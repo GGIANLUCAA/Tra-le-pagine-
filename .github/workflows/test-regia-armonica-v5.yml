@@ -1,0 +1,50 @@
+name: "Tra le Pagine - Collaudo V5 Regia Armonica"
+on:
+  push:
+    paths:
+      - ".github/workflows/test-regia-armonica-v5.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa solo strumenti gratuiti"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg frei0r-plugins
+          python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "opencv-python-headless>=4.8,<5"
+      - name: "Verifica qualità e limiti degli effetti senza AI"
+        run: |
+          python -m py_compile src/effetti_v4.py src/regia_armonica_v5.py src/controllo_master_v5.py
+          PYTHONPATH=src python src/test_regia_armonica_v5.py
+          PYTHONPATH=src python src/test_effetti_v4.py
+      - name: "Rileggi video esistente (audio e sottotitoli, nessuna generazione)"
+        uses: actions/download-artifact@v4
+        with:
+          name: VIDEO_V4_FREI0R_COLLAUDO_COMPLETO
+          run-id: 39169343642
+          github-token: ${{ github.token }}
+          path: old_output/
+      - name: "Rapporto tecnico della vecchia narrazione Gemini"
+        run: |
+          python src/controllo_master_v5.py \
+            --video old_output/COLLAUDO_INTEGRALE_V4_FREI0R_EP01.mp4 \
+            --srt old_output/SOTTOTITOLI.srt \
+            --out output_regia_v5/CONTROLLO_AUDIO_VIDEO_V5.json
+      - name: "Invia foglio di regia e report, non pubblicare"
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: REGIA_V5_PROVINO_GRATUITO_E_QA
+          path: |
+            output_regia_v5/
+            output_v4/
+          retention-days: 14
