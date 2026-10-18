@@ -190,6 +190,7 @@ def main():
             for i,scene in enumerate(scenes):
                 path=tmp/f"scena_{i+1:02}.jpg"
                 draw_scene(i,scene["motif"],path);images.append(path)
+        shutil.copy2(images[0],out/"COPERTINA.jpg")
         montage=make_video(images,duration,tmp)
         run("ffmpeg","-hide_banner","-loglevel","error","-y",
             "-i",montage,"-i",out/"VOCE.wav","-i",out/"MUSICA_ORIGINALE.wav",
@@ -198,6 +199,7 @@ def main():
             "-c:v","libx264","-preset","veryfast","-crf","23","-pix_fmt","yuv420p",
             "-c:a","aac","-b:a","160k","-shortest","-movflags","+faststart",out/"TRA_LE_PAGINE_EP01.mp4")
     shutil.copy2(ep/"DESCRIZIONE_SOCIAL.txt",out/"DESCRIZIONE_SOCIAL.txt")
+    shutil.copy2(ep/"testo.txt",out/"COPIONE.txt")
     (out/"INFO.txt").write_text(
         meta["title"]+"\nDurata: "+str(round(duration,1))+" secondi\n"
         "Voce: "+a.engine+"\nRivedere audio e sottotitoli prima di pubblicare.\n",encoding="utf-8")
