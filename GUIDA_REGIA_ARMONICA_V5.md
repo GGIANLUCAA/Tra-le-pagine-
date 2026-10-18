@@ -38,6 +38,8 @@ Non cambiare il sistema Google Gemini/GitHub/FFmpeg, non rigenerare immagini o v
 ### Una ragione narrativa per ogni effetto forte
 Ogni \`sketch_paint\`, \`brush_reveal\` e \`postfx\` richiede nel JSON \`reason\` non vuoto; un effetto apparso a caso **fa fallire il preflight prima di consumare crediti Gemini**.
 
+**Non sovrapporre mai una rivelazione a pennellate e un filtro frei0r nella stessa inquadratura:** una sola magia visiva alla volta.
+
 **Budget conservativo per ogni episodio:**
 - al massimo 3 rivelazioni matita/colore o pennellate;
 - al massimo 4 filtri frei0r;
