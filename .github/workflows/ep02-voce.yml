@@ -1,0 +1,32 @@
+name: "Tra le Pagine - EP02 Solo voce Gemini"
+on:
+  push:
+    paths: [".github/workflows/ep02-voce.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Installa sintesi e allineamento
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "numpy>=1.25,<3" "scipy>=1.11" "soundfile>=0.12" "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
+      - name: Registra L'arte della gioia
+        run: python src/ep02_voice_only.py
+      - name: Consegna voce con allineamento
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: TRA_LE_PAGINE_EP02_VOCE_E_TIMING
+          path: output_ep02/
+          retention-days: 14
