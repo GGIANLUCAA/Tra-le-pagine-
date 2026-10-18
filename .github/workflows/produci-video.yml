@@ -12,6 +12,7 @@ on:
         type: choice
         default: supertonic
         options:
+          - gemini
           - edge
           - supertonic
           - kokoro
@@ -28,6 +29,7 @@ jobs:
     timeout-minutes: 55
     env:
       VOCE: "${{ github.event.inputs.voce || 'supertonic' }}"
+      GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
     steps:
       - name: "Scarica progetto"
         uses: actions/checkout@v4
@@ -51,7 +53,14 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
-          if [[ "$VOCE" == "edge" ]]; then
+          if [[ "$VOCE" == "gemini" ]]; then
+            if [[ -z "${GEMINI_API_KEY:-}" ]]; then
+              echo "::error::Manca GEMINI_API_KEY. Aggiungi la chiave da GitHub Settings > Secrets and variables > Actions."
+              exit 2
+            fi
+            python -m pip install "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
+            python src/render.py --engine gemini --out output
+          elif [[ "$VOCE" == "edge" ]]; then
             echo "Produco una voce narrativa più naturale: Edge Neural Diego (italiano)."
             python -m pip install 'edge-tts>=7,<9'
             python src/render.py --engine edge --out output
