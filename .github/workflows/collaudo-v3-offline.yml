@@ -1,0 +1,53 @@
+name: "Tra le Pagine V3 - Collaudo video senza API"
+on:
+  push:
+    paths:
+      - ".github/workflows/collaudo-v3-offline.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  collaudo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Installa gli strumenti locali, senza API
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install 'pillow>=10,<13'
+      - name: Recupera il precedente MP4 dell'episodio 01 (gia prodotto)
+        uses: actions/download-artifact@v4
+        with:
+          name: TRA_LE_PAGINE_EP01_MP4_e_audio
+          run-id: 39124087807
+          github-token: ${{ github.token }}
+          path: output/
+      - name: Verifica MP4 storico e crea copertina coordinata V3
+        run: |
+          python src/episode_v3.py --episode 01_scacchi --out output --post
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          p=Path("output")
+          mp4=p/"TRA_LE_PAGINE_EP01.mp4"
+          cover=p/"COPERTINA_SERIE.jpg"
+          qc=p/"CONTROLLO_QUALITA.txt"
+          assert mp4.exists() and mp4.stat().st_size>1_000_000
+          assert cover.exists() and Image.open(cover).size==(1080,1920)
+          assert qc.exists()
+          print("TEST V3 SUPERATO: MP4 storico verificato, copertina 1080x1920 creata, controlli tecnici OK")
+          PY
+      - name: Consegna del pacchetto di collaudo (non un nuovo episodio)
+        uses: actions/upload-artifact@v4
+        with:
+          name: COLLAUDO_V3_EP01_SENZA_API
+          path: |
+            output/COPERTINA_SERIE.jpg
+            output/CONTROLLO_QUALITA.txt
+          retention-days: 14
