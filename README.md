@@ -1,70 +1,50 @@
-# 🎬 TRA LE PAGINE — Studio video automatico
+# 🎬 Tra le Pagine — Studio editoriale illustrato
 
-**Da Android, senza Colab, senza carta di credito e senza editor.**
+**Serie italiana di video sui libri**: copione originale verificato, illustrazioni narrative, voce italiana espressiva, sottotitoli, musica e video verticale. Preparazione e gestione possibili da Android.
 
-Questa cartella produce un video MP4 verticale narrato in italiano a partire dal copione e dalle illustrazioni di un episodio.
+## 📘 Leggi prima le nuove regole
 
-## Primo episodio
-**La novella degli scacchi** — Stefan Zweig, episodio 01.
+- **[METODOLOGIA EDITORIALE DEFINITIVA V3](METODOLOGIA_TRA_LE_PAGINE_V3.md)** — filosofia, fedeltà al libro, voce, immagini di qualità, copertina costante, ganci autentici, controlli ed approvazione.
+- **[SCHEDA EPISODIO V3](TEMPLATE_EPISODIO_V3.md)** — modulo riutilizzabile per ogni libro: ricerca, copione, storyboard, personaggi, copertina, voce, controlli qualità.
+- [Guida visiva storica di EP01](STILE_VISIVO.md) — utile come riferimento del vecchio episodio, **non sostituisce** la metodologia V3.
 
-La cartella `episodes/01_scacchi/` contiene:
-- `testo.txt`: copione narrato.
-- `scenes.json`: 20 scene in ordine.
-- `metadata.json`: titolo e autore.
-- `DESCRIZIONE_SOCIAL.txt`: descrizione per Instagram, Facebook e YouTube.
+**Una regola:** la produzione del nuovo video parte **soltanto dopo approvazione dell'anteprima** (copione, storyboard, 2–3 immagini singole campione, copertina). Una eventuale pubblicazione social richiede conferma separata.
 
-**Per la versione bella** basta caricare un solo file `episodes/01_scacchi/scene_premium.zip` contenente **12 immagini** chiamate `scena_01.jpg` ... `scena_12.jpg` (accetta anche PNG e WEBP). Il programma le estrae automaticamente e costruisce **16 cambi di scena sincronizzati alle frasi pronunciate** tramite `scene_cues.json`. **Non caricare una sola immagine collage**: nello ZIP devono esserci 12 immagini separate. Finché questo archivio non c'è, il sistema usa disegni di test NON adatti alla pubblicazione.
+## ⚙️ Tecnologia esistente
 
-## Come scaricare il video dal telefono
-1. Apri **[Actions → Tra le Pagine - Video automatico](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/produci-video.yml)**.
-2. Tocca l'ultima esecuzione del progetto. Un segno verde significa che l'elaborazione è riuscita; una croce rossa significa che è fallita e richiede diagnosi.
-3. Scorri in basso fino ad **Artifacts**.
-4. Tocca **TRA_LE_PAGINE_EP01_MP4_e_audio** e scarica il file ZIP.
-5. Estrai lo ZIP su Android; dentro trovi `TRA_LE_PAGINE_EP01.mp4`, `VOCE.wav`, `SOTTOTITOLI.srt`, `MUSICA_ORIGINALE.wav`, copione/descrizione e dettagli tecnici.
+- **ChatGPT** prepara ricerca, copione, storyboard, immagini, copertina e revisioni.
+- **Google Gemini TTS** interpreta il testo con voce italiana espressiva, pausa e intonazione. La chiave resta nel segreto GitHub **GEMINI_API_KEY**: non pubblicarla mai.
+- **GitHub Actions** esegue gli script sui suoi server, senza Colab né montaggio sul telefono.
+- **FFmpeg** monta il formato verticale con musica, sottotitoli e piccoli movimenti sulle illustrazioni.
+- Gli output generati possono essere scaricati come ZIP/MP4 su Android; **non vengono pubblicati automaticamente**.
 
-Per produrre una nuova versione vai nella stessa pagina, premi **Run workflow**, seleziona `kokoro` e avvia. In alcune versioni Android serve attivare *Sito desktop* per visualizzare il pulsante.
+La pipeline è operativa, ma non ancora interamente parametrica per tutti i libri: **il workflow principale fa ancora riferimento all'episodio 01 in alcune opzioni e nomi di file**. EP02 ha usato uno specifico workflow per la voce e un montaggio separato. Non dichiarare che basta premere un pulsante per ogni nuovo libro finché questa parte non sarà generalizzata e verificata.
 
-**Il workflow si avvia anche automaticamente quando ChatGPT aggiorna il codice o il contenuto degli episodi.**
+## 📁 Episodi presenti
 
-## Qualità e trasparenza
-- La prima scelta è **Kokoro TTS**, voce italiana maschile `im_nicola`. Se installazione o generazione falliscono, il sistema riprova con `espeak-ng` (voce italiana robotica, inferiore qualitativamente).
-- I sottotitoli sono sincronizzati sulla durata di ogni frase ma i singoli segmenti usano una stima proporzionale.
-- I video sono 720×1280, 24 fps, musica sintetizzata in modo originale, movimento lento sulle immagini.
-- Il codice non pubblica automaticamente sui social e non genera un cartoon animato AI: serve una revisione prima della pubblicazione.
-- Il repository è pubblico e i file sono visibili a chiunque. **Non caricare documenti personali o contenuti riservati.**
-- La sintesi Kokoro usa pesi con licenza Apache 2.0; le immagini sintetiche create dal codice non usano materiale fotografico esterno.
-- GitHub Actions per repository pubblici usa runner gratuiti, ma GitHub può modificare disponibilità e limiti.
+- [EP01 — La novella degli scacchi](episodes/01_scacchi)
+- [EP02 — L'arte della gioia](episodes/02_arte_della_gioia)
 
-## Tecnico
-La pipeline è nel workflow `.github/workflows/produci-video.yml` e nel programma `src/render.py`. Non devi eseguirli sul telefono.
+Per i prossimi episodi creare nuove cartelle, senza cancellare o sovrascrivere quelle precedenti.
 
-Quando chiederai un altro libro a ChatGPT, potremo aggiungere una cartella `episodes/02_nome_libro` e aggiornare l'avvio per selezionarlo.
+## 🧭 Flusso suggerito da smartphone
 
-## Voci italiane — aggiornamento ottobre 2026
-Nel menu **Run workflow → Voce narrante italiana** puoi scegliere:
-- **supertonic (predefinita)**: voce maschile M1 italiana, modello open-weight archivio Supertonic 3, nessuna API né pagamento per episodio; esegue la sintesi CPU direttamente su GitHub. OpenRAIL-M richiede di rispettare restrizioni d'uso e trasparenza sui contenuti generati. Descrizione social aggiornata con dichiarazione IA.
-- **edge**: voce neurale italiana Diego con intonazione per paragrafi completi, più naturale da valutare ad orecchio; richiede il servizio online gratuito Edge Read Aloud. **Diritti commerciali di tale accesso non chiariti da Microsoft**: utile per test, non presumere di poterlo usare per contenuti monetizzati.
-- **kokoro**: voce maschile im_nicola, modello open-weight Apache 2.0, ma è risultata poco naturale in italiano.
-- **espeak**: emergenza tecnica, non adatta per la pubblicazione.
+**Fase A: anteprima, senza render definitivo**
+1. Scrivere a ChatGPT: «Applica il Metodo Tra le Pagine V3 al libro ...».
+2. Controllare copione, fatti, spoiler, storyboard, 2–3 illustrazioni singole e copertina.
+3. Comunicare correzioni o scrivere «OK, procedi con il video».
 
-Ogni cambio di motore rigenera automaticamente audio, sottotitoli e tempi delle inquadrature. Non è necessario modificare o rigenerare le immagini. 
-La voce Supertonic viene sintetizzata localmente dal runner GitHub; per accelerare le successive generazioni, la cache conserva il modello di circa 400 MB.
+**Fase B: produzione**
+1. Completare le illustrazioni singole, mantenerne fisionomia e ambienti coerenti.
+2. Preparare la cartella del nuovo episodio e collegare i cambi di scena alle frasi.
+3. Generare con Gemini e verificare l'audio prima del montaggio finale.
+4. Produrre MP4, sottotitoli, copertina e descrizione.
+5. Controllo qualità completo. Richiedere conferma prima della pubblicazione.
 
-**I 2 provini Supertonic e i 2 provini Edge sono nel progetto come workflow separati**; serve ascoltare e approvare la voce prima di pubblicare.
+Il repository è **pubblico**: contenuti caricati e codice sono visibili, ma i valori dei GitHub Actions Secrets non vengono mostrati. Non caricare dati privati, chiavi in file o materiale protetto da diritti non autorizzato. Per l'uso dei contenuti generati con AI rispettare licenze, termini dei provider e politiche delle piattaforme social.
 
-## Narratore più naturale — Gemini 3.8 Flash TTS (facoltativo)
+## 🗣️ Comando rapido
 
-Per avere una lettura interpretata, con **pause organiche, domande, enfasi ed emozioni**, il generatore offre ora la voce `gemini` che usa **Gemini 3.8 Flash TTS** (modello Google specializzato in audiolibri). Il motore interpreta il racconto in una generazione continua, invece di registrare 34 frasi sconnesse. I tag `<short pause>` e `<long pause>` sono usati solo nei punti narrativi importanti. Una trascrizione Whisper permette di ricollocare sottotitoli e scene dopo le pause.
+«Applica [METODOLOGIA_TRA_LE_PAGINE_V3.md](METODOLOGIA_TRA_LE_PAGINE_V3.md) al libro **[titolo] di [autore]**. Voglio prima **solo copione verificato, storyboard, tre immagini verticali e proposta di copertina**; aspetta il mio OK prima del video completo.»
 
-### Impostazione UNA VOLTA SOLA da Android
-1. Apri [Google AI Studio — API keys](https://aistudio.google.com/api-keys), accedi con Google e crea una nuova chiave nel **livello gratuito**. Il modello ha una quota gratuita, con limiti. **Non attivare fatturazione per questa prova.**
-2. Copia la chiave generata. **Non scriverla nella chat e non inserirla in un file pubblico del repository.**
-3. Apri [GitHub — Secrets del repository](https://github.com/GGIANLUCAA/Tra-le-pagine-/settings/secrets/actions) → *New repository secret*: nome esatto `GEMINI_API_KEY`; nel campo *Secret* incolla la chiave → *Add secret*.
-4. Apri [Actions — Video automatico](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/produci-video.yml) → *Run workflow* → nel menu **Voce narrante italiana** scegli `gemini` → *Run workflow*. Dal telefono usa *Sito desktop* se il menu è nascosto.
-5. Quando la spunta diventa verde, apri l'esecuzione e scarica l'artifact ZIP con l'MP4 e l'audio. Se fallisce, verifica i registri di errore, senza mai incollare la chiave.
-
-Questa integrazione è configurata e il codice ha superato i test senza chiave, ma **la generazione reale Gemini non è stata testata**: serve la tua chiave inserita su GitHub per fare il primo provino. In caso di quota gratuita esaurita il workflow segnala errore, senza addebiti automatici se non attivi fatturazione.
-
-**Privacy:** sul livello gratuito Google può usare i contenuti inviati per migliorare i servizi, secondo le condizioni del servizio. Invia soltanto copioni destinati alla pubblicazione, mai dati riservati.
-
-**Importante:** la chiave va inserita come *secret*, non come normale variabile, commento o file. Il repository è pubblico; chiunque può leggere i file, ma non il valore dei GitHub Actions secrets.
+**Proposito:** non fare video seriali indistinguibili, ma racconti illustrati che sembrino **selezionati, scritti e diretti con vera cura**. Gli strumenti AI restano strumenti e non vanno presentati come performance umane se non lo sono.
