@@ -3,9 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "src/**"
-      - "episodes/**"
-      - ".github/workflows/produci-video.yml"
+      - "episodes/**/BUILD.txt"
   workflow_dispatch:
     inputs:
       voce:
