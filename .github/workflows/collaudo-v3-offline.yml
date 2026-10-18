@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - ".github/workflows/collaudo-v3-offline.yml"
+      - "src/episode_v3.py"
   workflow_dispatch:
 permissions:
   contents: read
