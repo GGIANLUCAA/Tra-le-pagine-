@@ -4,6 +4,7 @@ and check/brand delivered artifacts AFTER rendering.
 Designed to work with the existing src/render.py unchanged.
 """
 import argparse
+import io
 import json
 import math
 import re
@@ -98,9 +99,28 @@ def wrap(draw,text,face,maxwidth):
     return lines
 
 def branded_cover(outdir,ep,meta):
-    source=outdir/"COPERTINA.jpg"
-    if not source.exists():return
-    im=Image.open(source).convert("RGB")
+    """Build cover from a clean narrative scene, not from an old titled cover.
+
+    The historical output COPERTINA.jpg can contain old labels. Using it would
+    cause overlapping text. Extract scena_01 from the episode illustrations.
+    """
+    archive=ep/"scene_premium.zip"
+    im=None
+    if archive.is_file():
+        with zipfile.ZipFile(archive) as z:
+            scene=next((entry for entry in z.infolist()
+                        if re.fullmatch(r"scena_01\\.(?:jpg|jpeg|png|webp)",
+                                        Path(entry.filename).name,re.IGNORECASE)),None)
+            if scene is not None:
+                im=Image.open(io.BytesIO(z.read(scene))).convert("RGB")
+    else:
+        for suffix in (".jpg",".jpeg",".png",".webp"):
+            path=ep/"images"/("scena_01"+suffix)
+            if path.is_file():
+                im=Image.open(path).convert("RGB")
+                break
+    if im is None:
+        fail("Impossibile creare copertina: manca la scena 01 senza scritte")
     im=ImageOps.fit(im,(1080,1920),centering=(.5,.43),method=Image.Resampling.LANCZOS)
     overlay=Image.new("RGBA",im.size,(0,0,0,0))
     d=ImageDraw.Draw(overlay)
