@@ -42,8 +42,9 @@ Formato esempio:
   "version": "V4-frei0r-free",
   "scenes": [
     {"cue": 0, "effect": "sketch_paint", "seconds": 3.0, "mood": "cool"},
-    {"cue": 6, "effect": "brush_reveal", "seconds": 2.4, "mood": "warm", "postfx": "soft_bloom"},
-    {"cue": 9, "effect": "parallax_soft", "mood": "dusk", "postfx": "cinema_vignette"}
+    {"cue": 6, "effect": "brush_reveal", "seconds": 2.4, "mood": "warm", "reason": "Un elemento narrativo si rivela"},
+    {"cue": 9, "effect": "cinematic_pan", "mood": "warm", "postfx": "soft_bloom", "reason": "Un ricordo dolce ritorna per pochi secondi"},
+    {"cue": 12, "effect": "parallax_soft", "mood": "dusk", "postfx": "cinema_vignette", "reason": "Isolamento del personaggio nella scena"}
   ]
 }
 \`\`\`
