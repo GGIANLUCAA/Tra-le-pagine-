@@ -6,7 +6,8 @@
       "cue": 0,
       "effect": "sketch_paint",
       "seconds": 3.2,
-      "mood": "warm"
+      "mood": "warm",
+      "reason": "The search for personal truth starts in pencil and finds its color."
     },
     {
       "cue": 1,
@@ -17,7 +18,8 @@
       "cue": 2,
       "effect": "parallax_soft",
       "mood": "cool",
-      "postfx": "cinema_vignette"
+      "postfx": "cinema_vignette",
+      "reason": "Samana hardship warrants restrained solitude and vignette."
     },
     {
       "cue": 3,
@@ -34,7 +36,8 @@
       "effect": "brush_reveal",
       "seconds": 2.4,
       "mood": "warm",
-      "postfx": "soft_bloom"
+      "postfx": "soft_bloom",
+      "reason": "Kamala opens the sensory world, so the scene gently blooms into color."
     },
     {
       "cue": 6,
@@ -55,7 +58,8 @@
       "cue": 9,
       "effect": "light_atmosphere",
       "mood": "dusk",
-      "postfx": "vintage_grain"
+      "postfx": "vintage_grain",
+      "reason": "Loss of certainty at the river; subtle texture, almost no movement."
     },
     {
       "cue": 10,
@@ -77,7 +81,8 @@
       "effect": "brush_reveal",
       "seconds": 2.8,
       "mood": "warm",
-      "postfx": "golden_glow"
+      "postfx": "golden_glow",
+      "reason": "The river's wisdom is the emotional transformation, not a random filter."
     },
     {
       "cue": 14,
@@ -89,5 +94,11 @@
       "effect": "light_atmosphere",
       "mood": "warm"
     }
-  ]
+  ],
+  "quality": {
+    "color_cohesion": "gentle",
+    "rule": "Original colors and characters preserved; only slight same-mood Lab corrections when needed.",
+    "max_paint_reveals": 3,
+    "max_postfx": 4
+  }
 }
