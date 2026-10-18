@@ -174,20 +174,26 @@ def make_video(images,duration,tmp,starts=None):
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--episode",default="episodes/01_scacchi")
-    p.add_argument("--engine",choices=["kokoro","espeak"],default="kokoro")
+    p.add_argument("--engine",choices=["edge","kokoro","espeak"],default="edge")
     p.add_argument("--out",default="output")
     a=p.parse_args()
     ep=Path(a.episode);out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
     meta=json.loads((ep/"metadata.json").read_text(encoding="utf-8"))
     phrases=sentences((ep/"testo.txt").read_text(encoding="utf-8"))
     print(meta["title"],len(phrases),"frasi",flush=True)
-    audio=speak(phrases,a.engine)
-    quiet=np.zeros(round(.18*RATE),dtype=np.float32);parts=[];timed=[];cursor=0
-    for phrase,clip in zip(phrases,audio):
-        start=cursor/RATE;cursor+=len(clip);end=cursor/RATE
-        timed.append((phrase,start,end));parts.extend([clip,quiet]);cursor+=len(quiet)
-    voice=np.concatenate(parts);peak=float(np.max(np.abs(voice)))
-    sf.write(out/"VOCE.wav",voice/max(1,peak/.91),RATE)
+    if a.engine=="edge":
+        from edge_voice import synthesize
+        voice,timed=synthesize((ep/"testo.txt").read_text(encoding="utf-8"),out)
+        if len(timed)!=len(phrases):
+            raise RuntimeError(f"Numero frasi diverso: copione {len(phrases)}, Edge {len(timed)}")
+    else:
+        audio=speak(phrases,a.engine)
+        quiet=np.zeros(round(.18*RATE),dtype=np.float32);parts=[];timed=[];cursor=0
+        for phrase,clip in zip(phrases,audio):
+            start=cursor/RATE;cursor+=len(clip);end=cursor/RATE
+            timed.append((phrase,start,end));parts.extend([clip,quiet]);cursor+=len(quiet)
+        voice=np.concatenate(parts);peak=float(np.max(np.abs(voice)))
+        sf.write(out/"VOCE.wav",voice/max(1,peak/.91),RATE)
     duration=len(voice)/RATE
     subtitles(timed,out);music(out/"MUSICA_ORIGINALE.wav",duration)
     with tempfile.TemporaryDirectory() as tmpname:
@@ -266,6 +272,10 @@ def main():
     shutil.copy2(ep/"testo.txt",out/"COPIONE.txt")
     (out/"INFO.txt").write_text(
         meta["title"]+"\nDurata: "+str(round(duration,1))+" secondi\n"
-        "Voce: "+a.engine+"\nRivedere audio e sottotitoli prima di pubblicare.\n",encoding="utf-8")
+        + "Voce: "+a.engine+"\n"
+        + ("ATTENZIONE: Edge Read Aloud non ha una licenza commerciale esplicitamente confermata.\n"
+           if a.engine=="edge" else "")
+        + "Rivedere audio, sottotitoli e diritti prima di pubblicare.\n",
+        encoding="utf-8")
     print("VIDEO COMPLETO:",out/"TRA_LE_PAGINE_EP01.mp4",flush=True)
 if __name__=="__main__":main()
