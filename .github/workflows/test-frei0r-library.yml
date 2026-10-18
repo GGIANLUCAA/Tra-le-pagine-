@@ -1,0 +1,57 @@
+name: "Tra le Pagine - Prova libreria frei0r"
+on:
+  push:
+    paths:
+      - ".github/workflows/test-frei0r-library.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prova:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Installa libreria di effetti open source"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg frei0r-plugins
+          ffmpeg -hide_banner -filters | grep -w frei0r
+          echo "Numero plugin liberi disponibili:"
+          find /usr/lib/frei0r-1/ -name '*.so' | wc -l
+      - name: "Crea un provino per i plugin selezionati"
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import subprocess
+          root=Path("output_frei0r");root.mkdir(exist_ok=True)
+          archive=Path("episodes/01_scacchi/scene_premium.zip")
+          with ZipFile(archive) as z:
+            name=next(n for n in z.namelist() if Path(n).name=="scena_01.jpg")
+            image=root/"scena.jpg"
+            image.write_bytes(z.read(name))
+          tested=[]
+          for plugin in ["softglow","glow","cartoon","edgeglow","vignette","posterize","colorhalftone","rgbnoise","sepia"]:
+            result=subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y",
+                "-loop","1","-framerate","12","-i",str(image),"-t","1.5",
+                "-vf",f"scale=360:640,format=rgba,frei0r=filter_name={plugin},format=yuv420p",
+                "-frames:v","18","-an","-c:v","libx264","-preset","ultrafast",
+                "-pix_fmt","yuv420p",str(root/f"{plugin}.mp4")],
+                capture_output=True,text=True)
+            if result.returncode==0 and (root/f"{plugin}.mp4").stat().st_size>2000:
+                tested.append(plugin)
+                print("OK",plugin,flush=True)
+            else:
+                print("NON SUPPORTATO",plugin,result.stderr[-280:],flush=True)
+          (root/"RISULTATI.txt").write_text("Plugin testati con esito positivo: "+", ".join(tested)+"\n")
+          if len(tested)<5:
+             raise SystemExit(f"Solo {len(tested)} plugin funzionanti: controllare FFmpeg")
+          PY
+      - name: "Consegna provini (nessun audio, nessuna API)"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: FREI0R_FILTRI_GIT_HUB_CPU
+          path: output_frei0r/
+          retention-days: 7
