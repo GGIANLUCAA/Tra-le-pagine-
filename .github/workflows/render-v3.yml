@@ -74,7 +74,18 @@ jobs:
         if: steps.scegli.outputs.ready == 'true'
         env:
           EPISODIO: "${{ steps.scegli.outputs.episode }}"
-        run: python src/episode_v3.py --episode "$EPISODIO"
+        run: |
+          python src/episode_v3.py --episode "$EPISODIO"
+          if [[ "$EFFETTI" == "v4" ]]; then
+            PYTHONPATH=src python - <<'PY'
+          import json,os
+          from pathlib import Path
+          from regia_armonica_v5 import check_plan,read_plan
+          ep=Path("episodes")/os.environ["EPISODIO"]
+          n=len(json.loads((ep/"scene_cues.json").read_text(encoding="utf-8")))
+          print("REGIA V5:",check_plan(read_plan(ep/"effetti_v4.json"),n))
+          PY
+          fi
       - name: "Installa Gemini e l'allineamento parole"
         if: steps.scegli.outputs.ready == 'true'
         run: |
@@ -95,6 +106,22 @@ jobs:
         env:
           EPISODIO: "${{ steps.scegli.outputs.episode }}"
         run: python src/episode_v3.py --episode "$EPISODIO" --out output --post
+      - name: "Controlla loudness, picchi, formato e sottotitoli (non modifica audio)"
+        if: steps.scegli.outputs.ready == 'true' && success()
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from controllo_master_v5 import inspect
+          import json
+          mp4=list(Path("output").glob("TRA_LE_PAGINE_EP*.mp4"))
+          if len(mp4)!=1:raise SystemExit(f"Expected one final MP4, found {len(mp4)}")
+          subs=Path("output/SOTTOTITOLI.srt")
+          report=inspect(mp4[0], subs if subs.is_file() else None)
+          Path("output/CONTROLLO_MASTER_V5.json").write_text(
+              json.dumps(report,indent=2,ensure_ascii=False),encoding="utf-8")
+          print("Master V5:",report["technical_check"],"LUFS",report["loudness_lufs"])
+          PY
       - name: "Consegna il pacchetto (non pubblicato)"
         if: steps.scegli.outputs.ready == 'true' && success()
         uses: actions/upload-artifact@v4
