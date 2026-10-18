@@ -38,8 +38,8 @@ def main():
                 Image.open(path).verify()
                 images.append(path)
         settings={"scenes":[
-            {"cue":0,"effect":"sketch_paint","seconds":1.5,"mood":"warm","postfx":"soft_bloom","reason":"Introduce il conflitto con matita e lieve luce"},
-            {"cue":1,"effect":"cinematic_pan","mood":"cool"},
+            {"cue":0,"effect":"sketch_paint","seconds":1.5,"mood":"warm","reason":"Introduce il conflitto con la rivelazione a matita"},
+            {"cue":1,"effect":"cinematic_pan","mood":"cool","postfx":"soft_bloom","reason":"Lieve bagliore del ricordo senza trasformare i volti"},
             {"cue":2,"effect":"brush_reveal","seconds":1.4,"mood":"cool","reason":"Svolta narrativa, colore che ritorna"},
             {"cue":3,"effect":"light_atmosphere","mood":"warm"}]}
         config=work/"direzione.json"
@@ -68,8 +68,8 @@ def main():
     assert entries[0]["reveal_sec"]>0
     assert entries[2]["reveal_sec"]>0
     assert entries[3]["effect"]=="light_atmosphere"
-    assert entries[0]["postfx"]=="soft_bloom"
-    assert entries[1]["postfx"] is None
+    assert entries[0]["postfx"] is None
+    assert entries[1]["postfx"]=="soft_bloom"
     assert entries[2]["postfx"] is None
     assert entries[3]["postfx"] is None
     print("PASS: V4 offline, 4 scene, 11 s, video valido; ZERO API",flush=True)
