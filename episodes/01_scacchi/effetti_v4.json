@@ -1,5 +1,5 @@
 {
-  "version": "V4-free",
+  "version": "V4-frei0r-free",
   "note": "Saggio visivo: claustrofobia, scacchiera, fuga; massimo 3 rivelazioni forti.",
   "scenes": [
     {
@@ -12,17 +12,20 @@
       "cue": 6,
       "effect": "brush_reveal",
       "seconds": 2.2,
-      "mood": "cool"
+      "mood": "cool",
+      "postfx": "vintage_grain"
     },
     {
       "cue": 10,
       "effect": "parallax_soft",
-      "mood": "neutral"
+      "mood": "neutral",
+      "postfx": "ink_graphic"
     },
     {
       "cue": 14,
       "effect": "light_atmosphere",
-      "mood": "warm"
+      "mood": "warm",
+      "postfx": "cinema_vignette"
     },
     {
       "cue": 15,
