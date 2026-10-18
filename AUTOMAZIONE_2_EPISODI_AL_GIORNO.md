@@ -13,6 +13,21 @@ Aggiornato il 18 ottobre 2026.
 
 **Limite reale:** al momento sono automatiche due ANTEPRIME, non due MP4 completi ogni giorno. Le illustrazioni originali non possono essere prodotte in massa dalla sola API ChatGPT Plus, e Google non offre un piano immagini gratuito comparabile alla voce.
 
+## Primo collaudo V3 effettuato senza spese (18 ottobre 2026)
+
+Il nuovo generatore è stato **testato con risorse storiche**, senza chiamare Gemini e senza produrre nuove immagini.
+
+- [Test di validazione V3 riuscito](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39140109824): controlla lo storyboard premium dell'episodio 01, blocca l'episodio 02 che non ha ancora immagini premium nel repository e verifica il motore della copertina.
+- [Test di sicurezza della coda riuscito](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39140196236): una richiesta non approvata non produce MP4 e non chiama servizi esterni.
+- [Collaudo offline del video già esistente riuscito](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39142063491): recupera il MP4 dell'episodio 01 da un precedente artifact, legge audio e video con ffprobe, crea una **nuova copertina coordinata 1080×1920** partendo dalla scena 01 senza scritte, e produce `CONTROLLO_QUALITA.txt`. Dopo una prima prova è stato risolto un errore di titoli sovrapposti.
+- La **produzione completamente nuova**, da copione a Gemini a MP4 attraverso il workflow `render-v3.yml`, deve ancora ricevere il primo test con un nuovo episodio approvato e immagini definitive. Non si afferma il contrario.
+
+**Da Android, per vedere il test senza generare nulla:** apri il collaudo offline riuscito → scorri a **Artifacts** → scarica `COLLAUDO_V3_EP01_SENZA_API` → estrai e osserva `COPERTINA_SERIE.jpg` e `CONTROLLO_QUALITA.txt`. È un test del motore, non un nuovo episodio.
+
+**Per provare poi un nuovo episodio reale:** attendi la proposta delle 9:00 oppure delle 18:00, leggi copione e storyboard, correggi o dai OK. Dopo che le illustrazioni verticali definitive sono state generate e caricate, possiamo avviare `render-v3.yml` indicando il nome esatto della cartella dell'episodio. Il sistema blocca il render se manca un'immagine.
+
+**Importante:** l'OK per il montaggio non autorizza alcuna pubblicazione su Facebook, Instagram o YouTube. Pubblicazione e pagamento di servizi API rimangono separati.
+
 ## Come usarlo senza pagare altri abbonamenti
 
 1. Ogni mattina ricevi un libro e la sua bozza editoriale.
