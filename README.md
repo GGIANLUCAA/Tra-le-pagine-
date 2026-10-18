@@ -1,5 +1,17 @@
 # 🎬 Tra le Pagine — Studio editoriale illustrato
 
+## 🎨 NUOVO: Effetti cinematografici V4 gratuiti (installati e testati)
+
+Il generatore **V4** aggiunge un modulo visuale gratuito al workflow esistente: **matita → colore**, **pennellate progressive**, **camera cinematografica**, **movimento di profondità leggero** e **luce atmosferica**. Gli effetti possono essere scelti **scena per scena** nel file `effetti_v4.json`, senza cambiare copione, voce Gemini, sottotitoli o copertine.
+
+- [**GUIDA COMPLETA EFFETTI V4**](GUIDA_EFFETTI_V4.md) — effetto per effetto, limiti reali, costo e istruzioni Android.
+- [**PROVINO GRATUITO REALMENTE RIUSCITO**](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39166810954) — 8,5 secondi di video usando immagini EP01, nessuna nuova API.
+- [**RENDER VIDEO V4 — WORKFLOW**](.github/workflows/render-v3.yml) — seleziona episodio ed effetti `v4` oppure `off` dopo aver approvato le immagini.
+- [**Regia V4 di Siddharta**](episodes/03_siddharta/effetti_v4.json) — 16 inquadrature con gli effetti scelti per i momenti del romanzo.
+
+**Non è AI image-to-video con movimento naturale dei personaggi:** per ora il parallax leggero muove la camera virtuale sull'immagine e non scontorna un soggetto. Questo è voluto: costa €0 di API e preserva i volti. Il prossimo vero episodio V4 completo da 2–4 minuti richiederà un test e approvazione artistica.
+
+
 **Serie italiana di video sui libri**: copione originale verificato, illustrazioni narrative, voce italiana espressiva, sottotitoli, musica e video verticale. Preparazione e gestione possibili da Android.
 
 ## 🗓️ NOVITÀ: 2 episodi al giorno
