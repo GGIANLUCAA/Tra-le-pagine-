@@ -7,7 +7,8 @@ L'obiettivo non è avere più filtri, ma far sembrare ogni episodio un **cortome
 - [**GUIDA REGIA ARMONICA V5**](GUIDA_REGIA_ARMONICA_V5.md) — metodo, candidati GitHub studiati, scontorno Rembg realmente testato (non approvato per la produzione indiscriminata) e regole artistiche.
 - [**Motore V5**](src/regia_armonica_v5.py) — massimo 3 pennellate/rivelazioni, massimo 4 filtri accessori, senza sovrapposizioni; leggere correzioni colore soltanto su scene dello stesso tono.
 - [**Controllo audio/video V5**](src/controllo_master_v5.py) — loudness LUFS e true peak, formato e sottotitoli; non comprime/rovina la voce.
-- [**Test V5 riuscito**](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39171695750) — test su 16 inquadrature e provino gratis.
+- [**Test V5 riuscito**](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39171695750) — qualità cromatica e provino gratis.
+- [**MP4 di 130 secondi con V5 riuscito**](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39171898138) — voce Gemini originale, 16 inquadrature, 2 rivelazioni, 2 filtri delicati, sottotitoli e controllo audio.
 - [**Test scontorno Rembg**](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39171114735) — funzionante su CPU, ma contorni talvolta scorretti: prova separata, **non attivata** nel montaggio.
 - [**Render multi-episodio protetto**](.github/workflows/render-v3.yml) — controllo degli effetti prima di spendere crediti Gemini, QA audio automatico dopo l'MP4.
 
