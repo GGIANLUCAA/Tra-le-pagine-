@@ -43,18 +43,18 @@ Il motore nuovo è disponibile come **opzione separata**: i video precedenti res
 
 ## 4. Provino senza API — collaudo eseguito
 
-[▶ GitHub Actions — test V4 riuscito](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39166810954)
+[▶ GitHub Actions — test V4 riuscito a 720×1280](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39167222458)
 
 Artifact: \`PROVINO_EFFETTI_V4_GRATIS\`.
 
-Il test usa tre illustrazioni premium già presenti nell'episodio 01 e produce 8,5 secondi di MP4 muto (360×640 per minimizzare i tempi). Controlla:
+Il test usa tre illustrazioni premium già presenti nell'episodio 01 e produce 8,5 secondi di MP4 muto (720×1280, 24 fps: la risoluzione effettiva del generatore). Controlla:
 - durata e formato con ffprobe;
 - matita → colore e pennellate;
 - luce atmosferica;
 - punti di cambio scena;
 - creazione del manifesto \`REGIA_TEST.json\`.
 
-Risultato: test **PASS**, senza chiamate a servizi esterni.
+Risultato: test **PASS** alla risoluzione reale (204 fotogrammi, 8,5 s), senza chiamate a servizi esterni.
 
 Il **render completo di 2–4 minuti con V4**, che includesse nuova voce, musica e tutte le immagini, deve ancora essere collaudato in una vera produzione approvata. Il test da 8,5 s non è una prova di prestazioni o qualità editoriale di un episodio intero.
 
