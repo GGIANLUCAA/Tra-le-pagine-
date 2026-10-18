@@ -33,6 +33,23 @@ Non cambiare il sistema Google Gemini/GitHub/FFmpeg, non rigenerare immagini o v
 
 **Verdetto dopo aver guardato i file:** riconosce alcuni protagonisti, ma può includere sagome di persone in secondo piano e sfumature del dipinto. Se separassimo quei livelli automaticamente, creerebbe contorni visibili e buchi nello sfondo. **Non attivarlo automaticamente**. Possibile solo per 1 scena eccezionale dopo verifica della maschera e dei diritti sui pesi del modello. L'assenza di costi API non implica licenze commerciali garantite.
 
+## Collaudo integrale V5 riuscito — 18 ottobre 2026
+
+[Workflow GitHub, video di 130 secondi, riuscito](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39171898138).
+
+La run **non ha chiesto nuove immagini né rigenerato Gemini**: ha riutilizzato voce, musica, sottotitoli e 12 illustrazioni dell'episodio 01, organizzate in 16 inquadrature, e ha rimontato tutto con le regole V5.
+
+**Risultati misurati:**
+- MP4 720×1280, 24 fps, 130,28 secondi, video + audio presenti.
+- SRT: 63 intervalli, copertura 0–129,82 secondi.
+- Audio integrato: -19,3 LUFS; picco reale -0,75 dBTP, nessun allarme del controllo tecnico V5.
+- Budget effettivo: **2 rivelazioni pittoriche e 2 filtri aggiuntivi**, senza sovrapposizioni.
+- Coesione cromatica: confronti soltanto fra scene dello stesso tono, gradazione limitata, **1 sola scena** lievemente ritoccata.
+
+File di analisi: `REGIA_ARMONICA_V5.json`, `CONTATTO_SCENE_V5.jpg`, `CONTROLLO_AUDIO_VIDEO_V5.json` consegnati insieme all'MP4 nell'Artifact GitHub.
+
+Questo conferma che la **catena gratuita completa di montaggio con audio preesistente** funziona: la prova editoriale con un nuovo libro, una voce Gemini appena sintetizzata e immagini definitive ancora richiede approvazione e collaudo specifici. Qualità narrativa e bellezza non sono dimostrate dal solo test tecnico.
+
 ## Regole V5 obbligatorie
 
 ### Una ragione narrativa per ogni effetto forte
