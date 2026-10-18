@@ -1,0 +1,68 @@
+name: "Tra le Pagine - Prova scontorno 2.5D CPU"
+on:
+  push:
+    paths:
+      - ".github/workflows/test-rembg-v5.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa Rembg CPU e piccolo modello U2NetP"
+        run: |
+          python -m pip install "rembg[cpu]>=2.0.67,<3" "pillow>=10,<13"
+      - name: "Analizza soltanto scontorno, non alterare i video"
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          from PIL import Image,ImageOps,ImageDraw,ImageFilter
+          import numpy as np
+          from rembg import new_session,remove
+          root=Path("output_scontorno_v5")
+          root.mkdir(exist_ok=True)
+          source=Path("episodes/01_scacchi/scene_premium.zip")
+          session=new_session("u2netp")
+          rows=[]
+          with ZipFile(source) as z:
+              for num in (1,4,8):
+                  name=f"scena_{num:02}.jpg"
+                  match=next(m for m in z.namelist() if Path(m).name==name)
+                  im=Image.open(__import__("io").BytesIO(z.read(match))).convert("RGB")
+                  im=ImageOps.fit(im,(360,640),method=Image.Resampling.LANCZOS)
+                  mask=remove(im,session=session,only_mask=True).convert("L")
+                  coverage=float(np.mean(np.asarray(mask)>128))
+                  mask.save(root/f"mask_{num:02}.png")
+                  canvas=Image.new("RGB",(1080,640),(235,228,220))
+                  canvas.paste(im,(0,0))
+                  canvas.paste(mask.convert("RGB"),(360,0))
+                  checker=Image.new("RGB",(360,640),(40,66,76))
+                  checker.paste(im,(0,0),mask)
+                  canvas.paste(checker,(720,0))
+                  canvas.save(root/f"confronto_{num:02}.jpg",quality=90)
+                  rows.append((num,coverage))
+                  print(f"SCENE {num} detected opaque area: {coverage:.1%}")
+          (root/"STATO.txt").write_text(
+            "Solo esperimento Rembg u2netp con CPU. "+
+            "Non ancora usato nella produzione. "+
+            "Prima di usarlo, verificare qualità bordi, licenza dei pesi e "+
+            "ricostruzione dei buchi dello sfondo.\n"+
+            "\n".join(f"scena {num}: copertura {fraction:.1%}" for num,fraction in rows)
+          )
+          if not all(0.01<fraction<0.99 for _,fraction in rows):
+              print("ATTENZIONE: maschere non affidabili; non attivare il modello.")
+          PY
+      - name: "Consegna diagnostica visiva gratuita"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PROVINO_SCORNO_REMBG_CPU_V5
+          path: output_scontorno_v5/
+          retention-days: 7
