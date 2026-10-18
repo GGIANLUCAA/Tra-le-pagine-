@@ -1,39 +1,69 @@
-name: Tra le Pagine - Produci video
+name: "Tra le Pagine - Video automatico"
 on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "episodes/**"
+      - ".github/workflows/produci-video.yml"
   workflow_dispatch:
     inputs:
       voce:
-        description: Motore voce italiana
+        description: "Voce narrante italiana"
         required: true
-        default: kokoro
         type: choice
+        default: kokoro
         options:
           - kokoro
           - espeak
 permissions:
   contents: read
 jobs:
-  video:
+  produzione:
+    name: "Genera voce + sottotitoli + MP4"
     runs-on: ubuntu-latest
     timeout-minutes: 55
+    env:
+      VOCE: "${{ github.event.inputs.voce || 'kokoro' }}"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: "Scarica progetto"
+        uses: actions/checkout@v4
+      - name: "Installa Python"
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Installa strumenti
+          python-version: "3.11"
+      - name: "Prepara FFmpeg, fonetica italiana e librerie"
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg espeak-ng libsndfile1 fonts-dejavu-core
+          python -m pip install --upgrade pip
           python -m pip install 'numpy>=1.25,<3' 'pillow>=10,<13' 'soundfile>=0.12' 'scipy>=1.11'
-          if [ '${{ inputs.voce }}' = 'kokoro' ]; then python -m pip install 'kokoro>=0.9.4,<1'; fi
-      - name: Produci il video
-        run: python src/render.py --engine '${{ inputs.voce }}' --out output
-      - name: Scarica risultati
+      - name: "Crea il video"
+        shell: bash
+        run: |
+          set -uo pipefail
+          if [[ "$VOCE" == "kokoro" ]]; then
+            echo "Provo la voce italiana Kokoro im_nicola."
+            if python -m pip install 'kokoro>=0.9.4,<1'; then
+              if python src/render.py --engine kokoro --out output; then
+                echo "Kokoro riuscito."
+              else
+                echo "::warning::Kokoro non riuscito: passo alla voce eSpeak."
+                rm -rf output
+                python src/render.py --engine espeak --out output
+              fi
+            else
+              echo "::warning::Kokoro non installabile: passo alla voce eSpeak."
+              python src/render.py --engine espeak --out output
+            fi
+          else
+            python src/render.py --engine espeak --out output
+          fi
+      - name: "Consegna ZIP scaricabile da Android"
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: TRA_LE_PAGINE-EP01-${{ inputs.voce }}
+          name: "TRA_LE_PAGINE_EP01_MP4_e_audio"
           path: output/
           if-no-files-found: warn
           retention-days: 14
