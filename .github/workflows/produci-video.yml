@@ -1,0 +1,39 @@
+name: Tra le Pagine - Produci video
+on:
+  workflow_dispatch:
+    inputs:
+      voce:
+        description: Motore voce italiana
+        required: true
+        default: kokoro
+        type: choice
+        options:
+          - kokoro
+          - espeak
+permissions:
+  contents: read
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Installa strumenti
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg espeak-ng libsndfile1 fonts-dejavu-core
+          python -m pip install 'numpy>=1.25,<3' 'pillow>=10,<13' 'soundfile>=0.12' 'scipy>=1.11'
+          if [ '${{ inputs.voce }}' = 'kokoro' ]; then python -m pip install 'kokoro>=0.9.4,<1'; fi
+      - name: Produci il video
+        run: python src/render.py --engine '${{ inputs.voce }}' --out output
+      - name: Scarica risultati
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: TRA_LE_PAGINE-EP01-${{ inputs.voce }}
+          path: output/
+          if-no-files-found: warn
+          retention-days: 14
