@@ -84,6 +84,23 @@ def speak(sentences,engine):
             output.append(np.concatenate(blocks))
             print("Voce",i+1,"/",len(sentences),flush=True)
         return output
+    if engine=="supertonic":
+        from supertonic import TTS
+        from scipy.signal import resample_poly
+        print("Carico Supertonic 3 da modello aperto locale", flush=True)
+        model=TTS(model_dir="assets",auto_download=False)
+        style=model.get_voice_style(voice_name="M1")
+        audios=[]
+        for i,sentence in enumerate(sentences):
+            wav,duration=model.synthesize(
+                text=sentence, lang="it",voice_style=style,total_steps=8,speed=0.96)
+            signal=np.asarray(wav,dtype=np.float32).reshape(-1)
+            sound=resample_poly(signal,80,147).astype(np.float32)
+            if not len(sound):
+                raise RuntimeError("Supertonic non ha prodotto audio per la frase "+str(i+1))
+            audios.append(sound)
+            print("Supertonic voce",i+1,"/",len(sentences),flush=True)
+        return audios
     from scipy.signal import resample_poly
     audios=[]
     with tempfile.TemporaryDirectory() as tmp:
@@ -174,7 +191,7 @@ def make_video(images,duration,tmp,starts=None):
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--episode",default="episodes/01_scacchi")
-    p.add_argument("--engine",choices=["edge","kokoro","espeak"],default="edge")
+    p.add_argument("--engine",choices=["edge","supertonic","kokoro","espeak"],default="edge")
     p.add_argument("--out",default="output")
     a=p.parse_args()
     ep=Path(a.episode);out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
@@ -195,6 +212,10 @@ def main():
         voice=np.concatenate(parts);peak=float(np.max(np.abs(voice)))
         sf.write(out/"VOCE.wav",voice/max(1,peak/.91),RATE)
     duration=len(voice)/RATE
+    if a.engine=="supertonic":
+        run("ffmpeg","-hide_banner","-loglevel","error","-y",
+            "-i",out/"VOCE.wav","-codec:a","libmp3lame","-b:a","160k",
+            out/"VOCE_NATURALE.mp3")
     subtitles(timed,out);music(out/"MUSICA_ORIGINALE.wav",duration)
     with tempfile.TemporaryDirectory() as tmpname:
         tmp=Path(tmpname)
