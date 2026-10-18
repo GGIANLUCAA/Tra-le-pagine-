@@ -9,7 +9,7 @@ on:
         required: true
         default: "01_scacchi"
       effetti:
-        description: "Regia gratuita V4: matita, pennellate, camera e luce"
+        description: "Regia gratuita V4+frei0r: pittura, luce, inchiostro e 8 filtri controllati"
         type: choice
         required: true
         default: v4
@@ -68,7 +68,7 @@ jobs:
         if: steps.scegli.outputs.ready == 'true'
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core frei0r-plugins
           python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12" "scipy>=1.11" "opencv-python-headless>=4.8,<5"
       - name: "Controllo illustrazioni PRIMA delle richieste API"
         if: steps.scegli.outputs.ready == 'true'
