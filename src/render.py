@@ -126,7 +126,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
-Style: Narr,DejaVu Sans,43,&H00FFFFFF,&H00D3B47E,&HCA111923,&H90000000,0,0,0,0,100,100,0,0,1,3,1,2,56,56,160,1
+Style: Narr,DejaVu Sans,43,&H00FFFFFF,&H00D3B47E,&H00000000,&H70000000,0,0,0,0,100,100,0,0,1,3.2,0.7,2,56,56,115,1
 
 [Events]
 Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
@@ -144,9 +144,17 @@ def music(path,length):
         right+=amp*np.sin(2*np.pi*f*x+.3+.1*np.sin(x*.23+j))
     fade=np.minimum(1,x/2)*np.minimum(1,np.maximum(0,length-x)/3)
     sf.write(path,np.stack([left*fade,right*fade],axis=1),RATE)
-def make_video(images,duration,tmp):
+def make_video(images,duration,tmp,starts=None):
     total=math.ceil(duration*FPS)
-    counts=[total//len(images)+(i<total%len(images)) for i in range(len(images))]
+    if starts is not None:
+        if len(starts)!=len(images):raise ValueError("Le scene e i punti della narrazione non corrispondono")
+        limits=[round(float(t)*FPS) for t in starts]+[total]
+        if limits[0]!=0:limits[0]=0
+        if any(limits[i]>=limits[i+1] for i in range(len(limits)-1)):
+            raise ValueError("I cambi di scena devono essere in ordine crescente")
+        counts=[limits[i+1]-limits[i] for i in range(len(images))]
+    else:
+        counts=[total//len(images)+(i<total%len(images)) for i in range(len(images))]
     clips=[]
     for i,(picture,num) in enumerate(zip(images,counts)):
         path=tmp/f"clip_{i:02}.mp4";secs=num/FPS
@@ -184,14 +192,44 @@ def main():
     subtitles(timed,out);music(out/"MUSICA_ORIGINALE.wav",duration)
     with tempfile.TemporaryDirectory() as tmpname:
         tmp=Path(tmpname)
-        images=sorted((ep/"images").glob("scena_*.jpg")) if (ep/"images").exists() else []
-        if not images:
-            scenes=json.loads((ep/"scenes.json").read_text(encoding="utf-8"))
-            for i,scene in enumerate(scenes):
-                path=tmp/f"scena_{i+1:02}.jpg"
-                draw_scene(i,scene["motif"],path);images.append(path)
+        cue_file=ep/"scene_cues.json"
+        starts=None
+        placeholder=False
+        if cue_file.exists():
+            cues=json.loads(cue_file.read_text(encoding="utf-8"))
+            if cues[0]["start_sentence"]!=0:
+                raise ValueError("La prima scena deve iniziare dalla frase 0")
+            fallback_motifs=["isolation","chess","ship","chess","chess","corridor","book","memory","chess","delay","memory","sea"]
+            images=[]
+            starts=[]
+            for cue in cues:
+                ix=cue["start_sentence"]
+                asset=cue["asset"]
+                picture=ep/"images"/f"scena_{asset:02}.jpg"
+                if not picture.exists():
+                    placeholder=True
+                    picture=tmp/f"placeholder_{asset:02}.jpg"
+                    if not picture.exists():
+                        draw_scene(asset,fallback_motifs[(asset-1)%len(fallback_motifs)],picture)
+                images.append(picture)
+                starts.append(timed[ix][1])
+            (out/"SEQUENZA_SCENE.txt").write_text(
+                "\n".join(f"{starts[i]:6.2f}s  {cue['description']}  (immagine {cue['asset']:02})"
+                         for i,cue in enumerate(cues)),encoding="utf-8")
+        else:
+            images=sorted((ep/"images").glob("scena_*.jpg")) if (ep/"images").exists() else []
+            if not images:
+                placeholder=True
+                scenes=json.loads((ep/"scenes.json").read_text(encoding="utf-8"))
+                for i,scene in enumerate(scenes):
+                    picture=tmp/f"scena_{i+1:02}.jpg"
+                    draw_scene(i,scene["motif"],picture);images.append(picture)
         shutil.copy2(images[0],out/"COPERTINA.jpg")
-        montage=make_video(images,duration,tmp)
+        (out/"STATO_IMMAGINI.txt").write_text(
+            "ANTEPRIMA TECNICA: alcune immagini sono provvisorie, NON pubblicare.\n"
+            if placeholder else "IMMAGINI ESTERNE PRESENTI: controllare il risultato prima di pubblicare.\n",
+            encoding="utf-8")
+        montage=make_video(images,duration,tmp,starts)
         run("ffmpeg","-hide_banner","-loglevel","error","-y",
             "-i",montage,"-i",out/"VOCE.wav","-i",out/"MUSICA_ORIGINALE.wav",
             "-filter_complex","[1:a]volume=1.0[v];[2:a]volume=.40[m];[v][m]amix=inputs=2:duration=first:normalize=0[a]",
