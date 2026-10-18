@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - ".github/workflows/test-regia-armonica-v5.yml"
+      - "src/test_effetti_v4.py"
   workflow_dispatch:
 permissions:
   contents: read
