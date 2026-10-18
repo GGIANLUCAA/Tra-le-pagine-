@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Tra le Pagine: audio italiano + illustrazioni + sottotitoli + MP4 verticale."""
-import argparse, json, math, re, subprocess, tempfile, shutil
+import argparse, json, math, re, subprocess, tempfile, shutil, zipfile, io
 from pathlib import Path
 import numpy as np
 import soundfile as sf
@@ -192,6 +192,26 @@ def main():
     subtitles(timed,out);music(out/"MUSICA_ORIGINALE.wav",duration)
     with tempfile.TemporaryDirectory() as tmpname:
         tmp=Path(tmpname)
+        # Facoltativo: un solo ZIP con scena_01.jpg ... scena_12.jpg,
+        # caricabile da smartphone senza caricare tutte le immagini separatamente.
+        premium_root=ep/"images"
+        archive=ep/"scene_premium.zip"
+        if archive.exists():
+            premium_root=tmp/"premium"
+            premium_root.mkdir(exist_ok=True)
+            count=0
+            with zipfile.ZipFile(archive) as z:
+                for member in z.infolist():
+                    filename=Path(member.filename).name
+                    if not re.fullmatch(r"scena_[0-9]{2}\.(?:jpg|jpeg|png|webp)",filename,re.I):
+                        continue
+                    if member.file_size>12_000_000:raise ValueError("Immagine troppo grande nello ZIP")
+                    count+=1
+                    if count>30:raise ValueError("Troppi file immagine nello ZIP")
+                    picture=Image.open(io.BytesIO(z.read(member))).convert("RGB")
+                    number=int(filename.split("_")[1].split(".")[0])
+                    picture.save(premium_root/f"scena_{number:02}.jpg",quality=91)
+            print("Illustrazioni premium importate dallo ZIP:",count,flush=True)
         cue_file=ep/"scene_cues.json"
         starts=None
         placeholder=False
@@ -205,7 +225,7 @@ def main():
             for cue in cues:
                 ix=cue["start_sentence"]
                 asset=cue["asset"]
-                picture=ep/"images"/f"scena_{asset:02}.jpg"
+                picture=premium_root/f"scena_{asset:02}.jpg"
                 if not picture.exists():
                     placeholder=True
                     picture=tmp/f"placeholder_{asset:02}.jpg"
