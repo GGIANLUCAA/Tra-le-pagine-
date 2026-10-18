@@ -1,0 +1,41 @@
+name: "Tra le Pagine - Collaudo integrale effetti V4+frei0r"
+on:
+  push:
+    paths:
+      - ".github/workflows/test-integrale-v4-frei0r.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  prova:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa librerie gratuite senza GPU"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 frei0r-plugins fonts-dejavu-core
+          python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12" "opencv-python-headless>=4.8,<5"
+      - name: "Recupera voce, musica e sottotitoli gia generati"
+        uses: actions/download-artifact@v4
+        with:
+          name: TRA_LE_PAGINE_EP01_MP4_e_audio
+          run-id: 39124087807
+          github-token: ${{ github.token }}
+          path: output_precedente/
+      - name: "Rimonta 130 secondi senza chiamare servizi AI"
+        run: |
+          python -m py_compile src/effetti_v4.py src/frei0r_extra.py src/test_full_v4_offline.py
+          PYTHONPATH=src python src/test_full_v4_offline.py
+      - name: "Consegna MP4 integrale per confronto"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: VIDEO_V4_FREI0R_COLLAUDO_COMPLETO
+          path: output_v4_integrale/
+          retention-days: 14
