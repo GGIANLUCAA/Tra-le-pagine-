@@ -2,6 +2,12 @@
 
 **Serie italiana di video sui libri**: copione originale verificato, illustrazioni narrative, voce italiana espressiva, sottotitoli, musica e video verticale. Preparazione e gestione possibili da Android.
 
+## 🗓️ NOVITÀ: 2 episodi al giorno
+
+Sono attive due automazioni ChatGPT (verso le **9:00** e le **18:00**, ora italiana) per preparare due nuove **anteprime editoriali**. Il nuovo [render V3 parametrico](.github/workflows/render-v3.yml) accetta episodi diversi e blocca ogni esecuzione che non abbia immagini premium. La [coda](queue/render_request.json) richiede approvazione esplicita.
+
+**Non sono ancora due MP4 autonomi quotidiani**: per quello serve collegare una generazione immagini programmabile e concordare quote e un eventuale budget. Consulta [GUIDA — DUE EPISODI AL GIORNO](AUTOMAZIONE_2_EPISODI_AL_GIORNO.md).
+
 ## 📘 Leggi prima le nuove regole
 
 - **[METODOLOGIA EDITORIALE DEFINITIVA V3](METODOLOGIA_TRA_LE_PAGINE_V3.md)** — filosofia, fedeltà al libro, voce, immagini di qualità, copertina costante, ganci autentici, controlli ed approvazione.
@@ -18,7 +24,7 @@
 - **FFmpeg** monta il formato verticale con musica, sottotitoli e piccoli movimenti sulle illustrazioni.
 - Gli output generati possono essere scaricati come ZIP/MP4 su Android; **non vengono pubblicati automaticamente**.
 
-La pipeline è operativa, ma non ancora interamente parametrica per tutti i libri: **il workflow principale fa ancora riferimento all'episodio 01 in alcune opzioni e nomi di file**. EP02 ha usato uno specifico workflow per la voce e un montaggio separato. Non dichiarare che basta premere un pulsante per ogni nuovo libro finché questa parte non sarà generalizzata e verificata.
+La vecchia pipeline funziona ancora per i primi video e non è stata modificata. **Il nuovo workflow V3** permette la selezione di qualunque cartella episodio già completa e dotata di immagini premium, con verifica preventiva e copertina coordinata. Non genera automaticamente le illustrazioni: quelle restano il principale collo di bottiglia.
 
 ## 📁 Episodi presenti
 
