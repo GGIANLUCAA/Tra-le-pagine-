@@ -1,0 +1,35 @@
+name: "Tra le Pagine - Provino recitazione Chatterbox V3"
+on:
+  push:
+    paths: [".github/workflows/prova-chatterbox.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  provino:
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Installa sintesi open source
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install --upgrade pip
+          python -m pip install "chatterbox-tts>=0.1" soundfile
+      - name: Due provini italiani con pause ed espressivita'
+        env:
+          HF_HUB_DISABLE_XET: "1"
+          OMP_NUM_THREADS: "4"
+        run: python src/prova_chatterbox.py
+      - name: Consegna l'audio sul telefono
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PROVINI_NARRAZIONE_CHATTERBOX_V3
+          path: output/*.mp3
+          if-no-files-found: warn
+          retention-days: 14
