@@ -1,6 +1,6 @@
 {
   "version": "V4-frei0r-free",
-  "note": "Saggio visivo: claustrofobia, scacchiera, fuga; massimo 3 rivelazioni forti.",
+  "note": "Saggio visivo: claustrofobia, scacchiera, fuga; massimo 3 rivelazioni forti. V5: una sola rivelazione alla volta, niente filtri sovrapposti.",
   "scenes": [
     {
       "cue": 0,
@@ -14,7 +14,6 @@
       "effect": "brush_reveal",
       "seconds": 2.2,
       "mood": "cool",
-      "postfx": "vintage_grain",
       "reason": "The small chess book opens the prisoner's internal world."
     },
     {
