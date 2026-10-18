@@ -1,7 +1,7 @@
 # TRA LE PAGINE — METODOLOGIA EDITORIALE DEFINITIVA V3.0
 
 **Stato:** metodo approvato come guida per i futuri episodi, aggiornato il 18 ottobre 2026.
-**Obiettivo:** un video narrativo illustrato di alta qualità al giorno, ideato e revisionato con criterio editoriale; prodotto tramite ChatGPT + Gemini TTS + GitHub + FFmpeg, utilizzabile da Android.
+**Obiettivo aggiornato (18 ottobre 2026):** due proposte editoriali di alta qualità al giorno, con possibilità di produrre due MP4 quotidiani dopo l'OK, quando sono pronte le illustrazioni. Il controllo editoriale rimane prioritario. Produzione tramite ChatGPT + Gemini TTS + GitHub + FFmpeg, utilizzabile da Android.
 
 > Principio guida: l'AI è uno strumento di produzione, non il regista. Ogni decisione deve essere motivata dalla storia. Il pubblico deve percepire cura, personalità, sensibilità e ricerca: **mai contenuto generico, seriale o impersonale**. Non dichiarare falsamente che voce o illustrazioni sintetiche siano opera di attori o disegnatori umani.
 
@@ -17,7 +17,7 @@ Priorità in ordine:
 5. Voce naturale, pause intenzionali, qualità sonora professionale.
 6. Semplicità per il produttore: preparazione in ChatGPT, rendering automatizzato, consegna MP4 su Android.
 
-**Cadenza-obiettivo:** 1 video al giorno *quando supera tutti i controlli*. Se non è pronto, meglio ritardare o saltare un giorno; non pubblicare una bozza mediocre per rispettare un calendario.
+**Cadenza-obiettivo:** due nuove proposte al giorno, mattina e sera. A regime due MP4 al giorno *soltanto quando superano tutti i controlli*. Se non sono pronti, meglio ritardare o saltare una produzione; non sacrificare qualità o fedeltà al libro per rispettare una quota.
 
 **Durata:** da 2 a 4 minuti, mai stirare il testo per riempire tempo. Indicativamente 250–520 parole, ma calcolare sulla voce reale e sulle pause. Scegliere la durata soltanto dopo aver compreso il libro.
 
@@ -200,11 +200,13 @@ Adattare ritmo e struttura ai dati **senza** sacrificare correttezza, libertà e
 **Dopo approvazione:**
 > «OK, procedi alla Fase B del libro [TITOLO]. Conserva il copione approvato, usa il sistema GitHub già esistente e consegna il MP4 con la copertina e i sottotitoli.»
 
-## 14. Futuro: un video al giorno, ma solo dopo un test serio
+## 14. Automazione: due proposte al giorno, video su approvazione
 
-La possibile automazione quotidiana è una fase successiva, distinta dall'autorizzazione a pubblicare: un promemoria o sistema automatico può preparare **la bozza giornaliera**, ma fino a esplicita diversa decisione **non deve avviare la pubblicazione** e deve mantenere il controllo editoriale prima della produzione o pubblicazione.
+Sono attive due automazioni ChatGPT flessibili (indicativamente 9:00 e 18:00, orario italiano) per **due bozze distinte**. Per la produzione dopo OK esiste il workflow [GitHub V3](.github/workflows/render-v3.yml), che seleziona la cartella episodio ed esegue un controllo delle immagini premium prima del TTS. La coda [queue/render_request.json](queue/render_request.json) è disattivata finché non esiste un'approvazione esplicita.
 
-**Non creare ora alcun compito ricorrente.**
+**Limite attuale:** ChatGPT Plus non dà quote API gratuite per la generazione immagini su GitHub. La produzione autonoma completa di due MP4 ogni giorno richiederà una fonte immagini programmabile e la verifica di quote, eventuali costi e licenze. Il sistema non pubblica automaticamente e non avvia addebiti. In caso di immagini mancanti si ferma, senza produrre i vecchi disegni geometrici.
+
+Per procedura, costi e collegamenti consultare [AUTOMAZIONE_2_EPISODI_AL_GIORNO.md](AUTOMAZIONE_2_EPISODI_AL_GIORNO.md).
 
 ---
 
