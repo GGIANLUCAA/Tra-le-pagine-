@@ -10,8 +10,9 @@ on:
         description: "Voce narrante italiana"
         required: true
         type: choice
-        default: kokoro
+        default: edge
         options:
+          - edge
           - kokoro
           - espeak
 concurrency:
@@ -25,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     env:
-      VOCE: "${{ github.event.inputs.voce || 'kokoro' }}"
+      VOCE: "${{ github.event.inputs.voce || 'edge' }}"
     steps:
       - name: "Scarica progetto"
         uses: actions/checkout@v4
@@ -43,7 +44,11 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
-          if [[ "$VOCE" == "kokoro" ]]; then
+          if [[ "$VOCE" == "edge" ]]; then
+            echo "Produco una voce narrativa più naturale: Edge Neural Diego (italiano)."
+            python -m pip install 'edge-tts>=7,<9'
+            python src/render.py --engine edge --out output
+          elif [[ "$VOCE" == "kokoro" ]]; then
             echo "Provo la voce italiana Kokoro im_nicola."
             if python -m pip install 'kokoro>=0.9.4,<1'; then
               if python src/render.py --engine kokoro --out output; then
