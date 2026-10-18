@@ -38,9 +38,9 @@ def main():
                 Image.open(path).verify()
                 images.append(path)
         settings={"scenes":[
-            {"cue":0,"effect":"sketch_paint","seconds":1.5,"mood":"warm","postfx":"soft_bloom"},
+            {"cue":0,"effect":"sketch_paint","seconds":1.5,"mood":"warm","postfx":"soft_bloom","reason":"Introduce il conflitto con matita e lieve luce"},
             {"cue":1,"effect":"cinematic_pan","mood":"cool"},
-            {"cue":2,"effect":"brush_reveal","seconds":1.4,"mood":"cool"},
+            {"cue":2,"effect":"brush_reveal","seconds":1.4,"mood":"cool","reason":"Svolta narrativa, colore che ritorna"},
             {"cue":3,"effect":"light_atmosphere","mood":"warm"}]}
         config=work/"direzione.json"
         config.write_text(json.dumps(settings),encoding="utf-8")
