@@ -1,28 +1,37 @@
 {
-  "version": "V4-free",
-  "note": "Indicare solo inquadrature meritevoli, al massimo tre scene con rivelazione forte; altrimenti cinematic_pan",
-  "scenes": [
+  "version": "V5-editoriale",
+  "quality": {
+    "color_cohesion": "gentle"
+  },
+  "note": "Default pulito. La regia deve essere scritta PER IL LIBRO: nessun reveal o filtro aggiuntivo finché non ha un motivo narrativo concreto.",
+  "scenes": [],
+  "esempi_da_adattare_non_applicati": [
     {
       "cue": 0,
-      "effect": "sketch_paint",
-      "seconds": 3,
+      "effect": "cinematic_pan",
       "mood": "neutral"
     },
     {
       "cue": 5,
       "effect": "brush_reveal",
-      "seconds": 2.2,
-      "mood": "warm"
+      "seconds": 2.4,
+      "mood": "warm",
+      "reason": "Solo se un personaggio o una verità viene rivelata in questo esatto momento"
     },
     {
-      "cue": 9,
-      "effect": "parallax_soft",
-      "mood": "cool"
-    },
-    {
-      "cue": 14,
+      "cue": 10,
       "effect": "light_atmosphere",
-      "mood": "warm"
+      "postfx": "cinema_vignette",
+      "mood": "cool",
+      "reason": "Solo se il narratore parla realmente di isolamento"
     }
+  ],
+  "regole": [
+    "Al massimo tre reveal per episodio",
+    "Al massimo quattro postfiltri",
+    "Mai rivelazioni o postfiltri consecutivi",
+    "Mai mettere reveal e postfx sulla stessa scena",
+    "reason obbligatorio per reveal e postfx",
+    "La voce, i personaggi e il contenuto restano prioritari"
   ]
 }
