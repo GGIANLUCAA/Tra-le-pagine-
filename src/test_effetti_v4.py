@@ -53,14 +53,14 @@ def main():
         montage=render_montage(images,8.5,work,
                     starts=[0.,3.3,5.9],config_path=config,
                     output_manifest=out/"REGIA_TEST.json",
-                    fps=12,w=360,h=640)
+                    fps=24,w=720,h=1280)
         result=out/"PROVINO_V4_SENZA_API.mp4"
         result.write_bytes(montage.read_bytes())
     info=ffprobe(result)
     duration=float(info["format"]["duration"])
     video=next((s for s in info["streams"] if s.get("codec_type")=="video"),None)
     assert 8.0 < duration < 9.3, f"Durata errata: {duration}"
-    assert video and video["width"]==360 and video["height"]==640
+    assert video and video["width"]==720 and video["height"]==1280
     assert result.stat().st_size>20000
     entries=json.loads((out/"REGIA_TEST.json").read_text())
     assert len(entries)==3
