@@ -28,6 +28,8 @@ def check_plan(config, count):
         seen.add(cue)
         if shot.get("mood","neutral") not in MOODS:
             raise ValueError("Unknown color mood")
+        if shot.get("effect") in STRONG and shot.get("postfx") not in (None,"off"):
+            raise ValueError(f"Do not stack a painting reveal with another filter in cue {cue}")
         if shot.get("effect") in STRONG or shot.get("postfx") not in (None,"off"):
             if not str(shot.get("reason","")).strip():
                 raise ValueError(f"Missing storytelling reason for strong effect in cue {cue}")
