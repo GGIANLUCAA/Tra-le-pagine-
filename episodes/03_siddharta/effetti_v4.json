@@ -1,6 +1,6 @@
 {
   "version": "V4-frei0r-free",
-  "note": "Regia specifica per il viaggio interiore di Siddharta. Gli effetti sono deliberati, non casuali.",
+  "note": "Regia specifica per il viaggio interiore di Siddharta. Gli effetti sono deliberati, non casuali. V5: una sola rivelazione alla volta, niente filtri sovrapposti.",
   "scenes": [
     {
       "cue": 0,
@@ -36,7 +36,6 @@
       "effect": "brush_reveal",
       "seconds": 2.4,
       "mood": "warm",
-      "postfx": "soft_bloom",
       "reason": "Kamala opens the sensory world, so the scene gently blooms into color."
     },
     {
@@ -81,7 +80,6 @@
       "effect": "brush_reveal",
       "seconds": 2.8,
       "mood": "warm",
-      "postfx": "golden_glow",
       "reason": "The river's wisdom is the emotional transformation, not a random filter."
     },
     {
