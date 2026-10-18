@@ -39,3 +39,15 @@ Per produrre una nuova versione vai nella stessa pagina, premi **Run workflow**,
 La pipeline è nel workflow `.github/workflows/produci-video.yml` e nel programma `src/render.py`. Non devi eseguirli sul telefono.
 
 Quando chiederai un altro libro a ChatGPT, potremo aggiungere una cartella `episodes/02_nome_libro` e aggiornare l'avvio per selezionarlo.
+
+## Voci italiane — aggiornamento ottobre 2026
+Nel menu **Run workflow → Voce narrante italiana** puoi scegliere:
+- **supertonic (predefinita)**: voce maschile M1 italiana, modello open-weight archivio Supertonic 3, nessuna API né pagamento per episodio; esegue la sintesi CPU direttamente su GitHub. OpenRAIL-M richiede di rispettare restrizioni d'uso e trasparenza sui contenuti generati. Descrizione social aggiornata con dichiarazione IA.
+- **edge**: voce neurale italiana Diego con intonazione per paragrafi completi, più naturale da valutare ad orecchio; richiede il servizio online gratuito Edge Read Aloud. **Diritti commerciali di tale accesso non chiariti da Microsoft**: utile per test, non presumere di poterlo usare per contenuti monetizzati.
+- **kokoro**: voce maschile im_nicola, modello open-weight Apache 2.0, ma è risultata poco naturale in italiano.
+- **espeak**: emergenza tecnica, non adatta per la pubblicazione.
+
+Ogni cambio di motore rigenera automaticamente audio, sottotitoli e tempi delle inquadrature. Non è necessario modificare o rigenerare le immagini. 
+La voce Supertonic viene sintetizzata localmente dal runner GitHub; per accelerare le successive generazioni, la cache conserva il modello di circa 400 MB.
+
+**I 2 provini Supertonic e i 2 provini Edge sono nel progetto come workflow separati**; serve ascoltare e approvare la voce prima di pubblicare.
