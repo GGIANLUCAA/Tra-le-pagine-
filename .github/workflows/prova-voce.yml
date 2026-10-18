@@ -1,0 +1,26 @@
+name: "Tra le Pagine - Prova nuova voce"
+on:
+  push:
+    paths: [".github/workflows/prova-voce.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa motore voce"
+        run: python -m pip install "edge-tts>=7,<9"
+      - name: "Genera due provini in italiano"
+        run: python src/prova_voce.py
+      - name: "Carica MP3"
+        uses: actions/upload-artifact@v4
+        with:
+          name: PROVINI_VOCE_ITALIANA
+          path: output/*.mp3
+          retention-days: 14
