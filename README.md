@@ -1,5 +1,19 @@
 # 🎬 Tra le Pagine — Studio editoriale illustrato
 
+## 🎬 NUOVO: Regia armonica V5 — effetti solo quando raccontano qualcosa
+
+L'obiettivo non è avere più filtri, ma far sembrare ogni episodio un **cortometraggio letterario progettato con cura**. Il nostro nuovo V5 preserva colori e volti, richiede una **ragione narrativa per ogni effetto forte**, blocca le combinazioni eccessive e misura la qualità tecnica della voce finale.
+
+- [**GUIDA REGIA ARMONICA V5**](GUIDA_REGIA_ARMONICA_V5.md) — metodo, candidati GitHub studiati, scontorno Rembg realmente testato (non approvato per la produzione indiscriminata) e regole artistiche.
+- [**Motore V5**](src/regia_armonica_v5.py) — massimo 3 pennellate/rivelazioni, massimo 4 filtri accessori, senza sovrapposizioni; leggere correzioni colore soltanto su scene dello stesso tono.
+- [**Controllo audio/video V5**](src/controllo_master_v5.py) — loudness LUFS e true peak, formato e sottotitoli; non comprime/rovina la voce.
+- [**Test V5 riuscito**](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39171695750) — test su 16 inquadrature e provino gratis.
+- [**Test scontorno Rembg**](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39171114735) — funzionante su CPU, ma contorni talvolta scorretti: prova separata, **non attivata** nel montaggio.
+- [**Render multi-episodio protetto**](.github/workflows/render-v3.yml) — controllo degli effetti prima di spendere crediti Gemini, QA audio automatico dopo l'MP4.
+
+**La coerenza è più importante del numero di filtri.** Il nuovo motore non impone più lo stesso effetto iniziale a tutti i libri. La pubblicazione resta bloccata fino a consenso esplicito.
+
+
 ## 🎞️ Libreria frei0r: 136 plugin gratuiti disponibili, 8 selezionati e testati
 
 Il nostro sistema V4 può applicare, **solo dove serve alla storia**, una nuova libreria di effetti gratuita integrata direttamente in FFmpeg: glow, vignetta cinematografica, fumetto/inchiostro, stampa a retino, posterizzazione, grana e contorni luminosi.
