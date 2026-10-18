@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - ".github/workflows/test-effetti-v4.yml"
+      - "src/test_effetti_v4.py"
   workflow_dispatch:
 permissions:
   contents: read
