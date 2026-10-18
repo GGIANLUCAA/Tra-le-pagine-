@@ -1,5 +1,18 @@
 # 🎬 Tra le Pagine — Studio editoriale illustrato
 
+## 🎞️ Libreria frei0r: 136 plugin gratuiti disponibili, 8 selezionati e testati
+
+Il nostro sistema V4 può applicare, **solo dove serve alla storia**, una nuova libreria di effetti gratuita integrata direttamente in FFmpeg: glow, vignetta cinematografica, fumetto/inchiostro, stampa a retino, posterizzazione, grana e contorni luminosi.
+
+- **[GUIDA LIBRERIA EFFETTI GRATUITI](GUIDA_LIBRERIA_EFFETTI_GRATUITI.md)** — effetti realmente testati, limiti, configurazione per ogni libro e progetti futuri da valutare.
+- **[TEST plugin frei0r riuscito](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39168733579)** — 136 plugin disponibili nel runner, 8 filtri provati con successo.
+- **[TEST integrato V4+frei0r riuscito](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39168938771)** — tre filtri aggiunti a clip V4 di prova.
+- **[COLLAUDO MP4 di 2:10 riuscito](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39169343642)** — narrazione Gemini esistente + musica + sottotitoli + 16 inquadrature con effetti, senza chiamare API.
+
+I filtri sono gestiti nel modulo [`src/frei0r_extra.py`](src/frei0r_extra.py) e attivati tramite `postfx` nel file `effetti_v4.json`; non si avviano se il campo non è presente.
+
+Il flusso **non pubblica nulla automaticamente** e il primo render completamente nuovo con Gemini attivato in `render-v3.yml` resta da provare su un episodio approvato: la produzione odierna è un *remix offline* collaudato di un episodio precedente.
+
 ## 🎨 NUOVO: Effetti cinematografici V4 gratuiti (installati e testati)
 
 Il generatore **V4** aggiunge un modulo visuale gratuito al workflow esistente: **matita → colore**, **pennellate progressive**, **camera cinematografica**, **movimento di profondità leggero** e **luce atmosferica**. Gli effetti possono essere scelti **scena per scena** nel file `effetti_v4.json`, senza cambiare copione, voce Gemini, sottotitoli o copertine.
