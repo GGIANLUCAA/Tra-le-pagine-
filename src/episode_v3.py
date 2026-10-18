@@ -109,7 +109,7 @@ def branded_cover(outdir,ep,meta):
     if archive.is_file():
         with zipfile.ZipFile(archive) as z:
             scene=next((entry for entry in z.infolist()
-                        if re.fullmatch(r"scena_01\\.(?:jpg|jpeg|png|webp)",
+                        if re.fullmatch(r"scena_01\.(?:jpg|jpeg|png|webp)",
                                         Path(entry.filename).name,re.IGNORECASE)),None)
             if scene is not None:
                 im=Image.open(io.BytesIO(z.read(scene))).convert("RGB")
