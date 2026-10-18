@@ -13,7 +13,7 @@ La cartella `episodes/01_scacchi/` contiene:
 - `metadata.json`: titolo e autore.
 - `DESCRIZIONE_SOCIAL.txt`: descrizione per Instagram, Facebook e YouTube.
 
-Il programma crea automaticamente **scene grafiche originali** quando non trova immagini nella cartella `episodes/01_scacchi/images/`. Sono illustrazioni semplici in blu petrolio e oro, non filmati AI realisti. È possibile caricare foto o illustrazioni in JPEG con nomi `scena_01.jpg`, `scena_02.jpg` ecc.: verranno usate al posto dei disegni automatici.
+**Per la versione bella** basta caricare un solo file `episodes/01_scacchi/scene_premium.zip` contenente **12 immagini** chiamate `scena_01.jpg` ... `scena_12.jpg` (accetta anche PNG e WEBP). Il programma le estrae automaticamente e costruisce **16 cambi di scena sincronizzati alle frasi pronunciate** tramite `scene_cues.json`. **Non caricare una sola immagine collage**: nello ZIP devono esserci 12 immagini separate. Finché questo archivio non c'è, il sistema usa disegni di test NON adatti alla pubblicazione.
 
 ## Come scaricare il video dal telefono
 1. Apri **[Actions → Tra le Pagine - Video automatico](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/produci-video.yml)**.
