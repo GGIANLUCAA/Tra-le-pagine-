@@ -1,0 +1,32 @@
+name: "Tra le Pagine - Provino Gemini narratore"
+on:
+  push:
+    paths: [".github/workflows/prova-gemini.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prova:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Dipendenze minime voce
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "google-genai>=2.25.0,<3" "soundfile>=0.12"
+      - name: Prova breve della narrazione italiana
+        run: python src/prova_gemini.py
+      - name: Consegna MP3
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PROVINO_GEMINI_ITALIANO
+          path: output/*.mp3
+          retention-days: 7
