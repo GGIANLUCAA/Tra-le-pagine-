@@ -1,0 +1,22 @@
+name: "Tra le Pagine - Verifica regia voce"
+on:
+  push:
+    paths: [".github/workflows/verifica-regia.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verifica:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Librerie minime per controllo offline
+        run: python -m pip install "numpy>=1.25" "soundfile>=0.12"
+      - name: Controlla sintassi e pause senza segreti
+        run: |
+          python -m py_compile src/gemini_voice.py src/render.py
+          PYTHONPATH=src python src/test_gemini_voice.py
