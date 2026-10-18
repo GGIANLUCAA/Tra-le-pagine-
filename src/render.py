@@ -193,6 +193,7 @@ def main():
     p.add_argument("--episode",default="episodes/01_scacchi")
     p.add_argument("--engine",choices=["gemini","edge","supertonic","kokoro","espeak"],default="edge")
     p.add_argument("--out",default="output")
+    p.add_argument("--effects",choices=["off","v4"],default="off",help="Regia V4 gratuita, selettiva, senza chiamate API")
     a=p.parse_args()
     ep=Path(a.episode);out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
     meta=json.loads((ep/"metadata.json").read_text(encoding="utf-8"))
@@ -287,7 +288,15 @@ def main():
             "ANTEPRIMA TECNICA: alcune immagini sono provvisorie, NON pubblicare.\n"
             if placeholder else "IMMAGINI ESTERNE PRESENTI: controllare il risultato prima di pubblicare.\n",
             encoding="utf-8")
-        montage=make_video(images,duration,tmp,starts)
+        if a.effects=="v4":
+            from effetti_v4 import render_montage
+            montage=render_montage(
+                images,duration,tmp,starts,
+                config_path=ep/"effetti_v4.json",
+                output_manifest=out/"EFFETTI_V4.json",
+                fps=FPS,w=W,h=H)
+        else:
+            montage=make_video(images,duration,tmp,starts)
         run("ffmpeg","-hide_banner","-loglevel","error","-y",
             "-i",montage,"-i",out/"VOCE.wav","-i",out/"MUSICA_ORIGINALE.wav",
             "-filter_complex","[1:a]volume=1.0[v];[2:a]volume=.40[m];[v][m]amix=inputs=2:duration=first:normalize=0[a]",
