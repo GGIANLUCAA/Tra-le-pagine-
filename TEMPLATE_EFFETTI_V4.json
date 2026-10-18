@@ -1,0 +1,28 @@
+{
+  "version": "V4-free",
+  "note": "Indicare solo inquadrature meritevoli, al massimo tre scene con rivelazione forte; altrimenti cinematic_pan",
+  "scenes": [
+    {
+      "cue": 0,
+      "effect": "sketch_paint",
+      "seconds": 3,
+      "mood": "neutral"
+    },
+    {
+      "cue": 5,
+      "effect": "brush_reveal",
+      "seconds": 2.2,
+      "mood": "warm"
+    },
+    {
+      "cue": 9,
+      "effect": "parallax_soft",
+      "mood": "cool"
+    },
+    {
+      "cue": 14,
+      "effect": "light_atmosphere",
+      "mood": "warm"
+    }
+  ]
+}
