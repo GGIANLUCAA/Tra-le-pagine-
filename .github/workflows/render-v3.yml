@@ -1,0 +1,96 @@
+name: "Tra le Pagine V3 - Render episodio scelto"
+run-name: "V3 - ${{ github.event.inputs.episodio || 'richiesta approvata' }}"
+on:
+  workflow_dispatch:
+    inputs:
+      episodio:
+        description: "Cartella episodio senza episodes/ (es.: 01_scacchi)"
+        type: string
+        required: true
+        default: "01_scacchi"
+  push:
+    branches: [main]
+    paths:
+      - "queue/render_request.json"
+permissions:
+  contents: read
+concurrency:
+  group: v3-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
+      EPISODIO_INSERITO: "${{ github.event.inputs.episodio }}"
+      EVENTO: "${{ github.event_name }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Leggi la richiesta e controlla approvazione"
+        id: scegli
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          if os.getenv("EVENTO")=="push":
+              data=json.loads(Path("queue/render_request.json").read_text(encoding="utf-8"))
+              if not data.get("approved"):
+                  print("Coda disattivata: nessun nuovo video autorizzato.")
+                  with open(os.environ["GITHUB_OUTPUT"],"a") as f:f.write("ready=false\n")
+                  raise SystemExit(0)
+              slug=str(data.get("episode",""))
+          else:
+              slug=os.environ.get("EPISODIO_INSERITO","")
+          if not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_-]{0,70}",slug):
+              raise SystemExit("ERRORE: nome episodio non valido")
+          if not Path("episodes",slug).is_dir():
+              raise SystemExit("ERRORE: episodio non trovato")
+          print("Episodio scelto:",slug)
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("ready=true\n")
+              f.write(f"episode={slug}\n")
+          PY
+      - name: "Installa librerie montaggio e immagini"
+        if: steps.scegli.outputs.ready == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12" "scipy>=1.11"
+      - name: "Controllo illustrazioni PRIMA delle richieste API"
+        if: steps.scegli.outputs.ready == 'true'
+        env:
+          EPISODIO: "${{ steps.scegli.outputs.episode }}"
+        run: python src/episode_v3.py --episode "$EPISODIO"
+      - name: "Installa Gemini e l'allineamento parole"
+        if: steps.scegli.outputs.ready == 'true'
+        run: |
+          if [[ -z "${GEMINI_API_KEY:-}" ]]; then
+            echo "::error::GEMINI_API_KEY mancante nei GitHub Secrets"
+            exit 2
+          fi
+          python -m pip install "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
+      - name: "Produci voce, MP4 e sottotitoli"
+        if: steps.scegli.outputs.ready == 'true'
+        env:
+          EPISODIO: "${{ steps.scegli.outputs.episode }}"
+        run: |
+          mkdir -p output
+          python src/render.py --episode "episodes/$EPISODIO" --engine gemini --out output
+      - name: "Verifica MP4 e crea copertina standard"
+        if: steps.scegli.outputs.ready == 'true'
+        env:
+          EPISODIO: "${{ steps.scegli.outputs.episode }}"
+        run: python src/episode_v3.py --episode "$EPISODIO" --out output --post
+      - name: "Consegna il pacchetto (non pubblicato)"
+        if: steps.scegli.outputs.ready == 'true' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "TRA_LE_PAGINE_V3_${{ steps.scegli.outputs.episode }}"
+          path: output/
+          if-no-files-found: error
+          retention-days: 14
