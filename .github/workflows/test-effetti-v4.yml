@@ -1,0 +1,33 @@
+name: "Tra le Pagine V4 - PROVINO effetti gratuiti"
+on:
+  push:
+    paths:
+      - ".github/workflows/test-effetti-v4.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  provino:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Prepara effetti CPU, niente API"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'numpy>=1.25,<3' 'pillow>=10,<13' 'opencv-python-headless>=4.8,<5'
+      - name: "Test e video dimostrativo matita → pennellate → luce"
+        run: |
+          python -m py_compile src/effetti_v4.py src/test_effetti_v4.py src/render.py
+          PYTHONPATH=src python src/test_effetti_v4.py
+      - name: "Consegna video gratuito da confrontare"
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: PROVINO_EFFETTI_V4_GRATIS
+          path: output_v4/
+          retention-days: 14
