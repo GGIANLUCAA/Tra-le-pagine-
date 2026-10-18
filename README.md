@@ -51,3 +51,20 @@ Ogni cambio di motore rigenera automaticamente audio, sottotitoli e tempi delle 
 La voce Supertonic viene sintetizzata localmente dal runner GitHub; per accelerare le successive generazioni, la cache conserva il modello di circa 400 MB.
 
 **I 2 provini Supertonic e i 2 provini Edge sono nel progetto come workflow separati**; serve ascoltare e approvare la voce prima di pubblicare.
+
+## Narratore più naturale — Gemini 3.8 Flash TTS (facoltativo)
+
+Per avere una lettura interpretata, con **pause organiche, domande, enfasi ed emozioni**, il generatore offre ora la voce `gemini` che usa **Gemini 3.8 Flash TTS** (modello Google specializzato in audiolibri). Il motore interpreta il racconto in una generazione continua, invece di registrare 34 frasi sconnesse. I tag `<short pause>` e `<long pause>` sono usati solo nei punti narrativi importanti. Una trascrizione Whisper permette di ricollocare sottotitoli e scene dopo le pause.
+
+### Impostazione UNA VOLTA SOLA da Android
+1. Apri [Google AI Studio — API keys](https://aistudio.google.com/api-keys), accedi con Google e crea una nuova chiave nel **livello gratuito**. Il modello ha una quota gratuita, con limiti. **Non attivare fatturazione per questa prova.**
+2. Copia la chiave generata. **Non scriverla nella chat e non inserirla in un file pubblico del repository.**
+3. Apri [GitHub — Secrets del repository](https://github.com/GGIANLUCAA/Tra-le-pagine-/settings/secrets/actions) → *New repository secret*: nome esatto `GEMINI_API_KEY`; nel campo *Secret* incolla la chiave → *Add secret*.
+4. Apri [Actions — Video automatico](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/produci-video.yml) → *Run workflow* → nel menu **Voce narrante italiana** scegli `gemini` → *Run workflow*. Dal telefono usa *Sito desktop* se il menu è nascosto.
+5. Quando la spunta diventa verde, apri l'esecuzione e scarica l'artifact ZIP con l'MP4 e l'audio. Se fallisce, verifica i registri di errore, senza mai incollare la chiave.
+
+Questa integrazione è configurata e il codice ha superato i test senza chiave, ma **la generazione reale Gemini non è stata testata**: serve la tua chiave inserita su GitHub per fare il primo provino. In caso di quota gratuita esaurita il workflow segnala errore, senza addebiti automatici se non attivi fatturazione.
+
+**Privacy:** sul livello gratuito Google può usare i contenuti inviati per migliorare i servizi, secondo le condizioni del servizio. Invia soltanto copioni destinati alla pubblicazione, mai dati riservati.
+
+**Importante:** la chiave va inserita come *secret*, non come normale variabile, commento o file. Il repository è pubblico; chiunque può leggere i file, ma non il valore dei GitHub Actions secrets.
