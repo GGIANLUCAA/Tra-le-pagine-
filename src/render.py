@@ -196,6 +196,7 @@ def main():
         # caricabile da smartphone senza caricare tutte le immagini separatamente.
         premium_root=ep/"images"
         archive=ep/"scene_premium.zip"
+        custom_cover=None
         if archive.exists():
             premium_root=tmp/"premium"
             premium_root.mkdir(exist_ok=True)
@@ -203,6 +204,11 @@ def main():
             with zipfile.ZipFile(archive) as z:
                 for member in z.infolist():
                     filename=Path(member.filename).name
+                    if filename.lower()=="copertina.jpg":
+                        if member.file_size>12_000_000:raise ValueError("Copertina troppo grande")
+                        custom_cover=tmp/"cover_premium.jpg"
+                        Image.open(io.BytesIO(z.read(member))).convert("RGB").save(custom_cover,quality=91)
+                        continue
                     if not re.fullmatch(r"scena_[0-9]{2}\.(?:jpg|jpeg|png|webp)",filename,re.I):
                         continue
                     if member.file_size>12_000_000:raise ValueError("Immagine troppo grande nello ZIP")
@@ -244,7 +250,7 @@ def main():
                 for i,scene in enumerate(scenes):
                     picture=tmp/f"scena_{i+1:02}.jpg"
                     draw_scene(i,scene["motif"],picture);images.append(picture)
-        shutil.copy2(images[0],out/"COPERTINA.jpg")
+        shutil.copy2(custom_cover if custom_cover is not None else images[0],out/"COPERTINA.jpg")
         (out/"STATO_IMMAGINI.txt").write_text(
             "ANTEPRIMA TECNICA: alcune immagini sono provvisorie, NON pubblicare.\n"
             if placeholder else "IMMAGINI ESTERNE PRESENTI: controllare il risultato prima di pubblicare.\n",
