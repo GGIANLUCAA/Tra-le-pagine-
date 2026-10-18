@@ -28,6 +28,9 @@ def check_plan(config, count):
         seen.add(cue)
         if shot.get("mood","neutral") not in MOODS:
             raise ValueError("Unknown color mood")
+        if shot.get("effect") in STRONG or shot.get("postfx") not in (None,"off"):
+            if not str(shot.get("reason","")).strip():
+                raise ValueError(f"Missing storytelling reason for strong effect in cue {cue}")
         if shot.get("effect") in STRONG:strong.append(cue)
         if shot.get("postfx") not in (None,"off"):extras.append(cue)
     if len(strong)>3 or len(extras)>4:
