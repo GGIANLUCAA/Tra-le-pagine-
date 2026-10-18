@@ -14,6 +14,9 @@ on:
         options:
           - kokoro
           - espeak
+concurrency:
+  group: tra-le-pagine-video-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
