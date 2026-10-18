@@ -10,7 +10,7 @@ on:
         description: "Voce narrante italiana"
         required: true
         type: choice
-        default: edge
+        default: supertonic
         options:
           - edge
           - supertonic
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     env:
-      VOCE: "${{ github.event.inputs.voce || 'edge' }}"
+      VOCE: "${{ github.event.inputs.voce || 'supertonic' }}"
     steps:
       - name: "Scarica progetto"
         uses: actions/checkout@v4
