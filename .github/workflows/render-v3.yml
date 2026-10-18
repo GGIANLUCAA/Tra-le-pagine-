@@ -1,5 +1,5 @@
-name: "Tra le Pagine V3 - Render episodio scelto"
-run-name: "V3 - ${{ github.event.inputs.episodio || 'richiesta approvata' }}"
+name: "Tra le Pagine - Render episodio con effetti V4"
+run-name: "V4 - ${{ github.event.inputs.episodio || 'richiesta approvata' }}"
 on:
   workflow_dispatch:
     inputs:
@@ -8,6 +8,14 @@ on:
         type: string
         required: true
         default: "01_scacchi"
+      effetti:
+        description: "Regia gratuita V4: matita, pennellate, camera e luce"
+        type: choice
+        required: true
+        default: v4
+        options:
+          - v4
+          - "off"
   push:
     branches: [main]
     paths:
@@ -25,6 +33,7 @@ jobs:
       GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
       EPISODIO_INSERITO: "${{ github.event.inputs.episodio }}"
       EVENTO: "${{ github.event_name }}"
+      EFFETTI: "${{ github.event.inputs.effetti || 'v4' }}"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -60,7 +69,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
-          python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12" "scipy>=1.11"
+          python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12" "scipy>=1.11" "opencv-python-headless>=4.8,<5"
       - name: "Controllo illustrazioni PRIMA delle richieste API"
         if: steps.scegli.outputs.ready == 'true'
         env:
@@ -80,7 +89,7 @@ jobs:
           EPISODIO: "${{ steps.scegli.outputs.episode }}"
         run: |
           mkdir -p output
-          python src/render.py --episode "episodes/$EPISODIO" --engine gemini --out output
+          python src/render.py --episode "episodes/$EPISODIO" --engine gemini --out output --effects "$EFFETTI"
       - name: "Verifica MP4 e crea copertina standard"
         if: steps.scegli.outputs.ready == 'true'
         env:
