@@ -41,7 +41,8 @@ def pick_settings(config_path, scene_index, description, scene_count):
     if item is None:
         # Deliberate, conservative defaults for episodes with no art direction.
         if scene_index == 0:
-            item = {"effect": "sketch_paint", "seconds": 2.8}
+            # Never impose a flashy intro on every book: explicit director approval.
+            item = {"effect": "cinematic_pan"}
         elif scene_index == scene_count - 1:
             item = {"effect": "light_atmosphere"}
         else:
@@ -199,6 +200,14 @@ def render_montage(images,duration,tmp,starts=None,config_path=None,
     else:
         counts=[total//len(images)+int(i<total%len(images))
                 for i in range(len(images))]
+    # V5 regia: validate the creative budget before rendering and match only
+    # genuine color outliers in scenes with the SAME emotional palette.
+    from regia_armonica_v5 import prepare
+    quality_dir=Path(output_manifest).parent if output_manifest else temp
+    images, editorial_report=prepare(
+        images, temp/"v5_colori", config_path=config_path,
+        report_path=quality_dir/"REGIA_ARMONICA_V5.json",
+        contact_path=quality_dir/"CONTATTO_SCENE_V5.jpg")
     segments=[]
     manifest=[]
     for i,(picture,num) in enumerate(zip(images,counts)):
