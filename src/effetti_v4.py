@@ -58,6 +58,24 @@ def pick_settings(config_path, scene_index, description, scene_count):
     return effect, seconds, mood
 
 
+def pick_postfx(config_path, scene_index):
+    """Optional frei0r treatment, per storyboard cue; never used without explicit choice."""
+    if not config_path or not Path(config_path).exists():
+        return None
+    config = json.loads(Path(config_path).read_text(encoding="utf-8"))
+    item = next((x for x in config.get("scenes", [])
+                 if x.get("cue") == scene_index), None)
+    if not item:
+        return None
+    name = item.get("postfx")
+    if name is None or name == "off":
+        return None
+    from frei0r_extra import PRESETS
+    if name not in PRESETS:
+        raise ValueError(f"Filtro esterno non autorizzato scena {scene_index}: {name!r}")
+    return name
+
+
 def color_grade(im, mood):
     if mood == "neutral":
         return im
@@ -199,9 +217,18 @@ def render_montage(images,duration,tmp,starts=None,config_path=None,
             make_camera_clip(im,camera,remaining,
                              "cinematic_pan" if effect in STRONG else effect,
                              mood,fps,w,h,i)
-            segments.append(camera)
+            postfx=pick_postfx(config_path,i)
+            if postfx:
+                from frei0r_extra import apply_postfx
+                filtered=temp/f"v4_{i:02d}_frei0r.mp4"
+                apply_postfx(camera,filtered,postfx,remaining,fps)
+                segments.append(filtered)
+            else:
+                segments.append(camera)
+        else:
+            postfx=None
         manifest.append({"cue":i,"asset":str(picture),"effect":effect,
-                         "mood":mood,"duration_sec":round(num/fps,3),
+                         "postfx":postfx,"mood":mood,"duration_sec":round(num/fps,3),
                          "reveal_sec":round(introductory/fps,3)})
         print(f"V4 scena {i+1}/{len(images)}: {effect} ({num/fps:.1f}s)",flush=True)
     listing=temp/"v4_segments.txt"
