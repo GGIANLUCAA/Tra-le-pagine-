@@ -38,9 +38,9 @@ def main():
                 Image.open(path).verify()
                 images.append(path)
         settings={"scenes":[
-            {"cue":0,"effect":"sketch_paint","seconds":1.5,"mood":"warm"},
-            {"cue":1,"effect":"brush_reveal","seconds":1.4,"mood":"cool"},
-            {"cue":2,"effect":"light_atmosphere","mood":"warm"}]}
+            {"cue":0,"effect":"sketch_paint","seconds":1.5,"mood":"warm","postfx":"soft_bloom"},
+            {"cue":1,"effect":"brush_reveal","seconds":1.4,"mood":"cool","postfx":"cinema_vignette"},
+            {"cue":2,"effect":"light_atmosphere","mood":"warm","postfx":"ink_graphic"}]}
         config=work/"direzione.json"
         config.write_text(json.dumps(settings),encoding="utf-8")
         if pick_settings(config,0,"",3)[0]!="sketch_paint":
@@ -67,6 +67,9 @@ def main():
     assert entries[0]["reveal_sec"]>0
     assert entries[1]["reveal_sec"]>0
     assert entries[2]["effect"]=="light_atmosphere"
+    assert entries[0]["postfx"]=="soft_bloom"
+    assert entries[1]["postfx"]=="cinema_vignette"
+    assert entries[2]["postfx"]=="ink_graphic"
     print("PASS: V4 offline, 3 effetti, 8.5 s, video valido; ZERO API",flush=True)
 
 
