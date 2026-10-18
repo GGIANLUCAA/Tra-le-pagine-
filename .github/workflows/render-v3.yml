@@ -110,7 +110,7 @@ jobs:
         if: steps.scegli.outputs.ready == 'true' && success()
         shell: bash
         run: |
-          python - <<'PY'
+          PYTHONPATH=src python - <<'PY'
           from pathlib import Path
           from controllo_master_v5 import inspect
           import json
