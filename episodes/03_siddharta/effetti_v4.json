@@ -1,5 +1,5 @@
 {
-  "version": "V4-free",
+  "version": "V4-frei0r-free",
   "note": "Regia specifica per il viaggio interiore di Siddharta. Gli effetti sono deliberati, non casuali.",
   "scenes": [
     {
@@ -16,7 +16,8 @@
     {
       "cue": 2,
       "effect": "parallax_soft",
-      "mood": "cool"
+      "mood": "cool",
+      "postfx": "cinema_vignette"
     },
     {
       "cue": 3,
@@ -32,7 +33,8 @@
       "cue": 5,
       "effect": "brush_reveal",
       "seconds": 2.4,
-      "mood": "warm"
+      "mood": "warm",
+      "postfx": "soft_bloom"
     },
     {
       "cue": 6,
@@ -52,7 +54,8 @@
     {
       "cue": 9,
       "effect": "light_atmosphere",
-      "mood": "dusk"
+      "mood": "dusk",
+      "postfx": "vintage_grain"
     },
     {
       "cue": 10,
@@ -73,7 +76,8 @@
       "cue": 13,
       "effect": "brush_reveal",
       "seconds": 2.8,
-      "mood": "warm"
+      "mood": "warm",
+      "postfx": "golden_glow"
     },
     {
       "cue": 14,
