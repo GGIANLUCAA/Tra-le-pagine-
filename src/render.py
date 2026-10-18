@@ -191,14 +191,19 @@ def make_video(images,duration,tmp,starts=None):
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--episode",default="episodes/01_scacchi")
-    p.add_argument("--engine",choices=["edge","supertonic","kokoro","espeak"],default="edge")
+    p.add_argument("--engine",choices=["gemini","edge","supertonic","kokoro","espeak"],default="edge")
     p.add_argument("--out",default="output")
     a=p.parse_args()
     ep=Path(a.episode);out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
     meta=json.loads((ep/"metadata.json").read_text(encoding="utf-8"))
     phrases=sentences((ep/"testo.txt").read_text(encoding="utf-8"))
     print(meta["title"],len(phrases),"frasi",flush=True)
-    if a.engine=="edge":
+    if a.engine=="gemini":
+        from gemini_voice import synthesize
+        voice,timed=synthesize((ep/"testo.txt").read_text(encoding="utf-8"),out)
+        if len(timed)!=len(phrases):
+            raise RuntimeError(f"Frasi allineate {len(timed)} su {len(phrases)}")
+    elif a.engine=="edge":
         from edge_voice import synthesize
         voice,timed=synthesize((ep/"testo.txt").read_text(encoding="utf-8"),out)
         if len(timed)!=len(phrases):
