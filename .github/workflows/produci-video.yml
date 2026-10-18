@@ -10,7 +10,7 @@ on:
         description: "Voce narrante italiana"
         required: true
         type: choice
-        default: supertonic
+        default: gemini
         options:
           - gemini
           - edge
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     env:
-      VOCE: "${{ github.event.inputs.voce || 'supertonic' }}"
+      VOCE: "${{ github.event.inputs.voce || 'gemini' }}"
       GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
     steps:
       - name: "Scarica progetto"
