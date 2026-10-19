@@ -1,0 +1,53 @@
+name: "Inferno - VOCE GEMINI per montaggio locale"
+on:
+  push:
+    paths:
+      - ".github/workflows/inferno-voice.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Prepara audio e allineamento italiano"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "google-genai>=2.25,<3" "faster-whisper>=1.1,<2" "pillow>=10,<13"
+      - name: "Genera UNA SOLA voce Gemini (nessun video, no crediti immagini)"
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo "::error::API key mancante"; exit 2; }
+          mkdir -p output_inferno
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from gemini_voice import synthesize
+          from render import subtitles,music
+          ep=Path("episodes/04_inferno")
+          out=Path("output_inferno")
+          script=(ep/"testo.txt").read_text(encoding="utf-8")
+          audio,timed=synthesize(script,out)
+          if len(timed)<20:raise RuntimeError("Allineamento frasi incompleto")
+          subtitles(timed,out)
+          music(out/"MUSICA_ORIGINALE.wav",len(audio)/24000)
+          (out/"TIMING_FRASI.json").write_text(json.dumps([
+             {"text":text,"start":start,"end":end} for text,start,end in timed
+          ],ensure_ascii=False,indent=2),encoding="utf-8")
+          (out/"COPIONE.txt").write_text(script,encoding="utf-8")
+          print("PASS GEMINI VOICE",round(len(audio)/24000,2),"seconds",len(timed),"sentences")
+          PY
+      - name: "Metti a disposizione la voce per il montaggio"
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: VOCE_GEMINI_EP04_INFERNO
+          path: output_inferno/
+          retention-days: 14
