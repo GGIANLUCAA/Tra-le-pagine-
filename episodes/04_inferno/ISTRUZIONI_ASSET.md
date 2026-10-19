@@ -1,16 +1,12 @@
-# Inferno — caricamento finale delle illustrazioni
+# Inferno — asset artistici migliorati
 
-Il progetto testuale (copione, 18 cambi di scena, metadati e V5) è pronto su GitHub. Dieci illustrazioni originali coerenti sono già state riunite e controllate nella conversazione ChatGPT.
+La precedente raccolta di 10 immagini è stata sostituita, per l'anteprima attuale, da **15 file JPEG verticali 900×1600** con tagli di regia differenziati, uno shot dedicato a Virgilio e un finale con le stelle. Lo ZIP è allegato nella conversazione ChatGPT con nome `scene_premium_migliorate.zip`.
 
-**Manca un solo file binario:** `episodes/04_inferno/scene_premium.zip`. Lo ZIP contiene **10 file `scena_01.jpg` ... `scena_10.jpg`**, senza cartelle interne, ~5,5 MB. È stato validato localmente: nomi corretti, 406 parole, 38 frasi, 18 cue ordinati e immagini decodificabili.
+## Da Android
 
-## Dal telefono Android
+1. Scarica lo ZIP migliorato da ChatGPT.
+2. Apri [la cartella dell'episodio](https://github.com/GGIANLUCAA/Tra-le-pagine-/tree/main/episodes/04_inferno) e scegli **Add file → Upload files**.
+3. Carica **lo ZIP rinominandolo `scene_premium.zip`**: il programma cerca questo nome, non `scene_premium_migliorate.zip`.
+4. Dopo il commit, il test pre-render potrà verificare la corrispondenza fra `scene_cues.json` e le 15 scene.
 
-1. Scarica dalla conversazione ChatGPT il file **scene_premium.zip**, non l'archivio completo del progetto.
-2. Apri la cartella GitHub [episodes/04_inferno](https://github.com/GGIANLUCAA/Tra-le-pagine-/tree/main/episodes/04_inferno).
-3. Sul sito web di GitHub, scegli **Add file → Upload files**, seleziona lo ZIP e conferma **Commit changes**. Se su mobile non compare il comando, usa il sito desktop del browser.
-4. Comunica a ChatGPT soltanto **«caricato»**: dopo il controllo della completezza delle immagini, si potrà avviare il render con voce Gemini già configurata.
-
-**Stato:** copione e immagini pronti, ma Gemini non ancora eseguito e video MP4 nuovo non ancora creato. **Non chiamare API in assenza dello ZIP.** Nessuna pubblicazione automatica.
-
-**Nota artistica importante:** manca un'illustrazione specifica del cielo stellato finale; attualmente l'ultima scena riutilizza la luce distante della selva. Per qualità definitiva sarebbe preferibile crearne una prima della pubblicazione.
+**Attenzione:** le immagini sono soltanto preparate e NON ancora caricate direttamente nel repository; il render con voce Gemini non è partito e nessuna pubblicazione avviene in automatico.
