@@ -1,0 +1,47 @@
+name: "Controluce - VOCE primo episodio"
+on:
+  push:
+    branches:
+      - feature/controluce-v1
+    paths:
+      - .github/workflows/controluce-voice-pilot.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check secret
+        run: test -n "$GEMINI_API_KEY" || (echo "No configured TTS key" && exit 3)
+      - name: Setup voice dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install --quiet 'numpy>=1.25,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3'
+      - name: Generate the voice track (not public)
+        run: |
+          mkdir -p output_voice
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from gemini_voice import synthesize
+          p=Path("formats/controluce/episodes/2026-10-18_trasporti_sud/testo.txt")
+          _,timed=synthesize(p.read_text(encoding="utf-8"),Path("output_voice"))
+          (Path("output_voice")/"timing.json").write_text(json.dumps(timed,ensure_ascii=False,indent=2),encoding="utf-8")
+          PY
+      - name: Make voice artifact available
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: controluce-pilot-voice
+          path: output_voice/
+          retention-days: 7
+          if-no-files-found: error
