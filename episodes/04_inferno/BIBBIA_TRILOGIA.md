@@ -16,4 +16,6 @@ Tre cantiche, una stessa identità visiva. Dante e Virgilio hanno volti coerenti
 
 **Regia:** zoom lenti motivati; pochi punti di svolta; mai due effetti forti insieme; immagini legate a ciò che la voce narra. Voce maschile italiana Gemini con silenzi prima del Cocito e della frase finale delle stelle.
 
-**Stato:** 10 illustrazioni realizzate e pacchetto ZIP disponibile nella conversazione; le immagini non sono ancora caricate nel repository. Non avviare Gemini né il render finché manca `scene_premium.zip` e l'approvazione.
+**Nuova regola artistica della trilogia:** evitare il classico doppio ritratto fisso con Dante a sinistra e Virgilio a destra. Alternare primi piani di un solo soggetto, totali architettonici, viste dall'alto, schiena verso camera, dettagli delle mani solo quando naturali, gesti motivati (esplorare, proteggere, aiutare, arrampicarsi), inquadrature dei personaggi incontrati e silenzi visivi senza i due protagonisti. Ogni immagine deve raccontare la frase corrispondente. Vietato replicare lo stesso gesto di guida, lo stesso passo o la stessa posizione in più scene successive.
+
+**Stato artistico:** 15 asset visivi disponibili nella conversazione, derivati dalle 10 illustrazioni originali con variazioni di inquadratura, più inserto per l'incontro e cielo stellato ritoccato; non sono 15 immagini completamente rigenerate. Le immagini non sono ancora caricate nel repository. Non avviare Gemini né il render finché manca `scene_premium.zip` e l'approvazione.
