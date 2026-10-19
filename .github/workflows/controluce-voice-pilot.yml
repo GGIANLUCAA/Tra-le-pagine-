@@ -33,7 +33,7 @@ jobs:
           import json
           from pathlib import Path
           from gemini_voice import synthesize
-          p=Path("formats/controluce/episodes/2026-10-18_trasporti_sud/testo.txt")
+          p=Path("formats/controluce/episodes/2026-10-18_trasporti_sud/testo_video_180s.txt")
           _,timed=synthesize(p.read_text(encoding="utf-8"),Path("output_voice"))
           (Path("output_voice")/"timing.json").write_text(json.dumps(timed,ensure_ascii=False,indent=2),encoding="utf-8")
           PY
