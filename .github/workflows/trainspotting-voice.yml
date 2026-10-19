@@ -1,0 +1,52 @@
+name: "Trainspotting - VOCE GEMINI EP07"
+on:
+  push:
+    paths:
+      - ".github/workflows/trainspotting-voice.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    env:
+      GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa TTS e allineamento"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "google-genai>=2.25,<3" "faster-whisper>=1.1,<2" "pillow>=10,<13"
+      - name: "Narrazione integrale Trainspotting"
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo "::error::Gemini secret assente"; exit 2; }
+          mkdir -p trainspotting_voice
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          import json
+          from gemini_voice import synthesize
+          from render import subtitles,music
+          ep=Path("episodes/07_trainspotting");out=Path("trainspotting_voice")
+          script=(ep/"testo.txt").read_text(encoding="utf-8")
+          voice,timed=synthesize(script,out)
+          if len(timed)<26:raise RuntimeError(f"Solo {len(timed)} frasi")
+          subtitles(timed,out)
+          music(out/"MUSICA_ORIGINALE.wav",len(voice)/24000)
+          (out/"TIMING_FRASI.json").write_text(json.dumps([
+            {"text":t,"start":float(a),"end":float(b)} for t,a,b in timed],
+            indent=2,ensure_ascii=False),encoding="utf-8")
+          (out/"COPIONE.txt").write_text(script,encoding="utf-8")
+          print("TRAINSPOTTING GEMINI FINITO",round(len(voice)/24000,1),"secondi",len(timed),"frasi",flush=True)
+          PY
+      - name: "Consegna audio e sottotitoli"
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: TRAINSPOTTING_GEMINI_VOCE_SOTTOTITOLI
+          path: trainspotting_voice/
+          retention-days: 14
