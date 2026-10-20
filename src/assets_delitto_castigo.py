@@ -41,7 +41,7 @@ SCENE_COUNT = 12
 
 def quality_photo(raw: bytes):
     with Image.open(io.BytesIO(raw)) as im:
-        if im.width < 500 or im.height < 380:
+        if im.width < 380 or im.height < 350:
             raise ValueError("Immagine a risoluzione insufficiente")
         if im.width*im.height>35_000_000:
             raise ValueError("Immagine eccessivamente grande")
