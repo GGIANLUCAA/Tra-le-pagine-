@@ -291,7 +291,7 @@ def make_video(images, artist, duration, out, size=(720,1280), fps=24):
                    f"fade=t=in:st=0:d=0.35,fade=t=out:st={max(0,secs-0.40):.3f}:d=0.40")
         run(["ffmpeg","-hide_banner","-loglevel","error","-y","-loop","1","-framerate","1",
              "-i",str(img),"-vf",vfilter,"-frames:v",str(nframes),"-an",
-             "-c:v","libx264","-preset","ultrafast","-crf","23",
+             "-c:v","libx264","-preset","veryfast","-crf","23",
              "-pix_fmt","yuv420p","-movflags","+faststart",str(clip)])
         clips.append(clip)
         timeline.append({"index":index,"start":round(offset,2),"end":round(offset+secs,2),"type":kind,
