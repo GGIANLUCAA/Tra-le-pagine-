@@ -46,7 +46,7 @@ jobs:
               raise SystemExit("Slug episodio non valido")
           if not re.fullmatch(r"[0-9]{6,20}",run):
               raise SystemExit("ID run numerico non valido")
-          if not (Path("episodes")/ep/"metadata.json").is_file():
+          if not ((Path("episodes")/ep/"metadata.json").is_file() or ep==("auto_"+run)):
               raise SystemExit("Episodio inesistente")
           print("PUBBLICAZIONE PUBBLICA approvata per",ep,"run",run)
           PY
@@ -57,7 +57,7 @@ jobs:
           if info.get("conclusion")!="success":
               raise SystemExit("Origine non completata con successo")
           name=str(info.get("workflowName",""))
-          if not any(x in name for x in ("Render episodio","Video completo V5")):
+          if not any(x in name for x in ("Render episodio","Video completo V5","Autopilot V11 beta")):
               raise SystemExit("Run non riconosciuta come video: "+name)
           PY
       - name: "Scarica solo Artifact autorizzato"
@@ -67,6 +67,9 @@ jobs:
           ARTIFACT="TRA_LE_PAGINE_V3_$EP"
           if [[ "$EP" == "01_scacchi" ]] && [[ "$RUN_ID" == "39171898138" ]]; then
             ARTIFACT="TRA_LE_PAGINE_V5_VIDEO_ARMONICO_COMPLETO"
+          fi
+          if [[ "$EP" == "auto_$RUN_ID" ]]; then
+            ARTIFACT="VIDEO_V11_DA_APPROVARE"
           fi
           gh run download "$RUN_ID" --name "$ARTIFACT" --dir stage
           python - <<'PY'
@@ -95,7 +98,8 @@ jobs:
           TITLE="$(python - <<'PY'
           import json,os
           from pathlib import Path
-          m=json.loads((Path("episodes")/os.environ["EP"]/"metadata.json").read_text())
+          file=Path("episodes")/os.environ["EP"]/"metadata.json"
+          m=json.loads(file.read_text()) if file.is_file() else {}
           print(str(m.get("title",os.environ["EP"]))[:110])
           PY
           )"
