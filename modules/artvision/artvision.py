@@ -119,25 +119,31 @@ def discover_met(artist):
 
 
 def collect(artist, limit=38):
-    found, errors = [], {}
+    banks, errors = [], {}
     for name, method in [("Art Institute", discover_artic),
                          ("Cleveland", discover_cleveland), ("Met", discover_met)]:
         try:
             items = method(artist)
             print(f"{name}: {len(items)} opere verificabili", flush=True)
-            found += items
+            banks.append(items)
         except Exception as exc:
             errors[name] = str(exc)
             print(f"Archivio {name} non disponibile: {exc}", flush=True)
-    # Prefer museum-provenanced image records and avoid same title from multiple archives.
+    # Round-robin museums instead of letting a prolific API monopolize the film.
     unique, seen = [], set()
-    for item in found:
-        key = (norm(item["title"]), norm(item.get("year", "")))
-        if key in seen:
-            continue
-        seen.add(key)
-        unique.append(item)
-    return unique[:limit], errors
+    longest = max((len(bank) for bank in banks), default=0)
+    for i in range(longest):
+        for bank in banks:
+            if i >= len(bank):
+                continue
+            item = bank[i]
+            key = (norm(item["title"]), norm(item.get("year", "")))
+            if key not in seen:
+                seen.add(key)
+                unique.append(item)
+                if len(unique) >= limit:
+                    return unique, errors
+    return unique, errors
 
 
 def download_pictures(records, directory, max_works):
