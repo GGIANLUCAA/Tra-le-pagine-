@@ -57,3 +57,16 @@ La V3 comprende una mappa **reale, artigianale, titolo→focale→ragione regist
 
 ## Procedura futura standard
 Richiesta "crea un ArtVision su [nome]" → recuperare la mappa soggetti dell'artista o crearla da vere opere, scegliere musica real/CC adeguata, aggiornare `modules/artvision/queue.json` con `style=harmonic_reveal`, `artist`, `duration`, `request_id` nuovo, `approved_for_render=true`, `publish=false`; attendere job finale, scaricare artifact, controllare e consegnare MP4. Non usare lo stesso repertorio/musica/coordinate per artisti diversi.
+
+
+## V3 prima produzione COMPLETATA / verificata — 20 ottobre 2026
+- GitHub Actions [run #9](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39422133252) **SUCCESS**, artifact `ARTVISION_9` verificato.
+- Van Gogh, 16 opere di museo con metadati, 16 scene intenzionali (ognuna dettaglio → camera rallenta → intero), 150,000 secondi, 720×1280, H.264/AAC.
+- Vera registrazione scaricata dal sito ufficiale di Kevin MacLeod `Calmant.mp3`; SHA-256 `145d51e68117d5dc47b68cd2ac0577fd3c9d8c7464b49c32b3c25ad882c106c5`. Manifest e licenza CC BY 4.0 in `MUSICA_LICENZA_E_CREDITI.json`; allegare crediti ai post.
+- ArtVision V3 0 API a pagamento. Il report riporta 244,5 secondi end-to-end.
+- È stato verificato un campione di 27 fotogrammi da 9 opere (dettaglio, reveal, intero). Niente split-screen. Nota visiva: dipinti orizzontali interi usano bande scure verticali per preservare il rapporto d'aspetto, non tagliare l'opera.
+- MP4 originale ~35 MB; successiva ricompressione H.264 CRF24 preservando 150s/AAC ~16 MB, volume medio -18 dB, picco -0.8 dB.
+- Per evitare doppi render inutili durante gli aggiornamenti, il trigger GitHub Actions automatico ora ascolta solamente modifiche a `modules/artvision/queue.json` (resta anche workflow_dispatch manuale).
+- La registrazione è **copyrighted ma licensed CC BY 4.0**, NON 'priva di copyright'; crediti pubblici obbligatori per monetizzazione/licenza.
+- ArtVision V1/V2 e tutti i motori libro/narrati sono conservati. V3 per altri artisti richiede mappa di soggetti ragionata, non sempre stessa selezione.
+- Verifica creativa finale deve seguire il gusto dell'utente. Il render green dimostra solo affidabilità tecnica.
