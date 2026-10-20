@@ -1,0 +1,101 @@
+name: "ArtVision - opere autentiche senza voce"
+run-name: "ARTVISION - ${{ inputs.artist || 'Vincent van Gogh' }}"
+on:
+  workflow_dispatch:
+    inputs:
+      artist:
+        description: "Nome esatto dell'artista"
+        required: true
+        default: "Vincent van Gogh"
+        type: string
+      duration:
+        description: "Durata MP4 in secondi (120-180)"
+        required: true
+        default: "150"
+        type: choice
+        options:
+          - "120"
+          - "150"
+          - "180"
+      max_works:
+        description: "Numero massimo di opere distinte"
+        required: true
+        default: "16"
+        type: choice
+        options:
+          - "8"
+          - "12"
+          - "16"
+          - "20"
+          - "24"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-render.yml"
+
+permissions:
+  contents: read
+concurrency:
+  group: artvision-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: false
+
+jobs:
+  artvision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      ARTIST: ${{ github.event.inputs.artist || 'Vincent van Gogh' }}
+      VIDEO_DURATION: ${{ github.event.inputs.duration || '150' }}
+      MAX_WORKS: ${{ github.event.inputs.max_works || '16' }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: "Scarica progetto (sistema originale intatto)"
+        uses: actions/checkout@v4
+
+      - name: "Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: "Controlli preventivi, nessuna API a pagamento"
+        shell: bash
+        run: |
+          python -m py_compile modules/artvision/artvision.py
+          ffmpeg -version | head -1
+          ffprobe -version | head -1
+          python - <<'PY'
+          import os
+          artist=os.environ['ARTIST'].strip()
+          assert 2 <= len(artist) <= 100, 'Il nome artista deve avere 2-100 caratteri'
+          assert 120 <= int(os.environ['VIDEO_DURATION']) <= 180
+          assert 6 <= int(os.environ['MAX_WORKS']) <= 24
+          print('Artist:',artist,'- no voice - no Gemini - no paid API')
+          PY
+
+      - name: "Librerie open-source gratuite"
+        run: python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3"
+
+      - name: "Genera MP4, musica originale e manifest fonti"
+        shell: bash
+        run: |
+          python modules/artvision/artvision.py \
+            --artist "$ARTIST" \
+            --duration "$VIDEO_DURATION" \
+            --max-works "$MAX_WORKS" \
+            --out output/artvision
+
+      - name: "Deposita soltanto file finali (NON pubblica)"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_${{ github.run_number }}"
+          path: |
+            output/artvision/ARTVISION_VIDEO.mp4
+            output/artvision/COPERTINA.jpg
+            output/artvision/OPERE_FONTI_E_DIRITTI.json
+            output/artvision/CREDITI_E_FONTI.txt
+            output/artvision/DESCRIZIONE_SOCIAL.txt
+            output/artvision/MONTAGGIO.json
+            output/artvision/REPORT_PRODUZIONE.json
+          if-no-files-found: error
+          retention-days: 7
