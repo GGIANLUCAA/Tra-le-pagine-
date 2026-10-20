@@ -81,6 +81,13 @@ async function refreshEpisodes() {
     const data = await getPublic("/contents/episodes?ref=main");
     episodeSlugs = data.filter(x => x.type === "dir" && /^[a-zA-Z0-9_-]{1,75}$/.test(x.name)).map(x=>x.name);
     $("#stat-episodes").textContent = String(episodeSlugs.length);
+    const pub=$("#publish-episode");
+    if(pub) {
+      const old=pub.value;
+      pub.innerHTML='<option value="">Scegli il racconto</option>'+
+        episodeSlugs.map(x=>'<option value="'+esc(x)+'">'+esc(x.replace(/^\\d+_?/,"").replace(/_/g," "))+'</option>').join("");
+      if(episodeSlugs.includes(old))pub.value=old;
+    }
     await loadGallery();
     $("#episode-grid").innerHTML = episodeSlugs.length ? episodeSlugs.map((name,i) => makeEpisodeCard(name,i)).join("") : '<div class="empty">Nessun episodio disponibile.</div>';
     if (activeEpisode && !episodeSlugs.includes(activeEpisode)) {
@@ -266,6 +273,17 @@ function bind() {
   $("#action-render").addEventListener("click",()=>dispatch("render",{episodio:activeEpisode,effetti:"v4"},{
     title:"Avviare il montaggio MP4?",body:"Questa operazione può consumare minuti GitHub e una quota di sintesi Google Gemini. Usa soltanto episodi già approvati e con tutte le immagini premium.",
     consent:"Confermo il montaggio e l'eventuale consumo delle quote Google/GitHub."}));
+  $("#publish-from-run").addEventListener("click",()=>{
+    const episode=$("#publish-episode").value;
+    const id=$("#publish-run-id").value.trim();
+    if(!episodeSlugs.includes(episode)){toast("Scegli prima un episodio.");return;}
+    if(!/^\d{6,20}$/.test(id)){toast("Inserisci il numero della run GitHub, solo cifre.");return;}
+    dispatch("publish",{episode,render_run_id:id,publish_public:true},{
+      title:"Vuoi rendere PUBBLICO questo video?",
+      body:"Pubblicare nella videoteca renderà l'MP4 accessibile e scaricabile a chiunque su Internet. Non farlo con materiale privato. Questa operazione non cambia il motore Google.",
+      consent:"Ho controllato il video. ACCETTO che diventi PUBBLICO e scaricabile."
+    });
+  });
   $("#media-import").addEventListener("click",()=>{
     const id=$("#import-id").value.trim(),provider=$("#import-provider").value;
     if(provider==="openverse" && !/^[0-9a-fA-F-]{36}$/.test(id)){
