@@ -1,3 +1,4 @@
+import {loadGallery,makeEpisodeCard,showEpisodePreview,initEpisodePreview} from "./episode_gallery_v10.js";
 /* Tra le Pagine V9 — static frontend, no user token in browser. */
 const OWNER = "GGIANLUCAA";
 const REPO = "Tra-le-pagine-";
@@ -79,12 +80,8 @@ async function refreshEpisodes() {
     const data = await getPublic("/contents/episodes?ref=main");
     episodeSlugs = data.filter(x => x.type === "dir" && /^[a-zA-Z0-9_-]{1,75}$/.test(x.name)).map(x=>x.name);
     $("#stat-episodes").textContent = String(episodeSlugs.length);
-    $("#episode-grid").innerHTML = episodeSlugs.length ? episodeSlugs.map((name,i) => {
-      const cap = esc(name.replace(/^\d+_?/,"").replace(/_/g," "));
-      return '<button class="episode-card' + (activeEpisode === name ? " selected" : "") +
-        '" data-episode="' + esc(name) + '"><span class="episode-cover">' + String(i+1).padStart(2,"0") +
-        '</span><strong>' + cap + '</strong><small>Cartella: ' + esc(name) + '</small></button>';
-    }).join("") : '<div class="empty">Nessun episodio disponibile.</div>';
+    await loadGallery();
+    $("#episode-grid").innerHTML = episodeSlugs.length ? episodeSlugs.map((name,i) => makeEpisodeCard(name,i)).join("") : '<div class="empty">Nessun episodio disponibile.</div>';
     if (activeEpisode && !episodeSlugs.includes(activeEpisode)) {
       activeEpisode = ""; $("#selected-panel").hidden = true;
     }
@@ -230,7 +227,12 @@ function bind() {
   $("#refresh-all").addEventListener("click",()=>Promise.all([refreshRuns(),refreshEpisodes()]));
   $("#refresh-runs").addEventListener("click",refreshRuns);
   $("#refresh-episodes").addEventListener("click",refreshEpisodes);
-  $("#episode-grid").addEventListener("click",e=>{const item=e.target.closest("[data-episode]"); if(item) selectEpisode(item.dataset.episode);});
+  $("#episode-grid").addEventListener("click",e=>{
+    const preview=e.target.closest("[data-preview]");
+    if(preview){showEpisodePreview(preview.dataset.preview,{onSelect:selectEpisode});return;}
+    const item=e.target.closest("[data-episode]");
+    if(item) selectEpisode(item.dataset.episode);
+  });
   $("#type-options").addEventListener("click",e=>{
     const b=e.target.closest("[data-value]");if(!b)return;
     activeFormat=b.dataset.value; $$("#type-options .chip").forEach(x=>x.classList.toggle("selected",x===b));
@@ -283,6 +285,7 @@ function bind() {
 }
 async function init() {
   bind();
+  initEpisodePreview();
   const tab=window.location.hash.substring(1);
   go(["studio","nuovo","episodi","archivio","produzioni","impostazioni"].includes(tab)?tab:"studio");
   window.addEventListener("hashchange",()=>{const v=window.location.hash.slice(1);if($("#view-"+v))go(v);});
