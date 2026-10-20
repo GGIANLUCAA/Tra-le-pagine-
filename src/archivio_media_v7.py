@@ -109,7 +109,7 @@ def discover(provider, kind, query, limit, api_key=""):
         if kind != "image":
             raise ValueError("Openverse V7 ricerca immagini; usa Pexels per filmati.")
         params = urllib.parse.urlencode({
-            "q": query, "page_size": limit, "license": "cc0,by",
+            "q": query, "page_size": limit, "license": "cc0,by", "source": "wikimedia",
             "license_type": "commercial", "mature": "false"
         })
         data = api_json("https://api.openverse.org/v1/images/?" + params)
