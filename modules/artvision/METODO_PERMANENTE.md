@@ -42,3 +42,16 @@ Non riscrivere da zero: aggiungere un modulo o preset e testare che il modello p
 - Run GitHub #3: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39411451722 — esito SUCCESS, 150.167 secondi, 16 opere CC0, 24 inquadrature, audio/video verificati, 0 API a pagamento, 176 secondi di elaborazione. Output iniziale 136 MiB.
 - Run GitHub #4: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39412319602 — esito SUCCESS dopo cambio preset x264 `ultrafast` → `veryfast`. MP4 14.7 MiB, 150.167 secondi, 720×1280 H.264/AAC, 16 opere. 179 secondi di elaborazione. Per le prossime puntate conservare il preset compatto, con controllo qualitativo.
 - **Coda V1.3 testata con successo**: run #6 https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39412758541 — richiesta JSON approvata, raccolta opere, montaggio e artifact `ARTVISION_6` da circa 15 MB, job SUCCESS. Il test iniziale #5 falliva perché scriveva caratteri letterali `\\n` in `GITHUB_ENV`: correggere in vere sequenze di newline Python `\n` (committed).
+
+
+## NUOVA REGOLA PERMANENTE — REGIA CINEMA WOW V2 (20 ottobre 2026)
+
+**Feedback vincolante dell'utente:** il video Van Gogh V1 è stato giudicato troppo simile a una sequenza di fotografie con dissolvenze. Non riproporre la V1 come qualità definitiva. Il modello di riferimento inviato è `Enfermedad-cromtica-fdown.net.mp4`: ritmo rapido, chiaroscuro, motivi che ritornano, focali e dettagli, fusione con la musica. **Non riutilizzare quel filmato o il suo audio.**
+
+La nuova guida editoriale completa è [REGIA_CINEMA_WOW_V2.md](REGIA_CINEMA_WOW_V2.md), da leggere prima di ogni produzione; il file è parte permanente della memoria operativa del progetto.
+**Moduli indipendenti:** `artvision.py` mantiene V1; `cinema_wow_v2.py` implementa regia cinema musicale; `artvision_cinema_run.py` è il nuovo orchestratore che importa gli archivi museali dalla V1.
+**Nuovo default nel workflow:** `style: cinematic_wow`; per tornare alla V1 usare esplicitamente `style: museum_legacy`. La coda di produzione conserva lo stesso schema e può indicare `style` (se assente assume cinematic_wow).
+**Importantissimo:** la sintesi musicale originale è sperimentale e NON deve essere presentata come equivalente a musica professionale selezionata. La visione del rendering finale e il feedback dell'utente sono indispensabili.
+Per un episodio nuovo, conservare V1 e testare V2 su un provino di 20–30 secondi e poi sul video completo. Non attestare la qualità artistica senza ispezione del file.
+
+**Backup prima delle modifiche V2:** `backup-artvision-v1-3-prima-regia-wow-2026-10-20`. Nessuna modifica ai motori narrati.
