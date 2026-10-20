@@ -1,4 +1,4 @@
-# ARTVISION CINEMA V6 — Regia originale, niente slideshow
+# ARTVISION CINEMA V6 — Regia originale, niente slideshow\n\n**APPROVATA DALL'UTENTE IL 20 OTTOBRE 2026 — baseline GOLD MASTER.** Il film Van Gogh V6 è il migliore tra le varianti secondo la valutazione esplicita dell'utente. Non regredire a V5, conservare esattamente codice e metodologia. Per approvazione, backup, SHA256 e ripristino consultare [V6_APPROVATA_GOLD_MASTER.md](V6_APPROVATA_GOLD_MASTER.md).
 
 ## VERSIONE APPROVATA — CINEMA V6 (20 ottobre 2026)
 
