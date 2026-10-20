@@ -50,6 +50,14 @@ async function run() {
   await page.locator("#episode-grid .episode-card").first().waitFor();
   await page.locator("#episode-grid .episode-card").last().click();
   await page.locator("#selected-panel").waitFor({state:"visible"});
+  await page.locator("#episode-grid .episode-preview-btn").last().click();
+  await page.locator("#episode-preview").waitFor({state:"visible"});
+  await page.locator("#preview-heading").getByText(/siddharta/i).waitFor();
+  await page.locator("#preview-no-scenes").waitFor({state:"visible"});
+  await page.locator("#preview-file").waitFor({state:"attached"});
+  await page.screenshot({path:SCREEN+"/preview-mobile.png",fullPage:true});
+  await page.locator("#preview-close").click();
+  console.log("PASS: V10 preview shows honest missing-media state and private MP4 picker");
   const renderLabel=await page.locator("#action-render").textContent();
   assert.match(renderLabel,/Google/);
   await page.screenshot({path:SCREEN+"/episodes-mobile.png",fullPage:true});
