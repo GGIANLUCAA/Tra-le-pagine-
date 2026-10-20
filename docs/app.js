@@ -261,6 +261,20 @@ function bind() {
   $("#action-render").addEventListener("click",()=>dispatch("render",{episodio:activeEpisode,effetti:"v4"},{
     title:"Avviare il montaggio MP4?",body:"Questa operazione può consumare minuti GitHub e una quota di sintesi Google Gemini. Usa soltanto episodi già approvati e con tutte le immagini premium.",
     consent:"Confermo il montaggio e l'eventuale consumo delle quote Google/GitHub."}));
+  $("#media-import").addEventListener("click",()=>{
+    const id=$("#import-id").value.trim(),provider=$("#import-provider").value;
+    if(provider==="openverse" && !/^[0-9a-fA-F-]{36}$/.test(id)){
+      toast("Openverse richiede un ID UUID di 36 caratteri.");return;
+    }
+    if(provider==="pexels" && !/^\d{1,14}$/.test(id)){
+      toast("Pexels richiede un ID numerico.");return;
+    }
+    if(provider==="openverse" && mediaKind==="video"){
+      toast("I video possono essere importati soltanto da Pexels.");return;
+    }
+    dispatch("v7",{mode:"import",provider,kind:mediaKind,
+      query:"materiale scelto",asset_id:id});
+  });
   $("#media-search").addEventListener("click",()=>{
     const query=$("#media-query").value.trim();const provider=$("#media-provider").value;
     if(query.length<2||query.length>180){toast("La ricerca deve avere tra 2 e 180 caratteri.");return;}
