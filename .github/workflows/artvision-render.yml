@@ -88,6 +88,7 @@ jobs:
               env.write(f"ARTIST={artist}\n")
               env.write(f"VIDEO_DURATION={duration}\n")
               env.write(f"MAX_WORKS={works}\n")
+              env.write(f"ARTVISION_STYLE={style}\n")
           print("Richiesta verificata:", request.get("request_id"), artist, duration, works)
           PY
 
