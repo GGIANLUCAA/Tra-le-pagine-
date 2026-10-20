@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#091d27">
+  <meta name="description" content="Tra le Pagine — il tuo studio di produzione video AI, controllabile dal telefono.">
+  <title>Tra le Pagine · Studio AI</title>
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-mark">T<span>●</span>P</span><div><strong>Tra le Pagine</strong><small>STUDIO IBRIDO <em>V9</em></small></div></div>
+      <p class="nav-label">WORKSPACE</p>
+      <nav aria-label="Navigazione principale">
+        <button class="nav-item active" data-tab="studio"><span>⌂</span> Panoramica</button>
+        <button class="nav-item" data-tab="nuovo"><span>✦</span> Nuovo video</button>
+        <button class="nav-item" data-tab="episodi"><span>▤</span> Episodi</button>
+        <button class="nav-item" data-tab="archivio"><span>▧</span> Archivio media</button>
+        <button class="nav-item" data-tab="produzioni"><span>◷</span> Produzioni</button>
+      </nav>
+      <p class="nav-label second">SISTEMA</p>
+      <nav>
+        <button class="nav-item" data-tab="impostazioni"><span>⚙</span> Impostazioni</button>
+        <a class="nav-item external" href="https://github.com/GGIANLUCAA/Tra-le-pagine-" target="_blank" rel="noopener"><span>↗</span> Repository GitHub</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="connected"><span class="pulse-dot"></span><span id="backend-status">Verifica connessione...</span></div>
+        <small>Voce Google · Motore FFmpeg<br>Conserviamo sempre V3–V8</small>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="top-left"><button class="mobile-menu" id="menu-open" aria-label="Apri menu">☰</button><span id="section-label">PANORAMICA</span><span class="crumb">/</span><span class="crumb" id="section-crumb">Studio</span></div>
+        <div class="top-actions"><span class="top-pill" id="sync-status"><span class="live-dot"></span> GitHub pubblico</span><button class="avatar" id="account-action" title="Collegamento GitHub">GH</button></div>
+      </header>
+      <div class="content">
+        <section class="view active" id="view-studio">
+          <div class="eyebrow"><span class="spark">✦</span> IL TUO STUDIO DI PRODUZIONE</div>
+          <div class="hero">
+            <div class="hero-copy">
+              <h1>Ogni storia merita<br><span>di prendere vita.</span></h1>
+              <p>Dal racconto alla scena, dalla voce al video. Tutto dal tuo telefono, con il sistema che hai costruito.</p>
+              <button class="btn primary" data-go="nuovo"><span>✦</span> Crea un nuovo video <span>→</span></button>
+            </div>
+            <div class="hero-art" aria-hidden="true"><div class="halo halo-a"></div><div class="halo halo-b"></div><div class="film-card film-back"></div><div class="film-card film-front"><span>TRA LE PAGINE</span><div class="film-sun"></div><div class="film-mountain"></div><small>STORIE CHE RESTANO</small></div><div class="play-orb">▶</div></div>
+          </div>
+          <div class="section-heading"><div><h2>Il tuo studio, a colpo d'occhio</h2><p>Stato del sistema e scorciatoie principali.</p></div><button class="text-action" id="refresh-all">Aggiorna ↻</button></div>
+          <div class="stats">
+            <div class="stat"><span>EPISODI</span><strong id="stat-episodes">—</strong><small>Nel repository</small></div>
+            <div class="stat"><span>PRODUZIONI RECENTI</span><strong id="stat-runs">—</strong><small>Ultime esecuzioni GitHub</small></div>
+            <div class="stat"><span>MOTORE VOCE</span><strong class="voice-label">Google</strong><small>Gemini TTS · invariato</small></div>
+            <div class="stat"><span>STUDIO</span><strong>V9</strong><small>Pannello web</small></div>
+          </div>
+          <div class="section-heading space"><div><h2>Riprendi da dove eri rimasto</h2><p>Operazioni disponibili adesso.</p></div></div>
+          <div class="quick-grid">
+            <button class="quick-card" data-go="episodi"><span class="quick-icon gold">▤</span><strong>Apri un episodio</strong><small>Storyboard V6, V8 e render V5</small><span class="arrow">↗</span></button>
+            <button class="quick-card" data-go="archivio"><span class="quick-icon coral">▧</span><strong>Cerca nuove immagini</strong><small>Openverse e Pexels via V7</small><span class="arrow">↗</span></button>
+            <button class="quick-card" data-go="produzioni"><span class="quick-icon blue">◷</span><strong>Controlla i montaggi</strong><small>Esecuzioni e download MP4</small><span class="arrow">↗</span></button>
+          </div>
+          <div class="section-heading space"><div><h2>Ultime produzioni</h2><p>Stato letto dal repository GitHub.</p></div><button class="text-action" data-go="produzioni">Mostra tutte →</button></div>
+          <div class="runs" id="home-runs"><div class="empty">Caricamento produzioni…</div></div>
+        </section>
+
+        <section class="view" id="view-nuovo">
+          <div class="eyebrow">✦ PRODUZIONE CREATIVA</div><h1 class="page-title">Una storia. Un video.</h1><p class="page-subtitle">Prepara un brief per GPT senza nuove API a pagamento. Il progetto viene salvato nel browser del telefono.</p>
+          <div class="form-card">
+            <label for="video-idea">Di cosa deve parlare il video?</label>
+            <textarea id="video-idea" rows="6" placeholder="Es. Racconta la vita di Siddharta in circa tre minuti, con tono cinematografico e scene molto belle…"></textarea>
+            <div class="form-row"><div><label for="video-title">Titolo del progetto</label><input id="video-title" placeholder="La ricerca di Siddharta" maxlength="110"></div><div><label for="video-length">Durata indicativa</label><select id="video-length"><option value="2">2 minuti</option><option value="3" selected>3 minuti</option><option value="4">4 minuti</option></select></div></div>
+            <label>Tipo di contenuto</label><div class="chip-group" id="type-options"><button class="chip selected" data-value="libri">Libri</button><button class="chip" data-value="cronaca">Cronaca</button><button class="chip" data-value="documentario">Documentario</button><button class="chip" data-value="fiabe">Fiabe</button><button class="chip" data-value="social">Social</button></div>
+            <div class="form-row spaced"><label class="check-label"><input type="checkbox" id="real-sources" checked><span>Usa materiali reali o già disponibili prima delle immagini AI</span></label></div>
+            <div class="form-actions"><button class="btn primary" id="save-brief">Salva progetto</button><button class="btn outline" id="copy-gpt">✦ Prepara con GPT</button></div>
+            <p class="micro-note">GPT funziona attraverso il tuo account ChatGPT. Non è ancora integrato automaticamente in questa schermata: dopo la copia, incolla il brief nella chat.</p>
+          </div>
+          <div class="section-heading space"><div><h2>Progetti salvati sul telefono</h2><p>Restano soltanto in questo browser: non nel repository pubblico.</p></div></div><div id="saved-projects" class="saved-projects"><p class="empty">Non hai ancora salvato progetti.</p></div>
+        </section>
+
+        <section class="view" id="view-episodi">
+          <div class="eyebrow">▤ PRODUZIONE ESISTENTE</div><h1 class="page-title">Episodi</h1><p class="page-subtitle">Usa la regia storica: nessuna modifica alla voce Google o alle scene già approvate.</p>
+          <div class="section-heading"><h2>Scegli un episodio</h2><button class="text-action" id="refresh-episodes">Aggiorna ↻</button></div>
+          <div id="episode-grid" class="episode-grid"><div class="empty">Caricamento episodi…</div></div>
+          <div class="work-panel" id="selected-panel" hidden>
+            <div class="panel-top"><div><span class="eyebrow">EPISODIO SELEZIONATO</span><h2 id="selected-title"></h2><p id="selected-slug"></p></div><span class="phase-pill">Controlli guidati</span></div>
+            <div class="stage-actions"><button class="btn outline" id="action-v6">✦ Storyboard V6</button><button class="btn outline" id="action-v8-plan">▧ Analisi V8</button><button class="btn outline" id="action-v8-prepare">✓ Prepara scene</button><button class="btn primary" id="action-render">▶ Genera MP4 con Google</button></div>
+            <p class="micro-note" id="dispatch-hint">Se non hai collegato GitHub all'app, i pulsanti aprono i workflow ufficiali per avviarli dal tuo account.</p>
+          </div>
+        </section>
+
+        <section class="view" id="view-archivio">
+          <div class="eyebrow">▧ ASSET INTELLIGENCE</div><h1 class="page-title">Archivio media</h1><p class="page-subtitle">Cerca materiali già esistenti prima di generarne nuovi. La ricerca V7 gira su GitHub, non sul telefono.</p>
+          <div class="form-card compact"><div class="form-row"><div><label for="media-query">Cosa vuoi cercare?</label><input id="media-query" placeholder="Es. fiume India, città antica, montagne" value="river India"></div><div><label for="media-provider">Fonte</label><select id="media-provider"><option value="openverse">Openverse · gratuito</option><option value="pexels">Pexels · chiave gratuita</option></select></div></div>
+            <label>Tipo di materiale</label><div class="chip-group" id="kind-options"><button class="chip selected" data-value="image">Fotografie</button><button class="chip" data-value="video">Filmati</button></div>
+            <div class="form-actions"><button class="btn primary" id="media-search">⌕ Avvia ricerca V7</button></div>
+            <p class="micro-note">I risultati arrivano negli Artifact della run GitHub. Per Pexels serve la chiave configurata sul repository. Openverse V7 cerca fotografie indicizzate da Wikimedia.</p>
+          </div>
+          <div class="notice"><strong>Riusare, non ricreare.</strong><p>V7 può importare un file alla volta dopo una scelta esplicita. L'inserimento automatico di filmati nel render resta una fase successiva.</p></div>
+        </section>
+
+        <section class="view" id="view-produzioni">
+          <div class="eyebrow">◷ GITHUB ACTIONS</div><h1 class="page-title">Produzioni</h1><p class="page-subtitle">Segui l'avanzamento dei workflow e apri le esecuzioni per scaricare gli artifact e gli MP4.</p>
+          <div class="section-heading"><h2>Attività recente</h2><button class="text-action" id="refresh-runs">Aggiorna ↻</button></div>
+          <div class="runs" id="all-runs"><div class="empty">Caricamento…</div></div>
+          <a class="btn outline github-link" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions" target="_blank" rel="noopener">Apri tutte le Actions su GitHub ↗</a>
+          <p class="micro-note">Gli Artifact sono gestiti da GitHub e possono scadere. Scaricali dalla pagina della run entro il periodo di conservazione.</p>
+        </section>
+
+        <section class="view" id="view-impostazioni">
+          <div class="eyebrow">⚙ CONFIGURAZIONE</div><h1 class="page-title">Impostazioni studio</h1><p class="page-subtitle">La configurazione di base mantiene il motore storico stabile e le tue credenziali fuori dal browser.</p>
+          <div class="settings-grid">
+            <div class="settings-card"><span class="eyebrow">AUTENTICAZIONE</span><h3>Collegamento GitHub</h3><p id="auth-description">Controllo backend...</p><button class="btn outline" id="auth-button">Verifica collegamento</button></div>
+            <div class="settings-card"><span class="eyebrow">NARRAZIONE</span><h3>Google Gemini TTS</h3><p>Voce predefinita conservata. Nessun cambio e nessuna chiamata a GPT API per mostrare il pannello.</p><span class="good-label">✓ Conservata</span></div>
+            <div class="settings-card"><span class="eyebrow">COSTI</span><h3>Modalità economica</h3><p>Interfaccia senza API AI, ricerca gratuita e Github Actions secondo il piano e le quote. La sintesi Google può avere costi o limiti propri.</p><span class="good-label">✓ Preferenza gratuita</span></div>
+            <div class="settings-card"><span class="eyebrow">PRIVACY</span><h3>Dati sul telefono</h3><p>Il brief dei nuovi video rimane nel browser, non viene caricato nel repository pubblico. Non caricare documenti privati nelle cartelle pubbliche.</p><button class="btn outline" id="clear-local">Elimina brief locali</button></div>
+          </div>
+          <div class="notice"><strong>Vuoi attivare i pulsanti diretti?</strong><p>Il pannello pubblico legge lo stato di GitHub senza autenticazione. Per lanciare i workflow dentro l'app serve un backend privato Cloudflare con accesso GitHub OAuth. <a href="https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/STUDIO_WEB_V9_GUIDA.md" target="_blank" rel="noopener">Apri la guida di configurazione →</a></p></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="overlay" id="overlay" hidden></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="confirm-dialog"><form method="dialog"><div class="dialog-icon">◈</div><h2 id="dialog-title">Conferma</h2><p id="dialog-desc"></p><label class="check-label" id="dialog-consent"><input type="checkbox" id="dialog-check"><span id="dialog-consent-text">Ho verificato e approvo</span></label><div class="dialog-buttons"><button class="btn outline" value="cancel">Annulla</button><button class="btn primary" id="dialog-confirm" value="confirm" disabled>Continua</button></div></form></dialog>
+</body>
+</html>
