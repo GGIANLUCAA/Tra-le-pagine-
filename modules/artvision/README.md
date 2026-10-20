@@ -4,7 +4,7 @@ Modulo indipendente di `Tra le Pagine`. **Non modifica** `render-v3.yml`, Gemini
 
 ## Stato (20 ottobre 2026)
 
-Motore di partenza creato; test reale su GitHub Actions da verificare tramite workflow. La prima puntata dimostrativa prevista è **Vincent van Gogh, 150 secondi**, immagini autentiche provenienti da API museali. Non affermare che è stata prodotta se manca il report riuscito.
+La V1.3 è stata realmente collaudata (vedi esecuzioni in fondo). Dopo il feedback dell'utente è stata progettata una regia cinematografica V2, con modulo e workflow separati. Verificare i test V2 prima di attribuirle qualità finale.
 
 ## Accesso Android
 
@@ -63,3 +63,16 @@ Il file `modules/artvision/queue.json` è la **coda automatica**. Quando l'utent
 Se la coda contiene lo stesso artista ma si vuole un nuovo montaggio, modificare `request_id`. Se non ci sono almeno 6 opere con immagini e licenze adatte, il motore interrompe il rendering con errore comprensibile e non inventa opere.
 
 **Test definitivo della coda autonoma**: [GitHub Actions run #6](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39412758541) terminata con successo, artifact `ARTVISION_6` da circa 15 MB. Il sistema può quindi creare nuovi video tramite semplice aggiornamento di `modules/artvision/queue.json`, senza premere manualmente Run workflow.
+
+
+## NUOVA REGOLA PERMANENTE — REGIA CINEMA WOW V2 (20 ottobre 2026)
+
+**Feedback vincolante dell'utente:** il video Van Gogh V1 è stato giudicato troppo simile a una sequenza di fotografie con dissolvenze. Non riproporre la V1 come qualità definitiva. Il modello di riferimento inviato è `Enfermedad-cromtica-fdown.net.mp4`: ritmo rapido, chiaroscuro, motivi che ritornano, focali e dettagli, fusione con la musica. **Non riutilizzare quel filmato o il suo audio.**
+
+La nuova guida editoriale completa è [REGIA_CINEMA_WOW_V2.md](REGIA_CINEMA_WOW_V2.md), da leggere prima di ogni produzione; il file è parte permanente della memoria operativa del progetto.
+**Moduli indipendenti:** `artvision.py` mantiene V1; `cinema_wow_v2.py` implementa regia cinema musicale; `artvision_cinema_run.py` è il nuovo orchestratore che importa gli archivi museali dalla V1.
+**Nuovo default nel workflow:** `style: cinematic_wow`; per tornare alla V1 usare esplicitamente `style: museum_legacy`. La coda di produzione conserva lo stesso schema e può indicare `style` (se assente assume cinematic_wow).
+**Importantissimo:** la sintesi musicale originale è sperimentale e NON deve essere presentata come equivalente a musica professionale selezionata. La visione del rendering finale e il feedback dell'utente sono indispensabili.
+Per un episodio nuovo, conservare V1 e testare V2 su un provino di 20–30 secondi e poi sul video completo. Non attestare la qualità artistica senza ispezione del file.
+
+**Backup prima delle modifiche V2:** `backup-artvision-v1-3-prima-regia-wow-2026-10-20`. Nessuna modifica ai motori narrati.
