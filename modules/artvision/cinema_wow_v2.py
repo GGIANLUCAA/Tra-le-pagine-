@@ -36,6 +36,19 @@ def plan_storyboard(images,artist,duration):
     if duration < 18:raise ValueError("Minimum cinematic sample length 18s")
     count=len(images)
     if count < 6:raise ValueError("Six or more licensed artworks required")
+    # First image: purposeful visual hook, not first search result.
+    best_first = None
+    if "van gogh" in artist.lower():
+        best_first = next((j for j,rec in enumerate(images)
+            if "two poplars" in rec["title"].lower()),None)
+    if best_first is None:
+        scores=[]
+        for rec in images:
+            thumb=cv2.resize(rec["frame"],(96,144),interpolation=cv2.INTER_AREA)
+            hsv=cv2.cvtColor(thumb,cv2.COLOR_BGR2HSV)
+            gray=cv2.cvtColor(thumb,cv2.COLOR_BGR2GRAY)
+            scores.append(float(hsv[:,:,1].mean())*.70+float(gray.std())*.30)
+        best_first=int(np.argmax(scores))
     plan=[]
     t=0.0;i=0
     while t < duration-2.7:
@@ -51,7 +64,7 @@ def plan_storyboard(images,artist,duration):
         else:beats=4;mode="hero";act="risoluzione"
         seconds=min(beats*BEAT,max(.3,left-2.4))
         if seconds<=0:break
-        image_index=(i*5+3)%count
+        image_index=best_first if i==0 else (i*5+3)%count
         focus=focal_point(images[image_index]["frame"])
         turn=(i%5-2)*.034
         focus=(float(np.clip(focus[0]+turn,.24,.76)),
