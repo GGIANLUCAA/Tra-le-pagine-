@@ -75,7 +75,10 @@
           <div class="section-heading"><h2>Video disponibili</h2><button class="text-action" id="refresh-videos">Aggiorna ↻</button></div>
           <div id="videos-grid" class="videos-grid"><div class="empty">Caricamento dei video approvati…</div></div>
           <div class="video-private-warning"><strong>Privacy dei video</strong><p>Questo sito è pubblico. I video compariranno qui soltanto dopo una tua autorizzazione esplicita alla pubblicazione. Per una videoteca accessibile solo a te servirà attivare lo spazio privato Cloudflare.</p></div>
-          <div class="guide-card"><strong>Hai già un MP4 prodotto?</strong><p>Puoi conservarlo come video riproducibile e scaricabile nel sito dopo averlo controllato e approvato come pubblico.</p><a class="btn outline" target="_blank" rel="noopener" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/pubblica-video-v11.yml">Aggiungi MP4 approvato ↗</a></div>
+          <div class="guide-card"><strong>Hai già un MP4 prodotto?</strong><p>Trasferiscilo dagli Artifact GitHub nella videoteca, dove potrai guardarlo e scaricarlo. <b>Attenzione: la pubblicazione lo rende pubblico.</b></p>
+          <div class="form-row"><div><label for="publish-episode">Episodio</label><select id="publish-episode"><option value="">Seleziona un episodio</option></select></div><div><label for="publish-run-id">Numero della produzione GitHub</label><input id="publish-run-id" inputmode="numeric" placeholder="Es. 39171898138"></div></div>
+          <div class="form-actions"><button class="btn primary" id="publish-from-run">Aggiungi alla videoteca</button><a class="btn outline" target="_blank" rel="noopener" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/pubblica-video-v11.yml">Alternativa: usa GitHub ↗</a></div>
+          <p class="micro-note">Puoi recuperare il numero della produzione dalla pagina Produzioni. Prima del trasferimento ti chiederemo conferma esplicita perché chiunque potrebbe vedere un video pubblicato sul sito.</p></div>
         </section>
 
         <section class="view" id="view-nuovo">
