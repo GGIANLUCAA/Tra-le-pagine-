@@ -71,7 +71,7 @@ def select_images(slug, config, folder):
         key=norm(item["title"])
         if key in known:continue
         known.add(key);unique.append(item)
-    pictures,failed=download_pictures(unique,folder/"original_images",max_works=19)
+    pictures,failed=download_pictures(unique,folder/"original_images",max_works=23)
     if len(pictures)<12:
         raise RuntimeError("Video bloccato: solo "+str(len(pictures))+" fotografie autorizzate. "+json.dumps(failed,ensure_ascii=False)[:500])
     # Preserve high-res museum masters when technically accessible, with graceful fallback.
@@ -80,10 +80,16 @@ def select_images(slug, config, folder):
         upgrades=promote_museum_sources(pictures[:7])
     except Exception as e:
         upgrades=[{"error":str(e)[:150]}]
+    sufficient=[]
     for p in pictures:
         if min(p.get("width",0),p.get("height",0))<500:
-            raise RuntimeError("Sorgente troppo piccola: "+p["title"])
-    return pictures,errs,failed,upgrades
+            failed.append({"title":p["title"],"error":"Sorgente sotto 500 px, esclusa automaticamente"})
+            print("LOW RES SKIP",p["title"],flush=True)
+        else:
+            sufficient.append(p)
+    if len(sufficient)<12:
+        raise RuntimeError("Solo "+str(len(sufficient))+" sorgenti sufficienti dopo il filtro Full HD")
+    return sufficient,errs,failed,upgrades
 
 def detail_foci(path):
     """Find two compositional high-information regions on the ACTUAL work.
