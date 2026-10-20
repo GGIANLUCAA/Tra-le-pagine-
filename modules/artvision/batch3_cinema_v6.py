@@ -62,6 +62,9 @@ def score(entry,keys):
     return pts
 
 def select_images(slug, config, folder):
+    if slug=="monet":
+        from monet_commons_sources_v6 import export as monet_commons_export
+        return monet_commons_export(folder)
     collected,errs=collect(config["artist"],limit=100)
     if len(collected)<12:raise RuntimeError("Solo "+str(len(collected))+" opere museali per "+slug+": "+str(errs))
     # Keep high-interest works first, but spread museums: collect already round-robins sources.
