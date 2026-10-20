@@ -1,0 +1,54 @@
+name: "Tra le Pagine - Studio Ibrido V6 (solo anteprima, zero API)"
+on:
+  workflow_dispatch:
+    inputs:
+      episodio:
+        description: "Slug cartella dentro episodes/ (es. 03_siddharta)"
+        required: true
+        type: string
+        default: "03_siddharta"
+      formato:
+        description: "Tipo di racconto"
+        required: true
+        type: choice
+        default: libri
+        options: [libri, cronaca, documentario, fiabe, social]
+      budget:
+        description: "Solo pianificazione: zero o basso"
+        required: true
+        type: choice
+        default: zero
+        options: [zero, basso]
+  pull_request:
+    paths:
+      - "src/studio_ibrido_v6.py"
+      - "src/prompt_asset_v6.py"
+      - "config/studio_ibrido_tools.json"
+      - "tests/test_studio_ibrido_v6.py"
+      - ".github/workflows/studio-ibrido-v6.yml"
+permissions:
+  contents: read
+jobs:
+  studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      EPISODIO: ${{ inputs.episodio || '03_siddharta' }}
+      FORMATO: ${{ inputs.formato || 'libri' }}
+      BUDGET: ${{ inputs.budget || 'zero' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Test sicurezza e compatibilità (standard library)"
+        run: python -m unittest discover -s tests -p "test_studio_ibrido_v6.py" -v
+      - name: "Crea storyboard gratuito senza toccare V5"
+        run: python src/studio_ibrido_v6.py --episode "$EPISODIO" --format "$FORMATO" --budget "$BUDGET" --out output/studio_ibrido
+      - name: "Consegna rapporto e anteprima navigabile"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "STUDIO_IBRIDO_V6"
+          path: output/studio_ibrido/
+          if-no-files-found: error
+          retention-days: 14
