@@ -59,7 +59,8 @@ L'uso personale non rende automaticamente legittima qualsiasi acquisizione di ma
 
 ## Compatibilità e test
 - `src/orchestratore_v8.py` usa l'API di `src/studio_ibrido_v6.py`; V5 e V7 restano intatti.
-- `tests/test_orchestratore_v8.py` verifica sicurezza percorsi, Gate 1, preparazione separata, riuso, foto personali esplicitamente approvate, immagini mancanti e assenza di pubblicazioni.
+- `tests/test_orchestratore_v8.py` verifica sicurezza percorsi, Gate 1, preparazione separata, riuso, foto personali esplicitamente approvate, immagini mancanti e assenza di pubblicazioni. Il CI richiama anche i test V6 e V7.
+- Lo staging V8 viene **verificato dal validatore V3/V5 originale** (importazione della funzione `episode_v3.validate`), senza modificare il vecchio codice: vengono verificati copione, cue point, asset minimi e immagini complete prima di dichiarare la cartella pronta.
 - La conversione JPG avviene soltanto in `prepare`, via Pillow già utilizzato dal renderer V5.
 - Zero chiavi API in questo workflow, `permissions: contents: read`, nessun push e nessun trigger di pubblicazione.
 
