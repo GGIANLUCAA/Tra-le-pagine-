@@ -130,3 +130,20 @@ Nuovo motore separato: `modules/artvision/atelier_v4.py` — selezione `style=at
 - A differenza di V1–V4, la V5 introduce un limite zoom in base ai pixel sorgenti, evita macro estremi su immagini sfocate e conserva accuratamente i colori. Può diminuire la spettacolarità degli zoom quando i master sono piccoli: è una scelta a favore della qualità museale.
 - Git branch `backup-artvision-v4-prima-cinema-universal-v5-2026-10-20`, precedenti motori e workflow narrati conservati.
 - FUTURI ARTISTI: costruire e verificare prima un piano soggetti e dettagli specifico; attualmente la mappa esplicita implementata per V5 è di Van Gogh. Non dichiarare altri artisti supportati automaticamente se il piano non è stato preparato.
+
+
+## 20/10/2026 — NUOVA REGIA CINEMATOGRAFICA V6 DOPO CRITICA SEVERA ALLA V5
+
+**PREFERENZA AGGIORNATA DELL'UTENTE:** V5 è considerata una regressione: slideshow con quadri piccoli su nero, foto piatte, troppo tempo per opera. I riferimenti riconsegnati sono `No-Cuesta-Saber-fdown.net.mp4` e `Enfermedad-cromtica-fdown.net.mp4`. Sono SOLO riferimenti visivi, NON riutilizzare video/audio/loghi. L'utente vuole **un unico film vendibile e internazionale senza narrazione**, con introduzione elegante sempre uguale (nome artista + piccolo MUSIC BY), musica strumentale reale, fotografia museale, materia pittorica spettacolare, ritmo variabile, immagine quasi sempre pieno schermo e regia umana studiata. Non confondere tanti effetti con qualità.
+
+**Soluzione indipendente V6**:
+- Script: `modules/artvision/director_cinema_v6.py`.
+- Guida: `modules/artvision/REGIA_CINEMA_V6.md`.
+- Fonti: `modules/artvision/export_v6_assets.py`, scaricate 26 immagini museali autentiche ad alta risoluzione + brano `Dreams Become Real` (Kevin MacLeod, CC BY 4.0, full attribution in post description).
+- Workflow separato: `.github/workflows/artvision-cinema-v6.yml`; NON toccare il workflow originale per libri/narrati o ArtVision V1–V5.
+- Prima regia V6 Van Gogh: film 150 sec, 19 dipinti selezionati, 55 inquadrature curate a mano, 5 movimenti tematici, per lo più close-up verticali full-bleed, 2.2–4 sec per shot. Niente split-screen, nero invadente, foto AI inventate, sottotitoli o effetti compulsivi. Alcuni “whole” solo come pause deliberate su sfondi cromatici ricavati dal dipinto.
+- **COLLAUDO LOCALE COMPLETO SUCCESS**: `ARTVISION_VAN_GOGH_CINEMA_V6.mp4` generato, MP4 finale ricompresso 1080×1920, H.264/AAC, durata verificata ~150s, audio normalizzato circa -17.3 dB medio, picco -1.4 dB senza clipping, ~83MB. 19 fonti CC0 documentate e manifesto dei diritti, 55 scelte e motivazioni nello storyboard; pacchetto completo creato e consegnabile.
+- Il workflow GitHub V6 è stato predisposto per repliche future, ma il primo render era locale: **non indicare una run GitHub V6 come riuscita se non testata**.
+- Branch backup precedente V5: `backup-artvision-v5-prima-regia-cinema-2026-10-20`.
+- **Non proclamare WOW universalmente riuscito**: convalidare gusto finale dell'utente prima di rendere V6 default globale; migliorare su base feedback senza cancellare le versioni.
+- **Per artisti nuovi**: creare un piano di regia dedicato con 15–25 riproduzioni valide, una vera colonna sonora differente e foci motivati (vietato riciclare le coordinate Van Gogh), poi render con lo stesso motore e licenze verificate.
