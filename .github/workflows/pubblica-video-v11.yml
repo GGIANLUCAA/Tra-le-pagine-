@@ -86,6 +86,8 @@ jobs:
             "format=duration:stream=codec_type,width,height","-of","json",
             "TRA_LE_PAGINE_VIDEO.mp4"],check=True)
           print("Video:",round(p.stat().st_size/1048576,2),"MB")
+          subprocess.run(["ffmpeg","-y","-v","error","-ss","00:00:04", "-i", "TRA_LE_PAGINE_VIDEO.mp4", "-frames:v","1","-vf","scale=540:-1","-q:v","4","VIDEO_COPERTINA.jpg"],check=True)
+          if not Path("VIDEO_COPERTINA.jpg").is_file():raise SystemExit("Copertina reale non generata")
           PY
       - name: "Release pubblica per la videoteca"
         shell: bash
@@ -103,7 +105,7 @@ jobs:
           print(str(m.get("title",os.environ["EP"]))[:110])
           PY
           )"
-          gh release create "$TAG" "TRA_LE_PAGINE_VIDEO.mp4" \
+          gh release create "$TAG" "TRA_LE_PAGINE_VIDEO.mp4" "VIDEO_COPERTINA.jpg" \
             --title "Tra le Pagine · ${TITLE}" \
             --notes "Video pubblico approvato dall'utente. Episodio: ${EP}. Run originale: ${RUN_ID}. Voce Google invariata." \
             --latest=false
