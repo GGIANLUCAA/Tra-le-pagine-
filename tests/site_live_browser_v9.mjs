@@ -54,6 +54,17 @@ async function main() {
     await page.locator("#preview-slide-count").getByText("2 / 5").waitFor();
     await page.locator("#preview-close").click();
     console.log("REAL PASS: gallery slides load real photos and controls work");
+    await page.locator("#menu-open").click();
+    await page.locator(".sidebar [data-tab='videoteca']").click();
+    await page.locator("#view-videoteca").waitFor({state:"visible"});
+    await page.locator("#videos-grid").waitFor({state:"visible"});
+    await page.screenshot({path:DEST+"/real-videoteca-v11.png",fullPage:true});
+    console.log("REAL PASS: video library V11 visible on actual public site");
+    await page.locator("#menu-open").click();
+    await page.locator(".sidebar [data-tab='nuovo']").click();
+    await page.locator("#autopilot-create").waitFor({state:"visible"});
+    await page.screenshot({path:DEST+"/real-creator-v11.png",fullPage:true});
+    console.log("REAL PASS: story-to-video beta control available on mobile");
     assert.deepEqual(errors,[],"No JavaScript runtime exceptions on live site");
     console.log("REAL PASS: no browser JavaScript runtime exceptions");
     await ctx.close();
