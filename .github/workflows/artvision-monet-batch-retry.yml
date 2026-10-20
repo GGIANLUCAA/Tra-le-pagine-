@@ -1,0 +1,41 @@
+name: "ArtVision Cinema V6 - Claude Monet, sorgenti Wikimedia verificate"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-monet-batch-retry.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  monet:
+    name: "Monet — Cinema V6"
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Software open-source, mai API a pagamento"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+          python -m py_compile modules/artvision/batch3_cinema_v6.py modules/artvision/monet_commons_sources_v6.py
+      - name: "Monet 145s — fotografie verificate, regia V6, musica unica e cover fissa"
+        run: python modules/artvision/batch3_cinema_v6.py --artist monet
+      - name: "Deposita soltanto MP4 finale, copertina e provenienza"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_V6_MONET_FINALE"
+          path: |
+            output/artvision-batch-v6/monet/film/ARTVISION_MONET_CINEMA_V6.mp4
+            output/artvision-batch-v6/monet/film/COPERTINA.jpg
+            output/artvision-batch-v6/monet/film/FONTI_E_DIRITTI.json
+            output/artvision-batch-v6/monet/film/DESCRIZIONE_E_CREDITI.txt
+            output/artvision-batch-v6/monet/film/REPORT.json
+            output/artvision-batch-v6/monet/film/STORYBOARD_V6.json
+          if-no-files-found: error
+          retention-days: 7
