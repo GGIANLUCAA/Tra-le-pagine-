@@ -31,8 +31,8 @@ class SubtitleFreeV12Tests(unittest.TestCase):
         self.assertIn('"-vf","ass="',s)
 
     def test_command_and_real_ffmpeg_no_subtitles(self):
-        if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
-            self.skipTest("ffmpeg/ffprobe unavailable in local environment")
+        self.assertTrue(shutil.which("ffmpeg"),"FFmpeg deve essere installato: test video obbligatorio")
+        self.assertTrue(shutil.which("ffprobe"),"FFprobe deve essere installato: verifica video obbligatoria")
         import sys
         sys.path.insert(0,str(ROOT/"src"))
         from render import final_video_command
