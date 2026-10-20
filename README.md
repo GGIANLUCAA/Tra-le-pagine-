@@ -139,3 +139,12 @@ Nuova **app PWA mobile** in `docs/`, senza toccare i motori V3–V8. Gestisce nu
 - [Test V9](tests/test_studio_web_v9.mjs)
 
 L'abbonamento ChatGPT Plus viene usato **attraverso ChatGPT** per creare copioni e storyboard, non come API gratuite non previste. Il sito V9 non genera automaticamente nuovi episodi o MP4 senza i workflow V3–V8; la voce Google rimane invariata.
+
+## 🎞 Episodi V10: anteprime vere e lettore MP4 privato
+Il pannello Android V9 viene ampliato con schede ricche, titoli reali, miniature tratte dalle **immagini già presenti**, storyboard con scene e lettore MP4 che apre file **solo dal telefono senza caricarli**. La produzione storica conserva Google Gemini TTS. Nessuna pubblicazione automatica di filmati sul sito pubblico.
+
+Le miniature vengono estratte dal repository con `tools/build_episode_previews_v10.py`, pubblicate da `episode-previews-v10.yml` quando i permessi del workflow lo consentono; per le cartelle senza immagini mostra esplicitamente «Nessuna scena illustrata». I video negli Artifact GitHub richiedono download per la riproduzione locale.
+
+- [Guida completa anteprime V10](ANTEPRIME_V10_GUIDA.md)
+- [Modulo galleria e video](docs/episode_gallery_v10.js)
+- [Verifiche miniature](tests/test_episode_previews_v10.py)
