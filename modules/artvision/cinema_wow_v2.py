@@ -231,7 +231,7 @@ def make_video_cinematic(artworks,artist,duration,out,size=(720,1280),fps=24):
                          "-pix_fmt","yuv420p","-c:a","aac","-b:a","160k",
                          "-shortest","-movflags","+faststart",str(final)],capture_output=True,text=True)
     if proc.returncode:raise RuntimeError(proc.stderr[-2000:])
-    subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y","-i",str(final),
+    subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y","-ss","0.95","-i",str(final),
                     "-frames:v","1",str(out/"COPERTINA.jpg")],check=True)
     probe=subprocess.run(["ffprobe","-v","error","-show_entries","format=duration,size:"
                           "stream=codec_type,width,height","-of","json",str(final)],capture_output=True,text=True,check=True)
