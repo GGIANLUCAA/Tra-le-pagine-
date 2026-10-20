@@ -148,3 +148,16 @@ Le miniature vengono estratte dal repository con `tools/build_episode_previews_v
 - [Guida completa anteprime V10](ANTEPRIME_V10_GUIDA.md)
 - [Modulo galleria e video](docs/episode_gallery_v10.js)
 - [Verifiche miniature](tests/test_episode_previews_v10.py)
+
+## 🎬 V11 — Studio più facile, videoteca e video BETA da idea
+
+La home Android adesso mette in primo piano **Crea video**, **Videoteca** ed **Episodi**; le funzioni tecniche restano disponibili nel gruppo avanzato. La videoteca legge le Release approvate con player MP4, copertina estratta dal filmato e pulsante di download. Gli MP4 non vengono pubblicati automaticamente: la pubblicazione su un sito GitHub Pages **pubblico** richiede consenso specifico attraverso `pubblica-video-v11.yml`.
+
+L'esperimento `studio-autopilot-v11.yml` può tentare video narrativi completi da una descrizione: testo Google Gemini, fotografie di Openverse/Wikimedia, vecchia voce Google e FFmpeg. Si ferma se mancano immagini/quote, senza sostituzioni finte; il filmato resta in un Artifact per controllo. Questa beta non è ancora stata collaudata end-to-end con chiamate Google reali e non accetta automaticamente cronaca/documentari.
+
+Con GitHub Pages l'avvio dei workflow resta **guidato** attraverso GitHub; con l'integrazione Cloudflare OAuth configurata diventa eseguibile dal pulsante dell'app. **Plus non è un credito API OpenAI**; nessuna API GPT a pagamento è stata introdotta.
+
+- [Guida passo-passo Android V11](STUDIO_WEB_V11_GUIDA.md)
+- [Videoteca e MP4](docs/videoteca_v11.js)
+- [Workflow pubblicazione approvata](.github/workflows/pubblica-video-v11.yml)
+- [Pipeline beta da un'idea](.github/workflows/studio-autopilot-v11.yml)
