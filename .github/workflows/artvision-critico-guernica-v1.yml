@@ -1,0 +1,78 @@
+name: "ArtVision Critico - Picasso Guernica V1 (anteprima privata)"
+run-name: "GUERNICA · critica d'arte, voce, dettagli e dissolvenze"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-critico-guernica-v1.yml"
+permissions:
+  contents: read
+concurrency:
+  group: guernica-critico-v1
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 115
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: "Checkout senza alterare Cinema V6, libri, Dali'"
+        uses: actions/checkout@v4
+      - name: "Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Strumenti video e voce"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1
+          python -m pip install --disable-pip-version-check \
+            "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5" \
+            "edge-tts>=6.1,<9" "soundfile>=0.12,<1" "google-genai>=2.25,<4" \
+            "scipy>=1.11,<2"
+          python -m py_compile modules/artvision_critico/render_guernica.py modules/artvision_critico/render_dali.py src/gemini_voice.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("modules/artvision_critico/guernica_picasso_v1.json").read_text())
+          assert len(d["beats"])==16
+          assert all(b["speech"] and len(b["focus"])==2 for b in d["beats"])
+          print("Verified script: 16 scenes, "+str(sum(len(x["speech"].split()) for x in d["beats"]))+" words")
+          PY
+      - name: "Critico d'arte con zoom, voce continua e musica in dissolvenza"
+        run: |
+          python modules/artvision_critico/render_guernica.py
+      - name: "Verifica durate, tracce, copertina, script"
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          folder=Path("output/picasso-guernica-critico-v1")
+          movie=folder/"ARTVISION_PICASSO_GUERNICA_CRITICO_V1.mp4"
+          assert movie.is_file() and movie.stat().st_size>2_000_000
+          info=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries",
+            "format=duration,size:stream=codec_type,width,height","-of","json",str(movie)]))
+          tracks={v["codec_type"] for v in info["streams"]}
+          assert tracks=={"audio","video"},tracks
+          frame=next(x for x in info["streams"] if x["codec_type"]=="video")
+          assert (frame["width"],frame["height"])==(1080,1920)
+          assert float(info["format"]["duration"])>300
+          assert (folder/"COPERTINA_GUERNICA_PICASSO.jpg").stat().st_size>100_000
+          assert len(json.loads((folder/"REGIA_E_SYNC_GUERNICA.json").read_text())["timings"])==16
+          print("GUERNICA MASTER OK",info["format"]["duration"],"s",movie.stat().st_size,"bytes")
+          PY
+      - name: "Conserva MP4 e JPG, solo artifact privato, nessuna pubblicazione"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_PICASSO_GUERNICA_CRITICO_V1
+          path: |
+            output/picasso-guernica-critico-v1/ARTVISION_PICASSO_GUERNICA_CRITICO_V1.mp4
+            output/picasso-guernica-critico-v1/COPERTINA_GUERNICA_PICASSO.jpg
+            output/picasso-guernica-critico-v1/REGIA_E_SYNC_GUERNICA.json
+            output/picasso-guernica-critico-v1/SCRIPT_CRITICO_GUERNICA.txt
+            output/picasso-guernica-critico-v1/DIRITTI_FONTI_E_CREDITI.txt
+          if-no-files-found: error
+          retention-days: 14
