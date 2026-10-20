@@ -1,0 +1,122 @@
+name: "Tra le Pagine - Delitto e castigo: crea video completo"
+run-name: "Delitto e castigo — arte, voce Google e MP4"
+on:
+  pull_request:
+    paths:
+      - "episodes/08_delitto_e_castigo/**"
+      - "src/assets_delitto_castigo.py"
+      - "tests/test_delitto_castigo.py"
+      - ".github/workflows/delitto-castigo-video.yml"
+  push:
+    branches: [main]
+    paths:
+      - "episodes/08_delitto_e_castigo/PRODUCI.json"
+permissions:
+  contents: read
+concurrency:
+  group: delitto-castigo-2026
+  cancel-in-progress: false
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      EPISODE: 08_delitto_e_castigo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa Pillow per test e immagini"
+        run: python -m pip install "pillow>=10,<13"
+      - name: "Test del copione, cue point e fotografia editoriale"
+        run: |
+          PYTHONPATH=src python -m unittest discover -s tests -p "test_delitto_castigo.py" -v
+          PYTHONPATH=src python - <<'PY'
+          import json,re
+          from pathlib import Path
+          ep=Path("episodes/08_delitto_e_castigo")
+          txt=(ep/"testo.txt").read_text()
+          scenes=json.loads((ep/"scene_cues.json").read_text())
+          phrases=[v.strip() for v in re.split(r'(?<=[.!?])\s+(?=[A-ZÀ-ÙÈÉ«“])',re.sub(r'\s+',' ',txt)) if v.strip()]
+          assert 300<=len(txt.split())<=480
+          assert len(scenes)==12
+          assert [x["asset"] for x in scenes]==list(range(1,13))
+          assert scenes[0]["start_sentence"]==0
+          assert all(0<=v["start_sentence"]<len(phrases) for v in scenes)
+          assert all(a["start_sentence"]<b["start_sentence"] for a,b in zip(scenes,scenes[1:]))
+          print("STORIA OK:",len(txt.split()),"parole,",len(phrases),"frasi,",len(scenes),"scene")
+          PY
+      - name: "Recupera opere e fotografie autentiche d'archivio (no API Google)"
+        run: |
+          PYTHONPATH=src python -u src/assets_delitto_castigo.py --episode episodes/$EPISODE
+      - name: "Controllo obbligatorio delle 12 illustrazioni premium"
+        run: |
+          python src/episode_v3.py --episode "$EPISODE"
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from regia_armonica_v5 import check_plan,read_plan
+          e=Path("episodes/08_delitto_e_castigo")
+          cues=json.loads((e/"scene_cues.json").read_text())
+          print("REGIA V5",check_plan(read_plan(e/"effetti_v4.json"),len(cues)))
+          PY
+      - name: "Conserva storyboard visuale e le immagini usate"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "DELITTO_CASTIGO_STORYBOARD_IMMAGINI"
+          path: |
+            episodes/08_delitto_e_castigo/STORYBOARD_VISIVO.jpg
+            episodes/08_delitto_e_castigo/PROVENIENZA_IMMAGINI.json
+            episodes/08_delitto_e_castigo/scene_cues.json
+            episodes/08_delitto_e_castigo/testo.txt
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "Installa la pipeline Google Gemini e FFmpeg"
+        if: github.event_name == 'push'
+        run: |
+          if [[ -z "${GEMINI_API_KEY:-}" ]]; then
+            echo "::error::Chiave Google GEMINI_API_KEY mancante fra i Secrets GitHub"
+            exit 2
+          fi
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core frei0r-plugins
+          python -m pip install "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "opencv-python-headless>=4.8,<5" "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
+      - name: "Voce originale Google e regia cinematografica V4/V5"
+        if: github.event_name == 'push'
+        run: |
+          mkdir -p output
+          python src/render.py --episode "episodes/$EPISODE" --engine gemini --out output --effects v4
+      - name: "Controllo MP4, sottotitoli e copertina"
+        if: github.event_name == 'push'
+        run: |
+          python src/episode_v3.py --episode "$EPISODE" --out output --post
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from controllo_master_v5 import inspect
+          matches=list(Path("output").glob("TRA_LE_PAGINE_EP*.mp4"))
+          if len(matches)!=1:raise SystemExit("Video finale mancante")
+          subs=Path("output/SOTTOTITOLI.srt")
+          report=inspect(matches[0],subs if subs.exists() else None)
+          (Path("output")/"CONTROLLO_MASTER_V5.json").write_text(json.dumps(report,indent=2))
+          print("VIDEO COMPLETO:",matches[0],"secondi:",report["duration_seconds"])
+          PY
+      - name: "Consegna il video MP4 e le immagini (non pubblicato sul sito)"
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: "DELITTO_E_CASTIGO_VIDEO_MP4"
+          path: |
+            output/
+            episodes/08_delitto_e_castigo/STORYBOARD_VISIVO.jpg
+            episodes/08_delitto_e_castigo/PROVENIENZA_IMMAGINI.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: "Invia il collegamento al file"
+        if: github.event_name == 'push'
+        run: |
+          echo "## Delitto e castigo — MP4 pronto" >> "$GITHUB_STEP_SUMMARY"
+          echo "Scarica l'Artifact DELITTO_E_CASTIGO_VIDEO_MP4. Il video usa voce Google originale; non è stato pubblicato automaticamente nella videoteca." >> "$GITHUB_STEP_SUMMARY"
