@@ -73,4 +73,4 @@ def export(folder):
         time.sleep(.7)
     if len(records)<12:
         raise RuntimeError("Insufficient Monet museum painting reproductions: "+str(len(records))+" / 12; "+json.dumps(failures,ensure_ascii=False)[:1000])
-    return records,{"artic":"403 blocked, Commons curated fallback":True},failures,[]
+    return records,{"artic":"HTTP 403 on museum image CDN; switched to licensed Commons originals"},failures,[]
