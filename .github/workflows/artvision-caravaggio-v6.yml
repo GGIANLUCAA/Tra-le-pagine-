@@ -1,0 +1,58 @@
+name: "ArtVision Cinema V6 — Caravaggio (film finale)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-caravaggio-v6.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  caravaggio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Sorgenti originali del progetto
+        uses: actions/checkout@v4
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Software gratuito, nessun servizio video a pagamento
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+          python -m py_compile modules/artvision/export_caravaggio_v6.py modules/artvision/director_caravaggio_v6.py
+      - name: Fotografie autentiche — controllo licenze, master high-res, nuova musica
+        run: python modules/artvision/export_caravaggio_v6.py
+      - name: Montaggio Cinema V6 — 150 secondi
+        run: python modules/artvision/director_caravaggio_v6.py
+      - name: Validazione MP4 e report
+        run: |
+          ffprobe -v error -show_entries format=duration,size:stream=codec_name,codec_type,width,height -of json output/caravaggio-cinema-film/ARTVISION_CARAVAGGIO_CINEMA_V6.mp4
+          python - <<'PY'
+          import json, subprocess, pathlib
+          p=pathlib.Path("output/caravaggio-cinema-film")
+          m=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration,size:stream=codec_type,width,height","-of","json",str(p/"ARTVISION_CARAVAGGIO_CINEMA_V6.mp4")]))
+          assert abs(float(m["format"]["duration"])-150)<2
+          assert {s["codec_type"] for s in m["streams"]}=={"video","audio"}
+          video=next(s for s in m["streams"] if s["codec_type"]=="video")
+          assert (video["width"],video["height"])==(1080,1920)
+          rights=json.loads((p/"RIGHTS_AND_SOURCES.json").read_text())
+          assert len(rights["works"])>=12
+          print("CARAVAGGIO CINEMA V6: quality report passed",len(rights["works"]),"works")
+          PY
+      - name: Consegna un solo film definitivo
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_VISION_CARAVAGGIO_CINEMA_V6
+          path: |
+            output/caravaggio-cinema-film/ARTVISION_CARAVAGGIO_CINEMA_V6.mp4
+            output/caravaggio-cinema-film/COPERTINA_CARAVAGGIO.jpg
+            output/caravaggio-cinema-film/STORYBOARD_V6.json
+            output/caravaggio-cinema-film/RIGHTS_AND_SOURCES.json
+            output/caravaggio-cinema-film/DESCRIPTION_AND_CREDITS.txt
+            output/caravaggio-cinema-film/PRODUCTION_REPORT.json
+          if-no-files-found: error
+          retention-days: 7
