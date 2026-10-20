@@ -1,3 +1,4 @@
+import {videoForEpisode} from "./videoteca_v11.js";
 /**
  * Episode Gallery V10: real (never invented) image storyboard, private local MP4 playback,
  * and official Actions links for archived videos. No token, no AI API, no video upload.
@@ -27,14 +28,18 @@ export function makeEpisodeCard(slug,index){
   const title=esc(v.title||slug.replace(/^\d+_?/,"").replace(/_/g," "));
   const author=esc(v.author||"");
   const hasPicture=v.visual_status==="real_episode_images" && safeFrames(v.frames).length>0;
+  const published=videoForEpisode(slug);
   const image=hasPicture ? '<img loading="lazy" alt="Copertina reale dell’episodio" src="'+esc(new URL(v.poster,PAGES_ROOT).href)+'">' : '';
-  const visual=hasPicture ? "Immagini reali disponibili" : "Nessuna scena illustrata";
+  const visual=published ? "▶ VIDEO MP4 PRONTO" :
+    (hasPicture ? "Immagini reali disponibili" : "Nessuna scena illustrata");
   return '<div class="episode-entry"><button class="episode-card ep-v10" data-episode="'+esc(slug)+'">' +
       '<span class="episode-cover v10-cover '+(hasPicture?"has-picture":"no-picture")+'">'+image+
       '<span class="episode-number">'+String(index+1).padStart(2,"0")+'</span></span>'+
       '<span class="episode-title">'+title+'</span><small>'+author+'</small>'+
       '<span class="episode-availability '+(hasPicture?"available":"unavailable")+'">'+
-      (hasPicture?"◉ ":"○ ")+visual+'</span></button><button class="episode-preview-btn" data-preview="'+esc(slug)+'">▶ Apri anteprima</button></div>';
+      (published?"▶ ":(hasPicture?"◉ ":"○ "))+visual+'</span></button>'+
+    (published?'<button class="episode-preview-btn" data-watch-episode="'+esc(slug)+'">▶ Guarda il video</button>':
+      '<button class="episode-preview-btn" data-preview="'+esc(slug)+'">▶ Apri anteprima</button>')+'</div>';
 }
 function stop(){
   clearInterval(state.timer);state.timer=0;
