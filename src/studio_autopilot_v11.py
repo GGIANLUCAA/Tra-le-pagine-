@@ -33,28 +33,47 @@ def split_phrases(text):
 
 def content_prompt(title,idea,kind,minutes):
     words={2:"270–340",3:"380–470",4:"500–600"}[minutes]
-    return f"""Sei autore e regista per una breve narrazione originale italiana.
-Formato {kind}. Titolo: {title}. Idea: {idea}.
-Scrivi il parlato fluido, umano, naturale, senza formule robotiche, {words} parole.
-Per ogni scena seleziona UNA frase d'inizio e descrivi un'immagine fotografica esistente,
-realisticamente ricercabile in Wikimedia/Openverse. Deve raccontare davvero quel momento:
-no clipart o immagini di luoghi inesistenti indicate come autentiche.
-Le ricerche visuali in inglese devono usare termini generici concretamente fotografabili.
-Non dichiarare immagini storiche documentate se non lo sono.
-Consegna SOLO oggetto JSON:
+    return f"""Sei sceneggiatore e regista italiano per un racconto di qualità, chiaro anche a chi non conosce l'opera.
+Formato: {kind}. Titolo: {title}. Richiesta: {idea}.
+OBIETTIVO: {words} parole narrate, tono umano, naturale ed emozionante, senza frasi robotiche.
+Regola V12: PRIVILEGIA SEMPRE LA TRAMA, NON LE OPINIONI ASTRATTE.
+Per i LIBRI rispetta le vicende e i personaggi del testo originale: non inventare avvenimenti,
+dialoghi o svolte non presenti. Spiega i personaggi con nome e ruolo prima di riferirti a loro.
+La narrazione segue obbligatoriamente la sequenza comprensibile:
+1. Dove e quando siamo e chi è il protagonista.
+2. Che cosa desidera e quale problema affronta.
+3. Quale evento concreto cambia la situazione.
+4. Quali decisioni prende e con quali conseguenze.
+5. Che cosa succede davvero verso il finale.
+6. Chiudi con UNA riflessione breve legata alla storia, non un monologo filosofico.
+Mostra fatti, motivazioni e passaggi causa-effetto; non omettere i fatti decisivi.
+Non iniziare con molti interrogativi retorici né ripetere idee sulla colpa o sul destino.
+Per ogni scena scegli un momento PRECISO del racconto: stessa persona, stesso luogo,
+stessa azione e atmosfera della frase narrata. NO immagini decorative generiche, disegni
+brutti, loghi, poster, immagini non pertinenti, né stock casuale. Preferisci illustrazioni
+storiche direttamente sull'opera, se disponibili, o asset d'archivio inequivocabilmente
+rilevanti. Se non sono reperibili, la produzione dovrà fermarsi prima della voce.
+Nessuna scritta sul video: no sottotitoli, no caption, no didascalie.
+Le ricerche immagini in inglese devono indicare soggetto e azione osservabili.
+Non spacciare fotografie per riprese autentiche di fatti letterari immaginari.
+Consegna SOLO questo JSON:
 {{
- "title":"Titolo italiano",
+ "title":"Titolo italiano fedele all'opera",
  "author":"Tra le Pagine",
- "narration":"Il racconto completo di 2-4 minuti, con almeno 18 frasi chiare.",
+ "narration":"Testo integrale narrato, con almeno 18 frasi ben separate.",
  "scenes":[
-   {{"start_sentence":0,"description":"Descrizione italiana scena precisa","search":"english visual keyword 2-5 words"}},
-   {{"start_sentence":3,"description":"...","search":"..."}}
+   {{"start_sentence":0,
+     "narration_anchor":"COPIA ESATTA della frase iniziale della scena dalla narration",
+     "description":"Chi o che cosa si deve vedere in questa scena, in modo concreto",
+     "search":"specific English image search including correct subject, setting, action"}},
+   {{"start_sentence":3,"narration_anchor":"frase ESATTA copiata dal copione al relativo indice",
+     "description":"seconda inquadratura realmente coerente","search":"precise image subject and action"}}
  ]
 }}
-Vincoli: 8-12 scene con indici start_sentence interi crescenti e primo zero.
-Niente discorsi sui tuoi limiti o titoli nel campo narration.
-Non includere persone pubbliche immaginarie come testimonianze vere.
-La storia deve usare una struttura chiara, un finale convincente, tono coinvolgente.
+8-12 scene, indici di frase strettamente crescenti, prima scena start_sentence=0.
+Per ogni scena narration_anchor deve coincidere LETTERALMENTE con la frase all'indice start_sentence
+della narration, senza abbreviare o parafrasare.
+Mai introdurre persone o eventi inventati come fatti veri.
 """
 
 
@@ -80,6 +99,8 @@ def validate_story(data):
         for key in ("description","search"):
             if not isinstance(s.get(key),str) or not 3<=len(s[key])<=150:
                 raise ValueError(f"Scena {i+1}: mancano immagini ricercabili.")
+        if not isinstance(s.get("narration_anchor"),str) or s["narration_anchor"] != phrases[starts[i]]:
+            raise ValueError(f"Scena {i+1}: la didascalia di regia non coincide con la frase narrata.")
     return {"words":words,"sentences":len(phrases),"scenes":len(scenes)}
 
 
@@ -176,6 +197,8 @@ def create_episode(repo,slug,title,idea,kind,minutes,model,key):
     cues=[]
     for n,scene in enumerate(story["scenes"],1):
         cues.append({"asset":n,"start_sentence":scene["start_sentence"],
+                    "narration_anchor":scene["narration_anchor"],
+                    "visual_search":scene["search"],
                     "description":scene["description"]})
     (ep/"scene_cues.json").write_text(json.dumps(cues,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     provenance=[]
@@ -190,6 +213,9 @@ def create_episode(repo,slug,title,idea,kind,minutes,model,key):
         (ep/"COPIONE_E_STORYBOARD.json").write_text(
             json.dumps(story,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     # Original validator ensures no credits consumed for voice if images unavailable.
+    # Produce a per-shot exact quote + artwork review before spending voice credits.
+    from regia_narrativa_v12 import write_review
+    write_review(ep)
     import episode_v3
     episode_v3.ROOT=repo/"episodes"
     validate(slug)
