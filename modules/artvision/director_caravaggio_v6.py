@@ -110,22 +110,13 @@ def compose_full_story(base):
     return result
 SHOTS=compose_full_story(SHOTS)
 
+# Dal prossimo rendering si utilizza il MODELLO GRAFICO UNICO della serie.
+# La versione del video Caravaggio già approvata non viene modificata;
+# il codice originale è conservato nel branch di backup dedicato.
+from identita_visiva_v6 import signature as artvision_signature
+
 def label_caravaggio(img,t):
-    if t>=3.5:return img
-    alpha=min(1.,max(0.,(3.5-t)/.55))
-    base=Image.fromarray(cv2.cvtColor(img,cv2.COLOR_BGR2RGB)).convert("RGBA")
-    over=Image.new("RGBA",(cinema.W,cinema.H),(0,0,0,0))
-    d=ImageDraw.Draw(over)
-    d.rounded_rectangle((58,cinema.H-575,cinema.W-58,cinema.H-328),radius=11,fill=(8,10,15,int(188*alpha)))
-    ft=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf",72)
-    sm=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",21)
-    name="CARAVAGGIO";label="MUSIC BY KEVIN MACLEOD"
-    width=d.textbbox((0,0),name,font=ft)[2]
-    d.text(((cinema.W-width)/2,cinema.H-532),name,font=ft,fill=(254,250,243,int(255*alpha)))
-    d.line((130,cinema.H-424,cinema.W-130,cinema.H-424),fill=(211,194,169,int(190*alpha)),width=2)
-    width=d.textbbox((0,0),label,font=sm)[2]
-    d.text(((cinema.W-width)/2,cinema.H-402),label,font=sm,fill=(220,212,199,int(243*alpha)))
-    return cv2.cvtColor(np.asarray(Image.alpha_composite(base,over).convert("RGB")),cv2.COLOR_RGB2BGR)
+    return artvision_signature(img, t, "Caravaggio", "Kevin MacLeod")
 
 def main():
     root=Path("output/caravaggio-cinema-sources")
