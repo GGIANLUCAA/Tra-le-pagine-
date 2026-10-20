@@ -1,5 +1,5 @@
-name: "ArtVision - Cinema WOW V2 (V1 preservata)"
-run-name: "ARTVISION V2 - ${{ inputs.artist || 'richiesta automatica' }}"
+name: "ArtVision - regia armonica V3 (V1/V2 conservate)"
+run-name: "ARTVISION V3 - ${{ inputs.artist || 'richiesta automatica' }}"
 on:
   workflow_dispatch:
     inputs:
@@ -7,8 +7,9 @@ on:
         description: "Regia: Cinema WOW o vecchio motore museo"
         type: choice
         required: true
-        default: cinematic_wow
+        default: harmonic_reveal
         options:
+          - harmonic_reveal
           - cinematic_wow
           - museum_legacy
       artist:
@@ -57,7 +58,7 @@ jobs:
       VIDEO_DURATION: ${{ github.event.inputs.duration || '150' }}
       MAX_WORKS: ${{ github.event.inputs.max_works || '16' }}
       PYTHONUNBUFFERED: "1"
-      ARTVISION_STYLE: ${{ github.event.inputs.style || 'cinematic_wow' }}
+      ARTVISION_STYLE: ${{ github.event.inputs.style || 'harmonic_reveal' }}
     steps:
       - name: "Scarica progetto (sistema originale intatto)"
         uses: actions/checkout@v4
@@ -81,8 +82,8 @@ jobs:
           assert 2 <= len(artist) <= 100 and "\n" not in artist and "\r" not in artist, "Nome artista non valido"
           duration = int(request.get("duration", 150))
           works = int(request.get("max_works", 16))
-          style = str(request.get("style", "cinematic_wow"))
-          assert style in ("cinematic_wow", "museum_legacy"), "Regia sconosciuta"
+          style = str(request.get("style", "harmonic_reveal"))
+          assert style in ("harmonic_reveal", "cinematic_wow", "museum_legacy"), "Regia sconosciuta"
           assert 120 <= duration <= 180 and 6 <= works <= 24, "Durata o numero opere non valido"
           with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
               env.write(f"ARTIST={artist}\n")
@@ -100,7 +101,7 @@ jobs:
       - name: "Controlli preventivi, nessuna API a pagamento"
         shell: bash
         run: |
-          python -m py_compile modules/artvision/artvision.py modules/artvision/cinema_wow_v2.py modules/artvision/artvision_cinema_run.py
+          python -m py_compile modules/artvision/artvision.py modules/artvision/cinema_wow_v2.py modules/artvision/artvision_cinema_run.py modules/artvision/harmonic_reveal_v3.py
           ffmpeg -version | sed -n '1p'
           ffprobe -version | sed -n '1p'
           python - <<'PY'
@@ -118,7 +119,13 @@ jobs:
       - name: "Genera MP4, musica originale e manifest fonti (regia selezionata)"
         shell: bash
         run: |
-          if [[ "$ARTVISION_STYLE" == "cinematic_wow" ]]; then
+          if [[ "$ARTVISION_STYLE" == "harmonic_reveal" ]]; then
+            python modules/artvision/harmonic_reveal_v3.py \
+              --artist "$ARTIST" \
+              --duration "$VIDEO_DURATION" \
+              --max-works "$MAX_WORKS" \
+              --out output/artvision
+          elif [[ "$ARTVISION_STYLE" == "cinematic_wow" ]]; then
             python modules/artvision/artvision_cinema_run.py \
               --artist "$ARTIST" \
               --duration "$VIDEO_DURATION" \
@@ -146,5 +153,6 @@ jobs:
             output/artvision/MONTAGGIO.json
             output/artvision/REPORT_PRODUZIONE.json
             output/artvision/STORYBOARD_REGIA.json
+            output/artvision/MUSICA_LICENZA_E_CREDITI.json
           if-no-files-found: error
           retention-days: 7
