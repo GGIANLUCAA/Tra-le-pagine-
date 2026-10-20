@@ -51,5 +51,25 @@
     "Never change V6 baseline; create new versions and preserve rollbacks"
   ],
   "followup_workflow": "For new artist: source original artworks + map artist-specific subjects + select licensed track + write V6-style bespoke storyboard + render and QC. Never substitute artist name alone into hardcoded Van Gogh STORY. The V6 workflow exists but its end-to-end GitHub Action success should be verified before claiming.",
-  "release_media_storage": "Reference video and original museum photos are backed up separately from GitHub; do not imply Git branches contain media."
+  "release_media_storage": "Reference video and original museum photos are backed up separately from GitHub; do not imply Git branches contain media.",
+  "fixed_visual_identity": {
+    "policy": "REQUIRED_FOR_EVERY_FUTURE_ARTIST_FILM",
+    "module": "modules/artvision/identita_visiva_v6.py",
+    "spec": "modules/artvision/IDENTITA_VISIVA_FISSA_V6.json",
+    "only_changes": [
+      "artist_name",
+      "composer_name",
+      "artwork_background"
+    ],
+    "stable_assets": [
+      "main_font",
+      "small_font",
+      "box",
+      "golden_rule",
+      "positions",
+      "color",
+      "fade"
+    ],
+    "existing_media_unchanged": true
+  }
 }
