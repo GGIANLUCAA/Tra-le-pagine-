@@ -1,0 +1,93 @@
+name: "Tra le Pagine - Archivio media V7 (ricerca e riuso)"
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Cerca anteprime o importa materiale scelto"
+        type: choice
+        required: true
+        default: discover
+        options: [discover, import]
+      provider:
+        description: "Openverse senza chiavi o Pexels con API Key"
+        type: choice
+        required: true
+        default: openverse
+        options: [openverse, pexels]
+      kind:
+        description: "Immagini o filmati (video solo Pexels)"
+        type: choice
+        required: true
+        default: image
+        options: [image, video]
+      query:
+        description: "Ricerca, meglio descrittiva (es. river in India)"
+        required: true
+        type: string
+        default: "river India"
+      asset_id:
+        description: "SOLO per import: ID dalla galleria, niente URL"
+        required: false
+        type: string
+        default: ""
+  pull_request:
+    paths:
+      - "src/archivio_media_v7.py"
+      - "tests/test_archivio_media_v7.py"
+      - ".github/workflows/archivio-media-v7.yml"
+permissions:
+  contents: read
+concurrency:
+  group: archivio-v7-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      MODE: ${{ inputs.mode || 'discover' }}
+      PROVIDER: ${{ inputs.provider || 'openverse' }}
+      KIND: ${{ inputs.kind || 'image' }}
+      QUERY: ${{ inputs.query || 'river India' }}
+      ASSET_ID: ${{ inputs.asset_id || '' }}
+      PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Test sicurezza prima della rete"
+        run: python -m unittest discover -s tests -p "test_archivio_media_v7.py" -v
+      - name: "Prova connessione Openverse (solo ricerca, non scarica nulla)"
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: python src/archivio_media_v7.py --provider openverse --kind image --mode discover --query river --limit 3 --out output/v7_smoke
+      - name: "Controlli dei parametri"
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          if [[ "$MODE" == "import" && -z "$ASSET_ID" ]]; then
+            echo "::error::Per importare devi prima cercare e fornire ID"
+            exit 2
+          fi
+          if [[ "$PROVIDER" == "openverse" && "$KIND" == "video" ]]; then
+            echo "::error::Per i video usa Pexels con la tua API key"
+            exit 2
+          fi
+      - name: "Ricerca o import su server, non sul telefono"
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          if [[ "$MODE" == "discover" ]]; then
+            python src/archivio_media_v7.py --provider "$PROVIDER" --kind "$KIND" --mode discover --query "$QUERY" --limit 8
+          else
+            python src/archivio_media_v7.py --provider "$PROVIDER" --kind "$KIND" --mode import --id "$ASSET_ID"
+          fi
+      - name: "Pacchetto di risultati da controllare"
+        if: github.event_name == 'workflow_dispatch' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARCHIVIO_MEDIA_V7_${{ inputs.mode }}"
+          path: output/archivio_media_v7/
+          if-no-files-found: error
+          retention-days: 14
