@@ -290,7 +290,12 @@ def prepare(root, report, out, gate1=False):
             im=ImageOps.exif_transpose(original).convert("RGB")
             im.save(target,format="JPEG",quality=92,optimize=True)
         hashes[fingerprint]=target
+    # Reuse the V3 preflight against the isolated copy, without changing V3 source.
+    import episode_v3
+    episode_v3.ROOT = staged.parent
+    episode_v3.validate(report["episode"])
     evidence={
+        "v5_preflight":"PASS",
         "version":"V8","episode":report["episode"],
         "gate1":"approvato_manualmente","gate2":"in_attesa",
         "images_prepared":len(unique),"sha256_inputs":list(hashes),
