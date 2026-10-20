@@ -1,0 +1,75 @@
+name: "Tra le Pagine - Autopilot V11 beta"
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Titolo nuovo video (pubblico nei log)"
+        type: string
+        required: true
+      idea:
+        description: "Idea della storia: non inserire dati privati"
+        type: string
+        required: true
+      formato:
+        description: "Formato narrativo"
+        type: choice
+        options: [libri, fiabe, social]
+        default: libri
+      durata:
+        description: "Durata in minuti"
+        type: choice
+        options: ["2","3","4"]
+        default: "3"
+      conferma_costi:
+        description: "Autorizzo chiamate Google per testo e voce"
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  build:
+    if: ${{ inputs.conferma_costi == true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      VIDEO_TITLE: ${{ inputs.title }}
+      VIDEO_IDEA: ${{ inputs.idea }}
+      VIDEO_FORMAT: ${{ inputs.formato }}
+      VIDEO_DURATION: ${{ inputs.durata }}
+      VIDEO_SLUG: auto_${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa librerie gia' utilizzate nel progetto"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core frei0r-plugins
+          python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12" "scipy>=1.11" "opencv-python-headless>=4.8,<5" "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
+      - name: "Storia e immagini da archivio"
+        shell: bash
+        run: |
+          PYTHONPATH=src python src/studio_autopilot_v11.py --title "$VIDEO_TITLE" --idea "$VIDEO_IDEA" --format "$VIDEO_FORMAT" --minutes "$VIDEO_DURATION" --slug "$VIDEO_SLUG"
+      - name: "Conserva lo storyboard anche se manca qualche foto"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "STORIA_V11"
+          path: episodes/auto_*/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "Render storico voce Google"
+        shell: bash
+        run: |
+          mkdir -p output
+          python src/render.py --episode "episodes/$VIDEO_SLUG" --engine gemini --out output --effects off
+          python src/episode_v3.py --episode "$VIDEO_SLUG" --out output --post
+      - name: "Consegna MP4 senza pubblicazione automatica"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "VIDEO_V11_DA_APPROVARE"
+          path: output/
+          if-no-files-found: error
+          retention-days: 14
