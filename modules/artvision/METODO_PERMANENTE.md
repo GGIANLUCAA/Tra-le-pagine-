@@ -67,3 +67,15 @@ Per un episodio nuovo, conservare V1 e testare V2 su un provino di 20–30 secon
 - La nuova regia ha superato il collaudo **tecnico**, non equivale all'approvazione estetica dell'utente. Chiedere feedback sul video anziché affermare automaticamente che l'effetto wow è perfetto.
 
 Per le prossime produzioni: `cinematic_wow` è il default, `museum_legacy` resta selezionabile esplicitamente. Non alterare la generazione dei libri narrati.
+
+
+## Aggiornamento definitivo — REGIA ARMONICA V3 (20 ottobre 2026)
+
+L'utente ha valutato V2 migliorata ma **ancora troppo movimentata**. Non usare mai effetti split-screen, doppio quadro diviso, pan casuale, zoom rapido e continuo o musica generativa improvvisata come impostazione ArtVision. Il secondo video campione (`No-Cuesta-Saber-fdown.net.mp4`) privilegia tempi di contemplazione: leggere il dipinto prima dei tagli.
+
+**Nuovo preset raccomandato e workflow predefinito:** `style=harmonic_reveal` in `.github/workflows/artvision-render.yml`; codice `modules/artvision/harmonic_reveal_v3.py`. Ogni quadro deve prevedere un dettaglio significativo *scelto intenzionalmente* e motivato da una mappa per artista, seguito da zoom-out dolcemente rallentato e visione del quadro intero. Impostazioni precedenti `cinematic_wow` e `museum_legacy` restano recuperabili.
+
+**Musica reale:** `Calmant` (Kevin MacLeod, pianoforte, CC BY 4.0, attribution obbligatoria). Sorgente e licenza verificabili: https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100859 e https://creativecommons.org/licenses/by/4.0/ . V3 deve fallire quando non è disponibile una registrazione autorizzata: niente sintetizzatore fallback. La musica è soggetta a copyright, ma concessa in licenza gratuita con attribuzione.
+
+**Guida prioritaria da leggere per ogni nuovo video:** [REGIA_ARMONICA_V3.md](REGIA_ARMONICA_V3.md). La sua mappa di dettagli è curata *per Van Gogh*, non per altri pittori. Per ogni nuovo artista aggiungere focali motivate e verificare opere e musica PRIMA di avviare la produzione; non copiare coordinate casuali. La pubblicazione resta sempre separata dalla produzione.
+**Backup V2:** `backup-artvision-v2-prima-regia-armonica-v3-2026-10-20`.
