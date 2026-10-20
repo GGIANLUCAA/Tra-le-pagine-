@@ -36,7 +36,7 @@ export function makeEpisodeCard(slug,index){
       '<span class="episode-cover v10-cover '+(hasPicture?"has-picture":"no-picture")+'">'+image+
       '<span class="episode-number">'+String(index+1).padStart(2,"0")+'</span></span>'+
       '<span class="episode-title">'+title+'</span><small>'+author+'</small>'+
-      '<span class="episode-availability '+(hasPicture?"available":"unavailable")+'">'+
+      '<span class="episode-availability '+((hasPicture||published)?"available":"unavailable")+'">'+
       (published?"▶ ":(hasPicture?"◉ ":"○ "))+visual+'</span></button>'+
     (published?'<button class="episode-preview-btn" data-watch-episode="'+esc(slug)+'">▶ Guarda il video</button>':
       '<button class="episode-preview-btn" data-preview="'+esc(slug)+'">▶ Apri anteprima</button>')+'</div>';
