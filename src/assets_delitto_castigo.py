@@ -135,7 +135,7 @@ def commons_download(item):
 # category Crime and Punishment. Avoid unrelated search results and future models.
 CURATED={
   1:"Karazin3.jpg",
-  2:"Dostojevski Misdaad en straf 02.jpg",
+  2:"Raskolnikov by Boklevsky.jpg",
   3:"Karazin1.jpg",
   4:"Karazin2.jpg",
   5:"Protsentshitsa.jpg",
