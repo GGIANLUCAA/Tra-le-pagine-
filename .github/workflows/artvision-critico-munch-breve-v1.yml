@@ -1,0 +1,76 @@
+name: "ArtVision Critico - Munch L'Urlo breve V1"
+run-name: "MUNCH · Chi sta urlando davvero? · Critico breve"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-critico-munch-breve-v1.yml"
+permissions:
+  contents: read
+concurrency:
+  group: munch-critico-breve-v1
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: "Conserva vecchi motori: checkout non distruttivo"
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa strumenti open e verifica storia"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1
+          python -m pip install --disable-pip-version-check \
+            "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5" \
+            "edge-tts>=6.1,<9" "soundfile>=0.12,<1" "google-genai>=2.25,<4" \
+            "scipy>=1.11,<2"
+          python -m py_compile modules/artvision_critico/render_munch_breve.py modules/artvision_critico/render_dali.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.loads(Path("modules/artvision_critico/munch_urlo_breve_v1.json").read_text(encoding="utf8"))
+          words=sum(len(b["speech"].split()) for b in c["beats"])
+          assert len(c["beats"])==9 and words<700,(len(c["beats"]),words)
+          print("SHORT EPISODE OK:",words,"words,",len(c["beats"]),"scenes")
+          PY
+      - name: "Regia cinematografica - un'unica voce, zoom precisi, musica"
+        run: |
+          python modules/artvision_critico/render_munch_breve.py
+      - name: "Convalida VIDEO VERO, audio, immagini e durata"
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,subprocess
+          out=Path("output/munch-urlo-breve-v1")
+          mp4=out/"ARTVISION_MUNCH_L_URLO_CRITICO_BREVE_V1.mp4"
+          assert mp4.is_file() and mp4.stat().st_size>10_000_000
+          x=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries",
+             "format=duration,size:stream=codec_type,width,height","-of","json",str(mp4)]))
+          assert {y["codec_type"] for y in x["streams"]}=={"video","audio"}
+          screen=next(y for y in x["streams"] if y["codec_type"]=="video")
+          assert (screen["width"],screen["height"])==(1080,1920)
+          assert 120<float(x["format"]["duration"])<390
+          assert (out/"COPERTINA_MUNCH_URLO.jpg").stat().st_size>90000
+          assert len(json.loads((out/"REGIA_E_SYNC.json").read_text())["scenes"])==9
+          print("MUNCH VERIFIED",round(float(x["format"]["duration"]),1),"sec",round(mp4.stat().st_size/1e6,1),"MB")
+          PY
+      - name: "Archivia MP4 + copertina + copione + fonti, senza pubblicare"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_MUNCH_L_URLO_BREVE_V1
+          path: |
+            output/munch-urlo-breve-v1/ARTVISION_MUNCH_L_URLO_CRITICO_BREVE_V1.mp4
+            output/munch-urlo-breve-v1/COPERTINA_MUNCH_URLO.jpg
+            output/munch-urlo-breve-v1/REGIA_E_SYNC.json
+            output/munch-urlo-breve-v1/COPIONE.txt
+            output/munch-urlo-breve-v1/FONTI_DIRITTI_MUSICA.txt
+          if-no-files-found: error
+          retention-days: 14
