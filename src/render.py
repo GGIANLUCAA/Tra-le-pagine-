@@ -222,7 +222,11 @@ def main():
         run("ffmpeg","-hide_banner","-loglevel","error","-y",
             "-i",out/"VOCE.wav","-codec:a","libmp3lame","-b:a","160k",
             out/"VOCE_NATURALE.mp3")
-    subtitles(timed,out);music(out/"MUSICA_ORIGINALE.wav",duration)
+    # Tra le Pagine V12: per richiesta editoriale, nessun sottotitolo in video
+    # e nessun SRT/ASS generato. Elimina eventuali tracce di render precedenti.
+    for old_caption in ("SOTTOTITOLI.srt", "captions.ass"):
+        (out/old_caption).unlink(missing_ok=True)
+    music(out/"MUSICA_ORIGINALE.wav",duration)
     with tempfile.TemporaryDirectory() as tmpname:
         tmp=Path(tmpname)
         # Facoltativo: un solo ZIP con scena_01.jpg ... scena_12.jpg,
@@ -300,7 +304,7 @@ def main():
         run("ffmpeg","-hide_banner","-loglevel","error","-y",
             "-i",montage,"-i",out/"VOCE.wav","-i",out/"MUSICA_ORIGINALE.wav",
             "-filter_complex","[1:a]volume=1.0[v];[2:a]volume=.40[m];[v][m]amix=inputs=2:duration=first:normalize=0[a]",
-            "-vf","ass="+str(out/"captions.ass"),"-map","0:v:0","-map","[a]",
+            "-map","0:v:0","-map","[a]","-sn",
             "-c:v","libx264","-preset","veryfast","-crf","23","-pix_fmt","yuv420p",
             "-c:a","aac","-b:a","160k","-shortest","-movflags","+faststart",out/"TRA_LE_PAGINE_EP01.mp4")
     shutil.copy2(ep/"DESCRIZIONE_SOCIAL.txt",out/"DESCRIZIONE_SOCIAL.txt")
@@ -310,7 +314,7 @@ def main():
         + "Voce: "+a.engine+"\n"
         + ("ATTENZIONE: Edge Read Aloud non ha una licenza commerciale esplicitamente confermata.\n"
            if a.engine=="edge" else "")
-        + "Rivedere audio, sottotitoli e diritti prima di pubblicare.\n",
+        + "Rivedere audio, scene e diritti prima di pubblicare. Sottotitoli: DISATTIVATI.\n",
         encoding="utf-8")
     print("VIDEO COMPLETO:",out/"TRA_LE_PAGINE_EP01.mp4",flush=True)
 if __name__=="__main__":main()
