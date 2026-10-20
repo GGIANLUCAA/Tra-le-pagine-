@@ -69,14 +69,14 @@ jobs:
           assert request.get("approved_for_render") is True, "Richiesta non autorizzata: non genero MP4"
           assert request.get("publish") is False, "ArtVision non pubblica automaticamente"
           artist = str(request.get("artist", "")).strip()
-          assert 2 <= len(artist) <= 100 and "\\n" not in artist and "\\r" not in artist, "Nome artista non valido"
+          assert 2 <= len(artist) <= 100 and "\n" not in artist and "\r" not in artist, "Nome artista non valido"
           duration = int(request.get("duration", 150))
           works = int(request.get("max_works", 16))
           assert 120 <= duration <= 180 and 6 <= works <= 24, "Durata o numero opere non valido"
           with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
-              env.write(f"ARTIST={artist}\\n")
-              env.write(f"VIDEO_DURATION={duration}\\n")
-              env.write(f"MAX_WORKS={works}\\n")
+              env.write(f"ARTIST={artist}\n")
+              env.write(f"VIDEO_DURATION={duration}\n")
+              env.write(f"MAX_WORKS={works}\n")
           print("Richiesta verificata:", request.get("request_id"), artist, duration, works)
           PY
 
