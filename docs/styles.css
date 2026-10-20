@@ -52,3 +52,38 @@
 .scene-line span{font:600 11px system-ui;color:var(--gold)}
 .scene-line p{font-size:12px;margin:0}
 @media(max-width:760px){.episode-entry .v10-cover{height:160px}.episode-title{font-size:15px;min-height:56px}.episode-preview-dialog{padding:15px;max-height:96dvh}.preview-top h2{font-size:23px}.preview-cta>.btn{width:100%}.preview-stage{min-height:310px}}
+
+
+/* V11: video-first, simple user journeys, advanced controls remain available. */
+.hero-buttons{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.nav-count{margin-left:auto;display:inline-grid;place-items:center;background:#d7b47d22;color:#e6ce9b;border:1px solid #b99f784a;border-radius:15px;min-width:23px;height:23px;font-size:11px;padding:0 5px}
+.simple-stepper{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 30px}
+.simple-stepper span{border:1px solid #365964;background:#133442;color:#dfc294;padding:10px 14px;border-radius:25px;font-size:12px;font-weight:600}
+.videos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(285px,100%),1fr));gap:18px}
+.video-tile{border:1px solid #365361;border-radius:18px;overflow:hidden;background:#132d39}
+.video-tile-art{height:200px;background:radial-gradient(circle at 68% 28%,#987448 0%,transparent 34%),linear-gradient(145deg,#234d5d,#122833);display:grid;place-items:center}
+.video-tile-art span{display:grid;place-items:center;border:1px solid #e8cf9e;background:#d8b47d;color:#1c3138;border-radius:100%;width:60px;height:60px;font-size:23px}
+.video-tile-info{padding:18px}
+.video-tile-label{font-size:10px;color:var(--gold);letter-spacing:.1em}
+.video-tile-info h3{font:500 22px Georgia,serif;margin:10px 0}
+.video-tile-info p{font-size:12px}
+.video-tile-actions,.video-modal-actions{display:flex;flex-wrap:wrap;gap:10px}
+.video-empty{display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;padding:55px 25px;min-height:300px}
+.video-empty>span{font-size:40px;color:#dfbb86;margin-bottom:8px}
+.video-empty strong{font:22px Georgia,serif;max-width:450px}
+.video-empty p{max-width:470px}
+.video-private-warning,.guide-card,.next-step{margin-top:18px;border:1px solid #445c63;padding:20px;border-radius:14px;background:#193540}
+.video-private-warning strong,.guide-card strong,.next-step strong{font:500 19px Georgia,serif;color:#eacb9e}
+.video-private-warning p,.guide-card p,.next-step p{font-size:12px;margin:9px 0}
+.public-video-dialog{padding:18px;width:min(850px,calc(100vw - 18px));max-width:850px;max-height:95vh;overflow:auto}
+.public-video-dialog video{display:block;width:100%;max-height:66vh;background:#000;border-radius:12px;margin-top:15px}
+.public-video-dialog h2{margin:2px 0;font-size:22px}
+.video-modal-actions{margin-top:15px}
+@media(max-width:760px){
+ .hero-buttons{flex-direction:column;align-items:stretch}
+ .hero-buttons .btn{width:100%}
+ .simple-stepper{gap:5px}
+ .simple-stepper span{font-size:10px;padding:8px 11px}
+ .video-tile-art{height:185px}
+ .video-modal-actions .btn{flex:1}
+}
