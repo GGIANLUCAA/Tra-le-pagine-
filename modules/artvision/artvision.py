@@ -77,7 +77,7 @@ def discover_cleveland(artist):
     for r in payload.get("data", []):
         if r.get("share_license_status") != "CC0":
             continue
-        authors = ", ".join(a.get("name", "") for a in r.get("creators", []) if isinstance(a, dict))
+        authors = ", ".join((a.get("name") or a.get("description") or "") for a in r.get("creators", []) if isinstance(a, dict))
         if not authors:
             authors = ", ".join(a.get("name", "") for a in r.get("artists", []) if isinstance(a, dict))
         if not artist_match(authors, artist):
