@@ -1,5 +1,5 @@
-name: "ArtVision - regia armonica V3 (V1/V2 conservate)"
-run-name: "ARTVISION V3 - ${{ inputs.artist || 'richiesta automatica' }}"
+name: "ArtVision - Atelier V4 (V1/V2/V3 conservate)"
+run-name: "ARTVISION V4 - ${{ inputs.artist || 'richiesta automatica' }}"
 on:
   workflow_dispatch:
     inputs:
@@ -7,8 +7,9 @@ on:
         description: "Regia: Cinema WOW o vecchio motore museo"
         type: choice
         required: true
-        default: harmonic_reveal
+        default: atelier_v4
         options:
+          - atelier_v4
           - harmonic_reveal
           - cinematic_wow
           - museum_legacy
@@ -26,6 +27,14 @@ on:
           - "120"
           - "150"
           - "180"
+      music:
+        description: "Musica registrata con licenza CC BY 4.0; per Atelier V4"
+        type: choice
+        required: true
+        default: evening_fall_piano
+        options:
+          - evening_fall_piano
+          - calmant
       max_works:
         description: "Numero massimo di opere distinte"
         required: true
@@ -57,7 +66,8 @@ jobs:
       VIDEO_DURATION: ${{ github.event.inputs.duration || '150' }}
       MAX_WORKS: ${{ github.event.inputs.max_works || '16' }}
       PYTHONUNBUFFERED: "1"
-      ARTVISION_STYLE: ${{ github.event.inputs.style || 'harmonic_reveal' }}
+      ARTVISION_STYLE: ${{ github.event.inputs.style || 'atelier_v4' }}
+      ARTVISION_MUSIC: ${{ github.event.inputs.music || 'evening_fall_piano' }}
     steps:
       - name: "Scarica progetto (sistema originale intatto)"
         uses: actions/checkout@v4
@@ -81,14 +91,17 @@ jobs:
           assert 2 <= len(artist) <= 100 and "\n" not in artist and "\r" not in artist, "Nome artista non valido"
           duration = int(request.get("duration", 150))
           works = int(request.get("max_works", 16))
-          style = str(request.get("style", "harmonic_reveal"))
-          assert style in ("harmonic_reveal", "cinematic_wow", "museum_legacy"), "Regia sconosciuta"
+          style = str(request.get("style", "atelier_v4"))
+          assert style in ("atelier_v4", "harmonic_reveal", "cinematic_wow", "museum_legacy"), "Regia sconosciuta"
+          music = str(request.get("music", "evening_fall_piano"))
+          assert music in ("evening_fall_piano", "calmant"), "Brano non autorizzato"
           assert 120 <= duration <= 180 and 6 <= works <= 24, "Durata o numero opere non valido"
           with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
               env.write(f"ARTIST={artist}\n")
               env.write(f"VIDEO_DURATION={duration}\n")
               env.write(f"MAX_WORKS={works}\n")
               env.write(f"ARTVISION_STYLE={style}\n")
+              env.write(f"ARTVISION_MUSIC={music}\n")
           print("Richiesta verificata:", request.get("request_id"), artist, duration, works)
           PY
 
@@ -100,7 +113,7 @@ jobs:
       - name: "Controlli preventivi, nessuna API a pagamento"
         shell: bash
         run: |
-          python -m py_compile modules/artvision/artvision.py modules/artvision/cinema_wow_v2.py modules/artvision/artvision_cinema_run.py modules/artvision/harmonic_reveal_v3.py
+          python -m py_compile modules/artvision/artvision.py modules/artvision/cinema_wow_v2.py modules/artvision/artvision_cinema_run.py modules/artvision/harmonic_reveal_v3.py modules/artvision/atelier_v4.py
           ffmpeg -version | sed -n '1p'
           ffprobe -version | sed -n '1p'
           python - <<'PY'
@@ -118,7 +131,14 @@ jobs:
       - name: "Genera MP4, musica originale e manifest fonti (regia selezionata)"
         shell: bash
         run: |
-          if [[ "$ARTVISION_STYLE" == "harmonic_reveal" ]]; then
+          if [[ "$ARTVISION_STYLE" == "atelier_v4" ]]; then
+            python modules/artvision/atelier_v4.py \
+              --artist "$ARTIST" \
+              --duration "$VIDEO_DURATION" \
+              --max-works "$MAX_WORKS" \
+              --music "$ARTVISION_MUSIC" \
+              --out output/artvision
+          elif [[ "$ARTVISION_STYLE" == "harmonic_reveal" ]]; then
             python modules/artvision/harmonic_reveal_v3.py \
               --artist "$ARTIST" \
               --duration "$VIDEO_DURATION" \
