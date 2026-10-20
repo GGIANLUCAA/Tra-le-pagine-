@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "approved_at": "2026-10-20",
+  "approval": "L'utente considera ArtVision Cinema V6 il migliore dei video artistici realizzati finora. Usare questa metodologia come base per nuove produzioni; versioni future solo additive.",
+  "status": "GOLD_MASTER_APPROVED",
+  "approved_style": "cinema_v6",
+  "legacy_styles": [
+    "museum_legacy",
+    "cinematic_wow",
+    "harmonic_reveal",
+    "atelier_v4",
+    "universal_atelier_v5"
+  ],
+  "branch_snapshot": "ARTVISION_V6_GOLD_MASTER_APPROVATA_2026-10-20",
+  "repo": "GGIANLUCAA/Tra-le-pagine-",
+  "entrypoints": {
+    "artist_direction": "modules/artvision/director_cinema_v6.py",
+    "museum_asset_export": "modules/artvision/export_v6_assets.py",
+    "workflow": ".github/workflows/artvision-cinema-v6.yml",
+    "approved_method": "modules/artvision/V6_APPROVATA_GOLD_MASTER.md",
+    "art_direction": "modules/artvision/REGIA_CINEMA_V6.md"
+  },
+  "reference": {
+    "artist": "Vincent van Gogh",
+    "video": "ArtVision_CINEMA_V6_FINALE_150s.mp4",
+    "video_sha256": "5c94072d861daf04b99ceceea9ef78ec82661c63284cec9f8e9e68285973dffd",
+    "duration_seconds": 150.1,
+    "frame_size": [
+      1080,
+      1920
+    ],
+    "fps": 24,
+    "unique_artworks": 19,
+    "directed_shots": 55,
+    "sample_archive": "ArtVision_VanGogh_Cinema_V6_PACCHETTO.zip",
+    "sample_archive_sha256": "946fb049d795bf9d10a3b5058b036128120dc433945f0eca82b9014d75648bfe",
+    "original_sources_archive": "ARTVISION_MUSEUM_SOURCES_V6.zip",
+    "original_sources_sha256": "3963e8de6f657b73f7ff59e5215b9a58d1c604f3b70ee9e5e4969509a43738a3"
+  },
+  "constraints": [
+    "No narration, no lyrics, no subtitles in the film",
+    "Signature opening: ARTIST NAME + small MUSIC BY COMPOSER",
+    "One finished video, not parallel short and long variants",
+    "True museum-sourced images and verified sources",
+    "Artist-specific curated 40-65 shots, not slideshow",
+    "Full-screen immersive art, variety of rhythm and contemplative pauses",
+    "No split screen, gimmicks, AI repainting or automatic generic crop",
+    "Different licensed real instrumental soundtrack whenever possible",
+    "Complete legally required attributions outside film in public caption",
+    "No automatic publication",
+    "Never change V6 baseline; create new versions and preserve rollbacks"
+  ],
+  "followup_workflow": "For new artist: source original artworks + map artist-specific subjects + select licensed track + write V6-style bespoke storyboard + render and QC. Never substitute artist name alone into hardcoded Van Gogh STORY. The V6 workflow exists but its end-to-end GitHub Action success should be verified before claiming.",
+  "release_media_storage": "Reference video and original museum photos are backed up separately from GitHub; do not imply Git branches contain media."
+}
