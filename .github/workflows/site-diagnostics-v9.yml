@@ -1,0 +1,69 @@
+name: "Tra le Pagine — Live Site & Android Browser Tests"
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "tests/site_browser_v9.mjs"
+      - "tests/site_live_browser_v9.mjs"
+      - "tests/live_smoke_v9.py"
+      - ".github/workflows/site-diagnostics-v9.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "tests/site_browser_v9.mjs"
+      - "tests/live_smoke_v9.py"
+      - ".github/workflows/site-diagnostics-v9.yml"
+permissions:
+  contents: read
+jobs:
+  diagnostics:
+    name: "Sito pubblico + Chrome Android (simulato)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Codice web originale: controlli regressione"
+        run: |
+          node --check docs/app.js
+          node --check docs/sw.js
+          node --check worker/index.mjs
+          node --test tests/test_studio_web_v9.mjs
+      - name: "GitHub Pages reale su Internet (può essere ancora in pubblicazione)"
+        continue-on-error: true
+        run: |
+          python -u tests/live_smoke_v9.py --report site_diagnostics.json
+      - name: "Chromium — installa browser di test"
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: "Avvia copia locale del pannello V9"
+        run: |
+          python -m http.server 8765 --directory docs > /tmp/tlp_http.txt 2>&1 &
+          for i in 1 2 3 4 5; do
+            if curl --fail --silent http://127.0.0.1:8765/index.html -o /tmp/tlp_index.html; then break; fi
+            sleep 1
+          done
+          test -s /tmp/tlp_index.html
+      - name: "Test visivo e funzionale Android (Chrome Chromium)"
+        run: node tests/site_browser_v9.mjs
+      - name: "Test Chromium sull'app davvero online, senza simulare i dati GitHub"
+        continue-on-error: true
+        run: node tests/site_live_browser_v9.mjs
+      - name: "Conserva screenshot e rapporto"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "CONTROLLO_APP_V9"
+          path: |
+            test-screenshots/
+            site_diagnostics.json
+          if-no-files-found: warn
+          retention-days: 7
