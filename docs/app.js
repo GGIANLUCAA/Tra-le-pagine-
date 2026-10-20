@@ -220,8 +220,7 @@ async function copyGpt() {
   const draft=buildGptPrompt(p);
   try {
     await navigator.clipboard.writeText(draft);
-    toast("Brief copiato! Apri ChatGPT e incollalo nella conversazione.");
-    openLink("https://chatgpt.com/");
+    toast("Brief copiato! Tocca Apri ChatGPT e incollalo nella conversazione.");
   } catch { window.prompt("Copia questo testo e incollalo in ChatGPT:",draft); }
 }
 function bind() {
