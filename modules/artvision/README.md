@@ -1,5 +1,13 @@
 # ARTVISION — arte autentica in video, senza voce
 
+## VERSIONE APPROVATA — CINEMA V6 (20 ottobre 2026)
+
+**La regia Cinema V6 è ora il riferimento artistico principale confermato dall'utente.** Quando viene richiesto un nuovo video d'arte, NON usare automaticamente gli esperimenti V1–V5 e NON riproporre slideshow, fondali neri con immagini piccole, zoom sistematici o montaggi tutti uguali.
+
+Leggere prima **[VERSIONE_APPROVATA_CINEMA_V6.md](VERSIONE_APPROVATA_CINEMA_V6.md)** e **[REGIA_CINEMA_V6.md](REGIA_CINEMA_V6.md)**, poi usare il motore **`director_cinema_v6.py`** e il workflow dedicato **`artvision-cinema-v6.yml`**. Per artisti diversi da Van Gogh occorre uno storyboard nuovo specifico: il motore corrente contiene ancora la regia personalizzata per Van Gogh.
+
+**Il vecchio `artvision-render.yml` parte ancora con V5 per compatibilità tecnica: NON equivale al nuovo standard approvato.** Seguire il workflow V6 dedicato finché non si predispone un nuovo artista. Conservare intatti libri narrati, vecchi motori e backup. Una sola versione filmica per artista, salvo diversa richiesta.
+
 Modulo indipendente di `Tra le Pagine`. **Non modifica** `render-v3.yml`, Gemini, libri narrati o V5.
 
 ## Stato (20 ottobre 2026)
