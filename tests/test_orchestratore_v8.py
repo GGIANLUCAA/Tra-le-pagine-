@@ -32,8 +32,8 @@ class OrchestratoreV8Tests(unittest.TestCase):
                "description":"fiume verde a mezzogiorno" if i%2==0 else "ritratto sereno vicino al fiume"}
                for i in range(8)]
         (ep/"scene_cues.json").write_text(json.dumps(cues),encoding="utf-8")
-        Image.new("RGB",(1200,1500),(67,81,44)).save(ep/"images"/"scena_01.jpg",quality=96)
-        Image.new("RGB",(1200,1500),(125,80,31)).save(ep/"images"/"scena_02.jpg",quality=96)
+        Image.effect_noise((1200,1500),80).convert("RGB").save(ep/"images"/"scena_01.jpg",quality=89)
+        Image.effect_noise((1200,1500),100).convert("RGB").save(ep/"images"/"scena_02.jpg",quality=89)
         return ep
 
     def test_plan_is_read_only_and_uses_current_voice(self):
@@ -66,6 +66,7 @@ class OrchestratoreV8Tests(unittest.TestCase):
             manifest=json.loads((Path(td)/"out"/"RAPPORTO_PREPARAZIONE_V8.json").read_text())
             self.assertFalse(manifest["publish_enabled"])
             self.assertEqual(manifest["gate2"],"in_attesa")
+            self.assertEqual(manifest["v5_preflight"],"PASS")
 
     def test_missing_material_never_uses_fake_placeholder(self):
         with tempfile.TemporaryDirectory() as td:
