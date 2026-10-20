@@ -61,3 +61,5 @@ Il file `modules/artvision/queue.json` è la **coda automatica**. Quando l'utent
 **Produzione verificata**: 20 ottobre 2026, run 3, 150,17 s, 16 opere, 24 scene, 720×1280, H.264 + AAC, nessuna API a pagamento; render riuscito. **Compressione ottimizzata verificata**: run 4, stesso filmato, MP4 da circa 14,7 MB, tempo totale 179 s. Link run: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39412319602 .
 
 Se la coda contiene lo stesso artista ma si vuole un nuovo montaggio, modificare `request_id`. Se non ci sono almeno 6 opere con immagini e licenze adatte, il motore interrompe il rendering con errore comprensibile e non inventa opere.
+
+**Test definitivo della coda autonoma**: [GitHub Actions run #6](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39412758541) terminata con successo, artifact `ARTVISION_6` da circa 15 MB. Il sistema può quindi creare nuovi video tramite semplice aggiornamento di `modules/artvision/queue.json`, senza premere manualmente Run workflow.
