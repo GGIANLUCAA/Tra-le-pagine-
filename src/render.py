@@ -188,6 +188,18 @@ def make_video(images,duration,tmp,starts=None):
     run("ffmpeg","-hide_banner","-loglevel","error","-y",
         "-f","concat","-safe","0","-i",listing,"-c","copy",out)
     return out
+def final_video_command(montage, out):
+    """V12: combine original voice + music with NO captions/ASS filter or subtitle stream."""
+    return [
+        "ffmpeg","-hide_banner","-loglevel","error","-y",
+        "-i",montage,"-i",out/"VOCE.wav","-i",out/"MUSICA_ORIGINALE.wav",
+        "-filter_complex","[1:a]volume=1.0[v];[2:a]volume=.40[m];[v][m]amix=inputs=2:duration=first:normalize=0[a]",
+        "-map","0:v:0","-map","[a]","-sn",
+        "-c:v","libx264","-preset","veryfast","-crf","23","-pix_fmt","yuv420p",
+        "-c:a","aac","-b:a","160k","-shortest","-movflags","+faststart",
+        out/"TRA_LE_PAGINE_EP01.mp4",
+    ]
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--episode",default="episodes/01_scacchi")
@@ -301,12 +313,7 @@ def main():
                 fps=FPS,w=W,h=H)
         else:
             montage=make_video(images,duration,tmp,starts)
-        run("ffmpeg","-hide_banner","-loglevel","error","-y",
-            "-i",montage,"-i",out/"VOCE.wav","-i",out/"MUSICA_ORIGINALE.wav",
-            "-filter_complex","[1:a]volume=1.0[v];[2:a]volume=.40[m];[v][m]amix=inputs=2:duration=first:normalize=0[a]",
-            "-map","0:v:0","-map","[a]","-sn",
-            "-c:v","libx264","-preset","veryfast","-crf","23","-pix_fmt","yuv420p",
-            "-c:a","aac","-b:a","160k","-shortest","-movflags","+faststart",out/"TRA_LE_PAGINE_EP01.mp4")
+        run(*final_video_command(montage,out))
     shutil.copy2(ep/"DESCRIZIONE_SOCIAL.txt",out/"DESCRIZIONE_SOCIAL.txt")
     shutil.copy2(ep/"testo.txt",out/"COPIONE.txt")
     (out/"INFO.txt").write_text(
