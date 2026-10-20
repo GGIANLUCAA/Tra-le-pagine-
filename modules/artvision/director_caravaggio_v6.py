@@ -77,6 +77,39 @@ SHOTS=[
  ("David with the Head of Goliath","whole",(.5,.5),4.1,"Final image held in silence-like restraint","dissolve"),
 ]
 
+# Additional authored reverse angles and complete-work releases, distributed WITHIN each act,
+# never all grouped at the end. Every addition has a visual purpose.
+INSERT_AFTER_FIRST={
+ "David with the Head of Goliath":[
+  ("whole",(.5,.5),2.7,"Entire composition establishes weight and unease","dissolve"),
+  ("texture",(.46,.64),2.2,"Sword diagonal divides the bodies","match")],
+ "The Calling of Saint Matthew":[
+  ("texture",(.65,.26),2.3,"Hand and diagonal ray of illumination","cut"),
+  ("portrait",(.29,.61),2.6,"Coins and hands at Matthew's table","match")],
+ "Judith Beheading Holofernes":[
+  ("texture",(.25,.51),2.2,"The older maid's tense watchfulness","cut"),
+  ("texture",(.79,.49),2.2,"Holofernes' expression as emotional counterpoint","cut")],
+ "Supper at Emmaus":[("whole",(.5,.5),3.3,"Painted theatrical tableau finally revealed","dissolve")],
+ "The Incredulity of Saint Thomas":[("whole",(.5,.5),3.2,"Four figures seen as one intimate composition","dissolve")],
+ "Basket of Fruit":[("portrait",(.53,.37),2.7,"The leaf silhouettes against blank wall","cut")],
+ "The Cardsharps":[("whole",(.5,.5),2.7,"Three-player geometry of deception","dissolve")],
+ "Rest on the Flight into Egypt":[("texture",(.31,.31),2.4,"Angel wings, sheet music and fragile light","cut")],
+ "Saint Jerome Writing":[("whole",(.5,.5),3.3,"Red robe, book and skull align as an emblem","dissolve")],
+ "Narcissus":[("texture",(.30,.57),2.3,"Curving arm unites figure with reflection","cut")],
+ "The Conversion of Saint Paul":[("texture",(.56,.25),2.4,"Horse's body eclipses the upper light","cut")],
+}
+def compose_full_story(base):
+    result=[];visited=set()
+    for shot in base:
+        result.append(shot)
+        title=shot[0]
+        if title not in visited and title in INSERT_AFTER_FIRST:
+            visited.add(title)
+            for mode,focus,duration,reason,trans in INSERT_AFTER_FIRST[title]:
+                result.append((title,mode,focus,duration,reason,trans))
+    return result
+SHOTS=compose_full_story(SHOTS)
+
 def label_caravaggio(img,t):
     if t>=3.5:return img
     alpha=min(1.,max(0.,(3.5-t)/.55))
@@ -101,7 +134,7 @@ def main():
     cinema.STORY=SHOTS
     cinema.label_title=label_caravaggio
     shots=cinema.resolve_items(artworks,150)
-    if len(shots)<44:raise RuntimeError("Not enough curated Caravaggio shots: "+str(len(shots)))
+    if len(shots)<43:raise RuntimeError("Not enough curated Caravaggio shots: "+str(len(shots)))
     distinct={s.art["title"] for s in shots}
     if len(distinct)<12:raise RuntimeError("Only "+str(len(distinct))+" Caravaggio artworks, refusing generic slideshow")
     print("CARAVAGGIO V6 FILM",len(shots),"directed shots,",len(distinct),"genuine works",flush=True)
