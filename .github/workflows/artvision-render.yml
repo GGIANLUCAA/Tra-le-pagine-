@@ -113,7 +113,7 @@ jobs:
       - name: "Controlli preventivi, nessuna API a pagamento"
         shell: bash
         run: |
-          python -m py_compile modules/artvision/artvision.py modules/artvision/cinema_wow_v2.py modules/artvision/artvision_cinema_run.py modules/artvision/harmonic_reveal_v3.py modules/artvision/atelier_v4.py
+          python -m py_compile modules/artvision/artvision.py modules/artvision/cinema_wow_v2.py modules/artvision/artvision_cinema_run.py modules/artvision/harmonic_reveal_v3.py modules/artvision/atelier_v4.py modules/artvision/quality_report_v4.py
           ffmpeg -version | sed -n '1p'
           ffprobe -version | sed -n '1p'
           python - <<'PY'
@@ -158,6 +158,10 @@ jobs:
               --out output/artvision
           fi
 
+      - name: "Revisione visiva automatica e contatto regia V4"
+        if: success() && env.ARTVISION_STYLE == 'atelier_v4'
+        run: python modules/artvision/quality_report_v4.py --out output/artvision
+
       - name: "Deposita soltanto file finali (NON pubblica)"
         if: success()
         uses: actions/upload-artifact@v4
@@ -173,5 +177,7 @@ jobs:
             output/artvision/REPORT_PRODUZIONE.json
             output/artvision/STORYBOARD_REGIA.json
             output/artvision/MUSICA_LICENZA_E_CREDITI.json
+            output/artvision/CONTATTO_REGIA_V4.jpg
+            output/artvision/CONTROLLO_ATELIER_V4.json
           if-no-files-found: error
           retention-days: 7
