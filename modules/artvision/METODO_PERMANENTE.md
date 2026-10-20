@@ -41,4 +41,4 @@ Non riscrivere da zero: aggiungere un modulo o preset e testare che il modello p
 ## Test di collaudo riusciti
 - Run GitHub #3: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39411451722 — esito SUCCESS, 150.167 secondi, 16 opere CC0, 24 inquadrature, audio/video verificati, 0 API a pagamento, 176 secondi di elaborazione. Output iniziale 136 MiB.
 - Run GitHub #4: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39412319602 — esito SUCCESS dopo cambio preset x264 `ultrafast` → `veryfast`. MP4 14.7 MiB, 150.167 secondi, 720×1280 H.264/AAC, 16 opere. 179 secondi di elaborazione. Per le prossime puntate conservare il preset compatto, con controllo qualitativo.
-- La coda V1.3 deve essere verificata tramite run specifica; distinguerne l'esito da quello dei render manuali.
+- **Coda V1.3 testata con successo**: run #6 https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39412758541 — richiesta JSON approvata, raccolta opere, montaggio e artifact `ARTVISION_6` da circa 15 MB, job SUCCESS. Il test iniziale #5 falliva perché scriveva caratteri letterali `\\n` in `GITHUB_ENV`: correggere in vere sequenze di newline Python `\n` (committed).
