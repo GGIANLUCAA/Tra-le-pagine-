@@ -7,6 +7,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from studio_ibrido_v6 import build_plan, scene_method, source_report, storyboard_html
+from prompt_asset_v6 import build_prompts
 
 
 REGISTRY = {
@@ -84,6 +85,28 @@ class StudioIbridoV6Tests(unittest.TestCase):
             report = build_plan(ep, "libri", "basso", REGISTRY)
             self.assertIn("wan2.2", report["scenes"][0]["alternative_da_testare_non_attive"])
             self.assertEqual(report["eseguiti_modelli_esterni"], [])
+
+
+    def test_prompt_pack_reuses_assets(self):
+        with tempfile.TemporaryDirectory() as d:
+            ep = self.make_episode(Path(d))
+            (ep / "scene_cues.json").write_text(json.dumps([
+                {"start_sentence": 0, "asset": 1, "description": "Anna sul fiume"},
+                {"start_sentence": 4, "asset": 1, "description": "Anna davanti al fiume, ripresa diversa"}
+            ]), encoding="utf-8")
+            (ep / "personaggi.json").write_text(json.dumps([
+                {"nome": "Anna", "caratteristiche": "capelli castani, sciarpa rossa"}
+            ]), encoding="utf-8")
+            prompts = build_prompts(build_plan(ep, "libri", "zero", REGISTRY), ep)
+            self.assertEqual(len(prompts["asset"]), 1)
+            self.assertIn("sciarpa rossa", prompts["asset"][0]["prompt"])
+            self.assertEqual(prompts["immagini_da_generare"], 1)
+
+    def test_cronaca_prompts_are_marked_reconstruction(self):
+        with tempfile.TemporaryDirectory() as d:
+            ep = self.make_episode(Path(d))
+            result = build_prompts(build_plan(ep, "cronaca", "zero", REGISTRY), ep)
+            self.assertIn("NON UN FILMATO AUTENTICO", result["asset"][0]["prompt"])
 
 
 if __name__ == "__main__":
