@@ -76,6 +76,8 @@ test("Web interface carries out real actions without API keys in client",()=>{
   const app=readFileSync(resolve(root,"docs/app.js"),"utf8");
   assert.match(html,/id="view-nuovo"/);
   assert.match(html,/id="view-produzioni"/);
+  assert.match(html,/id="media-import"/);
+  assert.match(app,/media-import/);
   assert.match(app,/\/api\/dispatch/);
   assert.match(app,/\/api\/session/);
   assert.match(app,/navigator\.clipboard/);
