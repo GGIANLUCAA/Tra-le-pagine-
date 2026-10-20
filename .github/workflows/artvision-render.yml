@@ -1,5 +1,5 @@
-name: "ArtVision - opere autentiche senza voce"
-run-name: "ARTVISION - ${{ inputs.artist || 'Vincent van Gogh' }}"
+name: "ArtVision - opere autentiche senza voce (V1.1)"
+run-name: "ARTVISION V1.1 - ${{ inputs.artist || 'Vincent van Gogh' }}"
 on:
   workflow_dispatch:
     inputs:
