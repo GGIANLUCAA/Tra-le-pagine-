@@ -11,7 +11,8 @@ Il nucleo operativo rimane **GitHub Actions + Gemini TTS + FFmpeg + regia armoni
 - Selettore **deterministico** di inquadrature: `src/studio_ibrido_v6.py`. È una proposta tecnica, non un'AI creativa autonoma.
 - Lettura `scene_cues.json`, metadati e immagini disponibili (`scene_premium.zip` oppure cartella `images/`).
 - Riciclo delle immagini senza ripetere chiamate di generazione; riconoscimento di scene che riutilizzano un asset.
-- Pacchetto in `output/studio_ibrido/`: `PIANO_SCENE_V6.json`, `STORYBOARD_V6.html`, `CATALOGO_TOOLS_V6.json`.
+- **Prompt pack per immagini** in `src/prompt_asset_v6.py`: una proposta per ogni asset distinto, continuità personaggi se presenti in `personaggi.json`, formato 9:16 e divieto di false immagini di cronaca. È un file guida per modelli da collegare in futuro, non una generazione automatica.
+- Pacchetto in `output/studio_ibrido/`: `PIANO_SCENE_V6.json`, `STORYBOARD_V6.html`, `PROMPT_IMMAGINI_V6.json`, `CATALOGO_TOOLS_V6.json`.
 - Workflow manuale `.github/workflows/studio-ibrido-v6.yml` e test automatici della PR: solo Python standard library.
 - Quattro formati aggiuntivi al format libri: cronaca, documentario, fiabe e social; **nessun nuovo motore video è stato ancora collaudato**.
 
