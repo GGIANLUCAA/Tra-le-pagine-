@@ -1,3 +1,4 @@
+import {initVideoLibrary,getPublishedVideos} from "./videoteca_v11.js";
 import {loadGallery,makeEpisodeCard,showEpisodePreview,initEpisodePreview} from "./episode_gallery_v10.js";
 /* Tra le Pagine V9 — static frontend, no user token in browser. */
 const OWNER = "GGIANLUCAA";
@@ -31,7 +32,7 @@ function go(tab) {
   if (!$("#view-" + tab)) return;
   $$(".view").forEach(x => x.classList.toggle("active", x.id === "view-" + tab));
   $$(".nav-item[data-tab]").forEach(x => x.classList.toggle("active", x.dataset.tab === tab));
-  const labels = {studio:"PANORAMICA",nuovo:"NUOVO VIDEO",episodi:"EPISODI",archivio:"ARCHIVIO MEDIA",produzioni:"PRODUZIONI",impostazioni:"IMPOSTAZIONI"};
+  const labels = {studio:"PANORAMICA",nuovo:"NUOVO VIDEO",episodi:"EPISODI",videoteca:"VIDEOTECA",archivio:"ARCHIVIO MEDIA",produzioni:"PRODUZIONI",impostazioni:"IMPOSTAZIONI"};
   $("#section-label").textContent = labels[tab]; $("#section-crumb").textContent = "Studio";
   window.location.hash = tab;
   $("#sidebar").classList.remove("open"); $("#overlay").hidden = true;
@@ -224,8 +225,9 @@ function bind() {
   $$(".nav-item[data-tab], [data-go]").forEach(x=>x.addEventListener("click",()=>go(x.dataset.tab||x.dataset.go)));
   $("#menu-open").addEventListener("click",()=>{$("#sidebar").classList.add("open");$("#overlay").hidden=false;});
   $("#overlay").addEventListener("click",()=>{$("#sidebar").classList.remove("open");$("#overlay").hidden=true;});
-  $("#refresh-all").addEventListener("click",()=>Promise.all([refreshRuns(),refreshEpisodes()]));
+  $("#refresh-all").addEventListener("click",()=>Promise.all([refreshRuns(),refreshEpisodes(),initVideoLibrary()]));
   $("#refresh-runs").addEventListener("click",refreshRuns);
+  window.addEventListener("studio-videos-updated",()=>{const count=getPublishedVideos().length;const el=$("#videos-count");if(el)el.textContent=String(count);});
   $("#refresh-episodes").addEventListener("click",refreshEpisodes);
   $("#episode-grid").addEventListener("click",e=>{
     const preview=e.target.closest("[data-preview]");
@@ -287,10 +289,10 @@ async function init() {
   bind();
   initEpisodePreview();
   const tab=window.location.hash.substring(1);
-  go(["studio","nuovo","episodi","archivio","produzioni","impostazioni"].includes(tab)?tab:"studio");
+  go(["studio","nuovo","videoteca","episodi","archivio","produzioni","impostazioni"].includes(tab)?tab:"studio");
   window.addEventListener("hashchange",()=>{const v=window.location.hash.slice(1);if($("#view-"+v))go(v);});
   renderSaved();
-  await Promise.allSettled([session(),refreshRuns(),refreshEpisodes()]);
+  await Promise.allSettled([session(),refreshRuns(),refreshEpisodes(),initVideoLibrary()]);
   if("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(()=>{});
 }
 init();
