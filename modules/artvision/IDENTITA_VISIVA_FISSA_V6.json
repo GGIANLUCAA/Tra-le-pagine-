@@ -1,0 +1,80 @@
+{
+  "name": "ARTVISION_CINEMA_V6_IDENTITA_UNICA",
+  "status": "BLOCCATA_PER_TUTTI_I_PROSSIMI_VIDEO",
+  "user_approval_date": "2026-10-20",
+  "reference": "Original approved Van Gogh Cinema V6; accepted Caravaggio V6. Future designs must use identical lettering and frame design.",
+  "resolution": [
+    1080,
+    1920
+  ],
+  "headline": {
+    "font_family": "DejaVu Serif",
+    "style": "regular",
+    "size": 62,
+    "align": "center",
+    "y": 1387,
+    "color": "#FFFBF3",
+    "max_width": 880
+  },
+  "music": {
+    "font_family": "DejaVu Sans",
+    "style": "regular",
+    "size": 21,
+    "align": "center",
+    "y": 1521,
+    "color": "#DAD0C0",
+    "prefix": "MUSIC BY "
+  },
+  "band": {
+    "x": 56,
+    "y": 1340,
+    "width": 968,
+    "height": 250,
+    "fill_rgb": [
+      5,
+      8,
+      13
+    ],
+    "opacity": 190,
+    "radius": 10
+  },
+  "line": {
+    "x1": 130,
+    "y1": 1495,
+    "x2": 950,
+    "y2": 1495,
+    "color_rgb": [
+      218,
+      198,
+      168
+    ],
+    "opacity": 186,
+    "width": 2
+  },
+  "exit": {
+    "fade_start": 2.9,
+    "fade_seconds": 0.55
+  },
+  "per_artist_changes_allowed": [
+    "artist_name",
+    "composer_name",
+    "museum_artwork_underlay"
+  ],
+  "immutable": [
+    "title_font_family",
+    "composer_font_family",
+    "font_style",
+    "fixed_size_unless_text_would_overflow",
+    "band_palette",
+    "band_shape",
+    "line_color",
+    "text_colors",
+    "positions",
+    "fade",
+    "aspect_ratio"
+  ],
+  "implementation": "modules/artvision/identita_visiva_v6.py",
+  "cover_function": "cover(frame, artist, composer)",
+  "opening_function": "signature(frame, t, artist, composer)",
+  "legacy_media": "Already exported Van Gogh and Caravaggio MP4/JPG remain unchanged; this template applies to future episodes, including a re-render of Caravaggio if requested."
+}
