@@ -1,3 +1,13 @@
+# NOVITÀ — FONT E COPERTINA IDENTICI IN TUTTA LA SERIE
+
+## Identità grafica unica, obbligatoria dal prossimo episodio
+
+**Richiesta confermata dall'utente il 20 ottobre 2026:** i prossimi film ArtVision devono usare SEMPRE **lo stesso font, dimensioni di riferimento, colori, fascia scura, filetto dorato, posizioni e animazione** del titolo iniziale e della copertina, senza creare un titolo diverso per ogni artista. Solo *nome artista*, *autore musicale* e *opera fotografata nello sfondo* possono cambiare. Per nomi lunghi è consentita esclusivamente la riduzione proporzionale della dimensione (stessa famiglia tipografica), senza cambiare lo stile.
+
+**Fonte normativa per i nuovi video:** `modules/artvision/IDENTITA_VISIVA_FISSA_V6.json`. **Implementazione riutilizzabile:** `modules/artvision/identita_visiva_v6.py` con `signature(frame,t,artist,composer)` e `cover(frame,artist,composer)`. Il disegno replica l'apertura Van Gogh Cinema V6 approvata: titolo DejaVu Serif avorio, sottotitolo MUSIC BY in DejaVu Sans, banda antracite semitrasparente, linea dorata sottile, stessa posizione e sfumatura. Copertina JPG e video devono avere la STESSA impostazione, non solamente un font simile.
+
+Il video originale Van Gogh GOLD MASTER e il Caravaggio già consegnato rimangono **immutati**. Lo script Caravaggio utilizzerà il componente condiviso solo per eventuali render futuri; versione prima della modifica salvata nel branch `backup-caravaggio-v6-prima-identita-grafica-unica-2026-10-20`. Il branch GOLD MASTER Van Gogh resta congelato. In ogni nuovo script regia V6, IMPORTARE la funzione condivisa e NON ridisegnare a mano la copertina.
+
 # IMPORTANTE — ART VISION V6 APPROVATA\n\n> **VERSIONE APPROVATA (20/10/2026): ARTVISION CINEMA V6 — GOLD MASTER.** L'utente ha approvato esplicitamente il risultato V6 come migliore; è il **riferimento artistico predefinito per i prossimi film**, non V5. Leggere PRIMA [V6_APPROVATA_GOLD_MASTER.md](V6_APPROVATA_GOLD_MASTER.md) e [REGIA_CINEMA_V6.md](REGIA_CINEMA_V6.md). Le indicazioni V1–V5 sotto sono storico, non più default. Backup GitHub dedicato: `ARTVISION_V6_GOLD_MASTER_APPROVATA_2026-10-20`. Per nuovi artisti progettare nuovo storyboard V6 con opere/musica proprie. Non toccare i video narrati.\n\n# ARTVISION — arte autentica in video, senza voce
 
 ## VERSIONE APPROVATA — CINEMA V6 (20 ottobre 2026)
