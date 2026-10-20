@@ -50,3 +50,17 @@ Branch backup: `backup-artvision-v3-prima-regia-atelier-v4-2026-10-20`.
 
 ### Metodo ricorrente
 Richiesta artista → ricerca musei/licenze → piano curatoriale → musica nuova con licenza verificata → aggiorna coda `modules/artvision/queue.json` con `style=atelier_v4`, `music` e `request_id` unico → GitHub Actions → QA mp4/audio/composizione/crediti → consegna ZIP, JPG e MP4. Non riavviare più processi identici senza motivo.
+
+
+## PRIMO RENDER V4 REALE SUPERATO — 20 OTTOBRE 2026
+- [GitHub Actions #12](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39426478495) **success**, artifact `ARTVISION_12` verificato e MP4 esaminato.
+- Vincent van Gogh: 12 opere museali, 49 fasi di inquadratura curate, alternanza effettiva di 1/2/3 dettagli e apertura con opera intera; senza split-screen.
+- Video 150,000 secondi, 1080×1920 Full HD, 24fps H.264 + AAC; file master 93.4 MB (89.1 MiB). Questa è **alta qualità Full HD**, non 4K nativo.
+- Musica reale: `Evening Fall (Piano)`, Kevin MacLeod, ISRC USUAN1100235, registrazione 165,07 secondi verificata con ffprobe. Licenza attuale riportata dal sito dell'autore CC BY 4.0; la copia archivio Wikimedia indica CC BY 3.0. Credito esplicito nel MP4 e `DESCRIZIONE_SOCIAL.txt`.
+- Il download da `https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20(Piano).mp3` era **errato (404) sulla run #11**. URL ufficiale corretto è `Evening%20Fall%20-%20Piano.mp3` (fonte Wikimedia) e fallback verificato Commons `Evening Fall (Piano) (ISRC USUAN1100235).mp3`. Non inventare download URL in futuro.
+- Il primo V4 #12 ha utilizzato il file Wikimedia Commons: hash SHA256 `5195c266275c694f9186dceb23e667c45ed74767d97f6615df01021fed3f048e`.
+- Audio picco massimo misurato a -3.3 dBFS, senza clipping; durata e flussi controllati.
+- Tempo di produzione effettivo circa 321 secondi, 0 API a pagamento; upload video non è pubblicazione.
+- **Controllo visuale**: contact sheet con 3 campioni per ciascuna delle 12 opere preparato dalla run e esaminato: ritmo variato, quadro completo, dettagli, credit musicale visibile nei primi/ultimi secondi. Alcune immagini museali hanno risoluzioni inferiori a 1080 e alcuni soggetti sono disegni: non sostenere che tutti i dettagli siano 4K.
+- Script permanente `modules/artvision/quality_report_v4.py` e workflow aggiornato per includere `CONTATTO_REGIA_V4.jpg` e `CONTROLLO_ATELIER_V4.json` nei prossimi render, senza rifare il sistema.
+- La pubblicazione resta disabilitata; l'utente deve giudicare il gradimento artistico e l'idoneità dei diritti nel proprio territorio.
