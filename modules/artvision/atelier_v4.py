@@ -16,7 +16,8 @@ TRACKS = {
     "evening_fall_piano": {
         "title": "Evening Fall (Piano)", "author": "Kevin MacLeod", "isrc": "USUAN1100235",
         "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100235",
-        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20(Piano).mp3",
+        "urls": ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Evening%20Fall%20%28Piano%29%20%28ISRC%20USUAN1100235%29.mp3",
+                 "https://upload.wikimedia.org/wikipedia/commons/f/fd/Evening_Fall_%28Piano%29_%28ISRC_USUAN1100235%29.mp3"],
         "license": "CC BY 4.0", "license_url": "https://creativecommons.org/licenses/by/4.0/",
         "expected_seconds": 165},
     "calmant": {
@@ -90,22 +91,25 @@ def pick_music(key, duration):
 
 def audio_download(music,out,minimum):
     path=out/"official_licensed_recording.mp3"
-    try:
-        with urlopen(Request(music["url"],headers={"User-Agent":"Mozilla/5.0 ArtVision art video rights"}),timeout=50) as f:
-            data=f.read(18_000_000)
-        if len(data)<100000:raise ValueError("Unexpectedly small music file")
-        path.write_bytes(data)
-        fmt=json.loads(cmd(["ffprobe","-v","error","-show_entries","format=duration","-of","json",str(path)]))
-        actual=float(fmt["format"]["duration"])
-        if actual<minimum+.5:raise ValueError("Official music too short")
-        proof={k:v for k,v in music.items() if k!="url"}
-        proof.update({"downloaded_from":music["url"],"sha256":hashlib.sha256(data).hexdigest(),
-                      "duration_seconds":actual,"editing":"excerpt, music volume and fades; image soundtrack",
-                      "publication_attribution_required":True})
-        return path,proof
-    except Exception:
-        path.unlink(missing_ok=True)
-        raise
+    candidates=music.get("urls") or [music.get("url")]
+    errors=[]
+    for url in candidates:
+        try:
+            with urlopen(Request(url,headers={"User-Agent":"ArtVisionVideoEditor/1.0 (artwork educational compilation; attribution follows CC BY 4.0)"}),timeout=55) as f:
+                data=f.read(18000000)
+            if len(data)<100000:raise ValueError("Unexpectedly small music file")
+            path.write_bytes(data)
+            fmt=json.loads(cmd(["ffprobe","-v","error","-show_entries","format=duration","-of","json",str(path)]))
+            actual=float(fmt["format"]["duration"])
+            if actual<minimum+.5:raise ValueError("Music shorter than video")
+            proof={k:v for k,v in music.items() if k not in ("url","urls")}
+            proof.update({"downloaded_from":url,"sha256":hashlib.sha256(data).hexdigest(),
+                          "duration_seconds":actual,"editing":"excerpt, music volume and fades; soundtrack for art video",
+                          "publication_attribution_required":True})
+            return path,proof
+        except Exception as exc:
+            errors.append(str(exc)[:230]);path.unlink(missing_ok=True)
+    raise RuntimeError("No verified recording available for chosen track: "+"; ".join(errors))
 
 def storyboard(works, duration):
     selection=[]
