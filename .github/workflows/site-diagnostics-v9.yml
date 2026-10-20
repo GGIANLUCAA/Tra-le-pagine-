@@ -5,6 +5,7 @@ on:
     paths:
       - "docs/**"
       - "tests/site_browser_v9.mjs"
+      - "tests/site_live_browser_v9.mjs"
       - "tests/live_smoke_v9.py"
       - ".github/workflows/site-diagnostics-v9.yml"
   push:
@@ -53,6 +54,9 @@ jobs:
           test -s /tmp/tlp_index.html
       - name: "Test visivo e funzionale Android (Chrome Chromium)"
         run: node tests/site_browser_v9.mjs
+      - name: "Test Chromium sull'app davvero online, senza simulare i dati GitHub"
+        continue-on-error: true
+        run: node tests/site_live_browser_v9.mjs
       - name: "Conserva screenshot e rapporto"
         if: always()
         uses: actions/upload-artifact@v4
