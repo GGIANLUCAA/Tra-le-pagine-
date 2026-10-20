@@ -107,7 +107,7 @@ async function session() {
     if (!r.ok) throw new Error("Backend assente");
     const data = await r.json();
     if (typeof data.authenticated !== "boolean") throw new Error("Backend non riconosciuto");
-    auth = {backend:true,authenticated:data.authenticated,login:data.login || ""};
+    auth = {backend:data.ready === true,authenticated:data.ready === true && data.authenticated,login:data.login || ""};
   } catch { auth={backend:false,authenticated:false,login:""}; }
   const status = auth.authenticated ? "GitHub connesso" : (auth.backend ? "Accesso GitHub disponibile" : "Modalità GitHub guidata");
   $("#backend-status").textContent = status;
