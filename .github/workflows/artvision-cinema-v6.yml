@@ -1,0 +1,51 @@
+name: "ArtVision Cinema V6 - film curatoriale"
+on:
+  workflow_dispatch:
+    inputs:
+      artist:
+        description: "Artista con regia già curata"
+        type: choice
+        required: true
+        default: "Vincent van Gogh"
+        options:
+          - "Vincent van Gogh"
+permissions:
+  contents: read
+jobs:
+  cinema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Software video open source
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+          python -m py_compile modules/artvision/director_cinema_v6.py
+      - name: Opere originali autorizzate e musica reale
+        run: python modules/artvision/export_v6_assets.py
+      - name: Montaggio cinematografico 150 secondi
+        run: |
+          python modules/artvision/director_cinema_v6.py \
+            --assets output/artvision-assets \
+            --out output/artvision-cinema-v6 \
+            --duration 150
+      - name: Verifica contenitore finale
+        run: |
+          ffprobe -v error -show_entries format=duration,size:stream=codec_type,width,height -of json output/artvision-cinema-v6/ARTVISION_VAN_GOGH_CINEMA_V6.mp4
+      - name: Consegna video con provenienza e crediti esterni
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision_Cinema_V6
+          path: |
+            output/artvision-cinema-v6/ARTVISION_VAN_GOGH_CINEMA_V6.mp4
+            output/artvision-cinema-v6/COPERTINA_CINEMA_V6.jpg
+            output/artvision-cinema-v6/STORYBOARD_V6.json
+            output/artvision-assets/artworks.json
+            output/artvision-assets/music_rights.json
+          if-no-files-found: error
+          retention-days: 7
