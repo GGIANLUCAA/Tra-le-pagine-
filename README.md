@@ -103,3 +103,18 @@ Nuovo **catalogo di 23 strumenti** e pianificatore di scene `src/studio_ibrido_v
 - [**Catalogo dei 23 strumenti**](config/studio_ibrido_tools.json) — tool cinesi e internazionali, hardware, stato e cautele.
 - [**Workflow anteprima V6**](.github/workflows/studio-ibrido-v6.yml) — pianificazione manuale, zero API e pacchetto scaricabile.
 
+## 📂 Archivio Media V7 — riciclare asset prima di crearne di nuovi
+
+**Voce Google Gemini invariata. Solo telefono Android per comandare i workflow su GitHub.**
+Il nuovo modulo `src/archivio_media_v7.py` cerca fotografie Creative Commons via Openverse
+(senza API key) e contenuti fotografici/video via Pexels (con chiave opzionale).
+La ricerca produce una **galleria HTML**, senza scaricare o generare video.
+Un secondo avvio, con **ID scelto esplicitamente**, importa un solo file con
+provenienza e crediti da verificare. Nessuna pubblicazione o sostituzione automatica.
+
+- [Guida passo per passo V7](ARCHIVIO_MEDIA_V7_GUIDA.md)
+- [Workflow mobile V7](.github/workflows/archivio-media-v7.yml)
+- [Sorgente importer](src/archivio_media_v7.py)
+
+**Ordine operativo:** riusa asset approvati → cerca fonti licenziate → genera solo le scene mancanti.
+Il renderer V5 e i vecchi episodi non sono stati modificati.
