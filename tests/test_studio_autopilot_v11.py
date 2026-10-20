@@ -43,7 +43,7 @@ class AutopilotV11Tests(unittest.TestCase):
 
     def test_italian_prompt_and_no_false_footage(self):
         p=content_prompt("Ricerca","Storia di crescita","fiabe",3)
-        self.assertIn("narrativa",p.lower())
+        self.assertIn("narrazione",p.lower())
         self.assertIn("non dichiarare immagini storiche",p.lower())
 
     def test_real_jpg_poster_sizes(self):
