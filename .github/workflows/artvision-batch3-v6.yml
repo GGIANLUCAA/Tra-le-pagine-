@@ -10,7 +10,7 @@ permissions:
   contents: read
 jobs:
   artvision-batch:
-    name: "Film artistico — {{ matrix.artist }}"
+    name: "Film artistico — ${{ matrix.artist }}"
     runs-on: ubuntu-latest
     timeout-minutes: 65
     strategy:
@@ -33,16 +33,16 @@ jobs:
           python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
           python -m py_compile modules/artvision/batch3_cinema_v6.py modules/artvision/director_cinema_v6.py modules/artvision/identita_visiva_v6.py
       - name: "Ricerca opere originali, curatela V6 e film completo"
-        run: python modules/artvision/batch3_cinema_v6.py --artist "{{ matrix.artist }}"
+        run: python modules/artvision/batch3_cinema_v6.py --artist "${{ matrix.artist }}"
       - name: "Consegna MP4, copertina, diritti e report (senza pubblicare)"
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: "ARTVISION_V6_{{ matrix.artist }}"
+          name: "ARTVISION_V6_${{ matrix.artist }}"
           path: |
-            output/artvision-batch-v6/{{ matrix.artist }}/film/*.mp4
-            output/artvision-batch-v6/{{ matrix.artist }}/film/*.jpg
-            output/artvision-batch-v6/{{ matrix.artist }}/film/*.json
-            output/artvision-batch-v6/{{ matrix.artist }}/film/*.txt
+            output/artvision-batch-v6/${{ matrix.artist }}/film/*.mp4
+            output/artvision-batch-v6/${{ matrix.artist }}/film/*.jpg
+            output/artvision-batch-v6/${{ matrix.artist }}/film/*.json
+            output/artvision-batch-v6/${{ matrix.artist }}/film/*.txt
           if-no-files-found: error
           retention-days: 7
