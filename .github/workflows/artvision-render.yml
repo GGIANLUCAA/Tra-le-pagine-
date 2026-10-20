@@ -1,14 +1,15 @@
-name: "ArtVision - Atelier V4 (V1/V2/V3 conservate)"
-run-name: "ARTVISION V4 - ${{ inputs.artist || 'richiesta automatica' }}"
+name: "ArtVision - Universal Atelier V5 (versioni storiche intatte)"
+run-name: "ARTVISION V5 - ${{ inputs.artist || 'richiesta automatica' }}"
 on:
   workflow_dispatch:
     inputs:
       style:
-        description: "Regia: Cinema WOW o vecchio motore museo"
+        description: "Seleziona il motore di regia; V5 è la nuova impostazione"
         type: choice
         required: true
-        default: atelier_v4
+        default: universal_atelier_v5
         options:
+          - universal_atelier_v5
           - atelier_v4
           - harmonic_reveal
           - cinematic_wow
@@ -31,8 +32,9 @@ on:
         description: "Musica registrata con licenza CC BY 4.0; per Atelier V4"
         type: choice
         required: true
-        default: evening_fall_piano
+        default: dreams_become_real
         options:
+          - dreams_become_real
           - evening_fall_piano
           - calmant
       max_works:
@@ -66,8 +68,8 @@ jobs:
       VIDEO_DURATION: ${{ github.event.inputs.duration || '150' }}
       MAX_WORKS: ${{ github.event.inputs.max_works || '16' }}
       PYTHONUNBUFFERED: "1"
-      ARTVISION_STYLE: ${{ github.event.inputs.style || 'atelier_v4' }}
-      ARTVISION_MUSIC: ${{ github.event.inputs.music || 'evening_fall_piano' }}
+      ARTVISION_STYLE: ${{ github.event.inputs.style || 'universal_atelier_v5' }}
+      ARTVISION_MUSIC: ${{ github.event.inputs.music || 'dreams_become_real' }}
     steps:
       - name: "Scarica progetto (sistema originale intatto)"
         uses: actions/checkout@v4
@@ -91,10 +93,10 @@ jobs:
           assert 2 <= len(artist) <= 100 and "\n" not in artist and "\r" not in artist, "Nome artista non valido"
           duration = int(request.get("duration", 150))
           works = int(request.get("max_works", 16))
-          style = str(request.get("style", "atelier_v4"))
-          assert style in ("atelier_v4", "harmonic_reveal", "cinematic_wow", "museum_legacy"), "Regia sconosciuta"
-          music = str(request.get("music", "evening_fall_piano"))
-          assert music in ("evening_fall_piano", "calmant"), "Brano non autorizzato"
+          style = str(request.get("style", "universal_atelier_v5"))
+          assert style in ("universal_atelier_v5", "atelier_v4", "harmonic_reveal", "cinematic_wow", "museum_legacy"), "Regia sconosciuta"
+          music = str(request.get("music", "dreams_become_real"))
+          assert music in ("dreams_become_real", "evening_fall_piano", "calmant"), "Brano non autorizzato"
           assert 120 <= duration <= 180 and 6 <= works <= 24, "Durata o numero opere non valido"
           with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
               env.write(f"ARTIST={artist}\n")
@@ -113,7 +115,7 @@ jobs:
       - name: "Controlli preventivi, nessuna API a pagamento"
         shell: bash
         run: |
-          python -m py_compile modules/artvision/artvision.py modules/artvision/cinema_wow_v2.py modules/artvision/artvision_cinema_run.py modules/artvision/harmonic_reveal_v3.py modules/artvision/atelier_v4.py modules/artvision/quality_report_v4.py
+          python -m py_compile modules/artvision/artvision.py modules/artvision/cinema_wow_v2.py modules/artvision/artvision_cinema_run.py modules/artvision/harmonic_reveal_v3.py modules/artvision/atelier_v4.py modules/artvision/quality_report_v4.py modules/artvision/universal_atelier_v5.py
           ffmpeg -version | sed -n '1p'
           ffprobe -version | sed -n '1p'
           python - <<'PY'
@@ -131,7 +133,14 @@ jobs:
       - name: "Genera MP4, musica originale e manifest fonti (regia selezionata)"
         shell: bash
         run: |
-          if [[ "$ARTVISION_STYLE" == "atelier_v4" ]]; then
+          if [[ "$ARTVISION_STYLE" == "universal_atelier_v5" ]]; then
+            python modules/artvision/universal_atelier_v5.py \
+              --artist "$ARTIST" \
+              --duration "$VIDEO_DURATION" \
+              --max-works "$MAX_WORKS" \
+              --music "$ARTVISION_MUSIC" \
+              --out output/artvision
+          elif [[ "$ARTVISION_STYLE" == "atelier_v4" ]]; then
             python modules/artvision/atelier_v4.py \
               --artist "$ARTIST" \
               --duration "$VIDEO_DURATION" \
@@ -159,7 +168,7 @@ jobs:
           fi
 
       - name: "Revisione visiva automatica e contatto regia V4"
-        if: success() && env.ARTVISION_STYLE == 'atelier_v4'
+        if: success() && (env.ARTVISION_STYLE == 'atelier_v4' || env.ARTVISION_STYLE == 'universal_atelier_v5')
         run: python modules/artvision/quality_report_v4.py --out output/artvision
 
       - name: "Deposita soltanto file finali (NON pubblica)"
