@@ -16,6 +16,7 @@ def good_story():
     # >230 words for complete story; each sentence starts uppercase.
     script=" ".join(sentences)
     scenes=[{"start_sentence":i*3,"description":"Bosco e luce del mattino",
+             "narration_anchor":sentences[i*3],
              "search":"forest sunlight trees"} for i in range(9)]
     return {"narration":script,"scenes":scenes}
 
@@ -41,10 +42,20 @@ class AutopilotV11Tests(unittest.TestCase):
         story["scenes"][2]["search"]=""
         with self.assertRaises(ValueError):validate_story(story)
 
+    def test_exact_narration_anchor_required(self):
+        story=good_story()
+        story["scenes"][3]["narration_anchor"]="Una descrizione estranea al racconto."
+        with self.assertRaises(ValueError):
+            validate_story(story)
+        story=good_story()
+        del story["scenes"][3]["narration_anchor"]
+        with self.assertRaises(ValueError):
+            validate_story(story)
+
     def test_italian_prompt_and_no_false_footage(self):
         p=content_prompt("Ricerca","Storia di crescita","fiabe",3)
         self.assertIn("narrazione",p.lower())
-        self.assertIn("non dichiarare immagini storiche",p.lower())
+        self.assertIn("non spacciare fotografie",p.lower())
 
     def test_real_jpg_poster_sizes(self):
         image=Image.effect_noise((1100,900),60).convert("RGB")

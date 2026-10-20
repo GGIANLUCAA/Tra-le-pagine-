@@ -161,3 +161,16 @@ Con GitHub Pages l'avvio dei workflow resta **guidato** attraverso GitHub; con l
 - [Videoteca e MP4](docs/videoteca_v11.js)
 - [Workflow pubblicazione approvata](.github/workflows/pubblica-video-v11.yml)
 - [Pipeline beta da un'idea](.github/workflows/studio-autopilot-v11.yml)
+
+## 🎞 V12 — Regole permanenti per TUTTI i prossimi video
+**Nessun sottotitolo**: la nuova produzione non aggiunge più testo del parlato sull'immagine, non crea file `SOTTOTITOLI.srt`/`captions.ass` e non inserisce tracce sottotitoli nell'MP4. La vecchia implementazione è preservata **solo** nel backup `legacy_backup/render_con_sottotitoli_v11.py`. I video già prodotti rimangono intatti.
+
+**Narrazione più comprensibile:** i riassunti dei libri devono spiegare protagonista, situazione, eventi fondamentali, azioni, conseguenze e conclusione prima delle riflessioni. Il nuovo prompt V12 scoraggia generalità e filosofeggiamenti.
+
+**Immagini che seguono la voce:** il report `REGIA_NARRATIVA_V12.txt/json` abbina ogni scena alla frase esatta del racconto e segnala che la reale pertinenza delle fotografie richiede comunque controllo visivo. Non scambiare una keyword simile per una corrispondenza verificata.
+
+- [Leggi tutte le regole V12](REGOLE_VIDEO_V12.md)
+- [Regia narrativa V12](src/regia_narrativa_v12.py)
+- [Test MP4 senza sottotitoli](tests/test_no_subtitles_v12.py)
+
+**Importante:** il video `Delitto e castigo` già consegnato NON viene rigenerato: queste correzioni valgono per i video futuri.

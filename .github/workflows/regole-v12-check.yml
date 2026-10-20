@@ -1,0 +1,46 @@
+name: "Tra le Pagine - V12 regole senza sottotitoli"
+on:
+  pull_request:
+    paths:
+      - "src/render.py"
+      - "src/episode_v3.py"
+      - "src/studio_autopilot_v11.py"
+      - "src/regia_narrativa_v12.py"
+      - "tests/test_no_subtitles_v12.py"
+      - "tests/test_regia_narrativa_v12.py"
+      - "tests/test_studio_autopilot_v11.py"
+      - ".github/workflows/regole-v12-check.yml"
+      - "REGOLE_VIDEO_V12.md"
+  push:
+    branches: [main]
+    paths:
+      - "src/render.py"
+      - "src/episode_v3.py"
+      - "src/studio_autopilot_v11.py"
+      - "src/regia_narrativa_v12.py"
+permissions:
+  contents: read
+jobs:
+  story-and-video-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa librerie locali. Nessuna chiamata a Google"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "pillow>=10,<13" "numpy>=1.25,<3" "soundfile>=0.12"
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
+      - name: "Non generare SRT, ASS o testi impressi. Prova vero MP4"
+        run: python -m unittest discover -s tests -p "test_no_subtitles_v12.py" -v
+      - name: "Scena narrata associata all'immagine giusta nel rapporto editoriale"
+        run: python -m unittest discover -s tests -p "test_regia_narrativa_v12.py" -v
+      - name: "Trama chiara e storyboards ancorati alla frase esatta"
+        run: python -m unittest discover -s tests -p "test_studio_autopilot_v11.py" -v
+      - name: "Sintassi di tutti i moduli modificati"
+        run: python -m py_compile src/render.py src/episode_v3.py src/regia_narrativa_v12.py src/studio_autopilot_v11.py

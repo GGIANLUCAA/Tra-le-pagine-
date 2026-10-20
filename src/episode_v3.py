@@ -174,6 +174,11 @@ def postflight(episode,out):
     streams=info.get("streams",[])
     video=next((s for s in streams if s["codec_type"]=="video"),None)
     audio=next((s for s in streams if s["codec_type"]=="audio"),None)
+    # V12 policy: no subtitle stream, and no generated SRT/ASS sidecars.
+    if any(track.get("codec_type")=="subtitle" for track in streams):
+        fail("V12: video contiene una traccia sottotitoli; produzione bloccata")
+    if (out/"captions.ass").exists() or (out/"SOTTOTITOLI.srt").exists():
+        fail("V12: file sottotitoli residui nella produzione; produzione bloccata")
     if not 100<=duration<=270:fail(f"Durata sospetta: {duration:.1f}s")
     if not video or not audio:fail("Video o audio mancante")
     if video.get("width")!=720 or video.get("height")!=1280:
