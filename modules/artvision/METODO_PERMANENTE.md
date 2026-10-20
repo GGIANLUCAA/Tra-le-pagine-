@@ -55,3 +55,15 @@ La nuova guida editoriale completa è [REGIA_CINEMA_WOW_V2.md](REGIA_CINEMA_WOW_
 Per un episodio nuovo, conservare V1 e testare V2 su un provino di 20–30 secondi e poi sul video completo. Non attestare la qualità artistica senza ispezione del file.
 
 **Backup prima delle modifiche V2:** `backup-artvision-v1-3-prima-regia-wow-2026-10-20`. Nessuna modifica ai motori narrati.
+
+
+## Test reale della nuova regia V2 — riuscito il 20 ottobre 2026
+
+- [GitHub Actions run #7](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39416219435) conclusa con **SUCCESS**, nuovo motore `modules/artvision/cinema_wow_v2.py` invocato da `artvision_cinema_run.py` tramite workflow V2.
+- Artista: Vincent van Gogh; **16 opere**, **101 inquadrature** (contro 24 della V1), circa **149,834 s** a **720×1280** con codec H.264/AAC e **0 chiamate API a pagamento**. Render riportato: **235,2 secondi** complessivi. L'artifact GitHub `ARTVISION_7` include opere/fonti, storyboard regia e report.
+- QA creativo: il primo render automatico aveva una copertina basata sullo schizzo monocromatico «Wheat Field», giudicata debole per il gancio. È stato quindi corretto il motore per **scegliere deliberatamente l'immagine d'apertura**, con «Two Poplars in the Alpilles» come preferenza Van Gogh e scelta cromatico-compositiva per altri artisti.
+- È stata poi creata una versione di consegna localmente con nuovo incipit colorato, tipografia visibile, compressione del film a circa **25 MB** e normalizzazione audio. Questa **versione post-prodotta** non va confusa con l'artifact GitHub #7; quando si fa un nuovo render dal repository usare il codice di copertina aggiornato.
+- Audio V2: musica algoritmica composta nel sistema. È **provvisoria**, non un brano professionale; per valutazione qualitativa definitiva serve una musica di alta qualità con licenza verificabile.
+- La nuova regia ha superato il collaudo **tecnico**, non equivale all'approvazione estetica dell'utente. Chiedere feedback sul video anziché affermare automaticamente che l'effetto wow è perfetto.
+
+Per le prossime produzioni: `cinematic_wow` è il default, `museum_legacy` resta selezionabile esplicitamente. Non alterare la generazione dei libri narrati.
