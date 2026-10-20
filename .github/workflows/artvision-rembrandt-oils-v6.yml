@@ -1,0 +1,41 @@
+name: "ArtVision V6 - Rembrandt grandi dipinti a olio"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-rembrandt-oils-v6.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rembrandt:
+    name: "Rembrandt — Cinema V6"
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installazione strumenti video gratuiti"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+          python -m py_compile modules/artvision/batch3_cinema_v6.py modules/artvision/rembrandt_oils_sources_v6.py
+      - name: "Regia Rembrandt, filtro alta risoluzione e film completo"
+        run: python modules/artvision/batch3_cinema_v6.py --artist rembrandt
+      - name: "Consegna un solo MP4 finale più copertina e diritti"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_V6_REMBRANDT_DIPINTI"
+          path: |
+            output/artvision-batch-v6/rembrandt/film/ARTVISION_REMBRANDT_CINEMA_V6.mp4
+            output/artvision-batch-v6/rembrandt/film/COPERTINA.jpg
+            output/artvision-batch-v6/rembrandt/film/FONTI_E_DIRITTI.json
+            output/artvision-batch-v6/rembrandt/film/DESCRIZIONE_E_CREDITI.txt
+            output/artvision-batch-v6/rembrandt/film/REPORT.json
+            output/artvision-batch-v6/rembrandt/film/STORYBOARD_V6.json
+          if-no-files-found: error
+          retention-days: 7
