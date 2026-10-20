@@ -1,0 +1,103 @@
+{
+  "version": "V5-artist",
+  "quality": {
+    "color_cohesion": "gentle",
+    "max_paint_reveals": 3,
+    "max_postfx": 4
+  },
+  "scenes": [
+    {
+      "cue": 0,
+      "effect": "cinematic_pan",
+      "mood": "warm"
+    },
+    {
+      "cue": 1,
+      "effect": "cinematic_pan",
+      "mood": "warm"
+    },
+    {
+      "cue": 2,
+      "effect": "cinematic_pan",
+      "mood": "warm"
+    },
+    {
+      "cue": 3,
+      "effect": "brush_reveal",
+      "mood": "neutral",
+      "seconds": 2.1,
+      "reason": "Il Viaggiatore aziona la leva: la materia del laboratorio svanisce e il mondo futuro si rivela."
+    },
+    {
+      "cue": 4,
+      "effect": "cinematic_pan",
+      "mood": "warm"
+    },
+    {
+      "cue": 5,
+      "effect": "cinematic_pan",
+      "mood": "warm"
+    },
+    {
+      "cue": 6,
+      "effect": "cinematic_pan",
+      "mood": "cool",
+      "postfx": "cinema_vignette",
+      "reason": "La scomparsa della macchina isola il protagonista e trasforma il viaggio in una trappola."
+    },
+    {
+      "cue": 7,
+      "effect": "cinematic_pan",
+      "mood": "warm"
+    },
+    {
+      "cue": 8,
+      "effect": "sketch_paint",
+      "mood": "cool",
+      "seconds": 2.3,
+      "reason": "La figura sotterranea nascosta prende forma: per la prima volta il Viaggiatore vede un Morlock."
+    },
+    {
+      "cue": 9,
+      "effect": "cinematic_pan",
+      "mood": "cool"
+    },
+    {
+      "cue": 10,
+      "effect": "cinematic_pan",
+      "mood": "neutral"
+    },
+    {
+      "cue": 11,
+      "effect": "cinematic_pan",
+      "mood": "dusk"
+    },
+    {
+      "cue": 12,
+      "effect": "cinematic_pan",
+      "mood": "dusk"
+    },
+    {
+      "cue": 13,
+      "effect": "cinematic_pan",
+      "mood": "cool"
+    },
+    {
+      "cue": 14,
+      "effect": "cinematic_pan",
+      "mood": "dusk"
+    },
+    {
+      "cue": 15,
+      "effect": "cinematic_pan",
+      "mood": "warm",
+      "postfx": "soft_bloom",
+      "reason": "Un chiarore lieve mette in risalto i due fiori di Weena, unica prova concreta e tenera del viaggio."
+    },
+    {
+      "cue": 16,
+      "effect": "cinematic_pan",
+      "mood": "neutral"
+    }
+  ]
+}
