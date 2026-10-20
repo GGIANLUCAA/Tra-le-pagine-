@@ -118,3 +118,11 @@ provenienza e crediti da verificare. Nessuna pubblicazione o sostituzione automa
 
 **Ordine operativo:** riusa asset approvati → cerca fonti licenziate → genera solo le scene mancanti.
 Il renderer V5 e i vecchi episodi non sono stati modificati.
+
+## 🧠 Orchestratore V8 — stage sicuro, riuso e controllo da Android
+Nuovo modulo **solo additivo** per collegare pianificazione V6 e asset esistenti al formato immagini del renderer V5.
+Prepara `PIANO_V8.json`, `REVISIONE_GATE1_V8.html` e, **solo dopo approvazione Gate 1**, uno staging di immagini JPEG senza modificare le cartelle storiche. Suggerisce eventuali riusi da altri episodi ma non copia né genera immagini di sua iniziativa. La voce Google Gemini resta invariata. **V8 non genera ancora MP4**; il collegamento finale al vecchio renderer richiede un collaudo separato.
+
+- [Guida V8 per Android](ORCHESTRATORE_V8_GUIDA.md)
+- [Workflow Orchestratore V8](.github/workflows/orchestratore-v8.yml)
+- [Sorgente e adapter](src/orchestratore_v8.py)

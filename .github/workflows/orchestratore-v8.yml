@@ -1,0 +1,82 @@
+name: "Tra le Pagine - Orchestratore V8 (solo telefono)"
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episodio esistente (es. 03_siddharta)"
+        type: string
+        required: true
+        default: "03_siddharta"
+      format:
+        description: "Format editoriale"
+        type: choice
+        options: [libri, cronaca, documentario, fiabe, social]
+        default: libri
+        required: true
+      mode:
+        description: "plan=anteprima, prepare=staging solo dopo Gate 1"
+        type: choice
+        options: [plan, prepare]
+        required: true
+        default: plan
+      gate1_approved:
+        description: "Hai approvato copione e storyboard? (obbligatorio per prepare)"
+        type: boolean
+        required: true
+        default: false
+  pull_request:
+    paths:
+      - "src/orchestratore_v8.py"
+      - "tests/test_orchestratore_v8.py"
+      - ".github/workflows/orchestratore-v8.yml"
+permissions:
+  contents: read
+concurrency:
+  group: orchestratore-v8-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  orchestrator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      EPISODE: ${{ inputs.episode || '03_siddharta' }}
+      FORMAT: ${{ inputs.format || 'libri' }}
+      MODE: ${{ inputs.mode || 'plan' }}
+      GATE1: ${{ inputs.gate1_approved || false }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa solo Pillow per collaudi immagini; nessuna AI"
+        run: python -m pip install "pillow>=10,<13"
+      - name: "Test non regressione V6, V7 e V8"
+        run: |
+          python -m unittest discover -s tests -p "test_studio_ibrido_v6.py" -v
+          python -m unittest discover -s tests -p "test_archivio_media_v7.py" -v
+          python -m unittest discover -s tests -p "test_orchestratore_v8.py" -v
+      - name: "Proteggi l’approvazione"
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          if [[ "$MODE" == "prepare" && "$GATE1" != "true" ]]; then
+            echo "::error::Prima approva testo e storyboard (Gate 1)"
+            exit 2
+          fi
+      - name: "Pianifica o prepara un episodio compatibile V5"
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          if [[ "$MODE" == "prepare" ]]; then
+            python src/orchestratore_v8.py --episode "$EPISODE" --format "$FORMAT" --mode prepare --gate1-approved
+          else
+            python src/orchestratore_v8.py --episode "$EPISODE" --format "$FORMAT" --mode plan
+          fi
+      - name: "Consegna rapporto, anteprima e staging eventuale"
+        if: github.event_name == 'workflow_dispatch' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ORCHESTRATORE_V8_${{ inputs.mode }}"
+          path: output/orchestratore_v8/
+          if-no-files-found: error
+          retention-days: 14
