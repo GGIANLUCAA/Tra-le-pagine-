@@ -113,13 +113,22 @@ def sources(slug,cfg,folder):
  for name,info in found:
   if name in cache:continue
   cache.add(name)
-  if suitable_filename(name,slug):candidates.append((name,info))
+  if name==cfg["hero"] or suitable_filename(name,slug):candidates.append((name,info))
  candidates.sort(key=lambda x:priority(x[0],cfg,hero=(x[0]==cfg["hero"])),reverse=True)
  if not candidates:raise RuntimeError("No verifiable Commons candidates")
- works=[];errors=[];seen_titles=set()
+ works=[];errors=[];seen_titles=set();motif_counts={}
+ def motif_of(fn):
+  title=fn.lower().replace("_"," ").replace("-"," ")
+  # A museum image of the same painting may have many filenames / photographers.
+  for k in cfg["key"]:
+   if k.lower() in title:return k.lower()
+  return re.sub(r"[^a-z0-9]","",title.replace(cfg["name"].lower(),"").replace("google art project",""))[:60]
  for fn,info in candidates[:115]:
   if len(works)>=16:break
   try:
+   motif=motif_of(fn)
+   limit=1 if slug=="vermeer" else (3 if slug=="bosch" else 2)
+   if motif_counts.get(motif,0)>=limit:continue
    if info is None:info=info_file(fn)
    if not valid_license(info):raise RuntimeError("license unverified or commercial restriction")
    ext=info.get("extmetadata",{})
@@ -144,6 +153,7 @@ def sources(slug,cfg,folder):
    key=re.sub(r"[^a-z0-9]","",title.lower())
    if key in seen_titles:continue
    seen_titles.add(key)
+   motif_counts[motif]=motif_counts.get(motif,0)+1
    rec={"id":ident,"title":title,"artist":cfg["name"],"source":"Wikimedia Commons - licensed image file",
        "url":"https://commons.wikimedia.org/wiki/File:"+urllib.parse.quote(fn.replace(" ","_")),
        "original_file":fn,"license":rawclean(ext.get("LicenseShortName")),
