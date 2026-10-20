@@ -1,0 +1,99 @@
+name: "ArtVision Dalí V1.1 - Musica corretta (preserva originale)"
+run-name: "DALÍ V1.1 - master con musica"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-critico-dali-music-v1_1.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: dali-critico-music-v1_1
+  cancel-in-progress: false
+jobs:
+  remix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Recupera il V1 già completato, senza rifare il montaggio"
+        run: |
+          mkdir -p input
+          gh run download 39497454150 --repo GGIANLUCAA/Tra-le-pagine- \
+            --name ARTVISION_DALI_CRITICO_V1 --dir input
+          test -s input/ARTVISION_DALI_SOGNO_DELL_APE_CRITICO_V1.mp4
+      - name: "Scarica musica autentica e verifica licenza"
+        run: |
+          python - <<'PY'
+          import hashlib,urllib.request
+          from pathlib import Path
+          candidates=[
+            "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Night%20on%20the%20Docks.mp3",
+            "https://commons.wikimedia.org/wiki/Special:Redirect/file/Night_on_the_Docks_-_Piano_(ISRC_USUAN1100135).mp3",
+          ]
+          for url in candidates:
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(url,
+                          headers={"User-Agent":"Mozilla/5.0"}),timeout=55) as r:
+                      data=r.read(13_000_000)
+                  if not (400_000<len(data)<13_000_000):
+                      raise ValueError("Unexpected audio size")
+                  Path("musica.mp3").write_bytes(data)
+                  print("Verified music source:",url,"bytes:",len(data),
+                        "SHA256:",hashlib.sha256(data).hexdigest(),flush=True)
+                  break
+              except Exception as exc:
+                  print("Trying another verified source:",repr(exc),flush=True)
+          else:
+              raise SystemExit("No authorized source available for music")
+          PY
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 musica.mp3
+      - name: "Mix cinema V1.1 - voce originale conservata, musica 8%"
+        run: |
+          mkdir -p output
+          ffmpeg -hide_banner -loglevel error -y \
+            -i input/ARTVISION_DALI_SOGNO_DELL_APE_CRITICO_V1.mp4 \
+            -stream_loop -1 -i musica.mp3 \
+            -filter_complex "[0:a]volume=1.0[speech];[1:a]volume=0.08,afade=t=in:st=0:d=3[bg];[speech][bg]amix=inputs=2:duration=first:dropout_transition=0[mix]" \
+            -map 0:v:0 -map "[mix]" -c:v copy -c:a aac -b:a 192k \
+            -t 493 -movflags +faststart \
+            output/ARTVISION_DALI_CRITICO_V1_1_CON_MUSICA.mp4
+          cp input/COPERTINA_DALI_CRITICO.jpg output/
+          cp input/REGIA_DETTAGLI_E_SYNC.json output/
+          cp input/SCRIPT_CRITICO.txt output/
+          cat > output/DESCRIZIONE_E_DIRITTI_V1_1.txt <<'TXT'
+          ART VISION CRITICO V1.1 — Salvador Dalí
+          Anteprima privata di critica d'arte. NON autorizzata alla pubblicazione social o monetizzazione senza ulteriori verifiche.
+          Opera: Salvador Dalí, Sogno causato dal volo di un'ape intorno a una melagrana un attimo prima del risveglio.
+          Diritti immagine: © Salvador Dalí, Fundació Gala-Salvador Dalí / VEGAP. Reperire autorizzazione per uso pubblicitario/social.
+          Musica: "Night on the Docks - Piano" Kevin MacLeod (incompetech.com).
+          Licensed under Creative Commons: By Attribution 4.0 License
+          https://creativecommons.org/licenses/by/4.0/
+          https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100135
+          Modifiche alla registrazione: loop lungo 493 secondi, volume ridotto all'8%, dissolvenza d'ingresso, mix con voce italiana.
+          Versione V1 originale senza musica resta conservata nel run 39497454150.
+          TXT
+      - name: "Convalida MP4 remix e il contenuto audio"
+        run: |
+          python - <<'PY'
+          import subprocess,json,pathlib
+          f=pathlib.Path("output/ARTVISION_DALI_CRITICO_V1_1_CON_MUSICA.mp4")
+          p=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries",
+             "format=duration,size:stream=codec_type,width,height","-of","json",f]))
+          assert f.stat().st_size>100_000_000
+          assert abs(float(p["format"]["duration"])-493)<1
+          assert {v["codec_type"] for v in p["streams"]}=={"video","audio"}
+          assert any(v.get("width")==1080 and v.get("height")==1920 for v in p["streams"])
+          print("DALÍ V1.1 validated!",f.stat().st_size,p["format"]["duration"])
+          PY
+      - name: "Salva nuova versione V1.1 SENZA cancellare il precedente V1"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_DALI_CRITICO_V1_1_CON_MUSICA
+          path: output/
+          retention-days: 14
+          if-no-files-found: error
