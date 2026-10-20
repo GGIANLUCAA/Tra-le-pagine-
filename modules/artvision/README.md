@@ -1,4 +1,4 @@
-# ARTVISION — arte autentica in video, senza voce
+# IMPORTANTE — ART VISION V6 APPROVATA\n\n> **VERSIONE APPROVATA (20/10/2026): ARTVISION CINEMA V6 — GOLD MASTER.** L'utente ha approvato esplicitamente il risultato V6 come migliore; è il **riferimento artistico predefinito per i prossimi film**, non V5. Leggere PRIMA [V6_APPROVATA_GOLD_MASTER.md](V6_APPROVATA_GOLD_MASTER.md) e [REGIA_CINEMA_V6.md](REGIA_CINEMA_V6.md). Le indicazioni V1–V5 sotto sono storico, non più default. Backup GitHub dedicato: `ARTVISION_V6_GOLD_MASTER_APPROVATA_2026-10-20`. Per nuovi artisti progettare nuovo storyboard V6 con opere/musica proprie. Non toccare i video narrati.\n\n# ARTVISION — arte autentica in video, senza voce
 
 ## VERSIONE APPROVATA — CINEMA V6 (20 ottobre 2026)
 
