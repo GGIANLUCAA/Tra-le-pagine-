@@ -1,5 +1,5 @@
-const CACHE = "tra-le-pagine-v9-20261020b";
-const STATIC = ["./", "./index.html", "./styles.css", "./app.js", "./icon.svg", "./manifest.webmanifest"];
+const CACHE = "tra-le-pagine-v11-20261020";
+const STATIC = ["./", "./index.html", "./styles.css", "./app.js", "./videoteca_v11.js", "./episode_gallery_v10.js", "./icon.svg", "./manifest.webmanifest"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(STATIC)).catch(() => {}));
 });
