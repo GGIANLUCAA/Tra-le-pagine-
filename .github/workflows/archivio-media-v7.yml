@@ -58,6 +58,10 @@ jobs:
           python-version: "3.11"
       - name: "Test sicurezza prima della rete"
         run: python -m unittest discover -s tests -p "test_archivio_media_v7.py" -v
+      - name: "Prova connessione Openverse (solo ricerca, non scarica nulla)"
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: python src/archivio_media_v7.py --provider openverse --kind image --mode discover --query river --limit 3 --out output/v7_smoke
       - name: "Controlli dei parametri"
         if: github.event_name == 'workflow_dispatch'
         shell: bash
