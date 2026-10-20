@@ -103,3 +103,17 @@ L'utente apprezza V3 rispetto alle precedenti ma rifiuta la ripetitività di ogn
 Nuovo motore separato: `modules/artvision/atelier_v4.py` — selezione `style=atelier_v4` (default workflow); impostare `music` per ogni richiesta. V1, V2, V3 e i video libri restano invariati. Backup `backup-artvision-v3-prima-regia-atelier-v4-2026-10-20`. Linea guida completa: [REGIA_ATELIER_V4.md](REGIA_ATELIER_V4.md).
 
 **Consegna futura**: GitHub Actions con coda `modules/artvision/queue.json`, nessuna pubblicazione automatica, collaudo MP4, audio, fonti, licenze e `quality_report_v4.py` (tavola visuale dei dettagli). La run V4 #11 si era fermata su un URL musicale inventato: file corretto ufficiale è `Evening Fall - Piano.mp3`, non `Evening Fall (Piano).mp3`. Controllare l'URL reale nel metadato di [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Evening_Fall_(Piano)_(ISRC_USUAN1100235).mp3) prima dei download. Non generare un brano finto come sostituto silenzioso.
+
+
+## PRIMO RENDER V4 REALE SUPERATO — 20 OTTOBRE 2026
+- [GitHub Actions #12](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39426478495) **success**, artifact `ARTVISION_12` verificato e MP4 esaminato.
+- Vincent van Gogh: 12 opere museali, 49 fasi di inquadratura curate, alternanza effettiva di 1/2/3 dettagli e apertura con opera intera; senza split-screen.
+- Video 150,000 secondi, 1080×1920 Full HD, 24fps H.264 + AAC; file master 93.4 MB (89.1 MiB). Questa è **alta qualità Full HD**, non 4K nativo.
+- Musica reale: `Evening Fall (Piano)`, Kevin MacLeod, ISRC USUAN1100235, registrazione 165,07 secondi verificata con ffprobe. Licenza attuale riportata dal sito dell'autore CC BY 4.0; la copia archivio Wikimedia indica CC BY 3.0. Credito esplicito nel MP4 e `DESCRIZIONE_SOCIAL.txt`.
+- Il download da `https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20(Piano).mp3` era **errato (404) sulla run #11**. URL ufficiale corretto è `Evening%20Fall%20-%20Piano.mp3` (fonte Wikimedia) e fallback verificato Commons `Evening Fall (Piano) (ISRC USUAN1100235).mp3`. Non inventare download URL in futuro.
+- Il primo V4 #12 ha utilizzato il file Wikimedia Commons: hash SHA256 `5195c266275c694f9186dceb23e667c45ed74767d97f6615df01021fed3f048e`.
+- Audio picco massimo misurato a -3.3 dBFS, senza clipping; durata e flussi controllati.
+- Tempo di produzione effettivo circa 321 secondi, 0 API a pagamento; upload video non è pubblicazione.
+- **Controllo visuale**: contact sheet con 3 campioni per ciascuna delle 12 opere preparato dalla run e esaminato: ritmo variato, quadro completo, dettagli, credit musicale visibile nei primi/ultimi secondi. Alcune immagini museali hanno risoluzioni inferiori a 1080 e alcuni soggetti sono disegni: non sostenere che tutti i dettagli siano 4K.
+- Script permanente `modules/artvision/quality_report_v4.py` e workflow aggiornato per includere `CONTATTO_REGIA_V4.jpg` e `CONTROLLO_ATELIER_V4.json` nei prossimi render, senza rifare il sistema.
+- La pubblicazione resta disabilitata; l'utente deve giudicare il gradimento artistico e l'idoneità dei diritti nel proprio territorio.
