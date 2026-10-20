@@ -73,7 +73,7 @@ def render_art(im,focus,z):
     ih,iw=im.shape[:2]
     base=min((W-78)/iw,(H-280)/ih)
     # Preserve pixel density. Image must not be enlarged beyond ~1.35x native sample density.
-    cap=max(1.0,min(2.2,iw*1.35/(W/base),ih*1.35/(H/base)))
+    cap=max(1.0,min(2.2,1.35/base))
     z=min(z,cap)
     scale=base*z
     nw,nh=max(1,int(round(iw*scale))),max(1,int(round(ih*scale)))
