@@ -5,9 +5,10 @@ No narration, lyrics, subtitles, generic credit roll, split screens or AI-genera
 Full legally required music attribution is saved in the public post description, not in video.
 """
 from __future__ import annotations
-import argparse, json, math, shutil, time
+import argparse, json, math, shutil, time, hashlib, io
 from pathlib import Path
 from datetime import datetime, timezone
+from urllib.request import Request, urlopen
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -57,6 +58,60 @@ def opening_type(frame,artist,music,seconds):
     box=draw.textbbox((0,0),tiny,font=caption)
     draw.text(((W-box[2])/2,236),tiny,font=caption,fill=(209,204,196,round(a*.9)))
     return cv2.cvtColor(np.array(Image.alpha_composite(im,layer).convert("RGB")),cv2.COLOR_RGB2BGR)
+
+def promote_museum_sources(works):
+    """Upgrade CMA 900px web previews to *verified* museum print originals, if supplied.
+    Respect Open Access metadata; never invent image content or store huge masters in Git.
+    """
+    result=[]
+    for item in works:
+        if item.get("source")!="Cleveland Museum of Art" or item.get("license")!="CC0":
+            continue
+        if max(int(item.get("width",0)),int(item.get("height",0)))>=2000:continue
+        target=None
+        try:
+            uri="https://openaccess-api.clevelandart.org/api/artworks/"+str(item["id"])
+            with urlopen(Request(uri,headers={"User-Agent":"TraLePagine ArtVision cultural video"}),timeout=22) as response:
+                doc=json.loads(response.read(1600000))
+            rec=doc.get("data") or {}
+            if isinstance(rec,list):rec=rec[0] if rec else {}
+            if rec.get("share_license_status")=="CC0":
+                target=((rec.get("images") or {}).get("print") or {}).get("url")
+        except Exception as err:
+            print("CMA print discovery unavailable:",item["title"],str(err)[:140],flush=True)
+        if not target:
+            web=item.get("image_url","")
+            if web.endswith("_web.jpg"):
+                target=web[:-8]+"_print.jpg"
+        if not target:continue
+        try:
+            req=Request(target,headers={"User-Agent":"TraLePagine ArtVision / CC0 archive"})
+            data=bytearray()
+            with urlopen(req,timeout=52) as response:
+                while True:
+                    chunk=response.read(1024*1024)
+                    if not chunk:break
+                    data.extend(chunk)
+                    if len(data)>66_000_000:raise ValueError("master too large")
+            if len(data)<150000:raise ValueError("not a print master")
+            with Image.open(io.BytesIO(data)) as orig:
+                orig.draft("RGB",(4000,4000))
+                img=ImageOps.exif_transpose(orig).convert("RGB")
+                img.thumbnail((4000,4000),Image.Resampling.LANCZOS)
+            w,h=img.size
+            if max(w,h)<max(int(item["width"]),int(item["height"]))*1.7:
+                raise ValueError("no meaningful resolution increase")
+            path=Path(item["file"]);img.save(path,format="JPEG",quality=95,optimize=True,subsampling=0)
+            previous=item["image_url"];item.update({"image_url":target,"web_preview_url":previous,
+                "width":w,"height":h,"sha256":hashlib.sha256(path.read_bytes()).hexdigest(),
+                "source_upgrade":"Cleveland Museum Open Access print master, locally downsized to max 4000px"})
+            result.append({"title":item["title"],"from":previous,"to":target,
+                           "upgraded_pixels":[w,h],"verified":True})
+            print("Museum master upgraded:",item["title"],w,h,flush=True)
+        except Exception as err:
+            result.append({"title":item["title"],"verified":False,"error":str(err)[:180]})
+            print("Museum master fallback:",item["title"],str(err)[:150],flush=True)
+    return result
 
 def gallery_background():
     """A smooth, color-neutral gallery, no fake extension of the original artwork."""
@@ -132,6 +187,11 @@ def render(works,scenes,duration,artist,track,musicfile,out):
                 frame=render_art(im,focus,z)
                 elapsed=done/FPS
                 if elapsed<INTRO_SEC:
+                    # Intentional cinematic opening: real, richly detailed irises fill
+                    # the vertical canvas; no empty slideshow frame or invented content.
+                    hero=src[scenes[0]["art_index"]]
+                    hero_zoom=2.78-0.17*smooth(elapsed/INTRO_SEC)
+                    frame=render_art(hero,(.53,.49),hero_zoom)
                     frame=opening_type(frame,artist,track,elapsed)
                 if dissolve and k<dissolve and previous is not None:
                     blend=smooth((k+1)/(dissolve+1))
@@ -182,6 +242,8 @@ def main():
     musicfile, proof=audio_download(music,out,args.duration)
     catalog,errs=collect(args.artist)
     works,download_errors=download_pictures(catalog,out/"source_images",args.max_works)
+    promoted=promote_museum_sources(works)
+    (out/"QUALITA_SORGENTI.json").write_text(json.dumps(promoted,indent=2,ensure_ascii=False),encoding="utf8")
     scenes=storyboard(works,args.duration)
     chosen={s["art_index"] for s in scenes}
     proof.update({"onscreen_credit":"Music by "+music["author"],
@@ -204,6 +266,7 @@ def main():
     report={"artist":args.artist,"style":"universal_atelier_v5","one_video_only":True,
         "runtime_seconds":float(media["format"]["duration"]),"resolution":"1080x1920",
         "works":len(chosen),"shots":sum(len(x["parts"]) for x in scenes),
+        "museum_prints_upgraded":sum(x.get("verified") is True for x in promoted),
         "file_size_bytes":int(media["format"]["size"]),"processing_seconds":round(time.monotonic()-started,2),
         "music_track":music["title"],"music_author":music["author"],
         "text_in_video":["artist_name","music_by"],"other_credits_in_video":False,
