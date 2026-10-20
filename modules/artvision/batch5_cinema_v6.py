@@ -31,7 +31,7 @@ P={
  "bosch":{
   "name":"Hieronymus Bosch","duration":132,"hero":"The Garden of Earthly Delights by Hieronymus Bosch.jpg",
   "key":["garden of earthly delights","temptation of st anthony","last judgement","haywain","ship of fools","christ carrying the cross","hell","conjurer","extraction of stone","adoration","hermit saint"],
-  "find":["Hieronymus Bosch painting","Hieronymus Bosch Garden Delights","Bosch Triptych painting"],
+  "find":["Hieronymus Bosch Temptation Saint Anthony","Hieronymus Bosch The Haywain","Hieronymus Bosch Last Judgment","Hieronymus Bosch Ship of Fools","Hieronymus Bosch Triptych painting","Hieronymus Bosch Garden Delights"],
   "act":["First sight of an impossible world","Earthly abundance and temptation","Animals, objects and enigmas","Hellfire and grotesque faces","The garden returns"],"track":"darkest_child"},
  "botticelli":{
   "name":"Sandro Botticelli","duration":125,"hero":"Nascita di Venere Botticelli.jpg",
