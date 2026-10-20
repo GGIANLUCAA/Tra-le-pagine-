@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "notes": "Use only independently verified real recordings, preserve source/CC attribution. Avoid recent repeats. Extend per new artist, never use copyrighted recording without license.",
+  "notes": "Use only independently verified real recordings, preserve source/CC attribution. Avoid recent repeats. Extend per new artist, never use copyrighted recording without license. Newly added tracks have verified official licensing/duration but untested download URLs; do not mark production-ready until ffprobe validates recording.",
   "recent_uses": [
     {
       "artist": "Vincent van Gogh",
@@ -34,6 +34,50 @@
       "isrc": "USUAN1100235",
       "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100235",
       "approx_duration_seconds": 165
+    },
+    {
+      "id": "night_on_the_docks_piano",
+      "title": "Night on the Docks - Piano",
+      "composer": "Kevin MacLeod",
+      "license": "CC BY 4.0",
+      "isrc": "USUAN1100135",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100135",
+      "approx_duration_seconds": 174,
+      "mood": "noir, slow jazz piano",
+      "download_tested": false
+    },
+    {
+      "id": "dreams_become_real",
+      "title": "Dreams Become Real",
+      "composer": "Kevin MacLeod",
+      "license": "CC BY 4.0",
+      "isrc": "USUAN1500027",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027",
+      "approx_duration_seconds": 410,
+      "mood": "dreamy piano and synthesizers",
+      "download_tested": false
+    },
+    {
+      "id": "music_for_manatees",
+      "title": "Music for Manatees",
+      "composer": "Kevin MacLeod",
+      "license": "CC BY 4.0",
+      "isrc": "USUAN1400009",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400009",
+      "approx_duration_seconds": 1056,
+      "mood": "meditative piano and strings",
+      "download_tested": false
+    },
+    {
+      "id": "ever_mindful",
+      "title": "Ever Mindful",
+      "composer": "Kevin MacLeod",
+      "license": "CC BY 4.0",
+      "isrc": "USUAN1700033",
+      "source": "https://incompetech.com/music/royalty-free/?isrc=USUAN1700033",
+      "approx_duration_seconds": 1599,
+      "mood": "slow orchestral strings",
+      "download_tested": false
     }
   ]
 }
