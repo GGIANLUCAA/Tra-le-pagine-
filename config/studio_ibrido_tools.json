@@ -1,0 +1,268 @@
+{
+  "version": "V6",
+  "policy": {
+    "execution": "manual-opt-in",
+    "default_voice": "gemini-tts",
+    "default_renderer": "ffmpeg",
+    "auto_download": false,
+    "auto_publish": false,
+    "credentials_in_repo": false,
+    "cost_ceiling_eur": 0,
+    "notes": "Catalogo di candidati, NON integrazioni installate. I costi hardware/cloud, quote e licenze dei pesi si verificano prima di attivare."
+  },
+  "tools": [
+    {
+      "id": "ffmpeg",
+      "category": "montaggio",
+      "compute": "cpu",
+      "status": "integrato",
+      "cost_type": "zero",
+      "url": "https://ffmpeg.org/",
+      "note": "Motore già usato dal renderer V5; non duplicare.",
+      "enabled": true,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "gemini-tts",
+      "category": "voce",
+      "compute": "servizio",
+      "status": "integrato",
+      "cost_type": "quota",
+      "url": "https://ai.google.dev/gemini-api/docs/speech-generation",
+      "note": "Voce attuale, mantenere per default; consumi dipendono dal piano API.",
+      "enabled": true,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "qwen3-tts",
+      "category": "voce",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/QwenLM/Qwen3-TTS",
+      "note": "Italiano supportato; 0.6B/1.7B; provare in ambiente esterno, senza clonare persone senza consenso.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "cosyvoice",
+      "category": "voce",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/QwenAudio/CosyVoice",
+      "note": "Voce alternativa; verificare italiano e pesi del checkpoint specifico.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "z-image-turbo",
+      "category": "immagini",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/Tongyi-MAI/Z-Image",
+      "note": "Fotorealismo; circa 16 GB VRAM dichiarati per Turbo; output con controllo anatomia.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "qwen-image",
+      "category": "immagini",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/QwenLM/Qwen-Image",
+      "note": "Modello originario Apache 2.0; controllare ogni checkpoint e servizi ospitati.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "qwen-image-layered",
+      "category": "immagini-editabili",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/QwenLM/Qwen-Image-Layered",
+      "note": "Livelli separati da immagine; analizzare licenza dei pesi prima di uso commerciale.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "qwen-image-2.1",
+      "category": "immagini",
+      "compute": "gpu",
+      "status": "limitato",
+      "cost_type": "non-commerciale",
+      "url": "https://github.com/QwenLM/Qwen-Image-2.1",
+      "note": "Licenza RESEARCH solo non commerciale: non usare nel canale monetizzato senza permesso.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "wan2.2",
+      "category": "video-ai",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/Wan-Video/Wan2.2",
+      "note": "Image-to-video; GPU esterna; non lanciare sul runner GitHub gratuito.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "hunyuanvideo-1.5",
+      "category": "video-ai",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5",
+      "note": "14GB VRAM minimo ufficiale con offloading; test solo GPU esterna.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "cogvideox",
+      "category": "video-ai",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/zai-org/CogVideo",
+      "note": "Alternative video AI; controllo licenza del checkpoint obbligatorio.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "liveportrait",
+      "category": "ritratti",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/KlingAIResearch/LivePortrait",
+      "note": "Uso commerciale: attenzione ai modelli InsightFace non commerciali.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "funclip",
+      "category": "ritaglio",
+      "compute": "cpu-gpu",
+      "status": "candidato",
+      "cost_type": "libero-locale",
+      "url": "https://github.com/modelscope/FunClip",
+      "note": "Taglio guidato dalla trascrizione; modelli aggiuntivi opzionali.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "realesrgan",
+      "category": "restauro",
+      "compute": "cpu-gpu",
+      "status": "candidato",
+      "cost_type": "libero-locale",
+      "url": "https://github.com/xinntao/Real-ESRGAN",
+      "note": "Upscaling da valutare senza inventare dettagli storici.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "depth-anything-v2-small",
+      "category": "profondita",
+      "compute": "cpu-gpu",
+      "status": "candidato",
+      "cost_type": "libero-locale",
+      "url": "https://github.com/DepthAnything/Depth-Anything-V2",
+      "note": "Modello Small Apache-2.0; i modelli maggiori hanno restrizioni NC.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "rife",
+      "category": "interpolazione",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/hzwer/ECCV2022-RIFE",
+      "note": "Interpolate tra fotogrammi; rischio artefatti mani/volti.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "paddleocr",
+      "category": "verifica-testo",
+      "compute": "cpu",
+      "status": "candidato",
+      "cost_type": "libero-locale",
+      "url": "https://github.com/PaddlePaddle/PaddleOCR",
+      "note": "Controllo di scritte errate nelle grafiche; codice Apache 2.0.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "pyscenedetect",
+      "category": "analisi-montaggio",
+      "compute": "cpu",
+      "status": "candidato",
+      "cost_type": "libero-locale",
+      "url": "https://github.com/Breakthrough/PySceneDetect",
+      "note": "Riconoscere tagli su filmati già acquisiti.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "rembg",
+      "category": "scontorno",
+      "compute": "cpu",
+      "status": "sperimentale",
+      "cost_type": "libero-locale",
+      "url": "https://github.com/danielgatis/rembg",
+      "note": "Già testato nel progetto: non attivare di default a causa di difetti delle maschere.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "comfyui",
+      "category": "orchestrazione-gpu",
+      "compute": "gpu",
+      "status": "candidato",
+      "cost_type": "gpu",
+      "url": "https://github.com/Comfy-Org/ComfyUI",
+      "note": "Gestione grafi di modelli, richiede ambiente separato.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "starrykit",
+      "category": "copertine",
+      "compute": "servizio",
+      "status": "candidato",
+      "cost_type": "quota",
+      "url": "https://starrykit.com/",
+      "note": "Plugin non connesso in questa conversazione; limiti/crediti da verificare quando usato.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "uniscript",
+      "category": "caroselli",
+      "compute": "servizio",
+      "status": "candidato",
+      "cost_type": "pagamento",
+      "url": "https://uniscript.app/mcp/",
+      "note": "Non prioritario: piano MCP a pagamento.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    },
+    {
+      "id": "ii-content-engine",
+      "category": "riuso-template",
+      "compute": "ambiente-esterno",
+      "status": "candidato",
+      "cost_type": "da-verificare",
+      "url": "https://github.com/intelligent-iterations/ii-content-engine",
+      "note": "Non importare cookie browser né codebase nel sistema base senza audit.",
+      "enabled": false,
+      "third_party_model_license_reviewed": false
+    }
+  ]
+}
