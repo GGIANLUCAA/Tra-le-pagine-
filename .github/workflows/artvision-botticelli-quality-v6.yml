@@ -1,0 +1,37 @@
+name: "ArtVision - Botticelli regia varia, qualità V6"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-botticelli-quality-v6.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  botticelli:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "FFmpeg, Pillow, OpenCV"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: "Botticelli: Primavera, Venus, portrait, Madonna, myth"
+        run: python modules/artvision/batch5_cinema_v6.py --artist botticelli
+      - name: "Video e copertina con fonti"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_BOTTICELLI_VARIETA_V6"
+          path: |
+            output/artvision-batch5-cinema/botticelli/film/*.mp4
+            output/artvision-batch5-cinema/botticelli/film/*.jpg
+            output/artvision-batch5-cinema/botticelli/film/*.json
+            output/artvision-batch5-cinema/botticelli/film/*.txt
+          if-no-files-found: error
+          retention-days: 7
