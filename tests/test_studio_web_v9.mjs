@@ -111,3 +111,16 @@ test("public video publishing requires explicit valid episode, run and confirmat
   assert.throws(()=>validateDispatch({...payload,inputs:{...payload.inputs,episode:"../../secrets"}}));
   assert.throws(()=>validateDispatch({...payload,inputs:{...payload.inputs,extra:"x"}}));
 });
+
+test("AutoPilot BETA can only start with validated story and explicit quota approval",()=>{
+ const payload={workflow:"autopilot",inputs:{
+   title:"Viaggio attraverso il bosco",idea:"Una storia poetica di crescita e ricerca interiore, senza cronaca",
+   formato:"fiabe",durata:"3",conferma_costi:true},confirmed:true};
+ assert.equal(validateDispatch(payload).workflow,"studio-autopilot-v11.yml");
+ assert.throws(()=>validateDispatch({...payload,confirmed:false}));
+ assert.throws(()=>validateDispatch({...payload,inputs:{...payload.inputs,conferma_costi:false}}));
+ assert.throws(()=>validateDispatch({...payload,inputs:{...payload.inputs,formato:"cronaca"}}));
+ assert.throws(()=>validateDispatch({...payload,inputs:{...payload.inputs,durata:"120"}}));
+ assert.throws(()=>validateDispatch({...payload,inputs:{...payload.inputs,idea:"no"}}));
+ assert.throws(()=>validateDispatch({...payload,inputs:{...payload.inputs,idea:"hello\nbad"}}));
+});
