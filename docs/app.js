@@ -84,7 +84,7 @@ async function refreshEpisodes() {
     const pub=$("#publish-episode");
     if(pub) {
       const old=pub.value;
-      pub.innerHTML='<option value="">Scegli il racconto</option>'+
+      pub.innerHTML='<option value="">Scegli il racconto</option><option value="auto">Nuovo video BETA (usa ID run)</option>'+
         episodeSlugs.map(x=>'<option value="'+esc(x)+'">'+esc(x.replace(/^\\d+_?/,"").replace(/_/g," "))+'</option>').join("");
       if(episodeSlugs.includes(old))pub.value=old;
     }
@@ -273,10 +273,33 @@ function bind() {
   $("#action-render").addEventListener("click",()=>dispatch("render",{episodio:activeEpisode,effetti:"v4"},{
     title:"Avviare il montaggio MP4?",body:"Questa operazione può consumare minuti GitHub e una quota di sintesi Google Gemini. Usa soltanto episodi già approvati e con tutte le immagini premium.",
     consent:"Confermo il montaggio e l'eventuale consumo delle quote Google/GitHub."}));
+  $("#autopilot-create").addEventListener("click",()=>{
+    const p=projectFromForm();
+    const title=p.title.replace(/\s+/g," ").trim();
+    const idea=p.idea.replace(/\s+/g," ").trim();
+    if(title.length<5||title.length>110||idea.length<15||idea.length>1600){
+      toast("Inserisci titolo (5-110 caratteri) e descrizione (15-1600 caratteri).");return;
+    }
+    if(!["libri","fiabe","social"].includes(p.format)){
+      toast("La produzione automatica è in beta solo per libri, fiabe e social. Cronaca e documentari richiedono fonti e revisione.");
+      return;
+    }
+    if(!auth.authenticated){
+      try {localStorage.setItem("tlp_v9_projects",JSON.stringify([p,...getProjects()].slice(0,40)));renderSaved();}
+      catch {}
+      toast("Progetto salvato. Su GitHub Actions dovrai inserire titolo e descrizione e confermare i costi.");
+    }
+    dispatch("autopilot",{title,idea,formato:p.format,durata:String(p.minutes),conferma_costi:true},{
+      title:"Confermi la produzione del video BETA?",
+      body:"Gemini creerà testo e voce, verranno cercate immagini d'archivio. Consuma quote Google e GitHub e può fallire se non trova foto coerenti. La richiesta è visibile nel repository GitHub pubblico. Nessuna pubblicazione automatica del MP4.",
+      consent:"Autorizzo la produzione sperimentale e l'eventuale consumo di quote Google/GitHub."
+    });
+  });
   $("#publish-from-run").addEventListener("click",()=>{
-    const episode=$("#publish-episode").value;
+    const selected=$("#publish-episode").value;
     const id=$("#publish-run-id").value.trim();
-    if(!episodeSlugs.includes(episode)){toast("Scegli prima un episodio.");return;}
+    const episode=selected==="auto"?"auto_"+id:selected;
+    if(!episodeSlugs.includes(episode) && selected!=="auto"){toast("Scegli prima un episodio.");return;}
     if(!/^\d{6,20}$/.test(id)){toast("Inserisci il numero della run GitHub, solo cifre.");return;}
     dispatch("publish",{episode,render_run_id:id,publish_public:true},{
       title:"Vuoi rendere PUBBLICO questo video?",
