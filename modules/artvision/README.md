@@ -8,7 +8,7 @@ Motore di partenza creato; test reale su GitHub Actions da verificare tramite wo
 
 ## Accesso Android
 
-1. Apri [ARTVISION - arte autentica](../../actions/workflows/artvision-render.yml).
+1. Apri [ARTVISION - arte autentica](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/artvision-render.yml).
 2. Tocca **Run workflow**.
 3. Inserisci artista, durata (120-180 secondi), opere massime (6-24).
 4. Tocca Run workflow e consulta l'esito della run.
