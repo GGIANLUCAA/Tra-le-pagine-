@@ -1,4 +1,4 @@
-import {initVideoLibrary,getPublishedVideos} from "./videoteca_v11.js";
+import {initVideoLibrary,getPublishedVideos,videoForEpisode,watchVideo} from "./videoteca_v11.js";
 import {loadGallery,makeEpisodeCard,showEpisodePreview,initEpisodePreview} from "./episode_gallery_v10.js";
 /* Tra le Pagine V9 — static frontend, no user token in browser. */
 const OWNER = "GGIANLUCAA";
@@ -227,9 +227,11 @@ function bind() {
   $("#overlay").addEventListener("click",()=>{$("#sidebar").classList.remove("open");$("#overlay").hidden=true;});
   $("#refresh-all").addEventListener("click",()=>Promise.all([refreshRuns(),refreshEpisodes(),initVideoLibrary()]));
   $("#refresh-runs").addEventListener("click",refreshRuns);
-  window.addEventListener("studio-videos-updated",()=>{const count=getPublishedVideos().length;const el=$("#videos-count");if(el)el.textContent=String(count);});
+  window.addEventListener("studio-videos-updated",()=>{const count=getPublishedVideos().length;const el=$("#videos-count");if(el)el.textContent=String(count);if(episodeSlugs.length)refreshEpisodes().catch(()=>{});});
   $("#refresh-episodes").addEventListener("click",refreshEpisodes);
   $("#episode-grid").addEventListener("click",e=>{
+    const watch=e.target.closest("[data-watch-episode]");
+    if(watch){watchVideo(videoForEpisode(watch.dataset.watchEpisode));return;}
     const preview=e.target.closest("[data-preview]");
     if(preview){showEpisodePreview(preview.dataset.preview,{onSelect:selectEpisode});return;}
     const item=e.target.closest("[data-episode]");
