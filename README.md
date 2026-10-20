@@ -97,7 +97,7 @@ Il repository è **pubblico**: contenuti caricati e codice sono visibili, ma i v
 
 ## 🧩 STUDIO IBRIDO V6 — Moduli add-on (nessuna riscrittura del motore)
 
-Nuovo **catalogo di 23 strumenti** e pianificatore di scene `src/studio_ibrido_v6.py`. Genera un rapporto e uno storyboard HTML da consultare su Android, senza spese API. I modelli esterni restano candidati da testare: **non risultano installati**. Il V5, la voce Gemini, tutti gli episodi e il workflow precedente rimangono invariati.
+Nuovo **catalogo di 23 strumenti** e pianificatore di scene `src/studio_ibrido_v6.py`. Genera un rapporto, un pacchetto di prompt per immagini e uno storyboard HTML da consultare su Android, senza spese API. I modelli esterni restano candidati da testare: **non risultano installati**. Il V5, la voce Gemini, tutti gli episodi e il workflow precedente rimangono invariati.
 
 - [**GUIDA STUDIO IBRIDO V6**](STUDIO_IBRIDO_V6_GUIDA.md) — istruzioni, sicurezza, fonti di cronaca e roadmap.
 - [**Catalogo dei 23 strumenti**](config/studio_ibrido_tools.json) — tool cinesi e internazionali, hardware, stato e cautele.
