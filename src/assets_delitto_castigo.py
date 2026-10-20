@@ -181,6 +181,27 @@ def find_images(episode: Path, *, sleep=0.4):
     provenance=[]
     used_hashes=set()
     for idx,queries in SEARCHES.items():
+        if idx in (11,12):
+            # Strict 10-source archive budget: reuse a second approved framing rather
+            # than hammering Wikimedia or substituting unrelated stock.
+            base=2 if idx==11 else 9
+            previous=next((entry for entry in provenance if entry["asset"]==base),None)
+            if not previous:
+                raise RuntimeError(f"Immagine sorgente {base:02} mancante")
+            reference=images/f"scena_{base:02}.jpg"
+            with Image.open(reference) as im:
+                # Keep original illustrative artwork; use another color mood.
+                picture=ImageOps.exif_transpose(im).convert("RGB")
+                result=grade_photo(picture,images/f"scena_{idx:02}.jpg",
+                                   "hope" if idx==12 else "cool")
+            entry={**previous,"asset":idx,"title":previous["title"]+
+                   " (ripresa alternativa)",
+                   "reused_from_scene":base,
+                   "display_type":"Ripresa alternativa di un'opera storica già acquisita, non nuova fonte",
+                   **result}
+            provenance.append(entry)
+            print("SCENA",str(idx).zfill(2),"RIUSO ARTISTICO DA",base,flush=True)
+            continue
         chosen=None
         attempts=[]
         # Curated, book-specific artwork is first choice, not unrelated paintings.
