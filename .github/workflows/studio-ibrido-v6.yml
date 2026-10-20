@@ -22,6 +22,7 @@ on:
   pull_request:
     paths:
       - "src/studio_ibrido_v6.py"
+      - "src/prompt_asset_v6.py"
       - "config/studio_ibrido_tools.json"
       - "tests/test_studio_ibrido_v6.py"
       - ".github/workflows/studio-ibrido-v6.yml"
