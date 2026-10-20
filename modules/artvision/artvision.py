@@ -83,7 +83,7 @@ def discover_cleveland(artist):
         if not artist_match(authors, artist):
             continue
         pictures = r.get("images") or {}
-        url = (pictures.get("print") or pictures.get("web") or {}).get("url", "")
+        url = (pictures.get("web") or pictures.get("print") or {}).get("url", "")
         if not url:
             continue
         result.append({"source": "Cleveland Museum of Art", "id": str(r["id"]),
