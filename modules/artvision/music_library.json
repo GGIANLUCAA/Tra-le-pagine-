@@ -59,8 +59,9 @@
       "isrc": "USUAN1500027",
       "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027",
       "approx_duration_seconds": 410,
-      "mood": "dreamy piano and synthesizers",
-      "download_tested": false
+      "mood": "dreamlike luminous piano and synth",
+      "download_tested": false,
+      "instrumental": true
     },
     {
       "id": "music_for_manatees",
@@ -84,5 +85,16 @@
       "mood": "slow orchestral strings",
       "download_tested": false
     }
-  ]
+  ],
+  "production_standard": {
+    "one_film_per_artist": true,
+    "style": "universal_atelier_v5",
+    "onscreen_words": [
+      "ARTIST NAME",
+      "MUSIC BY COMPOSER"
+    ],
+    "music_rights": "Full CC attribution outside the video in public social caption",
+    "no_lyrics": true,
+    "avoid_tracks_used_in_recent_episodes": 3
+  }
 }
