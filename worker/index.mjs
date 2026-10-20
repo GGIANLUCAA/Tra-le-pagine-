@@ -11,7 +11,8 @@ const workflows = Object.freeze({
   v6: "studio-ibrido-v6.yml",
   v7: "archivio-media-v7.yml",
   v8: "orchestratore-v8.yml",
-  render: "render-v3.yml"
+  render: "render-v3.yml",
+  publish: "pubblica-video-v11.yml"
 });
 const json = (body,status=200) => Response.json(body,{status,headers:{
   "Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
@@ -62,6 +63,12 @@ export function validateDispatch(payload) {
     if(!exactKeys(i,["episodio","effetti"]) || !slug(i.episodio) ||
        !oneOf(i.effetti,["v4","off"]) || payload.confirmed!==true)
       throw new Error("Montaggio: approvazione esplicita richiesta.");
+  } else if (w==="publish") {
+    if(!exactKeys(i,["episode","render_run_id","publish_public"]) ||
+       !slug(i.episode) || typeof i.render_run_id!=="string" ||
+       !/^\d{6,20}$/.test(i.render_run_id) ||
+       i.publish_public!==true || payload.confirmed!==true)
+      throw new Error("Pubblicazione PUBBLICA: inserire ID produzione e confermare esplicitamente.");
   }
   return {workflow:workflows[w],inputs:i};
 }
