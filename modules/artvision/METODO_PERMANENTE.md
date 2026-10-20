@@ -16,7 +16,7 @@ Ramo storico intatto prima di ArtVision: `backup-prima-artvision-2026-10-20`.
 5. Rimuovere duplicati e scegliere sequenza coerente, non affidarsi al primo risultato. Mettere al centro la fedeltà all'opera.
 6. Per impostazione predefinita: video verticale 9:16, 150 secondi, intro/finale con nome artista, senza narrazione, con musica utilizzabile e camera digitale discreta.
 7. Costi standard: nessuna API di immagini o voce a pagamento; installazioni open-source (Pillow, NumPy, FFmpeg). Non abilitare piani a pagamento o pubblicazioni senza approvazione.
-8. Avviare workflow GitHub `artvision-render.yml` scegliendo `artist`, `duration` (120/150/180) e `max_works` (8/12/16/20/24). Per il telefono: repository → Actions → **ArtVision** → **Run workflow**.
+8. **Modalità autonoma preferita**: aggiornare `modules/artvision/queue.json` con un `request_id` nuovo, `artist`, `duration`, `max_works`, `approved_for_render: true`, `publish: false`; il push della coda avvia automaticamente il workflow V1.3. Come alternativa manuale, avviare workflow GitHub `artvision-render.yml` scegliendo `artist`, `duration` (120/150/180) e `max_works` (8/12/16/20/24). Per il telefono: repository → Actions → **ArtVision** → **Run workflow**.
 9. CONTROLLARE la run fino a `completed / success`; aprire i report, l'MP4, la copertina, il numero di immagini, l'audio, la durata e la presenza di sorgenti/licenze. Non promettere il file se non è stato creato.
 10. Consegnare il pacchetto `ARTVISION_<run_number>` da **Artifacts** della run riuscita; preferire un MP4 diretto quando possibile. Mantenere i link ai file di progetto e al workflow per riutilizzo.
 11. Registrare tempi effettivi di elaborazione e motivi degli errori per calibrare quante produzioni al giorno sono realistiche.
@@ -37,3 +37,8 @@ Non dipingere nuovi quadri falsamente attribuiti. Non deformare e non falsare il
 
 ## Istruzioni per futuri ampliamenti
 Non riscrivere da zero: aggiungere un modulo o preset e testare che il modello precedente funzioni. Backup, cambi piccoli, verifica sul runner e conservazione report; preferire correzioni incrementali misurate.
+
+## Test di collaudo riusciti
+- Run GitHub #3: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39411451722 — esito SUCCESS, 150.167 secondi, 16 opere CC0, 24 inquadrature, audio/video verificati, 0 API a pagamento, 176 secondi di elaborazione. Output iniziale 136 MiB.
+- Run GitHub #4: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39412319602 — esito SUCCESS dopo cambio preset x264 `ultrafast` → `veryfast`. MP4 14.7 MiB, 150.167 secondi, 720×1280 H.264/AAC, 16 opere. 179 secondi di elaborazione. Per le prossime puntate conservare il preset compatto, con controllo qualitativo.
+- La coda V1.3 deve essere verificata tramite run specifica; distinguerne l'esito da quello dei render manuali.
