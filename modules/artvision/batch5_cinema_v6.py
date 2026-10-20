@@ -36,7 +36,7 @@ P={
  "botticelli":{
   "name":"Sandro Botticelli","duration":125,"hero":"Nascita di Venere Botticelli.jpg",
   "key":["birth of venus","nascita di venere","primavera","venus and mars","portrait of a young woman","madonna of the magnificat","adoration of the magi","venus","annunciation","minerva and the centaur","portrait"],
-  "find":["Sandro Botticelli painting","Botticelli Primavera Birth of Venus","Botticelli Madonna portrait"],
+  "find":["Sandro Botticelli Venus and Mars","Sandro Botticelli Madonna","Sandro Botticelli Adoration of the Magi","Sandro Botticelli Annunciation","Sandro Botticelli Portrait","Botticelli Primavera Birth of Venus"],
   "act":["Birth of an icon","The grace of a human face","Spring, flowers and myth","Movement in delicate lines","Venus comes back"],"track":"calmant"},
  "mucha":{
   "name":"Alphonse Mucha","duration":113,"hero":"Alphonse Mucha - Zodiac.jpg",
