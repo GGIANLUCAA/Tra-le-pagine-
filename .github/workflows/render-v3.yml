@@ -86,6 +86,15 @@ jobs:
           print("REGIA V5:",check_plan(read_plan(ep/"effetti_v4.json"),n))
           PY
           fi
+      - name: "Regia V12: associa ogni immagine alla frase esatta del racconto"
+        if: steps.scegli.outputs.ready == 'true'
+        env:
+          EPISODIO: "${{ steps.scegli.outputs.episode }}"
+        run: |
+          PYTHONPATH=src python src/regia_narrativa_v12.py --episode "episodes/$EPISODIO"
+          mkdir -p output
+          cp "episodes/$EPISODIO/REGIA_NARRATIVA_V12.json" output/
+          cp "episodes/$EPISODIO/REGIA_NARRATIVA_V12.txt" output/
       - name: "Installa Gemini e l'allineamento parole"
         if: steps.scegli.outputs.ready == 'true'
         run: |
@@ -106,7 +115,7 @@ jobs:
         env:
           EPISODIO: "${{ steps.scegli.outputs.episode }}"
         run: python src/episode_v3.py --episode "$EPISODIO" --out output --post
-      - name: "Controlla loudness, picchi, formato e sottotitoli (non modifica audio)"
+      - name: "Controlla loudness e formato, SENZA sottotitoli (non modifica audio)"
         if: steps.scegli.outputs.ready == 'true' && success()
         shell: bash
         run: |
