@@ -1,0 +1,32 @@
+name: "Tra le Pagine - Autopilot V11 offline tests"
+on:
+  pull_request:
+    paths:
+      - "src/studio_autopilot_v11.py"
+      - "tests/test_studio_autopilot_v11.py"
+      - ".github/workflows/studio-autopilot-v11.yml"
+      - ".github/workflows/studio-autopilot-v11-check.yml"
+      - "STUDIO_WEB_V11_GUIDA.md"
+  push:
+    branches: [main]
+    paths:
+      - "src/studio_autopilot_v11.py"
+      - "tests/test_studio_autopilot_v11.py"
+      - ".github/workflows/studio-autopilot-v11.yml"
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Solo Pillow, nessuna API, nessuna quota consumata"
+        run: python -m pip install "pillow>=10,<13"
+      - name: "Test storyboard, immagini, fallback e licenze"
+        run: |
+          python -m unittest discover -s tests -p "test_studio_autopilot_v11.py" -v
+          python -m unittest discover -s tests -p "test_archivio_media_v7.py" -v

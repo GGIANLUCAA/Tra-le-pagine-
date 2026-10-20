@@ -1,0 +1,112 @@
+name: "Tra le Pagine - Pubblica un MP4 nella Videoteca V11"
+run-name: "Videoteca: ${{ inputs.episode }} (run ${{ inputs.render_run_id }}) "
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Cartella episodio originale (es. 01_scacchi)"
+        type: string
+        required: true
+        default: "01_scacchi"
+      render_run_id:
+        description: "ID NUMERICO della run GitHub dove e' stato prodotto MP4"
+        type: string
+        required: true
+      publish_public:
+        description: "Confermo: so che il video sara' PUBBLICO sul sito e su GitHub Releases"
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    if: ${{ inputs.publish_public == true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      EP: ${{ inputs.episode }}
+      RUN_ID: ${{ inputs.render_run_id }}
+      CONSENT: ${{ inputs.publish_public }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Verifica consenso, episodio e provenienza della run"
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          ep=os.environ["EP"];run=os.environ["RUN_ID"]
+          if os.environ["CONSENT"]!="true":
+              raise SystemExit("Pubblicazione non autorizzata")
+          if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,70}",ep):
+              raise SystemExit("Slug episodio non valido")
+          if not re.fullmatch(r"[0-9]{6,20}",run):
+              raise SystemExit("ID run numerico non valido")
+          if not ((Path("episodes")/ep/"metadata.json").is_file() or ep==("auto_"+run)):
+              raise SystemExit("Episodio inesistente")
+          print("PUBBLICAZIONE PUBBLICA approvata per",ep,"run",run)
+          PY
+          gh run view "$RUN_ID" --json conclusion,workflowName,headBranch > /tmp/origin.json
+          python - <<'PY'
+          import json
+          info=json.load(open("/tmp/origin.json"))
+          if info.get("conclusion")!="success":
+              raise SystemExit("Origine non completata con successo")
+          name=str(info.get("workflowName",""))
+          if not any(x in name for x in ("Render episodio","Video completo V5","Autopilot V11 beta")):
+              raise SystemExit("Run non riconosciuta come video: "+name)
+          PY
+      - name: "Scarica solo Artifact autorizzato"
+        shell: bash
+        run: |
+          mkdir -p stage
+          ARTIFACT="TRA_LE_PAGINE_V3_$EP"
+          if [[ "$EP" == "01_scacchi" ]] && [[ "$RUN_ID" == "39171898138" ]]; then
+            ARTIFACT="TRA_LE_PAGINE_V5_VIDEO_ARMONICO_COMPLETO"
+          fi
+          if [[ "$EP" == "auto_$RUN_ID" ]]; then
+            ARTIFACT="VIDEO_V11_DA_APPROVARE"
+          fi
+          gh run download "$RUN_ID" --name "$ARTIFACT" --dir stage
+          python - <<'PY'
+          import shutil,subprocess
+          from pathlib import Path
+          paths=list(Path("stage").rglob("*.mp4"))
+          if len(paths)!=1:raise SystemExit("Atteso 1 solo MP4, trovati: "+str(len(paths)))
+          p=paths[0]
+          if not 100_000<=p.stat().st_size<=120_000_000:
+              raise SystemExit("MP4 mancante o >120MB")
+          if p.is_symlink():raise SystemExit("Symlink vietato")
+          shutil.copy2(p,"TRA_LE_PAGINE_VIDEO.mp4")
+          subprocess.run(["ffprobe","-v","error","-show_entries",
+            "format=duration:stream=codec_type,width,height","-of","json",
+            "TRA_LE_PAGINE_VIDEO.mp4"],check=True)
+          print("Video:",round(p.stat().st_size/1048576,2),"MB")
+          subprocess.run(["ffmpeg","-y","-v","error","-ss","00:00:04", "-i", "TRA_LE_PAGINE_VIDEO.mp4", "-frames:v","1","-vf","scale=540:-1","-q:v","4","VIDEO_COPERTINA.jpg"],check=True)
+          if not Path("VIDEO_COPERTINA.jpg").is_file():raise SystemExit("Copertina reale non generata")
+          PY
+      - name: "Release pubblica per la videoteca"
+        shell: bash
+        run: |
+          TAG="tlp-video-${EP}-${RUN_ID}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::error::Video gia' pubblicato. Non sovrascrivo."
+            exit 1
+          fi
+          TITLE="$(python - <<'PY'
+          import json,os
+          from pathlib import Path
+          file=Path("episodes")/os.environ["EP"]/"metadata.json"
+          m=json.loads(file.read_text()) if file.is_file() else {}
+          print(str(m.get("title",os.environ["EP"]))[:110])
+          PY
+          )"
+          gh release create "$TAG" "TRA_LE_PAGINE_VIDEO.mp4" "VIDEO_COPERTINA.jpg" \
+            --title "Tra le Pagine · ${TITLE}" \
+            --notes "Video pubblico approvato dall'utente. Episodio: ${EP}. Run originale: ${RUN_ID}. Voce Google invariata." \
+            --latest=false
+          echo "Guarda il video nella videoteca: https://ggianlucaa.github.io/Tra-le-pagine-/#videoteca" >> "$GITHUB_STEP_SUMMARY"

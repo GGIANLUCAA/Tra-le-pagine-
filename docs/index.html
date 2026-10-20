@@ -14,17 +14,18 @@
 <body>
   <div class="app">
     <aside class="sidebar" id="sidebar">
-      <div class="brand"><span class="brand-mark">T<span>●</span>P</span><div><strong>Tra le Pagine</strong><small>STUDIO IBRIDO <em>V9</em></small></div></div>
+      <div class="brand"><span class="brand-mark">T<span>●</span>P</span><div><strong>Tra le Pagine</strong><small>STUDIO VIDEO <em>V11</em></small></div></div>
       <p class="nav-label">WORKSPACE</p>
       <nav aria-label="Navigazione principale">
         <button class="nav-item active" data-tab="studio"><span>⌂</span> Panoramica</button>
         <button class="nav-item" data-tab="nuovo"><span>✦</span> Nuovo video</button>
+        <button class="nav-item" data-tab="videoteca"><span>▶</span> Videoteca <span class="nav-count" id="videos-count">0</span></button>
         <button class="nav-item" data-tab="episodi"><span>▤</span> Episodi</button>
-        <button class="nav-item" data-tab="archivio"><span>▧</span> Archivio media</button>
-        <button class="nav-item" data-tab="produzioni"><span>◷</span> Produzioni</button>
-      </nav>
-      <p class="nav-label second">SISTEMA</p>
+        </nav>
+      <p class="nav-label second">STRUMENTI AVANZATI</p>
       <nav>
+        <button class="nav-item" data-tab="archivio"><span>▧</span> Archivio immagini</button>
+        <button class="nav-item" data-tab="produzioni"><span>◷</span> Stato e produzioni</button>
         <button class="nav-item" data-tab="impostazioni"><span>⚙</span> Impostazioni</button>
         <a class="nav-item external" href="https://github.com/GGIANLUCAA/Tra-le-pagine-" target="_blank" rel="noopener"><span>↗</span> Repository GitHub</a>
       </nav>
@@ -43,9 +44,9 @@
           <div class="eyebrow"><span class="spark">✦</span> IL TUO STUDIO DI PRODUZIONE</div>
           <div class="hero">
             <div class="hero-copy">
-              <h1>Ogni storia merita<br><span>di prendere vita.</span></h1>
-              <p>Dal racconto alla scena, dalla voce al video. Tutto dal tuo telefono, con il sistema che hai costruito.</p>
-              <button class="btn primary" data-go="nuovo"><span>✦</span> Crea un nuovo video <span>→</span></button>
+              <h1>Racconta. Crea.<br><span>Guarda i tuoi video.</span></h1>
+              <p>Il tuo studio video sul telefono: crea una storia, segui il montaggio, guarda il risultato e scaricalo. Senza dover conoscere GitHub.</p>
+              <div class="hero-buttons"><button class="btn primary" data-go="nuovo"><span>✦</span> Crea un video <span>→</span></button><button class="btn outline" data-go="videoteca">▶ Guarda i video</button></div>
             </div>
             <div class="hero-art" aria-hidden="true"><div class="halo halo-a"></div><div class="halo halo-b"></div><div class="film-card film-back"></div><div class="film-card film-front"><span>TRA LE PAGINE</span><div class="film-sun"></div><div class="film-mountain"></div><small>STORIE CHE RESTANO</small></div><div class="play-orb">▶</div></div>
           </div>
@@ -54,34 +55,48 @@
             <div class="stat"><span>EPISODI</span><strong id="stat-episodes">—</strong><small>Nel repository</small></div>
             <div class="stat"><span>PRODUZIONI RECENTI</span><strong id="stat-runs">—</strong><small>Ultime esecuzioni GitHub</small></div>
             <div class="stat"><span>MOTORE VOCE</span><strong class="voice-label">Google</strong><small>Gemini TTS · invariato</small></div>
-            <div class="stat"><span>STUDIO</span><strong>V9</strong><small>Pannello web</small></div>
+            <div class="stat"><span>STUDIO</span><strong>V11</strong><small>Studio e videoteca</small></div>
           </div>
           <div class="section-heading space"><div><h2>Riprendi da dove eri rimasto</h2><p>Operazioni disponibili adesso.</p></div></div>
           <div class="quick-grid">
-            <button class="quick-card" data-go="episodi"><span class="quick-icon gold">▤</span><strong>Apri un episodio</strong><small>Storyboard V6, V8 e render V5</small><span class="arrow">↗</span></button>
-            <button class="quick-card" data-go="archivio"><span class="quick-icon coral">▧</span><strong>Cerca nuove immagini</strong><small>Openverse e Pexels via V7</small><span class="arrow">↗</span></button>
-            <button class="quick-card" data-go="produzioni"><span class="quick-icon blue">◷</span><strong>Controlla i montaggi</strong><small>Esecuzioni e download MP4</small><span class="arrow">↗</span></button>
+            <button class="quick-card" data-go="videoteca"><span class="quick-icon gold">▶</span><strong>Guarda i video pronti</strong><small>Riproduci e scarica MP4 dal sito</small><span class="arrow">↗</span></button>
+            <button class="quick-card" data-go="episodi"><span class="quick-icon coral">▤</span><strong>Scegli un episodio</strong><small>Immagini, storyboard e montaggio</small><span class="arrow">↗</span></button>
+            <button class="quick-card" data-go="produzioni"><span class="quick-icon blue">◷</span><strong>Segui la produzione</strong><small>Stato del montaggio e file da rivedere</small><span class="arrow">↗</span></button>
           </div>
           <div class="section-heading space"><div><h2>Ultime produzioni</h2><p>Stato letto dal repository GitHub.</p></div><button class="text-action" data-go="produzioni">Mostra tutte →</button></div>
           <div class="runs" id="home-runs"><div class="empty">Caricamento produzioni…</div></div>
         </section>
 
+        <section class="view" id="view-videoteca">
+          <div class="eyebrow">▶ VIDEO PRONTI · STUDIO V11</div>
+          <h1 class="page-title">La tua videoteca.</h1>
+          <p class="page-subtitle">Guarda i video già pubblicati nella videoteca e scaricali con un tocco. I filmati ancora in lavorazione restano nella sezione Produzioni.</p>
+          <div class="simple-stepper"><span>① Crea</span><span>② Controlla</span><span>③ Guarda e scarica</span></div>
+          <div class="section-heading"><h2>Video disponibili</h2><button class="text-action" id="refresh-videos">Aggiorna ↻</button></div>
+          <div id="videos-grid" class="videos-grid"><div class="empty">Caricamento dei video approvati…</div></div>
+          <div class="video-private-warning"><strong>Privacy dei video</strong><p>Questo sito è pubblico. I video compariranno qui soltanto dopo una tua autorizzazione esplicita alla pubblicazione. Per una videoteca accessibile solo a te servirà attivare lo spazio privato Cloudflare.</p></div>
+          <div class="guide-card"><strong>Hai già un MP4 prodotto?</strong><p>Trasferiscilo dagli Artifact GitHub nella videoteca, dove potrai guardarlo e scaricarlo. <b>Attenzione: la pubblicazione lo rende pubblico.</b></p>
+          <div class="form-row"><div><label for="publish-episode">Episodio</label><select id="publish-episode"><option value="">Seleziona un episodio</option><option value="auto">Nuovo video creato da BETA</option></select></div><div><label for="publish-run-id">Numero della produzione GitHub</label><input id="publish-run-id" inputmode="numeric" placeholder="Es. 39171898138"></div></div>
+          <div class="form-actions"><button class="btn primary" id="publish-from-run">Aggiungi alla videoteca</button><a class="btn outline" target="_blank" rel="noopener" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/pubblica-video-v11.yml">Alternativa: usa GitHub ↗</a></div>
+          <p class="micro-note">Puoi recuperare il numero della produzione dalla pagina Produzioni. Prima del trasferimento ti chiederemo conferma esplicita perché chiunque potrebbe vedere un video pubblicato sul sito.</p></div>
+        </section>
+
         <section class="view" id="view-nuovo">
-          <div class="eyebrow">✦ PRODUZIONE CREATIVA</div><h1 class="page-title">Una storia. Un video.</h1><p class="page-subtitle">Prepara un brief per GPT senza nuove API a pagamento. Il progetto viene salvato nel browser del telefono.</p>
+          <div class="eyebrow">✦ PRODUZIONE CREATIVA</div><h1 class="page-title">Una storia. Un video.</h1><p class="page-subtitle">Descrivi la storia e scegli il formato. Usa GPT con il tuo abbonamento per il copione; il montaggio resta gestito dal motore Google e GitHub.</p>
           <div class="form-card">
             <label for="video-idea">Di cosa deve parlare il video?</label>
             <textarea id="video-idea" rows="6" placeholder="Es. Racconta la vita di Siddharta in circa tre minuti, con tono cinematografico e scene molto belle…"></textarea>
             <div class="form-row"><div><label for="video-title">Titolo del progetto</label><input id="video-title" placeholder="La ricerca di Siddharta" maxlength="110"></div><div><label for="video-length">Durata indicativa</label><select id="video-length"><option value="2">2 minuti</option><option value="3" selected>3 minuti</option><option value="4">4 minuti</option></select></div></div>
             <label>Tipo di contenuto</label><div class="chip-group" id="type-options"><button class="chip selected" data-value="libri">Libri</button><button class="chip" data-value="cronaca">Cronaca</button><button class="chip" data-value="documentario">Documentario</button><button class="chip" data-value="fiabe">Fiabe</button><button class="chip" data-value="social">Social</button></div>
             <div class="form-row spaced"><label class="check-label"><input type="checkbox" id="real-sources" checked><span>Usa materiali reali o già disponibili prima delle immagini AI</span></label></div>
-            <div class="form-actions"><button class="btn primary" id="save-brief">Salva progetto</button><button class="btn outline" id="copy-gpt">✦ Copia brief per GPT</button><a class="btn outline" href="https://chatgpt.com/" target="_blank" rel="noopener">Apri ChatGPT ↗</a></div>
-            <p class="micro-note">GPT funziona attraverso il tuo account ChatGPT. Non è ancora integrato automaticamente in questa schermata: dopo la copia, incolla il brief nella chat.</p>
-          </div>
+            <div class="form-actions"><button class="btn primary" id="autopilot-create">▶ Produci il video (BETA)</button><button class="btn outline" id="save-brief">Salva idea</button><button class="btn outline" id="copy-gpt">Prepara il copione con GPT</button><a class="btn outline" href="https://chatgpt.com/" target="_blank" rel="noopener">Apri ChatGPT ↗</a></div>
+            <p class="micro-note">**BETA:** produzione diretta solo per libri, fiabe e storie social, con quota Google Gemini e immagini reali ricercate negli archivi. Può fermarsi se mancano immagini o quota API. Il risultato sarà un MP4 nell\u0027Artifact da controllare, NON pubblicato automaticamente. Con GitHub Pages occorre confermare il workflow GitHub; per avvio dentro il sito serve il collegamento sicuro Cloudflare/GitHub. I tuoi input sono visibili nella repository pubblica.</p>
+          </div><div class="next-step"><strong>Hai già preparato un episodio?</strong><p>Selezionalo e avvia il montaggio con voce Google.</p><button class="btn primary" data-go="episodi">Vai agli episodi →</button></div>
           <div class="section-heading space"><div><h2>Progetti salvati sul telefono</h2><p>Restano soltanto in questo browser: non nel repository pubblico.</p></div></div><div id="saved-projects" class="saved-projects"><p class="empty">Non hai ancora salvato progetti.</p></div>
         </section>
 
         <section class="view" id="view-episodi">
-          <div class="eyebrow">▤ PRODUZIONE ESISTENTE</div><h1 class="page-title">Episodi</h1><p class="page-subtitle">Usa la regia storica: nessuna modifica alla voce Google o alle scene già approvate.</p>
+          <div class="eyebrow">▤ PRODUZIONE ESISTENTE</div><h1 class="page-title">Episodi</h1><p class="page-subtitle">Scegli il racconto. Premi Anteprima per guardare le immagini o Seleziona per preparare e montare il video.</p>
           <div class="section-heading"><h2>Scegli un episodio</h2><button class="text-action" id="refresh-episodes">Aggiorna ↻</button></div>
           <div id="episode-grid" class="episode-grid"><div class="empty">Caricamento episodi…</div></div>
           <div class="work-panel" id="selected-panel" hidden>
@@ -143,6 +158,12 @@
     </div>
     <p class="micro-note">Il video scelto dal telefono viene riprodotto soltanto nel browser e NON caricato online. I vecchi MP4 presenti negli Artifact GitHub devono prima essere scaricati. L'anteprima delle immagini non è un filmato.</p>
     <div class="preview-scenes"><h3>Storyboard disponibile</h3><div id="preview-scenes-list"></div></div>
+  </dialog>
+  <dialog id="public-video-dialog" class="public-video-dialog">
+    <div class="preview-top"><div><span class="eyebrow">▶ VIDEOTECA · MP4</span><h2 id="public-video-title"></h2></div><button id="public-video-close" class="preview-close" aria-label="Chiudi video">✕</button></div>
+    <video id="public-video-player" controls playsinline preload="metadata" controlsList="nodownload"></video>
+    <p id="public-video-warning" class="micro-note"></p>
+    <div class="video-modal-actions"><a id="public-video-download" class="btn primary" target="_blank" rel="noopener" download>↓ Scarica MP4</a><a id="public-video-backup" class="btn outline" target="_blank" rel="noopener">Apri file originale ↗</a></div>
   </dialog>
 </body>
 </html>

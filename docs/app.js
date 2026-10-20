@@ -1,3 +1,4 @@
+import {initVideoLibrary,getPublishedVideos,videoForEpisode,watchVideo} from "./videoteca_v11.js";
 import {loadGallery,makeEpisodeCard,showEpisodePreview,initEpisodePreview} from "./episode_gallery_v10.js";
 /* Tra le Pagine V9 — static frontend, no user token in browser. */
 const OWNER = "GGIANLUCAA";
@@ -31,7 +32,7 @@ function go(tab) {
   if (!$("#view-" + tab)) return;
   $$(".view").forEach(x => x.classList.toggle("active", x.id === "view-" + tab));
   $$(".nav-item[data-tab]").forEach(x => x.classList.toggle("active", x.dataset.tab === tab));
-  const labels = {studio:"PANORAMICA",nuovo:"NUOVO VIDEO",episodi:"EPISODI",archivio:"ARCHIVIO MEDIA",produzioni:"PRODUZIONI",impostazioni:"IMPOSTAZIONI"};
+  const labels = {studio:"PANORAMICA",nuovo:"NUOVO VIDEO",episodi:"EPISODI",videoteca:"VIDEOTECA",archivio:"ARCHIVIO MEDIA",produzioni:"PRODUZIONI",impostazioni:"IMPOSTAZIONI"};
   $("#section-label").textContent = labels[tab]; $("#section-crumb").textContent = "Studio";
   window.location.hash = tab;
   $("#sidebar").classList.remove("open"); $("#overlay").hidden = true;
@@ -80,6 +81,13 @@ async function refreshEpisodes() {
     const data = await getPublic("/contents/episodes?ref=main");
     episodeSlugs = data.filter(x => x.type === "dir" && /^[a-zA-Z0-9_-]{1,75}$/.test(x.name)).map(x=>x.name);
     $("#stat-episodes").textContent = String(episodeSlugs.length);
+    const pub=$("#publish-episode");
+    if(pub) {
+      const old=pub.value;
+      pub.innerHTML='<option value="">Scegli il racconto</option><option value="auto">Nuovo video BETA (usa ID run)</option>'+
+        episodeSlugs.map(x=>'<option value="'+esc(x)+'">'+esc(x.replace(/^\\d+_?/,"").replace(/_/g," "))+'</option>').join("");
+      if(episodeSlugs.includes(old))pub.value=old;
+    }
     await loadGallery();
     $("#episode-grid").innerHTML = episodeSlugs.length ? episodeSlugs.map((name,i) => makeEpisodeCard(name,i)).join("") : '<div class="empty">Nessun episodio disponibile.</div>';
     if (activeEpisode && !episodeSlugs.includes(activeEpisode)) {
@@ -224,10 +232,13 @@ function bind() {
   $$(".nav-item[data-tab], [data-go]").forEach(x=>x.addEventListener("click",()=>go(x.dataset.tab||x.dataset.go)));
   $("#menu-open").addEventListener("click",()=>{$("#sidebar").classList.add("open");$("#overlay").hidden=false;});
   $("#overlay").addEventListener("click",()=>{$("#sidebar").classList.remove("open");$("#overlay").hidden=true;});
-  $("#refresh-all").addEventListener("click",()=>Promise.all([refreshRuns(),refreshEpisodes()]));
+  $("#refresh-all").addEventListener("click",()=>Promise.all([refreshRuns(),refreshEpisodes(),initVideoLibrary()]));
   $("#refresh-runs").addEventListener("click",refreshRuns);
+  window.addEventListener("studio-videos-updated",()=>{const count=getPublishedVideos().length;const el=$("#videos-count");if(el)el.textContent=String(count);if(episodeSlugs.length)refreshEpisodes().catch(()=>{});});
   $("#refresh-episodes").addEventListener("click",refreshEpisodes);
   $("#episode-grid").addEventListener("click",e=>{
+    const watch=e.target.closest("[data-watch-episode]");
+    if(watch){watchVideo(videoForEpisode(watch.dataset.watchEpisode));return;}
     const preview=e.target.closest("[data-preview]");
     if(preview){showEpisodePreview(preview.dataset.preview,{onSelect:selectEpisode});return;}
     const item=e.target.closest("[data-episode]");
@@ -262,6 +273,40 @@ function bind() {
   $("#action-render").addEventListener("click",()=>dispatch("render",{episodio:activeEpisode,effetti:"v4"},{
     title:"Avviare il montaggio MP4?",body:"Questa operazione può consumare minuti GitHub e una quota di sintesi Google Gemini. Usa soltanto episodi già approvati e con tutte le immagini premium.",
     consent:"Confermo il montaggio e l'eventuale consumo delle quote Google/GitHub."}));
+  $("#autopilot-create").addEventListener("click",()=>{
+    const p=projectFromForm();
+    const title=p.title.replace(/\s+/g," ").trim();
+    const idea=p.idea.replace(/\s+/g," ").trim();
+    if(title.length<5||title.length>110||idea.length<15||idea.length>1600){
+      toast("Inserisci titolo (5-110 caratteri) e descrizione (15-1600 caratteri).");return;
+    }
+    if(!["libri","fiabe","social"].includes(p.format)){
+      toast("La produzione automatica è in beta solo per libri, fiabe e social. Cronaca e documentari richiedono fonti e revisione.");
+      return;
+    }
+    if(!auth.authenticated){
+      try {localStorage.setItem("tlp_v9_projects",JSON.stringify([p,...getProjects()].slice(0,40)));renderSaved();}
+      catch {}
+      toast("Progetto salvato. Su GitHub Actions dovrai inserire titolo e descrizione e confermare i costi.");
+    }
+    dispatch("autopilot",{title,idea,formato:p.format,durata:String(p.minutes),conferma_costi:true},{
+      title:"Confermi la produzione del video BETA?",
+      body:"Gemini creerà testo e voce, verranno cercate immagini d'archivio. Consuma quote Google e GitHub e può fallire se non trova foto coerenti. La richiesta è visibile nel repository GitHub pubblico. Nessuna pubblicazione automatica del MP4.",
+      consent:"Autorizzo la produzione sperimentale e l'eventuale consumo di quote Google/GitHub."
+    });
+  });
+  $("#publish-from-run").addEventListener("click",()=>{
+    const selected=$("#publish-episode").value;
+    const id=$("#publish-run-id").value.trim();
+    const episode=selected==="auto"?"auto_"+id:selected;
+    if(!episodeSlugs.includes(episode) && selected!=="auto"){toast("Scegli prima un episodio.");return;}
+    if(!/^\d{6,20}$/.test(id)){toast("Inserisci il numero della run GitHub, solo cifre.");return;}
+    dispatch("publish",{episode,render_run_id:id,publish_public:true},{
+      title:"Vuoi rendere PUBBLICO questo video?",
+      body:"Pubblicare nella videoteca renderà l'MP4 accessibile e scaricabile a chiunque su Internet. Non farlo con materiale privato. Questa operazione non cambia il motore Google.",
+      consent:"Ho controllato il video. ACCETTO che diventi PUBBLICO e scaricabile."
+    });
+  });
   $("#media-import").addEventListener("click",()=>{
     const id=$("#import-id").value.trim(),provider=$("#import-provider").value;
     if(provider==="openverse" && !/^[0-9a-fA-F-]{36}$/.test(id)){
@@ -287,10 +332,10 @@ async function init() {
   bind();
   initEpisodePreview();
   const tab=window.location.hash.substring(1);
-  go(["studio","nuovo","episodi","archivio","produzioni","impostazioni"].includes(tab)?tab:"studio");
+  go(["studio","nuovo","videoteca","episodi","archivio","produzioni","impostazioni"].includes(tab)?tab:"studio");
   window.addEventListener("hashchange",()=>{const v=window.location.hash.slice(1);if($("#view-"+v))go(v);});
   renderSaved();
-  await Promise.allSettled([session(),refreshRuns(),refreshEpisodes()]);
+  await Promise.allSettled([session(),refreshRuns(),refreshEpisodes(),initVideoLibrary()]);
   if("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(()=>{});
 }
 init();

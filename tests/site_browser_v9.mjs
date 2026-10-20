@@ -21,6 +21,11 @@ async function run() {
     const path=new URL(route.request().url()).pathname;
     const data=path.endsWith("/contents/episodes")
       ? [{type:"dir",name:"01_scacchi"},{type:"dir",name:"03_siddharta"}]
+      : path.endsWith("/releases")
+        ? [{tag_name:"tlp-video-01_scacchi-39171898138",name:"Tra le Pagine · La novella degli scacchi",
+          draft:false,prerelease:false,published_at:"2026-10-20T00:00:00Z",
+          assets:[{name:"TRA_LE_PAGINE_VIDEO.mp4",size:2_000_000,state:"uploaded",
+          browser_download_url:"https://github.com/GGIANLUCAA/Tra-le-pagine-/releases/download/tlp-video-01_scacchi-39171898138/TRA_LE_PAGINE_VIDEO.mp4"}]}]
       : path.endsWith("/actions/runs")
         ? {workflow_runs:[{id:12345678,display_title:"Siddharta",name:"Render con voce Google",
             created_at:"2026-10-20T00:00:00Z",status:"completed",conclusion:"success"}]}
@@ -45,6 +50,15 @@ async function run() {
   await page.locator("#saved-projects .saved-card").getByText("Siddharta — Una ricerca").waitFor();
   console.log("PASS: local draft persistence on mobile");
 
+  await page.locator("#menu-open").click();
+  await page.locator(".sidebar .nav-item[data-tab='videoteca']").click();
+  await page.locator("#videos-grid .video-tile").first().waitFor();
+  await page.locator("#videos-grid [data-watch='01_scacchi']").click();
+  await page.locator("#public-video-dialog").waitFor({state:"visible"});
+  assert.match(await page.locator("#public-video-download").getAttribute("href"),/TRA_LE_PAGINE_VIDEO\.mp4$/);
+  await page.screenshot({path:SCREEN+"/videoteca-v11-android.png",fullPage:true});
+  await page.locator("#public-video-close").click();
+  console.log("PASS: V11 direct MP4 library, video player and download link (mock Release)");
   await page.locator("#menu-open").click();
   await page.locator(".sidebar .nav-item[data-tab='episodi']").click();
   await page.locator("#episode-grid .episode-card").first().waitFor();
