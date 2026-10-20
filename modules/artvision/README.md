@@ -88,3 +88,14 @@ L'utente ha valutato V2 migliorata ma **ancora troppo movimentata**. Non usare m
 
 **Guida prioritaria da leggere per ogni nuovo video:** [REGIA_ARMONICA_V3.md](REGIA_ARMONICA_V3.md). La sua mappa di dettagli è curata *per Van Gogh*, non per altri pittori. Per ogni nuovo artista aggiungere focali motivate e verificare opere e musica PRIMA di avviare la produzione; non copiare coordinate casuali. La pubblicazione resta sempre separata dalla produzione.
 **Backup V2:** `backup-artvision-v2-prima-regia-armonica-v3-2026-10-20`.
+
+
+## NUOVA PREFERENZA VINCOLANTE: ATELIER V4 · 20 ottobre 2026
+
+L'utente apprezza V3 rispetto alle precedenti ma rifiuta la ripetitività di ogni quadro identico. **V4 è il preset preferito.** Ogni opera deve avere un piano artistico diverso: talvolta un dettaglio soltanto, talvolta 2/3, talvolta iniziare dall'opera completa e poi avvicinarsi. Per Van Gogh usare focali motivati come occhi, petali, alberi, gesti e prospettiva; per nuovi artisti rivedere tutte le coordinate, mai copiarle. Camera quasi ferma sui dettagli: il movimento non è fine a se stesso. Alternare forme narrative, tempi calmi e brevi tensioni; no split screen, no effetti ripetitivi. **1080×1920 Full HD** da riproduzioni originali, non millantare 4K reale. Piccolo titolo del brano e compositore nel video, attribution completa nella descrizione.
+
+**Musica differente nei prossimi video**: utilizzare registrazioni autentiche licenziate; tenere `music_library.json` per storico delle ultime musiche e per scoprire nuove scelte adatte allo stile. Le licenze ufficiali vanno controllate: CC BY 4.0 richiede attribution visibile. Il numero di brani ricercati è maggiore del numero di download già collaudati.
+
+Nuovo motore separato: `modules/artvision/atelier_v4.py` — selezione `style=atelier_v4` (default workflow); impostare `music` per ogni richiesta. V1, V2, V3 e i video libri restano invariati. Backup `backup-artvision-v3-prima-regia-atelier-v4-2026-10-20`. Linea guida completa: [REGIA_ATELIER_V4.md](REGIA_ATELIER_V4.md).
+
+**Consegna futura**: GitHub Actions con coda `modules/artvision/queue.json`, nessuna pubblicazione automatica, collaudo MP4, audio, fonti, licenze e `quality_report_v4.py` (tavola visuale dei dettagli). La run V4 #11 si era fermata su un URL musicale inventato: file corretto ufficiale è `Evening Fall - Piano.mp3`, non `Evening Fall (Piano).mp3`. Controllare l'URL reale nel metadato di [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Evening_Fall_(Piano)_(ISRC_USUAN1100235).mp3) prima dei download. Non generare un brano finto come sostituto silenzioso.
