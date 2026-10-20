@@ -31,6 +31,29 @@ async function main() {
     const shown=await page.locator("#episode-grid .episode-card").count();
     assert.equal(shown,episodeCount);
     console.log("REAL PASS: actual episodes loaded and navigable =",shown);
+    const genuineCard=page.locator('#episode-grid [data-episode="01_scacchi"]');
+    await genuineCard.waitFor({state:"visible"});
+    const cover=genuineCard.locator("img");
+    await cover.waitFor({state:"visible"});
+    await page.waitForFunction(()=>{
+      const img=document.querySelector('[data-episode="01_scacchi"] img');
+      return img && img.complete && img.naturalWidth>100;
+    },null,{timeout:15000});
+    console.log("REAL PASS: genuine Scacchi cover JPG visible on Android");
+    await page.locator('#episode-grid [data-preview="01_scacchi"]').click();
+    await page.locator("#episode-preview").waitFor({state:"visible"});
+    await page.locator("#preview-frame").waitFor({state:"visible"});
+    await page.waitForFunction(()=>{
+      const img=document.querySelector("#preview-frame");
+      return img && img.complete && img.naturalWidth>100;
+    },null,{timeout:15000});
+    const slideCount=await page.locator("#preview-slide-count").textContent();
+    assert.match(slideCount,/1 \/ 5/);
+    await page.screenshot({path:DEST+"/real-gallery-scacchi-v10.png",fullPage:true});
+    await page.locator("#preview-next").click();
+    await page.locator("#preview-slide-count").getByText("2 / 5").waitFor();
+    await page.locator("#preview-close").click();
+    console.log("REAL PASS: gallery slides load real photos and controls work");
     assert.deepEqual(errors,[],"No JavaScript runtime exceptions on live site");
     console.log("REAL PASS: no browser JavaScript runtime exceptions");
     await ctx.close();
