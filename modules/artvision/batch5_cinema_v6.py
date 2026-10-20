@@ -34,7 +34,7 @@ P={
   "find":["Hieronymus Bosch Temptation Saint Anthony","Hieronymus Bosch The Haywain","Hieronymus Bosch Last Judgment","Hieronymus Bosch Ship of Fools","Hieronymus Bosch Triptych painting","Hieronymus Bosch Garden Delights"],
   "act":["First sight of an impossible world","Earthly abundance and temptation","Animals, objects and enigmas","Hellfire and grotesque faces","The garden returns"],"track":"darkest_child"},
  "botticelli":{
-  "name":"Sandro Botticelli","duration":125,"hero":"Nascita di Venere Botticelli.jpg",
+  "name":"Sandro Botticelli","duration":125,"hero":"Nascita di Venere Botticelli.jpg","featured":["Primavera (Botticelli).jpg"],
   "key":["birth of venus","nascita di venere","primavera","venus and mars","portrait of a young woman","madonna of the magnificat","adoration of the magi","venus","annunciation","minerva and the centaur","portrait"],
   "find":["Sandro Botticelli Venus and Mars","Sandro Botticelli Madonna","Sandro Botticelli Adoration of the Magi","Sandro Botticelli Annunciation","Sandro Botticelli Portrait","Botticelli Primavera Birth of Venus"],
   "act":["Birth of an icon","The grace of a human face","Spring, flowers and myth","Movement in delicate lines","Venus comes back"],"track":"calmant"},
@@ -106,15 +106,15 @@ def suitable_filename(fn,slug):
  return any(s in lower for s in person)
 def sources(slug,cfg,folder):
  dst=folder/"original_images";dst.mkdir(parents=True,exist_ok=True)
- found=[(cfg["hero"],None)]
+ found=[(cfg["hero"],None)]+[(p,None) for p in cfg.get("featured",[])]
  try:found+=discover(cfg)
  except Exception as e:print("DISCOVERY unavailable",str(e),flush=True)
  cache=set();candidates=[]
  for name,info in found:
   if name in cache:continue
   cache.add(name)
-  if name==cfg["hero"] or suitable_filename(name,slug):candidates.append((name,info))
- candidates.sort(key=lambda x:priority(x[0],cfg,hero=(x[0]==cfg["hero"])),reverse=True)
+  if name==cfg["hero"] or name in cfg.get("featured",[]) or suitable_filename(name,slug):candidates.append((name,info))
+ candidates.sort(key=lambda x:priority(x[0],cfg,hero=(x[0]==cfg["hero"] or x[0] in cfg.get("featured",[]))),reverse=True)
  if not candidates:raise RuntimeError("No verifiable Commons candidates")
  works=[];errors=[];seen_titles=set();motif_counts={}
  def motif_of(fn):
