@@ -12,7 +12,8 @@ const workflows = Object.freeze({
   v7: "archivio-media-v7.yml",
   v8: "orchestratore-v8.yml",
   render: "render-v3.yml",
-  publish: "pubblica-video-v11.yml"
+  publish: "pubblica-video-v11.yml",
+  autopilot: "studio-autopilot-v11.yml"
 });
 const json = (body,status=200) => Response.json(body,{status,headers:{
   "Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
@@ -63,6 +64,16 @@ export function validateDispatch(payload) {
     if(!exactKeys(i,["episodio","effetti"]) || !slug(i.episodio) ||
        !oneOf(i.effetti,["v4","off"]) || payload.confirmed!==true)
       throw new Error("Montaggio: approvazione esplicita richiesta.");
+  } else if (w==="autopilot") {
+    if(!exactKeys(i,["title","idea","formato","durata","conferma_costi"]) ||
+       typeof i.title!=="string" || typeof i.idea!=="string" ||
+       i.title.length<5 || i.title.length>110 ||
+       i.idea.length<15 || i.idea.length>1600 ||
+       /[\x00-\x1f\x7f]/.test(i.title+i.idea) ||
+       !oneOf(i.formato,["libri","fiabe","social"]) ||
+       !oneOf(i.durata,["2","3","4"]) ||
+       i.conferma_costi!==true || payload.confirmed!==true)
+      throw new Error("Produzione AI: approva quota Google e inserisci titolo/descrizione validi.");
   } else if (w==="publish") {
     if(!exactKeys(i,["episode","render_run_id","publish_public"]) ||
        !slug(i.episode) || typeof i.render_run_id!=="string" ||
