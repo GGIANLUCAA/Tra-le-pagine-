@@ -32,3 +32,16 @@
 
 ## IL FUTURO
 Rendere V5 più autonoma su nuovi artisti: curatela del soggetto basata su segmentazione/opere e controllo umani, catalogo musicale più ampio, verifica risoluzione source per scene. Non progettare due filmati per lo stesso episodio senza ordine esplicito. Tutti i nuovi upgrade additivi, preservare la capacità di rollback.
+
+
+## V5 REALMENTE PRODOTTA E VALIDATA — 20 ottobre 2026
+- Single final film: Vincent van Gogh, **150.000 sec, 1080×1920, H.264/AAC**, 12 opere autentiche, 49 passaggi diversificati, sola firma artista e piccolo MUSIC BY nei primi secondi; nessun testo nel resto del video.
+- [GitHub Actions run #14](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39435930028) SUCCESS, artifact `ARTVISION_14` verificato, MP4 realmente scaricato e cover visionata. Non distribuire la precedente run #13 come versione finale: aveva una copertina eccessivamente vuota.
+- Copertina V5 aggiornata: fotografia autentica degli *Irises* avvicinata e pieno schermo, nome artista + MUSIC BY Kevin MacLeod in serif minimale su un velo scuro. Non aggiungere ulteriori testi nel video.
+- **Cinque immagini Cleveland Museum migliorate da web JPG 900px a JPEG print originali CC0**: Adeline Ravoux 3400×3389, The Large Plane Trees 3400×2713, Two Poplars 2543×3400, Landscape with Wheelbarrow 3400×2400, Dr. Gachet 2654×3400. Fonte e risultato per immagine in `QUALITA_SORGENTI.json`.
+- Nuovo brano, diverso dalla V4: `Dreams Become Real`, Kevin MacLeod, registrazione originale strumentale ~410.07sec da https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dreams%20Become%20Real.mp3 ; scheda https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027 ; **CC BY 4.0**. SHA256 `a8ea5df5f969ed8d898af7fe07eb4712233f03e9d83f7ebcc88d1c851f3171b0`. Informazione completa di attribuzione nella descrizione pubblica del post e file licenze; il solo MUSIC BY nel filmato non sostituisce l'attribuzione CC obbligatoria.
+- Durata elaborazione V5 con upgrading museale **318,56 s**; 0 API a pagamento, nessuna pubblicazione automatica, dimensione MP4 43.148.391 byte (~41.15 MiB).
+- Quality report: 18 dettagli, 17 inquadrature whole, 6 push, 8 reveal; 5 opere con multipli dettagli, 2 con tre dettagli, 6 che iniziano dal quadro intero. Contatto regia allegato, H264/AAC e durata controllati; **success tecnico NON garantisce valutazione estetica perfetta**.
+- A differenza di V1–V4, la V5 introduce un limite zoom in base ai pixel sorgenti, evita macro estremi su immagini sfocate e conserva accuratamente i colori. Può diminuire la spettacolarità degli zoom quando i master sono piccoli: è una scelta a favore della qualità museale.
+- Git branch `backup-artvision-v4-prima-cinema-universal-v5-2026-10-20`, precedenti motori e workflow narrati conservati.
+- FUTURI ARTISTI: costruire e verificare prima un piano soggetti e dettagli specifico; attualmente la mappa esplicita implementata per V5 è di Van Gogh. Non dichiarare altri artisti supportati automaticamente se il piano non è stato preparato.
