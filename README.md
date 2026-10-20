@@ -126,3 +126,16 @@ Prepara `PIANO_V8.json`, `REVISIONE_GATE1_V8.html` e, **solo dopo approvazione G
 - [Guida V8 per Android](ORCHESTRATORE_V8_GUIDA.md)
 - [Workflow Orchestratore V8](.github/workflows/orchestratore-v8.yml)
 - [Sorgente e adapter](src/orchestratore_v8.py)
+
+## 📱 Studio Web V9 — interfaccia Android
+Nuova **app PWA mobile** in `docs/`, senza toccare i motori V3–V8. Gestisce nuovi brief (salvati nel browser), mostra episodi e run GitHub reali, apre ricerca V7 / storyboard V6 / preparazione V8 / render storico V5.
+
+**Avvio gratuito semplice:** GitHub **Settings → Pages → Deploy from a branch → main → /docs → Save**. Dopo il deploy apri l'indirizzo pubblicato da Pages e aggiungilo alla Home di Android. I workflow si aprono in GitHub per conferma.
+
+**Opzionale:** `worker/index.mjs` + `wrangler.toml` permettono di ospitare la stessa web app su Cloudflare Workers e lanciare i workflow direttamente con GitHub OAuth, solo dopo impostazione manuale dei segreti e autorizzazione.
+
+- [Guida Android V9 e attivazione](STUDIO_WEB_V9_GUIDA.md)
+- [Apri sorgente interfaccia](docs/index.html)
+- [Test V9](tests/test_studio_web_v9.mjs)
+
+L'abbonamento ChatGPT Plus viene usato **attraverso ChatGPT** per creare copioni e storyboard, non come API gratuite non previste. Il sito V9 non genera automaticamente nuovi episodi o MP4 senza i workflow V3–V8; la voce Google rimane invariata.

@@ -1,0 +1,44 @@
+name: "Tra le Pagine - Studio Web V9 checks"
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "worker/**"
+      - "wrangler.toml"
+      - "tests/test_studio_web_v9.mjs"
+      - ".github/workflows/studio-web-v9-check.yml"
+      - "STUDIO_WEB_V9_GUIDA.md"
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "worker/**"
+      - "wrangler.toml"
+      - "tests/test_studio_web_v9.mjs"
+      - ".github/workflows/studio-web-v9-check.yml"
+permissions:
+  contents: read
+jobs:
+  test:
+    name: "Test PWA + GitHub OAuth senza segreti"
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: "Check JavaScript syntax"
+        run: |
+          node --check docs/app.js
+          node --check docs/sw.js
+          node --check worker/index.mjs
+      - name: "Contract + security regression tests"
+        run: node --test tests/test_studio_web_v9.mjs
+      - name: "Verify static page can be served"
+        run: |
+          python -m http.server 8765 --directory docs > /tmp/tlpweb.log 2>&1 &
+          for i in 1 2 3 4 5; do if curl --fail --silent http://127.0.0.1:8765/ -o /tmp/tlp.html; then break; fi; sleep 1; done
+          grep -q "Tra le Pagine" /tmp/tlp.html
+          curl --fail --silent http://127.0.0.1:8765/app.js -o /tmp/tlp-app.js
+          test -s /tmp/tlp-app.js
