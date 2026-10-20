@@ -12,6 +12,10 @@ import io
 import json
 import os
 import time
+import re
+import html
+import urllib.parse
+import urllib.request
 from pathlib import Path
 
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps, UnidentifiedImageError
@@ -65,6 +69,68 @@ def grade_photo(src: Image.Image, output: Path, mood: str):
     return {"file":output.name,"width":1080,"height":1920,"bytes":output.stat().st_size}
 
 
+def commons_results(query):
+    """Query Wikimedia Commons directly; thumbnail artwork stays with the original author."""
+    qs=urllib.parse.urlencode({
+        "action":"query","generator":"search","gsrsearch":query,
+        "gsrnamespace":"6","gsrlimit":"16","prop":"imageinfo",
+        "iiprop":"url|size|mime|extmetadata","iiurlwidth":"1200",
+        "format":"json","formatversion":"2",
+    })
+    req=urllib.request.Request(
+        "https://commons.wikimedia.org/w/api.php?"+qs,
+        headers={"Accept":"application/json","User-Agent":
+                 "TraLePagineBookVideo/1.0 (educational audiovisual research; github.com/GGIANLUCAA/Tra-le-pagine-)"})
+    with urllib.request.urlopen(req,timeout=12) as response:
+        payload=response.read(2_000_001)
+        if len(payload)>2_000_000:raise ValueError("Commons API response too large")
+        data=json.loads(payload)
+    out=[]
+    for page in data.get("query",{}).get("pages",[]):
+        info=(page.get("imageinfo") or [{}])[0]
+        if info.get("mime") not in ("image/jpeg","image/png","image/webp"):
+            continue
+        if int(info.get("width",0))<600 or int(info.get("height",0))<400:
+            continue
+        metadata=info.get("extmetadata") or {}
+        def val(name):
+            return str((metadata.get(name) or {}).get("value",""))
+        short=val("LicenseShortName").casefold()
+        licurl=val("LicenseUrl")
+        if not (("public domain" in short or "pd-" in short or "cc0" in short)
+                or ("cc by" in short and "sa" not in short and "nc" not in short and "nd" not in short)):
+            continue
+        source=info.get("thumburl") or info.get("url") or ""
+        if not source.startswith("https://upload.wikimedia.org/"):
+            continue
+        out.append({
+            "asset_title":str(page.get("title",""))[:200],
+            "author":re.sub(r"<[^>]*>","",html.unescape(val("Artist")))[:150] or "Autore da verificare",
+            "license":short,"license_url":licurl,
+            "source_url":"https://commons.wikimedia.org/wiki/"+urllib.parse.quote(
+                str(page.get("title","")).replace(" ","_")),
+            "download_url":source
+        })
+    return out
+
+
+def commons_download(item):
+    """Only allowed Wikimedia CDN, bounded JPEG/PNG/WEBP; do not accept redirects outside CDN."""
+    url=item["download_url"]
+    if urllib.parse.urlsplit(url).hostname!="upload.wikimedia.org":
+        raise ValueError("Host Wikimedia inatteso.")
+    req=urllib.request.Request(url,headers={"User-Agent":"TraLePagineBookVideo/1.0"})
+    with urllib.request.urlopen(req,timeout=16) as res:
+        if urllib.parse.urlsplit(res.url).hostname!="upload.wikimedia.org":
+            raise ValueError("Redirect fuori da Wikimedia.")
+        if int(res.headers.get("Content-Length","0"))>12_000_000:
+            raise ValueError("File troppo grande.")
+        raw=res.read(12_000_001)
+    if len(raw)>12_000_000 or len(raw)<500:
+        raise ValueError("Immagine troppo grande o vuota.")
+    return raw,hashlib.sha256(raw).hexdigest()
+
+
 def find_images(episode: Path, *, sleep=0.4):
     images=episode/"images"
     images.mkdir(parents=True,exist_ok=True)
@@ -74,46 +140,71 @@ def find_images(episode: Path, *, sleep=0.4):
         chosen=None
         attempts=[]
         for query in queries:
-            # All sources are constrained to Openverse-indexed Wikimedia.
-            # The full license must be checked in the original; this is an editorial preview.
+            # FIRST: direct Commons API (independent of Openverse availability).
             try:
-                suggestions=discover("openverse","image",query,12)
+                suggestions=commons_results(query)
             except Exception as e:
-                attempts.append(f"API {query}: {str(e)[:100]}")
-                time.sleep(max(1,sleep))
-                continue
-            for entry in suggestions:
-                title=entry["title"].casefold()
+                attempts.append(f"Commons {query}: {str(e)[:100]}")
+                suggestions=[]
+            for item in suggestions:
+                title=item["asset_title"].casefold()
                 if any(word in title for word in BAD_TITLE):
                     continue
                 try:
-                    from tempfile import TemporaryDirectory
-                    with TemporaryDirectory(prefix="tlp_08_") as t:
-                        metadata=download_approved(entry,Path(t))
-                        digest=metadata["sha256"]
-                        if digest in used_hashes:
-                            continue
-                        raw=(Path(t)/metadata["file"]).read_bytes()
-                        original=quality_photo(raw)
-                        dest=images/f"scena_{idx:02d}.jpg"
-                        result=grade_photo(original,dest,"hope" if idx==12 else "cool")
-                        chosen={
-                            "asset":idx,"query":query,"search_topic":SEARCHES[idx][0],
-                            "title":entry["title"],"author":entry["author"],
-                            "source_url":entry["source_url"],
-                            "license":entry["license"],"license_url":entry["license_url"],
+                    raw,digest=commons_download(item)
+                    if digest in used_hashes:
+                        continue
+                    original=quality_photo(raw)
+                    dest=images/f"scena_{idx:02d}.jpg"
+                    result=grade_photo(original,dest,"hope" if idx==12 else "cool")
+                    chosen={"asset":idx,"query":query,"search_topic":SEARCHES[idx][0],
+                            "title":item["asset_title"],"author":item["author"],
+                            "source_url":item["source_url"],"license":item["license"],
+                            "license_url":item["license_url"],
                             "sha256_original":digest,
                             "display_type":"opera o fotografia illustrativa, non scena reale del romanzo",
-                            **result
-                        }
-                        used_hashes.add(digest)
-                        break
+                            **result}
+                    used_hashes.add(digest)
+                    break
                 except Exception as e:
-                    attempts.append(f"{entry['id']}: {str(e)[:95]}")
+                    attempts.append(f"Commons thumb: {str(e)[:95]}")
             if chosen:
                 break
             time.sleep(sleep)
         if not chosen:
+            # Secondary fallback: Openverse, limited to one query because
+            # the anonymous service can time out during production.
+            query=queries[0]
+            try:
+                from tempfile import TemporaryDirectory
+                suggestions=discover("openverse","image",query,6)
+                for entry in suggestions:
+                    if any(word in entry["title"].casefold() for word in BAD_TITLE):
+                        continue
+                    try:
+                        with TemporaryDirectory(prefix="tlp08_") as t:
+                            metadata=download_approved(entry,Path(t))
+                            digest=metadata["sha256"]
+                            if digest in used_hashes:continue
+                            raw=(Path(t)/metadata["file"]).read_bytes()
+                            original=quality_photo(raw)
+                            dest=images/f"scena_{idx:02d}.jpg"
+                            result=grade_photo(original,dest,"hope" if idx==12 else "cool")
+                            chosen={"asset":idx,"query":query,"search_topic":SEARCHES[idx][0],
+                                    "title":entry["title"],"author":entry["author"],
+                                    "source_url":entry["source_url"],
+                                    "license":entry["license"],"license_url":entry["license_url"],
+                                    "sha256_original":digest,
+                                    "display_type":"opera o fotografia illustrativa, non scena reale del romanzo",
+                                    **result}
+                            used_hashes.add(digest)
+                            break
+                    except Exception as e:
+                        attempts.append(f"Openverse file: {str(e)[:95]}")
+            except Exception as e:
+                attempts.append(f"Openverse fallback: {str(e)[:100]}")
+        if not chosen:
+            print("SCENA FALLITA",idx,"ERRORI:",attempts[-10:],flush=True)
             report=episode/"PROVENIENZA_IMMAGINI.json"
             report.write_text(json.dumps({"images":provenance,"failed_scene":idx,
                     "search_errors":attempts[-8:]},
