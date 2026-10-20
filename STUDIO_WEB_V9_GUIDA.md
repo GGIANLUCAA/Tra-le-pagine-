@@ -82,7 +82,7 @@ Quando il tuo utente GitHub (GGIANLUCAA) autorizza, il Worker conserva il token 
 - **Panoramica:** vedere episodi e run recenti, collegamento a GitHub.
 - **Nuovo video:** scrivere idea/titolo, scegliere formato e durata; salvare una bozza **sul tuo browser**; copiare un brief in ChatGPT. La bozza non crea ancora un nuovo episodio GitHub.
 - **Episodi:** scegliere un episodio già presente; aprire o avviare storyboard V6, piano V8, preparazione e montaggio MP4.
-- **Archivio:** lanciare ricerche Openverse e Pexels V7, poi verificare gli artifact nelle run GitHub.
+- **Archivio:** lanciare ricerche Openverse e Pexels V7, **importare un elemento tramite ID** mantenendo uguali fonte e tipo, poi verificare gli artifact nelle run GitHub. I media importati non vengono montati automaticamente.
 - **Produzioni:** vedere workflow recenti, stato e link ufficiali ai pacchetti disponibili.
 - **Impostazioni:** controllare lo stato della connessione, conservazione voce Google, eliminare i brief locali.
 
