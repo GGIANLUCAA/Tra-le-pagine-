@@ -16,7 +16,8 @@ TRACKS = {
     "evening_fall_piano": {
         "title": "Evening Fall (Piano)", "author": "Kevin MacLeod", "isrc": "USUAN1100235",
         "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100235",
-        "urls": ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Evening%20Fall%20%28Piano%29%20%28ISRC%20USUAN1100235%29.mp3",
+        "urls": ["https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20-%20Piano.mp3",
+                 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Evening%20Fall%20%28Piano%29%20%28ISRC%20USUAN1100235%29.mp3",
                  "https://upload.wikimedia.org/wikipedia/commons/f/fd/Evening_Fall_%28Piano%29_%28ISRC_USUAN1100235%29.mp3"],
         "license": "CC BY 4.0", "license_url": "https://creativecommons.org/licenses/by/4.0/",
         "expected_seconds": 165},
