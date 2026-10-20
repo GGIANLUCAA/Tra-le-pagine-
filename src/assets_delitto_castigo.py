@@ -131,6 +131,50 @@ def commons_download(item):
     return raw,hashlib.sha256(raw).hexdigest()
 
 
+# Historically grounded illustrations, recorded on Wikimedia Commons in the
+# category Crime and Punishment. Avoid unrelated search results and future models.
+CURATED={
+  1:"Karazin3.jpg",
+  2:"Dostojevski Misdaad en straf 02.jpg",
+  3:"Karazin1.jpg",
+  4:"Karazin2.jpg",
+  5:"Protsentshitsa.jpg",
+  6:"AVRO Televisie De Student Raskolnikoff gebaseerd op een verhaal van Dostojevs, Bestanddeelnr 913-0363.jpg",
+  7:"AVRO Televisie De Student Raskolnikoff gebaseerd op een verhaal van Dostojevs, Bestanddeelnr 913-0364.jpg",
+  8:"AVRO Televisie De Student Raskolnikoff gebaseerd op een verhaal van Dostojevs, Bestanddeelnr 913-0365.jpg",
+  9:"Grabar Crime and Punishment Sonya visiting Marmeladov 1894.jpg",
+  10:"Klodt Michail Petrovich - Raskolnikov and Marmeladov.jpg",
+  11:"Nicolae Vermont - Suflete slave (Crima si pedeapsa).jpg",
+  12:"AVRO Televisie. De Student Raskolnikoff gebaseerd op een verhaal van Dostojevs, Bestanddeelnr 913-0367.jpg",
+}
+
+
+def wikimedia_original_file_url(name: str):
+    """Commons stable file name + Wikimedia storage MD5 directory."""
+    if not name.endswith((".jpg",".jpeg",".JPG")) or len(name)>200:
+        raise ValueError("Invalid curated file name")
+    filename=name.replace(" ","_")
+    digest=hashlib.md5(filename.encode("utf-8")).hexdigest()
+    return "https://upload.wikimedia.org/wikipedia/commons/"+digest[0]+"/"+digest[:2]+"/"+urllib.parse.quote(filename,safe="()")
+
+
+def download_curated(name,delay=9):
+    """Respect Commons CDN: one request every several seconds and retry 429."""
+    from urllib.error import HTTPError
+    url=wikimedia_original_file_url(name)
+    for i in range(4):
+        time.sleep(delay if i==0 else min(90,30*(i+1)))
+        try:
+            data,sha=commons_download({"download_url":url})
+            return data,sha,url
+        except HTTPError as e:
+            if e.code in (429,502,503):
+                print("Wikimedia in pausa",e.code,"file",name[:40],"tentativo",i+1,flush=True)
+                continue
+            raise
+    raise RuntimeError("Commons rate limit after four controlled attempts")
+
+
 def find_images(episode: Path, *, sleep=0.4):
     images=episode/"images"
     images.mkdir(parents=True,exist_ok=True)
@@ -139,7 +183,31 @@ def find_images(episode: Path, *, sleep=0.4):
     for idx,queries in SEARCHES.items():
         chosen=None
         attempts=[]
-        for query in queries:
+        # Curated, book-specific artwork is first choice, not unrelated paintings.
+        try:
+            selected=CURATED[idx]
+            raw,digest,url=download_curated(selected)
+            original=quality_photo(raw)
+            dest=images/f"scena_{idx:02d}.jpg"
+            result=grade_photo(original,dest,"hope" if idx==12 else "cool")
+            chosen={"asset":idx,"query":"curated Crime and Punishment historic illustration",
+                    "search_topic":SEARCHES[idx][0],
+                    "title":selected,"author":"Autore indicato nella pagina originale Wikimedia",
+                    "source_url":"https://commons.wikimedia.org/wiki/File:"+
+                                 urllib.parse.quote(selected.replace(" ","_")),
+                    "license":"Verificare pagina Commons","license_url":
+                    "https://commons.wikimedia.org/wiki/File:"+
+                                 urllib.parse.quote(selected.replace(" ","_")),
+                    "sha256_original":digest,
+                    "display_type":"illustrazione storica del romanzo o foto di sua rappresentazione, non scena reale",
+                    **result}
+            used_hashes.add(digest)
+        except Exception as e:
+            attempts.append("Curated "+CURATED[idx]+": "+str(e)[:120])
+        if not chosen:
+            print("CURATED NON DISPONIBILE",idx,attempts[-1],flush=True)
+        if not chosen:
+          for query in queries:
             # FIRST: direct Commons API (independent of Openverse availability).
             try:
                 suggestions=commons_results(query)
