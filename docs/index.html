@@ -126,5 +126,23 @@
   <div class="overlay" id="overlay" hidden></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <dialog id="confirm-dialog"><form method="dialog"><div class="dialog-icon">◈</div><h2 id="dialog-title">Conferma</h2><p id="dialog-desc"></p><label class="check-label" id="dialog-consent"><input type="checkbox" id="dialog-check"><span id="dialog-consent-text">Ho verificato e approvo</span></label><div class="dialog-buttons"><button class="btn outline" value="cancel">Annulla</button><button class="btn primary" id="dialog-confirm" value="confirm" disabled>Continua</button></div></form></dialog>
+  <dialog id="episode-preview" class="episode-preview-dialog" aria-labelledby="preview-heading">
+    <div class="preview-top"><div><span class="eyebrow">ANTEPRIMA EPISODIO · V10</span><h2 id="preview-heading">Episodio</h2><p id="preview-author"></p></div><button id="preview-close" class="preview-close" aria-label="Chiudi anteprima">✕</button></div>
+    <div class="preview-stage" id="preview-frame-container">
+      <img id="preview-frame" alt="Fotogramma originale dell'episodio" hidden>
+      <div id="preview-no-scenes" class="preview-empty" hidden><div class="preview-art-placeholder">▧</div><strong>Immagini non ancora disponibili</strong><span>Il racconto può avere copione e storyboard senza un video già montato.</span></div>
+      <div id="preview-slide-controls" class="preview-slide-controls" hidden><button id="preview-prev" aria-label="Immagine precedente">←</button><span id="preview-slide-count"></span><button id="preview-next" aria-label="Immagine successiva">→</button></div>
+    </div>
+    <div class="preview-video" id="preview-video-container" hidden><video id="episode-video" playsinline controls preload="metadata"></video></div>
+    <p class="preview-status" id="preview-status"></p>
+    <div class="preview-cta">
+      <label class="btn primary preview-file-cta" for="preview-file">▶ Apri un MP4 dal telefono</label>
+      <input id="preview-file" type="file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" hidden>
+      <a id="preview-github" class="btn outline" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions" target="_blank" rel="noopener">Vedi video in GitHub Actions ↗</a>
+      <button id="preview-select" class="btn outline">Seleziona episodio</button>
+    </div>
+    <p class="micro-note">Il video scelto dal telefono viene riprodotto soltanto nel browser e NON caricato online. I vecchi MP4 presenti negli Artifact GitHub devono prima essere scaricati. L'anteprima delle immagini non è un filmato.</p>
+    <div class="preview-scenes"><h3>Storyboard disponibile</h3><div id="preview-scenes-list"></div></div>
+  </dialog>
 </body>
 </html>
