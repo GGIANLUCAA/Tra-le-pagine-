@@ -26,9 +26,17 @@ export function normalizeRelease(release){
     a.browser_download_url.startsWith(BASE+release.tag_name+"/")
   );
   if(!asset)return null;
+  const thumb=(release.assets||[]).find(a=>
+    a?.name==="VIDEO_COPERTINA.jpg" &&
+    Number(a.size)>10000 && Number(a.size)<=12000000 &&
+    a.state==="uploaded" &&
+    typeof a.browser_download_url==="string" &&
+    a.browser_download_url.startsWith(BASE+release.tag_name+"/")
+  );
   return {
     slug:episode,run,tag:release.tag_name,
     title:String(release.name||episode).replace(/^Tra le Pagine · /,"").slice(0,130),
+    cover:thumb?.browser_download_url||"",
     url:asset.browser_download_url, bytes:asset.size,
     date:release.published_at||release.created_at,
     download_count:asset.download_count||0,
@@ -56,7 +64,8 @@ export const videoForEpisode=slug=>listed.find(x=>x.slug===slug)||null;
 function formatSize(bytes){return (bytes/1048576).toFixed(1)+" MB";}
 function tile(video){
   const slug=esc(video.slug);
-  return '<article class="video-tile"><div class="video-tile-art"><span>▶</span></div>'+
+  const cover=video.cover?'<img loading="lazy" alt="Fotogramma reale del video" src="'+esc(video.cover)+'">':"";
+  return '<article class="video-tile"><div class="video-tile-art">'+cover+'<span>▶</span></div>'+
     '<div class="video-tile-info"><span class="video-tile-label">VIDEO COMPLETO · '+esc(at(video.date))+'</span>'+
     '<h3>'+esc(video.title)+'</h3><p>'+formatSize(video.bytes)+' · Archivio permanente GitHub Release</p>'+
     '<div class="video-tile-actions"><button data-watch="'+slug+'" class="btn primary">▶ Guarda</button>'+
