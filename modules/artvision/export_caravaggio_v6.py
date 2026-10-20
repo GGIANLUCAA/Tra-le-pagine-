@@ -12,7 +12,7 @@ from atelier_v4 import audio_download
 # Exclude disputed attribution and modern unlicensed installation photography.
 CURATED=[
  ("The Calling of Saint Matthew","Caravaggio — The Calling of Saint Matthew.jpg"),
- ("Judith Beheading Holofernes","Judith Beheading Holofernes - Caravaggio.jpg"),
+ ("Judith Beheading Holofernes","Caravaggio - Judith beheading Holofernes.jpg"),
  ("Supper at Emmaus","Caravaggio — Supper at Emmaus.jpg"),
  ("David with the Head of Goliath","David with the Head of Goliath-Caravaggio (1610).jpg"),
  ("The Taking of Christ","Caravaggio - The Taking of Christ.jpg"),
@@ -23,7 +23,7 @@ CURATED=[
  ("Rest on the Flight into Egypt","Rest on the Flight into Egypt-Caravaggio (c.1597).jpg"),
  ("The Incredulity of Saint Thomas","Caravaggio incredulity.jpg"),
  ("Saint Jerome Writing","Saint Jerome Writing-Caravaggio (1605-6).jpg"),
- ("Narcissus","Narcissus by Caravaggio, 1597–1599, Galleria Nazionale d'Arte Antica (21809913606).jpg"),
+ ("Narcissus","Narcissus-Caravaggio (1594-96).jpg"),
  ("The Entombment of Christ","Caravaggio - Entombment of Christ.jpg"),
  ("The Musicians","Caravaggio - I Musici.jpg"),
  ("Crucifixion of Saint Peter","Caravaggio, Crucifixion of Saint Peter.jpg"),
@@ -44,9 +44,9 @@ def get(url,max_bytes=19_000_000):
         except Exception as err:
             last=err;time.sleep((n+1)*2)
     raise RuntimeError(str(last))
-def metadata(filename):
+def metadata(filename,width=2900):
     params=urllib.parse.urlencode({"action":"query","format":"json","formatversion":"2",
-        "titles":"File:"+filename,"prop":"imageinfo","iiprop":"url|size|extmetadata","iiurlwidth":"3000"})
+        "titles":"File:"+filename,"prop":"imageinfo","iiprop":"url|size|extmetadata","iiurlwidth":str(width)})
     api="https://commons.wikimedia.org/w/api.php?"+params
     payload=json.loads(get(api,max_bytes=3_000_000))
     pages=payload.get("query",{}).get("pages",[])
@@ -72,7 +72,16 @@ def main():
             ext=info.get("extmetadata") or {}
             lic=ext.get("LicenseShortName",{}).get("value","")
             link=info.get("thumburl") or info.get("url")
-            data=get(link, max_bytes=28_000_000)
+            try:
+                data=get(link,max_bytes=28_000_000)
+            except Exception as first_download_error:
+                # Lower-resolution Commons thumbnails are sometimes cached while 3K ones are rate-limited.
+                try:
+                    info=metadata(filename,width=1900)
+                    link=info.get("thumburl") or info.get("url")
+                    data=get(link,max_bytes=18_000_000)
+                except Exception:
+                    raise first_download_error
             with Image.open(io.BytesIO(data)) as orig:
                 orig.load();im=ImageOps.exif_transpose(orig).convert("RGB")
             if min(im.size)<640:raise RuntimeError(f"insufficient image dimensions {im.size}")
@@ -93,7 +102,7 @@ def main():
         except Exception as err:
             failure.append({"title":title,"file":filename,"error":str(err)[:300]})
             print("SKIPPED",title,str(err)[:220],flush=True)
-        time.sleep(.22)
+        time.sleep(.85)
     if len(records)<12:raise RuntimeError("Not enough authentic licensed high-resolution artworks: "+json.dumps(failure))
     # Different instrumental score from Van Gogh, verified officially by Kevin MacLeod (CC BY 4.0).
     music={"title":"Darkest Child","author":"Kevin MacLeod","isrc":"USUAN1100783",
