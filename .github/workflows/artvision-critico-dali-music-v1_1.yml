@@ -28,6 +28,8 @@ jobs:
           test -s input/ARTVISION_DALI_SOGNO_DELL_APE_CRITICO_V1.mp4
       - name: "Scarica musica autentica e verifica licenza"
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
           python - <<'PY'
           import hashlib,urllib.request
           from pathlib import Path
