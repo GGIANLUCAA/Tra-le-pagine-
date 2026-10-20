@@ -12,6 +12,7 @@ import re
 import zipfile
 from pathlib import Path
 from urllib.parse import urlparse
+from prompt_asset_v6 import build_prompts
 
 FORMATS = ("libri", "cronaca", "documentario", "fiabe", "social")
 BUDGETS = ("zero", "basso")
@@ -221,6 +222,8 @@ def run():
     (dest / "PIANO_SCENE_V6.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (dest / "STORYBOARD_V6.html").write_text(storyboard_html(report), encoding="utf-8")
+    (dest / "PROMPT_IMMAGINI_V6.json").write_text(
+        json.dumps(build_prompts(report, ep), ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
     (dest / "CATALOGO_TOOLS_V6.json").write_text(
         json.dumps(registry, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"STUDIO IBRIDO V6: {report['conteggi']['inquadrature']} inquadrature.")
