@@ -1,0 +1,32 @@
+name: "ArtVision - export museali per direzione artistica"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-export-assets.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Installa software gratuito
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5"
+      - name: Scarica opere originali autorizzate e musica verificata
+        run: python modules/artvision/export_v6_assets.py
+      - name: Salva asset temporanei per montaggio artistico
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_MUSEUM_SOURCES_V6
+          path: output/artvision-assets/
+          if-no-files-found: error
+          retention-days: 3
