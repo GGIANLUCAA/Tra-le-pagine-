@@ -79,3 +79,16 @@ L'utente ha valutato V2 migliorata ma **ancora troppo movimentata**. Non usare m
 
 **Guida prioritaria da leggere per ogni nuovo video:** [REGIA_ARMONICA_V3.md](REGIA_ARMONICA_V3.md). La sua mappa di dettagli è curata *per Van Gogh*, non per altri pittori. Per ogni nuovo artista aggiungere focali motivate e verificare opere e musica PRIMA di avviare la produzione; non copiare coordinate casuali. La pubblicazione resta sempre separata dalla produzione.
 **Backup V2:** `backup-artvision-v2-prima-regia-armonica-v3-2026-10-20`.
+
+
+## V3 prima produzione COMPLETATA / verificata — 20 ottobre 2026
+- GitHub Actions [run #9](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39422133252) **SUCCESS**, artifact `ARTVISION_9` verificato.
+- Van Gogh, 16 opere di museo con metadati, 16 scene intenzionali (ognuna dettaglio → camera rallenta → intero), 150,000 secondi, 720×1280, H.264/AAC.
+- Vera registrazione scaricata dal sito ufficiale di Kevin MacLeod `Calmant.mp3`; SHA-256 `145d51e68117d5dc47b68cd2ac0577fd3c9d8c7464b49c32b3c25ad882c106c5`. Manifest e licenza CC BY 4.0 in `MUSICA_LICENZA_E_CREDITI.json`; allegare crediti ai post.
+- ArtVision V3 0 API a pagamento. Il report riporta 244,5 secondi end-to-end.
+- È stato verificato un campione di 27 fotogrammi da 9 opere (dettaglio, reveal, intero). Niente split-screen. Nota visiva: dipinti orizzontali interi usano bande scure verticali per preservare il rapporto d'aspetto, non tagliare l'opera.
+- MP4 originale ~35 MB; successiva ricompressione H.264 CRF24 preservando 150s/AAC ~16 MB, volume medio -18 dB, picco -0.8 dB.
+- Per evitare doppi render inutili durante gli aggiornamenti, il trigger GitHub Actions automatico ora ascolta solamente modifiche a `modules/artvision/queue.json` (resta anche workflow_dispatch manuale).
+- La registrazione è **copyrighted ma licensed CC BY 4.0**, NON 'priva di copyright'; crediti pubblici obbligatori per monetizzazione/licenza.
+- ArtVision V1/V2 e tutti i motori libro/narrati sono conservati. V3 per altri artisti richiede mappa di soggetti ragionata, non sempre stessa selezione.
+- Verifica creativa finale deve seguire il gusto dell'utente. Il render green dimostra solo affidabilità tecnica.
