@@ -40,7 +40,6 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/artvision-render.yml"
       - "modules/artvision/queue.json"
 
 permissions:
