@@ -183,6 +183,7 @@ def run(slug):
     old_cover=out/"COPERTINA_CINEMA_V6.jpg"
     if old_cover.is_file():old_cover.replace(cover_path)
     spec=check_movie(movie,sec)
+    (out/"silent_v6.mp4").unlink(missing_ok=True)  # keep only user-ready MP4
     used={s.art["id"] for s in shots}
     selected=[x for x in pictures if x["id"] in used]
     credits=[
