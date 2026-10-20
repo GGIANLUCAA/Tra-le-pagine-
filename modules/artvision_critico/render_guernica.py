@@ -134,13 +134,21 @@ def make_immersive(base,img,beat,p):
     thin_frame(f,45,205,990,1380)
     return f
 
+_BRAND_CACHE={}
 def draw_brand(frame,title):
-    f=frame
-    cv2.line(f,(80,150),(1000,150),(131,118,91),1,cv2.LINE_AA)
-    f=label_center(f,"TRA LE PAGINE  ·  ART VISION CRITICO",86,23,GOLD,SANS)
-    f=label_center(f,title.upper(),1645,37,OFF,FONT)
-    f=label_center(f,"PABLO PICASSO  /  GUERNICA",1780,21,GOLD,SANS)
-    return f
+    # Cache pre-renders expensive typography ONLY ONCE per beat, avoiding a PIL
+    # full-frame conversion on every frame of 10-minute video.
+    if title not in _BRAND_CACHE:
+        paper=np.zeros((H,W,3),np.uint8);paper[:]=INK
+        cv2.line(paper,(80,150),(1000,150),(131,118,91),1,cv2.LINE_AA)
+        paper=label_center(paper,"TRA LE PAGINE  ·  ART VISION CRITICO",86,23,GOLD,SANS)
+        paper=label_center(paper,title.upper(),1645,37,OFF,FONT)
+        paper=label_center(paper,"PABLO PICASSO  /  GUERNICA",1780,21,GOLD,SANS)
+        _BRAND_CACHE[title]=(paper[66:160].copy(),paper[1626:1844].copy())
+    head,foot=_BRAND_CACHE[title]
+    frame[66:160]=head
+    frame[1626:1844]=foot
+    return frame
 
 def outro_symbols(frame,a):
     # Una firma di chiusura SOLO grafica: cuore, play con +. Niente voce o annunci.
