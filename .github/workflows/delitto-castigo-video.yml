@@ -14,7 +14,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: delitto-castigo-2026
+  group: delitto-castigo-${{ github.sha }}
   cancel-in-progress: false
 jobs:
   create:
