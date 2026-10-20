@@ -10,8 +10,9 @@ from urllib.parse import urljoin
 
 DEFAULT_URL = "https://ggianlucaa.github.io/Tra-le-pagine-/"
 CHECKS = {
-    "index.html": (b"<title>Tra le Pagine", "text/html"),
-    "app.js": (b"Tra le Pagine V9", "javascript"),
+    "index.html": (b'id="view-videoteca"', "text/html"),
+    "app.js": (b"videoteca_v11.js", "javascript"),
+    "videoteca_v11.js": (b"Tra le Pagine V11", "javascript"),
     "styles.css": (b":root", "text/css"),
     "manifest.webmanifest": (b"Tra le Pagine", "json"),
     "icon.svg": (b"<svg", "image/svg+xml"),
