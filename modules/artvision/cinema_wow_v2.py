@@ -240,8 +240,9 @@ def make_video_cinematic(artworks,artist,duration,out,size=(720,1280),fps=24):
     render_music(wav,frames/fps)
     final=out/"ARTVISION_VIDEO.mp4"
     proc=subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y","-i",str(silent),
-                         "-i",str(wav),"-c:v","libx264","-preset","veryfast","-crf","21",
+                         "-i",str(wav),"-c:v","libx264","-preset","veryfast","-crf","27",
                          "-pix_fmt","yuv420p","-c:a","aac","-b:a","160k",
+                         "-af","loudnorm=I=-16:TP=-1.5:LRA=8",
                          "-shortest","-movflags","+faststart",str(final)],capture_output=True,text=True)
     if proc.returncode:raise RuntimeError(proc.stderr[-2000:])
     subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y","-ss","0.95","-i",str(final),
