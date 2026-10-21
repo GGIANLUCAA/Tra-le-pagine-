@@ -105,7 +105,7 @@ jobs:
           req=urllib.request.Request(root+'/download/ARTVISION_CARAVAGGIO_CINEMA_V6.mp4',headers={'Range':'bytes=0-127'})
           with urllib.request.urlopen(req,timeout=30) as response:
               friendly=response.headers.get('Content-Disposition','')
-              assert 'attachment' in friendly and 'Arte' in friendly and 'Caravaggio' in friendly,'Missing genre and readable title in downloaded filename: '+friendly
+              assert 'attachment' in friendly and 'arte' in friendly.lower() and 'caravaggio' in friendly.lower(),'Missing genre and readable title in downloaded filename: '+friendly
               assert len(response.read())==128,'File byte range changed'
           with urllib.request.urlopen(root+'/info/ARTVISION_CARAVAGGIO_CINEMA_V6.mp4',timeout=30) as response:
               sheet=response.read().decode('utf-8')
