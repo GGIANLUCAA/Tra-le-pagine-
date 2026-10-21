@@ -208,7 +208,7 @@ function scheduleSynth(){if(audioFile||!playing||!ctx)return;const now=ctx.curre
  }
 }
 function clearVoices(){for(const o of voices)try{o.stop()}catch{}voices=[];scheduled.clear();clearInterval(synthTimer);synthTimer=null;}
-async function play(){if(playing)return;try{const ac=getContext();await ac.resume();if(audioFile){if(!mediaSource){mediaSource=ctx.createMediaElementSource(audio);mediaSource.connect(ctx.destination);mediaSource.connect(mediaDest);}audio.currentTime=clamp(cursor,0,Math.max(.01,audio.duration||1e9));await audio.play();}else{origin=ctx.currentTime-cursor;clearVoices();synthTimer=setInterval(scheduleSynth,110);scheduleSynth();}
+async function play(){if(playing)return;try{const ac=getContext();await ac.resume();if(audioFile){if(!mediaSource){mediaSource=ctx.createMediaElementSource(audio);mediaSource.connect(ctx.destination);mediaSource.connect(mediaDest);}audio.currentTime=clamp(cursor,0,Math.max(.01,audio.duration||1e9));await audio.play();}else{origin=ctx.currentTime-cursor;clearVoices();playing=true;synthTimer=setInterval(scheduleSynth,110);scheduleSynth();}
  playing=true;ui.play.textContent='Ⅱ Pausa';setStatus('Riproduzione');}catch(e){setStatus('Errore audio');ui.qa.textContent=e.message;}}
 function pause(){if(!playing)return;playing=false;if(audioFile)audio.pause();else{cursor=ctx.currentTime-origin;clearVoices();}ui.play.textContent='▶ Riproduci';setStatus('In pausa');}
 function stop(){pause();updateTime(0);if(audioFile)audio.currentTime=0;setStatus('Anteprima pronta');}
