@@ -1,0 +1,37 @@
+name: ArtVision Lotto 5 Cinema V6
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-lotto5.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        artist: [gentileschi, friedrich, bruegel, seurat]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: Create video
+        run: python modules/artvision/lotto5_artist_profiles.py --artist "${{ matrix.artist }}"
+      - name: Export movie
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: artvision-lotto5-${{ matrix.artist }}
+          path: output/artvision-lotto5/${{ matrix.artist }}/film/
+          if-no-files-found: error
+          retention-days: 7
