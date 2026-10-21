@@ -1,0 +1,33 @@
+name: ArtVision Fuseli - sound fix retry
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-fuseli-dark6-retry.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fuseli:
+    name: Henry Fuseli - Dark Cinema V6
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: Render Fuseli cinema with verified soundtrack
+        run: python modules/artvision/artvision_dark_lotto6.py --artist fuseli
+      - name: Package verified video and credits
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_DARK6_FUSELI_RETRY
+          path: output/artvision-lotto6-inquietudine/fuseli/film/
+          if-no-files-found: error
+          retention-days: 7
