@@ -17,6 +17,9 @@ jobs:
           python3 - <<'PY'
           import json,subprocess,tempfile,pathlib,urllib.request
           root='https://video-library-studio.600led.workers.dev'
+          opener=urllib.request.build_opener()
+          opener.addheaders=[('User-Agent','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36')]
+          urllib.request.install_opener(opener)
           name='PROVINO_V4_SENZA_API__535272.mp4'
           try:
               response=urllib.request.urlopen(root+'/api/files',timeout=25)
