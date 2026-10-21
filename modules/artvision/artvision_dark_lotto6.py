@@ -37,7 +37,19 @@ studio.P.update({
  "track":"evening_fall_piano"},
 "redon":{
  "name":"Odilon Redon","duration":112,
- "hero":"Odilon Redon - The Cyclops.jpg",
+ "hero":"Redon - The Eye, Like a Strange Balloon Moves Towards Infinity, plate one from To Edgar Poe, 1920.1570.jpg",
+ "featured":[
+ "Redon - Spider, 1920.1612.jpg",
+ "Redon - The Spider, 1902.jpg",
+ "Redon - And that Eyes without Heads Were Floating Like Mollusks, plate 13 of 24, 1920.1769.jpg",
+ "Redon - Le Nebuleuse, 1875-80.jpg",
+ "Redon - Satanic Image, 1885.png",
+ "Redon - The Book of Light, 1893.jpg",
+ "Redon - The Poet and Pegasus (Pegasus Captive), c. 1891-1898.jpg",
+ "Redon crying-spider.jpg",
+ "Redon - Eye-Balloon (Œil-ballon) 1878.jpg",
+ "Odilon Redon - La Maison hantée- He Held His Eyes Fixed on Me with Such a Strange Express - 1966.413.4 - Cleveland Museum of Art.jpg"
+ ],
  "key":["cyclops","eye","spider","balloon","smiling","head","dream","mask","flower","butterfly","black","strange"],
  "find":["Odilon Redon The Cyclops painting","Odilon Redon strange charcoal drawings","Odilon Redon surreal creatures","Odilon Redon paintings flower dreams"],
  "act":["An enormous eye appears","Floating faces and impossible beings","A universe drawn from dreams","The strange becomes beautiful","The eye returns"],
