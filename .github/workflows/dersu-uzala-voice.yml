@@ -1,0 +1,45 @@
+name: "Tra le Pagine - Dersu Uzala Voce Google"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "episodes/09_dersu_uzala/testo.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Prepara sintetizzatore vocale Google Gemini Gacrux
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg libsndfile1
+          python -m pip install "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "google-genai>=2.25,<3"
+      - name: Genera audio narrato senza alterare la voce abituale
+        run: |
+          mkdir -p output_dersu
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          from gemini_voice import synthesize
+          t=Path('episodes/09_dersu_uzala/testo.txt').read_text(encoding='utf-8')
+          if not 400 <= len(t.split()) <= 600:
+              raise SystemExit('Copione inatteso: '+str(len(t.split())))
+          audio,_=synthesize(t,'output_dersu')
+          (Path('output_dersu')/'COPIONE.txt').write_text(t,encoding='utf-8')
+          print('Durata secondi:',len(audio)/24000)
+          PY
+      - name: Conserva la voce pronta per il montaggio
+        uses: actions/upload-artifact@v4
+        with:
+          name: "DERSU_UZALA_GOOGLE_GACRUX_AUDIO"
+          path: output_dersu/
+          if-no-files-found: error
+          retention-days: 14
