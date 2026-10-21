@@ -79,15 +79,15 @@ $('#editForm').onsubmit=async e=>{e.preventDefault();const f=e.target,x=g.select
 $('#archiveToggle').onclick=async()=>{const x=g.selected;if(await manage(x,{hidden:!x.hidden}))$('#edit').close()};
 $('#favoriteToggle').onclick=async()=>{const x=g.selected;if(await manage(x,{favorite:!x.favorite}))$('#edit').close()};
 $('#adminOpen').onclick=()=>{if(g.admin){log('Gestione privata già attiva');return}$('#adminDialog').showModal()};
-$('#adminForm').onsubmit=async e=>{e.preventDefault();const token=$('#adminKey').value.trim();if(token.length<20){log('Chiave non valida');return}g.token=token;sessionStorage.setItem('vlsAdmin',token);await load(true);if(g.admin){$('#adminDialog').close();log('Gestione privata attivata')}else{g.token='';sessionStorage.removeItem('vlsAdmin');log('Accesso negato')}};
-$('#adminLogout').onclick=()=>{g.token='';g.admin=false;sessionStorage.removeItem('vlsAdmin');$('#includeArchived').checked=false;load(true)};
+$('#adminForm').onsubmit=async e=>{e.preventDefault();const token=$('#adminKey').value.trim();if(token.length<20){log('Chiave non valida');return}g.token=token;localStorage.setItem('vlsAdmin',token);await load(true);if(g.admin){$('#adminDialog').close();log('Gestione privata attivata')}else{g.token='';localStorage.removeItem('vlsAdmin');log('Accesso negato')}};
+$('#adminLogout').onclick=()=>{g.token='';g.admin=false;localStorage.removeItem('vlsAdmin');$('#includeArchived').checked=false;load(true)};
 $('#refresh').onclick=()=>load(true);$('#query').oninput=draw;$('#project').onchange=draw;$('#sort').onchange=draw;$('#versions').onchange=draw;$('#includeArchived').onchange=draw;
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{const dialog=$('#'+b.dataset.close);dialog.close();if(dialog.id==='player'){$('#video').pause();$('#video').removeAttribute('src');$('#video').load()}});
 $('#playerDownload').onclick=()=>{if(g.selected)location.href=fullURL(g.selected)};
 $('#playerShare').onclick=()=>g.selected&&share(g.selected);
 $('#playerDetails').onclick=()=>{const x=g.selected;$('#player').close();$('#video').pause();$('#video').removeAttribute('src');if(x)details(x)};
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){d.close();if(d.id==='player'){$('#video').pause();$('#video').removeAttribute('src')}}}));
-const frag=location.hash.slice(1);if(frag.startsWith('manage=')){g.token=decodeURIComponent(frag.slice(7));sessionStorage.setItem('vlsAdmin',g.token);history.replaceState(null,'',location.pathname+location.search)}else{g.token=sessionStorage.getItem('vlsAdmin')||''}
+const frag=location.hash.slice(1);if(frag.startsWith('manage=')){g.token=decodeURIComponent(frag.slice(7));localStorage.setItem('vlsAdmin',g.token);history.replaceState(null,'',location.pathname+location.search)}else{g.token=localStorage.getItem('vlsAdmin')||''}
 load(true);setInterval(()=>{if(!document.hidden)load(true)},180000);
 })();
 </script>
