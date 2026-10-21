@@ -64,11 +64,14 @@ jobs:
           def upload(fp,key):
               size=fp.stat().st_size
               old=status(key)
+              if old.get('deleted'):
+                  print('OWNER DELETED - do not restore:',key,flush=True);return False
               if old.get('exists') and old.get('size')==size:
                   print('Already stored:',key,flush=True);return False
               if old.get('exists'):
                   key=fp.stem+'__'+str(size)+fp.suffix
-                  if status(key).get('exists'):return False
+                  variant_status=status(key)
+                  if variant_status.get('deleted') or variant_status.get('exists'):return False
               if size<=32*1024*1024:
                   with fp.open('rb') as fd:r=cf('POST','/single',{'key':key},data=fd)
               else:
