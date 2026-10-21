@@ -1,3 +1,9 @@
+## Esecutore di produzione V16
+
+[Coda → renderer → revisione → checkpoint](docs/PRODUZIONE_AUTONOMA_V16.md).
+Esecutore per pacchetti preparati disponibile; target 10/giorno ancora da
+verificare su un lotto reale. [Audit degli input locali](docs/PRODUCTION_INPUT_AUDIT_V16.json).
+
 ## Produzione intensiva V15 — priorità corrente
 
 [Obiettivo 10 video al giorno in autonomia](docs/PRODUZIONE_INTENSIVA_V15.md).

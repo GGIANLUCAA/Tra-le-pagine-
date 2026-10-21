@@ -1,7 +1,7 @@
 name: "Direzione GPT V13 - ricette e riuso voce senza API"
 on:
   push:
-    branches: [main, "feature/gpt-video-director-v13", "feature/creator-growth-v14", "feature/production-v15"]
+    branches: [main, "feature/gpt-video-director-v13", "feature/creator-growth-v14", "feature/production-v15", "feature/production-runner-v16"]
     paths:
       - "docs/creator-business*"
       - "tests/test_creator_business_metrics.mjs"
@@ -12,6 +12,11 @@ on:
       - "src/creator_metrics_v13.py"
       - "src/creator_growth_v14.py"
       - "src/production_batch_v15.py"
+      - "src/production_runner_v16.py"
+      - "src/production_adapter_v16.py"
+      - "tools/production_store_v16.py"
+      - "tests/test_production_*v16.py"
+      - ".github/workflows/production-runner-v16.yml"
       - "config/production_v15.json"
       - "queue/production_v15.json"
       - "tests/test_production_batch_v15.py"
@@ -55,6 +60,7 @@ jobs:
           python -m unittest discover -s tests -p "test_creator_metrics_v13.py" -v
           python -m unittest discover -s tests -p "test_creator_growth_v14.py" -v
           python -m unittest discover -s tests -p "test_production_batch_v15.py" -v
+          python -m unittest discover -s tests -p "test_production_*v16.py" -v
       - name: Riuso WAV e trasparenza dei tempi stimati
         run: python -m unittest discover -s tests -p "test_voice_cache_v13.py" -v
       - name: Scene, provenienza e nessun sottotitolo

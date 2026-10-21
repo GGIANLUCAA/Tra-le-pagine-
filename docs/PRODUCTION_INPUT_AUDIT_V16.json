@@ -1,0 +1,63 @@
+{
+  "schema": "production-input-audit-v16",
+  "checked": "2026-10-21",
+  "scope": "local repository inputs only; not proof about delivered videos in Library or Cloudflare",
+  "books": [
+    {
+      "episode": "01_scacchi",
+      "title": "La novella degli scacchi",
+      "local_asset_validation": true,
+      "detail": "PRONTO PER RENDER: 01_scacchi: La novella degli scacchi, 265 parole, 34 frasi, 16 inquadrature e 12 illustrazioni."
+    },
+    {
+      "episode": "02_arte_della_gioia",
+      "title": "L'arte della gioia",
+      "local_asset_validation": false,
+      "detail": "ERRORE BLOCCANTE: ILLUSTRAZIONI PREMIUM MANCANTI: scena_01, scena_02, scena_03, scena_04, scena_05, scena_06, scena_07, scena_08, scena_09, scena_10, scena_11, scena_12. Non iniziare audio né video finché non ci sono."
+    },
+    {
+      "episode": "03_siddharta",
+      "title": "Siddharta",
+      "local_asset_validation": false,
+      "detail": "ERRORE BLOCCANTE: ILLUSTRAZIONI PREMIUM MANCANTI: scena_01, scena_02, scena_03, scena_04, scena_05, scena_06, scena_07, scena_08, scena_09, scena_10, scena_11, scena_12, scena_13, scena_14, scena_15. Non iniziare audio né video finché non ci sono."
+    },
+    {
+      "episode": "04_inferno",
+      "title": "Inferno — La Divina Commedia, Cantica I",
+      "local_asset_validation": false,
+      "detail": "ERRORE BLOCCANTE: ILLUSTRAZIONI PREMIUM MANCANTI: scena_01, scena_02, scena_03, scena_04, scena_05, scena_06, scena_07, scena_08, scena_09, scena_10, scena_11, scena_12, scena_13, scena_14, scena_15. Non iniziare audio né video finché non ci sono."
+    },
+    {
+      "episode": "05_purgatorio",
+      "title": "Purgatorio — Divina Commedia, Cantica II",
+      "local_asset_validation": false,
+      "detail": "ERRORE BLOCCANTE: File obbligatorio mancante: episodes/05_purgatorio/scene_cues.json"
+    },
+    {
+      "episode": "06_paradiso",
+      "title": "Paradiso — La Divina Commedia, Cantica III",
+      "local_asset_validation": false,
+      "detail": "ERRORE BLOCCANTE: File obbligatorio mancante: episodes/06_paradiso/scene_cues.json"
+    },
+    {
+      "episode": "07_trainspotting",
+      "title": "Trainspotting — Il prezzo di una fuga",
+      "local_asset_validation": false,
+      "detail": "ERRORE BLOCCANTE: File obbligatorio mancante: episodes/07_trainspotting/scene_cues.json"
+    },
+    {
+      "episode": "08_delitto_e_castigo",
+      "title": "Delitto e castigo — Il peso della colpa",
+      "local_asset_validation": false,
+      "detail": "ERRORE BLOCCANTE: ILLUSTRAZIONI PREMIUM MANCANTI: scena_01, scena_02, scena_03, scena_04, scena_05, scena_06, scena_07, scena_08, scena_09, scena_10, scena_11, scena_12. Non iniziare audio né video finché non ci sono."
+    }
+  ],
+  "local_voice_cache_manifests": [],
+  "critico_configs": [
+    "botticelli_venere.json",
+    "hokusai_grande_onda.json",
+    "leonardo_gioconda.json",
+    "klimt_bacio.json"
+  ],
+  "prepared_queue_items": 0
+}

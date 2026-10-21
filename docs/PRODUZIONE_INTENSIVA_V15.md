@@ -1,3 +1,5 @@
+> Aggiornamento: [esecutore autonomo V16](PRODUZIONE_AUTONOMA_V16.md) aggiunge avvio dei renderer preparati e recupero dello stato. Le limitazioni indicate sotto descrivono la versione V15.
+
 # Produzione intensiva V15 — obiettivo 10 video al giorno
 
 Richiesta di Gianluca del 21 ottobre 2026: **almeno dieci video ben fatti al giorno,

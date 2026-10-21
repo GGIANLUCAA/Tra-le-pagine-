@@ -173,3 +173,13 @@ Usare `src/production_batch_v15.py` per preflight e registro giornaliero.
 Il modulo di coda non è ancora un servizio completo di render continuo: non
 dichiarare attivo ciò che resta da integrare. Contare soltanto consegne distinte
 verificate, non tentativi, bozze o file duplicati. Distinguere produzione e distribuzione.
+
+## Esecuzione V16
+
+Leggere `docs/PRODUZIONE_AUTONOMA_V16.md`. I pacchetti preparati della coda V15
+si eseguono con `src/production_runner_v16.py run`: tre adapter ammessi, processi
+isolati, checkpoint e ripresa. Non basta una bozza del copione: recuperare gli asset
+e la voce verificata. Rivedere master e kit, poi registrare una revisione con hash
+esatti in `queue/reviews_v16/`. Nessuna approvazione ripetuta all’utente per lavoro
+già autorizzato. Se mancano asset o capacità, indicare il blocco, non inventare
+dieci consegne. I master non revisionati restano nel pacchetto di lavoro.

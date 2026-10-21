@@ -1,0 +1,99 @@
+name: "Produzione V16 - coda autonoma e ripresa"
+on:
+  schedule:
+    - cron: '15 5 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "queue/production_v15.json"
+      - "queue/reviews_v16/*.json"
+      - ".github/workflows/production-runner-v16.yml"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: production-v16-persistent
+  cancel-in-progress: false
+jobs:
+  production:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Recupera il checkpoint del solo workflow V16
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/production_store_v16.py
+      - name: Controlla se la coda contiene pacchetti preparati
+        id: queue
+        run: |
+          python - <<'PY'
+          import json,os
+          rows=json.load(open('queue/production_v15.json'))['items']
+          from pathlib import Path
+          ready=any(r.get('status')=='prepared' for r in rows) or any(Path('queue/reviews_v16').glob('*.json'))
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:f.write('prepared='+str(ready).lower()+'\n')
+          PY
+      - name: Strumenti video solo quando ci sono pacchetti
+        if: steps.queue.outputs.prepared == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1 frei0r-plugins
+          python -m pip install 'Pillow>=10,<13' 'numpy>=1.26,<3' 'soundfile>=0.12,<1' 'scipy>=1.11,<2' 'opencv-python-headless>=4.8,<5'
+      - name: Applica solo revisioni dell’agente legate al master esatto
+        run: python src/production_runner_v16.py reviews
+      - name: Esegui i lavori pronti, senza chiavi dei provider
+        run: python src/production_runner_v16.py run
+      - name: Prepara checkpoint senza MP4 esposti all'importatore pubblico
+        if: always()
+        run: |
+          if test -f output/production-v16/state.json; then
+            python src/production_runner_v16.py pack --archive checkpoint/workspace-v16.tar
+          fi
+      - name: Conserva stato, cache, master e materiali di revisione
+        if: always()
+        id: checkpoint
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-workspace-v16-${{ github.run_id }}
+          path: checkpoint/workspace-v16.tar
+          if-no-files-found: warn
+          compression-level: 0
+          retention-days: 14
+      - name: Salva il registro piccolo dopo aver conservato il checkpoint
+        if: always() && steps.checkpoint.outputs.artifact-id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import base64,json,os,subprocess
+          from pathlib import Path
+          p=Path('output/production-v16/state.json')
+          if not p.is_file():raise SystemExit(0)
+          route='repos/'+os.environ['GITHUB_REPOSITORY']+'/contents/queue/runner_state_v16.json'
+          old=json.loads(subprocess.check_output(['gh','api',route+'?ref=main']))
+          content=p.read_bytes()
+          if base64.b64decode(old['content'])==content:raise SystemExit(0)
+          body={'message':'Checkpoint produzione V16: stato dei lavori','content':base64.b64encode(content).decode(),'sha':old['sha'],'branch':'main'}
+          tmp=Path('/tmp/v16-state-body.json');tmp.write_text(json.dumps(body))
+          subprocess.run(['gh','api','--method','PUT',route,'--input',str(tmp)],stdout=subprocess.DEVNULL,check=True)
+          PY
+      - name: Rapporto giornaliero
+        if: always()
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path('output/production-v16/RUN_REPORT_V16.json')
+          if not p.is_file():raise SystemExit(0)
+          d=json.loads(p.read_text())
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
+            f.write(f"## Produzione {d['day']}\n\nObiettivo: {d['target']}; qualificati: {d['qualified_today']}; avviati: {d['started']}.\n\n")
+            f.write('Render completato e revisione artistica sono stati distinti. Nessuna pubblicazione social eseguita.\n')
+            f.write('\n```json\n'+json.dumps(d,ensure_ascii=False,indent=2)+'\n```\n')
+          PY

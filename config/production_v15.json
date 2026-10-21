@@ -10,12 +10,31 @@
   "autonomy": "preparation_render_recovery_and_agent_quality_review",
   "automatic_social_publication": false,
   "quality_review_owner": "agent",
-  "count_requires": ["unique_final_mp4", "technical_check", "editorial_review", "visual_review", "audio_review", "rights_review", "portable_recipe"],
+  "count_requires": [
+    "unique_final_mp4",
+    "technical_check",
+    "editorial_review",
+    "visual_review",
+    "audio_review",
+    "rights_review",
+    "portable_recipe"
+  ],
   "budget": {
     "daily_cash_limit_eur": null,
     "new_paid_calls_enabled": false,
     "note": "Il costo giornaliero non è ancora misurato. Riutilizzare materiali e WAV verificati; nessun nuovo addebito illimitato."
   },
   "capacity_status": "target_not_yet_benchmarked",
-  "rules": {"preserve_google_voice": true, "subtitles": false, "preserve_approved_series": true, "no_duplicate_final_counts": true, "no_repeated_user_approvals_for_authorized_work": true}
+  "rules": {
+    "preserve_google_voice": true,
+    "subtitles": false,
+    "preserve_approved_series": true,
+    "no_duplicate_final_counts": true,
+    "no_repeated_user_approvals_for_authorized_work": true
+  },
+  "executor": "src/production_runner_v16.py",
+  "checkpoint_workflow": ".github/workflows/production-runner-v16.yml",
+  "review_request_directory": "queue/reviews_v16",
+  "checkpoint_retention_days": 14,
+  "continuous_generation_status": "prepared_inputs_execute_automatically; new_editorial_assets_and_voice_require_agent_preparation"
 }
