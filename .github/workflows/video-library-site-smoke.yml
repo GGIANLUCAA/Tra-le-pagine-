@@ -1,0 +1,44 @@
+name: Video Library Studio - Playback and Download Check
+on:
+  push:
+    paths:
+      - .github/workflows/video-library-site-smoke.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Verify public video and download
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json,subprocess,tempfile,pathlib,urllib.request
+          root='https://video-library-studio.600led.workers.dev'
+          name='PROVINO_V4_SENZA_API__535272.mp4'
+          with urllib.request.urlopen(root+'/api/files',timeout=25) as response:
+              files=json.load(response)
+          record=next((x for x in files if x['name']==name),None)
+          assert record is not None, 'Video not found in site catalog'
+          assert int(record['size'])==535272, 'Unexpected video size'
+          for path,is_download in [('/media/'+name,False),('/download/'+name,True)]:
+              request=urllib.request.Request(root+path,headers={'Range':'bytes=0-511'})
+              with urllib.request.urlopen(request,timeout=30) as response:
+                  data=response.read()
+                  assert response.status==206, 'Expected HTTP 206: '+str(response.status)
+                  assert len(data)==512, 'Invalid partial length'
+                  assert response.headers.get('Content-Range','').startswith('bytes 0-511/535272'), 'Invalid Content-Range'
+                  assert response.headers.get('Content-Type','').startswith('video/mp4'),'Invalid video MIME'
+                  if is_download:assert 'attachment' in response.headers.get('Content-Disposition','').lower(),'Missing attachment header'
+                  print('PASS:',path,'HTTP 206 + byte range + content-type',flush=True)
+          with urllib.request.urlopen(root+'/media/'+name,timeout=60) as response:
+              raw=response.read()
+              assert response.status==200 and len(raw)==535272,'Full download corrupted'
+          with tempfile.TemporaryDirectory() as d:
+              file=pathlib.Path(d)/name;file.write_bytes(raw)
+              out=subprocess.run(['ffprobe','-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1',str(file)],capture_output=True,text=True)
+              assert out.returncode==0 and float(out.stdout.strip())>0,'Not a valid playable MP4: '+out.stderr
+              print('PASS: full video accessible; ffprobe duration',out.stdout.strip(),'seconds',flush=True)
+          PY
