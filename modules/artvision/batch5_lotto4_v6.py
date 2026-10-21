@@ -7,11 +7,11 @@ import batch5_cinema_v6 as studio
 studio.ROOT=Path("output/artvision-lotto4-v6")
 studio.P.clear()
 studio.P.update({
- "frida":{
-  "name":"Frida Kahlo","duration":107,"hero":"Frida Kahlo (self portrait).jpg",
-  "key":["self portrait","self-portrait","two fridas","broken column","thorn necklace","monkey","roots","wounded deer","diego","frida"],
-  "find":["Frida Kahlo paintings self portrait","Frida Kahlo self portraits original paintings","Frida Kahlo paintings art museum"],
-  "act":["An unforgettable gaze","A face with symbols","Nature, roots and memory","Portraits of pain and resilience","Return to her gaze"],"track":"calmant"},
+ "modigliani":{
+  "name":"Amedeo Modigliani","duration":107,"hero":"Amedeo Modigliani - Jeanne Hébuterne.jpg",
+  "key":["jeanne","portrait","woman","red nude","reclining nude","self portrait","seated","elongated","blue eyes"],
+  "find":["Amedeo Modigliani portraits paintings","Amedeo Modigliani Jeanne Hebuterne art","Amedeo Modigliani nude painting"],
+  "act":["An elongated gaze","Faces as sculpted silhouettes","Blue eyes and warm tones","Women and quiet interiors","A final portrait"],"track":"calmant"},
  "durer":{
   "name":"Albrecht Dürer","duration":118,"hero":"Albrecht Dürer - Self-Portrait at 28 - Google Art Project.jpg",
   "key":["self portrait","hare","rhinoceros","praying hands","adam and eve","melencolia","four apostles","watercolour","young hare","portrait"],
@@ -22,16 +22,17 @@ studio.P.update({
   "key":["fighting temeraire","rain steam speed","slave ship","snow storm","sunset","burning","venice","sea","storm","ship","light"],
   "find":["JMW Turner painting sea storm","Joseph Mallord William Turner landscape painting","J M W Turner Fighting Temeraire painting"],
   "act":["A ship vanishes into light","Sea and storm","The elements dissolve","Golden sunsets and distant cities","Light takes the frame"],"track":"dreams_become_real"},
- "magritte":{
-  "name":"René Magritte","duration":112,"hero":"The Son of Man by Rene Magritte.jpg",
-  "key":["son of man","treachery of images","golconda","lovers","human condition","empire of light","false mirror","apple","pipe","surreal"],
-  "find":["Rene Magritte paintings surrealism","Magritte The Son of Man Golconda paintings","Rene Magritte surrealist artwork museum"],
-  "act":["A face hidden by an apple","The impossible becomes ordinary","Clouds, windows and silhouettes","Everyday objects become mysteries","The concealed face returns"],"track":"darkest_child"},
- "hokusai2":{
-  "name":"Katsushika Hokusai","duration":103,"hero":"The Great Wave off Kanagawa.jpg",
-  "key":["great wave","red fuji","fine wind","mount fuji","thirty-six views","waterfall","bridge","wave","sea","suruga"],
-  "find":["Hokusai Great Wave Japanese woodblock","Katsushika Hokusai Thirty Six Views Mount Fuji","Hokusai Japanese print museum"],
-  "act":["The wave rises","Mount Fuji beyond the sea","Bridges and rivers","A world of shifting horizons","The wave returns"],"track":"music_for_manatees"}
+ "chagall":{
+  "name":"Marc Chagall","duration":112,"hero":"Marc Chagall - I and the Village.jpg",
+  "key":["village","lovers","flying","dream","birthday","blue","fiddler","paris","circus","window"],
+  "find":["Marc Chagall I and the Village painting","Marc Chagall early paintings artwork","Marc Chagall lovers dream painting"],
+  "act":["A village becomes a dream","Flying figures and memories","Animals, lovers and colour","An impossible world","Return to the village"],"track":"darkest_child"},
+ "kandinsky":{
+  "name":"Wassily Kandinsky","duration":103,"hero":"Wassily Kandinsky, 1913 - Composition VII.jpg",
+  "key":["composition","improvisation","yellow red blue","circles","abstract","blue rider","landscape","colour","color"],
+  "find":["Wassily Kandinsky Composition VII paintings","Wassily Kandinsky abstract paintings museum","Wassily Kandinsky circles painting"],
+  "act":["Colour explodes","Lines like instruments","Shapes in motion","An abstract universe","The composition returns"],"track":"music_for_manatees"}
+
 })
 studio.SOUND["music_for_manatees"]={
  "title":"Music for Manatees","author":"Kevin MacLeod",
