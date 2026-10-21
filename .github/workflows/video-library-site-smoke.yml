@@ -22,6 +22,15 @@ jobs:
           opener=urllib.request.build_opener()
           opener.addheaders=[('User-Agent','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36')]
           urllib.request.install_opener(opener)
+          with urllib.request.urlopen(root+'/',timeout=25) as page:
+              html=page.read().decode('utf-8')
+          assert 'Video Library Studio' in html,'Missing site'
+          js=html.split('<script>')[-1].split('</script>')[0]
+          with tempfile.TemporaryDirectory() as folder:
+              jsfile=pathlib.Path(folder)/'frontend.js';jsfile.write_text(js)
+              check=subprocess.run(['node','--check',str(jsfile)],capture_output=True,text=True)
+              assert check.returncode==0,'Frontend JS syntax error: '+check.stderr
+          print('PASS: homepage and frontend JavaScript',flush=True)
           name='PROVINO_V4_SENZA_API__535272.mp4'
           try:
               response=urllib.request.urlopen(root+'/api/files',timeout=25)
