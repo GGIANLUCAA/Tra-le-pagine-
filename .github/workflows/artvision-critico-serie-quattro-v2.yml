@@ -44,6 +44,7 @@ jobs:
             "edge-tts>=6.1,<9" "soundfile>=0.12,<1" "google-genai>=2.25,<4" "scipy>=1.11,<2"
           python -m py_compile modules/artvision_critico/production_series/render_series_v2.py
           python -c "import sys;sys.path.insert(0, 'modules/artvision_critico');import render_dali;print('ArtVision module import OK')"
+          python -c "from pathlib import Path;p=Path('modules/artvision_critico/production_series');assert (p/'leonardo_gioconda.json').exists();print('Episode config file location OK')"
           python - <<'PY'
           import json
           from pathlib import Path
