@@ -55,6 +55,13 @@ jobs:
           except urllib.error.HTTPError as e:
               assert e.code==401,'Expected private management HTTP 401, got '+str(e.code)
           print('PASS: editing API rejects visitors without access',flush=True)
+          try:
+              urllib.request.urlopen(root+'/media/catalog/gpt-dates.json',timeout=20)
+              raise AssertionError('Sensitive internal catalog JSON publicly readable')
+          except urllib.error.HTTPError as e:
+              assert e.code==404,'Expected catalog data access denied, got '+str(e.code)
+          print('PASS: internal R2 catalog metadata cannot be fetched as media',flush=True)
+
           with urllib.request.urlopen(root+'/watch/ARTVISION_CARAVAGGIO_CINEMA_V6.mp4',timeout=25) as response:
               landing=response.read().decode('utf-8')
           assert 'og:image' in landing and 'og:video' in landing,'Missing social poster metadata'
