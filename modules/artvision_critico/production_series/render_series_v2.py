@@ -11,7 +11,7 @@ from urllib.parse import urlencode, quote
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageOps
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(ROOT/"modules"/"artvision_critico"))
 sys.path.insert(0,str(ROOT/"src"))
 from render_dali import choose_voice, music_get
