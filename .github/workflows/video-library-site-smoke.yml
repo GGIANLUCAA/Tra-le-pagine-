@@ -38,6 +38,16 @@ jobs:
           with urllib.request.urlopen(root+'/api/metadata',timeout=45) as response:
               facts=json.load(response)
           print('PASS: enriched catalog,',len(catalog['items']),'videos,',len(facts),'video records',flush=True)
+          assert len(facts)>=75,'Not enough indexed video metadata'
+          covers=[v for v in catalog['items'] if v.get('cover')]
+          assert len(covers)>=75,'Missing generated posters'
+          known=[v for v in catalog['items'] if v.get('duration') and v.get('width') and v.get('height')]
+          assert len(known)>=75,'Missing duration or resolution'
+          with urllib.request.urlopen(root+covers[0]['cover'],timeout=25) as response:
+              thumb=response.read()
+              assert response.status==200 and thumb.startswith(b'\xff\xd8\xff'),'Invalid JPEG poster'
+          print('PASS: original video posters:',len(covers),'durations:',len(known),'JPEG bytes:',len(thumb),flush=True)
+
           req=urllib.request.Request(root+'/api/manage',data=b'{}',headers={'Content-Type':'application/json'},method='POST')
           try:
               urllib.request.urlopen(req,timeout=20)
