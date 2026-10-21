@@ -1,0 +1,130 @@
+name: Video Library Studio - Automatic Import
+on:
+  push:
+    paths:
+      - .github/workflows/video-library-r2-import.yml
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      max_artifacts:
+        description: 'Maximum GitHub artifacts to process (0 = all)'
+        required: false
+        default: '0'
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+concurrency:
+  group: video-library-studio-import
+  cancel-in-progress: false
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Transfer video artifacts to Cloudflare R2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          REQUESTED_LIMIT: ${{ inputs.max_artifacts || '0' }}
+          IMPORT_ENDPOINT: https://video-library-import.600led.workers.dev
+        shell: bash
+        run: |
+          python3 -m pip -q install requests
+          python3 - <<'PY'
+          import os,re,sys,zipfile,tempfile,pathlib,time
+          import requests
+          S=requests.Session()
+          ROOT=os.environ['IMPORT_ENDPOINT'].rstrip('/')
+          REPO=os.environ['REPOSITORY']
+          HEAD={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          AUD='vls-gh-import-2026'
+          limit=int(os.getenv('REQUESTED_LIMIT','0') or '0')
+          if os.environ['EVENT']=='push': limit=3
+          cache_token='',0
+          def token():
+              global cache_token
+              if cache_token[0] and time.time()-cache_token[1]<180:return cache_token[0]
+              url=os.environ['ACTIONS_ID_TOKEN_REQUEST_URL']
+              auth={'Authorization':'Bearer '+os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']}
+              r=S.get(url,headers=auth,params={'audience':AUD},timeout=30);r.raise_for_status()
+              t=r.json()['value'];cache_token=(t,time.time());return t
+          def cf(method,route,params=None,**kwargs):
+              for attempt in range(3):
+                  try:
+                      r=S.request(method,ROOT+route,params=params,headers={'Authorization':'Bearer '+token()},timeout=180,**kwargs)
+                      if r.status_code in (429,502,503,504):raise Exception('Retryable '+str(r.status_code))
+                      r.raise_for_status();return r.json()
+                  except Exception as e:
+                      if attempt==2:raise
+                      time.sleep(2**attempt)
+          def status(key):return cf('GET','/status',{'key':key})
+          def upload(fp,key):
+              size=fp.stat().st_size
+              old=status(key)
+              if old.get('exists') and old.get('size')==size:
+                  print('Already stored:',key,flush=True);return False
+              if old.get('exists'):
+                  key=fp.stem+'__'+str(size)+fp.suffix
+                  if status(key).get('exists'):return False
+              if size<=32*1024*1024:
+                  with fp.open('rb') as fd:r=cf('POST','/single',{'key':key},data=fd)
+              else:
+                  init=cf('POST','/init',{'key':key});uid=init['uploadId'];parts=[]
+                  try:
+                      with fp.open('rb') as fd:
+                          ix=0
+                          while part:=fd.read(8*1024*1024):
+                              ix+=1
+                              p=cf('PUT','/part',{'key':key,'uploadId':uid,'number':ix},data=part)
+                              parts.append({'partNumber':p['partNumber'],'etag':p['etag']})
+                      r=cf('POST','/complete',{'key':key,'uploadId':uid},json=parts)
+                  except Exception:
+                      try:cf('POST','/abort',{'key':key,'uploadId':uid})
+                      except Exception:pass
+                      raise
+              check=status(key)
+              if check.get('size')!=size:raise Exception('Uploaded size mismatch for '+key)
+              print('PUBLISHED:',key,'size:',size,flush=True);return True
+          print('Checking secure importer...',flush=True)
+          r=S.get(ROOT+'/health',timeout=20);r.raise_for_status();print(r.json(),flush=True)
+          artifacts=[]
+          for page in range(1,12):
+              r=S.get('https://api.github.com/repos/'+REPO+'/actions/artifacts',headers=HEAD,params={'per_page':100,'page':page},timeout=40)
+              r.raise_for_status();chunk=r.json().get('artifacts',[])
+              artifacts.extend(a for a in chunk if not a.get('expired') and a.get('name')!='github-pages')
+              if len(chunk)<100:break
+          artifacts.sort(key=lambda a:(a.get('size_in_bytes') or 0,a.get('id') or 0))
+          print('Nonexpired candidate artifacts:',len(artifacts),flush=True)
+          downloaded=published=errors=0
+          for a in artifacts:
+              if limit>0 and downloaded>=limit:break
+              with tempfile.TemporaryDirectory() as tmp:
+                  wd=pathlib.Path(tmp);zpath=wd/'a.zip'
+                  try:
+                      u='https://api.github.com/repos/'+REPO+'/actions/artifacts/'+str(a['id'])+'/zip'
+                      with S.get(u,headers=HEAD,stream=True,timeout=240) as r:
+                          r.raise_for_status()
+                          with zpath.open('wb') as f:
+                              for chunk in r.iter_content(1048576):f.write(chunk)
+                      with zipfile.ZipFile(zpath) as z:
+                          files=[n for n in z.namelist() if n.lower().endswith(('.mp4','.m4v','.mov','.jpg','.jpeg','.png','.webp')) and not n.endswith('/')]
+                          if not any(n.lower().endswith(('.mp4','.m4v','.mov')) for n in files):continue
+                          downloaded+=1
+                          for n in files:
+                              name=pathlib.PurePosixPath(n).name
+                              safe=re.sub(r'[^A-Za-z0-9_(). -]','_',name)[:180]
+                              if not safe:continue
+                              fp=wd/safe
+                              with z.open(n) as src,fp.open('wb') as dst:
+                                  import shutil;shutil.copyfileobj(src,dst)
+                              if upload(fp,safe):published+=1
+                      print('Completed artifact:',a['name'],flush=True)
+                  except Exception as e:
+                      errors+=1
+                      print('ERROR in artifact',a['name'],str(e)[:220],flush=True)
+          print('TOTAL:',{'artifacts':downloaded,'new_files':published,'errors':errors},flush=True)
+          if errors:sys.exit(1)
+          PY
