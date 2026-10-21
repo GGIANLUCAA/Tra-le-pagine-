@@ -1,0 +1,98 @@
+name: ChatGPT video bridge tests
+on:
+  push:
+    paths:
+      - site/video-library-chatgpt-bridge.js
+      - .github/workflows/video-library-chatgpt-bridge-test.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Worker syntax
+        run: node --check site/video-library-chatgpt-bridge.js
+      - name: Test real HTTP endpoint and safety controls
+        run: |
+          python3 - <<'PY'
+          import requests
+          root='https://video-library-chatgpt-bridge.600led.workers.dev'
+          s=requests.Session()
+          s.headers['User-Agent']='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/130.0.0.0 Safari/537.36'
+          r=s.get(root+'/health',timeout=25)
+          assert r.status_code==200,(r.status_code,r.text[:300])
+          h=r.json()
+          assert h['ok'] and h['importReady'] and h['connectionRequired'],h
+          print('PASS: video library importer is live with a healthy endpoint',flush=True)
+          r=s.post(root+'/mcp/'+'0'*64,json={'jsonrpc':'2.0','id':1,'method':'tools/list'},timeout=25)
+          assert r.status_code==404,('Unprotected MCP endpoint',r.status_code)
+          print('PASS: unknown private access tokens are denied',flush=True)
+          PY
+      - name: Test MCP protocol, single copy and streamed multipart
+        run: |
+          cp site/video-library-chatgpt-bridge.js /tmp/chatgpt-bridge-worker.mjs
+          cat > /tmp/chatgpt-bridge-test.mjs <<'JS'
+          import assert from 'node:assert/strict';
+          import {readFileSync} from 'node:fs';
+          import {webcrypto} from 'node:crypto';
+          globalThis.crypto ??= webcrypto;
+          const {default:worker}=await import('file:///tmp/chatgpt-bridge-worker.mjs');
+          const token='a'.repeat(64);
+          const data=new TextEncoder().encode(token);
+          const digest=Buffer.from(await crypto.subtle.digest('SHA-256',data)).toString('hex');
+          const db=new Map(), multipart=[];
+          const env={BRIDGE_TOKEN_SHA256:digest,VIDEOS:{
+            async list(){return {objects:Array.from(db,(entry)=>({key:entry[0],size:entry[1].length})),truncated:false}},
+            async head(key){return db.has(key)?{key,size:db.get(key).length}:null},
+            async get(key){const raw=db.get(key);return raw?{json:async()=>JSON.parse(new TextDecoder().decode(raw))}:null},
+            async put(key,bytes){const b=typeof bytes==='string'?new TextEncoder().encode(bytes):bytes instanceof Uint8Array?bytes:new Uint8Array(await new Response(bytes).arrayBuffer());db.set(key,b);return {key,size:b.length}},
+            async createMultipartUpload(key){const parts=new Map();multipart.push(key);return {uploadPart:async(no,bytes)=>{parts.set(no,new Uint8Array(bytes));return {etag:'e'+no}},complete:async(list)=>{const data=[];for(const x of list)data.push(parts.get(x.partNumber));db.set(key,Buffer.concat(data.map(x=>Buffer.from(x))));},abort:async()=>{}}}
+          }};
+          const tiny=new Uint8Array(1024*1024);tiny.fill(55);
+          const big=new Uint8Array(10*1024*1024);big.fill(13);
+          globalThis.fetch=async(url)=>{
+            if(url.startsWith('https://files.oaiusercontent.com/test-small'))return new Response(tiny,{headers:{'content-length':String(tiny.length),'content-type':'video/mp4'}});
+            if(url.startsWith('https://files.oaiusercontent.com/test-large'))return new Response(big,{headers:{'content-length':String(big.length),'content-type':'video/mp4'}});
+            throw Error('Unexpected fetch '+url);
+          };
+          const rpc=async(method,params={},targetToken=token)=>{
+            const request=new Request('https://mock/mcp/'+targetToken,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});
+            const response=await worker.fetch(request,env);
+            return {status:response.status,json:await response.json().catch(()=>null)};
+          };
+          assert.equal((await worker.fetch(new Request('https://mock/health'),env)).status,200);
+          assert.equal((await rpc('tools/list',{},'b'.repeat(64))).status,404);
+          const init=(await rpc('initialize',{protocolVersion:'2025-06-18'})).json.result;
+          assert(init.capabilities.tools);
+          const list=(await rpc('tools/list')).json.result.tools;
+          const importTool=list.find(x=>x.name==='import_chatgpt_video');
+          assert.deepEqual(importTool._meta['openai/fileParams'],['file']);
+          assert.deepEqual(importTool.inputSchema.properties.file.required,['download_url','file_id']);
+          const res=(await rpc('resources/read',{uri:'ui://video-library/import.html'})).json.result;
+          assert(res.contents[0].text.includes('selectFiles()'));
+          assert(res.contents[0].mimeType.includes('mcp-app'));
+          console.log('PASS: MCP initialization, native Library picker widget and validated file schema');
+          const file=(id,name,url)=>({file_id:id,file_name:name,mime_type:'video/mp4',download_url:'https://files.oaiusercontent.com/'+url});
+          const perform=async(f)=>(await rpc('tools/call',{name:'import_chatgpt_video',arguments:{file:f}})).json.result.structuredContent;
+          let out=await perform(file('file_test123','Per_Elisa_Music_Motion.mp4','test-small'));
+          assert.equal(out.ok,true);assert.equal(out.reused,false);assert.equal(out.size,tiny.length);
+          assert.equal(db.get('Per_Elisa_Music_Motion.mp4').length,tiny.length);
+          out=await perform(file('file_test123','Per_Elisa_Music_Motion.mp4','test-small'));assert(out.ok&&out.reused);
+          out=await perform(file('file_test456','Same_video.mp4','test-small'));assert(out.ok&&out.reused);
+          assert.equal(Array.from(db.keys()).filter(x=>x.endsWith('.mp4')).length,1);
+          console.log('PASS: first import and existing-file deduplication without copying');
+          out=await perform(file('file_test789','Large_Music.mp4','test-large'));
+          assert(out.ok&&!out.reused);
+          assert.equal(db.get('Large_Music.mp4').length,big.length);
+          assert.equal(multipart.length,1);
+          console.log('PASS: 10 MiB video uploaded in 8 MiB chunks, without buffering entire file');
+          out=await perform(file('file_invalid','unsafe.mp4','http://localhost/a'));
+          assert.equal(out.ok,false);
+          out=await perform({file_id:'file_bad',file_name:'unsafe.mp4',download_url:'https://127.0.0.1/private'});
+          assert.equal(out.ok,false);
+          console.log('PASS: untrusted upstream hosts and URL schemes rejected');
+          JS
+          node /tmp/chatgpt-bridge-test.mjs
