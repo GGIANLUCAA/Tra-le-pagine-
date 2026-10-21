@@ -1,0 +1,47 @@
+name: "ArtVision V6 - terzo lotto di 5 artisti"
+run-name: "Terzo lotto — 5 regie Cinema V6 distinte"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-batch5-ottobre21-v6.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  art-film:
+    name: "Artista — ${{ matrix.artist }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        artist: [munch, goya, arcimboldo, leonardo, hiroshige]
+    steps:
+      - name: "Sorgenti originali conservate"
+        uses: actions/checkout@v4
+      - name: "Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "FFmpeg, OpenCV, Pillow e NumPy"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+          python -m py_compile modules/artvision/batch5_ottobre21_v6.py modules/artvision/batch5_cinema_v6.py modules/artvision/identita_visiva_v6.py
+      - name: "Fonti autentiche, regia dedicata, singola musica e MP4"
+        run: python modules/artvision/batch5_ottobre21_v6.py --artist "${{ matrix.artist }}"
+      - name: "Solo file finali, copertina, storyboard, crediti"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_V6_LOTTO3_${{ matrix.artist }}"
+          path: |
+            output/artvision-terzo-lotto-v6/${{ matrix.artist }}/film/*.mp4
+            output/artvision-terzo-lotto-v6/${{ matrix.artist }}/film/*.jpg
+            output/artvision-terzo-lotto-v6/${{ matrix.artist }}/film/*.json
+            output/artvision-terzo-lotto-v6/${{ matrix.artist }}/film/*.txt
+          if-no-files-found: error
+          retention-days: 7
