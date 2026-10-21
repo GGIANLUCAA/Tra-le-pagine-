@@ -1,0 +1,37 @@
+name: "ArtVision Cinema V6 - recupero Munch con opere curate"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-munch-retry-21oct.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  munch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Software video open-source"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: "Film Edvard Munch con 12 opere verificate"
+        run: python modules/artvision/batch5_ottobre21_v6.py --artist munch
+      - name: "Pacchetto finale MP4, copertina, attribuzioni"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_MUNCH_FINALE_V6"
+          path: |
+            output/artvision-terzo-lotto-v6/munch/film/*.mp4
+            output/artvision-terzo-lotto-v6/munch/film/*.jpg
+            output/artvision-terzo-lotto-v6/munch/film/*.json
+            output/artvision-terzo-lotto-v6/munch/film/*.txt
+          if-no-files-found: error
+          retention-days: 7
