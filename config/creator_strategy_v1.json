@@ -1,0 +1,78 @@
+{
+  "version": "1.0",
+  "updated": "2026-10-21",
+  "goal": "profitto operativo per ora, con originalità e qualità",
+  "deployment": "manual_metrics_privacy_first",
+  "publications": [
+    {
+      "category": "Libri raccontati",
+      "brand": "Tra le Pagine",
+      "promise": "racconto fedele e avvincente, voce calda",
+      "formats": [
+        "corto 25-45s",
+        "racconto 3-6min"
+      ]
+    },
+    {
+      "category": "Arte e critica",
+      "brand": "ArtVision",
+      "promise": "interpretazione originale e regia elegante",
+      "formats": [
+        "critica narrata",
+        "cinema musicale V6"
+      ]
+    },
+    {
+      "category": "Musica visual",
+      "brand": "HyperLumen",
+      "promise": "musica e architetture visive realmente diverse",
+      "formats": [
+        "corto musicale",
+        "visual cinematografico"
+      ]
+    }
+  ],
+  "priorities": [
+    "servizi video su commissione",
+    "affiliazioni pertinenti e dichiarate",
+    "prodotti digitali dopo validazione domanda",
+    "sponsorizzazioni",
+    "advertising piattaforme quando idoneo"
+  ],
+  "approval_required": [
+    "render con quota a pagamento",
+    "pubblicazione social",
+    "proposta commerciale inviata",
+    "utilizzo di brani/asset con diritti incerti"
+  ],
+  "metrics": [
+    "production_id",
+    "platform",
+    "date",
+    "title",
+    "category",
+    "video_url",
+    "views",
+    "likes",
+    "comments",
+    "shares",
+    "watch_seconds_avg",
+    "video_seconds",
+    "revenue_eur",
+    "cost_eur",
+    "hours_invested"
+  ],
+  "limits": {
+    "api_budget_eur": 0,
+    "auto_publish": false,
+    "never_invent_metrics": true,
+    "manual_rights_review": true
+  },
+  "references": [
+    "https://github.com/rampstackco/claude-skills",
+    "https://github.com/heymarii/ai-blueprints",
+    "https://github.com/azizaeffendi/content-creator-monetization-guide",
+    "https://github.com/charlie-morrison/content-creator-prompts",
+    "https://github.com/msitarzewski/agency-agents"
+  ]
+}
