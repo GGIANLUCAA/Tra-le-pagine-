@@ -18,7 +18,12 @@ jobs:
           import json,subprocess,tempfile,pathlib,urllib.request
           root='https://video-library-studio.600led.workers.dev'
           name='PROVINO_V4_SENZA_API__535272.mp4'
-          with urllib.request.urlopen(root+'/api/files',timeout=25) as response:
+          try:
+              response=urllib.request.urlopen(root+'/api/files',timeout=25)
+          except Exception as e:
+              print('PUBLIC SITE ERROR',repr(e),getattr(e,'headers',{}),getattr(e,'read',lambda *a: b'')(1000),flush=True)
+              raise
+          with response:
               files=json.load(response)
           record=next((x for x in files if x['name']==name),None)
           assert record is not None, 'Video not found in site catalog'
