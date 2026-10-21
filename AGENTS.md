@@ -81,6 +81,10 @@ Le istruzioni esplicite dell'utente nella sessione hanno precedenza.
 - L'archivio `integrations/video_library_laboratorio/` è una copia dei sorgenti
   consegnati: non dimostra quale versione sia installata sul servizio live.
 
+## Pre-lancio e selezione creativa V18
+
+Prima della prima pubblicazione o per preparare una scorta usare [docs/PRELAUNCH_V18_GUIDA.md](docs/PRELAUNCH_V18_GUIDA.md), `src/prelaunch_editor_v18.py` e `src/creative_memory_v18.py`. Le nuove proposte sono bozze, non video pronti né stime di successo; le preferenze del pannello Android sono locali/esportabili e non alterano la coda. Controllare se esiste già una ricetta V13 completa prima di ricreare scene/voce. Non interpretare gli hash come approvazione artistica e non pubblicare automaticamente. Mantieni le regie approvate e gli altri motori invariati.
+
 ## Obiettivo economico e apprendimento
 
 Leggere `docs/STRATEGIA_CREATOR_V13.md` prima di pianificare nuovi contenuti.
