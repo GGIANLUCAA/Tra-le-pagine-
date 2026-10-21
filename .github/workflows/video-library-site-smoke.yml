@@ -25,6 +25,8 @@ jobs:
           with urllib.request.urlopen(root+'/',timeout=25) as page:
               html=page.read().decode('utf-8')
           assert 'Video Library Studio' in html,'Missing site'
+          assert 'id="exportCSV"' in html and 'Video_Library_Studio_Catalogo_' in html,'Missing catalog CSV export'
+          print('PASS: public catalog has CSV export',flush=True)
           js=html.split('<script>')[-1].split('</script>')[0]
           with tempfile.TemporaryDirectory() as folder:
               jsfile=pathlib.Path(folder)/'frontend.js';jsfile.write_text(js)
