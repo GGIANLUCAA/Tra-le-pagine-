@@ -122,6 +122,16 @@ jobs:
                               with z.open(n) as src,fp.open('wb') as dst:
                                   import shutil;shutil.copyfileobj(src,dst)
                               if upload(fp,safe):published+=1
+                          covers=[n for n in files if pathlib.PurePosixPath(n).name.lower().startswith(('copertina','cover')) and n.lower().endswith(('.jpg','.jpeg'))]
+                          if covers:
+                              for n in files:
+                                  if not n.lower().endswith(('.mp4','.m4v','.mov')):continue
+                                  base=pathlib.PurePosixPath(n).stem
+                                  coverkey=re.sub(r'[^A-Za-z0-9_(). -]','_',base)[:175]+'.jpg'
+                                  fp=wd/coverkey
+                                  with z.open(covers[0]) as source,fp.open('wb') as target:
+                                      import shutil;shutil.copyfileobj(source,target)
+                                  if upload(fp,coverkey):published+=1
                       cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']})
                       print('Completed artifact:',a['name'],flush=True)
                   except Exception as e:
