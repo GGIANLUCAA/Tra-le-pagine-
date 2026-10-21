@@ -1,0 +1,38 @@
+name: "ArtVision Munch 108 secondi Cinema V6 - recupero fonti"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-munch-short-retry-v6.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  munch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Software open-source"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+          python -m py_compile modules/artvision/cinema_v6_curated_shortfilm.py modules/artvision/shortfilm_munch_v6.py
+      - name: "Il grido e la vita - 108 secondi con opere vere"
+        run: python modules/artvision/shortfilm_munch_v6.py
+      - name: "Consegnare video e copertina corredati da fonti"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_MUNCH_108S_FINALE"
+          path: |
+            output/artvision-terzo-lotto-v6/munch/film/*.mp4
+            output/artvision-terzo-lotto-v6/munch/film/*.jpg
+            output/artvision-terzo-lotto-v6/munch/film/*.json
+            output/artvision-terzo-lotto-v6/munch/film/*.txt
+          if-no-files-found: error
+          retention-days: 7
