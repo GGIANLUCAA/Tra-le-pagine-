@@ -39,6 +39,18 @@ studio.SOUND["music_for_manatees"]={
  "page":"https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400009",
  "urls":["https://incompetech.com/music/royalty-free/mp3-royaltyfree/Music%20for%20Manatees.mp3"],
  "license":"CC BY 4.0","license_url":studio.LICENSE_URL,"expected_seconds":1056,"instrumental":True}
+# Adapt the old engine's artist whitelist without modifying its approved source.
+ALLOW={
+ "modigliani":["modigliani"],"durer":["dürer","durer","duerer"],
+ "turner":["turner"],"chagall":["chagall"],"kandinsky":["kandinsky"]
+}
+def safe_filename(name,slug):
+ n=name.casefold()
+ if not n.endswith((".jpg",".jpeg",".png",".webp",".tif",".tiff")):return False
+ if any(v in n for v in ("museum selfie","tshirt","merchandise","reproduction on wall","statue of","poster for exhibition","photograph of the artist","book cover")):return False
+ return any(v in n for v in ALLOW[slug])
+studio.suitable_filename=safe_filename
+
 if __name__=="__main__":
  p=argparse.ArgumentParser();p.add_argument("--artist",required=True,choices=sorted(studio.P))
  studio.make(p.parse_args().artist)
