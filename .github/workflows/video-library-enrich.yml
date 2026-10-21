@@ -27,7 +27,7 @@ jobs:
         env:
           IMPORT_ENDPOINT: 'https://video-library-import.600led.workers.dev'
           SITE: 'https://video-library-studio.600led.workers.dev'
-          SOURCE: 'https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/main/site/video-library-v2.html'
+          SOURCE: 'https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/${{ github.sha }}/site/video-library-v2.html'
           AUD: 'vls-gh-import-2026'
           LIMIT: '0'
         shell: bash
