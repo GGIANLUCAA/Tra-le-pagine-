@@ -75,6 +75,10 @@ esatti in `queue/reviews_v16/`. Nessuna approvazione ripetuta all’utente per l
 già autorizzato. Se mancano asset o capacità, indicare il blocco, non inventare
 dieci consegne. I master non revisionati restano nel pacchetto di lavoro.
 
+## Pre-lancio V18 — scegliere bene prima di produrre
+
+Leggere [PRELAUNCH_V18_GUIDA.md](docs/PRELAUNCH_V18_GUIDA.md). Da Android il pannello [Scorta pre-lancio](docs/prelaunch-v18.html) permette di selezionare idee (browser locale, esportabili in JSON). Il pianificatore V18 riusa le otto idee V14, aggiunge 16 bozze, e recupera ricette V13 solo quando realmente disponibili e con hash validi. Nessuna idea viene dichiarata video pronto, nessuna metrica social inventata, nessun nuovo render/credito/publishing attivato. La produzione V15/V16 e la regia artistica V17 rimangono distinte.
+
 ## Controllo qualità V17 per tutte le categorie
 
 Prima di lanciare il renderer approvato consulta [QUALITY_DIRECTOR_V17.md](docs/QUALITY_DIRECTOR_V17.md). La scheda V13 può essere controllata gratuitamente con `python src/quality_director_v17.py --project PERCORSO/PROJECT_V13.json --out output/quality-preflight`. Dopo il render V16 trovi automaticamente report HTML/JSON nel kit di revisione se l'analisi si è completata. Sono suggerimenti diagnostici, non voti artistici né conferme di correttezza del filmato; controlla sempre scena per scena prima di consegnare. Si esegue dai workflow GitHub gestibili su Android.

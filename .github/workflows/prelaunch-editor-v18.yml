@@ -1,0 +1,56 @@
+name: "Pre-lancio V18 - scorta idee e memoria creativa"
+on:
+  pull_request:
+    paths:
+      - "src/prelaunch_editor_v18.py"
+      - "src/creative_memory_v18.py"
+      - "templates/PRELAUNCH_ADDITIONS_V18.json"
+      - "tests/test_prelaunch_editor_v18.py"
+      - "tests/test_prelaunch_web_v18.mjs"
+      - "docs/prelaunch-v18.html"
+      - "docs/index.html"
+      - "docs/creator-growth.html"
+      - ".github/workflows/prelaunch-editor-v18.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check-and-plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test offline, nessuna API o GPU
+        run: python -m unittest discover -s tests -p "test_prelaunch_editor_v18.py" -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Controlla la pagina mobile
+        run: node tests/test_prelaunch_web_v18.mjs
+      - name: Scorta editoriale e report Android
+        run: python src/prelaunch_editor_v18.py --out output/prelaunch-v18
+      - name: Memoria delle ricette che esistono davvero nei file del checkout
+        run: python src/creative_memory_v18.py --out output/creative-memory-v18
+      - name: Controlla i contatori senza pubblicazione implicita
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('output/prelaunch-v18/PRELAUNCH_PLAN_V18.json').read_text())
+          assert p['count_ideas'] == p['count_original_v14'] + p['count_added_v18']
+          assert p['count_verified_final_mp4']==0 and p['count_social_metrics']==0
+          assert p['published'] is False and p['zero_paid_api_calls'] is True
+          PY
+      - name: Report scaricabili sul telefono
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editorial-prelaunch-v18
+          path: |
+            output/prelaunch-v18/
+            output/creative-memory-v18/
+          retention-days: 7
+          if-no-files-found: warn

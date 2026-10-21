@@ -23,6 +23,10 @@ outreach sono rimandati. Il planner prepara la coda senza pubblicare o consumare
 
 Funziona come checklist e controllo offline aggiuntivo: preserva i motori e i filmati approvati V3–V16; niente API obbligatorie, nessun rendering secondario. La revisione estetica reale resta indispensabile.
 
+## Scorta pre-lancio V18 (senza spendere crediti)
+
+[Dashboard Android V18](docs/prelaunch-v18.html) · [Guida](docs/PRELAUNCH_V18_GUIDA.md) · [Idee aggiuntive](templates/PRELAUNCH_ADDITIONS_V18.json) · [Workflow gratuito](.github/workflows/prelaunch-editor-v18.yml). Riusa le 8 idee V14, propone altre 16 bozze e indicizza solo ricette con file effettivamente disponibili. Nessuna idea o score editoriale è una promessa di visualizzazioni, nessun social viene pubblicato e nessun Gold Master è stato modificato.
+
 # 🎬 Tra le Pagine — Studio editoriale illustrato
 
 ## GPT: comincia da qui — Direzione video V13
