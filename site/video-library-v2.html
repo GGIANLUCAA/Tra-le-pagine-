@@ -51,7 +51,13 @@ else if(/tra_le_pagine|ep0|scacchi|siddharta|raccont|libro|collaudo|base_video/i
 else if(/music|motion|h yper|hyperlumen|mozart|beethoven|elise|orbita|geometri/i.test(n)){category='Musica e visual';project='Music Motion';kind='Video musicale'}
 const cleaned=name.replace(/^ARTVISION[_ -]*/i,'').replace(/^TRA_LE_PAGINE[_ -]*/i,'').replace(/[_]+/g,' ').replace(/\b(CINEMA|SOCIAL|VIDEO|DOWNLOAD|FINAL|V\d+|MP4)\b/gi,' ').replace(/\s+/g,' ').trim();
 let title=cleaned?cleaned.toLowerCase().replace(/(^|\s)\S/g,m=>m.toUpperCase()):x.key;
-if(artis && (/^(artvision|video)/i.test(name)||/gioconda|guernica/i.test(n)))title=artis+(kind==='Analisi di un’opera'?' — critica':'');
+const works=[['gioconda','La Gioconda'],['grande_onda','La grande onda di Kanagawa'],['guernica','Guernica'],['klimt_bacio','Il bacio'],['botticelli_venere','La nascita di Venere'],['munch_l_urlo',"L'urlo"],['sogno_dell_ape',"Sogno causato dal volo di un'ape"],['vermeer_perla',"La ragazza con l'orecchino di perla"]];
+const match=works.find(p=>n.includes(p[0]));
+const artist=artis.split(' · ').filter(a=>!['La Gioconda','Guernica di Picasso'].includes(a)).join(' · ');
+if(match)title=match[1]+(artist?' — '+artist:'')+(kind==='Analisi di un’opera'?' · Critica':'');
+else if(artist&&project==='ArtVision')title=artist+(kind==='Analisi di un’opera'?' — critica d’arte':' — viaggio nelle opere');
+else if(/^tra_le_pagine_ep(\d+)/i.test(n))title='Tra le Pagine · Episodio '+Number(n.match(/^tra_le_pagine_ep(\d+)/i)[1]);
+else if(/^artvision_video/i.test(n))title='ArtVision · produzione '+(name.match(/__(\d+)$/)?.[1]||'');
 const description=category==='Libri raccontati'?'Un racconto audiovisivo che unisce narrazione, immagini e atmosfera.':category==='Critica d’arte'?'Un approfondimento breve sull’opera, i suoi dettagli e il significato artistico.':category==='Artisti e pittura'?'Un viaggio visivo nelle opere e nei dettagli dell’artista, accompagnato dalla musica.':category==='Musica e visual'?'Musica e animazioni visive sincronizzate in un’esperienza audiovisiva.':'Produzione audiovisiva dell’archivio creativo.';
 const version=/provino|prova|anteprima|test|collaudo|base_/i.test(n)?'draft':/finale|final|definitiv/i.test(n)?'final':/__\d+$/.test(name)?'variant':'unknown';
 return {title,description,category,project,kind,artist:artis,version}}
