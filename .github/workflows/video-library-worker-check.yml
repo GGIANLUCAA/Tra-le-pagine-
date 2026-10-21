@@ -1,0 +1,15 @@
+name: Verify video library worker syntax
+on:
+  push:
+    paths:
+      - 'site/worker-v3.js'
+      - '.github/workflows/video-library-worker-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node --check site/worker-v3.js
