@@ -1,0 +1,80 @@
+name: "ArtVision Critico - Vermeer Perla breve V1"
+run-name: "VERMEER · E se non fosse una perla? · Critico naturale"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-critico-vermeer-breve-v1.yml"
+permissions:
+  contents: read
+concurrency:
+  group: vermeer-critico-breve-v1
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: "Checkout: non modificare vecchi master e workflow"
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa video e voce; controlla testo e sintassi"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1
+          python -m pip install --disable-pip-version-check \
+            "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5" \
+            "edge-tts>=6.1,<9" "soundfile>=0.12,<1" "google-genai>=2.25,<4" \
+            "scipy>=1.11,<2"
+          python -m py_compile modules/artvision_critico/render_vermeer_breve.py
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path("modules/artvision_critico/vermeer_perla_breve_v1.json")
+          d=json.loads(p.read_text(encoding="utf8"))
+          assert len(d["beats"])==8
+          total=sum(len(x["speech"].split()) for x in d["beats"])
+          assert 350<total<550,total
+          src=Path("modules/artvision_critico/render_vermeer_breve.py").read_text()
+          assert "TRA LE PAGINE" not in src.upper().replace("NO 'TRA LE PAGINE'",""),"Old banner is still present"
+          print("VERMEER PREPARED:",len(d["beats"]),"scenes",total,"words",flush=True)
+          PY
+      - name: "Render 1080x1920 con voce continua, zoom e musica delicata"
+        run: |
+          python modules/artvision_critico/render_vermeer_breve.py
+      - name: "Verifica MP4 vero (audio, video, durata, scene e JPG)"
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          out=Path("output/vermeer-perla-breve-v1")
+          movie=out/"ARTVISION_VERMEER_PERLA_CRITICO_BREVE_V1.mp4"
+          assert movie.is_file() and movie.stat().st_size>10_000_000
+          info=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries",
+            "format=duration,size:stream=codec_type,width,height","-of","json",str(movie)]))
+          assert {x["codec_type"] for x in info["streams"]}=={"video","audio"}
+          screen=next(x for x in info["streams"] if x["codec_type"]=="video")
+          assert (screen["width"],screen["height"])==(1080,1920)
+          assert 120<float(info["format"]["duration"])<390
+          assert (out/"COPERTINA_VERMEER_PERLA.jpg").stat().st_size>90_000
+          assert len(json.loads((out/"REGIA_E_SYNC.json").read_text())["scenes"])==8
+          print("VERMEER MASTER",info["format"]["duration"],"sec",movie.stat().st_size,"bytes")
+          PY
+      - name: "Pacchetto video completo, senza pubblicazione automatica"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_VERMEER_LA_PERLA_BREVE_V1
+          path: |
+            output/vermeer-perla-breve-v1/ARTVISION_VERMEER_PERLA_CRITICO_BREVE_V1.mp4
+            output/vermeer-perla-breve-v1/COPERTINA_VERMEER_PERLA.jpg
+            output/vermeer-perla-breve-v1/REGIA_E_SYNC.json
+            output/vermeer-perla-breve-v1/COPIONE.txt
+            output/vermeer-perla-breve-v1/FONTI_DIRITTI_MUSICA.txt
+          if-no-files-found: error
+          retention-days: 14
