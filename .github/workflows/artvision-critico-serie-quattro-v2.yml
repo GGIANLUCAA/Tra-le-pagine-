@@ -43,6 +43,7 @@ jobs:
             "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5" \
             "edge-tts>=6.1,<9" "soundfile>=0.12,<1" "google-genai>=2.25,<4" "scipy>=1.11,<2"
           python -m py_compile modules/artvision_critico/production_series/render_series_v2.py
+          python -c "import sys;sys.path.insert(0, 'modules/artvision_critico');import render_dali;print('ArtVision module import OK')"
           python - <<'PY'
           import json
           from pathlib import Path
