@@ -109,7 +109,7 @@ jobs:
               assert len(response.read())==128,'File byte range changed'
           with urllib.request.urlopen(root+'/info/ARTVISION_CARAVAGGIO_CINEMA_V6.mp4',timeout=30) as response:
               sheet=response.read().decode('utf-8')
-              assert 'Genere:' in sheet and 'Durata:' in sheet and 'Caravaggio' in sheet,'Invalid informational TXT sheet'
+              assert 'Genere:' in sheet and 'Durata:' in sheet and 'caravaggio' in sheet.lower(),'Invalid informational TXT sheet'
               assert '.txt' in response.headers.get('Content-Disposition',''),'TXT attachment not downloadable'
           print('PASS: descriptive video filename and companion metadata TXT',flush=True)
           big='ARTVISION_DALI_SOGNO_DELL_APE_CRITICO_V1.mp4'
