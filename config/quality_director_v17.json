@@ -1,0 +1,95 @@
+{
+  "schema": "quality-policy-v17",
+  "principles": [
+    "Android-only control surface",
+    "zero mandatory API credits",
+    "never modify approved presets or source assets",
+    "use existing V16 review frames",
+    "do not treat machine checks as artistic certification"
+  ],
+  "default": {
+    "narrated": false,
+    "minimum_asset_short_side": 720,
+    "minimum_video_short_side": 720,
+    "questions": [
+      "Il contenuto e le immagini sono coerenti?",
+      "Ogni effetto serve realmente alla regia?",
+      "Il ritmo è piacevole e non ripetitivo?",
+      "I diritti di musica e immagini sono verificati?"
+    ]
+  },
+  "formats": {
+    "libri": {
+      "narrated": true,
+      "minimum_asset_short_side": 720,
+      "minimum_video_short_side": 720,
+      "questions": [
+        "La voce Google mantiene calore e naturalezza?",
+        "Le immagini corrispondono esattamente alle frasi narrate?",
+        "Personaggi, luogo ed epoca sono coerenti?",
+        "Gli stacchi rispettano le pause emotive e narrative?",
+        "La musica rimane sotto la voce e il finale è completo?"
+      ]
+    },
+    "artvision_cinema": {
+      "narrated": false,
+      "minimum_asset_short_side": 1080,
+      "minimum_video_short_side": 1080,
+      "questions": [
+        "Sono riprodotte opere autentiche e correttamente attribuite?",
+        "La regia segue Cinema V6 Gold Master senza alterare il preset?",
+        "I dettagli valorizzano l'opera senza tagli sbagliati?",
+        "I movimenti sono eleganti e non tutti identici?",
+        "Il brano è appropriato e i crediti musicali sono gestiti?"
+      ]
+    },
+    "artvision_critico": {
+      "narrated": true,
+      "minimum_asset_short_side": 1080,
+      "minimum_video_short_side": 1080,
+      "questions": [
+        "Quando la voce cita un dettaglio, quel dettaglio è visibile?",
+        "Le affermazioni fattuali sono verificate e separate dalle interpretazioni?",
+        "Copertina e titoli seguono Critico V2 anziché Cinema V6?",
+        "La voce è scorrevole e non artificiale?",
+        "Il finale ritorna all'opera completa con richiamo discreto?"
+      ]
+    },
+    "controluce": {
+      "narrated": true,
+      "minimum_asset_short_side": 720,
+      "minimum_video_short_side": 720,
+      "questions": [
+        "La cronologia degli avvenimenti è corretta?",
+        "Fonti primarie e ipotesi sono distinte?",
+        "Le ricostruzioni non sono presentate come immagini autentiche?",
+        "La musica non trasforma ipotesi in fatti?",
+        "Il montaggio è coinvolgente senza essere ingannevole?"
+      ]
+    },
+    "visual_music": {
+      "narrated": false,
+      "minimum_asset_short_side": 720,
+      "minimum_video_short_side": 1080,
+      "questions": [
+        "Il brano è stato scelto in funzione del linguaggio visivo?",
+        "Le forme seguono battiti o note verificabili?",
+        "Geometrie e proporzioni sono leggibili?",
+        "Gli effetti lasciano spazio ai momenti musicali tranquilli?",
+        "Il finale è armonioso anziché brusco?"
+      ]
+    },
+    "hyperlumen": {
+      "narrated": false,
+      "minimum_asset_short_side": 720,
+      "minimum_video_short_side": 1080,
+      "questions": [
+        "Questa regia è davvero diversa dai video precedenti?",
+        "Il passaggio musicale scelto è memorabile?",
+        "Le geometrie luminose non si sovrappongono eccessivamente?",
+        "Il movimento è motivato dal suono?",
+        "Le inquadrature lasciano respirare l'immagine?"
+      ]
+    }
+  }
+}
