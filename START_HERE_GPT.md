@@ -74,3 +74,7 @@ e la voce verificata. Rivedere master e kit, poi registrare una revisione con ha
 esatti in `queue/reviews_v16/`. Nessuna approvazione ripetuta all’utente per lavoro
 già autorizzato. Se mancano asset o capacità, indicare il blocco, non inventare
 dieci consegne. I master non revisionati restano nel pacchetto di lavoro.
+
+## Controllo qualità V17 per tutte le categorie
+
+Prima di lanciare il renderer approvato consulta [QUALITY_DIRECTOR_V17.md](docs/QUALITY_DIRECTOR_V17.md). La scheda V13 può essere controllata gratuitamente con `python src/quality_director_v17.py --project PERCORSO/PROJECT_V13.json --out output/quality-preflight`. Dopo il render V16 trovi automaticamente report HTML/JSON nel kit di revisione se l'analisi si è completata. Sono suggerimenti diagnostici, non voti artistici né conferme di correttezza del filmato; controlla sempre scena per scena prima di consegnare. Si esegue dai workflow GitHub gestibili su Android.
