@@ -55,6 +55,16 @@ jobs:
           except urllib.error.HTTPError as e:
               assert e.code==401,'Expected private management HTTP 401, got '+str(e.code)
           print('PASS: editing API rejects visitors without access',flush=True)
+          req=urllib.request.Request(root+'/api/delete',data=b'{"key":"notafile.mp4","confirm":"notafile.mp4"}',headers={'Content-Type':'application/json'},method='POST')
+          try:
+              urllib.request.urlopen(req,timeout=20)
+              raise AssertionError('Permanent deletion API is not protected')
+          except urllib.error.HTTPError as e:
+              assert e.code==401,'Expected private deletion HTTP 401, got '+str(e.code)
+          assert 'data-act="hide"' in html or 'Rimuovi dal sito' in html,'Remove-from-catalog button absent'
+          assert 'id="deleteForever"' in html,'Permanent delete button missing'
+          print('PASS: remove/archive buttons present, permanent deletion protected',flush=True)
+
           try:
               urllib.request.urlopen(root+'/media/catalog/gpt-dates.json',timeout=20)
               raise AssertionError('Sensitive internal catalog JSON publicly readable')
