@@ -42,7 +42,7 @@ jobs:
           HEAD={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
           AUD='vls-gh-import-2026'
           limit=int(os.getenv('REQUESTED_LIMIT','0') or '0')
-          if os.environ['EVENT']=='push': limit=3
+          if os.environ['EVENT']=='push': limit=0
           cache_token='',0
           def token():
               global cache_token
