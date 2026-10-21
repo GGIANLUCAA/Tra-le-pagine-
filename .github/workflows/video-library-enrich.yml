@@ -1,0 +1,109 @@
+name: Video Library Studio - Covers and Metadata
+on:
+  push:
+    paths:
+      - '.github/workflows/video-library-enrich.yml'
+      - 'site/video-library-v2.html'
+  schedule:
+    - cron: '27 */3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: video-library-enrichment
+  cancel-in-progress: false
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    steps:
+      - name: Install video tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python3 -m pip -q install requests
+      - name: Publish website, posters and video facts
+        env:
+          IMPORT_ENDPOINT: 'https://video-library-import.600led.workers.dev'
+          SITE: 'https://video-library-studio.600led.workers.dev'
+          SOURCE: 'https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/main/site/video-library-v2.html'
+          AUD: 'vls-gh-import-2026'
+          LIMIT: '12'
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os,json,time,subprocess,tempfile,pathlib,urllib.parse,sys
+          import requests
+          s=requests.Session()
+          s.headers.update({'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/130.0.0.0 Safari/537.36'})
+          endpoint=os.environ['IMPORT_ENDPOINT'].rstrip('/')
+          site=os.environ['SITE'].rstrip('/')
+          token_cache=('',0)
+          def token():
+              global token_cache
+              if token_cache[0] and time.time()-token_cache[1]<150:return token_cache[0]
+              u=os.environ['ACTIONS_ID_TOKEN_REQUEST_URL']
+              h={'Authorization':'Bearer '+os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']}
+              r=s.get(u,headers=h,params={'audience':os.environ['AUD']},timeout=25);r.raise_for_status()
+              token_cache=(r.json()['value'],time.time());return token_cache[0]
+          def api(method,route,params=None,**kwargs):
+              for attempt in range(3):
+                  try:
+                      r=s.request(method,endpoint+route,params=params,headers={'Authorization':'Bearer '+token()},timeout=120,**kwargs)
+                      if r.status_code in (429,502,503,504):raise ValueError('Retry '+str(r.status_code))
+                      r.raise_for_status();return r.json()
+                  except Exception:
+                      if attempt==2:raise
+                      time.sleep(2**attempt)
+          page=s.get(os.environ['SOURCE'],timeout=35);page.raise_for_status()
+          assert page.text.lstrip().lower().startswith('<!doctype html>')
+          print('Site upload:',api('POST','/publish-html',data=page.text.encode('utf-8')),flush=True)
+          catalog=s.get(site+'/api/catalog',timeout=60);catalog.raise_for_status()
+          assets=catalog.json().get('items',[])
+          current=s.get(site+'/api/metadata',timeout=60);current.raise_for_status()
+          metadata=current.json()
+          print('Catalog assets:',len(assets),'Already enriched:',len(metadata),flush=True)
+          need=[v for v in assets if v['key'] not in metadata or not v.get('cover')]
+          need.sort(key=lambda x:(x['key'] in metadata,x.get('size',0)))
+          limit=max(0,int(os.getenv('LIMIT','12') or '12'))
+          if limit:need=need[:limit]
+          count=0;failures=0
+          agent='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/130.0.0.0 Safari/537.36'
+          for video in need:
+              name=video['key']
+              path=site+'/media/'+urllib.parse.quote(name,safe='')
+              facts=dict(metadata.get(name,{}))
+              try:
+                  probe=subprocess.run(['ffprobe','-v','error','-user_agent',agent,'-show_entries','format=duration:stream=width,height,codec_type','-of','json',path],capture_output=True,text=True,timeout=90)
+                  if probe.returncode:print('WARN ffprobe:',name,probe.stderr[:160],flush=True)
+                  else:
+                      data=json.loads(probe.stdout)
+                      try:facts['duration']=round(float(data.get('format',{}).get('duration',0)),2)
+                      except (ValueError,TypeError):pass
+                      vs=next((v for v in data.get('streams',[]) if v.get('codec_type')=='video'),{})
+                      for field in ('width','height'):
+                          if vs.get(field):facts[field]=int(vs[field])
+                  if not video.get('cover'):
+                      jpg=name.rsplit('.',1)[0]+'.jpg'
+                      with tempfile.TemporaryDirectory() as d:
+                          target=pathlib.Path(d)/'cover.jpg'
+                          frame=subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-user_agent',agent,'-ss','1.0','-i',path,'-frames:v','1','-vf','scale=640:360:force_original_aspect_ratio=decrease,pad=640:360:(ow-iw)/2:(oh-ih)/2:color=0x101827','-q:v','5',str(target)],capture_output=True,text=True,timeout=120)
+                          if frame.returncode and not target.exists():print('WARN frame extraction:',name,frame.stderr[:160],flush=True)
+                          elif target.exists() and target.stat().st_size>300:
+                              with target.open('rb') as fd:saved=api('POST','/single',params={'key':jpg},data=fd.read())
+                              facts['cover']=jpg
+                              print('COVER:',name, 'bytes:',saved.get('size'),flush=True)
+                  else:
+                      facts['cover']=name.rsplit('.',1)[0]+'.jpg'
+                  if facts:metadata[name]=facts;count+=1
+                  if count and count%5==0:
+                      api('POST','/manifest',data=json.dumps(metadata,ensure_ascii=False).encode('utf-8'))
+                      print('Metadata checkpoint:',count,flush=True)
+              except Exception as e:
+                  failures+=1
+                  print('WARNING processing',name,repr(e)[:200],flush=True)
+          print('Manifest:',api('POST','/manifest',data=json.dumps(metadata,ensure_ascii=False).encode('utf-8')),flush=True)
+          print('SUMMARY',{'processed':count,'failed':failures,'remaining':len(assets)-len(metadata),'metadata':len(metadata)},flush=True)
+          if failures and not count:sys.exit(1)
+          PY
