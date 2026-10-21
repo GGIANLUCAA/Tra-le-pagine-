@@ -16,7 +16,7 @@ const error=(msg)=>({isError:true,content:[{type:"text",text:msg}],structuredCon
 const mkResult=(id,value)=>({jsonrpc:"2.0",id,result:value});
 const mimeOf=(name)=>/\.mp4$/i.test(name)?"video/mp4":/\.mov$/i.test(name)?"video/quicktime":"video/x-m4v";
 async function authorized(req,env) {
- const segment=new URL(req.url).pathname.replace(/^\/mcp\//,"");
+ const route=new URL(req.url).pathname;const match=route.match(/^\/mcp\/([a-f0-9]{64})$/i)||route.match(/^\/([a-f0-9]{64})\/mcp$/i);const segment=match?.[1]||"";
  if(!/^[a-f0-9]{64}$/i.test(segment)||!env.BRIDGE_TOKEN_SHA256)return false;
  const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(segment));
  const hex=Array.from(new Uint8Array(digest),v=>v.toString(16).padStart(2,"0")).join("");
@@ -95,7 +95,7 @@ async function importFile(file,env){
 export default {async fetch(req,env){
  const path=new URL(req.url).pathname;
  if(path==="/health")return Response.json({ok:true,service:NAME,version:VERSION,importReady:true,connectionRequired:true});
- if(!path.startsWith("/mcp/"))return new Response("Not found",{status:404});
+ if(!path.startsWith("/mcp/")&&!/^\/[a-f0-9]{64}\/mcp$/i.test(path))return new Response("Not found",{status:404});
  if(!await authorized(req,env))return new Response("Not found",{status:404});
  if(req.method==="GET")return new Response("Use MCP Streamable HTTP POST",{status:405,headers:{"allow":"POST, OPTIONS"}});
  if(req.method!=="POST")return new Response("Method not allowed",{status:405});
