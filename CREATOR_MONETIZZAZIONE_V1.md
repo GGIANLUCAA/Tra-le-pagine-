@@ -63,7 +63,7 @@ Per ogni pubblicazione: id, titolo, format, piattaforma, data, visualizzazioni, 
 **Mese 3**: consolidare serie col proprio linguaggio distintivo, testare un'offerta digitale con una mini lista d'attesa; analisi costi/ore/ricavi e domanda reale. Non moltiplicare output senza guadagno/retention.
 
 ## Dashboard reale, non finta
-Nuova pagina: [Creator Business Lab](docs/creator-business.html). Salva ogni riga soltanto nel browser di quel dispositivo con localStorage, nessun dato trasmesso a GitHub o al sito. Offre backup JSON import/export. Non è un servizio cloud, non legge automaticamente le statistiche dei social e non recupera automaticamente i video dal sito. In futuro sostituire l'ingresso manuale con API autorizzate (YouTube prima) oppure import dei CSV ufficiali dei social. Non committare export con entrate personali nel repo pubblico.
+Nuova pagina: [Creator Business Lab](docs/creator-business.html). Salva ogni riga soltanto nel browser di quel dispositivo con localStorage, nessun dato trasmesso a GitHub o al sito. Offre backup JSON import/export e il pulsante **Copia report per ChatGPT**: trasferisce volontariamente negli appunti un report basato sui dati reali, per un'analisi AI senza nuove API a pagamento. Non è un servizio cloud, non legge automaticamente le statistiche dei social e non recupera automaticamente i video dal sito. In futuro sostituire l'ingresso manuale con API autorizzate (YouTube prima) oppure import dei CSV ufficiali dei social. Non committare export con entrate personali nel repo pubblico.
 
 ## Checklist pubblicazione singolo video
 1. Fonte e opera identificati, copyright e licenza commerciale verificati.
