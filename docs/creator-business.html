@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1522"><meta name="robots" content="noindex,nofollow">
+<title>Creator Business Lab · Tra le Pagine</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1422;--card:#132236;--card2:#172a40;--border:#29405a;--text:#edf3fa;--muted:#a9bfd6;--gold:#e6c78b;--teal:#79d4bf}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 95% -10%,#254262 0,transparent 47%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+header,main,footer{max-width:1150px;margin:auto;padding:22px}a{color:#a8d9ff}header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.kicker{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-weight:800}h1{font-size:clamp(27px,5vw,43px);margin:4px 0 0;letter-spacing:-.03em}h2{font-size:19px;line-height:1.25;margin:0 0 12px}p{color:var(--muted);margin:8px 0}button,input,select{font:inherit}button,.btn{border:1px solid var(--border);background:#243953;color:var(--text);border-radius:10px;padding:11px 15px;cursor:pointer;font-weight:700;text-decoration:none;display:inline-block}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--teal);outline-offset:2px}button.primary{background:var(--gold);border-color:var(--gold);color:#162238}button.danger{color:#ffbbbb;border-color:#714956;background:#3c2a37}button:disabled{opacity:.5;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.stat,.panel,.record{background:linear-gradient(125deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:16px;padding:18px;min-width:0}
+.stat label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block}.stat strong{display:block;font-size:clamp(20px,3vw,30px);margin:5px 0;color:var(--gold);overflow-wrap:anywhere}.stat small{color:var(--muted)}.section{margin:23px 0}.section-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field label{font-size:12px;color:var(--muted)}input,select{background:#0c1b2b;border:1px solid #43576e;color:var(--text);border-radius:8px;padding:11px 10px;width:100%;min-width:0}input::placeholder{color:#8499ae}.wide{grid-column:span 2}.full{grid-column:1/-1}.actions{display:flex;gap:8px;flex-wrap:wrap}.note{font-size:12px;color:var(--muted)}.notice{border-left:3px solid var(--gold);padding:8px 12px;background:#2b2a2c;border-radius:0 9px 9px 0}
+.records{display:grid;gap:10px}.record{padding:13px 15px;display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr)) auto;align-items:center;gap:12px}.record strong{display:block;overflow-wrap:anywhere}.record small{display:block;color:var(--muted)}.record b{font-size:16px}.pill{display:inline-block;background:#29455a;color:#cce8f9;padding:3px 8px;border-radius:12px;font-size:11px;margin-top:4px}
+.bars{display:grid;gap:10px}.barrow{display:grid;grid-template-columns:170px 1fr 108px;gap:10px;align-items:center;font-size:13px}.barrow span{overflow-wrap:anywhere}.barbg{height:12px;background:#0b1a2b;border-radius:12px;overflow:hidden}.barfill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:12px}.empty{color:var(--muted);border:1px dashed var(--border);padding:24px;text-align:center;border-radius:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:13px}.analysis{background:#122537;border:1px solid var(--border);padding:16px;border-radius:13px}.analysis strong{color:var(--teal)}.analysis p{font-size:13px}
+footer{font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
+@media(max-width:880px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}form{grid-template-columns:repeat(2,minmax(0,1fr))}.record{grid-template-columns:1fr 1fr}.record>:first-child{grid-column:1/-1}.two{grid-template-columns:1fr}}
+@media(max-width:510px){header,main,footer{padding:16px}.grid{gap:9px}.stat,.panel{padding:13px}.stat strong{font-size:22px}.record{gap:9px}.barrow{grid-template-columns:1fr 100px}.barbg{grid-column:1/-1;grid-row:2}.field.wide{grid-column:1/-1}.actions button{flex:1 1 140px}}
+</style></head><body>
+<header>
+ <div><div class="kicker">TRA LE PAGINE · BUSINESS LAB V1</div><h1>Numeri, non promesse.</h1><p>Scopri quali video fanno crescere il pubblico e quali portano ricavi.</p></div>
+ <a class="btn" href="./index.html">← Torna allo Studio</a>
+</header>
+<main>
+ <p class="notice"><strong>Privacy:</strong> le statistiche sono salvate solo nel browser di questo dispositivo. Non vengono inviate a GitHub né condivise automaticamente con altri dispositivi. Fai un backup JSON, soprattutto prima di cancellare i dati del browser. Per ora l'inserimento è manuale, senza collegamento ai social.</p>
+ <section class="section grid" aria-label="Indicatori economici">
+  <div class="stat"><label>Incassi registrati</label><strong id="revenue">€ 0,00</strong><small>Solo somme inserite</small></div>
+  <div class="stat"><label>Profitto operativo</label><strong id="profit">€ 0,00</strong><small>Ricavi meno costi inseriti</small></div>
+  <div class="stat"><label>Guadagno per ora</label><strong id="hourly">—</strong><small>Al lordo delle imposte</small></div>
+  <div class="stat"><label>Visualizzazioni</label><strong id="views">0</strong><small>Somma dei post registrati</small></div>
+ </section>
+ <section class="section panel" id="formpanel">
+  <div class="section-head"><div><div class="kicker">DATI REALI · RIGA PER PIATTAFORMA</div><h2 id="form-title">Registra un video pubblicato</h2></div><button id="resetForm" type="button">Pulisci modulo</button></div>
+  <form id="entryForm">
+   <div class="field wide"><label for="title">Titolo del video *</label><input id="title" maxlength="160" placeholder="Es. Van Gogh — oltre la notte" required></div>
+   <div class="field"><label for="category">Categoria</label><select id="category"><option>ArtVision · Arte</option><option>Critica d'arte</option><option>Tra le Pagine · Libri</option><option>Film raccontati</option><option>HyperLumen · Musica</option><option>Documentari</option><option>Cronaca</option><option>Altro</option></select></div>
+   <div class="field"><label for="platform">Piattaforma</label><select id="platform"><option>YouTube</option><option>YouTube Shorts</option><option>Facebook</option><option>Instagram</option><option>TikTok</option><option>Altro</option></select></div>
+   <div class="field"><label for="date">Data pubblicazione</label><input id="date" type="date" required></div>
+   <div class="field"><label for="viewsInput">Views reali</label><input id="viewsInput" type="number" min="0" step="1" value="0" required></div>
+   <div class="field"><label for="shares">Condivisioni</label><input id="shares" type="number" min="0" step="1" placeholder="Se disponibili"></div>
+   <div class="field"><label for="watch">Visualizzazione media (sec)</label><input id="watch" type="number" min="0" step="0.1" placeholder="Se disponibile"></div>
+   <div class="field"><label for="duration">Durata filmato (sec)</label><input id="duration" type="number" min="1" step="1" placeholder="Es. 180"></div>
+   <div class="field"><label for="revenueInput">Ricavi reali (€)</label><input id="revenueInput" type="number" min="0" step="0.01" placeholder="Es. 0"></div>
+   <div class="field"><label for="cost">Costi imputati (€)</label><input id="cost" type="number" min="0" step="0.01" placeholder="Es. 1.5"></div>
+   <div class="field"><label for="hours">Ore di lavoro imputate</label><input id="hours" type="number" min="0" step="0.1" placeholder="Es. 2.5"></div>
+   <div class="field wide"><label for="url">Link pubblico del video (facoltativo)</label><input id="url" type="url" maxlength="500" placeholder="https://..."></div>
+   <div class="field full"><div class="actions"><button class="primary" type="submit" id="save">Salva statistiche</button><button type="button" id="export">↓ Esporta backup JSON</button><button type="button" id="importButton">↑ Importa backup JSON</button><input type="file" id="importFile" accept="application/json,.json" hidden></div><p class="note">Se pubblichi lo stesso MP4 su 3 piattaforme, imputa ore e costi una sola volta o suddividili fra le righe, altrimenti il profitto sarà falsato. Registra solo incassi effettivi, non quelli previsti.</p></div>
+  </form>
+  <p class="note" id="message" role="status" aria-live="polite"></p>
+ </section>
+ <section class="section two">
+  <div class="panel"><div class="kicker">CATEGORIE · VISUALIZZAZIONI</div><h2>Cosa interessa di più</h2><div class="bars" id="categoryBars"><div class="empty">Inserisci almeno un video.</div></div></div>
+  <div class="panel"><div class="kicker">ANALISI · SCELTE</div><h2>Indicazioni basate sui dati</h2><div id="insights"><div class="empty">Servono statistiche reali.</div></div></div>
+ </section>
+ <section class="section">
+  <div class="section-head"><div><div class="kicker">CATALOGO DELLE PUBBLICAZIONI</div><h2>Performance dei video</h2></div><div class="actions"><select id="filter" aria-label="Filtra per categoria"><option value="all">Tutte le categorie</option></select><select id="sort" aria-label="Ordina i video"><option value="latest">Più recenti</option><option value="views">Più visualizzati</option><option value="profit">Maggior profitto</option><option value="shares">Più condivisi</option></select></div></div>
+  <div class="records" id="records"><div class="empty">Non ci sono ancora dati. Inserisci il tuo primo video.</div></div>
+ </section>
+</main>
+<footer>Creator Business Lab V1 · Nessun accesso automatico a YouTube, Facebook o TikTok · Nessun guadagno garantito · <a href="https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/CREATOR_MONETIZZAZIONE_V1.md">Leggi la strategia completa</a></footer>
+<script>
+(()=>{'use strict';
+const KEY='tlp_creator_business_v1';let rows=[];let editing=null;
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(n);
+const num=n=>new Intl.NumberFormat('it-IT',{maximumFractionDigits:0}).format(n);
+const val=id=>$(id).value.trim();
+const asNum=id=>{const x=val(id);return x===''?null:Number(x)};
+const safeURL=s=>{try{let u=new URL(s);return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return ''}};
+function safeRow(x){
+ if(!x||typeof x!=='object')return null;
+ let title=String(x.title||'').slice(0,160).trim(),category=String(x.category||'Altro').slice(0,80),platform=String(x.platform||'Altro').slice(0,40);
+ const d=String(x.date||'');if(!title||!/^\d{4}-\d{2}-\d{2}$/.test(d)||Number.isNaN(Date.parse(d+'T12:00:00Z')))return null;
+ let r={id:String(x.id||'').slice(0,70)||crypto.randomUUID(),title,category,platform,date:d,url:safeURL(String(x.url||''))};
+ for(const field of ['views','shares','watch','duration','revenue','cost','hours']){
+  const v=x[field];r[field]=(v===null||v===undefined||v==='')?null:Number(v);
+  if(r[field]!==null&&(!Number.isFinite(r[field])||r[field]<0||r[field]>100000000000))return null;
+ }
+ if(r.views===null||!Number.isInteger(r.views)||r.shares!==null&&!Number.isInteger(r.shares))return null;
+ return r;
+}
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');rows=Array.isArray(x)?x.map(safeRow).filter(Boolean):[]}catch{rows=[];$('message').textContent='Salvataggio locale non disponibile. Esporta i dati in JSON.'}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(rows));$('message').textContent='Salvato sul dispositivo.'}catch{$('message').textContent='Impossibile salvare nel browser. Esporta i dati come backup JSON.'}}
+function el(tag,cl,txt){const n=document.createElement(tag);if(cl)n.className=cl;if(txt!==undefined)n.textContent=String(txt);return n}
+function empty(target,label){target.replaceChildren(el('div','empty',label))}
+function render(){
+ const revenue=rows.reduce((s,r)=>s+(r.revenue||0),0),cost=rows.reduce((s,r)=>s+(r.cost||0),0),hours=rows.reduce((s,r)=>s+(r.hours||0),0),views=rows.reduce((s,r)=>s+r.views,0);
+ $('revenue').textContent=money(revenue);$('profit').textContent=money(revenue-cost);$('hourly').textContent=hours>0?money((revenue-cost)/hours):'—';$('views').textContent=num(views);
+ let groups=new Map();rows.forEach(r=>{let g=groups.get(r.category)||{views:0,n:0,revenue:0,cost:0};g.views+=r.views;g.n++;g.revenue+=r.revenue||0;g.cost+=r.cost||0;groups.set(r.category,g)});
+ let chart=$('categoryBars');chart.replaceChildren();if(!groups.size)empty(chart,'Ancora nessuna pubblicazione.');
+ let max=Math.max(1,...Array.from(groups.values(),g=>g.views));
+ [...groups.entries()].sort((a,b)=>b[1].views-a[1].views).forEach(([name,g])=>{let row=el('div','barrow');row.append(el('span','',name),el('span','',num(g.views)+' views'));let track=el('div','barbg');let fill=el('div','barfill');fill.style.width=(g.views/max*100)+'%';track.append(fill);row.append(track);chart.append(row)});
+ let insight=$('insights');insight.replaceChildren();
+ const message=(title,body)=>{let block=el('div','analysis'),s=el('strong','',title),p=el('p','',body);block.append(s,p);insight.append(block)};
+ if(!rows.length)message('Nessun dato inventato','Aggiungi visualizzazioni, ore e ricavi delle tue pubblicazioni. Qui compariranno consigli calcolati.');
+ else{
+   message('Margine osservato',money(revenue-cost)+' su '+rows.length+' pubblicazioni; '+(hours>0?money((revenue-cost)/hours)+' per ora imputata.':'mancano ore di lavoro per il risultato orario.'));
+   const eligible=[...groups.entries()].filter(([k,g])=>g.n>=3&&g.views>0);
+   if(!eligible.length)message('Campione ancora ridotto','Almeno 3 pubblicazioni della stessa categoria per un primo confronto indicativo. Confronta anche piattaforma, formato, data e retention.');
+   else{
+     let top=eligible.sort((a,b)=>(b[1].views/b[1].n)-(a[1].views/a[1].n))[0];
+     message('Categoria da approfondire',top[0]+' ha '+num(Math.round(top[1].views/top[1].n))+' views medie per pubblicazione ('+top[1].n+' post). È un indizio, non una previsione di ricavo: controlla età dei post e piattaforme.');
+   }
+   if(revenue===0)message('Monetizzazione non ancora dimostrata','Non considerare le views un guadagno. Testa un servizio video concreto e traccia i primi incassi realmente ricevuti.');
+ }
+ let filter=$('filter'),selected=filter.value,categories=[...new Set(rows.map(r=>r.category))].sort();filter.replaceChildren(new Option('Tutte le categorie','all'));categories.forEach(c=>filter.add(new Option(c,c)));filter.value=categories.includes(selected)?selected:'all';
+ renderRecords();
+}
+function renderRecords(){
+ const selected=$('filter').value,sort=$('sort').value,target=$('records');target.replaceChildren();
+ let subset=rows.filter(x=>selected==='all'||x.category===selected).slice().sort((a,b)=>{
+ if(sort==='views')return b.views-a.views;
+ if(sort==='profit')return ((b.revenue||0)-(b.cost||0))-((a.revenue||0)-(a.cost||0));
+ if(sort==='shares')return (b.shares||0)-(a.shares||0);
+ return b.date.localeCompare(a.date);
+ });
+ if(!subset.length)return empty(target,'Nessuna pubblicazione per questa selezione.');
+ subset.forEach(r=>{
+  let item=el('article','record');let head=el('div');head.append(el('strong','',r.title),el('small','',r.platform+' · '+r.date),el('span','pill',r.category));
+  if(r.url){let l=el('a','', 'Apri video ↗');l.href=r.url;l.target='_blank';l.rel='noopener noreferrer';head.append(' ',l)}
+  let v=el('div');v.append(el('small','','Views'),el('b','',num(r.views)));
+  let cash=el('div');cash.append(el('small','','Profitto imputato'),el('b','',money((r.revenue||0)-(r.cost||0))));
+  let share=el('div');share.append(el('small','','Condivisioni'),el('b','',r.shares===null?'—':num(r.shares)));
+  let actions=el('div','actions');let edit=el('button','','Modifica');edit.type='button';edit.addEventListener('click',()=>editRow(r.id));let del=el('button','danger','Elimina');del.type='button';del.addEventListener('click',()=>{if(confirm('Eliminare questa scheda solo da questo dispositivo?')){rows=rows.filter(x=>x.id!==r.id);persist();render()}});actions.append(edit,del);item.append(head,v,cash,share,actions);target.append(item);
+ });
+}
+function resetForm(){$('entryForm').reset();$('date').value=new Date().toLocaleDateString('en-CA');$('viewsInput').value='0';editing=null;$('form-title').textContent='Registra un video pubblicato';$('save').textContent='Salva statistiche'}
+function editRow(id){let r=rows.find(x=>x.id===id);if(!r)return;editing=id;for(const f of ['title','category','platform','date','url'])$(f).value=r[f];for(const [field,id] of Object.entries({views:'viewsInput',shares:'shares',watch:'watch',duration:'duration',revenue:'revenueInput',cost:'cost',hours:'hours'}))$(id).value=r[field]??'';$('form-title').textContent='Modifica statistiche';$('save').textContent='Aggiorna';$('formpanel').scrollIntoView({behavior:'smooth',block:'start'})}
+$('entryForm').addEventListener('submit',e=>{
+ e.preventDefault();const d={id:editing||crypto.randomUUID(),title:val('title'),category:val('category'),platform:val('platform'),date:val('date'),url:val('url'),views:asNum('viewsInput'),shares:asNum('shares'),watch:asNum('watch'),duration:asNum('duration'),revenue:asNum('revenueInput'),cost:asNum('cost'),hours:asNum('hours')};
+ let r=safeRow(d);if(!r){$('message').textContent='Controlla i valori: visualizzazioni intere, numeri positivi e data valida.';return}rows=rows.filter(x=>x.id!==r.id);rows.push(r);persist();resetForm();render();
+});
+$('resetForm').addEventListener('click',resetForm);$('filter').addEventListener('change',renderRecords);$('sort').addEventListener('change',renderRecords);
+$('export').addEventListener('click',()=>{
+ const content=JSON.stringify({version:1,created:new Date().toISOString(),records:rows},null,2);const blob=new Blob([content],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='creator-business-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);
+});
+$('importButton').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change',async e=>{
+ let f=e.target.files[0];if(!f)return;try{
+  if(f.size>4000000)throw Error('File troppo grande');const obj=JSON.parse(await f.text());if(!Array.isArray(obj.records)||obj.version!==1||obj.records.length>10000)throw Error('Formato backup incompatibile');
+  let imported=obj.records.map(safeRow).filter(Boolean);if(imported.length!==obj.records.length)throw Error('Una o più schede non valide');
+  if(!confirm('Importare '+imported.length+' schede? Le schede con lo stesso ID saranno sostituite, le altre conservate.'))return;
+  let map=new Map(rows.map(x=>[x.id,x]));imported.forEach(x=>map.set(x.id,x));rows=[...map.values()];persist();render();
+ }catch(err){$('message').textContent='Importazione non riuscita: '+err.message}finally{e.target.value=''}
+});
+resetForm();load();render();
+})();
+</script>
+</body></html>
