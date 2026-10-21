@@ -1,3 +1,5 @@
+> Cadenza aggiornata: [produzione intensiva V15](docs/PRODUZIONE_INTENSIVA_V15.md), obiettivo almeno 10 video/giorno in autonomia. La cadenza precedente di due video/settimana è superata.
+
 > Priorità aggiornata: [piano di crescita V14](docs/PIANO_CRESCITA_V14.md). Per ora sono rimandati commissioni, outreach a editori/aziende, sponsor e ads. Le sezioni commerciali sotto restano riferimenti futuri.
 
 > Aggiornamento: leggere [strategia verificata V13](docs/STRATEGIA_CREATOR_V13.md) per priorità correnti, limiti delle fonti e metriche confrontabili.

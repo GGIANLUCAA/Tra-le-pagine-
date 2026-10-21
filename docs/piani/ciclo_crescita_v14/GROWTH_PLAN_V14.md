@@ -1,3 +1,5 @@
+> Piano storico V14, superato dal target di almeno 10 video/giorno. Leggere docs/PRODUZIONE_INTENSIVA_V15.md.
+
 # Coda editoriale di crescita
 
 Stime di lavoro, non date di pubblicazione. Ordine editoriale delle idee, non previsione di viralità. Ricerca pendente non autorizza produzione.

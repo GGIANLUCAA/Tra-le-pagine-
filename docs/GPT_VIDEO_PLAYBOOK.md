@@ -161,3 +161,15 @@ Recuperare le lezioni pertinenti quando disponibili (schema in
 `templates/CREATOR_LEARNING_V14.json`); se assenti, dichiarare che mancano.
 Una sola variabile per prova; nessuna crescita garantita o pubblicazione implicita.
 Il piano V14 prevale sulle priorità commerciali delle guide V1/V13.
+
+## Produzione intensiva V15 — istruzione più recente
+
+Leggere `docs/PRODUZIONE_INTENSIVA_V15.md` e `config/production_v15.json`.
+Target: almeno 10 video finiti e controllati al giorno, con lavoro autonomo
+dell’agente. Il precedente limite di due video/settimana è superato.
+Preparare scorta, lotti paralleli, recupero dei materiali e revisioni dell’agente;
+non richiedere conferme per ogni operazione già autorizzata.
+Usare `src/production_batch_v15.py` per preflight e registro giornaliero.
+Il modulo di coda non è ancora un servizio completo di render continuo: non
+dichiarare attivo ciò che resta da integrare. Contare soltanto consegne distinte
+verificate, non tentativi, bozze o file duplicati. Distinguere produzione e distribuzione.

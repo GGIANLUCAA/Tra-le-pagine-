@@ -1,0 +1,21 @@
+{
+  "schema": "production-policy-v15",
+  "updated": "2026-10-21",
+  "timezone": "Europe/Rome",
+  "target_qualified_videos_per_day": 10,
+  "max_jobs_per_batch": 12,
+  "max_parallel_renders": 3,
+  "max_attempts_per_item": 2,
+  "planning_days": 7,
+  "autonomy": "preparation_render_recovery_and_agent_quality_review",
+  "automatic_social_publication": false,
+  "quality_review_owner": "agent",
+  "count_requires": ["unique_final_mp4", "technical_check", "editorial_review", "visual_review", "audio_review", "rights_review", "portable_recipe"],
+  "budget": {
+    "daily_cash_limit_eur": null,
+    "new_paid_calls_enabled": false,
+    "note": "Il costo giornaliero non è ancora misurato. Riutilizzare materiali e WAV verificati; nessun nuovo addebito illimitato."
+  },
+  "capacity_status": "target_not_yet_benchmarked",
+  "rules": {"preserve_google_voice": true, "subtitles": false, "preserve_approved_series": true, "no_duplicate_final_counts": true, "no_repeated_user_approvals_for_authorized_work": true}
+}

@@ -1,7 +1,7 @@
 name: "Direzione GPT V13 - ricette e riuso voce senza API"
 on:
   push:
-    branches: [main, "feature/gpt-video-director-v13", "feature/creator-growth-v14"]
+    branches: [main, "feature/gpt-video-director-v13", "feature/creator-growth-v14", "feature/production-v15"]
     paths:
       - "docs/creator-business*"
       - "tests/test_creator_business_metrics.mjs"
@@ -11,6 +11,10 @@ on:
       - "src/video_director_v13.py"
       - "src/creator_metrics_v13.py"
       - "src/creator_growth_v14.py"
+      - "src/production_batch_v15.py"
+      - "config/production_v15.json"
+      - "queue/production_v15.json"
+      - "tests/test_production_batch_v15.py"
       - "config/creator_growth_v14.json"
       - "tests/test_creator_growth_v14.py"
       - "templates/CREATOR_*V14.json"
@@ -50,6 +54,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p "test_creator_metrics_v13.py" -v
           python -m unittest discover -s tests -p "test_creator_growth_v14.py" -v
+          python -m unittest discover -s tests -p "test_production_batch_v15.py" -v
       - name: Riuso WAV e trasparenza dei tempi stimati
         run: python -m unittest discover -s tests -p "test_voice_cache_v13.py" -v
       - name: Scene, provenienza e nessun sottotitolo
@@ -61,4 +66,4 @@ jobs:
         run: |
           node integrations/video_library_laboratorio/workspace-api.test.mjs
           node tests/test_creator_business_metrics.mjs
-          python -m py_compile src/creator_growth_v14.py src/creator_metrics_v13.py src/video_director_v13.py src/gemini_voice.py src/episode_v3.py src/regia_narrativa_v12.py src/studio_autopilot_v11.py
+          python -m py_compile src/production_batch_v15.py src/creator_growth_v14.py src/creator_metrics_v13.py src/video_director_v13.py src/gemini_voice.py src/episode_v3.py src/regia_narrativa_v12.py src/studio_autopilot_v11.py

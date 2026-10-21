@@ -3,17 +3,34 @@
   "updated": "2026-10-21",
   "mode": "audience_first",
   "goal": "Crescita organica sostenibile, qualità riconoscibile e spettatori che tornano",
-  "deferred": ["servizi su commissione", "outreach a editori o aziende", "sponsorizzazioni", "pubblicità a pagamento"],
-  "active_formats": ["artvision_critico", "libri"],
+  "deferred": [
+    "servizi su commissione",
+    "outreach a editori o aziende",
+    "sponsorizzazioni",
+    "pubblicità a pagamento"
+  ],
+  "active_formats": [
+    "artvision_critico",
+    "libri"
+  ],
   "showcase_format": "artvision_cinema",
-  "max_videos_per_week": 2,
+  "max_videos_per_week": 70,
   "planning_weeks": 4,
   "review_minutes_per_week": 45,
   "provisional_weekly_minutes": 360,
   "capacity_is_measured": false,
   "distribution": "un account principale da identificare; riuso su un secondo solo se sostenibile",
-  "learning_windows_days": [7, 28],
-  "experiment_variables": ["opening", "topic", "cover", "pacing", "ending"],
+  "learning_windows_days": [
+    7,
+    28
+  ],
+  "experiment_variables": [
+    "opening",
+    "topic",
+    "cover",
+    "pacing",
+    "ending"
+  ],
   "rules": {
     "one_variable_per_experiment": true,
     "no_automatic_publication": true,
@@ -22,5 +39,7 @@
     "preserve_no_subtitles": true,
     "preserve_approved_art_direction": true,
     "unknown_metrics_are_null": true
-  }
+  },
+  "superseded_for_production_by": "config/production_v15.json",
+  "legacy_capacity_note": "Il budget manuale V14 non dimensiona lo studio autonomo V15; usare production_batch_v15 per la coda giornaliera."
 }

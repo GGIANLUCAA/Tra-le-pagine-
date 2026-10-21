@@ -1,3 +1,9 @@
+## Produzione intensiva V15 — priorità corrente
+
+[Obiettivo 10 video al giorno in autonomia](docs/PRODUZIONE_INTENSIVA_V15.md).
+Coda, preflight e registro verificato disponibili; servizio completo di produzione
+continua ancora da integrare e misurare. Il limite di due video/settimana è superato.
+
 ## Crescita dei canali — priorità corrente V14
 
 [Piano di sviluppo di 90 giorni](docs/PIANO_CRESCITA_V14.md) · [Pagina mobile](docs/creator-growth.html).

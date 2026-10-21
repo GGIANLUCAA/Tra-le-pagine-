@@ -1,3 +1,5 @@
+> Cadenza aggiornata: [produzione intensiva V15](PRODUZIONE_INTENSIVA_V15.md), obiettivo almeno 10 video/giorno in autonomia. La cadenza precedente di due video/settimana è superata.
+
 # Piano di sviluppo V14 — crescere con contenuti migliori
 
 Aggiornamento del 21 ottobre 2026, su indicazione di Gianluca. **Priorità attuale:
