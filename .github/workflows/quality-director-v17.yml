@@ -1,0 +1,63 @@
+name: "Regia qualità V17 - gratuita, mobile e non distruttiva"
+on:
+  pull_request:
+    paths:
+      - "src/quality_director_v17.py"
+      - "config/quality_director_v17.json"
+      - "tests/test_quality_director_v17.py"
+      - ".github/workflows/quality-director-v17.yml"
+  workflow_dispatch:
+    inputs:
+      project_path:
+        description: "PROJECT_V13.json già nel repository (facoltativo)"
+        required: false
+        type: string
+      format:
+        description: "Categoria in assenza del progetto"
+        required: false
+        default: "libri"
+        type: choice
+        options:
+          - libri
+          - artvision_cinema
+          - artvision_critico
+          - controluce
+          - visual_music
+          - hyperlumen
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Librerie gratuite e leggere
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'Pillow>=10,<13'
+      - name: Test su storyboard e MP4 sintetico
+        run: python -m unittest discover -s tests -p "test_quality_director_v17.py" -v
+      - name: Report della regia da Android
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          QUALITY_PROJECT: ${{ inputs.project_path }}
+          QUALITY_FORMAT: ${{ inputs.format }}
+        run: |
+          if [ -n "$QUALITY_PROJECT" ]; then
+            python src/quality_director_v17.py --project "$QUALITY_PROJECT" --out output/quality-v17 || true
+          else
+            python src/quality_director_v17.py --format "$QUALITY_FORMAT" --out output/quality-v17
+          fi
+      - name: Scarica la pagina HTML e il JSON di revisione
+        if: always() && github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-v17-report
+          path: output/quality-v17/
+          if-no-files-found: warn
+          retention-days: 7
