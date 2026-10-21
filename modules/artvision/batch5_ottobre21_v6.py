@@ -14,7 +14,7 @@ v6.P.update({
  "munch":{
   "name":"Edvard Munch","duration":108,
   "hero":"Edvard Munch - The Scream - NG.M.00939 - National Museum of Art, Architecture and Design.jpg",
-  "featured":["Edvard Munch - The Scream, 1910 (Munch Museum).jpg"],
+  "featured":["Edvard Munch - The Scream, 1910 (Munch Museum).jpg","Edvard Munch - Madonna (1894-1895).jpg","Edvard Munch - Anxiety - Google Art Project.jpg","Edvard Munch - The Kiss - MM.M.00059 - Munch Museum.jpg","Edvard Munch - The Dance of Life - NG.M.00941 - National Museum of Art, Architecture and Design.jpg","Edvard Munch - The Sick Child - NG.M.00839 - National Museum of Art, Architecture and Design.jpg","Edvard Munch - Jealousy 1895.jpg","Edvard Munch - Melancholy (1894-96).jpg","Edvard Munch - Self-portrait (1886).jpg","Edvard Munch - Self-Portrait - MM.M.01049 - Munch Museum.jpg","Edvard Munch - Melancholy (1893).jpg"],
   "key":["scream","the kiss","madonna","vampire","melancholy","anxiety","sick child","dance of life","self portrait","girls on bridge","jealousy"],
   "find":["Edvard Munch paintings melancholy Madonna","Edvard Munch Anxiety The Kiss painting","Edvard Munch The Scream Vampire"],
   "act":["The Scream: the world bends","Faces, hands and dark longing","Love and isolation","A moving sea of psychic colour","Return to the unforgettable cry"],
