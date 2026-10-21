@@ -208,7 +208,7 @@ def to_html(result):
                      '<details><summary>Verifiche e regia</summary><h3>Da verificare</h3><ul>'+
                      (issues or '<li>Nessuna segnalazione documentale</li>')+
                      '</ul><h3>Domande artistiche</h3><ul>'+questions+'</ul></details></article>')
-    return '''<!doctype html><html lang="it"><head><meta charset="utf-8">
+    return ('''<!doctype html><html lang="it"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0c1722">
 <title>Studio pre-lancio V18</title><style>
 :root{color-scheme:dark}*{box-sizing:border-box}body{font:16px/1.5 system-ui;margin:0;background:#0c1722;color:#f5f5f5}
@@ -235,7 +235,7 @@ escape(result['count_original_v14'])+''' recuperate · '''+escape(result['count_
 Questa pagina è consultabile offline anche su Android: non modifica le pipeline di produzione.</p></main>
 <script>const cards=[...document.querySelectorAll('.card')];const s=document.querySelector('#search'),k=document.querySelector('#kind'),v=document.querySelector('#visible');
 function refresh(){let n=0;for(const c of cards){const ok=c.textContent.toLocaleLowerCase('it').includes(s.value.toLocaleLowerCase('it'))&&(!k.value||c.dataset.kind===k.value);c.hidden=!ok;if(ok)n++;}v.textContent=n+' idee visibili';}
-s.addEventListener('input',refresh);k.addEventListener('change',refresh);refresh();</script></body></html>'''
+s.addEventListener('input',refresh);k.addEventListener('change',refresh);refresh();</script></body></html>''')
 
 
 def run(out, existing=None, additions=None, lessons=None, root=ROOT):
