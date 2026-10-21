@@ -44,7 +44,7 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
    <div class="field"><label for="cost">Costi imputati (€)</label><input id="cost" type="number" min="0" step="0.01" placeholder="Es. 1.5"></div>
    <div class="field"><label for="hours">Ore di lavoro imputate</label><input id="hours" type="number" min="0" step="0.1" placeholder="Es. 2.5"></div>
    <div class="field wide"><label for="url">Link pubblico del video (facoltativo)</label><input id="url" type="url" maxlength="500" placeholder="https://..."></div>
-   <div class="field full"><div class="actions"><button class="primary" type="submit" id="save">Salva statistiche</button><button type="button" id="export">↓ Esporta backup JSON</button><button type="button" id="importButton">↑ Importa backup JSON</button><input type="file" id="importFile" accept="application/json,.json" hidden></div><p class="note">Se pubblichi lo stesso MP4 su 3 piattaforme, imputa ore e costi una sola volta o suddividili fra le righe, altrimenti il profitto sarà falsato. Registra solo incassi effettivi, non quelli previsti.</p></div>
+   <div class="field full"><div class="actions"><button class="primary" type="submit" id="save">Salva statistiche</button><button type="button" id="export">↓ Esporta backup JSON</button><button type="button" id="importButton">↑ Importa backup JSON</button><button type="button" id="copyReport">✦ Copia report per ChatGPT</button><input type="file" id="importFile" accept="application/json,.json" hidden></div><p class="note">Se pubblichi lo stesso MP4 su 3 piattaforme, imputa ore e costi una sola volta o suddividili fra le righe, altrimenti il profitto sarà falsato. Registra solo incassi effettivi, non quelli previsti.</p></div>
   </form>
   <p class="note" id="message" role="status" aria-live="polite"></p>
  </section>
@@ -133,6 +133,13 @@ $('entryForm').addEventListener('submit',e=>{
 $('resetForm').addEventListener('click',resetForm);$('filter').addEventListener('change',renderRecords);$('sort').addEventListener('change',renderRecords);
 $('export').addEventListener('click',()=>{
  const content=JSON.stringify({version:1,created:new Date().toISOString(),records:rows},null,2);const blob=new Blob([content],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='creator-business-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);
+});
+$('copyReport').addEventListener('click',async()=>{
+ if(rows.length===0){$('message').textContent='Inserisci almeno un video per creare un report.';return}
+ const sorted=rows.slice().sort((a,b)=>b.date.localeCompare(a.date));
+ const data=sorted.map(r=>({data:r.date,video:r.title,categoria:r.category,piattaforma:r.platform,views:r.views,condivisioni:r.shares,ritenzione_media_sec:r.watch,durata_video_sec:r.duration,ricavi_reali_eur:r.revenue,costi_imputati_eur:r.cost,ore_imputate:r.hours,link:r.url}));
+ const prompt='Sei il direttore strategico del progetto Tra le Pagine / ArtVision / HyperLumen. Analizza SOLO i dati veri elencati. Rispetta la regia ArtVision Cinema V6, il racconto V12 e la voce Google. Non creare metriche fittizie. Confronta a parità di piattaforma e di età dei video; non definire vincitori su campioni minuscoli. Distingui views da ricavi; se i ricavi sono zero, proponi test realistici per servizi video e prodotti pertinenti. Produci: (1) analisi per categoria e piattaforma, (2) costo/ora e profitto con dati mancanti evidenziati, (3) tre ipotesi sperimentali su hook/titolo/musica/regia, (4) calendario prudente di 7 giorni, (5) quali video NON replicare perché troppo simili, (6) prime azioni commerciali misurabili. Non proporre pubblicazione senza il mio consenso. DATI JSON:\n'+JSON.stringify(data,null,2);
+ try{await navigator.clipboard.writeText(prompt);$('message').textContent='Report copiato. Incollalo nella nostra chat ChatGPT per una nuova analisi basata sui tuoi dati.'}catch{$('message').textContent='Il browser ha bloccato gli appunti. Usa Esporta backup JSON oppure apri la pagina da HTTPS.'}
 });
 $('importButton').addEventListener('click',()=>$('importFile').click());
 $('importFile').addEventListener('change',async e=>{
