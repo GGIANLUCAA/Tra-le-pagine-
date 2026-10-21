@@ -122,3 +122,7 @@ e la voce verificata. Rivedere master e kit, poi registrare una revisione con ha
 esatti in `queue/reviews_v16/`. Nessuna approvazione ripetuta all’utente per lavoro
 già autorizzato. Se mancano asset o capacità, indicare il blocco, non inventare
 dieci consegne. I master non revisionati restano nel pacchetto di lavoro.
+
+## Regia qualità aggiuntiva V17 (senza API, non distruttiva)
+
+Leggere [docs/QUALITY_DIRECTOR_V17.md](docs/QUALITY_DIRECTOR_V17.md) e `config/quality_director_v17.json`. Prima della produzione, dove esiste una scheda V13, eseguire `python src/quality_director_v17.py --project PATH/PROJECT_V13.json --out PATH/quality-preflight`: correggere le segnalazioni realmente rilevanti senza snaturare il preset. Per i lavori V16 il report finale V17 viene salvato accanto al master e al kit di revisione. V17 non certifica la bellezza, non verifica automaticamente le opere e non sostituisce la visione/ascolto integrali. Nessuna nuova API né costi obbligatori. Per nuove categorie creare una nuova policy, non modificare Cinema V6 Gold Master, Critico V2 o la voce Google già riuscita.

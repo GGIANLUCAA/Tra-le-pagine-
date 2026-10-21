@@ -189,6 +189,14 @@ def run_locked(queue_file,workspace,fallback_state,timeout):
             info=probe_video(video);rec=read_json(recipe)
             if rec.get('schema')!='video-recipe-v13' or rec.get('video',{}).get('sha256')!=digest(video):raise ValueError('Ricetta e master non corrispondenti')
             review_kit(video,out)
+            # V17 is additive: its failure never deletes a master or changes V16 qualification.
+            try:
+                from quality_director_v17 import inspect as quality_inspect_v17
+                quality_inspect_v17(video=video, project=stage/job['project_file'], out=out)
+            except Exception as qa_error:
+                (out/'QUALITY_V17_ERROR.txt').write_text(
+                    type(qa_error).__name__ + ': ' + str(qa_error)[:500] + '\n',
+                    encoding='utf-8')
             with mutex:
                 state['jobs'][ident].update({'status':'rendered_needs_review','finished_utc':stamp(),'video_file':video.relative_to(ROOT).as_posix(),'video_sha256':digest(video),'recipe_file':recipe.relative_to(ROOT).as_posix(),'recipe_sha256':digest(recipe),'technical':info,'review':'pending_agent_playback_and_sources'});save()
         except Exception as exc:
