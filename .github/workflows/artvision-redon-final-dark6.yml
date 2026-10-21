@@ -1,0 +1,32 @@
+name: ArtVision Redon - final seven-artwork recovery
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-redon-final-dark6.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install render engine
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: Render seven or more artwork film
+        run: python modules/artvision/redon_dark_lotto6_recovery.py
+      - name: Export final video credits cover
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_DARK6_REDON_FINAL
+          path: output/artvision-lotto6-inquietudine/redon/film/
+          if-no-files-found: error
+          retention-days: 7
