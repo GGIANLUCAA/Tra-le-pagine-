@@ -29,7 +29,7 @@ jobs:
           SITE: 'https://video-library-studio.600led.workers.dev'
           SOURCE: 'https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/main/site/video-library-v2.html'
           AUD: 'vls-gh-import-2026'
-          LIMIT: '12'
+          LIMIT: '0'
         shell: bash
         run: |
           python3 - <<'PY'
@@ -65,7 +65,7 @@ jobs:
           metadata=current.json()
           print('Catalog assets:',len(assets),'Already enriched:',len(metadata),flush=True)
           need=[v for v in assets if v['key'] not in metadata or not v.get('cover')]
-          need.sort(key=lambda x:(x['key'] in metadata,x.get('size',0)))
+          need.sort(key=lambda x:(not x['key'].upper().startswith('ARTVISION_'),x['key'] in metadata,x.get('size',0)))
           limit=max(0,int(os.getenv('LIMIT','12') or '12'))
           if limit:need=need[:limit]
           count=0;failures=0
