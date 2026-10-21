@@ -27,7 +27,7 @@ studio.P.update({
  "key":["nightmare","incubus","witch","ghost","dream","lady","apparition","horse","titania","shakespeare","night"],
  "find":["Henry Fuseli The Nightmare painting","Henry Fuseli ghost gothic paintings","Johann Heinrich Füssli paintings","Henry Fuseli Shakespeare paintings"],
  "act":["The first face in the dark","A dream becomes a nightmare","Shadows and theatrical figures","The mysteries of sleep","Return to the impossible visitor"],
- "track":"night_on_the_docks_piano"},
+ "track":"music_for_manatees"},
 "bocklin":{
  "name":"Arnold Böcklin","duration":118,
  "hero":"Arnold Böcklin - Die Toteninsel III (1883).jpg",
@@ -43,7 +43,13 @@ studio.P.update({
  "act":["An enormous eye appears","Floating faces and impossible beings","A universe drawn from dreams","The strange becomes beautiful","The eye returns"],
  "track":"calmant"}
 })
-studio.SOUND["night_on_the_docks_piano"]=studio.SOUND["night_on_the_docks_piano"]
+studio.SOUND["music_for_manatees"]={
+ "title":"Music for Manatees","author":"Kevin MacLeod",
+ "page":"https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400009",
+ "urls":["https://incompetech.com/music/royalty-free/mp3-royaltyfree/Music%20for%20Manatees.mp3"],
+ "license":"CC BY 4.0","license_url":studio.LICENSE_URL,
+ "expected_seconds":1056,"instrumental":True}
+
 ALIASES={
  "bosch_dark":["bosch"],
  "gericault":["gericault","géricault","géricault","gé́ricault"],
