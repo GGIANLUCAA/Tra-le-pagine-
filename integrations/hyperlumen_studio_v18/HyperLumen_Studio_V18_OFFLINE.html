@@ -1,0 +1,240 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#080f1d"><title>HyperLumen Studio V18 · Music First</title><style>:root{font-family:Inter,system-ui,-apple-system,Roboto,sans-serif;color:#eaf0fa;background:#080f1d;font-synthesis:none}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 30% -10%,#173455 0%,#080f1d 45%)}.shell{max-width:1080px;margin:0 auto;padding:18px 14px 40px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:10px}.eyebrow{font-family:Georgia,serif;letter-spacing:.19em;color:#e4c08b;font-size:11px}h1{font-family:Georgia,serif;font-weight:400;letter-spacing:.02em;font-size:clamp(29px,5vw,41px);margin:5px 0}h1 span{font:500 12px system-ui;border:1px solid #586779;border-radius:15px;padding:3px 8px;color:#bdcddd;vertical-align:middle}header p{margin:0;color:#aebdca;font-size:13px}.version{font-size:10px;color:#d4b683;white-space:nowrap}.stage-card{max-width:500px;margin:auto;background:#0a1523;border:1px solid #2a3a52;border-radius:20px;overflow:hidden;box-shadow:0 16px 42px #010816aa}.stage{position:relative;width:100%;aspect-ratio:9/16;max-height:70vh;overflow:hidden;background:radial-gradient(ellipse at center,#142b43,#02050c 80%)}#gl,#composite{position:absolute;inset:0;width:100%;height:100%;display:block}#gl{opacity:0;pointer-events:none}.stage-loader{position:absolute;left:0;right:0;top:48%;text-align:center;font-size:13px;color:#c0d5eb;pointer-events:none}.transport{display:flex;align-items:center;gap:9px;padding:13px;background:#111c2b}.transport button{flex:none}.transport input{flex:1;min-width:10px}.transport span{font-variant-numeric:tabular-nums;color:#a6b6c9;font-size:12px;min-width:40px}button{cursor:pointer;touch-action:manipulation;color:#e8f2ff;border:1px solid #485d73;background:#17273b;border-radius:12px;padding:10px 13px;font-weight:600}button:disabled{opacity:.45;cursor:not-allowed}button.primary{border-color:#dcb780;background:linear-gradient(135deg,#e0bc87,#a78358);color:#111b24}button.secondary{background:#1b344b;border-color:#48637d}.panel{max-width:800px;margin:16px auto;background:#101c2b;border:1px solid #2c4054;border-radius:18px;padding:17px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}h2{font-weight:600;font-size:17px;margin:0}.chip{font-size:10px;padding:5px 9px;border:1px solid #577081;color:#a8cedb;border-radius:18px;white-space:nowrap}.upload-grid,.style-grid,.compact,.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.upload{background:#1c2f44;border:1px dashed #5b7590;border-radius:12px;padding:14px 10px;text-align:center;font-size:14px;font-weight:650;cursor:pointer}.upload input{display:none}.compact{margin:12px 0 0}.compact label{display:flex;flex-direction:column;gap:5px;color:#b7c9dd;font-size:12px}.compact input{width:100%;background:#071525;color:#eaf1fb;border:1px solid #38536c;border-radius:9px;padding:9px;min-width:0}.compact input[type=range]{padding:0;height:35px}.style-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.style{font-size:13px;text-align:center;min-height:70px}.style.selected{border-color:#e6c184;box-shadow:0 0 0 1px #e6c18455;background:#233957}.style small{display:block;color:#a4bad0;font-size:10px;font-weight:400;margin-top:6px}.muted{font-size:12px;color:#99adc1;line-height:1.45}.actions{grid-template-columns:repeat(3,minmax(0,1fr))}.actions button{font-size:12px;padding:10px 7px}.qa{line-height:1.6;font-size:13px;color:#d3e5ef;margin-top:9px}.qa strong{color:#d8c393}footer{text-align:center;font-size:11px;color:#8294a6;margin:25px auto}@media(max-width:500px){.shell{padding:14px 9px 30px}.panel{padding:13px}.transport{gap:6px}.transport button{padding:8px 9px}.style-grid{grid-template-columns:1fr 1fr}.style:last-child{grid-column:1/-1}.actions{grid-template-columns:1fr 1fr}.actions #record{grid-column:1/-1}}
+</style></head>
+<body><main class="shell">
+<header><div><div class="eyebrow">H Y P E R L U M E N</div><h1>Music Studio <span>V18</span></h1><p>Prima la musica. Poi la coreografia.</p></div><div class="version">MOBILE · GPU</div></header>
+<section class="stage-card"><div class="stage" id="stage"><canvas id="gl"></canvas><canvas id="composite" width="540" height="960" aria-label="Anteprima musicale GPU"></canvas><div class="stage-loader" id="stageLoader">Inizializzazione grafica…</div></div>
+<div class="transport"><button id="play" class="primary">▶ Riproduci</button><button id="restart" title="Torna all’inizio">↺</button><input id="seek" aria-label="Posizione" type="range" min="0" max="1000" value="0"><span id="clock">00:00</span></div></section>
+<section class="panel"><div class="panel-head"><h2>1. Musica</h2><span class="chip">MIDI = verità delle note</span></div><div class="upload-grid"><label class="upload">🎼 Importa MIDI<input type="file" id="midiFile" accept=".mid,.midi,audio/midi"></label><label class="upload">🎧 Importa audio<input type="file" id="audioFile" accept="audio/*"></label></div><p id="musicInfo" class="muted">Demo originale incluso · Audio di prova sintetico, non destinato alla pubblicazione.</p><div class="compact"><label>Titolo<input id="titleInput" maxlength="46" value="THE LIGHT BETWEEN NOTES"></label><label>Autore<input id="artistInput" maxlength="54" value="HYPERLUMEN ORIGINAL DEMO"></label></div><div class="compact"><label>Offset audio ↔ MIDI (ms)<input id="offset" type="number" value="0" step="10" min="-10000" max="10000"></label><label>Durata estratto (s)<input id="durationInput" type="number" value="23" min="6" max="180" step="1"></label></div></section>
+<section class="panel"><div class="panel-head"><h2>2. Regia</h2><span class="chip">Note · frasi · dinamica</span></div><div class="style-grid"><button class="style selected" data-scene="glass">◈ Glass Highway<small>Spartito 3D prospettico</small></button><button class="style" data-scene="helix">◎ Helix Cathedral<small>Musica in una spirale</small></button><button class="style" data-scene="aurora">✦ Aurora Rivers<small>Fiumi luminosi sospesi</small></button></div><div class="compact"><label>Intensità scie<input id="trails" type="range" min="30" max="110" value="68"></label><label>Densità particelle<input id="density" type="range" min="30" max="120" value="80"></label></div><p class="muted">Tutte le scene usano le stesse note MIDI. Cambiano ambiente, movimento di camera e linguaggio geometrico.</p></section>
+<section class="panel"><div class="panel-head"><h2>3. Esportazione e controllo</h2><span id="status" class="chip">Anteprima pronta</span></div><div class="actions"><button class="secondary" id="qa">✓ Verifica progetto</button><button class="secondary" id="savePreset">↓ Salva ricetta</button><button class="primary" id="record">● Registra video</button></div><p id="recordHelp" class="muted">L'esportazione usa le capacità del browser Android: formato MP4 solo se supportato, altrimenti WebM. Il rendering è in tempo reale.</p><div id="qaReport" class="qa"></div></section>
+<footer>HyperLumen V18 · Prototipo tecnico funzionante · Nessuna pubblicazione automatica · I file restano sul dispositivo.</footer>
+</main><script>// HyperLumen MIDI Timeline: standalone, zero dependencies, tempo-map aware.
+function parseMidi(buffer) {
+  const dv=new DataView(buffer); let p=0;
+  function u8(){if(p>=dv.byteLength)throw Error('MIDI troncato');return dv.getUint8(p++);}
+  function u16(){const n=dv.getUint16(p);p+=2;return n;}
+  function u32(){const n=dv.getUint32(p);p+=4;return n;}
+  function str(n){let s='';for(let i=0;i<n;i++)s+=String.fromCharCode(u8());return s;}
+  function vlq(){let v=0;for(let i=0;i<4;i++){const b=u8();v=(v<<7)|(b&127);if(!(b&128))return v;}throw Error('VLQ invalido');}
+  if(str(4)!=='MThd')throw Error('File MIDI non riconosciuto');
+  const headerSize=u32(),format=u16(),numTracks=u16(),division=u16();p=8+headerSize;
+  if(division&0x8000)throw Error('MIDI con timecode SMPTE non supportato');
+  if(!division||numTracks>128)throw Error('Intestazione MIDI non valida');
+  const rawNotes=[],tempoEvents=[{tick:0,us:500000}],trackMeta=[];
+  for(let track=0;track<numTracks;track++){
+    if(str(4)!=='MTrk')throw Error('Traccia MIDI assente');
+    const length=u32(),end=p+length;if(end>dv.byteLength)throw Error('Traccia troncata');
+    let tick=0,running=0,name=`Track ${track+1}`;const active=new Map();
+    while(p<end){tick+=vlq();let status=u8();if(status<128){if(!running)throw Error('Running status mancante');p--;status=running;}else if(status<240)running=status;
+      if(status===0xff){const kind=u8(),size=vlq(),start=p;
+        if(kind===0x51&&size===3){const us=(u8()<<16)|(u8()<<8)|u8();tempoEvents.push({tick,us});}
+        else if(kind===0x03){name=str(size);}p=start+size;
+      }else if(status===0xf0||status===0xf7){p+=vlq();}
+      else if(status<240){const type=status&0xf0,ch=status&15,a=u8(),b=(type===0xc0||type===0xd0)?0:u8();
+        const key=`${ch}:${a}`;
+        if(type===0x90&&b>0){const q=active.get(key)||[];q.push({tick,pitch:a,velocity:b/127,track,channel:ch});active.set(key,q);}
+        if(type===0x80||(type===0x90&&b===0)){const q=active.get(key);if(q?.length){const n=q.shift();rawNotes.push({...n,endTick:Math.max(tick,n.tick+1)});}}
+      }else throw Error(`Evento MIDI non supportato: ${status}`);
+    }
+    p=end;for(const q of active.values())for(const n of q)rawNotes.push({...n,endTick:Math.max(tick,n.tick+division/8)});
+    trackMeta.push({track,name});
+  }
+  // Same-tick tempos: last effective tempo wins.
+  tempoEvents.sort((a,b)=>a.tick-b.tick);const tempos=[];
+  for(const e of tempoEvents){if(tempos.length&&tempos.at(-1).tick===e.tick)tempos.at(-1).us=e.us;else tempos.push({...e});}
+  let secs=0;for(let i=0;i<tempos.length;i++){if(i)secs+=(tempos[i].tick-tempos[i-1].tick)*tempos[i-1].us/(1e6*division);tempos[i].sec=secs;}
+  function toSec(tick){let lo=0,hi=tempos.length-1;while(lo<hi){const mid=Math.ceil((lo+hi)/2);if(tempos[mid].tick<=tick)lo=mid;else hi=mid-1;}const tm=tempos[lo];return tm.sec+(tick-tm.tick)*tm.us/(1e6*division);}
+  const notes=rawNotes.map(n=>({start:toSec(n.tick),end:toSec(n.endTick),pitch:n.pitch,velocity:n.velocity,track:n.track,channel:n.channel})).sort((a,b)=>a.start-b.start||a.pitch-b.pitch);
+  const duration=notes.length?Math.max(...notes.map(n=>n.end)):0;
+  return {notes,tempos,tracks:trackMeta,duration,format,division,source:'imported MIDI'};
+}
+function demoScore(){
+ const patterns=[
+  [48,55,60,64,67,72,76,79],[50,57,62,65,69,74,77,81],
+  [45,52,57,60,64,69,72,76],[43,50,55,59,62,67,71,74],
+  [48,55,60,64,67,72,76,79],[53,60,65,69,72,77,81,84],
+  [50,57,62,65,69,74,77,81],[48,55,60,64,67,72,76,84]
+ ];
+ const notes=[],step=.35;
+ patterns.forEach((pat,bar)=>{
+   const at=bar*8*step;
+   notes.push({start:at,end:at+2.7,pitch:pat[0],velocity:.56,track:0,channel:0});
+   for(let i=0;i<8;i++)notes.push({start:at+i*step,end:at+(i+.83)*step,pitch:pat[i],velocity:.49+.12*Math.sin((i+bar)*.7),track:1,channel:0});
+   if(bar>=2&&bar<=6){const mel=[pat[4],pat[5],pat[6],pat[7],pat[6],pat[5],pat[4],pat[2]];mel.forEach((pitch,i)=>notes.push({start:at+i*step,end:at+(i+.9)*step,pitch,velocity:.68,track:2,channel:0}));}
+ });
+ const duration=8*8*step+1;
+ return {notes,duration,tracks:[{track:0,name:'Basso'},{track:1,name:'Arpeggi'},{track:2,name:'Melodia'}],source:'Demo originale / anteprima sintetica'};
+}
+
+// Pure musical-feature extraction. No fake aesthetic quality score.
+const clampFeature=(v,a,b)=>Math.max(a,Math.min(b,v));
+function analyzeScore(score){
+ const {notes}=score;
+ const step=.12,binCount=Math.ceil(score.duration/step)+1,bins=Array.from({length:binCount},()=>({onsets:0,energy:0,high:0,bass:0,centroid:0}));
+ let maxDensity=1;
+ for(const n of notes){const k=clampFeature(Math.floor(n.start/step),0,binCount-1);const b=bins[k];b.onsets++;b.energy+=n.velocity;b.high+=n.pitch>=70?1:0;b.bass+=n.pitch<=53?1:0;b.centroid+=n.pitch;maxDensity=Math.max(maxDensity,b.onsets);}
+ for(const b of bins){b.centroid=b.onsets?b.centroid/b.onsets:60;b.energy=clampFeature(b.energy/3,0,1);}
+ const sorted=notes.slice().sort((a,b)=>a.start-b.start);
+ const phrases=[];let begin=0;
+ for(let i=1;i<sorted.length;i++)if(sorted[i].start-sorted[i-1].start>.85){if(sorted[i-1].start-begin>.8)phrases.push({start:begin,end:sorted[i-1].end});begin=sorted[i].start;}
+ if(sorted.length)phrases.push({start:begin,end:score.duration});
+ function frame(t){const idx=clampFeature(Math.round(t/step),0,binCount-1);const a=bins[idx],past=bins[Math.max(0,idx-3)];
+   let e=0,d=0,high=0,bass=0;for(let i=Math.max(0,idx-3);i<=Math.min(binCount-1,idx+2);i++){const w=1-Math.abs(i-idx)/8;e+=bins[i].energy*w;d+=bins[i].onsets*w;high+=bins[i].high*w;bass+=bins[i].bass*w;}
+   return {energy:clampFeature(e/3,0,1),density:clampFeature(d/5,0,1),high:clampFeature(high/4,0,1),bass:clampFeature(bass/4,0,1),onset:a.onsets>0,brightness:clampFeature((a.centroid-40)/48,0,1),rise:a.centroid-past.centroid};
+ }
+ return {frame,phrases,counts:{notes:notes.length,tracks:score.tracks.length,phrases:phrases.length},summary:{duration:score.duration,notes:notes.length,tracks:score.tracks.map(t=>t.name),tempoChanges:score.tempos?.length??'demo'}};
+}
+function qualityPreflight(score,audioFile){
+ const faults=[];if(!score.notes.length)faults.push('Il file MIDI non contiene note');
+ if(score.duration<6)faults.push('Estratto musicale troppo corto per una regia completa');
+ if(!audioFile)faults.push('Manca un audio di qualità: la sintesi interna è solo un riferimento');
+ return {readyForFinalExport:!faults.length,notes:score.notes.length,duration:score.duration,warnings:faults};
+}
+
+
+const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const ui={gl:$('gl'),composite:$('composite'),play:$('play'),seek:$('seek'),clock:$('clock'),status:$('status'),loader:$('stageLoader'),qa:$('qaReport')};
+let score=demoScore(),director=analyzeScore(score),scene='glass',cursor=0,playing=false,recording=false;
+let audioUrl=null,audioFile=null,audio=$audio(),ctx=null,mediaSource=null,mediaDest=null,origin=0,synthTimer=null,scheduled=new Set(),voices=[];
+let playDuration=23,recordChunks=[],recorder=null;
+let painter=null,gl=null,program=null,buf=null,vertices=[],lineVertices=[];
+const BASEW=540,BASEH=960,colors=[[0.23,0.95,1],[1,.34,.7],[1,.79,.36],[.66,.54,1]];
+function $audio(){let a=new Audio();a.preload='auto';a.crossOrigin='anonymous';a.addEventListener('ended',()=>stop());return a;}
+function vecColor(n){return colors[(n.track||0)%colors.length];}
+function setStatus(s){ui.status.textContent=s;}
+function txt(t){return String(t).replace(/[<>&"']/g,'');}
+function updInfo(){const tracks=score.tracks.map(t=>t.name).join(', ');$('musicInfo').textContent=`${score.notes.length} note · ${score.duration.toFixed(1)} s · ${score.tracks.length} tracce: ${tracks}${audioFile?' · audio allegato':' · audio dimostrativo sintetico'}`;}
+function resize(){const dpr=Math.min(devicePixelRatio||1,1.65);const viewWidth=ui.composite.clientWidth||540;let w=Math.round(viewWidth*dpr),h=Math.round(w*16/9);w=clamp(w,360,1080);h=clamp(h,640,1920);ui.gl.width=w;ui.gl.height=h;ui.composite.width=w;ui.composite.height=h;gl?.viewport(0,0,w,h);}
+function shader(type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
+function initGL(){gl=ui.gl.getContext('webgl2',{alpha:false,antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});if(!gl)throw Error('WebGL2 non disponibile');
+ const vert=`#version 300 es
+ precision highp float;in vec3 aPos;in vec4 aColor;in float aSize;out vec4 vColor;uniform float uAspect;uniform float uCamera;uniform float uMode;uniform float uPoint;
+ void main(){vec3 p=aPos;float a=uCamera;float x=p.x*cos(a)+p.z*sin(a);float z=-p.x*sin(a)+p.z*cos(a);float depth=max(1.2,4.5+z);float aspect=max(.3,uAspect);vec2 clip=vec2(x/(depth*.67*aspect),p.y/(depth*.95));gl_Position=vec4(clip,0.0,1.0);gl_PointSize=clamp(aSize*4.5/depth,1.0,82.0);vColor=aColor;}`;
+ const frag=`#version 300 es
+ precision mediump float;in vec4 vColor;out vec4 outColor;uniform float uPoint;
+ void main(){float a=vColor.a;if(uPoint>0.5){vec2 q=gl_PointCoord-.5;float r=dot(q,q);if(r>.25)discard;float halo=exp(-r*11.0)*.36+exp(-r*95.0)*.9;a*=halo;}outColor=vec4(vColor.rgb*a,a);}`;
+ program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vert));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,frag));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));
+ buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);const stride=8*4;for(const [name,size,offset] of [['aPos',3,0],['aColor',4,3],['aSize',1,7]]){const loc=gl.getAttribLocation(program,name);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,size,gl.FLOAT,false,stride,offset*4);}gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.disable(gl.DEPTH_TEST);gl.useProgram(program);
+}
+function pushPoint(out,x,y,z,col,a,size){if(a>.005&&Number.isFinite(x+y+z))out.push(x,y,z,col[0],col[1],col[2],a,size);}
+function path(n,age,time,style){const tr=n.track%4,p=(n.pitch-62)/24,seed=n.pitch*.147+n.track*2.9;
+ if(style==='helix'){const angle=age*1.1+seed;return [Math.cos(angle)*(1.55+tr*.16),p*.7+Math.sin(age*.53+seed)*.32,Math.sin(angle)*(1.55+tr*.16)-1.1];}
+ if(style==='aurora'){const x=age*1.8-2.1,y=p*1.45+Math.sin(x*.82+seed)*.47+Math.sin(time*.45+tr)*.21,z=-1.8+Math.cos(x*.68+seed)*.85;return [x,y,z];}
+ return [age*1.65-1.5,p*.87+Math.sin(age*2+seed)*.14,tr*.35-1.9+Math.cos(age*.8+seed)*.20];}
+function generateBackground(time,f){
+ const grid=[.07,.25,.38];const ambient=scene==='aurora'?[.16,.49,.60]:scene==='helix'?[.41,.31,.52]:grid;
+ if(scene==='glass'){
+   for(let lane=-7;lane<=7;lane++){
+     const y=lane*.19;for(let k=-25;k<25;k++){
+       const x=k*.22,warp=Math.sin(k*.09+time*.08)*.012;
+       const a=[x,y+warp,-2.1],b=[x+.22,y+warp,-2.1];pushPoint(lineVertices,...a,[.20,.54,.67],.20,1);pushPoint(lineVertices,...b,[.20,.54,.67],.20,1);
+     }
+   }
+   for(let k=-16;k<=16;k++){const x=k*.42;pushPoint(lineVertices,x,-1.5,-2.1,ambient,.085,1);pushPoint(lineVertices,x,1.5,-2.1,ambient,.085,1);}
+ }else if(scene==='helix'){
+   for(let r=0;r<5;r++){const radius=1.2+r*.25;
+     for(let k=0;k<90;k++){const a=k*Math.PI/18+time*.09, b=(k+1)*Math.PI/18+time*.09;
+       pushPoint(lineVertices,Math.cos(a)*radius,Math.sin(k*.2+r)*.55,Math.sin(a)*radius-1,[.24,.42,.57],.10,1);pushPoint(lineVertices,Math.cos(b)*radius,Math.sin((k+1)*.2+r)*.55,Math.sin(b)*radius-1,[.24,.42,.57],.10,1);
+     }
+   }
+ }else{
+   for(let i=0;i<22;i++){const y=(i-11)*.14,z=-1.6+Math.cos(i*.6+time*.14)*.26;
+      for(let k=-18;k<=18;k++){const x=k*.24,yy=y+Math.sin(x*.66+i*.23+time*.24)*.24;
+        pushPoint(lineVertices,x,yy,z,ambient,.09,1);pushPoint(lineVertices,x+.24,y+Math.sin((x+.24)*.66+i*.23+time*.24)*.24,z,ambient,.09,1);
+      }
+   }
+ }
+ // Deterministic stars, no per-frame random flicker.
+ for(let i=0;i<210;i++){const h=Math.sin(i*79.53)*43758.54,s=h-Math.floor(h),v=Math.sin(i*31.71)*73425.64,q=v-Math.floor(v);
+   const x=(s-.5)*10,y=(q-.5)*13,z=2.2+Math.sin(i*3.2)*.6;const a=.08+.11*(.5+.5*Math.sin(i+time*.45));pushPoint(vertices,x,y,z,[.43,.61,.77],a,1.9);
+ }
+}
+function buildScene(t){vertices=[];lineVertices=[];const f=director.frame(t),noteDensity=parseInt($('density').value,10)/80,trailLength=parseInt($('trails').value,10)/68;
+ generateBackground(t,f);
+ const view=2.75*Math.max(.65,trailLength),last=t-3.2,first=t+1.4;
+ // Notes are drawn directly from their MIDI timestamps; every head and tail shares the note's track and pitch.
+ for(const n of score.notes){const on=n.start+Number($('offset').value||0)/1000;
+   if(on>first||on+n.end-n.start+view<last)continue;
+   const head=t-on,rem=n.end-n.start;const col=vecColor(n),vel=.6+n.velocity*.5;
+   if(head<-1.1||head>rem+view+.5)continue;
+   const halo=clamp(1-Math.abs(head-.03)*1.6,0,1),visible=head>=0?1:.20;
+   const xAge=clamp(head,0,rem+view),p=path(n,xAge,t,scene);
+   if(head>=0){const samples=Math.round(15*noteDensity+11);let prev=null;
+    for(let j=0;j<=samples;j++){const age=xAge-j/samples*view; if(age<0)continue;
+      const xyz=path(n,age,t,scene),fade=(1-j/samples)*visible*vel*.65;
+      pushPoint(vertices,...xyz,col,fade,Math.max(3,16*(1-j/samples)));
+      if(prev){pushPoint(lineVertices,...prev,col,fade*.40,1);pushPoint(lineVertices,...xyz,col,fade*.40,1);}prev=xyz;
+    }
+    // Dense particles around real note attacks; seeded offsets avoid frame-to-frame jitter.
+    const bursts=Math.max(5,Math.round(9*noteDensity));
+    if(head<.75)for(let k=0;k<bursts;k++){const angle=k*2.399+n.pitch*.1,rad=Math.pow(head+.04,.58)*(k%4+1)*.045;
+      pushPoint(vertices,p[0]+Math.cos(angle)*rad,p[1]+Math.sin(angle)*rad,p[2]+Math.cos(angle*1.5)*rad,col,(1-head/.75)*.53,3.5);
+    }
+    pushPoint(vertices,...p,col,.86+.11*halo,23+12*halo);pushPoint(vertices,...p,[1,1,1],.78,6);
+   }else{const ghost=path(n,0,t,scene);pushPoint(vertices,...ghost,col,.18*(1+head),6);}
+ }
+ // Phrase-aware highlight: musical density and sustained notes control brightness, not random scaling.
+ if(f.energy>.32){for(let i=0;i<12;i++){const a=i*2.4+t*.1;
+     pushPoint(vertices,Math.cos(a)*.43,Math.sin(a)*.4,-2.4,[.58,.77,.89],f.energy*.10,4);
+   }}
+ return f;
+}
+function uploadDraw(v,mode,point,cam){if(v.length<8)return;const data=new Float32Array(v);gl.bufferData(gl.ARRAY_BUFFER,data,gl.DYNAMIC_DRAW);gl.uniform1f(gl.getUniformLocation(program,'uPoint'),point);gl.uniform1f(gl.getUniformLocation(program,'uAspect'),ui.gl.width/ui.gl.height);gl.uniform1f(gl.getUniformLocation(program,'uCamera'),cam);gl.drawArrays(mode,0,data.length/8);}
+function drawOverlay(t,f){const w=ui.composite.width,h=ui.composite.height,c=painter;const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,'rgba(1,5,11,.75)');g.addColorStop(.22,'rgba(1,5,11,0)');g.addColorStop(.75,'rgba(2,7,15,0)');g.addColorStop(1,'rgba(2,7,15,.92)');c.fillStyle=g;c.fillRect(0,0,w,h);
+ c.textAlign='center';c.fillStyle='#e6c993';c.font=`${Math.round(w*.027)}px Georgia`;c.fillText('H  Y  P  E  R  L  U  M  E  N',w/2,h*.069);
+ c.fillStyle='#f4f2e9';c.font=`${Math.round(w*.062)}px Georgia`;const title=txt($('titleInput').value).toUpperCase();c.fillText(title.length>26?title.slice(0,25)+'…':title,w/2,h*.122,w*.95);
+ c.fillStyle='#b4c7d7';c.font=`${Math.round(w*.025)}px system-ui`;c.fillText(txt($('artistInput').value).toUpperCase(),w/2,h*.157,w*.89);
+ c.strokeStyle='rgba(222,193,136,.50)';c.lineWidth=1;c.beginPath();c.moveTo(w*.18,h*.182);c.lineTo(w*.82,h*.182);c.stroke();
+ const y=h*.83;c.fillStyle='#ccbca4';c.font=`${Math.round(w*.028)}px system-ui`;c.fillText(({glass:'GLASS HIGHWAY',helix:'HELIX CATHEDRAL',aurora:'AURORA RIVERS'})[scene],w/2,y);
+ c.fillStyle='#8eabb9';c.font=`${Math.round(w*.021)}px system-ui`;c.fillText(`${director.counts.notes} MIDI NOTES · ${director.counts.tracks} TRACKS · MUSIC-DRIVEN`,w/2,y+h*.034);
+ const x=w*.16,barY=h*.90,barW=w*.68;c.fillStyle='rgba(121,164,181,.24)';c.fillRect(x,barY,barW,2);c.fillStyle='#e3bb7a';c.fillRect(x,barY,barW*clamp(t/playDuration,0,1),2);
+ c.fillStyle='#c8d9e4';c.fillText(`${fmt(t)}  /  ${fmt(playDuration)}`,w/2,barY+h*.034);
+}
+function frame(t){if(!gl||gl.isContextLost())return;gl.viewport(0,0,ui.gl.width,ui.gl.height);gl.clearColor(.005,.017,.037,1);gl.clear(gl.COLOR_BUFFER_BIT);const f=buildScene(t);const cam=scene==='helix'?.09*Math.sin(t*.36):scene==='aurora'?.035*Math.sin(t*.3):.017*Math.sin(t*.22);
+ uploadDraw(lineVertices,gl.LINES,0,cam);uploadDraw(vertices,gl.POINTS,1,cam);
+ painter.clearRect(0,0,ui.composite.width,ui.composite.height);painter.drawImage(ui.gl,0,0,ui.composite.width,ui.composite.height);drawOverlay(t,f);
+}
+function fmt(t){t=Math.max(0,Math.floor(t||0));return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');}
+function updateTime(t){cursor=clamp(t,0,playDuration);ui.seek.value=Math.round(cursor/playDuration*1000);ui.clock.textContent=fmt(cursor);}
+function playClock(){if(!playing)return;const t=audioFile?audio.currentTime:ctx.currentTime-origin;
+ updateTime(t);if(cursor>=playDuration){stop();if(recording)finishRecording();}}
+function animate(){requestAnimationFrame(animate);playClock();frame(cursor);}
+function getContext(){if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();mediaDest=ctx.createMediaStreamDestination();}return ctx;}
+function scheduleSynth(){if(audioFile||!playing||!ctx)return;const now=ctx.currentTime,horizon=now+.30;
+ for(const n of score.notes){const id=`${n.track}|${n.pitch}|${n.start}`;if(scheduled.has(id))continue;const when=origin+n.start+Number($('offset').value||0)/1000;if(when>horizon||when<now-.045)continue;scheduled.add(id);
+   const len=Math.max(.06,n.end-n.start),vol=Math.min(.09,.042*n.velocity),node=ctx.createGain(),filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=2300;
+   node.gain.setValueAtTime(.0001,Math.max(now,when));node.gain.exponentialRampToValueAtTime(vol,Math.max(now,when)+.012);node.gain.exponentialRampToValueAtTime(.0001,Math.max(now,when)+Math.min(2.2,len+.35));filter.connect(node);node.connect(ctx.destination);node.connect(mediaDest);
+   for(const [mult,gain] of [[1,1],[2,.18],[3,.08]]){const o=ctx.createOscillator(),v=ctx.createGain();o.type='sine';o.frequency.value=440*2**((n.pitch-69)/12)*mult;v.gain.value=gain;o.connect(v);v.connect(filter);o.start(Math.max(now,when));o.stop(Math.max(now,when)+Math.min(2.4,len+.45));voices.push(o);}
+ }
+}
+function clearVoices(){for(const o of voices)try{o.stop()}catch{}voices=[];scheduled.clear();clearInterval(synthTimer);synthTimer=null;}
+async function play(){if(playing)return;try{const ac=getContext();await ac.resume();if(audioFile){if(!mediaSource){mediaSource=ctx.createMediaElementSource(audio);mediaSource.connect(ctx.destination);mediaSource.connect(mediaDest);}audio.currentTime=clamp(cursor,0,Math.max(.01,audio.duration||1e9));await audio.play();}else{origin=ctx.currentTime-cursor;clearVoices();synthTimer=setInterval(scheduleSynth,110);scheduleSynth();}
+ playing=true;ui.play.textContent='Ⅱ Pausa';setStatus('Riproduzione');}catch(e){setStatus('Errore audio');ui.qa.textContent=e.message;}}
+function pause(){if(!playing)return;playing=false;if(audioFile)audio.pause();else{cursor=ctx.currentTime-origin;clearVoices();}ui.play.textContent='▶ Riproduci';setStatus('In pausa');}
+function stop(){pause();updateTime(0);if(audioFile)audio.currentTime=0;setStatus('Anteprima pronta');}
+async function startRecording(){if(recording)return;if(!gl){setStatus('GPU non disponibile');ui.qa.textContent='Serve WebGL2 per registrare effetti 3D. Aprire con Chrome aggiornato su Android.';return;}const ac=getContext();await ac.resume();const mime=['video/mp4;codecs="avc1.42E01E,mp4a.40.2"','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x));
+ if(!mime){setStatus('Export non disponibile');ui.qa.textContent='Questo browser non supporta MediaRecorder. Usa Chrome Android aggiornato.';return;}
+ stop();updateTime(0);frame(0);const stream=ui.composite.captureStream(30);for(const tr of mediaDest.stream.getAudioTracks())stream.addTrack(tr);
+ recordChunks=[];recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:Math.min(8500000,5000000)});recorder.ondataavailable=e=>{if(e.data.size)recordChunks.push(e.data)};
+ recorder.onstop=()=>{const ext=mime.startsWith('video/mp4')?'mp4':'webm',blob=new Blob(recordChunks,{type:mime}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`HyperLumen_${scene}_${new Date().toISOString().slice(0,10)}.${ext}`;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),30000);recording=false;$('record').textContent='● Registra video';setStatus(`Salvato .${ext}`);};
+ recorder.start(800);recording=true;$('record').textContent='■ Termina e salva';setStatus('Registrazione in corso');await play();}
+function finishRecording(){if(recording&&recorder?.state!=='inactive'){recorder.stop();clearVoices();for(const tr of recorder.stream?.getTracks?.()||[])tr.stop();}}
+function downloadText(name,s){const a=document.createElement('a'),u=URL.createObjectURL(new Blob([s],{type:'application/json'}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),20000);}
+function qa(){const r=qualityPreflight(score,audioFile);const offset=Number($('offset').value||0),dur=Number($('durationInput').value||0);const warnings=[...r.warnings];if(dur>score.duration+.5)warnings.push('La durata supera il MIDI disponibile');if(Math.abs(offset)>200)warnings.push('Offset maggiore di 200ms: verificare il sincronismo con ascolto diretto');if(!gl)warnings.push('WebGL2 assente');
+ const report={schema:'hyperlumen-preflight-v18',status:warnings.length?'PROTOTYPE_REVIEW_REQUIRED':'READY_FOR_ARTISTIC_REVIEW',renderer:'WebGL2 GPU',source:score.source,style:scene,midiNotes:r.notes,duration:dur,audioFile:audioFile?.name||null,offsetMs:offset,warnings,artisticApproval:'NOT_PERFORMED',rightsVerified:false,real4k:false};
+ ui.qa.innerHTML=`<strong>${warnings.length?'Da correggere prima della pubblicazione':'Controlli tecnici preliminari superati'}</strong><div>${warnings.map(w=>`• ${txt(w)}`).join('<br>')||'• Procedere alla revisione artistica e dei diritti'}</div><div>GPU: ${gl?'attiva':'assente'} · Note MIDI: ${r.notes} · Diritti: da verificare</div>`;
+ return report;}
+function setStyle(s){scene=s;document.querySelectorAll('.style').forEach(x=>x.classList.toggle('selected',x.dataset.scene===s));}
+async function init(){try{initGL();painter=ui.composite.getContext('2d',{alpha:false});resize();window.addEventListener('resize',resize);ui.loader.style.display='none';setStatus('GPU WebGL2 pronta');}catch(e){ui.loader.textContent='GPU non disponibile: '+e.message;setStatus('WebGL non disponibile');}
+ updInfo();updateTime(0);requestAnimationFrame(animate);
+ ui.play.onclick=()=>playing?pause():play();$('restart').onclick=stop;
+ ui.seek.oninput=e=>{const t=playDuration*Number(e.target.value)/1000;updateTime(t);if(playing){if(audioFile)audio.currentTime=t;else{origin=ctx.currentTime-t;clearVoices();synthTimer=setInterval(scheduleSynth,110);}}};
+ $('midiFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;pause();try{score=parseMidi(await file.arrayBuffer());director=analyzeScore(score);playDuration=Math.min(60,Math.max(6,score.duration));$('durationInput').value=String(Math.round(playDuration));$('titleInput').value=file.name.replace(/\.(mid|midi)$/i,'').replaceAll('_',' ').toUpperCase();updInfo();updateTime(0);setStatus('MIDI importato');}catch(err){setStatus('MIDI non valido');ui.qa.textContent=err.message;}};
+ $('audioFile').onchange=e=>{const file=e.target.files?.[0];if(!file)return;pause();if(audioUrl)URL.revokeObjectURL(audioUrl);audioFile=file;audioUrl=URL.createObjectURL(file);audio.src=audioUrl;audio.load();updInfo();setStatus('Audio caricato');};
+ $('durationInput').onchange=e=>{playDuration=clamp(Number(e.target.value)||20,6,180);updateTime(0);};
+ document.querySelectorAll('.style').forEach(b=>b.onclick=()=>setStyle(b.dataset.scene));
+ $('qa').onclick=qa;$('savePreset').onclick=()=>{const r=qa();downloadText('HYPERLUMEN_RECIPE_V18.json',JSON.stringify({...r,title:$('titleInput').value,artist:$('artistInput').value,design:{scene,trails:$('trails').value,density:$('density').value},noteTimeline:score.notes},null,2));};
+ $('record').onclick=()=>recording?finishRecording():startRecording().catch(e=>{ui.qa.textContent=e.message;setStatus('Export fallito');});
+}
+init();
+</script></body></html>
