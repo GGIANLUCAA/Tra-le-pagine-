@@ -1,0 +1,40 @@
+name: "Controluce - Raccolta quotidiana (NON pubblica)"
+on:
+  workflow_dispatch:
+    inputs:
+      giorno:
+        description: "Data dell'evento YYYY-MM-DD; vuota = ieri in Italia"
+        required: false
+        type: string
+  schedule:
+    - cron: '30 6 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: controluce-ricerca-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  ricerca:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: "Raccogli solo candidati, nessuna AI, nessuna pubblicazione"
+        env:
+          DATA_SCELTA: ${{ inputs.giorno }}
+        run: |
+          if [ -n "$DATA_SCELTA" ]; then
+            python src/controluce.py collect --date "$DATA_SCELTA" --output output_controluce/candidates.json
+          else
+            python src/controluce.py collect --output output_controluce/candidates.json
+          fi
+      - name: "Scarica raccolta giornaliera per revisione"
+        uses: actions/upload-artifact@v4
+        with:
+          name: controluce-candidate-${{ github.run_id }}
+          path: output_controluce/candidates.json
+          if-no-files-found: error
+          retention-days: 14
