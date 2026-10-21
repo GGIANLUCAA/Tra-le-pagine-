@@ -55,6 +55,11 @@ jobs:
           except urllib.error.HTTPError as e:
               assert e.code==401,'Expected private management HTTP 401, got '+str(e.code)
           print('PASS: editing API rejects visitors without access',flush=True)
+          with urllib.request.urlopen(root+'/watch/ARTVISION_CARAVAGGIO_CINEMA_V6.mp4',timeout=25) as response:
+              landing=response.read().decode('utf-8')
+          assert 'og:image' in landing and 'og:video' in landing,'Missing social poster metadata'
+          assert '/media/ARTVISION_CARAVAGGIO_CINEMA_V6.mp4' in landing,'Missing video playback in shared link'
+          print('PASS: social share landing page has poster + video link',flush=True)
           name='PROVINO_V4_SENZA_API__535272.mp4'
           try:
               response=urllib.request.urlopen(root+'/api/files',timeout=25)
