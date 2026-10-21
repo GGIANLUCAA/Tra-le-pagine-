@@ -1,3 +1,9 @@
+## Crescita dei canali — priorità corrente V14
+
+[Piano di sviluppo di 90 giorni](docs/PIANO_CRESCITA_V14.md) · [Pagina mobile](docs/creator-growth.html).
+Prima crescita organica, serie riconoscibili e qualità. Commissioni, sponsor e
+outreach sono rimandati. Il planner prepara la coda senza pubblicare o consumare API.
+
 # 🎬 Tra le Pagine — Studio editoriale illustrato
 
 ## GPT: comincia da qui — Direzione video V13

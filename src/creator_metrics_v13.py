@@ -6,7 +6,7 @@ from pathlib import Path
 from collections import defaultdict
 from statistics import median
 
-METRICS = ('views', 'watch_seconds', 'clicks', 'orders', 'net_receipts_eur', 'cash_cost_eur', 'hours')
+METRICS = ('views', 'watch_seconds', 'clicks', 'orders', 'net_receipts_eur', 'cash_cost_eur', 'hours', 'followers_gained', 'shares', 'saves', 'video_seconds')
 GROUP = ('platform', 'account', 'format', 'window_days', 'view_definition')
 
 def number(value, label):
@@ -42,6 +42,9 @@ def analyze(data):
         margin = m['net_receipts_eur'] - m['cash_cost_eur'] if all(m[k] is not None for k in ('net_receipts_eur', 'cash_cost_eur')) else None
         d = {**{k:r[k] for k in ('video_id', *GROUP)}, 'metrics': m,
              'avg_watch_seconds': ratio(m['watch_seconds'], m['views']),
+             'followers_per_1000_views': None if ratio(m['followers_gained'],m['views']) is None else 1000*ratio(m['followers_gained'],m['views']),
+             'shares_per_1000_views': None if ratio(m['shares'],m['views']) is None else 1000*ratio(m['shares'],m['views']),
+             'average_watch_fraction': ratio(ratio(m['watch_seconds'],m['views']),m['video_seconds']),
              'cash_contribution_eur': margin,
              'contribution_per_hour_eur': ratio(margin, m['hours']),
              'missing': [k for k,v in m.items() if v is None]}
@@ -56,6 +59,7 @@ def analyze(data):
             'note': 'Nessuna causalità o significatività statistica dimostrata; controllare argomento, durata e distribuzione.'})
     return {'schema':'creator-report-v13', 'observations':details, 'cohorts':summaries,
             'account_connections':False, 'revenue_forecast':None,
+            'growth_note':'Tassi descrittivi sul denominatore dichiarato; replay possono superare il 100%. Iscritti attribuiti al singolo video, non variazione totale del canale.',
             'note':'Contributo di cassa prima di imposte e costi fissi non allocati; non è utile netto. Finestre diverse non si sommano.'}
 
 def markdown(result):
@@ -70,12 +74,15 @@ def markdown(result):
     lines += ['', '| Video | Finestra | Contributo € | €/ora | Dati mancanti |', '|---|---:|---:|---:|---|']
     for d in result['observations']:
         lines.append(f"| {safe(d['video_id'])} | {d['window_days']} | {show(d['cash_contribution_eur'])} | {show(d['contribution_per_hour_eur'])} | {', '.join(d['missing']) or 'nessuno'} |")
+    lines += ['', '## Crescita osservata', '', result['growth_note'], '', '| Video | Iscritti / 1.000 views | Condivisioni / 1.000 views | Tempo medio / durata |', '|---|---:|---:|---:|']
+    for d in result['observations']:
+        lines.append(f"| {safe(d['video_id'])} | {show(d['followers_per_1000_views'])} | {show(d['shares_per_1000_views'])} | {show(d['average_watch_fraction'])} |")
     lines += ['', '## Prossima revisione', '',
               '1. Leggere la curva di ritenzione e i commenti originali prima di attribuire una causa.',
               '2. Scegliere una sola ipotesi (apertura, argomento, copertina o invito finale).',
               '3. Confrontare nuovi episodi a pari età di pubblicazione; non duplicare lo stesso filmato.',
               '4. Annotare decisione, costo e limite della prova. Non abbandonare una serie per un singolo risultato.',
-              '5. Se mancano incassi verificati, valutare interesse e richieste; non inventare ricavi dai follower.']
+              '5. Priorità attuale: pubblico che guarda e torna. Nessuna proposta di commissioni o sponsor; monetizzazione solo quando pertinente e richiesta.']
     return '\n'.join(lines)+'\n'
 
 def main():

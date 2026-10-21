@@ -1,3 +1,5 @@
+> Priorità aggiornata: [piano di crescita V14](docs/PIANO_CRESCITA_V14.md). Per ora sono rimandati commissioni, outreach a editori/aziende, sponsor e ads. Le sezioni commerciali sotto restano riferimenti futuri.
+
 > Aggiornamento: leggere [strategia verificata V13](docs/STRATEGIA_CREATOR_V13.md) per priorità correnti, limiti delle fonti e metriche confrontabili.
 
 # Creator Business Lab V1 — Strategia monetizzazione (21 ottobre 2026)

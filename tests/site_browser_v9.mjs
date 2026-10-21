@@ -95,6 +95,17 @@ async function run() {
   assert.deepEqual(issues,[], "Unexpected browser JS runtime errors");
   console.log("PASS: no browser JavaScript runtime errors");
 
+  await page.goto(new URL('creator-growth.html',ROOT).href,{waitUntil:'domcontentloaded'});
+  assert.match(await page.title(),/Piano di crescita/);
+  assert.match(await page.locator('h1').textContent(),/serie riconoscibile/);
+  assert.equal(await page.locator('article.card').count(),4);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'Growth page overflows mobile viewport');
+  await page.locator('summary').click();
+  assert.equal(await page.locator('details').getAttribute('open'),'');
+  await page.screenshot({path:SCREEN+'/crescita-v14-mobile.png',fullPage:true});
+  assert.deepEqual(issues,[], 'Growth page browser errors');
+  console.log('PASS: V14 growth roadmap mobile, four phases and expandable GPT instructions');
+
   await context.close();
   await browser.close();
 }

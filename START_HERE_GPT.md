@@ -40,3 +40,15 @@ Compilare il contesto `business` della scheda: pubblico, promessa, valore origin
 obiettivo, una prova, budget e invito finale. Nessuna crescita o entrata garantita.
 Usare `src/creator_metrics_v13.py` sui dati reali disponibili; dati mancanti restano
 sconosciuti. Non copiare KPI arbitrari dai repository di marketing.
+
+## Priorità corrente: crescita V14
+
+Leggere `docs/PIANO_CRESCITA_V14.md` e `config/creator_growth_v14.json`.
+La crescita dei canali propri precede per ora commissioni, sponsor e proposte
+a editori/aziende: non suggerire outreach o servizi come prossima azione.
+Preservare i format approvati. Pianificare secondo capacità con
+`src/creator_growth_v14.py`; cercare prima nel catalogo e nei riferimenti.
+Recuperare le lezioni pertinenti quando disponibili (schema in
+`templates/CREATOR_LEARNING_V14.json`); se assenti, dichiarare che mancano.
+Una sola variabile per prova; nessuna crescita garantita o pubblicazione implicita.
+Il piano V14 prevale sulle priorità commerciali delle guide V1/V13.

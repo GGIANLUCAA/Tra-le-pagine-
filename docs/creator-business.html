@@ -18,7 +18,8 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
 @media(max-width:510px){header,main,footer{padding:16px}.grid{gap:9px}.stat,.panel{padding:13px}.stat strong{font-size:22px}.record{gap:9px}.barrow{grid-template-columns:1fr 100px}.barbg{grid-column:1/-1;grid-row:2}.field.wide{grid-column:1/-1}.actions button{flex:1 1 140px}}
 </style></head><body>
 <header>
- <div><div class="kicker">TRA LE PAGINE · BUSINESS LAB V1</div><h1>Numeri, non promesse.</h1><p>Scopri quali video fanno crescere il pubblico e quali portano ricavi.</p></div>
+ <div><div class="kicker">TRA LE PAGINE · BUSINESS LAB V1</div><h1>Numeri, non promesse.</h1><p>Misura la crescita del pubblico e il tempo di produzione. I ricavi restano un obiettivo futuro.</p></div>
+ <a class="btn" href="./creator-growth.html">Piano di crescita</a>
  <a class="btn" href="./index.html">← Torna allo Studio</a>
 </header>
 <main>
@@ -98,7 +99,7 @@ function render(){
    message('Margine osservato',money(margin)+' su '+rows.length+' pubblicazioni; '+(hourly!==null?money(hourly)+' per ora imputata.':'dati economici incompleti: risultato orario non disponibile.'));
    message('Confronto da verificare','Questa vista non registra finestre di osservazione uniformi: non assegna vincitori. Usa il report V13 per confrontare stessa piattaforma, account, formato e giorni dalla pubblicazione.');
    if(margin===null)message('Dati economici incompleti','Almeno una riga non ha ricavi o costi misurati. Il totale e il risultato orario restano n/d; inserire zero solo quando verificato.');
-   if(revenue===0)message('Monetizzazione non ancora dimostrata','Non considerare le views un guadagno. Testa un servizio video concreto e traccia i primi incassi realmente ricevuti.');
+   if(revenue===0)message('Monetizzazione non ancora dimostrata','Non considerare le views un guadagno. Concentrati su attenzione, iscrizioni pertinenti e ritorno alla serie; mantieni separati eventuali incassi reali.');
  }
  let filter=$('filter'),selected=filter.value,categories=[...new Set(rows.map(r=>r.category))].sort();filter.replaceChildren(new Option('Tutte le categorie','all'));categories.forEach(c=>filter.add(new Option(c,c)));filter.value=categories.includes(selected)?selected:'all';
  renderRecords();
@@ -135,7 +136,7 @@ $('copyReport').addEventListener('click',async()=>{
  if(rows.length===0){$('message').textContent='Inserisci almeno un video per creare un report.';return}
  const sorted=rows.slice().sort((a,b)=>b.date.localeCompare(a.date));
  const data=sorted.map(r=>({data:r.date,video:r.title,categoria:r.category,piattaforma:r.platform,views:r.views,condivisioni:r.shares,ritenzione_media_sec:r.watch,durata_video_sec:r.duration,ricavi_reali_eur:r.revenue,costi_imputati_eur:r.cost,ore_imputate:r.hours,link:r.url}));
- const prompt='Sei il direttore strategico del progetto Tra le Pagine / ArtVision / HyperLumen. Analizza SOLO i dati veri elencati. Rispetta la regia ArtVision Cinema V6, il racconto V12 e la voce Google. Non creare metriche fittizie. Confronta a parità di piattaforma e di età dei video; non definire vincitori su campioni minuscoli. Distingui views da ricavi; se i ricavi sono zero, proponi test realistici per servizi video e prodotti pertinenti. Produci: (1) analisi per categoria e piattaforma, (2) costo/ora e profitto con dati mancanti evidenziati, (3) tre ipotesi sperimentali su hook/titolo/musica/regia, (4) calendario prudente di 7 giorni, (5) quali video NON replicare perché troppo simili, (6) prime azioni commerciali misurabili. Non proporre pubblicazione senza il mio consenso. DATI JSON:\n'+JSON.stringify(data,null,2);
+ const prompt='Sei il direttore strategico del progetto Tra le Pagine / ArtVision / HyperLumen. Analizza SOLO i dati veri elencati. Rispetta la regia ArtVision Cinema V6, il racconto V12 e la voce Google. Non creare metriche fittizie. Confronta a parità di piattaforma e di età dei video; non definire vincitori su campioni minuscoli. Distingui views da ricavi; se i ricavi sono zero, non proporre commissioni, sponsor o outreach: la priorità attuale è crescere con contenuti originali. Produci: (1) analisi per categoria e piattaforma, (2) costo/ora e profitto con dati mancanti evidenziati, (3) tre ipotesi sperimentali su hook/titolo/musica/regia, (4) calendario prudente di 7 giorni, (5) quali video NON replicare perché troppo simili, (6) prossime azioni misurabili per la crescita del canale. Non proporre pubblicazione senza il mio consenso. DATI JSON:\n'+JSON.stringify(data,null,2);
  try{await navigator.clipboard.writeText(prompt);$('message').textContent='Report copiato. Incollalo nella nostra chat ChatGPT per una nuova analisi basata sui tuoi dati.'}catch{$('message').textContent='Il browser ha bloccato gli appunti. Usa Esporta backup JSON oppure apri la pagina da HTTPS.'}
 });
 $('importButton').addEventListener('click',()=>$('importFile').click());

@@ -1,3 +1,5 @@
+> Priorità aggiornata: [piano di crescita V14](PIANO_CRESCITA_V14.md). Per ora sono rimandati commissioni, outreach a editori/aziende, sponsor e ads. Le sezioni commerciali sotto restano riferimenti futuri.
+
 # Strategia creator: qualità, pubblico e reddito
 
 Valutazione del 21 ottobre 2026. Questo documento è una proposta operativa per

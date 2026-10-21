@@ -78,7 +78,7 @@ def brief(kind, topic, out, references=()):
                "format": kind, "topic": topic.strip(), "preset": fmt["preset"],
                "status": "planned", "script": "", "subtitles": False,
                "business": {"audience": "", "viewer_promise": "", "original_contribution": "",
-                            "primary_platform": "", "goal": "", "cta": "",
+                            "primary_platform": "", "goal": "crescita del pubblico e ritorno alla serie", "cta": "",
                             "experiment": "", "time_budget_minutes": None, "cash_budget_eur": None},
                "assets": [], "scenes": [], "references": refs,
                "reviews": {key: {"status": "pending", "notes": ""} for key in ("story", "visuals", "rights")}}
