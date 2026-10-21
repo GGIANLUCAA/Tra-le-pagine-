@@ -10,7 +10,7 @@ permissions:
   contents: read
 concurrency:
   group: artvision-critico-batch-four-v2
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   produzione:
     strategy:
@@ -87,7 +87,7 @@ jobs:
         with:
           name: ART_VISION_V2_${{ matrix.episode }}
           path: |
-            output/artvision-serie-quattro/${{ matrix.episode }}/ARTVISION_${{ matrix.episode }}.mp4
+            output/artvision-serie-quattro/${{ matrix.episode }}/*.mp4
             output/artvision-serie-quattro/${{ matrix.episode }}/COPERTINA.jpg
             output/artvision-serie-quattro/${{ matrix.episode }}/COPIONE_IT.txt
             output/artvision-serie-quattro/${{ matrix.episode }}/REGIA_SINCRONIZZAZIONE.json
