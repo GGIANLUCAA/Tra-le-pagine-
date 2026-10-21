@@ -1,0 +1,64 @@
+name: "ArtVision Critico - Venere backup isolato"
+run-name: "BOTTICELLI · completamento indipendente e protetto"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-critico-venere-backup.yml"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-venere-isolato
+  cancel-in-progress: false
+jobs:
+  venere:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Setup script, immagine, audio, FFmpeg"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1
+          python -m pip install --disable-pip-version-check \
+            "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5" \
+            "edge-tts>=6.1,<9" "soundfile>=0.12,<1" "google-genai>=2.25,<4" "scipy>=1.11,<2"
+          python -m py_compile modules/artvision_critico/production_series/retry_botticelli.py
+      - name: "Esegui solo Botticelli con watchdog voce"
+        run: |
+          python modules/artvision_critico/production_series/retry_botticelli.py
+      - name: "Verifica MP4, tracce, copertina e durata"
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess,json
+          p=Path("output/artvision-serie-quattro/botticelli_venere")
+          f=p/"ARTVISION_BOTTICELLI_VENERE.mp4"
+          assert f.is_file() and f.stat().st_size>8_000_000
+          z=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries",
+           "format=duration:stream=codec_type,width,height","-of","json",str(f)]))
+          assert {s["codec_type"] for s in z["streams"]}=={"audio","video"}
+          v=next(s for s in z["streams"] if s["codec_type"]=="video")
+          assert (v["width"],v["height"])==(1080,1920)
+          assert (p/"COPERTINA.jpg").exists()
+          print("BACKUP BOTTICELLI OK",z["format"]["duration"],f.stat().st_size)
+          PY
+      - name: "Archivia SOLO il film finale (no MP4 temporaneo)"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_VISION_V2_botticelli_venere_BACKUP
+          path: |
+            output/artvision-serie-quattro/botticelli_venere/ARTVISION_BOTTICELLI_VENERE.mp4
+            output/artvision-serie-quattro/botticelli_venere/COPERTINA.jpg
+            output/artvision-serie-quattro/botticelli_venere/COPIONE_IT.txt
+            output/artvision-serie-quattro/botticelli_venere/REGIA_SINCRONIZZAZIONE.json
+            output/artvision-serie-quattro/botticelli_venere/DIRITTI_E_FONTI.txt
+          if-no-files-found: error
+          retention-days: 14
