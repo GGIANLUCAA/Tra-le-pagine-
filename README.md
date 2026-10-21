@@ -16,6 +16,13 @@ continua ancora da integrare e misurare. Il limite di due video/settimana è sup
 Prima crescita organica, serie riconoscibili e qualità. Commissioni, sponsor e
 outreach sono rimandati. Il planner prepara la coda senza pubblicare o consumare API.
 
+
+## Nuovo add-on non invasivo: regia qualità V17
+
+[Guida V17](docs/QUALITY_DIRECTOR_V17.md) · [Policy per categorie](config/quality_director_v17.json) · [Report Android da GitHub Actions](.github/workflows/quality-director-v17.yml).
+
+Funziona come checklist e controllo offline aggiuntivo: preserva i motori e i filmati approvati V3–V16; niente API obbligatorie, nessun rendering secondario. La revisione estetica reale resta indispensabile.
+
 # 🎬 Tra le Pagine — Studio editoriale illustrato
 
 ## GPT: comincia da qui — Direzione video V13
