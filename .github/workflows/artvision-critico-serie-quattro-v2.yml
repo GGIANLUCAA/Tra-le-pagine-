@@ -1,0 +1,96 @@
+name: "ArtVision Critico V2 - Serie di quattro opere (multilingua ready)"
+run-name: "SERIE 4 · Gioconda / Bacio / Grande Onda / Venere"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-critico-serie-quattro-v2.yml"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-critico-batch-four-v2
+  cancel-in-progress: false
+jobs:
+  produzione:
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        episode:
+          - leonardo_gioconda
+          - klimt_bacio
+          - hokusai_grande_onda
+          - botticelli_venere
+    name: "Video ${{ matrix.episode }} — master FULL HD"
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: "Checkout non distruttivo: conserva vecchi film, libri e processi"
+        uses: actions/checkout@v4
+      - name: "Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa strumenti, verifica copione e versione"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1
+          python -m pip install --disable-pip-version-check \
+            "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5" \
+            "edge-tts>=6.1,<9" "soundfile>=0.12,<1" "google-genai>=2.25,<4" "scipy>=1.11,<2"
+          python -m py_compile modules/artvision_critico/production_series/render_series_v2.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("modules/artvision_critico/production_series")
+          names=("leonardo_gioconda","klimt_bacio","hokusai_grande_onda","botticelli_venere")
+          lengths=[]
+          for name in names:
+              c=json.loads((p/(name+".json")).read_text(encoding="utf8"))
+              assert c["language"]=="it"
+              assert len(c["beats"])>=8
+              lengths.append(sum(len(b["speech"].split()) for b in c["beats"]))
+          assert len(set(lengths))==4,lengths
+          print("SERIES READY",list(zip(names,lengths)))
+          PY
+      - name: "Produci e sincronizza quadro, zoom e voce naturale"
+        run: |
+          python modules/artvision_critico/production_series/render_series_v2.py --episode ${{ matrix.episode }}
+      - name: "Verifica il master completo — non archiviare simulazioni o immagini statiche"
+        run: |
+          EPISODE="${{ matrix.episode }}" python - <<'PY'
+          import os,json,subprocess
+          from pathlib import Path
+          key=os.environ["EPISODE"]
+          out=Path("output/artvision-serie-quattro")/key
+          mp4=out/("ARTVISION_"+key.upper()+".mp4")
+          assert mp4.exists() and mp4.stat().st_size>8_000_000
+          x=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries",
+            "format=duration,size:stream=codec_type,width,height","-of","json",str(mp4)]))
+          tracks={t["codec_type"] for t in x["streams"]}
+          assert tracks=={"video","audio"},tracks
+          vid=next(z for z in x["streams"] if z["codec_type"]=="video")
+          assert (vid["width"],vid["height"])==(1080,1920)
+          assert 95<float(x["format"]["duration"])<440
+          assert (out/"COPERTINA.jpg").stat().st_size>70_000
+          m=json.loads((out/"REGIA_SINCRONIZZAZIONE.json").read_text(encoding="utf8"))
+          assert m["subtitle_overlay"] is False
+          assert len(m["beats"])>=8
+          print("VALIDATED MP4",key,x["format"]["duration"],mp4.stat().st_size,flush=True)
+          PY
+      - name: "Archivia MP4, copertina universale, voce IT, fonti e tempi"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_VISION_V2_${{ matrix.episode }}
+          path: |
+            output/artvision-serie-quattro/${{ matrix.episode }}/ARTVISION_${{ matrix.episode }}.mp4
+            output/artvision-serie-quattro/${{ matrix.episode }}/COPERTINA.jpg
+            output/artvision-serie-quattro/${{ matrix.episode }}/COPIONE_IT.txt
+            output/artvision-serie-quattro/${{ matrix.episode }}/REGIA_SINCRONIZZAZIONE.json
+            output/artvision-serie-quattro/${{ matrix.episode }}/DIRITTI_E_FONTI.txt
+          if-no-files-found: error
+          retention-days: 14
