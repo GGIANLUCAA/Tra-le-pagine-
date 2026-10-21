@@ -1,0 +1,33 @@
+name: ArtVision Redon - curated dark recovery
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-redon-dark6-retry.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  redon:
+    name: Odilon Redon - Dreams and Visions
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install cinematography tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: Build Redon film from curated art
+        run: python modules/artvision/artvision_dark_lotto6.py --artist redon
+      - name: Package MP4 and credits
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_DARK6_REDON_RETRY
+          path: output/artvision-lotto6-inquietudine/redon/film/
+          if-no-files-found: error
+          retention-days: 7
