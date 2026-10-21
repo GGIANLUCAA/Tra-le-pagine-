@@ -97,3 +97,31 @@ jobs:
               assert out.returncode==0 and float(out.stdout.strip())>0,'Not a valid playable MP4: '+out.stderr
               print('PASS: full video accessible; ffprobe duration',out.stdout.strip(),'seconds',flush=True)
           PY
+      - name: Validate interactive gallery rendering and search
+        shell: bash
+        run: |
+          mkdir -p /tmp/vlsdom
+          cd /tmp/vlsdom
+          npm install --silent --no-audit --no-fund jsdom@26
+          node - <<'JS'
+          const {JSDOM,VirtualConsole}=require('/tmp/vlsdom/node_modules/jsdom');
+          const https=require('https'),assert=require('assert');
+          function get(p){return new Promise((resolve,reject)=>{https.get('https://video-library-studio.600led.workers.dev'+p,{headers:{'User-Agent':'Mozilla/5.0 AppleWebKit/537.36 Chrome/130.0.0.0 Safari/537.36'}},r=>{let d='';r.on('data',x=>d+=x);r.on('end',()=>r.statusCode===200?resolve(d):reject(Error('HTTP '+r.statusCode)))}).on('error',reject)})}
+          (async()=>{
+            const [html,raw]=await Promise.all([get('/'),get('/api/catalog')]);
+            const model=JSON.parse(raw),errors=[],v=new VirtualConsole();
+            v.on('jsdomError',e=>errors.push(e.message));
+            const dom=new JSDOM(html,{url:'https://video-library-studio.600led.workers.dev/',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:v,beforeParse(w){w.fetch=async()=>({ok:true,json:async()=>model});}});
+            await new Promise(done=>setTimeout(done,700));
+            const d=dom.window.document;
+            const total=d.querySelectorAll('.card').length;
+            assert(total>=70,'Expected dozens of rendered cards, got '+total);
+            assert(d.querySelectorAll('.poster img').length>=70,'Missing JPG covers in cards');
+            const search=d.querySelector('#query');search.value='gioconda';search.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
+            const matches=d.querySelectorAll('.card').length;
+            assert(matches>=1&&matches<total,'Search filter failed: '+matches);
+            assert(errors.length===0,'Client error: '+errors.join('; '));
+            console.log('PASS: browser-side cards='+total+' JPG posters; Gioconda search='+matches+' results');
+            dom.window.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
