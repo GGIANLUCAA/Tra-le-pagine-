@@ -52,6 +52,13 @@ jobs:
                   assert response.headers.get('Content-Type','').startswith('video/mp4'),'Invalid video MIME'
                   if is_download:assert 'attachment' in response.headers.get('Content-Disposition','').lower(),'Missing attachment header'
                   print('PASS:',path,'HTTP 206 + byte range + content-type',flush=True)
+          big='ARTVISION_DALI_SOGNO_DELL_APE_CRITICO_V1.mp4'
+          large=next((x for x in files if x['name']==big),None)
+          assert large is not None and int(large['size'])>200000000,'Missing large MP4'
+          req=urllib.request.Request(root+'/media/'+big,headers={'Range':'bytes=0-4095'})
+          with urllib.request.urlopen(req,timeout=60) as response:
+              assert response.status==206 and len(response.read())==4096,'Large video range failed'
+              print('PASS: 227MB video supports public streaming and seeking',flush=True)
           with urllib.request.urlopen(root+'/media/'+name,timeout=60) as response:
               raw=response.read()
               assert response.status==200 and len(raw)==535272,'Full download corrupted'
