@@ -1,3 +1,5 @@
+> Aggiornamento: leggere [strategia verificata V13](docs/STRATEGIA_CREATOR_V13.md) per priorità correnti, limiti delle fonti e metriche confrontabili.
+
 # Creator Business Lab V1 — Strategia monetizzazione (21 ottobre 2026)
 
 > Modulo aggiuntivo. NON sostituisce la regia V6 ArtVision, il racconto V12, la voce Google, FFmpeg, le Release e la videoteca Cloudflare. NON pubblica, non genera MP4, non chiama API a pagamento e non legge dati privati.
@@ -33,8 +35,8 @@ E. **Ricavi delle piattaforme**: opportunità importanti MA non il primo euro pi
 ## Misura economica
 Per ogni pubblicazione: id, titolo, format, piattaforma, data, visualizzazioni, engagement, durata media, durata del video, ore di produzione imputate, spesa imputata, ricavi REALI in €, link pubblicato. Una stessa produzione su 3 piattaforme va collegata mediante production_id e i COSTI/ORE NON devono essere contati 3 volte. Nella dashboard MVP i costi/ore vanno imputati a un'unica riga oppure suddivisi manualmente in quote non sovrapposte. Nessuna metrica inventata.
 
-- Profitto netto operativo = ricavi tracciati - costi tracciati (al lordo di imposte, contributi e overhead non inseriti).
-- Margine orario operativo = profitto netto / ore registrate; distinguere valore negativo da zero.
+- Contributo di cassa = ricavi tracciati - costi tracciati (al lordo di imposte, contributi e overhead non inseriti).
+- Contributo orario = contributo di cassa / ore registrate; distinguere valore negativo da zero.
 - RPM osservato = 1000 × ricavi reali / visualizzazioni. Non è un RPM stimato e non è confrontabile fra piattaforme come fosse il medesimo regime pubblicitario.
 - Controllare oltre alle views: retention, condivisioni per 1000 views, clic in uscita e conversioni. I dati mancanti non valgono zero.
 - Decisione dopo 7 e 28 giorni, tenendo conto dell'età dei post e confrontando stesso formato sulla stessa piattaforma; campioni piccoli → soltanto indizi.

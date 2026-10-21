@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import '../docs/creator-business-metrics.js';
+const {summary}=globalThis.CreatorBusinessMetrics;
+assert.equal(summary([]).margin,null);
+assert.equal(summary([{revenue:null,cost:2,hours:1}]).margin,null);
+assert.equal(summary([{revenue:0,cost:2,hours:1}]).hourly,-2);
+assert.equal(summary([{revenue:10,cost:2,hours:0}]).hourly,null);
+assert.equal(summary([{revenue:10,cost:2,hours:1},{revenue:5,cost:null,hours:1}]).margin,null);
+assert.equal(summary([{revenue:10,cost:2,hours:1},{revenue:5,cost:1,hours:1}]).hourly,6);
+assert.equal(summary([{revenue:NaN,cost:2,hours:1}]).margin,null);
+console.log('Dashboard: missing vs zero, losses, complete totals and zero hours passed.');

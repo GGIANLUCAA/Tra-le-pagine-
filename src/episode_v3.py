@@ -194,6 +194,8 @@ def postflight(episode,out):
         f"Durata {duration:.1f} secondi; 720x1280, audio presente.\n"
         "Controlli automatici superati. RESTA NECESSARIA REVISIONE UMANA COMPLETA.\n"
         "Non pubblicato automaticamente.\n",encoding="utf-8")
+    from video_director_v13 import capture_book
+    capture_book(ep, out, target, out/"COPERTINA_SERIE.jpg")
     print("PRODUZIONE TECNICA RIUSCITA:",target)
 
 def main():

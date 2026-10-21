@@ -24,9 +24,9 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
 <main>
  <p class="notice"><strong>Privacy:</strong> le statistiche sono salvate solo nel browser di questo dispositivo. Non vengono inviate a GitHub né condivise automaticamente con altri dispositivi. Fai un backup JSON, soprattutto prima di cancellare i dati del browser. Per ora l'inserimento è manuale, senza collegamento ai social.</p>
  <section class="section grid" aria-label="Indicatori economici">
-  <div class="stat"><label>Incassi registrati</label><strong id="revenue">€ 0,00</strong><small>Solo somme inserite</small></div>
-  <div class="stat"><label>Profitto operativo</label><strong id="profit">€ 0,00</strong><small>Ricavi meno costi inseriti</small></div>
-  <div class="stat"><label>Guadagno per ora</label><strong id="hourly">—</strong><small>Al lordo delle imposte</small></div>
+  <div class="stat"><label>Incassi registrati</label><strong id="revenue">n/d</strong><small>Solo somme inserite</small></div>
+  <div class="stat"><label>Contributo di cassa</label><strong id="profit">n/d</strong><small>Ricavi meno costi inseriti</small></div>
+  <div class="stat"><label>Contributo per ora</label><strong id="hourly">—</strong><small>Al lordo delle imposte</small></div>
   <div class="stat"><label>Visualizzazioni</label><strong id="views">0</strong><small>Somma dei post registrati</small></div>
  </section>
  <section class="section panel" id="formpanel">
@@ -36,7 +36,7 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
    <div class="field"><label for="category">Categoria</label><select id="category"><option>ArtVision · Arte</option><option>Critica d'arte</option><option>Tra le Pagine · Libri</option><option>Film raccontati</option><option>HyperLumen · Musica</option><option>Documentari</option><option>Cronaca</option><option>Altro</option></select></div>
    <div class="field"><label for="platform">Piattaforma</label><select id="platform"><option>YouTube</option><option>YouTube Shorts</option><option>Facebook</option><option>Instagram</option><option>TikTok</option><option>Altro</option></select></div>
    <div class="field"><label for="date">Data pubblicazione</label><input id="date" type="date" required></div>
-   <div class="field"><label for="viewsInput">Views reali</label><input id="viewsInput" type="number" min="0" step="1" value="0" required></div>
+   <div class="field"><label for="viewsInput">Views reali</label><input id="viewsInput" type="number" min="0" step="1" placeholder="Dato misurato" required></div>
    <div class="field"><label for="shares">Condivisioni</label><input id="shares" type="number" min="0" step="1" placeholder="Se disponibili"></div>
    <div class="field"><label for="watch">Visualizzazione media (sec)</label><input id="watch" type="number" min="0" step="0.1" placeholder="Se disponibile"></div>
    <div class="field"><label for="duration">Durata filmato (sec)</label><input id="duration" type="number" min="1" step="1" placeholder="Es. 180"></div>
@@ -49,20 +49,21 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
   <p class="note" id="message" role="status" aria-live="polite"></p>
  </section>
  <section class="section two">
-  <div class="panel"><div class="kicker">CATEGORIE · VISUALIZZAZIONI</div><h2>Cosa interessa di più</h2><div class="bars" id="categoryBars"><div class="empty">Inserisci almeno un video.</div></div></div>
+  <div class="panel"><div class="kicker">CATEGORIE · VISUALIZZAZIONI</div><h2>Visualizzazioni registrate</h2><div class="bars" id="categoryBars"><div class="empty">Inserisci almeno un video.</div></div></div>
   <div class="panel"><div class="kicker">ANALISI · SCELTE</div><h2>Indicazioni basate sui dati</h2><div id="insights"><div class="empty">Servono statistiche reali.</div></div></div>
  </section>
  <section class="section">
-  <div class="section-head"><div><div class="kicker">CATALOGO DELLE PUBBLICAZIONI</div><h2>Performance dei video</h2></div><div class="actions"><select id="filter" aria-label="Filtra per categoria"><option value="all">Tutte le categorie</option></select><select id="sort" aria-label="Ordina i video"><option value="latest">Più recenti</option><option value="views">Più visualizzati</option><option value="profit">Maggior profitto</option><option value="shares">Più condivisi</option></select></div></div>
+  <div class="section-head"><div><div class="kicker">CATALOGO DELLE PUBBLICAZIONI</div><h2>Performance dei video</h2></div><div class="actions"><select id="filter" aria-label="Filtra per categoria"><option value="all">Tutte le categorie</option></select><select id="sort" aria-label="Ordina i video"><option value="latest">Più recenti</option><option value="views">Più visualizzati</option><option value="profit">Maggior contributo</option><option value="shares">Più condivisi</option></select></div></div>
   <div class="records" id="records"><div class="empty">Non ci sono ancora dati. Inserisci il tuo primo video.</div></div>
  </section>
 </main>
-<footer>Creator Business Lab V1 · Nessun accesso automatico a YouTube, Facebook o TikTok · Nessun guadagno garantito · <a href="https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/CREATOR_MONETIZZAZIONE_V1.md">Leggi la strategia completa</a></footer>
+<footer>Contributo di cassa prima di imposte e costi fissi non allocati; non è utile netto. Le visualizzazioni di età e piattaforme diverse non indicano il format migliore. <a href="https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/docs/STRATEGIA_CREATOR_V13.md">Strategia verificata e report V13</a><br>Creator Business Lab V1 · Nessun accesso automatico a YouTube, Facebook o TikTok · Nessun guadagno garantito · <a href="https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/CREATOR_MONETIZZAZIONE_V1.md">Leggi la strategia completa</a></footer>
+<script src="creator-business-metrics.js"></script>
 <script>
 (()=>{'use strict';
 const KEY='tlp_creator_business_v1';let rows=[];let editing=null;
 const $=id=>document.getElementById(id);
-const money=n=>new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(n);
+const money=n=>n===null?'n/d':new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(n);
 const num=n=>new Intl.NumberFormat('it-IT',{maximumFractionDigits:0}).format(n);
 const val=id=>$(id).value.trim();
 const asNum=id=>{const x=val(id);return x===''?null:Number(x)};
@@ -84,8 +85,8 @@ function persist(){try{localStorage.setItem(KEY,JSON.stringify(rows));$('message
 function el(tag,cl,txt){const n=document.createElement(tag);if(cl)n.className=cl;if(txt!==undefined)n.textContent=String(txt);return n}
 function empty(target,label){target.replaceChildren(el('div','empty',label))}
 function render(){
- const revenue=rows.reduce((s,r)=>s+(r.revenue||0),0),cost=rows.reduce((s,r)=>s+(r.cost||0),0),hours=rows.reduce((s,r)=>s+(r.hours||0),0),views=rows.reduce((s,r)=>s+r.views,0);
- $('revenue').textContent=money(revenue);$('profit').textContent=money(revenue-cost);$('hourly').textContent=hours>0?money((revenue-cost)/hours):'—';$('views').textContent=num(views);
+ const {revenue,cost,hours,margin,hourly}=CreatorBusinessMetrics.summary(rows),views=rows.reduce((s,r)=>s+r.views,0);
+ $('revenue').textContent=money(revenue);$('profit').textContent=money(margin);$('hourly').textContent=money(hourly);$('views').textContent=num(views);
  let groups=new Map();rows.forEach(r=>{let g=groups.get(r.category)||{views:0,n:0,revenue:0,cost:0};g.views+=r.views;g.n++;g.revenue+=r.revenue||0;g.cost+=r.cost||0;groups.set(r.category,g)});
  let chart=$('categoryBars');chart.replaceChildren();if(!groups.size)empty(chart,'Ancora nessuna pubblicazione.');
  let max=Math.max(1,...Array.from(groups.values(),g=>g.views));
@@ -94,13 +95,9 @@ function render(){
  const message=(title,body)=>{let block=el('div','analysis'),s=el('strong','',title),p=el('p','',body);block.append(s,p);insight.append(block)};
  if(!rows.length)message('Nessun dato inventato','Aggiungi visualizzazioni, ore e ricavi delle tue pubblicazioni. Qui compariranno consigli calcolati.');
  else{
-   message('Margine osservato',money(revenue-cost)+' su '+rows.length+' pubblicazioni; '+(hours>0?money((revenue-cost)/hours)+' per ora imputata.':'mancano ore di lavoro per il risultato orario.'));
-   const eligible=[...groups.entries()].filter(([k,g])=>g.n>=3&&g.views>0);
-   if(!eligible.length)message('Campione ancora ridotto','Almeno 3 pubblicazioni della stessa categoria per un primo confronto indicativo. Confronta anche piattaforma, formato, data e retention.');
-   else{
-     let top=eligible.sort((a,b)=>(b[1].views/b[1].n)-(a[1].views/a[1].n))[0];
-     message('Categoria da approfondire',top[0]+' ha '+num(Math.round(top[1].views/top[1].n))+' views medie per pubblicazione ('+top[1].n+' post). È un indizio, non una previsione di ricavo: controlla età dei post e piattaforme.');
-   }
+   message('Margine osservato',money(margin)+' su '+rows.length+' pubblicazioni; '+(hourly!==null?money(hourly)+' per ora imputata.':'dati economici incompleti: risultato orario non disponibile.'));
+   message('Confronto da verificare','Questa vista non registra finestre di osservazione uniformi: non assegna vincitori. Usa il report V13 per confrontare stessa piattaforma, account, formato e giorni dalla pubblicazione.');
+   if(margin===null)message('Dati economici incompleti','Almeno una riga non ha ricavi o costi misurati. Il totale e il risultato orario restano n/d; inserire zero solo quando verificato.');
    if(revenue===0)message('Monetizzazione non ancora dimostrata','Non considerare le views un guadagno. Testa un servizio video concreto e traccia i primi incassi realmente ricevuti.');
  }
  let filter=$('filter'),selected=filter.value,categories=[...new Set(rows.map(r=>r.category))].sort();filter.replaceChildren(new Option('Tutte le categorie','all'));categories.forEach(c=>filter.add(new Option(c,c)));filter.value=categories.includes(selected)?selected:'all';
@@ -110,7 +107,7 @@ function renderRecords(){
  const selected=$('filter').value,sort=$('sort').value,target=$('records');target.replaceChildren();
  let subset=rows.filter(x=>selected==='all'||x.category===selected).slice().sort((a,b)=>{
  if(sort==='views')return b.views-a.views;
- if(sort==='profit')return ((b.revenue||0)-(b.cost||0))-((a.revenue||0)-(a.cost||0));
+ if(sort==='profit'){const x=CreatorBusinessMetrics.summary([a]).margin,y=CreatorBusinessMetrics.summary([b]).margin;return x===null?(y===null?0:1):y===null?-1:y-x;}
  if(sort==='shares')return (b.shares||0)-(a.shares||0);
  return b.date.localeCompare(a.date);
  });
@@ -119,12 +116,12 @@ function renderRecords(){
   let item=el('article','record');let head=el('div');head.append(el('strong','',r.title),el('small','',r.platform+' · '+r.date),el('span','pill',r.category));
   if(r.url){let l=el('a','', 'Apri video ↗');l.href=r.url;l.target='_blank';l.rel='noopener noreferrer';head.append(' ',l)}
   let v=el('div');v.append(el('small','','Views'),el('b','',num(r.views)));
-  let cash=el('div');cash.append(el('small','','Profitto imputato'),el('b','',money((r.revenue||0)-(r.cost||0))));
+  let cash=el('div');cash.append(el('small','','Contributo imputato'),el('b','',money(CreatorBusinessMetrics.summary([r]).margin)));
   let share=el('div');share.append(el('small','','Condivisioni'),el('b','',r.shares===null?'—':num(r.shares)));
   let actions=el('div','actions');let edit=el('button','','Modifica');edit.type='button';edit.addEventListener('click',()=>editRow(r.id));let del=el('button','danger','Elimina');del.type='button';del.addEventListener('click',()=>{if(confirm('Eliminare questa scheda solo da questo dispositivo?')){rows=rows.filter(x=>x.id!==r.id);persist();render()}});actions.append(edit,del);item.append(head,v,cash,share,actions);target.append(item);
  });
 }
-function resetForm(){$('entryForm').reset();$('date').value=(()=>{const n=new Date();return [n.getFullYear(),String(n.getMonth()+1).padStart(2,'0'),String(n.getDate()).padStart(2,'0')].join('-')})();$('viewsInput').value='0';editing=null;$('form-title').textContent='Registra un video pubblicato';$('save').textContent='Salva statistiche'}
+function resetForm(){$('entryForm').reset();$('date').value=(()=>{const n=new Date();return [n.getFullYear(),String(n.getMonth()+1).padStart(2,'0'),String(n.getDate()).padStart(2,'0')].join('-')})();$('viewsInput').value='';editing=null;$('form-title').textContent='Registra un video pubblicato';$('save').textContent='Salva statistiche'}
 function editRow(id){let r=rows.find(x=>x.id===id);if(!r)return;editing=id;for(const f of ['title','category','platform','date','url'])$(f).value=r[f];for(const [field,id] of Object.entries({views:'viewsInput',shares:'shares',watch:'watch',duration:'duration',revenue:'revenueInput',cost:'cost',hours:'hours'}))$(id).value=r[field]??'';$('form-title').textContent='Modifica statistiche';$('save').textContent='Aggiorna';$('formpanel').scrollIntoView({behavior:'smooth',block:'start'})}
 $('entryForm').addEventListener('submit',e=>{
  e.preventDefault();const d={id:editing||crypto.randomUUID(),title:val('title'),category:val('category'),platform:val('platform'),date:val('date'),url:val('url'),views:asNum('viewsInput'),shares:asNum('shares'),watch:asNum('watch'),duration:asNum('duration'),revenue:asNum('revenueInput'),cost:asNum('cost'),hours:asNum('hours')};

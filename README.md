@@ -1,5 +1,31 @@
 # 🎬 Tra le Pagine — Studio editoriale illustrato
 
+## GPT: comincia da qui — Direzione video V13
+
+**[START_HERE_GPT.md](START_HERE_GPT.md)** →
+**[AGENTS.md](AGENTS.md)** → **[Playbook operativo](docs/GPT_VIDEO_PLAYBOOK.md)**.
+
+Il nuovo ingresso collega formati, regie approvate e moduli reali. Include scheda
+di progetto, controllo preventivo, ricetta dei filmati, riuso della voce Google
+verificata e report esplicito dei tempi stimati. Nessuna API nel planner.
+
+- **Arte senza voce:** Cinema V6 Gold Master. I workflow V1–V5 sotto sono storici.
+- **Critica parlata:** guida della serie Critico V2, con copertina titolo opera + artista.
+- **Libri:** regole V12, **nessun sottotitolo**. I riferimenti ai sottotitoli sotto sono storico.
+- **Controluce e musica:** verificare stato e sorgenti nel [registro](config/video_formats_v13.json).
+- **Laboratorio:** sorgenti consegnati conservati in [integrations/video_library_laboratorio](integrations/video_library_laboratorio/).
+
+```bash
+python src/video_director_v13.py formats
+python src/video_director_v13.py brief --format libri --topic "Il libro richiesto" --out output/nuovo_video
+```
+
+Le sezioni seguenti documentano l'evoluzione del progetto; non prevalgono sulle
+regole correnti indicate sopra. V13 non produce autonomamente video da un titolo:
+guida GPT nel completare i materiali e usare i renderer già disponibili.
+
+---
+
 ## 🎬 NUOVO: Regia armonica V5 — effetti solo quando raccontano qualcosa
 
 L'obiettivo non è avere più filtri, ma far sembrare ogni episodio un **cortometraggio letterario progettato con cura**. Il nostro nuovo V5 preserva colori e volti, richiede una **ragione narrativa per ogni effetto forte**, blocca le combinazioni eccessive e misura la qualità tecnica della voce finale.

@@ -1,0 +1,58 @@
+name: "Direzione GPT V13 - ricette e riuso voce senza API"
+on:
+  push:
+    branches: [main, "feature/gpt-video-director-v13"]
+    paths:
+      - "docs/creator-business*"
+      - "tests/test_creator_business_metrics.mjs"
+      - "AGENTS.md"
+      - "START_HERE_GPT.md"
+      - "config/video_formats_v13.json"
+      - "src/video_director_v13.py"
+      - "src/creator_metrics_v13.py"
+      - "tests/test_creator_metrics_v13.py"
+      - "src/gemini_voice.py"
+      - "src/episode_v3.py"
+      - "src/regia_narrativa_v12.py"
+      - "src/studio_autopilot_v11.py"
+      - "tests/test_video_director_v13.py"
+      - "tests/test_voice_cache_v13.py"
+      - "integrations/video_library_laboratorio/**"
+      - ".github/workflows/video-director-v13-check.yml"
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Dipendenze dei controlli offline
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12,<1"
+      - name: Routing, schede, hash e MP4 reale
+        run: python -m unittest discover -s tests -p "test_video_director_v13.py" -v
+      - name: Metriche confrontabili senza ricavi inventati
+        run: python -m unittest discover -s tests -p "test_creator_metrics_v13.py" -v
+      - name: Riuso WAV e trasparenza dei tempi stimati
+        run: python -m unittest discover -s tests -p "test_voice_cache_v13.py" -v
+      - name: Scene, provenienza e nessun sottotitolo
+        run: |
+          python -m unittest discover -s tests -p "test_regia_narrativa_v12.py" -v
+          python -m unittest discover -s tests -p "test_no_subtitles_v12.py" -v
+          python -m unittest discover -s tests -p "test_studio_autopilot_v11.py" -v
+      - name: Laboratorio conservato e sintassi
+        run: |
+          node integrations/video_library_laboratorio/workspace-api.test.mjs
+          node tests/test_creator_business_metrics.mjs
+          python -m py_compile src/video_director_v13.py src/gemini_voice.py src/episode_v3.py src/regia_narrativa_v12.py src/studio_autopilot_v11.py

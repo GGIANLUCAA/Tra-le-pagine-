@@ -1,0 +1,151 @@
+# Playbook operativo V13 - dal messaggio al filmato
+
+## Obiettivo
+
+Ogni richiesta di Gianluca parte dal lavoro approvato. Questo file è una procedura
+per GPT, non un nuovo servizio di generazione. Il registro dei formati indica cosa
+esiste, cosa va preparato e cosa va recuperato. Il planner non chiama API.
+
+Ordine di precedenza: richiesta attuale → regole V12 e preset approvato del formato
+→ questa guida → documenti storici. La serie Critico V2 ha una copertina diversa
+da Cinema V6; non generalizzare le preferenze tra formati.
+
+## 1. Decidi il formato e trova un riferimento
+
+Leggi `config/video_formats_v13.json`. Se è chiaro dal messaggio, scegli senza
+domande superflue. Se l'utente indica un video precedente, cerca prima la sua
+ricetta e poi i sorgenti. Se manca una scelta non essenziale, usa le preferenze
+già approvate e comunicale brevemente. Se due formati cambiano radicalmente il
+risultato e l'intento è ambiguo, chiarisci solo quel punto.
+
+```bash
+python src/video_director_v13.py formats
+python src/video_director_v13.py brief --format libri --topic "Il libro richiesto" --out output/progetto
+# Facoltativo: collega una o più ricette esistenti, senza copiare impostazioni alla cieca
+python src/video_director_v13.py brief --format artvision_critico --topic "L'opera richiesta" --reference /percorso/VIDEO_RECIPE_V13.json --out output/critico
+```
+
+`PROJECT_V13.json` contiene soggetto, preset, asset, scene e revisioni da completare.
+`BRIEF_GPT.md` indica le guide e i moduli reali. Nessun filmato viene dichiarato
+pronto quando è stata creata soltanto la scheda. Una cartella esistente non viene
+sovrascritta. I video storici restano intatti.
+
+## 2. Recupera prima di generare
+
+Per ogni scena cerca: asset approvato → fonte originale pertinente → nuova immagine.
+Riunisci i file nella cartella di lavoro, anche tramite copie locali, con percorsi
+relativi nella scheda. Per ciascun asset conserva `id`, `file`, `role`, `source`,
+`rights` e `credit`. Ruoli: `visual`, `voice`, `music`, `other`.
+Non inserire link firmati o segreti. La scheda si può salvare in un archivio
+privato; non pubblicare automaticamente materiali nel repository pubblico.
+
+Esempio di voce in `assets`:
+
+```json
+{"id":"scene01","file":"assets/scene01.jpg","role":"visual","source":"URL pubblico originale oppure identificativo archivio","rights":"Licenza verificata e riferimento","credit":"Attribuzione richiesta"}
+```
+
+Per ogni scena in `scenes` usa `asset_id`, `description`, `reason`. Per i narrati
+aggiungi `narration_anchor`, una frase esatta del copione; per la musica senza voce
+descrivi il punto musicale. I tempi reali arrivano dopo la sintesi o l'analisi audio.
+L'ordine degli anchor deve seguire il copione. La scheda non sostituisce il JSON
+specifico richiesto dal renderer: l'agente prepara l'adattamento indicato nel brief.
+
+## 3. Progetta la regia, non una successione casuale
+
+- **Racconti:** definisci personaggi/epoca; ogni scena mostra l'azione narrata.
+  Inizio concreto, nessi causa-effetto, finale comprensibile. Niente riflessioni
+  generiche al posto della storia. Non obbligare tutti i libri allo stesso effetto.
+- **Cinema V6:** scegli opere autentiche e dettagli significativi. Alterna tagli,
+  movimenti lievi e pause; preserva colore e nitidezza. Coordinate dedicate per artista.
+- **Critico V2:** fatti verificati e interpretazioni distinte; il dettaglio citato
+  entra quando viene descritto. Torna all'opera completa. Titolo opera + artista
+  in copertina; simboli discreti in chiusura, niente frasi italiane aggiuntive.
+- **Controluce:** verifica ciò che potrebbe smentire la lettura iniziale; una
+  vicenda centrale; ricostruzioni non spacciate per documenti o riprese autentiche.
+- **Musica:** geometrie leggibili, spazio libero, proporzioni corrette; annota
+  se la sincronizzazione è su note MIDI, battiti, ampiezza o altra analisi reale.
+
+Controlli editoriali dell'agente: `story`, `visuals`, `rights`. Compila ogni revisione
+solo dopo averla svolta, con `status: "passed"` e `notes` concrete. Per film senza
+narrazione `story` significa revisione della struttura visiva/musicale. Non sono
+tre nuove approvazioni da chiedere a Gianluca.
+
+```bash
+python src/video_director_v13.py check --project output/progetto/PROJECT_V13.json
+```
+
+Il controllo verifica file, identità asset, anchor e revisioni dichiarate, non la
+verità semantica delle immagini. Se il formato è da recuperare, segnala il blocco.
+Solo dopo verifica del codice recuperato aggiorna il registro con test e guida.
+
+## 4. Produci con il motore esistente
+
+**Libri** (dalla radice del repository; sostituire EPISODIO):
+
+```bash
+python src/episode_v3.py --episode EPISODIO
+python src/regia_narrativa_v12.py --episode episodes/EPISODIO
+python src/render.py --episode episodes/EPISODIO --engine gemini --effects v4 --out output/EPISODIO
+python src/episode_v3.py --episode EPISODIO --out output/EPISODIO --post
+```
+
+**Cinema V6:** usa le guide e i director registrati. Il director Van Gogh contiene
+uno storyboard specifico: non lanciarlo come generatore universale. Non modificare
+il Gold Master per produrre un nuovo artista.
+
+**Critico V2:** `render_series_v2.py --episode ID` accetta le quattro configurazioni
+registrate. Per un'opera nuova crea una configurazione e un adattamento testato,
+preservando i renderer precedenti. Non inventare un parametro CLI inesistente.
+
+La voce Google ora conserva `VOICE_CACHE_V13.json`, `VOCE.wav`,
+`VOICE_PROFILE_V13.json` e `ALLINEAMENTO_VOCE.json`. Il riuso richiede stesso testo
+diretto, modello, voce, istruzioni e hash WAV corretto. È locale alla cartella:
+tra runner diversi occorre recuperare questi file prima del render. Cambiare il
+copione invalida il riuso; modificare solo immagini o tagli non richiede nuova voce.
+Un vecchio WAV senza manifest non viene riutilizzato automaticamente.
+
+I tempi stimati sono dichiarati nel report; non considerarli sincronizzazione
+esatta. Controllare comunque scene/voce, anche quando l'allineamento ASR riesce.
+
+## 5. Registra e verifica la consegna
+
+Per i libri `--post` salva già `VIDEO_RECIPE_V13.json` e `RIUSO_VIDEO_V13.md`.
+Per altri formati, dopo il render:
+
+```bash
+python src/video_director_v13.py capture --format artvision_cinema --topic "Artista" --video output/film/film.mp4 --cover output/film/cover.jpg --out output/film --source modules/artvision/APPROVED_PRESET.json --source output/film/STORYBOARD_V6.json
+```
+
+Aggiungi `--source` per copione, audio, immagini/ZIP, musica, fonti e rapporti
+effettivi. Ogni file è registrato con hash: il riferimento deve essere archiviato
+assieme al progetto, non soltanto nominato. Il comando non carica né pubblica.
+La ricetta certifica caratteristiche tecniche del file, non il giudizio estetico.
+
+Prima di consegnare: ascolta tutto il parlato, guarda campioni di ogni scena e i
+tagli più importanti, verifica inizio/fine, copertina, volume, sorgenti e crediti.
+Se la sessione autorizza l'archiviazione sul sito, completa importazione, poster,
+metadati e verifica player. Il solo successo della voce o dell'upload non basta.
+
+## Riprendere un lavoro interrotto
+
+Recupera la cartella e la ricetta; verifica gli hash; riusa audio/asset validi;
+riparti dalla prima fase incompleta. Non rigenerare ciò che è già approvato.
+Leggi i messaggi di errore e distingui blocco tecnico, materiale mancante e revisione.
+Non dichiarare attivi modelli che il catalogo identifica come candidati.
+
+## Conservazione del Laboratorio
+
+`integrations/video_library_laboratorio/` conserva il pacchetto del 21/10/2026
+con stili, progetti, diario e selezione multipla. Salva riferimenti creativi;
+non ricava automaticamente voce, font o regia da un MP4. Per rendere eseguibile
+una sua scheda, GPT deve risolvere i riferimenti nelle ricette e preparare il
+progetto del formato scelto. Questo aggiornamento non cambia il servizio live.
+
+## Obiettivo economico e apprendimento
+
+Leggere `docs/STRATEGIA_CREATOR_V13.md` prima di pianificare nuovi contenuti.
+Compilare il contesto `business` della scheda: pubblico, promessa, valore originale,
+obiettivo, una prova, budget e invito finale. Nessuna crescita o entrata garantita.
+Usare `src/creator_metrics_v13.py` sui dati reali disponibili; dati mancanti restano
+sconosciuti. Non copiare KPI arbitrari dai repository di marketing.

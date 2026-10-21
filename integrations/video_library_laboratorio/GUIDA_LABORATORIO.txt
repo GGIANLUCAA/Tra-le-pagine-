@@ -1,0 +1,30 @@
+VIDEO LIBRARY STUDIO — LABORATORIO
+21 ottobre 2026
+
+Sito: https://video-library-studio.600led.workers.dev/
+
+USO
+1. Premi Seleziona e spunta i video; la selezione resta anche cambiando filtro.
+2. Copia titoli o nomi originali, copia i link o condividi una raccolta.
+3. Apri Riferimenti: scegli video diversi per voce, immagini, copertina, ritmo, musica e sottotitoli.
+4. Compila argomento, formato, durata, lingua, destinazione e note.
+5. Copia le istruzioni oppure salva come stile, progetto o diario.
+6. Da Laboratorio riapri, duplica come progetto, esporta/importa o sposta nel cestino le schede.
+
+SALVATAGGIO
+Senza gestione privata: dati locali al dispositivo/browser; usa Esporta laboratorio per conservarne una copia o trasferirli.
+Con gestione privata: schede online protette dalla chiave di amministratore esistente; le schede locali possono essere trasferite con Salva online.
+Le note private non sono incluse nei link di raccolta.
+
+OPERAZIONI IN BLOCCO
+Archivia e Ripristina richiedono la gestione privata. Archiviano nel catalogo senza cancellare gli MP4.
+Massimo 200 selezionati. Duplicare un progetto copia la scheda, non il filmato originale.
+
+LIMITI
+Il laboratorio prepara istruzioni di produzione. Non avvia da solo la generazione video e non ricostruisce automaticamente i parametri tecnici del solo MP4.
+I controlli locali coprono accesso privato, salvataggio/versioni, conflitti, riferimenti validi, archiviazione reversibile e conservazione dei metadati.
+Le prove dal sito coprono selezione tra filtri, assegnazione di riferimenti, salvataggio/riapertura dello stile, diario e cestino locale.
+
+SORGENTI
+worker.js importa workspace-api.mjs. Il frontend attuale e letto da site/index.html nel bucket; il Worker aggiunge preview-client e workspace-client nel contesto della pagina.
+Le credenziali non sono incluse. workspace-base.mjs è il backup precedente al laboratorio.

@@ -58,5 +58,17 @@ class NarrativeReviewV12(unittest.TestCase):
             p.write_text(json.dumps(cues))
             with self.assertRaises(ValueError):scene_review(ep)
 
+    def test_autopilot_provenance_and_original_schema_both_preserve_sources(self):
+        with tempfile.TemporaryDirectory() as d:
+            ep=self.make_episode(d)
+            (ep/"PROVENIENZA_FOTO.json").write_text(json.dumps([
+                {"image":"scena_01.jpg","source":"https://museum.example/one"},
+                {"asset":2,"source_url":"https://museum.example/two"},
+                {"asset":"invalid","source":"ignored"},
+            ]))
+            report=scene_review(ep)
+            self.assertEqual(report["scenes"][0]["original_source"],"https://museum.example/one")
+            self.assertEqual(report["scenes"][1]["original_source"],"https://museum.example/two")
+
 if __name__=="__main__":
     unittest.main()

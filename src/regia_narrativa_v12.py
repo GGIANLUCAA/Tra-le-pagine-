@@ -36,7 +36,20 @@ def scene_review(episode):
         if p.exists():
             obj=json.loads(p.read_text(encoding="utf-8"))
             source=obj if isinstance(obj,list) else (obj.get("images") or [])
-            provenance={int(v["asset"]):v for v in source if isinstance(v,dict) and "asset" in v}
+            # Both original episode metadata and Autopilot's image/source schema.
+            for row in source:
+                if not isinstance(row, dict):
+                    continue
+                value = row.get("asset")
+                if value is None:
+                    match = re.fullmatch(r"scena_(\d+)\.(?:jpg|jpeg|png|webp)",
+                                         Path(str(row.get("image", ""))).name, re.I)
+                    value = match.group(1) if match else None
+                try:
+                    asset_id = int(value)
+                except (TypeError, ValueError):
+                    continue
+                provenance[asset_id] = {**row, "source_url": row.get("source_url") or row.get("source", "")}
             break
     report=[]
     for i,cue in enumerate(cues):

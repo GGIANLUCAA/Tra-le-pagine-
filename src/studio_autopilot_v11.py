@@ -206,6 +206,8 @@ def create_episode(repo,slug,title,idea,kind,minutes,model,key):
     try:
         for n,scene in enumerate(story["scenes"],1):
             item=find_photo(scene["search"],img,n,seen)
+            item["asset"] = n
+            item["source_url"] = item.get("source_url") or item.get("source", "")
             provenance.append(item)
     finally:
         (ep/"PROVENIENZA_FOTO.json").write_text(
