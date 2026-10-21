@@ -4,7 +4,7 @@ on:
     paths:
       - .github/workflows/video-library-r2-import.yml
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '17 * * * *'
   workflow_dispatch:
     inputs:
       max_artifacts:
@@ -104,6 +104,7 @@ jobs:
               with tempfile.TemporaryDirectory() as tmp:
                   wd=pathlib.Path(tmp);zpath=wd/'a.zip'
                   try:
+                      if cf('GET','/artifact-status',{'artifact':a['id']}).get('synced'):continue
                       u='https://api.github.com/repos/'+REPO+'/actions/artifacts/'+str(a['id'])+'/zip'
                       with S.get(u,headers=HEAD,stream=True,timeout=240) as r:
                           r.raise_for_status()
@@ -121,6 +122,7 @@ jobs:
                               with z.open(n) as src,fp.open('wb') as dst:
                                   import shutil;shutil.copyfileobj(src,dst)
                               if upload(fp,safe):published+=1
+                      cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']})
                       print('Completed artifact:',a['name'],flush=True)
                   except Exception as e:
                       errors+=1
