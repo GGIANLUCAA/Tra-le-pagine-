@@ -13,7 +13,7 @@
 <body>
 <header class="hero">
  <div class="top"><div class="mark">✦ VIDEO LIBRARY STUDIO <span style="color:#8092b1;font-weight:500">/ CREATIVE ARCHIVE</span></div>
- <div class="top-actions"><button class="ghost" id="refresh">↻ Aggiorna</button><button class="btn" id="adminOpen">⚙ Gestione</button></div></div>
+ <div class="top-actions"><button class="ghost" id="exportCSV">⇩ Catalogo CSV</button><button class="ghost" id="refresh">↻ Aggiorna</button><button class="btn" id="adminOpen">⚙ Gestione</button></div></div>
  <h1>I tuoi video.<br>Tutti in un posto.</h1>
  <p>Esplora le produzioni, guarda le anteprime, riconosci le versioni, scarica gli originali e condividi i tuoi preferiti.</p>
  <div class="stats"><div class="stat"><b id="nVideos">—</b><span>Video disponibili</span></div><div class="stat"><b id="nPosters">—</b><span>Copertine</span></div><div class="stat"><b id="nGpt">—</b><span>Solo su ChatGPT</span></div><div class="stat"><b id="nProjects">—</b><span>Categorie</span></div><div class="stat"><b id="nHours">—</b><span>Ore di video rilevate</span></div></div>
@@ -92,6 +92,13 @@ $('#favoriteToggle').onclick=async()=>{const x=g.selected;if(await manage(x,{fav
 $('#adminOpen').onclick=()=>{if(g.admin){log('Gestione privata già attiva');return}$('#adminDialog').showModal()};
 $('#adminForm').onsubmit=async e=>{e.preventDefault();const token=$('#adminKey').value.trim();if(token.length<20){log('Chiave non valida');return}g.token=token;localStorage.setItem('vlsAdmin',token);await load(true);if(g.admin){$('#adminDialog').close();log('Gestione privata attivata')}else{g.token='';localStorage.removeItem('vlsAdmin');log('Accesso negato')}};
 $('#adminLogout').onclick=()=>{g.token='';g.admin=false;localStorage.removeItem('vlsAdmin');$('#includeArchived').checked=false;load(true)};
+$('#exportCSV').onclick=()=>{
+ const shown=g.items.filter(x=>!x.hidden||g.admin);
+ const columns=['Titolo','Categoria','Progetto','Descrizione','Durata_secondi','Larghezza_px','Altezza_px','Dimensione_byte','Fonte','Riproducibile','Versione','Copie_uguali','Varianti','Data_creazione_ChatGPT','Data_importazione_Cloudflare','Preferito','Nascosto','Nome_originale','Collegamento'];
+ const rows=[columns,...shown.map(x=>[x.viewTitle,x.viewCategory,x.viewProject,x.viewDescription,x.duration||'',x.width||'',x.height||'',x.size,x.source||'',x.available!==false?'SI':'NO',x.viewVersion,x.sameContent?.length||0,x.variants||0,x.gptCreatedAt||'',x.uploaded||'',x.favorite?'SI':'NO',x.hidden?'SI':'NO',x.name||x.key,x.available!==false?shareURL(x):'Solo nella libreria ChatGPT'])];
+ const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ const file=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download='Video_Library_Studio_Catalogo_'+new Date().toISOString().slice(0,10)+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2500);log('Catalogo CSV esportato: '+shown.length+' video');
+};
 $('#refresh').onclick=()=>load(true);$('#availability').onchange=draw;$('#query').oninput=draw;$('#project').onchange=draw;$('#sort').onchange=draw;$('#versions').onchange=draw;$('#includeArchived').onchange=draw;
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{const dialog=$('#'+b.dataset.close);dialog.close();if(dialog.id==='player'){$('#video').pause();$('#video').removeAttribute('src');$('#video').load()}});
 $('#playerDownload').onclick=()=>{if(g.selected)location.href=fullURL(g.selected)};
