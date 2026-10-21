@@ -16,7 +16,7 @@ sys.path.insert(0,str(ROOT/"modules"/"artvision_critico"))
 sys.path.insert(0,str(ROOT/"src"))
 from render_dali import choose_voice, music_get
 W,H,FPS=1080,1920,20
-PARENT=Path(__file__).parent/"production_series"
+PARENT=Path(__file__).parent
 FONTS={
  "display":"/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf",
  "sans":"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
