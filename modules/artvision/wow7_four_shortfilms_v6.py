@@ -114,7 +114,7 @@ MOVIES={
    ("officer","whole",(.5,.5),2.8,"Il disegno della figura nella sua interezza"),
    ("sancho","portrait",(.49,.35),3.0,"Un personaggio osservato da vicino"),
    ("sancho","whole",(.5,.5),2.8,"Dai particolari al carattere"),
-   ("quixote2","texture",(.62,.55),3.1,"L'incisione racconta un altro capitolo"),
+   ("hunt","texture",(.62,.55),3.1,"Segni nervosi di una scena di caccia"),
    ("hunt","whole",(.5,.5),2.8,"Lo studio preparatorio per intero"),
    ("wolf","portrait",(.51,.46),3.0,"La favola e i suoi simboli"),
    ("wolf","whole",(.5,.5),2.9,"Il soggetto rivelato"),
