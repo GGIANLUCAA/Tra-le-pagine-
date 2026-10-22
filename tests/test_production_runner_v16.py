@@ -60,6 +60,10 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(result['qualified_today'],0)
         stage=self.workspace/'jobs/test-one/repo/output/final'
         self.assertTrue((stage/'REVIEW_CONTACT.jpg').is_file());self.assertTrue((stage/'REVIEW_AUDIO.mp3').is_file())
+        pack_file=stage/'CREATIVE_PACKAGE_V21.json'
+        error_file=stage/'CREATIVE_V21_ERROR.txt'
+        self.assertTrue(pack_file.is_file(),error_file.read_text() if error_file.is_file() else 'V21 pack absent')
+        self.assertTrue((stage/'APERTURA_0_7_V21.jpg').is_file())
         state=json.loads((self.workspace/'state.json').read_text());self.assertEqual(state['jobs']['test-one']['attempts'],1)
         self.assertEqual(self.run_batch()['started'],0)
         archive=self.root/'checkpoint.tar';r.pack(self.workspace,archive)
