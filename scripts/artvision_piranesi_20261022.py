@@ -11,7 +11,7 @@ import requests
 import mido
 from mido import Message, MidiFile, MidiTrack, MetaMessage, bpm2tempo
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'modules'/'artvision'))
 import director_cinema_v6 as director
 from identita_visiva_v6 import signature,cover
