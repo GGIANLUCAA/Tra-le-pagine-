@@ -61,6 +61,20 @@ I file di packaging sono **bozze da revisionare** e non autorizzano pubblicazion
   Non applicare questa copertina a Cinema V6, che ha una diversa identità approvata.
 - Effetti motivati, movimenti armoniosi, niente confusione o ripetizione meccanica.
   Il parallax esistente è una camera su immagini, non animazione AI dei personaggi.
+- **Correzione Critico Bosch 23 ottobre 2026 — obbligo prima della consegna:**
+  nessun movimento sinusoidale, avanti-indietro o oscillazione della camera;
+  alternare inquadrature FERME a pochi push/pull motivati e molto lenti (come
+  riferimento prudente 0–1% di zoom nell'intera inquadratura, non al secondo),
+  tagli solo quando cambia il dettaglio di cui si parla, dissolvenze sobrie.
+  Nel controllo visivo guardare a velocità reale 0/1/3/5/7s e 3 transizioni
+  centrali: riconoscibilità del soggetto, stabilità, assenza effetto mal di mare.
+  La fine deve CHIUDERE il ragionamento senza inserire domande retoriche fuori
+  contesto o richiami artificiali all'engagement. I commenti interpretativi
+  personali del critico sono facoltativi, al massimo 1–2 se davvero utili;
+  nessuna scritta/commento sovrimpresso, salvo richiesta esplicita. Proteggere
+  parlato Google approvato, livello musica, copertina serie e master storico.
+  Vedere `modules/artvision_critico/production_series/bosch_director_cut_v22.json`
+  per la correzione concreta, non assumere che un test FFprobe dimostri armonia.
 - Un solo filmato finale per richiesta; niente due varianti non richieste.
 - Pubblicazione e caricamento su un sito pubblico seguono l'autorizzazione della
   sessione. Una richiesta di produzione non implica distribuzione pubblica.
