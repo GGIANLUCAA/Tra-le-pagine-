@@ -1,0 +1,50 @@
+{
+  "schema": "voice-artifact-recovery-v16",
+  "updated_utc": "2026-10-22T17:05:00Z",
+  "repository": "GGIANLUCAA/Tra-le-pagine-",
+  "entries": [
+    {
+      "episode": "03_siddharta",
+      "status": "recoverable_verified_voice_and_timing",
+      "workflow_run_id": 39153143646,
+      "workflow_commit": "917ce810178588fb9797b69c11ffa68c1c23f010",
+      "artifact_id": 12146196388,
+      "artifact_name": "TRA_LE_PAGINE_EP03_VOCE_E_TIMING",
+      "artifact_digest": "sha256:cfd09f320ffd62fb83ae9b5ed38aafff2f9b4348900414e29f35531d243d3835",
+      "script_file": "episodes/03_siddharta/testo.txt",
+      "artifact_script_file": "COPIONE.txt",
+      "wav_file": "VOCE.wav",
+      "wav_sha256": "7886e3781f86a40384a3f1c0be64fc6a35047e19b202f0bebd2b26e422ab0a8c",
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration_seconds": 190.72,
+      "timing_file": "TIMING_FRASI.json",
+      "voice_provider": "Google Gemini",
+      "voice_model": "gemini-3.8-flash-tts",
+      "voice_profile": "Gacrux",
+      "target_cache_dir": "cache/voice/03_siddharta"
+    },
+    {
+      "episode": "09_dersu_uzala",
+      "status": "verified_audio_only_alignment_missing",
+      "workflow_run_id": 39627957410,
+      "workflow_commit": "f73a76c860bd803e7c2eebb1a2132f52ef26e3eb",
+      "artifact_id": 12358361535,
+      "artifact_name": "DERSU_UZALA_GOOGLE_GACRUX_AUDIO",
+      "artifact_digest": "sha256:35103b43fb7f09ff68eaace8f091ff694ca42627a3619866c4d448d9623d7615",
+      "script_file": "episodes/09_dersu_uzala/testo.txt",
+      "artifact_script_file": "COPIONE.txt",
+      "wav_file": "VOCE.wav",
+      "wav_sha256": "6c18a9a69e5b8630c58113eeba45d6065b6fd361e5edbc2827db7f3cf273d0f0",
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration_seconds": 230.52,
+      "timing_file": null,
+      "voice_provider": "Google Gemini",
+      "voice_model": "gemini-3.8-flash-tts",
+      "voice_profile": "Gacrux",
+      "target_cache_dir": "cache/voice/09_dersu_uzala",
+      "blocker": "L'artefatto non contiene tempi frase o ALLINEAMENTO_VOCE.json: non creare una cache renderizzabile finché l'audio non viene allineato e ascoltato."
+    }
+  ]
+}

@@ -45,6 +45,11 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1 frei0r-plugins
           python -m pip install 'Pillow>=10,<13' 'numpy>=1.26,<3' 'soundfile>=0.12,<1' 'scipy>=1.11,<2' 'opencv-python-headless>=4.8,<5'
+      - name: Recupera soltanto cache vocali allowlist richieste dalla coda
+        if: steps.queue.outputs.prepared == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/recover_voice_artifacts_v16.py
       - name: Applica solo revisioni dell’agente legate al master esatto
         run: python src/production_runner_v16.py reviews
       - name: Esegui i lavori pronti, senza chiavi dei provider

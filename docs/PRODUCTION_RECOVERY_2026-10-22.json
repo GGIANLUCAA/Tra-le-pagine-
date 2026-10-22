@@ -1,0 +1,46 @@
+{
+  "schema": "production-recovery-audit-v16",
+  "checked_at": "2026-10-22T17:05:00Z",
+  "qualified_new_finals": 0,
+  "queue_prepared_items": 0,
+  "reviews_waiting": 0,
+  "v16_checkpoint": {
+    "latest_run_id": 39761091413,
+    "artifact_id": 12418545371,
+    "artifact_size_bytes": 10388,
+    "finding": "Checkpoint valido ma vuoto: nessun master o lavoro in attesa; il successo della run non equivale a produzione."
+  },
+  "verified_voice_artifacts": [
+    {
+      "episode": "03_siddharta",
+      "artifact_id": 12146196388,
+      "wav_sha256": "7886e3781f86a40384a3f1c0be64fc6a35047e19b202f0bebd2b26e422ab0a8c",
+      "duration_seconds": 190.72,
+      "sample_rate": 24000,
+      "channels": 1,
+      "script_matches_repository": true,
+      "voice_documented": "Google Gemini 3.8 Flash TTS / Gacrux",
+      "sentence_timing_present": true,
+      "remaining_blockers": ["15 illustrazioni premium mancanti", "PROJECT_V13 completo e diritti visivi", "musica con MUSIC_RELEASE_V20", "revisione integrale dopo render"]
+    },
+    {
+      "episode": "09_dersu_uzala",
+      "artifact_id": 12358361535,
+      "wav_sha256": "6c18a9a69e5b8630c58113eeba45d6065b6fd361e5edbc2827db7f3cf273d0f0",
+      "duration_seconds": 230.52,
+      "sample_rate": 24000,
+      "channels": 1,
+      "script_matches_repository": true,
+      "voice_documented": "Google Gemini 3.8 Flash TTS / Gacrux",
+      "sentence_timing_present": false,
+      "remaining_blockers": ["allineamento voce mancante", "metadata, scene_cues e asset visivi mancanti", "PROJECT_V13 completo e diritti", "musica con MUSIC_RELEASE_V20"]
+    }
+  ],
+  "catalog_findings": {
+    "episodes_in_repository": 9,
+    "local_recipes_v13": 0,
+    "prepared_queue_items": 0,
+    "note": "Artefatti storici e video già consegnati non sono stati contati come nuovi finali."
+  },
+  "action_taken": "Aggiunto recupero allowlist degli artefatti vocali con verifica di repository, copione, hash WAV, formato, profilo e timing. Nessuna chiamata TTS, nessuna pubblicazione, nessun pacchetto incompleto inserito in coda."
+}
