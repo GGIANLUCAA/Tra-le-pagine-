@@ -1,0 +1,79 @@
+name: "ArtVision Thomas Cole - Cinema V6 V17 V21"
+run-name: "Thomas Cole - Il destino di un impero - MP4 finale"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-thomas-cole-v6.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  film:
+    name: "Thomas Cole - original museum art film"
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU movie maker
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+          python -m py_compile modules/artvision/thomas_cole_course_v6.py
+      - name: Render story from verified paintings and licensed music
+        run: python modules/artvision/thomas_cole_course_v6.py
+      - name: Independent V17 quality review
+        run: |
+          python src/quality_director_v17.py \
+            --format artvision_cinema \
+            --project output/artvision-thomas-cole-course-v6/thomas_cole/PROJECT_V13.json \
+            --video output/artvision-thomas-cole-course-v6/thomas_cole/film/ARTVISION_THOMAS_COLE_CINEMA_V6.mp4 \
+            --out output/artvision-thomas-cole-course-v6/thomas_cole/film/QUALITY_V17
+      - name: Generate platform-specific V21 posts and 0-7 second contact sheet
+        run: |
+          python src/creative_director_v21.py \
+            --brief output/artvision-thomas-cole-course-v6/thomas_cole/PROJECT_V13.json \
+            --video output/artvision-thomas-cole-course-v6/thomas_cole/film/ARTVISION_THOMAS_COLE_CINEMA_V6.mp4 \
+            --out output/artvision-thomas-cole-course-v6/thomas_cole/film/CREATIVE_V21
+      - name: Verify MP4 codec actual paintings duration and rights report
+        run: |
+          python - <<'PY'
+          import json,hashlib,pathlib,subprocess
+          root=pathlib.Path('output/artvision-thomas-cole-course-v6/thomas_cole')
+          film=root/'film'
+          video=film/'ARTVISION_THOMAS_COLE_CINEMA_V6.mp4'
+          assert video.is_file() and video.stat().st_size>3_000_000
+          report=json.loads((film/'REPORT.json').read_text())
+          rights=json.loads((film/'FONTI_E_DIRITTI.json').read_text())
+          q17=json.loads((film/'QUALITY_V17/QUALITY_REPORT_V17.json').read_text())
+          q21=json.loads((film/'CREATIVE_V21/CREATIVE_PACKAGE_V21.json').read_text())
+          assert report['original_works']>=5 and report['shots']>=25,report
+          assert not q17['blocking'],q17['blocking']
+          assert q21['video_sha256']==hashlib.sha256(video.read_bytes()).hexdigest()
+          titles=[w['title'] for w in rights['works']]
+          for needle in ('Savage State','Pastoral State','Consummation','Destruction','Desolation'):
+            assert any(needle.casefold() in name.casefold() for name in titles),(needle,titles)
+          spec=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(video)]))
+          video_streams=[s for s in spec['streams'] if s['codec_type']=='video']
+          audio_streams=[s for s in spec['streams'] if s['codec_type']=='audio']
+          assert len(video_streams)==1 and video_streams[0]['codec_name']=='h264'
+          assert (video_streams[0]['width'],video_streams[0]['height'])==(1080,1920)
+          assert len(audio_streams)==1 and audio_streams[0]['codec_name']=='aac'
+          assert not any(s['codec_type']=='subtitle' for s in spec['streams'])
+          assert 120<float(spec['format']['duration'])<124
+          assert (film/'COPERTINA.jpg').is_file()
+          print('FINAL VERIFIED',video.name,video.stat().st_size,report['original_works'],report['shots'],'qa',q17['status'])
+          PY
+      - name: Export one finished MP4 cover rights V17 V21
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_COLE_COURSE_EMPIRE_FINALE
+          path: |
+            output/artvision-thomas-cole-course-v6/thomas_cole/film/
+            output/artvision-thomas-cole-course-v6/thomas_cole/PROJECT_V13.json
+          if-no-files-found: error
+          retention-days: 7
