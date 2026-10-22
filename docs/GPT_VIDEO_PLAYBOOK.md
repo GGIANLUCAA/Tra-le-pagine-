@@ -10,6 +10,20 @@ Ordine di precedenza: richiesta attuale → regole V12 e preset approvato del fo
 → questa guida → documenti storici. La serie Critico V2 ha una copertina diversa
 da Cinema V6; non generalizzare le preferenze tra formati.
 
+## Requisito permanente aggiunto V21: prima impressione e confezione social
+
+Leggere [CREATIVE_DIRECTOR_V21_STANDARD.md](CREATIVE_DIRECTOR_V21_STANDARD.md) per
+ogni produzione nuova. Pianificare **PRIMA** del render primo fotogramma,
+primi 3/5/7s, copertina dedicata, durata non fissa, scelta musicale emozionale
+e diritti Meta/external, descrizioni per Facebook/Instagram/TikTok/YouTube.
+Dopo il master eseguire il controllo V21 con `--video`: miniatura candidata e
+contact sheet primi sette secondi vengono estratti da veri fotogrammi.
+Non alterare il Gold Master approvato e non spacciarli per controllo estetico
+automaticamente superato. Il V21 non sostituisce l'Editor V19, i diritti V20 o QA V17.
+Se manca il video o il brief è povero, lasciare i campi **da revisionare** senza
+inventare contesto, fatti, licenze o metriche. Per musica di Facebook scelta in-app
+non riutilizzare la registrazione su social esterni senza diritti specifici.
+
 ## 1. Decidi il formato e trova un riferimento
 
 Leggi `config/video_formats_v13.json`. Se è chiaro dal messaggio, scegli senza
