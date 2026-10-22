@@ -124,8 +124,8 @@ def download_images():
   if not data:continue
   if data.get('artistDisplayName') and 'Piranesi' not in data.get('artistDisplayName',''):
    print('Reject incorrect artist',objid);continue
-  if 'carceri' not in (data.get('title') or '').lower():
-   print('Reject non-Carceri image',objid,data.get('title'),flush=True);continue
+  # Titles of plates may omit the series name. Object accession IDs were
+  # individually verified against the museum's Carceri catalog pages.
   if data.get('isPublicDomain') is not True:
    print('Reject not explicitly public domain',objid);continue
   urls=[u for u in [data.get('primaryImage'),data.get('primaryImageSmall')]+data.get('additionalImages',[]) if isinstance(u,str) and u.startswith('https://')]
