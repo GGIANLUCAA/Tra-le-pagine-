@@ -12,7 +12,7 @@ def check(brief):
     blockers, warnings = [], []
     if not str(brief.get("artist","")).strip():
         blockers.append("Indicare artista")
-    if brief.get("format") not in {"artvision_cinema","artvision_meraviglia_breve"}:
+    if brief.get("format") not in {"artvision_cinema","artvision_meraviglia_breve","artvision_enigma"}:
         blockers.append("Formato non supportato")
     scenes = brief.get("scenes") or []
     if len(scenes) < 3:

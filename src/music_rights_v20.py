@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 SOURCES = {"external_licensed", "meta_sound_collection", "meta_native_library", "original"}
-FORMATS = {"artvision_cinema", "artvision_critico", "libri", "controluce", "visual_music", "hyperlumen", "other"}
+FORMATS = {"artvision_cinema", "artvision_enigma", "artvision_critico", "libri", "controluce", "visual_music", "hyperlumen", "other"}
 QA_FIELDS = ("music_fit_reviewed", "full_watch_listen", "audio_mix_reviewed",
              "visual_rights_reviewed", "caption_ready", "originality_reviewed")
 

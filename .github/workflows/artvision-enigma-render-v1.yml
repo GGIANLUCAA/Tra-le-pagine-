@@ -1,0 +1,66 @@
+name: "ArtVision Enigma V1 — produce MP4 da opera museale"
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Soggetto già curato e con fonti verificate"
+        type: choice
+        required: true
+        default: arcimboldo_vertumnus
+        options:
+          - arcimboldo_vertumnus
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: modules/artvision_enigma/requirements.txt
+      - name: "FFmpeg + librerie riusate e impiegate davvero"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install -r modules/artvision_enigma/requirements.txt
+      - name: "Preflight e materiali originali con prova dei diritti"
+        run: |
+          python modules/artvision_enigma/enigma_v1.py --config modules/artvision_enigma/episodes/${{ inputs.episode }}.json --plan-only
+          python modules/artvision_enigma/assets_v1.py \
+            --config modules/artvision_enigma/episodes/${{ inputs.episode }}.json \
+            --out output/enigma-v1-assets
+      - name: "Regia Enigma — 1080x1920 H264/AAC, rivelazione e musica sincronizzata"
+        run: |
+          python modules/artvision_enigma/enigma_v1.py \
+            --config modules/artvision_enigma/episodes/${{ inputs.episode }}.json \
+            --image output/enigma-v1-assets/opera_museale.jpg \
+            --music output/enigma-v1-assets/official_licensed_recording.mp3 \
+            --out output/enigma-v1 --width 1080 --height 1920 --fps 24
+      - name: "Conferma MP4, audio, copertina, fonti e rapporto delle scene"
+        run: |
+          ffprobe -v error -show_entries format=duration,size:stream=codec_type,width,height \
+            -of json output/enigma-v1/ARTVISION_ENIGMA_V1.mp4
+          test -s output/enigma-v1/REPORT_QA.json
+          test -s output/enigma-v1/COPERTINA.jpg
+          test -s output/enigma-v1-assets/FONTI_E_DIRITTI.json
+      - name: "Consegna da revisionare — NESSUNA pubblicazione automatica"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_ENIGMA_V1_${{ inputs.episode }}_${{ github.run_id }}
+          path: |
+            output/enigma-v1/ARTVISION_ENIGMA_V1.mp4
+            output/enigma-v1/COPERTINA.jpg
+            output/enigma-v1/ANTEPRIMA_SCENE.jpg
+            output/enigma-v1/REPORT_QA.json
+            output/enigma-v1/EDITOR_REPORT_V19.json
+            output/enigma-v1/DIRECTION_PLAN_V19.md
+            output/enigma-v1/SOURCES_V19.md
+            output/enigma-v1/STORYBOARD.json
+            output/enigma-v1/DESCRIZIONE_SOCIAL.txt
+            output/enigma-v1-assets/FONTI_E_DIRITTI.json
+          if-no-files-found: error
+          retention-days: 14
