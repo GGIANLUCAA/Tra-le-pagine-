@@ -6,6 +6,11 @@ on:
     paths:
       - 'scripts/artvision_piranesi_20261022.py'
       - '.github/workflows/artvision-piranesi-20261022.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/artvision_piranesi_20261022.py'
+      - '.github/workflows/artvision-piranesi-20261022.yml'
   workflow_dispatch:
 permissions:
   contents: read
