@@ -164,6 +164,33 @@ def verify_scenes(path):
     found=detect(str(path), ContentDetector(threshold=32.0), show_progress=False)
     return [{"start_seconds":round(a.get_seconds(),2),"end_seconds":round(b.get_seconds(),2)} for a,b in found]
 
+def reuse_editor_v19(data,out):
+    """Applica VERAMENTE la skill V19 preesistente, senza modificarne le altre regie."""
+    from src.artvision_editor_v19 import outputs
+    m=data["music"]
+    brief={"format":"artvision_enigma","artist":data["artist"],
+      "music":{"title":m["title"],"composer":m["artist"],"source_url":m["source_url"],
+               "license_url":m["license_url"],"edits":"Estratto, volume e dissolvenza"},
+      "sources":[{"artwork":data["artwork"],"url":data["source"]["file_page"],
+                  "reuse_terms":data["source"]["license"],
+                  "attribution":data["source"].get("photo_credit","")}],
+      "editorial":{"opening":data["hook"],"body":data["resolution"],
+                   "fact_sources_checked":False,"hashtags":["#Arte","#ArtVision"]},
+      "artistic_review_complete":False,
+      "scenes":[{"artwork":data["artwork"],
+                 "framing":"medium" if shot["kind"]=="iris_reveal" else shot["kind"],
+                 "move":"detail_reveal" if shot["move"]=="reveal" else shot["move"],
+                 "purpose":shot["purpose"],"visual_hook":bool(i==0)}
+                for i,shot in enumerate(data["shots"])]}
+    report,plan,caption,rights=outputs(brief)
+    if report["blocking_issues"]:
+        raise ValueError("Editor V19 blocca la produzione: "+"; ".join(report["blocking_issues"]))
+    for name,value in [("EDITOR_REPORT_V19.json",json.dumps(report,ensure_ascii=False,indent=2)+"\n"),
+                       ("DIRECTION_PLAN_V19.md",plan),
+                       ("SOURCES_V19.md",rights)]:
+        (out/name).write_text(value,encoding="utf8")
+    return report
+
 def make_contact_sheet(video, out, duration, *, count=10):
     """Dieci fotogrammi REALI in una JPG leggera da controllare da Android."""
     cap=cv2.VideoCapture(str(video))
@@ -190,6 +217,7 @@ def render(data,image,music,out,width=1080,height=1920,fps=24,voice=None):
         raise ValueError("Dimensioni pari >= 240x426, FPS 12/24/25/30")
     if not image.is_file() or not music.is_file(): raise FileNotFoundError("Mancano immagine o musica")
     out.mkdir(parents=True,exist_ok=True)
+    reuse_editor_v19(data,out)
     src=load_art(image);whole=whole_art(src,width,height)
     onsets=beat_times(music,seconds)
     edges=boundaries(data["shots"],onsets,seconds)
