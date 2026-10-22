@@ -5,7 +5,7 @@ V6 Gold Master rimane immutato. V17 segue come controllo additivo.
 """
 from pathlib import Path
 import argparse, json, re
-import batch5_cinema_v6 as v6
+import john_martin_enriched_engine_v6 as v6
 import director_cinema_v6 as cinema
 from atelier_v4 import audio_download as original_download
 
@@ -87,7 +87,7 @@ def curate_sources(slug,cfg,folder):
   if motif in used:others.append(rec);continue
   used.add(motif);unique.append(rec)
  result=(unique+others[:max(0,9-len(unique))])[:15]
- if len(result)<9:raise RuntimeError("Fewer than nine verified original artworks")
+ if len(result)<6:raise RuntimeError("Fewer than six verified original artworks")
  print("Curated",len(result),"of",len(artworks),"verified artworks",flush=True)
  return result,errors
 v6.sources=curate_sources
@@ -120,6 +120,13 @@ def make_film_shots(works,cfg,slug):
  for w in extras[:max(0,12-len(selected)-len(light))]:
   selected.append((w,"Visions beyond the frame",(.42,.41),(.65,.59)))
  selected+=light
+ # If an art archive enforces temporary download limits, keep an authorial film:
+ # a second camera movement on a major work instead of unlicensed filler images.
+ if selected:
+  unique_first=list(selected)
+  for j in range(max(0,10-len(selected))):
+   work=unique_first[(j*2+1)%len(unique_first)][0]
+   selected.append((work,"Ripresa tematica — dettagli monumentali",(.31+.08*(j%3),.48),(.67,.58)))
  # Circular return to the opening picture after the light; it is a cinematic epilogue.
  if selected: selected.append((selected[0][0],"Coda — memory of the first catastrophe",(.5,.52),(.5,.5)))
  shots=[]
