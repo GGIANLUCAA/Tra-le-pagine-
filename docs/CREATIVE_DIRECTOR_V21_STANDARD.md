@@ -60,6 +60,24 @@ Distinguere:
 - **Ripetizione:** si può usare lo stesso brano anche su numerosi video quando coerente, ma non usare identico beat-template, inquadrature o crescendo con il solo titolo cambiato. Nel V21 la musica scelta NON viene sovrascritta per cercare artificialmente varietà.
 Fonti: https://www.facebook.com/help/instagram/402084904469945 e https://www.facebook.com/help/354736791367645/
 
+## Preferenza aggiornata: ArtVision Cinema più breve (23 ottobre 2026)
+
+Feedback dell'utente dopo il film Thomas Cole: i nuovi filmati **ArtVision
+Cinema V6 senza parlato** devono essere **generalmente più brevi**. Usare
+come riferimento editoriale **45–75 secondi**, spesso intorno a un minuto.
+La durata effettiva resta variabile e giustificata da opere, trama visiva e
+musica; superare l'intervallo quando una progressione significativa lo richiede
+e non accorciare forzatamente altri format narrati.
+
+Accorciare per sottrazione, **non** creando una camera nervosa: eliminare
+inquadrature ripetitive, intermezzi decorativi, ritorni inutili e riprese
+ridondanti. Conservare dettagli leggibili, movimenti stabili, un'apertura
+significativa nei primi 0/1/3/5/7 secondi e un finale poetico compiuto.
+Per la produzione in serie usare la regola nei nuovi storyboard/preset
+specifici dell'artista, **non** modificando V6 Gold Master o gli MP4 già
+approvati. La preferenza riguarda i nuovi lavori, non impone un limite fisso
+di durata né predice prestazioni social.
+
 ## Durata: logica pratica, non timer fisso
 
 - 1 sola rivelazione visiva: finire appena la promessa è mantenuta; niente riempitivi.
