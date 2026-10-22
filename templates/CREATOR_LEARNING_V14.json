@@ -11,6 +11,16 @@
       "limitations": "Non si conoscono retention, condivisioni, completamenti o crescita. Il pilot cambia anche durata (45→37.5s) e cover, quindi non e un A/B a variabile singola. La distanza visiva fra campioni non prova piacere o emozione dello spettatore. Evitare di pubblicare entrambi come duplicati.",
       "next_test": "Dopo scelta e pubblicazione autorizzata, raccogliere da Facebook metriche disponibili a 7 e 28 giorni (vista media, completamenti, drop 3/7s, condivisioni per 1000 views) e confrontare con altri video originali simili; per un eventuale vero A/B tenere costante cover e durata cambiando solo apertura.",
       "status": "hypothesis"
+    },
+    {
+      "id": "bosch-camera-nausea-ending-20261023",
+      "format": "artvision_critico",
+      "hypothesis": "Movimenti meno frequenti e meno ampi, pause visive e finale coerente possono migliorare comfort e attenzione; valutare qualitativamente e poi sulle retention reali.",
+      "evidence": [],
+      "observation": "Feedback diretto dell'utente dopo la visione di Bosch Critico V21: narrazione e voce abbastanza buone; movimenti della camera troppo veloci/eccessivi, quasi mal di mare; domanda finale fuori contesto. Richiesta di conservare poche osservazioni personali (0, 1 o 2) e armonia. Revisione locale V22: camera più stabile, 23 inquadrature motivate, dissolvenze 0,6s, voce Gacrux conservata fino a 'conseguenze', finale senza domanda. Controllati ffprobe e decodifica integrale, MP4 conservato in conversazione.",
+      "limitations": "Feedback qualitativo individuale, non prova generalizzabile su retention o viralità. V22 cambia variabili multiple; il miglioramento estetico va valutato dall'utente prima di adottare l'esempio come preset universale. Il workflow di questa specifica revisione non è stato automaticamente integrato ai vecchi renderer.",
+      "next_test": "Confrontare qualitativamente V21 e V22 sul telefono a velocità normale, soprattutto secondi 0-7, alcuni tagli centrali e ultimo pensiero; sulle prossime produzioni applicare la regola prima del render. Dopo autorizzazione e pubblicazione esaminare metriche reali comparabili quando disponibili.",
+      "status": "observed_editorial_feedback"
     }
   ],
   "lesson_fields": {
