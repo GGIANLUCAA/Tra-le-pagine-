@@ -1,0 +1,25 @@
+name: ArtVision Editor V19 - unit tests
+on:
+  pull_request:
+    paths:
+      - 'src/artvision_editor_v19.py'
+      - 'tests/test_artvision_editor_v19.py'
+      - 'templates/ARTVISION_JOHN_MARTIN_V19.json'
+      - '.github/workflows/artvision-editor-v19-tests.yml'
+  workflow_dispatch:
+jobs:
+  editor-v19:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify editorial module
+        run: python -m unittest discover -s tests -p 'test_artvision_editor_v19.py' -v
+      - name: Verify John Martin editorial package
+        run: |
+          python src/artvision_editor_v19.py --brief templates/ARTVISION_JOHN_MARTIN_V19.json --out output/editor-v19-smoke
+          test -f output/editor-v19-smoke/SOCIAL_CAPTION_V19.txt
+          test -f output/editor-v19-smoke/DIRECTION_PLAN_V19.md
