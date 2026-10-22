@@ -113,7 +113,7 @@ def quiet_shot(img,shot,t,bg=None,full=None):
  ih,iw=img.shape[:2]
  base_width=min(iw,ih*camera.W/camera.H)
  limit=max(1.015,base_width/camera.W*.92)
- return camera.compute(img,shot.focus,min(zoom,limit),movement=(0,0))
+ return camera.compute(img,shot.focus,min(zoom,limit),motion=(0,0))
 camera.frame_shot=quiet_shot
 
 # Music selects a real CC BY instrumental recording already used by this studio;
