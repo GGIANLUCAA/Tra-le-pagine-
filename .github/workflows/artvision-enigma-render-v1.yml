@@ -1,5 +1,9 @@
 name: "ArtVision Enigma V1 — produce MP4 da opera museale"
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'queue/render_requests/arcimboldo_enigma_20261022.json'
   workflow_dispatch:
     inputs:
       episode:
@@ -29,21 +33,21 @@ jobs:
           python -m pip install -r modules/artvision_enigma/requirements.txt
       - name: "Preflight e materiali originali con prova dei diritti"
         run: |
-          python modules/artvision_enigma/enigma_v1.py --config modules/artvision_enigma/episodes/${{ inputs.episode }}.json --plan-only
+          python modules/artvision_enigma/enigma_v1.py --config modules/artvision_enigma/episodes/${{ github.event_name == 'workflow_dispatch' && inputs.episode || 'arcimboldo_vertumnus' }}.json --plan-only
           python modules/artvision_enigma/assets_v1.py \
-            --config modules/artvision_enigma/episodes/${{ inputs.episode }}.json \
+            --config modules/artvision_enigma/episodes/${{ github.event_name == 'workflow_dispatch' && inputs.episode || 'arcimboldo_vertumnus' }}.json \
             --out output/enigma-v1-assets
       - name: "Regia Enigma — 1080x1920 H264/AAC, rivelazione e musica sincronizzata"
         run: |
           python modules/artvision_enigma/enigma_v1.py \
-            --config modules/artvision_enigma/episodes/${{ inputs.episode }}.json \
+            --config modules/artvision_enigma/episodes/${{ github.event_name == 'workflow_dispatch' && inputs.episode || 'arcimboldo_vertumnus' }}.json \
             --image output/enigma-v1-assets/opera_museale.jpg \
             --music output/enigma-v1-assets/official_licensed_recording.mp3 \
             --out output/enigma-v1 --width 1080 --height 1920 --fps 24
       - name: "Creative Director V21 — prima impressione, copertina candidata e guida social"
         run: |
           python src/creative_director_v21.py \
-            --brief modules/artvision_enigma/episodes/${{ inputs.episode }}.json \
+            --brief modules/artvision_enigma/episodes/${{ github.event_name == 'workflow_dispatch' && inputs.episode || 'arcimboldo_vertumnus' }}.json \
             --video output/enigma-v1/ARTVISION_ENIGMA_V1.mp4 \
             --out output/enigma-v1
       - name: "Conferma MP4, audio, copertina, fonti e rapporto delle scene"
@@ -56,7 +60,7 @@ jobs:
       - name: "Consegna da revisionare — NESSUNA pubblicazione automatica"
         uses: actions/upload-artifact@v4
         with:
-          name: ARTVISION_ENIGMA_V1_${{ inputs.episode }}_${{ github.run_id }}
+          name: ARTVISION_ENIGMA_V1_${{ github.event_name == 'workflow_dispatch' && inputs.episode || 'arcimboldo_vertumnus' }}_${{ github.run_id }}
           path: |
             output/enigma-v1/ARTVISION_ENIGMA_V1.mp4
             output/enigma-v1/COPERTINA.jpg
