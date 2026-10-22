@@ -1,0 +1,38 @@
+name: John Martin source diagnostics museums
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/john-martin-source-diagnostics.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Inspect public museum catalogs
+        run: |
+          python - <<'PY'
+          import json,urllib.request,urllib.parse
+          sources=[
+            ('aic','https://api.artic.edu/api/v1/artworks/search?'+urllib.parse.urlencode({'q':'John Martin','fields':'id,title,artist_title,is_public_domain,image_id','limit':100})),
+            ('met','https://collectionapi.metmuseum.org/public/collection/v1/search?'+urllib.parse.urlencode({'artistOrCulture':'true','q':'John Martin'})),
+            ('cleveland','https://openaccess-api.clevelandart.org/api/artworks/?'+urllib.parse.urlencode({'artists':'John Martin','limit':30}))
+          ]
+          for name,url in sources:
+           try:
+            req=urllib.request.Request(url,headers={'User-Agent':'ArtVisionMuseumResearch/1.0 (noncommercial personal film research)'})
+            data=json.load(urllib.request.urlopen(req,timeout=25))
+            if name=='aic':
+             works=data.get('data',[])
+             print(name,'total',data.get('pagination',{}).get('total'),'entries',len(works),'iiif',data.get('config',{}).get('iiif_url'),flush=True)
+             print('John Martin matches',[(x.get('title'),x.get('artist_title'),x.get('is_public_domain'),bool(x.get('image_id'))) for x in works if 'john martin' in (x.get('artist_title') or '').casefold()][:30],flush=True)
+             print('first',[(x.get('title'),x.get('artist_title')) for x in works[:4]],flush=True)
+            elif name=='met':
+             print(name,'total',data.get('total'),'first ids',str(data.get('objectIDs',[]))[:250],flush=True)
+            else:
+             works=data.get('data',[])
+             print(name,'total',data.get('info',{}).get('total'),'titles',[(x.get('title'),x.get('artists'),bool(x.get('images'))) for x in works[:12]],flush=True)
+           except Exception as ex:print(name,type(ex).__name__,str(ex)[:400],flush=True)
+          PY
