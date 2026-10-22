@@ -1,0 +1,62 @@
+name: "ArtVision — fonti reali Arcimboldo 2026-10-22"
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'queue/render_requests/arcimboldo_enigma_20261022.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Scarica materiali autentici senza pip e conserva fonte/licenza"
+        run: |
+          mkdir -p output/source-assets
+          python3 - <<'PY'
+          import json, urllib.request, urllib.parse, pathlib
+          from urllib.parse import urlsplit
+          from PIL import Image
+          root=pathlib.Path("output/source-assets")
+          name="Vertumnus årstidernas gud målad av Giuseppe Arcimboldo 1591 - Skoklosters slott - 91503.jpg"
+          api="https://commons.wikimedia.org/w/api.php?"+urllib.parse.urlencode({"action":"query","format":"json","formatversion":"2","titles":"File:"+name,"prop":"imageinfo","iiprop":"url|size|extmetadata","iiurlwidth":2200})
+          req=urllib.request.Request(api,headers={"User-Agent":"ArtVision-SourceQuality/1.0"})
+          info=json.load(urllib.request.urlopen(req,timeout=45))["query"]["pages"][0]["imageinfo"][0]
+          lic=str((info.get("extmetadata",{}).get("LicenseShortName") or {}).get("value","")).lower()
+          usage=str((info.get("extmetadata",{}).get("UsageTerms") or {}).get("value","")).lower()
+          if "public domain" not in lic+usage:raise ValueError("Opera non dichiarata pubblico dominio")
+          url=info.get("thumburl") or info["url"]
+          p=urlsplit(url)
+          if p.scheme!="https" or p.hostname not in {"upload.wikimedia.org","thumb.wikimedia.org"}:raise ValueError("Host immagine non fidato")
+          data=urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"ArtVision-SourceQuality/1.0"}),timeout=60).read(24000001)
+          if len(data)>24000000 or not data.startswith(b"\xff\xd8\xff"):raise ValueError("Immagine non valida")
+          img=root/"vertumnus.jpg";img.write_bytes(data)
+          with Image.open(img) as im:
+              print("image dimensions",im.size)
+              if min(im.size)<900:raise ValueError("Immagine non alta qualità")
+          candidates=[
+            "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20-%20Piano.mp3",
+            "https://upload.wikimedia.org/wikipedia/commons/f/fd/Evening_Fall_%28Piano%29_%28ISRC_USUAN1100235%29.mp3"
+          ]
+          for u in candidates:
+             try:
+                raw=urllib.request.urlopen(urllib.request.Request(u,headers={"User-Agent":"ArtVision-SourceQuality/1.0"}),timeout=50).read(18000001)
+                if len(raw)>18000000 or len(raw)<100000:raise ValueError("Music invalid")
+                (root/"music.mp3").write_bytes(raw)
+                break
+             except Exception as ex: print("Music candidate unavailable",str(ex)[:200])
+          else:raise RuntimeError("Nessuna registrazione autorizzata disponibile")
+          manifest={"painting":"Giuseppe Arcimboldo, Vertumnus, 1591","source":"https://commons.wikimedia.org/wiki/File:Vertumnus_%C3%A5rstidernas_gud_m%C3%A5lad_av_Giuseppe_Arcimboldo_1591_-_Skoklosters_slott_-_91503.jpg","image_license":"PDM","music":"Evening Fall (Piano), Kevin MacLeod","music_license":"CC BY 4.0","credit":"\u0022Evening Fall (Piano)\u0022 Kevin MacLeod (incompetech.com). Licensed under Creative Commons Attribution 4.0 — https://creativecommons.org/licenses/by/4.0/"}
+          (root/"SOURCES.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2))
+          PY
+          ffprobe -v error -show_entries format=duration,size -of json output/source-assets/music.mp3
+      - name: "Deliver source assets for offline local edit (not social publication)"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_SOURCES_ARCIMBOLDO_${{ github.run_id }}
+          path: output/source-assets/*
+          retention-days: 7
+          if-no-files-found: error
