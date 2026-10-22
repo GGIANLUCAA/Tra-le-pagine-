@@ -40,6 +40,12 @@ jobs:
             --image output/enigma-v1-assets/opera_museale.jpg \
             --music output/enigma-v1-assets/official_licensed_recording.mp3 \
             --out output/enigma-v1 --width 1080 --height 1920 --fps 24
+      - name: "Creative Director V21 — prima impressione, copertina candidata e guida social"
+        run: |
+          python src/creative_director_v21.py \
+            --brief modules/artvision_enigma/episodes/${{ inputs.episode }}.json \
+            --video output/enigma-v1/ARTVISION_ENIGMA_V1.mp4 \
+            --out output/enigma-v1
       - name: "Conferma MP4, audio, copertina, fonti e rapporto delle scene"
         run: |
           ffprobe -v error -show_entries format=duration,size:stream=codec_type,width,height \
@@ -56,6 +62,11 @@ jobs:
             output/enigma-v1/COPERTINA.jpg
             output/enigma-v1/ANTEPRIMA_SCENE.jpg
             output/enigma-v1/REPORT_QA.json
+            output/enigma-v1/CREATIVE_PACKAGE_V21.json
+            output/enigma-v1/ISTRUZIONI_PUBBLICAZIONE_V21.md
+            output/enigma-v1/POST_*_V21.txt
+            output/enigma-v1/APERTURA_0_7_V21.jpg
+            output/enigma-v1/COPERTINA_CANDIDATA_V21.jpg
             output/enigma-v1/EDITOR_REPORT_V19.json
             output/enigma-v1/DIRECTION_PLAN_V19.md
             output/enigma-v1/SOURCES_V19.md
