@@ -1,0 +1,355 @@
+{
+  "schema": "artvision-critico-editorial-direction-v22",
+  "id": "bosch-giardino-delizie-harmonic-v22",
+  "updated": "2026-10-23",
+  "status": "local_master_technical_verified_not_published",
+  "source_episode": "modules/artvision_critico/production_series/bosch_giardino_delizie_v21.json",
+  "supersedes_as_future_reference": "modules/artvision_critico/production_series/bosch_director_cut_v21.json",
+  "historical_master_mutated": false,
+  "user_feedback": {
+    "approved": "Spiegazione e voce Gacrux",
+    "needs_fix": "Movimenti di camera eccessivi, quasi nausea; domanda finale fuori luogo; pochi o nessun commento interpretativo personale"
+  },
+  "method": "Da originale museale 7500x4270: camera ferma sui punti davvero significativi, poche lievissime variazioni di scala, stacchi narrativi con dissolvenze di 0.6 s, nessun moto sinusoidale",
+  "motion_limits": {
+    "sinusoidal_or_back_and_forth": false,
+    "supported_modes": [
+      "locked",
+      "slow_push",
+      "slow_pull"
+    ],
+    "slow_push_pull_max_scale_percent": 1,
+    "shot_durations_not_fixed": true,
+    "prefer_story_relevant_holds": true,
+    "transition_seconds": 0.6,
+    "no_sudden_internal_subject_reframing": true
+  },
+  "writing": {
+    "voice": "Google Gemini Gacrux original unchanged except trim the unrelated final question",
+    "trim_voice_at_seconds": 121.86,
+    "last_spoken_thought": "È un viaggio tra innocenza, desiderio e conseguenze.",
+    "overlay_comments": 0,
+    "personal_interpretive_comments_max": 2,
+    "prohibition": "niente domande retoriche isolate prive di ruolo nel racconto"
+  },
+  "technical": {
+    "source_image_dimensions": [
+      7500,
+      4270
+    ],
+    "video_dimensions": [
+      1080,
+      1920
+    ],
+    "video_duration_seconds": 124.192667,
+    "video_codec": "H264",
+    "audio_codec": "AAC",
+    "master_size_bytes": 82328457,
+    "master_sha256": "2c59c58185ed3d7c51d280bf9c8442414cddf163a231fef08fd7a37d657b0ded",
+    "full_ffmpeg_decode_passed": true,
+    "rendered_mp4_in_chat_not_repository": true
+  },
+  "shots": [
+    {
+      "shot": 1,
+      "start_seconds": 0,
+      "end_seconds": 3.9,
+      "type": "detail",
+      "focus_xy": [
+        0.85,
+        0.39
+      ],
+      "source_crop_width_fraction": 0.115,
+      "intended_camera": "locked",
+      "narrative_reason": "volto uomo-albero"
+    },
+    {
+      "shot": 2,
+      "start_seconds": 3.9,
+      "end_seconds": 9.1,
+      "type": "detail",
+      "focus_xy": [
+        0.851,
+        0.425
+      ],
+      "source_crop_width_fraction": 0.235,
+      "intended_camera": "slow_pull",
+      "narrative_reason": "corpo cavo"
+    },
+    {
+      "shot": 3,
+      "start_seconds": 9.1,
+      "end_seconds": 14.23,
+      "type": "panel",
+      "focus_xy": [
+        0.87,
+        0.5
+      ],
+      "source_crop_width_fraction": 0.255,
+      "intended_camera": "locked",
+      "narrative_reason": "inferno"
+    },
+    {
+      "shot": 4,
+      "start_seconds": 14.23,
+      "end_seconds": 19.8,
+      "type": "panel",
+      "focus_xy": [
+        0.133,
+        0.5
+      ],
+      "source_crop_width_fraction": 0.249,
+      "intended_camera": "locked",
+      "narrative_reason": "Eden"
+    },
+    {
+      "shot": 5,
+      "start_seconds": 19.8,
+      "end_seconds": 26.31,
+      "type": "detail",
+      "focus_xy": [
+        0.124,
+        0.755
+      ],
+      "source_crop_width_fraction": 0.184,
+      "intended_camera": "slow_push",
+      "narrative_reason": "Adamo Eva e Dio"
+    },
+    {
+      "shot": 6,
+      "start_seconds": 26.31,
+      "end_seconds": 31.75,
+      "type": "panel",
+      "focus_xy": [
+        0.495,
+        0.5
+      ],
+      "source_crop_width_fraction": 0.497,
+      "intended_camera": "locked",
+      "narrative_reason": "pannello centrale"
+    },
+    {
+      "shot": 7,
+      "start_seconds": 31.75,
+      "end_seconds": 37.525,
+      "type": "detail",
+      "focus_xy": [
+        0.43,
+        0.63
+      ],
+      "source_crop_width_fraction": 0.265,
+      "intended_camera": "slow_push",
+      "narrative_reason": "figure e frutti"
+    },
+    {
+      "shot": 8,
+      "start_seconds": 37.525,
+      "end_seconds": 43.25,
+      "type": "detail",
+      "focus_xy": [
+        0.502,
+        0.466
+      ],
+      "source_crop_width_fraction": 0.243,
+      "intended_camera": "locked",
+      "narrative_reason": "giro cavalieri"
+    },
+    {
+      "shot": 9,
+      "start_seconds": 43.25,
+      "end_seconds": 48.739,
+      "type": "detail",
+      "focus_xy": [
+        0.579,
+        0.475
+      ],
+      "source_crop_width_fraction": 0.23,
+      "intended_camera": "slow_pull",
+      "narrative_reason": "animali fantastici"
+    },
+    {
+      "shot": 10,
+      "start_seconds": 48.739,
+      "end_seconds": 53.95,
+      "type": "detail",
+      "focus_xy": [
+        0.359,
+        0.76
+      ],
+      "source_crop_width_fraction": 0.193,
+      "intended_camera": "locked",
+      "narrative_reason": "frutti fuori scala"
+    },
+    {
+      "shot": 11,
+      "start_seconds": 53.95,
+      "end_seconds": 59.091,
+      "type": "detail",
+      "focus_xy": [
+        0.469,
+        0.784
+      ],
+      "source_crop_width_fraction": 0.193,
+      "intended_camera": "slow_push",
+      "narrative_reason": "piaceri brevi"
+    },
+    {
+      "shot": 12,
+      "start_seconds": 59.091,
+      "end_seconds": 65.25,
+      "type": "detail",
+      "focus_xy": [
+        0.627,
+        0.58
+      ],
+      "source_crop_width_fraction": 0.165,
+      "intended_camera": "locked",
+      "narrative_reason": "sfera di vetro"
+    },
+    {
+      "shot": 13,
+      "start_seconds": 65.25,
+      "end_seconds": 70.737,
+      "type": "detail",
+      "focus_xy": [
+        0.625,
+        0.589
+      ],
+      "source_crop_width_fraction": 0.224,
+      "intended_camera": "slow_pull",
+      "narrative_reason": "fragilità"
+    },
+    {
+      "shot": 14,
+      "start_seconds": 70.737,
+      "end_seconds": 75.75,
+      "type": "panel",
+      "focus_xy": [
+        0.874,
+        0.5
+      ],
+      "source_crop_width_fraction": 0.25,
+      "intended_camera": "locked",
+      "narrative_reason": "arrivo all'inferno"
+    },
+    {
+      "shot": 15,
+      "start_seconds": 75.75,
+      "end_seconds": 79.795,
+      "type": "detail",
+      "focus_xy": [
+        0.859,
+        0.161
+      ],
+      "source_crop_width_fraction": 0.223,
+      "intended_camera": "slow_push",
+      "narrative_reason": "città in fiamme"
+    },
+    {
+      "shot": 16,
+      "start_seconds": 79.795,
+      "end_seconds": 85.2,
+      "type": "detail",
+      "focus_xy": [
+        0.82,
+        0.708
+      ],
+      "source_crop_width_fraction": 0.211,
+      "intended_camera": "locked",
+      "narrative_reason": "strumenti musicali"
+    },
+    {
+      "shot": 17,
+      "start_seconds": 85.2,
+      "end_seconds": 90.578,
+      "type": "detail",
+      "focus_xy": [
+        0.873,
+        0.74
+      ],
+      "source_crop_width_fraction": 0.214,
+      "intended_camera": "slow_pull",
+      "narrative_reason": "tortura musicale"
+    },
+    {
+      "shot": 18,
+      "start_seconds": 90.578,
+      "end_seconds": 96,
+      "type": "detail",
+      "focus_xy": [
+        0.939,
+        0.72
+      ],
+      "source_crop_width_fraction": 0.178,
+      "intended_camera": "locked",
+      "narrative_reason": "mostro-uccello"
+    },
+    {
+      "shot": 19,
+      "start_seconds": 96,
+      "end_seconds": 101.792,
+      "type": "detail",
+      "focus_xy": [
+        0.939,
+        0.797
+      ],
+      "source_crop_width_fraction": 0.211,
+      "intended_camera": "slow_push",
+      "narrative_reason": "abisso"
+    },
+    {
+      "shot": 20,
+      "start_seconds": 101.792,
+      "end_seconds": 107.1,
+      "type": "detail",
+      "focus_xy": [
+        0.881,
+        0.388
+      ],
+      "source_crop_width_fraction": 0.171,
+      "intended_camera": "locked",
+      "narrative_reason": "ritorno uomo-albero"
+    },
+    {
+      "shot": 21,
+      "start_seconds": 107.1,
+      "end_seconds": 113.438,
+      "type": "detail",
+      "focus_xy": [
+        0.851,
+        0.439
+      ],
+      "source_crop_width_fraction": 0.257,
+      "intended_camera": "slow_pull",
+      "narrative_reason": "taverna nella creatura"
+    },
+    {
+      "shot": 22,
+      "start_seconds": 113.438,
+      "end_seconds": 117.5,
+      "type": "panel",
+      "focus_xy": [
+        0.494,
+        0.5
+      ],
+      "source_crop_width_fraction": 0.497,
+      "intended_camera": "locked",
+      "narrative_reason": "tre capitoli"
+    },
+    {
+      "shot": 23,
+      "start_seconds": 117.5,
+      "end_seconds": 124.15,
+      "type": "triptych",
+      "focus_xy": [
+        0.5,
+        0.5
+      ],
+      "source_crop_width_fraction": 1,
+      "intended_camera": "locked",
+      "narrative_reason": "conclusione visiva senza domanda"
+    }
+  ],
+  "qa_note": "I controlli tecnici sono effettuati; la preferenza artistica va confermata da visione umana. I tempi delle frasi provengono da stime per beat, non da forced alignment ASR verificato.",
+  "publish_authorized": false
+}
