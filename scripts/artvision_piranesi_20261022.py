@@ -249,6 +249,14 @@ def run():
  loaded=director.load_artworks(ASSETS)
  shots=director.resolve_items(loaded,DURATION)
  mp4,log=director.render(shots,ASSETS,OUT,DURATION)
+ # Soundfont tracks render at a deliberately quiet pre-master level.
+ # Always master to a proper listening level before export; preserve video without re-encoding.
+ normalized=OUT/'_normalized_mix.mp4'
+ sh(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',mp4,
+   '-map','0:v:0','-map','0:a:0','-c:v','copy',
+   '-af','loudnorm=I=-16:LRA=9:TP=-2','-c:a','aac','-b:a','192k',
+   '-movflags','+faststart',normalized])
+ normalized.replace(mp4)
  named=OUT/'ARTVISION_PIRANESI_CARCERI_CINEMA_V6.mp4'
  mp4.rename(named)
  # cover extracted from actual frame, same immutable Cinema V6 title band
@@ -267,7 +275,7 @@ def run():
   'sha256':checksum,'frame_count_expected':DURATION*24,'unique_artworks':len(entries),
   'directed_shots':len(log),'institutional_license': 'Met Museum Open Access / CC0',
   'fonts':'Immutable ArtVision Cinema V6 signature via identita_visiva_v6.py',
-  'soundtrack':'Original MIDI composition synthesized by FluidSynth; soundfont license review before commercial publication',
+  'soundtrack':'Original MIDI composition synthesized by FluidSynth; final loudness normalized to -16 LUFS target; FluidR3 soundfont MIT license attribution for distribution',
   'ffprobe':qa},indent=2,ensure_ascii=False))
  caption=('PIRANESI, LE PRIGIONI CHE NON ESISTONO\n\n'
   'Scale che portano nel vuoto. Arcate gigantesche. Figure minuscole in architetture senza uscita. '
