@@ -4,6 +4,31 @@ Questo repository è lo studio video di Gianluca. Leggi questo file **prima di
 proporre o produrre un filmato**. Non ricostruire il sistema da zero a ogni chat.
 Le istruzioni esplicite dell'utente nella sessione hanno precedenza.
 
+## Standard creativo permanente V21 — per OGNI video NUOVO
+
+**PRIMA di scrivere scene o lanciare un render** leggere
+[`docs/CREATIVE_DIRECTOR_V21_STANDARD.md`](docs/CREATIVE_DIRECTOR_V21_STANDARD.md) e
+`config/creative_director_v21.json`. Non modificare Cinema V6 Gold Master,
+Critico V2, V12 o i vecchi MP4. La richiesta esplicita dell'utente e i preset
+già approvati prevalgono sulle proposte del nuovo direttore.
+
+Ogni episodio deve avere una strategia distinta per **primo fotogramma, 0/1/3/5/7
+secondi, copertina, durata guidata dal contenuto, musica, copy per piattaforma,
+hashtag pertinenti e diritti**. Le immagini si scelgono per pertinenza reale:
+ritratti, sculture, figure, opere inquietanti, paesaggi o natura non si alternano
+casualmente per attirare clic. Evitare riempitivi, intro decorative e clickbait.
+Non assegnare durata standard a tutti; se il video è già pronto usare ffprobe,
+altrimenti stimare in base a scene/voce e dichiarare l'incertezza.
+La musica selezionata su Facebook può essere ripetuta se coerente, ma va aggiunta
+nell'app dove consentito; NON assumere diritti cross-platform né scaricare tracce
+Meta per incorporarle nel master universale.
+
+Eseguire `src/creative_director_v21.py` prima del render come pianificazione,
+e dopo il render con `--video` per estrarre prime immagini reali e pacchetto social.
+La V16 e Enigma sono collegate direttamente; per gli altri renderer storici
+attivare esplicitamente il workflow V21 o lo script prima di qualificare il lavoro.
+I file di packaging sono **bozze da revisionare** e non autorizzano pubblicazione.
+
 ## Punto di ingresso
 
 1. Leggi `config/video_formats_v13.json` e `docs/GPT_VIDEO_PLAYBOOK.md`.
