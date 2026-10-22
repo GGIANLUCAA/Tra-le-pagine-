@@ -1,0 +1,41 @@
+name: "Creative Director V21 — prepara pacchetto social"
+on:
+  workflow_dispatch:
+    inputs:
+      project_file:
+        description: "Percorso JSON sotto il repo, es. modules/artvision_enigma/episodes/arcimboldo_vertumnus.json o percorso PROJECT_V13.json"
+        required: true
+        default: "modules/artvision_enigma/episodes/arcimboldo_vertumnus.json"
+        type: string
+permissions:
+  contents: read
+jobs:
+  creative-pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PROJECT_FILE: ${{ inputs.project_file }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Confezione editoriale: nessuna AI/API a pagamento"
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          root=Path.cwd().resolve()
+          name=Path(os.environ["PROJECT_FILE"])
+          file=(root/name).resolve()
+          if name.is_absolute() or not file.is_relative_to(root) or not file.is_file() or file.suffix!=".json":
+              raise SystemExit("Scegli un JSON esistente sotto il repository")
+          PY
+          python src/creative_director_v21.py --brief "$PROJECT_FILE" --out output/creative-v21
+      - name: "Consegna piani/copertina prevista/descrizioni Facebook Instagram TikTok YouTube"
+        uses: actions/upload-artifact@v4
+        with:
+          name: CREATIVE_DIRECTOR_V21_${{ github.run_id }}
+          path: output/creative-v21/
+          retention-days: 14
+          if-no-files-found: error

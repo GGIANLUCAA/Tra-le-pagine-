@@ -197,8 +197,19 @@ def run_locked(queue_file,workspace,fallback_state,timeout):
                 (out/'QUALITY_V17_ERROR.txt').write_text(
                     type(qa_error).__name__ + ': ' + str(qa_error)[:500] + '\n',
                     encoding='utf-8')
+            # Standard creativo V21 per TUTTI i nuovi master V16: senza toccare
+            # film/preset/cover. Un errore produce un blocco di qualifica, non distrugge l'MP4.
+            creative_package=None
+            try:
+                from creative_director_v21 import write_package
+                write_package(read_json(stage/job['project_file']), out, video=video)
+                creative_package=out/'CREATIVE_PACKAGE_V21.json'
+            except Exception as creative_error:
+                (out/'CREATIVE_V21_ERROR.txt').write_text(
+                    type(creative_error).__name__ + ': ' + str(creative_error)[:500] + '\n',
+                    encoding='utf-8')
             with mutex:
-                state['jobs'][ident].update({'status':'rendered_needs_review','finished_utc':stamp(),'video_file':video.relative_to(ROOT).as_posix(),'video_sha256':digest(video),'recipe_file':recipe.relative_to(ROOT).as_posix(),'recipe_sha256':digest(recipe),'technical':info,'review':'pending_agent_playback_and_sources'});save()
+                state['jobs'][ident].update({'status':'rendered_needs_review','finished_utc':stamp(),'video_file':video.relative_to(ROOT).as_posix(),'video_sha256':digest(video),'recipe_file':recipe.relative_to(ROOT).as_posix(),'recipe_sha256':digest(recipe),'technical':info,'review':'pending_agent_playback_and_sources','creative_v21_required':True,'creative_v21_file':creative_package.relative_to(ROOT).as_posix() if creative_package else None,'creative_v21_sha256':digest(creative_package) if creative_package else None,'creative_v21_status':'needs_editorial_review' if creative_package else 'packaging_failed'});save()
         except Exception as exc:
             with mutex:
                 state['jobs'][ident].update({'status':'failed','finished_utc':stamp(),'error':type(exc).__name__+': '+str(exc)[:600]});save()
@@ -232,6 +243,19 @@ def qualify(workspace,ident,review_file):
     with (workspace/'runner.lock').open('a') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);state=load_state(statefile);row=state['jobs'][ident]
         if not valid_result(row):raise ValueError('Master non disponibile o modificato')
+        if row.get('creative_v21_required'):
+            package_name=row.get('creative_v21_file')
+            if not package_name or not row.get('creative_v21_sha256'):
+                raise ValueError('Creative Director V21 assente: completare packaging e revisione')
+            package=inside(package_name)
+            if digest(package)!=row['creative_v21_sha256']:
+                raise ValueError('Pacchetto creativo V21 mancante o alterato')
+            creative=read_json(package)
+            if creative.get('schema')!='creative-director-v21' or creative.get('video_sha256')!=row['video_sha256']:
+                raise ValueError('Creative V21 non corrisponde al master corrente')
+            # Il V21 non dichiara MAI da solo la pubblicazione pronta.
+            # La qualifica tecnica avviene dopo revisione editoriale V16 gia prevista.
+
         receipt={'item_id':ident,'content_key':row['content_key'],'day':batch.today(),'video_file':row['video_file'],'recipe_file':row['recipe_file'],'reviews':(lambda x:x.get('reviews',x))(read_json(review_file))}
         ledger_path=workspace/'ledger.json';ledger=batch.record(batch.ledger_or_empty(ledger_path),receipt);write_json(ledger_path,ledger)
         row['status']='qualified';row['qualified_day']=receipt['day'];row['qualified_utc']=stamp();row['review']='passed_agent_declaration';write_json(statefile,state)
