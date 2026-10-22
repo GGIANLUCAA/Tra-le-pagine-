@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        artist: [aivazovsky, blake, dore, piranesi]
+        artist: [homer, blake, dore, piranesi]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -33,16 +33,18 @@ jobs:
         run: python modules/artvision/wow7_four_shortfilms_v6.py --artist "${{ matrix.artist }}"
       - name: V17 objective QA - no silent approval
         run: |
+          UPPER=$(echo "${{ matrix.artist }}" | tr "[:lower:]" "[:upper:]")
           python src/quality_director_v17.py \
             --format artvision_cinema \
             --project "output/artvision-wow7/${{ matrix.artist }}/PROJECT_V13.json" \
-            --video "output/artvision-wow7/${{ matrix.artist }}/film/ARTVISION_${{ matrix.artist }}_CINEMA_V6.mp4" \
+            --video "output/artvision-wow7/${{ matrix.artist }}/film/ARTVISION_${UPPER}_CINEMA_V6.mp4" \
             --out "output/artvision-wow7/${{ matrix.artist }}/film/QUALITY_V17"
       - name: V21 platform posts and opening contact sheet
         run: |
+          UPPER=$(echo "${{ matrix.artist }}" | tr "[:lower:]" "[:upper:]")
           python src/creative_director_v21.py \
             --brief "output/artvision-wow7/${{ matrix.artist }}/PROJECT_V13.json" \
-            --video "output/artvision-wow7/${{ matrix.artist }}/film/ARTVISION_${{ matrix.artist }}_CINEMA_V6.mp4" \
+            --video "output/artvision-wow7/${{ matrix.artist }}/film/ARTVISION_${UPPER}_CINEMA_V6.mp4" \
             --out "output/artvision-wow7/${{ matrix.artist }}/film/CREATIVE_V21"
       - name: Independent MP4, time, source and rights verification
         run: |
@@ -51,7 +53,7 @@ jobs:
           slug=os.environ['MATRIX_ARTIST']
           required={'aivazovsky':50,'blake':59,'dore':65,'piranesi':73}
           folder=pathlib.Path('output/artvision-wow7')/slug/'film'
-          video=folder/('ARTVISION_'+slug+'_CINEMA_V6.mp4')
+          video=folder/('ARTVISION_'+slug.upper()+'_CINEMA_V6.mp4')
           assert video.is_file() and video.stat().st_size>1000000
           report=json.loads((folder/'REPORT.json').read_text())
           rights=json.loads((folder/'FONTI_E_DIRITTI.json').read_text())
