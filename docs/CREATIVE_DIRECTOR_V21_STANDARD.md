@@ -14,6 +14,33 @@ Un filmato non è *pronto per la pubblicazione* solo perché il suo MP4 è stato
 8. **Originalità:** varietà di soggetti (volti, opere, sculture, persone, paesaggi, architetture, fotografie inquietanti, natura, forme musicali) **SOLO** quando sono inerenti alla storia e i diritti sono documentati. Non introdurre donne, nudi, immagini inquietanti o AI casuali come clickbait.
 9. **Revisione e consenso:** controllo reale di copertina, apertura, finale, audio, diritti e descrizioni prima di rendere pubblico il filmato. L'agente svolge controlli già autorizzati senza chiedere conferma ad ogni singolo file. Pubblicazione pubblica solo con autorizzazione.
 
+## Correzione registica concreta — Bosch, 23 ottobre 2026
+
+Feedback diretto dopo la visione del master V21: panoramiche/zoom continui
+provocavano disagio e movimento da «mal di mare»; una domanda retorica finale
+era fuori contesto. La spiegazione e la voce Gacrux erano invece approvate.
+
+**Il sistema deve proteggere ciò che funziona e correggere il resto prima della
+consegna:** in Critico V2 l'apertura deve colpire con il soggetto autentico,
+non con movimenti più rapidi. Tenere la camera ferma quanto basta a leggere
+l'immagine; preferire raccordi editoriali morbidi e *pochi* ingrandimenti
+unidirezionali molto lenti (riferimento iniziale 0–1% nell'intera inquadratura,
+non regola universale da imporre a qualunque forma d'arte). **Vietare la
+micro-oscillazione sinusoidale o andata/ritorno priva di ragione narrativa.**
+Ogni dettaglio citato entra in quadro quando viene descritto; evitare un
+numero di tagli prestabilito. Guardare realmente le transizioni a velocità
+normale e rifiutare movimenti nauseanti anche quando FFprobe è perfetto.
+
+La conclusione deriva dal contenuto del dipinto, non da una domanda posticcia
+per generare commenti. Un giudizio interpretativo personale basta, talvolta
+uno o due, talvolta nessuno: non interrompere la storia con opinioni seriali.
+Nessun commento testuale sovrapposto nel video narrato, salvo richiesta. Voce,
+fonte, copertina approvata e musica si preservano dove già riuscite.
+
+La revisione reale Bosch V22 è registrata in
+`modules/artvision_critico/production_series/bosch_director_cut_v22.json`.
+Non generalizzare automaticamente il suo minutaggio o il suo numero di tagli.
+
 ## Perché queste regole (fonti ufficiali)
 
 - **Meta, marzo 2026:** valorizza contributo originale, riduce la distribuzione dei reupload e delle modifiche minime: https://about.fb.com/news/2026/03/rewarding-original-creators-on-facebook/
