@@ -69,6 +69,13 @@ HASHTAGS={"artvision_cinema":["ArtVision","Arte"],"artvision_enigma":["ArtVision
 "controluce":["Storia","Documentario"],"hyperlumen":["VisualMusic","ArteDigitale"],
 "visual_music":["Musica","VisualMusic"],"other":["Creativita"]}
 
+def sha256_file(path):
+    """Hash del master a blocchi: evita di caricare MP4 grandi in RAM."""
+    h=hashlib.sha256()
+    with Path(path).open("rb") as fp:
+        for chunk in iter(lambda:fp.read(1024*1024),b""):h.update(chunk)
+    return h.hexdigest()
+
 def clean(x):return " ".join(str(x or "").split())
 def safe_tag(s):
     s=re.sub(r"[^A-Za-zÀ-ÿ0-9]","",str(s or ""))
@@ -396,7 +403,7 @@ def write_package(brief,output,*,video=None,history=None,targets=None,policy_pat
               "Credit fotografici/musicali completi, descrizioni diverse per social",
               "Master integrale visto/ascoltato: regia e audio effettivi, no sottotitoli",
               "Nessuna pubblicazione senza autorizzazione umana"],
-        "video_sha256":hashlib.sha256(Path(video).read_bytes()).hexdigest() if video else None,
+        "video_sha256":sha256_file(video) if video else None,
         "automatic_scoring_not_aesthetic_certification":True}
     (output/"CREATIVE_PACKAGE_V21.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     for platform,data in social.items():
