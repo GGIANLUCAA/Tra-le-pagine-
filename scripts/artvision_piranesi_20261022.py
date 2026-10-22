@@ -70,7 +70,7 @@ BEATS=[
  (23,'Staircase','portrait',(.49,.60),2.9,'Human ascent, no visible destination','cut'),
  (24,'Pier','portrait',(.37,.72),2.55,'Architectural echoes in the depths','match'),
  (25,'Tower','portrait',(.38,.44),2.75,'Convergence against the circle','cut'),
- (26,'Giant Wheel','whole',(.50,.50),3.4,'Reveal the wheel's dreadful scale','dissolve'),
+ (26,'Giant Wheel','whole',(.50,.50),3.4,"Reveal the wheel's dreadful scale",'dissolve'),
  (27,'Well','portrait',(.63,.55),2.6,'Low vantage, high vault','cut'),
  (28,'Prisoners','portrait',(.38,.69),2.8,'The unreachable platform','cut'),
  (29,'Pier','portrait',(.59,.41),2.55,'Chained pillar and vanishing light','match'),
@@ -171,8 +171,8 @@ def music_midi():
  events=defaultdict(list)
  def note(tr,ch,pitch,vel,start,beats):
   a=max(0,round(start*480));b=max(a+1,round((start+beats)*480))
-  events[tr].append((a,1,Message('note_on',channel=ch,note=pitch,velocity=max(1,min(127,int(vel))),time=0)))
-  events[tr].append((b,0,Message('note_off',channel=ch,note=pitch,velocity=0,time=0)))
+  events[id(tr)].append((a,1,Message('note_on',channel=ch,note=pitch,velocity=max(1,min(127,int(vel))),time=0)))
+  events[id(tr)].append((b,0,Message('note_off',channel=ch,note=pitch,velocity=0,time=0)))
  chords=[
   [40,47,52,55,59], # Em
   [36,43,48,52,55], # Cm (foreign borrowed chord)
@@ -206,9 +206,9 @@ def music_midi():
    note(drum,9,36,42*intensity,start,.16)
   if bar in (12,20,28,36):note(drum,9,41,58*intensity,start,.27)
  for tr in mid.tracks:
-  if tr not in events:continue
+  if id(tr) not in events:continue
   last=0
-  for at,priority,msg in sorted(events[tr],key=lambda x:(x[0],x[1])):
+  for at,priority,msg in sorted(events[id(tr)],key=lambda x:(x[0],x[1])):
    msg.time=at-last;tr.append(msg);last=at
  mid.tracks[0].insert(1,MetaMessage('set_tempo',tempo=tempo,time=0))
  mid_path=ASSETS/'ORIGINAL_SCORE_PIRANESI.mid';mid.save(mid_path)
