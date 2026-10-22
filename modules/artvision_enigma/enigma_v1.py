@@ -164,6 +164,26 @@ def verify_scenes(path):
     found=detect(str(path), ContentDetector(threshold=32.0), show_progress=False)
     return [{"start_seconds":round(a.get_seconds(),2),"end_seconds":round(b.get_seconds(),2)} for a,b in found]
 
+def make_contact_sheet(video, out, duration, *, count=10):
+    """Dieci fotogrammi REALI in una JPG leggera da controllare da Android."""
+    cap=cv2.VideoCapture(str(video))
+    if not cap.isOpened(): raise RuntimeError("Impossibile aprire il master per la scheda scene")
+    tiles=[]
+    try:
+        for t in np.linspace(.45,max(.55,duration-.45),count):
+            cap.set(cv2.CAP_PROP_POS_MSEC,float(t)*1000)
+            ok,img=cap.read()
+            if not ok: raise RuntimeError("Frame di controllo mancante, timecode "+str(round(t,2)))
+            small=cv2.resize(img,(192,342),interpolation=cv2.INTER_AREA)
+            cv2.rectangle(small,(0,0),(80,27),(0,0,0),-1)
+            cv2.putText(small,f"{t:.1f}s",(9,19),cv2.FONT_HERSHEY_SIMPLEX,.55,(255,255,255),1,cv2.LINE_AA)
+            tiles.append(small)
+    finally:cap.release()
+    layout=np.vstack([np.hstack(tiles[:5]),np.hstack(tiles[5:])])
+    if not cv2.imwrite(str(out),layout,[cv2.IMWRITE_JPEG_QUALITY,85]):
+        raise RuntimeError("Salvataggio contact sheet fallito")
+    return out
+
 def render(data,image,music,out,width=1080,height=1920,fps=24,voice=None):
     seconds=validate(data)
     if width%2 or height%2 or width<240 or height<426 or fps not in (12,24,25,30):
@@ -215,10 +235,11 @@ def render(data,image,music,out,width=1080,height=1920,fps=24,voice=None):
     if not {"video","audio"}.issubset(types): raise RuntimeError("MP4 senza audio/video")
     if abs(float(info["format"]["duration"])-seconds)>.6: raise RuntimeError("Durata video errata")
     cuts=verify_scenes(dest)
+    sheet=make_contact_sheet(dest,out/"ANTEPRIMA_SCENE.jpg",seconds)
     report={"schema":"enigma-v1","id":data["id"],"seconds":seconds,
             "frame_count":count,"width":width,"height":height,"music_onsets":len(onsets),
             "cut_boundaries_seconds":[round(x,3) for x in edges],
-            "detected_scenes":cuts,"original_editorial_value":data["original_value"],
+            "detected_scenes":cuts,"review_contact_sheet":str(sheet.name),"original_editorial_value":data["original_value"],
             "visual_source":data["source"],"music_source":data["music"],
             "fact_sources":data["fact_sources"],
             "render_sha256":hashlib.sha256(dest.read_bytes()).hexdigest(),
