@@ -182,11 +182,11 @@ def render(data,image,music,out,width=1080,height=1920,fps=24,voice=None):
         "-stream_loop","-1","-i",str(music)]
     if voice is not None:
         cmd+=["-i",str(voice)]
-        filters="[1:a]volume=0.16[bg];[2:a]volume=1.0[narr];[bg][narr]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.90[mix]"
+        filters="[1:a]volume=0.16[bg];[2:a]volume=1.0[narr];[bg][narr]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.90,afade=t=out:st="+str(max(0,seconds-1.5))+":d=1.5[mix]"
         cmd+=["-filter_complex",filters,"-map","0:v","-map","[mix]"]
-    else: cmd+=["-map","0:v","-map","1:a"]
+    else: cmd+=["-map","0:v","-map","1:a","-af","afade=t=out:st="+str(max(0,seconds-1.5))+":d=1.5"]
     cmd+=["-t",str(seconds),"-c:v","libx264","-preset","veryfast","-crf","20",
-          "-pix_fmt","yuv420p","-c:a","aac","-b:a","160k","-af","afade=t=out:st="+str(max(0,seconds-1.5))+":d=1.5",
+          "-pix_fmt","yuv420p","-c:a","aac","-b:a","160k",
           "-movflags","+faststart","-shortest",str(dest)]
     # FFmpeg riceve frame da OpenCV; nessuna immagine generata o opera ridipinta.
     proc=subprocess.Popen(cmd,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
