@@ -18,6 +18,8 @@ import numpy as np
 from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0,str(ROOT))
 V6 = ROOT / "modules" / "artvision"
 if str(V6) not in sys.path:
     sys.path.insert(0, str(V6))
