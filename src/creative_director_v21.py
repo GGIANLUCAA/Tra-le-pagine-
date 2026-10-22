@@ -324,19 +324,64 @@ def caption_set(brief,context,music,targets):
               "youtube":"Per Shorts scegli un fotogramma direttamente dall'app quando previsto; per video lunghi carica thumbnail dedicata; titolo fedele al contenuto"}[p]}
     return outputs
 
+OPENING_BEATS={
+ "enigmatic_detail":[
+   "Partire da un elemento autentico non immediatamente decifrabile, con soggetto gia leggibile",
+   "Un micro-movimento fa intravedere una forma riconoscibile senza svelare ancora tutto",
+   "Un secondo indizio VISIVO collegato direttamente al primo modifica l'interpretazione",
+   "Costruire la rivelazione con un dettaglio nuovo e una pausa che non prolunga artificialmente il mistero"],
+ "human_gaze":[
+   "Aprire direttamente su uno sguardo, espressione o gesto veramente presente nel materiale",
+   "Una frase o un movimento contestualizza la persona; evitare dettagli non documentati",
+   "Rivelare il legame tra il volto e la scelta o il conflitto della storia",
+   "Allargare sul contesto soltanto se serve a capire quel rapporto"],
+ "dramatic_event":[
+   "Entrare dentro un gesto documentato o una situazione decisiva, non in un logo",
+   "Mostrare subito la conseguenza o la domanda che rende importante il gesto",
+   "Dare un riferimento essenziale per non confondere cronaca e ricostruzione",
+   "Preparare la svolta successiva con una immagine coerente e una frase precisa"],
+ "sculptural_form":[
+   "Aprire su volume, silhouette o superficie autentici che generano profondita",
+   "Muovere la camera rispetto all'asse dell'opera, senza inventare tridimensionalita falsa",
+   "La luce o un taglio di prospettiva svela un dettaglio della materia",
+   "Allargare abbastanza da far percepire il significato della forma"],
+ "beautiful_motion":[
+   "Usare un movimento visivo emozionante gia nel materiale, non una dissolvenza senza soggetto",
+   "Collegare due forme o colori realmente presenti con una transizione misurata",
+   "Un cambio di direzione o una pausa aggiunge significato al movimento",
+   "Preparare la prossima immagine con una connessione cromatica o narrativa specifica"],
+ "quiet_tension":[
+   "Partire da una presenza inquietante o silenziosa chiaramente leggibile, senza rumore gratuito",
+   "Lasciare una pausa *motivata*, poi mostrare un particolare che cambia la percezione",
+   "La musica o la voce aggiunge contesto mantenendo intelligibilita e tensione",
+   "Interrompere l'attesa con il primo fatto/rivelazione, non con un jump scare casuale"],
+ "musical_pulse":[
+   "Primo evento grafico sincronizzato con un onset o una nota REALE e non supposta",
+   "Rispondere al suono con un secondo movimento riconoscibile e diverso",
+   "Ritmo, durata o timbro trasformano la composizione senza confusione geometrica",
+   "Portare il motivo visivo verso il successivo ingresso musicale verificato"],
+ "unexpected_contrast":[
+   "Mostrare una caratteristica insolita ma autentica del soggetto",
+   "Introdurre il secondo elemento che ne cambia il senso senza immagini scollegate",
+   "Raccordare i due elementi per forma, epoca, emozione o azione verificabile",
+   "Spiegare visivamente il contrasto promesso prima che l'attenzione diminuisca"]
+}
 def first_seconds_plan(brief,context,arch,asset,seconds):
+    """Storyboard ragionato: otto archetipi DIFFERENTI, tempi guida non montaggio fisso."""
     visual=clean((asset or {}).get("visual_description") or context["opening"])
-    if not visual:visual="Inquadrare un soggetto verificato e davvero coerente con la promessa"
+    if not visual:visual="Soggetto autentico, forte e coerente con la promessa"
+    messages=OPENING_BEATS.get(arch,[
+       "Iniziare dalla scena piu significativa verificata",
+       "Mostrare subito il valore promesso dalla scena",
+       "Introdurre un cambiamento motivato",
+       "Preparare il resto del film in modo onesto"])
+    segments=[(0,1),(1,3),(3,5),(5,7)]
     item=[]
-    segments=[(0,1,"Primo fotogramma: impatto immediato e leggibilita su schermo piccolo"),
-              (1,3,"Introdurre la promessa con immagine/voce o evento sonoro autentico"),
-              (3,5,"Aggiungere una informazione o cambio visivo motivato"),
-              (5,7,"Rafforzare attesa e direzione; NON ripetere la stessa immagine")]
-    for start,end,role in segments:
+    for i,(start,end) in enumerate(segments):
         if seconds is not None and start>=seconds:break
         item.append({"from_seconds":start,"to_seconds":min(end,seconds) if seconds else end,
-            "purpose":role,"archetype":arch,"visual_anchor":visual,
-            "verified_visual":bool(asset),"proposed_only":True})
+            "purpose":messages[i],"archetype":arch,
+            "visual_anchor":visual,"verified_visual":bool(asset),"proposed_only":True})
     return item
 
 def probe_preview(video,folder):
