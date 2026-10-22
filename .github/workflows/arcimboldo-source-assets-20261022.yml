@@ -48,8 +48,6 @@ jobs:
           manifest={"painting":"Giuseppe Arcimboldo, Vertumnus, 1591","source":"https://commons.wikimedia.org/wiki/File:Vertumnus_%C3%A5rstidernas_gud_m%C3%A5lad_av_Giuseppe_Arcimboldo_1591_-_Skoklosters_slott_-_91503.jpg","image_license":"PDM","music":"Evening Fall (Piano), Kevin MacLeod","music_license":"CC BY 4.0","credit":"\u0022Evening Fall (Piano)\u0022 Kevin MacLeod (incompetech.com). Licensed under Creative Commons Attribution 4.0 — https://creativecommons.org/licenses/by/4.0/"}
           (root/"SOURCES.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2))
           PY
-          ffprobe -v error -show_entries stream=width,height -of json output/source-assets/vertumnus.jpg
-          ffprobe -v error -show_entries format=duration,size -of json output/source-assets/music.mp3
       - name: "Deliver source assets for offline local edit (not social publication)"
         uses: actions/upload-artifact@v4
         with:
