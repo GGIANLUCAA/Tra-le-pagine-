@@ -206,6 +206,43 @@ def sources(slug,cfg,folder):
      errors.append({"file":"AIC:"+title,"error":str(exc)[:130]})
   except Exception as exc:
    print("Art Institute open-access fallback unavailable:",str(exc)[:200],flush=True)
+ # Cleveland Museum of Art expressly releases these particular images as CC0.
+ # Their download CDN is independently probed to return genuine JPEGs.
+ if len(works)<13:
+  try:
+   doc=json.loads(get("https://openaccess-api.clevelandart.org/api/artworks/?"+
+       urllib.parse.urlencode({"artists":"John Martin","limit":30}),timeout=24,size=6_000_000))
+   for entry in doc.get("data",[]):
+    if len(works)>=15:break
+    if str(entry.get("share_license_status") or "").casefold()!="cc0":continue
+    options=entry.get("images") or {}
+    selected=(options.get("print") or options.get("web") or {})
+    imgurl=selected.get("url")
+    if not imgurl:continue
+    title=entry.get("title") or ""
+    if not title:continue
+    if any(w["title"].casefold()==title.casefold() for w in works):continue
+    try:
+     raw=get(imgurl,timeout=27,size=22_000_000)
+     with Image.open(io.BytesIO(raw)) as o:
+      o.load();im=ImageOps.exif_transpose(o).convert("RGB")
+     if min(im.size)<640:continue
+     identifier=hashlib.sha256(("cleveland:"+str(entry["id"])).encode()).hexdigest()[:17]
+     imgpath=dst/(identifier+".jpg")
+     im.save(imgpath,quality=93,subsampling=0,optimize=True)
+     works.append({"id":identifier,"title":title,"artist":"John Martin",
+       "source":"Cleveland Museum of Art open access",
+       "url":"https://www.clevelandart.org/art/"+str(entry.get("accession_number") or entry["id"]),
+       "original_file":"Cleveland museum "+str(entry["id"]),
+       "license":"CC0","license_url":"https://creativecommons.org/publicdomain/zero/1.0/",
+       "attribution":"John Martin; Open Access image courtesy of The Cleveland Museum of Art (CC0)",
+       "artist_metadata":"John Martin","image_url":imgurl,
+       "file":str(imgpath),"width":im.width,"height":im.height,
+       "sha256":hashlib.sha256(imgpath.read_bytes()).hexdigest()})
+     print("ACCEPT CLEVELAND",len(works),title,im.size,flush=True)
+    except Exception as exc:
+     errors.append({"file":"Cleveland:"+title,"error":str(exc)[:130]})
+  except Exception as exc:print("Cleveland fallback unavailable:",str(exc)[:200],flush=True)
  if len(works)<6:
   raise RuntimeError(f"{slug} has only {len(works)} verifiable original images, 6 needed. Errors: {errors[:7]}")
  return works,errors
