@@ -6,11 +6,6 @@ on:
     paths:
       - 'scripts/artvision_piranesi_20261022.py'
       - '.github/workflows/artvision-piranesi-20261022.yml'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'scripts/artvision_piranesi_20261022.py'
-      - '.github/workflows/artvision-piranesi-20261022.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -54,3 +49,4 @@ jobs:
             output/piranesi-cinema-v6/assets/artworks.json
             output/piranesi-cinema-v6/assets/music_rights.json
             output/piranesi-cinema-v6/assets/ORIGINAL_SCORE_PIRANESI.mid
+            output/piranesi-cinema-v6/assets/original_images/*.jpg
