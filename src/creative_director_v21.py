@@ -108,7 +108,7 @@ def actual_seconds(video):
     if not seconds:raise ValueError("Durata master non verificabile")
     return round(seconds,3)
 
-def duration_plan(brief,actual=None,history=None):
+def duration_plan(brief,actual=None,history=None,cinema_soft_range=None):
     """NON impone 30/60/180s: misura oppure suggerisce una finestra revisibile."""
     kind=fmt_from(brief)
     if actual:
@@ -128,7 +128,11 @@ def duration_plan(brief,actual=None,history=None):
     complexity=len(scenes) if isinstance(scenes,list) else 0
     if kind in ("artvision_enigma",):
         band=[25,80] if complexity>=9 else [15,65]
-    elif kind in ("artvision_cinema","visual_music","hyperlumen"):
+    elif kind=="artvision_cinema":
+        # User's editorial preference, not a fixed timer or social algorithm prediction.
+        # Actual master duration and genuinely authored shot timings still take precedence.
+        band=cinema_soft_range if isinstance(cinema_soft_range,list) and len(cinema_soft_range)==2 else [45,75]
+    elif kind in ("visual_music","hyperlumen"):
         band=[45,220] if complexity>=9 else [18,150]
     elif kind in ("libri","artvision_critico","controluce"):
         band=[120,420] if complexity>=8 else [40,240]
@@ -450,7 +454,8 @@ def write_package(brief,output,*,video=None,history=None,targets=None,policy_pat
     context=get_context(brief)
     archetypes=PREFERENCES[kind]
     arch,asset,vis_warnings=choose_visual(brief,archetypes,history)
-    duration=duration_plan(brief,actual_seconds(video) if video else None,history=history)
+    duration=duration_plan(brief,actual_seconds(video) if video else None,history=history,
+        cinema_soft_range=policy.get("timing",{}).get("artvision_cinema_preference",{}).get("default_soft_range_seconds"))
     music=mood_music(brief,targets)
     music["suggested_existing_tracks"]=licensed_music_suggestions(brief,history)
     openings=first_seconds_plan(brief,context,arch,asset,duration.get("seconds"))
