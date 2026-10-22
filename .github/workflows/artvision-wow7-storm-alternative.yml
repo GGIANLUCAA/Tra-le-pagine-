@@ -1,0 +1,27 @@
+name: "ArtVision WOW7 - substitute storm painters"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/artvision-wow7-storm-alternative.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Find public domain oceans and storms
+        run: |
+          python - <<'PY'
+          import urllib.request,urllib.parse,json
+          for artist in ['Winslow Homer','Albert Pinkham Ryder','Thomas Moran','Eugène Delacroix']:
+           try:
+            url='https://openaccess-api.clevelandart.org/api/artworks/?'+urllib.parse.urlencode({'artists':artist,'limit':100})
+            data=json.load(urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'ArtVisionTraLePagine/4.0'}),timeout=22))
+            cc=[x for x in data.get('data',[]) if x.get('share_license_status')=='CC0' and (x.get('images')or{}).get('print')]
+            print('ARTIST',artist,'CC0',len(cc),flush=True)
+            for x in cc[:30]:
+             print('TITLE',x.get('title'),x.get('accession_number'),flush=True)
+           except Exception as e:print('ERROR',artist,str(e)[:150],flush=True)
+          PY
