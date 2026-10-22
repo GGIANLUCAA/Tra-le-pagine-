@@ -43,4 +43,4 @@ jobs:
         env:
           ENIGMA_SMOKE: "1"
         run: |
-          python -m unittest -v tests.test_enigma_v1
+          python -m unittest discover -s tests -p 'test_enigma_v1.py' -v
