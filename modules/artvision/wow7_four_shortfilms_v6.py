@@ -168,6 +168,45 @@ MOVIES={
    ("drawbridge","whole",(.5,.5),5.1,"Ultima inquadratura ferma: l'enigma resta")
   ]}
 }
+# Reliably downloadable public-domain ocean art (Cleveland Museum).
+# Used instead of the earlier Aivazovsky attempt blocked by Commons HTTP 429.
+MOVIES["homer"]={
+ "name":"Winslow Homer","title":"Il mare non perdona","duration":50,
+ "track":"the_descent","hero":"morning",
+ "opening":"Dopo la tempesta, un oceano immenso e una fragile traccia umana.",
+ "resolution":"Winslow Homer raccontò le forze del mare, i naufragi e la vita dei marinai.",
+ "original":"Un percorso autentico tra tempesta, naufragio, navigazione e ritorno della luce.",
+ "museum":"Winslow Homer",
+ "search":[
+  ("morning","Early Morning After a Storm at Sea"),
+  ("perils","Perils of the Sea"),
+  ("wreck","The Wreck of the \"Atlantic\" - Cast Up by the Sea"),
+  ("winter","Winter at Sea - Taking in Sail Off the Coast"),
+  ("bells","Eight Bells"),
+  ("signal","At Sea, Signalling a Passing Steamer"),
+  ("shipbuild","Ship-Building, Gloucester Harbor"),
+  ("buccaneers","The Buccaneers"),
+  ("dad","\"Dad's Coming!\"")
+ ],
+ "acts":[
+  ("morning","texture",(.52,.48),3.0,"Il mare domina lo schermo sin dal primo secondo"),
+  ("morning","portrait",(.42,.58),2.6,"Sfumature della tempesta appena passata"),
+  ("morning","whole",(.5,.5),2.7,"La vastità del paesaggio"),
+  ("perils","portrait",(.53,.41),3.0,"La costa sembra pericolosa"),
+  ("perils","whole",(.5,.5),2.6,"L'intera scena del pericolo"),
+  ("wreck","texture",(.48,.65),3.0,"Il relitto sulla costa"),
+  ("wreck","whole",(.5,.5),2.6,"Una tragedia resa attraverso l'incisione"),
+  ("winter","portrait",(.52,.42),3.0,"Navigare contro il vento"),
+  ("winter","whole",(.5,.5),2.6,"I marinai in una luce invernale"),
+  ("bells","portrait",(.46,.48),3.1,"L'esperienza umana del mare"),
+  ("bells","whole",(.5,.5),2.7,"Il quadro si rivela"),
+  ("signal","portrait",(.53,.53),2.8,"Una nave all'orizzonte"),
+  ("signal","whole",(.5,.5),2.7,"Navigare è cercare un segnale"),
+  ("buccaneers","portrait",(.47,.46),2.9,"Il viaggio diventa storia umana"),
+  ("buccaneers","whole",(.5,.5),2.4,"Il mare come luogo di racconti"),
+  ("morning","whole",(.5,.5),4.5,"Ritorno al silenzio dopo la tempesta")
+ ]
+}
 # Four ACTUALLY different durations: 50/59/65/73 seconds.
 for slug,m in MOVIES.items():
  studio.P[slug]={"name":m["name"],"duration":m["duration"],
