@@ -222,7 +222,8 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
     cv2.imwrite(str(out/"COPERTINA.jpg"),cover,[cv2.IMWRITE_JPEG_QUALITY,96])
     base=backdrop(img)
     ratio=img.shape[1]/img.shape[0]
-    pad=2.8;tail=4.1
+    pad=0.22 if cfg.get("immediate_visual_hook") else 2.8
+    tail=3.0 if cfg.get("immediate_visual_hook") else 4.1
     duration=math.ceil(pad+vsec+tail)
     raw=out/"BASE_VIDEO.mp4"
     ff=subprocess.Popen(["ffmpeg","-hide_banner","-loglevel","error","-y",
@@ -244,7 +245,7 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
             enter_at=t;oldbeat=idx
         begin=0 if idx==0 else bounds[idx-1];stop=bounds[idx]
         p=(narr-begin)/max(.2,stop-begin)
-        if t<3.25:fr=cover.copy()
+        if t<3.25 and not cfg.get("immediate_visual_hook"):fr=cover.copy()
         elif t>pad+vsec:
             fr=close_frame.copy()
             q=(t-(pad+vsec))/tail
@@ -301,7 +302,7 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
 
 def main():
     cli=argparse.ArgumentParser()
-    cli.add_argument("--episode",required=True,choices=["leonardo_gioconda","klimt_bacio","hokusai_grande_onda","botticelli_venere"])
+    cli.add_argument("--episode",required=True,choices=["leonardo_gioconda","klimt_bacio","hokusai_grande_onda","botticelli_venere","ophelia_breve_v21"])
     args=cli.parse_args()
     cfg=json.loads((PARENT/(args.episode+".json")).read_text(encoding="utf8"))
     assert cfg["id"]==args.episode
