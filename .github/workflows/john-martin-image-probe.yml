@@ -1,0 +1,52 @@
+name: John Martin museum IIIF image probe
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/john-martin-image-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Test exact museum image endpoints and dimensions
+        run: |
+          python - <<'PY'
+          import json,urllib.request,urllib.parse
+          baseheaders={'User-Agent':'Mozilla/5.0 (compatible; ArtVision/1.0 art research)','Accept':'image/jpeg,*/*'}
+          apis=[
+           ('aic','https://api.artic.edu/api/v1/artworks/search?'+urllib.parse.urlencode({'q':'John Martin','fields':'id,title,artist_title,is_public_domain,image_id','limit':100})),
+           ('cleveland','https://openaccess-api.clevelandart.org/api/artworks/?artists=John%20Martin&limit=30')
+          ]
+          for name,url in apis:
+           try:
+            data=json.load(urllib.request.urlopen(urllib.request.Request(url,headers=baseheaders),timeout=15))
+            rows=data.get('data',[])
+            print('MUSEUM',name,'rows',len(rows),flush=True)
+            if name=='aic':
+             rows=[x for x in rows if (x.get('artist_title')or'').lower()=='john martin' and x.get('is_public_domain') and x.get('image_id')][:3]
+             for row in rows:
+              url='https://www.artic.edu/iiif/2/'+row['image_id']+'/full/1800,/0/default.jpg'
+              print('AIC URL',row['title'],url,flush=True)
+              try:
+               req=urllib.request.Request(url,headers=baseheaders)
+               with urllib.request.urlopen(req,timeout=15) as resp:
+                bb=resp.read(2048)
+                print('IMAGE OK',resp.status,resp.headers.get('content-type'),resp.headers.get('content-length'),bb[:12].hex(),flush=True)
+              except Exception as e:print('IMAGE ERROR',type(e).__name__,str(e)[:160],flush=True)
+            else:
+             for row in rows[:3]:
+              images=row.get('images') or {}
+              print('CLEVELAND',row.get('title'),row.get('share_license_status'),images,flush=True)
+              url=(images.get('web') or images.get('print') or {}).get('url')
+              if url:
+               try:
+                req=urllib.request.Request(url,headers=baseheaders)
+                with urllib.request.urlopen(req,timeout=15) as resp:
+                 bb=resp.read(100)
+                 print('CLEVELAND IMAGE',resp.status,resp.headers.get('content-type'),resp.headers.get('content-length'),bb[:10].hex(),flush=True)
+               except Exception as e:print('CLEVELAND IMAGE ERROR',type(e).__name__,str(e)[:180],flush=True)
+           except Exception as e:print('API ERROR',name,type(e).__name__,str(e)[:200],flush=True)
+          PY
