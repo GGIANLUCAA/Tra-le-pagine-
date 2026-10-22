@@ -488,8 +488,9 @@ def write_package(brief,output,*,video=None,history=None,targets=None,policy_pat
         "automatic_scoring_not_aesthetic_certification":True}
     (output/"CREATIVE_PACKAGE_V21.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     for platform,data in social.items():
-        text=data["title"]+"\n\n"+data["description"]+"\n\nISTRUZIONI\n"+data["publication_steps"]+"\n"+
-            music["platform_instructions"][platform]+"\n"
+        text=(data["title"]+"\n\n"+data["description"]+"\n\nISTRUZIONI\n"
+              +data["publication_steps"]+"\n"
+              +music["platform_instructions"][platform]+"\n")
         (output/("POST_"+platform.upper()+"_V21.txt")).write_text(text,encoding="utf8")
     parts=["# Creative Director V21 — "+(context["title"] or kind),"",
         "### Prima impressione",f"Archetipo proposto: {arch or 'da definire'}",
