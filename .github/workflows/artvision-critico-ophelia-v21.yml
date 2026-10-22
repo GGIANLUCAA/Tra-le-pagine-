@@ -1,0 +1,79 @@
+name: "ArtVision Critico V2 — Ofelia breve V21"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "queue/render_requests/critico_ophelia_20261022.json"
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Dipendenze motore Critico V2 esistente"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "numpy==1.26.4" "opencv-python-headless==4.10.0.84" "Pillow>=10,<13" "soundfile>=0.12" "google-genai>=1,<3" "edge-tts>=7,<8"
+      - name: "Preflight fonti e regia breve"
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("modules/artvision_critico/production_series/ophelia_breve_v21.json").read_text())
+          n=sum(len(b["speech"].split()) for b in d["beats"])
+          assert d["format"]=="artvision_critico" and d["immediate_visual_hook"] is True
+          assert len(d["beats"])==6 and 90<n<170
+          assert "tate.org.uk" in " ".join(d["sources"])
+          print("Preflight 6 scene, voce",n,"parole")
+          PY
+          python src/creative_director_v21.py --brief modules/artvision_critico/production_series/ophelia_breve_v21.json --out output/ophelia-v21-plan
+      - name: "Regia Critico V2 — Google Gacrux prima, fallback dichiarato"
+        run: |
+          python modules/artvision_critico/production_series/render_series_v2.py --episode ophelia_breve_v21
+      - name: "Creative Director V21 — copertina e inizio del vero master"
+        run: |
+          python src/creative_director_v21.py --brief modules/artvision_critico/production_series/ophelia_breve_v21.json --video output/artvision-serie-quattro/ophelia_breve_v21/ARTVISION_OPHELIA_BREVE_V21.mp4 --out output/artvision-serie-quattro/ophelia_breve_v21
+      - name: "Convalida tecnica MP4 e documenti social"
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          out=Path("output/artvision-serie-quattro/ophelia_breve_v21")
+          video=out/"ARTVISION_OPHELIA_BREVE_V21.mp4"
+          data=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_format","-show_streams","-of","json",str(video)]))
+          streams={x["codec_type"] for x in data["streams"]}
+          assert streams=={"audio","video"},streams
+          pic=next(x for x in data["streams"] if x["codec_type"]=="video")
+          assert (pic["width"],pic["height"])==(1080,1920)
+          assert 35<float(data["format"]["duration"])<115
+          assert video.stat().st_size>8_000_000
+          for n in ["COPERTINA.jpg","VOCE.wav","REGIA_SINCRONIZZAZIONE.json","COPIONE_IT.txt","DIRITTI_E_FONTI.txt","CREATIVE_PACKAGE_V21.json","APERTURA_0_7_V21.jpg","POST_FACEBOOK_V21.txt"]:
+            assert (out/n).stat().st_size>100,n
+          print("Master tecnico verificato; QA estetica e uso social da rivedere")
+          PY
+      - name: "Pacchetto MP4 e copertina da scaricare su Android"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_CRITICO_OFELIA_V21_${{ github.run_id }}
+          path: |
+            output/artvision-serie-quattro/ophelia_breve_v21/ARTVISION_OPHELIA_BREVE_V21.mp4
+            output/artvision-serie-quattro/ophelia_breve_v21/COPERTINA.jpg
+            output/artvision-serie-quattro/ophelia_breve_v21/REGIA_SINCRONIZZAZIONE.json
+            output/artvision-serie-quattro/ophelia_breve_v21/COPIONE_IT.txt
+            output/artvision-serie-quattro/ophelia_breve_v21/DIRITTI_E_FONTI.txt
+            output/artvision-serie-quattro/ophelia_breve_v21/CREATIVE_PACKAGE_V21.json
+            output/artvision-serie-quattro/ophelia_breve_v21/ISTRUZIONI_PUBBLICAZIONE_V21.md
+            output/artvision-serie-quattro/ophelia_breve_v21/POST_*_V21.txt
+            output/artvision-serie-quattro/ophelia_breve_v21/APERTURA_0_7_V21.jpg
+            output/artvision-serie-quattro/ophelia_breve_v21/COPERTINA_CANDIDATA_V21.jpg
+          retention-days: 14
+          if-no-files-found: error
