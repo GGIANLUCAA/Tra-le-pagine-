@@ -74,5 +74,6 @@ class TestEnigma(unittest.TestCase):
             self.assertTrue(report["artistic_review_required"])
             self.assertFalse(report["published"])
             self.assertTrue((root/"video"/"COPERTINA.jpg").is_file())
+            self.assertTrue((root/"video"/"ANTEPRIMA_SCENE.jpg").is_file())
 
 if __name__=="__main__":unittest.main()
