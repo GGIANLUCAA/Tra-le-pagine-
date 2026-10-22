@@ -17,6 +17,16 @@ secondi, copertina, durata guidata dal contenuto, musica, copy per piattaforma,
 hashtag pertinenti e diritti**. Le immagini si scelgono per pertinenza reale:
 ritratti, sculture, figure, opere inquietanti, paesaggi o natura non si alternano
 casualmente per attirare clic. Evitare riempitivi, intro decorative e clickbait.
+**Preferenza durata aggiornata 23 ottobre 2026 (feedback dopo Thomas Cole):**
+per i NUOVI ArtVision Cinema senza voce dare priorità a filmati più concisi, di
+norma **45–75 secondi**, spesso vicino a **un minuto**, salvo motivo artistico
+specifico per allungare. Non trasformare l'intervallo in un timer identico per
+tutti: decidere durata reale da progressione visiva, tensione e struttura del
+brano. Togliere dettagli ripetitivi, zoom superflui, pause riempitive e opere
+ridondanti anziché accelerare tagli e movimenti. Conservare apertura forte,
+camera stabile e finale motivato. Per i format narrati privilegiare comunque
+la concisione, senza troncare fatti, spiegazioni o voce. **I master storici e
+Cinema V6 Gold Master non vengono accorciati né sovrascritti.**
 Non assegnare durata standard a tutti; se il video è già pronto usare ffprobe,
 altrimenti stimare in base a scene/voce e dichiarare l'incertezza.
 La musica selezionata su Facebook può essere ripetuta se coerente, ma va aggiunta
