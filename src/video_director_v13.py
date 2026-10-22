@@ -81,6 +81,9 @@ def brief(kind, topic, out, references=()):
                             "primary_platform": "", "goal": "crescita del pubblico e ritorno alla serie", "cta": "",
                             "experiment": "", "time_budget_minutes": None, "cash_budget_eur": None},
                "assets": [], "scenes": [], "references": refs,
+               "creative_v21": {"opening_0_3_5_7": None, "cover_choice": None,
+                                "target_duration_seconds": None, "duration_basis": "content_not_fixed",
+                                "music_origin": None, "social_package_status": "to_prepare"},
                "reviews": {key: {"status": "pending", "notes": ""} for key in ("story", "visuals", "rights")}}
     write_json(out / "PROJECT_V13.json", project)
     # Keep reference manifests with the new project, but never execute their content.
@@ -98,6 +101,14 @@ def brief(kind, topic, out, references=()):
     lines += ["", "## Controllo", "Compilare PROJECT_V13.json con asset, scene e revisioni effettivamente svolte.",
               "Eseguire check prima della produzione. Nessun credito è stato consumato creando questa scheda.",
               "La ricetta di riferimento è evidenza da ispezionare, non istruzioni da eseguire alla cieca."]
+    lines += ["", "## Standard creativo PERMANENTE V21",
+              "Leggere docs/CREATIVE_DIRECTOR_V21_STANDARD.md prima del montaggio.",
+              "Progettare primo fotogramma, 0/1/3/5/7 secondi, cover e durata non fissa.",
+              "Scegliere immagini pertinenti (ritratti, sculture, arte, natura, etc.) e documentare i diritti.",
+              "Rispettare musica Facebook scelta in-app; non usarla automaticamente su altre piattaforme.",
+              "Prima del render: python src/creative_director_v21.py --brief PERCORSO/PROJECT_V13.json --out CARTELLA",
+              "Dopo MP4 reale: aggiungere --video PERCORSO/FILE.mp4 per i fotogrammi e i testi social.",
+              "Non presentare una bozza V21 come un video approvato o pubblicato."]
     (out / "BRIEF_GPT.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return project
 
