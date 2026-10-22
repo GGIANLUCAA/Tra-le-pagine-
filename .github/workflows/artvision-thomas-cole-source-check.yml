@@ -1,0 +1,35 @@
+name: "ArtVision Thomas Cole - check authentic museum images"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-thomas-cole-source-check.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check open art repository and image access
+        run: |
+          python - <<'PY'
+          import urllib.request,urllib.parse,json
+          H={'User-Agent':'ArtVisionMuseumResearch/1.0 (CC0 research; https://github.com/GGIANLUCAA/Tra-le-pagine-)'}
+          sources={
+           'cleveland':'https://openaccess-api.clevelandart.org/api/artworks/?artists=Thomas%20Cole&limit=40',
+           'commons':'https://commons.wikimedia.org/w/api.php?'+urllib.parse.urlencode({'action':'query','format':'json','titles':'File:Cole Thomas The Course of Empire Destruction 1836.jpg','prop':'imageinfo','iiprop':'url|size|extmetadata','iiurlwidth':2200})
+          }
+          for name,url in sources.items():
+           try:
+            data=json.load(urllib.request.urlopen(urllib.request.Request(url,headers=H),timeout=27))
+            if name=='cleveland':
+             rows=data.get('data',[])
+             print('CLEVELAND ITEMS',len(rows),flush=True)
+             for row in rows:
+              im=(row.get('images') or {}).get('print') or (row.get('images') or {}).get('web') or {}
+              print('CLEVELAND',row.get('title'),row.get('share_license_status'),row.get('accession_number'),im.get('url'),flush=True)
+            else:
+             rows=data['query']['pages'];print('COMMONS',[(x.get('title'),x.get('imageinfo',[{}])[0].get('thumburl')) for x in rows.values()],flush=True)
+           except Exception as e:print('ERROR',name,type(e).__name__,str(e)[:300],flush=True)
+          PY
