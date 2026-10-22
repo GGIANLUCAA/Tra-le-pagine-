@@ -1,0 +1,41 @@
+name: "ArtVision Critico — recupero sorgente museale Ofelia"
+on:
+  push:
+    branches: [main]
+    paths: ["queue/render_requests/critico_ofelia_source_v21.json"]
+permissions:
+  contents: read
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Fotografia autentica Commons 3840px"
+        run: |
+          mkdir -p output/critico-ofelia-source
+          python3 - <<'PY'
+          import json, urllib.request, urllib.parse, pathlib
+          name="File:John Everett Millais - Ophelia - Google Art Project.jpg"
+          u="https://commons.wikimedia.org/w/api.php?"+urllib.parse.urlencode({"action":"query","format":"json","formatversion":"2","titles":name,"prop":"imageinfo","iiprop":"url|extmetadata","iiurlwidth":"3840"})
+          rq=urllib.request.Request(u,headers={"User-Agent":"TraLePagine-ArtVision-Source/2.0","Accept":"application/json"})
+          data=json.load(urllib.request.urlopen(rq,timeout=40))
+          info=data["query"]["pages"][0]["imageinfo"][0]
+          licence=str((info["extmetadata"].get("LicenseShortName") or {}).get("value","")).lower()
+          if "public domain" not in licence and "pd" not in licence:raise ValueError("Commons PD non confermato: "+licence)
+          source=info.get("thumburl") or info["url"]
+          pr=urllib.parse.urlsplit(source)
+          if pr.scheme!="https" or pr.hostname not in ("upload.wikimedia.org","thumb.wikimedia.org"):raise ValueError("Dominio non consentito")
+          raw=urllib.request.urlopen(urllib.request.Request(source,headers={"User-Agent":"TraLePagine-ArtVision-Source/2.0"}),timeout=80).read(24_000_001)
+          if len(raw)>24000000 or not raw.startswith(b"\xff\xd8\xff"):raise ValueError("File non JPEG o dimensione eccessiva")
+          root=pathlib.Path("output/critico-ofelia-source")
+          (root/"OPHELIA_ARTWORK_SOURCE.jpg").write_bytes(raw)
+          (root/"SOURCE_CREDITS.json").write_text(json.dumps({"source_page":"https://commons.wikimedia.org/wiki/File:John_Everett_Millais_-_Ophelia_-_Google_Art_Project.jpg","source_url":source,"license":"Public Domain Mark su Wikimedia Commons","museum":"Tate Britain","social_publication":False},indent=2))
+          print("Acquisiti",len(raw),"bytes foto vera")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARTWORK_OFELIA_SOURCE_${{ github.run_id }}
+          path: output/critico-ofelia-source/
+          retention-days: 7
+          if-no-files-found: error
