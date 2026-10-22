@@ -297,6 +297,15 @@ def caption_set(brief,context,music,targets):
     if artist and artist.lower() not in [t.lower() for t in tags]:tags.append(artist)
     tags=[t for t in tags if t][:4]
     credits=clean(brief.get("credits"))
+    raw_source=brief.get("source") or {}
+    if isinstance(raw_source,dict) and clean(raw_source.get("file_page")):
+        credits=(credits+"\nFonte opera/immagine: "+clean(raw_source["file_page"])).strip()
+    else:
+        sources=brief.get("sources") or []
+        if isinstance(sources,list):
+            links=[clean(item.get("url")) for item in sources if isinstance(item,dict) and clean(item.get("url"))]
+            if links:credits=(credits+"\nFonti visive: "+"; ".join(links[:3])).strip()
+
     if music["origin"]=="external_licensed" and music["title"]:
         m=brief.get("music") or {}
         if m.get("credit_text"):credits=(credits+"\n"+clean(m["credit_text"])).strip()
@@ -377,11 +386,15 @@ def first_seconds_plan(brief,context,arch,asset,seconds):
        "Preparare il resto del film in modo onesto"])
     segments=[(0,1),(1,3),(3,5),(5,7)]
     item=[]
+    scenes=brief.get("shots") or brief.get("scenes") or []
     for i,(start,end) in enumerate(segments):
         if seconds is not None and start>=seconds:break
+        scene=scenes[i] if isinstance(scenes,list) and i<len(scenes) and isinstance(scenes[i],dict) else {}
+        scene_specific=clean(scene.get("purpose") or scene.get("description") or scene.get("reason"))
         item.append({"from_seconds":start,"to_seconds":min(end,seconds) if seconds else end,
             "purpose":messages[i],"archetype":arch,
-            "visual_anchor":visual,"verified_visual":bool(asset),"proposed_only":True})
+            "visual_anchor":scene_specific or visual,
+            "verified_visual":bool(asset),"proposed_only":True})
     return item
 
 def probe_preview(video,folder):
