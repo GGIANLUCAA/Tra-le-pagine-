@@ -82,3 +82,7 @@ Leggere [PRELAUNCH_V18_GUIDA.md](docs/PRELAUNCH_V18_GUIDA.md). Da Android il pan
 ## Controllo qualità V17 per tutte le categorie
 
 Prima di lanciare il renderer approvato consulta [QUALITY_DIRECTOR_V17.md](docs/QUALITY_DIRECTOR_V17.md). La scheda V13 può essere controllata gratuitamente con `python src/quality_director_v17.py --project PERCORSO/PROJECT_V13.json --out output/quality-preflight`. Dopo il render V16 trovi automaticamente report HTML/JSON nel kit di revisione se l'analisi si è completata. Sono suggerimenti diagnostici, non voti artistici né conferme di correttezza del filmato; controlla sempre scena per scena prima di consegnare. Si esegue dai workflow GitHub gestibili su Android.
+
+
+## Musica e protezione della pubblicazione — V20
+Per **ogni nuovo video**, consultare [Music Director / Publication Safety V20](docs/MUSIC_POLICY_V20.md) e compilare [manifest](templates/MUSIC_RELEASE_V20.json). La musica viene scelta per valore emotivo, regia, diritti della registrazione e condizioni d'uso delle piattaforme; prima di pubblicare eseguire il controllo `src/music_rights_v20.py` oppure [workflow Android](.github/workflows/music-rights-v20.yml). Nessuna pubblicazione implicita, né garanzia di assenza di claim. I preset approvati rimangono intatti.

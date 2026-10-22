@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "policy_id": "artvision_music_v20",
+  "updated": "2026-10-22",
+  "mode": "additive_only",
+  "applies_to": [
+    "artvision_cinema",
+    "artvision_critico",
+    "libri",
+    "controluce",
+    "visual_music",
+    "hyperlumen",
+    "other"
+  ],
+  "experiment": {
+    "external_licensed_pct": 75,
+    "meta_native_pct": 25,
+    "sample_min": 20,
+    "note": "Ipotesi editoriale iniziale, NON regola algoritmo e NON vincolo per singolo film. Solo musica appropriata e legalmente utilizzabile."
+  },
+  "editorial": {
+    "candidate_tracks": 3,
+    "select_by": [
+      "story_emotion",
+      "music_structure",
+      "artwork_sync",
+      "voice_intelligibility",
+      "sound_quality",
+      "rights",
+      "cross_platform_rights"
+    ],
+    "no_generic_rotation": true,
+    "avoid_repetition": true,
+    "split_versions_without_request": false
+  },
+  "format_rules": {
+    "artvision_cinema": "Cinema V6 Gold Master invariato: strumentale senza voce, traccia scelta per la regia, sync su frasi/climax; intro ARTIST+MUSIC BY, crediti completi in caption.",
+    "artvision_critico": "Voce Google approvata prioritaria; sottofondo discreto, ducking e pause.",
+    "libri": "Musica segue azioni e voce; no cambi meccanici, no sottotitoli.",
+    "controluce": "Non spettacolarizzare fatti reali; voce chiara, fonti verificabili.",
+    "visual_music": "Brano prima del motion; sincronizzazione verificata su audio/MIDI reali.",
+    "hyperlumen": "Sincronizzazione verificabile, evitare geometrie e sovrapposizioni confuse."
+  },
+  "music_origins": [
+    "external_licensed",
+    "meta_sound_collection",
+    "meta_native_library",
+    "original"
+  ],
+  "defaults": {
+    "future_monetization_assumed": true,
+    "ads_permitted_assumed": false,
+    "publication_automatic": false,
+    "noncommercial_audio_for_commercial_use": false,
+    "music_license_alone_sufficient": false
+  },
+  "publish_gate": {
+    "required": [
+      "music_identity",
+      "licence_and_recording_proof",
+      "permissions_by_target",
+      "commercial_rights_if_applicable",
+      "ads_and_monetization_permissions_if_applicable",
+      "visual_provenance",
+      "original_editorial_value",
+      "caption_credits",
+      "full_video_audio_review",
+      "human_publication_authorization"
+    ],
+    "blocks_on_missing": true
+  },
+  "claims": {
+    "on_notice": "Stop redistribution, preserve original MP4, license snapshot, source URLs, claims and platform notice. Reassess or replace offending audio, appeal only with substantiated rights."
+  },
+  "authoritative_sources": [
+    "https://www.facebook.com/help/instagram/402084904469945",
+    "https://about.fb.com/news/2026/03/rewarding-original-creators-on-facebook/",
+    "https://www.facebook.com/help/194353905193770",
+    "https://about.fb.com/news/2025/04/cracking-down-spammy-content-facebook/",
+    "https://www.facebook.com/business/ads/facebook-instagram-reels-ads"
+  ]
+}

@@ -1,0 +1,50 @@
+name: Music Rights V20 — review from Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: 'Path to MUSIC_RELEASE_V20.json already committed in repository'
+        required: true
+        default: 'templates/MUSIC_RELEASE_V20.json'
+  pull_request:
+    paths:
+      - 'src/music_rights_v20.py'
+      - 'tests/test_music_rights_v20.py'
+      - 'templates/MUSIC_RELEASE_V20.json'
+      - 'config/music_policy_v20.json'
+      - '.github/workflows/music-rights-v20.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  music-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run V20 tests
+        run: python -m unittest discover -s tests -p 'test_music_rights_v20.py' -v
+      - name: Review manifest when launched manually
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        env:
+          MANIFEST: ${{ inputs.manifest }}
+        run: |
+          set +e
+          python src/music_rights_v20.py --manifest "$MANIFEST" --out output/music-v20/MUSIC_REPORT_V20.json
+          result=$?
+          if [ -f output/music-v20/MUSIC_REPORT_V20.json ]; then
+            cat output/music-v20/MUSIC_REPORT_V20.json >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$result"
+      - name: Save report for Android review
+        if: always() && github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: music-report-v20
+          path: output/music-v20/MUSIC_REPORT_V20.json
+          if-no-files-found: warn

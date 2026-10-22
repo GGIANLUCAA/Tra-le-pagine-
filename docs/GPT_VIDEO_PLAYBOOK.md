@@ -183,3 +183,14 @@ e la voce verificata. Rivedere master e kit, poi registrare una revisione con ha
 esatti in `queue/reviews_v16/`. Nessuna approvazione ripetuta all’utente per lavoro
 già autorizzato. Se mancano asset o capacità, indicare il blocco, non inventare
 dieci consegne. I master non revisionati restano nel pacchetto di lavoro.
+
+
+## 6. Music Director V20 e safety prima della pubblicazione (obbligatorio per video nuovi)
+Non avviare il render con un brano casuale. Pianificare colonna sonora, struttura emotiva, sincronizzazione e registrare le prove della specifica registrazione, non soltanto della composizione. Leggere [MUSIC_POLICY_V20.md](MUSIC_POLICY_V20.md) e partire dal [manifest V20](../templates/MUSIC_RELEASE_V20.json). Per tutti i formati, oltre al kit V13/V17/V19, produrre una scheda musica e pubblicazione completa e relativo rapporto `src/music_rights_v20.py`. Se si usa audio aggiunto nell'editor Meta distinguere il master senza musica dalla versione finale e verificare la licenza per uso commerciale. Prestare attenzione anche alle opere d'arte, immagini museali e contributo originale del montaggio.
+
+Comandi dall'ambiente del repo:
+```bash
+python src/music_rights_v20.py --manifest output/progetto/MUSIC_RELEASE_V20.json --out output/progetto/MUSIC_REPORT_V20.json
+python -m unittest discover -s tests -p 'test_music_rights_v20.py' -v
+```
+Su Android usare **Actions → Music Rights V20**; fornisce report scaricabile quando la scheda e' committata. Nessun upload/pubblicazione social: `BLOCKED` o `REVIEW_REQUIRED` fermano la distribuzione; `READY_FOR_MANUAL_PUBLICATION` NON sostituisce verifica dei diritti, ascolto finale o consenso.
