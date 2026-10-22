@@ -1,0 +1,90 @@
+name: "ArtVision WOW7 - final Doré e Piranesi"
+run-name: "ArtVision WOW7 final pair - Dore and Piranesi"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-wow7-final-two.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cinema:
+    name: "Cinema WOW7 - ${{ matrix.artist }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        artist: [dore, piranesi]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free render environment
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+          python -m py_compile modules/artvision/wow7_four_shortfilms_v6.py
+      - name: Cinematic film render with authentic museum images
+        run: python modules/artvision/wow7_four_shortfilms_v6.py --artist "${{ matrix.artist }}"
+      - name: V17 objective QA - no silent approval
+        run: |
+          UPPER=$(echo "${{ matrix.artist }}" | tr "[:lower:]" "[:upper:]")
+          python src/quality_director_v17.py \
+            --format artvision_cinema \
+            --project "output/artvision-wow7/${{ matrix.artist }}/PROJECT_V13.json" \
+            --video "output/artvision-wow7/${{ matrix.artist }}/film/ARTVISION_${UPPER}_CINEMA_V6.mp4" \
+            --out "output/artvision-wow7/${{ matrix.artist }}/film/QUALITY_V17"
+      - name: V21 platform posts and opening contact sheet
+        run: |
+          UPPER=$(echo "${{ matrix.artist }}" | tr "[:lower:]" "[:upper:]")
+          python src/creative_director_v21.py \
+            --brief "output/artvision-wow7/${{ matrix.artist }}/PROJECT_V13.json" \
+            --video "output/artvision-wow7/${{ matrix.artist }}/film/ARTVISION_${UPPER}_CINEMA_V6.mp4" \
+            --out "output/artvision-wow7/${{ matrix.artist }}/film/CREATIVE_V21"
+      - name: Independent MP4, time, source and rights verification
+        run: |
+          python - <<'PY'
+          import json,os,hashlib,subprocess,pathlib
+          slug=os.environ['MATRIX_ARTIST']
+          required={'aivazovsky':50,'blake':59,'dore':65,'piranesi':73}
+          folder=pathlib.Path('output/artvision-wow7')/slug/'film'
+          video=folder/('ARTVISION_'+slug.upper()+'_CINEMA_V6.mp4')
+          assert video.is_file() and video.stat().st_size>1000000
+          report=json.loads((folder/'REPORT.json').read_text())
+          rights=json.loads((folder/'FONTI_E_DIRITTI.json').read_text())
+          qa=json.loads((folder/'QUALITY_V17/QUALITY_REPORT_V17.json').read_text())
+          v21=json.loads((folder/'CREATIVE_V21/CREATIVE_PACKAGE_V21.json').read_text())
+          assert report['original_works']>=5 and report['shots']>=13,report
+          assert all(x.get('url') and x.get('license') and x.get('sha256') for x in rights['works'])
+          assert not qa['blocking'],qa['blocking']
+          assert v21['video_sha256']==hashlib.sha256(video.read_bytes()).hexdigest()
+          s=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(video)]))
+          vv=[x for x in s['streams'] if x['codec_type']=='video']
+          aa=[x for x in s['streams'] if x['codec_type']=='audio']
+          assert len(vv)==1 and vv[0]['codec_name']=='h264' and (vv[0]['width'],vv[0]['height'])==(1080,1920)
+          assert len(aa)==1 and aa[0]['codec_name']=='aac'
+          assert not any(x['codec_type']=='subtitle' for x in s['streams'])
+          assert abs(float(s['format']['duration'])-required[slug])<1
+          assert (folder/'COPERTINA.jpg').is_file()
+          for platform in ['FACEBOOK','INSTAGRAM','TIKTOK','YOUTUBE']:
+            assert (folder/'CREATIVE_V21'/('POST_'+platform+'_V21.txt')).is_file()
+          print('WOW7 VERIFIED',slug,'seconds',s['format']['duration'],'bytes',video.stat().st_size,
+                'original artworks',report['original_works'],'composed shots',report['shots'],'QA',qa['status'])
+          PY
+        env:
+          MATRIX_ARTIST: "${{ matrix.artist }}"
+      - name: Save film, cover, credits, storyboard and V17/V21 review pack
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_WOW7_${{ matrix.artist }}"
+          path: |
+            output/artvision-wow7/${{ matrix.artist }}/film/
+            output/artvision-wow7/${{ matrix.artist }}/PROJECT_V13.json
+            output/artvision-wow7/${{ matrix.artist }}/PREFLIGHT_V21/
+          if-no-files-found: error
+          retention-days: 7
