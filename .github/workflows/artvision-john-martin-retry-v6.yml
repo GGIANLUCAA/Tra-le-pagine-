@@ -1,0 +1,61 @@
+name: John Martin V6 - museum fallback verified final
+run-name: John Martin final - Wikimedia and Art Institute open images
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-john-martin-retry-v6.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg and Python photo/camera tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+          python -m py_compile modules/artvision/john_martin_special_v6.py modules/artvision/john_martin_enriched_engine_v6.py
+      - name: Render John Martin film
+        run: python modules/artvision/john_martin_special_v6.py
+      - name: Add V17 QA report for mobile viewing
+        run: |
+          python src/quality_director_v17.py \
+            --format artvision_cinema \
+            --project output/artvision-john-martin-v6-special/john_martin/PROJECT_V13.json \
+            --video output/artvision-john-martin-v6-special/john_martin/film/ARTVISION_JOHN_MARTIN_CINEMA_V6.mp4 \
+            --out output/artvision-john-martin-v6-special/john_martin/film/QUALITY_V17
+      - name: Validate genuine H264 AAC MP4 and sources
+        run: |
+          python - <<'PY'
+          import json,pathlib,subprocess
+          folder=pathlib.Path("output/artvision-john-martin-v6-special/john_martin/film")
+          mp4=folder/"ARTVISION_JOHN_MARTIN_CINEMA_V6.mp4"
+          assert mp4.exists() and mp4.stat().st_size>2_000_000,"MP4 does not exist"
+          report=json.loads((folder/"REPORT.json").read_text())
+          qa=json.loads((folder/"QUALITY_V17/QUALITY_REPORT_V17.json").read_text())
+          assert report["original_works"]>=6 and report["shots"]>=29,report
+          assert not qa["blocking"],qa["blocking"]
+          specs=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_streams","-show_format","-of","json",str(mp4)]))
+          vids=[x for x in specs["streams"] if x["codec_type"]=="video"]
+          auds=[x for x in specs["streams"] if x["codec_type"]=="audio"]
+          assert len(vids)==1 and vids[0]["codec_name"]=="h264" and (vids[0]["width"],vids[0]["height"])==(1080,1920)
+          assert len(auds)==1 and auds[0]["codec_name"]=="aac"
+          assert 116<float(specs["format"]["duration"])<120
+          print("OK REAL MP4",mp4.stat().st_size,report["original_works"],report["shots"],qa["status"])
+          PY
+      - name: Upload film master cover storyboard licensing and QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_JOHN_MARTIN_V6_MUSEUM_FINALE
+          path: |
+            output/artvision-john-martin-v6-special/john_martin/film/
+            output/artvision-john-martin-v6-special/john_martin/PROJECT_V13.json
+          if-no-files-found: error
+          retention-days: 7
