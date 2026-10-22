@@ -1,7 +1,18 @@
 {
   "schema": "creator-learning-v14",
   "note": "Compilare con osservazioni reali, senza dati personali nel repository pubblico. Nessuna lezione già dimostrata.",
-  "lessons": [],
+  "lessons": [
+    {
+      "id": "arcimboldo-enigma-v21-pilot-20261022",
+      "format": "artvision_enigma",
+      "hypothesis": "Un primo secondo piu sorprendente e stacchi pertinenti entro 3s aumentano la probabilita di trattenere nuovi spettatori; da misurare su pubblico reale.",
+      "evidence": [],
+      "observation": "Prova offline reale Arcimboldo/Vertumno 2026-10-22: MP4 originale 45s e revisione V21 37.5s, entrambi 1080x1920 con audio. V21 mostra dettagli del dipinto diversi ai campioni 0,1,3s; QA ffprobe video H264/AAC e immagini estratte da MP4. File locali disponibili nel pacchetto dell'esecuzione ChatGPT, non nel repository. Nessun dato social osservato.",
+      "limitations": "Non si conoscono retention, condivisioni, completamenti o crescita. Il pilot cambia anche durata (45→37.5s) e cover, quindi non e un A/B a variabile singola. La distanza visiva fra campioni non prova piacere o emozione dello spettatore. Evitare di pubblicare entrambi come duplicati.",
+      "next_test": "Dopo scelta e pubblicazione autorizzata, raccogliere da Facebook metriche disponibili a 7 e 28 giorni (vista media, completamenti, drop 3/7s, condivisioni per 1000 views) e confrontare con altri video originali simili; per un eventuale vero A/B tenere costante cover e durata cambiando solo apertura.",
+      "status": "hypothesis"
+    }
+  ],
   "lesson_fields": {
     "id": "",
     "format": "",
@@ -12,5 +23,11 @@
     "next_test": "",
     "status": "hypothesis"
   },
-  "evidence_fields": {"video_id": "", "platform": "", "window_days": null, "source": "", "observed_at": ""}
+  "evidence_fields": {
+    "video_id": "",
+    "platform": "",
+    "window_days": null,
+    "source": "",
+    "observed_at": ""
+  }
 }
