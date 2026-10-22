@@ -10,6 +10,7 @@ import json
 import sys
 import urllib.parse
 import urllib.request
+import urllib.parse
 from pathlib import Path
 
 from PIL import Image, ImageOps
@@ -40,8 +41,12 @@ def fetch_art(data,out):
     if data["source"]["license"]=="PDM" and not ("public domain" in lic or "public domain" in usage or "pd"==lic):
         raise RuntimeError("Licenza PDM NON dimostrata da Commons; controlla prima l'originale")
     asset_url=info.get("thumburl") or info.get("url") or ""
-    if not allowed_media_url(asset_url,"openverse","image"):
-        raise RuntimeError("Dominio immagine diverso da Wikimedia")
+    url_parts=urllib.parse.urlsplit(asset_url)
+    if not ((allowed_media_url(asset_url,"openverse","image") or
+             (url_parts.scheme=="https" and url_parts.hostname=="thumb.wikimedia.org" and
+              not url_parts.username and not url_parts.password and url_parts.port is None))
+            and not url_parts.fragment):
+        raise RuntimeError("Dominio immagine diverso dalla CDN ufficiale Wikimedia")
     request=urllib.request.Request(asset_url,headers={"User-Agent":"TraLePagine-ArtVisionEnigma/1.0 (source research)"})
     opener=urllib.request.build_opener(NoRedirect)
     with opener.open(request,timeout=45) as response:
