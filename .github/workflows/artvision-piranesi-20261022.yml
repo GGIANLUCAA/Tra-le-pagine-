@@ -1,0 +1,51 @@
+name: ArtVision Piranesi Cinema V6 (nuovo film)
+on:
+  push:
+    branches:
+      - feature/artvision-piranesi-cinema-20261022
+    paths:
+      - 'scripts/artvision_piranesi_20261022.py'
+      - '.github/workflows/artvision-piranesi-20261022.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  piranesi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Open-source video and MIDI rendering
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fluidsynth fluid-soundfont-gm
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5" "requests>=2.30,<3" "mido>=1.2,<2"
+          python -m py_compile scripts/artvision_piranesi_20261022.py
+          python -m py_compile modules/artvision/director_cinema_v6.py modules/artvision/identita_visiva_v6.py
+      - name: Fetch authentic Met open access prints, compose original music, direct ArtVision V6
+        run: |
+          python -u scripts/artvision_piranesi_20261022.py
+      - name: Verify actual final MP4 and deliver
+        run: |
+          test -s output/piranesi-cinema-v6/ARTVISION_PIRANESI_CARCERI_CINEMA_V6.mp4
+          test -s output/piranesi-cinema-v6/COPERTINA_PIRANESI_CINEMA_V6.jpg
+          ffprobe -v error -show_entries format=duration,size:stream=codec_type,codec_name,width,height -of json output/piranesi-cinema-v6/ARTVISION_PIRANESI_CARCERI_CINEMA_V6.mp4
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: ArtVision_Piranesi_Carceri_Cinema_V6
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+          path: |
+            output/piranesi-cinema-v6/ARTVISION_PIRANESI_CARCERI_CINEMA_V6.mp4
+            output/piranesi-cinema-v6/COPERTINA_PIRANESI_CINEMA_V6.jpg
+            output/piranesi-cinema-v6/STORYBOARD_V6.json
+            output/piranesi-cinema-v6/DELIVERY_QA.json
+            output/piranesi-cinema-v6/POST_FACEBOOK.txt
+            output/piranesi-cinema-v6/assets/artworks.json
+            output/piranesi-cinema-v6/assets/music_rights.json
+            output/piranesi-cinema-v6/assets/ORIGINAL_SCORE_PIRANESI.mid
