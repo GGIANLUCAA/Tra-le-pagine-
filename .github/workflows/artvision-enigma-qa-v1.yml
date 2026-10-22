@@ -8,6 +8,12 @@ on:
       - "modules/artvision_enigma/**"
       - "tests/test_enigma_v1.py"
       - ".github/workflows/artvision-enigma-qa-v1.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "modules/artvision_enigma/**"
+      - "tests/test_enigma_v1.py"
+      - ".github/workflows/artvision-enigma-qa-v1.yml"
   workflow_dispatch:
 permissions:
   contents: read
