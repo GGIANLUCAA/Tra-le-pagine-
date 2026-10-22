@@ -34,9 +34,9 @@ WORKS=[
  ('The Giant Wheel',362675),
  ('The Round Tower',337725),
  ('Title Page',362797),
- ('The Drawbridge',362672),
- ('The Arch with a Shell Ornament',362673),
- ('The Smoking Fire',362674),
+ ('The Drawbridge',337060),
+ ('The Arch with a Shell Ornament',362645),
+ ('The Smoking Fire',362795),
  ('The Arch of the Great Staircase',362677),
  ('The Sawhorse',362678),
 ]
@@ -124,6 +124,8 @@ def download_images():
   if not data:continue
   if data.get('artistDisplayName') and 'Piranesi' not in data.get('artistDisplayName',''):
    print('Reject incorrect artist',objid);continue
+  if 'carceri' not in (data.get('title') or '').lower():
+   print('Reject non-Carceri image',objid,data.get('title'),flush=True);continue
   if data.get('isPublicDomain') is not True:
    print('Reject not explicitly public domain',objid);continue
   urls=[u for u in [data.get('primaryImage'),data.get('primaryImageSmall')]+data.get('additionalImages',[]) if isinstance(u,str) and u.startswith('https://')]
