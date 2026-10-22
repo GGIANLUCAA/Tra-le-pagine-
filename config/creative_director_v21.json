@@ -1,0 +1,134 @@
+{
+  "schema": "creative-director-v21",
+  "version": "21.0",
+  "updated_at": "2026-10-22",
+  "permanent": true,
+  "production_scope": "tutti i nuovi video e pacchetti V13/V16/Enigma, senza modificare originali storici",
+  "platforms": [
+    "facebook",
+    "instagram",
+    "tiktok",
+    "youtube"
+  ],
+  "priority": [
+    "contenuto originale e pertinente",
+    "primo fotogramma autenticamente interessante",
+    "promessa mantenuta dal filmato",
+    "ritmo narrativo/musicale",
+    "copertina leggibile e diversa tra episodi",
+    "descrizione e diritti per piattaforma",
+    "retention e condivisioni osservate, non previste"
+  ],
+  "keep_presets": [
+    "ArtVision Cinema V6 GOLD MASTER",
+    "Critico V2 COVER",
+    "Tra le Pagine V12 Google voice",
+    "Enigma V1",
+    "Music Rights V20"
+  ],
+  "opening": {
+    "review_at_seconds": [
+      0,
+      1,
+      3,
+      5,
+      7
+    ],
+    "hook_styles": [
+      "enigmatic_detail",
+      "human_gaze",
+      "dramatic_event",
+      "sculptural_form",
+      "beautiful_motion",
+      "quiet_tension",
+      "musical_pulse",
+      "unexpected_contrast"
+    ],
+    "never_force_screaming_hooks": true,
+    "never_insert_watermark_over_best_detail": true,
+    "first_frame_not_automatically_same_as_cover": true
+  },
+  "visuals": {
+    "families": [
+      "painting",
+      "portrait",
+      "sculpture",
+      "architecture",
+      "nature",
+      "manuscript",
+      "human_figure",
+      "dramatic_art",
+      "abstract",
+      "photography"
+    ],
+    "require_semantic_relevance": true,
+    "require_real_rights": true,
+    "avoid": "scegliere corpi, bellezza, paura o nudita soltanto per attirare click; nessun volti/eventi falsificati",
+    "preserve_existing_cinematography": true,
+    "allow_nude_if_contextual": true,
+    "commercial_rights_check": true
+  },
+  "timing": {
+    "fixed_durations": false,
+    "basis_order": [
+      "actual_ffprobe",
+      "voice_true_duration",
+      "scene_true_timing",
+      "content_based_hypothesis",
+      "historical_comparable_verified"
+    ],
+    "first_seven_seconds_review": true,
+    "disallow_claim_magic_length": true,
+    "viewer_retention_observed_after_publishing": true
+  },
+  "music": {
+    "allow_repeated_tracks_when_editorially_justified": true,
+    "avoid_mechanical_rotation": true,
+    "allowed_origins": [
+      "external_licensed",
+      "original",
+      "meta_sound_collection",
+      "meta_native_library"
+    ],
+    "facebook_native_music": "Scegliere dentro Facebook/Instagram quando il brano e disponibile e l'uso previsto e autorizzato; non estrarre o incorporare la registrazione nel master multipiattaforma.",
+    "meta_commercial_warning": "La musica generalista Instagram puo essere solo personale non commerciale; Sound Collection ha termini differenti da rispettare. Nessuna licenza Meta e globale.",
+    "keep_google_voice": true,
+    "dynamic_mix": true,
+    "review_sync_with_actual_audio": true
+  },
+  "captions": {
+    "facebook": "storia compatta e promessa veritiera, crediti esterni",
+    "instagram": "testo visuale sintetico con crediti",
+    "tiktok": "linea iniziale diretta e pertinente",
+    "youtube": "titolo chiaro e ricerca senza tag stuffing",
+    "max_topic_tags": 4,
+    "no_engagement_bait": true,
+    "no_unrelated_hashtags": true,
+    "rights_credits_mandatory_if_required": true
+  },
+  "output": [
+    "CREATIVE_PACKAGE_V21.json",
+    "ISTRUZIONI_PUBBLICAZIONE_V21.md",
+    "POST_FACEBOOK_V21.txt",
+    "POST_INSTAGRAM_V21.txt",
+    "POST_TIKTOK_V21.txt",
+    "POST_YOUTUBE_V21.txt",
+    "APERTURA_0_7_V21.jpg",
+    "COPERTINA_CANDIDATA_V21.jpg"
+  ],
+  "publication_gate": {
+    "needs_manual_approval": true,
+    "never_autopublish": true,
+    "never_overwrite_approved_video_or_cover": true,
+    "never_assume_paid_music_rights": true
+  },
+  "evidence": {
+    "meta_original": "https://about.fb.com/news/2026/03/rewarding-original-creators-on-facebook/",
+    "meta_views": "https://about.fb.com/news/2026/03/creator-fast-track-grow-your-audience-earn-money-on-facebook/",
+    "meta_music": "https://www.facebook.com/help/instagram/402084904469945",
+    "meta_spam": "https://about.fb.com/news/2025/04/cracking-down-spammy-content-facebook/",
+    "youtube": "https://support.google.com/youtube/answer/16559650?hl=en",
+    "retention": "https://support.google.com/youtube/answer/9314415",
+    "tiktok": "https://ads.tiktok.com/help/article/creative-best-practices?lang=it"
+  }
+}
