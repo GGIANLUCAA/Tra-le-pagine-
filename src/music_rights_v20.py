@@ -67,7 +67,8 @@ def check(data):
     missing(isinstance(allowed, list) and bool(allowed), "Piattaforme permesse non documentate")
     allowed = [str(t).lower() for t in allowed] if isinstance(allowed, list) else []
     for dest in targets:
-        bad(dest not in allowed, "Licenza audio non documentata per: " + dest)
+        if allowed:
+            bad(dest not in allowed, "Licenza audio non documentata per: " + dest)
 
     for flag, label in (("commercial", "uso commerciale"), ("monetized", "monetizzazione"),
                         ("ads", "pubblicita' a pagamento")):
