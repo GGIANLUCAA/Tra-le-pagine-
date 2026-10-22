@@ -14,7 +14,7 @@ def acquire():
     cfg=json.loads(CONFIG.read_text(encoding="utf-8"))
     OUT.mkdir(parents=True,exist_ok=True)
     base="https://commons.wikimedia.org/w/api.php"
-    q={"action":"query","format":"json","formatversion":"2","prop":"imageinfo","iiprop":"url|size|extmetadata","iiurlwidth":8500,"titles":cfg["commons_title"]}
+    q={"action":"query","format":"json","formatversion":"2","prop":"imageinfo","iiprop":"url|size|extmetadata","iiurlwidth":7800,"titles":cfg["commons_title"]}
     req=urllib.request.Request(base+"?"+urllib.parse.urlencode(q),headers={"User-Agent":"TraLePagine-BoschCritico/1.0 (educational artwork analysis)","Accept":"application/json"})
     with urllib.request.urlopen(req,timeout=45) as r:obj=json.load(r)
     info=obj["query"]["pages"][0]["imageinfo"][0]
@@ -22,8 +22,8 @@ def acquire():
     usage=str((info.get("extmetadata",{}).get("UsageTerms") or {}).get("value","")).lower()
     if not ("public domain" in lic+usage or "pd"==lic or "pd-art" in lic):
         raise ValueError("Fonte senza prova pubblico dominio, fermarsi: "+lic)
-    url=info.get("thumburl")
-    if not url:raise ValueError("Thumbnail Wikimedia non disponibile: vietato scaricare originale da 175 MB")
+    url=info.get("url") if int(info.get("width") or 0)<8000 else info.get("thumburl")
+    if not url:raise ValueError("Versione Wikimedia ad alta risoluzione non disponibile")
     parts=urllib.parse.urlsplit(url)
     if parts.scheme!="https" or parts.hostname not in ("upload.wikimedia.org","thumb.wikimedia.org") or parts.username or parts.password or parts.port:
         raise ValueError("URL fuori domini Wikimedia verificati")
