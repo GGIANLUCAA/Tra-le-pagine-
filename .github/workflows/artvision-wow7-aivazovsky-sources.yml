@@ -1,0 +1,37 @@
+name: "ArtVision WOW7 - Aivazovsky Commons source selection"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/artvision-wow7-aivazovsky-sources.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Identify genuinely licensed named marine paintings
+        run: |
+          python - <<'PY'
+          import urllib.request,urllib.parse,json
+          q={'action':'query','format':'json','formatversion':2,'generator':'search','gsrsearch':'Aivazovsky Ninth Wave filetype:bitmap','gsrnamespace':6,'gsrlimit':28,'prop':'imageinfo','iiprop':'url|size|extmetadata','iiurlwidth':2400}
+          H={'User-Agent':'ArtVisionTraLePagine/4.0 (personal artwork research, Github GGIANLUCAA/Tra-le-pagine-)'}
+          url='https://commons.wikimedia.org/w/api.php?'+urllib.parse.urlencode(q)
+          try:
+           data=json.load(urllib.request.urlopen(urllib.request.Request(url,headers=H),timeout=27))
+           for item in (data.get('query',{}).get('pages') or []):
+            if item.get('imageinfo'):
+             info=item['imageinfo'][0];n=item['title']; print('GALLERY',n,info.get('width'),info.get('height'),info.get('thumburl'),flush=True)
+          except Exception as e:print('GALLERY ERROR',str(e),flush=True)
+          files=['Ivan Aivazovsky - The Ninth Wave.jpg','Aivazovsky - The Ninth Wave.jpg','The Ninth Wave by Ivan Aivazovsky.jpg',
+                 'Ivan Aivazovsky - The Black Sea.jpg','Ivan Aivazovsky - The Rainbow.jpg',
+                 'Ivan Aivazovsky - Storm at Sea.jpg','Ivan Aivazovsky - Shipwreck.jpg',
+                 'Ivan Aivazovsky - Moonlit Night.jpg']
+          u='https://commons.wikimedia.org/w/api.php?'+urllib.parse.urlencode({'action':'query','format':'json','formatversion':2,'titles':'|'.join('File:'+x for x in files),'prop':'imageinfo','iiprop':'url|size|extmetadata','iiurlwidth':2400})
+          try:
+           data=json.load(urllib.request.urlopen(urllib.request.Request(u,headers=H),timeout=27))
+           for p in (data.get('query',{}).get('pages') or []):
+            ii=p.get('imageinfo');print('EXACT',p.get('title'),bool(ii),ii[0].get('thumburl') if ii else '',flush=True)
+          except Exception as e:print('EXACT ERROR',str(e),flush=True)
+          PY
