@@ -94,6 +94,8 @@ def real_images(slug,cfg,root):
    except Exception as exc:errors.append({"title":title,"error":str(exc)[:180]})
  except Exception as exc:
   errors.append({"source":"Cleveland optional prologue","error":str(exc)[:160]})
+ priority={"destruction":0,"consummation":1,"desolation":2,"savage":3,"arcadian":4,"schroon":5}
+ works.sort(key=lambda w:priority.get(w["label"],99))
  return works,errors
 studio.sources=real_images
 
