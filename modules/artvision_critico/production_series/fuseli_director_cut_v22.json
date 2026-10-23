@@ -1,0 +1,129 @@
+{
+  "schema": "artvision-critico-editorial-direction-v22",
+  "id": "fuseli-incubo-harmonic-v22",
+  "date": "2026-10-23",
+  "episode_source": "modules/artvision_critico/production_series/fuseli_incubo_v22.json",
+  "artwork": "L'incubo",
+  "artist": "Johann Heinrich Füssli",
+  "master_video_name": "ARTVISION_CRITICO_FUSSLI_L_INCUBO_V22.mp4",
+  "master_sha256": "705775d9fed56ca708efc78c1ff615fd09913197c146a5b3efcc336de929c11d",
+  "master_duration_seconds": 70,
+  "resolution": [
+    1080,
+    1920
+  ],
+  "fps": 20,
+  "voice": "Google Gemini Gacrux",
+  "voice_duration_seconds": 68.2,
+  "source_art": "https://commons.wikimedia.org/wiki/File:Johann_Heinrich_F%C3%BCssli_-_The_Nightmare_55.5.A-d1-2019-04-15.jpg",
+  "artwork_source_dimensions": [
+    8192,
+    6577
+  ],
+  "source_licence": "Public Domain Mark (on Commons)",
+  "source_media_workflow": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39912551111",
+  "music": "Night on the Docks — Piano, Kevin MacLeod, CC BY 4.0",
+  "cover": "Critico V2; dark gold ivory framed real painting, title+artist only",
+  "film_rhythm": "real unsettling horse eye immediate at 0s, reveal incubus after 2.85s, woman and body as narrated, whole painting context, end on full composition",
+  "opening_review_seconds": [
+    0,
+    1,
+    3,
+    5,
+    7
+  ],
+  "shots": [
+    [
+      "horse_eye",
+      0,
+      2.85
+    ],
+    [
+      "incubus_first",
+      2.85,
+      5.9
+    ],
+    [
+      "second_reveal",
+      5.9,
+      8.62
+    ],
+    [
+      "incubus_weight",
+      8.62,
+      12.5
+    ],
+    [
+      "woman_demon",
+      12.5,
+      17.2
+    ],
+    [
+      "whole_context",
+      17.2,
+      22.1
+    ],
+    [
+      "stage",
+      22.1,
+      27.95
+    ],
+    [
+      "woman_face",
+      27.95,
+      34.15
+    ],
+    [
+      "woman_arm",
+      34.15,
+      40.98
+    ],
+    [
+      "incubus_return",
+      40.98,
+      47.2
+    ],
+    [
+      "horse_return",
+      47.2,
+      54.44
+    ],
+    [
+      "red_curtain",
+      54.44,
+      60.62
+    ],
+    [
+      "emotional_final",
+      60.62,
+      65.55
+    ],
+    [
+      "whole_final",
+      65.55,
+      70
+    ]
+  ],
+  "camera_rules": {
+    "no_sine_pan_or_wobble": true,
+    "mostly_locked": true,
+    "transition_fade_seconds": 0.55,
+    "max_scale_change_over_whole_scene": 0.006,
+    "no_forced_final_question": true,
+    "subtitles": false
+  },
+  "technical_qa": {
+    "ffprobe_verified": true,
+    "source_real_full_resolution": true,
+    "voice_google_verified_by_workflow": true,
+    "video_audio_codec": [
+      "H264",
+      "AAC"
+    ],
+    "actual_still_samples_checked": true,
+    "full_decode_checked": false
+  },
+  "status": "rendered_needs_review",
+  "delivery_location": "ChatGPT conversation verified attached MP4 and ZIP, NOT GitHub binary or automatic catalog",
+  "publish_automatically": false
+}
