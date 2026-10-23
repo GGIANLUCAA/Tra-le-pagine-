@@ -365,7 +365,7 @@ def main():
     output=out/"VIDEO_MASTER.mp4"
     run("ffmpeg","-hide_banner","-loglevel","error","-y","-i",silent,
         "-ss",cfg.offset,"-i",score,"-map","0:v:0","-map","1:a:0",
-        "-c:v","copy","-af",f"aresample=48000,volume=.84,afade=t=in:st=0:d=.45,afade=t=out:st={max(0,duration-2.9):.3f}:d=2.9",
+        "-c:v","copy","-af",f"aresample=48000,volume=.84,afade=t=in:st=0:d=0.45,afade=t=out:st={max(0,duration-2.9):.3f}:d=2.9",
         "-c:a","aac","-b:a","192k","-t",duration,"-movflags","+faststart",output)
     facts=probe(output)
     assert 40<float(facts["format"]["duration"])<70
