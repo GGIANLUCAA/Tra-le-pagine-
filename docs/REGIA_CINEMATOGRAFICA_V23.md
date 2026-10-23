@@ -34,6 +34,13 @@ l'agente deve guardare il quadro e ascoltare la voce per confermarle.
   piano può essere del tutto immobile.
 - Se si cambia area del quadro, preferire un taglio leggibile o una dissolvenza
   motivata anziché trascinare l'occhio per decine di centimetri attraverso la tela.
+- **Eye trace / continuità dell'attenzione:** dopo un dettaglio, l'occhio
+  dovrebbe trovare facilmente quello successivo. Se i punti di interesse
+  passano da un margine all'altro della tela, valutare un'inquadratura
+  totale intermedia, non una panoramica accelerata. V23 segnala salti
+  significativi solo quando i centri di ritaglio sono realmente dichiarati;
+  non è un giudizio artistico automatico. Fonte:
+  https://www.adobe.com/creativecloud/video/discover/edit-a-video.html
 - Una dissolvenza breve può sostenere il raccordo; un **match cut** richiede
   che forme/colori/sguardi siano davvero analoghi. Non fare crossfade su ogni piano.
 - Ad ogni sostantivo o particolare importante della voce deve corrispondere
