@@ -1,0 +1,88 @@
+name: ArtVision V30 Holbein fallback renderer
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/artvision-holbein-v30-fallback.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  holbein-fallback:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare verified open-source video tools
+        timeout-minutes: 6
+        run: |
+          set -e
+          if ! command -v ffmpeg; then
+            sudo apt-get -o Acquire::Retries=2 install -y -qq ffmpeg
+          fi
+          if ! test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf; then
+            sudo apt-get -o Acquire::Retries=2 install -y -qq fonts-dejavu-core
+          fi
+          python -m pip install --disable-pip-version-check --timeout 15 --retries 2 "Pillow>=10,<14" numpy requests
+      - name: Verify V25 storyboard and natural V28 text
+        id: preflight
+        run: |
+          python -m py_compile scripts/artvision_cinema_duo_v30.py
+          python scripts/artvision_cinema_duo_v30.py --painting ambassadors --preflight-only
+      - name: Render The Ambassadors
+        id: render
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python scripts/artvision_cinema_duo_v30.py --painting ambassadors --out output/artvision-v30
+      - name: Verify real MP4 and complete bundle
+        id: verify
+        if: steps.render.outcome == 'success'
+        run: |
+          set -euo pipefail
+          video=output/artvision-v30/holbein_ambassadors_v30/VIDEO_MASTER.mp4
+          zip=output/artvision-v30/ARTVISION_V30_HOLBEIN_AMBASSADORS_V30_COMPLETE.zip
+          test -s "$video"
+          test -s "$zip"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$video" -f null -
+          python src/artvision_editorial_post_v28.py --validate-folder output/artvision-v30/holbein_ambassadors_v30
+          python - <<'PY'
+          import zipfile,json
+          z=zipfile.ZipFile('output/artvision-v30/ARTVISION_V30_HOLBEIN_AMBASSADORS_V30_COMPLETE.zip')
+          must={'VIDEO_MASTER.mp4','COPERTINA.jpg','POST_EDITORIAL_RESEARCH.json','POST_FACEBOOK.txt','POST_INSTAGRAM.txt','POST_TIKTOK.txt','POST_YOUTUBE.txt','VIDEO_RECIPE_V13.json','MUSIC_RELEASE_V20.json','SOURCES_AND_RIGHTS.md','QA_CONTACT_SHEET.jpg','TECHNICAL_QA_V30.json'}
+          assert must<=set(z.namelist()),must-set(z.namelist())
+          assert z.testzip() is None
+          assert json.loads(z.read('TECHNICAL_QA_V30.json'))['full_ffmpeg_decode']
+          PY
+      - name: Save full completed film and publishing package
+        id: archive
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision-V30-ambassadors-fallback
+          path: |
+            output/artvision-v30/holbein_ambassadors_v30/VIDEO_MASTER.mp4
+            output/artvision-v30/holbein_ambassadors_v30/COPERTINA.jpg
+            output/artvision-v30/holbein_ambassadors_v30/QA_CONTACT_SHEET.jpg
+            output/artvision-v30/ARTVISION_V30_HOLBEIN_AMBASSADORS_V30_COMPLETE.zip
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Register backup outcome accurately
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          P: ${{ steps.preflight.outcome }}
+          R: ${{ steps.render.outcome }}
+          V: ${{ steps.verify.outcome }}
+          A: ${{ steps.archive.outcome }}
+        with:
+          script: |
+            const fs=require('fs');
+            const p='output/artvision-v30/holbein_ambassadors_v30/VIDEO_MASTER.mp4';
+            const good=[process.env.P,process.env.R,process.env.V,process.env.A].every(x=>x==='success');
+            const run=`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.issues.createComment({owner:context.repo.owner,repo:context.repo.repo,issue_number:31,body:`ArtVision V30 Holbein alternate runner: **${good?'FULL MP4 + SOCIAL ZIP VERIFIED':'NOT COMPLETE'}**. MP4 bytes: ${fs.existsSync(p)?fs.statSync(p).size:'none'}. Steps preflight=${process.env.P}, render=${process.env.R}, verify=${process.env.V}, archive=${process.env.A}. Artifact: ${run}.`});
