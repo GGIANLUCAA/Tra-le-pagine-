@@ -1,0 +1,526 @@
+{
+  "schema": "artvision-cinema-v25-v28-wow9-two",
+  "date": "2026-10-23",
+  "baseline": "cinema_v6",
+  "contract": "docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md",
+  "music": {
+    "darkest_child": {
+      "title": "Darkest Child",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100783",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Darkest%20Child.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100783"
+    },
+    "dreams_become_real": {
+      "title": "Dreams Become Real",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dreams%20Become%20Real.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1500027"
+    },
+    "evening_fall": {
+      "title": "Evening Fall (Piano)",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100235",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20-%20Piano.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100235"
+    },
+    "the_descent": {
+      "title": "The Descent",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1200094"
+    },
+    "calmant": {
+      "title": "Calmant",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100859",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Calmant.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100859"
+    },
+    "the_chamber": {
+      "title": "The Chamber",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100400",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Chamber.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100400"
+    }
+  },
+  "works": {
+    "ensor": {
+      "artist": "JAMES ENSOR",
+      "title_en": "The Seven Deadly Sins",
+      "year": 1902,
+      "duration": 62,
+      "music": "darkest_child",
+      "file": "James Ensor - The Seven Deadly Sins - anger.jpg",
+      "source_page": "https://www.clevelandart.org/art/1971.108.3",
+      "art_url": "https://openaccess-cdn.clevelandart.org/1971.108.3/1971.108.3_print.jpg",
+      "arc": "Seven authentic etchings portray envy, greed, anger, pride, sloth, gluttony, and lust; a skeletal allegory closes the satire.",
+      "editorial_key": "ensor",
+      "assets": {
+        "anger": {
+          "accession": "1971.108.3",
+          "title": "The Seven Deadly Sins: Anger",
+          "trim": [
+            0.04,
+            0.04,
+            0.95,
+            0.92
+          ]
+        },
+        "pride": {
+          "accession": "1971.108.4",
+          "title": "The Seven Deadly Sins: Pride",
+          "trim": [
+            0.03,
+            0.05,
+            0.97,
+            0.91
+          ]
+        },
+        "envy": {
+          "accession": "1971.108.7",
+          "title": "The Seven Deadly Sins: Envy",
+          "trim": [
+            0.03,
+            0.05,
+            0.98,
+            0.9
+          ]
+        },
+        "gluttony": {
+          "accession": "1971.108.6",
+          "title": "The Seven Deadly Sins: Gluttony",
+          "trim": [
+            0.03,
+            0.045,
+            0.97,
+            0.91
+          ]
+        },
+        "sloth": {
+          "accession": "1971.108.2",
+          "title": "The Seven Deadly Sins: Sloth",
+          "trim": [
+            0.04,
+            0.06,
+            0.97,
+            0.9
+          ]
+        },
+        "avarice": {
+          "accession": "1971.108.5",
+          "title": "The Seven Deadly Sins: Avarice",
+          "trim": [
+            0.04,
+            0.045,
+            0.97,
+            0.92
+          ]
+        },
+        "lust": {
+          "accession": "1971.108.8",
+          "title": "The Seven Deadly Sins: Lust",
+          "trim": [
+            0.04,
+            0.045,
+            0.97,
+            0.91
+          ]
+        },
+        "death": {
+          "accession": "1971.108",
+          "title": "The Seven Deadly Sins",
+          "trim": [
+            0.03,
+            0.045,
+            0.97,
+            0.91
+          ]
+        }
+      },
+      "scenes": [
+        {
+          "id": 1,
+          "source_id": "anger",
+          "kind": "portrait",
+          "x": 0.4,
+          "y": 0.54,
+          "seconds": 4.1404,
+          "purpose": "The red, angry figure appears among frantic bodies",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "source_id": "anger",
+          "kind": "detail",
+          "x": 0.68,
+          "y": 0.34,
+          "seconds": 3.2911,
+          "purpose": "A winged skeleton and armed figures loom over the violent crowd",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "source_id": "anger",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 3.6096,
+          "purpose": "Reveal the coloured anger etching without a zoom",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "source_id": "pride",
+          "kind": "portrait",
+          "x": 0.5,
+          "y": 0.49,
+          "seconds": 3.6096,
+          "purpose": "The stern person is surrounded by boastful heads",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "source_id": "pride",
+          "kind": "detail",
+          "x": 0.75,
+          "y": 0.35,
+          "seconds": 3.3973,
+          "purpose": "A skeleton with a scythe watches a proud gathering",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "source_id": "envy",
+          "kind": "portrait",
+          "x": 0.54,
+          "y": 0.48,
+          "seconds": 3.6096,
+          "purpose": "A swarm of suspicious faces presses into the centre",
+          "motion": "locked"
+        },
+        {
+          "id": 7,
+          "source_id": "envy",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 3.2911,
+          "purpose": "Read the entire envious group in its source proportions",
+          "motion": "locked"
+        },
+        {
+          "id": 8,
+          "source_id": "avarice",
+          "kind": "detail",
+          "x": 0.44,
+          "y": 0.68,
+          "seconds": 3.6096,
+          "purpose": "Money on a table becomes an obsession",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "source_id": "avarice",
+          "kind": "portrait",
+          "x": 0.32,
+          "y": 0.42,
+          "seconds": 3.3973,
+          "purpose": "The grasping strange creature appears beside a hoarder",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "source_id": "gluttony",
+          "kind": "portrait",
+          "x": 0.49,
+          "y": 0.52,
+          "seconds": 3.5034,
+          "purpose": "A crowded table of indulgence compresses the scene",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "source_id": "gluttony",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 3.5034,
+          "purpose": "Allow the small satirical etching to breathe",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "source_id": "sloth",
+          "kind": "portrait",
+          "x": 0.56,
+          "y": 0.63,
+          "seconds": 3.5034,
+          "purpose": "A sleeping figure curls into the darkened room",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "source_id": "lust",
+          "kind": "detail",
+          "x": 0.6,
+          "y": 0.5,
+          "seconds": 3.3973,
+          "purpose": "Flirtation and temptation emerge in the delicate lines",
+          "motion": "locked"
+        },
+        {
+          "id": 14,
+          "source_id": "lust",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 3.1849,
+          "purpose": "The whole fragile print creates a quiet contrast",
+          "motion": "locked"
+        },
+        {
+          "id": 15,
+          "source_id": "death",
+          "kind": "portrait",
+          "x": 0.52,
+          "y": 0.29,
+          "seconds": 3.8219,
+          "purpose": "A gigantic skeletal head watches the seven figures",
+          "motion": "locked"
+        },
+        {
+          "id": 16,
+          "source_id": "death",
+          "kind": "texture",
+          "x": 0.67,
+          "y": 0.4,
+          "seconds": 3.3973,
+          "purpose": "Black feathers and a sinister wing fill the upper engraving",
+          "motion": "locked"
+        },
+        {
+          "id": 17,
+          "source_id": "death",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 5.7328,
+          "purpose": "Conclude with the complete allegory of Death above the human crowd",
+          "motion": "locked"
+        }
+      ]
+    },
+    "kuniyoshi": {
+      "artist": "UTAGAWA KUNIYOSHI",
+      "title_en": "The Strange Occurrence of Ukiyo Matahei and his Famous Paintings",
+      "year": 1853,
+      "duration": 56,
+      "music": "dreams_become_real",
+      "file": "Kuniyoshi - Strange Occurrence Ukiyo Matahei panel b.jpg",
+      "source_page": "https://www.clevelandart.org/art/1916.1160.b",
+      "art_url": "https://openaccess-cdn.clevelandart.org/1916.1160.b/1916.1160.b_print.jpg",
+      "arc": "A famous painter sits at his brush as painted folk characters emerge from a cloud and the artworks appear to come alive; the 1853 diptych closes in full.",
+      "editorial_key": "kuniyoshi",
+      "assets": {
+        "painter": {
+          "accession": "1916.1160.b",
+          "title": "The Strange Occurrence of Ukiyo Matahei and his Famous Paintings (painter)",
+          "trim": [
+            0.025,
+            0.03,
+            0.96,
+            0.97
+          ]
+        },
+        "spectres": {
+          "accession": "1916.1160.a",
+          "title": "The Strange Occurrence of Ukiyo Matahei and his Famous Paintings (figures)",
+          "trim": [
+            0.025,
+            0.03,
+            0.96,
+            0.97
+          ]
+        },
+        "diptych": {
+          "accession": "1916.1160",
+          "title": "The Strange Occurrence of Ukiyo Matahei and his Famous Paintings (complete diptych)",
+          "trim": [
+            0.005,
+            0.02,
+            0.995,
+            0.98
+          ]
+        }
+      },
+      "scenes": [
+        {
+          "id": 1,
+          "source_id": "painter",
+          "kind": "portrait",
+          "x": 0.54,
+          "y": 0.34,
+          "seconds": 4.365,
+          "purpose": "Red horned demons hover over the astonished painter",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "source_id": "painter",
+          "kind": "detail",
+          "x": 0.42,
+          "y": 0.69,
+          "seconds": 3.4068,
+          "purpose": "The painter's brush is held as his work escapes the page",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "source_id": "painter",
+          "kind": "wide",
+          "x": 0.52,
+          "y": 0.5,
+          "seconds": 3.7262,
+          "purpose": "The living characters gather above him in a swirl of clouds",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "source_id": "spectres",
+          "kind": "portrait",
+          "x": 0.64,
+          "y": 0.4,
+          "seconds": 3.5133,
+          "purpose": "A red-faced supernatural figure is presented in the companion print",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "source_id": "spectres",
+          "kind": "detail",
+          "x": 0.28,
+          "y": 0.29,
+          "seconds": 3.4068,
+          "purpose": "Other folk characters peer out from the artwork",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "source_id": "spectres",
+          "kind": "whole",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 3.6198,
+          "purpose": "Reveal the whole companion print, still unmistakably handmade",
+          "motion": "locked"
+        },
+        {
+          "id": 7,
+          "source_id": "painter",
+          "kind": "portrait",
+          "x": 0.35,
+          "y": 0.44,
+          "seconds": 3.3004,
+          "purpose": "A divine elderly figure watches the inexplicable event",
+          "motion": "locked"
+        },
+        {
+          "id": 8,
+          "source_id": "painter",
+          "kind": "detail",
+          "x": 0.76,
+          "y": 0.26,
+          "seconds": 3.4068,
+          "purpose": "A cloud of creatures breaks the boundary of the painted page",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "source_id": "diptych",
+          "kind": "medium",
+          "x": 0.5,
+          "y": 0.45,
+          "seconds": 3.8327,
+          "purpose": "Both panels join to form a single impossible encounter",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "source_id": "diptych",
+          "kind": "whole",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4.0456,
+          "purpose": "Show the source diptych for the first time as two panels",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "source_id": "spectres",
+          "kind": "texture",
+          "x": 0.39,
+          "y": 0.66,
+          "seconds": 3.1939,
+          "purpose": "Intricate fabrics, hair and faces make the ink feel alive",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "source_id": "painter",
+          "kind": "portrait",
+          "x": 0.52,
+          "y": 0.75,
+          "seconds": 3.4068,
+          "purpose": "Return to the astonished face and brush at the centre of the story",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "source_id": "diptych",
+          "kind": "portrait",
+          "x": 0.52,
+          "y": 0.43,
+          "seconds": 3.7262,
+          "purpose": "The shared scene now carries new meaning after close-up details",
+          "motion": "locked"
+        },
+        {
+          "id": 14,
+          "source_id": "spectres",
+          "kind": "whole",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 3.5133,
+          "purpose": "Pause on the supernatural left panel",
+          "motion": "locked"
+        },
+        {
+          "id": 15,
+          "source_id": "diptych",
+          "kind": "whole",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 5.5364,
+          "purpose": "Final unhurried full diptych; no artificial movement of figures",
+          "motion": "locked"
+        }
+      ]
+    }
+  }
+}
