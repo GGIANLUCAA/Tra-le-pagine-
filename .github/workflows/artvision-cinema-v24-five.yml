@@ -27,8 +27,8 @@ jobs:
           python-version: '3.11'
       - name: Open-source tools
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf || sudo apt-get install -y -qq fonts-dejavu-core
           python -m pip install --disable-pip-version-check pillow numpy requests
       - name: Render artistic film
         id: render
