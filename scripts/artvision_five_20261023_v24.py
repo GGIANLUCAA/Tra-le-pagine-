@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# 2026-10-23: run on preinstalled ffmpeg; preserve validated masters from prior attempt.
 """ArtVision Cinema V24: five artwork-specific, public-domain image films.
 Isolated add-on; never overwrites Cinema V6 gold masters.
 Original soundtrack: generated deterministically below, no third-party samples.
