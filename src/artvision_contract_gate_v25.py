@@ -280,6 +280,14 @@ def check_final(data, base: Path):
             tags = re.findall(r"#[A-Za-zÀ-ÿ0-9_]+",content)
             if len(tags) > 5:
                 errors.append(f"Post {key}: evitare hashtag eccessivi.")
+            artist = str((data.get("artwork") or {}).get("artist") or "").strip().casefold()
+            composer = str((data.get("music") or {}).get("composer") or "").strip().casefold()
+            if not artist or artist not in content.casefold():
+                errors.append(f"Post {key}: manca credito al vero artista.")
+            if not composer or composer not in content.casefold():
+                errors.append(f"Post {key}: manca credito musicale al compositore.")
+            if not any(token in content.casefold() for token in ("fonte:", "fonti:", "source:", "sources:")):
+                errors.append(f"Post {key}: manca sezione fonti verificabili.")
     for key in ("recipe","music_manifest"):
         if key in paths:
             try:
