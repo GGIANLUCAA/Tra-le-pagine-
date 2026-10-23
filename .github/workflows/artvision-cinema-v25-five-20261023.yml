@@ -1,0 +1,103 @@
+name: ArtVision Cinema V25 - five real films and social packs
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/artvision_cinema_v25_five_20261023.py
+      - config/artvision_cinema_v25_five_20261023.json
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: cinema-v25-five-20261023
+  cancel-in-progress: false
+jobs:
+  cinema-v25:
+    name: Cinema V25 ${{ matrix.painting }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        painting: [waterhouse, moreau, gerome, friedrich, bruegel]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free rendering dependencies
+        run: |
+          command -v ffmpeg
+          command -v ffprobe
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<14' requests
+      - name: Render actual artwork film and full social pack
+        id: render
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python scripts/artvision_cinema_v25_five_20261023.py --painting "${{ matrix.painting }}" --out output/artvision-v25
+      - name: Independent media and social output validation
+        id: verify
+        if: steps.render.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="output/artvision-v25/${{ matrix.painting }}/VIDEO_MASTER.mp4"
+          cover="output/artvision-v25/${{ matrix.painting }}/COPERTINA.jpg"
+          zipfile="output/artvision-v25/ARTVISION_V25_${{ matrix.painting }}_PACCHETTO.zip"
+          test -s "$file"
+          test -s "$cover"
+          test -s "$zipfile"
+          ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_type,codec_name,width,height -of json "$file"
+          ffmpeg -v error -xerror -i "$file" -f null -
+          python - "$file" "$zipfile" <<'PY'
+          import json,sys,subprocess,zipfile
+          x=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration",
+                                                 "-show_entries","stream=codec_type,codec_name,width,height","-of","json",sys.argv[1]]))
+          assert 40<float(x["format"]["duration"])<76,x
+          assert any(s.get("codec_type")=="video" and s.get("codec_name")=="h264" and s.get("width")==1080 and s.get("height")==1920 for s in x["streams"]),x
+          assert any(s.get("codec_type")=="audio" and s.get("codec_name")=="aac" for s in x["streams"]),x
+          with zipfile.ZipFile(sys.argv[2]) as z:
+              names=set(z.namelist());bad=z.testzip()
+              assert bad is None,bad
+              required=("VIDEO_MASTER.mp4","COPERTINA.jpg","POST_FACEBOOK.txt",
+              "POST_INSTAGRAM.txt","POST_TIKTOK.txt","POST_YOUTUBE.txt",
+              "VIDEO_RECIPE_V13.json","TECNICHE_REGIA.md","ISTRUZIONI_REPLICA.md",
+              "SOURCES_AND_RIGHTS.md","MUSIC_RELEASE_V20.json",
+              "ARTVISION_CONTRACT_V25.json","QA_V25/FRAME_00.jpg",
+              "QA_V25/FRAME_01.jpg","QA_V25/FRAME_03.jpg","QA_V25/FRAME_05.jpg",
+              "QA_V25/FRAME_07.jpg")
+              assert all(n in names for n in required),set(required)-names
+          PY
+      - name: Upload finished MP4 with cover, source, posts and recipe
+        uses: actions/upload-artifact@v4
+        id: upload
+        if: always()
+        with:
+          name: ArtVision-V25-${{ matrix.painting }}
+          path: output/artvision-v25/ARTVISION_V25_${{ matrix.painting }}_PACCHETTO.zip
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Record outcome, SHA and size in issue 26
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          PAINTING: ${{ matrix.painting }}
+          RENDER_STATE: ${{ steps.render.outcome }}
+          VERIFY_STATE: ${{ steps.verify.outcome }}
+          UPLOAD_STATE: ${{ steps.upload.outcome }}
+        with:
+          script: |
+            const fs=require('fs'),crypto=require('crypto');
+            const slug=process.env.PAINTING;
+            const filename=`output/artvision-v25/${slug}/VIDEO_MASTER.mp4`;
+            const fileExists=fs.existsSync(filename);
+            const size=fileExists?fs.statSync(filename).size:null;
+            const hash=fileExists?crypto.createHash('sha256').update(fs.readFileSync(filename)).digest('hex'):null;
+            const ok=process.env.RENDER_STATE==='success' && process.env.VERIFY_STATE==='success' && process.env.UPLOAD_STATE==='success';
+            const url=`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body=`Cinema V25 **${slug}**: **${ok?'TECHNICAL MP4 + PACK VALIDATED':'NOT FINISHED'}**\n\nMP4: ${fileExists?'yes':'no'}; bytes: ${size??'unknown'}; SHA256: ${hash??'none'}\nQA: render=${process.env.RENDER_STATE}, verify=${process.env.VERIFY_STATE}, artifact=${process.env.UPLOAD_STATE}.\nRun and packages: ${url}\nFull artistic approval and social publication are separate.`;
+            await github.rest.issues.createComment({owner:context.repo.owner,repo:context.repo.repo,issue_number:26,body});
