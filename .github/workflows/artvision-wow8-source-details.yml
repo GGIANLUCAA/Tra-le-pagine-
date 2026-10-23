@@ -1,0 +1,35 @@
+name: "ArtVision WOW8 - five original image primary-source fact check"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow8-source-details.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Confirm exact museum exhibits, public domain and usable images
+        run: |
+          python - <<'PY'
+          import json,urllib.request
+          ids={'goya':'1922.638','delacroix':'1962.109','bierstadt':'1949.541','hokusai':'1916.1137','hiroshige':'1985.312'}
+          H={'User-Agent':'ArtVisionTraLePagine/6.0 (source and licensing research)'}
+          for name,key in ids.items():
+           url='https://openaccess-api.clevelandart.org/api/artworks/?accession_number='+key
+           try:
+            data=json.load(urllib.request.urlopen(urllib.request.Request(url,headers=H),timeout=30))
+            rec=data['data'][0]
+            print('ID',name,rec.get('accession_number'),flush=True)
+            for prop in ['title','date_text','artists','technique','share_license_status','type','department','description','wall_description','tombstone','fun_fact','url','measurements','dimensions']:
+             val=rec.get(prop)
+             print('FIELD',prop,str(val)[:1500],flush=True)
+            image=rec['images']['print']
+            print('IMAGE',image,flush=True)
+            req=urllib.request.Request(image['url'],headers=H)
+            with urllib.request.urlopen(req,timeout=25) as response:
+             print('IMAGE_FETCH',response.status,response.headers.get('Content-Type'),response.headers.get('Content-Length'),response.read(8).hex(),flush=True)
+           except Exception as exc:print('ERROR',name,type(exc).__name__,str(exc)[:260],flush=True)
+          PY
