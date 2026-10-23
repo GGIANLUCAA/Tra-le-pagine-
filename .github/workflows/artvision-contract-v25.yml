@@ -1,0 +1,57 @@
+name: "ArtVision V25 - regole permanenti e gate consegna"
+on:
+  push:
+    paths:
+      - "src/artvision_contract_gate_v25.py"
+      - "tests/test_artvision_contract_gate_v25.py"
+      - "config/artvision_contract_v25.json"
+      - "templates/ARTVISION_CONTRACT_V25.json"
+      - ".github/workflows/artvision-contract-v25.yml"
+  pull_request:
+    paths:
+      - "src/artvision_contract_gate_v25.py"
+      - "tests/test_artvision_contract_gate_v25.py"
+      - "config/artvision_contract_v25.json"
+      - "templates/ARTVISION_CONTRACT_V25.json"
+      - ".github/workflows/artvision-contract-v25.yml"
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: "ARTVISION_CONTRACT_V25.json in the repository"
+        required: false
+        type: string
+      stage:
+        description: "Run preliminary or final deliverable gate"
+        required: true
+        default: preflight
+        type: choice
+        options: [preflight, final]
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Unittests — no API / no rendering / no cost
+        run: |
+          python -m unittest discover -s tests -p "test_artvision_contract_gate_v25.py" -v
+      - name: Verify actual manifest if provided (fail closed)
+        if: github.event_name == 'workflow_dispatch' && inputs.manifest != ''
+        env:
+          MANIFEST: ${{ inputs.manifest }}
+          STAGE: ${{ inputs.stage }}
+        run: |
+          set -euo pipefail
+          python src/artvision_contract_gate_v25.py --manifest "$MANIFEST" --stage "$STAGE" --out output/artvision_v25_report.json
+      - uses: actions/upload-artifact@v4
+        if: always() && github.event_name == 'workflow_dispatch' && inputs.manifest != ''
+        with:
+          name: artvision-v25-contract-report
+          path: output/artvision_v25_report.json
+          if-no-files-found: warn
+          retention-days: 14
