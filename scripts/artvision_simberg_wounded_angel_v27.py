@@ -189,11 +189,11 @@ def social(out):
 def package(out,impath,music,master,shots,analysis,offset):
     social(out);hash_mp4=digest(master)
     source=f"""# Provenienza e riuso
-Opera: Alexandre Simberg, The Wounded Angel (1903), Ateneum, inv. 889.2.1.
+Opera: Hugo Simberg, The Wounded Angel (1903), Ateneum (Finnish National Gallery), inv. A II 1703.
 Museo: {MUSEUM}
 Riproduzione Wikimedia: {ART_PAGE}
 Fotografia scaricata: {ART_URL}
-Riproduzione di un dipinto di pubblico dominio; Wikimedia la indica Public Domain Mark.
+Il dipinto storico è in pubblico dominio; la riproduzione usata è attribuita a Finnish National Gallery / Hannu Aaltonen, licenza CC BY 4.0. Fonte e condizioni: https://commons.wikimedia.org/wiki/File:The_Wounded_Angel_-_Hugo_Simberg.jpg e https://creativecommons.org/licenses/by/4.0/
 Verificare le limitazioni nazionali per l'uso commerciale di fotografie museali.
 SHA256 immagine: {digest(impath)}
 
@@ -207,8 +207,8 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
 """
     (out/"SOURCES_AND_RIGHTS.md").write_text(source,encoding="utf-8")
     notes=["# Regia personalizzata — The Wounded Angel","",
-           "Arco: sguardo → ali → gesto → angeli lontani → ritorno agli occhi → dipinto intero.",
-           "Tre-quarti delle inquadrature statiche. Niente pan avanti e indietro, nessun falso 3D.",
+           "Arco: benda dell'angelo → sguardo del ragazzo → bucaneve → barella e peso → ritorno allo sguardo → rivelazione del quadro intero.",
+           "La maggioranza delle inquadrature resta ferma. Niente pan avanti e indietro, nessun falso 3D.",
            "Firma iniziale V6: nome artista e MUSIC BY. Copertina: titolo inglese in un blocco separato.",
            "I tagli sono regolati entro 0,29 s su eventi misurati nella registrazione reale.",
            "", "## Tecniche selezionate"]
@@ -220,8 +220,8 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
         t+=s["duration"]
     (out/"TECNICHE_REGIA.md").write_text("\n".join(notes)+"\n",encoding="utf-8")
     guide=("ArtVision Simberg The Wounded Angel V27\n"
-           "Script: scripts/artvision_simberg_directors_cut_v27.py\n"
-           "Comando: python scripts/artvision_simberg_directors_cut_v27.py --out output/simberg-v27\n"
+           "Script: scripts/artvision_simberg_wounded_angel_v27.py\n"
+           "Comando: python scripts/artvision_simberg_wounded_angel_v27.py --out output/simberg-v27\n"
            "Preset originale da NON modificare: modules/artvision/APPROVED_PRESET.json\n"
            "Firma grafica: modules/artvision/IDENTITA_VISIVA_FISSA_V6.json\n"
            "Contratto V25: docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md\n"
@@ -232,8 +232,8 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
     (out/"ISTRUZIONI_REPLICA.md").write_text(guide,encoding="utf-8")
     recipe={"schema":"video-recipe-v13","video_id":"simberg-wounded-angel-v27","format":"artvision_cinema",
             "artist":ARTIST,"title_en":TITLE,"baseline":"cinema_v6","contract":"v25",
-            "renderer":"scripts/artvision_simberg_directors_cut_v27.py",
-            "replication_command":"python scripts/artvision_simberg_directors_cut_v27.py --out output/simberg-v27",
+            "renderer":"scripts/artvision_simberg_wounded_angel_v27.py",
+            "replication_command":"python scripts/artvision_simberg_wounded_angel_v27.py --out output/simberg-v27",
             "sha256_mp4":hash_mp4,"sha256_artwork":digest(impath),"sha256_music":digest(music),
             "source_page":ART_PAGE,"music_page":TRACK_PAGE,"license":"CC BY 4.0",
             "score_analysis":analysis,"score_offset_seconds":offset,"shots":shots,
@@ -284,20 +284,20 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
       "scenes":[{"source_id":"authentic-simberg-original","subject":s["purpose"],
                  "purpose":s["purpose"],"shot":"landscape" if s["kind"]=="landscape" else s["kind"],
                  "motion":s["motion"],"duration_seconds":s["duration"]} for s in shots],
-      "transition_reviews_plan":[{"why":"Wounded gaze to wing is a true graphic contrast"},
-                                 {"why":"Hands then distant angels connect the narrative of exile"},
-                                 {"why":"Return to eyes before full canvas opens the final view"}],
-      "music_cues":[{"seconds":0,"reason":"Opening restrained harmony with human gaze"},
-                    {"seconds":total*.48,"reason":"Tension deepens with the wings and sky"},
+      "transition_reviews_plan":[{"why":"Blindfold and snowdrops create an authentic white visual rhyme"},
+                                 {"why":"Stretcher and white snowdrops connect the two boys to the wounded angel"},
+                                 {"why":"The boy looks at the viewer before the full scene resolves"}],
+      "music_cues":[{"seconds":0,"reason":"The bandage introduces a genuine mystery in a restrained harmony"},
+                    {"seconds":total*.48,"reason":"The burden, bare feet, snowdrops and two boys deepen emotional context"},
                     {"seconds":total-5,"reason":"Music fades while full painting remains visible"}],
-      "duration_reason":"Fifteen artist-specific studies with authentic score accents and a measured full-image closure.",
+      "duration_reason":"Eighteen motivated pictorial views linked by repeating objects and a generous full-image close.",
       "selected_techniques":[{"id":k,"why":v} for k,v in TECH],
       "sources":[{"id":"authentic-simberg-original","url":ART_PAGE,
-                  "license":"Public Domain Mark original painting",
-                  "credit":"Simberg, Ateneum, Finnish National Gallery, Helsinki","status":"verified"}],
+                  "license":"Public-domain painting; original source photograph CC BY 4.0 (Finnish National Gallery / Hannu Aaltonen)",
+                  "credit":"Hugo Simberg, Ateneum; photograph Finnish National Gallery / Hannu Aaltonen","status":"verified"}],
       "music":{"title":"Mourning Song","composer":COMPOSER,"origin":"external_licensed",
                "license":"CC BY 4.0","evidence":TRACK_PAGE,
-               "emotional_arc":"intimate gaze, physical exile, total reveal","rights_status":"verified"},
+               "emotional_arc":"the wounded angel, her two companions, snowdrops, silent compassion and full painting","rights_status":"verified"},
       "copy_languages":dict.fromkeys(["facebook","instagram","tiktok","youtube"],"it"),
       "archive_only_after_authorization":True,"social_autopublish":False,
       "outputs":dict(video="VIDEO_MASTER.mp4",cover="COPERTINA.jpg",
