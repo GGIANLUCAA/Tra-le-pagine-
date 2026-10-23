@@ -32,11 +32,13 @@ COPY_LIMITS={"facebook":(40,165),"instagram":(26,135),"tiktok":(20,85),"youtube"
 def config():
     return json.loads(CATALOG.read_text(encoding="utf-8"))
 
-def editorial_body(text):
-    # Source and licensing are kept in a clearly separate footer. Review only
-    # the narrative for banned production notes, not legally required credits.
-    for split in ("\n\nFallen Angel (", "\n\nThe Wounded Angel (", "\n\nOpera:", "\n\nCrediti:"):
-        if split in text: return text.split(split,1)[0].strip()
+def editorial_body(text,title_en=""):
+    # Source and licensing are kept in a clearly separate footer. Extract the
+    # narrative for ANY future painting, not just the two examples.
+    boundaries=["\n\nOpera:", "\n\nCrediti:", "\n\nFonti:"]
+    if title_en: boundaries.insert(0, "\n\n"+title_en+" (")
+    for marker in boundaries:
+        if marker in text: return text.split(marker,1)[0].strip()
     return text.strip()
 
 def validate_entry(key,entry):
@@ -136,7 +138,7 @@ def validate_folder(path):
         if not path.is_file():
             errors.append("Missing caption file "+fn);continue
         txt=path.read_text(encoding="utf-8")
-        body=editorial_body(txt)
+        body=editorial_body(txt,record.get("title_en", ""))
         for phrase in FORBIDDEN:
             if phrase.casefold() in body.casefold():
                 errors.append(fn+" contains forbidden process/AI marketing language: "+phrase)
