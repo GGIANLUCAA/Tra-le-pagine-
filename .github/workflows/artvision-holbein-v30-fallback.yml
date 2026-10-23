@@ -1,4 +1,5 @@
 name: ArtVision V30 Holbein fallback renderer
+# Preserves genuine source artwork; additionally tries a full-size public-domain reproduction hosted off Wikimedia when Commons returns HTTP 429.
 on:
   push:
     branches: [main]
