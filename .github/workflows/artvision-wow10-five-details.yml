@@ -1,0 +1,33 @@
+name: "ArtVision WOW10 - exact five-source museum research"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow10-five-details.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  detail:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: List verified Cleveland CC0 originals for five original cinematic films
+        run: |
+          python - <<'PY'
+          import json,urllib.parse,urllib.request
+          names=['Albrecht Dürer','Kawanabe Kyōsai','Joseph Mallord William Turner','Henri Rousseau','Arthur Rackham']
+          H={'User-Agent':'ArtVisionTraLePagine/8.0 (noncommercial film research)'}
+          for artist in names:
+           url='https://openaccess-api.clevelandart.org/api/artworks/?'+urllib.parse.urlencode({'artists':artist,'limit':200})
+           data=json.load(urllib.request.urlopen(urllib.request.Request(url,headers=H),timeout=28))
+           rows=[x for x in data.get('data',[]) if x.get('share_license_status')=='CC0' and (x.get('images')or{}).get('print')]
+           print('ARTIST',artist,'CC0_COUNT',len(rows),flush=True)
+           candidates={'Albrecht Dürer':['Horsemen','Knight, Death','Sea Monster','George Killing','Apocalypse','Dream of the Doctor','Four Witches','Coat of Arms'],
+           'Kawanabe Kyōsai':['Hell Courtesan','Snail Versus Demon','Full Moon with Crow','Cranes and Pines','Toad','Ghost','Skeleton','Oni','Crow','Fox'],
+           'Joseph Mallord William Turner':['Moonlight','Ships in a Breeze','Leader Sea','Mildmay Sea','Little Devil','Norham','Calais'],
+           'Henri Rousseau':[],
+           'Arthur Rackham':[]}[artist]
+           selected=rows if not candidates else [x for x in rows if any(n.casefold() in (x.get('title')or'').casefold() for n in candidates)]
+           for x in selected[:24]:
+            img=x['images']['print'];print('WORK',repr(x.get('title')),x.get('accession_number'),img.get('width'),img.get('height'),repr(x.get('date_text')),flush=True)
+          PY
