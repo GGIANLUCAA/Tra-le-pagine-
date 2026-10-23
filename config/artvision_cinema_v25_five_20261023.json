@@ -1,0 +1,781 @@
+{
+  "schema": "artvision-cinema-v25-batch",
+  "date": "2026-10-23",
+  "baseline": "cinema_v6",
+  "contract": "docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md",
+  "works": {
+    "waterhouse": {
+      "artist": "JOHN WILLIAM WATERHOUSE",
+      "title_en": "The Magic Circle",
+      "file": "The Magic Circle - John William Waterhouse.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File:The_Magic_Circle_-_John_William_Waterhouse.jpg",
+      "duration": 55,
+      "music": "darkest_child",
+      "arc": "From ritual gesture to the hidden threshold and back to her intent.",
+      "caption": "Una donna traccia un cerchio sul terreno. Fuori, il paesaggio sembra immobile; dentro, ogni gesto diventa mistero. Waterhouse trasforma un rito in un'immagine che continua a interrogarci.",
+      "scenes": [
+        {
+          "id": 1,
+          "kind": "detail",
+          "x": 0.54,
+          "y": 0.38,
+          "seconds": 3.2,
+          "purpose": "La mano che compie il rito",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "kind": "portrait",
+          "x": 0.54,
+          "y": 0.25,
+          "seconds": 3.4,
+          "purpose": "Il profilo concentrato della protagonista",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "kind": "detail",
+          "x": 0.6,
+          "y": 0.46,
+          "seconds": 3.1,
+          "purpose": "La bacchetta e il gesto",
+          "motion": "slow_push"
+        },
+        {
+          "id": 4,
+          "kind": "texture",
+          "x": 0.67,
+          "y": 0.55,
+          "seconds": 2.8,
+          "purpose": "Luce e materia del recipiente",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "kind": "wide",
+          "x": 0.51,
+          "y": 0.53,
+          "seconds": 3.8,
+          "purpose": "La protagonista in rapporto con il cerchio",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "kind": "detail",
+          "x": 0.38,
+          "y": 0.75,
+          "seconds": 2.9,
+          "purpose": "La linea rituale sul terreno",
+          "motion": "locked"
+        },
+        {
+          "id": 7,
+          "kind": "macro",
+          "x": 0.56,
+          "y": 0.62,
+          "seconds": 2.8,
+          "purpose": "I dettagli degli oggetti",
+          "motion": "locked"
+        },
+        {
+          "id": 8,
+          "kind": "portrait",
+          "x": 0.53,
+          "y": 0.29,
+          "seconds": 3.5,
+          "purpose": "Lo sguardo ritorna prima del cambio",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "kind": "detail",
+          "x": 0.2,
+          "y": 0.5,
+          "seconds": 3,
+          "purpose": "La vegetazione intorno al gesto",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4.2,
+          "purpose": "Il rituale prende forma in pieno quadro",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "kind": "texture",
+          "x": 0.77,
+          "y": 0.44,
+          "seconds": 3,
+          "purpose": "Contrasto delle ombre",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "kind": "detail",
+          "x": 0.46,
+          "y": 0.68,
+          "seconds": 3.1,
+          "purpose": "Il cerchio a terra",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "kind": "portrait",
+          "x": 0.55,
+          "y": 0.24,
+          "seconds": 3.2,
+          "purpose": "Il volto reagisce senza anima artificiale",
+          "motion": "locked"
+        },
+        {
+          "id": 14,
+          "kind": "wide",
+          "x": 0.53,
+          "y": 0.5,
+          "seconds": 3.5,
+          "purpose": "Composizione finale senza moto",
+          "motion": "locked"
+        },
+        {
+          "id": 15,
+          "kind": "detail",
+          "x": 0.58,
+          "y": 0.43,
+          "seconds": 3.1,
+          "purpose": "Ultimo gesto prima dell'apertura",
+          "motion": "locked"
+        },
+        {
+          "id": 16,
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4.1,
+          "purpose": "Rivelazione del dipinto completo",
+          "motion": "locked"
+        }
+      ]
+    },
+    "moreau": {
+      "artist": "GUSTAVE MOREAU",
+      "title_en": "Jupiter and Semele",
+      "file": "Jupiter and Semele by Gustave Moreau.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Jupiter_and_Semele_by_Gustave_Moreau.jpg",
+      "duration": 59,
+      "music": "darkest_child",
+      "arc": "A celestial body rises out of ornamental chaos and the painting becomes a throne.",
+      "caption": "Un trono che sembra infinito. Figure, simboli e colori si intrecciano in un'immagine quasi impossibile da esplorare con un solo sguardo. Moreau costruisce un universo dentro una tela.",
+      "scenes": [
+        {
+          "id": 1,
+          "kind": "macro",
+          "x": 0.48,
+          "y": 0.29,
+          "seconds": 3.3,
+          "purpose": "Sguardo della figura luminosa",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "kind": "detail",
+          "x": 0.55,
+          "y": 0.4,
+          "seconds": 3,
+          "purpose": "Le figure centrali del mito",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "kind": "texture",
+          "x": 0.76,
+          "y": 0.28,
+          "seconds": 3.2,
+          "purpose": "Decorazioni lungo il trono",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "kind": "portrait",
+          "x": 0.45,
+          "y": 0.35,
+          "seconds": 3.2,
+          "purpose": "Il contrasto dei volti",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "kind": "detail",
+          "x": 0.26,
+          "y": 0.66,
+          "seconds": 3.1,
+          "purpose": "Creature ai piedi del trono",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "kind": "wide",
+          "x": 0.51,
+          "y": 0.39,
+          "seconds": 3.8,
+          "purpose": "Rivelazione del gruppo centrale",
+          "motion": "locked"
+        },
+        {
+          "id": 7,
+          "kind": "texture",
+          "x": 0.74,
+          "y": 0.71,
+          "seconds": 3.4,
+          "purpose": "Dettagli fantastici inferiori",
+          "motion": "locked"
+        },
+        {
+          "id": 8,
+          "kind": "detail",
+          "x": 0.34,
+          "y": 0.52,
+          "seconds": 3.3,
+          "purpose": "Il velo e i simboli",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "kind": "portrait",
+          "x": 0.52,
+          "y": 0.3,
+          "seconds": 3.4,
+          "purpose": "Il centro emotivo del dipinto",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "kind": "macro",
+          "x": 0.63,
+          "y": 0.6,
+          "seconds": 3,
+          "purpose": "Ritorno a un dettaglio nascosto",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.54,
+          "seconds": 4.2,
+          "purpose": "Colonna cromatica della composizione",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "kind": "texture",
+          "x": 0.2,
+          "y": 0.31,
+          "seconds": 3.3,
+          "purpose": "Un'area ricca di simboli",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "kind": "detail",
+          "x": 0.48,
+          "y": 0.77,
+          "seconds": 3.6,
+          "purpose": "L'universo inferiore",
+          "motion": "locked"
+        },
+        {
+          "id": 14,
+          "kind": "portrait",
+          "x": 0.52,
+          "y": 0.38,
+          "seconds": 3,
+          "purpose": "Riflessi sulla figura",
+          "motion": "locked"
+        },
+        {
+          "id": 15,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 3.5,
+          "purpose": "La visione prima della rivelazione",
+          "motion": "locked"
+        },
+        {
+          "id": 16,
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4.2,
+          "purpose": "Opera intera come chiusura",
+          "motion": "locked"
+        }
+      ]
+    },
+    "gerome": {
+      "artist": "JEAN-LÉON GÉRÔME",
+      "title_en": "Pollice Verso",
+      "file": "Jean-Leon Gerome Pollice Verso.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Jean-Leon_Gerome_Pollice_Verso.jpg",
+      "duration": 53,
+      "music": "darkest_child",
+      "arc": "A condemned gladiator's fate revealed through weapon, crowd and gesture.",
+      "caption": "Un gladiatore ferito. Una folla che osserva. Un gesto può decidere tutto. Gérôme congela l'arena romana in un istante di tensione.",
+      "scenes": [
+        {
+          "id": 1,
+          "kind": "detail",
+          "x": 0.37,
+          "y": 0.58,
+          "seconds": 3,
+          "purpose": "L'arma nel primo piano",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "kind": "macro",
+          "x": 0.47,
+          "y": 0.65,
+          "seconds": 2.7,
+          "purpose": "Il movimento delle braccia",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "kind": "detail",
+          "x": 0.48,
+          "y": 0.53,
+          "seconds": 3.1,
+          "purpose": "Gli sguardi dei gladiatori",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "kind": "texture",
+          "x": 0.6,
+          "y": 0.78,
+          "seconds": 2.8,
+          "purpose": "Polvere e superficie dell'arena",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.58,
+          "seconds": 3.6,
+          "purpose": "Il destino in rapporto alla folla",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "kind": "portrait",
+          "x": 0.68,
+          "y": 0.31,
+          "seconds": 3.2,
+          "purpose": "Gli spettatori e la reazione",
+          "motion": "locked"
+        },
+        {
+          "id": 7,
+          "kind": "detail",
+          "x": 0.8,
+          "y": 0.3,
+          "seconds": 2.9,
+          "purpose": "Il gesto nell'arena",
+          "motion": "locked"
+        },
+        {
+          "id": 8,
+          "kind": "portrait",
+          "x": 0.42,
+          "y": 0.6,
+          "seconds": 3.1,
+          "purpose": "La tensione del vincitore",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "kind": "detail",
+          "x": 0.22,
+          "y": 0.4,
+          "seconds": 3.1,
+          "purpose": "Luce sulla gradinata",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "kind": "wide",
+          "x": 0.54,
+          "y": 0.49,
+          "seconds": 3.5,
+          "purpose": "L'arena completa entra nel campo",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "kind": "texture",
+          "x": 0.32,
+          "y": 0.82,
+          "seconds": 3,
+          "purpose": "Sabbia e corpo",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "kind": "detail",
+          "x": 0.66,
+          "y": 0.36,
+          "seconds": 3,
+          "purpose": "Il gruppo dei giudicanti",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "kind": "portrait",
+          "x": 0.35,
+          "y": 0.58,
+          "seconds": 3.1,
+          "purpose": "L'ultimo sguardo del gladiatore",
+          "motion": "locked"
+        },
+        {
+          "id": 14,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.49,
+          "seconds": 3.6,
+          "purpose": "Ritorno alla struttura dell'arena",
+          "motion": "locked"
+        },
+        {
+          "id": 15,
+          "kind": "detail",
+          "x": 0.55,
+          "y": 0.57,
+          "seconds": 3.1,
+          "purpose": "Il confronto prima del silenzio",
+          "motion": "locked"
+        },
+        {
+          "id": 16,
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4,
+          "purpose": "Rivelazione finale della scena",
+          "motion": "locked"
+        }
+      ]
+    },
+    "friedrich": {
+      "artist": "CASPAR DAVID FRIEDRICH",
+      "title_en": "Wanderer above the Sea of Fog",
+      "file": "Caspar David Friedrich - Wanderer above the sea of fog.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg",
+      "duration": 49,
+      "music": "dreams_become_real",
+      "arc": "The lone figure opens onto an immense silent fogscape.",
+      "caption": "Una figura immobile, un paesaggio immenso. Non vediamo il volto del viandante, eppure il suo sguardo sembra il nostro. Friedrich trasforma la nebbia in infinito.",
+      "scenes": [
+        {
+          "id": 1,
+          "kind": "portrait",
+          "x": 0.52,
+          "y": 0.43,
+          "seconds": 3.4,
+          "purpose": "Una figura di spalle incontra il vuoto",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "kind": "detail",
+          "x": 0.49,
+          "y": 0.69,
+          "seconds": 3,
+          "purpose": "Le rocce sotto i piedi",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "kind": "texture",
+          "x": 0.63,
+          "y": 0.29,
+          "seconds": 3.1,
+          "purpose": "Gli strati di nebbia",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "kind": "wide",
+          "x": 0.52,
+          "y": 0.46,
+          "seconds": 3.9,
+          "purpose": "La figura e il paesaggio",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "kind": "detail",
+          "x": 0.26,
+          "y": 0.36,
+          "seconds": 3.2,
+          "purpose": "Montagne che emergono",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "kind": "portrait",
+          "x": 0.49,
+          "y": 0.37,
+          "seconds": 3.6,
+          "purpose": "Figura ferma al centro",
+          "motion": "locked"
+        },
+        {
+          "id": 7,
+          "kind": "texture",
+          "x": 0.78,
+          "y": 0.43,
+          "seconds": 2.9,
+          "purpose": "Cascate di nebbia",
+          "motion": "locked"
+        },
+        {
+          "id": 8,
+          "kind": "detail",
+          "x": 0.32,
+          "y": 0.7,
+          "seconds": 3.1,
+          "purpose": "La superficie rocciosa",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4.1,
+          "purpose": "La distanza completa",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "kind": "detail",
+          "x": 0.73,
+          "y": 0.32,
+          "seconds": 3.4,
+          "purpose": "Il profilo delle montagne",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "kind": "portrait",
+          "x": 0.52,
+          "y": 0.43,
+          "seconds": 3.5,
+          "purpose": "Ritorno alla figura",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "kind": "wide",
+          "x": 0.48,
+          "y": 0.47,
+          "seconds": 3.3,
+          "purpose": "Distanza fra uomo e spazio",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4,
+          "purpose": "Opera completa, finale quieto",
+          "motion": "locked"
+        }
+      ]
+    },
+    "bruegel": {
+      "artist": "PIETER BRUEGEL THE ELDER",
+      "title_en": "The Triumph of Death",
+      "file": "The Triumph of Death by Pieter Bruegel the Elder.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File:The_Triumph_of_Death_by_Pieter_Bruegel_the_Elder.jpg",
+      "duration": 58,
+      "music": "darkest_child",
+      "arc": "A seemingly endless painted world unveils dozens of tiny tragedies.",
+      "caption": "Uno scheletro dopo l'altro, un mondo intero travolto dal caos. Bruegel non racconta una sola morte: dipinge una folla di piccole storie che si inseguono sulla stessa tela.",
+      "scenes": [
+        {
+          "id": 1,
+          "kind": "macro",
+          "x": 0.25,
+          "y": 0.65,
+          "seconds": 3.1,
+          "purpose": "Un gruppo di scheletri in primo piano",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "kind": "detail",
+          "x": 0.45,
+          "y": 0.69,
+          "seconds": 3,
+          "purpose": "Lo scontro nel paesaggio",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "kind": "portrait",
+          "x": 0.64,
+          "y": 0.64,
+          "seconds": 3.4,
+          "purpose": "Il volto e la reazione di un personaggio",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "kind": "texture",
+          "x": 0.58,
+          "y": 0.28,
+          "seconds": 3.2,
+          "purpose": "Il paesaggio bruciato",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.53,
+          "seconds": 3.7,
+          "purpose": "La folla come un'unica scena",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "kind": "detail",
+          "x": 0.76,
+          "y": 0.75,
+          "seconds": 3.3,
+          "purpose": "Piccolo dramma nell'angolo",
+          "motion": "locked"
+        },
+        {
+          "id": 7,
+          "kind": "detail",
+          "x": 0.25,
+          "y": 0.36,
+          "seconds": 3.3,
+          "purpose": "L'orizzonte minaccioso",
+          "motion": "locked"
+        },
+        {
+          "id": 8,
+          "kind": "macro",
+          "x": 0.43,
+          "y": 0.7,
+          "seconds": 2.9,
+          "purpose": "Le figure armate",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4.1,
+          "purpose": "La densità della composizione",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "kind": "detail",
+          "x": 0.1,
+          "y": 0.58,
+          "seconds": 3,
+          "purpose": "Altri personaggi ai margini",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "kind": "portrait",
+          "x": 0.76,
+          "y": 0.5,
+          "seconds": 3.3,
+          "purpose": "Un gesto in mezzo al caos",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "kind": "texture",
+          "x": 0.52,
+          "y": 0.17,
+          "seconds": 3.1,
+          "purpose": "Nuvole e fumo",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "kind": "detail",
+          "x": 0.48,
+          "y": 0.82,
+          "seconds": 3.4,
+          "purpose": "La terra sotto la folla",
+          "motion": "locked"
+        },
+        {
+          "id": 14,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4,
+          "purpose": "Il ritmo delle scene miniaturizzate",
+          "motion": "locked"
+        },
+        {
+          "id": 15,
+          "kind": "detail",
+          "x": 0.69,
+          "y": 0.61,
+          "seconds": 3,
+          "purpose": "Un ultimo dettaglio umano",
+          "motion": "locked"
+        },
+        {
+          "id": 16,
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4.2,
+          "purpose": "Rivelazione dell'opera completa",
+          "motion": "locked"
+        }
+      ]
+    }
+  },
+  "music": {
+    "darkest_child": {
+      "title": "Darkest Child",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100783",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Darkest%20Child.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100783"
+    },
+    "dreams_become_real": {
+      "title": "Dreams Become Real",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dreams%20Become%20Real.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1500027"
+    }
+  }
+}
