@@ -46,8 +46,8 @@ def contains_forbidden(body, phrase):
     # match the ordinary expression "renderlo" or "rendere".
     escaped=re.escape(phrase)
     if phrase=="inquadratur":
-        return re.search(r"(?<!\\w)"+escaped+r"\\w*",body,flags=re.IGNORECASE) is not None
-    return re.search(r"(?<!\\w)"+escaped+r"(?!\\w)",body,flags=re.IGNORECASE) is not None
+        return re.search(r"(?<!\w)"+escaped+r"\w*",body,flags=re.IGNORECASE) is not None
+    return re.search(r"(?<!\w)"+escaped+r"(?!\w)",body,flags=re.IGNORECASE) is not None
 
 def validate_entry(key,entry):
     errors=[]
