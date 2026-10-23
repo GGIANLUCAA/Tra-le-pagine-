@@ -1,0 +1,46 @@
+name: "ArtVision WOW10 - shortlist authentic museum artwork research"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/artvision-wow10-research.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Evaluate iconic mysterious powerful artwork and CC0 images
+        run: |
+          python - <<'PY'
+          import json,urllib.request,urllib.parse,time
+          headers={'User-Agent':'ArtVisionTraLePagine/8.0 (museum CC0 artwork research)'}
+          candidates=[
+            'Tsukioka Yoshitoshi','Albrecht Dürer','Joseph Mallord William Turner',
+            'William Turner','J. M. W. Turner','Henri Rousseau','Jean-Honoré Fragonard',
+            'John Constable','Gustav Klimt','Edvard Munch','Dante Gabriel Rossetti',
+            'William Morris','Francisco de Zurbarán','Hendrick Goltzius','William Hogarth',
+            'Toshusai Sharaku','Kawanabe Kyōsai','Kawanabe Kyosai','Caspar David Friedrich',
+            'Martin Schongauer','Katsushika Hokusai','Thomas Moran','John Martin',
+            'William-Adolphe Bouguereau','Charles Meryon','Adolphe Appian',
+            'Frederic Edwin Church','Arthur Rackham','Frederick Sandys'
+          ]
+          keywords=['night','ghost','moon','skeleton','dragon','demon','flood','hell',
+             'storm','apocalypse','death','devil','witch','monster','angel','heaven',
+             'paradise','hell','vision','skull','dragon','tiger','serpent','battl',
+             'sword','fire','tornado','tempest','haunt','shipwreck','destruction',
+             'crucifi','judgment','dream','ship','sunset','sublime','thunder','sea','wave',
+             'demon','attack','bridge','waterfall','mask','serpent','lion']
+          for who in candidates:
+            try:
+              url='https://openaccess-api.clevelandart.org/api/artworks/?'+urllib.parse.urlencode({'artists':who,'limit':200})
+              j=json.load(urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=16))
+              good=[x for x in j.get('data',[]) if x.get('share_license_status')=='CC0' and (x.get('images') or {}).get('print')]
+              matches=[x for x in good if any(t in (x.get('title') or '').casefold() for t in keywords)]
+              print('ARTIST',who,'ALL',len(good),'WOWMATCH',len(matches),flush=True)
+              for x in matches[:14]:
+                print('WORK',x.get('title'),x.get('accession_number'),(x.get('images') or {}).get('print',{}).get('width'),(x.get('images') or {}).get('print',{}).get('height'),flush=True)
+            except Exception as exc:print('FAIL',who,str(exc)[:160],flush=True)
+            time.sleep(.05)
+          PY
