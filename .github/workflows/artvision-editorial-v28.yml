@@ -1,0 +1,49 @@
+name: ArtVision V28 - Post editoriali naturali
+on:
+  push:
+    branches: [main]
+    paths:
+      - "config/artvision_editorial_v28.json"
+      - "src/artvision_editorial_post_v28.py"
+      - "src/artvision_contract_gate_v25.py"
+      - "tests/test_artvision_editorial_post_v28.py"
+      - "scripts/artvision_simberg_wounded_angel_v27.py"
+      - "scripts/artvision_cabanel_directors_cut_v26.py"
+      - ".github/workflows/artvision-editorial-v28.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  check-editorial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test natural researched posts
+        id: unit
+        run: python -m unittest discover -s tests -p "test_artvision_editorial_post_v28.py" -v
+      - name: Check real captions and research output
+        id: review
+        run: |
+          set -euo pipefail
+          for ep in cabanel_v26 simberg_v27; do
+            folder="$(mktemp -d)"
+            python src/artvision_editorial_post_v28.py --episode "$ep" --out "$folder"
+            python src/artvision_editorial_post_v28.py --validate-folder "$folder"
+          done
+      - name: Report objective CI result in issue 28
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          UNIT_RESULT: ${{ steps.unit.outcome }}
+          REVIEW_RESULT: ${{ steps.review.outcome }}
+        with:
+          script: |
+            const ok=process.env.UNIT_RESULT==='success' && process.env.REVIEW_RESULT==='success';
+            const url=`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.issues.createComment({owner:context.repo.owner,repo:context.repo.repo,
+              issue_number:28,body:`ArtVision editorial V28: **${ok?'TESTS PASS':'CHECK FAILED'}**. Unit: ${process.env.UNIT_RESULT}; samples: ${process.env.REVIEW_RESULT}. Run: ${url}. Tests enforce objective no-process-note standards, NOT genuine literary quality.`});
