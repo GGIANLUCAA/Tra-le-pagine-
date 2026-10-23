@@ -1,3 +1,9 @@
+## Regole permanenti di qualità V25 e scrittura social V28
+
+Prima di creare qualunque nuovo episodio leggere [AGENTS.md](AGENTS.md), [contratto V25](docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md) e [standard post V28](docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md). Per Cinema mantenere Gold Master V6 e cover stabili; primi 0/1/3/5/7 secondi verificati, inquadrature motivate, niente camera oscillante. Ogni episodio include MP4 reale, copertina, quattro post social distinti, attribuzioni, `POST_EDITORIAL_RESEARCH.json` con musei/fonti e ricetta per replicare.
+
+**I testi social raccontano il quadro, non il montaggio del video.** Nessuna domanda seriale, frase generica, hashtag spam, o descrizione del processo. Il gate editoriale è [src/artvision_editorial_post_v28.py](src/artvision_editorial_post_v28.py) con [ricerche curate](config/artvision_editorial_v28.json) e test CI; le modifiche ai testi pubblici non cambiano i master storici.
+
 ## Esecutore di produzione V16
 
 [Coda → renderer → revisione → checkpoint](docs/PRODUZIONE_AUTONOMA_V16.md).
