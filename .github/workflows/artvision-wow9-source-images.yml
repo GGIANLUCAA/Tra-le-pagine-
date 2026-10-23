@@ -1,0 +1,61 @@
+name: "ArtVision WOW9 - two film original artwork visual contact"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow9-source-images.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Open art previews with Pillow
+        run: python -m pip install --quiet Pillow
+      - name: Create actual image scene/rights candidate grid
+        run: |
+          python - <<'PY'
+          import pathlib,urllib.request,json,io
+          from PIL import Image,ImageDraw
+          works={
+            'ensor_anger':'1971.108.3',
+            'ensor_pride':'1971.108.4',
+            'ensor_gluttony':'1971.108.6',
+            'ensor_envy':'1971.108.7',
+            'ensor_lust':'1971.108.8',
+            'ensor_avaro':'1971.108.5',
+            'ensor_sloth':'1971.108.2',
+            'ensor_vengeance':'1970.38',
+            'kuniyoshi_occurrence':'1916.1160',
+            'kuniyoshi_occurrence_a':'1916.1160.a',
+            'kuniyoshi_occurrence_b':'1916.1160.b',
+            'kuniyoshi_hero':'1980.85',
+            'kuniyoshi_tide':'1916.1108'}
+          out=pathlib.Path('wow9_review');out.mkdir(exist_ok=True)
+          board=Image.new('RGB',(1500,4*470),(20,23,28))
+          draw=ImageDraw.Draw(board)
+          for i,(name,key) in enumerate(works.items()):
+           url=f'https://openaccess-cdn.clevelandart.org/{key}/{key}_print.jpg'
+           try:
+            req=urllib.request.Request(url,headers={'User-Agent':'ArtVisionTraLePagine/6.0'})
+            data=urllib.request.urlopen(req,timeout=35).read(13_000_000)
+            with Image.open(io.BytesIO(data)) as im:
+             im.load();src=im.convert('RGB')
+            src.thumbnail((282,435),Image.Resampling.LANCZOS)
+            src.save(out/(name+'.jpg'),quality=91)
+            x=i%5*300+int((300-src.width)/2);y=i//5*470+10
+            board.paste(src,(x,y))
+            draw.text((i%5*300+10,i//5*470+445),name,fill='white')
+            print('VERIFIED',name,key,src.size,len(data),flush=True)
+           except Exception as e:print('FAILED',name,str(e)[:200],flush=True)
+          board.save(out/'WOW9_REAL_SOURCE_CONTACT.jpg',quality=93)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WOW9_VERIFIED_ART_PREVIEW
+          path: wow9_review/
+          retention-days: 4
