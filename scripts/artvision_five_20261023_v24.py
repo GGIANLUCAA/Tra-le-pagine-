@@ -138,7 +138,7 @@ def scene_image(src,shot,out,artist=None):
     else:
         background=crop_focus(src,.5,.5,1.01).filter(ImageFilter.GaussianBlur(42))
         background=ImageEnhance.Brightness(background).enhance(.34)
-        artwork,resample=cover_fit(src,(1030,1830))
+        artwork=cover_fit(src,(1030,1830))
         artwork=artwork.convert("RGB")
         frame=background
         x=(W-artwork.width)//2; y=(H-artwork.height)//2
