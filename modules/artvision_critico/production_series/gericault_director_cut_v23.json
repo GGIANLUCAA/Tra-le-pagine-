@@ -1,0 +1,284 @@
+{
+  "schema": "artvision-critico-director-cut-v23",
+  "id": "gericault-zattera-medusa-v23",
+  "date": "2026-10-23",
+  "painting": "La zattera della Medusa",
+  "artist": "Théodore Géricault",
+  "format": "artvision_critico",
+  "episode_source": "modules/artvision_critico/production_series/gericault_zattera_critico_v23.json",
+  "asset_workflow": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39936995557",
+  "art_source": "https://commons.wikimedia.org/wiki/File:Le_Radeau_de_la_M%C3%A9duse_-_Th%C3%A9odore_G%C3%A9ricault_-_Mus%C3%A9e_du_Louvre_Peintures_INV_4884_%3B_C_51.jpg",
+  "image_dimensions": [
+    8500,
+    5745
+  ],
+  "voice_engine": "Google Gemini Gacrux",
+  "voice_seconds": 102.76,
+  "voice_alignment_note": "7 beat times are estimated from recording lengths, not ASR word-level alignment.",
+  "music": "Night on the Docks — Piano by Kevin MacLeod, CC BY 4.0",
+  "music_changes": "Volume lowered, fade in/out and mixed with synthetic Gacrux speech",
+  "cover": "Critico V2 dark bronze / ivory; large artwork title and artist only",
+  "techniques_v23": [
+    "in_media_res_visual",
+    "locked_hold",
+    "close_then_wide",
+    "eye_trace_continuity",
+    "detail_return",
+    "motivated_cut",
+    "no_fake_art_motion",
+    "nonforced_ending"
+  ],
+  "regia": "19 distinct semantic compositions; static camera; subtle 0.45s crossfades, no sinusoidal or pan/zoom oscillation, no text overlays, narrative closure without rhetorical questions.",
+  "shots": [
+    {
+      "shot": 1,
+      "start": 0,
+      "end": 2.8,
+      "purpose": "signal detail",
+      "focus_xy": [
+        0.733,
+        0.263
+      ],
+      "source_crop_fraction": 0.236,
+      "camera": "locked"
+    },
+    {
+      "shot": 2,
+      "start": 2.8,
+      "end": 6.5,
+      "purpose": "raised arms",
+      "focus_xy": [
+        0.682,
+        0.389
+      ],
+      "source_crop_fraction": 0.308,
+      "camera": "locked"
+    },
+    {
+      "shot": 3,
+      "start": 6.5,
+      "end": 11.47,
+      "purpose": "whole artwork",
+      "focus_xy": [
+        0.5,
+        0.5
+      ],
+      "source_crop_fraction": 1,
+      "camera": "locked"
+    },
+    {
+      "shot": 4,
+      "start": 11.47,
+      "end": 17.5,
+      "purpose": "whole with context",
+      "focus_xy": [
+        0.5,
+        0.5
+      ],
+      "source_crop_fraction": 1,
+      "camera": "locked"
+    },
+    {
+      "shot": 5,
+      "start": 17.5,
+      "end": 24.85,
+      "purpose": "sail adrift",
+      "focus_xy": [
+        0.359,
+        0.452
+      ],
+      "source_crop_fraction": 0.52,
+      "camera": "locked"
+    },
+    {
+      "shot": 6,
+      "start": 24.85,
+      "end": 30.6,
+      "purpose": "father grief",
+      "focus_xy": [
+        0.298,
+        0.655
+      ],
+      "source_crop_fraction": 0.335,
+      "camera": "locked"
+    },
+    {
+      "shot": 7,
+      "start": 30.6,
+      "end": 36.35,
+      "purpose": "dead child",
+      "focus_xy": [
+        0.235,
+        0.79
+      ],
+      "source_crop_fraction": 0.306,
+      "camera": "locked"
+    },
+    {
+      "shot": 8,
+      "start": 36.35,
+      "end": 40.148,
+      "purpose": "mourning group",
+      "focus_xy": [
+        0.28,
+        0.694
+      ],
+      "source_crop_fraction": 0.378,
+      "camera": "locked"
+    },
+    {
+      "shot": 9,
+      "start": 40.148,
+      "end": 46.15,
+      "purpose": "rising bodies",
+      "focus_xy": [
+        0.524,
+        0.535
+      ],
+      "source_crop_fraction": 0.387,
+      "camera": "locked"
+    },
+    {
+      "shot": 10,
+      "start": 46.15,
+      "end": 50.75,
+      "purpose": "arms raised",
+      "focus_xy": [
+        0.634,
+        0.449
+      ],
+      "source_crop_fraction": 0.294,
+      "camera": "locked"
+    },
+    {
+      "shot": 11,
+      "start": 50.75,
+      "end": 54.965,
+      "purpose": "signal person",
+      "focus_xy": [
+        0.727,
+        0.28
+      ],
+      "source_crop_fraction": 0.247,
+      "camera": "locked"
+    },
+    {
+      "shot": 12,
+      "start": 54.965,
+      "end": 60.45,
+      "purpose": "distant ship",
+      "focus_xy": [
+        0.795,
+        0.393
+      ],
+      "source_crop_fraction": 0.195,
+      "camera": "locked"
+    },
+    {
+      "shot": 13,
+      "start": 60.45,
+      "end": 66.2,
+      "purpose": "horizon and figures",
+      "focus_xy": [
+        0.734,
+        0.391
+      ],
+      "source_crop_fraction": 0.36,
+      "camera": "locked"
+    },
+    {
+      "shot": 14,
+      "start": 66.2,
+      "end": 71.215,
+      "purpose": "full artwork",
+      "focus_xy": [
+        0.5,
+        0.5
+      ],
+      "source_crop_fraction": 1,
+      "camera": "locked"
+    },
+    {
+      "shot": 15,
+      "start": 71.215,
+      "end": 77.35,
+      "purpose": "foreground bodies",
+      "focus_xy": [
+        0.412,
+        0.775
+      ],
+      "source_crop_fraction": 0.403,
+      "camera": "locked"
+    },
+    {
+      "shot": 16,
+      "start": 77.35,
+      "end": 84.598,
+      "purpose": "stormy sea and mast",
+      "focus_xy": [
+        0.38,
+        0.239
+      ],
+      "source_crop_fraction": 0.521,
+      "camera": "locked"
+    },
+    {
+      "shot": 17,
+      "start": 84.598,
+      "end": 91.2,
+      "purpose": "foreground dead",
+      "focus_xy": [
+        0.305,
+        0.758
+      ],
+      "source_crop_fraction": 0.417,
+      "camera": "locked"
+    },
+    {
+      "shot": 18,
+      "start": 91.2,
+      "end": 97.75,
+      "purpose": "hope figures",
+      "focus_xy": [
+        0.637,
+        0.422
+      ],
+      "source_crop_fraction": 0.376,
+      "camera": "locked"
+    },
+    {
+      "shot": 19,
+      "start": 97.75,
+      "end": 105,
+      "purpose": "whole ending",
+      "focus_xy": [
+        0.5,
+        0.5
+      ],
+      "source_crop_fraction": 1,
+      "camera": "locked"
+    }
+  ],
+  "master": {
+    "filename": "ARTVISION_CRITICO_GERICAULT_LA_ZATTERA_V23.mp4",
+    "duration_seconds": 105,
+    "resolution": [
+      1080,
+      1920
+    ],
+    "codecs": [
+      "H264",
+      "AAC"
+    ],
+    "size_bytes": 52438879,
+    "sha256": "73cbcff828ca7b66a478bec49fb0585ebed9876d80320fc2178273ae9ffdf6c1",
+    "ffmpeg_full_decode_ok": true,
+    "volume_peak_dbfs": -1.1,
+    "preview_frames_extracted_and_inspected": 16,
+    "storage": "Attached in ChatGPT, not committed as binary to GitHub"
+  },
+  "rights_note": "Commons file carries Public Domain indication; national cultural heritage reproduction rules and music CC BY credit still need consideration when publishing.",
+  "publication_approved": false,
+  "status": "rendered_needs_artistic_review",
+  "note": "This recipe saves historical choices, not a reusable generic renderer. Do not replace existing Gold Masters."
+}
