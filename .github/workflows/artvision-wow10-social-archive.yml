@@ -1,0 +1,65 @@
+name: "ArtVision WOW10 - assemble reviewed social sourcepack"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow10-social-archive.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build only V28 post archives, source credits and same V25 storyboard, no render
+        run: |
+          python - <<'PY'
+          import json,pathlib,sys,shutil
+          out=pathlib.Path("WOW10_SOCIAL_AND_RECIPE");out.mkdir(exist_ok=True)
+          conf=json.load(open('config/artvision_wow10_five_v25.json'))
+          sys.path.insert(0,'src')
+          import artvision_editorial_post_v28 as e
+          e.CATALOG=pathlib.Path('config/artvision_wow10_editorial_v28.json')
+          for slug,work in conf['works'].items():
+           folder=out/slug
+           folder.mkdir(exist_ok=True)
+           e.write_posts(slug,folder,overwrite=True)
+           errs=e.validate_folder(folder)
+           if errs:raise RuntimeError(slug+str(errs))
+           music=conf['music'][work['music']]
+           doc=[f'# {work["title_en"]} — {work["artist"]}',"",
+             f'Durata: {work["duration"]} secondi',
+             'Status: Master tecnico verificato, revisione artistica completa ancora necessaria',
+             'Pubblicazione automatica: NON eseguita','',
+             '## Fonti fotografiche: Cleveland Museum of Art / CC0']
+           for label,a in work['assets'].items():
+            doc.extend([f'- {a["title"]} — https://www.clevelandart.org/art/{a["accession"]}',
+              f'  Riproduzione CC0: https://openaccess-cdn.clevelandart.org/{a["accession"]}/{a["accession"]}_print.jpg'])
+           doc.extend(['','## Musica autorizzata',f'{music["title"]} — {music["composer"]}',
+             music['page'],music['license_url'],
+             'Modifiche: estratto, dissolvenze, volume normalizzato e sincronizzazione dei tagli',
+             'Attribution required in social post before publishing.'])
+           (folder/'FONTI_DIRITTI_E_CREDITI.md').write_text('\n'.join(doc)+'\n',encoding='utf8')
+           (folder/'REGIA_RICETTA.json').write_text(json.dumps({
+             'format':'artvision_cinema','baseline':'Cinema V6','contract':'V25',
+             'director':'V23','editorial':'V28',
+             'artist':work['artist'],'title':work['title_en'],'duration':work['duration'],
+             'shots':work['scenes'],'artworks':work['assets'],'music':music,
+             'renderer':'scripts/artvision_wow10_five_v25_v28.py',
+             'source_config':'config/artvision_wow10_five_v25.json',
+             'replication_command':f'python scripts/artvision_wow10_five_v25_v28.py --painting {slug} --out output/artvision-wow10',
+             'not_auto_published':True},ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+           print('WOW10 FULL SOCIAL KIT',slug,'posts',len(list(folder.glob('POST_*.txt'))),'verified',flush=True)
+          for src in ['config/artvision_wow10_five_v25.json','config/artvision_wow10_editorial_v28.json',
+             'scripts/artvision_wow10_five_v25_v28.py','docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md',
+             'docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md']:
+           f=pathlib.Path(src);dest=out/'SORGENTI_PROGETTO'/src;dest.parent.mkdir(parents=True,exist_ok=True)
+           shutil.copy2(f,dest)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ART-VISION-WOW10-FIVE-POSTS-AND-DIRECTOR-SOURCE
+          path: WOW10_SOCIAL_AND_RECIPE/
+          retention-days: 60
+          if-no-files-found: error
