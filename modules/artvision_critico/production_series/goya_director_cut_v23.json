@@ -1,0 +1,251 @@
+{
+  "schema": "artvision-critico-director-cut-v23",
+  "id": "goya-3-maggio-critico-v23",
+  "date": "2026-10-23",
+  "artwork": "Il 3 maggio 1808",
+  "artist": "Francisco Goya",
+  "format": "artvision_critico",
+  "source_episode": "modules/artvision_critico/production_series/goya_3_maggio_critico_v23.json",
+  "source_asset_workflow": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39923395978",
+  "museum": "Museo del Prado",
+  "painting_source": "https://commons.wikimedia.org/wiki/File:El_tres_de_mayo_de_1808_en_Madrid_(2008).jpg",
+  "painting_dimensions": [
+    5903,
+    4539
+  ],
+  "voice": "Google Gemini Gacrux",
+  "voice_length_seconds": 88.28,
+  "voice_timing_estimated": true,
+  "music": "Night on the Docks – Piano, Kevin MacLeod, CC BY 4.0",
+  "techniques_v23": [
+    "in_media_res_visual",
+    "locked_hold",
+    "eye_trace_continuity",
+    "motivated_cut",
+    "one_claim_one_image",
+    "narration_anchor",
+    "whole_work_resolution",
+    "nonforced_ending"
+  ],
+  "cinematography": "La camera è stabile tranne due variazioni di scala inferiori allo 0.6%, senza movimento sinusoidale; fotografie originali, raccordi morbidi senza sovrascrizioni.",
+  "shot_map": [
+    {
+      "id": "white_figure",
+      "start": 0,
+      "end": 4.293,
+      "type": "detail",
+      "focus": [
+        0.322,
+        0.515
+      ],
+      "width_fraction": 0.314,
+      "move": "locked"
+    },
+    {
+      "id": "rifle_muzzles",
+      "start": 4.293,
+      "end": 7.36,
+      "type": "detail",
+      "focus": [
+        0.531,
+        0.516
+      ],
+      "width_fraction": 0.31,
+      "move": "locked"
+    },
+    {
+      "id": "whole_context_early",
+      "start": 7.36,
+      "end": 10.222,
+      "type": "full",
+      "focus": [
+        0.5,
+        0.5
+      ],
+      "width_fraction": 1,
+      "move": "locked"
+    },
+    {
+      "id": "historical_full",
+      "start": 10.222,
+      "end": 16.494,
+      "type": "full",
+      "focus": [
+        0.5,
+        0.5
+      ],
+      "width_fraction": 1,
+      "move": "locked"
+    },
+    {
+      "id": "night_city",
+      "start": 16.494,
+      "end": 24.161,
+      "type": "detail",
+      "focus": [
+        0.603,
+        0.285
+      ],
+      "width_fraction": 0.43,
+      "move": "locked"
+    },
+    {
+      "id": "white_arms",
+      "start": 24.161,
+      "end": 31.061,
+      "type": "detail",
+      "focus": [
+        0.322,
+        0.448
+      ],
+      "width_fraction": 0.339,
+      "move": "locked"
+    },
+    {
+      "id": "white_shirt",
+      "start": 31.061,
+      "end": 36.706,
+      "type": "detail",
+      "focus": [
+        0.324,
+        0.572
+      ],
+      "width_fraction": 0.305,
+      "move": "micro_push"
+    },
+    {
+      "id": "soldiers_back",
+      "start": 36.706,
+      "end": 42.514,
+      "type": "detail",
+      "focus": [
+        0.786,
+        0.542
+      ],
+      "width_fraction": 0.307,
+      "move": "locked"
+    },
+    {
+      "id": "rifle_line",
+      "start": 42.514,
+      "end": 48.322,
+      "type": "detail",
+      "focus": [
+        0.56,
+        0.508
+      ],
+      "width_fraction": 0.367,
+      "move": "locked"
+    },
+    {
+      "id": "lamp",
+      "start": 48.322,
+      "end": 54.092,
+      "type": "detail",
+      "focus": [
+        0.595,
+        0.726
+      ],
+      "width_fraction": 0.265,
+      "move": "locked"
+    },
+    {
+      "id": "fallen",
+      "start": 54.092,
+      "end": 60.867,
+      "type": "detail",
+      "focus": [
+        0.224,
+        0.827
+      ],
+      "width_fraction": 0.341,
+      "move": "locked"
+    },
+    {
+      "id": "victims_faces",
+      "start": 60.867,
+      "end": 67.767,
+      "type": "detail",
+      "focus": [
+        0.168,
+        0.512
+      ],
+      "width_fraction": 0.32,
+      "move": "locked"
+    },
+    {
+      "id": "hands_covering",
+      "start": 67.767,
+      "end": 73.412,
+      "type": "detail",
+      "focus": [
+        0.137,
+        0.484
+      ],
+      "width_fraction": 0.264,
+      "move": "micro_pull"
+    },
+    {
+      "id": "last_hero",
+      "start": 73.412,
+      "end": 80.846,
+      "type": "detail",
+      "focus": [
+        0.32,
+        0.524
+      ],
+      "width_fraction": 0.362,
+      "move": "locked"
+    },
+    {
+      "id": "full_final",
+      "start": 80.846,
+      "end": 88.28,
+      "type": "full",
+      "focus": [
+        0.5,
+        0.5
+      ],
+      "width_fraction": 1,
+      "move": "locked"
+    },
+    {
+      "id": "full_end_hold",
+      "start": 88.28,
+      "end": 90,
+      "type": "full",
+      "focus": [
+        0.5,
+        0.5
+      ],
+      "width_fraction": 1,
+      "move": "locked"
+    }
+  ],
+  "master": {
+    "filename": "ARTVISION_CRITICO_GOYA_IL_3_MAGGIO_V23.mp4",
+    "sha256": "f7ae0d5b830cc229d299a0fe2e3a2b08f2d17be410854c3e4d1ea4b04c116f57",
+    "duration_seconds": 90.1,
+    "size_bytes": 34795585,
+    "resolution": [
+      1080,
+      1920
+    ],
+    "fps": 20,
+    "codecs": [
+      "H264",
+      "AAC"
+    ],
+    "full_decode_passed": true,
+    "chat_delivery_only": true
+  },
+  "quality": {
+    "cover": "Critico V2",
+    "real_video_frame_samples_checked": true,
+    "no_subtitles": true,
+    "validated_video_and_audio": true,
+    "artistic_review": "pending user",
+    "publication_authorized": false
+  },
+  "notes": "Non confondere il report delle tecniche con una certificazione artistica. MP4 originale fornito in ChatGPT, non caricato sul repository. Conservarne voice/musica e svolgere eventuali correzioni senza re-generare inutilmente."
+}
