@@ -1,0 +1,127 @@
+name: ArtVision Cinema V30 | Goya Saturn + Holbein Ambassadors
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/artvision_cinema_duo_v30.py
+      - config/artvision_cinema_duo_v30.json
+      - .github/workflows/artvision-cinema-duo-v30.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  two_films:
+    name: "ArtVision V30 • ${{ matrix.painting }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 58
+    strategy:
+      max-parallel: 2
+      fail-fast: false
+      matrix:
+        painting: [saturn, ambassadors]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Open-source video environment
+        run: |
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe || sudo apt-get install -y -qq ffmpeg
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf || sudo apt-get install -y -qq fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "Pillow>=10,<14" numpy requests
+      - name: Check code, V28 real writing and artist-specific story before render
+        id: preflight
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_cinema_duo_v30.py
+          python -m unittest discover -s tests -p "test_artvision_editorial_post_v28.py" -v
+          python scripts/artvision_cinema_duo_v30.py --painting "${{ matrix.painting }}" --preflight-only
+          tmp="$(mktemp -d)"
+          if test "${{ matrix.painting }}" = saturn; then ep="goya_saturn_v30"; else ep="holbein_ambassadors_v30"; fi
+          python src/artvision_editorial_post_v28.py --episode "$ep" --out "$tmp"
+          python src/artvision_editorial_post_v28.py --validate-folder "$tmp"
+      - name: Render actual 1080x1920 H264/AAC movie and full social kit
+        id: render
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python scripts/artvision_cinema_duo_v30.py --painting "${{ matrix.painting }}" --out output/artvision-v30
+      - name: Independently verify MP4, QA frames, all post sources and ZIP contents
+        id: validate
+        if: steps.render.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          slug="goya_saturn_v30"
+          if test "${{ matrix.painting }}" = "ambassadors"; then slug="holbein_ambassadors_v30"; fi
+          film="output/artvision-v30/$slug/VIDEO_MASTER.mp4"
+          bundle="output/artvision-v30/ARTVISION_V30_${slug^^}_COMPLETE.zip"
+          test -s "$film"
+          test -s "$bundle"
+          test -s "output/artvision-v30/$slug/COPERTINA.jpg"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$film" -f null -
+          python src/artvision_editorial_post_v28.py --validate-folder "output/artvision-v30/$slug"
+          python - "$film" "$bundle" <<'PY'
+          import json,subprocess,zipfile,sys
+          film,bundle=sys.argv[1:]
+          data=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration",
+            "-show_entries","stream=codec_type,codec_name,width,height","-of","json",film]))
+          assert 40<float(data["format"]["duration"])<72,data
+          assert any(s.get("codec_type")=="video" and s.get("codec_name")=="h264" and
+            s.get("width")==1080 and s.get("height")==1920 for s in data["streams"]),data
+          assert any(s.get("codec_type")=="audio" and s.get("codec_name")=="aac" for s in data["streams"]),data
+          expected=[
+            "VIDEO_MASTER.mp4","COPERTINA.jpg","POST_EDITORIAL_RESEARCH.json",
+            "POST_FACEBOOK.txt","POST_INSTAGRAM.txt","POST_TIKTOK.txt","POST_YOUTUBE.txt",
+            "VIDEO_RECIPE_V13.json","TECNICHE_REGIA.md","ISTRUZIONI_REPLICA.md",
+            "MUSIC_RELEASE_V20.json","ARTVISION_CONTRACT_V25.json","SOURCES_AND_RIGHTS.md",
+            "TECHNICAL_QA_V30.json","QA_CONTACT_SHEET.jpg","STORYBOARD_REAL_ARTWORK.jpg",
+            "QA_V25/FRAME_00.jpg","QA_V25/FRAME_01.jpg","QA_V25/FRAME_03.jpg",
+            "QA_V25/FRAME_05.jpg","QA_V25/FRAME_07.jpg"
+          ]
+          with zipfile.ZipFile(bundle) as z:
+            assert z.testzip() is None
+            present=set(z.namelist())
+            assert set(expected)<=present,set(expected)-present
+            qa=json.loads(z.read("TECHNICAL_QA_V30.json"))
+            assert qa["full_ffmpeg_decode"] and qa["v25_preflight"]=="PASS",qa
+            assert qa["v28_editorial"]=="PASS_OBJECTIVE_CAPTION_CHECKS",qa
+            assert qa["approval"]=="human_visual_review_pending",qa
+          print("PASS, REAL COMPLETED VIDEO",data["format"]["duration"],"seconds")
+          PY
+      - name: Archive video, cover, QA and complete social-pack ZIP
+        id: archive
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtVision-V30-${{ matrix.painting }}
+          path: |
+            output/artvision-v30/*/VIDEO_MASTER.mp4
+            output/artvision-v30/*/COPERTINA.jpg
+            output/artvision-v30/*/QA_CONTACT_SHEET.jpg
+            output/artvision-v30/*/POST_FACEBOOK.txt
+            output/artvision-v30/ARTVISION_V30_*_COMPLETE.zip
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Verified state in production register
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          PAINTING: ${{ matrix.painting }}
+          PREFLIGHT: ${{ steps.preflight.outcome }}
+          RENDER: ${{ steps.render.outcome }}
+          VERIFY: ${{ steps.validate.outcome }}
+          ARCHIVE: ${{ steps.archive.outcome }}
+        with:
+          script: |
+            const fs=require('fs'),crypto=require('crypto');
+            const slug=process.env.PAINTING==='saturn'?'goya_saturn_v30':'holbein_ambassadors_v30';
+            const file=`output/artvision-v30/${slug}/VIDEO_MASTER.mp4`;
+            const exists=fs.existsSync(file);
+            const bytes=exists?fs.statSync(file).size:null;
+            const hash=exists?crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'):null;
+            const ok=['PREFLIGHT','RENDER','VERIFY','ARCHIVE'].every(k=>process.env[k]==='success');
+            const link=`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body=`ArtVision V30 **${slug}** — **${ok?'MP4 + COMPLETE SOCIAL PACK VERIFIED':'NOT COMPLETE'}**\n\nMP4: ${exists?'present':'missing'}; bytes: ${bytes??'n/a'}; SHA256: ${hash??'n/a'}.\nSteps: preflight=${process.env.PREFLIGHT}, render=${process.env.RENDER}, verify=${process.env.VERIFY}, archive=${process.env.ARCHIVE}.\nWorkflow and downloadable artifact: ${link}.\nArtistic Gold Master approval and social publication are separate.`;
+            await github.rest.issues.createComment({owner:context.repo.owner,repo:context.repo.repo,issue_number:31,body});
