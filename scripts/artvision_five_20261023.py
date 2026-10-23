@@ -54,7 +54,7 @@ WORKS = {
        ("detail",10,.42,.77,1.12,"Ritorno alla barca"),
        ("detail",9,.36,.45,1.03,"Mistero del passaggio"),
        ("full",8,.5,.5,1,"Silenzio finale")]),
- "waterhouse": dict(artist="JOHN W. WATERHOUSE", name="LA DAMA DI SHALOTT", subtitle="L'ultimo viaggio", file="John william waterhouse, the lady of shalott, 1888, 01.jpg",
+ "waterhouse": dict(artist="JOHN W. WATERHOUSE", name="LA DAMA DI SHALOTT", subtitle="L'ultimo viaggio", file="John William Waterhouse The Lady of Shalott.jpg",
        tone="elegy", root=40, kind="minor", shots=[
        ("detail",3,.49,.43,1.10,"Sguardo lontano"),
        ("detail",6,.29,.52,1.04,"Mano e stoffa"),
@@ -126,7 +126,7 @@ def crop_focus(src,cx,cy,zoom):
     out=src.crop((x,y,x+bw,y+bh)).resize((W,H),Image.Resampling.LANCZOS)
     return out
 
-def scene_image(src,shot,out):
+def scene_image(src,shot,out,artist=None):
     kind,seconds,cx,cy,zoom,reason=shot
     if kind=="detail":
         frame=crop_focus(src,cx,cy,zoom)
@@ -141,6 +141,11 @@ def scene_image(src,shot,out):
         frame.paste(mat,(x-10,y-10))
         frame.paste(artwork,(x,y))
     # No artificial 3D character movement: art is a genuine still painting.
+    if artist:
+        artist_font=ImageFont.truetype(fonts()[0],29)
+        overlay=ImageDraw.Draw(frame,"RGBA")
+        overlay.rounded_rectangle((42,H-124,42+max(350,len(artist)*20),H-53),radius=8,fill=(8,8,12,155))
+        overlay.text((63,H-105),artist,font=artist_font,fill=(238,223,196,240))
     frame.convert("RGB").save(out,"JPEG",quality=93,optimize=True)
 
 def cover_image(src,info,out):
@@ -244,7 +249,7 @@ def make(ident,out):
     for index,shot in enumerate(info["shots"]):
         frame=tmp/f"frame_{index:02}.jpg"
         clip=tmp/f"scene_{index:02}.mp4"
-        scene_image(src,shot,frame)
+        scene_image(src,shot,frame,info['artist'] if index==0 else None)
         duration=shot[1]; n=round(FPS*duration); durations.append(n/FPS)
         # Motion is an extremely small, non-oscillating advance, within one shot.
         vf=f"zoompan=z='min(1.0+on*0.000003,1.006)':x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2':d={n}:s={W}x{H}:fps={FPS},format=yuv420p"
