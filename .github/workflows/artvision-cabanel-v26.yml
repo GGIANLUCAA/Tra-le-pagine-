@@ -1,0 +1,87 @@
+name: ArtVision Cabanel V26 - director cut and complete social kit
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/artvision_cabanel_directors_cut_v26.py
+      - .github/workflows/artvision-cabanel-v26.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  cinema:
+    name: Real cinema master, licensed music and V25 social pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free open-source video tools and fonts
+        run: |
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe || sudo apt-get install -y -qq ffmpeg
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf || sudo apt-get install -y -qq fonts-dejavu-core
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<14' numpy requests
+      - name: Render authentic painting video and full social pack
+        id: render
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: python scripts/artvision_cabanel_directors_cut_v26.py --out output/cabanel-v26
+      - name: Independently verify complete film and packet
+        id: check
+        if: steps.render.outcome == 'success'
+        run: |
+          set -euo pipefail
+          test -s output/cabanel-v26/VIDEO_MASTER.mp4
+          test -s output/cabanel-v26/COPERTINA.jpg
+          test -s output/ARTVISION_CABANEL_FALLEN_ANGEL_V26_COMPLETE.zip
+          ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_type,codec_name,width,height -of json output/cabanel-v26/VIDEO_MASTER.mp4
+          ffmpeg -hide_banner -loglevel error -xerror -i output/cabanel-v26/VIDEO_MASTER.mp4 -f null -
+          python - <<'PY'
+          import zipfile,json,pathlib
+          z=zipfile.ZipFile('output/ARTVISION_CABANEL_FALLEN_ANGEL_V26_COMPLETE.zip')
+          expected=['VIDEO_MASTER.mp4','COPERTINA.jpg','POST_FACEBOOK.txt','POST_INSTAGRAM.txt',
+                    'POST_TIKTOK.txt','POST_YOUTUBE.txt','VIDEO_RECIPE_V13.json','SOURCES_AND_RIGHTS.md',
+                    'MUSIC_RELEASE_V20.json','ARTVISION_CONTRACT_V25.json','QA_CONTACT_SHEET.jpg',
+                    'TECNICHE_REGIA.md','ISTRUZIONI_REPLICA.md']
+          assert all(p in z.namelist() for p in expected),set(expected)-set(z.namelist())
+          assert z.testzip() is None
+          report=json.loads(z.read('TECHNICAL_QA_V26.json'))
+          assert report['status']=='RENDERED_NEEDS_ARTISTIC_REVIEW'
+          assert report['full_ffmpeg_decode'] is True
+          print("PACKAGE VERIFIED",report)
+          PY
+      - name: Save real video, cover and complete pack
+        uses: actions/upload-artifact@v4
+        id: archive
+        if: always()
+        with:
+          name: ArtVision-Cabanel-Fallen-Angel-V26
+          path: |
+            output/ARTVISION_CABANEL_FALLEN_ANGEL_V26_COMPLETE.zip
+            output/cabanel-v26/VIDEO_MASTER.mp4
+            output/cabanel-v26/COPERTINA.jpg
+            output/cabanel-v26/QA_CONTACT_SHEET.jpg
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Record production outcome
+        uses: actions/github-script@v7
+        if: always()
+        env:
+          RENDER: ${{ steps.render.outcome }}
+          CHECK: ${{ steps.check.outcome }}
+          ARCHIVE: ${{ steps.archive.outcome }}
+        with:
+          script: |
+            const fs=require('fs'),crypto=require('crypto');
+            const p='output/cabanel-v26/VIDEO_MASTER.mp4';
+            const available=fs.existsSync(p);
+            const size=available?fs.statSync(p).size:null;
+            const hash=available?crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'):null;
+            const ok=process.env.RENDER==='success' && process.env.CHECK==='success' && process.env.ARCHIVE==='success';
+            const url=`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.issues.createComment({owner:context.repo.owner,repo:context.repo.repo,
+              issue_number:27,body:`Cabanel V26: **${ok?'REAL MP4 + SOCIAL PACK VALIDATED':'NOT COMPLETE'}**\nMP4 bytes: ${size??'none'}; SHA256: ${hash??'none'}\nrender=${process.env.RENDER} verify=${process.env.CHECK} archive=${process.env.ARCHIVE}\nRun: ${url}\nArtistic acceptance is NOT implied.`});
