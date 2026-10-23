@@ -1,0 +1,101 @@
+name: "ArtVision WOW8 - Ripresa Goya Hokusai Hiroshige"
+run-name: "ArtVision WOW8 - Goya Hokusai Hiroshige render restart"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow8-three-recovery.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  film:
+    name: "ArtVision WOW8 - ${{ matrix.artist }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        artist: [goya, hokusai, hiroshige]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free ffmpeg and museum-film Python dependencies
+        run: |
+          set -e
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe || sudo apt-get install -y -qq ffmpeg
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf || sudo apt-get install -y -qq fonts-dejavu-core
+          python - <<'PY'
+          import importlib.util
+          from subprocess import run
+          missing=[package for package,mod in [('Pillow','PIL'),('numpy','numpy'),('requests','requests')] if importlib.util.find_spec(mod) is None]
+          if missing:run(['python','-m','pip','install','--disable-pip-version-check']+missing,check=True,timeout=95)
+          else:print('Dependencies preinstalled, skip pip network setup')
+          PY
+      - name: Validate documented image and editorial input
+        run: |
+          python -m py_compile scripts/artvision_wow8_five_v25_v28.py
+          python - <<'PY'
+          import sys,json
+          sys.path.insert(0,'src')
+          import artvision_editorial_post_v28 as editor
+          entries=json.load(open('config/artvision_wow8_editorial_v28.json'))['entries']
+          for key,entry in entries.items():
+            errors=editor.validate_entry(key,entry)
+            if errors:raise RuntimeError('Editorial block for '+key+': '+str(errors))
+          print('ALL FIVE V28 FACT-GROUNDED CAPTIONS PASS AUTOMATED QUALITY GATE')
+          PY
+      - name: Render real CINEMA V6 master and full V25 V28 publishing kit
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: python scripts/artvision_wow8_five_v25_v28.py --painting "${{ matrix.artist }}" --out output/artvision-wow8
+      - name: Independent original video, files, rights and captions QA
+        run: |
+          set -euo pipefail
+          folder="output/artvision-wow8/${{ matrix.artist }}"
+          slug="${{ matrix.artist }}"
+          test -s "$folder/VIDEO_MASTER.mp4"
+          test -s "$folder/COPERTINA.jpg"
+          test -s "$folder/POST_EDITORIAL_RESEARCH.json"
+          test -s "$folder/QA_CONTACT_SHEET.jpg"
+          test -s "output/artvision-wow8/ARTVISION_WOW8_${{ matrix.artist }}_COMPLETE.zip" || test -s "output/artvision-wow8/ARTVISION_WOW8_$(echo "${{ matrix.artist }}" | tr '[:lower:]' '[:upper:]')_COMPLETE.zip"
+          python src/artvision_editorial_post_v28.py --validate-folder "$folder"
+          ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_type,codec_name,width,height -of json "$folder/VIDEO_MASTER.mp4"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$folder/VIDEO_MASTER.mp4" -f null -
+          python - <<'PY'
+          import json,os,pathlib,zipfile,hashlib
+          slug=os.environ['ARTIST']
+          ep=pathlib.Path('output/artvision-wow8')/slug
+          manifest=json.load(open(ep/'FINAL_TECHNICAL_QA.json'))
+          assert manifest['v25_contract_preflight']=='PASS' and manifest['v28_narrative_qa']=='PASS_OBJECTIVE_CAPTION_CHECKS'
+          assert manifest['master_sha256']==hashlib.sha256((ep/'VIDEO_MASTER.mp4').read_bytes()).hexdigest()
+          pack=ep.parent/f'ARTVISION_WOW8_{slug.upper()}_COMPLETE.zip'
+          assert pack.is_file() and pack.stat().st_size>2000000
+          with zipfile.ZipFile(pack) as z:
+            assert z.testzip() is None
+            mandatory={'VIDEO_MASTER.mp4','COPERTINA.jpg','POST_FACEBOOK.txt','POST_INSTAGRAM.txt',
+              'POST_TIKTOK.txt','POST_YOUTUBE.txt','POST_EDITORIAL_RESEARCH.json',
+              'VIDEO_RECIPE_V13.json','TECNICHE_REGIA.md','ISTRUZIONI_REPLICA.md',
+              'SOURCES_AND_RIGHTS.md','MUSIC_RELEASE_V20.json','ARTVISION_CONTRACT_V25.json',
+              'MUSIC_CUE_ANALYSIS.json','QA_CONTACT_SHEET.jpg','FINAL_TECHNICAL_QA.json'}
+            assert mandatory.issubset(set(z.namelist())),mandatory-set(z.namelist())
+          print('FINISHED VERIFIED REAL MP4 AND FULL PACK',slug,manifest['duration_seconds'],manifest['bytes'])
+          PY
+        env:
+          ARTIST: "${{ matrix.artist }}"
+      - name: Package durable downloads for Android
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_WOW8_${{ matrix.artist }}_FINALE"
+          path: |
+            output/artvision-wow8/${{ matrix.artist }}/VIDEO_MASTER.mp4
+            output/artvision-wow8/${{ matrix.artist }}/COPERTINA.jpg
+            output/artvision-wow8/${{ matrix.artist }}/QA_CONTACT_SHEET.jpg
+            output/artvision-wow8/${{ matrix.artist }}/FINAL_TECHNICAL_QA.json
+            output/artvision-wow8/ARTVISION_WOW8_*.zip
+          if-no-files-found: error
+          retention-days: 60
