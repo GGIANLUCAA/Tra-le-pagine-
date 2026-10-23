@@ -7,6 +7,9 @@ on:
 permissions:
   contents: read
   issues: write
+concurrency:
+  group: artvision-cinema-v24
+  cancel-in-progress: true
 jobs:
   render-five:
     name: ArtVision V24 ${{ matrix.painting }}
@@ -57,7 +60,11 @@ jobs:
         if: always()
         with:
           name: ArtVision-Cinema-V24-${{ matrix.painting }}
-          path: output/artvision_v24/
+          path: |
+            output/artvision_v24/*.mp4
+            output/artvision_v24/*.jpg
+            output/artvision_v24/*.json
+            output/artvision_v24/*.txt
           if-no-files-found: warn
           retention-days: 60
       - name: Production report
