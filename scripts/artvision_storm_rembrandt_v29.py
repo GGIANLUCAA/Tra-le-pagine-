@@ -13,7 +13,7 @@ sys.path.insert(0,str(ROOT/"src"))
 from artvision_contract_gate_v25 import check_preflight
 W,H,FPS=1080,1920,24
 ARTIST="REMBRANDT VAN RIJN"; TITLE="Christ in the Storm on the Sea of Galilee"; COMPOSER="Kevin MacLeod"
-ART_URL="https://upload.wikimedia.org/wikipedia/commons/1/16/Rembrandt_-_Christ_in_the_Storm_on_the_Sea_of_Galilee.jpeg"
+ART_URL="https://www.gardnermuseum.org/sites/default/files/images/art/19/09/009164.jpg"
 ART_PAGE="https://commons.wikimedia.org/wiki/File:Rembrandt_-_Christ_in_the_Storm_on_the_Sea_of_Galilee.jpeg"
 MUSEUM="https://www.gardnermuseum.org/experience/collection/10953"
 TRACK_URL="https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Pyre.mp3"
@@ -74,7 +74,7 @@ def download(url,path,typ):
             if path.stat().st_size<200000:raise ValueError("Asset too small")
             if typ=="image":
                 with Image.open(path) as im:
-                    if im.width<2800 or im.height<1800:raise ValueError("Low resolution source")
+                    if im.width<1950 or im.height<2300:raise ValueError("Low resolution source")
                     im.verify()
             else:
                 if not any(s.get("codec_type")=="audio" for s in probe(path)["streams"]):raise ValueError("No audio")
@@ -195,7 +195,7 @@ L'opera fu rubata il 18 marzo 1990 e non e stata recuperata; la fotografia e un 
 Museo e commento: {MUSEUM}
 Furto documentato: https://www.gardnermuseum.org/about/theft
 Fotografia/riproduzione Wikimedia Commons: {ART_PAGE}
-File originale riproduzione: {ART_URL}
+Riproduzione fotografica museale: {ART_URL}
 Dipinto di pubblico dominio (1633). Foto di riproduzione di opera bidimensionale:
 possibili differenze tra giurisdizioni; verificare la scheda Commons e le condizioni locali.
 SHA256 riproduzione: {digest(impath)}
