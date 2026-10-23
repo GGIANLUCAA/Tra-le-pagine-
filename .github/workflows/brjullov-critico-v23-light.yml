@@ -1,0 +1,51 @@
+name: "Brjullov Pompei Critico V23 — asset fallback leggero"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "queue/render_requests/brjullov_pompei_fast_20261023.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Dipendenze senza apt-get bloccante"
+        run: |
+          which ffmpeg
+          python -m pip install --disable-pip-version-check "numpy==1.26.4" "opencv-python-headless==4.10.0.84" "Pillow>=10,<13" "soundfile>=0.12" "google-genai>=1,<3" "edge-tts>=7,<8"
+      - name: "Fonte Commons verificata e sintesi Gacrux"
+        run: python modules/artvision_critico/production_series/brjullov_v23_assets.py
+      - name: "Preflight materiale autentico"
+        run: |
+          python - <<'PY'
+          import pathlib,json
+          p=pathlib.Path("output/brjullov-pompei-v23")
+          r=json.loads((p/"ASSETS_TIMING.json").read_text())
+          assert r["art"]["dims"][0]>=3200 and r["art"]["dims"][1]>=2200
+          assert len(r["voice"]["beat_ends"])==7
+          assert r["voice"]["duration"]>30
+          assert (p/"PAINTING.jpg").stat().st_size>300000
+          assert (p/"VOCE.wav").stat().st_size>300000
+          assert (p/"MUSIC.mp3").stat().st_size>150000
+          print(r["voice"]["engine"],r["voice"]["duration"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BRJULLOV_POMPEI_ASSETS_LIGHT_${{ github.run_id }}
+          path: |
+            output/brjullov-pompei-v23/PAINTING.jpg
+            output/brjullov-pompei-v23/VOCE.wav
+            output/brjullov-pompei-v23/MUSIC.mp3
+            output/brjullov-pompei-v23/ASSETS_TIMING.json
+            output/brjullov-pompei-v23/COPIONE.txt
+          retention-days: 10
+          if-no-files-found: error
