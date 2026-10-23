@@ -1,5 +1,7 @@
 # Crea il prossimo video partendo dal lavoro già riuscito
 
+**REGOLA POST V28 (OBBLIGATORIA):** ogni testo Facebook/Instagram/TikTok/YouTube deve essere una storia, curiosità o lettura dell'opera che **aggiunge valore culturale non già evidente nel film**. Vietato parlare di `zoom`, `regia`, `montaggio`, `ho scelto`, `video AI` o meccanismi di produzione nel post. Leggi [lo standard editoriale V28](docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md), registra fonti primarie in `POST_EDITORIAL_RESEARCH.json`, verifica la lunghezza ragionevole, i crediti e la naturalezza. Non trasformare i post in note di lavorazione: quelle vivono solo nella ricetta tecnica.
+
 **STEP ZERO (OBBLIGATORIO):** apri [il contratto permanente ArtVision V25](docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md), poi `AGENTS.md` e il preset approvato del formato. Niente nuovi stili o ricette genericamente “virali” al posto delle regole. Il Cinema senza voce mantiene V6, copertine coerenti e titoli opere in inglese; descrizioni/hashtag/crediti pronti per i post. Prima/dopo il render esegui il gate V25 con `templates/ARTVISION_CONTRACT_V25.json`, il quale BLOCCA la consegna incompleta. Non confondere un piano con un MP4 effettivamente riuscito e controllato.
 
 
