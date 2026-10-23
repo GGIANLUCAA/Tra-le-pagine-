@@ -1,0 +1,1044 @@
+{
+  "schema": "artvision-cinema-v25-wow10-five",
+  "date": "2026-10-23",
+  "baseline": "cinema_v6",
+  "contract": "docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md",
+  "music": {
+    "darkest_child": {
+      "title": "Darkest Child",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100783",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Darkest%20Child.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100783"
+    },
+    "dreams_become_real": {
+      "title": "Dreams Become Real",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dreams%20Become%20Real.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1500027"
+    },
+    "evening_fall": {
+      "title": "Evening Fall (Piano)",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100235",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20-%20Piano.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100235"
+    },
+    "the_descent": {
+      "title": "The Descent",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1200094"
+    },
+    "calmant": {
+      "title": "Calmant",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100859",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Calmant.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100859"
+    },
+    "the_chamber": {
+      "title": "The Chamber",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100400",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Chamber.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100400"
+    }
+  },
+  "works": {
+    "durer": {
+      "artist": "ALBRECHT DÜRER",
+      "title_en": "The Four Horsemen",
+      "duration": 65,
+      "music": "darkest_child",
+      "editorial_key": "durer",
+      "arc": "A first shock from the Four Horsemen, then the human courage of the knight, fantasy beasts and the confrontation with death in Dürer's original engravings.",
+      "assets": {
+        "horsemen": {
+          "accession": "1932.313",
+          "title": "The Four Horsemen, from The Apocalypse",
+          "trim": [
+            0.035,
+            0.02,
+            0.972,
+            0.978
+          ]
+        },
+        "knight": {
+          "accession": "1965.231",
+          "title": "Knight, Death, and the Devil",
+          "trim": [
+            0.03,
+            0.025,
+            0.975,
+            0.967
+          ]
+        },
+        "dragon": {
+          "accession": "1922.248",
+          "title": "St. George Killing the Dragon",
+          "trim": [
+            0.02,
+            0.02,
+            0.98,
+            0.98
+          ]
+        },
+        "seamonster": {
+          "accession": "1934.340",
+          "title": "The Sea Monster",
+          "trim": [
+            0.025,
+            0.02,
+            0.97,
+            0.975
+          ]
+        },
+        "dream": {
+          "accession": "1934.341",
+          "title": "The Dream of the Doctor",
+          "trim": [
+            0.025,
+            0.02,
+            0.97,
+            0.975
+          ]
+        }
+      },
+      "scenes": [
+        {
+          "source_id": "horsemen",
+          "kind": "macro",
+          "x": 0.59,
+          "y": 0.29,
+          "purpose": "The faces of the charging riders emerge from a storm of engraved lines",
+          "motion": "locked",
+          "id": 1,
+          "seconds": 4.333
+        },
+        {
+          "source_id": "horsemen",
+          "kind": "detail",
+          "x": 0.38,
+          "y": 0.73,
+          "purpose": "Hooves and fallen figures give the biblical vision human stakes",
+          "motion": "locked",
+          "id": 2,
+          "seconds": 3.382
+        },
+        {
+          "source_id": "horsemen",
+          "kind": "wide",
+          "x": 0.49,
+          "y": 0.47,
+          "purpose": "The chaotic composition of the four horsemen is first legible",
+          "motion": "locked",
+          "id": 3,
+          "seconds": 3.805
+        },
+        {
+          "source_id": "knight",
+          "kind": "portrait",
+          "x": 0.55,
+          "y": 0.43,
+          "purpose": "A solitary armoured knight advances between death and the devil",
+          "motion": "locked",
+          "id": 4,
+          "seconds": 4.016
+        },
+        {
+          "source_id": "knight",
+          "kind": "detail",
+          "x": 0.77,
+          "y": 0.43,
+          "purpose": "The face of Death follows the rider",
+          "motion": "locked",
+          "id": 5,
+          "seconds": 3.276
+        },
+        {
+          "source_id": "knight",
+          "kind": "texture",
+          "x": 0.31,
+          "y": 0.74,
+          "purpose": "The artist's dense burin lines shape the rough earth",
+          "motion": "locked",
+          "id": 6,
+          "seconds": 3.382
+        },
+        {
+          "source_id": "knight",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "The full heroic knight reveals the danger all around him",
+          "motion": "locked",
+          "id": 7,
+          "seconds": 4.228
+        },
+        {
+          "source_id": "seamonster",
+          "kind": "portrait",
+          "x": 0.65,
+          "y": 0.7,
+          "purpose": "A reclining figure faces an unknown sea creature",
+          "motion": "locked",
+          "id": 8,
+          "seconds": 3.593
+        },
+        {
+          "source_id": "seamonster",
+          "kind": "medium",
+          "x": 0.35,
+          "y": 0.38,
+          "purpose": "The shore and distant architecture set the story's scale",
+          "motion": "locked",
+          "id": 9,
+          "seconds": 3.382
+        },
+        {
+          "source_id": "seamonster",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "Dürer's strange sea vision appears as a complete scene",
+          "motion": "locked",
+          "id": 10,
+          "seconds": 3.805
+        },
+        {
+          "source_id": "dragon",
+          "kind": "detail",
+          "x": 0.62,
+          "y": 0.7,
+          "purpose": "The dragon's expressive head fills the lower frame",
+          "motion": "locked",
+          "id": 11,
+          "seconds": 3.276
+        },
+        {
+          "source_id": "dragon",
+          "kind": "portrait",
+          "x": 0.43,
+          "y": 0.42,
+          "purpose": "St George's raised spear pierces the composition",
+          "motion": "locked",
+          "id": 12,
+          "seconds": 3.699
+        },
+        {
+          "source_id": "dragon",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "The whole dragon confrontation becomes visible",
+          "motion": "locked",
+          "id": 13,
+          "seconds": 3.699
+        },
+        {
+          "source_id": "dream",
+          "kind": "portrait",
+          "x": 0.43,
+          "y": 0.36,
+          "purpose": "The sleeping doctor ignores the visitor behind him",
+          "motion": "locked",
+          "id": 14,
+          "seconds": 3.488
+        },
+        {
+          "source_id": "dream",
+          "kind": "wide",
+          "x": 0.52,
+          "y": 0.55,
+          "purpose": "The surreal bedroom resolves into a complete dream vision",
+          "motion": "locked",
+          "id": 15,
+          "seconds": 3.805
+        },
+        {
+          "source_id": "horsemen",
+          "kind": "portrait",
+          "x": 0.62,
+          "y": 0.49,
+          "purpose": "The four riders return now seen as a single force",
+          "motion": "slow_push",
+          "id": 16,
+          "seconds": 3.911
+        },
+        {
+          "source_id": "horsemen",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "Final fixed full-frame engraving gives the viewer time to read the apocalypse",
+          "motion": "locked",
+          "id": 17,
+          "seconds": 5.92
+        }
+      ]
+    },
+    "kyosai": {
+      "artist": "KAWANABE KYŌSAI",
+      "title_en": "Hell Courtesan",
+      "duration": 54,
+      "music": "calmant",
+      "editorial_key": "kyosai",
+      "arc": "An elegant courtesan, theatrical nightmare figures and a crow in moonlight move between refined beauty and the supernatural in Kyōsai's original prints.",
+      "assets": {
+        "hell": {
+          "accession": "1985.268",
+          "title": "Hell Courtesan",
+          "trim": [
+            0.02,
+            0.015,
+            0.985,
+            0.985
+          ]
+        },
+        "demon": {
+          "accession": "1991.125.t",
+          "title": "Snail Versus Demon from Sketch Album",
+          "trim": [
+            0.02,
+            0.035,
+            0.98,
+            0.97
+          ]
+        },
+        "crow": {
+          "accession": "1930.203",
+          "title": "Full Moon with Crow on Plum Branch",
+          "trim": [
+            0.015,
+            0.015,
+            0.985,
+            0.98
+          ]
+        },
+        "moon": {
+          "accession": "1991.125.r",
+          "title": "Cranes and Pines in Moonlight from Sketch Album",
+          "trim": [
+            0.02,
+            0.02,
+            0.98,
+            0.965
+          ]
+        }
+      },
+      "scenes": [
+        {
+          "source_id": "hell",
+          "kind": "portrait",
+          "x": 0.3,
+          "y": 0.42,
+          "purpose": "The courtesan's quiet gaze is surrounded by richly patterned silk",
+          "motion": "locked",
+          "id": 1,
+          "seconds": 4.5
+        },
+        {
+          "source_id": "hell",
+          "kind": "detail",
+          "x": 0.32,
+          "y": 0.74,
+          "purpose": "A cascade of colourful textile patterns hides subtle symbols",
+          "motion": "locked",
+          "id": 2,
+          "seconds": 3.453
+        },
+        {
+          "source_id": "hell",
+          "kind": "portrait",
+          "x": 0.59,
+          "y": 0.37,
+          "purpose": "Painted figures behind the courtesan begin to suggest another world",
+          "motion": "locked",
+          "id": 3,
+          "seconds": 3.244
+        },
+        {
+          "source_id": "hell",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "The entire tall painted courtesan is shown without changing the original image",
+          "motion": "locked",
+          "id": 4,
+          "seconds": 3.767
+        },
+        {
+          "source_id": "demon",
+          "kind": "detail",
+          "x": 0.68,
+          "y": 0.48,
+          "purpose": "A curious demon with long horns confronts a small figure",
+          "motion": "locked",
+          "id": 5,
+          "seconds": 3.244
+        },
+        {
+          "source_id": "demon",
+          "kind": "portrait",
+          "x": 0.31,
+          "y": 0.54,
+          "purpose": "The light sketch outlines the human beside the beast",
+          "motion": "locked",
+          "id": 6,
+          "seconds": 3.14
+        },
+        {
+          "source_id": "demon",
+          "kind": "wide",
+          "x": 0.51,
+          "y": 0.53,
+          "purpose": "The eccentric sketch is viewed across its paper spread",
+          "motion": "locked",
+          "id": 7,
+          "seconds": 3.453
+        },
+        {
+          "source_id": "crow",
+          "kind": "portrait",
+          "x": 0.62,
+          "y": 0.48,
+          "purpose": "A single dark crow dominates the branch in an emptier scene",
+          "motion": "locked",
+          "id": 8,
+          "seconds": 3.453
+        },
+        {
+          "source_id": "crow",
+          "kind": "texture",
+          "x": 0.29,
+          "y": 0.34,
+          "purpose": "Calligraphy and brush marks enrich the bird's silhouette",
+          "motion": "locked",
+          "id": 9,
+          "seconds": 3.14
+        },
+        {
+          "source_id": "crow",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "The moonlit crow becomes still and complete",
+          "motion": "locked",
+          "id": 10,
+          "seconds": 3.663
+        },
+        {
+          "source_id": "moon",
+          "kind": "portrait",
+          "x": 0.64,
+          "y": 0.44,
+          "purpose": "The moonlit pines and cranes return the story to nature",
+          "motion": "locked",
+          "id": 11,
+          "seconds": 3.349
+        },
+        {
+          "source_id": "moon",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "The original moonlit sketch takes a quiet pause",
+          "motion": "locked",
+          "id": 12,
+          "seconds": 3.663
+        },
+        {
+          "source_id": "hell",
+          "kind": "detail",
+          "x": 0.38,
+          "y": 0.65,
+          "purpose": "Richly patterned kimono is seen with new meaning after the supernatural visions",
+          "motion": "locked",
+          "id": 13,
+          "seconds": 3.244
+        },
+        {
+          "source_id": "hell",
+          "kind": "portrait",
+          "x": 0.31,
+          "y": 0.35,
+          "purpose": "Her gaze returns as the scene's emotional centre",
+          "motion": "slow_pull",
+          "id": 14,
+          "seconds": 3.453
+        },
+        {
+          "source_id": "hell",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "The painting returns entire in an elegant, still conclusion",
+          "motion": "locked",
+          "id": 15,
+          "seconds": 5.234
+        }
+      ]
+    },
+    "church": {
+      "artist": "FREDERIC EDWIN CHURCH",
+      "title_en": "Storm in the Mountains",
+      "duration": 61,
+      "music": "the_descent",
+      "editorial_key": "church",
+      "arc": "The broken trunk and approaching mountain storm lead into the moonlit roar of Niagara Falls, contrasting disaster with sublime calm.",
+      "assets": {
+        "storm": {
+          "accession": "1969.52",
+          "title": "Storm in the Mountains",
+          "trim": [
+            0.007,
+            0.007,
+            0.993,
+            0.994
+          ]
+        },
+        "niagara": {
+          "accession": "1976.30",
+          "title": "Niagara Falls by Moonlight",
+          "trim": [
+            0.012,
+            0.018,
+            0.988,
+            0.986
+          ]
+        }
+      },
+      "scenes": [
+        {
+          "source_id": "storm",
+          "kind": "detail",
+          "x": 0.49,
+          "y": 0.49,
+          "purpose": "A broken tree and low clouds reveal the violence of the storm",
+          "motion": "locked",
+          "id": 1,
+          "seconds": 5.083
+        },
+        {
+          "source_id": "storm",
+          "kind": "texture",
+          "x": 0.62,
+          "y": 0.2,
+          "purpose": "Dark clouds build above the mountain",
+          "motion": "locked",
+          "id": 2,
+          "seconds": 4.019
+        },
+        {
+          "source_id": "storm",
+          "kind": "portrait",
+          "x": 0.31,
+          "y": 0.72,
+          "purpose": "Jagged dead trees and rock reveal the storm's scale",
+          "motion": "locked",
+          "id": 3,
+          "seconds": 4.138
+        },
+        {
+          "source_id": "storm",
+          "kind": "wide",
+          "x": 0.51,
+          "y": 0.51,
+          "purpose": "The original oil painting appears with its unstable landscape",
+          "motion": "locked",
+          "id": 4,
+          "seconds": 4.374
+        },
+        {
+          "source_id": "storm",
+          "kind": "detail",
+          "x": 0.73,
+          "y": 0.55,
+          "purpose": "Water and mist sweep past the dark cliff",
+          "motion": "locked",
+          "id": 5,
+          "seconds": 3.901
+        },
+        {
+          "source_id": "storm",
+          "kind": "portrait",
+          "x": 0.42,
+          "y": 0.46,
+          "purpose": "A single shattered trunk is silhouetted against troubled sky",
+          "motion": "locked",
+          "id": 6,
+          "seconds": 4.019
+        },
+        {
+          "source_id": "storm",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "The entire storm painting holds as the tension peaks",
+          "motion": "slow_push",
+          "id": 7,
+          "seconds": 4.492
+        },
+        {
+          "source_id": "niagara",
+          "kind": "texture",
+          "x": 0.37,
+          "y": 0.56,
+          "purpose": "The moonlit waterfall appears as a luminous white mass",
+          "motion": "locked",
+          "id": 8,
+          "seconds": 3.901
+        },
+        {
+          "source_id": "niagara",
+          "kind": "portrait",
+          "x": 0.54,
+          "y": 0.35,
+          "purpose": "A mysterious opening of light brightens the falls",
+          "motion": "locked",
+          "id": 9,
+          "seconds": 4.138
+        },
+        {
+          "source_id": "niagara",
+          "kind": "wide",
+          "x": 0.51,
+          "y": 0.51,
+          "purpose": "The Niagara falls become visible as a complete moonlit sketch",
+          "motion": "locked",
+          "id": 10,
+          "seconds": 4.256
+        },
+        {
+          "source_id": "storm",
+          "kind": "portrait",
+          "x": 0.52,
+          "y": 0.42,
+          "purpose": "The storm's broken tree returns as a visual memory",
+          "motion": "locked",
+          "id": 11,
+          "seconds": 4.138
+        },
+        {
+          "source_id": "storm",
+          "kind": "texture",
+          "x": 0.69,
+          "y": 0.73,
+          "purpose": "Rock face and wind-whipped vegetation form a natural texture",
+          "motion": "locked",
+          "id": 12,
+          "seconds": 4.019
+        },
+        {
+          "source_id": "niagara",
+          "kind": "portrait",
+          "x": 0.33,
+          "y": 0.63,
+          "purpose": "A quieter passage around the falls lets the viewer breathe",
+          "motion": "locked",
+          "id": 13,
+          "seconds": 4.138
+        },
+        {
+          "source_id": "niagara",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "A complete silent Niagara under moonlight offers a hopeful finale",
+          "motion": "locked",
+          "id": 14,
+          "seconds": 6.384
+        }
+      ]
+    },
+    "rousseau": {
+      "artist": "HENRI ROUSSEAU",
+      "title_en": "Fight Between a Tiger and a Buffalo",
+      "duration": 49,
+      "music": "the_chamber",
+      "editorial_key": "rousseau",
+      "arc": "Two animals struggle inside an impossible lush jungle; plants and foliage conceal their battle until the original painting is finally revealed.",
+      "assets": {
+        "tiger": {
+          "accession": "1949.186",
+          "title": "Fight Between a Tiger and a Buffalo",
+          "trim": [
+            0.01,
+            0.01,
+            0.99,
+            0.99
+          ]
+        }
+      },
+      "scenes": [
+        {
+          "source_id": "tiger",
+          "kind": "detail",
+          "x": 0.29,
+          "y": 0.72,
+          "purpose": "The tiger's striped face suddenly appears among dense leaves",
+          "motion": "locked",
+          "id": 1,
+          "seconds": 4.474
+        },
+        {
+          "source_id": "tiger",
+          "kind": "macro",
+          "x": 0.43,
+          "y": 0.8,
+          "purpose": "Paws and tense bodies hint at an unseen opponent",
+          "motion": "locked",
+          "id": 2,
+          "seconds": 3.196
+        },
+        {
+          "source_id": "tiger",
+          "kind": "texture",
+          "x": 0.6,
+          "y": 0.27,
+          "purpose": "Large tropical leaves hide the animals from the upper jungle",
+          "motion": "locked",
+          "id": 3,
+          "seconds": 3.409
+        },
+        {
+          "source_id": "tiger",
+          "kind": "portrait",
+          "x": 0.47,
+          "y": 0.73,
+          "purpose": "A dark buffalo is visible in the embrace of the tiger",
+          "motion": "locked",
+          "id": 4,
+          "seconds": 3.728
+        },
+        {
+          "source_id": "tiger",
+          "kind": "medium",
+          "x": 0.38,
+          "y": 0.69,
+          "purpose": "The intertwined animals begin to become recognisable",
+          "motion": "locked",
+          "id": 5,
+          "seconds": 3.622
+        },
+        {
+          "source_id": "tiger",
+          "kind": "detail",
+          "x": 0.17,
+          "y": 0.27,
+          "purpose": "Curved leaves and bright fruits interrupt the fight",
+          "motion": "locked",
+          "id": 6,
+          "seconds": 3.196
+        },
+        {
+          "source_id": "tiger",
+          "kind": "portrait",
+          "x": 0.33,
+          "y": 0.73,
+          "purpose": "The painted tiger's face returns as the scene's tension increases",
+          "motion": "locked",
+          "id": 7,
+          "seconds": 3.622
+        },
+        {
+          "source_id": "tiger",
+          "kind": "wide",
+          "x": 0.48,
+          "y": 0.52,
+          "purpose": "Tiger and buffalo are seen in relation to the whole strange forest",
+          "motion": "locked",
+          "id": 8,
+          "seconds": 3.622
+        },
+        {
+          "source_id": "tiger",
+          "kind": "texture",
+          "x": 0.83,
+          "y": 0.54,
+          "purpose": "Dense patterned vegetation disguises the background",
+          "motion": "locked",
+          "id": 9,
+          "seconds": 3.409
+        },
+        {
+          "source_id": "tiger",
+          "kind": "detail",
+          "x": 0.54,
+          "y": 0.72,
+          "purpose": "A final look at the rival animals before revelation",
+          "motion": "locked",
+          "id": 10,
+          "seconds": 3.728
+        },
+        {
+          "source_id": "tiger",
+          "kind": "portrait",
+          "x": 0.45,
+          "y": 0.39,
+          "purpose": "The lush leaf shapes dominate over the human-free scene",
+          "motion": "slow_push",
+          "id": 11,
+          "seconds": 3.622
+        },
+        {
+          "source_id": "tiger",
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.54,
+          "purpose": "The jungle appears as a complete organism",
+          "motion": "locked",
+          "id": 12,
+          "seconds": 3.835
+        },
+        {
+          "source_id": "tiger",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "Hold the full original canvas so the real painting replaces the mystery",
+          "motion": "locked",
+          "id": 13,
+          "seconds": 5.537
+        }
+      ]
+    },
+    "rackham": {
+      "artist": "ARTHUR RACKHAM",
+      "title_en": "The Green Dragon",
+      "duration": 73,
+      "music": "dreams_become_real",
+      "editorial_key": "rackham",
+      "arc": "The green dragon comes into view between twisting trees, followed by fairies and animal tales before returning to the original forest dragon.",
+      "assets": {
+        "dragon": {
+          "accession": "1954.652",
+          "title": "The Green Dragon",
+          "trim": [
+            0.022,
+            0.02,
+            0.98,
+            0.98
+          ]
+        },
+        "fairies": {
+          "accession": "1954.651",
+          "title": "And Now They Never Meet in Grove or Green",
+          "trim": [
+            0.022,
+            0.01,
+            0.98,
+            0.98
+          ]
+        },
+        "wren": {
+          "accession": "1946.8",
+          "title": "The Wren and the Bear",
+          "trim": [
+            0.02,
+            0.02,
+            0.98,
+            0.98
+          ]
+        },
+        "crow": {
+          "accession": "1954.653",
+          "title": "A Squirrel and a Crow",
+          "trim": [
+            0.015,
+            0.015,
+            0.985,
+            0.99
+          ]
+        }
+      },
+      "scenes": [
+        {
+          "source_id": "dragon",
+          "kind": "detail",
+          "x": 0.42,
+          "y": 0.76,
+          "purpose": "An enormous curled tail and jagged green scales emerge among twisted roots",
+          "motion": "locked",
+          "id": 1,
+          "seconds": 4.807
+        },
+        {
+          "source_id": "dragon",
+          "kind": "portrait",
+          "x": 0.59,
+          "y": 0.7,
+          "purpose": "The Green Dragon appears between forest trunks",
+          "motion": "locked",
+          "id": 2,
+          "seconds": 4.025
+        },
+        {
+          "source_id": "dragon",
+          "kind": "texture",
+          "x": 0.75,
+          "y": 0.31,
+          "purpose": "Ancient branches form a labyrinth around the creature",
+          "motion": "locked",
+          "id": 3,
+          "seconds": 3.913
+        },
+        {
+          "source_id": "dragon",
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.51,
+          "purpose": "First wide view of dragon and tangled dark forest",
+          "motion": "locked",
+          "id": 4,
+          "seconds": 4.36
+        },
+        {
+          "source_id": "fairies",
+          "kind": "portrait",
+          "x": 0.41,
+          "y": 0.72,
+          "purpose": "Small figures cross a scene of floating leaves and greenish mist",
+          "motion": "locked",
+          "id": 5,
+          "seconds": 4.136
+        },
+        {
+          "source_id": "fairies",
+          "kind": "detail",
+          "x": 0.68,
+          "y": 0.65,
+          "purpose": "An illustrated figure hides among intricate plants",
+          "motion": "locked",
+          "id": 6,
+          "seconds": 3.801
+        },
+        {
+          "source_id": "fairies",
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "The fairies belong to a grand enchanted landscape",
+          "motion": "locked",
+          "id": 7,
+          "seconds": 4.36
+        },
+        {
+          "source_id": "wren",
+          "kind": "detail",
+          "x": 0.58,
+          "y": 0.21,
+          "purpose": "A flock of moving birds fills the pale sky",
+          "motion": "locked",
+          "id": 8,
+          "seconds": 3.801
+        },
+        {
+          "source_id": "wren",
+          "kind": "portrait",
+          "x": 0.42,
+          "y": 0.56,
+          "purpose": "Bird silhouettes mark the scene's dramatic centre",
+          "motion": "locked",
+          "id": 9,
+          "seconds": 4.025
+        },
+        {
+          "source_id": "wren",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "One of Rackham's unusual animal tales becomes legible",
+          "motion": "locked",
+          "id": 10,
+          "seconds": 4.472
+        },
+        {
+          "source_id": "crow",
+          "kind": "portrait",
+          "x": 0.4,
+          "y": 0.32,
+          "purpose": "A watchful black bird faces another tree-dwelling creature",
+          "motion": "locked",
+          "id": 11,
+          "seconds": 4.025
+        },
+        {
+          "source_id": "crow",
+          "kind": "texture",
+          "x": 0.76,
+          "y": 0.41,
+          "purpose": "A small squirrel among the sketched roots and branches",
+          "motion": "locked",
+          "id": 12,
+          "seconds": 3.801
+        },
+        {
+          "source_id": "crow",
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "Their relationship is clear in the full composition",
+          "motion": "locked",
+          "id": 13,
+          "seconds": 4.36
+        },
+        {
+          "source_id": "dragon",
+          "kind": "texture",
+          "x": 0.31,
+          "y": 0.55,
+          "purpose": "A long tail and twisted roots lead us back into the dragon forest",
+          "motion": "locked",
+          "id": 14,
+          "seconds": 3.913
+        },
+        {
+          "source_id": "dragon",
+          "kind": "portrait",
+          "x": 0.55,
+          "y": 0.65,
+          "purpose": "The beast returns and dominates the frame",
+          "motion": "slow_pull",
+          "id": 15,
+          "seconds": 4.36
+        },
+        {
+          "source_id": "dragon",
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.53,
+          "purpose": "The whole scene of the legendary creature is seen again",
+          "motion": "locked",
+          "id": 16,
+          "seconds": 4.36
+        },
+        {
+          "source_id": "dragon",
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "purpose": "The original illustrated dragon closes the film in complete stillness",
+          "motion": "locked",
+          "id": 17,
+          "seconds": 6.481
+        }
+      ]
+    }
+  }
+}
