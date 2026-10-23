@@ -62,6 +62,29 @@ class ContractTests(unittest.TestCase):
     def test_valid_structural_preflight(self):
         self.assertEqual(gate.check_preflight(sample()),[])
 
+    def test_v21_cinema_package_includes_v25_contract(self):
+        from src.creative_director_v21 import write_package
+        brief={
+            "format":"artvision_cinema",
+            "project_id":"artvision-munch-test-episode",
+            "artist":"Edvard Munch",
+            "artwork_title_en":"The Scream",
+            "topic":"The Scream",
+            "original_value":"Creative art direction with verified real composition",
+            "hook":"The expressive painted figure starts the scene.",
+            "resolution":"The artwork is revealed fully at the last phrase.",
+            "shots":[{"seconds":5,"purpose":"Visual story beat"} for _ in range(9)]
+        }
+        with tempfile.TemporaryDirectory() as td:
+            result=write_package(brief,Path(td))
+            manifest=Path(td)/"ARTVISION_CONTRACT_V25.json"
+            self.assertTrue(manifest.is_file())
+            payload=json.loads(manifest.read_text(encoding="utf8"))
+            self.assertEqual(payload["artwork"]["title_en"],"The Scream")
+            self.assertEqual(payload["artwork"]["artist"],"EDVARD MUNCH")
+            self.assertTrue(gate.check_preflight(payload))
+            self.assertFalse(result["ready_to_publish"])
+
     def test_scaffold_from_brief_never_approves(self):
         with tempfile.TemporaryDirectory() as td:
             manifest = gate.scaffold_from_brief(
