@@ -503,6 +503,14 @@ def write_package(brief,output,*,video=None,history=None,targets=None,policy_pat
               "Nessuna pubblicazione senza autorizzazione umana"],
         "video_sha256":sha256_file(video) if video else None,
         "automatic_scoring_not_aesthetic_certification":True}
+    # Every new Cinema V21 brief obtains a V25 contract scaffold automatically.
+    # DRAFT ONLY: cannot be marked approved or published until actual rendering and review.
+    if kind == "artvision_cinema":
+        try:
+            from src.artvision_contract_gate_v25 import scaffold_from_brief
+        except ModuleNotFoundError:
+            from artvision_contract_gate_v25 import scaffold_from_brief
+        scaffold_from_brief(brief, output)
     (output/"CREATIVE_PACKAGE_V21.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     for platform,data in social.items():
         text=(data["title"]+"\n\n"+data["description"]+"\n\nISTRUZIONI\n"
