@@ -177,29 +177,12 @@ def make_cover(img,path):
     d.text((x,1181),title,font=f,fill=(255,251,243,255))
     Image.alpha_composite(c,layer).convert("RGB").save(path,quality=95)
 def social(out):
-    credits=(
-        "\n\nOpera: Fallen Angel (1847) — Alexandre Cabanel, Musée Fabre (Montpellier)."
-        + "\nFonte: " + ART_PAGE
-        + "\nMuseo: " + MUSEUM
-        + "\nMusica: The Chamber — Kevin MacLeod (incompetech.com)."
-        + "\nLicenza registrazione: CC BY 4.0 — " + LICENSE
-        + "\nRegistrazione: " + TRACK_PAGE
-        + "\nModifiche: estratto musicale con dissolvenze; montaggio e focali del quadro autentico."
-    )
-    captions={
-      "POST_FACEBOOK.txt":"C'è un dettaglio che rende quest'angelo indimenticabile: lo sguardo.\n\n"
-         "Nel 1847 Alexandre Cabanel dipinse il momento della caduta. Il corpo è a terra, le ali sembrano pesanti, e gli angeli sullo sfondo sono ormai lontani. "
-         "Ho scelto di partire dagli occhi e di mostrare il resto soltanto alla fine: ogni particolare appartiene davvero alla tela.",
-      "POST_INSTAGRAM.txt":"Uno sguardo prima del racconto.\n\n"
-         "Fallen Angel di Alexandre Cabanel: ali, mani, occhi, cielo. Un viaggio cinematografico in una sola opera del 1847.",
-      "POST_TIKTOK.txt":"Prima guarda gli occhi. Poi scopri il resto.\n\n"
-         "Un angelo a terra e il cielo che si allontana: Fallen Angel di Alexandre Cabanel.",
-      "POST_YOUTUBE.txt":"Fallen Angel | Alexandre Cabanel — ArtVision Cinema\n\n"
-         "Un filmato senza voce che esplora lo sguardo, le ali, le mani e il cielo del celebre dipinto del 1847. "
-         "Fotografia autentica, musiche strumentali con attribuzione e regia dedicata."}
-    tags="#ArtVision #Cabanel #FallenAngel #ArtHistory"
-    for name,caption in captions.items():
-        (out/name).write_text(caption+credits+"\n\n"+tags+"\n",encoding="utf-8")
+    # V28: public text must be researched editorial storytelling, never
+    # explain camera movement, edit choices or production technique.
+    # Block rather than invent filler for an unresearched artwork.
+    from artvision_editorial_post_v28 import write_posts
+    write_posts("cabanel_v26",out,overwrite=False)
+
 def package(out,impath,music,master,shots,analysis,offset):
     social(out);hash_mp4=digest(master)
     source=f"""# Provenienza e riuso
@@ -320,6 +303,7 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
                      recipe="VIDEO_RECIPE_V13.json",techniques="TECNICHE_REGIA.md",
                      replication="ISTRUZIONI_REPLICA.md",rights="SOURCES_AND_RIGHTS.md",
                      music_manifest="MUSIC_RELEASE_V20.json"),
+      "editorial_standard":"artvision_editorial_v28",
       "review_video_sha256":hash_mp4,
       "reviews":{k:{"passed":False,"notes":"Full real-time playback and aesthetic comparison with V6 is pending."}
                  for k in ["opening","visual","cover","music","rights","full_watch","replicability"]},
