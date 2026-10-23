@@ -106,10 +106,36 @@ def motion_check(brief,kind,policy):
             issues.append({"shot":index+1,"severity":"review","problem":"Pan oltre riferimento prudente Critico, controllare reale crop"})
         if mode in ("slow_pan_x","slow_pan_y") and not (shot.get("reason") or shot.get("title_internal") or shot.get("purpose")):
             issues.append({"shot":index+1,"severity":"review","problem":"Pan senza motivo narrativo dichiarato"})
+    # Eye-trace is a cross-cut constraint, not an automatic declaration of a bad edit.
+    # Only compare explicitly supplied real artwork crop centres. A wide/context
+    # establishing shot can legitimately move attention a long distance.
+    previous=None; eyes=0
+    for idx,shot in enumerate(rows):
+        if not isinstance(shot,dict):continue
+        p=shot.get("focus_xy",shot.get("focus"))
+        if not (isinstance(p,(list,tuple)) and len(p)==2
+                and all(isinstance(n,(int,float)) and not isinstance(n,bool)
+                        and math.isfinite(n) and 0<=n<=1 for n in p)):
+            previous=None
+            continue
+        eyes+=1
+        shot_type=str(shot.get("framing",shot.get("type","detail"))).lower()
+        if previous is not None:
+            old_idx,old_p,old_type=previous
+            distance=math.hypot(float(p[0])-old_p[0],float(p[1])-old_p[1])
+            if (distance>.42 and "full" not in (shot_type,old_type)
+                    and "whole" not in (shot_type,old_type)
+                    and "panel" not in (shot_type,old_type)
+                    and not shot.get("reestablish_context")):
+                issues.append({"shot":idx+1,"severity":"review",
+                    "problem":"Salto eye-trace notevole tra punti lontani: valutare totale/raccordo orientativo, non pan veloce",
+                    "distance_fraction":round(distance,3)})
+        previous=(idx,(float(p[0]),float(p[1])),shot_type)
     if kind=="artvision_critico" and examined>=4 and moving>locked:
         issues.append({"shot":None,"severity":"review","problem":"Troppi piani mobili: preferire pause e camera ferma"})
     return {"plans_with_camera":examined,"total_shots":len(rows),"locked":locked,
-            "moving":moving,"issues":issues,"real_video_inspected":False}
+            "moving":moving,"eye_trace_points_checked":eyes,
+            "issues":issues,"real_video_inspected":False}
 
 def plan(brief,catalog=None):
     if not isinstance(brief,dict):raise ValueError("Brief deve essere JSON oggetto")
