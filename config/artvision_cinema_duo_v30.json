@@ -1,0 +1,345 @@
+{
+  "schema": "artvision-cinema-duo-v30",
+  "version": "30.0",
+  "date": "2026-10-23",
+  "baseline": "cinema_v6",
+  "subjects": {
+    "saturn": {
+      "artist": "FRANCISCO GOYA",
+      "title_en": "Saturn Devouring His Son",
+      "year": "1820–1823",
+      "museum": "Museo Nacional del Prado, Madrid",
+      "slug": "goya_saturn_v30",
+      "editorial_key": "goya_saturn_v30",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Francisco_de_Goya,_Saturno_devorando_a_su_hijo_(1819-1823).jpg",
+      "museum_page": "https://www.museodelprado.es/en/the-collection/art-work/saturn/18110a75-b0e7-430c-bc73-2a4d55893bd6",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/8/82/Francisco_de_Goya,_Saturno_devorando_a_su_hijo_(1819-1823).jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Francisco_de_Goya%2C_Saturno_devorando_a_su_hijo_%281819-1823%29.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/6/65/Saturn_Devouring_His_Son.jpg"
+      ],
+      "music": {
+        "name": "The Dread",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Dread.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100048",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1100048",
+        "offset": 20
+      },
+      "story": "Avoid artificial horror transitions: the real image tells a claustrophobic psychological story through eyes, hand and threatening darkness. A long quiet final image returns scale.",
+      "techniques": [
+        "visual_hierarchy",
+        "motivated_cut",
+        "rhythmic_rest",
+        "detail_return",
+        "color_match",
+        "locked_hold",
+        "human_gaze_start",
+        "camera_seasick_gate"
+      ],
+      "scenes": [
+        {
+          "type": "portrait",
+          "x": 0.45,
+          "y": 0.23,
+          "z": 1.42,
+          "seconds": 4,
+          "movement": "locked",
+          "intent": "Start with the terrified eyes emerging from actual darkness"
+        },
+        {
+          "type": "texture",
+          "x": 0.14,
+          "y": 0.18,
+          "z": 1.03,
+          "seconds": 3,
+          "movement": "locked",
+          "intent": "Allow darkness to become a meaningful negative space"
+        },
+        {
+          "type": "detail",
+          "x": 0.5,
+          "y": 0.31,
+          "z": 1.4,
+          "seconds": 3.45,
+          "movement": "slow_pull",
+          "intent": "The clenched mouth is now visible next to the stare"
+        },
+        {
+          "type": "macro",
+          "x": 0.49,
+          "y": 0.51,
+          "z": 1.7,
+          "seconds": 3.2,
+          "movement": "locked",
+          "intent": "Hands gripping the pale body form a frozen human knot"
+        },
+        {
+          "type": "portrait",
+          "x": 0.43,
+          "y": 0.23,
+          "z": 1.36,
+          "seconds": 3.35,
+          "movement": "locked",
+          "intent": "Return to fear and expose the expression with a wider crop"
+        },
+        {
+          "type": "detail",
+          "x": 0.63,
+          "y": 0.53,
+          "z": 1.28,
+          "seconds": 3.4,
+          "movement": "locked",
+          "intent": "The white flesh contrasts with the immense painted black"
+        },
+        {
+          "type": "texture",
+          "x": 0.8,
+          "y": 0.3,
+          "z": 1.1,
+          "seconds": 3.1,
+          "movement": "locked",
+          "intent": "The unpainted dark surrounding space dominates the frame"
+        },
+        {
+          "type": "wide",
+          "x": 0.48,
+          "y": 0.5,
+          "z": 1.05,
+          "seconds": 4,
+          "movement": "slow_push",
+          "intent": "The terrifying figure enters a first legible almost-full view"
+        },
+        {
+          "type": "detail",
+          "x": 0.31,
+          "y": 0.68,
+          "z": 1.37,
+          "seconds": 3.3,
+          "movement": "locked",
+          "intent": "The body's giant bending elbow leads the viewer downward"
+        },
+        {
+          "type": "macro",
+          "x": 0.54,
+          "y": 0.51,
+          "z": 1.63,
+          "seconds": 3.2,
+          "movement": "locked",
+          "intent": "The rigid hand returns after darkness and fear"
+        },
+        {
+          "type": "portrait",
+          "x": 0.45,
+          "y": 0.23,
+          "z": 1.43,
+          "seconds": 3.55,
+          "movement": "locked",
+          "intent": "The eyes now carry a different emotional weight"
+        },
+        {
+          "type": "wide",
+          "x": 0.5,
+          "y": 0.51,
+          "z": 1,
+          "seconds": 4.2,
+          "movement": "slow_pull",
+          "intent": "A preparatory full silhouette without distracting effects"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 6.4,
+          "movement": "locked",
+          "intent": "Entire vertical wall painting held as the score gently resolves"
+        }
+      ]
+    },
+    "ambassadors": {
+      "artist": "HANS HOLBEIN THE YOUNGER",
+      "title_en": "The Ambassadors",
+      "year": "1533",
+      "museum": "The National Gallery, London",
+      "slug": "holbein_ambassadors_v30",
+      "editorial_key": "holbein_ambassadors_v30",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Holbein_Ambassadors.jpg",
+      "museum_page": "https://www.nationalgallery.org.uk/paintings/hans-holbein-the-younger-the-ambassadors",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/6/6e/Holbein_Ambassadors.jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Holbein_Ambassadors.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/b/b6/Holbein_il_giovane,_gli_ambasciatori,_1533,_01.jpg"
+      ],
+      "music": {
+        "name": "Tempting Secrets",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Tempting%20Secrets.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300038",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1300038",
+        "offset": 16
+      },
+      "story": "Begin from an unreadable pale oblique painted form, shift toward luxurious Renaissance details, then return to the skull and ultimately to the whole canvas; do not artificially de-anamorphize the original as it would alter the source painting.",
+      "techniques": [
+        "visual_hierarchy",
+        "motivated_cut",
+        "rhythmic_rest",
+        "detail_return",
+        "color_match",
+        "locked_hold",
+        "human_gaze_start",
+        "camera_seasick_gate"
+      ],
+      "scenes": [
+        {
+          "type": "detail",
+          "x": 0.51,
+          "y": 0.87,
+          "z": 1.36,
+          "seconds": 3.9,
+          "movement": "locked",
+          "intent": "The strange pale diagonal shape is initially mysterious"
+        },
+        {
+          "type": "macro",
+          "x": 0.56,
+          "y": 0.83,
+          "z": 1.64,
+          "seconds": 2.9,
+          "movement": "slow_pull",
+          "intent": "Reveal the distorted skull without synthetic perspective correction"
+        },
+        {
+          "type": "portrait",
+          "x": 0.24,
+          "y": 0.29,
+          "z": 1.2,
+          "seconds": 3.3,
+          "movement": "locked",
+          "intent": "The left ambassador stares from fur and red silk"
+        },
+        {
+          "type": "texture",
+          "x": 0.5,
+          "y": 0.19,
+          "z": 1.32,
+          "seconds": 3,
+          "movement": "locked",
+          "intent": "Globe and astronomical instruments suggest human mastery"
+        },
+        {
+          "type": "detail",
+          "x": 0.5,
+          "y": 0.56,
+          "z": 1.49,
+          "seconds": 3.25,
+          "movement": "locked",
+          "intent": "The broken lute string connects knowledge to human fragility"
+        },
+        {
+          "type": "portrait",
+          "x": 0.77,
+          "y": 0.27,
+          "z": 1.19,
+          "seconds": 3.5,
+          "movement": "slow_push",
+          "intent": "Second ambassador in restrained monochrome garment"
+        },
+        {
+          "type": "detail",
+          "x": 0.54,
+          "y": 0.41,
+          "z": 1.27,
+          "seconds": 3.25,
+          "movement": "locked",
+          "intent": "Fine woven carpet and mathematical tools come into view"
+        },
+        {
+          "type": "macro",
+          "x": 0.45,
+          "y": 0.68,
+          "z": 1.62,
+          "seconds": 3,
+          "movement": "locked",
+          "intent": "Books on the lower shelf interrupt the symmetry"
+        },
+        {
+          "type": "wide",
+          "x": 0.49,
+          "y": 0.48,
+          "z": 1.03,
+          "seconds": 4,
+          "movement": "locked",
+          "intent": "The two men balance around the still-life table"
+        },
+        {
+          "type": "detail",
+          "x": 0.11,
+          "y": 0.13,
+          "z": 1.21,
+          "seconds": 3.15,
+          "movement": "locked",
+          "intent": "The tiny crucifix is nearly hidden in the curtain"
+        },
+        {
+          "type": "texture",
+          "x": 0.63,
+          "y": 0.33,
+          "z": 1.38,
+          "seconds": 3.2,
+          "movement": "locked",
+          "intent": "A painted device for astronomy recurs across shelves"
+        },
+        {
+          "type": "portrait",
+          "x": 0.24,
+          "y": 0.33,
+          "z": 1.25,
+          "seconds": 3.2,
+          "movement": "locked",
+          "intent": "Human portrait returns after objects and instruments"
+        },
+        {
+          "type": "portrait",
+          "x": 0.79,
+          "y": 0.29,
+          "z": 1.25,
+          "seconds": 3.2,
+          "movement": "locked",
+          "intent": "The other ambassador's gaze completes the pair"
+        },
+        {
+          "type": "detail",
+          "x": 0.5,
+          "y": 0.87,
+          "z": 1.38,
+          "seconds": 3.4,
+          "movement": "slow_pull",
+          "intent": "Return to the mysterious distorted skull as meaning becomes clearer"
+        },
+        {
+          "type": "wide",
+          "x": 0.5,
+          "y": 0.56,
+          "z": 1,
+          "seconds": 4.1,
+          "movement": "locked",
+          "intent": "A first composition-wide framing with skull visible below"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 6.3,
+          "movement": "locked",
+          "intent": "Complete Holbein masterpiece; hold still for the closing musical phrase"
+        }
+      ]
+    }
+  }
+}
