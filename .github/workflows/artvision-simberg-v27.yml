@@ -1,0 +1,103 @@
+name: ArtVision The Wounded Angel V27 - Cinema V6 + Post V28
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/artvision_simberg_wounded_angel_v27.py
+      - config/artvision_editorial_v28.json
+      - .github/workflows/artvision-simberg-v27.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Video tools, typography and dependencies
+        run: |
+          set -e
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe || sudo apt-get install -y -qq ffmpeg
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf || sudo apt-get install -y -qq fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "Pillow>=10,<14" numpy requests
+      - name: Validate script and professional editorial copy before costly render
+        id: lint
+        run: |
+          python -m py_compile scripts/artvision_simberg_wounded_angel_v27.py src/artvision_editorial_post_v28.py
+          python -m unittest discover -s tests -p 'test_artvision_editorial_post_v28.py' -v
+          tmp=$(mktemp -d)
+          python src/artvision_editorial_post_v28.py --episode simberg_v27 --out "$tmp"
+          python src/artvision_editorial_post_v28.py --validate-folder "$tmp"
+      - name: Real cinema V27 render and entire editorial social pack
+        id: render
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: python scripts/artvision_simberg_wounded_angel_v27.py --out output/simberg-v27
+      - name: Verify original MP4 and full reproducible package
+        id: verify
+        if: steps.render.outcome == 'success'
+        run: |
+          set -euo pipefail
+          test -s output/simberg-v27/VIDEO_MASTER.mp4
+          test -s output/simberg-v27/COPERTINA.jpg
+          test -s output/simberg-v27/POST_EDITORIAL_RESEARCH.json
+          test -s output/ARTVISION_SIMBERG_WOUNDED_ANGEL_V27_COMPLETE.zip
+          ffmpeg -hide_banner -loglevel error -xerror -i output/simberg-v27/VIDEO_MASTER.mp4 -f null -
+          python src/artvision_editorial_post_v28.py --validate-folder output/simberg-v27
+          python - <<'PY'
+          import subprocess,json,zipfile
+          f='output/simberg-v27/VIDEO_MASTER.mp4'
+          d=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration",
+            "-show_entries","stream=codec_type,codec_name,width,height","-of","json",f]))
+          assert 40<float(d["format"]["duration"])<70
+          assert any(s.get("codec_type")=="video" and s.get("width")==1080 and s.get("height")==1920 and s.get("codec_name")=="h264" for s in d["streams"])
+          assert any(s.get("codec_type")=="audio" and s.get("codec_name")=="aac" for s in d["streams"])
+          z=zipfile.ZipFile('output/ARTVISION_SIMBERG_WOUNDED_ANGEL_V27_COMPLETE.zip')
+          req={'VIDEO_MASTER.mp4','COPERTINA.jpg','POST_FACEBOOK.txt','POST_INSTAGRAM.txt',
+           'POST_TIKTOK.txt','POST_YOUTUBE.txt','POST_EDITORIAL_RESEARCH.json',
+           'VIDEO_RECIPE_V13.json','TECNICHE_REGIA.md','ISTRUZIONI_REPLICA.md',
+           'MUSIC_RELEASE_V20.json','SOURCES_AND_RIGHTS.md','ARTVISION_CONTRACT_V25.json',
+           'QA_CONTACT_SHEET.jpg','QA_V25/FRAME_00.jpg','QA_V25/FRAME_01.jpg','QA_V25/FRAME_03.jpg',
+           'QA_V25/FRAME_05.jpg','QA_V25/FRAME_07.jpg'}
+          assert req.issubset(z.namelist()),req-set(z.namelist())
+          assert z.testzip() is None
+          print("PACK_VALIDATED",len(z.namelist()),"duration",d["format"]["duration"])
+          PY
+      - name: Keep genuine MP4 and all editorial source materials
+        uses: actions/upload-artifact@v4
+        id: archive
+        if: always()
+        with:
+          name: ArtVision-Simberg-Wounded-Angel-V27
+          path: |
+            output/ARTVISION_SIMBERG_WOUNDED_ANGEL_V27_COMPLETE.zip
+            output/simberg-v27/VIDEO_MASTER.mp4
+            output/simberg-v27/COPERTINA.jpg
+            output/simberg-v27/QA_CONTACT_SHEET.jpg
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Real result audit and production log
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          LINT: ${{ steps.lint.outcome }}
+          RENDER: ${{ steps.render.outcome }}
+          VERIFY: ${{ steps.verify.outcome }}
+          ARCHIVE: ${{ steps.archive.outcome }}
+        with:
+          script: |
+            const fs=require("fs"),crypto=require("crypto");
+            const path="output/simberg-v27/VIDEO_MASTER.mp4";
+            const exists=fs.existsSync(path);
+            const bytes=exists?fs.statSync(path).size:null;
+            const sha=exists?crypto.createHash("sha256").update(fs.readFileSync(path)).digest("hex"):null;
+            const ok=["LINT","RENDER","VERIFY","ARCHIVE"].every(n=>process.env[n]==="success");
+            const url=`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.issues.createComment({owner:context.repo.owner,repo:context.repo.repo,
+              issue_number:29,body:`ArtVision V27 **${ok?"MP4 + V28 SOCIAL PACK TECHNICALLY VALIDATED":"NOT COMPLETE"}**\nMP4 bytes: ${bytes??"absent"}. SHA256: ${sha??"absent"}.\nSteps: lint=${process.env.LINT}, render=${process.env.RENDER}, verify=${process.env.VERIFY}, archive=${process.env.ARCHIVE}.\nRun: ${url}\nVisual acceptance and social publishing are separate.`});
