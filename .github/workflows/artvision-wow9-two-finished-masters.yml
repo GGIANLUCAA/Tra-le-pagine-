@@ -1,0 +1,114 @@
+name: "ArtVision WOW9 - James Ensor & Utagawa Kuniyoshi"
+run-name: "ArtVision Cinema WOW9 two original short films: Ensor and Kuniyoshi"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow9-two-finished-masters.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cinema:
+    name: "WOW9 final Cinema V6 - ${{ matrix.artist }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        artist: [ensor, kuniyoshi]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install verified free software dependencies, reuse image codecs
+        run: |
+          set -e
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe || sudo apt-get install -y -qq ffmpeg
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf || sudo apt-get install -y -qq fonts-dejavu-core
+          python - <<'PY'
+          import importlib.util,subprocess
+          missing=[package for package,mod in [('Pillow','PIL'),('numpy','numpy'),('requests','requests')] if not importlib.util.find_spec(mod)]
+          if missing:subprocess.run(['python','-m','pip','install','--disable-pip-version-check']+missing,check=True,timeout=100)
+          else:print('All video dependencies already available')
+          PY
+          python -m py_compile scripts/artvision_wow9_two_v25_v28.py
+      - name: Independently verify exact editorial art/musical attribution
+        run: |
+          python - <<'PY'
+          import json,sys
+          sys.path.insert(0,'src')
+          import artvision_editorial_post_v28 as e
+          d=json.load(open('config/artvision_wow9_editorial_v28.json'))['entries']
+          x=json.load(open('config/artvision_wow9_two_v25.json'))
+          for name,entry in d.items():
+            problems=e.validate_entry(name,entry)
+            if problems:raise RuntimeError(name+': '+str(problems))
+            music=x['music'][x['works'][name]['music']]
+            credits=' '.join(entry['credit_lines'])
+            if music['title'].lower() not in credits.lower() or music['page'] not in credits:
+              raise RuntimeError('Actual recording and public credits differ on '+name)
+          print('CC0 artwork metadata and V28 museum storytelling preflight OK')
+          PY
+      - name: Produce real 1080x1920 MP4, genuine art sources and full posts
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python scripts/artvision_wow9_two_v25_v28.py --painting "${{ matrix.artist }}" --out output/artvision-wow9
+      - name: Verify final H264 AAC, subtitles absent, credits, source frames
+        env:
+          ARTIST: "${{ matrix.artist }}"
+        run: |
+          set -euo pipefail
+          slug="${{ matrix.artist }}"
+          dir="output/artvision-wow9/$slug"
+          test -s "$dir/VIDEO_MASTER.mp4"
+          test -s "$dir/COPERTINA.jpg"
+          test -s "$dir/WOW9_DELIVERY_REPORT.json"
+          test -s "$dir/QA_CONTACT_SHEET.jpg"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$dir/VIDEO_MASTER.mp4" -f null -
+          python src/artvision_editorial_post_v28.py --validate-folder "$dir"
+          python - <<'PY'
+          import os,json,pathlib,zipfile,hashlib,subprocess
+          slug=os.environ['ARTIST'];d=pathlib.Path('output/artvision-wow9')/slug
+          mp4=d/'VIDEO_MASTER.mp4';spec=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(mp4)]))
+          v=[x for x in spec['streams'] if x['codec_type']=='video']
+          a=[x for x in spec['streams'] if x['codec_type']=='audio']
+          assert len(v)==1 and v[0]['codec_name']=='h264' and (v[0]['width'],v[0]['height'])==(1080,1920)
+          assert len(a)==1 and a[0]['codec_name']=='aac'
+          assert not any(x['codec_type']=='subtitle' for x in spec['streams'])
+          target={'ensor':62,'kuniyoshi':56}[slug]
+          assert abs(float(spec['format']['duration'])-target)<1.5
+          rep=json.load(open(d/'WOW9_DELIVERY_REPORT.json'))
+          assert rep['master_sha256']==hashlib.sha256(mp4.read_bytes()).hexdigest()
+          assert rep['visual_originals']=={'ensor':8,'kuniyoshi':3}[slug]
+          assert rep['shots']>=14 and rep['publication']=='NOT_PUBLISHED'
+          z=d.parent/f'ARTVISION_WOW9_{slug.upper()}_COMPLETE.zip'
+          assert z.is_file() and z.stat().st_size>3000000
+          with zipfile.ZipFile(z) as pack:
+           assert pack.testzip() is None
+           req={'VIDEO_MASTER.mp4','COPERTINA.jpg','POST_FACEBOOK.txt','POST_INSTAGRAM.txt',
+              'POST_TIKTOK.txt','POST_YOUTUBE.txt','POST_EDITORIAL_RESEARCH.json',
+              'VIDEO_RECIPE_V13.json','ARTVISION_CONTRACT_V25.json','MUSIC_RELEASE_V20.json',
+              'SOURCES_AND_RIGHTS.md','COLLECTION_SOURCES_CC0.json','QA_CONTACT_SHEET.jpg',
+              'WOW9_DELIVERY_REPORT.json'}
+           assert req.issubset(pack.namelist()),req-set(pack.namelist())
+          print('WOW9 REAL MP4 VERIFIED',slug,'duration',spec['format']['duration'],
+                'bytes',mp4.stat().st_size,'actual artwork collection',rep['visual_originals'])
+          PY
+      - name: Archive separate film, cover, editorial posts, complete original research
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: "ARTVISION_WOW9_${{ matrix.artist }}_FINISHED"
+          path: |
+            output/artvision-wow9/${{ matrix.artist }}/VIDEO_MASTER.mp4
+            output/artvision-wow9/${{ matrix.artist }}/COPERTINA.jpg
+            output/artvision-wow9/${{ matrix.artist }}/QA_CONTACT_SHEET.jpg
+            output/artvision-wow9/${{ matrix.artist }}/POST_FACEBOOK.txt
+            output/artvision-wow9/${{ matrix.artist }}/WOW9_DELIVERY_REPORT.json
+            output/artvision-wow9/ARTVISION_WOW9_*.zip
+          if-no-files-found: error
+          retention-days: 60
