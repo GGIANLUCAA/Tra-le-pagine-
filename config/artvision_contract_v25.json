@@ -1,0 +1,90 @@
+{
+  "schema": "artvision-contract-v25",
+  "version": "25.0",
+  "created": "2026-10-23",
+  "scope": "all_new_video_outputs",
+  "format_policies": {
+    "artvision_cinema": {
+      "gold_master": "modules/artvision/APPROVED_PRESET.json",
+      "visual_identity": "modules/artvision/IDENTITA_VISIVA_FISSA_V6.json",
+      "opening_roles": [
+        "artist",
+        "music_credit"
+      ],
+      "cover_roles": [
+        "artwork_title",
+        "artist"
+      ],
+      "cover_title_language": "en",
+      "voice": false,
+      "subtitles": false,
+      "typical_duration_seconds": [
+        45,
+        75
+      ],
+      "fps": 24,
+      "resolution": [
+        1080,
+        1920
+      ],
+      "required_review_seconds": [
+        0,
+        1,
+        3,
+        5,
+        7
+      ],
+      "prohibited_motions": [
+        "sine",
+        "oscillate",
+        "wobble",
+        "bounce",
+        "spin",
+        "whip_pan",
+        "dolly_zoom_simulated"
+      ],
+      "techniques_range": [
+        3,
+        8
+      ]
+    },
+    "artvision_critico": {
+      "cover_title_language": "en",
+      "voice_preset": "Google Gemini Gacrux",
+      "cover_roles": [
+        "artwork_title",
+        "artist"
+      ],
+      "subtitles": false
+    }
+  },
+  "deliverables": [
+    "VIDEO_MASTER.mp4",
+    "COPERTINA.jpg",
+    "POST_FACEBOOK.txt",
+    "POST_INSTAGRAM.txt",
+    "POST_TIKTOK.txt",
+    "POST_YOUTUBE.txt",
+    "VIDEO_RECIPE_V13.json",
+    "TECNICHE_REGIA.md",
+    "ISTRUZIONI_REPLICA.md",
+    "SOURCES_AND_RIGHTS.md",
+    "MUSIC_RELEASE_V20.json"
+  ],
+  "mandatory_source_policies": [
+    "docs/CREATIVE_DIRECTOR_V21_STANDARD.md",
+    "docs/MUSIC_POLICY_V20.md",
+    "docs/ARTVISION_EDITOR_V19.md",
+    "docs/REGIA_CINEMATOGRAFICA_V23.md",
+    "modules/artvision/APPROVED_PRESET.json"
+  ],
+  "release_policy": {
+    "require_real_mp4": true,
+    "require_full_artistic_review": true,
+    "require_rights_review": true,
+    "library_archiving_only_if_authorized": true,
+    "social_publish_requires_separate_permission": true,
+    "never_overwrite_historical": true,
+    "never_call_index_update_a_finished_video": true
+  }
+}
