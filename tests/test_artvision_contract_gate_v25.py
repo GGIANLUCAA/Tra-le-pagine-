@@ -148,6 +148,37 @@ class ContractTests(unittest.TestCase):
         self.assertIn("inesistente",error)
         self.assertIn("moto macchina non permesso",error)
 
+    def test_delivery_zip_contains_every_required_file_and_no_overwrite(self):
+        import zipfile
+        data=sample()
+        data["video_id"]="example-batch-999"
+        with tempfile.TemporaryDirectory() as td:
+            base=Path(td)
+            manifest=base/"ARTVISION_CONTRACT_V25.json"
+            manifest.write_text(json.dumps(data),encoding="utf-8")
+            for filename in gate.FIELDS.values():
+                (base/filename).write_bytes(b"synthetic test bytes for packaging only")
+            frames=base/"QA_V25"
+            frames.mkdir()
+            for second in gate.REVIEW_SECONDS:
+                (frames/f"FRAME_{second:02d}.jpg").write_bytes(b"synthetic frame test only")
+            data_info={"video_sha256":"1"*64}
+            archive=gate.pack_delivery(manifest,data,data_info)
+            self.assertTrue(archive.is_file())
+            with zipfile.ZipFile(archive) as z:
+                names=set(z.namelist())
+            self.assertIn("VIDEO_MASTER.mp4",names)
+            self.assertIn("COPERTINA.jpg",names)
+            self.assertIn("POST_FACEBOOK.txt",names)
+            self.assertIn("VIDEO_RECIPE_V13.json",names)
+            self.assertIn("ISTRUZIONI_REPLICA.md",names)
+            self.assertIn("ARTVISION_CONTRACT_V25.json",names)
+            self.assertIn("QA_V25/FRAME_07.jpg",names)
+            before=archive.stat().st_mtime_ns
+            again=gate.pack_delivery(manifest,data,data_info)
+            self.assertEqual(archive,again)
+            self.assertEqual(before,archive.stat().st_mtime_ns)
+
     def test_final_rejects_missing_media_and_posts(self):
         obj=sample()
         with tempfile.TemporaryDirectory() as td:
