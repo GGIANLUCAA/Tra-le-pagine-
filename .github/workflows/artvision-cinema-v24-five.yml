@@ -1,0 +1,83 @@
+name: ArtVision Cinema V24 - cinque nuovi master
+on:
+  push:
+    branches: [main]
+    paths: ['scripts/artvision_five_20261023_v24.py']
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  render-five:
+    name: ArtVision V24 ${{ matrix.painting }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        painting: [aivazovsky, bouguereau, delaroche, leighton, rossetti]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Open-source tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check pillow numpy requests
+      - name: Render artistic film
+        id: render
+        run: |
+          python scripts/artvision_five_20261023_v24.py --painting "${{ matrix.painting }}" --out output/artvision_v24
+      - name: Validate actual MP4 and cover
+        id: validate
+        if: ${{ steps.render.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="output/artvision_v24/ARTVISION_CINEMA_V24_${{ matrix.painting }}_FINALE.mp4"
+          cover="output/artvision_v24/ARTVISION_CINEMA_V24_${{ matrix.painting }}_COPERTINA.jpg"
+          test -s "$file"
+          test -s "$cover"
+          ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_type,codec_name,width,height -of json "$file" | tee output/artvision_v24/FFPROBE_V24.json
+          ffmpeg -hide_banner -loglevel error -xerror -i "$file" -f null - 
+          sha256sum "$file" > output/artvision_v24/MASTER_SHA256.txt
+          python - "$file" <<'PY'
+          import json,subprocess,sys
+          d=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-show_entries','stream=codec_type,width,height','-of','json',sys.argv[1]]))
+          assert float(d['format']['duration']) >= 40, d
+          assert any(s.get('codec_type')=='video' and s.get('width')==1080 and s.get('height')==1920 for s in d['streams']), d
+          assert any(s.get('codec_type')=='audio' for s in d['streams']), d
+          PY
+      - name: Archive original, cover, recipe and frame checks
+        uses: actions/upload-artifact@v4
+        id: archive
+        if: always()
+        with:
+          name: ArtVision-Cinema-V24-${{ matrix.painting }}
+          path: output/artvision_v24/
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Production report
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          RENDER_STATE: ${{ steps.render.outcome }}
+          VALIDATE_STATE: ${{ steps.validate.outcome }}
+          ARTIFACT_STATE: ${{ steps.archive.outcome }}
+          PAINTING: ${{ matrix.painting }}
+        with:
+          script: |
+            const fs=require('fs');
+            const dir='output/artvision_v24';
+            const p=process.env.PAINTING;
+            const fn=`ARTVISION_CINEMA_V24_${p}_FINALE.mp4`;
+            const file=`${dir}/${fn}`;
+            const bytes=fs.existsSync(file)?fs.statSync(file).size:null;
+            const digest=fs.existsSync(`${dir}/MASTER_SHA256.txt`)?fs.readFileSync(`${dir}/MASTER_SHA256.txt`,'utf8').trim():'not verified';
+            const clean=process.env.RENDER_STATE==='success' && process.env.VALIDATE_STATE==='success' && process.env.ARTIFACT_STATE==='success';
+            const run=`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body=`ArtVision Cinema V24 **${p}** — ${clean?'RENDER + TECHNICAL VALIDATION OK':'NOT COMPLETE'}\n\nMP4: ${fn}\nSize: ${bytes??'unknown'} bytes\nSHA256: ${digest}\nSteps: render=${process.env.RENDER_STATE}; validation=${process.env.VALIDATE_STATE}; artifact=${process.env.ARTIFACT_STATE}\nActions + artifact: ${run}\nVisual review remains required before social publishing.`;
+            await github.rest.issues.createComment({owner:context.repo.owner,repo:context.repo.repo,issue_number:24,body});
