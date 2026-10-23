@@ -1,0 +1,42 @@
+name: ArtVision Cinema V23 - Five paintings
+on:
+  push:
+    branches: [main]
+    paths: ['scripts/artvision_five_20261023.py']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    name: Cinema V23 ${{ matrix.painting }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        painting: [goya, fuseli, bocklin, waterhouse, friedrich]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source renderer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check pillow numpy requests
+      - name: Render original Cinema V23 film
+        run: python scripts/artvision_five_20261023.py --painting "${{ matrix.painting }}" --out output/artvision_v23
+      - name: Check video streams
+        run: |
+          test -f output/artvision_v23/*.mp4
+          for f in output/artvision_v23/*.mp4; do
+            ffprobe -v error -show_entries format=duration -show_entries stream=codec_type,codec_name,width,height -of json "$f"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtVision-Cinema-V23-${{ matrix.painting }}
+          path: output/artvision_v23/
+          if-no-files-found: warn
+          retention-days: 30
