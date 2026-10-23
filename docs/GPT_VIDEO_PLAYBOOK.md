@@ -1,5 +1,8 @@
 # Playbook operativo V13 - dal messaggio al filmato
 
+> **Norma permanente V25 (23/10/2026):** leggere [ARTVISION_CONTRATTO_PERMANENTE_V25.md](ARTVISION_CONTRATTO_PERMANENTE_V25.md) PRIMA dei passi qui sotto. Per ogni NUOVO Cinema senza voce il gate `src/artvision_contract_gate_v25.py` deve passare in preflight e in finale, con copertina serie/inglese, reale regia V6/V23, 0/1/3/5/7 verificati, post Facebook/IG/TikTok/YouTube, diritti, hash/ricetta e istruzioni replica. La scelta estetica resta individuale e va vista/ascoltata, non automatizzata a punteggi. Nessuna consegna di un semplice piano al posto del video.
+
+
 ## Obiettivo
 
 Ogni richiesta di Gianluca parte dal lavoro approvato. Questo file è una procedura
