@@ -1,5 +1,7 @@
 # Playbook operativo V13 - dal messaggio al filmato
 
+> **Norma editoriale V28:** per TUTTI i nuovi film, i post pubblici raccontano **una storia vera o una riflessione interessante sull'opera**, non le tecniche di editing. Consultare [lo standard editoriale](ARTVISION_EDITORIAL_POST_STANDARD_V28.md), documentare un fatto verificabile e controllare che ogni parola sembri scritta da un appassionato, non dall'AI. Niente "in questo video ho scelto...", hashtag seriali o domande inventate. Attribuzioni/diritti in fondo in modo sobrio; istruzioni nei file privati di produzione.
+
 > **Norma permanente V25 (23/10/2026):** leggere [ARTVISION_CONTRATTO_PERMANENTE_V25.md](ARTVISION_CONTRATTO_PERMANENTE_V25.md) PRIMA dei passi qui sotto. Per ogni NUOVO Cinema senza voce il gate `src/artvision_contract_gate_v25.py` deve passare in preflight e in finale, con copertina serie/inglese, reale regia V6/V23, 0/1/3/5/7 verificati, post Facebook/IG/TikTok/YouTube, diritti, hash/ricetta e istruzioni replica. La scelta estetica resta individuale e va vista/ascoltata, non automatizzata a punteggi. Nessuna consegna di un semplice piano al posto del video.
 
 
