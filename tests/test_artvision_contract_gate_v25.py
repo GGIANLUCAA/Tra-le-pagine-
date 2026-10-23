@@ -62,6 +62,22 @@ class ContractTests(unittest.TestCase):
     def test_valid_structural_preflight(self):
         self.assertEqual(gate.check_preflight(sample()),[])
 
+    def test_scaffold_from_brief_never_approves(self):
+        with tempfile.TemporaryDirectory() as td:
+            manifest = gate.scaffold_from_brief(
+                {"project_id":"artvision-test-2468","artist":"Edvard Munch",
+                 "artwork_title_en":"The Scream"}, Path(td))
+            parsed=json.loads(manifest.read_text(encoding="utf-8"))
+            self.assertEqual(parsed["artwork"]["artist"],"EDVARD MUNCH")
+            self.assertEqual(parsed["artwork"]["title_en"],"The Scream")
+            self.assertEqual(parsed["artwork"]["title_language"],"en")
+            self.assertTrue(gate.check_preflight(parsed),
+                "Brief scaffold must remain incomplete until the agent verifies rights, music and scenes.")
+            manifest.write_text('{"custom":"do not overwrite"}',encoding="utf-8")
+            gate.scaffold_from_brief({"artist":"Other artist"},Path(td))
+            self.assertEqual(json.loads(manifest.read_text(encoding="utf-8"))["custom"],
+                             "do not overwrite")
+
     def test_template_is_draft_not_approval(self):
         draft=json.loads((ROOT/"templates"/"ARTVISION_CONTRACT_V25.json").read_text(encoding="utf-8"))
         self.assertTrue(gate.check_preflight(draft))
