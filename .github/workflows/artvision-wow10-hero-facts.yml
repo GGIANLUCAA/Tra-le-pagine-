@@ -1,0 +1,26 @@
+name: "ArtVision WOW10 - five artwork fact check source"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow10-hero-facts.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Read original Cleveland metadata for factual V28 stories
+        run: |
+          python - <<'PY'
+          import urllib.request,urllib.parse,json
+          H={'User-Agent':'ArtVisionTraLePagine/8.0 (museum documentation study)'}
+          exhibits={'durer':'1932.313','kyosai':'1985.268','church':'1969.52','rousseau':'1949.186','rackham':'1954.652'}
+          for k,accession in exhibits.items():
+           url='https://openaccess-api.clevelandart.org/api/artworks/?'+urllib.parse.urlencode({'accession_number':accession})
+           data=json.load(urllib.request.urlopen(urllib.request.Request(url,headers=H),timeout=23))['data'][0]
+           print('MASTER',k,'ACC',data.get('accession_number'),'RIGHTS',data.get('share_license_status'))
+           for p in ('title','date_text','technique','description','wall_description','tombstone','creditline','url'):
+            print('FACT',p,str(data.get(p))[:1850])
+          PY
