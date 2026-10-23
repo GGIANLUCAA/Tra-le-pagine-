@@ -15,6 +15,7 @@ import re
 import shutil
 import subprocess
 import sys
+import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = ROOT / "config" / "artvision_contract_v25.json"
@@ -303,11 +304,49 @@ def check_final(data, base: Path):
     return errors, info
 
 
+def pack_delivery(manifest: Path, data, info):
+    """Assemble finished media with captions/replication files after successful final gate.
+
+    The caller must enforce final validation. Never overwrite prior bundles.
+    Does not send or publish anything.
+    """
+    root = manifest.parent
+    slug = re.sub(r"[^a-z0-9_-]+","-",str(data["video_id"]).lower()).strip("-")[:72]
+    if not slug:
+        raise ValueError("Video ID non valido per pacchetto")
+    fingerprint = str(info["video_sha256"])[:12]
+    dest = root / f"ARTVISION_{slug}_{fingerprint}_PACCHETTO_CONSEGNA.zip"
+    if dest.exists():
+        return dest
+    files = [(manifest,manifest.name)]
+    for key, filename in FIELDS.items():
+        files.append((root / filename, filename))
+    frames=root/"QA_V25"
+    for second in REVIEW_SECONDS:
+        files.append((frames / f"FRAME_{second:02d}.jpg",
+                      f"QA_V25/FRAME_{second:02d}.jpg"))
+    for src, _ in files:
+        if not src.is_file() or src.stat().st_size <= 0:
+            raise FileNotFoundError("File del pacchetto mancante: "+str(src))
+    try:
+        with zipfile.ZipFile(dest,"x") as out:
+            for src,name in files:
+                compress=(zipfile.ZIP_STORED if src.suffix.lower() in
+                          (".mp4",".jpg",".jpeg",".png",".mp3",".wav") else zipfile.ZIP_DEFLATED)
+                out.write(src,arcname=name,compress_type=compress)
+    except Exception:
+        if dest.exists():
+            dest.unlink()
+        raise
+    return dest
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest",required=True)
     parser.add_argument("--stage",choices=("preflight","final"),required=True)
     parser.add_argument("--out",default=None)
+    parser.add_argument("--bundle",action="store_true",help="Create social/replication ZIP only after final gate passes.")
     args=parser.parse_args(argv)
     manifest=Path(args.manifest).resolve()
     try:
@@ -317,6 +356,14 @@ def main(argv=None):
             info={}
         else:
             errors,info=check_final(data,manifest.parent)
+        if args.bundle:
+            if args.stage != "final":
+                errors.append("Il pacchetto di consegna si crea soltanto con --stage final.")
+            elif not errors:
+                try:
+                    info["delivery_bundle"] = str(pack_delivery(manifest,data,info))
+                except (OSError,ValueError,zipfile.BadZipFile) as exc:
+                    errors.append("Creazione ZIP di consegna fallita: " + str(exc))
         report={"schema":"artvision-v25-gate-report","stage":args.stage,
                 "status":"BLOCKED" if errors else "PASS_DOCUMENTAL_REVIEW_REQUIRED",
                 "errors":errors,"info":info,
