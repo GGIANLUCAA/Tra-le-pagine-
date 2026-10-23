@@ -2,7 +2,7 @@
 *23 ottobre 2026 · integrazione additiva al Creative Director V21*
 
 ## Scopo reale
-NON applicare 111 tecniche a ogni MP4. Il catalogo \`config/cinematic_techniques_v23.json\`
+NON applicare 117 tecniche a ogni MP4. Il catalogo \`config/cinematic_techniques_v23.json\`
 contiene strumenti di riflessione con **intenzione, applicazione, situazione d'uso
 ed errore da evitare**. \`src/cinematic_director_v23.py\` sceglie fino a otto candidati
 in base al formato e agli indizi del brief; **non monta nulla e non certifica
