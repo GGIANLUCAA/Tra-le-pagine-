@@ -66,6 +66,10 @@ base.fetch=fetch_authentic
 
 def genuine_posts(work,music,folder):
  """V28 captions about real artwork and museum facts; NO rendering talk."""
+ entry=editorial.config()["entries"][work["editorial_key"]]
+ credits="\\n".join(entry["credit_lines"])
+ if music["title"].casefold() not in credits.casefold() or music["page"] not in credits:
+  raise RuntimeError("MUSIC_CREDIT_MISMATCH: social texts must credit the exact encoded recording "+music["title"])
  written=editorial.write_posts(work["editorial_key"],folder,overwrite=True)
  errors=editorial.validate_folder(folder)
  if errors:raise RuntimeError("V28_EDITORIAL_BLOCK: "+"; ".join(errors))
