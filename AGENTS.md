@@ -4,6 +4,18 @@ Questo repository è lo studio video di Gianluca. Leggi questo file **prima di
 proporre o produrre un filmato**. Non ricostruire il sistema da zero a ogni chat.
 Le istruzioni esplicite dell'utente nella sessione hanno precedenza.
 
+## CONTRATTI VINCOLANTI PER OGNI VIDEO NUOVO — V25 + POST V28
+
+**PRIMA di realizzare qualunque filmato, in OGNI nuova chat che accede al repository, leggi in questo ordine:**
+1. [Contratto permanente ArtVision V25](docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md): identità visiva invariata, Gold Master Cinema V6, inglese solo per titoli opere / nome artista nella grafica, movimenti calibrati, primi 0/1/3/5/7s, musica e licenze, QA artistico, MP4 e pacchetto finale effettivo.
+2. [Standard editoriale post V28](docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md): la descrizione social è una piccola storia vera, un fatto museale o una lettura umana interessante. **Mai** raccontare in post come è stato montato, riprodotto o generato il video. Vietati slogan artificiali e domande fuori luogo. Ricerca fonti verificabili, attribuzioni e 2–4 hashtag pertinenti. Diversifica tra opere e piattaforme.
+3. Preset reale approvato del singolo format, ad esempio `modules/artvision/APPROVED_PRESET.json` e `modules/artvision/IDENTITA_VISIVA_FISSA_V6.json` per Cinema; poi manuali V17/V19/V20/V21/V23.
+
+Il post pubblico NON è un foglio di lavorazione: i testi tecnici stanno solo in `TECNICHE_REGIA.md`, `VIDEO_RECIPE_V13.json` e `ISTRUZIONI_REPLICA.md`. Per ogni episodio salva `POST_EDITORIAL_RESEARCH.json`, `POST_FACEBOOK.txt`, `POST_INSTAGRAM.txt`, `POST_TIKTOK.txt`, `POST_YOUTUBE.txt`. Esegui `python src/artvision_editorial_post_v28.py --episode <chiave_editoriale> --out <cartella_episodio>` solamente dopo aver documentato e verificato la nuova voce di `config/artvision_editorial_v28.json`. Mai fabbricare un testo generico quando una voce manca. Il contratto V25 integra il gate V28 e BLOCCA i post irregolari, ma i test automatici non certificano scrittura umana o veridicità delle fonti; rileggi sempre.
+
+**Non sovrascrivere** master, copertine e post personalizzati, né elementi nascosti/eliminati dall'utente. Anche un video tecnicamente valido richiede valutazione artistica prima di diventare nuovo Gold Master. Nessun servizio a pagamento o pubblicazione social non autorizzata.
+
+
 ## Biblioteca cinematografica permanente V23 — per OGNI NUOVO video
 
 **Prima di decidere movimenti o montaggio**, consultare
