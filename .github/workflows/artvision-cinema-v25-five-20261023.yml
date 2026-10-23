@@ -5,6 +5,7 @@ on:
     paths:
       - scripts/artvision_cinema_v25_five_20261023.py
       - config/artvision_cinema_v25_five_20261023.json
+      - .github/workflows/artvision-cinema-v25-five-20261023.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -29,9 +30,9 @@ jobs:
           python-version: '3.11'
       - name: Free rendering dependencies
         run: |
-          command -v ffmpeg
-          command -v ffprobe
-          test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe || sudo apt-get install -y -qq ffmpeg
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf || sudo apt-get install -y -qq fonts-dejavu-core
           python -m pip install --disable-pip-version-check 'Pillow>=10,<14' requests
       - name: Render actual artwork film and full social pack
         id: render
