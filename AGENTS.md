@@ -4,6 +4,25 @@ Questo repository è lo studio video di Gianluca. Leggi questo file **prima di
 proporre o produrre un filmato**. Non ricostruire il sistema da zero a ogni chat.
 Le istruzioni esplicite dell'utente nella sessione hanno precedenza.
 
+## Biblioteca cinematografica permanente V23 — per OGNI NUOVO video
+
+**Prima di decidere movimenti o montaggio**, consultare
+`docs/REGIA_CINEMATOGRAFICA_V23.md` e `config/cinematic_techniques_v23.json`.
+La libreria propone 111 tecniche, ma ogni episodio sceglie **poche tecniche motivate**
+(3–8), non le applica tutte. `src/cinematic_director_v23.py` genera
+`CINEMATOGRAPHY_PLAN_V23.json` e `CINEMATOGRAPHY_NOTE_V23.md` insieme al
+pacchetto V21: la selezione è integrata automaticamente in
+`src/creative_director_v21.py`, non richiede servizi nuovi né nuove API.
+Non è un motore di rendering e non certifica l'estetica: il regista deve
+vedere il master, ascoltare la voce e motivare dettagli, tagli, musica.
+Per Critico privilegiare camera FERMA con pochi gesti lentissimi, per Cinema
+rispettare Gold Master e struttura del brano, per libri seguire l'azione
+narrata, per Visual Music la sincronizzazione su note reali.
+Vietate le oscillazioni a pendolo (feedback Bosch V21): anche un movimento
+tecnicamente regolare può provocare nausea. Togliere i moti gratuiti,
+non sostituirli con tagli frenetici. Finale contestuale, mai domanda a caso.
+Nessuna modifica ai vecchi master e nessuna pubblicazione automatica.
+
 ## Standard creativo permanente V21 — per OGNI video NUOVO
 
 **PRIMA di scrivere scene o lanciare un render** leggere
