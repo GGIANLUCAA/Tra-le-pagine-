@@ -8,7 +8,7 @@ Le istruzioni esplicite dell'utente nella sessione hanno precedenza.
 
 **Prima di decidere movimenti o montaggio**, consultare
 `docs/REGIA_CINEMATOGRAFICA_V23.md` e `config/cinematic_techniques_v23.json`.
-La libreria propone 111 tecniche, ma ogni episodio sceglie **poche tecniche motivate**
+La libreria propone 117 tecniche, ma ogni episodio sceglie **poche tecniche motivate**
 (3–8), non le applica tutte. `src/cinematic_director_v23.py` genera
 `CINEMATOGRAPHY_PLAN_V23.json` e `CINEMATOGRAPHY_NOTE_V23.md` insieme al
 pacchetto V21: la selezione è integrata automaticamente in
