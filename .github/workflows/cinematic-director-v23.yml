@@ -1,0 +1,54 @@
+name: "ArtVision Cinema V23 — libreria regia, tests e piano Android"
+on:
+  pull_request:
+    paths:
+      - "src/cinematic_director_v23.py"
+      - "src/creative_director_v21.py"
+      - "config/cinematic_techniques_v23.json"
+      - "tests/test_cinematic_director_v23.py"
+      - ".github/workflows/cinematic-director-v23.yml"
+  workflow_dispatch:
+    inputs:
+      brief_path:
+        description: "JSON brief esistente nel repository, per esempio modules/artvision_critico/production_series/fuseli_incubo_v22.json"
+        required: false
+        default: "modules/artvision_critico/production_series/fuseli_incubo_v22.json"
+        type: string
+permissions:
+  contents: read
+jobs:
+  cinema-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SELECTED_BRIEF: ${{ inputs.brief_path }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "111 tecniche, selezione diversa per genere, controlli no-nausea"
+        run: |
+          python -m unittest discover -s tests -p 'test_cinematic_director_v23.py' -v
+          python -m py_compile src/cinematic_director_v23.py src/creative_director_v21.py
+      - name: "Crea il piano regia da un episodio esistente, solo workflow manuale"
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          python - <<'PY'
+          import os, pathlib,subprocess
+          root=pathlib.Path.cwd().resolve()
+          val=os.environ.get("SELECTED_BRIEF","")
+          choice=(root/val).resolve()
+          if not choice.is_relative_to(root) or choice.suffix!=".json" or not choice.is_file() or choice.is_symlink():
+            raise ValueError("Brief JSON locale inesistente/non consentito")
+          if not (choice.relative_to(root).parts[0] in ("modules","episodes","queue","config")):
+            raise ValueError("Selezionare un JSON di progetto, non file arbitrari")
+          subprocess.run(["python","src/cinematic_director_v23.py","--brief",str(choice),"--out","output/cinematic-director-v23"],check=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          name: CINEMATIC_PLAN_V23_${{ github.run_id }}
+          path: output/cinematic-director-v23/
+          retention-days: 14
+          if-no-files-found: error
