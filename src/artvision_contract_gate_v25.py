@@ -288,6 +288,12 @@ def check_final(data, base: Path):
                 errors.append(f"Post {key}: manca credito musicale al compositore.")
             if not any(token in content.casefold() for token in ("fonte:", "fonti:", "source:", "sources:")):
                 errors.append(f"Post {key}: manca sezione fonti verificabili.")
+    # All NEW V28 episodes must pass objective editorial QA (the narrative must
+    # be about the ARTWORK, not camera moves or automated production).
+    if data.get("editorial_standard") == "artvision_editorial_v28":
+        from artvision_editorial_post_v28 import validate_folder
+        for problem in validate_folder(root):
+            errors.append("Editorial V28: "+problem)
     for key in ("recipe","music_manifest"):
         if key in paths:
             try:
@@ -329,6 +335,8 @@ def pack_delivery(manifest: Path, data, info):
     files = [(manifest,manifest.name)]
     for key, filename in FIELDS.items():
         files.append((root / filename, filename))
+    if data.get("editorial_standard") == "artvision_editorial_v28":
+        files.append((root / "POST_EDITORIAL_RESEARCH.json", "POST_EDITORIAL_RESEARCH.json"))
     frames=root/"QA_V25"
     for second in REVIEW_SECONDS:
         files.append((frames / f"FRAME_{second:02d}.jpg",
