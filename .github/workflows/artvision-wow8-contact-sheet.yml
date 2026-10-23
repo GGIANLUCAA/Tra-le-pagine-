@@ -1,0 +1,44 @@
+name: "ArtVision WOW8 - visual art storyboard review sheet"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow8-contact-sheet.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -q Pillow
+      - name: Create authentic original comparison to plan camera
+        run: |
+          python - <<'PY'
+          import urllib.request, pathlib, io
+          from PIL import Image,ImageOps,ImageDraw,ImageFont
+          ids={'goya':'1922.638','delacroix':'1962.109','bierstadt':'1949.541','hokusai':'1916.1137','hiroshige':'1985.312'}
+          out=pathlib.Path('review_art');out.mkdir(exist_ok=True)
+          board=Image.new('RGB',(1500,640),(24,26,30));dr=ImageDraw.Draw(board)
+          for i,(name,key) in enumerate(ids.items()):
+           url=f'https://openaccess-cdn.clevelandart.org/{key}/{key}_print.jpg'
+           req=urllib.request.Request(url,headers={'User-Agent':'ArtVisionResearch/6'})
+           with urllib.request.urlopen(req,timeout=35) as f:data=f.read(12_000_000)
+           with Image.open(io.BytesIO(data)) as im:
+            im.load();a=ImageOps.exif_transpose(im).convert('RGB')
+           a.thumbnail((280,580),Image.Resampling.LANCZOS)
+           a.save(out/(name+'_preview.jpg'),quality=91)
+           x=i*300+(300-a.width)//2
+           board.paste(a,(x,20))
+           dr.text((i*300+20,612),f'{name} - {key}',fill='white')
+           print('SOURCE OK',name,key,a.size,flush=True)
+          board.save(out/'WOW8_FIVE_ARTWORKS_CONTACT.jpg',quality=92)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WOW8-ARTWORK-PREFLIGHT
+          path: review_art/
+          retention-days: 3
