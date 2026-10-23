@@ -21,8 +21,8 @@ TRACK_PAGE="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100
 LICENSE="https://creativecommons.org/licenses/by/4.0/"
 FONT1="/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
 FONT2="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-# Every decision relates to a REAL motif: gaze / feathers / clasped hands / sky / exile.
-# x,y normalised to the whole canvas, not to a random crop; 15 distinct editorial shots.
+# Each focus is a real feature of the painting: blindfold, flower sprig, wing, two boys, wooden stretcher.
+# Coordinates x,y are relative to the authentic 1903 image; 18 distinct editorial shots.
 STORY=[
  ("portrait",.430,.280,1.60,3.70,"locked","Open on the angel's blindfold: why can this angel not see?"),
  ("portrait",.792,.220,1.48,3.04,"slow_pull","The boy turns toward the viewer; only one look can be returned"),
@@ -354,12 +354,14 @@ def main():
         "-ss",cfg.offset,"-i",score,"-map","0:v:0","-map","1:a:0",
         "-c:v","copy","-af",f"aresample=48000,volume=.84,afade=t=in:st=0:d=0.45,afade=t=out:st={max(0,duration-3.3):.3f}:d=3.3",
         "-c:a","aac","-b:a","192k","-t",duration,"-movflags","+faststart",output)
-    # Social listening QA: original excerpt measured -28.5 LUFS; gentle +6dB lift
-    # reaches approximately -22.5 LUFS with a safe true peak below -4dBFS.
-    quiet=tmp/"music_quiet_original_mix.mp4"
+    # Analyze and adapt this recording independently: never inherit another
+    # film's gain measurements. Controlled social loudness target and true peak,
+    # preserving soft passages as far as possible.
+    quiet=tmp/"music_original_mix_before_loudness.mp4"
     output.replace(quiet)
     run("ffmpeg","-hide_banner","-loglevel","error","-y","-i",quiet,
-        "-map","0:v:0","-map","0:a:0","-c:v","copy","-af","volume=6dB",
+        "-map","0:v:0","-map","0:a:0","-c:v","copy",
+        "-af","loudnorm=I=-19:TP=-2:LRA=11",
         "-c:a","aac","-b:a","192k","-movflags","+faststart",output)
     quiet.unlink(missing_ok=True)
     facts=probe(output)
