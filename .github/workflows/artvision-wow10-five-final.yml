@@ -1,0 +1,120 @@
+name: "ArtVision WOW10 - five new verified cinematic shorts"
+run-name: "ArtVision Cinema WOW10 - Durer Kyosai Church Rousseau Rackham"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow10-five-final.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  short-film:
+    name: "ArtVision WOW10 MP4 - ${{ matrix.artist }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        artist: [durer, kyosai, church, rousseau, rackham]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Reuse installed free dependencies and verify director
+        run: |
+          set -e
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe || sudo apt-get install -y -qq ffmpeg
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf || sudo apt-get install -y -qq fonts-dejavu-core
+          python - <<'PY'
+          import importlib.util,subprocess
+          missing=[package for package,mod in [('Pillow','PIL'),('numpy','numpy'),('requests','requests')] if importlib.util.find_spec(mod) is None]
+          if missing:subprocess.run(['python','-m','pip','install','--disable-pip-version-check']+missing,check=True,timeout=110)
+          else:print('All necessary codecs and photo libraries already available')
+          PY
+          python -m py_compile scripts/artvision_wow10_five_v25_v28.py
+      - name: Ensure authentic artist, music and independently written V28 posts
+        env:
+          ARTIST: "${{ matrix.artist }}"
+        run: |
+          python - <<'PY'
+          import json,sys,os
+          sys.path.insert(0,'src')
+          import artvision_editorial_post_v28 as e
+          slug=os.environ['ARTIST']
+          c=json.load(open('config/artvision_wow10_five_v25.json'))
+          post=json.load(open('config/artvision_wow10_editorial_v28.json'))['entries'][slug]
+          w=c['works'][slug]
+          track=c['music'][w['music']]
+          errors=e.validate_entry(slug,post)
+          assert not errors,errors
+          credits=' '.join(post['credit_lines']).casefold()
+          assert track['title'].casefold() in credits and track['page'] in credits
+          assert 45<=w['duration']<=75 and len(w['scenes'])>=12
+          assert abs(sum(s['seconds'] for s in w['scenes'])-w['duration'])<.11
+          assert all(s['source_id'] in w['assets'] for s in w['scenes'])
+          assert w['scenes'][0]['seconds']>=3.7
+          print('PRIMARY MUSEUM SOURCES + RESEARCHED HUMAN V28 COPY PASS',slug,len(w['assets']),'authentic artworks')
+          PY
+      - name: Film five wholly separate masters with Cinema V6 + authentic score
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python scripts/artvision_wow10_five_v25_v28.py --painting "${{ matrix.artist }}" --out output/artvision-wow10
+      - name: Independent H264, AAC, authentic source series, rights and full archive QA
+        env:
+          ARTIST: "${{ matrix.artist }}"
+        run: |
+          set -euo pipefail
+          slug="${{ matrix.artist }}"
+          dir="output/artvision-wow10/$slug"
+          test -s "$dir/VIDEO_MASTER.mp4"
+          test -s "$dir/COPERTINA.jpg"
+          test -s "$dir/WOW10_DELIVERY_REPORT.json"
+          test -s "$dir/QA_CONTACT_SHEET.jpg"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$dir/VIDEO_MASTER.mp4" -f null -
+          python src/artvision_editorial_post_v28.py --validate-folder "$dir"
+          python - <<'PY'
+          import os,json,pathlib,zipfile,hashlib,subprocess
+          slug=os.environ['ARTIST'];d=pathlib.Path('output/artvision-wow10')/slug
+          movie=d/'VIDEO_MASTER.mp4'
+          spec=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(movie)]))
+          video=[x for x in spec['streams'] if x['codec_type']=='video']
+          audio=[x for x in spec['streams'] if x['codec_type']=='audio']
+          assert len(video)==1 and video[0]['codec_name']=='h264' and (video[0]['width'],video[0]['height'])==(1080,1920)
+          assert len(audio)==1 and audio[0]['codec_name']=='aac'
+          assert not any(x['codec_type']=='subtitle' for x in spec['streams'])
+          c=json.load(open('config/artvision_wow10_five_v25.json'))['works'][slug]
+          assert abs(float(spec['format']['duration'])-c['duration'])<1.5
+          report=json.load(open(d/'WOW10_DELIVERY_REPORT.json'))
+          assert report['master_sha256']==hashlib.sha256(movie.read_bytes()).hexdigest()
+          assert report['visual_originals']==len(c['assets'])
+          assert report['shots']==len(c['scenes']) and report['publication']=='NOT_PUBLISHED'
+          z=d.parent/f'ARTVISION_WOW10_{slug.upper()}_COMPLETE.zip'
+          assert z.is_file() and z.stat().st_size>4000000
+          with zipfile.ZipFile(z) as pack:
+            assert pack.testzip() is None
+            mandatory={'VIDEO_MASTER.mp4','COPERTINA.jpg','POST_FACEBOOK.txt','POST_INSTAGRAM.txt',
+             'POST_TIKTOK.txt','POST_YOUTUBE.txt','POST_EDITORIAL_RESEARCH.json',
+             'VIDEO_RECIPE_V13.json','ARTVISION_CONTRACT_V25.json','MUSIC_RELEASE_V20.json',
+             'SOURCES_AND_RIGHTS.md','COLLECTION_SOURCES_CC0.json','QA_CONTACT_SHEET.jpg',
+             'WOW10_DELIVERY_REPORT.json','SOURCE_PREPARATION.json'}
+            assert mandatory.issubset(set(pack.namelist())),mandatory-set(pack.namelist())
+          print('WOW10 VERIFIED REAL MP4',slug,float(spec['format']['duration']),movie.stat().st_size,'original art sources',report['visual_originals'])
+          PY
+      - name: Upload independently verified film and reusable studio package for Android
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_WOW10_${{ matrix.artist }}_FINALE"
+          path: |
+            output/artvision-wow10/${{ matrix.artist }}/VIDEO_MASTER.mp4
+            output/artvision-wow10/${{ matrix.artist }}/COPERTINA.jpg
+            output/artvision-wow10/${{ matrix.artist }}/QA_CONTACT_SHEET.jpg
+            output/artvision-wow10/${{ matrix.artist }}/POST_FACEBOOK.txt
+            output/artvision-wow10/${{ matrix.artist }}/WOW10_DELIVERY_REPORT.json
+            output/artvision-wow10/ARTVISION_WOW10_${{ matrix.artist }}_COMPLETE.zip
+          if-no-files-found: error
+          retention-days: 60
