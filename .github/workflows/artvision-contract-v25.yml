@@ -28,6 +28,7 @@ on:
         options: [preflight, final]
 permissions:
   contents: read
+  issues: write
 jobs:
   contract:
     runs-on: ubuntu-latest
@@ -38,6 +39,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Unittests — no API / no rendering / no cost
+        id: tests
         run: |
           python -m unittest discover -s tests -p "test_artvision_contract_gate_v25.py" -v
       - name: Verify actual manifest if provided (fail closed)
@@ -48,6 +50,17 @@ jobs:
         run: |
           set -euo pipefail
           python src/artvision_contract_gate_v25.py --manifest "$MANIFEST" --stage "$STAGE" --out output/artvision_v25_report.json
+      - name: Record objective test outcome in issue 25
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          CHECK_RESULT: ${{ steps.tests.outcome }}
+        with:
+          script: |
+            const result = process.env.CHECK_RESULT;
+            const url = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `ArtVision V25 schema/contract unit tests: **${result==='success'?'PASS':'NOT PASSED'}**. Run: ${url}. This reports only program behavior, not artistic acceptance or licensing clearance.`;
+            await github.rest.issues.createComment({owner:context.repo.owner,repo:context.repo.repo,issue_number:25,body});
       - uses: actions/upload-artifact@v4
         if: always() && github.event_name == 'workflow_dispatch' && inputs.manifest != ''
         with:
