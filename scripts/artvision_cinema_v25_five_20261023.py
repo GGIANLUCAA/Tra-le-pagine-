@@ -420,7 +420,7 @@ def produce(slug,w,config,out):
             "technical_checks":"ffprobe + full ffmpeg decode","social_pack":True}
     (ep/"VERIFICA_TECNICA.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     # ZIP contains source art and licensed original recording, plus full recipe and social copy.
-    pack=out/f"ARTVISION_V25_{slug.upper()}_PACCHETTO.zip"
+    pack=out/f"ARTVISION_V25_{slug}_PACCHETTO.zip"
     import zipfile
     with zipfile.ZipFile(pack,"w") as z:
         for p in ep.rglob("*"):
