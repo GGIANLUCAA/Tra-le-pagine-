@@ -31,6 +31,9 @@ NON rinominare la qualità “V25”: V25 è il **contratto**, Cinema V6 resta G
 ## Musica e diritti V20
 Musica strumentale emotivamente pertinente, intro/climax/chiusura allineati all'audio REALE. Preferire registrazioni con diritti controllati: fonte, autore, LICENZA DELLA REGISTRAZIONE, uso social/commerciale, link e data di verifica. Il fatto che una composizione sia nel pubblico dominio NON rende automaticamente libera la registrazione. Eventuale musica selezionata nell'app Meta non va ri-esportata su altri social. Per visual/fonti museali conservare URL, licenze e condizioni d'uso. Nessuna licenza inventata o disclaimer sostitutivo.
 
+## STANDARD EDITORIALE VINCOLANTE V28 (23/10/2026): Didascalie vere, NON istruzioni di produzione
+Leggi sempre [ARTVISION_EDITORIAL_POST_STANDARD_V28.md](ARTVISION_EDITORIAL_POST_STANDARD_V28.md) **prima di scrivere o esportare qualunque POST per i nuovi video**. Scopo: una breve storia o un dettaglio culturale verificato, naturale, umano e adatto al quadro, NON la descrizione della regia, degli zoom, del montaggio, della camera, dell'intelligenza artificiale, delle ricette o dei metodi produttivi. Niente frasi automatiche, engagement bait, domande fuori luogo, hashtag eccessivi. Uno o più fatti documentati da musei o fonti primarie, distinguendo interpretazione da certezza. Pubblica solo il testo editoriale e il piè obbligatorio dei diritti/crediti. Tutta la metodologia resta nei file della ricetta. Ogni nuovo progetto deve creare un `POST_EDITORIAL_RESEARCH.json`, passare il gate V28 e ricevere revisione letteraria. Mai sovrascrivere i post personalizzati già modificati dall'utente.
+
 ## Il pacchetto di consegna è OBBLIGATORIO e riproducibile
 Per ogni nuovo video, nella cartella dell'episodio (nomi coerenti, senza sovrascrivere approvati):
 1. `VIDEO_MASTER.mp4` reale, ascoltato e visionato; `COPERTINA.jpg` reale, confrontata con la serie.
