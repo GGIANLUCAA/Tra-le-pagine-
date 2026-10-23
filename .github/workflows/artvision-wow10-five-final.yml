@@ -51,7 +51,7 @@ jobs:
           errors=e.validate_entry(slug,post)
           assert not errors,errors
           credits=' '.join(post['credit_lines']).casefold()
-          assert track['title'].casefold() in credits and track['page'] in credits
+          assert track['title'].casefold() in credits and track['page'].casefold() in credits
           assert 45<=w['duration']<=75 and len(w['scenes'])>=12
           assert abs(sum(s['seconds'] for s in w['scenes'])-w['duration'])<.11
           assert all(s['source_id'] in w['assets'] for s in w['scenes'])
