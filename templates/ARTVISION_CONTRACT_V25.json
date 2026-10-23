@@ -1,0 +1,260 @@
+{
+  "schema": "artvision-release-contract-v25",
+  "video_id": "REPLACE_UNIQUE_ID",
+  "format": "artvision_cinema",
+  "approved_baseline": "cinema_v6",
+  "artwork": {
+    "artist": "REPLACE_ARTIST",
+    "title_en": "REPLACE_TITLE_EN",
+    "title_language": "en",
+    "identity_source": "REPLACE_MUSEUM_SOURCE_URL"
+  },
+  "opening": {
+    "identity_preset": "modules/artvision/IDENTITA_VISIVA_FISSA_V6.json",
+    "artist_text": "REPLACE_ARTIST",
+    "composer": "REPLACE_COMPOSER",
+    "music_credit_text": "MUSIC BY REPLACE_COMPOSER"
+  },
+  "cover": {
+    "identity_family": "cinema_v6",
+    "title_en": "REPLACE_TITLE_EN",
+    "artist": "REPLACE_ARTIST",
+    "language": "en",
+    "existing_design_unchanged": true,
+    "composition_note": "Use same font, palette and signed visual family as approved V6; artwork title only on the new episode cover."
+  },
+  "on_screen_text": [
+    {
+      "role": "opening_artist",
+      "text": "REPLACE_ARTIST"
+    },
+    {
+      "role": "opening_music",
+      "text": "MUSIC BY REPLACE_COMPOSER"
+    }
+  ],
+  "voice": false,
+  "subtitles": false,
+  "first_seven_seconds": [
+    {
+      "second": 0,
+      "what_visible": "REPLACE_VISIBLE_REAL_ARTWORK_DETAIL",
+      "why": "REPLACE_EDITORIAL_PURPOSE_OF_THIS_SECOND"
+    },
+    {
+      "second": 1,
+      "what_visible": "REPLACE_VISIBLE_REAL_ARTWORK_DETAIL",
+      "why": "REPLACE_EDITORIAL_PURPOSE_OF_THIS_SECOND"
+    },
+    {
+      "second": 3,
+      "what_visible": "REPLACE_VISIBLE_REAL_ARTWORK_DETAIL",
+      "why": "REPLACE_EDITORIAL_PURPOSE_OF_THIS_SECOND"
+    },
+    {
+      "second": 5,
+      "what_visible": "REPLACE_VISIBLE_REAL_ARTWORK_DETAIL",
+      "why": "REPLACE_EDITORIAL_PURPOSE_OF_THIS_SECOND"
+    },
+    {
+      "second": 7,
+      "what_visible": "REPLACE_VISIBLE_REAL_ARTWORK_DETAIL",
+      "why": "REPLACE_EDITORIAL_PURPOSE_OF_THIS_SECOND"
+    }
+  ],
+  "duration_reason": "REPLACE_EXPLAIN_THE_REAL_MUSICAL_AND_VISUAL_ARC",
+  "scenes": [
+    {
+      "source_id": "REPLACE_SOURCE_IMAGE_1",
+      "subject": "REPLACE_VISIBLE_SUBJECT_1",
+      "purpose": "REPLACE_WHY_SHOW_THIS_AT_THIS_TIME",
+      "shot": "detail",
+      "motion": "locked",
+      "duration_seconds": 5.5,
+      "transition": "REPLACE_MOTIVATED_CUT"
+    },
+    {
+      "source_id": "REPLACE_SOURCE_IMAGE_2",
+      "subject": "REPLACE_VISIBLE_SUBJECT_2",
+      "purpose": "REPLACE_WHY_SHOW_THIS_AT_THIS_TIME",
+      "shot": "macro",
+      "motion": "locked",
+      "duration_seconds": 5.5,
+      "transition": "REPLACE_MOTIVATED_CUT"
+    },
+    {
+      "source_id": "REPLACE_SOURCE_IMAGE_3",
+      "subject": "REPLACE_VISIBLE_SUBJECT_3",
+      "purpose": "REPLACE_WHY_SHOW_THIS_AT_THIS_TIME",
+      "shot": "portrait",
+      "motion": "locked",
+      "duration_seconds": 5.5,
+      "transition": "REPLACE_MOTIVATED_CUT"
+    },
+    {
+      "source_id": "REPLACE_SOURCE_IMAGE_4",
+      "subject": "REPLACE_VISIBLE_SUBJECT_4",
+      "purpose": "REPLACE_WHY_SHOW_THIS_AT_THIS_TIME",
+      "shot": "wide",
+      "motion": "locked",
+      "duration_seconds": 5.5,
+      "transition": "REPLACE_MOTIVATED_CUT"
+    },
+    {
+      "source_id": "REPLACE_SOURCE_IMAGE_5",
+      "subject": "REPLACE_VISIBLE_SUBJECT_5",
+      "purpose": "REPLACE_WHY_SHOW_THIS_AT_THIS_TIME",
+      "shot": "texture",
+      "motion": "locked",
+      "duration_seconds": 5.5,
+      "transition": "REPLACE_MOTIVATED_CUT"
+    },
+    {
+      "source_id": "REPLACE_SOURCE_IMAGE_6",
+      "subject": "REPLACE_VISIBLE_SUBJECT_6",
+      "purpose": "REPLACE_WHY_SHOW_THIS_AT_THIS_TIME",
+      "shot": "medium",
+      "motion": "locked",
+      "duration_seconds": 5.5,
+      "transition": "REPLACE_MOTIVATED_CUT"
+    },
+    {
+      "source_id": "REPLACE_SOURCE_IMAGE_7",
+      "subject": "REPLACE_VISIBLE_SUBJECT_7",
+      "purpose": "REPLACE_WHY_SHOW_THIS_AT_THIS_TIME",
+      "shot": "detail",
+      "motion": "locked",
+      "duration_seconds": 5.5,
+      "transition": "REPLACE_MOTIVATED_CUT"
+    },
+    {
+      "source_id": "REPLACE_SOURCE_IMAGE_8",
+      "subject": "REPLACE_VISIBLE_SUBJECT_8",
+      "purpose": "REPLACE_WHY_SHOW_THIS_AT_THIS_TIME",
+      "shot": "full",
+      "motion": "locked",
+      "duration_seconds": 5.5,
+      "transition": "REPLACE_MOTIVATED_CUT"
+    }
+  ],
+  "transition_reviews_plan": [
+    {
+      "from_scene": 2,
+      "to_scene": 3,
+      "why": "REPLACE_REASON_WITH_REAL_FORM_OR_MUSIC_CUE"
+    },
+    {
+      "from_scene": 4,
+      "to_scene": 5,
+      "why": "REPLACE_REASON_WITH_REAL_FORM_OR_MUSIC_CUE"
+    },
+    {
+      "from_scene": 6,
+      "to_scene": 7,
+      "why": "REPLACE_REASON_WITH_REAL_FORM_OR_MUSIC_CUE"
+    }
+  ],
+  "music_cues": [
+    {
+      "seconds": 0,
+      "reason": "REPLACE_OPENING_MUSIC_EVENT"
+    },
+    {
+      "seconds": 18,
+      "reason": "REPLACE_REAL_MUSICAL_TURN"
+    },
+    {
+      "seconds": 45,
+      "reason": "REPLACE_REASON_FOR_MUSICAL_CLOSING"
+    }
+  ],
+  "selected_techniques": [
+    {
+      "id": "visual_hierarchy",
+      "why": "REPLACE_VISIBLE_VISUAL_FOCUS_PLAN"
+    },
+    {
+      "id": "motivated_cut",
+      "why": "REPLACE_SPECIFIC_CUT_REASON"
+    },
+    {
+      "id": "rhythmic_rest",
+      "why": "REPLACE_REASON_TO_ALLOW_A_PAUSE"
+    }
+  ],
+  "sources": [
+    {
+      "id": "REPLACE_SOURCE_IMAGE_1",
+      "url": "REPLACE_SOURCE_URL",
+      "license": "REPLACE_VERIFIED_VISUAL_RIGHTS",
+      "credit": "REPLACE_TRUE_CREDIT",
+      "status": "unchecked"
+    }
+  ],
+  "music": {
+    "title": "REPLACE_TRACK_TITLE",
+    "composer": "REPLACE_COMPOSER",
+    "origin": "REPLACE_RECORDING_TYPE",
+    "license": "REPLACE_RECORDING_LICENSE",
+    "evidence": "REPLACE_EVIDENCE_FILE_OR_URL",
+    "emotional_arc": "REPLACE_CUES_INTRO_CLIMAX_END",
+    "rights_status": "unchecked"
+  },
+  "copy_languages": {
+    "facebook": "it",
+    "instagram": "it",
+    "tiktok": "it",
+    "youtube": "it"
+  },
+  "archive_only_after_authorization": true,
+  "social_autopublish": false,
+  "outputs": {
+    "video": "VIDEO_MASTER.mp4",
+    "cover": "COPERTINA.jpg",
+    "facebook": "POST_FACEBOOK.txt",
+    "instagram": "POST_INSTAGRAM.txt",
+    "tiktok": "POST_TIKTOK.txt",
+    "youtube": "POST_YOUTUBE.txt",
+    "recipe": "VIDEO_RECIPE_V13.json",
+    "techniques": "TECNICHE_REGIA.md",
+    "replication": "ISTRUZIONI_REPLICA.md",
+    "rights": "SOURCES_AND_RIGHTS.md",
+    "music_manifest": "MUSIC_RELEASE_V20.json"
+  },
+  "review_video_sha256": "REPLACE_SHA256_AFTER_RENDER",
+  "reviews": {
+    "opening": {
+      "passed": false,
+      "notes": "REPLACE_CONCRETE_NOTES_FROM_REVIEW_AT_REAL_PLAYBACK_SPEED"
+    },
+    "visual": {
+      "passed": false,
+      "notes": "REPLACE_CONCRETE_NOTES_FROM_REVIEW_AT_REAL_PLAYBACK_SPEED"
+    },
+    "cover": {
+      "passed": false,
+      "notes": "REPLACE_CONCRETE_NOTES_FROM_REVIEW_AT_REAL_PLAYBACK_SPEED"
+    },
+    "music": {
+      "passed": false,
+      "notes": "REPLACE_CONCRETE_NOTES_FROM_REVIEW_AT_REAL_PLAYBACK_SPEED"
+    },
+    "rights": {
+      "passed": false,
+      "notes": "REPLACE_CONCRETE_NOTES_FROM_REVIEW_AT_REAL_PLAYBACK_SPEED"
+    },
+    "full_watch": {
+      "passed": false,
+      "notes": "REPLACE_CONCRETE_NOTES_FROM_REVIEW_AT_REAL_PLAYBACK_SPEED"
+    },
+    "replicability": {
+      "passed": false,
+      "notes": "REPLACE_CONCRETE_NOTES_FROM_REVIEW_AT_REAL_PLAYBACK_SPEED"
+    }
+  },
+  "publication": {
+    "status": "not_published",
+    "library_verified": false,
+    "social_post_url": null
+  }
+}
