@@ -1,0 +1,67 @@
+name: "ArtVision WOW10 - verify visual compositions before directing"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow10-previsualization.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  boards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Pillow only if unavailable
+        run: |
+          python - <<'PY'
+          import importlib.util,subprocess
+          if importlib.util.find_spec('PIL') is None:subprocess.run(['python','-m','pip','install','Pillow'],check=True,timeout=75)
+          PY
+      - name: Museum source image review boards
+        run: |
+          python - <<'PY'
+          import pathlib,urllib.request,io,hashlib,json
+          from PIL import Image,ImageOps,ImageDraw
+          catalog={
+          'durer':[('horsemen','1932.313'),('knight','1965.231'),('seamonster','1934.340'),('dragon','1922.248'),('dream','1934.341')],
+          'kyosai':[('hell','1985.268'),('demon','1991.125.t'),('crow','1930.203'),('moon','1991.125.r')],
+          'church':[('moonlight','1976.30'),('storm','1969.52')],
+          'rousseau':[('tiger','1949.186'),('war','2011.10'),('outskirts','1929.951')],
+          'rackham':[('dragon','1954.652'),('fairies','1954.651'),('wren','1946.8'),('crow','1954.653')]}
+          out=pathlib.Path('WOW10_REVIEW');out.mkdir(exist_ok=True)
+          manifests={}
+          for slug,sources in catalog.items():
+           tile=(300,400);w=tile[0]*len(sources)
+           sheet=Image.new('RGB',(w,430),'#151820')
+           draw=ImageDraw.Draw(sheet)
+           records=[]
+           for i,(label,accession) in enumerate(sources):
+            url=f'https://openaccess-cdn.clevelandart.org/{accession}/{accession}_print.jpg'
+            req=urllib.request.Request(url,headers={'User-Agent':'ArtVisionCinema/8.0 (museum public-domain source preflight)'})
+            with urllib.request.urlopen(req,timeout=42) as resp:
+             raw=resp.read(18000000)
+             assert resp.headers.get('Content-Type','').startswith('image/'),url
+            with Image.open(io.BytesIO(raw)) as im:
+             im.load();art=ImageOps.exif_transpose(im).convert('RGB')
+            assert min(art.size)>=950,(slug,label,art.size)
+            thumb=art.copy();thumb.thumbnail((294,392),Image.Resampling.LANCZOS)
+            left=i*tile[0]+(tile[0]-thumb.width)//2
+            sheet.paste(thumb,(left,4))
+            draw.text((i*tile[0]+15,401),f'{label}: {accession}',fill='white')
+            records.append({'label':label,'accession':accession,'source_url':url,
+                            'sha256_bytes':hashlib.sha256(raw).hexdigest(),
+                            'dimensions':list(art.size)})
+            print('PHOTO VALID',slug,label,art.size,flush=True)
+           sheet.save(out/f'{slug}_ALL_ORIGINALS.jpg',quality=92)
+           manifests[slug]=records
+          (out/'MUSEUM_IMAGE_HASHES.json').write_text(json.dumps(manifests,indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ART-VISION-WOW10-FIVE-PREVIEWS
+          path: WOW10_REVIEW/
+          retention-days: 5
+          if-no-files-found: error
