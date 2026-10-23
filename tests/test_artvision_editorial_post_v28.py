@@ -42,7 +42,7 @@ class EditorialV28Tests(unittest.TestCase):
             s=f.read_text(encoding="utf-8")
             s=s.replace("Due ragazzi trasportano", "Ho scelto di partire dallo zoom. Due ragazzi trasportano")
             f.write_text(s,encoding="utf-8")
-            self.assertTrue(any("production/AI" in x for x in validate_folder(td)))
+            self.assertTrue(any("forbidden process/AI" in x for x in validate_folder(td)))
 
     def test_reject_made_up_unresearched_topic(self):
         import copy
