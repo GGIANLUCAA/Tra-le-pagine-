@@ -1,0 +1,29 @@
+name: "ArtVision WOW9 - select two unused artists open-access"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow9-research.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  museum:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Query Cleveland collection and list real CC0 artworks
+        run: |
+          python - <<'PY'
+          import urllib.request,urllib.parse,json
+          H={'User-Agent':'ArtVisionTraLePagine/6.0 (museum art research)'}
+          artists=['James Ensor','Utagawa Kuniyoshi','Edward Burne-Jones','Henry Ossawa Tanner','Giovanni Battista Tiepolo','Aubrey Beardsley','Dante Gabriel Rossetti']
+          for artist in artists:
+           url='https://openaccess-api.clevelandart.org/api/artworks/?'+urllib.parse.urlencode({'artists':artist,'limit':100})
+           try:
+            data=json.load(urllib.request.urlopen(urllib.request.Request(url,headers=H),timeout=28))
+            rows=[x for x in data.get('data',[]) if x.get('share_license_status')=='CC0' and ((x.get('images')or{}).get('print') or (x.get('images')or{}).get('web'))]
+            print('ARTIST',artist,'CC0',len(rows),flush=True)
+            for x in rows[:40]:
+             print('ENTRY',str(x.get('title'))[:96],'ID',x.get('accession_number'),'DATE',x.get('date_text'),'IMAGE',(x.get('images') or {}).get('print',{}).get('width'),(x.get('images') or {}).get('print',{}).get('height'),flush=True)
+           except Exception as e:print('ERROR',artist,type(e).__name__,str(e)[:150],flush=True)
+          PY
