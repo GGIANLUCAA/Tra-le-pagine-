@@ -1,0 +1,279 @@
+{
+  "schema": "artvision-critico-director-cut-v23",
+  "id": "brjullov_ultimi_giorni_pompei_v23",
+  "artist": "Karl Brjullov",
+  "artwork": "L’ultimo giorno di Pompei",
+  "source_episode": "modules/artvision_critico/production_series/brjullov_pompei_v23.json",
+  "date": "2026-10-23",
+  "asset_workflow": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39939845575",
+  "museum_source": "https://rusmuseumvrm.ru/data/collections/painting/18_19/zh-5084/?lang=en",
+  "image_source": "https://commons.wikimedia.org/wiki/File:Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project.jpg",
+  "image_resolution": [
+    3840,
+    2696
+  ],
+  "image_license": "Wikimedia Commons PD-Art / Public Domain Mark; verify cultural heritage restrictions by territory",
+  "voice_engine": "Google Gemini Gacrux",
+  "voice_seconds": 103.04,
+  "voice_beat_end_estimates": [
+    13.2807,
+    30.2251,
+    42.5899,
+    57.7024,
+    72.357,
+    86.5536,
+    103.04
+  ],
+  "voice_word_alignment_verified": false,
+  "music": {
+    "title": "Night on the Docks – Piano",
+    "artist": "Kevin MacLeod",
+    "license": "CC BY 4.0",
+    "credit_required": true,
+    "music_faded": true
+  },
+  "cinema_v23_techniques": [
+    "in_media_res_visual",
+    "static_tableau",
+    "locked_hold",
+    "motivated_cut",
+    "eye_trace_continuity",
+    "spatial_reset",
+    "panel_geography",
+    "nonforced_ending",
+    "camera_seasick_gate"
+  ],
+  "camera_no_oscillation": true,
+  "subtitles": false,
+  "shot_count": 16,
+  "shots": [
+    {
+      "shot": 1,
+      "from": 0,
+      "to": 4.25,
+      "narrative": "Bambino e donna a terra",
+      "framing": "detail",
+      "focus": [
+        0.56,
+        0.73
+      ],
+      "source_crop_fraction": 0.24,
+      "camera": "locked"
+    },
+    {
+      "shot": 2,
+      "from": 4.25,
+      "to": 8.23,
+      "narrative": "Donna caduta",
+      "framing": "detail",
+      "focus": [
+        0.455,
+        0.81
+      ],
+      "source_crop_fraction": 0.272,
+      "camera": "locked"
+    },
+    {
+      "shot": 3,
+      "from": 8.23,
+      "to": 13.28,
+      "narrative": "Visione integrale",
+      "framing": "panel",
+      "focus": [
+        0.5,
+        0.5
+      ],
+      "source_crop_fraction": 1,
+      "camera": "locked"
+    },
+    {
+      "shot": 4,
+      "from": 13.28,
+      "to": 20.4,
+      "narrative": "Cielo ed eruzione",
+      "framing": "detail",
+      "focus": [
+        0.67,
+        0.32
+      ],
+      "source_crop_fraction": 0.61,
+      "camera": "locked"
+    },
+    {
+      "shot": 5,
+      "from": 20.4,
+      "to": 30.23,
+      "narrative": "Panoramica delle persone",
+      "framing": "panel",
+      "focus": [
+        0.5,
+        0.5
+      ],
+      "source_crop_fraction": 1,
+      "camera": "locked"
+    },
+    {
+      "shot": 6,
+      "from": 30.23,
+      "to": 36.28,
+      "narrative": "Famiglia sotto il mantello",
+      "framing": "detail",
+      "focus": [
+        0.355,
+        0.545
+      ],
+      "source_crop_fraction": 0.315,
+      "camera": "locked"
+    },
+    {
+      "shot": 7,
+      "from": 36.28,
+      "to": 42.59,
+      "narrative": "Mani e corpi che si aggrappano",
+      "framing": "detail",
+      "focus": [
+        0.432,
+        0.605
+      ],
+      "source_crop_fraction": 0.31,
+      "camera": "locked"
+    },
+    {
+      "shot": 8,
+      "from": 42.59,
+      "to": 50,
+      "narrative": "Sostenersi nella fuga",
+      "framing": "detail",
+      "focus": [
+        0.8,
+        0.64
+      ],
+      "source_crop_fraction": 0.34,
+      "camera": "locked"
+    },
+    {
+      "shot": 9,
+      "from": 50,
+      "to": 57.7,
+      "narrative": "Proteggere i propri cari",
+      "framing": "detail",
+      "focus": [
+        0.87,
+        0.69
+      ],
+      "source_crop_fraction": 0.385,
+      "camera": "locked"
+    },
+    {
+      "shot": 10,
+      "from": 57.7,
+      "to": 64.44,
+      "narrative": "Cielo rosso",
+      "framing": "detail",
+      "focus": [
+        0.69,
+        0.315
+      ],
+      "source_crop_fraction": 0.6,
+      "camera": "locked"
+    },
+    {
+      "shot": 11,
+      "from": 64.44,
+      "to": 72.36,
+      "narrative": "Bagliore sopra le rovine",
+      "framing": "detail",
+      "focus": [
+        0.818,
+        0.175
+      ],
+      "source_crop_fraction": 0.65,
+      "camera": "locked"
+    },
+    {
+      "shot": 12,
+      "from": 72.36,
+      "to": 78.75,
+      "narrative": "La città",
+      "framing": "detail",
+      "focus": [
+        0.28,
+        0.26
+      ],
+      "source_crop_fraction": 0.62,
+      "camera": "locked"
+    },
+    {
+      "shot": 13,
+      "from": 78.75,
+      "to": 86.55,
+      "narrative": "Opera intera e umanità",
+      "framing": "panel",
+      "focus": [
+        0.5,
+        0.5
+      ],
+      "source_crop_fraction": 1,
+      "camera": "locked"
+    },
+    {
+      "shot": 14,
+      "from": 86.55,
+      "to": 91.5,
+      "narrative": "Le mani",
+      "framing": "detail",
+      "focus": [
+        0.525,
+        0.66
+      ],
+      "source_crop_fraction": 0.33,
+      "camera": "locked"
+    },
+    {
+      "shot": 15,
+      "from": 91.5,
+      "to": 96.45,
+      "narrative": "Giovani e donna a terra",
+      "framing": "detail",
+      "focus": [
+        0.475,
+        0.78
+      ],
+      "source_crop_fraction": 0.36,
+      "camera": "locked"
+    },
+    {
+      "shot": 16,
+      "from": 96.45,
+      "to": 106,
+      "narrative": "Finale quadro intero",
+      "framing": "panel",
+      "focus": [
+        0.5,
+        0.5
+      ],
+      "source_crop_fraction": 1,
+      "camera": "locked"
+    }
+  ],
+  "master": {
+    "file": "ARTVISION_CRITICO_BRJULLOV_POMPEI_V23.mp4",
+    "sha256": "c3edae48e34b36e4bfba38d5029c30a87f08d2382ed642c6501539ceaf379eb7",
+    "duration_seconds": 106,
+    "resolution": [
+      1080,
+      1920
+    ],
+    "fps": 20,
+    "video_codec": "H264",
+    "audio_codec": "AAC",
+    "audio_peak_dbfs": -1.5,
+    "full_decode_success": true,
+    "real_frame_samples_checked": 16,
+    "stored": "ChatGPT delivered file, not binary in GitHub"
+  },
+  "editorial_review": "user_review_pending",
+  "publication_authorized": false,
+  "protected_historical_masters": true,
+  "notes": "Source artwork and Google recording reused from actual GitHub run; final cinematic edit performed in ChatGPT runtime with 16 still crops and .45 s dissolves. Offline technical QA does not certify engagement or artistic preference."
+}
