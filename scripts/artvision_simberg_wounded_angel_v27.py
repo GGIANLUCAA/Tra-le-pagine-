@@ -180,34 +180,12 @@ def make_cover(img,path):
     d.text((x,1181),title,font=f,fill=(255,251,243,255))
     Image.alpha_composite(c,layer).convert("RGB").save(path,quality=95)
 def social(out):
-    """Native captions with all sources and CC BY credits; no on-screen language."""
-    rights=("\n\nOpera: The Wounded Angel (1903), Hugo Simberg. Ateneum / Finnish National Gallery, Helsinki."
-            "\nFoto: Finnish National Gallery / Hannu Aaltonen, CC BY 4.0."
-            "\nFonte: "+ART_PAGE
-            +"\nMuseo: "+MUSEUM
-            +"\nLicenza immagine: "+LICENSE
-            +"\nMusica: \"Mourning Song\" — Kevin MacLeod (incompetech.com)."
-            +"\nLicenza audio: CC BY 4.0 — "+LICENSE
-            +"\nRegistrazione: "+TRACK_PAGE
-            +"\nModifiche: ritagli e montaggio della riproduzione museale; estratto musicale, volume e dissolvenze.")
-    tags="#ArtVision #HugoSimberg #TheWoundedAngel #ArtHistory"
-    copies={
-       "POST_FACEBOOK.txt":"Un angelo ferito. Due ragazzi che lo portano via. E uno sguardo che sembra rivolto proprio a noi.\n\n"
-         "Nel 1903 Hugo Simberg dipinse una scena senza spiegazione: la figura centrale ha gli occhi bendati, "
-         "stringe alcuni bucaneve e viene trasportata attraverso un paesaggio spoglio. "
-         "Cosa sia successo, il pittore non lo dice. È questo silenzio a rendere il quadro impossibile da dimenticare.\n\n"
-         "In questo video il racconto parte dalla benda, incontra lo sguardo del ragazzo e svela la scena intera solo alla fine.",
-       "POST_INSTAGRAM.txt":"Perché un angelo ha gli occhi bendati?\n\n"
-         "The Wounded Angel (1903), Hugo Simberg. Due ragazzi, pochi fiori bianchi e un mistero dipinto senza parole.",
-       "POST_TIKTOK.txt":"Guarda il ragazzo. Sembra sapere qualcosa che noi non sappiamo.\n\n"
-         "The Wounded Angel di Hugo Simberg, 1903. Un piccolo mistero raccontato soltanto attraverso il dipinto.",
-       "POST_YOUTUBE.txt":"The Wounded Angel | Hugo Simberg — ArtVision Cinema\n\n"
-         "Un cortometraggio senza voce sul dipinto del 1903 custodito all'Ateneum di Helsinki: "
-         "il volto bendato, i fiori, le ali, le mani e lo sguardo di un ragazzo. "
-         "Regia lenta e motivata, riproduzione museale autentica e finale con la tela completa."
-    }
-    for name,body in copies.items():
-        (out/name).write_text(body+rights+"\n\n"+tags+"\n",encoding="utf-8")
+    # V28: public text must be researched editorial storytelling, never
+    # explain camera movement, edit choices or production technique.
+    # Block rather than invent filler for an unresearched artwork.
+    from artvision_editorial_post_v28 import write_posts
+    write_posts("simberg_v27",out,overwrite=False)
+
 def package(out,impath,music,master,shots,analysis,offset):
     social(out);hash_mp4=digest(master)
     source=f"""# Provenienza e riuso
@@ -328,6 +306,7 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
                      recipe="VIDEO_RECIPE_V13.json",techniques="TECNICHE_REGIA.md",
                      replication="ISTRUZIONI_REPLICA.md",rights="SOURCES_AND_RIGHTS.md",
                      music_manifest="MUSIC_RELEASE_V20.json"),
+      "editorial_standard":"artvision_editorial_v28",
       "review_video_sha256":hash_mp4,
       "reviews":{k:{"passed":False,"notes":"Full real-time playback and aesthetic comparison with V6 is pending."}
                  for k in ["opening","visual","cover","music","rights","full_watch","replicability"]},
