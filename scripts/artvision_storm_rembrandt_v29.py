@@ -13,7 +13,7 @@ sys.path.insert(0,str(ROOT/"src"))
 from artvision_contract_gate_v25 import check_preflight
 W,H,FPS=1080,1920,24
 ARTIST="REMBRANDT VAN RIJN"; TITLE="Christ in the Storm on the Sea of Galilee"; COMPOSER="Kevin MacLeod"
-ART_URL="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/The_Wounded_Angel_-_Hugo_Rembrandt.jpg/3840px-The_Wounded_Angel_-_Hugo_Rembrandt.jpg"
+ART_URL="https://upload.wikimedia.org/wikipedia/commons/1/16/Rembrandt_-_Christ_in_the_Storm_on_the_Sea_of_Galilee.jpeg"
 ART_PAGE="https://commons.wikimedia.org/wiki/File:Rembrandt_-_Christ_in_the_Storm_on_the_Sea_of_Galilee.jpeg"
 MUSEUM="https://www.gardnermuseum.org/experience/collection/10953"
 TRACK_URL="https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Pyre.mp3"
@@ -21,7 +21,7 @@ TRACK_PAGE="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100
 LICENSE="https://creativecommons.org/licenses/by/4.0/"
 FONT1="/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
 FONT2="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-# Each focus is a real feature of the painting: blindfold, flower sprig, wing, two boys, wooden stretcher.
+# Each focus is a real detail in Rembrandt's painting: breaking sea, sail, figures, sky, boat and calm center.
 # Coordinates x,y are relative to the authentic 1633 image; 18 distinct editorial shots.
 STORY=[
  ("detail",.277,.615,1.82,3.62,"locked","The breaking wave and tiny struggling sailor create immediate physical stakes"),
@@ -189,29 +189,33 @@ def social(out):
 def package(out,impath,music,master,shots,analysis,offset):
     social(out);hash_mp4=digest(master)
     source=f"""# Provenienza e riuso
-Opera: Rembrandt van Rijn, Christ in the Storm on the Sea of Galilee (1633), Gardner Museum (Finnish National Gallery), inv. A II 1703.
-Museo: {MUSEUM}
-Riproduzione Wikimedia: {ART_PAGE}
-Fotografia scaricata: {ART_URL}
-Il dipinto storico è in pubblico dominio; la riproduzione usata è attribuita a Finnish National Gallery / Hannu Aaltonen, licenza CC BY 4.0. Fonte e condizioni: https://commons.wikimedia.org/wiki/File:Rembrandt_-_Christ_in_the_Storm_on_the_Sea_of_Galilee.jpeg e https://creativecommons.org/licenses/by/4.0/
-Verificare le limitazioni nazionali per l'uso commerciale di fotografie museali.
-SHA256 immagine: {digest(impath)}
+Opera: Christ in the Storm on the Sea of Galilee (1633), Rembrandt van Rijn.
+Collezione Isabella Stewart Gardner Museum, Boston; inventario P21s24.
+L'opera fu rubata il 18 marzo 1990 e non e stata recuperata; la fotografia e un documento precedente al furto.
+Museo e commento: {MUSEUM}
+Furto documentato: https://www.gardnermuseum.org/about/theft
+Fotografia/riproduzione Wikimedia Commons: {ART_PAGE}
+File originale riproduzione: {ART_URL}
+Dipinto di pubblico dominio (1633). Foto di riproduzione di opera bidimensionale:
+possibili differenze tra giurisdizioni; verificare la scheda Commons e le condizioni locali.
+SHA256 riproduzione: {digest(impath)}
 
-Musica: The Pyre, Kevin MacLeod, ISRC USUAN1100846.
-Brano e registrazione: {TRACK_PAGE}
-Registrazione scaricata: {TRACK_URL}
-Licenza: Creative Commons Attribution 4.0 — {LICENSE}
-SHA256 musica originale: {digest(music)}
-Adattamenti: estratto, volume e dissolvenze in entrata e uscita.
-Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
+Musica: The Pyre — Kevin MacLeod (incompetech.com), ISRC USUAN1100846.
+Fonte e dettagli registrazione: {TRACK_PAGE}
+File registrazione originale: {TRACK_URL}
+Licenza registrazione: CC BY 4.0 — {LICENSE}
+SHA256 registrazione: {digest(music)}
+Modifiche: estratto, normalizzazione, dissolvenze e adattamento del montaggio al brano.
+Citazione completa inclusa nei quattro testi social.
 """
     (out/"SOURCES_AND_RIGHTS.md").write_text(source,encoding="utf-8")
-    notes=["# Regia personalizzata — Christ in the Storm on the Sea of Galilee","",
-           "Arco: benda dell'angelo → sguardo del ragazzo → bucaneve → barella e peso → ritorno allo sguardo → rivelazione del quadro intero.",
-           "La maggioranza delle inquadrature resta ferma. Niente pan avanti e indietro, nessun falso 3D.",
-           "Firma iniziale V6: nome artista e MUSIC BY. Copertina: titolo inglese in un blocco separato.",
-           "I tagli sono regolati entro 0,29 s su eventi misurati nella registrazione reale.",
-           "", "## Tecniche selezionate"]
+    notes=["# Regia — Rembrandt: Christ in the Storm on the Sea of Galilee","",
+           "Arco visivo: onda devastante → lotta per la vela → corpi impauriti → Cristo calmo → volto che ci osserva → intero dipinto.",
+           "La tempesta non viene animata artificialmente. Il cinema nasce dal contrasto di focali e dalla composizione del quadro.",
+           "Primi secondi controllati a 0/1/3/5/7. Firma V6 uguale, titolo opera inglese solo sulla copertina.",
+           "Musica: accenti realmente misurati più pause di camera immobile, pochi zoom lenti e unidirezionali.",
+           "Chiusura: tenuta lunga dell'opera intera, musica in dissolvenza armonica.",
+           "", "## Tecniche V23"]
     notes += [f"- {k}: {v}" for k,v in TECH]
     notes += ["", "## Focali reali e motivazioni"]
     t=0
@@ -220,8 +224,8 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
         t+=s["duration"]
     (out/"TECNICHE_REGIA.md").write_text("\n".join(notes)+"\n",encoding="utf-8")
     guide=("ArtVision Rembrandt Christ in the Storm on the Sea of Galilee V29\n"
-           "Script: scripts/artvision_rembrandt_wounded_angel_v29.py\n"
-           "Comando: python scripts/artvision_rembrandt_wounded_angel_v29.py --out output/rembrandt-v29\n"
+           "Script: scripts/artvision_storm_rembrandt_v29.py\n"
+           "Comando: python scripts/artvision_storm_rembrandt_v29.py --out output/rembrandt-v29\n"
            "Preset originale da NON modificare: modules/artvision/APPROVED_PRESET.json\n"
            "Firma grafica: modules/artvision/IDENTITA_VISIVA_FISSA_V6.json\n"
            "Contratto V25: docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md\n"
@@ -232,8 +236,8 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
     (out/"ISTRUZIONI_REPLICA.md").write_text(guide,encoding="utf-8")
     recipe={"schema":"video-recipe-v13","video_id":"rembrandt-storm-galilee-v29","format":"artvision_cinema",
             "artist":ARTIST,"title_en":TITLE,"baseline":"cinema_v6","contract":"v25",
-            "renderer":"scripts/artvision_rembrandt_wounded_angel_v29.py",
-            "replication_command":"python scripts/artvision_rembrandt_wounded_angel_v29.py --out output/rembrandt-v29",
+            "renderer":"scripts/artvision_storm_rembrandt_v29.py",
+            "replication_command":"python scripts/artvision_storm_rembrandt_v29.py --out output/rembrandt-v29",
             "sha256_mp4":hash_mp4,"sha256_artwork":digest(impath),"sha256_music":digest(music),
             "source_page":ART_PAGE,"music_page":TRACK_PAGE,"license":"CC BY 4.0",
             "score_analysis":analysis,"score_offset_seconds":offset,"shots":shots,
@@ -244,7 +248,7 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
     (out/"VIDEO_RECIPE_V13.json").write_text(json.dumps(recipe,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     mm={"schema_version":1,
         "video":{"id":"rembrandt-storm-galilee-v29","format":"artvision_cinema","title":TITLE,
-                 "originality_statement":"Bespoke film direction on authentic 1633 canvas",
+                 "originality_statement":"New cinema direction of Rembrandt's unique 1633 painted seascape, no fabricated content",
                  "visual_rights_evidence":[ART_PAGE,MUSEUM]},
         "music":{"title":"The Pyre","artist":COMPOSER,"origin":"external_licensed",
                  "source_url":TRACK_PAGE,"recording_proof_url":TRACK_PAGE,
@@ -253,7 +257,7 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
                  "monetization_allowed":True,"ads_allowed":True,"credit_required":True,
                  "credit_text":'"The Pyre" Kevin MacLeod (incompetech.com) CC BY 4.0 '+LICENSE,
                  "music_embedded":True,"rights_holder_claim_status":"unchecked",
-                 "emotional_direction":"wounded gaze to isolated fall",
+                 "emotional_direction":"violent sea, fragile human effort and the one calm figure",
                  "cue_notes":"Video cuts adjusted to measured recording energy accents"},
         "distribution":{"targets":["facebook","instagram","tiktok","youtube"],
                         "commercial":True,"monetized":False,"ads":False},
@@ -284,17 +288,17 @@ Crediti inclusi nei file social. L'eventuale reclamo automatico va verificato.
       "scenes":[{"source_id":"authentic-rembrandt-original","subject":s["purpose"],
                  "purpose":s["purpose"],"shot":"landscape" if s["kind"]=="landscape" else s["kind"],
                  "motion":s["motion"],"duration_seconds":s["duration"]} for s in shots],
-      "transition_reviews_plan":[{"why":"Blindfold and snowdrops create an authentic white visual rhyme"},
-                                 {"why":"Stretcher and white snowdrops connect the two boys to the wounded angel"},
-                                 {"why":"The boy looks at the viewer before the full scene resolves"}],
-      "music_cues":[{"seconds":0,"reason":"The bandage introduces a genuine mystery in a restrained harmony"},
+      "transition_reviews_plan":[{"why":"Surf and pale sail create a genuine visual contrast"},
+                                 {"why":"Terrified sailors and the one calm figure create the dramatic opposition"},
+                                 {"why":"The sailor's outward gaze returns just before the full canvas is revealed"}],
+      "music_cues":[{"seconds":0,"reason":"The orchestral undercurrent supports the breaking wave"},
                     {"seconds":total*.48,"reason":"The burden, bare feet, snowdrops and two boys deepen emotional context"},
                     {"seconds":total-5,"reason":"Long complete-canvas closing hold on the musical fade"}],
       "duration_reason":"Eighteen motivated pictorial views linked by repeating objects and a generous full-image close.",
       "selected_techniques":[{"id":k,"why":v} for k,v in TECH],
       "sources":[{"id":"authentic-rembrandt-original","url":ART_PAGE,
-                  "license":"Public-domain painting; original source photograph CC BY 4.0 (Finnish National Gallery / Hannu Aaltonen)",
-                  "credit":"Rembrandt van Rijn, Gardner Museum; photograph Finnish National Gallery / Hannu Aaltonen","status":"verified"}],
+                  "license":"Public domain Rembrandt painting reproduction; photography reuse depends on jurisdiction",
+                  "credit":"Rembrandt van Rijn, Isabella Stewart Gardner Museum; Wikimedia reproduction","status":"verified"}],
       "music":{"title":"The Pyre","composer":COMPOSER,"origin":"external_licensed",
                "license":"CC BY 4.0","evidence":TRACK_PAGE,
                "emotional_arc":"the wounded angel, her two companions, snowdrops, silent compassion and full painting","rights_status":"verified"},
@@ -323,7 +327,7 @@ def main():
     cfg=ap.parse_args()
     out=Path(cfg.out);out.mkdir(parents=True,exist_ok=True)
     tmp=out/"_work";tmp.mkdir(exist_ok=True)
-    source=out/"ARTWORK_REMBrANDT_ORIGINAL.jpg";score=out/"THE_PYRE_ORIGINAL_CC_BY.mp3"
+    source=out/"ARTWORK_REMBRANDT_ORIGINAL.jpg";score=out/"THE_PYRE_ORIGINAL_CC_BY.mp3"
     download(ART_URL,source,"image");download(TRACK_URL,score,"music")
     src=Image.open(source).convert("RGB")
     if not (0.76<src.width/src.height<0.84):raise RuntimeError("Unexpected artwork dimensions")
