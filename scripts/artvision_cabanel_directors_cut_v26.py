@@ -367,6 +367,14 @@ def main():
         "-ss",cfg.offset,"-i",score,"-map","0:v:0","-map","1:a:0",
         "-c:v","copy","-af",f"aresample=48000,volume=.84,afade=t=in:st=0:d=0.45,afade=t=out:st={max(0,duration-2.9):.3f}:d=2.9",
         "-c:a","aac","-b:a","192k","-t",duration,"-movflags","+faststart",output)
+    # Social listening QA: original excerpt measured -28.5 LUFS; gentle +6dB lift
+    # reaches approximately -22.5 LUFS with a safe true peak below -4dBFS.
+    quiet=tmp/"music_quiet_original_mix.mp4"
+    output.replace(quiet)
+    run("ffmpeg","-hide_banner","-loglevel","error","-y","-i",quiet,
+        "-map","0:v:0","-map","0:a:0","-c:v","copy","-af","volume=6dB",
+        "-c:a","aac","-b:a","192k","-movflags","+faststart",output)
+    quiet.unlink(missing_ok=True)
     facts=probe(output)
     assert 40<float(facts["format"]["duration"])<70
     assert any(s.get("codec_type")=="video" and s.get("codec_name")=="h264" and
