@@ -8,7 +8,7 @@
     "rendered_complete_packages_v25_or_later": 7,
     "legacy_v24_render_only_packages": 5,
     "exact_hash_reviews_passed": 0,
-    "site_import_confirmed": 0,
+    "site_import_confirmed_by_filename_and_size": 5,
     "queue_items_added": 0
   },
   "review_policy": {
@@ -17,6 +17,11 @@
     "technical_decode_is_not_artistic_approval": true
   },
   "current_queue": {"items": 0, "runner_state_jobs": 0},
+  "site_import_evidence": {
+    "run_id": 39975572847,
+    "confirmed_current_render_names": ["ARTVISION_CINEMA_V24_aivazovsky_FINALE.mp4", "ARTVISION_CINEMA_V24_bouguereau_FINALE.mp4", "ARTVISION_CINEMA_V24_delaroche_FINALE.mp4", "ARTVISION_CINEMA_V24_leighton_FINALE.mp4", "ARTVISION_CINEMA_V24_rossetti_FINALE.mp4"],
+    "note": "Importer logs report these five filenames already stored at the artifact sizes. This is storage/import, not passed artistic review or social publication. An older Cabanel variant was also uploaded, but it is not treated as the current exact-hash master."
+  },
   "artifacts": [
     {"id":"artvision-v25-bruegel","title":"The Triumph of Death","run_id":39968852801,"artifact_id":12508078179,"video_sha256":"635274e289cdcd81021eb6ec0599d2876e71a61754d2c65974b729f50c75039b","duration_seconds":54.625,"audio_integrated_lufs":-14.3,"status":"rendered_needs_artistic_review","blockers":["V28 research missing","post contains production language","V25 review flags false"]},
     {"id":"artvision-v25-friedrich","title":"Wanderer above the Sea of Fog","run_id":39968852801,"artifact_id":12507473998,"video_sha256":"9c6b115d07d7548ea02902f267dac8cb3d055580bd052c749203fcc74232b88e","duration_seconds":44.792,"audio_integrated_lufs":-16.1,"status":"rendered_needs_artistic_review","blockers":["V28 research missing","post contains production language","V25 review flags false"]},
