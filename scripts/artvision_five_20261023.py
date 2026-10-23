@@ -231,7 +231,7 @@ def labels(info,arturl,slug,mp4,cover,durations):
       "music":"original synthesized score from scripts/artvision_five_20261023.py; no samples",
       "copyright_music":"original composition and recording by this production script",
       "voice":False,"fps":FPS,"frame_size":[W,H],"seconds":durations,"shot_reasons":[x[5] for x in info["shots"]],
-      "facebook_caption":caption+"\\n\\n#ArtVision #Arte #Pittura",
+      "facebook_caption":caption+"\n\n#ArtVision #Arte #Pittura",
       "production_notes":"Free original camera animation on documented public-domain painting. No AI-invented brushwork, subtitles or speech. Publication subject to visual and licensing review."}
 
 def make(ident,out):
@@ -253,7 +253,7 @@ def make(ident,out):
         clips.append(clip)
         print(f"[{ident}] scene {index+1}/{len(info['shots'])}: {shot[5]}",flush=True)
     files=tmp/"concat.txt"
-    files.write_text("".join("file '"+str(p.resolve()).replace("'","'\\''")+"'\\n" for p in clips))
+    files.write_text("".join("file '"+str(p.resolve()).replace("'","'\\''")+"'\n" for p in clips))
     sound=tmp/"original_score.wav"
     duration=sum(durations)
     score(duration,info["root"],info["kind"],info["tone"],sound)
@@ -267,7 +267,7 @@ def make(ident,out):
     manifest["sha256_mp4"]=hashlib.sha256(mp4.read_bytes()).hexdigest()
     manifest["size_bytes"]=mp4.stat().st_size
     (out/f"ARTVISION_CINEMA_V23_{ident.upper()}_RECIPE.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
-    (out/f"ARTVISION_CINEMA_V23_{ident.upper()}_POST_FACEBOOK.txt").write_text(manifest["facebook_caption"]+"\\n\\nOpera: "+manifest["image_page"]+"\\nMusica originale ArtVision V23.",encoding="utf-8")
+    (out/f"ARTVISION_CINEMA_V23_{ident.upper()}_POST_FACEBOOK.txt").write_text(manifest["facebook_caption"]+"\n\nOpera: "+manifest["image_page"]+"\nMusica originale ArtVision V23.",encoding="utf-8")
     # Real frames for review; not a synthetic or AI storyboard.
     for label,position in [("START",0.5),("MIDDLE",duration/2),("END",max(.5,duration-1))]:
         ffmpeg("-ss",f"{position:.2f}","-i",mp4,"-frames:v","1","-q:v","3",
