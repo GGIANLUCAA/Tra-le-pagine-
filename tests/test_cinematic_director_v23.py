@@ -84,6 +84,24 @@ class CinematicDirectorTests(unittest.TestCase):
             self.assertFalse(any(x.suffix==".mp4" for x in path.iterdir()))
             self.assertEqual(json.loads((path/"CINEMATOGRAPHY_PLAN_V23.json").read_text())["number_selected"],len(p["selected"]))
 
+    def test_automatically_included_in_creative_director_v21(self):
+        from src.creative_director_v21 import write_package
+        brief={"format":"artvision_critico","artwork":"L'incubo",
+          "artist":"Johann Heinrich Füssli",
+          "beats":[{"speech":"La donna è immobile. L'incubo compare."}],
+          "music":{"origin":"external_licensed","title":"Licensed score",
+                   "artist":"Composer","source_url":"https://example.com/score",
+                   "license_url":"https://creativecommons.org/licenses/by/4.0/",
+                   "commercial_allowed":True}}
+        with tempfile.TemporaryDirectory() as td:
+            r=write_package(brief,Path(td))
+            c=Path(td)/"CINEMATOGRAPHY_PLAN_V23.json"
+            self.assertTrue(c.is_file())
+            self.assertTrue((Path(td)/"CINEMATOGRAPHY_NOTE_V23.md").is_file())
+            self.assertEqual(r["cinematography_v23"]["plan_file"],c.name)
+            self.assertFalse(r["cinematography_v23"]["automatically_applied"])
+            self.assertFalse(r["ready_to_publish"])
+
     def test_catalog_missing_metadata_rejected(self):
         bad=dict(self.catalog)
         bad["techniques"]=[dict(x) for x in self.catalog["techniques"]]
