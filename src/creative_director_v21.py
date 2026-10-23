@@ -468,6 +468,14 @@ def write_package(brief,output,*,video=None,history=None,targets=None,policy_pat
         warnings.append("Fatti, opere e diritti delle immagini ancora da verificare editorialmente")
     if video is None:warnings.append("Manca master effettivo: primo fotogramma e copertina non ancora verificabili")
     output=Path(output);output.mkdir(parents=True,exist_ok=True)
+    # V23 cinema advisor is additive: no effect is automatically applied and historical masters
+    # or approved covers are never modified. Both module and CLI execution are supported.
+    try:
+        from src.cinematic_director_v23 import plan as cinematic_plan, export_plan as export_cinematic_plan
+    except ModuleNotFoundError:
+        from cinematic_director_v23 import plan as cinematic_plan, export_plan as export_cinematic_plan
+    cinema = cinematic_plan(brief)
+    export_cinematic_plan(cinema,output)
     preview=None
     if video:preview=probe_preview(video,output)
     record={"schema":"creative-director-v21","project_id":clean(brief.get("project_id") or brief.get("id")),
@@ -478,6 +486,10 @@ def write_package(brief,output,*,video=None,history=None,targets=None,policy_pat
                  "small_screen_review_required":True,"notes":"Una scultura, figura, volto, paesaggio o opera solo se PERTINENTE, originale e con diritti verificati"},
         "first_7_seconds":openings,"duration":duration,"music":music,
         "social":social,"technical_preview":preview,
+        "cinematography_v23":{"plan_file":"CINEMATOGRAPHY_PLAN_V23.json",
+           "selected_ids":[t["id"] for t in cinema["selected"]],
+           "camera_issues":cinema["camera_preflight"]["issues"],
+           "requires_real_review":True,"automatically_applied":False},
         "review_status":"review_required","ready_to_publish":False,
         "published":False,"warnings":list(dict.fromkeys(warnings)),
         "editorial_checks":["Copertina leggibile in griglia telefono",
@@ -503,6 +515,8 @@ def write_package(brief,output,*,video=None,history=None,targets=None,policy_pat
         "### Durata",json.dumps(duration,ensure_ascii=False),"",
         "### Apertura 0–7 secondi"]
     for s in openings:parts.append(f"- {s['from_seconds']}–{s['to_seconds']} s: {s['purpose']}")
+    parts+=["","### Tecniche cinematografiche V23 (proposte; non effetti automatici)"]
+    parts+=["- "+t["title"]+": "+t["how"] for t in cinema["selected"]]
     parts+=["","### Musica",music["master_policy"],"","### Revisione necessaria"]
     parts+=["- "+x for x in record["editorial_checks"]]
     parts+=["","### Segnalazioni"]+["- "+w for w in record["warnings"]]
