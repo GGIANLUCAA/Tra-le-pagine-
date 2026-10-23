@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ArtVision Cabanel V26: candidate director cut. V6 signature and V25 release contract.
 Images and licensed music are authentic; human aesthetic review remains required.
+This standalone candidate is triggered by the persistent CI workflow.
 """
 from __future__ import annotations
 import argparse,hashlib,json,math,shutil,subprocess,sys,time,zipfile
