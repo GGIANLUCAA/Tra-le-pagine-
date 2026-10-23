@@ -63,6 +63,17 @@ class CinematicDirectorTests(unittest.TestCase):
         self.assertEqual(r["issues"],[])
         self.assertEqual(r["locked"],3)
 
+    def test_eye_trace_large_jump_advises_reset_not_false_certification(self):
+        b={"shots":[{"focus_xy":[.1,.2],"framing":"detail"},
+                    {"focus_xy":[.88,.82],"framing":"detail"}]}
+        r=motion_check(b,"artvision_critico",self.catalog["safety"])
+        self.assertEqual(r["eye_trace_points_checked"],2)
+        self.assertTrue(any("eye-trace" in x["problem"] for x in r["issues"]))
+        self.assertTrue(all(x["severity"]!="block" for x in r["issues"]))
+        b["shots"][1]["framing"]="full"
+        q=motion_check(b,"artvision_critico",self.catalog["safety"])
+        self.assertFalse(any("eye-trace" in x["problem"] for x in q["issues"]))
+
     def test_unplanned_camera_never_claims_validated(self):
         r=plan({"format":"libri","scenes":[{"narration_anchor":"Quel giorno","description":"La porta si apre"}]},self.catalog)
         self.assertEqual(r["camera_preflight"]["plans_with_camera"],0)
