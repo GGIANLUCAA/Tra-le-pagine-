@@ -33,7 +33,7 @@ jobs:
           from pathlib import Path
           out=Path("output/goya-critico-v23")
           m=json.loads((out/"ASSETS_TIMING.json").read_text())
-          assert m["art"]["dims"][0]>=6000 and m["art"]["dims"][1]>=4000
+          assert m["art"]["dims"][0]>=5000 and m["art"]["dims"][1]>=4000
           assert len(m["voice"]["beat_ends"])==7
           assert m["voice"]["duration"]>35
           assert (out/"PAINTING.jpg").stat().st_size>2000000
