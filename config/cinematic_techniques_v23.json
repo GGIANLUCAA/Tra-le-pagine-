@@ -1,0 +1,2539 @@
+{
+  "schema": "artvision-cinematic-language-v23",
+  "version": "23.0",
+  "date": "2026-10-23",
+  "principle": "Non applicare effetti come preset automatici: scegliere massimo poche tecniche appropriate per ciascun video, basandosi su soggetto reale, narrativa/voce e musica; tenere la camera ferma se il movimento non serve.",
+  "source_links": [
+    "https://www.studiobinder.com/filmmaking-techniques-camera-movements/",
+    "https://www.studiobinder.com/camera-shots/camera-movements/",
+    "https://www.adobe.com/creativecloud/video/post-production/cuts-in-film/match-cut.html",
+    "https://helpx.adobe.com/it/premiere/desktop/edit-projects/trim-clips/perform-j-cuts-and-l-cuts.html",
+    "https://helpx.adobe.com/ph_fil/premiere-pro/how-to/ken-burns-effect.html",
+    "https://www.adobe.com/creativecloud/video/post-production/cuts-in-film.html",
+    "https://helpx.adobe.com/it/premiere/desktop/add-audio-effects/adjust-volume-and-levels/automatically-duck-audio.html"
+  ],
+  "sources_are_inspirations_not_guarantees": true,
+  "selection": {
+    "target_count": 6,
+    "max_count": 8,
+    "at_least_one_stillness_or_composition": true,
+    "max_camera_techniques": 2,
+    "do_not_force_all_techniques": true,
+    "prefer_approved_preset": true
+  },
+  "safety": {
+    "camera_default": "locked",
+    "motion_types": [
+      "locked",
+      "slow_push",
+      "slow_pull",
+      "slow_pan_x",
+      "slow_pan_y"
+    ],
+    "forbidden_motions": [
+      "sine",
+      "oscillate",
+      "wobble",
+      "bounce",
+      "spin",
+      "dolly_zoom_simulated",
+      "whip_pan"
+    ],
+    "critico_reference_max_scale_delta_fraction_per_shot": 0.01,
+    "critico_reference_max_travel_fraction_per_shot": 0.015,
+    "do_not_treat_reference_as_universal_law": true,
+    "require_motivated_pan_and_source_margin": true,
+    "review_at_seconds": [
+      0,
+      1,
+      3,
+      5,
+      7
+    ],
+    "require_real_time_playback": true,
+    "require_narration_anchor_for_narrated_edits": true,
+    "avoid_forced_question": true,
+    "personal_critico_comments_max": 2
+  },
+  "formats": {
+    "composition": [
+      "artvision_critico",
+      "artvision_cinema",
+      "libri",
+      "artvision_enigma",
+      "controluce"
+    ],
+    "camera": [
+      "artvision_critico",
+      "artvision_cinema",
+      "libri",
+      "artvision_enigma",
+      "controluce"
+    ],
+    "editing": [
+      "artvision_critico",
+      "artvision_cinema",
+      "libri",
+      "artvision_enigma",
+      "controluce",
+      "visual_music",
+      "hyperlumen"
+    ],
+    "opening": [
+      "artvision_critico",
+      "artvision_cinema",
+      "libri",
+      "artvision_enigma",
+      "controluce",
+      "visual_music",
+      "hyperlumen"
+    ],
+    "voice": [
+      "artvision_critico",
+      "libri",
+      "controluce"
+    ],
+    "music": [
+      "artvision_critico",
+      "artvision_cinema",
+      "libri",
+      "artvision_enigma",
+      "controluce",
+      "visual_music",
+      "hyperlumen"
+    ],
+    "artwork": [
+      "artvision_critico",
+      "artvision_cinema",
+      "artvision_enigma"
+    ],
+    "narrative": [
+      "artvision_critico",
+      "artvision_cinema",
+      "libri",
+      "artvision_enigma",
+      "controluce"
+    ],
+    "genre": [
+      "artvision_critico",
+      "artvision_cinema",
+      "libri",
+      "artvision_enigma",
+      "controluce",
+      "visual_music",
+      "hyperlumen"
+    ],
+    "quality": [
+      "artvision_critico",
+      "artvision_cinema",
+      "libri",
+      "artvision_enigma",
+      "controluce",
+      "visual_music",
+      "hyperlumen"
+    ]
+  },
+  "techniques": [
+    {
+      "id": "visual_hierarchy",
+      "family": "composition",
+      "title": "Gerarchia visiva",
+      "intention": "Condurre lo sguardo verso il soggetto decisivo",
+      "application": "Scegliere un solo centro d'interesse per piano",
+      "avoid": "Evita più focali in competizione",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "detail",
+        "portrait",
+        "dense"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "static_tableau",
+      "family": "composition",
+      "title": "Tableau immobile",
+      "intention": "Lasciar emergere tensione senza moto",
+      "application": "Camera ferma e durata giustificata da voce o musica",
+      "avoid": "Evita stasi dove manca nuova informazione",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "quiet",
+        "portrait",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "wide_then_close",
+      "family": "composition",
+      "title": "Totale e dettaglio",
+      "intention": "Mostrare relazione spaziale prima di approfondire",
+      "application": "Alternare quadro intero e ritaglio semanticamente motivato",
+      "avoid": "Evita ritorni generici troppo frequenti",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "dense",
+        "painting",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "close_then_wide",
+      "family": "composition",
+      "title": "Dettaglio e rivelazione",
+      "intention": "Fare del dettaglio la promessa iniziale",
+      "application": "Primo piano autentico seguito da contesto dopo indizio",
+      "avoid": "Evita suspense falsa o allungata",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "reveal",
+        "enigma",
+        "hook"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "triangular_balance",
+      "family": "composition",
+      "title": "Bilanciamento triangolare",
+      "intention": "Leggere tre poli narrativi in un'opera complessa",
+      "application": "Ancorare una sequenza di tre dettagli reali",
+      "avoid": "Evita imporre triangoli inesistenti",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "dense",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "leading_lines",
+      "family": "composition",
+      "title": "Linee guida",
+      "intention": "Seguire linee già presenti nella composizione",
+      "application": "Scegliere assi e direzioni della pittura nel piano",
+      "avoid": "Evita traiettorie che attraversano il volto",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "architecture",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "negative_space",
+      "family": "composition",
+      "title": "Spazio negativo",
+      "intention": "Valorizzare isolamento, silenzio o mistero",
+      "application": "Mantenere aria attorno alla figura e leggibilità",
+      "avoid": "Evita aree vuote usate come riempitivo",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "quiet",
+        "portrait"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "centered_symmetry",
+      "family": "composition",
+      "title": "Simmetria motivata",
+      "intention": "Dare solennità e ordine alla struttura",
+      "application": "Camera centrale su architettura o soggetto davvero simmetrico",
+      "avoid": "Evita simmetria falsa tramite ritaglio scorretto",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "architecture",
+        "dense"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "diagonal_tension",
+      "family": "composition",
+      "title": "Diagonale narrativa",
+      "intention": "Seguire tensione interna dell'opera",
+      "application": "Far leggere l'asse diagonale già dipinto",
+      "avoid": "Evita tilt fisico o effetto nave",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "dramatic",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "frame_within_frame",
+      "family": "composition",
+      "title": "Cornice nella cornice",
+      "intention": "Isolare un mondo dentro l'opera",
+      "application": "Usare porte, finestre o elementi reali come inquadratura",
+      "avoid": "Non inventare aperture con AI",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "architecture",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "scale_context",
+      "family": "composition",
+      "title": "Scala comparativa",
+      "intention": "Far comprendere proporzioni sorprendenti",
+      "application": "Mostrare dettaglio con riferimento presente nell'opera",
+      "avoid": "Evita grandezze inventate",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "dense",
+        "reveal"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "color_waypoint",
+      "family": "composition",
+      "title": "Colore come guida",
+      "intention": "Ritrovare un elemento fra inquadrature",
+      "application": "Collegare aree tramite cromia originale",
+      "avoid": "Non alterare palette del dipinto",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "painting",
+        "match"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "locked_hold",
+      "family": "camera",
+      "title": "Inquadratura ferma",
+      "intention": "Fermare il moto quando parla il contenuto",
+      "application": "Usare camera completamente statica nel dettaglio cruciale",
+      "avoid": "Evita far muovere ogni foto per abitudine",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "quiet",
+        "critico"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "micro_push",
+      "family": "camera",
+      "title": "Micro-avvicinamento",
+      "intention": "Aumentare attenzione su un dettaglio",
+      "application": "Progressione unidirezionale sobria su punto semantico",
+      "avoid": "Mai zoom pulsante/oscillante",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "detail",
+        "portrait"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "micro_pull",
+      "family": "camera",
+      "title": "Micro-allontanamento",
+      "intention": "Rivelare contesto senza shock",
+      "application": "Lentissimo allargamento verso composizione completa",
+      "avoid": "Evita rimbalzo in avanti dopo il pull",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "reveal",
+        "painting"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "vertical_read",
+      "family": "camera",
+      "title": "Lettura verticale lenta",
+      "intention": "Esplorare pitture alte e sculture",
+      "application": "Spostare il ritaglio su asse figurativo motivato",
+      "avoid": "Vietato il pendolo sopra/sotto",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "portrait",
+        "sculpture"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "lateral_read",
+      "family": "camera",
+      "title": "Lettura orizzontale lenta",
+      "intention": "Leggere fregi, panorami o scene corali",
+      "application": "Un solo percorso laterale da soggetto A a B",
+      "avoid": "Evita derive continue di pochi pixel",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "landscape",
+        "dense"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "single_axis",
+      "family": "camera",
+      "title": "Un solo asse per piano",
+      "intention": "Ridurre disorientamento",
+      "application": "Se si muove, cambiare solo una coordinata o la scala",
+      "avoid": "Evita diagonali e rotazioni simultanee",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "all"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "ease_in_out",
+      "family": "camera",
+      "title": "Accelerazione dolce",
+      "intention": "Eliminare partenze e arresti meccanici",
+      "application": "Interpolazione monotona con inizio/fine senza strappo",
+      "avoid": "Non ripetere easing sinusoidale a ciclo",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "motion"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "hold_before_move",
+      "family": "camera",
+      "title": "Pausa prima del moto",
+      "intention": "Dare tempo di leggere il soggetto",
+      "application": "Stabilire prima l'inquadratura poi avviare movimento",
+      "avoid": "Non sottrarre all'attenzione al primo dettaglio",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "detail",
+        "portrait"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "hold_after_move",
+      "family": "camera",
+      "title": "Pausa dopo il moto",
+      "intention": "Lasciare assorbire la scoperta",
+      "application": "Fermare il movimento e restare sul risultato",
+      "avoid": "Non continuare avanti e indietro",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "reveal",
+        "quiet"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "no_fake_depth",
+      "family": "camera",
+      "title": "No 3D inventato",
+      "intention": "Preservare integrità pittorica",
+      "application": "Preferire ritaglio 2D a parallax non ricostruito",
+      "avoid": "Non staccare corpi da una tela piatta",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "painting",
+        "rights"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "safe_crop",
+      "family": "camera",
+      "title": "Ritaglio protetto",
+      "intention": "Conservare elementi chiave e risoluzione",
+      "application": "Verificare soggetto, margini e pixel reali per close-up",
+      "avoid": "Mai testa o mani tagliate senza ragione",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "portrait",
+        "detail"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "one_motion_per_shot",
+      "family": "camera",
+      "title": "Un gesto per piano",
+      "intention": "Evitare nausea da sovramovimento",
+      "application": "Un solo movimento lento motivato, altrimenti fermo",
+      "avoid": "Vietate oscillazioni combinate",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "all"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "motivated_cut",
+      "family": "editing",
+      "title": "Taglio motivato",
+      "intention": "Seguire il pensiero e non il timer",
+      "application": "Tagliare quando cambia informazione o elemento narrato",
+      "avoid": "Non tagliare ogni 2 secondi per algoritmo",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "critico",
+        "story"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "semantic_dissolve",
+      "family": "editing",
+      "title": "Dissolvenza motivata",
+      "intention": "Passare in modo morbido fra stati correlati",
+      "application": "Dissolvere solo dove la fusione mantiene leggibilità",
+      "avoid": "Non usare dissolvenze sempre e comunque",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "quiet",
+        "painting"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "graphic_match",
+      "family": "editing",
+      "title": "Raccordo di forma",
+      "intention": "Collegare due elementi analoghi",
+      "application": "Allineare cerchi, direzioni o contorni autentici",
+      "avoid": "Non inventare connessioni casuali",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "dense",
+        "match"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "color_match",
+      "family": "editing",
+      "title": "Raccordo cromatico",
+      "intention": "Preservare continuità emotiva",
+      "application": "Passare fra toni esistenti con colore ponte",
+      "avoid": "Non ricolorare quadri",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "painting",
+        "match"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "gaze_match",
+      "family": "editing",
+      "title": "Raccordo di sguardo",
+      "intention": "Seguire una direzione di attenzione",
+      "application": "Passare al dettaglio guardato da un personaggio dipinto",
+      "avoid": "Non fingere un'azione non presente",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "portrait",
+        "story"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "reveal_cut",
+      "family": "editing",
+      "title": "Taglio di rivelazione",
+      "intention": "Colpire senza transizioni vistose",
+      "application": "Da macro significativa a contesto che scioglie mistero",
+      "avoid": "Non occultare artificiosamente informazioni",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "reveal",
+        "hook"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "detail_return",
+      "family": "editing",
+      "title": "Ritorno al dettaglio",
+      "intention": "Chiudere una struttura narrativa circolare",
+      "application": "Riprendere elemento iniziale con nuovo significato",
+      "avoid": "Non ripetere lo stesso crop senza novità",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "reveal",
+        "story"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "rhythmic_rest",
+      "family": "editing",
+      "title": "Pausa di montaggio",
+      "intention": "Rendere piacevole un video fitto",
+      "application": "Dopo sequenza densa mantenere piano contemplativo",
+      "avoid": "Evita rallentare storia già ferma",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "dense",
+        "quiet"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "chapter_by_vision",
+      "family": "editing",
+      "title": "Capitoli visivi",
+      "intention": "Organizzare opere complesse senza testi",
+      "application": "Passare di pannello o soggetto senza didascalie",
+      "avoid": "Evita etichette italiane sovrimpresse",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "triptych",
+        "dense"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "cutaway_return",
+      "family": "editing",
+      "title": "Stacco e ritorno",
+      "intention": "Contestualizzare un dettaglio",
+      "application": "Totale breve poi ritorno su figura citata",
+      "avoid": "Evita alternanza automatica sopra/sotto",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "painting",
+        "critico"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "contrast_pair",
+      "family": "editing",
+      "title": "Montaggio per contrasto",
+      "intention": "Sottolineare cambio di tono",
+      "application": "Associare dettagli differenti su base storica reale",
+      "avoid": "Non usare shock gratuito",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "dramatic",
+        "story"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "ellipsis_clean",
+      "family": "editing",
+      "title": "Ellissi pulita",
+      "intention": "Togliere ridondanze",
+      "application": "Rimuovere passaggi che non aggiungono contenuto",
+      "avoid": "Non troncare voce o nesso causale",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "short",
+        "story"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "music_continuity_cut",
+      "family": "editing",
+      "title": "Taglio con audio continuo",
+      "intention": "Tenere flusso percettivo",
+      "application": "Lasciare un ponte musicale fra inquadrature",
+      "avoid": "Evita tagliare l'audio con ciascuna scena",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "music",
+        "critico"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "no_split_screen",
+      "family": "editing",
+      "title": "Unità del dipinto",
+      "intention": "Non frammentare la visione del quadro",
+      "application": "Usare un'unica immagine per volta sui dipinti pittorici",
+      "avoid": "Evita montaggi due riquadri ripetuti",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "painting",
+        "critico"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "in_media_res_visual",
+      "family": "opening",
+      "title": "In medias res visivo",
+      "intention": "Cominciare dalla sostanza dell'opera",
+      "application": "Mostrare dettaglio verificato nel primo fotogramma",
+      "avoid": "Niente intro lunga o logo dominante",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hook",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "anomaly_real",
+      "family": "opening",
+      "title": "Anomalia autentica",
+      "intention": "Stimolare curiosità con elemento realmente insolito",
+      "application": "Dettaglio strano e spiegazione precisa successiva",
+      "avoid": "No clickbait o falso mistero",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hook",
+        "reveal"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "human_gaze_start",
+      "family": "opening",
+      "title": "Sguardo umano",
+      "intention": "Attivare relazione diretta con chi guarda",
+      "application": "Primo piano dipinto nitido con spazio intorno",
+      "avoid": "Non forzare un volto inesistente",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hook",
+        "portrait"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "scale_surprise",
+      "family": "opening",
+      "title": "Sorpresa di scala",
+      "intention": "Mostrare dimensioni inaspettate",
+      "application": "Accostare macro e totale con continuità",
+      "avoid": "Non falsificare proporzioni",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hook",
+        "reveal"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "quiet_intrigue",
+      "family": "opening",
+      "title": "Enigma senza rumore",
+      "intention": "Ottenere attenzione con la calma",
+      "application": "Piano forte, piccolo silenzio e voce naturale",
+      "avoid": "Non fare silenzi vuoti troppo lunghi",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hook",
+        "quiet"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "hook_voice_anchor",
+      "family": "opening",
+      "title": "Prima parola e dettaglio",
+      "intention": "Sincronizzare parola e cosa mostrata",
+      "application": "Voce concreta inizia sul dettaglio pertinente",
+      "avoid": "Non anticipare frasi non supportate",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hook",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "promise_payoff",
+      "family": "opening",
+      "title": "Promessa mantenuta",
+      "intention": "Evitare effetto esca",
+      "application": "Preparare una scoperta che arriverà nel racconto",
+      "avoid": "Niente finali senza risposta",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hook",
+        "story"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "0_1_3_5_7_review",
+      "family": "opening",
+      "title": "Controllo apertura",
+      "intention": "Valutare primo istante realmente visto",
+      "application": "Rileggere frame 0,1,3,5,7 in contesto e autoplay",
+      "avoid": "Non equiparare differenza pixel a qualità",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hook",
+        "qa"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "cover_not_intro",
+      "family": "opening",
+      "title": "Copertina distinta",
+      "intention": "Non bruciare secondi con title-card fissa",
+      "application": "Il video inizia sull'opera; cover autonoma per social",
+      "avoid": "Preserva preset cover V2 e V6",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hook",
+        "cover"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "reveal_delayed_but_fair",
+      "family": "opening",
+      "title": "Svelamento progressivo",
+      "intention": "Dare una ragione per continuare",
+      "application": "Ogni nuovo dettaglio avvicina alla verità",
+      "avoid": "Non ritardare artificialmente la risposta",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hook",
+        "reveal"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "narration_anchor",
+      "family": "voice",
+      "title": "Ancora semantica",
+      "intention": "Mostrare ciò che viene pronunciato",
+      "application": "Collegare una scena a frase esatta del copione",
+      "avoid": "Non stimare parola precisa senza allineamento",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "libri"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "speech_breath_hold",
+      "family": "voice",
+      "title": "Respiro della frase",
+      "intention": "Evitare caos durante la voce",
+      "application": "Lasciare fermo piano nelle pause naturali",
+      "avoid": "Non allungare una pausa già sufficiente",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "quiet"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "new_noun_new_visual",
+      "family": "voice",
+      "title": "Nuovo soggetto visivo",
+      "intention": "Cambiare inquadratura sul nome dell'oggetto",
+      "application": "Quando nomina un fiore, mostrare il fiore reale",
+      "avoid": "Non anticipare figura non nominata",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "story"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "narration_leads_image",
+      "family": "voice",
+      "title": "Voce guida lo sguardo",
+      "intention": "Tenere priorità al racconto",
+      "application": "L'immagine serve frase, non viceversa",
+      "avoid": "Non tagliare voce per una dissolvenza",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "libri"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "l_cut_voice",
+      "family": "voice",
+      "title": "L-cut narrativo",
+      "intention": "Mantener continuità durante cambio immagine",
+      "application": "La frase può proseguire sul nuovo dettaglio",
+      "avoid": "Non simulare due tracce audio quando non esistono",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "libri"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "j_cut_sound",
+      "family": "voice",
+      "title": "J-cut sonoro",
+      "intention": "Preparare scena con audio adeguato",
+      "application": "Solo se esistono davvero due clip/tracce con anticipo sonoro",
+      "avoid": "Non chiamare J-cut una musica continua",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "tags": [
+        "story",
+        "libri"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "key_word_reveal",
+      "family": "voice",
+      "title": "Rivelazione sulla parola",
+      "intention": "Dare rilievo a un fatto centrale",
+      "application": "Taglio al dettaglio proprio sulla parola chiave se timing reale",
+      "avoid": "Senza ASR segnala timing stimato",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "reveal"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "single_voice_timbre",
+      "family": "voice",
+      "title": "Timbrica costante",
+      "intention": "Evitare cambio narratore artificiale",
+      "application": "Conservare voce Gacrux e livelli tra scene",
+      "avoid": "Non mixare voci senza autorizzazione",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "libri"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "commentary_sparse",
+      "family": "voice",
+      "title": "Interpretazione misurata",
+      "intention": "Lasciar parlare l'opera",
+      "application": "Al massimo due opinioni personali motivate; anche zero",
+      "avoid": "Evita opinioni dopo ogni dettaglio",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "story"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "nonforced_ending",
+      "family": "voice",
+      "title": "Chiusura contestuale",
+      "intention": "Terminare dove chiude il ragionamento",
+      "application": "Ultima frase deriva da quanto mostrato e detto",
+      "avoid": "Niente domanda retorica aggiunta per commenti",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "story"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "musical_phrase_cut",
+      "family": "music",
+      "title": "Taglio a frase musicale",
+      "intention": "Accordare struttura visuale e musica",
+      "application": "Segnare il cambio alla fine reale di frase",
+      "avoid": "Non inventare beat o BPM",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "music",
+        "cinema"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "true_onset_sync",
+      "family": "music",
+      "title": "Sincronia su onset reale",
+      "intention": "Seguire accenti udibili",
+      "application": "Usare onset calcolati sull'audio quando disponibili",
+      "avoid": "Non sincronizzare su timer fisso",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "music",
+        "visual_music"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "quiet_score",
+      "family": "music",
+      "title": "Musica discreta",
+      "intention": "Lasciare spazio alla voce e al quadro",
+      "application": "Traccia coerente emotivamente e attenuata",
+      "avoid": "Non sovrastare Gacrux",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "critico",
+        "quiet"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "duck_dialogue",
+      "family": "music",
+      "title": "Ducking intelligente",
+      "intention": "Priorità comprensibilità voce",
+      "application": "Attenuare musica quando inizia la voce",
+      "avoid": "Non pompare volume ritmicamente",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "critico",
+        "libri"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "sound_bridge",
+      "family": "music",
+      "title": "Ponte musicale",
+      "intention": "Preservare flusso tra scene",
+      "application": "Mantieni suono condiviso attraversando stacchi",
+      "avoid": "Non inventare rumori senza licenza",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "music",
+        "story"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "rest_on_resonance",
+      "family": "music",
+      "title": "Risonanza",
+      "intention": "Far durare una scoperta",
+      "application": "Lasciare dettaglio mentre sfuma nota",
+      "avoid": "Evita immobilità senza musica o senso",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "cinema",
+        "quiet"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "dynamic_arc",
+      "family": "music",
+      "title": "Arco sonoro",
+      "intention": "Legare crescendo e climax",
+      "application": "Segmentare musica con reale andamento espressivo",
+      "avoid": "Non alzare artificialmente volume ogni scena",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "music",
+        "cinema"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "music_fade_end",
+      "family": "music",
+      "title": "Chiusura musicale",
+      "intention": "Non troncare l'ultimo suono",
+      "application": "Fade finale armonioso",
+      "avoid": "No taglio improvviso sulla coda",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "music",
+        "cinema"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "license_first",
+      "family": "music",
+      "title": "Licenza prima del mix",
+      "intention": "Rendere reale la pubblicabilità",
+      "application": "Verificare fonte, registrazione, licenza e crediti",
+      "avoid": "Non importare registrazione Meta su altre piattaforme",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "music",
+        "rights"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "silence_motivation",
+      "family": "music",
+      "title": "Silenzio significativo",
+      "intention": "Concentrarsi sul dettaglio",
+      "application": "Breve pausa audio solo se coerente",
+      "avoid": "Non silenziare senza ragione in autoplay",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "quiet",
+        "cinema"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "brushwork_macro",
+      "family": "artwork",
+      "title": "Materia pittorica",
+      "intention": "Osservare tecnica e pennellata",
+      "application": "Macro solo su riproduzione realmente nitida",
+      "avoid": "Non creare pennellate AI false",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "painting",
+        "detail"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "iconography_anchor",
+      "family": "artwork",
+      "title": "Simbolo contestualizzato",
+      "intention": "Interpretare senza inventare",
+      "application": "Mostrare simbolo e fonte museale precisa",
+      "avoid": "Non trasformare ipotesi in fatto",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "critico",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "panel_geography",
+      "family": "artwork",
+      "title": "Geografia trittico",
+      "intention": "Orientare nei pannelli",
+      "application": "Stabilire sinistra centro destra prima delle macro",
+      "avoid": "Non saltare fra pannelli senza contesto",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "triptych",
+        "dense"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "figure_grouping",
+      "family": "artwork",
+      "title": "Gruppi figurativi",
+      "intention": "Spiegare tante figure senza caos",
+      "application": "Isolare sottogruppo alla volta",
+      "avoid": "Non zoomare a caso in folla",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "dense",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "original_color",
+      "family": "artwork",
+      "title": "Colori autentici",
+      "intention": "Rispettare opere originali",
+      "application": "Conservare grading e gamma con gestione colore neutra",
+      "avoid": "Nessuna saturazione virale",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "painting",
+        "rights"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "no_fake_art_motion",
+      "family": "artwork",
+      "title": "Integrità dell'opera",
+      "intention": "Non far vivere personaggi artificialmente",
+      "application": "Camera virtuale sul quadro fermo, non sul contenuto",
+      "avoid": "No morfologie/animazioni non dichiarate",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "painting",
+        "rights"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "whole_work_resolution",
+      "family": "artwork",
+      "title": "Ritorno all'insieme",
+      "intention": "Non ridurre capolavoro a frammenti",
+      "application": "Mostrare l'intera composizione in punto narrativo chiave",
+      "avoid": "Evita totale illeggibile ripetuto",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "painting",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "era_materials",
+      "family": "artwork",
+      "title": "Contesto dei materiali",
+      "intention": "Spiegare pigmenti e tecniche con prove",
+      "application": "Avvicinamento solo su dettaglio collegato a fatto verificato",
+      "avoid": "Niente attribuzioni speculative",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "painting",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "detail_confidence",
+      "family": "artwork",
+      "title": "Dettaglio verificato",
+      "intention": "Non attribuire oggetto a pixel incomprensibili",
+      "application": "Annotare focus, dimensioni sorgente, prova visiva",
+      "avoid": "Non promettere qualità 4K inesistente",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "painting",
+        "qa"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "figure_eye_trace",
+      "family": "artwork",
+      "title": "Traiettoria dello sguardo",
+      "intention": "Collegare figure dentro l'immagine",
+      "application": "Usare vettori visivi reali e successivo dettaglio",
+      "avoid": "Non inventare chi guarda chi",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "painting",
+        "portrait"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "museum_first",
+      "family": "artwork",
+      "title": "Fonte museale",
+      "intention": "Ridurre errori interpretativi",
+      "application": "Prima scheda museo, poi altri studi, poi critica distinta",
+      "avoid": "Non copiare analisi senza attribuzione",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma"
+      ],
+      "tags": [
+        "critico",
+        "rights"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "three_act_micro",
+      "family": "narrative",
+      "title": "Arco breve",
+      "intention": "Condurre curiosità a esito",
+      "application": "Premessa, osservazioni reali, conseguenza naturale",
+      "avoid": "Non imporre durata fissa",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "story",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "setup_payoff",
+      "family": "narrative",
+      "title": "Preparazione e risposta",
+      "intention": "Rendere appagante il dettaglio iniziale",
+      "application": "Tornare su indizio con nuovo significato",
+      "avoid": "Non aggiungere domanda posticcia",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "story",
+        "reveal"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "contrast_real",
+      "family": "narrative",
+      "title": "Contrasto documentato",
+      "intention": "Mostrare due letture di un'opera",
+      "application": "Alternare dettagli opposti senza falsificarli",
+      "avoid": "No polemica costruita",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "story",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "one_claim_one_image",
+      "family": "narrative",
+      "title": "Una idea per piano",
+      "intention": "Evitare sovraccarico informativo",
+      "application": "Un'asserzione e un dettaglio pertinente",
+      "avoid": "Non cambiare soggetto a metà frase",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "libri"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "no_filler_reaction",
+      "family": "narrative",
+      "title": "Niente riempitivi",
+      "intention": "Conservare ritmo onesto",
+      "application": "Tagliare ripetizioni, non accelerare camera",
+      "avoid": "Evita silenzio usato per estendere runtime",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "short",
+        "story"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "credible_uncertainty",
+      "family": "narrative",
+      "title": "Incertezza onesta",
+      "intention": "Distinguere letture possibili e certe",
+      "application": "Marcare interpretazioni vs dati storici",
+      "avoid": "Non dichiarare il simbolo sempre certo",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "critico",
+        "rights"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "narrative_reveal",
+      "family": "narrative",
+      "title": "Rivelazione contestuale",
+      "intention": "Fare del dettaglio un punto di svolta",
+      "application": "Da indizio in immagine a interpretazione supportata",
+      "avoid": "No reveal creato con effetti falsi",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "reveal",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "subject_sensitivity",
+      "family": "narrative",
+      "title": "Tono proporzionato",
+      "intention": "Trattare temi cupi senza manipolare",
+      "application": "Musica e crop rispettosi della materia",
+      "avoid": "Niente shock gratuito sui corpi",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "dramatic",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "ending_on_whole",
+      "family": "narrative",
+      "title": "Finale contemplativo",
+      "intention": "Lasciare maturare il senso",
+      "application": "Chiudere su opera completa quando coerente",
+      "avoid": "Non forzare ritorno sempre",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "painting",
+        "quiet"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "story_not_visualizer",
+      "family": "narrative",
+      "title": "Storia prima dell'effetto",
+      "intention": "Evitare template ripetuto",
+      "application": "Ogni scena giustificata da storia e fonti",
+      "avoid": "Non animare immagini per sembrare attivi",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce"
+      ],
+      "tags": [
+        "all"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "critico_v2_identity",
+      "family": "genre",
+      "title": "Firma Critico V2",
+      "intention": "Continuità visiva della serie",
+      "application": "Titolo+artista su cover, niente etichette dentro",
+      "avoid": "Non usare copertina V6 su Critico",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "critico",
+        "cover"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "cinema_v6_identity",
+      "family": "genre",
+      "title": "Gold Master Cinema V6",
+      "intention": "Identità Cinema approvata",
+      "application": "Dettagli e totale, musica unica, niente voce",
+      "avoid": "Non alterare baseline V6",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "cinema",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "book_v12_scene",
+      "family": "genre",
+      "title": "Scena di libro",
+      "intention": "Azione coerente con frase",
+      "application": "Protagonista, gesto, conseguenza e voce",
+      "avoid": "Non usare foto simboliche incongrue",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "libri",
+        "story"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "enigma_causal",
+      "family": "genre",
+      "title": "Enigma visivo",
+      "intention": "Revelation senza inganno",
+      "application": "Mostra anomalia e scioglimento reale",
+      "avoid": "Non occultare troppo a lungo",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "enigma",
+        "reveal"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "visual_music_notes",
+      "family": "genre",
+      "title": "Visual Music sincronizzata",
+      "intention": "Note e figura realmente associate",
+      "application": "MIDI/score onset reale, composizione pulita",
+      "avoid": "Non simulare sincronia con amplitude casuale",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "visual_music",
+        "music"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "hyperlumen_form",
+      "family": "genre",
+      "title": "HyperLumen leggibile",
+      "intention": "Luce al servizio del brano",
+      "application": "Forme semplici e impulsi verificati",
+      "avoid": "No lampeggiamenti violenti casuali",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "hyperlumen",
+        "music"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "controluce_facts",
+      "family": "genre",
+      "title": "Controluce documentato",
+      "intention": "Separare cronaca e ricostruzione",
+      "application": "Fonti e asse temporale verificati",
+      "avoid": "Niente fake fotogrammi presentati come reali",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "controluce",
+        "story"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "portrait_treatment",
+      "family": "genre",
+      "title": "Opera verticale",
+      "intention": "Mantenere volti proporzionati",
+      "application": "Crop centrale con margini e totalità quando serve",
+      "avoid": "Mai deformare per rapporto 9:16",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "portrait",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "landscape_treatment",
+      "family": "genre",
+      "title": "Opera orizzontale",
+      "intention": "Non perdere geografia del quadro",
+      "application": "Panoramica totale leggibile prima di grandi macro",
+      "avoid": "Mai due layer ripetuti per forza",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "landscape",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "music_not_auto",
+      "family": "genre",
+      "title": "Senza automatismo musicale",
+      "intention": "Mantenere varietà creativa",
+      "application": "Montaggio sulla struttura scelta, non su ogni beat",
+      "avoid": "Non render uguali 10 video",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "music",
+        "cinema"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "camera_seasick_gate",
+      "family": "quality",
+      "title": "Controllo nausea",
+      "intention": "Non consegnare movimenti disorientanti",
+      "application": "Guardare a velocità reale inizio e raccordi centrali",
+      "avoid": "Non bastano campioni fermi",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "motion"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "camera_no_oscillation",
+      "family": "quality",
+      "title": "No oscillazioni",
+      "intention": "Eliminare moto a pendolo",
+      "application": "Rifiutare pan/zoom sinusoidali senza significato",
+      "avoid": "Niente rimbalzo dentro un piano",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "motion"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "real_frame_gate",
+      "family": "quality",
+      "title": "Fotogrammi del master",
+      "intention": "Giudicare prodotto reale",
+      "application": "Esportare frame 0,1,3,5,7 e campioni centrali",
+      "avoid": "Non confondere storyboard con filmato",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "hook"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "semantic_sync_gate",
+      "family": "quality",
+      "title": "QA voce e dettaglio",
+      "intention": "Verificare coordinamento reale",
+      "application": "Ascoltare frasi e vedere soggetto corrispondente",
+      "avoid": "ASR mancante significa tempo stimato",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "original_master_protect",
+      "family": "quality",
+      "title": "Master intoccabile",
+      "intention": "Non perdere video approvati",
+      "application": "Creare versioni additive e ricette hashate",
+      "avoid": "Mai modificare film storici",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "rights"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "rights_and_sources",
+      "family": "quality",
+      "title": "Diritti verificati",
+      "intention": "Pubblicazione legale",
+      "application": "Registro file, autore, foto, musica, territorio",
+      "avoid": "No licenza inferita da dominio",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "rights"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "readable_phone_gate",
+      "family": "quality",
+      "title": "Test telefono",
+      "intention": "Leggibilità miniatura e soggetto",
+      "application": "Vedere a dimensione smartphone non solo desktop",
+      "avoid": "Non usare testo minuscolo",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "cover"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "no_fake_4k",
+      "family": "quality",
+      "title": "Risoluzione dichiarata",
+      "intention": "Trasparenza sul prodotto",
+      "application": "ffprobe dimensione vera, rapporto sorgente/crop",
+      "avoid": "Non chiamare 4K un upscale",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "rights"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "no_voice_overmix",
+      "family": "quality",
+      "title": "Voce pulita",
+      "intention": "Parlato comprensibile",
+      "application": "Ascolto a volume telefono e duck musica",
+      "avoid": "No colonna sonora invasiva",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "timing_from_real_voice",
+      "family": "quality",
+      "title": "Timing verificato",
+      "intention": "Sincronia dichiarata",
+      "application": "Usare tempo reale del WAV, parola con allineamento quando presente",
+      "avoid": "Non chiamare sync perfetta stima per parole",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "critico"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "publication_gate",
+      "family": "quality",
+      "title": "Niente pubblicazione automatica",
+      "intention": "Proteggere revisione",
+      "application": "Distinguere render, QA, approvazione e distribuzione",
+      "avoid": "Non dire pronto sui social senza consenso",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "rights"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "no_viral_proof",
+      "family": "quality",
+      "title": "Nessuna viralità inventata",
+      "intention": "Valutazione reale",
+      "application": "Metriche solo dopo pubblicazione",
+      "avoid": "Non dichiarare miglioramenti statistici offline",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen"
+      ],
+      "tags": [
+        "qa",
+        "hook"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    }
+  ]
+}
