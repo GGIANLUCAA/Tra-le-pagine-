@@ -55,6 +55,38 @@ def load_json(path):
         return json.load(f)
 
 
+def scaffold_from_brief(brief, output_dir):
+    """Create an UNAPPROVED V25 manifest alongside a V21 Cinema package.
+
+    Does not guess rights, camera, musician, licenses or actual video quality.
+    Idempotent: never edits a person's work in an existing manifest.
+    """
+    if not isinstance(brief,dict):
+        raise ValueError("Brief per manifesto V25 deve essere un oggetto")
+    path = Path(output_dir) / "ARTVISION_CONTRACT_V25.json"
+    if path.exists():
+        return path
+    template = ROOT / "templates" / "ARTVISION_CONTRACT_V25.json"
+    data = load_json(template)
+    unique = brief.get("project_id") or brief.get("id") or brief.get("video_id")
+    if filled(unique):
+        data["video_id"] = str(unique)
+    artist = brief.get("artist") or brief.get("artist_name")
+    if filled(artist):
+        data["artwork"]["artist"] = str(artist).upper()
+        data["opening"]["artist_text"] = str(artist).upper()
+        data["cover"]["artist"] = str(artist).upper()
+        data["on_screen_text"][0]["text"] = str(artist).upper()
+    title = brief.get("artwork_title_en") or brief.get("painting_title_en")
+    if filled(title):
+        data["artwork"]["title_en"] = str(title)
+        data["cover"]["title_en"] = str(title)
+    # Keep source rights, score composer and artistic checkboxes NOT VERIFIED.
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text(json.dumps(data,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    return path
+
+
 def check_preflight(data, catalog=None):
     errors = []
     add = errors.append
