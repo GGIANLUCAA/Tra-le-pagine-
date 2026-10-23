@@ -43,7 +43,7 @@ Per ogni nuovo video, nella cartella dell'episodio (nomi coerenti, senza sovrasc
 
 ## Gate concreto — non solo testo
 `config/artvision_contract_v25.json` è la policy consultabile da codice. `src/artvision_contract_gate_v25.py` verifica un manifest esplicito prima e dopo il render, fallisce se mancano identità, copertina, title-en, primi secondi, fonti, musica, documenti, tracce o review. Non “certifica” automaticamente arte, traduzioni o diritti: dove serve occhio/orecchio umano esige prova annotata e segnala un blocco. Il gate non riscrive master, non pubblica e non spende API.
-Comandi: `python src/artvision_contract_gate_v25.py --manifest output/episode/ARTVISION_CONTRACT_V25.json --stage preflight` poi `--stage final`.
+Comandi: `python src/artvision_contract_gate_v25.py --manifest output/episode/ARTVISION_CONTRACT_V25.json --stage preflight` poi `--stage final`. Se il controllo finale passa, eseguire anche `--stage final --bundle` per creare uno **ZIP completo con suffisso SHA**, comprendente master, copertina, quattro post, ricetta, tecniche, replica, diritti, manifest musicale e fotogrammi QA reali; non sovrascrive pacchetti precedenti e non pubblica sui social. Il pacchetto V21 genera automaticamente la bozza del manifest V25 per Cinema, ma lascia i dati non verificati BLOCCATI.
 Lo schema di partenza è in `templates/ARTVISION_CONTRACT_V25.json`, da compilare per ogni opera. Non marcare `passed` prima di avere visionato il film.
 In un nuovo thread: aprire il repo e leggere AGENTS.md → questo contratto → preset formato → ricetta riferimento. Se il repo non è accessibile, dichiararlo, non inventare la memoria del contenuto.
 
