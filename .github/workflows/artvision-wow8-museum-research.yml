@@ -1,0 +1,33 @@
+name: "ArtVision WOW8 - exact museum art source preflight"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow8-museum-research.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Verify CC0 museum works, metadata and master image URLs
+        run: |
+          python - <<'PY'
+          import urllib.parse,urllib.request,json
+          hdr={'User-Agent':'ArtVisionTraLePagine/6 (open-access public artwork research)'}
+          artists=['Katsushika Hokusai','Utagawa Kuniyoshi','Francisco de Goya','Francisco Goya','Albert Bierstadt','Eugène Delacroix','James Ensor','Aubrey Beardsley','Gustave Moreau','Arnold Böcklin','Utagawa Hiroshige']
+          words=['great wave','wave off','skeleton','witch','sleep of reason','monsters','vesuvius','mount starr','lion devouring','tiger','ghost','night','death','nightmare','storm','demon','devil','flood','hell','fall']
+          for artist in artists:
+           api='https://openaccess-api.clevelandart.org/api/artworks/?'+urllib.parse.urlencode({'artists':artist,'limit':200})
+           try:
+            data=json.load(urllib.request.urlopen(urllib.request.Request(api,headers=hdr),timeout=25))
+            rows=[x for x in data.get('data',[]) if x.get('share_license_status')=='CC0' and (x.get('images')or{}).get('print')]
+            matches=[x for x in rows if any(k in (x.get('title') or '').lower() for k in words)]
+            print('ARTIST',artist,'count',len(rows),'matches',len(matches),flush=True)
+            for x in matches[:25]:
+             print('WORK',x.get('title'),'id',x.get('accession_number'),
+                   'dimensions',(x['images']['print'] or {}).get('width'),(x['images']['print'] or {}).get('height'),
+                   'img',x['images']['print'].get('url'),flush=True)
+           except Exception as exc:print('ERROR',artist,str(exc)[:160],flush=True)
+          PY
