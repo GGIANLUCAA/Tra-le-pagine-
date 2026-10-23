@@ -10,7 +10,9 @@
     "https://helpx.adobe.com/it/premiere/desktop/edit-projects/trim-clips/perform-j-cuts-and-l-cuts.html",
     "https://helpx.adobe.com/ph_fil/premiere-pro/how-to/ken-burns-effect.html",
     "https://www.adobe.com/creativecloud/video/post-production/cuts-in-film.html",
-    "https://helpx.adobe.com/it/premiere/desktop/add-audio-effects/adjust-volume-and-levels/automatically-duck-audio.html"
+    "https://helpx.adobe.com/it/premiere/desktop/add-audio-effects/adjust-volume-and-levels/automatically-duck-audio.html",
+    "https://www.adobe.com/creativecloud/video/discover/edit-a-video.html",
+    "https://www.adobe.com/creativecloud/video/hub/ideas/what-is-continuity-editing-in-film.html"
   ],
   "sources_are_inspirations_not_guarantees": true,
   "selection": {
@@ -2641,6 +2643,143 @@
       "tags": [
         "qa",
         "hook"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "eye_trace_continuity",
+      "family": "editing",
+      "title": "Continuità del punto d'attenzione",
+      "intention": "Il pubblico non deve cercare ogni volta dov'è il soggetto",
+      "application": "Allineare la posizione del soggetto tra due tagli o inserire totale orientativo",
+      "avoid": "Non saltare da un bordo all'altro senza ragione",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen",
+        "other"
+      ],
+      "tags": [
+        "portrait",
+        "dense",
+        "critico"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "spatial_reset",
+      "family": "editing",
+      "title": "Ripristino della geografia",
+      "intention": "Ri-orientare dopo macro lontane fra loro",
+      "application": "Inserire un totale o pannello leggibile prima di cambiare zona",
+      "avoid": "Non ripetere totale ogni pochi secondi",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "visual_music",
+        "hyperlumen",
+        "other"
+      ],
+      "tags": [
+        "dense",
+        "triptych",
+        "painting"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "scale_progression",
+      "family": "composition",
+      "title": "Progressione dei piani",
+      "intention": "Dare senso alla sequenza di campo largo medio dettaglio",
+      "application": "Motivare avvicinamento o allontanamento secondo l'informazione",
+      "avoid": "Non saltare di scala per mostrare un effetto",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "other"
+      ],
+      "tags": [
+        "detail",
+        "reveal",
+        "painting"
+      ],
+      "execution": "planning_or_review",
+      "automatic_effect": false
+    },
+    {
+      "id": "settle_before_cut",
+      "family": "camera",
+      "title": "Arrivo fermo prima del raccordo",
+      "intention": "Consentire allo sguardo di assimilare la meta",
+      "application": "Breve tenuta dopo un gesto lento, poi taglio motivato",
+      "avoid": "Non sommare moto interno, taglio e nuova panoramica",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "other"
+      ],
+      "tags": [
+        "quiet",
+        "critico"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "path_avoids_empty",
+      "family": "camera",
+      "title": "Percorso senza attraversamenti vuoti",
+      "intention": "Evitare panoramiche tra punti molto distanti",
+      "application": "Taglio o totale intermedi se movimento deve percorrere un vuoto",
+      "avoid": "Non trascinare la camera senza soggetto",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "libri",
+        "artvision_enigma",
+        "controluce",
+        "other"
+      ],
+      "tags": [
+        "dense",
+        "painting"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false
+    },
+    {
+      "id": "real_audio_lock",
+      "family": "voice",
+      "title": "Allineamento audio verificato",
+      "intention": "Evitare sincronie dichiarate solo da durata stimata",
+      "application": "Se possibile usare timestamp reali di frasi/parole, poi verifica visiva",
+      "avoid": "Non certificare precisione da numero di parole",
+      "formats": [
+        "artvision_critico",
+        "libri",
+        "controluce",
+        "other"
+      ],
+      "tags": [
+        "critico",
+        "libri"
       ],
       "execution": "planning_or_review",
       "automatic_effect": false
