@@ -1,5 +1,8 @@
 # Crea il prossimo video partendo dal lavoro già riuscito
 
+**STEP ZERO (OBBLIGATORIO):** apri [il contratto permanente ArtVision V25](docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md), poi `AGENTS.md` e il preset approvato del formato. Niente nuovi stili o ricette genericamente “virali” al posto delle regole. Il Cinema senza voce mantiene V6, copertine coerenti e titoli opere in inglese; descrizioni/hashtag/crediti pronti per i post. Prima/dopo il render esegui il gate V25 con `templates/ARTVISION_CONTRACT_V25.json`, il quale BLOCCA la consegna incompleta. Non confondere un piano con un MP4 effettivamente riuscito e controllato.
+
+
 **GPT: leggi [AGENTS.md](AGENTS.md), poi il
 [Playbook](docs/GPT_VIDEO_PLAYBOOK.md) e il
 [registro dei formati](config/video_formats_v13.json).**
