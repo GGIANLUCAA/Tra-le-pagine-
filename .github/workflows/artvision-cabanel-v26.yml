@@ -46,9 +46,12 @@ jobs:
           expected=['VIDEO_MASTER.mp4','COPERTINA.jpg','POST_FACEBOOK.txt','POST_INSTAGRAM.txt',
                     'POST_TIKTOK.txt','POST_YOUTUBE.txt','VIDEO_RECIPE_V13.json','SOURCES_AND_RIGHTS.md',
                     'MUSIC_RELEASE_V20.json','ARTVISION_CONTRACT_V25.json','QA_CONTACT_SHEET.jpg',
-                    'TECNICHE_REGIA.md','ISTRUZIONI_REPLICA.md']
+                    'TECNICHE_REGIA.md','ISTRUZIONI_REPLICA.md','POST_EDITORIAL_RESEARCH.json']
           assert all(p in z.namelist() for p in expected),set(expected)-set(z.namelist())
           assert z.testzip() is None
+          research=json.loads(z.read('POST_EDITORIAL_RESEARCH.json'))
+          assert research['schema']=='artvision-editorial-research-v28',research
+          assert research['verified_references'],research
           report=json.loads(z.read('TECHNICAL_QA_V26.json'))
           assert report['status']=='RENDERED_NEEDS_ARTISTIC_REVIEW'
           assert report['full_ffmpeg_decode'] is True

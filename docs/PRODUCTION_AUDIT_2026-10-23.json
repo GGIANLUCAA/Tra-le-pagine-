@@ -1,0 +1,46 @@
+{
+  "schema": "production-audit-v16",
+  "audit_date": "2026-10-23",
+  "scope": "GitHub Actions artifacts created on 2026-10-23; no social publication",
+  "summary": {
+    "distinct_new_masters_found": 12,
+    "full_media_decodes_passed": 12,
+    "rendered_complete_packages_v25_or_later": 7,
+    "legacy_v24_render_only_packages": 5,
+    "exact_hash_reviews_passed": 0,
+    "site_import_confirmed": 0,
+    "queue_items_added": 0
+  },
+  "review_policy": {
+    "queue_reviews_written": false,
+    "reason": "No master met the requirement for a complete real-time artistic watch/listen plus V28 editorial and rights review. Exact hashes are recorded without creating false passed reviews in queue/reviews_v16.",
+    "technical_decode_is_not_artistic_approval": true
+  },
+  "current_queue": {"items": 0, "runner_state_jobs": 0},
+  "artifacts": [
+    {"id":"artvision-v25-bruegel","title":"The Triumph of Death","run_id":39968852801,"artifact_id":12508078179,"video_sha256":"635274e289cdcd81021eb6ec0599d2876e71a61754d2c65974b729f50c75039b","duration_seconds":54.625,"audio_integrated_lufs":-14.3,"status":"rendered_needs_artistic_review","blockers":["V28 research missing","post contains production language","V25 review flags false"]},
+    {"id":"artvision-v25-friedrich","title":"Wanderer above the Sea of Fog","run_id":39968852801,"artifact_id":12507473998,"video_sha256":"9c6b115d07d7548ea02902f267dac8cb3d055580bd052c749203fcc74232b88e","duration_seconds":44.792,"audio_integrated_lufs":-16.1,"status":"rendered_needs_artistic_review","blockers":["V28 research missing","post contains production language","V25 review flags false"]},
+    {"id":"artvision-v25-gerome","title":"Pollice Verso","run_id":39968852801,"artifact_id":12507479407,"video_sha256":"d097ce1150912fa048bf46dad85829e43a4ec3e40dbaf54d6267b3843dc8e65f","duration_seconds":51.417,"audio_integrated_lufs":-17.8,"status":"rendered_needs_artistic_review","blockers":["V28 research missing","post contains production language","V25 review flags false"]},
+    {"id":"artvision-v25-moreau","title":"Jupiter and Semele","run_id":39968852801,"artifact_id":12507538343,"video_sha256":"cfcee91b7dd3acedaf814b33c3dd23ffeb2cfb36a23f502857de8c9c02d14aae","duration_seconds":54.917,"audio_integrated_lufs":-28.5,"status":"rendered_needs_correction_and_artistic_review","blockers":["audio materially quieter than batch","V28 research missing","post contains production language","V25 review flags false"]},
+    {"id":"artvision-v25-waterhouse","title":"The Magic Circle","run_id":39968852801,"artifact_id":12507493208,"video_sha256":"9e0375eef40ef4e7796b9017091b862661b63384a7961e64d84d8c6d97aa4110","duration_seconds":53.167,"audio_integrated_lufs":-21.2,"status":"rendered_needs_artistic_review","blockers":["V28 research missing","post contains production language","V25 review flags false"]},
+    {"id":"cabanel-fallen-angel-v26","title":"Fallen Angel","run_id":39974896846,"artifact_id":12512452720,"video_sha256":"875db933a2ec89080d90bfb5d26dce03898dfd09b5afb2f1ad71a06f38b3e211","duration_seconds":50.005,"audio_integrated_lufs":-22.5,"status":"rendered_social_pack_superseded","blockers":["artifact predates current V28 writer","V28 research missing","V25 review flags false"]},
+    {"id":"simberg-wounded-angel-v27","title":"The Wounded Angel","run_id":39979962944,"artifact_id":12513231491,"video_sha256":"cda9ef3832fb85172d10e12693ce9ab51182fd44f70a5a7eb49527e23d80d4ef","duration_seconds":57.4,"audio_integrated_lufs":-18.3,"status":"rendered_v28_packet_needs_artistic_review","blockers":["human editorial review pending","V25 artistic review flags false"]},
+    {"id":"artvision-v24-aivazovsky","title":"The Ninth Wave","run_id":39947777393,"artifact_id":12499356000,"video_sha256":"57ce299acea9806ea1e52fc03e15aef463e510711610c4f45391286c0d58414c","duration_seconds":53.0,"status":"legacy_render_only","blockers":["pre-V25 package","Italian visible title metadata","complete V25/V28 bundle missing"]},
+    {"id":"artvision-v24-bouguereau","title":"Dante and Virgil","run_id":39947777393,"artifact_id":12499306229,"video_sha256":"c9569679b1e83144fb6c280b415e629507b9bed861625d200d5fc3531714e30d","duration_seconds":48.0,"status":"legacy_render_only","blockers":["pre-V25 package","Italian visible title metadata","complete V25/V28 bundle missing"]},
+    {"id":"artvision-v24-delaroche","title":"The Execution of Lady Jane Grey","run_id":39947777393,"artifact_id":12499525343,"video_sha256":"73251671b48191d13f6cfcd4b1dae56322ddba7ea327df644a27888ec9b3d163","duration_seconds":55.0,"status":"legacy_render_only","blockers":["pre-V25 package","complete V25/V28 bundle missing"]},
+    {"id":"artvision-v24-leighton","title":"Flaming June","run_id":39947777393,"artifact_id":12498149361,"video_sha256":"0eab5b04435e3433ddbc0cd58b7f05796d65352088ae51f98dfe2db5517a344a","duration_seconds":54.0,"status":"legacy_render_only","blockers":["pre-V25 package","complete V25/V28 bundle missing"]},
+    {"id":"artvision-v24-rossetti","title":"Proserpine","run_id":39947777393,"artifact_id":12499510591,"video_sha256":"c99b4748168d4eaec4d0aa587cda2e6837219ee765acd72f9d629a73c68e0933","duration_seconds":57.0,"status":"legacy_render_only","blockers":["pre-V25 package","Italian visible title metadata","complete V25/V28 bundle missing"]}
+  ],
+  "source_checks": {
+    "cabanel_musee_fabre": "verified 2026-10-23: artist, title, year 1847 and inventory 889.2.1",
+    "simberg_finnish_national_gallery": "official object URL resolves but requires JavaScript; package records Commons CC BY 4.0 reproduction credit",
+    "music_pages": "recording URLs and CC BY 4.0 claims are recorded; independent page fetch was incomplete and remains part of rights review"
+  },
+  "next_actions": [
+    "Rerun Cabanel with current V28 writer and require POST_EDITORIAL_RESEARCH.json in CI.",
+    "Prepare museum-grounded V28 entries for the five V25 works before regenerating their social packages.",
+    "Correct and re-listen to Moreau audio before any passed review.",
+    "Perform real-time watch/listen on exact final hashes before writing queue/reviews_v16.",
+    "Do not import or publish an unreviewed master."
+  ]
+}
