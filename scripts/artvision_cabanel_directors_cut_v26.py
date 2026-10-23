@@ -177,12 +177,15 @@ def make_cover(img,path):
     d.text((x,1181),title,font=f,fill=(255,251,243,255))
     Image.alpha_composite(c,layer).convert("RGB").save(path,quality=95)
 def social(out):
-    credits=("\n\nOpera: Fallen Angel (1847) — Alexandre Cabanel, Musée Fabre (Montpellier)."
-             "\nFonte: "+ART_PAGE+"\nMuseo: "+MUSEUM
-             + "\nMusica: The Chamber — Kevin MacLeod (incompetech.com)."
-             "\nLicenza registrazione: CC BY 4.0 — "+LICENSE
-             "\nRegistrazione: "+TRACK_PAGE
-             + "\nModifiche: estratto musicale con dissolvenze; montaggio e focali del quadro autentico.")
+    credits=(
+        "\n\nOpera: Fallen Angel (1847) — Alexandre Cabanel, Musée Fabre (Montpellier)."
+        + "\nFonte: " + ART_PAGE
+        + "\nMuseo: " + MUSEUM
+        + "\nMusica: The Chamber — Kevin MacLeod (incompetech.com)."
+        + "\nLicenza registrazione: CC BY 4.0 — " + LICENSE
+        + "\nRegistrazione: " + TRACK_PAGE
+        + "\nModifiche: estratto musicale con dissolvenze; montaggio e focali del quadro autentico."
+    )
     captions={
       "POST_FACEBOOK.txt":"C'è un dettaglio che rende quest'angelo indimenticabile: lo sguardo.\n\n"
          "Nel 1847 Alexandre Cabanel dipinse il momento della caduta. Il corpo è a terra, le ali sembrano pesanti, e gli angeli sullo sfondo sono ormai lontani. "
