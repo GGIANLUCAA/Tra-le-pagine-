@@ -1,0 +1,825 @@
+{
+  "schema": "artvision-cinema-v25-v28-wow8-five",
+  "date": "2026-10-23",
+  "baseline": "cinema_v6",
+  "contract": "docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md",
+  "music": {
+    "darkest_child": {
+      "title": "Darkest Child",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100783",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Darkest%20Child.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100783"
+    },
+    "dreams_become_real": {
+      "title": "Dreams Become Real",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dreams%20Become%20Real.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1500027"
+    },
+    "evening_fall": {
+      "title": "Evening Fall (Piano)",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100235",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20-%20Piano.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100235"
+    },
+    "the_descent": {
+      "title": "The Descent",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1200094"
+    },
+    "calmant": {
+      "title": "Calmant",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100859",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Calmant.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100859"
+    },
+    "the_chamber": {
+      "title": "The Chamber",
+      "composer": "Kevin MacLeod",
+      "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100400",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Chamber.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "isrc": "USUAN1100400"
+    }
+  },
+  "works": {
+    "goya": {
+      "artist": "FRANCISCO DE GOYA",
+      "title_en": "The Sleep of Reason Produces Monsters",
+      "art_url": "https://openaccess-cdn.clevelandart.org/1922.638/1922.638_print.jpg",
+      "file": "museum-w8-goya.jpg",
+      "source_page": "https://www.clevelandart.org/art/1922.638",
+      "duration": 51,
+      "music": "darkest_child",
+      "editorial_key": "goya",
+      "trim": [
+        0.075,
+        0.19,
+        0.89,
+        0.79
+      ],
+      "arc": "A sleeping figure is approached by owls, bats and other presences; an unsettling image closes with the total etching.",
+      "scenes": [
+        {
+          "id": 1,
+          "kind": "detail",
+          "x": 0.73,
+          "y": 0.3,
+          "seconds": 4.1,
+          "purpose": "The bats form a disquieting black shape high above the sleeper",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "kind": "portrait",
+          "x": 0.41,
+          "y": 0.61,
+          "seconds": 3.3,
+          "purpose": "Goya's sleeping figure bends over the table",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "kind": "texture",
+          "x": 0.72,
+          "y": 0.48,
+          "seconds": 3.5,
+          "purpose": "An owl and a bat overlap near the head",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "kind": "medium",
+          "x": 0.49,
+          "y": 0.55,
+          "seconds": 3.8,
+          "purpose": "The sleeping figure and nocturnal creatures share the space",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "kind": "detail",
+          "x": 0.34,
+          "y": 0.78,
+          "seconds": 3.3,
+          "purpose": "A hand rests on the edge of the writing desk",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "kind": "wide",
+          "x": 0.48,
+          "y": 0.49,
+          "seconds": 3.7,
+          "purpose": "The full group becomes legible without an artificial pan",
+          "motion": "slow_push"
+        },
+        {
+          "id": 7,
+          "kind": "portrait",
+          "x": 0.44,
+          "y": 0.65,
+          "seconds": 3.3,
+          "purpose": "The isolated head remains closed to the night",
+          "motion": "locked"
+        },
+        {
+          "id": 8,
+          "kind": "detail",
+          "x": 0.84,
+          "y": 0.64,
+          "seconds": 3.2,
+          "purpose": "A dark creature crouches at the edge",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "kind": "texture",
+          "x": 0.75,
+          "y": 0.23,
+          "seconds": 3.1,
+          "purpose": "The wings fragment the upper darkness",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.51,
+          "seconds": 3.7,
+          "purpose": "The etching contrasts resting human and frantic shadows",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "kind": "detail",
+          "x": 0.33,
+          "y": 0.65,
+          "seconds": 3.2,
+          "purpose": "Return to the hand and sleeping face",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "kind": "portrait",
+          "x": 0.56,
+          "y": 0.54,
+          "seconds": 3.2,
+          "purpose": "Two symbolic presences surround the unconscious man",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "kind": "texture",
+          "x": 0.76,
+          "y": 0.35,
+          "seconds": 3,
+          "purpose": "The last dark wing becomes a visual echo",
+          "motion": "locked"
+        },
+        {
+          "id": 14,
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 5,
+          "purpose": "Read the complete etching and its original Spanish inscription",
+          "motion": "locked"
+        }
+      ]
+    },
+    "delacroix": {
+      "artist": "EUGÈNE DELACROIX",
+      "title_en": "Macbeth Consulting the Witches",
+      "art_url": "https://openaccess-cdn.clevelandart.org/1962.109/1962.109_print.jpg",
+      "file": "museum-w8-delacroix.jpg",
+      "source_page": "https://www.clevelandart.org/art/1962.109",
+      "duration": 57,
+      "music": "the_chamber",
+      "editorial_key": "delacroix",
+      "trim": [
+        0.04,
+        0.055,
+        0.95,
+        0.9
+      ],
+      "arc": "A soldier approaches a cauldron and the witches emerge from the darkness created by scratched lithographic stone.",
+      "scenes": [
+        {
+          "id": 1,
+          "kind": "portrait",
+          "x": 0.73,
+          "y": 0.62,
+          "seconds": 4.2,
+          "purpose": "The witch's face emerges near the cauldron",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "kind": "texture",
+          "x": 0.66,
+          "y": 0.43,
+          "seconds": 3.3,
+          "purpose": "Scratched light surrounds the mysterious hands",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "kind": "portrait",
+          "x": 0.28,
+          "y": 0.4,
+          "seconds": 3.9,
+          "purpose": "Macbeth stands still under a darkened sky",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "kind": "detail",
+          "x": 0.51,
+          "y": 0.7,
+          "seconds": 3.3,
+          "purpose": "The cauldron divides soldier and seers",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "kind": "portrait",
+          "x": 0.82,
+          "y": 0.52,
+          "seconds": 3.3,
+          "purpose": "A second sorceress is suggested by a gesturing arm",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4,
+          "purpose": "Macbeth and witches form a balanced confrontation",
+          "motion": "slow_push"
+        },
+        {
+          "id": 7,
+          "kind": "texture",
+          "x": 0.55,
+          "y": 0.28,
+          "seconds": 3.3,
+          "purpose": "Black crayon and scratched trails construct the night",
+          "motion": "locked"
+        },
+        {
+          "id": 8,
+          "kind": "detail",
+          "x": 0.48,
+          "y": 0.73,
+          "seconds": 3.2,
+          "purpose": "Glowing cauldron and bent bodies",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "kind": "portrait",
+          "x": 0.32,
+          "y": 0.4,
+          "seconds": 3.7,
+          "purpose": "The soldier remains immobile against the apparitions",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "kind": "medium",
+          "x": 0.59,
+          "y": 0.58,
+          "seconds": 3.2,
+          "purpose": "The gesture near the cauldron gains importance",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "kind": "detail",
+          "x": 0.76,
+          "y": 0.7,
+          "seconds": 3.4,
+          "purpose": "One witch's hand points toward the unseen",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "kind": "texture",
+          "x": 0.38,
+          "y": 0.26,
+          "seconds": 3,
+          "purpose": "The scratched sky contrasts the darker foreground",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "kind": "wide",
+          "x": 0.49,
+          "y": 0.53,
+          "seconds": 3.8,
+          "purpose": "The whole confrontation holds without false camera movement",
+          "motion": "locked"
+        },
+        {
+          "id": 14,
+          "kind": "portrait",
+          "x": 0.69,
+          "y": 0.59,
+          "seconds": 3.3,
+          "purpose": "Return to the ominous faces",
+          "motion": "locked"
+        },
+        {
+          "id": 15,
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 5.5,
+          "purpose": "Complete original Delacroix lithograph, a quiet gothic resolution",
+          "motion": "locked"
+        }
+      ]
+    },
+    "bierstadt": {
+      "artist": "ALBERT BIERSTADT",
+      "title_en": "Mount Vesuvius at Midnight",
+      "art_url": "https://openaccess-cdn.clevelandart.org/1949.541/1949.541_print.jpg",
+      "file": "museum-w8-bierstadt.jpg",
+      "source_page": "https://www.clevelandart.org/art/1949.541",
+      "duration": 63,
+      "music": "the_descent",
+      "editorial_key": "bierstadt",
+      "trim": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "arc": "The volcano glows at night, distant lava surrounds tiny dwellings and the horizon eventually becomes visible.",
+      "scenes": [
+        {
+          "id": 1,
+          "kind": "detail",
+          "x": 0.39,
+          "y": 0.31,
+          "seconds": 4.2,
+          "purpose": "Scarlet lava rises against almost black clouds",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "kind": "texture",
+          "x": 0.47,
+          "y": 0.18,
+          "seconds": 3.2,
+          "purpose": "The eruption's reddish ash enters a dark sky",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "kind": "portrait",
+          "x": 0.42,
+          "y": 0.57,
+          "seconds": 3.6,
+          "purpose": "Molten stone descends the flank of the mountain",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.39,
+          "seconds": 3.9,
+          "purpose": "The mountain emerges above the dark valley",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "kind": "detail",
+          "x": 0.67,
+          "y": 0.65,
+          "seconds": 3.4,
+          "purpose": "A small illuminated settlement beneath the volcano",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "kind": "texture",
+          "x": 0.38,
+          "y": 0.65,
+          "seconds": 3.5,
+          "purpose": "Crimson fire illuminates the rugged ground",
+          "motion": "locked"
+        },
+        {
+          "id": 7,
+          "kind": "portrait",
+          "x": 0.61,
+          "y": 0.35,
+          "seconds": 3.7,
+          "purpose": "The plume and torn clouds dominate the horizon",
+          "motion": "slow_push"
+        },
+        {
+          "id": 8,
+          "kind": "wide",
+          "x": 0.52,
+          "y": 0.51,
+          "seconds": 4,
+          "purpose": "The entire eruptive scene starts to cohere",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "kind": "detail",
+          "x": 0.51,
+          "y": 0.8,
+          "seconds": 3.3,
+          "purpose": "Foreground boulders and isolated signs of life",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "kind": "texture",
+          "x": 0.39,
+          "y": 0.28,
+          "seconds": 3.4,
+          "purpose": "Return to the brightness of the eruption",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "kind": "portrait",
+          "x": 0.72,
+          "y": 0.36,
+          "seconds": 3.6,
+          "purpose": "Moonlit clouds frame the volcanic smoke",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "kind": "medium",
+          "x": 0.6,
+          "y": 0.64,
+          "seconds": 3.4,
+          "purpose": "Contrast of tiny houses and vast eruption",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "kind": "wide",
+          "x": 0.49,
+          "y": 0.53,
+          "seconds": 4,
+          "purpose": "An interlude to read the whole mountain",
+          "motion": "locked"
+        },
+        {
+          "id": 14,
+          "kind": "detail",
+          "x": 0.45,
+          "y": 0.51,
+          "seconds": 3.4,
+          "purpose": "A narrow channel of lava is visible",
+          "motion": "locked"
+        },
+        {
+          "id": 15,
+          "kind": "texture",
+          "x": 0.83,
+          "y": 0.63,
+          "seconds": 3.1,
+          "purpose": "Night textures slowly emerge from darkness",
+          "motion": "locked"
+        },
+        {
+          "id": 16,
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 5.3,
+          "purpose": "Show the complete 1868 oil painting and hold",
+          "motion": "locked"
+        }
+      ]
+    },
+    "hokusai": {
+      "artist": "KATSUSHIKA HOKUSAI",
+      "title_en": "Ono Waterfall on the Kiso Road",
+      "art_url": "https://openaccess-cdn.clevelandart.org/1916.1137/1916.1137_print.jpg",
+      "file": "museum-w8-hokusai.jpg",
+      "source_page": "https://www.clevelandart.org/art/1916.1137",
+      "duration": 48,
+      "music": "dreams_become_real",
+      "editorial_key": "hokusai",
+      "trim": [
+        0.015,
+        0.015,
+        0.985,
+        0.99
+      ],
+      "arc": "A monumental bright blue vertical fall dwarfs the small buildings and figures at its base.",
+      "scenes": [
+        {
+          "id": 1,
+          "kind": "texture",
+          "x": 0.27,
+          "y": 0.38,
+          "seconds": 3.9,
+          "purpose": "Long vertical bands of blue water descend from the cliff",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "kind": "detail",
+          "x": 0.54,
+          "y": 0.73,
+          "seconds": 3.1,
+          "purpose": "The fragile red-roofed house appears alongside the cascade",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "kind": "portrait",
+          "x": 0.77,
+          "y": 0.36,
+          "seconds": 3.5,
+          "purpose": "Tree and cliff interrupt the powerful water shape",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "kind": "wide",
+          "x": 0.47,
+          "y": 0.52,
+          "seconds": 3.6,
+          "purpose": "The waterfall reveals its scale above the little buildings",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "kind": "detail",
+          "x": 0.48,
+          "y": 0.85,
+          "seconds": 3.2,
+          "purpose": "A traveller beneath the crashing water",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "kind": "texture",
+          "x": 0.25,
+          "y": 0.22,
+          "seconds": 3.3,
+          "purpose": "Parallel blue marks continue toward the rock ledge",
+          "motion": "locked"
+        },
+        {
+          "id": 7,
+          "kind": "portrait",
+          "x": 0.69,
+          "y": 0.64,
+          "seconds": 3.5,
+          "purpose": "The red-orange roof contrasts the blue water",
+          "motion": "slow_push"
+        },
+        {
+          "id": 8,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.53,
+          "seconds": 3.5,
+          "purpose": "The tall print invites a slow attentive pause",
+          "motion": "locked"
+        },
+        {
+          "id": 9,
+          "kind": "detail",
+          "x": 0.77,
+          "y": 0.82,
+          "seconds": 3.2,
+          "purpose": "Rocks and the lower path provide human scale",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "kind": "texture",
+          "x": 0.3,
+          "y": 0.55,
+          "seconds": 3.2,
+          "purpose": "Water stream divides the large dark cliffs",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "kind": "portrait",
+          "x": 0.53,
+          "y": 0.43,
+          "seconds": 3.5,
+          "purpose": "The architectural roof and cascade align",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "kind": "wide",
+          "x": 0.49,
+          "y": 0.55,
+          "seconds": 3.8,
+          "purpose": "Nearly all of the hanging waterfall is visible",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4.8,
+          "purpose": "The complete original Japanese color print closes the scene",
+          "motion": "locked"
+        }
+      ]
+    },
+    "hiroshige": {
+      "artist": "UTAGAWA HIROSHIGE",
+      "title_en": "Night Rain at Karasaki",
+      "art_url": "https://openaccess-cdn.clevelandart.org/1985.312/1985.312_print.jpg",
+      "file": "museum-w8-hiroshige.jpg",
+      "source_page": "https://www.clevelandart.org/art/1985.312",
+      "duration": 70,
+      "music": "evening_fall",
+      "editorial_key": "hiroshige",
+      "trim": [
+        0.03,
+        0.035,
+        0.97,
+        0.93
+      ],
+      "arc": "The sacred pine stands above a lakeshore under fine night rain, its bamboo props suggesting a fragile balance.",
+      "scenes": [
+        {
+          "id": 1,
+          "kind": "portrait",
+          "x": 0.56,
+          "y": 0.53,
+          "seconds": 4.6,
+          "purpose": "One low silhouette of Karasaki pine emerges through the curtain of rain",
+          "motion": "locked"
+        },
+        {
+          "id": 2,
+          "kind": "texture",
+          "x": 0.41,
+          "y": 0.27,
+          "seconds": 3.7,
+          "purpose": "The thin lines of rain cross the pale sky",
+          "motion": "locked"
+        },
+        {
+          "id": 3,
+          "kind": "detail",
+          "x": 0.39,
+          "y": 0.69,
+          "seconds": 3.8,
+          "purpose": "Dark pine branches spread across the lake shore",
+          "motion": "locked"
+        },
+        {
+          "id": 4,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4.4,
+          "purpose": "The enormous tree is revealed against open space",
+          "motion": "locked"
+        },
+        {
+          "id": 5,
+          "kind": "portrait",
+          "x": 0.62,
+          "y": 0.54,
+          "seconds": 4.1,
+          "purpose": "The profile of the sacred pine fills the frame",
+          "motion": "locked"
+        },
+        {
+          "id": 6,
+          "kind": "detail",
+          "x": 0.79,
+          "y": 0.77,
+          "seconds": 3.8,
+          "purpose": "Small shoreside boats suggest an inhabited place",
+          "motion": "locked"
+        },
+        {
+          "id": 7,
+          "kind": "texture",
+          "x": 0.23,
+          "y": 0.4,
+          "seconds": 3.7,
+          "purpose": "Fine lines of falling rain are almost invisible",
+          "motion": "locked"
+        },
+        {
+          "id": 8,
+          "kind": "wide",
+          "x": 0.52,
+          "y": 0.56,
+          "seconds": 4.5,
+          "purpose": "The great pine and the empty lake form one composition",
+          "motion": "slow_push"
+        },
+        {
+          "id": 9,
+          "kind": "detail",
+          "x": 0.43,
+          "y": 0.81,
+          "seconds": 3.6,
+          "purpose": "A tiny figure beneath the rain",
+          "motion": "locked"
+        },
+        {
+          "id": 10,
+          "kind": "portrait",
+          "x": 0.72,
+          "y": 0.5,
+          "seconds": 4.2,
+          "purpose": "Bamboo poles supporting the tree become apparent",
+          "motion": "locked"
+        },
+        {
+          "id": 11,
+          "kind": "texture",
+          "x": 0.6,
+          "y": 0.27,
+          "seconds": 3.5,
+          "purpose": "The pale sky blends with the fine curtain of rain",
+          "motion": "locked"
+        },
+        {
+          "id": 12,
+          "kind": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 4.6,
+          "purpose": "Hold a wide view, leaving time to see the poetry",
+          "motion": "locked"
+        },
+        {
+          "id": 13,
+          "kind": "detail",
+          "x": 0.49,
+          "y": 0.68,
+          "seconds": 3.9,
+          "purpose": "The shoreline and shrine remain small",
+          "motion": "locked"
+        },
+        {
+          "id": 14,
+          "kind": "portrait",
+          "x": 0.34,
+          "y": 0.58,
+          "seconds": 4.1,
+          "purpose": "The pine's branches reach across the frame",
+          "motion": "locked"
+        },
+        {
+          "id": 15,
+          "kind": "wide",
+          "x": 0.54,
+          "y": 0.55,
+          "seconds": 4.4,
+          "purpose": "The long silhouette returns before the final view",
+          "motion": "locked"
+        },
+        {
+          "id": 16,
+          "kind": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "seconds": 5.4,
+          "purpose": "A final still view of the full Hiroshige print",
+          "motion": "locked"
+        }
+      ]
+    }
+  }
+}
