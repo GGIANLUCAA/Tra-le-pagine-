@@ -41,6 +41,14 @@ def editorial_body(text,title_en=""):
         if marker in text: return text.split(marker,1)[0].strip()
     return text.strip()
 
+def contains_forbidden(body, phrase):
+    # Word boundaries matter in Italian: "render" (video renderer) must NOT
+    # match the ordinary expression "renderlo" or "rendere".
+    escaped=re.escape(phrase)
+    if phrase=="inquadratur":
+        return re.search(r"(?<!\\w)"+escaped+r"\\w*",body,flags=re.IGNORECASE) is not None
+    return re.search(r"(?<!\\w)"+escaped+r"(?!\\w)",body,flags=re.IGNORECASE) is not None
+
 def validate_entry(key,entry):
     errors=[]
     def err(what):errors.append(f"{key}: {what}")
@@ -66,7 +74,7 @@ def validate_entry(key,entry):
             err(f"{k} body length {wc} outside editorial guidance {lo}-{hi}")
         lower=body.casefold()
         for phrase in FORBIDDEN:
-            if phrase.casefold() in lower:
+            if contains_forbidden(lower,phrase):
                 err(f"{k} contains production/AI-marketing phrase '{phrase}'")
         if not any(term in lower for term in (
             entry.get("artist","").split(" ")[-1].casefold(),
@@ -140,7 +148,7 @@ def validate_folder(path):
         txt=path.read_text(encoding="utf-8")
         body=editorial_body(txt,record.get("title_en", ""))
         for phrase in FORBIDDEN:
-            if phrase.casefold() in body.casefold():
+            if contains_forbidden(body,phrase):
                 errors.append(fn+" contains forbidden process/AI marketing language: "+phrase)
         if "musica:" not in txt.casefold() or "cc by" not in txt.casefold():
             errors.append(fn+" missing music licence credit")
