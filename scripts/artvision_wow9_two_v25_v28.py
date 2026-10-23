@@ -193,7 +193,7 @@ def render_two(slug,out):
  video=ep/"VIDEO_MASTER.mp4"
  base.run("ffmpeg","-hide_banner","-loglevel","error","-y","-i",silent,"-i",track,
      "-map","0:v:0","-map","1:a:0","-c:v","copy",
-     "-af",f"aresample=48000,volume=.85,afade=t=in:st=0:d=.45,afade=t=out:st={max(0,duration-2.8):.3f}:d=2.8",
+     "-af",f"aresample=48000,volume=.85,afade=t=in:st=0:d=0.45,afade=t=out:st={max(0,duration-2.8):.3f}:d=2.8",
      "-c:a","aac","-b:a","192k","-t",f"{duration:.3f}","-movflags","+faststart",video)
  cover=ep/"COPERTINA.jpg"
  base.create_cover(base.shot_image(hero,w["scenes"][0]),w,music,cover)
