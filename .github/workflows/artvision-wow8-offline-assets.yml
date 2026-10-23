@@ -1,0 +1,59 @@
+name: "ArtVision WOW8 - offline assets fallback no pip"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-wow8-offline-assets.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  archive:
+    name: "Fetch verified museum masters and licensed audio without pip"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download images and score recordings via standard Python only
+        run: |
+          python - <<'PY'
+          import pathlib,json,urllib.request,hashlib,time
+          works=json.load(open('config/artvision_wow8_five_v25.json'))
+          artists=['goya','hokusai','hiroshige']
+          out=pathlib.Path('WOW8_OFFLINE_ASSETS')
+          out.mkdir(exist_ok=True)
+          docs=[]
+          for slug in artists:
+           work=works['works'][slug]
+           track=works['music'][work['music']]
+           for key,url,ext in [('art',work['art_url'],'jpg'),('music',track['download'],'mp3')]:
+            dest=out/f'{slug}_{key}.{ext}'
+            errors=[]
+            for attempt in range(3):
+             try:
+              request=urllib.request.Request(url,headers={'User-Agent':'ArtVisionMuseumArchive/6 (verified CC0 images and licensed recordings)'})
+              with urllib.request.urlopen(request,timeout=55) as r:
+               with dest.open('wb') as fo:
+                while True:
+                 b=r.read(2**18)
+                 if not b:break
+                 fo.write(b)
+              if dest.stat().st_size<100000:raise RuntimeError('undersized '+str(dest.stat().st_size))
+              docs.append({'artist':slug,'kind':key,'url':url,'path':dest.name,
+                           'sha256':hashlib.sha256(dest.read_bytes()).hexdigest(),'bytes':dest.stat().st_size})
+              print('DOWNLOADED',slug,key,dest.stat().st_size,flush=True)
+              break
+             except Exception as ex:
+              errors.append(str(ex)[:180]);dest.unlink(missing_ok=True);time.sleep(attempt+1)
+            else:raise RuntimeError(slug+' '+key+' failed: '+str(errors))
+          (out/'MANIFEST.json').write_text(json.dumps(docs,ensure_ascii=False,indent=2)+'\n')
+          PY
+      - name: Keep the exact latest GitHub renderer sources for local final recovery
+        run: |
+          tar -czf WOW8_OFFLINE_ASSETS/wow8_repo_sources.tgz scripts/ src/ config/ docs/ templates/ modules/
+          ls -lh WOW8_OFFLINE_ASSETS/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_WOW8_LAST3_OFFLINE_SOURCES
+          path: WOW8_OFFLINE_ASSETS/
+          if-no-files-found: error
+          retention-days: 3
