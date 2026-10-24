@@ -286,3 +286,5 @@ if __name__=="__main__":
     main()
 
 # Workflow trigger: dedicated V31 production cycle, distinct from previous MP4.
+
+# Editorial V28 exact collection credit verified before production.
