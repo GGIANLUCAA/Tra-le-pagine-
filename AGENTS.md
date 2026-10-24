@@ -4,6 +4,10 @@ Questo repository è lo studio video di Gianluca. Leggi questo file **prima di
 proporre o produrre un filmato**. Non ricostruire il sistema da zero a ogni chat.
 Le istruzioni esplicite dell'utente nella sessione hanno precedenza.
 
+## REGOLA INTEGRATIVA — FASCICOLO VIDEO E POST SOCIAL AUTOMATICO VLS V1 (24/10/2026)
+
+Ogni nuovo video registrato in Video Library Studio deve avere il fascicolo con post personalizzati Facebook/Instagram/TikTok/YouTube, informazioni del filmato, musica e crediti verificabili, regia e scene, ricetta, fonti, versioni, copie e ristampe quando note. La pipeline crea automaticamente la scheda iniziale in R2 senza duplicare l'MP4, recuperando i materiali già presenti; fonti, licenze e script non noti restano **da verificare**, mai inventati. Il sito offre ZIP completo o leggero generato solo su richiesta. Questa regola è additiva alle precedenti V6/V13/V19/V20/V28/V31 e non autorizza pubblicazioni automatiche. Leggere SEMPRE docs/VIDEO_LIBRARY_DOSSIER_V1.md prima di creare o importare un nuovo video.
+
 ## REGOLA PIÙ RECENTE — AUTOPRODUZIONE ARTISTICA V31 OGNI 3 ORE (24/10/2026)
 
 L'utente ha richiesto una routine **ricorrente ogni 3 ore** che produca un vero MP4 artistico, in modo autonomo, con **alternanza** fra ArtVision Cinema senza voce, ArtVision Critico V2 narrato (Gacrux naturale se disponibile) e raccolte tematiche di più opere reali (variante `artvision_cinema`, non un motore inesistente). Il riferimento permanente è [ARTVISION_AUTOPRODUZIONE_3H_V31.md](docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md), con policy [JSON](config/artvision_autoproduction_v31.json) e [stato di deduplica](queue/artvision_autoproduction_v31_state.json). Leggerlo PRIMA del contenuto per ogni ciclo programmato, insieme agli standard V25 e post V28 qui sotto.
