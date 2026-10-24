@@ -1,7 +1,7 @@
 {
   "schema": "production-audit-v16",
   "audit_date": "2026-10-24",
-  "verified_at_utc": "2026-10-24T16:49:00Z",
+  "verified_at_utc": "2026-10-24T16:51:40Z",
   "repository": "GGIANLUCAA/Tra-le-pagine-",
   "scope": "new activity observed on 2026-10-24; previous-day masters excluded",
   "summary": {
@@ -114,10 +114,14 @@
   ],
   "corrective_action": {
     "issue": "The existing site importer accepted V25 artifacts even when exact-hash artistic reviews were pending.",
-    "commit": "4350c26c6e8374b31471d77b4d9ee7345bb7ee01",
     "file": ".github/workflows/video-library-r2-import.yml",
     "behavior": "V25 artifacts now require opening, visual, cover, music, rights, full_watch and replicability reviews passed plus a matching master SHA-256. Legacy artifacts without a V25 contract retain prior behavior.",
-    "validation_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40113254767"
+    "validation_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40113399618",
+    "commits": [
+      "4350c26c6e8374b31471d77b4d9ee7345bb7ee01",
+      "f3522a95aafcd076271e25ba27a0b1767cf63bff"
+    ],
+    "validation_result": "success; in-workflow tests proved pending reviews blocked, exact-hash passed reviews accepted, and mismatched hashes blocked"
   },
   "blocking_items": [
     "No full real-time visual-and-audio review was completed for either new master.",
