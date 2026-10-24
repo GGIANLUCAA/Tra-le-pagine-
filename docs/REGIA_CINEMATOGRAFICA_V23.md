@@ -2,7 +2,7 @@
 *23 ottobre 2026 · integrazione additiva al Creative Director V21*
 
 ## Scopo reale
-NON applicare 117 tecniche a ogni MP4. Il catalogo \`config/cinematic_techniques_v23.json\`
+NON applicare 119 tecniche a ogni MP4. Il catalogo \`config/cinematic_techniques_v23.json\`
 contiene strumenti di riflessione con **intenzione, applicazione, situazione d'uso
 ed errore da evitare**. \`src/cinematic_director_v23.py\` sceglie fino a otto candidati
 in base al formato e agli indizi del brief; **non monta nulla e non certifica
@@ -115,3 +115,14 @@ esegue i test e permette di esportare un piano come Artifact sullo smartphone.
 
 Queste sono tecniche cinematografiche da cui trarre spunti, NON prove che
 una ricetta automatica abbia un'efficacia psicologica garantita sugli utenti.
+
+### Opzione cinematografica: dal museo dentro il quadro (non preset fisso)
+
+**Nuove tecniche facoltative:** `gallery_to_canvas_entry` e `canvas_to_gallery_reveal`. Sceglierle solo quando la cornice e l'ambiente fisico aggiungono valore narrativo: una foto/ripresa **reale e licenziata** dell'opera nella sala → breve avvicinamento morbido → raccordo con l'immagine originale in alta risoluzione → dettaglio motivato. Possibile struttura inversa, dal mistero visivo alla rivelazione del quadro appeso. Non sempre all'inizio: funziona anche in chiusura.
+
+- **No regola fissa:** non introdurla per abitudine o in video consecutivi senza motivo. Per alcune opere il dettaglio immediato è migliore; per altre la cornice è un ottimo primo fotogramma.
+- **Autenticità essenziale:** una foto con watermark Flickr non prova alcuna licenza riutilizzabile; cercare autore e autorizzazione della fotografia, oltre alle condizioni d'uso del museo. Non generare una falsa sala spacciandola per documentaria. Se serve una ricostruzione dichiararla nel backstage e non confonderla con una foto del museo.
+- **Raccordo credibile:** allineare assi/prospettiva, temperatura cromatica e scala; fare un solo movimento di avvicinamento di norma in circa 2–5 secondi, ma calibrarlo al soggetto e alla musica. Effetto eventualmente fisico (ripresa) o simulato come movimento di camera sulla FOTO REALE, senza fingere 3D interno al dipinto. La vecchia prudenza Critico 0–1% riguarda i microzoom durante la spiegazione, non costituisce limite cieco all'avvicinamento introduttivo dalla sala.
+- **QA:** vedere a velocità reale 0/1/3/5/7s, controllare che la transizione non faccia saltare colore, definizione o punto d'attenzione e che il primo secondo abbia un motivo per trattenere lo sguardo.
+
+La scelta è editoriale: la libreria propone, ma nessun renderer deve applicarla automaticamente.
