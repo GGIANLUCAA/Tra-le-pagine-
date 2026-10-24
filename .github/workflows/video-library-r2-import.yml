@@ -34,7 +34,7 @@ jobs:
         run: |
           python3 -m pip -q install requests
           python3 - <<'PY'
-          import os,re,sys,zipfile,tempfile,pathlib,time
+          import os,re,sys,zipfile,tempfile,pathlib,time,json,hashlib,io
           import requests
           S=requests.Session()
           ROOT=os.environ['IMPORT_ENDPOINT'].rstrip('/')
@@ -61,6 +61,47 @@ jobs:
                       if attempt==2:raise
                       time.sleep(2**attempt)
           def status(key):return cf('GET','/status',{'key':key})
+          def contract_manifests(archive):
+              manifests=[]
+              def read_from(zf,label):
+                  for member in zf.namelist():
+                      if pathlib.PurePosixPath(member).name=='ARTVISION_CONTRACT_V25.json':
+                          try:
+                              manifests.append((label+member,json.loads(zf.read(member).decode('utf-8'))))
+                          except Exception as exc:
+                              raise ValueError('Invalid V25 contract '+label+member+': '+str(exc))
+              read_from(archive,'')
+              for member in archive.namelist():
+                  if not member.lower().endswith('.zip') or member.endswith('/'):continue
+                  try:
+                      with zipfile.ZipFile(io.BytesIO(archive.read(member))) as nested:
+                          read_from(nested,member+'::')
+                  except zipfile.BadZipFile:
+                      continue
+              return manifests
+          def publication_gate(archive,video_members):
+              contracts=contract_manifests(archive)
+              if not contracts:
+                  return True,'legacy artifact without V25 contract'
+              approved_hashes=set()
+              required=('opening','visual','cover','music','rights','full_watch','replicability')
+              for label,contract in contracts:
+                  review_hash=str(contract.get('review_video_sha256') or '').lower()
+                  reviews=contract.get('reviews') or {}
+                  failed=[key for key in required if not isinstance(reviews.get(key),dict) or reviews[key].get('passed') is not True]
+                  if not review_hash or failed:
+                      return False,label+' pending reviews: '+','.join(failed or ['missing_exact_hash'])
+                  approved_hashes.add(review_hash)
+              actual={}
+              for member in video_members:
+                  digest=hashlib.sha256()
+                  with archive.open(member) as source:
+                      while chunk:=source.read(1024*1024):digest.update(chunk)
+                  actual[member]=digest.hexdigest()
+              unmatched={name:value for name,value in actual.items() if value not in approved_hashes}
+              if unmatched:
+                  return False,'master hash is not covered by an approved V25 review: '+repr(unmatched)
+              return True,'exact-hash V25 reviews passed'
           def upload(fp,key):
               size=fp.stat().st_size
               old=status(key)
@@ -115,8 +156,15 @@ jobs:
                               for chunk in r.iter_content(1048576):f.write(chunk)
                       with zipfile.ZipFile(zpath) as z:
                           files=[n for n in z.namelist() if n.lower().endswith(('.mp4','.m4v','.mov','.jpg','.jpeg','.png','.webp')) and not n.endswith('/')]
-                          if not any(n.lower().endswith(('.mp4','.m4v','.mov')) for n in files):
+                          videos=[n for n in files if n.lower().endswith(('.mp4','.m4v','.mov'))]
+                          if not videos:
                               cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']});continue
+                          allowed,reason=publication_gate(z,videos)
+                          if not allowed:
+                              print('SKIPPED UNREVIEWED:',a['name'],reason,flush=True)
+                              cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']})
+                              continue
+                          print('PUBLICATION GATE:',a['name'],reason,flush=True)
                           downloaded+=1
                           for n in files:
                               name=pathlib.PurePosixPath(n).name
