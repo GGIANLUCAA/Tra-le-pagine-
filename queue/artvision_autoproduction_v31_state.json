@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-24T18:28:00Z",
+  "updated": "2026-10-24T21:21:31.328Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -76,6 +76,30 @@
         "delivery_zip": "ArtVision_V31_Visions_Of_Symbolism_PACCHETTO_COMPLETO.zip",
         "human_artistic_review_pending": true
       }
+    },
+    {
+      "cycle_id": "20261024T2315+0200",
+      "created_at": "2026-10-24T21:21:31.001Z",
+      "artist": "Hugo Simberg",
+      "work": "The Wounded Angel",
+      "format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "reason_fallback": "Google Gacrux natural voice not verified; no robotic TTS fallback",
+      "status": "technical_pass_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 57.958333,
+      "size_bytes": 11522802,
+      "sha256_mp4": "d96820f0f09047879111580ee340db3b88f962738e63b326fdcb65c8ff2e8c15",
+      "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40133754824",
+      "artifact_name": "ArtVision-V31-20261024-Hugo-Simberg-Wounded-Angel",
+      "steps": {
+        "preflight": "success",
+        "render": "success",
+        "verify": "success",
+        "archive": "success"
+      },
+      "gold_master_approved": false,
+      "social_published": false
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
