@@ -4,6 +4,14 @@ Questo repository è lo studio video di Gianluca. Leggi questo file **prima di
 proporre o produrre un filmato**. Non ricostruire il sistema da zero a ogni chat.
 Le istruzioni esplicite dell'utente nella sessione hanno precedenza.
 
+## REGOLA PIÙ RECENTE — AUTOPRODUZIONE ARTISTICA V31 OGNI 3 ORE (24/10/2026)
+
+L'utente ha richiesto una routine **ricorrente ogni 3 ore** che produca un vero MP4 artistico, in modo autonomo, con **alternanza** fra ArtVision Cinema senza voce, ArtVision Critico V2 narrato (Gacrux naturale se disponibile) e raccolte tematiche di più opere reali (variante `artvision_cinema`, non un motore inesistente). Il riferimento permanente è [ARTVISION_AUTOPRODUZIONE_3H_V31.md](docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md), con policy [JSON](config/artvision_autoproduction_v31.json) e [stato di deduplica](queue/artvision_autoproduction_v31_state.json). Leggerlo PRIMA del contenuto per ogni ciclo programmato, insieme agli standard V25 e post V28 qui sotto.
+
+**Preferenza aggiornata 24/10:** video normalmente **45–120s**, Critico anche più lungo per necessità editoriali reali; prevale sulla vecchia finestra Cinema 45–75 come preferenza e NON modifica i master storici. Varietà di regie, temi, musica, lunghezze; immutabilità delle copertine approvate per serie, hook reale 0/1/3/5/7s. Ogni ciclo richiede MP4 reale verificato + copertina + quattro post veri e originali V28 + licenze + ricetta V13 + ZIP. Mai fingere video generato, non trasformare un render in Gold Master senza revisione, nessuna pubblicazione automatica social.
+
+La pianificazione 3h è fatta da **una sola routine ChatGPT**, non da un secondo cron GitHub duplicato; se crediti vocali, immagini o licenze mancano, non sostituire con un video di bassa qualità e riportare il limite concreto.
+
 ## CONTRATTI VINCOLANTI PER OGNI VIDEO NUOVO — V25 + POST V28
 
 **PRIMA di realizzare qualunque filmato, in OGNI nuova chat che accede al repository, leggi in questo ordine:**
