@@ -157,8 +157,8 @@ jobs:
           (async()=>{
             const [html,raw]=await Promise.all([get('/'),get('/api/catalog')]);
             const model=JSON.parse(raw),errors=[],v=new VirtualConsole();
-            v.on('jsdomError',e=>errors.push(e.message));
-            const dom=new JSDOM(html,{url:'https://video-library-studio.600led.workers.dev/',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:v,beforeParse(w){w.fetch=async()=>({ok:true,json:async()=>model});}});
+            v.on('jsdomError',e=>errors.push(e.stack||e.message));
+            const dom=new JSDOM(html,{url:'https://video-library-studio.600led.workers.dev/',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:v,beforeParse(w){w.fetch=async()=>({ok:true,json:async()=>model});w.HTMLElement.prototype.scrollIntoView=()=>{};w.IntersectionObserver=class{observe(){}unobserve(){}disconnect(){}};}});
             await new Promise(done=>setTimeout(done,700));
             const d=dom.window.document;
             const total=d.querySelectorAll('.card').length;
