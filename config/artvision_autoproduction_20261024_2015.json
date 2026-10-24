@@ -1,0 +1,245 @@
+{
+  "schema": "artvision-v31-collection",
+  "cycle_id": "20261024T2015+0200",
+  "slug": "visions_of_symbolism_20261024_2015",
+  "editorial_key": "symbolist_visons_three_museums_20261024_2015",
+  "title_en": "Visions of Symbolism",
+  "opening_text": "SYMBOLIST VISIONS",
+  "format": "artvision_cinema",
+  "subtype": "artvision_collection",
+  "baseline": "cinema_v6",
+  "voice": false,
+  "subtitles": false,
+  "candidates_considered": [
+    {
+      "artist": "Odilon Redon",
+      "work": "The Cyclops",
+      "reason": "Giant single eye and floral dream world, unusual instant visual hook"
+    },
+    {
+      "artist": "Gustave Moreau",
+      "work": "Jupiter and Semele",
+      "reason": "Intricate spectacular vision with authentic myth and vertical composition"
+    },
+    {
+      "artist": "Arnold Böcklin",
+      "work": "Isle of the Dead",
+      "reason": "A quiet mysterious ending with strong silhouettes and an iconic symbolist landscape"
+    },
+    {
+      "artist": "Evelyn De Morgan",
+      "work": "The Love Potion",
+      "reason": "Beautiful but same artist as previous cycle, excluded to prevent repetition"
+    }
+  ],
+  "music": {
+    "name": "Echoes of Time",
+    "artist": "Kevin MacLeod",
+    "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Echoes%20of%20Time.mp3",
+    "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300029",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "isrc": "USUAN1300029",
+    "offset": 24
+  },
+  "artworks": [
+    {
+      "id": "redon",
+      "artist": "Odilon Redon",
+      "title_en": "The Cyclops",
+      "year": "c. 1914",
+      "museum": "Kröller-Müller Museum",
+      "museum_url": "https://www.krollermuller.nl/en/collection/odilon-redon-the-cyclops-km-103-098",
+      "commons": "https://commons.wikimedia.org/wiki/File:Odilon_Redon_-_The_Cyclops,_c._1914.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/be/Odilon_Redon_-_The_Cyclops%2C_c._1914.jpg",
+      "expected_min": [
+        2200,
+        3000
+      ]
+    },
+    {
+      "id": "moreau",
+      "artist": "Gustave Moreau",
+      "title_en": "Jupiter and Semele",
+      "year": "1895",
+      "museum": "Musée Gustave Moreau",
+      "museum_url": "https://musee-moreau.fr/musees-napoleonien-africain/en/collection/objet/jupiter-and-semele-jupiter-et-semele",
+      "commons": "https://commons.wikimedia.org/wiki/File:Jupiter_and_Semele_by_Gustave_Moreau.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Jupiter_and_Semele_by_Gustave_Moreau.jpg",
+      "expected_min": [
+        3000,
+        6000
+      ]
+    },
+    {
+      "id": "bocklin",
+      "artist": "Arnold Böcklin",
+      "title_en": "Isle of the Dead (first version)",
+      "year": "1880",
+      "museum": "Kunstmuseum Basel",
+      "museum_url": "https://kunstmuseumbasel.ch/de/ausstellungen/2027/boecklin",
+      "commons": "https://commons.wikimedia.org/wiki/File:Arnold_B%C3%B6cklin_-_Die_Toteninsel_I_(Basel,_Kunstmuseum).jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/de/Arnold_B%C3%B6cklin_-_Die_Toteninsel_I_%28Basel%2C_Kunstmuseum%29.jpg",
+      "expected_min": [
+        6000,
+        4500
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "art": "redon",
+      "kind": "portrait",
+      "x": 0.36,
+      "y": 0.26,
+      "z": 1.27,
+      "seconds": 5.3,
+      "motion": "locked",
+      "purpose": "The giant single eye is immediately visible as a human, unsettling focal point"
+    },
+    {
+      "art": "redon",
+      "kind": "medium",
+      "x": 0.46,
+      "y": 0.35,
+      "z": 1.1,
+      "seconds": 4.7,
+      "motion": "slow_pull",
+      "purpose": "Polyphemus emerges behind the hill, making the eye part of a body"
+    },
+    {
+      "art": "redon",
+      "kind": "detail",
+      "x": 0.62,
+      "y": 0.72,
+      "z": 1.18,
+      "seconds": 4.7,
+      "motion": "locked",
+      "purpose": "The dreamlike floral field contrasts the giant without isolating the nude figure"
+    },
+    {
+      "art": "redon",
+      "kind": "full",
+      "x": 0.5,
+      "y": 0.5,
+      "z": 1,
+      "seconds": 5.7,
+      "motion": "locked",
+      "purpose": "The complete Redon canvas reveals the scale of the Cyclops and landscape"
+    },
+    {
+      "art": "moreau",
+      "kind": "portrait",
+      "x": 0.5,
+      "y": 0.29,
+      "z": 1.16,
+      "seconds": 5.1,
+      "motion": "locked",
+      "purpose": "A beardless Jupiter radiates from the ornate throne as the vision changes"
+    },
+    {
+      "art": "moreau",
+      "kind": "detail",
+      "x": 0.52,
+      "y": 0.38,
+      "z": 1.23,
+      "seconds": 4.8,
+      "motion": "slow_push",
+      "purpose": "The god's hands and lyre create a surprising association with poetry"
+    },
+    {
+      "art": "moreau",
+      "kind": "texture",
+      "x": 0.46,
+      "y": 0.72,
+      "z": 1.2,
+      "seconds": 4.9,
+      "motion": "locked",
+      "purpose": "Dense symbolic creatures populate the lower passage of the painting"
+    },
+    {
+      "art": "moreau",
+      "kind": "medium",
+      "x": 0.5,
+      "y": 0.55,
+      "z": 1.05,
+      "seconds": 5,
+      "motion": "locked",
+      "purpose": "The vertical path from mortal to divine becomes legible"
+    },
+    {
+      "art": "moreau",
+      "kind": "full",
+      "x": 0.5,
+      "y": 0.5,
+      "z": 1,
+      "seconds": 5.5,
+      "motion": "locked",
+      "purpose": "Hold the genuine entire 1895 composition before leaving its crowded world"
+    },
+    {
+      "art": "bocklin",
+      "kind": "detail",
+      "x": 0.43,
+      "y": 0.81,
+      "z": 1.24,
+      "seconds": 5.3,
+      "motion": "locked",
+      "purpose": "A tiny white passenger in a boat appears first in a landscape of silence"
+    },
+    {
+      "art": "bocklin",
+      "kind": "landscape",
+      "x": 0.54,
+      "y": 0.35,
+      "z": 1.12,
+      "seconds": 5.1,
+      "motion": "slow_pull",
+      "purpose": "Dark cypresses rise behind the small vessel, carrying the central symbol"
+    },
+    {
+      "art": "bocklin",
+      "kind": "medium",
+      "x": 0.29,
+      "y": 0.54,
+      "z": 1.18,
+      "seconds": 4.9,
+      "motion": "locked",
+      "purpose": "A pale doorway contrasts the island's rock and evergreen silhouettes"
+    },
+    {
+      "art": "bocklin",
+      "kind": "wide",
+      "x": 0.56,
+      "y": 0.63,
+      "z": 1.04,
+      "seconds": 5.2,
+      "motion": "locked",
+      "purpose": "Boat, rock and island form a quiet spatial relationship"
+    },
+    {
+      "art": "bocklin",
+      "kind": "full",
+      "x": 0.5,
+      "y": 0.5,
+      "z": 1,
+      "seconds": 7.2,
+      "motion": "locked",
+      "purpose": "A long contemplative stillness on the complete 1880 Basel canvas"
+    }
+  ],
+  "techniques": [
+    "human_gaze_start",
+    "locked_hold",
+    "visual_hierarchy",
+    "motivated_cut",
+    "detail_return",
+    "rhythmic_rest",
+    "camera_seasick_gate"
+  ],
+  "publication": {
+    "social": false,
+    "library": false
+  },
+  "no_ghosting": true
+}
