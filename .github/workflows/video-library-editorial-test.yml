@@ -1,0 +1,73 @@
+name: Video Library Studio — Editorial Dossier and ZIP
+on:
+  push:
+    paths:
+      - site/video-library-editorial-core.js
+      - site/video-library-v2.html
+      - tests/video-library-editorial.test.cjs
+      - .github/workflows/video-library-editorial-test.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dossier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify source frontend code
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('site/video-library-v2.html').read_text()
+          assert 'id="editorial"' in html and 'function openEditorial(x)' in html
+          assert 'id="edZipFull"' in html and 'id="edZipLight"' in html
+          assert 'data-ed-copy="facebook"' in html
+          script=re.findall(r'<script[^>]*>([\s\S]*?)</script>',html)
+          assert len(script)==1
+          Path('/tmp/video-library-editorial-front.js').write_text(script[0])
+          print('PASS: complete video dossier, post copy buttons, and both ZIP modes in the interface')
+          PY
+          node --check /tmp/video-library-editorial-front.js
+      - name: Test notes migration, editorial save, signed ZIP and streaming
+        run: |
+          node tests/video-library-editorial.test.cjs
+          python3 - <<'PY'
+          import zipfile,json
+          for mode in ('light','full'):
+              path=f'/tmp/vls-editorial-{mode}.zip'
+              with zipfile.ZipFile(path) as z:
+                  assert z.testzip() is None,'ZIP CRC error'
+                  names=set(z.namelist())
+                  assert '01_SOCIAL/Facebook_post.txt' in names
+                  assert '01_SOCIAL/Instagram_caption.txt' in names
+                  assert '02_PROGETTO/Regia_e_sceneggiatura.txt' in names
+                  assert '02_PROGETTO/Ricetta_e_istruzioni.txt' in names
+                  assert '02_PROGETTO/Fonti_e_crediti.txt' in names
+                  assert '03_COPERTINA/Copertina_originale.jpg' in names
+                  assert any(x.startswith('05_ALLEGATI/') and x.endswith('POST_STORICO.txt') for x in names)
+                  assert 'Facebook definitivo' in z.read('01_SOCIAL/Facebook_post.txt').decode('utf8')
+                  assert 'Workflow originale' in z.read('02_PROGETTO/Ricetta_e_istruzioni.txt').decode('utf8')
+                  j=json.loads(z.read('02_PROGETTO/Scheda_completa.json'))
+                  assert j['editorial']['reprints']=='3 copie'
+                  assert (any(x.startswith('04_VIDEO/') and x.endswith('.mp4') for x in names))==(mode=='full')
+                  print('PASS ZIP',mode,'with',len(names),'entries and verified CRC')
+          PY
+      - name: Verify live site still protects editorial information
+        run: |
+          python3 - <<'PY'
+          import urllib.request,urllib.error,json
+          u='https://video-library-studio.600led.workers.dev'
+          with urllib.request.urlopen(u,timeout=40) as r:html=r.read().decode()
+          assert 'id="editorial"' in html and 'id="edZipFull"' in html,'Live dossier not published'
+          checks=[
+           (u+'/api/editorial?key=ARTVISION_CARAVAGGIO_CINEMA_V6.mp4','GET',None,401),
+           (u+'/api/social-package-link','POST',b'{}',401),
+           (u+'/api/social-package','GET',None,403)
+          ]
+          for path,method,payload,status in checks:
+           try:urllib.request.urlopen(urllib.request.Request(path,method=method,data=payload,headers={'content-type':'application/json'}),timeout=30);raise AssertionError('Unprotected endpoint '+path)
+           except urllib.error.HTTPError as e:assert e.code==status,(path,e.code,status)
+          print('PASS live website: dossier online, private API and signed ZIP enforcement')
+          PY
