@@ -1,0 +1,74 @@
+{
+  "schema": "artvision-critico-director-cut-v23",
+  "episode_id": "holbein_gallery_entry_variant_v1",
+  "date": "2026-10-24",
+  "artwork": "The Ambassadors",
+  "artist": "Hans Holbein the Younger",
+  "format": "artvision_critico",
+  "status": "rendered_needs_artistic_review",
+  "publication_authorized": false,
+  "source_episode": "modules/artvision_critico/production_series/holbein_ambasciatori_critico_v23.json",
+  "previous_master": "holbein Critico V23, full 86.95s, Google Gacrux narration",
+  "effect": {
+    "technique": "gallery_to_canvas_entry",
+    "optional": true,
+    "motion_duration_seconds": 6,
+    "room": "AI-generated interpretative museum room, NOT documentary photograph of National Gallery",
+    "painting": "Authentic public-domain artwork scan composited into painted frame",
+    "opening_move": "Single smoothstep forward zoom, scale 1.0→3.601, no oscillation",
+    "target_match": "Matched authentic canvas crop to source master on t≈4.5; 0.35s crossfade at 5.6–5.95s",
+    "audio": "Original master AAC track carried unchanged and unretimed",
+    "camera_parameters": {
+      "start_center": [
+        540,
+        960
+      ],
+      "end_center": [
+        557,
+        798
+      ],
+      "zoom_factor": 3.601,
+      "canvas": [
+        1080,
+        1920
+      ],
+      "fps": 20
+    }
+  },
+  "master": {
+    "name": "ARTVISION_HOLBEIN_ENTRIAMO_NEL_QUADRO_V1.mp4",
+    "duration_seconds": 86.95,
+    "resolution": [
+      1080,
+      1920
+    ],
+    "codecs": [
+      "H264",
+      "AAC"
+    ],
+    "sha256": "b99c076bff65a7bc63f8f9f51890bb0a62a2291eb2c55ec6868dd7fe6aab447e",
+    "full_decode_passed": true,
+    "qa_frames_seconds": [
+      0,
+      1,
+      3,
+      5,
+      7,
+      40,
+      84
+    ],
+    "delivery": "ChatGPT attachment; MP4 binary not committed to GitHub"
+  },
+  "rights": {
+    "museum": "https://www.nationalgallery.org.uk/paintings/hans-holbein-the-younger-the-ambassadors",
+    "art": "https://commons.wikimedia.org/wiki/File:Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg",
+    "music": "Night on the Docks – Piano — Kevin MacLeod CC BY 4.0",
+    "generated_room": "Illustrative only, not an actual museum view"
+  },
+  "protect": {
+    "original_master_unchanged": true,
+    "gold_master_promotion": false,
+    "auto_publish": false
+  },
+  "note": "No mandatory change to Critico V2 preset. This is a tested OPTIONAL V23 effect. 2026-10-24 user request: enter frame from framed museum room, gradually reach original painting. Backstage room openly labeled synthetic. Previous malformed overlay render discarded, correct final created with trim/concat."
+}
