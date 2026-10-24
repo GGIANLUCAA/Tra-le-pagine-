@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-24T18:26:37.595Z",
+  "updated": "2026-10-24T18:28:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -67,7 +67,15 @@
         "archive": "success"
       },
       "gold_master_approved": false,
-      "social_published": false
+      "social_published": false,
+      "postprocess": {
+        "cover": "Single-title V6-family refinement; original opening and MP4 untouched",
+        "cover_script": "scripts/artvision_collection_cover_v31.py",
+        "social_footer": "Italian attribution wording polished",
+        "master_sha256_unchanged": true,
+        "delivery_zip": "ArtVision_V31_Visions_Of_Symbolism_PACCHETTO_COMPLETO.zip",
+        "human_artistic_review_pending": true
+      }
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
