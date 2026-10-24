@@ -61,6 +61,22 @@ jobs:
           print('Site upload:',api('POST','/publish-html',data=page.text.encode('utf-8')),flush=True)
           catalog=s.get(site+'/api/catalog',timeout=60);catalog.raise_for_status()
           assets=catalog.json().get('items',[])
+          # AUTO-DOSSIER V1: one lightweight persistent editorial record for every imported MP4.
+          # Does not copy or transcode original videos, does not overwrite owner edits.
+          import re
+          all_video_keys=sorted({v['key'] for v in assets
+                                 if v.get('available') is not False and
+                                 re.fullmatch(r'[\\w ().-]{1,190}\\.(?:mp4|mov|m4v)',v.get('key',''),re.I)})
+          if all_video_keys:
+              for phase in range(26):
+                  try:
+                      seeded=api('POST','/editorial-seed',data=json.dumps({'items':all_video_keys},ensure_ascii=False).encode('utf-8'))
+                      if not seeded.get('ok'):raise ValueError('Invalid seed response: '+repr(seeded)[:180])
+                      print('EDITORIAL AUTO-DOSSIER',{'created':seeded.get('created'), 'pending':seeded.get('pending'), 'existing':seeded.get('existing')},flush=True)
+                      if not seeded.get('pending') or not seeded.get('created'):break
+                  except Exception as exc:
+                      print('WARNING editorial dossier auto-seed:',str(exc)[:180],flush=True)
+                      break
           current=s.get(site+'/api/metadata',timeout=60);current.raise_for_status()
           metadata=current.json()
           print('Catalog assets:',len(assets),'Already enriched:',len(metadata),flush=True)
