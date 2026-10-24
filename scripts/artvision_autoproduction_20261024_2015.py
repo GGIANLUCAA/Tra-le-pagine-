@@ -96,7 +96,7 @@ def planned_manifest(cfg):
                    (3,"The original eye is still in focus as the artist signature fades away"),
                    (5,"The painting opens gradually to reveal the giant behind the hill"),
                    (7,"The larger head and hillside clarify the mysterious painted subject")]],
-      "scenes":[{"source_id":s["art"],"subject":s["purpose"],"purpose":s["purpose"],
+      "scenes":[{"source_id":"artwork_"+s["art"],"subject":s["purpose"],"purpose":s["purpose"],
                  "shot":s["kind"],"motion":s["motion"],"duration_seconds":s["seconds"]} for s in shots],
       "transition_reviews_plan":[{"why":"Move from eye to hill while preserving one opaque painting"},
                                  {"why":"Switch Redon's dream to Moreau's divine myth without transparent overlap"},
