@@ -28,7 +28,7 @@ def probe(path):
       "-of","json",str(path)],text=True))
 def fetch(url,dest,kind,minimum):
     errs=[]
-    for attempt in range(3):
+    for attempt in range(2):
         try:
             with requests.get(url,headers={"User-Agent":UA},timeout=90,stream=True) as resp:
                 resp.raise_for_status()
@@ -144,7 +144,7 @@ def main():
     for a in cfg["artworks"]:
         dest=base/("ORIGINAL_"+a["id"].upper()+".jpg")
         attempted=[]
-        for candidate in [a["url"]]+a.get("mirrors",[]):
+        for candidate in a.get("mirrors",[])+[a["url"]]:
             try:
                 fetch(candidate,dest,"image",a["expected_min"])
                 a["download_used"]=candidate
