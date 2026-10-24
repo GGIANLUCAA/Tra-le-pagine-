@@ -39,6 +39,8 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
 @media(max-width:385px){.grid{grid-template-columns:1fr 1fr}.hero-copy h1{font-size:36px}.brand-wordmark small{display:none}.brand-icon{width:34px;height:34px}.top-actions{gap:3px}.top-actions .ghost,.top-actions .btn{padding:7px}.collection-copy strong{font-size:14px}.grid.compact .card{grid-template-columns:85px minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
 
+
+.group-versions{display:flex;align-items:center;gap:8px;padding:6px 0 9px;font-size:12px;color:#c7b798}.group-versions input{width:17px;height:17px;min-height:0;accent-color:#dbb987}.studio-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 20px}.studio-metrics div{background:#222c37;border:1px solid #3e4753;border-radius:11px;padding:10px}.studio-metrics b{display:block;color:#e0bf92;font-size:20px}.studio-metrics span{font-size:11px;color:#b6c1d0}.film-placeholder{height:160px;display:grid;place-items:center;background:linear-gradient(135deg,#292e3a,#46382c);font-size:40px;color:#e0bf92}@media(max-width:720px){.studio-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.studio-metrics div{padding:7px}.studio-metrics b{font-size:18px}.studio-metrics span{font-size:10px}}
 </style>
 </head>
 <body>
@@ -77,7 +79,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
 </section>
 <section class="showcase-section ready-section" id="ready" aria-labelledby="readyTitle" hidden>
  <div class="section-heading"><div><div class="section-eyebrow">AREA EDITORIALE PRIVATA</div><h2 id="readyTitle">Pronti da pubblicare</h2><p>Video marcati come finali, pronti per la revisione.</p></div></div>
- <div class="film-rail" id="readyRail"></div>
+ <div class="studio-metrics" id="studioMetrics"></div><div class="film-rail" id="readyRail"></div>
 </section>
 <section class="library-section" id="library" aria-labelledby="libraryTitle">
  <div class="section-heading library-heading"><div><div class="section-eyebrow">TUTTO L'ARCHIVIO</div><h2 id="libraryTitle">La videoteca completa</h2><p>Cerca, filtra e organizza senza perdere nessun file.</p></div></div>
@@ -91,7 +93,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
  <select id="project" aria-label="Filtra per progetto"><option value="">Tutti i progetti</option></select>
  <select id="sort" aria-label="Ordina video"><option value="recent">Più recenti</option><option value="title">Titolo A–Z</option><option value="duration">Durata maggiore</option><option value="size">File più grandi</option><option value="favorites">Preferiti</option></select>
  <select id="versions" aria-label="Filtra per versione"><option value="">Tutte le versioni</option><option value="final">Solo finali</option><option value="draft">Bozze / provini</option><option value="variants">Possibili varianti</option></select>
- </div></details>
+ </div><label class="group-versions"><input id="groupVariants" type="checkbox"> Raggruppa le versioni riconosciute (senza eliminare file)</label></details>
 <p class="notice">I video con il simbolo ☁ sono presenti nella libreria ChatGPT ma non ancora riproducibili da questo sito. Per guardare o scaricare un video serve il trasferimento del suo file originale.</p><div class="filters" id="filters"></div>
 <div class="panelbar"><p id="counter">Caricamento archivio...</p><label class="toggle" id="archivedToggle" style="display:none"><input id="includeArchived" type="checkbox"> Mostra archiviati</label></div>
 <div class="selection-panel" id="selectionPanel" hidden>
@@ -204,6 +206,14 @@ function renderHome(){
  }
  const newest=sortedFresh(available).slice(0,12);
  populateRail('#latestRail',newest,'Non ci sono ancora video pronti alla riproduzione.');
+ const studioFacts=[
+  ['Totale schede',g.items.length],
+  ['Finali',visible.filter(x=>x.viewVersion==='final').length],
+  ['Provini',visible.filter(x=>x.viewVersion==='draft').length],
+  ['Da ChatGPT',visible.filter(x=>x.available===false).length],
+  ['Varianti',visible.filter(x=>x.variants>0).length]
+ ];
+ $('#studioMetrics').innerHTML=studioFacts.map(([name,num])=>'<div><b>'+num+'</b><span>'+h(name)+'</span></div>').join('');
  const ready=sortedFresh(available.filter(x=>x.viewVersion==='final')).slice(0,12);
  populateRail('#readyRail',ready,'Nessun filmato è ancora stato marcato come finale.');
 }
@@ -258,7 +268,7 @@ async function batchPatch(patch,label){
 let last=0;
 async function load(force){if(!force&&Date.now()-last<9000)return;last=Date.now();$('#counter').textContent='Aggiornamento archivio…';try{const res=await fetch('/api/catalog',{cache:'no-store',headers:g.token?{'Authorization':'Bearer '+g.token}:{}});if(!res.ok)throw Error('Impossibile leggere il catalogo ('+res.status+')');const data=await res.json();g.admin=!!data.admin;g.items=decorate(data.items||[]);g.override=data.overrides||{};$('#adminBanner').classList.toggle('show',g.admin);$('#archivedToggle').style.display=g.admin?'flex':'none';const projects=[...new Set(g.items.map(x=>x.viewProject))].sort();const selected=$('#project').value;$('#project').replaceChildren(new Option('Tutti i progetti',''));projects.forEach(p=>$('#project').add(new Option(p,p)));$('#project').value=projects.includes(selected)?selected:'';let total=g.items.filter(x=>!x.hidden);const online=total.filter(x=>x.available!==false);$('#nVideos').textContent=online.length;$('#nGpt').textContent=total.length-online.length;$('#nPosters').textContent=online.filter(x=>x.cover).length;$('#nProjects').textContent=new Set(total.map(x=>x.viewCategory)).size;const hours=total.reduce((s,x)=>s+(Number(x.duration)||0),0)/3600;$('#nHours').textContent=hours?hours.toFixed(1).replace('.',','):'—';categories();renderHome();applyStudioVisibility();draw();}catch(e){log(e.message);$('#counter').textContent='Errore durante il caricamento. Riprova con Aggiorna.'}}
 function categories(){const cats=['Tutti',...new Set(g.items.map(x=>x.viewCategory))];const nav=$('#filters');nav.replaceChildren();cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(g.category===c?' active':'');b.textContent=c;b.onclick=()=>{g.category=c;g.showLimit=36;categories();draw()};nav.append(b)});}
-function filtered(){const q=norm($('#query').value),p=$('#project').value,sort=$('#sort').value,ver=$('#versions').value,arc=$('#includeArchived').checked,where=$('#availability').value;let arr=g.items.filter(x=>(!x.hidden||(g.admin&&arc))&&(!where||(where==='online'?x.available!==false:x.available===false))&&(g.category==='Tutti'||x.viewCategory===g.category)&&(!p||x.viewProject===p)&&(!ver||(ver==='final'&&x.viewVersion==='final')||(ver==='draft'&&x.viewVersion==='draft')||(ver==='variants'&&x.variants>0))&&norm([x.viewTitle,x.key,x.viewDescription,x.viewProject,x.guess.artist].join(' ')).includes(q));arr.sort((a,b)=>sort==='title'?a.viewTitle.localeCompare(b.viewTitle,'it'):sort==='duration'?(b.duration||0)-(a.duration||0):sort==='size'?b.size-a.size:sort==='favorites'?Number(!!b.favorite)-Number(!!a.favorite):Date.parse(b.gptCreatedAt||b.uploaded||0)-Date.parse(a.gptCreatedAt||a.uploaded||0));return arr}
+function filtered(){const q=norm($('#query').value),p=$('#project').value,sort=$('#sort').value,ver=$('#versions').value,arc=$('#includeArchived').checked,where=$('#availability').value;let arr=g.items.filter(x=>(!x.hidden||(g.admin&&arc))&&(!where||(where==='online'?x.available!==false:x.available===false))&&(g.category==='Tutti'||x.viewCategory===g.category)&&(!p||x.viewProject===p)&&(!ver||(ver==='final'&&x.viewVersion==='final')||(ver==='draft'&&x.viewVersion==='draft')||(ver==='variants'&&x.variants>0))&&norm([x.viewTitle,x.key,x.viewDescription,x.viewProject,x.guess.artist].join(' ')).includes(q));arr.sort((a,b)=>sort==='title'?a.viewTitle.localeCompare(b.viewTitle,'it'):sort==='duration'?(b.duration||0)-(a.duration||0):sort==='size'?b.size-a.size:sort==='favorites'?Number(!!b.favorite)-Number(!!a.favorite):Date.parse(b.gptCreatedAt||b.uploaded||0)-Date.parse(a.gptCreatedAt||a.uploaded||0));if($('#groupVariants').checked){const seen=new Set();arr=arr.filter(x=>{const key=base(x.key);if(/^(artvisionvideo|basevideo|tra_le_pagineep01)/.test(key)||!x.variants)return true;if(seen.has(key))return false;seen.add(key);return true})}return arr}
 function draw(){
  const arr=filtered(),node=$('#grid');g.shownCache=arr;node.replaceChildren();
  node.classList.toggle('compact',g.compact);
@@ -336,21 +346,21 @@ $('#refresh').onclick=()=>load(true);
 const refreshFilter=()=>{g.showLimit=36;draw()};
 $('#availability').onchange=refreshFilter;$('#query').oninput=refreshFilter;
 $('#project').onchange=refreshFilter;$('#sort').onchange=refreshFilter;
-$('#versions').onchange=refreshFilter;$('#includeArchived').onchange=refreshFilter;
+$('#versions').onchange=refreshFilter;$('#includeArchived').onchange=refreshFilter;$('#groupVariants').onchange=refreshFilter;
 $('#topSearch').onclick=()=>{gotoSection('library');$('#query').focus()};
-$('#heroExplore').onclick=()=>gotoSection('library');
+$('#heroExplore').onclick=()=>{g.category='Tutti';categories();refreshFilter();gotoSection('library')};
 $('#heroStudio').onclick=()=>enterStudio();
 $('#browseRecent').onclick=()=>{g.category='Tutti';$('#availability').value='online';$('#sort').value='recent';categories();refreshFilter();gotoSection('library')};
 $('#compactToggle').onclick=()=>{g.compact=!g.compact;$('#compactToggle').setAttribute('aria-pressed',String(g.compact));$('#compactToggle').innerHTML=g.compact?'▦ <span>Vista riquadri</span>':'☷ <span>Vista compatta</span>';draw()};
 $('#selectionToggle').onclick=()=>{if(!g.admin||!g.studio)return;g.selectionMode=!g.selectionMode;if(!g.selectionMode)g.selectedKeys.clear();applyStudioVisibility();draw()};
-$('#selectAllVisible').onclick=()=>{for(const x of g.shownCache.slice(0,40))g.selectedKeys.add(x.key);draw()};
+$('#selectAllVisible').onclick=()=>{for(const x of g.shownCache.slice(0,Math.min(g.showLimit,40)))g.selectedKeys.add(x.key);draw()};
 $('#clearSelected').onclick=()=>{g.selectedKeys.clear();draw()};
 $('#batchFavorite').onclick=()=>batchPatch({favorite:true},'Aggiungi ai preferiti');
 $('#batchFinal').onclick=()=>batchPatch({version:'final'},'Marca come finale');
 $('#batchDraft').onclick=()=>batchPatch({version:'draft'},'Marca come provino');
 $('#batchArchive').onclick=()=>batchPatch({hidden:true},'Archivia dal catalogo');
 $('#moreVideos').onclick=()=>{g.showLimit+=36;draw()};
-document.querySelectorAll('.bottom-nav button').forEach(b=>b.onclick=()=>{if(b.dataset.section==='studio')enterStudio();else gotoSection(b.dataset.section)});
+document.querySelectorAll('.bottom-nav button').forEach(b=>b.onclick=()=>{if(b.dataset.section==='studio')enterStudio();else if(b.dataset.section==='library'){g.category='Tutti';categories();refreshFilter();gotoSection('library')}else gotoSection(b.dataset.section)});
 const playerSequence=(delta)=>{
  let seq=filtered().filter(x=>x.available!==false&&!x.hidden);
  if(!seq.some(x=>x.key===g.selected?.key))seq=sortedFresh(g.items.filter(x=>x.available!==false&&!x.hidden));
