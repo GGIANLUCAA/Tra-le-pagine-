@@ -1,0 +1,95 @@
+name: Video Library Studio V3 Preview — UI checks
+on:
+  push:
+    paths:
+      - 'site/video-library-v3-preview.html'
+      - '.github/workflows/video-library-v3-preview-test.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install isolated DOM test dependencies
+        run: npm install --prefix /tmp/vls-v3 --silent --no-audit --no-fund jsdom@26
+      - name: Test JavaScript syntax and layout structure
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          doc=Path('site/video-library-v3-preview.html').read_text()
+          js=re.findall(r'<script[^>]*>([\s\S]*?)</script>',doc)
+          assert len(js)==1,(len(js),'Expected one inline script')
+          Path('/tmp/vls-v3/script.js').write_text(js[0])
+          for item in ['collectionGrid','latestRail','readyRail','selectionPanel','compactToggle','bottom-nav','playerNext','playerPrevious','moreVideos']:
+              assert item in doc,item
+          print('PASS: V3 markup contains collections, spotlight, cinema player, bulk tools and bottom navigation')
+          PY
+          node --check /tmp/vls-v3/script.js
+      - name: Test public and private UX against current video catalog
+        run: |
+          curl -fsSL --retry 3 -A 'Mozilla/5.0' https://video-library-studio.600led.workers.dev/api/catalog > /tmp/vls-v3/catalog.json
+          cat > /tmp/vls-v3/verify.cjs <<'JS'
+          const {JSDOM,VirtualConsole}=require('/tmp/vls-v3/node_modules/jsdom');
+          const assert=require('node:assert/strict');
+          const fs=require('node:fs');
+          const html=fs.readFileSync('site/video-library-v3-preview.html','utf8');
+          const source=JSON.parse(fs.readFileSync('/tmp/vls-v3/catalog.json','utf8'));
+          assert(source.items.length>=100,'Expected real catalog with >100 records');
+          function make(isAdmin=false){
+            const errors=[],consoleVirtual=new VirtualConsole();
+            consoleVirtual.on('jsdomError',e=>errors.push(e.stack||e.message));
+            const dom=new JSDOM(html,{url:'https://video-library-studio.600led.workers.dev/',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:consoleVirtual,beforeParse(w){
+              w.fetch=async(uri,opts)=>opts?.method==='POST'?{ok:true,json:async()=>({ok:true,entry:JSON.parse(opts.body).patch})}:{ok:true,json:async()=>({...source,admin:isAdmin})};
+              w.HTMLElement.prototype.scrollIntoView=()=>{};
+              w.HTMLDialogElement.prototype.showModal=function(){this.open=true};
+              w.HTMLDialogElement.prototype.close=function(){this.open=false};
+              w.HTMLMediaElement.prototype.play=()=>Promise.resolve();
+              w.HTMLMediaElement.prototype.pause=()=>{};
+              w.confirm=()=>true;
+            }});
+            return {dom,doc:dom.window.document,errors};
+          }
+          async function delay(){await new Promise(r=>setTimeout(r,900))}
+          (async()=>{
+            const pub=make();await delay();
+            const d=pub.doc,total=d.querySelectorAll('.card').length;
+            assert(total===36,'Progressive default should show 36 cards, got '+total);
+            assert(d.querySelectorAll('.collection-card').length>=3,'Collections not built');
+            assert(d.querySelectorAll('#latestRail .film-tile').length>=1,'Recent video rail empty');
+            assert(d.querySelector('#spotlight .spotlight-play'),'Spotlight playback missing');
+            assert(d.querySelector('#moreRow').hidden===false,'Show-more not available');
+            d.querySelector('#moreVideos').click();
+            assert(d.querySelectorAll('.card').length===72,'Show-more pagination failed');
+            d.querySelector('#compactToggle').click();
+            assert(d.querySelector('#grid').classList.contains('compact'),'Compact mode failed');
+            const filter=d.querySelector('#availability');filter.value='chatgpt';filter.dispatchEvent(new pub.dom.window.Event('change',{bubbles:true}));
+            const offline=d.querySelectorAll('.card');
+            assert(offline.length>0,'GPT cards missing');
+            assert(offline[0].querySelector('[data-act="play"]')===null,'GPT-only video incorrectly playable');
+            filter.value='';filter.dispatchEvent(new pub.dom.window.Event('change',{bubbles:true}));
+            const q=d.querySelector('#query');q.value='gioconda';q.dispatchEvent(new pub.dom.window.Event('input',{bubbles:true}));
+            assert(d.querySelectorAll('.card').length>0,'Search Gioconda failed');
+            assert(!pub.errors.length,'Public JavaScript errors: '+pub.errors.slice(0,2).join('; '));
+            console.log('PASS public: hero, 3+ collections, latest, 36-card pagination, compact mode, ChatGPT filter, Gioconda search');
+            pub.dom.window.close();
+            const priv=make(true);await delay();
+            priv.doc.querySelector('#heroStudio').click();
+            assert(priv.doc.querySelector('#ready').hidden===false,'Studio private ready area missing');
+            priv.doc.querySelector('#selectionToggle').click();
+            assert(priv.doc.querySelector('#selectionPanel').hidden===false,'Selection bar not shown');
+            const select=priv.doc.querySelector('[data-act="select"]');assert(select,'Card select button not found');
+            select.click();
+            assert(priv.doc.querySelector('#selectedCount').textContent.startsWith('1 '),'Selection tracking failed');
+            priv.doc.querySelector('#clearSelected').click();
+            assert(priv.doc.querySelector('#selectedCount').textContent.startsWith('0 '),'Clear selection failed');
+            assert(priv.doc.querySelector('#deleteForever'),'Single-item protected delete remains');
+            assert(!priv.errors.length,'Admin JavaScript errors: '+priv.errors.slice(0,2).join('; '));
+            console.log('PASS private: Studio toggle, ready-to-publish rail, per-item selection, clear, protected delete retained');
+            priv.dom.window.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          node /tmp/vls-v3/verify.cjs
