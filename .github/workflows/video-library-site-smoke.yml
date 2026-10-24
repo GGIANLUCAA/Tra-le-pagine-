@@ -39,9 +39,9 @@ jobs:
           assert not catalog.get('admin'),'Unexpected admin access'
           assert len(catalog.get('items',[]))>=50,'Catalog missing real videos'
           offline=[v for v in catalog['items'] if v.get('available') is False]
-          assert len(offline)>=60,'Expected indexed ChatGPT-only entries'
-          assert any('Elise' in v.get('name','') for v in offline),'Missing Music Motion entry from ChatGPT'
-          print('PASS: ChatGPT-only video records listed accurately:',len(offline),flush=True)
+          assert all(v.get('source')=='chatgpt' for v in offline),'ChatGPT-only entries mislabeled'
+          assert any('elise' in v.get('name','').lower() for v in catalog['items']),'Music Motion entry missing from catalog'
+          print('PASS: ChatGPT-only references:',len(offline),'(decreases as originals are imported)',flush=True)
           with urllib.request.urlopen(root+'/api/metadata',timeout=45) as response:
               facts=json.load(response)
           print('PASS: enriched catalog,',len(catalog['items']),'videos,',len(facts),'video records',flush=True)
@@ -176,8 +176,9 @@ jobs:
             }
             const lib=d.querySelector('#availability');lib.value='chatgpt';lib.dispatchEvent(new dom.window.Event('change',{bubbles:true}));
             const only=d.querySelectorAll('.card');
-            assert(only.length>0&&only.length<(modern?model.items.length:total),'ChatGPT filter failed');
-            assert(only[0].querySelector('[data-act="play"]')===null,'GPT card incorrectly allows playback');
+            const expectedOffline=model.items.filter(x=>x.available===false).length;
+            assert(only.length===Math.min(modern?36:expectedOffline,expectedOffline),'ChatGPT filter count failed');
+            if(only.length)assert(only[0].querySelector('[data-act="play"]')===null,'GPT card incorrectly allows playback');
             lib.value='';lib.dispatchEvent(new dom.window.Event('change',{bubbles:true}));
             const search=d.querySelector('#query');search.value='gioconda';search.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
             const matches=d.querySelectorAll('.card').length;
