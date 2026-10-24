@@ -21,6 +21,14 @@ l'agente deve guardare il quadro e ascoltare la voce per confermarle.
 5. Per ogni piano annota soggetto, provenienza, crop, \`reason\`, modalità camera,
    ancora di voce e musica. Non inventare coordinate o timestamps se mancano file.
 
+## REGOLA VISIVA FISSA — UN SOLO QUADRO OPACO ALLA VOLTA, NO GHOSTING (feedback 24/10/2026)
+
+**SEMPRE, per ogni video e ogni genere d'arte:** VIETATO sovrapporre due fotografie, quadri, dettagli o inquadrature rendendole semitrasparenti; vietate dissolvenze incrociate/crossfade con immagine fantasma, `Image.blend`, `cv2.addWeighted` fra due scene, `xfade`, `overlay alpha`, doppie esposizioni e altre varianti che lasciano visibile il quadro precedente sotto quello successivo. Uno spettatore che studia i dettagli deve vedere sempre **una sola immagine nitida, opaca e leggibile**. Si usano tagli netti cinematografici, match cut senza trasparenza o, quando davvero giustificata, dissolvenza separata **verso nero → dal nero** senza simultaneità di due quadri. Anche nelle transizioni di dettaglio → dettaglio l'immagine entrante non deve condividere fotogrammi con l'immagine uscente. Un softening/blur che mescola scene è vietato.
+
+**DA PRESERVARE come opzione (non obbligo):** apertura POV in una sala museale, quadro incorniciato → camera che si avvicina in **un unico movimento lento e progressivo** → cornice sparisce e si entra nel dipinto. Questa apertura è stata esplicitamente APPREZZATA dall'utente. Nella sala ricostruita va inserita una riproduzione AUTENTICA dell'opera; distinguere sala illustrativa da fotografia documentaria. Il passaggio al dettaglio del quadro deve essere un **taglio pulito o match geometrico senza sovrapposizione semitrasparente**. Non eliminare questa apertura per risolvere il difetto: eliminare esclusivamente il ghosting. NON imporre l'apertura in ogni video.
+
+**Gate finale:** valutare i fotogrammi ai secondi 0, 1, 3, 5, 7 e su ogni raccordo; bloccare la consegna come finale approvato se appare doppia immagine/fantasma. Questa regola prevale su qualsiasi suggerimento precedente di `crossfade`, `dissolvenza morbida` o "brevissimo raccordo trasparente" nei documenti, nelle ricette o negli script storici, senza modificare retroattivamente i master approvati. Le vecchie ricette restano traccia storica, NON modello da replicare nei nuovi render.
+
 ### Durante il montaggio: grammatica di comfort
 - **Camera bloccata** quando parla il dettaglio. L'inquadratura può restare ferma
   anche diversi secondi. Nessuna formula fissa per durata o ritmo.
