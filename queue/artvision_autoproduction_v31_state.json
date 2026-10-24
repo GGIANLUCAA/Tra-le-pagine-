@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": null,
+  "updated": "2026-10-24T15:22:17.514Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -20,6 +20,31 @@
     }
   ],
   "next_preferred_format": "artvision_critico",
-  "cycle_log": [],
+  "cycle_log": [
+    {
+      "cycle_id": "20261024T1715+0200",
+      "created_at": "2026-10-24T15:22:17.166Z",
+      "artist": "Evelyn De Morgan",
+      "work": "The Storm Spirits",
+      "format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "reason_fallback": "Google Gacrux narration unavailable to verify for Critico in this execution",
+      "status": "technical_pass_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 61.166667,
+      "size_bytes": 10947660,
+      "sha256_mp4": "8805abc2cf04519d22910194e2c5b820f37695234778846715dec47f655cac67",
+      "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40106549733",
+      "artifact_name": "ArtVision-V31-20261024-Evelyn-De-Morgan-Storm-Spirits",
+      "steps": {
+        "preflight": "success",
+        "render": "success",
+        "verify": "success",
+        "archive": "success"
+      },
+      "gold_master_approved": false,
+      "social_published": false
+    }
+  ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
 }
