@@ -197,7 +197,7 @@ def main():
     master=base/"VIDEO_MASTER.mp4"
     run("ffmpeg","-hide_banner","-loglevel","error","-y","-i",silent,
         "-ss",music["offset"],"-i",track,"-map","0:v:0","-map","1:a:0",
-        "-c:v","copy","-af",f"aresample=48000,volume=0.9,afade=t=in:st=0:d=.45,afade=t=out:st={duration-4:.2f}:d=4,loudnorm=I=-19:TP=-2:LRA=11",
+        "-c:v","copy","-af",f"aresample=48000,volume=0.9,afade=t=in:st=0:d=0.45,afade=t=out:st={duration-4:.2f}:d=4,loudnorm=I=-19:TP=-2:LRA=11",
         "-c:a","aac","-b:a","192k","-t",duration,"-movflags","+faststart",master)
     # Cover uses the same genuine Redon opening source and immutable V6 typography.
     coverframe=cinema.crop(frames["redon"],cinema.STORY[0])
