@@ -55,7 +55,28 @@
     "require_real_time_playback": true,
     "require_narration_anchor_for_narrated_edits": true,
     "avoid_forced_question": true,
-    "personal_critico_comments_max": 2
+    "personal_critico_comments_max": 2,
+    "no_ghosting_permanent": true,
+    "crossfades_between_images_allowed": false,
+    "images_per_frame": 1,
+    "allowed_transitions": [
+      "hard_cut",
+      "geometric_match_cut_no_overlap",
+      "fade_out_to_black_then_fade_from_black_no_overlap"
+    ],
+    "forbidden_transitions": [
+      "crossfade",
+      "dissolve_overlap",
+      "double_exposure",
+      "image_blend",
+      "alpha_overlay_between_images",
+      "xfade",
+      "cv2_addWeighted_between_shots",
+      "ghost_background"
+    ],
+    "preserve_optional_gallery_first_person_entry": true,
+    "gallery_entry_final_match": "opaque image and non-overlapping geometric cut; no transparency even for 0.1 seconds",
+    "revision_date": "2026-10-24"
   },
   "formats": {
     "composition": [
