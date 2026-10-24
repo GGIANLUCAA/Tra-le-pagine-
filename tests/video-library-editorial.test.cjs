@@ -1,7 +1,7 @@
 /* Video Library Studio dossier mock tests: no production secrets or R2 writes. */
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
-const {AsyncFunction}=Object.getPrototypeOf(async()=>{}).constructor;
+const AsyncFunction=Object.getPrototypeOf(async()=>{}).constructor;
 globalThis.crypto=require('node:crypto').webcrypto;
 const core=fs.readFileSync('site/video-library-editorial-core.js','utf8');
 const writer=new AsyncFunction('req','env','u','readJSON','videoDetails','auth','json',core+"\nreturn new Response('Not found',{status:404});");
