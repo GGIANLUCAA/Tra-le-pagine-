@@ -1,0 +1,134 @@
+{
+  "schema": "production-audit-v16",
+  "audit_date": "2026-10-24",
+  "verified_at_utc": "2026-10-24T16:49:00Z",
+  "repository": "GGIANLUCAA/Tra-le-pagine-",
+  "scope": "new activity observed on 2026-10-24; previous-day masters excluded",
+  "summary": {
+    "new_unique_rendered_masters": 2,
+    "exact_hash_reviews_passed": 0,
+    "new_site_master_imports_confirmed": 1,
+    "prepared_v16_queue_items": 0,
+    "v16_qualified_deliveries": 0,
+    "target_qualified_videos_per_day": 10,
+    "target_met": false
+  },
+  "queue": {
+    "production_v15_items": 0,
+    "runner_v16_jobs": 0,
+    "exact_hash_review_files": 0,
+    "note": "queue/reviews_v16 contains README only. No review was fabricated."
+  },
+  "masters": [
+    {
+      "id": "rembrandt-storm-galilee-v29",
+      "artist": "Rembrandt van Rijn",
+      "work": "Christ in the Storm on the Sea of Galilee",
+      "format": "artvision_cinema",
+      "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40106459200",
+      "artifact_id": 12563844622,
+      "artifact_name": "ArtVision-Rembrandt-Storm-V29",
+      "sha256_mp4": "9ebf30b75336851b6702d67d5d82d1bc8539141d9d437e0c93668a2dce742e70",
+      "bytes": 10714465,
+      "duration_seconds": 59.1,
+      "video": "h264 1080x1920 24fps",
+      "audio": "aac stereo 96000Hz",
+      "integrated_lufs_measured": -19.66,
+      "full_ffmpeg_decode": true,
+      "subtitles": false,
+      "package_has_v13_recipe": true,
+      "package_has_project_v13": false,
+      "package_has_v28_editorial_research": true,
+      "visual_samples_inspected": true,
+      "full_realtime_watch_and_listen": false,
+      "contract_review_flags_passed": 0,
+      "state": "rendered_needs_artistic_review",
+      "sources_verified_2026_10_24": [
+        "https://www.gardnermuseum.org/experience/collection/10953",
+        "https://www.gardnermuseum.org/about/theft"
+      ],
+      "site_import": {
+        "importer_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40112445864",
+        "outcome": "artifact_completed_but_no_new_file_logged",
+        "counted_as_new_import": false
+      }
+    },
+    {
+      "id": "evelyn_de_morgan_storm_spirits_20261024_1715",
+      "artist": "Evelyn De Morgan",
+      "work": "The Storm Spirits",
+      "format": "artvision_cinema",
+      "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40106549733",
+      "artifact_id": 12563844763,
+      "artifact_name": "ArtVision-V31-20261024-Evelyn-De-Morgan-Storm-Spirits",
+      "sha256_mp4": "8805abc2cf04519d22910194e2c5b820f37695234778846715dec47f655cac67",
+      "bytes": 10947660,
+      "duration_seconds": 61.2,
+      "video": "h264 1080x1920 24fps",
+      "audio": "aac stereo 96000Hz",
+      "integrated_lufs_measured": -18.1,
+      "full_ffmpeg_decode": true,
+      "subtitles": false,
+      "package_has_v13_recipe": true,
+      "package_has_project_v13": false,
+      "package_has_v28_editorial_research": true,
+      "visual_samples_inspected": true,
+      "full_realtime_watch_and_listen": false,
+      "contract_review_flags_passed": 0,
+      "state": "rendered_needs_artistic_review",
+      "sources_verified_2026_10_24": [
+        "https://www.demorgan.org.uk/collection/the-storm-spirits/"
+      ],
+      "site_import": {
+        "importer_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40112445864",
+        "object_key": "VIDEO_MASTER__10947660.mp4",
+        "bytes": 10947660,
+        "counted_as_new_import": true,
+        "policy_violation": "imported while all V25 review flags were false"
+      }
+    }
+  ],
+  "prepared_not_rendered": [
+    {
+      "id": "holbein_ambasciatori_critico_v23",
+      "artist": "Hans Holbein the Younger",
+      "work": "The Ambassadors",
+      "format": "artvision_critico",
+      "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40102387642",
+      "artifact_id": 12563366455,
+      "artifact_name": "HOLBEIN_AMBASSADORS_ASSETS_40102387642",
+      "contents": [
+        "PAINTING.jpg",
+        "VOCE.wav",
+        "MUSIC.mp3",
+        "ASSETS_TIMING.json",
+        "COPIONE.txt"
+      ],
+      "voice_manifest_engine": "Google Gemini Gacrux",
+      "voice_duration_seconds": 84.96,
+      "master_present": false,
+      "state": "assets_prepared_render_missing",
+      "counted_as_video": false,
+      "note": "A successful asset job is not a completed render."
+    }
+  ],
+  "corrective_action": {
+    "issue": "The existing site importer accepted V25 artifacts even when exact-hash artistic reviews were pending.",
+    "commit": "4350c26c6e8374b31471d77b4d9ee7345bb7ee01",
+    "file": ".github/workflows/video-library-r2-import.yml",
+    "behavior": "V25 artifacts now require opening, visual, cover, music, rights, full_watch and replicability reviews passed plus a matching master SHA-256. Legacy artifacts without a V25 contract retain prior behavior.",
+    "validation_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40113254767"
+  },
+  "blocking_items": [
+    "No full real-time visual-and-audio review was completed for either new master.",
+    "Both V25 contracts explicitly keep all artistic review flags false.",
+    "Neither new package contains PROJECT_V13.json, so it is not a prepared V16 queue item.",
+    "Holbein Critico has verified assets and a documented Gacrux WAV but no artifact master.",
+    "The 10 qualified-video target is not demonstrated."
+  ],
+  "publication": {
+    "social_posts_sent": false,
+    "external_messages_sent": false,
+    "exact_hash_review_records_created": false
+  }
+}
