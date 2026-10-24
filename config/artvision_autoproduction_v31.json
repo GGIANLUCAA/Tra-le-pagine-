@@ -1,0 +1,156 @@
+{
+  "schema": "artvision-autoproduction-v31",
+  "version": "31.0",
+  "created": "2026-10-24",
+  "primary_doc": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
+  "cadence": {
+    "frequency": "HOURLY",
+    "interval": 3,
+    "timezone": "Europe/Zurich",
+    "expected_attempts_per_day": 8,
+    "managed_by": "ChatGPT scheduled automation",
+    "github_cron_duplicate": false,
+    "require_deduplicate_cycle": true
+  },
+  "selection": {
+    "evaluate_candidates_at_least": 3,
+    "avoid_last_n_topics": 12,
+    "avoid_more_than_n_same_format_in_a_row": 2,
+    "prefer_uncommon_but_high_impact": true,
+    "avoid_unverified_viral_guarantees": true,
+    "source_priority": [
+      "museum",
+      "gallery",
+      "institutional_archive",
+      "verified_commons"
+    ],
+    "do_not_fabricate_metrics": true
+  },
+  "mix": [
+    {
+      "key": "artvision_cinema",
+      "role": "One artwork / artist, authentic immersive score-only cinema",
+      "voice": false,
+      "preset": "modules/artvision/APPROVED_PRESET.json",
+      "cover": "modules/artvision/IDENTITA_VISIVA_FISSA_V6.json"
+    },
+    {
+      "key": "artvision_critico",
+      "role": "Human Italian art criticism in natural voice, grounded museum fact",
+      "voice": "Google Gemini Gacrux approved if legitimately available",
+      "preset": "modules/artvision_critico/production_series/README_SERIE_QUATTRO_V2.md",
+      "subtitle": false
+    },
+    {
+      "key": "artvision_collection",
+      "role": "Coherent thematic multi-artwork essay; implemented as curated artvision_cinema variant, NOT a new assumed runner",
+      "voice": false,
+      "base_format": "artvision_cinema",
+      "sources_per_artwork": true
+    }
+  ],
+  "duration": {
+    "normal_seconds": [
+      45,
+      120
+    ],
+    "critico_can_exceed_120_when_genuinely_necessary": true,
+    "do_not_force_fixed_duration": true
+  },
+  "intro": {
+    "real_frame_at_seconds": [
+      0,
+      1,
+      3,
+      5,
+      7
+    ],
+    "no_generic_splash": true,
+    "use_fixed_preset_by_series": true,
+    "english_artwork_title_only": true,
+    "never_obscure_human_focus": true
+  },
+  "direction": {
+    "techniques_min": 3,
+    "techniques_max": 8,
+    "motions": [
+      "locked",
+      "slow_push",
+      "slow_pull",
+      "slow_pan_x",
+      "slow_pan_y"
+    ],
+    "forbidden": [
+      "oscillate",
+      "sine",
+      "wobble",
+      "bounce",
+      "whip_pan",
+      "dolly_zoom_simulated"
+    ],
+    "music_cues_real": true,
+    "voice_alignment_required_when_narrated": true,
+    "no_generic_crop_loop": true
+  },
+  "social": {
+    "standard": "docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md",
+    "platforms": [
+      "facebook",
+      "instagram",
+      "tiktok",
+      "youtube"
+    ],
+    "language": "it",
+    "hashtags_typical": [
+      2,
+      4
+    ],
+    "sources_required": true,
+    "editorial_fact_required": true,
+    "process_copy_forbidden": true,
+    "licensing_in_caption": true
+  },
+  "deliverables": [
+    "VIDEO_MASTER.mp4",
+    "COPERTINA.jpg",
+    "POST_FACEBOOK.txt",
+    "POST_INSTAGRAM.txt",
+    "POST_TIKTOK.txt",
+    "POST_YOUTUBE.txt",
+    "POST_EDITORIAL_RESEARCH.json",
+    "VIDEO_RECIPE_V13.json",
+    "TECNICHE_REGIA.md",
+    "ISTRUZIONI_REPLICA.md",
+    "SOURCES_AND_RIGHTS.md",
+    "MUSIC_RELEASE_V20.json",
+    "quality_evidence_and_metadata",
+    "complete_downloadable_zip"
+  ],
+  "quality": {
+    "full_decode": true,
+    "ffprobe": true,
+    "real_opening_preview": true,
+    "check_3_central_transitions": true,
+    "real_audio_review": true,
+    "review_cover": true,
+    "require_valid_asset_licenses": true,
+    "technical_not_artistic_approval": true
+  },
+  "constraints": {
+    "android_only_user_workflow": true,
+    "free_existing_tools_first": true,
+    "never_claim_finished_without_verified_mp4": true,
+    "never_copy_user_external_reference_videos": true,
+    "no_auto_social_publishing": true,
+    "allow_archive_to_authorized_personal_library_only_if_non_destructive": true,
+    "never_change_gold_master": true,
+    "no_paid_api_without_approval": true
+  },
+  "fallback": {
+    "do_not_use_robotic_narrator": true,
+    "on_voice_failure": "record_blocker_and_select_alternate_format_only_when_complete",
+    "on_404_or_429": "try_authentic_alternative_source_and_validate",
+    "on_output_failure": "report_real_errors_without_fake_links"
+  },
+  "tracking_file": "queue/artvision_autoproduction_v31_state.json"
+}
