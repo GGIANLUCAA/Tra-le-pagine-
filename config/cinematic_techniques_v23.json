@@ -2783,6 +2783,61 @@
       ],
       "execution": "planning_or_review",
       "automatic_effect": false
+    },
+    {
+      "id": "gallery_to_canvas_entry",
+      "family": "camera",
+      "title": "Entrata dalla sala museale nel dipinto",
+      "intention": "Far percepire l'opera come oggetto reale prima dell'esplorazione dei dettagli",
+      "application": "Quando esiste una foto/video AUTENTICA del quadro appeso con diritti verificati, aprire con cornice/parete e compiere un unico avvicinamento dolce di 2–5 s fino all'immagine pittorica; raccordare con la scansione fedele del quadro solo se prospettiva, illuminazione e colore risultano coerenti. Se manca materiale reale, non simulare la sala come fotografia documentaria.",
+      "avoid": "Non imporre in ogni episodio, non usare foto Flickr con sola firma come prova della licenza, niente oscillazioni o warping della pittura, evitare cornice che nasconde hook",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma",
+        "other"
+      ],
+      "tags": [
+        "museum",
+        "gallery",
+        "painting",
+        "immersive",
+        "authentic_source"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false,
+      "optional": true
+    },
+    {
+      "id": "canvas_to_gallery_reveal",
+      "family": "editing",
+      "title": "Uscita dal dettaglio per rivelare quadro e museo",
+      "intention": "Trasformare un particolare intrigante in una scoperta del contesto fisico dell'opera",
+      "application": "Solo quando un vero totale in museo è disponibile e licenziato: partire da un dettaglio autentico, arretrare con un solo movimento motivato o con due raccordi, rivelando quadro completo, cornice e sala; legare ritorno alla narrazione o alla cadenza musicale.",
+      "avoid": "Evitare finta prospettiva, colore alterato, allontanamento troppo veloce, rivelazione prima del contenuto e uso ripetuto fra video consecutivi",
+      "formats": [
+        "artvision_critico",
+        "artvision_cinema",
+        "artvision_enigma",
+        "other"
+      ],
+      "tags": [
+        "museum",
+        "gallery",
+        "painting",
+        "reveal",
+        "ending"
+      ],
+      "execution": "requires_editing",
+      "automatic_effect": false,
+      "optional": true
     }
-  ]
+  ],
+  "optional_gallery_transition": {
+    "default": "off",
+    "selection_rule": "Scegliere solo se serve al racconto e se esiste una ripresa museale autentica con licenza valida; NON effetto fisso, massimo una entrata o uscita motivata, salvo scelta artistica esplicita.",
+    "source_and_rights_gate": "Per fotografie con logo Flickr, targhetta o marchi: verificare URL, autore, licenza della fotografia, eventuali vincoli museali; se non verificati, non usare nel master e non spacciare ricostruzioni per museo reale.",
+    "motion_gate": "Approccio spaziale deliberato distinto da microzoom di dettaglio: movimento dolce monotono, senza sine/wobble; controllare primi 0/1/3/5/7 s, giunzione e ultimo frame",
+    "compatibility": "Non modificare preset e cover approvati; non sovrascrivere master."
+  }
 }
