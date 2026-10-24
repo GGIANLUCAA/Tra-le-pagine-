@@ -1,3 +1,7 @@
+# Produzione autonoma V31 — norma più recente (24 ottobre 2026)
+
+Per tutte le richieste «nuovo video», «continua» e per ogni ciclo ricorrente ogni 3 ore consultare [AUTOPRODUZIONE 3H V31](docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md) + `AGENTS.md` + V25/V28 e preset di serie. Video da 45 a 120 secondi secondo il soggetto; critiche d'arte anche più lunghe quando motivate. Alternare Cinema senza voce, Critico narrato naturale Gacrux, e Collection di più opere autentiche. Identità e copertine di serie ferme, forte primi 0/1/3/5/7s; testi Facebook/IG/TikTok/YouTube umani e documentati; fonti e licenze. Non scambiare piani/indici con MP4 veri. Nessun social autopublish; smartphone Android only.
+
 # Crea il prossimo video partendo dal lavoro già riuscito
 
 **REGOLA POST V28 (OBBLIGATORIA):** ogni testo Facebook/Instagram/TikTok/YouTube deve essere una storia, curiosità o lettura dell'opera che **aggiunge valore culturale non già evidente nel film**. Vietato parlare di `zoom`, `regia`, `montaggio`, `ho scelto`, `video AI` o meccanismi di produzione nel post. Leggi [lo standard editoriale V28](docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md), registra fonti primarie in `POST_EDITORIAL_RESEARCH.json`, verifica la lunghezza ragionevole, i crediti e la naturalezza. Non trasformare i post in note di lavorazione: quelle vivono solo nella ricetta tecnica.
