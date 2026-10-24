@@ -1,0 +1,210 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "31.0",
+  "date": "2026-10-24",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261024T1715+0200",
+  "chosen_format": "artvision_cinema",
+  "format_reason": "Critico V2 Gacrux WAV could not be confirmed in this session; no robotic fallback allowed; new previously unused artist and strong visual allegory.",
+  "candidates_considered": [
+    {
+      "title": "The Storm Spirits",
+      "artist": "Evelyn De Morgan",
+      "reason": "Exceptional painted red-winged Lightning and genuine historical allegory; high-resolution PD-Art."
+    },
+    {
+      "title": "The Love Potion",
+      "artist": "Evelyn De Morgan",
+      "reason": "Recognizable woman and cat, beautiful vertical canvas; gentler visual narrative."
+    },
+    {
+      "title": "Wanderer above the Sea of Fog",
+      "artist": "Caspar David Friedrich",
+      "reason": "Iconic immediate silhouette, but artist already appears in prior video code, higher repetition risk."
+    }
+  ],
+  "subjects": {
+    "storm_spirits": {
+      "artist": "EVELYN DE MORGAN",
+      "title_en": "The Storm Spirits",
+      "year": "1900",
+      "museum": "De Morgan Collection / De Morgan Foundation",
+      "slug": "evelyn_de_morgan_storm_spirits_20261024_1715",
+      "editorial_key": "evelyn_de_morgan_storm_spirits_20261024_1715",
+      "source_page": "https://commons.wikimedia.org/wiki/File:The_Storm_Spirits,_by_Evelyn_De_Morgan.jpg",
+      "museum_page": "https://www.demorgan.org.uk/collection/the-storm-spirits/",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/c/ce/The_Storm_Spirits%2C_by_Evelyn_De_Morgan.jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/The_Storm_Spirits%2C_by_Evelyn_De_Morgan.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/7/77/The_Storm_Spirits.jpg"
+      ],
+      "music": {
+        "name": "The Descent",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1200094",
+        "offset": 28
+      },
+      "story": "The first red-winged figure seizes attention, then the painting reveals Rain and Thunderclouds. A hidden calm centre opposes the violence of the sea. End on the entire authentic painting in contemplative stillness. Interpretation follows the De Morgan Foundation and is not presented as proven artist intent.",
+      "techniques": [
+        "visual_hierarchy",
+        "motivated_cut",
+        "rhythmic_rest",
+        "detail_return",
+        "color_match",
+        "locked_hold",
+        "human_gaze_start",
+        "camera_seasick_gate"
+      ],
+      "scenes": [
+        {
+          "type": "portrait",
+          "x": 0.77,
+          "y": 0.42,
+          "z": 1.12,
+          "seconds": 4.3,
+          "movement": "locked",
+          "intent": "Start with the authentic red-winged spirit of Lightning, a vivid human presence against the dark storm"
+        },
+        {
+          "type": "detail",
+          "x": 0.7,
+          "y": 0.57,
+          "z": 1.35,
+          "seconds": 3.35,
+          "movement": "locked",
+          "intent": "The painted golden lightning bolts emerge from the figure's hand"
+        },
+        {
+          "type": "texture",
+          "x": 0.86,
+          "y": 0.23,
+          "z": 1.2,
+          "seconds": 3.2,
+          "movement": "locked",
+          "intent": "The red feathers turn from ornament into the central force of the composition"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 4.8,
+          "movement": "locked",
+          "intent": "First entire composition reveals the three allegorical forces without distortion"
+        },
+        {
+          "type": "portrait",
+          "x": 0.5,
+          "y": 0.25,
+          "z": 1.15,
+          "seconds": 3.65,
+          "movement": "locked",
+          "intent": "Thunderclouds in blue dress and dark wings seem to merge with the storm sky"
+        },
+        {
+          "type": "detail",
+          "x": 0.36,
+          "y": 0.33,
+          "z": 1.35,
+          "seconds": 3.15,
+          "movement": "slow_pull",
+          "intent": "A quiet hand and blue cloth provide a human counterpoint to the violence"
+        },
+        {
+          "type": "portrait",
+          "x": 0.16,
+          "y": 0.42,
+          "z": 1.16,
+          "seconds": 3.65,
+          "movement": "locked",
+          "intent": "Rain pours from the left, contrasting warm gold fabric and grey water"
+        },
+        {
+          "type": "detail",
+          "x": 0.19,
+          "y": 0.61,
+          "z": 1.26,
+          "seconds": 3.1,
+          "movement": "locked",
+          "intent": "The inexhaustible stream of rain connects the spirit to the foaming sea"
+        },
+        {
+          "type": "landscape",
+          "x": 0.48,
+          "y": 0.75,
+          "z": 1.12,
+          "seconds": 3.9,
+          "movement": "locked",
+          "intent": "Rocks and breakers dominate the lower painting as the musical tension rises"
+        },
+        {
+          "type": "detail",
+          "x": 0.58,
+          "y": 0.83,
+          "z": 1.3,
+          "seconds": 3.15,
+          "movement": "locked",
+          "intent": "White water cuts through the dark rock masses with a diagonal movement painted into the work"
+        },
+        {
+          "type": "landscape",
+          "x": 0.5,
+          "y": 0.52,
+          "z": 1.12,
+          "seconds": 4.25,
+          "movement": "locked",
+          "intent": "Small calm clearing at the centre carries the counter-idea of refuge"
+        },
+        {
+          "type": "portrait",
+          "x": 0.75,
+          "y": 0.47,
+          "z": 1.16,
+          "seconds": 3.55,
+          "movement": "slow_push",
+          "intent": "Return to Lightning with new context: energy now contrasts with a possible sanctuary"
+        },
+        {
+          "type": "texture",
+          "x": 0.49,
+          "y": 0.15,
+          "z": 1.11,
+          "seconds": 3.45,
+          "movement": "locked",
+          "intent": "The dark storm cloud forms an expressive ceiling over the allegorical figures"
+        },
+        {
+          "type": "medium",
+          "x": 0.3,
+          "y": 0.56,
+          "z": 1.08,
+          "seconds": 3.45,
+          "movement": "locked",
+          "intent": "The rainy coast and two forces share the scene in one readable spatial connection"
+        },
+        {
+          "type": "wide",
+          "x": 0.6,
+          "y": 0.45,
+          "z": 1.02,
+          "seconds": 3.9,
+          "movement": "locked",
+          "intent": "The red wings and blue drapery are briefly reunited before the final release"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 6.4,
+          "movement": "locked",
+          "intent": "Whole genuine painting held still to complete the contrast between chaos and refuge"
+        }
+      ]
+    }
+  }
+}
