@@ -1,0 +1,192 @@
+{
+  "schema": "artvision-critico-director-cut-v23",
+  "id": "holbein_ambasciatori_critico_v23",
+  "date": "2026-10-24",
+  "artist": "Hans Holbein the Younger",
+  "artwork": "The Ambassadors",
+  "museum": "National Gallery, London",
+  "format": "artvision_critico",
+  "source_episode": "modules/artvision_critico/production_series/holbein_ambasciatori_critico_v23.json",
+  "asset_workflow": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40102387642",
+  "artwork_source": "https://commons.wikimedia.org/wiki/File:Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg",
+  "image_dimensions": [
+    3840,
+    3784
+  ],
+  "source_licence": "Public Domain Mark/PD-Art, rights territory to review",
+  "facts_source": "https://www.nationalgallery.org.uk/paintings/hans-holbein-the-younger-the-ambassadors",
+  "voice": "Google Gemini Gacrux",
+  "voice_duration_seconds": 84.96,
+  "voice_beat_estimates": [
+    11.5626,
+    27.14698,
+    39.2123,
+    52.2831,
+    64.8511,
+    84.96
+  ],
+  "word_level_alignment_verified": false,
+  "music": {
+    "title": "Night on the Docks – Piano",
+    "composer": "Kevin MacLeod",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Night%20on%20the%20Docks.mp3",
+    "music_volume": 0.075
+  },
+  "director_preset": "Critico V2 + V23 cinematic language + V25 + editorial V28",
+  "techniques_v23": [
+    "in_media_res_visual",
+    "close_then_wide",
+    "locked_hold",
+    "graphic_match",
+    "narration_anchor",
+    "motivated_cut",
+    "detail_return",
+    "nonforced_ending"
+  ],
+  "cinematography": "15 authentic-artwork crops; no camera oscillations; fixed shots and restrained 0.35s dissolves. The distortion of the anamorphic skull is the artist's original work, not an AI reconstruction.",
+  "shots": [
+    {
+      "id": 1,
+      "from_seconds": 0,
+      "to_seconds": 2.9,
+      "semantic_reason": "Teschio anamorfico primo dettaglio",
+      "framing": "wide_still"
+    },
+    {
+      "id": 2,
+      "from_seconds": 2.9,
+      "to_seconds": 6.8,
+      "semantic_reason": "Forma estesa sul pavimento",
+      "framing": "macro_still"
+    },
+    {
+      "id": 3,
+      "from_seconds": 6.8,
+      "to_seconds": 11.65,
+      "semantic_reason": "Dipinto completo, contestualizzazione",
+      "framing": "whole_still"
+    },
+    {
+      "id": 4,
+      "from_seconds": 11.65,
+      "to_seconds": 18.4,
+      "semantic_reason": "Jean de Dinteville",
+      "framing": "portrait_still"
+    },
+    {
+      "id": 5,
+      "from_seconds": 18.4,
+      "to_seconds": 24.9,
+      "semantic_reason": "Georges de Selve",
+      "framing": "portrait_still"
+    },
+    {
+      "id": 6,
+      "from_seconds": 24.9,
+      "to_seconds": 27.45,
+      "semantic_reason": "I due uomini e il mondo degli oggetti",
+      "framing": "whole_still"
+    },
+    {
+      "id": 7,
+      "from_seconds": 27.45,
+      "to_seconds": 33.3,
+      "semantic_reason": "Globo celeste e strumenti astronomici",
+      "framing": "macro_still"
+    },
+    {
+      "id": 8,
+      "from_seconds": 33.3,
+      "to_seconds": 39.5,
+      "semantic_reason": "Il ripiano inferiore",
+      "framing": "macro_still"
+    },
+    {
+      "id": 9,
+      "from_seconds": 39.5,
+      "to_seconds": 45.9,
+      "semantic_reason": "Liuto con corda spezzata",
+      "framing": "macro_still"
+    },
+    {
+      "id": 10,
+      "from_seconds": 45.9,
+      "to_seconds": 52.55,
+      "semantic_reason": "Libri e flauti",
+      "framing": "macro_still"
+    },
+    {
+      "id": 11,
+      "from_seconds": 52.55,
+      "to_seconds": 57.8,
+      "semantic_reason": "Piccolo crocifisso nella tenda",
+      "framing": "macro_still"
+    },
+    {
+      "id": 12,
+      "from_seconds": 57.8,
+      "to_seconds": 65.1,
+      "semantic_reason": "La composizione intera",
+      "framing": "whole_still"
+    },
+    {
+      "id": 13,
+      "from_seconds": 65.1,
+      "to_seconds": 70.95,
+      "semantic_reason": "Teschio sul pavimento",
+      "framing": "macro_still"
+    },
+    {
+      "id": 14,
+      "from_seconds": 70.95,
+      "to_seconds": 77.85,
+      "semantic_reason": "Ritorno alla forma anamorfa",
+      "framing": "wide_still"
+    },
+    {
+      "id": 15,
+      "from_seconds": 77.85,
+      "to_seconds": 86.95,
+      "semantic_reason": "Riflessione finale quadro completo",
+      "framing": "whole_still"
+    }
+  ],
+  "master": {
+    "filename": "VIDEO_MASTER.mp4",
+    "sha256": "0384fd273f8c5d381ff6dbec6eac904963c03b41c9b050f3798732b133efab18",
+    "duration_seconds": 86.95,
+    "resolution": [
+      1080,
+      1920
+    ],
+    "fps": 20,
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "full_ffmpeg_decode_passed": true,
+    "real_frames_checked_seconds": [
+      0.1,
+      1,
+      3,
+      5,
+      7,
+      14,
+      29,
+      43,
+      54,
+      68,
+      77,
+      84
+    ],
+    "bytes": 15466983,
+    "delivery": "ChatGPT conversation verified path, binary not uploaded to GitHub"
+  },
+  "cover": "Critico V2 dark frame gold and ivory, English artwork title and artist",
+  "editorial_post_standard": "V28; four original platform descriptions delivered in ZIP",
+  "status": "rendered_needs_artistic_review",
+  "rights_review_required_before_publication": true,
+  "user_approval_for_publication": false,
+  "automatic_social_publish": false,
+  "real_video_quality_disclaimer": "Technical QA does not certify emotional impact, accuracy of estimated beat timing or artistic approval."
+}
