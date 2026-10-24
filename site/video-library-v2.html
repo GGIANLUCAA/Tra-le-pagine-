@@ -47,6 +47,8 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
 .editorial-dialog{width:min(96vw,1060px);max-height:94dvh}.editorial-head{padding:14px 18px}.editorial-heading small{color:#d9bc93;font-weight:750;font-size:10px;letter-spacing:.14em}.editorial-heading h2{font-size:19px;margin:3px 0}.editorial-meta{background:#1a2532;padding:10px 19px;font-size:12px;color:#bac7d9;white-space:normal;border-bottom:1px solid #374250}.editorial-status{padding:9px 18px;color:#e6c9a1;background:#29271e;border-bottom:1px solid #4b4333;font-size:12px;min-height:34px}.editorial-status:empty{display:none}.editorial-tabs{display:flex;gap:4px;padding:10px 16px 0;overflow-x:auto;scrollbar-width:thin;border-bottom:1px solid #374050}.editorial-tabs button{white-space:nowrap;padding:11px 14px;border:0;border-bottom:2px solid transparent;background:none;color:#9faec0;font-size:12px;font-weight:700}.editorial-tabs button.active{color:#ebc997;border-color:#ddbc91}.editorial-form{padding:16px 20px 20px}.editorial-form section[hidden]{display:none}.editorial-form label{display:flex;flex-direction:column;gap:7px;color:#d5dfeb;font-size:12px;font-weight:650}.editorial-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:12px 0 18px}.editorial-form input,.editorial-form select,.editorial-form textarea{width:100%;background:#192533;border:1px solid #3a4756;border-radius:10px;color:#f4f6f9;line-height:1.5}.editorial-form textarea{resize:vertical;min-height:93px;padding:12px;font-weight:400}.ed-platform{margin:12px 0 17px}.ed-platform>div{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}.ed-platform b{font-size:14px}.ed-platform button{font-size:12px;padding:6px 11px;min-height:36px}.ed-field{margin:13px 0}.ed-guidance{font-size:12px;color:#b7c4d3;margin:7px 0 14px;line-height:1.7}.ed-package-options{display:flex;gap:10px;flex-wrap:wrap;padding:17px 0}.editorial-footer{position:sticky;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:10px;background:#141c26;border-top:1px solid #455061;padding:13px 0 0;z-index:1}.editorial-footer span{color:#96aabc;font-size:11px}.editorial-footer button{white-space:nowrap}.ed-unverified{color:#f0c99d;font-weight:700}.ed-ready{color:#9fd6ba}
 @media(max-width:720px){.editorial-dialog{max-height:96dvh}.editorial-form{padding:12px}.editorial-columns{grid-template-columns:1fr;gap:10px}.editorial-tabs{padding:7px 7px 0}.editorial-tabs button{padding:10px;font-size:11px}.editorial-footer{flex-direction:column;align-items:stretch}.editorial-footer button{width:100%}.ed-package-options{flex-direction:column}.ed-package-options button{width:100%}}
 
+
+.ed-assets{padding:15px;background:#182333;border:1px solid #38495f;border-radius:12px;margin:14px 0}.ed-assets>strong{color:#ebc896}.ed-asset-item{display:flex;gap:9px;align-items:baseline;padding:7px 2px;border-bottom:1px solid #354455;font-size:12px;overflow-wrap:anywhere}.ed-asset-item span:first-child{color:#e2bf8c}
 </style>
 </head>
 <body>
@@ -161,6 +163,9 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
    <div class="editorial-columns">
     <label>Progetto / serie<input name="project" maxlength="1600" placeholder="ArtVision, Music Motion, Tra le Pagine…"></label>
     <label>Lingua<input name="language" maxlength="1600" placeholder="it / en / senza parlato"></label>
+    <label>Edizione / originale / versione<input name="edition" maxlength="1600" placeholder="Originale, edizione social, rimontaggio…"></label>
+    <label>Numero copie / ristampe<input name="reprints" maxlength="1600" placeholder="Unico, 2 copie, 3 ristampe…"></label>
+    <label>Master di riferimento<input name="masterRef" maxlength="1600" placeholder="Identificativo file e progetto sorgente"></label>
    </div>
    <label class="ed-field">Regia e movimenti di camera<textarea name="directorNotes" rows="5" maxlength="10000" placeholder="Stile, aperture, dettagli, ritmo, movimenti, transizioni…"></textarea></label>
    <label class="ed-field">Scene e storyboard<textarea name="storyboard" rows="7" maxlength="10000" placeholder="00:00… Scena 1, 00:08… Scena 2…"></textarea></label>
@@ -168,6 +173,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
    <label class="ed-field">Prompt e ricetta di produzione<textarea name="productionPrompt" rows="7" maxlength="10000" placeholder="Istruzioni usate per creare questo specifico video"></textarea></label>
    <label class="ed-field">Passaggi e workflow<textarea name="productionSteps" rows="5" maxlength="10000" placeholder="Strumenti, comandi, scene, tempi, correzioni, esportazione"></textarea></label>
    <label class="ed-field">Informazioni tecniche supplementari<textarea name="technicalNotes" rows="4" maxlength="10000" placeholder="Codec, formato, FPS, audio, master, versioni…"></textarea></label>
+   <label class="ed-field">Note storiche e di lavorazione già salvate<textarea name="legacyNotes" rows="4" maxlength="25000" placeholder="Note provenienti dal precedente Studio, versioni, osservazioni…"></textarea></label>
   </section>
   <section data-ed-panel="credits" hidden>
    <p class="ed-guidance">I crediti della musica, delle opere e delle immagini non vengono inventati. Quando sono sconosciuti rimangono da verificare.</p>
@@ -179,6 +185,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
     <label>Voce e narratore<input name="voiceCredits" maxlength="1600"></label>
     <label>Categoria<input name="category" maxlength="1600"></label>
    </div>
+   <label class="ed-field">Crediti musicali recuperati dal progetto precedente<textarea name="musicAttribution" rows="3" maxlength="10000" placeholder="Musica e attribuzioni annotate nelle produzioni precedenti"></textarea></label>
    <label class="ed-field">Crediti delle opere e delle immagini<textarea name="imageCredits" rows="5" maxlength="10000"></textarea></label>
    <label class="ed-field">Link e provenienza delle immagini<textarea name="imageSources" rows="5" maxlength="10000"></textarea></label>
    <label class="ed-field">Altre fonti e bibliografia<textarea name="sources" rows="5" maxlength="10000"></textarea></label>
@@ -196,6 +203,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
     <button type="button" class="btn" id="edZipLight">↓ ZIP leggero: post, copertina, schede</button>
    </div>
    <p class="ed-guidance">Per i video ancora esclusivamente nella Libreria ChatGPT è disponibile il pacchetto leggero; l'MP4 sarà incluso quando sarà stato importato.</p>
+   <div class="ed-assets"><strong>Allegati originali del progetto</strong><p class="ed-guidance">Gli allegati già presenti nello Studio vengono inseriti automaticamente nel pacchetto quando disponibili. Gli ZIP preesistenti sono esclusi per evitare duplicazioni.</p><div id="edAssetList">Caricamento materiali…</div><a class="btn" href="/studio" target="_blank" rel="noopener" style="display:inline-block;margin-top:12px">Apri archivio completo materiali ↗</a></div>
   </section>
   <div class="editorial-footer"><span id="edSavedInfo">Scheda in caricamento…</span><button class="btn primary" id="edSave" type="submit">✓ Salva tutte le informazioni</button></div>
  </form>
@@ -462,7 +470,7 @@ document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if
 
 /* Editorial per-video dossiers and social packages, all stored by original filename. */
 const edState={item:null,record:null,generated:true,missing:[],dirty:false};
-const edFieldNames=['publicTitle','shortDescription','category','project','language','hook','hashtags','facebook','instagram','tiktok','youtube','musicTitle','musicAuthor','musicLicense','musicLink','imageCredits','imageSources','voiceCredits','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes','tags','rightsStatus','publicationStatus'];
+const edFieldNames=['edition','reprints','masterRef','musicAttribution','legacyNotes','publicTitle','shortDescription','category','project','language','hook','hashtags','facebook','instagram','tiktok','youtube','musicTitle','musicAuthor','musicLicense','musicLink','imageCredits','imageSources','voiceCredits','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes','tags','rightsStatus','publicationStatus'];
 function editorialFieldsToForm(record){
  const f=$('#editorialForm');for(const name of edFieldNames){const el=f.elements.namedItem(name);if(el)el.value=record[name]??''}
  edState.dirty=false;
@@ -491,6 +499,15 @@ async function openEditorial(x){
   const r=await fetch('/api/editorial?key='+encodeURIComponent(x.key),{headers:{'Authorization':'Bearer '+g.token},cache:'no-store'});
   if(!r.ok)throw Error('Impossibile leggere il dossier ('+r.status+')');
   const data=await r.json();edState.record=data.record;edState.generated=data.generated;edState.missing=data.missing||[];
+  const node=$('#edAssetList');node.replaceChildren();
+  if(data.assets?.length){
+    for(const item of data.assets){
+     const line=document.createElement('div');line.className='ed-asset-item';
+     const icon=document.createElement('span');icon.textContent='▣';
+     const label=document.createElement('span');label.textContent=item.name+' · '+size(item.size);
+     line.append(icon,label);node.append(line);
+    }
+  }else node.textContent='Non risultano ancora allegati di progetto per questo video.';
   editorialFieldsToForm(data.record);
   $('#edSave').disabled=false;$('#edZipLight').disabled=false;$('#edZipFull').disabled=x.available===false;
   $('#edSavedInfo').textContent=data.generated?'Scheda iniziale generata automaticamente, ancora da verificare':'Ultima modifica: '+fmtDate(data.record.updatedAt);
