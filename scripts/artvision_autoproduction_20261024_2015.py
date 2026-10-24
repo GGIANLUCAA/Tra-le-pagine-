@@ -284,3 +284,5 @@ def main():
     print("MASTER_COMPLETE",json.dumps(report),str(archive),archive.stat().st_size,flush=True)
 if __name__=="__main__":
     main()
+
+# Workflow trigger: dedicated V31 production cycle, distinct from previous MP4.
