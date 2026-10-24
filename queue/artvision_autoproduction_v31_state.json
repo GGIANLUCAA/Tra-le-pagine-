@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-24T21:25:37.037Z",
+  "updated": "2026-10-24T21:27:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -99,7 +99,15 @@
         "archive": "success"
       },
       "gold_master_approved": false,
-      "social_published": false
+      "social_published": false,
+      "postprocess": {
+        "quality_review": "12 shot artistic refinement; final full-canvas matte solid opaque without ghosting",
+        "source_rights": "Photo CC BY 4.0 Finnish National Gallery / Hannu Aaltonen explicitly credited in corrected delivery ZIP",
+        "final_delivery_zip": "ArtVision_Hugo_Simberg_PACCHETTO_COMPLETO.zip",
+        "mp4_sha256_unchanged": true,
+        "external_video_library_import": "not_attempted_requires_user_fileParams_selection",
+        "human_artistic_review_pending": true
+      }
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
