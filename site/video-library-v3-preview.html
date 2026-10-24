@@ -125,7 +125,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
 <script>
 (function(){
 'use strict';
-const $=s=>document.querySelector(s), g={items:[],category:'Tutti',admin:false,token:'',selected:null,override:{}};
+const $=s=>document.querySelector(s), g={items:[],category:'Tutti',admin:false,token:'',selected:null,override:{},studio:false,selectionMode:false,selectedKeys:new Set(),showLimit:36,compact:false,shownCache:[]};
 const fmtDate=s=>{if(!s)return 'Non disponibile';try{return new Intl.DateTimeFormat('it-IT',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(s))}catch{return 'Non disponibile'}};
 const dur=v=>{const n=Number(v);if(!Number.isFinite(n)||n<=0)return 'Da rilevare';const s=Math.round(n);return s>=3600?Math.floor(s/3600)+'h '+String(Math.floor(s%3600/60)).padStart(2,'0')+'m':Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
 const size=v=>v>=1e9?(v/1e9).toFixed(2)+' GB':(v/1e6).toFixed(1)+' MB';
@@ -155,17 +155,158 @@ const version=/provino|prova|anteprima|test|collaudo|base_/i.test(n)?'draft':/fi
 return {title,description,category,project,kind,artist:artis,version}}
 const base=k=>norm(k.replace(/\.(mp4|m4v|mov)$/i,'').replace(/__\d+$/,'').replace(/[_\s-]v\d+(?:_\d+)?$/i,'').replace(/[^a-z0-9]+/g,''));
 function decorate(list){const groups={},fingerprints={};for(const x of list){x.guess=inferred(x);x.viewTitle=x.title||x.guess.title;x.viewCategory=x.category||x.guess.category;x.viewDescription=x.description||x.guess.description;x.viewProject=x.project||x.guess.project;x.viewVersion=x.version||x.guess.version;const k=base(x.key);(groups[k]||(groups[k]=[])).push(x);if(x.contentHash){const id=String(x.size)+'|'+x.contentHash;(fingerprints[id]||(fingerprints[id]=[])).push(x)}}for(const x of list){const peers=groups[base(x.key)]||[];x.variants=peers.length-1;x.variantGroup=peers.map(p=>p.key);x.sameContent=x.contentHash?(fingerprints[String(x.size)+'|'+x.contentHash]||[]).filter(p=>p.key!==x.key).map(p=>p.name||p.key):[];if(x.variants>0&&x.viewVersion==='unknown')x.viewVersion='variant';}return list}
+
+function sortedFresh(a){return [...a].sort((x,y)=>Date.parse(y.gptCreatedAt||y.uploaded||0)-Date.parse(x.gptCreatedAt||x.uploaded||0))}
+const gotoSection=(name)=>{
+ const el=document.getElementById(name);if(!el)return;
+ el.scrollIntoView({behavior:'smooth',block:'start'});
+ document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.section===name));
+};
+function safePublished(){return g.items.filter(x=>!x.hidden);}
+function makeFilmTile(x){
+ const button=document.createElement('button');button.type='button';button.className='film-tile';
+ button.setAttribute('aria-label','Riproduci '+x.viewTitle);
+ button.innerHTML=(x.cover?'<img loading="lazy" decoding="async" src="'+h(x.cover)+'" alt="">':'<div class="film-placeholder">✦</div>')+
+  '<div class="tile-info"><strong>'+h(x.viewTitle)+'</strong><small>'+h(x.viewCategory)+' · '+h(dur(x.duration))+'</small></div>';
+ button.onclick=()=>play(x);
+ return button;
+}
+function populateRail(where,items,empty){
+ const el=$(where);el.replaceChildren();
+ if(!items.length){const p=document.createElement('div');p.className='film-empty';p.textContent=empty;el.append(p);return}
+ const frag=document.createDocumentFragment();
+ items.forEach(x=>frag.append(makeFilmTile(x)));
+ el.append(frag);
+}
+function renderHome(){
+ if(!g.items.length)return;
+ const visible=safePublished(),available=visible.filter(x=>x.available!==false);
+ const spotlight=$('#spotlight');
+ const heroCandidates=sortedFresh(available.filter(x=>x.cover));
+ heroCandidates.sort((a,b)=>(b.viewVersion==='final')-(a.viewVersion==='final'));
+ const choice=heroCandidates[0]||sortedFresh(available)[0];
+ if(choice){
+  spotlight.replaceChildren();
+  const img=choice.cover?'<img src="'+h(choice.cover)+'" alt="" decoding="async">':'<div class="spotlight-empty"><span>✦</span></div>';
+  spotlight.innerHTML=img+'<div class="spotlight-bottom"><div class="spotlight-copy"><small>✦ In primo piano · '+h(choice.viewProject)+'</small><strong>'+h(choice.viewTitle)+'</strong><em>'+h(dur(choice.duration))+' · Guarda il filmato</em></div><button type="button" class="spotlight-play" aria-label="Riproduci '+h(choice.viewTitle)+'">▶</button></div>';
+  spotlight.querySelector('.spotlight-play').onclick=()=>play(choice);
+ }else spotlight.innerHTML='<div class="spotlight-empty"><span>✦</span><strong>Nessun filmato riproducibile</strong><small>Importa il primo video</small></div>';
+ const priority=['Artisti e pittura','Musica e visual','Libri raccontati','Critica d’arte','Cronaca e attualità','Altri progetti'];
+ const categories=[...new Set(visible.map(x=>x.viewCategory))].sort((a,b)=>priority.indexOf(a)===-1?1:priority.indexOf(b)===-1?-1:priority.indexOf(a)-priority.indexOf(b));
+ const grid=$('#collectionGrid');grid.replaceChildren();
+ const glyph={'Artisti e pittura':'✦','Musica e visual':'♫','Libri raccontati':'▤','Critica d’arte':'◈','Cronaca e attualità':'◎','Altri progetti':'◫'};
+ for(const category of categories.slice(0,8)){
+  const records=visible.filter(x=>x.viewCategory===category),poster=sortedFresh(records.filter(x=>x.cover&&x.available!==false))[0];
+  const b=document.createElement('button');b.type='button';b.className='collection-card';b.setAttribute('aria-label','Esplora '+category);
+  b.innerHTML=(poster?'<img loading="lazy" src="'+h(poster.cover)+'" alt="">':'')+'<span class="collection-icon">'+(glyph[category]||'✧')+'</span><span class="collection-arrow">↗</span><span class="collection-copy"><strong>'+h(category)+'</strong><small>'+records.length+' produzioni</small></span>';
+  b.onclick=()=>{g.category=category;g.showLimit=36;categories();draw();gotoSection('library')};
+  grid.append(b);
+ }
+ const newest=sortedFresh(available).slice(0,12);
+ populateRail('#latestRail',newest,'Non ci sono ancora video pronti alla riproduzione.');
+ const ready=sortedFresh(available.filter(x=>x.viewVersion==='final')).slice(0,12);
+ populateRail('#readyRail',ready,'Nessun filmato è ancora stato marcato come finale.');
+}
+function applyStudioVisibility(){
+ const active=!!(g.admin&&g.studio);
+ $('#ready').hidden=!active;
+ $('#selectionToggle').hidden=!active;
+ if(!active){g.selectionMode=false;g.selectedKeys.clear()}
+ $('#selectionToggle').setAttribute('aria-pressed',String(g.selectionMode));
+ $('#selectionToggle').innerHTML=g.selectionMode?'✕ <span>Termina selezione</span>':'☑ <span>Seleziona video</span>';
+ $('#selectionPanel').hidden=!(active&&g.selectionMode);
+ document.body.classList.toggle('studio-on',active);
+ updateSelectionPanel();
+}
+function enterStudio(){
+ if(!g.admin){$('#adminDialog').showModal();return}
+ g.studio=true;
+ applyStudioVisibility();
+ renderHome();draw();gotoSection('ready');
+}
+function updateSelectionPanel(){
+ const count=g.selectedKeys.size;$('#selectedCount').textContent=count+' video selezionat'+(count===1?'o':'i');
+ $('#selectionPanel').hidden=!(g.admin&&g.studio&&g.selectionMode);
+ for(const id of ['batchFavorite','batchFinal','batchDraft','batchArchive','clearSelected'])$('#'+id).disabled=!count;
+}
+async function batchPatch(patch,label){
+ if(!g.admin||!g.studio||!g.selectionMode||!g.selectedKeys.size)return;
+ const names=[...g.selectedKeys].slice(0,40),map=new Map(g.items.map(x=>[x.key,x]));
+ const chosen=names.map(k=>map.get(k)).filter(Boolean);
+ if(!chosen.length){g.selectedKeys.clear();updateSelectionPanel();return}
+ if(!confirm('Applicare «'+label+'» a '+chosen.length+' schede selezionate? Nessun file originale verrà eliminato.'))return;
+ const controls=['batchFavorite','batchFinal','batchDraft','batchArchive','clearSelected','selectAllVisible'];
+ controls.forEach(id=>$('#'+id).disabled=true);
+ let ok=0,bad=0;
+ try{
+  for(const x of chosen){
+   $('#batchMessage').textContent='Elaborazione '+(ok+bad+1)+'/'+chosen.length+': '+x.viewTitle;
+   try{
+    const r=await fetch('/api/manage',{method:'POST',headers:{'content-type':'application/json','Authorization':'Bearer '+g.token},body:JSON.stringify({key:x.key,patch})});
+    if(!r.ok)throw Error('HTTP '+r.status);
+    ok++;
+   }catch(e){bad++;console.warn('Aggiornamento rifiutato',x.key,e)}
+  }
+ }finally{
+  g.selectedKeys.clear();
+  $('#batchMessage').textContent='Completato: '+ok+' salvati'+(bad?', '+bad+' non aggiornati':'')+'. I video originali non sono stati eliminati.';
+  updateSelectionPanel();
+  await load(true);
+ }
+}
+
 let last=0;
-async function load(force){if(!force&&Date.now()-last<9000)return;last=Date.now();$('#counter').textContent='Aggiornamento archivio…';try{const res=await fetch('/api/catalog',{cache:'no-store',headers:g.token?{'Authorization':'Bearer '+g.token}:{}});if(!res.ok)throw Error('Impossibile leggere il catalogo ('+res.status+')');const data=await res.json();g.admin=!!data.admin;g.items=decorate(data.items||[]);g.override=data.overrides||{};$('#adminBanner').classList.toggle('show',g.admin);$('#archivedToggle').style.display=g.admin?'flex':'none';const projects=[...new Set(g.items.map(x=>x.viewProject))].sort();const selected=$('#project').value;$('#project').replaceChildren(new Option('Tutti i progetti',''));projects.forEach(p=>$('#project').add(new Option(p,p)));$('#project').value=projects.includes(selected)?selected:'';let total=g.items.filter(x=>!x.hidden);const online=total.filter(x=>x.available!==false);$('#nVideos').textContent=online.length;$('#nGpt').textContent=total.length-online.length;$('#nPosters').textContent=online.filter(x=>x.cover).length;$('#nProjects').textContent=new Set(total.map(x=>x.viewCategory)).size;const hours=total.reduce((s,x)=>s+(Number(x.duration)||0),0)/3600;$('#nHours').textContent=hours?hours.toFixed(1).replace('.',','):'—';categories();draw();}catch(e){log(e.message);$('#counter').textContent='Errore durante il caricamento. Riprova con Aggiorna.'}}
-function categories(){const cats=['Tutti',...new Set(g.items.map(x=>x.viewCategory))];const nav=$('#filters');nav.replaceChildren();cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(g.category===c?' active':'');b.textContent=c;b.onclick=()=>{g.category=c;categories();draw()};nav.append(b)});}
+async function load(force){if(!force&&Date.now()-last<9000)return;last=Date.now();$('#counter').textContent='Aggiornamento archivio…';try{const res=await fetch('/api/catalog',{cache:'no-store',headers:g.token?{'Authorization':'Bearer '+g.token}:{}});if(!res.ok)throw Error('Impossibile leggere il catalogo ('+res.status+')');const data=await res.json();g.admin=!!data.admin;g.items=decorate(data.items||[]);g.override=data.overrides||{};$('#adminBanner').classList.toggle('show',g.admin);$('#archivedToggle').style.display=g.admin?'flex':'none';const projects=[...new Set(g.items.map(x=>x.viewProject))].sort();const selected=$('#project').value;$('#project').replaceChildren(new Option('Tutti i progetti',''));projects.forEach(p=>$('#project').add(new Option(p,p)));$('#project').value=projects.includes(selected)?selected:'';let total=g.items.filter(x=>!x.hidden);const online=total.filter(x=>x.available!==false);$('#nVideos').textContent=online.length;$('#nGpt').textContent=total.length-online.length;$('#nPosters').textContent=online.filter(x=>x.cover).length;$('#nProjects').textContent=new Set(total.map(x=>x.viewCategory)).size;const hours=total.reduce((s,x)=>s+(Number(x.duration)||0),0)/3600;$('#nHours').textContent=hours?hours.toFixed(1).replace('.',','):'—';categories();renderHome();applyStudioVisibility();draw();}catch(e){log(e.message);$('#counter').textContent='Errore durante il caricamento. Riprova con Aggiorna.'}}
+function categories(){const cats=['Tutti',...new Set(g.items.map(x=>x.viewCategory))];const nav=$('#filters');nav.replaceChildren();cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(g.category===c?' active':'');b.textContent=c;b.onclick=()=>{g.category=c;g.showLimit=36;categories();draw()};nav.append(b)});}
 function filtered(){const q=norm($('#query').value),p=$('#project').value,sort=$('#sort').value,ver=$('#versions').value,arc=$('#includeArchived').checked,where=$('#availability').value;let arr=g.items.filter(x=>(!x.hidden||(g.admin&&arc))&&(!where||(where==='online'?x.available!==false:x.available===false))&&(g.category==='Tutti'||x.viewCategory===g.category)&&(!p||x.viewProject===p)&&(!ver||(ver==='final'&&x.viewVersion==='final')||(ver==='draft'&&x.viewVersion==='draft')||(ver==='variants'&&x.variants>0))&&norm([x.viewTitle,x.key,x.viewDescription,x.viewProject,x.guess.artist].join(' ')).includes(q));arr.sort((a,b)=>sort==='title'?a.viewTitle.localeCompare(b.viewTitle,'it'):sort==='duration'?(b.duration||0)-(a.duration||0):sort==='size'?b.size-a.size:sort==='favorites'?Number(!!b.favorite)-Number(!!a.favorite):Date.parse(b.gptCreatedAt||b.uploaded||0)-Date.parse(a.gptCreatedAt||a.uploaded||0));return arr}
-function draw(){let arr=filtered(),node=$('#grid');node.replaceChildren();$('#counter').textContent=arr.length+' video mostrati · '+g.items.filter(x=>x.variants>0).length+' possibili varianti riconosciute';if(!arr.length){node.innerHTML='<div class="empty">Nessun video corrisponde ai filtri. Prova una ricerca diversa.</div>';return}const frag=document.createDocumentFragment();for(const x of arr){const card=document.createElement('article');card.className='card'+(x.hidden?' archived':'');const cover=x.cover?'<img alt="Copertina di '+h(x.viewTitle)+'" loading="lazy" decoding="async" src="'+h(x.cover)+'" onerror="this.remove()">':'';const tags=['<span class="pill">'+h(x.viewProject)+'</span>'];if(x.viewVersion==='final')tags.push('<span class="pill">✓ Finale</span>');if(x.viewVersion==='draft')tags.push('<span class="pill alert">Bozza</span>');if(x.variants>0)tags.push('<span class="pill alert">≈ '+x.variants+' varianti</span>');if(x.sameContent?.length)tags.push('<span class="pill alert">≡ '+x.sameContent.length+' copie uguali</span>');if(x.hidden)tags.push('<span class="pill alert">Nascosto</span>');let date=x.gptCreatedAt?'ChatGPT '+fmtDate(x.gptCreatedAt):'Importato '+fmtDate(x.uploaded);if(x.available===false)tags.unshift('<span class="pill alert">☁ Solo in ChatGPT</span>');card.innerHTML='<div class="poster"><span class="symbol">'+(x.viewCategory==='Libri raccontati'?'📖':x.viewCategory==='Musica e visual'?'♫':'✦')+'</span>'+cover+'<span class="badge">'+h(x.guess.kind)+'</span><span class="duration">'+(x.available===false&&!x.duration?'Solo GPT':h(dur(x.duration)))+'</span>'+(g.admin?'<button class="heart'+(x.favorite?' on':'')+'" data-act="fav" aria-label="Preferito">'+(x.favorite?'♥':'♡')+'</button>':'')+'</div><div class="cardbody"><div class="eyebrow">'+h(x.viewCategory)+'</div><h3>'+h(x.viewTitle)+'</h3><p>'+h(x.viewDescription)+'</p><div class="info">'+tags.join('')+'<span class="pill">'+h(size(x.size))+'</span><span class="pill">'+h(date)+'</span></div><div class="actions">'+(x.available===false?'<button disabled>☁ Su ChatGPT</button><button data-act="detail">ℹ Scheda</button>':'<button class="primary" data-act="play">▶ Guarda</button><button data-act="download">↓ Scarica</button><button data-act="detail">··· Altro</button>')+'</div>'+(g.admin?'<div class="modalactions" style="margin-top:9px"><button class="ghost" data-act="hide">'+(x.hidden?'↩ Ripristina':'⤓ Rimuovi dal sito')+'</button><button class="ghost" data-act="edit">✎ Modifica</button></div>':'')+'</div>';card.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act;if(a==='play')play(x);else if(a==='download')location.href=fullURL(x);else if(a==='detail')details(x);else if(a==='fav')manage(x,{favorite:!x.favorite});else if(a==='hide')hide(x);else if(a==='edit')edit(x)});frag.append(card)}node.append(frag)}
-function play(x){if(x.available===false){log('Video presente solo in ChatGPT: trasferimento non ancora disponibile');return}g.selected=x;$('#playerTitle').textContent=x.viewTitle;$('#playerInfo').textContent=dur(x.duration)+' · '+size(x.size)+' · '+x.viewCategory;$('#video').src=mediaURL(x);if(x.cover)$('#video').poster=x.cover;else $('#video').removeAttribute('poster');$('#player').showModal();$('#video').play().catch(()=>{});}
+function draw(){
+ const arr=filtered(),node=$('#grid');g.shownCache=arr;node.replaceChildren();
+ node.classList.toggle('compact',g.compact);
+ const visible=arr.slice(0,g.showLimit);
+ const variantCount=g.items.filter(x=>x.variants>0).length;
+ $('#counter').textContent=arr.length+' video trovati · '+variantCount+' possibili varianti';
+ $('#moreRow').hidden=arr.length<=g.showLimit;
+ $('#moreVideos').textContent='Mostra altri '+Math.min(36,Math.max(0,arr.length-g.showLimit))+' video ↓';
+ if(!arr.length){node.innerHTML='<div class="empty">Nessun video corrisponde ai filtri. Prova una ricerca diversa.</div>';updateSelectionPanel();return}
+ const frag=document.createDocumentFragment();
+ for(const x of visible){
+  const card=document.createElement('article');card.className='card'+(x.hidden?' archived':'')+(g.selectedKeys.has(x.key)?' selected':'');
+  const cover=x.cover?'<img alt="Copertina di '+h(x.viewTitle)+'" loading="lazy" decoding="async" src="'+h(x.cover)+'" onerror="this.remove()">':'';
+  const tags=['<span class="pill">'+h(x.viewProject)+'</span>'];
+  if(x.viewVersion==='final')tags.push('<span class="pill">✓ Finale</span>');
+  if(x.viewVersion==='draft')tags.push('<span class="pill alert">Provino</span>');
+  if(x.variants>0)tags.push('<span class="pill alert">≈ '+x.variants+' versioni</span>');
+  if(x.sameContent?.length)tags.push('<span class="pill alert">≡ '+x.sameContent.length+' copie uguali</span>');
+  if(x.hidden)tags.push('<span class="pill alert">Archiviato</span>');
+  if(x.available===false)tags.unshift('<span class="pill alert">☁ Solo ChatGPT</span>');
+  const date=x.gptCreatedAt?'Creato '+fmtDate(x.gptCreatedAt):'Importato '+fmtDate(x.uploaded);
+  const isSelecting=g.admin&&g.studio&&g.selectionMode;
+  const upper=isSelecting?'<button type="button" class="select-mark" data-act="select" aria-pressed="'+g.selectedKeys.has(x.key)+'" aria-label="Seleziona '+h(x.viewTitle)+'">'+(g.selectedKeys.has(x.key)?'✓':'☐')+'</button>':g.admin?'<button class="heart'+(x.favorite?' on':'')+'" data-act="fav" aria-label="Preferito">'+(x.favorite?'♥':'♡')+'</button>':'';
+  const cardActions=isSelecting?'<button class="primary" data-act="select">'+(g.selectedKeys.has(x.key)?'✓ Selezionato':'☐ Seleziona')+'</button><button data-act="detail">Scheda</button>':x.available===false?'<button data-act="detail">☁ Dettagli ChatGPT</button>':'<button class="primary" data-act="play">▶ Guarda</button><button data-act="download">↓ Scarica</button><button data-act="detail">··· Altro</button>';
+  card.innerHTML='<div class="poster"><span class="symbol">'+(x.viewCategory==='Libri raccontati'?'▤':x.viewCategory==='Musica e visual'?'♫':'✦')+'</span>'+cover+'<span class="badge">'+h(x.guess.kind)+'</span><span class="duration">'+(x.available===false&&!x.duration?'Solo GPT':h(dur(x.duration)))+'</span>'+upper+'</div>'+
+    '<div class="cardbody"><div class="eyebrow">'+h(x.viewCategory)+'</div><h3>'+h(x.viewTitle)+'</h3><p>'+h(x.viewDescription)+'</p><div class="info">'+tags.join('')+'<span class="pill">'+h(size(x.size))+'</span><span class="pill">'+h(date)+'</span></div><div class="actions">'+cardActions+'</div>'+
+    (g.admin&&g.studio&&!isSelecting?'<div class="modalactions" style="margin-top:9px"><button class="ghost" data-act="hide">'+(x.hidden?'↩ Ripristina':'⊟ Archivia')+'</button><button class="ghost" data-act="edit">✎ Modifica</button></div>':'')+'</div>';
+  card.addEventListener('click',e=>{
+   const t=e.target.closest('[data-act]');if(!t)return;
+   const a=t.dataset.act;
+   if(a==='select'){if(!g.admin||!g.studio)return;if(g.selectedKeys.has(x.key))g.selectedKeys.delete(x.key);else g.selectedKeys.add(x.key);draw();}
+   else if(a==='play')play(x);
+   else if(a==='download'&&x.available!==false)location.href=fullURL(x);
+   else if(a==='detail')details(x);
+   else if(a==='fav')manage(x,{favorite:!x.favorite});
+   else if(a==='hide')hide(x);
+   else if(a==='edit')edit(x);
+  });
+  frag.append(card);
+ }
+ node.append(frag);updateSelectionPanel();
+}
+function play(x){if(x.available===false){log('Video presente solo in ChatGPT: trasferimento non ancora disponibile');return}g.selected=x;$('#playerTitle').textContent=x.viewTitle;$('#playerInfo').textContent=dur(x.duration)+' · '+size(x.size)+' · '+x.viewCategory;$('#video').src=mediaURL(x);if(x.cover)$('#video').poster=x.cover;else $('#video').removeAttribute('poster');if(!$('#player').open)$('#player').showModal();$('#video').play().catch(()=>{});}
 function details(x){g.selected=x;$('#detailTitle').textContent=x.viewTitle;const root=$('#detailBody');const rows=[['Titolo',x.viewTitle],['Categoria',x.viewCategory],['Progetto',x.viewProject],['Tipologia',x.guess.kind],['Durata',dur(x.duration)],['Risoluzione',x.width&&x.height?x.width+' × '+x.height:'Da rilevare'],['Dimensione',size(x.size)],['Creazione ChatGPT',x.gptCreatedAt?fmtDate(x.gptCreatedAt):'Data non disponibile'],['Importazione',fmtDate(x.uploaded)],['Versione',({final:'Versione finale',draft:'Bozza / provino',variant:'Seconda versione / variante',unknown:'Non verificata'})[x.viewVersion]||'Non verificata'],['Possibili varianti',String(x.variants)],['Copie con stessa impronta',x.sameContent?.length?x.sameContent.join(' · '):'Nessuna rilevata'],['File originale',x.name||x.key],['Disponibilità',x.available===false?'Solo ChatGPT — trasferimento mancante':'Riproducibile e scaricabile dal sito']];root.replaceChildren();const desc=document.createElement('p');desc.className='modalinfo';desc.textContent=x.viewDescription;root.append(desc);const table=document.createElement('div');table.style.cssText='display:grid;grid-template-columns:125px 1fr;gap:8px 12px;font-size:13px;word-break:break-word';for(const pair of rows){const k=document.createElement('span');k.style.color='#91a5c1';k.textContent=pair[0];const v=document.createElement('span');v.textContent=pair[1];table.append(k,v)}root.append(table);if(x.variants){const p=document.createElement('p');p.className='notice';p.textContent='Possibili altre versioni: '+x.variantGroup.filter(n=>n!==x.key).join(' · ')+'. Il sistema non può ancora confermare che siano identiche.';root.append(p)}
 const buttons=document.createElement('div');buttons.className='modalactions';buttons.innerHTML=(x.available===false?'<span class="pill alert">☁ Video da trasferire dalla libreria ChatGPT</span>':'<button class="btn primary" data-d="play">▶ Guarda</button><button class="btn" data-d="download">↓ Scarica</button><button class="btn" data-d="info">↓ Scheda TXT</button><button class="btn" data-d="share">↗ Condividi</button>')+(g.admin?'<button class="ghost" data-d="edit">✎ Modifica / archivia</button>':'');buttons.onclick=e=>{const a=e.target.closest('[data-d]')?.dataset.d;if(!a)return;if(a==='play'){$('#detail').close();play(x)}if(a==='download'&&x.available!==false)location.href=fullURL(x);if(a==='info'&&x.available!==false)location.href='/info/'+encodeURIComponent(x.key);if(a==='share'&&x.available!==false)share(x);if(a==='edit'){$('#detail').close();edit(x)}};root.append(buttons);
 if(x.available===false){const msg=document.createElement('p');msg.className='notice';msg.textContent='Questo video è individuato nella libreria ChatGPT, ma il suo MP4 non è ancora stato caricato su Cloudflare. Lo puoi cercare in ChatGPT con questo nome: '+x.name;root.append(msg);$('#detail').showModal();return}const url=encodeURIComponent(shareURL(x)),txt=encodeURIComponent(x.viewTitle+' — '+shareURL(x));const links=document.createElement('div');links.className='share-links';links.innerHTML='<a target="_blank" rel="noopener noreferrer" href="https://wa.me/?text='+txt+'">WhatsApp</a><a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/sharer/sharer.php?u='+url+'">Facebook</a><a target="_blank" rel="noopener noreferrer" href="https://t.me/share/url?url='+url+'&text='+encodeURIComponent(x.viewTitle)+'">Telegram</a><a target="_blank" rel="noopener noreferrer" href="https://twitter.com/intent/tweet?text='+encodeURIComponent(x.viewTitle)+'&url='+url+'">X</a>';root.append(links);$('#detail').showModal()}
 async function share(x){const link=shareURL(x);if(navigator.share){try{await navigator.share({title:x.viewTitle,text:x.viewDescription,url:link});return}catch(e){if(e.name==='AbortError')return}}try{await navigator.clipboard.writeText(link);log('Link del video copiato')}catch{prompt('Copia il collegamento',link)}}
-async function manage(x,patch){if(!g.admin){$('#adminDialog').showModal();return}try{const r=await fetch('/api/manage',{method:'POST',headers:{'content-type':'application/json','Authorization':'Bearer '+g.token},body:JSON.stringify({key:x.key,patch})});if(!r.ok)throw Error('Impossibile salvare ('+r.status+')');const d=await r.json();Object.assign(x,d.entry||patch);x.viewTitle=x.title||x.guess.title;x.viewCategory=x.category||x.guess.category;x.viewDescription=x.description||x.guess.description;x.viewVersion=x.version||x.guess.version;log('Modifiche salvate online');draw();return true}catch(e){log(e.message);return false}}
+async function manage(x,patch){if(!g.admin){$('#adminDialog').showModal();return}try{const r=await fetch('/api/manage',{method:'POST',headers:{'content-type':'application/json','Authorization':'Bearer '+g.token},body:JSON.stringify({key:x.key,patch})});if(!r.ok)throw Error('Impossibile salvare ('+r.status+')');const d=await r.json();Object.assign(x,d.entry||patch);x.viewTitle=x.title||x.guess.title;x.viewCategory=x.category||x.guess.category;x.viewDescription=x.description||x.guess.description;x.viewVersion=x.version||x.guess.version;log('Modifiche salvate online');renderHome();draw();return true}catch(e){log(e.message);return false}}
 async function hide(x){if(!g.admin)return;const verb=x.hidden?'ripristinare':'rimuovere dal catalogo';if(!confirm('Vuoi '+verb+' il video «'+x.viewTitle+'»? Il file originale non sarà cancellato.'))return;if(await manage(x,{hidden:!x.hidden}))await load(true)}
 async function deleteForever(x){
  if(!g.admin)return;
@@ -180,9 +321,9 @@ $('#editForm').onsubmit=async e=>{e.preventDefault();const f=e.target,x=g.select
 $('#archiveToggle').onclick=async()=>{const x=g.selected;$('#edit').close();await hide(x)};
 $('#deleteForever').onclick=()=>deleteForever(g.selected);
 $('#favoriteToggle').onclick=async()=>{const x=g.selected;if(await manage(x,{favorite:!x.favorite}))$('#edit').close()};
-$('#adminOpen').onclick=()=>{if(g.admin){log('Gestione privata già attiva');return}$('#adminDialog').showModal()};
-$('#adminForm').onsubmit=async e=>{e.preventDefault();const token=$('#adminKey').value.trim();if(token.length<20){log('Chiave non valida');return}g.token=token;localStorage.setItem('vlsAdmin',token);await load(true);if(g.admin){$('#adminDialog').close();log('Gestione privata attivata')}else{g.token='';localStorage.removeItem('vlsAdmin');log('Accesso negato')}};
-$('#adminLogout').onclick=()=>{g.token='';g.admin=false;localStorage.removeItem('vlsAdmin');$('#includeArchived').checked=false;load(true)};
+$('#adminOpen').onclick=()=>enterStudio();
+$('#adminForm').onsubmit=async e=>{e.preventDefault();const token=$('#adminKey').value.trim();if(token.length<20){log('Chiave non valida');return}g.token=token;localStorage.setItem('vlsAdmin',token);await load(true);if(g.admin){$('#adminDialog').close();enterStudio();log('Gestione privata attivata')}else{g.token='';localStorage.removeItem('vlsAdmin');log('Accesso negato')}};
+$('#adminLogout').onclick=()=>{g.token='';g.admin=false;g.studio=false;g.selectionMode=false;g.selectedKeys.clear();localStorage.removeItem('vlsAdmin');$('#includeArchived').checked=false;applyStudioVisibility();load(true)};
 $('#exportCSV').onclick=()=>{
  const shown=g.items.filter(x=>!x.hidden||g.admin);
  const columns=['Titolo','Categoria','Progetto','Descrizione','Durata_secondi','Larghezza_px','Altezza_px','Dimensione_byte','Fonte','Riproducibile','Versione','Copie_uguali','Varianti','Data_creazione_ChatGPT','Data_importazione_Cloudflare','Preferito','Nascosto','Nome_originale','Collegamento'];
@@ -190,7 +331,40 @@ $('#exportCSV').onclick=()=>{
  const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
  const file=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download='Video_Library_Studio_Catalogo_'+new Date().toISOString().slice(0,10)+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2500);log('Catalogo CSV esportato: '+shown.length+' video');
 };
-$('#refresh').onclick=()=>load(true);$('#availability').onchange=draw;$('#query').oninput=draw;$('#project').onchange=draw;$('#sort').onchange=draw;$('#versions').onchange=draw;$('#includeArchived').onchange=draw;
+
+$('#refresh').onclick=()=>load(true);
+const refreshFilter=()=>{g.showLimit=36;draw()};
+$('#availability').onchange=refreshFilter;$('#query').oninput=refreshFilter;
+$('#project').onchange=refreshFilter;$('#sort').onchange=refreshFilter;
+$('#versions').onchange=refreshFilter;$('#includeArchived').onchange=refreshFilter;
+$('#topSearch').onclick=()=>{gotoSection('library');$('#query').focus()};
+$('#heroExplore').onclick=()=>gotoSection('library');
+$('#heroStudio').onclick=()=>enterStudio();
+$('#browseRecent').onclick=()=>{g.category='Tutti';$('#availability').value='online';$('#sort').value='recent';categories();refreshFilter();gotoSection('library')};
+$('#compactToggle').onclick=()=>{g.compact=!g.compact;$('#compactToggle').setAttribute('aria-pressed',String(g.compact));$('#compactToggle').innerHTML=g.compact?'▦ <span>Vista riquadri</span>':'☷ <span>Vista compatta</span>';draw()};
+$('#selectionToggle').onclick=()=>{if(!g.admin||!g.studio)return;g.selectionMode=!g.selectionMode;if(!g.selectionMode)g.selectedKeys.clear();applyStudioVisibility();draw()};
+$('#selectAllVisible').onclick=()=>{for(const x of g.shownCache.slice(0,40))g.selectedKeys.add(x.key);draw()};
+$('#clearSelected').onclick=()=>{g.selectedKeys.clear();draw()};
+$('#batchFavorite').onclick=()=>batchPatch({favorite:true},'Aggiungi ai preferiti');
+$('#batchFinal').onclick=()=>batchPatch({version:'final'},'Marca come finale');
+$('#batchDraft').onclick=()=>batchPatch({version:'draft'},'Marca come provino');
+$('#batchArchive').onclick=()=>batchPatch({hidden:true},'Archivia dal catalogo');
+$('#moreVideos').onclick=()=>{g.showLimit+=36;draw()};
+document.querySelectorAll('.bottom-nav button').forEach(b=>b.onclick=()=>{if(b.dataset.section==='studio')enterStudio();else gotoSection(b.dataset.section)});
+const playerSequence=(delta)=>{
+ let seq=filtered().filter(x=>x.available!==false&&!x.hidden);
+ if(!seq.some(x=>x.key===g.selected?.key))seq=sortedFresh(g.items.filter(x=>x.available!==false&&!x.hidden));
+ const i=seq.findIndex(x=>x.key===g.selected?.key);
+ const next=seq[(Math.max(0,i)+delta+seq.length)%seq.length];
+ if(next)play(next);
+};
+$('#playerPrevious').onclick=()=>playerSequence(-1);
+$('#playerNext').onclick=()=>playerSequence(1);
+$('#playerRewind').onclick=()=>{const v=$('#video');if(Number.isFinite(v.currentTime))v.currentTime=Math.max(0,v.currentTime-10)};
+$('#playerForward').onclick=()=>{const v=$('#video');if(Number.isFinite(v.currentTime))v.currentTime=Math.min(Number.isFinite(v.duration)?v.duration:v.currentTime+10,v.currentTime+10)};
+$('#playerSpeed').onclick=()=>{const v=$('#video'),speeds=[1,1.25,1.5,2];v.playbackRate=speeds[(speeds.indexOf(v.playbackRate)+1)%speeds.length];$('#playerSpeed').textContent=v.playbackRate+'×'};
+document.addEventListener('keydown',e=>{if(!$('#player').open||['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;if(e.key==='ArrowLeft'){$('#playerRewind').click();e.preventDefault()}if(e.key==='ArrowRight'){$('#playerForward').click();e.preventDefault()}});
+
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{const dialog=$('#'+b.dataset.close);dialog.close();if(dialog.id==='player'){$('#video').pause();$('#video').removeAttribute('src');$('#video').load()}});
 $('#playerDownload').onclick=()=>{if(g.selected)location.href=fullURL(g.selected)};
 $('#playerShare').onclick=()=>g.selected&&share(g.selected);
