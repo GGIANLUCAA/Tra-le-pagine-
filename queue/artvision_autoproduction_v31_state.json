@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-24T18:24:36.396Z",
+  "updated": "2026-10-24T18:26:37.595Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -47,23 +47,23 @@
     },
     {
       "cycle_id": "20261024T2015+0200",
-      "created_at": "2026-10-24T18:24:36.230Z",
+      "created_at": "2026-10-24T18:26:37.330Z",
       "artist": "Odilon Redon; Gustave Moreau; Arnold Böcklin",
       "work": "Visions of Symbolism",
       "format": "artvision_collection",
       "baseline": "cinema_v6",
       "reason_fallback": "Natural Gacrux voice unavailable; non-narrated museum collection instead",
-      "status": "blocked_or_rendered_needs_review",
-      "mp4_verified": false,
-      "duration_seconds": null,
-      "size_bytes": null,
-      "sha256_mp4": null,
-      "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40120504791",
+      "status": "technical_pass_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 73.792,
+      "size_bytes": 18775067,
+      "sha256_mp4": "596e8de31372c8026eaaa7a4d2f82ffd75133e0bdc601a0907ea1af7501b4746",
+      "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40120512139",
       "artifact_name": "ArtVision-V31-20261024-Visions-Of-Symbolism",
       "steps": {
         "preflight": "success",
-        "render": "failure",
-        "verify": "skipped",
+        "render": "success",
+        "verify": "success",
         "archive": "success"
       },
       "gold_master_approved": false,
