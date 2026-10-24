@@ -1,0 +1,38 @@
+name: "ArtVision — anti ghosting visual gate"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/artvision_no_ghosting_gate_v1.py"
+      - "tests/test_artvision_no_ghosting_gate_v1.py"
+      - "modules/artvision_critico/production_series/holbein_gallery_entry_clean_cut_v2.json"
+  pull_request:
+    paths:
+      - "src/artvision_no_ghosting_gate_v1.py"
+      - "tests/test_artvision_no_ghosting_gate_v1.py"
+      - "modules/artvision_critico/production_series/holbein_gallery_entry_clean_cut_v2.json"
+  workflow_dispatch:
+    inputs:
+      manifest_path:
+        description: "Existing tracked JSON recipe declaring no visual overlap"
+        type: string
+        required: true
+        default: "modules/artvision_critico/production_series/holbein_gallery_entry_clean_cut_v2.json"
+permissions:
+  contents: read
+jobs:
+  check-no-ghosting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Tests"
+        run: python -m unittest discover -s tests -p test_artvision_no_ghosting_gate_v1.py -v
+      - name: "Check episode recipe"
+        env:
+          FILE: ${{ inputs.manifest_path || 'modules/artvision_critico/production_series/holbein_gallery_entry_clean_cut_v2.json' }}
+        run: |
+          test -f "$FILE" || { echo "No tracked recipe: $FILE"; exit 1; }
+          python src/artvision_no_ghosting_gate_v1.py --manifest "$FILE"
