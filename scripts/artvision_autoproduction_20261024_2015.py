@@ -143,7 +143,16 @@ def main():
     assets={}
     for a in cfg["artworks"]:
         dest=base/("ORIGINAL_"+a["id"].upper()+".jpg")
-        fetch(a["url"],dest,"image",a["expected_min"])
+        attempted=[]
+        for candidate in [a["url"]]+a.get("mirrors",[]):
+            try:
+                fetch(candidate,dest,"image",a["expected_min"])
+                a["download_used"]=candidate
+                break
+            except Exception as exc:
+                attempted.append(str(exc))
+        else:
+            raise RuntimeError("All authentic-image origins blocked for "+a["id"]+": "+" | ".join(attempted))
         assets[a["id"]]=dest
     music=cfg["music"];track=base/"ORIGINAL_LICENSED_MUSIC.mp3"
     fetch(music["url"],track,"audio",None)
@@ -203,7 +212,7 @@ def main():
         rights += [f"## {a['artist']} — {a['title_en']} ({a['year']})",
                    "Museum: "+a["museum"],"Museum evidence: "+a["museum_url"],
                    "Image rights: Commons public-domain reproduction "+a["commons"],
-                   "Original image downloaded: "+a["url"],
+                   "Original image downloaded: "+a.get("download_used",a["url"]),
                    "SHA256: "+sha(assets[a["id"]]),""]
     rights += ["## Soundtrack",f"{music['name']} — {music['artist']} (recording licensed CC BY 4.0)",
                "Recording source: "+music["url"],"License proof: "+music["page"],
