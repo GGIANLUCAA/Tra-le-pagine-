@@ -1,0 +1,147 @@
+name: "ArtVision V31 • Evelyn De Morgan • The Storm Spirits"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/artvision_autoproduction_20261024_1715.py"
+      - "config/artvision_autoproduction_20261024_1715.json"
+      - ".github/workflows/artvision-autoproduction-v31-20261024-1715.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: artvision-v31-20261024-1715
+  cancel-in-progress: false
+jobs:
+  artvision:
+    name: "Original painting • 9:16 • V6 gold baseline • V28 editorial"
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Open source cinematic dependencies
+        run: |
+          set -euo pipefail
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe || sudo apt-get install -y -qq ffmpeg
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf || sudo apt-get install -y -qq fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "Pillow>=10,<14" numpy requests
+      - name: Check real research and scene-specific preflight
+        id: preflight
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_autoproduction_20261024_1715.py
+          python -m unittest discover -s tests -p "test_artvision_editorial_post_v28.py" -v
+          python scripts/artvision_autoproduction_20261024_1715.py --painting storm_spirits --preflight-only
+          tmp="$(mktemp -d)"
+          python src/artvision_editorial_post_v28.py --episode evelyn_de_morgan_storm_spirits_20261024_1715 --out "$tmp"
+          python src/artvision_editorial_post_v28.py --validate-folder "$tmp"
+      - name: Render REAL museum-sourced 1080x1920 MP4 and complete social package
+        id: render
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python scripts/artvision_autoproduction_20261024_1715.py --painting storm_spirits --out output/artvision-autoproduction-v31
+      - name: Independent complete-decode QA, opening frames, audio, cover and ZIP
+        id: validate
+        if: steps.render.outcome == 'success'
+        run: |
+          set -euo pipefail
+          folder="output/artvision-autoproduction-v31/evelyn_de_morgan_storm_spirits_20261024_1715"
+          film="$folder/VIDEO_MASTER.mp4"
+          bundle="output/artvision-autoproduction-v31/ARTVISION_V30_EVELYN_DE_MORGAN_STORM_SPIRITS_20261024_1715_COMPLETE.zip"
+          test -s "$film"
+          test -s "$bundle"
+          test -s "$folder/COPERTINA.jpg"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$film" -f null -
+          python src/artvision_editorial_post_v28.py --validate-folder "$folder"
+          python - "$film" "$bundle" <<'PY'
+          import json,subprocess,zipfile,sys
+          film,bundle=sys.argv[1:]
+          data=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration,size","-show_entries","stream=codec_type,codec_name,width,height","-of","json",film]))
+          dur=float(data["format"]["duration"])
+          assert 45<=dur<=120,dur
+          assert any(s.get("codec_type")=="video" and s.get("codec_name")=="h264" and s.get("width")==1080 and s.get("height")==1920 for s in data["streams"]),data
+          assert any(s.get("codec_type")=="audio" and s.get("codec_name")=="aac" for s in data["streams"]),data
+          required=["VIDEO_MASTER.mp4","COPERTINA.jpg","POST_EDITORIAL_RESEARCH.json","POST_FACEBOOK.txt","POST_INSTAGRAM.txt","POST_TIKTOK.txt","POST_YOUTUBE.txt","VIDEO_RECIPE_V13.json","TECNICHE_REGIA.md","ISTRUZIONI_REPLICA.md","MUSIC_RELEASE_V20.json","ARTVISION_CONTRACT_V25.json","SOURCES_AND_RIGHTS.md","TECHNICAL_QA_V30.json","QA_CONTACT_SHEET.jpg","STORYBOARD_REAL_ARTWORK.jpg","QA_V25/FRAME_00.jpg","QA_V25/FRAME_01.jpg","QA_V25/FRAME_03.jpg","QA_V25/FRAME_05.jpg","QA_V25/FRAME_07.jpg"]
+          with zipfile.ZipFile(bundle) as z:
+            assert z.testzip() is None
+            assert set(required)<=set(z.namelist()),set(required)-set(z.namelist())
+            qa=json.loads(z.read("TECHNICAL_QA_V30.json"))
+            assert qa["full_ffmpeg_decode"] and qa["v25_preflight"]=="PASS" and qa["v28_editorial"]=="PASS_OBJECTIVE_CAPTION_CHECKS",qa
+            assert qa["approval"]=="human_visual_review_pending",qa
+          print("REAL_VIDEO_AND_ZIP_VALIDATED",dur,data["format"]["size"])
+          PY
+      - name: Upload actual video, preview, cover and complete kit
+        id: archive
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision-V31-20261024-Evelyn-De-Morgan-Storm-Spirits
+          path: |
+            output/artvision-autoproduction-v31/evelyn_de_morgan_storm_spirits_20261024_1715/VIDEO_MASTER.mp4
+            output/artvision-autoproduction-v31/evelyn_de_morgan_storm_spirits_20261024_1715/COPERTINA.jpg
+            output/artvision-autoproduction-v31/evelyn_de_morgan_storm_spirits_20261024_1715/QA_CONTACT_SHEET.jpg
+            output/artvision-autoproduction-v31/evelyn_de_morgan_storm_spirits_20261024_1715/POST_FACEBOOK.txt
+            output/artvision-autoproduction-v31/ARTVISION_V30_EVELYN_DE_MORGAN_STORM_SPIRITS_20261024_1715_COMPLETE.zip
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Persist verified or blocked result without touching approved masters
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          PREFLIGHT: ${{ steps.preflight.outcome }}
+          RENDER: ${{ steps.render.outcome }}
+          VERIFY: ${{ steps.validate.outcome }}
+          ARCHIVE: ${{ steps.archive.outcome }}
+        with:
+          script: |
+            const fs=require('fs'),crypto=require('crypto');
+            const path='queue/artvision_autoproduction_v31_state.json';
+            const folder='output/artvision-autoproduction-v31/evelyn_de_morgan_storm_spirits_20261024_1715';
+            const file=folder+'/VIDEO_MASTER.mp4';
+            const allOK=['PREFLIGHT','RENDER','VERIFY','ARCHIVE'].every(k=>process.env[k]==='success');
+            const hasFile=fs.existsSync(file);
+            let qa=null;
+            try {qa=JSON.parse(fs.readFileSync(folder+'/TECHNICAL_QA_V30.json','utf8'));} catch(e) {}
+            const event={
+              cycle_id:'20261024T1715+0200',created_at:new Date().toISOString(),
+              artist:'Evelyn De Morgan',work:'The Storm Spirits',
+              format:'artvision_cinema',baseline:'cinema_v6',
+              reason_fallback:'Google Gacrux narration unavailable to verify for Critico in this execution',
+              status:allOK?'technical_pass_not_gold_master':'blocked_or_rendered_needs_review',
+              mp4_verified:allOK && hasFile,
+              duration_seconds:allOK?qa?.duration_seconds:null,
+              size_bytes:hasFile?fs.statSync(file).size:null,
+              sha256_mp4:hasFile?crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'):null,
+              workflow_run_url:`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              artifact_name:'ArtVision-V31-20261024-Evelyn-De-Morgan-Storm-Spirits',
+              steps:{preflight:process.env.PREFLIGHT,render:process.env.RENDER,verify:process.env.VERIFY,archive:process.env.ARCHIVE},
+              gold_master_approved:false,social_published:false
+            };
+            for(let attempt=0;attempt<3;attempt++){
+              const old=await github.rest.repos.getContent({owner:context.repo.owner,repo:context.repo.repo,path,ref:'main'});
+              const state=JSON.parse(Buffer.from(old.data.content,'base64').toString('utf8'));
+              state.cycle_log=state.cycle_log||[];
+              const index=state.cycle_log.findIndex(x=>x.cycle_id===event.cycle_id);
+              if(index>=0)state.cycle_log[index]=event;else state.cycle_log.push(event);
+              state.updated=new Date().toISOString();
+              if(allOK)state.next_preferred_format='artvision_critico';
+              try {
+                await github.rest.repos.createOrUpdateFileContents({
+                  owner:context.repo.owner,repo:context.repo.repo,path,
+                  message:'ArtVision V31: record real first scheduled render outcome',
+                  content:Buffer.from(JSON.stringify(state,null,2)+'\n').toString('base64'),
+                  sha:old.data.sha,branch:'main'
+                }); break;
+              } catch(err){if(attempt===2)throw err;}
+            }
+            core.summary.addHeading('ArtVision V31 — The Storm Spirits')
+              .addRaw(`Production result: **${event.status}**\n\n`)
+              .addRaw(`Actual MP4: ${hasFile?'present':'not produced'}; duration: ${event.duration_seconds??'unknown'} seconds.\n\n`)
+              .addRaw(`Artifact: ${event.artifact_name}; run: ${event.workflow_run_url}\n\n`)
+              .addRaw('Social publication: NOT authorized. Artistic Gold Master: NOT approved.').write();
