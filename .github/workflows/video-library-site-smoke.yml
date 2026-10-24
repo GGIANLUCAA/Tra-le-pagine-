@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - .github/workflows/video-library-site-smoke.yml
+      - site/video-library-v2.html
   workflow_dispatch:
 permissions:
   contents: read
