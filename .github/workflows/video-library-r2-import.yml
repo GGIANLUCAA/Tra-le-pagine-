@@ -132,6 +132,34 @@ jobs:
               check=status(key)
               if check.get('size')!=size:raise Exception('Uploaded size mismatch for '+key)
               print('PUBLISHED:',key,'size:',size,flush=True);return True
+          def self_test_publication_gate():
+              sample=b'not-a-real-video-but-stable-for-gate-test'
+              digest=hashlib.sha256(sample).hexdigest()
+              contract={'schema':'artvision-release-contract-v25','review_video_sha256':digest,
+                        'reviews':{key:{'passed':False} for key in ('opening','visual','cover','music','rights','full_watch','replicability')}}
+              def make(current):
+                  buf=io.BytesIO()
+                  with zipfile.ZipFile(buf,'w') as test:
+                      test.writestr('VIDEO_MASTER.mp4',sample)
+                      test.writestr('ARTVISION_CONTRACT_V25.json',json.dumps(current))
+                  buf.seek(0)
+                  return buf
+              pending=make(contract)
+              with zipfile.ZipFile(pending) as test:
+                  allowed,_=publication_gate(test,['VIDEO_MASTER.mp4'])
+                  assert not allowed,'Unreviewed V25 artifact must remain blocked'
+              for row in contract['reviews'].values():row['passed']=True
+              approved=make(contract)
+              with zipfile.ZipFile(approved) as test:
+                  allowed,_=publication_gate(test,['VIDEO_MASTER.mp4'])
+                  assert allowed,'Exact-hash fully reviewed V25 artifact must pass'
+              contract['review_video_sha256']='0'*64
+              wrong=make(contract)
+              with zipfile.ZipFile(wrong) as test:
+                  allowed,_=publication_gate(test,['VIDEO_MASTER.mp4'])
+                  assert not allowed,'Mismatched V25 master hash must remain blocked'
+              print('Publication gate self-test: PASS',flush=True)
+          self_test_publication_gate()
           print('Checking secure importer...',flush=True)
           r=S.get(ROOT+'/health',timeout=20);r.raise_for_status();print(r.json(),flush=True)
           artifacts=[]
