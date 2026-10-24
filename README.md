@@ -1,3 +1,9 @@
+## ArtVision V31 — produzione autonoma ricorrente ogni tre ore
+
+[Prompt operativo V31](docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md) · [Policy](config/artvision_autoproduction_v31.json) · [Registro cicli](queue/artvision_autoproduction_v31_state.json).
+
+Alternare video Cinema V6 senza voce, Critico V2 con voce italiana Gacrux naturale e Collection tematiche; durata 45–120s, Critico più lungo solo quando l'opera lo giustifica. Ogni episodio deve produrre MP4 verificato, copertina immutabile di serie, testi V28 adatti a Facebook/IG/TikTok/YouTube, licenze e ZIP con ricetta riproducibile. Non scavalcare i Gold Master già approvati. Le esecuzioni ogni tre ore sono gestite da una routine ChatGPT programmata, non da cron GitHub paralleli.
+
 ## Regole permanenti di qualità V25 e scrittura social V28
 
 Prima di creare qualunque nuovo episodio leggere [AGENTS.md](AGENTS.md), [contratto V25](docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md) e [standard post V28](docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md). Per Cinema mantenere Gold Master V6 e cover stabili; primi 0/1/3/5/7 secondi verificati, inquadrature motivate, niente camera oscillante. Ogni episodio include MP4 reale, copertina, quattro post social distinti, attribuzioni, `POST_EDITORIAL_RESEARCH.json` con musei/fonti e ricetta per replicare.
