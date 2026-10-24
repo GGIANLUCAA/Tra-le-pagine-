@@ -94,7 +94,7 @@ async function edLoad(k){
 }
 function edTxt(s){return edEsc(s).replace(/\r\n/g,'\n').replace(/\r/g,'\n')}
 const edFields=['edition','reprints','masterRef','musicAttribution','legacyNotes','publicTitle','shortDescription','category','project','language','hook','hashtags','facebook','instagram','tiktok','youtube','musicTitle','musicAuthor','musicLicense','musicLink','imageCredits','imageSources','voiceCredits','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes','tags','rightsStatus','publicationStatus'];
-const edLarge=new Set(['legacyNotes','facebook','instagram','tiktok','youtube','imageCredits','imageSources','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes']);
+const edLarge=new Set(['musicAttribution','legacyNotes','facebook','instagram','tiktok','youtube','imageCredits','imageSources','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes']);
 function edSnapshot(k,record,metadata,missing){
  const p=s=>edTxt(s||'Da completare / verificare');
  const info=[
@@ -240,14 +240,14 @@ if(u.pathname==='/api/editorial'&&req.method==='GET'){
 }
 if(u.pathname==='/api/editorial'&&req.method==='POST'){
  if(!await auth())return new Response('Non autorizzato',{status:401});
- if(Number(req.headers.get('content-length')||0)>90000)return new Response('Scheda troppo grande',{status:413});
+ if(Number(req.headers.get('content-length')||0)>350000)return new Response('Scheda troppo grande',{status:413});
  let body;try{body=await req.json()}catch{return new Response('Richiesta errata',{status:400})}
  const key=body?.key;if(!await edExists(key))return new Response('Video inesistente',{status:404});
  if(!body?.data||Array.isArray(body.data)||typeof body.data!=='object')return new Response('Campi non validi',{status:400});
  const snapshot=await edLoad(key),rec={...snapshot.record};
  for(const [name,value] of Object.entries(body.data)){
   if(!edFields.includes(name)||typeof value!=='string')return new Response('Campo non consentito: '+name,{status:400});
-  const limit=edLarge.has(name)?10000:1600;
+  const limit=edLarge.has(name)?25000:1600;
   if(value.length>limit)return new Response('Testo troppo lungo: '+name,{status:400});
   rec[name]=value.trim();
  }
