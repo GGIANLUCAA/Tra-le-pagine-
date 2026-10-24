@@ -161,13 +161,28 @@ jobs:
             await new Promise(done=>setTimeout(done,700));
             const d=dom.window.document;
             const total=d.querySelectorAll('.card').length;
-            assert(total>=140,'Expected online+ChatGPT catalog cards, got '+total);
-            assert(d.querySelectorAll('.poster img').length>=70,'Missing JPG covers in cards');
-            const lib=d.querySelector('#availability');lib.value='chatgpt';lib.dispatchEvent(new dom.window.Event('change',{bubbles:true}));const only=d.querySelectorAll('.card');assert(only.length>=60&&only.length<total,'ChatGPT filter failed');assert(only[0].querySelector('[data-act="play"]')===null,'GPT card incorrectly allows playback');lib.value='';lib.dispatchEvent(new dom.window.Event('change',{bubbles:true}));const search=d.querySelector('#query');search.value='gioconda';search.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
+            const modern=Boolean(d.querySelector('#moreVideos'));
+            assert(modern?total===Math.min(36,model.items.length):total>=140,'Unexpected initial card count '+total);
+            assert(d.querySelectorAll('.poster img').length>=(modern?24:70),'Missing JPG covers in cards');
+            if(modern){
+              assert(d.querySelectorAll('.collection-card').length>=3,'Missing genre collections');
+              assert(d.querySelectorAll('#latestRail .film-tile').length>=1,'Missing recent releases');
+              assert(d.querySelector('#spotlight .spotlight-play'),'Featured film player missing');
+              d.querySelector('#moreVideos').click();
+              assert(d.querySelectorAll('.card').length>total,'Progressive loading failed');
+              d.querySelector('#compactToggle').click();
+              assert(d.querySelector('#grid').classList.contains('compact'),'Compact list failed');
+            }
+            const lib=d.querySelector('#availability');lib.value='chatgpt';lib.dispatchEvent(new dom.window.Event('change',{bubbles:true}));
+            const only=d.querySelectorAll('.card');
+            assert(only.length>0&&only.length<(modern?model.items.length:total),'ChatGPT filter failed');
+            assert(only[0].querySelector('[data-act="play"]')===null,'GPT card incorrectly allows playback');
+            lib.value='';lib.dispatchEvent(new dom.window.Event('change',{bubbles:true}));
+            const search=d.querySelector('#query');search.value='gioconda';search.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
             const matches=d.querySelectorAll('.card').length;
-            assert(matches>=1&&matches<total,'Search filter failed: '+matches);
+            assert(matches>=1&&matches<(modern?model.items.length:total),'Search filter failed: '+matches);
             assert(errors.length===0,'Client error: '+errors.join('; '));
-            console.log('PASS: browser-side cards='+total+' JPG posters; Gioconda search='+matches+' results');
+            console.log('PASS: browser-side initial cards='+total+' progressive='+modern+' JPG covers; Gioconda search='+matches);
             dom.window.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           JS
