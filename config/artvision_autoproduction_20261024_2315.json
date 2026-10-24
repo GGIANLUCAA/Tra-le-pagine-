@@ -1,0 +1,191 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "31.0",
+  "date": "2026-10-24",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261024T2315+0200",
+  "chosen_format": "artvision_cinema",
+  "format_reason": "Critico Gacrux natural voice unavailable to confirm; avoid robotic narration and render one original authentic painting instead; new artist after collection.",
+  "candidates_considered": [
+    {
+      "title": "The Wounded Angel",
+      "artist": "Hugo Simberg",
+      "reason": "Strong direct gaze, original symbolic narrative, Finnish National Gallery CC BY 4.0 high-resolution source, rare but memorable"
+    },
+    {
+      "title": "Flaming June",
+      "artist": "Frederic Leighton",
+      "reason": "Exceptional color and historic museum story; sheer drapery more sensitive to platform policy, held for later"
+    },
+    {
+      "title": "The Lady of Shalott",
+      "artist": "John William Waterhouse",
+      "reason": "Strong literary narrative but similar tragic-woman subject already represented; lower novelty for this slot"
+    }
+  ],
+  "subjects": {
+    "hugo_simberg_wounded_angel_20261024_2315": {
+      "artist": "HUGO SIMBERG",
+      "title_en": "The Wounded Angel",
+      "year": "1903",
+      "museum": "Ateneum Art Museum / Finnish National Gallery",
+      "slug": "hugo_simberg_wounded_angel_20261024_2315",
+      "editorial_key": "hugo_simberg_wounded_angel_20261024_2315",
+      "source_page": "https://commons.wikimedia.org/wiki/File:The_Wounded_Angel_-_Hugo_Simberg.jpg",
+      "museum_page": "https://www.kansallisgalleria.fi/en/object/396251",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/The_Wounded_Angel_-_Hugo_Simberg.jpg/3840px-The_Wounded_Angel_-_Hugo_Simberg.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/7/72/The_Wounded_Angel_-_Hugo_Simberg.jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/The_Wounded_Angel_-_Hugo_Simberg.jpg?width=3840"
+      ],
+      "music": {
+        "name": "Anguish",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Anguish.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400047",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1400047",
+        "offset": 18
+      },
+      "story": "The first gaze confronts the viewer. An injured angel with a bandaged head and snowdrops is revealed, then the whole procession. The weight of carrying, the quiet Helsinki shore, and the silent exchange of glances create a human arc. Return to the flowers and hold the full work without inventing its meaning.",
+      "techniques": [
+        "human_gaze_start",
+        "locked_hold",
+        "motivated_cut",
+        "visual_hierarchy",
+        "detail_return",
+        "rhythmic_rest",
+        "camera_seasick_gate"
+      ],
+      "scenes": [
+        {
+          "type": "portrait",
+          "x": 0.84,
+          "y": 0.25,
+          "z": 1.05,
+          "seconds": 4.5,
+          "movement": "locked",
+          "intent": "Open on the right boy's unflinching gaze, the one painted face that looks outward at the viewer"
+        },
+        {
+          "type": "portrait",
+          "x": 0.48,
+          "y": 0.36,
+          "z": 1.09,
+          "seconds": 3.6,
+          "movement": "locked",
+          "intent": "The wounded angel's bandaged face appears without yet revealing the whole procession"
+        },
+        {
+          "type": "detail",
+          "x": 0.44,
+          "y": 0.32,
+          "z": 1.28,
+          "seconds": 3.2,
+          "movement": "locked",
+          "intent": "A precise view of the pale bandage and bowed head, without enlarging the tiny blood traces"
+        },
+        {
+          "type": "detail",
+          "x": 0.37,
+          "y": 0.61,
+          "z": 1.26,
+          "seconds": 3.2,
+          "movement": "locked",
+          "intent": "White snowdrops held by the angel form a delicate counterpoint to the dark clothing"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 5.5,
+          "movement": "locked",
+          "intent": "First full reveal of the two boys carrying the angel through the Helsinki landscape"
+        },
+        {
+          "type": "portrait",
+          "x": 0.2,
+          "y": 0.32,
+          "z": 1.14,
+          "seconds": 3.8,
+          "movement": "locked",
+          "intent": "The front boy turns his eyes away, walking with the weight of the stretcher"
+        },
+        {
+          "type": "medium",
+          "x": 0.31,
+          "y": 0.67,
+          "z": 1.15,
+          "seconds": 4.2,
+          "movement": "locked",
+          "intent": "The front boy's hands grip the wooden pole, making the carrying effort palpable"
+        },
+        {
+          "type": "detail",
+          "x": 0.6,
+          "y": 0.57,
+          "z": 1.18,
+          "seconds": 4.2,
+          "movement": "slow_pull",
+          "intent": "The folded white wings and bent posture describe fragility without dramatized movement"
+        },
+        {
+          "type": "landscape",
+          "x": 0.54,
+          "y": 0.18,
+          "z": 1.12,
+          "seconds": 4,
+          "movement": "locked",
+          "intent": "Muted autumn trees and the waterside landscape ground the strange scene in an ordinary place"
+        },
+        {
+          "type": "portrait",
+          "x": 0.85,
+          "y": 0.36,
+          "z": 1.1,
+          "seconds": 4,
+          "movement": "locked",
+          "intent": "Return to the rear boy's direct gaze after the central figure is understood"
+        },
+        {
+          "type": "medium",
+          "x": 0.51,
+          "y": 0.57,
+          "z": 1.08,
+          "seconds": 4.2,
+          "movement": "locked",
+          "intent": "The angel's white form and the brown clothes share the frame as a silent relationship"
+        },
+        {
+          "type": "detail",
+          "x": 0.37,
+          "y": 0.63,
+          "z": 1.25,
+          "seconds": 3.2,
+          "movement": "locked",
+          "intent": "Snowdrops reappear, now legible as a fragile possibility of renewal rather than an answer"
+        },
+        {
+          "type": "wide",
+          "x": 0.55,
+          "y": 0.45,
+          "z": 1.04,
+          "seconds": 4,
+          "movement": "slow_push",
+          "intent": "Hold the contrast between the dark boys and the luminous figure as the score changes"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 6.8,
+          "movement": "locked",
+          "intent": "Entire genuine 1903 painting held still to leave its mystery unresolved"
+        }
+      ]
+    }
+  }
+}
