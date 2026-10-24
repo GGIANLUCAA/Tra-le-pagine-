@@ -3,30 +3,123 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b101c"><meta name="referrer" content="no-referrer">
-<title>Video Library Studio — Archivio creativo</title>
+<title>Video Library Studio — La tua cineteca creativa</title>
 <style>
 :root{color-scheme:dark;--bg:#080d17;--panel:#121b2b;--muted:#9baac0;--line:#2a374b;--purple:#c5a4fa;--ink:#f3f6fc}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #d9c3ff;outline-offset:2px}
 .hero{background:radial-gradient(ellipse at 82% 0%,#432958b8 0,transparent 55%),radial-gradient(ellipse at 9% 18%,#1b496480 0,transparent 51%),linear-gradient(135deg,#101728,#101827);border-bottom:1px solid var(--line);padding:28px clamp(16px,4vw,56px) 26px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}.mark{color:#d3baff;font-weight:850;letter-spacing:.16em;font-size:12px}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.btn,.ghost{border:1px solid #4b5671;border-radius:11px;background:#293852;color:#f0f5fc;padding:10px 14px;font-weight:650;min-height:41px}.ghost{background:#172135}.btn.primary{background:#c4a4f6;color:#20162e;border-color:#c4a4f6}.btn:hover,.ghost:hover{filter:brightness(1.13)}.hero h1{font-size:clamp(30px,5vw,58px);letter-spacing:-.055em;line-height:1.08;margin:23px 0 8px;font-weight:850}.hero p{color:#b1bdd0;max-width:800px;margin:0}.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:23px}.stat{background:#ffffff09;border:1px solid #ffffff1b;border-radius:12px;padding:10px 15px;min-width:95px}.stat b{font-size:21px;display:block;font-variant-numeric:tabular-nums}.stat span{font-size:12px;color:#b2bdd3}main{padding:22px clamp(16px,4vw,56px) 60px;max-width:1660px;margin:auto}.tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}input,select,textarea{background:#182437;border:1px solid #394963;color:#fff;border-radius:10px;padding:11px 13px;min-height:44px}.tools input{flex:2;min-width:200px}.tools select{flex:1;min-width:155px}.filters{display:flex;overflow:auto;gap:8px;padding:17px 0 18px;scrollbar-width:thin}.chip{background:#19273c;border:1px solid #354660;color:#c8d4e4;border-radius:30px;padding:8px 13px;white-space:nowrap}.chip.active{background:#bda0f0;color:#1e132e;border-color:#c9adfa;font-weight:750}.panelbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:6px 0 15px}.panelbar p{color:var(--muted);font-size:13px;margin:0}.toggle{display:flex;gap:8px;align-items:center;font-size:12px;color:#bcc9d9}.toggle input{min-height:auto}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:18px}.card{border:1px solid #293a50;border-radius:17px;background:#141e2e;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 25px #00000018}.card.archived{opacity:.6}.poster{aspect-ratio:16/10;position:relative;background:linear-gradient(130deg,#403765,#163b52,#242b43);overflow:hidden;display:grid;place-items:center}.poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .35s}.card:hover .poster img{transform:scale(1.035)}.poster .symbol{font-size:54px;opacity:.85}.badge{position:absolute;bottom:9px;left:9px;background:#07101cdd;padding:5px 9px;border:1px solid #ffffff24;border-radius:8px;font-size:11px;font-weight:700}.duration{position:absolute;bottom:9px;right:9px;background:#07101ce0;border-radius:6px;padding:4px 8px;font-size:12px;font-variant-numeric:tabular-nums}.heart{position:absolute;right:9px;top:9px;background:#0b1520dd;border:1px solid #ffffff33;border-radius:50%;height:34px;width:34px;font-size:19px;color:#fff}.heart.on{color:#ffb3bd}.cardbody{padding:15px;display:flex;flex:1;flex-direction:column}.eyebrow{font-size:11px;letter-spacing:.035em;color:#d1b6fe;font-weight:700;margin-bottom:6px}.card h3{font-size:17px;line-height:1.3;margin:0 0 7px;letter-spacing:-.018em}.card p{color:#b4c1d0;font-size:12.5px;line-height:1.46;margin:0 0 10px}.info{display:flex;gap:6px;flex-wrap:wrap;margin:auto 0 13px}.pill{font-size:10.5px;color:#b7c5d8;background:#233147;padding:5px 8px;border-radius:7px}.pill.alert{color:#f1cf99;background:#403223}.actions{display:grid;grid-template-columns:1fr 1fr auto;gap:7px}.actions button{border:1px solid #3c4b67;background:#293a52;color:#f3f5fc;border-radius:9px;padding:9px 8px;font-size:12px;font-weight:650}.actions button.primary{background:#c5a8fb;border-color:#c5a8fb;color:#1c1430}.actions button:last-child{padding:8px 12px}.empty{text-align:center;padding:64px 12px;color:#bbc9dd;border:1px dashed #35465c;border-radius:17px}.loading{color:#c9d1e1;padding:38px 0}.foot{color:#8192ab;font-size:12px;margin-top:27px}.admin-banner{display:none;background:#241f37;border:1px solid #635184;border-radius:12px;padding:12px 15px;margin:0 0 17px;color:#ddcefb}.admin-banner.show{display:block}dialog{width:min(92vw,860px);max-height:92dvh;overflow:auto;background:#121b2a;color:#f4f6fc;border:1px solid #465978;border-radius:17px;padding:0;box-shadow:0 30px 100px #0009}dialog::backdrop{background:#030710dd}.modalhead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid #293a52}.modalhead h2{margin:0;font-size:18px}.modalbody{padding:17px 20px 22px}.modalbody video{display:block;width:100%;max-height:54vh;background:#000;border-radius:12px}.modalinfo{color:#a8b9d0;font-size:13px;margin:12px 0}.modalactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.modalactions button{font-size:13px}.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.field{display:flex;flex-direction:column;gap:5px;color:#c9d5e6;font-size:12px}.field.full{grid-column:1/-1}.field textarea{min-height:86px}.share-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.share-links a{background:#25354a;border-radius:9px;padding:9px 11px;font-size:12px}.notice{color:#bec9dc;font-size:12px;margin-top:11px}#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);border:1px solid #6b5a8b;background:#22253e;color:#fff;padding:11px 17px;border-radius:12px;box-shadow:0 12px 32px #000a;display:none;z-index:10;max-width:92vw}@media(max-width:600px){.hero{padding-top:20px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.poster{aspect-ratio:9/10}.cardbody{padding:11px}.card h3{font-size:14px}.card p{font-size:11px}.eyebrow{font-size:10px}.info .pill{font-size:10px}.actions{grid-template-columns:1fr 1fr}.actions button{font-size:11px;padding:8px 5px}.actions button:last-child{grid-column:1/-1}.formgrid{grid-template-columns:1fr}.field.full{grid-column:1}.stat{min-width:85px}.stat b{font-size:19px}.top-actions .btn{padding:8px 10px;font-size:12px}}@media(max-width:370px){.grid{grid-template-columns:1fr}.poster{aspect-ratio:16/10}}
+
+
+/* Cinema Studio V3 — additive design layer; existing controls and R2 API untouched */
+:root{--bg:#0a0e14;--panel:#141b25;--muted:#abb6c5;--line:#293343;--purple:#dbc29f;--ink:#f6f3ed;--gold:#d5b489;--soft:#f2e5ce;color-scheme:dark}
+html{scroll-behavior:smooth;scroll-padding-top:30px}
+body{background:radial-gradient(circle at 96% 4%,#2d263022,transparent 30%),#0a0e14;color:var(--ink);letter-spacing:.003em}
+.hero{padding:24px clamp(18px,4.5vw,70px) 24px;background:radial-gradient(ellipse at 85% 15%,#56433548 0,transparent 47%),radial-gradient(ellipse at 10% 50%,#12293d80 0,transparent 54%),linear-gradient(135deg,#141923,#0a1018);border-color:#39404a}
+.top{align-items:center;gap:14px}.brand{display:inline-flex;gap:12px;align-items:center;min-width:0}.brand-icon{display:grid;place-items:center;border:1px solid #d8b78c65;background:#d4ac7620;border-radius:12px;color:#e4bd90;font-size:25px;width:45px;height:45px}.brand-wordmark{color:#fbf3e6;font-size:13px;font-weight:750;letter-spacing:.1em;line-height:1.3}.brand-wordmark strong{color:#dfc39e}.brand-wordmark small{display:block;color:#9da8b4;font-size:8px;letter-spacing:.17em;margin-top:5px}
+.hero-layout{display:grid;grid-template-columns:minmax(0,1.03fr) minmax(300px,0.97fr);gap:clamp(20px,4vw,70px);align-items:center;margin:40px 0 26px}.hero-copy{max-width:660px}.hero-eyebrow,.section-eyebrow{font-size:10px;letter-spacing:.2em;color:var(--gold);font-weight:800}.hero-eyebrow{display:flex;align-items:center;gap:9px}.gold-dot{width:7px;height:7px;border-radius:50%;background:#d2ab70;box-shadow:0 0 14px #bb965c8a}.hero h1{font-size:clamp(38px,6vw,76px);margin:16px 0 16px;line-height:1.06;letter-spacing:-.052em}.hero h1 em{font-family:Georgia,'Times New Roman',serif;font-weight:400;color:#e3c8a5;letter-spacing:-.04em}.hero-copy p{font-size:clamp(14px,1.5vw,17px);max-width:540px;line-height:1.75;color:#b3bdcb}.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.hero-second{background:#ffffff0c;border:1px solid #a6a19a70;color:#e7e1d8}
+.btn,.ghost{background:#222c38;border-color:#525a62;color:#f6f2eb;transition:filter .17s,transform .17s;touch-action:manipulation;min-height:44px}.btn.primary,.chip.active,.actions button.primary{background:#dfbc8b;border-color:#dfbc8b;color:#221b17}.btn:hover,.ghost:hover{filter:brightness(1.18)}.btn:active,.ghost:active{transform:scale(.98)}
+.spotlight{position:relative;aspect-ratio:1.6;min-height:240px;border-radius:20px;overflow:hidden;border:1px solid #ead5b43c;background:linear-gradient(135deg,#1b2d3c,#362835);box-shadow:0 28px 65px #0007;isolation:isolate}.spotlight:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,#05080a08 10%,#07080c24 40%,#06070adf 100%)}.spotlight img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.9);transition:transform .5s}.spotlight:hover img{transform:scale(1.035)}.spotlight-empty{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:7px;background:radial-gradient(circle at 50% 50%,#66513b55,transparent 65%)}.spotlight-empty span{font-size:55px;color:#dcb98b}.spotlight-empty strong{font-size:21px}.spotlight-empty small{color:#b9c0c8}.spotlight-bottom{position:absolute;inset:auto 0 0;padding:25px;z-index:2;display:flex;align-items:end;gap:10px;justify-content:space-between}.spotlight-copy{min-width:0}.spotlight-copy small{display:block;color:#ebca9d;font-size:10px;letter-spacing:.11em;text-transform:uppercase;margin-bottom:6px;font-weight:800}.spotlight-copy strong{font-size:clamp(18px,2.2vw,25px);line-height:1.2;display:block;color:#fff}.spotlight-copy em{display:block;color:#d4d6da;font-size:12px;margin-top:5px;font-style:normal}.spotlight-play{border:0;background:#e9c79c;color:#241912;border-radius:50%;width:58px;height:58px;font-size:23px;flex:none}
+.stats{gap:8px;margin-top:19px}.stat{border:1px solid #ffffff16;background:#ffffff07;border-radius:11px;padding:11px 15px;flex:1;min-width:120px}.stat b{color:#f4e6d2;font-size:23px}.stat span{font-size:11px}
+main{max-width:1740px;padding:0 clamp(18px,4.5vw,70px) 110px}.showcase-section,.library-section{padding-top:46px;scroll-margin-top:20px}.section-heading{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 0 19px}.section-heading h2{font-size:clamp(25px,3.4vw,37px);font-weight:750;letter-spacing:-.044em;line-height:1.14;margin:6px 0}.section-heading p{color:#98a8ba;font-size:13px;margin:0}.quiet-action{background:transparent;color:#ddbf97;border:0;padding:10px 2px;font-weight:700}
+.collection-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.collection-card{min-height:175px;position:relative;background:linear-gradient(140deg,#28313c,#222a37);border:1px solid #3a424c;overflow:hidden;border-radius:16px;text-align:left;color:#fff;padding:0;isolation:isolate}.collection-card:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0b0f15e8,#0b0f1545 78%),linear-gradient(0deg,#05070abf,transparent 80%);z-index:1}.collection-card img{position:absolute;width:100%;height:100%;object-fit:cover;inset:0;filter:saturate(.87);transition:transform .3s}.collection-card:hover img{transform:scale(1.05)}.collection-card .collection-icon{position:absolute;top:15px;left:17px;font-size:24px;z-index:2;color:#e2c69e}.collection-copy{position:absolute;left:17px;bottom:16px;right:12px;z-index:2}.collection-copy strong{display:block;font-size:19px;letter-spacing:-.025em}.collection-copy small{display:block;font-size:11px;margin-top:5px;color:#d2dae3}.collection-arrow{position:absolute;right:15px;top:15px;z-index:3;color:#d9c7a9}
+.film-rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;overscroll-behavior-x:contain;padding:2px 0 15px}.film-tile{flex:0 0 clamp(185px,21vw,278px);scroll-snap-align:start;border:1px solid #343f4a;background:#141d28;border-radius:15px;overflow:hidden;padding:0;text-align:left;color:#f2f4f8;min-width:0}.film-tile img{display:block;aspect-ratio:16/9;width:100%;object-fit:cover;background:#222c3b}.film-tile .tile-info{padding:11px 13px 13px}.film-tile strong{display:block;font-size:14px;line-height:1.32}.film-tile small{color:#a9bac9;font-size:11px;display:block;margin-top:6px}.film-tile:hover{border-color:#a8967b}.film-empty{border:1px dashed #3c4d61;padding:22px;color:#9caabc;border-radius:12px;width:100%}
+.library-heading{margin-bottom:16px}.search-wrap{background:#181f2b;border:1px solid #3b4655;border-radius:12px;display:flex;align-items:center;flex:1 1 240px;padding-left:15px;gap:6px;color:#dabd95;min-width:0}.search-wrap input{background:transparent;border:0;outline:0;min-width:0;flex:1;width:100%;color:#f7f3ed}.tools{gap:8px}.tools select{flex:0 1 175px;min-width:135px;border-color:#3b4655;background:#181f2b}.tools .view-btn,.tools .selection-toggle{white-space:nowrap}.advanced-filters{margin-top:11px;border:1px solid #293747;border-radius:12px;background:#141c28;padding:7px 14px}.advanced-filters summary{font-size:13px;font-weight:650;cursor:pointer;list-style:none;padding:5px 1px;color:#d0d5de}.advanced-filters summary::-webkit-details-marker{display:none}.advanced-filters summary span{font-weight:400;color:#8394a8;font-size:11px;margin-left:9px}.advanced-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding:11px 0 6px}.advanced-row select{width:100%;min-width:0;border-color:#3b4655}
+.filters{padding:17px 0 8px}.chip{background:#17212e;border-color:#364556;color:#cdd3db;min-height:41px}.chip.active{font-weight:750}.panelbar{margin:10px 0 16px}.grid{gap:15px;grid-template-columns:repeat(auto-fill,minmax(236px,1fr))}.card{background:#151d27;border:1px solid #343e4a;border-radius:16px;box-shadow:none;transition:border-color .15s,transform .15s}.card:hover{border-color:#877660;transform:translateY(-2px)}.poster{aspect-ratio:16/9;background:linear-gradient(125deg,#252936,#304151,#3b3033)}.poster img{transition:transform .28s}.poster .badge{background:#06090ebd;font-size:10px;letter-spacing:.025em;color:#f1eadf}.duration{font-size:11px}.cardbody{padding:13px;gap:0}.eyebrow{color:#cfb286}.card h3{font-size:16px;line-height:1.35;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;min-height:2.7em}.card p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;color:#a3b0bf}.info{margin:auto 0 10px}.pill{background:#232e3b;color:#aebac8;font-size:10px}.pill.alert{background:#3c3327;color:#e8c69a}.actions button{background:#273446;border-color:#3f4a59;min-height:39px}.actions button.primary{background:#dfbc8b;color:#241c14}.selection-panel{border:1px solid #8a7653;background:linear-gradient(130deg,#29271f,#222736);border-radius:16px;padding:16px;display:grid;gap:11px;margin-bottom:18px}.selection-panel[hidden],.ready-section[hidden],.selection-toggle[hidden],.load-more[hidden]{display:none!important}.selection-summary{display:flex;gap:15px;align-items:baseline;flex-wrap:wrap}.selection-summary strong{color:#efdeb9;font-size:17px}.selection-summary span,.selection-help{color:#b2becb;font-size:12px;margin:0}.selection-actions{display:flex;gap:7px;flex-wrap:wrap}.selection-actions button{font-size:12px;padding:8px 11px;min-height:41px}.danger-action{border-color:#795560!important;color:#ffc7cf!important}.select-mark{background:#111b2ac7;color:#fff;border:1px solid #f0d6a8a6;position:absolute;left:10px;top:10px;z-index:2;width:36px;height:36px;border-radius:11px}.card.selected{border-color:#e7c48f;box-shadow:0 0 0 1px #e7c48f88}.card.selected .select-mark{background:#e4c08e;color:#201914}.load-more{text-align:center;margin:23px auto 10px}.load-more button{min-width:220px}
+.grid.compact{display:flex;flex-direction:column;gap:7px}.grid.compact .card{display:grid;grid-template-columns:124px minmax(0,1fr);align-items:stretch;min-height:115px}.grid.compact .poster{height:100%;aspect-ratio:auto}.grid.compact .poster .symbol{font-size:30px}.grid.compact .cardbody{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:center;padding:10px 14px}.grid.compact .card .eyebrow{grid-column:1;grid-row:1}.grid.compact .card h3{grid-column:1;grid-row:2;min-height:0;font-size:14px;display:block;white-space:nowrap;text-overflow:ellipsis}.grid.compact .card p{display:none}.grid.compact .card .info{grid-column:1;grid-row:3;max-height:33px;overflow:hidden;margin:4px 0}.grid.compact .card .actions{grid-column:2;grid-row:1/4;display:flex;align-items:center;gap:7px}.grid.compact .card .actions button{min-height:40px}.grid.compact .card .modalactions{grid-column:1/-1;margin-top:7px!important}.grid.compact .poster .badge{display:none}.grid.compact .poster .duration{font-size:10px}
+.admin-banner{background:#2e251eb8;border-color:#775d3d;color:#f1dabb;border-radius:12px;margin:19px 0 0}.admin-banner strong{color:#f0d9b6}
+dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radius:18px}dialog::backdrop{background:#05070ae9;backdrop-filter:blur(5px)}.modalhead{background:#151c27;border-color:#343e48}.modalbody video{max-height:67dvh;background:#030405;object-fit:contain}.cinema-transport{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:12px}.cinema-transport button{background:#202b3a;color:#e8e5de;border:1px solid #435064;border-radius:9px;min-height:42px;min-width:50px;padding:7px 11px}.cinema-transport button:last-child{margin-left:7px;color:#efcc9f}.bottom-nav{display:none}
+@media(max-width:1050px){.hero-layout{grid-template-columns:minmax(0,1fr) minmax(240px,.92fr);gap:22px}.collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stats .stat{flex:1 1 25%}}
+@media(max-width:720px){
+ .hero{padding:16px 16px 24px}.hero-layout{grid-template-columns:1fr;margin:28px 0 22px;gap:20px}.hero h1{font-size:clamp(38px,8vw,55px);margin:13px 0}.hero-copy p{font-size:14px}.spotlight{min-height:0;aspect-ratio:16/9}.spotlight-bottom{padding:14px}.spotlight-copy strong{font-size:17px}.spotlight-play{width:46px;height:46px;font-size:20px}.top-actions .desktop-label{display:none}.top-actions{gap:5px}.top-actions .ghost,.top-actions .btn{padding:7px 10px;min-height:42px;font-size:12px}.top-search span{display:none}.brand-wordmark{font-size:11px}.brand-wordmark small{font-size:7px}.brand-icon{width:38px;height:38px;font-size:22px}.hero-cta .btn{flex:1;min-width:120px;padding:11px 9px;font-size:12px}.stats{gap:5px}.stat{min-width:0;flex:1 1 29%;padding:8px 10px}.stat b{font-size:18px}.stat span{font-size:10px}
+ main{padding:0 16px calc(90px + env(safe-area-inset-bottom))}.showcase-section,.library-section{padding-top:33px}.section-heading h2{font-size:27px}.section-heading p{font-size:12px}.collection-grid{gap:9px}.collection-card{min-height:145px}.collection-copy{left:12px;bottom:12px}.collection-copy strong{font-size:16px}.collection-icon{left:12px!important;top:12px!important}.film-tile{flex-basis:210px}.tools{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.search-wrap{grid-column:1/-1}.tools select{grid-column:1;min-width:0;width:100%}.view-btn{grid-column:2}.selection-toggle{grid-column:1/-1;width:100%}.advanced-row{grid-template-columns:1fr;gap:7px}.advanced-filters summary span{display:none}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.poster{aspect-ratio:16/10}.cardbody{padding:11px}.card h3{font-size:14px}.card p{display:none}.info .pill:nth-child(n+3){display:none}.actions{grid-template-columns:1fr auto}.actions button{min-height:42px;padding:8px 5px;font-size:11px}.actions button[data-act="download"]{display:none}.actions button:last-child{grid-column:auto}.card .eyebrow{font-size:10px}.card .modalactions{display:flex}.card .modalactions .ghost{font-size:11px;padding:6px}.grid.compact .card{grid-template-columns:100px minmax(0,1fr)}.grid.compact .cardbody{padding:9px 10px;display:flex;flex-direction:column;align-items:stretch;justify-content:center}.grid.compact .card h3{margin:2px 0}.grid.compact .card .actions{justify-content:flex-start;gap:6px}.grid.compact .card .actions button{font-size:11px}.grid.compact .card .info{margin:1px 0 5px}.grid.compact .card .poster{min-height:105px}.grid.compact .poster .duration{bottom:5px;right:5px}
+ .bottom-nav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:8;background:#101720f4;border-top:1px solid #57483b;box-shadow:0 -10px 35px #0008;padding:8px max(9px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(9px,env(safe-area-inset-right));justify-content:space-around;backdrop-filter:blur(18px)}.bottom-nav button{border:0;background:transparent;color:#93a2b8;min-width:66px;min-height:47px;display:flex;gap:1px;align-items:center;justify-content:center;flex-direction:column;font-size:10px}.bottom-nav button.active{color:#e8c295}.nav-glyph{font-size:21px;line-height:1.2}.foot{margin-top:20px;font-size:11px}
+ dialog{width:100vw;max-height:96dvh;margin:auto 0 0;position:fixed;bottom:0;left:0;border-radius:17px 17px 0 0}.modalbody{padding:12px}.modalhead{padding:12px 14px}.modalbody video{max-height:60dvh}.cinema-transport{gap:4px}.cinema-transport button{min-width:44px;padding:8px 7px}.formgrid{grid-template-columns:1fr}
+}
+@media(max-width:385px){.grid{grid-template-columns:1fr 1fr}.hero-copy h1{font-size:36px}.brand-wordmark small{display:none}.brand-icon{width:34px;height:34px}.top-actions{gap:3px}.top-actions .ghost,.top-actions .btn{padding:7px}.collection-copy strong{font-size:14px}.grid.compact .card{grid-template-columns:85px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
+
+
+.group-versions{display:flex;align-items:center;gap:8px;padding:6px 0 9px;font-size:12px;color:#c7b798}.group-versions input{width:17px;height:17px;min-height:0;accent-color:#dbb987}.studio-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 20px}.studio-metrics div{background:#222c37;border:1px solid #3e4753;border-radius:11px;padding:10px}.studio-metrics b{display:block;color:#e0bf92;font-size:20px}.studio-metrics span{font-size:11px;color:#b6c1d0}.film-placeholder{height:160px;display:grid;place-items:center;background:linear-gradient(135deg,#292e3a,#46382c);font-size:40px;color:#e0bf92}@media(max-width:720px){.studio-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.studio-metrics div{padding:7px}.studio-metrics b{font-size:18px}.studio-metrics span{font-size:10px}}
 </style>
 </head>
 <body>
-<header class="hero">
- <div class="top"><div class="mark">✦ VIDEO LIBRARY STUDIO <span style="color:#8092b1;font-weight:500">/ CREATIVE ARCHIVE</span></div>
- <div class="top-actions"><button class="ghost" id="exportCSV">⇩ Catalogo CSV</button><button class="ghost" id="refresh">↻ Aggiorna</button><button class="btn" id="adminOpen">⚙ Gestione</button></div></div>
- <h1>I tuoi video.<br>Tutti in un posto.</h1>
- <p>Esplora le produzioni, guarda le anteprime, riconosci le versioni, scarica gli originali e condividi i tuoi preferiti.</p>
- <div class="stats"><div class="stat"><b id="nVideos">—</b><span>Video disponibili</span></div><div class="stat"><b id="nPosters">—</b><span>Copertine</span></div><div class="stat"><b id="nGpt">—</b><span>Solo su ChatGPT</span></div><div class="stat"><b id="nProjects">—</b><span>Categorie</span></div><div class="stat"><b id="nHours">—</b><span>Ore di video rilevate</span></div></div>
+<header class="hero" id="home">
+ <div class="top">
+  <a href="#home" class="brand" aria-label="Video Library Studio, torna all'inizio">
+   <span class="brand-icon">✦</span><span class="brand-wordmark">VIDEO LIBRARY <strong>STUDIO</strong><small>CREATIVE CINEMA ARCHIVE</small></span>
+  </a>
+  <div class="top-actions">
+   <button class="ghost top-search" id="topSearch" aria-label="Vai alla ricerca">⌕ <span>Cerca</span></button>
+   <button class="ghost" id="exportCSV" title="Esporta catalogo CSV">⇩ <span class="desktop-label">Catalogo</span></button>
+   <button class="ghost" id="refresh" title="Aggiorna il catalogo">↻ <span class="desktop-label">Aggiorna</span></button>
+   <button class="btn studio-top" id="adminOpen">⚙ <span>Studio</span></button>
+  </div>
+ </div>
+ <div class="hero-layout">
+  <div class="hero-copy">
+   <div class="hero-eyebrow"><span class="gold-dot"></span> LA TUA CINETECA CREATIVA</div>
+   <h1>Ogni immagine.<br><em>Una nuova storia.</em></h1>
+   <p>Un unico posto per esplorare le tue opere, rivivere i video e dare forma alle prossime produzioni.</p>
+   <div class="hero-cta"><button class="btn primary" id="heroExplore">▶ Esplora i video</button><button class="btn hero-second" id="heroStudio">✧ Entra nello Studio</button></div>
+  </div>
+  <div class="spotlight" id="spotlight"><div class="spotlight-empty"><span>✦</span><strong>In primo piano</strong><small>La tua selezione cinematografica</small></div></div>
+ </div>
+ <div class="stats"><div class="stat"><b id="nVideos">—</b><span>Riproducibili</span></div><div class="stat"><b id="nPosters">—</b><span>Copertine</span></div><div class="stat"><b id="nGpt">—</b><span>In attesa da ChatGPT</span></div><div class="stat"><b id="nProjects">—</b><span>Generi</span></div><div class="stat"><b id="nHours">—</b><span>Ore di cinema</span></div></div>
 </header>
 <main>
 <div class="admin-banner" id="adminBanner">🔒 <strong>Gestione privata attiva.</strong> Le modifiche sono salvate nel catalogo online. Nascondere un video non elimina il file originale. <button class="ghost" id="adminLogout" style="margin-left:8px;padding:5px 10px;min-height:30px">Esci</button></div>
-<div class="tools"><select id="availability" aria-label="Disponibilità video"><option value="">Tutti i video</option><option value="online">▶ Riproducibili</option><option value="chatgpt">☁ Solo su ChatGPT</option></select><input id="query" type="search" placeholder="🔎 Cerca titolo, artista, opera, argomento…"><select id="project"><option value="">Tutti i progetti</option></select><select id="sort"><option value="recent">Più recenti</option><option value="title">Titolo A–Z</option><option value="duration">Durata maggiore</option><option value="size">File più grandi</option><option value="favorites">Preferiti</option></select><select id="versions"><option value="">Tutte le versioni</option><option value="final">Solo finali</option><option value="draft">Bozze / provini</option><option value="variants">Possibili varianti</option></select></div>
+<section class="showcase-section" id="collections" aria-labelledby="collectionsTitle">
+ <div class="section-heading"><div><div class="section-eyebrow">ESPLORA PER MONDO</div><h2 id="collectionsTitle">Le tue collezioni</h2><p>Ogni genere ha un'atmosfera. Scegli dove entrare.</p></div></div>
+ <div class="collection-grid" id="collectionGrid"></div>
+</section>
+<section class="showcase-section" id="recent" aria-labelledby="recentTitle">
+ <div class="section-heading"><div><div class="section-eyebrow">FRESCHI DI PRODUZIONE</div><h2 id="recentTitle">Appena arrivati</h2><p>Gli ultimi filmati già disponibili per la visione.</p></div><button class="quiet-action" id="browseRecent">Esplora archivio ↗</button></div>
+ <div class="film-rail" id="latestRail"></div>
+</section>
+<section class="showcase-section ready-section" id="ready" aria-labelledby="readyTitle" hidden>
+ <div class="section-heading"><div><div class="section-eyebrow">AREA EDITORIALE PRIVATA</div><h2 id="readyTitle">Pronti da pubblicare</h2><p>Video marcati come finali, pronti per la revisione.</p></div></div>
+ <div class="studio-metrics" id="studioMetrics"></div><div class="film-rail" id="readyRail"></div>
+</section>
+<section class="library-section" id="library" aria-labelledby="libraryTitle">
+ <div class="section-heading library-heading"><div><div class="section-eyebrow">TUTTO L'ARCHIVIO</div><h2 id="libraryTitle">La videoteca completa</h2><p>Cerca, filtra e organizza senza perdere nessun file.</p></div></div>
+<div class="tools">
+ <label class="search-wrap" for="query"><span aria-hidden="true">⌕</span><input id="query" type="search" placeholder="Cerca titoli, artisti, opere, temi…" autocomplete="off" aria-label="Cerca nei video"></label>
+ <select id="availability" aria-label="Disponibilità"><option value="">Tutti i video</option><option value="online">▶ Riproducibili</option><option value="chatgpt">☁ Solo ChatGPT</option></select>
+ <button class="ghost view-btn" id="compactToggle" type="button" aria-pressed="false">☷ <span>Vista compatta</span></button>
+ <button class="ghost selection-toggle" id="selectionToggle" type="button" aria-pressed="false" hidden>☑ <span>Seleziona</span></button>
+</div>
+<details class="advanced-filters" id="advancedFilters"><summary>☷ Filtri avanzati <span>Progetto · ordinamento · versione</span></summary><div class="advanced-row">
+ <select id="project" aria-label="Filtra per progetto"><option value="">Tutti i progetti</option></select>
+ <select id="sort" aria-label="Ordina video"><option value="recent">Più recenti</option><option value="title">Titolo A–Z</option><option value="duration">Durata maggiore</option><option value="size">File più grandi</option><option value="favorites">Preferiti</option></select>
+ <select id="versions" aria-label="Filtra per versione"><option value="">Tutte le versioni</option><option value="final">Solo finali</option><option value="draft">Bozze / provini</option><option value="variants">Possibili varianti</option></select>
+ </div><label class="group-versions"><input id="groupVariants" type="checkbox"> Raggruppa le versioni riconosciute (senza eliminare file)</label></details>
 <p class="notice">I video con il simbolo ☁ sono presenti nella libreria ChatGPT ma non ancora riproducibili da questo sito. Per guardare o scaricare un video serve il trasferimento del suo file originale.</p><div class="filters" id="filters"></div>
-<div class="panelbar"><p id="counter">Caricamento archivio...</p><label class="toggle" id="archivedToggle" style="display:none"><input id="includeArchived" type="checkbox"> Mostra anche archiviati</label></div>
-<div class="grid" id="grid"><div class="loading">Sto leggendo i video dall'archivio…</div></div>
+<div class="panelbar"><p id="counter">Caricamento archivio...</p><label class="toggle" id="archivedToggle" style="display:none"><input id="includeArchived" type="checkbox"> Mostra archiviati</label></div>
+<div class="selection-panel" id="selectionPanel" hidden>
+ <div class="selection-summary"><strong id="selectedCount">0 selezionati</strong><span>Azioni applicate soltanto ai video scelti</span></div>
+ <div class="selection-actions">
+  <button class="ghost" id="selectAllVisible" type="button">☑ Seleziona visibili (max 40)</button>
+  <button class="ghost" id="clearSelected" type="button">✕ Deseleziona</button>
+  <button class="btn" id="batchFavorite" type="button">♡ Preferiti</button>
+  <button class="btn" id="batchFinal" type="button">✓ Finale</button>
+  <button class="btn" id="batchDraft" type="button">◌ Provino</button>
+  <button class="ghost danger-action" id="batchArchive" type="button">⊟ Archivia</button>
+ </div><p class="selection-help" id="batchMessage">Nessuna eliminazione definitiva in blocco: gli originali restano al sicuro.</p>
+</div>
+<div class="grid" id="grid"><div class="loading">Sto leggendo i video dall'archivio…</div></div><div class="load-more" id="moreRow" hidden><button class="btn" type="button" id="moreVideos">Mostra altri video ↓</button></div>
 <div class="foot">Le anteprime sono immagini leggere e non scaricano l'intero MP4. La data ChatGPT compare soltanto quando ricavabile dal file originale; altrimenti è indicata la data di importazione. Il riconoscimento delle varianti è indicativo, non una verifica di identità dei contenuti.</div>
+</section>
 </main>
-<dialog id="player"><div class="modalhead"><h2 id="playerTitle">Video</h2><button class="ghost" data-close="player">✕ Chiudi</button></div><div class="modalbody"><video id="video" controls playsinline preload="metadata"></video><p class="modalinfo" id="playerInfo"></p><div class="modalactions"><button class="btn primary" id="playerDownload">↓ Scarica originale</button><button class="btn" id="playerShare">↗ Condividi</button><button class="ghost" id="playerDetails">ℹ Scheda</button></div></div></dialog>
+<nav class="bottom-nav" aria-label="Navigazione principale"><button type="button" data-section="home" class="active"><span class="nav-glyph">⌂</span><span>Home</span></button><button type="button" data-section="library"><span class="nav-glyph">▣</span><span>Video</span></button><button type="button" data-section="collections"><span class="nav-glyph">◫</span><span>Raccolte</span></button><button type="button" data-section="studio"><span class="nav-glyph">⚙</span><span>Studio</span></button></nav>
+<dialog id="player"><div class="modalhead"><h2 id="playerTitle">Video</h2><button class="ghost" data-close="player">✕ Chiudi</button></div><div class="modalbody"><video id="video" controls playsinline preload="metadata"></video>
+<div class="cinema-transport" aria-label="Controlli di riproduzione aggiuntivi">
+ <button id="playerPrevious" type="button" aria-label="Video precedente" title="Video precedente">⏮</button>
+ <button id="playerRewind" type="button" aria-label="Torna indietro 10 secondi">↶ 10s</button>
+ <button id="playerForward" type="button" aria-label="Avanza di 10 secondi">10s ↷</button>
+ <button id="playerNext" type="button" aria-label="Video successivo" title="Video successivo">⏭</button>
+ <button id="playerSpeed" type="button" aria-label="Velocità di riproduzione">1×</button>
+</div><p class="modalinfo" id="playerInfo"></p><div class="modalactions"><button class="btn primary" id="playerDownload">↓ Scarica originale</button><button class="btn" id="playerShare">↗ Condividi</button><button class="ghost" id="playerDetails">ℹ Scheda</button></div></div></dialog>
 <dialog id="detail"><div class="modalhead"><h2 id="detailTitle">Scheda video</h2><button class="ghost" data-close="detail">✕ Chiudi</button></div><div class="modalbody" id="detailBody"></div></dialog>
 <dialog id="edit"><div class="modalhead"><h2>Modifica scheda</h2><button class="ghost" data-close="edit">✕ Chiudi</button></div><div class="modalbody"><form id="editForm" class="formgrid"><label class="field full">Titolo<input name="title" maxlength="160"></label><label class="field">Categoria<select name="category"><option>Artisti e pittura</option><option>Critica d’arte</option><option>Libri raccontati</option><option>Musica e visual</option><option>Cronaca e attualità</option><option>Altri progetti</option></select></label><label class="field">Stato della versione<select name="version"><option value="unknown">Da verificare</option><option value="final">Versione finale</option><option value="draft">Bozza / provino</option><option value="variant">Variante / seconda versione</option></select></label><label class="field full">Descrizione<textarea name="description" maxlength="1200"></textarea></label><label class="field full">Note editoriali (solo per la gestione)<textarea name="note" maxlength="1200"></textarea></label><div class="field full"><div class="modalactions"><button class="btn primary" type="submit">Salva scheda</button><button class="btn" type="button" id="archiveToggle">Nascondi dal catalogo</button><button class="ghost" type="button" id="favoriteToggle">☆ Preferito</button><button class="ghost" type="button" id="deleteForever" style="border-color:#9c5765;color:#f8b4bc">🗑 Elimina file definitivamente</button></div><div class="notice">Nascondere equivale ad archiviare: non cancella il file MP4. Puoi ripristinarlo quando vuoi.</div></div></form></div></dialog>
 <dialog id="adminDialog"><div class="modalhead"><h2>Accesso gestione privata</h2><button class="ghost" data-close="adminDialog">✕ Chiudi</button></div><div class="modalbody"><p class="modalinfo">Per modificare titoli, versioni, preferiti o nascondere video usa il tuo collegamento amministratore privato oppure inserisci la chiave di gestione.</p><form id="adminForm"><label class="field">Chiave di gestione<input id="adminKey" type="password" autocomplete="off" placeholder="Incolla la chiave privata"></label><button class="btn primary" style="margin-top:14px" type="submit">Accedi</button></form></div></dialog>
@@ -34,7 +127,7 @@
 <script>
 (function(){
 'use strict';
-const $=s=>document.querySelector(s), g={items:[],category:'Tutti',admin:false,token:'',selected:null,override:{}};
+const $=s=>document.querySelector(s), g={items:[],category:'Tutti',admin:false,token:'',selected:null,override:{},studio:false,selectionMode:false,selectedKeys:new Set(),showLimit:36,compact:false,shownCache:[]};
 const fmtDate=s=>{if(!s)return 'Non disponibile';try{return new Intl.DateTimeFormat('it-IT',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(s))}catch{return 'Non disponibile'}};
 const dur=v=>{const n=Number(v);if(!Number.isFinite(n)||n<=0)return 'Da rilevare';const s=Math.round(n);return s>=3600?Math.floor(s/3600)+'h '+String(Math.floor(s%3600/60)).padStart(2,'0')+'m':Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
 const size=v=>v>=1e9?(v/1e9).toFixed(2)+' GB':(v/1e6).toFixed(1)+' MB';
@@ -64,17 +157,166 @@ const version=/provino|prova|anteprima|test|collaudo|base_/i.test(n)?'draft':/fi
 return {title,description,category,project,kind,artist:artis,version}}
 const base=k=>norm(k.replace(/\.(mp4|m4v|mov)$/i,'').replace(/__\d+$/,'').replace(/[_\s-]v\d+(?:_\d+)?$/i,'').replace(/[^a-z0-9]+/g,''));
 function decorate(list){const groups={},fingerprints={};for(const x of list){x.guess=inferred(x);x.viewTitle=x.title||x.guess.title;x.viewCategory=x.category||x.guess.category;x.viewDescription=x.description||x.guess.description;x.viewProject=x.project||x.guess.project;x.viewVersion=x.version||x.guess.version;const k=base(x.key);(groups[k]||(groups[k]=[])).push(x);if(x.contentHash){const id=String(x.size)+'|'+x.contentHash;(fingerprints[id]||(fingerprints[id]=[])).push(x)}}for(const x of list){const peers=groups[base(x.key)]||[];x.variants=peers.length-1;x.variantGroup=peers.map(p=>p.key);x.sameContent=x.contentHash?(fingerprints[String(x.size)+'|'+x.contentHash]||[]).filter(p=>p.key!==x.key).map(p=>p.name||p.key):[];if(x.variants>0&&x.viewVersion==='unknown')x.viewVersion='variant';}return list}
+
+function sortedFresh(a){return [...a].sort((x,y)=>Date.parse(y.gptCreatedAt||y.uploaded||0)-Date.parse(x.gptCreatedAt||x.uploaded||0))}
+const gotoSection=(name)=>{
+ const el=document.getElementById(name);if(!el)return;
+ el.scrollIntoView({behavior:'smooth',block:'start'});
+ document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.section===name));
+};
+function safePublished(){return g.items.filter(x=>!x.hidden);}
+function makeFilmTile(x){
+ const button=document.createElement('button');button.type='button';button.className='film-tile';
+ button.setAttribute('aria-label','Riproduci '+x.viewTitle);
+ button.innerHTML=(x.cover?'<img loading="lazy" decoding="async" src="'+h(x.cover)+'" alt="">':'<div class="film-placeholder">✦</div>')+
+  '<div class="tile-info"><strong>'+h(x.viewTitle)+'</strong><small>'+h(x.viewCategory)+' · '+h(dur(x.duration))+'</small></div>';
+ button.onclick=()=>play(x);
+ return button;
+}
+function populateRail(where,items,empty){
+ const el=$(where);el.replaceChildren();
+ if(!items.length){const p=document.createElement('div');p.className='film-empty';p.textContent=empty;el.append(p);return}
+ const frag=document.createDocumentFragment();
+ items.forEach(x=>frag.append(makeFilmTile(x)));
+ el.append(frag);
+}
+function renderHome(){
+ if(!g.items.length)return;
+ const visible=safePublished(),available=visible.filter(x=>x.available!==false);
+ const spotlight=$('#spotlight');
+ const heroCandidates=sortedFresh(available.filter(x=>x.cover));
+ heroCandidates.sort((a,b)=>(b.viewVersion==='final')-(a.viewVersion==='final'));
+ const choice=heroCandidates[0]||sortedFresh(available)[0];
+ if(choice){
+  spotlight.replaceChildren();
+  const img=choice.cover?'<img src="'+h(choice.cover)+'" alt="" decoding="async">':'<div class="spotlight-empty"><span>✦</span></div>';
+  spotlight.innerHTML=img+'<div class="spotlight-bottom"><div class="spotlight-copy"><small>✦ In primo piano · '+h(choice.viewProject)+'</small><strong>'+h(choice.viewTitle)+'</strong><em>'+h(dur(choice.duration))+' · Guarda il filmato</em></div><button type="button" class="spotlight-play" aria-label="Riproduci '+h(choice.viewTitle)+'">▶</button></div>';
+  spotlight.querySelector('.spotlight-play').onclick=()=>play(choice);
+ }else spotlight.innerHTML='<div class="spotlight-empty"><span>✦</span><strong>Nessun filmato riproducibile</strong><small>Importa il primo video</small></div>';
+ const priority=['Artisti e pittura','Musica e visual','Libri raccontati','Critica d’arte','Cronaca e attualità','Altri progetti'];
+ const categories=[...new Set(visible.map(x=>x.viewCategory))].sort((a,b)=>priority.indexOf(a)===-1?1:priority.indexOf(b)===-1?-1:priority.indexOf(a)-priority.indexOf(b));
+ const grid=$('#collectionGrid');grid.replaceChildren();
+ const glyph={'Artisti e pittura':'✦','Musica e visual':'♫','Libri raccontati':'▤','Critica d’arte':'◈','Cronaca e attualità':'◎','Altri progetti':'◫'};
+ for(const category of categories.slice(0,8)){
+  const records=visible.filter(x=>x.viewCategory===category),poster=sortedFresh(records.filter(x=>x.cover&&x.available!==false))[0];
+  const b=document.createElement('button');b.type='button';b.className='collection-card';b.setAttribute('aria-label','Esplora '+category);
+  b.innerHTML=(poster?'<img loading="lazy" src="'+h(poster.cover)+'" alt="">':'')+'<span class="collection-icon">'+(glyph[category]||'✧')+'</span><span class="collection-arrow">↗</span><span class="collection-copy"><strong>'+h(category)+'</strong><small>'+records.length+' produzioni</small></span>';
+  b.onclick=()=>{g.category=category;g.showLimit=36;categories();draw();gotoSection('library')};
+  grid.append(b);
+ }
+ const newest=sortedFresh(available).slice(0,12);
+ populateRail('#latestRail',newest,'Non ci sono ancora video pronti alla riproduzione.');
+ const studioFacts=[
+  ['Totale schede',g.items.length],
+  ['Finali',visible.filter(x=>x.viewVersion==='final').length],
+  ['Provini',visible.filter(x=>x.viewVersion==='draft').length],
+  ['Da ChatGPT',visible.filter(x=>x.available===false).length],
+  ['Varianti',visible.filter(x=>x.variants>0).length]
+ ];
+ $('#studioMetrics').innerHTML=studioFacts.map(([name,num])=>'<div><b>'+num+'</b><span>'+h(name)+'</span></div>').join('');
+ const ready=sortedFresh(available.filter(x=>x.viewVersion==='final')).slice(0,12);
+ populateRail('#readyRail',ready,'Nessun filmato è ancora stato marcato come finale.');
+}
+function applyStudioVisibility(){
+ const active=!!(g.admin&&g.studio);
+ $('#ready').hidden=!active;
+ $('#selectionToggle').hidden=!active;
+ if(!active){g.selectionMode=false;g.selectedKeys.clear()}
+ $('#selectionToggle').setAttribute('aria-pressed',String(g.selectionMode));
+ $('#selectionToggle').innerHTML=g.selectionMode?'✕ <span>Termina selezione</span>':'☑ <span>Seleziona video</span>';
+ $('#selectionPanel').hidden=!(active&&g.selectionMode);
+ document.body.classList.toggle('studio-on',active);
+ updateSelectionPanel();
+}
+function enterStudio(){
+ if(!g.admin){$('#adminDialog').showModal();return}
+ g.studio=true;
+ applyStudioVisibility();
+ renderHome();draw();gotoSection('ready');
+}
+function updateSelectionPanel(){
+ const count=g.selectedKeys.size;$('#selectedCount').textContent=count+' video selezionat'+(count===1?'o':'i');
+ $('#selectionPanel').hidden=!(g.admin&&g.studio&&g.selectionMode);
+ for(const id of ['batchFavorite','batchFinal','batchDraft','batchArchive','clearSelected'])$('#'+id).disabled=!count;
+}
+async function batchPatch(patch,label){
+ if(!g.admin||!g.studio||!g.selectionMode||!g.selectedKeys.size)return;
+ const names=[...g.selectedKeys].slice(0,40),map=new Map(g.items.map(x=>[x.key,x]));
+ const chosen=names.map(k=>map.get(k)).filter(Boolean);
+ if(!chosen.length){g.selectedKeys.clear();updateSelectionPanel();return}
+ if(!confirm('Applicare «'+label+'» a '+chosen.length+' schede selezionate? Nessun file originale verrà eliminato.'))return;
+ const controls=['batchFavorite','batchFinal','batchDraft','batchArchive','clearSelected','selectAllVisible'];
+ controls.forEach(id=>$('#'+id).disabled=true);
+ let ok=0,bad=0;
+ try{
+  for(const x of chosen){
+   $('#batchMessage').textContent='Elaborazione '+(ok+bad+1)+'/'+chosen.length+': '+x.viewTitle;
+   try{
+    const r=await fetch('/api/manage',{method:'POST',headers:{'content-type':'application/json','Authorization':'Bearer '+g.token},body:JSON.stringify({key:x.key,patch})});
+    if(!r.ok)throw Error('HTTP '+r.status);
+    ok++;
+   }catch(e){bad++;console.warn('Aggiornamento rifiutato',x.key,e)}
+  }
+ }finally{
+  g.selectedKeys.clear();
+  $('#batchMessage').textContent='Completato: '+ok+' salvati'+(bad?', '+bad+' non aggiornati':'')+'. I video originali non sono stati eliminati.';
+  updateSelectionPanel();
+  await load(true);
+ }
+}
+
 let last=0;
-async function load(force){if(!force&&Date.now()-last<9000)return;last=Date.now();$('#counter').textContent='Aggiornamento archivio…';try{const res=await fetch('/api/catalog',{cache:'no-store',headers:g.token?{'Authorization':'Bearer '+g.token}:{}});if(!res.ok)throw Error('Impossibile leggere il catalogo ('+res.status+')');const data=await res.json();g.admin=!!data.admin;g.items=decorate(data.items||[]);g.override=data.overrides||{};$('#adminBanner').classList.toggle('show',g.admin);$('#archivedToggle').style.display=g.admin?'flex':'none';const projects=[...new Set(g.items.map(x=>x.viewProject))].sort();const selected=$('#project').value;$('#project').replaceChildren(new Option('Tutti i progetti',''));projects.forEach(p=>$('#project').add(new Option(p,p)));$('#project').value=projects.includes(selected)?selected:'';let total=g.items.filter(x=>!x.hidden);const online=total.filter(x=>x.available!==false);$('#nVideos').textContent=online.length;$('#nGpt').textContent=total.length-online.length;$('#nPosters').textContent=online.filter(x=>x.cover).length;$('#nProjects').textContent=new Set(total.map(x=>x.viewCategory)).size;const hours=total.reduce((s,x)=>s+(Number(x.duration)||0),0)/3600;$('#nHours').textContent=hours?hours.toFixed(1).replace('.',','):'—';categories();draw();}catch(e){log(e.message);$('#counter').textContent='Errore durante il caricamento. Riprova con Aggiorna.'}}
-function categories(){const cats=['Tutti',...new Set(g.items.map(x=>x.viewCategory))];const nav=$('#filters');nav.replaceChildren();cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(g.category===c?' active':'');b.textContent=c;b.onclick=()=>{g.category=c;categories();draw()};nav.append(b)});}
-function filtered(){const q=norm($('#query').value),p=$('#project').value,sort=$('#sort').value,ver=$('#versions').value,arc=$('#includeArchived').checked,where=$('#availability').value;let arr=g.items.filter(x=>(!x.hidden||(g.admin&&arc))&&(!where||(where==='online'?x.available!==false:x.available===false))&&(g.category==='Tutti'||x.viewCategory===g.category)&&(!p||x.viewProject===p)&&(!ver||(ver==='final'&&x.viewVersion==='final')||(ver==='draft'&&x.viewVersion==='draft')||(ver==='variants'&&x.variants>0))&&norm([x.viewTitle,x.key,x.viewDescription,x.viewProject,x.guess.artist].join(' ')).includes(q));arr.sort((a,b)=>sort==='title'?a.viewTitle.localeCompare(b.viewTitle,'it'):sort==='duration'?(b.duration||0)-(a.duration||0):sort==='size'?b.size-a.size:sort==='favorites'?Number(!!b.favorite)-Number(!!a.favorite):Date.parse(b.gptCreatedAt||b.uploaded||0)-Date.parse(a.gptCreatedAt||a.uploaded||0));return arr}
-function draw(){let arr=filtered(),node=$('#grid');node.replaceChildren();$('#counter').textContent=arr.length+' video mostrati · '+g.items.filter(x=>x.variants>0).length+' possibili varianti riconosciute';if(!arr.length){node.innerHTML='<div class="empty">Nessun video corrisponde ai filtri. Prova una ricerca diversa.</div>';return}const frag=document.createDocumentFragment();for(const x of arr){const card=document.createElement('article');card.className='card'+(x.hidden?' archived':'');const cover=x.cover?'<img alt="Copertina di '+h(x.viewTitle)+'" loading="lazy" decoding="async" src="'+h(x.cover)+'" onerror="this.remove()">':'';const tags=['<span class="pill">'+h(x.viewProject)+'</span>'];if(x.viewVersion==='final')tags.push('<span class="pill">✓ Finale</span>');if(x.viewVersion==='draft')tags.push('<span class="pill alert">Bozza</span>');if(x.variants>0)tags.push('<span class="pill alert">≈ '+x.variants+' varianti</span>');if(x.sameContent?.length)tags.push('<span class="pill alert">≡ '+x.sameContent.length+' copie uguali</span>');if(x.hidden)tags.push('<span class="pill alert">Nascosto</span>');let date=x.gptCreatedAt?'ChatGPT '+fmtDate(x.gptCreatedAt):'Importato '+fmtDate(x.uploaded);if(x.available===false)tags.unshift('<span class="pill alert">☁ Solo in ChatGPT</span>');card.innerHTML='<div class="poster"><span class="symbol">'+(x.viewCategory==='Libri raccontati'?'📖':x.viewCategory==='Musica e visual'?'♫':'✦')+'</span>'+cover+'<span class="badge">'+h(x.guess.kind)+'</span><span class="duration">'+(x.available===false&&!x.duration?'Solo GPT':h(dur(x.duration)))+'</span>'+(g.admin?'<button class="heart'+(x.favorite?' on':'')+'" data-act="fav" aria-label="Preferito">'+(x.favorite?'♥':'♡')+'</button>':'')+'</div><div class="cardbody"><div class="eyebrow">'+h(x.viewCategory)+'</div><h3>'+h(x.viewTitle)+'</h3><p>'+h(x.viewDescription)+'</p><div class="info">'+tags.join('')+'<span class="pill">'+h(size(x.size))+'</span><span class="pill">'+h(date)+'</span></div><div class="actions">'+(x.available===false?'<button disabled>☁ Su ChatGPT</button><button data-act="detail">ℹ Scheda</button>':'<button class="primary" data-act="play">▶ Guarda</button><button data-act="download">↓ Scarica</button><button data-act="detail">··· Altro</button>')+'</div>'+(g.admin?'<div class="modalactions" style="margin-top:9px"><button class="ghost" data-act="hide">'+(x.hidden?'↩ Ripristina':'⤓ Rimuovi dal sito')+'</button><button class="ghost" data-act="edit">✎ Modifica</button></div>':'')+'</div>';card.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act;if(a==='play')play(x);else if(a==='download')location.href=fullURL(x);else if(a==='detail')details(x);else if(a==='fav')manage(x,{favorite:!x.favorite});else if(a==='hide')hide(x);else if(a==='edit')edit(x)});frag.append(card)}node.append(frag)}
-function play(x){if(x.available===false){log('Video presente solo in ChatGPT: trasferimento non ancora disponibile');return}g.selected=x;$('#playerTitle').textContent=x.viewTitle;$('#playerInfo').textContent=dur(x.duration)+' · '+size(x.size)+' · '+x.viewCategory;$('#video').src=mediaURL(x);if(x.cover)$('#video').poster=x.cover;else $('#video').removeAttribute('poster');$('#player').showModal();$('#video').play().catch(()=>{});}
+async function load(force){if(!force&&Date.now()-last<9000)return;last=Date.now();$('#counter').textContent='Aggiornamento archivio…';try{const res=await fetch('/api/catalog',{cache:'no-store',headers:g.token?{'Authorization':'Bearer '+g.token}:{}});if(!res.ok)throw Error('Impossibile leggere il catalogo ('+res.status+')');const data=await res.json();g.admin=!!data.admin;g.items=decorate(data.items||[]);g.override=data.overrides||{};$('#adminBanner').classList.toggle('show',g.admin);$('#archivedToggle').style.display=g.admin?'flex':'none';const projects=[...new Set(g.items.map(x=>x.viewProject))].sort();const selected=$('#project').value;$('#project').replaceChildren(new Option('Tutti i progetti',''));projects.forEach(p=>$('#project').add(new Option(p,p)));$('#project').value=projects.includes(selected)?selected:'';let total=g.items.filter(x=>!x.hidden);const online=total.filter(x=>x.available!==false);$('#nVideos').textContent=online.length;$('#nGpt').textContent=total.length-online.length;$('#nPosters').textContent=online.filter(x=>x.cover).length;$('#nProjects').textContent=new Set(total.map(x=>x.viewCategory)).size;const hours=total.reduce((s,x)=>s+(Number(x.duration)||0),0)/3600;$('#nHours').textContent=hours?hours.toFixed(1).replace('.',','):'—';categories();renderHome();applyStudioVisibility();draw();}catch(e){log(e.message);$('#counter').textContent='Errore durante il caricamento. Riprova con Aggiorna.'}}
+function categories(){const cats=['Tutti',...new Set(g.items.map(x=>x.viewCategory))];const nav=$('#filters');nav.replaceChildren();cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(g.category===c?' active':'');b.textContent=c;b.onclick=()=>{g.category=c;g.showLimit=36;categories();draw()};nav.append(b)});}
+function filtered(){const q=norm($('#query').value),p=$('#project').value,sort=$('#sort').value,ver=$('#versions').value,arc=$('#includeArchived').checked,where=$('#availability').value;let arr=g.items.filter(x=>(!x.hidden||(g.admin&&arc))&&(!where||(where==='online'?x.available!==false:x.available===false))&&(g.category==='Tutti'||x.viewCategory===g.category)&&(!p||x.viewProject===p)&&(!ver||(ver==='final'&&x.viewVersion==='final')||(ver==='draft'&&x.viewVersion==='draft')||(ver==='variants'&&x.variants>0))&&norm([x.viewTitle,x.key,x.viewDescription,x.viewProject,x.guess.artist].join(' ')).includes(q));arr.sort((a,b)=>sort==='title'?a.viewTitle.localeCompare(b.viewTitle,'it'):sort==='duration'?(b.duration||0)-(a.duration||0):sort==='size'?b.size-a.size:sort==='favorites'?Number(!!b.favorite)-Number(!!a.favorite):Date.parse(b.gptCreatedAt||b.uploaded||0)-Date.parse(a.gptCreatedAt||a.uploaded||0));if($('#groupVariants').checked){const seen=new Set();arr=arr.filter(x=>{const key=base(x.key);if(/^(artvisionvideo|basevideo|tra_le_pagineep01)/.test(key)||!x.variants)return true;if(seen.has(key))return false;seen.add(key);return true})}return arr}
+function draw(){
+ const arr=filtered(),node=$('#grid');g.shownCache=arr;node.replaceChildren();
+ node.classList.toggle('compact',g.compact);
+ const visible=arr.slice(0,g.showLimit);
+ const variantCount=g.items.filter(x=>x.variants>0).length;
+ $('#counter').textContent=arr.length+' video trovati · '+variantCount+' possibili varianti';
+ $('#moreRow').hidden=arr.length<=g.showLimit;
+ $('#moreVideos').textContent='Mostra altri '+Math.min(36,Math.max(0,arr.length-g.showLimit))+' video ↓';
+ if(!arr.length){node.innerHTML='<div class="empty">Nessun video corrisponde ai filtri. Prova una ricerca diversa.</div>';updateSelectionPanel();return}
+ const frag=document.createDocumentFragment();
+ for(const x of visible){
+  const card=document.createElement('article');card.className='card'+(x.hidden?' archived':'')+(g.selectedKeys.has(x.key)?' selected':'');
+  const cover=x.cover?'<img alt="Copertina di '+h(x.viewTitle)+'" loading="lazy" decoding="async" src="'+h(x.cover)+'" onerror="this.remove()">':'';
+  const tags=['<span class="pill">'+h(x.viewProject)+'</span>'];
+  if(x.viewVersion==='final')tags.push('<span class="pill">✓ Finale</span>');
+  if(x.viewVersion==='draft')tags.push('<span class="pill alert">Provino</span>');
+  if(x.variants>0)tags.push('<span class="pill alert">≈ '+x.variants+' versioni</span>');
+  if(x.sameContent?.length)tags.push('<span class="pill alert">≡ '+x.sameContent.length+' copie uguali</span>');
+  if(x.hidden)tags.push('<span class="pill alert">Archiviato</span>');
+  if(x.available===false)tags.unshift('<span class="pill alert">☁ Solo ChatGPT</span>');
+  const date=x.gptCreatedAt?'Creato '+fmtDate(x.gptCreatedAt):'Importato '+fmtDate(x.uploaded);
+  const isSelecting=g.admin&&g.studio&&g.selectionMode;
+  const upper=isSelecting?'<button type="button" class="select-mark" data-act="select" aria-pressed="'+g.selectedKeys.has(x.key)+'" aria-label="Seleziona '+h(x.viewTitle)+'">'+(g.selectedKeys.has(x.key)?'✓':'☐')+'</button>':g.admin?'<button class="heart'+(x.favorite?' on':'')+'" data-act="fav" aria-label="Preferito">'+(x.favorite?'♥':'♡')+'</button>':'';
+  const cardActions=isSelecting?'<button class="primary" data-act="select">'+(g.selectedKeys.has(x.key)?'✓ Selezionato':'☐ Seleziona')+'</button><button data-act="detail">Scheda</button>':x.available===false?'<button data-act="detail">☁ Dettagli ChatGPT</button>':'<button class="primary" data-act="play">▶ Guarda</button><button data-act="download">↓ Scarica</button><button data-act="detail">··· Altro</button>';
+  card.innerHTML='<div class="poster"><span class="symbol">'+(x.viewCategory==='Libri raccontati'?'▤':x.viewCategory==='Musica e visual'?'♫':'✦')+'</span>'+cover+'<span class="badge">'+h(x.guess.kind)+'</span><span class="duration">'+(x.available===false&&!x.duration?'Solo GPT':h(dur(x.duration)))+'</span>'+upper+'</div>'+
+    '<div class="cardbody"><div class="eyebrow">'+h(x.viewCategory)+'</div><h3>'+h(x.viewTitle)+'</h3><p>'+h(x.viewDescription)+'</p><div class="info">'+tags.join('')+'<span class="pill">'+h(size(x.size))+'</span><span class="pill">'+h(date)+'</span></div><div class="actions">'+cardActions+'</div>'+
+    (g.admin&&g.studio&&!isSelecting?'<div class="modalactions" style="margin-top:9px"><button class="ghost" data-act="hide">'+(x.hidden?'↩ Ripristina':'⊟ Archivia')+'</button><button class="ghost" data-act="edit">✎ Modifica</button></div>':'')+'</div>';
+  card.addEventListener('click',e=>{
+   const t=e.target.closest('[data-act]');if(!t)return;
+   const a=t.dataset.act;
+   if(a==='select'){if(!g.admin||!g.studio)return;if(g.selectedKeys.has(x.key))g.selectedKeys.delete(x.key);else g.selectedKeys.add(x.key);draw();}
+   else if(a==='play')play(x);
+   else if(a==='download'&&x.available!==false)location.href=fullURL(x);
+   else if(a==='detail')details(x);
+   else if(a==='fav')manage(x,{favorite:!x.favorite});
+   else if(a==='hide')hide(x);
+   else if(a==='edit')edit(x);
+  });
+  frag.append(card);
+ }
+ node.append(frag);updateSelectionPanel();
+}
+function play(x){if(x.available===false){log('Video presente solo in ChatGPT: trasferimento non ancora disponibile');return}g.selected=x;$('#playerTitle').textContent=x.viewTitle;$('#playerInfo').textContent=dur(x.duration)+' · '+size(x.size)+' · '+x.viewCategory;$('#video').src=mediaURL(x);if(x.cover)$('#video').poster=x.cover;else $('#video').removeAttribute('poster');if(!$('#player').open)$('#player').showModal();$('#video').play().catch(()=>{});}
 function details(x){g.selected=x;$('#detailTitle').textContent=x.viewTitle;const root=$('#detailBody');const rows=[['Titolo',x.viewTitle],['Categoria',x.viewCategory],['Progetto',x.viewProject],['Tipologia',x.guess.kind],['Durata',dur(x.duration)],['Risoluzione',x.width&&x.height?x.width+' × '+x.height:'Da rilevare'],['Dimensione',size(x.size)],['Creazione ChatGPT',x.gptCreatedAt?fmtDate(x.gptCreatedAt):'Data non disponibile'],['Importazione',fmtDate(x.uploaded)],['Versione',({final:'Versione finale',draft:'Bozza / provino',variant:'Seconda versione / variante',unknown:'Non verificata'})[x.viewVersion]||'Non verificata'],['Possibili varianti',String(x.variants)],['Copie con stessa impronta',x.sameContent?.length?x.sameContent.join(' · '):'Nessuna rilevata'],['File originale',x.name||x.key],['Disponibilità',x.available===false?'Solo ChatGPT — trasferimento mancante':'Riproducibile e scaricabile dal sito']];root.replaceChildren();const desc=document.createElement('p');desc.className='modalinfo';desc.textContent=x.viewDescription;root.append(desc);const table=document.createElement('div');table.style.cssText='display:grid;grid-template-columns:125px 1fr;gap:8px 12px;font-size:13px;word-break:break-word';for(const pair of rows){const k=document.createElement('span');k.style.color='#91a5c1';k.textContent=pair[0];const v=document.createElement('span');v.textContent=pair[1];table.append(k,v)}root.append(table);if(x.variants){const p=document.createElement('p');p.className='notice';p.textContent='Possibili altre versioni: '+x.variantGroup.filter(n=>n!==x.key).join(' · ')+'. Il sistema non può ancora confermare che siano identiche.';root.append(p)}
 const buttons=document.createElement('div');buttons.className='modalactions';buttons.innerHTML=(x.available===false?'<span class="pill alert">☁ Video da trasferire dalla libreria ChatGPT</span>':'<button class="btn primary" data-d="play">▶ Guarda</button><button class="btn" data-d="download">↓ Scarica</button><button class="btn" data-d="info">↓ Scheda TXT</button><button class="btn" data-d="share">↗ Condividi</button>')+(g.admin?'<button class="ghost" data-d="edit">✎ Modifica / archivia</button>':'');buttons.onclick=e=>{const a=e.target.closest('[data-d]')?.dataset.d;if(!a)return;if(a==='play'){$('#detail').close();play(x)}if(a==='download'&&x.available!==false)location.href=fullURL(x);if(a==='info'&&x.available!==false)location.href='/info/'+encodeURIComponent(x.key);if(a==='share'&&x.available!==false)share(x);if(a==='edit'){$('#detail').close();edit(x)}};root.append(buttons);
 if(x.available===false){const msg=document.createElement('p');msg.className='notice';msg.textContent='Questo video è individuato nella libreria ChatGPT, ma il suo MP4 non è ancora stato caricato su Cloudflare. Lo puoi cercare in ChatGPT con questo nome: '+x.name;root.append(msg);$('#detail').showModal();return}const url=encodeURIComponent(shareURL(x)),txt=encodeURIComponent(x.viewTitle+' — '+shareURL(x));const links=document.createElement('div');links.className='share-links';links.innerHTML='<a target="_blank" rel="noopener noreferrer" href="https://wa.me/?text='+txt+'">WhatsApp</a><a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/sharer/sharer.php?u='+url+'">Facebook</a><a target="_blank" rel="noopener noreferrer" href="https://t.me/share/url?url='+url+'&text='+encodeURIComponent(x.viewTitle)+'">Telegram</a><a target="_blank" rel="noopener noreferrer" href="https://twitter.com/intent/tweet?text='+encodeURIComponent(x.viewTitle)+'&url='+url+'">X</a>';root.append(links);$('#detail').showModal()}
 async function share(x){const link=shareURL(x);if(navigator.share){try{await navigator.share({title:x.viewTitle,text:x.viewDescription,url:link});return}catch(e){if(e.name==='AbortError')return}}try{await navigator.clipboard.writeText(link);log('Link del video copiato')}catch{prompt('Copia il collegamento',link)}}
-async function manage(x,patch){if(!g.admin){$('#adminDialog').showModal();return}try{const r=await fetch('/api/manage',{method:'POST',headers:{'content-type':'application/json','Authorization':'Bearer '+g.token},body:JSON.stringify({key:x.key,patch})});if(!r.ok)throw Error('Impossibile salvare ('+r.status+')');const d=await r.json();Object.assign(x,d.entry||patch);x.viewTitle=x.title||x.guess.title;x.viewCategory=x.category||x.guess.category;x.viewDescription=x.description||x.guess.description;x.viewVersion=x.version||x.guess.version;log('Modifiche salvate online');draw();return true}catch(e){log(e.message);return false}}
+async function manage(x,patch){if(!g.admin){$('#adminDialog').showModal();return}try{const r=await fetch('/api/manage',{method:'POST',headers:{'content-type':'application/json','Authorization':'Bearer '+g.token},body:JSON.stringify({key:x.key,patch})});if(!r.ok)throw Error('Impossibile salvare ('+r.status+')');const d=await r.json();Object.assign(x,d.entry||patch);x.viewTitle=x.title||x.guess.title;x.viewCategory=x.category||x.guess.category;x.viewDescription=x.description||x.guess.description;x.viewVersion=x.version||x.guess.version;log('Modifiche salvate online');renderHome();draw();return true}catch(e){log(e.message);return false}}
 async function hide(x){if(!g.admin)return;const verb=x.hidden?'ripristinare':'rimuovere dal catalogo';if(!confirm('Vuoi '+verb+' il video «'+x.viewTitle+'»? Il file originale non sarà cancellato.'))return;if(await manage(x,{hidden:!x.hidden}))await load(true)}
 async function deleteForever(x){
  if(!g.admin)return;
@@ -89,9 +331,9 @@ $('#editForm').onsubmit=async e=>{e.preventDefault();const f=e.target,x=g.select
 $('#archiveToggle').onclick=async()=>{const x=g.selected;$('#edit').close();await hide(x)};
 $('#deleteForever').onclick=()=>deleteForever(g.selected);
 $('#favoriteToggle').onclick=async()=>{const x=g.selected;if(await manage(x,{favorite:!x.favorite}))$('#edit').close()};
-$('#adminOpen').onclick=()=>{if(g.admin){log('Gestione privata già attiva');return}$('#adminDialog').showModal()};
-$('#adminForm').onsubmit=async e=>{e.preventDefault();const token=$('#adminKey').value.trim();if(token.length<20){log('Chiave non valida');return}g.token=token;localStorage.setItem('vlsAdmin',token);await load(true);if(g.admin){$('#adminDialog').close();log('Gestione privata attivata')}else{g.token='';localStorage.removeItem('vlsAdmin');log('Accesso negato')}};
-$('#adminLogout').onclick=()=>{g.token='';g.admin=false;localStorage.removeItem('vlsAdmin');$('#includeArchived').checked=false;load(true)};
+$('#adminOpen').onclick=()=>enterStudio();
+$('#adminForm').onsubmit=async e=>{e.preventDefault();const token=$('#adminKey').value.trim();if(token.length<20){log('Chiave non valida');return}g.token=token;localStorage.setItem('vlsAdmin',token);await load(true);if(g.admin){$('#adminDialog').close();enterStudio();log('Gestione privata attivata')}else{g.token='';localStorage.removeItem('vlsAdmin');log('Accesso negato')}};
+$('#adminLogout').onclick=()=>{g.token='';g.admin=false;g.studio=false;g.selectionMode=false;g.selectedKeys.clear();localStorage.removeItem('vlsAdmin');$('#includeArchived').checked=false;applyStudioVisibility();load(true)};
 $('#exportCSV').onclick=()=>{
  const shown=g.items.filter(x=>!x.hidden||g.admin);
  const columns=['Titolo','Categoria','Progetto','Descrizione','Durata_secondi','Larghezza_px','Altezza_px','Dimensione_byte','Fonte','Riproducibile','Versione','Copie_uguali','Varianti','Data_creazione_ChatGPT','Data_importazione_Cloudflare','Preferito','Nascosto','Nome_originale','Collegamento'];
@@ -99,7 +341,40 @@ $('#exportCSV').onclick=()=>{
  const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
  const file=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download='Video_Library_Studio_Catalogo_'+new Date().toISOString().slice(0,10)+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2500);log('Catalogo CSV esportato: '+shown.length+' video');
 };
-$('#refresh').onclick=()=>load(true);$('#availability').onchange=draw;$('#query').oninput=draw;$('#project').onchange=draw;$('#sort').onchange=draw;$('#versions').onchange=draw;$('#includeArchived').onchange=draw;
+
+$('#refresh').onclick=()=>load(true);
+const refreshFilter=()=>{g.showLimit=36;draw()};
+$('#availability').onchange=refreshFilter;$('#query').oninput=refreshFilter;
+$('#project').onchange=refreshFilter;$('#sort').onchange=refreshFilter;
+$('#versions').onchange=refreshFilter;$('#includeArchived').onchange=refreshFilter;$('#groupVariants').onchange=refreshFilter;
+$('#topSearch').onclick=()=>{gotoSection('library');$('#query').focus()};
+$('#heroExplore').onclick=()=>{g.category='Tutti';categories();refreshFilter();gotoSection('library')};
+$('#heroStudio').onclick=()=>enterStudio();
+$('#browseRecent').onclick=()=>{g.category='Tutti';$('#availability').value='online';$('#sort').value='recent';categories();refreshFilter();gotoSection('library')};
+$('#compactToggle').onclick=()=>{g.compact=!g.compact;$('#compactToggle').setAttribute('aria-pressed',String(g.compact));$('#compactToggle').innerHTML=g.compact?'▦ <span>Vista riquadri</span>':'☷ <span>Vista compatta</span>';draw()};
+$('#selectionToggle').onclick=()=>{if(!g.admin||!g.studio)return;g.selectionMode=!g.selectionMode;if(!g.selectionMode)g.selectedKeys.clear();applyStudioVisibility();draw()};
+$('#selectAllVisible').onclick=()=>{for(const x of g.shownCache.slice(0,Math.min(g.showLimit,40)))g.selectedKeys.add(x.key);draw()};
+$('#clearSelected').onclick=()=>{g.selectedKeys.clear();draw()};
+$('#batchFavorite').onclick=()=>batchPatch({favorite:true},'Aggiungi ai preferiti');
+$('#batchFinal').onclick=()=>batchPatch({version:'final'},'Marca come finale');
+$('#batchDraft').onclick=()=>batchPatch({version:'draft'},'Marca come provino');
+$('#batchArchive').onclick=()=>batchPatch({hidden:true},'Archivia dal catalogo');
+$('#moreVideos').onclick=()=>{g.showLimit+=36;draw()};
+document.querySelectorAll('.bottom-nav button').forEach(b=>b.onclick=()=>{if(b.dataset.section==='studio')enterStudio();else if(b.dataset.section==='library'){g.category='Tutti';categories();refreshFilter();gotoSection('library')}else gotoSection(b.dataset.section)});
+const playerSequence=(delta)=>{
+ let seq=filtered().filter(x=>x.available!==false&&!x.hidden);
+ if(!seq.some(x=>x.key===g.selected?.key))seq=sortedFresh(g.items.filter(x=>x.available!==false&&!x.hidden));
+ const i=seq.findIndex(x=>x.key===g.selected?.key);
+ const next=seq[(Math.max(0,i)+delta+seq.length)%seq.length];
+ if(next)play(next);
+};
+$('#playerPrevious').onclick=()=>playerSequence(-1);
+$('#playerNext').onclick=()=>playerSequence(1);
+$('#playerRewind').onclick=()=>{const v=$('#video');if(Number.isFinite(v.currentTime))v.currentTime=Math.max(0,v.currentTime-10)};
+$('#playerForward').onclick=()=>{const v=$('#video');if(Number.isFinite(v.currentTime))v.currentTime=Math.min(Number.isFinite(v.duration)?v.duration:v.currentTime+10,v.currentTime+10)};
+$('#playerSpeed').onclick=()=>{const v=$('#video'),speeds=[1,1.25,1.5,2];v.playbackRate=speeds[(speeds.indexOf(v.playbackRate)+1)%speeds.length];$('#playerSpeed').textContent=v.playbackRate+'×'};
+document.addEventListener('keydown',e=>{if(!$('#player').open||['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;if(e.key==='ArrowLeft'){$('#playerRewind').click();e.preventDefault()}if(e.key==='ArrowRight'){$('#playerForward').click();e.preventDefault()}});
+
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{const dialog=$('#'+b.dataset.close);dialog.close();if(dialog.id==='player'){$('#video').pause();$('#video').removeAttribute('src');$('#video').load()}});
 $('#playerDownload').onclick=()=>{if(g.selected)location.href=fullURL(g.selected)};
 $('#playerShare').onclick=()=>g.selected&&share(g.selected);
