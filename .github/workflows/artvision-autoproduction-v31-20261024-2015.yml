@@ -1,0 +1,136 @@
+name: "ArtVision V31 • Visions of Symbolism • Three Museum Paintings"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/artvision_autoproduction_20261024_2015.py"
+      - "config/artvision_autoproduction_20261024_2015.json"
+      - ".github/workflows/artvision-autoproduction-v31-20261024-2015.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: artvision-v31-20261024-2015
+  cancel-in-progress: false
+jobs:
+  artvision:
+    name: "Collection • 3 authentic artworks • V6 identity • 9:16 MP4"
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free open-source cinema dependencies
+        run: |
+          set -euo pipefail
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe || sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<14" "numpy>=1.26,<3" "requests>=2.31,<3"
+      - name: Verify research and ArtVision V25 preflight
+        id: preflight
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_autoproduction_20261024_2015.py
+          python scripts/artvision_autoproduction_20261024_2015.py --preflight-only
+      - name: Render genuine 1080x1920 film and full V28 social kit
+        id: render
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          set -euo pipefail
+          python scripts/artvision_autoproduction_20261024_2015.py --out output/artvision-v31-symbolist
+      - name: Independently verify MP4 decode and complete ZIP
+        id: verify
+        run: |
+          set -euo pipefail
+          folder="output/artvision-v31-symbolist/visions_of_symbolism_20261024_2015"
+          film="$folder/VIDEO_MASTER.mp4"
+          archive="output/artvision-v31-symbolist/ARTVISION_V31_VISIONS_OF_SYMBOLISM_20261024_2015_COMPLETE.zip"
+          test -s "$film"
+          test -s "$archive"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$film" -f null -
+          python src/artvision_editorial_post_v28.py --validate-folder "$folder"
+          python - "$film" "$archive" <<'PY'
+          import json,sys,subprocess,zipfile
+          film,archive=sys.argv[1:]
+          m=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration,size','-show_entries','stream=codec_type,codec_name,width,height','-of','json',film]))
+          d=float(m['format']['duration'])
+          assert 45<=d<=120,d
+          assert any(s.get('codec_type')=='video' and s.get('codec_name')=='h264' and s.get('width')==1080 and s.get('height')==1920 for s in m['streams'])
+          assert any(s.get('codec_type')=='audio' and s.get('codec_name')=='aac' for s in m['streams'])
+          with zipfile.ZipFile(archive) as z:
+            assert z.testzip() is None
+            needed={'VIDEO_MASTER.mp4','COPERTINA.jpg','POST_FACEBOOK.txt','POST_INSTAGRAM.txt','POST_TIKTOK.txt','POST_YOUTUBE.txt','POST_EDITORIAL_RESEARCH.json','VIDEO_RECIPE_V13.json','TECNICHE_REGIA.md','ISTRUZIONI_REPLICA.md','SOURCES_AND_RIGHTS.md','MUSIC_RELEASE_V20.json','TECHNICAL_QA_V31.json','QA_CONTACT_SHEET.jpg','ORIGINAL_REDON.jpg','ORIGINAL_MOREAU.jpg','ORIGINAL_BOCKLIN.jpg','ORIGINAL_LICENSED_MUSIC.mp3'}
+            assert needed<=set(z.namelist()),needed-set(z.namelist())
+            qa=json.loads(z.read('TECHNICAL_QA_V31.json'))
+            assert qa['full_ffmpeg_decode'] and qa['no_transparent_cross_scene_blend'] and qa['approval']=='human_visual_review_pending'
+          print('REAL_COLLECTION_VALIDATED',d,m['format']['size'])
+          PY
+      - name: Preserve verified MP4, cover, posts, previews and complete archive
+        if: always()
+        id: archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision-V31-20261024-Visions-Of-Symbolism
+          path: |
+            output/artvision-v31-symbolist/visions_of_symbolism_20261024_2015/VIDEO_MASTER.mp4
+            output/artvision-v31-symbolist/visions_of_symbolism_20261024_2015/COPERTINA.jpg
+            output/artvision-v31-symbolist/visions_of_symbolism_20261024_2015/QA_CONTACT_SHEET.jpg
+            output/artvision-v31-symbolist/visions_of_symbolism_20261024_2015/POST_FACEBOOK.txt
+            output/artvision-v31-symbolist/ARTVISION_V31_VISIONS_OF_SYMBOLISM_20261024_2015_COMPLETE.zip
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Record only real production outcome in V31 cycle log
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          PREFLIGHT: ${{ steps.preflight.outcome }}
+          RENDER: ${{ steps.render.outcome }}
+          VERIFY: ${{ steps.verify.outcome }}
+          ARCHIVE: ${{ steps.archive.outcome }}
+        with:
+          script: |
+            const fs=require('fs'),crypto=require('crypto');
+            const path='queue/artvision_autoproduction_v31_state.json';
+            const folder='output/artvision-v31-symbolist/visions_of_symbolism_20261024_2015';
+            const film=folder+'/VIDEO_MASTER.mp4';
+            const qaFile=folder+'/TECHNICAL_QA_V31.json';
+            const allOK=['PREFLIGHT','RENDER','VERIFY','ARCHIVE'].every(k=>process.env[k]==='success');
+            let qa=null;try{qa=JSON.parse(fs.readFileSync(qaFile,'utf8'))}catch(e){}
+            const exists=fs.existsSync(film);
+            const event={
+              cycle_id:'20261024T2015+0200',created_at:new Date().toISOString(),
+              artist:'Odilon Redon; Gustave Moreau; Arnold Böcklin',
+              work:'Visions of Symbolism',format:'artvision_collection',
+              baseline:'cinema_v6',reason_fallback:'Natural Gacrux voice unavailable; non-narrated museum collection instead',
+              status:allOK?'technical_pass_not_gold_master':'blocked_or_rendered_needs_review',
+              mp4_verified:allOK&&exists,
+              duration_seconds:allOK?qa?.duration_seconds:null,
+              size_bytes:exists?fs.statSync(film).size:null,
+              sha256_mp4:exists?crypto.createHash('sha256').update(fs.readFileSync(film)).digest('hex'):null,
+              workflow_run_url:`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              artifact_name:'ArtVision-V31-20261024-Visions-Of-Symbolism',
+              steps:{preflight:process.env.PREFLIGHT,render:process.env.RENDER,verify:process.env.VERIFY,archive:process.env.ARCHIVE},
+              gold_master_approved:false,social_published:false
+            };
+            for(let attempt=0;attempt<3;attempt++){
+              const old=await github.rest.repos.getContent({owner:context.repo.owner,repo:context.repo.repo,path,ref:'main'});
+              const state=JSON.parse(Buffer.from(old.data.content,'base64').toString('utf8'));
+              state.cycle_log=state.cycle_log||[];
+              const index=state.cycle_log.findIndex(x=>x.cycle_id===event.cycle_id);
+              if(index>=0)state.cycle_log[index]=event;else state.cycle_log.push(event);
+              state.updated=new Date().toISOString();
+              if(allOK)state.next_preferred_format='artvision_critico';
+              try{
+                await github.rest.repos.createOrUpdateFileContents({owner:context.repo.owner,repo:context.repo.repo,path,
+                  message:'ArtVision V31: record verified multi-museum collection run',
+                  content:Buffer.from(JSON.stringify(state,null,2)+'\n').toString('base64'),sha:old.data.sha,branch:'main'});
+                break;
+              }catch(err){if(attempt===2)throw err;}
+            }
+            core.summary.addHeading('ArtVision V31 — Visions of Symbolism')
+              .addRaw(`Outcome: **${event.status}**; actual MP4: ${exists}; duration: ${event.duration_seconds??'unknown'} seconds.\n\n`)
+              .addRaw('No social publication; Gold Master requires human artistic review.').write();
