@@ -5,6 +5,7 @@ on:
       - site/video-library-editorial-core.js
       - site/video-library-v2.html
       - tests/video-library-editorial.test.cjs
+      - tests/video-library-editorial-ui.test.cjs
       - .github/workflows/video-library-editorial-test.yml
   workflow_dispatch:
 permissions:
@@ -54,6 +55,10 @@ jobs:
                   assert (any(x.startswith('04_VIDEO/') and x.endswith('.mp4') for x in names))==(mode=='full')
                   print('PASS ZIP',mode,'with',len(names),'entries and verified CRC')
           PY
+      - name: Verify owner dossier UI with simulated browser
+        run: |
+          npm install --prefix /tmp/vls-editorial-ui --silent --no-audit --no-fund jsdom@26
+          node tests/video-library-editorial-ui.test.cjs
       - name: Verify live site still protects editorial information
         run: |
           python3 - <<'PY'
