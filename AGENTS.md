@@ -24,6 +24,10 @@ Il post pubblico NON è un foglio di lavorazione: i testi tecnici stanno solo in
 **Non sovrascrivere** master, copertine e post personalizzati, né elementi nascosti/eliminati dall'utente. Anche un video tecnicamente valido richiede valutazione artistica prima di diventare nuovo Gold Master. Nessun servizio a pagamento o pubblicazione social non autorizzata.
 
 
+## Effetto facoltativo «dal museo dentro il quadro» (24/10/2026)
+
+Aggiunto al repertorio V23, NON al preset fisso: `gallery_to_canvas_entry` / `canvas_to_gallery_reveal`. Quando funziona per l'opera, iniziare con foto/ripresa AUTENTICA e riutilizzabile del quadro incorniciato nella sala, avvicinarsi lentamente e raccordare alla scansione fedele; oppure uscire dal dettaglio per rivelare il museo. Richiede fonte e diritti della fotografia della sala (watermark Flickr da solo non concede riuso), niente museo artificiale spacciato per reale, camera armoniosa e verifica del raccordo a velocità normale. Valutare caso per caso, mai obbligo, mai sovrascrivere i master approvati.
+
 ## Biblioteca cinematografica permanente V23 — per OGNI NUOVO video
 
 **Prima di decidere movimenti o montaggio**, consultare
