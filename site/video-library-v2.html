@@ -49,6 +49,16 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
 
 
 .ed-assets{padding:15px;background:#182333;border:1px solid #38495f;border-radius:12px;margin:14px 0}.ed-assets>strong{color:#ebc896}.ed-asset-item{display:flex;gap:9px;align-items:baseline;padding:7px 2px;border-bottom:1px solid #354455;font-size:12px;overflow-wrap:anywhere}.ed-asset-item span:first-child{color:#e2bf8c}
+
+/* V34 boards: no image model / no API credits, mobile preview and PNG export. */
+.ed-board-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin:14px 0}
+.ed-board-tools label{display:grid;gap:5px;flex:1 1 225px;color:#d3dfe4;font-size:13px}
+.ed-board-tools select{background:#172630;border:1px solid #66727b;color:#fff;padding:11px;border-radius:10px;width:100%}
+.ed-board-tools button{min-height:44px}
+.ed-board-frame{margin:12px auto;max-width:660px;padding:7px;background:#101923;border:1px solid #556677;border-radius:12px}
+#edBoardCanvas{width:100%;height:auto;display:block;border-radius:7px;background:#f6f1e8}
+.ed-board-note{font-size:13px;color:#c6d1d8;line-height:1.5;margin:12px 0}
+@media(max-width:720px){.ed-board-tools{display:grid;grid-template-columns:1fr 1fr}.ed-board-tools label{grid-column:1/-1}.ed-board-tools button{font-size:12px;padding:11px 5px}}
 </style>
 </head>
 <body>
@@ -142,6 +152,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
   <button data-ed-tab="production" type="button">⚙ Regia e ricetta</button>
   <button data-ed-tab="credits" type="button">♬ Crediti e fonti</button>
   <button data-ed-tab="package" type="button">↓ Pacchetto ZIP</button>
+   <button data-ed-tab="boards" type="button">▣ Schede grafiche</button>
  </nav>
  <form id="editorialForm" class="editorial-form">
   <section data-ed-panel="social">
@@ -204,6 +215,23 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
    </div>
    <p class="ed-guidance">Per i video ancora esclusivamente nella Libreria ChatGPT è disponibile il pacchetto leggero; l'MP4 sarà incluso quando sarà stato importato.</p>
    <div class="ed-assets"><strong>Allegati originali del progetto</strong><p class="ed-guidance">Gli allegati già presenti nello Studio vengono inseriti automaticamente nel pacchetto quando disponibili. Gli ZIP preesistenti sono esclusi per evitare duplicazioni.</p><div id="edAssetList">Caricamento materiali…</div><a class="btn" href="/studio" target="_blank" rel="noopener" style="display:inline-block;margin-top:12px">Apri archivio completo materiali ↗</a></div>
+  </section>
+  <section data-ed-panel="boards" hidden>
+   <p class="ed-guidance"><b>Visual Boards V34 — zero crediti API.</b> Tre tavole impaginate nel browser con i dati già esistenti nel dossier e la copertina originale quando disponibile. Sono schede editoriali, non approvazioni di fonti o diritti.</p>
+   <div class="ed-board-tools">
+    <label>Scheda da vedere e scaricare
+     <select id="edBoardKind" aria-label="Scegli la scheda grafica">
+      <option value="concept">1 · Concept Board</option>
+      <option value="production">2 · Production Board</option>
+      <option value="scenes">3 · Scene Contact Sheet</option>
+     </select>
+    </label>
+    <button type="button" class="btn" id="edBoardRefresh">↻ Aggiorna</button>
+    <button type="button" class="btn primary" id="edBoardDownload">↓ Scarica PNG</button>
+   </div>
+   <div class="ed-board-frame"><canvas id="edBoardCanvas" width="1200" height="1600" role="img" aria-label="Anteprima della scheda grafica"></canvas></div>
+   <p id="edBoardInfo" class="ed-board-note" role="status">La scheda viene creata quando apri questa sezione.</p>
+   <p class="ed-board-note">La Contact Sheet usa esclusivamente le scene descritte nello storyboard, senza inventare foto mancanti. Il pacchetto ZIP già presente mantiene un solo master video e gli allegati originali.</p>
   </section>
   <div class="editorial-footer"><span id="edSavedInfo">Scheda in caricamento…</span><button class="btn primary" id="edSave" type="submit">✓ Salva tutte le informazioni</button></div>
  </form>
@@ -468,8 +496,136 @@ $('#playerShare').onclick=()=>g.selected&&share(g.selected);
 $('#playerDetails').onclick=()=>{const x=g.selected;$('#player').close();$('#video').pause();$('#video').removeAttribute('src');if(x)details(x)};
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){d.close();if(d.id==='player'){$('#video').pause();$('#video').removeAttribute('src')}}}));
 
+
+/* V34 Studio Visual Boards: client-only canvas render from the REAL editorial dossier.
+   No external fonts, no image generation, no paid services, no persistent duplicates. */
+const vb={cover:null,coverKey:'',loading:false};
+const VB={navy:'#122D3F',dark:'#203D50',cream:'#F5F0E7',white:'#FFFDF9',ink:'#182C3B',muted:'#566978',gold:'#C89F66',line:'#E1D9CA'};
+function vbRound(ctx,x,y,w,h,r,color){
+ ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+ ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+ ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fill();
+}
+function vbText(ctx,content,x,y,maxWidth,size,color,maxLines=4,lineHeight=1.35,bold=false){
+ const raw=String(content??'').replace(/\r/g,'').trim()||'Da completare';
+ ctx.font=(bold?'700 ':'400 ')+size+'px system-ui, Arial, sans-serif';ctx.fillStyle=color;ctx.textBaseline='top';
+ const rows=[];for(const para of raw.split('\n')){
+  const words=para.split(/\s+/).filter(Boolean);let line='';
+  for(const word of words){
+   const proposed=line?line+' '+word:word;
+   if(ctx.measureText(proposed).width>maxWidth&&line){rows.push(line);line=word}
+   else line=proposed;
+  }
+  if(line)rows.push(line);
+ }
+ const shortened=rows.slice(0,maxLines);
+ if(rows.length>maxLines&&shortened.length){
+  let t=shortened[shortened.length-1];while(t&&ctx.measureText(t+'…').width>maxWidth)t=t.slice(0,-1);shortened[shortened.length-1]=t+'…';
+ }
+ shortened.forEach((line,i)=>ctx.fillText(line,x,y+i*size*lineHeight,maxWidth));
+ return y+shortened.length*size*lineHeight;
+}
+function vbBase(canvas,label,height){
+ canvas.width=1200;canvas.height=height;const ctx=canvas.getContext('2d');
+ if(!ctx)throw Error('Canvas non disponibile su questo dispositivo');
+ ctx.fillStyle=VB.cream;ctx.fillRect(0,0,1200,height);ctx.fillStyle=VB.navy;ctx.fillRect(0,0,1200,200);
+ vbText(ctx,'TRA LE PAGINE · STUDIO IBRIDO',60,36,1000,27,VB.gold,1,1,true);
+ vbText(ctx,label,60,87,1090,60,VB.white,1,1,true);
+ vbText(ctx,'VISUAL BOARDS V34  |  solo dati disponibili  |  nessuna API AI',60,165,1060,18,'#C5D2D9',1);
+ return ctx;
+}
+function vbCard(ctx,x,y,w,h,label,value,opts={}){
+ vbRound(ctx,x,y,w,h,19,VB.white);
+ vbText(ctx,label.toUpperCase(),x+22,y+19,w-44,23,VB.gold,1,1,true);
+ vbText(ctx,value,x+22,y+60,w-44,opts.size||25,VB.ink,opts.lines||5,1.38);
+}
+function vbCover(ctx,x,y,w,h){
+ vbRound(ctx,x,y,w,h,16,VB.dark);
+ if(!vb.cover){vbText(ctx,'COPERTINA ORIGINALE',x+25,y+40,w-50,29,VB.white,2,1.2,true);
+  vbText(ctx,'Immagine non disponibile nel dossier',x+25,y+110,w-50,23,'#C2D4DC',3);return}
+ const iw=vb.cover.naturalWidth||vb.cover.width,ih=vb.cover.naturalHeight||vb.cover.height;
+ const scale=Math.min(w/iw,h/ih),nw=iw*scale,nh=ih*scale;
+ ctx.drawImage(vb.cover,x+(w-nw)/2,y+(h-nh)/2,nw,nh);
+}
+function vbStoryLines(record){
+ return String(record.storyboard||'').split(/\n|;(?=\s*(?:\d|scena|scene))/i).map(t=>t.trim()).filter(Boolean).slice(0,50);
+}
+function vbLoadNote(record){
+ const rights=record.rightsStatus==='verificato'?'Diritti segnati come verificati dall’operatore; ricontrollare le prove.':'Diritti da verificare: non pubblicare in automatico.';
+ return rights;
+}
+function vbCoverLoad(item){
+ const cover=item?.cover;if(!cover||typeof cover!=='string')return;
+ let url;try{url=new URL(cover,location.origin)}catch{return}
+ if(url.origin!==location.origin||!/^https?:$/.test(url.protocol))return;
+ const ident=item.key+'|'+url.href;
+ if(vb.coverKey===ident)return;
+ vb.coverKey=ident;vb.cover=null;vb.loading=true;
+ const im=new Image();
+ im.onload=()=>{if(vb.coverKey===ident){vb.cover=im;vb.loading=false;if($('#editorialTabs [data-ed-tab="boards"]').classList.contains('active'))vbDraw()}};
+ im.onerror=()=>{if(vb.coverKey===ident){vb.loading=false;vb.cover=null}};
+ im.src=url.href;
+}
+function vbDraw(){
+ if(!edState.record||!edState.item)return;
+ const x=edState.item,rec={...edState.record,...editorialCollect()};
+ const kind=$('#edBoardKind').value,canvas=$('#edBoardCanvas');
+ const scenes=vbStoryLines(rec),files=edState.assets||[];
+ let ctx,height=1600;
+ if(kind==='scenes')height=Math.max(1100,580+Math.ceil(Math.max(1,scenes.length)/2)*194);
+ ctx=vbBase(canvas,kind==='concept'?'CONCEPT BOARD':kind==='production'?'PRODUCTION BOARD':'SCENE CONTACT SHEET',height);
+ const name=rec.publicTitle||x.viewTitle||'Video senza titolo';
+ if(kind==='concept'){
+  vbCover(ctx,60,230,490,740);
+  vbCard(ctx,580,230,560,175,'Video / opera',name,{size:34,lines:2});
+  vbCard(ctx,580,430,560,155,'Categoria e lingua',String(rec.category||x.viewCategory||'Da definire')+' · '+String(rec.language||'Da definire'),{size:25,lines:2});
+  vbCard(ctx,580,610,560,170,'Promessa iniziale',rec.hook,{size:26,lines:3});
+  vbCard(ctx,580,805,560,165,'Presentazione',rec.shortDescription,{size:23,lines:3});
+  vbCard(ctx,60,1000,1080,170,'Direzione e montaggio',rec.directorNotes||'Regia da documentare',{size:24,lines:3});
+  vbCard(ctx,60,1190,1080,175,'Sceneggiatura / struttura',scenes.length?scenes.slice(0,4).join(' · '):'Storyboard non registrato; da completare',{size:23,lines:3});
+  vbText(ctx,vbLoadNote(rec),72,1390,1030,23,VB.muted,3);
+  vbText(ctx,'Bozza di progettazione, non certificazione del contenuto o del MP4.',72,1515,1030,21,VB.muted,2);
+ }else if(kind==='production'){
+  vbCover(ctx,60,230,305,425);
+  vbCard(ctx,390,230,750,185,'Titolo e serie',name+' · '+String(rec.project||'serie da specificare'),{size:28,lines:3});
+  vbCard(ctx,390,440,750,215,'Dati del master',String(x.viewCategory||rec.category||'')+' · '+String(rec.language||'Lingua non indicata')+'\nDurata: '+dur(x.duration)+' · '+String(x.viewVersion||'Stato non definito'),{size:25,lines:4});
+  vbCard(ctx,60,690,1080,190,'Diritti e stato editoriale',vbLoadNote(rec)+'\nPubblicazione: '+String(rec.publicationStatus||'bozza'),{size:27,lines:4});
+  vbCard(ctx,60,905,1080,195,'Fonti / licenze registrate',String(rec.imageSources||rec.sources||'Fonti delle immagini non registrate nel dossier'),{size:23,lines:4});
+  vbCard(ctx,60,1125,1080,190,'Musica e voce',String(rec.musicAttribution||[rec.musicTitle,rec.musicAuthor,rec.musicLicense].filter(Boolean).join(' · ')||'Musica non verificata')+'\nVoce: '+String(rec.voiceCredits||'Non documentata'),{size:23,lines:4});
+  vbCard(ctx,60,1335,1080,160,'Allegati effettivamente disponibili',files.length?files.slice(0,5).map(a=>a.name).join(' · '):'Nessun file di produzione allegato',{size:22,lines:3});
+  vbText(ctx,'Informazioni di archivio: non equivalgono a controlli artistici e legali superati.',68,1530,1050,20,VB.muted,2);
+ }else{
+  vbCover(ctx,60,226,300,340);
+  vbCard(ctx,385,226,755,205,'Scene del video',name,{size:33,lines:3});
+  vbText(ctx,'Scene realmente descritte: '+scenes.length+' · Allegati di produzione: '+files.length,390,462,730,25,VB.muted,2);
+  vbText(ctx,'Le singole miniature non vengono inventate: aggiungere asset nel progetto per una contact sheet fotografica.',62,586,1060,22,VB.muted,3);
+  if(!scenes.length){
+   vbCard(ctx,60,690,1080,235,'Storyboard da completare','Nessuna scena registrata nel dossier. Aggiungi la scaletta nella sezione “Regia e ricetta”; le schede si aggiornano senza consumare crediti.',{size:27,lines:5});
+  }else{
+   scenes.forEach((line,i)=>{
+    const col=i%2,row=Math.floor(i/2),left=60+col*550,top=690+row*194;
+    vbCard(ctx,left,top,530,174,'SCENA '+String(i+1).padStart(2,'0'),line,{size:23,lines:3});
+   });
+  }
+  vbText(ctx,'Anteprima delle descrizioni: nessun fotogramma del MP4 è stato ricostruito.',60,height-75,1080,20,VB.muted,2);
+ }
+ $('#edBoardInfo').textContent='Scheda creata localmente dal dossier: '+(kind==='scenes'?scenes.length+' scene descritte.':kind==='production'?files.length+' allegati elencati.':'anteprima concept.')+(vb.loading?' Copertina in caricamento…':'')+' Zero generazioni AI.';
+}
+async function vbDownload(){
+ if(!edState.record)return;
+ try{
+  vbDraw();const canvas=$('#edBoardCanvas');
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+  if(!blob)throw Error('Esportazione PNG non disponibile');
+  const filename=String(edState.item?.key||'Video').replace(/[^a-z0-9_-]+/gi,'_').slice(0,62)+'_'+$('#edBoardKind').value+'_V34.png';
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;
+  document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);
+  $('#edBoardInfo').textContent='PNG scaricato dal browser, senza generazioni AI né copie video.';
+ }catch(err){$('#edBoardInfo').textContent='Impossibile esportare PNG su questo dispositivo: '+err.message}
+}
+
 /* Editorial per-video dossiers and social packages, all stored by original filename. */
-const edState={item:null,record:null,generated:true,missing:[],dirty:false};
+const edState={item:null,record:null,generated:true,missing:[],dirty:false,assets:[],metadata:null};
 const edFieldNames=['edition','reprints','masterRef','musicAttribution','legacyNotes','publicTitle','shortDescription','category','project','language','hook','hashtags','facebook','instagram','tiktok','youtube','musicTitle','musicAuthor','musicLicense','musicLink','imageCredits','imageSources','voiceCredits','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes','tags','rightsStatus','publicationStatus'];
 function editorialFieldsToForm(record){
  const f=$('#editorialForm');for(const name of edFieldNames){const el=f.elements.namedItem(name);if(el)el.value=record[name]??''}
@@ -484,10 +640,11 @@ function edSetInfo(s){$('#editorialStatus').textContent=s}
 function edActivateTab(key){
  document.querySelectorAll('#editorialTabs [data-ed-tab]').forEach(b=>b.classList.toggle('active',b.dataset.edTab===key));
  document.querySelectorAll('#editorialForm [data-ed-panel]').forEach(p=>p.hidden=p.dataset.edPanel!==key);
+ if(key==='boards'&&edState.record)vbDraw();
 }
 async function openEditorial(x){
  if(!g.admin){$('#adminDialog').showModal();return}
- edState.item=x;edState.record=null;edState.missing=[];edState.dirty=false;
+ edState.item=x;edState.record=null;edState.missing=[];edState.dirty=false;edState.assets=[];edState.metadata=null;vb.cover=null;vb.coverKey='';
  $('#editorialTitle').textContent=x.viewTitle;
  $('#editorialMeta').textContent=x.viewCategory+' · '+dur(x.duration)+' · '+(x.available===false?'☁ Solo ChatGPT':'▶ MP4 disponibile')+' · '+(x.gptCreatedAt?'Creato '+fmtDate(x.gptCreatedAt):'Data creazione sconosciuta');
  edSetInfo('Caricamento del fascicolo e delle informazioni salvate…');
@@ -498,7 +655,7 @@ async function openEditorial(x){
  try{
   const r=await fetch('/api/editorial?key='+encodeURIComponent(x.key),{headers:{'Authorization':'Bearer '+g.token},cache:'no-store'});
   if(!r.ok)throw Error('Impossibile leggere il dossier ('+r.status+')');
-  const data=await r.json();edState.record=data.record;edState.generated=data.generated;edState.missing=data.missing||[];
+  const data=await r.json();edState.record=data.record;edState.generated=data.generated;edState.missing=data.missing||[];edState.assets=data.assets||[];edState.metadata=data.metadata||null;vbCoverLoad(x);
   const node=$('#edAssetList');node.replaceChildren();
   if(data.assets?.length){
     for(const item of data.assets){
@@ -557,6 +714,9 @@ $('#editorialForm').addEventListener('input',()=>{if(edState.record){edState.dir
 $('#editorialForm').onsubmit=async e=>{e.preventDefault();await edSaveRecord()};
 $('#edZipFull').onclick=()=>edDownload('full');
 $('#edZipLight').onclick=()=>edDownload('light');
+$('#edBoardKind').onchange=vbDraw;
+$('#edBoardRefresh').onclick=vbDraw;
+$('#edBoardDownload').onclick=vbDownload;
 
 const frag=location.hash.slice(1);if(frag.startsWith('manage=')){g.token=decodeURIComponent(frag.slice(7));localStorage.setItem('vlsAdmin',g.token);history.replaceState(null,'',location.pathname+location.search)}else{g.token=localStorage.getItem('vlsAdmin')||''}
 load(true);setInterval(()=>{if(!document.hidden)load(true)},180000);
