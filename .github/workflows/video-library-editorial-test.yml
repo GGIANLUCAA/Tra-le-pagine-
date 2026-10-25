@@ -6,6 +6,7 @@ on:
       - site/video-library-v2.html
       - tests/video-library-editorial.test.cjs
       - tests/video-library-editorial-ui.test.cjs
+      - tests/video-library-boards-v34-ui.test.cjs
       - .github/workflows/video-library-editorial-test.yml
   workflow_dispatch:
 permissions:
@@ -59,6 +60,7 @@ jobs:
         run: |
           npm install --prefix /tmp/vls-editorial-ui --silent --no-audit --no-fund jsdom@26
           node tests/video-library-editorial-ui.test.cjs
+          node tests/video-library-boards-v34-ui.test.cjs
       - name: Verify live site still protects editorial information
         run: |
           python3 - <<'PY'
