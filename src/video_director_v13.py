@@ -16,6 +16,10 @@ import subprocess
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+try:
+    from .editorial_rules import new_contract, new_plan, validate as validate_editorial
+except ImportError:
+    from editorial_rules import new_contract, new_plan, validate as validate_editorial
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "config/video_formats_v13.json"
@@ -75,6 +79,7 @@ def brief(kind, topic, out, references=()):
         raise ValueError("Cartella non vuota: scegli un nuovo progetto, senza sovrascrivere")
     out.mkdir(parents=True, exist_ok=True)
     project = {"schema": "video-project-v13", "project_id": str(uuid.uuid4()),
+               "editorial_contract": new_contract(kind), "editorial_plan": new_plan(),
                "format": kind, "topic": topic.strip(), "preset": fmt["preset"],
                "status": "planned", "script": "", "subtitles": False,
                "business": {"audience": "", "viewer_promise": "", "original_contribution": "",
@@ -93,6 +98,7 @@ def brief(kind, topic, out, references=()):
         for n, value in enumerate(references):
             shutil.copy2(value, refdir / f"{n + 1:02d}_VIDEO_RECIPE_V13.json")
     lines = ["# Brief GPT - " + topic.strip(), "", "Leggere AGENTS.md e docs/GPT_VIDEO_PLAYBOOK.md.",
+             "Leggere docs/REGOLE_ATTIVE.md: compilare editorial_contract ed editorial_plan prima del render.",
              "", "Formato: " + fmt["label"], "Preset: " + fmt["preset"], "Capacità: " + fmt["status"],
              "", "## Regia", fmt["direction"], "", "## Prossima azione", fmt["next_action"],
              "", "## Guide da leggere"]
@@ -131,6 +137,9 @@ def check(project_path):
         raise ValueError("Scheda progetto non riconosciuta")
     fmt = get_format(project.get("format", ""))
     blockers, warnings = [], []
+    editorial_errors, editorial_warnings = validate_editorial(project)
+    blockers.extend(editorial_errors)
+    warnings.extend(editorial_warnings)
     if fmt["status"] not in READY:
         blockers.append("Sorgenti da recuperare e verificare: " + fmt["next_action"])
     if project.get("preset") != fmt["preset"]:

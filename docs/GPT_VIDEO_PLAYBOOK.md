@@ -1,3 +1,7 @@
+> **Revisione attiva 25/10/2026:** leggere [REGOLE_ATTIVE.md](REGOLE_ATTIVE.md).
+> Le indicazioni storiche incompatibili su durate, quote di scene/tecniche e lingue
+> dei post sono superate. Il format richiesto e la presenza della voce sono protetti.
+
 # Playbook operativo V13 - dal messaggio al filmato
 
 > **Norma editoriale V28:** per TUTTI i nuovi film, i post pubblici raccontano **una storia vera o una riflessione interessante sull'opera**, non le tecniche di editing. Consultare [lo standard editoriale](ARTVISION_EDITORIAL_POST_STANDARD_V28.md), documentare un fatto verificabile e controllare che ogni parola sembri scritta da un appassionato, non dall'AI. Niente "in questo video ho scelto...", hashtag seriali o domande inventate. Attribuzioni/diritti in fondo in modo sobrio; istruzioni nei file privati di produzione.
@@ -11,8 +15,8 @@ Ogni richiesta di Gianluca parte dal lavoro approvato. Questo file è una proced
 per GPT, non un nuovo servizio di generazione. Il registro dei formati indica cosa
 esiste, cosa va preparato e cosa va recuperato. Il planner non chiama API.
 
-Ordine di precedenza: richiesta attuale → regole V12 e preset approvato del formato
-→ questa guida → documenti storici. La serie Critico V2 ha una copertina diversa
+Ordine di precedenza: richiesta attuale → docs/REGOLE_ATTIVE.md → profilo del formato
+→ scelte del singolo video → questa guida → documenti storici. La serie Critico V2 ha una copertina diversa
 da Cinema V6; non generalizzare le preferenze tra formati.
 
 ## Requisito permanente aggiunto V21: prima impressione e confezione social
@@ -45,6 +49,8 @@ python src/video_director_v13.py brief --format artvision_critico --topic "L'ope
 ```
 
 `PROJECT_V13.json` contiene soggetto, preset, asset, scene e revisioni da completare.
+Le nuove schede includono `editorial_contract` ed `editorial_plan`: compilare ricerca,
+promessa, conclusione, copertina, durata motivata, mix e lingue social prima del check.
 `BRIEF_GPT.md` indica le guide e i moduli reali. Nessun filmato viene dichiarato
 pronto quando è stata creata soltanto la scheda. Una cartella esistente non viene
 sovrascritta. I video storici restano intatti.

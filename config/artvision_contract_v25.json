@@ -18,10 +18,6 @@
       "cover_title_language": "en",
       "voice": false,
       "subtitles": false,
-      "typical_duration_seconds": [
-        45,
-        75
-      ],
       "fps": 24,
       "resolution": [
         1080,
@@ -43,10 +39,8 @@
         "whip_pan",
         "dolly_zoom_simulated"
       ],
-      "techniques_range": [
-        3,
-        8
-      ]
+      "duration_basis": "content_and_actual_audio",
+      "technique_count": "motivated_not_fixed"
     },
     "artvision_critico": {
       "cover_title_language": "en",
@@ -86,5 +80,6 @@
     "social_publish_requires_separate_permission": true,
     "never_overwrite_historical": true,
     "never_call_index_update_a_finished_video": true
-  }
+  },
+  "active_rules": "config/editorial_rules.json"
 }

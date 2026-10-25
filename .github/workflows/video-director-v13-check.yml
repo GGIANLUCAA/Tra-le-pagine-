@@ -6,6 +6,10 @@ on:
       - "docs/creator-business*"
       - "tests/test_creator_business_metrics.mjs"
       - "AGENTS.md"
+      - "config/editorial_rules.json"
+      - "src/editorial_rules.py"
+      - "tests/test_editorial_rules.py"
+      - "docs/REGOLE_ATTIVE.md"
       - "START_HERE_GPT.md"
       - "config/video_formats_v13.json"
       - "src/video_director_v13.py"
@@ -53,6 +57,8 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg
           python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12,<1"
+      - name: Regole attive, identita del format e mix espliciti
+        run: python -m unittest discover -s tests -p "test_editorial_rules.py" -v
       - name: Routing, schede, hash e MP4 reale
         run: python -m unittest discover -s tests -p "test_video_director_v13.py" -v
       - name: Metriche confrontabili senza ricavi inventati
