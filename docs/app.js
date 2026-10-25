@@ -190,6 +190,38 @@ function saveProject() {
     renderSaved(); toast("Progetto salvato in questo browser.");}
   catch {toast("Il browser non consente di salvare dati locali.");}
 }
+const PROJECT_BACKUP_SCHEMA = "tra-le-pagine-local-projects";
+function downloadProjectBackup() {
+  const projects=getProjects();
+  if(!projects.length){toast("Non ci sono brief salvati da esportare.");return;}
+  const backup={schema:PROJECT_BACKUP_SCHEMA,version:1,exportedAt:new Date().toISOString(),projects};
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob),link=document.createElement("a");
+  link.href=url;link.download="tra-le-pagine-brief-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast("Backup scaricato. Conservalo in File o Drive per poterlo recuperare.");
+}
+async function importProjectBackup(file) {
+  if(!file)return;
+  if(file.size>2*1024*1024){toast("Il file supera il limite di 2 MB.");return;}
+  try{
+    const backup=JSON.parse(await file.text());
+    if(!backup||backup.schema!==PROJECT_BACKUP_SCHEMA||backup.version!==1||!Array.isArray(backup.projects)){
+      toast("Questo non è un backup Tra le Pagine valido.");return;
+    }
+    const imported=backup.projects.filter(p=>p&&typeof p==="object"&&typeof p.id==="string"&&
+      typeof p.title==="string"&&typeof p.idea==="string"&&p.idea.length>=10);
+    if(!imported.length){toast("Nel backup non trovo brief validi.");return;}
+    if(!window.confirm("Importare "+imported.length+" brief? Si uniranno a quelli presenti; in caso di ID uguali, la copia del backup sostituisce quella locale."))return;
+    const merged=new Map(getProjects().map(p=>[p.id,p]));
+    for(const p of imported)merged.set(p.id,p);
+    const projects=[...merged.values()].sort((a,b)=>Date.parse(b.savedAt||0)-Date.parse(a.savedAt||0)).slice(0,40);
+    localStorage.setItem("tlp_v9_projects",JSON.stringify(projects));
+    renderSaved();
+    toast("Importati "+Math.min(imported.length,projects.length)+" brief. Sono ora disponibili in questo browser.");
+  }catch(error){toast(error instanceof SyntaxError?"Il file non contiene JSON valido.":"Non riesco a salvare il backup in questo browser.");}
+}
 function renderSaved() {
   const p=getProjects();
   $("#saved-projects").innerHTML=p.length ? p.map(v =>
@@ -230,10 +262,12 @@ function buildGptPrompt(p) {
     "Obiettivo editoriale: " + (goals[p.goal]||p.goal) + ". Piattaforma: " + p.platform + ". Lingua: " + p.language + ". Voce: " + p.voice + ". Durata: " + (p.minutes==="auto"?"scegli in base al contenuto":p.minutes+" minuto/i" )+".",
     "Regia: " + (p.style==="signature"?"usa lo stile abituale approvato per il format":p.style==="custom"?"segui le tecniche e i riferimenti indicati dall'utente, verificandone la compatibilità":"proponi un mix motivato, breve e adatto al soggetto") + ". Riferimenti aggiunti: " + (p.styleNotes||"nessuno; proponi tu senza trasformare esempi in regole permanenti") + ".",
     "Ricerca fonti e materiali reali prima di generare immagini: " + (p.preferReal?"sì":"valuta la soluzione più coerente e sostenibile") + ". Prepara anche copertina, testi social e crediti: " + (p.deliverSocial?"sì":"solo se richiesti"),
+    "Per ciascuna scena o asset visuale prepara una tabella con scena, funzione narrativa, opera autentica o ricostruzione dichiarata, URL della fonte, licenza/diritti, attribuzione richiesta e stato di verifica. Non segnare come verificato un dato che non hai controllato; se fonte o diritti mancano, segnala il blocco e non presentare l'asset come approvato. Non presumere che Pixabay, Openverse o AI Horde siano già collegati al renderer.",
+
     series?"Per la serie proponi prima un elenco dei titoli/idee degli episodi, con un filo comune e una variazione di regia per episodio. Mantieni la firma grafica condivisa, ma evita video-cloni. Non iniziare rendering massivo senza aver chiarito i soggetti e il piano.":"Per il video singolo sviluppa ricerca, promessa iniziale, copione/storyboard e regia adatti al soggetto.",
     "Verifica i fatti e le fonti, segnala le incertezze, non inventare storie di furti o misteri. Rispetta identità e mix espliciti delle regole. Per voce narrata resta naturale e usa Gacrux salvo istruzione diversa.",
     "Se l'utente ha già chiesto di creare e ha fornito dati sufficienti, usa queste impostazioni e procedi senza ripetere domande. Chiedi solo le informazioni essenziali mancanti; altrimenti proponi il riepilogo e le scelte predefinite. Un 'procedi' dell'utente avvia il lavoro, ma non autorizza pubblicazione social.",
-    "Consegna il piano editoriale e poi i file/materiali realmente producibili. Non dichiarare pronto un video non renderizzato e controllato. Nessuna pubblicazione automatica."
+    "Per ogni video o episodio prepara una scheda di produzione PROJECT_V13 separata: usa il brief e lo schema del repository, compila ricerca, editorial_plan, media_sourcing e revisioni, poi esegui il check disponibile. Prima di accodare un render verifica nel registro che esistano un renderer e gli asset necessari per quel format. Se questa chat non può leggere/scrivere il repository o eseguire i comandi, consegna il brief pronto da copiare e indica chiaramente che non è stato salvato, accodato o renderizzato. Il salvataggio del menu nel browser non è la scheda di produzione. Consegna piano, copertina e kit social effettivamente producibili; niente pubblicazione automatica."
   ].join("\n\n");
 }
 async function copyGpt() {
@@ -273,6 +307,11 @@ function bind() {
     mediaKind=b.dataset.value;$$("#kind-options .chip").forEach(x=>x.classList.toggle("selected",x===b));
   });
   $("#save-brief").addEventListener("click",saveProject);
+  $("#export-projects").addEventListener("click",downloadProjectBackup);
+  $("#import-projects").addEventListener("click",()=>$("#project-import-file").click());
+  $("#project-import-file").addEventListener("change",async e=>{
+    const file=e.target.files?.[0];e.target.value="";await importProjectBackup(file);
+  });
   $("#copy-gpt").addEventListener("click",copyGpt);
   $("#saved-projects").addEventListener("click",e=>{
     const op=e.target.closest("[data-project-open]");const del=e.target.closest("[data-project-delete]");
