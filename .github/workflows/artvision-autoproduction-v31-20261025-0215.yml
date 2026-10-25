@@ -20,6 +20,13 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+      - name: Restore verified image bytes and source cooldowns
+        uses: actions/cache/restore@v4
+        with:
+          path: .artvision-assets
+          key: artvision-images-v1-${{ github.workflow }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            artvision-images-v1-${{ github.workflow }}-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -149,3 +156,9 @@ jobs:
             core.summary.addHeading('ArtVision V31 — Circe Invidiosa')
               .addRaw(`Status: **${event.status}**; MP4 present: ${exists}; measured seconds: ${event.duration_seconds??'unknown'}.\n\n`)
               .addRaw('Human artistic approval pending. No automatic social publication.').write();
+      - name: Save verified images and cooldowns for the next attempt
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .artvision-assets
+          key: artvision-images-v1-${{ github.workflow }}-${{ github.run_id }}-${{ github.run_attempt }}

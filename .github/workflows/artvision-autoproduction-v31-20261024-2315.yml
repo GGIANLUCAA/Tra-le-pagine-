@@ -20,6 +20,13 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+      - name: Restore verified image bytes and source cooldowns
+        uses: actions/cache/restore@v4
+        with:
+          path: .artvision-assets
+          key: artvision-images-v1-${{ github.workflow }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            artvision-images-v1-${{ github.workflow }}-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -28,6 +35,20 @@ jobs:
           set -euo pipefail
           command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
           python -m pip install --disable-pip-version-check "Pillow>=10,<14" "numpy>=1.26,<3" "requests>=2.31,<3"
+      - name: Recover original Simberg production archive when cache is absent
+        id: recover_original
+        if: hashFiles('assets/verified/simberg_wounded_angel/ORIGINAL_ARTWORK.jpg', '.artvision-assets/*.jpg') == ''
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: ArtVision-V31-20261024-Hugo-Simberg-Wounded-Angel
+          run-id: 40134086889
+          github-token: ${{ github.token }}
+          path: .artvision-recovery
+      - name: Validate original archive identity and SHA256 before reuse
+        if: steps.recover_original.outcome == 'success'
+        continue-on-error: true
+        run: python scripts/artvision_seed_image_archive.py --archive-dir .artvision-recovery --config config/artvision_autoproduction_20261024_2315.json --painting hugo_simberg_wounded_angel_20261024_2315
       - name: Research, V25 and V28 preflight
         id: preflight
         run: |
@@ -130,3 +151,9 @@ jobs:
             core.summary.addHeading('ArtVision V31 — Hugo Simberg, The Wounded Angel')
               .addRaw(`Outcome: **${event.status}**; MP4 exists: ${exists}; duration: ${event.duration_seconds??'unknown'} seconds.\n\n`)
               .addRaw('No automatic social publication; artistic review pending.').write();
+      - name: Save verified images and cooldowns for the next attempt
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .artvision-assets
+          key: artvision-images-v1-${{ github.workflow }}-${{ github.run_id }}-${{ github.run_attempt }}

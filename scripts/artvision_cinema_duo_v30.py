@@ -16,6 +16,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"src"))
 import artvision_editorial_post_v28 as editorial
 from artvision_contract_gate_v25 import check_preflight
+from artvision_image_acquisition import ImageStore
 CONFIG=ROOT/"config/artvision_cinema_duo_v30.json"
 BASE=ROOT/"scripts/artvision_storm_rembrandt_v29.py"
 spec=importlib.util.spec_from_file_location("cinema_base_v29",BASE)
@@ -33,7 +34,7 @@ def validate_brief(b,slug):
     if len(b.get("scenes",[]))<8:errors.append("too few independently motivated shots")
     if b.get("editorial_key")!=b.get("slug"):errors.append("catalog key mismatch")
     if b.get("slug")!=slug:errors.append("subject key mismatch")
-    if len(b.get("art_candidates",[]))<2:errors.append("need two authentic image origins")
+    if len(b.get("art_candidates",[]))<2:errors.append("need two candidate image URLs (not necessarily independent origins)")
     if not all(len(s.get("intent",""))>16 and s["seconds"]>2 and s["movement"] in
         ("locked","slow_push","slow_pull") for s in b.get("scenes",[])):
         errors.append("unmotivated or unsupported camera movement")
@@ -51,31 +52,19 @@ def validate_brief(b,slug):
     return errors
 
 def fetch_authentic_image(b,destination):
-    exceptions=[]
-    for url in b["art_candidates"]:
-        for attempt in range(2):
-            try:
-                with requests.get(url,headers={"User-Agent":USER_AGENT},timeout=72,stream=True,allow_redirects=True) as r:
-                    r.raise_for_status()
-                    ct=r.headers.get("Content-Type","").lower()
-                    if "text/html" in ct or "application/json" in ct:
-                        raise RuntimeError("not an image: "+ct)
-                    with destination.open("wb") as f:
-                        for piece in r.iter_content(chunk_size=512*1024):
-                            if piece:f.write(piece)
-                if destination.stat().st_size<200000:raise ValueError("under 200KB")
-                with Image.open(destination) as art:
-                    art.verify()
-                with Image.open(destination) as art:
-                    assert min(art.width,art.height)>=1000 and max(art.width,art.height)>=1850,(art.size,url)
-                    dims=art.size
-                print("AUTHENTIC_IMAGE_OK",url, dims,destination.stat().st_size,flush=True)
-                return url
-            except Exception as exc:
-                exceptions.append(f"{url}: {type(exc).__name__}: {str(exc)[:120]}")
-                destination.unlink(missing_ok=True)
-                time.sleep(1.5*(attempt+1))
-    raise RuntimeError("NO_VERIFIED_ORIGINAL_IMAGE: "+" | ".join(exceptions[-6:]))
+    store=ImageStore()
+    if b.get("local_image"):
+        local=(ROOT/b["local_image"]).resolve()
+        if not local.is_relative_to(ROOT.resolve()):
+            raise ValueError("Local artwork must be inside repository")
+        if not b.get("image_sha256") or b.get("local_image_source_url") not in b["art_candidates"]:
+            raise ValueError("Local artwork requires pinned SHA256 and configured source URL")
+        try:
+            store.seed(b["source_page"],local,b["local_image_source_url"],b["image_sha256"])
+        except (OSError,ValueError) as exc:
+            print("LOCAL_IMAGE_REJECTED",type(exc).__name__,str(exc),flush=True)
+    return store.acquire(b["source_page"], b["art_candidates"], destination,
+                         expected=b.get("image_sha256"))
 
 def fetch_track(m,filepath):
     errors=[]
@@ -125,6 +114,15 @@ def narrative_meta(b,shots,chosen_image,asset,track,duration,analysis,out):
     editorial.write_posts(slug,out,overwrite=False)
     e=editorial.validate_folder(out)
     if e:raise RuntimeError("V28 captions BLOCKED: "+";".join(e))
+    rights=b.get("image_rights")
+    image_rights_text=(
+        f"Photographic reproduction: {rights['credit']} — {rights['license']}\n"
+        f"Image license: {rights['license_url']}\n"
+        f"Transformations: {rights['transformations']}\n\n"
+        if rights else
+        "Photographic reproduction rights: consult the source file and editorial research.\n"
+        "Technical image validation is not rights approval.\n\n"
+    )
     source=(
         f"# Sources & rights / {title}\n\n"
         f"Artwork: {title} ({b['year']}) — {artist}, {b['museum']}.\n"
@@ -132,9 +130,7 @@ def narrative_meta(b,shots,chosen_image,asset,track,duration,analysis,out):
         f"Source file: {b['source_page']}\n"
         f"Original image successfully downloaded: {chosen_image}\n"
         f"Image SHA256: {image_hash}\n"
-        "The centuries-old painting is public domain. Photographic reproductions\n"
-        "of flat art are considered PD-Art on Wikimedia Commons; check national\n"
-        "cultural heritage and photography terms before use in any jurisdiction.\n\n"
+        + image_rights_text +
         f"Recording: {music['name']} — {music['artist']} (incompetech.com)\n"
         f"ISRC: {music['isrc']}\n"
         f"Original recording: {music['url']}\n"
@@ -257,8 +253,8 @@ Neither this run nor technical validation constitutes artistic Gold Master appro
         "duration_reason":"Individual scenes motivated by painterly content and actual soundtrack phrases; no generic fixed-length slideshow.",
         "selected_techniques":[{"id":n,"why":why} for n,why in cinema.TECH],
         "sources":[{"id":"verified-original-artwork","url":b["source_page"],
-                    "license":"Public domain historical painting / photographic reproduction rights caveat",
-                    "credit":f"{artist}, {b['museum']}","status":"verified"}],
+                    "license":rights["license"] if rights else "See source reproduction rights",
+                    "credit":rights["credit"] if rights else f"{artist}, {b['museum']}","status":"verified"}],
         "music":{"title":music["name"],"composer":music["artist"],
                  "origin":"external_licensed","license":"CC BY 4.0","evidence":music["page"],
                  "emotional_arc":b["story"],"rights_status":"verified"},
