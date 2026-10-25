@@ -32,7 +32,11 @@ def new_plan():
             'payoff': '', 'cover_reason': '', 'duration_seconds': None,
             'duration_reason': '', 'techniques': [], 'mix_reason': '',
             'social_languages': {}, 'comparison_reference': None,
-            'voice_image_sync_review': 'pending', 'artistic_review': 'pending'}
+            'voice_image_sync_review': 'pending', 'artistic_review': 'pending',
+            'audience_research': {
+                'candidates': [], 'selected_work': '', 'selection_reason': '',
+                'viewer_interest': '', 'creative_direction': '',
+                'signal_limitations': '', 'analytics_feedback': 'not_yet_published'}}
 
 
 def validate(project):
@@ -87,6 +91,49 @@ def validate(project):
         for source in sources:
             if not isinstance(source, dict) or any(not isinstance(source.get(k), str) or not source[k].strip() for k in ('reference', 'finding', 'verification_notes')) or source.get('status') != 'reviewed':
                 errors.append('Fonte senza riscontro e nota di verifica: non inventare approvazioni')
+    # V32: verify there is an actual documented choice before an ArtVision render.
+    # This gate validates the record, not the truth of external popularity claims.
+    if actual in rules.get('audience_research', {}).get('applies_to', []):
+        research = plan.get('audience_research')
+        if not isinstance(research, dict):
+            errors.append('Ricerca pubblico ArtVision V32 mancante')
+        else:
+            candidates = research.get('candidates')
+            minimum = rules['audience_research']['min_candidates']
+            if not isinstance(candidates, list) or len(candidates) < minimum:
+                errors.append(f'Ricerca pubblico: confrontare almeno {minimum} opere o temi')
+            else:
+                seen_works = set()
+                for i, candidate in enumerate(candidates):
+                    if not isinstance(candidate, dict):
+                        errors.append(f'Candidato pubblico {i+1} non valido')
+                        continue
+                    required = ('artist', 'work', 'visual_hook', 'human_interest',
+                                'historical_anchor', 'asset_rights_notes', 'comparison_reason')
+                    if any(not isinstance(candidate.get(k), str) or not candidate[k].strip()
+                           for k in required):
+                        errors.append(f'Candidato pubblico {i+1}: ricerca, regia o diritti incompleti')
+                    identity = (candidate.get('artist'), candidate.get('work'))
+                    if identity in seen_works:
+                        errors.append('Ricerca pubblico: candidato duplicato')
+                    seen_works.add(identity)
+                    signal = candidate.get('audience_signal')
+                    if not isinstance(signal, dict) or signal.get('status') not in ('verified', 'unavailable'):
+                        errors.append(f'Candidato pubblico {i+1}: dichiarare segnale verificato o indisponibile')
+                    elif signal['status'] == 'verified':
+                        if not all(isinstance(signal.get(k), str) and signal[k].strip()
+                                   for k in ('reference', 'observation', 'checked_on')):
+                            errors.append(f'Candidato pubblico {i+1}: segnale pubblico senza fonte, data o riscontro')
+                    elif not isinstance(signal.get('reason'), str) or not signal['reason'].strip():
+                        errors.append(f'Candidato pubblico {i+1}: motivare indisponibilità dei dati')
+                selected = research.get('selected_work')
+                if not isinstance(selected, str) or not selected.strip() or selected not in [
+                    item.get('work') for item in candidates if isinstance(item, dict)
+                ]:
+                    errors.append('Ricerca pubblico: scegliere esplicitamente una delle opere confrontate')
+            for key in ('selection_reason', 'viewer_interest', 'creative_direction'):
+                if not isinstance(research.get(key), str) or not research[key].strip():
+                    errors.append('Ricerca pubblico: motivazione mancante: ' + key)
     entries = json.loads((ROOT / rules['technique_catalog']).read_text(encoding='utf-8'))['techniques']
     catalog = {x['id']: x for x in entries}
     techniques = plan.get('techniques')
