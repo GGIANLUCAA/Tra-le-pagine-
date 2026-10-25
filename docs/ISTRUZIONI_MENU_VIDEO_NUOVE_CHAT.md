@@ -28,6 +28,18 @@ modificarli oppure dire “usa le impostazioni consigliate e procedi”.
   ogni volta valori già fissati dalle regole.
 - Pubblicazione: mai implicita; creare i materiali non equivale a pubblicarli.
 
+## Fonti e strumenti — opzione preimpostata invisibile per l'utente
+
+Preselezionare `config/editorial_rules.json > media_source_priority` senza
+aggiungere domande al menu ordinario. Quando viene chiesto `creami un video`,
+leggere `docs/FILOSOFIA_FONTI_MEDIA_V33.md`, recuperare immagini riuscite e
+scegliere il **materiale più pertinente alla scena**, non il provider più facile.
+Per ArtVision solo quadri autentici; per libri originali coerenti quando lo stock
+non basta; Pixabay (`PIXABAY`) per foto/clip adatte e ricerche manuali mirate;
+AI Horde solo nel percorso sperimentale esplicito. Registrare asset, licenze,
+revisioni e fallback nel dossier. Mostrare queste opzioni soltanto se l'utente
+vuole cambiare impostazioni o serve un'autorizzazione reale.
+
 ## Regole di dialogo
 
 - Se la richiesta iniziale contiene già l'idea, il numero di video, il genere o altre

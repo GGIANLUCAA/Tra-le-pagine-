@@ -33,6 +33,9 @@ def new_plan():
             'duration_reason': '', 'techniques': [], 'mix_reason': '',
             'social_languages': {}, 'comparison_reference': None,
             'voice_image_sync_review': 'pending', 'artistic_review': 'pending',
+            'media_sourcing': {'policy_id': policy()['media_source_priority']['id'],
+                              'review_status': 'pending', 'decisions': [],
+                              'note': 'Compilare scelte per ciascun asset: non sono approvate automaticamente.'},
             'audience_research': {
                 'candidates': [], 'selection_mode': 'research_selected',
                 'explicit_user_instruction': '', 'selected_work': '', 'selection_reason': '',

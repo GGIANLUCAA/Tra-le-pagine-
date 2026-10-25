@@ -22,6 +22,15 @@ class VideoDirectorTests(unittest.TestCase):
         from PIL import Image
         Image.new("RGB", (100, 100), "blue").save(folder / "scene.jpg")
         p["script"] = "story.txt"
+        p["editorial_plan"]["media_sourcing"] = {
+            "policy_id": "media-priority-v33", "review_status": "reviewed",
+            "decisions": [{"asset_id": "one", "source_kind": "user_supplied",
+                           "provider": "test_fixture", "source_reference": "local-test-file-scene.jpg",
+                           "choice_reason": "Original test image matching the test scene",
+                           "scene_match_note": "Fixture: Anna on the threshold",
+                           "rights_review": "reviewed", "scene_relevance": "reviewed",
+                           "visual_review": "passed"}]
+        }
         p["assets"] = [{"id": "one", "file": "scene.jpg", "role": "visual", "source": "Originale di prova",
                         "rights": "Proprio", "sha256": digest(folder / "scene.jpg")}]
         p["scenes"] = [{"asset_id": "one", "description": "Anna sulla soglia", "reason": "Apertura della vicenda",

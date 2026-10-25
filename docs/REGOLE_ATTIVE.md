@@ -1,4 +1,4 @@
-# Regole attive — 25 ottobre 2026 (revisione 2, Audience V32)
+# Regole attive — 25 ottobre 2026 (revisione 3, Audience V32 + Fonti V33)
 
 Questa revisione applica le decisioni di Gianluca sulla regia modulare.
 La configurazione consultabile dal programma è `config/editorial_rules.json`.
@@ -75,6 +75,37 @@ confronto documentato, scelta e ragione di regia. Altri renderer che non
 chiamano quel preflight devono applicare la stessa regola esplicitamente.
 Questa è una regola **sempre** per ArtVision, non un esperimento e non
 un nuovo preset visivo. Non modifica video/master esistenti.
+
+## Filosofia fonti e API V33 — VINCOLANTE per tutti i nuovi contenuti (25/10/2026)
+
+Approvazione esplicita dell'utente: priorità a sistemi e API gratuiti già disponibili,
+senza perdere qualità né cambiare il linguaggio del singolo format.
+**Prima recuperare asset approvati; poi scegliere fonti autentiche o archivi quando
+servono fatti/opere reali, stock pertinente quando serve ambientazione, illustrazione
+originale quando il racconto richiede personaggi o azioni precise**.
+La preferenza di provider è guidata da pertinenza narrativa, diritti e autenticità,
+non da una classifica rigida o dalla quantità di immagini generate.
+
+**Pixabay** è il nome corretto del servizio. Il segreto già inserito `PIXABAY`
+ha priorità nell'adapter; `PIXABAY_API_KEY` è alias facoltativo;
+`PRIXIBAY2` non viene utilizzato automaticamente senza verifica.
+AI Horde resta sperimentale (chiave principale `AIHORDE_API_KEY`), Google
+Gacrux mantiene `GEMINI_API_KEY`, OpenRouter `OPENROUTER2` non autorizza
+modelli a pagamento e non è ancora attivo per inferenza.
+Secondi account non si usano per aggirare quote; niente API costose automatiche.
+Pixabay richiede ricerche reali e cache 24h; il bridge non ha ancora cache
+persistente, quindi evitare richieste duplicate e volumi massivi.
+
+Per ogni nuovo progetto V13 annotare in `editorial_plan.media_sourcing` la
+sorgente e la decisione **di ogni asset visivo**. Il check V13 blocca mancanza
+di verifica di diritti, pertinenza, fonte, esame visivo, oppure l'uso di immagini AI
+come quadro autentico/prova di cronaca. Nessun campo tecnico certifica bellezza.
+Risultati/diritti/seed/hash sono riusabili solo se registrati; gli asset già approvati
+non vengono riscritti. Le 45 API V2 sono un catalogo, non 45 connettori attivi.
+
+Dettagli e differenze tra format: `docs/FILOSOFIA_FONTI_MEDIA_V33.md`.
+Le nuove chat indipendenti devono leggere o ricevere le regole esplicitamente:
+il repository non può imporle a una chat che non lo consulta.
 
 ## Dal soggetto al risultato
 
