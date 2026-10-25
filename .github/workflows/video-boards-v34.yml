@@ -1,0 +1,59 @@
+name: "Tra le Pagine - Visual Boards V34 (no AI)"
+on:
+  push:
+    branches:
+      - feature/video-boards-v34-zero-ai
+    paths:
+      - src/video_boards_v34.py
+      - tests/test_video_boards_v34.py
+      - .github/workflows/video-boards-v34.yml
+  workflow_dispatch:
+    inputs:
+      project_path:
+        description: "Path to PROJECT_V13.json; leave blank for batch in output/"
+        required: false
+        type: string
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install open-source board dependency
+        run: python -m pip install "Pillow>=10,<13"
+      - name: Test offline boards including 20-video batch
+        run: PYTHONPATH=. python -m unittest discover -s tests -p test_video_boards_v34.py -v
+
+  generate:
+    if: github.event_name == 'workflow_dispatch'
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install "Pillow>=10,<13"
+      - name: Build boards using only existing assets
+        env:
+          PROJECT_PATH: ${{ inputs.project_path }}
+        run: |
+          if [ -n "$PROJECT_PATH" ]; then
+            test -f "$PROJECT_PATH" || { echo "::error::PROJECT_V13 missing"; exit 2; }
+            python src/video_boards_v34.py --project "$PROJECT_PATH" --out "${RUNNER_TEMP}/visual_boards"
+          else
+            test -d output || { echo "::error::No output/ folder in repository"; exit 2; }
+            python src/video_boards_v34.py --root output --out "${RUNNER_TEMP}/visual_boards"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VISUAL_BOARDS_V34
+          path: ${{ runner.temp }}/visual_boards/
+          retention-days: 7
+          if-no-files-found: error
