@@ -71,6 +71,7 @@ jobs:
           opener.addheaders=[('User-Agent',agent)]
           with opener.open(u,timeout=40) as r:html=r.read().decode()
           assert 'id="editorial"' in html and 'id="edZipFull"' in html,'Live dossier not published'
+          assert 'id="edBoardCanvas"' in html and 'data-ed-tab="boards"' in html,'Visual Boards V34 not yet published'
           checks=[
            (u+'/api/editorial?key=ARTVISION_CARAVAGGIO_CINEMA_V6.mp4','GET',None,401),
            (u+'/api/social-package-link','POST',b'{}',401),
