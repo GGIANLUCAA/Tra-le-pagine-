@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-25T13:20:00Z",
+  "updated": "2026-10-25T16:30:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -368,6 +368,53 @@
         "external_video_library_import": "not_attempted",
         "social_published": false
       }
+    },
+    {
+      "cycle_id": "20261025T1715+0100",
+      "created_at": "2026-10-25T16:30:00Z",
+      "artist": "Utagawa Hiroshige; Vincent van Gogh",
+      "work": "Japan Through Van Gogh",
+      "format": "artvision_collection",
+      "baseline": "artvision_cinema / cinema_v6",
+      "reason_fallback": "Natural Google Gacrux narration for a new script was not verified in this session. Chose a documented visual before/after collection with four newly sourced authentic artworks and existing Cinema V6 signature; no robot voice or unimplemented adapter.",
+      "status": "technical_pass_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 80,
+      "size_bytes": 29166498,
+      "sha256_mp4": "c005bc6f860bc57ed412ac483d56ed440d9ae49feecc908f1701090b42f5da3f",
+      "sha256_zip": "dcbd35d9b215578ca938d6a7f363f7741b1e9719afb8a1add5663657fb4cf9d1",
+      "artifact_name": "ArtVision_V32_Japan_Through_Van_Gogh_PACCHETTO_COMPLETO.zip (conversation attachment; not GitHub media)",
+      "delivery_video": "ArtVision_V32_Japan_Through_Van_Gogh.mp4 (conversation attachment)",
+      "source_workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40211488753",
+      "workflow_run_url": null,
+      "execution_environment": "ChatGPT local FFmpeg/Pillow + GitHub Actions for authentic source downloads; not a GitHub video-render workflow",
+      "source_images_count": 4,
+      "original_new_montage": true,
+      "audience_research": "V32 three-theme shortlist; public performance signals unavailable and not fabricated; chose documented Hiroshige-to-Van-Gogh influence",
+      "steps": {
+        "source_research": "documented",
+        "image_retrieval": "GitHub Actions success",
+        "preflight": "V32 editorial manual verified; V13 CLI not run locally",
+        "render": "success",
+        "verify": "full_decode_ffprobe_audio_pass",
+        "archive": "local ZIP CRC pass"
+      },
+      "qa": {
+        "resolution": "1080x1920",
+        "fps": 24,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "frames": 1920,
+        "full_decode": "pass",
+        "sampled_real_frames": 20,
+        "ghosting": "no overlap in method and sampled frames",
+        "zip_crc": "pass"
+      },
+      "license_status": "Commons PD-Art for 4 source reproductions; original recording Echoes of Time by Kevin MacLeod CC BY 4.0; local jurisdiction/platform rights recheck required",
+      "gold_master_approved": false,
+      "social_published": false,
+      "human_artistic_review_pending": true,
+      "feedback": "User requested research based on actual audience interest and content-specific direction. V32 shortlist included; no invented engagement statistics."
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
