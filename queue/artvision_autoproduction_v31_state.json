@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-25T00:26:35.331Z",
+  "updated": "2026-10-25T00:28:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -131,7 +131,20 @@
         "archive": "success"
       },
       "gold_master_approved": false,
-      "social_published": false
+      "social_published": false,
+      "postprocess": {
+        "shot_count": 11,
+        "refinement": "Trimmed repetitive scenes; stronger macro/full rhythm and full-canvas opaque matte",
+        "cover": "One-band V6-family refined cover; original video and approved historical presets untouched",
+        "cover_sha256": "e9269d064705497ba5b430dea00a6e260b3c85649f3175e75242c4a372ff2a48",
+        "delivery_zip": "ArtVision_V31_Waterhouse_Circe_Invidiosa_PACCHETTO_COMPLETO.zip",
+        "delivery_status": "MP4 full decoded and final ZIP tested in local working environment",
+        "original_workflow_artifact_id": 12580892569,
+        "source": "Art Gallery of South Australia, museum record and Wikimedia Commons PD-Art",
+        "music": "The Chamber — Kevin MacLeod, CC BY 4.0",
+        "external_video_library_import": "not_attempted",
+        "human_artistic_review_pending": true
+      }
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
