@@ -1,0 +1,114 @@
+name: "ArtVision Critico V32 - Holbein voice reuse final retry"
+run-name: "Critico V32 - Holbein master narrato correggi V28"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-critico-v32-holbein-retry.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  critic:
+    name: "Critico V32 voce IT - ${{ matrix.episode }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        episode: [holbein]
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Reuse verified Holbein Gacrux voice without resynthesis
+        if: matrix.episode == 'holbein'
+        uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_HOLBEIN_CRITICO_V4_VOCE_GACRUX
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 40159716004
+          github-token: ${{ github.token }}
+          path: input_voice/holbein
+      - name: Install freely available codec and natural-voice dependencies
+        run: |
+          set -e
+          if ! command -v ffmpeg >/dev/null 2>&1; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          if ! test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf; then sudo apt-get update -qq && sudo apt-get install -y -qq fonts-dejavu-core; fi
+          python -m pip install -q --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<14" "opencv-python-headless>=4.8,<5" "soundfile>=0.12,<1" "scipy>=1.11,<2" "google-genai>=2.25,<4"
+          python -m py_compile scripts/artvision_critico_v32_natural_three.py
+      - name: Validate museum-backed Italian criticism before speaking
+        env:
+          EPISODE: "${{ matrix.episode }}"
+        run: |
+          python - <<'PY'
+          import json,os,sys,pathlib
+          sys.path.insert(0,"src")
+          import artvision_editorial_post_v28 as e
+          posts=json.load(open("config/artvision_critico_v32_posts.json"))["entries"]
+          doc=json.load(open("config/artvision_critico_v32_three.json"))
+          slug=os.environ["EPISODE"]
+          p=doc["episodes"][slug]
+          errors=e.validate_entry(slug,posts[slug])
+          assert not errors,errors
+          music=p["music"]
+          credits=" ".join(posts[slug]["credit_lines"]).casefold()
+          assert music["title"].casefold() in credits and music["source"].casefold() in credits
+          assert p.get("beats") or pathlib.Path(p["script_file"]).is_file()
+          print("CRITIC REAL-FACT PRECHECK APPROVED",slug,flush=True)
+          PY
+      - name: Create actual voiced 1080x1920 MP4 and no-ghosting V25 publishing dossier
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python scripts/artvision_critico_v32_natural_three.py --episode "${{ matrix.episode }}"
+      - name: Validate real playable master, spoken narration, source and complete materials
+        env:
+          EPISODE: "${{ matrix.episode }}"
+        run: |
+          set -e
+          folder="output/artvision-critico-v32/${{ matrix.episode }}"
+          ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_type,codec_name,width,height -of json "$folder/VIDEO_MASTER.mp4"
+          python src/artvision_editorial_post_v28.py --validate-folder "$folder" || {
+            python - <<'PY'
+          import json,os,pathlib,sys
+          sys.path.insert(0,"src")
+          import artvision_editorial_post_v28 as e
+          e.CATALOG=pathlib.Path("config/artvision_critico_v32_posts.json")
+          errors=e.validate_folder(pathlib.Path("output/artvision-critico-v32")/os.environ["EPISODE"])
+          print(errors)
+          if errors:sys.exit(1)
+          PY
+          }
+          ffmpeg -hide_banner -loglevel error -xerror -i "$folder/VIDEO_MASTER.mp4" -f null -
+          python - <<'PY'
+          import hashlib,json,os,pathlib,subprocess
+          slug=os.environ["EPISODE"]
+          p=pathlib.Path("output/artvision-critico-v32")/slug
+          f=p/"VIDEO_MASTER.mp4"
+          d=json.load(open(p/"FINAL_QA.json"))
+          assert d["spoken_narration_present"] and d["voice"]=="Google Gemini Gacrux"
+          assert d["master_sha256"]==hashlib.sha256(f.read_bytes()).hexdigest()
+          assert d["distinct_visual_crops"]>=12 and d["no_ghosting_policy"]
+          assert (p/"COPERTINA.jpg").stat().st_size>40000
+          assert (p.parent/f"ARTVISION_CRITICO_V32_{slug.upper()}_COMPLETE.zip").stat().st_size>1000000
+          print("REAL CRITICO FILM FULL DECODE PASSED",slug,d["duration_seconds"],f.stat().st_size)
+          PY
+      - name: Deliver real master and original editing packet for Android download
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_CRITICO_V32_${{ matrix.episode }}_FINALE"
+          path: |
+            output/artvision-critico-v32/${{ matrix.episode }}/VIDEO_MASTER.mp4
+            output/artvision-critico-v32/${{ matrix.episode }}/COPERTINA.jpg
+            output/artvision-critico-v32/${{ matrix.episode }}/COPIONE_IT.txt
+            output/artvision-critico-v32/${{ matrix.episode }}/QA_CONTACT_SHEET.jpg
+            output/artvision-critico-v32/${{ matrix.episode }}/FINAL_QA.json
+            output/artvision-critico-v32/ARTVISION_CRITICO_V32_${{ matrix.episode }}_COMPLETE.zip
+          if-no-files-found: error
+          retention-days: 30
