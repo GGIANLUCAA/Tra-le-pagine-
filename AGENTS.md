@@ -37,11 +37,12 @@ aggiornare la fonte unica con versione, motivo e riferimento dell'approvazione.
 
 Per ogni **nuovo** ArtVision Cinema, Critico o Collection leggere e applicare
 `docs/ARTVISION_AUDIENCE_RESEARCH_V32.md` e la regola in `docs/REGOLE_ATTIVE.md`.
-Prima di scegliere il quadro confrontare >=3 candidati con interesse umano,
+Se il soggetto è libero, confrontare >=3 candidati con interesse umano,
 possibili segnali pubblici documentati (o indisponibilità dichiarata), storia
 museale, qualità/diritti, originalità e regia prevista. Conservare il confronto
 in `editorial_plan.audience_research` e nei materiali dell'episodio; eseguire
 il gate preflight V13/V16 quando presente. **Non fabbricare statistiche**.
+Se l'utente ha già scelto l'opera, analizzarne comunque il pubblico senza imporre altre opere.
 La regia dev'essere specifica del soggetto, non uno stampino.
 Questo non cambia i formati approvati né i master storici.
 
