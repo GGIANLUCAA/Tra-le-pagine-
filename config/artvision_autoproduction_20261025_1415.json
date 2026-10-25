@@ -1,0 +1,153 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "31.1",
+  "date": "2026-10-25",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261025T1415+0100",
+  "chosen_format": "artvision_cinema",
+  "format_reason": "New standalone museum painting; natural approved Gacrux not verified as free/available, and format remains non-narrated rather than substituting robotic speech.",
+  "candidates_considered": [
+    {
+      "artist": "Caspar David Friedrich",
+      "title": "The Sea of Ice",
+      "reason": "Selected: extraordinary angular glacier, nearly hidden ship, first-frame mystery, museum-verified 1820–21 Elbe studies and clean Commons PD-Art source."
+    },
+    {
+      "artist": "Henry Fuseli",
+      "title": "The Nightmare",
+      "reason": "Visually compelling but museum reproduction rights require more care and image has sensitive sexualized incubus symbolism."
+    },
+    {
+      "artist": "J. M. W. Turner",
+      "title": "The Fighting Temeraire",
+      "reason": "Excellent museum story and glowing light, but painting is already present in older ArtVision batch profiles and less surprising than the ice wreck."
+    }
+  ],
+  "subjects": {
+    "sea_of_ice": {
+      "artist": "CASPAR DAVID FRIEDRICH",
+      "title_en": "The Sea of Ice",
+      "year": "1823–1824",
+      "museum": "Hamburger Kunsthalle, Hamburg",
+      "slug": "caspar_friedrich_sea_of_ice_20261025_1415",
+      "editorial_key": "caspar_friedrich_sea_of_ice_20261025_1415",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Caspar_David_Friedrich_-_Das_Eismeer_-_Hamburger_Kunsthalle.jpg",
+      "museum_page": "https://cdfriedrich.de/en/chronicle/das-eismeer/",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/b/bc/Caspar_David_Friedrich_-_Das_Eismeer_-_Hamburger_Kunsthalle.jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Caspar_David_Friedrich_-_Das_Eismeer_-_Hamburger_Kunsthalle.jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Caspar_David_Friedrich_-_Das_Eismeer_-_Hamburger_Kunsthalle_-_02.jpg"
+      ],
+      "music": {
+        "name": "The Chamber",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Chamber.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100400",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1100400",
+        "offset": 8
+      },
+      "story": "A nearly invisible ship becomes the emotional hook; monumental broken ice dwarfs it. The painting's harsh planes become a quiet reflection on the limits of human ambition. Finish with an opaque, perfectly complete canvas, not a generic zoom loop.",
+      "techniques": [
+        "hidden_detail_reveal",
+        "visual_hierarchy",
+        "rhythmic_rest",
+        "motivated_cut",
+        "opaque_canvas_reveal"
+      ],
+      "scenes": [
+        {
+          "type": "detail",
+          "x": 0.83,
+          "y": 0.47,
+          "z": 1.48,
+          "seconds": 5.3,
+          "movement": "locked",
+          "intent": "Open on the almost-hidden broken ship on the right, so viewers discover the painting's secret first"
+        },
+        {
+          "type": "wide",
+          "x": 0.46,
+          "y": 0.29,
+          "z": 1.02,
+          "seconds": 5.7,
+          "movement": "slow_pull",
+          "intent": "Reveal the angular peak of crushed ice and the disproportionate scale of the landscape"
+        },
+        {
+          "type": "texture",
+          "x": 0.47,
+          "y": 0.83,
+          "z": 1.28,
+          "seconds": 5.1,
+          "movement": "locked",
+          "intent": "Hold on the dark blue and green foreground slabs where ice resembles shattered stone"
+        },
+        {
+          "type": "landscape",
+          "x": 0.15,
+          "y": 0.39,
+          "z": 1.25,
+          "seconds": 5,
+          "movement": "locked",
+          "intent": "Shift to the distant left glacier and the cold horizon for an essential breath"
+        },
+        {
+          "type": "macro",
+          "x": 0.83,
+          "y": 0.47,
+          "z": 1.6,
+          "seconds": 5.3,
+          "movement": "slow_push",
+          "intent": "Return to the ship's tiny hull trapped between two jagged walls of ice"
+        },
+        {
+          "type": "medium",
+          "x": 0.68,
+          "y": 0.65,
+          "z": 1.3,
+          "seconds": 5,
+          "movement": "locked",
+          "intent": "Examine pale green light along the angled front ice plates"
+        },
+        {
+          "type": "detail",
+          "x": 0.46,
+          "y": 0.23,
+          "z": 1.5,
+          "seconds": 5.2,
+          "movement": "locked",
+          "intent": "Study the monumental upward thrust of the central jagged ice tower"
+        },
+        {
+          "type": "landscape",
+          "x": 0.73,
+          "y": 0.17,
+          "z": 1.2,
+          "seconds": 5.1,
+          "movement": "locked",
+          "intent": "Allow stillness in the sky and distant frozen sea without decorative motion"
+        },
+        {
+          "type": "wide",
+          "x": 0.49,
+          "y": 0.45,
+          "z": 1.02,
+          "seconds": 5.5,
+          "movement": "slow_pull",
+          "intent": "Return to the entire mountain of ice before the closing full-canvas reveal"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 8.5,
+          "movement": "locked",
+          "intent": "Finish on the complete genuine painting centered on a fully opaque dark matte"
+        }
+      ]
+    }
+  }
+}
