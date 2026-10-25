@@ -168,7 +168,21 @@
         "archive": "success"
       },
       "gold_master_approved": false,
-      "social_published": false
+      "social_published": false,
+      "postprocess": {
+        "independent_full_decode": "pass",
+        "real_transition_checks_seconds": [
+          15.298,
+          29.489,
+          43.58
+        ],
+        "no_ghosting_visual_sample": "pass",
+        "cover_visual_sample": "reviewed",
+        "complete_zip_local_verified": true,
+        "local_zip_addendum": "QA_TRANSITIONS_V31.jpg + JSON",
+        "human_artistic_review_pending": true,
+        "external_video_library_import": "not_attempted"
+      }
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
