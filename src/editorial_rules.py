@@ -34,7 +34,8 @@ def new_plan():
             'social_languages': {}, 'comparison_reference': None,
             'voice_image_sync_review': 'pending', 'artistic_review': 'pending',
             'audience_research': {
-                'candidates': [], 'selected_work': '', 'selection_reason': '',
+                'candidates': [], 'selection_mode': 'research_selected',
+                'explicit_user_instruction': '', 'selected_work': '', 'selection_reason': '',
                 'viewer_interest': '', 'creative_direction': '',
                 'signal_limitations': '', 'analytics_feedback': 'not_yet_published'}}
 
@@ -99,7 +100,12 @@ def validate(project):
             errors.append('Ricerca pubblico ArtVision V32 mancante')
         else:
             candidates = research.get('candidates')
-            minimum = rules['audience_research']['min_candidates']
+            user_specified = (research.get('selection_mode') == 'user_specified'
+                              and isinstance(research.get('explicit_user_instruction'), str)
+                              and bool(research['explicit_user_instruction'].strip()))
+            minimum = 1 if user_specified else rules['audience_research']['min_candidates']
+            if research.get('selection_mode') == 'user_specified' and not user_specified:
+                errors.append('Ricerca pubblico: soggetto imposto senza istruzione esplicita dell’utente')
             if not isinstance(candidates, list) or len(candidates) < minimum:
                 errors.append(f'Ricerca pubblico: confrontare almeno {minimum} opere o temi')
             else:
