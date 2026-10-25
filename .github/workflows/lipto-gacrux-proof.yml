@@ -1,0 +1,76 @@
+name: "Lipto prova 1 — prova voce Google Gacrux"
+run-name: "Gacrux | Lipto prova 1"
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/lipto-gacrux-proof.yml"
+      - "episodes/lipto_prova_1_dorian_gray/**"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Preflight: copione, modello Google e secret"
+        run: |
+          test -s episodes/lipto_prova_1_dorian_gray/testo.txt
+          python - <<'PY'
+          from pathlib import Path
+          txt=Path("episodes/lipto_prova_1_dorian_gray/testo.txt").read_text(encoding="utf-8")
+          n=len(txt.split())
+          assert 230 <= n <= 700, f"Numero parole non valido: {n}"
+          from pathlib import Path
+          src=Path("src/gemini_voice.py").read_text(encoding="utf-8")
+          assert 'VOICE = "Gacrux"' in src, "Voce Google Gacrux diversa dalle regole"
+          print("Copione valido:",n,"parole. Voce approvata: Gacrux.")
+          PY
+          if [[ -z "${GEMINI_API_KEY:-}" ]]; then
+            echo "::error::Il secret GEMINI_API_KEY non è disponibile. Nessuna chiamata a Google eseguita."
+            exit 2
+          fi
+      - name: "Installa dipendenze già usate dal progetto"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "google-genai>=2.25,<3"
+      - name: "Genera solo audio originale con il modulo esistente"
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, str(Path("src").resolve()))
+          from gemini_voice import synthesize, voice_profile
+          assert voice_profile()["voice"] == "Gacrux"
+          text=Path("episodes/lipto_prova_1_dorian_gray/testo.txt").read_text(encoding="utf-8")
+          synthesize(text, Path("output/lipto_prova_1_gacrux"))
+          PY
+      - name: "Verifica audio reale e genera report"
+        run: |
+          ffprobe -v error -show_entries format=duration:stream=codec_type,codec_name,sample_rate -of json output/lipto_prova_1_gacrux/VOCE.wav > output/lipto_prova_1_gacrux/FFPROBE_VOCE.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("output/lipto_prova_1_gacrux")
+          d=json.loads((p/"FFPROBE_VOCE.json").read_text())
+          assert any(x.get("codec_type")=="audio" for x in d.get("streams", []))
+          assert float(d["format"]["duration"])>30
+          assert (p/"VOCE.wav").stat().st_size>100000
+          print("VOCE GOOGLE GACRUX PRESENTE; non è un MP4 renderizzato.")
+          PY
+      - name: "Consegna WAV, MP3, allineamento e provenienza (non pubblicare)"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "LIPTO_PROVA_1_GOOGLE_GACRUX_VOCE"
+          path: output/lipto_prova_1_gacrux/
+          if-no-files-found: error
+          retention-days: 14
