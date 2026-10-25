@@ -175,7 +175,14 @@
     ],
     "containment_commit": "d93b3bfa83e91691055b1a7186d0873ea78929e7",
     "containment": "Importer now fails closed when ARTVISION_CONTRACT_V25.json is absent and includes a regression self-test.",
-    "removal_status": "not_removed; the repository exposes no documented authenticated delete route for this importer, so deletion was not guessed."
+    "removal_status": "not_removed; the repository exposes no documented authenticated delete route for this importer, so deletion was not guessed.",
+    "containment_validation": {
+      "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40216708514",
+      "conclusion": "success",
+      "self_test": "PASS",
+      "new_files_published": 0,
+      "errors": 0
+    }
   },
   "next_blockers": [
     "Perform complete real-time watch/listen reviews and record only exact master hashes.",
