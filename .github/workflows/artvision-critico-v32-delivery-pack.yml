@@ -1,0 +1,134 @@
+name: "ArtVision Critico V32 - assemble three verified releases"
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-critico-v32-delivery-pack.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Recover real Rousseau master without rerendering
+        uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_CRITICO_V32_rousseau_FINALE
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 40162064316
+          github-token: ${{ github.token }}
+          path: incoming/rousseau
+      - name: Recover real Durer master without rerendering
+        uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_CRITICO_V32_durer_FINALE
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 40162064316
+          github-token: ${{ github.token }}
+          path: incoming/durer
+      - name: Recover real Holbein master without resynthesizing voice
+        uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_CRITICO_V32_holbein_FINALE
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 40162152593
+          github-token: ${{ github.token }}
+          path: incoming/holbein
+      - name: Collect verified videos, honest dossiers, V28 posts and replication scripts
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,pathlib,shutil,sys,zipfile
+          sys.path.insert(0,'src')
+          import artvision_editorial_post_v28 as e
+          e.CATALOG=pathlib.Path('config/artvision_critico_v32_posts.json')
+          doc=json.load(open('config/artvision_critico_v32_three.json'))
+          catalog=json.load(open('config/artvision_critico_v32_posts.json'))
+          root=pathlib.Path('DELIVERY_CRITICO_V32');root.mkdir(exist_ok=True)
+          summary=[]
+          for slug,p in doc['episodes'].items():
+            incoming=pathlib.Path('incoming')/slug/slug
+            out=root/slug;out.mkdir(exist_ok=True)
+            for name in ['VIDEO_MASTER.mp4','COPERTINA.jpg','COPIONE_IT.txt',
+                         'QA_CONTACT_SHEET.jpg','FINAL_QA.json']:
+              src=incoming/name
+              assert src.is_file(),('Missing real artifact',slug,name)
+              shutil.copy2(src,out/name)
+            report=json.loads((out/'FINAL_QA.json').read_text())
+            assert report['status']=='TECHNICALLY_VERIFIED_AESTHETIC_REVIEW_REQUIRED'
+            assert report['master_sha256']==hashlib.sha256((out/'VIDEO_MASTER.mp4').read_bytes()).hexdigest()
+            e.write_posts(slug,out,overwrite=True)
+            errors=e.validate_folder(out)
+            if errors:raise RuntimeError(slug+': '+str(errors))
+            m=p['music']
+            source={
+              'title':p['title'],'artist':p['artist_full'],'genre':'ArtVision Critico (narrated)',
+              'date_created':'2026-10-25',
+              'artwork_source':p['source_page'],
+              'museum':p['museum'],
+              'image_provenance':report['art_source'],
+              'original_script':out.joinpath('COPIONE_IT.txt').name,
+              'voice_origin':report['voice'],
+              'voice_is_synthetic':True,
+              'music':m,
+              'credits_footer':catalog['entries'][slug]['credit_lines'],
+              'master_sha256':report['master_sha256'],
+              'visual_review':'Technical frame samples reviewed; artistic listening still needed',
+              'copyright_review':'Reconfirm territories and publication rights',
+              'published':False}
+            (out/'FONTI_DIRITTI_E_CREDITI.json').write_text(json.dumps(source,ensure_ascii=False,indent=2)+'\n')
+            shotdata=p.get('beats') or p.get('shots')
+            note={'script_engine':'scripts/artvision_critico_v32_natural_three.py',
+              'config':'config/artvision_critico_v32_three.json',
+              'replication_command':f'python scripts/artvision_critico_v32_natural_three.py --episode {slug}',
+              'shot_intentions':shotdata,
+              'transition_policy':'Only opaque hard cuts, no image overlaps',
+              'timing_note':'This packaged recipe lists intended shots. Exact spoken timings remain in the renderer-generated VOICE_ALIGNMENT_BEATS.json, not recovered here; do not interpret approximate durations as exact alignment.',
+              'approval':'Technically verified, not Gold Master or automatic publication'}
+            (out/'REGIA_E_REPLICA.json').write_text(json.dumps(note,ensure_ascii=False,indent=2)+'\n')
+            (out/'ISTRUZIONI_PUBBLICAZIONE.md').write_text(
+             f'# {p["artist_full"]} — {p["title"]}\n\n'
+             'Questo MP4 comprende voce italiana Gacrux, una musica autorizzata sotto il parlato e immagini originali di opere autentiche.\n\n'
+             'Per Facebook utilizzare POST_FACEBOOK.txt; post diversi sono forniti per Instagram, TikTok e YouTube.\n'
+             'Controllare fonti, credito musicale CC BY 4.0, eventuali limitazioni territoriali e volume prima di pubblicare.\n'
+             'Nessun contenuto è pubblicato automaticamente.\n'
+             'Per modifiche video, aprire il progetto GitHub e seguire REGIA_E_REPLICA.json.\n',encoding='utf8')
+            summary.append({'slug':slug,'artist':p['artist_full'],'title':p['title'],
+              'duration':report['duration_seconds'],'sha256':report['master_sha256'],
+              'resolution':report['resolution'],'voice':report['voice'],'published':False})
+            single=root/f'ARTVISION_CRITICO_V32_{slug.upper()}_COMPLETE.zip'
+            with zipfile.ZipFile(single,'w',allowZip64=True) as z:
+             for f in out.rglob('*'):
+              if f.is_file():z.write(f,f.name,compress_type=zipfile.ZIP_STORED if f.suffix.lower() in ('.mp4','.jpg') else zipfile.ZIP_DEFLATED)
+            print('PACKAGED VERIFIED MASTER',slug,round(single.stat().st_size/1e6,2),'MB',flush=True)
+          (root/'CATALOGO_CRITICO_V32.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
+          for f in ('config/artvision_critico_v32_three.json','config/artvision_critico_v32_posts.json',
+            'scripts/artvision_critico_v32_natural_three.py','docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md',
+            'modules/artvision_critico/GUIDA_STILE_PERMANENTE_SERIE.md'):
+             dest=root/'SORGENTI_PER_RIPRODURRE'/f;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(f,dest)
+          big=root/'ARTVISION_CRITICO_V32_TRE_FILM_FINITI.zip'
+          with zipfile.ZipFile(big,'w',allowZip64=True) as z:
+           for slug in doc['episodes']:
+            for f in (root/slug).rglob('*'):
+             if f.is_file():z.write(f,str(f.relative_to(root)),compress_type=zipfile.ZIP_STORED if f.suffix.lower() in ('.mp4','.jpg') else zipfile.ZIP_DEFLATED)
+           for f in (root/'SORGENTI_PER_RIPRODURRE').rglob('*'):
+            if f.is_file():z.write(f,str(f.relative_to(root)),compress_type=zipfile.ZIP_DEFLATED)
+           z.write(root/'CATALOGO_CRITICO_V32.json','CATALOGO_CRITICO_V32.json')
+          with zipfile.ZipFile(big) as z:assert z.testzip() is None
+          print('ALL_THREE_PACKED',big.stat().st_size,flush=True)
+          PY
+      - name: Upload entire actual mobile-compatible archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_CRITICO_V32_TUTTI_TRE_PACK_REAL
+          path: |
+            DELIVERY_CRITICO_V32/ARTVISION_CRITICO_V32_TRE_FILM_FINITI.zip
+            DELIVERY_CRITICO_V32/ARTVISION_CRITICO_V32_*_COMPLETE.zip
+            DELIVERY_CRITICO_V32/CATALOGO_CRITICO_V32.json
+          retention-days: 60
+          if-no-files-found: error
