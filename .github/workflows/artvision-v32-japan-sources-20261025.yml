@@ -1,0 +1,82 @@
+name: "ArtVision V32 — Japan & Van Gogh source assets (one-shot)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-v32-japan-sources-20261025.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  museum-sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Fetch four documented authentic art reproductions
+        shell: bash
+        run: |
+          python -m pip install -q requests pillow
+          mkdir -p assets_japan_v32
+          python - <<'PY'
+          import requests,time,io,json,hashlib,os
+          from PIL import Image
+          from pathlib import Path
+          root=Path("assets_japan_v32")
+          works=[
+            ("HIROSHIGE_RAIN.jpg","Utagawa Hiroshige","Sudden Shower over Shin-Ohashi Bridge and Atake",1857,
+             "https://upload.wikimedia.org/wikipedia/commons/7/72/Hiroshige%2C_Sudden_shower_over_Shin-%C5%8Chashi_bridge_and_Atake%2C_1857.jpg",
+             "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/72/Hiroshige%2C_Sudden_shower_over_Shin-%C5%8Chashi_bridge_and_Atake%2C_1857.jpg/1920px-Hiroshige%2C_Sudden_shower_over_Shin-%C5%8Chashi_bridge_and_Atake%2C_1857.jpg",
+             "https://commons.wikimedia.org/wiki/File:Hiroshige,_Sudden_shower_over_Shin-%C5%8Chashi_bridge_and_Atake,_1857.jpg"),
+            ("VANGOGH_RAIN.jpg","Vincent van Gogh","Bridge in the Rain (after Hiroshige)",1887,
+             "https://upload.wikimedia.org/wikipedia/commons/7/77/Vincent_van_Gogh_-_Brug_in_de_regen-_naar_Hiroshige_-_Google_Art_Project.jpg",
+             "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Vincent_van_Gogh_-_Brug_in_de_regen-_naar_Hiroshige_-_Google_Art_Project.jpg/1920px-Vincent_van_Gogh_-_Brug_in_de_regen-_naar_Hiroshige_-_Google_Art_Project.jpg",
+             "https://commons.wikimedia.org/wiki/File:Vincent_van_Gogh_-_Brug_in_de_regen-_naar_Hiroshige_-_Google_Art_Project.jpg"),
+            ("HIROSHIGE_PLUM.jpg","Utagawa Hiroshige","Plum Garden at Kameido",1857,
+             "https://upload.wikimedia.org/wikipedia/commons/1/19/Ando_Hiroshige_-_Plum_Garden%2C_Kameido_-_Google_Art_Project.jpg",
+             "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/Ando_Hiroshige_-_Plum_Garden%2C_Kameido_-_Google_Art_Project.jpg/1920px-Ando_Hiroshige_-_Plum_Garden%2C_Kameido_-_Google_Art_Project.jpg",
+             "https://commons.wikimedia.org/wiki/File:Ando_Hiroshige_-_Plum_Garden,_Kameido_-_Google_Art_Project.jpg"),
+            ("VANGOGH_PLUM.jpg","Vincent van Gogh","Flowering Plum Orchard (after Hiroshige)",1887,
+             "https://upload.wikimedia.org/wikipedia/commons/e/ed/Bloeiende_pruimenboomgaard_%28naar_Hiroshige%29_-_s0115V1962_-_Van_Gogh_Museum.jpg",
+             "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Bloeiende_pruimenboomgaard_%28naar_Hiroshige%29_-_s0115V1962_-_Van_Gogh_Museum.jpg/1920px-Bloeiende_pruimenboomgaard_%28naar_Hiroshige%29_-_s0115V1962_-_Van_Gogh_Museum.jpg",
+             "https://commons.wikimedia.org/wiki/File:Bloeiende_pruimenboomgaard_(naar_Hiroshige)_-_s0115V1962_-_Van_Gogh_Museum.jpg")
+          ]
+          out=[]
+          session=requests.Session()
+          session.headers.update({"User-Agent":"ArtVisionMuseumResearch/1.0 (open cultural assets; GitHub GGIANLUCAA/Tra-le-pagine-)","Accept":"image/jpeg,image/png,*/*"})
+          for name,artist,title,year,original,thumb,page in works:
+            errors=[]
+            for url in (original,thumb):
+              for attempt in range(3):
+                try:
+                  resp=session.get(url,timeout=55)
+                  resp.raise_for_status()
+                  raw=resp.content
+                  with Image.open(io.BytesIO(raw)) as img:
+                    img.verify()
+                  with Image.open(io.BytesIO(raw)) as img:
+                    size=list(img.size)
+                  if min(size)<900:raise RuntimeError("Insufficient resolution: "+str(size))
+                  (root/name).write_bytes(raw)
+                  out.append({"file":name,"artist":artist,"title":title,"year":year,"commons_file":page,
+                              "download_url":url,"sha256":hashlib.sha256(raw).hexdigest(),
+                              "bytes":len(raw),"resolution":size,
+                              "rights":"Public domain painting; Commons PD-Art faithful reproduction, verify local cultural heritage rules"})
+                  print("OK",name,size,len(raw),flush=True)
+                  break
+                except Exception as exc:
+                  errors.append(str(exc)[:140]);time.sleep(2+attempt)
+              if (root/name).exists():break
+            if not (root/name).exists():
+              raise RuntimeError("Source retrieval failed: "+name+" "+repr(errors))
+          (root/"SOURCE_MANIFEST.json").write_text(json.dumps({"source_policy":"ArtVision V32","images":out},indent=2,ensure_ascii=False))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision-V32-20261025-Japan-VanGogh-Originals
+          path: assets_japan_v32/
+          if-no-files-found: error
+          retention-days: 14
