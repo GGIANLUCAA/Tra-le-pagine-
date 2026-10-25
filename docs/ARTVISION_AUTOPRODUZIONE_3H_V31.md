@@ -31,7 +31,9 @@ Almeno un episodio di ciascuna tipologia nelle 3–5 consegne riuscite consecuti
 ## 2. Scelta soggetto ragionata
 > **Aggiornamento approvato 25/10/2026 (V32):** questa sezione va letta
 > insieme alla regola permanente `docs/ARTVISION_AUDIENCE_RESEARCH_V32.md`
-> e alla fonte unica `docs/REGOLE_ATTIVE.md`. Il confronto fra >=3 candidati
+> e alla fonte unica `docs/REGOLE_ATTIVE.md`. Se l'utente ha già indicato
+> l'opera, studiarne comunque l'interesse senza imporre alternative.
+> Per una selezione libera, il confronto fra >=3 candidati
 > deve contenere prove di interesse pubblico quando accessibili o motivare
 > espressamente la loro indisponibilità; la regia deve dipendere dall'opera.
 > Conservare il risultato in `editorial_plan.audience_research` e nel
