@@ -1,0 +1,36 @@
+{
+  "schema": "lipto-production-report-v1",
+  "episode": "lipto_prova_1_dorian_gray",
+  "format": "libri",
+  "topic": "Il ritratto di Dorian Gray — Oscar Wilde",
+  "rules_version": "2026-10-25.1",
+  "narrated": true,
+  "voice": "Google Gemini Gacrux",
+  "model": "gemini-3.8-flash-tts",
+  "source_workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40197770044",
+  "voice_artifact_id": 12600613428,
+  "voice_wav_sha256": "54a36337ef245ecab077f86de5cfc36d473caf5fa73601134d25c23ad8ab9c3e",
+  "rendered_master": {
+    "filename": "Lipto_Prova_1_Google_Gacrux.mp4",
+    "sha256": "0a7231bef0dda51770143284eba752f31fc4ae7195816459e48493c12e6e0f51",
+    "duration_seconds": 185.791667,
+    "width": 720,
+    "height": 1280,
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "scene_count": 22,
+    "output_location": "ChatGPT conversation attachment, not uploaded to repository"
+  },
+  "timing_caveat": "Sentence alignment estimated; full artistic playback review still pending",
+  "QA": {
+    "audio_and_video_streams": true,
+    "contact_sheet_generated": true,
+    "integrated_loudness_lufs": -21.8,
+    "true_peak_dbfs": -0.6,
+    "no_crossfade_or_split_screen": true
+  },
+  "music": "Original synthetic instrumental, no external audio samples",
+  "publishing": "not_published",
+  "status": "rendered_needs_review",
+  "note": "Public repo does not store the binary video or 22 source illustrations; keep the generated ZIP archive. Do not re-run TTS unless script/voice changes."
+}
