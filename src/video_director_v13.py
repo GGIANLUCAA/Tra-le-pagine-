@@ -21,6 +21,11 @@ try:
 except ImportError:
     from editorial_rules import new_contract, new_plan, validate as validate_editorial
 
+try:
+    from .media_source_priority_v33 import check as validate_media_sources
+except ImportError:
+    from media_source_priority_v33 import check as validate_media_sources
+
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "config/video_formats_v13.json"
 READY = {"ready_with_assets", "ready_with_curated_plan", "ready_with_episode_config"}
@@ -99,6 +104,7 @@ def brief(kind, topic, out, references=()):
             shutil.copy2(value, refdir / f"{n + 1:02d}_VIDEO_RECIPE_V13.json")
     lines = ["# Brief GPT - " + topic.strip(), "", "Leggere AGENTS.md e docs/GPT_VIDEO_PLAYBOOK.md.",
              "Leggere docs/REGOLE_ATTIVE.md: compilare editorial_contract ed editorial_plan prima del render.",
+             "Fonti media V33: seguire docs/FILOSOFIA_FONTI_MEDIA_V33.md e compilare media_sourcing per ogni asset visivo.",
              "", "Formato: " + fmt["label"], "Preset: " + fmt["preset"], "Capacità: " + fmt["status"],
              "", "## Regia", fmt["direction"], "", "## Prossima azione", fmt["next_action"],
              "", "## Guide da leggere"]
@@ -174,6 +180,7 @@ def check(project_path):
                 blockers.append(f"Asset {aid}: manca {key}")
     if not visual_ids:
         blockers.append("Mancano materiali visivi")
+    blockers.extend(validate_media_sources(project, visual_ids))
     scenes = project.get("scenes", [])
     if not isinstance(scenes, list):
         raise ValueError("scenes deve essere una lista")
