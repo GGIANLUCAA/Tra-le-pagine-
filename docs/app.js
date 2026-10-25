@@ -11,13 +11,14 @@ const WORKFLOWS = Object.freeze({
   v8: "orchestratore-v8.yml",
   render: "render-v3.yml"
 });
-const FORMAT_VALUES = ["libri", "cronaca", "documentario", "fiabe", "social"];
+const FORMAT_VALUES = ["auto", "artvision_cinema", "artvision_critico", "libri", "controluce", "visual_music", "other"];
 const $ = (q) => document.querySelector(q);
 const $$ = (q) => [...document.querySelectorAll(q)];
 const esc = (x) => String(x ?? "").replace(/[&<>"']/g, (c) =>
   ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let activeEpisode = "";
-let activeFormat = "libri";
+let activeFormat = "auto";
+let projectMode = "single";
 let mediaKind = "image";
 let auth = { backend: false, authenticated: false, login: "" };
 let runs = [];
@@ -175,8 +176,11 @@ function getProjects() {
 }
 function projectFromForm() {
   return {id:crypto.randomUUID?.() || String(Date.now()), title:$("#video-title").value.trim().slice(0,110) || "Nuovo progetto",
-    idea:$("#video-idea").value.trim().slice(0,6000),format:activeFormat,
-    minutes:Number($("#video-length").value),preferReal:$("#real-sources").checked,
+    idea:$("#video-idea").value.trim().slice(0,6000),format:$("#video-format").value,
+    mode:projectMode,count:projectMode==="series"?Number($("#video-count").value):1,seriesName:$("#series-name").value.trim().slice(0,100),
+    category:$("#video-category").value,goal:$("#video-goal").value,style:$("#video-style").value,styleNotes:$("#video-style-notes").value.trim().slice(0,1200),
+    minutes:$("#video-length").value,platform:$("#video-platform").value,language:$("#video-language").value,voice:$("#video-voice").value,
+    preferReal:$("#real-sources").checked,deliverSocial:$("#deliver-social").checked,
     savedAt:new Date().toISOString()};
 }
 function saveProject() {
@@ -197,26 +201,39 @@ function renderSaved() {
 }
 function applyProject(project) {
   $("#video-title").value=project.title;$("#video-idea").value=project.idea;
-  $("#video-length").value=String(project.minutes || 3); activeFormat=FORMAT_VALUES.includes(project.format)?project.format:"libri";
-  $("#real-sources").checked=project.preferReal!==false;
-  $$("#type-options .chip").forEach(x=>x.classList.toggle("selected",x.dataset.value===activeFormat));
+  projectMode=project.mode==="series"?"series":"single";
+  $("#series-count-row").hidden=projectMode!=="series";
+  $("#video-count").value=String([2,3,4,5,6,7].includes(Number(project.count))?project.count:2);
+  $("#series-name").value=project.seriesName||"";
+  activeFormat=FORMAT_VALUES.includes(project.format)?project.format:"auto";$("#video-format").value=activeFormat;
+  $("#video-category").value=project.category||"auto";$("#video-goal").value=project.goal||"balanced";
+  $("#video-style").value=project.style||"recommend";$("#video-style-notes").value=project.styleNotes||"";
+  $("#video-length").value=["auto","1","2","3","4","custom"].includes(String(project.minutes))?String(project.minutes):"auto";
+  $("#video-platform").value=project.platform||"social";$("#video-language").value=project.language||"auto";$("#video-voice").value=project.voice||"auto";
+  $("#real-sources").checked=project.preferReal!==false;$("#deliver-social").checked=project.deliverSocial!==false;
+  $$("#project-mode-options .chip").forEach(x=>x.classList.toggle("selected",x.dataset.value===projectMode));
   go("nuovo");
 }
 function buildGptPrompt(p) {
+  const labels={auto:"GPT scelga in base al soggetto",artvision_cinema:"ArtVision Cinema, arte senza voce",artvision_critico:"ArtVision Critico, arte con voce",libri:"Racconto di un libro, con voce",controluce:"Controluce, storia e fonti",visual_music:"Visual Music / HyperLumen, senza voce",other:"proporre e valutare un format nuovo"};
+  const categories={auto:"da consigliare in base all'idea",arte:"arte e artisti",libri:"libri, racconti e fiabe",storia:"storia e personaggi",mistero:"misteri e storie documentate",musica:"musica e visual music",cultura:"cultura e documentari",altro:"altro"};
+  const goals={balanced:"equilibrio tra chiarezza, coinvolgimento e qualità",hook:"maggiore impatto nei primi secondi, senza clickbait ingannevole",emotion:"emozione e atmosfera",learn:"informazione semplice e facile da seguire",visual:"regia visiva"};
+  const series=p.mode==="series";
   return [
-    "Sto creando un episodio per il mio progetto Tra le Pagine — Studio Ibrido.",
-    "Repository: " + REPO_URL,
-    "Utilizzo: smartphone Android + GitHub Actions. Preserva V3–V8.",
-    "Voce: Google Gemini TTS, non cambiarla. Non presumere di avere accesso all'API di GPT con Plus.",
-    "Obiettivo: prepara il materiale editoriale per un video originale.",
-    "Titolo: " + p.title,
-    "Formato: " + p.format,
-    "Durata indicativa: " + p.minutes + " minuti.",
-    "Idea dell'episodio: " + p.idea,
-    "Prima riutilizza media già approvati, poi cerca materiali consentiti, solo alla fine immagini AI: " + (p.preferReal?"sì":"facoltativo") + ".",
-    "Fornisci un copione narrato naturale in italiano, una divisione in scene con descrizioni corrispondenti alle frasi, eventuali fonti per fatti di cronaca, indicazione di materiale visivo necessario e note per l'approvazione Gate 1.",
-    "Non inventare fonti. Non dichiarare che il video è pronto: produci prima un copione e uno storyboard da approvare.",
-    "Per file di episodio compatibili, considera il formato esistente scene_cues.json, testo.txt, metadata.json nel repository reale."
+    "Sto preparando " + (series?`una serie di ${p.count} video per il progetto Tra le Pagine — Studio Ibrido.`:"un video per il progetto Tra le Pagine — Studio Ibrido."),
+    "Repository e istruzioni del progetto: " + REPO_URL + " · leggi AGENTS.md, START_HERE_GPT.md, docs/REGOLE_ATTIVE.md e il profilo del format prima di lavorare.",
+    "Uso da smartphone Android. Mantieni i costi sotto controllo: non presumere che Plus dia accesso a un'API GPT o che siano disponibili motori/renderer non verificati.",
+    "Richiesta / prompt: " + p.idea,
+    "Titolo o tema: " + p.title,
+    "Nome serie: " + (p.seriesName||"da proporre se utile"),
+    "Categoria: " + (categories[p.category]||p.category) + ". Format: " + (labels[p.format]||p.format) + ". Se è automatico, consigliami il format e spiegami brevemente la scelta.",
+    "Obiettivo editoriale: " + (goals[p.goal]||p.goal) + ". Piattaforma: " + p.platform + ". Lingua: " + p.language + ". Voce: " + p.voice + ". Durata: " + (p.minutes==="auto"?"scegli in base al contenuto":p.minutes+" minuto/i" )+".",
+    "Regia: " + (p.style==="signature"?"usa lo stile abituale approvato per il format":p.style==="custom"?"segui le tecniche e i riferimenti indicati dall'utente, verificandone la compatibilità":"proponi un mix motivato, breve e adatto al soggetto") + ". Riferimenti aggiunti: " + (p.styleNotes||"nessuno; proponi tu senza trasformare esempi in regole permanenti") + ".",
+    "Ricerca fonti e materiali reali prima di generare immagini: " + (p.preferReal?"sì":"valuta la soluzione più coerente e sostenibile") + ". Prepara anche copertina, testi social e crediti: " + (p.deliverSocial?"sì":"solo se richiesti"),
+    series?"Per la serie proponi prima un elenco dei titoli/idee degli episodi, con un filo comune e una variazione di regia per episodio. Mantieni la firma grafica condivisa, ma evita video-cloni. Non iniziare rendering massivo senza aver chiarito i soggetti e il piano.":"Per il video singolo sviluppa ricerca, promessa iniziale, copione/storyboard e regia adatti al soggetto.",
+    "Verifica i fatti e le fonti, segnala le incertezze, non inventare storie di furti o misteri. Rispetta identità e mix espliciti delle regole. Per voce narrata resta naturale e usa Gacrux salvo istruzione diversa.",
+    "Se l'utente ha già chiesto di creare e ha fornito dati sufficienti, usa queste impostazioni e procedi senza ripetere domande. Chiedi solo le informazioni essenziali mancanti; altrimenti proponi il riepilogo e le scelte predefinite. Un 'procedi' dell'utente avvia il lavoro, ma non autorizza pubblicazione social.",
+    "Consegna il piano editoriale e poi i file/materiali realmente producibili. Non dichiarare pronto un video non renderizzato e controllato. Nessuna pubblicazione automatica."
   ].join("\n\n");
 }
 async function copyGpt() {
@@ -225,7 +242,7 @@ async function copyGpt() {
   const draft=buildGptPrompt(p);
   try {
     await navigator.clipboard.writeText(draft);
-    toast("Brief copiato! Tocca Apri ChatGPT e incollalo nella conversazione.");
+    toast("Brief copiato. Apri ChatGPT, scegli la chat del progetto e incollalo.");
   } catch { window.prompt("Copia questo testo e incollalo in ChatGPT:",draft); }
 }
 function bind() {
@@ -244,10 +261,13 @@ function bind() {
     const item=e.target.closest("[data-episode]");
     if(item) selectEpisode(item.dataset.episode);
   });
-  $("#type-options").addEventListener("click",e=>{
+  $("#project-mode-options").addEventListener("click",e=>{
     const b=e.target.closest("[data-value]");if(!b)return;
-    activeFormat=b.dataset.value; $$("#type-options .chip").forEach(x=>x.classList.toggle("selected",x===b));
+    projectMode=b.dataset.value==="series"?"series":"single";
+    $$("#project-mode-options .chip").forEach(x=>x.classList.toggle("selected",x===b));
+    $("#series-count-row").hidden=projectMode!=="series";
   });
+  $("#video-format").addEventListener("change",e=>{activeFormat=e.target.value;});
   $("#kind-options").addEventListener("click",e=>{
     const b=e.target.closest("[data-value]");if(!b)return;
     mediaKind=b.dataset.value;$$("#kind-options .chip").forEach(x=>x.classList.toggle("selected",x===b));
@@ -273,28 +293,6 @@ function bind() {
   $("#action-render").addEventListener("click",()=>dispatch("render",{episodio:activeEpisode,effetti:"v4"},{
     title:"Avviare il montaggio MP4?",body:"Questa operazione può consumare minuti GitHub e una quota di sintesi Google Gemini. Usa soltanto episodi già approvati e con tutte le immagini premium.",
     consent:"Confermo il montaggio e l'eventuale consumo delle quote Google/GitHub."}));
-  $("#autopilot-create").addEventListener("click",()=>{
-    const p=projectFromForm();
-    const title=p.title.replace(/\s+/g," ").trim();
-    const idea=p.idea.replace(/\s+/g," ").trim();
-    if(title.length<5||title.length>110||idea.length<15||idea.length>1600){
-      toast("Inserisci titolo (5-110 caratteri) e descrizione (15-1600 caratteri).");return;
-    }
-    if(!["libri","fiabe","social"].includes(p.format)){
-      toast("La produzione automatica è in beta solo per libri, fiabe e social. Cronaca e documentari richiedono fonti e revisione.");
-      return;
-    }
-    if(!auth.authenticated){
-      try {localStorage.setItem("tlp_v9_projects",JSON.stringify([p,...getProjects()].slice(0,40)));renderSaved();}
-      catch {}
-      toast("Progetto salvato. Su GitHub Actions dovrai inserire titolo e descrizione e confermare i costi.");
-    }
-    dispatch("autopilot",{title,idea,formato:p.format,durata:String(p.minutes),conferma_costi:true},{
-      title:"Confermi la produzione del video BETA?",
-      body:"Gemini creerà testo e voce, verranno cercate immagini d'archivio. Consuma quote Google e GitHub e può fallire se non trova foto coerenti. La richiesta è visibile nel repository GitHub pubblico. Nessuna pubblicazione automatica del MP4.",
-      consent:"Autorizzo la produzione sperimentale e l'eventuale consumo di quote Google/GitHub."
-    });
-  });
   $("#publish-from-run").addEventListener("click",()=>{
     const selected=$("#publish-episode").value;
     const id=$("#publish-run-id").value.trim();
