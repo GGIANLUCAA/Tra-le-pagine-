@@ -1,11 +1,6 @@
 name: "Lipto prova 1 — prova voce Google Gacrux"
 run-name: "Gacrux | Lipto prova 1"
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - ".github/workflows/lipto-gacrux-proof.yml"
-      - "episodes/lipto_prova_1_dorian_gray/**"
   workflow_dispatch:
 permissions:
   contents: read
