@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-25T19:18:00Z",
+  "updated": "2026-10-25T22:20:23.943Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -452,6 +452,32 @@
       "external_video_library_import": "not_attempted",
       "artistic_review": "pending_user_review",
       "rights_status": "public_domain_artworks_and_CC_BY_4_recording_with_platform_and_jurisdiction_checks_pending"
+    },
+    {
+      "cycle_id": "20261025T2315+0100",
+      "created_at": "2026-10-25T22:20:23.685Z",
+      "artist": "Ivan Aivazovsky",
+      "work": "The Ninth Wave",
+      "format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "subtype": "new_standalone_authentic_artwork",
+      "reason_fallback": "Natural Google Gacrux TTS not verifiable free/available; no robotic narration or wrong voice",
+      "status": "technical_pass_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 60.125,
+      "size_bytes": 8921117,
+      "sha256_mp4": "6dd42ec9af731b2777b632d60c9cf5b11b87935115100f9f0382d8af41ff3f80",
+      "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40239618696",
+      "artifact_name": "ArtVision-V33-20261025-Aivazovsky-The-Ninth-Wave",
+      "steps": {
+        "preflight": "success",
+        "render": "success",
+        "verify": "success",
+        "archive": "success"
+      },
+      "gold_master_approved": false,
+      "social_published": false,
+      "external_video_library_import": "not_attempted"
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
