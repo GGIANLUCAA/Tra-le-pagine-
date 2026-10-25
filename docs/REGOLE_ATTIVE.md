@@ -66,6 +66,25 @@ compatibile: il percorso attuale mantiene i profili approvati.
    non si autoapprova. Metriche reali, quando disponibili, informano esperimenti;
    nessuna previsione certa di viralità o promozione automatica a master approvato.
 
+## Avvio facile per un video o una serie
+
+- Quando Gianluca chiede di creare un video o più video, avviare il menu breve
+  `docs/ISTRUZIONI_MENU_VIDEO_NUOVE_CHAT.md`: singolo/serie, idea o prompt, categoria,
+  format e stile. Usare i valori già proposti; mostrare le altre impostazioni solo
+  se desidera cambiarle.
+- Se la richiesta contiene già queste informazioni, precompilare il menu e chiedere
+  soltanto le decisioni essenziali mancanti. La frase “usa le impostazioni consigliate
+  e procedi” significa che può iniziare il lavoro senza ripetere l'intero riepilogo.
+- Per una serie proporre un elenco degli episodi con identità condivisa e regie
+  variate. Una correzione del singolo episodio non modifica le impostazioni globali.
+- Nel sito il pulsante “Prepara e copia il brief per GPT” prepara testo da incollare
+  in una chat. Salvare impostazioni nel browser non equivale a salvarle nel sito o
+  in un repository; usare la copia del brief per trasferirle tra dispositivi.
+- Queste istruzioni valgono nelle chat che leggono questo repository o il prompt
+  dedicato. Una chat nuova e indipendente non può leggere il repository da sola:
+  per applicare il comportamento ovunque, inserire il testo del file dedicato nelle
+  istruzioni del progetto ChatGPT o nelle istruzioni personalizzate.
+
 ## Collegamento effettivo al codice
 
 `video_director_v13.py brief` crea `PROJECT_V13.json` con:
@@ -104,6 +123,7 @@ del playbook: questo intervento non dimostra che tutti i renderer siano integrat
 
 La validazione controlla dati e coerenza delle dichiarazioni. Non vede la bellezza,
 non prova che una fonte sia vera e non ascolta il parlato al posto della revisione.
-Questa revisione non installa una nuova interfaccia, non aggiorna automaticamente
-il sito live, non attiva pianificazioni, servizi a pagamento o pubblicazioni social.
+Il menu nell'interfaccia richiede la distribuzione del repository per comparire sul
+sito live; le istruzioni non attivano pianificazioni, servizi a pagamento o
+pubblicazioni social.
 Le nuove regole sono applicabili alle nuove chat solo se il progetto viene letto.

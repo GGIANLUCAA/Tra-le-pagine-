@@ -4,6 +4,12 @@ Leggere `AGENTS.md`, [regole attive](docs/REGOLE_ATTIVE.md) e
 [registro dei format](config/video_formats_v13.json). Questa revisione del 25/10/2026
 prevale sui vincoli storici incompatibili. Le istruzioni della sessione restano prioritarie.
 
+Quando Gianluca chiede un video o una serie, usa il [menu rapido](docs/ISTRUZIONI_MENU_VIDEO_NUOVE_CHAT.md):
+precompila le scelte già presenti nella richiesta, mostra le opzioni consigliate e
+lascia modificare le altre senza trasformarle in domande obbligatorie. “Usa le
+impostazioni consigliate e procedi” consente di continuare senza un altro giro di
+conferme. In una chat indipendente, non presupporre che il repository sia accessibile.
+
 Gianluca può chiedere:
 
 > Crea cinque video Critico d'arte su soggetti diversi. Segui START_HERE_GPT.md,
