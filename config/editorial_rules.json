@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-25.1",
-  "approved_by": "Gianluca — richiesta di applicare la revisione delle regole del 25/10/2026",
+  "version": "2026-10-25.2",
+  "approved_by": "Gianluca — 25/10/2026: ricerca del pubblico e regia basata sull'interesse umano come regola permanente per ArtVision",
   "precedence": [
     "explicit_user_request",
     "editorial_rules",
@@ -22,7 +22,9 @@
     "verify_sources": true,
     "real_downloadable_delivery": true,
     "technical_pass_is_artistic_approval": false,
-    "examples_are_approval": false
+    "examples_are_approval": false,
+    "artwork_audience_research_before_selection": true,
+    "never_invent_trend_metrics": true
   },
   "defaults": {
     "voice": "Google Gemini Gacrux",
@@ -97,5 +99,26 @@
     }
   },
   "unknown_technique_status": "candidate_not_user_approved",
-  "limits": "I controlli strutturali non vedono il filmato e non certificano fonti, voce, bellezza o viralità. Le funzioni del sito live richiedono integrazione separata."
+  "limits": "I controlli strutturali non vedono il filmato e non certificano fonti, voce, bellezza o viralità. Le funzioni del sito live richiedono integrazione separata.",
+  "audience_research": {
+    "policy": "docs/ARTVISION_AUDIENCE_RESEARCH_V32.md",
+    "applies_to": [
+      "artvision_cinema",
+      "artvision_critico"
+    ],
+    "collection_uses_cinema": true,
+    "min_candidates": 3,
+    "larger_discovery_pool": "10–20 when practical and documented; not a fixed daily quota",
+    "dimensions_and_max_points": {
+      "observed_audience_interest": 25,
+      "first_frame_visual_strength": 20,
+      "authentic_story_and_curiosity": 20,
+      "directing_potential": 15,
+      "catalog_originality": 10,
+      "source_quality_and_rights": 10
+    },
+    "signals_policy": "Record specific dated sources and observations, or unavailable with reason; qualitative ratings are editorial judgment, never measured popularity.",
+    "learning_policy": "Compare retention 0–3s, mean view duration, completion, shares and saves only after publication when analytics are accessible.",
+    "no_algorithmic_guarantees": true
+  }
 }
