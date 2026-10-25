@@ -46,6 +46,21 @@ Se l'utente ha già scelto l'opera, analizzarne comunque il pubblico senza impor
 La regia dev'essere specifica del soggetto, non uno stampino.
 Questo non cambia i formati approvati né i master storici.
 
+## Fonti e API per ogni nuovo contenuto — regola permanente V33
+
+Leggere **docs/FILOSOFIA_FONTI_MEDIA_V33.md** e seguire
+`config/editorial_rules.json > media_source_priority` **prima di scegliere immagini,
+clip, suoni o generare nuovi asset**. Fonte autentica per ArtVision, ricostruzione
+esplicitamente distinta in cronaca, immagini originali coerenti per scene di libri,
+riuso preferito solo quando davvero pertinente. Pixabay è il nome corretto:
+secret primario `PIXABAY`; alias `PIXABAY_API_KEY`.
+AI Horde è un prototipo manuale, Gemini Gacrux resta la voce; `OPENROUTER2`
+non è un permesso per modelli a pagamento. Nessuna quota aggirata o servizio Premium.
+Per i nuovi progetti V13 completare `editorial_plan.media_sourcing` per ogni
+asset visuale; il preflight blocca provenienza/diritti/pertinenza non revisionati.
+Questa regola non modifica automaticamente motori specializzati che bypassano V13;
+i rispettivi agenti devono seguirla esplicitamente.
+
 ## Firma e regia
 
 - Cinema: baseline V6, opere autentiche, senza voce; identità di serie, nome artista
