@@ -1,0 +1,89 @@
+name: "Tra le Pagine - Fonti immagini gratuite V1"
+on:
+  push:
+    branches: ["feature/collega-segreti-e-fonti-v1-20261025"]
+    paths:
+      - "src/free_sources_bridge_v1.py"
+      - "tests/test_free_sources_bridge_v1.py"
+      - ".github/workflows/fonti-immagini-gratuite-v1.yml"
+  pull_request:
+    paths:
+      - "src/free_sources_bridge_v1.py"
+      - "tests/test_free_sources_bridge_v1.py"
+      - ".github/workflows/fonti-immagini-gratuite-v1.yml"
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: "status non contatta le API; pixabay/openverse fanno UNA ricerca"
+        required: true
+        default: "status"
+        type: choice
+        options: [status, plan, pixabay, openverse]
+      kind:
+        description: "Tipo di asset da cercare"
+        required: true
+        type: choice
+        default: image
+        options: [image, video]
+      query:
+        description: "Termini della singola ricerca (in inglese)"
+        required: false
+        default: "victorian garden"
+        type: string
+      limit:
+        description: "Da 1 a 5 candidati"
+        required: false
+        type: number
+        default: 3
+permissions:
+  contents: read
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test offline e nessuna fuga dei segreti
+        run: python -m unittest discover -s tests -p 'test_free_sources_bridge_v1.py' -v
+  search:
+    needs: unit
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PIXABAY: ${{ secrets.PIXABAY }}
+      PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+      PRIXIBAY2: ${{ secrets.PRIXIBAY2 }}
+      AIHORDE_API_KEY: ${{ secrets.AIHORDE_API_KEY }}
+      AIHORDE_API_KEY_2: ${{ secrets.AIHORDE_API_KEY_2 }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      OPENROUTER2: ${{ secrets.OPENROUTER2 }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+      SOURCE_PROVIDER: ${{ inputs.provider }}
+      SOURCE_KIND: ${{ inputs.kind }}
+      SOURCE_QUERY: ${{ inputs.query }}
+      SOURCE_LIMIT: ${{ inputs.limit }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Consulta presenza credenziali o una sola ricerca
+        shell: bash
+        run: |
+          python src/free_sources_bridge_v1.py \
+            --provider "$SOURCE_PROVIDER" --kind "$SOURCE_KIND" \
+            --query "$SOURCE_QUERY" --limit "$SOURCE_LIMIT" \
+            --out output/fonti_gratuite/REPORT.json
+      - name: Carica report di candidati senza segreti
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fonti-immagini-v1-${{ github.run_id }}
+          path: output/fonti_gratuite/REPORT.json
+          if-no-files-found: warn
+          retention-days: 14
