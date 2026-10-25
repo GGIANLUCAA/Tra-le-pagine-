@@ -119,8 +119,21 @@ class ContractTests(unittest.TestCase):
         obj["scenes"]=obj["scenes"][:4]
         obj["transition_reviews_plan"]=[]
         error="\n".join(gate.check_preflight(obj))
-        self.assertIn("Almeno 8 scelte",error)
-        self.assertIn("almeno tre transizioni",error)
+        self.assertIn("Motivare le transizioni",error)
+
+    def test_small_motivated_plan_and_english_posts_are_allowed(self):
+        obj=sample()
+        obj['scenes']=obj['scenes'][:2]
+        obj['selected_techniques']=obj['selected_techniques'][:1]
+        obj['music_cues']=obj['music_cues'][:1]
+        obj['transition_reviews_plan']=obj['transition_reviews_plan'][:1]
+        obj['copy_languages']={'facebook':'en'}
+        self.assertEqual(gate.check_preflight(obj), [])
+
+    def test_nonfinite_scene_duration_is_rejected(self):
+        for value in (float('nan'),float('inf'),True):
+            obj=sample();obj['scenes'][0]['duration_seconds']=value
+            self.assertTrue(any('durata positiva' in e for e in gate.check_preflight(obj)))
 
     def test_identity_is_immutable(self):
         obj=sample()
@@ -134,11 +147,11 @@ class ContractTests(unittest.TestCase):
         obj=sample()
         obj["sources"][0]["status"]="unknown"
         obj["music"]["rights_status"]="unchecked"
-        obj["copy_languages"]["facebook"]="en"
+        obj["copy_languages"]["facebook"]=""
         error="\n".join(gate.check_preflight(obj))
         self.assertIn("Fonte visiva",error)
         self.assertIn("Musica:",error)
-        self.assertIn("Facebook italiana",error)
+        self.assertIn("lingue dei post",error)
 
     def test_techniques_and_motion_must_be_real(self):
         obj=sample()

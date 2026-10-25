@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -146,34 +147,30 @@ def check_preflight(data, catalog=None):
             break
 
     scenes = data.get("scenes") or []
-    if len(scenes) < 8:
-        add("Almeno 8 scelte di regia motivate; non basta una successione generica di slide.")
-    used = set()
+    if not scenes:
+        add("Serve uno storyboard con scelte di regia motivate.")
     for i, s in enumerate(scenes):
         if any(not filled(s.get(k), 8) for k in ("subject", "purpose", "source_id")):
             add(f"Inquadratura {i+1}: soggetto, ragione e fonte specifici obbligatori.")
         shot = s.get("shot")
         if shot not in VALID_SHOTS:
             add(f"Inquadratura {i+1}: tipo di shot non definito.")
-        used.add(shot)
         if s.get("motion") not in VALID_MOTIONS:
             add(f"Inquadratura {i+1}: moto macchina non permesso.")
-        if not isinstance(s.get("duration_seconds"), (float,int)) or s["duration_seconds"] <= 0:
+        if isinstance(s.get("duration_seconds"), bool) or not isinstance(s.get("duration_seconds"), (float,int)) or not math.isfinite(s["duration_seconds"]) or s["duration_seconds"] <= 0:
             add(f"Inquadratura {i+1}: durata positiva mancante.")
-    if len(used.intersection(VALID_SHOTS)) < 3:
-        add("Servono almeno tre famiglie di inquadratura, senza schemi ripetuti.")
 
     transitions = data.get("transition_reviews_plan") or []
-    if len(transitions) < 3 or any(not filled(x.get("why"), 15) for x in transitions):
-        add("Motivare almeno tre transizioni centrali; niente tagli meccanici.")
+    if (len(scenes) > 1 and not transitions) or any(not filled(x.get("why"), 15) for x in transitions):
+        add("Motivare le transizioni presenti; niente quota minima di tagli.")
     cues = data.get("music_cues") or []
-    if len(cues) < 3 or any(not filled(x.get("reason"), 12) for x in cues):
-        add("Tre cue musicali effettivi con motivazione (intro, sviluppo, finale).")
+    if not cues or any(not filled(x.get("reason"), 12) for x in cues):
+        add("Documentare i cue musicali effettivi con motivazione.")
     if not filled(data.get("duration_reason"), 25):
         add("Durata motivata dal contenuto, non da timer fisso.")
     tt = data.get("selected_techniques") or []
-    if not 3 <= len(tt) <= 8 or any(not filled(x.get("why"), 12) for x in tt):
-        add("Selezionare 3-8 tecniche V23 con ragione individuale.")
+    if not tt or any(not filled(x.get("why"), 12) for x in tt):
+        add("Selezionare tecniche V23 con ragione individuale, senza quota fissa.")
     if catalog is None:
         try:
             catalog = {x["id"] for x in load_json(TECHNIQUES)["techniques"]}
@@ -194,8 +191,9 @@ def check_preflight(data, catalog=None):
         add("Musica: origine, autore, registrazione, licenza, prova e arco emotivo verificati.")
     if music.get("composer") != opening.get("composer"):
         add("Compositore mostrato in apertura diverso da quello documentato.")
-    if not (data.get("copy_languages") or {}).get("facebook") == "it":
-        add("Descrizione Facebook italiana esterna obbligatoria.")
+    languages = data.get("copy_languages") or {}
+    if not isinstance(languages, dict) or not languages or any(not isinstance(v, str) or not re.fullmatch(r"[a-z]{2}(?:-[A-Z]{2})?", v) for v in languages.values()):
+        add("Definire le lingue dei post per piattaforma con codici espliciti, senza imporre italiano o inglese a tutti.")
     if data.get("archive_only_after_authorization") is not True or data.get("social_autopublish") is not False:
         add("Archivio video e pubblicazione social sono autorizzazioni separate.")
     return errors
@@ -235,8 +233,8 @@ def check_final(data, base: Path):
             streams = facts.get("streams", [])
             duration = float(facts["format"]["duration"])
             info["duration"] = duration
-            if duration < 20:
-                errors.append("MP4 troppo corto per il Cinema V6 previsto; motivare una eccezione.")
+            if not math.isfinite(duration) or duration <= 0:
+                errors.append("Durata del MP4 non valida.")
             if not any(s.get("codec_type") == "video" and s.get("width") == 1080 and s.get("height") == 1920 and s.get("codec_name") == "h264" for s in streams):
                 errors.append("MP4: video H264 verticale 1080x1920 assente.")
             if not any(s.get("codec_type") == "audio" and s.get("codec_name") == "aac" for s in streams):
@@ -251,6 +249,8 @@ def check_final(data, base: Path):
             review_dir = root / "QA_V25"
             review_dir.mkdir(exist_ok=True)
             for s in REVIEW_SECONDS:
+                if not math.isfinite(duration) or s >= duration:
+                    continue
                 frame = review_dir / f"FRAME_{s:02d}.jpg"
                 if not frame.is_file():
                     result = subprocess.run(

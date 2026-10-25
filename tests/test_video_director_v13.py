@@ -15,6 +15,9 @@ class VideoDirectorTests(unittest.TestCase):
     def ready_project(self, folder):
         folder = Path(folder)
         p = brief("libri", "Un racconto", folder)
+        from test_editorial_rules import completed_plan
+        p["editorial_plan"] = completed_plan()
+        p["editorial_plan"]["techniques"][0]["id"] = "book_v12_scene"
         (folder / "story.txt").write_text("Anna apre la porta. Poi torna al mare.", encoding="utf-8")
         from PIL import Image
         Image.new("RGB", (100, 100), "blue").save(folder / "scene.jpg")

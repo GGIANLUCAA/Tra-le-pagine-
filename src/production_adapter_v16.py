@@ -2,6 +2,7 @@
 from __future__ import annotations
 import argparse
 import json
+import math
 import os
 import re
 import shutil
@@ -9,6 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 from video_director_v13 import ROOT, capture, local_file
+from editorial_rules import validate as validate_editorial, POLICY
 
 ADAPTERS={'books_gemini_cache':'libri','critico_v2_prepared':'artvision_critico','cinema_v6_vangogh_prepared':'artvision_cinema'}
 
@@ -38,7 +40,10 @@ def execute(job,out):
     os.environ.pop('GEMINI_API_KEY',None)
     project_file=path(job['project_file']);project=json.loads(project_file.read_text())
     if project['format']!=ADAPTERS[adapter]:raise ValueError('Adapter e formato non corrispondenti')
+    editorial_errors, _ = validate_editorial(project)
+    if editorial_errors:raise ValueError('; '.join(editorial_errors))
     sources=[project_file,Path(__file__).resolve()]
+    if project.get('editorial_contract'):sources.append(POLICY)
     for asset in project['assets']:
         sources.append(local_file(project_file.parent,asset['file']))
     approved={local_file(project_file.parent,a['file']) for a in project['assets']}
@@ -65,7 +70,7 @@ def execute(job,out):
         from render_dali import audio_gemini
         import cv2
         cfgfile=path(job['config_file']);cfg=json.loads(cfgfile.read_text())
-        if not isinstance(cfg.get('beats'),list) or len(cfg['beats'])<8:raise ValueError('Critico richiede almeno 8 beat curati')
+        if not isinstance(cfg.get('beats'),list) or not cfg['beats']:raise ValueError('Critico richiede beat curati e pertinenti al copione')
         if not isinstance(cfg.get('id'),str) or not re.fullmatch(r'[a-z0-9_-]{1,70}',cfg['id']):raise ValueError('ID configurazione Critico non valido')
         script='\n\n'.join(b['speech'] for b in cfg['beats'])
         if script.strip()!=local_file(project_file.parent,project['script']).read_text().strip():raise ValueError('Copione del brief diverso dai beat Critico')
@@ -84,7 +89,10 @@ def execute(job,out):
         if job.get('artist')!='Vincent van Gogh':raise ValueError('Questo adapter usa solo la regia Van Gogh V6; altri artisti richiedono un adapter specifico')
         assets=path(job['assets_dir'],True)
         if not (assets/'music_rights.json').is_file():raise ValueError('Provenienza musica V6 mancante')
-        subprocess.run([sys.executable,'modules/artvision/director_cinema_v6.py','--assets',str(assets),'--out',str(out),'--duration','150'],cwd=ROOT,check=True)
+        # Legacy projects retain their historic duration; new briefs carry a motivated value.
+        duration = math.ceil(project.get('editorial_plan', {}).get('duration_seconds', 150))
+        if duration < 4:raise ValueError('Il renderer storico Van Gogh richiede almeno 4 secondi per le dissolvenze audio; scegliere un motore adatto alla durata richiesta')
+        subprocess.run([sys.executable,'modules/artvision/director_cinema_v6.py','--assets',str(assets),'--out',str(out),'--duration',str(duration)],cwd=ROOT,check=True)
         video=out/'ARTVISION_VAN_GOGH_CINEMA_V6.mp4';cover=out/'COPERTINA_CINEMA_V6.jpg'
         sources += [p for p in assets.rglob('*') if p.is_file()]
         sources += [ROOT/'modules/artvision/director_cinema_v6.py']

@@ -1,0 +1,101 @@
+{
+  "version": "2026-10-25.1",
+  "approved_by": "Gianluca — richiesta di applicare la revisione delle regole del 25/10/2026",
+  "precedence": [
+    "explicit_user_request",
+    "editorial_rules",
+    "format_profile",
+    "episode_choices",
+    "historical_guides"
+  ],
+  "scopes": [
+    "always",
+    "format",
+    "episode",
+    "experiment"
+  ],
+  "always": {
+    "android_only": true,
+    "new_paid_services_without_authorization": false,
+    "preserve_approved_masters": true,
+    "social_autopublish": false,
+    "verify_sources": true,
+    "real_downloadable_delivery": true,
+    "technical_pass_is_artistic_approval": false,
+    "examples_are_approval": false
+  },
+  "defaults": {
+    "voice": "Google Gemini Gacrux",
+    "one_music_track": true,
+    "repeat_approved_music": true,
+    "opening": "choose_for_subject",
+    "duration": "content_and_actual_audio",
+    "cta": "only_if_pertinent",
+    "technique_count": "motivated_not_fixed"
+  },
+  "retired_global_constraints": [
+    "fixed_opening",
+    "always_detail_then_whole",
+    "unique_music_every_video",
+    "mandatory_final_question",
+    "fixed_scene_or_effect_count",
+    "new_version_is_better",
+    "fixed_duration",
+    "all_formats_same_language",
+    "all_formats_same_cover"
+  ],
+  "formats": {
+    "libri": {
+      "narrated": true,
+      "subtitles": false,
+      "voice": "Google Gemini Gacrux",
+      "speech_language": "it",
+      "on_screen_language": "format_profile"
+    },
+    "artvision_cinema": {
+      "narrated": false,
+      "subtitles": false,
+      "voice": null,
+      "speech_language": null,
+      "on_screen_language": "en"
+    },
+    "artvision_critico": {
+      "narrated": true,
+      "subtitles": false,
+      "voice": "Google Gemini Gacrux",
+      "speech_language": "it",
+      "on_screen_language": "format_profile"
+    },
+    "controluce": {
+      "narrated": true,
+      "subtitles": false,
+      "voice": "Google Gemini Gacrux",
+      "speech_language": "it",
+      "on_screen_language": "format_profile"
+    },
+    "visual_music": {
+      "narrated": false,
+      "subtitles": false,
+      "voice": null,
+      "speech_language": null,
+      "on_screen_language": "en"
+    },
+    "hyperlumen": {
+      "narrated": false,
+      "subtitles": false,
+      "voice": null,
+      "speech_language": null,
+      "on_screen_language": "en"
+    }
+  },
+  "technique_catalog": "config/cinematic_techniques_v23.json",
+  "technique_approvals": {
+    "gallery_to_canvas_entry": {
+      "status": "approved_option",
+      "evidence": "AGENTS.md, feedback 24/10/2026: ingresso POV apprezzato; raccordo opaco senza ghosting",
+      "mandatory": false
+    }
+  },
+  "unknown_technique_status": "candidate_not_user_approved",
+  "limits": "I controlli strutturali non vedono il filmato e non certificano fonti, voce, bellezza o viralità. Le funzioni del sito live richiedono integrazione separata."
+}

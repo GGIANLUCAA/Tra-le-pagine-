@@ -81,7 +81,7 @@
     "disallow_claim_magic_length": true,
     "viewer_retention_observed_after_publishing": true,
     "artvision_cinema_preference": {
-      "enabled": true,
+      "enabled": false,
       "updated_at": "2026-10-23",
       "default_soft_range_seconds": [
         45,
@@ -92,7 +92,8 @@
       "exception": "Un film può essere più lungo se ogni scena aggiunge valore artistico o una progressione narrativa necessaria",
       "editing_rule": "Accorcia per sottrazione di scene ripetitive, senza aumentare velocità di camera o ritmo di taglio",
       "apply_to": "Nuovi ArtVision Cinema senza voce; altri generi restano guidati da contenuto e voce",
-      "historical_masters_unchanged": true
+      "historical_masters_unchanged": true,
+      "superseded_by": "config/editorial_rules.json — durata motivata, nessuna finestra globale"
     }
   },
   "music": {

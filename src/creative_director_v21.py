@@ -120,6 +120,11 @@ def duration_plan(brief,actual=None,history=None,cinema_soft_range=None):
         if val>0:return {"seconds":round(val,2),"basis":"shot_timing_curato_da_validare","fixed_template":False}
     spoken=as_positive_number(brief.get("voice_duration_seconds") or brief.get("narration_seconds"))
     if spoken:return {"seconds":round(spoken,2),"basis":"timing_voce_dichiarato_da_verificare","fixed_template":False}
+    editorial = brief.get('editorial_plan') or {}
+    proposed = as_positive_number(editorial.get('duration_seconds'))
+    if proposed and editorial.get('duration_reason'):
+        return {'seconds': proposed, 'basis': 'proposta_editoriale_da_verificare_su_audio_reale',
+                'fixed_template': False, 'advice': editorial['duration_reason']}
     scenes=brief.get("scenes") or []
     secs=sum(as_positive_number(s.get("seconds") or s.get("duration")) or 0 for s in scenes if isinstance(s,dict))
     if secs>0 and all(as_positive_number(s.get("seconds") or s.get("duration")) for s in scenes if isinstance(s,dict)):
@@ -131,7 +136,7 @@ def duration_plan(brief,actual=None,history=None,cinema_soft_range=None):
     elif kind=="artvision_cinema":
         # User's editorial preference, not a fixed timer or social algorithm prediction.
         # Actual master duration and genuinely authored shot timings still take precedence.
-        band=cinema_soft_range if isinstance(cinema_soft_range,list) and len(cinema_soft_range)==2 else [45,75]
+        band=None if cinema_soft_range is False else (cinema_soft_range if isinstance(cinema_soft_range,list) and len(cinema_soft_range)==2 else [45,75])
     elif kind in ("visual_music","hyperlumen"):
         band=[45,220] if complexity>=9 else [18,150]
     elif kind in ("libri","artvision_critico","controluce"):
@@ -454,8 +459,9 @@ def write_package(brief,output,*,video=None,history=None,targets=None,policy_pat
     context=get_context(brief)
     archetypes=PREFERENCES[kind]
     arch,asset,vis_warnings=choose_visual(brief,archetypes,history)
+    timing_policy = policy.get('timing', {}).get('artvision_cinema_preference', {})
     duration=duration_plan(brief,actual_seconds(video) if video else None,history=history,
-        cinema_soft_range=policy.get("timing",{}).get("artvision_cinema_preference",{}).get("default_soft_range_seconds"))
+        cinema_soft_range=timing_policy.get('default_soft_range_seconds') if timing_policy.get('enabled', True) else False)
     music=mood_music(brief,targets)
     music["suggested_existing_tracks"]=licensed_music_suggestions(brief,history)
     openings=first_seconds_plan(brief,context,arch,asset,duration.get("seconds"))

@@ -151,11 +151,17 @@ def plan(brief,catalog=None):
           "reason":why,"how":x["application"],"avoid":x["avoid"],
           "must_be_reviewed_manually":True})
         families.add(x["family"])
-    for id in BASICS[kind]:
+    explicit = (brief.get('editorial_plan') or {}).get('techniques')
+    if explicit:
+        for item in explicit:
+            if not isinstance(item, dict) or item.get('id') not in byid or not item.get('reason'):
+                raise ValueError('Mix esplicito non valido o incompatibile col format')
+            add(byid[item['id']], item['reason'])
+    for id in ([] if explicit else BASICS[kind]):
         if id in byid:add(byid[id],"Regola-base già approvata per "+kind)
     # Fill uncovered families first; score tags + useful relations, not random or a viral score.
     need=["opening","composition","editing","artwork","voice","music","genre","narrative"]
-    for family in need:
+    for family in ([] if explicit else need):
         if len(selected)>=8:break
         if family in families:continue
         pool=[x for x in entries if x["family"]==family and x["id"] not in {y["id"] for y in selected}]

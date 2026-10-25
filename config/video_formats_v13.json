@@ -1,17 +1,33 @@
 {
   "schema_version": 1,
   "version": "director-v13",
-  "rules": {"subtitles": false, "default_voice": "Google Gemini Gacrux", "paid_generation_in_planner": false, "automatic_publication": false},
+  "rules": {
+    "subtitles": false,
+    "default_voice": "Google Gemini Gacrux",
+    "paid_generation_in_planner": false,
+    "automatic_publication": false
+  },
   "formats": {
     "libri": {
       "label": "Libri, racconti e fiabe",
       "status": "ready_with_assets",
       "preset": "narrative-v12-harmonic-v5",
       "narrated": true,
-      "guides": ["REGOLE_VIDEO_V12.md", "METODOLOGIA_TRA_LE_PAGINE_V3.md", "GUIDA_REGIA_ARMONICA_V5.md"],
-      "entrypoints": ["src/render.py", "src/episode_v3.py", ".github/workflows/render-v3.yml"],
-      "resolution": [720, 1280],
-      "direction": "Trama chiara, 8-12 immagini curate e riutilizzabili, cue sulle frasi, camera morbida. Gli effetti forti hanno una ragione narrativa. Durata guidata dalla voce reale.",
+      "guides": [
+        "REGOLE_VIDEO_V12.md",
+        "METODOLOGIA_TRA_LE_PAGINE_V3.md",
+        "GUIDA_REGIA_ARMONICA_V5.md"
+      ],
+      "entrypoints": [
+        "src/render.py",
+        "src/episode_v3.py",
+        ".github/workflows/render-v3.yml"
+      ],
+      "resolution": [
+        720,
+        1280
+      ],
+      "direction": "Trama chiara, immagini curate in numero motivato dal racconto e riutilizzabili, cue sulle frasi, camera morbida. Gli effetti forti hanno una ragione narrativa. Durata guidata dalla voce reale.",
       "next_action": "Completare una cartella episodes con testo, metadata, scene_cues, descrizione e immagini. Validare prima della voce; render con --engine gemini --effects v4; eseguire episode_v3.py --post."
     },
     "artvision_cinema": {
@@ -19,10 +35,22 @@
       "status": "ready_with_curated_plan",
       "preset": "cinema_v6",
       "narrated": false,
-      "guides": ["modules/artvision/APPROVED_PRESET.json", "modules/artvision/REGIA_CINEMA_V6.md", "modules/artvision/IDENTITA_VISIVA_FISSA_V6.json", "docs/ARTVISION_LINEE_GUIDA_SOCIAL.md"],
-      "entrypoints": ["modules/artvision/director_cinema_v6.py", "modules/artvision/director_caravaggio_v6.py", "modules/artvision/cinema_v6_curated_shortfilm.py"],
-      "resolution": [1080, 1920],
-      "direction": "Opere autentiche, focali curate per artista, materia e dettagli, ritmo variato, pause. Intro fissa artista + MUSIC BY, poi zero testo e zero voce. Mai ripiegare su V5.",
+      "guides": [
+        "modules/artvision/APPROVED_PRESET.json",
+        "modules/artvision/REGIA_CINEMA_V6.md",
+        "modules/artvision/IDENTITA_VISIVA_FISSA_V6.json",
+        "docs/ARTVISION_LINEE_GUIDA_SOCIAL.md"
+      ],
+      "entrypoints": [
+        "modules/artvision/director_cinema_v6.py",
+        "modules/artvision/director_caravaggio_v6.py",
+        "modules/artvision/cinema_v6_curated_shortfilm.py"
+      ],
+      "resolution": [
+        1080,
+        1920
+      ],
+      "direction": "Opere autentiche, focali curate per artista, materia e dettagli, ritmo variato, pause. Firma artista + MUSIC BY, con apertura visiva scelta per il soggetto, poi zero testo e zero voce. Mai ripiegare su V5.",
       "next_action": "Recuperare la regia specifica dell'artista o crearne una nuova con il motore V6. Il workflow artvision-cinema-v6.yml è predisposto per Van Gogh: non usarlo per un altro artista cambiando soltanto il titolo."
     },
     "artvision_critico": {
@@ -30,10 +58,20 @@
       "status": "ready_with_episode_config",
       "preset": "critico-series-v2",
       "narrated": true,
-      "guides": ["modules/artvision_critico/production_series/README_SERIE_QUATTRO_V2.md", "modules/artvision_critico/NUOVA_LINEA_NARRATIVA_SENZA_MARCHIO_TESTUALE.md", "REGOLE_VIDEO_V12.md"],
-      "entrypoints": ["modules/artvision_critico/production_series/render_series_v2.py", "modules/artvision_critico/render_dali.py"],
-      "resolution": [1080, 1920],
-      "direction": "Voce accessibile, fatti verificati, dettagli esattamente descritti. Copertina serie V2: titolo dell'opera grande + artista; niente etichette di serie. Finale simbolico non parlato.",
+      "guides": [
+        "modules/artvision_critico/production_series/README_SERIE_QUATTRO_V2.md",
+        "modules/artvision_critico/NUOVA_LINEA_NARRATIVA_SENZA_MARCHIO_TESTUALE.md",
+        "REGOLE_VIDEO_V12.md"
+      ],
+      "entrypoints": [
+        "modules/artvision_critico/production_series/render_series_v2.py",
+        "modules/artvision_critico/render_dali.py"
+      ],
+      "resolution": [
+        1080,
+        1920
+      ],
+      "direction": "Voce accessibile, fatti verificati, dettagli esattamente descritti. Copertina serie V2: titolo dell'opera grande + artista; niente etichette di serie. Finale che conclude il ragionamento; eventuale coda visiva motivata. Mai togliere la narrazione per migliorare le immagini.",
       "next_action": "Recuperare il JSON dell'opera; per opere nuove preparare beats, fonti, crop e configurazione dedicata. Il renderer V2 accetta quattro ID esistenti, non qualunque titolo."
     },
     "controluce": {
@@ -42,9 +80,14 @@
       "source_branch": "feature/controluce-v1",
       "preset": "controluce-v1-with-v12-policy",
       "narrated": true,
-      "guides": ["REGOLE_VIDEO_V12.md"],
+      "guides": [
+        "REGOLE_VIDEO_V12.md"
+      ],
       "entrypoints": [],
-      "resolution": [720, 1280],
+      "resolution": [
+        720,
+        1280
+      ],
       "direction": "Un fatto centrale, fonti primarie e confronto, separare fatti, attribuzioni e analisi; immagini pertinenti e ricostruzioni riconoscibili. Google Gacrux; niente sottotitoli.",
       "next_action": "Recuperare dal ramo feature/controluce-v1 formats/controluce, src/controluce.py e src/controluce_render.py; controllare compatibilità V12 e asset. Non attivare le pianificazioni storiche per il solo recupero."
     },
@@ -55,7 +98,10 @@
       "narrated": false,
       "guides": [],
       "entrypoints": [],
-      "resolution": [1080, 1920],
+      "resolution": [
+        1080,
+        1920
+      ],
       "direction": "Geometrie eleganti e leggibili, proporzioni corrette, scorrimento sinistra-destra dove previsto, sincronizzazione musicale documentata e chiusura armoniosa; nessuna numerazione decorativa.",
       "next_action": "Recuperare pacchetto sorgente, MIDI o audio, seed e legame note-movimenti del riferimento riuscito. I soli MP4 nel catalogo non dimostrano che il generatore sia installato."
     },
@@ -66,9 +112,13 @@
       "narrated": false,
       "guides": [],
       "entrypoints": [],
-      "resolution": [1080, 1920],
+      "resolution": [
+        1080,
+        1920
+      ],
       "direction": "Forme luminose e ritmo musicale con spazio libero e focali leggibili. Evitare sovrapposizioni confuse. Riutilizzare il generatore approvato e le sue palette prima di inventarne uno nuovo.",
       "next_action": "Recuperare le sorgenti dei filmati HyperLumen dal pacchetto originale e verificare audio, geometrie e sincronizzazione. Dichiarare i parametri mancanti senza fingere di recuperarli dal solo MP4."
     }
-  }
+  },
+  "active_rules": "config/editorial_rules.json"
 }

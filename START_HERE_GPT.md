@@ -1,97 +1,40 @@
-# Produzione autonoma V31 — norma più recente (24 ottobre 2026)
+# Inizia da qui — studio video di Gianluca
 
-Per tutte le richieste «nuovo video», «continua» e per ogni ciclo ricorrente ogni 3 ore consultare [AUTOPRODUZIONE 3H V31](docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md) + `AGENTS.md` + V25/V28 e preset di serie. Video da 45 a 120 secondi secondo il soggetto; critiche d'arte anche più lunghe quando motivate. Alternare Cinema senza voce, Critico narrato naturale Gacrux, e Collection di più opere autentiche. Identità e copertine di serie ferme, forte primi 0/1/3/5/7s; testi Facebook/IG/TikTok/YouTube umani e documentati; fonti e licenze. Non scambiare piani/indici con MP4 veri. Nessun social autopublish; smartphone Android only.
+Leggere `AGENTS.md`, [regole attive](docs/REGOLE_ATTIVE.md) e
+[registro dei format](config/video_formats_v13.json). Questa revisione del 25/10/2026
+prevale sui vincoli storici incompatibili. Le istruzioni della sessione restano prioritarie.
 
-# Crea il prossimo video partendo dal lavoro già riuscito
+Gianluca può chiedere:
 
-**REGOLA POST V28 (OBBLIGATORIA):** ogni testo Facebook/Instagram/TikTok/YouTube deve essere una storia, curiosità o lettura dell'opera che **aggiunge valore culturale non già evidente nel film**. Vietato parlare di `zoom`, `regia`, `montaggio`, `ho scelto`, `video AI` o meccanismi di produzione nel post. Leggi [lo standard editoriale V28](docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md), registra fonti primarie in `POST_EDITORIAL_RESEARCH.json`, verifica la lunghezza ragionevole, i crediti e la naturalezza. Non trasformare i post in note di lavorazione: quelle vivono solo nella ricetta tecnica.
-
-**STEP ZERO (OBBLIGATORIO):** apri [il contratto permanente ArtVision V25](docs/ARTVISION_CONTRATTO_PERMANENTE_V25.md), poi `AGENTS.md` e il preset approvato del formato. Niente nuovi stili o ricette genericamente “virali” al posto delle regole. Il Cinema senza voce mantiene V6, copertine coerenti e titoli opere in inglese; descrizioni/hashtag/crediti pronti per i post. Prima/dopo il render esegui il gate V25 con `templates/ARTVISION_CONTRACT_V25.json`, il quale BLOCCA la consegna incompleta. Non confondere un piano con un MP4 effettivamente riuscito e controllato.
-
-
-**GPT: leggi [AGENTS.md](AGENTS.md), poi il
-[Playbook](docs/GPT_VIDEO_PLAYBOOK.md) e il
-[registro dei formati](config/video_formats_v13.json).**
-
-Gianluca può chiedere normalmente:
-
-> Crea un video su [argomento] usando il progetto Tra-le-pagine-.
-> Segui START_HERE_GPT.md. Mantieni le tecniche approvate e consegna il filmato finito.
+> Crea cinque video Critico d'arte su soggetti diversi. Segui START_HERE_GPT.md,
+> studia ogni opera, mantieni la voce Gacrux e proponi un mix motivato per ciascuno.
+> Riusa le tecniche approvate e conserva le impostazioni di ogni risultato.
 
 Oppure:
 
-> Usa la voce del video X e la regia del video Y. Recupera le loro ricette,
-> riutilizza i materiali adatti e genera soltanto ciò che manca.
+> Migliora questo video mantenendo il format e la voce. Usa l'apertura del video X
+> e il ritmo del video Y se sono compatibili. Recupera prima le loro schede.
 
-La guida funziona quando GPT ha accesso al repository e la legge; non modifica
-automaticamente tutte le chat o installazioni di ChatGPT. Per iniziare da un'altra
-chat condividi questo file o il link del repository.
+## Procedura dell'agente
 
-## Comandi, senza consumo di API
+1. Recuperare riferimenti e regole; identificare il format richiesto.
+2. Creare una nuova scheda con `brief`; compilarla con ricerca e scelte motivate.
+3. Eseguire `check`, risolvere i blocchi, usare i renderer realmente disponibili.
+4. Controllare file, parlato e immagini; consegnare MP4, cover, post e dati di replica.
+5. Salvare le correzioni con ambito e versione; pubblicare solo se autorizzato.
 
 ```bash
 python src/video_director_v13.py formats
-python src/video_director_v13.py brief --format libri --topic "Titolo del libro" --out output/nuovo_video
+python src/video_director_v13.py brief --format artvision_critico --topic "Opera scelta" --out output/nuovo_video
 python src/video_director_v13.py check --project output/nuovo_video/PROJECT_V13.json
 ```
 
-`brief` crea la scheda e istruzioni specifiche. `check` identifica materiali e
-revisioni mancanti. Sono strumenti per l'agente: non generano da soli immagini,
-voce o MP4. L'agente prosegue con i motori esistenti indicati nel piano.
+Il brief contiene `editorial_contract` e `editorial_plan`. Una scheda vuota è
+una bozza: check blocca la produzione finché dati e revisioni sono incompleti.
+Il cambio Critico → Cinema non può avvenire silenziosamente. I numeri di scene,
+le durate e le tecniche si scelgono per il contenuto, senza quote estetiche fisse.
 
-Il percorso dei libri con `episode_v3.py --post` registra automaticamente la ricetta
-del video finale. Per gli altri formati usare `capture` dopo il render, come nella guida.
-
-## Obiettivo economico e apprendimento
-
-Leggere `docs/STRATEGIA_CREATOR_V13.md` prima di pianificare nuovi contenuti.
-Compilare il contesto `business` della scheda: pubblico, promessa, valore originale,
-obiettivo, una prova, budget e invito finale. Nessuna crescita o entrata garantita.
-Usare `src/creator_metrics_v13.py` sui dati reali disponibili; dati mancanti restano
-sconosciuti. Non copiare KPI arbitrari dai repository di marketing.
-
-## Priorità corrente: crescita V14
-
-Leggere `docs/PIANO_CRESCITA_V14.md` e `config/creator_growth_v14.json`.
-La crescita dei canali propri precede per ora commissioni, sponsor e proposte
-a editori/aziende: non suggerire outreach o servizi come prossima azione.
-Preservare i format approvati. Pianificare secondo capacità con
-`src/creator_growth_v14.py`; cercare prima nel catalogo e nei riferimenti.
-Recuperare le lezioni pertinenti quando disponibili (schema in
-`templates/CREATOR_LEARNING_V14.json`); se assenti, dichiarare che mancano.
-Una sola variabile per prova; nessuna crescita garantita o pubblicazione implicita.
-Il piano V14 prevale sulle priorità commerciali delle guide V1/V13.
-
-## Produzione intensiva V15 — istruzione più recente
-
-Leggere `docs/PRODUZIONE_INTENSIVA_V15.md` e `config/production_v15.json`.
-Target: almeno 10 video finiti e controllati al giorno, con lavoro autonomo
-dell’agente. Il precedente limite di due video/settimana è superato.
-Preparare scorta, lotti paralleli, recupero dei materiali e revisioni dell’agente;
-non richiedere conferme per ogni operazione già autorizzata.
-Usare `src/production_batch_v15.py` per preflight e registro giornaliero.
-Il modulo di coda non è ancora un servizio completo di render continuo: non
-dichiarare attivo ciò che resta da integrare. Contare soltanto consegne distinte
-verificate, non tentativi, bozze o file duplicati. Distinguere produzione e distribuzione.
-
-## Esecuzione V16
-
-Leggere `docs/PRODUZIONE_AUTONOMA_V16.md`. I pacchetti preparati della coda V15
-si eseguono con `src/production_runner_v16.py run`: tre adapter ammessi, processi
-isolati, checkpoint e ripresa. Non basta una bozza del copione: recuperare gli asset
-e la voce verificata. Rivedere master e kit, poi registrare una revisione con hash
-esatti in `queue/reviews_v16/`. Nessuna approvazione ripetuta all’utente per lavoro
-già autorizzato. Se mancano asset o capacità, indicare il blocco, non inventare
-dieci consegne. I master non revisionati restano nel pacchetto di lavoro.
-
-## Pre-lancio V18 — scegliere bene prima di produrre
-
-Leggere [PRELAUNCH_V18_GUIDA.md](docs/PRELAUNCH_V18_GUIDA.md). Da Android il pannello [Scorta pre-lancio](docs/prelaunch-v18.html) permette di selezionare idee (browser locale, esportabili in JSON). Il pianificatore V18 riusa le otto idee V14, aggiunge 16 bozze, e recupera ricette V13 solo quando realmente disponibili e con hash validi. Nessuna idea viene dichiarata video pronto, nessuna metrica social inventata, nessun nuovo render/credito/publishing attivato. La produzione V15/V16 e la regia artistica V17 rimangono distinte.
-
-## Controllo qualità V17 per tutte le categorie
-
-Prima di lanciare il renderer approvato consulta [QUALITY_DIRECTOR_V17.md](docs/QUALITY_DIRECTOR_V17.md). La scheda V13 può essere controllata gratuitamente con `python src/quality_director_v17.py --project PERCORSO/PROJECT_V13.json --out output/quality-preflight`. Dopo il render V16 trovi automaticamente report HTML/JSON nel kit di revisione se l'analisi si è completata. Sono suggerimenti diagnostici, non voti artistici né conferme di correttezza del filmato; controlla sempre scena per scena prima di consegnare. Si esegue dai workflow GitHub gestibili su Android.
-
-
-## Musica e protezione della pubblicazione — V20
-Per **ogni nuovo video**, consultare [Music Director / Publication Safety V20](docs/MUSIC_POLICY_V20.md) e compilare [manifest](templates/MUSIC_RELEASE_V20.json). La musica viene scelta per valore emotivo, regia, diritti della registrazione e condizioni d'uso delle piattaforme; prima di pubblicare eseguire il controllo `src/music_rights_v20.py` oppure [workflow Android](.github/workflows/music-rights-v20.yml). Nessuna pubblicazione implicita, né garanzia di assenza di claim. I preset approvati rimangono intatti.
+Per lotti e ripresa consultare V15/V16 nel [playbook](docs/GPT_VIDEO_PLAYBOOK.md).
+Android è il mezzo operativo. Nessun nuovo servizio a pagamento viene attivato.
+Questo file non è un generatore di video né una funzione installata sul sito live:
+serve all'agente con accesso al repository per eseguire il lavoro con i motori esistenti.

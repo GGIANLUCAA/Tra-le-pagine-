@@ -1,3 +1,5 @@
+> **Regole consolidate 25/10/2026:** iniziare da [START_HERE_GPT.md](START_HERE_GPT.md) e [regole attive](docs/REGOLE_ATTIVE.md). Le versioni e descrizioni seguenti documentano anche funzionalità storiche; non sostituiscono le regole correnti.
+
 ## ArtVision V31 — produzione autonoma ricorrente ogni tre ore
 
 [Prompt operativo V31](docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md) · [Policy](config/artvision_autoproduction_v31.json) · [Registro cicli](queue/artvision_autoproduction_v31_state.json).
