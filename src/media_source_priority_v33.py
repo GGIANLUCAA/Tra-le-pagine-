@@ -77,10 +77,10 @@ def check(project, visual_ids):
             errors.append("Priorita media V33: revisione visuale mancante per "+aid)
         source_kind=entry.get("source_kind")
         actual_format=project.get("format")
-        if (actual_format in ("artvision_cinema","artvision_critico") and source_kind in AI_KIN
+        if (actual_format in ("artvision_cinema","artvision_critico") and source_kind in AI_KINDS
             and entry.get("role_in_video")!="labelled_supporting_reconstruction"):
             errors.append("ArtVision: illustrazione AI non puo sostituire l'opera originale: "+aid)
-        if (actual_format=="controluce" and source_kind in AI_KIN
+        if (actual_format=="controluce" and source_kind in AI_KINDS
             and entry.get("role_in_video")!="labelled_supporting_reconstruction"):
             errors.append("Controluce: ricostruzione AI non etichettata: "+aid)
     for aid in sorted(set(visual_ids)-set(by_id)):
