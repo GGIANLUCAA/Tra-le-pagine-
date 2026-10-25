@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-25T00:28:00Z",
+  "updated": "2026-10-25T04:15:20.962Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -145,6 +145,30 @@
         "external_video_library_import": "not_attempted",
         "human_artistic_review_pending": true
       }
+    },
+    {
+      "cycle_id": "20261025T0515+0100",
+      "created_at": "2026-10-25T04:15:20.689Z",
+      "artist": "Mikhail Vrubel",
+      "work": "The Demon Seated",
+      "format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "reason_fallback": "Gacrux newly available for Holbein only; avoid unapproved new paid/free-tier-unknown API calls and do not reuse mismatched voice",
+      "status": "technical_pass_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 60.3,
+      "size_bytes": 10736279,
+      "sha256_mp4": "311bafb24465a9d5b2b11c078ae850bbca4286e3084a0ac277d2b156d7186fed",
+      "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40161154578",
+      "artifact_name": "ArtVision-V31-20261025-Vrubel-The-Demon-Seated",
+      "steps": {
+        "preflight": "success",
+        "render": "success",
+        "verify": "success",
+        "archive": "success"
+      },
+      "gold_master_approved": false,
+      "social_published": false
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
