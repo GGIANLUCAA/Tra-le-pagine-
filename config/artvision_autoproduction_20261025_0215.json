@@ -1,0 +1,191 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "31.0",
+  "date": "2026-10-25",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261025T0215+0200",
+  "chosen_format": "artvision_cinema",
+  "format_reason": "The three previous verified episodes were Cinema, Collection, Cinema; natural Google Gacrux voice could not be verified in this run, so preserve quality with a new mythological Cinema work rather than fabricate narration.",
+  "candidates_considered": [
+    {
+      "title": "Circe Invidiosa",
+      "artist": "John William Waterhouse",
+      "reason": "Striking emerald poison and a vertically composed, high-resolution authentic museum work; Ovidian narrative documented by AGSA; new subject for this cycle"
+    },
+    {
+      "title": "Flaming June",
+      "artist": "Frederic Leighton",
+      "reason": "Excellent orange visual impact, but the narrative is more contemplative and similar reclining subjects appear in the archive; reserve for a future production"
+    },
+    {
+      "title": "The Great Day of His Wrath",
+      "artist": "John Martin",
+      "reason": "Spectacular apocalyptic scale but John Martin was already explored in the existing ArtVision archive; avoid repeating subjects"
+    }
+  ],
+  "subjects": {
+    "waterhouse_circe_invidiosa_20261025_0215": {
+      "artist": "JOHN WILLIAM WATERHOUSE",
+      "title_en": "Circe Invidiosa",
+      "year": "1892",
+      "museum": "Art Gallery of South Australia",
+      "slug": "waterhouse_circe_invidiosa_20261025_0215",
+      "editorial_key": "waterhouse_circe_invidiosa_20261025_0215",
+      "source_page": "https://commons.wikimedia.org/wiki/File:J._W._Waterhouse_-_Circe_Invidiosa_-_Google_Art_Project.jpg",
+      "museum_page": "https://www.agsa.sa.gov.au/collection-publications/collection/works/_/24983/",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/1/1d/J._W._Waterhouse_-_Circe_Invidiosa_-_Google_Art_Project.jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/J._W._Waterhouse_-_Circe_Invidiosa_-_Google_Art_Project.jpg?width=2350",
+        "https://upload.wikimedia.org/wikipedia/commons/3/3b/Circe_Invidiosa_-_John_William_Waterhouse.jpg"
+      ],
+      "music": {
+        "name": "The Chamber",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Chamber.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100400",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1100400",
+        "offset": 8
+      },
+      "story": "Circe holds the poison above the sea: a gaze and green bowl lead to the vertical stream, then the entire scene, the dark setting, hands and feet, the spreading green water, a return to her face, and a still full-canvas ending. Each cut clarifies a real feature; no transparent crossfades or oscillations.",
+      "techniques": [
+        "human_gaze_start",
+        "locked_hold",
+        "motivated_cut",
+        "visual_hierarchy",
+        "detail_return",
+        "rhythmic_rest",
+        "camera_seasick_gate"
+      ],
+      "scenes": [
+        {
+          "type": "portrait",
+          "x": 0.53,
+          "y": 0.29,
+          "z": 1.18,
+          "seconds": 4.7,
+          "movement": "locked",
+          "intent": "The painted enchantress holds a green vessel beneath a troubled downward gaze"
+        },
+        {
+          "type": "detail",
+          "x": 0.52,
+          "y": 0.36,
+          "z": 1.65,
+          "seconds": 3.65,
+          "movement": "locked",
+          "intent": "An unnatural emerald stream descends from the vessel in a continuous narrow thread"
+        },
+        {
+          "type": "texture",
+          "x": 0.53,
+          "y": 0.54,
+          "z": 1.42,
+          "seconds": 3.4,
+          "movement": "locked",
+          "intent": "Green cloth and liquid share a painterly texture without invented animation"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 5,
+          "movement": "locked",
+          "intent": "A first full reveal establishes the narrow towering composition and the dangerous sea"
+        },
+        {
+          "type": "portrait",
+          "x": 0.48,
+          "y": 0.23,
+          "z": 1.42,
+          "seconds": 4.25,
+          "movement": "slow_pull",
+          "intent": "Circe's downturned eyes and tense expression return with the story now visible"
+        },
+        {
+          "type": "detail",
+          "x": 0.52,
+          "y": 0.3,
+          "z": 1.8,
+          "seconds": 3.7,
+          "movement": "locked",
+          "intent": "The broad cup held in both hands is the exact source of the poisonous liquid"
+        },
+        {
+          "type": "landscape",
+          "x": 0.55,
+          "y": 0.1,
+          "z": 1.18,
+          "seconds": 3.75,
+          "movement": "locked",
+          "intent": "Dark upper rock and forest shadows isolate the enchantress before the green eruption"
+        },
+        {
+          "type": "detail",
+          "x": 0.51,
+          "y": 0.48,
+          "z": 1.72,
+          "seconds": 3.55,
+          "movement": "locked",
+          "intent": "The brilliant green vertical thread crosses the richly painted robe"
+        },
+        {
+          "type": "detail",
+          "x": 0.5,
+          "y": 0.79,
+          "z": 1.62,
+          "seconds": 4,
+          "movement": "locked",
+          "intent": "Bare feet hover over the green water where the potion enters the sea"
+        },
+        {
+          "type": "landscape",
+          "x": 0.53,
+          "y": 0.93,
+          "z": 1.34,
+          "seconds": 3.6,
+          "movement": "locked",
+          "intent": "Unsettling painted shapes and green ripples beneath the water hint at the consequence"
+        },
+        {
+          "type": "portrait",
+          "x": 0.51,
+          "y": 0.31,
+          "z": 1.3,
+          "seconds": 4,
+          "movement": "locked",
+          "intent": "A restrained return to Circe's face reframes beauty as an act of envy"
+        },
+        {
+          "type": "medium",
+          "x": 0.51,
+          "y": 0.47,
+          "z": 1.08,
+          "seconds": 4.45,
+          "movement": "slow_push",
+          "intent": "Her hands, garment and falling poison share a clear single pictorial plane"
+        },
+        {
+          "type": "texture",
+          "x": 0.52,
+          "y": 0.73,
+          "z": 1.26,
+          "seconds": 3.75,
+          "movement": "locked",
+          "intent": "Green water fills the composition and absorbs the falling poison without false motion"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 6.3,
+          "movement": "locked",
+          "intent": "Final complete painting remains still as the score resolves and the viewer understands the myth"
+        }
+      ]
+    }
+  }
+}
