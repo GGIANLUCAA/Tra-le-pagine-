@@ -1,0 +1,187 @@
+{
+  "schema": "production-audit-v16",
+  "date": "2026-10-25",
+  "repository": "GGIANLUCAA/Tra-le-pagine-",
+  "truth_statement": "Technical validation is not an artistic approval. No master below received a complete real-time watch/listen review tied to its exact SHA-256 during this run.",
+  "required_docs_read": [
+    "AGENTS.md",
+    "START_HERE_GPT.md",
+    "docs/PRODUZIONE_AUTONOMA_V16.md",
+    "config/production_v15.json",
+    "docs/REGOLE_ATTIVE.md",
+    "config/editorial_rules.json",
+    "docs/ARTVISION_AUDIENCE_RESEARCH_V32.md"
+  ],
+  "counts": {
+    "new_github_recoverable_unique_masters": 6,
+    "full_decode_passed": 6,
+    "sampled_visual_contact_sheet_checked": 6,
+    "exact_hash_artistic_reviews_passed": 0,
+    "valid_v16_queue_items_added": 0,
+    "v16_jobs_pending": 0,
+    "imported_to_site_today": 3,
+    "imported_to_site_without_required_review": 3,
+    "state_declared_local_only_masters_not_counted_as_github_deliverables": 3
+  },
+  "masters": [
+    {
+      "id": "waterhouse-circe-invidiosa",
+      "format": "Cinema",
+      "duration_seconds": 55.5,
+      "sha256": "df44f90c09f0a9d1e392527eaf96c3ff1c6e76ac4ad99ff07653f1acac33203d",
+      "resolution": "1080x1920",
+      "fps": 24,
+      "audio": "AAC stereo 96 kHz",
+      "integrated_lufs": -18.37,
+      "true_peak_dbfs": -2,
+      "decode": "pass",
+      "visual_sample": "pass_no_obvious_subtitles_or_ghosting_in_12_samples",
+      "review": "pending_all_v25_flags",
+      "site_import": "blocked",
+      "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40146646289",
+      "artifact_id": 12580892569
+    },
+    {
+      "id": "vrubel-the-demon-seated",
+      "format": "Cinema",
+      "duration_seconds": 60.3,
+      "sha256": "311bafb24465a9d5b2b11c078ae850bbca4286e3084a0ac277d2b156d7186fed",
+      "resolution": "1080x1920",
+      "fps": 24,
+      "audio": "AAC stereo 96 kHz",
+      "integrated_lufs": -19.31,
+      "true_peak_dbfs": -3.72,
+      "decode": "pass",
+      "visual_sample": "pass_no_obvious_subtitles_or_ghosting_in_12_samples",
+      "review": "pending_all_v25_flags",
+      "site_import": "blocked",
+      "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40161154578",
+      "artifact_id": 12585893575
+    },
+    {
+      "id": "friedrich-the-sea-of-ice-github-original",
+      "format": "Cinema",
+      "duration_seconds": 55.8,
+      "sha256": "dda35901fef620d1d85fdf440c90402e8fa2aeee8f93891186b48ccbbd916a1d",
+      "resolution": "1080x1920",
+      "fps": 24,
+      "audio": "AAC stereo 96 kHz",
+      "integrated_lufs": -18.43,
+      "true_peak_dbfs": -2,
+      "decode": "pass",
+      "visual_sample": "pass_no_obvious_subtitles_or_ghosting_in_12_samples",
+      "review": "pending_all_v25_flags",
+      "site_import": "blocked",
+      "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40196817073",
+      "artifact_id": 12600561811,
+      "note": "A separately declared director's cut SHA d48858... was local-only and was not independently recoverable from this GitHub artifact."
+    },
+    {
+      "id": "durer-four-horsemen",
+      "format": "Critico V32",
+      "duration_seconds": 88.8,
+      "sha256": "96004ea7780a5ae00f8e832ed47a8da5f96c7b01c9d39eb6c7d0fa205fce3672",
+      "resolution": "1080x1920",
+      "fps": 24,
+      "audio": "AAC mono 24 kHz; package declares Google it-IT-Chirp3-HD-Gacrux",
+      "integrated_lufs": -18.71,
+      "true_peak_dbfs": -0.64,
+      "decode": "pass",
+      "visual_sample": "pass_no_obvious_subtitles_or_ghosting_in_12_samples",
+      "review": "pending_full_watch_listen_and_exact_hash_contract",
+      "site_import": "imported_in_error_as_legacy",
+      "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40162375826",
+      "artifact_id": 12587225468
+    },
+    {
+      "id": "rousseau-fight-between-a-tiger-and-a-buffalo",
+      "format": "Critico V32",
+      "duration_seconds": 88.24,
+      "sha256": "5bd6c2cf51e4b3acb6cd34a04b038d60e720104b5ca04e79738e87b6e3da5b6a",
+      "resolution": "1080x1920",
+      "fps": 24,
+      "audio": "AAC mono 24 kHz; package declares Google it-IT-Chirp3-HD-Gacrux",
+      "integrated_lufs": -19.85,
+      "true_peak_dbfs": -0.04,
+      "decode": "pass",
+      "visual_sample": "pass_no_obvious_subtitles_or_ghosting_in_12_samples",
+      "review": "pending_full_watch_listen_and_exact_hash_contract",
+      "site_import": "imported_in_error_as_legacy",
+      "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40162375826",
+      "artifact_id": 12587225468
+    },
+    {
+      "id": "holbein-the-ambassadors",
+      "format": "Critico V32",
+      "duration_seconds": 92.64,
+      "sha256": "08d5dec830893f719a2a3eb66f2f73de515b818f9331961cb4aeca7026fb5d3d",
+      "resolution": "1080x1920",
+      "fps": 24,
+      "audio": "AAC mono 24 kHz; package declares Google it-IT-Chirp3-HD-Gacrux",
+      "integrated_lufs": -20.9,
+      "true_peak_dbfs": -0.66,
+      "decode": "pass",
+      "visual_sample": "pass_no_obvious_subtitles_or_ghosting_in_12_samples",
+      "review": "pending_full_watch_listen_and_exact_hash_contract",
+      "site_import": "imported_in_error_as_legacy",
+      "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40162375826",
+      "artifact_id": 12587225468
+    }
+  ],
+  "source_and_rights_notes": {
+    "durer": [
+      "Cleveland Museum CC0 for The Four Horsemen",
+      "The Descent music CC BY 4.0; package still requires final rights recheck"
+    ],
+    "rousseau": [
+      "Cleveland Museum CC0 for Fight Between a Tiger and a Buffalo",
+      "Dreams Become Real music CC BY 4.0; package still requires final rights recheck"
+    ],
+    "holbein": [
+      "National Gallery / Wikimedia Commons public-domain reproduction declaration",
+      "Night on the Docks Piano CC BY 4.0; package still requires final rights recheck"
+    ]
+  },
+  "local_only_not_counted": [
+    {
+      "id": "the-other-side-of-beauty-collection",
+      "sha256_prefix": "45ad412c",
+      "reason": "ChatGPT attachment only; no GitHub video artifact"
+    },
+    {
+      "id": "gustave-moreau-jupiter-and-semele",
+      "sha256_prefix": "168a01c4",
+      "reason": "ChatGPT attachment only; rights conflict and nudity review pending"
+    },
+    {
+      "id": "japan-through-van-gogh",
+      "sha256_prefix": "c005bc",
+      "reason": "ChatGPT attachment only; GitHub has source assets, not the video master"
+    }
+  ],
+  "queue_status": {
+    "production_v15": "empty",
+    "runner_state_v16_jobs": [],
+    "reviews_v16": "README.md only",
+    "reason": "Recovered packages do not contain a complete PROJECT_V13.json plus the required exact-hash review record; therefore nothing was added to the V16 queue."
+  },
+  "importer_incident": {
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40168322554",
+    "observed": "Durer, Rousseau and Holbein were published by the importer under 'legacy artifact without V25 contract' although each FINAL_QA.json says TECHNICALLY_VERIFIED_AESTHETIC_REVIEW_REQUIRED.",
+    "uploaded_master_keys": [
+      "VIDEO_MASTER__12020804.mp4",
+      "VIDEO_MASTER__7772642.mp4",
+      "VIDEO_MASTER__10467942.mp4"
+    ],
+    "containment_commit": "d93b3bfa83e91691055b1a7186d0873ea78929e7",
+    "containment": "Importer now fails closed when ARTVISION_CONTRACT_V25.json is absent and includes a regression self-test.",
+    "removal_status": "not_removed; the repository exposes no documented authenticated delete route for this importer, so deletion was not guessed."
+  },
+  "next_blockers": [
+    "Perform complete real-time watch/listen reviews and record only exact master hashes.",
+    "For Critico V32, create exact-hash V25 review contracts and validate declared Gacrux take against the packaged audio.",
+    "For every V16 candidate, finish PROJECT_V13.json and supported adapter parameters before queue insertion.",
+    "Remove the three mistakenly imported Critico objects through the existing authorized site-management path.",
+    "Make local-only masters recoverable as GitHub artifacts before counting them as repository deliverables."
+  ]
+}
