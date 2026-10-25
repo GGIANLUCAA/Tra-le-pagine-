@@ -1,0 +1,44 @@
+name: "Regole V33 - priorita fonti e regressioni video"
+on:
+  push:
+    branches: ["feature/media-priority-permanent-v33-20261025"]
+    paths:
+      - "config/editorial_rules.json"
+      - "src/editorial_rules.py"
+      - "src/video_director_v13.py"
+      - "src/media_source_priority_v33.py"
+      - "tests/test_media_source_priority_v33.py"
+      - "tests/test_video_director_v13.py"
+      - ".github/workflows/media-priority-v33.yml"
+  pull_request:
+    paths:
+      - "config/editorial_rules.json"
+      - "src/editorial_rules.py"
+      - "src/video_director_v13.py"
+      - "src/media_source_priority_v33.py"
+      - "tests/test_media_source_priority_v33.py"
+      - "tests/test_video_director_v13.py"
+      - ".github/workflows/media-priority-v33.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  policy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Setup test image dependencies
+        run: python -m pip install --quiet 'Pillow>=10,<13' 'numpy>=1.25,<3'
+      - name: Validate V33 media source policy
+        run: |
+          python -m unittest discover -s tests -p 'test_media_source_priority_v33.py' -v
+          python -m unittest discover -s tests -p 'test_editorial_rules.py' -v
+          python -m unittest discover -s tests -p 'test_video_director_v13.py' -v
+      - name: No regression to free sources and generator
+        run: |
+          python -m unittest discover -s tests -p 'test_free_sources_bridge_v1.py' -v
+          python -m unittest discover -s tests -p 'test_image_pipeline_v1.py' -v
