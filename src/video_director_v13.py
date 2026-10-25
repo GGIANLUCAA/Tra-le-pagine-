@@ -180,7 +180,11 @@ def check(project_path):
                 blockers.append(f"Asset {aid}: manca {key}")
     if not visual_ids:
         blockers.append("Mancano materiali visivi")
-    blockers.extend(validate_media_sources(project, visual_ids))
+    # Enforce V33 on newly contracted projects only. Legacy V15/V16 jobs without
+    # editorial_contract remain readable; they already receive a migration warning
+    # from validate_editorial() and must be re-briefed for NEW batches.
+    if isinstance(project.get("editorial_contract"), dict):
+        blockers.extend(validate_media_sources(project, visual_ids))
     scenes = project.get("scenes", [])
     if not isinstance(scenes, list):
         raise ValueError("scenes deve essere una lista")
