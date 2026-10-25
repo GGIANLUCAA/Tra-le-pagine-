@@ -21,6 +21,18 @@ Oppure:
 > Migliora questo video mantenendo il format e la voce. Usa l'apertura del video X
 > e il ritmo del video Y se sono compatibili. Recupera prima le loro schede.
 
+## Priorità permanente sulle immagini (V33)
+
+Per **qualsiasi nuovo video/serie** applicare `docs/FILOSOFIA_FONTI_MEDIA_V33.md`
+e `config/editorial_rules.json > media_source_priority`:
+riusa prima asset approvati **pertinenti**, per arte/cronaca privilegia fonti
+autentiche e licenziate; usa Pixabay (`PIXABAY`) o Openverse per stock coerente;
+per scene narrative specifiche privilegia illustrazioni originali con personaggi
+consistenti (AI Horde sperimentale); non usare Canva Premium per default.
+Compila `media_sourcing` per ogni asset prima del check V13. Nessuna spesa
+o pubblicazione automatica e niente nuovi secret da richiedere se già disponibili.
+Una fonte catalogata non è necessariamente un connettore attivo.
+
 ## Procedura dell'agente
 
 1. Recuperare riferimenti e regole; identificare il format richiesto.
