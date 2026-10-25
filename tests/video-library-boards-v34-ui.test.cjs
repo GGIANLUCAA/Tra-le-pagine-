@@ -8,7 +8,7 @@ const catalog={admin:true,items:[{key,name:key,available:true,size:12700000,cove
 const record={key,schemaVersion:1,publicTitle:'Il principe felice',shortDescription:'La storia di una rondine e di una statua',project:'Tra le Pagine',category:'Libri raccontati',language:'it',hook:'Un principe che rinuncia a tutto',directorNotes:'Movimenti lenti e tagli narrativi',storyboard:'00:00 La statua sulla città\n00:15 La rondine si posa\n00:35 La sarta riceve il rubino',rightsStatus:'da_verificare',publicationStatus:'bozza',musicAttribution:'',imageSources:'',sources:'',voiceCredits:'Google Gacrux'};
 let sent=0,drawn=[],downloads=[],errors=[];
 const vconsole=new VirtualConsole();vconsole.on('jsdomError',e=>errors.push(e.message));
-const dom=new JSDOM(html,{url:'https://video-library-studio.600led.workers.dev/',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole,beforeParse(w){
+const dom=new JSDOM(html,{url:'https://video-library-studio.600led.workers.dev/',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vconsole,beforeParse(w){
  w.localStorage.setItem('vlsAdmin','a'.repeat(64));
  w.IntersectionObserver=class{observe(){}disconnect(){}unobserve(){}};
  w.HTMLElement.prototype.scrollIntoView=()=>{};
