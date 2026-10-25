@@ -1,0 +1,53 @@
+name: "Tra le Pagine - Il principe felice Gacrux"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/happy_prince_voice.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install audio requirements
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "google-genai>=2.25,<3" "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11"
+      - name: Verify secret before TTS
+        run: |
+          if [ -z "${GEMINI_API_KEY:-}" ]; then
+            echo "::error::GEMINI_API_KEY is unavailable; cannot create Gacrux voice."
+            exit 2
+          fi
+      - name: Create Italian Gacrux voice with existing repository module
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          import json
+          from gemini_voice import synthesize,voice_profile
+          text=Path('requests/happy_prince_voice.txt').read_text(encoding='utf-8').strip()
+          audio,timed=synthesize(text,Path('output/happy_prince_voice'))
+          Path('output/happy_prince_voice/PROJECT_TTS.json').write_text(
+            json.dumps({"episode":"il_principe_felice","voice_profile":voice_profile(),
+              "script_path":"requests/happy_prince_voice.txt",
+              "audio_seconds":len(audio)/24000,
+              "timed_sentences":timed,
+              "source":"Gemini Gacrux via src/gemini_voice.py"},
+              ensure_ascii=False,indent=2), encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: IL_PRINCIPE_FELICE_GACRUX_AUDIO
+          path: output/happy_prince_voice/
+          retention-days: 14
+          if-no-files-found: error
