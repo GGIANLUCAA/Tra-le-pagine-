@@ -1,0 +1,55 @@
+name: "ArtVision Critico V4 Holbein - Natural Gacrux voice (one-shot)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-holbein-natural-v4.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Prepare original Google Gacrux TTS engine"
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "soundfile>=0.12,<1" "google-genai>=2.25,<4" "scipy>=1.11,<2"
+      - name: "One coherent human-paced voice pass; no robotic fallback"
+        run: |
+          python - <<'PY'
+          import os,sys,hashlib,json,subprocess
+          from pathlib import Path
+          if not os.environ.get("GEMINI_API_KEY"):
+              raise RuntimeError("GEMINI_API_KEY missing; cannot generate approved Gacrux voice; no synthetic substitute")
+          sys.path.insert(0,"src")
+          from gemini_voice import synthesize,voice_profile
+          src=Path("config/holbein_critico_v4_natural_script_20261025.txt")
+          text=src.read_text(encoding="utf-8")
+          out=Path("output/holbein-critico-v4-natural-gacrux")
+          out.mkdir(parents=True,exist_ok=True)
+          (out/"COPIONE_IT.txt").write_text(text,encoding="utf-8")
+          samples,timed=synthesize(text,out)
+          sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          manifest={"schema":"artvision-voice-release-v4","engine":"Google Gemini Gacrux","profile":voice_profile(),"voice_file":"VOCE.wav","script_sha256":sha(src),"voice_sha256":sha(out/"VOCE.wav"),"duration_seconds":len(samples)/24000,"alignment":timed,"unapproved_until_artistic_review":True}
+          (out/"VOICE_TAKE_V4.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("GACRUX_SUCCESS",manifest["duration_seconds"],sha(out/"VOCE.wav"))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_HOLBEIN_CRITICO_V4_VOCE_GACRUX
+          path: |
+            output/holbein-critico-v4-natural-gacrux/VOCE.wav
+            output/holbein-critico-v4-natural-gacrux/VOCE_NATURALE.mp3
+            output/holbein-critico-v4-natural-gacrux/COPIONE_IT.txt
+            output/holbein-critico-v4-natural-gacrux/VOICE_TAKE_V4.json
+            output/holbein-critico-v4-natural-gacrux/ALLINEAMENTO_VOCE.json
+          if-no-files-found: error
+          retention-days: 14
