@@ -16,6 +16,31 @@ def completed_plan():
                 sources=[{'reference': 'fixture', 'finding': 'test claim',
                           'verification_notes': 'synthetic unit-test evidence', 'status': 'reviewed'}],
                 techniques=[{'id': 'locked_hold', 'reason': 'Show the narrated detail clearly', 'status': 'trial'}])
+    # Synthetic discovery record used only for structural tests.
+    plan['audience_research'] = {
+        'candidates': [
+            {'artist': 'Painter A', 'work': 'Work A', 'visual_hook': 'Strong silhouette',
+             'human_interest': 'Curiosity', 'historical_anchor': 'Museum context',
+             'asset_rights_notes': 'Source and photo license need final clearance',
+             'comparison_reason': 'Visually distinct',
+             'audience_signal': {'status': 'unavailable', 'reason': 'Unit test offline'}},
+            {'artist': 'Painter B', 'work': 'Work B', 'visual_hook': 'Contrasting colors',
+             'human_interest': 'Wonder', 'historical_anchor': 'Museum context',
+             'asset_rights_notes': 'Photo rights to review',
+             'comparison_reason': 'Contrasting mood',
+             'audience_signal': {'status': 'unavailable', 'reason': 'Unit test offline'}},
+            {'artist': 'Painter C', 'work': 'Work C', 'visual_hook': 'Expressive eyes',
+             'human_interest': 'Empathy', 'historical_anchor': 'Museum context',
+             'asset_rights_notes': 'Photo rights to review',
+             'comparison_reason': 'Different narrative',
+             'audience_signal': {'status': 'unavailable', 'reason': 'Unit test offline'}}
+        ],
+        'selected_work': 'Work A', 'selection_reason': 'Best balance of visual and story',
+        'viewer_interest': 'Curiosity about the scene',
+        'creative_direction': 'Reveal context after compelling opening',
+        'signal_limitations': 'No platform data in offline tests',
+        'analytics_feedback': 'not_yet_published'
+    }
     return plan
 
 
@@ -25,6 +50,31 @@ def project(kind='artvision_critico'):
 
 
 class EditorialTests(unittest.TestCase):
+    def test_audience_research_is_required_for_artvision(self):
+        p = project()
+        p['editorial_plan']['audience_research'] = {}
+        errors, _ = validate(p)
+        self.assertTrue(any('Ricerca pubblico' in e for e in errors))
+
+    def test_unverified_popularity_claim_cannot_pass_as_signal(self):
+        p = project()
+        p['editorial_plan']['audience_research']['candidates'][0]['audience_signal'] = {
+            'status': 'verified', 'observation': 'viral',
+        }
+        errors, _ = validate(p)
+        self.assertTrue(any('senza fonte' in e for e in errors))
+
+    def test_selection_must_match_shortlist(self):
+        p = project()
+        p['editorial_plan']['audience_research']['selected_work'] = 'Nonexistent work'
+        self.assertTrue(any('scegliere esplicitamente' in e for e in validate(p)[0]))
+
+    def test_documented_unavailability_does_not_fabricate_metrics(self):
+        p = project()
+        self.assertEqual(validate(p)[0], [])
+        assert all(c['audience_signal']['status'] == 'unavailable'
+                   for c in p['editorial_plan']['audience_research']['candidates'])
+
     def test_new_plan_is_blocked_until_research_and_choices_are_complete(self):
         p = project(); p['editorial_plan'] = new_plan()
         errors, _ = validate(p)
