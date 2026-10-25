@@ -1,0 +1,49 @@
+name: "Libri - La macchina del tempo voce Gacrux"
+on:
+  push:
+    branches: ["feature/libri-macchina-tempo-20261025"]
+    paths: ["voice_jobs/macchina_tempo_20261025.txt"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verifica chiave Gemini
+        run: test -n "$GEMINI_API_KEY" || (echo "Secret TTS mancante" && exit 2)
+      - name: Dipendenze voce
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install -q 'numpy>=1.25,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Narrazione e allineamento
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          import json
+          from gemini_voice import synthesize
+          source=Path('voice_jobs/macchina_tempo_20261025.txt').read_text(encoding='utf-8')
+          out=Path('output/macchina_tempo')
+          wave,times=synthesize(source,out)
+          def fmt(t):
+              ms=int(round(t*1000));h,ms=divmod(ms,3600000);m,ms=divmod(ms,60000);s,ms=divmod(ms,1000)
+              return f'{h:02}:{m:02}:{s:02},{ms:03}'
+          (out/'NARRAZIONE.srt').write_text(''.join(f'{i}\n{fmt(a)} --> {fmt(b)}\n{phrase}\n\n' for i,(phrase,a,b) in enumerate(times,1)),encoding='utf-8')
+          (out/'STATUS.json').write_text(json.dumps({'duration':round(len(wave)/24000,3),'model':'Gemini Gacrux','published':False},indent=2),encoding='utf-8')
+          PY
+      - name: Consegna voce, allineamento e profilo
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macchina-tempo-gacrux-${{ github.run_id }}
+          path: output/macchina_tempo/
+          retention-days: 14
+          if-no-files-found: error
