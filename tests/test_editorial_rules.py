@@ -50,6 +50,16 @@ def project(kind='artvision_critico'):
 
 
 class EditorialTests(unittest.TestCase):
+    def test_explicitly_requested_artwork_keeps_user_choice(self):
+        p = project()
+        r = p['editorial_plan']['audience_research']
+        r['selection_mode'] = 'user_specified'
+        r['explicit_user_instruction'] = 'User explicitly requested Work A'
+        r['candidates'] = r['candidates'][:1]
+        self.assertEqual(validate(p)[0], [])
+        r['explicit_user_instruction'] = ''
+        self.assertTrue(any('soggetto imposto' in e for e in validate(p)[0]))
+
     def test_audience_research_is_required_for_artvision(self):
         p = project()
         p['editorial_plan']['audience_research'] = {}
