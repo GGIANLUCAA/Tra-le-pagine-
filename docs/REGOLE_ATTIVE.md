@@ -43,12 +43,16 @@ compatibile: il percorso attuale mantiene i profili approvati.
 ## Ricerca pubblico e regia motivata — VINCOLANTE per ArtVision (25/10/2026, V32)
 
 Approvazione esplicita dell'utente: non scegliere un quadro soltanto perché è bello o famoso.
-**Prima di ogni nuovo ArtVision Cinema, Critico o Collection**, confrontare **almeno tre**
-opere/temi distinti e scegliere in base a una ragione umana di visione: interesse
+**Prima di ogni nuovo ArtVision Cinema, Critico o Collection**, se il soggetto
+è da scegliere confrontare **almeno tre** opere/temi distinti e scegliere in base a una ragione umana di visione: interesse
 pubblico verificabile quando disponibile, impatto visivo iniziale, storia vera,
 possibilità di regia, originalità del catalogo, riproduzioni e diritti. Ampliamento
 facoltativo a 10–20 candidati quando le fonti lo rendono davvero utile, senza
 trasformarlo in una quota burocratica.
+
+Se l'utente indica già l'opera, non sostituirla: la ricerca sul suo interesse
+resta obbligatoria, ma il confronto con tre altre opere è facoltativo e va
+registrato il vincolo esplicito della richiesta.
 
 I segnali di Google Trends, Facebook, Instagram, TikTok, YouTube o altre fonti
 si registrano con URL, data, contesto e osservazione, **senza inventare numeri
