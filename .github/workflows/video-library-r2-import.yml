@@ -82,7 +82,7 @@ jobs:
           def publication_gate(archive,video_members):
               contracts=contract_manifests(archive)
               if not contracts:
-                  return True,'legacy artifact without V25 contract'
+                  return False,'missing ARTVISION_CONTRACT_V25.json; importer is fail-closed'
               approved_hashes=set()
               required=('opening','visual','cover','music','rights','full_watch','replicability')
               for label,contract in contracts:
@@ -144,6 +144,13 @@ jobs:
                       test.writestr('ARTVISION_CONTRACT_V25.json',json.dumps(current))
                   buf.seek(0)
                   return buf
+              without_contract=io.BytesIO()
+              with zipfile.ZipFile(without_contract,'w') as test:
+                  test.writestr('VIDEO_MASTER.mp4',sample)
+              without_contract.seek(0)
+              with zipfile.ZipFile(without_contract) as test:
+                  allowed,_=publication_gate(test,['VIDEO_MASTER.mp4'])
+                  assert not allowed,'Artifacts without a V25 review contract must remain blocked'
               pending=make(contract)
               with zipfile.ZipFile(pending) as test:
                   allowed,_=publication_gate(test,['VIDEO_MASTER.mp4'])
