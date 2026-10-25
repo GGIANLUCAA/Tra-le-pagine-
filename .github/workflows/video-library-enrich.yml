@@ -1,6 +1,7 @@
 name: Video Library Studio - Covers and Metadata
 on:
   push:
+    branches: [main]
     paths:
       - '.github/workflows/video-library-enrich.yml'
       - 'site/video-library-v2.html'
