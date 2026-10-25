@@ -1,4 +1,4 @@
-# Regole attive — 25 ottobre 2026 (revisione 2, Audience V32)
+# Regole attive — 25 ottobre 2026 (revisione 3, Audience V32 + Fonti V33)
 
 Questa revisione applica le decisioni di Gianluca sulla regia modulare.
 La configurazione consultabile dal programma è `config/editorial_rules.json`.
