@@ -1,0 +1,319 @@
+{
+  "schema": "artvision-critico-v32-natural-recitativo",
+  "version": "32.0",
+  "lang": "it-IT",
+  "immutable_baselines": [
+    "Cinema V6 Gold Master",
+    "Critico V2",
+    "Gacrux V4"
+  ],
+  "policies": {
+    "no_visual_ghosting": true,
+    "hard_cuts_only": true,
+    "visual_layers": 1,
+    "quality": "1080x1920 H264 AAC 24fps",
+    "voice": "Google Gemini Gacrux natural one-take",
+    "duration_rule": "contenuto e voce prima del cronometro; 45-120s di preferenza non vincolante",
+    "social": "V28 source checked",
+    "publication": "NOT_PUBLISHED"
+  },
+  "episodes": {
+    "holbein": {
+      "artist": "HANS HOLBEIN THE YOUNGER",
+      "artist_full": "Hans Holbein the Younger",
+      "title": "The Ambassadors",
+      "year": "1533",
+      "kind": "critico_d_arte",
+      "source_kind": "wikimedia_commons",
+      "original_artwork_title": "File:Hans Holbein the Younger - The Ambassadors - Google Art Project.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg",
+      "museum": "The National Gallery, London",
+      "museum_source": "https://www.nationalgallery.org.uk/paintings/hans-holbein-the-younger-the-ambassadors",
+      "script_file": "config/holbein_critico_v4_natural_script_20261025.txt",
+      "voice_reuse": "holbein_v4_existing_gacrux_verified",
+      "voice_artifact_run_id": 40159716004,
+      "music": {
+        "title": "Night on the Docks - Piano",
+        "composer": "Kevin MacLeod",
+        "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100135",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Night%20on%20the%20Docks.mp3",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "shots": [
+        {
+          "detail": [
+            0.52,
+            0.9
+          ],
+          "wide": [
+            0.5,
+            0.76
+          ],
+          "why": "The strange anamorphic skull and the viewers' first question"
+        },
+        {
+          "detail": [
+            0.28,
+            0.4
+          ],
+          "wide": [
+            0.72,
+            0.41
+          ],
+          "why": "One diplomat and the other, before revealing the double portrait"
+        },
+        {
+          "detail": [
+            0.53,
+            0.45
+          ],
+          "wide": [
+            0.54,
+            0.57
+          ],
+          "why": "Scientific instruments above, cracked lute and books below"
+        },
+        {
+          "detail": [
+            0.11,
+            0.075
+          ],
+          "wide": [
+            0.43,
+            0.2
+          ],
+          "why": "Tiny crucifix half-hidden behind green textile at upper left"
+        },
+        {
+          "detail": [
+            0.56,
+            0.89
+          ],
+          "wide": [
+            0.6,
+            0.74
+          ],
+          "why": "The anamorphosis seen from the original painting, without inventing a literal corrected skull"
+        },
+        {
+          "detail": [
+            0.46,
+            0.42
+          ],
+          "wide": [
+            0.5,
+            0.5
+          ],
+          "why": "The full 1533 masterpiece closes the story"
+        }
+      ],
+      "facts": [
+        "Jean de Dinteville and Georges de Selve are the two sitters",
+        "The anamorphic skull emerges from a particular viewing angle",
+        "The lute has a broken string",
+        "A crucifix is partially hidden in the upper left"
+      ],
+      "interpretation_caveat": "Religious division interpretation of the broken lute is plausible but not certain."
+    },
+    "rousseau": {
+      "artist": "HENRI ROUSSEAU",
+      "artist_full": "Henri Rousseau",
+      "title": "Fight Between a Tiger and a Buffalo",
+      "year": "1908",
+      "kind": "critico_d_arte",
+      "source_kind": "cleveland_cc0",
+      "accession": "1949.186",
+      "source_page": "https://www.clevelandart.org/art/1949.186",
+      "museum": "The Cleveland Museum of Art",
+      "music": {
+        "title": "Dreams Become Real",
+        "composer": "Kevin MacLeod",
+        "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dreams%20Become%20Real.mp3",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "beats": [
+        {
+          "speech": "Guardate qui, tra le foglie. C'è una tigre che ha già afferrato un bufalo. Eppure, intorno, la giungla sembra immobile. Quasi trattenesse il fiato.",
+          "detail": [
+            0.29,
+            0.72
+          ],
+          "wide": [
+            0.48,
+            0.74
+          ],
+          "why": "Opening faces and the central conflict"
+        },
+        {
+          "speech": "La cosa sorprendente è che Henri Rousseau una giungla vera non l'aveva mai vista. Non era mai uscito dalla Francia. Per inventarla studiava le piante a Parigi e sfogliava libri di viaggio.",
+          "detail": [
+            0.64,
+            0.3
+          ],
+          "wide": [
+            0.27,
+            0.55
+          ],
+          "why": "Fantastic leaves as signs of invented geography"
+        },
+        {
+          "speech": "Osservate queste foglie: sono nette, quasi ritagliate. Alcune sembrano grandi quanto gli animali. E ci sono perfino banane che crescono al contrario. Non è un manuale di botanica, questo. È il mondo di Rousseau.",
+          "detail": [
+            0.77,
+            0.43
+          ],
+          "wide": [
+            0.42,
+            0.33
+          ],
+          "why": "The oversized hothouse vegetation and upside-down bananas"
+        },
+        {
+          "speech": "C'è poi una storia incredibile. Nel 1907, mentre lavorava a questo quadro, Rousseau era in carcere per una vicenda di frode. Secondo il museo di Cleveland, gli concessero di uscire prima per finirlo e portarlo a una mostra.",
+          "detail": [
+            0.44,
+            0.71
+          ],
+          "wide": [
+            0.5,
+            0.5
+          ],
+          "why": "Quiet full painting while the biographical fact is explained"
+        },
+        {
+          "speech": "Il dipinto fu esposto al Salon des Indépendants nel 1908. Guardate come tutto è preciso, e allo stesso tempo impossibile: gli animali sembrano veri, ma la foresta non somiglia a nessun posto reale.",
+          "detail": [
+            0.36,
+            0.66
+          ],
+          "wide": [
+            0.73,
+            0.35
+          ],
+          "why": "Return to the apparently real animal bodies and imaginary foliage"
+        },
+        {
+          "speech": "Forse è per questo che non riesco a staccare gli occhi. Qui la natura non viene copiata. Viene sognata. E la lotta, al centro, la rende ancora più viva.",
+          "detail": [
+            0.4,
+            0.73
+          ],
+          "wide": [
+            0.5,
+            0.5
+          ],
+          "why": "Finish with real full artwork and thematic reflection"
+        }
+      ],
+      "facts": [
+        "Rousseau never traveled outside France",
+        "Sources for the imaginary jungle were travel books and Paris botanical gardens",
+        "Upside-down bananas appear in painting",
+        "Worked on picture during imprisonment for fraud in December 1907; early release for exhibition",
+        "Exhibited March 1908 at Salon des Indépendants"
+      ]
+    },
+    "durer": {
+      "artist": "ALBRECHT DÜRER",
+      "artist_full": "Albrecht Dürer",
+      "title": "The Four Horsemen",
+      "year": "c. 1498",
+      "kind": "critico_d_arte",
+      "source_kind": "cleveland_cc0",
+      "accession": "1932.313",
+      "source_page": "https://www.clevelandart.org/art/1932.313",
+      "museum": "The Cleveland Museum of Art",
+      "music": {
+        "title": "The Descent",
+        "composer": "Kevin MacLeod",
+        "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "beats": [
+        {
+          "speech": "Guardate questi cavalli. Sembrano uscire dal quadro, uno addosso all'altro. E sotto gli zoccoli ci sono corpi che non riescono a fuggire. È difficile credere che questa immagine abbia più di cinquecento anni.",
+          "detail": [
+            0.53,
+            0.32
+          ],
+          "wide": [
+            0.43,
+            0.7
+          ],
+          "why": "Explosive opening with the horses and bodies"
+        },
+        {
+          "speech": "A disegnarla fu Albrecht Dürer, intorno al 1498. Si intitola I quattro cavalieri e fa parte delle sue immagini per l'Apocalisse di Giovanni. Non è un dipinto: è una xilografia. Vuol dire che le linee sono state ricavate da una tavola di legno, per poterle stampare.",
+          "detail": [
+            0.28,
+            0.29
+          ],
+          "wide": [
+            0.5,
+            0.5
+          ],
+          "why": "Introduce printmaking and the actual entire composition"
+        },
+        {
+          "speech": "Guardate i vestiti. Si piegano all'indietro, come spinti da un vento feroce. Anche le nuvole sembrano correre. E ogni cavallo avanza in una direzione appena diversa: per questo la scena non trova mai pace.",
+          "detail": [
+            0.6,
+            0.29
+          ],
+          "wide": [
+            0.47,
+            0.47
+          ],
+          "why": "The wind-blown robes and clouds create momentum"
+        },
+        {
+          "speech": "Il museo di Cleveland nota una cosa importante: Dürer non ha bisogno del colore per darci il movimento. Gli bastano le diagonali, le ombre e quei corpi schiacciati sul terreno.",
+          "detail": [
+            0.47,
+            0.78
+          ],
+          "wide": [
+            0.33,
+            0.55
+          ],
+          "why": "Figure beneath hooves and directional hatching"
+        },
+        {
+          "speech": "Quando pubblicò la sua Apocalisse, Dürer era anche l'editore del proprio libro. Un fatto straordinario per quell'epoca. Voleva che le immagini avessero una forza tutta loro, non fossero soltanto una decorazione del testo.",
+          "detail": [
+            0.67,
+            0.52
+          ],
+          "wide": [
+            0.5,
+            0.5
+          ],
+          "why": "Read full woodcut while learning publishing context"
+        },
+        {
+          "speech": "Ed è proprio così che funziona ancora oggi. Lo guardi, e prima ancora di capire chi siano questi cavalieri, senti che stanno arrivando. E che non si fermeranno.",
+          "detail": [
+            0.59,
+            0.39
+          ],
+          "wide": [
+            0.5,
+            0.5
+          ],
+          "why": "Return to the relentless riders and hold complete print"
+        }
+      ],
+      "facts": [
+        "Created c1498 by Dürer",
+        "Published as part of illustrated Apocalypse, authored and published by Dürer",
+        "Woodcut",
+        "Windblown clothing/clouds and trampled figures suggest momentum per Cleveland Museum"
+      ]
+    }
+  }
+}
