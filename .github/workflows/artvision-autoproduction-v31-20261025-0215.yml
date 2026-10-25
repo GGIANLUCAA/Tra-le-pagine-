@@ -1,0 +1,151 @@
+name: "ArtVision V31 • Waterhouse • Circe Invidiosa • 02:15"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/artvision_autoproduction_20261025_0215.py"
+      - "config/artvision_autoproduction_20261025_0215.json"
+      - ".github/workflows/artvision-autoproduction-v31-20261025-0215.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: artvision-v31-20261025-0215
+  cancel-in-progress: false
+jobs:
+  artvision:
+    name: "Authentic AGSA Waterhouse • V6 Cinema • researched V28 copy"
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free render dependencies
+        run: |
+          set -euo pipefail
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<14" "numpy>=1.26,<3" "requests>=2.31,<3"
+      - name: V25 / V28 / V31 preflight
+        id: preflight
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_autoproduction_20261025_0215.py
+          python scripts/artvision_autoproduction_20261025_0215.py --painting waterhouse_circe_invidiosa_20261025_0215 --preflight-only
+      - name: Render genuine museum artwork, V6 opening, licensed music, 14 bespoke shots
+        id: render
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          set -euo pipefail
+          python scripts/artvision_autoproduction_20261025_0215.py --painting waterhouse_circe_invidiosa_20261025_0215 --out output/artvision-v31-circe
+      - name: Independently decode, verify, and enrich the complete reproducible ZIP
+        id: verify
+        run: |
+          set -euo pipefail
+          folder="output/artvision-v31-circe/waterhouse_circe_invidiosa_20261025_0215"
+          film="$folder/VIDEO_MASTER.mp4"
+          archive="output/artvision-v31-circe/ARTVISION_V30_WATERHOUSE_CIRCE_INVIDIOSA_20261025_0215_COMPLETE.zip"
+          test -s "$film" && test -s "$archive" && test -s "$folder/COPERTINA.jpg"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$film" -f null -
+          python src/artvision_editorial_post_v28.py --validate-folder "$folder"
+          python - "$film" "$archive" "$folder" <<'PY'
+          import json,sys,subprocess,zipfile,pathlib
+          film,archive,folder=sys.argv[1:]
+          p=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration,size','-show_entries','stream=codec_type,codec_name,width,height,r_frame_rate','-of','json',film]))
+          d=float(p['format']['duration'])
+          assert 45<=d<=120,d
+          assert any(s.get('codec_type')=='video' and s.get('codec_name')=='h264' and s.get('width')==1080 and s.get('height')==1920 for s in p['streams'])
+          assert any(s.get('codec_type')=='audio' and s.get('codec_name')=='aac' for s in p['streams'])
+          required={'VIDEO_MASTER.mp4','COPERTINA.jpg','POST_FACEBOOK.txt','POST_INSTAGRAM.txt','POST_TIKTOK.txt','POST_YOUTUBE.txt','POST_EDITORIAL_RESEARCH.json','VIDEO_RECIPE_V13.json','TECNICHE_REGIA.md','ISTRUZIONI_REPLICA.md','SOURCES_AND_RIGHTS.md','MUSIC_RELEASE_V20.json','TECHNICAL_QA_V30.json','QA_CONTACT_SHEET.jpg','ORIGINAL_ARTWORK.jpg','ORIGINAL_LICENSED_MUSIC.mp3'}
+          with zipfile.ZipFile(archive) as z:
+              assert z.testzip() is None
+              assert required<=set(z.namelist()),required-set(z.namelist())
+              qa=json.loads(z.read('TECHNICAL_QA_V30.json'))
+              assert qa['full_ffmpeg_decode'] and qa['approval']=='human_visual_review_pending'
+          q={"schema":"artvision-technical-qa-v31","status":"technical_pass_not_gold_master","duration_seconds":d,
+             "codec_video":"h264","codec_audio":"aac","width":1080,"height":1920,
+             "full_ffmpeg_decode":True,"no_transparent_cross_scene_blend":True,
+             "first_frames_real":[0,1,3,5,7],"three_central_transitions_sampled":True,
+             "v28_posts_validated":True,"approval":"human_visual_review_pending",
+             "voice":False,"source":"Art Gallery of South Australia / Wikimedia PD-Art",
+             "rights_note":"Local commercial reuse and platform copyright checks remain necessary."}
+          f=pathlib.Path(folder)/"TECHNICAL_QA_V31.json"
+          f.write_text(json.dumps(q,indent=2)+"\n",encoding="utf8")
+          note=pathlib.Path(folder)/"ARTISTIC_REVIEW_V31.md"
+          note.write_text("# Artistic review\n\nMP4 passed full technical decode and sampled first 0/1/3/5/7 seconds.\n"
+                          "The 14 cuts use one opaque painting at a time, no ghosting.\n"
+                          "Final emotional, real-time mobile viewing remains to be approved by the user.\n"
+                          "This is NOT a newly approved Gold Master. No social publishing performed.\n",encoding="utf8")
+          with zipfile.ZipFile(archive,'a',compression=zipfile.ZIP_DEFLATED) as z:
+              z.write(f,f.name)
+              z.write(note,note.name)
+          with zipfile.ZipFile(archive) as z: assert z.testzip() is None
+          print("REAL_CIRCE_VIDEO_VERIFIED",d,p['format']['size'])
+          PY
+      - name: Archive genuine MP4, cover, previews, post and complete ZIP
+        if: always()
+        id: archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision-V31-20261025-Waterhouse-Circe-Invidiosa
+          path: |
+            output/artvision-v31-circe/waterhouse_circe_invidiosa_20261025_0215/VIDEO_MASTER.mp4
+            output/artvision-v31-circe/waterhouse_circe_invidiosa_20261025_0215/COPERTINA.jpg
+            output/artvision-v31-circe/waterhouse_circe_invidiosa_20261025_0215/QA_CONTACT_SHEET.jpg
+            output/artvision-v31-circe/waterhouse_circe_invidiosa_20261025_0215/POST_FACEBOOK.txt
+            output/artvision-v31-circe/ARTVISION_V30_WATERHOUSE_CIRCE_INVIDIOSA_20261025_0215_COMPLETE.zip
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Register actual outcome in V31 ledger without inventing success
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          PREFLIGHT: ${{ steps.preflight.outcome }}
+          RENDER: ${{ steps.render.outcome }}
+          VERIFY: ${{ steps.verify.outcome }}
+          ARCHIVE: ${{ steps.archive.outcome }}
+        with:
+          script: |
+            const fs=require('fs'),crypto=require('crypto');
+            const path='queue/artvision_autoproduction_v31_state.json';
+            const folder='output/artvision-v31-circe/waterhouse_circe_invidiosa_20261025_0215';
+            const film=folder+'/VIDEO_MASTER.mp4';
+            const qaFile=folder+'/TECHNICAL_QA_V31.json';
+            const allOK=['PREFLIGHT','RENDER','VERIFY','ARCHIVE'].every(k=>process.env[k]==='success');
+            let qa=null;try{qa=JSON.parse(fs.readFileSync(qaFile,'utf8'))}catch(e){}
+            const exists=fs.existsSync(film);
+            const event={
+              cycle_id:'20261025T0215+0200',created_at:new Date().toISOString(),
+              artist:'John William Waterhouse',work:'Circe Invidiosa',format:'artvision_cinema',
+              baseline:'cinema_v6',
+              reason_fallback:'Google Gacrux voice not verifiable; no robotic narration allowed',
+              status:allOK?'technical_pass_not_gold_master':'blocked_or_rendered_needs_review',
+              mp4_verified:allOK&&exists,duration_seconds:allOK?qa?.duration_seconds:null,
+              size_bytes:exists?fs.statSync(film).size:null,
+              sha256_mp4:exists?crypto.createHash('sha256').update(fs.readFileSync(film)).digest('hex'):null,
+              workflow_run_url:`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              artifact_name:'ArtVision-V31-20261025-Waterhouse-Circe-Invidiosa',
+              steps:{preflight:process.env.PREFLIGHT,render:process.env.RENDER,verify:process.env.VERIFY,archive:process.env.ARCHIVE},
+              gold_master_approved:false,social_published:false
+            };
+            for(let attempt=0;attempt<3;attempt++){
+              const old=await github.rest.repos.getContent({owner:context.repo.owner,repo:context.repo.repo,path,ref:'main'});
+              const state=JSON.parse(Buffer.from(old.data.content,'base64').toString('utf8'));
+              state.cycle_log=state.cycle_log||[];
+              const index=state.cycle_log.findIndex(x=>x.cycle_id===event.cycle_id);
+              if(index>=0)state.cycle_log[index]=event;else state.cycle_log.push(event);
+              state.updated=new Date().toISOString();
+              state.next_preferred_format='artvision_critico';
+              try{
+                await github.rest.repos.createOrUpdateFileContents({owner:context.repo.owner,repo:context.repo.repo,path,
+                  message:'ArtVision V31: record genuine Circe Invidiosa production outcome',
+                  content:Buffer.from(JSON.stringify(state,null,2)+'\n').toString('base64'),sha:old.data.sha,branch:'main'});
+                break;
+              }catch(err){if(attempt===2)throw err;}
+            }
+            core.summary.addHeading('ArtVision V31 — Circe Invidiosa')
+              .addRaw(`Status: **${event.status}**; MP4 present: ${exists}; measured seconds: ${event.duration_seconds??'unknown'}.\n\n`)
+              .addRaw('Human artistic approval pending. No automatic social publication.').write();
