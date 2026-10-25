@@ -1,0 +1,48 @@
+name: "Tra le Pagine - Alice voce originale"
+on:
+  push:
+    branches: ["feature/alice-original-cartoon-20261025"]
+    paths: ["voice_jobs/alice_originale_20261025.txt"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verifica voce Gemini
+        run: test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY mancante' && exit 2)
+      - name: Installa dipendenze
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install --quiet 'numpy>=1.25,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Narrazione italiana Gacrux continua
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          import json
+          from gemini_voice import synthesize
+          text=Path('voice_jobs/alice_originale_20261025.txt').read_text(encoding='utf-8')
+          out=Path('output/alice_voice')
+          audio,phrases=synthesize(text,out)
+          def ts(t):
+              ms=round(t*1000);h,ms=divmod(ms,3600000);m,ms=divmod(ms,60000);s,ms=divmod(ms,1000)
+              return f'{h:02}:{m:02}:{s:02},{ms:03}'
+          (out/'NARRAZIONE.srt').write_text(''.join(f'{i}\n{ts(a)} --> {ts(b)}\n{txt}\n\n' for i,(txt,a,b) in enumerate(phrases,1)),encoding='utf-8')
+          (out/'REPORT.json').write_text(json.dumps({'engine':'Gemini Gacrux','duration_seconds':round(len(audio)/24000,2),'count':len(phrases),'published':False},ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+      - name: Esporta audio e sottotitoli
+        uses: actions/upload-artifact@v4
+        with:
+          name: alice-original-voice-${{ github.run_id }}
+          path: output/alice_voice/
+          retention-days: 14
+          if-no-files-found: error
