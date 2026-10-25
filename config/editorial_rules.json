@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-25.2",
-  "approved_by": "Gianluca — 25/10/2026: ricerca del pubblico e regia basata sull'interesse umano come regola permanente per ArtVision",
+  "version": "2026-10-25.3",
+  "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research",
   "precedence": [
     "explicit_user_request",
     "editorial_rules",
@@ -24,7 +24,13 @@
     "technical_pass_is_artistic_approval": false,
     "examples_are_approval": false,
     "artwork_audience_research_before_selection": true,
-    "never_invent_trend_metrics": true
+    "never_invent_trend_metrics": true,
+    "prefer_approved_free_media_sources": true,
+    "provider_status_must_be_verified": true,
+    "no_unapproved_paid_api_calls": true,
+    "no_secondary_keys_for_quota_evasion": true,
+    "no_stock_filler_to_replace_exact_story_scene": true,
+    "media_asset_license_and_scene_fit_review": true
   },
   "defaults": {
     "voice": "Google Gemini Gacrux",
@@ -120,5 +126,123 @@
     "signals_policy": "Record specific dated sources and observations, or unavailable with reason; qualitative ratings are editorial judgment, never measured popularity.",
     "learning_policy": "Compare retention 0–3s, mean view duration, completion, shares and saves only after publication when analytics are accessible.",
     "no_algorithmic_guarantees": true
+  },
+  "media_source_priority": {
+    "id": "media-priority-v33",
+    "scope": "always_on_new_content",
+    "guide": "docs/FILOSOFIA_FONTI_MEDIA_V33.md",
+    "default_cash_budget_eur": 0,
+    "order_of_work": [
+      "review_existing_approved_assets_and_reuse_provenance",
+      "define_narration_cues_and_exact_visual_need",
+      "select_authentic_rights_verified_sources_for_factual_or_artistic_content",
+      "compare_relevant_no_key_public_archives_and_allowed_pixabay_manual_queries",
+      "generate_original_illustration_for_narrative_scenes_that_stock_cannot_truthfully_represent",
+      "run_visual_factual_rights_and_audio_sync_preflight",
+      "archive_approved_assets_and_record_fallback_before_render"
+    ],
+    "decisions_are_per_scene": true,
+    "not_a_fixed_provider_ranking": "Narrative fidelity, authenticity and rights override tool ranking; no need to query every provider for every scene.",
+    "format_priority": {
+      "libri": [
+        "approved_reusable_originals",
+        "original_ai_illustrations_for_specific_actions",
+        "verified_archival_illustrations_when_story_relevant",
+        "pixabay_stock_only_when_story_relevant"
+      ],
+      "artvision_cinema": [
+        "authentic_verified_original_artworks",
+        "approved_previous_artwork_assets",
+        "trusted_museum_open_access_and_commons",
+        "pixabay_only_supporting_context"
+      ],
+      "artvision_critico": [
+        "authentic_verified_original_artworks",
+        "approved_previous_artwork_assets",
+        "trusted_museum_open_access_and_commons",
+        "pixabay_only_supporting_context"
+      ],
+      "controluce": [
+        "verified_primary_sources_and_clearly_attributed_archive",
+        "approved_documentary_assets",
+        "pixabay_broll_only_when_appropriate",
+        "clearly_labelled_reconstructions_never_as_evidence"
+      ],
+      "visual_music": [
+        "verified_licensed_audio_and_timing",
+        "approved_reusable_musical_visuals",
+        "original_geometry_and_effects",
+        "stock_only_for_fitting_context"
+      ],
+      "hyperlumen": [
+        "verified_licensed_audio_and_timing",
+        "approved_reusable_musical_visuals",
+        "original_geometry_and_effects",
+        "stock_only_for_fitting_context"
+      ]
+    },
+    "provider_registry": {
+      "approved_library": {
+        "status": "existing_assets_only",
+        "credential": null
+      },
+      "wikimedia_openverse_v7": {
+        "status": "integrated_limited_search",
+        "credential": null
+      },
+      "pixabay": {
+        "status": "integrated_single_manual_search",
+        "credential": "PIXABAY",
+        "fallback_credential": "PIXABAY_API_KEY",
+        "key2_status": "not_used",
+        "official_name": "Pixabay",
+        "cache_requirement_hours": 24,
+        "bulk_automated_queries_allowed": false
+      },
+      "ai_horde": {
+        "status": "prototype_three_images_manual_only",
+        "credential": "AIHORDE_API_KEY",
+        "secondary_credential": "AIHORDE_API_KEY_2",
+        "secondary_key_active": false
+      },
+      "gemini_gacrux": {
+        "status": "integrated_voice_quota_may_apply",
+        "credential": "GEMINI_API_KEY"
+      },
+      "openrouter_free": {
+        "status": "not_enabled_for_generation",
+        "credential": "OPENROUTER2",
+        "requires_free_model_selection": true
+      },
+      "museums_public_archives": {
+        "status": "catalog_only_except_existing_adapters",
+        "credential": null
+      },
+      "kaggle_comfyui_zimage": {
+        "status": "not_integrated_candidate",
+        "credential": null
+      }
+    },
+    "provenance_required_fields": [
+      "asset_id",
+      "source_kind",
+      "provider",
+      "source_reference",
+      "choice_reason",
+      "rights_review",
+      "scene_relevance",
+      "visual_review"
+    ],
+    "no_premium_default": true,
+    "no_auto_publication": true,
+    "no_guessing_api_secret_values": true,
+    "negative_outcomes": [
+      "no_misleading_documentary_synthetic_media",
+      "no_generic_stock_when_exact_scene_needed",
+      "no_artwork_from_ai_masquerading_as_real",
+      "no_cropped_faces_or_unmotivated_transitions",
+      "no_foreign_logos_watermarks",
+      "no_production_volume_claim_without_measurement"
+    ]
   }
 }
