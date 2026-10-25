@@ -572,7 +572,7 @@ function vbDraw(){
  const kind=$('#edBoardKind').value,canvas=$('#edBoardCanvas');
  const scenes=vbStoryLines(rec),files=edState.assets||[];
  let ctx,height=1600;
- if(kind==='scenes')height=Math.max(1100,580+Math.ceil(Math.max(1,scenes.length)/2)*194);
+ if(kind==='scenes')height=Math.max(1100,800+Math.ceil(Math.max(1,scenes.length)/2)*194);
  ctx=vbBase(canvas,kind==='concept'?'CONCEPT BOARD':kind==='production'?'PRODUCTION BOARD':'SCENE CONTACT SHEET',height);
  const name=rec.publicTitle||x.viewTitle||'Video senza titolo';
  if(kind==='concept'){
