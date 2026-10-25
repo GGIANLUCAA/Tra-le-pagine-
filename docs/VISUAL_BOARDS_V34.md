@@ -47,5 +47,20 @@ Ogni cartella PROJECT_V13 valida riceve il proprio sottodossier con nome differe
 - Adatto a libri, cinema e critico perché il contenuto viene letto dal V13; non alterare regie o voci dei format.
 - Produzione batch gratuita non significa che la sintesi vocale, l'illustrazione originale o lo storage siano illimitati.
 
-## Passo successivo
-Integrare il pulsante "Schede grafiche" nel Dossier Video Library Studio, solo dopo verifica del sito live e del collegamento V13. A quel punto generare automaticamente 3 schede al completamento del video senza duplicare MP4; Release Pack on-demand.
+## Interfaccia Video Library Studio V34 (26/10/2026)
+La scheda privata Dossier / ZIP include la sezione **▣ Schede grafiche** con tre opzioni (Concept, Production, Scene Contact Sheet), preview mobile e download PNG.
+Le tavole vengono **calcolate su richiesta nel browser**, senza nuove chiamate a GPT, Gemini, Pixabay o un motore immagini.
+Dopo la pubblicazione della pagina tramite `.github/workflows/video-library-enrich.yml`, per ogni video presente nel catalogo l'utente può aprire Dossier → Schede grafiche → scegliere → scaricare.
+
+- Progetto `PROJECT_V13.json` e codice `src/video_boards_v34.py`: disponibili per batch server-side con asset locali.
+- Schede nel **sito**: derivano dal dossier online e dalla copertina già nel catalogo, non sono copie PNG archiviate in R2.
+- La Contact Sheet del sito mostra **descrizioni** da `storyboard`; non inventa una miniatura per una scena che non abbia un asset accessibile. Per anteprima delle immagini reali di scena usare il generatore Python quando gli asset esistono.
+- Se la copertina non è disponibile compare un segnaposto dichiarato.
+- Se modifichi il dossier e non hai ancora salvato, l'anteprima riflette le modifiche aperte nel form; il PNG non salva automaticamente il dossier.
+- Restano necessari controlli V13, diritti e revisione artistica prima di chiamare un video approvato.
+
+### Limiti espliciti
+Questa integrazione non crea immagini nuove, non sincronizza fotogrammi del MP4 e non carica nuovi asset in R2. La versione del sito non equivale al generatore locale V34 completo e non sostituisce il Release Pack. Nessun upload o pubblicazione social viene attivato dall'apertura delle schede.
+
+### Verifica
+`tests/video-library-boards-v34-ui.test.cjs` valida tre layout, il testo dello storyboard, il rispetto dei diritti non verificati, il download PNG e l'assenza di nuove chiamate API. `.github/workflows/video-library-editorial-test.yml` include la verifica del sito.
