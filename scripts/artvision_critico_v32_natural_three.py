@@ -82,7 +82,7 @@ def voice_from_source(profile,ep,text):
   if not (input_dir/name).is_file():raise FileNotFoundError("Previously approved voice artifact is incomplete: "+name)
  m=json.loads((input_dir/"VOICE_TAKE_V4.json").read_text(encoding="utf8"))
  if m.get("engine")!="Google Gemini Gacrux":raise ValueError("Unapproved narrator in restored voice")
- if hashlib.sha256(text.encode("utf8")).hexdigest()!=m["script_sha256"]:
+ if sha(ROOT/profile["script_file"])!=m["script_sha256"]:
   raise ValueError("Existing Holbein voice script hash does not match the preserved transcript")
  if sha(input_dir/"VOCE.wav")!=m["voice_sha256"]:
   raise ValueError("Restored Holbein original voice failed hash validation")
