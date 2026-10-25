@@ -29,6 +29,16 @@ Consultare ultime produzioni e registro `queue/artvision_autoproduction_v31_stat
 Almeno un episodio di ciascuna tipologia nelle 3–5 consegne riuscite consecutive quando le risorse realmente disponibili lo consentono. Variare intensità: mistero, luce, poesia, grandi paesaggi, visioni surreali, simboli, episodi storici. Non fare solo quadri macabri per attirare clic.
 
 ## 2. Scelta soggetto ragionata
+> **Aggiornamento approvato 25/10/2026 (V32):** questa sezione va letta
+> insieme alla regola permanente `docs/ARTVISION_AUDIENCE_RESEARCH_V32.md`
+> e alla fonte unica `docs/REGOLE_ATTIVE.md`. Il confronto fra >=3 candidati
+> deve contenere prove di interesse pubblico quando accessibili o motivare
+> espressamente la loro indisponibilità; la regia deve dipendere dall'opera.
+> Conservare il risultato in `editorial_plan.audience_research` e nel
+> `AUDIENCE_RESEARCH_V32.json` dell'episodio. Non inventare metriche.
+> Le regole attive V32 prevalgono sulle raccomandazioni storiche di V31.
+
+
 Valutare **almeno tre candidati** prima della decisione, considerando:
 - forza del primo fotogramma e leggibilità in autoplay;
 - bellezza o originalità visiva/forza delle emozioni; unicità nell'archivio;
