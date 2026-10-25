@@ -1,0 +1,173 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "31.0",
+  "date": "2026-10-25",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261025T0515+0100",
+  "chosen_format": "artvision_cinema",
+  "format_reason": "A new natural Gacrux workflow has just succeeded for a different Holbein script, but it does not license reusing that WAV for this artwork and API cost/free-tier status is not confirmed. This run uses an original no-voice cinema work instead of incurring an unapproved new TTS call. New authentic artist and painting.",
+  "candidates_considered": [
+    {
+      "title": "The Demon Seated",
+      "artist": "Mikhail Vrubel",
+      "reason": "A striking symbolic 1890 work with unusually crystalline brushwork, emotional face, public-domain 4000px original, Tretyakov primary research and new subject."
+    },
+    {
+      "title": "The Ninth Wave",
+      "artist": "Ivan Aivazovsky",
+      "reason": "Visually powerful marine painting, but maritime storm works already heavily represented in archive."
+    },
+    {
+      "title": "The Ancient of Days",
+      "artist": "William Blake",
+      "reason": "Iconic golden figure and bold geometry, but artwork's partial nudity and small central subject complicate platform-safe vertical crop."
+    }
+  ],
+  "subjects": {
+    "vrubel_demon_seated_20261025_0515": {
+      "artist": "MIKHAIL VRUBEL",
+      "title_en": "The Demon Seated",
+      "year": "1890",
+      "museum": "State Tretyakov Gallery, Moscow",
+      "slug": "vrubel_demon_seated_20261025_0515",
+      "editorial_key": "vrubel_demon_seated_20261025_0515",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Mikhail_Vrubel_-_%D0%94%D0%B5%D0%BC%D0%BE%D0%BD_(%D1%81%D0%B8%D0%B4%D1%8F%D1%89%D0%B8%D0%B9)_-_Google_Art_Project.jpg",
+      "museum_page": "https://museum.tretyakov.ru/publications/istoriya-odnoy-kartiny-demon-sidyashchiy-mikhaila-vrubelya/",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/c/c0/Mikhail_Vrubel_-_%D0%94%D0%B5%D0%BC%D0%BE%D0%BD_%28%D1%81%D0%B8%D0%B4%D1%8F%D1%89%D0%B8%D0%B9%29_-_Google_Art_Project.jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Mikhail_Vrubel_-_%D0%94%D0%B5%D0%BC%D0%BE%D0%BD_(%D1%81%D0%B8%D0%B4%D1%8F%D1%89%D0%B8%D0%B9)_-_Google_Art_Project.jpg?width=3840",
+        "https://upload.wikimedia.org/wikipedia/commons/2/2e/1890_Vrubel_Daemon_sitzend_anagoria.JPG"
+      ],
+      "music": {
+        "name": "Dark Times",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dark%20Times.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100747",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1100747",
+        "offset": 8
+      },
+      "story": "Twelve subject-specific visual decisions: the human face and bound hands, an early complete canvas, faceted flowers, muscular torso, flaming sunset, blue crystalline folds, a return to the eyes, and a final still whole-canvas view. One opaque original at a time; no ghosting, no painted figure animation.",
+      "techniques": [
+        "human_gaze_start",
+        "locked_hold",
+        "motivated_cut",
+        "visual_hierarchy",
+        "detail_return",
+        "rhythmic_rest",
+        "camera_seasick_gate"
+      ],
+      "scenes": [
+        {
+          "type": "portrait",
+          "x": 0.44,
+          "y": 0.19,
+          "z": 1.15,
+          "seconds": 5.2,
+          "movement": "locked",
+          "intent": "The face, heavy dark hair and distant eyes hold the first five seconds without a camera trick."
+        },
+        {
+          "type": "detail",
+          "x": 0.43,
+          "y": 0.67,
+          "z": 1.6,
+          "seconds": 4.4,
+          "movement": "locked",
+          "intent": "Interlocked hands are a striking contradiction to the monumental arms."
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 5.7,
+          "movement": "locked",
+          "intent": "Early full revelation establishes the demon's cramped body between sunset and stone flowers."
+        },
+        {
+          "type": "texture",
+          "x": 0.81,
+          "y": 0.42,
+          "z": 1.75,
+          "seconds": 4.8,
+          "movement": "locked",
+          "intent": "Sharp crystalline blossoms at right explain the painter's unusual angular surface."
+        },
+        {
+          "type": "medium",
+          "x": 0.55,
+          "y": 0.4,
+          "z": 1.25,
+          "seconds": 4.7,
+          "movement": "slow_pull",
+          "intent": "The powerful shoulder and compressed chest become readable together."
+        },
+        {
+          "type": "landscape",
+          "x": 0.13,
+          "y": 0.68,
+          "z": 1.55,
+          "seconds": 4.4,
+          "movement": "locked",
+          "intent": "Fiery sunset on the left becomes the only opening in the enclosing landscape."
+        },
+        {
+          "type": "detail",
+          "x": 0.52,
+          "y": 0.62,
+          "z": 1.9,
+          "seconds": 4.6,
+          "movement": "locked",
+          "intent": "Blue trousers and faceted brushwork contrast with the warm skin tones."
+        },
+        {
+          "type": "portrait",
+          "x": 0.43,
+          "y": 0.16,
+          "z": 1.48,
+          "seconds": 4.9,
+          "movement": "locked",
+          "intent": "A closer return to the contemplative face changes meaning after the painting is known."
+        },
+        {
+          "type": "detail",
+          "x": 0.49,
+          "y": 0.74,
+          "z": 1.5,
+          "seconds": 4.5,
+          "movement": "locked",
+          "intent": "Clasped fingers and knees form a visual knot of immobility."
+        },
+        {
+          "type": "landscape",
+          "x": 0.9,
+          "y": 0.65,
+          "z": 1.45,
+          "seconds": 4.5,
+          "movement": "locked",
+          "intent": "Flowers and shattered mineral forms show a beautiful but inhospitable world."
+        },
+        {
+          "type": "medium",
+          "x": 0.43,
+          "y": 0.48,
+          "z": 1.18,
+          "seconds": 5.1,
+          "movement": "slow_push",
+          "intent": "The body appears strong and trapped at the same time, without a gratuitous camera swing."
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 7,
+          "movement": "locked",
+          "intent": "The entire original 1890 painting closes the piece in stillness."
+        }
+      ]
+    }
+  }
+}
