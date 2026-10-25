@@ -190,6 +190,38 @@ function saveProject() {
     renderSaved(); toast("Progetto salvato in questo browser.");}
   catch {toast("Il browser non consente di salvare dati locali.");}
 }
+const PROJECT_BACKUP_SCHEMA = "tra-le-pagine-local-projects";
+function downloadProjectBackup() {
+  const projects=getProjects();
+  if(!projects.length){toast("Non ci sono brief salvati da esportare.");return;}
+  const backup={schema:PROJECT_BACKUP_SCHEMA,version:1,exportedAt:new Date().toISOString(),projects};
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob),link=document.createElement("a");
+  link.href=url;link.download="tra-le-pagine-brief-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast("Backup scaricato. Conservalo in File o Drive per poterlo recuperare.");
+}
+async function importProjectBackup(file) {
+  if(!file)return;
+  if(file.size>2*1024*1024){toast("Il file supera il limite di 2 MB.");return;}
+  try{
+    const backup=JSON.parse(await file.text());
+    if(!backup||backup.schema!==PROJECT_BACKUP_SCHEMA||backup.version!==1||!Array.isArray(backup.projects)){
+      toast("Questo non è un backup Tra le Pagine valido.");return;
+    }
+    const imported=backup.projects.filter(p=>p&&typeof p==="object"&&typeof p.id==="string"&&
+      typeof p.title==="string"&&typeof p.idea==="string"&&p.idea.length>=10);
+    if(!imported.length){toast("Nel backup non trovo brief validi.");return;}
+    if(!window.confirm("Importare "+imported.length+" brief? Si uniranno a quelli presenti; in caso di ID uguali, la copia del backup sostituisce quella locale."))return;
+    const merged=new Map(getProjects().map(p=>[p.id,p]));
+    for(const p of imported)merged.set(p.id,p);
+    const projects=[...merged.values()].sort((a,b)=>Date.parse(b.savedAt||0)-Date.parse(a.savedAt||0)).slice(0,40);
+    localStorage.setItem("tlp_v9_projects",JSON.stringify(projects));
+    renderSaved();
+    toast("Importati "+Math.min(imported.length,projects.length)+" brief. Sono ora disponibili in questo browser.");
+  }catch(error){toast(error instanceof SyntaxError?"Il file non contiene JSON valido.":"Non riesco a salvare il backup in questo browser.");}
+}
 function renderSaved() {
   const p=getProjects();
   $("#saved-projects").innerHTML=p.length ? p.map(v =>
@@ -273,6 +305,11 @@ function bind() {
     mediaKind=b.dataset.value;$$("#kind-options .chip").forEach(x=>x.classList.toggle("selected",x===b));
   });
   $("#save-brief").addEventListener("click",saveProject);
+  $("#export-projects").addEventListener("click",downloadProjectBackup);
+  $("#import-projects").addEventListener("click",()=>$("#project-import-file").click());
+  $("#project-import-file").addEventListener("change",async e=>{
+    const file=e.target.files?.[0];e.target.value="";await importProjectBackup(file);
+  });
   $("#copy-gpt").addEventListener("click",copyGpt);
   $("#saved-projects").addEventListener("click",e=>{
     const op=e.target.closest("[data-project-open]");const del=e.target.closest("[data-project-delete]");
