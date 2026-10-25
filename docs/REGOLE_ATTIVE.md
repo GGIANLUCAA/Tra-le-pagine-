@@ -1,4 +1,4 @@
-# Regole attive — 25 ottobre 2026
+# Regole attive — 25 ottobre 2026 (revisione 2, Audience V32)
 
 Questa revisione applica le decisioni di Gianluca sulla regia modulare.
 La configurazione consultabile dal programma è `config/editorial_rules.json`.
@@ -39,6 +39,38 @@ conservazione degli originali e assenza di pubblicazione implicita.
 I limiti tecnici del renderer vanno dichiarati e non confusi con regole artistiche.
 Un formato nuovo o una variante con sottotitoli/voce diversa richiede un profilo
 compatibile: il percorso attuale mantiene i profili approvati.
+
+## Ricerca pubblico e regia motivata — VINCOLANTE per ArtVision (25/10/2026, V32)
+
+Approvazione esplicita dell'utente: non scegliere un quadro soltanto perché è bello o famoso.
+**Prima di ogni nuovo ArtVision Cinema, Critico o Collection**, confrontare **almeno tre**
+opere/temi distinti e scegliere in base a una ragione umana di visione: interesse
+pubblico verificabile quando disponibile, impatto visivo iniziale, storia vera,
+possibilità di regia, originalità del catalogo, riproduzioni e diritti. Ampliamento
+facoltativo a 10–20 candidati quando le fonti lo rendono davvero utile, senza
+trasformarlo in una quota burocratica.
+
+I segnali di Google Trends, Facebook, Instagram, TikTok, YouTube o altre fonti
+si registrano con URL, data, contesto e osservazione, **senza inventare numeri
+di visualizzazioni o viralità**. Se un segnale non è accessibile: annotare
+`unavailable` e motivo, ragionare qualitativamente e non presentare ipotesi
+come dati. Una scelta artistica può privilegiare un'opera meno cercata per
+una motivazione documentata.
+
+**La regia nasce dall'opera e dall'interesse umano**, non da 8/10 crop ripetuti:
+apertura, dettagli, andamento, musica/voce e finale devono rispondere a una
+promessa concreta al pubblico, rispettando stile del format, no ghosting
+e controlli 0/1/3/5/7. Dopo una pubblicazione, confrontare solo metriche
+realmente accessibili (retention, completamento, durata media, condivisioni).
+Nessun KPI inventato, nessun automatismo di approvazione Gold Master.
+
+La guida `docs/ARTVISION_AUDIENCE_RESEARCH_V32.md` specifica la griglia
+qualitativa /100 e i campi per `editorial_plan.audience_research`.
+Per nuovi progetti ArtVision il preflight V13/V16 blocca il render senza
+confronto documentato, scelta e ragione di regia. Altri renderer che non
+chiamano quel preflight devono applicare la stessa regola esplicitamente.
+Questa è una regola **sempre** per ArtVision, non un esperimento e non
+un nuovo preset visivo. Non modifica video/master esistenti.
 
 ## Dal soggetto al risultato
 
