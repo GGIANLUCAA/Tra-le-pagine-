@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-25T16:30:00Z",
+  "updated": "2026-10-25T19:18:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -415,6 +415,43 @@
       "social_published": false,
       "human_artistic_review_pending": true,
       "feedback": "User requested research based on actual audience interest and content-specific direction. V32 shortlist included; no invented engagement statistics."
+    },
+    {
+      "cycle_id": "20261025T2013+0100",
+      "created_at": "2026-10-25T19:13:10Z",
+      "artist": "Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh",
+      "work": "After the Storm",
+      "format": "artvision_collection",
+      "baseline": "cinema_v6",
+      "reason_fallback": "Natural Google Gacrux voice was not available to verify in this run; produced a non-narrated four-work Collection with the existing Cinema V6 visual identity rather than a robotic Critico.",
+      "status": "technical_pass_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 71,
+      "size_bytes": 21494779,
+      "sha256_mp4": "382d5c07a839dab2cc897b69f2d0fefffc9d6d897d27c8e51eee4a98f96748bd",
+      "cover_sha256": "316c8559ec9df49b374e17b27d4161c19fad4dc6a6714fd6f6d860bcb850262d",
+      "zip_sha256": "419bc7c70e5f9fae0f0cbf5dec584641b5f5c9098b1a5a28ebccf5dc60a4ab8c",
+      "artifact_name": "ArtVision_20261025_2013_After_The_Storm_COMPLETE.zip",
+      "artifact_storage": "ChatGPT conversation sandbox, not GitHub Actions artifact; repository stores manifest only",
+      "episode_record": "docs/productions/2026-10-25-2013-after-the-storm.md",
+      "steps": {
+        "source_reuse": "success",
+        "audience_research": "qualitative_with_unavailable_metrics",
+        "render": "success",
+        "decode": "success",
+        "audio": "success",
+        "frame_review": "success",
+        "zip_integrity": "success"
+      },
+      "reused_original_art_assets": true,
+      "reused_previous_mp4": false,
+      "original_masters_modified": false,
+      "new_theme_and_shot_plan": true,
+      "gold_master_approved": false,
+      "social_published": false,
+      "external_video_library_import": "not_attempted",
+      "artistic_review": "pending_user_review",
+      "rights_status": "public_domain_artworks_and_CC_BY_4_recording_with_platform_and_jurisdiction_checks_pending"
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
