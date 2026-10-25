@@ -20,6 +20,13 @@ jobs:
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
+      - name: Restore verified image bytes and source cooldowns
+        uses: actions/cache/restore@v4
+        with:
+          path: .artvision-assets
+          key: artvision-images-v1-${{ github.workflow }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            artvision-images-v1-${{ github.workflow }}-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -145,3 +152,9 @@ jobs:
               .addRaw(`Actual MP4: ${hasFile?'present':'not produced'}; duration: ${event.duration_seconds??'unknown'} seconds.\n\n`)
               .addRaw(`Artifact: ${event.artifact_name}; run: ${event.workflow_run_url}\n\n`)
               .addRaw('Social publication: NOT authorized. Artistic Gold Master: NOT approved.').write();
+      - name: Save verified images and cooldowns for the next attempt
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .artvision-assets
+          key: artvision-images-v1-${{ github.workflow }}-${{ github.run_id }}-${{ github.run_attempt }}

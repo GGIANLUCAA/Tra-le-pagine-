@@ -20,6 +20,13 @@ jobs:
     timeout-minutes: 100
     steps:
       - uses: actions/checkout@v4
+      - name: Restore verified image bytes and source cooldowns
+        uses: actions/cache/restore@v4
+        with:
+          path: .artvision-assets
+          key: artvision-images-v1-${{ github.workflow }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            artvision-images-v1-${{ github.workflow }}-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -134,3 +141,9 @@ jobs:
             core.summary.addHeading('ArtVision V31 — Visions of Symbolism')
               .addRaw(`Outcome: **${event.status}**; actual MP4: ${exists}; duration: ${event.duration_seconds??'unknown'} seconds.\n\n`)
               .addRaw('No social publication; Gold Master requires human artistic review.').write();
+      - name: Save verified images and cooldowns for the next attempt
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .artvision-assets
+          key: artvision-images-v1-${{ github.workflow }}-${{ github.run_id }}-${{ github.run_attempt }}
