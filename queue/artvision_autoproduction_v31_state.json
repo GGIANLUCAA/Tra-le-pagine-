@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-26T19:24:00Z",
+  "updated": "2026-10-26T22:20:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -871,6 +871,39 @@
       },
       "gold_master_approved": false,
       "social_published": false
+    },
+    {
+      "cycle_id": "20261026T2315+0100",
+      "created_at": "2026-10-26T22:15:00Z",
+      "artist": "Hugo Simberg; Jan van Eyck; Arnold Böcklin",
+      "work": "The Witness — three historic gazes",
+      "format": "artvision_collection",
+      "baseline": "cinema_v6",
+      "reason_fallback": "Natural Google Gacrux voice not verified in this environment; no robotic Critico fallback. New Wikimedia asset downloads blocked by environment; three rights-documented authentic stills reused in a NEW original thematic film (not new artworks).",
+      "status": "technical_pass_not_gold_master_rights_review_required",
+      "mp4_verified": true,
+      "duration_seconds": 69,
+      "size_bytes": 12288988,
+      "sha256_mp4": "d7418cfe13a58b930e269ab246c4104d4b130895e43d68629b82887f33cfc33a",
+      "zip_sha256": "",
+      "execution_environment": "ChatGPT local FFmpeg 7.1.5 / Pillow; not GitHub Actions",
+      "workflow_run_url": null,
+      "artifact_name": "ArtVision_20261026_2315_The_Witness_COMPLETE.zip (conversation attachment)",
+      "steps": {
+        "audience_research": "completed_three_candidates_qualitative_no_metrics",
+        "preflight": "rights_attribution_documented_final_territorial_review_pending",
+        "render": "success",
+        "verify": "success_ffprobe_full_decode_audio_level_frames",
+        "archive": "success_zip_test"
+      },
+      "gold_master_approved": false,
+      "social_published": false,
+      "external_video_library_import": "not_attempted_requires_explicit_file_selection",
+      "quality_feedback": [
+        "Full painting horizontal smaller in 9:16: prefer bespoke museum composition in next experiment",
+        "Reused paintings diminish novelty: prioritize newly sourced authentic artworks next cycle",
+        "Sync transitions more precisely to recorded music phrases"
+      ]
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
