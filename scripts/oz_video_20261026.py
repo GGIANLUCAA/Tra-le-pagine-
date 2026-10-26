@@ -55,6 +55,7 @@ BEATS = [
     ("Le scarpette d'argento", 23, ["glinda", "shoes", "slippers"]),
     ("Il ritorno a casa", 24, ["home", "kansas", "dorothy"]),
     ("I desideri degli amici", 24, ["dorothy", "scarecrow", "lion"])
+]
 
 
 class TagReader(HTMLParser):
