@@ -1,0 +1,50 @@
+name: "Tra le Pagine - L'ultima foglia Gacrux"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/ultima_foglia_voice.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install supported audio tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "google-genai>=2.25,<3" "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11"
+      - name: Validate configured voice service
+        run: |
+          if [ -z "${GEMINI_API_KEY:-}" ]; then
+            echo "::error::GEMINI_API_KEY not configured"
+            exit 2
+          fi
+      - name: Generate native Gacrux audio
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          import json
+          from gemini_voice import synthesize,voice_profile
+          script=Path('requests/ultima_foglia_voice.txt').read_text(encoding='utf-8')
+          wav,timed=synthesize(script,Path('output/ultima_foglia_gacrux'))
+          p=Path('output/ultima_foglia_gacrux')
+          (p/'VOICE_EPISODE.json').write_text(json.dumps({'title':"L'ultima foglia",'author':'O. Henry','voice':voice_profile(),
+            'duration_seconds':len(wav)/24000,'script_path':'requests/ultima_foglia_voice.txt','timed_sentences':timed},
+            ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ULTIMA_FOGLIA_GACRUX_ORIGINALE
+          path: output/ultima_foglia_gacrux/
+          retention-days: 14
+          if-no-files-found: error
