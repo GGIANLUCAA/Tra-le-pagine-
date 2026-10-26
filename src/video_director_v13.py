@@ -87,6 +87,8 @@ def brief(kind, topic, out, references=()):
                "editorial_contract": new_contract(kind), "editorial_plan": new_plan(),
                "format": kind, "topic": topic.strip(), "preset": fmt["preset"],
                "status": "planned", "script": "", "subtitles": False,
+               "bibliography": {"author": "", "publication_year": "", "edition_reference": "", "rights_notes": ""},
+               "editorial_metadata": {"series": "", "themes": "", "genre": "", "narration_style": ""},
                "business": {"audience": "", "viewer_promise": "", "original_contribution": "",
                             "primary_platform": "", "goal": "crescita del pubblico e ritorno alla serie", "cta": "",
                             "experiment": "", "time_budget_minutes": None, "cash_budget_eur": None},
