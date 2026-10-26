@@ -146,6 +146,37 @@ class EditorialTests(unittest.TestCase):
         self.assertEqual(duration_plan(p, actual=94)['seconds'], 94)
         self.assertIsNone(duration_plan({'format': 'artvision_cinema'}, cinema_soft_range=False)['creative_window_seconds'])
 
+
+    def test_v38_positive_reference_does_not_impose_stamped_film(self):
+        """The liked video is a transferable quality reference, never a template."""
+        from src.editorial_rules import policy
+        rules = policy()
+        ref = rules['creative_references']['time_machine_20261026']
+        variation = rules['creative_variation']
+        self.assertEqual(ref['status'], 'liked_with_improvements_possible_not_gold_master')
+        self.assertIn('image_count', ref['do_not_copy'])
+        self.assertIn('duration', ref['do_not_copy'])
+        self.assertIn('always_16_images', variation['forbidden_global_quotas'])
+        self.assertIn('always_3_minutes', variation['forbidden_global_quotas'])
+        plan = new_plan()
+        self.assertEqual(plan['narrative_design']['story_beats'], [])
+        self.assertEqual(plan['narrative_design']['distinct_visual_needs'], [])
+        self.assertEqual(plan['narrative_design']['reference_id'], '')
+        self.assertTrue(plan['narrative_design']['do_not_copy_reference_parameters'])
+        self.assertNotIn('target_image_count', plan)
+        self.assertNotIn('fixed_shot_seconds', plan)
+
+    def test_v38_different_creative_mixes_both_remain_valid(self):
+        """A quiet tale and an adventurous tale should not be forced to match."""
+        quiet = project(kind='libri')
+        fast = project(kind='libri')
+        quiet['editorial_plan'].update(duration_seconds=78, duration_reason='Quiet narrative pause')
+        fast['editorial_plan'].update(duration_seconds=221, duration_reason='Long action-oriented narrative')
+        quiet['editorial_plan']['narrative_design']['distinct_visual_needs'] = ['two calm visual tableaux']
+        fast['editorial_plan']['narrative_design']['distinct_visual_needs'] = ['many distinct events, locations, and figures']
+        self.assertEqual(validate(quiet)[0], [])
+        self.assertEqual(validate(fast)[0], [])
+
     def test_policy_changes_do_not_silently_update_project(self):
         p = project(); p['editorial_contract']['policy_sha256'] = 'old'
         self.assertTrue(any('Versione regole cambiata' in e for e in validate(p)[0]))
