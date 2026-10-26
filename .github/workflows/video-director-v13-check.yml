@@ -63,6 +63,8 @@ jobs:
         run: python -m unittest discover -s tests -p "test_video_director_v13.py" -v
       - name: Regia V38 senza stampini o quote immagini
         run: python -m unittest discover -s tests -p "test_narrative_variation_v38.py" -v
+      - name: Nuovo libro Oz — piano immagini e testi social offline
+        run: python -m unittest discover -s tests -p "test_oz_episode_20261026.py" -v
       - name: Metriche confrontabili senza ricavi inventati
         run: |
           python -m unittest discover -s tests -p "test_creator_metrics_v13.py" -v
