@@ -44,7 +44,7 @@ jobs:
           python src/oz_assets_20261026.py
           python src/episode_v3.py --episode oz_dorothy_20261026
           python src/regia_narrativa_v12.py --episode episodes/oz_dorothy_20261026
-      - name: Narrative direction V38: do not use image quotas
+      - name: "Narrative direction V38: do not use image quotas"
         run: |
           python - <<'PY'
           import json
