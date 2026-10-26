@@ -93,6 +93,12 @@ Un candidato non e un file acquisito, una licenza approvata o un video montato.
 - Le scelte esplicite del mix in `editorial_plan.techniques` prevalgono sui
   suggerimenti automatici V23. Il planner non esegue automaticamente gli effetti.
 
+## Feedback video libri e regia senza stampino — approvazione 26/10/2026 (V38)
+
+Per **ogni nuovo video** leggere `docs/FEEDBACK_REGIA_NARRATIVA_V38.md` e la policy `config/editorial_rules.json > creative_variation`; se il format e narrativo recuperare anche il riferimento `creative_references.time_machine_20261026`.
+
+L'utente ha giudicato positivamente **La macchina del tempo (H. G. Wells)** per la maggiore ricchezza e varietà delle immagini, pur rilevando possibili miglioramenti. Registrato come **riferimento buono, non GOLD MASTER** e non prova di pubblicazione o diritti verificati. **Non replicare** la durata, il numero di illustrazioni (16 in quell'episodio), la durata delle scene o lo schema di regia. Progettare per storia i beat, il numero di immagini davvero pertinenti, i passaggi visivi e i ritmi, senza quota estetica. Nessun effetto/immagine per riempimento. Preservare la riconoscibilita del brand e la coerenza dei personaggi; il mix di ogni storia e unico.
+
 ## No ghosting e apertura museo
 
 Per i video d'arte: un quadro nitido e opaco alla volta. Vietate dissolvenze
