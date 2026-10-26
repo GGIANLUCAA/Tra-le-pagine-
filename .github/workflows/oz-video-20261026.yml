@@ -1,0 +1,58 @@
+name: "Tra le Pagine — Oz libro narrato con Gacrux"
+on:
+  push:
+    branches:
+      - feature/video-wizard-oz-20261026
+    paths:
+      - voice_jobs/oz_20261026.run
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: oz-20261026-production
+  cancel-in-progress: false
+jobs:
+  book-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Dependencies — public-domain originals and natural narration
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12" "google-genai>=2.25,<3" "scipy>=1.11"
+      - name: Check the approved voice secret
+        run: |
+          if [[ -z "${GEMINI_API_KEY:-}" ]]; then
+            echo "::error::GEMINI_API_KEY non disponibile. Nessun audio sostitutivo robotico."
+            exit 2
+          fi
+      - name: Produce episode with authentic Denslow illustrations
+        run: python scripts/oz_video_20261026.py --out output/oz
+      - name: Decode the actual video and inspect deliverables
+        run: |
+          ffmpeg -hide_banner -v error -i output/oz/TRA_LE_PAGINE_IL_MERAVIGLIOSO_MAGO_DI_OZ.mp4 -f null -
+          ffprobe -v error -show_entries format=duration -of default=nw=1 output/oz/TRA_LE_PAGINE_IL_MERAVIGLIOSO_MAGO_DI_OZ.mp4
+          test -s output/oz/COPERTINA.jpg
+          test -s output/oz/SCHEDA_PRESENTAZIONE.jpg
+          test -s output/oz/SCHEDA_TESTO.md
+          test -s output/oz/POST_FACEBOOK.txt
+          test -s output/oz/POST_INSTAGRAM.txt
+          test -s output/oz/POST_TIKTOK.txt
+          test -s output/oz/POST_YOUTUBE.txt
+          test -s output/oz/FONTI_ILLUSTRAZIONI.json
+          test -s output/oz/VIDEO_SOLO_MP4.zip
+      - name: Keep voice, video, cover, board and the full editorial dossier together
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "TRA_LE_PAGINE_MAGO_DI_OZ_20261026"
+          path: output/oz/
+          retention-days: 14
+          if-no-files-found: error
