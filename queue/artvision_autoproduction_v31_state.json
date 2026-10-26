@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-26T13:52:28Z",
+  "updated": "2026-10-26T16:30:16Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -760,6 +760,56 @@
       "social_published": false,
       "external_video_library_import": "not_attempted",
       "feedback": "New standalone narrative and verified MP4. Same painting was used briefly in The Weight of Silence collection; not a new image acquisition. Public popularity signals unavailable and not fabricated."
+    },
+    {
+      "cycle_id": "20261026T1715+0100",
+      "created_at": "2026-10-26T16:24:50Z",
+      "artist": "Jan van Eyck",
+      "work": "The Arnolfini Portrait — The Secret in the Mirror",
+      "format": "artvision_cinema",
+      "subtype": "standalone_single_artwork",
+      "baseline": "cinema_v6_family",
+      "reason_fallback": "Natural Google Gacrux voice for a new Critico script not verified in this execution; a new authentic single-artwork Cinema film was rendered without voice, not a mislabeled Critico.",
+      "status": "technical_pass_not_gold_master_rights_review_required",
+      "mp4_verified": true,
+      "duration_seconds": 68,
+      "size_bytes": 6845722,
+      "sha256_mp4": "322ffedbd631cdd7d698864482ddeccbfca026864d911a68a9a84c9d2299942f",
+      "execution_environment": "ChatGPT local FFmpeg/Pillow renderer, with original artwork and public-domain piano recording fetched via GitHub Actions",
+      "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40359415221",
+      "workflow_role": "SOURCE_ACQUISITION_ONLY; actual render and QA performed locally",
+      "artifact_name": "ArtVision_20261026_1715_Arnolfini_Mirror_COMPLETE.zip (conversation attachment)",
+      "steps": {
+        "audience_research": "3 candidates documented; no fabricated platform metrics",
+        "source_acquisition": "success",
+        "render": "success",
+        "verify": "success",
+        "archive": "success",
+        "publication": "not_attempted"
+      },
+      "gold_master_approved": false,
+      "social_published": false,
+      "postprocess": {
+        "shots": 9,
+        "source_artworks": 1,
+        "source_image": "Wikimedia Commons PD-Art Jan van Eyck Arnolfini Portrait",
+        "source_image_resolution": "4386x6000",
+        "music": "Erik Satie Gymnopédie No. 1, Robin Alciatore piano (Musopen), public-domain recording",
+        "qa_video_codec": "h264",
+        "qa_audio_codec": "aac",
+        "resolution": "1080x1920",
+        "fps": 24,
+        "full_decode": "pass",
+        "audio_volumedetect_mean_db": -29.9,
+        "audio_volumedetect_peak_db": -8.4,
+        "zip_crc": "pass",
+        "zip_sha256": "03325e96f0a6cba29d9e37c42c09c26113737b5e09f763eaee8f3f165ad5f8f3",
+        "cover_sha256": "dde0a3fde100afa3efd4823e407b7bbf9da620a2ce549f7a1cfd5b9ba75a8d71",
+        "territorial_photo_rights_review_required": true,
+        "content_id_review_required": true,
+        "human_artistic_review_pending": true,
+        "external_video_library_import": "not_attempted"
+      }
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
