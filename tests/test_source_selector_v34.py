@@ -34,7 +34,7 @@ class SelectorV34Tests(unittest.TestCase):
         with patch.object(sel, "discover_single", side_effect=AssertionError("network unexpectedly called")):
             r=sel.build_report(sample(), [])
         self.assertEqual(r["counts"]["need_sources"],1)
-        self.assertFalse(r["no_auto_publish"])
+        self.assertTrue(r["no_auto_publish"])
         self.assertTrue(r["no_api_calls_by_default"])
         self.assertIn("ai_horde_manual_three_scene_trial",r["scenes"][0]["recommended_path"])
         self.assertFalse(r["scenes"][0]["automatic_generation"])
