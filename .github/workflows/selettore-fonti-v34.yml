@@ -64,6 +64,18 @@ jobs:
           python -m unittest discover -s tests -p 'test_source_selector_v34.py' -v
           python -m unittest discover -s tests -p 'test_media_source_priority_v33.py' -v
           python -m unittest discover -s tests -p 'test_free_sources_bridge_v1.py' -v
+          python -m unittest discover -s tests -p 'test_studio_ibrido_v6.py' -v
+      - name: Crea due schede reali da aprire su Android senza API
+        run: |
+          python src/source_selector_v34.py --mode plan --brief config/image_pipeline_v1_demo.json --out output/v34_libri
+          python src/source_selector_v34.py --mode plan --brief config/source_selector_v34_demo.json --out output/v34_controluce
+      - name: Consegna il provino del selettore in HTML e JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: DEMO_SELETTORE_FONTI_V34
+          path: output/v34_*/
+          if-no-files-found: error
+          retention-days: 14
   source-plan:
     needs: selector-tests
     if: github.event_name == 'workflow_dispatch'
