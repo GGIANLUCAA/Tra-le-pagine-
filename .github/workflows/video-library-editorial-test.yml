@@ -19,6 +19,22 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+      - name: Validate Oz source code without provider use
+        if: github.event_name == 'pull_request'
+        run: |
+          python -m py_compile scripts/oz_video_20261026.py
+          python - <<'PY'
+          import ast,re
+          from pathlib import Path
+          source=Path("scripts/oz_video_20261026.py").read_text()
+          tree=ast.parse(source)
+          beats=next(ast.literal_eval(a.value) for a in tree.body if isinstance(a,ast.Assign) and any(isinstance(t,ast.Name) and t.id=="BEATS" for t in a.targets))
+          story=Path("voice_jobs/oz_20261026.txt").read_text().strip()
+          paragraphs=[p for p in re.split(r"\n\s*\n",story) if p.strip()]
+          assert len(beats)==len(paragraphs), (len(beats),len(paragraphs))
+          assert len(set(x[0] for x in beats))==len(beats)
+          print("OZ PREFLIGHT PASS:",len(paragraphs),"narrative beats, original images to acquire at render")
+          PY
       - name: Observe Oz production workflow run (no TTS call)
         if: github.event_name == 'pull_request'
         env:
