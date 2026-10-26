@@ -1,0 +1,29 @@
+name: "ArtVision Arnolfini — authenticated museum media acquisition"
+on:
+  push:
+    paths:
+      - ".github/workflows/artvision-arnolfini-source-20261026.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-acquisition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Download original painting and CC BY recording
+        run: |
+          set -euo pipefail
+          mkdir -p source
+          curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 15 --max-time 100 -A 'ArtVision-Research/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)' 'https://upload.wikimedia.org/wikipedia/commons/3/33/Van_Eyck_-_Arnolfini_Portrait.jpg' -o source/ARNOLFINI_ORIGINAL.jpg
+          curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 15 --max-time 100 -A 'ArtVision-Research/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)' 'https://upload.wikimedia.org/wikipedia/commons/4/49/The_Descent_by_Kevin_MacLeod.ogg' -o source/THE_DESCENT_CC_BY_4.0.ogg
+          test "$(stat -c%s source/ARNOLFINI_ORIGINAL.jpg)" -gt 1000000
+          test "$(stat -c%s source/THE_DESCENT_CC_BY_4.0.ogg)" -gt 1000000
+          file source/*
+          sha256sum source/* > source/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision-20261026-Arnolfini-Authentic-Sources
+          path: source/
+          if-no-files-found: error
+          retention-days: 7
