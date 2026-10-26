@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-26T16:30:16Z",
+  "updated": "2026-10-26T19:24:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -810,6 +810,67 @@
         "human_artistic_review_pending": true,
         "external_video_library_import": "not_attempted"
       }
+    },
+    {
+      "cycle_id": "20261026T2015+0100",
+      "created_at": "2026-10-26T19:24:00Z",
+      "artist": "John Martin",
+      "work": "The Country of the Iguanodon",
+      "format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "reason_fallback": "Google Gacrux new Italian natural narration not verifiably available; no fake Critico narration; Cinema V6 monographic alternative",
+      "status": "technical_pass_not_gold_master_rights_review_required",
+      "mp4_verified": true,
+      "duration_seconds": 73,
+      "size_bytes": 20486712,
+      "sha256_mp4": "966813be3f304b1d28ea3f47ac85ed33f6750e0d9b9df256e1ea0f6722859280",
+      "sha256_zip": "ee7dfd337ad67f4aacf9ac68ab1eb952660a58a1d77c854a7a0ae92dfb69d2ef",
+      "artifact_name": "ArtVision_20261026_2015_Country_of_Iguanodon_COMPLETE.zip",
+      "execution_environment": "ChatGPT container with real local FFmpeg/Pillow/OpenCV; NOT GitHub Actions",
+      "workflow_run_url": null,
+      "steps": {
+        "preflight": "manual_source_and_rights_review",
+        "render": "success",
+        "verify": "full_ffmpeg_decode_and_ffprobe_success",
+        "archive": "zip_integrity_success"
+      },
+      "postprocess": {
+        "source": "Museum of New Zealand Te Papa Tongarewa via Wikimedia Commons PD-Art; pre-existing authenticated image from John Martin 12-artwork archive",
+        "source_reused_from_prior_collection": true,
+        "new_original_monographic_edit": true,
+        "photo_sha256": "4bcebc5c388a78e2db9027a3af06a912926d8db4685ccce2983bca5958fd4643",
+        "music": "Evening of Chaos — Kevin MacLeod, CC BY 4.0, actual MP3 file",
+        "music_sha256": "00a2fee94641761f37e74973eaaa654e1a8a628269f585707d46987558d07573",
+        "qa_frames": [
+          0,
+          1,
+          3,
+          5,
+          7,
+          5.88,
+          6.12,
+          12.88,
+          13.12,
+          23.88,
+          24.12,
+          40.88,
+          41.12,
+          64.88,
+          65.12,
+          72.5
+        ],
+        "full_decode": true,
+        "video_library_import": "not_attempted_requires_owner_selected_fileParams",
+        "human_artistic_review_pending": true,
+        "territorial_rights_review_pending": true,
+        "auto_critique": [
+          "Full horizontal painting necessarily appears smaller within 9:16",
+          "Some adjacent crops share similar color/brightness; monitor perceived variety",
+          "Music grows intense; human listening review needed"
+        ]
+      },
+      "gold_master_approved": false,
+      "social_published": false
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
