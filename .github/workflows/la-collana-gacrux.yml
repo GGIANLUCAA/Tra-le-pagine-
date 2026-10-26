@@ -1,0 +1,52 @@
+name: "Tra le Pagine - La collana Gacrux"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/la_collana_voice.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "google-genai>=2.25,<3" "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11"
+      - name: Validate Google API secret
+        run: |
+          if [ -z "${GEMINI_API_KEY:-}" ]; then
+            echo "::error::GEMINI_API_KEY not configured; cannot use Gacrux"
+            exit 2
+          fi
+      - name: Render Gacrux voice with existing module
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          import json
+          from gemini_voice import synthesize,voice_profile
+          script=Path('requests/la_collana_voice.txt').read_text(encoding='utf-8').strip()
+          samples,timed=synthesize(script,Path('output/la_collana_gacrux'))
+          folder=Path('output/la_collana_gacrux')
+          (folder/'COLLANA_VOICE_INFO.json').write_text(json.dumps({
+            'format':'libri','title':'La collana','author':'Guy de Maupassant',
+            'duration_seconds':len(samples)/24000,'profile':voice_profile(),
+            'timed_sentences':timed,'script':'requests/la_collana_voice.txt'
+          },ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LA_COLLANA_GACRUX_NARRAZIONE
+          path: output/la_collana_gacrux/
+          retention-days: 14
+          if-no-files-found: error
