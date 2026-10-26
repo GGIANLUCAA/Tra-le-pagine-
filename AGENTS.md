@@ -61,6 +61,16 @@ asset visuale; il preflight blocca provenienza/diritti/pertinenza non revisionat
 Questa regola non modifica automaticamente motori specializzati che bypassano V13;
 i rispettivi agenti devono seguirla esplicitamente.
 
+## Selettore fonti V34 — usare dopo il piano delle scene
+
+Per ogni nuovo contenuto, dopo storyboard/cue e prima di cercare o generare asset, leggere
+`docs/SELETTORE_FONTI_V34_GUIDA.md`. Il motore `src/source_selector_v34.py`
+applica le priorita V33 per formato, controlla candidati di riuso documentati e
+restituisce il percorso scena-per-scena. Lo Studio Ibrido V6 lo include gia nel
+piano delle scene. `plan` e offline; `discover` e solo una ricerca manuale
+per una scena di ambientazione/B-roll su Openverse/Pixabay, non un crawler.
+Un candidato non e un file acquisito, una licenza approvata o un video montato.
+
 ## Firma e regia
 
 - Cinema: baseline V6, opere autentiche, senza voce; identità di serie, nome artista
