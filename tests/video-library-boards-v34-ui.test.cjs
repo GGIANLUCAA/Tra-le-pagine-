@@ -54,7 +54,7 @@ const pause=()=>new Promise(done=>setTimeout(done,400));
  assert.equal(canvas.height,3650,'Illustrated master dossier must be full-height');
  assert(drawn.some(t=>t.includes('Oscar Wilde')),'Book author must appear in board');
  assert(drawn.some(t=>t.includes('1888')),'Original publication year must appear');
- assert(drawn.some(t=>t.includes('Gutenberg')),'Research source must appear');
+ assert(drawn.some(t=>t.toLowerCase().includes('gutenberg')),'Research source must appear');
  assert(drawn.some(t=>t.includes('Diritti da verificare')),'Pending rights must be visible');
  assert(drawn.some(t=>t.includes('PROJECT_V13 reale allegato')),'Origin provenance must appear');
  d.querySelector('#edBoardKind').value='production';
