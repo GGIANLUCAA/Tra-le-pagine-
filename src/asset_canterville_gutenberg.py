@@ -28,7 +28,7 @@ class Parser(HTMLParser):
             return
         a=dict(attrs)
         src=a.get('src') or ''
-        if re.search(r'\.(?:png|jpg|jpeg|gif)
+        if src.lower().endswith((".jpg", ".jpeg", ".png", ".gif")) and not src.startswith("http"):
             self.images.append({"url":urljoin(BASE,src),"alt":a.get('alt','')})
 
 
