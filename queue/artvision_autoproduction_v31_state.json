@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-26T10:15:00Z",
+  "updated": "2026-10-26T13:52:28Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -719,6 +719,47 @@
         "external_video_library_import": "not_attempted",
         "social_posts": "four distinct Italian posts included"
       }
+    },
+    {
+      "cycle_id": "20261026T1415+0100",
+      "created_at": "2026-10-26T13:52:28Z",
+      "artist": "Hugo Simberg",
+      "work": "The Wounded Angel — A Quiet Procession",
+      "format": "artvision_cinema",
+      "subtype": "new_monographic_edit_of_authentic_artwork_previously_seen_in_collection",
+      "baseline": "cinema_v6_visual_identity",
+      "actual_renderer": "local FFmpeg/Pillow/NumPy, not the Van Gogh-specific V6 engine",
+      "reason_fallback": "Natural Google Gacrux voice availability and free quota not verified; do not replace Critico voice or spend on unapproved API. Cinema chosen as valid alternate.",
+      "status": "technical_pass_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 75.416667,
+      "size_bytes": 19653776,
+      "sha256_mp4": "c8af621c71cfdf683cf12f6ed0b556319760b5b58919f7b33c49e8c0cdc7a98c",
+      "sha256_cover": "e053a2fb4ad0bfaa751caa0b0564260807f5dadba7411036dbcd18dbf9d738c9",
+      "sha256_zip": "aa5b93a5aae233526cd5c528db476220f41e3e31efb4307e946831e374a2709b",
+      "artifact_name": "ArtVision_20261026_1415_Wounded_Angel_PACCHETTO_COMPLETO.zip",
+      "artifact_storage": "ChatGPT conversation sandbox, not GitHub Actions",
+      "execution_environment": "ChatGPT local FFmpeg/Pillow/NumPy; GitHub record only",
+      "episode_record": "docs/productions/2026-10-26-1415-the-wounded-angel-a-quiet-procession.md",
+      "steps": {
+        "source_reuse": "verified",
+        "audience_research": "3_candidates_qualitative",
+        "render": "pass",
+        "ffprobe": "pass",
+        "full_decode": "pass",
+        "frame_qa": "pass",
+        "audio_rms_peak": "pass",
+        "archive_crc": "pass"
+      },
+      "shot_count": 14,
+      "source_image_sha256": "c4892eea58c9f8c5b73f1ffbc0deb86536115a8c5c3d92f15da14b11ea7a2b50",
+      "source_image_license": "Finnish National Gallery / Hannu Aaltonen CC BY 4.0 (Commons), Finna also labels CC0",
+      "soundtrack": "Original synthesized instrumental — The Quiet Procession (no third-party samples)",
+      "gold_master_approved": false,
+      "human_artistic_review_pending": true,
+      "social_published": false,
+      "external_video_library_import": "not_attempted",
+      "feedback": "New standalone narrative and verified MP4. Same painting was used briefly in The Weight of Silence collection; not a new image acquisition. Public popularity signals unavailable and not fabricated."
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
