@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-26.4",
-  "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica",
+  "version": "2026-10-26.5",
+  "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi",
   "precedence": [
     "explicit_user_request",
     "editorial_rules",
@@ -35,7 +35,11 @@
     "social_copy_separate_from_technical_notes": true,
     "four_distinct_platform_captions_per_video": true,
     "video_library_social_archive_required": true,
-    "no_generic_metadata_caption_as_publishable": true
+    "no_generic_metadata_caption_as_publishable": true,
+    "creative_choices_justified_by_story": true,
+    "do_not_copy_reference_video_timing_or_image_count": true,
+    "varied_visual_narrative_without_filler": true,
+    "feedback_references_are_not_gold_master": true
   },
   "defaults": {
     "voice": "Google Gemini Gacrux",
@@ -273,5 +277,83 @@
     "gate": "no approval with missing, duplicate, generic or production-oriented captions; editorial judgment and rights need human review",
     "variation": "subject-driven historical, cultural, symbolic, descriptive or interpretative angle; no repeating opening formula",
     "legacy": "preserve existing hand-edited texts; never overwrite on reimport"
+  },
+  "creative_variation": {
+    "id": "creative-variation-v38",
+    "guide": "docs/FEEDBACK_REGIA_NARRATIVA_V38.md",
+    "scope": "all_new_videos_with_format_specific_adaptation",
+    "source_of_choices": "actual_story_beats_character_actions_emotional_turns_and_verified_media",
+    "choose_independently_per_episode": [
+      "duration",
+      "unique_image_count",
+      "shot_count",
+      "scene_order",
+      "shot_lengths",
+      "editing_rhythm",
+      "camera_movement",
+      "opening",
+      "transitions",
+      "music"
+    ],
+    "forbidden_global_quotas": [
+      "always_3_minutes",
+      "always_16_images",
+      "always_20_images",
+      "always_same_scene_duration",
+      "always_same_intro",
+      "always_same_camera_pattern",
+      "always_same_number_of_techniques"
+    ],
+    "favor": [
+      "narration_image_alignment",
+      "meaningful_distinct_visuals",
+      "character_and_location_consistency",
+      "calm_motivated_camera",
+      "paced_visual_revelations",
+      "strong_pertinent_opening",
+      "complete_narrative_payoff",
+      "series_visual_identity"
+    ],
+    "quality_does_not_mean": "maximize_number_of_images_or_effects",
+    "minimum_required": "explain_reason_for_duration_and_visual_mix; document distinct narrative needs and check repeated filler",
+    "test_scope": "structural_planning_consistency_only; artistic_quality_requires_review",
+    "prior_positive_reference": "time_machine_20261026"
+  },
+  "creative_references": {
+    "time_machine_20261026": {
+      "name": "La macchina del tempo — H. G. Wells",
+      "format": "libri",
+      "video_file": "TRA_LE_PAGINE_LA_MACCHINA_DEL_TEMPO.mp4",
+      "observed_date": "2026-10-26",
+      "evidence": "Direct user feedback in conversation after viewing the delivered episode",
+      "rating": "positive_qualitative_reference",
+      "status": "liked_with_improvements_possible_not_gold_master",
+      "observed_features": {
+        "illustrations_in_episode": 16,
+        "voice": "Google Gemini Gacrux",
+        "visuals": "more varied and numerous than earlier narrated book videos"
+      },
+      "appreciated": [
+        "more images created a richer and more pleasing experience",
+        "better visual variety than preceding examples",
+        "direction judged a good step forward"
+      ],
+      "portable_lessons": [
+        "plan visual variety from narrative beats",
+        "ensure pertinent images follow spoken facts and emotion",
+        "preserve series identity while tailoring each episode"
+      ],
+      "do_not_copy": [
+        "duration",
+        "image_count",
+        "camera_move_recipe",
+        "shot_timing",
+        "opening",
+        "music",
+        "shot_order"
+      ],
+      "asset_status": "Not confirmed imported into Video Library Studio; reference video may exist only as chat artifact",
+      "approval_note": "User praised result, but said improvements remain; not a gold master, publication or rights approval."
+    }
   }
 }
