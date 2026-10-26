@@ -150,6 +150,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
  <nav class="editorial-tabs" id="editorialTabs" aria-label="Sezioni della scheda video">
   <button class="active" data-ed-tab="social" type="button">✎ Post social</button>
   <button data-ed-tab="production" type="button">⚙ Regia e ricetta</button>
+   <button data-ed-tab="research" type="button">◈ Ricerca e libro</button>
   <button data-ed-tab="credits" type="button">♬ Crediti e fonti</button>
   <button data-ed-tab="package" type="button">↓ Pacchetto ZIP</button>
    <button data-ed-tab="boards" type="button">▣ Schede grafiche</button>
@@ -185,6 +186,21 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
    <label class="ed-field">Passaggi e workflow<textarea name="productionSteps" rows="5" maxlength="10000" placeholder="Strumenti, comandi, scene, tempi, correzioni, esportazione"></textarea></label>
    <label class="ed-field">Informazioni tecniche supplementari<textarea name="technicalNotes" rows="4" maxlength="10000" placeholder="Codec, formato, FPS, audio, master, versioni…"></textarea></label>
    <label class="ed-field">Note storiche e di lavorazione già salvate<textarea name="legacyNotes" rows="4" maxlength="25000" placeholder="Note provenienti dal precedente Studio, versioni, osservazioni…"></textarea></label>
+  </section>
+  <section data-ed-panel="research" hidden>
+   <p class="ed-guidance">Questi campi registrano da dove arrivano le informazioni. Se un vero PROJECT_V13.json è allegato al dossier, le informazioni disponibili vengono riutilizzate. Nessuna verifica è automatica.</p>
+   <div class="editorial-columns">
+    <label>Autore del libro<input name="bookAuthor" maxlength="1600" placeholder="Es. Lewis Carroll"></label>
+    <label>Prima pubblicazione<input name="publicationYear" maxlength="1600" placeholder="Es. 1865"></label>
+    <label>Serie<input name="seriesTitle" maxlength="1600" placeholder="Es. Classici che parlano ancora"></label>
+    <label>Pubblico previsto<input name="targetAudience" maxlength="1600"></label>
+   </div>
+   <label class="ed-field">Perché raccontare questo libro<textarea name="selectionReason" rows="4" maxlength="25000"></textarea></label>
+   <label class="ed-field">Temi e interpretazione<textarea name="narrativeThemes" rows="3" maxlength="25000"></textarea></label>
+   <label class="ed-field">Stile visivo e regia<textarea name="visualMix" rows="4" maxlength="25000"></textarea></label>
+   <label class="ed-field">Registro fonti · URL, dato verificato, data, controllo effettivo<textarea name="sourceEvidence" rows="7" maxlength="25000" placeholder="Nessun dato viene verificato dall'impaginatore grafico"></textarea></label>
+   <label class="ed-field">Tabella asset · scena, tipo, URL, licenza, attribuzione, stato<textarea name="assetLedger" rows="8" maxlength="25000"></textarea></label>
+   <p class="ed-guidance">Se una fonte manca scrivi «Da verificare», mai «Verificato» sulla fiducia. Il salvataggio del dossier conserva le correzioni per questo video.</p>
   </section>
   <section data-ed-panel="credits" hidden>
    <p class="ed-guidance">I crediti della musica, delle opere e delle immagini non vengono inventati. Quando sono sconosciuti rimangono da verificare.</p>
@@ -224,6 +240,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
       <option value="concept">1 · Concept Board</option>
       <option value="production">2 · Production Board</option>
       <option value="scenes">3 · Scene Contact Sheet</option>
+      <option value="master">4 · Dossier illustrato completo</option>
      </select>
     </label>
     <button type="button" class="btn" id="edBoardRefresh">↻ Aggiorna</button>
@@ -625,8 +642,8 @@ async function vbDownload(){
 }
 
 /* Editorial per-video dossiers and social packages, all stored by original filename. */
-const edState={item:null,record:null,generated:true,missing:[],dirty:false,assets:[],metadata:null};
-const edFieldNames=['edition','reprints','masterRef','musicAttribution','legacyNotes','publicTitle','shortDescription','category','project','language','hook','hashtags','facebook','instagram','tiktok','youtube','musicTitle','musicAuthor','musicLicense','musicLink','imageCredits','imageSources','voiceCredits','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes','tags','rightsStatus','publicationStatus'];
+const edState={item:null,record:null,generated:true,missing:[],dirty:false,assets:[],metadata:null,projectV13Attached:false};
+const edFieldNames=['bookAuthor','publicationYear','seriesTitle','selectionReason','targetAudience','narrativeThemes','visualMix','sourceEvidence','assetLedger','edition','reprints','masterRef','musicAttribution','legacyNotes','publicTitle','shortDescription','category','project','language','hook','hashtags','facebook','instagram','tiktok','youtube','musicTitle','musicAuthor','musicLicense','musicLink','imageCredits','imageSources','voiceCredits','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes','tags','rightsStatus','publicationStatus'];
 function editorialFieldsToForm(record){
  const f=$('#editorialForm');for(const name of edFieldNames){const el=f.elements.namedItem(name);if(el)el.value=record[name]??''}
  edState.dirty=false;
@@ -644,7 +661,7 @@ function edActivateTab(key){
 }
 async function openEditorial(x){
  if(!g.admin){$('#adminDialog').showModal();return}
- edState.item=x;edState.record=null;edState.missing=[];edState.dirty=false;edState.assets=[];edState.metadata=null;vb.cover=null;vb.coverKey='';
+ edState.item=x;edState.record=null;edState.missing=[];edState.dirty=false;edState.assets=[];edState.metadata=null;edState.projectV13Attached=false;vb.cover=null;vb.coverKey='';
  $('#editorialTitle').textContent=x.viewTitle;
  $('#editorialMeta').textContent=x.viewCategory+' · '+dur(x.duration)+' · '+(x.available===false?'☁ Solo ChatGPT':'▶ MP4 disponibile')+' · '+(x.gptCreatedAt?'Creato '+fmtDate(x.gptCreatedAt):'Data creazione sconosciuta');
  edSetInfo('Caricamento del fascicolo e delle informazioni salvate…');
@@ -655,7 +672,7 @@ async function openEditorial(x){
  try{
   const r=await fetch('/api/editorial?key='+encodeURIComponent(x.key),{headers:{'Authorization':'Bearer '+g.token},cache:'no-store'});
   if(!r.ok)throw Error('Impossibile leggere il dossier ('+r.status+')');
-  const data=await r.json();edState.record=data.record;edState.generated=data.generated;edState.missing=data.missing||[];edState.assets=data.assets||[];edState.metadata=data.metadata||null;vbCoverLoad(x);
+  const data=await r.json();edState.record=data.record;edState.generated=data.generated;edState.missing=data.missing||[];edState.assets=data.assets||[];edState.metadata=data.metadata||null;edState.projectV13Attached=!!data.projectV13Attached;vbCoverLoad(x);
   const node=$('#edAssetList');node.replaceChildren();
   if(data.assets?.length){
     for(const item of data.assets){
