@@ -885,7 +885,7 @@
       "duration_seconds": 69,
       "size_bytes": 12288988,
       "sha256_mp4": "d7418cfe13a58b930e269ab246c4104d4b130895e43d68629b82887f33cfc33a",
-      "zip_sha256": "",
+      "zip_sha256": "d926a5af415755e3c605411256a473d500cf162f8687de2d51584dda2af67ad3",
       "execution_environment": "ChatGPT local FFmpeg 7.1.5 / Pillow; not GitHub Actions",
       "workflow_run_url": null,
       "artifact_name": "ArtVision_20261026_2315_The_Witness_COMPLETE.zip (conversation attachment)",
@@ -903,7 +903,9 @@
         "Full painting horizontal smaller in 9:16: prefer bespoke museum composition in next experiment",
         "Reused paintings diminish novelty: prioritize newly sourced authentic artworks next cycle",
         "Sync transitions more precisely to recorded music phrases"
-      ]
+      ],
+      "zip_size_bytes": 34970921,
+      "delivery_qa": "Local MP4 exists, ffprobe H264/AAC 1080x1920 24fps 69.0s; complete ffmpeg decode pass; 20 real frame samples incl 0/1/3/5/7, transitions and finale; ZIP test pass; music waveform level -30.8 dB mean -9.3 dB max. Artistic review and commercial territorial rights still pending."
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
