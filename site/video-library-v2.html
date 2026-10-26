@@ -59,6 +59,20 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
 #edBoardCanvas{width:100%;height:auto;display:block;border-radius:7px;background:#f6f1e8}
 .ed-board-note{font-size:13px;color:#c6d1d8;line-height:1.5;margin:12px 0}
 @media(max-width:720px){.ed-board-tools{display:grid;grid-template-columns:1fr 1fr}.ed-board-tools label{grid-column:1/-1}.ed-board-tools button{font-size:12px;padding:11px 5px}}
+
+/* Social archive viewer */
+#socialViewer{width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;border:0;border-radius:0;background:#05070a;overflow:hidden;padding:0}
+.social-top{height:64px;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;gap:12px}
+#socialFeed{height:calc(100dvh - 64px);overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;touch-action:pan-y}
+.social-slide{height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;align-items:center;padding:0 12px max(12px,env(safe-area-inset-bottom));gap:8px}
+.social-screen{flex:1;min-height:0;width:100%;max-width:600px;background:#000;display:flex;align-items:center;justify-content:center}
+.social-screen video{width:100%;height:100%;object-fit:contain}
+.social-caption{width:100%;max-width:600px}
+.social-caption h3{font-size:16px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.social-caption p{font-size:12px;color:#b2c3d4;margin:3px 0}
+.social-actions{display:flex;gap:8px;flex-wrap:wrap}
+.social-actions button{min-height:44px}
+
 </style>
 </head>
 <body>
@@ -113,7 +127,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
  <select id="versions" aria-label="Filtra per versione"><option value="">Tutte le versioni</option><option value="final">Solo finali</option><option value="draft">Bozze / provini</option><option value="variants">Possibili varianti</option></select>
  </div><label class="group-versions"><input id="groupVariants" type="checkbox"> Raggruppa le versioni riconosciute (senza eliminare file)</label></details>
 <p class="notice">I video con il simbolo ☁ sono presenti nella libreria ChatGPT ma non ancora riproducibili da questo sito. Per guardare o scaricare un video serve il trasferimento del suo file originale.</p><div class="filters" id="filters"></div>
-<div class="panelbar"><p id="counter">Caricamento archivio...</p><label class="toggle" id="archivedToggle" style="display:none"><input id="includeArchived" type="checkbox"> Mostra archiviati</label></div>
+<div class="panelbar"><button class="btn primary" id="socialOpen" type="button">▶ Scorri video</button><p id="counter">Caricamento archivio...</p><label class="toggle" id="archivedToggle" style="display:none"><input id="includeArchived" type="checkbox"> Mostra archiviati</label></div>
 <div class="selection-panel" id="selectionPanel" hidden>
  <div class="selection-summary"><strong id="selectedCount">0 selezionati</strong><span>Azioni applicate soltanto ai video scelti</span></div>
  <div class="selection-actions">
@@ -130,6 +144,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
 </section>
 </main>
 <nav class="bottom-nav" aria-label="Navigazione principale"><button type="button" data-section="home" class="active"><span class="nav-glyph">⌂</span><span>Home</span></button><button type="button" data-section="library"><span class="nav-glyph">▣</span><span>Video</span></button><button type="button" data-section="collections"><span class="nav-glyph">◫</span><span>Raccolte</span></button><button type="button" data-section="studio"><span class="nav-glyph">⚙</span><span>Studio</span></button></nav>
+<dialog id="socialViewer" aria-label="Scorri i video dell’archivio"><div class="social-top"><strong>Scorri video <span id="socialPosition"></span></strong><button class="ghost" id="socialClose" type="button">✕ Chiudi</button></div><div id="socialFeed" tabindex="0" aria-label="Scorri verso l’alto per il prossimo video"></div></dialog>
 <dialog id="player"><div class="modalhead"><h2 id="playerTitle">Video</h2><button class="ghost" data-close="player">✕ Chiudi</button></div><div class="modalbody"><video id="video" controls playsinline preload="metadata"></video>
 <div class="cinema-transport" aria-label="Controlli di riproduzione aggiuntivi">
  <button id="playerPrevious" type="button" aria-label="Video precedente" title="Video precedente">⏮</button>
@@ -773,6 +788,66 @@ $('#edZipLight').onclick=()=>edDownload('light');
 $('#edBoardKind').onchange=vbDraw;
 $('#edBoardRefresh').onclick=vbDraw;
 $('#edBoardDownload').onclick=vbDownload;
+
+
+/* Social archive viewer: one media element, current filtered catalog, no copied masters. */
+const social={rows:[],index:-1,observer:null,muted:true,focus:null,overflow:''};
+const socialVideo=document.createElement('video');
+socialVideo.controls=true;socialVideo.playsInline=true;socialVideo.preload='metadata';
+socialVideo.setAttribute('aria-label','Video selezionato');
+function socialActivate(index){
+ if(!$('#socialViewer').open||index===social.index)return;
+ socialVideo.pause();social.index=index;const x=social.rows[index];
+ socialVideo.muted=social.muted;socialVideo.src=mediaURL(x);
+ if(x.cover)socialVideo.poster=x.cover;else socialVideo.removeAttribute('poster');
+ $('#socialFeed').children[index].querySelector('.social-screen').append(socialVideo);
+ $('#socialPosition').textContent=(index+1)+' / '+social.rows.length;
+ socialVideo.play().catch(()=>{});
+}
+function socialMove(delta){
+ const index=Math.max(0,Math.min(social.rows.length-1,social.index+delta));
+ $('#socialFeed').children[index]?.scrollIntoView({block:'start',behavior:'instant'});
+}
+function socialOpen(){
+ social.rows=filtered().filter(x=>x.available!==false);
+ if(!social.rows.length){log('Nessun video riproducibile con questi filtri. Prova Tutti o cambia la ricerca.');return}
+ social.focus=document.activeElement;social.index=-1;
+ social.overflow=document.body.style.overflow;document.body.style.overflow='hidden';
+ const feed=$('#socialFeed');feed.replaceChildren();
+ social.rows.forEach((x,index)=>{
+  const slide=document.createElement('article');slide.className='social-slide';slide.dataset.index=index;
+  const screen=document.createElement('div');screen.className='social-screen';
+  const caption=document.createElement('div');caption.className='social-caption';
+  const title=document.createElement('h3');title.textContent=x.viewTitle;
+  const hint=document.createElement('p');hint.textContent=x.viewCategory+' · Scorri ↑ prossimo · ↓ precedente';
+  const actions=document.createElement('div');actions.className='social-actions';
+  const button=(label,fn)=>{const b=document.createElement('button');b.type='button';b.className='ghost';b.textContent=label;b.onclick=fn;actions.append(b)};
+  button('↑ Precedente',()=>socialMove(-1));button('↓ Successivo',()=>socialMove(1));
+  button('Scheda',()=>{socialVideo.pause();details(x)});
+  caption.append(title,hint,actions);slide.append(screen,caption);feed.append(slide);
+ });
+ $('#video').pause();
+ $('#socialViewer').showModal();feed.scrollTop=0;
+ social.observer=new IntersectionObserver(entries=>{
+  const best=entries.filter(e=>e.isIntersecting&&e.intersectionRatio>=.6).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+  if(best)socialActivate(Number(best.target.dataset.index));
+ },{root:feed,threshold:[.6]});
+ for(const slide of feed.children)social.observer.observe(slide);
+ socialActivate(0);
+}
+socialVideo.addEventListener('volumechange',()=>{social.muted=socialVideo.muted});
+socialVideo.addEventListener('error',()=>{if($('#socialViewer').open)log('Video non disponibile. Puoi scorrere al successivo o riprovare dalla scheda.');});
+$('#socialClose').onclick=()=>$('#socialViewer').close();
+$('#socialViewer').addEventListener('close',()=>{
+ social.observer?.disconnect();socialVideo.pause();socialVideo.removeAttribute('src');socialVideo.load();socialVideo.remove();
+ $('#socialFeed').replaceChildren();social.index=-1;document.body.style.overflow=social.overflow;social.focus?.focus();
+});
+$('#socialFeed').addEventListener('keydown',e=>{
+ if(e.target!==$('#socialFeed'))return;
+ if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();socialMove(e.key==='ArrowDown'?1:-1)}
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)socialVideo.pause()});
+$('#socialOpen').onclick=socialOpen;
 
 const frag=location.hash.slice(1);if(frag.startsWith('manage=')){g.token=decodeURIComponent(frag.slice(7));localStorage.setItem('vlsAdmin',g.token);history.replaceState(null,'',location.pathname+location.search)}else{g.token=localStorage.getItem('vlsAdmin')||''}
 load(true);setInterval(()=>{if(!document.hidden)load(true)},180000);
