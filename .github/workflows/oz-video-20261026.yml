@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: oz-20261026-production
   cancel-in-progress: false
@@ -27,13 +28,21 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
           python -m pip install --disable-pip-version-check "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12" "google-genai>=2.25,<3" "scipy>=1.11" "faster-whisper>=1.1,<2"
-      - name: Check the approved voice secret
+      - name: Recover original approved Gacrux take from successful first render
+        uses: actions/download-artifact@v4
+        with:
+          name: "TRA_LE_PAGINE_MAGO_DI_OZ_20261026"
+          run-id: 40345464507
+          github-token: ${{ github.token }}
+          path: output/oz
+      - name: Prevent new Gemini spending during image-only remaster
         run: |
-          if [[ -z "${GEMINI_API_KEY:-}" ]]; then
-            echo "::error::GEMINI_API_KEY non disponibile. Nessun audio sostitutivo robotico."
-            exit 2
-          fi
-      - name: Produce episode with authentic Denslow illustrations
+          test -s output/oz/VOICE_CACHE_V13.json
+          test -s output/oz/VOCE.wav
+          echo "Original voice/cache recovered; any cache mismatch MUST fail without Google call."
+      - name: Produce corrected episode with 21 curated Denslow images, reuse voice
+        env:
+          GEMINI_API_KEY: ""
         run: python scripts/oz_video_20261026.py --out output/oz
       - name: Decode the actual video and inspect deliverables
         run: |
@@ -52,7 +61,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: "TRA_LE_PAGINE_MAGO_DI_OZ_20261026"
+          name: "TRA_LE_PAGINE_MAGO_DI_OZ_V39_CURATO"
           path: output/oz/
           retention-days: 14
           if-no-files-found: error
