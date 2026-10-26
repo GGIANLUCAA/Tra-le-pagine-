@@ -107,6 +107,8 @@ def brief(kind, topic, out, references=()):
     lines = ["# Brief GPT - " + topic.strip(), "", "Leggere AGENTS.md e docs/GPT_VIDEO_PLAYBOOK.md.",
              "Leggere docs/REGOLE_ATTIVE.md: compilare editorial_contract ed editorial_plan prima del render.",
              "Fonti media V33: seguire docs/FILOSOFIA_FONTI_MEDIA_V33.md e compilare media_sourcing per ogni asset visivo.",
+             "Feedback V38: leggere docs/FEEDBACK_REGIA_NARRATIVA_V38.md; La macchina del tempo e un buon riferimento di varieta, non un template di 16 foto o 3 minuti.",
+             "Prima di fissare durata/immagini, scrivere beat, esigenze visuali distinte e ragioni del ritmo in editorial_plan.narrative_design.",
              "", "Formato: " + fmt["label"], "Preset: " + fmt["preset"], "Capacità: " + fmt["status"],
              "", "## Regia", fmt["direction"], "", "## Prossima azione", fmt["next_action"],
              "", "## Guide da leggere"]
