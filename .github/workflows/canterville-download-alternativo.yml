@@ -1,0 +1,43 @@
+name: "Canterville — scarica MP4 da GitHub (senza ChatGPT Library)"
+on:
+  push:
+    branches: ["feature/canterville-download-direct-20261026"]
+    paths: ["source_jobs/canterville_github_download_20261026.txt"]
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: read
+jobs:
+  downloadable-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve existing narrator and historical illustrations
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p input/voice input/illustrations
+          gh run download 40286522709 --repo "$GITHUB_REPOSITORY" --name CANTERVILLE_GACRUX --dir input/voice
+          gh run download 40287123277 --repo "$GITHUB_REPOSITORY" --name CANTERVILLE_LIBRO_ILLUSTRATO_1906 --dir input/illustrations
+          test -s input/voice/VOCE_NATURALE.mp3
+          test -s input/illustrations/illustrazione_17.jpg
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install open-source local renderer
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q 'Pillow>=10,<13'
+      - name: Rebuild video; verify H264 and AAC with full decode
+        run: python src/canterville_rebuild_download.py
+      - name: ZIP artifact for GitHub download on Android
+        uses: actions/upload-artifact@v4
+        with:
+          name: SCARICA_CANTERVILLE_VIDEO_MP4
+          path: |
+            output/CANTERVILLE_GITHUB_DOWNLOAD.mp4
+            output/README_DOWNLOAD.txt
+            output/SHOT_LIST.json
+          if-no-files-found: error
+          retention-days: 30
