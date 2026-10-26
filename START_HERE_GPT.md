@@ -33,6 +33,14 @@ Compila `media_sourcing` per ogni asset prima del check V13. Nessuna spesa
 o pubblicazione automatica e niente nuovi secret da richiedere se già disponibili.
 Una fonte catalogata non è necessariamente un connettore attivo.
 
+## Selettore scene/fonti V34
+
+Applicare i criteri permanenti V33 tramite `docs/SELETTORE_FONTI_V34_GUIDA.md`.
+Dopo lo storyboard e prima dell'acquisizione utilizzare `src/source_selector_v34.py`
+per proporre un percorso scena per scena. `plan` offline, ricerca singola
+`discover` su Pixabay/Openverse per sole scene pertinenti; non considerare
+le 45 API integrate. Il controllo artistico e il render restano separati.
+
 ## Procedura dell'agente
 
 1. Recuperare riferimenti e regole; identificare il format richiesto.
