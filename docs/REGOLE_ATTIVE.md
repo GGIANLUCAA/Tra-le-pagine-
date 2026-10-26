@@ -117,6 +117,16 @@ La consegna include quattro file social curati, **scheda visuale** nello stile e
 
 Il sito applica filtri strutturali contro campi vuoti/identici/cliche e dettagli tecnici, ma revisione umana del contenuto e verifica di fonti/diritti restano indispensabili. Vedere `docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md` e `docs/VIDEO_LIBRARY_DOSSIER_V1.md`.
 
+## Riferimento positivo e originalita narrativa — VINCOLANTE (26/10/2026, V38)
+
+**Feedback approvato:** *La macchina del tempo* di H. G. Wells e stato giudicato un **buon risultato**, piu bello dei video precedenti soprattutto per una maggiore ricchezza/varieta delle immagini; restano migliorie possibili. Registrare questa valutazione come **riferimento qualitativo positivo**, non come `GOLD MASTER`, licenza, promessa di successo o istruzione per copiare il suo montaggio.
+
+**Regola permanente anti-stampino:** ogni storia/opera deve determinare autonomamente durata, quantita di immagini *distinte*, ordine e durata delle scene, ritmo, variazioni di camera, apertura, musica e finale. La copertina mantiene la firma della serie ma il racconto non deve ripetersi meccanicamente. Vietato trarre dalla *Macchina del tempo* una durata standard, 16 illustrazioni obbligatorie, un numero prefissato di effetti o transizioni e un medesimo schema di montaggio.
+
+Prima di acquisire asset, individuare beat narrativi, luoghi, azioni, emozioni e cambi di significato; motivare scelte di durata e mix e allinearle alle parole e all'audio reale. **Più immagini è positivo solo quando aumenta pertinenza e interesse, non se introduce ripetizioni o filler.** Per racconti diversi sono validi anche pochi quadri lunghi o molti cambi, quando servono alla storia.
+
+Documento operativo `docs/FEEDBACK_REGIA_NARRATIVA_V38.md`; configurazione `config/editorial_rules.json > creative_variation, creative_references`. Il controllo strutturale non certifica la bellezza né trasforma automaticamente il filmato in master approvato.
+
 ## Dal soggetto al risultato
 
 1. Registrare richiesta, format, presenza della voce, lingua e obiettivo. Se si
