@@ -105,61 +105,78 @@ def fetch(url, cap=18_000_000):
         raise RuntimeError("Source exceeds safe size limit")
     return data
 
+# V39: Curated exact original illustration (source filename) for each story beat.
+# Never let an automated proximity match substitute a decorative chapter initial
+# or an unrelated scene. If a source is missing, fail visibly before calling Gacrux.
+CURATED_ORIGINALS = [
+    "i016_edit.jpg",  # Dorothy and Toto on a bed, inside the travelling house
+    "i013_edit.jpg",  # Aunt and Uncle, grey Kansas
+    "i011_edit.jpg",  # Toto during the cyclone
+    "i023_edit.jpg",  # Munchkins
+    "i027_edit.jpg",  # Dorothy with silver slippers
+    "i041_edit.jpg",  # Dorothy meets the Scarecrow
+    "i065_edit.jpg",  # Tin Woodman among friends
+    "i075_edit.jpg",  # Dorothy confronts the Lion
+    "i109-edit.jpg",  # Poppy field
+    "i116_edit.jpg",  # Queen of the Mice
+    "i135_edit.jpg",  # Emerald City
+    "i152_edit.jpg",  # The Eyes of Oz
+    "i172_edit.jpg",  # Winged monkeys and the western witch
+    "i180_edit.jpg",  # Melting witch
+    "i214_edit.jpg",  # Oz admits his deception
+    "i230_edit.jpg",  # Oz gives Tin Woodman a heart
+    "i218_edit.jpg",  # Oz goes up in the balloon
+    "i264_edit.jpg",  # Dorothy travelling through the porcelain country
+    "i296_edit.jpg",  # Glinda sees Dorothy
+    "i301_edit.jpg",  # Dorothy and Toto heading home
+    "i127-i128_combo.jpg",  # Group of companions: closing reflection
+]
+
+
 def collect_assets(folder):
     folder.mkdir(parents=True, exist_ok=True)
     page = fetch(SOURCE, 3_800_000).decode("utf-8", "replace")
     parser = TagReader()
     parser.feed(page)
     candidates = [x for x in parser.images
-                  if "/43936/" in x["url"] and "images/" in x["url"]
-                  and not re.search(r"chapter\s+[ivx\d]+|copyright|dedication|frontispiece", x["alt"], re.I)]
-    if len(candidates) < 25:
-        raise RuntimeError("Original illustrated edition unavailable: %d illustrated candidates" % len(candidates))
-    chapters_detected = len({x["chapter"] for x in candidates}) >= 6
-    print("Original images in edition:", len(candidates), "chapter parsing", chapters_detected, flush=True)
-    selected, used = [], set()
-    for i, (title, chapter, hints) in enumerate(BEATS):
-        scored = []
-        for idx, item in enumerate(candidates):
-            if item["url"] in used:
-                continue
-            alt = item["alt"].casefold()
-            prox = abs(item["chapter"]-chapter) / 23 if chapters_detected else abs(idx / len(candidates) - (i+.5)/len(BEATS))
-            points = max(0, 12 - 40 * prox)
-            points += max((7 if hint in alt else 0) for hint in hints)
-            if chapters_detected and item["chapter"] == chapter:
-                points += 2
-            scored.append((points, -idx, item))
-        scored.sort(reverse=True)
-        saved = None
-        for _, _, item in scored[:12]:
-            try:
-                raw = fetch(item["url"])
-                with Image.open(io.BytesIO(raw)) as opened:
-                    opened.load()
-                    img = ImageOps.exif_transpose(opened).convert("RGB")
-                if min(img.size) < 260:
-                    continue
-                dest = folder / ("scene_%02d.jpg" % (i+1))
-                img.save(dest, quality=94, optimize=True)
-                saved = dict(item, scene=i+1, title=title, file=dest.name,
-                             width=img.width, height=img.height,
-                             sha256=hashlib.sha256(dest.read_bytes()).hexdigest(),
-                             original_author=ARTIST, year=1900,
-                             rights_review="public-domain-authors-died-1915-1919-country-check-required")
-                used.add(item["url"])
-                break
-            except Exception as exc:
-                print("Source skipped", item["url"].rsplit("/",1)[-1], type(exc).__name__, flush=True)
-        if not saved:
-            raise RuntimeError("No usable, distinct, original illustration for beat: " + title)
-        selected.append(saved)
-        print("%02d" % (i+1), title, saved["alt"][:60], saved["url"].rsplit("/",1)[-1], flush=True)
-        time.sleep(0.20)
+                  if "/43936/" in x["url"] and "images/" in x["url"]]
+    by_name = {urlparse(x["url"]).path.rsplit("/", 1)[-1]: x for x in candidates}
+    if len(CURATED_ORIGINALS) != len(BEATS) or len(set(CURATED_ORIGINALS)) != len(BEATS):
+        raise RuntimeError("Curated list must have one distinct illustration per narrative beat")
+    missing = [name for name in CURATED_ORIGINALS if name not in by_name]
+    if missing:
+        raise RuntimeError("Verified Denslow source is missing: " + ", ".join(missing))
+    selected = []
+    for i, ((title, chapter, hints), filename) in enumerate(zip(BEATS, CURATED_ORIGINALS)):
+        item = by_name[filename]
+        if re.search(r"^chapter\\s+[ivx\\d]+|copyright|dedication", item["alt"], re.I):
+            raise RuntimeError("Decorative chapter illustration incorrectly selected: " + filename)
+        try:
+            raw = fetch(item["url"])
+            with Image.open(io.BytesIO(raw)) as opened:
+                opened.load()
+                img = ImageOps.exif_transpose(opened).convert("RGB")
+            if min(img.size) < 260:
+                raise RuntimeError("Too small for legible video: " + filename)
+            dest = folder / ("scene_%02d.jpg" % (i + 1))
+            img.save(dest, quality=94, optimize=True)
+            saved = dict(item, scene=i + 1, title=title, file=dest.name,
+                         width=img.width, height=img.height, source_filename=filename,
+                         selection_method="human_curated_exact_original_scene_v39",
+                         narrative_fit_review="specific_story_beat_mapped",
+                         sha256=hashlib.sha256(dest.read_bytes()).hexdigest(),
+                         original_author=ARTIST, year=1900,
+                         rights_review="public-domain-authors-died-1915-1919-country-check-required")
+            selected.append(saved)
+            print("%02d" % (i + 1), title, saved["alt"][:70], filename, flush=True)
+        except Exception as exc:
+            raise RuntimeError("Curated image acquisition failed for beat %d: %s"% (i+1,filename)) from exc
+        time.sleep(0.16)
     report = {"source_edition": SOURCE, "title": "The Wonderful Wizard of Oz",
               "authors": {"text": "L. Frank Baum (died 1919)",
                           "original_illustrations": "W. W. Denslow (died 1915)"},
               "illustration_year": 1900, "assets": selected,
+              "selection_policy": "manual narrative fit, unique documented image per passage; no chapter initials or random proximity",
               "note": "Public domain original authors/illustrator: verify territorial reuse and scan terms before monetization. No stock/AI image fallback."}
     write_json(folder.parent / "FONTI_ILLUSTRAZIONI.json", report)
     return selected
