@@ -313,7 +313,7 @@ if(u.pathname==='/api/editorial'&&req.method==='POST'){
  if(!['bozza','da_revisionare','approvato','pubblicato'].includes(rec.publicationStatus))return new Response('Stato non valido',{status:400});
  const socialIssues=edSocialIssues(rec);
  if(['approvato','pubblicato'].includes(rec.publicationStatus)&&socialIssues.length)
-  return json({ok:false,code:'SOCIAL_REVIEW_REQUIRED',issues:socialIssues,status:'da_revisionare'},422);
+  return new Response(JSON.stringify({ok:false,code:'SOCIAL_REVIEW_REQUIRED',issues:socialIssues,status:'da_revisionare'}),{status:422,headers:{'content-type':'application/json; charset=utf-8'}});
  rec.updatedAt=new Date().toISOString();rec.createdAt=rec.createdAt||rec.updatedAt;rec.authoring='edited';
  await env.VIDEOS.put(edFilesKey(key),JSON.stringify(rec),{httpMetadata:{contentType:'application/json'}});
  return json({ok:true,record:rec,missing:(await edLoad(key)).missing});
