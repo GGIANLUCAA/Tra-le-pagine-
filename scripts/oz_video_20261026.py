@@ -40,25 +40,22 @@ BEATS = [
     ("Il paese colorato", 2, ["munchkin", "dorothy"]),
     ("La via gialla", 2, ["yellow brick", "slippers", "witch"]),
     ("Lo Spaventapasseri", 3, ["scarecrow", "corn"]),
-    ("La foresta", 4, ["forest", "road"]),
     ("Il Boscaiolo di Latta", 5, ["woodman", "tinman", "rust"]),
-    ("Il cuore", 5, ["woodman", "tinman"]),
     ("Il Leone", 6, ["lion crying", "lion", "toto"]),
-    ("Un viaggio insieme", 7, ["lion and dorothy", "road", "scarecrow"]),
     ("Il campo dei papaveri", 8, ["poppy", "flowers", "lion"]),
     ("La regina dei topi", 9, ["mice", "queen", "lion"]),
     ("La Città di Smeraldo", 10, ["emerald city", "gate"]),
     ("Il Grande Oz", 11, ["oz", "head", "throne"]),
     ("La Strega dell'Ovest", 12, ["wicked", "witch", "monkeys"]),
-    ("La liberazione", 13, ["reunited", "rescue", "tinman"]),
-    ("Le scimmie alate", 14, ["winged", "monkeys"]),
+    ("Il potere dell'acqua", 13, ["witch", "water", "dorothy"]),
     ("L'uomo dietro la tenda", 15, ["humbug", "oz", "curtain"]),
     ("Il cervello e il cuore", 16, ["brains", "heart", "wizard"]),
     ("La mongolfiera", 17, ["balloon", "oz"]),
     ("In cerca di Glinda", 21, ["glinda", "south", "journey"]),
     ("Le scarpette d'argento", 23, ["glinda", "shoes", "slippers"]),
     ("Il ritorno a casa", 24, ["home", "kansas", "dorothy"]),
-]
+    ("I desideri degli amici", 24, ["dorothy", "scarecrow", "lion"])
+
 
 class TagReader(HTMLParser):
     def __init__(self):
@@ -368,7 +365,7 @@ def board(out, assets, paragraphs, seconds):
     card(d,(46,225),"PROMESSA INIZIALE","Una bambina vola dentro una casa. Quando atterra, scopre che anche il coraggio può sembrare invisibile.",608)
     card(d,(685,225),"PERCHÉ QUESTO LIBRO","Fantasia riconoscibile, amicizia e ricerca di sé; immagini originali con identità cromatica del 1900.",617)
     card(d,(46,416),"STILE E REGIA","Illustrazioni originali, immagini integre, stacchi motivati e movimenti minimi. Nessun collage o volto tagliato.",608)
-    card(d,(685,416),"PACCHETTO EDITORIALE","MP4, copertina, 24 scene, musica originale, 4 post social, fonti e scheda testuale.",617)
+    card(d,(685,416),"PACCHETTO EDITORIALE","MP4, copertina, scene narrative distinte, musica originale, 4 post social, fonti e scheda testuale.",617)
     d.text((53,630),"STORYBOARD — SELEZIONE VISIVA",font=font(31,True),fill=(11,37,54))
     iw,ih=270,265
     for j,item in enumerate(assets[:12]):
@@ -485,6 +482,11 @@ def main():
     # The lightweight Android ZIP contains only the complete MP4.
     with zipfile.ZipFile(out/"VIDEO_SOLO_MP4.zip","w",compression=zipfile.ZIP_STORED) as zipout:
         zipout.write(target,target.name)
+    # Keep compact final deliveries, not temporary per-shot encodes and boards.
+    shutil.rmtree(out/"segments", ignore_errors=True)
+    shutil.rmtree(out/"frames", ignore_errors=True)
+    (out/"VIDEO_SENZA_AUDIO.mp4").unlink(missing_ok=True)
+    (out/"segments.txt").unlink(missing_ok=True)
     status={"status":"rendered_needs_review", "video":target.name,
             "duration_voice_seconds":seconds,"scenes":len(assets),
             "source":SOURCE,"frame_images":"intact_original_1900_illustrations",
