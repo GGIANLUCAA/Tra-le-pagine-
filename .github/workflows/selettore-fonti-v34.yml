@@ -1,0 +1,125 @@
+name: "Tra le Pagine - Selettore fonti V34"
+on:
+  push:
+    branches: ["feature/selettore-fonti-v34-20261026"]
+    paths:
+      - "src/source_selector_v34.py"
+      - "tests/test_source_selector_v34.py"
+      - ".github/workflows/selettore-fonti-v34.yml"
+      - "config/source_selector_v34_demo.json"
+  pull_request:
+    paths:
+      - "src/source_selector_v34.py"
+      - "tests/test_source_selector_v34.py"
+      - ".github/workflows/selettore-fonti-v34.yml"
+      - "config/source_selector_v34_demo.json"
+  workflow_dispatch:
+    inputs:
+      example:
+        description: "Esempio da analizzare, nessun video viene creato"
+        type: choice
+        required: true
+        default: libri
+        options: [libri, controluce]
+      mode:
+        description: "plan: senza API; discover: una sola ricerca mirata"
+        type: choice
+        required: true
+        default: plan
+        options: [plan, discover]
+      scene_id:
+        description: "Solo discover: scena ammessa per stock (es. broll_citta)"
+        type: string
+        required: false
+        default: broll_citta
+      provider:
+        description: "Provider della singola ricerca"
+        type: choice
+        required: true
+        default: openverse
+        options: [openverse, pixabay]
+      query:
+        description: "Solo discover: termini dell'unica ricerca"
+        type: string
+        required: false
+        default: city skyline night
+      limit:
+        description: "Candidati 1-5"
+        type: number
+        required: true
+        default: 3
+permissions:
+  contents: read
+jobs:
+  selector-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test offline e nessuna chiamata automatica
+        run: |
+          python -m unittest discover -s tests -p 'test_source_selector_v34.py' -v
+          python -m unittest discover -s tests -p 'test_media_source_priority_v33.py' -v
+          python -m unittest discover -s tests -p 'test_free_sources_bridge_v1.py' -v
+          python -m unittest discover -s tests -p 'test_studio_ibrido_v6.py' -v
+      - name: Crea due schede reali da aprire su Android senza API
+        run: |
+          python src/source_selector_v34.py --mode plan --brief config/image_pipeline_v1_demo.json --out output/v34_libri
+          python src/source_selector_v34.py --mode plan --brief config/source_selector_v34_demo.json --out output/v34_controluce
+      - name: Consegna il provino del selettore in HTML e JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: DEMO_SELETTORE_FONTI_V34
+          path: output/v34_*/
+          if-no-files-found: error
+          retention-days: 14
+  source-plan:
+    needs: selector-tests
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      PIXABAY: ${{ secrets.PIXABAY }}
+      PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+      SELECTOR_MODE: ${{ inputs.mode }}
+      SELECTOR_EXAMPLE: ${{ inputs.example }}
+      SELECTOR_SCENE: ${{ inputs.scene_id }}
+      SELECTOR_PROVIDER: ${{ inputs.provider }}
+      SELECTOR_QUERY: ${{ inputs.query }}
+      SELECTOR_LIMIT: ${{ inputs.limit }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Prepara percorso scenico, budget zero
+        shell: bash
+        run: |
+          if [[ "$SELECTOR_EXAMPLE" == "libri" ]]; then
+            BRIEF=config/image_pipeline_v1_demo.json
+          elif [[ "$SELECTOR_EXAMPLE" == "controluce" ]]; then
+            BRIEF=config/source_selector_v34_demo.json
+          else
+            echo "Esempio non riconosciuto"; exit 2
+          fi
+          if [[ "$SELECTOR_MODE" == "plan" ]]; then
+            python src/source_selector_v34.py --mode plan --brief "$BRIEF" --out output/selettore_v34
+          elif [[ "$SELECTOR_MODE" == "discover" ]]; then
+            python src/source_selector_v34.py --mode discover --brief "$BRIEF" \
+              --scene "$SELECTOR_SCENE" --provider "$SELECTOR_PROVIDER" \
+              --query "$SELECTOR_QUERY" --limit "$SELECTOR_LIMIT" \
+              --out output/selettore_v34
+          else
+            echo "Modalita non riconosciuta"; exit 2
+          fi
+      - name: Report V34 e scheda Android (senza file multimediali)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SELETTORE_FONTI_V34_${{ github.run_id }}
+          path: output/selettore_v34/
+          if-no-files-found: warn
+          retention-days: 14

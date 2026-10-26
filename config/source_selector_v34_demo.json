@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "title": "Prova fonti automatiche per Controluce",
+  "format": "controluce",
+  "scenes": [
+    {
+      "id": "documento",
+      "need": "documentary_evidence",
+      "description": "Fotografia del documento originale citato nella narrazione, non una ricostruzione inventata.",
+      "narration_anchor": "Il documento originale."
+    },
+    {
+      "id": "broll_citta",
+      "need": "documentary_broll",
+      "description": "Una ripresa generica di una città di notte, senza attribuirla a un evento storico specifico.",
+      "narration_anchor": "La città di notte.",
+      "search_query": "city skyline night"
+    }
+  ]
+}

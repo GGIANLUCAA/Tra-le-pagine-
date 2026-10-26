@@ -40,6 +40,14 @@ AI Horde solo nel percorso sperimentale esplicito. Registrare asset, licenze,
 revisioni e fallback nel dossier. Mostrare queste opzioni soltanto se l'utente
 vuole cambiare impostazioni o serve un'autorizzazione reale.
 
+## Selezione fonti senza menu aggiuntivi
+
+Le priorita V33 restano preimpostate. Dopo la definizione delle scene usare il
+selettore V34 (`src/source_selector_v34.py`, istruzioni nella guida V34)
+per preparare percorso fonte/riuso/creazione senza far scegliere ogni provider
+all'utente. Il test manuale Pixabay/Openverse non e generazione automatica di
+un video, e non sostituisce approvazioni o verifiche dei diritti.
+
 ## Regole di dialogo
 
 - Se la richiesta iniziale contiene già l'idea, il numero di video, il genere o altre
