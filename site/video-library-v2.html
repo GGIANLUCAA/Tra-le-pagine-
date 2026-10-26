@@ -150,6 +150,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
  <nav class="editorial-tabs" id="editorialTabs" aria-label="Sezioni della scheda video">
   <button class="active" data-ed-tab="social" type="button">✎ Post social</button>
   <button data-ed-tab="production" type="button">⚙ Regia e ricetta</button>
+   <button data-ed-tab="research" type="button">◈ Ricerca e libro</button>
   <button data-ed-tab="credits" type="button">♬ Crediti e fonti</button>
   <button data-ed-tab="package" type="button">↓ Pacchetto ZIP</button>
    <button data-ed-tab="boards" type="button">▣ Schede grafiche</button>
@@ -185,6 +186,21 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
    <label class="ed-field">Passaggi e workflow<textarea name="productionSteps" rows="5" maxlength="10000" placeholder="Strumenti, comandi, scene, tempi, correzioni, esportazione"></textarea></label>
    <label class="ed-field">Informazioni tecniche supplementari<textarea name="technicalNotes" rows="4" maxlength="10000" placeholder="Codec, formato, FPS, audio, master, versioni…"></textarea></label>
    <label class="ed-field">Note storiche e di lavorazione già salvate<textarea name="legacyNotes" rows="4" maxlength="25000" placeholder="Note provenienti dal precedente Studio, versioni, osservazioni…"></textarea></label>
+  </section>
+  <section data-ed-panel="research" hidden>
+   <p class="ed-guidance">Questi campi registrano da dove arrivano le informazioni. Se un vero PROJECT_V13.json è allegato al dossier, le informazioni disponibili vengono riutilizzate. Nessuna verifica è automatica.</p>
+   <div class="editorial-columns">
+    <label>Autore del libro<input name="bookAuthor" maxlength="1600" placeholder="Es. Lewis Carroll"></label>
+    <label>Prima pubblicazione<input name="publicationYear" maxlength="1600" placeholder="Es. 1865"></label>
+    <label>Serie<input name="seriesTitle" maxlength="1600" placeholder="Es. Classici che parlano ancora"></label>
+    <label>Pubblico previsto<input name="targetAudience" maxlength="1600"></label>
+   </div>
+   <label class="ed-field">Perché raccontare questo libro<textarea name="selectionReason" rows="4" maxlength="25000"></textarea></label>
+   <label class="ed-field">Temi e interpretazione<textarea name="narrativeThemes" rows="3" maxlength="25000"></textarea></label>
+   <label class="ed-field">Stile visivo e regia<textarea name="visualMix" rows="4" maxlength="25000"></textarea></label>
+   <label class="ed-field">Registro fonti · URL, dato verificato, data, controllo effettivo<textarea name="sourceEvidence" rows="7" maxlength="25000" placeholder="Nessun dato viene verificato dall'impaginatore grafico"></textarea></label>
+   <label class="ed-field">Tabella asset · scena, tipo, URL, licenza, attribuzione, stato<textarea name="assetLedger" rows="8" maxlength="25000"></textarea></label>
+   <p class="ed-guidance">Se una fonte manca scrivi «Da verificare», mai «Verificato» sulla fiducia. Il salvataggio del dossier conserva le correzioni per questo video.</p>
   </section>
   <section data-ed-panel="credits" hidden>
    <p class="ed-guidance">I crediti della musica, delle opere e delle immagini non vengono inventati. Quando sono sconosciuti rimangono da verificare.</p>
@@ -224,6 +240,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
       <option value="concept">1 · Concept Board</option>
       <option value="production">2 · Production Board</option>
       <option value="scenes">3 · Scene Contact Sheet</option>
+      <option value="master">4 · Dossier illustrato completo</option>
      </select>
     </label>
     <button type="button" class="btn" id="edBoardRefresh">↻ Aggiorna</button>
@@ -573,7 +590,8 @@ function vbDraw(){
  const scenes=vbStoryLines(rec),files=edState.assets||[];
  let ctx,height=1600;
  if(kind==='scenes')height=Math.max(1100,800+Math.ceil(Math.max(1,scenes.length)/2)*194);
- ctx=vbBase(canvas,kind==='concept'?'CONCEPT BOARD':kind==='production'?'PRODUCTION BOARD':'SCENE CONTACT SHEET',height);
+ if(kind==='master')height=3650;
+ ctx=vbBase(canvas,kind==='concept'?'CONCEPT BOARD':kind==='production'?'PRODUCTION BOARD':kind==='master'?'DOSSIER ILLUSTRATO':'SCENE CONTACT SHEET',height);
  const name=rec.publicTitle||x.viewTitle||'Video senza titolo';
  if(kind==='concept'){
   vbCover(ctx,60,230,490,740);
@@ -594,6 +612,40 @@ function vbDraw(){
   vbCard(ctx,60,1125,1080,190,'Musica e voce',String(rec.musicAttribution||[rec.musicTitle,rec.musicAuthor,rec.musicLicense].filter(Boolean).join(' · ')||'Musica non verificata')+'\nVoce: '+String(rec.voiceCredits||'Non documentata'),{size:23,lines:4});
   vbCard(ctx,60,1335,1080,160,'Allegati effettivamente disponibili',files.length?files.slice(0,5).map(a=>a.name).join(' · '):'Nessun file di produzione allegato',{size:22,lines:3});
   vbText(ctx,'Informazioni di archivio: non equivalgono a controlli artistici e legali superati.',68,1530,1050,20,VB.muted,2);
+ }else if(kind==='master'){
+  vbCover(ctx,60,230,350,520);
+  vbCard(ctx,435,230,705,175,'Titolo e serie',name+'\n'+String(rec.seriesTitle||'Serie da definire'),{size:32,lines:3});
+  vbCard(ctx,435,430,705,135,'Autore e prima pubblicazione',
+   String(rec.bookAuthor||'Autore da registrare')+' · '+String(rec.publicationYear||'Data da verificare'),{size:26,lines:2});
+  vbCard(ctx,435,590,705,160,'Format / durata / lingua / voce',
+   String(rec.category||x.viewCategory||'Da definire')+' · '+dur(x.duration)+' · '+String(rec.language||'it')+
+   '\n'+String(rec.voiceCredits||'Voce non documentata'),{size:24,lines:3});
+  vbCard(ctx,60,775,1080,160,'Promessa iniziale / hook',rec.hook,{size:26,lines:3});
+  vbCard(ctx,60,952,1080,200,'Perché è stato scelto',rec.selectionReason||'Motivazione editoriale non registrata',{size:24,lines:4});
+  vbCard(ctx,60,1168,520,173,'Pubblico previsto',rec.targetAudience||'Da studiare',{size:24,lines:4});
+  vbCard(ctx,595,1168,545,173,'Temi e messaggio',rec.narrativeThemes||'Da documentare',{size:24,lines:4});
+  vbCard(ctx,60,1358,1080,183,'Regia e stile visivo',rec.visualMix||rec.directorNotes||'Da documentare',{size:24,lines:4});
+  vbText(ctx,'STORYBOARD NARRATIVO',69,1567,1050,32,VB.navy,1,1,true);
+  for(const [i,line] of scenes.slice(0,8).entries()){
+    const bx=60+(i%2)*550,by=1625+Math.floor(i/2)*167;
+    vbCard(ctx,bx,by,530,150,'SCENA '+String(i+1),line,{size:21,lines:3});
+  }
+  if(!scenes.length)vbCard(ctx,60,1630,1080,145,'Storyboard mancante','Nessuna scena reale risulta descritta nel dossier.',{size:24,lines:2});
+  if(scenes.length>8)vbText(ctx,'Altre '+(scenes.length-8)+' scene nel dossier integrale.',70,2312,1050,20,VB.muted,1);
+  vbCard(ctx,60,2330,1080,290,'Fonti della ricerca · stato dichiarato',
+   rec.sourceEvidence||rec.sources||'Non risultano evidenze bibliografiche associate a questa scheda.',{size:21,lines:7});
+  vbCard(ctx,60,2635,1080,270,'Asset, URL, licenze e verifiche',
+   rec.assetLedger||rec.imageSources||'Non risultano fonti e licenze associate ai singoli asset.',{size:20,lines:7});
+  vbCard(ctx,60,2920,1080,180,'Testi per i social',
+   rec.facebook||rec.shortDescription||'Testi social non disponibili',{size:21,lines:4});
+  vbCard(ctx,60,3117,1080,170,'Musica, voce e crediti',
+   'Musica: '+String(rec.musicTitle||rec.musicAttribution||'Da documentare')+
+   '\nLicenza: '+String(rec.musicLicense||'Da verificare')+
+   '\nVoce: '+String(rec.voiceCredits||'Da documentare'),{size:20,lines:3});
+  vbText(ctx,'ORIGINE DEI DATI: '+(edState.projectV13Attached?'PROJECT_V13 reale allegato + dati del dossier':'Solo dati del dossier · PROJECT_V13 non collegato'),
+      70,3320,1060,23,VB.ink,2);
+  vbText(ctx,'DIRITTI: '+vbLoadNote(rec),70,3380,1060,20,VB.muted,3);
+  vbText(ctx,'Fatti, proposte creative e verifiche non sono equivalenti. Controllare gli URL prima della pubblicazione.',70,3510,1060,21,VB.muted,3);
  }else{
   vbCover(ctx,60,226,300,340);
   vbCard(ctx,385,226,755,205,'Scene del video',name,{size:33,lines:3});
@@ -609,7 +661,7 @@ function vbDraw(){
   }
   vbText(ctx,'Anteprima delle descrizioni: nessun fotogramma del MP4 è stato ricostruito.',60,height-75,1080,20,VB.muted,2);
  }
- $('#edBoardInfo').textContent='Scheda creata localmente dal dossier: '+(kind==='scenes'?scenes.length+' scene descritte.':kind==='production'?files.length+' allegati elencati.':'anteprima concept.')+(vb.loading?' Copertina in caricamento…':'')+' Zero generazioni AI.';
+ $('#edBoardInfo').textContent='Scheda creata localmente dal dossier: '+(kind==='scenes'?scenes.length+' scene descritte.':kind==='master'?'fonti, storia e storyboard del dossier.':kind==='production'?files.length+' allegati elencati.':'anteprima concept.')+(vb.loading?' Copertina in caricamento…':'')+' Zero generazioni AI.';
 }
 async function vbDownload(){
  if(!edState.record)return;
@@ -625,8 +677,8 @@ async function vbDownload(){
 }
 
 /* Editorial per-video dossiers and social packages, all stored by original filename. */
-const edState={item:null,record:null,generated:true,missing:[],dirty:false,assets:[],metadata:null};
-const edFieldNames=['edition','reprints','masterRef','musicAttribution','legacyNotes','publicTitle','shortDescription','category','project','language','hook','hashtags','facebook','instagram','tiktok','youtube','musicTitle','musicAuthor','musicLicense','musicLink','imageCredits','imageSources','voiceCredits','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes','tags','rightsStatus','publicationStatus'];
+const edState={item:null,record:null,generated:true,missing:[],dirty:false,assets:[],metadata:null,projectV13Attached:false};
+const edFieldNames=['bookAuthor','publicationYear','seriesTitle','selectionReason','targetAudience','narrativeThemes','visualMix','sourceEvidence','assetLedger','edition','reprints','masterRef','musicAttribution','legacyNotes','publicTitle','shortDescription','category','project','language','hook','hashtags','facebook','instagram','tiktok','youtube','musicTitle','musicAuthor','musicLicense','musicLink','imageCredits','imageSources','voiceCredits','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes','tags','rightsStatus','publicationStatus'];
 function editorialFieldsToForm(record){
  const f=$('#editorialForm');for(const name of edFieldNames){const el=f.elements.namedItem(name);if(el)el.value=record[name]??''}
  edState.dirty=false;
@@ -644,7 +696,7 @@ function edActivateTab(key){
 }
 async function openEditorial(x){
  if(!g.admin){$('#adminDialog').showModal();return}
- edState.item=x;edState.record=null;edState.missing=[];edState.dirty=false;edState.assets=[];edState.metadata=null;vb.cover=null;vb.coverKey='';
+ edState.item=x;edState.record=null;edState.missing=[];edState.dirty=false;edState.assets=[];edState.metadata=null;edState.projectV13Attached=false;vb.cover=null;vb.coverKey='';
  $('#editorialTitle').textContent=x.viewTitle;
  $('#editorialMeta').textContent=x.viewCategory+' · '+dur(x.duration)+' · '+(x.available===false?'☁ Solo ChatGPT':'▶ MP4 disponibile')+' · '+(x.gptCreatedAt?'Creato '+fmtDate(x.gptCreatedAt):'Data creazione sconosciuta');
  edSetInfo('Caricamento del fascicolo e delle informazioni salvate…');
@@ -655,7 +707,7 @@ async function openEditorial(x){
  try{
   const r=await fetch('/api/editorial?key='+encodeURIComponent(x.key),{headers:{'Authorization':'Bearer '+g.token},cache:'no-store'});
   if(!r.ok)throw Error('Impossibile leggere il dossier ('+r.status+')');
-  const data=await r.json();edState.record=data.record;edState.generated=data.generated;edState.missing=data.missing||[];edState.assets=data.assets||[];edState.metadata=data.metadata||null;vbCoverLoad(x);
+  const data=await r.json();edState.record=data.record;edState.generated=data.generated;edState.missing=data.missing||[];edState.assets=data.assets||[];edState.metadata=data.metadata||null;edState.projectV13Attached=!!data.projectV13Attached;vbCoverLoad(x);
   const node=$('#edAssetList');node.replaceChildren();
   if(data.assets?.length){
     for(const item of data.assets){

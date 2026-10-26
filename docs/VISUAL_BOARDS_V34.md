@@ -64,3 +64,47 @@ Questa integrazione non crea immagini nuove, non sincronizza fotogrammi del MP4 
 
 ### Verifica
 `tests/video-library-boards-v34-ui.test.cjs` valida tre layout, il testo dello storyboard, il rispetto dei diritti non verificati, il download PNG e l'assenza di nuove chiamate API. `.github/workflows/video-library-editorial-test.yml` include la verifica del sito.
+
+
+## V35 · Dossier ricco, con provenienza documentata (26 ottobre 2026)
+Le infografiche precedenti di *Alice* e *Il piccolo principe* erano composizioni editoriali elaborate dall'AI, **non database originali verificati**. Le etichette "verificato" e le licenze presentate nelle immagini precedenti non dimostrano di per sé un controllo reale.
+
+**Distinguere sempre quattro origini:**
+1. **Fatto bibliografico**: autore, anno, prima edizione, personaggi e svolgimento; richiede URL consultabile e riscontro effettuato.
+2. **Proposta editoriale**: hook, durata, storyboard, regia, pubblico, promessa iniziale; è una scelta creativa, non un fatto ricavato dalla fonte.
+3. **Asset specifico**: immagine usata, file, URL, licenza, attribuzione richiesta e stato di verifica. Ogni asset ha una riga distinta; la fonte del libro non autorizza automaticamente le sue illustrazioni.
+4. **Master effettivo**: durata, codec, voce, scene renderizzate, link e controlli tecnici vengono da strumenti o file reali, non dallo storyboard prospettico.
+
+### Record dati
+I nuovi brief `PROJECT_V13.json` possono includere, **senza creare un secondo progetto**:
+```json
+{
+  "bibliography": {
+    "author": "",
+    "publication_year": "",
+    "edition_reference": "",
+    "rights_notes": ""
+  },
+  "editorial_metadata": {
+    "series": "",
+    "themes": "",
+    "genre": "",
+    "narration_style": ""
+  }
+}
+```
+Rimangono anche `editorial_plan.sources` (reference, finding, verification), `editorial_plan.subject_insight`, `editorial_plan.mix_reason`, `business.audience`, `scenes`, `assets` e `editorial_plan.media_sourcing.decisions`.
+
+Video Library Studio ha ora una sezione **◈ Ricerca e libro** e la quarta tavola **4 · Dossier illustrato completo**. Un **vero** `PROJECT_V13.json` allegato come `production/files/<video_codificato>/PROJECT_V13.json` viene letto solo nella sezione privata, se pesa al massimo 250 kB: vengono importati i campi disponibili; le correzioni già presenti nel dossier prevalgono. Se il file non è collegato compare la dicitura di origine **"Solo dati del dossier"**, senza pretendere il recupero automatico.
+
+La quarta tavola riunisce autore, anno, serie, hook, ragione della scelta, temi, pubblico, format, durata, voce, regia, scene, fonti, registro asset, social, musica, crediti e stato dei diritti. Eventuali campi mancanti sono **Da completare**. Una tavola illustrata non è un archivio verificato, e la versione del sito resta una sintesi visiva: il dossier testuale conserva i dati integrali.
+
+### Verifiche bibliografiche esemplificative: da NON trapiantare a un altro video
+- **Alice**: Lewis Carroll, prima edizione 1865; vedi Morgan Library https://www.themorgan.org/printed-books/246978 e illustrazioni Tenniel al V&A https://www.vam.ac.uk/articles/alice-through-the-pages . I diritti delle singole riproduzioni e i termini dei fornitori devono essere controllati sul file effettivamente riutilizzato.
+- **Il piccolo principe**: pubblicato nel 1943; i disegni dell'autore non sono da dichiarare automaticamente di pubblico dominio in Francia. Il Syndicat national de l'édition indica **1 gennaio 2033** per l'ingresso nel pubblico dominio francese: https://www.sne.fr/editeur-et-auteur/duree-des-droits-dauteurs/ . Anche leggi e territori diversi vanno controllati prima dell'uso commerciale. La copertina generata da AI non è la prova di licenza delle illustrazioni originali.
+
+### Costi e sicurezza
+- **Zero chiamate extra AI** per generare le tavole: CSS/Canvas o Pillow da materiali e metadati già esistenti.
+- Nessuna duplicazione di MP4 e nessuna pubblicazione automatica.
+- Senza V13 allegato il sito **non può ricostruire retroattivamente** dati che non sono stati archiviati.
+- Non importare una fonte fittizia, non marcare "verificato" per sola presenza di URL.

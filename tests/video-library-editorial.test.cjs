@@ -57,6 +57,24 @@ const request=async(path,method='GET',data)=>{
  assert.equal(dossier.record.reprints,'3 copie');
  assert.equal(dossier.assets.length,1);
  console.log('PASS: auto dossier reuses historical production notes and original attachment');
+ const projectV13={schema:'video-project-v13',bibliography:{author:'Lewis Carroll',publication_year:'1865'},
+  editorial_metadata:{series:'Classici che parlano ancora',themes:'Fantasia e logica'},business:{audience:'Adulti e ragazzi'},
+  editorial_plan:{subject_insight:'Un classico di grande ricchezza visiva',mix_reason:'Illustrazioni narrative e movimenti delicati',
+  opening_promise:'Una domanda che cambia il mondo',sources:[
+   {reference:'https://www.themorgan.org/printed-books/246978',finding:'Prima edizione 1865',verification:'controlled_by_operator'}],
+  media_sourcing:{decisions:[{asset_id:'A1',source_reference:'https://example.org/fonte',
+     rights_review:'pending',visual_review:'pending'}]}},
+  assets:[{id:'A1',file:'alice-scene.jpg',source:'Archivio pubblico',rights:'Da verificare'}],
+  scenes:[{asset_id:'A1',description:'Alice guarda la tana',reason:'Introduzione'}]};
+ add('production/files/'+encodeURIComponent(video)+'/PROJECT_V13.json',JSON.stringify(projectV13));
+ const enriched=(await(await request('/api/editorial?key='+encodeURIComponent(video))).json());
+ assert.equal(enriched.projectV13Attached,true,'V13 attachment must be recognized');
+ assert.equal(enriched.record.bookAuthor,'Lewis Carroll');
+ assert.equal(enriched.record.publicationYear,'1865');
+ assert(enriched.record.sourceEvidence.includes('themorgan.org'),'A real recorded source must be imported');
+ assert(enriched.record.assetLedger.includes('pending'),'Rights must remain pending');
+ assert(enriched.record.storyboard.includes('panoramica'),'Historic owner storyboard must not be overwritten');
+ console.log('PASS V35: attached V13 enriches dossier, traces source and keeps unverified rights');
  const edit=await request('/api/editorial','POST',{key:video,data:{facebook:'Facebook definitivo con fonte verificata',musicTitle:'Titolo test',rightsStatus:'verificato',publicationStatus:'approvato'}});
  assert.equal(edit.status,200,'Editing failed '+await edit.text());
  const again=(await(await request('/api/editorial?key='+encodeURIComponent(video))).json()).record;

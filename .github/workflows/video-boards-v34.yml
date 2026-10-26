@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/video-boards-v34-zero-ai
+      - feature/v35-rich-boards-sourced-dossier
       - main
     paths:
       - src/video_boards_v34.py
