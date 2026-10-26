@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-26T07:31:00Z",
+  "updated": "2026-10-26T10:15:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -660,6 +660,65 @@
       "social_published": false,
       "external_video_library_import": "not_attempted_requires_supported file selection",
       "feedback": "Awaiting artistic review of the real MP4; no measured audience analytics"
+    },
+    {
+      "cycle_id": "20261026T1115+0100",
+      "created_at": "2026-10-26T10:15:00Z",
+      "artist": "Ivan Aivazovsky; Caspar David Friedrich; Arnold Böcklin",
+      "work": "The Sea Between Us",
+      "format": "artvision_collection",
+      "subtype": "cinema_v6_collection",
+      "baseline": "cinema_v6_identity_recreated_locally",
+      "reason_fallback": "Google Gacrux natural voice not verifiably available; fresh artwork image download blocked, reused verified original JPEGs for a new thematic collection.",
+      "status": "technical_pass_not_gold_master_rights_review_required",
+      "mp4_verified": true,
+      "duration_seconds": 66,
+      "size_bytes": 10454172,
+      "sha256_mp4": "a104b4fb4676c61e06d6bc9c4c881dbf012c619f0a93da6bfdea307a724d222e",
+      "execution_environment": "ChatGPT local FFmpeg/Pillow; not GitHub Actions",
+      "workflow_run_url": null,
+      "artifact_name": "ArtVision_20261026_1115_The_Sea_Between_Us_COMPLETE.zip (conversation attachment)",
+      "record": "docs/productions/2026-10-26-1115-the-sea-between-us.md",
+      "steps": {
+        "preflight": "manual research and source validation",
+        "render": "success",
+        "verify": "success: full decode, 66s, audio, frame samples",
+        "archive": "local ZIP CRC and MP4 hash pass"
+      },
+      "gold_master_approved": false,
+      "social_published": false,
+      "rights_release_status": "REVIEW_REQUIRED: Commons PD-Art jurisdictional restrictions; CC BY 4.0 recording attribution included; platform claim unchecked",
+      "postprocess": {
+        "source_reuse_disclosed": true,
+        "source_artworks_count": 3,
+        "shots": 9,
+        "video_codec": "H.264",
+        "audio_codec": "AAC",
+        "resolution": "1080x1920",
+        "fps": 24,
+        "full_decode": "pass",
+        "zip_crc": "pass",
+        "audio_mean_db": -18.4,
+        "audio_peak_db": -5.4,
+        "real_frame_checks": [
+          0,
+          1,
+          3,
+          5,
+          7,
+          19.8,
+          20.2,
+          41.8,
+          42.2,
+          55.8,
+          56.2,
+          65.5
+        ],
+        "no_ghosting": true,
+        "human_artistic_review_pending": true,
+        "external_video_library_import": "not_attempted",
+        "social_posts": "four distinct Italian posts included"
+      }
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
