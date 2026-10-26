@@ -40,3 +40,17 @@ Fonte unica machine-readable: `config/editorial_rules.json` alle chiavi `creativ
 Nei nuovi `PROJECT_V13.json` i campi dell'`editorial_plan` per durata/mix/tecniche restano motivati. Una nuova sezione facoltativa `narrative_design` raccoglie beat, esigenze delle immagini e motivazione del ritmo, senza imporre un numero di fotogrammi predefinito e senza attribuire valore di licenza a fonti ancora da verificare. I progetti vecchi non sono automaticamente certificati o riscritti.
 
 **Principio:** standardizzare il controllo della qualità, **non** il filmato.
+
+## Controllo operativo V38B — integrato nel preflight V13 (26 ottobre 2026)
+
+Il nuovo modulo offline `src/narrative_variation_v38.py` elabora `PROJECT_V13.json` senza API, video né costi. Il comando esistente `python src/video_director_v13.py check --project ...` restituisce anche un oggetto JSON `creative_review` ed eventuali messaggi `V38` nella lista `warnings`:
+
+- `VISUAL_NEEDS_NOT_PLANNED`: beat dichiarati, bisogni visivi non motivati.
+- `VISUAL_COUNT_NOT_MOTIVATED` e `RHYTHM_NOT_MOTIVATED`: più scene previste ma manca la ragione di quantità e ritmo.
+- `DUPLICATE_SHOT_WITHOUT_REASON`: due scene consecutive con stessi asset, descrizione e motivazione; annotare `reuse_reason` se il ritorno è davvero voluto, oppure correggere storyboard.
+- `REPEATED_CAMERA_UNEXPLAINED`: pattern di movimento uguale ripetuto in una sequenza priva di `camera_reason`; va giudicato artisticamente, non eliminato a priori.
+- `REFERENCE_TEMPLATE_RISK`: riferimento positivo usato dichiarando di volerne copiare i parametri, anziché le lezioni trasferibili.
+
+L'output espone **scene e asset osservati**, non obiettivi artistici. Un filmato con un'unica scena pertinente rimane legittimo, così come uno con molte immagini distinte. La stessa illustrazione può tornare per ragioni narrative reali, dichiarabili nel progetto. Tutte le segnalazioni sono advisory e non nuove quote o blocchi rigidi al render. Un check senza segnalazioni non certifica che il video sia bello, che le immagini rappresentino davvero il testo o che i diritti siano in regola.
+
+Test: `tests/test_narrative_variation_v38.py` e caso di integrazione in `tests/test_video_director_v13.py`. Il gate generale V13 sui diritti e sulle fonti resta invariato; master e ricette passate non sono modificati.

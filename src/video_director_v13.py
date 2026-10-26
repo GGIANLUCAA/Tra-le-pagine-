@@ -26,6 +26,11 @@ try:
 except ImportError:
     from media_source_priority_v33 import check as validate_media_sources
 
+try:
+    from .narrative_variation_v38 import inspect as inspect_narrative_variation
+except ImportError:
+    from narrative_variation_v38 import inspect as inspect_narrative_variation
+
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "config/video_formats_v13.json"
 READY = {"ready_with_assets", "ready_with_curated_plan", "ready_with_episode_config"}
@@ -216,6 +221,11 @@ def check(project_path):
                 blockers.append(f"Scena {n}: frase non trovata in ordine nel copione")
             else:
                 cursor = pos + len(anchor)
+    # V38: advisory review of scene variety and motivation, not an image quota.
+    creative_review = inspect_narrative_variation(project)
+    for finding in creative_review["findings"]:
+        location = (" scene " + ",".join(map(str, finding["scenes"]))) if finding["scenes"] else ""
+        warnings.append("V38 " + finding["code"] + location + ": " + finding["message"])
     reviews = project.get("reviews", {})
     for name in ("story", "visuals", "rights"):
         review = reviews.get(name, {}) if isinstance(reviews, dict) else {}
@@ -230,7 +240,8 @@ def check(project_path):
         warnings.append("Strategia da completare: pubblico, promessa, contributo originale e obiettivo")
     return {"schema": "video-preflight-v13", "ready": not blockers,
             "status": "blocked" if blockers else "ready_for_production", "blockers": blockers,
-            "warnings": warnings, "semantic_accuracy_certified": False,
+            "warnings": warnings, "creative_review": creative_review,
+            "semantic_accuracy_certified": False,
             "note": "Controllo strutturale; le revisioni sono dichiarazioni dell'agente, non visione automatica."}
 
 
