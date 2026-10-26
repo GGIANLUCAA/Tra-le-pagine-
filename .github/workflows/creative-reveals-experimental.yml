@@ -1,0 +1,68 @@
+name: Creative Reveals - Experimental Preview
+on:
+  workflow_dispatch:
+    inputs:
+      effect:
+        description: 'Suggerimento del regista / tecnica esplicita'
+        type: choice
+        required: true
+        default: auto
+        options: [auto, none, ink, watercolor, line_art]
+      format:
+        description: 'Formato di riferimento, non cambia i renderer'
+        type: choice
+        required: true
+        default: libri
+        options: [libri, artvision_cinema, artvision_critico, controluce]
+      mood:
+        description: 'Atmosfera proposta'
+        type: choice
+        required: true
+        default: fiaba
+        options: [fiaba, mistero, illustrato, neutro]
+      duration:
+        description: 'Durata prova in secondi, massimo 15'
+        type: string
+        required: true
+        default: '3'
+  pull_request:
+    paths:
+      - src/creative_reveals_experimental.py
+      - tests/test_creative_reveals_experimental.py
+      - .github/workflows/creative-reveals-experimental.yml
+permissions:
+  contents: read
+jobs:
+  technical-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'numpy>=1.24,<3' 'pillow>=10,<13' 'opencv-python-headless>=4.8,<5'
+      - name: Tests
+        run: python -m unittest discover -s tests -p 'test_creative_reveals_experimental.py' -v
+      - name: Isolated preview, no publication
+        env:
+          EFFECT: ${{ inputs.effect || 'auto' }}
+          FORMAT: ${{ inputs.format || 'libri' }}
+          MOOD: ${{ inputs.mood || 'fiaba' }}
+          DURATION: ${{ inputs.duration || '3' }}
+        run: |
+          python src/creative_reveals_experimental.py \
+            --out output/creative-reveals/PROVA_DIRETTORE_3S.mp4 \
+            --effect "$EFFECT" --format "$FORMAT" --mood "$MOOD" --duration "$DURATION"
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 output/creative-reveals/PROVA_DIRETTORE_3S.mp4
+      - name: Download private demo artifact (not published)
+        uses: actions/upload-artifact@v4
+        with:
+          name: CREATIVE_REVEALS_PROVA_3S
+          path: output/creative-reveals/
+          if-no-files-found: error
+          retention-days: 7
