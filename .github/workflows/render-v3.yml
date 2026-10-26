@@ -131,6 +131,10 @@ jobs:
               json.dumps(report,indent=2,ensure_ascii=False),encoding="utf-8")
           print("Master V5:",report["technical_check"],"LUFS",report["loudness_lufs"])
           PY
+      - name: "Download sicuro V36 - video verificato e ZIP solo MP4"
+        if: steps.scegli.outputs.ready == 'true' && success()
+        run: |
+          python src/video_download_fallback_v36.py --source-dir output --output-dir output/DOWNLOAD_FACILE
       - name: "Consegna il pacchetto (non pubblicato)"
         if: steps.scegli.outputs.ready == 'true' && success()
         uses: actions/upload-artifact@v4
