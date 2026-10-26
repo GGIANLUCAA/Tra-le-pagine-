@@ -1,0 +1,21 @@
+# ArtVision — Isle of the Dead (Böcklin, first version 1880)
+
+- Cycle ID: `20261026T0515+0100`
+- Video ID: `artvision-20261026-0515-bocklin-isle-of-the-dead`
+- Format: `artvision_cinema` (single artwork; no voice)
+- Reference: Cinema V6 graphic signature recreated, original Van Gogh V6 renderer **not invoked**
+- Original authentic painting: first version (1880), Kunstmuseum Basel, from the previously archived V31 `Visions of Symbolism` **original-source** artifact, not an MP4.
+- Music: Kevin MacLeod, `Echoes of Time`, authentic recording, CC BY 4.0 with required credit.
+- Duration measured: **68.500 s**; 1080×1920, 24 fps, H.264/AAC.
+- MP4 SHA256: `cff42dc1e74cb38623ba1a695c2803372d8664def6c7b75d103f5d7674bb7612`
+- Size: 8,465,295 bytes.
+- QA: ffprobe **pass**, ffmpeg full decode **pass**, visual sample of 0/1/3/5/7s + transitions and finale **reviewed**, ZIP CRC **pass**, cover **present**.
+- Delivery: ChatGPT conversation attachment `ArtVision_20261026_0515_Isle_of_the_Dead/VIDEO_MASTER.mp4` and `ArtVision_20261026_0515_Isle_of_the_Dead_PACCHETTO_COMPLETO.zip`; **not uploaded to GitHub media storage**.
+- Included: cover, four Italian platform posts, audience V32, media sourcing V33, sources/rights, music V20, V13 recipe, QA, build script, verified original painting and audio.
+- Three compared subjects: Böcklin *Isle of the Dead*, Redon *The Cyclops*, Hiroshige *Sudden Shower*. Social trend metrics unavailable; no invented popularity.
+- Primary source: https://www.metmuseum.org/art/collection/search/435683 (the Met has second version; first in Basel).
+- Artwork and license: https://commons.wikimedia.org/wiki/File:Arnold_B%C3%B6cklin_-_Die_Toteninsel_I_(Basel,_Kunstmuseum).jpg (PD-Art; photographer credit Kunstmuseum Basel / Martin P. Bühler).
+- Music license: https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300029 and https://creativecommons.org/licenses/by/4.0/.
+- Reason for Cinema fallback: new Google Gacrux narration and its cost/quota were **not verified accessible**; no synthetic substitute or mislabeled Critico.
+- Status: `technical_pass_not_gold_master_rights_review_required`. Human artistic approval, final territorial photographic rights review, platform music claim check pending.
+- No social publishing, no Video Library import, no paid API, no prior master overwritten.
