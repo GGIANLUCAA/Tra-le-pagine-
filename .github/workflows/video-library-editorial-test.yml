@@ -19,6 +19,27 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+      - name: Catalog Denslow illustration labels without downloading images
+        if: github.event_name == 'pull_request'
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from urllib.request import urlopen,Request
+          from urllib.parse import urljoin
+          url="https://www.gutenberg.org/cache/epub/43936/pg43936-images.html"
+          class Pictures(HTMLParser):
+              def __init__(self):
+                  super().__init__();self.images=[]
+              def handle_starttag(self,tag,attrs):
+                  if tag!="img":return
+                  a=dict(attrs);src=a.get("src","")
+                  if "images/" in src and src.split("?")[0].lower().endswith((".jpg",".jpeg",".png")):
+                      self.images.append((len(self.images),a.get("alt",""),urljoin(url,src).rsplit("/",1)[-1]))
+          p=Pictures();p.feed(urlopen(Request(url,headers={"User-Agent":"TraLePagine-SourceAudit/1.0"}),timeout=60).read().decode("utf8","replace"))
+          for i,alt,name in p.images:
+              print(f"OZIMAGE|{i:03d}|{name}|{alt}")
+          print("OZ-CATALOG-COUNT",len(p.images))
+          PY
       - name: Validate Oz source code without provider use
         if: github.event_name == 'pull_request'
         run: |
