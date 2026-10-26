@@ -266,12 +266,27 @@ def video_assets(out, assets, voice_seconds):
     make_frame(assets[0],out/"images"/assets[0]["file"],cover,cover=True)
     return frames,cover
 
-def render(out, frames, paragraphs, duration):
-    # A paragraph is a narrative beat. Times follow the real spoken duration,
-    # with proportional estimates explicitly documented, not passed off as ASR.
+def render(out, frames, paragraphs, duration, timed=None):
+    # One paragraph = one story beat. Prefer timecodes from real narrated audio.
+    # If Whisper cannot run, preserve a clearly labelled approximate fallback.
     lengths=[max(1,len(re.findall(r"\w+",p))) for p in paragraphs]
     total=sum(lengths)
     times=[duration*n/total for n in lengths]
+    if timed:
+        from gemini_voice import sentences
+        per_paragraph=[len(sentences(p)) for p in paragraphs]
+        if sum(per_paragraph)==len(timed):
+            boundaries=[0.]
+            idx=0
+            for n in per_paragraph[:-1]:
+                idx+=n
+                between=(float(timed[idx-1][2])+float(timed[idx][1]))/2
+                boundaries.append(max(boundaries[-1],min(duration,between)))
+            boundaries.append(duration)
+            aligned=[b-a for a,b in zip(boundaries,boundaries[1:])]
+            if len(aligned)==len(paragraphs) and min(aligned)>0.3:
+                times=aligned
+                print("Using phrase-alignment boundaries for",len(times),"story beats",flush=True)
     clips=out/"segments";clips.mkdir()
     files=[]
     for i,sec in enumerate(times):
@@ -468,11 +483,11 @@ def main():
     print("Valid original images acquired; generating approved Gacrux voice.",flush=True)
     sys.path.insert(0,str(ROOT/"src"))
     from gemini_voice import synthesize, SAMPLE_RATE
-    audio,_=synthesize(script,out)
+    audio,timed=synthesize(script,out)
     seconds=len(audio)/SAMPLE_RATE
     if seconds<90 or seconds>480:
         raise RuntimeError("Unexpected real speech length: %.1f"%seconds)
-    target,times=render(out,frames,paragraphs,seconds)
+    target,times=render(out,frames,paragraphs,seconds,timed)
     posts=public_texts(out)
     board(out,assets,paragraphs,seconds)
     dossier(out,assets,paragraphs,times,seconds,posts)
@@ -487,11 +502,14 @@ def main():
     shutil.rmtree(out/"frames", ignore_errors=True)
     (out/"VIDEO_SENZA_AUDIO.mp4").unlink(missing_ok=True)
     (out/"segments.txt").unlink(missing_ok=True)
+    alignment_file=out/"ALLINEAMENTO_VOCE.json"
+    alignment_info=json.loads(alignment_file.read_text()) if alignment_file.is_file() else {}
     status={"status":"rendered_needs_review", "video":target.name,
             "duration_voice_seconds":seconds,"scenes":len(assets),
             "source":SOURCE,"frame_images":"intact_original_1900_illustrations",
             "narration":"Google Gemini Gacrux",
-            "timing":"paragraph_duration_estimated_from_spoken_word_ratios",
+            "timing":alignment_info.get("method","estimated"),
+            "timing_requires_manual_review":True,
             "commercial_clearance":"not_finally_certified",
             "site_uploaded":False,"social_published":False}
     write_json(out/"STATUS.json",status)
