@@ -73,6 +73,23 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
 .social-actions{display:flex;gap:8px;flex-wrap:wrap}
 .social-actions button{min-height:44px}
 
+
+/* Social options V2 */
+.social-filters{height:64px;display:flex;gap:8px;align-items:center;padding:8px 12px;overflow-x:auto}
+.social-filters select{max-width:180px;font-size:14px}
+#socialViewer #socialFeed{height:calc(100dvh - 128px)}
+#socialViewer.social-clean .social-top,#socialViewer.social-clean .social-filters,#socialViewer.social-clean .social-caption{display:none}
+#socialViewer.social-clean #socialFeed{height:100dvh}
+#socialViewer.social-clean .social-slide{padding:0;gap:0}
+#socialViewer.social-clean .social-screen{max-width:none}
+#socialRestore{display:none;position:absolute;right:12px;top:max(12px,env(safe-area-inset-top));z-index:3;background:#101827b8;min-height:44px}
+#socialViewer.social-clean #socialRestore{display:block}
+#socialOptions{width:min(94vw,520px)}
+#socialOptions .modalbody{display:grid;gap:10px}
+#socialOptions button,#socialOptions select{min-height:44px}
+#socialFeedback{min-height:24px;color:#dfbc8b;font-size:14px}
+.social-empty{padding:32px;text-align:center}
+
 </style>
 </head>
 <body>
@@ -848,6 +865,89 @@ $('#socialFeed').addEventListener('keydown',e=>{
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden)socialVideo.pause()});
 $('#socialOpen').onclick=socialOpen;
+
+
+/* Social options V2 */
+const socialPrefs={local:{},category:g.category||'Tutti',favoriteOnly:false,scope:'current',current:[],clean:false};
+try{socialPrefs.local=JSON.parse(localStorage.getItem('vls.social.favorites')||'{}')||{}}catch{}
+const socialTop=$('#socialViewer .social-top'),socialFilters=document.createElement('div');
+socialFilters.className='social-filters';
+socialFilters.innerHTML='<select id="socialScope" aria-label="Video da scorrere"><option value="current">Risultati della ricerca</option><option value="all">Tutto l’archivio</option></select><select id="socialCategory" aria-label="Categoria da scorrere"></select><button class="ghost" id="socialFavorites" aria-pressed="false">♡ Solo preferiti</button><button class="ghost" id="socialClean">Solo video</button>';
+socialTop.after(socialFilters);
+const restore=document.createElement('button');restore.id='socialRestore';restore.className='ghost';restore.textContent='☰ Comandi';restore.onclick=()=>socialClean(false);$('#socialViewer').append(restore);
+const options=document.createElement('dialog');options.id='socialOptions';options.setAttribute('aria-label','Opzioni del video');
+options.innerHTML='<div class="modalhead"><h2 id="socialOptionsTitle">Opzioni video</h2><button class="ghost" id="socialOptionsClose">✕ Chiudi</button></div><div class="modalbody"><button class="btn" id="socialFavAction"></button><p class="notice" id="socialFavoriteNote"></p><button class="btn" id="socialCopy">Copia URL del video</button><button class="btn" id="socialCopyTitle">Copia titolo</button><button class="btn" id="socialShare">Condividi…</button><button class="btn" id="socialDownload">Scarica originale</button><button class="btn" id="socialDossier">Scheda e materiali</button><label class="field">Sposta nella categoria<select id="socialMoveCategory"></select></label><button class="btn" id="socialMoveSave">Salva categoria</button><p class="notice">Cambia la categoria della scheda senza spostare o duplicare il file originale. Richiede l’accesso Studio.</p><p id="socialFeedback" role="status"></p></div>';
+document.body.append(options);
+let socialActionItem=null;
+function socialIsFavorite(x){return g.admin?!!x.favorite:(Object.hasOwn(socialPrefs.local,x.key)?!!socialPrefs.local[x.key]:!!x.favorite)}
+function socialClean(on){socialPrefs.clean=on;$('#socialViewer').classList.toggle('social-clean',on);requestAnimationFrame(()=>{if(social.index>=0)$('#socialFeed').children[social.index]?.scrollIntoView({block:'start',behavior:'instant'})})}
+function socialRows(){return (socialPrefs.scope==='current'?socialPrefs.current:g.items.filter(x=>!x.hidden)).filter(x=>x.available!==false&&(socialPrefs.category==='Tutti'||x.viewCategory===socialPrefs.category)&&(!socialPrefs.favoriteOnly||socialIsFavorite(x)))}
+function socialRebuild(){
+ const keep=social.rows[social.index]?.key;social.observer?.disconnect();socialVideo.pause();
+ const rows=socialRows(),feed=$('#socialFeed');feed.replaceChildren();social.rows=rows;social.index=-1;
+ if(!rows.length){socialVideo.removeAttribute('src');socialVideo.load();const empty=document.createElement('p');empty.className='social-empty';empty.textContent='Nessun video con questi filtri. Disattiva “Solo preferiti”, cambia categoria o scegli “Tutto l’archivio”.';feed.append(empty);$('#socialPosition').textContent='0 video';return}
+ for(const [index,x] of rows.entries()){
+  const slide=document.createElement('article');slide.className='social-slide';slide.dataset.index=index;
+  const screen=document.createElement('div');screen.className='social-screen';
+  const caption=document.createElement('div');caption.className='social-caption';
+  const title=document.createElement('h3');title.textContent=x.viewTitle;
+  const hint=document.createElement('p');hint.textContent=x.viewCategory+' · Scorri ↑ prossimo · ↓ precedente';
+  const actions=document.createElement('div');actions.className='social-actions';
+  const add=(label,fn)=>{const b=document.createElement('button');b.type='button';b.className='ghost';b.textContent=label;b.onclick=fn;actions.append(b)};
+  add('↑',()=>socialMove(-1));add('↓',()=>socialMove(1));add(socialIsFavorite(x)?'♥ Preferito':'♡ Preferito',()=>socialOptionsOpen(x));
+  add('⋯ Opzioni',()=>socialOptionsOpen(x));
+  caption.append(title,hint,actions);slide.append(screen,caption);feed.append(slide);
+ }
+ const index=Math.max(0,rows.findIndex(x=>x.key===keep));socialActivate(index);
+ social.observer=new IntersectionObserver(entries=>{const best=entries.filter(e=>e.isIntersecting&&e.intersectionRatio>=.6).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(best)socialActivate(Number(best.target.dataset.index))},{root:feed,threshold:[.6]});
+ for(const slide of feed.children)social.observer.observe(slide);
+ feed.children[index].scrollIntoView({block:'start',behavior:'instant'});
+}
+const socialOpenOriginal=socialOpen;
+socialOpen=function(){
+ socialPrefs.current=filtered();socialPrefs.scope='current';socialPrefs.category='Tutti';
+ $('#socialScope').value='current';
+ const category=$('#socialCategory');category.replaceChildren(new Option('Tutte le categorie','Tutti'));
+ for(const c of [...new Set(g.items.map(x=>x.viewCategory))].sort())category.add(new Option(c,c));
+ category.value='Tutti';
+ socialOpenOriginal();if($('#socialViewer').open)socialRebuild();
+};
+$('#socialOpen').onclick=socialOpen;
+$('#socialScope').onchange=e=>{socialPrefs.scope=e.target.value;socialRebuild()};
+$('#socialCategory').onchange=e=>{socialPrefs.category=e.target.value;socialRebuild()};
+$('#socialFavorites').onclick=()=>{socialPrefs.favoriteOnly=!socialPrefs.favoriteOnly;$('#socialFavorites').setAttribute('aria-pressed',String(socialPrefs.favoriteOnly));$('#socialFavorites').textContent=socialPrefs.favoriteOnly?'♥ Solo preferiti: sì':'♡ Solo preferiti';socialRebuild()};
+$('#socialClean').onclick=()=>socialClean(true);
+$('#socialViewer').addEventListener('close',()=>socialClean(false));
+function socialOptionsOpen(x){
+ socialVideo.pause();socialActionItem=x;$('#socialOptionsTitle').textContent=x.viewTitle;
+ $('#socialFavAction').textContent=socialIsFavorite(x)?'♥ Rimuovi dai preferiti':'♡ Aggiungi ai preferiti';
+ $('#socialFavoriteNote').textContent=g.admin?'Preferiti salvati online nello Studio.':'Preferiti salvati su questo browser. Accedi allo Studio per usare quelli online.';
+ const select=$('#socialMoveCategory');select.replaceChildren();
+ for(const option of $('#editForm').elements.category.options)select.add(new Option(option.text,option.value));
+ select.value=x.viewCategory;select.disabled=!g.admin;$('#socialMoveSave').disabled=!g.admin;
+ $('#socialFeedback').textContent='';options.showModal();
+}
+$('#socialOptionsClose').onclick=()=>options.close();
+async function socialCopyText(value){try{await navigator.clipboard.writeText(value);$('#socialFeedback').textContent='Copiato negli appunti.'}catch{prompt('Copia questo testo',value)}}
+$('#socialCopy').onclick=()=>socialCopyText(shareURL(socialActionItem));
+$('#socialCopyTitle').onclick=()=>socialCopyText(socialActionItem.viewTitle);
+$('#socialShare').onclick=()=>share(socialActionItem);
+$('#socialDownload').onclick=()=>{location.href=fullURL(socialActionItem)};
+$('#socialDossier').onclick=()=>{const x=socialActionItem;options.close();details(x)};
+$('#socialFavAction').onclick=async()=>{
+ const x=socialActionItem,value=!socialIsFavorite(x),b=$('#socialFavAction');b.disabled=true;
+ try{
+  if(g.admin){if(!await manage(x,{favorite:value})){ $('#socialFeedback').textContent='Salvataggio non riuscito. Riprova.';return}}
+  else{const next={...socialPrefs.local,[x.key]:value};localStorage.setItem('vls.social.favorites',JSON.stringify(next));socialPrefs.local=next}
+  b.textContent=value?'♥ Rimuovi dai preferiti':'♡ Aggiungi ai preferiti';
+  $('#socialFeedback').textContent=g.admin?'Preferito aggiornato online.':'Preferito aggiornato su questo browser.';
+  socialRebuild();socialVideo.pause();
+ }catch{$('#socialFeedback').textContent='Impossibile salvare i preferiti su questo browser.'}finally{b.disabled=false}
+};
+$('#socialMoveSave').onclick=async()=>{
+ if(!g.admin)return;const b=$('#socialMoveSave');b.disabled=true;
+ try{if(await manage(socialActionItem,{category:$('#socialMoveCategory').value})){categories();$('#socialFeedback').textContent='Categoria salvata online.';socialRebuild();socialVideo.pause()}else $('#socialFeedback').textContent='Categoria non salvata. Riprova.'}finally{b.disabled=false}
+};
 
 const frag=location.hash.slice(1);if(frag.startsWith('manage=')){g.token=decodeURIComponent(frag.slice(7));localStorage.setItem('vlsAdmin',g.token);history.replaceState(null,'',location.pathname+location.search)}else{g.token=localStorage.getItem('vlsAdmin')||''}
 load(true);setInterval(()=>{if(!document.hidden)load(true)},180000);
