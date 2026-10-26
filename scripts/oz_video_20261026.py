@@ -128,7 +128,7 @@ CURATED_ORIGINALS = [
     "i218_edit.jpg",  # Oz goes up in the balloon
     "i264_edit.jpg",  # Dorothy travelling through the porcelain country
     "i296_edit.jpg",  # Glinda sees Dorothy
-    "i301_edit.jpg",  # Dorothy and Toto heading home
+    "i009_edit.jpg",  # Dorothy and Toto: their reunion in Kansas (opening motif returns)
     "i127-i128_combo.jpg",  # Group of companions: closing reflection
 ]
 
