@@ -17,6 +17,8 @@ jobs:
           mkdir -p source
           curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 15 --max-time 100 -A 'ArtVision-Research/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)' 'https://upload.wikimedia.org/wikipedia/commons/3/33/Van_Eyck_-_Arnolfini_Portrait.jpg' -o source/ARNOLFINI_ORIGINAL.jpg
           curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 15 --max-time 100 -A 'ArtVision-Research/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)' 'https://upload.wikimedia.org/wikipedia/commons/4/49/The_Descent_by_Kevin_MacLeod.ogg' -o source/THE_DESCENT_CC_BY_4.0.ogg
+          curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 15 --max-time 100 -A 'ArtVision-Research/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)' 'https://upload.wikimedia.org/wikipedia/commons/9/90/Erik_Satie_-_gymnopedies_-_la_1_ere._lent_et_douloureux.ogg' -o source/SATIE_GYMNOPEDIE1_ROBIN_ALCIATORE_PD.ogg
+          test "$(stat -c%s source/SATIE_GYMNOPEDIE1_ROBIN_ALCIATORE_PD.ogg)" -gt 1000000
           test "$(stat -c%s source/ARNOLFINI_ORIGINAL.jpg)" -gt 1000000
           test "$(stat -c%s source/THE_DESCENT_CC_BY_4.0.ogg)" -gt 1000000
           file source/*
