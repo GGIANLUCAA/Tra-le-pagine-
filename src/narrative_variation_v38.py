@@ -23,7 +23,8 @@ def inspect(project):
     Fields are deliberately optional for legacy recipes. A repeated image is
     not inherently bad: the same illustration can serve multiple distinct beats.
     """
-    design = (project.get("editorial_plan") or {}).get("narrative_design")
+    raw_plan = project.get("editorial_plan")
+    design = raw_plan.get("narrative_design") if isinstance(raw_plan, dict) else None
     scenes = project.get("scenes") or []
     if not isinstance(scenes, list):
         scenes = []
