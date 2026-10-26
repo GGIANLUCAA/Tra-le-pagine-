@@ -5,7 +5,7 @@ const fs=require('node:fs');
 const html=fs.readFileSync('site/video-library-v2.html','utf8');
 const key='TRA_LE_PAGINE_PRINCIPE_FELICE.mp4';
 const catalog={admin:true,items:[{key,name:key,available:true,size:12700000,cover:'/cover/test',title:'Il principe felice',description:'Una fiaba di Oscar Wilde',category:'Libri raccontati',project:'Tra le Pagine',duration:185,version:'final'}]};
-const record={key,schemaVersion:1,publicTitle:'Il principe felice',shortDescription:'La storia di una rondine e di una statua',project:'Tra le Pagine',category:'Libri raccontati',language:'it',hook:'Un principe che rinuncia a tutto',directorNotes:'Movimenti lenti e tagli narrativi',storyboard:'00:00 La statua sulla città\n00:15 La rondine si posa\n00:35 La sarta riceve il rubino',rightsStatus:'da_verificare',publicationStatus:'bozza',musicAttribution:'',imageSources:'',sources:'',voiceCredits:'Google Gacrux'};
+const record={key,schemaVersion:1,publicTitle:'Il principe felice',shortDescription:'La storia di una rondine e di una statua',project:'Tra le Pagine',category:'Libri raccontati',language:'it',hook:'Un principe che rinuncia a tutto',directorNotes:'Movimenti lenti e tagli narrativi',storyboard:'00:00 La statua sulla città\n00:15 La rondine si posa\n00:35 La sarta riceve il rubino',bookAuthor:'Oscar Wilde',publicationYear:'1888',seriesTitle:'Fiabe che restano',selectionReason:'Scelto per la forza narrativa',targetAudience:'Adulti e famiglie',narrativeThemes:'Solidarietà e sacrificio',visualMix:'Illustrazione originale e regia lenta',sourceEvidence:'https://www.gutenberg.org/ - Testo originale, revisione manuale da completare',assetLedger:'Scena 1 | Immagine originale | Diritti da verificare',rightsStatus:'da_verificare',publicationStatus:'bozza',musicAttribution:'',imageSources:'',sources:'',voiceCredits:'Google Gacrux'};
 let sent=0,drawn=[],downloads=[],errors=[];
 const vconsole=new VirtualConsole();vconsole.on('jsdomError',e=>errors.push(e.message));
 const dom=new JSDOM(html,{url:'https://video-library-studio.600led.workers.dev/',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vconsole,beforeParse(w){
@@ -27,7 +27,7 @@ const dom=new JSDOM(html,{url:'https://video-library-studio.600led.workers.dev/'
  w.fetch=async(url,options={})=>{
   const path=String(url);
   if(path.startsWith('/api/catalog'))return {ok:true,json:async()=>catalog};
-  if(path.startsWith('/api/editorial?'))return {ok:true,json:async()=>({ok:true,record,metadata:catalog.items[0],assets:[{name:'SCENA_01.jpg',size:50000}],generated:true,missing:['licenze da verificare']})};
+  if(path.startsWith('/api/editorial?'))return {ok:true,json:async()=>({ok:true,record,metadata:catalog.items[0],assets:[{name:'SCENA_01.jpg',size:50000}],projectV13Attached:true,generated:true,missing:['licenze da verificare']})};
   sent++;throw Error('Unexpected request '+path);
  };
 }});
@@ -46,6 +46,17 @@ const pause=()=>new Promise(done=>setTimeout(done,400));
  assert(drawn.some(x=>x.includes('Il principe felice')),'Existing title not shown');
  assert(drawn.some(x=>x.includes('Diritti da verificare')),'Unverified rights must not be approved');
  assert.equal(d.querySelector('#edBoardKind').value,'concept');
+ d.querySelector('[data-ed-tab="research"]').click();
+ assert.equal(d.querySelector('#editorialForm').elements.namedItem('bookAuthor').value,'Oscar Wilde','Research fields missing');
+ d.querySelector('[data-ed-tab="boards"]').click();
+ d.querySelector('#edBoardKind').value='master';
+ d.querySelector('#edBoardKind').dispatchEvent(new dom.window.Event('change'));
+ assert.equal(canvas.height,3650,'Illustrated master dossier must be full-height');
+ assert(drawn.some(t=>t.includes('Oscar Wilde')),'Book author must appear in board');
+ assert(drawn.some(t=>t.includes('1888')),'Original publication year must appear');
+ assert(drawn.some(t=>t.includes('Gutenberg')),'Research source must appear');
+ assert(drawn.some(t=>t.includes('Diritti da verificare')),'Pending rights must be visible');
+ assert(drawn.some(t=>t.includes('PROJECT_V13 reale allegato')),'Origin provenance must appear');
  d.querySelector('#edBoardKind').value='production';
  d.querySelector('#edBoardKind').dispatchEvent(new dom.window.Event('change'));
  assert(drawn.some(x=>x.includes('SCENA_01.jpg')),'Attachments absent');
