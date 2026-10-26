@@ -1,0 +1,21 @@
+name: "Tra le Pagine - Video Download V36"
+on:
+  push:
+    branches: [fix/video-download-v36-android-fallback, main]
+    paths:
+      - "src/video_download_fallback_v36.py"
+      - "tests/test_video_download_fallback_v36.py"
+      - ".github/workflows/video-download-v36.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax check (no extra packages)
+        run: python -m py_compile src/video_download_fallback_v36.py tests/test_video_download_fallback_v36.py
+      - name: Verify video-only ZIP and free Android fallback
+        run: python -m unittest discover -s tests -p test_video_download_fallback_v36.py -v
