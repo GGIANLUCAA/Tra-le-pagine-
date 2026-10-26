@@ -41,6 +41,10 @@ per proporre un percorso scena per scena. `plan` offline, ricerca singola
 `discover` su Pixabay/Openverse per sole scene pertinenti; non considerare
 le 45 API integrate. Il controllo artistico e il render restano separati.
 
+## Riferimento creativo V38 (26/10/2026)
+
+Consultare `docs/FEEDBACK_REGIA_NARRATIVA_V38.md` e `config/editorial_rules.json > creative_variation`. Il filmato **La macchina del tempo** e un riferimento **positivo per ricchezza visuale e varieta** ma non un modello da replicare ne un Gold Master. Ogni storia sceglie durata, immagini, ritmo e regia a partire da beat e necessità della narrazione; non copiare le 16 immagini o circa tre minuti del riferimento. L'identita di serie resta coerente, il montaggio cambia per ogni soggetto.
+
 ## Procedura dell'agente
 
 1. Recuperare riferimenti e regole; identificare il format richiesto.

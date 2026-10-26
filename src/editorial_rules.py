@@ -33,6 +33,16 @@ def new_plan():
             'duration_reason': '', 'techniques': [], 'mix_reason': '',
             'social_languages': {}, 'comparison_reference': None,
             'voice_image_sync_review': 'pending', 'artistic_review': 'pending',
+            'narrative_design': {
+                'story_beats': [],
+                'distinct_visual_needs': [],
+                'image_count_reason': '',
+                'pace_reason': '',
+                'reference_id': '',
+                'portable_lessons': [],
+                'do_not_copy_reference_parameters': True,
+                'note': 'V38: numero immagini, durata, ritmo e regia per storia, non per template.'
+            },
             'media_sourcing': {'policy_id': policy()['media_source_priority']['id'],
                               'review_status': 'pending', 'decisions': [],
                               'note': 'Compilare scelte per ciascun asset: non sono approvate automaticamente.'},
