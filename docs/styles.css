@@ -95,3 +95,36 @@
 .advanced-settings[open] summary{border-bottom:1px solid var(--line)}
 .advanced-body{padding:17px}
 #series-count-row[hidden]{display:none}
+
+/* Studio: leggibilità e comandi accessibili da telefono. */
+:root{--muted:#b2c3c9}
+.sidebar{overflow-y:auto}
+.studio-journey{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:24px 0 36px}
+.studio-journey article{padding:24px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#173642,#102933)}
+.studio-journey article>span{font-size:11px;letter-spacing:.14em;color:var(--gold2);font-weight:700}
+.studio-journey h2{font-size:24px;margin:14px 0 10px}
+.studio-journey p{font-size:14px;line-height:1.7}
+.btn,.chip,.text-action,.saved-buttons button,.episode-preview-btn{min-height:44px}
+.micro-note{font-size:13px;color:#afc1c8}
+.saved-projects{margin-top:20px}
+.saved-card p,.settings-card p,.guide-card p,.next-step p,.video-tile-info p{font-size:14px}
+.saved-card,.video-tile-info,.run-item{overflow-wrap:anywhere}
+.run-item strong{white-space:normal;line-height:1.5}
+@media(max-width:760px){
+ .studio-journey{grid-template-columns:1fr;gap:12px}
+ .studio-journey article{padding:20px}
+ .hero p{font-size:15px;max-width:100%}
+ .hero-art{display:none}
+ .hero{min-height:0;padding:28px 22px}
+ .hero h1{font-size:36px}
+ .form-card label,.settings-card label{font-size:14px}
+ textarea,input,select{font-size:16px}
+ .form-actions>.btn,.backup-actions>.btn{width:100%}
+ .section-heading{align-items:flex-start;flex-wrap:wrap}
+ .episode-grid{grid-template-columns:1fr}
+ .episode-title{font-size:20px;min-height:0}
+ .episode-entry .v10-cover{height:220px}
+ .quick-card small,.stat small,.run-item small{font-size:13px}
+ .mobile-menu,.avatar{min-width:44px;min-height:44px}
+ .toast{bottom:max(18px,env(safe-area-inset-bottom));font-size:14px}
+}
