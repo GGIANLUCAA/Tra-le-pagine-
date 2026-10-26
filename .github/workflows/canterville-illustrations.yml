@@ -1,0 +1,29 @@
+name: "Libri — Canterville illustrazioni originali public domain"
+on:
+  push:
+    branches: ["feature/libri-canterville-20261026"]
+    paths: ["source_jobs/canterville_illustrations_20261026.txt"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  book-illustrations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Installa validatore immagini
+        run: python -m pip install -q 'Pillow>=10,<13'
+      - name: Acquisisci illustrazioni originali dall'edizione pubblica
+        run: python src/asset_canterville_gutenberg.py output/canterville_illustrations
+      - name: Consegna illustrazioni e provenienza
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CANTERVILLE_LIBRO_ILLUSTRATO_1906
+          path: output/canterville_illustrations/
+          if-no-files-found: error
+          retention-days: 14
