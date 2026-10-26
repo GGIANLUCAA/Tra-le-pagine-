@@ -590,7 +590,8 @@ function vbDraw(){
  const scenes=vbStoryLines(rec),files=edState.assets||[];
  let ctx,height=1600;
  if(kind==='scenes')height=Math.max(1100,800+Math.ceil(Math.max(1,scenes.length)/2)*194);
- ctx=vbBase(canvas,kind==='concept'?'CONCEPT BOARD':kind==='production'?'PRODUCTION BOARD':'SCENE CONTACT SHEET',height);
+ if(kind==='master')height=3650;
+ ctx=vbBase(canvas,kind==='concept'?'CONCEPT BOARD':kind==='production'?'PRODUCTION BOARD':kind==='master'?'DOSSIER ILLUSTRATO':'SCENE CONTACT SHEET',height);
  const name=rec.publicTitle||x.viewTitle||'Video senza titolo';
  if(kind==='concept'){
   vbCover(ctx,60,230,490,740);
@@ -611,6 +612,40 @@ function vbDraw(){
   vbCard(ctx,60,1125,1080,190,'Musica e voce',String(rec.musicAttribution||[rec.musicTitle,rec.musicAuthor,rec.musicLicense].filter(Boolean).join(' · ')||'Musica non verificata')+'\nVoce: '+String(rec.voiceCredits||'Non documentata'),{size:23,lines:4});
   vbCard(ctx,60,1335,1080,160,'Allegati effettivamente disponibili',files.length?files.slice(0,5).map(a=>a.name).join(' · '):'Nessun file di produzione allegato',{size:22,lines:3});
   vbText(ctx,'Informazioni di archivio: non equivalgono a controlli artistici e legali superati.',68,1530,1050,20,VB.muted,2);
+ }else if(kind==='master'){
+  vbCover(ctx,60,230,350,520);
+  vbCard(ctx,435,230,705,175,'Titolo e serie',name+'\n'+String(rec.seriesTitle||'Serie da definire'),{size:32,lines:3});
+  vbCard(ctx,435,430,705,135,'Autore e prima pubblicazione',
+   String(rec.bookAuthor||'Autore da registrare')+' · '+String(rec.publicationYear||'Data da verificare'),{size:26,lines:2});
+  vbCard(ctx,435,590,705,160,'Format / durata / lingua / voce',
+   String(rec.category||x.viewCategory||'Da definire')+' · '+dur(x.duration)+' · '+String(rec.language||'it')+
+   '\n'+String(rec.voiceCredits||'Voce non documentata'),{size:24,lines:3});
+  vbCard(ctx,60,775,1080,160,'Promessa iniziale / hook',rec.hook,{size:26,lines:3});
+  vbCard(ctx,60,952,1080,200,'Perché è stato scelto',rec.selectionReason||'Motivazione editoriale non registrata',{size:24,lines:4});
+  vbCard(ctx,60,1168,520,173,'Pubblico previsto',rec.targetAudience||'Da studiare',{size:24,lines:4});
+  vbCard(ctx,595,1168,545,173,'Temi e messaggio',rec.narrativeThemes||'Da documentare',{size:24,lines:4});
+  vbCard(ctx,60,1358,1080,183,'Regia e stile visivo',rec.visualMix||rec.directorNotes||'Da documentare',{size:24,lines:4});
+  vbText(ctx,'STORYBOARD NARRATIVO',69,1567,1050,32,VB.navy,1,1,true);
+  for(const [i,line] of scenes.slice(0,8).entries()){
+    const bx=60+(i%2)*550,by=1625+Math.floor(i/2)*167;
+    vbCard(ctx,bx,by,530,150,'SCENA '+String(i+1),line,{size:21,lines:3});
+  }
+  if(!scenes.length)vbCard(ctx,60,1630,1080,145,'Storyboard mancante','Nessuna scena reale risulta descritta nel dossier.',{size:24,lines:2});
+  if(scenes.length>8)vbText(ctx,'Altre '+(scenes.length-8)+' scene nel dossier integrale.',70,2312,1050,20,VB.muted,1);
+  vbCard(ctx,60,2330,1080,290,'Fonti della ricerca · stato dichiarato',
+   rec.sourceEvidence||rec.sources||'Non risultano evidenze bibliografiche associate a questa scheda.',{size:21,lines:7});
+  vbCard(ctx,60,2635,1080,270,'Asset, URL, licenze e verifiche',
+   rec.assetLedger||rec.imageSources||'Non risultano fonti e licenze associate ai singoli asset.',{size:20,lines:7});
+  vbCard(ctx,60,2920,1080,180,'Testi per i social',
+   rec.facebook||rec.shortDescription||'Testi social non disponibili',{size:21,lines:4});
+  vbCard(ctx,60,3117,1080,170,'Musica, voce e crediti',
+   'Musica: '+String(rec.musicTitle||rec.musicAttribution||'Da documentare')+
+   '\nLicenza: '+String(rec.musicLicense||'Da verificare')+
+   '\nVoce: '+String(rec.voiceCredits||'Da documentare'),{size:20,lines:3});
+  vbText(ctx,'ORIGINE DEI DATI: '+(edState.projectV13Attached?'PROJECT_V13 reale allegato + dati del dossier':'Solo dati del dossier · PROJECT_V13 non collegato'),
+      70,3320,1060,23,VB.ink,2);
+  vbText(ctx,'DIRITTI: '+vbLoadNote(rec),70,3380,1060,20,VB.muted,3);
+  vbText(ctx,'Fatti, proposte creative e verifiche non sono equivalenti. Controllare gli URL prima della pubblicazione.',70,3510,1060,21,VB.muted,3);
  }else{
   vbCover(ctx,60,226,300,340);
   vbCard(ctx,385,226,755,205,'Scene del video',name,{size:33,lines:3});
@@ -626,7 +661,7 @@ function vbDraw(){
   }
   vbText(ctx,'Anteprima delle descrizioni: nessun fotogramma del MP4 è stato ricostruito.',60,height-75,1080,20,VB.muted,2);
  }
- $('#edBoardInfo').textContent='Scheda creata localmente dal dossier: '+(kind==='scenes'?scenes.length+' scene descritte.':kind==='production'?files.length+' allegati elencati.':'anteprima concept.')+(vb.loading?' Copertina in caricamento…':'')+' Zero generazioni AI.';
+ $('#edBoardInfo').textContent='Scheda creata localmente dal dossier: '+(kind==='scenes'?scenes.length+' scene descritte.':kind==='master'?'fonti, storia e storyboard del dossier.':kind==='production'?files.length+' allegati elencati.':'anteprima concept.')+(vb.loading?' Copertina in caricamento…':'')+' Zero generazioni AI.';
 }
 async function vbDownload(){
  if(!edState.record)return;
