@@ -269,6 +269,37 @@ def discover_single(brief, catalog, scene_id, provider, query, limit, environ=No
                     "new_api_calls": 1, "downloaded_files": 0}
 
 
+
+def render_html(report):
+    """Offline phone-readable review sheet, no external scripts or CDN requests."""
+    import html
+    esc = lambda x: html.escape(str(x), quote=True)
+    cards = []
+    for item in report["scenes"]:
+        approved = item["approved_candidate"]
+        status = "REVISIONATO, NON PUBBLICATO" if approved else "CERCARE / CREARE ASSET"
+        candidate = (f'<p class="link">Sorgente: {esc(approved["source_reference"])}</p>'
+                     if approved else "")
+        paths = " → ".join(esc(p) for p in item["recommended_path"])
+        cards.append('<article><small>'+esc(item["scene_id"])+' · '+esc(item["need"])+'</small>'
+                     '<h2>'+status+'</h2><p>'+esc(item["description"])+'</p>'
+                     '<p><strong>Priorità:</strong> '+paths+'</p>'+candidate+
+                     '<p><strong>Parlato:</strong> '+esc(item["narration_anchor"])+'</p>'
+                     '<p class="warn">Controllo editoriale ancora richiesto</p></article>')
+    return ('<!doctype html><html lang="it"><meta charset="UTF-8">'
+            '<meta name="viewport" content="width=device-width,initial-scale=1">'
+            '<title>Tra le Pagine · Selettore fonti V34</title>'
+            '<style>body{font-family:system-ui;background:#111c2a;color:#eaf0f5;'
+            'margin:auto;padding:22px;max-width:900px;line-height:1.55}'
+            'h1{font-size:26px}h2{font-size:16px}article{padding:18px;margin:16px 0;'
+            'border:1px solid #45556a;border-radius:16px;background:#1c2c3b}'
+            'small,.warn{color:#ffd18c}p{overflow-wrap:anywhere}.link{color:#a8cee6}'
+            '</style><h1>Tra le Pagine · Fonti V34</h1><p>'+esc(report["title"])+
+            ' · '+esc(report["format"])+ ' · '+str(report["counts"]["scenes"])+
+            ' scene · '+str(report["counts"]["need_sources"])+
+            ' ancora da completare</p>'+''.join(cards)+
+            '<p>Report di instradamento: nessun media certificato automaticamente.</p></html>')
+
 def main():
     p = argparse.ArgumentParser(description="V34 source routing, safe from Android.")
     p.add_argument("--brief", default="config/image_pipeline_v1_demo.json")
@@ -294,6 +325,8 @@ def main():
                                              args.query, args.limit)
         (output / "PIANO_FONTI_V34.json").write_text(
             json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        (output / "SCHEDA_FONTI_ANDROID_V34.html").write_text(
+            render_html(report), encoding="utf-8")
         if detail:
             (output / "CANDIDATI_DA_APPROVARE_V34.json").write_text(
                 json.dumps(detail, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
