@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-25T22:22:00Z",
+  "updated": "2026-10-26T01:15:30Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -508,6 +508,66 @@
         "publication": "not_published",
         "library_import": "not_attempted"
       }
+    },
+    {
+      "cycle_id": "20261026T0215+0100",
+      "created_at": "2026-10-26T01:15:30Z",
+      "episode_id": "artvision_20261026_0215_shape_of_the_wind",
+      "artist": "Ivan Aivazovsky; Utagawa Hiroshige; Evelyn De Morgan",
+      "work": "The Shape of the Wind",
+      "format": "artvision_collection",
+      "technical_format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "reason_fallback": "Approved Google Gacrux narration not verified as available without new paid API use; delivered a genuine non-narrated Collection instead.",
+      "status": "technical_pass_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 75.2,
+      "size_bytes": 21853918,
+      "sha256_mp4": "48b45dc7640e6c622fc6c4e377ff9fa98fff66376ea4ec742f11f8bb151198b2",
+      "sha256_zip": "a24ed7fd3cebf86379d22351a99f5117b59772c20a05f64250ca9dd440621d8f",
+      "artifact_name": "ArtVision_20261026_0215_The_Shape_Of_The_Wind_COMPLETE.zip",
+      "artifact_storage": "ChatGPT conversation sandbox; GitHub stores metadata only; no claim of GitHub Actions artifact",
+      "workflow_run_url": null,
+      "execution_environment": "ChatGPT local FFmpeg/Pillow from archived authentic original stills and licensed MP3",
+      "source_artworks_count": 3,
+      "source_stills_reused": true,
+      "previous_mp4_reused": false,
+      "new_montage": true,
+      "shot_count": 18,
+      "steps": {
+        "source_review": "pass_existing_authentic_assets",
+        "audience_research": "three_candidate_qualitative_no_invented_metrics",
+        "render": "success",
+        "ffprobe": "pass",
+        "full_video_decode": "pass",
+        "full_audio_decode": "pass",
+        "frame_review": "pass",
+        "zip_integrity": "pass"
+      },
+      "qa": {
+        "resolution": "1080x1920",
+        "fps": 24,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "audio_mean_db": -21,
+        "audio_peak_db": -5.9,
+        "opening_checks_seconds": [
+          0,
+          1,
+          3,
+          5,
+          7
+        ],
+        "real_transition_checks": true,
+        "no_ghosting": "hard_cuts_opaque",
+        "human_artistic_review": "pending"
+      },
+      "soundtrack": "Echoes of Time — Kevin MacLeod (CC BY 4.0)",
+      "rights_status": "archived_PD_Art_and_CC_BY_4.0_platform_jurisdiction_recheck_pending",
+      "gold_master_approved": false,
+      "social_published": false,
+      "external_video_library_import": "not_attempted",
+      "episode_record": "docs/productions/2026-10-26-0215-shape-of-the-wind.md"
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
