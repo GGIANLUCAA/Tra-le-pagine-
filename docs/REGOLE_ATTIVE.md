@@ -127,7 +127,7 @@ il repository non può imporle a una chat che non lo consulta.
    autorizzata non imporre ulteriori conferme operative.
 7. Prima del render eseguire preflight; dopo render controllare il file realmente
    prodotto. Non valutare la durata finale di un Critico su una versione senza voce.
-8. Consegnare MP4, copertina, post differenziati, fonti/crediti e dati di replica.
+8. Consegnare MP4, copertina, post differenziati, fonti/crediti e dati di replica.\n   V36 download: verificare che il file MP4 esista e sia interamente decodificabile;\n   quando si consegna in ChatGPT fornire anche uno ZIP con SOLO il video,\n   separato dal pacchetto sorgenti. Per errori Android preparare a richiesta un\n   MP4 H.264/AAC leggero. Usare `docs/VIDEO_DOWNLOAD_V36.md` e\n   `src/video_download_fallback_v36.py`. Un controllo locale non garantisce che\n   un link sandbox dell'app ChatGPT sia funzionante; per archivio stabile\n   usare Video Library Studio/R2 solo dopo importazione reale dell'asset.
    Salvare lo stato reale, il percorso verificabile e una versione identificabile.
 9. Raccogliere correzioni per video e regole riutilizzabili. Una proposta di regola
    non si autoapprova. Metriche reali, quando disponibili, informano esperimenti;
