@@ -13,6 +13,7 @@ import zipfile
 from pathlib import Path
 from urllib.parse import urlparse
 from prompt_asset_v6 import build_prompts
+from source_selector_v34 import fallback_for
 
 FORMATS = ("libri", "cronaca", "documentario", "fiabe", "social")
 BUDGETS = ("zero", "basso")
@@ -133,12 +134,25 @@ def build_plan(ep: Path, mode: str, budget: str, registry: dict):
                 extras = ["wan2.2", "hunyuanvideo-1.5"]
             else:
                 extras = ["z-image-turbo", "qwen-image"]
+        if mode in NO_AI_FACT_MODES:
+            source_need = cue.get("source_need", "documentary_evidence")
+            if source_need not in ("documentary_evidence", "documentary_broll"):
+                raise ValueError("Cronaca: indicare documento autentico o B-roll, non AI")
+        else:
+            source_need = cue.get("source_need", "fictional_action")
+            if source_need not in ("fictional_action", "establishing"):
+                raise ValueError("Scena di racconto: source_need non valido")
+        source_route = fallback_for("controluce" if mode in NO_AI_FACT_MODES else "libri",
+                                    {"need": source_need})
         scenes.append({
             "cue": i, "start_sentence": start, "asset": asset,
             "description": desc, "asset_name": assetname,
             "asset_presente": existing, "riutilizza_asset": reused,
             "regia_gratuita": method, "motivo": caution,
-            "alternative_da_testare_non_attive": extras
+            "alternative_da_testare_non_attive": extras,
+            "source_need_v34": source_need,
+            "priority_sources_v34": source_route,
+            "media_v34_verified": False  # Presence of a file is not a rights or scene-match review.
         })
     sources = source_report(ep, mode)
     meta = read_json(ep / "metadata.json") if (ep / "metadata.json").is_file() else {}
@@ -155,6 +169,7 @@ def build_plan(ep: Path, mode: str, budget: str, registry: dict):
         "puo_passare_a_revisione_editoriale": not needs_sources,
         "stato_fonti": sources,
         "voce_attuale": "gemini-tts", "render_attuale": "ffmpeg",
+        "source_selector": "V34 - route suggestions only; no asset automatically approved",
         "scenes": scenes,
         "conteggi": {"inquadrature": len(scenes),
                     "immagini_distinte": len(seen_assets),
