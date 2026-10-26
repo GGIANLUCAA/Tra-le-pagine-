@@ -29,6 +29,10 @@ on:
     paths:
       - src/creative_reveals_experimental.py
       - src/illustration_reveals_lab_v2.py
+      - src/narrative_reveal_director_v3.py
+      - src/narrative_reveal_renderer_v3.py
+      - tests/test_narrative_reveal_v3.py
+      - examples/creative_reveals_storyboard_v3.json
       - tests/test_creative_reveals_experimental.py
       - tests/test_illustration_reveals_lab_v2.py
       - .github/workflows/creative-reveals-experimental.yml
@@ -52,6 +56,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_creative_reveals_experimental.py' -v
           python -m unittest discover -s tests -p 'test_illustration_reveals_lab_v2.py' -v
+          python -m unittest discover -s tests -p 'test_narrative_reveal_v3.py' -v
       - name: V1 preview (unchanged, no publication)
         env:
           EFFECT: ${{ inputs.effect || 'auto' }}
@@ -89,10 +94,37 @@ jobs:
           for f in output/creative-reveals/V2_*_3s.mp4; do
             ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 "$f"
           done
+      - name: V3 narrative storyboard and local object reveal (silent)
+        run: |
+          python src/narrative_reveal_director_v3.py \
+            --story examples/creative_reveals_storyboard_v3.json \
+            --out output/creative-reveals/REGIA_STORIA_V3.json
+          python - <<'PYDEMO'
+          from PIL import Image, ImageDraw
+          from pathlib import Path
+          p=Path('output/creative-reveals/V3_DEMO_CHIAVE.png')
+          im=Image.new('RGB',(360,640),(251,248,241))
+          d=ImageDraw.Draw(im)
+          d.rectangle((40,120,319,482),fill='#e4d3b9',outline='#4f5860',width=7)
+          d.ellipse((78,154,281,353),fill='#d0a56f',outline='#475b64',width=6)
+          d.ellipse((108,184,251,323),fill='#f9eee0',outline='#59606a',width=4)
+          d.line((180,253,180,201),fill='#425367',width=7)
+          d.line((180,253,224,276),fill='#425367',width=6)
+          d.ellipse((146,347,177,379),outline='#b2823f',width=8)
+          d.line((160,376,160,425),fill='#b2823f',width=9)
+          d.line((160,425,183,425),fill='#b2823f',width=8)
+          d.line((174,424,174,408),fill='#b2823f',width=6)
+          im.save(p)
+          PYDEMO
+          python src/narrative_reveal_renderer_v3.py \
+            --plan output/creative-reveals/REGIA_STORIA_V3.json \
+            --scene scena_04 --image output/creative-reveals/V3_DEMO_CHIAVE.png \
+            --out output/creative-reveals/V3_SCENA_04_INDIZIO.mp4
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 output/creative-reveals/V3_SCENA_04_INDIZIO.mp4
       - name: Download non-public artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: CREATIVE_REVEALS_EXPERIMENTAL_V1_V2
+          name: CREATIVE_REVEALS_EXPERIMENTAL_V1_V2_V3
           path: output/creative-reveals/
           if-no-files-found: error
           retention-days: 7
