@@ -1,0 +1,91 @@
+name: Oz — Un libro narrato con illustrazioni originali e voce Gacrux
+on:
+  push:
+    branches: [main]
+    paths:
+      - "queue/oz_episode_20261026.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  oz_story:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Confirm explicit request, don't auto-publish
+        run: |
+          python - <<'PY'
+          import json
+          o=json.load(open("queue/oz_episode_20261026.json"))
+          assert o["approved"] is True and o["episode"]=="oz_dorothy_20261026"
+          assert o["auto_publish"] is False
+          print("Authorized single video only; no social publishing")
+          PY
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "::error::Gemini key missing: cannot replace approved natural voice"
+            exit 2
+          fi
+      - name: Install free editor + licensed media prep tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install --quiet "pillow>=10,<13" "numpy>=1.25,<3" "soundfile>=0.12,<1" "scipy>=1.11" "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
+      - name: Check script, source ledger and distinct editorial text offline
+        run: |
+          python -m unittest discover -s tests -p "test_oz_episode_20261026.py" -v
+      - name: Acquire archival source images BEFORE Gemini voice call
+        run: |
+          python src/oz_assets_20261026.py
+          python src/episode_v3.py --episode oz_dorothy_20261026
+          python src/regia_narrativa_v12.py --episode episodes/oz_dorothy_20261026
+      - name: Narrative direction V38: do not use image quotas
+        run: |
+          python - <<'PY'
+          import json
+          from src.narrative_variation_v38 import inspect
+          from pathlib import Path
+          ep=Path("episodes/oz_dorothy_20261026")
+          plan=json.loads((ep/"scene_plan_oz.json").read_text())["scenes"]
+          scenes=[{"asset_id":str(p["scene"]),"description":p["intent"],"reason":p["narration"],
+                   "camera":p["camera_style"],"camera_reason":p["intent"]} for p in plan]
+          project={"format":"libri","editorial_contract":{"requested_format":"libri"},
+                   "editorial_plan":{"narrative_design":{"story_beats":[p["intent"] for p in plan],
+                   "distinct_visual_needs":[p["source_alt"] for p in plan],
+                   "image_count_reason":"The story contains distinct settings, challenges and character revelations",
+                   "pace_reason":"Each visual is anchored to a spoken beat, pauses vary with meaning"}},
+                   "scenes":scenes}
+          result=inspect(project)
+          print(json.dumps(result,ensure_ascii=False,indent=2))
+          assert not result["needs_creative_review"],"V38 review: investigate story plan"
+          PY
+      - name: Natural Gacrux narration and scene-synchronised MP4
+        run: |
+          python src/oz_render_20261026.py
+      - name: Illustrated board, source dossier, four captions, Android ZIPs
+        run: |
+          python src/oz_package_20261026.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path("output/oz_dorothy_20261026")
+          for name in ("TRA_LE_PAGINE_IL_MERAVIGLIOSO_MAGO_DI_OZ.mp4",
+                       "COPERTINA_SERIE.jpg","OZ_SCHEDA_PRESENTAZIONE.jpg",
+                       "OZ_SCHEDA_TESTO.md","OZ_DOSSIER_SITO.json",
+                       "OZ_SOLO_VIDEO.zip","OZ_PACCHETTO_COMPLETO.zip"):
+            f=p/name
+            assert f.exists() and f.stat().st_size>500
+            print("DELIVERY",name,f.stat().st_size)
+          PY
+      - name: Deliver downloadable video to Android — no auto-publication
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TRA_LE_PAGINE_OZ_VIDEO_FINALE_E_DOSSIER
+          path: output/oz_dorothy_20261026/
+          if-no-files-found: error
+          retention-days: 14
