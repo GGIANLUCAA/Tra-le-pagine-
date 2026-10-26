@@ -217,6 +217,87 @@ def make_production(project_path, out, obj, plan, scenes, visuals, cover):
     d.text((70, 2360), "Generato da metadata locali; verificare il video e le licenze prima della consegna", font=font(20), fill=MUTED)
     im.save(out/"PRODUCTION_BOARD.png", optimize=True)
 
+
+def make_master(project_path, out, obj, plan, scenes, visuals, cover):
+    """Sourced fourth board from recorded PROJECT_V13 fields. No model/API calls."""
+    im = Image.new("RGB", (W, 3600), PAPER)
+    d = ImageDraw.Draw(im)
+    banner(im, d, "DOSSIER ILLUSTRATO COMPLETO", "PROJECT_V13 · Ricerca dichiarata · Nessuna generazione AI")
+    bib = obj.get("bibliography") if isinstance(obj.get("bibliography"), dict) else {}
+    meta = obj.get("editorial_metadata") if isinstance(obj.get("editorial_metadata"), dict) else {}
+    business = obj.get("business") if isinstance(obj.get("business"), dict) else {}
+    contract = obj.get("editorial_contract") if isinstance(obj.get("editorial_contract"), dict) else {}
+    sources = plan.get("sources") if isinstance(plan.get("sources"), list) else []
+    box(d, (60, 265, 535, 1130))
+    place(im, d, cover, (82, 287, 432, 818), "Copertina da allegare")
+    box(d, (565, 265, 1540, 1130))
+    wrapped(d, obj.get("topic"), (595, 300), 890, font(48, bold=True, serif=True), INK, 3, 59)
+    y = 450
+    fields = [
+        ("AUTORE / ANNO", normalize(bib.get("author")) + " · " + normalize(bib.get("publication_year"))),
+        ("SERIE / FORMATO", normalize(meta.get("series")) + " · " + normalize(obj.get("format"))),
+        ("HOOK", plan.get("opening_promise")),
+        ("PERCHÉ QUESTO LIBRO", plan.get("subject_insight")),
+        ("PUBBLICO", business.get("audience")),
+        ("TEMI", meta.get("themes")),
+        ("STILE E REGIA", plan.get("mix_reason")),
+    ]
+    for label, value in fields:
+        d.text((602, y), label, font=font(20, bold=True), fill="#937045")
+        y = wrapped(d, value, (602, y+30), 878, font(21), INK, 2, 27) + 18
+        if y > 1090:
+            break
+    d.text((68, 1170), "STORYBOARD · SCENE DOCUMENTATE", font=font(38, bold=True), fill=NAVY)
+    for n, scene in enumerate(scenes[:8]):
+        x, y = 65+(n%4)*378, 1225+(n//4)*361
+        box(d, (x, y, x+355, y+340))
+        place(im, d, scene.get("path"), (x+13, y+14, 328, 197), "Asset non presente")
+        d.text((x+16, y+220), "SCENA "+str(scene["number"]), font=font(21, bold=True), fill="#947047")
+        wrapped(d, scene.get("text"), (x+15, y+257), 325, font(18), INK, 2, 25)
+    if len(scenes)>8:
+        d.text((80, 1971), f"+ {len(scenes)-8} scene nella contact sheet", font=font(21), fill=MUTED)
+    d.text((68, 1998), "FONTI BIBLIOGRAFICHE · STATO DICHIARATO", font=font(35, bold=True), fill=NAVY)
+    box(d, (65, 2055, 1538, 2450))
+    if sources:
+        y = 2082
+        for i, src in enumerate(sources[:5], 1):
+            if not isinstance(src, dict):
+                continue
+            value = (f"{i}. " + normalize(src.get("reference")) + " | " +
+                     normalize(src.get("finding")) + " | Verifica: " + normalize(src.get("verification")))
+            y = wrapped(d, value, (88, y), 1412, font(19), INK, 2, 26)+13
+    else:
+        wrapped(d, "Nessuna fonte registrata. Non dichiarare il soggetto verificato.",
+                (90, 2090), 1380, font(26), MUTED, 3)
+    d.text((68, 2496), "ASSET VISIVI · PROVENIENZA E DIRITTI", font=font(35, bold=True), fill=NAVY)
+    box(d, (65, 2555, 1538, 3170))
+    if visuals:
+        y = 2585
+        for i, v in enumerate(visuals[:7], 1):
+            a, dec = v["data"], v["decision"]
+            line = (f"{i}. "+normalize(v["id"])+" · "+normalize(a.get("file"))+
+                    " | Fonte: "+normalize(dec.get("source_reference") or a.get("source"))+
+                    " | Diritti: "+normalize(a.get("rights"))+" | "+status_for(v))
+            y = wrapped(d, line, (88, y), 1412, font(18), INK, 2, 25)+15
+    else:
+        wrapped(d, "Nessun asset registrato: il video non è approvato.", (90, 2600), 1390, font(27), MUTED, 2)
+    if len(visuals)>7:
+        d.text((90, 3145), f"+{len(visuals)-7} asset nel PROJECT_V13 originale", font=font(20), fill=MUTED)
+    box(d, (65, 3220, 1538, 3535))
+    labels = [
+        ("VOCE", contract.get("voice")),
+        ("DURATA OBIETTIVO", str(plan.get("duration_seconds") or "Da definire")+" s"),
+        ("SOCIAL", (obj.get("creative_v21") or {}).get("social_package_status")),
+        ("DIRITTI", (obj.get("reviews") or {}).get("rights", {}).get("status")),
+    ]
+    y = 3250
+    for label, value in labels:
+        d.text((87, y), label, font=font(20, bold=True), fill="#987448")
+        wrapped(d, value, (465, y), 1020, font(20), INK, 1)
+        y += 56
+    d.text((74, 3570), "Fonti dichiarate ≠ fonti verificate. Diritti da verificare prima della pubblicazione.", font=font(19), fill=MUTED)
+    im.save(out / "MASTER_BOARD.png", optimize=True)
+
 def make_contact(project_path, out, scenes, cover):
     cols, tile_h = 4, 430
     rows = max(1, math.ceil(len(scenes) / cols))
@@ -242,6 +323,7 @@ def generate(project_path, out):
     make_concept(project_path, out, obj, plan, scenes, visuals, cover)
     make_production(project_path, out, obj, plan, scenes, visuals, cover)
     make_contact(project_path, out, scenes, cover)
+    make_master(project_path, out, obj, plan, scenes, visuals, cover)
     manifest = {
         "schema": "video-boards-v34", "source_project": str(project_path),
         "source_sha256": hashlib.sha256(project_path.read_bytes()).hexdigest(),
@@ -250,7 +332,7 @@ def generate(project_path, out):
         "missing_visual_files": [v["id"] for v in visuals if v["path"] is None],
         "unreviewed_visual_assets": [v["id"] for v in visuals if status_for(v) != "REVISIONI REGISTRATE"],
         "status": "informational_not_approved",
-        "files": ["CONCEPT_BOARD.png", "PRODUCTION_BOARD.png", "SCENE_CONTACT_SHEET.jpg"]}
+        "files": ["CONCEPT_BOARD.png", "PRODUCTION_BOARD.png", "SCENE_CONTACT_SHEET.jpg", "MASTER_BOARD.png"]}
     (out/"BOARD_MANIFEST.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     return manifest
 
