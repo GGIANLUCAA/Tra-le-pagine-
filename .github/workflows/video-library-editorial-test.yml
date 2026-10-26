@@ -12,12 +12,22 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   dossier:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+      - name: Observe Oz production workflow run (no TTS call)
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs?branch=feature%2Fvideo-wizard-oz-20261026&per_page=70" --jq '
+            [.workflow_runs[] | select(.name == "Tra le Pagine — Oz libro narrato con Gacrux") |
+            {id, status, conclusion, event, html_url, created_at}]' || true
+
       - name: Verify source frontend code
         run: |
           python3 - <<'PY'
