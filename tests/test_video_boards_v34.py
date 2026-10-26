@@ -49,6 +49,8 @@ class BoardTests(unittest.TestCase):
             result=generate(p,out)
             self.assertFalse(result["calls_paid_models"])
             self.assertEqual(result["scene_count"],2)
+            self.assertIn("MASTER_BOARD.png",result["files"])
+            self.assertEqual(len(result["files"]),4)
             self.assertEqual(result["unreviewed_visual_assets"],["V2"])
             self.assertEqual(result["status"],"informational_not_approved")
             for name in result["files"]:
@@ -67,6 +69,7 @@ class BoardTests(unittest.TestCase):
                 result=generate(project,out)
                 self.assertEqual(result["visual_asset_count"],2)
                 self.assertTrue((out/"BOARD_MANIFEST.json").exists())
+                self.assertGreater((out/"MASTER_BOARD.png").stat().st_size,1000)
             self.assertEqual(len(list((base/"boards").glob("*/CONCEPT_BOARD.png"))),20)
 
     def test_reject_non_v13_project(self):
