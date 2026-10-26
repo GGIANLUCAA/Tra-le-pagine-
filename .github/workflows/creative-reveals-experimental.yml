@@ -3,32 +3,34 @@ on:
   workflow_dispatch:
     inputs:
       effect:
-        description: 'Suggerimento del regista / tecnica esplicita'
+        description: 'V1 effect (not a global production preset)'
         type: choice
         required: true
         default: auto
         options: [auto, none, ink, watercolor, line_art]
       format:
-        description: 'Formato di riferimento, non cambia i renderer'
+        description: 'Format reference, does not change renderers'
         type: choice
         required: true
         default: libri
         options: [libri, artvision_cinema, artvision_critico, controluce]
       mood:
-        description: 'Atmosfera proposta'
+        description: 'V1 atmosphere'
         type: choice
         required: true
         default: fiaba
         options: [fiaba, mistero, illustrato, neutro]
       duration:
-        description: 'Durata prova in secondi, massimo 15'
+        description: 'V1 preview length, 0.5-15s'
         type: string
         required: true
         default: '3'
   pull_request:
     paths:
       - src/creative_reveals_experimental.py
+      - src/illustration_reveals_lab_v2.py
       - tests/test_creative_reveals_experimental.py
+      - tests/test_illustration_reveals_lab_v2.py
       - .github/workflows/creative-reveals-experimental.yml
 permissions:
   contents: read
@@ -46,9 +48,11 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg
           python -m pip install 'numpy>=1.24,<3' 'pillow>=10,<13' 'opencv-python-headless>=4.8,<5'
-      - name: Tests
-        run: python -m unittest discover -s tests -p 'test_creative_reveals_experimental.py' -v
-      - name: Isolated preview, no publication
+      - name: V1 and V2 offline tests
+        run: |
+          python -m unittest discover -s tests -p 'test_creative_reveals_experimental.py' -v
+          python -m unittest discover -s tests -p 'test_illustration_reveals_lab_v2.py' -v
+      - name: V1 preview (unchanged, no publication)
         env:
           EFFECT: ${{ inputs.effect || 'auto' }}
           FORMAT: ${{ inputs.format || 'libri' }}
@@ -58,11 +62,37 @@ jobs:
           python src/creative_reveals_experimental.py \
             --out output/creative-reveals/PROVA_DIRETTORE_3S.mp4 \
             --effect "$EFFECT" --format "$FORMAT" --mood "$MOOD" --duration "$DURATION"
-          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 output/creative-reveals/PROVA_DIRETTORE_3S.mp4
-      - name: Download private demo artifact (not published)
+      - name: V2 original procedural test illustration on paper
+        run: |
+          python - <<'PY'
+          from PIL import Image,ImageDraw
+          from pathlib import Path
+          p=Path('output/creative-reveals/V2_SAMPLE_SOURCE.png')
+          p.parent.mkdir(parents=True,exist_ok=True)
+          im=Image.new('RGB',(360,640),(251,248,241))
+          d=ImageDraw.Draw(im)
+          d.ellipse((237,73,318,154),fill='#ebc17b',outline='#594459',width=4)
+          d.polygon(((175,222),(230,150),(284,222)),fill='#476f8c')
+          d.rectangle((186,222,274,330),fill='#abc4c8',outline='#455467',width=4)
+          d.ellipse((79,343,155,441),fill='#ddb18a',outline='#504553',width=4)
+          d.polygon(((68,421),(135,404),(178,531),(91,533)),fill='#42758e')
+          d.polygon(((52,527),(156,505),(179,535),(283,504),(313,534),(313,602),(179,620),(52,595)),
+                    fill='#eedcae',outline='#5b4d5c')
+          im.save(p)
+          PY
+          for EFFECT in stroke_draw object_stagger pigment_bloom director_mix; do
+            python src/illustration_reveals_lab_v2.py \
+              --image output/creative-reveals/V2_SAMPLE_SOURCE.png \
+              --out "output/creative-reveals/V2_${EFFECT}_3s.mp4" \
+              --effect "$EFFECT" --duration 3 --width 360 --height 640
+          done
+          for f in output/creative-reveals/V2_*_3s.mp4; do
+            ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 "$f"
+          done
+      - name: Download non-public artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: CREATIVE_REVEALS_PROVA_3S
+          name: CREATIVE_REVEALS_EXPERIMENTAL_V1_V2
           path: output/creative-reveals/
           if-no-files-found: error
           retention-days: 7
