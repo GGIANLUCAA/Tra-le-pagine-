@@ -41,6 +41,9 @@ class StudioIbridoV6Tests(unittest.TestCase):
             self.assertFalse(report["pubblicazione_automatica"])
             self.assertEqual(report["conteggi"]["inquadrature"], 2)
             self.assertEqual(report["scenes"][0]["alternative_da_testare_non_attive"], [])
+            self.assertEqual(report["scenes"][0]["source_need_v34"], "fictional_action")
+            self.assertIn("ai_horde_manual_three_scene_trial", report["scenes"][0]["priority_sources_v34"])
+            self.assertFalse(report["scenes"][0]["media_v34_verified"])
             self.assertIn("Episodio Test", storyboard_html(report))
 
     def test_cronaca_without_sources_is_blocked(self):
@@ -50,6 +53,9 @@ class StudioIbridoV6Tests(unittest.TestCase):
             self.assertFalse(report["puo_passare_a_revisione_editoriale"])
             self.assertEqual(report["stato_fonti"]["status"], "FONTI_DA_AGGIUNGERE")
             self.assertEqual(report["scenes"][0]["regia_gratuita"], "archivio_verificato_o_grafica_neutra")
+            self.assertEqual(report["scenes"][0]["source_need_v34"], "documentary_evidence")
+            self.assertIn("STOP_and_label_reconstruction_if_no_evidence",
+                          report["scenes"][0]["priority_sources_v34"])
 
     def test_two_domains_still_need_human_verification(self):
         with tempfile.TemporaryDirectory() as d:
