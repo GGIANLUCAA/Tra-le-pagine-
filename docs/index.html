@@ -16,7 +16,7 @@
     <aside class="sidebar" id="sidebar">
       <div class="brand"><span class="brand-mark">T<span>●</span>P</span><div><strong>Tra le Pagine</strong><small>STUDIO VIDEO <em>V11</em></small></div></div>
       <p class="nav-label">WORKSPACE</p>
-      <nav aria-label="Navigazione principale">
+      <nav aria-label="Navigazione principale"><a class="nav-item external" href="https://video-library-studio.600led.workers.dev"><span>▶</span> Archivio completo dei video</a>
         <a class="nav-item external" href="./controllo-finale.html"><span>✓</span> Controllo finale</a>
         <button class="nav-item active" data-tab="studio"><span>⌂</span> Panoramica</button>
         <button class="nav-item" data-tab="nuovo"><span>✦</span> Nuovo video</button>
@@ -46,13 +46,13 @@
         <div class="top-actions"><span class="top-pill" id="sync-status"><span class="live-dot"></span> GitHub pubblico</span><button class="avatar" id="account-action" title="Collegamento GitHub">GH</button></div>
       </header>
       <div class="content">
-        <section class="view active" id="view-studio">
+        <section class="view active" id="view-studio"><div class="guide-card" style="margin:0 0 24px"><strong>Il tuo archivio completo è qui</strong><p>Apri Video Library Studio per ritrovare i video già conservati, le anteprime, i dossier e i materiali. Usa il tuo accesso abituale.</p><a class="btn primary" href="https://video-library-studio.600led.workers.dev">▶ Apri tutti i miei video</a><p class="micro-note">Questo pannello prepara i nuovi progetti. L’archivio completo continua a essere gestito nel tuo Studio privato.</p></div>
           <div class="eyebrow"><span class="spark">✦</span> IL TUO STUDIO DI PRODUZIONE</div>
           <div class="hero">
             <div class="hero-copy">
               <h1>Racconta. Crea.<br><span>Guarda i tuoi video.</span></h1>
               <p>Dalla tua idea al prossimo video. Prepara le indicazioni per GPT, ritrova i tuoi progetti e controlla i risultati dal telefono.</p>
-              <div class="hero-buttons"><button class="btn primary" data-go="nuovo"><span>✦</span> Crea un video <span>→</span></button><button class="btn outline" data-go="videoteca">▶ Guarda i video</button></div>
+              <div class="hero-buttons"><button class="btn primary" data-go="nuovo"><span>✦</span> Crea un video <span>→</span></button><a class="btn outline" href="https://video-library-studio.600led.workers.dev">▶ Tutti i miei video</a></div>
             </div>
             <div class="hero-art" aria-hidden="true"><div class="halo halo-a"></div><div class="halo halo-b"></div><div class="film-card film-back"></div><div class="film-card film-front"><span>TRA LE PAGINE</span><div class="film-sun"></div><div class="film-mountain"></div><small>STORIE CHE RESTANO</small></div><div class="play-orb">▶</div></div>
           </div>
@@ -73,9 +73,9 @@
           <div class="runs" id="home-runs"><div class="empty">Caricamento produzioni…</div></div>
         </section>
 
-        <section class="view" id="view-videoteca">
+        <section class="view" id="view-videoteca"><div class="guide-card"><strong>Cerchi tutti i video realizzati?</strong><p>Il catalogo completo con schede e materiali si trova in Video Library Studio. La lista qui sotto mostra soltanto le pubblicazioni GitHub compatibili con questo pannello.</p><a class="btn primary" href="https://video-library-studio.600led.workers.dev">Apri l’archivio completo →</a></div>
           <div class="eyebrow">▶ VIDEO PRONTI · STUDIO V11</div>
-          <h1 class="page-title">La tua videoteca.</h1>
+          <h1 class="page-title">Video pubblicati su GitHub.</h1>
           <p class="page-subtitle">Guarda i video già pubblicati nella videoteca e scaricali con un tocco. I filmati ancora in lavorazione restano nella sezione Produzioni.</p>
           <div class="simple-stepper"><span>① Crea</span><span>② Controlla</span><span>③ Guarda e scarica</span></div>
           <div class="section-heading"><h2>Video disponibili</h2><button class="text-action" id="refresh-videos">Aggiorna ↻</button></div>
