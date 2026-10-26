@@ -81,6 +81,13 @@ class NarrativeVariationV38Tests(unittest.TestCase):
             scene("old", "Archive illustration", "Historical scene")]})
         self.assertFalse(result["needs_creative_review"])
 
+    def test_malformed_editorial_plan_never_crashes_a_creative_review(self):
+        p = {"editorial_contract": {"requested_format": "libri"},
+             "editorial_plan": "invalid legacy data",
+             "scenes": [scene("a", "Still life", "Atmosphere")]}
+        result = inspect(p)
+        self.assertIn("V38_PLAN_MISSING", result["finding_counts"])
+
     def test_reference_is_not_master_approval(self):
         p = self.project([scene("x", "Scene", "Reason")])
         p["editorial_plan"]["narrative_design"].update(
