@@ -12,7 +12,7 @@ API="https://commons.wikimedia.org/w/api.php"
 session=requests.Session()
 session.headers.update({"User-Agent":"TraLePagineEditorialResearch/1.0 (one-off noncommercial educational inspection; GitHub @GGIANLUCAA)"})
 params={"action":"query","generator":"categorymembers",
-        "gcmtitle":"Category:Illustrations from Twenty Thousand Leagues Under the Sea by Édouard Riou",
+        "gcmtitle":"Category:Illustrations from Twenty Thousand Leagues Under the Sea by Neuville and Riou",
         "gcmtype":"file","gcmlimit":48,"prop":"imageinfo","iiprop":"url|extmetadata","iiurlwidth":650,"format":"json"}
 records=[]
 try:
@@ -25,7 +25,7 @@ try:
         if url and any(url.lower().split("?")[0].endswith(x) for x in (".jpg",".jpeg",".png",".webp")):
             candidates.append((page,image,url))
     candidates.sort(key=lambda p:p[0].get("title",""))
-    for n,(page,info,url) in enumerate(candidates[:24]):
+    for n,(page,info,url) in enumerate(candidates[:20]):
         try:
             r=session.get(url,timeout=15)
             if r.status_code==429:break
