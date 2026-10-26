@@ -107,6 +107,16 @@ Dettagli e differenze tra format: `docs/FILOSOFIA_FONTI_MEDIA_V33.md`.
 Le nuove chat indipendenti devono leggere o ricevere le regole esplicitamente:
 il repository non può imporle a una chat che non lo consulta.
 
+## Descrizioni social di alta qualita e recuperabili nel sito — VINCOLANTE (26/10/2026)
+
+**Conferma e irrigidimento della V28**, non un nuovo format. Ogni nuovo video ha post **differenziati** per Facebook, Instagram, TikTok e YouTube, con fatti verificati e taglio narrativo scelto sul contenuto (autore, vicenda, interpretazione prudente, contesto storico, museo, personaggi, emozione). Identita editoriale riconoscibile ma apertura, ritmo e prospettiva mai meccanicamente identici.
+
+**Pubblico:** solo contenuto interessante su opera/storia e crediti realmente obbligatori; niente montaggio, zoom, render, script, prompt, metodologia, algoritmi o informazioni che lo spettatore non deve conoscere. **Privato:** regia, ricette, prompt e conti restano nel dossier tecnico.
+
+La consegna include quattro file social curati, **scheda visuale** nello stile editoriale approvato e **scheda testuale** corrispondente. Per i video importati realmente, queste descrizioni devono essere salvate nella scheda del singolo video su Video Library Studio ed esportabili dal telefono. Nessun testo generico generato dalla categoria vale come post pronto. Se il video non e ancora sul sito, dichiararlo e non simulare il salvataggio.
+
+Il sito applica filtri strutturali contro campi vuoti/identici/cliche e dettagli tecnici, ma revisione umana del contenuto e verifica di fonti/diritti restano indispensabili. Vedere `docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md` e `docs/VIDEO_LIBRARY_DOSSIER_V1.md`.
+
 ## Dal soggetto al risultato
 
 1. Registrare richiesta, format, presenza della voce, lingua e obiettivo. Se si

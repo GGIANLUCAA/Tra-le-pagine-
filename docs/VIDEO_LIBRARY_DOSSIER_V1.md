@@ -28,6 +28,15 @@ Al termine di ogni video l'agente deve consegnare o rendere disponibile quanto r
 
 **Vietato inventare** musiche o licenze, fonti visive, link inesistenti, testimonianze, regia specifica o scene non note. Tutto ciò che manca è segnato "Da verificare". I testi automaticamente generati sono bozze da rivedere e non verifiche dei diritti.
 
+## Chiarimento V37 — testo pubblico e archivio realmente persistente (26 ottobre 2026)
+
+La regola editoriale da applicare e quella V28, rafforzata su richiesta dell'utente: non creare una disciplina concorrente.
+- Nella scheda di ogni video, **Post social** contiene solo copy destinato al pubblico (quattro varianti autonome, hook, descrizione breve, crediti pubblici dovuti). **Regia e ricetta**, **Ricerca**, **Crediti e fonti** contengono dati specialistici privati.
+- Ogni variante si salva nel record R2 `catalog/editorial/<chiave-video>.json`, e si recupera dal telefono mediante la scheda video e nel pacchetto ZIP. Il salvataggio non deve sostituire un testo storico curato.
+- I nuovi video senza testi originali non ricevono post precompilati di routine: hanno campi da scrivere e lo stato `bozza/da_revisionare`.
+- Impedire la transizione allo stato `approvato` o `pubblicato` quando mancano i post, sono identici, contengono note di produzione o slogan boilerplate. Il controllo letterario e fattuale resta manuale.
+- Una modifica ai testi social **non comporta rimontaggio** e non duplica l'MP4 master. Senza importazione nel sito, il dossier non si materializza automaticamente in R2: dichiarare lo stato reale.
+
 ## Dove si trova e come si usa
 
 Dalla gestione privata su https://video-library-studio.600led.workers.dev aprire Scheda → Dossier completo / ZIP social.

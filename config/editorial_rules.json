@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-25.3",
-  "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research",
+  "version": "2026-10-26.4",
+  "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica",
   "precedence": [
     "explicit_user_request",
     "editorial_rules",
@@ -30,7 +30,12 @@
     "no_unapproved_paid_api_calls": true,
     "no_secondary_keys_for_quota_evasion": true,
     "no_stock_filler_to_replace_exact_story_scene": true,
-    "media_asset_license_and_scene_fit_review": true
+    "media_asset_license_and_scene_fit_review": true,
+    "social_description_researched_and_human_reviewed": true,
+    "social_copy_separate_from_technical_notes": true,
+    "four_distinct_platform_captions_per_video": true,
+    "video_library_social_archive_required": true,
+    "no_generic_metadata_caption_as_publishable": true
   },
   "defaults": {
     "voice": "Google Gemini Gacrux",
@@ -244,5 +249,29 @@
       "no_foreign_logos_watermarks",
       "no_production_volume_claim_without_measurement"
     ]
+  },
+  "social_editorial": {
+    "standard": "docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md",
+    "site_dossier": "docs/VIDEO_LIBRARY_DOSSIER_V1.md",
+    "public_fields": [
+      "facebook",
+      "instagram",
+      "tiktok",
+      "youtube",
+      "shortDescription"
+    ],
+    "private_fields": [
+      "directorNotes",
+      "storyboard",
+      "script",
+      "productionPrompt",
+      "productionSteps",
+      "technicalNotes",
+      "socialInstructions",
+      "publicationNotes"
+    ],
+    "gate": "no approval with missing, duplicate, generic or production-oriented captions; editorial judgment and rights need human review",
+    "variation": "subject-driven historical, cultural, symbolic, descriptive or interpretative angle; no repeating opening formula",
+    "legacy": "preserve existing hand-edited texts; never overwrite on reimport"
   }
 }

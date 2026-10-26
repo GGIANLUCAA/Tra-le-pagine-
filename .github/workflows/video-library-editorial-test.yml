@@ -8,6 +8,7 @@ on:
       - tests/video-library-editorial-ui.test.cjs
       - tests/video-library-boards-v34-ui.test.cjs
       - .github/workflows/video-library-editorial-test.yml
+  pull_request:
   workflow_dispatch:
 permissions:
   contents: read

@@ -75,12 +75,37 @@ const request=async(path,method='GET',data)=>{
  assert(enriched.record.assetLedger.includes('pending'),'Rights must remain pending');
  assert(enriched.record.storyboard.includes('panoramica'),'Historic owner storyboard must not be overwritten');
  console.log('PASS V35: attached V13 enriches dossier, traces source and keeps unverified rights');
- const edit=await request('/api/editorial','POST',{key:video,data:{facebook:'Facebook definitivo con fonte verificata',musicTitle:'Titolo test',rightsStatus:'verificato',publicationStatus:'approvato'}});
- assert.equal(edit.status,200,'Editing failed '+await edit.text());
+ // V37: an automatic new dossier must not contain generic platform boilerplate.
+ assert.equal(dossier.record.instagram,'INSTAGRAM STORICO','Historical Instagram must survive');
+ assert.equal(dossier.record.youtube,'','New generic YouTube must be blank, not publication-ready');
+ const blocked=await request('/api/editorial','POST',{key:video,data:{
+  facebook:'Facebook definitivo con fonte verificata',musicTitle:'Titolo test',rightsStatus:'verificato',publicationStatus:'approvato'}});
+ assert.equal(blocked.status,422,'Short or generic captions must not be approved');
+ const failure=await blocked.json();
+ assert.equal(failure.code,'SOCIAL_REVIEW_REQUIRED');
+ assert(failure.issues.some(x=>x.includes('facebook')));
+ console.log('PASS V37: placeholders and missing captions block approval');
+ const edit=await request('/api/editorial','POST',{key:video,data:{facebook:'Facebook definitivo con fonte verificata',musicTitle:'Titolo test',rightsStatus:'verificato',publicationStatus:'da_revisionare'}});
+ assert.equal(edit.status,200,'Editing a draft must remain possible '+await edit.text());
  const again=(await(await request('/api/editorial?key='+encodeURIComponent(video))).json()).record;
  assert.equal(again.facebook,'Facebook definitivo con fonte verificata');
  assert.equal(again.storyboard,'00:00 panoramica; 00:10 dettaglio');
- assert.equal(again.publicationStatus,'approvato');
+ assert.equal(again.publicationStatus,'da_revisionare');
+ const forbidden=await request('/api/editorial','POST',{key:video,data:{
+  facebook:'Qui spieghiamo tutte le scelte della regia e del montaggio con un testo decisamente lungo e pieno di parole per superare qualsiasi controllo quantitativo senza parlare di un soggetto reale e senza raccontare una storia autentica che interessi il nostro pubblico e i visitatori del sito oltre al lavoro per prepararlo e presentarlo.',
+  publicationStatus:'approvato'}});
+ assert.equal(forbidden.status,422,'Public process notes must be blocked');
+ const fb='Facebook definitivo — Il dipinto si trova in una collezione storica. Questo racconto si concentra sulle domande che un visitatore può porsi davanti alle figure e sui modi in cui la pittura cambia il nostro sguardo. La storia dell opera viene collocata nel suo tempo, distinguendo fatti e interpretazioni senza inventare dettagli.';
+ const ig='Davanti a quest opera si possono osservare almeno due storie: quella che l artista voleva mostrare e quella che il pubblico continua a leggere. Il contesto ci aiuta a guardarla con maggiore attenzione, senza imporre una risposta unica.';
+ const tt='Una figura e una scelta raccontano il cuore di questa storia. Una lettura breve, chiara, basata sul contesto e sul soggetto.';
+ const yt='Questo episodio prende avvio da un opera conservata in una collezione storica. Attraverso la sua vicenda, le figure e il contesto in cui nacque, esploriamo alcune domande che ancora interessano chi osserva la pittura. Il racconto distingue ciò che conosciamo da ciò che rimane un interpretazione, con un approccio accessibile a tutti.';
+ const accepted=await request('/api/editorial','POST',{key:video,data:{
+  facebook:fb,instagram:ig,tiktok:tt,youtube:yt,publicationStatus:'approvato'}});
+ assert.equal(accepted.status,200,'Four distinct researched captions should be structurally acceptable '+await accepted.text());
+ const curated=(await(await request('/api/editorial?key='+encodeURIComponent(video))).json());
+ assert.equal(curated.record.publicationStatus,'approvato');
+ assert.deepEqual(curated.socialIssues,[]);
+ console.log('PASS V37: four distinctive platform texts stored and retrieved with master dossier');
  console.log('PASS: editing persists and preserves historical recipes');
  let denied=await request('/api/editorial','POST',{key:video,data:{unknown:'oops'}});
  assert.equal(denied.status,400);

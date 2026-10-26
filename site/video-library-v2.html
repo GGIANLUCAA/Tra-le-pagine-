@@ -157,7 +157,7 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
  </nav>
  <form id="editorialForm" class="editorial-form">
   <section data-ed-panel="social">
-   <p class="ed-guidance">Testi generati come bozza dai metadati. Puoi correggerli e salvarli una sola volta: resteranno associati al video anche dopo nuovi import.</p>
+   <p class="ed-guidance"><strong>Descrizioni pubbliche per chi guarda il video.</strong> Scrivi quattro testi autonomi, originali, basati su fatti e caratteristiche del soggetto: Facebook, Instagram, TikTok e YouTube. Variano taglio e lunghezza, non sono copie della stessa caption. Nessuna nota su regia, zoom, montaggio, AI, prompt o produzione. Le informazioni tecniche restano esclusivamente nelle altre sezioni private. Le vecchie descrizioni curate vengono conservate; nessuna frase generica viene spacciata per testo pronto. Per segnare il video come approvato, completa prima la revisione delle descrizioni e dei crediti necessari.</p>
    <div class="editorial-columns">
     <label>Titolo pubblico<input name="publicTitle" maxlength="1600" autocomplete="off"></label>
     <label>Descrizione breve<input name="shortDescription" maxlength="1600"></label>
@@ -729,10 +729,14 @@ async function edSaveRecord(){
  $('#edSave').disabled=true;
  try{
   const res=await fetch('/api/editorial',{method:'POST',headers:{'content-type':'application/json','Authorization':'Bearer '+g.token},body:JSON.stringify({key:x.key,data:patch})});
-  if(!res.ok){const msg=await res.text();throw Error('Salvataggio dossier: '+res.status+' '+msg.slice(0,120))}
+  if(!res.ok){
+   const raw=await res.text();let info=null;try{info=JSON.parse(raw)}catch{}
+   if(res.status===422&&info?.issues?.length)throw Error('Pubblicazione bloccata: '+info.issues.join(' · '));
+   throw Error('Salvataggio dossier: '+res.status+' '+raw.slice(0,120))
+  }
   const out=await res.json();edState.record=out.record;edState.dirty=false;edState.generated=false;edState.missing=out.missing||[];
   $('#edSavedInfo').textContent='Salvato: '+fmtDate(out.record.updatedAt);
-  edSetInfo(edState.missing.length?'Salvato. Da verificare: '+edState.missing.join(' · '):'Scheda salvata online.');
+  edSetInfo(edState.missing.length?'Salvato. Da verificare: '+edState.missing.join(' · '):'Scheda salvata online. Rileggi comunque stile, fatti, crediti e differenze tra piattaforme.');
   log('Dossier completo salvato online');
   return true;
  }catch(e){edSetInfo(e.message);log(e.message);return false}

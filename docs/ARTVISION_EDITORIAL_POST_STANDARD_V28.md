@@ -2,6 +2,17 @@
 
 **VINCOLANTE per ogni nuovo video, tutti i formati. ADDITIVO alle regole Cinema V6 + Contratto V25.** Questo NON è un nuovo preset visuale. Serve esclusivamente a scrivere post che siano davvero interessanti da leggere.
 
+## Consolidamento approvato 26 ottobre 2026 — descrizioni pubbliche e archivio sito
+- Questa e una **precisazione della V28 gia approvata**, NON un nuovo sistema parallelo. Vale per libri, Critico, Cinema, cronaca, musica e format futuri.
+- Ogni episodio deve avere quattro descrizioni realmente curate e distinte, salvate nel **Video Library Studio** insieme all'MP4 originale, alla copertina, alla scheda grafica e alla versione testuale. Devono essere leggibili e copiabili da Android dal dossier del singolo video.
+- La descrizione pubblica deve raccontare **l'argomento o l'opera** e il suo significato per il pubblico: contesto, storia, autore, dettagli documentati, una prospettiva originale o l'esperienza che il visitatore/lettore trovera. Niente logistica editoriale, spiegazioni di regia, note di rendering o dati che interessano solo al produttore.
+- **Voce editoriale costante, struttura narrativa variabile.** Alternare, con motivazione, un fatto sorprendente verificato, una scena simbolica, un contrasto umano, la storia dell'autore, un dettaglio museale, la voce del racconto o una spiegazione accessibile. Non alternare stili meccanicamente e non produrre quattro copie dello stesso testo.
+- Facebook: racconto autonomo con valore informativo e paragrafi naturali. Instagram: identita narrativa e frase di apertura adatta al mezzo. TikTok: essenzialita senza impoverire il contenuto. YouTube: contesto piu ricco, titolo cercabile e crediti pertinenti. Niente soglie rigide di parole come obiettivo artistico: le eventuali soglie automatiche sono solo un filtro contro campi vuoti.
+- Crediti e licenze obbligatori restano nel piede della descrizione pubblica **quando richiesti**, senza nasconderli nel dossier. Le note legali dettagliate rimangono nel fascicolo privato.
+- Il sito deve riusare testi autentici gia scritti e non sostituirli con boilerplate dedotto da categoria o titolo. Una scheda nuova senza testi curati deve dichiarare chiaramente **Da revisionare**. Mai presentare come pronto un modello generico.
+- Il controllo automatico puo bloccare assenza, duplicati e linguaggio tecnico; **non certifica qualita narrativa, fatti, liceita delle fonti o diritti**. Richiede revisione editoriale umana prima di approvare/pubblicare.
+- Se il video non e realmente importato nel sito, non affermare che le descrizioni siano gia salvate: produrre i quattro file, la scheda in testo e il dossier e registrare l'importazione quando avviene.
+
 ## PRINCIPIO: il testo racconta il quadro, non la lavorazione
 - Il video **mostra**. Il post **aggiunge** ciò che non è già evidente: storia vera, autore, contesto, un paradosso, una scelta pittorica significativa, un'interpretazione prudente, un dettaglio museale sorprendente. Evitare di descrivere meccanicamente gli oggetti già visibili o di ripetere il titolo del video.
 - Il testo deve essere una breve storia **autentica e autonoma**: utile anche se il lettore non conosce l'opera. Può suscitare stupore, curiosità, bellezza, dubbio, tristezza, fascino; non deve sembrare una formula di marketing.
