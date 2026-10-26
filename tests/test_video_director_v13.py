@@ -73,6 +73,30 @@ class VideoDirectorTests(unittest.TestCase):
             (Path(d) / "scene.jpg").write_bytes(b"different content")
             self.assertFalse(check(file)["ready"])
 
+    def test_v38_creative_review_detects_cloned_scenes_without_scene_quota(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = self.ready_project(d)
+            p["editorial_plan"]["narrative_design"].update(
+                story_beats=["Opening", "Return"],
+                distinct_visual_needs=["The door", "The consequence"],
+                image_count_reason="Two distinct narrative moments",
+                pace_reason="Contrast between the opening and the outcome")
+            p["scenes"].append({
+                "asset_id": "one", "description": "Anna sulla soglia",
+                "reason": "Apertura della vicenda",
+                "narration_anchor": "Poi torna al mare."
+            })
+            write_json(Path(d) / "PROJECT_V13.json", p)
+            result = check(Path(d) / "PROJECT_V13.json")
+            self.assertTrue(result["ready"], "V38 is advice, not another render blocker")
+            self.assertTrue(result["creative_review"]["needs_creative_review"])
+            self.assertTrue(any("DUPLICATE_SHOT_WITHOUT_REASON" in x for x in result["warnings"]))
+            # Creative correction is an explicit motivation, not a fabricated new image.
+            p["scenes"][1]["reuse_reason"] = "Returning to a remembered visual motif is intentional"
+            write_json(Path(d) / "PROJECT_V13.json", p)
+            checked = check(Path(d) / "PROJECT_V13.json")
+            self.assertFalse(checked["creative_review"]["needs_creative_review"])
+
     def test_outside_paths_and_wrong_anchor_are_blocked(self):
         with tempfile.TemporaryDirectory() as d:
             p = self.ready_project(d)
