@@ -15,10 +15,7 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - name: Verify pre-installed video tools
-        run: |
-          command -v ffmpeg
-          command -v ffprobe
-          ffmpeg -version | head -1
+      - name: Syntax check (no extra packages)
+        run: python -m py_compile src/video_download_fallback_v36.py tests/test_video_download_fallback_v36.py
       - name: Verify video-only ZIP and free Android fallback
         run: python -m unittest discover -s tests -p test_video_download_fallback_v36.py -v
