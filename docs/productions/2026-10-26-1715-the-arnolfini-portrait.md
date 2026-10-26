@@ -7,7 +7,7 @@
 - **Video:** 68.000 seconds, H.264 1080×1920 24 fps, AAC stereo; 6,845,722 bytes.
 - **SHA-256:** `322ffedbd631cdd7d698864482ddeccbfca026864d911a68a9a84c9d2299942f`
 - **Cover SHA-256:** `dde0a3fde100afa3efd4823e407b7bbf9da620a2ce549f7a1cfd5b9ba75a8d71`
-- **Package:** `ArtVision_20261026_1715_Arnolfini_Mirror_COMPLETE.zip`, SHA-256 `03325e96f0a6cba29d9e37c42c09c26113737b5e09f763eaee8f3f165ad5f8f3`; conversation attachment, not committed to GitHub.
+- **Package:** `ArtVision_20261026_1715_Arnolfini_Mirror_COMPLETE.zip`, SHA-256 `f5aadc157db28c3796b8178c9f40147036beb66d0e5b2032665b6ec7e7910104`; conversation attachment, not committed to GitHub.
 - **Audio:** Erik Satie, *Gymnopédie No. 1*, piano Robin Alciatore (Musopen), recording dedicated to public domain, via Wikimedia Commons. An edited 68-second excerpt with gain and fade; actual AAC stereo present.
 - **Image:** Wikimedia Commons faithful PD-Art reproduction, 4386×6000. Photo rights may vary by jurisdiction; review before commercial posting.
 - **Museum research:** [National Gallery](https://www.nationalgallery.org.uk/paintings/jan-van-eyck-the-arnolfini-portrait) and [historical interpretation](https://www.nationalgallery.org.uk/exhibitions/past/reflections-van-eyck-and-the-pre-raphaelites/reflections-behind-the-inspiration?viewPage=6).
