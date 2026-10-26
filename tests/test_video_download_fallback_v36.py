@@ -1,15 +1,31 @@
 """No external services: test master integrity, MP4 audio/video, ZIP and mobile fallback."""
 import hashlib
 import json
+import shutil
 import subprocess
 import tempfile
 import unittest
 import zipfile
 from pathlib import Path
-from src.video_download_fallback_v36 import deliver
+from src.video_download_fallback_v36 import deliver, zip_only_video
 
 
 class DownloadFallbackTests(unittest.TestCase):
+    def test_zip_always_contains_exactly_original_bytes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            fake_video = root / 'EXAMPLE.mp4'
+            payload = b'example-inert-raw-bytes' * 3000
+            fake_video.write_bytes(payload)
+            record = zip_only_video(fake_video, root / 'SOLO_VIDEO.zip')
+            self.assertEqual(record['size_bytes'], (root / 'SOLO_VIDEO.zip').stat().st_size)
+            with zipfile.ZipFile(root / 'SOLO_VIDEO.zip') as z:
+                self.assertEqual(z.namelist(), ['EXAMPLE.mp4'])
+                self.assertIsNone(z.testzip())
+                self.assertEqual(z.read('EXAMPLE.mp4'), payload)
+
+    @unittest.skipUnless(shutil.which('ffmpeg') and shutil.which('ffprobe'),
+                         'ffmpeg absent on CI; full MP4 integration verified separately')
     def test_mp4_zip_integrity_and_mobile_video(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
