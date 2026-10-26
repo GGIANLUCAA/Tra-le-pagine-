@@ -10,6 +10,6 @@
   "monetization_status": "rights_and_tts_terms_pending_review",
   "music": "new_original_local_composition",
   "image_provider": "Project Gutenberg 43936, 1900 W W Denslow, original public-domain book",
-  "workflow_retry": 2,
-  "retry_reason": "Fixed GitHub Actions YAML parse error; previous attempt had zero jobs and no TTS API call."
+  "workflow_retry": 3,
+  "retry_reason": "Source image download passed for all 25 assets; add missing DESCRIZIONE_SOCIAL.txt to satisfy existing V3 compatibility preflight. Earlier run never called TTS."
 }
