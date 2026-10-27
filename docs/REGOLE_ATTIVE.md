@@ -32,6 +32,16 @@ regola riutilizzabile registrare ambito, motivo, riferimento, approvazione e ver
 
 **Ambito:** tutti i fornitori a credito IA image-to-video, text-to-video, restauro video a pagamento, incluse Vidu, Wan, Kling, Seedance, Runware e provider futuri. Si applica a produzioni manuali, agenti automatici e workflow GitHub. Questa regola prevale su qualsiasi indicazione generale di autonomia, target numerici e routine di produzione. Nessuna spesa e stata autorizzata con questa modifica documentale.
 
+## Vidu come motore cinematografico prioritario — V45 (27/10/2026)
+
+L'utente ha acquistato circa 10 euro di servizio Vidu e richiede esplicitamente che venga **usato e valorizzato davvero** per scene image-to-video cinematografiche del progetto, senza sostituire le richieste con motion finti OpenCV/FFmpeg. Le regole di autorizzazione per SINGOLA spesa restano vincolanti e non significano "non utilizzare mai Vidu". Ogni nuovo episodio con azioni visive importanti deve valutare gratuitamente se Vidu può aumentarne davvero l'impatto; preparare una proposta precisa invece di ignorare lo strumento.
+
+Selezione per ogni scena: usare l'immagine originale in migliore qualità recuperabile; individuare gesto fisico interamente visibile e sincronizzato alla voce; stabilire durata adeguata, modello e risoluzione; confrontare il rapporto crediti/risultato per Q2/Q3 tenendo conto dei prezzi correnti; NON assumere che un modello più costoso sia automaticamente migliore. Confermare il saldo **API** con GET /ent/v2/credits senza addebiti: un abbonamento consumer potrebbe non alimentare lo stesso wallet API. In assenza di credito API, NON acquistare automaticamente altri pacchetti: usare, ove consentito e disponibile, il servizio web Vidu già sottoscritto o chiedere la soluzione praticabile.
+
+Per la clip scegliere il movimento con attenzione, usare un prompt singolo preciso, generare soltanto la scena approvata, recuperarla e revisionarla prima di qualsiasi altro pagamento. Conservare master originali, clip autentica, task ID, costo, confronto prima/dopo, motivazione, esito V44, montaggio con voice sync, MP4/ZIP Android. Una clip fallita resta scartata, NON genera retry o addebiti impliciti.
+
+La prima proposta concreta: La macchina del tempo di H.G. Wells, gesto della leva intorno 10,9–15,9 secondi, 5 sec Q2 Pro Fast 720p offpeak circa 8 crediti ($0,04) oppure Q3 Turbo 720p circa 30 crediti ($0,15) in offpeak. Prezzi da verificare sulla console prima del singolo pagamento. Il sorgente 505×761 resta un rischio qualitativo: non confondere upscale con recupero dei dettagli.
+
 ## Qualita animazioni e blocco anti-consegna scadente — VINCOLANTE V44 (27/10/2026)
 
 **Incidente approvato come feedback correttivo:** il video \`MACCHINA_DEL_TEMPO_ANIMATA_FINALE.mp4\` del 27/10 NON e approvato. Una ruota ruotata localmente e una leva deformata non realizzano la vera azione "l'uomo tira una leva". La visione critica deve avvenire PRIMA della consegna, non dopo il rifiuto dell'utente. Dettagli e prove: \`docs/VIDEO_INCIDENT_2026-10-27_V44.md\`.
