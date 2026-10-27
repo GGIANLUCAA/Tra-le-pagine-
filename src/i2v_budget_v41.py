@@ -27,7 +27,7 @@ MIME={".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".webp":"image
 def estimate(seconds=5, off_peak=True):
     if type(seconds) is not int or not 5<=seconds<=10:
         raise ValueError("Durata 5-10 secondi")
-    base=8+2*seconds
+    base=8+2*(seconds-1)
     n=math.ceil(base/2) if off_peak else base
     return {"credits":n,"usd":round(n*0.005,4)}
 
