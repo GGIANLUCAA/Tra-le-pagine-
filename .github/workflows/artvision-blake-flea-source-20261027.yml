@@ -19,6 +19,7 @@ jobs:
           mkdir -p source
           curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 15 --max-time 100 -A 'ArtVision/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)' 'https://upload.wikimedia.org/wikipedia/commons/9/93/William_Blake_-_The_Ghost_of_a_Flea_-_Google_Art_Project.jpg' -o source/BLAKE_GHOST_FLEA.jpg
           test "$(stat -c%s source/BLAKE_GHOST_FLEA.jpg)" -gt 1000000
+          python -m pip install --quiet Pillow
           python - <<'PY'
           from PIL import Image
           im=Image.open('source/BLAKE_GHOST_FLEA.jpg')
