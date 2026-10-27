@@ -1,0 +1,37 @@
+name: "ArtVision source | Blake Ghost of a Flea | 2026-10-27"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-blake-flea-source-20261027.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Acquire and verify faithful Commons reproduction
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p source
+          curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 15 --max-time 100 -A 'ArtVision/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)' 'https://upload.wikimedia.org/wikipedia/commons/9/93/William_Blake_-_The_Ghost_of_a_Flea_-_Google_Art_Project.jpg' -o source/BLAKE_GHOST_FLEA.jpg
+          test "$(stat -c%s source/BLAKE_GHOST_FLEA.jpg)" -gt 1000000
+          python - <<'PY'
+          from PIL import Image
+          im=Image.open('source/BLAKE_GHOST_FLEA.jpg')
+          im.verify()
+          im=Image.open('source/BLAKE_GHOST_FLEA.jpg')
+          assert im.size == (1609,2196),im.size
+          print('AUTHENTIC_SOURCE_VALIDATED', im.size)
+          PY
+          sha256sum source/BLAKE_GHOST_FLEA.jpg > source/SHA256SUMS.txt
+          printf '%s\n' 'William Blake, The Ghost of a Flea, c. 1819-20, Tate Britain N05889.' 'https://commons.wikimedia.org/wiki/File:William_Blake_-_The_Ghost_of_a_Flea_-_Google_Art_Project.jpg' 'Faithful reproduction of public-domain artwork; Commons PD-Art. Tate claims rights to photographic reproduction in the UK. Territorial commercial reuse needs separate review; no social publication authorized.' > source/SOURCE_RIGHTS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision-20261027-Blake-Ghost-Flea-Source
+          path: source/
+          retention-days: 7
+          if-no-files-found: error
