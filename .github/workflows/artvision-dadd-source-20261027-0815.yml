@@ -17,6 +17,7 @@ jobs:
           set -euo pipefail
           mkdir -p source
           curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 15 --max-time 100 -A 'ArtVision-Research/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)' 'https://upload.wikimedia.org/wikipedia/commons/5/5f/The_Fairy_Feller%27s_Master-Stroke.jpg' -o source/DADD_FAIRY_FELLER_ORIGINAL.jpg
+          python3 -m pip install --quiet --break-system-packages Pillow
           python3 - <<'PY'
           from PIL import Image
           import os
