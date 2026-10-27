@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-27T13:20:00Z",
+  "updated": "2026-10-27T19:16:47Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -19,7 +19,7 @@
       "record": "https://github.com/GGIANLUCAA/Tra-le-pagine-/issues/31"
     }
   ],
-  "next_preferred_format": "artvision_critico",
+  "next_preferred_format": "artvision_critico_if_natural_Gacrux_verified_else_new_unique_artwork_cinema",
   "cycle_log": [
     {
       "cycle_id": "20261024T1715+0200",
@@ -1206,6 +1206,42 @@
           "notes": "Only 0-5s intro revised, remaining video and original soundtrack preserved; all four posts included"
         }
       }
+    },
+    {
+      "cycle_id": "20261027T2015+0100",
+      "created_at": "2026-10-27T19:16:47Z",
+      "artist": "Odilon Redon",
+      "work": "The Cyclops",
+      "format": "artvision_cinema",
+      "subtype": "new_standalone_edit_of_previously_used_artwork",
+      "baseline": "cinema_v6_family",
+      "status": "rendered_needs_review_artwork_reused_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 51.333333,
+      "size_bytes": 17859236,
+      "sha256_mp4": "860922e2ffac18bfd6859a291f26b58e53dfbe639cb3eb2d50b5efedd17acda0",
+      "zip_sha256": "7d0ac3092aaefb60b9aff810e020a8fdd1c2b0fcc40c84f17385d909fef9c0ce",
+      "delivery_mp4": "https://drive.google.com/file/d/1Aq9n8IV4qdfJ9Oto8vrgTEU2b4rz27pr/view",
+      "delivery_zip": "https://drive.google.com/file/d/1t6LIT8d4ZeRyvnFaYCxVpqI43rMIR-nm/view",
+      "record": "docs/productions/2026-10-27-2015-odilon-redon-the-cyclops-standalone.md",
+      "source_reuse_disclosed": true,
+      "prior_collections": [
+        "Visions of Symbolism",
+        "The Other Side of Beauty"
+      ],
+      "new_unique_artwork": false,
+      "quality": {
+        "ffprobe": "pass",
+        "full_decode": "pass",
+        "zip_crc": "pass",
+        "opening_title_artist_visual": "pass",
+        "audio_technical": "pass",
+        "subjective_listening": "pending",
+        "artistic_approval": "pending"
+      },
+      "paid_ai_video_calls": 0,
+      "social_published": false,
+      "gold_master_approved": false
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
