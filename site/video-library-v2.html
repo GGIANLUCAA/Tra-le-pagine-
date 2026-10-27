@@ -976,6 +976,33 @@ $('#swExport').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringi
 $('#swImport').onchange=async e=>{try{const f=e.target.files[0];if(!f)return;if(f.size>2000000)throw Error('File troppo grande');const d=JSON.parse(await f.text());if(d.schema!=='vls-workflow-v1'||!Array.isArray(d.collections)||!d.videos||typeof d.videos!=='object'||Array.isArray(d.videos))throw Error('Formato non valido');for(const n of d.collections)if(typeof n!=='string'||n.length>60)throw Error('Raccolta non valida');for(const r of Object.values(d.videos))if(!r||!Array.isArray(r.collections)||r.collections.some(n=>typeof n!=='string')||typeof r.notes!=='string'||r.notes.length>5000||!['Da valutare','Mi piace','Da correggere'].includes(r.rating))throw Error('Scheda non valida');swSave({collections:[...new Set([...swData.collections,...d.collections])],videos:{...d.videos,...swData.videos}});swRefreshCollections();swChecks(swData.videos[swItem.key]?.collections||[]);$('#swStatus').textContent='Importazione completata. Le schede già presenti hanno la precedenza.'}catch(err){$('#swStatus').textContent='Importazione non riuscita: '+err.message}finally{e.target.value=''}};
 function swButton(label,fn){const b=document.createElement('button');b.className='ghost';b.textContent=label;b.onclick=fn;return b}
 $('#socialOptions .modalbody').prepend(swButton('Raccolte e giudizio',()=>{const x=socialActionItem;options.close();swOpen(x)}),swButton('Prepara pubblicazione',()=>{const x=socialActionItem;options.close();swPublish(x)}));
+let swCloudRevision=null,swCloudToken='',swCloudConflicts=0;
+const swCloudBox=document.createElement('div');swCloudBox.id='swCloudBox';
+swCloudBox.innerHTML='<p class="notice">Copia privata online: accedi allo Studio, carica e unisci le copie, poi salva online. I video non vengono duplicati.</p><button class="ghost" id="swCloudLoad">Carica e unisci copia online</button> <button class="btn" id="swCloudSave">Salva copia online</button><p id="swCloudInfo" role="status"></p><div id="swCloudChoices"></div>';
+$('#swExport').before(swCloudBox);
+function swCloudForm(){if(!swItem)return;const r=swData.videos[swItem.key]||{};swChecks(r.collections||[]);$('#swRating').value=r.rating||'Da valutare';$('#swIssue').value=r.issue||'';$('#swNotes').value=r.notes||'';swRefreshCollections()}
+function swCloudDraft(){if(!swItem)return false;const r=swData.videos[swItem.key]||{};return $('#swNotes').value!==(r.notes||'')||$('#swRating').value!==(r.rating||'Da valutare')||$('#swIssue').value!==(r.issue||'')||JSON.stringify([...$('#swChecks').querySelectorAll('input:checked')].map(x=>x.value).sort())!==JSON.stringify([...(r.collections||[])].sort())}
+function swCloudAuth(){if(!g.admin){$('#swCloudInfo').textContent='Accedi allo Studio per usare la copia privata online.';return false}if(swCloudToken!==g.token){swCloudRevision=null;swCloudToken=g.token}if(swCloudDraft()){$('#swCloudInfo').textContent='Prima premi Salva raccolte e giudizio per conservare le modifiche aperte.';return false}return true}
+$('#swCloudLoad').onclick=async()=>{
+ if(!swCloudAuth())return;const token=g.token;$('#swCloudLoad').disabled=true;$('#swCloudInfo').textContent='Lettura della copia online…';
+ try{const response=await fetch('/api/workflow',{headers:{Authorization:'Bearer '+token},cache:'no-store'});if(!response.ok)throw Error(await response.text());const remote=await response.json();if(token!==g.token)return;
+  const videos={...remote.videos,...swData.videos},conflicts=[];
+  const comparable=r=>JSON.stringify([r.title,[...(r.collections||[])].sort(),r.rating,r.issue||'',r.notes]);
+  for(const [key,r]of Object.entries(remote.videos))if(swData.videos[key]&&comparable(swData.videos[key])!==comparable(r))conflicts.push([key,swData.videos[key],r]);
+  swSave({collections:[...new Set([...remote.collections,...swData.collections])],videos});swCloudRevision=remote.revision;swCloudConflicts=conflicts.length;swCloudForm();
+  const root=$('#swCloudChoices');root.replaceChildren();
+  for(const [key,local,cloud]of conflicts){const box=document.createElement('div');box.className='notice';const title=document.createElement('p');title.textContent='Due giudizi diversi: '+(local.title||key);box.append(title);
+   for(const [label,record]of [['Telefono',local],['Online',cloud]]){const text=document.createElement('p');text.textContent=label+': '+record.rating+' · '+record.notes;const button=swButton('Conserva '+label.toLowerCase(),()=>{try{swSave({...swData,videos:{...swData.videos,[key]:record}});box.remove();swCloudConflicts--;swCloudForm();$('#swCloudInfo').textContent=swCloudConflicts?'Risolvi ancora '+swCloudConflicts+' differenze.':'Unione completata. Premi Salva copia online.'}catch{$('#swCloudInfo').textContent='Salvataggio locale fallito; esporta le note.'}});box.append(text,button)}root.append(box)}
+  $('#swCloudInfo').textContent=conflicts.length?'Trovate '+conflicts.length+' differenze: scegli quale conservare prima di salvare online.':'Copie unite senza conflitti. Premi Salva copia online per conservarle sul sito.';
+ }catch(e){$('#swCloudInfo').textContent=e.message}finally{$('#swCloudLoad').disabled=false}
+};
+$('#swCloudSave').onclick=async()=>{
+ if(!swCloudAuth())return;if(swCloudRevision===null){$('#swCloudInfo').textContent='Prima premi Carica e unisci copia online.';return}if(swCloudConflicts){$('#swCloudInfo').textContent='Scegli quali giudizi conservare per risolvere le differenze.';return}
+ const token=g.token;$('#swCloudSave').disabled=true;
+ try{const response=await fetch('/api/workflow',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({data:swData,revision:swCloudRevision})});if(!response.ok)throw Error(await response.text());const result=await response.json();if(token!==g.token)return;swCloudRevision=result.revision;$('#swCloudInfo').textContent='Copia salvata online. Su un altro dispositivo accedi allo Studio e premi Carica e unisci copia online.'}
+ catch(e){$('#swCloudInfo').textContent='Copia online non salvata: '+e.message}finally{$('#swCloudSave').disabled=false}
+};
+
 const swAutoButton=swButton('Automatico: no',()=>{swAuto=!swAuto;swAutoButton.textContent=swAuto?'Automatico: sì':'Automatico: no';swAutoButton.setAttribute('aria-pressed',String(swAuto))});socialFilters.append(swAutoButton);
 socialVideo.addEventListener('ended',()=>{if(swAuto&&!document.hidden&&!swDialog.open&&!options.open&&!swPub.open&&social.index<social.rows.length-1)socialMove(1)});
 const swControls=document.createElement('div');swControls.id='swControls';swControls.style.cssText='position:absolute;left:12px;bottom:12px;z-index:5;display:flex;gap:8px';
@@ -993,7 +1020,7 @@ swPub.innerHTML='<div class="modalhead"><h2 id="swPubTitle">Prepara pubblicazion
 document.body.append(swPub);let swPubItem=null,swPubRecord=null,swPubSources={},swRequest=0;
 $('#swPubClose').onclick=()=>{swRequest++;swPub.close()};
 swPub.addEventListener('cancel',()=>swRequest++);
-function swPostUpdate(){const platform=$('#swPlatform').value,text=swPubRecord?.[platform]||'';$('#swPost').value=text;$('#swCopyPost').disabled=!text.trim();const source=swPubSources[platform];$('#swPubInfo').textContent=!swPubRecord?'Accedi allo Studio per leggere i testi e i crediti privati.':!text.trim()?'Testo mancante: completa questo social nel dossier.':(source?.label||'Testo salvato, da revisionare')+(source?.file?' · '+source.file:'')+'. Copiare il testo non pubblica il video.';}
+function swPostUpdate(){const platform=$('#swPlatform').value,text=swPubRecord?.[platform]||'';$('#swPost').value=text;$('#swCopyPost').disabled=!text.trim();const source=swPubSources[platform];$('#swPubInfo').textContent=!swPubRecord?'Accedi allo Studio per leggere i testi e i crediti privati.':!text.trim()?(source?.kind==='conflict'?source.label+'. Controlla gli allegati prima di scegliere.':'Testo mancante: completa questo social nel dossier.'):(source?.label||'Testo salvato, da revisionare')+(source?.file?' · '+source.file:'')+'. Copiare il testo non pubblica il video.';}
 $('#swPlatform').onchange=swPostUpdate;
 $('#swCopyPost').onclick=async()=>{try{await navigator.clipboard.writeText($('#swPost').value);$('#swPubInfo').textContent='Testo copiato.'}catch{$('#swPost').focus();$('#swPost').select();$('#swPubInfo').textContent='Seleziona e copia il testo.'}};
 $('#swPubDossier').onclick=()=>{swPub.close();openEditorial(swPubItem)};
