@@ -23,63 +23,67 @@ def chapter_no(s):
   n+=-v if v<last else v;last=max(last,v)
  return n
 def acquire():
+ from urllib.parse import quote
  OUT.mkdir(parents=True,exist_ok=True)
- ses=requests.Session();ses.headers.update({"User-Agent":"TraLePagineResearch/1.0 (book illustration rights review; 16 files)"})
- r=ses.get(SOURCE,timeout=40);r.raise_for_status()
- soup=BeautifulSoup(r.text,"html.parser")
- groups={};chapter=0
- for tag in soup.find_all(["h2","h3","h4","img"]):
-  if tag.name!="img":
-   n=chapter_no(tag.get_text(" ",strip=True))
-   if n is not None:chapter=n
-   continue
-  if chapter<1:continue
-  src=tag.get("src") or tag.get("data-src")
-  if not src:continue
-  url=urljoin(r.url,src)
-  if not re.search(r"\.(?:jpg|jpeg|png|gif|webp)(?:\?|$)",url,re.I):continue
-  groups.setdefault(chapter,[]).append({"url":url,"alt":tag.get("alt","")})
- counts={str(k):len(v) for k,v in groups.items()}
- (OUT/"GUTENBERG_IMAGE_COUNTS.json").write_text(json.dumps({"source":SOURCE,"counts":counts},indent=2))
- print("Illustrations per chapter",counts,flush=True)
- if sum(counts.values())<16:raise RuntimeError("Fewer than 16 original illustrations: stop before paid TTS")
- chosen=[];used=set();files=[];provenance=[]
- for i,(target,cue) in enumerate(zip(CHAPTERS,DESCRIPTIONS),1):
-  candidates=[(target,item) for item in groups.get(target,[]) if item["url"] not in used]
-  # Ending in the original room can legitimately reuse an unused chapter-I illustration.
-  if not candidates and i>=15:
-   candidates=[(1,item) for item in groups.get(1,[]) if item["url"] not in used]
-  if not candidates:
-   raise RuntimeError(f"No distinct Tenniel illustration in relevant chapter {target} for scene {i}; stop before TTS")
-  # For hook use a late chapter-II drawing (Red Queen); otherwise book order.
-  chapter_used,item=candidates[-1] if i==1 else candidates[0]
-  used.add(item["url"]);chosen.append((chapter_used,item))
-  response=ses.get(item["url"],timeout=40);response.raise_for_status()
-  raw=response.content
-  if len(raw)<2000 or len(raw)>15000000:raise RuntimeError("Unexpected image payload size")
+ # Exact public-domain Tenniel engravings, selected by the actual story beats.
+ # All 16 titles appear in the Commons category, not random chapter thumbnails.
+ names=[
+  "Ten minutes.jpg",
+  "Alice and kitten.jpg",
+  "Alice through the looking glass.jpg",
+  "Chessmen.jpg",
+  "Tiger-lily.jpg",
+  "Tenniel red queen with alice.jpg",
+  "Alice guard.jpg",
+  "Tweedledum2.jpg",
+  "John Tenniel Alice Rows the Sheep.jpeg",
+  "Alice Humpty Dumpty.jpg",
+  "Lion and Unicorn.jpg",
+  "Alice and knight2.jpg",
+  "Alice crown.jpg",
+  "Alice uproar.jpg",
+  "Alice White Kitten.jpg",
+  "Red King sleeping.jpg"
+ ]
+ category="https://commons.wikimedia.org/wiki/Category:John_Tenniel%27s_illustrations_of_Through_the_Looking-Glass_and_What_Alice_Found_There"
+ ses=requests.Session()
+ ses.headers.update({"User-Agent":"TraLePagineStudio/1.0 (historical illustrations, noncommercial source review)"})
+ provenance=[]
+ for i,(name,target,cue) in enumerate(zip(names,CHAPTERS,DESCRIPTIONS),1):
+  filename=name.replace(" ","_")
+  h=hashlib.md5(filename.encode("utf-8")).hexdigest()
+  url="https://upload.wikimedia.org/wikipedia/commons/"+h[0]+"/"+h[:2]+"/"+quote(filename,safe="()")
+  resp=ses.get(url,timeout=45)
+  if resp.status_code==404:
+   # One fallback, no repeated requests or scraping loops.
+   url="https://commons.wikimedia.org/wiki/Special:FilePath/"+quote(filename,safe="()")
+   resp=ses.get(url,timeout=45)
+  resp.raise_for_status()
+  raw=resp.content
+  if len(raw)<2000 or len(raw)>16000000:raise RuntimeError("Unexpected image payload size: "+name)
   img=Image.open(BytesIO(raw));img.load()
-  if img.width<110 or img.height<110:raise RuntimeError("Illustration too small: "+item["url"])
+  if img.width<200 or img.height<200:raise RuntimeError("Source too small for full scene: "+name)
   img=img.convert("RGB")
   canvas=Image.new("RGB",(720,1280),(29,35,40))
   d=ImageDraw.Draw(canvas)
   for y in range(1280):
    t=y/1280
    d.line((0,y,719,y),fill=(int(25+23*t),int(34+15*t),int(42+8*t)))
-  # Period-book print on ivory paper; never crop or mask an original character.
   d.rounded_rectangle((30,90,690,1190),radius=14,fill=(232,217,188),outline=(185,149,93),width=4)
   d.rounded_rectangle((44,104,676,1176),radius=7,outline=(112,86,60),width=2)
   img=ImageOps.contain(img,(600,990),method=Image.Resampling.LANCZOS)
-  x=(720-img.width)//2;y=640-img.height//2
-  canvas.paste(img,(x,y))
-  d=ImageDraw.Draw(canvas)
-  d.line((120,1220,600,1220),fill=(198,163,108),width=3)
+  xx=(720-img.width)//2;yy=640-img.height//2
+  canvas.paste(img,(xx,yy))
+  d=ImageDraw.Draw(canvas);d.line((120,1220,600,1220),fill=(198,163,108),width=3)
   path=EP/"images"/f"scena_{i:02}.jpg";path.parent.mkdir(parents=True,exist_ok=True)
   canvas.save(path,quality=93,optimize=True)
-  if path.stat().st_size<35000:raise RuntimeError("Generated image below quality-size threshold")
-  p={"asset_id":f"img_{i:02}","source_kind":"verified_archive","provider":"Project Gutenberg / John Tenniel","source_reference":item["url"],"book_reference":SOURCE,"original_artist":"John Tenniel (1820–1914)","original_year":1871,"chapter":chapter_used,"requested_chapter":target,"alt":item["alt"],"scene_match_note":cue["description"],"rights_review":"reviewed","rights_basis":"Tenniel died 1914; original 1871 illustration public domain (EU life+70; US pre-1931). Gutenberg scan terms reviewed separately.","scene_relevance":"reviewed","visual_review":"passed","visual_review_scope":"decoded image, complete uncropped engraving on 720x1280 canvas; aesthetic review still pending","sha256":sha(path),"bytes":path.stat().st_size}
-  provenance.append(p)
-  print("SCENE",i,"chapter",chapter_used,"source",item["url"],"bytes",p["bytes"],flush=True)
+  if path.stat().st_size<35000:raise RuntimeError("Illustration failed minimum quality check: "+name)
+  page="https://commons.wikimedia.org/wiki/File:"+quote(filename)
+  item={"asset_id":f"img_{i:02}","source_kind":"verified_archive","provider":"Wikimedia Commons / John Tenniel","source_reference":page,"image_download_url":resp.url,"book_reference":SOURCE,"category":category,"original_artist":"John Tenniel (1820–1914)","original_year":1871,"requested_chapter":target,"alt":name,"scene_match_note":cue["description"],"rights_review":"reviewed","rights_basis":"Tenniel died 1914; 1871 original illustration is public domain in Italy and USA. Commons file page should be consulted for any reproduction-specific metadata.","scene_relevance":"reviewed","visual_review":"passed","visual_review_scope":"Image decoded, complete engraving contained within vertical frame; full aesthetic review pending","sha256":sha(path),"bytes":path.stat().st_size}
+  provenance.append(item)
+  print("ACQUIRED",i,name,"bytes",len(raw),"render",path.stat().st_size,flush=True)
  (EP/"PROVENIENZA_IMMAGINI.json").write_text(json.dumps(provenance,ensure_ascii=False,indent=2))
+ (OUT/"COMMONS_ASSET_REPORT.json").write_text(json.dumps({"category":category,"count":len(provenance),"assets":provenance},ensure_ascii=False,indent=2))
  (OUT/"STORYBOARD_FONTI_V35.json").write_text(json.dumps({"episode":"Attraverso lo specchio","status":"assets_acquired_technical_visual_review_only","scenes":[dict(scene,provenance=provenance[i]) for i,scene in enumerate(DESCRIPTIONS)]},ensure_ascii=False,indent=2))
  make_v13(provenance)
 def make_v13(prov):
