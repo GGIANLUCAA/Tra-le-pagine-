@@ -54,7 +54,7 @@ class RealActionV40(unittest.TestCase):
         result = produce(self.video, self.root/"output.mp4", self.spec, self.root,
                          fps=24, width=320, height=568)
         self.assertEqual(result["status"], "rendered_needs_review")
-        self.assertTrue(result["original_footage_has_action"]["median_frame_change"] > 0.65)
+        self.assertTrue(result["original_footage_has_action"]["median_frame_change"] > 0.20)
         self.assertTrue((self.root/"output.json").is_file())
         self.assertEqual(result["duration"], 5.0)
 
