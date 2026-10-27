@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-27T10:18:00Z",
+  "updated": "2026-10-27T13:20:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -1186,7 +1186,26 @@
       "social_published": false,
       "rights_status": "PD-Art Commons with photo EXIF copyright claim: territorial commercial review required",
       "external_video_library_import": "attempted_blocked_file_reference",
-      "record": "docs/productions/2026-10-27-1115-craesbeeck-temptation.md"
+      "record": "docs/productions/2026-10-27-1115-craesbeeck-temptation.md",
+      "postprocess": {
+        "title_and_artist_correction": {
+          "corrected_at": "2026-10-27T14:15:00+01:00",
+          "kind": "correction_not_new_episode",
+          "old_master_preserved": true,
+          "video_sha256": "8bf84ffb42453c00fd353b6c9192d8334a5e6dc11fe3a6f36d6f8c59b799228a",
+          "video_duration_seconds": 70,
+          "video_resolution": "1080x1920",
+          "video_audio_codecs": "H264/AAC",
+          "new_cover_and_first_frame": "both contain title and artist; V6 visual family",
+          "full_decode": "pass",
+          "zip_crc": "pass",
+          "delivery_zip": "ArtVision_20261027_1415_Craesbeeck_TitleFix_COMPLETE.zip (conversation attachment, not stored in GitHub)",
+          "rights_status": "review_required",
+          "gold_master": false,
+          "publication": false,
+          "notes": "Only 0-5s intro revised, remaining video and original soundtrack preserved; all four posts included"
+        }
+      }
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
