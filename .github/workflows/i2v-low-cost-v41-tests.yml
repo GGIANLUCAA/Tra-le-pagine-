@@ -24,3 +24,30 @@ jobs:
         run: |
           python -m py_compile src/i2v_budget_v41.py src/i2v_scene_v41.py
           python -m unittest discover -s tests -p "test_i2v*.py" -v
+      - name: "Smoke test reale: estrai immagine di Scacchi, valida e prepara preventivo GRATIS"
+        run: |
+          mkdir -p output/v41
+          python src/i2v_scene_v41.py --episode 01_scacchi --scene 1 --output-dir output/v41
+          python - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          images=list(Path("output/v41").glob("scena_01.*"))
+          images+=list(Path("episodes/01_scacchi/images").glob("scena_01.*")) if Path("episodes/01_scacchi/images").exists() else []
+          if len(images)!=1:raise SystemExit("Immagine del primo capitolo non disponibile in modo univoco")
+          cmd=[sys.executable,"src/i2v_budget_v41.py","plan",
+               "--image",str(images[0]),
+               "--prompt","In a candlelit Victorian study, the human hand carefully turns the page of the book while its paper bends realistically.",
+               "--seconds","5","--out","output/v41"]
+          subprocess.run(cmd,check=True)
+          print("PREVENTIVO CREATO, SENZA GENERAZIONE REMOTA")
+          PY
+      - name: "Conserva solo i piani del test su GitHub (nessun video inventato)"
+        uses: actions/upload-artifact@v4
+        with:
+          name: V41_PROVA_GRATUITA_EPISODIO
+          path: |
+            output/v41/I2V_PLAN.json
+            output/v41/SCENA_NARRAZIONE_V41.json
+          if-no-files-found: error
+          retention-days: 7
+
