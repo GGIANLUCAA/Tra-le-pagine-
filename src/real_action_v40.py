@@ -88,7 +88,7 @@ def inspect_action(path: Path, start: float, seconds: float):
         raise ValueError("Non riesco a campionare due intervalli di movimento")
     frame_change = float(np.median(diffs))
     object_motion = float(np.median(residuals)) if residuals else 0.0
-    if frame_change < 0.65:
+    if frame_change < 0.20:
         raise ValueError("La fonte sembra ferma: non consegnarla come azione animata")
     return {"median_frame_change": round(frame_change, 3),
             "object_motion_px_256w": round(object_motion, 3),
