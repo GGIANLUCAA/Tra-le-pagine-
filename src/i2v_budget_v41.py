@@ -40,6 +40,17 @@ def plan(image:Path,prompt:str,seconds:int=5,off_peak=True,max_cost_usd=0.10):
         raise ValueError("Immagine vuota o oltre 9.5 MB")
     if not isinstance(prompt,str) or not 30<=len(prompt.strip())<=2000:
         raise ValueError("Descrivere un'azione verificabile in almeno 30 caratteri")
+    # Fail BEFORE submitting a paid generation if the picture is corrupt,
+    # extremely narrow, or too small for acceptable cinematic output.
+    from PIL import Image, UnidentifiedImageError
+    try:
+        with Image.open(image) as picture:
+            width,height=picture.size
+            picture.verify()
+    except (OSError,UnidentifiedImageError,ValueError) as exc:
+        raise ValueError("Immagine danneggiata o non decodificabile") from exc
+    if min(width,height)<256 or max(width/height,height/width)>=4:
+        raise ValueError("Immagine con risoluzione o proporzioni non idonee a I2V")
     quote=estimate(seconds,off_peak)
     if max_cost_usd<=0 or quote["usd"]>max_cost_usd+1e-8:
         raise ValueError("La richiesta supera il tetto di spesa consentito")
