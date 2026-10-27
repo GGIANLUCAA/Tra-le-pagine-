@@ -18,6 +18,20 @@ Un esempio dell'utente resta uno spunto. L'approvazione di un filmato non signif
 che ogni suo dettaglio diventi obbligatorio in tutti i film futuri. Per una nuova
 regola riutilizzabile registrare ambito, motivo, riferimento, approvazione e versione.
 
+## Crediti IA video a pagamento — REGOLA PERMANENTE VINCOLANTE (27/10/2026)
+
+**Approvazione esplicita dell'utente:** i soldi per i crediti di generazione video sono limitati e vanno rispettati. Il semplice acquisto dei crediti, la presenza di una chiave API, frasi come "fatto", "continua", "prosegui" o il numero-obiettivo "20 clip al giorno" **NON autorizzano a spendere nemmeno un credito**.
+
+1. **Nessuna generazione video pagata per prove casuali.** Prima di consumare crediti preparare GRATIS una scheda della singola scena: progetto/episodio, immagine effettiva visionabile, testo narrato e punto temporale preciso, azione fisica che deve avvenire, prompt positivo e vincoli negativi, modello, durata, formato, preventivo e utilita prevista nel montaggio finale. Confrontare con immagini/personaggi preesistenti; NON generare stock narrativamente scorrelato.
+2. **Preflight editoriale approfondito e autocritico, a costo zero.** Verificare fonte e diritti, composizione originale, volti, mani, ambiente, epoca, movimenti plausibili, formato/crop, continuita personaggi e dialogo, coerenza del modello scelto. Chiedere chiarimenti se lo scopo o la qualita attesa sono incerti, invece di tentare a pagamento. Non promettere un risultato "wow" certo: la generazione IA e probabilistica.
+3. **APPROVAZIONE ESPLICITA PER OGNI GENERAZIONE** legata a immagine, prompt, modello, durata, costo massimo e scena; usare codice univoco derivato dal preventivo approvato nel workflow Vidu. L'operatore deve vedere la scheda e autorizzare il singolo submit dopo averne compreso contenuto e costo. Ogni variazione richiede un nuovo piano e una nuova approvazione. API key = permesso tecnico, NON assenso economico. Vietata autoapprovazione dell'assistente.
+4. **Niente lotti, rinnovi, retry, fallback pagati, programmazioni ricorrenti o generazioni speculative** senza autorizzazione separata e limiti espliciti. Un fallimento non autorizza una seconda spesa. In caso di timeout controllare lo stato del task nel provider prima di qualsiasi tentativo; non inviare alla cieca. Limitare le chiamate per run e impedire re-run di job a pagamento.
+5. **Tracciabilita dei crediti**: preservare preventivo, codice approvato, data, scena, modello, durata, ID task, stato, esito, costo provider quando disponibile e hash degli asset. Indicare le stime come tali, non come addebiti verificati; budget giornaliero predefinito ZERO, fino a esplicita autorizzazione del singolo costo.
+6. **Qualita prima della quantita**: i modelli economici vanno scelti solo se adeguati alla scena. Per un effetto importante meglio zero clip che un esperimento scadente. Una clip prodotta resta DA_REVISIONARE fino al controllo reale; non dichiararla buona per il progetto solo perche l'API ha generato un MP4.
+7. **Consegna affidabile**: scaricare il video completato dal provider prima della scadenza del link, verificare bytes/formato, salvare originale e ZIP Android, predisporre collegamento recuperabile, senza inventare percorsi.
+
+**Ambito:** tutti i fornitori a credito IA image-to-video, text-to-video, restauro video a pagamento, incluse Vidu, Wan, Kling, Seedance, Runware e provider futuri. Si applica a produzioni manuali, agenti automatici e workflow GitHub. Questa regola prevale su qualsiasi indicazione generale di autonomia, target numerici e routine di produzione. Nessuna spesa e stata autorizzata con questa modifica documentale.
+
 ## Decisioni consolidate
 
 | Prima | Ora |
