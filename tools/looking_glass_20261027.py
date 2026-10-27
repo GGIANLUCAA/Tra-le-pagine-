@@ -15,7 +15,7 @@ CHAPTERS=[2,1,1,1,2,2,3,4,5,6,7,8,9,9,1,1]
 DESCRIPTIONS=json.loads((EP/"scene_cues.json").read_text(encoding="utf-8"))
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def chapter_no(s):
- m=re.search(r"CHAPTER\\s+([IVX]+)\\.",s,re.I)
+ m=re.search(r"CHAPTER\s+([IVX]+)\.",s,re.I)
  if not m:return None
  r=m.group(1).upper(); n=0; last=0
  for c in r[::-1]:
@@ -37,7 +37,7 @@ def acquire():
   src=tag.get("src") or tag.get("data-src")
   if not src:continue
   url=urljoin(r.url,src)
-  if not re.search(r"\\.(?:jpg|jpeg|png|gif|webp)(?:\\?|$)",url,re.I):continue
+  if not re.search(r"\.(?:jpg|jpeg|png|gif|webp)(?:\?|$)",url,re.I):continue
   groups.setdefault(chapter,[]).append({"url":url,"alt":tag.get("alt","")})
  counts={str(k):len(v) for k,v in groups.items()}
  (OUT/"GUTENBERG_IMAGE_COUNTS.json").write_text(json.dumps({"source":SOURCE,"counts":counts},indent=2))
