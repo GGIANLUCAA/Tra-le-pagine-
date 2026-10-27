@@ -4,7 +4,7 @@
 **Format:** Cinema V6, authentic single artwork, no voice (Gacrux availability unverified).
 **Video:** 76.5 s, 1080×1920, 24 fps, H.264/AAC, 8,099,667 bytes.
 **MP4 SHA256:** `401a3a802d42d045d3261ed143d9f302879db2bbc53876c6a11c2b52529fc693`
-**ZIP SHA256:** `0ec58570cb0b7be0c5af1f24ad3c01ff8c6f5dd6ea480c1cabc381c78ab49d28`
+**ZIP SHA256:** `f434283de74cd5485f37e007e732dc2c251fb770c5965175390d6b9237d0e51d`
 **Cover SHA256:** `60d555cf2d65621234def31c9dfd93aab8095a2cdca182b5c55a05dba835601a`
 
 ## Production
