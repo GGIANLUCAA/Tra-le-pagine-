@@ -1,12 +1,13 @@
 """V41 image selection tests: no traversal, output review, no source overwrite."""
 import os
 import sys
+import json
 import tempfile
 import unittest
 import zipfile
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent/"src"))
-from i2v_scene_v41 import select
+from i2v_scene_v41 import select, narration_matches
 
 
 class SceneV41Tests(unittest.TestCase):
@@ -40,6 +41,19 @@ class SceneV41Tests(unittest.TestCase):
             select("test_book",36,self.out)
         with self.assertRaises(ValueError):
             select("test_book",2,self.out)
+    def test_narration_cues_with_reused_asset(self):
+        (self.root/"testo.txt").write_text(
+            "First moment. Second moment. Third moment. Fourth moment.",encoding="utf-8")
+        (self.root/"scene_cues.json").write_text(json.dumps([
+            {"start_sentence":0,"asset":1,"description":"Opening"},
+            {"start_sentence":1,"asset":2,"description":"Elsewhere"},
+            {"start_sentence":2,"asset":1,"description":"Return to river"}]))
+        report=narration_matches("test_book",1)
+        self.assertTrue(report["human_review_required"])
+        self.assertEqual(len(report["matches"]),2)
+        self.assertEqual(report["matches"][1]["first_spoken_sentence"],"Third moment.")
+        self.assertEqual(report["matches"][1]["narration_alignment"],"NEEDS_HUMAN_REVIEW")
+
     def test_preserve_output(self):
         select("test_book",1,self.out)
         with self.assertRaises(ValueError):
