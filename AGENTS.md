@@ -143,6 +143,29 @@ fotogrammi reali e i raccordi a velocità normale. Il test non certifica l'estet
   `docs/VIDEO_LIBRARY_DOSSIER_V1.md`. Verificare salvataggio, scheda, anteprima e player.
   Una copia di sorgenti nel repository non dimostra cosa sia installato sul sito live.
 
+## V44 — NIENTE FINTA ANIMAZIONE / MASTER NON REVISIONATI (27/10/2026)
+
+**Incidente reale e feedback dell'utente:** \`docs/VIDEO_INCIDENT_2026-10-27_V44.md\`.
+Il video "Macchina del tempo animata" con ruote ruotate e leva deformata in OpenCV
+è stato RIFIUTATO. MP4 integro e audio presente NON equivalgono a film pronto.
+**Mai ripetere l'errore** di consegnare un video come FINALE dopo una mera analisi
+ffprobe/ZIP/decodifica, senza vera autocritica delle azioni e della regia.
+
+Per ogni video creato mediante aggiunta o sostituzione di scene animate:
+- Confrontare il medesimo intervallo PRIMA/DOPO e ascoltare le esatte parole.
+- Se la richiesta è movimento IA reale, semplici zoom, crop, deformazioni e rotazioni
+  locali NON soddisfano il lavoro; non etichettarli come scena IA.
+- Verificare se il soggetto FA davvero l'azione richiesta, e controllare testa, mani,
+  elementi fisici e continuità a velocità normale. Se il risultato è brutto, SCARTARLO.
+- Eseguire \`src/animated_video_release_gate_v44.py\`: preparare sempre manifest
+  \`rendered_needs_review\`. Non dichiarare FINALE né pronto per pubblicazione
+  senza validazione effettiva, stato \`approved_for_final_delivery\` e hash del video
+  revisionato. In mancanza di revisione mostrare solo bozza chiaramente non approvata.
+- Nessun retry pagato e nessuna simulazione della revisione con flag inventati.
+- Le protezioni sono necessarie ma non certificano automaticamente l'estetica e
+  non impediscono da sole che uno script esterno al repository le aggiri.
+  Applicare la regola anche a lavori locali, chat e automazioni.
+
 ## Crediti video IA a pagamento — blocco preventivo inderogabile
 
 Prima di ogni chiamata a modelli video che consumano crediti leggere e applicare
