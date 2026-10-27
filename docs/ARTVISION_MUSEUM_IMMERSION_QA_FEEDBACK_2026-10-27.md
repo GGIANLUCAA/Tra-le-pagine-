@@ -1,3 +1,16 @@
+# ESITO FEEDBACK UTENTE — V3 RESPINTA (27 ottobre 2026)
+
+**VINCOLANTE PER LE PROSSIME PRODUZIONI:** l'utente ha guardato V3 e ha detto esplicitamente «ancora peggio». Il confronto visivo diretto V2/V3 conferma la regressione estetica. **NON usare V3 come riferimento approvato né riutilizzare il suo algoritmo di raccordo automatico SIFT e zoom 2D esasperato.** NON promuoverla Gold Master o qualità museale. Restaurare **V2** come unico riferimento positivo attuale, con i tre piccoli difetti noti (bordo cornice, raccordo ingresso, raccordo uscita).
+
+Diagnosi verificata tramite comparativa di 13 fotogrammi a t=0,2,4,5.5,7.5,8.7,9.3,13,55,57,59,61,63 s:
+- In V3 nei primi secondi il quadro cresce troppo velocemente: a 2 s occupa già gran parte del frame; a 4 s si vede un bordo orizzontale enorme; a 7–9 s zoom e panoramica spostano la composizione e compromettono la naturalezza.
+- In V3 il rientro a 59–61 s reintroduce bruscamente la cornice e perde la fluidità originale.
+- La registrazione geometrica dei pixel ai punti di stacco non sostituisce la **continuità del moto**, della velocità e della percezione: il miglioramento metrico di un match-cut ha prodotto una regressione visiva.
+- V3 non va «aggiustata di nuovo»: conservarla soltanto per diagnosi. Lavorare su una **copia della V2**, preferibilmente con test brevi A/B dei soli raccordi che devono essere effettivamente guardati prima di renderizzare un nuovo film intero.
+- Il feedback dell'utente prevale su ogni QA esclusivamente tecnico («ffmpeg decodifica» non equivale a qualità artistica). Evitare ulteriori video completi finché l'apertura breve non è visivamente convincente.
+
+---
+
 # ArtVision Museum Immersion — feedback e QA dei raccordi (27 ottobre 2026)
 
 ## Stato
