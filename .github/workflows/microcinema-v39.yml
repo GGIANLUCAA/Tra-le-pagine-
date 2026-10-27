@@ -1,0 +1,76 @@
+name: "MicroCinema V39 - provino gratuito"
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "File immagine nel repository, sotto episodes/"
+        required: true
+        type: string
+      format:
+        description: "Formato"
+        type: choice
+        options: [libri, artvision_cinema, artvision_critico, controluce]
+        default: libri
+      effect:
+        description: "Effetto (depth_layers richiede 2 asset e si usa da CLI)"
+        type: choice
+        options: [slow_push, focus_reveal, light_travel]
+        default: slow_push
+      seconds:
+        description: "Durata in secondi"
+        type: choice
+        options: ["5", "7", "10"]
+        default: "7"
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      IMAGE_PATH: "${{ inputs.image }}"
+      EDITORIAL_FORMAT: "${{ inputs.format }}"
+      EFFECT: "${{ inputs.effect }}"
+      SECONDS: "${{ inputs.seconds }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Conferma che esiste un'immagine di episodio"
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          path = Path(os.environ["IMAGE_PATH"])
+          if path.is_absolute() or ".." in path.parts or not path.parts or path.parts[0] != "episodes":
+              raise SystemExit("Immagine ammessa solo dentro episodes/")
+          if path.suffix.lower() not in (".jpg", ".jpeg", ".png", ".webp") or not path.is_file():
+              raise SystemExit("Immagine locale mancante o estensione non ammessa")
+          if os.environ["EDITORIAL_FORMAT"].startswith("artvision") and os.environ["EFFECT"] == "light_travel":
+              raise SystemExit("ArtVision: evitare luce ricostruita nel quadro autentico")
+          PY
+      - name: "Installa software libero su runner (non su Android)"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "numpy>=1.25,<3" "opencv-python-headless>=4.8,<5"
+      - name: "Test funzionali"
+        run: python -m unittest discover -s tests -p 'test_microcinema_v39.py' -v
+      - name: "Genera un provino MP4 non pubblicato"
+        shell: bash
+        run: |
+          mkdir -p output
+          python src/microcinema_v39.py --image "$IMAGE_PATH" \
+            --effect "$EFFECT" --format "$EDITORIAL_FORMAT" \
+            --seconds "$SECONDS" --out output/microcinema_v39.mp4
+      - name: "Salva video e manifesto scaricabili"
+        uses: actions/upload-artifact@v4
+        with:
+          name: MicroCinema_V39_Trial
+          path: |
+            output/microcinema_v39.mp4
+            output/microcinema_v39.json
+          if-no-files-found: error
+          retention-days: 14
