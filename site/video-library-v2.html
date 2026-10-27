@@ -90,6 +90,8 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
 #socialFeedback{min-height:24px;color:#dfbc8b;font-size:14px}
 .social-empty{padding:32px;text-align:center}
 
+
+#swDialog,#swPub{width:min(94vw,650px)}#swDialog .modalbody,#swPub .modalbody{display:grid;gap:12px}#swPubLinks{display:flex;gap:8px;flex-wrap:wrap}#swControls[hidden]{display:none!important}#socialViewer:not(.social-clean) #socialFeed{height:calc(100dvh - 185px)}#socialViewer:not(.social-clean){padding-bottom:57px}#socialViewer.social-clean{padding-bottom:0}#swControls button{min-height:44px;background:#172135dd}#swDialog textarea,#swPub textarea{width:100%}
 </style>
 </head>
 <body>
@@ -948,6 +950,58 @@ $('#socialMoveSave').onclick=async()=>{
  if(!g.admin)return;const b=$('#socialMoveSave');b.disabled=true;
  try{if(await manage(socialActionItem,{category:$('#socialMoveCategory').value})){categories();$('#socialFeedback').textContent='Categoria salvata online.';socialRebuild();socialVideo.pause()}else $('#socialFeedback').textContent='Categoria non salvata. Riprova.'}finally{b.disabled=false}
 };
+
+
+/* Social workflow V3: collections, reviews and publication preparation; no resume history. */
+let swData={collections:['Da pubblicare','Da migliorare','Regie che mi piacciono','Musiche da riutilizzare'],videos:{}};
+try{const d=JSON.parse(localStorage.getItem('vls.workflow.v1'));if(d&&Array.isArray(d.collections)&&d.videos&&typeof d.videos==='object')swData=d}catch{}
+let swCollection='',swItem=null,swAuto=false,swTimer;
+function swSave(next){localStorage.setItem('vls.workflow.v1',JSON.stringify(next));swData=next}
+const swDialog=document.createElement('dialog');swDialog.id='swDialog';
+swDialog.innerHTML='<div class="modalhead"><h2 id="swTitle">Organizza video</h2><button class="ghost" id="swClose">Chiudi</button></div><div class="modalbody"><p class="notice">Raccolte e giudizi salvati su questo browser. Esporta una copia per conservarli anche fuori dal telefono.</p><h3>Raccolte</h3><div id="swChecks"></div><label class="field">Nuova raccolta<input id="swNewCollection" maxlength="60" placeholder="Nome della raccolta"></label><button class="ghost" id="swAdd">Aggiungi raccolta</button><h3>Il tuo giudizio</h3><label class="field">Valutazione<select id="swRating"><option>Da valutare</option><option>Mi piace</option><option>Da correggere</option></select></label><label class="field">Cosa migliorare<select id="swIssue"><option value="">Nessun aspetto indicato</option><option>Voce</option><option>Immagini</option><option>Movimenti</option><option>Musica</option><option>Copione</option><option>Altro</option></select></label><label class="field">Note<textarea id="swNotes" maxlength="5000" placeholder="Scrivi cosa funziona e cosa cambieresti"></textarea></label><button class="btn primary" id="swSave">Salva raccolte e giudizio</button><p id="swStatus" role="status"></p><button class="ghost" id="swExport">Esporta raccolte e giudizi</button><label class="field">Importa una copia salvata<input type="file" id="swImport" accept=".json,application/json"></label></div>';
+document.body.append(swDialog);
+const swSelect=document.createElement('select');swSelect.id='swCollection';swSelect.setAttribute('aria-label','Raccolta da scorrere');socialFilters.append(swSelect);
+function swRefreshCollections(){swSelect.replaceChildren(new Option('Tutte le raccolte',''));for(const n of swData.collections)swSelect.add(new Option(n,n));swSelect.value=swCollection}
+swRefreshCollections();
+const swOriginalRows=socialRows;socialRows=function(){return swOriginalRows().filter(x=>!swCollection||(swData.videos[x.key]?.collections||[]).includes(swCollection))};
+swSelect.onchange=()=>{swCollection=swSelect.value;socialRebuild()};
+function swChecks(selected){const root=$('#swChecks');root.replaceChildren();for(const name of swData.collections){const label=document.createElement('label');label.style.cssText='display:flex;gap:10px;align-items:center;min-height:44px';const check=document.createElement('input');check.type='checkbox';check.value=name;check.checked=selected.includes(name);check.style.minHeight='20px';label.append(check,document.createTextNode(name));root.append(label)}}
+function swOpen(x){swItem=x;socialVideo.pause();$('#swTitle').textContent=x.viewTitle;const r=swData.videos[x.key]||{};swChecks(r.collections||[]);$('#swRating').value=r.rating||'Da valutare';$('#swIssue').value=r.issue||'';$('#swNotes').value=r.notes||'';$('#swStatus').textContent='';$('#swNewCollection').value='';swDialog.showModal()}
+$('#swClose').onclick=()=>swDialog.close();
+$('#swAdd').onclick=()=>{const name=$('#swNewCollection').value.trim();if(!name)return;const chosen=[...$('#swChecks').querySelectorAll('input:checked')].map(x=>x.value);try{if(!swData.collections.includes(name))swSave({...swData,collections:[...swData.collections,name]});swChecks([...chosen,name]);swRefreshCollections();$('#swNewCollection').value='';$('#swStatus').textContent='Raccolta creata. Premi Salva per inserirvi questo video.'}catch{$('#swStatus').textContent='Salvataggio non disponibile su questo browser.'}};
+$('#swSave').onclick=()=>{if(!swItem)return;try{const record={title:swItem.viewTitle,collections:[...$('#swChecks').querySelectorAll('input:checked')].map(x=>x.value),rating:$('#swRating').value,issue:$('#swIssue').value,notes:$('#swNotes').value,updatedAt:new Date().toISOString()};swSave({...swData,videos:{...swData.videos,[swItem.key]:record}});$('#swStatus').textContent='Salvato su questo browser. Il giudizio non certifica che il video sia pronto alla pubblicazione.';socialRebuild();socialVideo.pause()}catch{$('#swStatus').textContent='Salvataggio fallito: conserva le note prima di chiudere.'}};
+$('#swExport').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({schema:'vls-workflow-v1',...swData},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='Raccolte_e_giudizi.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000)};
+$('#swImport').onchange=async e=>{try{const f=e.target.files[0];if(!f)return;if(f.size>2000000)throw Error('File troppo grande');const d=JSON.parse(await f.text());if(d.schema!=='vls-workflow-v1'||!Array.isArray(d.collections)||!d.videos||typeof d.videos!=='object'||Array.isArray(d.videos))throw Error('Formato non valido');for(const n of d.collections)if(typeof n!=='string'||n.length>60)throw Error('Raccolta non valida');for(const r of Object.values(d.videos))if(!r||!Array.isArray(r.collections)||r.collections.some(n=>typeof n!=='string')||typeof r.notes!=='string'||r.notes.length>5000||!['Da valutare','Mi piace','Da correggere'].includes(r.rating))throw Error('Scheda non valida');swSave({collections:[...new Set([...swData.collections,...d.collections])],videos:{...d.videos,...swData.videos}});swRefreshCollections();swChecks(swData.videos[swItem.key]?.collections||[]);$('#swStatus').textContent='Importazione completata. Le schede già presenti hanno la precedenza.'}catch(err){$('#swStatus').textContent='Importazione non riuscita: '+err.message}finally{e.target.value=''}};
+function swButton(label,fn){const b=document.createElement('button');b.className='ghost';b.textContent=label;b.onclick=fn;return b}
+$('#socialOptions .modalbody').prepend(swButton('Raccolte e giudizio',()=>{const x=socialActionItem;options.close();swOpen(x)}),swButton('Prepara pubblicazione',()=>{const x=socialActionItem;options.close();swPublish(x)}));
+const swAutoButton=swButton('Automatico: no',()=>{swAuto=!swAuto;swAutoButton.textContent=swAuto?'Automatico: sì':'Automatico: no';swAutoButton.setAttribute('aria-pressed',String(swAuto))});socialFilters.append(swAutoButton);
+socialVideo.addEventListener('ended',()=>{if(swAuto&&!document.hidden&&!swDialog.open&&!options.open&&!swPub.open&&social.index<social.rows.length-1)socialMove(1)});
+const swControls=document.createElement('div');swControls.id='swControls';swControls.style.cssText='position:absolute;left:12px;bottom:12px;z-index:5;display:flex;gap:8px';
+swControls.append(swButton('▶ / ❚❚',()=>{if(socialVideo.paused)socialVideo.play().catch(()=>{});else socialVideo.pause()}),swButton('Audio',()=>{socialVideo.muted=!socialVideo.muted}),swButton('♡',async()=>{const x=social.rows[social.index];if(!x)return;try{const value=!socialIsFavorite(x);if(g.admin){if(!await manage(x,{favorite:value}))return}else{const next={...socialPrefs.local,[x.key]:value};localStorage.setItem('vls.social.favorites',JSON.stringify(next));socialPrefs.local=next}swControls.lastChild.textContent=value?'♥':'♡';swControls.lastChild.setAttribute('aria-pressed',String(value))}catch{log('Preferito non salvato')}}));
+swControls.firstChild.setAttribute('aria-label','Riproduci o metti in pausa');swControls.lastChild.setAttribute('aria-label','Aggiungi o rimuovi preferito');
+$('#socialViewer').append(swControls);
+function swReveal(){swControls.hidden=false;clearTimeout(swTimer);if(socialPrefs.clean)swTimer=setTimeout(()=>{swControls.hidden=true},3000)}
+socialVideo.addEventListener('click',()=>{if(socialPrefs.clean)swReveal()});
+socialVideo.addEventListener('volumechange',()=>{swControls.children[1].textContent=socialVideo.muted?'Audio: spento':'Audio: acceso'});
+const swActivate=socialActivate;socialActivate=function(i){swActivate(i);const x=social.rows[social.index];if(x)swControls.lastChild.textContent=socialIsFavorite(x)?'♥':'♡';swReveal()};
+const swClean=socialClean;socialClean=function(on){swClean(on);swReveal()};
+$('#socialViewer').addEventListener('close',()=>{clearTimeout(swTimer)});
+const swPub=document.createElement('dialog');swPub.id='swPub';
+swPub.innerHTML='<div class="modalhead"><h2 id="swPubTitle">Prepara pubblicazione</h2><button class="ghost" id="swPubClose">Chiudi</button></div><div class="modalbody"><p>Preparazione dei materiali: nessuna pubblicazione automatica.</p><div id="swPubLinks"></div><label class="field">Social<select id="swPlatform"><option value="facebook">Facebook</option><option value="instagram">Instagram</option><option value="tiktok">TikTok</option><option value="youtube">YouTube</option></select></label><label class="field">Testo disponibile<textarea id="swPost" readonly rows="7"></textarea></label><button class="btn" id="swCopyPost">Copia testo</button><p id="swPubInfo" role="status"></p><p id="swPubCredits"></p><button class="btn" id="swPubDossier">Apri dossier e pacchetti ZIP</button></div>';
+document.body.append(swPub);let swPubItem=null,swPubRecord=null,swRequest=0;
+$('#swPubClose').onclick=()=>{swRequest++;swPub.close()};
+swPub.addEventListener('cancel',()=>swRequest++);
+function swPostUpdate(){const text=swPubRecord?.[$('#swPlatform').value]||'';$('#swPost').value=text;$('#swCopyPost').disabled=!text.trim();$('#swPubInfo').textContent=swPubRecord?(text.trim()?'Testo presente: rileggi fatti, stile e crediti prima di pubblicare.':'Manca il testo per questo social.'):'Accedi allo Studio per leggere i testi e i crediti privati.'}
+$('#swPlatform').onchange=swPostUpdate;
+$('#swCopyPost').onclick=async()=>{try{await navigator.clipboard.writeText($('#swPost').value);$('#swPubInfo').textContent='Testo copiato.'}catch{$('#swPost').focus();$('#swPost').select();$('#swPubInfo').textContent='Seleziona e copia il testo.'}};
+$('#swPubDossier').onclick=()=>{swPub.close();openEditorial(swPubItem)};
+async function swPublish(x){
+ socialVideo.pause();swPubItem=x;swPubRecord=null;const request=++swRequest;$('#swPubTitle').textContent=x.viewTitle;$('#swPubCredits').textContent='Crediti e diritti da verificare nel dossier.';
+ const links=$('#swPubLinks');links.replaceChildren();for(const [label,url] of [['Scarica video',fullURL(x)],['Copertina originale',x.cover]]){if(!url){const p=document.createElement('p');p.textContent='Copertina mancante';links.append(p);continue}const a=document.createElement('a');a.className='btn';a.textContent=label;a.href=url;a.target='_blank';a.rel='noopener';links.append(a)}
+ swPostUpdate();swPub.showModal();if(!g.admin)return;
+ $('#swPubInfo').textContent='Caricamento dossier…';
+ try{const r=await fetch('/api/editorial?key='+encodeURIComponent(x.key),{headers:{Authorization:'Bearer '+g.token},cache:'no-store'});if(!r.ok)throw Error('Dossier non disponibile ('+r.status+')');const d=await r.json();if(request!==swRequest||!swPub.open)return;swPubRecord=d.record;swPostUpdate();$('#swPubCredits').textContent='Musica: '+(d.record.musicAttribution||[d.record.musicTitle,d.record.musicAuthor].filter(Boolean).join(' · ')||'Da documentare')+' · Diritti: '+(d.record.rightsStatus||'Da verificare')+(d.missing?.length?' · Campi mancanti: '+d.missing.join(', '):'');}catch(e){if(request===swRequest)$('#swPubInfo').textContent=e.message}
+}
 
 const frag=location.hash.slice(1);if(frag.startsWith('manage=')){g.token=decodeURIComponent(frag.slice(7));localStorage.setItem('vlsAdmin',g.token);history.replaceState(null,'',location.pathname+location.search)}else{g.token=localStorage.getItem('vlsAdmin')||''}
 load(true);setInterval(()=>{if(!document.hidden)load(true)},180000);
