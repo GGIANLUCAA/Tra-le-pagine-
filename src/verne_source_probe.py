@@ -14,3 +14,10 @@ with urlopen(Request(URL,headers={"User-Agent":"TraLePagineEditorial/1.0"}),time
 p=Parser();p.feed(html)
 print("SOURCE",URL,"HTML_BYTES",len(html),"IMAGE_COUNT",len(p.images),flush=True)
 for i,v in enumerate(p.images):print(f"IMAGE_{i:03d}: {json.dumps(v,ensure_ascii=False)}",flush=True)
+
+print("CAPTION_CONTEXT_SNIPPETS",flush=True)
+for number in (4,9,15,23,31,40,49,55,64,72,78,85,96,107):
+ marker=f"im{number:03}.jpg"
+ pos=html.find(marker)
+ if pos>=0:
+  print("CONTEXT",number,json.dumps(html[max(0,pos-120):pos+650],ensure_ascii=False),flush=True)
