@@ -1,0 +1,38 @@
+name: "Tra le Pagine — Attraverso lo specchio: rimasterizza incisioni (senza API)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/looking-glass-remaster-assets.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free source inspection tools
+        run: |
+          python -m pip install "requests>=2.31,<3" "beautifulsoup4>=4.12,<5" "pillow>=10,<13" "numpy>=1.25,<3" "opencv-python-headless>=4.8,<5" "pymupdf>=1.24,<2" "soundfile>=0.12"
+      - name: Extract and validate 16 full Tenniel illustrations from one 1872 book scan
+        run: |
+          python tools/looking_glass_20261027.py --mode prepare
+      - name: Archive corrected original engravings without repeating Gacrux TTS
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ATTRAVERSO_LO_SPECCHIO_16_INCISIONI_RIMASTERIZZATE
+          path: |
+            episodes/looking_glass_20261027/images/
+            episodes/looking_glass_20261027/PROVENIENZA_IMMAGINI.json
+            output/looking_glass_20261027/ARCHIVE_ASSET_REPORT.json
+            output/looking_glass_20261027/STORYBOARD_FONTI_V35.json
+            output/looking_glass_20261027/PROJECT_V13.json
+            output/looking_glass_20261027/PREFLIGHT_V13.json
+          retention-days: 14
+          if-no-files-found: warn
