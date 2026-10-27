@@ -36,7 +36,7 @@ jobs:
           if len(images)!=1:raise SystemExit("Immagine del primo capitolo non disponibile in modo univoco")
           cmd=[sys.executable,"src/i2v_budget_v41.py","plan",
                "--image",str(images[0]),
-               "--prompt","In a candlelit Victorian study, the human hand carefully turns the page of the book while its paper bends realistically.",
+               "--prompt","In a dim 1940s hotel room, the imprisoned man slowly turns toward the locked door and clenches his hands. Realistic breathing. Preserve his face, clothes and room. No new people.",
                "--seconds","5","--out","output/v41"]
           subprocess.run(cmd,check=True)
           print("PREVENTIVO CREATO, SENZA GENERAZIONE REMOTA")
