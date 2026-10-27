@@ -33,3 +33,7 @@ A separate recent GitHub workflow produced Gacrux speech for a **different** boo
 3. Music has a relatively even mood; next cycle should test a more distinctive licensed harmonic arc when the subject calls for it.
 
 No user approval or Gold Master status is inferred from technical checks.
+
+## Videoteca
+
+Video Library Studio status was reachable (348 stored videos, 187 ChatGPT imports at check), but importing this new MP4 failed with `BLOCKED_FILE_REFERENCE` (connector egress unavailable for this file). **No new video was added to the library**. The local ChatGPT MP4/ZIP remain the delivery artifacts.
