@@ -101,11 +101,35 @@ class BudgetV41Tests(unittest.TestCase):
         with self.assertRaises(PermissionError):
             v41.verify_approved_plan(changed,a["approval_code"])
 
+    def test_balance_endpoint_read_only_no_spending(self):
+        with patch.object(v41,"_api",return_value={"remains":[{"type":"metered","credit_remain":115},{"type":"test","credit_remain":5}]}) as api:
+            b=v41.get_balance("token-not-real")
+            self.assertEqual(b["available_credits"],120)
+            api.assert_called_once_with("GET","/ent/v2/credits","token-not-real")
+
+    def test_no_paid_call_when_website_subscription_has_no_api_credits(self):
+        info=v41.plan(self.image,self.prompt,3,True,.10,"cinema720")
+        with patch.object(v41,"_api",return_value={"remains":[{"type":"metered","credit_remain":0}]}) as api:
+            with self.assertRaisesRegex(ValueError,"insufficienti"):
+                v41.submit(info,self.out,"fake",info["approval_code"])
+            self.assertEqual(api.call_count,1)
+            self.assertEqual(api.call_args.args[0],"GET")
+        self.assertFalse((self.out/"VIDU_TASK.json").exists())
+
+    def test_unknown_wallet_structure_blocks_before_post(self):
+        info=v41.plan(self.image,self.prompt,3,True,.10,"cinema720")
+        with patch.object(v41,"_api",return_value={"unknown":"structure"}) as api:
+            with self.assertRaisesRegex(ValueError,"non interpretabile"):
+                v41.submit(info,self.out,"fake",info["approval_code"])
+            self.assertEqual(api.call_count,1)
+            self.assertEqual(api.call_args.args[0],"GET")
+
     def test_network_timeout_prevents_unintended_retry(self):
         info=v41.plan(self.image,self.prompt)
-        with patch.object(v41,"_api",side_effect=TimeoutError("unconfirmed")):
-            with self.assertRaises(TimeoutError):
-                v41.submit(info,self.out,"mock-not-real",info["approval_code"])
+        with patch.object(v41,"get_balance",return_value={"available_credits":100}):
+            with patch.object(v41,"_api",side_effect=TimeoutError("unconfirmed")):
+                with self.assertRaises(TimeoutError):
+                    v41.submit(info,self.out,"mock-not-real",info["approval_code"])
         record=json.loads((self.out/"VIDU_TASK.json").read_text())
         self.assertEqual(record["status"],"possibly_submitted_check_console")
         with self.assertRaisesRegex(RuntimeError,"già registrata"):
