@@ -1,0 +1,75 @@
+name: "MicroCinema V39 - provino gratuito"
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Immagine in episodes/ oppure scene_premium.zip"
+        required: true
+        type: string
+      scene_number:
+        description: "Numero scena da ZIP (1-35; ignorato se immagine diretta)"
+        type: string
+        default: "1"
+      format:
+        description: "Formato"
+        type: choice
+        options: [libri, artvision_cinema, artvision_critico, controluce]
+        default: libri
+      effect:
+        description: "Effetto (depth_layers richiede 2 asset e si usa da CLI)"
+        type: choice
+        options: [slow_push, focus_reveal, light_travel]
+        default: slow_push
+      seconds:
+        description: "Durata in secondi"
+        type: choice
+        options: ["5", "7", "10"]
+        default: "7"
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      IMAGE_PATH: "${{ inputs.image }}"
+      SCENE_NUMBER: "${{ inputs.scene_number }}"
+      EDITORIAL_FORMAT: "${{ inputs.format }}"
+      EFFECT: "${{ inputs.effect }}"
+      SECONDS: "${{ inputs.seconds }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Estrai in sicurezza una scena ZIP o verifica immagine"
+        shell: bash
+        run: |
+          python src/microcinema_inputs_v39.py --input "$IMAGE_PATH" --scene-number "$SCENE_NUMBER" --out-dir output
+          if [[ "$EDITORIAL_FORMAT" == artvision* && "$EFFECT" == "light_travel" ]]; then
+            echo "::error::ArtVision non ammette alterazioni della luce nel quadro"
+            exit 2
+          fi
+      - name: "Installa software libero su runner (non su Android)"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "numpy>=1.25,<3" "opencv-python-headless>=4.8,<5"
+      - name: "Test funzionali"
+        run: python -m unittest discover -s tests -p 'test_microcinema*.py' -v
+      - name: "Genera un provino MP4 non pubblicato"
+        shell: bash
+        run: |
+          mkdir -p output
+          python src/microcinema_v39.py --image "$CLIP_IMAGE" \
+            --effect "$EFFECT" --format "$EDITORIAL_FORMAT" \
+            --seconds "$SECONDS" --out output/microcinema_v39.mp4
+      - name: "Salva video e manifesto scaricabili"
+        uses: actions/upload-artifact@v4
+        with:
+          name: MicroCinema_V39_Trial
+          path: |
+            output/microcinema_v39.mp4
+            output/microcinema_v39.json
+          if-no-files-found: error
+          retention-days: 14
