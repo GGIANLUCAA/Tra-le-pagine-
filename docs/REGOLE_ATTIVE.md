@@ -127,6 +127,18 @@ Prima di acquisire asset, individuare beat narrativi, luoghi, azioni, emozioni e
 
 Documento operativo `docs/FEEDBACK_REGIA_NARRATIVA_V38.md`; configurazione `config/editorial_rules.json > creative_variation, creative_references`. Il controllo strutturale non certifica la bellezza né trasforma automaticamente il filmato in master approvato.
 
+## Consegna file verificabile su Android — regola permanente (27/10/2026)
+
+**Richiesta esplicita dell'utente dopo ripetuti errori "Library file not found":** per ogni nuovo file generato e consegnato in ChatGPT (MP4, immagini, ZIP, PDF, documenti o altri allegati) non basta stampare un link o affermare che il render è riuscito.
+
+1. Verificare nella sessione corrente il **percorso effettivo** del file, che esista, sia non vuoto e del formato richiesto; per MP4 controllare con ffprobe e, quando possibile, la decodifica completa; per ZIP testare CRC e contenuti. Non inventare link sandbox.
+2. Consegnare il **file singolo principale con nome breve ASCII**, preferibilmente direttamente in /mnt/data senza sottocartelle. Per video e consegne soggette a errori Android fornire **anche ZIP con soltanto i file finali**, separato dai sorgenti; verificare entrambi. Creare copia leggera H.264/AAC solo se serve, senza sostituire l'originale.
+3. Non confondere **file verificato localmente**, **collegamento sandbox accessibile sul telefono**, **Artifact GitHub ancora disponibile** e **asset davvero ospitato su Video Library Studio**: sono verifiche distinte. Non si può certificare dal server che l'app ChatGPT risolverà sempre i link; non promettere che la sola ridenominazione o lo ZIP eliminino un errore della piattaforma.
+4. Se il download via ChatGPT fallisce, offrire un secondo percorso realmente esistente (ZIP, Artifact GitHub oppure, previa autorizzazione e verifica del caricamento, URL stabile su Video Library Studio/R2). Non pubblicare file privati su un repository pubblico né creare URL immaginari.
+5. Segnalare con precisione l'eventuale limite di accesso e non chiamare "consegnato" un file assente o un link non verificato. La preferenza vale per ogni nuova consegna, non soltanto per i video.
+
+Per gli episodi con audio resta disponibile V36 in docs/VIDEO_DOWNLOAD_V36.md e src/video_download_fallback_v36.py. Per i microclip senza audio usare un confezionamento ZIP equivalente senza alterare il video originale.
+
 ## Dal soggetto al risultato
 
 1. Registrare richiesta, format, presenza della voce, lingua e obiettivo. Se si
