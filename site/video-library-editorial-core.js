@@ -199,7 +199,7 @@ async function edLoad(k){
  ].filter(Boolean)};
 }
 function edTxt(s){return edEsc(s).replace(/\r\n/g,'\n').replace(/\r/g,'\n')}
-const edFields=['bookAuthor','publicationYear','seriesTitle','selectionReason','targetAudience','narrativeThemes','visualMix','sourceEvidence','assetLedger','edition','reprints','masterRef','musicAttribution','legacyNotes','publicTitle','shortDescription','category','project','language','hook','hashtags','facebook','instagram','tiktok','youtube','musicTitle','musicAuthor','musicLicense','musicLink','imageCredits','imageSources','voiceCredits','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes','tags','rightsStatus','publicationStatus'];
+const edFields=['reviewImages','reviewAudio','reviewCover','reviewFacts','bookAuthor','publicationYear','seriesTitle','selectionReason','targetAudience','narrativeThemes','visualMix','sourceEvidence','assetLedger','edition','reprints','masterRef','musicAttribution','legacyNotes','publicTitle','shortDescription','category','project','language','hook','hashtags','facebook','instagram','tiktok','youtube','musicTitle','musicAuthor','musicLicense','musicLink','imageCredits','imageSources','voiceCredits','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes','tags','rightsStatus','publicationStatus'];
 const edLarge=new Set(['selectionReason','narrativeThemes','visualMix','sourceEvidence','assetLedger','musicAttribution','legacyNotes','facebook','instagram','tiktok','youtube','imageCredits','imageSources','sources','directorNotes','storyboard','script','productionPrompt','productionSteps','technicalNotes','socialInstructions','publicationNotes']);
 function edSnapshot(k,record,metadata,missing){
  const p=s=>edTxt(s||'Da completare / verificare');
@@ -367,6 +367,11 @@ if(u.pathname==='/api/editorial'&&req.method==='POST'){
  if(!['da_verificare','verificato','non_utilizzabile'].includes(rec.rightsStatus))return new Response('Diritti non validi',{status:400});
  if(!['bozza','da_revisionare','approvato','pubblicato'].includes(rec.publicationStatus))return new Response('Stato non valido',{status:400});
  const socialIssues=edSocialIssues(rec);
+ if(['approvato','pubblicato'].includes(rec.publicationStatus)){
+  for(const [field,label]of Object.entries({reviewImages:'Visione integrale di immagini e montaggio',reviewAudio:'Ascolto integrale di voce e musica',reviewCover:'Copertina e apertura',reviewFacts:'Fatti, fonti e crediti'}))if(rec[field]!=='verificato')socialIssues.push('Controllo da completare: '+label);
+  if(rec.rightsStatus!=='verificato')socialIssues.push('Diritti e licenze da verificare');
+  if(!snapshot.metadata.size||key.startsWith('gpt:'))socialIssues.push('MP4 originale non disponibile sul sito');
+ }
  if(['approvato','pubblicato'].includes(rec.publicationStatus)&&socialIssues.length)
   return new Response(JSON.stringify({ok:false,code:'SOCIAL_REVIEW_REQUIRED',issues:socialIssues,status:'da_revisionare'}),{status:422,headers:{'content-type':'application/json; charset=utf-8'}});
  rec.updatedAt=new Date().toISOString();rec.createdAt=rec.createdAt||rec.updatedAt;rec.authoring='edited';
