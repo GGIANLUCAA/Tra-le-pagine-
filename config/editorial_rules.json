@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-27.3",
+  "version": "2026-10-27.4",
   "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.",
   "precedence": [
     "explicit_user_request",
@@ -432,5 +432,54 @@
     "prohibit_presenting_local_warp_as_real_ai": true,
     "reject_if_visual_improvement_is_unproven": true,
     "incident": "docs/VIDEO_INCIDENT_2026-10-27_V44.md"
+  },
+  "museum_immersion_scale": {
+    "approved_at": "2026-10-27",
+    "scope": [
+      "artvision_cinema",
+      "artvision_critico"
+    ],
+    "status": "permanent_art_direction_requirement",
+    "guide": "docs/REGOLE_ATTIVE.md#scala-reale-delle-opere-nei-video-museum-immersion--regola-approvata-27102026",
+    "measured_properties_required": [
+      "artwork_height_cm",
+      "artwork_width_cm",
+      "dimensions_source",
+      "edition_or_impression_variance",
+      "original_vs_reconstructed_frame",
+      "camera_start_distance_m_approx",
+      "human_scale_reference"
+    ],
+    "scale_examples": [
+      {
+        "description": "small print",
+        "size_cm": [
+          35,
+          24
+        ],
+        "direction": "small next to adult 170 cm figure"
+      },
+      {
+        "description": "monumental canvas",
+        "size_cm": [
+          800,
+          1000
+        ],
+        "direction": "architecturally massive wall and distant camera"
+      }
+    ],
+    "forbidden": [
+      "all_artworks_same_frame_size",
+      "small_print_monumental_on_gallery_wall",
+      "oversized_canvas_in_ordinary_room_without_scale",
+      "invented_exact_museum_dimensions"
+    ],
+    "qa": [
+      "correct physical proportion at wide view",
+      "human_and_architecture_reference",
+      "frame_painting_actual_dimensions_distinguished",
+      "closeup_can_fill_screen_only_by_camera_approach"
+    ],
+    "new_episode_reference": "Hiroshige Sudden Shower, small print, 2026-10-27"
   }
 }
