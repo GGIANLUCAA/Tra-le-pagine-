@@ -1,0 +1,55 @@
+name: "Tra le Pagine — Attraverso lo specchio (Gacrux + Tenniel)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/looking-glass-20261027.yml"
+      - "episodes/looking_glass_20261027/testo.txt"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: libri-looking-glass-20261027
+  cancel-in-progress: false
+jobs:
+  book:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free local render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core frei0r-plugins
+          python -m pip install "requests>=2.31,<3" "beautifulsoup4>=4.12,<5" "pillow>=10,<13" "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "opencv-python-headless>=4.8,<5" "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
+          command -v ffmpeg
+          ffmpeg -version | head -n 1
+      - name: Fetch original public-domain Tenniel art and run real V13 preflight BEFORE TTS
+        run: |
+          python tools/looking_glass_20261027.py --mode prepare
+          python src/episode_v3.py --episode looking_glass_20261027
+          PYTHONPATH=src python src/regia_narrativa_v12.py --episode episodes/looking_glass_20261027
+      - name: Verify Google integration, then produce Gacrux Italian voice and actual MP4
+        run: |
+          if [ -z "${GEMINI_API_KEY:-}" ]; then echo "::error::Gacrux API unavailable; no substitute voice"; exit 2; fi
+          python src/render.py --episode episodes/looking_glass_20261027 --engine gemini --effects v4 --out output/looking_glass_20261027
+      - name: Check full MP4, cover, voice, source and Android ZIP
+        run: |
+          python src/episode_v3.py --episode looking_glass_20261027 --out output/looking_glass_20261027 --post
+          python src/video_download_fallback_v36.py --source-dir output/looking_glass_20261027 --output-dir output/looking_glass_20261027/DOWNLOAD_FACILE --android
+          python tools/looking_glass_20261027.py --mode qa
+      - name: Archive produced files without social publication
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TRA_LE_PAGINE_ATTRAVERSO_LO_SPECCHIO_20261027
+          path: |
+            output/looking_glass_20261027/
+            episodes/looking_glass_20261027/PROVENIENZA_IMMAGINI.json
+          retention-days: 14
+          if-no-files-found: warn
