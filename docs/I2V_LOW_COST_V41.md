@@ -12,6 +12,23 @@ Vidu Q2 Pro Fast: 720p, $0.005/credito, modalità off-peak a metà dei crediti n
 
 Il limite di spesa presente nel codice è di $0.10 **per chiamata**, non per giornata o mese. Nessuna generazione non autorizzata. Prima confrontare 1–3 scene; solo dopo valutare un lotto di 20.
 
+## Novita V42: preset per spendere meno
+
+Il menu Android del workflow offre DUE profili: `economy540` (Vidu Q2 Turbo, 540p) per le prove e le clip corte; `cinema720` (Vidu Q2 Pro Fast, 720p) quando dettaglio e coerenza visiva hanno priorita. Il preventivo e' sempre locale e il submit rimane bloccato senza autorizzazione.
+
+Prezzi ufficiali indicativi Vidu (1 credito = $0.005), con off-peak e arrotondamento crediti:
+- economy540 2s = 4 crediti = $0.020
+- economy540 3s = 5 crediti = $0.025
+- economy540 5s = 7 crediti = $0.035
+- cinema720 3s = 6 crediti = $0.030
+- cinema720 5s = 8 crediti = $0.040
+
+Per venti generazioni al giorno per 30 giorni: economy540 3s = $15 al mese senza scarti; economy540 5s = $21/mese. Con due tentativi medi raddoppiano. Il 540p non e' pari al 720p: confrontare su 3 immagini reali, non usare automaticamente il modello piu' economico per i momenti piu' importanti. La regia puo' sfruttare anche tre secondi in un passaggio intenso, ma non forzare una durata uguale per tutte le storie.
+
+Le API per la Cina continentale (Seedance 1.0 Pro Fast di Volcano Engine, RMB 0.2/5s a 480p) possono costare meno in valuta locale, ma sono da confermare disponibilita', pagamento e licenza per utente in Italia PRIMA di costruire un adapter. Non usare fornitori anonimi o account in prestito per ridurre il costo.
+
+Sorgenti di prezzo: https://platform.vidu.com/docs/pricing e https://docs.volcengine.com/docs/Largemodelofimagegeneration/Packagebillinginstructions?lang=zh .
+
 ## Uso da Android dopo che la PR viene collaudata e unita a main
 
 1. Creare account su https://platform.vidu.com e valutare credito disponibile.
