@@ -25,7 +25,7 @@ for number in (4,9,15,23,31,40,49,55,64,72,78,85,96,107):
 import re
 from html import unescape
 captions=[]
-for m in re.finditer(r'<img\\b[^>]*src="images/(im\\d+)\\.jpg"[^>]*>\\s*<p class="caption"[^>]*>(.*?)</p>',html,re.S|re.I):
+for m in re.finditer(r'<img\b[^>]*src="images/(im\d+)\.jpg"[^>]*>\s*<p class="caption"[^>]*>(.*?)</p>',html,re.S|re.I):
  clean=unescape(re.sub(r"<[^>]+>"," ",m.group(2)))
  clean=" ".join(clean.split())
  captions.append((m.group(1),clean))
