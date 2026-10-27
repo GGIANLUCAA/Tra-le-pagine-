@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-26.5",
+  "version": "2026-10-27.1",
   "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi",
   "precedence": [
     "explicit_user_request",
@@ -39,7 +39,11 @@
     "creative_choices_justified_by_story": true,
     "do_not_copy_reference_video_timing_or_image_count": true,
     "varied_visual_narrative_without_filler": true,
-    "feedback_references_are_not_gold_master": true
+    "feedback_references_are_not_gold_master": true,
+    "paid_video_api_key_is_not_spend_approval": true,
+    "paid_video_requires_exact_per_scene_human_authorization": true,
+    "no_paid_video_retry_without_fresh_approval": true,
+    "no_automatic_paid_video_batch": true
   },
   "defaults": {
     "voice": "Google Gemini Gacrux",
@@ -355,5 +359,25 @@
       "asset_status": "Not confirmed imported into Video Library Studio; reference video may exist only as chat artifact",
       "approval_note": "User praised result, but said improvements remain; not a gold master, publication or rights approval."
     }
+  },
+  "paid_video_credits": {
+    "scope": "all_billable_ai_video_models",
+    "policy": "docs/REGOLE_ATTIVE.md#crediti-ia-video-a-pagamento--regola-permanente-vincolante-27102026",
+    "default_budget_usd": 0,
+    "secret_is_authorization": false,
+    "subscription_is_authorization": false,
+    "goal_20_per_day_is_authorization": false,
+    "require_free_storyboard": true,
+    "require_real_image_preview": true,
+    "require_exact_narration_anchor": true,
+    "require_action_and_negative_constraints": true,
+    "require_model_duration_and_estimated_cost": true,
+    "per_generation_approval": true,
+    "approval_matches_plan_fingerprint": true,
+    "operator_must_confirm_cost_before_each_submit": true,
+    "billable_retries": false,
+    "billable_scheduled_runs": false,
+    "post_generation_art_review": true,
+    "require_reliable_output_archive": true
   }
 }
