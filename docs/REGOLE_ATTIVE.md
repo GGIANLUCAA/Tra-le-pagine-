@@ -32,6 +32,18 @@ regola riutilizzabile registrare ambito, motivo, riferimento, approvazione e ver
 
 **Ambito:** tutti i fornitori a credito IA image-to-video, text-to-video, restauro video a pagamento, incluse Vidu, Wan, Kling, Seedance, Runware e provider futuri. Si applica a produzioni manuali, agenti automatici e workflow GitHub. Questa regola prevale su qualsiasi indicazione generale di autonomia, target numerici e routine di produzione. Nessuna spesa e stata autorizzata con questa modifica documentale.
 
+## Qualita animazioni e blocco anti-consegna scadente — VINCOLANTE V44 (27/10/2026)
+
+**Incidente approvato come feedback correttivo:** il video \`MACCHINA_DEL_TEMPO_ANIMATA_FINALE.mp4\` del 27/10 NON e approvato. Una ruota ruotata localmente e una leva deformata non realizzano la vera azione "l'uomo tira una leva". La visione critica deve avvenire PRIMA della consegna, non dopo il rifiuto dell'utente. Dettagli e prove: \`docs/VIDEO_INCIDENT_2026-10-27_V44.md\`.
+
+**No auto-promozione dei render.** Quando un video gia esistente riceve scene animate nuove, tanto gratuite quanto a pagamento, creare un contratto V44 con originale, clip inserita, MP4 completo, hash e frase/secondi esatti. Confrontare prima/dopo a velocita normale, osservare gesto completo, sincronizzazione con la voce, identita di volto e mani, meccanica plausibile, artefatti, raccordi, musica e miglioramento rispetto al master. Difetti visibili determinano **SCARTATO**, non "buono abbastanza".
+
+Se la richiesta esplicita e vera animazione generativa image-to-video, **vietato surrogarla** con warp, rotazioni di frammenti, dolly-zoom, semplici pan o morphing artificioso presentati come scena IA. Puo essere una bozza dichiarata, mai l'adempimento della richiesta. Il modulo \`src/animated_video_release_gate_v44.py\` deve rifiutare un \`final delivery\` di genere generativo senza provenienza reale e revisione del medesimo SHA-256.
+
+**Stati:** \`planned\` → \`rendered_needs_review\` → \`approved_for_final_delivery\` soltanto dopo verifica effettiva di tutte le prove. In mancanza di un revisore realmente coinvolto, lo stato resta \`rendered_needs_review\` e non si usa nel sito fra i video finiti, non si pubblica, non si manda come "finale" o "ottimo". L'esito artistico resta valutazione umana: nessun flag software garantisce la bellezza.
+
+La regola prevale su target numerici, urgenza, export tecnico, istruzioni dei vecchi workflow e qualsiasi scorciatoia di chat. NON comporta alcun consumo di crediti.
+
 ## Decisioni consolidate
 
 | Prima | Ora |
