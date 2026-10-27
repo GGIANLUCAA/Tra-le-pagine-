@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "plan GRATIS; submit richiede credito; collect recupera un task"
+        description: "balance controlla GRATIS i crediti API; plan GRATIS; submit a pagamento; collect recupera"
         type: choice
         required: true
         default: plan
-        options: [plan, submit, collect]
+        options: [balance, plan, submit, collect]
       preset:
         description: "economy540: 540p economico / cinema720: 720p di qualita"
         type: choice
@@ -71,7 +71,9 @@ jobs:
         shell: bash
         run: |
           mkdir -p output/v41
-          if [[ "$MODE" == "collect" ]]; then
+          if [[ "$MODE" == "balance" ]]; then
+            echo "Preflight saldo Vidu: nessuna scena, nessuna generazione."
+          elif [[ "$MODE" == "collect" ]]; then
             if [[ ! "$TASK_ID" =~ ^[A-Za-z0-9_-]{4,100}$ ]]; then
               echo "::error::ID task non valido"
               exit 2
@@ -87,7 +89,7 @@ jobs:
               --episode "$EPISODIO" --scene "$SCENA" --output-dir output/v41
           fi
       - name: "Allega l'immagine originale per la revisione PRIMA del pagamento"
-        if: env.MODE != 'collect'
+        if: env.MODE != 'collect' && env.MODE != 'balance'
         shell: bash
         run: |
           python - <<'PY'
@@ -100,7 +102,9 @@ jobs:
       - name: "Preventivo gratis, invio autorizzato, oppure recupero"
         shell: bash
         run: |
-          if [[ "$MODE" == "collect" ]]; then
+          if [[ "$MODE" == "balance" ]]; then
+            python src/i2v_budget_v41.py balance --out output/v41
+          elif [[ "$MODE" == "collect" ]]; then
             if ! command -v ffprobe >/dev/null; then
               timeout 140s sudo apt-get install -y -qq ffmpeg
             fi

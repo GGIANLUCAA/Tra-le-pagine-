@@ -109,6 +109,33 @@ def _api(method,path,key,payload=None):
         return json.loads(response.read(1048576))
 
 
+def get_balance(key:str)->dict:
+    """READ-ONLY GET on Vidu API; never charges credits."""
+    response=_api("GET","/ent/v2/credits",key)
+    available=response.get("remaining_credits", response.get("remains"))
+    if available is None:  # older account API shapes may expose only packages
+        available=response.get("packages")
+    if not isinstance(available,list):
+        raise ValueError("Saldo Vidu API non interpretabile: NON generare")
+    credits=0
+    for group in available:
+        if not isinstance(group,dict): continue
+        remain=group.get("credit_remain")
+        if type(remain) not in (int,float) or remain < 0:
+            continue
+        credits+=int(remain)
+    return {"api_access_ok":True,"available_credits":credits,
+            "has_credits":credits>0,"source":"GET /ent/v2/credits"}
+
+
+def require_balance(key:str,credits_needed:int)->None:
+    balance=get_balance(key)
+    if balance["available_credits"] < credits_needed:
+        raise ValueError("Crediti API Vidu insufficienti: richiesti %d, verificati %d. "
+                         "L'abbonamento sul sito potrebbe NON essere saldo API." %
+                         (credits_needed,balance["available_credits"]))
+
+
 def _payload(info):
     image=Path(info["image"])
     encoded=base64.b64encode(image.read_bytes()).decode("ascii")
@@ -127,6 +154,9 @@ def submit(info,out:Path,key:str,approved_plan_code:str=""):
     state=out/"VIDU_TASK.json"
     if state.exists():
         raise RuntimeError("Richiesta già registrata. Non duplicare chiamate pagate")
+    # A read-only wallet check verifies whether website subscription credits
+    # actually exist in API billing. Do not create a payment task if absent.
+    require_balance(key,info["credits_estimated"])
     # Reserve the ID locally BEFORE network I/O; even a network timeout may
     # mean a task was accepted. Resolve via Vidu console rather than resubmit.
     attempt={"status":"possibly_submitted_check_console",
@@ -191,7 +221,7 @@ def collect(out:Path,key:str):
 
 def main():
     ap=argparse.ArgumentParser()
-    ap.add_argument("action",choices=["plan","submit","collect"])
+    ap.add_argument("action",choices=["plan","submit","collect","balance"])
     ap.add_argument("--image",type=Path)
     ap.add_argument("--prompt")
     ap.add_argument("--seconds",type=int,default=5)
@@ -204,7 +234,15 @@ def main():
                     help="Codice tratto dal preventivo GRATUITO dopo verifica umana")
     a=ap.parse_args()
     a.out.mkdir(parents=True,exist_ok=True)
-    if a.action=="collect":
+    if a.action=="balance":
+        key=os.environ.get("VIDU_API_KEY","")
+        if not key:ap.error("Manca il secret VIDU_API_KEY per leggere il saldo API")
+        b=get_balance(key)
+        # Github repo is public: never expose a user's private exact balance in logs.
+        result={"api_access_ok":b["api_access_ok"],"has_credits":b["has_credits"],
+                "source":b["source"],
+                "notice":"Saldo numerico oscurato nei log pubblici; consultare console Vidu"}
+    elif a.action=="collect":
         result=collect(a.out,os.environ.get("VIDU_API_KEY",""))
     else:
         if a.image is None or a.prompt is None:
