@@ -1,0 +1,28 @@
+name: "MicroCinema V39 - test automatizzati"
+on:
+  pull_request:
+    paths:
+      - "src/microcinema_v39.py"
+      - "src/microcinema_book_bridge_v39.py"
+      - "src/microcinema_inputs_v39.py"
+      - "src/effetti_v4.py"
+      - "tests/test_microcinema*.py"
+      - ".github/workflows/microcinema-v39*.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "numpy>=1.25,<3" "opencv-python-headless>=4.8,<5"
+      - name: "Run all V39 tests"
+        run: python -m unittest discover -s tests -p "test_microcinema*.py" -v
