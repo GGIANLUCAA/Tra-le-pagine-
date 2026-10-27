@@ -2,7 +2,7 @@
 
 **Stato reale:** `rendered_needs_review`. Nuovo dipinto nel catalogo, non Gold Master, non pubblicato sui social, nessun credito I2V/T2V pagato.
 
-## Ricerca V32 e deduplica
+**Scelta format:** Cinema V6 non narrato. In questo ambiente non è stata verificata la disponibilità effettiva di Google Gacrux per un nuovo Critico; non è stata inventata una voce né convertito un Critico incompleto. Nel ciclo successivo il registro indica preferenza Critico se la voce è verificabile, altrimenti Collection.\n\n## Ricerca V32 e deduplica
 Verificati `queue/artvision_autoproduction_v31_state.json`, `docs/productions/` e ricerca nel repository. *The Fall of the Rebel Angels* appariva solo come candidato non prodotto nella scheda Redon del 27/10, 20:15; non risultava un episodio dedicato. Confrontati tre soggetti: Bruegel (scelto: mostri ibridi documentati, forte dettaglio e rivelazione), Fuseli *The Nightmare* (già in coda Critico), Turner *The Fighting Temeraire* (già in piani di batch). Nessuna statistica social comparabile verificata, nessuna inventata.
 
 ## Materiali e fonti
