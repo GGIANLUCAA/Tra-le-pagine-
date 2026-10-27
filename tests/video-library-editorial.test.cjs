@@ -116,8 +116,11 @@ const request=async(path,method='GET',data)=>{
  const ig='Davanti a quest opera si possono osservare almeno due storie: quella che l artista voleva mostrare e quella che il pubblico continua a leggere. Il contesto ci aiuta a guardarla con maggiore attenzione, senza imporre una risposta unica.';
  const tt='Una figura e una scelta raccontano il cuore di questa storia. Una lettura breve, chiara, basata sul contesto e sul soggetto.';
  const yt='Questo episodio prende avvio da un opera conservata in una collezione storica. Attraverso la sua vicenda, le figure e il contesto in cui nacque, esploriamo alcune domande che ancora interessano chi osserva la pittura. Il racconto distingue ciò che conosciamo da ciò che rimane un interpretazione, con un approccio accessibile a tutti.';
+ const qaBlocked=await request('/api/editorial','POST',{key:video,data:{facebook:fb,instagram:ig,tiktok:tt,youtube:yt,publicationStatus:'approvato'}});
+ assert.equal(qaBlocked.status,422,'Good captions alone must not certify the video');
+ assert((await qaBlocked.json()).issues.some(s=>s.includes('Ascolto integrale')));
  const accepted=await request('/api/editorial','POST',{key:video,data:{
-  facebook:fb,instagram:ig,tiktok:tt,youtube:yt,publicationStatus:'approvato'}});
+  facebook:fb,instagram:ig,tiktok:tt,youtube:yt,publicationStatus:'approvato',rightsStatus:'verificato',reviewImages:'verificato',reviewAudio:'verificato',reviewCover:'verificato',reviewFacts:'verificato'}});
  assert.equal(accepted.status,200,'Four distinct researched captions should be structurally acceptable '+await accepted.text());
  const curated=(await(await request('/api/editorial?key='+encodeURIComponent(video))).json());
  assert.equal(curated.record.publicationStatus,'approvato');
