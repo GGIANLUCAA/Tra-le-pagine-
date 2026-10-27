@@ -33,3 +33,9 @@ Raccordi al primo e ultimo cambio museo/arte controllati su frame non ricompress
 1. La stanza è una scena illustrativa animata in 2.5D, non una ripresa tridimensionale con parallax misurato: per realism ancora maggiore servono camera/scene 3D o riprese reali autorizzate.
 2. La stampa rappresenta un disegno multiesemplare: per precisione museologica assoluta scegliere in futuro file e misure del **medesimo oggetto inventariato**, inclusa la cornice vera quando documentata.
 3. La qualità del ritmo e della musica richiede visione e feedback dell'utente sul MP4 esatto; non si considera automaticamente pronta la pubblicazione solo perché i controlli tecnici sono passati.
+
+## Feedback artistico successivo — 28 ottobre 2026
+
+Dopo visione del file consegnato, l'utente ha confermato «Ottimo lavoro sembra che siamo sulla strada giusta usali come modello che va bene le proporzioni erano ben studiate». Registrare **approvazione della tecnica e delle proporzioni fisiche**: `approved_reusable_physical_scale_reference`, preservando la riserva `not_automatic_gold_master` per la qualità di ogni nuovo episodio.
+
+Riferimento da combinare con **The Cyclops — Odilon Redon, SENZA STRISCE CORRETTO** per realism cornice, qualità dei raccordi e assenza di edge stretching. Dettagli e criteri: `docs/ARTVISION_MUSEUM_IMMERSION_MODELLO_APPROVATO_V46.md`. Non sovrascrivere il file esistente, non dichiarare questa sala una ripresa reale del museo, non cambiare in massa i preset o riprodurre la stessa apertura identica in ogni episodio.
