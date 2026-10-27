@@ -1,0 +1,27 @@
+name: Isola del tesoro - authentic illustrated visual assets
+on:
+  pull_request:
+    paths:
+      - experiments/isola_tesoro_20261027/acquire_wyeth.py
+      - .github/workflows/isola-tesoro-wyeth.yml
+permissions:
+  contents: read
+jobs:
+  acquire:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install "Pillow>=10,<13"
+      - run: python experiments/isola_tesoro_20261027/acquire_wyeth.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ISOLA_TESORO_WYETH_PUBLIC_DOMAIN_ASSETS
+          path: output/isola-wyeth-originals/
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,27 @@
+name: Treasure Island Wyeth colored paintings - one-off provenance check
+on:
+  pull_request:
+    paths:
+      - experiments/isola_tesoro_20261027/acquire_wyeth_nocloo.py
+      - .github/workflows/isola-tesoro-wyeth-nocloo.yml
+permissions:
+  contents: read
+jobs:
+  acquire:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install pillow
+      - run: python experiments/isola_tesoro_20261027/acquire_wyeth_nocloo.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ISOLA_WYETH_NOCLOO_PAINTINGS
+          path: output/isola-wyeth-color/
+          if-no-files-found: warn
+          retention-days: 14
