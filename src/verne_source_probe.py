@@ -21,3 +21,13 @@ for number in (4,9,15,23,31,40,49,55,64,72,78,85,96,107):
  pos=html.find(marker)
  if pos>=0:
   print("CONTEXT",number,json.dumps(html[max(0,pos-120):pos+650],ensure_ascii=False),flush=True)
+
+import re
+from html import unescape
+captions=[]
+for m in re.finditer(r'<img\\b[^>]*src="images/(im\\d+)\\.jpg"[^>]*>\\s*<p class="caption"[^>]*>(.*?)</p>',html,re.S|re.I):
+ clean=unescape(re.sub(r"<[^>]+>"," ",m.group(2)))
+ clean=" ".join(clean.split())
+ captions.append((m.group(1),clean))
+print("CAPTIONS_FOUND",len(captions),flush=True)
+for num,caption in captions:print("CAPTION",num,json.dumps(caption,ensure_ascii=False),flush=True)
