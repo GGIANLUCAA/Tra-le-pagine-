@@ -1,7 +1,7 @@
 name: Verne — Source catalog preflight (no TTS)
 on:
   push:
-    branches: [feature/verne-nautilus-20261027]
+    branches: [main, feature/verne-nautilus-20261027]
     paths:
       - "src/verne_source_probe.py"
   workflow_dispatch:
