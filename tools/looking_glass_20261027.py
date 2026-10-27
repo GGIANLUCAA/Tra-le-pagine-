@@ -43,7 +43,7 @@ def acquire():
  provenance=[]
  for i,(page,scene,cue) in enumerate(zip(pages,names,DESCRIPTIONS),1):
   # IA book n-page numbering is roughly printed page + 22 in this 1872 scan.
-  center=page+22
+  center=page+16
   if center>=len(doc):raise RuntimeError("Page outside archive")
   candidates=[]
   for ix in range(max(0,center-2),min(len(doc),center+3)):
@@ -61,8 +61,26 @@ def acquire():
   score,ix=max(candidates)
   pix=doc[ix].get_pixmap(matrix=fitz.Matrix(1.55,1.55),colorspace=fitz.csRGB,alpha=False)
   img=Image.frombytes("RGB",(pix.width,pix.height),pix.samples)
-  # Keep complete scan page: never crop a character's face or silently blend two plates.
-  img=ImageOps.contain(img,(610,1080),method=Image.Resampling.LANCZOS)
+  # Isolate the authentic engraving, not the surrounding printed book text.
+  # Connected linework is much larger than individual typographic glyphs.
+  g=np.asarray(img.convert("L"))
+  H,W=g.shape
+  left,right=int(W*.09),int(W*.91)
+  top,bottom=int(H*.09),int(H*.91)
+  roi=g[top:bottom,left:right]
+  binary=(roi<135).astype(np.uint8)
+  joined=cv2.morphologyEx(binary,cv2.MORPH_CLOSE,np.ones((3,3),np.uint8))
+  n,labels,stats,centers=cv2.connectedComponentsWithStats(joined,8)
+  choices=[(int(row[4]),tuple(map(int,row[:4]))) for row in stats[1:] if row[4]>800]
+  if not choices:raise RuntimeError("No large authentic engraving found on scan page "+str(ix))
+  area,(cx,cy,cw,ch)=max(choices)
+  if cw<roi.shape[1]*.20 or ch<roi.shape[0]*.12:
+   raise RuntimeError("Largest connected image is too small; do not use a text page "+str(ix))
+  margin=max(18,int(min(W,H)*.025))
+  x0=max(0,left+cx-margin);x1=min(W,left+cx+cw+margin)
+  y0=max(0,top+cy-margin);y1=min(H,top+cy+ch+margin)
+  img=img.crop((x0,y0,x1,y1))
+  img=ImageOps.contain(img,(640,1060),method=Image.Resampling.LANCZOS)
   canvas=Image.new("RGB",(720,1280),(26,32,39))
   d=ImageDraw.Draw(canvas)
   for yy in range(1280):
@@ -74,7 +92,7 @@ def acquire():
   path=EP/"images"/f"scena_{i:02}.jpg";path.parent.mkdir(parents=True,exist_ok=True)
   canvas.save(path,quality=93,optimize=True)
   if path.stat().st_size<35000:raise RuntimeError("Scan page too small: "+str(ix))
-  item={"asset_id":f"img_{i:02}","source_kind":"verified_archive","provider":"Internet Archive / 1872 Macmillan scan","source_reference":archive+"#page=n"+str(ix),"book_reference":SOURCE,"original_artist":"John Tenniel (1820–1914)","original_year":1871,"edition_year":1872,"printed_page":page,"scan_page_index":ix,"image_selection_score":round(score,5),"alt":scene,"scene_match_note":cue["description"],"rights_review":"reviewed","rights_basis":"1872 Macmillan book with 1871 Tenniel engravings, public domain in Italy and USA; digitized by Duke University Libraries/Internet Archive.","scene_relevance":"reviewed","visual_review":"passed","visual_review_scope":"Actual scan page decoded and fitted whole without subject cropping; human artistic scene review pending","sha256":sha(path),"bytes":path.stat().st_size}
+  item={"asset_id":f"img_{i:02}","source_kind":"verified_archive","provider":"Internet Archive / 1872 Macmillan scan","source_reference":archive+"#page=n"+str(ix),"book_reference":SOURCE,"original_artist":"John Tenniel (1820–1914)","original_year":1871,"edition_year":1872,"printed_page":page,"scan_page_index":ix,"image_selection_score":round(score,5),"alt":scene,"scene_match_note":cue["description"],"rights_review":"reviewed","rights_basis":"1872 Macmillan book with 1871 Tenniel engravings, public domain in Italy and USA; digitized by Duke University Libraries/Internet Archive.","scene_relevance":"reviewed","visual_review":"passed","visual_review_scope":"Large connected authentic engraving isolated from surrounding book text, with safety margin; human artistic review pending","sha256":sha(path),"bytes":path.stat().st_size}
   provenance.append(item)
   print("SCAN SCENE",i,"printed",page,"scan",ix,"score",round(score,4),flush=True)
  (EP/"PROVENIENZA_IMMAGINI.json").write_text(json.dumps(provenance,ensure_ascii=False,indent=2))
