@@ -140,6 +140,17 @@ const request=async(path,method='GET',data)=>{
   fs.writeFileSync('/tmp/vls-editorial-'+mode+'.zip',bytes);
   console.log('PASS: streaming ZIP '+mode+' bytes='+bytes.length);
  }
+
+ const workflow={collections:['Da migliorare'],videos:{[video]:{title:'Opera',collections:['Da migliorare'],rating:'Da correggere',issue:'Musica',notes:'Abbassare la musica',updatedAt:'2026-10-27T12:00:00Z'}}};
+ authenticated=false;assert.equal((await request('/api/workflow')).status,401);authenticated=true;
+ assert.equal((await request('/api/workflow')).status,200);
+ let cloud=await request('/api/workflow','POST',{data:workflow,revision:0});assert.equal(cloud.status,200);
+ const restored=await (await request('/api/workflow')).json();assert.equal(restored.videos[video].notes,'Abbassare la musica');assert.equal(restored.revision,1);
+ assert.equal((await request('/api/workflow','POST',{data:workflow,revision:0})).status,409);
+ assert.equal((await request('/api/workflow','POST',{data:{collections:[],videos:{bad:{}}},revision:1})).status,400);
+ const originalPut=env.VIDEOS.put;env.VIDEOS.put=async()=>null;
+ assert.equal((await request('/api/workflow','POST',{data:workflow,revision:1})).status,409);env.VIDEOS.put=originalPut;
+ console.log('PASS: private collections persist; stale writes, invalid data and concurrent writes rejected');
  const bad=await request('/api/social-package?key='+encodeURIComponent(video)+'&mode=full&exp='+Math.floor(Date.now()/1000)+'&sig='+'b'.repeat(64));
  assert.equal(bad.status,403);
 })();
