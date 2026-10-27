@@ -1,0 +1,72 @@
+name: "ArtVision V44 | Bruegel authentic source | 20261027-2315"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-bruegel-source-20261027-2315.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Download authentic Bruegel artwork and verify photograph license
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p source
+          python -m pip install --quiet Pillow requests
+          python - <<'PY'
+          import requests,hashlib,json,pathlib,time
+          from PIL import Image
+          from io import BytesIO
+          d=pathlib.Path('source')
+          ua='ArtVisionResearch/1.0 (public-domain art research; https://github.com/GGIANLUCAA/Tra-le-pagine-)'
+          s=requests.Session();s.headers.update({'User-Agent':ua})
+          files=[
+            ('Pieter Bruegel the Elder - The Fall of the Rebel Angels - Google Art Project.jpg','PDM; public domain faithful reproduction'),
+            ('Pieter bruegel il vecchio, Caduta degli angeli ribelli, 1562, 37.JPG','CC BY 3.0; photo Sailko')
+          ]
+          failures=[]
+          for title,license in files:
+            try:
+              p=s.get('https://commons.wikimedia.org/w/api.php',params={'action':'query','format':'json','prop':'imageinfo','iiprop':'url','iiurlwidth':4000,'titles':'File:'+title},timeout=35)
+              p.raise_for_status()
+              page=next(iter(p.json()['query']['pages'].values()))
+              info=page['imageinfo'][0]
+              url=info.get('thumburl') or info['url']
+              r=s.get(url,timeout=120);r.raise_for_status()
+              if len(r.content)<400000:raise ValueError('file too small')
+              img=Image.open(BytesIO(r.content));img.load()
+              if min(img.size)<1500:raise ValueError('image dimensions too small '+str(img.size))
+              img.convert('RGB').save(d/'ORIGINAL_ARTWORK.jpg',quality=96,subsampling=0)
+              meta={'title':title,'source_page':'https://commons.wikimedia.org/wiki/File:'+title.replace(' ','_'),'download_url':url,'license_note':license,'dimensions':img.size,'sha256':hashlib.sha256((d/'ORIGINAL_ARTWORK.jpg').read_bytes()).hexdigest()}
+              (d/'ART_SOURCE.json').write_text(json.dumps(meta,indent=2))
+              print('ARTWORK_OK',meta)
+              break
+            except Exception as e:
+              failures.append({'title':title,'error':str(e)[:300]})
+          else:
+            raise SystemExit('No verified artwork acquired: '+str(failures))
+          # Official composer's actual recording; no synthesized or paid music.
+          url='https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20of%20Chaos.mp3'
+          try:
+            r=s.get(url,timeout=120);r.raise_for_status()
+            if len(r.content)<500000 or r.content[:3]!=b'ID3' and r.content[:2]!=bytes.fromhex('fffb'):
+              raise ValueError('unexpected audio file')
+            (d/'ORIGINAL_LICENSED_MUSIC.mp3').write_bytes(r.content)
+            print('MUSIC_OK',len(r.content),hashlib.sha256(r.content).hexdigest())
+          except Exception as e:
+            print('MUSIC_NOT_ACQUIRED',repr(e))
+          (d/'RIGHTS.txt').write_text('Pieter Bruegel the Elder, The Fall of the Rebel Angels (1562), Royal Museums of Fine Arts of Belgium, inv. 584. Art source and exact license in ART_SOURCE.json. Music if present: Evening of Chaos, Kevin MacLeod, ISRC USUAN1300041, official Incompetech recording, CC BY 4.0, https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300041 ; license https://creativecommons.org/licenses/by/4.0/. Do not claim publication rights or artistic approval automatically.\n')
+          PY
+          test -s source/ORIGINAL_ARTWORK.jpg
+          sha256sum source/* > source/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision-20261027-Bruegel-Rebel-Angels-Authentic-Source
+          path: source/
+          retention-days: 30
+          if-no-files-found: error
