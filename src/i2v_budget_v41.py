@@ -72,7 +72,7 @@ def _payload(info):
     image=Path(info["image"])
     encoded=base64.b64encode(image.read_bytes()).decode("ascii")
     uri="data:"+MIME[image.suffix.lower()]+";base64,"+encoded
-    return {"model":MODEL,"images":[uri],"prompt":info["prompt"],
+    return {"model":MODEL,"images":uri,"prompt":info["prompt"],
             "duration":info["duration"],"resolution":"720p",
             "off_peak":info["off_peak"],"audio":False,"is_rec":False}
 
