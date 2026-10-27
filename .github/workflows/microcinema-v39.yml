@@ -3,9 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       image:
-        description: "File immagine nel repository, sotto episodes/"
+        description: "Immagine in episodes/ oppure scene_premium.zip"
         required: true
         type: string
+      scene_number:
+        description: "Numero scena da ZIP (1-35; ignorato se immagine diretta)"
+        type: string
+        default: "1"
       format:
         description: "Formato"
         type: choice
@@ -29,6 +33,7 @@ jobs:
     timeout-minutes: 20
     env:
       IMAGE_PATH: "${{ inputs.image }}"
+      SCENE_NUMBER: "${{ inputs.scene_number }}"
       EDITORIAL_FORMAT: "${{ inputs.format }}"
       EFFECT: "${{ inputs.effect }}"
       SECONDS: "${{ inputs.seconds }}"
@@ -37,20 +42,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: "Conferma che esiste un'immagine di episodio"
+      - name: "Estrai in sicurezza una scena ZIP o verifica immagine"
         shell: bash
         run: |
-          python - <<'PY'
-          import os
-          from pathlib import Path
-          path = Path(os.environ["IMAGE_PATH"])
-          if path.is_absolute() or ".." in path.parts or not path.parts or path.parts[0] != "episodes":
-              raise SystemExit("Immagine ammessa solo dentro episodes/")
-          if path.suffix.lower() not in (".jpg", ".jpeg", ".png", ".webp") or not path.is_file():
-              raise SystemExit("Immagine locale mancante o estensione non ammessa")
-          if os.environ["EDITORIAL_FORMAT"].startswith("artvision") and os.environ["EFFECT"] == "light_travel":
-              raise SystemExit("ArtVision: evitare luce ricostruita nel quadro autentico")
-          PY
+          python src/microcinema_inputs_v39.py --input "$IMAGE_PATH" --scene-number "$SCENE_NUMBER" --out-dir output
+          if [[ "$EDITORIAL_FORMAT" == artvision* && "$EFFECT" == "light_travel" ]]; then
+            echo "::error::ArtVision non ammette alterazioni della luce nel quadro"
+            exit 2
+          fi
       - name: "Installa software libero su runner (non su Android)"
         run: |
           sudo apt-get update -qq
@@ -62,7 +61,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p output
-          python src/microcinema_v39.py --image "$IMAGE_PATH" \
+          python src/microcinema_v39.py --image "$CLIP_IMAGE" \
             --effect "$EFFECT" --format "$EDITORIAL_FORMAT" \
             --seconds "$SECONDS" --out output/microcinema_v39.mp4
       - name: "Salva video e manifesto scaricabili"
