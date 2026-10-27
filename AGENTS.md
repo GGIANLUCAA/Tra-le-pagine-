@@ -129,6 +129,13 @@ fotogrammi reali e i raccordi a velocità normale. Il test non certifica l'estet
   niente note di montaggio al pubblico. Crediti corretti, nessuna domanda artificiale.
 - Controllare MP4 effettivo, durata/codec/risoluzione, fotogrammi di tutte le scene,
   primi secondi e raccordi, ascolto integrale di voce/musica. Mai chiamare 4K un Full HD.
+- **Consegna Android affidabile:** applicare il protocollo permanente in
+  `docs/REGOLE_ATTIVE.md > Consegna file verificabile su Android`: verificare
+  l'esistenza del file e, per MP4/ZIP, integrità e decodifica; consegnare
+  collegamento diretto a nome breve e ZIP di soli finali quando utile.
+  Il controllo locale non certifica l'accessibilità del link sandbox
+  nell'app ChatGPT. In caso di "File not found" offrire percorso
+  alternativo realmente disponibile, senza inventare URL.
 - Salvare ricetta V13 con materiali, hash, preset effettivo, commit e regole usate.
   Consegnare MP4 scaricabile, copertina e kit social. Un render riuscito resta
   `rendered_needs_review` fino alla revisione artistica sul file esatto.
