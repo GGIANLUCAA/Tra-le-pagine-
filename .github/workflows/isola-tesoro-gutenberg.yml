@@ -1,0 +1,27 @@
+name: Isola del tesoro - Gutenberg illustrated book assets
+on:
+  pull_request:
+    paths:
+      - experiments/isola_tesoro_20261027/acquire_gutenberg.py
+      - .github/workflows/isola-tesoro-gutenberg.yml
+permissions:
+  contents: read
+jobs:
+  acquire:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install "Pillow>=10,<13"
+      - run: python experiments/isola_tesoro_20261027/acquire_gutenberg.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ISOLA_TESORO_RHEAD_GUTENBERG_BOOK_IMAGES
+          path: output/isola-gutenberg-rhead/
+          if-no-files-found: warn
+          retention-days: 14
