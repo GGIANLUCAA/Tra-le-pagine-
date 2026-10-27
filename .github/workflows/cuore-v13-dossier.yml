@@ -1,0 +1,40 @@
+name: "Tra le Pagine - Poe V13 Dossier"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/cuore-v13-dossier.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dossier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Pillow only
+        run: python -m pip install "pillow>=10,<13"
+      - name: Reconstruct illustrations and build V13 project without false artistic approval
+        run: |
+          python src/illustrate_cuore_20261027.py --out episodes/10_cuore_rivelatore_20261027/images
+          python src/prepare_cuore_v13.py --episode episodes/10_cuore_rivelatore_20261027 --out output/cuore_v13
+          python - <<'PY'
+          import json
+          p=json.load(open('output/cuore_v13/PREFLIGHT_V13.json'))
+          print('STRUCTURAL READY:',p['ready'])
+          print('HUMAN REVIEW PENDING:',p['blockers'])
+          assert 'Revisione dell\'agente da completare: visuals' in p['blockers']
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CUORE_RIVELATORE_V13_DOSSIER
+          path: |
+            output/cuore_v13/PROJECT_V13.json
+            output/cuore_v13/PREFLIGHT_V13.json
+            output/cuore_v13/BRIEF_GPT.md
+          retention-days: 14
+          if-no-files-found: error
