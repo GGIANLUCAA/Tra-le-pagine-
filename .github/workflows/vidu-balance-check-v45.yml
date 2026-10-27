@@ -7,12 +7,15 @@ on:
       - "src/vidu_scene_integration_v46.py"
       - "tests/test_vidu_scene_integration_v46.py"
       - ".github/workflows/vidu-balance-check-v45.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/vidu_balance_check_v45.py"
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   api-balance-read-only:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
@@ -24,7 +27,8 @@ jobs:
         run: |
           ffmpeg -version | head -n 1
           python -m unittest discover -s tests -p 'test_vidu*_v*.py' -v
-      - name: "GET saldo Vidu API (mai POST; ZERO generazioni)"
+      - name: "GET saldo Vidu API (solo push main o manuale; ZERO generazioni)"
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         env:
           VIDU_API_KEY: ${{ secrets.VIDU_API_KEY }}
         run: python src/vidu_balance_check_v45.py
