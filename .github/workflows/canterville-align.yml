@@ -1,0 +1,37 @@
+name: Canterville - word timing review (no new voice)
+on:
+  pull_request:
+    paths:
+      - experiments/canterville_20261027/align_words.py
+      - .github/workflows/canterville-align.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  align:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/download-artifact@v4
+        with:
+          name: CANTERVILLE_GACRUX_AUDIO
+          path: source_audio
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 40480672147
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "faster-whisper>=1.1,<2"
+          python experiments/canterville_20261027/align_words.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CANTERVILLE_ASR_WORDS_REVIEW
+          path: output/canterville-word-alignment/
+          if-no-files-found: warn
+          retention-days: 14
