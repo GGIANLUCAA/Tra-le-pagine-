@@ -28,7 +28,7 @@ jobs:
         env:
           IMPORT_ENDPOINT: 'https://video-library-import.600led.workers.dev'
           SITE: 'https://video-library-studio.600led.workers.dev'
-          SOURCE: 'https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/${{ github.sha }}/site/video-library-v2.html'
+          SOURCE: 'https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/main/site/video-library-v2.html'
           AUD: 'vls-gh-import-2026'
           LIMIT: '0'
         shell: bash
@@ -59,6 +59,13 @@ jobs:
                       time.sleep(2**attempt)
           page=s.get(os.environ['SOURCE'],timeout=35);page.raise_for_status()
           assert page.text.lstrip().lower().startswith('<!doctype html>')
+          # Validate the exact current main HTML before publishing, even for queued old runs.
+          import re
+          scripts=re.findall(r'<script[^>]*>([\s\S]*?)</script>',page.text)
+          assert len(scripts)==1,'Unexpected frontend script count'
+          checked=subprocess.run(['node','--check'],input=scripts[0],text=True,capture_output=True)
+          if checked.returncode:raise RuntimeError('Frontend syntax validation failed: '+checked.stderr[:300])
+          assert 'function swPostUpdate' in page.text and 'function openEditorial' in page.text
           print('Site upload:',api('POST','/publish-html',data=page.text.encode('utf-8')),flush=True)
           catalog=s.get(site+'/api/catalog',timeout=60);catalog.raise_for_status()
           assets=catalog.json().get('items',[])
