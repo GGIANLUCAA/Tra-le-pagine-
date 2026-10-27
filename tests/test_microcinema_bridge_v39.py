@@ -3,9 +3,11 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+import sys
 
 import cv2
 import numpy as np
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 from microcinema_book_bridge_v39 import config_for_cue, make_insert
 
 
