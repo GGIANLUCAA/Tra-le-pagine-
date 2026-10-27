@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-27.4",
-  "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.",
+  "version": "2026-10-28.1",
+  "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.",
   "precedence": [
     "explicit_user_request",
     "editorial_rules",
@@ -393,6 +393,42 @@
         "cover_and_initial_frame_title_and_artist",
         "critic_voice_must_remain_present"
       ]
+    },
+    "hiroshige_museum_scale_20261027": {
+      "name": "Sudden Shower over Shin-Ōhashi Bridge and Atake — Museum Scale",
+      "artist": "Utagawa Hiroshige",
+      "year": 1857,
+      "format": [
+        "artvision_cinema",
+        "artvision_critico"
+      ],
+      "video_file": "ARTVISION_HIROSHIGE_MUSEUM_SCALE_ANDROID_20261027.mp4",
+      "video_url": "https://drive.google.com/file/d/14X8_TObXEijGlBg8HuyR6ITTlPjJk0dA/view?usp=drivesdk",
+      "kit_url": "https://drive.google.com/file/d/1l6FBjb3HGDTriMuhnna8UKRSocTLvBBU/view?usp=drivesdk",
+      "observed_date": "2026-10-28",
+      "evidence": "Direct feedback after viewing Hiroshige Museum Scale: 'Ottimo lavoro sembra che siamo sulla strada giusta usali come modello che va bene le proporzioni erano ben studiate'.",
+      "status": "approved_reusable_physical_scale_reference_not_automatic_gold_master",
+      "reference_document": "docs/ARTVISION_MUSEUM_IMMERSION_MODELLO_APPROVATO_V46.md",
+      "production_document": "docs/productions/2026-10-27-hiroshige-sudden-shower-museum-scale.md",
+      "scale_cm_approx": [
+        35,
+        24
+      ],
+      "scale_basis": "Comparable museum impressions: Cleveland 35.3 x 23.2 cm, Metropolitan Museum 36.5 x 24.3 cm; original archive image may correspond to another impression",
+      "approved_features": [
+        "small_artwork_physically_small_in_gallery",
+        "correct_human_scale_and_camera_distance",
+        "museum_perspective_and_frame_proportions",
+        "enlarge_only_when_camera_approaches",
+        "natural_museum_entry_exploration_return"
+      ],
+      "not_mandatory": [
+        "same_museum",
+        "same_frame",
+        "same_camera_path",
+        "same_duration",
+        "all_artworks_small"
+      ]
     }
   },
   "paid_video_credits": {
@@ -480,6 +516,10 @@
       "frame_painting_actual_dimensions_distinguished",
       "closeup_can_fill_screen_only_by_camera_approach"
     ],
-    "new_episode_reference": "Hiroshige Sudden Shower, small print, 2026-10-27"
+    "new_episode_reference": "Hiroshige Sudden Shower, small print, 2026-10-27",
+    "approved_reference": "hiroshige_museum_scale_20261027",
+    "paired_reference": "cyclops_museum_immersion_edgefixed_20261027",
+    "user_feedback": "Proporzioni ben studiate, da usare come modello; confermato 28/10/2026",
+    "quality_note": "user approved scale and direction, not blanket Gold Master approval"
   }
 }
