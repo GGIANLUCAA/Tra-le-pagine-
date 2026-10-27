@@ -1,0 +1,16 @@
+name: Stop blocked one-off installation
+on:
+  push:
+    branches: [episode/isola-tesoro-originale-20261027]
+    paths: [queue/cancel_slow_treasure_install.txt]
+permissions:
+  actions: write
+  contents: read
+jobs:
+  stop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel slow run before any Gemini request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/actions/runs/40540912058/cancel" || true
