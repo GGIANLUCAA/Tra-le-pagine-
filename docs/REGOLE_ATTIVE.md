@@ -62,7 +62,10 @@ La regola prevale su target numerici, urgenza, export tecnico, istruzioni dei ve
 
 **QA BLOCCANTE:** niente fasce di colore ottenute replicando o stirando l'ultima riga di pixel nella parte alta o bassa durante pan/zoom, niente quadro sovrapposto alla cornice o raccordi visivamente bruschi. Verificare tutti i movimenti e i bordi, prima e dopo i passaggi e a velocità normale; i soli test ffmpeg non bastano. Sala ricostruita dichiarata, fotografia pittorica autentica e diritti controllati. Non confondere questa approvazione di riferimento con un nuovo Gold Master automatico.
 
-## Scala reale delle opere nei video Museum Immersion — regola approvata (27/10/2026)
+## Scala reale delle opere nei video Museum Immersion
+
+**Conferma positiva 28/10/2026 — due modelli complementari approvati:** *The Cyclops* di Redon, **versione senza strisce**, per cornice realistica e regia pulita; *Sudden Shower* di Hiroshige, **Museum Scale 20261027**, per rapporto dimensionale corretto tra piccola stampa, visitatore e sala. L'utente ha valutato espressamente ben studiate le proporzioni di Hiroshige e ha chiesto di riutilizzare entrambi come modello. Leggere `docs/ARTVISION_MUSEUM_IMMERSION_MODELLO_APPROVATO_V46.md` prima dei nuovi video Cinema o Critico con effetto museo. Non adottare dimensioni uniformi: verificare la misura museale e adattare architettura, camera e inquadratura. L'approvazione non equivale a Gold Master globale.
+ — regola approvata (27/10/2026)
 
 **Indicazione esplicita dell'utente:** ogni quadro o stampa deve sembrare delle sue dimensioni fisiche reali. Una piccola tavoletta da 20–40 cm va mostrata piccola in una sala credibile; una tela da 5–10 m deve occupare un'immensa parete con prospettiva, distanza di osservazione e architettura coerenti. Non trattare tutti i dipinti come della stessa grandezza.
 
