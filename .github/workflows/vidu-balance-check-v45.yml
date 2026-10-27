@@ -1,0 +1,26 @@
+name: "V45 - Vidu verifica crediti API GRATIS"
+on:
+  pull_request:
+    paths:
+      - "src/vidu_balance_check_v45.py"
+      - "tests/test_vidu_balance_check_v45.py"
+      - ".github/workflows/vidu-balance-check-v45.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  api-balance-read-only:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Unit test senza rete"
+        run: python -m unittest discover -s tests -p 'test_vidu_balance_check_v45.py' -v
+      - name: "GET saldo Vidu API (mai POST; ZERO generazioni)"
+        env:
+          VIDU_API_KEY: ${{ secrets.VIDU_API_KEY }}
+        run: python src/vidu_balance_check_v45.py
