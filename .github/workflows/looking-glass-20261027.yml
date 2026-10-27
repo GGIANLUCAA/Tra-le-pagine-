@@ -26,7 +26,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core frei0r-plugins
-          python -m pip install "requests>=2.31,<3" "beautifulsoup4>=4.12,<5" "pillow>=10,<13" "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "opencv-python-headless>=4.8,<5" "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
+          python -m pip install "requests>=2.31,<3" "beautifulsoup4>=4.12,<5" "pillow>=10,<13" "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "opencv-python-headless>=4.8,<5" "pymupdf>=1.24,<2" "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
           command -v ffmpeg
           ffmpeg -version | head -n 1
       - name: Fetch original public-domain Tenniel art and run real V13 preflight BEFORE TTS
@@ -59,3 +59,5 @@ jobs:
 # Original public-domain Tenniel scenes now fetched from Commons by exact filename.
 
 # Final source-matched race illustration, high-resolution Tenniel original.
+
+# Fallback: one authenticated historical archive scan, no Wikimedia 429 retries.
