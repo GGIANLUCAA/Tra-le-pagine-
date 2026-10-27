@@ -54,6 +54,14 @@ Se la richiesta esplicita e vera animazione generativa image-to-video, **vietato
 
 La regola prevale su target numerici, urgenza, export tecnico, istruzioni dei vecchi workflow e qualsiasi scorciatoia di chat. NON comporta alcun consumo di crediti.
 
+## Museum Immersion V46 — modello approvato per ArtVision Cinema e Critico (27/10/2026)
+
+**Approvazione esplicita dell'utente:** la versione **The Cyclops — Odilon Redon, SENZA STRISCE CORRETTO** è un riferimento positivo da **usare spesso**, sia nei video ArtVision Cinema sia nei video Critico d'arte. Recuperare prima **`docs/ARTVISION_MUSEUM_IMMERSION_MODELLO_APPROVATO_V46.md`** e confrontare il file esatto conservato su Google Drive, non le varianti con difetti.
+
+**Regia ricorrente opzionale, non stampino:** museo fotorealistico, quadro realmente incassato dietro il labbro interno della cornice, centratura e ombre credibili, POV visitatore che entra nell'opera, scene pittoriche significative, ritorno alla stessa sala. In Cinema mantenere regia musicale senza voce secondo V6; nei Critico preservare voce naturale e sincronizzazione con le parole secondo V2. Applicarla spesso quando motivata, alternando altri ingressi.
+
+**QA BLOCCANTE:** niente fasce di colore ottenute replicando o stirando l'ultima riga di pixel nella parte alta o bassa durante pan/zoom, niente quadro sovrapposto alla cornice o raccordi visivamente bruschi. Verificare tutti i movimenti e i bordi, prima e dopo i passaggi e a velocità normale; i soli test ffmpeg non bastano. Sala ricostruita dichiarata, fotografia pittorica autentica e diritti controllati. Non confondere questa approvazione di riferimento con un nuovo Gold Master automatico.
+
 ## Decisioni consolidate
 
 | Prima | Ora |
