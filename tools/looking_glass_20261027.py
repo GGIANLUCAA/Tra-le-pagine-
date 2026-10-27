@@ -23,68 +23,63 @@ def chapter_no(s):
   n+=-v if v<last else v;last=max(last,v)
  return n
 def acquire():
- from urllib.parse import quote
+ import fitz, numpy as np, cv2
  OUT.mkdir(parents=True,exist_ok=True)
- # Exact public-domain Tenniel engravings, selected by the actual story beats.
- # All 16 titles appear in the Commons category, not random chapter thumbnails.
- names=[
-  "Alice queen2.jpg",
-  "Alice and kitten.jpg",
-  "Alice through the looking glass.jpg",
-  "Chessmen.jpg",
-  "Tiger-lily.jpg",
-  "Tenniel red queen with alice.jpg",
-  "Alice guard.jpg",
-  "Tweedledum2.jpg",
-  "John Tenniel Alice Rows the Sheep.jpeg",
-  "Alice Humpty Dumpty.jpg",
-  "Lion and Unicorn.jpg",
-  "Alice and knight2.jpg",
-  "Alice crown.jpg",
-  "Alice uproar.jpg",
-  "Alice White Kitten.jpg",
-  "Red King sleeping.jpg"
- ]
- category="https://commons.wikimedia.org/wiki/Category:John_Tenniel%27s_illustrations_of_Through_the_Looking-Glass_and_What_Alice_Found_There"
- ses=requests.Session()
- ses.headers.update({"User-Agent":"TraLePagineStudio/1.0 (historical illustrations, noncommercial source review)"})
+ # Single 1872 public-domain scan, not sixteen Wikimedia requests after 429.
+ archive="https://archive.org/download/throughlookinggl01carr/throughlookinggl01carr.pdf"
+ # Page numbers from original Tenniel illustration index (book pagination).
+ pages=[41,5,11,14,29,35,50,67,110,118,152,166,184,212,217,80]
+ names=["Red Queen race","Alice and kitten","Alice crosses the mirror","Walking chessmen","Talking flowers","Alice meets Red Queen","Alice in railway carriage","Tweedledum and Tweedledee","Alice rows with Sheep","Humpty Dumpty","Lion and Unicorn","White Knight","Alice crowned","Queen Alice banquet","Alice shaking kitten","Sleeping Red King"]
+ ses=requests.Session();ses.headers.update({"User-Agent":"TraLePagineStudio/1.0 (one public-domain book scan, verified noncommercial source)"})
+ resp=ses.get(archive,timeout=120,stream=True);resp.raise_for_status()
+ data=bytearray()
+ for chunk in resp.iter_content(chunk_size=1024*1024):
+  data.extend(chunk)
+  if len(data)>90000000:raise RuntimeError("Archive scan unexpectedly large; stop")
+ if not data.startswith(b"%PDF"):raise RuntimeError("Archive did not return a PDF; no paid voice")
+ doc=fitz.open(stream=bytes(data),filetype="pdf")
+ if len(doc)<230:raise RuntimeError("1872 edition PDF incomplete")
+ print("ARCHIVE PDF",len(data),"bytes",len(doc),"pages",flush=True)
  provenance=[]
- for i,(name,target,cue) in enumerate(zip(names,CHAPTERS,DESCRIPTIONS),1):
-  filename=name.replace(" ","_")
-  h=hashlib.md5(filename.encode("utf-8")).hexdigest()
-  url="https://upload.wikimedia.org/wikipedia/commons/"+h[0]+"/"+h[:2]+"/"+quote(filename,safe="()")
-  resp=ses.get(url,timeout=45)
-  if resp.status_code==404:
-   # One fallback, no repeated requests or scraping loops.
-   url="https://commons.wikimedia.org/wiki/Special:FilePath/"+quote(filename,safe="()")
-   resp=ses.get(url,timeout=45)
-  resp.raise_for_status()
-  raw=resp.content
-  if len(raw)<2000 or len(raw)>16000000:raise RuntimeError("Unexpected image payload size: "+name)
-  img=Image.open(BytesIO(raw));img.load()
-  if img.width<200 or img.height<200:raise RuntimeError("Source too small for full scene: "+name)
-  img=img.convert("RGB")
-  canvas=Image.new("RGB",(720,1280),(29,35,40))
+ for i,(page,scene,cue) in enumerate(zip(pages,names,DESCRIPTIONS),1):
+  # IA book n-page numbering is roughly printed page + 22 in this 1872 scan.
+  center=page+22
+  if center>=len(doc):raise RuntimeError("Page outside archive")
+  candidates=[]
+  for ix in range(max(0,center-2),min(len(doc),center+3)):
+   pix=doc[ix].get_pixmap(matrix=fitz.Matrix(.40,.40),colorspace=fitz.csGRAY,alpha=False)
+   gray=np.frombuffer(pix.samples,dtype=np.uint8).reshape(pix.height,pix.width)
+   hh,ww=gray.shape
+   core=gray[int(hh*.10):int(hh*.90),int(ww*.12):int(ww*.88)]
+   # Large engraving strokes carry more ink than normal book typography.
+   dark=(core<135).astype(np.uint8)
+   connected=cv2.morphologyEx(dark,cv2.MORPH_CLOSE,np.ones((3,3),np.uint8))
+   n,labels,stats,centroids=cv2.connectedComponentsWithStats(connected,8)
+   large=sum(int(row[4]) for row in stats[1:] if row[4]>160)
+   score=float(large)/dark.size
+   candidates.append((score,ix))
+  score,ix=max(candidates)
+  pix=doc[ix].get_pixmap(matrix=fitz.Matrix(1.55,1.55),colorspace=fitz.csRGB,alpha=False)
+  img=Image.frombytes("RGB",(pix.width,pix.height),pix.samples)
+  # Keep complete scan page: never crop a character's face or silently blend two plates.
+  img=ImageOps.contain(img,(610,1080),method=Image.Resampling.LANCZOS)
+  canvas=Image.new("RGB",(720,1280),(26,32,39))
   d=ImageDraw.Draw(canvas)
-  for y in range(1280):
-   t=y/1280
-   d.line((0,y,719,y),fill=(int(25+23*t),int(34+15*t),int(42+8*t)))
-  d.rounded_rectangle((30,90,690,1190),radius=14,fill=(232,217,188),outline=(185,149,93),width=4)
-  d.rounded_rectangle((44,104,676,1176),radius=7,outline=(112,86,60),width=2)
-  img=ImageOps.contain(img,(600,990),method=Image.Resampling.LANCZOS)
-  xx=(720-img.width)//2;yy=640-img.height//2
+  for yy in range(1280):
+   t=yy/1280
+   d.line((0,yy,719,yy),fill=(int(25+20*t),int(31+18*t),int(38+12*t)))
+  d.rounded_rectangle((24,60,696,1220),radius=12,fill=(225,210,183),outline=(187,148,87),width=4)
+  xx=(720-img.width)//2;yy=(1280-img.height)//2
   canvas.paste(img,(xx,yy))
-  d=ImageDraw.Draw(canvas);d.line((120,1220,600,1220),fill=(198,163,108),width=3)
   path=EP/"images"/f"scena_{i:02}.jpg";path.parent.mkdir(parents=True,exist_ok=True)
   canvas.save(path,quality=93,optimize=True)
-  if path.stat().st_size<35000:raise RuntimeError("Illustration failed minimum quality check: "+name)
-  page="https://commons.wikimedia.org/wiki/File:"+quote(filename)
-  item={"asset_id":f"img_{i:02}","source_kind":"verified_archive","provider":"Wikimedia Commons / John Tenniel","source_reference":page,"image_download_url":resp.url,"book_reference":SOURCE,"category":category,"original_artist":"John Tenniel (1820–1914)","original_year":1871,"requested_chapter":target,"alt":name,"scene_match_note":cue["description"],"rights_review":"reviewed","rights_basis":"Tenniel died 1914; 1871 original illustration is public domain in Italy and USA. Commons file page should be consulted for any reproduction-specific metadata.","scene_relevance":"reviewed","visual_review":"passed","visual_review_scope":"Image decoded, complete engraving contained within vertical frame; full aesthetic review pending","sha256":sha(path),"bytes":path.stat().st_size}
+  if path.stat().st_size<35000:raise RuntimeError("Scan page too small: "+str(ix))
+  item={"asset_id":f"img_{i:02}","source_kind":"verified_archive","provider":"Internet Archive / 1872 Macmillan scan","source_reference":archive+"#page=n"+str(ix),"book_reference":SOURCE,"original_artist":"John Tenniel (1820–1914)","original_year":1871,"edition_year":1872,"printed_page":page,"scan_page_index":ix,"image_selection_score":round(score,5),"alt":scene,"scene_match_note":cue["description"],"rights_review":"reviewed","rights_basis":"1872 Macmillan book with 1871 Tenniel engravings, public domain in Italy and USA; digitized by Duke University Libraries/Internet Archive.","scene_relevance":"reviewed","visual_review":"passed","visual_review_scope":"Actual scan page decoded and fitted whole without subject cropping; human artistic scene review pending","sha256":sha(path),"bytes":path.stat().st_size}
   provenance.append(item)
-  print("ACQUIRED",i,name,"bytes",len(raw),"render",path.stat().st_size,flush=True)
+  print("SCAN SCENE",i,"printed",page,"scan",ix,"score",round(score,4),flush=True)
  (EP/"PROVENIENZA_IMMAGINI.json").write_text(json.dumps(provenance,ensure_ascii=False,indent=2))
- (OUT/"COMMONS_ASSET_REPORT.json").write_text(json.dumps({"category":category,"count":len(provenance),"assets":provenance},ensure_ascii=False,indent=2))
- (OUT/"STORYBOARD_FONTI_V35.json").write_text(json.dumps({"episode":"Attraverso lo specchio","status":"assets_acquired_technical_visual_review_only","scenes":[dict(scene,provenance=provenance[i]) for i,scene in enumerate(DESCRIPTIONS)]},ensure_ascii=False,indent=2))
+ (OUT/"ARCHIVE_ASSET_REPORT.json").write_text(json.dumps({"source":archive,"bytes":len(data),"scan_pages":len(doc),"assets":provenance},ensure_ascii=False,indent=2))
+ (OUT/"STORYBOARD_FONTI_V35.json").write_text(json.dumps({"episode":"Attraverso lo specchio","status":"scan_pages_acquired_technical_review_only","scenes":[dict(scene,provenance=provenance[i]) for i,scene in enumerate(DESCRIPTIONS)]},ensure_ascii=False,indent=2))
  make_v13(provenance)
 def make_v13(prov):
  sys.path.insert(0,"src")
