@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-27T19:16:47Z",
+  "updated": "2026-10-27T22:27:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -19,7 +19,7 @@
       "record": "https://github.com/GGIANLUCAA/Tra-le-pagine-/issues/31"
     }
   ],
-  "next_preferred_format": "artvision_critico_if_natural_Gacrux_verified_else_new_unique_artwork_cinema",
+  "next_preferred_format": "artvision_critico_if_natural_Gacrux_verified_else_collection",
   "cycle_log": [
     {
       "cycle_id": "20261024T1715+0200",
@@ -1242,6 +1242,47 @@
       "paid_ai_video_calls": 0,
       "social_published": false,
       "gold_master_approved": false
+    },
+    {
+      "cycle_id": "20261027T2315+0100",
+      "created_at": "2026-10-27T22:27:00Z",
+      "artist": "Pieter Bruegel the Elder",
+      "work": "The Fall of the Rebel Angels",
+      "format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "subtype": "new_authentic_standalone_artwork",
+      "status": "rendered_needs_review",
+      "mp4_verified": true,
+      "duration_seconds": 55.25,
+      "size_bytes": 19376181,
+      "sha256_mp4": "0bd2fb6e0aadd02ae1eab56fa804f5fcb914c15330121765e28ba5878531f12a",
+      "zip_complete_sha256": "7809bb2483b197cfe581d26e874c0e0a5eaedc59c57ce8edccd6045b44ec817e",
+      "source_workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40594326083",
+      "source_artifact_id": 12775741359,
+      "record": "docs/productions/2026-10-27-2315-bruegel-fall-rebel-angels.md",
+      "delivery_library_paths": [
+        "/ArtVision/ArtVision_Bruegel_20261027.mp4",
+        "/ArtVision/ArtVision_Bruegel_COMPLETO_20261027.zip"
+      ],
+      "steps": {
+        "source": "success",
+        "render": "success",
+        "ffprobe": "pass",
+        "full_decode": "pass",
+        "zip_crc": "pass",
+        "cover_and_frame0": "visually checked",
+        "audio_human_review": "pending",
+        "artistic_review": "pending"
+      },
+      "gold_master_approved": false,
+      "social_published": false,
+      "paid_video_credits": 0,
+      "external_video_library_import": "not_attempted",
+      "next_cycle_improvements": [
+        "Reduce central figure repetition",
+        "Improve legibility of whole landscape painting in 9:16",
+        "Synchronize motivated cuts to measured musical accents"
+      ]
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
