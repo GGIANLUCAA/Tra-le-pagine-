@@ -1,0 +1,89 @@
+name: Tra le Pagine — Ventimila leghe, Gacrux e dossier completo
+on:
+  push:
+    branches: [main]
+    paths:
+      - "queue/verne_episode_20261027.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verne:
+    runs-on: ubuntu-latest
+    timeout-minutes: 58
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify single authorized episode, no auto-publication
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open("queue/verne_episode_20261027.json"))
+          assert p["approved"] is True and p["episode"]=="nautilus_20261027"
+          assert p["automatic_publication"] is False
+          print("ONE VIDEO AUTHORIZED. No social publication.")
+          PY
+          if [ -z "${GEMINI_API_KEY:-}" ]; then echo "::error::GEMINI_API_KEY not configured"; exit 2; fi
+      - name: Install image, narration and video tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install --quiet "pillow>=10,<13" "numpy>=1.25,<3" "soundfile>=0.12,<1" "scipy>=1.11" "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
+      - name: Offline source, story, rights ledger and platform text checks
+        run: |
+          python -m py_compile src/verne_assets_20261027.py src/verne_render_20261027.py src/verne_package_20261027.py
+          python -m unittest discover -s tests -p "test_verne_episode_20261027.py" -v
+      - name: Acquire historical engravings before any voice request
+        run: |
+          python src/verne_assets_20261027.py
+          python src/episode_v3.py --episode nautilus_20261027
+          python src/regia_narrativa_v12.py --episode episodes/nautilus_20261027
+      - name: "Check V38: no duplicated beats and no forced scene quota"
+        run: |
+          python - <<'PY'
+          import json
+          from src.narrative_variation_v38 import inspect
+          ep="episodes/nautilus_20261027/"
+          beats=json.load(open(ep+"scene_plan_verne.json"))["scenes"]
+          scenes=[{"asset_id":p["source_image_id"],"description":p["visual_intent"],
+            "reason":p["narration"],"camera":p["camera_style"],
+            "camera_reason":p["justification"]} for p in beats]
+          design={"story_beats":[p["visual_intent"] for p in beats],
+            "distinct_visual_needs":[p["source_image_id"] for p in beats],
+            "image_count_reason":"Each image relates to a different moment of Nemo's story.",
+            "pace_reason":"Changes in location, emotion and actual narrator voice guide editing."}
+          report=inspect({"format":"libri","editorial_contract":{"requested_format":"libri"},
+            "editorial_plan":{"narrative_design":design},"scenes":scenes})
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          assert not report["needs_creative_review"],"Review unmotivated repetition before rendering"
+          PY
+      - name: Generate Gacrux voice, original music and actual MP4
+        run: |
+          python src/verne_render_20261027.py
+      - name: Make illustrated presentation, source dossier and ZIPs
+        run: |
+          python src/verne_package_20261027.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path("output/nautilus_20261027")
+          names=("TRA_LE_PAGINE_VENTIMILA_LEGHE_SOTTO_I_MARI.mp4",
+            "COPERTINA_SERIE.jpg","SCHEDA_PRESENTAZIONE.jpg",
+            "STORYBOARD_COMPLETO.jpg","SCHEDA_TESTO.md","DOSSIER_SITO.json",
+            "SOLO_VIDEO.zip","PACCHETTO_COMPLETO.zip")
+          for n in names:
+            f=p/n
+            assert f.is_file() and f.stat().st_size>1000, "Not delivered: "+n
+            print("READY",n,f.stat().st_size)
+          PY
+      - name: Upload full Android-friendly master package, unpublished
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TRA_LE_PAGINE_NAUTILUS_MP4_E_DOSSIER
+          path: output/nautilus_20261027/
+          if-no-files-found: error
+          retention-days: 14
