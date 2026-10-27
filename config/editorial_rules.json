@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-27.2",
-  "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi",
+  "version": "2026-10-27.3",
+  "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.",
   "precedence": [
     "explicit_user_request",
     "editorial_rules",
@@ -115,9 +115,14 @@
   "technique_catalog": "config/cinematic_techniques_v23.json",
   "technique_approvals": {
     "gallery_to_canvas_entry": {
-      "status": "approved_option",
-      "evidence": "AGENTS.md, feedback 24/10/2026: ingresso POV apprezzato; raccordo opaco senza ghosting",
-      "mandatory": false
+      "status": "approved_frequent_option",
+      "evidence": "27/10/2026: user explicitly approved The Cyclops edge-fixed video and requested frequent reuse for ArtVision Cinema and Critico; docs/ARTVISION_MUSEUM_IMMERSION_MODELLO_APPROVATO_V46.md",
+      "mandatory": false,
+      "formats": [
+        "artvision_cinema",
+        "artvision_critico"
+      ],
+      "reference_key": "cyclops_museum_immersion_edgefixed_20261027"
     }
   },
   "unknown_technique_status": "candidate_not_user_approved",
@@ -361,6 +366,33 @@
       ],
       "asset_status": "Not confirmed imported into Video Library Studio; reference video may exist only as chat artifact",
       "approval_note": "User praised result, but said improvements remain; not a gold master, publication or rights approval."
+    },
+    "cyclops_museum_immersion_edgefixed_20261027": {
+      "name": "The Cyclops — Museum Immersion senza strisce",
+      "artist": "Odilon Redon",
+      "format": [
+        "artvision_cinema",
+        "artvision_critico"
+      ],
+      "video_file": "ArtVision_The_Cyclops_SENZA_STRISCE_CORRETTO_20261027.mp4",
+      "video_url": "https://drive.google.com/file/d/1w9mb1N5hrGAaB870JANHoKk98MiibtpW/view",
+      "observed_date": "2026-10-27",
+      "evidence": "User direct positive feedback after viewing corrected video: 'Ottimo salvalo nella memoria come modello. Ben fatto e da usare spesso per questo genere di video e anche quelli di critico d'arte'.",
+      "status": "approved_reusable_visual_reference_not_automatic_gold_master",
+      "reuse_frequency": "frequently_when_artistically_appropriate_not_mandatory_every_video",
+      "guide": "docs/ARTVISION_MUSEUM_IMMERSION_MODELLO_APPROVATO_V46.md",
+      "not_to_reuse": [
+        "earlier_cyclops_version_with_edge_stretch",
+        "ninth_wave_v3_rejected"
+      ],
+      "essential_qa": [
+        "painting_physically_behind_inner_frame_lip",
+        "proper_alignment_and_contact_shadows",
+        "no_vertical_pixel_stretch_stripes_at_upper_lower_edges",
+        "natural_entry_exit_without_ghosting",
+        "cover_and_initial_frame_title_and_artist",
+        "critic_voice_must_remain_present"
+      ]
     }
   },
   "paid_video_credits": {
