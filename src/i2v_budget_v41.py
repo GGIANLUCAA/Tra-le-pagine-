@@ -64,7 +64,8 @@ def plan(image:Path,prompt:str,seconds:int=5,off_peak=True,max_cost_usd=0.10,pre
         raise ValueError("La richiesta supera il tetto di spesa consentito")
     sha=hashlib.sha256(image.read_bytes()).hexdigest()
     fingerprint=hashlib.sha256(json.dumps(
-        [sha,prompt,seconds,off_peak,preset],ensure_ascii=False).encode()).hexdigest()
+        [sha,prompt,seconds,off_peak,preset,quote["credits"],quote["usd"],
+         round(float(max_cost_usd),4)],ensure_ascii=False).encode()).hexdigest()
     model,resolution=PRESETS[preset]
     return {"version":"v42","model":model,"provider":"vidu","preset":preset,
             "image":str(image),"image_sha256":sha,"prompt":prompt,
