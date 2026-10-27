@@ -20,7 +20,10 @@ jobs:
             --jq '{"runs": [.workflow_runs[]|{id,html_url,status,conclusion,created_at,head_sha}], "checked_at":"2026-10-27"}' > status.json
           echo "Found:"
           cat status.json
+          CURRENT_SHA="$(gh api "repos/${{ github.repository }}/contents/queue/treasure_run_status_20261027.json?ref=${{ github.ref_name }}" --jq .sha 2>/dev/null || true)"
+          [ -n "$CURRENT_SHA" ] && SHA_ARG=(-f "sha=$CURRENT_SHA") || SHA_ARG=()
           gh api -X PUT "repos/${{ github.repository }}/contents/queue/treasure_run_status_20261027.json" \
+            "${SHA_ARG[@]}" \
             -f message="Record isolated book-production run status" \
             -f branch="${{ github.ref_name }}" \
             -f content="$(base64 -w0 status.json)"
