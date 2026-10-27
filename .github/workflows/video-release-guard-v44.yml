@@ -1,0 +1,24 @@
+name: "V44 - animated video release guard (offline)"
+on:
+  pull_request:
+    paths:
+      - "src/animated_video_release_gate_v44.py"
+      - "tests/test_animated_video_release_gate_v44.py"
+      - "docs/VIDEO_INCIDENT_2026-10-27_V44.md"
+      - ".github/workflows/video-release-guard-v44.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fail-closed-video-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Verifica regole V44 senza chiamate API"
+        run: |
+          python -m py_compile src/animated_video_release_gate_v44.py
+          python -m unittest discover -s tests -p 'test_animated_video_release_gate_v44.py' -v
