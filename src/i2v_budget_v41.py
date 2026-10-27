@@ -140,9 +140,9 @@ def _payload(info):
     image=Path(info["image"])
     encoded=base64.b64encode(image.read_bytes()).decode("ascii")
     uri="data:"+MIME[image.suffix.lower()]+";base64,"+encoded
-    # Q2 Turbo official endpoint specifies a one-item images array.
-    # Keep legacy Pro Fast single-image payload until that endpoint is verified live.
-    images=[uri] if info["model"]==ECONOMY_MODEL else uri
+    # Q2 official schema: ONE-ELEMENT array. The example with a string is
+    # inconsistent with its documented parameter schema. Prevent bad submits.
+    images=[uri]
     return {"model":info["model"],"images":images,"prompt":info["prompt"],
             "duration":info["duration"],"resolution":info["resolution"],
             "off_peak":info["off_peak"],"audio":False,"is_rec":False}
