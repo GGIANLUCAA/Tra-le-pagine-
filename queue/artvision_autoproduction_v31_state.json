@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-27T07:29:00Z",
+  "updated": "2026-10-27T10:18:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -1111,6 +1111,82 @@
       "external_video_library_import": "not_attempted",
       "feedback": "Preflight corrected near-duplicate shots 9/10 and recentered opening; remaining limits: original resolution for extreme details, dense small-screen image, music needs full human artistic listening",
       "record": "docs/productions/2026-10-27-0815-richard-dadd-fairy-feller.md"
+    },
+    {
+      "cycle_id": "20261027T1115+0100",
+      "created_at": "2026-10-27T10:17:58Z",
+      "artist": "Joos van Craesbeeck",
+      "work": "The Temptation of Saint Anthony",
+      "format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "subtype": "new_authentic_single_artwork",
+      "reason_format": "New authentic artwork selected after comparing 3 candidates; dense visual composition suited to Cinema. Gacrux success exists for another project but natural voice/picture sync for this new ArtVision script was not validated, so no fake Critico.",
+      "status": "technical_pass_not_gold_master_rights_review_required",
+      "mp4_verified": true,
+      "duration_seconds": 70,
+      "size_bytes": 13340137,
+      "sha256_mp4": "58497af140bdfd5db63a070b5539e3c5c8dfba65f06fb657c18d437a8436b430",
+      "sha256_zip": "acf958be4e380624b9d14d0e262e39cd5f01844fdea22781e0fc7b67dab6e2ab",
+      "artifact_name": "ArtVision_20261027_1115_Craesbeeck_COMPLETE.zip (ChatGPT conversation attachment)",
+      "source_workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40486740935",
+      "workflow_run_url": null,
+      "execution_environment": "ChatGPT local FFmpeg/OpenCV/Pillow; authentic image acquired by GitHub Actions",
+      "source_artwork_sha256": "unknown_in_this_registry_use_video_recipe",
+      "steps": {
+        "research": "complete_3_candidates",
+        "source_acquisition": "GitHub_Action_success",
+        "render": "success",
+        "ffprobe": "pass",
+        "full_decode": "pass",
+        "audio": "pass",
+        "sample_frames": "pass_22",
+        "archive": "zip_crc_pass"
+      },
+      "qa": {
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "resolution": "1080x1920",
+        "fps": 24,
+        "shots": 10,
+        "real_frame_samples": [
+          0,
+          1,
+          3,
+          5,
+          7,
+          11.8,
+          12.2,
+          18.3,
+          18.7,
+          26.3,
+          26.7,
+          33.3,
+          33.7,
+          41.8,
+          42.2,
+          48.8,
+          49.2,
+          54.8,
+          55.2,
+          60.8,
+          61.2,
+          69.6
+        ],
+        "audio_mean_db": -22,
+        "audio_peak_db": -3.2,
+        "zip_crc": "pass",
+        "human_artistic_review": "pending"
+      },
+      "improvements": [
+        "Second render improved the final single-canvas reveal with a minimal illustrative frame and wall, without a fake museum photo",
+        "Next time prioritize a higher-resolution authentic scan where rights are clear",
+        "Refine cuts against musical phrases and test a genuinely narrated Critico Gacrux with verified alignment"
+      ],
+      "gold_master_approved": false,
+      "social_published": false,
+      "rights_status": "PD-Art Commons with photo EXIF copyright claim: territorial commercial review required",
+      "external_video_library_import": "attempted_blocked_file_reference",
+      "record": "docs/productions/2026-10-27-1115-craesbeeck-temptation.md"
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
