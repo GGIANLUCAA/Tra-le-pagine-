@@ -5,6 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
+from PIL import Image
 
 SOURCE=Path(__file__).resolve().parent.parent/"src"/"i2v_budget_v41.py"
 spec=importlib.util.spec_from_file_location("i2v_budget_v41",SOURCE)
@@ -18,7 +19,7 @@ class BudgetV41Tests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
         self.image=self.root/"image.png"
-        self.image.write_bytes(b"sample non-sensitive placeholder bytes"*100)
+        Image.effect_noise((400,710), 55).convert("RGB").save(self.image)
         self.out=self.root/"output"
         self.out.mkdir()
         self.prompt="A brass mechanism rotates in the old workshop while the main character pulls a lever."
