@@ -49,7 +49,7 @@ class BudgetV41Tests(unittest.TestCase):
         info=v41.plan(self.image,self.prompt)
         message=v41._payload(info)
         self.assertEqual(message["model"],"viduq2-pro-fast")
-        self.assertTrue(message["images"][0].startswith("data:image/png;base64,"))
+        self.assertTrue(message["images"].startswith("data:image/png;base64,"))
         self.assertFalse(message["audio"])
         self.assertTrue(message["off_peak"])
 
