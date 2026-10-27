@@ -62,6 +62,16 @@ La regola prevale su target numerici, urgenza, export tecnico, istruzioni dei ve
 
 **QA BLOCCANTE:** niente fasce di colore ottenute replicando o stirando l'ultima riga di pixel nella parte alta o bassa durante pan/zoom, niente quadro sovrapposto alla cornice o raccordi visivamente bruschi. Verificare tutti i movimenti e i bordi, prima e dopo i passaggi e a velocità normale; i soli test ffmpeg non bastano. Sala ricostruita dichiarata, fotografia pittorica autentica e diritti controllati. Non confondere questa approvazione di riferimento con un nuovo Gold Master automatico.
 
+## Scala reale delle opere nei video Museum Immersion — regola approvata (27/10/2026)
+
+**Indicazione esplicita dell'utente:** ogni quadro o stampa deve sembrare delle sue dimensioni fisiche reali. Una piccola tavoletta da 20–40 cm va mostrata piccola in una sala credibile; una tela da 5–10 m deve occupare un'immensa parete con prospettiva, distanza di osservazione e architettura coerenti. Non trattare tutti i dipinti come della stessa grandezza.
+
+Per ogni nuovo video Museum Immersion registrare nel piano/ricetta **larghezza e altezza in cm**, fonte museale verificata, eventuali variazioni fra esemplari/edizioni, distinzione tra quadro e cornice, presenza di autentica cornice o ricostruzione, dimensioni indicative della sala e punto di vista della telecamera. Usare scale note (visitatore adulto circa 1,7 m, porte, pavimento, targhette) come riferimenti prospettici. La proporzione del dipinto e della cornice deve rimanere corretta durante l'avvicinamento e il ritorno. Non rimpicciolire i quadri monumentali, non ingigantire le stampe, non deformare la pittura.
+
+In caso di misura non documentata dichiarare `unknown`, non inventarla. L'illustrazione della sala, se generata e non documentale, deve essere descritta come ricostruzione e non come allestimento museale reale. La cornice deve contenere fisicamente l'opera nel suo vano interno con occlusione e ombre, mai sembrare un'immagine incollata. Controllare il tutto su still e sui fotogrammi intermedi; seguire anche il modello V46 del Cyclops corretto senza strisce.
+
+**Episodio di prova scala piccola:** Hiroshige, `Sudden Shower over Shin-Ōhashi Bridge and Atake` (1857); esemplari museali comparabili circa 35 × 24 cm, fonte Cleveland Museum of Art 1921.318 e Met Museum JP644. La fotografia autentica d'archivio può rappresentare un'altra impressione dello stesso disegno e non va attribuita senza prova a uno di questi due esemplari.
+
 ## Decisioni consolidate
 
 | Prima | Ora |
