@@ -5,6 +5,7 @@ Nothing is downloaded or published. Used by the Android GitHub Actions entry.
 """
 from __future__ import annotations
 import argparse
+import json
 import os
 import re
 from pathlib import Path
@@ -51,6 +52,49 @@ def select(episode_slug:str, scene_number:int, out:Path)->Path:
         return dest
 
 
+
+def narration_matches(episode_slug:str, scene_number:int)->dict:
+    """Read the ACTUAL words at every cue using the requested picture.
+
+    Does not claim semantic correctness: a repeated image can belong to
+    several different story beats and must be reviewed by an editor.
+    """
+    root=Path("episodes")/episode_slug
+    cuefile=root/"scene_cues.json"
+    scriptfile=root/"testo.txt"
+    if not cuefile.is_file() or not scriptfile.is_file():
+        return {"status":"narration_or_cues_missing", "matches":[],
+                "human_review_required":True}
+    cues=json.loads(cuefile.read_text(encoding="utf-8"))
+    if not isinstance(cues,list) or not cues:
+        raise ValueError("Il file scene_cues.json non contiene scene")
+    script=re.sub(r"\s+"," ",scriptfile.read_text(encoding="utf-8").strip())
+    sentences=[v.strip() for v in re.split(r"(?<=[.!?])\s+(?=[A-ZÀ-ÙÈÉ«“])",script)
+               if v.strip()]
+    starts=[c["start_sentence"] for c in cues]
+    if starts[0]!=0 or any(type(v) is not int or v<0 or v>=len(sentences) for v in starts):
+        raise ValueError("Indici di narrazione non validi")
+    if any(a>=b for a,b in zip(starts,starts[1:])):
+        raise ValueError("Inizi scene fuori ordine")
+    matching=[]
+    for i,cue in enumerate(cues):
+        if cue.get("asset")!=scene_number:
+            continue
+        begin=starts[i]
+        stop=starts[i+1] if i+1<len(starts) else len(sentences)
+        matching.append({
+            "cue_index":i,
+            "image_asset":scene_number,
+            "visual_description":str(cue.get("description","")),
+            "first_spoken_sentence":sentences[begin],
+            "spoken_segment":" ".join(sentences[begin:stop]),
+            "narration_alignment":"NEEDS_HUMAN_REVIEW",
+        })
+    return {"status":"review_required","matches":matching,
+            "human_review_required":True,
+            "note":"Confrontare il prompt con la frase, l'immagine e la continuità dei personaggi."}
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--episode",required=True)
@@ -59,6 +103,10 @@ def main():
     a=p.parse_args()
     result=select(a.episode,a.scene,a.output_dir)
     print("Immagine selezionata:",result)
+    report=narration_matches(a.episode,a.scene)
+    (a.output_dir/"SCENA_NARRAZIONE_V41.json").write_text(
+        json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    print("Corrispondenze con la narrazione:",len(report["matches"]))
     if os.getenv("GITHUB_ENV"):
         with open(os.environ["GITHUB_ENV"],"a",encoding="utf-8") as f:
             f.write("I2V_SOURCE_IMAGE="+str(result)+"\n")
