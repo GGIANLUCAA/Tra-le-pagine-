@@ -24,13 +24,13 @@ class BudgetV41Tests(unittest.TestCase):
         self.prompt="A brass mechanism rotates in the old workshop while the main character pulls a lever."
 
     def test_720p_off_peak_estimate(self):
-        self.assertEqual(v41.estimate(5,True),{"credits":9,"usd":.045})
-        self.assertEqual(v41.estimate(5,False),{"credits":18,"usd":.09})
-        self.assertEqual(v41.estimate(10,True),{"credits":14,"usd":.07})
+        self.assertEqual(v41.estimate(5,True),{"credits":8,"usd":.04})
+        self.assertEqual(v41.estimate(5,False),{"credits":16,"usd":.08})
+        self.assertEqual(v41.estimate(10,True),{"credits":13,"usd":.065})
 
     def test_budget_gate_blocks_requests(self):
         with self.assertRaisesRegex(ValueError,"tetto di spesa"):
-            v41.plan(self.image,self.prompt,max_cost_usd=.04)
+            v41.plan(self.image,self.prompt,max_cost_usd=.035)
         with self.assertRaisesRegex(ValueError,"Durata"):
             v41.estimate(11)
         with self.assertRaisesRegex(ValueError,"azione"):
