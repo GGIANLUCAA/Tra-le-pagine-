@@ -57,6 +57,23 @@ const request=async(path,method='GET',data)=>{
  assert.equal(dossier.record.reprints,'3 copie');
  assert.equal(dossier.assets.length,1);
  console.log('PASS: auto dossier reuses historical production notes and original attachment');
+ const attachmentVideo='HOKUSAI_ATTACHMENT_TEST.mp4';add(attachmentVideo,binary);
+ const ap='production/files/'+encodeURIComponent(attachmentVideo)+'/';
+ add(ap+'POST_FACEBOOK.txt','Un post originale dedicato a questo filmato e alle sue opere.');
+ add(ap+'POST_FACEBOOK_COPY.txt','Un post originale dedicato a questo filmato e alle sue opere.');
+ add(ap+'POST_INSTAGRAM_V1.txt','Primo testo Instagram.');add(ap+'POST_INSTAGRAM_V2.txt','Secondo testo Instagram.');
+ const attached=await (await request('/api/editorial?key='+encodeURIComponent(attachmentVideo))).json();
+ assert.equal(attached.record.facebook,'Un post originale dedicato a questo filmato e alle sue opere.');
+ assert.equal(attached.socialSources.facebook.kind,'attachment');
+ assert.equal(attached.record.instagram,'');assert.equal(attached.socialSources.instagram.kind,'conflict');
+ const saveFields=await request('/api/editorial','POST',{key:attachmentVideo,data:{bookAuthor:'Autore verificato',sourceEvidence:'Fonte originale',facebook:'Post curato dall’utente',category:'Artisti e pittura'}});
+ assert.equal(saveFields.status,200);
+ const reloaded=await (await request('/api/editorial?key='+encodeURIComponent(attachmentVideo))).json();
+ assert.equal(reloaded.record.bookAuthor,'Autore verificato');assert.equal(reloaded.record.facebook,'Post curato dall’utente');
+ assert.equal(reloaded.socialSources.facebook.kind,'saved');
+ assert.equal((await request('/api/editorial','POST',{key:attachmentVideo,data:{category:'Categoria diversa'}})).status,409);
+ console.log('PASS: exact-video posts recovered, conflicts exposed, curated copy and new fields persist');
+
  const projectV13={schema:'video-project-v13',bibliography:{author:'Lewis Carroll',publication_year:'1865'},
   editorial_metadata:{series:'Classici che parlano ancora',themes:'Fantasia e logica'},business:{audience:'Adulti e ragazzi'},
   editorial_plan:{subject_insight:'Un classico di grande ricchezza visiva',mix_reason:'Illustrazioni narrative e movimenti delicati',
@@ -126,3 +143,4 @@ const request=async(path,method='GET',data)=>{
  const bad=await request('/api/social-package?key='+encodeURIComponent(video)+'&mode=full&exp='+Math.floor(Date.now()/1000)+'&sig='+'b'.repeat(64));
  assert.equal(bad.status,403);
 })();
+
