@@ -1,0 +1,43 @@
+name: "ArtVision 20261027 0815 Dadd — authentic source acquisition"
+on:
+  push:
+    paths:
+      - ".github/workflows/artvision-dadd-source-20261027-0815.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Download and validate authenticated public-domain artwork
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p source
+          curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 15 --max-time 100 -A 'ArtVision-Research/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)' 'https://upload.wikimedia.org/wikipedia/commons/5/5f/The_Fairy_Feller%27s_Master-Stroke.jpg' -o source/DADD_FAIRY_FELLER_ORIGINAL.jpg
+          python3 - <<'PY'
+          from PIL import Image
+          import os
+          p='source/DADD_FAIRY_FELLER_ORIGINAL.jpg'
+          with Image.open(p) as im:
+              im.verify()
+          with Image.open(p) as im:
+              print('Authentic artwork pixels:', im.size)
+              assert im.width >= 1500 and im.height >= 2000
+          assert os.stat(p).st_size > 500000
+          PY
+          sha256sum source/DADD_FAIRY_FELLER_ORIGINAL.jpg > source/SHA256SUMS.txt
+          cat > source/RIGHTS_SOURCE.txt <<'TXT'
+          Richard Dadd — The Fairy Feller's Master-Stroke (1855-1864)
+          Tate T00598; source https://commons.wikimedia.org/wiki/File:The_Fairy_Feller%27s_Master-Stroke.jpg
+          Commons PD-Art faithful reproduction; original work public domain (artist died 1886).
+          Note: local territorial reuse rules must still be reviewed before publication.
+          TXT
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision-20261027-0815-Dadd-Authentic-Source
+          path: source/
+          if-no-files-found: error
+          retention-days: 7
