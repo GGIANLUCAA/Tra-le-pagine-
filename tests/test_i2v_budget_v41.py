@@ -91,6 +91,7 @@ class BudgetV41Tests(unittest.TestCase):
             v41.plan(self.image,self.prompt,4,True,.1,"economy540"),
             v41.plan(self.image,self.prompt,3,False,.1,"economy540"),
             v41.plan(self.image,self.prompt,3,True,.1,"cinema720"),
+            v41.plan(self.image,self.prompt,3,True,.08,"economy540"),
         ]
         for variant in variants:
             with self.assertRaises(PermissionError):
