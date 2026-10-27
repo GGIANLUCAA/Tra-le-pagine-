@@ -1,0 +1,37 @@
+name: Retrieve 1911 original plates PDF once
+on:
+  push:
+    branches: [episode/isola-tesoro-originale-20261027]
+    paths: [queue/retrieve_treasure_scan_20261027.txt]
+permissions:
+  contents: write
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Download the single public-domain historical scan
+        run: |
+          mkdir -p output/archive
+          curl -L -fsS --max-time 130 --retry 1 --retry-delay 3 \
+            -A "TraLePagine-PublicDomainBookFilm/1.0" \
+            "https://archive.org/download/treasureisland00steviala/treasureisland00steviala.pdf" \
+            -o output/archive/treasure_island_1911.pdf
+          ls -lh output/archive/treasure_island_1911.pdf
+          file output/archive/treasure_island_1911.pdf
+      - name: Upload source PDF (no Gemini / no image generation)
+        uses: actions/upload-artifact@v4
+        with:
+          name: treasure_island_wyeth_original_1911_PDF
+          path: output/archive/treasure_island_1911.pdf
+          if-no-files-found: error
+          retention-days: 2
+      - name: Record run ID on isolated feature branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo '{"run_id":${{ github.run_id }}, "source":"archive.org/details/treasureisland00steviala", "status":"original_pdf_downloaded"}' > report.json
+          gh api -X PUT "repos/${{ github.repository }}/contents/queue/treasure_pdf_run.json" \
+            -f branch="${{ github.ref_name }}" \
+            -f message="Record verified original PDF scan artifact" \
+            -f content="$(base64 -w0 report.json)"
