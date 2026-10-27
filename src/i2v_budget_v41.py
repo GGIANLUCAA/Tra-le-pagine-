@@ -29,8 +29,10 @@ MIME={".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".webp":"image
 def estimate(seconds=5, off_peak=True, preset="cinema720"):
     if preset not in PRESETS:
         raise ValueError("Profilo AI sconosciuto")
-    if type(seconds) is not int or not 2<=seconds<=8:
-        raise ValueError("Profili I2V: scegliere 2-8 secondi")
+    if type(seconds) is not int or not 2<=seconds<=10:
+        raise ValueError("Durata I2V: scegliere 2-10 secondi")
+    if preset=="economy540" and seconds>8:
+        raise ValueError("Durata economia 540p: massimo 8 secondi")
     # Official Vidu Q2 pricing: initial second + two credits per later sec.
     first=6 if preset=="economy540" else 8
     base=first+2*(seconds-1)
