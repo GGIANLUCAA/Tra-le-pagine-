@@ -2,6 +2,16 @@
 
 Questa è un'integrazione sperimentale **NON ATTIVA**: non crea account, non paga API, non modifica master, non pubblica su Video Library Studio. Lavora con immagini originali dei libri, non con finti effetti zoom V39. I clip IA vanno revisati per identità del personaggio, costumi, coerenza con la frase, movimento reale e qualità artistica. ArtVision richiede opere autentiche: non presentare ricostruzioni IA come quadri originali.
 
+## Protezione crediti IRREVOCABILE — regola approvata 27/10/2026
+
+**NESSUN costo senza approvazione della singola scena.** Comprare un piano Vidu o installare VIDU_API_KEY non equivale a permesso di spesa. Anche "Fatto", "Continua" e l'obiettivo di 20 clip/giorno non autorizzano una generazione. Leggere la fonte unica `docs/REGOLE_ATTIVE.md` sulla protezione dei crediti IA.
+
+Il workflow Android ha tre modalita: `plan` prepara GRATIS il preventivo e il dossier (immagine reale di anteprima, corrispondenza con la frase narrata, prompt, modello, secondi, prezzo e codice di 12 caratteri); `submit` richiede SIA la conferma `AUTORIZZO_10_CENT` SIA `codice_piano_approvato` ricopiato dal JSON `I2V_PLAN.json` della stessa IDENTICA scena; `collect` interroga un task preesistente e recupera file, senza nuove generazioni. Il codice cambia se cambiano immagine, prompt, modello, durata o modalita off-peak. Il runner blocca inoltre i rerun automatici di una richiesta pagata.
+
+Prima di fornire il codice di approvazione, esaminare davvero ANTEPRIMA_SCENA, SCENA_NARRAZIONE_V41.json, I2V_PLAN.json e gli scopi della clip. Se non si e convinti che l'azione richiesta sia utile, NON inviare. L'approvazione e per **un solo invio**; un retry non e autorizzato automaticamente. Il tetto di $0.10 e solo massimo tecnico per richiesta, non spesa autorizzata.
+
+**Limite dichiarato**: il sistema non puo garantire a priori che un modello probabilistico generi una clip perfetta; il controllo minimizza tentativi inutili ma non assicura un esito spettacolare. Lo stesso piano approvato puo essere lanciato di nuovo come nuova run manuale da un operatore: una protezione globale del credito fra run distinte richiedera un registro persistente e ulteriore collaudo. Non fingere che esista gia.
+
 ## Prezzi e cautela
 
 Fonti ufficiali Vidu:
@@ -35,7 +45,7 @@ Sorgenti di prezzo: https://platform.vidu.com/docs/pricing e https://docs.volcen
 2. Salvare la chiave SOLO nel repository GitHub -> Settings -> Secrets and variables -> Actions -> New repository secret, nome VIDU_API_KEY. Non inviare la chiave in chat o in prompt.
 3. Aprire GitHub -> Actions -> "V41 - Image-to-video Vidu low-cost (Android manuale)" -> Run workflow. Il workflow manuale appare dopo il merge sul ramo predefinito.
 4. Eseguire mode=plan con slug episodio, numero dell'immagine e un prompt inglese che descriva un'azione concreta. **Questo passaggio non costa niente, non crea MP4**. Scaricare l'artifact e leggere il preventivo I2V_PLAN.json.
-5. Solo dopo revisione, eseguire mode=submit con gli stessi input e scrivere AUTORIZZO_10_CENT per una singola richiesta a pagamento; la richiesta genera un task_id. Non ripetere un submit incerto dopo timeout, perché il server potrebbe aver già accettato il task.
+5. Solo dopo avere esaminato ANTEPRIMA_SCENA, il contesto narrativo e I2V_PLAN.json, eseguire mode=submit con gli stessi identici input e scrivere AUTORIZZO_10_CENT **e** il codice di 12 caratteri nel campo codice_piano_approvato; in mancanza il submit fallisce senza spesa. La richiesta genera un task_id. Non ripetere un submit incerto dopo timeout, perché il server potrebbe aver già accettato il task.
 6. Usare mode=collect inserendo il task_id dopo che Vidu ha terminato. Questa azione non genera nuovi video né consuma crediti di generazione; salva MP4, verifica formato con ffprobe e confeziona I2V_V41_ANDROID.zip solo con il video. Ripetere il controllo in caso di coda.
 7. Scaricare gli Artifacts dalla run Android. L'artifact attuale resta 14 giorni. Nessun collegamento ChatGPT o R2 è garantito fino a importazione realmente verificata.
 8. Revisionare integralmente il MP4 e montarlo col sistema originale solo se è bello e pertinente. La V41 non integra ancora da sola l'MP4 nei render V4, V13 o ArtVision.

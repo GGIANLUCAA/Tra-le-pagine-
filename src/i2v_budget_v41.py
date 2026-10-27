@@ -64,14 +64,35 @@ def plan(image:Path,prompt:str,seconds:int=5,off_peak=True,max_cost_usd=0.10,pre
         raise ValueError("La richiesta supera il tetto di spesa consentito")
     sha=hashlib.sha256(image.read_bytes()).hexdigest()
     fingerprint=hashlib.sha256(json.dumps(
-        [sha,prompt,seconds,off_peak,preset],ensure_ascii=False).encode()).hexdigest()
+        [sha,prompt,seconds,off_peak,preset,quote["credits"],quote["usd"],
+         round(float(max_cost_usd),4)],ensure_ascii=False).encode()).hexdigest()
     model,resolution=PRESETS[preset]
     return {"version":"v42","model":model,"provider":"vidu","preset":preset,
             "image":str(image),"image_sha256":sha,"prompt":prompt,
             "duration":seconds,"resolution":resolution,"off_peak":off_peak,
             "audio":False,"is_rec":False,"usd_estimated":quote["usd"],
             "credits_estimated":quote["credits"],"fingerprint":fingerprint,
+            "approval_code":fingerprint[:12].upper(),
+            "approval_policy":"exact_plan_human_confirmation_required",
             "status":"planned_not_submitted","review_required":True}
+
+
+def approval_code(info:dict)->str:
+    """Exact approval tied to image bytes, prompt, model, duration and price mode.
+    The code must be copied from a FREE plan reviewed by a human.
+    """
+    fp=info.get("fingerprint")
+    if not isinstance(fp,str) or len(fp)!=64 or any(c not in "0123456789abcdef" for c in fp):
+        raise ValueError("Piano Vidu privo di impronta valida")
+    return fp[:12].upper()
+
+
+def verify_approved_plan(info:dict,code:str)->None:
+    if not isinstance(code,str) or not code or code.strip().upper()!=approval_code(info):
+        raise PermissionError(
+            "CREDITO BLOCCATO: devi prima vedere immagine, frase, prompt e prezzo nel "
+            "preventivo gratuito e inserire il codice esatto del piano approvato. "
+            "Abbonamento e API key NON sono un consenso alla spesa.")
 
 
 def _json_save(path,content):
@@ -100,7 +121,9 @@ def _payload(info):
             "off_peak":info["off_peak"],"audio":False,"is_rec":False}
 
 
-def submit(info,out:Path,key:str):
+def submit(info,out:Path,key:str,approved_plan_code:str=""):
+    # MUST gate here, not only in CLI or GitHub workflow; no paid POST otherwise.
+    verify_approved_plan(info,approved_plan_code)
     state=out/"VIDU_TASK.json"
     if state.exists():
         raise RuntimeError("Richiesta già registrata. Non duplicare chiamate pagate")
@@ -177,6 +200,8 @@ def main():
     ap.add_argument("--off-peak",action=argparse.BooleanOptionalAction,default=True)
     ap.add_argument("--max-cost-usd",type=float,default=.10)
     ap.add_argument("--approve-charge",default="NO")
+    ap.add_argument("--approved-plan-code",default="",
+                    help="Codice tratto dal preventivo GRATUITO dopo verifica umana")
     a=ap.parse_args()
     a.out.mkdir(parents=True,exist_ok=True)
     if a.action=="collect":
@@ -187,10 +212,11 @@ def main():
         result=plan(a.image,a.prompt,a.seconds,a.off_peak,a.max_cost_usd,a.preset)
         if a.action=="submit":
             if a.approve_charge!="YES":ap.error("Serve --approve-charge YES")
+            verify_approved_plan(result,a.approved_plan_code)
             if not os.getenv("VIDU_API_KEY"):ap.error("VIDU_API_KEY non impostata")
         _json_save(a.out/"I2V_PLAN.json",result)
         if a.action=="submit":
-            result=submit(result,a.out,os.environ["VIDU_API_KEY"])
+            result=submit(result,a.out,os.environ["VIDU_API_KEY"],a.approved_plan_code)
     print(json.dumps(result,ensure_ascii=False,indent=2))
 
 

@@ -38,10 +38,15 @@ on:
         description: "SOLO submit: scrivere AUTORIZZO_10_CENT"
         type: string
         default: ""
+      codice_piano_approvato:
+        description: "SOLO submit: codice del piano GRATUITO gia controllato (12 caratteri)"
+        type: string
+        default: ""
 permissions:
   contents: read
 jobs:
   video:
+    if: github.event_name == 'workflow_dispatch' && github.run_attempt == 1
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -54,6 +59,7 @@ jobs:
       VIDEO_PROMPT: "${{ inputs.prompt }}"
       TASK_ID: "${{ inputs.task_id }}"
       CONFERMA_SPESA: "${{ inputs.conferma_spesa }}"
+      APPROVED_PLAN_CODE: "${{ inputs.codice_piano_approvato }}"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -80,6 +86,17 @@ jobs:
             python src/i2v_scene_v41.py \
               --episode "$EPISODIO" --scene "$SCENA" --output-dir output/v41
           fi
+      - name: "Allega l'immagine originale per la revisione PRIMA del pagamento"
+        if: env.MODE != 'collect'
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os, shutil
+          from pathlib import Path
+          source=Path(os.environ["I2V_SOURCE_IMAGE"])
+          target=Path("output/v41")/("ANTEPRIMA_SCENA"+source.suffix.lower())
+          shutil.copy2(source,target)
+          PY
       - name: "Preventivo gratis, invio autorizzato, oppure recupero"
         shell: bash
         run: |
@@ -89,14 +106,14 @@ jobs:
             fi
             python src/i2v_budget_v41.py collect --out output/v41
           elif [[ "$MODE" == "submit" ]]; then
-            if [[ "$CONFERMA_SPESA" != "AUTORIZZO_10_CENT" || -z "$VIDU_API_KEY" ]]; then
+            if [[ "$CONFERMA_SPESA" != "AUTORIZZO_10_CENT" || -z "$VIDU_API_KEY" || ! "$APPROVED_PLAN_CODE" =~ ^[A-Fa-f0-9]{12}$ ]]; then
               echo "::error::Servono autorizzazione esplicita e Secret VIDU_API_KEY"
               exit 3
             fi
             python src/i2v_budget_v41.py submit \
               --image "$I2V_SOURCE_IMAGE" --prompt "$VIDEO_PROMPT" \
               --seconds "$SECONDS" --preset "$PRESET" --max-cost-usd 0.10 \
-              --approve-charge YES --out output/v41
+              --approve-charge YES --approved-plan-code "$APPROVED_PLAN_CODE" --out output/v41
           else
             python src/i2v_budget_v41.py plan \
               --image "$I2V_SOURCE_IMAGE" --prompt "$VIDEO_PROMPT" \
@@ -108,6 +125,7 @@ jobs:
         with:
           name: I2V_V41_Android_Da_Revisionare
           path: |
+            output/v41/ANTEPRIMA_SCENA.*
             output/v41/SCENA_NARRAZIONE_V41.json
             output/v41/I2V_PLAN.json
             output/v41/VIDU_TASK.json
