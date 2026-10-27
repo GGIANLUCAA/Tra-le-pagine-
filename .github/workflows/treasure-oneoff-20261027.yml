@@ -1,0 +1,51 @@
+name: Tra le Pagine — Treasure Island standalone 2026-10-27
+on:
+  push:
+    branches:
+      - episode/isola-tesoro-originale-20261027
+    paths:
+      - queue/treasure_request_20261027.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: treasure-island-oneoff-20261027
+  cancel-in-progress: false
+jobs:
+  produce:
+    name: Book film with verified art, voice and technical QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: System dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1
+          python -m pip install -q "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12" "scipy>=1.11" "google-genai>=2.25,<3"
+      - name: Check rights and configuration without API calls
+        run: |
+          test -n "${GEMINI_API_KEY:-}" || (echo "::error::Missing GEMINI_API_KEY — no voice substituted" && exit 2)
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("episodes/isola_tesoro_20261027")
+          assert len(json.loads((p/"scene_cues.json").read_text()))==16
+          assert 230 < len((p/"testo.txt").read_text().split()) < 700
+          print("PRECHECK: 16 planned paintings, public domain edition 1911, Gacrux secret present")
+          PY
+      - name: Acquire genuine Wyeth illustrations, produce Gacrux and master
+        run: python tools/standalone_treasure_20261027.py
+      - name: Upload audited video and extras — no social publication
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TRA_LE_PAGINE_L_ISOLA_DEL_TESORO_20261027
+          path: output/isola_tesoro_20261027/
+          if-no-files-found: warn
+          retention-days: 14
