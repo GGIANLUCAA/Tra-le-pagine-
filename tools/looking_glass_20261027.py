@@ -28,7 +28,7 @@ def acquire():
  # Exact public-domain Tenniel engravings, selected by the actual story beats.
  # All 16 titles appear in the Commons category, not random chapter thumbnails.
  names=[
-  "Ten minutes.jpg",
+  "Alice queen2.jpg",
   "Alice and kitten.jpg",
   "Alice through the looking glass.jpg",
   "Chessmen.jpg",
