@@ -54,6 +54,25 @@ class BudgetV41Tests(unittest.TestCase):
         self.assertFalse(message["audio"])
         self.assertTrue(message["off_peak"])
 
+    def test_economy_turbo_low_budget(self):
+        self.assertEqual(v41.estimate(3,True,"economy540"),
+                         {"credits":5,"usd":.025})
+        self.assertEqual(v41.estimate(5,True,"economy540"),
+                         {"credits":7,"usd":.035})
+        self.assertEqual(v41.estimate(2,True,"economy540"),
+                         {"credits":4,"usd":.02})
+        with self.assertRaisesRegex(ValueError,"tetto di spesa"):
+            v41.plan(self.image,self.prompt,3,True,.02,"economy540")
+        info=v41.plan(self.image,self.prompt,3,True,.03,"economy540")
+        self.assertEqual(info["model"],"viduq2-turbo")
+        self.assertEqual(info["resolution"],"540p")
+        request=v41._payload(info)
+        self.assertIsInstance(request["images"],list)
+        self.assertEqual(len(request["images"]),1)
+        self.assertTrue(request["images"][0].startswith("data:image/png;base64,"))
+        self.assertFalse(request["audio"])
+        self.assertEqual(request["duration"],3)
+
     def test_network_timeout_prevents_unintended_retry(self):
         info=v41.plan(self.image,self.prompt)
         with patch.object(v41,"_api",side_effect=TimeoutError("unconfirmed")):
