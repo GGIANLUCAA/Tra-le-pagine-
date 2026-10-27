@@ -84,9 +84,17 @@ def make_frame(base: np.ndarray, width: int, height: int, p: float,
         a = subject[:, :, 3:4].astype(np.float32) / 255.0
         frame = np.clip(bg.astype(np.float32) * (1.0 - a) +
                         subject[:, :, :3].astype(np.float32) * a, 0, 255).astype(np.uint8)
+    elif effect == "slow_push":
+        # Real controlled push-in, not just a lateral pan.
+        zoom = 1.0 + 0.055 * ease(p)
+        sh, sw = base.shape[:2]
+        crop_w, crop_h = min(sw, round(sw / zoom)), min(sh, round(sh / zoom))
+        left = max(0, min(sw - crop_w, round((sw - crop_w) * 0.5)))
+        top = max(0, min(sh - crop_h, round((sh - crop_h) * 0.5)))
+        frame = cv2.resize(base[top:top + crop_h, left:left + crop_w],
+                           (width, height), interpolation=cv2.INTER_LINEAR)
     else:
-        frame = camera_crop(base, width, height, p,
-                            0.025 if effect == "slow_push" else 0.06)
+        frame = camera_crop(base, width, height, p, 0.06)
     if effect == "focus_reveal":
         amount = 1.0 - ease(min(1.0, p / 0.26))
         if amount > 0.001:
