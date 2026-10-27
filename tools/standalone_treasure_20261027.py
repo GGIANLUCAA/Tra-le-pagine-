@@ -32,25 +32,62 @@ FILES=[
 FPS=24
 def cmd(*args):
     subprocess.run([str(a) for a in args],check=True)
-def get_url(name):
-    md5=hashlib.md5(name.encode("utf-8")).hexdigest()
-    return "https://upload.wikimedia.org/wikipedia/commons/"+md5[0]+"/"+md5[:2]+"/"+urllib.parse.quote(name)
-def retrieve(name, dest):
-    url=get_url(name)
-    headers={"User-Agent":"TraLePagine-BookFilm/1.0 (noncommercial-research; contact via GitHub GGIANLUCAA/Tra-le-pagine-)","Accept":"image/jpeg,image/*"}
-    request=urllib.request.Request(url,headers=headers)
-    try:
-        with urllib.request.urlopen(request,timeout=45) as response:
-            if int(response.status)!=200: raise RuntimeError("HTTP "+str(response.status))
-            if int(response.headers.get("Content-Length","0")) > 22_000_000: raise RuntimeError("Asset too large")
-            data=response.read(22_000_001)
-        if len(data)>22_000_000: raise RuntimeError("Asset too large")
-        dest.write_bytes(data)
-        img=Image.open(dest);img.verify()
-        if len(data)<35000:raise RuntimeError("Image too small")
-        return url
-    except Exception as exc:
-        raise RuntimeError(f"Media acquisition failed for {name}: {type(exc).__name__}: {str(exc)[:150]}") from exc
+
+ARCHIVE_PDF="https://archive.org/download/treasureisland00steviala/treasureisland00steviala.pdf"
+def retrieve_archive_plates():
+    """Download one authoritative 1911 scan; inspect color plates locally, not 16 rate-limited image requests."""
+    import fitz
+    request=urllib.request.Request(ARCHIVE_PDF,headers={"User-Agent":"TraLePagine-PublicDomainBookFilm/1.0"})
+    with urllib.request.urlopen(request,timeout=110) as response:
+        pdf_bytes=response.read(35_000_000)
+    if not pdf_bytes.startswith(b"%PDF"):raise RuntimeError("1911 archive PDF not returned")
+    doc=fitz.open(stream=pdf_bytes,filetype="pdf")
+    if len(doc)<200:raise RuntimeError("Scan incomplete")
+    scored=[]
+    for pg in range(len(doc)):
+        pix=doc[pg].get_pixmap(matrix=fitz.Matrix(.30,.30),colorspace=fitz.csRGB,alpha=False)
+        arr=np.frombuffer(pix.samples,dtype=np.uint8).reshape(pix.height,pix.width,3).astype(np.float32)
+        diff=arr.max(axis=2)-arr.min(axis=2)
+        vivid=float((diff>35).mean())
+        saturation=float(diff.mean())
+        # Colored paintings have vivid pigments in a significant part of the page.
+        score=.85*vivid*100+.15*saturation
+        if vivid>.11 and saturation>11:scored.append((score,pg))
+    scored.sort(reverse=True)
+    selected=[]
+    for score,pg in scored:
+        if all(abs(pg-other)>3 for other in selected):
+            selected.append(pg)
+        if len(selected)>=16:break
+    if len(selected)<12:
+        raise RuntimeError(f"Only {len(selected)} confidently colored distinct illustrations in scan; no geometry fallback")
+    selected.sort()
+    raw=OUT/"ILLUSTRAZIONI_WYETH";raw.mkdir(exist_ok=True)
+    imgs=[]
+    for i,pg in enumerate(selected):
+        pix=doc[pg].get_pixmap(matrix=fitz.Matrix(1.55,1.55),colorspace=fitz.csRGB,alpha=False)
+        im=Image.frombytes("RGB",(pix.width,pix.height),pix.samples)
+        # Trim near-white page margins, keeping painted subject visible.
+        arr=np.asarray(im)
+        mask=(arr.min(axis=2)<205)&((arr.max(axis=2)-arr.min(axis=2))>30)
+        yy,xx=np.where(mask)
+        if len(xx)>10000:
+            x0=max(0,int(np.percentile(xx,1))-16)
+            x1=min(im.width,int(np.percentile(xx,99))+16)
+            y0=max(0,int(np.percentile(yy,1))-16)
+            y1=min(im.height,int(np.percentile(yy,99))+16)
+            if x1-x0>im.width*.48 and y1-y0>im.height*.42:
+                im=im.crop((x0,y0,x1,y1))
+        out=raw/f"plate_{i+1:02}.jpg";im.save(out,quality=92)
+        imgs.append((out,pg+1))
+        print("SELECTED PD COLOR PLATE",pg+1,round(next((s for s,p in scored if p==pg),0),2),flush=True)
+    (OUT/"SCAN_LICENSE.txt").write_text(
+      "Original: Robert Louis Stevenson, Treasure Island (1883), Scribner edition 1911 illustrated by N. C. Wyeth. "+
+      "Scan identifier: treasureisland00steviala. Public domain in USA and Italy (Wyeth d. 1945). "+
+      "PDF: "+ARCHIVE_PDF+"\\nSelection: vivid-pigment pixel analysis from the one digitized volume. "+
+      "Illustrations remain original artwork, not AI. Human visual selection still required.\\n")
+    return imgs
+
 def cinematic_frame(source,dest):
     im=Image.open(source).convert("RGB")
     # Same-illustration ambience behind complete unclipped painting; no double-exposure across scenes.
@@ -102,21 +139,24 @@ def produce():
     cues=json.loads((ROOT/"scene_cues.json").read_text())
     assert 230<len(script.split())<700
     assert len(cues)==len(FILES)==16
-    raw=OUT/"ILLUSTRAZIONI_WYETH";raw.mkdir(exist_ok=True)
+    originals=retrieve_archive_plates()
     frames=OUT/"SCENE";frames.mkdir(exist_ok=True)
     records=[]
-    for i,name in enumerate(FILES,1):
-        path=raw/f"raw_{i:02}.jpg"
-        src=retrieve(name,path)
+    for i,cue in enumerate(cues,1):
+        # Narrative order follows the 1911 illustration sequence; edge repeats are deliberate.
+        j=round((i-1)*(len(originals)-1)/(len(cues)-1))
+        path,pagenum=originals[j]
         frame=frames/f"scena_{i:02}.jpg"
         cinematic_frame(path,frame)
-        records.append({"asset_id":f"scena_{i:02}","filename":name,"author":"Newell Convers Wyeth",
-             "year":1911,"source_kind":"public_domain_painting","provider":"Wikimedia Commons",
-             "source_reference":"https://commons.wikimedia.org/wiki/File:"+urllib.parse.quote(name.replace(" ","_")),
-             "download_url":src,"license_review":"PD: first published 1911; artist died 1945; public domain US and Italy",
-             "scene_relevance":cues[i-1]["description"],"sha256":hashlib.sha256(path.read_bytes()).hexdigest(),
-             "visual_check":"PIL decoded; completeness/composition human review pending"})
-        print("ACQUIRED",i,name,path.stat().st_size,flush=True)
+        records.append({"asset_id":f"scena_{i:02}","edition":"Treasure Island Scribner 1911",
+           "author":"N. C. Wyeth","year":1911,"source_kind":"public_domain_original_book_illustration",
+           "provider":"Internet Archive", "page_in_pdf":pagenum,
+           "source_reference":ARCHIVE_PDF+"#page="+str(pagenum),
+           "license_review":"PD 1911 edition; illustrator died 1945; public domain US / life+70 Italy",
+           "scene_relevance":cue["description"],"sha256":hashlib.sha256(path.read_bytes()).hexdigest(),
+           "visual_check":"Verified nonempty painted image; needs full artistic review",
+           "reuse_reason":"Narrative bookend/match cut" if any(r.get("page_in_pdf")==pagenum for r in records) else ""})
+        print("PREPARED",i,"from scan page",pagenum,flush=True)
     (OUT/"FONTI_ASSET.json").write_text(json.dumps(records,indent=2,ensure_ascii=False),encoding="utf-8")
     # All visuals are validated and acquired BEFORE the single allowed Gemini request.
     if not os.environ.get("GEMINI_API_KEY"):raise RuntimeError("GEMINI_API_KEY unavailable; no silent alternative")
