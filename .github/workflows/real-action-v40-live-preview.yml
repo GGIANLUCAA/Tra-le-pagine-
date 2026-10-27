@@ -13,11 +13,13 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: "Check preinstalled FFmpeg (fail fast, no apt stalls)"
+      - name: "Install FFmpeg only if needed, using existing apt index"
         run: |
+          if ! command -v ffmpeg >/dev/null; then
+            timeout 120s sudo apt-get install -y -qq ffmpeg
+          fi
           command -v ffmpeg
           command -v ffprobe
-          ffmpeg -version | head -1
       - name: "Fetch actual moving clock gears footage from verified source"
         shell: bash
         run: |
