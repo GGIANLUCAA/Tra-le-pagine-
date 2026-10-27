@@ -208,14 +208,23 @@ def render_montage(images,duration,tmp,starts=None,config_path=None,
         images, temp/"v5_colori", config_path=config_path,
         report_path=quality_dir/"REGIA_ARMONICA_V5.json",
         contact_path=quality_dir/"CONTATTO_SCENE_V5.jpg")
+    # Preserve legacy V4 environments without OpenCV when microclip is unused.
+    # Only import the new module if the director explicitly opted in for a cue.
+    micro_cues=set()
+    if config_path and Path(config_path).is_file():
+        micro_plan=json.loads(Path(config_path).read_text(encoding="utf-8"))
+        micro_cues={s.get("cue") for s in micro_plan.get("scenes",[])
+                    if isinstance(s,dict) and "microcinema" in s}
     segments=[]
     manifest=[]
     for i,(picture,num) in enumerate(zip(images,counts)):
         effect,seconds,mood=pick_settings(config_path,i,"",len(images))
         # Opt-in microclip: REPLACE an existing scene's beginning without
         # extending its duration or shifting the real narration timing.
-        from microcinema_book_bridge_v39 import make_insert
-        micro = make_insert(picture,i,num,fps,w,h,temp,config_path)
+        micro=None
+        if i in micro_cues:
+            from microcinema_book_bridge_v39 import make_insert
+            micro=make_insert(picture,i,num,fps,w,h,temp,config_path)
         if micro is not None:
             micro_clip,micro_report = micro
             segments.append(micro_clip)
