@@ -1,0 +1,51 @@
+name: Dracula short reveal - original Gacrux voice
+on:
+  pull_request:
+    paths:
+      - experiments/dracula_selective_reveal_20261027/copione.txt
+      - .github/workflows/dracula-short-gacrux.yml
+permissions:
+  contents: read
+jobs:
+  voice:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "google-genai>=2.25,<3"
+      - name: Approved Gacrux voice (no substitution)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          mkdir -p output/dracula-reveal-voice
+          python - <<'PY'
+          from pathlib import Path
+          import json,sys
+          sys.path.insert(0,"src")
+          from gemini_voice import synthesize
+          target=Path("output/dracula-reveal-voice")
+          if not __import__("os").environ.get("GEMINI_API_KEY"):
+              (target/"VOICE_STATUS.txt").write_text("VOICE_UNAVAILABLE: secret not configured\n")
+              raise SystemExit(0)
+          text=Path("experiments/dracula_selective_reveal_20261027/copione.txt").read_text(encoding="utf8")
+          try:
+              voice,phrases=synthesize(text,target)
+              (target/"VOICE_STATUS.txt").write_text("Gacrux produced; align scene timing to actual voice\n")
+              (target/"SCENE_TIMING.json").write_text(json.dumps(phrases,ensure_ascii=False,indent=2))
+          except Exception as exc:
+              (target/"VOICE_STATUS.txt").write_text("VOICE_UNAVAILABLE: "+type(exc).__name__+"\n")
+              print(type(exc).__name__,str(exc)[:200])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DRACULA_NAUTILUS_STYLE_GACRUX
+          path: output/dracula-reveal-voice/
+          if-no-files-found: error
+          retention-days: 14
