@@ -21,18 +21,24 @@ import zipfile
 
 API="https://api.vidu.com"
 MODEL="viduq2-pro-fast"
+ECONOMY_MODEL="viduq2-turbo"
+PRESETS={"cinema720":(MODEL,"720p"),"economy540":(ECONOMY_MODEL,"540p")}
 MIME={".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".webp":"image/webp"}
 
 
-def estimate(seconds=5, off_peak=True):
-    if type(seconds) is not int or not 5<=seconds<=10:
-        raise ValueError("Durata 5-10 secondi")
-    base=8+2*(seconds-1)
+def estimate(seconds=5, off_peak=True, preset="cinema720"):
+    if preset not in PRESETS:
+        raise ValueError("Profilo AI sconosciuto")
+    if type(seconds) is not int or not 2<=seconds<=8:
+        raise ValueError("Profili I2V: scegliere 2-8 secondi")
+    # Official Vidu Q2 pricing: initial second + two credits per later sec.
+    first=6 if preset=="economy540" else 8
+    base=first+2*(seconds-1)
     n=math.ceil(base/2) if off_peak else base
     return {"credits":n,"usd":round(n*0.005,4)}
 
 
-def plan(image:Path,prompt:str,seconds:int=5,off_peak=True,max_cost_usd=0.10):
+def plan(image:Path,prompt:str,seconds:int=5,off_peak=True,max_cost_usd=0.10,preset="cinema720"):
     image=Path(image)
     if not image.is_file() or image.suffix.lower() not in MIME:
         raise ValueError("Immagine PNG/JPG/WebP obbligatoria")
@@ -51,15 +57,16 @@ def plan(image:Path,prompt:str,seconds:int=5,off_peak=True,max_cost_usd=0.10):
         raise ValueError("Immagine danneggiata o non decodificabile") from exc
     if min(width,height)<256 or max(width/height,height/width)>=4:
         raise ValueError("Immagine con risoluzione o proporzioni non idonee a I2V")
-    quote=estimate(seconds,off_peak)
+    quote=estimate(seconds,off_peak,preset)
     if max_cost_usd<=0 or quote["usd"]>max_cost_usd+1e-8:
         raise ValueError("La richiesta supera il tetto di spesa consentito")
     sha=hashlib.sha256(image.read_bytes()).hexdigest()
     fingerprint=hashlib.sha256(json.dumps(
-        [sha,prompt,seconds,off_peak,MODEL],ensure_ascii=False).encode()).hexdigest()
-    return {"version":"v41","model":MODEL,"provider":"vidu",
+        [sha,prompt,seconds,off_peak,preset],ensure_ascii=False).encode()).hexdigest()
+    model,resolution=PRESETS[preset]
+    return {"version":"v42","model":model,"provider":"vidu","preset":preset,
             "image":str(image),"image_sha256":sha,"prompt":prompt,
-            "duration":seconds,"resolution":"720p","off_peak":off_peak,
+            "duration":seconds,"resolution":resolution,"off_peak":off_peak,
             "audio":False,"is_rec":False,"usd_estimated":quote["usd"],
             "credits_estimated":quote["credits"],"fingerprint":fingerprint,
             "status":"planned_not_submitted","review_required":True}
@@ -83,8 +90,11 @@ def _payload(info):
     image=Path(info["image"])
     encoded=base64.b64encode(image.read_bytes()).decode("ascii")
     uri="data:"+MIME[image.suffix.lower()]+";base64,"+encoded
-    return {"model":MODEL,"images":uri,"prompt":info["prompt"],
-            "duration":info["duration"],"resolution":"720p",
+    # Q2 Turbo official endpoint specifies a one-item images array.
+    # Keep legacy Pro Fast single-image payload until that endpoint is verified live.
+    images=[uri] if info["model"]==ECONOMY_MODEL else uri
+    return {"model":info["model"],"images":images,"prompt":info["prompt"],
+            "duration":info["duration"],"resolution":info["resolution"],
             "off_peak":info["off_peak"],"audio":False,"is_rec":False}
 
 
@@ -160,6 +170,7 @@ def main():
     ap.add_argument("--image",type=Path)
     ap.add_argument("--prompt")
     ap.add_argument("--seconds",type=int,default=5)
+    ap.add_argument("--preset",choices=sorted(PRESETS),default="cinema720")
     ap.add_argument("--out",type=Path,required=True)
     ap.add_argument("--off-peak",action=argparse.BooleanOptionalAction,default=True)
     ap.add_argument("--max-cost-usd",type=float,default=.10)
@@ -171,7 +182,7 @@ def main():
     else:
         if a.image is None or a.prompt is None:
             ap.error("Immagine e prompt obbligatori")
-        result=plan(a.image,a.prompt,a.seconds,a.off_peak,a.max_cost_usd)
+        result=plan(a.image,a.prompt,a.seconds,a.off_peak,a.max_cost_usd,a.preset)
         if a.action=="submit":
             if a.approve_charge!="YES":ap.error("Serve --approve-charge YES")
             if not os.getenv("VIDU_API_KEY"):ap.error("VIDU_API_KEY non impostata")
