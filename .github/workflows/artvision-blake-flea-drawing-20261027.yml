@@ -1,0 +1,37 @@
+name: "ArtVision source | Blake Ghost Flea drawing | 2026-10-27"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-blake-flea-drawing-20261027.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Acquire and validate authentic Tate graphite drawing
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p source
+          curl --fail --location --retry 2 --connect-timeout 15 --max-time 90 -A 'ArtVision/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)' 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Blake_The_Head_of_a_Ghost_of_Flea.jpg' -o source/BLAKE_HEAD_GHOST_FLEA_DRAWING.jpg
+          python -m pip install --quiet Pillow
+          python - <<'PY'
+          from PIL import Image
+          p='source/BLAKE_HEAD_GHOST_FLEA_DRAWING.jpg'
+          im=Image.open(p);im.verify()
+          im=Image.open(p)
+          assert im.size==(1204,1486),im.size
+          print('VALID_DRAWING',im.size)
+          PY
+          sha256sum source/*.jpg > source/SHA256SUMS.txt
+          printf '%s\n' 'William Blake, The Head of a Ghost of a Flea, c.1819, Tate Britain, drawing.' 'Photo by Wikimedia Commons user Dmitrismirnov, CC BY-SA 3.0; credit, link, changes and share-alike obligations apply.' 'https://commons.wikimedia.org/wiki/File:Blake_The_Head_of_a_Ghost_of_Flea.jpg' 'https://creativecommons.org/licenses/by-sa/3.0/' > source/SOURCE_RIGHTS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtVision-20261027-Blake-Ghost-Flea-Drawing
+          path: source/
+          retention-days: 7
+          if-no-files-found: error
