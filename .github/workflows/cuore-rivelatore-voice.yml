@@ -1,0 +1,61 @@
+name: "Tra le Pagine - Poe Gacrux Voice"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/cuore-rivelatore-voice.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: "poe-gacrux-20261027"
+  cancel-in-progress: false
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify source and no secret leakage
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo "GEMINI_API_KEY unavailable"; exit 2; }
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("episodes/10_cuore_rivelatore_20261027/testo.txt").read_text()
+          assert 230<=len(s.split())<=700
+          assert len([x for x in s.split("\n\n") if x.strip()])==16
+          print("Source validated; voice: Google Gemini Gacrux only")
+          PY
+      - name: Install existing Gacrux TTS dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "google-genai>=2.25,<3" "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11"
+      - name: Synthesize single complete Italian Gacrux performance
+        run: |
+          mkdir -p output/poe_voice
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          import json
+          from gemini_voice import synthesize, voice_profile
+          text=Path("episodes/10_cuore_rivelatore_20261027/testo.txt").read_text(encoding="utf-8")
+          voice,timed=synthesize(text,Path("output/poe_voice"))
+          assert len(timed)==16,(len(timed),16)
+          duration=len(voice)/24000
+          if not 100<=duration<=300:raise ValueError("Unexpected duration: "+str(duration))
+          Path("output/poe_voice/VOICE_METADATA.json").write_text(json.dumps(
+            {"duration_seconds":duration,"sentences":len(timed),"profile":voice_profile()},
+            indent=2,ensure_ascii=False))
+          print("VOICE READY",round(duration,2),"s; all 16 narrative sentences")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CUORE_RIVELATORE_GACRUX_AUDIO
+          path: output/poe_voice/
+          retention-days: 14
+          if-no-files-found: error
