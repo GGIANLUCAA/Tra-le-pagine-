@@ -1,0 +1,105 @@
+name: "V41 - Image-to-video Vidu low-cost (Android manuale)"
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "plan GRATIS; submit richiede credito; collect recupera un task"
+        type: choice
+        required: true
+        default: plan
+        options: [plan, submit, collect]
+      episodio:
+        description: "Nome cartella episodio in episodes/"
+        type: string
+        default: "03_siddharta"
+      scena:
+        description: "Numero scena da 1 a 35"
+        type: string
+        default: "1"
+      prompt:
+        description: "Azione fisica nella scena, in inglese"
+        type: string
+        default: "The leaves sway gently as the protagonist lifts his gaze toward the flowing river water."
+      task_id:
+        description: "SOLO collect: ID task Vidu ottenuto nella fase submit"
+        type: string
+        default: ""
+      conferma_spesa:
+        description: "SOLO submit: scrivere AUTORIZZO_10_CENT"
+        type: string
+        default: ""
+permissions:
+  contents: read
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VIDU_API_KEY: "${{ secrets.VIDU_API_KEY }}"
+      MODE: "${{ inputs.mode }}"
+      EPISODIO: "${{ inputs.episodio }}"
+      SCENA: "${{ inputs.scena }}"
+      VIDEO_PROMPT: "${{ inputs.prompt }}"
+      TASK_ID: "${{ inputs.task_id }}"
+      CONFERMA_SPESA: "${{ inputs.conferma_spesa }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa validatore immagini"
+        run: python -m pip install "pillow>=10,<13"
+      - name: "Preflight: zero pagamenti"
+        shell: bash
+        run: |
+          mkdir -p output/v41
+          if [[ "$MODE" == "collect" ]]; then
+            if [[ ! "$TASK_ID" =~ ^[A-Za-z0-9_-]{4,100}$ ]]; then
+              echo "::error::ID task non valido"
+              exit 2
+            fi
+            python - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path("output/v41/VIDU_TASK.json").write_text(json.dumps({
+              "task_id": os.environ["TASK_ID"], "status": "created"}))
+          PY
+          else
+            python src/i2v_scene_v41.py \
+              --episode "$EPISODIO" --scene "$SCENA" --output-dir output/v41
+          fi
+      - name: "Preventivo gratis, invio autorizzato, oppure recupero"
+        shell: bash
+        run: |
+          if [[ "$MODE" == "collect" ]]; then
+            if ! command -v ffprobe >/dev/null; then
+              timeout 140s sudo apt-get install -y -qq ffmpeg
+            fi
+            python src/i2v_budget_v41.py collect --out output/v41
+          elif [[ "$MODE" == "submit" ]]; then
+            if [[ "$CONFERMA_SPESA" != "AUTORIZZO_10_CENT" || -z "$VIDU_API_KEY" ]]; then
+              echo "::error::Servono autorizzazione esplicita e Secret VIDU_API_KEY"
+              exit 3
+            fi
+            python src/i2v_budget_v41.py submit \
+              --image "$I2V_SOURCE_IMAGE" --prompt "$VIDEO_PROMPT" \
+              --seconds 5 --max-cost-usd 0.10 \
+              --approve-charge YES --out output/v41
+          else
+            python src/i2v_budget_v41.py plan \
+              --image "$I2V_SOURCE_IMAGE" --prompt "$VIDEO_PROMPT" \
+              --seconds 5 --max-cost-usd 0.10 --out output/v41
+          fi
+      - name: "Artifact: piano, task ID o MP4/ZIP verificati"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: I2V_V41_Android_Da_Revisionare
+          path: |
+            output/v41/SCENA_NARRAZIONE_V41.json
+            output/v41/I2V_PLAN.json
+            output/v41/VIDU_TASK.json
+            output/v41/I2V_V41_DA_REVISIONARE.mp4
+            output/v41/I2V_V41_ANDROID.zip
+          if-no-files-found: warn
+          retention-days: 14
