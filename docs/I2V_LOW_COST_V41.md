@@ -27,7 +27,7 @@ Il limite di spesa presente nel codice è di $0.10 **per chiamata**, non per gio
 
 Comandi disponibili:
 - python -m unittest discover -s tests -p 'test_i2v*.py' -v
-- python src/i2v_scene_v41.py --episode 03_siddharta --scene 1 --output-dir output/v41
+- python src/i2v_scene_v41.py --episode 01_scacchi --scene 1 --output-dir output/v41
 - python src/i2v_budget_v41.py plan --image episodes/03_siddharta/images/scena_01.jpg --prompt "The man walks toward the river as the branches sway in the wind, with subtle natural movements." --seconds 5 --out output/v41
 
 La scena dentro scene_premium.zip è supportata dalla selezione GitHub; questo esempio CLI presuppone il JPG già presente nella cartella images.
