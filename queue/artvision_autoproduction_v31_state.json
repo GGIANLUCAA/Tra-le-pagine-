@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-27T01:26:00Z",
+  "updated": "2026-10-27T04:22:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -963,6 +963,86 @@
       "external_video_library_import": "blocked_file_reference_connector_egress",
       "feedback": "Prior user liked detailed discoveries in Arnolfini; selected authentic hidden faces in Blake, revised repetitive shot before delivery; no public metrics.",
       "video_library_status_checked": "348 videos, 187 ChatGPT imports at time of check; no claim new video imported"
+    },
+    {
+      "cycle_id": "20261027T0515+0100",
+      "created_at": "2026-10-27T04:21:38Z",
+      "artist": "Giuseppe Arcimboldo",
+      "work": "Vertumnus",
+      "format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "subtype": "new_11_shot_montage_from_existing_museum_source",
+      "reason_fallback": "Natural Google Gacrux narration for a new script not verified; separate authentic Cinema V6 edit, no robotic Critico. High-res Hokusai CC0 source unavailable to local renderer; used already validated Arcimboldo Skokloster photo and licensed piano. Prior Arcimboldo Enigma pilot disclosed.",
+      "status": "technical_pass_not_gold_master_rights_review_required",
+      "mp4_verified": true,
+      "duration_seconds": 63,
+      "size_bytes": 69806206,
+      "sha256_mp4": "65e3bb9bc5de679122c2ccd82cc0af8d80b5cb9c677b1bcfe39aef1633f407d8",
+      "sha256_zip": "5455ee079f77529388164eebd44ef1e90b52a57ac2a5c450393f46109cbf398c",
+      "zip_bytes": 96942414,
+      "cover_sha256": "1de33ec33eae339bf63eb98846a43b12accdf4536f58e8ccc1610f2fe617a178",
+      "execution_environment": "ChatGPT local Python/OpenCV/Pillow/FFmpeg; authentic source from existing GitHub Actions artifact 12440215729, run 39810101139; NOT a new GitHub video render",
+      "workflow_run_url": null,
+      "source_workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39810101139",
+      "artifact_name": "ArtVision_20261027_0515_Vertumnus_COMPLETE.zip (ChatGPT conversation attachment, not GitHub Actions artifact)",
+      "steps": {
+        "source_research": "verified",
+        "image_retrieval": "reused_from_existing_verified_artifact",
+        "preflight": "manual_V32_V33_and_source_rights_review",
+        "render": "success",
+        "verify": "full_ffmpeg_video_audio_decode_and_real_frames_pass",
+        "archive": "local_zip_crc_pass"
+      },
+      "qa": {
+        "resolution": "1080x1920",
+        "fps": 24,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "audio_rms": 0.068366,
+        "video_full_decode": "pass",
+        "audio_full_decode": "pass",
+        "real_frame_samples_seconds": [
+          0,
+          1,
+          3,
+          5,
+          7,
+          14.88,
+          15.12,
+          26.28,
+          26.52,
+          37.78,
+          38.02,
+          49.88,
+          50.12,
+          60,
+          62.4
+        ],
+        "ghosting": "none_in_hard_cut_method_and_inspected_samples",
+        "zip_crc": "pass",
+        "human_artistic_review_pending": true,
+        "human_full_music_listening_pending": true
+      },
+      "rights": {
+        "artwork_photo": "Skokloster Castle Erik Lernestål / Wikimedia Commons Public Domain Mark",
+        "recording": "Evening Fall (Piano), Kevin MacLeod CC BY 4.0, attribution in 4 posts",
+        "platform_territory_review": "pending"
+      },
+      "feedback": {
+        "positive": [
+          "Striking face from authentic museum image; focused fruit/flower details; readable final whole painting",
+          "V6 signature and no-ghosting opaque hard cuts maintained"
+        ],
+        "improve_next": [
+          "Reduce visual overlap of adjacent eye and nose details",
+          "Choose cuts more precisely on piano cadences",
+          "Prefer artwork not previously used in any studio format when acquisition works"
+        ]
+      },
+      "record": "docs/productions/2026-10-27-0515-vertumnus-cinema.md",
+      "gold_master_approved": false,
+      "social_published": false,
+      "external_video_library_import": "attempted_but_BLOCKED_FILE_REFERENCE; not imported"
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
