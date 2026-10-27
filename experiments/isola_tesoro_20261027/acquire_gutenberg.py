@@ -13,7 +13,7 @@ out=Path("output/isola-gutenberg-rhead");out.mkdir(parents=True,exist_ok=True)
 manifest=[]
 try:
     with urlopen(Request(url,headers={"User-Agent":"Mozilla/5.0 (compatible; IllustratedPublicDomainBook/1.0)"}),timeout=50) as resp:
-        blob=resp.read(45_000_000)
+        blob=resp.read(220_000_000)
     print("GUTENBERG_ZIP",len(blob))
     z=ZipFile(BytesIO(blob))
     for info in z.infolist():
