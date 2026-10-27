@@ -24,6 +24,32 @@ function edSocialIssues(rec){
  // Structured checks cannot establish literary quality or verify all the facts.
  return issues;
 }
+/* Private online backup for collections/reviews; no viewing history. */
+if(u.pathname==='/api/workflow'){
+ if(!await auth())return new Response('Non autorizzato',{status:401});
+ const key='catalog/workflow/private-v1.json';
+ const object=await env.VIDEOS.get(key);
+ const current=object?await object.json():{schema:'vls-workflow-v1',collections:[],videos:{},revision:0};
+ if(req.method==='GET')return json(current);
+ if(req.method!=='POST')return new Response('Metodo non consentito',{status:405});
+ if(Number(req.headers.get('content-length')||0)>2000000)return new Response('Archivio troppo grande',{status:413});
+ const raw=await req.text();if(raw.length>2000000)return new Response('Archivio troppo grande',{status:413});
+ let input;try{input=JSON.parse(raw)}catch{return new Response('JSON non valido',{status:400})}
+ const d=input?.data;
+ if(!d||!Array.isArray(d.collections)||d.collections.length>300||!d.videos||typeof d.videos!=='object'||Array.isArray(d.videos)||Object.keys(d.videos).length>3000)return new Response('Archivio non valido',{status:400});
+ if(d.collections.some(n=>typeof n!=='string'||!n.trim()||n.length>60))return new Response('Raccolta non valida',{status:400});
+ const videos={};
+ for(const [k,v]of Object.entries(d.videos)){
+  if(!edValidKey(k)||!v||!Array.isArray(v.collections)||v.collections.length>300||v.collections.some(n=>typeof n!=='string'||!d.collections.includes(n))||!['Da valutare','Mi piace','Da correggere'].includes(v.rating)||typeof v.notes!=='string'||v.notes.length>5000||typeof v.title!=='string'||v.title.length>500||!Number.isFinite(Date.parse(v.updatedAt)))return new Response('Giudizio non valido',{status:400});
+  videos[k]={title:v.title,collections:[...new Set(v.collections)],rating:v.rating,issue:typeof v.issue==='string'?v.issue.slice(0,100):'',notes:v.notes,updatedAt:v.updatedAt};
+ }
+ if(!Number.isInteger(input.revision)||input.revision!==current.revision)return new Response('La copia online è cambiata. Caricala prima di salvare.',{status:409});
+ const next={schema:'vls-workflow-v1',collections:[...new Set(d.collections)],videos,revision:current.revision+1,updatedAt:new Date().toISOString()};
+ const written=await env.VIDEOS.put(key,JSON.stringify(next),{httpMetadata:{contentType:'application/json'},onlyIf:object?{etagMatches:object.etag}:{etagDoesNotMatch:'*'}});
+ if(!written)return new Response('Salvataggio concorrente: ricarica la copia online.',{status:409});
+ return json({ok:true,revision:next.revision,updatedAt:next.updatedAt});
+}
+
 async function edExists(k){
  if(!edValidKey(k))return false;
  if(!k.startsWith('gpt:'))return !!await env.VIDEOS.head(k);
