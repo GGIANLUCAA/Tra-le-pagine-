@@ -1,4 +1,4 @@
-name: "V41 - Image-to-video Vidu low-cost (Android manuale)"
+name: "V41/V42 - Image-to-video Vidu economico (Android manuale)"
 on:
   workflow_dispatch:
     inputs:
@@ -8,6 +8,16 @@ on:
         required: true
         default: plan
         options: [plan, submit, collect]
+      preset:
+        description: "economy540: 540p economico / cinema720: 720p di qualita"
+        type: choice
+        default: economy540
+        options: [economy540, cinema720]
+      seconds:
+        description: "Durata effettiva; 2-8 secondi"
+        type: choice
+        default: "3"
+        options: ["2", "3", "4", "5", "6", "7", "8"]
       episodio:
         description: "Nome cartella episodio in episodes/"
         type: string
@@ -37,6 +47,8 @@ jobs:
     env:
       VIDU_API_KEY: "${{ secrets.VIDU_API_KEY }}"
       MODE: "${{ inputs.mode }}"
+      PRESET: "${{ inputs.preset }}"
+      SECONDS: "${{ inputs.seconds }}"
       EPISODIO: "${{ inputs.episodio }}"
       SCENA: "${{ inputs.scena }}"
       VIDEO_PROMPT: "${{ inputs.prompt }}"
@@ -83,12 +95,12 @@ jobs:
             fi
             python src/i2v_budget_v41.py submit \
               --image "$I2V_SOURCE_IMAGE" --prompt "$VIDEO_PROMPT" \
-              --seconds 5 --max-cost-usd 0.10 \
+              --seconds "$SECONDS" --preset "$PRESET" --max-cost-usd 0.10 \
               --approve-charge YES --out output/v41
           else
             python src/i2v_budget_v41.py plan \
               --image "$I2V_SOURCE_IMAGE" --prompt "$VIDEO_PROMPT" \
-              --seconds 5 --max-cost-usd 0.10 --out output/v41
+              --seconds "$SECONDS" --preset "$PRESET" --max-cost-usd 0.10 --out output/v41
           fi
       - name: "Artifact: piano, task ID o MP4/ZIP verificati"
         if: always()
