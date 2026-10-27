@@ -143,6 +143,20 @@ fotogrammi reali e i raccordi a velocità normale. Il test non certifica l'estet
   `docs/VIDEO_LIBRARY_DOSSIER_V1.md`. Verificare salvataggio, scheda, anteprima e player.
   Una copia di sorgenti nel repository non dimostra cosa sia installato sul sito live.
 
+## Crediti video IA a pagamento — blocco preventivo inderogabile
+
+Prima di ogni chiamata a modelli video che consumano crediti leggere e applicare
+`docs/REGOLE_ATTIVE.md > Crediti IA video a pagamento`. **L'acquisto
+dell'abbonamento e l'inserimento di VIDU_API_KEY non autorizzano generazioni.**
+Mai approvare automaticamente una spesa, neanche da 1 centesimo. Preparare
+gratuitamente la singola scena con anteprima immagine, frase del copione, azione,
+prompt, modello, secondi, costo stimato e motivo narrativo. Chiedere approvazione
+dell'esatta scena e preventivo PRIMA del singolo invio, usando il codice del piano.
+Se c'e incertezza editoriale, chiedere chiarimenti invece di sprecare crediti.
+Nessun retry, batch, job ricorrente o fallback pagato implicito, nemmeno dopo errore.
+Un MP4 tecnicamente riuscito NON e automaticamente un video bello o pubblicabile.
+L'obiettivo fino a 20 clip/giorno non autorizza alcuna spesa automatica.
+
 ## Autonomia e manutenzione
 
 Android soltanto, nessun nuovo costo o servizio senza autorizzazione. Eseguire le
