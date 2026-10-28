@@ -1,0 +1,88 @@
+name: "V68 — video REALE Parigi 1918 con fotografie generative"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/storia_rivive_v68_render_true_generative.py"
+      - ".github/workflows/storia-rivive-v68-real-video.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-rivive-v68-real-video
+  cancel-in-progress: false
+jobs:
+  render_real_photographic_reconstruction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Install offline compositor, all generated photos already exist"
+        run: |
+          python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - name: "Retrieve original GENUINE diffusion AI photos, do not regenerate or fabricate"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_rivive_v68_generativa_sei
+          curl --fail --location --retry 3 --max-time 150 \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12843903460/zip" \
+            -o /tmp/V68_real_photos.zip
+          unzip -t /tmp/V68_real_photos.zip
+          unzip -j /tmp/V68_real_photos.zip "GENERATIVA_*.png" -d output/storia_rivive_v68_generativa_sei/
+          test "$(find output/storia_rivive_v68_generativa_sei -name 'GENERATIVA_*.png' | wc -l)" = 3
+      - name: "Render ORIGINAL moving historical footage + true generative photo freeze, 1080x1920"
+        run: |
+          python -m py_compile src/storia_rivive_v68_render_true_generative.py
+          python -u src/storia_rivive_v68_render_true_generative.py
+      - name: "Archive verified MP4, photo compares, cover, four posts and ZIP"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PARIGI_1918_V68_FOTO_GENERATIVE_VIDEO
+          path: |
+            output/storia_rivive_v68_parigi_generativa/PARIGI_1918_RESTAURATA_GENERATIVA_V68.mp4
+            output/storia_rivive_v68_parigi_generativa/PARIGI_1918_V68_RESTAURO_GENERATIVO_COMPLETO.zip
+            output/storia_rivive_v68_parigi_generativa/COPERTINA.jpg
+            output/storia_rivive_v68_parigi_generativa/V68_TRE_SCENE_ORIGINALE_VS_DIFFUSIONE.jpg
+            output/storia_rivive_v68_parigi_generativa/FONTI_DIRITTI_RICOSTRUZIONE_QA.json
+            output/storia_rivive_v68_parigi_generativa/POST_*.txt
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "Release verified MP4 for direct Android downloads, no private site/social auto-post"
+        shell: bash
+        run: |
+          set -euo pipefail
+          D=output/storia_rivive_v68_parigi_generativa
+          test -s "$D/PARIGI_1918_RESTAURATA_GENERATIVA_V68.mp4"
+          unzip -t "$D/PARIGI_1918_V68_RESTAURO_GENERATIVO_COMPLETO.zip"
+          TAG=storia-rivive-parigi-1918-generativa-v68
+          assets=("$D/PARIGI_1918_RESTAURATA_GENERATIVA_V68.mp4" "$D/PARIGI_1918_V68_RESTAURO_GENERATIVO_COMPLETO.zip" "$D/COPERTINA.jpg" "$D/V68_TRE_SCENE_ORIGINALE_VS_DIFFUSIONE.jpg")
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${assets[@]}" --clobber
+          else
+            gh release create "$TAG" --repo "${GITHUB_REPOSITORY}" --target main \
+              --title "Parigi 1918 — Il tempo si ferma | vero restauro generativo V68" \
+              --notes "Nuovo film vero: 3 riprese autentiche CC0 Parigi 1918 del Musée Albert-Kahn in bianco e nero in movimento, freeze sul frame, **3 foto realmente ricostruite tramite diffusione pubblica ZeroGPU (Finegrain + ControlNet)**. Risultato molto diverso dai soli DDColor/RealESRGAN dei V65 e V67. 1080x1920 H264/AAC, musica originale. La nitidezza fotografica è percepita, NON 4K da originale; i dettagli del volto sono inferenze, non lineamenti storici certi. Test integrale video e freeze passati, qualità artistica finale da valutare. Zero crediti Vidu o servizio a pagamento, non pubblicato sul sito privato/social." \
+              --latest=false "${assets[@]}"
+          fi
+          gh release view "$TAG" --json url,assets --jq '{url:.url,files:[.assets[]|{name:.name,bytes:.size}]}'
+      - name: "Verify public release asset names and sizes"
+        run: |
+          set -euo pipefail
+          for fn in PARIGI_1918_RESTAURATA_GENERATIVA_V68.mp4 PARIGI_1918_V68_RESTAURO_GENERATIVO_COMPLETO.zip; do
+            n=$(stat -c %s output/storia_rivive_v68_parigi_generativa/$fn)
+            remote=$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/storia-rivive-parigi-1918-generativa-v68" --jq ".assets[]|select(.name==\"$fn\")|.size")
+            test "$n" = "$remote"
+            echo "VERIFIED $fn $n bytes"
+          done
