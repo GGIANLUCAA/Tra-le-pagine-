@@ -159,6 +159,14 @@ chiamano quel preflight devono applicare la stessa regola esplicitamente.
 Questa è una regola **sempre** per ArtVision, non un esperimento e non
 un nuovo preset visivo. Non modifica video/master esistenti.
 
+## Priorità opere WOW — 28/10/2026
+
+**Feedback esplicito su Van Eyck V53:** realizzazione e cornice gradite, ma il dipinto non ha abbastanza forza visiva per gli obiettivi social del progetto. Nella scelta libera di nuove opere ArtVision dare priorità a quadri straordinari e sorprendenti **per merito dell'opera stessa**, prima di curare cornice, museo e movimenti.
+
+Confrontare almeno tre candidati e controllare catalogo/duplicati. Valutare sul telefono la forza del primo fotogramma in 9:16, qualità compositiva e colori, meraviglia, mistero, scene epiche, dettagli nascosti davvero significativi, storia verificabile, fonti e diritti, dimensioni e cornice museale. Alternare temi e regie: niente sequenza ripetitiva di soggetti cupi o singoli primi piani. Se nessuna opera ha un motivo forte per catturare l'attenzione, non sprecare una produzione. La scelta artistica non garantisce viralità.
+
+**Gate:** prima del render annotare `phone_first_frame_hook`, `discovery_detail`, `narrative_turn`, `vertical_fit`, `catalog_duplicate_check` e prove disponibili. Una cornice lussuosa non sostituisce un soggetto poco interessante. Se un'opera è scelta espressamente dall'utente, rispettare la scelta e progettare la migliore interpretazione possibile. Applicare anche V32, V28, V44, V46, autenticità cornice e divieto di crediti IA video a pagamento non approvati.
+
 ## Filosofia fonti e API V33 — VINCOLANTE per tutti i nuovi contenuti (25/10/2026)
 
 Approvazione esplicita dell'utente: priorità a sistemi e API gratuiti già disponibili,
