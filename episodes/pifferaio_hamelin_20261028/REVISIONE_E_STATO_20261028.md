@@ -1,3 +1,14 @@
+## Aggiornamento 28/10/2026 — montaggio narrato in revisione (successivo all'anteprima)
+È stato effettivamente renderizzato nel contesto ChatGPT un **MP4 narrato verticale** con 16 scene in 174,6 secondi, H.264 720×1280 24 fps + AAC, dimensione circa 12,17 MB, SHA-256 `aed20f7fb594f5bb3cb67521571e0c3de9af167fd6f412fb4523cfdd2e736f0a`. Decodifica completa OK, loudness integrato -17,1 LUFS; ZIP Android (un solo MP4) e pacchetto dossier ZIP verificati con CRC.
+
+La voce è **Microsoft Edge Neural Diego, alternativa italiana gratuita, NON Google Gacrux**: il modello Gacrux non è stato invocato, perché la quota gratuita del progetto non risulta attestata. Audio realmente sintetizzato in 16 parti e tempi registrati dal workflow gratuito separato https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40779753600 . Il parlato è stato accelerato solo di 1,17× per mantenere tutta la trama entro circa 3 minuti. Musica composta sinteticamente in locale, originale, senza campioni terzi.
+
+**STATO: rendered_needs_review; non è GOLD MASTER, non è approvato artisticamente, non va pubblicato né importato come video approvato.** La realizzazione usa incisioni/illustrazioni statiche con lievi movimenti di camera, **NON** personaggi realmente animati e NON video generativo. Le carenze di aderenza scena–immagine già registrate sotto rimangono: panoramica della città, tuffo dei topi, portale, eccetera. La conformità tecnica V36 non sostituisce una revisione V44/V55. Nessun credito video IA a pagamento utilizzato, nessuna pubblicazione o importazione nell'archivio. Gli MP4/ZIP di questa sessione sono allegati ChatGPT; **non** sono ancora file persistenti nel repository.
+
+Il precedente stato storico, riferito alla prima anteprima senza voce, è conservato qui sotto.
+
+---
+
 # Il pifferaio di Hamelin — stato reale e revisione artistica (28/10/2026)
 
 **Stato: anteprima visuale verificata, non episodio narrato finale.** La run riuscita è https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40770448793 . Video: `PIFFERAIO_ANTEPRIMA_24S_SENZA_VOCE.mp4`, 24.0 s, 720×1280, H.264/AAC, SHA256 `5041113bfd9fb8a7ec02d1b4c4462751a5c63f8fba0db7069a572bf8481b25e3`. Decodifica integrale e ZIP CRC riusciti.
