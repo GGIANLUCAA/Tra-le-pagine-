@@ -10,6 +10,7 @@ on:
       - "tests/test_storia_rivive_v57.py"
       - "config/storia_rivive_quality_v57.json"
       - "tests/test_storia_rivive_v56.py"
+      - "config/storia_rivive_v59.json"
       - "config/storia_rivive_v56.json"
       - "templates/STORIA_RIVIVE_V56_EPISODE.json"
       - ".github/workflows/storia-rivive-v56.yml"
@@ -38,6 +39,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v56.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v57.py" -v
           python -m json.tool config/storia_rivive_v56.json > /dev/null
+          python -m json.tool config/storia_rivive_v59.json > /dev/null
           python -m json.tool config/storia_rivive_quality_v57.json > /dev/null
           python -m json.tool templates/STORIA_RIVIVE_V56_EPISODE.json > /dev/null
           python -m json.tool config/editorial_rules.json > /dev/null

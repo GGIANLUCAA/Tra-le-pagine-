@@ -127,6 +127,7 @@
       "preset": "historical-archive-v56",
       "narrated": false,
       "guides": [
+        "docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md",
         "docs/LA_STORIA_RIVIVE_OPEN_SOURCE_E_MONTAGGIO_V58.md",
         "docs/LA_STORIA_RIVIVE_QUALITA_V57.md",
         "docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md",
@@ -146,7 +147,10 @@
       "direction": "Qualità visiva percepita 720/1080p, colore AI semantico e stabile; rivelazione reale e montaggio libero di una o più riprese storiche collegate da un racconto. Vidu solo inserto opzionale etichettato e autorizzato per clip; 4K cosmetico e seppia finali vietati.",
       "next_action": "Selezionare 3 fonti CC0, guardare i veri fotogrammi, poi verificare GPU gratuita per DDColor + stabilizzatore temporale con licenza compatibile. Comporre scene con il montatore V58 dopo consegna delle clip AI vere e gate V57. Nessun render storico pronto da questa configurazione da sola.",
       "rules_config": "config/storia_rivive_v56.json",
-      "quality_preset": "reference_modern_color"
+      "quality_preset": "reference_modern_color",
+      "source_rights": "PUBLIC_DOMAIN_OR_CC0_ONLY",
+      "publication_intent": "NON_MONETIZED",
+      "licensed_tools": "noncommercial_when_use_and_social_distribution_allowed"
     }
   },
   "active_rules": "config/editorial_rules.json"

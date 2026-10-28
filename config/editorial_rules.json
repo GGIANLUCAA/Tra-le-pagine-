@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-28.6",
-  "approved_by": "28/10/2026: V55 verifica consegna MP4/copertina/ZIP/4 post e primi 7 secondi e importazione privata; 28/10/2026: ArtVision 4x1 V54 con direzione emotiva, gate e autocritica; Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.; 28/10/2026: categoria La Storia Rivive V56 con riprese autentiche, diritti e controlli ferrei, zero spese automatiche, primissimi secondi e consegna V55 completa.; 28/10/2026: V57 utente boccia seppia/dissolvenza e impone colore AI ricco e dettaglio fotorealistico, non false etichette 4K.; 28/10/2026: V58 richiesta esplicita multi-scene, effetti cromatici veri, alta qualità percepita senza obbligo 4K, Vidu solo futuro e opzionale, licenze commerciali software/pesi verificate.",
+  "version": "2026-10-28.7",
+  "approved_by": "28/10/2026: V55 verifica consegna MP4/copertina/ZIP/4 post e primi 7 secondi e importazione privata; 28/10/2026: ArtVision 4x1 V54 con direzione emotiva, gate e autocritica; Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.; 28/10/2026: categoria La Storia Rivive V56 con riprese autentiche, diritti e controlli ferrei, zero spese automatiche, primissimi secondi e consegna V55 completa.; 28/10/2026: V57 utente boccia seppia/dissolvenza e impone colore AI ricco e dettaglio fotorealistico, non false etichette 4K.; 28/10/2026: V58 richiesta esplicita multi-scene, effetti cromatici veri, alta qualità percepita senza obbligo 4K, Vidu solo futuro e opzionale, licenze commerciali software/pesi verificate.; 28/10/2026: V59 utente specifica post non monetizzati, ORIGINALI storici solo PD/CC0. Ammessi strumenti noncommerciali se licenza copre uso/pubblicazione effettivi; richiedere prova specifica per restrizioni research-only, mantenere V55/V57.",
   "precedence": [
     "explicit_user_request",
     "editorial_rules",
@@ -784,6 +784,14 @@
     "no_native_4k_requirement": true,
     "perceived_quality_priority": true,
     "optional_vidu_only_explicit_authorization": true,
-    "colormnet_noncommercial_caution": true
+    "colormnet_noncommercial_caution": true,
+    "v59_contract": "docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md",
+    "v59_config": "config/storia_rivive_v59.json",
+    "nonmonetized_social_distribution": true,
+    "require_original_archival_public_domain_or_cc0": true,
+    "source_commercial_reuse_proof_not_required": true,
+    "tool_noncommercial_licenses_consider_when_public_use_permitted": true,
+    "academic_only_requires_separate_permission": true,
+    "keep_no_autopublish": true
   }
 }

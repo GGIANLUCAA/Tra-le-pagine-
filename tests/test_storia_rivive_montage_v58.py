@@ -19,13 +19,22 @@ class StoryMontageV58(unittest.TestCase):
                         "-c:v","libx264","-pix_fmt","yuv420p",str(clip)],
                        check=True, capture_output=True, timeout=90)
         source = {"source_page":"https://commons.wikimedia.org/wiki/File:Sample",
-                  "source_id":"test_fixture","rights_checked":True,"framing_reviewed":True}
+                  "source_id":"test_fixture","rights_checked":True,
+                  "source_license":"CC0","nonmonetized_publication_rights_checked":True,
+                  "framing_reviewed":True}
         reveal = {**source, "kind":"reveal", "bw_file":str(clip), "color_file":str(clip),
                   "start":0, "duration":1.25,"reveal_at":.4,"reveal_seconds":.4,
                   "same_source_and_frames_verified":True,"semantic_color_reviewed":True}
         outro = {**source, "kind":"archive_bw","file":str(clip),"start":1.25,"duration":1.25}
         return {"title":"TEST ONLY — not AI-colorized","test_only":True,
                 "width":360,"height":640,"scenes":[reveal,outro],"audio":{}}
+
+    def test_v59_rejects_copyrighted_archival_source(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan = self.make_plan(Path(tmp))
+            plan["scenes"][0]["source_license"] = "CC BY-NC"
+            errors, _ = mod.check(plan)
+            self.assertTrue(any("V59" in e for e in errors))
 
     def test_no_paid_api_and_no_autopublish(self):
         with tempfile.TemporaryDirectory() as tmp:

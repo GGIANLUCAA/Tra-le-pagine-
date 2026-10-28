@@ -64,11 +64,20 @@ def evaluate(plan, stage="source"):
     need(nonblank(license_name), "Licenza singolo file mancante")
     need(nonblank(rights.get("reviewed_on")), "Data controllo diritti mancante")
     need(rights.get("reviewed_by_human") is True, "Verifica dei diritti non confermata")
-    if license_name and license_name.upper() not in ("CC0", "CC0 1.0"):
+    # V59: the ORIGINAL movie must be public domain or dedicated with CC0.
+    # PDM is an informative mark, not permission in itself.
+    accepted = {"CC0", "CC0 1.0", "PUBLIC_DOMAIN", "PDM"}
+    license_normalized = license_name.strip().upper() if isinstance(license_name, str) else ""
+    need(license_normalized in accepted,
+         "V59: ammessi soltanto filmati originali di pubblico dominio verificato o CC0")
+    need(nonblank(rights.get("license_url")) and
+         rights["license_url"].startswith("https://"),
+         "V59: link alla prova del dominio pubblico / CC0 mancante")
+    if license_normalized in ("PUBLIC_DOMAIN", "PDM"):
         need(rights.get("jurisdiction_reviewed") is True,
-             "Licenza non CC0: necessaria verifica giurisdizione/termini")
-    need(rights.get("source_rights_clear_for_commercial_reuse") is True,
-         "Diritti di riuso commerciale non verificati")
+             "V59: PDM non e' una licenza; verificare dominio pubblico in Italia e nel paese d'origine")
+    need(rights.get("source_rights_clear_for_noncommercial_publication") is True,
+         "V59: diritti di pubblicazione social non monetizzata non verificati")
     need(cost.get("approved_max_eur", 0) == 0 or cost.get("per_clip_authorization") is True,
          "Crediti/spesa non autorizzati per la clip specifica")
     need(cost.get("vidu_calls_planned", 0) == 0 or cost.get("per_clip_authorization") is True,

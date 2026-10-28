@@ -5,6 +5,10 @@ La configurazione consultabile dal programma è `config/editorial_rules.json`.
 La revisione sostituisce i vincoli generali incompatibili nelle guide storiche;
 non riscrive filmati, materiali o approvazioni già esistenti.
 
+## La Storia Rivive V59 — SOLO video di pubblico dominio/CC0; senza monetizzazione (28/10/2026)
+
+**Decisione utente vincolante:** per la nuova categoria usare filmati originali **esclusivamente di pubblico dominio verificato o CC0 sul singolo file**. La serie sarà pubblicata senza monetizzazione; NON chiedere prova di riuso commerciale e NON scartare strumenti AI solo per il loro limite commerciale, purché i termini ne consentano realmente l'uso e la pubblicazione non commerciale. Verificare sempre licenza del modello e dei pesi separatamente: `academic research only` non equivale a libera pubblicazione non commerciale. Per PDM/PD serve controllo giurisdizione Italia e origine; per CC0 resta il controllo di altri diritti e privacy. Audio e musica verificati separatamente. **Non monetizzare non esclude la promozione indiretta**: niente finalità promozionali preimpostate. La pubblicazione resta da autorizzare separatamente, nessuna autopubblicazione né crediti Vidu senza consenso. Documento: `docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md`; config `config/storia_rivive_v59.json`. V55/V57/V58 invariati per qualità, regia e consegna.
+
 ## La Storia Rivive V58 — regia multi-clip open source e priorità qualità percepita (28/10/2026)
 
 **Richiesta esplicita:** la risoluzione nativa 4K NON interessa; contano dettaglio percepito sul telefono, colori semantici coerenti, apertura emozionante, scelta autonoma dei soggetti più interessanti e montaggio di più frammenti quando raccontano qualcosa. Prevedere un eventuale breve inserto Vidu **solo in futuro**, chiaramente marcato come ricostruzione AI e autorizzato per singola clip/credito, mai automatico.
