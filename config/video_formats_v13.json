@@ -123,10 +123,11 @@
     },
     "storia_rivive": {
       "label": "La Storia Rivive — filmati d'archivio autentici",
-      "status": "pilot_implementation_pending",
-      "preset": "historical-archive-v56",
+      "status": "pending_actual_generated_ai_photos",
+      "preset": "photo_reveal_v61",
       "narrated": false,
       "guides": [
+        "docs/LA_STORIA_RIVIVE_FOTOGRAMMA_FOTO_AI_V61.md",
         "docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md",
         "docs/LA_STORIA_RIVIVE_OPEN_SOURCE_E_MONTAGGIO_V58.md",
         "docs/LA_STORIA_RIVIVE_QUALITA_V57.md",
@@ -136,6 +137,7 @@
         "docs/VIDEO_LIBRARY_DOSSIER_V1.md"
       ],
       "entrypoints": [
+        "src/storia_rivive_photo_freeze_v61.py",
         "src/storia_rivive_preflight_v56.py",
         "src/storia_rivive_visual_gate_v57.py",
         "src/storia_rivive_montage_v58.py"
@@ -144,13 +146,14 @@
         720,
         1280
       ],
-      "direction": "Qualità visiva percepita 720/1080p, colore AI semantico e stabile; rivelazione reale e montaggio libero di una o più riprese storiche collegate da un racconto. Vidu solo inserto opzionale etichettato e autorizzato per clip; 4K cosmetico e seppia finali vietati.",
-      "next_action": "Selezionare 3 fonti CC0, guardare i veri fotogrammi, poi verificare GPU gratuita per DDColor + stabilizzatore temporale con licenza compatibile. Comporre scene con il montatore V58 dopo consegna delle clip AI vere e gate V57. Nessun render storico pronto da questa configurazione da sola.",
+      "direction": "Una ripresa d'archivio CC0/PD in movimento B/N; congela l'istante più bello; trasformalo in FOTO AI REALISTICA A COLORI RICOSTRUITA davvero, FERMA per ~0,9s (fast) o ~2s (slow); cut ad altra ripresa vera. Il video tutto a colori in movimento come V60 NON è lo stile di riferimento. 720p/1080p visivamente belli. Fonte, nomi/volti/oggetti verificati; musica sui cambi; V55.",
+      "next_action": "Generare realmente fotografie AI image-to-image da keyframe archivistico PD/CC0 usando modello restaurativo compatibile, fare QA identità e nitidezza; soltanto dopo montarle con src/storia_rivive_photo_freeze_v61.py e pacchetto V55. Nessuna nuova prova solo DDColor.",
       "rules_config": "config/storia_rivive_v56.json",
       "quality_preset": "reference_modern_color",
       "source_rights": "PUBLIC_DOMAIN_OR_CC0_ONLY",
       "publication_intent": "NON_MONETIZED",
-      "licensed_tools": "noncommercial_when_use_and_social_distribution_allowed"
+      "licensed_tools": "noncommercial_when_use_and_social_distribution_allowed",
+      "default_direction": "blackwhite_motion_then_freeze_high_detail_ai_color_photo"
     }
   },
   "active_rules": "config/editorial_rules.json"
