@@ -77,3 +77,11 @@ Per lotti e ripresa consultare V15/V16 nel [playbook](docs/GPT_VIDEO_PLAYBOOK.md
 Android è il mezzo operativo. Nessun nuovo servizio a pagamento viene attivato.
 Questo file non è un generatore di video né una funzione installata sul sito live:
 serve all'agente con accesso al repository per eseguire il lavoro con i motori esistenti.
+
+
+## Consegna obbligatoria V55: ChatGPT e Video Library Studio
+
+Per ogni nuovo video (non solo ArtVision) applicare `docs/REGOLE_ATTIVE.md > V55`: MP4 scaricabile in ChatGPT, ZIP alternativo reale, copertina approvata, 4 post social curati e file di fonti/ricetta; importare e verificare lo stesso master e dossier sul sito privato prima di dichiarare la consegna completa. Il sito genera il ZIP completo on demand con link temporaneo; non considerare automaticamente presente il post originale se il sito ha soltanto una scheda generica.
+
+L'apertura (primo frame e primi 1/3/5/7 secondi) decide l'interesse: organizzare un dettaglio significativo, una scoperta e una progressione, con voce/musica adatta e titoli leggibili. Controllare fotogrammi reali e ascoltare tutto l'inizio; niente ingressi museali vuoti, niente stesso stampino. Strumento per ArtVision: `src/artvision_delivery_v55.py`. La verifica tecnica non certifica emozione, la presenza locale non prova la disponibilità del link su Android.
+
