@@ -1,0 +1,59 @@
+name: "ArtVision V55 — Wright licensed full-frame photo probe (no render)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-wright-museum-photo-probe-v55.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download and visually compare three documented museum photo candidates
+        run: |
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "requests>=2.31,<3"
+          python - <<'PY'
+          import requests,json,hashlib
+          from PIL import Image,ImageDraw,ImageOps
+          from pathlib import Path
+          out=Path("output/wright-photo-probe-v55");out.mkdir(parents=True,exist_ok=True)
+          cases=[
+            ("STEVE_KNIGHT_2025_APR_CC_BY_2","https://commons.wikimedia.org/wiki/Special:Redirect/file/Joseph_Wright_of_Derby_-_An_experiment_on_a_bird_with_an_air_pump_-_1768.jpg"),
+            ("STEVE_KNIGHT_2025_DEC_CC_BY_4","https://commons.wikimedia.org/wiki/Special:Redirect/file/An_Experiment_on_a_bird_in_an_air_pump_1768_Joseph_Wright_of_Derby_-_54977535687.jpg"),
+            ("TRISTAN_SURTEL_2018_PDM","https://upload.wikimedia.org/wikipedia/commons/c/c4/An_Experiment_on_a_Bird_in_the_Air_Pump.jpg")
+          ]
+          sheet=Image.new("RGB",(1000,850*len(cases)),(14,18,23));d=ImageDraw.Draw(sheet)
+          meta=[]
+          for i,(name,url) in enumerate(cases):
+            try:
+              r=requests.get(url,timeout=75,headers={"User-Agent":"ArtVisionV55/1.0 (license review)"})
+              r.raise_for_status()
+              path=out/(name+".jpg");path.write_bytes(r.content)
+              with Image.open(path) as im:
+                im.verify()
+              with Image.open(path) as im:
+                pic=ImageOps.contain(im.convert("RGB"),(960,780))
+                dims=im.size
+              sheet.paste(pic,((1000-pic.width)//2,i*850+30))
+              d.text((20,i*850+810),name,fill="white")
+              meta.append({"name":name,"url":url,"size":dims,"sha256":hashlib.sha256(r.content).hexdigest(),"bytes":len(r.content)})
+            except Exception as e:
+              d.text((20,i*850+80),name+": "+str(e)[:90],fill="red")
+              meta.append({"name":name,"error":str(e)[:300]})
+          sheet.save(out/"THREE_LICENSED_PHOTOS_CONTACT.jpg",quality=91)
+          (out/"SOURCES.json").write_text(json.dumps(meta,indent=2))
+          print(json.dumps(meta,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_WRIGHT_MUSEUM_PHOTO_CANDIDATES_V55_RESEARCH_ONLY
+          path: output/wright-photo-probe-v55/*
+          if-no-files-found: error
+          retention-days: 7
