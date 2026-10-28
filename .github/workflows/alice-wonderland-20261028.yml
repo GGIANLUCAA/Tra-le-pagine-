@@ -1,4 +1,4 @@
-name: "Tra le Pagine — Alice, sorgenti Rackham e produzione isolata"
+name: "Tra le Pagine — Alice, 14 scene Rackham, Gacrux solo con quota verificata"
 on:
   push:
     branches: [main]
@@ -12,28 +12,68 @@ concurrency:
 jobs:
   episode:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 95
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_TTS_FREE_QUOTA_CONFIRMED: ${{ vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install free source inventory tools
-        run: python -m pip install --quiet "requests>=2.31,<3" "beautifulsoup4>=4.12,<5" "pillow>=10,<13"
-      - name: Source inventory only, no video or TTS
-        run: python tools/alice_20261028_probe.py
-      - name: Preserve genuine source report
+      - name: Validate exact free-only episode request
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open("queue/alice_wonderland_20261028.json"))
+          assert q["episode"]=="alice_wonderland_20261028"
+          assert q["paid_video_api_calls"] is False
+          assert q["social_publish"] is False
+          assert q["mode"]=="produce_free_first"
+          print("ONE BOOK, NO VIDU, NO PAID VIDEO, NO SOCIAL PUBLISH")
+          PY
+      - name: Install free archival image and video tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install --quiet "requests>=2.31,<3" "beautifulsoup4>=4.12,<5" "pillow>=10,<13" "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11"
+          python -m py_compile tools/alice_wonderland_20261028.py
+      - name: Acquire 13 original Rackham color plates, create 14 scene boards and V13 preflight
+        id: prepare
+        run: python tools/alice_wonderland_20261028.py --mode prepare
+      - name: Check Gacrux free-quota attestation WITHOUT any model request
+        id: quota
+        if: steps.prepare.outcome == 'success'
+        run: |
+          if [ "${GEMINI_TTS_FREE_QUOTA_CONFIRMED:-}" = "true" ] && [ -n "${GEMINI_API_KEY:-}" ]; then
+            echo "can_tts=true" >> "$GITHUB_OUTPUT"
+            echo "Gacrux key present and project free-quota attestation present. ONE synthesis allowed."
+          else
+            echo "can_tts=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Gacrux free quota not verifiably attested: NO TTS, no silent substitute, no complete MP4."
+          fi
+      - name: Install Gacrux only after explicit free-quota attestation
+        if: steps.quota.outputs.can_tts == 'true'
+        run: python -m pip install --quiet "google-genai>=2.25,<3" "faster-whisper>=1.1,<2"
+      - name: Produce ONE Gacrux narration and 720x1280 H264 AAC master
+        if: steps.quota.outputs.can_tts == 'true'
+        id: render
+        run: python tools/alice_wonderland_20261028.py --mode render
+      - name: Real full decode, voice check, 5 opening frames, ZIP CRC
+        if: steps.render.outcome == 'success'
+        run: python tools/alice_wonderland_20261028.py --mode qa
+      - name: Preserve genuine output for Android, even if Gacrux is unavailable
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ALICE_RACKHAM_SOURCE_INVENTORY_20261028
-          path: output/alice_wonderland_20261028/
+          name: TRA_LE_PAGINE_ALICE_RACKHAM_20261028_REALI
+          path: |
+            output/alice_wonderland_20261028/
+            episodes/alice_wonderland_20261028/images/
+            episodes/alice_wonderland_20261028/scene_cues.json
           if-no-files-found: warn
           retention-days: 14
-
-      - name: Persist truthful inventory status for Android
+      - name: Persist truthful run status, no invented download or publication
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
@@ -41,15 +81,30 @@ jobs:
           python - <<'PY'
           import base64,json,os,subprocess
           from pathlib import Path
-          src=Path("output/alice_wonderland_20261028/SOURCE_INVENTORY.json")
-          report={"run_id":os.environ["GITHUB_RUN_ID"],"run_url":"https://github.com/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/"+os.environ["GITHUB_RUN_ID"],"source_inventory_created":src.is_file(),"video_created":False,"paid_video_calls":0,"voice_calls":0}
-          if src.is_file():
-              raw=json.loads(src.read_text(encoding="utf8"))
-              report.update({"source_url":raw["url"],"source_image_count":raw["count"],"source_images":raw["images"]})
-          payload={"message":"LIBRI: report actual Alice source probe result","branch":"main","content":base64.b64encode((json.dumps(report,ensure_ascii=False,indent=2)+"\\n").encode()).decode()}
-          route="repos/"+os.environ["GITHUB_REPOSITORY"]+"/contents/reports/alice_source_inventory_20261028.json"
+          out=Path("output/alice_wonderland_20261028")
+          q=out/"QUALITY.json";v=out/"TRA_LE_PAGINE_ALICE_NEL_PAESE_DELLE_MERAVIGLIE.mp4"
+          state={"run_id":os.environ["GITHUB_RUN_ID"],"run_url":"https://github.com/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/"+os.environ["GITHUB_RUN_ID"],
+            "episode":"alice_wonderland_20261028","source_images_present":len(list(Path("episodes/alice_wonderland_20261028/images").glob("scena_*.jpg"))),
+            "voice_generated":(out/"VOICE_PROFILE_V13.json").is_file(),
+            "mp4_exists":v.is_file(),"paid_video_api_calls":0,"social_published":False,"archive_imported":False,
+            "free_quota_attested":os.environ.get("GEMINI_TTS_FREE_QUOTA_CONFIRMED")=="true"}
+          if q.is_file():
+            try:state["quality"]=json.loads(q.read_text())
+            except Exception:state["quality_error"]="unreadable"
+          if (out/"PREFLIGHT_V13.json").is_file():
+            p=json.loads((out/"PREFLIGHT_V13.json").read_text())
+            state["v13_ready"]=bool(p.get("ready"));state["v13_blockers"]=p.get("blockers",[])
+          if v.is_file():
+            import hashlib
+            state["video_sha256"]=hashlib.sha256(v.read_bytes()).hexdigest()
+            state["video_bytes"]=v.stat().st_size
+          body=json.dumps(state,ensure_ascii=False,indent=2)+"\n"
+          payload={"message":"LIBRI: actual Alice run state, no paid API","branch":"main",
+            "content":base64.b64encode(body.encode()).decode()}
+          route="repos/"+os.environ["GITHUB_REPOSITORY"]+"/contents/reports/alice_wonderland_20261028_run.json"
           existing=subprocess.run(["gh","api",route],capture_output=True,text=True)
           if existing.returncode==0:payload["sha"]=json.loads(existing.stdout)["sha"]
-          p=Path("/tmp/alice_source_report.json");p.write_text(json.dumps(payload))
-          subprocess.run(["gh","api","--method","PUT",route,"--input",str(p)],check=True,stdout=subprocess.DEVNULL)
+          tmp=Path("/tmp/alice_status_payload.json");tmp.write_text(json.dumps(payload))
+          subprocess.run(["gh","api","--method","PUT",route,"--input",str(tmp)],stdout=subprocess.DEVNULL,check=True)
+          print("DURABLE_RUN_STATUS",json.dumps({k:v for k,v in state.items() if k!="quality"},ensure_ascii=False))
           PY
