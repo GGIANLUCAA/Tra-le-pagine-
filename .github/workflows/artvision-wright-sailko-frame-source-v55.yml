@@ -1,0 +1,55 @@
+name: "ArtVision V55 - Wright authentic Sailko framed photo source check"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-wright-sailko-frame-source-v55.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acquire_source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install "Pillow>=10,<13" "requests>=2.31,<3"
+      - name: Fetch licensed actual framed photo and inspect dimensions
+        run: |
+          python - <<'PY'
+          from PIL import Image
+          import requests,hashlib,json,pathlib,io,time
+          p=pathlib.Path("wright_sailko_source");p.mkdir(exist_ok=True)
+          name="Joseph_wright_of_derby,_esperimento_di_un_uccello_in_una_pompa_penumatica,_1768,_01.jpg"
+          urls=[
+            "https://upload.wikimedia.org/wikipedia/commons/2/26/"+name.replace(",","%2C"),
+            "https://commons.wikimedia.org/wiki/Special:Redirect/file/"+name+"?width=2400",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/"+name.replace(",","%2C")+"/2048px-"+name.replace(",","%2C")
+          ]
+          errors=[]
+          for url in urls:
+            for attempt in range(2):
+              try:
+                r=requests.get(url,timeout=40,headers={"User-Agent":"ArtVision-Attribution-Research/1.0 contact: local-testing"},allow_redirects=True);r.raise_for_status()
+                im=Image.open(io.BytesIO(r.content));im.verify()
+                im=Image.open(io.BytesIO(r.content))
+                if im.width<1800 or im.height<1300:raise ValueError("image too small")
+                if abs(im.width/im.height-1.253)>0.06:raise ValueError("unexpected framed image ratio")
+                target=p/"WRIGHT_TRUE_GILDED_FRAME_SAILKO_CC_BY_3.jpg";target.write_bytes(r.content)
+                meta={"photographer":"Sailko","license":"CC BY 3.0 Unported","license_url":"https://creativecommons.org/licenses/by/3.0/","page":"https://commons.wikimedia.org/wiki/File:Joseph_wright_of_derby,_esperimento_di_un_uccello_in_una_pompa_penumatica,_1768,_01.jpg","original_dimensions":[im.width,im.height],"sha256":hashlib.sha256(r.content).hexdigest(),"actual_url":r.url,"captured":"2017-03-01","note":"Entire framed painting in 2017 photograph; NOT proof of current gallery location."}
+                (p/"PHOTO_PROVENANCE.json").write_text(json.dumps(meta,indent=2))
+                im.thumbnail((960,960));im.save(p/"SOURCE_PREVIEW.jpg",quality=88)
+                print("SOURCE_ACQUIRED",meta);quit()
+              except Exception as e:
+                errors.append(str(e)[:130]);time.sleep(2)
+          raise RuntimeError("Source unavailable "+repr(errors))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_WRIGHT_AUTHENTIC_GILDED_FRAME_SAILKO_SOURCE
+          path: wright_sailko_source/*
+          if-no-files-found: error
+          retention-days: 30
