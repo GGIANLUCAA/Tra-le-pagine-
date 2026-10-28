@@ -7,7 +7,7 @@ on:
       - 'site/video-library-v2.html'
       - 'src/video_library_dossier_sync_v55.py'
       - 'tests/test_video_library_dossier_sync_v55.py'
-      - 'docs/productions/2026-10-28-wright-cinema-museum-v55/ARCHIVE_STAGING_V55.json'
+      - 'docs/productions/**/ARCHIVE_STAGING_V55.json'
   schedule:
     - cron: '27 */3 * * *'
   workflow_dispatch:
@@ -140,12 +140,16 @@ jobs:
       - name: Validate V55 dossier sync, offline only
         run: |
           python3 -m unittest tests/test_video_library_dossier_sync_v55.py -v
-          python3 src/video_library_dossier_sync_v55.py --dry-run docs/productions/2026-10-28-wright-cinema-museum-v55/ARCHIVE_STAGING_V55.json
+          mapfile -t manifests < <(find docs/productions -name ARCHIVE_STAGING_V55.json -type f | sort)
+          if [ ${#manifests[@]} -eq 0 ]; then echo 'No V55 staging files'; exit 0; fi
+          python3 src/video_library_dossier_sync_v55.py --dry-run "${manifests[@]}"
       - name: Sync genuine V55 dossier attachments, never video or approval
         continue-on-error: true
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
-          python3 src/video_library_dossier_sync_v55.py docs/productions/2026-10-28-wright-cinema-museum-v55/ARCHIVE_STAGING_V55.json
+          mapfile -t manifests < <(find docs/productions -name ARCHIVE_STAGING_V55.json -type f | sort)
+          if [ ${#manifests[@]} -eq 0 ]; then echo 'No V55 staging files'; exit 0; fi
+          python3 src/video_library_dossier_sync_v55.py "${manifests[@]}"
           echo 'V55: text dossier uploaded or safely preserved; cover and signed full ZIP still require individual verification' >> "$GITHUB_STEP_SUMMARY"
