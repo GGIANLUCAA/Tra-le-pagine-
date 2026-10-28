@@ -5,7 +5,7 @@ on:
     paths: ["queue/alice_wonderland_20261028.json"]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: libri-alice-wonderland-20261028
   cancel-in-progress: false
@@ -32,3 +32,24 @@ jobs:
           path: output/alice_wonderland_20261028/
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Persist truthful inventory status for Android
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import base64,json,os,subprocess
+          from pathlib import Path
+          src=Path("output/alice_wonderland_20261028/SOURCE_INVENTORY.json")
+          report={"run_id":os.environ["GITHUB_RUN_ID"],"run_url":"https://github.com/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/"+os.environ["GITHUB_RUN_ID"],"source_inventory_created":src.is_file(),"video_created":False,"paid_video_calls":0,"voice_calls":0}
+          if src.is_file():
+              raw=json.loads(src.read_text(encoding="utf8"))
+              report.update({"source_url":raw["url"],"source_image_count":raw["count"],"source_images":raw["images"]})
+          payload={"message":"LIBRI: report actual Alice source probe result","branch":"main","content":base64.b64encode((json.dumps(report,ensure_ascii=False,indent=2)+"\\n").encode()).decode()}
+          route="repos/"+os.environ["GITHUB_REPOSITORY"]+"/contents/reports/alice_source_inventory_20261028.json"
+          existing=subprocess.run(["gh","api",route],capture_output=True,text=True)
+          if existing.returncode==0:payload["sha"]=json.loads(existing.stdout)["sha"]
+          p=Path("/tmp/alice_source_report.json");p.write_text(json.dumps(payload))
+          subprocess.run(["gh","api","--method","PUT",route,"--input",str(p)],check=True,stdout=subprocess.DEVNULL)
+          PY
