@@ -1,0 +1,122 @@
+{
+  "version": "V58_2026_10_28",
+  "status": "real_source_pages_verified_video_frames_not_yet_reviewed",
+  "ranking_is": "EDITORIAL_HYPOTHESES_NOT_VIEW_COUNTS",
+  "rights_note": "CC0 dichiarata nella scheda dei singoli file Wikimedia; non certifica altri diritti o aspetti storici. Licenze originali riconfermare alla produzione",
+  "selection_rule": "A if story/motion/color/crop probable; then actual shot review mandatory; no fake engagement data",
+  "candidates": [
+    {
+      "id": "paris_swim_1918",
+      "title": "Parigi 1918 — la folla alla gara di nuoto",
+      "event": "Evento popolare e folla attorno alla traversata a nuoto di Parigi",
+      "year": 1918,
+      "date_precision": "multiple_dates_on_source_page",
+      "source_page": "https://commons.wikimedia.org/wiki/File:F%C3%AAte_Am%C3%A9ricaine_et_la_foule_pendant_la_travers%C3%A9e_de_Paris_%C3%A0_la_nage_-_AI83969.webm",
+      "inventory": "AI83969",
+      "license": "CC0_as_declared",
+      "duration_seconds": 75,
+      "theme": "folla/sport/energia",
+      "editorial_priority": "A",
+      "hypothesis": "Movimento collettivo e sorpresa; ottimo potenziale di gancio se le facce/azioni sono ben visibili",
+      "risks": [
+        "momento visibile NON revisionato",
+        "doppia data segnata nella fonte: non attribuire giorno unico",
+        "crop 9:16 da verificare"
+      ]
+    },
+    {
+      "id": "paris_train_1918",
+      "title": "Parigi 1918 — stazione ferroviaria e viaggio",
+      "event": "Arrivo del treno da Marsiglia e viaggiatori alla Gare de Lyon; nello stesso file anche nuoto a Parigi",
+      "year": 1918,
+      "date_precision": "multiple_dates_on_source_page",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Arriv%C3%A9e_d%27un_train_de_Marseille_et_voyageurs_dans_la_cour_de_la_gare_de_Lyon._La_travers%C3%A9e_de_Paris_%C3%A0_la_nage_-_AI139599.webm",
+      "inventory": "AI139599",
+      "license": "CC0_as_declared",
+      "duration_seconds": 283,
+      "theme": "trasporti/viaggi/persone",
+      "editorial_priority": "A",
+      "hypothesis": "Treno e viaggiatori danno azione e una microstoria immediata; utile montaggio multi-shot",
+      "risks": [
+        "riprese diverse nello stesso file: non dire che sono simultanee",
+        "timecode e framerate originali non verificati",
+        "crop 9:16 da verificare"
+      ]
+    },
+    {
+      "id": "beirut_1919_street",
+      "title": "Beirut 1919 — mercato, strada, mestieri",
+      "event": "Porto, mercato, lavoro e scene di strada nel documentario (catalogo)",
+      "year": 1919,
+      "date_precision": "1919-11_1919-12_archive",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Sc%C3%A8nes_de_rue_-_AI13347.webm",
+      "inventory": "AI13347",
+      "license": "CC0_as_declared",
+      "duration_seconds": 188,
+      "theme": "vita quotidiana/gesti/mercato",
+      "editorial_priority": "A",
+      "hypothesis": "Più episodi densi da un unico girato con persone e scene realmente diverse; meglio del precedente pilot seppia",
+      "risks": [
+        "selezionare timecodes nuovi solo dopo visione",
+        "scena centrale e crop per singola inquadratura",
+        "non riciclare il pilot virato bocciato"
+      ]
+    },
+    {
+      "id": "paris_cafe_strike_1919",
+      "title": "Parigi 1919 — sciopero dei camerieri",
+      "event": "Caffè e taverne chiusi, persone che passano, poliziotti in alcune riprese",
+      "year": 1919,
+      "date_precision": "1919-07-11",
+      "source_page": "https://commons.wikimedia.org/wiki/File:La_Gr%C3%A8ve_des_gar%C3%A7ons_de_caf%C3%A9_-_AI94492.webm",
+      "inventory": "AI94492",
+      "license": "CC0_as_declared",
+      "duration_seconds": 82,
+      "theme": "storie sociali/proteste/sorpresa",
+      "editorial_priority": "B",
+      "hypothesis": "Curiosità storica fortissima da spiegare con titolo breve, ma visivamente può essere poco emozionante",
+      "risks": [
+        "non inventare cause dello sciopero",
+        "presenza della polizia non implica scontri",
+        "azione e crop da visionare"
+      ]
+    },
+    {
+      "id": "paris_champs_1918",
+      "title": "Parigi 1918 — Champs-Élysées e Concorde",
+      "event": "Avenue des Champs-Élysées, place de la Concorde",
+      "year": 1918,
+      "date_precision": "1918-07-24",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Avenue_des_Champs-%C3%89lys%C3%A9es%2C_place_de_la_Concorde_-_AI53745.webm",
+      "inventory": "AI53745",
+      "license": "CC0_as_declared",
+      "duration_seconds": 38,
+      "theme": "luoghi riconoscibili/citta",
+      "editorial_priority": "B",
+      "hypothesis": "Luoghi riconoscibili e forte prima/dopo visivo; montaggio con altre riprese della stessa città solo se storicamente distinto",
+      "risks": [
+        "movimento dettagli non ancora visti",
+        "non spacciare un passaggio d'epoca per lo stesso luogo di oggi senza prova"
+      ]
+    },
+    {
+      "id": "market_rural_1920",
+      "title": "1920 — mercato coperto e vita rurale",
+      "event": "Mercato coperto e scene rurali",
+      "year": 1920,
+      "date_precision": "1920-03",
+      "source_page": "https://commons.wikimedia.org/wiki/File:March%C3%A9_couvert_et_sc%C3%A8nes_rurales_-_AI140423.webm",
+      "inventory": "AI140423",
+      "license": "CC0_as_declared",
+      "duration_seconds": 356,
+      "theme": "mercati/lavori/umanità",
+      "editorial_priority": "A",
+      "hypothesis": "Molte microstorie e gesti umani, buon test di colorizzazione semantica con oggetti distinti",
+      "risks": [
+        "luogo/eventi specifici da ricontrollare nella scheda",
+        "film lungo: preprocess e preview prima di colorizzare",
+        "movimenti/volti da verificare"
+      ]
+    }
+  ]
+}
