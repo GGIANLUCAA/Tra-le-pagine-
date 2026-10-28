@@ -1,0 +1,62 @@
+name: "Vidu API - saldo numerico cifrato per proprietario (zero spesa)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/vidu-api-exact-balance-secure.yml"
+permissions:
+  contents: read
+jobs:
+  safe-balance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read-only balance query and encrypted report (no billable POST)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VIDU_API_KEY:-}" || { echo "::error::Missing VIDUOK"; exit 2; }
+          cat > /tmp/vidu-balance-public.pem <<'EOF_PUB'
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAja6mCDjoLn/MjPYVwnKN
+RBTypymU0S5NHbeonVFjfnydPBGSn5HGXE4jGIp5cKYzFKzuQh+jHOX9g4dPH5EY
+hoANiRiO0Hhxad7My+j9ufiDyWU6F8xQtLQoxGyg8Cvmr5FU3EvNAbA5n9U/Dt8u
+Ey/LZgd3ploFbEAy2eMzzEsqjEhPOW7KZRPJYE2hdbaY3IKXCjGK631SfpyyY4B2
+Y9VSJU1IqKMYuLbD1BGK7THH96AlScr17ToB599x4uZRqFZbCoAsAP4ML9eFoVIO
+Q+w3gTYgCzdN1B4uleaF3N21rIHnLcETBbjwEUhqEpekSoIM2Px2eOdZS9B3dt1r
+pwIDAQAB
+-----END PUBLIC KEY-----
+          EOF_PUB
+          python - <<'PY'
+          import json,os,urllib.request
+          url='https://api.vidu.com/ent/v2/credits?show_detail=true'
+          req=urllib.request.Request(url,headers={'Authorization':'Token '+os.environ['VIDU_API_KEY'],'Accept':'application/json'})
+          with urllib.request.urlopen(req,timeout=22) as r:
+              obj=json.loads(r.read(1000000))
+          rem=obj.get('remaining_credits')
+          if not isinstance(rem,list):
+              rem=obj.get('remains')
+          if not isinstance(rem,list) or not rem:
+              raise RuntimeError('Missing usable credit arrays. Not computing balance')
+          rows=[]
+          for e in rem:
+              if not isinstance(e,dict):continue
+              n=e.get('credit_remain')
+              if type(n) is not int or n<0: continue
+              rows.append({'type':str(e.get('type','untyped'))[:60],'remaining':n})
+          if not rows: raise RuntimeError('No valid numeric credit balances')
+          total=sum(e['remaining'] for e in rows)
+          report={'total':total,'groups':rows,'clips_5sec_q2_pro_fast_720p_offpeak':total//8,
+                  'clips_5sec_q2_pro_fast_720p_normal':total//16,
+                  'status':'read_only_confirmed','endpoint':'GET /ent/v2/credits'}
+          with open('/tmp/vidu-balance-private.json','w') as f:
+              json.dump(report,f,sort_keys=True)
+          print('Valid Vidu API credit balances returned and encrypted; amounts NOT in public logs.')
+          PY
+          openssl pkeyutl -encrypt -pubin -inkey /tmp/vidu-balance-public.pem -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 -in /tmp/vidu-balance-private.json -out /tmp/vidu-balance-private.enc
+          echo "VIDU_BALANCE_ENCRYPTED=$(base64 -w 0 /tmp/vidu-balance-private.enc)"
+          rm -f /tmp/vidu-balance-private.json /tmp/vidu-balance-private.enc
+          echo "Finished safe credit count: ZERO generative API requests and zero credits consumed."
