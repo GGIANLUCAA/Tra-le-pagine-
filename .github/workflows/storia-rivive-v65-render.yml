@@ -1,0 +1,87 @@
+name: "La Storia Rivive V65 — nuovo video Parigi 1918 autentico"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/storia_rivive_paris_1918_v65.py"
+      - "src/storia_rivive_paris_v65_qa.py"
+      - ".github/workflows/storia-rivive-v65-render.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: storia-rivive-v65-paris-1918
+  cancel-in-progress: false
+jobs:
+  render_new_paris_1918_reel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 57
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_XET: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Install free CPU-only FFmpeg and pretrained restoration dependencies"
+        run: |
+          python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow onnxruntime huggingface_hub
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - name: "Check Python scripts"
+        run: |
+          python -m py_compile src/storia_rivive_v65_paris_source_contact.py src/storia_rivive_paris_1918_v65.py src/storia_rivive_paris_v65_qa.py
+      - name: "Generate REAL 1918 Paris moving-archive-to-AI-photo video"
+        run: |
+          python -u src/storia_rivive_paris_1918_v65.py
+      - name: "Verify exact sourced photo and freeze, no hallucinated release claims"
+        run: |
+          python -u src/storia_rivive_paris_v65_qa.py
+      - name: "Save original produced MP4 ZIP cover photos and side-by-side review"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PARIGI_1918_FOTO_AI_V65_COMPLETO
+          path: |
+            output/storia_rivive_v65_paris_1918/PARIGI_1918_IL_TEMPO_SI_FERMA_V65.mp4
+            output/storia_rivive_v65_paris_1918/PARIGI_1918_VIDEO_E_FOTO_V65.zip
+            output/storia_rivive_v65_paris_1918/COPERTINA.jpg
+            output/storia_rivive_v65_paris_1918/FOTO_RESTAURATA_*.jpg
+            output/storia_rivive_v65_paris_1918/FONTI_E_QA.json
+            output/storia_rivive_v65_paris_1918/QA_REPORT.json
+            output/storia_rivive_v65_paris_1918/PARIGI_1918_CONFRONTO_PRIMA_DOPO.jpg
+            output/storia_rivive_v65_paris_1918/POST_*.txt
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "Publish non-social VIDEO PREVIEW with stable Android MP4 + ZIP via GitHub Release"
+        run: |
+          set -euo pipefail
+          D=output/storia_rivive_v65_paris_1918
+          test -s "$D/PARIGI_1918_IL_TEMPO_SI_FERMA_V65.mp4"
+          test -s "$D/QA_REPORT.json"
+          unzip -t "$D/PARIGI_1918_VIDEO_E_FOTO_V65.zip"
+          TAG=storia-rivive-parigi-1918-photo-freeze-v65
+          assets=("$D/PARIGI_1918_IL_TEMPO_SI_FERMA_V65.mp4" "$D/PARIGI_1918_VIDEO_E_FOTO_V65.zip" "$D/COPERTINA.jpg" "$D/PARIGI_1918_CONFRONTO_PRIMA_DOPO.jpg" "$D/QA_REPORT.json")
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${assets[@]}" --clobber
+          else
+            gh release create "$TAG" --target main \
+              --title "Parigi 1918 — Il tempo si ferma | Nuovo video V65 (provino)" \
+              --notes "NUOVO FILM, NON BEIRUT. Circa 25 secondi verticali H264/AAC: sei scene autentiche di Parigi nel 1918 dal Musée Albert-Kahn, ognuna in movimento B/N → congelamento → foto a colori AI statica. Sorgente esatta CC0 su Wikimedia Commons, 768x576; il video finale è 1080x1920 ma non 4K nativo. DDColor+RealESRGAN e allineamento temporale di frame vicini; NON ancora HYPIR/diffusion image-to-image. Le tinte e i microdettagli sono ricostruzioni interpretative. Qualità artistica da giudicare rispetto agli esempi. Nessun Vidu o GPU a pagamento. Nessuna pubblicazione social né import automatico nel sito privato." \
+              --latest=false "${assets[@]}"
+          fi
+          echo "Published direct-download MP4 release:"
+          gh release view "$TAG" --json url,assets --jq '{url:.url,files:[.assets[]|{name:.name,bytes:.size}]}'
+      - name: "Verify exact published MP4 and ZIP size in GitHub API"
+        run: |
+          set -euo pipefail
+          for f in PARIGI_1918_IL_TEMPO_SI_FERMA_V65.mp4 PARIGI_1918_VIDEO_E_FOTO_V65.zip; do
+            local_size=$(stat -c %s "output/storia_rivive_v65_paris_1918/$f")
+            remote_size=$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/storia-rivive-parigi-1918-photo-freeze-v65" --jq ".assets[]|select(.name==\"$f\")|.size")
+            test "$local_size" = "$remote_size"
+            echo "verified $f $remote_size bytes"
+          done
