@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-28T07:20:00Z",
+  "updated": "2026-10-28T10:23:41Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -1375,6 +1375,55 @@
         "Review adjacent right-side portraits at normal speed",
         "Confirm bird legibility on Android at normal brightness",
         "Listen to complete score cadence before approval"
+      ],
+      "s01_turner_critico": "blocked_voice_unavailable"
+    },
+    {
+      "cycle_id": "20261028T1110+0100-ALTDORFER-V55",
+      "created_at": "2026-10-28T10:23:41Z",
+      "artist": "Albrecht Altdorfer",
+      "work": "The Battle of Alexander at Issus",
+      "format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "subtype": "authentic_wow_artwork_distinct_detail_revision",
+      "status": "rendered_needs_review",
+      "mp4_verified": true,
+      "duration_seconds": 60.75,
+      "size_bytes": 13914145,
+      "sha256_mp4": "43ffd0343268010c0dc1f0220d0d98a775dad25a9bfc32c34100202827d86a60",
+      "zip_complete_sha256": "d7d153b5a8895ba5433ce58106a510a82189f8829792305b3a7d788ce43a1e9b",
+      "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40671108781",
+      "workflow_artifact_id": 12807399984,
+      "workflow_artifact_version": "V54 technical predecessor, V55 is local reviewed crop revision",
+      "record": "docs/productions/2026-10-28-1110-altdorfer-wow-v55.md",
+      "delivery_library_paths": [
+        "/ArtVision/ARTVISION_ALTDORFER_WOW_V55_VIDEO_MASTER.mp4",
+        "/ArtVision/ARTVISION_ALTDORFER_WOW_V55_REVIEW_COMPLETE.zip"
+      ],
+      "source": "Alte Pinakothek official CC BY-SA 4.0 BStGS photo 2291x3000; panel 158.4x120.3cm",
+      "music": "The Pyre — Kevin MacLeod, CC BY 4.0, ISRC USUAN1100846",
+      "qa": {
+        "ffprobe": "pass",
+        "full_decode": "pass",
+        "zip_crc": "pass",
+        "cover_and_first_frame": "visually inspected; MAD 4.91",
+        "four_v28_posts": "pass",
+        "human_full_speed_audio": "pending",
+        "human_artistic_review": "pending",
+        "photo_sharealike_commercial_review": "pending"
+      },
+      "revised_from": {
+        "v54_mp4_sha256": "013ef75a8a49c79dc4ea32e98ca529f86d612fb62db3bc9d4274e5e34c5a723a",
+        "defect": "Too many similar wide and medium crops; V55 changes scenes to distinct sky, city, flags and cavalry motifs"
+      },
+      "gold_master_approved": false,
+      "social_published": false,
+      "paid_video_credits": 0,
+      "paid_video_api_calls": 0,
+      "next_cycle_improvements": [
+        "Make opening sky/action hook more immediate without gimmicks",
+        "Use higher-resolution official photo if licensed and available",
+        "Listen to musical cadence and inspect deep crop sharpness before artistic approval"
       ],
       "s01_turner_critico": "blocked_voice_unavailable"
     }
