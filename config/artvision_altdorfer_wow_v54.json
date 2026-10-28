@@ -45,6 +45,7 @@
       "source_page": "https://commons.wikimedia.org/wiki/File:Battle_of_Issus_by_Altdorfer_1529_Pinakothek-Mus_Munich.jpg",
       "museum_page": "https://www.sammlung.pinakothek.de/en/artwork/9pL3Qyz4eb",
       "art_candidates": [
+        "https://cdn.thenetexperts.info/image/authenticated/s--HJMuiact--/q_80/artworks/ALBRECHT-ALTDORFER-1482_HISTORIENZYKLUS-ALEXANDERSCHLACHT-SCHLACHT-BEI-ISSUS-688_1599359_CC-BY-SA_BSTGS.jpg",
         "https://upload.wikimedia.org/wikipedia/commons/1/1c/Battle_of_Issus_by_Altdorfer_1529_Pinakothek-Mus_Munich.jpg",
         "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Battle_of_Alexander_at_Issus_%28by_Albrecht_Altdorfer%2C_1529%29_-_Alte_Pinakothek%2C_Munich.jpg"
       ],
@@ -71,7 +72,7 @@
           "type": "wide",
           "x": 0.5,
           "y": 0.49,
-          "z": 1.0,
+          "z": 1,
           "seconds": 5.2,
           "movement": "locked",
           "intent": "Open with the stormy cosmic sky and the vast battle in a single authentic painting, with exact title and artist in the approved band."
@@ -108,7 +109,7 @@
           "x": 0.45,
           "y": 0.54,
           "z": 1.15,
-          "seconds": 5.0,
+          "seconds": 5,
           "movement": "slow_pull",
           "intent": "Mountains, rivers, settlements and armies compress an imagined geography into one view."
         },
@@ -152,8 +153,8 @@
           "type": "wide",
           "x": 0.5,
           "y": 0.53,
-          "z": 1.0,
-          "seconds": 5.0,
+          "z": 1,
+          "seconds": 5,
           "movement": "slow_pull",
           "intent": "Return to the confrontation beneath the extraordinary geography; one restrained movement, no fake animation."
         },
@@ -170,12 +171,13 @@
           "type": "full",
           "x": 0.5,
           "y": 0.5,
-          "z": 1.0,
-          "seconds": 7.0,
+          "z": 1,
+          "seconds": 7,
           "movement": "locked",
           "intent": "Reveal the complete authentic panel against a neutral solid backdrop, preserving all edges and avoiding a second blurred copy."
         }
-      ]
+      ],
+      "official_download_license": "CC BY-SA 4.0, Bayerische Staatsgemäldesammlungen, https://creativecommons.org/licenses/by-sa/4.0/"
     }
   }
 }
