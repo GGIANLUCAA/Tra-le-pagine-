@@ -1,0 +1,35 @@
+# ArtVision V53 — produzione seriale per coppie di format (28 ottobre 2026)
+
+## Decisione dell'utente
+Ogni OPERA scelta genera **due episodi distinti ma collegati**:
+1. **ArtVision Cinema / Museum Immersion (V6)**: quadro autentico e sala museale credibile alla scala reale, cornice documentata o scenografia dichiarata, ingresso nel dipinto, dettagli visivi con significato, ritorno nel museo quando appropriato. Senza voce; solo registrazione musicale lecita.
+2. **ArtVision Critico d'arte (V2)**: stessa opera ma **nuovo film autonomo** con ricerca d'arte rigorosa, copione italiano naturale e interessante (non generico, non enfatico), voce Google Gacrux **reale e verificata**, sequenza di dettagli motivata **dalle frasi effettive**. Se utile, riusare un breve ingresso Museum Immersion V46, mai sacrificarvi la spiegazione.
+
+**Cadenzamento richiesto: un tentativo di produzione ogni due ore, idealmente un video finito e revisionato per slot**; non equivale a certificare automaticamente un MP4 ogni due ore. Preferire (opera A / Cinema) -> (opera A / Critico) -> (opera B / Cinema) -> (opera B / Critico). Se uno dei due è già prodotto, verificarne hash, stato e diritti; lavorare sulla versione mancante. Se la voce è bloccata o manca una fonte, registrare il blocco, preparare il necessario gratuitamente e passare temporaneamente alla prossima attività indipendente nella coda senza dichiarare «coppia completa». Non duplicare Cinema per fingere di sostituire Critico.
+
+## Scheda comune per opera, riutilizzata dai due video
+- Identificativi unici `artwork_id`, `pair_id`, `cinema_episode_id`, `critico_episode_id` e stato **indipendente** dei due episodi. Registro persistente e deduplicazione per titolo/artista/anno/museo; mantenere master e revisioni.
+- Ricerca V32 su almeno tre opere candidate quando il soggetto non è imposto. Per ciascuna: pubblico potenziale *qualitativo* senza inventare metriche, sorpresa visiva, conflitto umano, ricchezza di dettagli, accessibilità della riproduzione e licenze, capacità di raccontare una vera storia. Distinguere fatto, attribuzione, interpretazione e ipotesi.
+- Scheda museale ufficiale: titolo storico, artista, anno, tecnica, ubicazione e **altezza/larghezza reali in cm**; distingue quadro/cornice e diverse versioni/stampe. Conservare fonti URL e data verifica.
+- Riproduzione autentica ad alta risoluzione: provenienza, fotografia, licenza/crediti. Se presente una foto verificabile della cornice effettiva, riprodurne materiali, modanature, spessore, battuta, ombre e proporzioni; indicare se attuale, storica o originale. Se assente, `scenic_reconstruction`; mai etichettare una ricostruzione come cornice autentica.
+- Atlante dei dettagli: per ogni dettaglio una posizione `focus` e un significato narrativo, più rischio di errore iconografico. Selezionare dettagli diversi per Cinema e Critico quando migliora la fruizione; la fotografia autentica deve restare riconoscibile e non deformata.
+- Brief separati, sceneggiature separate, regia scena per scena e copertine V6/V2 distinte ma coerenti. Titolo **esatto** e nome artista su JPEG e primo fotogramma; niente sottotitoli o testo riempitivo nelle scene.
+
+## Critico d'arte: standard editoriale rigoroso
+Il copione non deve sembrare una scheda Wikipedia recitata o una lista di aggettivi. Deve offrire una **tesi interessante e sostenibile**, con un'apertura che faccia osservare qualcosa di concreto, poi lettura compositiva e dei colori/gesti/luce, contesto storico verificato, simboli interpretati senza spacciarli per certezze, eventuali controversie attribuite e un finale che chiude il ragionamento. Evitare frasi identiche tra episodi, domande artificiali, superlativi e presunte intenzioni dell'autore non documentate.
+
+Studiare contenuti e fonti prima della voce. Per ogni beat di parlato indicare testo, `voice_start`, `voice_end`, dettaglio effettivo, fuoco in coordinate normalizzate, movimento, provenienza e motivo. Allineare i cue alla **registrazione realmente prodotta e ascoltata**, non distribuire i secondi a caso. Le inquadrature respirano; mai volti tagliati, pan pendolari, crop sbagliati, ghosting o immagini non pertinenti. Durata ricavata dalla storia e dalla voce, senza stampino; parlare in italiano naturale con timbro uniforme e pause credibili. **Se Gacrux non è accessibile o non è verificabile, mantenere `blocked_voice_unavailable`, non pubblicare un video muto come Critico né inventare una voce Gacrux**. Nessun consumo di nuove API a pagamento senza specifica approvazione.
+
+## Museum Immersion: regole visive
+Recuperare i master approvati `ArtVision_The_Cyclops_SENZA_STRISCE_CORRETTO_20261027.mp4` e `ARTVISION_HIROSHIGE_MUSEUM_SCALE_ANDROID_20261027.mp4` (V46). Il primo insegna cornici fisiche, incasso, ombre e assenza di strisce; il secondo insegna **scala fisica reale**, distanza della camera e rapporto con il visitatore. Ogni opera chiede però nuova sala e regia, non lo stesso stampino. Inquadratura larga e misura fedele, cornice di qualità, avvicinamento motivato; no edge-stretch, bande replicate, prospettiva incoerente, quadro incollato, riflessi falsi, transizioni confusive. Opera autentica sempre distinta da ambiente ricostruito.
+
+## Consegna, qualità e budget
+Ogni episodio consegnabile richiede: MP4 verticale H.264/AAC, cover JPEG, quattro **testi social italiani realmente diversi** (Facebook, Instagram, TikTok, YouTube) secondo V28, scheda di fonti e diritti (opera, **specifica registrazione** musicale, voce), storyboard e ricetta replicabile, QA, ZIP completo verificato e link Android realmente raggiungibile. Verificare ffprobe, decodifica integrale, fotogrammi intermedi, prima scena, ascolto voce/musica, continuità e qualità artistica. Un renderer universale o un check tecnico non approva l'estetica: `rendered_needs_review` finché l'hash esatto non supera il processo di revisione V44/V17. Non chiamare Gold Master, pubblicato o pronto senza evidenza.
+
+**Budget di credito IA video predefinito: ZERO.** Vidu/Kling/Wan/Runware/Seedance e simili soltanto dopo scheda della singola clip e autorizzazione specifica a costo noto. Nessuna pubblicazione social automatica. Prima di ogni slot verificare lavori in corso e lock, catalogo, coda e eventuali upload del sito per non sovrascrivere o produrre duplicati. Comunicare ogni volta il risultato reale e cosa manca.
+
+## Operatività
+- Coda della serie: `queue/artvision_dual_format_s01_20261028.json` (non altera la coda storica `artvision_museum_scale_s01_20261028.json`).
+- Automazione esistente `6adca191603c8191a90d5190901cd034`: **riutilizzata**, non creare nuovi agenti concorrenti; frequenza aggiornata a 2 ore.
+- `config/video_formats_v13.json` resta fonte per preset e renderer. Il vecchio `render_series_v2.py` è storicamente limitato a ID specifici: per nuove opere occorrono una scheda JSON verificata e un entrypoint che la accetti. Non dichiarare questa funzione già universale finché non è implementata/testata.
+- Le produzioni V50/V51/V52B in stato `rendered_needs_review` sono **materiali di partenza**, non coppie approvate; verificare le versioni recenti prima di ogni lavoro.
