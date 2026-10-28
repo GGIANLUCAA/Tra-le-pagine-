@@ -24,20 +24,39 @@ class HistoricalRulesV56(unittest.TestCase):
     def test_source_gate(self):
         p = copy.deepcopy(self.pilot)
         p["rights"]["reviewed_by_human"] = True
-        p["rights"]["source_rights_clear_for_commercial_reuse"] = True
+        p["rights"]["source_rights_clear_for_noncommercial_publication"] = True
+        self.assertTrue(mod.evaluate(p, "source")["ok"])
+
+    def test_v59_rejects_non_pd_footage_even_when_nonmonetized(self):
+        p = copy.deepcopy(self.pilot)
+        p["rights"].update(reviewed_by_human=True,
+                           source_rights_clear_for_noncommercial_publication=True)
+        for license_name in ("CC BY", "CC BY-NC", "CC BY-NC-SA", "All rights reserved"):
+            p["rights"]["license"] = license_name
+            self.assertFalse(mod.evaluate(p, "source")["ok"])
+        p["rights"]["license"] = "CC0"
+        self.assertTrue(mod.evaluate(p, "source")["ok"])
+
+    def test_v59_public_domain_requires_jurisdiction_review(self):
+        p = copy.deepcopy(self.pilot)
+        p["rights"].update(license="PDM", reviewed_by_human=True,
+                           source_rights_clear_for_noncommercial_publication=True,
+                           jurisdiction_reviewed=False)
+        self.assertFalse(mod.evaluate(p, "source")["ok"])
+        p["rights"]["jurisdiction_reviewed"] = True
         self.assertTrue(mod.evaluate(p, "source")["ok"])
 
     def test_paid_key_is_not_approval(self):
         p = copy.deepcopy(self.pilot)
         p["rights"]["reviewed_by_human"] = True
-        p["rights"]["source_rights_clear_for_commercial_reuse"] = True
+        p["rights"]["source_rights_clear_for_noncommercial_publication"] = True
         p["cost"]["vidu_calls_planned"] = 1
         self.assertFalse(mod.evaluate(p, "source")["ok"])
 
     def test_sepia_not_ai(self):
         p = copy.deepcopy(self.pilot)
         p["rights"]["reviewed_by_human"] = True
-        p["rights"]["source_rights_clear_for_commercial_reuse"] = True
+        p["rights"]["source_rights_clear_for_noncommercial_publication"] = True
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         original = Path(temp.name) / "original.webm"
