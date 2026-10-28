@@ -120,6 +120,28 @@
       ],
       "direction": "Forme luminose e ritmo musicale con spazio libero e focali leggibili. Evitare sovrapposizioni confuse. Riutilizzare il generatore approvato e le sue palette prima di inventarne uno nuovo.",
       "next_action": "Recuperare le sorgenti dei filmati HyperLumen dal pacchetto originale e verificare audio, geometrie e sincronizzazione. Dichiarare i parametri mancanti senza fingere di recuperarli dal solo MP4."
+    },
+    "storia_rivive": {
+      "label": "La Storia Rivive — filmati d'archivio autentici",
+      "status": "pilot_implementation_pending",
+      "preset": "historical-archive-v56",
+      "narrated": false,
+      "guides": [
+        "docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md",
+        "docs/REGOLE_ATTIVE.md",
+        "docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md",
+        "docs/VIDEO_LIBRARY_DOSSIER_V1.md"
+      ],
+      "entrypoints": [
+        "src/storia_rivive_preflight_v56.py"
+      ],
+      "resolution": [
+        1080,
+        1920
+      ],
+      "direction": "Montaggio da RIPRESE STORICHE autentiche documentate, B/N→colorizzazione solo su medesimi fotogrammi; crop che non taglia persone, 0–7 s forti, licenza/music rights verificati e kit V55 completo. Sepia != vera colorizzazione AI.",
+      "next_action": "Verificare segmento e diritti del pilot; acquisire vero master, realizzare export e QA umano. Il contratto V56 non prova che il video o il colore AI siano già pronti.",
+      "rules_config": "config/storia_rivive_v56.json"
     }
   },
   "active_rules": "config/editorial_rules.json"
