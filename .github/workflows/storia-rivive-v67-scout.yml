@@ -18,7 +18,7 @@ jobs:
           python-version: "3.12"
       - run: |
           python -m pip -q install --no-cache-dir opencv-python-headless Pillow
-          command -v ffmpeg
+          command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
       - run: python -u src/storia_rivive_v67_vienna_source_contact.py
       - uses: actions/upload-artifact@v4
         with:
