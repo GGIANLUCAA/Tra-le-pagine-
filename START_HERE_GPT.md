@@ -22,6 +22,15 @@ Oppure:
 > e il ritmo del video Y se sono compatibili. Recupera prima le loro schede.
 
 ## Priorità permanente sulle immagini (V33)
+## ArtVision 4x1 — guida rapida V54 (28/10/2026)
+
+Per ogni opera scelta per la produzione **seriale ArtVision**, ora sono quattro i video distinti: Critico Standard, Critico Museum, Cinema Standard e Cinema Museum. Il limite precedente di due video V53 è superato. Leggere `docs/REGOLE_ATTIVE.md` e `docs/ARTVISION_FOUR_VARIANTS_CONTRACT_20261028.md`. Un'unica ricerca visiva e storico-artistica deve individuare almeno tre particolari autentici, tensione centrale, progressione emotiva e un momento forte *motivato*, non effetti casuali. Non usare lo stesso stampino di montaggio su opere diverse.
+
+Creare il dossier vuoto con `python src/video_director_v13.py four-brief --topic "Opera" --artist "Autore" --out output/ARTVISION_4X1_PLAN.json`, compilarlo senza inventare verifiche, poi `python src/video_director_v13.py four-check --plan output/ARTVISION_4X1_PLAN.json`. È un controllo strutturale a costo zero, non una verifica estetica. Se il dossier 4x1 è legato al progetto V13 con `serial_mode` e `artvision_4x1_plan`, anche il preflight ordinario lo blocca quando incompleto.
+
+Dopo ogni MP4 realmente visto e ascoltato usare `src/artvision_learning_loop_v1.py` per registrare difetti specifici contro il SHA256 esatto, conservare lezioni e scegliere **una sola sperimentazione misurabile** per la produzione seguente. Niente falsi Gold Master, spese automatiche o autocritiche inventate.
+
+
 
 Per **qualsiasi nuovo video/serie** applicare `docs/FILOSOFIA_FONTI_MEDIA_V33.md`
 e `config/editorial_rules.json > media_source_priority`:
