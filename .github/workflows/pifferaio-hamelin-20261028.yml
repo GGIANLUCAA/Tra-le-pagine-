@@ -1,0 +1,95 @@
+name: "Tra le Pagine — Pifferaio Hamelin, 16 scene originali, zero crediti"
+on:
+  push:
+    branches: [main]
+    paths: ["queue/pifferaio_hamelin_20261028.json"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: libri-pifferaio-hamelin-20261028
+  cancel-in-progress: false
+jobs:
+  episode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    env:
+      GEMINI_TTS_FREE_QUOTA_CONFIRMED: ${{ vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify independent free-only request
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open("queue/pifferaio_hamelin_20261028.json"))
+          assert q["episode"]=="pifferaio_hamelin_20261028"
+          assert q["paid_video_api_calls"] is False and q["social_publish"] is False
+          assert q["tts_mode"]=="disabled_until_quota_and_art_review"
+          print("NO PAID I2V; NO GEMINI CALL; NO SOCIAL PUBLISH")
+          PY
+      - name: Install free source and video tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install --quiet "requests>=2.31,<3" "beautifulsoup4>=4.12,<5" "pillow>=10,<13" "numpy>=1.25,<3" "soundfile>=0.12,<1"
+          python -m py_compile tools/pied_piper_20261028.py
+      - name: Acquire original Greenaway images and render genuine non-narrated preview
+        run: python tools/pied_piper_20261028.py
+      - name: Check V13 status without inventing artistic approval
+        if: success()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("output/pifferaio_hamelin_20261028/QUALITY.json")
+          q=json.loads(p.read_text())
+          assert q["complete_narrated_mp4"] is False
+          assert q["state"]=="VISUALS_ACQUIRED_ART_REVIEW_PENDING"
+          assert q["paid_video_calls"]==0
+          print("V13 DRAFT ONLY; 16 source files need real semantic review before Gacrux and final render")
+          PY
+      - name: Deliver verified visual preview and Android ZIPs (not final)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TRA_LE_PAGINE_PIFFERAIO_GREENAWAY_16_SCENE_NON_FINALE
+          path: output/pifferaio_hamelin_20261028/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Record truthful durable run state
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import base64,json,os,subprocess
+          from pathlib import Path
+          p=Path("output/pifferaio_hamelin_20261028")
+          preview=p/"PIFFERAIO_ANTEPRIMA_24S_SENZA_VOCE.mp4"
+          report={"episode":"pifferaio_hamelin_20261028",
+            "run_id":os.environ["GITHUB_RUN_ID"],
+            "run_url":"https://github.com/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/"+os.environ["GITHUB_RUN_ID"],
+            "preview_mp4_exists":preview.is_file(),
+            "preview_sha256":None,
+            "source_images_acquired":len(list(Path("episodes/pifferaio_hamelin_20261028/images").glob("scena_*.jpg"))),
+            "narrated_mp4_exists":False,"gacrux_called":False,
+            "gacrux_free_quota_attested":os.environ.get("GEMINI_TTS_FREE_QUOTA_CONFIRMED")=="true",
+            "artistic_review":"pending","paid_video_api_calls":0,"social_published":False,"archive_imported":False}
+          if preview.is_file():
+            import hashlib
+            report["preview_sha256"]=hashlib.sha256(preview.read_bytes()).hexdigest()
+          q=p/"QUALITY.json"
+          if q.is_file():report["quality"]=json.loads(q.read_text())
+          data=json.dumps(report,ensure_ascii=False,indent=2)+"\n"
+          route="repos/"+os.environ["GITHUB_REPOSITORY"]+"/contents/reports/pifferaio_hamelin_20261028_run.json"
+          payload={"message":"LIBRI: record actual Pifferaio run, no paid API","branch":"main",
+                   "content":base64.b64encode(data.encode()).decode()}
+          old=subprocess.run(["gh","api",route],capture_output=True,text=True)
+          if old.returncode==0:payload["sha"]=json.loads(old.stdout)["sha"]
+          tmp=Path("/tmp/pifferaio_report.json");tmp.write_text(json.dumps(payload))
+          subprocess.run(["gh","api","--method","PUT",route,"--input",str(tmp)],check=True,stdout=subprocess.DEVNULL)
+          print("RUN_STATE",json.dumps({k:v for k,v in report.items() if k!="quality"}))
+          PY
