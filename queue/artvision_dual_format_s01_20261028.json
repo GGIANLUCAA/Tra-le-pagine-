@@ -1,0 +1,123 @@
+{
+  "schema_version": "artvision-paired-series-v1",
+  "series_id": "artvision_dual_format_s01_20261028",
+  "created_at": "2026-10-28",
+  "user_goal": "Un nuovo MP4 ArtVision tentato ogni due ore, due video distinti per ciascuna opera: Cinema Museum Immersion e Critico narrato italiano.",
+  "automation_id": "6adca191603c8191a90d5190901cd034",
+  "schedule_intent": "one_video_attempt_per_2_hours; not two videos per slot; quality gates may delay delivery",
+  "guide": "docs/ARTVISION_PRODUZIONE_A_COPPIE_V53.md",
+  "status": "planned_and_existing_cinema_candidates_registered_no_new_render_claimed",
+  "policy": {
+    "artistic_quality_over_count": true,
+    "paid_video_api_budget_eur": 0,
+    "no_auto_social_publish": true,
+    "no_duplicate_renders": true,
+    "voice_for_critico": "Google Gemini Gacrux verified",
+    "critico_without_verified_voice": "blocked_voice_unavailable",
+    "on_block": "record_precise_blocker_and_prepare_other_safe_queue_work",
+    "artistic_review": "required_for_exact_file_sha256",
+    "max_concurrent_artvision_jobs": 1
+  },
+  "selection": {
+    "new_artwork_compare_n": 3,
+    "checks": [
+      "audience V32",
+      "museum source measurements",
+      "visual richness",
+      "human critical insight",
+      "rights of reproduction",
+      "frame provenance"
+    ]
+  },
+  "next_slot_preference": "wright_air_pump_1768__critico; only if actual Google Gacrux voice and accurate beat cues available",
+  "pairs": [
+    {
+      "pair_id": "wright_air_pump_1768",
+      "artist": "Joseph Wright of Derby",
+      "work": "An Experiment on a Bird in the Air Pump",
+      "year": 1768,
+      "museum": "National Gallery London",
+      "source": "https://www.nationalgallery.org.uk/paintings/joseph-wright-of-derby-an-experiment-on-a-bird-in-the-air-pump",
+      "physical_dimensions_cm": {
+        "h": 183,
+        "w": 244
+      },
+      "cinema": {
+        "status": "rendered_needs_review",
+        "version": "V52B",
+        "sha256": "ec4525c155334a02696bfa05d745005bea3084f178043c9eaf1dca6d7bfe29e2",
+        "report": "docs/productions/2026-10-28-0915-wright-air-pump-v52b.md"
+      },
+      "critico": {
+        "status": "planned_voice_and_script_preflight",
+        "next_action": "Research 6-12 substantive critical beats, authenticate each visual focus, verify Gacrux before actual narration or rendering."
+      }
+    },
+    {
+      "pair_id": "fabritius_goldfinch_1654",
+      "artist": "Carel Fabritius",
+      "work": "The Goldfinch",
+      "year": 1654,
+      "museum": "Mauritshuis",
+      "source": "https://www.mauritshuis.nl/en/our-collection/artworks/605-the-goldfinch",
+      "physical_dimensions_cm": {
+        "h": 33.5,
+        "w": 22.8
+      },
+      "cinema": {
+        "status": "rendered_needs_review",
+        "version": "V50",
+        "sha256": "5b760c609a51acf9c22a5f39aeb90344ea6914b812290c5fc01164376d3c94bd",
+        "report": "docs/productions/2026-10-28-goldfinch-museum-scale-s01-e01.md"
+      },
+      "critico": {
+        "status": "planned_voice_and_script_preflight",
+        "next_action": "Explain chained bird, painterly illusion, small scale and historical context without invented symbols; verify Gacrux voice."
+      }
+    },
+    {
+      "pair_id": "seurat_grande_jatte_1884",
+      "artist": "Georges Seurat",
+      "work": "A Sunday on La Grande Jatte—1884",
+      "year": "1884-1886",
+      "museum": "Art Institute of Chicago",
+      "source": "https://www.artic.edu/artworks/27992/a-sunday-on-la-grande-jatte-1884",
+      "physical_dimensions_cm": {
+        "h": 207.6,
+        "w": 308
+      },
+      "cinema": {
+        "status": "rendered_needs_review",
+        "version": "V51",
+        "sha256": "450d9c86942a4d9cb57ee87cb8b5e0b536232091d17d95e997b311c32c65b367",
+        "report": "queue/artvision_museum_scale_s01_20261028.json"
+      },
+      "critico": {
+        "status": "planned_voice_and_script_preflight",
+        "next_action": "Discuss pointillism, optical mixing, social staging and figures with sources; synchronize closeups to speech."
+      }
+    },
+    {
+      "pair_id": "turner_fighting_temeraire_1839",
+      "artist": "J. M. W. Turner",
+      "work": "The Fighting Temeraire",
+      "year": 1839,
+      "museum": "National Gallery London",
+      "source": "https://www.nationalgallery.org.uk/paintings/joseph-mallord-william-turner-the-fighting-temeraire",
+      "physical_dimensions_cm": {
+        "h": 90.7,
+        "w": 121.6
+      },
+      "cinema": {
+        "status": "planned_not_rendered",
+        "next_action": "Prepare Cinema using verified painting, frame and true scale."
+      },
+      "critico": {
+        "status": "blocked_voice_unavailable",
+        "origin": "queue/artvision_museum_scale_s01_20261028.json",
+        "next_action": "Research and draft speech; obtain real Gacrux verification, no silent downgrade to Cinema."
+      }
+    }
+  ],
+  "release_state": "No new video was rendered by creating this queue."
+}
