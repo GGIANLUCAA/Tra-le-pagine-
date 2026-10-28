@@ -4,6 +4,10 @@ Leggere `AGENTS.md`, [regole attive](docs/REGOLE_ATTIVE.md) e
 [registro dei format](config/video_formats_v13.json). Questa revisione del 25/10/2026
 prevale sui vincoli storici incompatibili. Le istruzioni della sessione restano prioritarie.
 
+## V58 — Storia senza stampini e senza 4K cosmetico
+
+Quando viene chiesto «un nuovo video storico», fare autonomamente ricerca qualitative di almeno 3 filmati d'archivio, scegliere scene con azioni vere, progettare un gancio forte e un montaggio anche multi-shot quando serve. Percepito nitido a 720p/1080p meglio di falso 4K. Colorizzazione AI reale non seppia, continuità, fonte esatta; montare con FFmpeg e materiali colorizzati già verificati. Vidu solo opzionale e a pagamento previa approvazione per clip. Leggere `docs/LA_STORIA_RIVIVE_OPEN_SOURCE_E_MONTAGGIO_V58.md` e il registro `queue/storia_rivive_candidates_v58.json`; nessuna domanda ripetuta sui preset già decisi.
+
 ## La Storia Rivive: riferimento estetico V57
 
 Non chiedere di nuovo che effetto desidera l'utente: **colore vero ben definito, volti realistici, dettaglio moderno**, come i tre MP4 di riferimento; non seppia né sola dissolvenza. Leggere `docs/LA_STORIA_RIVIVE_QUALITA_V57.md` prima di avviare la categoria. Il test gratuito accettabile è una clip 2–3s colorizzata DAVVERO con AI, non un'altra tinta cosmetica. Preservare separazione archivio autentico vs ricostruzione generativa e budget 0 senza autorizzazione.
