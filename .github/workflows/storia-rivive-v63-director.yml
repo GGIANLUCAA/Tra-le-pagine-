@@ -1,0 +1,63 @@
+name: "La Storia Rivive V63 — director cut 1080p and real photo-restoration QA"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/storia_rivive_director_cut_v63.py"
+      - "src/storia_rivive_v63_qa.py"
+      - ".github/workflows/storia-rivive-v63-director.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-rivive-v63-director-render
+  cancel-in-progress: false
+jobs:
+  render_and_critique:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      HF_HUB_DISABLE_XET: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Install free CPU-only source and restoration tools"
+        run: |
+          python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow onnxruntime huggingface_hub
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - name: "Syntax and source contract"
+        run: |
+          python -m py_compile src/storia_rivive_director_cut_v63.py src/storia_rivive_v63_qa.py
+          python -m json.tool config/storia_rivive_v63.json > /dev/null
+          python -m json.tool queue/storia_rivive_beirut_v63_selected_scenes.json > /dev/null
+      - name: "Render directed B/W video → clean natural-color AI still → hold, 1080x1920"
+        run: |
+          python -u src/storia_rivive_director_cut_v63.py
+      - name: "Actual visual-contact QA, pixel preservation, stillness, runtime"
+        run: |
+          python -u src/storia_rivive_v63_qa.py
+      - name: "Preserve MP4, ZIP and source-vs-photo comparison for REAL artistic review"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_RIVIVE_BEIRUT_V63_DIRETTORE_1080P
+          path: |
+            output/storia_rivive_v63_director_cut/LA_STORIA_RIVIVE_BEIRUT_1919_REGIA_V63.mp4
+            output/storia_rivive_v63_director_cut/BEIRUT_1919_REGIA_V63_KIT.zip
+            output/storia_rivive_v63_director_cut/COVER.jpg
+            output/storia_rivive_v63_director_cut/FOTO_AI_*.jpg
+            output/storia_rivive_v63_director_cut/POST_*.txt
+            output/storia_rivive_v63_director_cut/FONTI_RICETTA_QA.json
+            output/storia_rivive_v63_director_cut/V63_QA_SIX_BEFORE_AFTER.jpg
+            output/storia_rivive_v63_director_cut/V63_QA_REPORT.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "No automatic public or site publication before art-direction review"
+        run: |
+          echo 'V63 is a review master, NOT accepted 4K. User-facing direct download must be made after examining QA board.'

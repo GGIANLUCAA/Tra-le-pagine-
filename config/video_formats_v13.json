@@ -123,10 +123,11 @@
     },
     "storia_rivive": {
       "label": "La Storia Rivive — filmati d'archivio autentici",
-      "status": "pending_actual_generated_ai_photos",
-      "preset": "photo_reveal_v61",
+      "status": "pending_real_artistic_review",
+      "preset": "director_photographic_v63",
       "narrated": false,
       "guides": [
+        "docs/LA_STORIA_RIVIVE_DIREZIONE_FOTOGRAFICA_V63.md",
         "docs/LA_STORIA_RIVIVE_FOTOGRAMMA_FOTO_AI_V61.md",
         "docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md",
         "docs/LA_STORIA_RIVIVE_OPEN_SOURCE_E_MONTAGGIO_V58.md",
@@ -137,16 +138,17 @@
         "docs/VIDEO_LIBRARY_DOSSIER_V1.md"
       ],
       "entrypoints": [
+        "src/storia_rivive_director_cut_v63.py",
         "src/storia_rivive_photo_freeze_v61.py",
         "src/storia_rivive_preflight_v56.py",
         "src/storia_rivive_visual_gate_v57.py",
         "src/storia_rivive_montage_v58.py"
       ],
       "resolution": [
-        720,
-        1280
+        1080,
+        1920
       ],
-      "direction": "Una ripresa d'archivio CC0/PD in movimento B/N; congela l'istante più bello; trasformalo in FOTO AI REALISTICA A COLORI RICOSTRUITA davvero, FERMA per ~0,9s (fast) o ~2s (slow); cut ad altra ripresa vera. Il video tutto a colori in movimento come V60 NON è lo stile di riferimento. 720p/1080p visivamente belli. Fonte, nomi/volti/oggetti verificati; musica sui cambi; V55.",
+      "direction": "Scegliere prima il frame migliore dal film: volti e gesti, crop 9:16 sicuro. 1.2–1.6s B/N in movimento, 0.3–0.4s transizione e 1.8–2.8s fotografia AI ferma. Durata ~20–28s secondo soggetto. Restauro FOTO sul crop original-size, no pre-AI downsizing, no falso 4K. Qualità indistinguibile da foto moderna richiede generativo image-to-image non ancora integrato.",
       "next_action": "Generare realmente fotografie AI image-to-image da keyframe archivistico PD/CC0 usando modello restaurativo compatibile, fare QA identità e nitidezza; soltanto dopo montarle con src/storia_rivive_photo_freeze_v61.py e pacchetto V55. Nessuna nuova prova solo DDColor.",
       "rules_config": "config/storia_rivive_v56.json",
       "quality_preset": "reference_modern_color",

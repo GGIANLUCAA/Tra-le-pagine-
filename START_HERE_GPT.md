@@ -4,6 +4,10 @@ Leggere `AGENTS.md`, [regole attive](docs/REGOLE_ATTIVE.md) e
 [registro dei format](config/video_formats_v13.json). Questa revisione del 25/10/2026
 prevale sui vincoli storici incompatibili. Le istruzioni della sessione restano prioritarie.
 
+## V63 — REGIA PRIMA DEL RESTAURO (28/10/2026)
+
+Dopo V62 (18,2s): meglio 20–28 s quando serve; studiare l'intero filmato e confrontare i ritagli 9:16, fermandosi sui volti, gesti e momenti davvero importanti. Priorità al contenuto, NON a scene panoramiche riempitive. Fotografia dal ritaglio originale prima di Real-ESRGAN, NO downscale distruttivo V62, denoise leggero, DDColor, render 1080×1920, hold 1.8–2.8s secondo importanza. Il 1080p NON è 4K. Un image-to-image generativo davvero fotografico può superare il semplice ESRGAN, ma serve compute, licenze e valutazione fedeltà, non è integrato. `docs/LA_STORIA_RIVIVE_DIREZIONE_FOTOGRAFICA_V63.md`, `config/storia_rivive_v63.json`, `src/storia_rivive_director_cut_v63.py`. Provino a verifica artistica; V59, V55 e 0 crediti Vidu invariati.
+
 ## V61 — EFFETTO ESATTO: VIDEO B/N → FOTOGRAFIA AI STATICA COLORATA
 
 La scelta di regia è GIÀ stata chiarita dall'utente: analisi dei tre video `43054.mp4` (2s+2s), `43055.mp4` e `43056.mp4` (~0,9s+0,9s). Per ogni ripresa autentica: muove il B/N, seleziona istante significativo, **blocca movimento**, cambia rapidamente in NUOVA fotografia AI ricostruita con colori/distinzione e nitidezza moderna; lascia ammirare la FOTO per 0,9–2 s, poi cut a NUOVA scena. Non serve Vidu. Non basta DDColor su video, non serve 4K nativo. Vedi `docs/LA_STORIA_RIVIVE_FOTOGRAMMA_FOTO_AI_V61.md` prima di nuove produzioni. Senza il file fotografia AI realmente generato e visto non affermare di avere un risultato conforme.

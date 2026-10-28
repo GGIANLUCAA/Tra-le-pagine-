@@ -1,0 +1,68 @@
+{
+  "version": "V63_2026-10-28",
+  "format": "storia_rivive",
+  "predecessor": "V62",
+  "goal": "Beyond cosmetic upscaling: director-selected documentary keyframes, 1080p color photo holds, visually impressive with honest limitations",
+  "target_duration_s": [
+    20,
+    28
+  ],
+  "target_deliver_px": [
+    1080,
+    1920
+  ],
+  "native_source_px": [
+    720,
+    576
+  ],
+  "cannot_claim_native4k": true,
+  "zero_paid_calls": true,
+  "master_source_rights": "CC0_or_PD_verified",
+  "editorial_selection": {
+    "inspect_full_source": true,
+    "compare_vertical_crop_options": true,
+    "priority_formula": "historical_action+human_face_expression+readable_subject+safe_framing+story_arc+contrast",
+    "reject": "tiny_far_away_people/cut_faces/repeated_source_actions/filler",
+    "photo_hold_by_importance_s": [
+      1.8,
+      2.75
+    ],
+    "moving_blackwhite_s": [
+      1.25,
+      1.55
+    ],
+    "transition_s": [
+      0.32,
+      0.36
+    ],
+    "start": "animal or prominent human action",
+    "end": "group or meaningful closing",
+    "titles": "only opening; no repeated graphics obstructing photograph"
+  },
+  "restoration": {
+    "order": [
+      "authentic archival frame at exact freeze instant",
+      "gentle monochrome denoise without obliterating grain",
+      "DDColor semantic colorization",
+      "safe subject-centred crop at original resolution, no pre-AI downscale",
+      "Real-ESRGAN x4 restoration from native crop",
+      "resize 1080x1920, restrained contrast, no aggressive detailEnhance",
+      "manual compare crop-source vs restored photo"
+    ],
+    "separate_models_optional": [
+      "SUPIR with authorized GPU only, check rights",
+      "DiffBIR with authorized GPU only, verify pretrained weight licensing",
+      "GFPGAN/CodeFormer face-only if source face enough pixels, check identity"
+    ],
+    "gpu_available_now": false,
+    "real_generative_photo_model_integrated": false,
+    "honest_quality_limit": "AI can enhance but cannot recover truly missing features from 720x576 source",
+    "auto_publishing_without_approval": false
+  },
+  "output": {
+    "renderer": "src/storia_rivive_director_cut_v63.py",
+    "qa": "manual side-by-side check mandatory",
+    "publish_master_only_when_artistic_qa_passed": true,
+    "platform": "H264/AAC, original music, ZIP+cover+4 posts+source rights"
+  }
+}
