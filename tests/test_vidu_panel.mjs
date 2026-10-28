@@ -23,3 +23,19 @@ test('sweep archives completed clip privately and does not submit',async()=>{pai
 test('reject unsafe API routes without owner auth and cross-origin writes',async()=>{const env={STUDIO:{fetch:async()=>Response.json({ok:false},{status:401})}};let r=await worker.fetch(new Request('https://panel.test/api/jobs'),env);assert.equal(r.status,401);r=await worker.fetch(new Request('https://panel.test/api/submit',{method:'POST',headers:{origin:'https://evil.test'}}),env);assert.equal(r.status,403);});
 test('configuration is encrypted and never returned; no generation for connection',async()=>{const env={VIDEOS:new Bucket(),CONFIG_SECRET:'x'.repeat(40),STUDIO:{fetch:async()=>Response.json({ok:true})}};const key='private-api-key-not-for-output';paid=0;const restore=mockProvider(provider);try{const r=await worker.fetch(new Request('https://panel.test/api/connect',{method:'POST',headers:{origin:'https://panel.test',authorization:'Bearer '+'a'.repeat(32)},body:JSON.stringify({key})}),env);assert.equal(r.status,200);assert.ok(!(await r.text()).includes(key));assert.ok(!env.VIDEOS.data.get(P+'connection.json').includes(key));assert.equal(paid,0);}finally{restore();}});
 test('overlapping balances remain separate and unknown balances fail closed',()=>{assert.deepEqual(balanceRows({remains:[{credit_remain:5},{credit_remain:7}]}).map(x=>x.credits),[5,7]);assert.throws(()=>balanceRows({packages:[]}));});
+
+test('GitHub import requires a valid signature, exact repo, workflow, commit and expiry',async()=>{
+ const {verifyGithub,AUDIENCE}=await import('../integrations/vidu_panel/github-oidc.mjs');
+ const pair=await crypto.subtle.generateKey({name:'RSASSA-PKCS1-v1_5',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'},true,['sign','verify']);
+ const jwk=await crypto.subtle.exportKey('jwk',pair.publicKey);jwk.kid='test';jwk.use='sig';
+ const env={IMPORT_COMMIT:'a'.repeat(40),IMPORT_UNTIL:String(now+3600000)};
+ const claims={iss:'https://token.actions.githubusercontent.com',aud:AUDIENCE,nbf:now/1000-1,iat:now/1000,exp:now/1000+300,repository_id:'1424142756',repository_owner_id:'249835809',repository:'GGIANLUCAA/Tra-le-pagine-',ref:'refs/heads/feature/vidu-mobile-panel',sha:env.IMPORT_COMMIT,event_name:'push',workflow_ref:'GGIANLUCAA/Tra-le-pagine-/.github/workflows/vidu-connect-once.yml@refs/heads/feature/vidu-mobile-panel'};
+ const sign=async c=>{const head=Buffer.from(JSON.stringify({alg:'RS256',kid:'test'})).toString('base64url'),body=Buffer.from(JSON.stringify(c)).toString('base64url'),msg=head+'.'+body;return msg+'.'+Buffer.from(await crypto.subtle.sign('RSASSA-PKCS1-v1_5',pair.privateKey,new TextEncoder().encode(msg))).toString('base64url');};
+ const restore=mockProvider(async()=>Response.json({keys:[jwk]}));try{
+  assert.equal((await verifyGithub(await sign(claims),env,now)).sha,env.IMPORT_COMMIT);
+  for(const field of ['aud','repository_id','repository_owner_id','ref','sha','workflow_ref','event_name'])await assert.rejects(verifyGithub(await sign({...claims,[field]:'other'}),env,now));
+  await assert.rejects(verifyGithub(await sign(claims),env,now+400000));
+  await assert.rejects(verifyGithub(await sign(claims),{},now));
+  const signed=await sign(claims),parts=signed.split('.');parts[2]=Buffer.alloc(256).toString('base64url');await assert.rejects(verifyGithub(parts.join('.'),env,now));
+ }finally{restore();}
+});

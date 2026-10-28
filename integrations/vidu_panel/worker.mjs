@@ -1,3 +1,4 @@
+import {verifyGithub} from './github-oidc.mjs';
 import { HTML, CLIENT, CSS } from './ui.mjs';
 const PREFIX = 'private-vidu/v1/';
 const API = 'https://api.vidu.com';
@@ -141,6 +142,17 @@ export default {
   if(req.method==='GET'&&['/','/app.js','/app.css'].includes(p))return new Response(p==='/'?HTML:p==='/app.js'?CLIENT:CSS,{headers:{...headers,'content-type':p==='/'?'text/html; charset=utf-8':p==='/app.js'?'text/javascript; charset=utf-8':'text/css; charset=utf-8','content-security-policy':"default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'"}});
   if(!p.startsWith('/api/'))return reply({error:'Pagina non trovata.'},404);
   try{
+   if(p==='/api/github-connect'&&req.method==='POST'){
+    // No browser auth bypass: exact short-lived GitHub OIDC signature is required.
+    try{await verifyGithub((req.headers.get('authorization')||'').replace(/^Bearer /,''),env);}catch{return reply({error:'Importazione GitHub non autorizzata.'},403);}
+    const b=await readJSON(req,4096),key=clean(b.key,500,20);if(/\s/.test(key))fail('Chiave non valida.');
+    const receipt='imports/'+env.IMPORT_COMMIT+'.json';
+    if(await get(env,receipt))return reply({connected:true,alreadyImported:true});
+    balanceRows(await api(key,'/ent/v2/credits'));
+    await saveKey(env,key);
+    await put(env,receipt,{connected:true,at:Date.now(),commit:env.IMPORT_COMMIT});
+    return reply({connected:true,verifiedReadOnly:true});
+   }
    if(req.method!=='GET'&&req.headers.get('origin')!==u.origin)return reply({error:'Origine non autorizzata.'},403);
    if(!await authenticate(req,env))return reply({error:'Accedi con la chiave di gestione del tuo Video Library Studio.'},401);
    if(p==='/api/status'&&req.method==='GET')return reply({connected:Boolean(env.VIDU_API_KEY||await get(env,'connection.json')),priceDate:pricing.date,priceExpiresAt:pricing.expiresAt,firstCredit:pricing.first,extraCredit:pricing.extra,priceValid:Date.now()<=PRICE_UNTIL});
