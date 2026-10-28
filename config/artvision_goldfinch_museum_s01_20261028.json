@@ -1,0 +1,160 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "48.0",
+  "date": "2026-10-28",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261028-museum-scale-s01-e01",
+  "chosen_format": "artvision_cinema",
+  "queue": "queue/artvision_museum_scale_s01_20261028.json",
+  "format_reason": "User-approved queue S01 episode 1. Cinema avoids unsupported Critico voice and protects paid credits.",
+  "candidates_considered": [
+    {
+      "artist": "Carel Fabritius",
+      "title": "The Goldfinch",
+      "reason": "SELECTED first approved S01 episode; small 33.5x22.8 cm panel; museum primary source; authentic PD-Art high-res Commons image."
+    },
+    {
+      "artist": "J. M. W. Turner",
+      "title": "The Fighting Temeraire",
+      "reason": "S01 episode 2 reserved for narrated Critico, Google Gacrux required and unverified for this cycle."
+    },
+    {
+      "artist": "Georges Seurat",
+      "title": "A Sunday on La Grande Jatte—1884",
+      "reason": "S01 episode 3 reserved for monumental scale Cinema; avoid skipping queue order."
+    }
+  ],
+  "subjects": {
+    "goldfinch": {
+      "artist": "CAREL FABRITIUS",
+      "title_en": "The Goldfinch",
+      "year": "1654",
+      "museum": "Mauritshuis, The Hague, inv. 605",
+      "slug": "fabritius_goldfinch_museum_s01_20261028",
+      "editorial_key": "fabritius_goldfinch_museum_s01_20261028",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
+      "museum_page": "https://www.mauritshuis.nl/en/our-collection/artworks/605-the-goldfinch",
+      "art_candidates": [
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/3/3c/Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg"
+      ],
+      "music": {
+        "name": "Water Lily",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Water%20Lily.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1400035",
+        "offset": 0
+      },
+      "story": "A tiny goldfinch seems alive until a delicate chain changes the feeling; the yellow wing's scratched paint reveals Fabritius's craft. Physical scale is explicit, the museum setting is an illustrative reconstruction, not an actual room photograph.",
+      "techniques": [
+        "physical_scale_reveal",
+        "opaque_museum_entry",
+        "bird_eye_detail",
+        "chain_revelation",
+        "brushstroke_wow",
+        "same_room_return"
+      ],
+      "scenes": [
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 5.8,
+          "movement": "locked",
+          "intent": "First museum view: a 33.5 cm high panel is tiny against a human-scale wall; title and artist appear together."
+        },
+        {
+          "type": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 5.1,
+          "movement": "locked",
+          "intent": "Visitor approaches the small framed panel; gallery geometry scales consistently, not an enormous wall-sized painting."
+        },
+        {
+          "type": "medium",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 5.3,
+          "movement": "locked",
+          "intent": "Close to the frame: the little goldfinch becomes legible before the image enters the painting."
+        },
+        {
+          "type": "portrait",
+          "x": 0.51,
+          "y": 0.42,
+          "z": 1.04,
+          "seconds": 5.3,
+          "movement": "locked",
+          "intent": "The bird's face and posture feel alive; pause on the real painted expression."
+        },
+        {
+          "type": "macro",
+          "x": 0.57,
+          "y": 0.38,
+          "z": 1.18,
+          "seconds": 5.1,
+          "movement": "slow_push",
+          "intent": "The red facial mask and alert eye show Fabritius's delicate optical illusion."
+        },
+        {
+          "type": "texture",
+          "x": 0.42,
+          "y": 0.45,
+          "z": 1.22,
+          "seconds": 5.1,
+          "movement": "locked",
+          "intent": "Yellow wing paint scratched with brush handle: museum-documented material technique."
+        },
+        {
+          "type": "detail",
+          "x": 0.47,
+          "y": 0.62,
+          "z": 1.12,
+          "seconds": 5.3,
+          "movement": "locked",
+          "intent": "Reveal the fine chain that changes the emotional reading of the tame bird."
+        },
+        {
+          "type": "portrait",
+          "x": 0.48,
+          "y": 0.51,
+          "z": 1.02,
+          "seconds": 5.4,
+          "movement": "slow_pull",
+          "intent": "The whole bird and feeding box are reunited in the original panel, without overlay."
+        },
+        {
+          "type": "medium",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 5.3,
+          "movement": "locked",
+          "intent": "Exit the painting into the same reconstructed museum wall, restoring the actual small scale."
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 7.8,
+          "movement": "locked",
+          "intent": "End in the original room perspective: an intimate small panel rather than a monumental canvas."
+        }
+      ],
+      "dimensions_cm": {
+        "height": 33.5,
+        "width": 22.8,
+        "source": "https://www.mauritshuis.nl/en/our-collection/artworks/605-the-goldfinch"
+      },
+      "museum_immersion": "reconstructed_room_with_physical_scale_33_5x22_8cm_not_documentary_photo"
+    }
+  }
+}
