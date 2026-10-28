@@ -1,0 +1,154 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "55.0",
+  "date": "2026-10-28",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261028-turner-cinema-standard",
+  "chosen_format": "artvision_cinema",
+  "format_reason": "Render the missing Turner Cinema Standard with authentic PD artwork, verified music, no paid API, no duplicate.",
+  "candidates_considered": [
+    {
+      "artist": "J. M. W. Turner",
+      "title": "The Fighting Temeraire",
+      "reason": "Chosen: missing Cinema Standard; six verified details and museum source."
+    },
+    {
+      "artist": "Joseph Wright of Derby",
+      "title": "An Experiment on a Bird in the Air Pump",
+      "reason": "Cinema Standard V52B already rendered, avoid duplication."
+    },
+    {
+      "artist": "Carel Fabritius",
+      "title": "The Goldfinch",
+      "reason": "Cinema Standard V55 and Museum V50 already rendered."
+    },
+    {
+      "artist": "Georges Seurat",
+      "title": "A Sunday on La Grande Jatte—1884",
+      "reason": "Cinema Standard V55 and Museum V51 already rendered."
+    }
+  ],
+  "subjects": {
+    "temeraire": {
+      "artist": "J. M. W. TURNER",
+      "title_en": "The Fighting Temeraire",
+      "year": "1839",
+      "museum": "National Gallery, London, NG524",
+      "slug": "turner_fighting_temeraire_cinema_standard_v55",
+      "editorial_key": "turner_fighting_temeraire_cinema_standard_v55",
+      "source_page": "https://commons.wikimedia.org/wiki/File:The_Fighting_Temeraire,_JMW_Turner,_National_Gallery.jpg",
+      "museum_page": "https://www.nationalgallery.org.uk/paintings/joseph-mallord-william-turner-the-fighting-temeraire",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/3/30/The_Fighting_Temeraire%2C_JMW_Turner%2C_National_Gallery.jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/The_Fighting_Temeraire%2C_JMW_Turner%2C_National_Gallery.jpg"
+      ],
+      "music": {
+        "name": "Water Lily",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Water%20Lily.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1400035",
+        "offset": 2.2
+      },
+      "story": "A ghostlike veteran warship is pulled toward dismantling by a small black steam tug; the sunset, masts and moon transform historical change into a farewell.",
+      "techniques": [
+        "detail_first",
+        "motivated_cut",
+        "subtle_optical_motion",
+        "full_artwork_resolution"
+      ],
+      "scenes": [
+        {
+          "type": "detail",
+          "x": 0.305,
+          "y": 0.46,
+          "z": 1.12,
+          "seconds": 5.1,
+          "movement": "locked",
+          "intent": "The pale veteran warship is the authentic opening visual hook"
+        },
+        {
+          "type": "portrait",
+          "x": 0.475,
+          "y": 0.61,
+          "z": 1.24,
+          "seconds": 5.2,
+          "movement": "slow_push",
+          "intent": "The small dark steam tug reverses the apparent hierarchy of power"
+        },
+        {
+          "type": "texture",
+          "x": 0.49,
+          "y": 0.37,
+          "z": 1.13,
+          "seconds": 5.1,
+          "movement": "locked",
+          "intent": "The smoke connects the new steam power to the pale masts"
+        },
+        {
+          "type": "medium",
+          "x": 0.78,
+          "y": 0.55,
+          "z": 1.12,
+          "seconds": 5.2,
+          "movement": "slow_pull",
+          "intent": "The sunset gives the journey poetic meaning"
+        },
+        {
+          "type": "detail",
+          "x": 0.29,
+          "y": 0.45,
+          "z": 1.08,
+          "seconds": 5.1,
+          "movement": "locked",
+          "intent": "The masts Turner restored despite their removal in the actual tow"
+        },
+        {
+          "type": "texture",
+          "x": 0.19,
+          "y": 0.2,
+          "z": 1.04,
+          "seconds": 5.1,
+          "movement": "locked",
+          "intent": "A faint moon creates a quiet, contemplative visual pause"
+        },
+        {
+          "type": "medium",
+          "x": 0.7,
+          "y": 0.8,
+          "z": 1.14,
+          "seconds": 5.1,
+          "movement": "locked",
+          "intent": "The dark river and buoy balance the warm sky"
+        },
+        {
+          "type": "portrait",
+          "x": 0.47,
+          "y": 0.62,
+          "z": 1.12,
+          "seconds": 5,
+          "movement": "slow_pull",
+          "intent": "Return to the tug that moves the old giant"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 7,
+          "movement": "locked",
+          "intent": "The whole painting resolves the historical paradox"
+        }
+      ],
+      "dimensions_cm": {
+        "height": 90.7,
+        "width": 121.6,
+        "source": "https://www.nationalgallery.org.uk/paintings/joseph-mallord-william-turner-the-fighting-temeraire"
+      },
+      "museum_immersion": "not_used: Cinema Standard has no illustrative gallery"
+    }
+  },
+  "correction_note": "V52 initial render was rejected after actual contact-sheet review: opening focused on an empty birdcage, not the bird, due to wrong normalized x coordinate. V52B corrects all 10 scene coordinates against the 5639×4226 genuine source image. Initial artifact is preserved as a rejected study, not overwritten."
+}
