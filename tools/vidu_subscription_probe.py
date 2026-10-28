@@ -8,14 +8,30 @@ import sys
 def call(name, args):
     try:
         p=subprocess.run(args, capture_output=True, text=True, timeout=45, check=False)
-        if p.returncode:
-            print(f"{name}: HTTP/CLI failure; exit={p.returncode}; no generation")
+        try:
+            data=json.loads(p.stdout)
+        except (ValueError, TypeError):
+            print(f"{name}: invalid/non-JSON CLI response; exit={p.returncode}; no generation")
             return False
-        data=json.loads(p.stdout)
-        if not isinstance(data,dict) or data.get("ok") is not True:
-            print(f"{name}: provider did not confirm success")
+        if not isinstance(data,dict) or data.get("ok") is not True or p.returncode:
+            error=data.get("error",{}) if isinstance(data,dict) else {}
+            if not isinstance(error,dict):
+                error={}
+            safe_type=str(error.get("type","unknown"))[:60]
+            safe_code=str(error.get("code","unknown"))[:60]
+            status=error.get("http_status")
+            if type(status) is not int:
+                status="unknown"
+            print(f"{name}: refused; type={safe_type} code={safe_code} http_status={status} exit={p.returncode}; no generation")
             return False
-        print(f"{name}: confirmed; personal balance hidden from public logs")
+        if name.endswith("quote_NOT_Q2_PRO_FAST"):
+            cost=data.get("cost_credits")
+            if type(cost) is int:
+                print(f"{name}: verified; 8_credit_ceiling={cost<=8}; can_submit={data.get('can_submit') is True}; no generation")
+            else:
+                print(f"{name}: verified with no interpretable price; no generation")
+        else:
+            print(f"{name}: confirmed; account quota numbers hidden from public logs")
         return True
     except (OSError,subprocess.TimeoutExpired,ValueError):
         print(f"{name}: unavailable or invalid output; no generation")
