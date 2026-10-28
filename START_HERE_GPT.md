@@ -4,6 +4,10 @@ Leggere `AGENTS.md`, [regole attive](docs/REGOLE_ATTIVE.md) e
 [registro dei format](config/video_formats_v13.json). Questa revisione del 25/10/2026
 prevale sui vincoli storici incompatibili. Le istruzioni della sessione restano prioritarie.
 
+## V61 — EFFETTO ESATTO: VIDEO B/N → FOTOGRAFIA AI STATICA COLORATA
+
+La scelta di regia è GIÀ stata chiarita dall'utente: analisi dei tre video `43054.mp4` (2s+2s), `43055.mp4` e `43056.mp4` (~0,9s+0,9s). Per ogni ripresa autentica: muove il B/N, seleziona istante significativo, **blocca movimento**, cambia rapidamente in NUOVA fotografia AI ricostruita con colori/distinzione e nitidezza moderna; lascia ammirare la FOTO per 0,9–2 s, poi cut a NUOVA scena. Non serve Vidu. Non basta DDColor su video, non serve 4K nativo. Vedi `docs/LA_STORIA_RIVIVE_FOTOGRAMMA_FOTO_AI_V61.md` prima di nuove produzioni. Senza il file fotografia AI realmente generato e visto non affermare di avere un risultato conforme.
+
 ## V59 — Fonti storiche di pubblico dominio, no monetizzazione
 
 Per `La Storia Rivive` non domandare ancora se vuole monetizzare: la risposta è **no**. Seleziona SOLO veri filmati originali PD o CC0 verificati; il software può essere open-source o limitato a usi non commerciali quando consente effettivamente la produzione e pubblicazione prevista. Non usare tool «solo ricerca» per pubblicare senza verifica specifica. Diritti musica indipendenti, nessuna autopubblicazione, mantenere V55. Guida `docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md`.
