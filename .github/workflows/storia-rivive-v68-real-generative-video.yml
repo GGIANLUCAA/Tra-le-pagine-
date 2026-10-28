@@ -11,7 +11,7 @@ permissions:
   actions: read
 concurrency:
   group: storia-rivive-v68-generative-photos
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   real_generatively_restored_video:
     runs-on: ubuntu-latest
