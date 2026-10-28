@@ -27,7 +27,7 @@ jobs:
           cases=[
             ("STEVE_KNIGHT_2025_APR_CC_BY_2","https://commons.wikimedia.org/wiki/Special:Redirect/file/Joseph_Wright_of_Derby_-_An_experiment_on_a_bird_with_an_air_pump_-_1768.jpg"),
             ("STEVE_KNIGHT_2025_DEC_CC_BY_4","https://commons.wikimedia.org/wiki/Special:Redirect/file/An_Experiment_on_a_bird_in_an_air_pump_1768_Joseph_Wright_of_Derby_-_54977535687.jpg"),
-            ("TRISTAN_SURTEL_2018_PDM","https://upload.wikimedia.org/wikipedia/commons/c/c4/An_Experiment_on_a_Bird_in_the_Air_Pump.jpg")
+            ("TRISTAN_SURTEL_2018_PDM","https://commons.wikimedia.org/wiki/Special:Redirect/file/An_Experiment_on_a_Bird_in_the_Air_Pump.jpg")
           ]
           sheet=Image.new("RGB",(1000,850*len(cases)),(14,18,23));d=ImageDraw.Draw(sheet)
           meta=[]
@@ -57,3 +57,5 @@ jobs:
           path: output/wright-photo-probe-v55/*
           if-no-files-found: error
           retention-days: 7
+
+# Retry 1: use Commons redirect after upload.wikimedia 429; no rendering.
