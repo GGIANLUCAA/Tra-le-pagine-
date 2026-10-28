@@ -38,19 +38,24 @@
           "verified_this_migration": false
         },
         "cinema_standard": {
-          "status": "planned",
-          "legacy_prior": null,
-          "verified_this_migration": false
-        },
-        "cinema_museum": {
           "status": "rendered_needs_review",
           "legacy_prior": "rendered_needs_review",
           "reported_hash": "ec4525c155334a02696bfa05d745005bea3084f178043c9eaf1dca6d7bfe29e2",
           "legacy_version": "V52B",
           "legacy_report": "docs/productions/2026-10-28-0915-wright-air-pump-v52b.md",
-          "verified_this_migration": false
+          "verified_this_migration": true,
+          "classification_evidence": "2026-10-28 V52B source ZIP VIDEO_RECIPE_V13.json + QA_CONTACT_SHEET.jpg: painting-only closeups, no gallery or framed museum entrance; therefore Cinema Standard, not Cinema Museum",
+          "human_approval": false,
+          "archive_sync_pending": true
+        },
+        "cinema_museum": {
+          "status": "planned",
+          "legacy_prior": "misclassified_as_museum_in_V54_initial_migration",
+          "verified_this_migration": false,
+          "notes": "No verified Museum Immersion render for Wright; avoid duplicate V52B. Requires real-scale gallery 183x244 cm, frame provenance and V46 review."
         }
-      }
+      },
+      "migration_correction": "2026-10-28: reclassified V52B to cinema_standard after inspecting original V52B package, recipe and QA contact sheet; historical V53 queue left intact."
     },
     {
       "group_id": "fabritius_goldfinch_1654",
