@@ -1,0 +1,41 @@
+name: "V70 — vere fotografie AI da pellicola originale 1906 (NO crediti)"
+on:
+  pull_request:
+    paths:
+      - "src/storia_v70_sf1906_photo_ai.py"
+      - "src/storia_v70_sf1906_source_scout.py"
+      - ".github/workflows/storia-v70-photo-generative.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reconstruct_real_source_photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 37
+    env:
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip -q install --no-cache-dir opencv-python-headless numpy Pillow onnxruntime huggingface_hub gradio_client
+      - name: "Download verified 1906 35mm-derived film and generate TRUE image-to-image AI photographs"
+        run: python -u src/storia_v70_sf1906_photo_ai.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V70_SF1906_REAL_GENERATIVE_PHOTO_REVIEW
+          path: |
+            output/storia_v70_sf1906/FOTO_ORIGINALE_BN_*.png
+            output/storia_v70_sf1906/FOTO_FOTOGRAFICA_AI_*.png
+            output/storia_v70_sf1906/BASE_COLORE_AI_*.jpg
+            output/storia_v70_sf1906/RESTORATION_QA.json
+            output/storia_v70_sf1906/CONTATTI_PRIMA_DOPO_AI_V70.jpg
+          if-no-files-found: warn
+          retention-days: 14
+      - run: echo "Photo creation only. Manual artistic quality check is required BEFORE video render or release."
