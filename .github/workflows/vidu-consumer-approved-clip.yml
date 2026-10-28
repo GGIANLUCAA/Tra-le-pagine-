@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 18
     env:
-      VIDU_TOKEN: ${{ secrets.VIDU_TOKEN }}
+      VIDU_TOKEN: ${{ secrets.VIDUOK || secrets.VIDU_TOKEN }}
       VIDU_BASE_URL: https://service.vidu.com
       GH_TOKEN: ${{ github.token }}
     steps:
