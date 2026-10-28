@@ -2,9 +2,9 @@ name: Sleepy Hollow — Rackham asset preflight (free)
 on:
   push:
     branches: [episode/sleepy-hollow-20261028-rackham-v13]
-    paths: [queue/sleepy_rackham_preflight.request]
+    paths: ['queue/sleepy_rackham_preflight*.request']
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: sleepy-hollow-rackham-20261028
   cancel-in-progress: false
