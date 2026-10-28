@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      VIDU_API_KEY: "${{ secrets.VIDU_API_KEY }}"
+      VIDU_API_KEY: "${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}"
       MODE: "${{ inputs.mode }}"
       PRESET: "${{ inputs.preset }}"
       SECONDS: "${{ inputs.seconds }}"
