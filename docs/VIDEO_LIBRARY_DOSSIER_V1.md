@@ -68,3 +68,19 @@ Sorgenti: site/video-library-v2.html; site/video-library-editorial-core.js; site
 Test: tests/video-library-editorial.test.cjs e workflow .github/workflows/video-library-editorial-test.yml validano dossier, salvataggi, crediti ereditati, ZIP con CRC corretto, firme di download e protezione privata. I test del sito verificano anche la riproduzione degli MP4 originali.
 
 Se la semina automatica fallisce, non bloccare il video: mantenere la scheda dinamica e riprovare al ciclo successivo.
+
+
+## V55 — pacchetto completo verificato, non solo file MP4 (28 ottobre 2026)
+
+Per ogni nuova produzione, da ogni format, la cartella/consegna deve includere MP4 originale, copertina JPEG, quattro testi pubblici curati separatamente, fonti e licenze effettive, ricetta e ZIP completo CRC-validato. Fornire anche ZIP solo-video quando serve su Android, evitando copie inutili online. L'identità video/cover/post va associata al nome del vero master (non a una categoria dedotta).
+
+**Sito privato:** l'import video da GitHub resta regolato dal contratto V25 approvato. Per i nuovi pacchetti V55, il workflow `.github/workflows/video-library-r2-import.yml` cerca e importa anche `POST_FACEBOOK.txt`, `POST_INSTAGRAM.txt`, `POST_TIKTOK.txt`, `POST_YOUTUBE.txt`, ricetta, fonti e manifest sotto `production/files/<video>/`. Il nuovo endpoint `/production-file` del worker import (OIDC GitHub verificato, SHA256 controllato, limite di dimensione, protezione anti-sovrascrittura) deve essere **effettivamente distribuito sul Worker live** affinché l'import funzioni: il solo commit non basta. I post autentici vengono recuperati dalla scheda senza sovrascrivere testi già curati.
+
+Il sito crea ZIP completo e ZIP leggero **su richiesta** e rilascia link firmati temporanei, così l'utente trova sempre l'azione nel dossier senza accumulare copie ZIP permanenti. Verificare dopo l'import: MP4 catalogato e riproducibile, copertina corrispondente, quattro post realmente salvati, ZIP completo generabile. Una scheda placeholder o un link firmato scaduto non dimostra disponibilità.
+
+Il workflow di import GitHub è previsto sia dopo il completamento delle produzioni sia su pianificazione, ma cron, permessi, attivazione worker e disponibilità del servizio non consentono una promessa di sincronizzazione istantanea. I video che esistono soltanto in ChatGPT seguono l'automazione di import dalla Libreria; questa app importa principalmente MP4, quindi verificare a parte la presenza di JPEG, testi e ZIP, senza affermare il pacchetto completo se mancanti.
+
+**ChatGPT:** prima di mostrare link sandbox confermare l'esistenza reale dei file nella sessione attiva. Se un MP4 non si apre su Android offrire ZIP originale effettivamente presente o link sito soltanto quando già importato e testato; non inventare percorsi. Il report di `src/artvision_delivery_v55.py` distingue correttamente la validità locale dalla verifica delle due destinazioni.
+
+**Primi sette secondi:** utilizzare il contatto di fotogrammi veri (0.1/1/3/5/7 secondi) e la visione/ascolto continuo; l'apertura deve contenere titolo/artista leggibili e qualcosa di realmente interessante entro 3 secondi, seguito da una scoperta nei successivi 4, senza template sempre uguale. La revisione artistica resta una prova distinta, legata all'hash del MP4.
+
