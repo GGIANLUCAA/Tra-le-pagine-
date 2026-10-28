@@ -12,10 +12,10 @@ def call(name, args):
             print(f"{name}: HTTP/CLI failure; exit={p.returncode}; no generation")
             return False
         data=json.loads(p.stdout)
-        if not isinstance(data,(dict,list)):
-            print(f"{name}: unexpected response")
+        if not isinstance(data,dict) or data.get("ok") is not True:
+            print(f"{name}: provider did not confirm success")
             return False
-        print(f"{name}: success; personal balance hidden from public logs")
+        print(f"{name}: confirmed; personal balance hidden from public logs")
         return True
     except (OSError,subprocess.TimeoutExpired,ValueError):
         print(f"{name}: unavailable or invalid output; no generation")
@@ -24,7 +24,7 @@ def call(name, args):
 def main():
     if not os.getenv("VIDU_TOKEN","").strip():
         print("MISSING_CONSUMER_TOKEN: retrieve from vidu.com avatar > Vidu Token")
-        return 0
+        return 2
     if os.getenv("VIDU_BASE_URL")!="https://service.vidu.com":
         print("BLOCKED: consumer Vidu overseas endpoint required")
         return 3
