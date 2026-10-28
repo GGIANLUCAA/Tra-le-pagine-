@@ -164,7 +164,7 @@ def validate_opening_review(review, video_hash):
     return issues
 
 
-def pack(video, cover, posts, rights, recipe, out, opening_review=None):
+def pack(video, cover, posts, rights, recipe, out, opening_review=None, release_contract=None):
     video = require_file(video, ("mp4",))
     cover = require_file(cover, JPEG)
     rights = require_file(rights, ("md", "txt"))
@@ -190,6 +190,21 @@ def pack(video, cover, posts, rights, recipe, out, opening_review=None):
     shutil.copy2(recipe, stage / "04_FONTI_E_RICETTA" / ("RICETTA" + recipe.suffix))
     frames = opening_frames(video, stage / "05_PRIMI_7_SECONDI", info["duration"])
     sha = filehash(video)
+    # Existing V25 importer is fail-closed: an archive import cannot happen
+    # without a review contract approved against the exact video SHA.
+    if release_contract is not None:
+        release_path = require_file(release_contract, ("json",))
+        contract = json.loads(release_path.read_text(encoding="utf-8"))
+        expected_reviews = ("opening", "visual", "cover", "music", "rights",
+                            "full_watch", "replicability")
+        checks = contract.get("reviews") if isinstance(contract, dict) else {}
+        if (not isinstance(contract, dict)
+                or contract.get("review_video_sha256") != sha
+                or not isinstance(checks, dict)
+                or any(not isinstance(checks.get(key), dict)
+                       or checks[key].get("passed") is not True for key in expected_reviews)):
+            raise ValueError("V25: contratto non approvato per SHA256 esatto del master")
+        shutil.copy2(release_path, stage / "ARTVISION_CONTRACT_V25.json")
     if opening_review:
         review = json.loads(require_file(opening_review, ("json",)).read_text(encoding="utf-8"))
     else:
@@ -211,6 +226,7 @@ def pack(video, cover, posts, rights, recipe, out, opening_review=None):
         "social_files": list(CAPTION_OUTPUTS.values()),
         "local_verified": True,
         "delivery": {
+            "site_import_V25_contract": "exact_sha_review_verified" if release_contract else "missing_or_not_provided",
             "chatgpt_mp4_link": "not_tested_by_host",
             "chatgpt_zip_link": "not_tested_by_host",
             "archive_video": "not_checked",
@@ -298,13 +314,14 @@ def main():
                 "rights", "recipe", "out"):
         b.add_argument("--" + key, required=True)
     b.add_argument("--opening-review", help="Exact-sha visual opening review JSON")
+    b.add_argument("--release-contract", help="Already-approved V25 JSON required for private R2 artifact import")
     s = sub.add_parser("site-check", help="Verify catalog and range playback, not private social dossier")
     s.add_argument("--key", required=True)
     args = ap.parse_args()
     if args.command == "pack":
         data = pack(args.video, args.cover,
                     {key: getattr(args, key) for key in SOCIAL},
-                    args.rights, args.recipe, args.out, args.opening_review)
+                    args.rights, args.recipe, args.out, args.opening_review, args.release_contract)
     else:
         data = check_site(args.key)
     print(json.dumps(data, ensure_ascii=False, indent=2))
