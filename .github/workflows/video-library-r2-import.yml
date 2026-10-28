@@ -5,6 +5,13 @@ on:
       - .github/workflows/video-library-r2-import.yml
   schedule:
     - cron: '17 * * * *'
+  workflow_run:
+    workflows:
+      - "Produzione V16 - coda autonoma e ripresa"
+      - "ArtVision Cinema V6 - film curatoriale"
+      - "Tra le Pagine - Render episodio con effetti V4"
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
       max_artifacts:
@@ -209,6 +216,51 @@ jobs:
                               with z.open(n) as src,fp.open('wb') as dst:
                                   import shutil;shutil.copyfileobj(src,dst)
                               if upload(fp,safe):published+=1
+                          # V55: save source posts and production records next to their video in R2.
+                          # The site then recovers authentic copy instead of auto-generated placeholders.
+                          known={
+                            'POST_FACEBOOK.txt','POST_INSTAGRAM.txt','POST_TIKTOK.txt','POST_YOUTUBE.txt',
+                            'PROJECT_V13.json','VIDEO_RECIPE_V13.json','RICETTA.json',
+                            'FONTI_E_DIRITTI.md','FONTI_E_DIRITTI.txt','SOURCES_AND_RIGHTS.md',
+                            'DELIVERY_MANIFEST_V55.json','ARTVISION_DELIVERY_V55.json',
+                            'REVIEW_APERTURA.json','OPENING_REVIEW_V55.json',
+                            'TECNICHE_REGIA.md','POST_EDITORIAL_RESEARCH.json'}
+                          v55=any(pathlib.PurePosixPath(m).name in ('DELIVERY_MANIFEST_V55.json','ARTVISION_DELIVERY_V55.json') for m in z.namelist())
+                          text_items=[m for m in z.namelist() if pathlib.PurePosixPath(m).name in known and not m.endswith('/')]
+                          if v55:
+                              for social in ('POST_FACEBOOK.txt','POST_INSTAGRAM.txt','POST_TIKTOK.txt','POST_YOUTUBE.txt'):
+                                  if not any(pathlib.PurePosixPath(m).name==social for m in text_items):
+                                      raise ValueError('V55 missing required social attachment: '+social)
+                          if text_items:
+                              if len(videos)>1:
+                                  print('WARNING: multiple videos, editorial attachments could be ambiguous',flush=True)
+                                  if v55:raise ValueError('V55 requires one MP4 per release package')
+                              else:
+                                  video_file=pathlib.PurePosixPath(videos[0]).name
+                                  base_name=re.sub(r'[^A-Za-z0-9_(). -]','_',video_file)[:180]
+                                  original_fp=wd/base_name
+                                  video_key=base_name
+                                  if status(video_key).get('size')!=original_fp.stat().st_size:
+                                      video_key=original_fp.stem+'__'+str(original_fp.stat().st_size)+original_fp.suffix
+                                  if not status(video_key).get('exists'):
+                                      raise ValueError('MP4 not verified in archive before editorial attachments')
+                                  unique={}
+                                  for member_name in text_items:
+                                      short=pathlib.PurePosixPath(member_name).name
+                                      raw=z.read(member_name)
+                                      if not raw or len(raw)>250000:
+                                          if v55:raise ValueError('V55 attachment empty or oversized: '+short)
+                                          continue
+                                      if short in unique and unique[short]!=raw:
+                                          raise ValueError('Conflicting editorial files named '+short)
+                                      unique[short]=raw
+                                  for short,raw in unique.items():
+                                      h=hashlib.sha256(raw).hexdigest()
+                                      saved=cf('POST','/production-file',
+                                               {'video':video_key,'name':short,'sha256':h},data=raw)
+                                      if not saved.get('ok') or saved.get('sha256')!=h:
+                                          raise ValueError('Editorial attachment not verified: '+short)
+                                  print('V55 EDITORIAL ATTACHMENTS:',video_key,len(unique),flush=True)
                           covers=[n for n in files if pathlib.PurePosixPath(n).name.lower().startswith(('copertina','cover')) and n.lower().endswith(('.jpg','.jpeg'))]
                           if covers:
                               for n in files:
