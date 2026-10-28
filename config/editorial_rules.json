@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-28.1",
-  "approved_by": "Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.",
+  "version": "2026-10-28.2",
+  "approved_by": "28/10/2026: ArtVision 4x1 V54 con direzione emotiva, gate e autocritica; Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.",
   "precedence": [
     "explicit_user_request",
     "editorial_rules",
@@ -618,6 +618,48 @@
       "inherits": "museum_immersion_scale + museum_immersion_frame_quality + V44/V46 release QA",
       "automatic_final_approval": false
     }
+  },
+  "artvision_four_variants": {
+    "version": "v54_2026_10_28",
+    "status": "active_supersedes_v53_two_video_count",
+    "approved_by": "user",
+    "scope": [
+      "artvision_cinema",
+      "artvision_critico"
+    ],
+    "goal": "one_evidence_based_research_dossier_four_distinct_social_ready_variants_per_artwork",
+    "variants": [
+      "critico_standard",
+      "critico_museum",
+      "cinema_standard",
+      "cinema_museum"
+    ],
+    "shared_critical_narration": "same_verified_Gacrux_audio_and_script",
+    "shared_cinema_core": "same_painting_and_legally_licensed_recording",
+    "museum_reference_qa": "V46_Cyclops_edge_fixed_and_Hiroshige_true_scale",
+    "emotional_direction_required": [
+      "central_tension",
+      "intended_feeling_1_or_2",
+      "evidence_details_3_or_more",
+      "reveal_order",
+      "opening_hook",
+      "closing_payoff",
+      "wow_justification"
+    ],
+    "artistic_gate": "scene_specific_meaning_audio_sync_and_human_review_required",
+    "pre_render_cli": "python src/video_director_v13.py four-check --plan ART VISION_4X1_PLAN.json",
+    "pre_render_module": "src/artvision_four_variants_gate.py",
+    "learning_module": "src/artvision_learning_loop_v1.py",
+    "learning": "log_2_to_3_observed_defects_per_reviewed_MP4_select_one_experiment_next_cycle_preserve_masters",
+    "quality_is_not_measured_by_score": true,
+    "artistic_approval_automatic": false,
+    "release_status_default": "rendered_needs_review",
+    "no_unapproved_paid_video_credits": true,
+    "no_automatic_social_publication": true,
+    "source_of_truth": "docs/REGOLE_ATTIVE.md#artvision-4x1--regola-prioritaria-approvata-28102026-v54-autocritica-continua",
+    "contract": "docs/ARTVISION_FOUR_VARIANTS_CONTRACT_20261028.md",
+    "legacy_queue": "queue/artvision_dual_format_s01_20261028.json",
+    "existing_automation_id": "6adca191603c8191a90d5190901cd034"
   },
   "artvision_paired_series": {
     "version": "v53_2026_10_28",
