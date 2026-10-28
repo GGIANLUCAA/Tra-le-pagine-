@@ -4,6 +4,10 @@ Leggere `AGENTS.md`, [regole attive](docs/REGOLE_ATTIVE.md) e
 [registro dei format](config/video_formats_v13.json). Questa revisione del 25/10/2026
 prevale sui vincoli storici incompatibili. Le istruzioni della sessione restano prioritarie.
 
+## V59 — Fonti storiche di pubblico dominio, no monetizzazione
+
+Per `La Storia Rivive` non domandare ancora se vuole monetizzare: la risposta è **no**. Seleziona SOLO veri filmati originali PD o CC0 verificati; il software può essere open-source o limitato a usi non commerciali quando consente effettivamente la produzione e pubblicazione prevista. Non usare tool «solo ricerca» per pubblicare senza verifica specifica. Diritti musica indipendenti, nessuna autopubblicazione, mantenere V55. Guida `docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md`.
+
 ## V58 — Storia senza stampini e senza 4K cosmetico
 
 Quando viene chiesto «un nuovo video storico», fare autonomamente ricerca qualitative di almeno 3 filmati d'archivio, scegliere scene con azioni vere, progettare un gancio forte e un montaggio anche multi-shot quando serve. Percepito nitido a 720p/1080p meglio di falso 4K. Colorizzazione AI reale non seppia, continuità, fonte esatta; montare con FFmpeg e materiali colorizzati già verificati. Vidu solo opzionale e a pagamento previa approvazione per clip. Leggere `docs/LA_STORIA_RIVIVE_OPEN_SOURCE_E_MONTAGGIO_V58.md` e il registro `queue/storia_rivive_candidates_v58.json`; nessuna domanda ripetuta sui preset già decisi.
