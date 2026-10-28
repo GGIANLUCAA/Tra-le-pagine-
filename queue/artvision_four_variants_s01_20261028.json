@@ -69,7 +69,7 @@
         "w": 22.8
       },
       "dossier_4x1_path": "docs/productions/2026-10-28-goldfinch-cinema-standard-v55/ARTVISION_4X1_PLAN.json",
-      "dossier_preflight": "local_structural_mirror_passed_official_four_check_pending",
+      "dossier_preflight": "official_four_check_passed_2026-10-28T19:24:00+01:00",
       "variants": {
         "critico_standard": {
           "status": "planned",
@@ -93,7 +93,7 @@
           "chatgpt_library_path": "/ArtVision/Goldfinch_Cinema_Standard_V55/ARTVISION_GOLDFINCH_CINEMA_STANDARD_V55_REVIEW.mp4",
           "delivery_status": "package_verified_locally_archive_sync_pending",
           "human_approval": false,
-          "official_four_check": "pending",
+          "official_four_check": "passed; structural only, no artistic certification and no rendered-video verification",
           "site_verified": false
         },
         "cinema_museum": {
@@ -120,7 +120,7 @@
         "w": 308
       },
       "dossier_4x1_path": "docs/productions/2026-10-28-seurat-cinema-standard-v55/ARTVISION_4X1_PLAN.json",
-      "dossier_preflight": "local_structural_copy_passed_original_four_check_pending",
+      "dossier_preflight": "official_four_check_passed_2026-10-28T19:24:00+01:00",
       "variants": {
         "critico_standard": {
           "status": "planned",
@@ -144,7 +144,7 @@
           "chatgpt_library_path": "/ArtVision/Seurat_Cinema_Standard_V55/ARTVISION_SEURAT_CINEMA_STANDARD_V55_REVIEW.mp4",
           "delivery_status": "package_verified_locally_archive_sync_pending",
           "human_approval": false,
-          "official_four_check": "pending; local faithful structural validator passed",
+          "official_four_check": "passed; structural only, no artistic certification and no rendered-video verification",
           "site_verified": false
         },
         "cinema_museum": {
@@ -156,7 +156,7 @@
           "verified_this_migration": false
         }
       },
-      "dossier_local_note": "GitHub mother plan now exists; repository official four-check still pending; local faithful structural gate passed."
+      "dossier_local_note": "GitHub mother plan exists; repository src/video_director_v13.py four-check passed on 2026-10-28. Normal V13 PROJECT_V13 checks remain unavailable because the four variant project files and repository-resident prepared assets are not present."
     },
     {
       "group_id": "turner_fighting_temeraire_1839",
