@@ -1,0 +1,45 @@
+name: "Vidu abbonamento - controllo gratuito CLI ufficiale"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/vidu-abbonamento-official-cli-v1
+    paths:
+      - .github/workflows/vidu-subscription-readonly.yml
+      - tools/vidu_subscription_probe.py
+permissions:
+  contents: read
+concurrency:
+  group: vidu-subscription-readonly-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  read-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      VIDU_TOKEN: ${{ secrets.VIDU_TOKEN }}
+      VIDU_BASE_URL: https://service.vidu.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check consumer Vidu token without payment
+        id: token
+        shell: bash
+        run: |
+          if [ -z "${VIDU_TOKEN:-}" ]; then
+            echo "::notice::VIDU_TOKEN not configured. Vidu.com account avatar > Vidu Token; store in GitHub Actions Secrets."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Install official Vidu CLI (no generation)
+        if: steps.token.outputs.configured == 'true'
+        run: npm install --global vidu-cli@0.2.36
+      - name: Subscription quota and candidate quote only (no generation)
+        if: steps.token.outputs.configured == 'true'
+        run: python tools/vidu_subscription_probe.py
+      - name: Confirm zero spending
+        if: always()
+        run: echo "No Vidu video generation or credit consumption in this workflow."
