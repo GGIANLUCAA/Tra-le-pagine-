@@ -1,0 +1,64 @@
+name: "La Storia Rivive V63 — link diretto provino 1080p NON approvato"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-rivive-v63-preview-direct.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish_verified_preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      ARTIFACT_ID: "12836435541"
+      RELEASE_TAG: "storia-rivive-beirut-1919-regia-v63-preview"
+    steps:
+      - name: "Fetch existing V63 review artifact, no renderer or paid models"
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 180 \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${REPO}/actions/artifacts/${ARTIFACT_ID}/zip" \
+            --output /tmp/artifact.zip
+          unzip -t /tmp/artifact.zip
+          mkdir -p release
+          for filename in LA_STORIA_RIVIVE_BEIRUT_1919_REGIA_V63.mp4 BEIRUT_1919_REGIA_V63_KIT.zip COVER.jpg V63_QA_SIX_BEFORE_AFTER.jpg V63_QA_REPORT.json; do
+            unzip -p /tmp/artifact.zip "$filename" > "release/$filename"
+          done
+          echo '0a7455a591198e072c5554d0f73c19d94195554425113ceba358aa65cd5002a5  release/LA_STORIA_RIVIVE_BEIRUT_1919_REGIA_V63.mp4' | sha256sum -c
+          unzip -t release/BEIRUT_1919_REGIA_V63_KIT.zip
+          test "$(stat -c %s release/LA_STORIA_RIVIVE_BEIRUT_1919_REGIA_V63.mp4)" = "10315708"
+      - name: "Public GitHub Release preview with clear creative QA disclaimer"
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$REPO" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" release/* --repo "$REPO" --clobber
+          else
+            gh release create "$RELEASE_TAG" --repo "$REPO" --target main \
+              --title "Beirut 1919 V63 — provino di regia migliorata (non approvato)" \
+              --notes "PROVINO TECNICO, NON MASTER ARTISTICO APPROVATO. È un reale video 24.43s H264/AAC 1080x1920: sei riprese CC0 originali in B/N; 6 fermo-foto colorizzati con DDColor e restaurati da Real-ESRGAN direttamente sul crop originale. Regia e durata più motivate di V62. Tuttavia la revisione visiva rileva ancora toni rosati e dettagli dei volti non paragonabili alle fotografie ricostruite con modelli generativi dei tre esempi utente. NON è video 4K nativo né foto generativa diffusion. La fonte è reale; colore e microdettagli sono interpretazioni AI. No Vidu, no social autopubblicazione né import automatico sito. Include confronto originale/restauro." \
+              --latest=false \
+              release/LA_STORIA_RIVIVE_BEIRUT_1919_REGIA_V63.mp4 \
+              release/BEIRUT_1919_REGIA_V63_KIT.zip \
+              release/COVER.jpg \
+              release/V63_QA_SIX_BEFORE_AFTER.jpg \
+              release/V63_QA_REPORT.json
+          fi
+      - name: "Verify exact published assets by GitHub API, not curl HEAD piping"
+        shell: bash
+        run: |
+          set -euo pipefail
+          for spec in LA_STORIA_RIVIVE_BEIRUT_1919_REGIA_V63.mp4:10315708 BEIRUT_1919_REGIA_V63_KIT.zip:12977481 V63_QA_SIX_BEFORE_AFTER.jpg:351119; do
+            name="${spec%:*}"; expected="${spec#*:}"
+            actual=$(gh api "repos/${REPO}/releases/tags/${RELEASE_TAG}" --jq ".assets[] | select(.name == \"${name}\") | .size")
+            test "$actual" = "$expected"
+            echo "Verified: $name $actual bytes"
+          done
