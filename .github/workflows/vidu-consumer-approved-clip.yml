@@ -28,7 +28,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t files < <(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- "episodes/**/VIDU_I2V_APPROVAL.json")
+          mapfile -t files < <(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" | grep -E "^episodes/[^/]+/VIDU_I2V_APPROVAL\\.json$" || true)
           if [ "${#files[@]}" -ne 1 ]; then
             echo "::error::Exactly one approved manifest per push; prevent batch purchases."
             exit 2
