@@ -1,0 +1,107 @@
+name: "ArtVision V55 — Wright Cinema Museum — genuine 2019 gallery photo"
+run-name: "Wright Air Pump · missing Cinema Museum V55 · authentic frame · review only"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-wright-cinema-museum-v55-20261028.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-v55-4x1-single-render
+  cancel-in-progress: false
+jobs:
+  wright_museum:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free CPU rendering dependencies
+        run: |
+          set -euo pipefail
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "requests>=2.31,<3"
+          python -m py_compile scripts/artvision_wright_cinema_museum_v55.py scripts/artvision_wright_air_pump_20261028.py src/artvision_delivery_v55.py
+      - name: Verify V54 mother plan and distinct missing variant before render
+        run: |
+          set -euo pipefail
+          python src/video_director_v13.py four-check --plan docs/productions/2026-10-28-wright-cinema-museum-v55/ARTVISION_4X1_PLAN.json
+          python - <<'PY'
+          import json
+          q=json.load(open("queue/artvision_four_variants_s01_20261028.json"))
+          g=next(x for x in q["groups"] if x["group_id"]=="wright_air_pump_1768")
+          assert g["variants"]["cinema_standard"]["status"]=="rendered_needs_review", "Do not overwrite V52B"
+          assert g["variants"]["cinema_museum"]["status"]=="planned", "Do not duplicate museum variant"
+          assert g["variants"]["critico_standard"]["status"]!="approved_for_final_delivery"
+          print("WRIGHT_MUSEUM_MISSING; V52B_CINEMA_STANDARD_PRESERVED")
+          PY
+      - name: Validate original V28 captions and zero paid API calls
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, "src")
+          import artvision_editorial_post_v28 as v28
+          v28.CATALOG=Path("config/artvision_wright_cinema_museum_v55_editorial.json")
+          key="wright_air_pump_cinema_museum_v55"
+          errors=v28.validate_entry(key,v28.config()["entries"][key])
+          assert not errors, errors
+          code=Path("scripts/artvision_wright_cinema_museum_v55.py").read_text()
+          for bad in ("VIDU_API_KEY","RUNWARE_API_KEY","KLING_API_KEY","SEEDANCE_API_KEY","GEMINI_API_KEY","requests.post("):
+              assert bad not in code,bad
+          print("V28_VALID; ZERO_PAID_VIDEO_APIS; NO_SOCIAL_AUTOPUBLISH")
+          PY
+      - name: Render distinct Wright Cinema Museum with real photo and source music
+        run: python scripts/artvision_wright_cinema_museum_v55.py
+      - name: Independent V55 H264 AAC full decode and ZIP CRC
+        run: |
+          set -euo pipefail
+          root="output/artvision-wright-cinema-museum-v55"
+          folder="$root/wright_air_pump_cinema_museum_v55"
+          film="$folder/VIDEO_MASTER.mp4"
+          test -s "$film"
+          test -s "$folder/COPERTINA.jpg"
+          test -s "$folder/ORIGINAL_REAL_GALLERY_PHOTO_AD_MESKENS_CC_BY_SA_4.jpg"
+          test -s "$root/V55_DELIVERY/VIDEO_MASTER_COMPLETO.zip"
+          test -s "$root/V55_DELIVERY/ARTVISION_WRIGHT_CINEMA_MUSEUM_V55_SOLO_VIDEO_ANDROID.zip"
+          ffmpeg -nostdin -hide_banner -loglevel error -xerror -i "$film" -f null -
+          python - <<'PY'
+          import json,subprocess,hashlib,zipfile
+          from pathlib import Path
+          root=Path("output/artvision-wright-cinema-museum-v55")
+          folder=root/"wright_air_pump_cinema_museum_v55"
+          film=folder/"VIDEO_MASTER.mp4"
+          p=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration:stream=codec_type,codec_name,width,height","-of","json",str(film)]))
+          assert any(s.get("codec_name")=="h264" and (s.get("width"),s.get("height"))==(1080,1920) for s in p["streams"])
+          assert any(s.get("codec_name")=="aac" for s in p["streams"])
+          for z in list(root.glob("*.zip"))+list((root/"V55_DELIVERY").glob("*.zip")):
+              with zipfile.ZipFile(z) as f:assert f.testzip() is None,str(z)
+          for platform in ("FACEBOOK","INSTAGRAM","TIKTOK","YOUTUBE"):
+              assert (folder/("POST_"+platform+".txt")).stat().st_size>150
+          rights=(folder/"SOURCES_AND_RIGHTS.md").read_text()
+          assert "Ad Meskens" in rights and "CC BY-SA 4.0" in rights and "CC BY 4.0" in rights
+          release=json.loads((root/"RELEASE_STATE_V55.json").read_text())
+          assert release["state"]=="rendered_needs_review" and not release["V25_approved"]
+          print("WRIGHT_CINEMA_MUSEUM_V55_REVIEW_ONLY",hashlib.sha256(film.read_bytes()).hexdigest())
+          PY
+      - name: Preserve genuine MP4 and complete V55 dossier for ChatGPT download
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_WRIGHT_CINEMA_MUSEUM_V55_RENDERED_NEEDS_REVIEW
+          path: |
+            output/artvision-wright-cinema-museum-v55/wright_air_pump_cinema_museum_v55/VIDEO_MASTER.mp4
+            output/artvision-wright-cinema-museum-v55/wright_air_pump_cinema_museum_v55/COPERTINA.jpg
+            output/artvision-wright-cinema-museum-v55/wright_air_pump_cinema_museum_v55/QA_CONTACT_SHEET.jpg
+            output/artvision-wright-cinema-museum-v55/wright_air_pump_cinema_museum_v55/QA_FIRST_FRAME_V55.jpg
+            output/artvision-wright-cinema-museum-v55/ARTVISION_WRIGHT_CINEMA_MUSEUM_V55_ORIGINALS.zip
+            output/artvision-wright-cinema-museum-v55/V55_DELIVERY/*.zip
+            output/artvision-wright-cinema-museum-v55/V55_DELIVERY/DELIVERY_STATUS_V55.json
+            output/artvision-wright-cinema-museum-v55/RELEASE_STATE_V55.json
+          if-no-files-found: error
+          retention-days: 30
