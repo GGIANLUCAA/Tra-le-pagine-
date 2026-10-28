@@ -1,0 +1,45 @@
+name: "La Storia Rivive V60 - vero video AI colore (pilota gratuito)"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_real_ai_v60.py"
+      - ".github/workflows/storia-rivive-v60-real-color.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render_true_color_pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: "Install free CPU-only colorization engine"
+        run: |
+          python -m pip install -q --no-cache-dir numpy opencv-python-headless Pillow onnxruntime huggingface_hub
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - name: "Actually download Commons CC0 film and DDColor ONNX; render 3 authentic shots"
+        env:
+          HF_HUB_DISABLE_XET: '1'
+          HF_HUB_DISABLE_TELEMETRY: '1'
+          OMP_NUM_THREADS: '4'
+          OPENBLAS_NUM_THREADS: '1'
+        run: |
+          python -u src/storia_rivive_real_ai_v60.py
+      - name: "Archive real MP4, cover, captions and rights; NO dummy video"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BEIRUT_1919_VERI_COLORI_AI_V60
+          path: |
+            output/storia_rivive_v60_beirut/VIDEO_COLOR_AI.mp4
+            output/storia_rivive_v60_beirut/COVER.jpg
+            output/storia_rivive_v60_beirut/BEIRUT_1919_COLORE_AI_COMPLETO.zip
+            output/storia_rivive_v60_beirut/FONTI_E_DIRITTI.json
+            output/storia_rivive_v60_beirut/POST_*.txt
+            output/storia_rivive_v60_beirut/README.txt
+          if-no-files-found: warn
+          retention-days: 14
