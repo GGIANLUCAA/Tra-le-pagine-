@@ -8,11 +8,13 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   reconstruct_real_source_photos:
     runs-on: ubuntu-latest
     timeout-minutes: 37
     env:
+      GH_TOKEN: ${{ github.token }}
       HF_HUB_DISABLE_TELEMETRY: "1"
       HF_HUB_DISABLE_XET: "1"
       OMP_NUM_THREADS: "4"
