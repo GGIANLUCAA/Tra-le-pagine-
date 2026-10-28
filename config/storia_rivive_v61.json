@@ -1,0 +1,116 @@
+{
+  "version": "V61_2026_10_28",
+  "format": "storia_rivive",
+  "default_direction": "archive_video_to_ai_photograph_freeze",
+  "supersedes": "V60 moving continuous colorization as default example-match",
+  "user_examples": [
+    {
+      "file": "43054.mp4",
+      "fps": 30,
+      "resolution": [
+        720,
+        1280
+      ],
+      "duration_s": 23.733,
+      "style": "slow",
+      "observed": "~2s moving archive B&W then ~2s static color photograph, repeated"
+    },
+    {
+      "file": "43055.mp4",
+      "fps": 30,
+      "resolution": [
+        720,
+        1280
+      ],
+      "duration_s": 20.233,
+      "style": "fast",
+      "observed": "~0.9s B&W moving, ~0.9s colored photo, repeated"
+    },
+    {
+      "file": "43056.mp4",
+      "fps": 30,
+      "resolution": [
+        720,
+        1280
+      ],
+      "duration_s": 20.967,
+      "style": "fast",
+      "observed": "~0.9s B&W moving, ~0.9s colored photo, repeated"
+    }
+  ],
+  "modes": {
+    "slow": {
+      "motion_range_s": [
+        1.8,
+        2.3
+      ],
+      "photo_range_s": [
+        1.8,
+        2.2
+      ],
+      "transition_s": [
+        0.2,
+        0.4
+      ]
+    },
+    "fast": {
+      "motion_range_s": [
+        0.8,
+        1.1
+      ],
+      "photo_range_s": [
+        0.6,
+        1.1
+      ],
+      "transition_s": [
+        0.18,
+        0.3
+      ]
+    },
+    "custom": {
+      "duration": "story_driven",
+      "reason_required": true
+    }
+  },
+  "source_footage": {
+    "allowed_only": [
+      "CC0",
+      "CC0 1.0",
+      "PUBLIC_DOMAIN",
+      "PDM"
+    ],
+    "verify_single_file": true
+  },
+  "reconstruction": {
+    "key_image_extracted_from_true_archival_motion": true,
+    "photo_ai_is_new_image": true,
+    "must_not_call_ddcolor_only_ai_photo": true,
+    "ai_tool_candidates": [
+      "SUPIR noncommercial possible",
+      "DiffBIR model licenses check",
+      "CodeFormer face-only optional"
+    ],
+    "gpu_required_for_quality_candidate": true,
+    "ai_image_720x1280_min_or_1080x1920": true,
+    "match_people_pose_objects": true,
+    "ai_photographic_details_hypothetical": true,
+    "disclosure": "Filmati storici originali; fotografie a colori ricostruite con intelligenza artificiale.",
+    "frozen_image_after_reveal": true
+  },
+  "music": {
+    "synchronize_edits": true,
+    "source_and_license_separate": true
+  },
+  "montage": {
+    "tool": "src/storia_rivive_photo_freeze_v61.py",
+    "test_ci": "tests/test_storia_rivive_photo_freeze_v61.py",
+    "does_not_generate_ai_photographs": true,
+    "block_delivery_without_actual_ai_stills": true,
+    "stills_not_fake_motion": true
+  },
+  "cost": {
+    "vidu_credits_default": 0,
+    "automatic_social_publication": false
+  },
+  "delivery": "V55 existing complete MP4 ZIP cover four social texts, stable direct link and verified archive"
+}
