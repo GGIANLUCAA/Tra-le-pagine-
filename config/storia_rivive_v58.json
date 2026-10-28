@@ -1,5 +1,5 @@
 {
-  "version": "V58_2026_10_28",
+  "version": "V58_plus_V59_2026_10_28",
   "format": "storia_rivive",
   "scope": "new_historical_archive_reels",
   "approved_user_intent": "free open-source tools, best-looking perceived resolution, autonomous subject selection and meaningful multi-shot montage, optional future Vidu segment",
@@ -29,12 +29,11 @@
     "semantic_model": "DDColor_candidate_not_installed",
     "temporal_stabilizer": "OpenCV_optical_flow_custom_candidate_not_installed",
     "video_wrapper": "HAVC_code_MIT_but_commercial_deps_not_cleared",
-    "prohibited_commercial_without_permission": [
-      "original_colormnet_BY_NC_SA",
-      "cmnet2_derived_until_rights_cleared"
-    ],
+    "prohibited_commercial_without_permission": [],
     "quality_gate": "src/storia_rivive_visual_gate_v57.py",
-    "no_sepia_final": true
+    "no_sepia_final": true,
+    "noncommercial_tools": "eligible_if_terms_cover_actual_publication_not_just_academic_research",
+    "colormnet": "license_by_nc_sa_research_only_note_requires_specific_rights_review"
   },
   "render": {
     "engine": "src/storia_rivive_montage_v58.py",
@@ -54,7 +53,12 @@
     "queue": "queue/storia_rivive_candidates_v58.json",
     "minimum_candidate_comparison_when_free_choice": 3,
     "selection": "documentary_fact+human_action+hook+color_potential+crop+rights+render_cost",
-    "no_invented_engagement": true
+    "no_invented_engagement": true,
+    "allowed_original_footage": [
+      "public_domain_verified",
+      "CC0_verified"
+    ],
+    "other_content_licenses_excluded": true
   },
   "ai_inserts": {
     "provider": "Vidu_optional",
@@ -76,5 +80,7 @@
       "actual_Android_download_and_library_verification"
     ],
     "not_currently_automated": true
-  }
+  },
+  "intended_publication": "social_nonmonetized_no_promotion",
+  "v59_policy": "config/storia_rivive_v59.json"
 }
