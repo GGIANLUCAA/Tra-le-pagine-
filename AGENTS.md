@@ -14,6 +14,10 @@ Le guide V12–V31 restano istruzioni dei moduli: in caso di conflitto prevale l
 revisione attiva. Non aggiungere in cima altri blocchi «regola più recente»:
 aggiornare la fonte unica con versione, motivo e riferimento dell'approvazione.
 
+## V63 — REGIA PRIMA DEL RESTAURO (28/10/2026)
+
+Dopo V62 (18,2s): meglio 20–28 s quando serve; studiare l'intero filmato e confrontare i ritagli 9:16, fermandosi sui volti, gesti e momenti davvero importanti. Priorità al contenuto, NON a scene panoramiche riempitive. Fotografia dal ritaglio originale prima di Real-ESRGAN, NO downscale distruttivo V62, denoise leggero, DDColor, render 1080×1920, hold 1.8–2.8s secondo importanza. Il 1080p NON è 4K. Un image-to-image generativo davvero fotografico può superare il semplice ESRGAN, ma serve compute, licenze e valutazione fedeltà, non è integrato. `docs/LA_STORIA_RIVIVE_DIREZIONE_FOTOGRAFICA_V63.md`, `config/storia_rivive_v63.json`, `src/storia_rivive_director_cut_v63.py`. Provino a verifica artistica; V59, V55 e 0 crediti Vidu invariati.
+
 ## V61 — Regia storica CONGELA IL MOVIMENTO, FOTOGRAFIA AI, POI CUT
 
 Richiesta definitiva confermata dopo 3 esempi reali del 28/10/2026 `43054.mp4`, `43055.mp4`, `43056.mp4`: NON basta la colorizzazione di pellicola in movimento come Beirut V60. La scena mostra **0,9–2 s B/N storico in movimento**, poi resta FERMA in una NUOVA fotografia AI nitida a colori per **0,9–2 s**, ritmata dalla musica; quindi un'altra scena B/N. La fotografia deve essere **rigenerata con image-to-image restoration** dal preciso frame originale; DDColor solo è insufficiente. Preservare persone/pose/oggetti, segnalare ricostruzione dei colori/dettagli. Guide `docs/LA_STORIA_RIVIVE_FOTOGRAMMA_FOTO_AI_V61.md`, config `config/storia_rivive_v61.json`; montatore `src/storia_rivive_photo_freeze_v61.py` richiede FOTO AI già creata e verificata. Nessun MP4 V61 finale senza la FOTO AI reale. Sorgenti solo PD/CC0 (V59), no spese Vidu, no autopubblicazione, pacchetto V55.
