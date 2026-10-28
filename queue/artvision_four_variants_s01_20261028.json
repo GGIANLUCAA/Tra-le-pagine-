@@ -120,7 +120,7 @@
         "w": 308
       },
       "dossier_4x1_path": null,
-      "dossier_preflight": "pending",
+      "dossier_preflight": "local_structural_copy_passed_original_four_check_pending",
       "variants": {
         "critico_standard": {
           "status": "planned",
@@ -133,9 +133,19 @@
           "verified_this_migration": false
         },
         "cinema_standard": {
-          "status": "planned",
+          "status": "rendered_needs_review",
           "legacy_prior": null,
-          "verified_this_migration": false
+          "verified_this_migration": true,
+          "version": "V55",
+          "reported_hash": "fec7ec7d2c64460d3737f92eeca99fd0d521c775ab2dfda39502293dfa683789",
+          "duration_seconds": 51.917,
+          "codec": "H264/AAC 1080x1920",
+          "report": "docs/productions/2026-10-28-seurat-cinema-standard-v55/PRODUCTION_REPORT.md",
+          "chatgpt_library_path": "/ArtVision/Seurat_Cinema_Standard_V55/ARTVISION_SEURAT_CINEMA_STANDARD_V55_REVIEW.mp4",
+          "delivery_status": "package_verified_locally_archive_sync_pending",
+          "human_approval": false,
+          "official_four_check": "pending; local faithful structural validator passed",
+          "site_verified": false
         },
         "cinema_museum": {
           "status": "rendered_needs_review",
@@ -145,7 +155,8 @@
           "legacy_report": "queue/artvision_museum_scale_s01_20261028.json",
           "verified_this_migration": false
         }
-      }
+      },
+      "dossier_local_note": "ARTVISION_4X1_PLAN.json included in full ZIP, not yet committed as separate repository file"
     },
     {
       "group_id": "turner_fighting_temeraire_1839",
