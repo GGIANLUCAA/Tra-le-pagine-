@@ -35,7 +35,7 @@ jobs:
           SITE: 'https://video-library-studio.600led.workers.dev'
           SOURCE: 'https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/main/site/video-library-v2.html'
           AUD: 'vls-gh-import-2026'
-          LIMIT: '0'
+          LIMIT: '12'
         shell: bash
         run: |
           python3 - <<'PY'
@@ -136,14 +136,30 @@ jobs:
                           if vs.get(field):facts[field]=int(vs[field])
                   if not video.get('cover'):
                       jpg=name.rsplit('.',1)[0]+'.jpg'
-                      with tempfile.TemporaryDirectory() as d:
-                          target=pathlib.Path(d)/'cover.jpg'
-                          frame=subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-user_agent',agent,'-ss','1.0','-i',path,'-frames:v','1','-vf','scale=640:360:force_original_aspect_ratio=decrease,pad=640:360:(ow-iw)/2:(oh-ih)/2:color=0x101827','-q:v','5',str(target)],capture_output=True,text=True,timeout=120)
-                          if frame.returncode and not target.exists():print('WARN frame extraction:',name,frame.stderr[:160],flush=True)
-                          elif target.exists() and target.stat().st_size>300:
-                              with target.open('rb') as fd:saved=api('POST','/single',params={'key':jpg},data=fd.read())
-                              facts['cover']=jpg
-                              print('COVER:',name, 'bytes:',saved.get('size'),flush=True)
+                      # An existing owner/curator poster is never overwritten.
+                      cover_exists=api('GET','/status',params={'key':jpg})
+                      if cover_exists.get('exists'):
+                          facts['cover']=jpg
+                          print('KEEP_EXISTING_COVER:',name,flush=True)
+                      else:
+                          portrait=name.upper().startswith('ARTVISION_')
+                          start='0.10' if portrait else '1.0'
+                          vf=('scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:color=0x101827'
+                              if portrait else
+                              'scale=640:360:force_original_aspect_ratio=decrease,pad=640:360:(ow-iw)/2:(oh-ih)/2:color=0x101827')
+                          with tempfile.TemporaryDirectory() as d:
+                              target=pathlib.Path(d)/'cover.jpg'
+                              frame=subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y',
+                                  '-user_agent',agent,'-ss',start,'-i',path,
+                                  '-frames:v','1','-vf',vf,'-q:v','5',str(target)],
+                                  capture_output=True,text=True,timeout=120)
+                              if frame.returncode and not target.exists():
+                                  print('WARN frame extraction:',name,frame.stderr[:160],flush=True)
+                              elif target.exists() and target.stat().st_size>300:
+                                  with target.open('rb') as fd:
+                                      saved=api('POST','/single',params={'key':jpg},data=fd.read())
+                                  facts['cover']=jpg
+                                  print('NEW_COVER:',name,'bytes:',saved.get('size'),flush=True)
                   else:
                       facts['cover']=name.rsplit('.',1)[0]+'.jpg'
                   if facts:metadata[name]=facts;count+=1
