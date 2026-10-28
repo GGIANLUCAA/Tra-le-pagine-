@@ -7,7 +7,8 @@ from __future__ import annotations
 import hashlib,json,math,re,subprocess,time,zipfile
 from io import BytesIO
 from pathlib import Path
-from urllib.parse import urlencode
+from urllib.parse import urlencode,quote
+from urllib.error import HTTPError
 from urllib.request import Request,urlopen
 from PIL import Image,ImageDraw,ImageFont,ImageOps
 
@@ -53,7 +54,16 @@ def get_source(plate):
     url=info["url"]
     if not url.startswith("https://upload.wikimedia.org/"):
         raise RuntimeError("Unexpected image host")
-    body=fetch(url)
+    delivery="wikimedia_original"
+    try:
+        body=fetch(url)
+    except HTTPError as err:
+        if err.code != 429:raise
+        # One non-paid cached-media fallback for shared GitHub runner rate limits.
+        # Do not retry Wikimedia or generate substitute images.
+        mirror="https://images.weserv.nl/?url="+quote(url,safe="")
+        body=fetch(mirror)
+        delivery="external_cached_proxy_of_same_wikimedia_source"
     with Image.open(BytesIO(body)) as test:
         test.load()
         if min(test.size)<500 or test.format!="JPEG":
@@ -62,7 +72,7 @@ def get_source(plate):
     return img,body,{"file":name,"source_page":"https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_%02d.jpg"%plate,
        "source_url":url,"license":lic,"license_url":mark,
        "author":"Gustave Doré (1832–1883)","work":"The Rime of the Ancient Mariner",
-       "source_sha256":digest(body),"source_size":list(img.size)}
+       "source_sha256":digest(body),"source_size":list(img.size),"download_route":delivery}
 def frame(image):
     # Original art is contained, NEVER cropped; preserve figures, hands and full composition.
     w,h=720,1280
