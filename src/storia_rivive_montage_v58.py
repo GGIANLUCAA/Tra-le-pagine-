@@ -53,6 +53,17 @@ def check(plan):
         if kind.startswith("archive") or kind == "reveal":
             block(bool(s.get("source_id") and s.get("source_page") and s.get("rights_checked")),
                   label + "provenienza o diritti incompleti")
+            # V59: non-commercial use is not the requirement for original footage.
+            # The historical FILM itself must be PD/CC0.
+            license_name = s.get("source_license")
+            license_id = license_name.strip().upper() if isinstance(license_name, str) else ""
+            block(license_id in {"CC0", "CC0 1.0", "PUBLIC_DOMAIN", "PDM"},
+                  label + "V59: la ripresa non e' documentata PD/CC0")
+            block(s.get("nonmonetized_publication_rights_checked") is True,
+                  label + "V59: diritti pubblicazione non monetizzata assenti")
+            if license_id in ("PUBLIC_DOMAIN", "PDM"):
+                block(s.get("jurisdiction_reviewed") is True,
+                      label + "V59: stato PD/PDM non verificato per Italia e origine")
         if kind == "reveal":
             revealed = True
             block(s.get("same_source_and_frames_verified") is True,
