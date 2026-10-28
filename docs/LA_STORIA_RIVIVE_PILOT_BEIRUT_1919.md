@@ -31,3 +31,6 @@
 5. Verificare il sito privato con import autorizzato e una scheda completa di quattro post distinti. Non chiamare `delivery_ready` una prova incompleta.
 
 Fonte regole: [V56](LA_STORIA_RIVIVE_CONTRATTO_V56.md) e [V55](REGOLE_ATTIVE.md).
+## Correzione V57 dopo feedback dell'utente (28 ottobre 2026)
+
+**Pilot respinto per obiettivo estetico.** Il file sepia è tecnicamente valido e mantenuto solo come prova storica di pipeline. Il gate cromatico V57 sull'intervallo a colori 7–12,2s rileva una sola famiglia di tinte, mediana entropia tonalità ~0,11 bit; quindi la semplice tinta non ricrea colori diversi e non raggiunge il riferimento. I tre MP4 dimostrativi sono tutti 720×1280/30fps: forte nitidezza percepita non equivale a 4K. Niente altra variante seppia. Restauro AI semantico/temporale obbligatorio prima di proporre un nuovo risultato finale. Vedi `docs/LA_STORIA_RIVIVE_QUALITA_V57.md`.
