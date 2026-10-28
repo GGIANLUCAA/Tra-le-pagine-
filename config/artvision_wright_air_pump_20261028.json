@@ -1,0 +1,157 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "52.1",
+  "date": "2026-10-28",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261028T0915+0100",
+  "chosen_format": "artvision_cinema",
+  "format_reason": "S01 E02 Turner Critico remains blocked pending a genuinely available Gacrux voice; E01 and E03 already rendered. New standalone Cinema with a different verified public-domain artwork; no silent Critico downgrade.",
+  "candidates_considered": [
+    {
+      "artist": "Joseph Wright 'of Derby'",
+      "title": "An Experiment on a Bird in the Air Pump",
+      "reason": "Selected: moral suspense around a bird in a vacuum, scientific Enlightenment painting; NG725, 183×244 cm, PD-Art high-res source; no existing standalone found in repo search or production register."
+    },
+    {
+      "artist": "Pieter Bruegel the Elder",
+      "title": "The Tower of Babel",
+      "reason": "Visually extraordinary and well-known; other Bruegel production already recent, risk of repetitive artist/style, authentic image rights still to be assessed."
+    },
+    {
+      "artist": "Rembrandt van Rijn",
+      "title": "The Night Watch",
+      "reason": "Recognizable classic and monumental, but Rembrandt already present in multiple V6 and V29 modules, less catalogue novelty for this cycle."
+    }
+  ],
+  "subjects": {
+    "air_pump": {
+      "artist": "JOSEPH WRIGHT 'OF DERBY'",
+      "title_en": "An Experiment on a Bird in the Air Pump",
+      "year": "1768",
+      "museum": "The National Gallery, London, NG725 (on loan to Derby Museums through 1 November 2026)",
+      "slug": "wright_air_pump_20261028_0915",
+      "editorial_key": "wright_air_pump_20261028_0915",
+      "source_page": "https://commons.wikimedia.org/wiki/File:An_Experiment_on_a_Bird_in_an_Air_Pump_by_Joseph_Wright_of_Derby,_1768.jpg",
+      "museum_page": "https://www.nationalgallery.org.uk/paintings/joseph-wright-of-derby-an-experiment-on-a-bird-in-the-air-pump",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/2/22/An_Experiment_on_a_Bird_in_an_Air_Pump_by_Joseph_Wright_of_Derby%2C_1768.jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/An_Experiment_on_a_Bird_in_an_Air_Pump_by_Joseph_Wright_of_Derby%2C_1768.jpg"
+      ],
+      "music": {
+        "name": "The Descent",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1200094",
+        "offset": 0
+      },
+      "story": "The bird is suspended between life and death; one experiment divides the witnesses between curiosity, fear, affection and detachment. End on the entire 1768 composition, not a simulated living bird.",
+      "techniques": [
+        "human_gaze_start",
+        "motivated_cut",
+        "rhythmic_rest",
+        "opaque_canvas_reveal"
+      ],
+      "scenes": [
+        {
+          "type": "detail",
+          "x": 0.7,
+          "y": 0.22,
+          "z": 1.42,
+          "seconds": 5.4,
+          "movement": "locked",
+          "intent": "The white bird in the suspended glass vessel introduces the experiment and the ethical stakes"
+        },
+        {
+          "type": "portrait",
+          "x": 0.53,
+          "y": 0.32,
+          "z": 1.25,
+          "seconds": 5.1,
+          "movement": "slow_pull",
+          "intent": "The lecturer looks outward, making the viewer a witness rather than a passive observer"
+        },
+        {
+          "type": "portrait",
+          "x": 0.88,
+          "y": 0.58,
+          "z": 1.45,
+          "seconds": 5.5,
+          "movement": "locked",
+          "intent": "A distressed child turns away, the first emotional response to the demonstration"
+        },
+        {
+          "type": "medium",
+          "x": 0.83,
+          "y": 0.44,
+          "z": 1.2,
+          "seconds": 5.2,
+          "movement": "locked",
+          "intent": "A consoling adult contrasts scientific curiosity with the child's fear"
+        },
+        {
+          "type": "portrait",
+          "x": 0.34,
+          "y": 0.56,
+          "z": 1.37,
+          "seconds": 5.2,
+          "movement": "locked",
+          "intent": "A young spectator leans forward, captivated by what the experiment might reveal"
+        },
+        {
+          "type": "medium",
+          "x": 0.26,
+          "y": 0.35,
+          "z": 1.2,
+          "seconds": 5.3,
+          "movement": "slow_push",
+          "intent": "The two figures at left appear absorbed in their own intimate conversation"
+        },
+        {
+          "type": "texture",
+          "x": 0.55,
+          "y": 0.73,
+          "z": 1.42,
+          "seconds": 5.1,
+          "movement": "locked",
+          "intent": "The illuminated glass and skull introduce mortality without inventing a narrative"
+        },
+        {
+          "type": "portrait",
+          "x": 0.86,
+          "y": 0.33,
+          "z": 1.32,
+          "seconds": 5.2,
+          "movement": "locked",
+          "intent": "An observer near the right edge is intent on the demonstration, emotionally distant"
+        },
+        {
+          "type": "detail",
+          "x": 0.7,
+          "y": 0.22,
+          "z": 1.33,
+          "seconds": 5.3,
+          "movement": "locked",
+          "intent": "The bird returns, now charged with the conflicting responses we have seen"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 8.6,
+          "movement": "locked",
+          "intent": "The whole canvas reveals the moral stage, its figures and the single candlelit space"
+        }
+      ],
+      "dimensions_cm": {
+        "height": 183,
+        "width": 244,
+        "source": "https://www.nationalgallery.org.uk/paintings/joseph-wright-of-derby-an-experiment-on-a-bird-in-the-air-pump"
+      },
+      "museum_immersion": "not_used: the historical scene itself is staged like a theatre; direct close study is more meaningful than an invented museum room; no false scale scene"
+    }
+  }
+}
