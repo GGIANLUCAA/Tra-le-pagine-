@@ -62,20 +62,29 @@ def acquire():
     split=re.compile(r"(?<=[.!?])\s+(?=[A-ZÀ-ÙÈÉ«“])")
     for i,(scene,paragraph) in enumerate(zip(plan,paragraphs),1):
         target=scene["target_page"]
+        exact=scene.get("source_file")
+        if not exact:raise RuntimeError("Explicit artist-reviewed source filename required")
         ranked=sorted(enumerate(candidates),key=lambda v:(
+            Path(v[1]["src"]).name!=exact,
             abs((v[1]["page"] if v[1]["page"] is not None else (v[0]*48/max(1,len(candidates)-1)+1))-target),
-            -len(v[1]["alt"]),v[0]))
+            v[0]))
         chosen=None
         for idx,c in ranked:
             if c["url"] in used:continue
             try:
                 if c["url"] not in cache:
-                    res=session.get(c["url"],timeout=45);res.raise_for_status()
+                    # Prefer full-size original linked by the Gutenberg thumbnail.
+                    full=c["url"].replace("th.jpg",".jpg") if c["url"].endswith("th.jpg") else c["url"]
+                    res=session.get(full,timeout=45)
+                    if res.status_code in (403,429):raise RuntimeError("Provider rate limit, stop")
+                    if res.status_code==404 and full!=c["url"]:
+                        res=session.get(c["url"],timeout=45)
+                    res.raise_for_status()
                     if not 12000<len(res.content)<12000000:continue
                     with Image.open(BytesIO(res.content)) as orig:
                         orig.load()
                         if orig.width<220 or orig.height<220 or orig.width*orig.height<85000:continue
-                        cache[c["url"]]=(res.content,orig.convert("RGB"),[orig.width,orig.height])
+                        cache[c["url"]]=(res.content,orig.convert("RGB"),[orig.width,orig.height],res.url)
                 chosen=c;break
             except requests.HTTPError as exc:
                 if exc.response is not None and exc.response.status_code in (429,403):
@@ -83,9 +92,10 @@ def acquire():
                 continue
             except (OSError,ValueError,requests.RequestException):
                 continue
-        if chosen is None:raise RuntimeError("Not enough decodable original illustrations for scene "+str(i))
+        if chosen is None or Path(chosen["src"]).name!=exact:
+            raise RuntimeError("Exact reviewed source missing for scene "+str(i)+": "+exact)
         used.add(chosen["url"])
-        raw,im,size=cache[chosen["url"]]
+        raw,im,size,actual_url=cache[chosen["url"]]
         dest=EP/"images"/("scena_%02d.jpg"%i)
         frame(im).save(dest,"JPEG",quality=93,optimize=True)
         if dest.stat().st_size<35000:raise RuntimeError("Too-small frame "+str(dest))
@@ -93,10 +103,10 @@ def acquire():
                      "narration_anchor":split.split(paragraph)[0]})
         offset+=len([s for s in split.split(paragraph) if s.strip()])
         records.append({"scene":i,"asset_id":"img_%02d"%i,"file":str(dest),
-          "output_sha256":sha(dest.read_bytes()),"source_url":chosen["url"],"source_page":SOURCE,
+          "output_sha256":sha(dest.read_bytes()),"source_url":actual_url,"source_page":SOURCE,
           "source_sha256":sha(raw),"source_dimensions":size,"source_alt":chosen["alt"],
           "edition_page_candidate":chosen["page"],"requested_page":target,
-          "scene_match_note":scene["scene_match_note"],
+          "scene_match_note":scene["scene_match_note"],"image_review_note":scene["image_review_note"],
           "rights_basis":"Robert Browning (died 1889), Kate Greenaway (died 1901); original public-domain artwork, verify exact reproduction",
           "rights_review":"source_artist_and_date_checked","scene_relevance":"PENDING_VISUAL_MATCH",
           "visual_review":"PENDING_HUMAN_REVIEW"})
