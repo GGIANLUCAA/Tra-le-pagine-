@@ -50,6 +50,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ARTVISION_WRIGHT_AUTHENTIC_GILDED_FRAME_SAILKO_SOURCE
-          path: wright_sailko_source/*
+          path: |
+            wright_sailko_source/*
+            src/artvision_delivery_v55.py
           if-no-files-found: error
           retention-days: 30
