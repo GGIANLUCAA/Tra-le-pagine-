@@ -172,19 +172,19 @@ jobs:
           set -euo pipefail
           python3 -m unittest discover -s tests -p test_video_library_dossier_sync_v55.py -v
           mapfile -t manifests < <(find docs/productions -type f -name ARCHIVE_STAGING_V55.json | sort)
-          if [ \${#manifests[@]} -eq 0 ]; then echo 'No V55 dossiers ready'; exit 0; fi
-          python3 src/video_library_dossier_sync_v55.py --dry-run "\${manifests[@]}"
+          if [ ${#manifests[@]} -eq 0 ]; then echo 'No V55 dossiers ready'; exit 0; fi
+          python3 src/video_library_dossier_sync_v55.py --dry-run "${manifests[@]}"
       - name: Upload genuine documents to existing private MP4 only
         id: archive_documents
         continue-on-error: true
         env:
-          GITHUB_REPOSITORY: \${{ github.repository }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
           python3 -m pip -q install requests
           mapfile -t manifests < <(find docs/productions -type f -name ARCHIVE_STAGING_V55.json | sort)
-          if [ \${#manifests[@]} -eq 0 ]; then echo 'No dossiers to synchronize'; exit 0; fi
-          python3 src/video_library_dossier_sync_v55.py "\${manifests[@]}"
+          if [ ${#manifests[@]} -eq 0 ]; then echo 'No dossiers to synchronize'; exit 0; fi
+          python3 src/video_library_dossier_sync_v55.py "${manifests[@]}"
           echo 'Private V55 text dossier sync attempted; V25 approval, dedicated JPEG and site ZIP still require separate verification.' >> "$GITHUB_STEP_SUMMARY"
       - name: Preserve upload blocker visibly without stopping website enrichment
         if: steps.archive_documents.outcome == 'failure'
