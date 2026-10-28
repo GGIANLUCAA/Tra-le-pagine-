@@ -14,6 +14,10 @@ Le guide V12–V31 restano istruzioni dei moduli: in caso di conflitto prevale l
 revisione attiva. Non aggiungere in cima altri blocchi «regola più recente»:
 aggiornare la fonte unica con versione, motivo e riferimento dell'approvazione.
 
+## V58 — Ricerche open source e montaggi autentici in più scene
+
+Leggere `docs/LA_STORIA_RIVIVE_OPEN_SOURCE_E_MONTAGGIO_V58.md` e `config/storia_rivive_v58.json` per OGNI nuovo reel storico. 4K non obbligatorio: priorità alla qualità percepita. Confrontare 3 fonti, selezionare azioni reali e montare scene pertinenti e diverse senza durata/numero fisso. Usare `src/storia_rivive_montage_v58.py` solo con clip **veramente AI-colorizzate** già presenti e gate V57; non colorizza, non scarica e non chiama Vidu. HAVC wrapper MIT non autorizza i componenti ColorMNet/CMNET2 non-commercial: non dare per scontata la monetizzazione. Eventuale segmento Vidu è ricostruzione AI separatamente etichettata con consenso per clip. Tutto resta sottoposto a V55/V28/V33/V25.
+
 ## V57 — Il target storico è colore AI fotorealistico, NON seppia
 
 Correzione dell'utente del 28/10/2026: i tre file `facebook_20261028_142708.mp4`, `142737.mp4`, `142900.mp4` sono i riferimenti estetici; tutti risultano 720×1280, non vero 4K. Un banale viraggio caldo è stato esplicitamente bocciato. Leggere `docs/LA_STORIA_RIVIVE_QUALITA_V57.md` e `config/storia_rivive_quality_v57.json`. Per nuovi video storico-reference-grade applicare colorizzazione AI semantica e temporalmente coerente e reale recupero del dettaglio; non inviare un altro falso "restauro AI". Non confondere ricostruzione generativa con filmato storico autentico. Zero crediti Vidu senza consenso per clip; revisione e pacchetto V55 obbligatori.

@@ -1,0 +1,32 @@
+name: "La Storia Rivive V58 - montaggio open source gratuito"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_montage_v58.py"
+      - "tests/test_storia_rivive_montage_v58.py"
+      - ".github/workflows/storia-rivive-v58-montage-tests.yml"
+      - "config/storia_rivive_v58.json"
+      - "queue/storia_rivive_candidates_v58.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline_qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Requisiti locali: FFmpeg, nessuna API"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: "Test concreti: preflight, montaggio e decodifica integrale"
+        run: |
+          python -m unittest discover -s tests -p "test_storia_rivive_montage_v58.py" -v
+          python -m json.tool queue/storia_rivive_candidates_v58.json > /dev/null
+          python -m json.tool config/storia_rivive_v58.json > /dev/null
+      - name: "Nessun MP4 di test viene presentato come video storico AI"
+        run: echo "V58 CI e' solo controllo tecnico del compositor, non crea un episodio pubblicabile"
