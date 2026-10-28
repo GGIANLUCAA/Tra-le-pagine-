@@ -1,0 +1,422 @@
+{
+  "schema": "project-v13-draft",
+  "format": "libri",
+  "status": "assets_preparation_not_final",
+  "editorial_contract": {
+    "requested_format": "libri",
+    "user_request": "Produce one complete Italian narrated episode with Gacrux only if integration and quota confirmed; no paid I2V; 9:16 720x1280; no subtitles; rights and QA V44",
+    "active_rules": "V13/V33/V35/V36/V38/V44/V55",
+    "no_paid_video_calls": true
+  },
+  "editorial_plan": {
+    "topic": "La ballata del vecchio marinaio",
+    "hook": "Un vecchio marinaio fermò un invitato davanti alla porta di una festa di nozze. Non lo trattenne con la forza, ma con uno sguardo impossibile da ignorare.",
+    "narrative_design": {
+      "story_beats": [
+        "Il vecchio marinaio ferma un invitato alle nozze",
+        "La nave lascia il porto",
+        "La festa resta alle spalle",
+        "La nave affronta il vento",
+        "Il vascello entra nei ghiacci",
+        "Compare l'albatro",
+        "L'albatro accompagna la nave",
+        "Il gesto irreparabile",
+        "Il giudizio dell'equipaggio",
+        "La bonaccia mortale",
+        "La sete dei marinai",
+        "Luci spettrali sull'acqua",
+        "La nave fantasma",
+        "La sorte si decide",
+        "L'equipaggio cade",
+        "Il superstite e la colpa",
+        "Le creature marine",
+        "Il ritorno del movimento",
+        "Le luci degli angeli",
+        "Il marinaio torna a raccontare"
+      ],
+      "distinct_visual_needs": [
+        "L'estraneo dagli occhi inquietanti trattiene un invitato al matrimonio.",
+        "Il marinaio ricorda la partenza della nave verso il mare aperto.",
+        "Il racconto trattiene l'ospite mentre la vita continua lontano.",
+        "Una tempesta spinge la nave lontano dalla rotta.",
+        "La nave è imprigionata fra pareti di ghiaccio.",
+        "Un grande uccello bianco raggiunge l'equipaggio.",
+        "Il vento riprende e il volatile segue i marinai.",
+        "Il marinaio colpisce l'albatro con la balestra.",
+        "I compagni prima lo accusano, poi cambiano opinione.",
+        "La nave si arresta nel mare immobile.",
+        "L'acqua è ovunque, ma nessuno può berla.",
+        "La notte si riempie di bagliori innaturali.",
+        "Una vela impossibile compare all'orizzonte.",
+        "Morte e Vita-in-Morte si contendono i marinai.",
+        "I compagni muoiono uno dopo l'altro.",
+        "Il marinaio rimane solo, con l'albatro al collo.",
+        "Il marinaio osserva e benedice la bellezza dei serpenti d'acqua.",
+        "La maledizione si spezza e la nave riparte.",
+        "Presenze luminose vegliano sui marinai morti.",
+        "La confessione lo porta a rispettare ogni creatura vivente."
+      ],
+      "image_count_reason": "20 specific events in Coleridge's narrative; each uses a different original Doré engraving rather than duplicated crops",
+      "pace_reason": "Scenes change on each spoken paragraph, with pauses at the killing, death, and redemption"
+    },
+    "media_sourcing": [
+      {
+        "asset_id": "scena_01",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_01.jpg",
+        "choice_reason": "L'estraneo dagli occhi inquietanti trattiene un invitato al matrimonio.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Il vecchio marinaio ferma un invitato alle nozze",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_02",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_02.jpg",
+        "choice_reason": "Il marinaio ricorda la partenza della nave verso il mare aperto.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "La nave lascia il porto",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_03",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_03.jpg",
+        "choice_reason": "Il racconto trattiene l'ospite mentre la vita continua lontano.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "La festa resta alle spalle",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_04",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_04.jpg",
+        "choice_reason": "Una tempesta spinge la nave lontano dalla rotta.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "La nave affronta il vento",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_05",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_05.jpg",
+        "choice_reason": "La nave è imprigionata fra pareti di ghiaccio.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Il vascello entra nei ghiacci",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_06",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_06.jpg",
+        "choice_reason": "Un grande uccello bianco raggiunge l'equipaggio.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Compare l'albatro",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_07",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_07.jpg",
+        "choice_reason": "Il vento riprende e il volatile segue i marinai.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "L'albatro accompagna la nave",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_08",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_08.jpg",
+        "choice_reason": "Il marinaio colpisce l'albatro con la balestra.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Il gesto irreparabile",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_09",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_09.jpg",
+        "choice_reason": "I compagni prima lo accusano, poi cambiano opinione.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Il giudizio dell'equipaggio",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_10",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_10.jpg",
+        "choice_reason": "La nave si arresta nel mare immobile.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "La bonaccia mortale",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_11",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_11.jpg",
+        "choice_reason": "L'acqua è ovunque, ma nessuno può berla.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "La sete dei marinai",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_12",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_12.jpg",
+        "choice_reason": "La notte si riempie di bagliori innaturali.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Luci spettrali sull'acqua",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_13",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_13.jpg",
+        "choice_reason": "Una vela impossibile compare all'orizzonte.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "La nave fantasma",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_14",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_14.jpg",
+        "choice_reason": "Morte e Vita-in-Morte si contendono i marinai.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "La sorte si decide",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_15",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_15.jpg",
+        "choice_reason": "I compagni muoiono uno dopo l'altro.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "L'equipaggio cade",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_16",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_17.jpg",
+        "choice_reason": "Il marinaio rimane solo, con l'albatro al collo.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Il superstite e la colpa",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_17",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_19.jpg",
+        "choice_reason": "Il marinaio osserva e benedice la bellezza dei serpenti d'acqua.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Le creature marine",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_18",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_21.jpg",
+        "choice_reason": "La maledizione si spezza e la nave riparte.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Il ritorno del movimento",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_19",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_30.jpg",
+        "choice_reason": "Presenze luminose vegliano sui marinai morti.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Le luci degli angeli",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      },
+      {
+        "asset_id": "scena_20",
+        "source_kind": "verified_archival_illustration",
+        "provider": "Wikimedia Commons",
+        "source_reference": "https://commons.wikimedia.org/wiki/File:Der_Alte_Matrose_b_38.jpg",
+        "choice_reason": "La confessione lo porta a rispettare ogni creatura vivente.",
+        "rights_review": "Original Gustave Doré drawing (artist died 1883); Commons Public Domain Mark per source page; image metadata checked on download; human visual review pending",
+        "scene_relevance": "Il marinaio torna a raccontare",
+        "visual_review": "pending_image_acquisition_and_human_review"
+      }
+    ],
+    "music": {
+      "kind": "original_composition_only",
+      "credits": "Tra le Pagine — Studio Ibrido",
+      "state": "not_yet_rendered"
+    },
+    "voice": {
+      "provider": "Google Gemini",
+      "voice": "Gacrux",
+      "status": "not_requested; quota_unconfirmed"
+    },
+    "release": {
+      "status": "not_final",
+      "archive_sync_pending": true,
+      "publish_social": false
+    }
+  },
+  "scenes": [
+    {
+      "asset_id": "scena_01",
+      "description": "Il vecchio marinaio ferma un invitato alle nozze",
+      "reason": "L'estraneo dagli occhi inquietanti trattiene un invitato al matrimonio.",
+      "camera": "locked",
+      "camera_reason": "Un volto e un gesto di arresto aprono il racconto"
+    },
+    {
+      "asset_id": "scena_02",
+      "description": "La nave lascia il porto",
+      "reason": "Il marinaio ricorda la partenza della nave verso il mare aperto.",
+      "camera": "slow_zoom_out",
+      "camera_reason": "Rivelazione progressiva della scala della nave"
+    },
+    {
+      "asset_id": "scena_03",
+      "description": "La festa resta alle spalle",
+      "reason": "Il racconto trattiene l'ospite mentre la vita continua lontano.",
+      "camera": "locked",
+      "camera_reason": "Contrasto tra festa e prigionia dell'ascoltatore"
+    },
+    {
+      "asset_id": "scena_04",
+      "description": "La nave affronta il vento",
+      "reason": "Una tempesta spinge la nave lontano dalla rotta.",
+      "camera": "slow_pan_right",
+      "camera_reason": "Direzione della forza atmosferica"
+    },
+    {
+      "asset_id": "scena_05",
+      "description": "Il vascello entra nei ghiacci",
+      "reason": "La nave è imprigionata fra pareti di ghiaccio.",
+      "camera": "locked",
+      "camera_reason": "Silenzio e immobilità degli iceberg"
+    },
+    {
+      "asset_id": "scena_06",
+      "description": "Compare l'albatro",
+      "reason": "Un grande uccello bianco raggiunge l'equipaggio.",
+      "camera": "slow_zoom_in",
+      "camera_reason": "Avvicinamento rispettoso al segno di speranza"
+    },
+    {
+      "asset_id": "scena_07",
+      "description": "L'albatro accompagna la nave",
+      "reason": "Il vento riprende e il volatile segue i marinai.",
+      "camera": "slow_pan_left",
+      "camera_reason": "Seguire la navigazione"
+    },
+    {
+      "asset_id": "scena_08",
+      "description": "Il gesto irreparabile",
+      "reason": "Il marinaio colpisce l'albatro con la balestra.",
+      "camera": "locked",
+      "camera_reason": "Taglio netto per il momento di colpa"
+    },
+    {
+      "asset_id": "scena_09",
+      "description": "Il giudizio dell'equipaggio",
+      "reason": "I compagni prima lo accusano, poi cambiano opinione.",
+      "camera": "locked",
+      "camera_reason": "Fermare il tempo della contraddizione"
+    },
+    {
+      "asset_id": "scena_10",
+      "description": "La bonaccia mortale",
+      "reason": "La nave si arresta nel mare immobile.",
+      "camera": "slow_zoom_out",
+      "camera_reason": "Allargare il vuoto intorno alla nave"
+    },
+    {
+      "asset_id": "scena_11",
+      "description": "La sete dei marinai",
+      "reason": "L'acqua è ovunque, ma nessuno può berla.",
+      "camera": "locked",
+      "camera_reason": "Concentrazione sulla sofferenza"
+    },
+    {
+      "asset_id": "scena_12",
+      "description": "Luci spettrali sull'acqua",
+      "reason": "La notte si riempie di bagliori innaturali.",
+      "camera": "slow_pan_right",
+      "camera_reason": "Seguire la luce sull'acqua"
+    },
+    {
+      "asset_id": "scena_13",
+      "description": "La nave fantasma",
+      "reason": "Una vela impossibile compare all'orizzonte.",
+      "camera": "slow_zoom_in",
+      "camera_reason": "Rivelazione della minaccia"
+    },
+    {
+      "asset_id": "scena_14",
+      "description": "La sorte si decide",
+      "reason": "Morte e Vita-in-Morte si contendono i marinai.",
+      "camera": "locked",
+      "camera_reason": "Sospensione prima della condanna"
+    },
+    {
+      "asset_id": "scena_15",
+      "description": "L'equipaggio cade",
+      "reason": "I compagni muoiono uno dopo l'altro.",
+      "camera": "locked",
+      "camera_reason": "Nessun movimento decorativo sulla perdita"
+    },
+    {
+      "asset_id": "scena_16",
+      "description": "Il superstite e la colpa",
+      "reason": "Il marinaio rimane solo, con l'albatro al collo.",
+      "camera": "slow_zoom_out",
+      "camera_reason": "Solitudine e distanza"
+    },
+    {
+      "asset_id": "scena_17",
+      "description": "Le creature marine",
+      "reason": "Il marinaio osserva e benedice la bellezza dei serpenti d'acqua.",
+      "camera": "slow_zoom_in",
+      "camera_reason": "Il primo gesto di compassione"
+    },
+    {
+      "asset_id": "scena_18",
+      "description": "Il ritorno del movimento",
+      "reason": "La maledizione si spezza e la nave riparte.",
+      "camera": "slow_pan_left",
+      "camera_reason": "Ritorno del vento e della speranza"
+    },
+    {
+      "asset_id": "scena_19",
+      "description": "Le luci degli angeli",
+      "reason": "Presenze luminose vegliano sui marinai morti.",
+      "camera": "locked",
+      "camera_reason": "Silenzio davanti all'evento soprannaturale"
+    },
+    {
+      "asset_id": "scena_20",
+      "description": "Il marinaio torna a raccontare",
+      "reason": "La confessione lo porta a rispettare ogni creatura vivente.",
+      "camera": "slow_zoom_out",
+      "camera_reason": "Congedo e apertura verso il mondo"
+    }
+  ]
+}
