@@ -30,6 +30,14 @@ Per ogni nuova opera ArtVision applicare `docs/ARTVISION_FOUR_VARIANTS_CONTRACT_
 **Dopo il render:** per ogni MP4 realmente recuperato e visionato/ascoltato, registrare 2-3 difetti con timecode e azione di correzione nel registro tramite `python src/artvision_learning_loop_v1.py record --review REVIEW.json --video VIDEO.mp4 --ledger output/artvision_learning.jsonl`; consultare `... next --ledger ...` per scegliere una sola modifica per il prossimo ciclo. Il registro verifica file, hash, formato H264/AAC verticale e struttura delle osservazioni; NON vede il video da solo, NON prova emozione e non autorizza pubblicazione o Gold Master. Nessuna recensione inventata se MP4 non visionabile. La modifica alla policy V54 cambia l'hash dei contratti V13: i vecchi progetti devono essere migrati esplicitamente, non aggiornati in silenzio.
 
 
+## V55 — apertura forte + doppia consegna verificata (28/10/2026)
+
+**Per OGNI nuovo video, qualunque format** applicare `docs/REGOLE_ATTIVE.md > V55` e `docs/VIDEO_LIBRARY_DOSSIER_V1.md`: MP4 originale H264/AAC, copertina JPEG coerente e titolo/artista nei video d'arte, quattro post originali Facebook/Instagram/TikTok/YouTube, fonti/diritti/ricetta, ZIP completo e ZIP MP4-only quando serve ad Android. Testare hash, CRC, ffprobe e decodifica. Non considerare concluso il lavoro soltanto perché il renderer genera un MP4.
+
+**Prima scena cruciale:** pianificare primi 0–3–7 secondi su un dettaglio reale/emozionante, con titolo/artista leggibile sul primo frame, ritmo, voce e musica appropriati. Verificare MP4 reale ai secondi 0/1/3/5/7 e ascoltare l'apertura; il codice non può certificare emozione, leggibilità o buona regia senza vera revisione del file. Per ArtVision utilizzare `src/artvision_delivery_v55.py pack`; `--opening-review` richiede osservazioni riferite all'hash esatto, e i blocchi restano visibili.
+
+**Doppio percorso di consegna:** ChatGPT = allegati che esistono DAVVERO nella sessione (/mnt/data) e link MP4 + ZIP effettivamente verificati localmente; il solo sandbox non prova la disponibilità sul telefono. Studio = importare l'originale nel Video Library Studio privato, verificarne catalogo, riproduzione, vera cover, testi social persistiti e ZIP dinamico del dossier. Non confondere una scheda automatica vuota con i testi autentici salvati. Segnare `delivery_pending`/`archive_sync_pending` finché manca un controllo; niente link inventati. Non pubblicare sui social e non spendere crediti senza approvazione. Import da GitHub e import dalla Libreria ChatGPT sono distinti; la regola non implica disponibilità immediata garantita dai servizi.
+
 ## Prima di produrre
 
 1. Identificare l'intento: `libri`, `artvision_cinema`, `artvision_critico`,
