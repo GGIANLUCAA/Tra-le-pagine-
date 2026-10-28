@@ -3,7 +3,7 @@
   "created_at": "2026-10-28",
   "requested_by_user": "Avviare nuova produzione in serie dopo approvazione di The Cyclops SENZA_STRISCE e Hiroshige Museum Scale",
   "intent": "Tre nuovi episodi con scala fisica rigorosa, miniature/metri/monumentale; Cinema, Critico, Cinema, e regie differenti",
-  "status": "queued_with_existing_artvision_automation_run_requested",
+  "status": "episode_1_rendered_needs_review_episodes_2_3_queued",
   "no_external_spend": true,
   "no_auto_publish": true,
   "existing_automation_id": "6adca191603c8191a90d5190901cd034",
@@ -31,7 +31,7 @@
   "episodes": [
     {
       "episode": 1,
-      "status": "queued_asset_acquisition_required",
+      "status": "rendered_needs_review",
       "format": "artvision_cinema",
       "artist": "Carel Fabritius",
       "work": "The Goldfinch",
@@ -41,12 +41,27 @@
       "artwork_w_cm": 22.8,
       "verified_museum_source": "https://www.mauritshuis.nl/en/our-collection/artworks/605-the-goldfinch",
       "proposed_art_image": "https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
-      "image_status": "Commons PD-Art record available; actual full-resolution bytes not yet acquired or validated",
+      "image_status": "Original 3930x6000 source acquired and verified; PD-Art reproduction included in V50 ZIP",
       "audience_reason": "Un uccellino quasi vivo e incatenato: un quadro minuscolo che incuriosisce con la pittura illusionistica.",
-      "museum_camera": "Figura umana alta circa 1.7 m, tavoletta piccola visibile a parete, avvicinamento trattenuto, close-up becco/occhio/catenella, ritorno.",
+      "museum_camera": "Photographic-style illustrative gallery, not actual Mauritshuis; panel 33.5x22.8cm physically small relative to adult visitor; entry/exit and close-ups.",
       "artwork_frame": "real frame not authenticated; if reconstructed disclose as scenic, ensure correct aperture and proportions",
       "narrative_style": "sospeso, dettagli tattili, nessun eccesso horror",
-      "music": "strumentale CC BY specifico da selezionare e verificare per registrazione"
+      "music": "Water Lily — Kevin MacLeod, original recording ISRC USUAN1400035, CC BY 4.0, preserved in ZIP",
+      "actual_render": {
+        "date": "2026-10-28",
+        "version": "V50",
+        "sha256": "5b760c609a51acf9c22a5f39aeb90344ea6914b812290c5fc01164376d3c94bd",
+        "seconds": 55,
+        "codec_video": "H264",
+        "codec_audio": "AAC",
+        "resolution": "1080x1920",
+        "fps": 24,
+        "library_mp4": "/ArtVision/Museum_Scale_S01/ArtVision_Goldfinch_Museum_V50_REVIEW.mp4",
+        "library_zip": "/ArtVision/Museum_Scale_S01/ArtVision_Goldfinch_Museum_V50_Complete.zip",
+        "repository_report": "docs/productions/2026-10-28-goldfinch-museum-scale-s01-e01.md",
+        "human_approved": false,
+        "social_published": false
+      }
     },
     {
       "episode": 2,
@@ -97,5 +112,6 @@
     "Upload Android verificato, mai link fittizi",
     "File originali preservati, nessun automatic Gold Master"
   ],
-  "note": "Documento di avvio e prenotazione, non rappresenta tre MP4 creati. La produzione viene attivata dall'automazione esistente e va verificata per singolo episodio. Nessuna nuova automazione duplicata."
+  "note": "Documento di avvio e prenotazione, non rappresenta tre MP4 creati. La produzione viene attivata dall'automazione esistente e va verificata per singolo episodio. Nessuna nuova automazione duplicata.",
+  "last_verified_run": "2026-10-28: V48 GitHub Actions 40614672767 technically passed but artistically superseded by V50 local render. V50 verified ffprobe/full decode/ZIP/cover; human aesthetic approval pending."
 }
