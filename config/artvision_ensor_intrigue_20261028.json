@@ -1,0 +1,157 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "47.1",
+  "date": "2026-10-28",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261028T0215+0100",
+  "chosen_format": "artvision_cinema",
+  "format_reason": "The previous episode was Cinema; Critico Gacrux not verified free and available, so this is a rights-documented new monographic Cinema rather than fake narrated Critico.",
+  "candidates_considered": [
+    {
+      "artist": "James Ensor",
+      "title": "The Intrigue",
+      "reason": "Selected: uncanny masks, original 1890 painting at KMSKA, verified dimensions 89.5 x 149 cm, authentic CC0 5000x2990 photo, no match in V31 state or repository code search."
+    },
+    {
+      "artist": "Gustave Moreau",
+      "title": "The Apparition",
+      "reason": "Strange, symbolist and visually compelling, but less immediately legible for a short vertical episode; asset and museum rights not completed this cycle."
+    },
+    {
+      "artist": "Johann Heinrich Füssli",
+      "title": "The Nightmare",
+      "reason": "Recognizable classic with unsettling visual storytelling, but previously treated in Critico workflows; weaker novelty than Ensor."
+    }
+  ],
+  "subjects": {
+    "intrigue": {
+      "artist": "JAMES ENSOR",
+      "title_en": "The Intrigue",
+      "year": "1890",
+      "museum": "Royal Museum of Fine Arts Antwerp (KMSKA), Belgium",
+      "slug": "ensor_intrigue_20261028_0215",
+      "editorial_key": "ensor_intrigue_20261028_0215",
+      "source_page": "https://commons.wikimedia.org/wiki/File:De_intrige,_James_Ensor,_1890,_Koninklijk_Museum_voor_Schone_Kunsten_Antwerpen,_1856.002.jpeg",
+      "museum_page": "https://kmska.be/en/masterpiece/the-intrigue",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/0/0a/De_intrige%2C_James_Ensor%2C_1890%2C_Koninklijk_Museum_voor_Schone_Kunsten_Antwerpen%2C_1856.002.jpeg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/De_intrige%2C_James_Ensor%2C_1890%2C_Koninklijk_Museum_voor_Schone_Kunsten_Antwerpen%2C_1856.002.jpeg"
+      ],
+      "music": {
+        "name": "The Descent",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1200094",
+        "offset": 0
+      },
+      "story": "Eleven masked faces offer smiles without trust. The reveal is not a hidden object but a social paradox: everyone has a face, nobody reveals one. The final full image restores the crowd.",
+      "techniques": [
+        "human_gaze_start",
+        "motivated_cut",
+        "rhythmic_rest",
+        "opaque_canvas_reveal"
+      ],
+      "scenes": [
+        {
+          "type": "detail",
+          "x": 0.49,
+          "y": 0.48,
+          "z": 1.08,
+          "seconds": 5.6,
+          "movement": "locked",
+          "intent": "The top hat mask stares out, a calm center amid an uncomfortable crowd"
+        },
+        {
+          "type": "portrait",
+          "x": 0.16,
+          "y": 0.45,
+          "z": 1.2,
+          "seconds": 5.3,
+          "movement": "slow_push",
+          "intent": "The white face at far left watches from behind another costume"
+        },
+        {
+          "type": "detail",
+          "x": 0.31,
+          "y": 0.53,
+          "z": 1.22,
+          "seconds": 5.4,
+          "movement": "locked",
+          "intent": "The smiling mask and the floral hat reveal a painted contradiction"
+        },
+        {
+          "type": "portrait",
+          "x": 0.54,
+          "y": 0.49,
+          "z": 1.13,
+          "seconds": 5.4,
+          "movement": "locked",
+          "intent": "The black top hat and pale expression suggest emotional distance"
+        },
+        {
+          "type": "macro",
+          "x": 0.74,
+          "y": 0.35,
+          "z": 1.25,
+          "seconds": 5.3,
+          "movement": "slow_pull",
+          "intent": "The orange and green hood reveals an unsettling theatrical face"
+        },
+        {
+          "type": "detail",
+          "x": 0.9,
+          "y": 0.54,
+          "z": 1.17,
+          "seconds": 5.5,
+          "movement": "locked",
+          "intent": "The small face and red clothing compress a crowded corner"
+        },
+        {
+          "type": "portrait",
+          "x": 0.47,
+          "y": 0.58,
+          "z": 1.32,
+          "seconds": 5.2,
+          "movement": "locked",
+          "intent": "The pale eyes and painted mouth seem friendly but feel ambiguous"
+        },
+        {
+          "type": "texture",
+          "x": 0.11,
+          "y": 0.65,
+          "z": 1.22,
+          "seconds": 5.5,
+          "movement": "slow_push",
+          "intent": "A grotesque lower-left mask undermines the cheerful carnival colors"
+        },
+        {
+          "type": "medium",
+          "x": 0.69,
+          "y": 0.58,
+          "z": 1.12,
+          "seconds": 5.8,
+          "movement": "locked",
+          "intent": "The figures on the right offer no safe or trustworthy expression"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 9.2,
+          "movement": "locked",
+          "intent": "Reveal all eleven masked figures in the true horizontal composition"
+        }
+      ],
+      "dimensions_cm": {
+        "height": 89.5,
+        "width": 149,
+        "source": "https://kmska.be/en/masterpiece/the-intrigue"
+      },
+      "museum_immersion": "not_used: masks benefit from direct opaque close study, avoiding a generic museum scene"
+    }
+  }
+}
