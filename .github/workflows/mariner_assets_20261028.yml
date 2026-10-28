@@ -1,0 +1,67 @@
+name: "Tra le Pagine — Marinaio, fonti vere e schede gratuite"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "queue/mariner_assets_20261028.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: libri-mariner-20261028-source-only
+  cancel-in-progress: false
+jobs:
+  free-assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Explicitly prohibit paid providers and unconfirmed narration
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open("queue/mariner_assets_20261028.json"))
+          assert q["episode"]=="marinaio_antico_20261028"
+          assert q["video_api_calls_allowed"] is False
+          assert q["gemini_tts_quota_confirmed"] is False
+          assert q["social_publish"] is False
+          print("NO VIDEO API, NO TTS, NO SOCIAL PUBLISH. Free source package only.")
+          PY
+      - name: Install free image tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-dejavu-core
+          python -m pip install --quiet "pillow>=10,<13"
+      - name: Check Python and acquire only 20 genuine Commons engravings
+        run: |
+          python -m py_compile src/mariner_assets_20261028.py
+          python src/mariner_assets_20261028.py
+      - name: Validate cover, storyboard, sources and ZIP
+        run: |
+          python - <<'PY'
+          import json,zipfile
+          from pathlib import Path
+          from PIL import Image
+          root=Path("output/marinaio_antico_20261028")
+          data=json.loads((root/"PROVENIENZA_IMMAGINI.json").read_text())
+          assert len(data["images"])==20
+          assert len({i["source_sha256"] for i in data["images"]})==20
+          for name in ("COPERTINA_SERIE.jpg","STORYBOARD_COMPLETO.jpg"):
+            with Image.open(root/name) as im:im.verify()
+          with zipfile.ZipFile(root/"PACCHETTO_VISUALE_NON_VIDEO.zip") as z:
+            assert z.testzip() is None
+            assert len([n for n in z.namelist() if n.startswith("ILLUSTRAZIONI/")])==20
+            assert not any(n.lower().endswith(".mp4") for n in z.namelist())
+          print("VISUAL_PREVIEW_VERIFIED: 20 genuine sources; NO VIDEO CLAIM")
+          PY
+      - name: Deliver actual free preview package for Android
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARINAIO_20_TAVOLE_COPERTINA_STORYBOARD_NON_VIDEO
+          path: output/marinaio_antico_20261028/
+          if-no-files-found: error
+          retention-days: 14
