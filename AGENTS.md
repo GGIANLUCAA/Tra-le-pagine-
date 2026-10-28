@@ -14,6 +14,10 @@ Le guide V12–V31 restano istruzioni dei moduli: in caso di conflitto prevale l
 revisione attiva. Non aggiungere in cima altri blocchi «regola più recente»:
 aggiornare la fonte unica con versione, motivo e riferimento dell'approvazione.
 
+## ArtVision 4x1 e direzione emotiva — 28/10/2026
+
+Per ogni nuova opera ArtVision applicare `docs/ARTVISION_FOUR_VARIANTS_CONTRACT_20261028.md`: dossier unico, quattro varianti (Critico Standard/Museum e Cinema Standard/Museum), direzione emotiva fondata sui dettagli reali, gate artistici e stati separati. Non confondere l'obiettivo di quattro varianti con quattro video effettivamente renderizzati o approvati. Questo integra le regole attive e non autorizza spese o pubblicazioni.
+
 ## Prima di produrre
 
 1. Identificare l'intento: `libri`, `artvision_cinema`, `artvision_critico`,
