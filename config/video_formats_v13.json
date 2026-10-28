@@ -123,10 +123,11 @@
     },
     "storia_rivive": {
       "label": "La Storia Rivive — filmati d'archivio autentici",
-      "status": "reference_grade_blocked_pending_real_img2img_source",
+      "status": "source_wow_selection_required_before_new_production",
       "preset": "source_fidelity_photographic_v64",
       "narrated": false,
       "guides": [
+        "docs/LA_STORIA_RIVIVE_SCELTA_WOW_V69.md",
         "docs/LA_STORIA_RIVIVE_FOTO_FEDELE_V64.md",
         "docs/LA_STORIA_RIVIVE_DIREZIONE_FOTOGRAFICA_V63.md",
         "docs/LA_STORIA_RIVIVE_FOTOGRAMMA_FOTO_AI_V61.md",
@@ -139,6 +140,7 @@
         "docs/VIDEO_LIBRARY_DOSSIER_V1.md"
       ],
       "entrypoints": [
+        "src/storia_rivive_source_selector_v69.py",
         "src/storia_rivive_quality_policy_v64.py",
         "src/storia_rivive_director_cut_v63.py",
         "src/storia_rivive_photo_freeze_v61.py",
@@ -151,13 +153,15 @@
         1920
       ],
       "direction": "Non basta RealESRGAN+DDColor. L'immagine FERMA deve apparire fotografia moderna ma corrispondere alle STESSE persone, volti/abiti/gesti e sfondo del filmato storico. Prima cercare scansione 2K/HD PD/CC0, faces >72px in sorgente (target 100+), fusione multi-frame reale, restaurare e colorizzare foto con modello img2img vincolato alla sorgente e QA manuale. Se AI inventa nuovi volti o immagine resta morbida, scartare e non pubblicare. 20-30s, pauses scene-specific.",
-      "next_action": "Scegliere un filmato fonte reale HD/2K con diritti PD/CC0 singolo-file; generare e QA foto image-to-image restauro identità; solo se V64 passa montare V61 e pacchetto V55; zero nuovi crediti autonomi.",
+      "next_action": "V69: fare prima scouting 3 fonti storiche PD/CC0 vere (territorio Italia verificato) e almeno 3 frame/crop per ciascuna; provare reale restauro generativo su 2-3 frame migliori; scegliere in base a volti, dettaglio percepito, fedeltà e forza emotiva, non raster 4K. Solo dopo MP4 wow e pacchetto V55.",
       "rules_config": "config/storia_rivive_v56.json",
       "quality_preset": "reference_modern_color",
       "source_rights": "PUBLIC_DOMAIN_OR_CC0_ONLY",
       "publication_intent": "NON_MONETIZED",
       "licensed_tools": "noncommercial_when_use_and_social_distribution_allowed",
-      "default_direction": "blackwhite_motion_then_freeze_high_detail_ai_color_photo"
+      "default_direction": "blackwhite_motion_then_freeze_high_detail_ai_color_photo",
+      "source_selector": "src/storia_rivive_source_selector_v69.py",
+      "source_quality_contract": "config/storia_rivive_v69.json"
     }
   },
   "active_rules": "config/editorial_rules.json"
