@@ -42,7 +42,7 @@ def source_metrics(frame,subject_box=None):
         occupancy=clamp(bw*bh*7)
     # Face detector is ONLY advisory, never a source identity verification.
     faces=[]
-    if hasattr(cv2,"data"):
+    if hasattr(cv2,"data") and hasattr(cv2,"CascadeClassifier"):
         cascade=cv2.CascadeClassifier(cv2.data.haarcascades+"haarcascade_frontalface_default.xml")
         if not cascade.empty():
             for x,y,fw,fh in cascade.detectMultiScale(gray,1.18,5,minSize=(25,25)):
