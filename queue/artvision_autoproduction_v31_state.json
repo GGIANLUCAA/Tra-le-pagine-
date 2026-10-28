@@ -1,7 +1,7 @@
 {
   "schema": "artvision-autoproduction-state-v31",
   "created": "2026-10-24",
-  "updated": "2026-10-27T22:27:00Z",
+  "updated": "2026-10-28T00:44:00Z",
   "policy": "docs/ARTVISION_AUTOPRODUZIONE_3H_V31.md",
   "last_verified_from_conversation": [
     {
@@ -19,7 +19,7 @@
       "record": "https://github.com/GGIANLUCAA/Tra-le-pagine-/issues/31"
     }
   ],
-  "next_preferred_format": "artvision_critico_if_natural_Gacrux_verified_else_collection",
+  "next_preferred_format": "artvision_critico",
   "cycle_log": [
     {
       "cycle_id": "20261024T1715+0200",
@@ -1283,6 +1283,48 @@
         "Improve legibility of whole landscape painting in 9:16",
         "Synchronize motivated cuts to measured musical accents"
       ]
+    },
+    {
+      "cycle_id": "20261028T0215+0100",
+      "created_at": "2026-10-28T00:43:06Z",
+      "artist": "James Ensor",
+      "work": "The Intrigue",
+      "format": "artvision_cinema",
+      "baseline": "cinema_v6",
+      "status": "technical_pass_not_gold_master",
+      "mp4_verified": true,
+      "duration_seconds": 58.2,
+      "size_bytes": 16226460,
+      "sha256_mp4": "9eafd4ca3513605082607b879ed124dc7e73ca05818d5c23ea4250dae8c0cfcc",
+      "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40610397247",
+      "artifact_id": 12783045905,
+      "artifact_name": "ARTVISION_V47_ENSOR_THE_INTRIGUE_REAL_FILES",
+      "episode_record": "docs/productions/2026-10-28-0215-ensor-the-intrigue.md",
+      "source": "KMSKA The Intrigue 1890, photograph Hugo Maertens CC0 Wikimedia Commons",
+      "dimensions_cm": {
+        "width": 149,
+        "height": 89.5
+      },
+      "music": "The Descent — Kevin MacLeod, CC BY 4.0, ISRC USUAN1200094",
+      "steps": {
+        "render": "success",
+        "verify": "success",
+        "archive": "success",
+        "local_full_decode": "pass",
+        "zip_crc": "pass",
+        "first_frame_title_artist_visual": "pass"
+      },
+      "human_artistic_review": "pending",
+      "gold_master_approved": false,
+      "social_published": false,
+      "external_video_library_import": "not_attempted",
+      "format_fallback_reason": "Google Gacrux narration not verified available without consumption; Cinema V6 with licensed instrumental instead",
+      "qa_issues_next": [
+        "Consecutive central mask crops may feel similar",
+        "Horizontal full painting looks small in 9:16 finale",
+        "Human listening to score cadence still pending"
+      ],
+      "v25_legacy_override": "Explicit user title+artist opening supersedes legacy V25 music credit on-screen; music credited in all V28 captions"
     }
   ],
   "notes": "New entries must be verified and may be appended; do not remove user's existing catalog selections or previously hidden works. Do not mark storyboard as MP4."
