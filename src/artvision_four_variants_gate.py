@@ -42,6 +42,16 @@ def new_plan(topic, artist):
         variants[name] = {
             "format": fmt, "mode": mode, "variation_reason": "",
             "scenes": [], "status": "planned",
+            "opening_0_7": {
+                "first_frame_title_artist": "",
+                "first_frame_visual": "",
+                "first_3_seconds_hook": "",
+                "seconds_3_to_7_reveal": "",
+                "detail_id": "",
+                "mobile_composition_reason": "",
+                "audio_or_voice_cue": "",
+                "qa_status": "pending_visual_review",
+            },
         }
         if mode == "museum":
             variants[name]["museum"] = {
@@ -133,6 +143,26 @@ def validate(plan):
              f"{name}: formato o tipo ingresso errato")
         need(meaningful(variant.get("variation_reason"), 20),
              f"{name}: motivare la differenza artistica")
+        # V55: the first seven seconds must have a meaningful artwork-specific
+        # visual hook. This is a storyboard gate, NOT video/image recognition.
+        opening = variant.get("opening_0_7")
+        if not isinstance(opening, dict):
+            opening = {}
+        for field, minimum in (
+            ("first_frame_title_artist", 8),
+            ("first_frame_visual", 20),
+            ("first_3_seconds_hook", 20),
+            ("seconds_3_to_7_reveal", 20),
+            ("mobile_composition_reason", 18),
+            ("audio_or_voice_cue", 18),
+        ):
+            need(meaningful(opening.get(field), minimum),
+                 f"{name}: opening_0_7 {field} non studiato")
+        need(opening.get("detail_id") in ids if isinstance(opening.get("detail_id"), str) else False,
+             f"{name}: opening_0_7 deve usare un dettaglio autentico del quadro")
+        need(opening.get("qa_status", "pending_visual_review") in
+             ("pending_visual_review", "reviewed_on_real_frames"),
+             f"{name}: stato revisione apertura non valido")
         scenes = variant.get("scenes")
         if not isinstance(scenes, list):
             scenes = []
