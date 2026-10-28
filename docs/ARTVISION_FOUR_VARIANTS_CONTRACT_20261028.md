@@ -23,3 +23,21 @@ Questo contratto **integra**, non sostituisce, AGENTS.md, docs/REGOLE_ATTIVE.md,
 
 ## Regola di fallback
 Se una delle quattro varianti non è producibile, mantenere separatamente lo stato delle altre; non consegnare una copia rinominata come variante diversa e non dichiarare il gruppo completo. La qualità prevale sulla cadenza di tre ore.
+
+## Direzione emotiva obbligatoria — V1 (28 ottobre 2026)
+Questo è un **gate di progettazione**, non una promessa di viralità o un punteggio di bellezza calcolabile.
+
+Per ogni opera il dossier madre deve contenere una `emotional_direction` verificabile:
+- `central_tension`: il contrasto umano, storico o visivo che rende l'opera interessante, fondato su ciò che si vede e sulle fonti.
+- `intended_feeling`: una o due emozioni principali (meraviglia, inquietudine, tenerezza, malinconia, tensione, ecc.), non un elenco generico.
+- `evidence_details`: almeno tre dettagli specifici dell'opera con posizione/descrizione, fonte dell'immagine e significato; se un dettaglio è interpretativo dichiararlo.
+- `reveal_order`: ordine motivato di scoperta, dal primo stimolo alla rivelazione e alla chiusura; evitare di mostrare subito tutto se distrugge la sorpresa.
+- `visual_audio_cues`: per ogni scena dettaglio reale, emozione cercata, movimento motivato, durata indicativa, musica/pausa e, nei Critico, frase esatta con timecode verificato.
+- `wow_justification`: quale nuova comprensione produce il momento più forte, non soltanto quale effetto usa.
+- `four_variant_delta`: perché le due varianti Standard e Museum aggiungono esperienze diverse pur mantenendo fatti, voce e messaggio coerenti.
+
+**Gate pre-render:** rifiutare storyboard che contengano solo "zoom", "pan", "wow", "epico" senza dettagli identificati e funzione narrativa. Nessuna immagine riempitiva, tagli arbitrari, primi piani troppo degradati o passaggi che contraddicono la voce. Per la variante Museum l'entrata/uscita deve rafforzare la scoperta, non ritardarla inutilmente.
+
+**Gate dopo render:** rivedere l'intero video a velocità normale, anche senza audio per controllare la leggibilità del percorso visivo; poi con audio per verificare tensione, pause, enfasi e raccordi. Annotare almeno un punto che emoziona o sorprende *per una ragione spiegabile* e 2–3 debolezze concrete. Se non emerge alcuna progressione significativa, stato `rendered_needs_review`, mai Gold Master automatico.
+
+**Apprendimento:** registrare i feedback dell'utente e, quando disponibili, dati reali di retention, completamento, salvataggi e condivisioni per variante. Confrontare ipotesi e risultati senza inventare metriche; modificare poche variabili per ciclo. Le emozioni non si certificano con ffprobe o con un algoritmo.
