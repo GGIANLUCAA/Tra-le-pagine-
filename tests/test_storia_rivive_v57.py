@@ -26,7 +26,7 @@ class ReferenceColorV57(unittest.TestCase):
 
     def test_reference_gate_rejects_tint(self):
         info={"width":720,"height":1280,"median_hue_entropy_bits":.11,"p75_hue_entropy_bits":.12}
-        errors,_=m.gates(info,"sepia_tint","","reference_modern_color"=="other")
+        errors,_=m.gates(info,"sepia_tint","")
         self.assertTrue(any("seppia" in x.lower() for x in errors))
 
     def test_false_4k_claim_blocked(self):
