@@ -53,7 +53,7 @@ def raw_frame(cap,sec):
  cap.set(cv2.CAP_PROP_POS_MSEC,sec*1000)
  ok,img=cap.read()
  if not ok:raise ValueError("Archive frame unavailable "+str(sec))
- if img.shape[:2]!=(576,768):raise ValueError("Source width mismatch "+str(img.shape))
+ if img.shape[:2]!=(576,720):raise ValueError("Encoded source raster mismatch "+str(img.shape))
  return img
 
 def crop(frame,x):
@@ -235,7 +235,7 @@ def build():
   "rights":"CC0 asserted for the precise Commons film; extra rights need editorial review",
   "historical_scope":"1918 compilation; NOT a claim of one single filming date for all six shots",
   "scenes":meta,"runtime_s":round(duration,2),
-  "output_resolution_px":[W,H],"is_native_4k":False,"native_source_px":[768,576],
+  "output_resolution_px":[W,H],"is_native_4k":False,"native_source_px":[720,576],"display_aspect_ratio":"4:3; square-pixel display width 768, encoded raster width 720",
   "source_crop_px":[324,576],"colorization":ddmeta,"ai_photo_detail_recovery":upmeta,
   "IMPORTANT_ARTISTIC_NOTE":"These are AI-colorized/ESRGAN-restored authentic frames, NOT HYPIR diffusion. Visually review image fidelity; DO NOT claim original face detail recovered with certainty.",
   "ai_disclosure":"Riprese reali d'archivio del 1918. Colori e microdettagli ricostruiti con IA, non documentazione cromatica autentica.",
