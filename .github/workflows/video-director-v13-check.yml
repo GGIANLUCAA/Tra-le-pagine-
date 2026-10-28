@@ -13,6 +13,10 @@ on:
       - "START_HERE_GPT.md"
       - "config/video_formats_v13.json"
       - "src/video_director_v13.py"
+      - "src/artvision_four_variants_gate.py"
+      - "src/artvision_learning_loop_v1.py"
+      - "docs/ARTVISION_FOUR_VARIANTS_CONTRACT_20261028.md"
+      - "tests/test_artvision_four_variants_gate.py"
       - "src/creator_metrics_v13.py"
       - "src/creator_growth_v14.py"
       - "src/production_batch_v15.py"
@@ -59,6 +63,8 @@ jobs:
           python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12,<1"
       - name: Regole attive, identita del format e mix espliciti
         run: python -m unittest discover -s tests -p "test_editorial_rules.py" -v
+      - name: ArtVision 4x1: regia emotiva e autocritica offline
+        run: python -m unittest discover -s tests -p "test_artvision_four_variants_gate.py" -v
       - name: Routing, schede, hash e MP4 reale
         run: python -m unittest discover -s tests -p "test_video_director_v13.py" -v
       - name: Regia V38 senza stampini o quote immagini
@@ -82,4 +88,4 @@ jobs:
         run: |
           node integrations/video_library_laboratorio/workspace-api.test.mjs
           node tests/test_creator_business_metrics.mjs
-          python -m py_compile src/production_batch_v15.py src/creator_growth_v14.py src/creator_metrics_v13.py src/video_director_v13.py src/gemini_voice.py src/episode_v3.py src/regia_narrativa_v12.py src/studio_autopilot_v11.py
+          python -m py_compile src/production_batch_v15.py src/creator_growth_v14.py src/creator_metrics_v13.py src/video_director_v13.py src/artvision_four_variants_gate.py src/artvision_learning_loop_v1.py src/gemini_voice.py src/episode_v3.py src/regia_narrativa_v12.py src/studio_autopilot_v11.py
