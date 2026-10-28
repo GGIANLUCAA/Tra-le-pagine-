@@ -47,6 +47,40 @@ export default{async fetch(request,env){
    await env.VIDEOS.put('site/index.html',t,{httpMetadata:{contentType:'text/html; charset=utf-8'}});
    return resp({success:true,bytes:t.length});
  }
+// V55: transfer genuine post texts and reproducible notes with the exact MP4.
+// Authenticated GitHub Actions only; NEVER overwrite existing owner-curated material.
+ if((route==='/production-file'&&method==='POST')||(route==='/production-file-status'&&method==='GET')){
+  const video=u.searchParams.get('video')||'',name=u.searchParams.get('name')||'';
+  if(!/^[\w ().-]{1,190}\.(?:mp4|m4v|mov)$/i.test(video)||video.includes('..')||
+     !/^[A-Za-z0-9_(). -]{1,110}\.(?:txt|md|json)$/i.test(name)||name.includes('..'))
+   return resp({error:'Invalid video or attachment filename'},400);
+  if(!await env.VIDEOS.head(video))return resp({error:'MP4 not in archive'},409);
+  const storage='production/files/'+encodeURIComponent(video)+'/'+encodeURIComponent(name);
+  if(method==='GET'){
+   const existing=await env.VIDEOS.head(storage);
+   return resp(existing?{exists:true,size:existing.size,video,name}:{exists:false,video,name});
+  }
+  const n=Number(request.headers.get('content-length')||0);
+  if(n>250000)return resp({error:'Attachment too large'},413);
+  const bytes=await request.arrayBuffer();
+  if(bytes.byteLength===0||bytes.byteLength>250000)return resp({error:'Attachment empty or too large'},413);
+  const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),x=>x.toString(16).padStart(2,'0')).join('');
+  const expected=u.searchParams.get('sha256')||'';
+  if(!/^[0-9a-f]{64}$/i.test(expected)||expected.toLowerCase()!==digest)
+   return resp({error:'Attachment hash mismatch'},400);
+  const old=await env.VIDEOS.get(storage);
+  if(old){
+   const current=await old.arrayBuffer();
+   const oldHash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',current)),x=>x.toString(16).padStart(2,'0')).join('');
+   if(oldHash!==digest)return resp({error:'Curated attachment already exists with different content',conflict:true},409);
+   return resp({ok:true,already_exists:true,video,name,size:current.byteLength,sha256:oldHash});
+  }
+  const typ=/\.json$/i.test(name)?'application/json':/\.md$/i.test(name)?'text/markdown':'text/plain';
+  await env.VIDEOS.put(storage,bytes,{httpMetadata:{contentType:typ+'; charset=utf-8'}});
+  const stored=await env.VIDEOS.head(storage);
+  if(!stored||stored.size!==bytes.byteLength)return resp({error:'Attachment storage verification failed'},500);
+  return resp({ok:true,stored:true,video,name,size:stored.size,sha256:digest});
+ }
 const key=u.searchParams.get('key')||'';
  if(!/^[\w(). -]{1,180}\.(?:mp4|m4v|mov|jpe?g|png|webp)$/i.test(key)||key.includes('..'))return resp({error:'Invalid filename'},400);
  try{
