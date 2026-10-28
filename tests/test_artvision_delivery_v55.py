@@ -95,7 +95,7 @@ class DeliveryV55Tests(unittest.TestCase):
         review_path = self.root / "opening.json"
         review_path.write_text(json.dumps(review), encoding="utf-8")
         self.assertEqual(pack(self.video, self.cover, self.posts, self.rights,
-                              self.recipe, self.root / "approved-open")["first_seconds"]
+                              self.recipe, self.root / "approved-open", opening_review=review_path)["first_seconds"]
                          ["human_or_agent_visual_review"], "self_attested")
         review["video_sha256"] = "0" * 64
         self.assertTrue(validate_opening_review(review, sha))
