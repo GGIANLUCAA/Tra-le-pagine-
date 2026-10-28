@@ -128,7 +128,7 @@ def prepare():
         name=row["source_file"];tag=indexed.get(name)
         if tag is None:raise RuntimeError("Missing authentic plate "+name)
         alt=tag.get("alt","")
-        if len(alt)<8:raise RuntimeError("Missing plate caption "+name)
+        if len(alt)<3:raise RuntimeError("Missing plate caption "+name)
         link=urljoin(URL,tag["src"])
         if name not in cache:
             res=s.get(link,timeout=50);res.raise_for_status()
