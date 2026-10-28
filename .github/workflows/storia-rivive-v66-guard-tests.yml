@@ -1,0 +1,26 @@
+name: "La Storia Rivive V66 — artistic source fidelity guard"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_v66_photo_guard.py"
+      - "tests/test_storia_rivive_v66_photo_guard.py"
+      - "config/storia_rivive_v66.json"
+      - ".github/workflows/storia-rivive-v66-guard-tests.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate_source_anchored_ai_photography:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Install free local-only CV tools, no model or paid inference"
+        run: python -m pip install -q --no-cache-dir numpy opencv-python-headless
+      - name: "Test that impressive but unrelated photos FAIL"
+        run: |
+          python -m unittest discover -s tests -p "test_storia_rivive_v66_photo_guard.py" -v
+          python -m json.tool config/storia_rivive_v66.json > /dev/null

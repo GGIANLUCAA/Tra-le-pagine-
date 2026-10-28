@@ -1,0 +1,21 @@
+# V66 — Restauro fotorealistico, non illustrazione storica
+Data 28 ottobre 2026. Richiesta utente: tutte le foto ferme di La Storia Rivive devono apparire come immagini moderne con occhi, pelle, capelli, tessuti, mani e materiali molto nitidi, senza cambiare i soggetti originali.
+
+## Prova effettivamente compiuta
+Su `Parigi 1918` (Musée Albert-Kahn / CC0, file AI139599) è stato estratto il frame originale a 265,0 secondi della venditrice di giornali, con crop 324×576. È stata ottenuta una fotografia generativa più nitida di DDColor+Real-ESRGAN. **La prova è però una ricostruzione ARTISTICA, non un restauro fedele**: la persona è più grande, ha cambiato viso, postura e gesto, variano abiti, altri passanti e oggetti. Quindi non usarla nella versione definitiva del filmato come se fosse lo stesso frame.
+Confronto orientativo tramite mappa delle luminanze a bassa frequenza 64×112 (non prova di verità): V65 DDColor+RealESRGAN vs frame vero **0,989** di correlazione geometrica; fotografia generativa libera vs vero **0,032**. Non usare la correlazione come metrica di dettaglio o somiglianza facciale, ma come **segnale di forte cambiamento compositivo**.
+
+## Nuovo protocollo di restauro
+1. Prima regia, poi foto: scegli una singola scena autentica CC0/PD e il frame con più volto, mani, oggetti e azione. Se la sorgente non contiene dettagli utili, confronta più scansioni originali o cambia clip. Non forzare l'AI a fabbricare il volto.
+2. Pulisci graffi e instabilità; ove possibile allinea più fotogrammi autentici vicini; conserva la grana di base dove non danneggia i dettagli.
+3. Colore AI semanticamente coerente; da questo frame derivare almeno due candidate **image-to-image** con vincoli forte/bilanciato, non prompt text-to-image che inventa tutta la scena. HYPIR primo candidato; DiffBIR/SUPIR alternativi; verificare licenze, pesi e GPU e non spendere crediti senza autorizzazione.
+4. Fase faccia opzionale e controllata (CodeFormer/GFPGAN ecc.) *solo se* la posizione e l'identità rappresentabile rimangono coerenti con la persona nella sequenza reale. Non sostituire volti completamente sfocati con una persona fittizia dichiarandola autentica.
+5. Confrontare con immagine originale e più frame adiacenti. Inquadratura, numero di persone, mani, abbigliamento, disposizione di oggetti, edifici devono restare coerenti. Se la candidata cambia il volto senza elementi verificabili, registrare "identità ipotetica" e non chiamarla restauro fedele.
+6. Gate `src/storia_rivive_v66_photo_guard.py` confronta immagini B/N vs foto colorata (stessa inquadratura) con controllo **grossolano della struttura**, poi richiede sei approvazioni umane verificabili (facce/pose, numero persone, oggetti, livello fotografico, disclosure e diritti) per classificare `ART_DIRECTOR_APPROVED`. NON equiparare punteggio elevato a dettagli faciali autentici: è solo un controllo preliminare. Qualsiasi candidata vistosamente nuova va in `REJECT_NOT_SOURCE_FAITHFUL`. Allo stato attuale l'uso del motore rimane modulare e non è integrato come generatore fotografico.
+7. Nel montaggio 20–30 sec: per ogni momento B/N in moto 1–2s, metamorfosi 0,2–0,7s, foto davvero FERMA 2–3s, poi nuova scena. Evitare cambio posizione/volto durante il morph; nessuna grafica copre i volti. V55 ZIP, cover, quattro copy, sorgenti, hash, link Android verificato, sync sito solo previa verifica effettiva.
+8. Etichette distinte: `RESTAURO_FEDELE_REVISIONATO` per immagini source-aligned approvate; `RICOSTRUZIONE_ARTISTICA_AI` per interpretazioni che alterano soggetti, MAI inserite nelle quattro versioni autentiche senza una regia e disclosure separata. Colori e microdettagli sono comunque ipotesi; la fotografia originale resta B/N.
+
+## Licenze/costi
+HYPIR uso non commerciale secondo autori https://github.com/XPixelGroup/HYPIR. L'account utente non è Pro su Hugging Face, e Jobs GPU **NON è gratuito** (billing a minuti): https://huggingface.co/docs/hub/en/jobs-pricing. Non avviare job HF GPU a pagamento; Google Colab T4 è una possibilità gratuita con quota non garantita, non una GPU già disponibile. Vidu 0 crediti per default.
+
+**Stato reale V66:** un breve test tecnico artistico MP4 locale è stato reso e decodificato (durata 5,1 s), NON è un master fedele né una versione definitiva né un video presente sul sito. HYPIR ancora NON eseguito. Nessun servizio pagato.
