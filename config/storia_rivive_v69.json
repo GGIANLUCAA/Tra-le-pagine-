@@ -1,0 +1,52 @@
+{
+  "version": "V69_2026_10_28",
+  "core_rule": "Choose based on ACTUAL AI photo reconstruction quality, not native resolution alone",
+  "minimum_source_options_to_compare": 3,
+  "min_distinct_frames_per_source": 3,
+  "real_restorations_before_final_selection": 2,
+  "do_not_consume_paid_credits_without_explicit_authorization": true,
+  "source_checks": [
+    "rights_us_and_italy_and_origin",
+    "true_original_scan_not_prior_ai_upscale",
+    "documentary_vs_staged_label",
+    "native_9_16_crop_pixels",
+    "actual_subject_pixel_count",
+    "sharpness_noise_exposure",
+    "true faces/eyes legible",
+    "no face cut"
+  ],
+  "final_checks": [
+    "generative photo actually created",
+    "photo physically available sha verified",
+    "no new people/objects",
+    "faces skin hair fabric believable",
+    "source continuity under transition",
+    "emotion and cinematic hook",
+    "human comparison reviewed"
+  ],
+  "estimated_weights": {
+    "source_technical": 0.35,
+    "actual_generatively_restored_photo_and_fidelity": 0.55,
+    "editorial_wow": 0.1
+  },
+  "selection_tool": "src/storia_rivive_source_selector_v69.py",
+  "selector_tests": "tests/test_storia_rivive_source_selector_v69.py",
+  "source_research": "docs/LA_STORIA_RIVIVE_SCELTA_WOW_V69.md",
+  "generate_real_video_after_qa": true,
+  "target_duration_s": [
+    20,
+    30
+  ],
+  "b_and_w_motion_s": [
+    0.8,
+    1.8
+  ],
+  "photo_hold_s": [
+    1.8,
+    3
+  ],
+  "output_1080p_for_perceived_quality": true,
+  "false_4k_claim_prohibited": true,
+  "user_reference_quality_v68_not_assumed_by_numeric_gate": true,
+  "status": "Code and QA gates implemented; each new source still needs real scoring, real AI restoration and editor review"
+}

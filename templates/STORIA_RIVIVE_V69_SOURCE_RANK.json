@@ -1,0 +1,34 @@
+{
+  "version": "V69",
+  "source_selector": "src/storia_rivive_source_selector_v69.py",
+  "candidates": [
+    {
+      "id": "sample_sourcing_needs_user_or_workflow_filled_paths",
+      "source_frame_path": "/absolute/path/to/actual_historical_frame.png",
+      "restored_image_path": null,
+      "subject_box": [
+        0.3,
+        0.15,
+        0.36,
+        0.7
+      ],
+      "license": "CC0",
+      "rights_territories_checked": false,
+      "true_scan_vs_upscale_checked": false,
+      "actuality_not_staged": true,
+      "editorial_wow_0_5": null,
+      "actual_restoration_review": null
+    }
+  ],
+  "reviewer_scale": "0=not usable to 5=reference grade",
+  "actual_restoration_review_example_NEVER_PREFILL_TRUE": {
+    "actually_compared_by_reviewer": false,
+    "no_new_people": false,
+    "faces": null,
+    "skin_hair_clothes": null,
+    "objects_architecture": null,
+    "natural_photograph": null,
+    "same_people_geometry": null,
+    "wow_emotion": null
+  }
+}

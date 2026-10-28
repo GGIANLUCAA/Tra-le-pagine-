@@ -1,0 +1,114 @@
+{
+  "version": "V69",
+  "status": "RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED",
+  "items": [
+    {
+      "id": "san-francisco-1906-market-street-35mm",
+      "title": "A Trip Down Market Street (1906)",
+      "type": "documentary_actuality",
+      "raster_px": [
+        3260,
+        2420
+      ],
+      "original_scan_statement": "Prelinger Archives 35mm original print; 2018 digital scan",
+      "length_s": 686,
+      "source_page": "https://commons.wikimedia.org/wiki/File:A_Trip_Down_Market_Street_(1906).webm",
+      "priority_for": [
+        "trams",
+        "period streets",
+        "carriages",
+        "crowd close-ups when they happen"
+      ],
+      "risk": "wide shot, tiny faces on distant pedestrians; ~3.2GB; US PD does not finish Italy clearance",
+      "legal_status": "PENDING_ITALY_REVIEW",
+      "real_original_frame_assessed": false,
+      "ai_candidate_compared": false
+    },
+    {
+      "id": "new-york-1903-streets",
+      "title": "Scenes in New York City, 1903",
+      "type": "documentary_actuality",
+      "raster_px": [
+        1920,
+        1080
+      ],
+      "source_page": "https://commons.wikimedia.org/wiki/File:Scenes_in_New_York_City,_1903.webm",
+      "length_s": 272,
+      "original_scan_statement": "not confirmed: web file was previously stabilized/speed adapted",
+      "priority_for": [
+        "historical passers-by",
+        "street detail",
+        "NYC time capsule"
+      ],
+      "risk": "HD raster is not proof of original image detail; 82.85MB",
+      "legal_status": "PENDING_ITALY_REVIEW",
+      "real_original_frame_assessed": false,
+      "ai_candidate_compared": false
+    },
+    {
+      "id": "india-1906-real-street",
+      "title": "A Native Street in India (1906)",
+      "type": "documentary_actuality",
+      "raster_px": [
+        1920,
+        1080
+      ],
+      "length_s": 172,
+      "source_page": "https://commons.wikimedia.org/wiki/File:A_Native_Street_in_India_(1906).webm",
+      "original_scan_statement": "BFI film online via Wikimedia; scan parameters unverified",
+      "priority_for": [
+        "unusual crowd",
+        "street life",
+        "faces if close to static camera"
+      ],
+      "risk": "Unknown city must not be invented; PD status needs review; 49.34MB",
+      "legal_status": "PENDING_ITALY_REVIEW",
+      "real_original_frame_assessed": false,
+      "ai_candidate_compared": false
+    },
+    {
+      "id": "paris-1918-cinema-benchmark",
+      "title": "Parigi 1918, Cinema Parisiana (V68 benchmark)",
+      "type": "documentary_actuality",
+      "raster_px": [
+        720,
+        576
+      ],
+      "source_page": "https://commons.wikimedia.org/wiki/File:Arriv%C3%A9e_d%27un_train_de_Marseille_et_voyageurs_dans_la_cour_de_la_gare_de_Lyon._La_travers%C3%A9e_de_Paris_%C3%A0_la_nage_-_AI139599.webm",
+      "original_scan_statement": "existing source from Musée Albert-Kahn; selected frame from source film (not 1080p output)",
+      "priority_for": [
+        "facades",
+        "cinema signs",
+        "crowds"
+      ],
+      "risk": "cropped source ~324x576, faces often very small, generative text can be invented",
+      "legal_status": "CC0_EXACT_FILE_PREVIOUSLY_VERIFIED",
+      "real_original_frame_assessed": true,
+      "ai_candidate_compared": true,
+      "reference": "V68 Finegrain genuine 4 images but still under target"
+    },
+    {
+      "id": "fiction-cinema-1920-possible",
+      "title": "One Week (1920) HD copy",
+      "type": "scripted_silent_film_NOT_ACTUALITY",
+      "raster_px": [
+        1920,
+        1080
+      ],
+      "source_page": "https://commons.wikimedia.org/wiki/File:One_Week_(1920)_-_Super_8_Sound_-_Flat_-_HD.webm",
+      "original_scan_statement": "Super 8 sound reprint; 1920x1080 file not original 35mm resolution",
+      "priority_for": [
+        "large faces",
+        "physical comedy",
+        "dramatic expressions"
+      ],
+      "risk": "Staged cinema not historical street documentary; 1920 soundtrack may be modern/copyrighted; separate rights",
+      "legal_status": "PENDING_ITALY_AND_SOUND_REVIEW",
+      "real_original_frame_assessed": false,
+      "ai_candidate_compared": false
+    }
+  ],
+  "current_approved_wow_winner": null,
+  "automated_native_pixel_evidence_validated": false,
+  "strict_policy": "Do not publish claims about winner until actual source frames and AI photo comparisons."
+}
