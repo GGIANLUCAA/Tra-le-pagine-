@@ -45,3 +45,15 @@ Non tradurre acriticamente i titoli di opere storiche: utilizzare il titolo con 
 ## Origine / diritti
 
 I quattro originali scelti sono pubblici domini in Italia (Leonardo, Klimt, Hokusai, Botticelli). Le riproduzioni derivano da Wikimedia Commons e hanno link specifici nei JSON; controllare le licenze/condizioni specifiche della fotografia e nei paesi di destinazione. La licenza della musica richiede attribuzione e indicazione delle modifiche. Rispetto delle condizioni e delle quote Google di sintesi vocale.
+
+## Estensione V53 — Critico per nuove opere, abbinato al Cinema (28/10/2026)
+
+Per la produzione a coppie leggere `docs/ARTVISION_PRODUZIONE_A_COPPIE_V53.md` e `queue/artvision_dual_format_s01_20261028.json`. Il renderer esistente accetta ora una **configurazione JSON preparata per una nuova opera** senza introdurre nuove identità editoriali e senza alterare i vecchi episodi:
+
+```bash
+python modules/artvision_critico/production_series/render_series_v2.py --config queue/configs/wright_air_pump_critico.json --require-gacrux
+```
+
+Il percorso è **solo un esempio di invocazione**, non prova che tale file già esista. Creare il JSON e verificarne immagini/diritti, copione italiano originale (beats con `speech`, `focus`, `zoom_start`, `zoom_end`), fonti, musica e dettagli prima del render. Il JSON deve comprendere `id`, `artist`, `artwork`, `commons_title`, `image_ratio_min`, `image_ratio_max`, `sources`, `beats`, `music`; si può usare un episodio storico come **schema tecnico**, NON come copione standard. Il renderer non effettua da solo le verifiche storico-artistiche.
+
+Il comando `--config` **impone la voce Google Gacrux reale**: senza `GEMINI_API_KEY`, o se il tentativo termina su Edge, il render viene bloccato anziché dichiarare Critico un video con voce diversa. Le vecchie invocazioni `--episode id` rimangono compatibili; `--require-gacrux` è disponibile anche lì. Non sono approvati automaticamente usi a pagamento del TTS o della generazione video. Dopo il render sono ancora necessari ascolto, sincronizzazione, post V28, QA V44, ZIP e revisione artistica. Non assumere che il nuovo `--config` abbia già generato o testato un nuovo MP4.
