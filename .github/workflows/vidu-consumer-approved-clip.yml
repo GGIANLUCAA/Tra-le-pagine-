@@ -1,0 +1,78 @@
+name: "Tra le Pagine - Vidu consumer single approved clip"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "episodes/**/VIDU_I2V_APPROVAL.json"
+permissions:
+  contents: write
+concurrency:
+  group: vidu-consumer-single-submit
+  cancel-in-progress: false
+jobs:
+  submit:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      VIDU_TOKEN: ${{ secrets.VIDU_TOKEN }}
+      VIDU_BASE_URL: https://service.vidu.com
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: true
+      - name: Select exactly one changed approved manifest
+        id: shot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- "episodes/**/VIDU_I2V_APPROVAL.json")
+          if [ "${#files[@]}" -ne 1 ]; then
+            echo "::error::Exactly one approved manifest per push; prevent batch purchases."
+            exit 2
+          fi
+          printf 'manifest=%s\n' "${files[0]}" >> "$GITHUB_OUTPUT"
+      - name: Offline validation of exact immutable input and approval
+        run: |
+          python -m py_compile tools/vidu_consumer_autopilot.py
+          python tools/vidu_consumer_autopilot.py plan --manifest "${{ steps.shot.outputs.manifest }}"
+          python - <<'PY'
+          from tools.vidu_consumer_autopilot import validate
+          p,im,code=validate("${{ steps.shot.outputs.manifest }}",approve=True)
+          print("Exact user-approved image, model, text and budget:",code)
+          PY
+      - name: Check consumer token before any provider upload
+        run: |
+          if [ -z "${VIDU_TOKEN:-}" ]; then
+            echo "::error::Vidu consumer VIDU_TOKEN unavailable; no video requests sent."
+            exit 3
+          fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install official consumer CLI (no generation)
+        run: npm install -g vidu-cli@0.2.36
+      - name: Verify official subscription pass and actual server quote
+        run: python tools/vidu_consumer_autopilot.py quote --manifest "${{ steps.shot.outputs.manifest }}"
+      - name: Single provider submit, ledger reservation before networking
+        run: python tools/vidu_consumer_autopilot.py submit --manifest "${{ steps.shot.outputs.manifest }}" --out output/vidu_consumer_auto
+      - name: Collect if already available (read-only; never resubmit)
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          receipt=json.loads(Path("output/vidu_consumer_auto/TASK_RECEIPT.json").read_text())
+          cmd=["python","tools/vidu_consumer_autopilot.py","collect",
+               "--task-id",receipt["task_id"],"--out","output/vidu_consumer_auto/media"]
+          subprocess.run(cmd,check=False,timeout=180)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: VIDU_CONSUMER_SINGLE_SCENE_ATTEMPT
+          path: output/vidu_consumer_auto/
+          retention-days: 14
+          if-no-files-found: warn
