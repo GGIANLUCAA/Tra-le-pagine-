@@ -6,6 +6,12 @@
 
 Ogni video ha un solo originale MP4 nell'archivio e un dossier legato al suo nome tecnico. Nessuna copia dello stesso master per pubblicare o modificare post. Conservare originali e riferimenti anche durante l'archiviazione delle schede.
 
+## Integrazione ArtVision V55 — consegna e archivio (28/10/2026)
+
+Dopo ogni nuovo MP4 ArtVision, i QUATTRO post devono esistere davvero e corrispondere allo stesso film, non essere un testo generico creato dall'importer. Il percorso privato di importazione prova prima MP4/playback e copertina; la scheda del sito deve poi recuperare i post originali o un dossier persistente confermato. Il full ZIP dinamico disponibile dal dossier include MP4, JPEG, post, ricetta, diritti e QA: non serve duplicare lo ZIP permanentemente in R2, ma il relativo comando deve funzionare quando richiesto. In ChatGPT produrre anche un ZIP autonomo già integro per il download da Android.
+
+**Gate:** la presenza del film nel catalogo NON prova che i post siano sul sito e non prova che lo ZIP firmato sia stato generato con successo. Stato minimo `archive_sync_pending` finché catalogo, lettura video, cover, 4 post e ZIP privato non sono verificati realmente. Seguire `config/artvision_delivery_v55.json`, `docs/REGOLE_ATTIVE.md > ArtVision V55` e `src/artvision_delivery_v55.py`. I servizi possono avere ritardi: ritentare senza duplicati; non inventare upload, non sovrascrivere schede storiche.
+
 ## Automazione già collegata
 
 1. Il workflow esistente .github/workflows/video-library-enrich.yml controlla i video importati.
