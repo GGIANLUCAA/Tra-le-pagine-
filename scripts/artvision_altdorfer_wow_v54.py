@@ -113,12 +113,44 @@ def render():
                                 {'role':'opening_artist','text':ARTIST.upper()}]
     contract['user_explicit_override_20261028']='Exact artwork title and artist must appear on both cover and first MP4 frame. No other scene captions.'
     (folder/'ARTVISION_CONTRACT_V25.json').write_text(json.dumps(contract,ensure_ascii=False,indent=2)+'\n')
+    # Correct source-specific attribution after the actual downloaded asset is known.
+    actual_url=recipe['original_image']
+    museum_photo='cdn.thenetexperts.info' in actual_url
+    if museum_photo:
+        image_credit=('Immagine: Bayerische Staatsgemäldesammlungen – Alte Pinakothek München, '
+          'fotografia dell’opera scaricata dalla scheda museale, CC BY-SA 4.0: '
+          'https://www.sammlung.pinakothek.de/en/artwork/9pL3Qyz4eb ; '
+          'https://creativecommons.org/licenses/by-sa/4.0/ . Elaborazione: selezione e ritaglio dei dettagli.')
+        photo_rights='CC BY-SA 4.0; attribution and ShareAlike duties must be reviewed for any distributed adaptation.'
+    else:
+        image_credit=('Immagine: riproduzione fotografica fedele di opera bidimensionale in pubblico dominio (PD-Art), '
+          'Wikimedia Commons: https://commons.wikimedia.org/wiki/File:Battle_of_Issus_by_Altdorfer_1529_Pinakothek-Mus_Munich.jpg')
+        photo_rights='PD-Art on Commons; verify territorial heritage and photography rules before commercial distribution.'
+    for post in ('POST_FACEBOOK.txt','POST_INSTAGRAM.txt','POST_TIKTOK.txt','POST_YOUTUBE.txt'):
+        path=folder/post
+        original=path.read_text(encoding='utf8')
+        lines=original.splitlines()
+        assert sum(line.startswith('Immagine:') for line in lines)==1
+        lines=[image_credit if line.startswith('Immagine:') else line for line in lines]
+        path.write_text('\n'.join(lines)+'\n',encoding='utf8')
+    assert not editorial.validate_folder(folder),'V28 posts invalid after source-specific credits'
     rights=folder/'SOURCES_AND_RIGHTS.md'
-    with rights.open('a',encoding='utf8') as f:
-        f.write('\nDocumented object scale: 158.4 x 120.3 cm, Alte Pinakothek inv. 688.\n')
-        f.write('Current frame documented as BStGS workshop 2007; no real museum room or frame is depicted in this episode.\n')
-        f.write('Wikimedia PD-Art photographic reproduction: re-check national cultural heritage and photo terms before commercial distribution.\n')
-        f.write('Specific recording The Pyre, Kevin MacLeod, ISRC USUAN1100846, CC BY 4.0. No stock or paid model.\n')
+    rights.write_text(
+        '# Sources & rights / The Battle of Alexander at Issus\n\n'
+        'Painting: Albrecht Altdorfer, 1529, lindenwood panel, 158.4 × 120.3 cm, '
+        'Bayerische Staatsgemäldesammlungen – Alte Pinakothek, inventory 688.\n'
+        'Official museum: https://www.sammlung.pinakothek.de/en/artwork/9pL3Qyz4eb\n'
+        'Actual source JPEG: '+actual_url+'\n'
+        'Actual JPEG SHA256: '+sha(folder/'ORIGINAL_ARTWORK.jpg')+'\n'
+        'Photograph licence: '+photo_rights+'\n'
+        'Current museum frame is BStGS workshops, 2007. It is not depicted; '
+        'no fake historical frame or gallery is claimed.\n\n'
+        'Specific recording: The Pyre — Kevin MacLeod (incompetech.com), ISRC USUAN1100846.\n'
+        'Official track: https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100846\n'
+        'Recording licence: CC BY 4.0 https://creativecommons.org/licenses/by/4.0/\n'
+        'Original audio SHA256: '+sha(folder/'ORIGINAL_LICENSED_MUSIC.mp3')+'\n'
+        'Changes: excerpt, fade, normalization, video montage. No paid model.\n'
+        'The social posts contain required attribution. Platform/territory review remains pending.\n',encoding='utf8')
     qa=json.loads((folder/'TECHNICAL_QA_V30.json').read_text())
     qa.update({
       'first_frame_and_cover_mad':mad,
@@ -146,13 +178,14 @@ def render():
       'viewer_interest':'A world-size landscape contains a battle that looks almost microscopic.',
       'creative_direction':'Cinema V6 detail-led; begin with sky and armies, reveal moon/sun/inscription, close with entire panel; no artificial animation.',
       'source_museum':'https://www.sammlung.pinakothek.de/en/artwork/9pL3Qyz4eb',
-      'source_image':config['subjects'][SLUG]['source_page'],
+      'source_image':actual_url,
       'checked_on':'2026-10-28','human_approval':False}
     (folder/'AUDIENCE_RESEARCH_V32.json').write_text(json.dumps(research,ensure_ascii=False,indent=2)+'\n')
     (folder/'RELEASE_STATUS.json').write_text(json.dumps({
       'state':'rendered_needs_review','mp4_sha256':sha(film),
       'human_artistic_approval':False,'published':False,
       'rights_territorial_review':'pending',
+      'actual_photo_license':'CC BY-SA 4.0' if museum_photo else 'PD-Art',
       'external_spend':0,'paid_video_api_calls':0},ensure_ascii=False,indent=2)+'\n')
     (folder/'ISTRUZIONI_REPLICA.md').write_text(
       '# ArtVision Altdorfer V54\n\n'
