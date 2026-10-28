@@ -1,0 +1,68 @@
+name: "La Storia Rivive V60 — link MP4 diretto e stabile"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-rivive-v60-direct-download.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-rivive-v60-direct-release
+  cancel-in-progress: false
+jobs:
+  publish_existing_produced_video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      ARTIFACT_ID: "12828357082"
+      RELEASE_TAG: "storia-rivive-beirut-1919-ddcolor-v60"
+      ORIGINAL_SHA256: "eb8279410e7f5ee5b9483a5b332ab42ba1574517aa46f1cab9636b2dc5183df6"
+    steps:
+      - name: "Download EXACT existing successful GitHub artifact — no AI or Vidu rerun"
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 150 \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${REPO}/actions/artifacts/${ARTIFACT_ID}/zip" \
+            --output /tmp/v60-artifact.zip
+          unzip -t /tmp/v60-artifact.zip
+          mkdir -p dist
+          unzip -p /tmp/v60-artifact.zip "VIDEO_COLOR_AI.mp4" > dist/BEIRUT_1919_COLORI_AI.mp4
+          unzip -p /tmp/v60-artifact.zip "BEIRUT_1919_COLORE_AI_COMPLETO.zip" > dist/BEIRUT_1919_KIT_COMPLETO.zip
+          unzip -p /tmp/v60-artifact.zip "COVER.jpg" > dist/BEIRUT_1919_COPERTINA.jpg
+          echo "${ORIGINAL_SHA256}  dist/BEIRUT_1919_COLORI_AI.mp4" | sha256sum --check --status
+          unzip -t dist/BEIRUT_1919_KIT_COMPLETO.zip
+          test "$(stat -c '%s' dist/BEIRUT_1919_COLORI_AI.mp4)" = "5748812"
+          echo "Original MP4 hash verified; ZIP CRC correct."
+      - name: "Release direct MP4 and ZIP; no GitHub login required"
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${RELEASE_TAG}"
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/BEIRUT_1919_COLORI_AI.mp4 dist/BEIRUT_1919_KIT_COMPLETO.zip dist/BEIRUT_1919_COPERTINA.jpg --repo "$REPO" --clobber
+          else
+            gh release create "$TAG" \
+              --repo "$REPO" --target main \
+              --title "La Storia Rivive | Beirut 1919 — video a colori AI" \
+              --notes "Video reale di archivio CC0 restaurato e colorizzato con DDColor. 13,8 s, verticale 720×1280, H264/AAC. Contiene fonte originale autentica e colori ricostruiti digitalmente, non documentati. MP4 scaricabile direttamente da Android; ZIP con copertina, crediti e quattro post. Nessuna monetizzazione o utilizzo di crediti Vidu. Questo release pubblico non prova la sincronizzazione nel Video Library Studio privato." \
+              --latest=false \
+              dist/BEIRUT_1919_COLORI_AI.mp4 dist/BEIRUT_1919_KIT_COMPLETO.zip dist/BEIRUT_1919_COPERTINA.jpg
+          fi
+          gh release view "$TAG" --repo "$REPO" --json url,assets --jq '{url: .url, files: [.assets[].name]}'
+      - name: "Verify release files exposed by GitHub before reporting success"
+        shell: bash
+        run: |
+          set -euo pipefail
+          for ext in "BEIRUT_1919_COLORI_AI.mp4" "BEIRUT_1919_KIT_COMPLETO.zip" "BEIRUT_1919_COPERTINA.jpg"; do
+            curl -sSIfL --retry 3 --max-time 40 \
+              "https://github.com/${REPO}/releases/download/${RELEASE_TAG}/${ext}" \
+              | grep -Eiq '^HTTP/(1.1|2|3) 200|^HTTP/(1.1|2|3) 302'
+            echo "Release URL checked: ${ext}"
+          done
