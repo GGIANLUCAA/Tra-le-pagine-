@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -90,13 +91,13 @@ def review_for_bytes(data):
              "likely_cause": "Raccordo non abbastanza preciso.",
              "next_change": "Allungare il passaggio di mezzo secondo.",
              "verification": "Confrontare la scena a velocità normale.",
-             "at_second": 2.0},
+             "at_second": 0.2},
             {"severity": "minor", "problem": "Chiusura musicale troppo brusca.",
              "specific_evidence": "Il brano si interrompe al secondo 20.",
              "likely_cause": "Fade di uscita non sufficientemente lungo.",
              "next_change": "Estendere di poco il finale musicale.",
              "verification": "Riascoltare gli ultimi cinque secondi.",
-             "at_second": 20.0},
+             "at_second": 0.7},
         ],
         "next_experiment": {
             "one_variable": "Durata del passaggio di entrata",
@@ -160,8 +161,14 @@ class SelfCritiqueLedgerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
             vid = root / "example.mp4"
-            vid.write_bytes(b"sample-video-for-tests")
-            review = review_for_bytes(b"sample-video-for-tests")
+            subprocess.run([
+                "ffmpeg", "-v", "error", "-y", "-f", "lavfi",
+                "-i", "color=c=black:s=144x256:r=10:d=1",
+                "-f", "lavfi", "-i", "sine=duration=1",
+                "-c:v", "libx264", "-pix_fmt", "yuv420p",
+                "-c:a", "aac", "-shortest", str(vid)],
+                check=True, capture_output=True)
+            review = review_for_bytes(vid.read_bytes())
             ledger = root / "learning.jsonl"
             self.assertFalse(record({**review, "video_sha256": "0" * 64}, vid, ledger)["saved"])
             self.assertTrue(record(review, vid, ledger)["saved"])
@@ -169,6 +176,14 @@ class SelfCritiqueLedgerTests(unittest.TestCase):
             suggestion = next_lesson(ledger)
             self.assertEqual(suggestion["status"], "proposed_not_proven")
             self.assertEqual(suggestion["based_on_video_sha256"], review["video_sha256"])
+
+    def test_corrupted_bytes_cannot_pass_video_probe(self):
+        with tempfile.TemporaryDirectory() as folder:
+            vid = Path(folder) / "fake.mp4"
+            vid.write_bytes(b"not a real video")
+            review = review_for_bytes(vid.read_bytes())
+            self.assertTrue(any("ffprobe" in x or "MP4" in x
+                                for x in validate_review(review, vid)))
 
     def test_review_never_certifies_gold_master(self):
         r = review_for_bytes(b"sample")
