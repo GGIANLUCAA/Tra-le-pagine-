@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - site/video-library-editorial-core.js
+      - site/video-library-importer-with-editorial.js
+      - tests/video-library-importer-v55.test.cjs
+      - .github/workflows/video-library-r2-import.yml
       - site/video-library-v2.html
       - tests/video-library-editorial.test.cjs
       - tests/video-library-editorial-ui.test.cjs
@@ -33,6 +36,8 @@ jobs:
           print('PASS: complete video dossier, post copy buttons, and both ZIP modes in the interface')
           PY
           node --check /tmp/video-library-editorial-front.js
+      - name: Video Library V55 - file originali e post nel dossier privato
+        run: node tests/video-library-importer-v55.test.cjs
       - name: Test notes migration, editorial save, signed ZIP and streaming
         run: |
           node tests/video-library-editorial.test.cjs
