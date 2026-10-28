@@ -65,3 +65,7 @@ Per esempio «Parigi 1918» può riunire folla per festa sportiva + città **sol
 4. Only later: miglioramento nitidezza e possibile inserto Vidu, **non** come scorciatoia per la colorizzazione. Zero euro e zero crediti finché non arriva autorizzazione esplicita.
 
 Fonti ufficiali: repository e licenze sopra; Kaggle e Colab docs. Attestazioni di installazione/compatibilità/GPU non verificate restano `not_integrated`.
+
+## Modifica V59 (28/10/2026): cambia il criterio commerciale
+
+Le limitazioni precedenti che davano priorità all'uso **commerciale** non rappresentano più la richiesta: pubblicazione finale **senza monetizzazione**, originali soltanto **PD o CC0**. Per gli strumenti BY-NC-SA si può valutare un uso e pubblicazione non commerciali quando i termini effettivi lo permettono; il repository di ColorMNet dichiara tuttavia anche «academic research use only», quindi non autorizzare automaticamente la pubblicazione di video prodotti con quei pesi. Per i materiali di archivio la libertà di monetizzazione non è una priorità; pubblico dominio/CC0 sì. Dettagli e verifiche: `docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md`.
