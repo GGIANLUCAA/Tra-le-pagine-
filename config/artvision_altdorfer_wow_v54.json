@@ -1,0 +1,181 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "V54.1",
+  "date": "2026-10-28",
+  "cycle_id": "20261028-1110-altdorfer-wow-v54",
+  "chosen_format": "artvision_cinema",
+  "format_reason": "Turner S01 E02 Critico remains blocked without verified Gacrux; S01 E01 and E03 already rendered. Fresh visually spectacular work with authentic PD-Art and CC BY recording; Cinema V6 no voice.",
+  "selection_mode": "research_selected",
+  "audience_metrics": "unavailable; no fabricated view counts",
+  "candidates_considered": [
+    {
+      "artist": "Albrecht Altdorfer",
+      "title": "The Battle of Alexander at Issus",
+      "selection": "selected",
+      "phone_hook": "cosmic sky over thousands of tiny fighters",
+      "museum_source": "https://www.sammlung.pinakothek.de/en/artwork/9pL3Qyz4eb",
+      "originality": "no exact work in indexed repo or V31 state at preflight",
+      "rights": "Commons PD-Art source; territory review required"
+    },
+    {
+      "artist": "Peter Paul Rubens",
+      "title": "The Fall of Phaeton",
+      "selection": "not selected",
+      "phone_hook": "horses and bodies falling in a dramatic diagonal",
+      "museum_source": "https://www.nga.gov/artworks/71349-fall-phaeton",
+      "reason": "spectacular but more nude-body crop risks; choose Altdorfer first"
+    },
+    {
+      "artist": "Gustave Moreau",
+      "title": "Saint George and the Dragon",
+      "selection": "not selected",
+      "phone_hook": "white horse and fantastic dragon in vertical scene",
+      "museum_source": "https://www.nationalgallery.org.uk/paintings/gustave-moreau-saint-george-and-the-dragon",
+      "reason": "strong vertical candidate for a future museum frame study"
+    }
+  ],
+  "subjects": {
+    "altdorfer_alexander_issus_wow_v54": {
+      "artist": "ALBRECHT ALTDORFER",
+      "title_en": "The Battle of Alexander at Issus",
+      "year": 1529,
+      "museum": "Bayerische Staatsgemäldesammlungen – Alte Pinakothek Munich, inventory 688",
+      "slug": "altdorfer_alexander_issus_wow_v54",
+      "editorial_key": "altdorfer_alexander_issus_wow_v54",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Battle_of_Issus_by_Altdorfer_1529_Pinakothek-Mus_Munich.jpg",
+      "museum_page": "https://www.sammlung.pinakothek.de/en/artwork/9pL3Qyz4eb",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/1/1c/Battle_of_Issus_by_Altdorfer_1529_Pinakothek-Mus_Munich.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Battle_of_Alexander_at_Issus_%28by_Albrecht_Altdorfer%2C_1529%29_-_Alte_Pinakothek%2C_Munich.jpg"
+      ],
+      "music": {
+        "name": "The Pyre",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Pyre.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100846",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1100846",
+        "offset": 7
+      },
+      "story": "An impossible battle: cosmic sky and a whole imagined world conceal thousands of tiny human fighters; the title plaque and red cord bring the distant history into focus. Begin with the entire world, uncover the micro-battle, end with the complete image.",
+      "physical_scale_cm": {
+        "height": 158.4,
+        "width": 120.3
+      },
+      "physical_scale_source": "https://www.sammlung.pinakothek.de/en/artwork/9pL3Qyz4eb",
+      "frame": "2007 BStGS workshop frame is documented; not reconstructed here without a verified reference photograph. No fake museum room in this Cinema variant.",
+      "gallery_scene": "none; a clean opaque detail-led V6 episode deliberately varies the prior museum POV",
+      "scenes": [
+        {
+          "type": "wide",
+          "x": 0.5,
+          "y": 0.49,
+          "z": 1.0,
+          "seconds": 5.2,
+          "movement": "locked",
+          "intent": "Open with the stormy cosmic sky and the vast battle in a single authentic painting, with exact title and artist in the approved band."
+        },
+        {
+          "type": "landscape",
+          "x": 0.67,
+          "y": 0.24,
+          "z": 1.19,
+          "seconds": 4.4,
+          "movement": "slow_push",
+          "intent": "The radiant horizon and sweeping clouds make the painted battle feel like an entire world."
+        },
+        {
+          "type": "detail",
+          "x": 0.14,
+          "y": 0.12,
+          "z": 1.48,
+          "seconds": 4.3,
+          "movement": "locked",
+          "intent": "The thin crescent moon in the left upper sky counters the warm light at the opposite horizon."
+        },
+        {
+          "type": "detail",
+          "x": 0.81,
+          "y": 0.29,
+          "z": 1.35,
+          "seconds": 4.7,
+          "movement": "locked",
+          "intent": "The glowing sun and distant coastline establish a nearly cosmic scale before returning to human conflict."
+        },
+        {
+          "type": "medium",
+          "x": 0.45,
+          "y": 0.54,
+          "z": 1.15,
+          "seconds": 5.0,
+          "movement": "slow_pull",
+          "intent": "Mountains, rivers, settlements and armies compress an imagined geography into one view."
+        },
+        {
+          "type": "macro",
+          "x": 0.42,
+          "y": 0.79,
+          "z": 1.48,
+          "seconds": 5.3,
+          "movement": "locked",
+          "intent": "Thousands of tiny figures and colored banners become legible as a mass of individual human lives."
+        },
+        {
+          "type": "detail",
+          "x": 0.77,
+          "y": 0.73,
+          "z": 1.48,
+          "seconds": 4.5,
+          "movement": "locked",
+          "intent": "The red and blue battle standards draw attention to the two opposing forces without invented motion."
+        },
+        {
+          "type": "medium",
+          "x": 0.55,
+          "y": 0.84,
+          "z": 1.26,
+          "seconds": 5.4,
+          "movement": "locked",
+          "intent": "The densely packed cavalry makes the contrast between human scale and cosmic landscape unmistakable."
+        },
+        {
+          "type": "detail",
+          "x": 0.51,
+          "y": 0.12,
+          "z": 1.35,
+          "seconds": 4.7,
+          "movement": "locked",
+          "intent": "The Latin inscription panel suspended over the sky introduces the painting as a deliberate historical narrative."
+        },
+        {
+          "type": "wide",
+          "x": 0.5,
+          "y": 0.53,
+          "z": 1.0,
+          "seconds": 5.0,
+          "movement": "slow_pull",
+          "intent": "Return to the confrontation beneath the extraordinary geography; one restrained movement, no fake animation."
+        },
+        {
+          "type": "landscape",
+          "x": 0.52,
+          "y": 0.38,
+          "z": 1.06,
+          "seconds": 5.2,
+          "movement": "locked",
+          "intent": "Hold the horizon and mountainous world after the soldiers have been seen close up, changing the emotional reading."
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1.0,
+          "seconds": 7.0,
+          "movement": "locked",
+          "intent": "Reveal the complete authentic panel against a neutral solid backdrop, preserving all edges and avoiding a second blurred copy."
+        }
+      ]
+    }
+  }
+}
