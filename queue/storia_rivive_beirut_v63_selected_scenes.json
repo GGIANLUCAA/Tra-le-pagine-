@@ -1,0 +1,79 @@
+{
+  "decision_date": "2026-10-28",
+  "source": "https://commons.wikimedia.org/wiki/File:Sc%C3%A8nes_de_rue_-_AI13347.webm",
+  "source_license": "CC0 according to Wikimedia page",
+  "source_native_px": [
+    720,
+    576
+  ],
+  "target": "Beirut V63",
+  "review_note": "Manually compared 62 timeline frames + crop contact sheets; positions are starting points, not automatic aesthetic certification",
+  "shots": [
+    {
+      "id": "01",
+      "subject": "camel_and_rider",
+      "source_timecode_s": 146.5,
+      "x_origin_px": 195,
+      "motion_s": 1.4,
+      "reveal_s": 0.35,
+      "hold_s": 2.5,
+      "rank": 5,
+      "reason": "Close camel+person action; immediately understandable visual hook"
+    },
+    {
+      "id": "02",
+      "subject": "family_and_child",
+      "source_timecode_s": 162.5,
+      "x_origin_px": 190,
+      "motion_s": 1.55,
+      "reveal_s": 0.36,
+      "hold_s": 2.75,
+      "rank": 5,
+      "reason": "Closest multi-person human group with child, possible emotional freeze"
+    },
+    {
+      "id": "03",
+      "subject": "fruit_sellers",
+      "source_timecode_s": 128.95,
+      "x_origin_px": 105,
+      "motion_s": 1.35,
+      "reveal_s": 0.35,
+      "hold_s": 2.2,
+      "rank": 4,
+      "reason": "Merchants and their produce in a single meaningful image"
+    },
+    {
+      "id": "04",
+      "subject": "cafe_men",
+      "source_timecode_s": 183.5,
+      "x_origin_px": 290,
+      "motion_s": 1.45,
+      "reveal_s": 0.32,
+      "hold_s": 2.35,
+      "rank": 5,
+      "reason": "Closer social tableau at outdoor café"
+    },
+    {
+      "id": "05",
+      "subject": "dock_workers",
+      "source_timecode_s": 72.5,
+      "x_origin_px": 95,
+      "motion_s": 1.25,
+      "reveal_s": 0.33,
+      "hold_s": 1.82,
+      "rank": 3,
+      "reason": "Only establishing breathing-space scene; shorter hold than portraits"
+    },
+    {
+      "id": "06",
+      "subject": "town_crowd",
+      "source_timecode_s": 103,
+      "x_origin_px": 258,
+      "motion_s": 1.48,
+      "reveal_s": 0.35,
+      "hold_s": 2.35,
+      "rank": 4,
+      "reason": "City crowd closing, distinct from café and camels"
+    }
+  ]
+}
