@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-28.3",
-  "approved_by": "28/10/2026: V55 verifica consegna MP4/copertina/ZIP/4 post e primi 7 secondi e importazione privata; 28/10/2026: ArtVision 4x1 V54 con direzione emotiva, gate e autocritica; Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.",
+  "version": "2026-10-28.4",
+  "approved_by": "28/10/2026: V55 verifica consegna MP4/copertina/ZIP/4 post e primi 7 secondi e importazione privata; 28/10/2026: ArtVision 4x1 V54 con direzione emotiva, gate e autocritica; Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.; 28/10/2026: categoria La Storia Rivive V56 con riprese autentiche, diritti e controlli ferrei, zero spese automatiche, primissimi secondi e consegna V55 completa.",
   "precedence": [
     "explicit_user_request",
     "editorial_rules",
@@ -110,6 +110,14 @@
       "voice": null,
       "speech_language": null,
       "on_screen_language": "en"
+    },
+    "storia_rivive": {
+      "narrated": false,
+      "subtitles": false,
+      "voice": null,
+      "speech_language": null,
+      "on_screen_language": "it",
+      "contract": "docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md"
     }
   },
   "technique_catalog": "config/cinematic_techniques_v23.json",
@@ -200,6 +208,12 @@
         "approved_reusable_musical_visuals",
         "original_geometry_and_effects",
         "stock_only_for_fitting_context"
+      ],
+      "storia_rivive": [
+        "verified_original_archive_footage",
+        "approved_licensed_collection_cc0_preferred",
+        "same_original_frames_for_restoration",
+        "no_new_ai_scenes_masquerading_as_archive"
       ]
     },
     "provider_registry": {
@@ -748,5 +762,14 @@
     "guide": "docs/ARTVISION_PRODUZIONE_A_COPPIE_V53.md",
     "queue": "queue/artvision_dual_format_s01_20261028.json",
     "existing_automation_id": "6adca191603c8191a90d5190901cd034"
+  },
+  "storia_rivive": {
+    "contract": "docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md",
+    "policy": "config/storia_rivive_v56.json",
+    "requires_v55_delivery": true,
+    "zero_paid_credits": true,
+    "temporal_color_consistency_required": true,
+    "requires_exact_historical_source": true,
+    "format_is_separate_from_artvision_4x1": true
   }
 }

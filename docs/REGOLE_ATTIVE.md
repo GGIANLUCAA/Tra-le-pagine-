@@ -5,6 +5,12 @@ La configurazione consultabile dal programma è `config/editorial_rules.json`.
 La revisione sostituisce i vincoli generali incompatibili nelle guide storiche;
 non riscrive filmati, materiali o approvazioni già esistenti.
 
+## La Storia Rivive V56 — NUOVO FORMAT AUTONOMO (28 ottobre 2026)
+
+**Regole richieste e approvate esplicitamente dall'utente:** nuova categoria per montare vere riprese d'archivio con passaggio B/N→colorizzazione fedele, senza stampini e senza spreco di crediti. Contratto vincolante: [LA_STORIA_RIVIVE_CONTRATTO_V56.md](LA_STORIA_RIVIVE_CONTRATTO_V56.md); policy machine-readable `config/storia_rivive_v56.json`; profilo `config/video_formats_v13.json > formats.storia_rivive`.
+
+**Blocchi non negoziabili:** luogo/data/diritti verificati per il file esatto; niente scene generate presentate come fonti; non chiamare sepia «AI a colori»; verificare volti/crop e coerenza tra fotogrammi; copertina da frame autentico; primi 0/1/3/5/7 secondi visti e ascoltati; quattro post V28 diversi; MP4 + cover + fonti + musica/diritti + QA + ZIP completo; download ChatGPT Android e importazione/playback/dossier sul sito verificati separatamente. Budget predefinito **0 € e 0 crediti Vidu**; avere una key non autorizza a spenderla; niente social automatici. Il nuovo format non altera la regola ArtVision 4x1 e non certifica un video prima del vero render. Priorità V55 generale, V33 fonti, V25 autorizzazioni e V38 variabilità.
+
 ## ArtVision V55 — primi 7 secondi e consegna completa verificata (28/10/2026)
 
 **Nuova richiesta esplicita dell'utente, priorità massima per OGNI video ArtVision, incluso ciascuno dei quattro video 4x1.** Un render riuscito non è una consegna completa. Prima di descrivere un film come pronto, l'agente deve preparare e verificare **l'MP4 H264/AAC verticale, la copertina JPEG dedicata nel branding approvato, quattro descrizioni social ORIGINALI e diverse per Facebook/Instagram/TikTok/YouTube, le fonti e licenze, la ricetta/QA, lo ZIP completo**. Devono esistere anche **percorsi MP4 e ZIP realmente recuperabili da ChatGPT Android** e **la scheda nel sito privato Video Library Studio** con MP4 riproducibile, copertina, post e generazione ZIP disponibili. Dossier sul solo GitHub, solo JPG o solo video in R2 NON soddisfa l'intero requisito.

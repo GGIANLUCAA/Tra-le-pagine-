@@ -1,0 +1,59 @@
+name: "La Storia Rivive V56 — controlli e provini gratuiti"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_*.py"
+      - "tests/test_storia_rivive_v56.py"
+      - "config/storia_rivive_v56.json"
+      - "templates/STORIA_RIVIVE_V56_EPISODE.json"
+      - ".github/workflows/storia-rivive-v56.yml"
+  workflow_dispatch:
+    inputs:
+      pilot:
+        description: "Archivio CC0 per tavola provini (NON film finito)"
+        required: true
+        type: choice
+        options: [beirut1919]
+        default: beirut1919
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test V56 senza API e senza crediti
+        run: |
+          python -m unittest discover -s tests -p "test_storia_rivive_v56.py" -v
+          python -m json.tool config/storia_rivive_v56.json > /dev/null
+          python -m json.tool templates/STORIA_RIVIVE_V56_EPISODE.json > /dev/null
+          python -m json.tool config/editorial_rules.json > /dev/null
+          python -m json.tool config/video_formats_v13.json > /dev/null
+  acquire_pilot:
+    if: github.event_name == 'workflow_dispatch'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Installa FFmpeg gratuito
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Scarica fonte CC0 e genera contatti reali
+        env:
+          PILOT_NAME: ${{ inputs.pilot }}
+        run: python src/storia_rivive_source_v56.py --preset "$PILOT_NAME" --out output/storia_rivive
+      - name: Download da Android: sorgente, licenza e provini (NON video pubblicabile)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: la-storia-rivive-v56-materiali-di-prova
+          path: output/storia_rivive/
+          if-no-files-found: warn
+          retention-days: 14
