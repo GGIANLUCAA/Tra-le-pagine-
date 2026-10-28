@@ -1,0 +1,129 @@
+{
+  "version": "V56_2026_10_28",
+  "format": "storia_rivive",
+  "source_of_truth": "docs/REGOLE_ATTIVE.md",
+  "contract": "docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md",
+  "status": "pilot_implementation_pending_real_source_and_review",
+  "scope": "new_historical_archive_clips_only",
+  "user_approved_rules": true,
+  "safe_defaults": {
+    "cash_budget_eur": 0,
+    "vidu_credits_budget": 0,
+    "auto_spend": false,
+    "auto_retry_paid": false,
+    "automatic_social_publication": false,
+    "subtitles": false,
+    "voice_required": false,
+    "music_required": false,
+    "require_human_rights_review": true,
+    "require_actual_visual_review": true,
+    "preserve_original": true
+  },
+  "formats": {
+    "output": "9:16",
+    "preferred_export": [
+      1080,
+      1920
+    ],
+    "allowed_export": [
+      [
+        720,
+        1280
+      ],
+      [
+        1080,
+        1920
+      ]
+    ],
+    "video_codec": "h264",
+    "audio_codec": "aac_if_audio_present",
+    "source_native_resolution_must_be_recorded": true,
+    "never_claim_native_4k_from_upscale": true,
+    "source_fps_must_be_recorded": true
+  },
+  "opening": {
+    "first_frame_location_year_only_when_verified": true,
+    "review_seconds": [
+      0.1,
+      1,
+      3,
+      5,
+      7
+    ],
+    "hook_0_3": "documented_real_motion_not_black_or_logo",
+    "reveal_3_7": "source_motivated",
+    "no_fixed_transition_timing": true
+  },
+  "imagery": {
+    "default": "authentic_original_footage",
+    "crop_policy": "framing_review_or_full_frame_letterbox",
+    "avoid": [
+      "cut_faces",
+      "synthetic_filler",
+      "fake_native_4k",
+      "discontinuity",
+      "ghosting",
+      "modern_objects_claimed_original",
+      "temporal_color_flicker"
+    ]
+  },
+  "colorization": {
+    "free_preview": "sepia_tint_must_be_labeled_as_not_AI",
+    "ai_mode": "same_source_frames_only",
+    "machine_model": "ddcolor_candidate_not_integrated",
+    "temporal_consistency_review_required": true,
+    "review_before_credits": true,
+    "disclosure": "I colori sono una ricostruzione digitale interpretativa"
+  },
+  "license": {
+    "auto_allow_only_explicit_cc0_source_if_other_rights_clear": true,
+    "public_domain_requires_jurisdiction_review": true,
+    "music_independent_clearance": true,
+    "source_page_and_check_date_required": true,
+    "sha256_original_required": true
+  },
+  "cost": {
+    "paid_calls_require_exact_per_clip_authorization": true,
+    "no_paid_api_fallback": true,
+    "stored_key_is_not_authorization": true
+  },
+  "packaging": {
+    "files": [
+      "VIDEO.mp4",
+      "COVER.jpg",
+      "POST_FACEBOOK.txt",
+      "POST_INSTAGRAM.txt",
+      "POST_TIKTOK.txt",
+      "POST_YOUTUBE.txt",
+      "FONTI_DIRITTI.json",
+      "RICETTA.json",
+      "QA.json",
+      "STATUS.json",
+      "ZIP_COMPLETO.zip"
+    ],
+    "technical_full_decode": true,
+    "crc": true,
+    "hashes": true,
+    "copy_on_site_must_be_verified": true,
+    "android_download_must_be_verified": true
+  },
+  "delivery": {
+    "chatgpt_mp4": true,
+    "chatgpt_complete_zip": true,
+    "video_library_studio": true,
+    "site_playback_check": true,
+    "site_cover_check": true,
+    "site_four_posts_check": true,
+    "site_zip_check": true,
+    "never_claim_external_status_without_proof": true
+  },
+  "pilots": [
+    {
+      "id": "beirut1919",
+      "title": "BEIRUT 1919 — LA VITA IN STRADA",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Sc%C3%A8nes_de_rue_-_AI13347.webm",
+      "source_rights": "CC0_recorded_2026_10_28",
+      "scene_timecodes": "not_yet_reviewed"
+    }
+  ]
+}
