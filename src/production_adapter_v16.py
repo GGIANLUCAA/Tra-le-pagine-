@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from video_director_v13 import ROOT, capture, local_file
+from video_director_v13 import ROOT, capture, local_file, linked_four_plan, check as check_project
 from editorial_rules import validate as validate_editorial, POLICY
 
 ADAPTERS={'books_gemini_cache':'libri','critico_v2_prepared':'artvision_critico','cinema_v6_vangogh_prepared':'artvision_cinema'}
@@ -42,7 +42,16 @@ def execute(job,out):
     if project['format']!=ADAPTERS[adapter]:raise ValueError('Adapter e formato non corrispondenti')
     editorial_errors, _ = validate_editorial(project)
     if editorial_errors:raise ValueError('; '.join(editorial_errors))
+    if project.get('serial_mode') == 'artvision_4x1':
+        # Recheck in the actual staged runtime, never trust queue metadata alone.
+        bound = linked_four_plan(project_file, project.get('artvision_4x1_plan'))
+        result = check_project(project_file)
+        if not result['ready']:
+            raise ValueError('ArtVision 4x1 preflight: ' + '; '.join(result['blockers']))
+
     sources=[project_file,Path(__file__).resolve()]
+    if project.get('serial_mode') == 'artvision_4x1':
+        sources.append(bound)
     if project.get('editorial_contract'):sources.append(POLICY)
     for asset in project['assets']:
         sources.append(local_file(project_file.parent,asset['file']))
