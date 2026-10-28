@@ -18,6 +18,7 @@ jobs:
     timeout-minutes: 12
     env:
       VIDU_TOKEN: ${{ secrets.VIDU_TOKEN }}
+      VIDU_API_KEY: ${{ secrets.VIDU_API_KEY }}
       VIDU_BASE_URL: https://service.vidu.com
     steps:
       - uses: actions/checkout@v4
@@ -31,7 +32,11 @@ jobs:
         shell: bash
         run: |
           if [ -z "${VIDU_TOKEN:-}" ]; then
-            echo "::notice::VIDU_TOKEN not configured. Vidu.com account avatar > Vidu Token; store in GitHub Actions Secrets."
+            if [ -n "${VIDU_API_KEY:-}" ]; then
+              echo "::notice::Found VIDU_API_KEY but no VIDU_TOKEN: developer API key does not connect consumer subscription."
+            else
+              echo "::notice::VIDU_TOKEN unavailable, cannot access consumer subscription."
+            fi
             echo "configured=false" >> "$GITHUB_OUTPUT"
           else
             echo "configured=true" >> "$GITHUB_OUTPUT"
