@@ -13,11 +13,6 @@ async function authorized(req){
  return await crypto.subtle.verify('RSASSA-PKCS1-v1_5',key,from64(seg[2]),new TextEncoder().encode(seg[0]+'.'+seg[1]));
 }
 
-export function v55SidecarName(name){
- if(typeof name!=='string'||name.length>80||name.includes('..'))return null;
- const allowed=/^(?:POST_(?:FACEBOOK|INSTAGRAM|TIKTOK|YOUTUBE)\.txt|FONTI_E_DIRITTI\.(?:md|txt)|RICETTA\.(?:json|md|txt)|DELIVERY_MANIFEST_V55\.json|PROJECT_V13\.json|REVIEW_APERTURA\.json)$/i;
- return allowed.test(name)?name:null;
-}
 function resp(j,status=200){return Response.json(j,{status,headers:{'Cache-Control':'no-store'}});}
 export default{async fetch(request,env){
  const u=new URL(request.url),method=request.method,route=u.pathname;
@@ -39,28 +34,6 @@ export default{async fetch(request,env){
    created++;
   }
   return resp({ok:true,created,pending:Math.max(0,pending.length-batch.length),unavailable,total:candidates.length,existing:existing.size});
- }
- if((route==='/attachment'||route==='/attachment-status')){
-  const videoKey=u.searchParams.get('key')||'', name=v55SidecarName(u.searchParams.get('name')||'');
-  if(!/^[\w ().-]{1,190}\.mp4$/i.test(videoKey)||videoKey.includes('..')||!name)return resp({error:'Invalid attachment target'},400);
-  if(!await env.VIDEOS.head(videoKey))return resp({error:'Original video not imported'},409);
-  const removed=await env.VIDEOS.get('catalog/deleted.json');
-  if(removed){let d={};try{d=await removed.json()}catch{}if(d[videoKey])return resp({error:'Owner deleted video'},409)}
-  const destination='production/files/'+encodeURIComponent(videoKey)+'/'+name;
-  if(route==='/attachment-status'&&method==='GET'){
-   const existing=await env.VIDEOS.head(destination);
-   return resp({exists:!!existing,size:existing?.size||0,key:destination});
-  }
-  if(method!=='POST')return resp({error:'Method not allowed'},405);
-  if(!request.body)return resp({error:'Empty document'},400);
-  const content=await request.text();
-  if(!content.trim()||content.length>180000)return resp({error:'Attachment missing or oversized'},413);
-  if(await env.VIDEOS.head(destination))return resp({exists:true,preserved:true,key:destination});
-  const mime=name.endsWith('.json')?'application/json':'text/plain; charset=utf-8';
-  const saved=await env.VIDEOS.put(destination,content,{
-   httpMetadata:{contentType:mime},onlyIf:{etagDoesNotMatch:'*'}});
-  if(!saved)return resp({error:'Concurrent sidecar save; owner data preserved'},409);
-  return resp({saved:true,key:destination,size:saved.size||content.length});
  }
  const aid=u.searchParams.get('artifact')||'';if(route==='/artifact-status'&&method==='GET'){if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad ID'},400);const o=await env.VIDEOS.head('sync/gh/'+aid+'.json');return resp({synced:!!o});}if(route==='/artifact-mark'&&method==='POST'){if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad ID'},400);const d=await request.json();await env.VIDEOS.put('sync/gh/'+aid+'.json',JSON.stringify({id:aid,name:String(d.name||'').slice(0,160),when:new Date().toISOString()}),{httpMetadata:{contentType:'application/json'}});return resp({synced:true});}
  if(route==='/manifest'&&method==='POST'){
