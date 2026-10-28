@@ -1,0 +1,36 @@
+name: Sleepy Hollow — V13 source preflight (free)
+on:
+  push:
+    branches: [episode/sleepy-hollow-20261028-rackham-v13]
+    paths: [queue/sleepy_v13_check.request]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: sleepy-hollow-v13-20261028
+  cancel-in-progress: false
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: SLEEPY_HOLLOW_RACKHAM_IMAGES_PREFLIGHT
+          run-id: 40613217390
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: output/sleepy_hollow_rackham_20261028
+      - name: V13/V33/V38 preflight with actual files
+        run: python tools/sleepy_v13_preflight_20261028.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: SLEEPY_HOLLOW_PROJECT_V13_AND_CHECK
+          path: output/sleepy_hollow_v13/
+          retention-days: 15
+          if-no-files-found: warn
