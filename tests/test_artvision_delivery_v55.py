@@ -100,6 +100,34 @@ class DeliveryV55Tests(unittest.TestCase):
         review["video_sha256"] = "0" * 64
         self.assertTrue(validate_opening_review(review, sha))
 
+    def test_archive_contract_requires_exact_approved_video_sha(self):
+        sha = hashlib.sha256(self.video.read_bytes()).hexdigest()
+        contract_file = self.root / "ARTVISION_CONTRACT_V25.json"
+        checks = {name: {"passed": True} for name in (
+            "opening", "visual", "cover", "music", "rights",
+            "full_watch", "replicability")}
+        contract_file.write_text(json.dumps({
+            "schema": "artvision-release-contract-v25",
+            "review_video_sha256": "0"*64,
+            "reviews": checks,
+        }), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "contratto non approvato"):
+            pack(self.video, self.cover, self.posts, self.rights, self.recipe,
+                 self.root / "bad_contract", release_contract=contract_file)
+        contract_file.write_text(json.dumps({
+            "schema": "artvision-release-contract-v25",
+            "review_video_sha256": sha,
+            "reviews": checks,
+        }), encoding="utf-8")
+        output = self.root / "valid_contract"
+        result = pack(self.video, self.cover, self.posts, self.rights, self.recipe,
+                      output, release_contract=contract_file)
+        self.assertEqual(result["delivery"]["site_import_V25_contract"],
+                         "exact_sha_review_verified")
+        full_zip = next(output.glob("*_COMPLETO.zip"))
+        with zipfile.ZipFile(full_zip) as archive:
+            self.assertIn("ARTVISION_CONTRACT_V25.json", archive.namelist())
+
     def test_site_catalog_missing_is_not_falsely_confirmed(self):
         class FakeResponse:
             def __enter__(self): return self
