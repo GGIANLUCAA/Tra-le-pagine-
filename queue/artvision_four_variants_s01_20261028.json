@@ -24,7 +24,7 @@
         "h": 183,
         "w": 244
       },
-      "dossier_4x1_path": null,
+      "dossier_4x1_path": "docs/productions/2026-10-28-wright-cinema-museum-v55/ARTVISION_4X1_PLAN.json",
       "dossier_preflight": "pending",
       "variants": {
         "critico_standard": {
@@ -49,10 +49,22 @@
           "archive_sync_pending": true
         },
         "cinema_museum": {
-          "status": "planned",
+          "status": "rendered_needs_review",
           "legacy_prior": "misclassified_as_museum_in_V54_initial_migration",
-          "verified_this_migration": false,
-          "notes": "No verified Museum Immersion render for Wright; avoid duplicate V52B. Requires real-scale gallery 183x244 cm, frame provenance and V46 review."
+          "verified_this_migration": true,
+          "notes": "Actual distinct corrected Cinema Museum MP4 exists in ChatGPT producing session only; source true gilded frame, illustrated surroundings; no V25 approval, no site import. Preserve old rejected MP4 for traceability. Do NOT silently re-render.",
+          "version": "V55_corrected_true_frame",
+          "reported_hash": "5352f3f49546b97d70c58478120a71855727a3c4b3a25db4bbb071acbb7d04b3",
+          "duration_seconds": 53.083333,
+          "codec": "H264/AAC 1080x1920",
+          "source_photo_sha256": "ef5c2f7bbc60984222226ba9ef392601d748e86233db970c1c58dc10b1c6964b",
+          "source_photo_license": "Sailko Wikimedia Commons CC BY 3.0",
+          "report": "docs/productions/2026-10-28-wright-cinema-museum-v55/DELIVERY_CORRECTED_TRUE_FRAME_20261028.md",
+          "technical_qa": "ffprobe_ffmpeg_full_decode_V55_pack_ZIP_CRC_passed_in_ChatGPT_session",
+          "opening_review": "frames_reviewed_full_speed_audio_pending",
+          "human_approval": false,
+          "archive_sync_pending": true,
+          "site_verified": false
         }
       },
       "migration_correction": "2026-10-28: reclassified V52B to cinema_standard after inspecting original V52B package, recipe and QA contact sheet; historical V53 queue left intact."
