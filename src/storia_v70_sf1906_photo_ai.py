@@ -14,7 +14,7 @@ SOURCE=OUT/"SAN_FRANCISCO_1906_HD_ORIGINALE.webm"
 spec=importlib.util.spec_from_file_location("ddcolor_v60",ROOT/"src/storia_rivive_real_ai_v60.py")
 dd=importlib.util.module_from_spec(spec);spec.loader.exec_module(dd)
 sc=importlib.util.spec_from_file_location("source_v70",ROOT/"src/storia_v70_sf1906_source_scout.py")
-src=importlib.util.module_from_spec(sc);spec.loader.exec_module(src)
+src=importlib.util.module_from_spec(sc);sc.loader.exec_module(src)
 SHOTS=[
  {"id":"01","name":"Il passante","sec":236.0,"x":810,"motion":1.75,"reveal":.36,"hold":3.6,"seed":71,
   "subject":"a real walking man in dark coat and period top hat near the camera; white stone facades beyond",
