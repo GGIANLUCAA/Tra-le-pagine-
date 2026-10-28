@@ -1,0 +1,33 @@
+name: "Storia Rivive V61 — freeze to AI-photo montage technical QA"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_photo_freeze_v61.py"
+      - "tests/test_storia_rivive_photo_freeze_v61.py"
+      - "config/storia_rivive_v61.json"
+      - "templates/STORIA_RIVIVE_V61_PHOTO_FREEZE.json"
+      - ".github/workflows/storia-rivive-v61-freeze-tests.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  freeze_photo_technical_test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Prepare offline tools only"
+        run: |
+          python -m pip install -q --no-cache-dir numpy opencv-python-headless
+          command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+      - name: "Test real frame freezing after archival motion, correct stillness and rights gates"
+        run: |
+          python -m unittest discover -s tests -p "test_storia_rivive_photo_freeze_v61.py" -v
+          python -m json.tool config/storia_rivive_v61.json > /dev/null
+          python -m json.tool templates/STORIA_RIVIVE_V61_PHOTO_FREEZE.json > /dev/null
+      - name: "This is NOT a real AI-restored episode"
+        run: |
+          echo 'Tests only synthetic placeholders; actual image-to-image generated photography still missing.'
