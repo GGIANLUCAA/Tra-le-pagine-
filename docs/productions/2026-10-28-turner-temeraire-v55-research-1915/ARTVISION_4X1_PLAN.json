@@ -1,0 +1,499 @@
+{
+  "schema": "artvision-4x1-v1",
+  "topic": "The Fighting Temeraire",
+  "artist": "J. M. W. Turner",
+  "research_status": "documented_museum_and_commons_source_but_original_bytes_not_locally_acquired",
+  "emotional_direction": {
+    "central_tension": "The veteran sailing warship is magnificent but powerless, towed by a tiny steam tug toward dismantling; Turner deliberately changes reality to give it a dignified farewell.",
+    "intended_feeling": [
+      "meraviglia",
+      "malinconia"
+    ],
+    "evidence_details": [
+      {
+        "id": "ghost_ship",
+        "location": "left half, tall pale three-masted Temeraire",
+        "observation": "The pale old warship is shown with masts and rigging that were already removed before its actual tow.",
+        "significance": "Turner restores its dignity as a ghostly historical presence; the masts are a documented poetic alteration.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Turner_-_The_Fighting_Temeraire.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "steam_tug",
+        "location": "lower left-center, squat dark tug ahead of the Temeraire",
+        "observation": "A small paddle-wheel steam tug tows the enormous pale warship and bears a dark funnel.",
+        "significance": "A visual collision of old naval glory and new industrial propulsion, not proof of Turner's simple hostility to steam.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Turner_-_The_Fighting_Temeraire.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "smoke",
+        "location": "middle left, warm dark plume behind tug funnel",
+        "observation": "The tug's funnel and smoke are deliberately arranged so the plume sweeps back toward the old masts.",
+        "significance": "The smoke visually binds the two ships and heightens the sense of historical transition.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Turner_-_The_Fighting_Temeraire.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "sunset",
+        "location": "right third, white-gold sun under crimson-orange clouds",
+        "observation": "A luminous setting sun fills the right-hand sky; the sunset is placed in a geographically impossible direction for the voyage.",
+        "significance": "The poetic sunset communicates farewell rather than a literal record of the Thames tow.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Turner_-_The_Fighting_Temeraire.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "moon",
+        "location": "upper left above the Temeraire, pale crescent moon",
+        "observation": "A faint crescent moon appears over the old ship while the sun glows on the opposite side.",
+        "significance": "Its juxtaposition with the sunset supports an interpretation of ending and beginning, not a fixed secret code.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Turner_-_The_Fighting_Temeraire.jpg",
+        "claim_type": "interpretation"
+      },
+      {
+        "id": "buoy",
+        "location": "lower right foreground, near-black buoy on the water",
+        "observation": "A dark buoy punctuates the water opposite the tug and balances the wide bright sky.",
+        "significance": "It anchors the composition and makes the quiet river feel deep and expansive.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Turner_-_The_Fighting_Temeraire.jpg",
+        "claim_type": "interpretation"
+      }
+    ],
+    "reveal_order": [
+      "ghost_ship",
+      "steam_tug",
+      "smoke",
+      "sunset",
+      "moon",
+      "buoy"
+    ],
+    "opening_hook": "A glowing, ghostlike ship seems heroic; by seven seconds the small dark tug reveals it cannot move on its own.",
+    "closing_payoff": "The whole picture is revisited as a poetic farewell, not as a literal reconstruction of the Thames journey.",
+    "wow_justification": "The apparent power hierarchy flips when the tiny tug is revealed pulling the immense warship; viewers discover Turner's purposeful historical distortions."
+  },
+  "variants": {
+    "critico_standard": {
+      "format": "critico",
+      "mode": "standard",
+      "variation_reason": "The authentic details alone carry the nuanced critical narration, with no gallery reconstruction.",
+      "status": "blocked",
+      "opening_0_7": {
+        "first_frame_title_artist": "THE FIGHTING TEMERAIRE / J. M. W. TURNER — same approved ArtVision type template, exact painting title, readable on phone",
+        "first_frame_visual": "Authentic luminous pale Temeraire occupies the opening crop; artist/title overlay does not cover ship",
+        "first_3_seconds_hook": "The pale, ghostlike warship is visible immediately; her size and silence form the opening visual question",
+        "seconds_3_to_7_reveal": "Show the small black steam tug that drags the larger ship, a surprising reversal of visual power",
+        "detail_id": "ghost_ship",
+        "mobile_composition_reason": "Title stays in established safe-area banner; bright ship and dark tug remain recognizable on a phone, no letterbox or empty corridor",
+        "audio_or_voice_cue": "Identical Italian script in both Critico variants; use only verified natural Google Gacrux, not generated or timed yet",
+        "qa_status": "pending_visual_review"
+      },
+      "scenes": [
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Establish the ghostly warship and her historically documented fate without inventing movement.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Meraviglia e tensione nel contrasto fra due epoche",
+          "duration_seconds": 16,
+          "spoken_line": "Questa nave bianca sembra un fantasma. È la Temeraire, veterana della battaglia di Trafalgar: Turner la dipinge durante il suo ultimo viaggio, verso la demolizione."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "steam_tug",
+          "purpose": "Contrast the small steam tug against the much larger old ship using the authentic painting.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Meraviglia e tensione nel contrasto fra due epoche",
+          "duration_seconds": 15,
+          "spoken_line": "Guardate l'imbarcazione davanti a lei. È un piccolo rimorchiatore a vapore: una macchina scura trascina un gigante della marina a vela."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "smoke",
+          "purpose": "Reveal the painted smoke as a bridge between sail and steam, synchronized with the critical argument.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Meraviglia e tensione nel contrasto fra due epoche",
+          "duration_seconds": 17,
+          "spoken_line": "Il fumo attraversa l'aria e sembra investire gli alberi della vecchia nave. Turner costruisce così il contrasto fra due epoche, senza trasformarlo in una semplice condanna del progresso."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Return to the masts to explain Turner's documented departure from the real 1838 tow.",
+          "movement": "Static comparison of painted masts; no historical fake footage",
+          "emotional_effect": "Malinconia e rispetto per la memoria storica",
+          "duration_seconds": 16,
+          "spoken_line": "C'è però un dettaglio sorprendente: nella realtà, prima del traino, gli alberi della Temeraire erano stati rimossi. Turner li restituisce al dipinto per darle un'ultima dignità."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "sunset",
+          "purpose": "Reveal the symbolic sunset and distinguish poetic licence from geographic accuracy.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Malinconia e rispetto per la memoria storica",
+          "duration_seconds": 16,
+          "spoken_line": "A destra il sole tramonta in una luce quasi irreale. Anche la sua posizione è una libertà poetica: non corrisponde alla direzione geografica del viaggio."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "moon",
+          "purpose": "Discover the tiny crescent moon, inviting a nuanced reading of historical change.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Malinconia e rispetto per la memoria storica",
+          "duration_seconds": 14,
+          "spoken_line": "In alto a sinistra appare una sottile falce di luna. Fra il chiarore del sole e quello della luna, il quadro suggerisce che un'epoca finisce mentre un'altra comincia."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "buoy",
+          "purpose": "Resolve the story with the whole original painting and the dark buoy for compositional closure.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Malinconia e rispetto per la memoria storica",
+          "duration_seconds": 17,
+          "spoken_line": "Turner non stava dipingendo una fotografia del Tamigi. Stava creando un addio: la grande nave è ancora splendida, ma non può più avanzare da sola."
+        }
+      ]
+    },
+    "critico_museum": {
+      "format": "critico",
+      "mode": "museum",
+      "variation_reason": "The same spoken critique is framed by a real-scale gallery encounter and a return to the same room.",
+      "status": "blocked",
+      "opening_0_7": {
+        "first_frame_title_artist": "THE FIGHTING TEMERAIRE / J. M. W. TURNER — same approved ArtVision type template, exact painting title, readable on phone",
+        "first_frame_visual": "Actual Turner painting visible at correct 90.7 × 121.6 cm scale in a clearly illustrative gallery; ship is legible from first frame",
+        "first_3_seconds_hook": "The pale, ghostlike warship is visible immediately; her size and silence form the opening visual question",
+        "seconds_3_to_7_reveal": "Show the small black steam tug that drags the larger ship, a surprising reversal of visual power",
+        "detail_id": "ghost_ship",
+        "mobile_composition_reason": "Title stays in established safe-area banner; bright ship and dark tug remain recognizable on a phone, no letterbox or empty corridor",
+        "audio_or_voice_cue": "Identical Italian script in both Critico variants; use only verified natural Google Gacrux, not generated or timed yet",
+        "qa_status": "pending_visual_review"
+      },
+      "scenes": [
+        {
+          "kind": "gallery_entry",
+          "purpose": "Show documented physical painting dimensions and immediate visual access to the ghost ship, not an empty corridor.",
+          "movement": "One restrained POV approach, frame fully three-dimensional and painting recessed; no edge-stretch.",
+          "emotional_effect": "Stupore misurato per la presenza fisica dell'opera",
+          "duration_seconds": 3.1
+        },
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Establish the ghostly warship and her historically documented fate without inventing movement.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Meraviglia e tensione nel contrasto fra due epoche",
+          "duration_seconds": 16,
+          "spoken_line": "Questa nave bianca sembra un fantasma. È la Temeraire, veterana della battaglia di Trafalgar: Turner la dipinge durante il suo ultimo viaggio, verso la demolizione."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "steam_tug",
+          "purpose": "Contrast the small steam tug against the much larger old ship using the authentic painting.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Meraviglia e tensione nel contrasto fra due epoche",
+          "duration_seconds": 15,
+          "spoken_line": "Guardate l'imbarcazione davanti a lei. È un piccolo rimorchiatore a vapore: una macchina scura trascina un gigante della marina a vela."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "smoke",
+          "purpose": "Reveal the painted smoke as a bridge between sail and steam, synchronized with the critical argument.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Meraviglia e tensione nel contrasto fra due epoche",
+          "duration_seconds": 17,
+          "spoken_line": "Il fumo attraversa l'aria e sembra investire gli alberi della vecchia nave. Turner costruisce così il contrasto fra due epoche, senza trasformarlo in una semplice condanna del progresso."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Return to the masts to explain Turner's documented departure from the real 1838 tow.",
+          "movement": "Static comparison of painted masts; no historical fake footage",
+          "emotional_effect": "Malinconia e rispetto per la memoria storica",
+          "duration_seconds": 16,
+          "spoken_line": "C'è però un dettaglio sorprendente: nella realtà, prima del traino, gli alberi della Temeraire erano stati rimossi. Turner li restituisce al dipinto per darle un'ultima dignità."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "sunset",
+          "purpose": "Reveal the symbolic sunset and distinguish poetic licence from geographic accuracy.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Malinconia e rispetto per la memoria storica",
+          "duration_seconds": 16,
+          "spoken_line": "A destra il sole tramonta in una luce quasi irreale. Anche la sua posizione è una libertà poetica: non corrisponde alla direzione geografica del viaggio."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "moon",
+          "purpose": "Discover the tiny crescent moon, inviting a nuanced reading of historical change.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Malinconia e rispetto per la memoria storica",
+          "duration_seconds": 14,
+          "spoken_line": "In alto a sinistra appare una sottile falce di luna. Fra il chiarore del sole e quello della luna, il quadro suggerisce che un'epoca finisce mentre un'altra comincia."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "buoy",
+          "purpose": "Resolve the story with the whole original painting and the dark buoy for compositional closure.",
+          "movement": "Restrained optical drift within genuine artwork pixels, avoiding border stretching",
+          "emotional_effect": "Malinconia e rispetto per la memoria storica",
+          "duration_seconds": 17,
+          "spoken_line": "Turner non stava dipingendo una fotografia del Tamigi. Stava creando un addio: la grande nave è ancora splendida, ma non può più avanzare da sola."
+        },
+        {
+          "kind": "gallery_exit",
+          "purpose": "Return to the exact same gallery and show the painting at true scale after the revelation.",
+          "movement": "Reverse the established camera path with consistent geometry and contact shadows.",
+          "emotional_effect": "Chiusura malinconica, senza stacco artificiale",
+          "duration_seconds": 3.2
+        }
+      ],
+      "museum": {
+        "width_cm": 121.6,
+        "height_cm": 90.7,
+        "dimensions_source": "https://www.nationalgallery.org.uk/paintings/catalogues/egerton-2000/the-fighting-temeraire",
+        "frame_status": "Original frame dimensions and period not verified; scenic reconstruction must be explicitly labelled, no claim of authentic frame",
+        "gallery_id": "turner_ng524_illustrative_gallery_A",
+        "entrance_plan": "From first frame show the 90.7 x 121.6 cm painting already visible at human scale; short POV approach with authentic image recessed behind a plausible frame",
+        "exit_same_gallery_plan": "Return to the exact same reconstructed wall, camera axis and painting scale, with no ghosting or border replication",
+        "scene_is_reconstruction": true
+      }
+    },
+    "cinema_standard": {
+      "format": "cinema",
+      "mode": "standard",
+      "variation_reason": "A voice-free sequence of genuine painted details builds the farewell from warship to tug, sunset and moon.",
+      "status": "planned",
+      "opening_0_7": {
+        "first_frame_title_artist": "THE FIGHTING TEMERAIRE / J. M. W. TURNER — same approved ArtVision type template, exact painting title, readable on phone",
+        "first_frame_visual": "Authentic luminous pale Temeraire occupies the opening crop; artist/title overlay does not cover ship",
+        "first_3_seconds_hook": "The pale, ghostlike warship is visible immediately; her size and silence form the opening visual question",
+        "seconds_3_to_7_reveal": "Show the small black steam tug that drags the larger ship, a surprising reversal of visual power",
+        "detail_id": "ghost_ship",
+        "mobile_composition_reason": "Title stays in established safe-area banner; bright ship and dark tug remain recognizable on a phone, no letterbox or empty corridor",
+        "audio_or_voice_cue": "Music must be individually sourced and licensed before render; no recording chosen or falsely claimed",
+        "qa_status": "pending_visual_review"
+      },
+      "scenes": [
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Open immediately on the luminous white ship with the series title and artist, not an empty room.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Curiosità e sorpresa per il contrasto di scala",
+          "duration_seconds": 3
+        },
+        {
+          "kind": "detail",
+          "detail_id": "steam_tug",
+          "purpose": "Show the small dark steam tug that reverses the scale of power in the painting.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Curiosità e sorpresa per il contrasto di scala",
+          "duration_seconds": 4
+        },
+        {
+          "kind": "detail",
+          "detail_id": "smoke",
+          "purpose": "Let the smoke visually connect new steam technology to old masts.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Curiosità e sorpresa per il contrasto di scala",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Reveal the complete ship with preserved rigging; no claim that the painting is documentary.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "sunset",
+          "purpose": "Hold the dramatic right-side sunset as the emotional climax.",
+          "movement": "Very slow hold, preserving painted texture and full sun disk",
+          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "duration_seconds": 7
+        },
+        {
+          "kind": "detail",
+          "detail_id": "moon",
+          "purpose": "Discover the crescent moon only after the sunset has established the ending.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "buoy",
+          "purpose": "Use the dark buoy to balance the wide sky and give the viewer visual orientation.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Close on the entire original painting and its two opposing vessels.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "duration_seconds": 8
+        }
+      ]
+    },
+    "cinema_museum": {
+      "format": "cinema",
+      "mode": "museum",
+      "variation_reason": "The voice-free visual argument gains physical scale in a reconstructed gallery, with a genuine POV entry and return.",
+      "status": "planned",
+      "opening_0_7": {
+        "first_frame_title_artist": "THE FIGHTING TEMERAIRE / J. M. W. TURNER — same approved ArtVision type template, exact painting title, readable on phone",
+        "first_frame_visual": "Actual Turner painting visible at correct 90.7 × 121.6 cm scale in a clearly illustrative gallery; ship is legible from first frame",
+        "first_3_seconds_hook": "The pale, ghostlike warship is visible immediately; her size and silence form the opening visual question",
+        "seconds_3_to_7_reveal": "Show the small black steam tug that drags the larger ship, a surprising reversal of visual power",
+        "detail_id": "ghost_ship",
+        "mobile_composition_reason": "Title stays in established safe-area banner; bright ship and dark tug remain recognizable on a phone, no letterbox or empty corridor",
+        "audio_or_voice_cue": "Music must be individually sourced and licensed before render; no recording chosen or falsely claimed",
+        "qa_status": "pending_visual_review"
+      },
+      "scenes": [
+        {
+          "kind": "gallery_entry",
+          "purpose": "Show documented physical painting dimensions and immediate visual access to the ghost ship, not an empty corridor.",
+          "movement": "One restrained POV approach, frame fully three-dimensional and painting recessed; no edge-stretch.",
+          "emotional_effect": "Stupore misurato per la presenza fisica dell'opera",
+          "duration_seconds": 3.1
+        },
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Open immediately on the luminous white ship with the series title and artist, not an empty room.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Curiosità e sorpresa per il contrasto di scala",
+          "duration_seconds": 3
+        },
+        {
+          "kind": "detail",
+          "detail_id": "steam_tug",
+          "purpose": "Show the small dark steam tug that reverses the scale of power in the painting.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Curiosità e sorpresa per il contrasto di scala",
+          "duration_seconds": 4
+        },
+        {
+          "kind": "detail",
+          "detail_id": "smoke",
+          "purpose": "Let the smoke visually connect new steam technology to old masts.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Curiosità e sorpresa per il contrasto di scala",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Reveal the complete ship with preserved rigging; no claim that the painting is documentary.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "sunset",
+          "purpose": "Hold the dramatic right-side sunset as the emotional climax.",
+          "movement": "Very slow hold, preserving painted texture and full sun disk",
+          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "duration_seconds": 7
+        },
+        {
+          "kind": "detail",
+          "detail_id": "moon",
+          "purpose": "Discover the crescent moon only after the sunset has established the ending.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "buoy",
+          "purpose": "Use the dark buoy to balance the wide sky and give the viewer visual orientation.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Close on the entire original painting and its two opposing vessels.",
+          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
+          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "duration_seconds": 8
+        },
+        {
+          "kind": "gallery_exit",
+          "purpose": "Return to the exact same gallery and show the painting at true scale after the revelation.",
+          "movement": "Reverse the established camera path with consistent geometry and contact shadows.",
+          "emotional_effect": "Chiusura malinconica, senza stacco artificiale",
+          "duration_seconds": 3.2
+        }
+      ],
+      "museum": {
+        "width_cm": 121.6,
+        "height_cm": 90.7,
+        "dimensions_source": "https://www.nationalgallery.org.uk/paintings/catalogues/egerton-2000/the-fighting-temeraire",
+        "frame_status": "Original frame dimensions and period not verified; scenic reconstruction must be explicitly labelled, no claim of authentic frame",
+        "gallery_id": "turner_ng524_illustrative_gallery_A",
+        "entrance_plan": "From first frame show the 90.7 x 121.6 cm painting already visible at human scale; short POV approach with authentic image recessed behind a plausible frame",
+        "exit_same_gallery_plan": "Return to the exact same reconstructed wall, camera axis and painting scale, with no ghosting or border replication",
+        "scene_is_reconstruction": true
+      }
+    }
+  },
+  "learning": {
+    "previous_reference": "User-approved Cyclops SENZA STRISCE and Hiroshige Museum Scale for gallery technique, but neither exact MP4 was visually reviewed in this run.",
+    "experiment_variable": "Test first-frame ghost ship followed by steam-tug reveal by second seven, compared with delayed museum entrances.",
+    "expected_improvement": "Make the historic tension legible immediately on a phone without resorting to generic museum corridors.",
+    "post_render_review": "pending; no new MP4 rendered"
+  },
+  "approval": {
+    "artistic_status": "planned",
+    "user_approval": false
+  },
+  "audience_research": {
+    "compared": [
+      {
+        "work": "The Fighting Temeraire",
+        "reason": "Selected as the next non-duplicative Cinema Standard candidate; visual farewell and documented historic tension; image transfer remains blocked."
+      },
+      {
+        "work": "An Experiment on a Bird in the Air Pump",
+        "reason": "Existing Cinema Standard V52B; Museum variant still planned, Critico requires verified Gacrux."
+      },
+      {
+        "work": "The Goldfinch",
+        "reason": "Both Cinema variants already rendered and awaiting artistic review; avoid duplicate."
+      },
+      {
+        "work": "A Sunday on La Grande Jatte—1884",
+        "reason": "Both Cinema variants already rendered and awaiting artistic review; avoid duplicate."
+      }
+    ],
+    "statistics": "No measured retention or view counts available; no fabricated popularity metrics."
+  },
+  "rights": {
+    "artwork_museum": "https://www.nationalgallery.org.uk/paintings/joseph-mallord-william-turner-the-fighting-temeraire",
+    "scholarly_catalog": "https://www.nationalgallery.org.uk/paintings/catalogues/egerton-2000/the-fighting-temeraire",
+    "commons_reproduction": "https://commons.wikimedia.org/wiki/File:Turner_-_The_Fighting_Temeraire.jpg",
+    "commons_status": "Public-domain artwork and faithful 2D reproduction as marked on Wikimedia Commons; territorial caveat remains",
+    "original_image_sha256": null,
+    "original_image_locally_acquired": false,
+    "music_recording": "not selected",
+    "music_license": "not verified",
+    "museum_frame": "original/current frame not authenticated; scenic reconstruction only",
+    "voice": "Google Gacrux unavailable/not verified",
+    "note": "No paid API, social publication or rendering authorized by this research plan."
+  },
+  "preflight": {
+    "official_four_brief": "not_run_in_this_cycle",
+    "official_four_check": "not_run_in_this_cycle",
+    "reason": "Repository scripts not present in isolated runtime; this authored plan is a research dossier, not a passing preflight."
+  }
+}
