@@ -60,12 +60,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh api "repos/${REPO}/releases/tags/${RELEASE_TAG}" --jq '.assets[] | [.name, (.size|tostring)] | @tsv' > /tmp/published-assets.tsv
-          cat /tmp/published-assets.tsv
-          grep -Fx 
-BEIRUT_1919_COLORI_AI.mp4\t5748812' /tmp/published-assets.tsv
-          grep -Fx 
-BEIRUT_1919_KIT_COMPLETO.zip\t5931382' /tmp/published-assets.tsv
-          grep -Fx 
-BEIRUT_1919_COPERTINA.jpg\t183892' /tmp/published-assets.tsv
+          for spec in BEIRUT_1919_COLORI_AI.mp4:5748812 BEIRUT_1919_KIT_COMPLETO.zip:5931382 BEIRUT_1919_COPERTINA.jpg:183892; do
+            name="${spec%:*}"
+            expected="${spec#*:}"
+            actual=$(gh api "repos/${REPO}/releases/tags/${RELEASE_TAG}" --jq ".assets[] | select(.name == \"${name}\") | .size")
+            test "$actual" = "$expected"
+            echo "Verified GitHub published asset: $name ($actual bytes)"
+          done
           echo 'Release live with exact verified asset sizes.'
