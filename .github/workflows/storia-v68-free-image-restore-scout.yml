@@ -1,0 +1,34 @@
+name: "V68 — test API restauratori fotografici senza crediti"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v68-free-image-restore-scout.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gradio_restoration_scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip -q install --no-cache-dir gradio_client Pillow requests
+      - name: "Find image restoration API inputs and free runtime"
+        env:
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: |
+          python - <<'PY'
+          import json
+          from gradio_client import Client
+          for space in ("sczhou/CodeFormer","finegrain/finegrain-image-enhancer","tkawano/GFPGAN"):
+              try:
+                  print("SPACE",space,flush=True)
+                  client=Client(space,verbose=False)
+                  api=client.view_api(return_format="dict")
+                  print(json.dumps(api,ensure_ascii=False,default=str)[:12000],flush=True)
+              except Exception as e:
+                  print("SPACE_ERROR",space,type(e).__name__,str(e)[:700],flush=True)
+          PY
