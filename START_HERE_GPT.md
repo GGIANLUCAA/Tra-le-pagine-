@@ -4,6 +4,10 @@ Leggere `AGENTS.md`, [regole attive](docs/REGOLE_ATTIVE.md) e
 [registro dei format](config/video_formats_v13.json). Questa revisione del 25/10/2026
 prevale sui vincoli storici incompatibili. Le istruzioni della sessione restano prioritarie.
 
+## La Storia Rivive V56 — avvio senza questionari
+
+Per richieste di video da filmati storici usare il format `storia_rivive` e il suo contratto in `docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md`, con preferenze già impostate: film originale autentico, CC0/diritti controllati, primo frame memorabile, restauro fedele, 0 crediti di default e pacchetto V55 completo. Non chiedere nuovamente le regole o le scelte già note; distinguere sempre pilot progettato, MP4 realmente pronto e archivio realmente sincronizzato.
+
 Quando Gianluca chiede un video o una serie, usa il [menu rapido](docs/ISTRUZIONI_MENU_VIDEO_NUOVE_CHAT.md):
 precompila le scelte già presenti nella richiesta, mostra le opzioni consigliate e
 lascia modificare le altre senza trasformarle in domande obbligatorie. “Usa le
