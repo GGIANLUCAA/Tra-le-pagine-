@@ -16,7 +16,7 @@ EP=Path("episodes/alice_wonderland_20261028")
 OUT=Path("output/alice_wonderland_20261028")
 URL="https://www.gutenberg.org/cache/epub/28885/pg28885-images.html"
 FPS=24
-SPLIT=re.compile(r"(?<=[.!?])\\s+(?=[A-ZÀ-ÙÈÉ«“])")
+SPLIT=re.compile(r"(?<=[.!?])\s+(?=[A-ZÀ-ÙÈÉ«“])")
 NAME="TRA_LE_PAGINE_ALICE_NEL_PAESE_DELLE_MERAVIGLIE.mp4"
 def sha(data):return hashlib.sha256(data).hexdigest()
 def sha_file(path):return sha(Path(path).read_bytes())
@@ -25,7 +25,7 @@ def cmd(*args):
     subprocess.run([str(x) for x in args],check=True)
 def load():
     plan=json.loads((EP/"scene_plan_alice.json").read_text(encoding="utf8"))["scenes"]
-    paragraphs=[p.strip() for p in (EP/"testo.txt").read_text(encoding="utf8").split("\\n\\n") if p.strip()]
+    paragraphs=[p.strip() for p in (EP/"testo.txt").read_text(encoding="utf8").split("\n\n") if p.strip()]
     if len(plan)!=14 or len(paragraphs)!=14:raise RuntimeError("Expected 14 narrative beats")
     if any(a["narration"]!=b for a,b in zip(plan,paragraphs)):
         raise RuntimeError("Script/scene narrative mismatch")
@@ -154,10 +154,10 @@ def prepare():
           "visual_review":"source_contact_sheet_reviewed; full_video_pending"})
         print("VERIFIED_PLATE",i,name,alt[:90],size,flush=True)
     if len(cache)!=13:raise RuntimeError("Wrong unique image count")
-    (EP/"scene_cues.json").write_text(json.dumps(cues,ensure_ascii=False,indent=2)+"\\n",encoding="utf8")
+    (EP/"scene_cues.json").write_text(json.dumps(cues,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     (OUT/"PROVENIENZA_IMMAGINI.json").write_text(json.dumps({"source":URL,
       "source_unique":len(cache),"shots":len(plan),"images":provenance,
-      "human_full_video_review":"pending"},ensure_ascii=False,indent=2)+"\\n",encoding="utf8")
+      "human_full_video_review":"pending"},ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     board(plan)
     sys.path.insert(0,"src")
     from episode_v3 import validate,branded_cover
@@ -167,7 +167,7 @@ def prepare():
                  "POST_FACEBOOK.txt","POST_INSTAGRAM.txt","POST_TIKTOK.txt","POST_YOUTUBE.txt"]:
         shutil.copy2(EP/name,OUT/name)
     ready=make_v13(provenance,plan,paragraphs)
-    (OUT/"MUSICA_CREDITI.txt").write_text("Prevista: Alice — valzer originale Tra le Pagine, sintetizzato da codice, senza campioni terzi. Audio presente solo se MP4 effettivamente renderizzato.\\n")
+    (OUT/"MUSICA_CREDITI.txt").write_text("Prevista: Alice — valzer originale Tra le Pagine, sintetizzato da codice, senza campioni terzi. Audio presente solo se MP4 effettivamente renderizzato.\n")
     status={"episode":EP.name,"state":"visuals_ready_tts_pending","unique_original_plates":13,
       "shots":14,"original_source":URL,"v13_ready":ready,"video_exists":False,
       "tts_generated":False,"paid_video_calls":0,"social_published":False}
@@ -237,7 +237,7 @@ def render():
                 "-i",inp,"-vf",vf,"-frames:v",frames,"-an","-c:v","libx264",
                 "-preset","veryfast","-crf",23,"-pix_fmt","yuv420p",clip)
             clips.append(clip)
-        listing=root/"clips.txt";listing.write_text("".join("file '"+str(c)+"'\\n" for c in clips))
+        listing=root/"clips.txt";listing.write_text("".join("file '"+str(c)+"'\n" for c in clips))
         visual=root/"visual.mp4"
         cmd("ffmpeg","-hide_banner","-loglevel","error","-y","-f","concat","-safe","0",
             "-i",listing,"-c","copy",visual)
@@ -278,7 +278,7 @@ def qa():
       "paid_video_api_calls":0}
     (OUT/"QA_REALE.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
     (OUT/"QUALITY.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
-    (OUT/"MUSICA_CREDITI.txt").write_text("Titolo: Alice — Valzer delle Meraviglie. Composizione e sintesi originale Tra le Pagine — Studio Ibrido. Nessun campione audio di terzi.\\n")
+    (OUT/"MUSICA_CREDITI.txt").write_text("Titolo: Alice — Valzer delle Meraviglie. Composizione e sintesi originale Tra le Pagine — Studio Ibrido. Nessun campione audio di terzi.\n")
     with zipfile.ZipFile(OUT/"ALICE_SOLO_VIDEO_V36.zip","w",zipfile.ZIP_DEFLATED,compresslevel=1) as z:z.write(video,video.name)
     full=OUT/"ALICE_PACCHETTO_COMPLETO.zip"
     with zipfile.ZipFile(full,"w",zipfile.ZIP_DEFLATED,compresslevel=1) as z:
