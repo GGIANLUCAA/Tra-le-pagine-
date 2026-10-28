@@ -1,0 +1,110 @@
+name: "V70 — vero video SAN FRANCISCO 1906 con foto IA restaurate 1080p"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v70-final-render-release.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v70-sf1906-final-master
+  cancel-in-progress: false
+jobs:
+  make_and_publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Install free local video requirements — ZERO generative calls"
+        run: |
+          python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow gradio_client onnxruntime huggingface_hub
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - name: "Download EXACT four successful prior generative photographs, preserve SHA"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v70_sf1906
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 160 \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12854966385/zip" \
+            --output /tmp/V70_REAL_AI_PHOTOS.zip
+          unzip -t /tmp/V70_REAL_AI_PHOTOS.zip
+          unzip -oq /tmp/V70_REAL_AI_PHOTOS.zip -d output/storia_v70_sf1906
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          o=Path('output/storia_v70_sf1906')
+          p=json.loads((o/'RESTORATION_QA.json').read_text())
+          assert p['created_photographic_images']==4
+          for x in p['results']:
+              assert hashlib.sha256((o/x['photo']).read_bytes()).hexdigest()==x['photo_sha256']
+              assert hashlib.sha256((o/x['source_frame']).read_bytes()).hexdigest()==x['source_frame_sha256']
+          print('Four authentic source-locked generated images individually SHA256 verified.')
+          PY
+      - name: "Render actual moving old film → frame freeze → reconstructed photo → 3 seconds hold"
+        run: |
+          python -u src/storia_v70_sf1906_render.py
+      - name: "Protect Android complete output, verify H264/AAC full decode and kit CRC"
+        shell: bash
+        run: |
+          set -euo pipefail
+          D=output/storia_v70_sf1906
+          test -s "$D/SAN_FRANCISCO_1906_WOW_FOTO_GENERATIVE_V70.mp4"
+          test -s "$D/SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip"
+          ffmpeg -nostdin -v error -xerror -i "$D/SAN_FRANCISCO_1906_WOW_FOTO_GENERATIVE_V70.mp4" -f null -
+          unzip -t "$D/SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip" >/dev/null
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json "$D/SAN_FRANCISCO_1906_WOW_FOTO_GENERATIVE_V70.mp4"
+      - name: "Preserve MP4, original source comparisons and social kit (no private site)"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SAN_FRANCISCO_1906_V70_FINAL_VIDEO_REAL_GENERATIVE
+          path: |
+            output/storia_v70_sf1906/SAN_FRANCISCO_1906_WOW_FOTO_GENERATIVE_V70.mp4
+            output/storia_v70_sf1906/SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip
+            output/storia_v70_sf1906/CONTATTI_PRIMA_DOPO_AI_V70.jpg
+            output/storia_v70_sf1906/COPERTINA.jpg
+            output/storia_v70_sf1906/V70_QA_REPORT.json
+            output/storia_v70_sf1906/FOTO_FOTOGRAFICA_AI_*.png
+            output/storia_v70_sf1906/POST_*.txt
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "Release DIRECT MP4 and ZIP for Android; no GitHub account or ChatGPT Library required"
+        run: |
+          set -euo pipefail
+          D=output/storia_v70_sf1906
+          TAG=storia-rivive-san-francisco-1906-foto-ai-v70
+          files=("$D/SAN_FRANCISCO_1906_WOW_FOTO_GENERATIVE_V70.mp4" \
+             "$D/SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip" \
+             "$D/COPERTINA.jpg" "$D/CONTATTI_PRIMA_DOPO_AI_V70.jpg" "$D/V70_QA_REPORT.json")
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main \
+              --title "La Storia Rivive V70 — San Francisco 1906, la città che non sapeva" \
+              --notes "PROVINO ARTISTICO STORICO 1080×1920 H264/AAC 21.6s. NUOVO film autentico 1906 Miles Brothers, scansione 1440x1072 (pubblico dominio dichiarato su Commons). QUATTRO fotogrammi originali a colori ricostruiti con DDColor+generazione Finegrain, non semplici ingrandimenti: passante, automobile, ciclista, Ferry Building. Ogni ripresa vera in B/N si muove, si congela, passa in ~0.3s a foto AI e resta ferma ~3s; musica originale. Controlli SHA, prova di decodifica, QA fermezza e confronto sorgente/restauro. IMPORTANTISSIMO: colori, tratti facciali e particolari della foto sono ipotesi generative, non certezza storica; non dichiarati veri volti 4K. I diritti territoriali della copia e dei modelli vanno riesaminati prima di usi commerciali. Nessun Vidu, nessun pagamento o autopubblicazione nei social o sito privato." \
+              --latest=false "${files[@]}"
+          fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json url,assets --jq '{url:.url,files:[.assets[]|{name:.name,bytes:.size}]}'
+      - name: "Verify DIRECT public release MP4 and ZIP sizes exactly match generated originals"
+        run: |
+          set -euo pipefail
+          for file in SAN_FRANCISCO_1906_WOW_FOTO_GENERATIVE_V70.mp4 SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip; do
+            local_bytes=$(stat -c '%s' "output/storia_v70_sf1906/$file")
+            public_bytes=$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/storia-rivive-san-francisco-1906-foto-ai-v70" --jq ".assets[]|select(.name==\"$file\")|.size")
+            test "$public_bytes" = "$local_bytes"
+            echo "GitHub direct asset VERIFIED: $file ${public_bytes} bytes"
+          done

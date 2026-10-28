@@ -1,0 +1,32 @@
+name: "V70 — scout San Francisco 1906 sorgente HD reale"
+on:
+  pull_request:
+    paths:
+      - "src/storia_v70_sf1906_source_scout.py"
+      - ".github/workflows/storia-v70-scout.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify_actuality_and_frames:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip -q install --no-cache-dir Pillow opencv-python-headless numpy
+      - name: "Download source and inspect true original frames"
+        run: python -u src/storia_v70_sf1906_source_scout.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: SAN_FRANCISCO_1906_V70_SCOUT_FILM_AND_CONTACTS
+          path: |
+            output/storia_v70_sf1906/PROVENANCE.json
+            output/storia_v70_sf1906/FILM_SCOUT_INDEX.json
+            output/storia_v70_sf1906/TIMELINE_*.jpg
+            output/storia_v70_sf1906/SAN_FRANCISCO_1906_HD_ORIGINALE.webm
+          if-no-files-found: warn
+          retention-days: 7
