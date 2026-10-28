@@ -1,0 +1,77 @@
+name: "La Storia Rivive V62 — sei foto AI reali dal film storico"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/storia_rivive_real_photo_ai_v62.py"
+      - ".github/workflows/storia-rivive-v62-photos.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: storia-rivive-v62-photo-reel
+  cancel-in-progress: false
+jobs:
+  render_v62_photo_freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_XET: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Install free, non-paid AI inference tools"
+        run: |
+          python -m pip install -q --no-cache-dir numpy opencv-python-headless Pillow onnxruntime huggingface_hub
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - name: "Actual frame-by-frame historical video -> AI-restored photographs"
+        run: |
+          python -u src/storia_rivive_real_photo_ai_v62.py
+      - name: "Archive real outputs including six photos, kit, source notes"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BEIRUT_1919_6_FOTO_AI_V62
+          path: |
+            output/storia_rivive_v62_photo_freeze/LA_STORIA_RIVIVE_BEIRUT_1919_FOTO_AI_V62.mp4
+            output/storia_rivive_v62_photo_freeze/BEIRUT_1919_FOTO_AI_V62_KIT.zip
+            output/storia_rivive_v62_photo_freeze/COVER.jpg
+            output/storia_rivive_v62_photo_freeze/FOTO_AI_*.jpg
+            output/storia_rivive_v62_photo_freeze/FONTI_RICETTA_QA.json
+            output/storia_rivive_v62_photo_freeze/POST_*.txt
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "Publish directly downloadable V62 preview on GitHub Releases"
+        run: |
+          set -euo pipefail
+          D=output/storia_rivive_v62_photo_freeze
+          test -s "$D/LA_STORIA_RIVIVE_BEIRUT_1919_FOTO_AI_V62.mp4"
+          unzip -t "$D/BEIRUT_1919_FOTO_AI_V62_KIT.zip"
+          sha256sum "$D/LA_STORIA_RIVIVE_BEIRUT_1919_FOTO_AI_V62.mp4"
+          TAG=storia-rivive-beirut-1919-foto-ai-v62
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" \
+              "$D/LA_STORIA_RIVIVE_BEIRUT_1919_FOTO_AI_V62.mp4" \
+              "$D/BEIRUT_1919_FOTO_AI_V62_KIT.zip" "$D/COVER.jpg" --clobber
+          else
+            gh release create "$TAG" \
+              --target main \
+              --title "La Storia Rivive V62 | Il tempo si ferma — Beirut 1919" \
+              --notes "VIDEO PROVINO V62 A REVISIONE ARTISTICA: filmato CC0 autentico in movimento B/N, vero congelamento sul frame originale, fotografie AI colorizzate da DDColor e restaurate da Real-ESRGAN, tenuta immobile e cambio di inquadratura. Sei riprese reali, H264/AAC. Colori e microdettagli sono ricostruzioni digitali, non fatti storici. Nessun Vidu/credito. Non pubblicato sui social né importato automaticamente nel sito privato." \
+              --latest=false \
+              "$D/LA_STORIA_RIVIVE_BEIRUT_1919_FOTO_AI_V62.mp4" \
+              "$D/BEIRUT_1919_FOTO_AI_V62_KIT.zip" "$D/COVER.jpg"
+          fi
+          gh release view "$TAG" --json url,assets --jq '{url: .url, files: [.assets[] | {name: .name, bytes: .size}]}'
+      - name: "Check independently accessible GitHub Release assets"
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/releases/tags/storia-rivive-beirut-1919-foto-ai-v62" \
+            --jq '.assets[] | [.name, (.size|tostring)] | @tsv'
