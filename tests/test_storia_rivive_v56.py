@@ -1,6 +1,8 @@
 import copy
 import importlib.util
 import json
+import hashlib
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -36,7 +38,13 @@ class HistoricalRulesV56(unittest.TestCase):
         p = copy.deepcopy(self.pilot)
         p["rights"]["reviewed_by_human"] = True
         p["rights"]["source_rights_clear_for_commercial_reuse"] = True
-        p["source"].update(start_sec=1, end_sec=14)
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        original = Path(temp.name) / "original.webm"
+        original.write_bytes(b"mock-original-test-content")
+        p["source"].update(start_sec=1, end_sec=14,
+                           original_file_path=str(original),
+                           original_sha256=hashlib.sha256(original.read_bytes()).hexdigest())
         p["editorial"].update(opening_0_3="Mani di persone in un'azione reale",
                               reveal_3_7="Dettaglio storico in progressione", framing_reason="Letterbox per salvare volti",
                               no_faces_cut_reviewed=True,first_frame_location_year_verified=True)
