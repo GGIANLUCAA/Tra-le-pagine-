@@ -158,25 +158,36 @@ jobs:
           if failures and not count:sys.exit(1)
           PY
 
-      - name: Checkout for V55 archival validation
-        if: always()
-        uses: actions/checkout@v4
-      - name: Validate V55 dossier sync, offline only
-        id: v55_validate
-        if: always()
-        run: |
-          python3 -m unittest tests/test_video_library_dossier_sync_v55.py -v
-          mapfile -t manifests < <(find docs/productions -name ARCHIVE_STAGING_V55.json -type f | sort)
-          if [ ${#manifests[@]} -eq 0 ]; then echo 'No V55 staging files'; exit 0; fi
-          python3 src/video_library_dossier_sync_v55.py --dry-run "${manifests[@]}"
-      - name: Sync genuine V55 dossier attachments, never video or approval
-        if: ${{ always() && steps.v55_validate.outcome == 'success' }}
-        continue-on-error: true
-        env:
-          GITHUB_REPOSITORY: ${{ github.repository }}
+  dossier_sync:
+    name: V55 private text dossier synchronization (independent of posters)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate exact-original V55 dossier manifests without network calls
         run: |
           set -euo pipefail
-          mapfile -t manifests < <(find docs/productions -name ARCHIVE_STAGING_V55.json -type f | sort)
-          if [ ${#manifests[@]} -eq 0 ]; then echo 'No V55 staging files'; exit 0; fi
-          python3 src/video_library_dossier_sync_v55.py "${manifests[@]}"
-          echo 'V55: text dossier uploaded or safely preserved; cover and signed full ZIP still require individual verification' >> "$GITHUB_STEP_SUMMARY"
+          python3 -m unittest discover -s tests -p test_video_library_dossier_sync_v55.py -v
+          mapfile -t manifests < <(find docs/productions -type f -name ARCHIVE_STAGING_V55.json | sort)
+          if [ \${#manifests[@]} -eq 0 ]; then echo 'No V55 dossiers ready'; exit 0; fi
+          python3 src/video_library_dossier_sync_v55.py --dry-run "\${manifests[@]}"
+      - name: Upload genuine documents to existing private MP4 only
+        id: archive_documents
+        continue-on-error: true
+        env:
+          GITHUB_REPOSITORY: \${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python3 -m pip -q install requests
+          mapfile -t manifests < <(find docs/productions -type f -name ARCHIVE_STAGING_V55.json | sort)
+          if [ \${#manifests[@]} -eq 0 ]; then echo 'No dossiers to synchronize'; exit 0; fi
+          python3 src/video_library_dossier_sync_v55.py "\${manifests[@]}"
+          echo 'Private V55 text dossier sync attempted; V25 approval, dedicated JPEG and site ZIP still require separate verification.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve upload blocker visibly without stopping website enrichment
+        if: steps.archive_documents.outcome == 'failure'
+        run: |
+          echo 'V55 archival attachment upload was BLOCKED: inspect the preceding step. Do not claim the private site dossier is complete.' >> "$GITHUB_STEP_SUMMARY"
+
