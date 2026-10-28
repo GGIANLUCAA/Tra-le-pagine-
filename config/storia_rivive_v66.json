@@ -1,0 +1,59 @@
+{
+  "version": "V66_2026_10_28",
+  "guide": "docs/LA_STORIA_RIVIVE_RESTAURO_V66.md",
+  "format": "storia_rivive",
+  "priority": "PHOTO_REALISM_AND_SOURCE_FIDELITY",
+  "example_reference": "43054.mp4 and 43055.mp4",
+  "freeze_photo_seconds": [
+    2,
+    3
+  ],
+  "candidate_generation": {
+    "real_img2img_required_for_target": true,
+    "model_candidates": [
+      "HYPIR",
+      "DiffBIR",
+      "SUPIR"
+    ],
+    "current_status": "NO_GPU_GENERATIVE_SOURCE_ANCHORED_RESULT_YET",
+    "do_not_claim_reference_grade_from_esrgan": true,
+    "generate_at_least_two_stills_per_shot": true,
+    "facial_identity_must_be_checked_against_original_adjacent_frames": true
+  },
+  "gate": {
+    "script": "src/storia_rivive_v66_photo_guard.py",
+    "minimum_geometry_correlation_for_auto_warning": 0.56,
+    "manual_review_required": true,
+    "required_fields": [
+      "source_faces_poses_approved",
+      "original_people_count_preserved",
+      "same_objects_and_layout_approved",
+      "photo_quality_reference_approved",
+      "ai_reconstruction_disclosure_confirmed",
+      "rights_verified"
+    ],
+    "reject_new_people_face_or_major_geometry": true
+  },
+  "test_v66_paris": {
+    "original_source": "Musée Albert-Kahn Paris 1918, CC0 frame at 265s",
+    "original_crop_px": [
+      324,
+      576
+    ],
+    "conservative_v65_geometry_correlation": 0.9894,
+    "generated_creative_geometry_correlation": 0.0318,
+    "creative_render": "5.1sec TEST_ONLY; NOT historically faithful; not delivered to Video Library Studio",
+    "no_hypir_inference_completed": true
+  },
+  "cost": {
+    "free_only_by_default": true,
+    "HF_jobs_gpu_is_metered_not_free": true,
+    "prohibit_paid_gpu_without_explicit_approval": true,
+    "vidu_zero_credits": true
+  },
+  "delivery": {
+    "source_video_pd_cc0_only": true,
+    "zip_post_cover_after_real_high_quality_qa": true,
+    "no_autopublish": true
+  }
+}
