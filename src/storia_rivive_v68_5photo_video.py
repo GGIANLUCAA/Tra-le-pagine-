@@ -201,7 +201,7 @@ def cut_video(src,images):
  if p.wait()!=0:raise RuntimeError("Real video encode failed "+err[-600:])
  duration=frame_count/FPS
  cmd(["ffmpeg","-nostdin","-y","-loglevel","error","-i",str(silent),
-      "-i",str(src),"-map","0:v","-map","1:a:0","-c:v","copy","-af",f"afade=t=out:st={max(0,duration-.85):.2f}:d=.85",
+      "-i",str(src),"-map","0:v","-map","1:a:0","-c:v","copy","-af",f"afade=t=out:st={max(0,duration-.85):.2f}:d=0.85",
       "-c:a","aac","-b:a","160k","-t",str(duration),"-movflags","+faststart",str(VIDEO)])
  cmd(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(VIDEO),"-f","null","-"])
  if duration<20 or duration>29:raise RuntimeError("Duration unsuitable "+str(duration))
