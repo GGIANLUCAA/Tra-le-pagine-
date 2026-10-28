@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/storia-v70-final-render-release.yml"
+      - "src/storia_v70_sf1906_render.py"
   workflow_dispatch:
 permissions:
   contents: write
