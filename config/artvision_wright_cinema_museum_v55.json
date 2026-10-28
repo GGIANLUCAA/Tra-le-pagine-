@@ -1,0 +1,158 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "55",
+  "date": "2026-10-28",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261028-wright-cinema-museum-v55",
+  "chosen_format": "artvision_cinema_museum",
+  "format_reason": "New missing Wright Cinema Museum variant, distinct from V52B Cinema Standard; authentic 2019 gallery photograph, not synthetic.",
+  "candidates_considered": [
+    {
+      "artist": "Joseph Wright 'of Derby'",
+      "title": "An Experiment on a Bird in the Air Pump",
+      "reason": "Selected: moral suspense around a bird in a vacuum, scientific Enlightenment painting; NG725, 183×244 cm, PD-Art high-res source; no existing standalone found in repo search or production register."
+    },
+    {
+      "artist": "Pieter Bruegel the Elder",
+      "title": "The Tower of Babel",
+      "reason": "Visually extraordinary and well-known; other Bruegel production already recent, risk of repetitive artist/style, authentic image rights still to be assessed."
+    },
+    {
+      "artist": "Rembrandt van Rijn",
+      "title": "The Night Watch",
+      "reason": "Recognizable classic and monumental, but Rembrandt already present in multiple V6 and V29 modules, less catalogue novelty for this cycle."
+    }
+  ],
+  "subjects": {
+    "air_pump": {
+      "artist": "JOSEPH WRIGHT 'OF DERBY'",
+      "title_en": "An Experiment on a Bird in the Air Pump",
+      "year": "1768",
+      "museum": "The National Gallery, London, NG725 (on loan to Derby Museums through 1 November 2026)",
+      "slug": "wright_air_pump_cinema_museum_v55",
+      "editorial_key": "wright_air_pump_cinema_museum_v55",
+      "source_page": "https://commons.wikimedia.org/wiki/File:An_Experiment_on_a_Bird_in_an_Air_Pump_by_Joseph_Wright_of_Derby,_1768.jpg",
+      "museum_page": "https://www.nationalgallery.org.uk/paintings/joseph-wright-of-derby-an-experiment-on-a-bird-in-the-air-pump",
+      "art_candidates": [
+        "https://upload.wikimedia.org/wikipedia/commons/2/22/An_Experiment_on_a_Bird_in_an_Air_Pump_by_Joseph_Wright_of_Derby%2C_1768.jpg",
+        "https://commons.wikimedia.org/wiki/Special:Redirect/file/An_Experiment_on_a_Bird_in_an_Air_Pump_by_Joseph_Wright_of_Derby%2C_1768.jpg"
+      ],
+      "music": {
+        "name": "The Descent",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1200094",
+        "offset": 0
+      },
+      "story": "A white cockatoo becomes the ethical focus. Begin on the real painted bird, reveal its actual gilded frame in a genuine 2019 National Gallery photograph, enter the original canvas to read each witness, and return to the same real photographed frame. No simulated human movement.",
+      "techniques": [
+        "human_gaze_start",
+        "motivated_cut",
+        "rhythmic_rest",
+        "opaque_canvas_reveal"
+      ],
+      "scenes": [
+        {
+          "type": "detail",
+          "x": 0.5,
+          "y": 0.27,
+          "z": 1.35,
+          "seconds": 4,
+          "movement": "locked",
+          "intent": "The authentic white cockatoo in the bell jar is the opening moral shock, visible from frame one"
+        },
+        {
+          "type": "wide",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 5.6,
+          "movement": "slow_push",
+          "intent": "MUSEUM: reveal genuine Ad Meskens 2019 photograph of the gilded framed painting in the National Gallery; push toward actual picture"
+        },
+        {
+          "type": "portrait",
+          "x": 0.4,
+          "y": 0.34,
+          "z": 1.25,
+          "seconds": 5.4,
+          "movement": "locked",
+          "intent": "The lecturer looks directly toward the spectator and holds the power over the bird's fate"
+        },
+        {
+          "type": "portrait",
+          "x": 0.67,
+          "y": 0.58,
+          "z": 1.45,
+          "seconds": 5.4,
+          "movement": "locked",
+          "intent": "The elder girl hides her face while the younger looks up, contrasting fear and curiosity"
+        },
+        {
+          "type": "texture",
+          "x": 0.5,
+          "y": 0.68,
+          "z": 1.42,
+          "seconds": 5,
+          "movement": "locked",
+          "intent": "The hidden candle, round glass and skull offer a carefully sourced vanitas motif"
+        },
+        {
+          "type": "medium",
+          "x": 0.22,
+          "y": 0.39,
+          "z": 1.2,
+          "seconds": 5,
+          "movement": "locked",
+          "intent": "The couple at the left seems emotionally distant from the experiment"
+        },
+        {
+          "type": "portrait",
+          "x": 0.83,
+          "y": 0.33,
+          "z": 1.32,
+          "seconds": 4.8,
+          "movement": "locked",
+          "intent": "The boy with the cage introduces the unresolved possibility of the bird's return"
+        },
+        {
+          "type": "portrait",
+          "x": 0.3,
+          "y": 0.55,
+          "z": 1.37,
+          "seconds": 4.7,
+          "movement": "locked",
+          "intent": "The boy leaning forward embodies scientific curiosity without invented action"
+        },
+        {
+          "type": "detail",
+          "x": 0.5,
+          "y": 0.27,
+          "z": 1.33,
+          "seconds": 5,
+          "movement": "locked",
+          "intent": "Return to the authentic bird now charged with the reactions of the spectators"
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 8,
+          "movement": "slow_pull",
+          "intent": "MUSEUM: return to the exact 2019 gallery photograph and gilded frame, restoring true physical context"
+        }
+      ],
+      "dimensions_cm": {
+        "height": 183,
+        "width": 244,
+        "source": "https://www.nationalgallery.org.uk/paintings/joseph-wright-of-derby-an-experiment-on-a-bird-in-the-air-pump"
+      },
+      "museum_immersion": "2019 genuine National Gallery photograph by Ad Meskens, CC BY-SA 4.0, with real gilded 19th-century English frame. Photograph is historical: the painting is currently on loan to Derby Museums until 1 Nov 2026. No claim that the painting is currently in London. Physical canvas 183x244 cm, frame measurements unknown."
+    }
+  },
+  "correction_note": "V52 initial render was rejected after actual contact-sheet review: opening focused on an empty birdcage, not the bird, due to wrong normalized x coordinate. V52B corrects all 10 scene coordinates against the 5639×4226 genuine source image. Initial artifact is preserved as a rejected study, not overwritten."
+}
