@@ -69,7 +69,28 @@ jobs:
           checked=subprocess.run(['node','--check'],input=scripts[0],text=True,capture_output=True)
           if checked.returncode:raise RuntimeError('Frontend syntax validation failed: '+checked.stderr[:300])
           assert 'function swPostUpdate' in page.text and 'function openEditorial' in page.text
-          print('Site upload:',api('POST','/publish-html',data=page.text.encode('utf-8')),flush=True)
+          # The importer limits HTML to 140k bytes. Preserve HTML/JS behavior
+          # while stripping only verified block comments and blank markup spaces.
+          # Main source stays untouched; this is a transport representation.
+          parts=re.split(r'(<script[^>]*>[\s\S]*?</script>)',page.text,flags=re.I)
+          compact=[]
+          for i,chunk in enumerate(parts):
+              chunk=re.sub(r'/\*[\s\S]*?\*/','',chunk)
+              if i%2==0:
+                  chunk=re.sub(r'^[ \t]+(?=<)','',chunk,flags=re.M)
+                  chunk=re.sub(r'\n[ \t]*\n+','\n',chunk)
+                  chunk=re.sub(r'>\s+<','><',chunk)
+              compact.append(chunk)
+          html=''.join(compact)
+          assert html.lstrip().lower().startswith('<!doctype html>') and len(html.encode('utf-8'))<140000, \
+              'Site HTML cannot be safely transported within the current worker limit'
+          final_scripts=re.findall(r'<script[^>]*>([\s\S]*?)</script>',html)
+          assert len(final_scripts)==1
+          checked_final=subprocess.run(['node','--check'],input=final_scripts[0],text=True,capture_output=True)
+          if checked_final.returncode:
+              raise RuntimeError('HTML transport compacting broke JS: '+checked_final.stderr[:250])
+          print('HTML transport bytes:',len(page.text.encode('utf-8')),'->',len(html.encode('utf-8')),flush=True)
+          print('Site upload:',api('POST','/publish-html',data=html.encode('utf-8')),flush=True)
           catalog=s.get(site+'/api/catalog',timeout=60);catalog.raise_for_status()
           assets=catalog.json().get('items',[])
           # AUTO-DOSSIER V1: one lightweight persistent editorial record for every imported MP4.
@@ -136,14 +157,18 @@ jobs:
           PY
 
       - name: Checkout for V55 archival validation
+        if: always()
         uses: actions/checkout@v4
       - name: Validate V55 dossier sync, offline only
+        id: v55_validate
+        if: always()
         run: |
           python3 -m unittest tests/test_video_library_dossier_sync_v55.py -v
           mapfile -t manifests < <(find docs/productions -name ARCHIVE_STAGING_V55.json -type f | sort)
           if [ ${#manifests[@]} -eq 0 ]; then echo 'No V55 staging files'; exit 0; fi
           python3 src/video_library_dossier_sync_v55.py --dry-run "${manifests[@]}"
       - name: Sync genuine V55 dossier attachments, never video or approval
+        if: ${{ always() && steps.v55_validate.outcome == 'success' }}
         continue-on-error: true
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
