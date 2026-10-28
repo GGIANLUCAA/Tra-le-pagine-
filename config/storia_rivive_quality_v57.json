@@ -1,0 +1,98 @@
+{
+  "version": "V57_2026_10_28",
+  "format": "storia_rivive",
+  "reason": "Pilot sepia does not match user's three photorealistically colorized references",
+  "inherits": [
+    "docs/REGOLE_ATTIVE.md",
+    "docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md",
+    "docs/LA_STORIA_RIVIVE_QUALITA_V57.md"
+  ],
+  "default_quality_preset": "reference_modern_color",
+  "target": {
+    "scene_source": "authentic_archive",
+    "color_method": "semantic_ai_colorization_temporally_consistent",
+    "texture": "photorealistic_modern_with_historical_fidelity",
+    "first_delivery": [
+      1080,
+      1920
+    ],
+    "optional_4k": [
+      2160,
+      3840
+    ],
+    "aspect_ratio": "9:16",
+    "explain_original_resolution": true,
+    "do_not_label_upscale_as_natively_4k": true
+  },
+  "forbid_as_final": [
+    "sepia_tint",
+    "monochrome_warm_overlay",
+    "white_balance_only",
+    "lut_only",
+    "opacity_transition_only",
+    "stills_with_ken_burns_spoofing_real_video"
+  ],
+  "allowed_modes": {
+    "archival_ai_restoration": {
+      "disclosure": "Filmato d'archivio restaurato con IA. Colori ricostruiti digitalmente.",
+      "preserve_original_people_and_motion": true
+    },
+    "historical_ai_recreation": {
+      "disclosure": "Ricostruzione AI ispirata a riprese storiche, non filmato autentico.",
+      "explicit_separate_label_required": true
+    }
+  },
+  "must_review": [
+    "distinct_semantic_color_by_material",
+    "faces_and_hands_natural",
+    "no_shimmer_or_waxy_ai_skin",
+    "correct_background_and_object_consistency",
+    "actual_motion_full_speed",
+    "sharp_but_not_plastic",
+    "framing_9_16",
+    "first_0_1_3_5_7_seconds",
+    "real_frame_and_cover_agree",
+    "separate_rights_and_music",
+    "chatgpt_mp4_zip_and_site_verification"
+  ],
+  "reference_files": [
+    {
+      "file": "facebook_20261028_142708.mp4",
+      "width": 720,
+      "height": 1280,
+      "fps": 30,
+      "duration_seconds": 23.733
+    },
+    {
+      "file": "facebook_20261028_142737.mp4",
+      "width": 720,
+      "height": 1280,
+      "fps": 30,
+      "duration_seconds": 20.233
+    },
+    {
+      "file": "facebook_20261028_142900.mp4",
+      "width": 720,
+      "height": 1280,
+      "fps": 30,
+      "duration_seconds": 20.967
+    }
+  ],
+  "pilot_beirut_1919": {
+    "previous_color_method": "sepia_tint",
+    "reference_grade": false,
+    "approved_master": false,
+    "ai_colorization_status": "not_integrated",
+    "status": "needs_real_ai_color_and_quality_review"
+  },
+  "quality_check": "src/storia_rivive_visual_gate_v57.py",
+  "technical_qa_is_not_visual_approval": true,
+  "spending": {
+    "default_eur": 0,
+    "default_vidu_credits": 0,
+    "exact_per_clip_authorization_required": true,
+    "retry_with_new_authorization": true
+  },
+  "social_autopublish": false,
+  "auto_repeat_incomplete_pilot": false
+}
