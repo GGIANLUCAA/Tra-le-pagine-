@@ -1,0 +1,42 @@
+{
+  "version": "V55_2026_10_28",
+  "approved_by": "user_2026_10_28",
+  "applies_to": [
+    "artvision_critico",
+    "artvision_cinema"
+  ],
+  "scope": "every_actual_new_artvision_video_including_all_four_variants",
+  "on_creation": [
+    "actual_H264_AAC_9_16_MP4_full_decode",
+    "approved_brand_cover_JPEG_separate",
+    "title_artist_visible_cover_and_first_video_frame",
+    "research_references_rights_and_replicable_recipe",
+    "four_original_distinct_verified_social_descriptions_per_platform",
+    "complete_ZIP_with_MP4_cover_social_research_QA_and_recipe",
+    "early_0_1_3_5_7_seconds_real_frame_contact_sheet",
+    "v55_first_7_seconds_review_record_attached_to_actual_MP4_sha256",
+    "chatgpt_local_file_and_ZIP_paths_verified_before_link",
+    "immediate_attempt_to_import_into_private_video_library",
+    "catalog_playback_verified_and_cover_available",
+    "social_dossier_and_ZIP_in_archive_verified_separately"
+  ],
+  "statuses": [
+    "rendered_needs_review",
+    "package_pending",
+    "package_verified_locally",
+    "archive_sync_pending",
+    "archive_verified",
+    "ready_for_user_delivery"
+  ],
+  "system_is_not_allowed_to_assume_sandbox_downloadability": true,
+  "archive_only_after_real_upload_verified": true,
+  "archive_presentation": "private_personal_library_not_automatic_social_publication",
+  "fallback": "verified_complete_zip_or_authorized_stable_site_link",
+  "archive_zip": "site_generates_signed_full_ZIP_on_demand_without_permanent_duplicate",
+  "archive_sync_workflow": ".github/workflows/video-library-r2-import.yml",
+  "archive_sync_chatgpt_automation": "6ad8aaa9e2248191b609aa5c1dfdc04f",
+  "verification_tool": "src/artvision_delivery_v55.py",
+  "opening_template": "templates/ARTVISION_OPENING_REVIEW_V55.json",
+  "source_of_truth": "docs/REGOLE_ATTIVE.md",
+  "note": "Do not falsely mark external archive or ChatGPT links verified; do not autoapprove V25 or spend credits."
+}
