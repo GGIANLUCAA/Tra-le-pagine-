@@ -1,5 +1,5 @@
-name: "ArtVision V52 - Wright Air Pump Cinema - no paid APIs"
-run-name: "Wright 1768 real painting / Cinema V6 / review required"
+name: "ArtVision V52B - Wright Air Pump Cinema - no paid APIs"
+run-name: "Wright 1768 corrected bird opening / Cinema V6 / review required"
 on:
   workflow_dispatch:
   push:
@@ -41,9 +41,9 @@ jobs:
       - name: Independent H264 AAC full decode and ZIP check
         run: |
           set -euo pipefail
-          dir="output/artvision-wright-air-pump-20261028/wright_air_pump_20261028_0915"
+          dir="output/artvision-wright-air-pump-v52b-20261028/wright_air_pump_20261028_0915"
           film="$dir/VIDEO_MASTER.mp4"
-          archive="output/artvision-wright-air-pump-20261028/ARTVISION_V52_WRIGHT_AIR_PUMP_COMPLETE_REVIEW.zip"
+          archive="output/artvision-wright-air-pump-v52b-20261028/ARTVISION_V52B_WRIGHT_AIR_PUMP_COMPLETE_REVIEW.zip"
           test -s "$film" && test -s "$dir/COPERTINA.jpg" && test -s "$archive"
           ffmpeg -hide_banner -loglevel error -xerror -i "$film" -f null -
           python src/artvision_editorial_post_v28.py --validate-folder "$dir"
@@ -63,16 +63,16 @@ jobs:
           assert qa["first_frame_and_cover_verified_against_expected_brand"]
           assert qa["title"]=="An Experiment on a Bird in the Air Pump"
           assert qa["artist"]=="JOSEPH WRIGHT 'OF DERBY'"
-          print("V52_VERIFIED_NOT_GOLD_MASTER",hashlib.sha256(pathlib.Path(film).read_bytes()).hexdigest())
+          print("V52B_VERIFIED_NOT_GOLD_MASTER",hashlib.sha256(pathlib.Path(film).read_bytes()).hexdigest())
           PY
       - name: Preserve actual video, cover, QA and ZIP for Android
         uses: actions/upload-artifact@v4
         with:
-          name: ARTVISION_V52_WRIGHT_AIR_PUMP_RENDERED_NEEDS_REVIEW
+          name: ARTVISION_V52B_WRIGHT_AIR_PUMP_RENDERED_NEEDS_REVIEW
           path: |
-            output/artvision-wright-air-pump-20261028/wright_air_pump_20261028_0915/VIDEO_MASTER.mp4
-            output/artvision-wright-air-pump-20261028/wright_air_pump_20261028_0915/COPERTINA.jpg
-            output/artvision-wright-air-pump-20261028/wright_air_pump_20261028_0915/QA_CONTACT_SHEET.jpg
-            output/artvision-wright-air-pump-20261028/ARTVISION_V52_WRIGHT_AIR_PUMP_COMPLETE_REVIEW.zip
+            output/artvision-wright-air-pump-v52b-20261028/wright_air_pump_20261028_0915/VIDEO_MASTER.mp4
+            output/artvision-wright-air-pump-v52b-20261028/wright_air_pump_20261028_0915/COPERTINA.jpg
+            output/artvision-wright-air-pump-v52b-20261028/wright_air_pump_20261028_0915/QA_CONTACT_SHEET.jpg
+            output/artvision-wright-air-pump-v52b-20261028/ARTVISION_V52B_WRIGHT_AIR_PUMP_COMPLETE_REVIEW.zip
           retention-days: 60
           if-no-files-found: error
