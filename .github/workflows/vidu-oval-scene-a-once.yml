@@ -1,0 +1,42 @@
+name: "Tra le Pagine - Vidu Scena A unica prova autorizzata"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/vidu-oval-scene-a-once.yml"
+permissions:
+  contents: write
+concurrency:
+  group: vidu-oval-approved-scene-a-single-post
+  cancel-in-progress: false
+jobs:
+  generate_once:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+      SCENE_SOURCE_URL: "https://eu-central.storage.cloudconvert.com/tasks/0aca0bc3-39f4-4c73-bd91-eb2bf60e8cc7/SCENA_A_PRIMO_FOTOGRAMMA.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20261028%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20261028T135150Z&X-Amz-Expires=86400&X-Amz-Signature=b8a4a8077052542c7f6360038e9a00b7c67afe5e55ba46fc5e9283293e8db913&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22SCENA_A_PRIMO_FOTOGRAMMA.jpg%22&response-content-type=image%2Fjpeg&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+      SCENE_PROMPT: "In a 19th-century Gothic castle bedroom, the wounded dark-haired traveler in a burgundy velvet coat deliberately slides the brass candleholder to his right with his fully engaged hand. The candle flames and their warm light move naturally across the dark wall, slowly unveiling a previously shadowed part of the room. Keep the older silver-haired servant standing behind him. A restrained, fixed-camera cinematic shot, lifelike coherent arm, wrist and finger motion, natural flame and shadow behavior. Preserve the exact identities, clothing, architecture and composition from the starting image. Do not invent an oval portrait inside this shot: the following edited shot reveals the portrait. No face distortion, no extra fingers or limbs, no morphing, no ghosting, no cuts, no subtitles, no writing, no music or generated speech."
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate environment before any credits
+        run: |
+          test -n "$VIDU_API_KEY" || { echo "::error::Missing Vidu API key"; exit 2; }
+          test -s tools/vidu_oval_scene_a_once.py
+          python -m pip install "pillow>=10,<13"
+      - name: Verify original image SHA256 & exact approval code; reserve; send one Vidu Q2 Pro Fast 5s 720p off-peak request
+        run: python tools/vidu_oval_scene_a_once.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: VIDU_OVAL_SCENE_A_SINGLE_ATTEMPT
+          path: output/vidu-oval-A/
+          retention-days: 14
+          if-no-files-found: warn
