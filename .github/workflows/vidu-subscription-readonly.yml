@@ -1,8 +1,11 @@
 name: "Vidu abbonamento - controllo gratuito CLI ufficiale"
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "17 8 * * *"
   push:
     branches:
+      - main
       - feature/vidu-abbonamento-official-cli-v1
     paths:
       - .github/workflows/vidu-subscription-readonly.yml
