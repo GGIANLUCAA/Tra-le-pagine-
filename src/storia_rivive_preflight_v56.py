@@ -107,6 +107,13 @@ def evaluate(plan, stage="source"):
             need(nonblank(audio.get("music_source")) and nonblank(audio.get("music_license")),
                  "Musica e relativi diritti non verificati")
     if stage == "delivery":
+        # V56.1: il video a seppia era un provino tecnico, non il risultato richiesto.
+        need(color.get("mode") == "ai_colorized",
+             "V56.1: effetto richiesto assente; serve colorizzazione AI multicolore (non seppia)")
+        need(color.get("natural_multicolor_reviewed") is True,
+             "V56.1: reale multicolore non verificato visivamente")
+        need(color.get("reference_style_match_reviewed") is True,
+             "V56.1: resa visiva non confrontata con gli esempi")
         paths = delivery.get("files", {})
         required = ["mp4", "cover_jpg", "rights_json", "recipe_json",
                     "qa_json", "complete_zip"]
