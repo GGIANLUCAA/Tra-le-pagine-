@@ -7,7 +7,7 @@ from pathlib import Path
 import cv2, numpy as np
 from PIL import Image,ImageDraw,ImageFont
 ROOT=Path(__file__).resolve().parents[1]
-sp=importlib.util.spec_from_file_location("paris",ROOT/"src/storia_rivive_paris_1918_v65.py")
+sp=importlib.util.spec_from_file_location("vienna",ROOT/"src/storia_rivive_austria_1920_v67.py")
 p=importlib.util.module_from_spec(sp);sp.loader.exec_module(p)
 OUT=p.OUT
 info=json.loads((OUT/"FONTI_E_QA.json").read_text())
