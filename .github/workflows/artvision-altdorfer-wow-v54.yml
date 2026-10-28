@@ -1,0 +1,81 @@
+name: ArtVision V54 - Altdorfer WOW authentic Cinema
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/artvision_altdorfer_wow_v54.py
+      - config/artvision_altdorfer_wow_v54.json
+      - config/artvision_altdorfer_wow_v54_posts.json
+      - .github/workflows/artvision-altdorfer-wow-v54.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render_altdorfer:
+    name: ArtVision V54 original artwork, V28 social kit and QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 58
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free open-source renderer
+        run: |
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe || sudo apt-get install -y -qq ffmpeg
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf || sudo apt-get install -y -qq fonts-dejavu-core
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<14' numpy requests
+      - name: Preflight subject and four editorial captions
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_altdorfer_wow_v54.py
+          python - <<'PY'
+          import importlib.util
+          p='scripts/artvision_altdorfer_wow_v54.py'
+          s=importlib.util.spec_from_file_location('v54',p)
+          m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+          cfg=m.engine.get_config(); key=m.SLUG
+          assert not m.engine.validate_brief(cfg[key],key)
+          assert not m.editorial.validate_entry(key,m.editorial.config()['entries'][key])
+          print('V54_PREFLIGHT_OK',key)
+          PY
+      - name: Render and verify actual H264 AAC, title/artist and complete ZIP
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: python scripts/artvision_altdorfer_wow_v54.py
+      - name: Independently validate outputs and full decode
+        run: |
+          set -euo pipefail
+          d=output/artvision-altdorfer-wow-v54/altdorfer_alexander_issus_wow_v54
+          f="$d/VIDEO_MASTER.mp4"
+          z=output/artvision-altdorfer-wow-v54/ARTVISION_ALTDORFER_WOW_V54_REVIEW_COMPLETE.zip
+          test -s "$f" && test -s "$z" && test -s "$d/COPERTINA.jpg"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$f" -f null -
+          python - <<'PY'
+          import json,zipfile,subprocess
+          p='output/artvision-altdorfer-wow-v54/altdorfer_alexander_issus_wow_v54'
+          q=json.load(open(p+'/TECHNICAL_QA_V30.json'))
+          assert q['brand_exact_title']=='The Battle of Alexander at Issus'
+          assert q['brand_exact_artist']=='ALBRECHT ALTDORFER'
+          assert q['first_frame_and_cover_mad']<15
+          assert q['full_decode_confirmed']
+          with zipfile.ZipFile('output/artvision-altdorfer-wow-v54/ARTVISION_ALTDORFER_WOW_V54_REVIEW_COMPLETE.zip') as z:
+            assert z.testzip() is None
+            assert len([n for n in z.namelist() if n.startswith('POST_') and n.endswith('.txt')])==4
+          print('V54_INDEPENDENT_QA_PASS')
+          PY
+      - name: Archive complete kit and Android preview files
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtVision-Altdorfer-WOW-V54-REVIEW
+          path: |
+            output/artvision-altdorfer-wow-v54/*/VIDEO_MASTER.mp4
+            output/artvision-altdorfer-wow-v54/*/COPERTINA.jpg
+            output/artvision-altdorfer-wow-v54/*/QA_FIRST_FRAME.jpg
+            output/artvision-altdorfer-wow-v54/*/QA_CONTACT_SHEET.jpg
+            output/artvision-altdorfer-wow-v54/*/POST_FACEBOOK.txt
+            output/artvision-altdorfer-wow-v54/ARTVISION_ALTDORFER_WOW_V54_REVIEW_COMPLETE.zip
+          if-no-files-found: warn
+          retention-days: 60
