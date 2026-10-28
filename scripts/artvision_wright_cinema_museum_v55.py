@@ -156,6 +156,10 @@ def main():
     folder.mkdir(parents=True, exist_ok=True)
     photo_file = folder / "ORIGINAL_REAL_GALLERY_PHOTO_AD_MESKENS_CC_BY_SA_4.jpg"
     used_url = fetch_photo(photo_file)
+    # V55 visual-source incident: the Ad Meskens 2019 file is a tight painting DETAIL,
+    # not a photographed gilded frame. Block its known SHA before any rendering.
+    if sha(photo_file) == "b82ea9c5ca81ab220a4d34f908293e920293b15a2b7eaa0215ac14a92c0dd523":
+        raise RuntimeError("V55_SOURCE_FRAME_NOT_VISIBLE: this 2019 photo is only a cropped lecturer/bird detail; cannot be a Cinema Museum entry/exit. Acquire and inspect a real full-frame photo first.")
     with Image.open(photo_file) as im:
         PHOTO = im.convert("RGB").copy()
     engine.render_one("air_pump", OUT)
