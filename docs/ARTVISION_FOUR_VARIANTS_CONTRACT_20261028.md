@@ -77,3 +77,15 @@ python src/artvision_learning_loop_v1.py next --ledger output/artvision_learning
 Usare `templates/ARTVISION_4X1_SELF_CRITIQUE_V1.json` come scheda vuota. Collegare almeno due difetti a secondi concreti, gravità, ipotesi di causa, correzione e metodo di verifica; **il tool verifica hash e caratteristiche MP4 con ffprobe, ma non visiona il filmato**. Niente autocritiche finte, niente modifica automatica di master approvati e nessun rating artificiale presentato come previsione di viralità. La lezione proposta è un'ipotesi da confrontare su un nuovo MP4, mai una prova di qualità raggiunta.
 
 **Coda:** `queue/artvision_four_variants_s01_20261028.json` conserva separatamente le quattro varianti per opera. Le voci ereditate dalla precedente coda V53 sono riferimenti storici da riverificare, non attestazioni di consegna. Le due automazioni produttive già esistenti devono evitare sovrapposizioni.
+
+
+## Consegna V55 — requisito per ognuna delle quattro varianti (28 ottobre 2026)
+
+**Nessuna variante si considera consegnata** se mancano MP4 H264/AAC valido e decodificato, copertina JPEG coerente con il primo frame, 4 post V28 originali, fonti/licenze e ricetta, ZIP completo con CRC e hash, file effettivamente reperibili nella chat e scheda completa su Video Library Studio verificata. Un lotto 4x1 completo ha quattro kit autonomi (4 MP4 + 4 copertine + 4 ZIP completi + 16 post), senza duplicare i master per convenienza.
+
+Usare `src/artvision_delivery_v55.py pack --video ... --cover ... --facebook ... --instagram ... --tiktok ... --youtube ... --rights ... --recipe ... --out ... [--opening-review ...]`. Il comando è solo locale, verifica codec, decodifica integrale, JPEG, unicità dei testi e CRC/MP4 in ZIP, estrae fotogrammi reali a 0.1, 1, 3, 5 e 7 secondi; **non importa sul sito e non certifica accessibilità ChatGPT**. Il file `DELIVERY_STATUS_V55.json` distingue le verifiche non fatte e i blocchi dell'apertura. Controllare visivamente il filmato e la sincronizzazione col parlato prima di compilare l'eventuale review.
+
+**Apertura diversa per opera e per variante:** il primo secondo deve già comunicare identità e qualità; entro 3 secondi una domanda visiva vera o un particolare sorprendente deve fermare l'occhio; entro 7 secondi dare un primo avanzamento narrativo. Le scene Museum non devono iniziare con inutili secondi di corridoi vuoti. Adattare ritmo e struttura all'opera, evitando un identico stampo per ogni video.
+
+La sincronizzazione al sito è un evento separato. Esigere una verifica del catalogo/cover/dossier/ZIP privato quando disponibile, non inventare il successo né link permanenti. Nessuna autopubblicazione social e nessuna chiamata video IA pagata.
+
