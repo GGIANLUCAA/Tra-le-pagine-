@@ -301,15 +301,44 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
     print("MASTER VERIFIED",cfg["id"],master.stat().st_size,"bytes",duration,"seconds",engine,flush=True)
 
 def main():
-    cli=argparse.ArgumentParser()
-    cli.add_argument("--episode",required=True,choices=["leonardo_gioconda","klimt_bacio","hokusai_grande_onda","botticelli_venere","ophelia_breve_v21"])
+    cli=argparse.ArgumentParser(
+        description="ArtVision Critico V2: legacy episodes or verified per-artwork JSON (V53 paired series).")
+    source=cli.add_mutually_exclusive_group(required=True)
+    source.add_argument("--episode", help="Existing JSON episode basename in production_series/")
+    source.add_argument("--config", type=Path, help="Path to a prepared and verified JSON for a new painting")
+    cli.add_argument("--require-gacrux", action="store_true",
+                     help="Require actual Google Gemini Gacrux, never silently use Edge fallback")
     args=cli.parse_args()
-    cfg=json.loads((PARENT/(args.episode+".json")).read_text(encoding="utf8"))
-    assert cfg["id"]==args.episode
-    output=OUTROOT/args.episode
+    cfg_path=args.config if args.config else PARENT/(args.episode+".json")
+    if not cfg_path.is_file():
+        cli.error("Episode JSON not found: "+str(cfg_path))
+    cfg=json.loads(cfg_path.read_text(encoding="utf8"))
+    episode_id=cfg.get("id")
+    if not isinstance(episode_id,str) or not re.fullmatch(r"[a-z0-9][a-z0-9_-]{2,80}",episode_id):
+        cli.error("JSON needs a safe, nonempty id of 3-81 lowercase letters/numbers/_/-")
+    if args.episode and episode_id!=args.episode:
+        cli.error("Episode ID and JSON id differ")
+    required_fields=("artist","artwork","commons_title","image_ratio_min",
+                     "image_ratio_max","sources","beats","music")
+    missing=[key for key in required_fields if key not in cfg]
+    if missing:cli.error("Incomplete episode JSON: "+", ".join(missing))
+    if not isinstance(cfg["beats"],list) or len(cfg["beats"])<3 or any(
+        not b.get("speech") or not isinstance(b.get("focus"),list) or len(b["focus"])!=2
+        for b in cfg["beats"]):
+        cli.error("Critico requires researched narration and visual focus for each beat")
+    # New custom V53 episodes always require true Google Gacrux; legacy
+    # V2 rendering retains its historical fallback unless explicitly constrained.
+    require_gacrux=args.require_gacrux or args.config is not None
+    if require_gacrux and not os.getenv("GEMINI_API_KEY","").strip():
+        raise RuntimeError("blocked_voice_unavailable: GEMINI_API_KEY absent; "
+                           "do not replace Critico with silent Cinema or Edge")
+    output=OUTROOT/episode_id
     output.mkdir(parents=True,exist_ok=True)
     painting,source=get_art(cfg,output)
     voice,sec,bounds,engine=choose_voice(cfg["beats"],output)
+    if require_gacrux and "Gemini Gacrux" not in engine:
+        raise RuntimeError("blocked_voice_unavailable: Gacrux audio not actually produced; "
+                           "render is forbidden (no fallback approval)")
     if "Gemini" not in engine:
         print("WARNING: Gemini unavailable, alternative Edge voice used. Clearly disclosed in metadata.",flush=True)
     music,proof=music_get(cfg,output)
