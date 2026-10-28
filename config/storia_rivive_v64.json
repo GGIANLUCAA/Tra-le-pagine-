@@ -1,0 +1,27 @@
+{
+  "version": "V64_2026_10_28",
+  "format": "storia_rivive",
+  "guide": "docs/LA_STORIA_RIVIVE_FOTO_FEDELE_V64.md",
+  "verified_v63_fails_reference_grade": true,
+  "artistic_goal": "sharp natural recognizable faces and objects with source fidelity",
+  "max_average_hold_s": 2.8,
+  "range_length_s": [
+    20,
+    30
+  ],
+  "prioritize_true_high_quality_scans": true,
+  "min_native_cropped_pixels": 700000,
+  "min_face_short_edge_original_px": 72,
+  "preferred_face_short_edge_original_px": 100,
+  "source_video_pd_cc0_only": true,
+  "require_multi_frame_denoise": true,
+  "require_reference_constrained_img2img_for_reference_grade": true,
+  "require_geometry_and_identity_human_review": true,
+  "require_facial_realism_human_review": true,
+  "photo_generated_details_hypothetical": true,
+  "model_weights_publication_rights_checked": true,
+  "never_spend_HF_GPU_without_consent": true,
+  "reject_pure_DDColor_ESRGAN_as_reference_grade": true,
+  "reject_prompt_fabricated_faces": true,
+  "keep_v55_delivery_and_no_autopublish": true
+}

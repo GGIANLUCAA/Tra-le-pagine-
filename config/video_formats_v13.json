@@ -123,10 +123,11 @@
     },
     "storia_rivive": {
       "label": "La Storia Rivive — filmati d'archivio autentici",
-      "status": "pending_real_artistic_review",
-      "preset": "director_photographic_v63",
+      "status": "reference_grade_blocked_pending_real_img2img_source",
+      "preset": "source_fidelity_photographic_v64",
       "narrated": false,
       "guides": [
+        "docs/LA_STORIA_RIVIVE_FOTO_FEDELE_V64.md",
         "docs/LA_STORIA_RIVIVE_DIREZIONE_FOTOGRAFICA_V63.md",
         "docs/LA_STORIA_RIVIVE_FOTOGRAMMA_FOTO_AI_V61.md",
         "docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md",
@@ -138,6 +139,7 @@
         "docs/VIDEO_LIBRARY_DOSSIER_V1.md"
       ],
       "entrypoints": [
+        "src/storia_rivive_quality_policy_v64.py",
         "src/storia_rivive_director_cut_v63.py",
         "src/storia_rivive_photo_freeze_v61.py",
         "src/storia_rivive_preflight_v56.py",
@@ -148,8 +150,8 @@
         1080,
         1920
       ],
-      "direction": "Scegliere prima il frame migliore dal film: volti e gesti, crop 9:16 sicuro. 1.2–1.6s B/N in movimento, 0.3–0.4s transizione e 1.8–2.8s fotografia AI ferma. Durata ~20–28s secondo soggetto. Restauro FOTO sul crop original-size, no pre-AI downsizing, no falso 4K. Qualità indistinguibile da foto moderna richiede generativo image-to-image non ancora integrato.",
-      "next_action": "Generare realmente fotografie AI image-to-image da keyframe archivistico PD/CC0 usando modello restaurativo compatibile, fare QA identità e nitidezza; soltanto dopo montarle con src/storia_rivive_photo_freeze_v61.py e pacchetto V55. Nessuna nuova prova solo DDColor.",
+      "direction": "Non basta RealESRGAN+DDColor. L'immagine FERMA deve apparire fotografia moderna ma corrispondere alle STESSE persone, volti/abiti/gesti e sfondo del filmato storico. Prima cercare scansione 2K/HD PD/CC0, faces >72px in sorgente (target 100+), fusione multi-frame reale, restaurare e colorizzare foto con modello img2img vincolato alla sorgente e QA manuale. Se AI inventa nuovi volti o immagine resta morbida, scartare e non pubblicare. 20-30s, pauses scene-specific.",
+      "next_action": "Scegliere un filmato fonte reale HD/2K con diritti PD/CC0 singolo-file; generare e QA foto image-to-image restauro identità; solo se V64 passa montare V61 e pacchetto V55; zero nuovi crediti autonomi.",
       "rules_config": "config/storia_rivive_v56.json",
       "quality_preset": "reference_modern_color",
       "source_rights": "PUBLIC_DOMAIN_OR_CC0_ONLY",
