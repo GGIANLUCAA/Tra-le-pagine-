@@ -1,0 +1,82 @@
+name: "V68 — Parigi 1918 fotografie GENERATIVE vere e nuovo MP4"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/storia_rivive_v68_5photo_video.py"
+      - ".github/workflows/storia-rivive-v68-real-generative-video.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-rivive-v68-generative-photos
+  cancel-in-progress: false
+jobs:
+  real_generatively_restored_video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: "Install only free inference clients and local video tools"
+        run: |
+          python -m pip -q install --no-cache-dir gradio_client Pillow numpy opencv-python-headless
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - name: "Check actual production script"
+        run: python -m py_compile src/storia_rivive_v68_5photo_video.py
+      - name: "Five REAL source-constrained generative photographs and 23s color-photo-freeze video"
+        run: |
+          python -u src/storia_rivive_v68_5photo_video.py
+      - name: "Save REAL MP4, photo images, source comparison and social posts"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PARIGI_1918_V68_CINQUE_FOTO_GENERATIVE_VERIFICATE
+          path: |
+            output/storia_rivive_v68_paris_generativo/PARIGI_1918_RESTAURO_FOTOGRAFICO_GENERATIVO_V68.mp4
+            output/storia_rivive_v68_paris_generativo/PARIGI_1918_FOTO_GENERATIVE_V68_COMPLETO.zip
+            output/storia_rivive_v68_paris_generativo/COPERTINA_V68.jpg
+            output/storia_rivive_v68_paris_generativo/FOTO_AI_RICOSTRUITA_*.png
+            output/storia_rivive_v68_paris_generativo/CONFRONTO_REALE_5_SCENE.jpg
+            output/storia_rivive_v68_paris_generativo/FONTI_E_QA.json
+            output/storia_rivive_v68_paris_generativo/POST_*.txt
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "Public direct Android MP4 and ZIP preview, NOT private site or social autopublishing"
+        run: |
+          set -euo pipefail
+          D=output/storia_rivive_v68_paris_generativo
+          VIDEO="$D/PARIGI_1918_RESTAURO_FOTOGRAFICO_GENERATIVO_V68.mp4"
+          ZIP="$D/PARIGI_1918_FOTO_GENERATIVE_V68_COMPLETO.zip"
+          test -s "$VIDEO"
+          unzip -t "$ZIP" > /dev/null
+          ffmpeg -nostdin -v error -xerror -i "$VIDEO" -f null -
+          TAG=storia-rivive-parigi-1918-fotografie-generative-v68
+          files=("$VIDEO" "$ZIP" "$D/COPERTINA_V68.jpg" "$D/CONFRONTO_REALE_5_SCENE.jpg" "$D/FONTI_E_QA.json")
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --clobber
+          else
+            gh release create "$TAG" --target main \
+              --title "La Storia Rivive V68 | Parigi 1918 — fotografie generative" \
+              --notes "NUOVO PROVINO REALMENTE GENERATIVO, NON SOLO DDColor/RealESRGAN: cinque autentiche scene CC0 di Parigi 1918 in movimento B/N, diventano fotografie ricostruite a colori con modello generativo Finegrain. Varianti ad alta intensità, controllate sulla struttura e disposizione originale. Volti/colori/dettagli NON sono dati storici verificabili: restauro artistico dichiarato. Link MP4 Android H264/AAC, ZIP, copertina, 4 post, foto e confronto. Non equivale a HYPIR, non garantisce il volto storico esatto. Nessuna pubblicazione social o sincronizzazione archivio privato. Nessun credito Vidu né GPU a pagamento." \
+              --latest=false "${files[@]}"
+          fi
+          gh release view "$TAG" --json url,assets --jq '{url:.url,files:[.assets[]|{name:.name,bytes:.size}]}'
+      - name: "Check live GitHub assets match local bytes"
+        run: |
+          set -euo pipefail
+          for f in PARIGI_1918_RESTAURO_FOTOGRAFICO_GENERATIVO_V68.mp4 PARIGI_1918_FOTO_GENERATIVE_V68_COMPLETO.zip CONFRONTO_REALE_5_SCENE.jpg; do
+            expected=$(stat -c '%s' "output/storia_rivive_v68_paris_generativo/$f")
+            remote=$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/storia-rivive-parigi-1918-fotografie-generative-v68" --jq ".assets[]|select(.name==\"$f\")|.size")
+            test "$expected" = "$remote"
+            echo "$f size verified $expected"
+          done
