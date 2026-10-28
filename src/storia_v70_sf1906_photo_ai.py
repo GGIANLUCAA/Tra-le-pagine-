@@ -3,7 +3,7 @@
 Uses DDColor ONNX semantic color and free Finegrain Gradio image-to-image; 0 Vidu/paid tokens.
 Real images are never represented as authentic 1906 color photographs.
 """
-import importlib.util,hashlib,io,json,subprocess
+import importlib.util,hashlib,io,json,subprocess,os,zipfile
 from pathlib import Path
 import cv2,numpy as np
 from PIL import Image,ImageDraw,ImageFont,ImageEnhance
@@ -22,12 +22,12 @@ SHOTS=[
  {"id":"02","name":"L'automobile","sec":164.0,"x":625,"motion":1.60,"reveal":.32,"hold":3.25,"seed":107,
   "subject":"a very early 1906 motor car crossing Market Street with pedestrians and ornate period storefronts",
   "emphasis":"brass and steel wheel hardware, authentic rubber tires, brick and stone facades, original cars and people"},
- {"id":"03","name":"Il tram","sec":80.0,"x":0,"motion":1.65,"reveal":.34,"hold":3.30,"seed":149,
-  "subject":"an authentic San Francisco 1906 electric streetcar approaching in the foreground of Market Street",
-  "emphasis":"lacquered wood of car, metal rail track textures, glass reflections, real people under the awning"},
+ {"id":"03","name":"Il ciclista","sec":128.0,"x":630,"motion":1.65,"reveal":.34,"hold":3.30,"seed":149,
+  "subject":"a real young male cyclist riding past an early automobile in 1906 Market Street, ornate buildings and passersby",
+  "emphasis":"realistic 1906 bicycle frame and rubber tires, original man's face and suit, street facades, authentic natural colors"},
  {"id":"04","name":"Le persone al molo","sec":476.0,"x":725,"motion":1.60,"reveal":.34,"hold":3.45,"seed":181,
-  "subject":"group of men in 1906 San Francisco near Ferry Building facade, visible dark bowler hats, Edwardian outfits",
-  "emphasis":"natural lifelike faces, hats, fabrics and elaborate period geometry of the ferry terminal arch"}
+  "subject":"men and women walking and waiting in front of authentic San Francisco Ferry Building facade in 1906, period dresses and bowler hats",
+  "emphasis":"natural faces where readable, black Victorian fabrics and hats, fabric seams, stone facade geometry and patterns"}
 ]
 NEG="invented people, new cars, changed face, face swap, more people, extra limbs, changed body positions, unrealistic skin, plastic people, neon colors, modern clothes, modern street, fantasy objects, changed architecture, oversaturated red-magenta, fictional text, glowing skin, illegible fake shop lettering, oversharpened halos, cartoons, paintings"
 PROMPT="High-resolution perfectly focused 1906 documentary color PHOTOGRAPH restored from exactly the supplied original source image. Preserve every existing subject's identity, number, expression, clothing, architecture and framing. Photographic dynamic range, natural believable period-appropriate colors and fine color texture; this is the SAME moment and camera position. Restore nuanced micro-details on " 
@@ -68,12 +68,33 @@ def produce():
  if rights["file_sha256"]!="c8b30802c0fbeb5f9ec3dc9af3e4f71ef627a863d4abba5550b63998cb46725a":
   raise RuntimeError("Not the exact genuine original film previously reviewed")
  session,model_meta=dd.download_model()
+ # Reuse two REAL AI restorations already passed technical inspection, avoiding gratuitous quota spend.
+ artifact_id="12853454516"
+ token=os.environ.get("GH_TOKEN","")
+ if not token:raise RuntimeError("Read token required to reuse already-generated images")
+ artifact_url=f"https://api.github.com/repos/GGIANLUCAA/Tra-le-pagine-/actions/artifacts/{artifact_id}/zip"
+ art=OUT/"V70_ORIGINAL_TWO_PHOTOS_REUSED.zip"
+ subprocess.run(["curl","--fail","--location","--retry","3","--connect-timeout","20",
+  "--max-time","150","-H","Authorization: Bearer "+token,
+  "-H","Accept: application/vnd.github+json",artifact_url,"-o",str(art)],check=True,timeout=160)
+ with zipfile.ZipFile(art) as z:
+  if z.testzip():raise RuntimeError("Original AI photo artifact ZIP CRC failed")
+  old_manifest=json.loads(z.read("RESTORATION_QA.json"))
+  if old_manifest["original_video_sha256"]!=rights["file_sha256"] or len(old_manifest["results"])!=2:
+   raise RuntimeError("Original AI photograph provenance mismatch")
+  for r in old_manifest["results"]:
+   for file in (r["photo"],r["source_frame"],r["ddcolor_image"]):
+    (OUT/file).write_bytes(z.read(file))
+   if sha(OUT/r["photo"])!=r["photo_sha256"] or sha(OUT/r["source_frame"])!=r["source_frame_sha256"]:
+    raise RuntimeError("SHA of preserved real AI photo mismatch")
+ print("REAL_AI_IMAGES_REUSED_WITHOUT_REGENERATION",2,flush=True)
  cap=cv2.VideoCapture(str(SOURCE))
  if not cap.isOpened():raise RuntimeError("Source cannot open")
  client=Client("finegrain/finegrain-image-enhancer",verbose=False)
- results=[]
+ results=list(old_manifest['results'])
  try:
   for i,s in enumerate(SHOTS):
+   if i<2:continue
    frame=source_frame(cap,s["sec"])
    crop=frame[:,s["x"]:s["x"]+603]
    if crop.shape[:2]!=(1072,603):raise RuntimeError("Invalid vertical native crop")
