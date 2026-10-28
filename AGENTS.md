@@ -14,6 +14,10 @@ Le guide V12–V31 restano istruzioni dei moduli: in caso di conflitto prevale l
 revisione attiva. Non aggiungere in cima altri blocchi «regola più recente»:
 aggiornare la fonte unica con versione, motivo e riferimento dell'approvazione.
 
+## V61 — Regia storica CONGELA IL MOVIMENTO, FOTOGRAFIA AI, POI CUT
+
+Richiesta definitiva confermata dopo 3 esempi reali del 28/10/2026 `43054.mp4`, `43055.mp4`, `43056.mp4`: NON basta la colorizzazione di pellicola in movimento come Beirut V60. La scena mostra **0,9–2 s B/N storico in movimento**, poi resta FERMA in una NUOVA fotografia AI nitida a colori per **0,9–2 s**, ritmata dalla musica; quindi un'altra scena B/N. La fotografia deve essere **rigenerata con image-to-image restoration** dal preciso frame originale; DDColor solo è insufficiente. Preservare persone/pose/oggetti, segnalare ricostruzione dei colori/dettagli. Guide `docs/LA_STORIA_RIVIVE_FOTOGRAMMA_FOTO_AI_V61.md`, config `config/storia_rivive_v61.json`; montatore `src/storia_rivive_photo_freeze_v61.py` richiede FOTO AI già creata e verificata. Nessun MP4 V61 finale senza la FOTO AI reale. Sorgenti solo PD/CC0 (V59), no spese Vidu, no autopubblicazione, pacchetto V55.
+
 ## V59 — Originali soltanto PD o CC0; pubblicazione prevista non monetizzata
 
 Nuova decisione del 28/10/2026: per `storia_rivive` usare **solo pellicole realmente di pubblico dominio o CC0**, documentando la pagina del singolo filmato, fonte, paese, data e diritti residuali. Non richiedere commercializzazione del film: l'utente pubblicherà senza monetizzare. Modelli e pesi non commerciali sono candidati se i loro termini consentono la pubblicazione non commerciale; vincoli `research only` restano da verificare e non si considerano automaticamente autorizzati. Vedi `docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md` e `config/storia_rivive_v59.json`; non cambiare gli altri format, né spendere o autopubblicare.

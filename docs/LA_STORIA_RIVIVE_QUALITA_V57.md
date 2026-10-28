@@ -30,3 +30,7 @@
 - Migliorare progressivamente usando metriche reali di retention solo quando pubblicati; nessuna previsione gratuita di viralità.
 
 **Potenziali componenti da valutare senza affermare installazione:** [DDColor](https://github.com/piddnad/DDColor), [vs-havc](https://github.com/dan64/vs-havc), [CMNET2](https://github.com/dan64/cmnet2), [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN). Controllare compatibilità, licenza dei pesi, disponibilità reale della GPU e qualità temporale; il semplice link a un progetto open source non prova che sia stato integrato.
+
+## Precisazione vincolante V61 — 28 ottobre 2026
+
+La V57 rimane valida come requisiti di resa e fonti, **ma il preset predefinito degli esempi è cambiato**: l'utente ha esplicitamente corretto l'idea di un filmato interamente in movimento colorizzato. Gli esempi `43054.mp4`, `43055.mp4`, `43056.mp4` mostrano un nuovo schema `B/N in movimento → freeze → fotografia AI ricostruita, colorata e FERMA`. Il precedente «divieto di ricreare un frame» è ora specificato: **vietato chiamare la FOTO AI una prova documentaria**, ma è la fotografia ricostruita dichiarata l'output che l'utente vuole vedere. Requisiti e tempi in `docs/LA_STORIA_RIVIVE_FOTOGRAMMA_FOTO_AI_V61.md`. La colorizzazione DDColor su ogni frame, pur essendo autentica colorizzazione, non supera da sola il gate artistico V61.
