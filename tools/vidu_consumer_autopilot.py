@@ -50,10 +50,9 @@ def validate(path, approve=False):
         raise ValueError("Wrong provider: developer API is NOT the consumer subscription")
     if p.get("model_version") not in ALLOWED_MODELS:
         raise ValueError("CLI model unavailable/unverified, no model substitution")
-    if p.get("model_name") not in ("Q2 (CLI 3.1)","Q3 (CLI 3.2)","Q3 audio (CLI 3.2_a)"):
-        raise ValueError("Human-readable model name required; never claim 3.1 is Q2 Pro Fast")
-    if p["model_version"] == "3.1" and p["model_name"] != "Q2 (CLI 3.1)":
-        raise ValueError("Unproven model equivalence")
+    model_names={"3.1":"Q2 (CLI 3.1)", "3.2":"Q3 (CLI 3.2)", "3.2_a":"Q3 audio (CLI 3.2_a)"}
+    if p.get("model_name") != model_names[p["model_version"]]:
+        raise ValueError("Exact CLI model name mismatch; no substitution permitted")
     if type(p.get("duration")) is not int or not 2<=p["duration"]<=8:
         raise ValueError("Duration must be 2-8 seconds")
     if p.get("resolution")!="1080p" or p.get("transition") not in ("pro","speed"):
