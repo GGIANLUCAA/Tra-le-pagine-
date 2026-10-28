@@ -1,0 +1,169 @@
+{
+  "schema": "artvision-autoproduction-v31-one",
+  "version": "S01-E03-20261028.1",
+  "date": "2026-10-28",
+  "baseline": "cinema_v6",
+  "cycle_id": "20261028-museum-scale-s01-e03",
+  "chosen_format": "artvision_cinema",
+  "queue": "queue/artvision_museum_scale_s01_20261028.json",
+  "format_reason": "Turner E02 requires verified natural Google Gacrux voice, unavailable in this run. User-approved queue permits skipping a blocked episode; Seurat E03 uses Cinema with no voice and no paid APIs.",
+  "candidates_considered": [
+    {
+      "artist": "Carel Fabritius",
+      "title": "The Goldfinch",
+      "status": "existing rendered_needs_review V50, do not duplicate"
+    },
+    {
+      "artist": "J. M. W. Turner",
+      "title": "The Fighting Temeraire",
+      "status": "queued E02, Critico blocked until Google Gacrux available and voice real"
+    },
+    {
+      "artist": "Georges Seurat",
+      "title": "A Sunday on La Grande Jatte — 1884",
+      "status": "selected E03, monumental 207.5 x 308.1 cm, public-domain art and museum documentation"
+    }
+  ],
+  "subjects": {
+    "seurat_jatte_s01_e03": {
+      "artist": "GEORGES SEURAT",
+      "title_en": "A Sunday on La Grande Jatte — 1884",
+      "year": "1884–1886",
+      "museum": "Art Institute of Chicago, inv. 1926.224",
+      "slug": "seurat_jatte_s01_e03",
+      "editorial_key": "seurat_jatte_s01_e03",
+      "source_page": "https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg",
+      "museum_page": "https://www.artic.edu/artworks/27992/a-sunday-on-la-grande-jatte-1884",
+      "art_candidates": [
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg/3840px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg",
+        "https://www.artic.edu/iiif/2/2d484387-2509-5e8e-2c43-22f9981972eb/full/1686,/0/default.jpg"
+      ],
+      "music": {
+        "name": "Water Lily",
+        "artist": "Kevin MacLeod",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Water%20Lily.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "isrc": "USUAN1400035",
+        "offset": 0
+      },
+      "story": "First a strange small monkey at the foot of a monumental Sunday crowd; then human profiles, river, umbrellas, and the quiet scientific color dots. The painting's 207.5 x 308.1 cm physical scale is documented; no fake museum reconstruction is used in this variant.",
+      "techniques": [
+        "start_with_odd_detail",
+        "motif_juxtaposition",
+        "pointillism_micro_to_macro",
+        "rhythmic_static_holds",
+        "opaque_cut",
+        "final_full_reveal"
+      ],
+      "physical_scale_cm": {
+        "height": 207.5,
+        "width": 308.1
+      },
+      "physical_scale_source": "https://www.artic.edu/artworks/27992/a-sunday-on-la-grande-jatte-1884",
+      "gallery_scene": "none: no unverified museum reconstruction or invented physical perspective; full painting shown only as image in final view",
+      "scenes": [
+        {
+          "type": "portrait",
+          "x": 0.83,
+          "y": 0.52,
+          "z": 1.03,
+          "seconds": 5.6,
+          "movement": "locked",
+          "intent": "Opening: elegant woman with parasol on right, silhouette creates tension without a slogan; title and artist clear in bottom band."
+        },
+        {
+          "type": "macro",
+          "x": 0.78,
+          "y": 0.8,
+          "z": 1.35,
+          "seconds": 5,
+          "movement": "slow_push",
+          "intent": "Reveal the tiny monkey near the elegant woman's feet, the unexpected narrative clue."
+        },
+        {
+          "type": "detail",
+          "x": 0.69,
+          "y": 0.79,
+          "z": 1.13,
+          "seconds": 4.8,
+          "movement": "locked",
+          "intent": "The small dog and monkey counterpoint a carefully controlled social tableau."
+        },
+        {
+          "type": "portrait",
+          "x": 0.51,
+          "y": 0.47,
+          "z": 1.12,
+          "seconds": 5,
+          "movement": "locked",
+          "intent": "Central woman with parasol and girl in white establish solemn stillness."
+        },
+        {
+          "type": "texture",
+          "x": 0.5,
+          "y": 0.39,
+          "z": 1.48,
+          "seconds": 5.2,
+          "movement": "slow_push",
+          "intent": "The colored pointillist strokes become visible on a bright dress and grass."
+        },
+        {
+          "type": "detail",
+          "x": 0.16,
+          "y": 0.38,
+          "z": 1.18,
+          "seconds": 4.8,
+          "movement": "locked",
+          "intent": "Riverbank and white sailboats create air and space beyond rigid figures."
+        },
+        {
+          "type": "portrait",
+          "x": 0.3,
+          "y": 0.73,
+          "z": 1.13,
+          "seconds": 5.3,
+          "movement": "locked",
+          "intent": "Seated and reclining people provide a human counterpoint to formal standing figures."
+        },
+        {
+          "type": "macro",
+          "x": 0.54,
+          "y": 0.2,
+          "z": 1.32,
+          "seconds": 5,
+          "movement": "locked",
+          "intent": "Canopy, orange parasol and tree foliage demonstrate controlled chromatic vibration."
+        },
+        {
+          "type": "landscape",
+          "x": 0.46,
+          "y": 0.5,
+          "z": 1.04,
+          "seconds": 5.3,
+          "movement": "locked",
+          "intent": "A broad horizontal scan of the gathering without ghosting or exaggerated motion."
+        },
+        {
+          "type": "medium",
+          "x": 0.8,
+          "y": 0.49,
+          "z": 1.02,
+          "seconds": 5,
+          "movement": "slow_pull",
+          "intent": "Return to rightmost figure and the pet monkey: a question about class and leisure, not a fabricated story."
+        },
+        {
+          "type": "full",
+          "x": 0.5,
+          "y": 0.5,
+          "z": 1,
+          "seconds": 6.5,
+          "movement": "locked",
+          "intent": "Whole 3.08-metre-wide composition finally disclosed, contextualized without false museum scale."
+        }
+      ]
+    }
+  }
+}
