@@ -1,0 +1,47 @@
+name: Sleepy Hollow — Gacrux one-time narration
+on:
+  push:
+    branches: [episode/sleepy-hollow-20261028-rackham-v13]
+    paths: [queue/sleepy_voice_20261028.request]
+permissions:
+  contents: read
+concurrency:
+  group: sleepy-hollow-voice-20261028-once
+  cancel-in-progress: false
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check script and configured integration before any speech request
+        run: |
+          test -n "${GEMINI_API_KEY:-}" || { echo "::error::No Gemini secret"; exit 2; }
+          python - <<'PY'
+          from pathlib import Path
+          t=Path("episodes/sleepy_hollow_20261028/COPIONE_ITALIANO.txt").read_text()
+          assert len(t.split("\n\n"))==14
+          assert 300<=len(t.split())<=450
+          print("Script and Gacrux integration configured; no video AI paid calls")
+          PY
+      - name: Install voice and alignment libraries
+        run: |
+          python -m pip install --disable-pip-version-check -q "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "google-genai>=2.25,<3" "imageio-ffmpeg>=0.5" "faster-whisper>=1.1,<2"
+          mkdir -p "$RUNNER_TEMP/ffbin"
+          ln -sf "$(python -c 'import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())')" "$RUNNER_TEMP/ffbin/ffmpeg"
+          echo "$RUNNER_TEMP/ffbin" >> "$GITHUB_PATH"
+      - name: Google Gacrux once, never retry or substitute
+        run: python tools/sleepy_gacrux_once_20261028.py
+      - name: Preserve voice even if later QA fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SLEEPY_HOLLOW_GACRUX_ONCE_20261028
+          path: output/sleepy_hollow_gacrux_20261028/
+          retention-days: 15
+          if-no-files-found: warn
