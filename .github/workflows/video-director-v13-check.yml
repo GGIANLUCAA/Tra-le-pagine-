@@ -65,11 +65,9 @@ jobs:
           python -m pip install "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12,<1"
       - name: Regole attive, identita del format e mix espliciti
         run: python -m unittest discover -s tests -p "test_editorial_rules.py" -v
-      - name: ArtVision 4x1: regia emotiva e autocritica offline
+      - name: "ArtVision 4x1: regia emotiva e autocritica offline"
         run: python -m unittest discover -s tests -p "test_artvision_four_variants_gate.py" -v
-      - name: ArtVision V55: kit MP4, copertina, post, ZIP e apertura reale
-        run: python -m unittest discover -s tests -p "test_artvision_delivery_v55.py" -v
-      - name: ArtVision V55 - pacchetto scaricabile ZIP e primi 7 secondi
+      - name: "ArtVision V55: kit MP4, copertina, post, ZIP e apertura reale"
         run: python -m unittest discover -s tests -p "test_artvision_delivery_v55.py" -v
       - name: Routing, schede, hash e MP4 reale
         run: python -m unittest discover -s tests -p "test_video_director_v13.py" -v
