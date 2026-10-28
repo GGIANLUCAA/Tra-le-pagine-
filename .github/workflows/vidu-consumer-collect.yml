@@ -1,0 +1,70 @@
+name: "Tra le Pagine - Vidu consumer collect real clips (no cost)"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 */6 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: vidu-consumer-pending-collect
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      VIDU_TOKEN: ${{ secrets.VIDU_TOKEN }}
+      VIDU_BASE_URL: https://service.vidu.com
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: No provider calls when token or pending receipts absent
+        id: pending
+        run: |
+          if [ -z "${VIDU_TOKEN:-}" ] || [ ! -d queue/vidu_consumer_attempts ]; then
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No consumer token or pending task receipts; zero spending"
+          else
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.pending.outputs.found == 'true'
+        with:
+          node-version: "22"
+      - name: Install Vidu CLI and ffmpeg (read-only download)
+        if: steps.pending.outputs.found == 'true'
+        run: |
+          npm install -g vidu-cli@0.2.36
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Fetch and verify up to three pending clips
+        if: steps.pending.outputs.found == 'true'
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          ledger=Path("queue/vidu_consumer_attempts")
+          pending=[]
+          for p in sorted(ledger.glob("*.json")):
+              try:
+                  info=json.loads(p.read_text(encoding="utf-8"))
+                  if info.get("status")=="submitted_needs_collection" and info.get("task_id"):
+                      pending.append((p,info))
+              except (OSError,ValueError,TypeError):
+                  continue
+          print("Pending task count:",len(pending))
+          for path,info in pending[:3]:
+              out=Path("output/vidu_consumer_collected")/path.stem
+              cmd=["python","tools/vidu_consumer_autopilot.py","collect",
+                   "--task-id",str(info["task_id"]),"--out",str(out),
+                   "--manifest",str(path)]
+              result=subprocess.run(cmd,timeout=170,check=False)
+              print("Read-only collection code",path.stem,"exit",result.returncode)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: VIDU_CONSUMER_VERIFIED_CLIPS_NEED_REVIEW
+          path: output/vidu_consumer_collected/
+          retention-days: 14
+          if-no-files-found: ignore

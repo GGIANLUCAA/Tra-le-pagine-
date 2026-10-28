@@ -1,0 +1,33 @@
+name: "Vidu abbonamento - controlli autoproduzione senza crediti"
+on:
+  push:
+    branches:
+      - feature/vidu-abbonamento-official-cli-v1
+    paths:
+      - tools/vidu_consumer_autopilot.py
+      - tools/vidu_subscription_probe.py
+      - tests/test_vidu_consumer_autopilot.py
+      - .github/workflows/vidu-consumer-autopilot-check.yml
+  pull_request:
+    paths:
+      - tools/vidu_consumer_autopilot.py
+      - tools/vidu_subscription_probe.py
+      - tests/test_vidu_consumer_autopilot.py
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check Python syntax
+        run: |
+          python -m py_compile tools/vidu_consumer_autopilot.py tools/vidu_subscription_probe.py
+      - name: Run all no-billing consumer automation safety tests
+        run: python -m unittest discover -s tests -p 'test_vidu_consumer_autopilot.py' -v
+      - name: Confirm no credentials or charges used
+        run: echo "This job makes no Vidu API requests and submits zero tasks."
