@@ -1,0 +1,38 @@
+name: Sleepy Hollow — Rackham asset preflight (free)
+on:
+  push:
+    branches: [episode/sleepy-hollow-20261028-rackham-v13]
+    paths: [queue/sleepy_rackham_preflight.request]
+permissions:
+  contents: read
+concurrency:
+  group: sleepy-hollow-rackham-20261028
+  cancel-in-progress: false
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install PIL and requests
+        run: python -m pip install -q "pillow>=10,<13" "requests>=2.31,<3"
+      - name: Acquire public-domain plates (no generative APIs)
+        run: python tools/sleepy_rackham_preflight.py
+      - name: Archive preflight images for editorial review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SLEEPY_HOLLOW_RACKHAM_IMAGES_PREFLIGHT
+          path: output/sleepy_hollow_rackham_20261028/
+          if-no-files-found: warn
+          retention-days: 15
+      - name: Save run locator
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo '{"run_id":${{ github.run_id }},"type":"assets_preflight","no_paid_ai_video":true}' > locator.json
+          gh api -X PUT "repos/${{ github.repository }}/contents/queue/sleepy_rackham_preflight_locator.json" -f branch="${{ github.ref_name }}" -f message="Record Rackham preflight run" -f content="$(base64 -w0 locator.json)"
