@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ArtVision V52 Joseph Wright Cinema: authentic art, free render, review-only release."""
+"""ArtVision V52B Joseph Wright Cinema: authentic art, free render, review-only release."""
 from __future__ import annotations
 import importlib.util, hashlib, json, subprocess, sys, zipfile
 from pathlib import Path
@@ -66,7 +66,7 @@ def full(art):
 cinema.full=full
 
 def main():
-    out=ROOT/"output/artvision-wright-air-pump-20261028"
+    out=ROOT/"output/artvision-wright-air-pump-v52b-20261028"
     slug="wright_air_pump_20261028_0915"
     result=engine.render_one("air_pump",out)
     folder=out/slug
@@ -74,7 +74,7 @@ def main():
     coverfile=folder/"COPERTINA.jpg"
     original=folder/"ORIGINAL_ARTWORK.jpg"
     track=folder/"ORIGINAL_LICENSED_MUSIC.mp3"
-    framefile=folder/"QA_FIRST_FRAME_V52.jpg"
+    framefile=folder/"QA_FIRST_FRAME_V52B.jpg"
     subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y","-i",str(film),
                     "-frames:v","1",str(framefile)],check=True)
     with Image.open(original) as src:
@@ -138,6 +138,7 @@ def main():
        "first_frame_and_cover_verified_against_expected_brand":True,
        "title":TITLE,"artist":ARTIST,"cover_brand_mad":mad_cover,"first_frame_brand_mad":mad_first,
        "past_defect":"The Temptation of Saint Anthony lacked title or artist in first frame; both exact strings now mandatory in cover and opening, structurally and visually compared.",
+       "rejected_previous_v52":"Initial V52 contact sheet revealed opening on empty cage instead of the bird; wrong normalized x=0.70. This corrected V52B uses x=0.50, y=0.27 and all shot coordinates visually checked against original. Old artifact retained, not approved.",
        "actual_video_sha256":sha(film),"full_ffmpeg_decode":True,"ffprobe":info,
        "no_edge_stretch":"No replicated-edge padding used; full-speed human visual review still pending.",
        "no_ghosting":"Only opaque hard cuts and a solid dark matte around full image.",
@@ -155,13 +156,13 @@ def main():
       "publication":"not_published","rights_territorial_review":"pending",
       "s01_turner_critico":"blocked_voice_unavailable"},ensure_ascii=False,indent=2)+"\n")
     (folder/"ISTRUZIONI_REPLICA.md").write_text(
-      "# ArtVision V52 — Wright of Derby\n\n"
+      "# ArtVision V52B — Wright of Derby\n\n"
       "Run: python scripts/artvision_wright_air_pump_20261028.py\n"
       "Source: config/artvision_wright_air_pump_20261028.json\n"
       "Posts: config/artvision_wright_air_pump_editorial_20261028.json\n"
       "Renderer: scripts/artvision_cinema_duo_v30.py + existing V6 signature adaptation.\n"
       "No paid video calls. No automatic social publishing or Gold Master approval.\n",encoding="utf8")
-    archive=out/"ARTVISION_V52_WRIGHT_AIR_PUMP_COMPLETE_REVIEW.zip"
+    archive=out/"ARTVISION_V52B_WRIGHT_AIR_PUMP_COMPLETE_REVIEW.zip"
     with zipfile.ZipFile(archive,"w",allowZip64=True) as z:
         for p in folder.rglob("*"):
             if p.is_file() and "_working" not in p.parts:
@@ -177,10 +178,10 @@ def main():
           "POST_INSTAGRAM.txt","POST_TIKTOK.txt","POST_YOUTUBE.txt",
           "POST_EDITORIAL_RESEARCH.json","AUDIENCE_RESEARCH_V32.json",
           "VIDEO_RECIPE_V13.json","SOURCES_AND_RIGHTS.md","MUSIC_RELEASE_V20.json",
-          "TECHNICAL_QA_V30.json","QA_FIRST_FRAME_V52.jpg",
+          "TECHNICAL_QA_V30.json","QA_FIRST_FRAME_V52B.jpg",
           "ORIGINAL_ARTWORK.jpg","ORIGINAL_LICENSED_MUSIC.mp3"}
         assert required.issubset(z.namelist()),required-set(z.namelist())
-    print("ARTVISION_V52_RENDERED_NEEDS_REVIEW",json.dumps({
+    print("ARTVISION_V52B_RENDERED_NEEDS_REVIEW",json.dumps({
       "sha256":sha(film),"duration":info["format"]["duration"],
       "mp4_bytes":film.stat().st_size,"zip_bytes":archive.stat().st_size,
       "cover_mad":mad_cover,"first_frame_mad":mad_first},ensure_ascii=False),flush=True)
