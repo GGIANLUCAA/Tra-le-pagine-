@@ -1,9 +1,11 @@
 {
   "episode": "alice_wonderland_20261028",
-  "mode": "source_inventory_with_persistent_report",
+  "mode": "produce_free_first",
   "paid_video_api_calls": false,
   "social_publish": false,
-  "voice_api_calls": false,
-  "source": "Project Gutenberg 28885 Rackham 1907",
-  "date": "2026-10-28"
+  "voice_api_calls": "only if GEMINI_TTS_FREE_QUOTA_CONFIRMED=true and GEMINI_API_KEY present",
+  "source": "Project Gutenberg #28885, 13 Arthur Rackham color plates, 14 narrative shots",
+  "date": "2026-10-28",
+  "script_words": 373,
+  "visual_count": 13
 }
