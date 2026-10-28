@@ -169,8 +169,8 @@
         "h": 90.7,
         "w": 121.6
       },
-      "dossier_4x1_path": null,
-      "dossier_preflight": "pending",
+      "dossier_4x1_path": "docs/productions/2026-10-28-turner-temeraire-v55-research-1915/ARTVISION_4X1_PLAN.json",
+      "dossier_preflight": "official_four_check_passed_in_github_actions_run_40753869951_2026-10-28",
       "variants": {
         "critico_standard": {
           "status": "blocked",
@@ -183,9 +183,20 @@
           "verified_this_migration": false
         },
         "cinema_standard": {
-          "status": "planned",
-          "legacy_prior": null,
-          "verified_this_migration": false
+          "status": "rendered_needs_review",
+          "version": "V55",
+          "verified_this_migration": true,
+          "reported_hash": "59da265649c6d7a7f0eb7b34d85e40fefa25f2cb422ccd77ad427b360b570bd4",
+          "duration_seconds": 47.8,
+          "codec": "H264/AAC 1080x1920",
+          "github_actions_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40753869951",
+          "github_artifact_id": 12845445991,
+          "technical_qa": "ffprobe_full_decode_zip_crc_passed_independently_2026-10-28",
+          "opening_review": "pending_real_full_speed_video_and_audio_review",
+          "human_approval": false,
+          "archive_sync_pending": true,
+          "site_verified": false,
+          "notes": "Authentic Wikimedia Commons 5684x4223 artwork; Kevin MacLeod Water Lily CC BY 4.0 recording; V55 package exists. No V25 artistic approval, no private archive verification."
         },
         "cinema_museum": {
           "status": "planned",
