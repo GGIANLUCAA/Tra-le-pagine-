@@ -1,0 +1,32 @@
+name: "V68 — inspect free public generative image-to-image restoration Spaces"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v68-free-generative-scout.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Inspect current free ZeroGPU image restoration interfaces, NO actual billed inference"
+        run: |
+          python -m pip -q install --no-cache-dir gradio_client==1.12.1
+          python - <<'PY'
+          import json, traceback
+          from gradio_client import Client
+          for name in ['finegrain/finegrain-image-enhancer','Upsampler/clarity-upscaler']:
+              print('\nATTEMPT_SPACE',name,flush=True)
+              try:
+                  c=Client(name,verbose=False,httpx_kwargs={'timeout':20})
+                  j=c.view_api(return_format='dict')
+                  print('SPACE_ENDPOINTS',name,json.dumps(j,ensure_ascii=False,default=str)[:18000],flush=True)
+              except Exception as e:
+                  print('SPACE_FAILED',name,type(e).__name__,str(e)[:750],flush=True)
+          PY
