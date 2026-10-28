@@ -40,6 +40,15 @@ def ready_plan():
              "L'immagine finale conserva una malinconia sottile."]
     for name, variant in plan["variants"].items():
         variant["variation_reason"] = f"Scelta visiva specifica per {name}, senza duplicare effetti."
+        variant["opening_0_7"].update({
+            "first_frame_title_artist": "The Goldfinch — Carel Fabritius",
+            "first_frame_visual": "Il piccolo uccellino ben visibile sul supporto originale.",
+            "first_3_seconds_hook": "Il primo sguardo rivela il cardellino e suggerisce libertà.",
+            "seconds_3_to_7_reveal": "La catena cambia il significato di quella quiete.",
+            "detail_id": "d1",
+            "mobile_composition_reason": "Titolo leggibile e uccello al centro senza tagli.",
+            "audio_or_voice_cue": "Una pausa e un accento musicale motivati dall'opera.",
+        })
         if variant["mode"] == "museum":
             variant["museum"].update({
                 "width_cm": 22.8, "height_cm": 33.5,
@@ -119,6 +128,11 @@ class FourVariantsGateTests(unittest.TestCase):
 
     def test_complete_plan_passes_structural_review(self):
         self.assertEqual(validate(ready_plan()), [])
+
+    def test_first_seven_seconds_weak_hook_blocks(self):
+        p = ready_plan()
+        p["variants"]["cinema_standard"]["opening_0_7"]["first_3_seconds_hook"] = "WOW"
+        self.assertTrue(any("first_3_seconds_hook" in x for x in validate(p)))
 
     def test_museum_missing_scale_blocks(self):
         p = ready_plan()
