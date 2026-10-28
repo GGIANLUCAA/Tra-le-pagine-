@@ -75,6 +75,19 @@ In caso di misura non documentata dichiarare `unknown`, non inventarla. L'illust
 
 **Episodio di prova scala piccola:** Hiroshige, `Sudden Shower over Shin-Ōhashi Bridge and Atake` (1857); esemplari museali comparabili circa 35 × 24 cm, fonte Cleveland Museum of Art 1921.318 e Met Museum JP644. La fotografia autentica d'archivio può rappresentare un'altra impressione dello stesso disegno e non va attribuita senza prova a uno di questi due esemplari.
 
+
+## Cornici museali di alta qualità — regola permanente (feedback 28/10/2026)
+
+**Richiesta esplicita dell'utente:** nelle sequenze in prima persona / Museum Immersion la cornice deve valorizzare davvero l'opera, con qualità visiva superiore a quella degli ultimi tentativi. Prendere come riferimenti *The Cyclops — SENZA STRISCE CORRETTO* (incasso e integrazione) e *Hiroshige — Museum Scale* (proporzioni), senza copiare meccanicamente una cornice unica.
+
+- **Scelta specifica per opera:** cercare prima fotografie verificabili della cornice reale e la sua provenienza. Se non è verificata, indicare «cornice scenografica ricostruita» nel dossier, senza spacciarla per autentica. Disegnare una cornice credibile per epoca, tecnica, dimensioni e carattere del dipinto; non applicare sempre una cornice dorata, barocca o esagerata. Per una stampa modesta può servire una cornice discreta con passe-partout appropriato; per una tela monumentale una struttura robusta ma proporzionata.
+- **Valore visivo e materiali:** cornice tridimensionale con sezioni e modanature plausibili, legno/metallo/doratura materici ma non pacchiani, grana e imperfezioni sobrie, angoli coerenti, fonte luminosa definita, ombre di contatto sotto il labbro interno, profondità reale nel vano, eventuale vetro solo se plausibile e senza riflessi che coprono l'opera. L'opera va dietro il bordo interno, mai sovrapposta alla cornice o deformata per riempirla.
+- **Proporzioni non negoziabili:** dimensioni del dipinto originali in cm, proporzione esatta lato/lato, spessore e larghezza della cornice coerenti con misure reali, scala della sala e del visitatore adulto (~170 cm). Documentare anche le dimensioni dell'insieme tela+cornice, se note, separando misure verificate da scelte scenografiche. Un dipinto piccolo resta piccolo sulla parete, e un grande quadro conserva la sua presenza monumentale; i dettagli possono diventare grandi soltanto con l'avvicinamento della camera.
+- **Regia e branding:** nell'apertura il pubblico deve percepire bellezza dell'oggetto *quadro + cornice* e rapporto con la sala; l'ingresso e l'eventuale uscita devono risultare fisici e progressivi, senza ghosting, bordi allungati, pixel ripetuti, jumps o cambi di proporzione. Testi iniziali di titolo e artista come da preset, leggibili ma senza coprire il fulcro.
+- **QA BLOCCANTE prima di chiamare l'episodio consegnabile:** confrontare una vista della cornice con i riferimenti approvati V46/Hiroshige, controllare a dimensioni telefono **apertura, quattro angoli, modanatura, incasso, ombre, eventuale vetro, scala relativa, ingresso/uscita e fotogrammi intermedi**; verificare bordi video e rapporto d'aspetto. Rifiutare/correggere cornice piatta, artificiale, pacchiana, sproporzionata, quadro incollato o dettagli dell'opera nascosti. Annotare foto/asset della cornice, natura autentica o illustrativa, misure, revisione visiva ed eventuali limiti nel dossier/ricetta. Un controllo automatico non sostituisce revisione artistica reale.
+
+**Ambito:** tutte le nuove produzioni Cinema V6, Critico V2 e Collection quando adottano effetto visita museale in prima persona. Questa regola aggiorna la qualità delle cornici; non obbliga l'effetto museo in ogni video, non sostituisce i due riferimenti precedenti, non modifica master esistenti e non autorizza alcuna spesa o pubblicazione.
+
 ## Decisioni consolidate
 
 | Prima | Ora |
