@@ -8,6 +8,9 @@ on:
       - config/artvision_altdorfer_wow_v54_posts.json
       - .github/workflows/artvision-altdorfer-wow-v54.yml
   workflow_dispatch:
+concurrency:
+  group: artvision-altdorfer-wow-v54
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
