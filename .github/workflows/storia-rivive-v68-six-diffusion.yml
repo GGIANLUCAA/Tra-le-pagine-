@@ -1,0 +1,34 @@
+name: "V68 — six real generative historical Paris photographs, free diffusion"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_v68_six_diffusion_stills.py"
+      - ".github/workflows/storia-rivive-v68-six-diffusion.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  six_free_photo_restorations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Local tools; public shared ZeroGPU only, no HF Jobs billing"
+        run: python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow gradio_client==1.12.1
+      - name: "Actually reconstruct six original photos with diffusion ControlNet"
+        run: python -u src/storia_rivive_v68_six_diffusion_stills.py
+      - name: "Record only actual produced images and real QA, do not pretend on failure"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PARIGI_1918_V68_SIX_GENERATIVE_PHOTOS
+          path: |
+            output/storia_rivive_v68_generativa_sei/GENERATIVA_*.png
+            output/storia_rivive_v68_generativa_sei/INPUT_*.png
+            output/storia_rivive_v68_generativa_sei/SEI_RESTAURI_GENERATIVI_V68_PRIMA_DOPO.jpg
+            output/storia_rivive_v68_generativa_sei/QA_COMPLETO.json
+            output/storia_rivive_v68_generativa_sei/PROGRESS.json
+          retention-days: 14

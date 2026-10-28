@@ -1,0 +1,35 @@
+name: "V68 — free real diffusion photo restoration one-source test"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_v68_one_photo_zero_gpu.py"
+      - ".github/workflows/storia-rivive-v68-real-image-test.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actual_free_generating_photo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Install image and Gradio client tools only; no paid HF Jobs"
+        run: python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow gradio_client==1.12.1
+      - name: "Try actual public free ZeroGPU ControlNet diffusion on one historical photo"
+        run: python -u src/storia_rivive_v68_one_photo_zero_gpu.py
+      - name: "Save before/after evidence even if the public free demo is busy"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V68_PARIGI_GENERATIVE_REAL_TEST
+          path: |
+            output/storia_rivive_v68_generativa/SOURCE_FOR_GENERATIVE_486x864.png
+            output/storia_rivive_v68_generativa/GENERATIVE_01_FROM_SAME_FRAME.png
+            output/storia_rivive_v68_generativa/V68_REVIEW_BEFORE_AFTER.jpg
+            output/storia_rivive_v68_generativa/QA.json
+            output/storia_rivive_v68_generativa/FAILED_GENERATION.txt
+          if-no-files-found: warn
+          retention-days: 14
