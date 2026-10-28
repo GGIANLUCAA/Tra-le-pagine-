@@ -14,6 +14,10 @@ Le guide V12–V31 restano istruzioni dei moduli: in caso di conflitto prevale l
 revisione attiva. Non aggiungere in cima altri blocchi «regola più recente»:
 aggiornare la fonte unica con versione, motivo e riferimento dell'approvazione.
 
+## V59 — Originali soltanto PD o CC0; pubblicazione prevista non monetizzata
+
+Nuova decisione del 28/10/2026: per `storia_rivive` usare **solo pellicole realmente di pubblico dominio o CC0**, documentando la pagina del singolo filmato, fonte, paese, data e diritti residuali. Non richiedere commercializzazione del film: l'utente pubblicherà senza monetizzare. Modelli e pesi non commerciali sono candidati se i loro termini consentono la pubblicazione non commerciale; vincoli `research only` restano da verificare e non si considerano automaticamente autorizzati. Vedi `docs/LA_STORIA_RIVIVE_DOMINIO_PUBBLICO_V59.md` e `config/storia_rivive_v59.json`; non cambiare gli altri format, né spendere o autopubblicare.
+
 ## V58 — Ricerche open source e montaggi autentici in più scene
 
 Leggere `docs/LA_STORIA_RIVIVE_OPEN_SOURCE_E_MONTAGGIO_V58.md` e `config/storia_rivive_v58.json` per OGNI nuovo reel storico. 4K non obbligatorio: priorità alla qualità percepita. Confrontare 3 fonti, selezionare azioni reali e montare scene pertinenti e diverse senza durata/numero fisso. Usare `src/storia_rivive_montage_v58.py` solo con clip **veramente AI-colorizzate** già presenti e gate V57; non colorizza, non scarica e non chiama Vidu. HAVC wrapper MIT non autorizza i componenti ColorMNet/CMNET2 non-commercial: non dare per scontata la monetizzazione. Eventuale segmento Vidu è ricostruzione AI separatamente etichettata con consenso per clip. Tutto resta sottoposto a V55/V28/V33/V25.
