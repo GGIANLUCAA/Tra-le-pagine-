@@ -31,6 +31,11 @@ try:
 except ImportError:
     from narrative_variation_v38 import inspect as inspect_narrative_variation
 
+try:
+    from .artvision_four_variants_gate import new_plan as new_four_plan, validate as validate_four_plan
+except ImportError:
+    from artvision_four_variants_gate import new_plan as new_four_plan, validate as validate_four_plan
+
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "config/video_formats_v13.json"
 READY = {"ready_with_assets", "ready_with_curated_plan", "ready_with_episode_config"}
@@ -221,6 +226,25 @@ def check(project_path):
                 blockers.append(f"Scena {n}: frase non trovata in ordine nel copione")
             else:
                 cursor = pos + len(anchor)
+    # Explicitly bound 4x1 group plans must pass the emotional storyboard gate.
+    # Historical single-format projects remain readable and are not rewritten.
+    group_plan = project.get("artvision_4x1_plan")
+    if project.get("serial_mode") == "artvision_4x1" and not group_plan:
+        blockers.append("Produzione seriale ArtVision: manca artvision_4x1_plan")
+    if group_plan is not None:
+        if project.get("format") not in ("artvision_cinema", "artvision_critico"):
+            blockers.append("Piano ArtVision 4x1 collegato a formato non ArtVision")
+        else:
+            try:
+                group_path = local_file(project_path.parent, group_plan)
+                group_data = read_json(group_path)
+                if str(group_data.get("topic", "")).strip() != str(project.get("topic", "")).strip():
+                    blockers.append("4x1: opera del gruppo diversa dal progetto singolo")
+                blockers.extend("4x1: " + x for x in validate_four_plan(group_data))
+            except (ValueError, OSError, TypeError, KeyError, json.JSONDecodeError) as exc:
+                blockers.append("4x1: impossibile verificare il piano condiviso: " + str(exc))
+    elif project.get("format") in ("artvision_cinema", "artvision_critico"):
+        warnings.append("Produzione seriale 4x1: creare e collegare il dossier condiviso; i progetti singoli storici restano validi")
     # V38: advisory review of scene variety and motivation, not an image quota.
     creative_review = inspect_narrative_variation(project)
     for finding in creative_review["findings"]:
@@ -336,6 +360,11 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     commands = ap.add_subparsers(dest="command", required=True)
     commands.add_parser("formats")
+    fb = commands.add_parser("four-brief", help="Scheda madre ArtVision 4x1, senza spesa")
+    fb.add_argument("--topic", required=True); fb.add_argument("--artist", required=True)
+    fb.add_argument("--out", required=True)
+    fc = commands.add_parser("four-check", help="Gate strutturale dei quattro storyboard")
+    fc.add_argument("--plan", required=True)
     b = commands.add_parser("brief")
     b.add_argument("--format", required=True); b.add_argument("--topic", required=True)
     b.add_argument("--out", required=True); b.add_argument("--reference", action="append", default=[])
@@ -347,6 +376,18 @@ def main():
     args = ap.parse_args()
     if args.command == "formats":
         data = read_json(REGISTRY)
+    elif args.command == "four-brief":
+        target = Path(args.out)
+        if target.exists():
+            raise ValueError("Dossier esistente: non sovrascrivere")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        data = new_four_plan(args.topic, args.artist)
+        write_json(target, data)
+    elif args.command == "four-check":
+        issues = validate_four_plan(read_json(args.plan))
+        data = {"schema": "artvision-4x1-preflight-v1", "ready": not issues,
+                "blockers": issues, "artistic_quality_certified": False,
+                "rendered_video_verified": False}
     elif args.command == "brief":
         data = brief(args.format, args.topic, args.out, args.reference)
     elif args.command == "check":
@@ -354,7 +395,7 @@ def main():
     else:
         data = capture(args.format, args.topic, args.video, args.cover, args.out, args.source)
     print(json.dumps(data, ensure_ascii=False, indent=2))
-    if args.command == "check" and not data["ready"]:
+    if args.command in ("check", "four-check") and not data["ready"]:
         raise SystemExit(2)
 
 
