@@ -20,15 +20,15 @@ jobs:
           set -euo pipefail
           test -n "${VIDU_API_KEY:-}" || { echo "::error::Missing VIDUOK"; exit 2; }
           cat > /tmp/vidu-balance-public.pem <<'EOF_PUB'
------BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAja6mCDjoLn/MjPYVwnKN
-RBTypymU0S5NHbeonVFjfnydPBGSn5HGXE4jGIp5cKYzFKzuQh+jHOX9g4dPH5EY
-hoANiRiO0Hhxad7My+j9ufiDyWU6F8xQtLQoxGyg8Cvmr5FU3EvNAbA5n9U/Dt8u
-Ey/LZgd3ploFbEAy2eMzzEsqjEhPOW7KZRPJYE2hdbaY3IKXCjGK631SfpyyY4B2
-Y9VSJU1IqKMYuLbD1BGK7THH96AlScr17ToB599x4uZRqFZbCoAsAP4ML9eFoVIO
-Q+w3gTYgCzdN1B4uleaF3N21rIHnLcETBbjwEUhqEpekSoIM2Px2eOdZS9B3dt1r
-pwIDAQAB
------END PUBLIC KEY-----
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAja6mCDjoLn/MjPYVwnKN
+          RBTypymU0S5NHbeonVFjfnydPBGSn5HGXE4jGIp5cKYzFKzuQh+jHOX9g4dPH5EY
+          hoANiRiO0Hhxad7My+j9ufiDyWU6F8xQtLQoxGyg8Cvmr5FU3EvNAbA5n9U/Dt8u
+          Ey/LZgd3ploFbEAy2eMzzEsqjEhPOW7KZRPJYE2hdbaY3IKXCjGK631SfpyyY4B2
+          Y9VSJU1IqKMYuLbD1BGK7THH96AlScr17ToB599x4uZRqFZbCoAsAP4ML9eFoVIO
+          Q+w3gTYgCzdN1B4uleaF3N21rIHnLcETBbjwEUhqEpekSoIM2Px2eOdZS9B3dt1r
+          pwIDAQAB
+          -----END PUBLIC KEY-----
           EOF_PUB
           python - <<'PY'
           import json,os,urllib.request
@@ -49,9 +49,7 @@ pwIDAQAB
               rows.append({'type':str(e.get('type','untyped'))[:60],'remaining':n})
           if not rows: raise RuntimeError('No valid numeric credit balances')
           total=sum(e['remaining'] for e in rows)
-          report={'total':total,'groups':rows,'clips_5sec_q2_pro_fast_720p_offpeak':total//8,
-                  'clips_5sec_q2_pro_fast_720p_normal':total//16,
-                  'status':'read_only_confirmed','endpoint':'GET /ent/v2/credits'}
+          report={'n':total,'g':[{'t':e['type'],'c':e['remaining']} for e in rows],'f8':total//8,'f16':total//16}
           with open('/tmp/vidu-balance-private.json','w') as f:
               json.dump(report,f,sort_keys=True)
           print('Valid Vidu API credit balances returned and encrypted; amounts NOT in public logs.')
