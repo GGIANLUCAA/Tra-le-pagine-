@@ -46,3 +46,17 @@ Non lanciare `task submit` prima del controllo del costo esatto, modello, prompt
 - **GitHub Actions senza token**: non ha accesso ai cookie del browser Android. Non basta l'abbonamento per eseguire job GitHub.
 
 **Sicurezza:** VIDU_TOKEN solo come secret GitHub; niente cookie in repository, login incollati nel codice o prompt. Workflow V1 e' volutamente read-only e non esegue submit. Nessun pagamento o tentativo commerciale e' autorizzato implicitamente.
+
+
+## Implementazione dell'automazione 28/10/2026 — modifiche effettive
+
+- `tools/vidu_consumer_autopilot.py`: preflight offline, preventivo server read-only, singolo submit autorizzato con fingerprint, prenotazione persistente GitHub PRIMA della chiamata e recupero successivo del video. Nessun retry.
+- `.github/workflows/vidu-consumer-approved-clip.yml`: dopo integrazione nel ramo `main`, scatta AUTOMATICAMENTE soltanto quando viene aggiunto o aggiornato esattamente un `episodes/<slug>/VIDU_I2V_APPROVAL.json`. I manifest vanno creati solo dopo approvazione utente della singola spesa.
+- `.github/workflows/vidu-consumer-collect.yml`: ogni sei ore verifica soltanto i task esistenti e scarica MP4 reali. Le letture non inviano nuove generazioni. Un file acquisito non e' automaticamente approvato per la pubblicazione.
+- `tests/test_vidu_consumer_autopilot.py`: verifica offline limiti, modello, impronta, provenienza immagine, esaurimento pass e prevenzione retry.
+
+**Stato di integrazione dell'account:** il test GitHub Actions piu' recente ha trovato `VIDU_TOKEN` non disponibile e neppure `VIDU_API_KEY` disponibile nel workflow. Il nome del secret, lo spazio (repository anziche' Environment) o la disponibilita' dell'account vanno risolti una sola volta. Il semplice abbonamento sul browser Android non trasferisce i cookie a GitHub Actions.
+
+**Limite dell'episodio Il ritratto ovale:** la foto `SCENA_07.jpg` non e' ancora nel repository, e l'autorizzazione a `Q2 Pro Fast` non vale per `Q2 (CLI 3.1)`. Sono due blocchi indipendenti oltre al token. Nessuna clip di Vidu e' stata generata da questa integrazione.
+
+**Autonomia futura, nel limite del mandato:** il sistema non richiede che l'utente apra GitHub per ogni passo tecnico. ChatGPT puo' predisporre e registrare il manifesto dell'approvazione ottenuta nella conversazione e il push in `main` avvia automaticamente i passi tecnici. Non autoautorizza altre spese, modelli o scene: ogni consumo resta limitato all'approvazione specifica.
