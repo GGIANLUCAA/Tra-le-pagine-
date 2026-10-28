@@ -19,20 +19,20 @@ ARTIFACT_ID="12849782800" # Actual existing stronger candidate, generated & revi
 UA="Tra-le-Pagine/0.68 non-monetized historical-documentary"
 W,H,FPS=1080,1920,30
 SCENES=[
-    {"idx":0,"name":"La venditrice","motion":1.56,"orig_reveal":.34,"orig_hold":2.65,"new_hold":2.95,
+    {"idx":0,"name":"La venditrice","motion":1.56,"orig_reveal":.34,"orig_hold":2.65,"new_hold":3.50,
      "prompt":"Paris 1918 genuine candid street documentary photograph, newspaper vendor at stall in foreground, expressive eyes and nuanced realistic skin, old period hats, four customers, wool coats and newspapers on wooden counter; painstaking texture, documentary 35mm still photograph, same exact persons, pose and camera view."},
-    {"idx":1,"name":"La stazione","motion":1.58,"orig_reveal":.32,"orig_hold":2.32,"new_hold":2.70,
+    {"idx":1,"name":"La stazione","motion":1.58,"orig_reveal":.32,"orig_hold":2.32,"new_hold":3.26,
      "prompt":"Paris 1918 Gare de Lyon actual documentary still, authentic train station passengers, period hats, coats, individual fabric fibers, natural human eyes and lifelike subtle facial skin, realistic limestone architecture, documentary photographic detail; preserve precisely original people and arrangement."},
-    {"idx":2,"name":"Il cinema","motion":1.35,"orig_reveal":.33,"orig_hold":2.11,"new_hold":2.65,
+    {"idx":2,"name":"Il cinema","motion":1.35,"orig_reveal":.33,"orig_hold":2.11,"new_hold":3.20,
      "prompt":"Real 1918 Paris cinema street crowd, documentary photographic realism, detailed faces without changing identities, Edwardian era coats and hats, authentic cinema marquee textures, natural photo color and fine street detail, exact source geometry, not a movie poster."},
-    {"idx":3,"name":"Il tram","motion":1.48,"orig_reveal":.32,"orig_hold":2.31,"new_hold":2.55,
+    {"idx":3,"name":"Il tram","motion":1.48,"orig_reveal":.32,"orig_hold":2.31,"new_hold":3.45,
      "prompt":"1918 Paris original electric tram and passing pedestrians, photorealistic historical color restoration of actual source frame, sharp tram paneling, human faces natural skin and realistic period clothes, exquisite material texture without changing scene geometry."},
     {"idx":4,"name":"La folla","motion":1.60,"orig_reveal":.35,"orig_hold":2.69,"new_hold":2.95,
      "prompt":"Authentic documentary photo of 1918 Paris boulevard street crowd and historic shop fronts, lifelike skin textures and individual fabric weaving, convincing human faces consistent with source, sharp readable architecture and natural sunlight, reproduce source camera framing."},
     {"idx":5,"name":"La Senna","motion":1.40,"orig_reveal":.33,"orig_hold":2.38,"new_hold":2.30,
      "prompt":"Paris 1918 original black-and-white film still near the Seine, historically accurate street crowd, real faces and water textures, color photographic restoration, preserve all source people."},
 ]
-SELECTED=SCENES[:5]
+SELECTED=SCENES[:4]
 NEGATIVE="changed number of people, new faces, invented persons, redesigned shop, cartoon, painterly style, over-smooth skin, distorted eyes, face swap, blurry, film grain, red-magenta tint, altered clothing, invented scene, fake 4k text"
 PROMPT_COMMON="Full frame image-to-image restoration. Keep the exact source image framing, historical positions, clothing, faces and gestures. Add convincing photographic micro-detail as a plausible reconstruction, not factual evidence. Natural period-appropriate nuanced colors. "
 VIDEO=OUT/"PARIGI_1918_RESTAURO_FOTOGRAFICO_GENERATIVO_V68.mp4"
@@ -102,43 +102,45 @@ def photo_match(source,photo):
  return float(np.corrcoef(s.ravel(),p.ravel())[0,1])
 
 def enhance_images():
- print("FETCH_EXISTING_HIGH_QUALITY_GENERATIVE_FIRST",flush=True)
- images={0:get_existing_first()}
- service=Client("finegrain/finegrain-image-enhancer",verbose=False)
- for i,s in enumerate(SELECTED):
-  if i==0:continue
-  base=Image.open(OUT/("BASE_V65_FOTO_%02d.jpg"%(i+1))).convert("RGB")
-  base=ImageEnhance.Color(base).enhance(.90)
-  base=base.resize((540,960),Image.Resampling.LANCZOS)
-  inp=OUT/("MODEL_INPUT_%02d.jpg"%(i+1));base.save(inp,quality=96)
-  print("START_REAL_GENERATIVE_FRAME",i+1,s["name"],flush=True)
-  returned=service.predict(handle_file(str(inp)),
-        PROMPT_COMMON+s["prompt"],NEGATIVE,103+i*17,2,1.27,.96,6,112,144,.60,20,"DDIM",api_name="/process")
-  processed=returned[1] if isinstance(returned,(list,tuple)) else returned
-  if isinstance(processed,dict):processed=processed.get("path")
-  if not processed or not Path(processed).is_file():raise RuntimeError("No generative image for "+str(i+1))
-  im=Image.open(processed).convert("RGB")
-  if im.size!=(W,H):raise RuntimeError("Wrong output size "+str(im.size))
-  dest=OUT/("FOTO_AI_RICOSTRUITA_%02d.png"%(i+1))
-  im.save(dest)
-  images[i]=dest
-  print("TRUE_GENERATIVE_RESTORATION_CREATED",i+1,dest.stat().st_size,flush=True)
- if len(images)!=len(SELECTED):raise RuntimeError("Missing generative photographs")
+ # Reuse all FOUR real model-generated photos already successfully created in V68.
+ # Never retry the ZeroGPU quota or pay for inference. Download with cross-host-safe curl.
+ token=os.environ.get("GH_TOKEN","")
+ if not token:raise RuntimeError("GitHub artifact read permission required")
+ artifact_id="12849614550"
+ url="https://api.github.com/repos/GGIANLUCAA/Tra-le-pagine-/actions/artifacts/"+artifact_id+"/zip"
+ tmp=OUT/"V68_FOUR_REAL_GENERATIVE_IMAGES.zip"
+ cmd(["curl","--fail","--location","--retry","3","--connect-timeout","20","--max-time","150",
+      "-H","Authorization: Bearer "+token,"-H","Accept: application/vnd.github+json",url,
+      "-o",str(tmp)],170)
+ images={}
+ with zipfile.ZipFile(tmp) as z:
+  if z.testzip():raise RuntimeError("Generated image archive CRC corruption")
+  for i,s in enumerate(SELECTED):
+   name="FOTO_AI_RICOSTRUITA_%02d.png"%(i+1)
+   im=Image.open(io.BytesIO(z.read(name))).convert("RGB")
+   if im.size!=(W,H):raise RuntimeError("Unexpected restored photo size "+str(im.size))
+   target=OUT/name
+   im.save(target)
+   images[i]=target
+ if len(images)!=4:raise RuntimeError("Missing prior real image-to-image generation")
  report=[]
  for i,s in enumerate(SELECTED):
   photo=Image.open(images[i]).convert("RGB")
   base=Image.open(OUT/("BASE_V65_FOTO_%02d.jpg"%(i+1))).convert("RGB")
   corr=photo_match(base,photo)
-  if corr < .82:raise RuntimeError("Generative still diverges from original scene: "+str(i)+" correlation "+str(corr))
-  report.append({"scene":i+1,"subject":s["name"],"base_sha256":sha(OUT/("BASE_V65_FOTO_%02d.jpg"%(i+1))),
-                 "photo_sha256":sha(images[i]),"geometry_similarity_lowfreq":round(corr,3),
-                 "model":"finegrain/finegrain-image-enhancer","denoise":.64 if i==0 else .60,
-                 "colors_and_facial_microdetail_are_ai_hypotheses":True})
- print("GENERATIVE_SCENE_GEOMETRY_APPROVED_BY_NUMERIC_GATE",report,flush=True)
+  if corr<.82:raise RuntimeError("Photo diverges from historical scene "+str(i+1))
+  report.append({"scene":i+1,"subject":s["name"],
+      "source_photo_sha256":sha(OUT/("BASE_V65_FOTO_%02d.jpg"%(i+1))),
+      "generative_photo_sha256":sha(images[i]),
+      "source_layout_similarity":round(corr,3),
+      "model":"Finegrain image-to-image on free ZeroGPU Space",
+      "denoise_strength":.64 if i==0 else .60,
+      "details_faces_and_writing_are_plausible_AI_interpretations":True})
+ print("FOUR_TRUE_GENERATIVE_PHOTOS_REUSED",json.dumps(report,ensure_ascii=False),flush=True)
  return images,report
 
 def qa_comparison(images):
- board=Image.new("RGB",(5*260,2*500),(18,19,20))
+ board=Image.new("RGB",(len(SELECTED)*260,2*500),(18,19,20))
  draw=ImageDraw.Draw(board)
  for i,s in enumerate(SELECTED):
   before=Image.open(OUT/("BASE_V65_FOTO_%02d.jpg"%(i+1))).convert("RGB")
@@ -148,7 +150,7 @@ def qa_comparison(images):
   board.paste(after,(i*260+5,526))
   draw.text((i*260+9,7),s["name"],fill="white")
   draw.text((i*260+9,508),"RICOSTRUZIONE AI",fill="white")
- path=OUT/"CONFRONTO_REALE_5_SCENE.jpg"
+ path=OUT/"CONFRONTO_REALE_4_SCENE.jpg"
  board.save(path,quality=91)
  return path
 
@@ -227,7 +229,7 @@ def package(srcmeta,posts,images,photos,video_meta,duration,board):
   "rendered_mp4_size":VIDEO.stat().st_size,
   "duration_s":round(duration,2),"resolution":[W,H],
   "real_blackwhite_motion_before_each_ai_photo":True,"photo_hold_static":True,
-  "generation":"Public free Finegrain diffusion-style image-to-image restoration, actual inference, not V65 ESRGAN alone",
+  "generation":"Four actual free Finegrain generative photos, produced in V68 and reused after ZeroGPU cap; not only V65 ESRGAN",
   "model_license_and_external_use_review_needed":True,
   "source_archival_video_pd_or_cc0_declared":True,
   "reconstruction_disclosure":"AI reconstructed facial features, colors, details are plausible, not verifiable identities.",
