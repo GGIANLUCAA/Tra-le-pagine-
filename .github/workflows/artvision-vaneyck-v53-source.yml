@@ -1,0 +1,42 @@
+name: "ArtVision V53 - Van Eyck original-frame source acquisition"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-vaneyck-v53-source.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  asset:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Acquire original framed artwork with independent provenance
+        run: |
+          python - <<'PY'
+          import urllib.request, pathlib, json, hashlib
+          from PIL import Image
+          url="https://upload.wikimedia.org/wikipedia/commons/c/ca/Portrait_of_a_Man_in_a_Turban_%28Jan_van_Eyck%29_with_frame.jpg"
+          path=pathlib.Path("asset")
+          path.mkdir(parents=True,exist_ok=True)
+          req=urllib.request.Request(url,headers={"User-Agent":"ArtVision-Research/1.0 (artwork-source-verification)"})
+          with urllib.request.urlopen(req,timeout=35) as r: data=r.read()
+          assert len(data)>100000, len(data)
+          target=path/"JAN_VAN_EYCK_ORIGINAL_FRAME.jpg"
+          target.write_bytes(data)
+          with Image.open(target) as im:
+            im.verify()
+          with Image.open(target) as im:
+            width,height=im.size
+          assert width>=1920 and height>=2400, (width,height)
+          details={"source":"https://commons.wikimedia.org/wiki/File:Portrait_of_a_Man_in_a_Turban_(Jan_van_Eyck)_with_frame.jpg","file_url":url,"museum":"National Gallery NG222","frame":"Original painted frame, per National Gallery","license":"Wikimedia Commons PD-Art / PDM; check jurisdiction","file_sha256":hashlib.sha256(data).hexdigest(),"width":width,"height":height}
+          (path/"SOURCE.json").write_text(json.dumps(details,indent=2))
+          print("SOURCE_VERIFIED",json.dumps(details),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V53_VANEYCK_AUTHENTIC_FRAME_SOURCE
+          path: asset/
+          if-no-files-found: error
+          retention-days: 30
