@@ -1,3 +1,8 @@
+## Correzione contrattuale — voce non autorizzata (28/10/2026)
+Il video narrato con **Microsoft Edge Neural Diego** è una **prova non conforme** al requisito del format LIBRI: la voce impostata dall'utente resta **Google Gemini Gacrux**. La sostituzione non era stata approvata, anche se segnalata nella consegna. Il video NON è un episodio finale approvato, non è pronto per la pubblicazione e non deve essere importato tra i master approvati. Nessuna variante Edge va generata come fallback automatico.
+
+Il workflow sperimentale `.github/workflows/pifferaio-narrazione-gratuita-20261028.yml` è stato eliminato dopo la contestazione, per impedire nuove esecuzioni. Conservare i materiali validi (immagini, copione, regia in bozza) e usare soltanto l'integrazione Gacrux realmente verificata e con quota gratuita attestata. Se la quota manca, fermare la produzione narrata, riferire il blocco e non sostituire la voce senza consenso esplicito.
+
 ## Aggiornamento 28/10/2026 — montaggio narrato in revisione (successivo all'anteprima)
 È stato effettivamente renderizzato nel contesto ChatGPT un **MP4 narrato verticale** con 16 scene in 174,6 secondi, H.264 720×1280 24 fps + AAC, dimensione circa 12,17 MB, SHA-256 `aed20f7fb594f5bb3cb67521571e0c3de9af167fd6f412fb4523cfdd2e736f0a`. Decodifica completa OK, loudness integrato -17,1 LUFS; ZIP Android (un solo MP4) e pacchetto dossier ZIP verificati con CRC.
 
