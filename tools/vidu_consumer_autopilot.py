@@ -145,6 +145,29 @@ def reserve_once(code):
         raise RuntimeError("Cannot make exclusive durable reservation; NO paid submit")
     return dest
 
+def update_ledger(code, changes):
+    """Persist task ID on GitHub main; no tokens, quotas or signed URLs in public data."""
+    repo = os.getenv("GITHUB_REPOSITORY","")
+    if not os.getenv("GH_TOKEN") or os.getenv("GITHUB_REF_NAME")!="main":
+        raise RuntimeError("Ledger update requires authenticated main-branch workflow")
+    dest=ledger_path(code)
+    got=subprocess.run(["gh","api","repos/"+repo+"/contents/"+dest+"?ref=main"],
+                       capture_output=True,text=True,timeout=30,check=False)
+    if got.returncode:raise RuntimeError("Could not read existing durable attempt marker")
+    raw=json.loads(got.stdout)
+    old=json.loads(base64.b64decode(raw["content"]))
+    if old.get("plan_code")!=code or old.get("attempts_allowed")!=1:
+        raise RuntimeError("Attempt marker fingerprint mismatch")
+    old.update(changes)
+    content=base64.b64encode((json.dumps(old,sort_keys=True)+"\n").encode()).decode()
+    put=subprocess.run([
+        "gh","api","-X","PUT","repos/"+repo+"/contents/"+dest,
+        "-f","message=Update Vidu result receipt "+code,
+        "-f","content="+content,"-f","sha="+raw["sha"],"-f","branch=main"],
+        capture_output=True,text=True,timeout=30,check=False)
+    if put.returncode:raise RuntimeError("Ledger update failed. Do not resubmit.")
+
+
 def run_submit(p,image,code,out):
     cost=quote(p)
     print("APPROVED_SCENE_PRICE_WITHIN_LIMIT:",cost,"credits",flush=True)
@@ -165,6 +188,7 @@ def run_submit(p,image,code,out):
              "provider":"vidu_consumer","reported_cost_credits":cost,
              "status":"rendered_needs_review"}
     (out/"TASK_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+    update_ledger(code,{"status":"submitted_needs_collection","task_id":str(task_id)})
     print("ONE_SUBMISSION_ACCEPTED; receipt saved for read-only collection")
     return str(task_id)
 
@@ -190,6 +214,7 @@ def run_collect(task_id,out):
     with zipfile.ZipFile(dest) as z:
         if z.testzip() is not None:raise RuntimeError("ZIP CRC failure")
     print("REAL_MEDIA_VERIFIED; requires V44 human artistic review:",[x.name for x in files])
+    return {"sha256":sha256(files[0]),"bytes":files[0].stat().st_size,"clip_name":files[0].name}
 
 def main():
     a=argparse.ArgumentParser()
@@ -201,7 +226,14 @@ def main():
     try:
         if args.action=="collect":
             if not args.task_id:raise ValueError("Receipt task ID required")
-            run_collect(args.task_id,Path(args.out))
+            result=run_collect(args.task_id,Path(args.out))
+            if result and args.manifest:
+                code=Path(args.manifest).stem
+                if not re.fullmatch(r"[0-9A-F]{12}",code):
+                    raise ValueError("Expected reserved plan code as ledger filename")
+                update_ledger(code,{"status":"collected_needs_review",
+                                    "mp4_sha256":result["sha256"],
+                                    "mp4_bytes":result["bytes"]})
             return
         if not args.manifest:raise ValueError("Manifest required")
         p,image,code=validate(args.manifest,approve=args.action=="submit")
