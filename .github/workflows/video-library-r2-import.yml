@@ -233,10 +233,17 @@ jobs:
                                   if not any(pathlib.PurePosixPath(m).name==social for m in text_items):
                                       raise ValueError('V55 missing required social attachment: '+social)
                           if text_items:
+                              hashes=set()
                               if len(videos)>1:
-                                  print('WARNING: multiple videos, editorial attachments could be ambiguous',flush=True)
-                                  if v55:raise ValueError('V55 requires one MP4 per release package')
-                              else:
+                                  for member in videos:
+                                      h=hashlib.sha256()
+                                      with z.open(member) as stream:
+                                          while chunk:=stream.read(1048576):h.update(chunk)
+                                      hashes.add(h.hexdigest())
+                                  if len(hashes)>1:
+                                      print('WARNING: multiple different videos; shared editorial documents ambiguous',flush=True)
+                                      if v55:raise ValueError('V55 expects one unique MP4 per release package')
+                              if len(videos)==1 or len(hashes)==1:
                                   video_file=pathlib.PurePosixPath(videos[0]).name
                                   base_name=re.sub(r'[^A-Za-z0-9_(). -]','_',video_file)[:180]
                                   original_fp=wd/base_name
