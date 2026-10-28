@@ -63,8 +63,8 @@
         "h": 33.5,
         "w": 22.8
       },
-      "dossier_4x1_path": null,
-      "dossier_preflight": "pending",
+      "dossier_4x1_path": "docs/productions/2026-10-28-goldfinch-cinema-standard-v55/ARTVISION_4X1_PLAN.json",
+      "dossier_preflight": "local_structural_mirror_passed_official_four_check_pending",
       "variants": {
         "critico_standard": {
           "status": "planned",
@@ -77,9 +77,19 @@
           "verified_this_migration": false
         },
         "cinema_standard": {
-          "status": "planned",
+          "status": "rendered_needs_review",
           "legacy_prior": null,
-          "verified_this_migration": false
+          "verified_this_migration": true,
+          "reported_hash": "537d7f8683bbac8791a8e629916ee206c845d41673eebd3a8dec1bee7575b1f2",
+          "version": "V55",
+          "duration_seconds": 43.666667,
+          "codec": "H264/AAC 1080x1920",
+          "report": "docs/productions/2026-10-28-goldfinch-cinema-standard-v55/PRODUCTION_REPORT.md",
+          "chatgpt_library_path": "/ArtVision/Goldfinch_Cinema_Standard_V55/ARTVISION_GOLDFINCH_CINEMA_STANDARD_V55_REVIEW.mp4",
+          "delivery_status": "package_verified_locally_archive_sync_pending",
+          "human_approval": false,
+          "official_four_check": "pending",
+          "site_verified": false
         },
         "cinema_museum": {
           "status": "rendered_needs_review",
@@ -87,7 +97,9 @@
           "reported_hash": "5b760c609a51acf9c22a5f39aeb90344ea6914b812290c5fc01164376d3c94bd",
           "legacy_version": "V50",
           "legacy_report": "docs/productions/2026-10-28-goldfinch-museum-scale-s01-e01.md",
-          "verified_this_migration": false
+          "verified_this_migration": true,
+          "hash_verified_against_library_original": true,
+          "human_approval": false
         }
       }
     },
