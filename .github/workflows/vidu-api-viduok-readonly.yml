@@ -1,0 +1,29 @@
+name: "Vidu API - verifica credito del pagamento (zero spese)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/vidu-api-viduok-readonly.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  balance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Saldo API reale con GET (nessuna generazione)"
+        shell: bash
+        run: |
+          if [ -z "${VIDU_API_KEY:-}" ]; then
+            echo "::error::VIDUOK e VIDU_API_KEY non configurate nei Repository secrets"
+            exit 2
+          fi
+          python src/vidu_balance_check_v45.py
+          echo "Finished read-only balance check: no Vidu POST, no billable video generation"
