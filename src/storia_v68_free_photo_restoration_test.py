@@ -24,42 +24,26 @@ with zipfile.ZipFile(io.BytesIO(data)) as z:
     print("SOURCE_RENDERED",w,h,"AIINPUT",img.size,flush=True)
 def digest(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 results=[]
-try:
-    print("STARTING_FINEGRAIN_GENERATIVE",flush=True)
-    cl=Client("finegrain/finegrain-image-enhancer",verbose=False)
-    v=cl.predict(handle_file(str(OUT/"BASE_PER_AI.jpg")),
-        "A genuine candid documentary photograph of Paris in 1918, lifelike eyes, skin, clothing seams, fine newspaper details and stonework, preserving exactly the original persons, faces, pose, hats, tabletop, street, and camera view. Highly realistic restored photographic texture, true-to-source perspective, neutral natural skin tones.",
-        "extra people, altered faces, glamour makeup, cartoon, oil painting, overly saturated colors, modern cars, made-up storefront, new pose, inaccurate hands, excessive fake texture, plastic skin",
-        42, 2, 1.05, .95, 5, 112, 144, .30, 15, "DDIM",api_name="/process")
-    print("FINEGRAIN_RETURN",repr(v)[:800],flush=True)
-    # Slider returns pair (original, processed).
-    generated=v[1] if isinstance(v,(list,tuple)) else v
-    if isinstance(generated,dict):generated=generated.get("path")
-    if not generated or not Path(str(generated)).is_file():raise ValueError("Missing generative resulting image")
-    dest=OUT/"FINEGRAIN_PHOTOGRAPHIC_RESTORATION.png"
-    Image.open(generated).convert("RGB").save(dest)
-    results.append({"model":"finegrain", "image":dest.name,"sha256":digest(dest),"size":Image.open(dest).size})
-    print("REAL_FINEGRAIN_COMPLETE",dest.stat().st_size,flush=True)
-except Exception as e:
-    print("FINEGRAIN_NOT_AVAILABLE",type(e).__name__,str(e)[:1200],flush=True)
-try:
-    print("STARTING_CODEFORMER_FACE",flush=True)
-    cl=Client("sczhou/CodeFormer",verbose=False)
-    v=cl.predict(handle_file(str(OUT/"BASE_V65_AUTENTICA.jpg")),
-        False,False,False,2,.76,api_name="/inference")
-    print("CODEFORMER_RETURN",repr(v)[:800],flush=True)
-    generated=v[0] if isinstance(v,(list,tuple)) else v
-    if isinstance(generated,dict):generated=generated.get("path")
-    if not generated or not Path(str(generated)).is_file():raise ValueError("Missing CodeFormer resulting image")
-    dest=OUT/"CODEFORMER_FACE_RESTORATION.png"
-    Image.open(generated).convert("RGB").save(dest)
-    results.append({"model":"CodeFormer","image":dest.name,"sha256":digest(dest),"size":Image.open(dest).size})
-    print("REAL_CODEFORMER_COMPLETE",dest.stat().st_size,flush=True)
-except Exception as e:
-    print("CODEFORMER_NOT_AVAILABLE",type(e).__name__,str(e)[:1200],flush=True)
-(OUT/"RESULTS.json").write_text(json.dumps({"source":"authentic archived Paris 1918 frame transformed using DDColor/RealESRGAN V65",
- "input_sha256":digest(OUT/"BASE_V65_AUTENTICA.jpg"),
- "free_zero_gpu_public_demos_no_paid_tokens":True,
- "results":results,"identity_historical_accuracy_not_certified":True},ensure_ascii=False,indent=2))
-if not results:raise RuntimeError("No genuinely AI-enhanced photograph could be produced; NO fake result.")
-print("V68_ACTUAL_PHOTOGRAPH_RESULTS",json.dumps(results,ensure_ascii=False),flush=True)
+prompt="Sharp true-to-life historic color photograph Paris 1918 newspaper vendor, realistic facial pores and eyes, expressive subtle face details with human natural skin, individual hair strands, natural woven wool and linen fabric, newspaper print texture, limestone architectural details, authentic camera lens optical sharpness, rich midtones, preserve exact existing identities and locations and framing of ALL original people, no reframing, photorealistic restored frame"
+negative="different people, changing face or pose, added objects, invented street, fake signage, glam fashion, big facial changes, plastic skin, waxy skin, painting, illustration, smearing, excessive grain, halo, red magenta cast, double pupils, extra hands"
+cl=Client("finegrain/finegrain-image-enhancer",verbose=False)
+for name,denoise,control,seed in (("PRECISA",.48,1.16,69),("FORTE",.64,1.30,149)):
+    try:
+        print("START_VARIANT",name,denoise,control,flush=True)
+        v=cl.predict(handle_file(str(OUT/"BASE_PER_AI.jpg")),
+            prompt,negative,seed,2,control,.96,6,112,144,denoise,20,"DDIM",api_name="/process")
+        generated=v[1] if isinstance(v,(tuple,list)) else v
+        if isinstance(generated,dict):generated=generated.get("path")
+        if not generated or not Path(str(generated)).is_file():raise ValueError("Missing actual output")
+        dest=OUT/f"FOTO_GENERATIVA_{name}.png"
+        Image.open(generated).convert("RGB").save(dest)
+        results.append({"model":"finegrain","mode":name,"denoise":denoise,"controlnet":control,"image":dest.name,
+                        "sha256":digest(dest),"size":Image.open(dest).size})
+        print("REAL_IMAGE_GENERATED",name,dest.stat().st_size,flush=True)
+    except Exception as e:
+        print("MODEL_UNAVAILABLE",name,type(e).__name__,str(e)[:1200],flush=True)
+(OUT/"RESULTS.json").write_text(json.dumps({"source":"actual CC0 1918 Paris historical video frame, V65 colorization",
+ "base_sha256":digest(OUT/"BASE_V65_AUTENTICA.jpg"),"zero_paid_credits":True,
+ "results":results,"visual_identity_review_required":True},ensure_ascii=False,indent=2))
+if not results:raise RuntimeError("Generative restoration failed; no dummy output.")
+print("V68_IMPROVED_GENERATIVE_RESTORATION",json.dumps(results,ensure_ascii=False),flush=True)
