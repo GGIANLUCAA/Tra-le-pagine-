@@ -148,6 +148,15 @@ class VideoDirectorTests(unittest.TestCase):
             plan = read_json(target)
             self.assertEqual(len(plan["variants"]), 4)
             self.assertFalse(plan["approval"]["user_approval"])
+            for variant in ("critico_standard", "critico_museum",
+                            "cinema_standard", "cinema_museum"):
+                subproject = target.parent / variant / "PROJECT_V13.json"
+                self.assertTrue(subproject.is_file())
+                linked = read_json(subproject)
+                self.assertEqual(linked["serial_mode"], "artvision_4x1")
+                self.assertEqual(linked["artvision_4x1_variant"], variant)
+                self.assertEqual(linked["artvision_4x1_plan"], "../ARTVISION_4X1_PLAN.json")
+                self.assertTrue(any("4x1:" in x for x in check(subproject)["blockers"]))
             check_args = [sys.executable, str(ROOT / "src/video_director_v13.py"),
                           "four-check", "--plan", str(target)]
             self.assertEqual(subprocess.run(check_args, capture_output=True).returncode, 2)
