@@ -138,6 +138,35 @@ class VideoDirectorTests(unittest.TestCase):
             self.assertEqual(len(b["references"]), 1)
             self.assertFalse((root / "next" / "VOCE.wav").exists())
 
+    def test_four_brief_cli_requires_real_emotional_plan_and_never_overwrites(self):
+        with tempfile.TemporaryDirectory() as d:
+            target = Path(d) / "ARTVISION_4X1_PLAN.json"
+            args = [sys.executable, str(ROOT / "src/video_director_v13.py"),
+                    "four-brief", "--topic", "The Goldfinch", "--artist",
+                    "Carel Fabritius", "--out", str(target)]
+            self.assertEqual(subprocess.run(args, capture_output=True).returncode, 0)
+            plan = read_json(target)
+            self.assertEqual(len(plan["variants"]), 4)
+            self.assertFalse(plan["approval"]["user_approval"])
+            check_args = [sys.executable, str(ROOT / "src/video_director_v13.py"),
+                          "four-check", "--plan", str(target)]
+            self.assertEqual(subprocess.run(check_args, capture_output=True).returncode, 2)
+            self.assertNotEqual(subprocess.run(args, capture_output=True).returncode, 0)
+
+    def test_serial_artvision_project_blocks_unchecked_group(self):
+        with tempfile.TemporaryDirectory() as d:
+            from artvision_four_variants_gate import new_plan
+            folder = Path(d) / "art"
+            p = brief("artvision_cinema", "The Goldfinch", folder)
+            p["serial_mode"] = "artvision_4x1"
+            p["artvision_4x1_plan"] = "ARTVISION_4X1_PLAN.json"
+            write_json(folder / "ARTVISION_4X1_PLAN.json",
+                       new_plan("The Goldfinch", "Carel Fabritius"))
+            write_json(folder / "PROJECT_V13.json", p)
+            result = check(folder / "PROJECT_V13.json")
+            self.assertFalse(result["ready"])
+            self.assertTrue(any("4x1:" in x for x in result["blockers"]))
+
     def test_audio_only_cannot_be_registered_as_finished_video(self):
         with tempfile.TemporaryDirectory() as d:
             f = Path(d) / "voice.wav"
