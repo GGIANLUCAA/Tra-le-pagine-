@@ -1,0 +1,507 @@
+{
+  "schema": "artvision-4x1-v1",
+  "topic": "A Sunday on La Grande Jatte—1884",
+  "artist": "Georges Seurat",
+  "research_status": "documented_museum_and_pd_image_music_cc_by; territorial_claims_unchecked",
+  "emotional_direction": {
+    "central_tension": "A luminous Sunday seems alive yet the people are almost motionless; a white child and leashed monkey disrupt a rigid social tableau.",
+    "intended_feeling": [
+      "curiosità",
+      "meraviglia inquieta"
+    ],
+    "evidence_details": [
+      {
+        "id": "child",
+        "location": "centre x=0.455 y=0.49",
+        "observation": "A white-clothed child faces the viewer amid a mostly profile-view crowd.",
+        "significance": "Her direct gaze disrupts the frozen social procession.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "monkey",
+        "location": "lower right x=0.70 y=0.82",
+        "observation": "A small monkey is shown on a leash near the foreground woman.",
+        "significance": "An unexpected animal detail unsettles the formality of the scene.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "couple",
+        "location": "right foreground x=0.84 y=0.46",
+        "observation": "A top-hatted man and a parasol-holding woman stand in profile.",
+        "significance": "Rigid outlines contrast with a supposedly leisurely afternoon.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "red_parasol",
+        "location": "centre x=0.49 y=0.23",
+        "observation": "A red parasol crowns a standing woman in the centre.",
+        "significance": "Its bright shape organizes the eye's route through the crowd.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "river",
+        "location": "left x=0.15 y=0.30",
+        "observation": "Sailboats and water brighten the left edge of the painting.",
+        "significance": "The river implies movement against the rigid human silhouettes.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "fisherwoman",
+        "location": "far left x=0.10 y=0.44",
+        "observation": "A woman in orange holds a fishing rod beside the water.",
+        "significance": "Her silhouette anchors the bank and evokes ordinary leisure.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "dog",
+        "location": "lower centre x=0.45 y=0.74",
+        "observation": "A dark dog sniffs the grass in front of the crowd.",
+        "significance": "The everyday animal gesture contrasts with the staged poses.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "painted_border",
+        "location": "outer edge x=0.02 y=0.02",
+        "observation": "Small colored touches form a narrow painted border.",
+        "significance": "The later border shows how color and surface frame the scene.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg",
+        "claim_type": "documented"
+      }
+    ],
+    "reveal_order": [
+      "child",
+      "monkey",
+      "couple",
+      "red_parasol",
+      "river",
+      "fisherwoman",
+      "dog",
+      "painted_border"
+    ],
+    "opening_hook": "The white child meets our gaze before a leashed monkey creates a surprising second reveal.",
+    "closing_payoff": "The entire monumental canvas returns after its small details have changed the viewer's reading.",
+    "wow_justification": "A genuine monkey and the white child's direct gaze expose the tension between natural life and the stillness of the social scene."
+  },
+  "variants": {
+    "critico_standard": {
+      "format": "critico",
+      "mode": "standard",
+      "status": "blocked",
+      "variation_reason": "Italian critical narration synchronized with original artwork closeups, no museum entrance.",
+      "scenes": [
+        {
+          "kind": "detail",
+          "detail_id": "child",
+          "purpose": "Show the authentic child detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2,
+          "spoken_line": "Nel mezzo della folla, una bambina vestita di bianco ci guarda: è una piccola interruzione in un mondo di profili."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "monkey",
+          "purpose": "Show the authentic monkey detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2,
+          "spoken_line": "Accanto alla figura di destra compare una scimmietta al guinzaglio, un dettaglio sorprendente che non va caricato di significati inventati."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "couple",
+          "purpose": "Show the authentic couple detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.4,
+          "spoken_line": "La coppia in primo piano sembra ritagliata nella luce. Seurat trasforma una passeggiata in una processione di figure."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "red_parasol",
+          "purpose": "Show the authentic red_parasol detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2,
+          "spoken_line": "Il parasole rosso guida lo sguardo tra corpi e alberi. Il colore organizza la composizione, non è soltanto atmosfera."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "river",
+          "purpose": "Show the authentic river detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5,
+          "spoken_line": "A sinistra, le barche sul fiume promettono movimento; sulla riva le persone sembrano trattenere il respiro."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "fisherwoman",
+          "purpose": "Show the authentic fisherwoman detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2,
+          "spoken_line": "La donna con la canna da pesca ricorda che questa è una scena di svago lungo la Senna."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "dog",
+          "purpose": "Show the authentic dog detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5,
+          "spoken_line": "Un cane nero annusa l'erba: in mezzo a pose ferme, il suo gesto è una nota di vita quotidiana."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "painted_border",
+          "purpose": "Show the authentic painted_border detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5,
+          "spoken_line": "Anche il bordo dipinto, aggiunto in seguito, è composto da piccoli tocchi: da vicino diventano materia, da lontano luce."
+        }
+      ],
+      "opening_0_7": {
+        "first_frame_title_artist": "A SUNDAY ON LA GRANDE JATTE—1884 / GEORGES SEURAT",
+        "first_frame_visual": "Authentic white-clothed child and red parasol, not an empty museum corridor.",
+        "first_3_seconds_hook": "The white child faces the viewer within 1–3 seconds, disrupting the rigid crowd.",
+        "seconds_3_to_7_reveal": "Reveal the real leashed monkey beside the foreground couple by seven seconds.",
+        "detail_id": "child",
+        "mobile_composition_reason": "White child remains above the title banner and visible on a vertical phone screen.",
+        "audio_or_voice_cue": "Verified natural Google Gacrux must speak the child line at the opening; currently unavailable.",
+        "qa_status": "pending_visual_review"
+      },
+      "voice_status": "blocked_google_gacrux_not_verified"
+    },
+    "critico_museum": {
+      "format": "critico",
+      "mode": "museum",
+      "status": "blocked",
+      "variation_reason": "Identical Italian critical narration in a reconstructed physically scaled museum entrance and exit.",
+      "scenes": [
+        {
+          "kind": "gallery_entry",
+          "purpose": "Establish monumental physical scale while the real white child is visible immediately.",
+          "movement": "Short POV advance toward an already visible framed painting.",
+          "emotional_effect": "Scale surprise and curiosity.",
+          "duration_seconds": 3.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "child",
+          "purpose": "Show the authentic child detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2,
+          "spoken_line": "Nel mezzo della folla, una bambina vestita di bianco ci guarda: è una piccola interruzione in un mondo di profili."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "monkey",
+          "purpose": "Show the authentic monkey detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2,
+          "spoken_line": "Accanto alla figura di destra compare una scimmietta al guinzaglio, un dettaglio sorprendente che non va caricato di significati inventati."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "couple",
+          "purpose": "Show the authentic couple detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.4,
+          "spoken_line": "La coppia in primo piano sembra ritagliata nella luce. Seurat trasforma una passeggiata in una processione di figure."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "red_parasol",
+          "purpose": "Show the authentic red_parasol detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2,
+          "spoken_line": "Il parasole rosso guida lo sguardo tra corpi e alberi. Il colore organizza la composizione, non è soltanto atmosfera."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "river",
+          "purpose": "Show the authentic river detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5,
+          "spoken_line": "A sinistra, le barche sul fiume promettono movimento; sulla riva le persone sembrano trattenere il respiro."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "fisherwoman",
+          "purpose": "Show the authentic fisherwoman detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2,
+          "spoken_line": "La donna con la canna da pesca ricorda che questa è una scena di svago lungo la Senna."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "dog",
+          "purpose": "Show the authentic dog detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5,
+          "spoken_line": "Un cane nero annusa l'erba: in mezzo a pose ferme, il suo gesto è una nota di vita quotidiana."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "painted_border",
+          "purpose": "Show the authentic painted_border detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5,
+          "spoken_line": "Anche il bordo dipinto, aggiunto in seguito, è composto da piccoli tocchi: da vicino diventano materia, da lontano luce."
+        },
+        {
+          "kind": "gallery_exit",
+          "purpose": "Return to the exact same gallery with a physically credible 3.08-metre-wide canvas.",
+          "movement": "POV retreat to the identical gallery axis and frame.",
+          "emotional_effect": "Reflective closure and restored scale.",
+          "duration_seconds": 4
+        }
+      ],
+      "opening_0_7": {
+        "first_frame_title_artist": "A SUNDAY ON LA GRANDE JATTE—1884 / GEORGES SEURAT",
+        "first_frame_visual": "Authentic white-clothed child and red parasol, not an empty museum corridor.",
+        "first_3_seconds_hook": "The white child faces the viewer within 1–3 seconds, disrupting the rigid crowd.",
+        "seconds_3_to_7_reveal": "Reveal the real leashed monkey beside the foreground couple by seven seconds.",
+        "detail_id": "child",
+        "mobile_composition_reason": "White child remains above the title banner and visible on a vertical phone screen.",
+        "audio_or_voice_cue": "Verified natural Google Gacrux must speak the child line at the opening; currently unavailable.",
+        "qa_status": "pending_visual_review"
+      },
+      "museum": {
+        "width_cm": 308.1,
+        "height_cm": 207.5,
+        "dimensions_source": "https://www.artic.edu/artworks/27992/a-sunday-on-la-grande-jatte-1884",
+        "frame_status": "Original frame not independently verified; reconstructed museum frame declared illustrative.",
+        "gallery_id": "seurat_v51_reconstructed_gallery_20261028",
+        "entrance_plan": "Canvas physically scaled to 3.08m width and 2.075m height relative to a 1.7m visitor, already visible at first second.",
+        "exit_same_gallery_plan": "Return to the identical gallery and camera axis, no edge stretch or ghosting.",
+        "scene_is_reconstruction": true
+      },
+      "voice_status": "blocked_google_gacrux_not_verified"
+    },
+    "cinema_standard": {
+      "format": "cinema",
+      "mode": "standard",
+      "status": "rendered_needs_review",
+      "variation_reason": "Wordless painting-first sequence using original details, not the V51 gallery footage.",
+      "scenes": [
+        {
+          "kind": "detail",
+          "detail_id": "child",
+          "purpose": "Show the authentic child detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "monkey",
+          "purpose": "Show the authentic monkey detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "couple",
+          "purpose": "Show the authentic couple detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.4
+        },
+        {
+          "kind": "detail",
+          "detail_id": "red_parasol",
+          "purpose": "Show the authentic red_parasol detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "river",
+          "purpose": "Show the authentic river detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "fisherwoman",
+          "purpose": "Show the authentic fisherwoman detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "dog",
+          "purpose": "Show the authentic dog detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "painted_border",
+          "purpose": "Show the authentic painted_border detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5
+        }
+      ],
+      "opening_0_7": {
+        "first_frame_title_artist": "A SUNDAY ON LA GRANDE JATTE—1884 / GEORGES SEURAT",
+        "first_frame_visual": "Authentic white-clothed child and red parasol, not an empty museum corridor.",
+        "first_3_seconds_hook": "The white child faces the viewer within 1–3 seconds, disrupting the rigid crowd.",
+        "seconds_3_to_7_reveal": "Reveal the real leashed monkey beside the foreground couple by seven seconds.",
+        "detail_id": "child",
+        "mobile_composition_reason": "White child remains above the title banner and visible on a vertical phone screen.",
+        "audio_or_voice_cue": "Licensed Water Lily instrumental begins with a real audible signal, with a cut to the monkey on a phrase.",
+        "qa_status": "pending_visual_review"
+      },
+      "rendered_mp4_sha256": "fec7ec7d2c64460d3737f92eeca99fd0d521c775ab2dfda39502293dfa683789"
+    },
+    "cinema_museum": {
+      "format": "cinema",
+      "mode": "museum",
+      "status": "rendered_needs_review",
+      "variation_reason": "Wordless physically scaled gallery POV followed by painting details and return to same room.",
+      "scenes": [
+        {
+          "kind": "gallery_entry",
+          "purpose": "Establish monumental physical scale while the real white child is visible immediately.",
+          "movement": "Short POV advance toward an already visible framed painting.",
+          "emotional_effect": "Scale surprise and curiosity.",
+          "duration_seconds": 3.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "child",
+          "purpose": "Show the authentic child detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "monkey",
+          "purpose": "Show the authentic monkey detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "couple",
+          "purpose": "Show the authentic couple detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.4
+        },
+        {
+          "kind": "detail",
+          "detail_id": "red_parasol",
+          "purpose": "Show the authentic red_parasol detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "river",
+          "purpose": "Show the authentic river detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "fisherwoman",
+          "purpose": "Show the authentic fisherwoman detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "dog",
+          "purpose": "Show the authentic dog detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "painted_border",
+          "purpose": "Show the authentic painted_border detail and advance the contrast between apparent leisure and formal stillness.",
+          "movement": "Restrained optical framing of the actual painting, no generated character action.",
+          "emotional_effect": "Curiosity develops into reflective astonishment.",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "gallery_exit",
+          "purpose": "Return to the exact same gallery with a physically credible 3.08-metre-wide canvas.",
+          "movement": "POV retreat to the identical gallery axis and frame.",
+          "emotional_effect": "Reflective closure and restored scale.",
+          "duration_seconds": 4
+        }
+      ],
+      "opening_0_7": {
+        "first_frame_title_artist": "A SUNDAY ON LA GRANDE JATTE—1884 / GEORGES SEURAT",
+        "first_frame_visual": "Authentic white-clothed child and red parasol, not an empty museum corridor.",
+        "first_3_seconds_hook": "The white child faces the viewer within 1–3 seconds, disrupting the rigid crowd.",
+        "seconds_3_to_7_reveal": "Reveal the real leashed monkey beside the foreground couple by seven seconds.",
+        "detail_id": "child",
+        "mobile_composition_reason": "White child remains above the title banner and visible on a vertical phone screen.",
+        "audio_or_voice_cue": "Licensed Water Lily instrumental begins with a real audible signal, with a cut to the monkey on a phrase.",
+        "qa_status": "pending_visual_review"
+      },
+      "museum": {
+        "width_cm": 308.1,
+        "height_cm": 207.5,
+        "dimensions_source": "https://www.artic.edu/artworks/27992/a-sunday-on-la-grande-jatte-1884",
+        "frame_status": "Original frame not independently verified; reconstructed museum frame declared illustrative.",
+        "gallery_id": "seurat_v51_reconstructed_gallery_20261028",
+        "entrance_plan": "Canvas physically scaled to 3.08m width and 2.075m height relative to a 1.7m visitor, already visible at first second.",
+        "exit_same_gallery_plan": "Return to the identical gallery and camera axis, no edge stretch or ghosting.",
+        "scene_is_reconstruction": true
+      }
+    }
+  },
+  "learning": {
+    "previous_reference": "Seurat V51 Museum existing, Cyclops and Hiroshige V46 references",
+    "experiment_variable": "Start on painting-specific child rather than a generic museum-wide shot.",
+    "expected_improvement": "Meaningful authentic subject in 0–3 seconds, monkey discovery in 3–7 seconds.",
+    "post_render_review": "pending_full_speed_watch_and_listen"
+  },
+  "approval": {
+    "artistic_status": "pending",
+    "user_approval": false
+  },
+  "sources": {
+    "museum": "https://www.artic.edu/artworks/27992/a-sunday-on-la-grande-jatte-1884",
+    "public_domain_image": "https://commons.wikimedia.org/wiki/File:A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg",
+    "image_sha256": "7e8f6f4fb2f7aaa255342603c2e92003986afc78296fd5d18ae1bf553c824e84",
+    "music": "Water Lily — Kevin MacLeod, CC BY 4.0, ISRC USUAN1400035",
+    "music_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6"
+  },
+  "render_note": "The Cinema Standard master exists but is not artistically approved."
+}
