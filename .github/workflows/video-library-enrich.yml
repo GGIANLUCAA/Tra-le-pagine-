@@ -24,8 +24,10 @@ jobs:
     steps:
       - name: Install video tools
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
           python3 -m pip -q install requests
       - name: Publish website, posters and video facts
         env:
