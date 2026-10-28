@@ -1,0 +1,71 @@
+name: "ArtVision S01 E01 • The Goldfinch • museum real scale • zero paid APIs"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-goldfinch-museum-s01-20261028.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-museum-scale-s01-e01-goldfinch
+  cancel-in-progress: false
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source local renderer (no paid API)
+        run: |
+          set -euo pipefail
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<14" "numpy>=1.26,<3" "requests>=2.31,<3"
+          python -m py_compile scripts/artvision_goldfinch_museum_s01_20261028.py
+      - name: Run ArtVision Cinema with authentic source, physical scale and V28 posts
+        run: |
+          set -euo pipefail
+          python scripts/artvision_goldfinch_museum_s01_20261028.py
+      - name: Independent MP4 / V28 / ZIP QA, never Gold Master
+        run: |
+          set -euo pipefail
+          dir="output/artvision-goldfinch-s01/fabritius_goldfinch_museum_s01_20261028"
+          film="$dir/VIDEO_MASTER.mp4"
+          zip="output/artvision-goldfinch-s01/ARTVISION_GOLDFINCH_MUSEUM_S01_COMPLETE.zip"
+          test -s "$film" && test -s "$dir/COPERTINA.jpg" && test -s "$zip"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$film" -f null -
+          python - "$film" "$zip" "$dir" <<'PY'
+          import sys,json,subprocess,zipfile,pathlib,hashlib
+          f,z,d=sys.argv[1:]
+          p=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration,size:stream=codec_type,codec_name,width,height","-of","json",f]))
+          assert 45<float(p["format"]["duration"])<70
+          assert any(s.get("codec_name")=="h264" and s.get("width")==1080 and s.get("height")==1920 for s in p["streams"])
+          assert any(s.get("codec_name")=="aac" for s in p["streams"])
+          with zipfile.ZipFile(z) as archive:
+              assert archive.testzip() is None
+              assert archive.getinfo("VIDEO_MASTER.mp4").file_size==pathlib.Path(f).stat().st_size
+          for platform in ["FACEBOOK","INSTAGRAM","TIKTOK","YOUTUBE"]:
+              txt=pathlib.Path(d,f"POST_{platform}.txt").read_text(encoding="utf8")
+              assert "The Goldfinch" in txt and "Musica:" in txt and "CC BY 4.0" in txt
+          qa=json.loads(pathlib.Path(d,"TECHNICAL_QA_V30.json").read_text())
+          assert qa["v44_status"]=="rendered_needs_review"
+          assert qa["first_frame_title"]=="THE GOLDFINCH"
+          assert qa["first_frame_artist"]=="CAREL FABRITIUS"
+          print("INDEPENDENT_QA_PASS",hashlib.sha256(pathlib.Path(f).read_bytes()).hexdigest(),flush=True)
+          PY
+      - name: Save real files for Android (not social publication)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_S01_E01_GOLDFINCH_REVIEW_ONLY
+          path: |
+            output/artvision-goldfinch-s01/fabritius_goldfinch_museum_s01_20261028/VIDEO_MASTER.mp4
+            output/artvision-goldfinch-s01/fabritius_goldfinch_museum_s01_20261028/COPERTINA.jpg
+            output/artvision-goldfinch-s01/fabritius_goldfinch_museum_s01_20261028/QA_FIRST_FRAME.jpg
+            output/artvision-goldfinch-s01/fabritius_goldfinch_museum_s01_20261028/QA_CONTACT_SHEET.jpg
+            output/artvision-goldfinch-s01/ARTVISION_GOLDFINCH_MUSEUM_S01_COMPLETE.zip
+          retention-days: 60
+          if-no-files-found: error
