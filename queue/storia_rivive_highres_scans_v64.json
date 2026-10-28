@@ -1,0 +1,79 @@
+{
+  "version": "V64_2026_10_28",
+  "purpose": "Higher-native-pixel CC0/PD archival footage for realistic faithful photo freeze; no video published until provenance rights and face-size audit",
+  "top_candidate": {
+    "subject": "San Francisco 1906 — A Trip Down Market Street",
+    "source_file_page": "https://commons.wikimedia.org/wiki/File:A_Trip_Down_Market_Street_(1906).webm",
+    "original_archive": "https://archive.org/details/MarketStreet19064KScan20181016",
+    "creator": "Miles Brothers",
+    "original_filming_year": 1906,
+    "digital_scan_year": 2018,
+    "original_support": "35 mm film",
+    "file_dimensions_native_scan_px": [
+      3260,
+      2420
+    ],
+    "landscape_image_crop_9_16_portrait_px": [
+      1361,
+      2420
+    ],
+    "source_file_size_approx": "3.2GB",
+    "licensed_as": "public domain in United States according to file page",
+    "license_type_for_v64": "PUBLIC_DOMAIN",
+    "rights_in_italy_legal_review_status": "PENDING",
+    "has_actual_native_scan_not_neural_upscale": true,
+    "verified_single_file_page": true,
+    "downloaded_and_decoded_full_source": false,
+    "face_size_reviewed": false,
+    "shots_selected_and_timings_documented": false,
+    "source_admissibility": "CANDIDATE_NOT_APPROVED",
+    "editorial_hook": "Actual filmed crowded street only days before the San Francisco earthquake, crowds, horse carts and people; prioritize close passes on camera (not only empty city wides)",
+    "reason": "High original scan pixel density could preserve more real fine detail for original 9:16 crop; needs actual frame inspection and source/derivative rights verification",
+    "source_citations": [
+      "https://commons.wikimedia.org/wiki/File:A_Trip_Down_Market_Street_(1906).webm",
+      "https://blogs.loc.gov/now-see-hear/2026/04/a-tale-of-two-films-the-san-francisco-earthquake-1906-before-and-after/"
+    ]
+  },
+  "alternates": [
+    {
+      "subject": "A Trip Down Market Street (Library of Congress Print)",
+      "source_file_page": "https://commons.wikimedia.org/wiki/File:A_Trip_Down_Market_Street_(Library_of_Congress_Print).webm",
+      "source_resolution_px": [
+        1440,
+        1080
+      ],
+      "source_size_approx": "766.64MB",
+      "rights_in_italy": "PENDING",
+      "candidate_not_approved": true
+    },
+    {
+      "subject": "A Trip down market street (older digital file)",
+      "source_file_page": "https://commons.wikimedia.org/wiki/File:A_Trip_down_market_street_(1906).webm",
+      "source_resolution_px": [
+        1440,
+        1072
+      ],
+      "source_size_approx": "121.91MB",
+      "rights_in_italy": "PENDING",
+      "candidate_not_approved": true
+    }
+  ],
+  "exclude": [
+    {
+      "subject": "Neural upscaled/colorized 2020 3840x2160 third-party remix",
+      "source_file_page": "https://commons.wikimedia.org/wiki/File:(4k,_60_fps)_San_Francisco,_a_Trip_down_Market_Street,_April_14,_1906.webm",
+      "reason": "Neural upscaling not an original film scan, publication rights of added restoration/audio need separate audit, not a direct high-quality documentary source; owner wants verified PD original."
+    }
+  ],
+  "production_gate": [
+    "Verify single file source PD/CC0 in Italy and originating country",
+    "Inspect actual downloaded 35mm scan resolution—not webplayer transcode",
+    "Review facial visibility and 9:16 crops over entire film; reject far-away tiny faces",
+    "Multi-frame fusion for actual optical detail",
+    "Color-restoration plus source-constrained image-to-image preserving person count, identity geometry, clothes and environment",
+    "Manual 100% mobile close-up QA on eyes, skin, hands and background",
+    "Only then V61 freeze reveal 20-30s and V55 release, Android download, site archival"
+  ],
+  "paid_GPU_used": false,
+  "video_generated": false
+}
