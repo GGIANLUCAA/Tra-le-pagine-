@@ -5,6 +5,9 @@ on:
     paths:
       - '.github/workflows/video-library-enrich.yml'
       - 'site/video-library-v2.html'
+      - 'src/video_library_dossier_sync_v55.py'
+      - 'tests/test_video_library_dossier_sync_v55.py'
+      - 'docs/productions/2026-10-28-wright-cinema-museum-v55/ARCHIVE_STAGING_V55.json'
   schedule:
     - cron: '27 */3 * * *'
   workflow_dispatch:
@@ -131,3 +134,18 @@ jobs:
           print('SUMMARY',{'processed':count,'failed':failures,'remaining':len(assets)-len(metadata),'metadata':len(metadata)},flush=True)
           if failures and not count:sys.exit(1)
           PY
+
+      - name: Checkout for V55 archival validation
+        uses: actions/checkout@v4
+      - name: Validate V55 dossier sync, offline only
+        run: |
+          python3 -m unittest tests/test_video_library_dossier_sync_v55.py -v
+          python3 src/video_library_dossier_sync_v55.py --dry-run docs/productions/2026-10-28-wright-cinema-museum-v55/ARCHIVE_STAGING_V55.json
+      - name: Sync genuine V55 dossier attachments, never video or approval
+        continue-on-error: true
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python3 src/video_library_dossier_sync_v55.py docs/productions/2026-10-28-wright-cinema-museum-v55/ARCHIVE_STAGING_V55.json
+          echo 'V55: text dossier uploaded or safely preserved; cover and signed full ZIP still require individual verification' >> "$GITHUB_STEP_SUMMARY"
