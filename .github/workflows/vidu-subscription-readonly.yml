@@ -24,6 +24,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Validate adapter syntax before any account access
+        run: python -m py_compile tools/vidu_subscription_probe.py
       - name: Check consumer Vidu token without payment
         id: token
         shell: bash
