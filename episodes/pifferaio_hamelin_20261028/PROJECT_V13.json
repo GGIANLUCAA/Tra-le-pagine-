@@ -1,0 +1,45 @@
+{
+  "schema": "project-v13-draft",
+  "format": "libri",
+  "status": "assets_pending_voice_free_quota_unconfirmed",
+  "title": "Il pifferaio di Hamelin",
+  "author": "Robert Browning",
+  "editorial_contract": {
+    "requested_format": "libri",
+    "paid_video_api_calls_allowed": false,
+    "social_publish": false,
+    "voice": "Google Gemini Gacrux only after confirmed free quota"
+  },
+  "editorial_plan": {
+    "hook": "La montagna si richiuse dietro l'ultimo bambino. A Hamelin nessuno capiva ancora come una semplice melodia avesse portato via un'intera generazione.",
+    "story_beats": [
+      "Quando la montagna si richiuse",
+      "La città sul Weser",
+      "L'invasione",
+      "Il sindaco in difficoltà",
+      "Lo straniero",
+      "La promessa",
+      "Le prime note",
+      "Il corteo dei topi",
+      "La festa",
+      "Il tradimento",
+      "L'avvertimento",
+      "La seconda melodia",
+      "I bambini lo seguono",
+      "Verso la montagna",
+      "Il bambino rimasto",
+      "La memoria di Hamelin"
+    ],
+    "narrative_design": {
+      "image_count_reason": "16 narrative beats: 2 melodies, broken promise, departure and aftermath; candidate pages must be reviewed, not blindly mapped.",
+      "pace_reason": "Flashforward, accelerating rat invasion, pause at refusal, contrasting second melody, still ending."
+    },
+    "media_sourcing": {
+      "policy_id": "media-priority-v33",
+      "status": "pending real images and review"
+    }
+  },
+  "sources": [
+    "# Il pifferaio di Hamelin — fonti e diritti\n\nOpera originale: Robert Browning, *The Pied Piper of Hamelin*, pubblicata nel 1842; autore morto nel 1889. Edizione illustrata di Kate Greenaway (1888), illustratrice morta nel 1901. Le opere originali sono di pubblico dominio in Italia secondo il termine ordinario vita+70; controllare eventuali diritti specifici delle riproduzioni e della giurisdizione di distribuzione.\n\nTesto e immagini originali: https://www.gutenberg.org/ebooks/18343 e https://www.gutenberg.org/cache/epub/18343/pg18343-images.html ; copia digitalizzata Library of Congress https://www.loc.gov/item/38027626/ ; scansione PD https://commons.wikimedia.org/wiki/File:Robert_Browning,_Kate_Greenaway_-_The_Pied_Piper_of_Hamelin_-_1888_-_Frederick_Warne_%26_Co.djvu .\n\nCopione italiano: riscrittura originale basata sulla trama, NON una traduzione moderna copiata. Ogni immagine deve conservare URL sorgente, SHA256, pagina, dimensioni, verifica visiva e motivo dell'associazione. La selezione per pagina è solo un CANDIDATO e non prova la corrispondenza artistica. Non usare immagini di altri illustratori nella stessa sequenza.\n\nMusica: prevista composizione originale generata localmente con codice (nessun sample/registrazione terza); crediti e file audio solo dopo generazione reale. Nessun pagamento o pubblicazione social autorizzata.\n"
+  ]
+}
