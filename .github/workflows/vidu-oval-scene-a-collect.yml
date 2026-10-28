@@ -1,0 +1,70 @@
+name: "Vidu - recupera automaticamente la clip reale Scena A"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/vidu-oval-scene-a-collect.yml"]
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: vidu-oval-scene-a-collect-only
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Load already accepted Vidu job and retrieve-only (never submit)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          sys.path.insert(0,"src")
+          from i2v_budget_v41 import collect
+          ledger=Path("queue/vidu_api_attempts/OVAL_A_BC3BD42AC11A.json")
+          status=json.loads(ledger.read_text())
+          if status["status"]=="collected_needs_review":
+              print("Video already collected; never generate again")
+              raise SystemExit(0)
+          assert status["code"]=="BC3BD42AC11A"
+          assert status["task_id"]=="1013025588866215936"
+          assert status["status"]=="submitted_needs_collection"
+          assert os.environ.get("VIDU_API_KEY"),"Vidu API key not configured"
+          out=Path("output/vidu-oval-A")
+          out.mkdir(parents=True,exist_ok=True)
+          (out/"VIDU_TASK.json").write_text(json.dumps({"task_id":status["task_id"],"status":"created"}))
+          result=collect(out,os.environ["VIDU_API_KEY"])
+          print("PROVIDER_STATE="+str(result.get("status")))
+          if (out/"I2V_V41_DA_REVISIONARE.mp4").exists():
+              import hashlib,base64,subprocess
+              vid=out/"I2V_V41_DA_REVISIONARE.mp4"
+              sha=hashlib.sha256(vid.read_bytes()).hexdigest()
+              ledger_state=dict(status,status="collected_needs_review",sha256=sha,bytes=vid.stat().st_size)
+              api="repos/"+os.environ["GITHUB_REPOSITORY"]+"/contents/"+str(ledger)
+              ref=json.loads(subprocess.check_output(["gh","api",api+"?ref=main"]))
+              data=base64.b64encode((json.dumps(ledger_state,sort_keys=True)+"\n").encode()).decode()
+              subprocess.run(["gh","api","-X","PUT",api,"-f","message=Mark Vidu oval scene A real MP4 collected",
+                              "-f","content="+data,"-f","sha="+ref["sha"],"-f","branch=main"],
+                             check=True,stdout=subprocess.DEVNULL)
+              print("REAL_MP4_VERIFIED_SHA256="+sha)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: VIDU_OVAL_SCENA_A_MP4_VERIFICATO_DA_REVISIONARE
+          path: |
+            output/vidu-oval-A/VIDU_TASK.json
+            output/vidu-oval-A/I2V_V41_DA_REVISIONARE.mp4
+            output/vidu-oval-A/I2V_V41_ANDROID.zip
+          retention-days: 14
+          if-no-files-found: warn
