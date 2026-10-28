@@ -521,5 +521,49 @@
     "paired_reference": "cyclops_museum_immersion_edgefixed_20261027",
     "user_feedback": "Proporzioni ben studiate, da usare come modello; confermato 28/10/2026",
     "quality_note": "user approved scale and direction, not blanket Gold Master approval"
+  },
+  "museum_immersion_frame_quality": {
+    "approved_at": "2026-10-28",
+    "status": "permanent_rule_from_explicit_user_feedback",
+    "scope": [
+      "artvision_cinema",
+      "artvision_critico",
+      "artvision_collection_when_using_museum_pov"
+    ],
+    "reference_guide": "docs/REGOLE_ATTIVE.md > Cornici museali di alta qualità",
+    "cinematic_reference": "cyclops_museum_immersion_edgefixed_20261027",
+    "scale_reference": "hiroshige_museum_scale_20261027",
+    "required": [
+      "choose_frame_specific_to_artwork_era_medium_scale",
+      "verify_actual_frame_first_or_label_scenic_reconstruction",
+      "realistic_3d_frame_profiles_material_light_contact_shadow",
+      "painting_recessed_behind_inner_lip_not_pasted",
+      "record_verified_artwork_dimensions_cm_and_separately_frame_dimensions_or_estimates",
+      "keep_ratio_and_real_world_gallery_human_scale",
+      "respect_authentic_artwork_image_and_original_viewing_details",
+      "compare_approved_references_if_accessible_and_note_if_not"
+    ],
+    "forbidden": [
+      "generic_identical_frame_every_episode",
+      "arbitrarily_ornate_or_gaudy_frame",
+      "flat_2d_border_masquerading_as_3d",
+      "painting_pasted_over_frame",
+      "artwork_aspect_distortion",
+      "unverified_frame_claimed_authentic",
+      "stretched_edge_pixels",
+      "ghosting",
+      "hard_entry_exit_discontinuity"
+    ],
+    "blocking_visual_qa": [
+      "phone_size_opening_view",
+      "all_four_mitred_corners_and_moulding",
+      "frame_lip_recess_contact_shadows",
+      "scale_vs_adult_and_architecture",
+      "no_reflections_obscuring_important_details",
+      "intermediate_frames_entry_exit_and_borders",
+      "separate_authenticity_rights_measurements_in_recipe",
+      "artistic_review_not_inferred_from_ffprobe"
+    ],
+    "note": "User explicitly requested much better high-value museum frames, while preserving true artwork proportions. Does not require museum effect for all videos or approve outputs automatically."
   }
 }
