@@ -1,0 +1,101 @@
+{
+  "series_id": "artvision_museum_immersion_real_scale_s01",
+  "created_at": "2026-10-28",
+  "requested_by_user": "Avviare nuova produzione in serie dopo approvazione di The Cyclops SENZA_STRISCE e Hiroshige Museum Scale",
+  "intent": "Tre nuovi episodi con scala fisica rigorosa, miniature/metri/monumentale; Cinema, Critico, Cinema, e regie differenti",
+  "status": "queued_with_existing_artvision_automation_run_requested",
+  "no_external_spend": true,
+  "no_auto_publish": true,
+  "existing_automation_id": "6adca191603c8191a90d5190901cd034",
+  "references": [
+    {
+      "title": "The Cyclops — corrected",
+      "url": "https://drive.google.com/file/d/1w9mb1N5hrGAaB870JANHoKk98MiibtpW/view",
+      "lesson": "Cornice incassata, ombre di contatto, no pixel streaks"
+    },
+    {
+      "title": "Hiroshige — Museum Scale",
+      "url": "https://drive.google.com/file/d/14X8_TObXEijGlBg8HuyR6ITTlPjJk0dA/view",
+      "lesson": "Scala 35 cm credibile accanto a visitatore e stanza"
+    }
+  ],
+  "candidate_comparison": {
+    "selection_mode": "research_selected",
+    "audience_signal": {
+      "status": "unavailable",
+      "reason": "Nessuna metrica comparabile verificata nel turno; non si inventano indicatori di viralità."
+    },
+    "selection_reason": "Tre scale di opere molto distinte, tre storie universali, musei e dimensioni verificati, possibilità di un confronto visivo narrativo.",
+    "candidates_considered": 3
+  },
+  "episodes": [
+    {
+      "episode": 1,
+      "status": "queued_asset_acquisition_required",
+      "format": "artvision_cinema",
+      "artist": "Carel Fabritius",
+      "work": "The Goldfinch",
+      "year": 1654,
+      "museum": "Mauritshuis, The Hague, inv. 605, Room 14",
+      "artwork_h_cm": 33.5,
+      "artwork_w_cm": 22.8,
+      "verified_museum_source": "https://www.mauritshuis.nl/en/our-collection/artworks/605-the-goldfinch",
+      "proposed_art_image": "https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
+      "image_status": "Commons PD-Art record available; actual full-resolution bytes not yet acquired or validated",
+      "audience_reason": "Un uccellino quasi vivo e incatenato: un quadro minuscolo che incuriosisce con la pittura illusionistica.",
+      "museum_camera": "Figura umana alta circa 1.7 m, tavoletta piccola visibile a parete, avvicinamento trattenuto, close-up becco/occhio/catenella, ritorno.",
+      "artwork_frame": "real frame not authenticated; if reconstructed disclose as scenic, ensure correct aperture and proportions",
+      "narrative_style": "sospeso, dettagli tattili, nessun eccesso horror",
+      "music": "strumentale CC BY specifico da selezionare e verificare per registrazione"
+    },
+    {
+      "episode": 2,
+      "status": "queued_asset_and_voice_verification_required",
+      "format": "artvision_critico",
+      "artist": "Joseph Mallord William Turner",
+      "work": "The Fighting Temeraire tugged to her last berth to be broken up, 1838",
+      "year": 1839,
+      "museum": "National Gallery, London, NG524, Room 40",
+      "artwork_h_cm": 90.7,
+      "artwork_w_cm": 121.6,
+      "verified_museum_source": "https://www.nationalgallery.org.uk/paintings/joseph-mallord-william-turner-the-fighting-temeraire",
+      "proposed_art_image": "https://commons.wikimedia.org/wiki/File:The_Fighting_Temeraire,_JMW_Turner,_National_Gallery.jpg",
+      "image_status": "Commons PD-Art record available, source bytes not yet acquired",
+      "voice": "Italiano, Google Gacrux solo se veramente disponibile, altrimenti episodio in stato blocked_voice_unavailable, senza travestire un Cinema da Critico",
+      "audience_reason": "La vecchia nave gloriosa trainata verso la demolizione: tramonto del passato e nascita dell'industria.",
+      "museum_camera": "Tela circa 1.2 m di larghezza all'altezza degli occhi; naturale distanza visita, vista della sala prima dell'entrata.",
+      "artwork_frame": "National Gallery catalogue mentions 19th-century French frame; verify visual before claiming reconstruction faithful.",
+      "music": "brano/registrazione con attribuzione e licenza proprie, sotto la voce"
+    },
+    {
+      "episode": 3,
+      "status": "queued_asset_acquisition_required",
+      "format": "artvision_cinema",
+      "artist": "Georges Seurat",
+      "work": "A Sunday on La Grande Jatte—1884",
+      "year": "1884–1886",
+      "museum": "Art Institute of Chicago, Helen Birch Bartlett Memorial Collection 1926.224",
+      "artwork_h_cm": 207.6,
+      "artwork_w_cm": 308,
+      "verified_museum_source": "https://publications.artic.edu/gauguin/reader/gauguinart/section/140411/p-26",
+      "proposed_art_image": "https://commons.wikimedia.org/wiki/Category:A_Sunday_Afternoon_on_the_Island_of_La_Grande_Jatte",
+      "image_status": "Source high-resolution CC0/PD-Art not yet materialized or verified",
+      "audience_reason": "Da lontano una folla immobile; da vicino migliaia di punti colorati e piccoli enigmi sociali.",
+      "museum_camera": "Tela imponente larga oltre 3 metri, figura umana minuscola rispetto all'opera, parete e stanza grandi, avvicinamento per scoprire i punti.",
+      "artwork_frame": "actual historic frame not verified; clearly label scenic alternative",
+      "music": "strumentale verificato compatibile Cinema V6"
+    }
+  ],
+  "release_gate": [
+    "Dimensioni in cm documentate, proporzioni piene anche con cornice",
+    "Fotografia opera autentica scaricata e verificata, provenienza/diritti espliciti",
+    "Nessun pixel stretching ai bordi in ogni frame, bordo tela dietro cornice",
+    "No ghosting, ingresso/uscita fluidi, nessuna deformazione quadro",
+    "Copertina e primo frame con titolo esatto e artista, branding V6 o Critico V2",
+    "Critico deve avere realmente voce naturale italiana e immagini sincronizzate",
+    "ffprobe, decodifica integrale, controllo artistico reale, ZIP test e quattro post V28",
+    "Upload Android verificato, mai link fittizi",
+    "File originali preservati, nessun automatic Gold Master"
+  ],
+  "note": "Documento di avvio e prenotazione, non rappresenta tre MP4 creati. La produzione viene attivata dall'automazione esistente e va verificata per singolo episodio. Nessuna nuova automazione duplicata."
+}
