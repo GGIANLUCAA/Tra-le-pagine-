@@ -53,7 +53,7 @@ jobs:
         env:
           PILOT_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.pilot || 'beirut1919' }}
         run: python src/storia_rivive_source_v56.py --preset "$PILOT_NAME" --out output/storia_rivive
-      - name: Download da Android: sorgente, licenza e provini (NON video pubblicabile)
+      - name: "Download da Android: sorgente, licenza e provini (NON video pubblicabile)"
         if: always()
         uses: actions/upload-artifact@v4
         with:
