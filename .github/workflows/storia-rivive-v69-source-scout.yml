@@ -1,0 +1,41 @@
+name: "La Storia Rivive V69 — campioni sorgente e gate WOW"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_source_selector_v69.py"
+      - "tests/test_storia_rivive_source_selector_v69.py"
+      - "config/storia_rivive_v69.json"
+      - "templates/STORIA_RIVIVE_V69_SOURCE_RANK.json"
+      - ".github/workflows/storia-rivive-v69-source-scout.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source_quality_selection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Install local-only quality assessment libraries"
+        run: |
+          python -m pip -q install --no-cache-dir numpy opencv-python-headless
+      - name: "Run real sharp-vs-blurred and source/fidelity gate tests"
+        run: |
+          python -m unittest discover -s tests -p "test_storia_rivive_source_selector_v69.py" -v
+      - name: "Validate scouting research and no auto-approval"
+        run: |
+          python -m json.tool config/storia_rivive_v69.json >/dev/null
+          python -m json.tool templates/STORIA_RIVIVE_V69_SOURCE_RANK.json >/dev/null
+          python -m json.tool queue/storia_rivive_v69_film_scouting_candidates.json >/dev/null
+          python - <<'PY'
+          import json
+          a=json.load(open("queue/storia_rivive_v69_film_scouting_candidates.json"))
+          assert a["current_approved_wow_winner"] is None
+          assert all(not x.get("ai_candidate_compared",False) for x in a["items"][:3])
+          print("Source research is a SHORTLIST ONLY, not fabricated reference-grade render.")
+          PY
+      - name: "No paid AI inference or external publication"
+        run: echo "Scouting and tests only. Human visual review and actual generative photo required."
