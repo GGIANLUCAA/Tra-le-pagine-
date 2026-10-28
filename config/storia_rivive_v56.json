@@ -1,9 +1,9 @@
 {
-  "version": "V56_2026_10_28",
+  "version": "V56_1_2026_10_28",
   "format": "storia_rivive",
   "source_of_truth": "docs/REGOLE_ATTIVE.md",
   "contract": "docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md",
-  "status": "pilot_implementation_pending_real_source_and_review",
+  "status": "pilot_sepia_rejected_pending_real_multicolor",
   "scope": "new_historical_archive_clips_only",
   "user_approved_rules": true,
   "safe_defaults": {
@@ -73,7 +73,15 @@
     "machine_model": "ddcolor_candidate_not_integrated",
     "temporal_consistency_review_required": true,
     "review_before_credits": true,
-    "disclosure": "I colori sono una ricostruzione digitale interpretativa"
+    "disclosure": "I colori sono una ricostruzione digitale interpretativa",
+    "main_delivery_requires_real_multicolor": true,
+    "sepia_technical_preview_only": true,
+    "qa_required": [
+      "natural_multicolor_reviewed",
+      "reference_style_match_reviewed",
+      "temporal_stability_reviewed",
+      "same_source_frames"
+    ]
   },
   "license": {
     "auto_allow_only_explicit_cc0_source_if_other_rights_clear": true,
@@ -125,5 +133,6 @@
       "source_rights": "CC0_recorded_2026_10_28",
       "scene_timecodes": "not_yet_reviewed"
     }
-  ]
+  ],
+  "visual_standard": "docs/LA_STORIA_RIVIVE_STANDARD_VISIVO_V56_1.md"
 }
