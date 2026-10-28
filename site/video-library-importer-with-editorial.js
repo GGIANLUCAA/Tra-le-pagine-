@@ -50,7 +50,7 @@ export default{async fetch(request,env){
  }
 // V55: transfer genuine post texts and reproducible notes with the exact MP4.
 // Authenticated GitHub Actions only; NEVER overwrite existing owner-curated material.
- if((route==='/production-file'&&method==='POST')||(route==='/production-file-status'&&method==='GET')){
+ if((route==='/production-file'&&(method==='POST'||method==='GET'))||(route==='/production-file-status'&&method==='GET')){
   const video=u.searchParams.get('video')||'',name=u.searchParams.get('name')||'';
   if(!/^[\w ().-]{1,190}\.(?:mp4|m4v|mov)$/i.test(video)||video.includes('..')||
      !/^[A-Za-z0-9_(). -]{1,110}\.(?:txt|md|json)$/i.test(name)||name.includes('..'))
