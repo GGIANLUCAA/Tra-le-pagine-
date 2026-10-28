@@ -1,0 +1,67 @@
+name: "ArtVision V47 • James Ensor • The Intrigue • zero paid APIs"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-ensor-intrigue-20261028.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-ensor-intrigue-v47
+  cancel-in-progress: false
+jobs:
+  artvision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install existing open-source renderer dependencies
+        run: |
+          set -euo pipefail
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<14" "numpy>=1.26,<3" "requests>=2.31,<3"
+          python -m py_compile scripts/artvision_ensor_intrigue_20261028.py
+      - name: Render authentic painting, licensed recording, V28 posts and QA
+        run: |
+          set -euo pipefail
+          python scripts/artvision_ensor_intrigue_20261028.py
+      - name: Verify actual MP4, image, audio, captions and ZIP independently
+        run: |
+          set -euo pipefail
+          dir="output/artvision-ensor-20261028/ensor_intrigue_20261028_0215"
+          film="$dir/VIDEO_MASTER.mp4"
+          zip="output/artvision-ensor-20261028/ARTVISION_ENSOR_INTRIGUE_20261028_COMPLETE.zip"
+          test -s "$film" && test -s "$dir/COPERTINA.jpg" && test -s "$zip"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$film" -f null -
+          python src/artvision_editorial_post_v28.py --validate-folder "$dir"
+          python - "$film" "$zip" "$dir" <<'PY'
+          import sys,subprocess,json,zipfile,hashlib,pathlib
+          film,archive,folder=sys.argv[1:]
+          info=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration,size:stream=codec_type,codec_name,width,height","-of","json",film]))
+          assert 45<float(info["format"]["duration"])<75
+          assert any(s.get("codec_name")=="h264" and s.get("width")==1080 and s.get("height")==1920 for s in info["streams"])
+          assert any(s.get("codec_name")=="aac" for s in info["streams"])
+          with zipfile.ZipFile(archive) as z:
+            assert z.testzip() is None
+            assert z.getinfo("VIDEO_MASTER.mp4").file_size==pathlib.Path(film).stat().st_size
+          qa=json.loads(pathlib.Path(folder,"TECHNICAL_QA_V30.json").read_text())
+          assert qa["v44_status"]=="rendered_needs_review"
+          assert qa["title_first_frame"]=="THE INTRIGUE" and qa["artist_first_frame"]=="JAMES ENSOR"
+          print("INDEPENDENT_QA_PASS",hashlib.sha256(pathlib.Path(film).read_bytes()).hexdigest(),flush=True)
+          PY
+      - name: Upload MP4, cover, contact sheet and full ZIP for Android
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V47_ENSOR_THE_INTRIGUE_REAL_FILES
+          path: |
+            output/artvision-ensor-20261028/ensor_intrigue_20261028_0215/VIDEO_MASTER.mp4
+            output/artvision-ensor-20261028/ensor_intrigue_20261028_0215/COPERTINA.jpg
+            output/artvision-ensor-20261028/ensor_intrigue_20261028_0215/QA_CONTACT_SHEET.jpg
+            output/artvision-ensor-20261028/ARTVISION_ENSOR_INTRIGUE_20261028_COMPLETE.zip
+          retention-days: 60
+          if-no-files-found: error
