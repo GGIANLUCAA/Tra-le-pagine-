@@ -1,5 +1,9 @@
 name: "La Storia Rivive V56 — controlli e provini gratuiti"
 on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-rivive-v56.yml"
   pull_request:
     paths:
       - "src/storia_rivive_*.py"
@@ -34,7 +38,7 @@ jobs:
           python -m json.tool config/editorial_rules.json > /dev/null
           python -m json.tool config/video_formats_v13.json > /dev/null
   acquire_pilot:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 12
@@ -47,7 +51,7 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Scarica fonte CC0 e genera contatti reali
         env:
-          PILOT_NAME: ${{ inputs.pilot }}
+          PILOT_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.pilot || 'beirut1919' }}
         run: python src/storia_rivive_source_v56.py --preset "$PILOT_NAME" --out output/storia_rivive
       - name: Download da Android: sorgente, licenza e provini (NON video pubblicabile)
         if: always()
