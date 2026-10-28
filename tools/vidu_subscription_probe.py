@@ -52,6 +52,10 @@ def main():
         ("Q2_legacy_exploratory_quote_NOT_Q2_PRO_FAST",[
             "vidu-cli","task","cost","--type","img2video",
             "--model-version","3.1","--duration","5","--resolution","1080p",
+            "--transition","pro","--schedule-mode","nopeak"]),
+        ("EXACT_APPROVED_Q2_PRO_FAST_720P_READ_ONLY",[
+            "vidu-cli","task","cost","--type","img2video",
+            "--model-version","viduq2-pro-fast","--duration","5","--resolution","720p",
             "--transition","pro","--schedule-mode","nopeak"])]:
         success=call(name,cmd) and success
     print("ZERO tasks submitted. Never treat exploratory Q2 quote as approval of Q2 Pro Fast.")
