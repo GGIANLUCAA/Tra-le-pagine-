@@ -14,6 +14,12 @@ Le guide V12–V31 restano istruzioni dei moduli: in caso di conflitto prevale l
 revisione attiva. Non aggiungere in cima altri blocchi «regola più recente»:
 aggiornare la fonte unica con versione, motivo e riferimento dell'approvazione.
 
+## V55 — Video sempre recuperabili e primi 7 secondi curati (28/10/2026)
+
+Per ogni nuovo film ArtVision, prima della consegna applicare **docs/REGOLE_ATTIVE.md > ArtVision V55**, `config/artvision_delivery_v55.json` e `docs/VIDEO_LIBRARY_DOSSIER_V1.md`. Nessun video è consegnato completamente se mancano MP4 verificato, JPEG cover nel branding approvato, 4 post social originali V28, dati fonti/diritti/ricetta/QA e ZIP completo verificato. Preparare i veri campioni 0.1/1/3/5/7 secondi del video con `src/artvision_delivery_v55.py pack` e revisionare apertura, primo frame, titolo/artista, emozione e sincronizzazione prima dell'etichetta finale. Non confondere un frame estratto con una revisione artistica.
+
+Sempre tentare il trasferimento nell'archivio privato Video Library Studio immediatamente dopo il filmato pronto secondo i percorsi già autorizzati, poi **verificare separatamente** catalogo, playback, copertina, 4 post e ZIP su sito; il solo import MP4 non prova gli altri elementi. Conservare una consegna ChatGPT/Android con MP4 diretto e ZIP, verificare i percorsi reali e non promettere la durata dei link sandbox. Se qualcosa manca, dichiarare precisamente `delivery_incomplete` / `archive_sync_pending` e non inventare link. **Non pubblicare sui social automaticamente** e non aggirare V25/V44 per rendere il video visibile. Rispettare i master e i post già salvati.
+
 ## ArtVision 4x1 e direzione emotiva — 28/10/2026
 
 Per ogni nuova opera ArtVision applicare `docs/ARTVISION_FOUR_VARIANTS_CONTRACT_20261028.md`: dossier unico, quattro varianti (Critico Standard/Museum e Cinema Standard/Museum), direzione emotiva fondata sui dettagli reali, gate artistici e stati separati. Non confondere l'obiettivo di quattro varianti con quattro video effettivamente renderizzati o approvati. Questo integra le regole attive e non autorizza spese o pubblicazioni.
