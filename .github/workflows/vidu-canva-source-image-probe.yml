@@ -1,0 +1,27 @@
+name: "Vidu - probe source image transfer without credits"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/vidu-canva-source-image-probe.yml"]
+permissions:
+  contents: read
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test exact Canva original resolution publicly hosted image, no API calls
+        env:
+          THUMB: 'https://media.canva.com/v2/image-resize/format:JPG/height:200/quality:75/uri:ifs%3A%2F%2FM%2F32f1e354-1cfb-4216-8ec6-2ab0759c4301/watermark:F/width:112?csig=AAAAAAAAAAAAAAAAAAAAAMzzy_zgYv1wkgbuOYLOGn2tpZzqwtsEPkySIp4FcaP0&exp=1793208311&osig=AAAAAAAAAAAAAAAAAAAAAORTig_ZXNhuV6M4E8Ac1vRH5kA5DGS9IMKXUrM2ncDs&signer=media-rpc&token=AAIAAU0AJDMyZjFlMzU0LTFjZmItNDIxNi04ZWM2LTJhYjA3NTljNDMwMQAAAAABoYOLXNjKbZYU0QZnvtHzIBpqClY_RGvk-1nvwDTejwIqHNxIwg&x-canva-quality=thumbnail'
+        run: |
+          python - <<'PY'
+          import os,urllib.request,urllib.error
+          from io import BytesIO
+          from PIL import Image
+          u=os.environ['THUMB']
+          for label,url in [('thumbnail',u),('full-resolution',u.replace('height:200','height:1280').replace('width:112','width:720').replace('quality:75','quality:90'))]:
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=20) as r:
+                      b=r.read(3000000)
+                  im=Image.open(BytesIO(b)); print(label,im.size,'bytes',len(b))
+              except Exception as e: print(label,type(e).__name__, str(e)[:160])
+          PY
