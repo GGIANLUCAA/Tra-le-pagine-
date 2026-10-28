@@ -117,7 +117,8 @@ def music(total,cues,file):
   w.setnchannels(2);w.setsampwidth(2);w.setframerate(sr);w.writeframes(pcm.tobytes())
 
 def render():
- srcfile,rights=src.original()
+ rights=src.original()
+ srcfile=src.SOURCE
  manifest,checked=getphotos()
  if srcfile.stat().st_size!=127835024 or sha(srcfile)!=manifest["original_video_sha256"]:
   raise RuntimeError("Unverified original 1906 film")
