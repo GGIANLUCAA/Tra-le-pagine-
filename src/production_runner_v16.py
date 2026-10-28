@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import production_batch_v15 as batch
 from production_adapter_v16 import ADAPTERS
-from video_director_v13 import ROOT, read_json, write_json, digest, local_file, probe_video
+from video_director_v13 import ROOT, read_json, write_json, digest, local_file, probe_video, linked_four_plan
 
 SCHEMA='production-state-v16'
 TERMINAL={'rendered_needs_review','qualified'}
@@ -45,6 +45,9 @@ def inputs(job):
     project_file=inside(job['project_file']);project=read_json(project_file)
     if project.get('format')!=ADAPTERS[job['adapter']]:raise ValueError('Adapter e formato diversi')
     files=[project_file]+[local_file(project_file.parent,a['file']) for a in project['assets']]
+    if project.get('serial_mode') == 'artvision_4x1':
+        # Include the one shared dossier in the fingerprint and staged repository.
+        files.append(linked_four_plan(project_file, project.get('artvision_4x1_plan')))
     if project.get('script'):files.append(local_file(project_file.parent,project['script']))
     adapter=job['adapter']
     if adapter=='books_gemini_cache':
