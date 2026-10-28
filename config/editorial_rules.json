@@ -618,5 +618,48 @@
       "inherits": "museum_immersion_scale + museum_immersion_frame_quality + V44/V46 release QA",
       "automatic_final_approval": false
     }
+  },
+  "artvision_paired_series": {
+    "version": "v53_2026_10_28",
+    "approved_by": "user",
+    "scope": [
+      "artvision_cinema",
+      "artvision_critico"
+    ],
+    "strategy": "same_artist_and_artwork_two_distinct_episodes",
+    "target_video_attempt_interval_hours": 2,
+    "target_videos_per_cycle": 1,
+    "formats_in_pair": [
+      "artvision_cinema",
+      "artvision_critico"
+    ],
+    "existing_versions": "reuse_verified_assets_and_render_only_missing_version",
+    "metadata_shared": [
+      "official_museum_facts",
+      "physical_size_cm",
+      "frame_documentation",
+      "authentic_image_license",
+      "visual_critical_detail_map",
+      "sources"
+    ],
+    "cinema": {
+      "narrated": false,
+      "default_approach": "museum_immersion_v46_when_suitable",
+      "must_show_authentic_art": true
+    },
+    "critico": {
+      "narrated": true,
+      "voice": "Google Gemini Gacrux (verified authentic audio)",
+      "natural_italian_scholarship": true,
+      "detail_synced_to_audio": true,
+      "never_replace_voice_with_music": true
+    },
+    "quality_first": true,
+    "release_requires": "per_video_exact_hash_artistic_review_and_complete_delivery",
+    "paid_video_api_default_budget_eur": 0,
+    "auto_publish_social": false,
+    "guide": "docs/ARTVISION_PRODUZIONE_A_COPPIE_V53.md",
+    "queue": "queue/artvision_dual_format_s01_20261028.json",
+    "existing_automation_id": "6adca191603c8191a90d5190901cd034"
   }
 }
