@@ -1,0 +1,43 @@
+name: Giant 1913 historical illustrations free archival fetch
+on:
+  push:
+    branches: [episode/il-gigante-egoista-20261028-gacrux]
+    paths: [queue/gigante_egoista_1913_images_20261028.request]
+permissions:
+  contents: write
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch exactly two public-domain 1913 illustrations
+        run: |
+          mkdir -p output/giant1913
+          curl -fL --retry 0 --connect-timeout 10 --max-time 30 \
+            'https://www.gutenberg.org/files/30120/30120-h/images/c_plate64.jpg' \
+            -o output/giant1913/c_plate64.jpg
+          curl -fL --retry 0 --connect-timeout 10 --max-time 30 \
+            'https://www.gutenberg.org/files/30120/30120-h/images/c_plate68.jpg' \
+            -o output/giant1913/c_plate68.jpg
+          python - <<'PY'
+          from pathlib import Path
+          import imghdr,hashlib
+          for p in Path('output/giant1913').glob('*.jpg'):
+            assert p.stat().st_size>20000 and imghdr.what(p)=='jpeg'
+            print(p.name,p.stat().st_size,hashlib.sha256(p.read_bytes()).hexdigest())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GIGANTE_EGOISTA_1913_ILLUSTRATIONS
+          path: output/giant1913/
+          retention-days: 14
+      - name: Record archive locator
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo '{"run_id":${{ github.run_id }},"workflow":"gigante-1913-archive-20261028.yml"}' > locator.json
+          gh api -X PUT "repos/${{ github.repository }}/contents/queue/gigante_1913_run_locator_20261028.json" \
+            -f branch="${{ github.ref_name }}" -f message="Record Giant 1913 illustration run" \
+            -f content="$(base64 -w0 locator.json)"
