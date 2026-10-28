@@ -2,7 +2,7 @@ name: Sleepy Hollow — V13 source preflight (free)
 on:
   push:
     branches: [episode/sleepy-hollow-20261028-rackham-v13]
-    paths: [queue/sleepy_v13_check.request]
+    paths: ['queue/sleepy_v13_check*.request']
 permissions:
   contents: read
   actions: read
