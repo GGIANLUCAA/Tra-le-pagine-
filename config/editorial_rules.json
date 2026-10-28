@@ -1,6 +1,6 @@
 {
-  "version": "2026-10-28.2",
-  "approved_by": "28/10/2026: ArtVision 4x1 V54 con direzione emotiva, gate e autocritica; Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.",
+  "version": "2026-10-28.3",
+  "approved_by": "28/10/2026: V55 verifica consegna MP4/copertina/ZIP/4 post e primi 7 secondi e importazione privata; 28/10/2026: ArtVision 4x1 V54 con direzione emotiva, gate e autocritica; Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.",
   "precedence": [
     "explicit_user_request",
     "editorial_rules",
@@ -660,6 +660,51 @@
     "contract": "docs/ARTVISION_FOUR_VARIANTS_CONTRACT_20261028.md",
     "legacy_queue": "queue/artvision_dual_format_s01_20261028.json",
     "existing_automation_id": "6adca191603c8191a90d5190901cd034"
+  },
+  "delivery_v55": {
+    "version": "v55_2026_10_28",
+    "scope": "all_new_videos",
+    "required_local_files": [
+      "MP4_H264_AAC_real",
+      "JPEG_original_cover",
+      "POST_FACEBOOK.txt",
+      "POST_INSTAGRAM.txt",
+      "POST_TIKTOK.txt",
+      "POST_YOUTUBE.txt",
+      "SOURCES_AND_RIGHTS.md",
+      "reproducible_recipe",
+      "complete_crc_checked_zip",
+      "mp4_only_zip_for_android_fallback"
+    ],
+    "first_seconds_inspection_times_s": [
+      0.1,
+      1,
+      3,
+      5,
+      7
+    ],
+    "first_frame_branding_for_artvision": [
+      "exact_english_title",
+      "artist_name",
+      "approved_cover_style"
+    ],
+    "first_3_seconds": "subject_specific_attention_hook_with_value_not_filler",
+    "seconds_3_to_7": "motivated_detail_reveal_and_progression",
+    "artistic_self_review_required": true,
+    "editorial_site_archive": "https://video-library-studio.600led.workers.dev",
+    "site_states": [
+      "not_imported",
+      "import_pending",
+      "video_present_missing_materials",
+      "archive_verified"
+    ],
+    "local_chatgpt_file_presence_is_not_android_download_proof": true,
+    "site_catalog_presence_is_not_social_or_zip_proof": true,
+    "site_zip": "generate_on_demand_after_verified_import_no_duplicated_permanent_zip",
+    "side_effects_without_approval": false,
+    "uploader": "github_workflow_run_and_periodic_or_chatgpt_library_importer_as_applicable",
+    "quality_gate_script": "src/artvision_delivery_v55.py",
+    "docs": "docs/REGOLE_ATTIVE.md"
   },
   "artvision_paired_series": {
     "version": "v53_2026_10_28",
