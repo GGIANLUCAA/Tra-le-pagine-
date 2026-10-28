@@ -58,14 +58,21 @@ def esrgan_4x(session,bgr):
  # Tiled CPU ONNX restoration, never replace source geometry.
  rgb=cv2.cvtColor(bgr,cv2.COLOR_BGR2RGB)
  h,w=rgb.shape[:2]
- core,pad=96,12
+ # This ONNX release exposes a FIXED input of 1x3x64x64: tile exactly 64px.
+ # Core 48px + 8px context each side; reflection-pad the final edge tiles.
+ core,pad=48,8
  framed=cv2.copyMakeBorder(rgb,pad,pad,pad,pad,cv2.BORDER_REFLECT_101)
  result=np.zeros((h*4,w*4,3),dtype=np.uint8)
  input_name=session.get_inputs()[0].name
+ shape=session.get_inputs()[0].shape
+ if list(shape[2:])!=[64,64]:
+  raise ValueError("Unexpected RealESRGAN fixed input shape: "+str(shape))
  for y in range(0,h,core):
   for x in range(0,w,core):
    ch=min(core,h-y);cw=min(core,w-x)
-   tile=framed[y:y+ch+2*pad,x:x+cw+2*pad]
+   tile=framed[y:y+core+2*pad,x:x+core+2*pad]
+   if tile.shape[0] < 64 or tile.shape[1] < 64:
+    tile=cv2.copyMakeBorder(tile,0,64-tile.shape[0],0,64-tile.shape[1],cv2.BORDER_REFLECT_101)
    n=np.transpose(tile.astype(np.float32)/255,(2,0,1))[None]
    pred=session.run(None,{input_name:n})[0]
    if pred.ndim!=4 or pred.shape[1]!=3 or pred.shape[2]!=tile.shape[0]*4 or pred.shape[3]!=tile.shape[1]*4:
