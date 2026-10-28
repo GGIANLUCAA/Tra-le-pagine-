@@ -236,7 +236,11 @@ def pack(video, cover, posts, rights, recipe, out, opening_review=None):
     with zipfile.ZipFile(zip_path) as archive:
         if archive.testzip() is not None:
             raise ValueError("ZIP danneggiato")
-        if hashlib.sha256(archive.read("01_VIDEO/" + stem + ".mp4")).hexdigest() != sha:
+        zhash = hashlib.sha256()
+        with archive.open("01_VIDEO/" + stem + ".mp4") as member:
+            for block in iter(lambda: member.read(1024 * 1024), b""):
+                zhash.update(block)
+        if zhash.hexdigest() != sha:
             raise ValueError("ZIP e MP4 originali non corrispondono")
         for key in SOCIAL:
             if "03_POST_SOCIAL/" + CAPTION_OUTPUTS[key] not in archive.namelist():
