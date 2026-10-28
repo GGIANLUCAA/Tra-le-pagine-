@@ -1,0 +1,131 @@
+name: "VLS owner-requested private import - Beirut 1919 V60"
+# SINGLE USER REQUEST 28 Oct 2026: "mandamelo qui scaricabile e sul mio sito".
+# This is a one-time private archive import, not an automatic social publication.
+# No modification of V25 automatic ingestion gate, no processing of other artifacts.
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/vls-owner-beirut-v60-once.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+concurrency:
+  group: vls-owner-beirut-1919-v60-once
+  cancel-in-progress: false
+jobs:
+  user_requested_private_import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - name: Import EXACT existing V60 video into private archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 -m pip -q install requests
+          python3 - <<'PY'
+          import os,sys,hashlib,zipfile,io,requests,time,json,re
+          from pathlib import Path
+          from urllib.parse import quote
+          S=requests.Session()
+          S.headers['User-Agent']='Tra-le-Pagine-V60-user-requested-private-archive/1.0'
+          repo=os.environ['REPO']
+          artifact_id=12828357082
+          root='https://video-library-import.600led.workers.dev'
+          site='https://video-library-studio.600led.workers.dev'
+          key='STORIA_RIVIVE_BEIRUT_1919_AI_V60.mp4'
+          expected_sha='eb8279410e7f5ee5b9483a5b332ab42ba1574517aa46f1cab9636b2dc5183df6'
+          auth={'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+                'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          url='https://api.github.com/repos/'+repo+'/actions/artifacts/'+str(artifact_id)+'/zip'
+          q=S.get(url,headers=auth,timeout=90)
+          q.raise_for_status()
+          with zipfile.ZipFile(io.BytesIO(q.content)) as archive:
+              assert archive.testzip() is None,'Corrupt outer archive'
+              video=archive.read('VIDEO_COLOR_AI.mp4')
+              cover=archive.read('COVER.jpg')
+              posts={k:archive.read('POST_'+k.upper()+'.txt') for k in ('facebook','instagram','tiktok','youtube')}
+              rights=archive.read('FONTI_E_DIRITTI.json')
+              with zipfile.ZipFile(io.BytesIO(archive.read('BEIRUT_1919_COLORE_AI_COMPLETO.zip'))) as complete:
+                  assert complete.testzip() is None,'Corrupt inner ZIP'
+          assert len(video)==5748812,'Unexpected video size'
+          assert hashlib.sha256(video).hexdigest()==expected_sha,'MP4 SHA mismatch'
+          assert len(cover)>10000 and cover[:3]==b'\xff\xd8\xff','Invalid original JPEG'
+          assert all(len(s)>100 for s in posts.values()),'Missing researched social captions'
+          meta=json.loads(rights)
+          assert meta.get('vidu_credits_used')==0
+          assert 'CC0' in json.dumps(meta)
+          print('VERIFIED user requested exact-hash V60, 3 authentic scenes, four captions, 0 Vidu calls',flush=True)
+
+          AUD='vls-gh-import-2026';cached=('',0)
+          def oidc():
+              global cached
+              if cached[0] and time.time()-cached[1]<150:return cached[0]
+              t=S.get(os.environ['ACTIONS_ID_TOKEN_REQUEST_URL'],
+                    headers={'Authorization':'Bearer '+os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']},
+                    params={'audience':AUD},timeout=25)
+              t.raise_for_status(); cached=(t.json()['value'],time.time());return cached[0]
+          def api(method,path,query=None,body=None):
+              for retry in range(3):
+                  req=S.request(method,root+path,params=query,
+                        headers={'Authorization':'Bearer '+oidc()},
+                        data=body,timeout=100)
+                  if req.status_code in (429,502,503,504) and retry<2:
+                      time.sleep(2**retry);continue
+                  if not req.ok:raise RuntimeError(f'Private importer {method} {path}: {req.status_code} {req.text[:200]}')
+                  return req.json()
+          h=S.get(root+'/health',timeout=20);h.raise_for_status()
+          st=api('GET','/status',{'key':key})
+          if st.get('deleted'):
+              raise RuntimeError('Owner deleted this exact video key. Do not restore.')
+          if st.get('exists'):
+              assert st.get('size')==len(video),'Existing key mismatch; do not overwrite'
+              print('VIDEO_ALREADY_PRESENT_AND_SAME_SIZE')
+          else:
+              print('PRIVATE_IMPORT video start',len(video),flush=True)
+              result=api('POST','/single',{'key':key},video)
+              print('IMPORT_RESPONSE',str(result)[:200],flush=True)
+          after=api('GET','/status',{'key':key})
+          assert after.get('exists') and after.get('size')==len(video),'Video R2 size check failed'
+          print('R2_VIDEO_VERIFIED',key,after.get('size'),flush=True)
+          coverkey=key[:-4]+'.jpg'
+          coverstatus=api('GET','/status',{'key':coverkey})
+          if coverstatus.get('deleted'):
+              raise RuntimeError('Owner deleted cover; no automatic restore')
+          if not coverstatus.get('exists'):
+              api('POST','/single',{'key':coverkey},cover)
+          covercheck=api('GET','/status',{'key':coverkey})
+          assert covercheck.get('exists') and covercheck.get('size')==len(cover),'Cover not verified'
+          print('R2_COVER_VERIFIED',coverkey,flush=True)
+          # User content attached to same exact video, via official importer attachment API.
+          editorial={ 'POST_'+k.upper()+'.txt':v for k,v in posts.items() }
+          editorial['RICETTA.json']=json.dumps(meta,ensure_ascii=False,indent=2).encode('utf-8')
+          src='# Fonti e diritti\n\nVideo storico: '+str(meta.get('title','Beirut 1919'))+'\n\nArchivio: Musee Albert-Kahn, film del 1919.\nFonte: https://commons.wikimedia.org/wiki/File:Sc%C3%A8nes_de_rue_-_AI13347.webm\nLicenza del film originale: CC0 dichiarata su Wikimedia Commons.\nColori: ricostruzione digitale AI DDColor (interpretativa, non originale).\nMusica: composizione originale generata per questa produzione.\nSocial: non pubblicati automaticamente.\n'
+          editorial['SOURCES_AND_RIGHTS.md']=src.encode('utf-8')
+          for name,data in editorial.items():
+              digest=hashlib.sha256(data).hexdigest()
+              saved=api('POST','/production-file',{'video':key,'name':name,'sha256':digest},data)
+              if saved.get('ok') is not True or saved.get('sha256')!=digest:
+                  raise RuntimeError('Editorial attachment rejected: '+name+' '+str(saved)[:180])
+              print('VLS_ATTACHMENT_VERIFIED',name,flush=True)
+          # Private preview only: never social autopublish, never imply a V25-approved release.
+          try:
+              seed=api('POST','/editorial-seed',body=json.dumps({'items':[key]}).encode())
+              print('PRIVATE_EDITORIAL_SEED',str(seed)[:250],flush=True)
+          except Exception as e:
+              print('NON_FATAL editorial seed failure',str(e)[:180],flush=True)
+          catalog=S.get(site+'/api/catalog',timeout=50);catalog.raise_for_status()
+          j=catalog.json()
+          items=j.get('items',[]) if isinstance(j,dict) else (j if isinstance(j,list) else [])
+          found=[item for item in items if item.get('key')==key and item.get('available') is not False]
+          if not found:
+              raise RuntimeError('MP4 uploaded but not yet in live catalog (needs index refresh)')
+          media=S.get(site+'/media/'+quote(key,safe=''),headers={'Range':'bytes=0-1023'},timeout=40)
+          assert media.status_code in (200,206) and media.content,'Live media playback endpoint inaccessible'
+          print('LIVE_SITE_VERIFIED',site+'/watch/'+quote(key,safe=''),flush=True)
+          print('DIRECT_DOWNLOAD',site+'/download/'+quote(key,safe=''),flush=True)
+          print('END: PRIVATE USER-REQUESTED IMPORT DONE; NO SOCIAL PUBLICATION',flush=True)
+          PY
