@@ -54,6 +54,19 @@ class HistoricalRulesV56(unittest.TestCase):
         p["colorization"]["described_as_ai_colorized"] = False
         self.assertTrue(mod.evaluate(p, "pre-render")["ok"])
 
+    def test_multicolor_required_for_final_delivery(self):
+        p = copy.deepcopy(self.pilot)
+        p["colorization"]["mode"] = "sepia_tint"
+        out = mod.evaluate(p, "delivery")
+        self.assertTrue(any("V56.1" in x and "colorizzazione" in x for x in out["errors"]))
+        p["colorization"]["mode"] = "ai_colorized"
+        out = mod.evaluate(p, "delivery")
+        self.assertTrue(any("V56.1" in x and "multicolore" in x for x in out["errors"]))
+        p["colorization"]["natural_multicolor_reviewed"] = True
+        p["colorization"]["reference_style_match_reviewed"] = True
+        out = mod.evaluate(p, "delivery")
+        self.assertFalse(any("V56.1" in x for x in out["errors"]))
+
     def test_no_false_full_delivery(self):
         p = copy.deepcopy(self.pilot)
         self.assertFalse(mod.evaluate(p, "delivery")["ok"])
