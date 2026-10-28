@@ -88,7 +88,16 @@
     "public_domain_requires_jurisdiction_review": true,
     "music_independent_clearance": true,
     "source_page_and_check_date_required": true,
-    "sha256_original_required": true
+    "sha256_original_required": true,
+    "only_original_source_rights": [
+      "CC0",
+      "CC0 1.0",
+      "PUBLIC_DOMAIN",
+      "PDM"
+    ],
+    "commercial_use_proof_required": false,
+    "nonmonetized_publication_rights_check_required": true,
+    "academic_only_models_not_cleared_for_publication_automatically": true
   },
   "cost": {
     "paid_calls_require_exact_per_clip_authorization": true,
@@ -138,5 +147,6 @@
   "visual_standard": "docs/LA_STORIA_RIVIVE_STANDARD_VISIVO_V56_1.md",
   "quality_override": "config/storia_rivive_quality_v57.json",
   "default_quality_preset": "reference_modern_color",
-  "sepias_as_final_prohibited": true
+  "sepias_as_final_prohibited": true,
+  "v59_policy": "config/storia_rivive_v59.json"
 }
