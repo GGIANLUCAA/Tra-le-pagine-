@@ -343,115 +343,118 @@
     "cinema_museum": {
       "format": "cinema",
       "mode": "museum",
-      "variation_reason": "The voice-free visual argument gains physical scale in a reconstructed gallery, with a genuine POV entry and return.",
-      "status": "planned",
+      "variation_reason": "A genuinely photographed 2023 National Gallery frame and patterned wall, not a fabricated room, introduce and close the painting; the central acts use independent authentic painting details. Music only, no voice.",
+      "status": "rendered_needs_review",
       "opening_0_7": {
         "first_frame_title_artist": "THE FIGHTING TEMERAIRE / J. M. W. TURNER — same approved ArtVision type template, exact painting title, readable on phone",
-        "first_frame_visual": "Actual Turner painting visible at correct 90.7 × 121.6 cm scale in a clearly illustrative gallery; ship is legible from first frame",
-        "first_3_seconds_hook": "The pale, ghostlike warship is visible immediately; her size and silence form the opening visual question",
-        "seconds_3_to_7_reveal": "Show the small black steam tug that drags the larger ship, a surprising reversal of visual power",
+        "first_frame_visual": "Actual CC BY-SA 4.0 museum photograph shows the real gold frame and Turner's ghostlike ship on the first frame, with dark title band below the painting.",
+        "first_3_seconds_hook": "Within 0-3 seconds the real gilded frame, pale warship and tiny tug are visible; the title and artist are readable beneath the picture.",
+        "seconds_3_to_7_reveal": "Camera approaches the actual framed painting and clarifies the black tug in front of the ghostly Temeraire; no empty corridor or synthetic room.",
         "detail_id": "ghost_ship",
-        "mobile_composition_reason": "Title stays in established safe-area banner; bright ship and dark tug remain recognizable on a phone, no letterbox or empty corridor",
-        "audio_or_voice_cue": "Music must be individually sourced and licensed before render; no recording chosen or falsely claimed",
-        "qa_status": "pending_visual_review"
+        "mobile_composition_reason": "1080x1920 first frame shows the full framed picture above the V6 title/artist band; real extracted 0.1,1,3,5,7 second frames inspected; mobile playback not independently tested.",
+        "audio_or_voice_cue": "Water Lily, Kevin MacLeod original recording CC BY 4.0, AAC score; opening begins with the score, full-speed listening remains pending.",
+        "qa_status": "reviewed_on_real_frames"
       },
       "scenes": [
         {
           "kind": "gallery_entry",
-          "purpose": "Show documented physical painting dimensions and immediate visual access to the ghost ship, not an empty corridor.",
-          "movement": "One restrained POV approach, frame fully three-dimensional and painting recessed; no edge-stretch.",
-          "emotional_effect": "Stupore misurato per la presenza fisica dell'opera",
-          "duration_seconds": 3.1
+          "purpose": "Begin on the real 2023 National Gallery photograph with the authentic ornate frame and pale warship visible under title and artist.",
+          "movement": "Slow optical approach within original gallery photo, no synthetic perspective",
+          "emotional_effect": "Meraviglia davanti all'oggetto reale",
+          "duration_seconds": 5.2
         },
         {
           "kind": "detail",
           "detail_id": "ghost_ship",
-          "purpose": "Open immediately on the luminous white ship with the series title and artist, not an empty room.",
-          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
-          "emotional_effect": "Curiosità e sorpresa per il contrasto di scala",
-          "duration_seconds": 3
+          "purpose": "Continue approaching the authentic photographed frame to discover the small tug against the luminous warship.",
+          "movement": "Smooth optical push using the same actual gallery photograph",
+          "emotional_effect": "Sorpresa nel rapporto tra le navi",
+          "duration_seconds": 4.5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "ghost_ship",
+          "purpose": "Enter the genuine high-resolution painting and hold the luminous veteran ship.",
+          "movement": "Locked authentic painting detail, no painted motion",
+          "emotional_effect": "Malinconia per la nave condannata",
+          "duration_seconds": 5.3
         },
         {
           "kind": "detail",
           "detail_id": "steam_tug",
-          "purpose": "Show the small dark steam tug that reverses the scale of power in the painting.",
-          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
-          "emotional_effect": "Curiosità e sorpresa per il contrasto di scala",
-          "duration_seconds": 4
+          "purpose": "Reveal the small steam tug whose dark silhouette contradicts the old ship's apparent power.",
+          "movement": "Restrained push into authentic tug detail",
+          "emotional_effect": "Stupore per il ribaltamento di potere",
+          "duration_seconds": 5.1
         },
         {
           "kind": "detail",
           "detail_id": "smoke",
-          "purpose": "Let the smoke visually connect new steam technology to old masts.",
-          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
-          "emotional_effect": "Curiosità e sorpresa per il contrasto di scala",
-          "duration_seconds": 5
-        },
-        {
-          "kind": "detail",
-          "detail_id": "ghost_ship",
-          "purpose": "Reveal the complete ship with preserved rigging; no claim that the painting is documentary.",
-          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
-          "emotional_effect": "Malinconia, quiete e rivelazione",
-          "duration_seconds": 5
+          "purpose": "Observe the black plume visually linking steam machinery and pale masts.",
+          "movement": "Locked authentic painting detail",
+          "emotional_effect": "Tensione tra tecnologia e memoria",
+          "duration_seconds": 5.1
         },
         {
           "kind": "detail",
           "detail_id": "sunset",
-          "purpose": "Hold the dramatic right-side sunset as the emotional climax.",
-          "movement": "Very slow hold, preserving painted texture and full sun disk",
-          "emotional_effect": "Malinconia, quiete e rivelazione",
-          "duration_seconds": 7
+          "purpose": "Let the warm sunset transform the literal tow into a poetic farewell.",
+          "movement": "Restrained pull inside the genuine painting",
+          "emotional_effect": "Malinconia per la fine di un'epoca",
+          "duration_seconds": 5.2
         },
         {
           "kind": "detail",
           "detail_id": "moon",
-          "purpose": "Discover the crescent moon only after the sunset has established the ending.",
-          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
-          "emotional_effect": "Malinconia, quiete e rivelazione",
-          "duration_seconds": 5
+          "purpose": "Reveal the faint moon as a quiet counterpoint to the sunset.",
+          "movement": "Locked authentic painting detail",
+          "emotional_effect": "Quiete e attenzione al particolare",
+          "duration_seconds": 4.8
         },
         {
           "kind": "detail",
           "detail_id": "buoy",
-          "purpose": "Use the dark buoy to balance the wide sky and give the viewer visual orientation.",
-          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
-          "emotional_effect": "Malinconia, quiete e rivelazione",
+          "purpose": "Focus on the dark river and buoy that counterbalance the luminous sky.",
+          "movement": "Locked authentic painting detail",
+          "emotional_effect": "Riflessione sul silenzio del viaggio",
           "duration_seconds": 5
         },
         {
           "kind": "detail",
           "detail_id": "ghost_ship",
-          "purpose": "Close on the entire original painting and its two opposing vessels.",
-          "movement": "Locked or gently motivated crop entirely inside the real painting, never artificial motion of ships",
-          "emotional_effect": "Malinconia, quiete e rivelazione",
-          "duration_seconds": 8
+          "purpose": "Re-enter the actual gallery photograph and pull back from the painted story to the authentic ornate frame.",
+          "movement": "Reverse optical path on the original museum photo",
+          "emotional_effect": "Ritorno alla presenza fisica del quadro",
+          "duration_seconds": 5.2
         },
         {
           "kind": "gallery_exit",
-          "purpose": "Return to the exact same gallery and show the painting at true scale after the revelation.",
-          "movement": "Reverse the established camera path with consistent geometry and contact shadows.",
-          "emotional_effect": "Chiusura malinconica, senza stacco artificiale",
-          "duration_seconds": 3.2
+          "purpose": "Finish in the same actual 2023 museum photograph, with Turner painting and real frame visibly restored.",
+          "movement": "Smooth optical pullback to exactly the initial gallery photo",
+          "emotional_effect": "Chiusura malinconica nella sala reale",
+          "duration_seconds": 6.7
         }
       ],
       "museum": {
         "width_cm": 121.6,
         "height_cm": 90.7,
-        "dimensions_source": "https://www.nationalgallery.org.uk/paintings/catalogues/egerton-2000/the-fighting-temeraire",
-        "frame_status": "Original frame dimensions and period not verified; scenic reconstruction must be explicitly labelled, no claim of authentic frame",
-        "gallery_id": "turner_ng524_illustrative_gallery_A",
-        "entrance_plan": "From first frame show the 90.7 x 121.6 cm painting already visible at human scale; short POV approach with authentic image recessed behind a plausible frame",
-        "exit_same_gallery_plan": "Return to the exact same reconstructed wall, camera axis and painting scale, with no ghosting or border replication",
-        "scene_is_reconstruction": true
-      }
+        "dimensions_source": "https://www.nationalgallery.org.uk/paintings/joseph-mallord-william-turner-the-fighting-temeraire",
+        "frame_status": "Actual gilded frame photographed in 2023; age and provenance of the frame not verified",
+        "gallery_id": "real_2023_commons_photo_JMW_Turners_The_Fighting_Temeraire_CC_BY_SA_4_0",
+        "entrance_plan": "Real photographed painting and frame visible from first frame; slow optical approach then hard cut to genuine high-resolution painting details",
+        "exit_same_gallery_plan": "Return to the same real photograph, same camera centre and initial frame, without a synthetic gallery",
+        "scene_is_reconstruction": false,
+        "photo_source": "https://commons.wikimedia.org/wiki/File:JMW_Turner%27s_The_Fighting_Temeraire.jpg",
+        "photo_license": "CC BY-SA 4.0; author metadata attribution pending human review"
+      },
+      "video_sha256": "dcac4d5155598a42fd3fc29f06f455ccf38a5f63da4a0f06ef9286cbaccc4ea8"
     }
   },
   "learning": {
     "previous_reference": "User-approved Cyclops SENZA STRISCE and Hiroshige Museum Scale for gallery technique, but neither exact MP4 was visually reviewed in this run.",
     "experiment_variable": "Test first-frame ghost ship followed by steam-tug reveal by second seven, compared with delayed museum entrances.",
     "expected_improvement": "Make the historic tension legible immediately on a phone without resorting to generic museum corridors.",
-    "post_render_review": "pending; no new MP4 rendered"
+    "post_render_review": "Real opening frames inspected; full-speed audiovisual review pending; no learning-loop record or Gold Master."
   },
   "approval": {
     "artistic_status": "planned",
