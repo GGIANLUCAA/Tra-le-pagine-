@@ -1,0 +1,498 @@
+{
+  "schema": "artvision-4x1-v1",
+  "topic": "The Goldfinch",
+  "artist": "Carel Fabritius",
+  "research_status": "documented_rights_territorial_pending",
+  "emotional_direction": {
+    "central_tension": "An intimate and seemingly free goldfinch is in fact chained to its feeder; the painterly illusion makes its captivity more unsettling.",
+    "intended_feeling": [
+      "tenerezza",
+      "inquietudine"
+    ],
+    "evidence_details": [
+      {
+        "id": "eye",
+        "location": "upper right, head x~0.77 y~0.27",
+        "observation": "The goldfinch looks toward the viewer with its dark eye and red face.",
+        "significance": "Creates intimacy before the chain is discovered.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
+        "claim_type": "interpretation"
+      },
+      {
+        "id": "chain",
+        "location": "leg, feeder and hanging line, central and left lower region",
+        "observation": "The bird is tethered to the feeder by a thin chain.",
+        "significance": "Makes captivity visible within an otherwise tender depiction.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "wing",
+        "location": "bird's black and yellow wing, central right",
+        "observation": "Two thick yellow strokes on black were scratched with the brush handle.",
+        "significance": "Shows the painter's material economy and illusionism.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "shadow",
+        "location": "right of the bird and box on pale wall",
+        "observation": "The painted shadow suggests a real bird and feeder hanging on a wall.",
+        "significance": "Demonstrates trompe-l'oeil depth without any synthetic motion.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "perch",
+        "location": "middle and lower half, curved bar and box",
+        "observation": "A feeder and curved support form the bird's domestic apparatus.",
+        "significance": "Connects the portrait to the trained pet's daily life.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
+        "claim_type": "documented"
+      },
+      {
+        "id": "signature",
+        "location": "lower center, inscription on panel",
+        "observation": "The inscription reads C FABRITIVS 1654.",
+        "significance": "Connects the painting to the artist's last year.",
+        "image_source": "https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
+        "claim_type": "documented"
+      }
+    ],
+    "reveal_order": [
+      "eye",
+      "chain",
+      "wing",
+      "shadow",
+      "perch",
+      "signature"
+    ],
+    "opening_hook": "The authentic bird's gaze invites an intimate encounter before the chain changes the meaning within seven seconds.",
+    "closing_payoff": "Return to the entire small panel with new awareness of the tether and painterly illusion.",
+    "wow_justification": "The authentic tether is the revelation: apparent tenderness turns into an ethical question without a fake animated bird."
+  },
+  "variants": {
+    "critico_standard": {
+      "format": "critico",
+      "mode": "standard",
+      "variation_reason": "Standard stays entirely within authentic artwork details, with no museum reconstruction",
+      "status": "blocked",
+      "opening_0_7": {
+        "first_frame_title_artist": "THE GOLDFINCH / CAREL FABRITIUS, fixed approved series lower banner",
+        "first_frame_visual": "Authentic bird eye, red face and wing directly visible from frame one",
+        "first_3_seconds_hook": "Direct gaze of goldfinch with legible artist and exact English title",
+        "seconds_3_to_7_reveal": "Reveal bird and tether together at 3s, then a closer chain detail",
+        "detail_id": "eye",
+        "mobile_composition_reason": "Bird eye and painting remain visible in safe area; title banner does not cover the eye",
+        "audio_or_voice_cue": "Google Gacrux natural Italian speech required, currently unavailable; no silent downgrade",
+        "qa_status": "pending_visual_review"
+      },
+      "scenes": [
+        {
+          "kind": "detail",
+          "detail_id": "eye",
+          "purpose": "Exact Italian narration tied to authentic detail eye and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.1,
+          "spoken_line": "Nel 1654 Carel Fabritius dipinge un uccellino che sembra guardarci da una parete vera. Non c’è paesaggio, non c’è una scena grandiosa: soltanto un cardellino."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "wing",
+          "purpose": "Exact Italian narration tied to authentic detail wing and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.25,
+          "spoken_line": "Bastano pochi tocchi di colore per farci riconoscere il piumaggio. La striscia gialla sull’ala interrompe i toni quieti del fondo."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "chain",
+          "purpose": "Exact Italian narration tied to authentic detail chain and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.3999999999999995,
+          "spoken_line": "Poi lo sguardo scende. Alla zampa è fissata una catena sottile. Quello che sembrava un incontro libero è anche il ritratto di un animale tenuto in cattività."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "perch",
+          "purpose": "Exact Italian narration tied to authentic detail perch and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.55,
+          "spoken_line": "Il suo nome olandese, puttertje, ricorda l’abitudine di addestrare questi uccelli a tirare su piccoli recipienti d’acqua."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "shadow",
+          "purpose": "Exact Italian narration tied to authentic detail shadow and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.699999999999999,
+          "spoken_line": "Fabritius usa la luce e l’ombra per ingannare il nostro occhio: il posatoio sembra uscire dalla superficie, come un oggetto realmente appeso al muro."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "signature",
+          "purpose": "Exact Italian narration tied to authentic detail signature and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.85,
+          "spoken_line": "In basso firma e data il dipinto: 1654. È lo stesso anno in cui l’artista muore nell’esplosione della polveriera di Delft."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "eye",
+          "purpose": "Exact Italian narration tied to authentic detail eye and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 8,
+          "spoken_line": "L’opera è minuscola, poco più di trentatré centimetri d’altezza. Eppure basta questo sguardo, insieme alla catena, per lasciarci una domanda sulla libertà."
+        }
+      ]
+    },
+    "critico_museum": {
+      "format": "critico",
+      "mode": "museum",
+      "variation_reason": "Museum shows true 33.5x22.8cm physical panel, coherent reconstructed frame and return to same room",
+      "status": "blocked",
+      "opening_0_7": {
+        "first_frame_title_artist": "THE GOLDFINCH / CAREL FABRITIUS, fixed approved series lower banner",
+        "first_frame_visual": "Authentic small painting clearly visible on reconstructed wall with real scale",
+        "first_3_seconds_hook": "Immediate view of small 33.5cm painting and human-scale setting",
+        "seconds_3_to_7_reveal": "Move closer to the bird and tether; no empty corridor",
+        "detail_id": "eye",
+        "mobile_composition_reason": "Bird eye and painting remain visible in safe area; title banner does not cover the eye",
+        "audio_or_voice_cue": "Google Gacrux natural Italian speech required, currently unavailable; no silent downgrade",
+        "qa_status": "pending_visual_review"
+      },
+      "scenes": [
+        {
+          "kind": "gallery_entry",
+          "purpose": "Establish genuine physical small scale with artwork visible from first frame",
+          "movement": "Gentle POV approach without stretching edges",
+          "emotional_effect": "Curiosità e tenerezza",
+          "duration_seconds": 3.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "eye",
+          "purpose": "Exact Italian narration tied to authentic detail eye and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.1,
+          "spoken_line": "Nel 1654 Carel Fabritius dipinge un uccellino che sembra guardarci da una parete vera. Non c’è paesaggio, non c’è una scena grandiosa: soltanto un cardellino."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "wing",
+          "purpose": "Exact Italian narration tied to authentic detail wing and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.25,
+          "spoken_line": "Bastano pochi tocchi di colore per farci riconoscere il piumaggio. La striscia gialla sull’ala interrompe i toni quieti del fondo."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "chain",
+          "purpose": "Exact Italian narration tied to authentic detail chain and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.3999999999999995,
+          "spoken_line": "Poi lo sguardo scende. Alla zampa è fissata una catena sottile. Quello che sembrava un incontro libero è anche il ritratto di un animale tenuto in cattività."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "perch",
+          "purpose": "Exact Italian narration tied to authentic detail perch and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.55,
+          "spoken_line": "Il suo nome olandese, puttertje, ricorda l’abitudine di addestrare questi uccelli a tirare su piccoli recipienti d’acqua."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "shadow",
+          "purpose": "Exact Italian narration tied to authentic detail shadow and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.699999999999999,
+          "spoken_line": "Fabritius usa la luce e l’ombra per ingannare il nostro occhio: il posatoio sembra uscire dalla superficie, come un oggetto realmente appeso al muro."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "signature",
+          "purpose": "Exact Italian narration tied to authentic detail signature and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 7.85,
+          "spoken_line": "In basso firma e data il dipinto: 1654. È lo stesso anno in cui l’artista muore nell’esplosione della polveriera di Delft."
+        },
+        {
+          "kind": "detail",
+          "detail_id": "eye",
+          "purpose": "Exact Italian narration tied to authentic detail eye and museum research",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 8,
+          "spoken_line": "L’opera è minuscola, poco più di trentatré centimetri d’altezza. Eppure basta questo sguardo, insieme alla catena, per lasciarci una domanda sulla libertà."
+        },
+        {
+          "kind": "gallery_exit",
+          "purpose": "Return to identical illustrated wall and original physical panel size",
+          "movement": "Smooth retreat to exactly the same museum viewpoint",
+          "emotional_effect": "Contemplazione e calma",
+          "duration_seconds": 5
+        }
+      ],
+      "museum": {
+        "width_cm": 22.8,
+        "height_cm": 33.5,
+        "dimensions_source": "https://www.mauritshuis.nl/en/our-collection/artworks/605-the-goldfinch",
+        "frame_status": "scenic reconstruction; not documented artist-original frame",
+        "gallery_id": "goldfinch_v50_illustrative_gallery",
+        "entrance_plan": "Real-scale tiny panel with visible visitor and frame depth, not an empty hallway",
+        "exit_same_gallery_plan": "Return to identical illustrated wall and small panel size; no edge stretch",
+        "scene_is_reconstruction": true
+      }
+    },
+    "cinema_standard": {
+      "format": "cinema",
+      "mode": "standard",
+      "variation_reason": "Standard stays entirely within authentic artwork details, with no museum reconstruction",
+      "status": "rendered_needs_review",
+      "opening_0_7": {
+        "first_frame_title_artist": "THE GOLDFINCH / CAREL FABRITIUS, fixed approved series lower banner",
+        "first_frame_visual": "Authentic bird eye, red face and wing directly visible from frame one",
+        "first_3_seconds_hook": "Direct gaze of goldfinch with legible artist and exact English title",
+        "seconds_3_to_7_reveal": "Reveal bird and tether together at 3s, then a closer chain detail",
+        "detail_id": "eye",
+        "mobile_composition_reason": "Bird eye and painting remain visible in safe area; title banner does not cover the eye",
+        "audio_or_voice_cue": "Licensed Water Lily by Kevin MacLeod starts at 0s after trimming 2.2s source silence; no speech",
+        "qa_status": "reviewed_on_real_frames"
+      },
+      "scenes": [
+        {
+          "kind": "detail",
+          "detail_id": "eye",
+          "purpose": "First-frame title and artist with authentic bird eye as immediate hook",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 3
+        },
+        {
+          "kind": "detail",
+          "detail_id": "chain",
+          "purpose": "At 3 seconds reveal whole bird and visible tether; no corridor",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 4.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "chain",
+          "purpose": "Closer look at the thin chain after its connection is established",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 5.1
+        },
+        {
+          "kind": "detail",
+          "detail_id": "wing",
+          "purpose": "Show yellow wing and brushwork without exaggerating movement",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 5.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "shadow",
+          "purpose": "Let the trompe-l'oeil shadow explain the painted presence",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 5.1
+        },
+        {
+          "kind": "detail",
+          "detail_id": "perch",
+          "purpose": "Explore feeding box and domestic curved support",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "signature",
+          "purpose": "Show authentic 1654 signature after the painting's emotional story",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 4.8
+        },
+        {
+          "kind": "detail",
+          "detail_id": "eye",
+          "purpose": "Return to the bird gaze after revealing the tether",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 4.8
+        },
+        {
+          "kind": "detail",
+          "detail_id": "perch",
+          "purpose": "Close on the complete original panel without adding slogans",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 6.5
+        }
+      ],
+      "verified_video_sha256": "537d7f8683bbac8791a8e629916ee206c845d41673eebd3a8dec1bee7575b1f2",
+      "duration_seconds": 43.666667,
+      "delivery": "ChatGPT Library stored, private Studio archive_sync_pending, V25 review pending"
+    },
+    "cinema_museum": {
+      "format": "cinema",
+      "mode": "museum",
+      "variation_reason": "Museum shows true 33.5x22.8cm physical panel, coherent reconstructed frame and return to same room",
+      "status": "rendered_needs_review",
+      "opening_0_7": {
+        "first_frame_title_artist": "THE GOLDFINCH / CAREL FABRITIUS, fixed approved series lower banner",
+        "first_frame_visual": "Authentic small painting clearly visible on reconstructed wall with real scale",
+        "first_3_seconds_hook": "Immediate view of small 33.5cm painting and human-scale setting",
+        "seconds_3_to_7_reveal": "Move closer to the bird and tether; no empty corridor",
+        "detail_id": "eye",
+        "mobile_composition_reason": "Bird eye and painting remain visible in safe area; title banner does not cover the eye",
+        "audio_or_voice_cue": "Licensed Water Lily by Kevin MacLeod starts at 0s after trimming 2.2s source silence; no speech",
+        "qa_status": "pending_visual_review"
+      },
+      "scenes": [
+        {
+          "kind": "gallery_entry",
+          "purpose": "Establish genuine physical small scale with artwork visible from first frame",
+          "movement": "Gentle POV approach without stretching edges",
+          "emotional_effect": "Curiosità e tenerezza",
+          "duration_seconds": 3.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "eye",
+          "purpose": "First-frame title and artist with authentic bird eye as immediate hook",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 3
+        },
+        {
+          "kind": "detail",
+          "detail_id": "chain",
+          "purpose": "At 3 seconds reveal whole bird and visible tether; no corridor",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 4.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "chain",
+          "purpose": "Closer look at the thin chain after its connection is established",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 5.1
+        },
+        {
+          "kind": "detail",
+          "detail_id": "wing",
+          "purpose": "Show yellow wing and brushwork without exaggerating movement",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 5.2
+        },
+        {
+          "kind": "detail",
+          "detail_id": "shadow",
+          "purpose": "Let the trompe-l'oeil shadow explain the painted presence",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 5.1
+        },
+        {
+          "kind": "detail",
+          "detail_id": "perch",
+          "purpose": "Explore feeding box and domestic curved support",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 5
+        },
+        {
+          "kind": "detail",
+          "detail_id": "signature",
+          "purpose": "Show authentic 1654 signature after the painting's emotional story",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 4.8
+        },
+        {
+          "kind": "detail",
+          "detail_id": "eye",
+          "purpose": "Return to the bird gaze after revealing the tether",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 4.8
+        },
+        {
+          "kind": "detail",
+          "detail_id": "perch",
+          "purpose": "Close on the complete original panel without adding slogans",
+          "movement": "Restrained static camera or slow motivated optical drift",
+          "emotional_effect": "Tenerezza e inquietudine, without false animation",
+          "duration_seconds": 6.5
+        },
+        {
+          "kind": "gallery_exit",
+          "purpose": "Return to identical illustrated wall and original physical panel size",
+          "movement": "Smooth retreat to exactly the same museum viewpoint",
+          "emotional_effect": "Contemplazione e calma",
+          "duration_seconds": 5
+        }
+      ],
+      "museum": {
+        "width_cm": 22.8,
+        "height_cm": 33.5,
+        "dimensions_source": "https://www.mauritshuis.nl/en/our-collection/artworks/605-the-goldfinch",
+        "frame_status": "scenic reconstruction; not documented artist-original frame",
+        "gallery_id": "goldfinch_v50_illustrative_gallery",
+        "entrance_plan": "Real-scale tiny panel with visible visitor and frame depth, not an empty hallway",
+        "exit_same_gallery_plan": "Return to identical illustrated wall and small panel size; no edge stretch",
+        "scene_is_reconstruction": true
+      },
+      "existing_verified_sha256": "5b760c609a51acf9c22a5f39aeb90344ea6914b812290c5fc01164376d3c94bd",
+      "legacy_version": "V50",
+      "delivery": "existing review master, no new render"
+    }
+  },
+  "learning": {
+    "previous_reference": "Cyclops SENZA STRISCE and Hiroshige Museum Scale, plus existing Goldfinch V50",
+    "experiment_variable": "Standard opens directly on bird and reveals tether before 7 seconds",
+    "expected_improvement": "Less delay than museum entrance; more specific and authentic hook",
+    "post_render_review": "First-frame and contact-sheet review done; full-speed watch/listen still pending"
+  },
+  "approval": {
+    "artistic_status": "rendered_needs_review",
+    "user_approval": false
+  },
+  "audience_research": {
+    "compared": [
+      "Wright Air Pump — Critico first but Google Gacrux not verified; V52B existing file classification ambiguous",
+      "Goldfinch — existing V50 Museum, missing Cinema Standard with authentic source and licensed recording; selected",
+      "Seurat Grande Jatte — V51 existing, future complex large-scale composition"
+    ],
+    "statistics": "No invented public engagement figures"
+  },
+  "rights": {
+    "artwork": "https://www.mauritshuis.nl/en/our-collection/artworks/605-the-goldfinch",
+    "image": "https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg",
+    "artwork_sha256": "b3c68e063addcb1cb4b49fb58b240750084b74cfb5957d91afa4db688f55830c",
+    "recording": "Water Lily — Kevin MacLeod, ISRC USUAN1400035, CC BY 4.0",
+    "recording_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+    "territorial_review": "pending"
+  }
+}
