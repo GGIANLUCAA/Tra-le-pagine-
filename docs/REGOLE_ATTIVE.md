@@ -5,6 +5,14 @@ La configurazione consultabile dal programma è `config/editorial_rules.json`.
 La revisione sostituisce i vincoli generali incompatibili nelle guide storiche;
 non riscrive filmati, materiali o approvazioni già esistenti.
 
+## Produzione seriale ArtVision a coppie — regola approvata 28/10/2026 (V53)
+
+**Nuova richiesta dell'utente:** per ogni quadro selezionato realizzare **due video originali collegati**: (A) Cinema / Museum Immersion, senza voce, ingresso nel quadro seguendo proporzioni e cornici V46; (B) Critico d'arte narrato, con studio approfondito, copione italiano naturale, voce Google Gacrux effettiva e dettagli strettamente sincronizzati alle frasi. Studio del soggetto comune per non rispendere risorse, ma montaggio e regia separati, senza copie travestite. Vale per qualunque tipologia di opera purché l'autenticità, le dimensioni e le capacità del renderer siano verificabili.
+
+**Cadenza richiesta:** un ciclo automatico ogni **due ore**, obiettivo un video artisticamente buono e revisionato per ciclo (non due video insieme ogni due ore). Se il Cinema già esiste, iniziare dal Critico mancante; completare entrambi prima di considerare terminata la coppia. La qualità prevale sul conteggio: se assenti voce vera, foto/diritti o review, segnalare stato esatto e passare ad attività sicura nella coda, senza inventare risultati.
+
+**Fonte operativa:** [ArtVision V53 — produzione a coppie](ARTVISION_PRODUZIONE_A_COPPIE_V53.md) e `queue/artvision_dual_format_s01_20261028.json`; riutilizzare l'automazione ArtVision esistente, non creare un secondo programma concorrente. Preservare la minisérie Museum Scale S01, master, file review e gate V44; budget IA video pagato pari a zero fino ad autorizzazione per singola generazione, nessuna autopubblicazione social.
+
 ## Quattro ambiti comprensibili
 
 | Ambito | Cosa significa | Esempio |
