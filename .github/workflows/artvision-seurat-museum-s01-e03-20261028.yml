@@ -1,0 +1,54 @@
+name: "ArtVision S01 E03 - Seurat Cinema - zero paid APIs"
+run-name: "S01 E03 Seurat real render and QA, not an approved master"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-seurat-museum-s01-e03-20261028.yml"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-museum-scale-s01-e03-20261028
+  cancel-in-progress: false
+jobs:
+  seurat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install local free render tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<13" "requests>=2.31,<3" "scipy>=1.11,<2"
+      - name: Confirm no secrets, paid services or social publishing
+        run: |
+          python -m py_compile scripts/artvision_seurat_museum_s01_e03_20261028.py
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("scripts/artvision_seurat_museum_s01_e03_20261028.py").read_text()
+          for forbidden in ["VIDU_API_KEY","RUNWARE_API_KEY","KLING_API_KEY","SEEDANCE_API_KEY","GEMINI_API_KEY","requests.post("]:
+              assert forbidden not in s, forbidden
+          print("ZERO_PAID_VIDEO_APIS_AND_NO_SOCIAL_PUBLISHING")
+          PY
+      - name: Render genuine Seurat art with verified recording and mandatory QA
+        run: |
+          python scripts/artvision_seurat_museum_s01_e03_20261028.py
+      - name: Upload review package, not Gold Master
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_SEURAT_S01_E03_RENDERED_NEEDS_REVIEW
+          path: |
+            output/artvision-seurat-s01-e03/ARTVISION_SEURAT_S01_E03_REVIEW_COMPLETE.zip
+            output/artvision-seurat-s01-e03/seurat_jatte_s01_e03/VIDEO_MASTER.mp4
+            output/artvision-seurat-s01-e03/seurat_jatte_s01_e03/COPERTINA.jpg
+            output/artvision-seurat-s01-e03/seurat_jatte_s01_e03/QA_CONTACT_SHEET.jpg
+            output/artvision-seurat-s01-e03/seurat_jatte_s01_e03/TECHNICAL_QA_V30.json
+          retention-days: 60
+          if-no-files-found: error
