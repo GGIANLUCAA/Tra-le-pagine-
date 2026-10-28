@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import sys
 from pathlib import Path
 
 SCHEMA = "artvision-4x1-v1"
@@ -222,9 +223,11 @@ def main():
     init.add_argument("--out", required=True, type=Path)
     check = commands.add_parser("check", help="Structural pre-render gate")
     check.add_argument("plan", type=Path)
-    # Backward-compatible shorthand: python file.py PLAN.json
-    ap.add_argument("legacy_plan", nargs="?", type=Path)
-    args = ap.parse_args()
+    # Accept historical call style: python file.py PLAN.json
+    argv = sys.argv[1:]
+    if argv and argv[0] not in ("init", "check", "-h", "--help"):
+        argv = ["check"] + argv
+    args = ap.parse_args(argv)
     if args.command == "init":
         if args.out.exists():
             ap.error("Destinazione già esistente: non sovrascrivere")
@@ -233,9 +236,7 @@ def main():
                                        ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(str(args.out))
         return
-    target = args.plan if args.command == "check" else args.legacy_plan
-    if not target:
-        ap.error("Usa init o check PLAN.json")
+    target = args.plan
     errors = validate(json.loads(target.read_text(encoding="utf-8")))
     print(json.dumps({"schema": "artvision-4x1-preflight-v1",
                       "passed": not errors, "blockers": errors,
