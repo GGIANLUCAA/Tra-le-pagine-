@@ -56,13 +56,16 @@ jobs:
               dist/BEIRUT_1919_COLORI_AI.mp4 dist/BEIRUT_1919_KIT_COMPLETO.zip dist/BEIRUT_1919_COPERTINA.jpg
           fi
           gh release view "$TAG" --repo "$REPO" --json url,assets --jq '{url: .url, files: [.assets[].name]}'
-      - name: "Verify release files exposed by GitHub before reporting success"
+      - name: "Verify published GitHub Release assets via trusted GitHub API"
         shell: bash
         run: |
           set -euo pipefail
-          for ext in "BEIRUT_1919_COLORI_AI.mp4" "BEIRUT_1919_KIT_COMPLETO.zip" "BEIRUT_1919_COPERTINA.jpg"; do
-            curl -sSIfL --retry 3 --max-time 40 \
-              "https://github.com/${REPO}/releases/download/${RELEASE_TAG}/${ext}" \
-              | grep -Eiq '^HTTP/(1.1|2|3) 200|^HTTP/(1.1|2|3) 302'
-            echo "Release URL checked: ${ext}"
-          done
+          gh api "repos/${REPO}/releases/tags/${RELEASE_TAG}" --jq '.assets[] | [.name, (.size|tostring)] | @tsv' > /tmp/published-assets.tsv
+          cat /tmp/published-assets.tsv
+          grep -Fx 
+BEIRUT_1919_COLORI_AI.mp4\t5748812' /tmp/published-assets.tsv
+          grep -Fx 
+BEIRUT_1919_KIT_COMPLETO.zip\t5931382' /tmp/published-assets.tsv
+          grep -Fx 
+BEIRUT_1919_COPERTINA.jpg\t183892' /tmp/published-assets.tsv
+          echo 'Release live with exact verified asset sizes.'
