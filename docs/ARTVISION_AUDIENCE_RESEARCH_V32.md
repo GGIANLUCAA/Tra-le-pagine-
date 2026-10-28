@@ -26,6 +26,14 @@ Non produrre un quadro solo perché è bello, celebre o già in archivio. Identi
 
 Il giudizio editoriale non è una predizione delle visualizzazioni. Se i segnali del pubblico non sono accessibili, assegnare `non valutabile` alla dimensione interesse osservato: non sostituirla con falsi valori. Confrontare anche i limiti e i rischi, non solo il totale.
 
+## Feedback WOW — 28 ottobre 2026
+
+Dopo il video Van Eyck V53 l'utente ha apprezzato la realizzazione e la cornice, ma vuole **opere molto più sorprendenti da guardare**. Per le nuove scelte libere ArtVision dare priorita al soggetto visivamente straordinario PRIMA della messa in scena museale.
+
+Confrontare >=3 candidati non duplicati. Provare in piccolo sul telefono l'immagine d'insieme; indicare cosa incuriosisce nei primi 1–3 secondi, quale particolare cambia la lettura, che storia vera sostiene la scoperta e se il 9:16 conserva il soggetto. Alternare grande spettacolo, mistero, meraviglia, stranezza e bellezza senza ridurre tutto a soggetti cupi. Un quadro storicamente importante non e automaticamente una buona scelta per il format WOW. Se l'opera e imposta dall'utente rispettarla.
+
+Registrare qualitativamente: phone_first_frame_hook, discovery_detail, visual_distinctiveness, narrative_turn, frame_source, artwork_scale, rights, duplicate_check, editorial_risks. Niente promesse di viralita, KPI inventati o scorciatoie sulle fonti e sui diritti. Restano obbligatori V28, V44, V46 e il divieto di API video a pagamento senza approvazione.
+
 ## Regia costruita sul contenuto, non stampino
 - **Mistero / molti dettagli:** rivelazioni scandite, collegamenti leggibili, pause sui simboli documentati.
 - **Emozione / relazione umana:** prossimità e distanza motivate, respiro, musica coerente, durata senza riempitivi.
