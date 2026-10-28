@@ -60,3 +60,22 @@ Non lanciare `task submit` prima del controllo del costo esatto, modello, prompt
 **Limite dell'episodio Il ritratto ovale:** la foto `SCENA_07.jpg` non e' ancora nel repository, e l'autorizzazione a `Q2 Pro Fast` non vale per `Q2 (CLI 3.1)`. Sono due blocchi indipendenti oltre al token. Nessuna clip di Vidu e' stata generata da questa integrazione.
 
 **Autonomia futura, nel limite del mandato:** il sistema non richiede che l'utente apra GitHub per ogni passo tecnico. ChatGPT puo' predisporre e registrare il manifesto dell'approvazione ottenuta nella conversazione e il push in `main` avvia automaticamente i passi tecnici. Non autoautorizza altre spese, modelli o scene: ogni consumo resta limitato all'approvazione specifica.
+
+
+## Verifica nuova chiave viduok — 28/10/2026 (GitHub main)
+
+Il secret aggiunto dall'utente col nome `viduok` viene ora letto con fallback `${{ secrets.VIDUOK || secrets.VIDU_TOKEN }}` da tre workflow:
+- `.github/workflows/vidu-subscription-readonly.yml`
+- `.github/workflows/vidu-consumer-approved-clip.yml`
+- `.github/workflows/vidu-consumer-collect.yml`
+
+**Test reale gratuito**: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40690411921
+
+- La variabile di ambiente `VIDU_TOKEN` non e' piu' vuota e la CLI ufficiale viene installata.
+- GET `quota pass`: `401 Unauthorized`.
+- GET `quota credit`: `401 Unauthorized`.
+- Preventivo di `Q2 CLI 3.1`, 5 secondi, 1080p, nopeak: richiesta risponde; `can_submit=true`, costo entro 8 crediti. **Il preventivo non prova l'autenticazione delle API di quota, quindi non si puo' affermare che il saldo/pass consumer sia disponibile.**
+- Preventivo con nome `viduq2-pro-fast`, 5 secondi, 720p: CLI locale lo rifiuta (exit 2), perche' il modello approvato su developer API non e' un modello consumer CLI compatibile.
+- **Nessun video inviato, nessun credito addebitato da questi controlli.**
+
+Per sbloccare il vero abbonamento consumer occorre verificare che il valore memorizzato in `VIDUOK` provenga dal menu `Vidu Token` su `vidu.com`, e non dal portale sviluppatori `platform.vidu.com`. Non inserire il token in chat. Verificare poi che il piano consenta quote e modello effettivo prima di creare una richiesta con approvazione distinta per un modello alternativo.
