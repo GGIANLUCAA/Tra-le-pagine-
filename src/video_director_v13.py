@@ -32,9 +32,9 @@ except ImportError:
     from narrative_variation_v38 import inspect as inspect_narrative_variation
 
 try:
-    from .artvision_four_variants_gate import new_plan as new_four_plan, validate as validate_four_plan
+    from .artvision_four_variants_gate import (new_plan as new_four_plan, validate as validate_four_plan, VARIANTS as FOUR_VARIANTS)
 except ImportError:
-    from artvision_four_variants_gate import new_plan as new_four_plan, validate as validate_four_plan
+    from artvision_four_variants_gate import (new_plan as new_four_plan, validate as validate_four_plan, VARIANTS as FOUR_VARIANTS)
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "config/video_formats_v13.json"
@@ -150,6 +150,19 @@ def local_file(base, name):
     return path
 
 
+def linked_four_plan(project_path, reference):
+    """Allow only the canonical 4x1 dossier in the current or parent group folder."""
+    project_path = Path(project_path)
+    if not isinstance(reference, str) or not reference.strip():
+        raise ValueError("Riferimento dossier 4x1 mancante")
+    base = project_path.parent.resolve()
+    target = (base / reference).resolve()
+    allowed = {base / "ARTVISION_4X1_PLAN.json", base.parent / "ARTVISION_4X1_PLAN.json"}
+    if target not in allowed or not target.is_file() or not target.stat().st_size:
+        raise ValueError("Dossier 4x1 assente o fuori dal gruppo consentito")
+    return target
+
+
 def check(project_path):
     project_path = Path(project_path)
     project = read_json(project_path)
@@ -236,11 +249,19 @@ def check(project_path):
             blockers.append("Piano ArtVision 4x1 collegato a formato non ArtVision")
         else:
             try:
-                group_path = local_file(project_path.parent, group_plan)
+                group_path = linked_four_plan(project_path, group_plan)
                 group_data = read_json(group_path)
-                if str(group_data.get("topic", "")).strip() != str(project.get("topic", "")).strip():
-                    blockers.append("4x1: opera del gruppo diversa dal progetto singolo")
-                blockers.extend("4x1: " + x for x in validate_four_plan(group_data))
+                if not isinstance(group_data, dict):
+                    blockers.append("4x1: dossier non valido")
+                else:
+                    if str(group_data.get("topic", "")).strip() != str(project.get("topic", "")).strip():
+                        blockers.append("4x1: opera del gruppo diversa dal progetto singolo")
+                    variant_name = project.get("artvision_4x1_variant")
+                    if variant_name not in FOUR_VARIANTS:
+                        blockers.append("4x1: variante del progetto V13 non indicata")
+                    elif "artvision_" + FOUR_VARIANTS[variant_name][0] != project.get("format"):
+                        blockers.append("4x1: formato del progetto diverso dalla variante scelta")
+                    blockers.extend("4x1: " + x for x in validate_four_plan(group_data))
             except (ValueError, OSError, TypeError, KeyError, json.JSONDecodeError) as exc:
                 blockers.append("4x1: impossibile verificare il piano condiviso: " + str(exc))
     elif project.get("format") in ("artvision_cinema", "artvision_critico"):
@@ -380,9 +401,22 @@ def main():
         target = Path(args.out)
         if target.exists():
             raise ValueError("Dossier esistente: non sovrascrivere")
+        if target.name != "ARTVISION_4X1_PLAN.json":
+            raise ValueError("Usare il nome ART VISION canonico: ARTVISION_4X1_PLAN.json")
+        destinations = {name: target.parent / name for name in FOUR_VARIANTS}
+        if any(d.exists() for d in destinations.values()):
+            raise ValueError("Una cartella variante esiste già: niente sovrascritture")
         target.parent.mkdir(parents=True, exist_ok=True)
         data = new_four_plan(args.topic, args.artist)
+        data["project_files"] = {name: f"{name}/PROJECT_V13.json" for name in FOUR_VARIANTS}
         write_json(target, data)
+        for name, (kind, mode) in FOUR_VARIANTS.items():
+            folder = destinations[name]
+            single = brief("artvision_" + kind, args.topic, folder)
+            single["serial_mode"] = "artvision_4x1"
+            single["artvision_4x1_variant"] = name
+            single["artvision_4x1_plan"] = "../ARTVISION_4X1_PLAN.json"
+            write_json(folder / "PROJECT_V13.json", single)
     elif args.command == "four-check":
         issues = validate_four_plan(read_json(args.plan))
         data = {"schema": "artvision-4x1-preflight-v1", "ready": not issues,
