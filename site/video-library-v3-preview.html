@@ -139,7 +139,8 @@ const log=s=>{const n=$('#toast');n.textContent=s;n.style.display='block';clearT
 function topic(x){const n=norm(x.available===false?x.name:x.key);const names=[['leonardo','Leonardo da Vinci'],['gioconda','La Gioconda'],['guernica','Guernica di Picasso'],['picasso','Pablo Picasso'],['caravaggio','Caravaggio'],['van_gogh','Vincent van Gogh'],['dali','Salvador Dalí'],['munch','Edvard Munch'],['klimt','Gustav Klimt'],['monet','Claude Monet'],['botticelli','Sandro Botticelli'],['vermeer','Johannes Vermeer'],['hokusai','Hokusai'],['rembrandt','Rembrandt'],['bosch','Hieronymus Bosch'],['arcimboldo','Giuseppe Arcimboldo'],['gentileschi','Artemisia Gentileschi'],['modigliani','Amedeo Modigliani'],['kandinsky','Wassily Kandinsky'],['bruegel','Pieter Bruegel'],['goya','Francisco Goya'],['hiroshige','Hiroshige'],['friedrich','Caspar David Friedrich'],['turner','William Turner'],['mucha','Alphonse Mucha'],['durer','Albrecht Dürer'],['mozart','Mozart'],['beethoven','Beethoven']];
 let found=names.filter(p=>n.includes(p[0])).map(p=>p[1]);if(found.length===0)return '';return found.slice(0,2).join(' · ')}
 function inferred(x){const name=(x.available===false?x.name:x.key).replace(/\.(mp4|mov|m4v)$/i,'').replace(/__\d+$/,'');const n=norm(name), artis=topic(x);let category='Altri progetti',project='Studio creativo',kind='Produzione video';
-if(/artvision|critico|guernica|gioconda|botticelli|monet|picasso|caravaggio/i.test(n)){category=/critico/.test(n)?'Critica d’arte':'Artisti e pittura';project='ArtVision';kind=/critico/.test(n)?'Analisi di un’opera':'Arte in immagini'}
+if(/(?:storia[_ -]?rivive|archivio[_ -]?storico)/i.test(n)){category='La Storia Rivive';project='Tra le Pagine';kind='Filmato storico autentico'}
+else if(/artvision|critico|guernica|gioconda|botticelli|monet|picasso|caravaggio/i.test(n)){category=/critico/.test(n)?'Critica d’arte':'Artisti e pittura';project='ArtVision';kind=/critico/.test(n)?'Analisi di un’opera':'Arte in immagini'}
 else if(/tra_le_pagine|ep0|scacchi|siddharta|raccont|libro|collaudo|base_video|delitto|castigo|pagine|arte_della_gioia|inferno|purgatorio|paradiso|trainspotting/i.test(n)){category='Libri raccontati';project='Tra le Pagine';kind='Libro raccontato'}
 else if(/controluce|cronaca|inchiesta/i.test(n)){category='Cronaca e attualità';project='Controluce';kind='Racconto di cronaca'}
 else if(/music|motion|hyper|mozart|beethoven|elise|orbita|geometri|prism|quantum|polytope|ribbon|aurora|costellazione|rifless|spirale|respiro|cattedrale|onde|stelle|raggio|gravita|scintille|giardino|forma_silenzio|astronomia|oceano|piano|sinfon/i.test(n)){category='Musica e visual';project='Music Motion';kind='Video musicale'}
@@ -193,10 +194,10 @@ function renderHome(){
   spotlight.innerHTML=img+'<div class="spotlight-bottom"><div class="spotlight-copy"><small>✦ In primo piano · '+h(choice.viewProject)+'</small><strong>'+h(choice.viewTitle)+'</strong><em>'+h(dur(choice.duration))+' · Guarda il filmato</em></div><button type="button" class="spotlight-play" aria-label="Riproduci '+h(choice.viewTitle)+'">▶</button></div>';
   spotlight.querySelector('.spotlight-play').onclick=()=>play(choice);
  }else spotlight.innerHTML='<div class="spotlight-empty"><span>✦</span><strong>Nessun filmato riproducibile</strong><small>Importa il primo video</small></div>';
- const priority=['Artisti e pittura','Musica e visual','Libri raccontati','Critica d’arte','Cronaca e attualità','Altri progetti'];
+ const priority=['Artisti e pittura','Musica e visual','Libri raccontati','Critica d’arte','La Storia Rivive','Cronaca e attualità','Altri progetti'];
  const categories=[...new Set(visible.map(x=>x.viewCategory))].sort((a,b)=>priority.indexOf(a)===-1?1:priority.indexOf(b)===-1?-1:priority.indexOf(a)-priority.indexOf(b));
  const grid=$('#collectionGrid');grid.replaceChildren();
- const glyph={'Artisti e pittura':'✦','Musica e visual':'♫','Libri raccontati':'▤','Critica d’arte':'◈','Cronaca e attualità':'◎','Altri progetti':'◫'};
+ const glyph={'Artisti e pittura':'✦','Musica e visual':'♫','Libri raccontati':'▤','Critica d’arte':'◈','La Storia Rivive':'◉','Cronaca e attualità':'◎','Altri progetti':'◫'};
  for(const category of categories.slice(0,8)){
   const records=visible.filter(x=>x.viewCategory===category),poster=sortedFresh(records.filter(x=>x.cover&&x.available!==false))[0];
   const b=document.createElement('button');b.type='button';b.className='collection-card';b.setAttribute('aria-label','Esplora '+category);
