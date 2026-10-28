@@ -1,0 +1,80 @@
+{
+  "version": "V58_2026_10_28",
+  "format": "storia_rivive",
+  "scope": "new_historical_archive_reels",
+  "approved_user_intent": "free open-source tools, best-looking perceived resolution, autonomous subject selection and meaningful multi-shot montage, optional future Vidu segment",
+  "budget": {
+    "cash_eur_default": 0,
+    "vidu_credits_default": 0,
+    "no_paid_retries": true,
+    "per_clip_explicit_approval": true,
+    "autopublish": false
+  },
+  "resolution": {
+    "goal": "perceived_quality_on_android",
+    "delivery_choices": [
+      [
+        720,
+        1280
+      ],
+      [
+        1080,
+        1920
+      ]
+    ],
+    "native_4k_not_required": true,
+    "avoid_cosmetic_upscale": true
+  },
+  "coloring": {
+    "semantic_model": "DDColor_candidate_not_installed",
+    "temporal_stabilizer": "OpenCV_optical_flow_custom_candidate_not_installed",
+    "video_wrapper": "HAVC_code_MIT_but_commercial_deps_not_cleared",
+    "prohibited_commercial_without_permission": [
+      "original_colormnet_BY_NC_SA",
+      "cmnet2_derived_until_rights_cleared"
+    ],
+    "quality_gate": "src/storia_rivive_visual_gate_v57.py",
+    "no_sepia_final": true
+  },
+  "render": {
+    "engine": "src/storia_rivive_montage_v58.py",
+    "status": "offline_compositor_implemented_requires_real_precolored_sources",
+    "source_download_and_colorization": "separate_unintegrated_steps",
+    "test_only_360x640": true,
+    "final_720x1280_or_1080x1920": true,
+    "forms": [
+      "single_reveal",
+      "multi_shot_microstory",
+      "archive_plus_labelled_ai_recreation"
+    ],
+    "duration": "motivated_by_actual_story_not_fixed",
+    "no_repeated_zoom_as_new_scene": true
+  },
+  "source_search": {
+    "queue": "queue/storia_rivive_candidates_v58.json",
+    "minimum_candidate_comparison_when_free_choice": 3,
+    "selection": "documentary_fact+human_action+hook+color_potential+crop+rights+render_cost",
+    "no_invented_engagement": true
+  },
+  "ai_inserts": {
+    "provider": "Vidu_optional",
+    "enabled": false,
+    "label": "RICOSTRUZIONE AI",
+    "require_separate_reconstruction_disclosure": true,
+    "never_fake_archival_footage": true,
+    "score_added_creative_value_before_authorization": true
+  },
+  "handoff": {
+    "inherit": "V55",
+    "files": [
+      "MP4_H264_AAC",
+      "JPG_cover",
+      "four_original_social_posts",
+      "rights_and_source",
+      "recipe_and_QA",
+      "ZIP_complete",
+      "actual_Android_download_and_library_verification"
+    ],
+    "not_currently_automated": true
+  }
+}
