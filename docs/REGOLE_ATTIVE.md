@@ -5,6 +5,10 @@ La configurazione consultabile dal programma è `config/editorial_rules.json`.
 La revisione sostituisce i vincoli generali incompatibili nelle guide storiche;
 non riscrive filmati, materiali o approvazioni già esistenti.
 
+## Correzione vincolante La Storia Rivive V57 — 28/10/2026
+
+**Feedback esplicito dell'utente dopo visione del pilota:** viraggio seppia e dissolvenza NON somigliano ai tre esempi, che appaiono fotorealistici, ricchi di colori distinti e dettagli moderni. **Vietato consegnare come finali reference-grade semplici LUT, seppia, dissolvenze o upscale cosmetici.** La priorità assoluta per questa categoria è **restauro AI semantico con stabilità temporale, nitidezza credibile e fedeltà documentaria**, oppure ricostruzione generativa chiaramente etichettata come tale (mai falsa prova storica). 4K significa 2160×3840 effettivi, non qualità percepita; i tre MP4 di riferimento misurano tutti 720×1280. Il pilot Beirut resta bocciato come target estetico, senza chiedere di visionarlo di nuovo. Leggere `docs/LA_STORIA_RIVIVE_QUALITA_V57.md`, `config/storia_rivive_quality_v57.json` e usare `src/storia_rivive_visual_gate_v57.py` come controllo tecnico addizionale, NON sostituto della visione reale. Restano vincolanti V56 (fonti/costi/download), V55 e divieto di usare crediti senza autorizzazione.
+
 ## La Storia Rivive V56 — NUOVO FORMAT AUTONOMO (28 ottobre 2026)
 
 **Regole richieste e approvate esplicitamente dall'utente:** nuova categoria per montare vere riprese d'archivio con passaggio B/N→colorizzazione fedele, senza stampini e senza spreco di crediti. Contratto vincolante: [LA_STORIA_RIVIVE_CONTRATTO_V56.md](LA_STORIA_RIVIVE_CONTRATTO_V56.md); policy machine-readable `config/storia_rivive_v56.json`; profilo `config/video_formats_v13.json > formats.storia_rivive`.

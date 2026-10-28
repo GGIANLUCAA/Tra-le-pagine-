@@ -131,8 +131,12 @@
       "title": "BEIRUT 1919 — LA VITA IN STRADA",
       "source_page": "https://commons.wikimedia.org/wiki/File:Sc%C3%A8nes_de_rue_-_AI13347.webm",
       "source_rights": "CC0_recorded_2026_10_28",
-      "scene_timecodes": "not_yet_reviewed"
+      "scene_timecodes": "not_yet_reviewed",
+      "color_version_status": "FAILED_REFERENCE_STANDARD_V57"
     }
   ],
-  "visual_standard": "docs/LA_STORIA_RIVIVE_STANDARD_VISIVO_V56_1.md"
+  "visual_standard": "docs/LA_STORIA_RIVIVE_STANDARD_VISIVO_V56_1.md",
+  "quality_override": "config/storia_rivive_quality_v57.json",
+  "default_quality_preset": "reference_modern_color",
+  "sepias_as_final_prohibited": true
 }

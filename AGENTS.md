@@ -14,6 +14,10 @@ Le guide V12–V31 restano istruzioni dei moduli: in caso di conflitto prevale l
 revisione attiva. Non aggiungere in cima altri blocchi «regola più recente»:
 aggiornare la fonte unica con versione, motivo e riferimento dell'approvazione.
 
+## V57 — Il target storico è colore AI fotorealistico, NON seppia
+
+Correzione dell'utente del 28/10/2026: i tre file `facebook_20261028_142708.mp4`, `142737.mp4`, `142900.mp4` sono i riferimenti estetici; tutti risultano 720×1280, non vero 4K. Un banale viraggio caldo è stato esplicitamente bocciato. Leggere `docs/LA_STORIA_RIVIVE_QUALITA_V57.md` e `config/storia_rivive_quality_v57.json`. Per nuovi video storico-reference-grade applicare colorizzazione AI semantica e temporalmente coerente e reale recupero del dettaglio; non inviare un altro falso "restauro AI". Non confondere ricostruzione generativa con filmato storico autentico. Zero crediti Vidu senza consenso per clip; revisione e pacchetto V55 obbligatori.
+
 ## V56 — Nuova categoria La Storia Rivive (28/10/2026)
 
 Per nuovi filmati storici leggere `docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md`, `config/storia_rivive_v56.json` e il profilo `storia_rivive` di `config/video_formats_v13.json`. Usare V55, V28, V33 e V25 senza trasferire automaticamente Museum/V54 4x1 ai filmati d'archivio. Niente falsi documenti, fake colorization, crop facce o spese Vidu non approvate. Nuovo format separato, non modificare i master. Il pilot non è un MP4 pronto solo perché esistono regole.
