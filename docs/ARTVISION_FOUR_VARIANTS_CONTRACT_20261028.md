@@ -41,3 +41,33 @@ Per ogni opera il dossier madre deve contenere una `emotional_direction` verific
 **Gate dopo render:** rivedere l'intero video a velocità normale, anche senza audio per controllare la leggibilità del percorso visivo; poi con audio per verificare tensione, pause, enfasi e raccordi. Annotare almeno un punto che emoziona o sorprende *per una ragione spiegabile* e 2–3 debolezze concrete. Se non emerge alcuna progressione significativa, stato `rendered_needs_review`, mai Gold Master automatico.
 
 **Apprendimento:** registrare i feedback dell'utente e, quando disponibili, dati reali di retention, completamento, salvataggi e condivisioni per variante. Confrontare ipotesi e risultati senza inventare metriche; modificare poche variabili per ciclo. Le emozioni non si certificano con ffprobe o con un algoritmo.
+
+## Implementazione V54 — comandi reali e limiti dei controlli (28/10/2026)
+
+**Creazione senza spesa del gruppo e delle quattro schede V13 collegate:**
+
+```bash
+python src/video_director_v13.py four-brief --topic "The Goldfinch" --artist "Carel Fabritius" --out output/fabritius/ARTVISION_4X1_PLAN.json
+```
+
+Crea **un solo** `output/fabritius/ARTVISION_4X1_PLAN.json` e quattro sottocartelle con `PROJECT_V13.json` separati (`critico_standard`, `critico_museum`, `cinema_standard`, `cinema_museum`). Ogni scheda V13 usa `artvision_4x1_plan=../ARTVISION_4X1_PLAN.json`, `serial_mode=artvision_4x1` e `artvision_4x1_variant` corretto. **Non vengono creati MP4, voce, musica, immagini, ricerche né approvazioni**; i campi sono intenzionalmente vuoti. Non sovrascrivere cartelle già esistenti.
+
+**Preflight prima dei renderer:**
+
+```bash
+python src/video_director_v13.py four-check --plan output/fabritius/ARTVISION_4X1_PLAN.json
+python src/video_director_v13.py check --project output/fabritius/critico_standard/PROJECT_V13.json
+```
+
+Ripetere il secondo comando per tutte le varianti; il normale `check` include il controllo condiviso 4x1 quando la scheda dichiara la modalità seriale. Il check strutturale **non certifica che le fonti siano vere, che la voce sia stata ascoltata o che la resa sia emozionante**. I passaggi di produzione effettiva seguono gli adapter e renderer V6/V2 esistenti. In caso di blocco riportare precisamente l'elemento mancante.
+
+**Autocritica su un MP4 reale, dopo averlo davvero visto e ascoltato:**
+
+```bash
+python src/artvision_learning_loop_v1.py record --review REVIEW.json --video VIDEO.mp4 --ledger output/artvision_learning.jsonl
+python src/artvision_learning_loop_v1.py next --ledger output/artvision_learning.jsonl
+```
+
+Usare `templates/ARTVISION_4X1_SELF_CRITIQUE_V1.json` come scheda vuota. Collegare almeno due difetti a secondi concreti, gravità, ipotesi di causa, correzione e metodo di verifica; **il tool verifica hash e caratteristiche MP4 con ffprobe, ma non visiona il filmato**. Niente autocritiche finte, niente modifica automatica di master approvati e nessun rating artificiale presentato come previsione di viralità. La lezione proposta è un'ipotesi da confrontare su un nuovo MP4, mai una prova di qualità raggiunta.
+
+**Coda:** `queue/artvision_four_variants_s01_20261028.json` conserva separatamente le quattro varianti per opera. Le voci ereditate dalla precedente coda V53 sono riferimenti storici da riverificare, non attestazioni di consegna. Le due automazioni produttive già esistenti devono evitare sovrapposizioni.
