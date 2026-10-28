@@ -1,0 +1,82 @@
+name: "ArtVision V55 — Turner Cinema Standard — real render zero paid APIs"
+run-name: "Turner The Fighting Temeraire · Cinema Standard V55 · review only"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-turner-cinema-standard-v55-20261028.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-turner-cinema-standard-v55-20261028
+  cancel-in-progress: false
+jobs:
+  turner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install local free video tools
+        run: |
+          set -euo pipefail
+          command -v ffmpeg || sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "requests>=2.31,<3"
+          python -m py_compile scripts/artvision_turner_cinema_standard_v55.py src/artvision_delivery_v55.py
+      - name: V54 official four-check (structural only, fail closed)
+        run: |
+          python src/video_director_v13.py four-check --plan docs/productions/2026-10-28-turner-temeraire-v55-research-1915/ARTVISION_4X1_PLAN.json
+      - name: Confirm no paid video API or social autopublishing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          code=Path('scripts/artvision_turner_cinema_standard_v55.py').read_text()
+          for bad in ('VIDU_API_KEY','RUNWARE_API_KEY','KLING_API_KEY','SEEDANCE_API_KEY','GEMINI_API_KEY','requests.post('):
+              assert bad not in code,bad
+          print('ZERO_PAID_VIDEO_APIS; SOCIAL_AUTOPUBLISHING_DISABLED')
+          PY
+      - name: Render Turner Cinema Standard with authentic artwork and licensed recording
+        run: |
+          python scripts/artvision_turner_cinema_standard_v55.py
+      - name: Independent full decode and V55 package CRC
+        run: |
+          set -euo pipefail
+          root="output/artvision-turner-cinema-standard-v55"
+          film="$root/turner_fighting_temeraire_cinema_standard_v55/VIDEO_MASTER.mp4"
+          test -s "$film"
+          test -s "$root/V55_DELIVERY/VIDEO_MASTER_COMPLETO.zip"
+          test -s "$root/V55_DELIVERY/ARTVISION_TURNER_CINEMA_STANDARD_V55_SOLO_VIDEO_ANDROID.zip"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$film" -f null -
+          python - <<'PY'
+          import pathlib,zipfile,subprocess,json,hashlib
+          root=pathlib.Path('output/artvision-turner-cinema-standard-v55')
+          video=root/'turner_fighting_temeraire_cinema_standard_v55/VIDEO_MASTER.mp4'
+          p=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration:stream=codec_name,codec_type,width,height','-of','json',str(video)]))
+          assert any(s.get('codec_name')=='h264' and (s.get('width'),s.get('height'))==(1080,1920) for s in p['streams'])
+          assert any(s.get('codec_name')=='aac' for s in p['streams'])
+          for f in (root/'V55_DELIVERY').glob('*.zip'):
+              with zipfile.ZipFile(f) as z:assert z.testzip() is None
+          for k in ('FACEBOOK','INSTAGRAM','TIKTOK','YOUTUBE'):
+              assert (video.parent/f'POST_{k}.txt').stat().st_size>100
+          print('RENDERED_NEEDS_REVIEW',hashlib.sha256(video.read_bytes()).hexdigest())
+          PY
+      - name: Save real MP4 and complete V55 review bundle; do not publish
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_TURNER_CINEMA_STANDARD_V55_RENDERED_NEEDS_REVIEW
+          path: |
+            output/artvision-turner-cinema-standard-v55/turner_fighting_temeraire_cinema_standard_v55/VIDEO_MASTER.mp4
+            output/artvision-turner-cinema-standard-v55/turner_fighting_temeraire_cinema_standard_v55/COPERTINA.jpg
+            output/artvision-turner-cinema-standard-v55/turner_fighting_temeraire_cinema_standard_v55/QA_CONTACT_SHEET.jpg
+            output/artvision-turner-cinema-standard-v55/turner_fighting_temeraire_cinema_standard_v55/QA_FIRST_FRAME_V55.jpg
+            output/artvision-turner-cinema-standard-v55/ARTVISION_V30_TURNER_FIGHTING_TEMERAIRE_CINEMA_STANDARD_V55_COMPLETE.zip
+            output/artvision-turner-cinema-standard-v55/V55_DELIVERY/*.zip
+            output/artvision-turner-cinema-standard-v55/V55_DELIVERY/DELIVERY_STATUS_V55.json
+            output/artvision-turner-cinema-standard-v55/RELEASE_STATE_V55.json
+          if-no-files-found: error
+          retention-days: 30
