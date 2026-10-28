@@ -114,6 +114,13 @@ def evaluate(plan, stage="source"):
              "V56.1: reale multicolore non verificato visivamente")
         need(color.get("reference_style_match_reviewed") is True,
              "V56.1: resa visiva non confrontata con gli esempi")
+        if plan.get("quality_preset", "reference_modern_color") == "reference_modern_color":
+            need(nonblank(color.get("model_and_version")),
+                 "V57: modello AI effettivamente utilizzato non documentato")
+            need(color.get("temporal_stability_reviewed") is True,
+                 "V57: colori e dettagli devono essere coerenti fra fotogrammi")
+            need(delivery.get("v57_color_gate_passed") is True,
+                 "V57: gate sul colore semantico multicolore non superato")
         paths = delivery.get("files", {})
         required = ["mp4", "cover_jpg", "rights_json", "recipe_json",
                     "qa_json", "complete_zip"]
