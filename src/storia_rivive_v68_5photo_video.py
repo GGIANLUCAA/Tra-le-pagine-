@@ -76,8 +76,15 @@ def get_existing_first():
  url="https://api.github.com/repos/GGIANLUCAA/Tra-le-pagine-/actions/artifacts/"+ARTIFACT_ID+"/zip"
  token=os.environ.get("GH_TOKEN","")
  if not token:raise RuntimeError("No github read token for real preexisting approved test artifact")
- file=download(url,OUT/"V68_TESTED_FIRST_ARTIFACT.zip",headers={"Authorization":"Bearer "+token,
-                                                    "Accept":"application/vnd.github+json"})
+ file=OUT/"V68_TESTED_FIRST_ARTIFACT.zip"
+ # urllib forwards the Authorization header to GitHub's cross-domain blob redirect,
+ # triggering Azure HTTP 401; curl -L strips sensitive auth when host changes.
+ cmd(["curl","--fail","--location","--retry","3","--connect-timeout","20","--max-time","160",
+      "-H","Authorization: Bearer "+token,
+      "-H","Accept: application/vnd.github+json",
+      url,"-o",str(file)],180)
+ if not file.is_file() or file.stat().st_size<100000:
+  raise RuntimeError("Original actual generative photo artifact missing")
  with zipfile.ZipFile(file) as z:
   im=Image.open(io.BytesIO(z.read("FOTO_GENERATIVA_FORTE.png"))).convert("RGB")
   result=OUT/"FOTO_AI_RICOSTRUITA_01.png"
