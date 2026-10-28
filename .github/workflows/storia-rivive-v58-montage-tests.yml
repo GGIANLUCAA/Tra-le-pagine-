@@ -4,6 +4,7 @@ on:
     paths:
       - "src/storia_rivive_montage_v58.py"
       - "tests/test_storia_rivive_montage_v58.py"
+      - "config/storia_rivive_v59.json"
       - ".github/workflows/storia-rivive-v58-montage-tests.yml"
       - "config/storia_rivive_v58.json"
       - "queue/storia_rivive_candidates_v58.json"
@@ -28,5 +29,6 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_montage_v58.py" -v
           python -m json.tool queue/storia_rivive_candidates_v58.json > /dev/null
           python -m json.tool config/storia_rivive_v58.json > /dev/null
+          python -m json.tool config/storia_rivive_v59.json > /dev/null
       - name: "Nessun MP4 di test viene presentato come video storico AI"
         run: echo "V58 CI e' solo controllo tecnico del compositor, non crea un episodio pubblicabile"
