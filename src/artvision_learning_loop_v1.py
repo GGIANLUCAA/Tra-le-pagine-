@@ -10,7 +10,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import re
+import subprocess
 from collections import Counter
 from pathlib import Path
 
@@ -44,15 +46,36 @@ def validate_review(review, real_video=None):
     digest = review.get("video_sha256")
     if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
         errors.append("SHA256 esatto del video richiesto")
+    video_duration = None
     if real_video is None:
         errors.append("Passare --video per provare l'esistenza del filmato analizzato")
     else:
         video = Path(real_video)
         if not video.is_file() or video.stat().st_size == 0:
             errors.append("MP4 originale inesistente o vuoto")
-        elif isinstance(digest, str) and re.fullmatch(r"[0-9a-f]{64}", digest):
-            if sha256_file(video) != digest:
-                errors.append("Il file MP4 non coincide con l'hash della recensione")
+        else:
+            if isinstance(digest, str) and re.fullmatch(r"[0-9a-f]{64}", digest):
+                if sha256_file(video) != digest:
+                    errors.append("Il file MP4 non coincide con l'hash della recensione")
+            try:
+                info = json.loads(subprocess.check_output([
+                    "ffprobe", "-v", "error", "-show_entries",
+                    "format=duration:stream=codec_type,codec_name,width,height",
+                    "-of", "json", str(video)], text=True, timeout=40,
+                    stderr=subprocess.DEVNULL))
+                streams = info.get("streams", [])
+                visual = next((s for s in streams if s.get("codec_type") == "video"), None)
+                audio = next((s for s in streams if s.get("codec_type") == "audio"), None)
+                video_duration = float(info.get("format", {}).get("duration", 0))
+                if not visual or not audio or not math.isfinite(video_duration) or video_duration <= 0:
+                    errors.append("MP4 non valido: audio e video reali richiesti")
+                elif visual.get("codec_name") != "h264" or audio.get("codec_name") != "aac":
+                    errors.append("ArtVision richiede video H264 e audio AAC")
+                elif not (visual.get("width", 0) < visual.get("height", 0)):
+                    errors.append("ArtVision richiede filmato verticale")
+            except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired,
+                    ValueError, TypeError) as exc:
+                errors.append("ffprobe: impossibile verificare l'MP4: " + str(exc))
     inspection = review.get("inspection")
     if not isinstance(inspection, dict):
         inspection = {}
@@ -79,7 +102,8 @@ def validate_review(review, real_video=None):
                 errors.append(f"Difetto {i}: {field} troppo generico")
         seconds = finding.get("at_second")
         if (isinstance(seconds, bool) or not isinstance(seconds, (int, float))
-                or seconds < 0 or seconds != seconds):
+                or not math.isfinite(seconds) or seconds < 0
+                or (video_duration is not None and seconds > video_duration)):
             errors.append(f"Difetto {i}: secondi del problema richiesti")
     experiment = review.get("next_experiment")
     if not isinstance(experiment, dict):
@@ -115,7 +139,8 @@ def record(review, video, ledger):
     tmp.write_text("".join(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n"
                            for row in rows), encoding="utf-8")
     tmp.replace(ledger)
-    return {"saved": True, "records": len(rows), "auto_approved": False}
+    return {"saved": True, "records": len(rows), "auto_approved": False,
+            "review_evidence": "self_reported_with_matching_local_mp4"}
 
 
 def next_lesson(ledger):
