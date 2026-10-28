@@ -127,6 +127,7 @@
       "preset": "historical-archive-v56",
       "narrated": false,
       "guides": [
+        "docs/LA_STORIA_RIVIVE_OPEN_SOURCE_E_MONTAGGIO_V58.md",
         "docs/LA_STORIA_RIVIVE_QUALITA_V57.md",
         "docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md",
         "docs/REGOLE_ATTIVE.md",
@@ -135,14 +136,15 @@
       ],
       "entrypoints": [
         "src/storia_rivive_preflight_v56.py",
-        "src/storia_rivive_visual_gate_v57.py"
+        "src/storia_rivive_visual_gate_v57.py",
+        "src/storia_rivive_montage_v58.py"
       ],
       "resolution": [
-        1080,
-        1920
+        720,
+        1280
       ],
-      "direction": "Riprese storiche autentiche, VERA colorizzazione AI semantica multicolore stabile fra fotogrammi e nitidezza moderna. I vecchi effetti seppia/LUT non superano V57. Distinguere restauro reale da ricostruzione AI. 1080×1920 target, 2160×3840 solo se output verificato; primi 7s forti e dossier V55 integrale.",
-      "next_action": "Verificare GPU e modello di video colorization + temporal propagation; produrre test reale di 2–3s prima dell'intero video. Il pilota seppia NON è un esempio approvato e non va riproposto.",
+      "direction": "Qualità visiva percepita 720/1080p, colore AI semantico e stabile; rivelazione reale e montaggio libero di una o più riprese storiche collegate da un racconto. Vidu solo inserto opzionale etichettato e autorizzato per clip; 4K cosmetico e seppia finali vietati.",
+      "next_action": "Selezionare 3 fonti CC0, guardare i veri fotogrammi, poi verificare GPU gratuita per DDColor + stabilizzatore temporale con licenza compatibile. Comporre scene con il montatore V58 dopo consegna delle clip AI vere e gate V57. Nessun render storico pronto da questa configurazione da sola.",
       "rules_config": "config/storia_rivive_v56.json",
       "quality_preset": "reference_modern_color"
     }
