@@ -199,12 +199,24 @@
           "notes": "Authentic Wikimedia Commons 5684x4223 artwork; Kevin MacLeod Water Lily CC BY 4.0 recording; V55 package exists. No V25 artistic approval, no private archive verification."
         },
         "cinema_museum": {
-          "status": "planned",
+          "status": "rendered_needs_review",
           "legacy_prior": "planned_not_rendered",
-          "reported_hash": null,
+          "reported_hash": "dcac4d5155598a42fd3fc29f06f455ccf38a5f63da4a0f06ef9286cbaccc4ea8",
           "legacy_version": null,
           "legacy_report": null,
-          "verified_this_migration": false
+          "verified_this_migration": true,
+          "version": "V55",
+          "duration_seconds": 52.2,
+          "codec": "H264/AAC 1080x1920",
+          "github_actions_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40762260266",
+          "github_artifact_id": 12847734987,
+          "technical_qa": "ffprobe_full_decode_zip_crc_verified_independently_2026-10-28",
+          "opening_review": "real_frames_0_1_3_5_7_seen; full_speed_watch_and_audio_pending",
+          "human_approval": false,
+          "archive_sync_pending": true,
+          "site_verified": false,
+          "photo_license": "Commons CC BY-SA 4.0; photographer attribution human review pending",
+          "notes": "Actual CC BY-SA 4.0 2023 photograph of the framed Turner at National Gallery; distinct Cinema Museum render; first-frame title+artist checked. No V25 approval, no import claim."
         }
       }
     }
