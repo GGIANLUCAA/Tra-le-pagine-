@@ -564,6 +564,59 @@
       "separate_authenticity_rights_measurements_in_recipe",
       "artistic_review_not_inferred_from_ffprobe"
     ],
-    "note": "User explicitly requested much better high-value museum frames, while preserving true artwork proportions. Does not require museum effect for all videos or approve outputs automatically."
+    "note": "User explicitly requested much better high-value museum frames, while preserving true artwork proportions. Does not require museum effect for all videos or approve outputs automatically.",
+    "authentic_frame_replication_priority": {
+      "approved_at": "2026-10-28",
+      "priority": "replicate_documented_frame_before_creating_alternative",
+      "identification": [
+        "exact_artwork_specimen",
+        "museum_photo_or_archival_source",
+        "current_vs_historical_vs_artist_original",
+        "photo_date_or_unknown"
+      ],
+      "fallback_order": [
+        "documented_current_frame_replica",
+        "documented_historical_frame_replica_with_label",
+        "partial_reconstruction_disclosed",
+        "scenic_reconstruction_disclosed"
+      ],
+      "record_in_recipe": "frame_research",
+      "required_frame_research_fields": [
+        "authenticity_status",
+        "source_urls",
+        "photo_date_or_unknown",
+        "rights_status",
+        "evidence_notes",
+        "artwork_size_cm",
+        "frame_size_cm_or_unknown",
+        "assumptions",
+        "reference_visual_compared",
+        "qa_visual_result"
+      ],
+      "allowed_authenticity_status": [
+        "documented_current",
+        "documented_historical",
+        "partial_reconstruction",
+        "scenic_reconstruction"
+      ],
+      "quality_gates": [
+        "source_frame_comparison_on_real_still",
+        "proportions_mouldings_materials_corners",
+        "artwork_physically_recessed_behind_inner_lip",
+        "correct_human_and_architectural_scale",
+        "all_intermediate_frames_and_same_room_exit",
+        "phone_view_legibility",
+        "no_invented_authenticity_or_measurements"
+      ],
+      "never": [
+        "replace_documented_simple_frame_with_fancy_invented_frame",
+        "claim_original_frame_without_evidence",
+        "claim_current_exhibition_from_undated_photo",
+        "assume_photo_reuse_rights",
+        "change_artwork_aspect_ratio"
+      ],
+      "inherits": "museum_immersion_scale + museum_immersion_frame_quality + V44/V46 release QA",
+      "automatic_final_approval": false
+    }
   }
 }
