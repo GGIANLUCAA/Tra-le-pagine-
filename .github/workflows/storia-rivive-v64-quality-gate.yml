@@ -1,0 +1,27 @@
+name: "Storia Rivive V64 — blocco foto AI non realistiche o infedeli"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_quality_policy_v64.py"
+      - "tests/test_storia_rivive_quality_policy_v64.py"
+      - "config/storia_rivive_v64.json"
+      - ".github/workflows/storia-rivive-v64-quality-gate.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  quality_control:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Test rejection of V63 low-source-pixel footage and hallucinated faces"
+        run: |
+          python -m unittest discover -s tests -p "test_storia_rivive_quality_policy_v64.py" -v
+          python -m json.tool config/storia_rivive_v64.json > /dev/null
+      - name: "Realistic-fidelity approval requires real img2img inputs and human review"
+        run: |
+          echo "Only technical validation: not evidence of a real completed identity-preserving photograph."
