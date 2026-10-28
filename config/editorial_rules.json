@@ -647,7 +647,7 @@
       "wow_justification"
     ],
     "artistic_gate": "scene_specific_meaning_audio_sync_and_human_review_required",
-    "pre_render_cli": "python src/video_director_v13.py four-check --plan ART VISION_4X1_PLAN.json",
+    "pre_render_cli": "python src/video_director_v13.py four-check --plan ARTVISION_4X1_PLAN.json",
     "pre_render_module": "src/artvision_four_variants_gate.py",
     "learning_module": "src/artvision_learning_loop_v1.py",
     "learning": "log_2_to_3_observed_defects_per_reviewed_MP4_select_one_experiment_next_cycle_preserve_masters",
