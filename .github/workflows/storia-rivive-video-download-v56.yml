@@ -1,0 +1,54 @@
+name: "La Storia Rivive — Scarica MP4 Beirut 1919 (V56)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-rivive-video-download-v56.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render_and_download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Prepara strumenti gratuiti"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install "Pillow>=10,<13"
+      - name: "Scarica la sorgente autentica CC0"
+        run: python src/storia_rivive_source_v56.py --preset beirut1919 --out output/fonte_beirut
+      - name: "Crea video, copertina e ZIP da scaricare"
+        run: python src/storia_rivive_public_provino_v56.py --source output/fonte_beirut/FONTE_ORIGINALE.webm --out output/BEIRUT_1919
+      - name: "Controlla integrità del filmato e dei file"
+        run: |
+          ffmpeg -v error -xerror -i output/BEIRUT_1919/BEIRUT_1919_VIDEO.mp4 -f null -
+          python - <<'PY'
+          import zipfile
+          from pathlib import Path
+          folder=Path("output/BEIRUT_1919")
+          for name in ["BEIRUT_1919_VIDEO.mp4", "BEIRUT_1919_COMPLETO.zip", "BEIRUT_1919_SOLO_VIDEO.zip", "COVER.jpg"]:
+              f=folder/name
+              assert f.exists() and f.stat().st_size>1000, f
+              if f.suffix==".zip":
+                  with zipfile.ZipFile(f) as z:
+                      assert z.testzip() is None
+          print("DOWNLOAD PACKAGE READY; NOT SOCIAL-PUBLISHED")
+          PY
+      - name: "Pacchetto diretto MP4 e ZIP (scaricabile su GitHub)"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BEIRUT_1919_VIDEO_E_ZIP
+          path: |
+            output/BEIRUT_1919/BEIRUT_1919_VIDEO.mp4
+            output/BEIRUT_1919/BEIRUT_1919_COMPLETO.zip
+            output/BEIRUT_1919/BEIRUT_1919_SOLO_VIDEO.zip
+            output/BEIRUT_1919/COVER.jpg
+          retention-days: 30
+          if-no-files-found: error
