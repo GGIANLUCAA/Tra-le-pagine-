@@ -144,7 +144,7 @@ export default {
   try{
    if(p==='/api/github-connect'&&req.method==='POST'){
     // No browser auth bypass: exact short-lived GitHub OIDC signature is required.
-    try{await verifyGithub((req.headers.get('authorization')||'').replace(/^Bearer /,''),env);}catch{return reply({error:'Importazione GitHub non autorizzata.'},403);}
+    try{await verifyGithub((req.headers.get('authorization')||'').replace(/^Bearer /,''),env);}catch(e){return reply({error:'Importazione GitHub non autorizzata.',reason:['disabled','token','claims','jwks','key','signature'].includes(e.message)?e.message:'token'},403);}
     const b=await readJSON(req,4096),key=clean(b.key,500,20);if(/\s/.test(key))fail('Chiave non valida.');
     const receipt='imports/'+env.IMPORT_COMMIT+'.json';
     if(await get(env,receipt))return reply({connected:true,alreadyImported:true});
