@@ -65,7 +65,7 @@
     },
     {
       "episode": 2,
-      "status": "queued_asset_and_voice_verification_required",
+      "status": "blocked_voice_unavailable",
       "format": "artvision_critico",
       "artist": "Joseph Mallord William Turner",
       "work": "The Fighting Temeraire tugged to her last berth to be broken up, 1838",
@@ -80,11 +80,12 @@
       "audience_reason": "La vecchia nave gloriosa trainata verso la demolizione: tramonto del passato e nascita dell'industria.",
       "museum_camera": "Tela circa 1.2 m di larghezza all'altezza degli occhi; naturale distanza visita, vista della sala prima dell'entrata.",
       "artwork_frame": "National Gallery catalogue mentions 19th-century French frame; verify visual before claiming reconstruction faithful.",
-      "music": "brano/registrazione con attribuzione e licenza proprie, sotto la voce"
+      "music": "brano/registrazione con attribuzione e licenza proprie, sotto la voce",
+      "last_check": "2026-10-28: No verified Google Gacrux voice/recording for this episode; Critico must not be silently replaced by Cinema. No TTS API called or charged."
     },
     {
       "episode": 3,
-      "status": "queued_asset_acquisition_required",
+      "status": "rendered_needs_review",
       "format": "artvision_cinema",
       "artist": "Georges Seurat",
       "work": "A Sunday on La Grande Jatte—1884",
@@ -94,11 +95,34 @@
       "artwork_w_cm": 308,
       "verified_museum_source": "https://publications.artic.edu/gauguin/reader/gauguinart/section/140411/p-26",
       "proposed_art_image": "https://commons.wikimedia.org/wiki/Category:A_Sunday_Afternoon_on_the_Island_of_La_Grande_Jatte",
-      "image_status": "Source high-resolution CC0/PD-Art not yet materialized or verified",
+      "image_status": "Authentic 3840×2556 PD-Art source acquired in verified GitHub Actions 40632021327; original source in V51 ZIP.",
       "audience_reason": "Da lontano una folla immobile; da vicino migliaia di punti colorati e piccoli enigmi sociali.",
       "museum_camera": "Tela imponente larga oltre 3 metri, figura umana minuscola rispetto all'opera, parete e stanza grandi, avvicinamento per scoprire i punti.",
       "artwork_frame": "actual historic frame not verified; clearly label scenic alternative",
-      "music": "strumentale verificato compatibile Cinema V6"
+      "music": "strumentale verificato compatibile Cinema V6",
+      "actual_render": {
+        "date": "2026-10-28",
+        "version": "V51 local museum-scale correction of verified GitHub V30 source",
+        "sha256": "450d9c86942a4d9cb57ee87cb8b5e0b536232091d17d95e997b311c32c65b367",
+        "seconds": 60.083333,
+        "codec_video": "H264",
+        "codec_audio": "AAC",
+        "resolution": "1080x1920",
+        "fps": 24,
+        "mp4_bytes": 46824034,
+        "zip_bytes": 98856168,
+        "library_mp4": "/ArtVision/Museum_Scale_S01/ArtVision_Seurat_V51_REVIEW.mp4",
+        "library_zip": "/ArtVision/Museum_Scale_S01/ArtVision_Seurat_V51_COMPLETO.zip",
+        "cover_in_zip": true,
+        "cover_library_upload": "failed: 403 trusted producer indexing; cover remains in ZIP and conversation file",
+        "original_art": "Wikimedia Commons PD-Art, 3840x2556",
+        "gallery": "fictional generated room, no documentary museum photo",
+        "music": "Water Lily — Kevin MacLeod, original recording USUAN1400035, CC BY 4.0",
+        "human_approved": false,
+        "social_published": false,
+        "gitHubSourceRun": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40632021327",
+        "artistic_review": "pending"
+      }
     }
   ],
   "release_gate": [
@@ -113,5 +137,5 @@
     "File originali preservati, nessun automatic Gold Master"
   ],
   "note": "Documento di avvio e prenotazione, non rappresenta tre MP4 creati. La produzione viene attivata dall'automazione esistente e va verificata per singolo episodio. Nessuna nuova automazione duplicata.",
-  "last_verified_run": "2026-10-28: V48 GitHub Actions 40614672767 technically passed but artistically superseded by V50 local render. V50 verified ffprobe/full decode/ZIP/cover; human aesthetic approval pending."
+  "last_verified_run": "2026-10-28: S01 E03 Seurat V51 local museum scale candidate rendered and verified ffprobe/full decode/cover/ZIP; human aesthetic approval pending. E02 Turner Critico remains blocked pending actual Gacrux voice."
 }
