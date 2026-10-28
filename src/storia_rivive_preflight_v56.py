@@ -9,6 +9,7 @@ import json
 import shutil
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 
 PLATFORMS = ("facebook", "instagram", "tiktok", "youtube")
@@ -78,8 +79,15 @@ def evaluate(plan, stage="source"):
         need(isinstance(source.get("start_sec"), (int, float)) and source.get("start_sec", -1) >= 0,
              "Timecode iniziale non verificato")
         need(isinstance(source.get("end_sec"), (int, float)) and
-             source.get("end_sec", 0) > source.get("start_sec", 10**10),
+             isinstance(source.get("start_sec"), (int, float)) and
+             source["end_sec"] > source["start_sec"],
              "Timecode finale non verificato")
+        orig = source.get("original_file_path")
+        need(nonblank(orig) and Path(orig).is_file(), "Master archivistico originale non acquisito")
+        if nonblank(orig) and Path(orig).is_file():
+            need(nonblank(source.get("original_sha256")) and
+                 filehash(orig) == source["original_sha256"],
+                 "SHA256 master originale assente o discordante")
         need(nonblank(editorial.get("opening_0_3")), "Gancio 0–3 s non studiato")
         need(nonblank(editorial.get("reveal_3_7")), "Rivelazione 3–7 s non studiata")
         need(nonblank(editorial.get("framing_reason")), "Crop/letterbox non motivato")
@@ -89,7 +97,9 @@ def evaluate(plan, stage="source"):
         need(color.get("mode") in ALLOWED_COLOR, "Tipo di colore non dichiarato")
         if color.get("mode") == "ai_colorized":
             need(color.get("same_source_frames") is True, "AI: fotogrammi differenti dall'originale")
-            need(color.get("temporal_stability_reviewed") is True, "AI: stabilita temporale non esaminata")
+            if stage == "delivery":
+                need(color.get("temporal_stability_reviewed") is True,
+                     "AI: stabilita temporale non esaminata")
             need(nonblank(color.get("model_and_version")), "AI: modello/versione mancante")
         if color.get("mode") == "sepia_tint":
             need(color.get("described_as_ai_colorized") is not True, "Sepia spacciata per colorizzazione AI")
@@ -107,7 +117,7 @@ def evaluate(plan, stage="source"):
         social = delivery.get("social_posts", {})
         for k in PLATFORMS:
             f = social.get(k)
-            need(nonblank(f) and Path(f).is_file() and Path(f).stat().st_size > 30,
+            need(nonblank(f) and Path(f).is_file() and Path(f).stat().st_size > 45,
                  "Post V28 mancante: " + k)
         names = [Path(social[k]).read_text(encoding="utf-8").strip().casefold()
                  for k in PLATFORMS if nonblank(social.get(k)) and Path(social[k]).is_file()]
@@ -124,9 +134,8 @@ def evaluate(plan, stage="source"):
                 vs = next((s for s in streams if s.get("codec_type") == "video"), {})
                 need(vs.get("codec_name") == "h264", "MP4 non H264")
                 need(vs.get("width", 0) * 16 == vs.get("height", 0) * 9, "Aspect ratio non 9:16")
-                if audio.get("has_music") or audio.get("has_voice"):
-                    need(any(s.get("codec_type") == "audio" and s.get("codec_name") == "aac"
-                             for s in streams), "AAC audio mancante")
+                need(any(s.get("codec_type") == "audio" and s.get("codec_name") == "aac"
+                         for s in streams), "Traccia AAC richiesta da V55, anche se silenziosa")
                 recorded = delivery.get("mp4_sha256")
                 need(nonblank(recorded) and filehash(paths["mp4"]) == recorded,
                      "SHA256 MP4 mancante/discordante")
@@ -136,8 +145,30 @@ def evaluate(plan, stage="source"):
             warnings.append("chatgpt_android_download_pending")
         if not delivery.get("archive_catalog_playback_cover_social_zip_tested"):
             warnings.append("archive_sync_pending")
-        if not delivery.get("zip_crc_checked"):
-            errors.append("CRC ZIP non controllato (usare artvision_delivery_v55.py pack)")
+        archive = paths.get("complete_zip")
+        if nonblank(archive) and Path(archive).is_file():
+            try:
+                with zipfile.ZipFile(archive) as zip_check:
+                    need(zip_check.testzip() is None, "CRC ZIP errato")
+                    contents = zip_check.namelist()
+                    need(any(s.lower().endswith(".mp4") for s in contents),
+                         "ZIP senza MP4")
+                    need(any(s.lower().endswith((".jpg", ".jpeg")) for s in contents),
+                         "ZIP senza copertina")
+                    need(sum(s.upper().endswith(".TXT") and "POST" in s.upper()
+                             for s in contents) >= 4, "ZIP senza quattro post")
+            except (zipfile.BadZipFile, OSError) as exc:
+                errors.append("ZIP non leggibile: " + str(exc))
+        else:
+            errors.append("CRC ZIP non verificabile: ZIP assente")
+        if nonblank(paths.get("mp4")) and Path(paths["mp4"]).is_file() and shutil.which("ffmpeg"):
+            try:
+                subprocess.run(["ffmpeg", "-nostdin", "-hide_banner", "-v", "error",
+                                "-xerror", "-i", paths["mp4"], "-f", "null", "-"],
+                               check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               timeout=600)
+            except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+                errors.append("Decodifica integrale MP4 fallita: " + str(exc))
     return {"ok": not errors, "stage": stage, "errors": errors,
             "warnings": warnings, "technical_not_artistic_approval": True}
 
