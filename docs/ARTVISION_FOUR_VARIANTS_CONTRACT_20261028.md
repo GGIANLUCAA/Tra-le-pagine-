@@ -42,6 +42,12 @@ Per ogni opera il dossier madre deve contenere una `emotional_direction` verific
 
 **Apprendimento:** registrare i feedback dell'utente e, quando disponibili, dati reali di retention, completamento, salvataggi e condivisioni per variante. Confrontare ipotesi e risultati senza inventare metriche; modificare poche variabili per ciclo. Le emozioni non si certificano con ffprobe o con un algoritmo.
 
+## Estensione V55 — apertura e consegna obbligatoria per ogni variante
+
+Ogni variante deve avere `opening_0_7` specifico: primo frame con titolo/artista, particolare originale visivamente riconoscibile, gancio 0–3 s, scoperta 3–7 s, crop leggibile su telefono e cue audio coerente. Nelle versioni Museum non dedicare tutta l'apertura a un corridoio ripetitivo: il museo è un mezzo per rivelare la scala e la presenza reale dell'opera. In Critico preservare la narrazione studiata, in Cinema la regia musicale. I momenti iniziali devono avere contenuto autentico, non un mero cambio di effetti.
+
+**Consegna per ognuno dei 4 MP4, separata:** creare con `src/artvision_delivery_v55.py pack` MP4, cover JPG, quattro POST_*.txt distinti, fonti/diritti, ricetta e ZIP integrale. Guardare il foglio `APERTURA_PRIMI_7_SECONDI.jpg` e il film a velocità reale; registrare la valutazione nel template `templates/ARTVISION_OPENING_REVIEW_V55.json` con SHA256 vero. Mantenere stato di **distribuzione** separato dallo stato **artistico**. Importare al più presto sul sito archivio personale con percorso realmente disponibile, senza pubblicazione social; dichiarare `archive_sync_pending` quando non provato. I link di ChatGPT sono ammessi solo dopo creazione/verifica del percorso reale in quella sessione; salvare anche ZIP per Android. Il sito ha ZIP dinamico firmato: provarne la disponibilità nella scheda, non creare doppioni permanentemente.
+
 ## Implementazione V54 — comandi reali e limiti dei controlli (28/10/2026)
 
 **Creazione senza spesa del gruppo e delle quattro schede V13 collegate:**
