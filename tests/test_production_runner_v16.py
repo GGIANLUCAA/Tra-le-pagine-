@@ -103,6 +103,25 @@ class RunnerTests(unittest.TestCase):
         write_json(one,{'schema':r.SCHEMA,'jobs':{'one':{'status':'failed','attempts':1,'finished_utc':'2026-10-21T08:00:00'}}})
         write_json(two,{'schema':r.SCHEMA,'jobs':{'one':{'status':'rendered_needs_review','attempts':2,'finished_utc':'2026-10-21T09:00:00'}}})
         self.assertEqual(r.load_state(one,two)['jobs']['one']['attempts'],2)
+    def test_artvision_shared_dossier_is_staged_and_changes_fingerprint(self):
+        group=self.root/'group';variant=group/'cinema_standard';variant.mkdir(parents=True)
+        master=group/'ARTVISION_4X1_PLAN.json'
+        master.write_text('{"schema":"artvision-4x1-v1","topic":"Artwork"}')
+        write_json(variant/'project.json',{
+            'format':'artvision_cinema','topic':'Artwork','assets':[],
+            'serial_mode':'artvision_4x1',
+            'artvision_4x1_variant':'cinema_standard',
+            'artvision_4x1_plan':'../ARTVISION_4X1_PLAN.json'})
+        asset_dir=self.root/'empty_assets';asset_dir.mkdir()
+        job={'adapter':'cinema_v6_vangogh_prepared',
+             'project_file':'group/cinema_standard/project.json',
+             'assets_dir':'empty_assets'}
+        files=r.inputs(job)
+        self.assertIn(master,files)
+        old=r.fingerprint(job,files)
+        master.write_text('{"schema":"artvision-4x1-v1","topic":"Changed"}')
+        self.assertNotEqual(old,r.fingerprint(job,r.inputs(job)))
+
     def test_unknown_adapter_and_escape_rejected(self):
         with self.assertRaises(ValueError):r.inputs({**self.job,'adapter':'arbitrary_shell'})
         with self.assertRaises(ValueError):r.inside('../outside')
