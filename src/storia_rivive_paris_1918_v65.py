@@ -119,7 +119,7 @@ def photo_ai(cap,s,ddcolor,esrgan):
 
 def title_text(frame,sec,scene_index):
  # Only the opening has a transparent title panel. Never cover every photo repeatedly.
- if scene_index!=0 or sec>2.5:return frame
+ if scene_index!=0 or sec>.85:return frame
  im=Image.fromarray(cv2.cvtColor(frame,cv2.COLOR_BGR2RGB))
  d=ImageDraw.Draw(im,"RGBA")
  try:
