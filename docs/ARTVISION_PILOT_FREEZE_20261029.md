@@ -1,5 +1,8 @@
 # ArtVision 4×1 — blocco pilota V58 (29/10/2026)
 
+> **STATO AGGIORNATO V68:** il testo storico V58 menziona Cinema Museum e Gacrux mancanti: quei blocchi sono stati successivamente risolti e tutti e quattro gli MP4 di Socrate sono stati renderizzati. Feedback positivo su sala Museum, cornice e racconto, ma **0 approvazioni Gold Master V25** e nessuna prova completa di archiviazione privata. Lo scopo del blocco ora è evitare di ricreare MP4 o scegliere un altro quadro prima di approvazione/decisione dell'utente. Nuovo protocollo `docs/ARTVISION_START_HERE_QUATTRO_VIDEO_RIPRODUCIBILE_V68.md` e stati correnti nella coda.
+
+
 ## Decisione esplicita
 Non scegliere più nuovi quadri finché non esiste almeno un gruppo di **quattro video distinti davvero finiti, riproducibili, con pacchetti completi e approvazione artistica dell'utente**. Primo pilota: **The Death of Socrates**, Jacques-Louis David (Met 436105). Un secondo pilota, con opera diversa, potrà essere avviato solo su decisione dell'utente; non riattivare automaticamente la produzione seriale.
 

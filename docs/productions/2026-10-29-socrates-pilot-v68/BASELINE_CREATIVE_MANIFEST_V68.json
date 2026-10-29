@@ -1,0 +1,106 @@
+{
+  "schema": "artvision-4x1-creative-baseline-manifest-v68",
+  "artwork_id": "david_death_of_socrates_met436105_1787",
+  "artwork_title": "The Death of Socrates",
+  "artist": "Jacques Louis David",
+  "work_year": 1787,
+  "museum_source": "https://www.metmuseum.org/art/collection/search/436105",
+  "recorded_date": "2026-10-29",
+  "artistic_user_feedback": {
+    "observed": "User watched an ArtVision Socrates Museum film and positively evaluated the room, documented frame, and explanation; wants this as a reusable GOOD but improvable 4x1 foundation.",
+    "creative_baseline_accepted": true,
+    "scope": "style_direction_and_four-variant_system_not_each_mp4_as_final_gold",
+    "owner_can_request_future_changes": [
+      "different_frame_style_if_truthfully_disclosed",
+      "shorter_or_longer_video",
+      "more_centered_framing",
+      "new_creative_rules_with_version_control"
+    ],
+    "formal_v25_approvals": 0,
+    "auto_series_restart_authorized": false
+  },
+  "four_slots": {
+    "critico_standard": {
+      "status": "rendered_needs_review",
+      "sha256": "f68592a8d65d5d774494f49892a4b8be8f9bbe7842ab19631f85046f0adf19c3",
+      "video_bytes": 15575097,
+      "duration_seconds": 168.166667,
+      "voice_sha256": "b26b6826380c8dcc9b27a590bb6ecd43dd12107dafd367e429ad43351bd8a476",
+      "version": "V67",
+      "approval_v25": false,
+      "private_archive_verified": false,
+      "source_manifest_path": "docs/productions/2026-10-29-socrates-critico-standard-v67/ARCHIVE_STAGING_V55.json"
+    },
+    "critico_museum": {
+      "status": "rendered_needs_review",
+      "sha256": "c3be9d91b2967df4e484918b6d678b141111130eea991b63493d15b843c090a9",
+      "video_bytes": 53582121,
+      "duration_seconds": 168.166667,
+      "voice_sha256": "b26b6826380c8dcc9b27a590bb6ecd43dd12107dafd367e429ad43351bd8a476",
+      "version": "V67",
+      "approval_v25": false,
+      "private_archive_verified": false,
+      "source_manifest_path": "docs/productions/2026-10-29-socrates-critico-museum-v67/ARCHIVE_STAGING_V55.json"
+    },
+    "cinema_standard": {
+      "status": "rendered_needs_review",
+      "sha256": "4ea696772dd80e03a73c7b3570a22c7915787d47b77822a97ee040cbca959ce9",
+      "video_bytes": 2402408,
+      "duration_seconds": 35.625011,
+      "voice_sha256": null,
+      "version": "V55",
+      "approval_v25": false,
+      "private_archive_verified": false,
+      "source_manifest_path": "docs/productions/2026-10-29-socrates-cinema-standard-v55/ARCHIVE_STAGING_V55.json"
+    },
+    "cinema_museum": {
+      "status": "rendered_needs_review",
+      "sha256": "6ae8a2cb1ad3709bea4bab801ddefdaf8e7a00b3f3f65f50ddd81af8e4414afc",
+      "video_bytes": 22854775,
+      "duration_seconds": 38,
+      "voice_sha256": null,
+      "version": "V61_no_visitors_review",
+      "approval_v25": false,
+      "private_archive_verified": false,
+      "source_manifest_path": "docs/productions/2026-10-29-socrates-cinema-museum-v61/ARCHIVE_STAGING_V55.json"
+    }
+  },
+  "technical": [
+    "Critical narration: exact same source Gacrux WAV for both critic variants, no reuse from Bosch/Ofelia unrelated texts.",
+    "Museum continuous in/out camera V57, scale and current frame image source evidenced; gallery composited/reconstructed, not documented Socrates installation.",
+    "Cinema films music-only. Critico films full Italian narration synchronized to real ASR timeline.",
+    "No first-person cropped visitors; cropped-person correction V61 is baseline.",
+    "No new artwork until explicitly allowed after pilot creative/V25 review."
+  ],
+  "reproducibility": {
+    "creative_preset": "config/artvision_four_variants_presets_v68.json",
+    "start_here": "docs/ARTVISION_START_HERE_QUATTRO_VIDEO_RIPRODUCIBILE_V68.md",
+    "artwork_recipe_generator": "src/artvision_recipe_v68.py",
+    "master_archival_recipe": "docs/ARTVISION_SOCRATES_4X1_QUATTRO_MP4_REALI_V67_20261029.md",
+    "master_cinema_reference": "docs/ARTVISION_QUATTRO_VARIANTI_REGIA_V57_20261029.md",
+    "master_critico_reference": "docs/ARTVISION_CRITICO_V63_RIFERIMENTI_ORIGINALI_BOSCH_OFELIA_20261029.md",
+    "museum_no_cropped_people_rule": "docs/ARTVISION_MUSEUM_NO_CROPPED_VISITORS_V61_20261029.md",
+    "voice_gacrux_sha256": "b26b6826380c8dcc9b27a590bb6ecd43dd12107dafd367e429ad43351bd8a476",
+    "voice_github_actions_run_id": 40901604669,
+    "voice_alignment_run_id": 40902193743,
+    "voice_artifact_is_temporary": true,
+    "scripts_and_manifests_on_repository": true,
+    "all_video_bytes_persisted_on_repository": false,
+    "private_archive_import_certified": false,
+    "full_end_to_end_bitwise_reproduction_tested": false,
+    "generic_new_artwork_renderer_tested": false,
+    "remaining_work": [
+      "Preserve source masters/video/WAV in approved durable private storage, then independently hash-verify retrieval",
+      "Use one second deliberately different pilot before unlocking automated series",
+      "Finish individual human V25 review and real private archive playback/download verification",
+      "Validate new-artwork renderer/preflight for all four slots on that second pilot"
+    ]
+  },
+  "change_policy": {
+    "local_setting_change": "Create per-artwork recipe revision; global default unchanged",
+    "permanent_change": "New version of preset + active-rules note + tests + exact opt-in",
+    "protect_existing_masters": true,
+    "no_autopublish": true,
+    "no_api_video_spend_without_per_scene_approval": true
+  }
+}

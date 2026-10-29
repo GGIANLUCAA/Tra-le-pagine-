@@ -36,6 +36,7 @@
       "preset": "cinema_v6",
       "narrated": false,
       "guides": [
+        "docs/ARTVISION_START_HERE_QUATTRO_VIDEO_RIPRODUCIBILE_V68.md",
         "modules/artvision/APPROVED_PRESET.json",
         "modules/artvision/REGIA_CINEMA_V6.md",
         "modules/artvision/IDENTITA_VISIVA_FISSA_V6.json",
@@ -52,7 +53,10 @@
         1920
       ],
       "direction": "Opere autentiche, focali curate per artista, materia e dettagli, ritmo variato, pause. Firma artista + MUSIC BY, con apertura visiva scelta per il soggetto, poi zero testo e zero voce. Mai ripiegare su V5.",
-      "next_action": "Recuperare la regia specifica dell'artista o crearne una nuova con il motore V6. Il workflow artvision-cinema-v6.yml è predisposto per Van Gogh: non usarlo per un altro artista cambiando soltanto il titolo."
+      "next_action": "Recuperare la regia specifica dell'artista o crearne una nuova con il motore V6. Il workflow artvision-cinema-v6.yml è predisposto per Van Gogh: non usarlo per un altro artista cambiando soltanto il titolo.",
+      "creative_preset_v68": "config/artvision_four_variants_presets_v68.json",
+      "new_artwork_gate": "config/artvision_pilot_lock_v58.json",
+      "new_artwork_status": "planning_only_until_explicit_user_unlock"
     },
     "artvision_critico": {
       "label": "Critica d'arte narrata",
@@ -60,6 +64,7 @@
       "preset": "critico-series-v2",
       "narrated": true,
       "guides": [
+        "docs/ARTVISION_START_HERE_QUATTRO_VIDEO_RIPRODUCIBILE_V68.md",
         "modules/artvision_critico/production_series/README_SERIE_QUATTRO_V2.md",
         "modules/artvision_critico/NUOVA_LINEA_NARRATIVA_SENZA_MARCHIO_TESTUALE.md",
         "REGOLE_VIDEO_V12.md",
@@ -74,7 +79,10 @@
         1920
       ],
       "direction": "Voce accessibile, fatti verificati, dettagli esattamente descritti. Copertina serie V2: titolo dell'opera grande + artista; niente etichette di serie. Finale che conclude il ragionamento; eventuale coda visiva motivata. Mai togliere la narrazione per migliorare le immagini.",
-      "next_action": "Recuperare il JSON dell'opera; per opere nuove preparare beats, fonti, crop e configurazione dedicata. Il renderer V2 accetta quattro ID esistenti, non qualunque titolo."
+      "next_action": "Per nuove opere usare la ricetta V68 e renderer Critico V2, un solo autentico WAV Gacrux per la coppia Standard/Museum, con V13 preflight, QA e autorizzazione del secondo pilota. Non alterare i master storici.",
+      "creative_preset_v68": "config/artvision_four_variants_presets_v68.json",
+      "new_artwork_gate": "config/artvision_pilot_lock_v58.json",
+      "new_artwork_status": "planning_only_until_explicit_user_unlock"
     },
     "controluce": {
       "label": "Controluce, cronaca narrativa",

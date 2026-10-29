@@ -1,0 +1,300 @@
+{
+  "schema": "artvision-4x1-reusable-preset-v68",
+  "preset_id": "socrates-4x1-quality-baseline-2026-10-29",
+  "version": "1.0.0",
+  "created_from": "Socrates V67 pilot, V61 no-person Museum revision, V63 Bosch/Ophelia Critico references",
+  "source_of_truth": [
+    "AGENTS.md",
+    "docs/REGOLE_ATTIVE.md",
+    "docs/ARTVISION_CONTRATTO_MADRE_4X1_V58_20261029.md",
+    "docs/ARTVISION_SOCRATES_4X1_QUATTRO_MP4_REALI_V67_20261029.md"
+  ],
+  "feedback": {
+    "date": "2026-10-29",
+    "raw_meaning": "User watched a Socrates video and positively evaluated Museum room, frame and explanation; accepts first four-video project as a GOOD, improvable reusable reference.",
+    "scope": "positive_creative_baseline_for_future_productions",
+    "does_not_grant": [
+      "V25_release",
+      "social_publication",
+      "all_four_individual_gold_master_approvals",
+      "unverified_private_archive_import",
+      "paid_video_generation",
+      "automatic_new_artwork_unfreeze"
+    ]
+  },
+  "invariants": {
+    "required_variant_ids": [
+      "critico_standard",
+      "critico_museum",
+      "cinema_standard",
+      "cinema_museum"
+    ],
+    "each_slot_must_be_original_mp4": true,
+    "shared_critico_script_and_exact_wav_sha256": true,
+    "critico_voice_provider": "Google Gemini",
+    "critico_voice_model": "gemini-3.8-flash-tts",
+    "critico_voice": "Gacrux",
+    "no_voice_in_cinema": true,
+    "museum_entry_exit_continuous_camera": true,
+    "museum_frame_requires_provenance_or_declared_reconstruction": true,
+    "empty_gallery_default": true,
+    "no_cropped_foreground_people": true,
+    "first_0_3_7_seconds_must_be_compelling": true,
+    "copyright_music_recording_verified": true,
+    "sha256_and_rights_required": true,
+    "full_length_audio_visual_qa_required": true,
+    "per_video_four_original_social_posts": true,
+    "video_container": "mp4",
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "vertical_ratio": "9:16",
+    "no_social_auto_publication": true,
+    "zero_paid_video_ai_without_per_scene_consent": true,
+    "old_masters_immutable": true,
+    "no_new_artwork_until_existing_pilot_lock_is_explicitly_released": true
+  },
+  "defaults": {
+    "critico_pair": {
+      "narration_language": "it",
+      "target_words": 365,
+      "commentary_depth": "detailed",
+      "narration_duration_policy": "from_verified_WAV_not_fixed",
+      "strict_semantic_timing": true,
+      "source_reference": "Bosch Critico V22 + Ophelia Critico V21",
+      "motion_guideline": "narrative_holds_rare_unidirectional_motion",
+      "no_rhetorical_final_question": true
+    },
+    "slots": {
+      "critico_standard": {
+        "audio_mode": "Gacrux_narrated",
+        "director": "Critico_V2",
+        "camera_center_x": 0.5,
+        "camera_center_y": 0.5,
+        "motion_level": "restrained",
+        "shot_count_policy": "from_real_script",
+        "source": "authentic_painting_details"
+      },
+      "critico_museum": {
+        "audio_mode": "same_exact_Gacrux_WAV_as_critico_standard",
+        "director": "Museum_V57_camera_continuous",
+        "camera_center_x": 0.5,
+        "camera_center_y": 0.5,
+        "motion_level": "restrained",
+        "shot_count_policy": "from_real_script",
+        "source": "painting_plus_artwork_specific_gallery"
+      },
+      "cinema_standard": {
+        "audio_mode": "licensed_music_only",
+        "director": "Cinema_Standard",
+        "target_seconds": 40,
+        "camera_center_x": 0.5,
+        "camera_center_y": 0.5,
+        "motion_level": "balanced",
+        "source": "authentic_painting_details"
+      },
+      "cinema_museum": {
+        "audio_mode": "licensed_music_only",
+        "director": "Museum_V57_camera_continuous",
+        "target_seconds": 40,
+        "camera_center_x": 0.5,
+        "camera_center_y": 0.5,
+        "motion_level": "restrained",
+        "source": "painting_plus_artwork_specific_gallery"
+      }
+    },
+    "museum": {
+      "frame_mode": "source_actual_if_documented",
+      "frame_finish": "match_source",
+      "gallery_architecture": "artwork_specific_measured",
+      "spatial_scale": "documented_painting_dimensions",
+      "entrance_seconds": 8,
+      "exit_seconds": 8,
+      "safe_margin_percent": 12,
+      "foreground_visitors": "none",
+      "room_reconstruction_disclosure_required": true
+    },
+    "cover": {
+      "style": "elegant_museum",
+      "title_language": "en",
+      "include_exact_artist": true,
+      "title_size_scale": 1
+    },
+    "delivery": {
+      "aspect_ratio": "9:16",
+      "minimum_quality": "1080x1920_delivery_if_source_adequate",
+      "zip_complete": true,
+      "zip_android_mp4_only": true,
+      "posts_platforms": [
+        "facebook",
+        "instagram",
+        "tiktok",
+        "youtube"
+      ],
+      "private_archive_verification_separate": true
+    }
+  },
+  "adjustable_fields": {
+    "critico_pair.target_words": {
+      "type": "int",
+      "min": 170,
+      "max": 850,
+      "consequence": "Rewrite and source-check the entire Critico script. Synthesize one NEW verified Gacrux WAV for both Critico, with explicit TTS cost authorization."
+    },
+    "critico_pair.commentary_depth": {
+      "type": "enum",
+      "values": [
+        "accessible",
+        "detailed",
+        "scholarly"
+      ]
+    },
+    "slots.cinema_standard.target_seconds": {
+      "type": "int",
+      "min": 12,
+      "max": 180
+    },
+    "slots.cinema_museum.target_seconds": {
+      "type": "int",
+      "min": 12,
+      "max": 180
+    },
+    "slots.critico_standard.camera_center_x": {
+      "type": "float",
+      "min": 0.2,
+      "max": 0.8
+    },
+    "slots.critico_standard.camera_center_y": {
+      "type": "float",
+      "min": 0.2,
+      "max": 0.8
+    },
+    "slots.critico_museum.camera_center_x": {
+      "type": "float",
+      "min": 0.2,
+      "max": 0.8
+    },
+    "slots.critico_museum.camera_center_y": {
+      "type": "float",
+      "min": 0.2,
+      "max": 0.8
+    },
+    "slots.cinema_standard.camera_center_x": {
+      "type": "float",
+      "min": 0.2,
+      "max": 0.8
+    },
+    "slots.cinema_standard.camera_center_y": {
+      "type": "float",
+      "min": 0.2,
+      "max": 0.8
+    },
+    "slots.cinema_museum.camera_center_x": {
+      "type": "float",
+      "min": 0.2,
+      "max": 0.8
+    },
+    "slots.cinema_museum.camera_center_y": {
+      "type": "float",
+      "min": 0.2,
+      "max": 0.8
+    },
+    "slots.critico_standard.motion_level": {
+      "type": "enum",
+      "values": [
+        "locked",
+        "restrained",
+        "balanced"
+      ]
+    },
+    "slots.critico_museum.motion_level": {
+      "type": "enum",
+      "values": [
+        "locked",
+        "restrained",
+        "balanced"
+      ]
+    },
+    "slots.cinema_standard.motion_level": {
+      "type": "enum",
+      "values": [
+        "locked",
+        "restrained",
+        "balanced",
+        "dynamic"
+      ]
+    },
+    "slots.cinema_museum.motion_level": {
+      "type": "enum",
+      "values": [
+        "restrained",
+        "balanced"
+      ]
+    },
+    "museum.frame_mode": {
+      "type": "enum",
+      "values": [
+        "source_actual_if_documented",
+        "faithful_reconstruction",
+        "declared_creative_alternative"
+      ],
+      "consequence": "Any source-inaccurate frame must be labeled a creative reconstruction with rights and no museum authenticity claim."
+    },
+    "museum.frame_finish": {
+      "type": "enum",
+      "values": [
+        "match_source",
+        "warm_gilt",
+        "dark_wood",
+        "matte_black",
+        "antique_bronze"
+      ],
+      "consequence": "Non-matching finish requires a declared creative reconstruction; never claim it is the historic frame."
+    },
+    "museum.gallery_architecture": {
+      "type": "enum",
+      "values": [
+        "artwork_specific_measured",
+        "declared_historic_reconstruction",
+        "declared_contemporary_reconstruction"
+      ]
+    },
+    "museum.entrance_seconds": {
+      "type": "int",
+      "min": 3,
+      "max": 24
+    },
+    "museum.exit_seconds": {
+      "type": "int",
+      "min": 3,
+      "max": 24
+    },
+    "museum.safe_margin_percent": {
+      "type": "int",
+      "min": 8,
+      "max": 25
+    },
+    "cover.title_size_scale": {
+      "type": "float",
+      "min": 0.7,
+      "max": 1.35
+    }
+  },
+  "per_work_evidence_required": [
+    "source_art_image_SHA256_and_rights",
+    "documented_painting_physical_dimensions",
+    "frame_exact_photo_or_declared_reconstruction_and_license",
+    "specific_gallery_provenance_or_declared_reconstruction",
+    "licensed_musical_recording_and_SHA256",
+    "one_critico_script_real_Gacrux_WAV_and_ASR_timecodes",
+    "four_distinct_storyboards",
+    "four_real_MP4_hashes_bytes_and_distinctness",
+    "four_comprehensive_ZIP_CRC_and_android_ZIP",
+    "sixteen_original_social_posts",
+    "technical_QA_and_human_full_speed_review",
+    "private_archive_import_and_playback_verification_separately"
+  ],
+  "pilot_lock_source": "config/artvision_pilot_lock_v58.json",
+  "new_work_is_planning_only_until_user_explicitly_unlocks": true,
+  "supported_workflow": "Plan artwork → create immutable per-work recipe and four stories → verify rights/source/scale → generate one Gacrux WAV → render four original videos → QA → delivery → owner feedback → explicit approval → private archive",
+  "notes": "Editable settings are per artwork, not permanent rule changes. Use change_log. This V68 file is a planning preset, NOT a generic proven end-to-end renderer; existing engine adapters retain their own preflight gates."
+}
