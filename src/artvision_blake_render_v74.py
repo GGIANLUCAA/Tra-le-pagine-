@@ -94,7 +94,7 @@ def acquire():
                "isrc":"USUAN1100747","source":MUSIC_PAGE,"license":"CC BY 4.0", "license_url":MUSIC_LICENSE,**musicrec},
       "museum":{"actual_gallery_photo_used":False,"frame_status":"declared_scenic_reconstruction",
                 "room_status":"declared_scenic_reconstruction",
-                "frame_description":"small dark wood frame with gilt inner lip, designed scenography only",
+                "frame_description":"V77 corrected: fine graphite edge with neutral conservation-style paper mount; scenic only, authentic historical frame undocumented",
                 "physical_reference":"sheet 55.1cm high, painting 43.7cm, room viewer distance 3.5m",
                 "source_offscreen_during_details":True,"same_room_on_exit":True},
       "no_other_blake_work_or_ai_generated_artwork":True,
