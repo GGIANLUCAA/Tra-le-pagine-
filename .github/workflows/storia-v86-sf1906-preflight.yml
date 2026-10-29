@@ -1,0 +1,44 @@
+name: "La Storia Rivive V86 SF 1906 - preflight no credits"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v86-sf1906-preflight.yml"]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify_assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Fetch four existing true AI photo restorations and original historical movie"
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v86_preflight
+          cd output/storia_v86_preflight
+          gh release download storia-rivive-san-francisco-1906-foto-ai-v70 -p "SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip" --repo "$GITHUB_REPOSITORY"
+          unzip -Z1 SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip | tee KIT_CONTENTS.txt
+          gh release download storia-rivive-san-francisco-1906-foto-ai-v70 -p "V70_QA_REPORT.json" --repo "$GITHUB_REPOSITORY"
+          python - <<'PY'
+          import json,zipfile, pathlib
+          r=pathlib.Path("SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip")
+          with zipfile.ZipFile(r) as z:
+              assert z.testzip() is None
+              pics=[n for n in z.namelist() if "FOTO_FOTOGRAFICA_AI_" in n]
+              print("SOURCE_REAL_GENERATIVE_PHOTOS",pics,flush=True)
+              assert len(pics)>=4,"Four quality photo scenes required"
+          d=json.load(open("V70_QA_REPORT.json"))
+          print("V70_RELEASE_META",str(d)[:6000],flush=True)
+          PY
+      - name: "Store human-verifiable source asset pack and photo QA"
+        uses: actions/upload-artifact@v4
+        with:
+          name: V86_SF1906_REAL_EXISTING_AI_PHOTOS_AND_SOURCE_MANIFEST
+          path: |
+            output/storia_v86_preflight/SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip
+            output/storia_v86_preflight/V70_QA_REPORT.json
+            output/storia_v86_preflight/KIT_CONTENTS.txt
+          retention-days: 5
