@@ -12,7 +12,7 @@
 2. Coney Island, 1903, Shooting the Chutes, Luna Park — https://www.loc.gov/item/00563608/ — 3 luglio 1903, film 1:32 a 16fps, G.W. Bitzer, American Mutoscope & Biograph. **Prossimo soggetto fresco**, priorità allo splash e alle persone sullo scivolo; timecode da verificare SU FILE.
 3. New York, 1902, A Perilous Proceeding — https://www.loc.gov/item/00694383/ — uomini sospesi su un cavo di gru; costruzione. Verificare origine, vero soggetto, diritti e crop.
 4. Venezia 1896, Panorama du Grand Canal — cercare scansione migliore e PDM specifica.
-5. New York 1906, The Skyscrapers of New York — sequenze muratori/travi da cercare.
+5. New York 1906, The Skyscrapers of New York — **ATTENZIONE: melodramma di finzione**, con autentiche riprese di operai al lavoro inserite nel racconto. Separare i frammenti documentari dalle scene recitate, non presentare tutto il film come un actuality puro. Fonte primaria: https://www.loc.gov/item/00694391/
 6. Parigi 1898 traffico Champs-Élysées.
 7. New York 1905 POV metropolitana.
 8. Ellis Island 1903.
