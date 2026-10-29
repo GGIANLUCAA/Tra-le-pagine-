@@ -78,6 +78,30 @@ def read_frames(source):
  print("REAL_MOVEMENT_FRAMES",len(frames),"original_fps",fps,flush=True)
  return frames
 
+
+def historically_plausible_chroma(bgr):
+ # Scene-aware spatial color design for this fixed original camera view, not a global tint.
+ # Semantics: soft blue sky; weathered brown wood/steel; limestone bridge; blue-green water.
+ # Constrain colors by the authentic frame luminance. Do not generate new people or shapes.
+ lab=cv2.cvtColor(bgr.astype(np.float32)/255.0,cv2.COLOR_BGR2LAB)
+ L=lab[:,:,0]
+ hh,ww=L.shape
+ y,x=np.mgrid[:hh,:ww]
+ def smooth(z):return 1/(1+np.exp(np.clip(z,-35,35)))
+ sky=smooth((y-705)/35)
+ bridge=smooth((715-y)/30)*smooth((y-960)/30)
+ water=smooth((956-y)/30)
+ dark=np.clip((66-L)/42,0,1)
+ wood=sky*dark*smooth((85-x)/45)*smooth((x-655)/35)
+ # Bright foam and sky retain nuanced low chroma, midtones show the recovered colors.
+ strength=np.clip(.62+.34*(100-L)/100,.62,.96)
+ a=(sky*(-4.2)+bridge*4.0+water*(-10.6)+wood*7.2)*strength
+ b=(sky*(-13.2)+bridge*14.2+water*(-10.2)+wood*17.8)*strength
+ lab[:,:,1]=lab[:,:,1]*.3+a*.80
+ lab[:,:,2]=lab[:,:,2]*.3+b*.80
+ enhanced=np.clip(cv2.cvtColor(lab.astype(np.float32),cv2.COLOR_LAB2BGR)*255,0,255).astype(np.uint8)
+ return enhanced
+
 def alpha_map(t,shape):
  # Spatially motivated reveal: splash becomes a radial expansion of the colors.
  hh,ww=shape[:2]
@@ -137,6 +161,7 @@ def render(source,dd,session):
    cw=round(540*9/16)
    original=cv2.resize(frame[:,x0:x0+cw],(W,H),interpolation=cv2.INTER_CUBIC)
    colored=cv2.resize(color[:,x0:x0+cw],(W,H),interpolation=cv2.INTER_CUBIC)
+   colored=historically_plausible_chroma(colored)
    mask=alpha_map(t,original.shape)
    if mask is None:out=original
    else:out=np.clip(original.astype(np.float32)*(1-mask[...,None])+colored.astype(np.float32)*mask[...,None],0,255).astype(np.uint8)
@@ -221,7 +246,7 @@ def finish(silent,srcmeta,modelmeta,metrics,samples):
  "original_file":srcmeta,"source_timecode":{"start":T0,"end":T1},
  "video":video.name,"video_sha256":sha(video),"video_size":video.stat().st_size,
  "video_probe":probe,"render":{"resolution":[W,H],"fps":FPS,"real_source_motion":True,
- "colorization":"DDColor ONNX semantic chroma anchored by optical flow; same original frame movement",
+ "colorization":"DDColor ONNX plus source-locked regional chroma grade (sky/wood/stone/water), with optical-flow temporal anchors; same original moving frames",
  "transition":"spatial splash-anchored progressive color","color_metrics":metrics,"not_original_4k":True},
  "color_model":modelmeta,"original_sound":"none; soundtrack created originally","rights_italy_clearance":"PENDING",
  "artistic_human_review":"PENDING","technical_full_decode":True,"zero_eur":True,"vidu_credits":0,
