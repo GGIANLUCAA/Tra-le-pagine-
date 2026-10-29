@@ -11,7 +11,7 @@
   "max_concurrent_artvision_jobs": 1,
   "auto_publish": false,
   "paid_video_credits_without_approval": false,
-  "note": "Catalog now includes Hokusai corrective V55B registered by exact SHA. Other four groups already have both Cinema variants in review. Avoid duplicate Cinema; select new artworks if compatible assets exist. Preserve historic references but use this as single operational queue.",
+  "note": "Registered Hokusai and newly verified Homer V55B two distinct Cinema videos; all rendered Cinema must not be regenerated or double-counted, and both Critico remain blocked until genuine matching Gacrux cache. Next owner action: prepare authentic voice for missing Critico or select distinct new artwork. Preserve zero spend and private archive V25 gate.",
   "groups": [
     {
       "group_id": "wright_air_pump_1768",
@@ -360,6 +360,78 @@
         }
       },
       "note": "Hokusai two genuinely different rendered Cinema variants: Standard V55B and Museum V55C. Both rendered_needs_review and archive_sync_pending. Critico Standard/Museum require original Google Gacrux voice, not free substitute. Preserve historic SHA variants; never multiply counts for corrective attempts."
+    },
+    {
+      "group_id": "homer_gulf_stream_met11122_1899",
+      "artwork": "The Gulf Stream",
+      "artist": "Winslow Homer",
+      "year": "1899; reworked by 1906",
+      "official_source": "https://www.metmuseum.org/art/collection/search/11122",
+      "museum": "The Metropolitan Museum of Art",
+      "accession_number": "06.1234",
+      "physical_dimensions_cm": {
+        "h": 71.4,
+        "w": 124.8
+      },
+      "framed_outer_dimensions_cm": {
+        "h": 107.5,
+        "w": 159.3,
+        "depth": 15
+      },
+      "dossier_4x1_source": "GitHub Actions run 40848647492 / artifact 12885564867 / ARTVISION_4X1_PLAN.json; generated reproducibly via scripts/artvision_homer_four_v55.py",
+      "render_script": "scripts/artvision_homer_four_v55.py",
+      "status": "two_cinema_rendered_needs_review_two_critico_blocked",
+      "variants": {
+        "critico_standard": {
+          "status": "blocked",
+          "blocker_code": "blocked_voice_unavailable",
+          "blocker_note": "Exact Google Gacrux Italian voice WAV and verified cache for complete critic narration unavailable; no alternate TTS or charged API without user authorization.",
+          "human_approval": false
+        },
+        "critico_museum": {
+          "status": "blocked",
+          "blocker_code": "blocked_voice_unavailable",
+          "blocker_note": "Exact same Gacrux speech and spoken script as Critico Standard required, gallery direction then return; no voice available.",
+          "human_approval": false
+        },
+        "cinema_standard": {
+          "status": "rendered_needs_review",
+          "version": "V55B",
+          "video_sha256": "b28da50e0dac449ef9eca2edffe5ee6ee692702f95ab094d1fadff892d28eb52",
+          "video_bytes": 3730833,
+          "codec": "H264/AAC 1080x1920",
+          "duration_seconds": 37.333333,
+          "source_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40848647492",
+          "artifact_id": 12885564867,
+          "source_original": "Met Open Access object 11122, public domain",
+          "music": "Water Lily by Kevin MacLeod CC BY 4.0",
+          "initial_qa": "GitHub ffprobe H264/AAC, full ffmpeg decode, SHA256 and CRC ZIP verified, 9 real frames independently examined; full normal-speed artistic watch/listen pending",
+          "human_approval": false,
+          "site_imported": false,
+          "private_archive_status": "not_verified",
+          "V25_approved": false,
+          "superseded_first_trial_sha256": "4875db9e7e8f2d46cd4ebbce578ae98beb64c956a13035147abf9f0bfac2bf86"
+        },
+        "cinema_museum": {
+          "status": "rendered_needs_review",
+          "version": "V55B",
+          "video_sha256": "2c50c5f94c2fefbdf23b1a03086245afed3e25b06a159845c8947fcd9ee1a5b8",
+          "video_bytes": 5520280,
+          "codec": "H264/AAC 1080x1920",
+          "duration_seconds": 48.6,
+          "source_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40848647492",
+          "artifact_id": 12885564867,
+          "museum_frame": "Documented painting and outer-frame proportions, but displayed room and frame styling artistically reconstructed, NOT actual gallery photo or historic original frame",
+          "room_entry_exit": "same reconstructed wall and frame, improved perspective approach and retreat",
+          "initial_qa": "GitHub ffprobe H264/AAC, full ffmpeg decode, SHA256 and CRC ZIP verified, 9 real frames independently examined; full normal-speed artistic watch/listen pending",
+          "human_approval": false,
+          "site_imported": false,
+          "private_archive_status": "not_verified",
+          "V25_approved": false,
+          "superseded_first_trial_sha256": "be1f8b14b750cab44a1219e9f6875c722f96378c3117bdc4eb92e8efb65aabe3"
+        }
+      },
+      "notes": "Exactly two different authentic MP4 Cinema variants for this new four-variant artwork group. Corrective trials V55 superseded and not counted. Critico variants require exact Google Gacrux cache, no false release or paid substitution."
     }
   ],
   "last_operational_update": {
