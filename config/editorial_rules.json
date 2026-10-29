@@ -766,6 +766,39 @@
         "4 rendered new variants",
         "voice Gacrux cache available"
       ]
+    },
+    "foreground_visitors_v61": {
+      "approved_at": "2026-10-29",
+      "status": "permanent_after_explicit_user_feedback",
+      "default": "EMPTY_GALLERY_NO_FOREGROUND_VISITORS",
+      "must_fix": "THE_ACTUAL_VIDEO_NOT_ONLY_A_STILL_IMAGE",
+      "fail_if": [
+        "visitor_head_cropped_by_9_16_crop",
+        "partial_foreground_person_at_frame_edge",
+        "foreground_visitor_covers_title",
+        "visitor_head_cut_during_entry_or_return"
+      ],
+      "required_full_video_qa": [
+        "first_frame",
+        "1s",
+        "3s",
+        "5s",
+        "7s",
+        "museum_entry",
+        "museum_return",
+        "last_frame",
+        "full_9_16_camera_path"
+      ],
+      "exception": "Deliberate person permitted only when full head and important body parts remain safely visible throughout the vertical film with human approval.",
+      "scope": [
+        "artvision_cinema_museum",
+        "artvision_critico_museum"
+      ],
+      "on_failure": "needs_visual_correction_not_gold_master",
+      "socrates_v61": "Remove seated visitors and bench from the whole 38s Cinema Museum; keep original title painting frame and music.",
+      "corrections_are_same_variant": true,
+      "document": "docs/ARTVISION_MUSEUM_NO_CROPPED_VISITORS_V61_20261029.md",
+      "no_v25_auto_approval": true
     }
   },
   "artvision_four_variants": {
