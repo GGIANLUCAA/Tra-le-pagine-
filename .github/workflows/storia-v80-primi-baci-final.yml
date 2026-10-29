@@ -1,0 +1,94 @@
+name: "V80 La Storia Rivive · i primi baci del cinema 1896–1900 FINAL VIDEO"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v80-primi-baci-final.yml"
+      - "src/storia_v80_primi_baci_faces_video.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-rivive-v80-baci-real-film-final
+  cancel-in-progress: false
+jobs:
+  make_video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 26
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check Python and ffmpeg
+        run: |
+          python -m py_compile src/storia_v80_primi_baci_faces_video.py
+          ffmpeg -version | head -1
+      - name: Install free video-processing libraries
+        run: python -m pip -q install --no-cache-dir opencv-python-headless numpy pillow
+      - name: Download source provenance and original historical frames
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v79_volti output/storia_v79_kiss_late output/storia_v79_refined
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 150 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12902617847/zip" --output /tmp/archival_provenance.zip
+          unzip -oq /tmp/archival_provenance.zip -d output/storia_v79_volti
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 150 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12901989932/zip" --output /tmp/authentic_source_photo_frames.zip
+          unzip -oq /tmp/authentic_source_photo_frames.zip -d output/storia_v79_volti
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 150 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12903687978/zip" --output /tmp/third_source_photo_frame.zip
+          unzip -oq /tmp/third_source_photo_frame.zip -d output/storia_v79_kiss_late
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 150 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12905110186/zip" --output /tmp/three_modern_faces.zip
+          unzip -oq /tmp/three_modern_faces.zip -d output/storia_v79_refined
+          test -s output/storia_v79_volti/FONTI_VERIFICATE.json
+          test -s output/storia_v79_kiss_late/KISS_1896_LATE_ORIGINALE.png
+          test -s output/storia_v79_refined/KISS_1900_V80_MODERN_PHOTO.png
+      - name: Download 1896 and 1900 *genuinely moving* original Wikimedia films
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 175 -A "Tra-le-Pagine-ArtVision/1.0" "https://upload.wikimedia.org/wikipedia/commons/d/dd/The_Kiss_%281896%29.webm" --output output/storia_v79_volti/KISS_1896.webm
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 100 -A "Tra-le-Pagine-ArtVision/1.0" "https://upload.wikimedia.org/wikipedia/commons/4/4a/The_Kiss_%281900%29.webm" --output output/storia_v79_volti/KISS_1900.webm
+          test $(stat -c%s output/storia_v79_volti/KISS_1896.webm) -gt 48000000
+          test $(stat -c%s output/storia_v79_volti/KISS_1900.webm) -gt 6000000
+      - name: Film montage, exact original-film photo freezes, music and authentic faces
+        run: python -u src/storia_v80_primi_baci_faces_video.py
+      - name: Full technical QA of MP4 H264 AAC, 3 true freeze/photo cycles, ZIP CRC
+        run: |
+          set -euo pipefail
+          D=output/storia_v80_final
+          F="$D/LA_STORIA_RIVIVE_PRIMI_BACI_VOLTI_HD_V80.mp4"
+          test -s "$F"
+          ffmpeg -v error -xerror -i "$F" -f null -
+          python src/storia_rivive_v74_effect_gate.py --video "$F" --min-cycles 3 --report "$D/FORMATO_VERIFICATO.json"
+          unzip -t "$D/LA_STORIA_RIVIVE_PRIMI_BACI_V80_COMPLETO.zip"
+          ffprobe -v error -show_entries stream=codec_name,width,height:format=duration,size -of json "$F"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: LA_STORIA_RIVIVE_V80_FILMATO_REALE_1896_1900
+          path: |
+            output/storia_v80_final/LA_STORIA_RIVIVE_PRIMI_BACI_VOLTI_HD_V80.mp4
+            output/storia_v80_final/LA_STORIA_RIVIVE_PRIMI_BACI_V80_COMPLETO.zip
+            output/storia_v80_final/COPERTINA.jpg
+            output/storia_v80_final/FONTI_E_QA.json
+            output/storia_v80_final/FORMATO_VERIFICATO.json
+            output/storia_v80_final/POST_*.txt
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Direct Android MP4/ZIP links on GitHub Release without social publishing
+        run: |
+          set -euo pipefail
+          D=output/storia_v80_final
+          TAG=storia-rivive-primi-baci-volti-moderni-v80
+          files=("$D/LA_STORIA_RIVIVE_PRIMI_BACI_VOLTI_HD_V80.mp4" "$D/LA_STORIA_RIVIVE_PRIMI_BACI_V80_COMPLETO.zip" "$D/COPERTINA.jpg" "$D/FONTI_E_QA.json")
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --prerelease --latest=false --title "La Storia Rivive · I primi baci del cinema 1896–1900 V80" --notes "PROVA ARTISTICA per giudizio utente, NON certificazione di identità facciale. 2 autentiche pellicole d’archivio 1896 e 1900, 3 momenti distinti reali B/N in movimento, fermo su fotogramma originale e 3 fotografie AI a colori con volto restaurato. Colori, trama della pelle e microdettagli non documentati sono ricostruzioni probabilistiche. Musica originale; video 720×1280 H264/AAC; no Vidu or paid API. Reuse rights internationally to verify; not published to social/private site." "${files[@]}"
+          fi
+          local_size=$(stat -c%s "$D/LA_STORIA_RIVIVE_PRIMI_BACI_VOLTI_HD_V80.mp4")
+          remote_size=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[]|select(.name=="LA_STORIA_RIVIVE_PRIMI_BACI_VOLTI_HD_V80.mp4")|.size')
+          test "$local_size" = "$remote_size"
+          echo "V80_TRUE_FILM_VIDEO_DOWNLOAD_VERIFIED $local_size"
