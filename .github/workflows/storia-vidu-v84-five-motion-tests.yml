@@ -44,7 +44,7 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12913904773/zip" -o PriorRealVidu.zip
           unzip -j -q PriorRealVidu.zip "END_MODERN.jpg"
-          printf "25070cfd5aa0e38585c6b582b7cdade10a7aeb8154  FOTO_AI_RICOSTRUITA_01.png\n" | sha256sum -c -
+          printf "25070cfd5aa0e38585c6b582b7cdade10a7aeb8154c4983f94b058da9b128e71  FOTO_AI_RICOSTRUITA_01.png\n" | sha256sum -c -
           printf "328af7951bb4b443166143eded5b149aae4f6982713a47420428f79ae291dedf  FOTO_AI_RICOSTRUITA_02.png\n" | sha256sum -c -
           printf "8d36d33fec39d6051b2dbed9bc0d5349438522ef1f2756e8bbf91416aeaa6211  FOTO_AI_RICOSTRUITA_03.png\n" | sha256sum -c -
           printf "5abf828d87465ad90201da0bb7e0ea3dad1554cd1436aa3f953a36c26f4b9688  FOTO_AI_RICOSTRUITA_04.png\n" | sha256sum -c -
