@@ -1,0 +1,102 @@
+{
+  "format": "storia_rivive",
+  "quality_policy_version": "V94",
+  "production_date": "",
+  "episode_id": "",
+  "editorial_subject_type": "people_focused",
+  "authentic_source_reviewed": false,
+  "copyright_and_territories_checked": false,
+  "visual_reference_reviewed": false,
+  "visual_quality_goals": {
+    "faces_benchmark": [
+      "44356.mp4",
+      "44357.mp4"
+    ],
+    "action_physical_fidelity_benchmark": [
+      "44358.mp4",
+      "44359.mp4"
+    ],
+    "prior_bad_example": "44376.mp4"
+  },
+  "scenes": [
+    {
+      "event_id": "source_1_unique_real_moment",
+      "original_source_frame_checked": false,
+      "original_frame_sha256": "",
+      "objects_and_people_preserved": false,
+      "faces_visible": true,
+      "source_face_native_width_px": 0,
+      "actual_photo_image2image_generated": false,
+      "face_against_adjacent_original_frames_reviewed": false,
+      "eyes_skin_hair_expression_reviewed": false,
+      "no_face_swap_or_person_object_hallucinations": false,
+      "restored_face_still_sha256": ""
+    },
+    {
+      "event_id": "source_2_unique_real_moment",
+      "original_source_frame_checked": false,
+      "original_frame_sha256": "",
+      "objects_and_people_preserved": false,
+      "faces_visible": true,
+      "source_face_native_width_px": 0,
+      "actual_photo_image2image_generated": false,
+      "face_against_adjacent_original_frames_reviewed": false,
+      "eyes_skin_hair_expression_reviewed": false,
+      "no_face_swap_or_person_object_hallucinations": false,
+      "restored_face_still_sha256": ""
+    },
+    {
+      "event_id": "source_3_unique_real_moment",
+      "original_source_frame_checked": false,
+      "original_frame_sha256": "",
+      "objects_and_people_preserved": false,
+      "faces_visible": false
+    },
+    {
+      "event_id": "source_4_unique_real_moment",
+      "original_source_frame_checked": false,
+      "original_frame_sha256": "",
+      "objects_and_people_preserved": false,
+      "faces_visible": false
+    },
+    {
+      "event_id": "source_5_unique_real_moment",
+      "original_source_frame_checked": false,
+      "original_frame_sha256": "",
+      "objects_and_people_preserved": false,
+      "faces_visible": false
+    }
+  ],
+  "vidu": {
+    "source_crop_complete_subject_checked": false,
+    "start_photo_source_fidelity_checked": false,
+    "original_frame_sha256": "",
+    "color_anchor_sha256": "",
+    "model": "viduq2-pro-fast",
+    "resolution": "720p",
+    "duration_s": 5,
+    "prompt_sha256": "",
+    "prepaid_credits_only": true,
+    "no_purchase_or_recharge": true,
+    "immutable_ledger_reserved_before_POST": false,
+    "fresh_live_provider_balance_checked": false,
+    "fresh_live_cost_quote_checked": false,
+    "quoted_credits": 0,
+    "current_balance_credits": 0,
+    "attempts_previously_submitted": 0,
+    "single_post_no_retry_enforced": true,
+    "provider_state": "not_submitted",
+    "provider_task_id": "",
+    "actual_vidu_mp4_sha256": "",
+    "provider_clip_in_final_master": false,
+    "real_clip_duration_s": 0,
+    "actual_motion_after_color_verified": false,
+    "same_faces_people_objects_and_camera_approved": false,
+    "no_morphs_or_extra_limbs_approved": false,
+    "full_scene_reviewed_in_motion": false,
+    "actual_spent_credits": 0,
+    "paid_submission_count": 0
+  },
+  "full_video_watched_with_audio": false,
+  "full_video_artistically_approved": false
+}
