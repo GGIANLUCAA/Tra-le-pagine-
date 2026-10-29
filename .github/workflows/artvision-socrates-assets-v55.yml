@@ -1,0 +1,57 @@
+name: "ArtVision V55 — Socrates authentic assets preflight (not a render)"
+on:
+  push:
+    branches:
+      - "artvision-socrates-cinema-standard-v55-20261029"
+    paths:
+      - ".github/workflows/artvision-socrates-assets-v55.yml"
+      - "src/artvision_met_prepared_assets_v55.py"
+      - "tests/test_artvision_met_prepared_assets_v55.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-v55-one-render-at-a-time
+  cancel-in-progress: false
+jobs:
+  socrates-assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free dependencies and run offline safety tests
+        run: |
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "pytest>=8,<10"
+          python -m pytest -q tests/test_artvision_met_prepared_assets_v55.py
+      - name: Acquire actual original Met 436105 and verified licensed recording
+        run: |
+          python src/artvision_met_prepared_assets_v55.py \
+            --met-object-id 436105 \
+            --title "The Death of Socrates" \
+            --artist "Jacques Louis David" \
+            --out output/artvision-socrates-assets-v55
+      - name: Verify manifest is assets-only and no MP4 is falsely claimed
+        run: |
+          python - <<'PY'
+          import json,pathlib,hashlib
+          root=pathlib.Path('output/artvision-socrates-assets-v55')
+          j=json.loads((root/'PREPARED_ASSETS_V55.json').read_text())
+          assert j['status']=='assets_verified_only'
+          assert j['rendered_mp4'] is False and j['v25_approved'] is False
+          for key in ('artwork','music'):
+              item=j[key]
+              f=root/item['file']
+              assert f.is_file() and hashlib.sha256(f.read_bytes()).hexdigest()==item['sha256']
+          assert not list(root.glob('*.mp4'))
+          print('AUTHENTIC_ASSETS_READY_FOR_V54_V13; NO_VIDEO_RENDERED')
+          PY
+      - name: Preserve original assets and source manifest for next Cinema Standard
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_SOCRATES_MET436105_ASSETS_ONLY_V55
+          path: output/artvision-socrates-assets-v55/
+          if-no-files-found: error
+          retention-days: 30
