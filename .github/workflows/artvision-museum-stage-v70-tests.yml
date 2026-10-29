@@ -1,0 +1,24 @@
+name: ArtVision Museum V69-V70 checks
+on:
+  push:
+    paths:
+      - 'src/artvision_museum_director_v69.py'
+      - 'src/artvision_museum_stage_v70.py'
+      - 'tests/test_artvision_museum_director_v69.py'
+      - 'tests/test_artvision_museum_stage_v70.py'
+      - '.github/workflows/artvision-museum-stage-v70-tests.yml'
+  workflow_dispatch:
+jobs:
+  museum-planning:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run museum preflight and geometry tests
+        run: |
+          python -m unittest discover -s tests -p 'test_artvision_museum_director_v69.py' -v
+          python -m unittest discover -s tests -p 'test_artvision_museum_stage_v70.py' -v
