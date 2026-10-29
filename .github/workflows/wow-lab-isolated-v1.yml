@@ -1,0 +1,117 @@
+name: "WOW LAB V1 — Autonomous isolated 2-hour visual studio"
+on:
+  schedule:
+    - cron: "23 */2 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - experiment/wow-lab-isolated-v1-20261029
+    paths:
+      - "wow_lab/**"
+      - ".github/workflows/wow-lab-isolated-v1.yml"
+permissions:
+  contents: read
+concurrency:
+  group: wow-lab-autonomous-v1-only
+  cancel-in-progress: false
+jobs:
+  build_candidate:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU-only libraries; fail if tools unavailable
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+          command -v ffmpeg && command -v ffprobe
+      - name: Verify standalone contracts and Python syntax
+        run: |
+          python -m py_compile wow_lab/engine.py
+          python -m unittest discover -s wow_lab/tests -v
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          conf=json.loads(Path("wow_lab/config.json").read_text())
+          assert conf["enabled"] and conf["no_paid_services"] and conf["no_vidu"]
+          assert conf["no_core_config_edits"] and conf["no_core_automation_edits"]
+          assert conf["no_social_publish"] and conf["history_scope"].startswith("wow-lab-v1-")
+          print("WOW LAB ISOLATION PASS")
+          PY
+      - name: Generate original-source CC0 2.5D candidate (test source on branch)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            python wow_lab/engine.py --out "wow_lab/runs/${{ github.run_id }}"
+          else
+            python wow_lab/engine.py --out "wow_lab/runs/${{ github.run_id }}" --test-source-id 437133
+          fi
+      - name: Verify integrity, rights, artifact size and no publishing
+        run: |
+          python - <<'PY'
+          import json, hashlib, pathlib
+          p=pathlib.Path("wow_lab/runs/${{ github.run_id }}")
+          m=json.loads((p/"MANIFEST.json").read_text())
+          assert m["status"]=="needs_human_review" and m["qa"]["technical_pass"]
+          assert m["qa"]["decoded_without_errors"] and m["is_public_domain"]
+          assert m["paid_api_cost"]==0 and not m["artistic_approval"] and not m["social_publication"]
+          assert m["reconstructed_3d_mesh"] is False and m["source_sha256"]
+          assert (p/"WOW_LAB_PREVIEW.mp4").stat().st_size > 50000
+          assert len(list(p.glob("WOW_LAB_ANDROID_*.zip")))==1
+          print("WOW LAB TECHNICAL PREVIEW VALIDATED; ARTISTIC REVIEW STILL REQUIRED")
+          PY
+      - name: Preserve separate downloadable artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_V1_RUN_${{ github.run_id }}
+          path: wow_lab/runs/${{ github.run_id }}/*
+          if-no-files-found: error
+          retention-days: 30
+  publish_namespaced_prerelease:
+    needs: build_candidate
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert published mode explicitly enabled and repository public
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.loads(Path("wow_lab/config.json").read_text())
+          assert c["enabled"] and c["production_ready"] and c["no_social_publish"] and c["no_paid_services"]
+          print("Namespaced prerelease permitted; no social or production-master actions.")
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          name: WOW_LAB_V1_RUN_${{ github.run_id }}
+          path: wow_lab/runs/${{ github.run_id }}
+      - name: Release ONLY isolated reviewed-as-candidate preview (never overwrite)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          folder="wow_lab/runs/${{ github.run_id }}"
+          tag=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["tag"])' "$folder/MANIFEST.json")
+          [[ "$tag" =~ ^wow-lab-v1-[0-9]{8}T[0-9]{2}$ ]] || exit 2
+          if gh release view "$tag" > /dev/null 2>&1; then
+            echo "Existing WOW LAB release $tag — never overwrite. Skipping."
+            exit 0
+          fi
+          bundles=("$folder"/WOW_LAB_ANDROID_*.zip)
+          [[ -f "${bundles[0]}" ]] || exit 3
+          gh release create "$tag" "$folder/WOW_LAB_PREVIEW.mp4" "$folder/COVER.jpg" "${bundles[0]}" "$folder/MANIFEST.json" "$folder/RIGHTS.txt" \
+            --title "WOW LAB · $tag · needs human review" \
+            --notes-file "$folder/RELEASE_NOTES.md" --prerelease --target main
+          echo "PUBLIC_GITHUB_PRERELEASE_ONLY: no social publication, no studio import."
