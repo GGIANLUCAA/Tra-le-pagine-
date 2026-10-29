@@ -1,0 +1,83 @@
+name: "La Storia Rivive V92 - BOMBAY 1929 - 8 authentic AI restorations"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-bombay-v92-render.yml"]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-bombay-1929-v92-real-reel-once
+  cancel-in-progress: false
+jobs:
+  render:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_XET: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OMP_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU real semantic AI restoration, no Vidu credits
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --quiet "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "huggingface_hub>=0.25,<2" "onnxruntime>=1.18,<2"
+          python -m py_compile tools/storia_bombay_1929_v92_render.py src/storia_rivive_real_ai_v60.py src/storia_rivive_final_gate_v91.py
+      - name: Actual authentic Bombay film, 8 distinct sources, neural color, original music, MP4 and ZIP
+        run: python -u tools/storia_bombay_1929_v92_render.py
+      - name: Verify full H264/AAC decode, cover, 8 source-locked photos, ZIP and length 22-29s
+        run: |
+          set -euo pipefail
+          d=output/storia_bombay_1929_v92
+          test -s "$d/BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4"
+          test -s "$d/COVER.jpg"
+          test -s "$d/CONTACT_REAL_FILM_VS_AI_PHOTOS.jpg"
+          test "$(find "$d" -name 'COLOR_PHOTO_*.jpg' | wc -l)" -eq 8
+          ffmpeg -nostdin -v error -xerror -i "$d/BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4" -f null -
+          unzip -t "$d/BOMBAY_1929_V92_ANDROID_COMPLETO.zip"
+          ffprobe -v error -show_entries format=duration,size:stream=codec_name,width,height -of json "$d/BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4"
+          python -m unittest discover -s tests -p test_storia_rivive_final_gate_v91.py -v
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: STORIA_BOMBAY_1929_V92_8_REAL_SCENES_AI_COLOR
+          path: |
+            output/storia_bombay_1929_v92/BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4
+            output/storia_bombay_1929_v92/BOMBAY_1929_V92_ANDROID_COMPLETO.zip
+            output/storia_bombay_1929_v92/COVER.jpg
+            output/storia_bombay_1929_v92/CONTACT_REAL_FILM_VS_AI_PHOTOS.jpg
+            output/storia_bombay_1929_v92/FINAL_QA_SOURCES.json
+            output/storia_bombay_1929_v92/PHOTO_QA.json
+            output/storia_bombay_1929_v92/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Verified direct Android download prerelease, clearly marked needs artistic review
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_bombay_1929_v92
+          tag=storia-rivive-bombay-1929-v92-8-scenes-ai-review
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Existing release; no overwrite or duplication"
+            exit 0
+          fi
+          gh release create "$tag" \
+            "$d/BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4" \
+            "$d/BOMBAY_1929_V92_ANDROID_COMPLETO.zip" \
+            "$d/COVER.jpg" "$d/CONTACT_REAL_FILM_VS_AI_PHOTOS.jpg" \
+            "$d/FINAL_QA_SOURCES.json" \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "La Storia Rivive · Bombay 1929 · V92 · Eight real moments" \
+            --notes "Nuovo MP4 storico (~26s) con 8 scene autentiche diverse del film Bombay 1929, source-locked freeze + foto a colori DDColor (neural AI), musica originale, cover e 4 post nel kit. ZERO nuovi crediti Vidu o costi API. I colori sono ipotesi. Film originale dichiarato PD India/US su Wikimedia Commons; diritti territoriali in Italia e identita' semantica delle foto ancora da verificare. Anteprima tecnica per la revisione artistica, NON pubblicata sui social o sul sito privato."
+          remote=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$tag" --jq '.assets[]|select(.name=="BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4")|.size')
+          local=$(stat -c %s "$d/BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4")
+          test "$remote" = "$local"
+          echo "ANDROID_MASTER_BYTES_VERIFIED=$remote"
