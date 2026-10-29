@@ -34,7 +34,7 @@ def validate(manifest, video_info):
         need(isinstance(scene.get("visual_distinction"),str) and len(scene["visual_distinction"])>=15,
              f"scene {i}: distinct visual contribution not documented")
     need(manifest.get("opening_hook_approved") is True,"opening 0–3s not artistically approved")
-    need(manifest.get("strong_ending_approved") is True,"final 2–3s lacks reviewed payoff")
+    need(manifest.get("strong_ending_approved") is True,"ending: final 2–3s lacks reviewed payoff")
     need(manifest.get("full_reel_watched_with_audio") is True,"entire reel not watched with audio")
     need(manifest.get("rhythm_nonrepetitive_approved") is True,"visual rhythm not approved")
     need(manifest.get("full_video_human_artistic_approval") is True,
