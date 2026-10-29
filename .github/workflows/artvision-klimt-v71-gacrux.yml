@@ -1,0 +1,37 @@
+name: ArtVision Klimt V71 — ONE Gacrux shared Critico narration
+on:
+  pull_request:
+    paths:
+      - src/artvision_klimt_gacrux_voice_v71.py
+      - .github/workflows/artvision-klimt-v71-gacrux.yml
+permissions:
+  contents: read
+concurrency:
+  group: artvision-klimt-single-Gacrux-v71
+  cancel-in-progress: false
+jobs:
+  create-one-voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local ASR and Google TTS SDK
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" "numpy>=1.26" "soundfile>=0.12" "scipy>=1.11" "faster-whisper>=1.1"
+      - name: Generate one original Google Gacrux full Klimt criticism using user-authorized API
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python src/artvision_klimt_gacrux_voice_v71.py
+      - name: Preserve genuine audio SHA and ASR data, even when final conversion fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_KLIMT_GACRUX_ONE_WAV_V71
+          path: output/klimt_gacrux_v71/
+          retention-days: 30
+          if-no-files-found: warn
