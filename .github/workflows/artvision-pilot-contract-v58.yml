@@ -1,0 +1,58 @@
+name: "ArtVision V58 — Pilot four-video contract checks"
+on:
+  pull_request:
+    paths:
+      - "AGENTS.md"
+      - "docs/REGOLE_ATTIVE.md"
+      - "docs/ARTVISION_CONTRATTO_MADRE_4X1_V58_20261029.md"
+      - "docs/ARTVISION_PILOT_FREEZE_20261029.md"
+      - "config/artvision_pilot_lock_v58.json"
+      - "src/artvision_pilot_guard_v58.py"
+      - "src/artvision_pilot_render_v58.py"
+      - "src/artvision_next_render_v55.py"
+      - "src/production_adapter_v16.py"
+      - "tests/test_artvision_pilot_guard_v58.py"
+      - "tests/test_artvision_pilot_queue_v58.py"
+      - ".github/workflows/artvision-pilot-contract-v58.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check V58 pilot guard, queue and regression tests
+        run: |
+          python -m unittest discover -s tests -p "test_artvision_pilot_guard_v58.py" -v
+          python -m unittest discover -s tests -p "test_artvision_pilot_queue_v58.py" -v
+          python -m unittest discover -s tests -p "test_artvision_next_render_v55.py" -v
+      - name: Prove adapter entrypoint enforces lock before actual render
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          source=Path("src/production_adapter_v16.py").read_text()
+          tree=ast.parse(source)
+          run=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=="execute")
+          call=next(i for i,n in enumerate(run.body) if isinstance(n,ast.Expr)
+              and isinstance(n.value,ast.Call) and getattr(n.value.func,"id",None)=="enforce_pilot_project")
+          project_load=next(i for i,n in enumerate(run.body) if "project_file=path(" in ast.get_source_segment(source,n))
+          assert call>project_load, "Guard must follow project load"
+          assert "from artvision_pilot_guard_v58 import enforce_pilot_project" in source
+          print("DIRECT_ADAPTER_GUARD_PRESENT")
+          PY
+      - name: Pilot scheduler must not select an unapproved new painting
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          output=subprocess.check_output(["python","src/artvision_next_render_v55.py","--json"],text=True)
+          status=json.loads(output)
+          assert status.get("new_artwork_required") is False, status
+          assert status["status"] in ("pilot_in_progress","existing_jobs_take_priority"),status
+          print(status["status"])
+          PY
