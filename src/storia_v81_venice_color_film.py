@@ -34,6 +34,10 @@ def restore_palace_photo(source,dd,session):
  cl=cv2.createCLAHE(clipLimit=1.55,tileGridSize=(12,12))
  gray=tone[:,:,0];tone[:,:,0]=cv2.addWeighted(gray,.88,cl.apply(gray),.12,0)
  col=cv2.cvtColor(tone,cv2.COLOR_LAB2BGR)
+ hsv=cv2.cvtColor(col,cv2.COLOR_BGR2HSV).astype(np.float32)
+ mean_s=float(hsv[:,:,1].mean())
+ hsv[:,:,1]=np.clip(hsv[:,:,1]*min(2.1,max(1.,38./max(mean_s,1.))),0,160)
+ col=cv2.cvtColor(hsv.astype(np.uint8),cv2.COLOR_HSV2BGR)
  blur=cv2.GaussianBlur(col,(0,0),.85)
  col=cv2.addWeighted(col,1.38,blur,-.38,0)
  return col
