@@ -98,7 +98,7 @@ def plan(project):
         s["start_s"] = start
         s["timing_reason"] = "Gesto in B/N, freeze autentico e ricompensa colore proporzionata a contenuto"
     # 25 seconds is a desired average, NOT a quota to pad with dull shots.
-    while duration(shots) > MAX_TOTAL and len(shots) > 4:
+    while (duration(shots) > MAX_TOTAL or len(shots) > 12) and len(shots) > 4:
         opts = range(1, len(shots)-1)
         idx = min(opts, key=lambda i: (1.8 * shots[i]["emotional_value"]
                         + shots[i]["image_quality"] + .6 * shots[i]["visual_complexity"], i))
