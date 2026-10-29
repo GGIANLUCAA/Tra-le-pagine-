@@ -164,7 +164,7 @@ def validate_opening_review(review, video_hash):
     return issues
 
 
-def pack(video, cover, posts, rights, recipe, out, opening_review=None, release_contract=None):
+def pack(video, cover, posts, rights, recipe, out, opening_review=None, release_contract=None, museum_qa=None):
     video = require_file(video, ("mp4",))
     cover = require_file(cover, JPEG)
     rights = require_file(rights, ("md", "txt"))
@@ -190,6 +190,26 @@ def pack(video, cover, posts, rights, recipe, out, opening_review=None, release_
     shutil.copy2(recipe, stage / "04_FONTI_E_RICETTA" / ("RICETTA" + recipe.suffix))
     frames = opening_frames(video, stage / "05_PRIMI_7_SECONDI", info["duration"])
     sha = filehash(video)
+    # V56: a release of Museum Immersion must also satisfy the actual
+    # approved V46 camera/frame QA, not merely ffprobe and a V25 checkbox.
+    # Review-only packaging is allowed and explicitly remains NOT approved.
+    try:
+        recipe_data = json.loads(recipe.read_text(encoding="utf-8")) if recipe.suffix.lower() == ".json" else {}
+    except (ValueError, UnicodeDecodeError):
+        recipe_data = {}
+    museum_variant = recipe_data.get("variant") in ("cinema_museum", "critico_museum")
+    museum_v46_qa_verified = False
+    if museum_variant and release_contract is not None:
+        if museum_qa is None:
+            raise ValueError("V46 Museum: manca QA del vero ingresso/uscita e ricerca cornice; pubblicazione bloccata")
+        report_file = require_file(museum_qa, ("json",))
+        report = json.loads(report_file.read_text(encoding="utf-8"))
+        if (report.get("schema") != "artvision-v46-museum-regression-v56"
+                or report.get("video_sha256") != sha
+                or report.get("museum_quality_gate_passed") is not True
+                or report.get("blockers") != []):
+            raise ValueError("V46 Museum: il video non supera gate filmato/cornice/raccordi; approvazione V25 vietata")
+        museum_v46_qa_verified = True
     # Existing V25 importer is fail-closed: an archive import cannot happen
     # without a review contract approved against the exact video SHA.
     if release_contract is not None:
@@ -236,6 +256,7 @@ def pack(video, cover, posts, rights, recipe, out, opening_review=None, release_
             "complete_across_channels": False,
         },
         "release_gate": {
+            "museum_v46_status": "verified_by_sha_and_review" if museum_v46_qa_verified else ("pending_or_blocked" if museum_variant else "not_applicable"),
             "status": "packaged_needs_review_or_import" if blockers else "package_technically_verified",
             "opening_blockers": blockers,
             "artistic_approval": "not_certified",
@@ -315,13 +336,14 @@ def main():
         b.add_argument("--" + key, required=True)
     b.add_argument("--opening-review", help="Exact-sha visual opening review JSON")
     b.add_argument("--release-contract", help="Already-approved V25 JSON required for private R2 artifact import")
+    b.add_argument("--museum-qa", help="V46 exact-video art/frame/transition QA JSON mandatory for any Museum V25 release")
     s = sub.add_parser("site-check", help="Verify catalog and range playback, not private social dossier")
     s.add_argument("--key", required=True)
     args = ap.parse_args()
     if args.command == "pack":
         data = pack(args.video, args.cover,
                     {key: getattr(args, key) for key in SOCIAL},
-                    args.rights, args.recipe, args.out, args.opening_review, args.release_contract)
+                    args.rights, args.recipe, args.out, args.opening_review, args.release_contract, args.museum_qa)
     else:
         data = check_site(args.key)
     print(json.dumps(data, ensure_ascii=False, indent=2))
