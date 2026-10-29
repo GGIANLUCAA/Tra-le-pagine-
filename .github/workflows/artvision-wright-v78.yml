@@ -1,0 +1,54 @@
+name: ArtVision Wright NG725 V78 — four different variants (one-off pilot)
+run-name: Wright V78 source-frame 4x1 (no paid calls)
+on:
+  push:
+    branches:
+      - pilot/artvision-wright-air-pump-v78
+    paths:
+      - src/artvision_wright_visual_v78.py
+      - src/artvision_wright_render_v78.py
+      - tests/test_artvision_wright_v78.py
+      - docs/productions/2026-10-29-wright-air-pump-v78/**
+      - .github/workflows/artvision-wright-v78.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-wright-v78-single-only
+  cancel-in-progress: false
+jobs:
+  source-verified-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install local render libraries (no paid API)
+        run: |
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10.2" "opencv-python-headless>=4.8" "requests>=2.31" "soundfile>=0.12" "google-genai>=1.20" "scipy>=1.11"
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
+      - name: Check the physical frame model, continuity and output sizes
+        run: python -m unittest discover -s tests -p "test_artvision_wright_v78.py" -v
+      - name: Render real Wright videos; no charge without independent proof of free Gacrux
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_TTS_FREE_QUOTA_CONFIRMED: ${{ vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
+          GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED: ${{ vars.GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED }}
+        run: python -u src/artvision_wright_render_v78.py
+      - name: Publish only actually existing MP4 + ZIP + source/QA manifests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTIVISION_WRIGHT_NG725_V78_ACTUAL_FILES
+          path: |
+            output/artvision-wright-air-pump-v78/*/*.mp4
+            output/artvision-wright-air-pump-v78/*/COPERTINA.jpg
+            output/artvision-wright-air-pump-v78/*_COMPLETE.zip
+            output/artvision-wright-air-pump-v78/WRIGHT_4X1_FINAL_STATE.json
+            output/artvision-wright-air-pump-v78/GACRUX_GATE_V74.json
+            output/artvision-wright-air-pump-v78/SOURCE_MANIFEST.json
+          if-no-files-found: warn
+          retention-days: 14
