@@ -1,0 +1,159 @@
+{
+  "schema": "artvision-preproduction-v55-v1",
+  "date": "2026-10-29",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "group_id": "david_death_of_socrates_met436105_1787",
+  "status": "asset_acquisition_workflow_proposed_not_yet_verified",
+  "artwork": {
+    "title": "The Death of Socrates",
+    "artist": "Jacques Louis David",
+    "date": "1787",
+    "museum": "The Metropolitan Museum of Art",
+    "object_id": 436105,
+    "accession": "31.45",
+    "canvas_cm": {
+      "height": 129.5,
+      "width": 196.2
+    },
+    "museum_source": "https://www.metmuseum.org/art/collection/search/436105",
+    "rights": "Met collection marks artwork Public Domain; runtime must confirm isPublicDomain=true and original image SHA256"
+  },
+  "v32_comparison": [
+    {
+      "work": "The Death of Socrates",
+      "artist": "Jacques Louis David",
+      "object_id": 436105,
+      "hook": "Poison cup offered while Socrates gestures calmly; universal human stakes",
+      "source": "https://www.metmuseum.org/art/collection/search/436105",
+      "reason": "Strong emotional narrative, restrained instrumental track suited to subject",
+      "social_metrics": "unavailable"
+    },
+    {
+      "work": "The Horse Fair",
+      "artist": "Rosa Bonheur",
+      "object_id": 435702,
+      "hook": "Rearing horses and dense market movement",
+      "source": "https://www.metmuseum.org/art/collection/search/435702",
+      "reason": "High visual action, but requires more energetic licensed music and precise horse detail crops",
+      "social_metrics": "unavailable"
+    },
+    {
+      "work": "Washington Crossing the Delaware",
+      "artist": "Emanuel Leutze",
+      "object_id": 11417,
+      "hook": "Dramatic icy river crossing on monumental canvas",
+      "source": "https://www.metmuseum.org/art/collection/search/11417",
+      "reason": "Strong opening but requires careful distinction between history and pictorial invention",
+      "social_metrics": "unavailable"
+    }
+  ],
+  "emotional_direction": {
+    "central_tension": "Composure of the condemned philosopher against the grief of his companions",
+    "intended_feeling": [
+      "awe",
+      "sorrow"
+    ],
+    "evidence_details": [
+      {
+        "id": "cup",
+        "description": "Attendant offers the hemlock cup",
+        "verification": "needs original-image close inspection"
+      },
+      {
+        "id": "hand",
+        "description": "Socrates points upward and reaches toward the cup",
+        "verification": "needs original-image close inspection"
+      },
+      {
+        "id": "disciple",
+        "description": "Grieving disciple grasps the teacher's knee",
+        "verification": "needs original-image close inspection"
+      },
+      {
+        "id": "plato",
+        "description": "Seated elderly figure at left",
+        "verification": "needs original-image close inspection"
+      },
+      {
+        "id": "chains",
+        "description": "Discarded shackles near the bed",
+        "verification": "needs original-image close inspection"
+      }
+    ],
+    "reveal_order": [
+      "cup",
+      "hand",
+      "disciple",
+      "plato",
+      "chains",
+      "whole"
+    ],
+    "wow_justification": "The man facing death is the calmest person in the room"
+  },
+  "music": {
+    "recording": "Water Lily",
+    "artist": "Kevin MacLeod",
+    "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035",
+    "license": "CC BY 4.0",
+    "pinned_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+    "runtime_verification": "pending"
+  },
+  "variants": {
+    "cinema_standard": {
+      "status": "planned_assets_pending",
+      "shot_focus_normalized": [
+        [
+          0.66,
+          0.54
+        ],
+        [
+          0.52,
+          0.42
+        ],
+        [
+          0.39,
+          0.7
+        ],
+        [
+          0.17,
+          0.57
+        ],
+        [
+          0.41,
+          0.84
+        ],
+        [
+          0.5,
+          0.5
+        ]
+      ],
+      "storyboard": "Cup -> pointing hand -> grieving disciple -> witness -> shackles -> entire painting, instrumental only",
+      "render": "cinema_v55_prepared after official V13/V54 checks"
+    },
+    "cinema_museum": {
+      "status": "blocked_quality_museum_v46_not_met",
+      "storyboard": "Real-scale canvas and materially modelled frame -> continuous entrance -> authentic detail journey -> continuous exit into same gallery; no 2D flat-wall substitute",
+      "frame": "current frame unverified, do not invent historical frame"
+    },
+    "critico_standard": {
+      "status": "blocked_voice_unavailable",
+      "storyboard": "Italian critical narration synchronized to cup, gestures, classical composition and historical context, Gacrux required"
+    },
+    "critico_museum": {
+      "status": "blocked_voice_unavailable",
+      "storyboard": "Same Gacrux script and audio as Critico Standard, with additional real-scale continuous Museum entry and exit; V46 also blocked"
+    }
+  },
+  "gates": {
+    "met_asset_download": "pending GitHub Actions proof",
+    "four_brief": "not_created",
+    "four_check": "not_run",
+    "v13_check": "not_run",
+    "mp4": "not_rendered",
+    "v55_package": "not_created",
+    "v25_approval": false,
+    "archive_sync": "not_attempted"
+  },
+  "no_paid_video_calls": true,
+  "no_duplicate_master": true
+}
