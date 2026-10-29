@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""La Storia Rivive V92: Bombay January 1929 (8 authentic shots + 8 ONNX neural AI photo stills).
+"""La Storia Rivive V92.1: Bombay January 1929 (8 authentic shots + 8 ONNX neural AI photo stills).
 Fails closed if source missing, source frame mismatch, color missing, duplicate scenes, or bad video.
 NO billable Vidu, no HF quota, no fabricated faces, no auto-publication.
 """
@@ -18,10 +18,10 @@ SHOTS=[
  {"t":84.5,"x":630,"kind":"face","label":"Fruit-seller and first human face","motion":.72,"transition":.27,"hold":1.88},
  {"t":537.7,"x":643,"kind":"wide","label":"Crowd in front of landmark corner building","motion":1.12,"transition":.38,"hold":1.79},
  {"t":285.9,"x":675,"kind":"action","label":"Man carrying immense woven load through market","motion":.92,"transition":.34,"hold":1.94},
- {"t":487.3,"x":637,"kind":"detail","label":"Trade baskets and goods near the waterside","motion":.94,"transition":.32,"hold":1.68},
+ {"t":512.5,"x":637,"kind":"detail","label":"Harbor workers handling bundles and goods","motion":.94,"transition":.32,"hold":1.68},
  {"t":613.2,"x":620,"kind":"wide","label":"Street traders under building balconies","motion":1.10,"transition":.41,"hold":1.93},
  {"t":751.7,"x":652,"kind":"action","label":"Horse cart outside monumental stone entrance","motion":1.17,"transition":.36,"hold":1.90},
- {"t":185.2,"x":640,"kind":"action","label":"Market crowd and traders with baskets","motion":.84,"transition":.31,"hold":2.12},
+ {"t":223.0,"x":640,"kind":"action","label":"Merchants walking through the crowded market","motion":.84,"transition":.31,"hold":2.12},
  {"t":399.2,"x":645,"kind":"climax","label":"Smiling men speaking together facing the camera","motion":1.08,"transition":.48,"hold":2.35},
 ]
 def run(args,timeout=250):
@@ -83,6 +83,24 @@ def quality_photo(frame,dd,session,index):
  soft=cv2.GaussianBlur(image,(0,0),.65)
  image=cv2.addWeighted(image,1.14,soft,-.14,0)
  image=np.clip(image,0,255).astype(np.uint8)
+ # Scene-aware photograph-grade correction applied only to new AI colors.
+ # Prevent model's bright scarlet from turning naturally woven straw baskets into neon.
+ factors=[.78,.84,.59,.81,.88,.60,.75,.84]
+ hsv=cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
+ h,s,v=cv2.split(hsv)
+ if index==3:
+  yy=np.arange(H,dtype=np.int32)[:,None]
+  basket=(np.logical_or(h<12,h>171) & (s>85) & (yy<800))
+  h[basket]=17
+  s[basket]=np.minimum(s[basket],97)
+ s=np.clip(s.astype(np.float32)*factors[index-1],0,255).astype(np.uint8)
+ image=cv2.cvtColor(cv2.merge([h,s,v]),cv2.COLOR_HSV2BGR)
+ if index==6:
+  # Historic stone and wooden cart: neutralize excessive generated orange cast.
+  f=image.astype(np.float32)
+  f[:,:,0]=np.clip(f[:,:,0]*1.08,0,255)
+  f[:,:,2]=np.clip(f[:,:,2]*.90,0,255)
+  image=f.astype(np.uint8)
  g1=cv2.resize(cv2.cvtColor(source,cv2.COLOR_BGR2GRAY),(90,160)).astype(np.float32)
  g2=cv2.resize(cv2.cvtColor(image,cv2.COLOR_BGR2GRAY),(90,160)).astype(np.float32)
  corr=float(np.corrcoef(g1.ravel(),g2.ravel())[0,1])
