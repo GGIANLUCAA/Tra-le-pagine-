@@ -1,0 +1,113 @@
+{
+  "version": "V94_2026_10_30",
+  "format": "storia_rivive",
+  "status": "binding_for_all_new_historical_reels",
+  "applies_to": "La Storia Rivive historical restoration reels only; ArtVision 4x1 unchanged",
+  "reference_quality_only": {
+    "user_clips": [
+      "44356.mp4",
+      "44357.mp4",
+      "44358.mp4",
+      "44359.mp4"
+    ],
+    "prior_master_comparison": "44376.mp4",
+    "use_for": "modern photographic facial reconstruction / physical coherence, NOT reuse of the referenced media",
+    "source_resolution_note": "All inspected supplied MP4 exports are 720x1280, label 4K is not evidence of real 4K"
+  },
+  "visual_quality": {
+    "priority": "lifelike face reconstruction, not color tint only",
+    "image_to_image_required_when_faces_visible": true,
+    "minimum_useful_source_face_width_px": 65,
+    "minimum_recommended_face_closeups": 2,
+    "source_face_pixel_threshold_is_advisory_if_override_is_documented": true,
+    "request_2_generations_when_generating_faces": true,
+    "inspect": [
+      "eyes",
+      "skin pores",
+      "hair strands",
+      "nose and mouth",
+      "facial expression",
+      "age",
+      "hands",
+      "costume",
+      "background",
+      "all people present",
+      "all objects preserve nature"
+    ],
+    "compare_real_source_and_adjacent_frames": true,
+    "source_image_original_crop_native_pixels_required": true,
+    "deny": [
+      "DDColor_only_as_modern_face_reconstruction",
+      "synthetic_people_replacing_real_people",
+      "object_to_person_or_person_to_object",
+      "face_swap",
+      "excessive_color_saturation",
+      "plastic_CGI_skin",
+      "blurred_soft_faces_as_approved_master",
+      "fake_original_4K"
+    ]
+  },
+  "mandatory_vidu": {
+    "required": true,
+    "min_real_video_s": 4.5,
+    "preferred_real_video_s": 5,
+    "resolution": "720p",
+    "preferred_model": "viduq2-pro-fast",
+    "recommended_effect": "source-anchored single continuous cinematic color-motion insert",
+    "location": "hook|middle|climax, deliberate",
+    "max_generated_clips_per_episode": 1,
+    "color_appears_by_s": 1.15,
+    "live_motion_after_reveal_min_s": 3.5,
+    "source_presentation": "original black-and-white motion, exact frame, source-locked restored color photography then Vidu authentic-to-source moving color (AI reinterpretation)",
+    "source_anchor_must_show_complete_subject": true,
+    "qa": [
+      "actual_generation_task_id",
+      "paid_credits_recorded",
+      "verify_original_anchor_sha256",
+      "first_frame_visual_identity_review",
+      "same_people_objects_camera_geometry_throughout",
+      "no_facial_morphs_or_extra_fingers",
+      "motion_after_color",
+      "full_video_review_before_delivery"
+    ],
+    "never_omit_from_master": true,
+    "if_unavailable_or_rejected": "HOLD as not-final, do NOT publish or silently shorten to old photographic-only format"
+  },
+  "spending_authorization": {
+    "user_request": "2026-10-30 standing instruction: always use Vidu with existing prepaid credits for new La Storia Rivive episodes",
+    "scope": "prepaid existing Vidu API credits ONLY",
+    "model": "viduq2-pro-fast",
+    "standard_cost_5s_720p_credits": 16,
+    "off_peak_quote_if_verified": 8,
+    "maximum_credits_per_episode": 16,
+    "maximum_billable_requests_per_episode": 1,
+    "no_unlimited_extra_credit_purchases": true,
+    "no_auto_recharge": true,
+    "validate_current_provider_quote": true,
+    "validate_balance_before": true,
+    "unique_episode_id_required": true,
+    "immutable_pre_billing_ledger_required": true,
+    "if_existing_or_uncertain_submit": "DO_NOT_RETRY",
+    "if_cost_above_cap": "PAUSE_AND_ASK",
+    "if_no_credit": "PAUSE_AND_REPORT",
+    "must_not_use_some_other_app_subscription_as_api_credit": true
+  },
+  "pacing": {
+    "duration_s_min": 14,
+    "duration_s_max": 35,
+    "target_rolling_mean_s": 25,
+    "never_pad": true,
+    "never_truncate_after_vidu_rejection": true,
+    "opening_hook_s": 3,
+    "ending_review_s": 3,
+    "scene_count_content_led": true
+  },
+  "delivery": {
+    "release_gate": "src/storia_rivive_quality_gate_v94.py",
+    "old_artifacts_grandfathered": true,
+    "new_videos_require_real_vidu_clip": true,
+    "existing_final_artistic_gate": "src/storia_rivive_final_gate_v91.py",
+    "require_MP4_AAC_H264_zip_cover_four_posts_rights": true,
+    "publication_to_site_requires_verified_import": true
+  }
+}
