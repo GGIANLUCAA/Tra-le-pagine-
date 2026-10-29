@@ -1,0 +1,29 @@
+name: "La Storia Rivive V83 - planning and continuity safety tests"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v83-safety-tests.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          python -m py_compile src/storia_rivive_hybrid_planner_v83.py src/storia_rivive_hybrid_v83.py src/storia_rivive_vidu_chroma_retime_v83.py
+          python -m unittest discover -s tests -p "test_storia_rivive_hybrid_planner_v83.py" -v
+          python - <<'PY'
+          import json
+          p=json.load(open("config/storia_rivive_hybrid_4plus1_v83.json"))
+          assert p["scenes"]["classical_photo"]==4
+          assert p["scenes"]["vidu_motion_color"]==1
+          assert p["vidu"]["budget"]["max_billable_requests_per_scene"]==1
+          assert not p["production"]["status"].startswith("AUTOMATICALLY_APPROVED")
+          print("V83 safe-presets PASS, zero paid provider calls")
+          PY
