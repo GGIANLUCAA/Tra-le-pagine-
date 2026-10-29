@@ -28,9 +28,9 @@ DOSSIER=ROOT/"docs/productions/2026-10-29-wright-air-pump-v78"
 SCRIPT=DOSSIER/"COPIONE_CRITICO_V78.txt"
 TITLE="An Experiment on a Bird in the Air Pump"
 ARTIST="Joseph Wright of Derby"
-SOURCE_PAGE="https://commons.wikimedia.org/wiki/File:An_Experiment_on_a_Bird_in_the_Air_Pump.jpg"
-SOURCE_IMAGE="https://upload.wikimedia.org/wikipedia/commons/c/c4/An_Experiment_on_a_Bird_in_the_Air_Pump.jpg"
-SOURCE_SHA1="536701308e08b70fbc51c6551f17c4359f36eb28"
+SOURCE_PAGE="https://commons.wikimedia.org/wiki/File:An_Experiment_on_a_Bird_in_an_Air_Pump_by_Joseph_Wright_of_Derby%2C_1768.jpg"
+SOURCE_IMAGE="https://uploads6.wikiart.org/images/joseph-wright/an-experiment-on-a-bird-in-the-air-pump-1768.jpg"
+SOURCE_SHA1="8999bf5baa1b5c6f4332786797129fe01da84398" # Wikimedia Commons related file; WikiArt distributor hash checked via byte size and recorded separately
 MUSIC_PAGE="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100747"
 MUSIC_MP3="https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dark%20Times.mp3"
 MUSIC_LICENSE="https://creativecommons.org/licenses/by/4.0/"
@@ -61,20 +61,21 @@ def download(url,dest,minbytes=500_000,maxbytes=15_000_000):
 
 def acquire():
     OUT.mkdir(parents=True,exist_ok=True)
-    artpath=OUT/"NATIONAL_GALLERY_WRIGHT_ORIGINAL_FRAMED.jpg"
+    artpath=OUT/"NATIONAL_GALLERY_WRIGHT_PD_ART.jpg"
     song=OUT/"KEVIN_MACLEOD_DARK_TIMES_CC_BY.mp3"
     if artpath.exists():
-        if hashlib.sha1(artpath.read_bytes()).hexdigest()!=SOURCE_SHA1:
-            raise RuntimeError("Unexpected original image SHA1; not Brooklyn source")
+        if artpath.stat().st_size!=4147734:
+            raise RuntimeError("WikiArt source byte count mismatch; reject unknown picture")
         artrec={"url":SOURCE_IMAGE,"bytes":artpath.stat().st_size,"sha256":sha256(artpath)}
     else:
         artrec=download(SOURCE_IMAGE,artpath)
     with Image.open(artpath) as a:
         a.verify()
     with Image.open(artpath) as a:
-        if a.size!=(4946,3688):raise ValueError("Wrong Wright framed photo dimensions: "+str(a.size))
-    if hashlib.sha1(artpath.read_bytes()).hexdigest()!=SOURCE_SHA1:
-        raise ValueError("Wrong Wright original; SHA1 mismatch to Commons NG725 photo")
+        if a.size!=(5639,4226):raise ValueError("Wrong Wright public-domain reproduction dimensions: "+str(a.size))
+    if artpath.stat().st_size!=4147734:
+        raise ValueError("Unexpected WikiArt distribution byte count; do not quietly substitute images")
+    true_source_sha1=hashlib.sha1(artpath.read_bytes()).hexdigest()
     if song.exists():musicrec={"url":MUSIC_MP3,"bytes":song.stat().st_size,"sha256":sha256(song)}
     else:musicrec=download(MUSIC_MP3,song,minbytes=1_000_000,maxbytes=14_000_000)
     probe=subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration",
@@ -88,17 +89,17 @@ def acquire():
               "painting_cm":{"height":183.0,"width":244.0},
               "dimensions_source":NATIONAL_GALLERY,"medium":"oil on canvas"},
       "artwork":{"source_page":SOURCE_PAGE,
-                 "rights":"Public domain Mark; Commons direct photograph of original framed work",
-                 "source_sha1":SOURCE_SHA1,**artrec},
+                 "rights":"Public domain mark; WikiArt direct high-resolution distribution of Commons artwork file",
+                 "source_sha1":true_source_sha1,"related_commons_sha1":SOURCE_SHA1,**artrec},
       "music":{"title":"Dark Times","artist":"Kevin MacLeod",
                "isrc":"USUAN1100747","source":MUSIC_PAGE,"license":"CC BY 4.0","license_url":MUSIC_LICENSE,**musicrec},
       "museum":{"actual_gallery_photo_used":False,
-                "frame_status":"documented_real_frame_from_same_source_photo",
+                "frame_status":"authentic_historic_frame_documented_not_reproduced_source_photo_unavailable",
                 "room_status":"declared_fictional_gallery_staging",
-                "frame_description":"Original photographed 19th-century English oil-gilded frame: pine, acanthus, lamb-tongue and bead-reel details documented by National Gallery. Not a programmatically invented outline.",
+                "frame_description":"19th-century English gilded frame documented by National Gallery but NOT included in selected public-domain source image. No invented decorative frame; clean unframed digital gallery staging only.",
                 "physical_reference":"oil canvas 183x244cm; human-scale viewer distance approximately 3.5m",
                 "source_offscreen_during_details":True,"same_room_on_exit":True,
-                "frame_source":SOURCE_PAGE},
+                "frame_documentation":NATIONAL_GALLERY},
       "no_ai_generated_artwork":True,
       "copyright_status_needs_publication_territory_review":True,
       "paid_video_calls":0,"social_autopublish":False
@@ -160,7 +161,7 @@ def get_voice():
 
 def social(variant):
     title="An Experiment on a Bird in the Air Pump — Joseph Wright of Derby (1768), National Gallery, NG725."
-    gallery="La sala museale è una scenografia digitale. La cornice proviene dalla fotografia autentica dell'opera; nessuna cornice fittizia sovrapposta."
+    gallery="La sala museale è una scenografia digitale. La cornice storica è documentata ma non è riprodotta; la sala digitale presenta l'opera senza cornice fittizia."
     if variant=="cinema_standard":
         return {
           "facebook":"Una stanza, un uccello bianco, una decisione che cambia tutto. "+title+" La luce mostra i dettagli che potresti non notare.",
@@ -171,7 +172,7 @@ def social(variant):
     if variant=="cinema_museum":
         return {
           "facebook":"Un dipinto di quasi due metri e mezzo. Dalla sala al cuore della scena, poi indietro nella stessa sala. "+title+" "+gallery,
-          "instagram":"MUSEUM IMMERSION · Un quadro, una sola camera, una cornice davvero documentata. "+title+" "+gallery+" #MuseumImmersion",
+          "instagram":"MUSEUM IMMERSION · Un quadro, una sola camera, una cornice storicamente documentata, qui non riprodotta. "+title+" "+gallery+" #MuseumImmersion",
           "tiktok":"Entra nel dipinto: un uccello bianco e una scelta sospesa. "+title+" "+gallery,
           "youtube":"MUSEUM IMMERSION · Ingresso e uscita continui a scala illustrativa di 183×244 cm. "+title+" "+gallery
         }
@@ -186,7 +187,7 @@ def social(variant):
        "facebook":"Lo stesso racconto Critico, la stessa voce Gacrux, con una camera continua dentro l'opera. "+title+" "+gallery,
        "instagram":"MUSEUM CRITICO · La scena vista da vicino senza tagli artificiosi né cornici inventate. "+title+" "+gallery,
        "tiktok":"Entro nella sala, poi nel quadro, mentre il critico racconta cosa sta accadendo. "+title+" "+gallery,
-       "youtube":"CRITICO MUSEUM · Stesso copione e WAV del Critico Standard, camera immersiva e cornice storica fotografata. "+title+" "+gallery
+       "youtube":"CRITICO MUSEUM · Stesso copione e WAV del Critico Standard, camera immersiva e cornice storica non ricostruita. "+title+" "+gallery
     }
 
 def ffprobe(path):
@@ -268,9 +269,9 @@ def render_one(name,art,roomimg,song,voice=None):
     (folder/"SOURCE_AND_RIGHTS.md").write_text(
         "# Joseph Wright of Derby, An Experiment on a Bird in the Air Pump\n"
         "National Gallery NG725, 1768; source: "+SOURCE_PAGE+"\n"
-        "Framed painting photo Public Domain Mark, Commons, SHA1 "+SOURCE_SHA1+"\n"
+        "Unframed painting reproduction PD Mark, WikiArt CDN image; Commons-related SHA1 "+SOURCE_SHA1+"\n"
         "Music: Dark Times by Kevin MacLeod, CC BY 4.0: "+MUSIC_PAGE+"\n"
-        "Museum wall is a digital staging, not National Gallery photograph; the photographed gilded frame belongs to this NG725 object.\n"
+        "Museum wall is digital staging, historical gilded frame documented but not recreated because source frame photo is rate-limited.\n"
         "No AI or invented painted content, no added fictitious frame.\n",encoding="utf-8")
     if critic:
         shutil.copy2(SCRIPT,folder/"COPIONE_CRITICO.txt")
