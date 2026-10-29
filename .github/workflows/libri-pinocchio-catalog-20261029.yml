@@ -1,0 +1,58 @@
+name: "LIBRI Pinocchio — catalogue authentic 1902 plates, no TTS or paid calls"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/libri-pinocchio-catalog-20261029.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: libri-pinocchio-catalog-20261029
+  cancel-in-progress: false
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --quiet "requests>=2.31,<3" "beautifulsoup4>=4.12,<5"
+      - name: Extract genuine image captions and chapter context from Gutenberg 52484
+        run: |
+          python - <<'PY'
+          import requests,json,re,os,base64,subprocess
+          from bs4 import BeautifulSoup
+          from urllib.parse import urljoin
+          source='https://www.gutenberg.org/cache/epub/52484/pg52484-images.html'
+          r=requests.get(source,timeout=55);r.raise_for_status()
+          s=BeautifulSoup(r.content,'html.parser')
+          items=[]
+          for im in s.select('img'):
+              src=im.get('src','')
+              if not src or 'images/' not in src:continue
+              a=im.find_parent('a')
+              href=a.get('href','') if a else ''
+              url=urljoin(source,href if href.lower().endswith(('.jpg','.png','.jpeg')) else src)
+              p=im.parent
+              for _ in range(3):
+                  if p and len(p.get_text(' ',strip=True))<180 and p.parent:p=p.parent
+              cap=p.get_text(' ',strip=True)[:220] if p else ''
+              h=im.find_previous(re.compile('^h[1-6]$'))
+              items.append({'index':len(items),'url':url,'caption':cap,'chapter':h.get_text(' ',strip=True)[:160] if h else '', 'alt':im.get('alt','')})
+          assert len(items)>=45,('not enough source images',len(items))
+          report={'source':source,'edition':'1902 Carlo Chiostri illustrations, Carlo Collodi original',
+                  'count':len(items),'items':items,
+                  'run_url':'https://github.com/'+os.environ['GITHUB_REPOSITORY']+'/actions/runs/'+os.environ['GITHUB_RUN_ID'],
+                  'paid_calls':0,'tts_calls':0}
+          data=json.dumps(report,ensure_ascii=False,indent=2)+'\n'
+          body=json.dumps({'message':'Record actual public-domain Pinocchio image catalog from Gutenberg',
+              'content':base64.b64encode(data.encode()).decode()})
+          api='repos/'+os.environ['GITHUB_REPOSITORY']+'/contents/reports/pinocchio_image_catalog_20261029.json'
+          p=subprocess.run(['gh','api','-X','PUT',api,'--input','-'],input=body,text=True,capture_output=True)
+          if p.returncode:raise RuntimeError(p.stderr[:500])
+          print('CATALOG_SAVED',len(items),report['run_url'])
+          PY
