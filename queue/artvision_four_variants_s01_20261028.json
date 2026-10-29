@@ -1,7 +1,7 @@
 {
   "schema_version": "artvision-four-variant-queue-v1",
-  "version": "V54",
-  "date": "2026-10-28",
+  "version": "V55",
+  "date": "2026-10-29",
   "automation_id": "6adca191603c8191a90d5190901cd034",
   "legacy_queue": "queue/artvision_dual_format_s01_20261028.json",
   "purpose": "Mappatura prudente delle coppie storiche alle quattro varianti; non conferma file o verifiche nuove",
@@ -11,7 +11,7 @@
   "max_concurrent_artvision_jobs": 1,
   "auto_publish": false,
   "paid_video_credits_without_approval": false,
-  "note": "La vecchia voce Cinema V53 rappresentava in genere una versione Museum. Verificare MP4 originale e corrispondenza prima del riuso: gli hash sono solo riferimenti storici. Non generare duplicati.",
+  "note": "Catalog now includes Hokusai corrective V55B registered by exact SHA. Other four groups already have both Cinema variants in review. Avoid duplicate Cinema; select new artworks if compatible assets exist. Preserve historic references but use this as single operational queue.",
   "groups": [
     {
       "group_id": "wright_air_pump_1768",
@@ -279,6 +279,54 @@
           }
         }
       }
+    },
+    {
+      "group_id": "hokusai_great_wave_met45434_1830",
+      "artwork": "The Great Wave",
+      "artist": "Katsushika Hokusai",
+      "year": "circa 1830–1832",
+      "official_source": "https://www.metmuseum.org/art/collection/search/45434",
+      "museum": "The Metropolitan Museum of Art",
+      "accession_number": "JP1847",
+      "physical_dimensions_cm": {
+        "h": 25.7,
+        "w": 37.9
+      },
+      "dossier_4x1_source": "GitHub Actions artifact 12882622228, ARTVISION_4X1_PLAN.json (authentic V54 dossier; not yet committed as a standalone repository JSON)",
+      "archive_manifest_path": "docs/productions/2026-10-29-hokusai-great-wave-v55b/ARCHIVE_STAGING_V55.json",
+      "variants": {
+        "critico_standard": {
+          "status": "blocked",
+          "blocker_code": "blocked_voice_unavailable",
+          "blocker_note": "Exact Google Gacrux voice cache and timing not verified; do not use synthetic substitute."
+        },
+        "critico_museum": {
+          "status": "blocked",
+          "blocker_code": "blocked_voice_unavailable",
+          "blocker_note": "Exact Google Gacrux voice cache and timing not verified; no Museum renderer approval."
+        },
+        "cinema_standard": {
+          "status": "rendered_needs_review",
+          "version": "V55B",
+          "video_sha256": "f253f21ea327e17a16ac453a18059f8e468c98f3b7e468574d5ced630fcc8689",
+          "video_bytes": 3110366,
+          "codec": "H264/AAC 1080x1920",
+          "duration_seconds": 31.25,
+          "source_action_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40840392325",
+          "github_artifact_id": 12882622228,
+          "previous_rejected_prototype_sha256": "ac73d443a26109e7627bd9d65527f39e545c90d032ab65f6b49dc66defa11d77",
+          "initial_qa": "Full ffmpeg decode, source license, SHA/ZIP CRC, first second crop guard passed; normal-speed artistic watch/listen pending",
+          "human_approval": false,
+          "archive_sync_pending": true,
+          "site_verified": false
+        },
+        "cinema_museum": {
+          "status": "planned",
+          "blocker_code": "blocked_museum_renderer_unavailable",
+          "blocker_note": "Dedicated compatible Museum artwork-scale renderer and frame/galleries not prepared; do not relabel Standard as Museum."
+        }
+      },
+      "note": "One distinct new Cinema Standard V55B corrective version: original V55 trial has poor first frame; NOT a second 4x1 variant. V25 and private archive pending. Do not duplicate on next cycle."
     }
   ],
   "last_operational_update": {
