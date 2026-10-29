@@ -15,10 +15,10 @@ META={"city":"NEW YORK","year":"1911",
  "page":"https://commons.wikimedia.org/wiki/File:New_York_1911.webm",
  "description":"Genuine 1911 New York city moving street life. Svenska Biografteatern.",
  "shots":[
-  {"t":56.0,"center":635,"length":2.20,"tag":"early New York streets and transport"},
-  {"t":150.0,"center":640,"length":2.20,"tag":"New York 1911 daily city life"},
-  {"t":258.0,"center":640,"length":2.30,"tag":"historic moving street scene in New York"},
-  {"t":415.0,"center":640,"length":2.20,"tag":"historic Manhattan activity captured on film"}
+  {"t":56.0,"center":960,"length":2.20,"tag":"early New York streets and transport"},
+  {"t":150.0,"center":960,"length":2.20,"tag":"New York 1911 daily city life"},
+  {"t":258.0,"center":960,"length":2.30,"tag":"historic moving street scene in New York"},
+  {"t":415.0,"center":960,"length":2.20,"tag":"historic Manhattan activity captured on film"}
  ]}
 def get_archive(d):
  api="https://commons.wikimedia.org/w/api.php?"+urlencode({"action":"query","format":"json","formatversion":"2","prop":"imageinfo","titles":META["commons"],"iiprop":"url|size|mime|extmetadata"})
@@ -27,9 +27,9 @@ def get_archive(d):
  it=data["query"]["pages"][0]["imageinfo"][0]
  assert it["mime"]=="video/webm", "Not a moving film"
  master=it["url"]; filename=master.rsplit("/",1)[-1]
- # Prefer verified 720p Wikimedia transcode: within free CI constraints, no billable services.
- link=master.rsplit("/",1)[0].replace("/commons/","/commons/transcoded/")+"/"+filename+"/"+filename+".720p.vp9.webm"
- dest=d/"AUTHENTIC_1911_FILM_720p.webm"
+ # Use the Commons original full-HD source; transcode URL is not guaranteed to exist.
+ link=master
+ dest=d/"AUTHENTIC_1911_FILM_ORIGINAL.webm"
  if not dest.exists() or dest.stat().st_size<15_000_000:
   req=Request(link,headers={"User-Agent":base.UA})
   with urlopen(req,timeout=120) as resp,open(dest,"wb") as out:
@@ -37,10 +37,10 @@ def get_archive(d):
     chunk=resp.read(1024*1024)
     if not chunk:break
     out.write(chunk)
-    if out.tell()>230_000_000:raise RuntimeError("Unexpectedly large transcode")
+    if out.tell()>480_000_000:raise RuntimeError("Unexpectedly large transcode")
  cap=cv2.VideoCapture(str(dest))
  w,h=cap.get(3),cap.get(4);fps=cap.get(5);duration=cap.get(7)/max(fps,1);cap.release()
- if w<1100 or h<700 or duration<425 or fps<14:raise RuntimeError("SOURCE_QUALITY_FAILED "+str((w,h,fps,duration)))
+ if w<1800 or h<1000 or duration<425 or fps<14:raise RuntimeError("SOURCE_QUALITY_FAILED "+str((w,h,fps,duration)))
  lic={k:html.unescape(v.get("value","")) for k,v in it.get("extmetadata",{}).items() if k in ("LicenseShortName","Copyrighted","LicenseUrl","Artist")}
  detail={"page":META["page"],"creator":"Svenska Biografteatern","source":link,"sha256":base.sha(dest),"source_resolution":[w,h],"source_duration":duration,"source_fps":fps,"commons_licensing":lic,"rights_for_italy":"PENDING_HUMAN_REVIEW","note":"Color is an interpretation; audio is new; no fabricated source frames."}
  (d/"SOURCE_QA.json").write_text(json.dumps(detail,indent=2,ensure_ascii=False))
