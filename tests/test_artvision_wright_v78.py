@@ -29,7 +29,7 @@ class WrightV78(unittest.TestCase):
         self.assertEqual(s.size,(720,1280))
     def test_source_4x3_unaltered_in_wide_shot(self):
         im=v.museum(self.source,self.room,1,(.5,.5))
-        self.assertEqual(im.getpixel((360,455)),(67,102,128))
+        self.assertEqual(im.getpixel((360,640)),(67,102,128))
     def test_cover_9x16(self):
         self.assertEqual(v.cover(self.source,"cinema_museum").size,(1080,1920))
 
