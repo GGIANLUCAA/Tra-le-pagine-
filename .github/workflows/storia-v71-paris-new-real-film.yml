@@ -1,0 +1,55 @@
+name: "V71 Paris 1896-1900 authentic video restoration"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v71-paris-new-real-film.yml"
+      - "src/storia_v71_paris_new_real_film.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 42
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+      OMP_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m py_compile src/storia_v71_paris_new_real_film.py
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - run: python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow huggingface_hub onnxruntime gradio_client
+      - name: Render real moving original with source-locked free AI
+        run: python -u src/storia_v71_paris_new_real_film.py
+      - name: Verify full output
+        run: |
+          set -euo pipefail
+          D=output/storia_v71_paris
+          test -s "$D/LA_STORIA_RIVIVE_PARIGI_1900_V71.mp4"
+          test -s "$D/LA_STORIA_RIVIVE_PARIGI_1900_KIT.zip"
+          ffmpeg -v error -xerror -i "$D/LA_STORIA_RIVIVE_PARIGI_1900_V71.mp4" -f null -
+          unzip -t "$D/LA_STORIA_RIVIVE_PARIGI_1900_KIT.zip"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: LA_STORIA_RIVIVE_PARIGI_1900_V71_NEW_VIDEO
+          path: output/storia_v71_paris/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Release direct MP4 and ZIP for Android, do not publish to social
+        run: |
+          set -euo pipefail
+          D=output/storia_v71_paris
+          TAG=storia-rivive-parigi-1900-new-real-film-v71
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$D/LA_STORIA_RIVIVE_PARIGI_1900_V71.mp4" "$D/LA_STORIA_RIVIVE_PARIGI_1900_KIT.zip" "$D/COPERTINA.jpg" "$D/QA.json" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --latest=false --title "La Storia Rivive: Paris 1896-1900 V71" --notes "Real period film movement and original AI reconstructed still photography; color, faces and texture interpreted, original rights and artistic review pending; 0 Vidu; no social publication." "$D/LA_STORIA_RIVIVE_PARIGI_1900_V71.mp4" "$D/LA_STORIA_RIVIVE_PARIGI_1900_KIT.zip" "$D/COPERTINA.jpg" "$D/QA.json"
+          fi
+          echo "Release ready"
