@@ -1,5 +1,5 @@
 {
-  "version": "V76",
+  "version": "V77-compatible",
   "editorial_preset": "freeze_ai_photo_reference_43054_43056",
   "social_museum_v76": true,
   "default_target_duration_s": [
@@ -65,5 +65,40 @@
     ],
     "prefer_test_multiple_subjects": true
   },
-  "artistic_review_required": true
+  "artistic_review_required": true,
+  "identity_integrity": {
+    "mandatory": true,
+    "policy": "never_convert_people_into_objects_or_objects_into_people",
+    "source_frame_and_adjacent_frames_required": true,
+    "verified_object_inventory_required": true,
+    "protect_high_risk_objects": [
+      "faces",
+      "hands",
+      "horses",
+      "wheels",
+      "ladders",
+      "railings",
+      "stairs",
+      "car_parts",
+      "carriages",
+      "background_silhouettes"
+    ],
+    "conservative_photo_generator": "src/storia_rivive_v77_safe_photo_generator.py",
+    "image_guard": "src/storia_rivive_v77_identity_guard.py",
+    "image_guard_minimum_original_luminance": 0.78,
+    "model_parameters": {
+      "denoise_start": 0.22,
+      "denoise_hard_limit": 0.27,
+      "controlnet_scale": 1.3,
+      "condition_scale": 5
+    },
+    "single_free_candidate_no_automatic_retries": true,
+    "local_structural_qa_per_tile": true,
+    "high_global_similarity_is_not_a_semantic_pass": true,
+    "annotated_roi_protection": true,
+    "final_approval_state": "PENDING_HUMAN_SEMANTIC_REVIEW",
+    "release_requires_human_semantic_approval": true,
+    "fallback": "preserve original shape or reject scene; do not invent content",
+    "v76_previous_generations": "older existing video unaffected; must not label historically verified"
+  }
 }
