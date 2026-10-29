@@ -1,9 +1,8 @@
 name: "La Storia Rivive V90.3 - Paris 1900 verified color + safe one Vidu"
+# One-off workflow intentionally disabled from automatic push triggers.
+# Old Vidu task has already billed 16 credits; do not run again on each fix.
 on:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/storia-cleo-paris-1900-v90.yml"
+  workflow_dispatch:
 permissions:
   contents: write
   actions: read
@@ -59,7 +58,10 @@ jobs:
             output/storia_cleo_1900_v90/ARCHIVE_FRAME_*.png
           retention-days: 7
           if-no-files-found: warn
-      - name: Create direct-download GitHub prerelease only after successful video render
+      - name: Fail closed on artistic identity, pacing, Vidu continuity and release quality
+        if: success()
+        run: python src/storia_rivive_final_gate_v91.py --video output/storia_cleo_1900_v90/PARIS_1900_CLEO_DANCE_V90.mp4 --manifest output/storia_cleo_1900_v90/QA_SOURCES_RIGHTS.json
+      - name: Create direct-download GitHub prerelease only after passed artistic V91 gate
         if: success()
         shell: bash
         run: |
