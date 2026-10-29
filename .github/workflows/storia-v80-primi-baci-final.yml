@@ -65,7 +65,7 @@ jobs:
           F="$D/LA_STORIA_RIVIVE_PRIMI_BACI_VOLTI_HD_V80.mp4"
           test -s "$F"
           ffmpeg -v error -xerror -i "$F" -f null -
-          python src/storia_rivive_v74_effect_gate.py --video "$F" --min-cycles 3 --report "$D/FORMATO_VERIFICATO.json"
+          python src/storia_rivive_v74_effect_gate.py --video "$F" --min-cycles 3 --sat-threshold 30 --bw-threshold 28 --report "$D/FORMATO_VERIFICATO.json"
           unzip -t "$D/LA_STORIA_RIVIVE_PRIMI_BACI_V80_COMPLETO.zip"
           ffprobe -v error -show_entries stream=codec_name,width,height:format=duration,size -of json "$F"
       - uses: actions/upload-artifact@v4
