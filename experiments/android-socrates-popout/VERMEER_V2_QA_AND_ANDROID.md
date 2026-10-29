@@ -38,3 +38,11 @@ The renderer does **not** infer the unseen sides of the face, the rear of the co
 - Local video SHA-256: `b774dda5480bb3d8907a8704e6bd9c98a9fb39eb26005d8b11b59cc4095cbf13`.
 - Frames at 0,1,2,3,4,5,6,7 s inspected as contact sheet; **artistically experimental**. V1 zoom failure recorded, real-world phone playback of V2 **not verified**.
 - This local hash is NOT automatically the hash of any GitHub Actions rerender using a potentially different Commons JPEG. Each cloud run must be checked separately.
+
+## Cloud reproduction verified (29 Oct 2026)
+- Successful self-contained GitHub Actions CPU run: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40934134934
+- Archive artifact ID: `12924870298`, named `ARTVISION_VERMEER_POP_OUT_V2_ANDROID_EXPERIMENT`.
+- Video SHA-256 of this **cloud** rendering: `69f820b5518e0b3b3c723639500af4cc60fb5dabc4eaaaf537f1f0eed3178082`.
+- GitHub artifact ZIP extracted, CRC checked, side-by-side preview visually inspected. Full remote H264/AAC video decoded separately with FFmpeg: **PASS**, 8.000 seconds, 720×1280.
+- Verified source, mask, images, manifest and video are in the artifact; different input-image resolution produces a different hash from the local run.
+- No live-site upload, Social publication, V25 approval, automated universal per-painting segmentation or true 3D model has been implemented. A browser-accessible one-click launch for other artworks is still a future interface task.
