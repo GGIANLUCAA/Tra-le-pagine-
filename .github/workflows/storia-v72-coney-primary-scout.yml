@@ -1,0 +1,30 @@
+name: "V72 Coney Island 1903 primary archival film source scout"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v72-coney-primary-scout.yml"
+      - "src/storia_v72_coney_primary_scout.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source_discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - run: python -u src/storia_v72_coney_primary_scout.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V72_CONEY_ISLAND_SOURCE_PROVENANCE
+          path: |
+            output/storia_v72_coney/SOURCE_DISCOVERY.json
+            output/storia_v72_coney/ACQUIRED_SOURCE.json
+          retention-days: 14
+          if-no-files-found: warn
