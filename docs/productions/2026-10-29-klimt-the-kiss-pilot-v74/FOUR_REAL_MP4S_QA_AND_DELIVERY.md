@@ -1,0 +1,23 @@
+# ArtVision — The Kiss (Gustav Klimt), 4×1 V74 — QUATTRO MP4 REALI
+
+**Data:** 29 ottobre 2026. **Secondo pilota autorizzato.** Quattro filmati nuovi, distinti, prodotti nella sessione ChatGPT. Sono **tecnicamente verificati ma ancora `rendered_needs_review`**, non Gold Master/V25. I vecchi video Klimt V2/V6 non sono stati riciclati; la vecchia sala Socrate non è stata riutilizzata.
+
+| Slot | MP4 file sessione | SHA256 reale | Byte | Durata |
+|---|---|---|---:|---:|
+| Critico Standard V72 | `/mnt/data/01_Klimt_Critico_Standard_Gacrux.mp4` | `d8bf725675e45be210383a4ca3b2113a06807bb9af540e21b3adb7fa2b4e5eb8` | 17.136.945 | 207.5s |
+| Critico Museum V73 | `/mnt/data/02_Klimt_Critico_Museum_Gacrux.mp4` | `814e52f6d4281df14d3064bce6f1295ab6cdc059a5d5c80acf7db0a095cbf1ab` | 13.583.486 | 207.5s |
+| Cinema Standard V72 (Android) | `/mnt/data/03_Klimt_Cinema_Standard.mp4` | `5651ec851055d007dba9ed86762840decd51a9008a9ebdfcba470618e31200a6` | 3.774.837 | 47s |
+| Cinema Museum V73 | `/mnt/data/04_Klimt_Cinema_Museum.mp4` | `9dc3cf7abcebc3e8b16d105e9e9934cde8775cec1ac6b684519fe0df1875e746` | 4.343.198 | 52s |
+
+**Consegna:** `/mnt/data/KLIMT_4_VIDEO_ANDROID.zip` 38.848.236 byte, SHA `83954859c6e86c23e69b1f1342c7ac08a9d5589534bce7da086f07c4035b97d8`, 4 MP4 + manifest, ZIP CRC pass. `/mnt/data/KLIMT_4X1_PACCHETTO_COMPLETO.zip` 65.968.295 byte, SHA `3a274ffe739599122f1b0f04bf3ee13837c8d706c25f03c7fdaf61cbb6d49f75`, ZIP CRC pass, 70 file con 4 MP4, 4 cover, 16 post originali distinti, origini, diritti, WAV Gacrux, immagini, musica, note QA e renderer. **I percorsi sono della sessione ChatGPT: NON equivalgono a backup durevole o import sul sito.**
+
+## Prove e fonti
+- Dipinto: Gustav Klimt, The Kiss (1908–1909), Upper Belvedere Vienna inv. 912, canvas **180×180 cm**. Fotografia fedele PD-Art, documento https://commons.wikimedia.org/wiki/File:Klimt_-_The_Kiss.jpg, file sorgente 4096×4188 recuperato via CDN alternativo weserv.nl senza ripetere HTTP429, SHA `43e998b7b9dc6f935918dbd55ff1a3f34052b932d563e74e5d2d5dceb2660b24`, 4.135.630 byte.
+- Musica *Dreams Become Real* — Kevin MacLeod, registrazione CC BY 4.0, URL https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027 , SHA del file MP3 `a8ea5df5f969ed8d898af7fe07eb4712233f03e9d83f7ebcc88d1c851f3171b0`. Attribuire autore, brano e https://creativecommons.org/licenses/by/4.0/.
+- **UNA SOLA registrazione originale Google Gacrux**, copione Critico 476 parole/9 passaggi, WAV mono 24 kHz durata 206.04s SHA `fe5bab5c9c52567c04959b387459178caa4a268c8f64671582bab10c81214371`, script SHA `32ccea05dd0a29aef72e06b79ffab097a44cca7a41cd55b9944e9e190b0896ef`, ASR Whisper 44 frasi, 92.886% match e parole non riconosciute interpolate. **Estratto audio AAC dai due Critico SHA IDENTICO** `7e33f4a696f77033afddfad2f18562295b605c39cfd50a999bf94843907a53fe`. Una sola invocazione Google dal workflow run `40922904037`, artifact `12919861110`; il costo effettivo TTS non è verificato.
+- Museo V73: **scenografia CREATA digitalmente** specifica per Klimt, no persone, cornice scura a gradini con filetto dorato **ricostruita** da riferimento di stile, non fotografia storica né installazione reale Belvedere. Camera unica 2.5D senza tagli galleria-dipinto. Fonte composito SHA `3cb492eabba0406b3c9c997803aa73880d1cf967743f55f7da1079a12b9cc56d`. Il precedente V72 Museo soffriva di camera puntata troppo al pavimento: **RIFIUTATO**, corretto in V73 **stesso slot, non nuovi 5°/6° filmati**.
+- Camera Museum V73 V57 gate: Cinema picco 15.352/255 mediana 5.368; Critico picco 16.750/255 mediana 1.958. **Nessun picco supera la soglia di rigetto combinata**. Contatto visivo dei frame inizio/1/3/5/7/medio/fine effettuato; ambientazione Museale varia, ma rimane **necessaria visione/ascolto reale a velocità normale dell'intera opera** prima di qualificare Gold Master.
+- Tutti 4: MP4 720×1280 (output nativo, NON vero 4K), H264/AAC, 20fps; ffmpeg `-xerror` full decode PASS, zip CRC PASS. Cinema solo musica, Critico parlato + musica molto ridotta. Nessuna AI video a credito. Nessuna pubblicazione social.
+
+## Stato reale e prossimi gate
+**Klimt 4/4 nuovi MP4 reali, 0/4 V25 approvati, 0 import sito privato certificati.** Anche Socrate 4/4 MP4 prodotti ma in review. Nessun terzo quadro finché non autorizzato; non attivare produzione seriale indiscriminata. Il sito privato richiede prova distinta dell'MP4 importato, catalogo, playback, cover, 4 testi social e ZIP; lo staging JSON dei post non prova l'import. I singoli MP4 vengono consegnati tramite link sandbox esistenti in questa sessione; se scaricamento fallisce, non inventare altro link, servirà delivery autorizzata e verificata.
