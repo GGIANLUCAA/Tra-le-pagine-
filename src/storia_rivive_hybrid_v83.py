@@ -17,7 +17,7 @@ OUT.mkdir(parents=True,exist_ok=True)
 FPS,W,H=30,720,1280
 V65=ASSETS/"PARIGI_1918_IL_TEMPO_SI_FERMA_V65.mp4"
 V76=ASSETS/"LA_STORIA_RIVIVE_SOCIAL_MUSEUM_V76.mp4"
-VIDU=ASSETS/"VIDU_TRANSIZIONE_ORIGINALE.mp4"
+VIDU=ASSETS/"VIDU_COLOR_MOTION_1S.mp4"
 V68_NAMES=[f"FOTO_AI_RICOSTRUITA_{n:02d}.png" for n in range(1,5)]
 SCENES=[
  {"name":"newspaper vendor","offset":0.00,"motion":1.56,"photo":V68_NAMES[0]},
@@ -158,6 +158,10 @@ def soundtrack(seconds,beats,path):
 def make_preview(preview=True):
  photos,vmeta=validate_inputs()
  quality=analyze_vidu(float(vmeta["format"]["duration"]))
+ retime_qa_file=ASSETS/"VIDU_CHROMA_RETIME_QA.json"
+ if not retime_qa_file.exists():raise RuntimeError("MISSING_MOTION_PRESERVING_CHROMA_QA")
+ retime_qa=json.loads(retime_qa_file.read_text())
+ if not retime_qa.get("production_gate_pass"):raise RuntimeError("VIDU_CHROMA_POSTPROCESS_NOT_ACCEPTABLE")
  if not preview and not quality["production_gate_pass"]:
   raise RuntimeError("VIDU_PREMIUM_MOTION_REJECTED: old clip remains a slow photo morph; do not label it the new moving-color preset")
  # A sample montage is deliberately marked as not approved: Vidu = 1900; classic photos = 1918.
@@ -242,7 +246,9 @@ def make_preview(preview=True):
      "source_era_warning":"1900 and 1918 mixed intentionally only for integration demo; future production requires coherent date and location",
      "source_vidu":"existing approved single generation on 2026-10-29; no new credits",
      "vidu_job_id":"1013429649004335104","vidu_motion_result":quality,
-     "warning":"Old Vidu clip does not necessarily satisfy 1-second color-reveal and sustained motion; production gate is strict",
+     "vidu_color_timing_postprocess":retime_qa,
+     "vidu_original_unaltered_file":"VIDU_TRANSIZIONE_ORIGINALE.mp4",
+     "warning":"First-second color recovered by free flow-guided chroma postprocessing of EXISTING moving Vidu frames; not a newly generated Vidu clip, no additional paid credits",
      "source_validated_sha256":{"V65":sha(V65),"V76":sha(V76),"VIDU":sha(VIDU),**{n:sha(ASSETS/n) for n in V68_NAMES}},
      "duration_s":round(duration,3),"frames":count,"resolution":[W,H],"fps":FPS,
      "video_sha256":sha(video),"video_bytes":video.stat().st_size,
