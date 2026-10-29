@@ -35,5 +35,29 @@ class MuseumStageTests(unittest.TestCase):
         result=plan_stage(dossier(100,100))
         self.assertEqual(result["variants"],["critico_museum","cinema_museum"])
 
+    def test_tiny_print_not_false_monumental(self):
+        little=plan_stage(dossier(22.8,33.5))
+        canvas=plan_stage(dossier(196.2,129.5))
+        self.assertLess(little["storyboard_9_16"]["frame_width_px"],180)
+        self.assertGreater(canvas["storyboard_9_16"]["frame_width_px"],500)
+        self.assertGreater(little["gallery"]["camera_start_distance_cm"],349)
+        self.assertLess(little["frame"]["height_vs_170cm_person_ratio"],.5)
+    def test_off_center_frame_not_clipped_in_opening(self):
+        d=dossier(196.2,129.5)
+        d["camera"]["painting_center_x"]=.8
+        d["camera"]["painting_center_y"]=.8
+        plan=plan_stage(d)
+        left,top,right,bottom=plan["storyboard_9_16"]["opening_frame_bounds_px"]
+        self.assertGreaterEqual(left,108)
+        self.assertGreaterEqual(top,192)
+        self.assertLessEqual(right,972)
+        self.assertLessEqual(bottom,1728)
+    def test_large_canvas_backing_distance_and_room_depth(self):
+        huge=plan_stage(dossier(550,350))
+        self.assertGreater(huge["gallery"]["camera_start_distance_cm"],600)
+        self.assertGreater(huge["gallery"]["minimum_suggested_depth_cm"],huge["gallery"]["camera_start_distance_cm"])
+    def test_render_stays_blocked_after_scale_fix(self):
+        self.assertFalse(plan_stage(dossier(22.8,33.5))["render_authorized"])
+
 if __name__=="__main__":
     unittest.main()

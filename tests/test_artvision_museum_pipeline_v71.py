@@ -77,5 +77,11 @@ class MuseumPipelineTests(unittest.TestCase):
         self.assertEqual(p["four_slots"]["critico_museum"]["existing_sha256"],
                          b["four_slots"]["critico_museum"]["sha256"])
 
+    def test_single_physical_camera_distance_used_by_stage_and_pipeline(self):
+        p=build(self.d)
+        self.assertAlmostEqual(p["physical_camera"]["starting_view_distance_m_estimate"],
+            p["physical_stage"]["gallery"]["camera_start_distance_cm"]/100.,places=3)
+        self.assertGreater(p["physical_camera"]["starting_view_distance_m_estimate"],3.5)
+
 if __name__=="__main__":
     unittest.main()

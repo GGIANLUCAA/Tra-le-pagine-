@@ -102,9 +102,10 @@ def build(dossier, pilot_lock=None, baseline=None):
         raise PlanningBlocked("Four existing V68 slots required")
     if existing.get("formal_v25_approvals",existing.get("artistic_user_feedback",{}).get("formal_v25_approvals")) not in (None,0):
         raise PlanningBlocked("Baseline approval state changed: review manually")
-    frame_width_m=physical["frame"]["width_cm"]/100.
-    field_of_view_deg=39.
-    start_distance_m=round(frame_width_m/(2.*math.tan(math.radians(field_of_view_deg/2.))*.72),3)
+    # Reuse the same safe physical viewing distance calculated in V72.
+    # A small panel must not be zoomed to fill the opening frame.
+    field_of_view_deg=physical["gallery"]["horizontal_fov_degrees"]
+    start_distance_m=round(physical["gallery"]["camera_start_distance_cm"]/100.,3)
     center_x = dossier["camera"]["painting_center_x"]
     center_y = dossier["camera"]["painting_center_y"]
     durations = {
