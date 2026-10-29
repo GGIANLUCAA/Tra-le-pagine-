@@ -13,8 +13,8 @@ BASE.mkdir(parents=True,exist_ok=True)
 MODEL_ID="opiumuseless/gfpgan-v1.4-w16"
 MODEL_FILE="GFPGANv1.4-w16.onnx"
 MASKS={
- 1:[(230,310,495,580,.68)],
- 2:[(239,462,425,695,.60),(425,170,641,421,.45)],
+ 1:[(230,310,495,580,.45)],
+ 2:[(239,462,425,695,.60),(425,170,641,421,.34)],
  3:[(365,355,571,614,.68)]
 }
 STILLS={1:(2.27,6.6),2:(9.0,13.0),3:(15.3,19.47)}
@@ -185,7 +185,7 @@ def render():
  check(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(video_out),"-f","null","-"])
  gate_spec=importlib.util.spec_from_file_location("gate","src/storia_rivive_v74_effect_gate.py")
  gate=importlib.util.module_from_spec(gate_spec);gate_spec.loader.exec_module(gate)
- qa=gate.inspect_video(video_out)
+ qa=gate.inspect_video(video_out,sat_threshold=32,bw_threshold=28)
  if qa["approved_pattern_cycles"]<3:raise RuntimeError("Reference pattern lost "+str(qa))
  Image.open(BASE/"FOTO_AI_03_FACE_HD.png").convert("RGB").save(BASE/"COPERTINA.jpg",quality=94)
  status=dict(episode="Ellis Island 1903",version="V80",seconds=round(dur,2),
