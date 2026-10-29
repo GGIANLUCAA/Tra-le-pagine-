@@ -119,6 +119,8 @@ def restore_photos():
   if unmodified<.94:raise RuntimeError("An inpaint spread outside curated facial ROIs")
   details.append({"scene":scene,"original_sha":sha(photo),"new_photo_sha":sha(final),
                   "unmodified_scene_fraction":round(unmodified,4),"faces":face_metrics})
+ approved=sum(f["status"].startswith("PHOTO_RESTORATION_CANDIDATE") for d in details for f in d["faces"])
+ if approved<2:raise RuntimeError("INSUFFICIENT_FACE_DETAILS_IMPROVED_NOT_DELIVERING")
  (OUT/"FACE_REVIEW_V82.json").write_text(json.dumps(details,indent=2,ensure_ascii=False))
  return details
 
@@ -176,7 +178,7 @@ def render(existing):
  return round(frame/fps,3)
 
 def deliver(details,duration):
- (OUT/"COVER.jpg").write_bytes((OUT/"FOTO_AI_03_FACE_MODERN_V82.png").read_bytes())
+ Image.open(OUT/"FOTO_AI_03_FACE_MODERN_V82.png").convert("RGB").save(OUT/"COVER.jpg",format="JPEG",quality=93)
  qa={"version":"V82","title":"NEW YORK · 1903","duration_seconds":duration,
  "source":"https://www.loc.gov/item/00694367/","source_audio":"original V80 soundtrack",
  "source_video":"V80 Ellis original moving historical film + 3 already generated same-frame AI photos",
