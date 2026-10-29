@@ -58,3 +58,9 @@ Android controller → source CC0/rights preflight
 - Container browser navigation was blocked by execution-environment policy. **Not** tested successfully on real Android. No source image or end-user rendering result was produced.
 
 **Gate to next step:** user reviews Android 2.5D trial; correct segmentation/clean plate and output. Only then pilot actual image-to-3D model on verified free remote resource.
+
+## Review correction after real source test (29 October 2026)
+
+A separate GitHub Actions workflow `experiment-android-socrates-popout.yml` was exercised on the genuine Met image. Run 40926187730 generated a real 5s MP4 and comparison but **its automatic GrabCut mask accidentally included part of the red-clothed disciple**. Therefore its output/artifact 12920302226 is **REJECTED ARTISTICALLY**. File-level tests alone did not catch this mistake. Do not claim that run as the final before/after.
+
+The corrected manual-mask test was generated separately within the ChatGPT working environment, from the same genuine Met image (4000×2663), using only the contours of Socrates. The reviewer inspected the new side-by-side picture and frames 0,1,2,3,4,5; a 6-second vertical H.264/AAC MP4, stills, and an offline Android HTML slider were exported and verified with FFmpeg. Source image and original soundtrack are zero-paid-API. This **remains a 2.5D painted cutout**, not a true 3D mesh, and the backdrop/frame are scenic reconstructions. The corrected sandbox attachment is NOT automatically persisted to GitHub or the private Video Library; the cloud workflow needs the hand-traced silhouette and art-QA gate before it can replace this experiment. The four ArtVision V68 videos, master records, live site, and production owner were not changed.
