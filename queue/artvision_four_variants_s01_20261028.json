@@ -208,7 +208,19 @@
           "human_approval": false,
           "archive_sync_pending": true,
           "site_verified": false,
-          "notes": "Authentic Wikimedia Commons 5684x4223 artwork; Kevin MacLeod Water Lily CC BY 4.0 recording; V55 package exists. No V25 artistic approval, no private archive verification."
+          "notes": "Authentic Wikimedia Commons 5684x4223 artwork; Kevin MacLeod Water Lily CC BY 4.0 recording; V55 package exists. No V25 artistic approval, no private archive verification.",
+          "archive_text_sync": {
+            "observed_at": "2026-10-29T02:17:54Z",
+            "status": "seven_private_text_attachments_stored",
+            "source_workflow_run_id": 40805476117,
+            "remote_video": "present_size_matched_hash_unverified",
+            "video_bytes_matched": 7705037,
+            "posts_original_verified_against_source_zip": true,
+            "private_cover_verified": false,
+            "private_playback_verified": false,
+            "private_zip_verified": false,
+            "V25_approval": false
+          }
         },
         "cinema_museum": {
           "status": "rendered_needs_review",
