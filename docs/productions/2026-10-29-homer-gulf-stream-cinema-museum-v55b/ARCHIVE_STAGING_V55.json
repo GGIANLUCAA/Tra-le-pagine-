@@ -1,0 +1,71 @@
+{
+  "schema": "artvision-v55-archive-staging-v1",
+  "video_key": "ARTVISION_WINSLOW_HOMER_CINEMA_MUSEUM_V55B_REVIEW.mp4",
+  "video_sha256": "2c50c5f94c2fefbdf23b1a03086245afed3e25b06a159845c8947fcd9ee1a5b8",
+  "video_bytes": 5520280,
+  "review_state": "rendered_needs_review",
+  "posts": {
+    "facebook": "Davanti al dipinto The Gulf Stream di Winslow Homer l'imbarcazione sembra minuscola: 124,8 centimetri di oceano dipinto, incorniciati in una sala espositiva ricostruita. Poi la camera entra nei dettagli veri dell'opera: squali, barca, figura solitaria e tempesta lontana. La stanza e la cornice visibile sono ricostruzioni contemporanee, non una fotografia del Metropolitan Museum. Fonte autentica: Met 06.1234, pubblico dominio. 🎵 Water Lily — Kevin MacLeod, CC BY 4.0 (incompetech.com).",
+    "instagram": "Un quadro di 124,8 × 71,4 cm, un oceano che sembra immenso. 🌊 The Gulf Stream di Winslow Homer, versione Cinema Museum: ingresso da una sala espositiva immaginata, dettagli originali e ritorno alla stessa parete. La stanza e la cornice visibili sono ricostruzioni artistiche, non foto del Met; le misure del dipinto e della sua cornice sono documentate nel catalogo. Met Open Access 06.1234, pubblico dominio. Water Lily — Kevin MacLeod, CC BY 4.0. #ArtVision #MuseumImmersion #WinslowHomer #TheGulfStream",
+    "tiktok": "Ti avvicini al quadro, poi scopri che sotto la barca ci sono gli squali 🦈 The Gulf Stream di Winslow Homer in una versione Museum Immersion con stanza ricostruita e dettagli autentici. Non è una ripresa delle sale del Met e la cornice mostrata non è una replica storica. Quadro originale pubblico dominio Met 06.1234. Musica Water Lily di Kevin MacLeod, CC BY 4.0, incompetech.com. #MuseumImmersion #ArtTok #WinslowHomer",
+    "youtube": "Winslow Homer — The Gulf Stream | Cinema Museum Immersion. The Metropolitan Museum of Art, numero 06.1234, olio su tela del 1899 rielaborato entro il 1906. L'opera misura 71,4 × 124,8 cm; il catalogo registra 107,5 × 159,3 cm inclusa la cornice. Il nostro percorso inizia da una sala espositiva e una cornice contemporanee RICOSTRUITE, si avvicina al dipinto autentico e ritorna alla stessa parete dopo gli approfondimenti su marinaio, barca, squali e mare. Non rappresenta una sala reale del Met, né sostiene che la cornice disegnata sia originale. Riproduzione: Met Open Access / pubblico dominio. Musica Water Lily — Kevin MacLeod, CC BY 4.0; crediti incompetech.com, licenza creativecommons.org/licenses/by/4.0/."
+  },
+  "source_post_sha256": {
+    "facebook": "b965f813b7ebfd3a1edd8a94b4b7ab8d5e07a3951d1d7ab3ee36ebbbf691fcee",
+    "instagram": "649c45481e0d1418a27fce17054bd91daad94920aa2ff6f7d62751fc3f095393",
+    "tiktok": "216e922d594e2df00c8dab6b6af5718f3354b9c3a1f97470949e6fc23846d238",
+    "youtube": "aedb8c6c5a09e587cdf4c55360975ad63cb994ee0b30c8ede4e90e82dd084236"
+  },
+  "rights_markdown": "# The Gulf Stream — Winslow Homer — Cinema Museum V55B\n\nOriginal artwork and image: The Metropolitan Museum of Art 06.1234 (object 11122) public domain / Met Open Access CC0. Official catalog https://www.metmuseum.org/art/collection/search/11122. Image https://images.metmuseum.org/CRDImages/ad/original/DP-20821-001.jpg, SHA256 67fd3b2bb4e07f41dc1991c0e538981ba187ab6e3c08722636f6c347f0611b70.\nPainted canvas 71.4 × 124.8 cm; Met documents external frame 107.5 × 159.3 × 15 cm. The depicted gallery and frame profile are ORIGINAL MODERN ARTISTIC RECONSTRUCTIONS, not genuine photos of the Met or copies of its historic physical frame. Size proportions only are document-based.\nMusic: Water Lily — Kevin MacLeod original recording, CC BY 4.0 https://creativecommons.org/licenses/by/4.0/, source https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035, recording SHA256 b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6.\nVideo remains rendered_needs_review pending full artistic / rights and V25 release review. No paid video API used.",
+  "recipe": {
+    "schema": "video-recipe-v13",
+    "format": "artvision_cinema",
+    "topic": "The Gulf Stream",
+    "status": "rendered_needs_review",
+    "variant": "cinema_museum",
+    "review_state": "rendered_needs_review",
+    "video": {
+      "name": "ARTVISION_WINSLOW_HOMER_CINEMA_MUSEUM_V55B_REVIEW.mp4",
+      "file": "ARTVISION_WINSLOW_HOMER_CINEMA_MUSEUM_V55B_REVIEW.mp4",
+      "sha256": "2c50c5f94c2fefbdf23b1a03086245afed3e25b06a159845c8947fcd9ee1a5b8",
+      "bytes": 5520280
+    },
+    "cover": {
+      "name": "COPERTINA.jpg",
+      "sha256": "bcc015da20f14ced25a584288262fcc273467ae1cb88b9e5d92e9a753046c153",
+      "bytes": 311686
+    },
+    "sources": [
+      {
+        "name": "met_11122_original.jpg",
+        "sha256": "67fd3b2bb4e07f41dc1991c0e538981ba187ab6e3c08722636f6c347f0611b70",
+        "source": "Met Open Access 11122",
+        "rights": "Public Domain"
+      },
+      {
+        "name": "water_lily_original.mp3",
+        "sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+        "source": "Incompetech Water Lily Kevin MacLeod",
+        "rights": "CC BY 4.0"
+      }
+    ],
+    "technical": {
+      "duration_seconds": 48.6,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "full_decode": "passed"
+    },
+    "artistic_review": "pending_full_speed_human_review",
+    "publication": "not_performed",
+    "archive_transfer": "pending",
+    "original_full_recipe": "GitHub Actions artifact 12885564867, cinema_museum_rendered/VIDEO_RECIPE_V13.json",
+    "V25_approved": false
+  },
+  "source_artifact": {
+    "run_id": 40848647492,
+    "artifact_id": 12885564867
+  },
+  "notes": "Exact MP4 SHA and social posts generated by real workflow. Recipe here is archival metadata excerpt; complete untouched source recipe remains in GitHub artifact/ZIP. Private MP4 import and V25 approval unverified. Corrective prototype V55 intentionally not counted."
+}
