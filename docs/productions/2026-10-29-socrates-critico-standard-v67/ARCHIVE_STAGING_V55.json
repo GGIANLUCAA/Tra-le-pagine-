@@ -1,0 +1,58 @@
+{
+  "schema": "artvision-v55-archive-staging-v1",
+  "video_key": "Socrate_Critico_Standard_Gacrux_V67.mp4",
+  "video_sha256": "f68592a8d65d5d774494f49892a4b8be8f9bbe7842ab19631f85046f0adf19c3",
+  "video_bytes": 15575097,
+  "review_state": "rendered_needs_review",
+  "posts": {
+    "facebook": "La morte di Socrate non racconta soltanto un addio: mostra il contrasto tra un uomo sereno e chi non sopporta di perderlo. In questa critica di Jacques-Louis David osserviamo il calice di cicuta, i due gesti del filosofo, il giovane in rosso, Platone e le catene. Una lettura completa, narrata in italiano, per capire perché quest’opera del 1787 continua a interrogarci. Quale dettaglio vi colpisce di più?",
+    "instagram": "Una mano verso il veleno. L’altra verso il cielo. Nel capolavoro di Jacques-Louis David anche il silenzio ha una voce. 🎨 Esploriamo la scelta di Socrate, la paura dei discepoli e i dettagli che trasformano una scena antica in un grande racconto morale. #JacquesLouisDavid #Socrate #StoriaDellArte",
+    "tiktok": "Sta per bere la cicuta. Eppure è il più calmo di tutti. 🔍 Guarda il gesto di Socrate e poi gli occhi del giovane in rosso: David nasconde la tensione proprio nel contrasto tra le figure. Una critica completa, non un semplice zoom su un quadro. #Arte #Socrate #ArtTok",
+    "youtube": "THE DEATH OF SOCRATES | Jacques-Louis David — Analisi completa del dipinto\n\nPerché Socrate indica il cielo mentre accetta la cicuta? In questa critica d’arte narrata osserviamo il processo, i gesti, la luce, il giovane che non riesce a guardare, i discepoli in lacrime, Platone e le catene ai piedi del letto. L’opera del 1787 al Metropolitan Museum diventa una riflessione sulla libertà interiore. Narrazione originale italiana Google Gacrux, immagini autentiche del dipinto. Crediti completi dell’opera e della registrazione musicale nel dossier."
+  },
+  "rights_markdown": "Pittura: The Death of Socrates (Jacques-Louis David, 1787), Met 436105 Open Access PD; https://www.metmuseum.org/art/collection/search/436105. Musica: Water Lily, Kevin MacLeod, registrazione CC BY 4.0, https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035 ; https://creativecommons.org/licenses/by/4.0/. Voce: Gacrux Google Gemini 3.8 Flash TTS, una registrazione originale su account autorizzato dall'utente, stessa per le due regie, costo effettivo non verificato.",
+  "recipe": {
+    "schema": "artvision-critico-v67-review-only",
+    "variant": "critico_standard",
+    "video": {
+      "name": "Socrate_Critico_Standard_Gacrux_V67.mp4",
+      "sha256": "f68592a8d65d5d774494f49892a4b8be8f9bbe7842ab19631f85046f0adf19c3",
+      "bytes": 15575097,
+      "duration_seconds": 168.166667,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "native_render_resolution": [
+        720,
+        1280
+      ],
+      "upscale": "Lanczos"
+    },
+    "original_script_sha256": "c85c4017bec6efd0a75e46ee62b83ed4aeff14e6018e5f66f911b4fd941a0828",
+    "shared_exact_gacrux_audio_sha256": "b26b6826380c8dcc9b27a590bb6ecd43dd12107dafd367e429ad43351bd8a476",
+    "same_voice_for_two_variants": true,
+    "voice_alignment": "Whisper offline ASR with interpolation",
+    "asr_matched_fraction": 0.8885941644562334,
+    "voice_source_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40901604669",
+    "voice_alignment_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40902193743",
+    "painting_sha256": "eaff5a04103361fed9fba6f10ea7bed80ccdc595d664b6997c6bd32f0eee06a6",
+    "music_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+    "qa": {
+      "full_decode": "passed",
+      "ffprobe": "passed",
+      "zip_crc": "passed",
+      "first_frames_exported": true,
+      "full_speed_visual_listening": "pending",
+      "human_art_review": "pending",
+      "v25_approval": false,
+      "private_archive_import": false,
+      "no_ghosting_intro_correction": "applied",
+      "matched_reference": "Bosch V22 & Ophelia V21"
+    },
+    "audio_api_calls": "one single owner-authorized synthesis for the two variants",
+    "paid_video_ai_api_calls": 0,
+    "actual_google_tts_cost": "not independently verified"
+  },
+  "notes": "MP4 genuinely rendered in ChatGPT; SHA and bytes independently measured. Text staging only. Never claim actual private-site video import, playback or V25 approval."
+}
