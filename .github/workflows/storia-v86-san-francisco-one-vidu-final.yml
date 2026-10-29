@@ -1,0 +1,123 @@
+name: "La Storia Rivive V86 - San Francisco 1906 · 4 foto + 1 Vidu NEW"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v86-san-francisco-one-vidu-final.yml"]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v86-sf1906-unique-43s-one-paid-vidu-task
+  cancel-in-progress: false
+jobs:
+  real_4plus1:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      TAG: storia-rivive-san-francisco-1906-v86-hybrid-4plus1-real-vidu
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install CPU tools and validate all code (no API expense)"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg unzip
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+          python -m py_compile src/storia_v86_sf1906_vidu_once.py src/storia_v86_sf1906_hybrid_compose.py
+      - name: "Get all FOUR real restored photo chapters and verify source master (no spend)"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v86_sf1906
+          cd output/storia_v86_sf1906
+          gh release download storia-rivive-san-francisco-1906-foto-ai-v70 --repo "$GITHUB_REPOSITORY" -p SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip
+          unzip -j -q SAN_FRANCISCO_1906_FOTOGRAFIE_GENERATIVE_KIT.zip "SAN_FRANCISCO_1906_WOW_FOTO_GENERATIVE_V70.mp4" "FOTO_FOTOGRAFICA_AI_*.png" "V70_QA_REPORT.json"
+          printf "eaa9c566451690b85f67756420852b8e49d9350b0794618adaf110ff5a2e477d  SAN_FRANCISCO_1906_WOW_FOTO_GENERATIVE_V70.mp4\n" | sha256sum -c -
+          python - <<'PY'
+          import json,glob,hashlib
+          q=json.load(open("V70_QA_REPORT.json"))
+          assert q["real_AI_generated_photographs"]==4 and len(q["scenes"])==4
+          for i,s in enumerate(q["scenes"],1):
+              p=f"FOTO_FOTOGRAFICA_AI_{i:02d}.png"
+              assert hashlib.sha256(open(p,"rb").read()).hexdigest()==s["true_AI_generated_photo_sha256"],"Photo/scene source hash mismatch: "+p
+          print("V86_FOUR_ACTUAL_SOURCE_LOCKED_PHOTOS_OK",flush=True)
+          PY
+      - name: "Get 5th source-locked free AI photo from completed preflight and compare SHA (no spend)"
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_v86_sf1906
+          curl -fsSL --retry 2 --connect-timeout 20 --max-time 130 \
+            -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12922792422/zip" -o FREE_PHOTOGRAPHIC_5TH_SOURCE.zip
+          unzip -j -q FREE_PHOTOGRAPHIC_5TH_SOURCE.zip "FIFTH_VIDU_COLOR_ANCHOR_1906.jpg" "FIFTH_SCENE_RESTORATION_QA.json" "SOURCE_BW_05.png" "SCENA_05_PRIMA_DOPO.jpg"
+          printf "1679b5b4ed6996bdd693701ecdf01fc85098fcbe333fb940eb20336a04d3c78e  FIFTH_VIDU_COLOR_ANCHOR_1906.jpg\n" | sha256sum -c -
+          python - <<'PY'
+          import json
+          r=json.load(open("FIFTH_SCENE_RESTORATION_QA.json"))
+          assert r["photo_quality_gate_passed"] is True
+          assert r["restoration_method"]=="finegrain/free_image_to_image"
+          assert r["free_model_failure"] is None
+          assert r["geometry_corr"]>=.95
+          assert r["source_timestamp_seconds"]==43.0
+          print("V86_FIFTH_GENERATIVE_PHOTO_SEMANTIC_PREFLIGHT_OK",flush=True)
+          PY
+      - name: "Acquire original verified 1906 film for genuinely moving fifth shot (no spend)"
+        run: |
+          python - <<'PY'
+          import importlib.util
+          sp=importlib.util.spec_from_file_location("sf_source","src/storia_v70_sf1906_source_scout.py")
+          m=importlib.util.module_from_spec(sp);sp.loader.exec_module(m)
+          doc=m.original()
+          assert doc["file_sha256"]=="c8b30802c0fbeb5f9ec3dc9af3e4f71ef627a863d4abba5550b63998cb46725a"
+          print("V86_REAL_ORIGINAL_SOURCE",doc["source_of_work"],flush=True)
+          PY
+      - name: "ONE paid 5s Vidu video on scene 5; 16-credit cap and GitHub no-retry ledger"
+        run: python -u src/storia_v86_sf1906_vidu_once.py
+      - name: "Render FIVE different archival moments: four still restorations and one genuinely moving Vidu shot"
+        run: python -u src/storia_v86_sf1906_hybrid_compose.py
+      - name: "Private recovery artifact of original Vidu MP4, processed MP4, hybrid and QA"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V86_SF1906_REAL_4PLUS1_ONE_VIDU_PRIVATE_RECOVERY
+          path: |
+            output/storia_v86_sf1906/VIDU_SF1906_05_ORIGINAL.mp4
+            output/storia_v86_sf1906/VIDU_SF1906_05_COLOR_MOTION.mp4
+            output/storia_v86_sf1906/SF1906_VIDU_SINGLE_TASK_QA_PRIVATE.json
+            output/storia_v86_sf1906/SAN_FRANCISCO_1906_V86_4FOTO_1VIDU.mp4
+            output/storia_v86_sf1906/SAN_FRANCISCO_1906_V86_ANDROID.zip
+            output/storia_v86_sf1906/COPERTINA.jpg
+            output/storia_v86_sf1906/CONFRONTO_CINQUE_SCENE_V86.jpg
+            output/storia_v86_sf1906/QA_PUBLIC_V86.json
+            output/storia_v86_sf1906/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Publish one GitHub Android technical preview backup ONLY; no social/site automatic publication"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_v86_sf1906
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Existing preview; do not duplicate"; exit 0
+          fi
+          gh release create "$TAG" \
+            SAN_FRANCISCO_1906_V86_4FOTO_1VIDU.mp4 \
+            SAN_FRANCISCO_1906_V86_ANDROID.zip \
+            VIDU_SF1906_05_COLOR_MOTION.mp4 \
+            VIDU_SF1906_05_ORIGINAL.mp4 \
+            COPERTINA.jpg CONFRONTO_CINQUE_SCENE_V86.jpg QA_PUBLIC_V86.json \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "La Storia Rivive · San Francisco 1906 · V86 4 restorations + 1 Vidu moving scene" \
+            --notes "TECHNICAL REVIEW PREVIEW · 4 genuine San Francisco 1906 Miles Brothers archival moving shots in B/N freezing to four separate AI color photographs, then a fifth distinct real moving 1906 archival shot transitioning into ONE newly generated five-second Vidu Q2 Pro Fast scene. Only one paid Vidu task. The archival movie was filmed April 14, 1906, four days before the earthquake. Source original: Library of Congress https://www.loc.gov/item/00694408/ (public domain). Colors, reconstructed faces and generated continuation of motion are artistic AI interpretations, not authentic historical color footage. Source rights territorial check and artistic QA still pending; not social publication. MP4 H.264/AAC, mobile ZIP, cover and public technical QA; private credit report never included in public release." \
+            --prerelease
+          names="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          grep -Fqx "SAN_FRANCISCO_1906_V86_4FOTO_1VIDU.mp4" <<< "$names"
+          grep -Fqx "SAN_FRANCISCO_1906_V86_ANDROID.zip" <<< "$names"
+          echo "V86_REAL_ANDROID_VIDEO_DOWNLOAD_BACKUP_VERIFIED"
