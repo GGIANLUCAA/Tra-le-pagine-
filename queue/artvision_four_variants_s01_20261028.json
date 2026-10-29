@@ -356,7 +356,14 @@
             "playback_verified": false,
             "dynamic_zip_verified": false,
             "v25_approved": false
-          }
+          },
+          "artistic_direction": "rejected_v46_museum_regression",
+          "release_gate": "blocked_quality_museum_v46_not_met",
+          "rebuild_requires": "restore_cyclops_physical_frame_transition_and_hiroshige_human_scale; actual approved master comparison and independent human QA",
+          "regression_evidence": "docs/ARTVISION_MUSEUM_V46_REGRESSION_REVIEW_20261029.md",
+          "delivery_as_final_forbidden": true,
+          "artistically_approved": false,
+          "technical_status_preserved": "rendered_needs_review"
         }
       },
       "note": "Hokusai two genuinely different rendered Cinema variants: Standard V55B and Museum V55C. Both rendered_needs_review and archive_sync_pending. Critico Standard/Museum require original Google Gacrux voice, not free substitute. Preserve historic SHA variants; never multiply counts for corrective attempts."
@@ -428,7 +435,14 @@
           "site_imported": false,
           "private_archive_status": "not_verified",
           "V25_approved": false,
-          "superseded_first_trial_sha256": "be1f8b14b750cab44a1219e9f6875c722f96378c3117bdc4eb92e8efb65aabe3"
+          "superseded_first_trial_sha256": "be1f8b14b750cab44a1219e9f6875c722f96378c3117bdc4eb92e8efb65aabe3",
+          "artistic_direction": "rejected_v46_museum_regression",
+          "release_gate": "blocked_quality_museum_v46_not_met",
+          "rebuild_requires": "restore_cyclops_physical_frame_transition_and_hiroshige_human_scale; actual approved master comparison and independent human QA",
+          "regression_evidence": "docs/ARTVISION_MUSEUM_V46_REGRESSION_REVIEW_20261029.md",
+          "delivery_as_final_forbidden": true,
+          "artistically_approved": false,
+          "technical_status_preserved": "rendered_needs_review"
         }
       },
       "notes": "Exactly two different authentic MP4 Cinema variants for this new four-variant artwork group. Corrective trials V55 superseded and not counted. Critico variants require exact Google Gacrux cache, no false release or paid substitution."
@@ -443,5 +457,18 @@
     "paid_video_calls": 0,
     "archive_dossier_sync_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40828355188",
     "archive_dossier_sync_result": "Turner Museum MP4 absent from private archive; zero attachments uploaded. Standard 7 existing attachments left untouched (remote hashes unavailable)."
+  },
+  "museum_regression_v56": {
+    "date": "2026-10-29",
+    "reason": "user rejected low-value generic museum 2D frame/room and hard cut",
+    "affected_groups": [
+      "hokusai_great_wave_met45434_1830",
+      "homer_gulf_stream_met11122_1899"
+    ],
+    "reference_clips": [
+      "Cyclops corrected no stripes",
+      "Hiroshige Museum Scale"
+    ],
+    "rule": "Do not count technical MP4 as approved Museum; block final delivery until new V46-quality render with real continuity and reference comparisons."
   }
 }
