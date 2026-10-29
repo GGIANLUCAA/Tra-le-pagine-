@@ -78,6 +78,14 @@ def download_and_scout():
 def restoration(stills):
     from gradio_client import Client, handle_file
     client=Client("finegrain/finegrain-image-enhancer",verbose=False)
+    # Finegrain improves detail but does NOT colorize grayscale films.
+    # Use the established semantic DDColor ONNX model (model license checked in V60),
+    # operating on the actual enhanced grayscale still; never fake color with sepia/LUT.
+    import importlib.util
+    dd_spec=importlib.util.spec_from_file_location("v60_ddcolor",str(pathlib.Path("src/storia_rivive_real_ai_v60.py")))
+    dd=importlib.util.module_from_spec(dd_spec);dd_spec.loader.exec_module(dd)
+    session, ddmeta=dd.download_model()
+    print("REAL_SEMANTIC_COLORIZER_READY",ddmeta["model_id"],flush=True)
     out=[]
     for i,src in enumerate(stills):
         fn=ROOT/f"ARCHIVE_FRAME_{i+1:02}.png"
@@ -93,13 +101,27 @@ def restoration(stills):
         if not p or not pathlib.Path(p).is_file():raise RuntimeError("No genuine generative photo from restoration")
         dst=ROOT/f"COLOR_AI_{i+1:02}.jpg"
         Image.open(p).convert("RGB").resize((W,H),Image.Resampling.LANCZOS).save(dst,quality=95,subsampling=0)
-        im=cv2.imread(str(dst))
+        # Reconstruct hues with neural chroma inference, preserving Finegrain luminance.
+        restored=cv2.imread(str(dst))
+        lab_l=dd.l_channel(restored)
+        semantic_ab=dd.infer_ab(session,restored)
+        ab=cv2.resize(semantic_ab,(W,H),interpolation=cv2.INTER_LINEAR)
+        ab=np.clip(ab*1.32,-112,112)
+        lab=np.dstack((lab_l,ab)).astype(np.float32)
+        rgb=cv2.cvtColor(lab,cv2.COLOR_LAB2RGB)
+        im=cv2.cvtColor((np.clip(rgb,0,1)*255).astype("uint8"),cv2.COLOR_RGB2BGR)
+        cv2.imwrite(str(dst),im,[cv2.IMWRITE_JPEG_QUALITY,95])
         gr1=cv2.resize(cv2.GaussianBlur(cv2.cvtColor(src,cv2.COLOR_BGR2GRAY),(9,9),2),(80,144))
         gr2=cv2.resize(cv2.GaussianBlur(cv2.cvtColor(im,cv2.COLOR_BGR2GRAY),(9,9),2),(80,144))
         corr=float(np.corrcoef(gr1.ravel(),gr2.ravel())[0,1])
-        sat=float(ImageStat.Stat(Image.open(dst).convert("HSV")).mean[1])
-        print("RESTORATION_QA",i+1,round(corr,3),round(sat,1),flush=True)
-        if not np.isfinite(corr) or corr<.82 or sat<16:
+        # Mean across entire frame is misleading for an archival studio backdrop:
+        # verify visibly colored dancer and body, not black/gray scenery.
+        hsv=cv2.cvtColor(im,cv2.COLOR_BGR2HSV)
+        person_roi=hsv[round(H*.24):round(H*.90),round(W*.30):round(W*.88),1]
+        sat=float(np.mean(person_roi))
+        high_color_frac=float(np.mean(person_roi>28))
+        print("RESTORATION_QA",i+1,"geometry",round(corr,3),"dancer_saturation",round(sat,1),"color_fraction",round(high_color_frac,3),flush=True)
+        if not np.isfinite(corr) or corr<.82 or (sat<19 and high_color_frac<.12):
             raise RuntimeError("AI still is not source-faithful or not really colorful")
         out.append({"path":str(dst),"source_frame_timecode_s":CLIP_TIMES[i],"correlation":round(corr,3),
                     "saturation":round(sat,1),"sha256":digest(dst)})
