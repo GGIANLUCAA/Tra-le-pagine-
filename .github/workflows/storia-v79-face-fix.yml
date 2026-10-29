@@ -1,0 +1,39 @@
+name: "V79 Facial HD refinement · natural skin/CodeFormer test"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v79-face-fix.yml"
+      - "src/storia_v79_face_fix.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  refine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip -q install --no-cache-dir opencv-python-headless numpy pillow gradio_client
+      - name: Download existing two source-locked photographic faces from preceding job
+        run: |
+          mkdir -p output/storia_v79_volti
+          curl -fsSL --connect-timeout 20 --max-time 110 --retry 2 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12901989932/zip" -o /tmp/source_guided_photos.zip
+          unzip -t /tmp/source_guided_photos.zip >/dev/null
+          unzip -oq /tmp/source_guided_photos.zip -d output/storia_v79_volti
+          test -s output/storia_v79_volti/KISS_1896_FOTO_AI_HD.png
+      - name: Optional free CodeFormer face recovery or natural-color fallback; record method
+        run: python -u src/storia_v79_face_fix.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V79_FACIAL_DETAIL_AND_COLOR_IMPROVEMENTS
+          path: output/storia_v79_face_fix/
+          if-no-files-found: warn
+          retention-days: 14
