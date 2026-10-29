@@ -1,0 +1,41 @@
+name: "ArtVision Klimt V69 — authorized second pilot preflight"
+on:
+  pull_request:
+    paths:
+      - "src/artvision_klimt_second_pilot_cinema_v69.py"
+      - ".github/workflows/artvision-klimt-second-pilot-validation-v69.yml"
+      - ".github/workflows/artvision-klimt-second-pilot-v69.yml"
+      - "config/artvision_pilot_lock_v58.json"
+      - "src/artvision_pilot_guard_v58.py"
+      - "src/artvision_next_render_v55.py"
+      - "tests/test_artvision_second_pilot_v69.py"
+      - "docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/**"
+      - "queue/artvision_four_variants_s01_20261028.json"
+permissions:
+  contents: read
+jobs:
+  scope-and-storyboards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Confirm Klimt-only pilot, block third artwork, no duplicates
+        run: python -m unittest discover -s tests -p "test_artvision_second_pilot_v69.py" -v
+      - name: Official V54 four-storyboard structural preflight
+        run: python src/artvision_four_variants_gate.py check docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_4X1_DOSSIER_V69.json
+      - name: V68 per-work recipe structure — does not grant render authorization
+        run: python src/artvision_recipe_v68.py validate --recipe docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_RECIPE_V68.json
+      - name: Preserve truthful external-source blocker until image provider is accessible
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          q=json.loads(Path("queue/artvision_four_variants_s01_20261028.json").read_text())
+          g=next(x for x in q["groups"] if x["group_id"]=="klimt_the_kiss_belvedere912_1908")
+          assert g["four_video_pilot"]["rendered_count"]==0
+          assert len(g["variants"])==4
+          print("VERIFIED_SECOND_PILOT_ONLY: 0 MP4; Wikimedia artwork download HTTP 429 in run 40917785627; do not retry automatically")
+          PY
