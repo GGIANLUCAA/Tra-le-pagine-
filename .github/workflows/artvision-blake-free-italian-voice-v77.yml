@@ -1,0 +1,54 @@
+name: ArtVision Blake V77 - offline Italian voice experiment ZERO API
+on:
+  push:
+    branches:
+      - experiment/artvision-blake-italian-tts-v77-free
+    paths:
+      - 'src/artvision_blake_render_v74.py'
+      - 'src/artvision_blake_offline_voice_v77.py'
+      - '.github/workflows/artvision-blake-free-italian-voice-v77.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-blake-v77-experimental-free-voice
+  cancel-in-progress: false
+jobs:
+  offline-italian-critic-pair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline voice engine; NO Gemini or Vidu credentials
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq espeak-ng ffmpeg
+          python -m pip install --disable-pip-version-check --no-cache-dir 'torch==2.6.0' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install --disable-pip-version-check --no-cache-dir 'kokoro==0.9.4' 'transformers<5' 'soundfile>=0.12' 'numpy>=1.26,<3' 'Pillow>=10.2' 'opencv-python-headless>=4.8' 'requests>=2.31'
+      - name: Render two experimental Critico with one shared original Kokoro WAV
+        env:
+          HF_HUB_DISABLE_TELEMETRY: '1'
+          TOKENIZERS_PARALLELISM: 'false'
+          OMP_NUM_THREADS: '2'
+          MKL_NUM_THREADS: '2'
+          CUDA_VISIBLE_DEVICES: ''
+        run: |
+          python -u src/artvision_blake_offline_voice_v77.py
+      - name: Export actual experimental MP4s, original audio and four-post packages
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_BLAKE_V77_FREE_ITALIAN_VOICE_EXPERIMENT
+          path: |
+            output/artvision-blake-free-voice-v77/ASCOLTA_NICOLA_PRIMI_22S.wav
+            output/artvision-blake-free-voice-v77/KOKORO_NICOLA_BLAKE_V77.wav
+            output/artvision-blake-free-voice-v77/VOICE_V77_PROVENANCE.json
+            output/artvision-blake-free-voice-v77/EXPERIMENT_V77_STATUS.json
+            output/artvision-blake-free-voice-v77/*_COMPLETE.zip
+            output/artvision-blake-free-voice-v77/*/*.mp4
+            output/artvision-blake-free-voice-v77/*/COPERTINA.jpg
+          if-no-files-found: warn
+          retention-days: 10
