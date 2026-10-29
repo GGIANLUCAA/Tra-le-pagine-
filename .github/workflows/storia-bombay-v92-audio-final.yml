@@ -1,0 +1,110 @@
+name: "La Storia Rivive Bombay V92.2 - audio corrected stable release"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-bombay-v92-audio-final.yml"]
+permissions:
+  contents: write
+concurrency:
+  group: storia-bombay-v92-release-audio-normalization-once
+  cancel-in-progress: false
+jobs:
+  normalize:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: storia-rivive-bombay-1929-v92-8-scenes-ai-review
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ffmpeg (free CPU, no Vidu)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Download exactly existing user review master and kit
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_bombay_1929_v92/audio_final
+          cd output/storia_bombay_1929_v92/audio_final
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" \
+            -p BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4 \
+            -p BOMBAY_1929_V92_ANDROID_COMPLETO.zip \
+            -p FINAL_QA_SOURCES.json \
+            -p COVER.jpg \
+            -p CONTACT_REAL_FILM_VS_AI_PHOTOS.jpg
+          test -s BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4
+      - name: Normalize too quiet original music without touching visual frames
+        run: |
+          set -euo pipefail
+          cd output/storia_bombay_1929_v92/audio_final
+          ffmpeg -nostdin -y -v error -i BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4 \
+            -map 0:v:0 -map 0:a:0 -c:v copy \
+            -af 'loudnorm=I=-18:TP=-2:LRA=7' \
+            -c:a aac -b:a 192k -movflags +faststart \
+            NORMALIZED.mp4
+          ffmpeg -nostdin -v error -xerror -i NORMALIZED.mp4 -f null -
+          mv NORMALIZED.mp4 BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4
+      - name: Update exact MP4 hash and ZIP Android contents, test CRC
+        run: |
+          python - <<'PY'
+          import json,zipfile,hashlib,pathlib,os
+          d=pathlib.Path("output/storia_bombay_1929_v92/audio_final")
+          mp4=d/"BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4"
+          original=d/"BOMBAY_1929_V92_ANDROID_COMPLETO.zip"
+          qa=d/"FINAL_QA_SOURCES.json"
+          spec=json.loads(qa.read_text(encoding="utf8"))
+          spec["video_sha256"]=hashlib.sha256(mp4.read_bytes()).hexdigest()
+          spec["video_bytes"]=mp4.stat().st_size
+          spec["duration_s"]=26.4
+          spec["audio_mastering"]="V92.2 original melody normalized with ffmpeg loudnorm I=-18, TP=-2, LRA=7; visual video stream bit-for-bit unchanged"
+          spec["status"]="RENDERED_AND_AUDIO_CORRECTED_FOR_ARTISTIC_REVIEW_NOT_AUTO_PUBLISHED"
+          qa.write_text(json.dumps(spec,indent=2,ensure_ascii=False)+"\n",encoding="utf8")
+          new=d/"UPDATED_ANDROID.zip"
+          with zipfile.ZipFile(original) as old, zipfile.ZipFile(new,"w",zipfile.ZIP_DEFLATED) as target:
+           for m in old.namelist():
+            if m==mp4.name:
+             target.write(mp4,m)
+            elif m==qa.name:
+             target.write(qa,m)
+            else:
+             target.writestr(m,old.read(m))
+          with zipfile.ZipFile(new) as z:
+           if z.testzip():raise RuntimeError("ZIP failed CRC")
+           if hashlib.sha256(z.read(mp4.name)).digest()!=hashlib.sha256(mp4.read_bytes()).digest():
+            raise RuntimeError("Video in zip differs")
+          os.replace(new,original)
+          print("SAME_FRAMES_AUDIO_CORRECTED_MASTER",mp4.stat().st_size,
+                "ZIP",original.stat().st_size,"SHA",spec["video_sha256"],flush=True)
+          PY
+      - name: Replace existing release assets and verify actual remote bytes
+        run: |
+          set -euo pipefail
+          cd output/storia_bombay_1929_v92/audio_final
+          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber \
+            BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4 \
+            BOMBAY_1929_V92_ANDROID_COMPLETO.zip \
+            FINAL_QA_SOURCES.json
+          python - <<'PY'
+          import json,subprocess,pathlib
+          d=pathlib.Path(".")
+          data=json.loads(subprocess.check_output(["gh","release","view",
+            "storia-rivive-bombay-1929-v92-8-scenes-ai-review",
+            "--repo", "GGIANLUCAA/Tra-le-pagine-", "--json","assets"]))
+          assets={x["name"]:x["size"] for x in data["assets"]}
+          for n in ("BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4","BOMBAY_1929_V92_ANDROID_COMPLETO.zip","FINAL_QA_SOURCES.json"):
+           assert assets[n]==(d/n).stat().st_size,(n,assets.get(n))
+          print("PERMANENT_ANDROID_LINKS_ASSETS_VERIFIED",assets,flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: BOMBAY_1929_V92_2_NORMALIZED_AUDIO_DELIVERY
+          path: |
+            output/storia_bombay_1929_v92/audio_final/BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4
+            output/storia_bombay_1929_v92/audio_final/BOMBAY_1929_V92_ANDROID_COMPLETO.zip
+            output/storia_bombay_1929_v92/audio_final/FINAL_QA_SOURCES.json
+            output/storia_bombay_1929_v92/audio_final/COVER.jpg
+            output/storia_bombay_1929_v92/audio_final/CONTACT_REAL_FILM_VS_AI_PHOTOS.jpg
+          retention-days: 14
+          if-no-files-found: warn
