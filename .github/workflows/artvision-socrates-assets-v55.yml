@@ -23,10 +23,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install free dependencies and run offline safety tests
+      - name: Install free ffmpeg encoder and Python dependencies; fail closed if absent
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          command -v ffmpeg
+          command -v ffprobe
           python -m pip install --disable-pip-version-check "Pillow>=10,<13" "pytest>=8,<10"
-          ffmpeg -version | head -1
           python -m pytest -q tests/test_artvision_met_prepared_assets_v55.py
       - name: Acquire actual original Met 436105 and verified licensed recording
         run: |
