@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ArtVision 3D Studio — Socrate · Prototipo Android</title>
+<style>
+:root{color-scheme:dark;--bg:#10131a;--panel:#1d2330;--edge:#343d4d;--gold:#d4b77b;--text:#f8f5ee;--muted:#afb8c6}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#273041,#10131a 65%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:540px;margin:auto;padding:18px 14px 42px}h1{font-family:Georgia,serif;font-size:26px;margin:4px 0 8px;color:#f6e0af}h2{font-size:16px;margin:0 0 11px}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:2px;font-weight:bold}.lead{font-size:14px;line-height:1.55;color:var(--muted)}section{padding:15px;margin:14px 0;border:1px solid var(--edge);border-radius:16px;background:rgba(29,35,48,.87)}label{font-size:13px;display:block;margin:8px 0 6px;color:#d8e0ef}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}button,.btn{background:linear-gradient(#d9bd83,#a8864a);color:#1b1812;font-weight:750;border:none;border-radius:9px;padding:12px 14px;cursor:pointer;font-size:13px;min-height:42px}button.secondary{background:#303a4b;color:white;border:1px solid #566073}button:disabled{opacity:.45}input[type=file]{width:100%;padding:10px;border:1px dashed #6a7688;border-radius:8px;background:#151a24;font-size:13px}input[type=range]{width:100%;accent-color:#d4b77b}canvas{display:block;width:100%;height:auto;border-radius:10px;background:#090d14;touch-action:none}#editor{cursor:crosshair}#preview{max-height:76vh;object-fit:contain}.hint,.meta{font-size:12px;line-height:1.5;color:var(--muted)}#status{font-size:12px;min-height:38px;padding:10px;background:#111723;border-radius:9px;border:1px solid var(--edge)}a{color:#f1cf8c}code{font-size:12px}.tag{font-size:11px;border:1px solid #7e6642;color:#f6dca5;padding:4px 7px;border-radius:6px}footer{font-size:12px;color:var(--muted);line-height:1.5;margin-top:14px}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">ARTVISION · LABORATORIO SPERIMENTALE</div>
+<h1>3D Pop-Out Studio</h1>
+<p class="lead">Prova Android senza account e senza API a pagamento. Separa Socrate con tocchi sul dipinto e simula l'uscita dalla cornice. <strong>Questo è un effetto 2.5D, non una vera mesh 3D.</strong></p>
+<div class="row"><span class="tag">Socrate · David · 1787</span><span class="tag">Standard · 720 × 1280</span><span class="tag">0 crediti AI</span></div>
+<section><h2>1 · Carica il dipinto autentico</h2><label for="image">Foto originale JPG/PNG del Met</label><input id="image" type="file" accept="image/png,image/jpeg,image/webp" />
+<p class="hint">Opera CC0: <a target="_blank" rel="noopener" href="https://www.metmuseum.org/art/collection/search/436105">The Death of Socrates · Metropolitan Museum</a>. Scarica prima la fotografia sul telefono e selezionala qui. Il file resta sul dispositivo.</p>
+<label for="backdrop">Sfondo senza personaggio (facoltativo, consigliato)</label><input id="backdrop" type="file" accept="image/png,image/jpeg,image/webp" />
+<p class="hint">Senza sfondo pulito useremo una copertura sfocata nella zona selezionata: è solo una simulazione, non un restauro affidabile.</p></section>
+<section><h2>2 · Disegna il contorno di Socrate</h2><p class="hint">Tocca punti successivi lungo il profilo del personaggio, compresi braccio e tunica. Almeno 3 punti. Su Android puoi usare il dito; più punti migliorano il taglio. Seleziona solo Socrate.</p><canvas id="editor" width="900" height="600" aria-label="Selezione con poligono"></canvas>
+<div class="row" style="margin-top:12px"><button id="undo" class="secondary">Annulla punto</button><button id="reset" class="secondary">Ricomincia</button><button id="auto" class="secondary">Maschera indicativa</button></div>
+<p id="points" class="meta">0 punti. La maschera indicativa è una sagoma grezza da rifinire, non un'estrazione automatica AI.</p></section>
+<section><h2>3 · Guarda l'uscita dal quadro</h2><label for="strength">Intensità dell'effetto <span id="strengthText">65%</span></label><input id="strength" type="range" min="20" max="100" value="65" step="5"/>
+<canvas id="preview" width="720" height="1280" aria-label="Anteprima video verticale Pop Out"></canvas>
+<div class="row" style="margin-top:12px"><button id="play">▶ Anteprima 7 s</button><button id="record" class="secondary">● Registra WebM</button><button id="still" class="secondary">Salva fotogramma PNG</button></div>
+<p class="hint">L'esportazione video usa MediaRecorder nel browser, se compatibile. <strong>WebM non è MP4</strong>. L'MP4 H.264 richiede successiva conversione (es. FFmpeg in GitHub Actions CPU), non inclusa in questo laboratorio.</p></section>
+<div id="status" role="status" aria-live="polite">Carica il quadro originale per iniziare. Nessun file viene inviato a server esterni.</div>
+<footer><strong>Stato: prototipo sperimentale.</strong> Nessuna integrazione con il renderer 4×1, Vidu, la coda, l'archivio o la pubblicazione. La proiezione della foto su un piano mobile è un'illusione 2.5D, non mostra lati reali della figura. La cornice di prova è una ricostruzione scenografica, non la cornice storica documentata.</footer>
+</main>
+<script>
+'use strict';
+const imageInput=document.getElementById('image'),bgInput=document.getElementById('backdrop');
+const editor=document.getElementById('editor'),ec=editor.getContext('2d');
+const preview=document.getElementById('preview'),pc=preview.getContext('2d',{alpha:false});
+const status=document.getElementById('status'),pointsEl=document.getElementById('points');
+let original=null,cleanBg=null,points=[],strength=.65,active=false,start=0,mediaRecorder=null,spriteCache=null;
+const W=720,H=1280,DURATION=7000;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function message(s){status.textContent=s}
+function fit(src,w,h,pad=0){const k=Math.min((w-2*pad)/src.width,(h-2*pad)/src.height);return {x:(w-src.width*k)/2,y:(h-src.height*k)/2,w:src.width*k,h:src.height*k}}
+function readImage(file){return new Promise((resolve,reject)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);resolve(im)};im.onerror=()=>{URL.revokeObjectURL(u);reject(Error('Immagine non leggibile'))};im.src=u})}
+imageInput.addEventListener('change',async()=>{if(!imageInput.files[0])return;try{original=await readImage(imageInput.files[0]);points=[];spriteCache=null;drawEditor();drawPreview(0);message('Dipinto caricato. Tocca il contorno di Socrate, poi prova l’anteprima.')}catch(e){message(e.message)}});
+bgInput.addEventListener('change',async()=>{if(!bgInput.files[0])return;try{cleanBg=await readImage(bgInput.files[0]);drawPreview(0);message('Sfondo alternativo caricato: la prova userà questo file dietro la figura.')}catch(e){message(e.message)}});
+function outline(ctx,poly,close=true){if(!poly.length)return;ctx.beginPath();ctx.moveTo(poly[0].x,poly[0].y);for(let i=1;i<poly.length;i++)ctx.lineTo(poly[i].x,poly[i].y);if(close)ctx.closePath()}
+function edRect(){return fit(original,editor.width,editor.height)}
+function drawEditor(){ec.clearRect(0,0,editor.width,editor.height);ec.fillStyle='#090d14';ec.fillRect(0,0,editor.width,editor.height);if(!original){ec.fillStyle='#b9c4d6';ec.textAlign='center';ec.font='24px system-ui';ec.fillText('Carica il quadro qui sopra',450,300);return}const r=edRect();ec.drawImage(original,r.x,r.y,r.w,r.h);const pp=points.map(p=>({x:r.x+p.x*r.w,y:r.y+p.y*r.h}));if(pp.length){ec.save();ec.fillStyle='#efc77633';ec.strokeStyle='#f7d48d';ec.lineWidth=3;outline(ec,pp,pp.length>2);if(pp.length>2)ec.fill();ec.stroke();pp.forEach((p,i)=>{ec.beginPath();ec.arc(p.x,p.y,6,0,Math.PI*2);ec.fillStyle=i===0?'#ff846b':'#ffe8ac';ec.fill()});ec.restore()}}
+function showPoints(){spriteCache=null;pointsEl.textContent=points.length+' punti selezionati. '+(points.length<3?'Servono almeno 3 punti.':'Ora puoi avviare la prova. Controlla il profilo.');drawEditor()}
+editor.addEventListener('pointerdown',e=>{if(!original)return;const rect=editor.getBoundingClientRect(),x=(e.clientX-rect.left)*editor.width/rect.width,y=(e.clientY-rect.top)*editor.height/rect.height,r=edRect();if(x<r.x||y<r.y||x>r.x+r.w||y>r.y+r.h)return;points.push({x:clamp((x-r.x)/r.w,0,1),y:clamp((y-r.y)/r.h,0,1)});showPoints();drawPreview(0)});
+document.getElementById('undo').onclick=()=>{points.pop();showPoints()};document.getElementById('reset').onclick=()=>{points=[];showPoints()};
+// Intentional rough, adjustable STARTING polygon. Coordinates relative to complete Met image.
+document.getElementById('auto').onclick=()=>{if(!original){message('Carica prima la foto originale.');return}points=[{x:.54,y:.52},{x:.57,y:.39},{x:.6,y:.32},{x:.64,y:.31},{x:.66,y:.39},{x:.69,y:.39},{x:.73,y:.29},{x:.75,y:.16},{x:.78,y:.16},{x:.79,y:.30},{x:.76,y:.46},{x:.7,y:.51},{x:.66,y:.66},{x:.56,y:.74},{x:.50,y:.65}];showPoints();message('Maschera indicativa inserita. Correggila manualmente: non è una segmentazione verificata.')};
+function polygonInStage(r){return points.map(p=>({x:r.x+p.x*r.w,y:r.y+p.y*r.h}))}
+function clamp01(t){return clamp(t,0,1)}
+function ease(t){return 1-Math.pow(1-clamp01(t),3)}
+function drawFrame(x,y,w,h){pc.save();pc.shadowColor='#000';pc.shadowBlur=38;pc.shadowOffsetY=17;pc.fillStyle='#2b1b11';pc.fillRect(x-18,y-18,w+36,h+36);pc.restore();for(const [pad,c,l] of [[19,'#73522d',8],[14,'#e1c98b',5],[9,'#92723a',4],[3,'#e8d8a9',3]]){pc.strokeStyle=c;pc.lineWidth=l;pc.strokeRect(x-pad,y-pad,w+pad*2,h+pad*2)}pc.strokeStyle='#312315';pc.lineWidth=4;pc.strokeRect(x-1,y-1,w+2,h+2)}
+function getSprite(){
+ if(spriteCache)return spriteCache;
+ const sprite=document.createElement('canvas');sprite.width=Math.min(original.width,1400);sprite.height=Math.round(sprite.width*original.height/original.width);
+ const sc=sprite.getContext('2d');sc.save();sc.scale(sprite.width,sprite.height);outline(sc,points);sc.clip();sc.drawImage(original,0,0,1,1);sc.restore();
+ spriteCache=sprite;return spriteCache
+}
+function drawPreview(ms){pc.fillStyle='#111620';pc.fillRect(0,0,W,H);const glow=pc.createRadialGradient(360,500,20,360,500,900);glow.addColorStop(0,'#394150');glow.addColorStop(1,'#10151e');pc.fillStyle=glow;pc.fillRect(0,0,W,H);pc.textAlign='center';pc.fillStyle='#e8d3a0';pc.font='25px Georgia';pc.fillText('JACQUES-LOUIS DAVID',360,170);pc.fillStyle='#f7f2e6';pc.font='37px Georgia';pc.fillText('THE DEATH OF SOCRATES',360,223);
+if(!original){pc.font='26px system-ui';pc.fillStyle='#aab3c0';pc.fillText('Carica il quadro per iniziare',360,670);return}
+const r=fit(original,620,500);r.x+=50;r.y+=365;
+const seconds=ms/1000,phase=ease((seconds-1.4)/4.2),s=1+strength*.32*phase,dx=-strength*28*phase,dy=-strength*105*phase;
+pc.drawImage(cleanBg||original,r.x,r.y,r.w,r.h);
+if(!cleanBg&&phase>.01&&points.length>=3){ // rough local patch, NOT image inpainting
+pc.save();outline(pc,polygonInStage(r));pc.clip();pc.globalAlpha=Math.min(.96,phase*.96);pc.filter='blur(32px)';pc.drawImage(original,r.x-24,r.y-20,r.w+48,r.h+40);pc.restore()}
+drawFrame(r.x,r.y,r.w,r.h);
+if(points.length>=3){const sprite=getSprite();const cx=r.x+r.w*.65,cy=r.y+r.h*.49;pc.save();pc.translate(cx+dx,cy+dy);pc.scale(s,s);pc.translate(-cx,-cy);pc.shadowColor='rgba(0,0,0,.75)';pc.shadowBlur=phase*28;pc.shadowOffsetX=phase*18;pc.shadowOffsetY=phase*30;pc.drawImage(sprite,r.x,r.y,r.w,r.h);pc.restore()}
+pc.font='23px Georgia';pc.fillStyle='#e6dbcc';pc.fillText('1787  ·  THE METROPOLITAN MUSEUM OF ART',360,1000);pc.font='21px system-ui';pc.fillStyle='#b8bdc4';pc.fillText('ARTVISION  •  EXPERIMENTAL POP-OUT',360,1052);
+pc.fillStyle='#c3a16b';pc.fillRect(220,1092,280*clamp01(seconds/7),3)
+}
+function frame(now){if(!active)return;const t=now-start;drawPreview(Math.min(DURATION,t));if(t>=DURATION){active=false;return}requestAnimationFrame(frame)}
+function play(){if(!original||points.length<3){message('Serve prima il quadro e una sagoma con almeno 3 punti.');return false}start=performance.now();active=true;requestAnimationFrame(frame);return true}
+document.getElementById('play').onclick=()=>{if(play())message('Anteprima in corso: 7 secondi. Solo effetto 2.5D.')} ;
+document.getElementById('strength').oninput=e=>{strength=Number(e.target.value)/100;document.getElementById('strengthText').textContent=e.target.value+'%';drawPreview(5000)};
+function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),12000)}
+document.getElementById('still').onclick=()=>{if(!original||points.length<3){message('Prima carica il dipinto e disegna la sagoma.');return}drawPreview(5200);preview.toBlob(b=>b?downloadBlob(b,'artvision_socrate_popout_2_5d.png'):message('PNG non disponibile'),'image/png')};
+document.getElementById('record').onclick=()=>{if(!original||points.length<3){message('Prima carica il dipinto e disegna la sagoma.');return}if(!('MediaRecorder' in window)||!preview.captureStream){message('Browser senza registrazione video compatibile. Puoi salvare un PNG.');return}if(mediaRecorder&&mediaRecorder.state!=='inactive'){message('Registrazione già in corso.');return}const mime=['video/webm;codecs=vp8','video/webm','video/mp4'].find(t=>MediaRecorder.isTypeSupported(t));if(!mime){message('Questo browser non supporta la registrazione del canvas.');return}let chunks=[];const stream=preview.captureStream(24);try{mediaRecorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:2500000})}catch(e){message('Registrazione non disponibile: '+e.message);return}mediaRecorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};mediaRecorder.onerror=e=>message('Errore recorder: '+e.error?.message);mediaRecorder.onstop=()=>{const type=mediaRecorder.mimeType||mime;stream.getTracks().forEach(t=>t.stop());if(!chunks.length){message('Nessun dato video registrato.');return}downloadBlob(new Blob(chunks,{type}),`artvision_socrate_popout_demo.${type.includes('mp4')?'mp4':'webm'}`);message('Clip scaricata. Controlla durata e riproduzione sul telefono; non è un master ArtVision.')};mediaRecorder.start();if(!play()){mediaRecorder.stop();return}message('Registrazione del canvas in corso, senza chiamate API.');setTimeout(()=>{if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop()},DURATION+300)};
+drawEditor();drawPreview(0);
+</script></body></html>
