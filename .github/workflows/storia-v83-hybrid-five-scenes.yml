@@ -1,0 +1,94 @@
+name: "La Storia Rivive V83 - HYBRID 4 foto + 1 Vidu (zero crediti)"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v83-hybrid-five-scenes.yml"]
+  workflow_dispatch:
+    inputs:
+      production_mode:
+        type: choice
+        required: true
+        default: preview
+        options: [preview, strict]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v83-hybrid-no-billable-post
+  cancel-in-progress: false
+jobs:
+  montage:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      V83_MODE: ${{ inputs.production_mode || 'preview' }}
+      TAG: storia-rivive-paris-1900-1918-hybrid-v83-technical-preview
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install local CPU renderer, no billable Vidu call"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg unzip
+          python -m pip install --quiet "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+          python -m py_compile src/storia_rivive_hybrid_v83.py
+      - name: "Retrieve exact owned/source assets: four photos, real films, existing Vidu clip"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_ibrida_v83/assets
+          cd output/storia_ibrida_v83/assets
+          gh release download storia-rivive-parigi-1918-photo-freeze-v65 --repo "$GITHUB_REPOSITORY" -p "PARIGI_1918_IL_TEMPO_SI_FERMA_V65.mp4"
+          gh release download storia-rivive-parigi-1896-1900-social-museum-v76 --repo "$GITHUB_REPOSITORY" -p "LA_STORIA_RIVIVE_SOCIAL_MUSEUM_V76.mp4"
+          curl -fsSL --retry 2 --connect-timeout 20 --max-time 140 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12849614550/zip" -o FOUR_AI_STILLS_ARTIFACT.zip
+          unzip -j -q FOUR_AI_STILLS_ARTIFACT.zip "FOTO_AI_RICOSTRUITA_*.png"
+          curl -fsSL --retry 2 --connect-timeout 20 --max-time 140 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12913904773/zip" -o PREVIOUS_VIDU_RUN.zip
+          unzip -j -q PREVIOUS_VIDU_RUN.zip "VIDU_TRANSIZIONE_ORIGINALE.mp4"
+          printf "d59659f00c21c82e7a07c37051edbe217de3fa75e721ccb72c11bec674d9b9ce  VIDU_TRANSIZIONE_ORIGINALE.mp4\n" | sha256sum -c -
+          printf "25070cfd5aa0e38585c6b582b7cdade10a7aeb8154c4983f94b058da9b128e71  FOTO_AI_RICOSTRUITA_01.png\n" | sha256sum -c -
+          printf "328af7951bb4b443166143eded5b149aae4f6982713a47420428f79ae291dedf  FOTO_AI_RICOSTRUITA_02.png\n" | sha256sum -c -
+          printf "8d36d33fec39d6051b2dbed9bc0d5349438522ef1f2756e8bbf91416aeaa6211  FOTO_AI_RICOSTRUITA_03.png\n" | sha256sum -c -
+          printf "5abf828d87465ad90201da0bb7e0ea3dad1554cd1436aa3f953a36c26f4b9688  FOTO_AI_RICOSTRUITA_04.png\n" | sha256sum -c -
+          echo "V83_SOURCE_FILES_ALL_VERIFIED"
+      - name: "Render continuous montage with 5 true chapters, 1 uninterrupted soundtrack"
+        run: python src/storia_rivive_hybrid_v83.py
+      - name: "Attach Android MP4 ZIP cover editorial and QA, even if not approved"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PARIS_V83_HYBRID_4PLUS1_TECHNICAL_PREVIEW
+          path: |
+            output/storia_ibrida_v83/delivery/PARIS_1900_1918_HYBRID_4PLUS1_V83_TECHNICAL_PREVIEW.mp4
+            output/storia_ibrida_v83/delivery/PARIS_V83_HYBRID_ANDROID.zip
+            output/storia_ibrida_v83/delivery/COPERTINA.jpg
+            output/storia_ibrida_v83/delivery/QA_V83.json
+            output/storia_ibrida_v83/delivery/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Make Android direct-download technical prerelease (not social publication)"
+        if: success() && env.V83_MODE == 'preview'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_ibrida_v83/delivery
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Existing preview detected; do not replace or publish duplicate"; exit 0
+          fi
+          gh release create "$TAG" \
+            PARIS_1900_1918_HYBRID_4PLUS1_V83_TECHNICAL_PREVIEW.mp4 \
+            PARIS_V83_HYBRID_ANDROID.zip COPERTINA.jpg QA_V83.json \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "La Storia Rivive V83 - PARIS 1900–1918 - 4 foto + 1 Vidu (solo preview)" \
+            --notes "Anteprima TECNICA, non approvata artisticamente o per pubblicazione social. Quattro scene d’archivio del 1918 con foto AI già create, più la clip Vidu 1900 già pagata; date differenti dichiarate. Il vecchio inserto Vidu non soddisfa necessariamente la nuova regola colore entro un secondo e movimento continuo. NESSUN nuovo credito speso. Usare questa preview per controllare raccordi, ritmo, continuità audio e formato Android." \
+            --prerelease
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name'
