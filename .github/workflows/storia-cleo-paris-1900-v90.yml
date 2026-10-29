@@ -1,0 +1,64 @@
+name: "La Storia Rivive V90 - Paris 1900 Cleo new film + Vidu"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-cleo-paris-1900-v90.yml"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-cleo-paris-1900-v90-single-paid-request
+  cancel-in-progress: false
+jobs:
+  render:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install real photo restoration and authentic media utilities
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --quiet "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "gradio_client>=1.9,<3"
+          python -m py_compile tools/storia_cleo_1900_v90_once.py
+      - name: Four source-anchored color photographs and one paid Vidu 5s scene
+        run: python -u tools/storia_cleo_1900_v90_once.py
+      - name: Preserve Android MP4 and QA privately, even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PARIS_CLEO_1900_V90_NEW_HISTORY_VIDEO
+          path: |
+            output/storia_cleo_1900_v90/PARIS_1900_CLEO_DANCE_V90.mp4
+            output/storia_cleo_1900_v90/PARIS_1900_CLEO_V90_ANDROID.zip
+            output/storia_cleo_1900_v90/COVER.jpg
+            output/storia_cleo_1900_v90/QA_SOURCES_RIGHTS.json
+            output/storia_cleo_1900_v90/POST_*.txt
+            output/storia_cleo_1900_v90/COLOR_AI_*.jpg
+            output/storia_cleo_1900_v90/ARCHIVE_FRAME_*.png
+          retention-days: 7
+          if-no-files-found: warn
+      - name: Create direct-download GitHub prerelease only after successful video render
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_cleo_1900_v90
+          tag="la-storia-rivive-cleo-1900-v90-ai-photo-vidu-test"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Existing release; refusing overwrite or duplicate"
+            exit 0
+          fi
+          gh release create "$tag" PARIS_1900_CLEO_DANCE_V90.mp4 PARIS_1900_CLEO_V90_ANDROID.zip COVER.jpg QA_SOURCES_RIGHTS.json POST_*.txt \
+            --title "Paris 1900 - Cleo de Merode - historical restoration + Vidu V90" \
+            --notes "Archive: Danse javanaise (1900), Wikimedia Commons/PDM. Four source-anchored AI photographs + one 5s Vidu moving insert. Color, microdetails and AI motion are reconstructions, not original historical evidence. Technically complete preview subject to artistic review. No social autopublishing." \
+            --repo "$GITHUB_REPOSITORY" --prerelease
+          gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[] | .name'
