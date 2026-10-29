@@ -32,6 +32,11 @@ jobs:
                 b=r.content.decode('utf-8','replace')
                 for match in re.findall(r'<meta[^>]+(?:og:image|twitter:image)[^>]+>',b,re.I)[:6]:
                   print('GALLERY_IMAGE_META',match[:450],flush=True)
+                for match in re.findall(r'''(?:https?:)?//[^\\"'<> ]+?(?:\\.jpg|\\.jpeg|\\.webp|\\.png)(?:[?][^\\"'<> ]*)?''',b,re.I)[:35]:
+                  print('GALLERY_IMAGE_LINK',match[:420],flush=True)
+                for needle in ('og:image','NG725','imageUrl','image_url','frameImage'):
+                  p=b.find(needle)
+                  if p>0:print('GALLERY_HTML_SNIPPET',needle,b[max(0,p-200):p+440].replace('\\n',' ')[:640],flush=True)
               r.close()
             except Exception as ex:
               print('SOURCE_FAILED',name,type(ex).__name__,str(ex)[:180],flush=True)
