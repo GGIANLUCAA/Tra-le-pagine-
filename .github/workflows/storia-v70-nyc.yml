@@ -1,13 +1,30 @@
-name: V70 New York 1903 new historical footage
+name: "V70 NYC 1903 — source verification before paid/free image quota"
 on:
-  push:
-    branches: [main]
-    paths: [src/storia_v70_nyc_new_film.py, .github/workflows/storia-v70-nyc.yml]
+  pull_request:
+    paths:
+      - "src/storia_v70_nyc_new_film.py"
+      - "src/storia_v70_qa_gate.py"
+      - "tests/test_storia_v70_qa_gate.py"
+      - "config/storia_v70_nyc_failed_source.json"
+      - ".github/workflows/storia-v70-nyc.yml"
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
+  preflight_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow
+      - run: python -m unittest discover -s tests -p "test_storia_v70_qa_gate.py" -v
+      - run: python -m py_compile src/storia_v70_nyc_new_film.py src/storia_v70_qa_gate.py
   produce:
+    if: github.event_name == 'workflow_dispatch'
+    needs: preflight_tests
     runs-on: ubuntu-latest
     timeout-minutes: 38
     steps:
@@ -15,9 +32,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -q numpy opencv-python-headless Pillow gradio_client
+      - run: python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow gradio_client
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-      - run: python -u src/storia_v70_nyc_new_film.py
+      - name: "Fail BEFORE any AI if original historical source review is rejected"
+        run: python src/storia_v70_qa_gate.py --review config/storia_v70_nyc_failed_source.json
+      - name: "Produce only quality-gated historical film"
+        run: python -u src/storia_v70_nyc_new_film.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -1,0 +1,54 @@
+{
+  "version": "V70_failure_review_2026-10-29",
+  "source": "https://commons.wikimedia.org/wiki/File:Scenes_in_New_York_City,_1903.webm",
+  "source_local_record": "GitHub Actions artifact 12878771931 from run 40830952260",
+  "rights_cleared_for_intended_countries": false,
+  "unaltered_historical_source_verified": false,
+  "watermark_free": false,
+  "true_source_scan_verified": false,
+  "editorial_visual_reviewed": true,
+  "human_reconstruction_feasibility_approved": false,
+  "identified_problem": "FRAMEPOOL large logo visible throughout the public 1920x1080 copy; not a clean original scan",
+  "source_resolution_px": [
+    1920,
+    1080
+  ],
+  "source_duration_s": 272.2,
+  "scene_candidates": [
+    {
+      "time_s": 54.62,
+      "distinct_shot_id": "fruit-market-same-shot",
+      "original_name": "Market 54s"
+    },
+    {
+      "time_s": 70.83,
+      "distinct_shot_id": "fruit-market-same-shot",
+      "original_name": "Market 70s"
+    },
+    {
+      "time_s": 83.79,
+      "distinct_shot_id": "fruit-market-same-shot",
+      "original_name": "Market 84s"
+    },
+    {
+      "time_s": 93.52,
+      "distinct_shot_id": "fruit-market-same-shot",
+      "original_name": "Market 94s"
+    }
+  ],
+  "generated_count": 3,
+  "requested_count": 4,
+  "reason_for_failure": "Hugging Face ZeroGPU free runs limit reached on fourth image",
+  "ai_photos_mean_rgb_range": [
+    0.8585,
+    0.6087,
+    2.1777
+  ],
+  "ai_color_failed": true,
+  "partial_assets_are_not_publishable": true,
+  "mp4_generated": false,
+  "archived_on_personal_site": false,
+  "credit_spent_on_vidu": 0,
+  "source_disposition": "REJECT",
+  "decision": "Do not retry the original V70 film or reuse its three low-quality monochrome photos; scout different PD/CC0 licensed clean higher-detail source, with the source reviewed before running any model."
+}
