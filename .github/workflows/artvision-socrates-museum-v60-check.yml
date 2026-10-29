@@ -36,8 +36,10 @@ jobs:
           assert a["superseded_revision_v60"]["sha256"]=="60c9653285352272edba9af0b032f4c4e0d4949167074a6513aea566579d8264"
           assert m["review_state"]=="rendered_needs_review"
           assert a["human_approval"] is False and a["site_verified"] is False
-          assert all(v[k]["blocker_code"]=="blocked_voice_unavailable" for k in ("critico_standard","critico_museum"))
+          assert all(v[k]["status"]=="rendered_needs_review" for k in ("critico_standard","critico_museum"))
+          assert v["critico_standard"]["exact_shared_Gacrux_voice_sha256"]==v["critico_museum"]["exact_shared_Gacrux_voice_sha256"]
+          assert v["critico_standard"]["v25_approved"] is False and v["critico_museum"]["v25_approved"] is False
           assert v["cinema_standard"]["sha256"]=="4ea696772dd80e03a73c7b3570a22c7915787d47b77822a97ee040cbca959ce9"
           assert len(m["posts"])==4
-          print("Socrates exactly TWO Cinema slots, V61 corrected same Museum slot, Critico blocked, NO V25 approval")
+          print("Socrates exactly FOUR real rendered slots, Museum V61 corrected same slot, 0 V25 approvals")
           PY

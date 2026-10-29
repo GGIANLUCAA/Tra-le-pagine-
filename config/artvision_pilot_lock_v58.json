@@ -16,5 +16,26 @@
   "approval_required_to_unlock": true,
   "existing_cinema_standard_sha256": "4ea696772dd80e03a73c7b3570a22c7915787d47b77822a97ee040cbca959ce9",
   "no_paid_video_calls": true,
-  "no_social_publish": true
+  "no_social_publish": true,
+  "authorized_second_pilot": {
+    "enabled": true,
+    "authorization": "Explicit user instructions in current conversation 29 October 2026 to start second painting after Socrates 4×1",
+    "allowed_group_id": "klimt_the_kiss_belvedere912_1908",
+    "allowed_title": "The Kiss",
+    "allowed_artist": "Gustav Klimt",
+    "phase": "second_pilot_only_not_automatic_series",
+    "independent_four_video_slots": true,
+    "priority": [
+      "cinema_standard",
+      "critico_standard",
+      "cinema_museum",
+      "critico_museum"
+    ],
+    "video_paid_ai_consent": false,
+    "voice_Gacrux_permitted_after_preflight_and_verified_cost_scope": false,
+    "v25_auto_approval": false,
+    "no_new_third_artwork": true,
+    "user_approves_series_only_after_second_pilot_review": true
+  },
+  "note_second_pilot": "Socrates remains immutable and in review. Klimt alone expressly allowed as second 4x1 pilot; does not release series or other existing queued works."
 }

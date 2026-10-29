@@ -642,18 +642,78 @@
         "no_auto_second_artwork": true,
         "next_action": "User visual/audio review all four videos, correct any flaws, obtain V25 approval and verify private archive before series; do not rerender approved variants."
       }
+    },
+    {
+      "group_id": "klimt_the_kiss_belvedere912_1908",
+      "artwork": "The Kiss",
+      "artist": "Gustav Klimt",
+      "year": "1908–1909",
+      "museum": "Upper Belvedere, Vienna",
+      "accession_number": "912",
+      "official_source": "https://sammlung.belvedere.at/objects/6678/",
+      "physical_dimensions_cm": {
+        "h": 180,
+        "w": 180
+      },
+      "rights_reproduction": {
+        "selected_candidate": "https://commons.wikimedia.org/wiki/File:Klimt_-_The_Kiss.jpg",
+        "license": "PD-Art faithful reproduction (public domain artwork); final bytes/SHA and local rights check pending",
+        "official_belvedere_press_photos": "PRESS-ONLY. Not allowed for video without explicit written reuse permission.",
+        "authentic_frame_photo": "pending_verified_source",
+        "museum_gallery": "pending_reusable_licensed_photo_specific_or_declared_reconstruction",
+        "no_claim_original_frame_without_provenance": true
+      },
+      "second_pilot_authorization": "User expressly requested second 4×1 painting, 29 October 2026",
+      "reference_base": "Socrates ArtVision V68 approved creative direction; Bosch/Ophelia Critico V2; Cyclops V57 camera and Hiroshige physical scale",
+      "dossier_4x1_path": "docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_4X1_DOSSIER_V69.json",
+      "artwork_recipe_path": "docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_RECIPE_V68.json",
+      "dossier_preflight": "needs_assets_music_SHA_and_V13_four_check",
+      "priority": "second_pilot_only",
+      "variants": {
+        "critico_standard": {
+          "status": "planned",
+          "source_existing_script": "modules/artvision_critico/production_series/klimt_bacio.json",
+          "beats": 9,
+          "voice": "Gacrux authentic one new recording, must match Critico Museum exact WAV",
+          "video_sha256": null,
+          "v25_approved": false
+        },
+        "critico_museum": {
+          "status": "blocked",
+          "blocker_code": "blocked_quality_museum_frame_gallery_unverified",
+          "voice": "same verified WAV as Critico Standard",
+          "video_sha256": null,
+          "v25_approved": false
+        },
+        "cinema_standard": {
+          "status": "blocked",
+          "renderer_candidate": "src/artvision_cinema_prepared_v55.py",
+          "blocker_code": "blocked_source_artwork_upload_wikimedia_http_429",
+          "video_sha256": null,
+          "v25_approved": false,
+          "attempted_workflow_run_id": 40917785627,
+          "attempted_execution": "V54 and V68 validation passed; artwork Commons info metadata verified, actual source pixel download rejected HTTP 429 from Wikimedia CDN; no MP4, no paid retry",
+          "next_action": "Find a DIFFERENT licensed/verified authorized image provider or preexisting original cache; do not repeatedly retry Wikimedia's 429 endpoint."
+        },
+        "cinema_museum": {
+          "status": "blocked",
+          "blocker_code": "blocked_quality_museum_frame_gallery_unverified",
+          "video_sha256": null,
+          "v25_approved": false
+        }
+      },
+      "four_video_pilot": {
+        "target_count": 4,
+        "rendered_count": 0,
+        "approved_count": 0,
+        "status": "PREPRODUCTION_BLOCKED_AT_REAL_ART_SOURCE_HTTP_429",
+        "no_automatic_third_work": true
+      },
+      "notes": "SECOND work ONLY. Do not reuse Klimt historical V2 or V6 videos as new 4×1 variants; existing code/script can be reused after verified original identities, licenses, and fresh footage. No fake MP4s, no paid video API.",
+      "note": "Klimt second pilot authorized, new four-slot dossier and V68 recipe prepared; tests V54 and scope pass; new original art image download failed Wikimedia HTTP429, so no new MP4 claimed. Manual review needed for alternate lawful original image, official Belvedere press images restricted. No auto retry of 429."
     }
   ],
-  "last_operational_update": {
-    "date": "2026-10-29",
-    "owner_automation_id": "6adca191603c8191a90d5190901cd034",
-    "action": "Fixed Turner Cinema Museum archive staging to reproduce original V55 four posts byte-for-byte, including original hashtags and rights/music credits; added optional SHA256 fail-closed validation and CI tests, PR #105 merged a9b5ccab. Independent local MP4 full decode, CRC ZIP, and original MP4 hashes passed. No new artistic MP4 or V25 approval.",
-    "next_first_blocker": "Exact Google Gacrux voice cache unavailable for Critico; Turner Museum private MP4 absent from authorized archive, so text sync remains pending until V25-compliant import. For a new Cinema work, source assets and four-check preflight must be prepared before rendering.",
-    "no_duplicate_renders": true,
-    "paid_video_calls": 0,
-    "archive_dossier_sync_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40828355188",
-    "archive_dossier_sync_result": "Turner Museum MP4 absent from private archive; zero attachments uploaded. Standard 7 existing attachments left untouched (remote hashes unavailable)."
-  },
+  "last_operational_update": "2026-10-29 Klimt second pilot V69 source blocked HTTP 429 in Actions 40917785627; four MP4 target, zero rendered. Socrates unchanged.",
   "museum_regression_v56": {
     "date": "2026-10-29",
     "reason": "user rejected low-value generic museum 2D frame/room and hard cut",
@@ -666,5 +726,6 @@
       "Hiroshige Museum Scale"
     ],
     "rule": "Do not count technical MP4 as approved Museum; block final delivery until new V46-quality render with real continuity and reference comparisons."
-  }
+  },
+  "note_second_pilot_v69": "User explicitly authorized The Kiss after Socrates; maintain single owner, other works frozen, Klimt queued V69 as authorized second pilot (0 MP4)."
 }

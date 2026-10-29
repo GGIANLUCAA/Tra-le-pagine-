@@ -53,9 +53,12 @@ jobs:
           output=subprocess.check_output(["python","src/artvision_next_render_v55.py","--json"],text=True)
           status=json.loads(output)
           assert status.get("new_artwork_required") is False, status
-          assert status["status"] in ("pilot_in_progress","existing_jobs_take_priority","pilot_four_rendered_review_pending","pilot_awaiting_explicit_second_pilot"),status
+          assert status["status"] in ("pilot_in_progress","existing_jobs_take_priority","pilot_four_rendered_review_pending","pilot_awaiting_explicit_second_pilot","second_pilot_preproduction","second_pilot_in_progress","second_pilot_four_rendered_review_pending"),status
           if status["status"] in ("pilot_four_rendered_review_pending","pilot_awaiting_explicit_second_pilot"):
             assert status["rendered_count"]==4, status
             assert status["rendering_allowed"] is False, status
+          if status["status"].startswith("second_pilot"):
+            assert status["work"]=="klimt_the_kiss_belvedere912_1908",status
+            assert status["new_third_artwork_allowed"] is False,status
           print(status["status"])
           PY

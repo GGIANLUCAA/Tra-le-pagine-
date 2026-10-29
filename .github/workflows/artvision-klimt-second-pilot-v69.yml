@@ -1,0 +1,40 @@
+name: "ArtVision Klimt V69 — second pilot Cinema Standard source-and-render"
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-single-owner-klimt-v69
+  cancel-in-progress: false
+jobs:
+  prepare-and-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install offline free video tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13"
+      - name: Test second-pilot lock (no other new artworks)
+        run: |
+          python -m unittest discover -s tests -p "test_artvision_second_pilot_v69.py" -v
+      - name: 4×1 dossier structural gate (not artistic approval)
+        run: |
+          python src/artvision_four_variants_gate.py check docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_4X1_DOSSIER_V69.json
+          python src/artvision_recipe_v68.py validate --recipe docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_RECIPE_V68.json
+      - name: Retrieve authentic Klimt image and licensed recording, then create ONE new MP4 Cinema Standard
+        run: |
+          python src/artvision_klimt_second_pilot_cinema_v69.py --out output/artvision-klimt-second-pilot-v69
+      - name: Save actual MP4, cover, verified sources, review frames and CRC package (temporary)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_KLIMT_THE_KISS_CINEMA_STANDARD_V69_OR_BLOCKER
+          path: output/artvision-klimt-second-pilot-v69/
+          retention-days: 30
+          if-no-files-found: warn

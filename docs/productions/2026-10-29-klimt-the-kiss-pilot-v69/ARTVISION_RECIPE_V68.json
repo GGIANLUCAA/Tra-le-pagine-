@@ -1,0 +1,268 @@
+{
+  "schema": "artvision-artwork-recipe-v68",
+  "artwork": {
+    "id": "klimt_the_kiss_belvedere912_1908",
+    "title": "The Kiss",
+    "artist": "Gustav Klimt",
+    "primary_source": "https://sammlung.belvedere.at/objects/6678/"
+  },
+  "creative_baseline": {
+    "preset_id": "socrates-4x1-quality-baseline-2026-10-29",
+    "preset_version": "1.0.0",
+    "preset_sha256": null,
+    "preset_git_blob_sha1": "5c2f8ca7a0c0ea6a4d729813dd0ff012e5478e73",
+    "reference_feedback_scope": "positive_creative_baseline_for_future_productions",
+    "sha256_note": "SHA to be computed by exact project CLI before render"
+  },
+  "invariants": {
+    "required_variant_ids": [
+      "critico_standard",
+      "critico_museum",
+      "cinema_standard",
+      "cinema_museum"
+    ],
+    "each_slot_must_be_original_mp4": true,
+    "shared_critico_script_and_exact_wav_sha256": true,
+    "critico_voice_provider": "Google Gemini",
+    "critico_voice_model": "gemini-3.8-flash-tts",
+    "critico_voice": "Gacrux",
+    "no_voice_in_cinema": true,
+    "museum_entry_exit_continuous_camera": true,
+    "museum_frame_requires_provenance_or_declared_reconstruction": true,
+    "empty_gallery_default": true,
+    "no_cropped_foreground_people": true,
+    "first_0_3_7_seconds_must_be_compelling": true,
+    "copyright_music_recording_verified": true,
+    "sha256_and_rights_required": true,
+    "full_length_audio_visual_qa_required": true,
+    "per_video_four_original_social_posts": true,
+    "video_container": "mp4",
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "vertical_ratio": "9:16",
+    "no_social_auto_publication": true,
+    "zero_paid_video_ai_without_per_scene_consent": true,
+    "old_masters_immutable": true,
+    "no_new_artwork_until_existing_pilot_lock_is_explicitly_released": true
+  },
+  "creative": {
+    "critico_pair": {
+      "narration_language": "it",
+      "target_words": 365,
+      "commentary_depth": "detailed",
+      "narration_duration_policy": "from_verified_WAV_not_fixed",
+      "strict_semantic_timing": true,
+      "source_reference": "Bosch Critico V22 + Ophelia Critico V21",
+      "motion_guideline": "narrative_holds_rare_unidirectional_motion",
+      "no_rhetorical_final_question": true
+    },
+    "slots": {
+      "critico_standard": {
+        "audio_mode": "Gacrux_narrated",
+        "director": "Critico_V2",
+        "camera_center_x": 0.5,
+        "camera_center_y": 0.5,
+        "motion_level": "restrained",
+        "shot_count_policy": "from_real_script",
+        "source": "authentic_painting_details"
+      },
+      "critico_museum": {
+        "audio_mode": "same_exact_Gacrux_WAV_as_critico_standard",
+        "director": "Museum_V57_camera_continuous",
+        "camera_center_x": 0.5,
+        "camera_center_y": 0.5,
+        "motion_level": "restrained",
+        "shot_count_policy": "from_real_script",
+        "source": "painting_plus_artwork_specific_gallery"
+      },
+      "cinema_standard": {
+        "audio_mode": "licensed_music_only",
+        "director": "Cinema_Standard",
+        "target_seconds": 40,
+        "camera_center_x": 0.5,
+        "camera_center_y": 0.5,
+        "motion_level": "balanced",
+        "source": "authentic_painting_details"
+      },
+      "cinema_museum": {
+        "audio_mode": "licensed_music_only",
+        "director": "Museum_V57_camera_continuous",
+        "target_seconds": 40,
+        "camera_center_x": 0.5,
+        "camera_center_y": 0.5,
+        "motion_level": "restrained",
+        "source": "painting_plus_artwork_specific_gallery"
+      }
+    },
+    "museum": {
+      "frame_mode": "source_actual_if_documented",
+      "frame_finish": "match_source",
+      "gallery_architecture": "artwork_specific_measured",
+      "spatial_scale": "documented_painting_dimensions",
+      "entrance_seconds": 8,
+      "exit_seconds": 8,
+      "safe_margin_percent": 12,
+      "foreground_visitors": "none",
+      "room_reconstruction_disclosure_required": true
+    },
+    "cover": {
+      "style": "elegant_museum",
+      "title_language": "en",
+      "include_exact_artist": true,
+      "title_size_scale": 1
+    },
+    "delivery": {
+      "aspect_ratio": "9:16",
+      "minimum_quality": "1080x1920_delivery_if_source_adequate",
+      "zip_complete": true,
+      "zip_android_mp4_only": true,
+      "posts_platforms": [
+        "facebook",
+        "instagram",
+        "tiktok",
+        "youtube"
+      ],
+      "private_archive_verification_separate": true
+    }
+  },
+  "required_evidence": {
+    "source_art_image_SHA256_and_rights": {
+      "status": "pending",
+      "sources": []
+    },
+    "documented_painting_physical_dimensions": {
+      "status": "pending",
+      "sources": []
+    },
+    "frame_exact_photo_or_declared_reconstruction_and_license": {
+      "status": "pending",
+      "sources": []
+    },
+    "specific_gallery_provenance_or_declared_reconstruction": {
+      "status": "pending",
+      "sources": []
+    },
+    "licensed_musical_recording_and_SHA256": {
+      "status": "pending",
+      "sources": []
+    },
+    "one_critico_script_real_Gacrux_WAV_and_ASR_timecodes": {
+      "status": "pending",
+      "sources": []
+    },
+    "four_distinct_storyboards": {
+      "status": "pending",
+      "sources": []
+    },
+    "four_real_MP4_hashes_bytes_and_distinctness": {
+      "status": "pending",
+      "sources": []
+    },
+    "four_comprehensive_ZIP_CRC_and_android_ZIP": {
+      "status": "pending",
+      "sources": []
+    },
+    "sixteen_original_social_posts": {
+      "status": "pending",
+      "sources": []
+    },
+    "technical_QA_and_human_full_speed_review": {
+      "status": "pending",
+      "sources": []
+    },
+    "private_archive_import_and_playback_verification_separately": {
+      "status": "pending",
+      "sources": []
+    }
+  },
+  "storyboards": {
+    "critico_standard": {
+      "status": "planned_from_four_dossier",
+      "shots": [],
+      "direction_notes": "See docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_4X1_DOSSIER_V69.json; convert to exact vetted shots during V13 planning"
+    },
+    "critico_museum": {
+      "status": "planned_from_four_dossier",
+      "shots": [],
+      "direction_notes": "See docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_4X1_DOSSIER_V69.json; convert to exact vetted shots during V13 planning"
+    },
+    "cinema_standard": {
+      "status": "planned_from_four_dossier",
+      "shots": [],
+      "direction_notes": "See docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_4X1_DOSSIER_V69.json; convert to exact vetted shots during V13 planning"
+    },
+    "cinema_museum": {
+      "status": "planned_from_four_dossier",
+      "shots": [],
+      "direction_notes": "See docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_4X1_DOSSIER_V69.json; convert to exact vetted shots during V13 planning"
+    }
+  },
+  "variants": {
+    "critico_standard": {
+      "status": "not_rendered",
+      "mp4_sha256": null,
+      "mp4_bytes": null,
+      "source_voice_sha256": null,
+      "voice_script_sha256": null,
+      "full_speed_human_review": "pending",
+      "V25_approved": false,
+      "private_archive_import_verified": false
+    },
+    "critico_museum": {
+      "status": "not_rendered",
+      "mp4_sha256": null,
+      "mp4_bytes": null,
+      "source_voice_sha256": null,
+      "voice_script_sha256": null,
+      "full_speed_human_review": "pending",
+      "V25_approved": false,
+      "private_archive_import_verified": false
+    },
+    "cinema_standard": {
+      "status": "not_rendered",
+      "mp4_sha256": null,
+      "mp4_bytes": null,
+      "source_voice_sha256": null,
+      "voice_script_sha256": null,
+      "full_speed_human_review": "pending",
+      "V25_approved": false,
+      "private_archive_import_verified": false
+    },
+    "cinema_museum": {
+      "status": "not_rendered",
+      "mp4_sha256": null,
+      "mp4_bytes": null,
+      "source_voice_sha256": null,
+      "voice_script_sha256": null,
+      "full_speed_human_review": "pending",
+      "V25_approved": false,
+      "private_archive_import_verified": false
+    }
+  },
+  "production": {
+    "status": "authorized_second_pilot_preproduction",
+    "render_eligible": false,
+    "social_publishing_authorized": false,
+    "paid_video_ai_authorized": false,
+    "single_owner_required": true,
+    "source_code_commit": "PIN_ON_ACTUAL_RENDER"
+  },
+  "change_log": [
+    {
+      "number": 1,
+      "field": "production.authorized_second_pilot",
+      "previous": false,
+      "new": true,
+      "reason": "User explicitly authorized second artwork after four Socrates videos, 29 October 2026",
+      "requested_scope": "THIS_ARTWORK_ONLY",
+      "source_preset_unchanged": true
+    }
+  ],
+  "documentation": {
+    "baseline": "docs/ARTVISION_START_HERE_QUATTRO_VIDEO_RIPRODUCIBILE_V68.md",
+    "four_dossier": "docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_4X1_DOSSIER_V69.json",
+    "art_image_license": "https://commons.wikimedia.org/wiki/File:Klimt_-_The_Kiss.jpg",
+    "gallery_source_status": "pending legally reusable image, no official press reuse",
+    "same_voice_script_existing": "modules/artvision_critico/production_series/klimt_bacio.json"
+  }
+}

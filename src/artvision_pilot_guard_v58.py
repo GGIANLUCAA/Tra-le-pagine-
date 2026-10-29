@@ -18,8 +18,12 @@ def enforce_pilot_project(project, root=ROOT):
         return
     if lock.get("automatic_new_artwork_selection") is not False:
         raise ValueError("ArtVision pilot lock policy invalid")
-    if project.get("topic")!=lock.get("allowed_title"):
-        raise ValueError("ArtVision PILOT LOCK: new artwork rendering forbidden")
+    permitted={lock.get("allowed_title")}
+    second=lock.get("authorized_second_pilot", {})
+    if second.get("enabled") is True and second.get("phase")=="second_pilot_only_not_automatic_series":
+        permitted.add(second.get("allowed_title"))
+    if project.get("topic") not in permitted:
+        raise ValueError("ArtVision PILOT LOCK: artwork outside explicitly authorized pilots")
     variant=project.get("artvision_4x1_variant")
     if variant not in VARIANTS or variant not in lock["variant_ids"]:
         raise ValueError("ArtVision PILOT LOCK: invalid variant")
