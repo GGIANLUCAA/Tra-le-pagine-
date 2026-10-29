@@ -17,6 +17,10 @@ VARIANTS = ("cinema_standard", "cinema_museum", "critico_standard", "critico_mus
 def choose(root=ROOT):
     queue = json.loads((root / "queue/artvision_four_variants_s01_20261028.json").read_text())
     production = json.loads((root / "queue/production_v15.json").read_text())
+    # One ArtVision renderer at a time: never select work while a job exists.
+    if production.get("items"):
+        return {"status":"existing_jobs_take_priority", "count":len(production["items"]),
+                "new_artwork_required":False}
     from artvision_pilot_guard_v58 import enforce_pilot_project
     lock_path = root / "config/artvision_pilot_lock_v58.json"
     if lock_path.is_file():
