@@ -1,5 +1,5 @@
 {
-  "version": "V77-compatible",
+  "version": "V78-compatible",
   "editorial_preset": "freeze_ai_photo_reference_43054_43056",
   "social_museum_v76": true,
   "default_target_duration_s": [
@@ -87,10 +87,10 @@
     "image_guard": "src/storia_rivive_v77_identity_guard.py",
     "image_guard_minimum_original_luminance": 0.78,
     "model_parameters": {
-      "denoise_start": 0.22,
-      "denoise_hard_limit": 0.27,
-      "controlnet_scale": 1.3,
-      "condition_scale": 5
+      "denoise": "adaptive_to_source_and_object_masks; NOT hard capped at 0.27",
+      "controlnet_scale": "adjust_after_visual_tests",
+      "source_fidelity": "requires human source-vs-candidate review",
+      "paid_calls_without_permission": false
     },
     "single_free_candidate_no_automatic_retries": true,
     "local_structural_qa_per_tile": true,
@@ -99,6 +99,21 @@
     "final_approval_state": "PENDING_HUMAN_SEMANTIC_REVIEW",
     "release_requires_human_semantic_approval": true,
     "fallback": "preserve original shape or reject scene; do not invent content",
-    "v76_previous_generations": "older existing video unaffected; must not label historically verified"
+    "v76_previous_generations": "older existing video unaffected; must not label historically verified",
+    "version": "V78",
+    "default_strategy": "preserve_generatively_restored_high_definition_faces_and_objects",
+    "global_source_luminance_blend": 0,
+    "local_protection_only_for_confirmed_or_curator_flagged_mechanical_ROIs": true,
+    "selected_region_source_luminance_weight_range": [
+      0.5,
+      0.75
+    ],
+    "v77_global_blend_policy": "DISABLED_REGRESSION",
+    "prohibit_global_detail_regression": true,
+    "manual_semantic_approval_required": true,
+    "face_detail_policy": "keep_hd_generated_texture_by_default; use masked region-focused regeneration if a face is incorrect, never global source blur",
+    "production_script": "src/storia_v78_hd_selective_identity.py",
+    "documentation": "docs/LA_STORIA_RIVIVE_RITORNO_HD_V78.md",
+    "previous_v77_stills": "REJECTED_QUALITY_REGRESSION"
   }
 }
