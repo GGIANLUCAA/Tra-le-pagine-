@@ -1,0 +1,29 @@
+{
+  "schema": "production-v16-prepared-job-v1",
+  "queue_eligible": false,
+  "reason": "La cache Google Gacrux verificata, il manifest e l'allineamento non esistono; nessuna chiamata TTS è autorizzata con quota gratuita non attestata.",
+  "job": {
+    "id": "peter-rabbit-20261029-v1",
+    "content_key": "book-peter-rabbit-1902-it-original-v1",
+    "project_file": "episodes/peter_rabbit_20261029/PROJECT_V13.json",
+    "status": "prepared_assets_voice_blocked",
+    "attempts": 0,
+    "new_paid_calls_required": false,
+    "adapter": "books_gemini_cache",
+    "episode": "peter_rabbit_20261029",
+    "voice_cache_dir": "voice_cache/peter_rabbit_20261029",
+    "effects": "off"
+  },
+  "required_before_queue": [
+    "VOCE.wav Google Gemini Gacrux verificata sul copione esatto",
+    "VOICE_CACHE_V13.json con hash e timing validi",
+    "VOICE_PROFILE_V13.json",
+    "ALLINEAMENTO_VOCE.json",
+    "attestazione verificabile della quota gratuita o autorizzazione specifica alla singola chiamata"
+  ],
+  "forbidden_fallbacks": [
+    "Edge TTS",
+    "voce non documentata",
+    "chiamata Gemini con costo o quota non verificati"
+  ]
+}

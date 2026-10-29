@@ -1,38 +1,742 @@
 {
-  "schema": "project-v13-draft",
-  "status": "planning_blocked_gacrux_free_tier_unverified",
-  "episode": "peter_rabbit_20261029",
+  "schema": "video-project-v13",
+  "project_id": "peter-rabbit-20261029-v13-assets-verified",
   "format": "libri",
-  "title": "Peter Coniglio — Il giardino proibito",
-  "author": "Beatrix Potter",
+  "topic": "Peter Coniglio — Il giardino proibito",
+  "preset": "narrative-v12-harmonic-v5",
+  "status": "assets_ready_voice_blocked",
+  "script": "testo.txt",
+  "subtitles": false,
+  "bibliography": {
+    "author": "Beatrix Potter",
+    "publication_year": "1902",
+    "edition_reference": "Frederick Warne & Co. 1902; digitalizzazione Project Gutenberg #14838",
+    "rights_notes": "Opera e illustrazioni di Beatrix Potter (m. 1943): termini ordinari vita+70 scaduti in Italia; URL e hash per ciascuna riproduzione conservati."
+  },
+  "editorial_metadata": {
+    "series": "Tra le Pagine",
+    "themes": "curiosità, disobbedienza, paura, ritorno a casa",
+    "genre": "fiaba illustrata",
+    "narration_style": "racconto italiano originale, chiaro e cinematografico senza sottotitoli"
+  },
   "editorial_contract": {
-    "user_requirement": "Solo filmati COMPLETI con testo/voce se previsti, no anteprime mute come sostituti",
+    "rules_version": "2026-10-29.5",
+    "policy_sha256": "004b750b177725fc0f72f857f53315222c1ea56a410eb3ea80515439235012a9",
+    "requested_format": "libri",
+    "narrated": true,
     "voice": "Google Gemini Gacrux",
-    "no_paid_calls": true,
-    "no_silent_fallback": true,
-    "no_subtitles": true
+    "speech_language": "it",
+    "subtitles": false,
+    "format_change_authorization": null
   },
   "editorial_plan": {
-    "source": "The Tale of Peter Rabbit, 1902",
-    "narrative_arc": "flashforward giacchino -> disobbedienza -> inseguimento -> fuga -> conseguenza",
-    "hook_0_7_seconds": "giacchino blu abbandonato, domanda visiva e rivelazione del protagonista",
-    "target_duration_seconds": [
-      120,
-      180
+    "subject_insight": "Una piccola disobbedienza diventa una fuga: il giacchino blu anticipa il prezzo della curiosità e torna nel finale come conseguenza visiva.",
+    "sources": [
+      {
+        "reference": "https://www.gutenberg.org/ebooks/14838",
+        "finding": "Edizione illustrata 1902 con tavole autentiche di Beatrix Potter; 20 file distinti acquisiti dal workflow.",
+        "verification_notes": "Workflow GitHub 40846992824; ASSET_PROVENIENZA_QA.json conserva URL, dimensioni e SHA256; artifact ZIP digest b6196814174776de22704e4b2f4301999071d32c8f7c90e3e77c40fcbf41cfb2.",
+        "status": "reviewed"
+      },
+      {
+        "reference": "episodes/peter_rabbit_20261029/ASSET_PROVENIENZA_QA.json",
+        "finding": "20 hash sorgente unici, 20 composizioni 720×1280, copertina e contact sheet.",
+        "verification_notes": "ZIP scaricato il 29/10/2026, CRC integro; contact sheet visionata integralmente.",
+        "status": "reviewed"
+      }
     ],
-    "scene_count": 20,
-    "media_sourcing": "20 original illustrations by Beatrix Potter, 1902, exact image URLs and SHA256 to be recorded by asset acquisition workflow",
-    "music": "planned original instrumental composed for this episode, NOT generated yet",
-    "cover": "planned 720x1280 original illustration + brand and author",
-    "qa_status": "not_started",
-    "rights_status": "author death 1943; source image byte inspection pending"
+    "opening_promise": "0–3 s: titolo, autrice e giacchino blu nell’orto; 3–7 s: domanda sulla scomparsa e ritorno all’inizio della storia.",
+    "payoff": "Peter torna a casa; il giacchino rimane nell’orto, chiudendo il flashforward senza moralismo aggiunto.",
+    "cover_reason": "La tavola del giacchino rende immediatamente riconoscibile il mistero iniziale; titolo e autrice restano leggibili su telefono.",
+    "duration_seconds": 156,
+    "duration_reason": "337 parole a circa 130 parole/minuto più pause naturali: stima 156 s, da rifinire sulla durata del WAV Gacrux reale.",
+    "techniques": [
+      {
+        "id": "locked_hold",
+        "reason": "Conserva la leggibilità delle piccole tavole e dà alla voce il tempo di guidare lo sguardo.",
+        "status": "trial"
+      },
+      {
+        "id": "micro_push",
+        "reason": "Avvicina dettagli narrativi senza simulare movimento dei personaggi o tagliare figure.",
+        "status": "trial"
+      },
+      {
+        "id": "motivated_cut",
+        "reason": "Ogni cambio segue un beat completo del racconto e non una quota meccanica di immagini.",
+        "status": "trial"
+      }
+    ],
+    "mix_reason": "Musica originale strumentale discreta sotto la voce; variazioni solo sui passaggi di pericolo e ritorno, senza coprire Gacrux.",
+    "social_languages": {
+      "facebook": "it",
+      "instagram": "it",
+      "tiktok": "it",
+      "youtube": "it"
+    },
+    "comparison_reference": "La macchina del tempo soltanto per varietà ritmica; non copiarne durata, numero immagini o finta animazione.",
+    "voice_image_sync_review": "blocked_until_exact_gacrux_wav",
+    "artistic_review": "assets_contact_sheet_passed_master_pending",
+    "narrative_design": {
+      "story_beats": [
+        "Un giacchino blu è appeso nell'orto, come uno spaventapasseri. Il suo proprietario è scomparso. Tutto cominciò quella mattina.",
+        "Sotto un grande abete vivevano quattro coniglietti: Flopsy, Mopsy, Cotton-tail e Peter, il più curioso.",
+        "La mamma uscì per fare la spesa. Prima di andare, proibì ai piccoli di entrare nel giardino del signor McGregor: era pericoloso.",
+        "Gli altri obbedirono. Peter vide il cancello, abbassò le orecchie e si infilò sotto le assi.",
+        "Nel giardino trovò lattughe, fagiolini e ravanelli. Mangiò così in fretta da dimenticare ogni prudenza.",
+        "Quando iniziò a sentirsi male, cercò del prezzemolo. Ma dietro la serra lo attendeva una sorpresa.",
+        "McGregor lavorava tra i cavoli. Vide Peter, si alzò di scatto e cominciò a inseguirlo.",
+        "Peter fuggì tra i filari. Le foglie gli frustavano il muso e il cancello sembrava sparito.",
+        "Perse una scarpetta tra i cavoli e l'altra tra le patate. Correva più veloce, ma era completamente disorientato.",
+        "Poi i bottoni del giacchino si impigliarono in una rete. Più si agitava, più restava prigioniero.",
+        "Peter pianse. Alcuni passeri, con il loro cinguettio, sembrarono incoraggiarlo a liberarsi.",
+        "McGregor arrivò con un setaccio. Peter scappò all'ultimo istante, lasciando nella rete il suo giacchino blu.",
+        "Si rifugiò nel capanno e saltò dentro un annaffiatoio. Era pieno d'acqua: ne uscì fradicio.",
+        "Quando il contadino entrò, Peter starnutì. Fu scoperto, ma saltò da una finestra troppo stretta per McGregor.",
+        "Vicino a una porta chiusa incontrò un topo. Gli chiese la strada; il topo, con la bocca piena, scosse soltanto la testa.",
+        "Accanto allo stagno una gatta bianca fissava i pesci. Peter preferì non disturbarla.",
+        "Poi sentì una zappa. Salì su una carriola e vide finalmente il cancello, oltre la schiena del contadino.",
+        "Scese piano, trattenne il respiro e corse. McGregor si voltò troppo tardi: Peter era già fuori.",
+        "Attraversò il bosco e tornò alla tana. Era salvo, ma aveva perso scarpe e giacchino.",
+        "Quella sera la mamma gli preparò la camomilla. Peter imparò che la curiosità può avere un prezzo. Il giacchino, intanto, restò nell'orto a spaventare gli uccelli."
+      ],
+      "distinct_visual_needs": [
+        "Flashforward: giacchino blu appeso nell'orto, mistero iniziale",
+        "Famiglia di conigli sotto le radici dell'abete",
+        "Madre avverte del pericolo del giardino",
+        "Peter passa sotto il cancello proibito",
+        "Peter mangia le verdure dell'orto",
+        "Peter cerca prezzemolo, malessere",
+        "McGregor compare presso i cavoli",
+        "McGregor insegue Peter",
+        "Peter perde le scarpette tra le piante",
+        "Peter impigliato nella rete dell'uva spina",
+        "Passeri incoraggiano Peter impaurito",
+        "Peter sfugge al setaccio e perde il giacchino",
+        "Peter si nasconde nell'annaffiatoio",
+        "Peter salta dalla finestra del capanno",
+        "Peter domanda la via al topo vicino alla porta",
+        "Gatta bianca accanto al laghetto",
+        "Peter sulla carriola individua il cancello",
+        "Peter attraversa il cancello e si salva",
+        "Peter ritorna stremato alla tana",
+        "Madre mette Peter a letto e prepara camomilla"
+      ],
+      "image_count_reason": "Venti beat sostanziali con venti tavole autentiche distinte; nessun riuso mascherato da nuova scena.",
+      "pace_reason": "Pause più lunghe su divieto, rete, annaffiatoio e ritorno; ritmo guidato dalla futura voce reale, non da una durata fissa.",
+      "reference_id": "peter-rabbit-1902-gutenberg-14838",
+      "portable_lessons": [
+        "Aprire con una conseguenza visiva e chiuderla nel finale.",
+        "Preferire tavole della stessa edizione per continuità.",
+        "Non chiamare animazione un micro-movimento di camera."
+      ],
+      "do_not_copy_reference_parameters": true,
+      "note": "V38: durata e ritmo restano provvisori finché non esiste il WAV Gacrux esatto."
+    },
+    "media_sourcing": {
+      "policy_id": "media-priority-v33",
+      "review_status": "reviewed",
+      "decisions": [
+        {
+          "asset_id": "scene_01",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter52.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Flashforward: giacchino blu appeso nell'orto, mistero iniziale; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_02",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter08.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Famiglia di conigli sotto le radici dell'abete; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_03",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter11.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Madre avverte del pericolo del giardino; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_04",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter19.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter passa sotto il cancello proibito; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_05",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter20.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter mangia le verdure dell'orto; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_06",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter23.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter cerca prezzemolo, malessere; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_07",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter24.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "McGregor compare presso i cavoli; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_08",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter27.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "McGregor insegue Peter; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_09",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter28.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter perde le scarpette tra le piante; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_10",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter31.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter impigliato nella rete dell'uva spina; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_11",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter32.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Passeri incoraggiano Peter impaurito; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_12",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter35.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter sfugge al setaccio e perde il giacchino; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_13",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter36.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter si nasconde nell'annaffiatoio; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_14",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter40.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter salta dalla finestra del capanno; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_15",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter44.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter domanda la via al topo vicino alla porta; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_16",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter47.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Gatta bianca accanto al laghetto; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_17",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter48.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter sulla carriola individua il cancello; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_18",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter51.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter attraversa il cancello e si salva; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_19",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter55.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Peter ritorna stremato alla tana; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        },
+        {
+          "asset_id": "scene_20",
+          "source_kind": "verified_archive",
+          "provider": "Project Gutenberg #14838",
+          "source_reference": "https://www.gutenberg.org/cache/epub/14838/images/peter57.jpg",
+          "choice_reason": "Tavola autentica della medesima edizione 1902, preferita a stock o generazione per continuità figurativa.",
+          "scene_match_note": "Madre mette Peter a letto e prepara camomilla; corrispondenza controllata sulla contact sheet completa, resa del futuro movimento ancora da verificare sul master.",
+          "rights_review": "reviewed",
+          "scene_relevance": "reviewed",
+          "visual_review": "passed",
+          "role_in_video": "primary_historical_illustration"
+        }
+      ],
+      "note": "20 still materializzati nel repository; verifica svolta sulla contact sheet e sugli hash. Il QA del movimento e del master resta separato."
+    },
+    "audience_research": {
+      "candidates": [],
+      "selection_mode": "user_specified",
+      "explicit_user_instruction": "Il compito giornaliero deve concentrarsi su libri e altri formati, senza ArtVision concorrente.",
+      "selected_work": "Peter Coniglio — Il giardino proibito",
+      "selection_reason": "Asset reali già acquisiti oggi e soggetto distinto dal catalogo esistente.",
+      "viewer_interest": "Fiaba breve con pericolo chiaro, personaggio riconoscibile e illustrazioni autentiche.",
+      "creative_direction": "Suspense gentile dal giacchino alla fuga e al ritorno.",
+      "signal_limitations": "Nessuna metrica di pubblico usata o inventata.",
+      "analytics_feedback": "not_yet_published"
+    }
+  },
+  "business": {
+    "audience": "famiglie, lettori e pubblico di fiabe illustrate",
+    "viewer_promise": "Una storia completa, narrata naturalmente, con tavole autentiche e fonti consultabili.",
+    "original_contribution": "Adattamento italiano originale e montaggio motivato su venti beat distinti.",
+    "primary_platform": "Video Library Studio privato prima di qualsiasi pubblicazione",
+    "goal": "crescita del pubblico e ritorno alla serie",
+    "cta": "Scopri altre storie illustrate di Tra le Pagine.",
+    "experiment": "flashforward del giacchino entro 3 secondi",
+    "time_budget_minutes": null,
+    "cash_budget_eur": 0
+  },
+  "assets": [
+    {
+      "id": "scene_01",
+      "file": "images/scena_01.jpg",
+      "role": "visual",
+      "sha256": "2b29b7376804d0fea8092a18f96577aa3c8560a08bc5fc76fff635fbe5db5e6b",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter52.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_02",
+      "file": "images/scena_02.jpg",
+      "role": "visual",
+      "sha256": "757b996d2e12fb5f6cfa3efb08661268d6c7877a101458de8e6fc4f3925a2f70",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter08.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_03",
+      "file": "images/scena_03.jpg",
+      "role": "visual",
+      "sha256": "61494cb38f609c92a6bb3b3513ba6043da90eff2f7849da782167356fd307f02",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter11.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_04",
+      "file": "images/scena_04.jpg",
+      "role": "visual",
+      "sha256": "7596f60bb3ad0260c812ec26f2cbe124dee477124dfa3b6a66802ce6d76e6a74",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter19.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_05",
+      "file": "images/scena_05.jpg",
+      "role": "visual",
+      "sha256": "22c001c13a18872e8bc73aaf50f03a0dbd97132592b316200a42c749ce0a1375",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter20.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_06",
+      "file": "images/scena_06.jpg",
+      "role": "visual",
+      "sha256": "8c811974180333e7a1d3798cc6e2d7d0fdfa06366a9e35155c7115d277e97011",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter23.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_07",
+      "file": "images/scena_07.jpg",
+      "role": "visual",
+      "sha256": "fcd3adcdc87f3988820fd78878077272b1825458fb1b8827d1a4d037d5fe7fb6",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter24.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_08",
+      "file": "images/scena_08.jpg",
+      "role": "visual",
+      "sha256": "520c4c73971895922c819d6c448b18206d5e9c9498a0d0907ea1c3b3ee352a8a",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter27.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_09",
+      "file": "images/scena_09.jpg",
+      "role": "visual",
+      "sha256": "a0898eb66bedda36e6ec387e0d80ee1a1ab8937e09cefe29d06cec19c80ce8eb",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter28.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_10",
+      "file": "images/scena_10.jpg",
+      "role": "visual",
+      "sha256": "0c79ca6e63e6e71a192924a3d25bc59cc446c5448e62256dfc21c82e44f73701",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter31.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_11",
+      "file": "images/scena_11.jpg",
+      "role": "visual",
+      "sha256": "168201d3faaccf86055e2c6d33359dcf1f56f140a315c007288b340e829d699b",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter32.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_12",
+      "file": "images/scena_12.jpg",
+      "role": "visual",
+      "sha256": "d2b22cd40b5155c70e39037f2e9d58a6f874dcf799586459e2dcb95d41c6ca36",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter35.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_13",
+      "file": "images/scena_13.jpg",
+      "role": "visual",
+      "sha256": "c566e166e810c16d2d29a3aa76a8cf30b6a5b5b6cd135c54040f6279b67a5820",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter36.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_14",
+      "file": "images/scena_14.jpg",
+      "role": "visual",
+      "sha256": "2829598b8745008f1c849c897b954506b23efaa49c9ec5d305e46893c69842bf",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter40.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_15",
+      "file": "images/scena_15.jpg",
+      "role": "visual",
+      "sha256": "ba14f6e1fe6fa28eb61e97911ea64179715b23295efdaf0b0c557840069ce136",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter44.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_16",
+      "file": "images/scena_16.jpg",
+      "role": "visual",
+      "sha256": "9959ebf7196669b7213262c0978e0d127b95417613c6a7a7985f6db2dc293d50",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter47.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_17",
+      "file": "images/scena_17.jpg",
+      "role": "visual",
+      "sha256": "3170962a4ce10ad55bd8dc27eec3dec57be8f60d069373417091ac764d9599bd",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter48.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_18",
+      "file": "images/scena_18.jpg",
+      "role": "visual",
+      "sha256": "1d863ecd365d6c14a573336a1590b176ad894141e22be17a806c4021d6154763",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter51.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_19",
+      "file": "images/scena_19.jpg",
+      "role": "visual",
+      "sha256": "71147c3912a4a6d293800d82cadf2a00301d1e1f7430065742c7d6990f48f501",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter55.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    },
+    {
+      "id": "scene_20",
+      "file": "images/scena_20.jpg",
+      "role": "visual",
+      "sha256": "7adebda83552621f615a0156832cd56d5cb22991c082a54e964f13973ded64bf",
+      "source": "https://www.gutenberg.org/cache/epub/14838/images/peter57.jpg",
+      "rights": "Beatrix Potter, 1902; autrice morta nel 1943, termini ordinari vita+70 scaduti in Italia. Riproduzione Project Gutenberg #14838; URL e hash sorgente conservati in ASSET_PROVENIENZA_QA.json."
+    }
+  ],
+  "scenes": [
+    {
+      "asset_id": "scene_01",
+      "description": "Flashforward: giacchino blu appeso nell'orto, mistero iniziale",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Un giacchino blu è appeso nell'orto, come uno spaventapasseri. Il suo proprietario è scomparso. Tutto cominciò quella mattina.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_02",
+      "description": "Famiglia di conigli sotto le radici dell'abete",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Sotto un grande abete vivevano quattro coniglietti: Flopsy, Mopsy, Cotton-tail e Peter, il più curioso.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_03",
+      "description": "Madre avverte del pericolo del giardino",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "La mamma uscì per fare la spesa. Prima di andare, proibì ai piccoli di entrare nel giardino del signor McGregor: era pericoloso.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_04",
+      "description": "Peter passa sotto il cancello proibito",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Gli altri obbedirono. Peter vide il cancello, abbassò le orecchie e si infilò sotto le assi.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_05",
+      "description": "Peter mangia le verdure dell'orto",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Nel giardino trovò lattughe, fagiolini e ravanelli. Mangiò così in fretta da dimenticare ogni prudenza.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_06",
+      "description": "Peter cerca prezzemolo, malessere",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Quando iniziò a sentirsi male, cercò del prezzemolo. Ma dietro la serra lo attendeva una sorpresa.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_07",
+      "description": "McGregor compare presso i cavoli",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "McGregor lavorava tra i cavoli. Vide Peter, si alzò di scatto e cominciò a inseguirlo.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_08",
+      "description": "McGregor insegue Peter",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Peter fuggì tra i filari. Le foglie gli frustavano il muso e il cancello sembrava sparito.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_09",
+      "description": "Peter perde le scarpette tra le piante",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Perse una scarpetta tra i cavoli e l'altra tra le patate. Correva più veloce, ma era completamente disorientato.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_10",
+      "description": "Peter impigliato nella rete dell'uva spina",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Poi i bottoni del giacchino si impigliarono in una rete. Più si agitava, più restava prigioniero.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_11",
+      "description": "Passeri incoraggiano Peter impaurito",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Peter pianse. Alcuni passeri, con il loro cinguettio, sembrarono incoraggiarlo a liberarsi.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_12",
+      "description": "Peter sfugge al setaccio e perde il giacchino",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "McGregor arrivò con un setaccio. Peter scappò all'ultimo istante, lasciando nella rete il suo giacchino blu.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_13",
+      "description": "Peter si nasconde nell'annaffiatoio",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Si rifugiò nel capanno e saltò dentro un annaffiatoio. Era pieno d'acqua: ne uscì fradicio.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_14",
+      "description": "Peter salta dalla finestra del capanno",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Quando il contadino entrò, Peter starnutì. Fu scoperto, ma saltò da una finestra troppo stretta per McGregor.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_15",
+      "description": "Peter domanda la via al topo vicino alla porta",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Vicino a una porta chiusa incontrò un topo. Gli chiese la strada; il topo, con la bocca piena, scosse soltanto la testa.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_16",
+      "description": "Gatta bianca accanto al laghetto",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Accanto allo stagno una gatta bianca fissava i pesci. Peter preferì non disturbarla.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_17",
+      "description": "Peter sulla carriola individua il cancello",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Poi sentì una zappa. Salì su una carriola e vide finalmente il cancello, oltre la schiena del contadino.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_18",
+      "description": "Peter attraversa il cancello e si salva",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Scese piano, trattenne il respiro e corse. McGregor si voltò troppo tardi: Peter era già fuori.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_19",
+      "description": "Peter ritorna stremato alla tana",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Attraversò il bosco e tornò alla tana. Era salvo, ma aveva perso scarpe e giacchino.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    },
+    {
+      "asset_id": "scene_20",
+      "description": "Madre mette Peter a letto e prepara camomilla",
+      "reason": "La tavola mostra il beat narrato con i personaggi e l’azione pertinenti, preservando lo stile unitario dell’edizione 1902.",
+      "narration_anchor": "Quella sera la mamma gli preparò la camomilla. Peter imparò che la curiosità può avere un prezzo. Il giacchino, intanto, restò nell'orto a spaventare gli uccelli.",
+      "motion": "Camera minima: hold e micro-push; nessuna animazione generativa o gesto simulato."
+    }
+  ],
+  "references": [],
+  "creative_v21": {
+    "opening_0_3_5_7": "0.1 s titolo/autrice + giacchino; 1–3 s dettaglio giacchino; 3–5 s domanda; 5–7 s famiglia e avvio cronologico.",
+    "cover_choice": "COPERTINA_PETER_CONIGLIO.jpg, SHA256 bfa116a8b80b81d8943b027caf747c914b998143c68e981f7aaa4df2ad0dfc87",
+    "target_duration_seconds": 156,
+    "duration_basis": "337 parole + pause; correggere sulla voce reale",
+    "music_origin": "da comporre localmente, originale, nessuna spesa",
+    "social_package_status": "four_distinct_posts_prepared_not_published"
+  },
+  "reviews": {
+    "story": {
+      "status": "passed",
+      "notes": "Copione originale di 337 parole con inizio, sviluppo e finale; 20 anchor in ordine e nessuna duplicazione mascherata."
+    },
+    "visuals": {
+      "status": "passed",
+      "notes": "Contact sheet reale visionata il 29/10/2026: 20 tavole distinte e coerenti; ampi margini e bassa risoluzione restano limiti da controllare sul master, non approvazione finale."
+    },
+    "rights": {
+      "status": "passed",
+      "notes": "Autrice/illustratrice morta nel 1943; edizione 1902. URL e hash di ogni file Project Gutenberg conservati. Ricontrollare termini della destinazione prima di pubblicare."
+    }
   },
   "delivery": {
     "mp4_exists": false,
     "voice_wav_exists": false,
     "zip_video_exists": false,
-    "cover_exists": false,
+    "cover_exists": true,
     "library_import_verified": false,
-    "approval": "NOT_FINAL"
+    "approval": "NOT_FINAL",
+    "archive_sync": "archive_sync_pending"
   }
 }
