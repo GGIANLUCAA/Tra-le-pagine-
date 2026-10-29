@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - run: ffmpeg -version | head -1
       - run: python -m pip install -q --no-cache-dir opencv-python-headless pillow numpy
       - name: Download independent PD archival moving films and compare native faces
         run: python -u src/storia_v79_volti_scout.py
