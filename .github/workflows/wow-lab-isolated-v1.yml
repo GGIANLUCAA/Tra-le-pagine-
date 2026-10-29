@@ -51,7 +51,7 @@ jobs:
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
             python wow_lab/engine.py --out "wow_lab/runs/${{ github.run_id }}"
           else
-            python wow_lab/engine.py --out "wow_lab/runs/${{ github.run_id }}" --test-source-id 437133
+            python wow_lab/engine.py --out "wow_lab/runs/${{ github.run_id }}" --test-source-id 436535
           fi
       - name: Verify integrity, rights, artifact size and no publishing
         run: |
