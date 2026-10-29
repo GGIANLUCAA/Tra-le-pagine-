@@ -16,6 +16,8 @@ jobs:
           python - <<'PY'
           import re, requests
           tests={
+            'commons_cached_thumb_1280':'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/An_Experiment_on_a_Bird_in_the_Air_Pump.jpg/1280px-An_Experiment_on_a_Bird_in_the_Air_Pump.jpg',
+            'commons_cached_thumb_1920':'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/An_Experiment_on_a_Bird_in_the_Air_Pump.jpg/1920px-An_Experiment_on_a_Bird_in_the_Air_Pump.jpg',
             'commons_cached_thumb_2560':'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/An_Experiment_on_a_Bird_in_the_Air_Pump.jpg/2560px-An_Experiment_on_a_Bird_in_the_Air_Pump.jpg',
             'wikiart_cdn':'https://uploads6.wikiart.org/images/joseph-wright/an-experiment-on-a-bird-in-the-air-pump-1768.jpg',
             'wikiart_other_cdn':'https://images.wikiart.org/paintings/joseph-wright/an-experiment-on-a-bird-in-the-air-pump-1768.jpg',
