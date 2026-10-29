@@ -3,7 +3,7 @@
   "date": "2026-10-29",
   "owner_automation_id": "6adca191603c8191a90d5190901cd034",
   "group_id": "david_death_of_socrates_met436105_1787",
-  "status": "asset_acquisition_workflow_proposed_not_yet_verified",
+  "status": "cinema_standard_rendered_needs_review",
   "artwork": {
     "title": "The Death of Socrates",
     "artist": "Jacques Louis David",
@@ -107,7 +107,7 @@
   },
   "variants": {
     "cinema_standard": {
-      "status": "planned_assets_pending",
+      "status": "rendered_needs_review",
       "shot_focus_normalized": [
         [
           0.66,
@@ -135,7 +135,15 @@
         ]
       ],
       "storyboard": "Cup -> pointing hand -> grieving disciple -> witness -> shackles -> entire painting, instrumental only",
-      "render": "cinema_v55_prepared after official V13/V54 checks"
+      "render": "cinema_v55_prepared after official V13/V54 checks",
+      "sha256": "4ea696772dd80e03a73c7b3570a22c7915787d47b77822a97ee040cbca959ce9",
+      "bytes": 2402408,
+      "duration_seconds": 35.625011,
+      "artifact_id": 12896880789,
+      "run_id": 40872572384,
+      "visual_review": "Contact sheet reviewed: real painting and opening title, but slow repeated painting crops; not approved for final delivery.",
+      "audio_review": "not_listened",
+      "site_verified": false
     },
     "cinema_museum": {
       "status": "blocked_quality_museum_v46_not_met",
@@ -152,15 +160,25 @@
     }
   },
   "gates": {
-    "met_asset_download": "pending GitHub Actions proof",
-    "four_brief": "not_created",
-    "four_check": "not_run",
-    "v13_check": "not_run",
-    "mp4": "not_rendered",
-    "v55_package": "not_created",
+    "met_asset_download": "verified_GitHub_Actions_40872572384",
+    "four_brief": "executed_from_official_V13",
+    "four_check": "passed_structural_no_artistic_certification",
+    "v13_check": "passed_structural_no_artistic_certification",
+    "mp4": "rendered_needs_review_sha256_4ea696772dd80e03a73c7b3570a22c7915787d47b77822a97ee040cbca959ce9",
+    "v55_package": "ZIP_CRC_and_first_7s_frames_verified",
     "v25_approval": false,
-    "archive_sync": "not_attempted"
+    "archive_sync": "staging_manifest_committed_dry_run_passed_private_import_not_attempted"
   },
   "no_paid_video_calls": true,
-  "no_duplicate_master": true
+  "no_duplicate_master": true,
+  "produced": {
+    "run_id": 40872572384,
+    "artifact_id": 12896880789,
+    "video_sha256": "4ea696772dd80e03a73c7b3570a22c7915787d47b77822a97ee040cbca959ce9",
+    "video_bytes": 2402408,
+    "package_sha256": "4e9a4f91572253d58ef861bac95b71f9d65237c363f6eab16312a5f85ada261e",
+    "archive_staging": "docs/productions/2026-10-29-socrates-cinema-standard-v55/ARCHIVE_STAGING_V55.json",
+    "status": "rendered_needs_review",
+    "qa_note": "Full speed audio/visual review pending, no V25 approval or archive import"
+  }
 }
