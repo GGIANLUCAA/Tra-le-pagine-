@@ -36,7 +36,7 @@ SPECS=[
  {"id":"05_1900_WALKWAY_COLOR_MOTION","image":"END_MODERN.jpg","kind":"1900 moving walkway benchmark","motion":"moving walkway",
   "prompt":"Bring this exact restored full-color archival Paris 1900 moving walkway scene to life as genuine continuous realistic video. The old electric moving sidewalk belt slowly transports the existing passengers in their exact historical hats and outfits; railings and supporting columns remain rigid, natural slight head and arm movement, correct mechanical motion, physically consistent shifting shadows. Preserve number and identity of all people, details of machinery, frame geometry and viewpoint. Stationary documentary camera, no push-in, no zoom, no cut and no camera shake. Rich but natural photographic color and coherent real movement for the FULL five seconds. No static frame, no surreal transformations, no false people, no invented architectural elements."}
 ]
-KNOWN_SHA={"FOTO_AI_RICOSTRUITA_01.png":"25070cfd5aa0e38585c6b582b7cdade10a7aeb8154",
+KNOWN_SHA={"FOTO_AI_RICOSTRUITA_01.png":"25070cfd5aa0e38585c6b582b7cdade10a7aeb8154c4983f94b058da9b128e71",
 "FOTO_AI_RICOSTRUITA_02.png":"328af7951bb4b443166143eded5b149aae4f6982713a47420428f79ae291dedf",
 "FOTO_AI_RICOSTRUITA_03.png":"8d36d33fec39d6051b2dbed9bc0d5349438522ef1f2756e8bbf91416aeaa6211",
 "FOTO_AI_RICOSTRUITA_04.png":"5abf828d87465ad90201da0bb7e0ea3dad1554cd1436aa3f953a36c26f4b9688",
