@@ -28,7 +28,7 @@
 1. GitHub Actions `wow-lab-isolated-v1` si avvia ogni due ore (cron `23 */2 * * *`) quando è presente nel ramo `main`.
 2. `wow_lab/engine.py` legge esclusivamente `wow_lab/config.json`, legge gli ultimi manifest WOW LAB pubblicati e seleziona una fonte di pubblico dominio.
 3. Crea un MP4 verticale con musica originale, copertina, metadati di diritti, descrizioni social in bozza, manifesto con hash SHA256 e autodiagnosi.
-4. Verifica l'MP4 tramite ffprobe, decodifica con ffmpeg, differenza fotogrammi. Se supera il QA tecnico, crea un **GitHub prerelease** namespaced e un Artifact (non social).
+4. Verifica l'MP4 tramite ffprobe, decodifica con ffmpeg, differenza fotogrammi. Se supera il QA tecnico, crea un **GitHub prerelease** namespaced (solo candidato da revisionare, non master) e un Artifact (non social).
 5. Dall'Android apri `https://github.com/GGIANLUCAA/Tra-le-pagine-/releases`, filtra i tag `wow-lab-v1-` e scarica il file MP4 o ZIP.
 
 **Nota fondamentale:** generazione ogni due ore è un obiettivo operativo, **non una garanzia**. Se fonti, servizio o qualità non sono disponibili il sistema salta e segnala il motivo, senza produrre falso materiale.
