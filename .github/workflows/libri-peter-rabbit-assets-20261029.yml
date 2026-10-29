@@ -1,0 +1,76 @@
+name: "LIBRI Peter Rabbit — 1902 original illustrations and dossier ONLY (zero paid calls)"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/libri-peter-rabbit-assets-20261029.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: libri-peter-rabbit-assets-20261029
+  cancel-in-progress: false
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GEMINI_TTS_FREE_QUOTA_CONFIRMED: ${{ vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install free image and archival dependencies"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-dejavu-core
+          python -m pip install --quiet "requests>=2.31,<3" "beautifulsoup4>=4.12,<5" "pillow>=10,<13"
+          python -m py_compile tools/peter_rabbit_assets_20261029.py
+      - name: "Acquire twenty authentic 1902 illustrations; make cover and storyboard; no voice/video"
+        run: |
+          python tools/peter_rabbit_assets_20261029.py --out output/peter_rabbit_20261029
+      - name: "Verify real files and unique source hashes"
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("output/peter_rabbit_20261029")
+          d=json.loads((p/"ASSET_PROVENIENZA_QA.json").read_text())
+          assert d["scene_count"]==20 and d["unique_source_hashes"]==20
+          assert d["tts_calls"]==0 and d["paid_video_calls"]==0 and d["video_exists"] is False
+          for x in d["scenes"]:
+              source=p/x["source_file"];still=p/x["rendered_file"]
+              assert source.is_file() and still.is_file()
+              assert hashlib.sha256(source.read_bytes()).hexdigest()==x["source_sha256"]
+              assert hashlib.sha256(still.read_bytes()).hexdigest()==x["rendered_sha256"]
+          assert (p/"COPERTINA_PETER_CONIGLIO.jpg").stat().st_size>50000
+          assert (p/"STORYBOARD_20_SCENE.jpg").stat().st_size>50000
+          assert not list(p.rglob("*.mp4"))
+          print("SOURCE_AND_STILL_HASHES_PASS, 20 unique images; NO VIDEO")
+          PY
+      - name: "Upload genuine source images, cover, storyboard and dossier; not an MP4"
+        uses: actions/upload-artifact@v4
+        with:
+          name: PETER_RABBIT_1902_ASSET_DOSSIER_NOT_VIDEO
+          path: output/peter_rabbit_20261029/
+          retention-days: 14
+          if-no-files-found: error
+      - name: "Persist read-only production status (never claim complete video)"
+        run: |
+          python - <<'PY'
+          import json,os,base64,subprocess
+          from pathlib import Path
+          d=json.loads(Path("output/peter_rabbit_20261029/ASSET_PROVENIENZA_QA.json").read_text())
+          s={k:d[k] for k in ("episode","status","scene_count","unique_source_hashes","gacrux_free_quota_attested","gacrux_key_present","tts_calls","paid_video_calls","video_exists","approval")}
+          s["run_url"]="https://github.com/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/"+os.environ["GITHUB_RUN_ID"]
+          api="repos/"+os.environ["GITHUB_REPOSITORY"]+"/contents/reports/peter_rabbit_20261029_assets.json"
+          body={"message":"Record verified Peter Rabbit asset-only result (no Gacrux, no MP4)",
+                "content":base64.b64encode((json.dumps(s,ensure_ascii=False,indent=2)+"\n").encode()).decode()}
+          old=subprocess.run(["gh","api",api],text=True,capture_output=True)
+          if old.returncode==0:body["sha"]=json.loads(old.stdout)["sha"]
+          r=subprocess.run(["gh","api","-X","PUT",api,"--input","-"],input=json.dumps(body),text=True,capture_output=True)
+          if r.returncode:raise RuntimeError(r.stderr[:500])
+          print("STATUS_PERSISTED",s["run_url"])
+          PY
