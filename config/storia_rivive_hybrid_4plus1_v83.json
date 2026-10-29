@@ -1,0 +1,157 @@
+{
+  "version": "V83-HYBRID-5X1",
+  "project": "La Storia Rivive",
+  "editorial_reference": "docs/LA_STORIA_RIVIVE_GOLD_REFERENCE_43054_43055_43056_V82.md",
+  "goal": "A seamless-feeling documentary montage with 4 restored photo scenes and 1 five-second authentic moving color Vidu insert, while preserving the identity of real archival people and objects.",
+  "scenes": {
+    "target": 5,
+    "classical_photo": 4,
+    "vidu_motion_color": 1,
+    "distinct_authentic_source_shots": 5,
+    "no_repeated_crops_as_distinct_shots": true,
+    "sequence": [
+      {
+        "slot": 1,
+        "type": "auto",
+        "narrative_role": "opening_hook"
+      },
+      {
+        "slot": 2,
+        "type": "auto",
+        "narrative_role": "build"
+      },
+      {
+        "slot": 3,
+        "type": "auto",
+        "narrative_role": "climax"
+      },
+      {
+        "slot": 4,
+        "type": "auto",
+        "narrative_role": "development"
+      },
+      {
+        "slot": 5,
+        "type": "auto",
+        "narrative_role": "memorable_ending"
+      }
+    ],
+    "vidu_position": "choose 1,3,or 5 based on source material, motion action and narrative; never rigidly 3"
+  },
+  "classical": {
+    "source": "verified real public-domain or CC0 archival MOVING film",
+    "pre_freeze_s": {
+      "min": 0.9,
+      "max": 2.1
+    },
+    "freeze_required": "exact original frame",
+    "photo": "source-locked modern-quality full-color photoreal still, real AI reconstruction",
+    "reveal_s": {
+      "min": 0.18,
+      "max": 0.33
+    },
+    "photo_hold_s": {
+      "min": 1.2,
+      "max": 2.5
+    },
+    "no_static_photos_called_archival_motion": true
+  },
+  "vidu": {
+    "model_default": "viduq2-pro-fast",
+    "default_duration_s": 5,
+    "start_frame": "exact last black-and-white archival source frame, same crop and camera",
+    "first_second": "B/W becomes natural color by 1.15 seconds",
+    "next_four_seconds": "visible coherent continuous FULL COLOR movement, not freeze or pan/zoom only",
+    "keyframe_strategy": "prefer source photo at 1-second color target plus motion-preserving prompt, do not force final freeze in last seconds",
+    "frame_matching_threshold": 0.9,
+    "sustained_color_median_saturation_min": 17,
+    "motion_metric": "per 0.4s median grayscale difference requires >=0.9 on >= half samples; independent optical-flow and human QA recommended",
+    "high_risk": [
+      "small faces",
+      "hands",
+      "wheels",
+      "moving crowds",
+      "rails",
+      "car parts",
+      "historical signs",
+      "ladders"
+    ],
+    "fail_action": "reject clip or use classical fallback, NEVER automatically resubmit paid API",
+    "budget": {
+      "approval": "single-scene exact image/prompt/duration/model/cost before each paid POST",
+      "balance_before_and_after": true,
+      "max_billable_requests_per_scene": 1,
+      "retry_billable": false,
+      "duplicate_reservation": "GitHub unique ledger before POST",
+      "preserve_existing_vidu_clip": true
+    }
+  },
+  "continuity": {
+    "audio": "one uninterrupted original/licensed music bed, revelation cues as accents",
+    "color_grading": "white balance, gamma, controlled saturation match across shots, do not blur detailed faces",
+    "crop": "same aspect 9:16 (720x1280), no unexpected face cutoffs",
+    "fps": 30,
+    "cuts": "match cut on movement/composition/beat between DIFFERENT archival shots; no pretending a single camera take",
+    "within_vidu": "last original monochrome source frame == first generated Vidu frame, visually check perspective match",
+    "after_vidu": "avoid ending on artificial frozen frame, preserve motion until next archival shot",
+    "no_black_frames": true,
+    "no_ghosted_crossdissolves_across_people": true,
+    "human_scene_order_review": true
+  },
+  "source_rights": {
+    "historical": "PD/CC0 explicitly verified for Italy and origin jurisdiction",
+    "color_and_faces": "AI reconstruction, hypothesis not original color or original identities",
+    "Vidu": "synthetic movement separate from historical original",
+    "social_publish": "manual art/right review before publication"
+  },
+  "qa": {
+    "technical": [
+      "sha256 per asset",
+      "manifest+source mapping",
+      "5 genuinely distinct shots",
+      "no generic fillers",
+      "frame-to-photo match",
+      "first Vidu frame match",
+      "first-second color",
+      "continuous motion Vidu",
+      "consistent aspect/fps",
+      "full decode H264/AAC",
+      "ZIP CRC",
+      "verify downloads from external GitHub release"
+    ],
+    "artistic": [
+      "view full video at normal playback",
+      "natural faces not plastic",
+      "no person↔object swaps",
+      "no invented limbs/people",
+      "Vidu not replacing authentic historic footage",
+      "music emotional and not intrusive"
+    ],
+    "preview_vs_final": "Fail closed: technical preview can show legacy mismatches flagged; production must pass strict gates and manual review"
+  },
+  "delivery": {
+    "master": "MP4 H264 yuv420p AAC faststart",
+    "cover": "JPG elegant English place + period",
+    "kit": "ZIP with MP4, cover, 4 social descriptions, source and QA",
+    "direct_android": "GitHub Release direct MP4 and ZIP; no sandbox-only links",
+    "archive": "import to Video Library Studio only after its own publishing gate and verify playback",
+    "posts": [
+      "Facebook",
+      "Instagram",
+      "TikTok",
+      "YouTube"
+    ]
+  },
+  "pilot": {
+    "label": "PARIS 1900–1918, V83 TECHNICAL_PREVIEW",
+    "existing_vidu_1900": "1013429649004335104",
+    "classical_1918": "Four authentic-film/photo pairs from V68",
+    "spend_new_vidu_credits": 0,
+    "warning": "Different periods, and old Vidu transition took too long to color: demo of montage only; NOT a quality-approved example"
+  },
+  "production": {
+    "status": "PROTOTYPE_WITH_STRICT_GATES",
+    "do_not_modify": "V82 base renderer, V55 archival publishing, 4x1 ArtVision rules",
+    "next_step": "Create a same-period matching animated-color Vidu 5-second insert only after individual preflight and approval; then use strict gate"
+  }
+}
