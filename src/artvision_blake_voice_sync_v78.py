@@ -84,23 +84,33 @@ def _museum_keys(starts,duration):
     exit_start=max(starts[6]+5.,duration-12.)
     keys=[
         (0.,1.,.50,.50),
-        (min(11.,starts[1]*.70),18.,.51,.32),
-        (starts[1],18.,.51,.32),
+        (min(11.,starts[1]*.70),18.,.51,.36),
+        (starts[1],18.,.51,.36),
         (starts[2],17.,.50,.50),
-        (starts[3],20.,.51,.21),
+        (starts[3],20.,.51,.33),
         # Within the first three seconds of each spoken paragraph, place
         # the described subject at the actual center of attention.
         (starts[3]+3.,19.5,.52,.40),
         (starts[4],19.5,.52,.40),
-        (starts[4]+3.,19.,.46,.70),
-        (starts[5],19.,.46,.70),
+        (starts[4]+3.,19.,.46,.63),
+        (starts[5],19.,.46,.63),
         # Female head and arms are on the lower RIGHT of the exact sheet.
         # Pull back so her entire face and shoulders remain on screen.
-        (starts[5]+3.,16.5,.83,.69),
-        (starts[6],16.5,.83,.69),
+        (starts[5]+3.,17.1,.70,.61),
+        (starts[6],17.1,.70,.61),
         (exit_start,17.,.50,.50),
         (duration,1.,.50,.50)
     ]
+    # A detail shot must stay INSIDE the genuine painted rectangle. Blake's
+    # source sheet includes authentic handwritten paper margins; never
+    # confuse them with the camera-frame during immersion.
+    for t,zoom,fx,fy in keys[1:-1]:
+        if zoom>=16:
+            halfw=visual.W/(2*112.0*zoom)
+            halfh=visual.H/(2*141.0*zoom)
+            if not (.107<fx-halfw and fx+halfw<.891 and
+                    .087<fy-halfh and fy+halfh<.881):
+                raise ValueError("Museum detail would expose sheet margins: "+str(t))
     if any(a[0]>=b[0] for a,b in zip(keys,keys[1:])):
         raise ValueError("Continuous camera keys not chronologically ordered")
     return keys
