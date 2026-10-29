@@ -1,0 +1,88 @@
+name: "WOW LAB — Hokusai Android external download only"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-hokusai-wave-wow-20261029
+    paths:
+      - "wow_lab/experiments/hokusai_wave/render_downloadable.py"
+      - ".github/workflows/wow-lab-hokusai-android-download.yml"
+permissions:
+  contents: read
+concurrency:
+  group: "wow-lab-hokusai-independent-download"
+  cancel-in-progress: false
+jobs:
+  make_mp4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free CPU tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+      - name: Get authentic Public Domain Hokusai artwork from the Metropolitan Museum
+        run: |
+          python wow_lab/experiments/hokusai_wave/fetch_met_image.py
+      - name: Render separate 11-second H264/AAC Android file
+        run: |
+          python wow_lab/experiments/hokusai_wave/render_downloadable.py
+      - name: Independently validate new MP4 and extracted source license
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("wow_lab/experiments/hokusai_wave/output")
+          d=json.loads((p/"QA.json").read_text())
+          source=json.loads(Path("wow_lab/experiments/hokusai_wave/assets/SOURCE_MANIFEST.json").read_text())
+          assert d["full_ffmpeg_decode"] and d["paid_api_eur"]==0
+          assert not d["is_auto_published_to_social"] and d["status"]=="needs_human_review"
+          assert d["object_id"]==45434 and source["isPublicDomain"] is True
+          assert (p/"HOKUSAI_WOW_POP_OUT_ANDROID.mp4").stat().st_size>90000
+          assert (p/"HOKUSAI_WOW_ANDROID_KIT.zip").stat().st_size>90000
+          print("WOW LAB HOKUSAI Android MP4 artifact verified; no parent project modified.")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HOKUSAI_WOW_ANDROID_DOWNLOAD
+          path: wow_lab/experiments/hokusai_wave/output/*
+          if-no-files-found: error
+          retention-days: 30
+  publish_public_download:
+    needs: make_mp4
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: HOKUSAI_WOW_ANDROID_DOWNLOAD
+          path: output/
+      - name: Create only an experimental GitHub prerelease; do not publish to social or ArtVision
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="wow-lab-hokusai-45434-android-20261029"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "An archived Hokusai release already exists. Refusing to overwrite files."
+            exit 0
+          fi
+          gh release create "$tag" \
+            "output/HOKUSAI_WOW_POP_OUT_ANDROID.mp4" \
+            "output/HOKUSAI_WOW_ANDROID_KIT.zip" \
+            "output/03_COMPARISON.jpg" \
+            "output/QA.json" \
+            --title "WOW LAB · Hokusai wave · Android MP4 experimental" \
+            --notes "ArtVision WOW LAB independent test based on The Metropolitan Museum of Art CC0 Hokusai print 45434. 11-second MP4 H.264/AAC. Cinematic 2.5D, not a true 3D mesh. Human artistic review pending. No social publishing, no paid APIs, and no modification of any core ArtVision work." \
+            --target experiment/wow-lab-hokusai-wave-wow-20261029 \
+            --prerelease
+          gh release view "$tag" --json tagName,url,assets --jq '{tagName,url,assets:[.assets[].name]}'
