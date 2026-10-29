@@ -1,0 +1,71 @@
+name: "V83 NEW YORK 1911 — real archival film and source-locked restored freezes"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v83-nyc1911.yml"
+      - "src/storia_v83_new_york_1911.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  real_new_york_1911:
+    runs-on: ubuntu-latest
+    timeout-minutes: 36
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_XET: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check actual production code
+        run: python -m py_compile src/storia_v83_new_york_1911.py
+      - name: Install zero-cost local restoration tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow huggingface_hub onnxruntime
+      - name: Download true historical film, colorize source-locked frames and render original montage
+        run: python -u src/storia_v83_new_york_1911.py
+      - name: Verify full playable MP4 with soundtrack and intact ZIP
+        run: |
+          set -euo pipefail
+          D=output/storia_v83_new_york_1911
+          F="$D/LA_STORIA_RIVIVE_NEW_YORK_1911_V83.mp4"
+          test -s "$F"
+          ffmpeg -v error -xerror -i "$F" -f null -
+          unzip -t "$D/LA_STORIA_RIVIVE_NEW_YORK_1911_KIT.zip"
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json "$F"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V83_NEW_YORK_1911_AUTHENTIC_FILM_RESTORATION
+          path: |
+            output/storia_v83_new_york_1911/LA_STORIA_RIVIVE_*.mp4
+            output/storia_v83_new_york_1911/LA_STORIA_RIVIVE_*.zip
+            output/storia_v83_new_york_1911/COVER.jpg
+            output/storia_v83_new_york_1911/BEFORE_AFTER_ACTUAL_GENERATED.jpg
+            output/storia_v83_new_york_1911/*QA.json
+            output/storia_v83_new_york_1911/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Release permanent direct-download file; do not post on private site or socials
+        run: |
+          set -euo pipefail
+          D=output/storia_v83_new_york_1911
+          TAG=storia-rivive-new-york-1911-v83-real-archival-color
+          files=("$D/LA_STORIA_RIVIVE_NEW_YORK_1911_V83.mp4" "$D/LA_STORIA_RIVIVE_NEW_YORK_1911_KIT.zip" "$D/COVER.jpg" "$D/BEFORE_AFTER_ACTUAL_GENERATED.jpg" "$D/QA.json")
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --latest=false --prerelease --title "La Storia Rivive — NEW YORK · 1911 — V83" --notes "True public-domain historical moving footage from Wikimedia Commons, 1911, Svenska Biografteatern. No Vidu/paid APIs. Source-aligned chroma-color restoration of four frozen frames, no invented faces or objects; original composed ambient music. Human aesthetic verification and reuse rights in Italy pending; do not auto-publish on social or private library." "${files[@]}"
+          fi
+          actual=$(stat -c %s "$D/LA_STORIA_RIVIVE_NEW_YORK_1911_V83.mp4")
+          remote=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[]|select(.name=="LA_STORIA_RIVIVE_NEW_YORK_1911_V83.mp4")|.size')
+          test "$actual" = "$remote"
+          echo "VERIFIED_VIDEO_BYTES=$remote"
