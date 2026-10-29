@@ -21,12 +21,15 @@ def _need(err,predicate,msg):
     if not predicate:err.append(msg)
 
 def is_new_storia(manifest):
-    if manifest.get("legacy_historical_master_readonly") is True:return False
     kind=str(manifest.get("format",manifest.get("format_name",""))).lower().strip()
     if not (kind=="storia_rivive" or "storia rivive" in kind):return False
-    # A manifest without an explicit date on new production MUST NOT bypass V94.
+    # A new reel cannot bypass the policy by merely calling itself 'legacy'.
     version=manifest.get("quality_policy_version")
     date=str(manifest.get("production_date",""))
+    legacy=manifest.get("legacy_historical_master_readonly") is True
+    if legacy and date and date<"2026-10-30" and version!="V94":
+        return False
+    # Missing dates must fail closed for any explicitly marked historical format.
     return version=="V94" or not date or date>="2026-10-30"
 
 def inspect(manifest,phase="delivery",policy=None):
