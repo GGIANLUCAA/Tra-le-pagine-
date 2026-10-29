@@ -58,6 +58,28 @@ class MuseumV46GateTests(unittest.TestCase):
         errors=gate.validate_profile(profile)
         self.assertTrue(any('verifiable reference URL' in e for e in errors))
 
+    def test_real_approved_cyclops_camera_is_not_falsely_rejected(self):
+        # True per-frame differences measured on the user's approved V46 MP4
+        # at ~3.35 s: 22.81 max, 21.37 baseline, ratio 1.07.
+        diffs=[20.9,21.2,21.37,22.81,21.6,21.4,20.9,22.1]
+        info=gate.describe_motion_discontinuity(diffs)
+        self.assertTrue(info['passed_transition_continuity'])
+        self.assertLess(info['spike_ratio_vs_neighbour_median'],1.2)
+
+    def test_new_continuous_v57_pilot_does_not_false_positive(self):
+        # Real 1080x1920 V57 pilot ~6.30 s: 22.02 max, local median 20.92.
+        diffs=[20.5,20.92,21.15,22.02,21.7,20.75,20.9]
+        self.assertTrue(gate.describe_motion_discontinuity(diffs)['passed_transition_continuity'])
+
+    def test_original_hokusai_and_homer_hard_cuts_are_rejected(self):
+        # Real MP4 measurements: Hokusai 72-128 vs 2.3 baseline,
+        # Homer 65-92 vs 0-2.56 baseline.
+        for peak,median in [(72.28,2.3),(128.46,2.45),(65.92,0.0),(92.10,2.56)]:
+            diffs=[median,median*.75,median*1.1,peak,median*.9,median]
+            info=gate.describe_motion_discontinuity(diffs)
+            self.assertFalse(info['passed_transition_continuity'])
+            self.assertTrue(info['isolated_hard_cut_detected'])
+
     def test_approximate_measured_jump_semantics(self):
         # The direct original MP4 review measured 74/130 for Hokusai and
         # 67/93 for Homer. Those real measurements must never be approved.
