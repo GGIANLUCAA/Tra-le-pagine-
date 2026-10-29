@@ -69,6 +69,8 @@ jobs:
         run: python -m unittest discover -s tests -p "test_artvision_four_variants_gate.py" -v
       - name: "ArtVision V55: kit MP4, copertina, post, ZIP e apertura reale"
         run: python -m unittest discover -s tests -p "test_artvision_delivery_v55.py" -v
+      - name: "ArtVision V55: private dossier sync safety without network"
+        run: python -m unittest discover -s tests -p "test_video_library_dossier_sync_v55.py" -v
       - name: Routing, schede, hash e MP4 reale
         run: python -m unittest discover -s tests -p "test_video_director_v13.py" -v
       - name: Regia V38 senza stampini o quote immagini

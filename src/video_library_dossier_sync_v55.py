@@ -67,6 +67,14 @@ def prepare(manifest):
         raise ValueError("Attachment invalid or over 250 KB")
     return video,size,docs
 
+def remote_video_state(remote, expected_bytes):
+    """Never attach a dossier to a missing/deleted or wrong-size private MP4."""
+    if remote.get("deleted") or not remote.get("exists"):
+        return "archive_sync_pending"
+    if remote.get("size") != expected_bytes:
+        return "size_conflict"
+    return "present_size_matched_hash_unverified"
+
 def run(paths,dry_run):
     prepared=[(*prepare(json.loads(p.read_text(encoding="utf8"))),str(p)) for p in paths]
     if len({r[0] for r in prepared})!=len(prepared):
@@ -102,13 +110,21 @@ def run(paths,dry_run):
         return r.json()
     for video,size,docs,origin in prepared:
         remote=api("GET","/status",{"key":video})
-        if remote.get("deleted") or not remote.get("exists") or remote.get("size")!=size:
-            raise RuntimeError("MP4 absent/different size in private archive: "+video+" "+repr(remote))
+        remote_state=remote_video_state(remote,size)
+        if remote_state=="archive_sync_pending":
+            print(json.dumps({"video":video,"status":"ARCHIVE_SYNC_PENDING_VIDEO_NOT_IMPORTED",
+                              "video_sha256":"local_reference_only",
+                              "note":"No private MP4 yet; no text upload, approval or publication"},ensure_ascii=False))
+            continue
+        if remote_state=="size_conflict":
+            raise RuntimeError("MP4 SIZE CONFLICT in private archive: "+video+" "+repr(remote))
         newly_stored=0
+        existing_unverified=0
         for name,data in docs.items():
             params={"video":video,"name":name}
             previous=api("GET","/production-file-status",params)
             if previous.get("exists"):
+                existing_unverified+=1
                 print(json.dumps({"video":video,"file":name,"result":"EXISTING_UNTOUCHED_HASH_UNVERIFIED"}))
                 continue
             value=api("POST","/production-file",{**params,"sha256":digest(data)},body=data)
@@ -118,7 +134,8 @@ def run(paths,dry_run):
             newly_stored+=1
             print(json.dumps({"video":video,"file":name,"result":"PRIVATE_STORED","sha256":digest(data)}))
         print(json.dumps({"video":video,"new_text_files":newly_stored,
-                          "status":"TEXT_DOSSIER_SYNCED_COVER_ZIP_UNVERIFIED",
+                          "existing_text_files_hash_unverified":existing_unverified,
+                          "status":"TEXT_ATTACHMENTS_PRESENT_HASH_UNVERIFIED_COVER_ZIP_UNVERIFIED",
                           "video_remote_sha256":"not_available",
                           "artistic_approval":False,"social_publication":False}))
 

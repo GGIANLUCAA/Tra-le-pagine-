@@ -17,6 +17,22 @@ def valid():
             "recipe":{"video":{"sha256":h},"review_state":"rendered_needs_review"}}
 
 class SyncValidation(unittest.TestCase):
+    def test_turner_real_artifact_staging_validates_offline(self):
+        import json
+        p=SCRIPT.parents[1]/"docs"/"productions"/"2026-10-28-turner-temeraire-v55-research-1915"/"ARCHIVE_STAGING_V55.json"
+        data=json.loads(p.read_text(encoding="utf8"))
+        key,size,docs=v55.prepare(data)
+        self.assertEqual(key,"ARTVISION_TURNER_CINEMA_MUSEUM_V55_REVIEW.mp4")
+        self.assertEqual(size,25776806)
+        self.assertEqual(data["video_sha256"],"dcac4d5155598a42fd3fc29f06f455ccf38a5f63da4a0f06ef9286cbaccc4ea8")
+        self.assertEqual(len([k for k in docs if k.startswith("POST_")]),4)
+    def test_private_mp4_missing_stays_pending(self):
+        self.assertEqual(v55.remote_video_state({"exists":False},123456),"archive_sync_pending")
+        self.assertEqual(v55.remote_video_state({"exists":True,"deleted":True,"size":123456},123456),"archive_sync_pending")
+    def test_private_mp4_size_conflict_is_not_silently_skipped(self):
+        self.assertEqual(v55.remote_video_state({"exists":True,"size":123455},123456),"size_conflict")
+    def test_private_mp4_size_match_does_not_prove_sha(self):
+        self.assertEqual(v55.remote_video_state({"exists":True,"size":123456},123456),"present_size_matched_hash_unverified")
     def test_accepted(self):
         key,size,docs=v55.prepare(valid())
         self.assertEqual((key,size),("Example.mp4",123456))
