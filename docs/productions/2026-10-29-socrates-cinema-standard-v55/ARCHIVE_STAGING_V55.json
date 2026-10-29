@@ -1,0 +1,115 @@
+{
+  "schema": "artvision-v55-archive-staging-v1",
+  "video_key": "ARTVISION_JACQUES_LOUIS_DAVID_CINEMA_STANDARD_V55_REVIEW.mp4",
+  "video_sha256": "4ea696772dd80e03a73c7b3570a22c7915787d47b77822a97ee040cbca959ce9",
+  "video_bytes": 2402408,
+  "review_state": "rendered_needs_review",
+  "posts": {
+    "facebook": "Un uomo sta per bere la cicuta. Eppure è l'unico a non sembrare spaventato. In The Death of Socrates, Jacques-Louis David costruisce un dramma di gesti: la coppa, la mano rivolta al cielo, gli allievi disperati. Guardate poi Platone seduto all'estrema sinistra: la sua presenza collega l'immagine al racconto scritto. Opera del 1787, Metropolitan Museum of Art. Immagine: The Met Open Access, pubblico dominio. Musica: Water Lily — Kevin MacLeod (CC BY 4.0), incompetech.com.",
+    "instagram": "La mano indica il cielo. L'altra raggiunge il veleno. Il contrasto fra il volto sereno di Socrate e il dolore dei suoi discepoli rende questa tela di Jacques-Louis David un'immagine indimenticabile. Scorriamo i dettagli originali fino a ritrovare la composizione intera. The Death of Socrates, 1787, The Met. Fonte visiva: Met Open Access (PD). Soundtrack: Water Lily by Kevin MacLeod, CC BY 4.0, incompetech.com. #StoriaDellArte #JacquesLouisDavid #Socrate",
+    "tiktok": "Sta per morire. Ma guarda chi è il più calmo della stanza. La coppa della cicuta arriva, un allievo distoglie lo sguardo e Socrate continua a indicare il cielo. Non è un effetto AI: sono dettagli reali del dipinto The Death of Socrates (1787) di Jacques-Louis David, custodito al Metropolitan Museum of Art. Opera originale: The Met, pubblico dominio. Water Lily — Kevin MacLeod, CC BY 4.0, incompetech.com. #arte #socrate #painting",
+    "youtube": "Perché Socrate sembra così sereno nel momento della morte? In questo breve percorso cinematografico osserviamo la coppa, i gesti, la figura di Platone, le catene e i discepoli prima di tornare all'intera composizione neoclassica. The Death of Socrates (1787), Jacques-Louis David, The Metropolitan Museum of Art, accession 31.45. Riproduzione ufficiale The Met Open Access, pubblico dominio. Colonna sonora: Water Lily di Kevin MacLeod, concessa CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), fonte incompetech.com."
+  },
+  "source_post_sha256": {
+    "facebook": "c3b54b8473d370e1c60d35134ff61a70a7b134849ec99d920d4e22130ab0a8bc",
+    "instagram": "106b99371a62279e28152019a063e6d14bfc36c51919c44bf665c73c46bc1d22",
+    "tiktok": "dec41eb746bb0168ca7492d29cae4e6c69b496801199b6278b8a26e262a2cb4c",
+    "youtube": "00f7a14f714812e21521353c8fccd61ab0a4c5ff38b56a2c4d3af1e4265d9b11"
+  },
+  "rights_markdown": "# The Death of Socrates — sources and rights\n\nThe Metropolitan Museum of Art, object 436105, accession 31.45, Jacques Louis David, 1787, 129.5 x 196.2 cm. Official collection: https://www.metmuseum.org/art/collection/search/436105\nMet Open Access API: https://collectionapi.metmuseum.org/public/collection/v1/objects/436105 . The exact downloaded primaryImage is marked isPublicDomain=true, hash eaff5a04103361fed9fba6f10ea7bed80ccdc595d664b6997c6bd32f0eee06a6. Frame exterior measurements are documented, but appearance and gallery reconstruction are not authenticated. No Museum film is produced here.\n\nRecording: Water Lily by Kevin MacLeod, original recording at https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035 . License Creative Commons Attribution 4.0: https://creativecommons.org/licenses/by/4.0/ . Recording SHA256 b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6. This film contains no narration and no new AI-generated artwork. Attribution is retained in each social post.\n",
+  "recipe": {
+    "schema": "video-recipe-v13",
+    "project_id": "383d1f5b-275d-468b-8089-0e5d91e32dee",
+    "created_utc": "2026-10-29T12:22:11.226648+00:00",
+    "format": "artvision_cinema",
+    "topic": "The Death of Socrates",
+    "recommended_preset": "cinema_v6",
+    "applied_preset": "Read actual source configurations; not inferred from format label",
+    "status": "rendered_needs_review",
+    "code": {
+      "commit": "3d5079bbe17947b1e45e95b62c02ed114aa7d79d",
+      "tracked_changes": false
+    },
+    "video": {
+      "name": "ARTVISION_JACQUES_LOUIS_DAVID_CINEMA_STANDARD_V55_REVIEW.mp4",
+      "file": "ARTVISION_JACQUES_LOUIS_DAVID_CINEMA_STANDARD_V55_REVIEW.mp4",
+      "sha256": "4ea696772dd80e03a73c7b3570a22c7915787d47b77822a97ee040cbca959ce9",
+      "bytes": 2402408
+    },
+    "cover": {
+      "name": "COPERTINA.jpg",
+      "file": "COPERTINA.jpg",
+      "sha256": "a73a815d90a99e0b9e164c593f4529f3949f5162566d7f1bd7d3a26cd5807e49",
+      "bytes": 479629
+    },
+    "sources": [
+      {
+        "name": "PROJECT_V13.json",
+        "file": "recipe_assets/c42f160946ce1819280a87853e5979af26550bd9d5c2aa8d08154ad4825bc59d.json",
+        "sha256": "c42f160946ce1819280a87853e5979af26550bd9d5c2aa8d08154ad4825bc59d",
+        "bytes": 13198
+      },
+      {
+        "name": "production_adapter_v16.py",
+        "file": "recipe_assets/daf204f3cc561db6234e2e8d405cc1d10a422057f1ee71fb354ea481df13a339.py",
+        "sha256": "daf204f3cc561db6234e2e8d405cc1d10a422057f1ee71fb354ea481df13a339",
+        "bytes": 10233
+      },
+      {
+        "name": "ARTVISION_4X1_PLAN.json",
+        "file": "recipe_assets/2a8a05db41e455a8ef194c034e1b00257ef6d282908c4bb17c3515d2ab388d8c.json",
+        "sha256": "2a8a05db41e455a8ef194c034e1b00257ef6d282908c4bb17c3515d2ab388d8c",
+        "bytes": 26378
+      },
+      {
+        "name": "editorial_rules.json",
+        "file": "recipe_assets/2978ea9651305b8c2614fef2563c5e9db18767f6bd747d0cdeb09bf8e852ff7d.json",
+        "sha256": "2978ea9651305b8c2614fef2563c5e9db18767f6bd747d0cdeb09bf8e852ff7d",
+        "bytes": 39063
+      },
+      {
+        "name": "met_original.jpg",
+        "file": "recipe_assets/eaff5a04103361fed9fba6f10ea7bed80ccdc595d664b6997c6bd32f0eee06a6.jpg",
+        "sha256": "eaff5a04103361fed9fba6f10ea7bed80ccdc595d664b6997c6bd32f0eee06a6",
+        "bytes": 1793830
+      },
+      {
+        "name": "water_lily_original.mp3",
+        "file": "recipe_assets/b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6.mp3",
+        "sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+        "bytes": 4612305
+      },
+      {
+        "name": "CINEMA_PLAN_V55.json",
+        "file": "recipe_assets/b51dda3fb8cc0ad6dfc5ea05dcf52047ee4d6911850b0556a268321be449d781.json",
+        "sha256": "b51dda3fb8cc0ad6dfc5ea05dcf52047ee4d6911850b0556a268321be449d781",
+        "bytes": 3974
+      },
+      {
+        "name": "artvision_cinema_prepared_v55.py",
+        "file": "recipe_assets/8ff936c135438745f17ffce39e9be32437ec51c914cbc5269f979e16e46f38a8.py",
+        "sha256": "8ff936c135438745f17ffce39e9be32437ec51c914cbc5269f979e16e46f38a8",
+        "bytes": 10318
+      },
+      {
+        "name": "STORYBOARD_CINEMA_V55.json",
+        "file": "STORYBOARD_CINEMA_V55.json",
+        "sha256": "bbb1910e22489f8aa998b06bb0aa2af1681f58f5d563546dbc07d5271efe59ac",
+        "bytes": 4188
+      }
+    ],
+    "technical": {
+      "duration_seconds": 35.625011,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "subtitle_streams": 0,
+      "burned_in_text_checked": false
+    },
+    "artistic_review": "pending",
+    "publication": "not_performed_by_capture",
+    "archive_transfer": "not_performed_by_capture",
+    "review_state": "rendered_needs_review"
+  }
+}
