@@ -128,6 +128,27 @@ class DeliveryV55Tests(unittest.TestCase):
         with zipfile.ZipFile(full_zip) as archive:
             self.assertIn("ARTVISION_CONTRACT_V25.json", archive.namelist())
 
+    def test_museum_v46_is_required_before_v25_final_release(self):
+        sha = hashlib.sha256(self.video.read_bytes()).hexdigest()
+        self.recipe.write_text(json.dumps({
+            "schema": "video-recipe-v13", "variant": "cinema_museum",
+            "review_state": "rendered_needs_review",
+        }), encoding="utf-8")
+        contract_file = self.root / "ARTVISION_CONTRACT_V25.json"
+        checks = {key: {"passed": True} for key in (
+            "opening", "visual", "cover", "music", "rights", "full_watch", "replicability")}
+        contract_file.write_text(json.dumps({
+            "schema": "artvision-release-contract-v25",
+            "review_video_sha256": sha, "reviews": checks,
+        }), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "V46 Museum"):
+            pack(self.video, self.cover, self.posts, self.rights,
+                 self.recipe, self.root / "forbidden_release", release_contract=contract_file)
+        review = pack(self.video, self.cover, self.posts, self.rights,
+                      self.recipe, self.root / "review_only")
+        self.assertEqual(review["release_gate"]["museum_v46_status"], "pending_or_blocked")
+        self.assertEqual(review["delivery"]["site_import_V25_contract"], "missing_or_not_provided")
+
     def test_site_catalog_missing_is_not_falsely_confirmed(self):
         class FakeResponse:
             def __enter__(self): return self
