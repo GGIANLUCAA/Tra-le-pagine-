@@ -24,6 +24,10 @@ jobs:
       - name: Verify free local tools and install public Python dependencies
         run: |
           set -euo pipefail
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
           command -v ffmpeg
           command -v ffprobe
           python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3"
