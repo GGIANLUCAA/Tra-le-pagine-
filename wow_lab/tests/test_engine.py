@@ -26,7 +26,7 @@ class WowLabContractTests(unittest.TestCase):
             engine.slot_id("not-a-time")
 
     def test_artwork_rights_fail_closed(self):
-        rec = {"objectID": 437133,"isPublicDomain": True,"objectName":"Painting",
+        rec = {"objectID": 436535,"isPublicDomain": True,"objectName":"Painting",
                "primaryImage":"https://images.metmuseum.org/photo.jpg"}
         self.assertTrue(engine.valid_object(rec))
         rec["isPublicDomain"] = False
