@@ -15,6 +15,7 @@ from pathlib import Path
 from artvision_museum_director_v69 import evaluate
 from artvision_museum_stage_v70 import plan_stage
 from artvision_museum_camera_v64 import camera_at
+from artvision_museum_frame_focus_v73 import focus_storyboard
 from artvision_recipe_v68 import build_recipe, inspect, VARIANTS
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -69,6 +70,7 @@ def beats_for_duration(seconds, center_x, center_y):
            camera_at(seconds,seconds,starts,poses)[2])>1e-8:
         raise PlanningBlocked("Camera does not return to gallery")
     return {"module":"artvision_museum_camera_v64.camera_at",
+            "frame_visibility_v73":focus_storyboard(seconds,starts,poses),
             "duration_seconds":seconds,"beat_starts_seconds":starts,
             "poses":[list(p) for p in poses],
             "sampled_keyframes":keyframes,
