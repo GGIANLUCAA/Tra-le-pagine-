@@ -296,7 +296,7 @@ def ffmpeg_render(slug,stills,music,seconds,output):
     args+=['-filter_complex',';'.join(flt),'-map','[v]','-map',f'{len(stills)}:a:0',
         '-t',str(total),'-r',str(FPS),'-c:v','libx264','-preset','veryfast','-crf','20',
         '-pix_fmt','yuv420p','-c:a','aac','-b:a','160k',
-        '-af',f'afade=t=in:st=0:d=.35,afade=t=out:st={total-1.8}:d=1.8',
+        '-af',f'afade=t=in:st=0:d=0.35,afade=t=out:st={total-1.8}:d=1.8',
         '-movflags','+faststart',str(output)]
     subprocess.run(args,check=True,timeout=1500)
 
