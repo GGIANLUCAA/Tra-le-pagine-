@@ -464,12 +464,38 @@
       "variants": {
         "critico_standard": {
           "status": "blocked",
-          "blocker_code": "blocked_voice_unavailable"
+          "blocker_code": "blocked_voice_free_tier_not_verified",
+          "legacy_blocker": "blocked_voice_unavailable",
+          "script_file": "docs/productions/2026-10-29-socrates-critico-master-v60/COPIONE_GACRUX_V62.txt",
+          "script_words": 366,
+          "voice_provider": "Google Gemini",
+          "voice_model": "gemini-3.8-flash-tts",
+          "voice_name": "Gacrux",
+          "voice_gate_workflow": ".github/workflows/artvision-socrates-gacrux-v62.yml",
+          "voice_gate_actions_run_id": 40892861596,
+          "voice_gate_result": "No cache. GitHub secret present, both verified free-only account variables missing; 0 TTS calls.",
+          "charge_consent": false,
+          "wav_sha256": null,
+          "exact_shared_critic_voice_required": true,
+          "v25_approved": false
         },
         "critico_museum": {
           "status": "blocked",
-          "blocker_code": "blocked_voice_unavailable",
-          "additional_blocker": "blocked_quality_museum_v46_not_met"
+          "blocker_code": "blocked_voice_free_tier_not_verified",
+          "additional_blocker": "blocked_quality_museum_v46_not_met",
+          "legacy_blocker": "blocked_voice_unavailable",
+          "script_file": "docs/productions/2026-10-29-socrates-critico-master-v60/COPIONE_GACRUX_V62.txt",
+          "script_words": 366,
+          "voice_provider": "Google Gemini",
+          "voice_model": "gemini-3.8-flash-tts",
+          "voice_name": "Gacrux",
+          "voice_gate_workflow": ".github/workflows/artvision-socrates-gacrux-v62.yml",
+          "voice_gate_actions_run_id": 40892861596,
+          "voice_gate_result": "No cache. GitHub secret present, both verified free-only account variables missing; 0 TTS calls.",
+          "charge_consent": false,
+          "wav_sha256": null,
+          "exact_shared_critic_voice_required": true,
+          "v25_approved": false
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -542,7 +568,7 @@
           "no_cropped_foreground_visitors_v61": true
         }
       },
-      "note": "Two genuine Cinema slots exist, V61 Museum replaces V60 as latest review candidate but no fifth variant. Both Critico blocked exact Google Gacrux voice; 0 V25 approvals; freeze other artworks."
+      "note": "Socrates 2 authentic Cinema MP4 slots (Standard, Museum V61) exist but review-only. Critico Standard and Critico Museum have exact 366-word script but remain blocked until verified FREE-ONLY Gemini Gacrux voice. Actions run 40892861596 safety SUCCESS but no WAV/no Critico video/no paid call. No new painting selected."
     }
   ],
   "last_operational_update": {
