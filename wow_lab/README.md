@@ -38,7 +38,7 @@
 ```bash
 python -m pip install pillow numpy opencv-python-headless
 sudo apt-get install -y ffmpeg
-python wow_lab/engine.py --out output/wow_lab --slot 2026-10-29T20 --test-source-id 437133
+python wow_lab/engine.py --out output/wow_lab --slot 2026-10-29T20 --test-source-id 436535
 ```
 
 Il test utilizza sempre una vera fonte CC0 Met e non modifica i video precedenti. Cartella output ignorata dalle modifiche permanenti.
