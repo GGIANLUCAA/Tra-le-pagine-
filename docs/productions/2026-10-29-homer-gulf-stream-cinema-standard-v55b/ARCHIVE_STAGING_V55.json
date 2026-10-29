@@ -1,0 +1,71 @@
+{
+  "schema": "artvision-v55-archive-staging-v1",
+  "video_key": "ARTVISION_WINSLOW_HOMER_CINEMA_STANDARD_V55B_REVIEW.mp4",
+  "video_sha256": "b28da50e0dac449ef9eca2edffe5ee6ee692702f95ab094d1fadff892d28eb52",
+  "video_bytes": 3730833,
+  "review_state": "rendered_needs_review",
+  "posts": {
+    "facebook": "Un uomo, una barca senza albero, squali sotto la superficie. Nel dipinto The Gulf Stream (1899, rielaborato entro il 1906), Winslow Homer mette la calma di una figura umana contro un oceano senza tregua. Questa versione Cinema Standard attraversa i dettagli autentici del quadro, senza scene artificiali. Opera originale: Metropolitan Museum of Art 06.1234, pubblico dominio. Musica: Water Lily — Kevin MacLeod, CC BY 4.0 (incompetech.com). Quale dettaglio hai notato per primo?",
+    "instagram": "🦈 Guardi l'uomo o gli squali? The Gulf Stream di Winslow Homer lascia sospesa una domanda: resisterà? L'imbarcazione spezzata, il mare scuro, il vortice lontano. Solo dettagli veri dell'opera, 1899 e rielaborata entro il 1906. Met Open Access, 06.1234 (pubblico dominio). 🎵 Water Lily, Kevin MacLeod, CC BY 4.0 (incompetech.com). #WinslowHomer #TheGulfStream #Arte #ArtVision",
+    "tiktok": "Il mare, una barca rotta e gli squali. Ma perché l'uomo sembra così immobile? 👀 The Gulf Stream di Winslow Homer è un quadro dove ogni dettaglio cambia il racconto. Questa versione Cinema Standard usa solo l'immagine autentica del Met (06.1234, pubblico dominio). Water Lily — Kevin MacLeod, CC BY 4.0, incompetech.com. #ArtTok #MuseumArt #WinslowHomer #TheGulfStream",
+    "youtube": "The Gulf Stream — Winslow Homer | ArtVision Cinema Standard. Dipinto del 1899, rielaborato entro il 1906, al Metropolitan Museum of Art (06.1234). Il film esplora in successione gli squali, il marinaio seduto, l'imbarcazione danneggiata, il vortice lontano e le onde, poi ricompone l'intero quadro. La storia e il contesto di impero e schiavitù sono trattati nelle schede, non inventati come animazioni. Opera e riproduzione: Met Open Access / pubblico dominio. Musica Water Lily di Kevin MacLeod, CC BY 4.0, https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035."
+  },
+  "source_post_sha256": {
+    "facebook": "55dae6f8bf9937ed0250c905f3257f74b8d7497614ebbe34ec13fa5d7a78bc78",
+    "instagram": "889df2ba69b3d2e97e57fb3b993e34aeec02257dd442470fbde221445a8644f7",
+    "tiktok": "d7dccd60529ec5ba0556bdd8fde042fc1ab94b6f7eb0f991585aae7757fd1acd",
+    "youtube": "d083ce92f6d71f24e6f522c2415c43bd8a284ea2ee5c70fc7e86644e35f7fb7f"
+  },
+  "rights_markdown": "# The Gulf Stream — Winslow Homer — Cinema Standard V55B\n\nOriginal image: The Metropolitan Museum of Art, 06.1234 (object 11122), public domain / Open Access CC0. Official catalog: https://www.metmuseum.org/art/collection/search/11122. Original Met image: https://images.metmuseum.org/CRDImages/ad/original/DP-20821-001.jpg. Full source SHA256 67fd3b2bb4e07f41dc1991c0e538981ba187ab6e3c08722636f6c347f0611b70.\nPainting: oil on canvas 1899, reworked by 1906, dimensions 71.4 × 124.8 cm. No fabricated gallery or original-frame representation in this Standard version.\nMusic: Water Lily original recording by Kevin MacLeod, license Creative Commons Attribution 4.0 https://creativecommons.org/licenses/by/4.0/. Source https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035. MP3 SHA256 b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6.\nVideo is rendered_needs_review, not approved or publicly released. No paid video API used.",
+  "recipe": {
+    "schema": "video-recipe-v13",
+    "format": "artvision_cinema",
+    "topic": "The Gulf Stream",
+    "status": "rendered_needs_review",
+    "variant": "cinema_standard",
+    "review_state": "rendered_needs_review",
+    "video": {
+      "name": "ARTVISION_WINSLOW_HOMER_CINEMA_STANDARD_V55B_REVIEW.mp4",
+      "file": "ARTVISION_WINSLOW_HOMER_CINEMA_STANDARD_V55B_REVIEW.mp4",
+      "sha256": "b28da50e0dac449ef9eca2edffe5ee6ee692702f95ab094d1fadff892d28eb52",
+      "bytes": 3730833
+    },
+    "cover": {
+      "name": "COPERTINA.jpg",
+      "sha256": "12793680a36c526bca207e807c5389067c04200af8049a08f62228c4f198f952",
+      "bytes": 737616
+    },
+    "sources": [
+      {
+        "name": "met_11122_original.jpg",
+        "sha256": "67fd3b2bb4e07f41dc1991c0e538981ba187ab6e3c08722636f6c347f0611b70",
+        "source": "Met Open Access 11122",
+        "rights": "Public Domain"
+      },
+      {
+        "name": "water_lily_original.mp3",
+        "sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+        "source": "Incompetech Water Lily Kevin MacLeod",
+        "rights": "CC BY 4.0"
+      }
+    ],
+    "technical": {
+      "duration_seconds": 37.333333,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "full_decode": "passed"
+    },
+    "artistic_review": "pending_full_speed_human_review",
+    "publication": "not_performed",
+    "archive_transfer": "pending",
+    "original_full_recipe": "GitHub Actions artifact 12885564867, cinema_standard_rendered/VIDEO_RECIPE_V13.json",
+    "V25_approved": false
+  },
+  "source_artifact": {
+    "run_id": 40848647492,
+    "artifact_id": 12885564867
+  },
+  "notes": "Exact MP4 SHA and social posts generated by real workflow. Recipe here is archival metadata excerpt; complete untouched source recipe remains in GitHub artifact/ZIP. Private MP4 import and V25 approval unverified. Corrective prototype V55 intentionally not counted."
+}
