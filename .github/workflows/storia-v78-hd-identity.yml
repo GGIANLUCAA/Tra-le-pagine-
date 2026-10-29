@@ -1,0 +1,84 @@
+name: "V78 High Detail + local protection of objects"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v78-hd-identity.yml"
+      - "src/storia_v78_hd_selective_identity.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v78-hd-identity-review
+  cancel-in-progress: false
+jobs:
+  preserve_photo_detail:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install only free video dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install --no-cache-dir opencv-python-headless numpy pillow
+      - name: Python lint and semantic hazard unit tests
+        run: |
+          python -m py_compile src/storia_v78_hd_selective_identity.py src/storia_rivive_v77_identity_guard.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v77_identity_guard.py" -v
+      - name: Reuse already verified original film and V76 HD photographic AI candidates
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v76_paris
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 160 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12885194313/zip" --output /tmp/storia_hd_photo_assets.zip
+          unzip -t /tmp/storia_hd_photo_assets.zip >/dev/null
+          unzip -oq /tmp/storia_hd_photo_assets.zip -d output/storia_v76_paris
+          test -s output/storia_v76_paris/PELICOLA_PARIGI_ORIGINALE.webm
+          test -s output/storia_v76_paris/FOTO_AI_03.png
+      - name: Preserve HD face features and patch only limited mechanical objects
+        run: python -u src/storia_v78_hd_selective_identity.py
+      - name: Check authentic movement plus 3 photo freezes and audio
+        run: |
+          set -euo pipefail
+          D=output/storia_v78_paris
+          F="$D/LA_STORIA_RIVIVE_PARIGI_V78_HD_DETTAGLI_FEDeli.mp4"
+          test -s "$F"
+          python -u src/storia_rivive_v74_effect_gate.py --video "$F" --min-cycles 3 --report "$D/V78_FORMAT_QA.json"
+          ffmpeg -v error -xerror -i "$F" -f null -
+          unzip -t "$D/LA_STORIA_RIVIVE_V78_HD_COMPLETO.zip"
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json "$F"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: LA_STORIA_RIVIVE_V78_HD_PHOTO_PREVIEW
+          path: |
+            output/storia_v78_paris/LA_STORIA_RIVIVE_PARIGI_V78_HD_DETTAGLI_FEDeli.mp4
+            output/storia_v78_paris/LA_STORIA_RIVIVE_V78_HD_COMPLETO.zip
+            output/storia_v78_paris/PRIMA_V76_DOPO_V78.jpg
+            output/storia_v78_paris/V78_REGION_QA.json
+            output/storia_v78_paris/FONTI_E_QA.json
+            output/storia_v78_paris/COPERTINA.jpg
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Publish GitHub direct Android preview downloads, NOT site or socials
+        run: |
+          set -euo pipefail
+          D=output/storia_v78_paris
+          TAG=storia-rivive-parigi-v78-hd-volti-ricostruiti
+          files=("$D/LA_STORIA_RIVIVE_PARIGI_V78_HD_DETTAGLI_FEDeli.mp4" "$D/LA_STORIA_RIVIVE_V78_HD_COMPLETO.zip" "$D/PRIMA_V76_DOPO_V78.jpg" "$D/V78_REGION_QA.json")
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --prerelease --latest=false --title "La Storia Rivive — V78 HD e protezione mirata" --notes "Comparative VIDEO PREVIEW, 20.47s, three original Paris source frames: rollback of V77 blur, preserve V76 HD candidate for faces/architecture, source luminance selectively blended ONLY in manually chosen mechanical objects (~4-11% pixels). No new generation, no Vidu or paid APIs. Human semantic review of uncertain people/objects required. True film motion then exact-frame freeze, AI color photographic stills, original audio. No private site/social publishing." "${files[@]}"
+          fi
+          local_size=$(stat -c %s "$D/LA_STORIA_RIVIVE_PARIGI_V78_HD_DETTAGLI_FEDeli.mp4")
+          remote_size=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[]|select(.name=="LA_STORIA_RIVIVE_PARIGI_V78_HD_DETTAGLI_FEDeli.mp4")|.size')
+          test "$local_size" = "$remote_size"
+          echo "V78_DOWNLOAD_VALIDATED"
