@@ -10,6 +10,7 @@ on:
       - "src/artvision_next_render_v55.py"
       - "tests/test_artvision_second_pilot_v69.py"
       - "docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/**"
+      - "docs/productions/2026-10-29-klimt-*-v73/**"
       - "queue/artvision_four_variants_s01_20261028.json"
 permissions:
   contents: read
@@ -28,14 +29,25 @@ jobs:
         run: python src/artvision_four_variants_gate.py check docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_4X1_DOSSIER_V69.json
       - name: V68 per-work recipe structure — does not grant render authorization
         run: python src/artvision_recipe_v68.py validate --recipe docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/ARTVISION_RECIPE_V68.json
-      - name: Preserve truthful external-source blocker until image provider is accessible
+      - name: Confirm four ORIGINAL MP4 identities and 0 automatic V25 approvals
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
           q=json.loads(Path("queue/artvision_four_variants_s01_20261028.json").read_text())
           g=next(x for x in q["groups"] if x["group_id"]=="klimt_the_kiss_belvedere912_1908")
-          assert g["four_video_pilot"]["rendered_count"]==0
+          assert g["four_video_pilot"]["rendered_count"]==4
+          assert g["four_video_pilot"]["approved_count"]==0
+          assert all(v["status"]=="rendered_needs_review" for v in g["variants"].values())
+          assert len(set(v["video_sha256"] for v in g["variants"].values()))==4
+          assert all(v.get("v25_approved") is False for v in g["variants"].values())
           assert len(g["variants"])==4
-          print("VERIFIED_SECOND_PILOT_ONLY: 0 MP4; Wikimedia artwork download HTTP 429 in run 40917785627; do not retry automatically")
+          assert g["four_video_pilot"]["no_automatic_third_work"] is True
+          print("KLIMT: exactly four distinct MP4 SHA, 0 V25 approvals, no third artwork")
           PY
+
+      - name: Official V55 staging dry-run for each real Klimt MP4 (text only, no site import)
+        run: |
+          for variant in critico-standard critico-museum cinema-standard cinema-museum; do
+            python src/video_library_dossier_sync_v55.py "docs/productions/2026-10-29-klimt-${variant}-v73/ARCHIVE_STAGING_V55.json" --dry-run
+          done
