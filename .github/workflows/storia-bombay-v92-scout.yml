@@ -1,0 +1,30 @@
+name: "V92 Bombay 1929 real historic scout 64 frames (no credits)"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-bombay-v92-scout.yml"]
+permissions:
+  contents: read
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU tools (no paid APIs)
+        run: |
+          python -m pip install --quiet "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+      - name: Fetch original public-domain-declared film and extract real visual contact sheet
+        run: python -u tools/storia_bombay_1929_v92_scout.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: BOMBAY_1929_V92_REAL_SOURCE_SCOUT
+          path: |
+            output/storia_bombay_1929_v92/SCOUT_64_VERT_FRAMES.jpg
+            output/storia_bombay_1929_v92/SCOUT_SOURCE.json
+          retention-days: 7
+          if-no-files-found: warn
