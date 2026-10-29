@@ -41,7 +41,7 @@ class TestAdaptiveHistoricalPacingV70(unittest.TestCase):
             self.assertEqual(p["pacing_v70"]["status"], "TIMING_PLANNED_NOT_VIDEO_QA")
             totals.append(t)
             for shot in p["shots"]:
-                self.assertAlmostEqual(shot["start_s"] + shot["motion_s"],
+                self.assertAlmostEqual(shot["start_s"] + (max(1, round(shot["motion_s"] * 30)) - 1) / 30,
                                        shot["source_frame_timecode_s"])
         self.assertGreater(len(set(totals)), 3)
 
