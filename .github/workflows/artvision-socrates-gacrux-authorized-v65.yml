@@ -1,0 +1,41 @@
+name: "ArtVision Socrate · Gacrux originale autorizzato V65"
+on:
+  push:
+    branches:
+      - artvision-socrates-gacrux-authorized-v65
+    paths:
+      - "src/artvision_socrates_gacrux_authorized_v65.py"
+      - ".github/workflows/artvision-socrates-gacrux-authorized-v65.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: socrates-one-authorized-tts-v65
+  cancel-in-progress: false
+jobs:
+  create-one-voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install supported current Gemini 3.8 TTS client and offline ASR
+        run: |
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" "numpy>=1.26" "soundfile>=0.12" "scipy>=1.11" "faster-whisper>=1.1"
+      - name: Generate ONE original Gacrux narration using owner permission for Socrates
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SOCRATES_GACRUX_ONE_CALL_USER_AUTHORIZED: "true"
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: |
+          python src/artvision_socrates_gacrux_authorized_v65.py
+      - name: Preserve Gacrux WAV even if ASR or TTS QA is incomplete
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SOCRATES_GACRUX_ORIGINAL_AUTHORIZED_V65
+          path: output/artvision-socrates-authorized-gacrux-v65/
+          if-no-files-found: warn
+          retention-days: 30
