@@ -65,6 +65,15 @@ def validate(manifest, video_info):
     need(manifest.get("four_social_posts_present") is True,"4 platform posts missing")
     need(manifest.get("cover_present") is True,"cover missing")
     need(manifest.get("zip_verified") is True,"ZIP not verified")
+    # V94 applies only to NEW history reels, not legacy review clips or ArtVision 4x1.
+    # No custom renderer may claim 'final' without a real Vidu clip and source-faithful faces.
+    import importlib.util
+    module_path = Path(__file__).with_name("storia_rivive_quality_gate_v94.py")
+    if module_path.is_file():
+        spec = importlib.util.spec_from_file_location("storia_quality_v94", module_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        failures.extend(module.inspect(manifest, phase="delivery"))
     return failures
 
 def probe(path):
