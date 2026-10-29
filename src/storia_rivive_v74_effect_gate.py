@@ -4,7 +4,7 @@ import argparse,json
 from pathlib import Path
 import cv2,numpy as np
 
-def inspect_video(path, sat_threshold=22, static_threshold=5.0):
+def inspect_video(path, sat_threshold=22, static_threshold=5.0, bw_threshold=18):
  cap=cv2.VideoCapture(str(path)); fps=float(cap.get(cv2.CAP_PROP_FPS))
  if not cap.isOpened() or fps<12:raise RuntimeError("Cannot decode original")
  sat=[];diff=[];prev=None
@@ -29,7 +29,7 @@ def inspect_video(path, sat_threshold=22, static_threshold=5.0):
    if i-start>=max(8,round(.45*fps)):
     prior=sat[max(0,start-round(.65*fps)):start]
     motion=float(np.median(diff[start+1:i])) if i>start+1 else 999
-    bw_before=len(prior)>round(.2*fps) and float(np.median(prior))<18
+    bw_before=len(prior)>round(.2*fps) and float(np.median(prior))<bw_threshold
     qualifies=bool(bw_before and motion<static_threshold)
     blocks.append({"from_s":round(start/fps,2),"to_s":round(i/fps,2),
                    "median_color_motion":round(motion,2),"preceded_by_bw":bool(bw_before),"qualifies":qualifies})
@@ -42,8 +42,10 @@ def inspect_video(path, sat_threshold=22, static_threshold=5.0):
 if __name__=="__main__":
  p=argparse.ArgumentParser();p.add_argument("--video",type=Path,required=True)
  p.add_argument("--min-cycles",type=int,default=3);p.add_argument("--report",type=Path)
+ p.add_argument("--sat-threshold",type=float,default=22)
+ p.add_argument("--bw-threshold",type=float,default=18)
  args=p.parse_args()
- r=inspect_video(args.video)
+ r=inspect_video(args.video,sat_threshold=args.sat_threshold,bw_threshold=args.bw_threshold)
  r["structural_pass"]=r["approved_pattern_cycles"]>=args.min_cycles
  if args.report:
   args.report.parent.mkdir(parents=True,exist_ok=True)
