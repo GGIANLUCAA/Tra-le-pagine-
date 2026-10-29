@@ -93,6 +93,16 @@ def run():
     voice,report=synthesize()
     art=engine.Image.open(artfile).convert("RGB")
     room=engine.visual.room()
+    # Generate source-faithful shots from REAL WAV paragraph times; no guessed
+    # fixed-percent narrative cuts, no false Gacrux claim.
+    import artvision_blake_voice_sync_v78 as sync
+    starts=sync.from_voice_report(report)
+    engine.visual.critico_standard=lambda art,t,duration: sync.critico_standard(art,t,duration,starts)
+    base_museum=engine.visual.museum_frame
+    engine.visual.museum_frame=lambda art,room,t,duration,critic=False: (
+        sync.critico_museum(art,room,t,duration,starts) if critic
+        else base_museum(art,room,t,duration,critic=critic)
+    )
     results={}
     label="Kokoro Nicola (offline Italian trial, not Gacrux)"
     for variant in ("critico_standard","critico_museum"):
@@ -108,6 +118,8 @@ def run():
        "approved_gold_master":False,"replaces_official_critico":False,
        "google_tts_calls":0,"paid_api_calls":0,
        "critic_pair_shared_voice_sha256":a["voice_sha256"],
+       "narrative_alignment":"real 7-paragraph WAV timing V78",
+       "paragraph_starts_seconds":starts,
        "results":results}
     engine.write_json(OUT/"EXPERIMENT_V77_STATUS.json",summary)
     print("EXPERIMENT_V77_RESULT",json.dumps(summary,ensure_ascii=False),flush=True)
