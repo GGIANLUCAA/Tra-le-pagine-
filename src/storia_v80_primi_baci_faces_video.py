@@ -148,7 +148,7 @@ def make():
  spec=__import__('importlib.util',fromlist=['spec_from_file_location']).spec_from_file_location('gate','src/storia_rivive_v74_effect_gate.py')
  import importlib.util
  gate=importlib.util.module_from_spec(spec);spec.loader.exec_module(gate)
- check=gate.inspect_video(video)
+ check=gate.inspect_video(video,sat_threshold=30,bw_threshold=28)
  if check['approved_pattern_cycles']<3:raise RuntimeError('USER_GOLD_EFFECT_NOT_PRESENT '+str(check))
  cover=FINAL/'COPERTINA.jpg'
  p=Image.open(Path(SHOTS[0]['photo_dir'])/SHOTS[0]['photo']).convert('RGB').resize((720,1280))
