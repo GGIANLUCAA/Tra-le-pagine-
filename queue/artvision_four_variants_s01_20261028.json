@@ -28,14 +28,20 @@
       "dossier_preflight": "pending",
       "variants": {
         "critico_standard": {
-          "status": "planned",
+          "status": "blocked",
           "legacy_prior": "planned_voice_and_script_preflight",
-          "verified_this_migration": false
+          "verified_this_migration": false,
+          "blocker_code": "blocked_voice_unavailable",
+          "blocker_note": "No exact-script Google Gacrux WAV plus verified cache/alignment has been presented for this variant; do not substitute another TTS or mark rendered. Resume only after a matching verified cache is recovered.",
+          "blocker_reviewed_date": "2026-10-29"
         },
         "critico_museum": {
-          "status": "planned",
+          "status": "blocked",
           "legacy_prior": "planned_voice_and_script_preflight",
-          "verified_this_migration": false
+          "verified_this_migration": false,
+          "blocker_code": "blocked_voice_unavailable",
+          "blocker_note": "No exact-script Google Gacrux WAV plus verified cache/alignment has been presented for this variant; do not substitute another TTS or mark rendered. Resume only after a matching verified cache is recovered.",
+          "blocker_reviewed_date": "2026-10-29"
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -84,14 +90,20 @@
       "dossier_preflight": "official_four_check_passed_2026-10-28T19:24:00+01:00",
       "variants": {
         "critico_standard": {
-          "status": "planned",
+          "status": "blocked",
           "legacy_prior": "planned_voice_and_script_preflight",
-          "verified_this_migration": false
+          "verified_this_migration": false,
+          "blocker_code": "blocked_voice_unavailable",
+          "blocker_note": "No exact-script Google Gacrux WAV plus verified cache/alignment has been presented for this variant; do not substitute another TTS or mark rendered. Resume only after a matching verified cache is recovered.",
+          "blocker_reviewed_date": "2026-10-29"
         },
         "critico_museum": {
-          "status": "planned",
+          "status": "blocked",
           "legacy_prior": "planned_voice_and_script_preflight",
-          "verified_this_migration": false
+          "verified_this_migration": false,
+          "blocker_code": "blocked_voice_unavailable",
+          "blocker_note": "No exact-script Google Gacrux WAV plus verified cache/alignment has been presented for this variant; do not substitute another TTS or mark rendered. Resume only after a matching verified cache is recovered.",
+          "blocker_reviewed_date": "2026-10-29"
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -135,14 +147,20 @@
       "dossier_preflight": "official_four_check_passed_2026-10-28T19:24:00+01:00",
       "variants": {
         "critico_standard": {
-          "status": "planned",
+          "status": "blocked",
           "legacy_prior": "planned_voice_and_script_preflight",
-          "verified_this_migration": false
+          "verified_this_migration": false,
+          "blocker_code": "blocked_voice_unavailable",
+          "blocker_note": "No exact-script Google Gacrux WAV plus verified cache/alignment has been presented for this variant; do not substitute another TTS or mark rendered. Resume only after a matching verified cache is recovered.",
+          "blocker_reviewed_date": "2026-10-29"
         },
         "critico_museum": {
-          "status": "planned",
+          "status": "blocked",
           "legacy_prior": "planned_voice_and_script_preflight",
-          "verified_this_migration": false
+          "verified_this_migration": false,
+          "blocker_code": "blocked_voice_unavailable",
+          "blocker_note": "No exact-script Google Gacrux WAV plus verified cache/alignment has been presented for this variant; do not substitute another TTS or mark rendered. Resume only after a matching verified cache is recovered.",
+          "blocker_reviewed_date": "2026-10-29"
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -244,5 +262,13 @@
         }
       }
     }
-  ]
+  ],
+  "last_operational_update": {
+    "date": "2026-10-29",
+    "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+    "action": "Cinema V55 generic offline prepared adapter merged (68e4cd15fd443c552b930f8ec69c3503c89305c8), technical H264/AAC fixture passed CI. No new artistic MP4. All four existing groups have both Cinema variants rendered_needs_review; Critico variants remain blocked until exact Google Gacrux cache.",
+    "next_first_blocker": "Verified exact-script Google Gacrux voice cache for an existing Critico; otherwise prepare a genuinely new work with V32/V54 gate and approved authentic source assets for the generic Cinema Standard renderer.",
+    "no_duplicate_renders": true,
+    "paid_video_calls": 0
+  }
 }
