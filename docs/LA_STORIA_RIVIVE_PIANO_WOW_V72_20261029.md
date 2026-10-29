@@ -1,5 +1,7 @@
 # LA STORIA RIVIVE — piano operativo WOW video storici V72
 **29 ottobre 2026 — fonte:** piano editoriale fornito dall'utente, integrato con verifiche LOC di prima mano.
+
+**CORREZIONE SUCCESSIVA V74:** per una richiesta generica di nuovo video il preset approvato è SEMPRE `VIDEO_BN_REALE -> FREEZE -> FOTO_GENERATIVA_AI_A_COLORI -> FOTO_FERMA -> NUOVA_SCENA`, come nei video 43054/43056. «Cinema continuo WOW» non sostituisce questa regia e può essere usato solo se esplicitamente richiesto. Il video Coney Island V73 è stato respinto dall'utente perché non riproduce l'effetto di riferimento. Applicare `docs/LA_STORIA_RIVIVE_EFFETTO_REFERENCE_V74.md` e `src/storia_rivive_v74_effect_gate.py`.
 **Priorità:** qualità artistica autentica prima di quantità, video d'archivio reale in movimento, 0 euro/0 crediti Vidu, nessuna pubblicazione automatica.
 
 ## Due regie distinte, senza confonderle
