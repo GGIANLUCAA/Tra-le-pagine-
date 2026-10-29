@@ -1,0 +1,41 @@
+name: "ArtVision Socrates V60 — exact Cinema Museum archival QA"
+on:
+  pull_request:
+    paths:
+      - "docs/productions/2026-10-29-socrates-cinema-museum-v60/**"
+      - "queue/artvision_four_variants_s01_20261028.json"
+      - ".github/workflows/artvision-socrates-museum-v60-check.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  manifest-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Official V55 private-archive manifest dry run (NO upload)
+        run: |
+          python src/video_library_dossier_sync_v55.py \
+            docs/productions/2026-10-29-socrates-cinema-museum-v60/ARCHIVE_STAGING_V55.json --dry-run
+      - name: Compare precise MP4 identity with four-slot queue (NO approval)
+        run: |
+          python - <<'PY'
+          import json,pathlib,re
+          m=json.loads(pathlib.Path("docs/productions/2026-10-29-socrates-cinema-museum-v60/ARCHIVE_STAGING_V55.json").read_text())
+          q=json.loads(pathlib.Path("queue/artvision_four_variants_s01_20261028.json").read_text())
+          g=next(x for x in q["groups"] if x["group_id"]=="david_death_of_socrates_met436105_1787")
+          v=g["variants"]
+          a=v["cinema_museum"]
+          assert a["rendered_mp4"] is True and a["sha256"]==m["video_sha256"]
+          assert a["video_bytes"]==m["video_bytes"]
+          assert m["review_state"]=="rendered_needs_review"
+          assert a["human_approval"] is False and a["site_verified"] is False
+          assert all(v[k]["blocker_code"]=="blocked_voice_unavailable" for k in ("critico_standard","critico_museum"))
+          assert v["cinema_standard"]["sha256"]=="4ea696772dd80e03a73c7b3570a22c7915787d47b77822a97ee040cbca959ce9"
+          assert len(m["posts"])==4
+          print("Socrates exactly TWO Cinema slots, Critico still blocked, NO V25 approval")
+          PY
