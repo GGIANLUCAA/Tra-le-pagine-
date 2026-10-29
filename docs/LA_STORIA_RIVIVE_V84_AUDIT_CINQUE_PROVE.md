@@ -45,3 +45,10 @@ La mappatura fra immagine e soggetto è stata sbagliata in tre prompt (01, 02, 0
 - 4/5 metriche automatiche di colore superate; il quinto è tenue e non passa il gate automatico
 - audit visuale su cinque tempi rappresentativi delle cinque scene
 - **nessuna** approvazione artistica della clip finale al solo passaggio automatico
+
+## Montaggio V85 ricavato dalle prove — zero nuovi crediti
+Abbiamo realizzato **V85** con quattro cicli V82 già esistenti e, nel finale, la vera clip Vidu `05_1900_WALKWAY_COLOR_MOTION` generata nei test V84. La nuova regia dispone tram → edicola → cinema → stazione → marciapiede mobile Vidu, con musica continua e rinforzo cromatico moderato sulla clip Vidu senza optical flow, durata verificata **19,8 secondi** e MP4/ZIP esterni. Nell'audit GitHub Actions i salti di luminanza misurati ai quattro confini sono ~2,56 / 2,82 / 9,74 / 0,7 (la vecchia disposizione raggiungeva circa 63). Il salto più forte del V83 è stato quindi molto ridotto **ordinando le scene**, non sfocandole o fondendo persone diverse. Nessun nuovo POST Vidu; fonte storica mista 1918 + 1900, **anteprima tecnica non approvata per pubblicazione**.
+- Nuovo renderer: `src/storia_rivive_hybrid_v85.py`
+- Workflow: `.github/workflows/storia-v85-hybrid-final-moving-vidu.yml`
+- Download esterno: https://github.com/GGIANLUCAA/Tra-le-pagine-/releases/tag/storia-rivive-paris-1900-1918-v85-4plus1-vidu-moving-finale
+- Evitare di qualificare `exposure_seams` come prova di corrispondenza dei volti: serve controllo visivo dell'originale e del generato.
