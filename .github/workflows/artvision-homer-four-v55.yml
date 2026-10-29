@@ -1,0 +1,105 @@
+name: ArtVision V55 — Winslow Homer two distinct Cinema variants V55B
+run-name: "The Gulf Stream | ArtVision 4x1 | 2x Cinema | real Met originals"
+on:
+  push:
+    branches: [feature/artvision-homer-four-v55-20261029]
+    paths:
+      - "scripts/artvision_homer_four_v55.py"
+      - ".github/workflows/artvision-homer-four-v55.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-v55-one-render-at-a-time
+  cancel-in-progress: false
+jobs:
+  homer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free offline video tools and Python libs
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          command -v ffprobe
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3"
+          python -m py_compile scripts/artvision_homer_four_v55.py
+      - name: Verify no paid providers or autopublish in production script
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('scripts/artvision_homer_four_v55.py').read_text()
+          for forbidden in ('VIDU_API_KEY','RUNWARE_API_KEY','KLING_API_KEY',
+                            'GEMINI_API_KEY','SEEDANCE_API_KEY','requests.post(', '/publish-html'):
+              assert forbidden not in text,forbidden
+          print('ZERO PAID PROVIDERS; NO SOCIAL PUBLISHING; CRITICO BLOCKED UNTIL GACRUX')
+          PY
+      - name: Met Open Access image + original licensed music + actual two renders
+        run: python scripts/artvision_homer_four_v55.py
+      - name: Verify TWO distinct H.264/AAC MP4, 4 original posts each, and ZIP CRC
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,zipfile
+          root=Path('output/artvision-homer-gulf-stream-v55b')
+          data=json.loads((root/'RESULT_V55.json').read_text())
+          assert len(data['two_distinct_real_videos'])==2
+          hashes=set()
+          for item in data['two_distinct_real_videos']:
+              path=Path(item['video'])
+              assert path.is_file() and path.stat().st_size>300000
+              sha=hashlib.sha256(path.read_bytes()).hexdigest()
+              assert sha==item['video_sha256'] and sha not in hashes
+              hashes.add(sha)
+              result=json.loads(subprocess.check_output(['ffprobe','-v','error',
+                '-show_entries','format=duration:stream=codec_name,codec_type,width,height',
+                '-of','json',str(path)]))
+              assert any(s.get('codec_name')=='h264' and (s.get('width'),s.get('height'))==(1080,1920) for s in result['streams'])
+              assert any(s.get('codec_name')=='aac' for s in result['streams'])
+              assert float(result['format']['duration'])>25
+              subprocess.run(['ffmpeg','-nostdin','-v','error','-xerror','-i',str(path),'-f','null','-'],check=True,timeout=420)
+              for platform in ('FACEBOOK','INSTAGRAM','TIKTOK','YOUTUBE'):
+                  assert (path.parent/('POST_'+platform+'.txt')).stat().st_size>150
+              zips=list(Path(item['package_directory']).glob('*.zip'))
+              assert len(zips)>=2
+              for z in zips:
+                  with zipfile.ZipFile(z) as arc:assert arc.testzip() is None
+              print('REAL_NEW_MP4',item['variant'],sha,'bytes',path.stat().st_size)
+          assert data['critico_standard'].startswith('blocked')
+          assert not data['V25_approved'] and data['paid_api_calls']==0
+          PY
+      - name: Store all genuine MP4, original sources, covers and ZIP packages
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_HOMER_GULF_STREAM_CINEMA_PAIR_V55B_REVIEW
+          path: |
+            output/artvision-homer-gulf-stream-v55b/ARTVISION_4X1_PLAN.json
+            output/artvision-homer-gulf-stream-v55b/MET_OPEN_ACCESS_SOURCE.json
+            output/artvision-homer-gulf-stream-v55b/RESULT_V55.json
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/*.mp4
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/COPERTINA.jpg
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/POST_*.txt
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/SOURCES_AND_RIGHTS.md
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/VIDEO_RECIPE_V13.json
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/SCENE_IMAGES/*.jpg
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/*.mp4
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/COPERTINA.jpg
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/POST_*.txt
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/SOURCES_AND_RIGHTS.md
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/VIDEO_RECIPE_V13.json
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/RECONSTRUCTED_GALLERY_ORIGINAL.jpg
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/SCENE_IMAGES/*.jpg
+            output/artvision-homer-gulf-stream-v55b/*_V55_DELIVERY/*.zip
+            output/artvision-homer-gulf-stream-v55b/*_V55_DELIVERY/DELIVERY_STATUS_V55.json
+            output/artvision-homer-gulf-stream-v55b/cinema_standard/assets/met_11122_original.jpg
+            output/artvision-homer-gulf-stream-v55b/cinema_standard/assets/water_lily_original.mp3
+          if-no-files-found: error
+          retention-days: 30
