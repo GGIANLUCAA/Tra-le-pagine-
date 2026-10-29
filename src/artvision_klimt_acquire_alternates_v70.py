@@ -51,7 +51,7 @@ def obtain(out):
         try:
             b,final=get(url)
             path=out/"KLIMT_THE_KISS_PD_SOURCE.jpg"
-            if not b.startswith(b"\\xff\\xd8"):raise ValueError("Not JPEG bytes")
+            if not b.startswith(bytes([0xff,0xd8])):raise ValueError("Not JPEG bytes")
             path.write_bytes(b)
             with Image.open(path) as image:
                 image.verify()
