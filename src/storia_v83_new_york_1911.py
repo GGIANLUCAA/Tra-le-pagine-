@@ -62,6 +62,13 @@ def main():
   clahe=cv2.createCLAHE(clipLimit=1.5,tileGridSize=(12,12))
   l=lab[:,:,0];lab[:,:,0]=cv2.addWeighted(l,.82,clahe.apply(l),.18,0)
   img=cv2.cvtColor(lab,cv2.COLOR_LAB2BGR)
+  # Strengthen only DDColor-inferred chroma; shapes and original luminance
+  # remain anchored to the actual frame. Reject flat sepia or monochrome.
+  hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV).astype(np.float32)
+  mean_s=float(hsv[:,:,1].mean())
+  boost=min(8.0,max(1.0,34.0/max(mean_s,1.0)))
+  hsv[:,:,1]=np.clip(hsv[:,:,1]*boost+4.0,0,130)
+  img=cv2.cvtColor(hsv.astype(np.uint8),cv2.COLOR_HSV2BGR)
   soft=cv2.GaussianBlur(img,(0,0),0.8)
   img=cv2.addWeighted(img,1.25,soft,-.25,0)
   target=d/("PHOTO_AI_%02d.png"%rec["scene"]);cv2.imwrite(str(target),img)
