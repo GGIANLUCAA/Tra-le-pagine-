@@ -29,14 +29,14 @@ DETAILS=[
   ("square_full","whole",[0.50,0.50],7.2,"Hold on the full authentic 180-by-180-centimeter composition with dignity")
 ]
 
-def fetch(url,maxbytes,allowed_host):
+def fetch(url,maxbytes,allowed_host,min_bytes=90000):
     req=urllib.request.Request(url,headers={"User-Agent":USER_AGENT,"Accept":"*/*"})
     with urllib.request.urlopen(req,timeout=90) as r:
         u=urllib.parse.urlsplit(r.geturl())
         if r.status!=200 or u.scheme!="https" or u.hostname not in allowed_host:
             raise ValueError("Bad download origin/redirect: "+r.geturl())
         result=r.read(maxbytes+1)
-        if not 90000<len(result)<=maxbytes:raise ValueError("Source unexpectedly tiny or over cap")
+        if not min_bytes<len(result)<=maxbytes:raise ValueError("Source unexpectedly tiny or over cap")
         return result,r.geturl()
 
 def obtain_art(assets):
@@ -44,7 +44,7 @@ def obtain_art(assets):
         "action":"query","format":"json","formatversion":2,
         "titles":"File:Klimt - The Kiss.jpg","prop":"imageinfo",
         "iiprop":"url|size|extmetadata"})
-    body,url=fetch(query,2_000_000,{"commons.wikimedia.org"})
+    body,url=fetch(query,2_000_000,{"commons.wikimedia.org"},min_bytes=200)
     doc=json.loads(body)
     pages=doc.get("query",{}).get("pages",[])
     if len(pages)!=1 or pages[0].get("missing") is True:raise ValueError("Klimt Commons original not found")
