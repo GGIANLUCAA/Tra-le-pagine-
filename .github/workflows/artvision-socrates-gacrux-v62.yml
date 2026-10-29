@@ -1,0 +1,46 @@
+name: ArtVision V62 — one real Socrates Gacrux for both Critico variants, free-only
+on:
+  pull_request:
+    paths:
+      - "src/artvision_socrates_gacrux_gate_v62.py"
+      - "tests/test_artvision_socrates_gacrux_gate_v62.py"
+      - "docs/productions/2026-10-29-socrates-critico-master-v60/COPIONE_GACRUX_V62.txt"
+      - ".github/workflows/artvision-socrates-gacrux-v62.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-gacrux-socrates-v62-one-at-time
+  cancel-in-progress: false
+jobs:
+  exact-script-and-free-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Google voice and audio verification dependencies
+        run: |
+          python -m pip install --disable-pip-version-check "google-genai>=1.20" "numpy>=1.26" "soundfile>=0.12"
+      - name: Safety regression — key alone does not consent to a paid request
+        run: |
+          python -m unittest discover -s tests -p "test_artvision_socrates_gacrux_gate_v62.py" -v
+      - name: Attempt real voice cache reuse or verified FREE-ONLY Gacrux, never substitute
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_TTS_FREE_QUOTA_CONFIRMED: ${{ vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
+          GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED: ${{ vars.GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED }}
+        run: |
+          python src/artvision_socrates_gacrux_gate_v62.py \
+             --cache output/artvision-socrates-critico-v62/voice \
+             --out output/artvision-socrates-critico-v62/GACRUX_GATE_V62.json
+      - name: Preserve exact free gate result, or genuine Gacrux WAV if actually obtained
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SOCRATES_CRITICO_GACRUX_V62_PROOF_OR_BLOCKED_NO_COST
+          path: output/artvision-socrates-critico-v62/
+          if-no-files-found: warn
+          retention-days: 30
