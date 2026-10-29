@@ -50,7 +50,7 @@ Correzione dell'utente del 28/10/2026: i tre file `facebook_20261028_142708.mp4`
 
 ## V56 — Nuova categoria La Storia Rivive (28/10/2026)
 
-Per nuovi filmati storici leggere `docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md`, `config/storia_rivive_v56.json` e il profilo `storia_rivive` di `config/video_formats_v13.json`. Usare V55, V28, V33 e V25 senza trasferire automaticamente Museum/V54 4x1 ai filmati d'archivio. Niente falsi documenti, fake colorization, crop facce o spese Vidu non approvate. Nuovo format separato, non modificare i master. Il pilot non è un MP4 pronto solo perché esistono regole.
+Per nuovi filmati storici leggere `docs/LA_STORIA_RIVIVE_CONTRATTO_V56.md`, `config/storia_rivive_v56.json` e il profilo `storia_rivive` di `config/video_formats_v13.json`. Usare V55, V28, V33 e V25 senza trasferire automaticamente Museum/V54 4x1 ai filmati d'archivio. Niente falsi documenti, fake colorization, crop facce o spese Vidu non approvate. Nuovo format separato, non modificare i master. Il pilot non è un MP4 pronto solo perché esistono regole. Per OGNI NUOVO video `storia_rivive` usare anche il **preflight ritmo adattivo V70**: `docs/LA_STORIA_RIVIVE_RITMO_ADATTIVO_V70.md`, `config/storia_rivive_pacing_v70.json`, `src/storia_rivive_pacing_v70.py`. Durata 14–35 secondi, media editoriale desiderata ~25 senza obbligo per video; osservazione originale documentata, timecode di freeze conservato, B/N/reveal/colore variabili, gate antimonotonia prima del render. NON si applica alla categoria 4×1.
 
 ## V55 — Video sempre recuperabili e primi 7 secondi curati (28/10/2026)
 
