@@ -27,3 +27,5 @@ jobs:
           fi
           python src/vidu_balance_check_v45.py
           echo "Finished read-only balance check: no Vidu POST, no billable video generation"
+
+# ChatGPT bridge verification 2026-10-29: read-only credit check; never POST to Vidu.
