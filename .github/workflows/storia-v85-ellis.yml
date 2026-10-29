@@ -1,0 +1,53 @@
+name: "V85 ELLIS ISLAND 1903 — authentic people-first restoration"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v85-ellis.yml"
+      - "src/storia_v85_ellis_island_1903.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ellis_reconstruction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      HF_HUB_DISABLE_XET: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OMP_NUM_THREADS: "3"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install free reconstruction dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow huggingface_hub onnxruntime
+      - name: Verify source-locked restoration program
+        run: python -m py_compile src/storia_v85_ellis_island_1903.py
+      - name: Render people-first historical before and after
+        run: python -u src/storia_v85_ellis_island_1903.py
+      - name: Probe and full decode final movie
+        run: |
+          set -euo pipefail
+          d=output/storia_v85_ellis_1903
+          test -s "$d/ELLIS_ISLAND_1903_V85.mp4"
+          ffmpeg -v error -xerror -i "$d/ELLIS_ISLAND_1903_V85.mp4" -f null -
+          unzip -t "$d/ELLIS_ISLAND_1903_KIT_V85.zip"
+          ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_name,width,height -of json "$d/ELLIS_ISLAND_1903_V85.mp4"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V85_ELLIS_1903_REAL_HISTORICAL_FILM_AND_RESTORED_PHOTOS
+          path: |
+            output/storia_v85_ellis_1903/*.mp4
+            output/storia_v85_ellis_1903/*.zip
+            output/storia_v85_ellis_1903/*.jpg
+            output/storia_v85_ellis_1903/*.json
+            output/storia_v85_ellis_1903/*.txt
+          retention-days: 14
+          if-no-files-found: warn
