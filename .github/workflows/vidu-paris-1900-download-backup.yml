@@ -1,0 +1,78 @@
+name: "Vidu Paris 1900 - backup Android diretto MP4 ZIP"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/vidu-paris-1900-download-backup.yml"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: vidu-paris-1900-download-backup-one
+  cancel-in-progress: false
+jobs:
+  backup:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BACKUP_RUN: "40913629505"
+      TAG: "vidu-paris-1900-modern-20261029-preview"
+      MP4: "PARIS_1900_PASSATO_DIVENTA_PRESENTE_VIDU.mp4"
+      ZIP: "PARIS_1900_VIDU_ANDROID.zip"
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Install QA tools (no video API calls)"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: "Retrieve completed paid run artifact; only download, never regenerate"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p recovered
+          gh run download "$BACKUP_RUN" --repo "$GITHUB_REPOSITORY" --name VIDU_PARIS_1900_ANTICO_MODERNO_REAL_TEST --dir recovered
+          python - <<'PY'
+          import json,pathlib,hashlib,zipfile,subprocess
+          root=pathlib.Path("recovered")
+          movie=root/"PARIS_1900_PASSATO_DIVENTA_PRESENTE_VIDU.mp4"
+          archive=root/"PARIS_1900_VIDU_ANDROID.zip"
+          qa=json.loads((root/"QA_E_CREDITI.json").read_text())
+          assert movie.stat().st_size>100_000 and archive.stat().st_size>100_000
+          h=hashlib.sha256(movie.read_bytes()).hexdigest()
+          assert h==qa["final_sha256"],"MP4 differs from approved transfer hash"
+          with zipfile.ZipFile(archive) as z:
+              assert z.testzip() is None,"ZIP CRC failed"
+              assert "PARIS_1900_PASSATO_DIVENTA_PRESENTE_VIDU.mp4" in z.namelist()
+              assert hashlib.sha256(z.read("PARIS_1900_PASSATO_DIVENTA_PRESENTE_VIDU.mp4")).hexdigest()==h
+          meta=subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration:stream=codec_name,width,height","-of","json",str(movie)],text=True)
+          p=json.loads(meta)
+          assert 8<=float(p["format"]["duration"])<=9
+          assert any(s.get("codec_name")=="h264" and s.get("width")==720 and s.get("height")==1280 for s in p["streams"])
+          subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(movie),"-f","null","-"],check=True,timeout=120)
+          print("VERIFIED_MP4",movie.stat().st_size,"SHA256",h,"ZIP",archive.stat().st_size,flush=True)
+          PY
+      - name: "Make stable public technical download backup; do not publish social"
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Existing release found. No overwrite or duplicate publication."
+            gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name'
+            exit 0
+          fi
+          gh release create "$TAG" "recovered/$MP4" "recovered/$ZIP" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Vidu · Paris 1900 · Anteprima tecnica per download Android" \
+            --notes "Anteprima tecnica NON approvata per la pubblicazione social. Ripresa originale storica da Wikimedia Commons / Lumière, transizione a colori ricostruita con Vidu AI. MP4 H.264/AAC 720x1280, 8.334 s; ZIP Android incluso. Nessuna nuova generazione o credito Vidu consumato da questo backup. Il link e accessibile pubblicamente: non contiene informazioni private, chiavi API o ricevute del saldo." \
+            --prerelease
+      - name: "Verify external release has both downloadable assets"
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | sort > /tmp/asset_names
+          grep -Fx "$MP4" /tmp/asset_names
+          grep -Fx "$ZIP" /tmp/asset_names
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json url --jq ".url"
+          echo "GITHUB_EXTERNAL_BACKUP_VERIFIED"
