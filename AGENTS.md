@@ -1,6 +1,11 @@
 # Studio video di Gianluca — istruzioni attive
 
-Leggere questo file prima di proporre o produrre video. Il repository principale è
+Leggere questo file prima di proporre o produrre video.
+
+## ARTVISION V58 — CONTRATTO MADRE 4×1 E BLOCCO PILOTA (29/10/2026)
+
+**Decisione utente vincolante:** leggere `docs/ARTVISION_CONTRATTO_MADRE_4X1_V58_20261029.md`, `docs/ARTVISION_PILOT_FREEZE_20261029.md` e `config/artvision_pilot_lock_v58.json` prima di QUALSIASI nuova produzione ArtVision. Per ogni opera QUATTRO filmati distinti: Critico Standard, Critico Museum, Cinema Standard, Cinema Museum. **Prima completare e approvare tutto Socrate; non avviare nuovi quadri né automatizzare la serie.** Il secondo pilota richiede decisione dell'utente. Il rendering V16 applica il guard V58 prima di generare l'output. No copie, spese non autorizzate, finte review, fake Museum o pubblicazione social.
+ Il repository principale è
 `GGIANLUCAA/Tra-le-pagine-`. Lavorare dal sistema esistente e preservare i master
 approvati. Le istruzioni esplicite della sessione hanno precedenza.
 
