@@ -28,7 +28,7 @@ import artvision_hokusai_cinema_v55 as previous
 from video_director_v13 import read_json, write_json, check, capture, digest
 from artvision_delivery_v55 import pack
 
-OUT=ROOT/'output/artvision-hokusai-cinema-museum-v55b'
+OUT=ROOT/'output/artvision-hokusai-cinema-museum-v55c'
 W,H,FPS=1080,1920,24
 TITLE='The Great Wave'
 ARTIST='Katsushika Hokusai'
@@ -36,7 +36,7 @@ MUSEUM_PAGE='https://www.metmuseum.org/art/collection/search/45434'
 MET_IMAGE='https://images.metmuseum.org/CRDImages/as/original/DP130155.jpg'
 PAPER_CM=(37.9,25.7)
 FRAME_NOTE='Contemporary neutral conservation-style reconstruction; NOT historical or a photograph of a Met gallery.'
-SLUG='ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_MUSEUM_V55B_REVIEW'
+SLUG='ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_MUSEUM_V55C_REVIEW'
 
 def font(size,serif=False):
     paths=('/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf' if serif else
@@ -123,7 +123,7 @@ def branding(original):
     draw_text(draw,(w//2,h-445),ARTIST.upper(),49,(234,224,206,255),anchor='mm')
     return Image.alpha_composite(img,layer).convert('RGB')
 
-def secure_detail(art,focus,mode='detail'):
+def secure_detail(art,focus,mode='detail',scale=0.72):
     im=ImageOps.exif_transpose(art).convert('RGB')
     if mode=='whole':
         out=Image.new('RGB',(W,H),(19,23,27))
@@ -134,7 +134,10 @@ def secure_detail(art,focus,mode='detail'):
     iw,ih=im.size
     if min(iw,ih)<800:raise ValueError('Met original too small for close detail')
     # Preserve source pixels and legitimate crops only.
-    crop_h=min(ih,int(iw/ratio));crop_w=min(iw,int(crop_h*ratio))
+    # Choose a subject-specific true source crop, not an entire-height pan.
+    # This permits genuinely different crests, boat, Fuji and foam locations.
+    if not 0.45 <= scale <= 1.0:raise ValueError('Invalid source-detail scale')
+    crop_h=min(ih,round(ih*scale));crop_w=min(iw,round(crop_h*ratio))
     cx,cy=focus
     x=max(0,min(iw-crop_w,int(cx*iw-crop_w/2)))
     y=max(0,min(ih-crop_h,int(cy*ih-crop_h/2)))
@@ -229,10 +232,10 @@ def outputs(dossier,folder,art_file,music_file):
     pictures=[
        branding(room),
        room,
-       secure_detail(art,(.28,.38)),
-       secure_detail(art,(.32,.72)),
-       secure_detail(art,(.57,.74)),
-       secure_detail(art,(.58,.27)),
+       secure_detail(art,(.31,.36),scale=.60),
+       secure_detail(art,(.59,.82),scale=.56),
+       secure_detail(art,(.65,.62),scale=.60),
+       secure_detail(art,(.44,.25),scale=.52),
        secure_detail(art,(.50,.50),'whole'),
        room,
        room,
