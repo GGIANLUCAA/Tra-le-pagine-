@@ -424,8 +424,9 @@ def run(args):
     stamp=slot_id(args.slot)
     label=PREFIX+stamp
     out=Path(args.out).resolve()
-    if out == Path("/") or out == Path.cwd().resolve():
-        raise ValueError("Dedicated output directory required")
+    sandbox = (ROOT / "runs").resolve()
+    if out == sandbox or sandbox not in out.parents:
+        raise ValueError("Output must stay inside wow_lab/runs/<unique-slot>")
     out.mkdir(parents=True,exist_ok=True)
     past=recent_history()
     rec=select_artwork(conf, stamp, past, args.test_source_id)
