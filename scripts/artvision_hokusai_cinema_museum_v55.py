@@ -28,7 +28,7 @@ import artvision_hokusai_cinema_v55 as previous
 from video_director_v13 import read_json, write_json, check, capture, digest
 from artvision_delivery_v55 import pack
 
-OUT=ROOT/'output/artvision-hokusai-cinema-museum-v55'
+OUT=ROOT/'output/artvision-hokusai-cinema-museum-v55b'
 W,H,FPS=1080,1920,24
 TITLE='The Great Wave'
 ARTIST='Katsushika Hokusai'
@@ -36,7 +36,7 @@ MUSEUM_PAGE='https://www.metmuseum.org/art/collection/search/45434'
 MET_IMAGE='https://images.metmuseum.org/CRDImages/as/original/DP130155.jpg'
 PAPER_CM=(37.9,25.7)
 FRAME_NOTE='Contemporary neutral conservation-style reconstruction; NOT historical or a photograph of a Met gallery.'
-SLUG='ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_MUSEUM_V55_REVIEW'
+SLUG='ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_MUSEUM_V55B_REVIEW'
 
 def font(size,serif=False):
     paths=('/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf' if serif else
@@ -183,7 +183,11 @@ def encode(out,stills,music,scene):
         dur=s['duration'];za,zb=s['zoom']
         # zoompan uses current *output* frame index, with a subtle ease.
         z=f"({za}+({zb}-{za})*on/{max(1,round(dur*FPS)-1)})"
-        filters.append(f'[{i}:v]scale=2160:3840:flags=lanczos,zoompan=z=\'{z}\':x=\'iw/2-iw/zoom/2\':y=\'ih/2-ih/zoom/2\':d=1:fps={FPS}:s={W}x{H},trim=duration={dur},setpts=PTS-STARTPTS[v{i}]')
+        # Museum camera must approach the *painting centre*, not an empty
+        # geometric wall centre. The same anchor is used on retreat.
+        yexpr=('max(0,min(ih-ih/zoom,1510-ih/zoom/2))'
+               if s['name'].startswith('museum_') else 'ih/2-ih/zoom/2')
+        filters.append(f'[{i}:v]scale=2160:3840:flags=lanczos,zoompan=z=\'{z}\':x=\'iw/2-iw/zoom/2\':y=\'{yexpr}\':d=1:fps={FPS}:s={W}x{H},trim=duration={dur},setpts=PTS-STARTPTS[v{i}]')
     filters.append(''.join(f'[v{i}]' for i in range(len(scene)))+f'concat=n={len(scene)}:v=1:a=0[v]')
     total=sum(durations)
     args += ['-filter_complex',';'.join(filters),'-map','[v]','-map',f'{len(scene)}:a:0',
