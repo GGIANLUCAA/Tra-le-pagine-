@@ -237,7 +237,7 @@ def museum_frame(art,roomimg,t,duration,critic=False):
     elif t<duration-exit_time:
         u=(t-enter)/(duration-enter-exit_time)
         # These subject centers + a physical optical zoom keep both the
-        # actual gilded frame AND the original paper edge offscreen.
+        # reconstructed neutral mount AND original paper edge offscreen.
         # The underlying image pixels are never invented or erased.
         points=[(.52,.34),(.51,.33),(.54,.49),(.48,.66),(.69,.67),(.5,.5)]
         v=u*(len(points)-1)
