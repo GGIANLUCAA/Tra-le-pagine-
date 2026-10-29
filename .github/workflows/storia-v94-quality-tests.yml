@@ -1,0 +1,23 @@
+name: "La Storia Rivive V94 - mandatory face and Vidu contract tests"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v94-quality-tests.yml"
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile both delivery gates
+        run: python -m py_compile src/storia_rivive_quality_gate_v94.py src/storia_rivive_final_gate_v91.py
+      - name: Test mandatory new reel Vidu and source-faithful modern faces; legacy unaffected
+        run: |
+          python -m unittest discover -s tests -p 'test_storia_rivive_quality_v94.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_final_gate_v91.py' -v
