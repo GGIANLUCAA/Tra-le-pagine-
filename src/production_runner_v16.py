@@ -55,8 +55,10 @@ def inputs(job):
         if not isinstance(slug,str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,70}',slug):raise ValueError('Episodio non valido')
         files+=tree_files(inside('episodes/'+slug,True))
     elif adapter=='critico_v2_prepared':files += [inside(job[k]) for k in ('config_file','painting_file','music_file')]
-    else:files += tree_files(inside(job['assets_dir'],True))
-    if adapter!='cinema_v6_vangogh_prepared':
+    else:
+        files += tree_files(inside(job['assets_dir'],True))
+        if adapter=='cinema_v55_prepared':files.append(inside(job['cinema_plan_file']))
+    if adapter not in ('cinema_v6_vangogh_prepared','cinema_v55_prepared'):
         folder=inside(job['voice_cache_dir'],True)
         files += [folder/name for name in ('VOCE.wav','VOICE_CACHE_V13.json','VOICE_PROFILE_V13.json','ALLINEAMENTO_VOCE.json') if (folder/name).is_file()]
         if not (folder/'VOCE.wav').is_file() or not (folder/'VOICE_CACHE_V13.json').is_file():raise ValueError('WAV e manifest Google richiesti')
