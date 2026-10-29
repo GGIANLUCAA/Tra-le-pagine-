@@ -1,0 +1,25 @@
+name: ArtVision Museum Director V69 tests
+on:
+  push:
+    paths:
+      - 'src/artvision_museum_director_v69.py'
+      - 'tests/test_artvision_museum_director_v69.py'
+      - '.github/workflows/artvision-museum-director-v69-tests.yml'
+  pull_request:
+    paths:
+      - 'src/artvision_museum_director_v69.py'
+      - 'tests/test_artvision_museum_director_v69.py'
+      - '.github/workflows/artvision-museum-director-v69-tests.yml'
+  workflow_dispatch:
+jobs:
+  museum-preflight:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Museum Director validation tests
+        run: python -m unittest discover -s tests -p 'test_artvision_museum_director_v69.py' -v
