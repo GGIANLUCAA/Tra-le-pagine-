@@ -1,0 +1,94 @@
+name: "LIBRI — Pinocchio Chiostri 1902, Gacrux only if quota attested"
+on:
+  push:
+    branches: [main]
+    paths: ["queue/pinocchio_20261029.json"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: libri-pinocchio-20261029
+  cancel-in-progress: false
+jobs:
+  episode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_TTS_FREE_QUOTA_CONFIRMED: ${{ vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Preflight budget and format
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open("queue/pinocchio_20261029.json"))
+          assert q["episode"]=="pinocchio_20261029"
+          assert q["paid_video_api_calls"] is False and q["social_publish"] is False
+          assert q["voice"]=="Google Gemini Gacrux only when verified free quota"
+          assert q["source_catalog"]=="reports/pinocchio_image_catalog_20261029.json"
+          print("ONE EPISODE: zero paid I2V; no silent voice fallback; no social publication")
+          PY
+      - name: Install free video and historical illustration tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install --quiet "requests>=2.31,<3" "pillow>=10,<13" "numpy>=1.25,<3" "soundfile>=0.12,<1"
+          python -m py_compile tools/pinocchio_libri_20261029.py
+      - name: Acquire 20 different genuine Chiostri plates, create full dossier and 40s preview
+        id: prepare
+        run: python tools/pinocchio_libri_20261029.py --mode prepare
+      - name: Verify account-level free quota attestation without a Gemini call
+        id: quota
+        if: steps.prepare.outcome == 'success'
+        run: |
+          if [ "${GEMINI_TTS_FREE_QUOTA_CONFIRMED:-}" = "true" ] && [ -n "${GEMINI_API_KEY:-}" ]; then
+            echo "can_tts=true" >> "$GITHUB_OUTPUT"
+            echo "Free quota attestation and Google key present; ONE Gacrux synthesis permitted."
+          else
+            echo "can_tts=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Free quota not confirmed; no Gemini call, no replacement voice, no narrated master."
+          fi
+      - name: Install official Gacrux module dependencies only if quota confirmed
+        if: steps.quota.outputs.can_tts == 'true'
+        run: python -m pip install --quiet "google-genai>=2.25,<3" "faster-whisper>=1.1,<2" "scipy>=1.11"
+      - name: Synthesize exactly one Gacrux narration and render actual narrated MP4
+        if: steps.quota.outputs.can_tts == 'true'
+        run: python tools/pinocchio_libri_20261029.py --mode render
+      - name: Upload ONLY files that exist, no fabricated master
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PINOCCHIO_CHIOSTRI_1902_PRODUZIONE_REALE
+          path: output/pinocchio_20261029/
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Record actual production status
+        if: always()
+        run: |
+          python - <<'PY'
+          import os,json,subprocess,base64
+          from pathlib import Path
+          p=Path("output/pinocchio_20261029/QA_STATO_REALE.json")
+          state=json.loads(p.read_text()) if p.is_file() else {
+            "episode":"pinocchio_20261029","status":"source_or_render_failed",
+            "narrated_master_exists":False,"paid_video_api_calls":0}
+          state["run_id"]=os.environ["GITHUB_RUN_ID"]
+          state["run_url"]="https://github.com/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/"+state["run_id"]
+          state["artifact_name"]="PINOCCHIO_CHIOSTRI_1902_PRODUZIONE_REALE" if p.is_file() else None
+          state["free_quota_attested"]=os.environ.get("GEMINI_TTS_FREE_QUOTA_CONFIRMED")=="true"
+          state["not_final"]=True
+          path="repos/"+os.environ["GITHUB_REPOSITORY"]+"/contents/reports/pinocchio_20261029_run.json"
+          payload={"message":"Persist real Pinocchio episode run and quota outcome",
+                   "content":base64.b64encode((json.dumps(state,ensure_ascii=False,indent=2)+"\n").encode()).decode()}
+          old=subprocess.run(["gh","api",path],capture_output=True,text=True)
+          if old.returncode==0:payload["sha"]=json.loads(old.stdout)["sha"]
+          r=subprocess.run(["gh","api","--method","PUT",path,"--input","-"],
+              input=json.dumps(payload),text=True,capture_output=True)
+          print("STATUS_PERSISTED",r.returncode==0,state["run_url"])
+          if r.returncode:print(r.stderr[:500])
+          PY
