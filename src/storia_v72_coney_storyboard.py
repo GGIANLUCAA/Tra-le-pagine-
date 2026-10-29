@@ -10,6 +10,7 @@ spec=importlib.util.spec_from_file_location("source",root/"src/storia_v72_coney_
 s=importlib.util.module_from_spec(spec);spec.loader.exec_module(s)
 # source scout actually runs at import, downloads the ProRes
 p=Path("output/storia_v72_coney/SOURCE_ORIGINAL.mov")
+if not p.is_file() or p.stat().st_size < 100000: p=Path("output/storia_v72_coney/SOURCE_ORIGINAL.mp4")
 out=p.parent
 if not p.is_file():raise SystemExit("No master")
 cap=cv2.VideoCapture(str(p))
