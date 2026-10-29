@@ -1,3 +1,9 @@
+## Ogni video deve essere completo prima della consegna — regola trasversale (29/10/2026)
+
+**Decisione esplicita dell'utente:** «Quando mi consegni un video deve essere finito; se un video ha bisogno di testo e voce deve contenerlo». Il requisito vale per **tutti i format**, mantenendo le differenze creative previste: LIBRI/RACCONTI e Critico d'arte richiedono copione, narrazione vera Google Gemini Gacrux (salvo deroga dell'utente) e sincronizzazione scena-parola; i film Cinema/Museum Immersion concepiti musicali **non devono ricevere una voce inventata**. Dove il progetto prevede testo visibile (ad esempio titolo, autore, crediti) va incluso e verificato; dove vieta sottotitoli, non aggiungerli automaticamente.
+
+**Gate prima di inviare un video come risultato:** non basta un file MP4 decodificabile. Verificare in concreto che durata, trama o progressione, voce se richiesta, audio/musica, testo se richiesto, immagini/gesti coerenti, copertina, diritti, QA artistico e pacchetto MP4 + ZIP/Android rispettino le regole specifiche del format V13/V33/V35/V36/V44/V55. Un video che richiede voce e ne è privo, o richiede testo e ne è privo, è **incompleto e NON consegnabile come prodotto finito**, anche se è bello o tecnicamente integro. Le anteprime e i test sono materiali di lavorazione, da fornire soltanto quando richiesti esplicitamente come tali, non come surrogato del risultato. In caso di blocchi di strumenti o quote, dichiarare il blocco e non cambiare i requisiti senza consenso. Divieti di spesa video IA a credito e pubblicazione social automatica invariati.
+
 # Regole attive — 25 ottobre 2026 (revisione 3, Audience V32 + Fonti V33)
 
 Questa revisione applica le decisioni di Gianluca sulla regia modulare.
