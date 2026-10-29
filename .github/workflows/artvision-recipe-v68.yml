@@ -1,0 +1,41 @@
+name: "ArtVision V68 — Reusable four-video recipe contract"
+on:
+  pull_request:
+    paths:
+      - "src/artvision_recipe_v68.py"
+      - "config/artvision_four_variants_presets_v68.json"
+      - "tests/test_artvision_recipe_v68.py"
+      - "docs/ARTVISION_START_HERE_QUATTRO_VIDEO_RIPRODUCIBILE_V68.md"
+      - ".github/workflows/artvision-recipe-v68.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check 4 distinct slots, source-accurate frame, immutable rules, change history and pilot lock
+        run: python -m unittest discover -s tests -p "test_artvision_recipe_v68.py" -v
+      - name: End-to-end planning CLI without any render or paid request
+        run: |
+          python src/artvision_recipe_v68.py init \
+            --id sample-second-pilot --title "Sample Artwork" --artist "Test Artist" \
+            --out /tmp/artvision-v68-original.json
+          python src/artvision_recipe_v68.py validate --recipe /tmp/artvision-v68-original.json
+          python src/artvision_recipe_v68.py set \
+            --recipe /tmp/artvision-v68-original.json \
+            --field slots.cinema_museum.target_seconds --value 60 \
+            --reason "Longer Museum as requested for a hypothetical work" \
+            --out /tmp/artvision-v68-customized.json
+          python src/artvision_recipe_v68.py validate --recipe /tmp/artvision-v68-customized.json
+          if python src/artvision_recipe_v68.py validate --for-render \
+              --recipe /tmp/artvision-v68-customized.json; then
+            echo "ERROR: unapproved second artwork must never bypass the Socrates pilot lock"
+            exit 1
+          fi
+          echo "V68 planning is ready; second pilot RENDER is correctly blocked"
