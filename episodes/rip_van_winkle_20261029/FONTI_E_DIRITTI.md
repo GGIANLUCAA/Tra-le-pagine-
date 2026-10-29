@@ -1,0 +1,7 @@
+# Rip Van Winkle — fonte e diritti
+
+Testo originale: Washington Irving (1819; morto 1859), [Project Gutenberg n. 60976](https://www.gutenberg.org/ebooks/60976). Edizione illustrata Arthur Rackham, pubblicata 1905, illustratore morto 1939. Entrambi in pubblico dominio in Italia (70 anni dopo la morte) e negli Stati Uniti per pubblicazione antecedente al 1931. Le tavole sono riproduzioni storiche, NON generazioni AI. Si prelevano 17 tavole distinte dalla stessa edizione, con numero della tavola e URL/file/hash acquisiti nel dossier di produzione. La pagina di Gutenberg richiede verifica dei termini di redistribuzione e attribuzione: il testo narrato italiano è una riscrittura originale, non una traduzione moderna copiata.
+
+**Caveat importante:** il numero di tavola documenta il soggetto dell'immagine, ma non dimostra da solo la corrispondenza completa con il testo narrato. Il quadro della gola non mostra necessariamente lo straniero e la botte; la scena alla locanda non mostra necessariamente il ritratto di Washington. Segnare queste come **ricostruzione non illustrata fedelmente** e correggerle prima del master finale, non presentare come match esatto. Il pacchetto resta `rendered_needs_review`.
+
+Nessuna spesa Vidu o altra API video; voce Google Gemini Gacrux soltanto con `GEMINI_API_KEY` e attestazione quota gratuita, senza fallback. Musica: composizione originale sintetizzata dal codice dell'episodio, senza campioni terzi. Nessuna pubblicazione social.
