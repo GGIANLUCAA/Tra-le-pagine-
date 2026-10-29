@@ -126,7 +126,11 @@ def render(source,dd,session):
     mix=(i-prev)/(nxt-prev)
     ab=(1-mix)*p+mix*q
    # Same real frame, its genuine luminance and geometry, only model-generated chroma.
-   color=dd.image_at(frame,ab)
+   lab_l=dd.l_channel(frame)
+   full_ab=cv2.resize(ab,(frame.shape[1],frame.shape[0]),interpolation=cv2.INTER_LINEAR)
+   lab=np.dstack((lab_l,np.clip(full_ab*1.12,-110,110))).astype(np.float32)
+   rgb=np.clip(cv2.cvtColor(lab,cv2.COLOR_LAB2RGB)*255,0,255).astype(np.uint8)
+   color=cv2.cvtColor(rgb,cv2.COLOR_RGB2BGR)
    # Dynamic pan following real boat and splash (not a synthetic camera movement).
    progress=np.clip((t-34.0)/(51.6-34.0),0,1)
    x0=int(205+135*progress)
