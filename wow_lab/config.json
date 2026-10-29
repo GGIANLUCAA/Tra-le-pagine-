@@ -1,0 +1,67 @@
+{
+  "schema": "artvision-wow-lab-v1",
+  "enabled": true,
+  "mode": "isolated_candidates",
+  "requested_cadence_hours": 2,
+  "allowed_sources": [
+    "met_open_access_cc0"
+  ],
+  "allowed_artwork_ids": [
+    437133,
+    436105
+  ],
+  "allow_museum_api_search": true,
+  "search_queries": [
+    "dramatic landscape",
+    "sea storm painting",
+    "portrait",
+    "night landscape",
+    "mythology painting",
+    "mountain painting",
+    "flowers oil painting",
+    "ship at sea"
+  ],
+  "min_image_width": 850,
+  "min_image_height": 600,
+  "aspect": "9:16",
+  "size": [
+    540,
+    960
+  ],
+  "fps": 20,
+  "duration_seconds": 9,
+  "techniques": [
+    "gallery_orbit",
+    "luminous_reveal",
+    "depth_portal"
+  ],
+  "initial_selection": "curated_then_discovery",
+  "quality": {
+    "min_video_bytes": 50000,
+    "require_h264": true,
+    "require_full_decode": true,
+    "require_rights_verified": true,
+    "require_artwork_authentic": true,
+    "require_distinct_frames": true,
+    "require_visual_review_before_social": true
+  },
+  "rights": {
+    "source_license": "CC0",
+    "commercial_use_allowed": true,
+    "source_credit_required": false,
+    "source_credit_display": true
+  },
+  "no_paid_services": true,
+  "no_vidu": true,
+  "no_social_publish": true,
+  "no_original_master_overwrite": true,
+  "no_imports_from_core": true,
+  "no_core_config_edits": true,
+  "no_core_automation_edits": true,
+  "output_scope": "wow-lab-* releases and artifacts only",
+  "history_scope": "wow-lab-v1-* GitHub releases only",
+  "state_persistence": "namespaced release manifest plus run artifact",
+  "stop_mechanism": "set wow_lab/config.json enabled=false or disable the WOW LAB GitHub Actions workflow",
+  "production_ready": false,
+  "status": "experimental: technical QA only; must not be called approved or viral"
+}
