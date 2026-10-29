@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One new, authentic, rights-gated Cinema Standard V55 production attempt.
+"""Corrective V55B Hokusai Cinema Standard after real frame review of V55.
 
 Hokusai Met JP1847 image (Met Open Access) and MacLeod Water Lily recording
 (CC BY 4.0). No paid APIs, no AI video, no upload or automatic approval.
@@ -14,7 +14,7 @@ sys.path.insert(0,str(ROOT/'src'))
 from video_director_v13 import check, read_json, write_json
 from artvision_four_variants_gate import validate as four_validate
 
-DEST=ROOT/'output/artvision-hokusai-cinema-standard-v55'
+DEST=ROOT/'output/artvision-hokusai-cinema-standard-v55b'
 OBJ='https://collectionapi.metmuseum.org/public/collection/v1/objects/45434'
 MET='https://www.metmuseum.org/art/collection/search/45434'
 MUSIC='https://incompetech.com/music/royalty-free/mp3-royaltyfree/Water%20Lily.mp3'
@@ -252,11 +252,11 @@ def render(folder,art,recording):
     image_ref={'file':art.name,'sha256':sha256(art)}
     recording_ref={'file':recording.name,'sha256':sha256(recording)}
     shots=[
-      ('crest',[.71,.28],'detail',3.5),
-      ('boats',[.30,.62],'detail',5.0),
-      ('fuji',[.87,.77],'detail',5.3),
-      ('foam',[.55,.38],'detail',5.3),
-      ('boats',[.56,.68],'detail',5.1),
+      ('crest',[.30,.62],'detail',4.3),
+      ('boats',[.28,.75],'detail',4.7),
+      ('fuji',[.52,.72],'detail',4.6),
+      ('foam',[.24,.58],'detail',4.8),
+      ('boats',[.34,.68],'detail',4.8),
       ('entire_composition',[.5,.5],'whole',8.1)]
     plan={'schema':SCHEMA,'variant':'cinema_standard','title':TITLE,'artist':ARTIST,
        'music':{**recording_ref,'recording_title':'Water Lily',
@@ -278,6 +278,27 @@ def render(folder,art,recording):
     video=Path(result['video']);cover=Path(result['cover'])
     if sha(video)!=result['video_sha256']:raise ValueError('Rendered master SHA mismatch')
     subprocess.run(['ffmpeg','-nostdin','-v','error','-xerror','-i',str(video),'-f','null','-'],check=True,timeout=160)
+    # Subject-specific guard: the first seconds MUST actually show the
+    # dark-blue curling wave, not only an empty beige paper background.
+    # Automated pixel check is a technical rejection signal, NOT art approval.
+    from PIL import Image
+    first=out/'QA_OPENING_1S.jpg'
+    subprocess.run(['ffmpeg','-v','error','-y','-ss','1','-i',str(video),
+                    '-frames:v','1',str(first)],check=True,timeout=60)
+    with Image.open(first) as image:
+        rgb=image.convert('RGB')
+        width,height=rgb.size
+        data=rgb.crop((0,0,width,int(height*0.65))).resize((180,210)).getdata()
+        values=list(data)
+    blue_fraction=sum(1 for r,g,b in values if b>r*1.15 and b>g*1.02 and b>50)/len(values)
+    (out/'QA_OPENING_COLOUR_SIGNAL.json').write_text(json.dumps({
+        'blue_fraction_upper65pct':blue_fraction,
+        'minimum_for_this_specific_wave_opening':0.15,
+        'artistic_approval':False,
+        'note':'Subject-specific poor-framing rejection guard only; not a universal quality or aesthetic score.'
+    },indent=2)+'\n')
+    if blue_fraction<0.15:
+        raise ValueError('Opening crop visually wrong: mostly pale paper rather than authentic blue wave')
     return video,cover,out
 
 def package(video,cover,out,art,recording):
