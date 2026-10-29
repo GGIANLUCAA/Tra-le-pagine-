@@ -1,0 +1,29 @@
+name: "V81 real archival closeups 1894-1900 for photographic face fidelity"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v81-archival-closeups.yml"
+      - "src/storia_v81_1894_1900_closeups_acquire.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source_archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Acquire and SHA-verify all original close-up films
+        run: python -u src/storia_v81_1894_1900_closeups_acquire.py
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: V81_ORIGINAL_ARCHIVE_FILMS_1894_1896_1900
+          path: output/storia_v81_archive_closeups/
+          retention-days: 14
+          if-no-files-found: error
