@@ -1,0 +1,91 @@
+name: "V80 TWO new cities — NEW YORK 1903 and VENICE 1896 English title films"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v80-new-york-venice.yml"
+      - "src/storia_v80_new_york_venice.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v80-two-new-cities
+  cancel-in-progress: false
+jobs:
+  render_both_cities:
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check Python source compiles
+        run: python -m py_compile src/storia_v80_new_york_venice.py
+      - name: Install zero-cost video and generative image tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow huggingface_hub onnxruntime gradio_client
+      - name: Source 2 new original archival films, generate source-aligned photos, render 2 final MP4s
+        run: python -u src/storia_v80_new_york_venice.py
+      - name: Validate all actually rendered MP4 outputs; require at least one
+        run: |
+          set -euo pipefail
+          D=output/storia_v80_new_cities
+          test -s "$D/REPORT.json"
+          count=0
+          for city in NEW_YORK_1903 VENICE_1896; do
+            if test -s "$D/$city/LA_STORIA_RIVIVE_${city}_V80.mp4"; then
+              ffmpeg -v error -xerror -i "$D/$city/LA_STORIA_RIVIVE_${city}_V80.mp4" -f null -
+              unzip -t "$D/$city/LA_STORIA_RIVIVE_${city}_KIT.zip"
+              count=$((count+1))
+            fi
+          done
+          test "$count" -ge 1
+          echo "ACTUAL_V80_VIDEO_COUNT=$count"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V80_NEW_YORK_1903_VENICE_1896_NEW_ACTUAL_FILMS
+          path: |
+            output/storia_v80_new_cities/REPORT.json
+            output/storia_v80_new_cities/*/LA_STORIA_RIVIVE_*.mp4
+            output/storia_v80_new_cities/*/LA_STORIA_RIVIVE_*_KIT.zip
+            output/storia_v80_new_cities/*/BEFORE_AFTER_ACTUAL_GENERATED.jpg
+            output/storia_v80_new_cities/*/QA.json
+            output/storia_v80_new_cities/*/SOURCE_QA.json
+            output/storia_v80_new_cities/*/PHOTO_QA.json
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Release each successful city separately to permanent direct Android downloads
+        run: |
+          set -euo pipefail
+          D=output/storia_v80_new_cities
+          for city in NEW_YORK_1903 VENICE_1896; do
+            sub="$D/$city"
+            VIDEO="$sub/LA_STORIA_RIVIVE_${city}_V80.mp4"
+            KIT="$sub/LA_STORIA_RIVIVE_${city}_KIT.zip"
+            if ! test -s "$VIDEO"; then
+              echo "NO_REAL_FINAL_MOVIE_FOR_$city_SKIP"
+              continue
+            fi
+            TAG="storia-rivive-${city,,}-v80-authentic-film-ai-photo"
+            files=("$VIDEO" "$KIT" "$sub/COVER.jpg" "$sub/QA.json" "$sub/BEFORE_AFTER_ACTUAL_GENERATED.jpg")
+            if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+            else
+              gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --latest=false --prerelease --title "La Storia Rivive — $city · V80 (English city and year)" --notes "Authentic moving archival film (Library of Congress / Wikimedia Commons), source frame frozen to genuinely AI-generated color photo, original music, English-only city + year cinematic intro. All faces, colors and small reconstructed details are interpretative and subject to source comparison. Automated geometry gates passed; human semantic review and rights in Italy pending. No Vidu or paid credits. Not posted on social or private video site." "${files[@]}"
+            fi
+            local_bytes=$(stat -c %s "$VIDEO")
+            remote_bytes=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq ".assets[]|select(.name==\"LA_STORIA_RIVIVE_${city}_V80.mp4\")|.size")
+            test "$local_bytes" = "$remote_bytes"
+            echo "V80_DOWNLOAD_ASSET_VERIFIED $city $remote_bytes"
+          done
