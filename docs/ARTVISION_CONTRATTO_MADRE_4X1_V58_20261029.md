@@ -1,5 +1,8 @@
 # ARTVISION — CONTRATTO MADRE 4×1 V58 (29/10/2026)
 
+> **AGGIORNAMENTO STATO V68 — 29/10/2026:** l'antico elenco di blocker Socrate riportato più sotto descrive lo STATO STORICO al V58, non quello corrente. Socrate ha ora **4 MP4 reali** (Critico V67, Cinema V59/V61) e il proprietario ha apprezzato la regia Museum, la cornice e la spiegazione: **modello creativo buono e migliorabile**, non approvazione V25 delle quattro singole uscite. Consultare `docs/ARTVISION_START_HERE_QUATTRO_VIDEO_RIPRODUCIBILE_V68.md`, `config/artvision_four_variants_presets_v68.json`, e la coda 4×1 per gli SHA e stati attuali. Personalizzazioni per quadro versionate; nessuna nuova opera automatica fino a consenso esplicito.
+
+
 **Decisione permanente del proprietario:** UNA OPERA = QUATTRO FILMATI ORIGINALI, distinti e completi. Un rendering intermedio, una scheda, uno ZIP o un duplicato non equivalgono a un filmato approvato. Questo documento integra AGENTS.md, REGOLE_ATTIVE.md, V25/V28/V33/V44/V46/V54/V55/V57; non abbassa i gate storici.
 
 ## Pacchetto unico per opera
