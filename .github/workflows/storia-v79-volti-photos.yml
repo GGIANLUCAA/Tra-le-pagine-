@@ -1,0 +1,43 @@
+name: "V79 1894–1900 · true HD facial photographic restorations"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v79-volti-photos.yml"
+      - "src/storia_v79_volti_photos.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  generate_free_hd_photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      OMP_NUM_THREADS: "4"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+      HF_HUB_ENABLE_HF_TRANSFER: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: ffmpeg -version | head -1
+      - run: python -m pip -q install --no-cache-dir opencv-python-headless numpy pillow onnxruntime huggingface_hub gradio_client
+      - name: Reacquire and verify exact real PD films from archive
+        run: python -u src/storia_v79_volti_scout.py
+      - name: Create actual AI photographic closeups from original frames and compare faces
+        run: python -u src/storia_v79_volti_photos.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V79_REAL_ARCHIVE_FACE_PHOTOS_VISUAL_QA
+          path: |
+            output/storia_v79_volti/*_ORIGINALE.png
+            output/storia_v79_volti/*_FOTO_AI_HD.png
+            output/storia_v79_volti/*_COLORE_BASE.jpg
+            output/storia_v79_volti/PHOTO_QA_V79.json
+            output/storia_v79_volti/FONTI_VERIFICATE.json
+            output/storia_v79_volti/CONFRONTO_VISIVO_VOLTI_V79.jpg
+          if-no-files-found: warn
+          retention-days: 14
