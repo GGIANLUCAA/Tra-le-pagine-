@@ -170,7 +170,11 @@ La regola prevale su target numerici, urgenza, export tecnico, istruzioni dei ve
 
 **Non modificare** i master approvati, non sostituire l'effetto Museum con un Cinema Standard rinominato, non spendere crediti video IA senza permesso per singola clip.
 
-### V57 — provino pratico su vera camera V46, regia distinta per le 4 varianti (29/10/2026)
+### V57 — provino pratico su vera camera V46, regia distinta per le 4 varianti (APPROVATO 29/10/2026)
+
+L'utente ha approvato lo stile del provino Cyclops V57 da 34 secondi, SHA256 4d746edb3cd1083605ff11b0dce2bbfbe0e37eda01b836b8243894c732d509bb. Modello per la camera continua delle due varianti Museum: ingresso/uscita nella stessa sala, opera allineata e incassata, dettagli riproiettati dall'originale, dimensioni reali. Rimangono riferimenti complementari Cyclops V46 per qualita' della cornice e Hiroshige per scala umana. Per ogni nuova opera sala e cornice devono essere specifiche, non ripetute automaticamente. Le quattro varianti restano distinte: Critico Standard voce Gacrux, Critico Museum medesima voce e camera museo V57, Cinema Standard musica soltanto, Cinema Museum musica e camera museo V57. Ogni futuro MP4 richiede revisione artistica e V25; il consenso sul provino non autorizza pubblicazione automatica o spese.
+
+
 
 **Nuovo filmato pilota REALE:** `ARTVISION_CYCLOPS_V46_PROVINO_ANDROID.mp4`, 34 s, SHA256 `4d746edb3cd1083605ff11b0dce2bbfbe0e37eda01b836b8243894c732d509bb`. Non è un nuovo quadro né master approvato: è un nuovo percorso ottico sul materiale ArtVision Cyclops già approvato, con immagine originale Redon ad alta risoluzione riproiettata continuamente nello stesso piano della cornice e ritorno alla stessa stanza. Prima prova bocciata per disallineamento opera/cornice; corretto attraverso vera registrazione feature SIFT/RANSAC dell'immagine sul master. **Nessun costo video API.** Regole operative + quattro versioni specifiche: `docs/ARTVISION_QUATTRO_VARIANTI_REGIA_V57_20261029.md`.
 
