@@ -1,7 +1,7 @@
 {
   "schema": "artvision-4x1-reusable-preset-v68",
   "preset_id": "socrates-4x1-quality-baseline-2026-10-29",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "created_from": "Socrates V67 pilot, V61 no-person Museum revision, V63 Bosch/Ophelia Critico references",
   "source_of_truth": [
     "AGENTS.md",
@@ -20,7 +20,14 @@
       "unverified_private_archive_import",
       "paid_video_generation",
       "automatic_new_artwork_unfreeze"
-    ]
+    ],
+    "v73": {
+      "date": "2026-10-29",
+      "scope": "two_small_improvements_only",
+      "critic": "shorter, more factual, less personal; still professional and clear",
+      "museum": "frame visible outside, naturally out of frame during details, returns during exit",
+      "keep_all_other_rules_unchanged": true
+    }
   },
   "invariants": {
     "required_variant_ids": [
@@ -56,13 +63,37 @@
   "defaults": {
     "critico_pair": {
       "narration_language": "it",
-      "target_words": 365,
-      "commentary_depth": "detailed",
+      "target_words": 285,
+      "commentary_depth": "accessible",
       "narration_duration_policy": "from_verified_WAV_not_fixed",
       "strict_semantic_timing": true,
       "source_reference": "Bosch Critico V22 + Ophelia Critico V21",
       "motion_guideline": "narrative_holds_rare_unidirectional_motion",
-      "no_rhetorical_final_question": true
+      "no_rhetorical_final_question": true,
+      "editorial_voice_v73": {
+        "tone": "professional_precise_neutral",
+        "target_words_range": [
+          250,
+          320
+        ],
+        "guideline": "Approx. 15–25% shorter than Socrates V67, without fixed duration; preserve verified historical context and critical insight",
+        "avoid": [
+          "personal opinions",
+          "subjective praise",
+          "repetitive emotional commentary",
+          "speculation stated as fact",
+          "rhetorical questions"
+        ],
+        "require": [
+          "verified facts",
+          "visual evidence in the painting",
+          "historical and stylistic interpretation grounded in sources",
+          "concise clear narration"
+        ],
+        "shared_exact_script_and_WAV_for_both_critico": true,
+        "existing_socrates_audio_immutable": true,
+        "tts_new_generation_requires_approval": true
+      }
     },
     "slots": {
       "critico_standard": {
@@ -111,7 +142,21 @@
       "exit_seconds": 8,
       "safe_margin_percent": 12,
       "foreground_visitors": "none",
-      "room_reconstruction_disclosure_required": true
+      "room_reconstruction_disclosure_required": true,
+      "frame_detail_v73": {
+        "mode": "frame_visible_on_room_wide_shot_then_outside_detail_view",
+        "entrance": "keep authentic frame while viewing painting from gallery; smoothly move into the image until frame is completely outside viewport",
+        "inside": "show more original painted surface; frame must not overlay detail crops or become a decorative border",
+        "return": "reverse continuous camera movement; original frame naturally re-enters field of view before room-wide ending",
+        "no_fake_fade_or_erasure": true,
+        "no_ghosting_or_stretched_edges": true,
+        "do_not_invent_off_canvas_pixels": true,
+        "apply_to": [
+          "critico_museum",
+          "cinema_museum"
+        ],
+        "keep_frame_source_and_gallery_unchanged": true
+      }
     },
     "cover": {
       "style": "elegant_museum",
