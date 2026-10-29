@@ -92,7 +92,7 @@ def plan(project):
         s["transition_s"] = round(reveal, 2)
         s["photo_hold_s"] = round(max(1.05, min(2.95, hold)), 2)
         # NEVER move the AI photo to a different historical frame.
-        start = round(s["source_frame_timecode_s"] - bw, 3)
+        start = round(s["source_frame_timecode_s"] - (max(1, round(bw * 30)) - 1) / 30, 4)
         if start < 0:
             raise ValueError(f"Scena {i+1}: freeze troppo vicino a inizio fonte")
         s["start_s"] = start
@@ -172,7 +172,7 @@ def check(obj):
             errors.append(f"Scena {i+1}: tempo colore fuori 1.05-3.05s")
         if not numeric(s.get("start_s")) or not numeric(s.get("source_frame_timecode_s")):
             errors.append(f"Scena {i+1}: timecode originale non ancorato")
-        elif abs(s["start_s"] + bw - s["source_frame_timecode_s"]) > .035:
+        elif abs(s["start_s"] + (max(1, round(bw * 30)) - 1) / 30 - s["source_frame_timecode_s"]) > (1 / 60):
             errors.append(f"Scena {i+1}: freeze non sul fotogramma originale selezionato")
         if i >= 2 and s.get("composition_group") == shots[i-1].get("composition_group") == shots[i-2].get("composition_group"):
             errors.append(f"Scena {i+1}: tre composizioni uguali consecutive")
