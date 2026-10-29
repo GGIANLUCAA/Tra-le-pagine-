@@ -258,7 +258,22 @@
           "archive_sync_pending": true,
           "site_verified": false,
           "photo_license": "Commons CC BY-SA 4.0; photographer attribution human review pending",
-          "notes": "Actual CC BY-SA 4.0 2023 photograph of the framed Turner at National Gallery; distinct Cinema Museum render; first-frame title+artist checked. No V25 approval, no import claim."
+          "notes": "Actual CC BY-SA 4.0 2023 photograph of the framed Turner at National Gallery; distinct Cinema Museum render; first-frame title+artist checked. No V25 approval, no import claim.",
+          "archive_original_posts_verified": {
+            "date": "2026-10-29",
+            "status": "local_original_zip_sha256_matched_staging",
+            "source_zip": "/mnt/data/artvision_turner_review/VIDEO_MASTER_COMPLETO.zip",
+            "post_sha256": {
+              "facebook": "280698ca28e34f5634156615d71dae9ff5cece03671912767f007a0e233f2fe1",
+              "instagram": "9cecca456c0df92662d1afbe26bfee94fd4679bd0070d44f2224034ebbf5cc14",
+              "tiktok": "1a10cb7b2ea06451c5aca996a9043f7f56f31375af5dc994a90f6e0934cd1789",
+              "youtube": "4e4d78f41fccdaad2cb6d42cfaf31bd50727d5dbdf97c0655c955a42514ce167"
+            },
+            "archive_sync_pending": true,
+            "remote_text_verified": false,
+            "original_mp4_sha256": "dcac4d5155598a42fd3fc29f06f455ccf38a5f63da4a0f06ef9286cbaccc4ea8",
+            "code_commit": "a9b5ccabbbd5b37715ca33307fdba450f7e981f1"
+          }
         }
       }
     }
@@ -266,8 +281,8 @@
   "last_operational_update": {
     "date": "2026-10-29",
     "owner_automation_id": "6adca191603c8191a90d5190901cd034",
-    "action": "Cinema V55 generic offline prepared adapter merged (68e4cd15fd443c552b930f8ec69c3503c89305c8), technical H264/AAC fixture passed CI. No new artistic MP4. All four existing groups have both Cinema variants rendered_needs_review; Critico variants remain blocked until exact Google Gacrux cache.",
-    "next_first_blocker": "Verified exact-script Google Gacrux voice cache for an existing Critico; otherwise prepare a genuinely new work with V32/V54 gate and approved authentic source assets for the generic Cinema Standard renderer.",
+    "action": "Fixed Turner Cinema Museum archive staging to reproduce original V55 four posts byte-for-byte, including original hashtags and rights/music credits; added optional SHA256 fail-closed validation and CI tests, PR #105 merged a9b5ccab. Independent local MP4 full decode, CRC ZIP, and original MP4 hashes passed. No new artistic MP4 or V25 approval.",
+    "next_first_blocker": "Exact Google Gacrux voice cache unavailable for Critico; Turner Museum private MP4 absent from authorized archive, so text sync remains pending until V25-compliant import. For a new Cinema work, source assets and four-check preflight must be prepared before rendering.",
     "no_duplicate_renders": true,
     "paid_video_calls": 0
   }
