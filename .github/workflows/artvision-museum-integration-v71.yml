@@ -1,0 +1,50 @@
+name: ArtVision Socrates Museum Integration V71
+on:
+  pull_request:
+    paths:
+      - 'src/artvision_museum_pipeline_v71.py'
+      - 'src/artvision_museum_director_v69.py'
+      - 'src/artvision_museum_stage_v70.py'
+      - 'src/artvision_museum_camera_v64.py'
+      - 'src/artvision_recipe_v68.py'
+      - 'tests/test_artvision_museum_*'
+      - 'docs/productions/2026-10-29-socrates-pilot-v68/MUSEUM_DIRECTOR_DOSSIER_V71.json'
+      - '.github/workflows/artvision-museum-integration-v71.yml'
+  workflow_dispatch:
+jobs:
+  socrates-museum-planning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate existing museum and V71 integration
+        run: |
+          python -m unittest discover -s tests -p 'test_artvision_museum_director_v69.py' -v
+          python -m unittest discover -s tests -p 'test_artvision_museum_stage_v70.py' -v
+          python -m unittest discover -s tests -p 'test_artvision_museum_camera_v64.py' -v
+          python -m unittest discover -s tests -p 'test_artvision_museum_pipeline_v71.py' -v
+      - name: Produce Socrates JSON-only plan without video/API calls
+        run: |
+          python src/artvision_museum_pipeline_v71.py \
+            --dossier docs/productions/2026-10-29-socrates-pilot-v68/MUSEUM_DIRECTOR_DOSSIER_V71.json \
+            --out output/MUSEUM_DIRECTOR_SOCRATES_V71_PLAN.json
+          python - <<'PY'
+          import json
+          p=json.load(open("output/MUSEUM_DIRECTOR_SOCRATES_V71_PLAN.json"))
+          assert not p["controls"]["render_authorized"]
+          assert not p["controls"]["paid_video_calls"]
+          assert len(p["four_slots"])==4
+          assert p["evidence"]["gallery_status"]!="actual_documented"
+          print("Socrates V71 planning smoke test PASSED, no renderer executed")
+          PY
+      - name: Archive small planning report for Android inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: socrates-museum-v71-planning-json
+          path: output/MUSEUM_DIRECTOR_SOCRATES_V71_PLAN.json
+          retention-days: 7
