@@ -33,6 +33,25 @@ def choose(root=ROOT):
                 enforce_pilot_project({"serial_mode":"artvision_4x1","topic":group["artwork"],"artvision_4x1_variant":variant},root)
             states={v:group["variants"][v]["status"] for v in VARIANTS}
             if all(s in ("rendered_needs_review","approved_for_final_delivery") for s in states.values()):
+                second=lock.get("authorized_second_pilot",{})
+                if second.get("enabled") is True and second.get("phase")=="second_pilot_only_not_automatic_series":
+                    next_group=next((g for g in queue["groups"] if g.get("group_id")==second.get("allowed_group_id")),None)
+                    if next_group is None or next_group.get("artwork")!=second.get("allowed_title"):
+                        return {"status":"authorized_second_pilot_missing","rendering_allowed":False,
+                                "new_artwork_required":False}
+                    for variant in VARIANTS:
+                        enforce_pilot_project({"serial_mode":"artvision_4x1",
+                            "topic":next_group["artwork"],"artvision_4x1_variant":variant},root)
+                    second_states={v:next_group["variants"][v]["status"] for v in VARIANTS}
+                    count=sum(s in ("rendered_needs_review","approved_for_final_delivery") for s in second_states.values())
+                    return {"status":"second_pilot_preproduction" if count==0 else
+                             ("second_pilot_four_rendered_review_pending" if count==4 else "second_pilot_in_progress"),
+                             "work":next_group["group_id"],"artwork":next_group["artwork"],
+                             "new_artwork_required":False,"new_third_artwork_allowed":False,
+                             "rendered_count":count,"approved_count":sum(
+                                s=="approved_for_final_delivery" for s in second_states.values()),
+                             "variants":second_states,
+                             "next_action":"Advance The Kiss only after artwork-specific source, rights, Gacrux and V13/V46 gates. Never count dossier/preview as MP4; preserve Socrates."}
                 completed=sum(s=="approved_for_final_delivery" for s in states.values())
                 return {"status":"pilot_four_rendered_review_pending" if completed<4 else "pilot_awaiting_explicit_second_pilot",
                         "work":group["group_id"],
