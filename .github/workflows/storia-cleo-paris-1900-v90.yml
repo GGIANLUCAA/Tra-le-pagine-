@@ -1,4 +1,4 @@
-name: "La Storia Rivive V90.2 - Paris 1900 DDColor + safe Vidu anchor"
+name: "La Storia Rivive V90.3 - Paris 1900 verified color + safe one Vidu"
 on:
   push:
     branches: [main]
@@ -29,7 +29,20 @@ jobs:
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
           python -m pip install --quiet "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "gradio_client>=1.9,<3" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2"
           python -m py_compile tools/storia_cleo_1900_v90_once.py
-      - name: Four source-anchored color photographs and one paid Vidu 5s scene
+      - name: Retrieve three previously verified AI color photographs (no extra GPU quota)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_cleo_1900_v90
+          gh api -H "Accept: application/vnd.github+json" \
+             "repos/$GITHUB_REPOSITORY/actions/artifacts/12932090029/zip" > /tmp/v90_verified_photos.zip
+          unzip -jo /tmp/v90_verified_photos.zip 'COLOR_AI_0[1-3].jpg' -d output/storia_cleo_1900_v90/
+          cd output/storia_cleo_1900_v90
+          printf '%s\n' \
+            '4f09b4a2cc5fc1191ef33b645347ed8db9de92072542531b79d0bd9c738a1e20  COLOR_AI_01.jpg' \
+            '43fd3253c1d42ae3261d2690ba33f7832a72983eb023537f5e7a042bad453394  COLOR_AI_02.jpg' \
+            'a781538c0754c4d1ac8f13055d0944a175c1f4d66b4d2f556025ac2ed8f7541d  COLOR_AI_03.jpg' | sha256sum -c -
+      - name: Four archival BW/color stills plus ONE real moving Vidu scene (single bounded paid POST)
         run: python -u tools/storia_cleo_1900_v90_once.py
       - name: Preserve Android MP4 and QA privately, even on failure
         if: always()
