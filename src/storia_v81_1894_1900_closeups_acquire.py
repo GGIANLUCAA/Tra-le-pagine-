@@ -9,7 +9,7 @@ OUT=Path("output/storia_v81_archive_closeups");OUT.mkdir(parents=True,exist_ok=T
 SOURCES=[
  ("SNEEZE_1894.webm","https://upload.wikimedia.org/wikipedia/commons/3/35/Fred_Ott%27s_Sneeze_%281894%29.webm","a310a9e466490de4c32b39f25411790023dbc198e04902a2276f1fdfec2cd690"),
  ("KISS_1896.webm","https://upload.wikimedia.org/wikipedia/commons/d/dd/The_Kiss_%281896%29.webm","862317cd5f159788638384845f7dc7624ca01c528e15465dc1ed71336e5d53f3"),
- ("KISS_1900.webm","https://upload.wikimedia.org/wikipedia/commons/4/4a/The_Kiss_%281900%29.webm","4e23e4a7bef6b43c5458ed50ef3b38a25fae5919a9624d37f5e28103c5d20486")
+ # 1900 lower-resolution 480p clip excluded: faces not trustworthy as modern photography
 ]
 def digest(p):
  h=hashlib.sha256()
