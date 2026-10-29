@@ -27,9 +27,13 @@ jobs:
       - name: Check Python and ffmpeg
         run: |
           python -m py_compile src/storia_v80_primi_baci_faces_video.py
+          python -V
+      - name: Install ffmpeg video encoder and free image libraries
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install --no-cache-dir opencv-python-headless numpy pillow
           ffmpeg -version | head -1
-      - name: Install free video-processing libraries
-        run: python -m pip -q install --no-cache-dir opencv-python-headless numpy pillow
       - name: Download source provenance and original historical frames
         run: |
           set -euo pipefail
