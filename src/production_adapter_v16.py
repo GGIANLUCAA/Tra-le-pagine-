@@ -12,7 +12,7 @@ from pathlib import Path
 from video_director_v13 import ROOT, capture, local_file, linked_four_plan, check as check_project
 from editorial_rules import validate as validate_editorial, POLICY
 
-ADAPTERS={'books_gemini_cache':'libri','critico_v2_prepared':'artvision_critico','cinema_v6_vangogh_prepared':'artvision_cinema'}
+ADAPTERS={'books_gemini_cache':'libri','critico_v2_prepared':'artvision_critico','cinema_v6_vangogh_prepared':'artvision_cinema','cinema_v55_prepared':'artvision_cinema'}
 
 def path(name, directory=False):
     if not isinstance(name,str) or not name or Path(name).is_absolute():raise ValueError('Percorso relativo richiesto')
@@ -94,6 +94,27 @@ def execute(job,out):
         (out/'DIRITTI_E_FONTI.txt').write_text('Fonti e diritti del pacchetto preparato, da verificare per la destinazione. Nessuna licenza dedotta dal nome del renderer.\n'+json.dumps(rights,ensure_ascii=False,indent=2)+'\n')
         video=out/('ARTVISION_'+cfg['id'].upper()+'.mp4');cover=out/'COPERTINA.jpg'
         sources += [cfgfile,painting,music,ROOT/'modules/artvision_critico/production_series/render_series_v2.py']
+    elif adapter=='cinema_v55_prepared':
+        # A generic Cinema engine must never bypass the shared 4x1/V13 preflight.
+        if project.get('serial_mode')!='artvision_4x1' or not project.get('editorial_contract'):
+            raise ValueError('Cinema V55 requires a migrated 4x1 V13 project and editorial contract')
+        assets=path(job['assets_dir'],True)
+        planfile=path(job['cinema_plan_file'])
+        if planfile.parent!=assets or planfile.is_symlink():
+            raise ValueError('Cinema plan must be a local file in the prepared assets folder')
+        plan=json.loads(planfile.read_text(encoding='utf-8'))
+        if plan.get('title')!=project.get('topic'):
+            raise ValueError('Exact English artwork title must match V13 project topic')
+        # Asset allowlist and explicit source/rights are mandatory even when
+        # a legacy V13 project has weaker metadata. No new download or fallback.
+        for asset in project['assets']:
+            if not isinstance(asset.get('source'),str) or not asset['source'].startswith('https://'):
+                raise ValueError('Prepared Cinema asset source URL missing')
+            if not isinstance(asset.get('rights'),str) or len(asset['rights'].strip())<4:
+                raise ValueError('Prepared Cinema asset rights missing')
+        from artvision_cinema_prepared_v55 import render
+        video,cover=render(plan,assets,approved,out)
+        sources += [planfile,ROOT/'src/artvision_cinema_prepared_v55.py']
     else:
         if job.get('artist')!='Vincent van Gogh':raise ValueError('Questo adapter usa solo la regia Van Gogh V6; altri artisti richiedono un adapter specifico')
         assets=path(job['assets_dir'],True)
