@@ -1,0 +1,38 @@
+name: "La Storia Rivive V86 - scout 5th SF1906 genuine film shot (free)"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v86-fifth-scene-scout.yml"]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  historical_scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install open source video analysis tools"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+      - name: "Acquire genuine 1906 film, license, SHA256 and build distinct fifth-shot source board"
+        run: |
+          python -u src/storia_v70_sf1906_source_scout.py
+          python -u src/storia_v86_sf1906_fifth_scene_scout.py
+      - name: "Upload source candidates and original exact B/W frames"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V86_SF1906_DISTINCT_FIFTH_SOURCE_REVIEW
+          path: |
+            output/storia_v86_sf1906/SCELTA_QUINTA_SCENA_BN.jpg
+            output/storia_v86_sf1906/CANDIDATE_FRAMES.json
+            output/storia_v86_sf1906/ORIGINAL_BW_*.jpg
+            output/storia_v70_sf1906/PROVENANCE.json
+          retention-days: 7
+          if-no-files-found: warn
