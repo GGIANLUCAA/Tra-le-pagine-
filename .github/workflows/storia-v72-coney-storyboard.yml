@@ -1,0 +1,32 @@
+name: "V72 Coney Island 1903 timecode and visual action scouting"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v72-coney-storyboard.yml"
+      - "src/storia_v72_coney_storyboard.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build_storyboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - run: python -m pip -q install --no-cache-dir opencv-python-headless pillow numpy
+      - run: python -u src/storia_v72_coney_storyboard.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: CONEY_1903_ORIGINAL_LOC_PRORES_STORYBOARD
+          path: |
+            output/storia_v72_coney/CONTI_*.jpg
+            output/storia_v72_coney/SOURCE_DISCOVERY.json
+            output/storia_v72_coney/ACQUIRED_SOURCE.json
+          retention-days: 14
+          if-no-files-found: warn
