@@ -1,0 +1,56 @@
+{
+  "schema": "artvision-museum-director-dossier-v71",
+  "artwork_id": "david_death_of_socrates_met436105_1787",
+  "artwork": {
+    "title": "The Death of Socrates",
+    "artist": "Jacques Louis David",
+    "year": 1787,
+    "object_id": 436105,
+    "accession": "31.45",
+    "source_url": "https://www.metmuseum.org/art/collection/search/436105",
+    "image_sha256": "eaff5a04103361fed9fba6f10ea7bed80ccdc595d664b6997c6bd32f0eee06a6",
+    "rights": "The Met Open Access: artwork image reported public domain; source hash from existing Socrates Critico Museum V67 manifest",
+    "width_cm": 196.2,
+    "height_cm": 129.5,
+    "dimensions_source": "https://www.metmuseum.org/art/collection/search/436105"
+  },
+  "frame": {
+    "status": "historic_documented",
+    "photo_source": "https://commons.wikimedia.org/wiki/File:David_-_The_Death_of_Socrates_-_with_frame.jpg",
+    "photo_rights": "Szilas 2008, CC BY-SA 4.0; attribution and ShareAlike apply to photo derivatives",
+    "outer_width_cm": 233.68047,
+    "outer_height_cm": 168.27533,
+    "depth_cm": 14.605029,
+    "dimensions_source": "https://collectionapi.metmuseum.org/public/collection/v1/objects/436105",
+    "material": "gilt finish visually documented in 2008 photo; exact frame construction not independently established",
+    "profile": "replicate documented frame photo (details need direct image review)",
+    "disclosure": "2008 photographic reference of the framed artwork; current appearance not independently verified"
+  },
+  "gallery": {
+    "status": "declared_contemporary_reconstruction",
+    "photo_source": "https://commons.wikimedia.org/wiki/File:Paintings_in_Metropolitan_Museum_of_Art_20240523.jpg",
+    "photo_rights": "颐园居 2024, CC BY-SA 4.0; attribution and ShareAlike if adapted",
+    "disclosure": "Digital reconstruction from photo of Gallery 632, NOT actual filmed installation of The Death of Socrates (Met Gallery 634)",
+    "architecture_rationale": "Reference architectural treatment from a different Met gallery; stage geometry sized to this painting and frame, not asserted to be documented exhibition design"
+  },
+  "camera": {
+    "painting_center_x": 0.5,
+    "painting_center_y": 0.5,
+    "continuous_entry_exit": true,
+    "foreground_visitors": "none",
+    "scale_reference": "160 cm eye-height visual planning reference and wall-floor junction; no fictional life-size visitor in foreground",
+    "opening_wide_shot": true,
+    "return_same_room": true
+  },
+  "production": {
+    "status": "planning_only",
+    "render_authorized": false,
+    "two_museum_slots_only": [
+      "critico_museum",
+      "cinema_museum"
+    ],
+    "existing_film_masters_immutable": true,
+    "pilot_lock_source": "config/artvision_pilot_lock_v58.json",
+    "notes": "This is NOT permission to render or replace existing 4 MP4, claim museum footage, make Vidu calls, or publish."
+  }
+}
