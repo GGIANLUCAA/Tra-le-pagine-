@@ -301,7 +301,7 @@ def shot_params(mode: str, p: float, W: int, H: int, sz: tuple[int,int]):
     if not cv2.isContourConvex(quad.astype(np.int32)):
         raise RuntimeError('Invalid camera quadrilateral: self-crossing or concave')
     if not (quad[:,0].min() >= -W*.12 and quad[:,0].max() <= W*1.12 and
-            quad[:,1].min() > H*.10 and quad[:,1].max() < H*.84):
+            quad[:,1].min() > H*.07 and quad[:,1].max() < H*.84):
         raise RuntimeError('Camera projected the artwork beyond the safe museum view')
     return quad
 
