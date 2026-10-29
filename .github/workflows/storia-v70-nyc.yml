@@ -1,0 +1,27 @@
+name: V70 New York 1903 new historical footage
+on:
+  push:
+    branches: [main]
+    paths: [src/storia_v70_nyc_new_film.py, .github/workflows/storia-v70-nyc.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q numpy opencv-python-headless Pillow gradio_client
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - run: python -u src/storia_v70_nyc_new_film.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: NYC_1903_V70_REAL_SOURCE_AI_RESTORATION
+          path: output/storia_v70_nyc1903/
+          retention-days: 14
+          if-no-files-found: warn
