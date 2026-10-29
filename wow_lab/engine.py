@@ -288,7 +288,7 @@ def shot_params(mode: str, p: float, W: int, H: int, sz: tuple[int,int]):
         yoff = 24-36*eased(p)
     xoff = (p-.5)*(36 if mode != "gallery_orbit" else -48)
     center_x = W/2 + xoff
-    center_y = H*.49+yoff
+    center_y = H*.47+yoff
     halfw = sw/2*magnitude
     halfh = sh/2*magnitude
     perspective = a * halfw
@@ -301,7 +301,7 @@ def shot_params(mode: str, p: float, W: int, H: int, sz: tuple[int,int]):
     if not cv2.isContourConvex(quad.astype(np.int32)):
         raise RuntimeError('Invalid camera quadrilateral: self-crossing or concave')
     if not (quad[:,0].min() >= -W*.12 and quad[:,0].max() <= W*1.12 and
-            quad[:,1].min() > H*.10 and quad[:,1].max() < H*.82):
+            quad[:,1].min() > H*.10 and quad[:,1].max() < H*.84):
         raise RuntimeError('Camera projected the artwork beyond the safe museum view')
     return quad
 
@@ -444,7 +444,7 @@ def run(args):
     mode=modes[0]
     duration=int(conf["duration_seconds"])+rng.randrange(0,4)
     fps=int(conf["fps"]); W,H=map(int,conf["size"])
-    panel=prepare_panel(source,int(W*.85),int(H*.67),mode)
+    panel=prepare_panel(source,int(W*.85),int(H*.54),mode)
     panel_bgra=cv2.cvtColor(np.asarray(panel),cv2.COLOR_RGBA2BGRA)
     colors=mood_colors(source)
     title=rec["title"];artist=rec.get("artistDisplayName") or "Artist unknown"
