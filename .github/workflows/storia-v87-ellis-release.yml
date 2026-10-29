@@ -1,0 +1,48 @@
+name: "V87 ELLIS ISLAND 1903 — stable downloadable preview"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v87-ellis-release.yml"
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+jobs:
+  create_review_download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: "3"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Prepare open video tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install numpy opencv-python-headless Pillow
+      - name: Retrieve already generated authentic archival clip
+        run: |
+          mkdir -p input
+          gh run download 40917349078 --repo "$GITHUB_REPOSITORY" -n V85_ELLIS_1903_REAL_HISTORICAL_FILM_AND_RESTORED_PHOTOS -D input
+          test -s input/ELLIS_ISLAND_1903_V85.mp4
+      - name: Create neutrally graded video with soundtrack and integrity-tested ZIP
+        run: python src/storia_v87_ellis_release.py
+      - name: Release independent download assets as NOT APPROVED preview
+        run: |
+          set -euo pipefail
+          tag=la-storia-rivive-ellis-island-1903-v87-preview
+          files=(output_v87/ELLIS_ISLAND_1903_V87_PREVIEW.mp4 output_v87/ELLIS_ISLAND_1903_KIT_V87_PREVIEW.zip output_v87/COVER.jpg output_v87/QA.json)
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$tag" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target main --latest=false --prerelease --title "Ellis Island 1903 — V87 PREVIEW (not artistically approved)" --notes "Real film, source-locked colorization, 23 seconds, music, full download. Photorealistic face improvement does not yet meet reference example; not for automatic social publication. No paid credits." "${files[@]}"
+          fi
+          localbytes=$(stat -c %s output_v87/ELLIS_ISLAND_1903_V87_PREVIEW.mp4)
+          remotebytes=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$tag" --jq '.assets[]|select(.name=="ELLIS_ISLAND_1903_V87_PREVIEW.mp4")|.size')
+          test "$localbytes" = "$remotebytes"
+          echo "VERIFIED_EXTERNAL_DOWNLOAD_BYTES=$localbytes"
