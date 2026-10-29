@@ -6,8 +6,8 @@ Real approved visual references:
  * Hiroshige, Sudden Shower, Museum Scale — Drive ref 14X8_TObXEijGlBg8HuyR6ITTlPjJk0dA
 
 Checks the actual pair of consecutive decoded frames at the *declared*
-gallery->painting and painting->gallery transitions. It catches the fatal
-jump-cut regression, NOT photorealism, period framing or full artistic value.
+gallery->painting and painting->gallery transitions. It rejects sudden spikes while allowing genuine continuous camera movements.
+It catches the fatal jump-cut regression, NOT photorealism, period framing or full artistic value.
 Those need real comparison against both approved video masters plus human QA.
 Do NOT change a video status to approved simply because this code passes.
 No network or paid service calls.
@@ -25,7 +25,9 @@ import sys
 W,H=180,320
 BPP=3
 FRAME_BYTES=W*H*BPP
-MAX_JUMP_MAD=12.0
+MAX_JUMP_MAD=30.0
+MIN_SPIKE_RATIO=2.7
+MIN_SPIKE_EXCESS=18.0
 MAX_ARTWORK_RATIO_ERROR=.012
 ALLOWED_AUTHENTICITY={
     "documented_current","documented_historical",
@@ -66,15 +68,44 @@ def mad(a,b):
     # use no external Python libraries in this checker
     return sum(abs(x-y) for x,y in zip(a,b))/len(a)
 
+def describe_motion_discontinuity(values):
+    """Distinguish a single-frame scene jump from fast BUT smooth camera motion.
+
+    The approved Cyclops V46 master reaches RGB MAD 22.81/255 during an
+    unbroken move. The new V57 pilot reaches 22.02. Both have local ratios
+    near 1.05. Rejected Hokusai/Homer reach 66-130 and ratios 31-52+.
+    Never infer artistic approval from this mathematical test alone.
+    """
+    if len(values)<4:
+        raise ValueError('At least four real adjacent frame differences required')
+    data=[float(x) for x in values]
+    peak=max(data)
+    rest=sorted(data)
+    rest.remove(peak)
+    m=len(rest)
+    median=rest[m//2] if m%2 else (rest[m//2-1]+rest[m//2])/2
+    ratio=peak/max(0.1,median)
+    excess=peak-median
+    cut=(peak>=MAX_JUMP_MAD and ratio>=MIN_SPIKE_RATIO
+         and excess>=MIN_SPIKE_EXCESS)
+    return {
+        'largest_adjacent_frame_mad_rgb_255':round(peak,3),
+        'median_neighbour_mad_rgb_255':round(median,3),
+        'spike_ratio_vs_neighbour_median':round(ratio,3),
+        'excess_over_neighbour_median':round(excess,3),
+        'thresholds':{'minimum_peak':MAX_JUMP_MAD,'minimum_ratio':MIN_SPIKE_RATIO,
+                      'minimum_excess':MIN_SPIKE_EXCESS},
+        'isolated_hard_cut_detected':cut,
+        'passed_transition_continuity':not cut,
+    }
+
 def boundary_jump(video,t,fps):
     frames=nearby_frames(video,t,fps)
     values=[mad(frames[i-1],frames[i]) for i in range(1,len(frames))]
     return {
-      'timestamp_s':round(float(t),3),
-      'largest_adjacent_frame_mad_rgb_255':round(max(values),3),
-      'samples':len(frames),
-      'threshold':MAX_JUMP_MAD,
-      'passed_transition_continuity':max(values)<=MAX_JUMP_MAD
+        'timestamp_s':round(float(t),3),
+        'samples':len(frames),
+        **describe_motion_discontinuity(values),
     }
 
 def validate_profile(profile):
@@ -133,7 +164,7 @@ def evaluate(video,enter,leave,profile=None):
     blockers=[]
     for name,item in jumps.items():
         if not item['passed_transition_continuity']:
-            blockers.append(f'{name}: abrupt jump {item["largest_adjacent_frame_mad_rgb_255"]}/255 exceeds {MAX_JUMP_MAD}/255')
+            blockers.append(f'{name}: abrupt jump {item["largest_adjacent_frame_mad_rgb_255"]}/255 is an isolated discontinuity (ratio {item["spike_ratio_vs_neighbour_median"]})')
     blockers.extend(validate_profile(profile))
     return {
       'schema':'artvision-v46-museum-regression-v56',
