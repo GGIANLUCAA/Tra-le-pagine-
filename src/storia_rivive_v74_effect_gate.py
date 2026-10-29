@@ -29,7 +29,7 @@ def inspect_video(path, sat_threshold=22, static_threshold=5.0):
    if i-start>=max(8,round(.45*fps)):
     prior=sat[max(0,start-round(.65*fps)):start]
     motion=float(np.median(diff[start+1:i])) if i>start+1 else 999
-    bw_before=len(prior)>round(.2*fps) and float(np.median(prior))<12
+    bw_before=len(prior)>round(.2*fps) and float(np.median(prior))<18
     qualifies=bool(bw_before and motion<static_threshold)
     blocks.append({"from_s":round(start/fps,2),"to_s":round(i/fps,2),
                    "median_color_motion":round(motion,2),"preceded_by_bw":bool(bw_before),"qualifies":qualifies})
