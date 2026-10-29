@@ -33,13 +33,22 @@ class ArtVisionNextRenderTests(unittest.TestCase):
         self.assertEqual(len(data['blockers']),2)
         self.assertTrue(all(b['reason']=='verified_gacrux_cache_required' for b in data['blockers']))
 
-    def test_missing_museum_renderer_does_not_make_fake_job(self):
+    def test_missing_museum_renderer_does_not_block_next_new_standard(self):
         self.variants['cinema_museum']={'status':'planned'}
         self.write([])
         data=choose(self.root)
-        self.assertEqual(data['status'],'missing_cinema_input_or_renderer')
-        self.assertFalse(data['new_artwork_required'])
+        self.assertEqual(data['status'],'new_artwork_preparation_required')
+        self.assertTrue(data['new_artwork_required'])
         self.assertEqual([b['reason'] for b in data['blockers'] if b['variant']=='cinema_museum'],['no_verified_generic_museum_renderer'])
+
+    def test_missing_standard_requires_real_preparation_not_fake_render(self):
+        self.variants['cinema_standard']={'status':'planned'}
+        self.write([])
+        data=choose(self.root)
+        self.assertEqual(data['status'],'missing_standard_preparation')
+        self.assertFalse(data['new_artwork_required'])
+        self.assertEqual([b['reason'] for b in data['blockers'] if b['variant']=='cinema_standard'],
+                         ['prepared_v13_project_and_rights_review_required'])
 
     def test_existing_queue_keeps_only_one_production_owner(self):
         self.write([{'id':'existing_job'}])
