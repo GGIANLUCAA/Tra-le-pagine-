@@ -1,0 +1,34 @@
+name: ArtVision V46 Museum regression quality gate
+on:
+  push:
+    branches: [fix/artvision-v46-museum-regression-20261029]
+    paths:
+      - src/artvision_museum_v46_regression_gate.py
+      - tests/test_artvision_museum_v46_regression_gate.py
+      - .github/workflows/artvision-museum-v46-regression.yml
+  pull_request:
+    paths:
+      - src/artvision_museum_v46_regression_gate.py
+      - tests/test_artvision_museum_v46_regression_gate.py
+      - .github/workflows/artvision-museum-v46-regression.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  museum-v46:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify tests and source contract
+        run: |
+          python -m py_compile src/artvision_museum_v46_regression_gate.py
+          python -m unittest discover -s tests -p test_artvision_museum_v46_regression_gate.py -v
+      - name: Confirm V46 actual-reference regression report is present
+        run: |
+          grep -F '74,4 / 255' docs/ARTVISION_MUSEUM_V46_REGRESSION_REVIEW_20261029.md
+          grep -F '92,7 / 255' docs/ARTVISION_MUSEUM_V46_REGRESSION_REVIEW_20261029.md
+          test -s src/artvision_museum_v46_regression_gate.py
