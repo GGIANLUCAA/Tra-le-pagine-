@@ -1,0 +1,101 @@
+name: "La Storia Rivive V84 - cinque prove Vidu movimento vero autorizzate"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-vidu-v84-five-motion-tests.yml"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v84-five-motion-tests-20261029-one-billable-at-a-time
+  cancel-in-progress: false
+jobs:
+  five_motion_tests:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 56
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      PREVIEW_TAG: storia-rivive-v84-vidu-five-full-motion-previews-20261029
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Prepare FFmpeg and Python (no spend)"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg unzip
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+          python -m py_compile src/storia_vidu_five_motion_tests_v84.py src/storia_vidu_v84_compare_reel.py
+      - name: "Download and verify FIVE exact historic photo anchors, no API spend"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_vidu_v84_five_tests/inputs
+          cd output/storia_vidu_v84_five_tests/inputs
+          curl -fsSL --retry 2 --connect-timeout 20 --max-time 150 \
+            -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12849614550/zip" -o FourRealRestoredPhotos.zip
+          unzip -j -q FourRealRestoredPhotos.zip "FOTO_AI_RICOSTRUITA_*.png"
+          curl -fsSL --retry 2 --connect-timeout 20 --max-time 150 \
+            -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12913904773/zip" -o PriorRealVidu.zip
+          unzip -j -q PriorRealVidu.zip "END_MODERN.jpg"
+          printf "25070cfd5aa0e38585c6b582b7cdade10a7aeb8154  FOTO_AI_RICOSTRUITA_01.png\n" | sha256sum -c -
+          printf "328af7951bb4b443166143eded5b149aae4f6982713a47420428f79ae291dedf  FOTO_AI_RICOSTRUITA_02.png\n" | sha256sum -c -
+          printf "8d36d33fec39d6051b2dbed9bc0d5349438522ef1f2756e8bbf91416aeaa6211  FOTO_AI_RICOSTRUITA_03.png\n" | sha256sum -c -
+          printf "5abf828d87465ad90201da0bb7e0ea3dad1554cd1436aa3f953a36c26f4b9688  FOTO_AI_RICOSTRUITA_04.png\n" | sha256sum -c -
+          printf "f9c83984489830b938a90857cf6ea5afe63cc4ab7f16e795f0a0c9c297d90772  END_MODERN.jpg\n" | sha256sum -c -
+          echo "ALL_FIVE_HISTORY_INPUTS_VERIFIED_NO_PAID_SPEND"
+      - name: "Run 5 different authorized 5-second Vidu img2video tests SEQUENTIALLY, <=80 credits total"
+        run: python -u src/storia_vidu_five_motion_tests_v84.py
+      - name: "Compare all 5 clips in one moving review reel and Android ZIP"
+        run: python -u src/storia_vidu_v84_compare_reel.py
+      - name: "Save all actually retrieved videos and full PRIVATE credit report"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V84_REAL_VIDU_FIVE_MOTION_TESTS_PRIVATE_QA
+          path: |
+            output/storia_vidu_v84_five_tests/*_VIDU_ORIGINAL.mp4
+            output/storia_vidu_v84_five_tests/*_BW_TO_COLOR_1S_AND_MOVING.mp4
+            output/storia_vidu_v84_five_tests/*_QA_PRIVATE.json
+            output/storia_vidu_v84_five_tests/CREDIT_REPORT_PRIVATE.json
+            output/storia_vidu_v84_five_tests/TEST_REPORT_FOR_REVIEW.json
+            output/storia_vidu_v84_five_tests/V84_CINQUE_PROVE_VIDU_CONFRONTO.mp4
+            output/storia_vidu_v84_five_tests/FIVE_VIDU_TESTS_ANDROID.zip
+            output/storia_vidu_v84_five_tests/COVER.jpg
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Create verified Android download preview ONLY; no social or website import"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_vidu_v84_five_tests
+          if gh release view "$PREVIEW_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists; do not overwrite"; exit 0
+          fi
+          gh release create "$PREVIEW_TAG" \
+            V84_CINQUE_PROVE_VIDU_CONFRONTO.mp4 FIVE_VIDU_TESTS_ANDROID.zip \
+            *_BW_TO_COLOR_1S_AND_MOVING.mp4 \
+            *_VIDU_ORIGINAL.mp4 COVER.jpg TEST_REPORT_FOR_REVIEW.json \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "La Storia Rivive V84 · Cinque prove Vidu movimento a colori · Anteprima tecnica" \
+            --notes "CINQUE VERE GENERAZIONI Vidu Q2 Pro Fast (5s ciascuna) a partire da fotogrammi storici restaurati; ognuna trasformata da B/N a colore durante il suo primo secondo preservando il movimento del video generato nei successivi quattro. Quattro scene di Parigi ~1918 e una scena ~1900, quindi esperimento tecnico NON unico piano sequenza storico. VIDEO E RICOSTRUZIONI AI NON SONO FILMATI ORIGINALI A COLORI. Test artistico/diritti non approvato per social. Prerelease tecnica con file accessibili a chi conosce l’URL, non in catalogo pubblico/social. Report crediti privato nell’artifact dell’Action, mai divulgato pubblicamente sul repository." \
+            --prerelease
+          gh release view "$PREVIEW_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name'
+      - name: "Verify new direct external MP4 and ZIP names exist"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          names="$(gh release view "$PREVIEW_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          grep -Fqx "V84_CINQUE_PROVE_VIDU_CONFRONTO.mp4" <<< "$names"
+          grep -Fqx "FIVE_VIDU_TESTS_ANDROID.zip" <<< "$names"
+          count="$(grep -c "_BW_TO_COLOR_1S_AND_MOVING.mp4" <<< "$names")"
+          test "$count" -eq 5
+          echo "ALL_FIVE_PUBLIC_TECHNICAL_PREVIEW_DOWNLOADS_PRESENT"
