@@ -63,6 +63,7 @@
   "history_scope": "wow-lab-v1-* GitHub releases only",
   "state_persistence": "namespaced release manifest plus run artifact",
   "stop_mechanism": "set wow_lab/config.json enabled=false or disable the WOW LAB GitHub Actions workflow",
+  "preview_releases_enabled": true,
   "production_ready": false,
   "status": "experimental: technical QA only; must not be called approved or viral"
 }
