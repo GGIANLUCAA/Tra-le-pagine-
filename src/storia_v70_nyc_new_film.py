@@ -121,9 +121,22 @@ def render(video,chosen,outputs):
  run(["ffmpeg","-v","error","-xerror","-i",str(target),"-f","null","-"])
  return target,duration
 def main():
+ # MUST pass BEFORE downloading source or consuming any free AI image quota.
+ # This specific 1903 file has an intrusive FRAMEPOOL logo and repeated footage:
+ # its real review is REJECTED and the pipeline intentionally stops here.
+ from storia_v70_qa_gate import review_source,check_distinct_source_frames,test_color_photo
+ review=O.parents[1]/"config/storia_v70_nyc_failed_source.json"
+ if not review.is_file():
+  review=Path(__file__).resolve().parents[1]/"config/storia_v70_nyc_failed_source.json"
+ approved=review_source(review)
  src=fetch()
  shots=source_frames(src)
+ # Detect repeated nearly identical frames before AI requests.
+ originals=[O/f"NYC_ORIGINAL_{i:02}.png" for i in range(1,len(shots)+1)]
+ check_distinct_source_frames(originals)
  photos=generate(shots)
+ # Do not confuse 1080x1920 grayscale output with colorful modern photography.
+ for photo in photos:test_color_photo(photo)
  vid,dur=render(src,shots,photos)
  report={"source":URL,"original_sha256":sha(src),"restored_photo_sha256":[sha(p) for p in photos],
  "video_sha256":sha(vid),"duration":dur,"real_archive_footage":True,
