@@ -1,0 +1,37 @@
+name: "V79 Extra real 1896 kiss moment · face HD photo restoration"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v79-kiss-late.yml"
+      - "src/storia_v79_kiss_late.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  generate_one_new_face:
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    env:
+      OMP_NUM_THREADS: "4"
+      HF_HUB_DISABLE_XET: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip -q install --no-cache-dir opencv-python-headless pillow numpy huggingface_hub onnxruntime gradio_client
+      - name: Fetch original 1896 high-resolution unedited PD film
+        run: |
+          mkdir -p output/storia_v79_volti
+          curl -fLsS --retry 2 --connect-timeout 25 --max-time 180 -o output/storia_v79_volti/KISS_1896.webm "https://upload.wikimedia.org/wikipedia/commons/d/dd/The_Kiss_%281896%29.webm"
+          test $(stat -c%s output/storia_v79_volti/KISS_1896.webm) -gt 47000000
+      - name: Source-locked separate late kiss frame, genuine image-to-image face photography
+        run: python -u src/storia_v79_kiss_late.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V79_SECOND_REAL_1896_GESTURE_HD_PHOTO
+          path: output/storia_v79_kiss_late/
+          if-no-files-found: warn
+          retention-days: 14
