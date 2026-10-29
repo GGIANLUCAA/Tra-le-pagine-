@@ -1,0 +1,99 @@
+name: ArtVision V55 — Hokusai Cinema Museum real-scale production
+run-name: "Hokusai The Great Wave — Cinema Museum V55 — review only"
+on:
+  push:
+    branches: [feature/artvision-hokusai-cinema-museum-v55-20261029]
+    paths:
+      - ".github/workflows/artvision-hokusai-cinema-museum-v55.yml"
+      - "scripts/artvision_hokusai_cinema_museum_v55.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-v55-one-render-at-a-time
+  cancel-in-progress: true
+jobs:
+  museum:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU-only FFmpeg/Pillow/numpy for free local rendering
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          command -v ffmpeg
+          command -v ffprobe
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3"
+          python -m py_compile scripts/artvision_hokusai_cinema_museum_v55.py
+      - name: Reject paid APIs, automatic publishing and historic frame claims
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('scripts/artvision_hokusai_cinema_museum_v55.py').read_text()
+          for key in ('VIDU_API_KEY', 'RUNWARE_API_KEY','KLING_API_KEY','SEEDANCE_API_KEY','GEMINI_API_KEY','requests.post('):
+              assert key not in s,key
+          assert "RECONSTRUCTION" in s
+          assert "NOT historical" in s or "NOT a photograph" in s
+          print('ZERO_PAID_VIDEO_API; GALLERY_RECONSTRUCTION_EXPLICIT')
+          PY
+      - name: Run documented V54/V13 preflight and make genuinely distinct Cinema Museum MP4
+        run: |
+          python scripts/artvision_hokusai_cinema_museum_v55.py
+      - name: Independently verify original H.264/AAC MP4 and complete ZIPs
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,subprocess,zipfile
+          from pathlib import Path
+          out=Path('output/artvision-hokusai-cinema-museum-v55')
+          movie=out/'rendered/ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_MUSEUM_V55_REVIEW.mp4'
+          assert movie.is_file() and movie.stat().st_size>500000
+          p=json.loads(subprocess.check_output(['ffprobe','-v','error',
+              '-show_entries','format=duration:stream=codec_name,codec_type,width,height',
+              '-of','json',str(movie)]))
+          assert any(s.get('codec_name')=='h264' and (s.get('width'),s.get('height'))==(1080,1920)
+              for s in p['streams'])
+          assert any(s.get('codec_name')=='aac' for s in p['streams'])
+          assert float(p['format']['duration'])>25
+          subprocess.run(['ffmpeg','-nostdin','-v','error','-xerror','-i',str(movie),'-f','null','-'],
+                         check=True,timeout=450)
+          zips=list((out/'V55_DELIVERY').glob('*.zip'))
+          assert len(zips)>=2
+          for z in zips:
+              with zipfile.ZipFile(z) as f:
+                  assert f.testzip() is None
+          for t in ('FACEBOOK','INSTAGRAM','TIKTOK','YOUTUBE'):
+              assert (out/'rendered'/('POST_'+t+'.txt')).stat().st_size>150
+          assert (out/'rendered/GALLERY_RECONSTRUCTION_ORIGINAL.jpg').stat().st_size>100000
+          state=json.loads((out/'RELEASE_STATE_V55.json').read_text())
+          assert state['state']=='rendered_needs_review' and not state['V25_approved']
+          print('VERIFIED_HOKUSAI_CINEMA_MUSEUM_MP4',hashlib.sha256(movie.read_bytes()).hexdigest(),
+                'bytes',movie.stat().st_size)
+          PY
+      - name: Keep real movie, review source, four posts, ZIP Android and complete pack
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_HOKUSAI_CINEMA_MUSEUM_V55_RENDERED_NEEDS_REVIEW
+          path: |
+            output/artvision-hokusai-cinema-museum-v55/rendered/ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_MUSEUM_V55_REVIEW.mp4
+            output/artvision-hokusai-cinema-museum-v55/rendered/COPERTINA.jpg
+            output/artvision-hokusai-cinema-museum-v55/rendered/FRAME_*S.jpg
+            output/artvision-hokusai-cinema-museum-v55/rendered/GALLERY_RECONSTRUCTION_ORIGINAL.jpg
+            output/artvision-hokusai-cinema-museum-v55/rendered/VIDEO_RECIPE_V13.json
+            output/artvision-hokusai-cinema-museum-v55/rendered/SOURCES_AND_RIGHTS.md
+            output/artvision-hokusai-cinema-museum-v55/rendered/POST_*.txt
+            output/artvision-hokusai-cinema-museum-v55/V55_DELIVERY/*.zip
+            output/artvision-hokusai-cinema-museum-v55/V55_DELIVERY/DELIVERY_STATUS_V55.json
+            output/artvision-hokusai-cinema-museum-v55/RELEASE_STATE_V55.json
+            output/artvision-hokusai-cinema-museum-v55/ARTVISION_4X1_PLAN.json
+          if-no-files-found: error
+          retention-days: 30
