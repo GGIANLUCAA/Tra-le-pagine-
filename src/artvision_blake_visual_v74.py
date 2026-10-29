@@ -169,6 +169,7 @@ DETAILS=[
 ]
 
 def cinema_standard(art,t,duration):
+    """Narrative edits with clean 0.32s source-faithful dissolves, no hard flashes."""
     schedule=[
         (0.,4.4,.50,.26,2.4,"THE DRAGON"),
         (4.4,10.2,.5,.53,1.02,"WILLIAM BLAKE"),
@@ -177,22 +178,28 @@ def cinema_standard(art,t,duration):
         (23.0,29.0,.49,.76,2.7,"THE COILED TAIL"),
         (29.0,35.0,.73,.73,2.7,"THE WOMAN"),
         (35.0,duration,.5,.52,1.0,"A PROPHECY ON PAPER")]
-    shot=next((s for s in schedule if s[0]<=t<s[1]),schedule[-1])
-    start,end,fx,fy,mag,title=shot
-    u=(t-start)/max(.1,end-start)
-    zoom=mag*(.97+.055*smooth(u))
-    if title=="WILLIAM BLAKE" or title=="A PROPHECY ON PAPER":
-        # Complete original sheet, not a second artwork or enlarged AI version.
-        result=Image.new("RGB",(W,H),(17,18,21))
-        sheet=art.copy()
-        sheet.thumbnail((int(W*.86),int(H*.81)),Image.Resampling.LANCZOS)
-        result.paste(sheet,((W-sheet.width)//2,(H-sheet.height)//2))
-    else:
-        result=crop_art(art,fx,fy,zoom,t)
+    def render_shot(shot,now):
+        start,end,fx,fy,mag,title=shot
+        u=max(0.,min(1.,(now-start)/max(.1,end-start)))
+        zoom=mag*(.97+.055*smooth(u))
+        if title in ("WILLIAM BLAKE","A PROPHECY ON PAPER"):
+            result=Image.new("RGB",(W,H),(17,18,21))
+            sheet=art.copy()
+            sheet.thumbnail((int(W*.86),int(H*.81)),Image.Resampling.LANCZOS)
+            result.paste(sheet,((W-sheet.width)//2,(H-sheet.height)//2))
+        else:
+            result=crop_art(art,fx,fy,zoom,now)
+        return result
+    idx=next((i for i,s in enumerate(schedule) if s[0]<=t<s[1]),len(schedule)-1)
+    result=render_shot(schedule[idx],t)
+    if idx>0:
+        boundary=schedule[idx][0]
+        if 0<=t-boundary<.32:
+            previous=render_shot(schedule[idx-1],boundary-.001)
+            result=Image.blend(previous,result,smooth((t-boundary)/.32))
     if t<3.4:
         result=label(result,70,["THE GREAT","RED DRAGON"],"WILLIAM BLAKE  ·  1803–1805",
                      opacity=min(1.,t/.45,(3.6-t)/.6))
-    # No recurring large captions: let the historical image speak.
     return result
 
 def critico_standard(art,t,duration):
