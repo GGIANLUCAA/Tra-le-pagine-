@@ -1,0 +1,69 @@
+{
+  "version": "V76",
+  "editorial_preset": "freeze_ai_photo_reference_43054_43056",
+  "social_museum_v76": true,
+  "default_target_duration_s": [
+    20,
+    26
+  ],
+  "title": {
+    "content": [
+      "place",
+      "year"
+    ],
+    "overlay_on_real_bw_moving_film": true,
+    "max_seconds": 2
+  },
+  "hook": {
+    "max_first_photo_reveal_seconds": 3,
+    "first_frame_moving_action_required": true
+  },
+  "scene": {
+    "different_real_shots_required": true,
+    "bw_motion_s": [
+      1.8,
+      3.5
+    ],
+    "photo_hold_s": [
+      2,
+      4.2
+    ],
+    "reveal_s": [
+      0.2,
+      0.4
+    ],
+    "freeze_original_frame_required": true,
+    "photoreal_ai_image_required": true
+  },
+  "sound": {
+    "voiceover": false,
+    "music_original_or_cleared": true,
+    "reveal_sound_accents": true,
+    "synthetic_ambience_must_not_be_called_original": true
+  },
+  "delivery": {
+    "mp4_h264_aac": true,
+    "zip": true,
+    "cover": true,
+    "social_descriptions": true,
+    "metadata_and_QA": true,
+    "github_release_download_verified": true,
+    "site_upload_needs_verification": true
+  },
+  "budget": {
+    "vidu_credits": 0,
+    "no_paid_api_without_approval": true
+  },
+  "testing": {
+    "record_after_publication": [
+      "views",
+      "watch_time",
+      "completion",
+      "replays",
+      "shares",
+      "saves"
+    ],
+    "prefer_test_multiple_subjects": true
+  },
+  "artistic_review_required": true
+}
