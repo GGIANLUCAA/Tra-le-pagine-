@@ -1,0 +1,62 @@
+name: "ArtVision 3D Studio — Vermeer Pop-Out V2 CPU experiment"
+on:
+  push:
+    branches: ["experiment/android-socrates-popout-standard-20261029"]
+    paths:
+      - ".github/workflows/experiment-vermeer-popout-v2.yml"
+      - "experiments/android-socrates-popout/artvision_popout_v2_standalone.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: isolated-artvision-vermeer-popout-v2
+  cancel-in-progress: false
+jobs:
+  2point5d-experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free CPU libraries and FFmpeg, never install GPU services
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+      - name: Use the documented free public-domain source and render actual 8-second video
+        run: |
+          python experiments/android-socrates-popout/artvision_popout_v2_standalone.py \
+            --out output/experiment-vermeer-popout-v2
+      - name: Verify video, mask, original source and full decode; never label as real 3D
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, subprocess
+          d=Path("output/experiment-vermeer-popout-v2")
+          m=json.loads((d/"MANIFEST_V2.json").read_text())
+          assert m["is_full_3d_mesh"] is False
+          assert m["generated_ai_image"] is False
+          assert m["paid_api_calls"] == 0
+          assert m["modifies_production"] is False
+          files=("ORIGINAL_PICTURE_NORMALIZED.png","AUTO_FOREGROUND_MASK.png","01_ORIGINALE.jpg",
+                 "02_MOMENTO_USCITA.jpg","03_POP_OUT_PARALLASSE_3D.jpg",
+                 "04_PRIMA_DOPO.jpg","05_VERMEER_POP_OUT_V2_CAMERA_3D.mp4")
+          for filename in files:
+              p=d/filename
+              assert p.is_file() and p.stat().st_size>5000, filename
+          mp4=d/"05_VERMEER_POP_OUT_V2_CAMERA_3D.mp4"
+          duration=float(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration",
+              "-of","default=nokey=1:noprint_wrappers=1",str(mp4)],text=True))
+          assert 7.8<duration<8.2,duration
+          subprocess.run(["ffmpeg","-v","error","-i",str(mp4),"-f","null","-"],check=True)
+          print("PASS: REAL H264 MP4 and original-derived stills. Artistic review still required.")
+          PY
+      - name: Preserve real files for Android, never publish to ArtVision library or social
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_VERMEER_POP_OUT_V2_ANDROID_EXPERIMENT
+          path: output/experiment-vermeer-popout-v2/
+          if-no-files-found: error
+          retention-days: 15
