@@ -44,7 +44,7 @@ class SyncValidation(unittest.TestCase):
         for platform,original_sha in expected.items():
             payload=docs["POST_"+platform.upper()+".txt"]
             self.assertEqual(hashlib.sha256(payload).hexdigest(),original_sha)
-            self.assertEqual(payload.decode("utf8"),entry["captions"][platform].strip()+"\\n\\n"+"\\n".join(entry["credit_lines"])+"\\n\\n"+" ".join(entry["hashtags"])+"\\n")
+            self.assertEqual(payload.decode("utf8"),entry["captions"][platform].strip()+"\n\n"+"\n".join(entry["credit_lines"])+"\n\n"+" ".join(entry["hashtags"])+"\n")
             self.assertIn("CC BY-SA 4.0",payload.decode("utf8"))
             self.assertIn("Kevin MacLeod",payload.decode("utf8"))
 
