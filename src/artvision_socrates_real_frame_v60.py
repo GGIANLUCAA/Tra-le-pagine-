@@ -49,6 +49,30 @@ def prepare(dest):
         "status":"SOURCE_ONLY_NO_MUSEUM_RENDER",
         "paid_api_calls":0,"cinema_museum_rendered":False
     }
+    # Licensed 2024 reference for Met gallery architectural finishes only.
+    # Gallery 632, not the current installation of object 436105.
+    gallery_url="https://upload.wikimedia.org/wikipedia/commons/b/bd/Paintings_in_Metropolitan_Museum_of_Art_20240523.jpg"
+    gallery_file=dest/"MET_GALLERY_632_2024_YIYUANJU_CC_BY_SA_4.jpg"
+    request=urllib.request.Request(gallery_url,headers={"User-Agent":"ArtVision/60 (CC BY-SA 4.0 licensed reference; source audit)"})
+    with urllib.request.urlopen(request,timeout=90) as g:
+        if g.status!=200 or not g.geturl().startswith("https://upload.wikimedia.org/"):
+            raise ValueError("Gallery reference must originate from Commons")
+        gallery_bytes=g.read(12000001)
+    if not 500000<len(gallery_bytes)<12000000:
+        raise ValueError("Unexpected gallery photo size")
+    gallery_file.write_bytes(gallery_bytes)
+    with Image.open(gallery_file) as im:
+        im.verify()
+    with Image.open(gallery_file) as im:
+        gw,gh=im.size
+    if min(gw,gh)<1800: raise ValueError("Gallery reference too small")
+    record["gallery_reference"]={
+        "file":gallery_file.name,"sha256":sha(gallery_file),"dimensions_px":[gw,gh],
+        "source_page":"https://commons.wikimedia.org/wiki/File:Paintings_in_Metropolitan_Museum_of_Art_20240523.jpg",
+        "photo_author":"颐园居","photo_date":"2024-05-23",
+        "license":"CC BY-SA 4.0","license_url":LICENSE,
+        "truth":"The photographed room is Gallery 632, not a verified image of Socrates' current Gallery 634. Can guide architectural reconstruction only; any scene combining it with Socrates must be explicitly disclosed as composited."
+    }
     (dest/"FRAME_SOURCE_V60.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n")
     print(json.dumps(record,ensure_ascii=False,indent=2))
 if __name__=="__main__":
