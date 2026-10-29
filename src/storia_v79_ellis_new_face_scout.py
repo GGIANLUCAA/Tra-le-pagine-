@@ -34,7 +34,9 @@ def scout():
  p=get_source()
  cap=cv2.VideoCapture(str(p));fps=cap.get(cv2.CAP_PROP_FPS);w=cap.get(3);h=cap.get(4);dur=cap.get(7)/fps
  if w<1200 or h<900 or dur<120:raise RuntimeError("Wrong source frame size/film duration")
- face_cascade=cv2.CascadeClassifier(cv2.data.haarcascades+"haarcascade_frontalface_default.xml")
+ face_cascade=None
+ if hasattr(cv2,"CascadeClassifier") and hasattr(cv2,"data"):
+  face_cascade=cv2.CascadeClassifier(cv2.data.haarcascades+"haarcascade_frontalface_default.xml")
  rows=[]
  for sec in [5,15,25,35,45,55,65,75,85,95,105,115,125,135,143]:
   cap.set(cv2.CAP_PROP_POS_MSEC,sec*1000)
@@ -42,7 +44,7 @@ def scout():
   if not ok:continue
   mono=cv2.cvtColor(fr,cv2.COLOR_BGR2GRAY)
   # Source has tiny figures: look for 24+ px human faces; detection is a heuristic only, not factual count.
-  faces=face_cascade.detectMultiScale(mono,scaleFactor=1.08,minNeighbors=4,minSize=(24,24))
+  faces=face_cascade.detectMultiScale(mono,scaleFactor=1.08,minNeighbors=4,minSize=(24,24)) if face_cascade is not None else []
   body=np.mean(cv2.Laplacian(mono,cv2.CV_32F)**2)
   sharp=float(cv2.Laplacian(mono,cv2.CV_32F).var())
   rows.append(dict(second=sec,face_boxes=faces.tolist() if hasattr(faces,"tolist") else [],
