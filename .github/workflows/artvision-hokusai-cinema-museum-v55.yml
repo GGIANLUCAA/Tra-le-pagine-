@@ -53,8 +53,8 @@ jobs:
           python - <<'PY'
           import hashlib,json,subprocess,zipfile
           from pathlib import Path
-          out=Path('output/artvision-hokusai-cinema-museum-v55b')
-          movie=out/'rendered/ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_MUSEUM_V55B_REVIEW.mp4'
+          out=Path('output/artvision-hokusai-cinema-museum-v55c')
+          movie=out/'rendered/ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_MUSEUM_V55C_REVIEW.mp4'
           assert movie.is_file() and movie.stat().st_size>500000
           p=json.loads(subprocess.check_output(['ffprobe','-v','error',
               '-show_entries','format=duration:stream=codec_name,codec_type,width,height',
@@ -82,18 +82,18 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ARTVISION_HOKUSAI_CINEMA_MUSEUM_V55B_RENDERED_NEEDS_REVIEW
+          name: ARTVISION_HOKUSAI_CINEMA_MUSEUM_V55C_RENDERED_NEEDS_REVIEW
           path: |
-            output/artvision-hokusai-cinema-museum-v55b/rendered/ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_MUSEUM_V55B_REVIEW.mp4
-            output/artvision-hokusai-cinema-museum-v55b/rendered/COPERTINA.jpg
-            output/artvision-hokusai-cinema-museum-v55b/rendered/FRAME_*S.jpg
-            output/artvision-hokusai-cinema-museum-v55b/rendered/GALLERY_RECONSTRUCTION_ORIGINAL.jpg
-            output/artvision-hokusai-cinema-museum-v55b/rendered/VIDEO_RECIPE_V13.json
-            output/artvision-hokusai-cinema-museum-v55b/rendered/SOURCES_AND_RIGHTS.md
-            output/artvision-hokusai-cinema-museum-v55b/rendered/POST_*.txt
-            output/artvision-hokusai-cinema-museum-v55b/V55_DELIVERY/*.zip
-            output/artvision-hokusai-cinema-museum-v55b/V55_DELIVERY/DELIVERY_STATUS_V55.json
-            output/artvision-hokusai-cinema-museum-v55b/RELEASE_STATE_V55.json
-            output/artvision-hokusai-cinema-museum-v55b/ARTVISION_4X1_PLAN.json
+            output/artvision-hokusai-cinema-museum-v55c/rendered/ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_MUSEUM_V55C_REVIEW.mp4
+            output/artvision-hokusai-cinema-museum-v55c/rendered/COPERTINA.jpg
+            output/artvision-hokusai-cinema-museum-v55c/rendered/FRAME_*S.jpg
+            output/artvision-hokusai-cinema-museum-v55c/rendered/GALLERY_RECONSTRUCTION_ORIGINAL.jpg
+            output/artvision-hokusai-cinema-museum-v55c/rendered/VIDEO_RECIPE_V13.json
+            output/artvision-hokusai-cinema-museum-v55c/rendered/SOURCES_AND_RIGHTS.md
+            output/artvision-hokusai-cinema-museum-v55c/rendered/POST_*.txt
+            output/artvision-hokusai-cinema-museum-v55c/V55_DELIVERY/*.zip
+            output/artvision-hokusai-cinema-museum-v55c/V55_DELIVERY/DELIVERY_STATUS_V55.json
+            output/artvision-hokusai-cinema-museum-v55c/RELEASE_STATE_V55.json
+            output/artvision-hokusai-cinema-museum-v55c/ARTVISION_4X1_PLAN.json
           if-no-files-found: error
           retention-days: 30
