@@ -1,0 +1,45 @@
+{
+  "schema": "artvision-v55-archive-staging-v1",
+  "video_key": "01_Klimt_Critico_Standard_Gacrux.mp4",
+  "video_sha256": "d8bf725675e45be210383a4ca3b2113a06807bb9af540e21b3adb7fa2b4e5eb8",
+  "video_bytes": 17136945,
+  "review_state": "rendered_needs_review",
+  "posts": {
+    "facebook": "Una coppia in un abbraccio, il mondo che sparisce. Nell'analisi di The Kiss scopriremo perché i volti sono così piccoli, come parlano le mani e cosa racconta il prato sul quale i due si stringono.",
+    "instagram": "L'oro non copre la tenerezza: la amplifica. ✨ Una lettura dettagliata del Bacio di Klimt, dalle mani ai fiori, dai cerchi ai rettangoli. #Klimt #StoriaDellArte",
+    "tiktok": "Hai mai visto davvero la mano della donna nel Bacio di Klimt? In questa critica di tre minuti i dettagli autentici seguono esattamente il racconto. #Klimt #Arte",
+    "youtube": "THE KISS — Gustav Klimt | Analisi Critico d'arte. Volti, mani, decorazioni geometriche, foglia d'oro, prato e gesto sospeso: una spiegazione completa del quadro custodito al Belvedere di Vienna, narrata in italiano."
+  },
+  "rights_markdown": "The Kiss, Gustav Klimt (1908–1909), Upper Belvedere inv. 912, 180×180 cm. Painting faithful public-domain reproduction Commons PD-Art https://commons.wikimedia.org/wiki/File:Klimt_-_The_Kiss.jpg ; actual image SHA256 43e998b7b9dc6f935918dbd55ff1a3f34052b932d563e74e5d2d5dceb2660b24. Music: Dreams Become Real by Kevin MacLeod, licensed CC BY 4.0 https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027 ; https://creativecommons.org/licenses/by/4.0/ ; original audio SHA256 a8ea5df5f969ed8d898af7fe07eb4712233f03e9d83f7ebcc88d1c851f3171b0. Critico narration: exact Google Gemini Gacrux Italian recording WAV SHA256 fe5bab5c9c52567c04959b387459178caa4a268c8f64671582bab10c81214371, one authorized request. Museum: independently constructed gallery image and dark stepped + golden fillet frame are DIGITAL RECONSTRUCTIONS, not authentic current Belvedere gallery or historical frame. No social auto-publication, no V25 approval or verified private archive.",
+  "recipe": {
+    "schema": "artvision-klimt-4x1-v73",
+    "variant": "critico_standard",
+    "artist": "Gustav Klimt",
+    "title": "The Kiss",
+    "duration_seconds": 207.5,
+    "codec": "H264/AAC",
+    "resolution": [
+      720,
+      1280
+    ],
+    "frame_rate": 20,
+    "video": {
+      "name": "01_Klimt_Critico_Standard_Gacrux.mp4",
+      "sha256": "d8bf725675e45be210383a4ca3b2113a06807bb9af540e21b3adb7fa2b4e5eb8",
+      "bytes": 17136945
+    },
+    "original_art_sha256": "43e998b7b9dc6f935918dbd55ff1a3f34052b932d563e74e5d2d5dceb2660b24",
+    "music_sha256": "a8ea5df5f969ed8d898af7fe07eb4712233f03e9d83f7ebcc88d1c851f3171b0",
+    "gacrux_voice_sha256": "fe5bab5c9c52567c04959b387459178caa4a268c8f64671582bab10c81214371",
+    "same_critico_audio_aac_sha256": "7e33f4a696f77033afddfad2f18562295b605c39cfd50a999bf94843907a53fe",
+    "museum_reconstruction": false,
+    "V57_numeric_jump_gate": null,
+    "complete_decode": "passed",
+    "opening_frames": "extracted",
+    "full_speed_human_review": "pending",
+    "V25_approved": false,
+    "private_archive_import": false,
+    "video_AI_paid_calls": 0
+  },
+  "notes": "Exact real MP4 produced locally in user ChatGPT session and checked; stage text only. Archive Sync pending until real authenticated import and SHA retrieval. The ZIP packaging has a separate set of four distinct posts per video. Not an approved Gold Master."
+}
