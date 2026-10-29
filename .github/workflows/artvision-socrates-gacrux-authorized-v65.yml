@@ -1,8 +1,6 @@
 name: "ArtVision Socrate · Gacrux originale autorizzato V65"
 on:
-  push:
-    branches:
-      - artvision-socrates-gacrux-authorized-v65
+  pull_request:
     paths:
       - "src/artvision_socrates_gacrux_authorized_v65.py"
       - ".github/workflows/artvision-socrates-gacrux-authorized-v65.yml"
