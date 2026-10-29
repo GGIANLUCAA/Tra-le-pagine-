@@ -686,11 +686,14 @@
           "v25_approved": false
         },
         "cinema_standard": {
-          "status": "planned",
+          "status": "blocked",
           "renderer_candidate": "src/artvision_cinema_prepared_v55.py",
-          "blocker_code": "authentic_painting_and_music_SHA_V13_preflight_needed",
+          "blocker_code": "blocked_source_artwork_upload_wikimedia_http_429",
           "video_sha256": null,
-          "v25_approved": false
+          "v25_approved": false,
+          "attempted_workflow_run_id": 40917785627,
+          "attempted_execution": "V54 and V68 validation passed; artwork Commons info metadata verified, actual source pixel download rejected HTTP 429 from Wikimedia CDN; no MP4, no paid retry",
+          "next_action": "Find a DIFFERENT licensed/verified authorized image provider or preexisting original cache; do not repeatedly retry Wikimedia's 429 endpoint."
         },
         "cinema_museum": {
           "status": "blocked",
@@ -703,22 +706,14 @@
         "target_count": 4,
         "rendered_count": 0,
         "approved_count": 0,
-        "status": "AUTHORIZED_SECOND_PILOT_PREPRODUCTION",
+        "status": "PREPRODUCTION_BLOCKED_AT_REAL_ART_SOURCE_HTTP_429",
         "no_automatic_third_work": true
       },
-      "notes": "SECOND work ONLY. Do not reuse Klimt historical V2 or V6 videos as new 4×1 variants; existing code/script can be reused after verified original identities, licenses, and fresh footage. No fake MP4s, no paid video API."
+      "notes": "SECOND work ONLY. Do not reuse Klimt historical V2 or V6 videos as new 4×1 variants; existing code/script can be reused after verified original identities, licenses, and fresh footage. No fake MP4s, no paid video API.",
+      "note": "Klimt second pilot authorized, new four-slot dossier and V68 recipe prepared; tests V54 and scope pass; new original art image download failed Wikimedia HTTP429, so no new MP4 claimed. Manual review needed for alternate lawful original image, official Belvedere press images restricted. No auto retry of 429."
     }
   ],
-  "last_operational_update": {
-    "date": "2026-10-29",
-    "owner_automation_id": "6adca191603c8191a90d5190901cd034",
-    "action": "Fixed Turner Cinema Museum archive staging to reproduce original V55 four posts byte-for-byte, including original hashtags and rights/music credits; added optional SHA256 fail-closed validation and CI tests, PR #105 merged a9b5ccab. Independent local MP4 full decode, CRC ZIP, and original MP4 hashes passed. No new artistic MP4 or V25 approval.",
-    "next_first_blocker": "Exact Google Gacrux voice cache unavailable for Critico; Turner Museum private MP4 absent from authorized archive, so text sync remains pending until V25-compliant import. For a new Cinema work, source assets and four-check preflight must be prepared before rendering.",
-    "no_duplicate_renders": true,
-    "paid_video_calls": 0,
-    "archive_dossier_sync_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40828355188",
-    "archive_dossier_sync_result": "Turner Museum MP4 absent from private archive; zero attachments uploaded. Standard 7 existing attachments left untouched (remote hashes unavailable)."
-  },
+  "last_operational_update": "2026-10-29 Klimt second pilot V69 source blocked HTTP 429 in Actions 40917785627; four MP4 target, zero rendered. Socrates unchanged.",
   "museum_regression_v56": {
     "date": "2026-10-29",
     "reason": "user rejected low-value generic museum 2D frame/room and hard cut",
