@@ -41,3 +41,20 @@ V72 «Cinema continuo WOW» resta **un'alternativa, esplicitamente richiesta**, 
 - Non reinterpretare un feedback sulla qualità fotografica come consenso a sostituire l'effetto video→foto.
 
 **Non è necessario proporre all'utente di ripetere le regole: sono tutte descritte qui e nei documenti V61/V64/V68/V69.**
+
+## V75 — Feedback positivo e perfezionamento del formato (29/10/2026)
+
+**L'utente APPROVA l'effetto realizzato in Parigi V74**: ripresa storica autentica in bianco e nero con movimento → blocco dello stesso fotogramma → fotografia AI restaurata a colori, fotorealistica e FERMA → successiva ripresa autentica. Non cambiare questo effetto né reinterpretarlo come colorizzazione in movimento. V74 è ora riferimento positivo per la regia, pur restando migliorabile nella qualità fotografica.
+
+### Due modifiche richieste e approvate
+1. **Durata leggermente maggiore rispetto a Parigi V74 (14,4 s).** Impostazione editoriale orientativa per i prossimi episodi: **22–28 secondi**, variabile secondo l'azione e la qualità delle scene, senza allungare artificialmente singoli fotogrammi o riciclare riprese. In genere 4–6 trasformazioni davvero diverse e significative; qualità prevale sul numero. Se esistono solo tre foto eccezionali, non riempire con materiale mediocre. Il video deve iniziare a incuriosire entro i primi 1–3 s.
+2. **Un bel titolo iniziale con anno ben leggibile**, e località corretta. Titolo cinematografico/museale elegante, curato nella tipografia e nelle proporzioni, ad esempio `PARIGI · 1898` / `CONEY ISLAND · 1903`, eventuale credito archivio piccolo e discreto. Idealmente appare nei primi **0,8–1,5 s sopra una vera ripresa in movimento** (senza cartello nero fermo o attesa vuota), poi si ritira per lasciare spazio alle scene. Niente «prima/dopo», diciture tecniche o paragrafi; niente voce per questo format. Verificare il periodo esatto sulle fonti, non inventare l'anno.
+
+### Indicazioni per montaggio e QA
+- Eseguire il formato **V74 approvato**, il titolo non deve coprire i volti, l'azione o la trasformazione né appesantire la prima inquadratura.
+- I blocchi fotografici devono essere abbastanza lunghi da far ammirare i dettagli (preferibilmente 1,5–2,5 s, con flessibilità artistica).
+- Allungare l'episodio aggiungendo scene vere, soggetti WOW e fotografie AI approvate, **non** mediante zoom/fermi troppo lunghi o duplicati.
+- Esportare e verificare MP4/ZIP scaricabili, titoli, musica originale e controllo artistico. Backup GitHub diretto e sito privato soltanto se effettivamente caricati/verificati.
+- Queste sono preferenze permanenti per i **prossimi episodi**. Non dichiarare di aver già rifatto video precedenti senza averlo eseguito.
+
+**Stato:** effetto V74 APPROVATO dall'utente; introduzione/ritmo V75 miglioramenti richiesti per nuove produzioni.
