@@ -66,7 +66,7 @@ def coerce(value,spec):
             raise ValueError("Unsupported choice: "+repr(value)+", valid: "+", ".join(spec["values"]))
         return value
     if t=="int":
-        if isinstance(value,bool) or not re.fullmatch(r"-?\\d+",str(value)):
+        if isinstance(value,bool) or not re.fullmatch(r"-?\d+",str(value)):
             raise ValueError("Expected integer")
         x=int(value)
     elif t=="float":
