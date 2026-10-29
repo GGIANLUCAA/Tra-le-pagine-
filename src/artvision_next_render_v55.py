@@ -31,10 +31,20 @@ def choose(root=ROOT):
                 return {"status": "pilot_missing_from_queue", "new_artwork_required": False}
             for variant in VARIANTS:
                 enforce_pilot_project({"serial_mode":"artvision_4x1","topic":group["artwork"],"artvision_4x1_variant":variant},root)
+            states={v:group["variants"][v]["status"] for v in VARIANTS}
+            if all(s in ("rendered_needs_review","approved_for_final_delivery") for s in states.values()):
+                completed=sum(s=="approved_for_final_delivery" for s in states.values())
+                return {"status":"pilot_four_rendered_review_pending" if completed<4 else "pilot_awaiting_explicit_second_pilot",
+                        "work":group["group_id"],
+                        "new_artwork_required":False,
+                        "rendering_allowed":False,
+                        "rendered_count":4,"approved_count":completed,
+                        "variants":states,
+                        "next_action":"Use ArtVision V68 reusable recipe to preserve feedback, run real visual/audio QA and verify private archive; do NOT auto-produce more works or repeat renders. Explicit user approval is required for second pilot."}
             return {"status":"pilot_in_progress","work":group["group_id"],
                     "new_artwork_required":False,
-                    "variants":{v:group["variants"][v]["status"] for v in VARIANTS},
-                    "next_action":"Complete Socrates 4x1 and real artistic/technical QA; do not select new artwork."}
+                    "variants":states,
+                    "next_action":"Complete the missing Socrates 4x1 slots; do not select new artwork."}
 
     if production.get("items"):
         return {"status": "existing_jobs_take_priority", "count": len(production["items"])}
