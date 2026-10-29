@@ -1,5 +1,10 @@
 # Regole attive — 25 ottobre 2026 (revisione 3, Audience V32 + Fonti V33)
 
+## ARTVISION — DIRETTIVA V58 PRIORITARIA (29/10/2026)
+
+Per la serie di dipinti ArtVision è obbligatorio `docs/ARTVISION_CONTRATTO_MADRE_4X1_V58_20261029.md`: **un quadro, quattro video realmente diversi** (Critico Standard e Museum con identico audio Gacrux, Cinema Standard e Museum musicali), un unico dossier e quattro pacchetti V55. **Congelare i nuovi quadri**: prima completare e far approvare artisticamente tutti e quattro i filmati di The Death of Socrates, poi eventualmente un secondo pilota approvato dall'utente; solo successivamente e previo consenso riattivare la serie. Seguire `config/artvision_pilot_lock_v58.json`; nessun MP4 in review è finale. La presente direttiva prevale su V53 (due versioni) e sui programmi storici di nuove opere ad ogni intervallo. Restano validi V25/V46/V54/V55/V57 e i divieti di spesa/pubblicazione.
+
+
 Questa revisione applica le decisioni di Gianluca sulla regia modulare.
 La configurazione consultabile dal programma è `config/editorial_rules.json`.
 La revisione sostituisce i vincoli generali incompatibili nelle guide storiche;

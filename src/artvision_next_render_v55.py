@@ -17,6 +17,25 @@ VARIANTS = ("cinema_standard", "cinema_museum", "critico_standard", "critico_mus
 def choose(root=ROOT):
     queue = json.loads((root / "queue/artvision_four_variants_s01_20261028.json").read_text())
     production = json.loads((root / "queue/production_v15.json").read_text())
+    # One ArtVision renderer at a time: never select work while a job exists.
+    if production.get("items"):
+        return {"status":"existing_jobs_take_priority", "count":len(production["items"]),
+                "new_artwork_required":False}
+    from artvision_pilot_guard_v58 import enforce_pilot_project
+    lock_path = root / "config/artvision_pilot_lock_v58.json"
+    if lock_path.is_file():
+        lock = json.loads(lock_path.read_text())
+        if lock.get("active") is True:
+            group = next((g for g in queue["groups"] if g.get("group_id") == lock["allowed_group_id"]), None)
+            if group is None:
+                return {"status": "pilot_missing_from_queue", "new_artwork_required": False}
+            for variant in VARIANTS:
+                enforce_pilot_project({"serial_mode":"artvision_4x1","topic":group["artwork"],"artvision_4x1_variant":variant},root)
+            return {"status":"pilot_in_progress","work":group["group_id"],
+                    "new_artwork_required":False,
+                    "variants":{v:group["variants"][v]["status"] for v in VARIANTS},
+                    "next_action":"Complete Socrates 4x1 and real artistic/technical QA; do not select new artwork."}
+
     if production.get("items"):
         return {"status": "existing_jobs_take_priority", "count": len(production["items"])}
     blocked = []

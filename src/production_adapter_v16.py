@@ -39,6 +39,8 @@ def execute(job,out):
     # A prepared adapter cannot accidentally activate a provider or Edge fallback.
     os.environ.pop('GEMINI_API_KEY',None)
     project_file=path(job['project_file']);project=json.loads(project_file.read_text())
+    from artvision_pilot_guard_v58 import enforce_pilot_project
+    enforce_pilot_project(project)
     if project['format']!=ADAPTERS[adapter]:raise ValueError('Adapter e formato non corrispondenti')
     editorial_errors, _ = validate_editorial(project)
     if editorial_errors:raise ValueError('; '.join(editorial_errors))
