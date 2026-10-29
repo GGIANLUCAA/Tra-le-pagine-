@@ -28,7 +28,7 @@ from video_director_v13 import check,read_json,write_json,capture,digest
 from artvision_delivery_v55 import pack, inspect_video
 from artvision_cinema_prepared_v55 import SCHEMA as CINEMA_SCHEMA, sha256 as sha
 
-ROOT_OUT=ROOT/'output/artvision-homer-gulf-stream-v55'
+ROOT_OUT=ROOT/'output/artvision-homer-gulf-stream-v55b'
 OBJ='https://collectionapi.metmuseum.org/public/collection/v1/objects/11122'
 MET='https://www.metmuseum.org/art/collection/search/11122'
 MUSIC='https://incompetech.com/music/royalty-free/mp3-royaltyfree/Water%20Lily.mp3'
@@ -282,15 +282,21 @@ def project_setup(folder,dossier,art,music,image_url,variant):
     if not result['ready']:raise RuntimeError('V13 preflight '+variant+': '+json.dumps(result['blockers'],ensure_ascii=False))
     return p
 
-def ffmpeg_render(slug,stills,music,seconds,output):
+def ffmpeg_render(slug,stills,music,seconds,output,moves=None):
     args=['ffmpeg','-nostdin','-hide_banner','-loglevel','error','-y']
     for path,duration in zip(stills,seconds):
         args+=['-loop','1','-framerate',str(FPS),'-t',str(duration),'-i',str(path)]
     args+=['-stream_loop','-1','-i',str(music)]
     flt=[]
     for i,dur in enumerate(seconds):
-        # Gentle continuous optical push, 0-4%, avoiding shaky or animated falsification.
-        flt.append(f'[{i}:v]zoompan=z=\'min(zoom+0.00009,1.04)\':d=1:fps={FPS}:s={W}x{H},trim=duration={dur},setpts=PTS-STARTPTS[v{i}]')
+        # Museum entrance/exit move through real perspective in the same
+        # reconstructed room. No motion is invented inside painted sea.
+        if moves is not None and moves[i] is not None:
+            za,zb=moves[i]
+            zexpr=f'({za}+({zb}-{za})*on/{max(1,round(dur*FPS)-1)})'
+        else:
+            zexpr='min(zoom+0.00009,1.04)'
+        flt.append(f'[{i}:v]zoompan=z=\'{zexpr}\':d=1:fps={FPS}:s={W}x{H},trim=duration={dur},setpts=PTS-STARTPTS[v{i}]')
     flt.append(''.join(f'[v{i}]' for i in range(len(stills)))+f'concat=n={len(stills)}:v=1:a=0[v]')
     total=sum(seconds)
     args+=['-filter_complex',';'.join(flt),'-map','[v]','-map',f'{len(stills)}:a:0',
@@ -440,11 +446,11 @@ def cinema_standard(dossier,folder,art,music):
     # These are original physically different regions; avoid false claim of
     # multi-image source diversity. All shots derive from the exact Met JPG.
     frames=[
-      brand(detail(source,.20,.83,.53)), # first shark beneath threatening sea
-      detail(source,.80,.52,.52), # still person
-      detail(source,.62,.66,.57), # broken mast / deck
-      detail(source,.38,.29,.55), # grey waterspout / horizon
-      detail(source,.17,.66,.58), # sea and shark other region
+      brand(detail(source,.43,.74,.54)), # opening shark mouth beneath boat
+      detail(source,.61,.42,.49), # real man face and torso location verified on Met original
+      detail(source,.52,.55,.54), # real damaged boat with sugarcane
+      detail(source,.87,.17,.54), # actual waterspout right horizon
+      detail(source,.22,.64,.58), # left shark fins and different waves
       whole(source)
     ]
     secs=[5.2,6.0,6.5,5.9,5.9,7.8]
@@ -453,7 +459,7 @@ def cinema_standard(dossier,folder,art,music):
     for i,im in enumerate(frames):
         p=image_dir/(f'{i:02}.jpg');im.save(p,quality=94,subsampling=0);stills.append(p)
     cover=out/'COPERTINA.jpg';shutil.copy2(stills[0],cover)
-    video=out/'ARTVISION_WINSLOW_HOMER_CINEMA_STANDARD_V55_REVIEW.mp4'
+    video=out/'ARTVISION_WINSLOW_HOMER_CINEMA_STANDARD_V55B_REVIEW.mp4'
     ffmpeg_render('cinema_standard',stills,music,secs,video)
     print('HOMER_CINEMA_STANDARD_RENDERED',digest(video),'bytes',video.stat().st_size,flush=True)
     return deliver('cinema_standard',video,cover,art,music,dossier,project)
@@ -473,10 +479,10 @@ def cinema_museum(dossier,std_folder,art,music):
     frames=[
        brand(room_frame(room_original,1.48)),
        room_frame(room_original,1.68),
-       detail(source,.80,.53,.49), # face of survivor
-       detail(source,.23,.82,.56), # lower shark
-       detail(source,.62,.64,.59), # wood and sugarcane
-       detail(source,.35,.28,.55), # distant storm
+       detail(source,.61,.42,.48), # exact survivor head and posture
+       detail(source,.43,.74,.54), # exact open shark jaw and dorsal fin
+       detail(source,.53,.54,.56), # visible broken mast and sugarcane
+       detail(source,.87,.17,.53), # visible waterspout right horizon
        whole(source),
        room_frame(room_original,1.66),
        room_frame(room_original,1.22)
@@ -487,8 +493,9 @@ def cinema_museum(dossier,std_folder,art,music):
     for i,im in enumerate(frames):
         p=image_dir/(f'{i:02}.jpg');im.save(p,quality=94,subsampling=0);paths.append(p)
     cover=out/'COPERTINA.jpg';shutil.copy2(paths[0],cover)
-    video=out/'ARTVISION_WINSLOW_HOMER_CINEMA_MUSEUM_V55_REVIEW.mp4'
-    ffmpeg_render('cinema_museum',paths,music_copy,seconds,video)
+    video=out/'ARTVISION_WINSLOW_HOMER_CINEMA_MUSEUM_V55B_REVIEW.mp4'
+    ffmpeg_render('cinema_museum',paths,music_copy,seconds,video,
+       moves=[(1.0,1.14),(1.0,1.30),None,None,None,None,None,(1.30,1.0),(1.36,1.0)])
     print('HOMER_CINEMA_MUSEUM_RENDERED',digest(video),'bytes',video.stat().st_size,flush=True)
     return deliver('cinema_museum',video,cover,original_art,music_copy,dossier,project,room)
 
