@@ -1,0 +1,51 @@
+name: "ArtVision 3D Studio — Socrates autonomous source-faithful test"
+on:
+  push:
+    branches:
+      - "experiment/android-socrates-popout-standard-20261029"
+    paths:
+      - ".github/workflows/experiment-android-socrates-popout.yml"
+      - "experiments/android-socrates-popout/build_met_popout.py"
+permissions:
+  contents: read
+concurrency:
+  group: experiment-socrates-popout-only
+  cancel-in-progress: false
+jobs:
+  popout-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU-only free dependencies
+        run: |
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+          ffmpeg -version | head -1
+      - name: Fetch the genuine Met painting and render independent 2.5D before-after demo
+        run: |
+          python experiments/android-socrates-popout/build_met_popout.py --out output/3d_studio_socrates
+      - name: Verify real output and MP4 from source without claims of real 3D
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, subprocess
+          p=Path("output/3d_studio_socrates")
+          m=json.loads((p/"MANIFEST.json").read_text())
+          assert m["paid_api_calls"]==0 and m["met_object_id"]==436105
+          assert m["source_sha256"] and "NOT true 3D" in m["reconstruction"]
+          for f in ["Socrate_MET_originale.jpg","01_PRIMA_originale.jpg","02_DOPO_popout_2_5D.jpg","03_PRIMA_DOPO_confronto.jpg","04_POP_OUT_demo_5s.mp4","socrates_mask_review.png"]:
+              assert (p/f).is_file() and (p/f).stat().st_size>5000,f
+          dur=subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration","-of","default=noprint_wrappers=1:nokey=1",str(p/"04_POP_OUT_demo_5s.mp4")],text=True)
+          assert 4.8<float(dur)<5.2,dur
+          print("PREVIEW FILES VERIFIED, human visual QA still pending.")
+          PY
+      - name: Upload artifacts without publishing or changing any ArtVision production
+        uses: actions/upload-artifact@v4
+        with:
+          name: SOCRATES_2_5D_BEFORE_AFTER_ANDROID_EXPERIMENT
+          path: output/3d_studio_socrates/*
+          if-no-files-found: error
+          retention-days: 30
