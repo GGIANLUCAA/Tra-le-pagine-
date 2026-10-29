@@ -7,7 +7,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-P = Path(__file__).with_name('storia_rivive_v77_identity_guard.py')
+P = Path(__file__).resolve().parents[1] / 'src' / 'storia_rivive_v77_identity_guard.py'
 spec = importlib.util.spec_from_file_location('v77', P)
 v77 = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(v77)
