@@ -1,0 +1,52 @@
+name: ArtVision Blake V79 - Correct Museum Camera With Existing Free WAV
+on:
+  push:
+    branches:
+      - experiment/artvision-blake-italian-tts-v77-free
+    paths:
+      - src/artvision_blake_voice_sync_v78.py
+      - src/artvision_blake_museum_reedit_v79.py
+      - .github/workflows/artvision-blake-critico-museum-v79.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-blake-museum-v79-free-reedit
+  cancel-in-progress: false
+jobs:
+  museum-woman-framing-fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_BLAKE_V77_FREE_ITALIAN_VOICE_EXPERIMENT
+          run-id: 40949638430
+          github-token: ${{ github.token }}
+          path: .staging/v78_voice
+      - name: Install only free rendering dependencies, no TTS model or API
+        run: |
+          python -m pip install --disable-pip-version-check 'numpy>=1.26,<3' 'Pillow>=10.2' 'opencv-python-headless>=4.8' 'requests>=2.31'
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+      - name: Render corrected Museum from exact SHA-pinned existing WAV, no synthesis
+        run: python -u src/artvision_blake_museum_reedit_v79.py
+      - name: Save corrected Museum video and complete standalone package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_BLAKE_CRITICO_MUSEUM_V79_VOCE_GRATUITA
+          path: |
+            output/artvision-blake-museum-v79/critico_museum/CRITICO_MUSEUM.mp4
+            output/artvision-blake-museum-v79/critico_museum/COPERTINA.jpg
+            output/artvision-blake-museum-v79/critico_museum_COMPLETE.zip
+            output/artvision-blake-museum-v79/V79_EDITED_CRITICO_MUSEUM_STATE.json
+          retention-days: 10
+          if-no-files-found: warn
