@@ -1,7 +1,7 @@
 """Original ArtVision Blake pilot V74 visual compositor (offline, no paid AI).
 
-Uses only exact authentic Brooklyn Museum source pixels. Room/frame are clearly
-identified as invented museum scenography; neither claims a real museum photo.
+Uses only exact authentic Brooklyn Museum source pixels. Room and art mount are openly declared scenic reconstructions, never a documented
+museum installation or an authentic historical frame. V77: no fake gilt borders.
 All four variants share one source artwork with independently designed staging.
 """
 from __future__ import annotations
@@ -109,7 +109,10 @@ def museum(art,roomimg,zoom,focus,mode="museum"):
     # At zoom 1: 43 cm wide sheet viewed at ~3.5 m, human-scale wall.
     px,py=370,528
     aw,ah=112.,141.
-    bx,by=aw+18,ah+18
+    # Brooklyn 15.368: watercolor on paper; historical frame NOT documented.
+    # Preserve the actual sheet, use a modest neutral conservation-style surround.
+    # Outer size follows the 55.1 x 43.3 cm physical sheet, not an oversized oil frame.
+    bx,by=aw+10,ah+10
     # Camera aim: focus inside artwork at high zoom, not empty wall.
     camx=lerp(360,px+(fx-.5)*aw,smooth(min(1,(zoom-1)/6)))
     camy=lerp(545,py+(fy-.5)*ah,smooth(min(1,(zoom-1)/6)))
@@ -122,23 +125,21 @@ def museum(art,roomimg,zoom,focus,mode="museum"):
     left=(px-bx/2-camx)*scale+W/2
     top=(py-by/2-camy)*scale+H/2
     ow,oh=bx*scale,by*scale
-    # Contact shadows and layered frame profile track the SAME projection.
+    # Neutral, conservation-style presentation (RECONSTRUCTION, not original frame).
+    # Contact shadow and mount all track the SAME physical plane.
     if left>W+40 or top>H+40 or left+ow<-40 or top+oh<-40:
         return out
     def rect(a,b,c,e,fill,width=None):
         if width is None:d.rectangle((a,b,c,e),fill=fill)
         else:d.rectangle((a,b,c,e),outline=fill,width=width)
-    thick=max(1,int(5*scale))
-    rect(left+7*scale,top+10*scale,left+ow+10*scale,top+oh+12*scale,(30,27,23))
-    rect(left,top,left+ow,top+oh,(36,30,28))
+    rect(left+2*scale,top+3*scale,left+ow+3*scale,top+oh+4*scale,(32,31,30))
+    rect(left,top,left+ow,top+oh,(45,44,43))  # fine graphite edge
     rect(left+2*scale,top+2*scale,left+ow-2*scale,top+oh-2*scale,
-         (112,83,46),max(1,int(2.8*scale)))
-    rect(left+5*scale,top+5*scale,left+ow-5*scale,top+oh-5*scale,
-         (196,157,91),max(1,int(1.15*scale)))
-    rect(left+8*scale,top+8*scale,left+ow-8*scale,top+oh-8*scale,
-         (31,26,24),max(1,int(2*scale)))
-    sheet_left=left+9*scale
-    sheet_top=top+9*scale
+         (207,200,185))  # neutral warm-paper mount, not bright gold
+    rect(left+4*scale,top+4*scale,left+ow-4*scale,top+oh-4*scale,
+         (80,75,68),max(1,int(.65*scale)))  # subtle bevel at sheet
+    sheet_left=left+5*scale
+    sheet_top=top+5*scale
     sheet_w=aw*scale
     sheet_h=ah*scale
     dx0=max(0,int(math.floor(sheet_left)))
@@ -261,8 +262,10 @@ def cover(art,variant):
     d=ImageDraw.Draw(out)
     sheet=art.copy();sheet.thumbnail((865,1390),Image.Resampling.LANCZOS)
     x=(w-sheet.width)//2;y=365
-    d.rectangle((x-14,y-14,x+sheet.width+14,y+sheet.height+14),fill=(102,78,48))
-    d.rectangle((x-8,y-8,x+sheet.width+8,y+sheet.height+8),fill=(198,156,82))
+    # V77: same restrained paper-mount treatment as the Museum shot.
+    # This is editorial scenography; no undocumented gilded antique frame.
+    d.rectangle((x-14,y-14,x+sheet.width+14,y+sheet.height+14),fill=(45,44,43))
+    d.rectangle((x-8,y-8,x+sheet.width+8,y+sheet.height+8),fill=(207,200,185))
     out.paste(sheet,(x,y))
     d=ImageDraw.Draw(out)
     lines=("THE GREAT","RED DRAGON")
