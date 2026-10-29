@@ -1,0 +1,122 @@
+name: "V77 QA persone/oggetti e prova Parigi conservativa"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v77-identity-guard-preview.yml"
+      - "src/storia_rivive_v77_identity_guard.py"
+      - "src/storia_rivive_v77_safe_photo_generator.py"
+      - "tests/test_storia_rivive_v77_identity_guard.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v77-identity-guard-preview
+  cancel-in-progress: false
+jobs:
+  test_and_render_preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install free video tools only
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --quiet --no-cache-dir opencv-python-headless numpy pillow
+      - name: Test real V77 guard on synthetic object person conversion
+        run: |
+          python -m py_compile src/storia_rivive_v77_identity_guard.py src/storia_rivive_v77_safe_photo_generator.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v77_identity_guard.py" -v
+      - name: Reuse existing original historical moving source and 3 existing AI stills
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v76_paris
+          curl --fail --location --retry 2 --connect-timeout 20 --max-time 180 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12885194313/zip" --output /tmp/paris_original_assets.zip
+          unzip -t /tmp/paris_original_assets.zip >/dev/null
+          unzip -oq /tmp/paris_original_assets.zip -d output/storia_v76_paris
+          test -s output/storia_v76_paris/ORIGINAL_03.png
+          test -s output/storia_v76_paris/FOTO_AI_03.png
+          test -s output/storia_v76_paris/PELICOLA_PARIGI_ORIGINALE.webm
+      - name: Source identity lock per scene with before after review sheets
+        run: |
+          set -euo pipefail
+          D=output/storia_v76_paris
+          mkdir -p "$D/ORIGINAL_GENERATIVE_CANDIDATES"
+          for i in 01 02 03; do
+            cp "$D/FOTO_AI_$i.png" "$D/ORIGINAL_GENERATIVE_CANDIDATES/FOTO_AI_$i.png"
+            python -u src/storia_rivive_v77_identity_guard.py --source "$D/ORIGINAL_$i.png" --candidate "$D/ORIGINAL_GENERATIVE_CANDIDATES/FOTO_AI_$i.png" --output "$D/FOTO_AI_$i.png" --report "$D/REVIEW_$i.json" --preview "$D/REVIEW_$i.jpg"
+          done
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          d=Path("output/storia_v76_paris")
+          qa=json.loads((d/"PHOTO_QA.json").read_text())
+          for rec in qa["photos"]:
+            p=d/("FOTO_AI_%02d.png"%int(rec["i"]))
+            if p.exists():
+              rec["photo_sha"]=hashlib.sha256(p.read_bytes()).hexdigest()
+              rec["identity_lock"]="V77_SOURCE_LUMINANCE_PRESERVED_NOT_SEMANTICALLY_APPROVED"
+          (d/"PHOTO_QA.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2))
+          PY
+      - name: Render comparison ONLY, preserve same authentic moving film to frozen photo effect
+        run: python -u src/storia_v76_paris_social_museum.py
+      - name: Verified 20s MP4, native video motion, color photo freezes and audio
+        run: |
+          set -euo pipefail
+          D=output/storia_v76_paris
+          SRC="$D/LA_STORIA_RIVIVE_SOCIAL_MUSEUM_V76.mp4"
+          test -s "$SRC"
+          ffmpeg -v error -xerror -i "$SRC" -f null -
+          python src/storia_rivive_v74_effect_gate.py --video "$SRC" --min-cycles 3 --report "$D/REFERENCE_PATTERN_V77.json"
+          cp "$SRC" "$D/LA_STORIA_RIVIVE_PARIGI_V77_CONSERVATIVO_PROVINO.mp4"
+          python - <<'PY'
+          from pathlib import Path
+          import json,zipfile
+          d=Path("output/storia_v76_paris")
+          report={"version":"V77","status":"PENDING_HUMAN_SEMANTIC_REVIEW","format":"historic true motion -> freeze -> source-locked photo","new_ai_photo_generated":False,"source_locked_existing_photos":True,"social_published":False,"private_website_uploaded":False,"zero_paid_api_calls":True,"warning":"Automated tests do NOT certify that all subjects retain their historic identity."}
+          for i in (1,2,3):
+            report["scene_"+str(i)]=json.loads((d/("REVIEW_%02d.json"%i)).read_text())["inspection"]
+          (d/"V77_STATUS.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          names=["LA_STORIA_RIVIVE_PARIGI_V77_CONSERVATIVO_PROVINO.mp4","COPERTINA.jpg","V77_STATUS.json","REFERENCE_PATTERN_V77.json"]
+          names += ["REVIEW_%02d.jpg"%i for i in (1,2,3)]
+          names += ["REVIEW_%02d.json"%i for i in (1,2,3)]
+          with zipfile.ZipFile(d/"LA_STORIA_RIVIVE_V77_KIT_PROVA.zip","w",compression=zipfile.ZIP_DEFLATED) as z:
+            for name in names:z.write(d/name,name)
+          with zipfile.ZipFile(d/"LA_STORIA_RIVIVE_V77_KIT_PROVA.zip") as z:
+            assert z.testzip() is None
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V77_PARIGI_PROVA_IDENTITA_OGGETTI
+          path: |
+            output/storia_v76_paris/LA_STORIA_RIVIVE_PARIGI_V77_CONSERVATIVO_PROVINO.mp4
+            output/storia_v76_paris/LA_STORIA_RIVIVE_V77_KIT_PROVA.zip
+            output/storia_v76_paris/REVIEW_*.json
+            output/storia_v76_paris/REVIEW_*.jpg
+            output/storia_v76_paris/V77_STATUS.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Permanent Android download, PREVIEW only, do not publish to social or site
+        run: |
+          set -euo pipefail
+          D=output/storia_v76_paris
+          TAG=storia-rivive-parigi-v77-prova-oggetti-fedeli
+          files=("$D/LA_STORIA_RIVIVE_PARIGI_V77_CONSERVATIVO_PROVINO.mp4" "$D/LA_STORIA_RIVIVE_V77_KIT_PROVA.zip" "$D/V77_STATUS.json")
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --latest=false --prerelease --title "La Storia Rivive V77 — PROVA più fedele agli oggetti" --notes "PROVA DA VALUTARE, non master definitivo. Stesso movimento storico Parigi V76, stessi tre restauri AI originali, ma recupero della luminanza strutturale originale e blocco di dettagli sospetti. Segnalazioni QA per piccole regioni e controlli automatici; la verifica semantica delle persone/oggetti NON è stata completata da un curatore umano. Nessuna nuova generazione a pagamento o uso Vidu, nessuna pubblicazione sul sito o sui social. Colori interpretativi." "${files[@]}"
+          fi
+          local_bytes=$(stat -c %s "$D/LA_STORIA_RIVIVE_PARIGI_V77_CONSERVATIVO_PROVINO.mp4")
+          remote_bytes=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[]|select(.name=="LA_STORIA_RIVIVE_PARIGI_V77_CONSERVATIVO_PROVINO.mp4")|.size')
+          test "$local_bytes" = "$remote_bytes"
+          echo "V77_PREVIEW_DOWNLOAD_VERIFIED $local_bytes"
