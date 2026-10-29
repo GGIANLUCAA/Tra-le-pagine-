@@ -118,6 +118,16 @@ def validate(plan):
                 require(end <= prior_start or start >= prior_end,
                         label + "tempo sorgente sovrapposto a clip precedente")
             source_ranges.setdefault(key, []).append((start, end))
+    # V70 is a hard preflight for real historical reels, NOT for synthetic tests.
+    # It validates the timecode of the true frame used for the AI color still.
+    if not test:
+        import importlib.util
+        pacing_path = Path(__file__).with_name("storia_rivive_pacing_v70.py")
+        spec = importlib.util.spec_from_file_location("storia_rivive_pacing_v70", pacing_path)
+        pacing = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(pacing)
+        rhythm_errors, rhythm_warnings = pacing.check(plan)
+        errors.extend("V70 ritmica: " + err for err in rhythm_errors)
     require(.5 < total <= 60, "Durata totale non idonea")
     audio=plan.get("audio") or {}
     if audio.get("music_file"):
