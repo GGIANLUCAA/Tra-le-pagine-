@@ -1,0 +1,110 @@
+{
+  "version": "V70_2026_10_29",
+  "format": "storia_rivive",
+  "scope": "new_historical_bw_moving_to_photo_ai_color_restorations",
+  "status": "binding_preflight_not_publication_approval",
+  "duration_seconds": {
+    "minimum": 14,
+    "maximum": 35,
+    "preferred_rolling_average": 25,
+    "never_pad_to_target": true,
+    "scene_count": "semantic_and_variable_3_to_20_candidates_before_selection"
+  },
+  "required_before_render": [
+    "inspect_real_sources_and_multiple_candidate_frames",
+    "verify_PD_or_CC0_single_source",
+    "choose_authentic_freeze_timecode",
+    "visual_notes_and_editorial_scores_per_scene",
+    "generate_scene_timings",
+    "fail_closed_preflight"
+  ],
+  "phase_policy": {
+    "bw_original_motion_seconds": [
+      0.55,
+      1.8
+    ],
+    "transform_seconds": [
+      0.18,
+      0.8
+    ],
+    "photo_color_reward_seconds": [
+      1.05,
+      3.05
+    ],
+    "first_reveal_completed_by_s": 1.5
+  },
+  "baseline_starting_points_seconds": {
+    "face": [
+      0.72,
+      0.31,
+      1.55
+    ],
+    "action": [
+      0.92,
+      0.33,
+      1.6
+    ],
+    "wide": [
+      1.06,
+      0.42,
+      1.85
+    ],
+    "detail": [
+      0.68,
+      0.3,
+      1.5
+    ],
+    "climax": [
+      0.92,
+      0.48,
+      2.1
+    ]
+  },
+  "editor_evidence_fields": [
+    "scene_type",
+    "emotional_value",
+    "visual_complexity",
+    "motion_value",
+    "image_quality",
+    "unique_event_id",
+    "composition_group",
+    "narrative_role",
+    "visual_evidence",
+    "source_frame_timecode_s",
+    "source_visually_reviewed",
+    "safe_crop_reviewed",
+    "source_rights_verified"
+  ],
+  "non_negotiable": [
+    "source_frame_must_match_AI_photo_freeze",
+    "reject_same_unique_event_reused_as_new_scene",
+    "reject_three_same_composition_in_a_row",
+    "reject_three_nearly_identical_scene_cycle_durations",
+    "retain_>=45_percent_photo_hold",
+    "never_invent_people_objects_or_restore_without_source",
+    "source_rights_v59",
+    "quality_v64_v66",
+    "delivery_v55",
+    "no_unapproved_paid_calls",
+    "no_social_autopublishing"
+  ],
+  "interpretation": "Numbers are experimental guardrails, not universal psychological laws. Preserve V61 archival moving B/W -> freeze on the source frame -> restored AI color still, unless a new production format is explicitly requested.",
+  "install": {
+    "planner": "src/storia_rivive_pacing_v70.py",
+    "cli_plan": "python src/storia_rivive_pacing_v70.py plan --input drafts/storia.json --output output/storia_paced.json",
+    "cli_check": "python src/storia_rivive_pacing_v70.py check --input output/storia_paced.json",
+    "v61_renderer": "src/storia_rivive_photo_freeze_v61.py"
+  },
+  "experiments": {
+    "compare": [
+      "first_three_seconds",
+      "average_watch_time",
+      "completion",
+      "rewatches",
+      "shares_per_reach",
+      "qualitative_wow"
+    ],
+    "require_same_source_and_similar_conditions": true,
+    "do_not_claim_scientific_optimum": true
+  }
+}
