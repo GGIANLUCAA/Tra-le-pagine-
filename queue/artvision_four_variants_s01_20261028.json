@@ -446,6 +446,43 @@
         }
       },
       "notes": "Exactly two different authentic MP4 Cinema variants for this new four-variant artwork group. Corrective trials V55 superseded and not counted. Critico variants require exact Google Gacrux cache, no false release or paid substitution."
+    },
+    {
+      "group_id": "david_death_of_socrates_met436105_1787",
+      "artwork": "The Death of Socrates",
+      "artist": "Jacques Louis David",
+      "year": 1787,
+      "museum": "The Metropolitan Museum of Art",
+      "official_source": "https://www.metmuseum.org/art/collection/search/436105",
+      "accession_number": "31.45",
+      "physical_dimensions_cm": {
+        "h": 129.5,
+        "w": 196.2
+      },
+      "dossier_preproduction": "docs/productions/2026-10-29-socrates-cinema-standard-v55/PREPRODUCTION_V55.json",
+      "asset_acquisition_pr": "https://github.com/GGIANLUCAA/Tra-le-pagine-/pull/113",
+      "variants": {
+        "critico_standard": {
+          "status": "blocked",
+          "blocker_code": "blocked_voice_unavailable"
+        },
+        "critico_museum": {
+          "status": "blocked",
+          "blocker_code": "blocked_voice_unavailable",
+          "additional_blocker": "blocked_quality_museum_v46_not_met"
+        },
+        "cinema_standard": {
+          "status": "planned",
+          "blocker_code": "authentic_asset_acquisition_and_v54_v13_preflight_pending",
+          "rendered_mp4": false
+        },
+        "cinema_museum": {
+          "status": "blocked",
+          "blocker_code": "blocked_quality_museum_v46_not_met",
+          "rendered_mp4": false
+        }
+      },
+      "note": "New unique artwork selected via V32 three-work comparison; no asset download, V13 gate, MP4 or approval claimed. Museum requires V46 quality rebuild, Critico exact Gacrux."
     }
   ],
   "last_operational_update": {
