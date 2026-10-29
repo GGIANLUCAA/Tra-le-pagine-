@@ -200,7 +200,7 @@ def ffprobe(path):
             "video_codec":video[0]["codec_name"],"audio_codec":audio[0]["codec_name"],
             "pixels":[video[0]["width"],video[0]["height"]]}
 
-def render_one(name,art,roomimg,song,voice=None):
+def render_one(name,art,roomimg,song,voice=None,voice_provider_label="Google Gemini Gacrux"):
     critic=name.startswith("critico")
     if critic and voice is None:raise ValueError("No silent Critico allowed")
     if critic:
@@ -259,6 +259,9 @@ def render_one(name,art,roomimg,song,voice=None):
                     "-i",str(mp4),"-f","null","-"],check=True)
     visual.cover(art,name).save(folder/"COPERTINA.jpg",quality=92)
     for platform,text in social(name).items():
+        if critic and voice_provider_label!="Google Gemini Gacrux":
+            text=text.replace("Gacrux",voice_provider_label)
+            text+="\n\nPROVA VOCE GRATUITA: non e Gacrux; non e un Gold Master."
         credit='\n\nMusica: "Dark Times", Kevin MacLeod (incompetech.com), CC BY 4.0: '+MUSIC_LICENSE
         (folder/("POST_"+platform.upper()+".txt")).write_text(text+credit+"\n",encoding="utf-8")
     (folder/"SOURCE_AND_RIGHTS.md").write_text(
@@ -270,13 +273,14 @@ def render_one(name,art,roomimg,song,voice=None):
         "No AI painting reconstruction or other Blake Dragon version is used.\n",encoding="utf-8")
     if critic:
         shutil.copy2(SCRIPT,folder/"COPIONE_CRITICO.txt")
-        shutil.copy2(voice,folder/"VOCE_GACRUX.wav")
-    state={"variant":name,"status":"rendered_needs_review","video":mp4.name,
+        shutil.copy2(voice,folder/("VOCE_GACRUX.wav" if voice_provider_label=="Google Gemini Gacrux" else "VOCE_ALTERNATIVA_SPERIMENTALE.wav"))
+    state={"variant":name,"status":("alternate_voice_experiment_needs_review" if critic and voice_provider_label!="Google Gemini Gacrux" else "rendered_needs_review"),"video":mp4.name,
            "video_sha256":sha256(mp4),"source_artwork_sha256":sha256(OUT/"BROOKLYN_BLAKE_ORIGINAL.jpg"),
            "music_sha256":sha256(song),"native_render_pixels":[visual.W,visual.H],
            "delivery_pixels":[1080,1920],"fps":visual.FPS,
            "voice_sha256":sha256(voice) if critic else None,
-           "studio_voice":"Google Gemini Gacrux" if critic else None,
+           "studio_voice":voice_provider_label if critic else None,
+           "alternate_voice_experiment":bool(critic and voice_provider_label!="Google Gemini Gacrux"),
            "same_WAV_for_both_critico":True if critic else None,
            "human_full_speed_review":"pending","artistic_gold_master":False,
            "private_archive_verified":False,"social_published":False,**info}
