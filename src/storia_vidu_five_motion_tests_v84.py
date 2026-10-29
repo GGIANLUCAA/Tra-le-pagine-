@@ -25,17 +25,30 @@ FP="20261029_V84_5_TESTS"
 SEED=190018
 
 SPECS=[
- {"id":"01_TRAM_CAMERA_FISSA","image":"FOTO_AI_RICOSTRUITA_03.png","kind":"1918 tram/people", "motion":"locked",
+ {"id":"01_TRAM_CAMERA_FISSA","image":"FOTO_AI_RICOSTRUITA_04.png","kind":"1918 tram/people", "motion":"locked",
   "prompt":"One continuous documentary shot from this exact color-restored archival Paris street photograph. The vintage electric tram slowly rolls forward along its original rails and the pedestrians walk at natural human speed; tram wheels stay wheels, tram remains one rigid mechanical vehicle, buildings remain fixed. Tripod camera fully locked off; eye-level framing stays identical. Realistic coordinated locomotion, small wind movement in clothing, subtle depth motion, crisp natural details. Preserve exact number and identities of visible people. DO NOT change historical signs, clothes or geometry; no zoom, no pan, no morphs, no extra humans or limbs, no freeze-frame or slideshow. Every second contains real object movement."},
- {"id":"02_NEWSSTAND_HANDS","image":"FOTO_AI_RICOSTRUITA_04.png","kind":"1918 street newspaper stand","motion":"human gesture",
+ {"id":"02_NEWSSTAND_HANDS","image":"FOTO_AI_RICOSTRUITA_01.png","kind":"1918 street newspaper stand","motion":"human gesture",
   "prompt":"The same Paris newsstand from the input archival color photograph comes alive as uninterrupted realistic live footage. Camera is fixed at the exact source viewpoint, a customer reaches for one newspaper while the newspaper seller adjusts a single paper, natural tiny head motion, real cloth fabric reacting gently, neighboring customers move subtly in place. No changes to the identities, faces, hats, newspaper count, storefront architecture, or camera lens. Human hands with correct fingers and grip; no disintegrating papers or letters, no object-person morph, no new people, no rubber limbs, no camera zoom, no artificial freeze. Full-color continuous live-action movement throughout all five seconds."},
  {"id":"03_STATION_PEDESTRIANS","image":"FOTO_AI_RICOSTRUITA_02.png","kind":"1918 station arrival","motion":"walking crowd",
   "prompt":"Animate the exact same early-20th-century Paris station entrance color-restored photograph into a credible 5-second continuous historical documentary shot. The nearest adult subtly shifts weight then walks one deliberate step, other people pass naturally behind at their existing depth and positions, fabric and luggage respond to real gravity. Camera on stationary tripod, no cut, no reframing, no dolly, no zoom. Keep same people, ages, clothes, hats, luggage, architecture and storefront details. Hands, shoes and faces anatomically stable, no new characters, no multiplied body parts, no object becoming human. Real continuous natural color motion throughout."},
- {"id":"04_CINEMA_CROWD","image":"FOTO_AI_RICOSTRUITA_01.png","kind":"1918 cinema exterior","motion":"moving crowd",
+ {"id":"04_CINEMA_CROWD","image":"FOTO_AI_RICOSTRUITA_03.png","kind":"1918 cinema exterior","motion":"moving crowd",
   "prompt":"The EXACT color-restored still of the historic Paris cinema and the crowd begins naturally moving in the same camera composition. Vintage moviegoers walk slowly past the entrance, a woman turns her head slightly, hats and coat fabric respond naturally, passers-by keep their identities and plausible physical trajectories. The cinema signage, marquee, buildings, lamps and rails stay architecture and lettering remains stable. Camera completely fixed without zoom, pan, or shake. One uninterrupted 5-second color documentary shot, no still image pans, no extra faces, no deforming letters, no people morphing into objects or each other, anatomically correct feet, hands, realistic light."},
  {"id":"05_1900_WALKWAY_COLOR_MOTION","image":"END_MODERN.jpg","kind":"1900 moving walkway benchmark","motion":"moving walkway",
   "prompt":"Bring this exact restored full-color archival Paris 1900 moving walkway scene to life as genuine continuous realistic video. The old electric moving sidewalk belt slowly transports the existing passengers in their exact historical hats and outfits; railings and supporting columns remain rigid, natural slight head and arm movement, correct mechanical motion, physically consistent shifting shadows. Preserve number and identity of all people, details of machinery, frame geometry and viewpoint. Stationary documentary camera, no push-in, no zoom, no cut and no camera shake. Rich but natural photographic color and coherent real movement for the FULL five seconds. No static frame, no surreal transformations, no false people, no invented architectural elements."}
 ]
+IMAGE_SUBJECTS_HUMAN_VERIFIED={
+ "FOTO_AI_RICOSTRUITA_01.png":"NEWSSTAND",
+ "FOTO_AI_RICOSTRUITA_02.png":"STATION",
+ "FOTO_AI_RICOSTRUITA_03.png":"CINEMA",
+ "FOTO_AI_RICOSTRUITA_04.png":"TRAM",
+ "END_MODERN.jpg":"MOVING_WALKWAY"
+}
+EXPECTED_SUBJECTS={"01_TRAM_CAMERA_FISSA":"TRAM","02_NEWSSTAND_HANDS":"NEWSSTAND",
+"03_STATION_PEDESTRIANS":"STATION","04_CINEMA_CROWD":"CINEMA",
+"05_1900_WALKWAY_COLOR_MOTION":"MOVING_WALKWAY"}
+# Subject labels were manually checked against all FIVE source images. Strict mapping
+# protects future paid runs from the prompt/image mismatch discovered during V84 QA.
+
 KNOWN_SHA={"FOTO_AI_RICOSTRUITA_01.png":"25070cfd5aa0e38585c6b582b7cdade10a7aeb8154c4983f94b058da9b128e71",
 "FOTO_AI_RICOSTRUITA_02.png":"328af7951bb4b443166143eded5b149aae4f6982713a47420428f79ae291dedf",
 "FOTO_AI_RICOSTRUITA_03.png":"8d36d33fec39d6051b2dbed9bc0d5349438522ef1f2756e8bbf91416aeaa6211",
@@ -206,6 +219,9 @@ def style_bw_to_fullcolor(original,export,fade_seconds=1.0):
 def main():
  if not KEY:raise RuntimeError("Vidu API secret absent")
  if len(SPECS)!=5 or len({x["id"] for x in SPECS})!=5:raise RuntimeError("NOT_FIVE_UNIQUE_EXPERIMENTS")
+ for spec in SPECS:
+  if IMAGE_SUBJECTS_HUMAN_VERIFIED[spec["image"]]!=EXPECTED_SUBJECTS[spec["id"]]:
+   raise RuntimeError("SOURCE_SEMANTIC_MISMATCH_STOP_BEFORE_BILLING "+spec["id"])
  for s in SPECS:
   if not (MEDIA/s["image"]).exists() or sha(MEDIA/s["image"])!=KNOWN_SHA[s["image"]]:
    raise RuntimeError("PRECHECK_IMAGES_MISSING_OR_CHANGED "+s["image"])
