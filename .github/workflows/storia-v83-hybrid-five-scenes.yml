@@ -24,7 +24,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       V83_MODE: ${{ inputs.production_mode || 'preview' }}
-      TAG: storia-rivive-paris-1900-1918-hybrid-v83-technical-preview
+      TAG: storia-rivive-paris-1900-1918-hybrid-v83-1-color-motion-preview
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -35,7 +35,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg unzip
           python -m pip install --quiet "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
-          python -m py_compile src/storia_rivive_hybrid_v83.py
+          python -m py_compile src/storia_rivive_hybrid_v83.py src/storia_rivive_vidu_chroma_retime_v83.py
       - name: "Retrieve exact owned/source assets: four photos, real films, existing Vidu clip"
         shell: bash
         run: |
@@ -60,6 +60,11 @@ jobs:
           printf "8d36d33fec39d6051b2dbed9bc0d5349438522ef1f2756e8bbf91416aeaa6211  FOTO_AI_RICOSTRUITA_03.png\n" | sha256sum -c -
           printf "5abf828d87465ad90201da0bb7e0ea3dad1554cd1436aa3f953a36c26f4b9688  FOTO_AI_RICOSTRUITA_04.png\n" | sha256sum -c -
           echo "V83_SOURCE_FILES_ALL_VERIFIED"
+      - name: "Restore first-second color timing ON EXISTING paid Vidu motion (zero additional credits)"
+        run: |
+          python src/storia_rivive_vidu_chroma_retime_v83.py \
+            --input output/storia_ibrida_v83/assets/VIDU_TRANSIZIONE_ORIGINALE.mp4 \
+            --output output/storia_ibrida_v83/assets/VIDU_COLOR_MOTION_1S.mp4
       - name: "Render continuous montage with 5 true chapters, 1 uninterrupted soundtrack"
         run: python src/storia_rivive_hybrid_v83.py
       - name: "Attach Android MP4 ZIP cover editorial and QA, even if not approved"
@@ -89,6 +94,6 @@ jobs:
             PARIS_V83_HYBRID_ANDROID.zip COPERTINA.jpg QA_V83.json \
             --repo "$GITHUB_REPOSITORY" \
             --title "La Storia Rivive V83 - PARIS 1900–1918 - 4 foto + 1 Vidu (solo preview)" \
-            --notes "Anteprima TECNICA, non approvata artisticamente o per pubblicazione social. Quattro scene d’archivio del 1918 con foto AI già create, più la clip Vidu 1900 già pagata; date differenti dichiarate. Il vecchio inserto Vidu non soddisfa necessariamente la nuova regola colore entro un secondo e movimento continuo. NESSUN nuovo credito speso. Usare questa preview per controllare raccordi, ritmo, continuità audio e formato Android." \
+            --notes "Anteprima TECNICA, non approvata artisticamente o per pubblicazione social. Quattro scene d’archivio del 1918 con foto AI già create, più la clip Vidu 1900 già pagata; date differenti dichiarate. Il movimento resta quello dei fotogrammi generati da Vidu il 29 ottobre, mentre il colore è stato anticipato entro ~1 s con una correzione cromatica gratuita guidata dal flusso ottico. NESSUN nuovo credito speso. Usare questa preview per controllare raccordi, ritmo, continuità audio e formato Android." \
             --prerelease
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name'
