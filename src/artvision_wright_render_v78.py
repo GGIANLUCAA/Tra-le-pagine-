@@ -277,7 +277,7 @@ def render_one(name,art,roomimg,song,voice=None):
         shutil.copy2(SCRIPT,folder/"COPIONE_CRITICO.txt")
         shutil.copy2(voice,folder/"VOCE_GACRUX.wav")
     state={"variant":name,"status":"rendered_needs_review","video":mp4.name,
-           "video_sha256":sha256(mp4),"source_artwork_sha256":sha256(OUT/"NATIONAL_GALLERY_WRIGHT_ORIGINAL_FRAMED.jpg"),
+           "video_sha256":sha256(mp4),"source_artwork_sha256":sha256(OUT/"NATIONAL_GALLERY_WRIGHT_PD_ART.jpg"),
            "music_sha256":sha256(song),"native_render_pixels":[visual.W,visual.H],
            "delivery_pixels":[1080,1920],"fps":visual.FPS,
            "voice_sha256":sha256(voice) if critic else None,
