@@ -38,5 +38,9 @@ Example 43054: wider action with many people, buildings and carriages; stills ar
 
 Reference contact sheets were produced for internal analysis from user uploads but **do not commit original user footage or derivatives to public GitHub**.
 
+## Correzione esplicita dell'utente — 29 ottobre 2026, V83
+
+**I tre video sono benchmark della QUALITÀ DEL RESTAURO fotografico, non template da replicare per il MONTAGGIO.** Ritmi, intervalli di freeze, numero cicli e durata indicati sopra sono misure dei campioni e possibilità del motore, non obblighi creativi né ritmi da copiare. Analizzare ogni filmato originale, scegliere il momento di freeze, costruire scene/durata/musica con la regia più adatta al soggetto. I requisiti visivi restano vincolanti: volti fotografici nitidi e coerenti con vera fonte, dettagli tessuti/ambienti/oggetti, colori realistici, integrità delle persone. Prima di generare leggere `docs/LA_STORIA_RIVIVE_SORGENTI_HD_PRECHECK_V83.md` e confrontare fonti originali con vera digitalizzazione HD/2K/4K documentata e diritti PD/CC0 specifici. Se il materiale non consente insieme realismo e fedeltà, cercare una fonte migliore e NON dichiarare un nuovo master approvato.
+
 ## Version priority
 V82 reference effect from verified 43054/43055/43056 supersedes weaker assumptions in V73/V74/V75/V76/V77/V78 for visual **target**, while retaining the safe constraints learned in later versions. This is the style target for all subsequent La Storia Rivive videos, not the false claim that the original people can be reconstructed with perfectly historically true faces from blurred film.
