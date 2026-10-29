@@ -1,0 +1,77 @@
+name: "V74 Parigi — reference video to AI PHOTO FREEZE (corretto)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v74-paris-reference-freeze.yml"
+      - "src/storia_v74_paris_true_photo_freeze.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v74-reference-freeze
+  cancel-in-progress: false
+jobs:
+  build_reference_correct:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install only free CPU video tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install --no-cache-dir opencv-python-headless pillow numpy
+      - name: Reuse original verified Paris film and photographic AI images (zero new AI quota)
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v74_paris
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 160 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12885194313/zip" --output /tmp/ARCHIVAL_FOOTAGE_AND_PHOTOS.zip
+          unzip -t /tmp/ARCHIVAL_FOOTAGE_AND_PHOTOS.zip >/dev/null
+          unzip -oq /tmp/ARCHIVAL_FOOTAGE_AND_PHOTOS.zip -d output/storia_v74_paris
+          test -s output/storia_v74_paris/PELICOLA_PARIGI_ORIGINALE.webm
+          test -s output/storia_v74_paris/FOTO_AI_03.png
+          test -s output/storia_v74_paris/PHOTO_QA.json
+      - name: Real B/W motion > exact historical freeze > generative AI PHOTO still > next original moving scene
+        run: python -u src/storia_v74_paris_true_photo_freeze.py
+      - name: Compare reference format, verify MP4 and ZIP
+        run: |
+          set -euo pipefail
+          D=output/storia_v74_paris
+          python -u src/storia_rivive_v74_effect_gate.py --video "$D/PARIGI_1896_1900_EFFETTO_ORIGINALE_V74.mp4" --min-cycles 3 --report "$D/FORMAT_QA_V74.json"
+          ffmpeg -v error -xerror -i "$D/PARIGI_1896_1900_EFFETTO_ORIGINALE_V74.mp4" -f null -
+          unzip -t "$D/PARIGI_V74_VIDEO_COMPLETO.zip"
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json "$D/PARIGI_1896_1900_EFFETTO_ORIGINALE_V74.mp4"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PARIGI_1896_1900_V74_CORRECT_REFERENCE_EFFECT
+          path: |
+            output/storia_v74_paris/PARIGI_1896_1900_EFFETTO_ORIGINALE_V74.mp4
+            output/storia_v74_paris/PARIGI_V74_VIDEO_COMPLETO.zip
+            output/storia_v74_paris/FONTI_E_QA.json
+            output/storia_v74_paris/FORMAT_QA_V74.json
+            output/storia_v74_paris/COPERTINA.jpg
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Make permanently downloadable Android MP4 and ZIP via GitHub release
+        run: |
+          set -euo pipefail
+          D=output/storia_v74_paris
+          TAG=storia-rivive-parigi-1896-1900-effetto-approvato-v74
+          files=("$D/PARIGI_1896_1900_EFFETTO_ORIGINALE_V74.mp4" "$D/PARIGI_V74_VIDEO_COMPLETO.zip" "$D/COPERTINA.jpg" "$D/FONTI_E_QA.json")
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --latest=false --title "La Storia Rivive — Parigi V74 — Effetto originale VIDEO > FOTO AI" --notes "V74 corrected format compared with user MP4 references 43054 and 43056. Three real moving archival shots from Paris 1896-1900, freeze of same historical frame followed by source-locked full color photographic AI reconstruction held motionless. No continuous video colorization. Original music; no Vidu credits; source and AI photography from previous real V71 run. AI colors/face details are reconstructions. Human creative and Italian reuse-rights reviews pending. Not uploaded to social or private site." "${files[@]}"
+          fi
+          local_bytes=$(stat -c %s "$D/PARIGI_1896_1900_EFFETTO_ORIGINALE_V74.mp4")
+          remote_bytes=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[]|select(.name=="PARIGI_1896_1900_EFFETTO_ORIGINALE_V74.mp4")|.size')
+          test "$local_bytes" = "$remote_bytes"
+          echo "MP4_DOWNLOAD_VERIFIED $local_bytes"
