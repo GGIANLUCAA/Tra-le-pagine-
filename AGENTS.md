@@ -1,5 +1,10 @@
 # Studio video di Gianluca — istruzioni attive
 
+## ArtVision V68 — MODULO 4×1 RIUTILIZZABILE (feedback del 29/10/2026)
+
+**LEGGERE PER PRIMO** `docs/ARTVISION_START_HERE_QUATTRO_VIDEO_RIPRODUCIBILE_V68.md` e `config/artvision_four_variants_presets_v68.json` quando l'utente chiede un quadro, una variante, un nuovo preset o una regola di regia. Socrate ha **4 MP4 realmente renderizzati**, con Museo/cornice/spiegazione giudicati **BUONA BASE ARTISTICA MIGLIORABILE**: preservare quel modello, non ripartire da zero e non attribuire V25 Gold Master a nessuna variante senza approvazione specifica. Preset globale + ricetta PER OPERA + log versionato delle modifiche; nuove preferenze locali non toccano gli altri quadri. Il pilot lock V58 resta attivo finché non viene autorizzato esplicitamente il secondo pilota; serie automatica NON sbloccata. Gli output MP4/WAV grandi devono essere salvati davvero nell'archivio privato: un manifest SHA su GitHub non significa backup dei byte.
+
+
 Leggere questo file prima di proporre o produrre video.
 
 ## ARTVISION V58 — CONTRATTO MADRE 4×1 E BLOCCO PILOTA (29/10/2026)
