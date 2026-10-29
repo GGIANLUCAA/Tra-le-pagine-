@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-29.4",
+  "version": "2026-10-29.5",
   "approved_by": "28/10/2026: V55 verifica consegna MP4/copertina/ZIP/4 post e primi 7 secondi e importazione privata; 28/10/2026: ArtVision 4x1 V54 con direzione emotiva, gate e autocritica; Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.; 28/10/2026: categoria La Storia Rivive V56 con riprese autentiche, diritti e controlli ferrei, zero spese automatiche, primissimi secondi e consegna V55 completa.; 28/10/2026: V57 utente boccia seppia/dissolvenza e impone colore AI ricco e dettaglio fotorealistico, non false etichette 4K.; 28/10/2026: V58 richiesta esplicita multi-scene, effetti cromatici veri, alta qualità percepita senza obbligo 4K, Vidu solo futuro e opzionale, licenze commerciali software/pesi verificate.; 28/10/2026: V59 utente specifica post non monetizzati, ORIGINALI storici solo PD/CC0. Ammessi strumenti noncommerciali se licenza copre uso/pubblicazione effettivi; richiedere prova specifica per restrizioni research-only, mantenere V55/V57.; 28/10/2026: V61 analizzati tre MP4 nuovi, vero effetto video B/N in movimento->freeze->FOTO AI a colori ferma; fast 0,9+0,9 e slow 2+2; V60 colorizzazione in movimento non soddisfa.; 28/10/2026: V63 feedback V62, ritagli scelti per importanza, fermo 1.8-2.8 s, 20-28 s, originale senza downsizing prima dell'ESRGAN, 1080p no finto 4K.; 28/10/2026: V64 dopo V63 utente chiede fermo AI foto nitida come moderna e volti riconoscibili; rigore su stessa identità/abiti, cambiare fonte se pochi pixel; scartare output creativi con nuovi personaggi.; 28/10/2026: V69, fonte del cinema più restaurabile, valutare possibilità effettiva di ricostruzione e wow prima del montaggio; scegliere vecchie pellicole vere di scansione migliore, soggetti leggibili nel crop verticale, con micro-test generativo e controllo fedeltà; mai finto 4K.",
   "precedence": [
     "explicit_user_request",
@@ -738,6 +738,34 @@
           }
         ]
       }
+    },
+    "user_approved_continuous_camera_v57": {
+      "approved_at": "2026-10-29",
+      "reference": "The Cyclops Museum V57 34s corrected camera pilot",
+      "sha256": "4d746edb3cd1083605ff11b0dce2bbfbe0e37eda01b836b8243894c732d509bb",
+      "comparison_reference_unchanged": [
+        "The Cyclops — SENZA STRISCE CORRETTO V46",
+        "Hiroshige Museum Scale"
+      ],
+      "preserved_strengths": [
+        "continuous entrance without painting pasted onto frame",
+        "real source image aligned by SIFT/RANSAC, reprojection during optical push",
+        "artistically satisfying same-room return",
+        "zero cloned edge strips",
+        "good cover/musical no-voice Cinema Museum"
+      ],
+      "subject_specific_not_templated": true,
+      "applies_to": [
+        "artvision_cinema_museum",
+        "artvision_critico_museum"
+      ],
+      "do_not_infer": [
+        "permission to copy identical gallery to different canvas",
+        "historical frame authenticity",
+        "V25 publication approval",
+        "4 rendered new variants",
+        "voice Gacrux cache available"
+      ]
     }
   },
   "artvision_four_variants": {
@@ -782,7 +810,7 @@
     "legacy_queue": "queue/artvision_dual_format_s01_20261028.json",
     "existing_automation_id": "6adca191603c8191a90d5190901cd034",
     "practical_director_v57": {
-      "status": "camera_pilot_real_video_rendered_needs_review_not_approved",
+      "status": "user_approved_museum_camera_and_regia_reference_2026_10_29",
       "approved_scene_source": "ArtVision_The_Cyclops_SENZA_STRISCE_CORRETTO_20261027.mp4",
       "pilot_exact_sha256": "4d746edb3cd1083605ff11b0dce2bbfbe0e37eda01b836b8243894c732d509bb",
       "pilot_source": "User's own previously approved V46 original gallery still and exact original Redon painting; reused for camera test, not a new artwork or four completed videos.",
@@ -794,9 +822,47 @@
         "cinema_standard": "Music only, no narration, original detail-driven cut with purposeful movement; no fake gallery",
         "cinema_museum": "Music only, no narration, fully continuous V46 gallery frame-to-paint and paint-to-same-gallery camera, physical scale and photographic-quality frame"
       },
-      "user_feedback_pending": true,
+      "user_feedback_pending": false,
       "approved_for_automated_museum_release": false,
-      "no_paid_video_api_without_explicit_scene_authorization": true
+      "no_paid_video_api_without_explicit_scene_authorization": true,
+      "user_approval": {
+        "date": "2026-10-29",
+        "quote": "Bello mi piace salva le regole",
+        "scope": "Approval of the practical Cyclops V57 visual movement/style as reusable museum-directing reference for future four-variant ArtVision productions",
+        "approved_reference_movie_sha256": "4d746edb3cd1083605ff11b0dce2bbfbe0e37eda01b836b8243894c732d509bb",
+        "does_not_certify": "V25 release quality for other MP4s, exact original gallery authenticity, future frame reconstruction, or remote website import"
+      },
+      "approved_for_reference_use": true,
+      "reference_priority": [
+        "The Cyclops V57 camera pilot user-approved for continuous entry / high-res aligned art reprojection / return to same room",
+        "The Cyclops SENZA STRISCE CORRETTO V46 for physical frame depth, material, recessed painting and no stretch",
+        "Hiroshige Museum Scale for physically credible height/width, architecture and person reference"
+      ],
+      "required_museum_renderer_contract": [
+        "User-approved genuine continuous POV camera, not slide montage or abrupt jump; gallery-to-art aligned one-coordinate transform with authentic image pixels",
+        "Accurate art alignment within the frame plane before movement; keep painting recessed behind inner lip and never paste over historic framing",
+        "Physically convincing room and frame with period/artist-specific research, proper proportions, bevel, shadow, corners and lighting",
+        "On return the same exact museum room, frame and angle, with a smooth visually justified retreat",
+        "No stretched margins, ghosting, 2D box museum or empty wall used as filler",
+        "Artistic and V25 review for each newly generated work; only pilot direction (not every output) explicitly user-approved"
+      ],
+      "critico_standard": {
+        "audio": "Google Gacrux original natural Italian voice required; thorough art criticism with factual verification and detail sync",
+        "direction": "Critico Standard cover and detail-led picture entry; no obligatory museum room"
+      },
+      "critico_museum": {
+        "audio": "Exactly the same spoken script and identical Gacrux audio recording as Critico Standard",
+        "direction": "User-approved V57 continuous gallery entry/return V46 + gallery true-scale; picture analysis details time-locked to voice"
+      },
+      "cinema_standard": {
+        "audio": "Music only, no narrator; use legally licensed full recording",
+        "direction": "Cinematic authenticated artwork detail progression; do not fake Museum frame or repeat crop as new source scenes"
+      },
+      "cinema_museum": {
+        "audio": "Music only, no narrator; use legally licensed full recording",
+        "direction": "User-approved V57 continuous physically coherent gallery entry + true-size work and researched frame + return to same gallery"
+      },
+      "delivery_rule": "Each new artwork remains 4 separate videos, each own verified MP4/cover/ZIP/4 social posts and archive checks; pilot is a reference, not a new group or fifth variant"
     }
   },
   "delivery_v55": {
