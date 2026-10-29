@@ -1,0 +1,37 @@
+name: ArtVision Klimt V70 source and music from alternate lawful providers
+on:
+  pull_request:
+    paths:
+      - src/artvision_klimt_acquire_alternates_v70.py
+      - .github/workflows/artvision-klimt-v70-source.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-klimt-v70-source-one
+  cancel-in-progress: false
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install only free image/audio validation utilities
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13"
+      - name: Fetch from CC0 and PD alternative hosts without repeating Wikimedia 429
+        run: |
+          python src/artvision_klimt_acquire_alternates_v70.py --out output/klimt-v70-verified-source
+      - name: Archive verifiable original media and provenance, even if job failed
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_KLIMT_V70_PD_ART_AND_CC_MUSIC_ASSETS
+          path: output/klimt-v70-verified-source/
+          retention-days: 30
+          if-no-files-found: warn
