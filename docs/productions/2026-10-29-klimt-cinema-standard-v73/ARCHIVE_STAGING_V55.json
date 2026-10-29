@@ -1,0 +1,46 @@
+{
+  "schema": "artvision-v55-archive-staging-v1",
+  "video_key": "03_Klimt_Cinema_Standard.mp4",
+  "video_sha256": "5651ec851055d007dba9ed86762840decd51a9008a9ebdfcba470618e31200a6",
+  "video_bytes": 3774837,
+  "review_state": "rendered_needs_review",
+  "posts": {
+    "facebook": "La superficie dorata del Bacio nasconde mille piccoli gesti. Un filmato soltanto musicale entra tra i fiori e i motivi di Klimt, poi torna alla visione completa.",
+    "instagram": "Una carezza, una geometria, un giardino d'oro. ✨ The Kiss di Klimt senza parole: solo dettagli autentici e musica. #GoldenPeriod #TheKiss",
+    "tiktok": "47 secondi di oro e dettagli autentici di Klimt. Nessuna voce, soltanto la pittura. Guarda le mani. 👀 #Klimt #Arte",
+    "youtube": "THE KISS — Gustav Klimt | Cinema Standard. Montaggio musicale di 47 secondi su dettagli originali della tela: volti, mani, ornamenti, fiori e composizione intera. Nessun parlato."
+  },
+  "rights_markdown": "The Kiss, Gustav Klimt (1908–1909), Upper Belvedere inv. 912, 180×180 cm. Painting faithful public-domain reproduction Commons PD-Art https://commons.wikimedia.org/wiki/File:Klimt_-_The_Kiss.jpg ; actual image SHA256 43e998b7b9dc6f935918dbd55ff1a3f34052b932d563e74e5d2d5dceb2660b24. Music: Dreams Become Real by Kevin MacLeod, licensed CC BY 4.0 https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027 ; https://creativecommons.org/licenses/by/4.0/ ; original audio SHA256 a8ea5df5f969ed8d898af7fe07eb4712233f03e9d83f7ebcc88d1c851f3171b0. Critico narration: exact Google Gemini Gacrux Italian recording WAV SHA256 fe5bab5c9c52567c04959b387459178caa4a268c8f64671582bab10c81214371, one authorized request. Museum: independently constructed gallery image and dark stepped + golden fillet frame are DIGITAL RECONSTRUCTIONS, not authentic current Belvedere gallery or historical frame. No social auto-publication, no V25 approval or verified private archive.",
+  "recipe": {
+    "schema": "artvision-klimt-4x1-v73",
+    "variant": "cinema_standard",
+    "artist": "Gustav Klimt",
+    "title": "The Kiss",
+    "duration_seconds": 47,
+    "codec": "H264/AAC",
+    "resolution": [
+      720,
+      1280
+    ],
+    "frame_rate": 20,
+    "video": {
+      "name": "03_Klimt_Cinema_Standard.mp4",
+      "sha256": "5651ec851055d007dba9ed86762840decd51a9008a9ebdfcba470618e31200a6",
+      "bytes": 3774837
+    },
+    "original_art_sha256": "43e998b7b9dc6f935918dbd55ff1a3f34052b932d563e74e5d2d5dceb2660b24",
+    "music_sha256": "a8ea5df5f969ed8d898af7fe07eb4712233f03e9d83f7ebcc88d1c851f3171b0",
+    "gacrux_voice_sha256": null,
+    "same_critico_audio_aac_sha256": null,
+    "museum_reconstruction": false,
+    "V57_numeric_jump_gate": null,
+    "complete_decode": "passed",
+    "opening_frames": "extracted",
+    "full_speed_human_review": "pending",
+    "V25_approved": false,
+    "private_archive_import": false,
+    "video_AI_paid_calls": 0,
+    "review_state": "rendered_needs_review"
+  },
+  "notes": "Exact real MP4 produced locally in user ChatGPT session and checked; stage text only. Archive Sync pending until real authenticated import and SHA retrieval. The ZIP packaging has a separate set of four distinct posts per video. Not an approved Gold Master."
+}
