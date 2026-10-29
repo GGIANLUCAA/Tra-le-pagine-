@@ -10,7 +10,7 @@ ROOT.mkdir(parents=True,exist_ok=True)
 REPO=os.environ.get("GITHUB_REPOSITORY","GGIANLUCAA/Tra-le-pagine-")
 SRC_URL="https://commons.wikimedia.org/wiki/Special:Redirect/file/Danse_javanaise_%281900%29.webm"
 SRC=ROOT/"DANSE_JAVANAISE_1900_SOURCE.webm"
-LEDGER="queue/vidu_api_attempts/CLEO_DANSE_1900_V90_ONCE_20261029.json"
+LEDGER="queue/vidu_api_attempts/CLEO_DANSE_1900_V90_REFRAMED_ONCE_20261029.json"
 FPS,W,H=30,720,1280
 CLIP_TIMES=[20.0,56.0,92.0,128.0,163.0]
 MODEL="viduq2-pro-fast"; MAX_CREDITS=16
@@ -53,6 +53,10 @@ def frame_at(t):
     h,w=fr.shape[:2];cw=int(h*9/16)
     # Allow entire dancer's gesture, prioritize performer center.
     left=(w-cw)//2
+    # At t=163s the performer walks toward frame right. Reframe using REAL source pixels.
+    # Do not inpaint missing feet, limbs, or stage background.
+    if t>=155:
+        left=min(w-cw,max(0,left+150))
     im=fr[:,left:left+cw]
     return cv2.resize(im,(W,H),interpolation=cv2.INTER_LANCZOS4)
 def download_and_scout():
