@@ -16,7 +16,14 @@
       "width": 196.2
     },
     "museum_source": "https://www.metmuseum.org/art/collection/search/436105",
-    "rights": "Met collection marks artwork Public Domain; runtime must confirm isPublicDomain=true and original image SHA256"
+    "rights": "Met collection marks artwork Public Domain; runtime must confirm isPublicDomain=true and original image SHA256",
+    "framed_outer_cm": {
+      "height": 168.27533,
+      "width": 233.68047,
+      "depth": 14.605029
+    },
+    "frame_dimensions_source": "https://collectionapi.metmuseum.org/public/collection/v1/objects/436105 (measurements: Framed Height/Width/Depth)",
+    "frame_visual_authenticity": "Dimensions are documented; appearance, moldings, current gallery photograph and reproduction rights NOT verified. No museum renderer approval."
   },
   "v32_comparison": [
     {
@@ -133,7 +140,7 @@
     "cinema_museum": {
       "status": "blocked_quality_museum_v46_not_met",
       "storyboard": "Real-scale canvas and materially modelled frame -> continuous entrance -> authentic detail journey -> continuous exit into same gallery; no 2D flat-wall substitute",
-      "frame": "current frame unverified, do not invent historical frame"
+      "frame": "Met API documents framed dimensions 168.27533 × 233.68047 × 14.605029 cm; frame appearance/photography unverified. Reconstructed frame must be clearly identified and V46 seamless transitions proven."
     },
     "critico_standard": {
       "status": "blocked_voice_unavailable",
