@@ -1,14 +1,5 @@
 name: "ArtVision Klimt V69 — second pilot Cinema Standard source-and-render"
 on:
-  pull_request:
-    paths:
-      - "src/artvision_klimt_second_pilot_cinema_v69.py"
-      - ".github/workflows/artvision-klimt-second-pilot-v69.yml"
-      - "docs/productions/2026-10-29-klimt-the-kiss-pilot-v69/**"
-      - "config/artvision_pilot_lock_v58.json"
-      - "src/artvision_pilot_guard_v58.py"
-      - "src/artvision_next_render_v55.py"
-      - "queue/artvision_four_variants_s01_20261028.json"
   workflow_dispatch:
 permissions:
   contents: read
