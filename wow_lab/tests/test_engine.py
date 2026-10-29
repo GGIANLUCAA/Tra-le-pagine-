@@ -45,6 +45,21 @@ class WowLabContractTests(unittest.TestCase):
             modes.append(tuple(round(float(x),2) for x in b.flatten()))
         self.assertEqual(len(set(modes)),len(engine.SAFE_MODES))
 
+
+    def test_every_camera_trajectory_remains_convex_and_in_safe_frame(self):
+        import cv2
+        import numpy as np
+        W,H=540,960
+        for mode in engine.SAFE_MODES:
+            for dims in ((420,450),(380,532),(470,300)):
+                for step in range(41):
+                    p=step/40
+                    quad=engine.shot_params(mode,p,W,H,dims)
+                    self.assertTrue(cv2.isContourConvex(quad.astype(np.int32)),(mode,dims,p))
+                    self.assertGreater(cv2.contourArea(quad),25000)
+                    self.assertGreater(float(quad[:,1].min()),0)
+                    self.assertLess(float(quad[:,1].max()),H*.84)
+
     def test_no_imports_from_parent_core(self):
         src=(MODULE/"engine.py").read_text(encoding="utf-8")
         prohibited = ["import src.", "from src", "import config.",
