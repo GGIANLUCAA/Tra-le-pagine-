@@ -43,7 +43,7 @@ def obtain_art(assets):
     query=API+"?"+urllib.parse.urlencode({
         "action":"query","format":"json","formatversion":2,
         "titles":"File:Klimt - The Kiss.jpg","prop":"imageinfo",
-        "iiprop":"url|size|extmetadata"})
+        "iiprop":"url|size|mime|extmetadata"})
     body,url=fetch(query,2_000_000,{"commons.wikimedia.org"},min_bytes=200)
     doc=json.loads(body)
     pages=doc.get("query",{}).get("pages",[])
