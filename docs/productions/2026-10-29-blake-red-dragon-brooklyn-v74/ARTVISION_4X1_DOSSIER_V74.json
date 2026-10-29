@@ -1,0 +1,96 @@
+{
+  "schema": "artvision-blake-brooklyn-second-pilot-v74",
+  "scope": "one explicitly requested second pilot; no automatic queue unlocking",
+  "artwork": {
+    "artist": "William Blake",
+    "title": "The Great Red Dragon and the Woman Clothed with the Sun (Rev. 12:1-4)",
+    "date": "ca. 1803–1805",
+    "museum": "Brooklyn Museum, New York",
+    "object_id": 4368,
+    "accession": "15.368",
+    "image_cm": {
+      "h": 43.7,
+      "w": 34.8
+    },
+    "sheet_cm": {
+      "h": 55.1,
+      "w": 43.3
+    },
+    "source_url": "https://www.brooklynmuseum.org/opencollection/objects/4368",
+    "original_image_url": "https://commons.wikimedia.org/wiki/File:The_Great_Red_Dragon_and_the_Woman_Clothed_with_the_Sun.jpg",
+    "verified_sha1": "75782f11ff654abf909599525b3fa494bf20c4d7",
+    "media": "black ink and watercolor over graphite",
+    "rights": "Public domain artwork; Commons Brooklyn Museum partnership reports no known restrictions; verify territorial photo concerns"
+  },
+  "narrative": {
+    "topic": "Revelation 12:1-4",
+    "sources": [
+      "Brooklyn Museum object record",
+      "Wikimedia Commons file provenance"
+    ],
+    "tone": "professional, concise, restrained V73",
+    "length_words": 282,
+    "script": "COPIONE_CRITICO_V74.txt",
+    "facts": [
+      "dragon viewed from behind with wings",
+      "multiple heads and horns",
+      "coiling tail across painted paper",
+      "luminous reclining woman",
+      "biblical conflict from Revelation"
+    ],
+    "not_claimed": [
+      "original museum frame known",
+      "actual Brooklyn gallery filmed",
+      "measured virality or reach"
+    ]
+  },
+  "frame_gallery": {
+    "frame": "historically plausible scenic dark wood with gilt fillet; NOT original documented frame",
+    "gallery": "illustrative museum reconstruction NOT Brooklyn room",
+    "physical_scale": "paper 55.1cm high, artwork 43.7cm high; stage perspective estimate"
+  },
+  "four_variants": [
+    "critico_standard",
+    "critico_museum",
+    "cinema_standard",
+    "cinema_museum"
+  ],
+  "presentation": {
+    "critico_pair": "identical script and Gacrux WAV, no alternate voice or silent Critico",
+    "museum": "continuous entrance/exit, frame naturally leaves viewport and returns",
+    "cinema": "licensed music only, different regia",
+    "first_7_seconds": "artwork dragon hook or small-in-room scale surprise"
+  },
+  "music": {
+    "title": "Dark Times",
+    "artist": "Kevin MacLeod",
+    "isrc": "USUAN1100747",
+    "license": "CC BY 4.0",
+    "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100747"
+  },
+  "quality": {
+    "required": [
+      "MP4 H264/AAC 9:16",
+      "full ffmpeg decode",
+      "cover",
+      "four social posts per video",
+      "rights, provenance, SHA",
+      "ZIP CRC",
+      "full-speed human aesthetic review"
+    ],
+    "approval": "pending",
+    "publication": false,
+    "archive_verified": false
+  },
+  "api_safety": {
+    "paid_video_calls": false,
+    "tts_without_verified_no_charge": false,
+    "missing_voice_blocks_critico": true
+  },
+  "lock": "V58 unchanged; manually authorized explicit second pilot only",
+  "source_of_truth": [
+    "AGENTS.md",
+    "docs/ARTVISION_V73_DUE_ACCORGIMENTI.md",
+    "config/artvision_four_variants_presets_v68.json"
+  ]
+}
