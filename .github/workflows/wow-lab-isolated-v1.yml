@@ -89,7 +89,7 @@ jobs:
           import json
           from pathlib import Path
           c=json.loads(Path("wow_lab/config.json").read_text())
-          assert c["enabled"] and c["production_ready"] and c["no_social_publish"] and c["no_paid_services"]
+          assert c["enabled"] and c["preview_releases_enabled"] and c["no_social_publish"] and c["no_paid_services"]
           print("Namespaced prerelease permitted; no social or production-master actions.")
           PY
       - uses: actions/download-artifact@v4
