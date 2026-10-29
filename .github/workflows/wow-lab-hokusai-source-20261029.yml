@@ -1,0 +1,29 @@
+name: "WOW LAB — Hokusai original CC0 source isolated"
+on:
+  push:
+    branches: [experiment/wow-lab-hokusai-wave-wow-20261029]
+    paths:
+      - "wow_lab/experiments/hokusai_wave/**"
+      - ".github/workflows/wow-lab-hokusai-source-20261029.yml"
+permissions:
+  contents: read
+concurrency:
+  group: wow-lab-hokusai-assets-experiment
+  cancel-in-progress: false
+jobs:
+  acquire_source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check "Pillow>=10,<12"
+      - run: python wow_lab/experiments/hokusai_wave/fetch_met_image.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_HOKUSAI_CC0_SOURCE_45434
+          path: wow_lab/experiments/hokusai_wave/assets/
+          if-no-files-found: error
+          retention-days: 14
