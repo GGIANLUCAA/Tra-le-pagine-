@@ -1,0 +1,34 @@
+name: "V79 Ellis Island 1903 — inspect NEW high-definition historical faces"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v79-ellis-source-scout.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source_scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --quiet --no-cache-dir numpy pillow opencv-python-headless
+      - name: Download true film from Commons and inspect 15 authentic frames
+        run: python -u src/storia_v79_ellis_new_face_scout.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V79_ELLIS_ISLAND_REAL_1903_FILM_SCOUT
+          path: |
+            output/storia_v79_ellis/SCENE_SCOUT_BOARD.jpg
+            output/storia_v79_ellis/SCOUT.json
+            output/storia_v79_ellis/FRAME_*.png
+          if-no-files-found: warn
+          retention-days: 14
