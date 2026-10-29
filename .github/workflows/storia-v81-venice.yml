@@ -1,0 +1,70 @@
+name: "V81 VENICE 1896 — original film English title and AI-color photographed freezes"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v81-venice.yml"
+      - "src/storia_v81_venice_color_film.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  venice_restoration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_XET: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OMP_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify Venice script
+        run: python -m py_compile src/storia_v81_venice_color_film.py
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install --no-cache-dir numpy opencv-python-headless Pillow huggingface_hub onnxruntime
+      - name: Produce authentic VENICE 1896 historical footage and four restored photographic color freeze scenes
+        run: python -u src/storia_v81_venice_color_film.py
+      - name: Verify every video frame, MP4 and ZIP
+        run: |
+          set -euo pipefail
+          D=output/storia_v80_new_cities/VENICE_1896
+          F="$D/LA_STORIA_RIVIVE_VENICE_1896_V80.mp4"
+          test -s "$F"
+          ffmpeg -v error -xerror -i "$F" -f null -
+          unzip -t "$D/LA_STORIA_RIVIVE_VENICE_1896_KIT.zip"
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json "$F"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V81_VENICE_1896_REAL_FILM_AI_COLOR
+          path: |
+            output/storia_v80_new_cities/VENICE_1896/LA_STORIA_RIVIVE_*.mp4
+            output/storia_v80_new_cities/VENICE_1896/LA_STORIA_RIVIVE_*_KIT.zip
+            output/storia_v80_new_cities/VENICE_1896/BEFORE_AFTER_ACTUAL_GENERATED.jpg
+            output/storia_v80_new_cities/VENICE_1896/COVER.jpg
+            output/storia_v80_new_cities/VENICE_1896/QA.json
+            output/storia_v80_new_cities/VENICE_1896/SOURCE_QA.json
+            output/storia_v80_new_cities/VENICE_1896/PHOTO_QA.json
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Permanent download in GitHub releases; no auto-publishing to socials
+        run: |
+          set -euo pipefail
+          D=output/storia_v80_new_cities/VENICE_1896
+          TAG=storia-rivive-venice-1896-original-color-film-v81
+          files=("$D/LA_STORIA_RIVIVE_VENICE_1896_V80.mp4" "$D/LA_STORIA_RIVIVE_VENICE_1896_KIT.zip" "$D/COVER.jpg" "$D/QA.json")
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --latest=false --prerelease --title "La Storia Rivive — VENICE · 1896 — V81" --notes "Authentic moving panoramic Venice film by Alexandre Promio (1896), sourced from Wikimedia Commons, filmed from a boat, restored into four same-frame AI-colorized detailed still photographs; original music, English city/year title, no voice or before-after labels. NOTE: Free DDColor predicts historic colors but does NOT perform new photorealistic generative face enhancement. Color and fine texture are interpretations; Italian rights and artistic semantic review pending. No paid API or Vidu, no upload to the private site/social." "${files[@]}"
+          fi
+          actual=$(stat -c %s "$D/LA_STORIA_RIVIVE_VENICE_1896_V80.mp4")
+          remote=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[]|select(.name=="LA_STORIA_RIVIVE_VENICE_1896_V80.mp4")|.size')
+          test "$actual" = "$remote"
+          echo "VENICE_V81_DOWNLOAD_VERIFIED=$remote"
