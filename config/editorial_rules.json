@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-29.2",
+  "version": "2026-10-29.3",
   "approved_by": "28/10/2026: V55 verifica consegna MP4/copertina/ZIP/4 post e primi 7 secondi e importazione privata; 28/10/2026: ArtVision 4x1 V54 con direzione emotiva, gate e autocritica; Gianluca — 25/10/2026: priorita permanente di fonti e API gratuite, riuso, qualita narrativa, Pixabay corretto, Android, rispetto licenze e quote; preservata V32 audience research; 26/10/2026: confermata e rafforzata V28, descrizioni social curate e persistenti nel dossier; nessun dato di produzione nella copia pubblica; 26/10/2026: La macchina del tempo valutato positivamente per ricchezza e varieta delle immagini, ma NO stampini o numeri fissi in nuovi episodi; 27/10/2026: approvato The Cyclops edge-fixed Museum Immersion come riferimento frequente per Cinema V6 e Critico V2 senza imporre uno stampino.; 28/10/2026: Hiroshige Museum Scale approvato come secondo modello complementare a Cyclops per dimensioni e prospettiva reali delle opere.; 28/10/2026: categoria La Storia Rivive V56 con riprese autentiche, diritti e controlli ferrei, zero spese automatiche, primissimi secondi e consegna V55 completa.; 28/10/2026: V57 utente boccia seppia/dissolvenza e impone colore AI ricco e dettaglio fotorealistico, non false etichette 4K.; 28/10/2026: V58 richiesta esplicita multi-scene, effetti cromatici veri, alta qualità percepita senza obbligo 4K, Vidu solo futuro e opzionale, licenze commerciali software/pesi verificate.; 28/10/2026: V59 utente specifica post non monetizzati, ORIGINALI storici solo PD/CC0. Ammessi strumenti noncommerciali se licenza copre uso/pubblicazione effettivi; richiedere prova specifica per restrizioni research-only, mantenere V55/V57.; 28/10/2026: V61 analizzati tre MP4 nuovi, vero effetto video B/N in movimento->freeze->FOTO AI a colori ferma; fast 0,9+0,9 e slow 2+2; V60 colorizzazione in movimento non soddisfa.; 28/10/2026: V63 feedback V62, ritagli scelti per importanza, fermo 1.8-2.8 s, 20-28 s, originale senza downsizing prima dell'ESRGAN, 1080p no finto 4K.; 28/10/2026: V64 dopo V63 utente chiede fermo AI foto nitida come moderna e volti riconoscibili; rigore su stessa identità/abiti, cambiare fonte se pochi pixel; scartare output creativi con nuovi personaggi.; 28/10/2026: V69, fonte del cinema più restaurabile, valutare possibilità effettiva di ricostruzione e wow prima del montaggio; scegliere vecchie pellicole vere di scansione migliore, soggetti leggibili nel crop verticale, con micro-test generativo e controllo fedeltà; mai finto 4K.",
   "precedence": [
     "explicit_user_request",
@@ -591,7 +591,7 @@
       "separate_authenticity_rights_measurements_in_recipe",
       "artistic_review_not_inferred_from_ffprobe"
     ],
-    "note": "User explicitly requested much better high-value museum frames, while preserving true artwork proportions. Does not require museum effect for all videos or approve outputs automatically.",
+    "note": "User explicitly requested much better high-value museum frames, while preserving true artwork proportions. Does not require museum effect for all videos or approve outputs automatically. New V56: the technical Movie/ZIP checker is insufficient. Entry and return must be continuous physical camera transitions and human visually reviewed against the actual approved masters.",
     "authentic_frame_replication_priority": {
       "approved_at": "2026-10-28",
       "priority": "replicate_documented_frame_before_creating_alternative",
@@ -644,6 +644,65 @@
       ],
       "inherits": "museum_immersion_scale + museum_immersion_frame_quality + V44/V46 release QA",
       "automatic_final_approval": false
+    },
+    "regression_v56": {
+      "trigger": "Explicit rejection 29/10/2026 after real source-video comparison with approved Cyclops V46 and Hiroshige Museum Scale",
+      "comparison_verified": true,
+      "master_reference_drive_ids": [
+        "1w9mb1N5hrGAaB870JANHoKk98MiibtpW",
+        "14X8_TObXEijGlBg8HuyR6ITTlPjJk0dA"
+      ],
+      "failed_new_masters": [
+        {
+          "work": "Hokusai The Great Wave",
+          "variant": "cinema_museum",
+          "version": "V55C",
+          "sha256": "92d017fc9b65b63799d161a33e9e9902cfb1e20c7fbbf6ba878b1d54035a6547",
+          "entry_cut_s": 8.208,
+          "entry_mad": 74.413,
+          "exit_cut_s": 33.917,
+          "exit_mad": 130.237,
+          "human_art_direction": "rejected"
+        },
+        {
+          "work": "Winslow Homer The Gulf Stream",
+          "variant": "cinema_museum",
+          "version": "V55B",
+          "sha256": "2c50c5f94c2fefbdf23b1a03086245afed3e25b06a159845c8947fcd9ee1a5b8",
+          "entry_cut_s": 8.375,
+          "entry_mad": 66.859,
+          "exit_cut_s": 38.75,
+          "exit_mad": 92.653,
+          "human_art_direction": "rejected"
+        }
+      ],
+      "quality_guard_script": "src/artvision_museum_v46_regression_gate.py",
+      "maximum_entry_exit_adjacent_rgb_mean_difference": 12,
+      "approved_model_reported_reference_discontinuity_approx": 3,
+      "numeric_guard_not_artistically_sufficient": true,
+      "museum_pov_must_include": [
+        "rendered_camera_path_continuous_through_frame_plane",
+        "no_pasted_2d_rectangle_frame",
+        "documented_original_frame_photo_prioritized",
+        "artwork_behind_physical_recessed_frame_lip",
+        "moulding_depth_corner_construction_lighting_contact_shadows",
+        "gallery_scale_tied_to_human_and_architecture",
+        "same_room_return_with_continuous_transition",
+        "compare_actual_cyclops_and_hiroshige_frames",
+        "watch_full_master_at_normal_speed"
+      ],
+      "no_new_museum_delivery_when": [
+        "renderer_only_zoompan_on_flat_jpegs",
+        "frame_research_missing",
+        "actual_approved_video_masters_not_compared",
+        "entry_or_exit_mad_exceeds_12",
+        "subject_painting_pasted_over_2d_frame",
+        "human_scale_absent",
+        "artistic_visual_qa_not_confirmed"
+      ],
+      "fallback": "blocked_quality_museum_v46_not_met; preserve technically rendered files without deleting, don't use them as quality references or deliver as finished, don't inflate four-variant counts",
+      "evidence_report": "docs/ARTVISION_MUSEUM_V46_REGRESSION_REVIEW_20261029.md",
+      "authorization": "User feedback does not authorize paid generative video services; zero paid calls remain"
     }
   },
   "artvision_four_variants": {
