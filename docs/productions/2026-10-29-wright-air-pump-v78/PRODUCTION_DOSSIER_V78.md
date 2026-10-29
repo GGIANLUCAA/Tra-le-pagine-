@@ -4,7 +4,9 @@
 - Opera: Joseph Wright of Derby, An Experiment on a Bird in the Air Pump, 1768, National Gallery London NG725.
 - Dimensioni: 183 x 244 cm, olio su tela. Catalogo e cornice: https://www.nationalgallery.org.uk/paintings/joseph-wright-of-derby-an-experiment-on-a-bird-in-the-air-pump
 - La National Gallery descrive la cornice reale: inglese del XIX secolo, pino, doratura a olio, stile italiano secentesco, foglie d'acanto, lamb's tongue, bead-and-reel; è una cornice riadattata a quest'opera nel 1863.
-- Fonte visiva fedele: https://commons.wikimedia.org/wiki/File:An_Experiment_on_a_Bird_in_the_Air_Pump.jpg ; originale 4946 x 3688 (fotografia con bordo dorato vero visibile), SHA1 536701308e08b70fbc51c6551f17c4359f36eb28, etichetta Public Domain Mark. Il frame fotografato viene direttamente dalla foto, non disegnato ex novo. È ripreso nella composizione di riferimento, non una falsa cornice dorata decorativa.
+- La fotografia con cornice originale https://commons.wikimedia.org/wiki/File:An_Experiment_on_a_Bird_in_the_Air_Pump.jpg (4946×3688) è documentata e in Public Domain Mark, ma al primo rendering il server Wikimedia ha risposto HTTP 429; nessun retry inutile né simulazione della vera cornice.
+- Fallback indipendente realmente verificato: https://uploads6.wikiart.org/images/joseph-wright/an-experiment-on-a-bird-in-the-air-pump-1768.jpg ; file JPEG ~4,147,734 byte, immagine 5639×4226, riproduzione ad alta risoluzione dell'identica opera, catalogata come public domain da WikiArt e Wikimedia Commons (relativa immagine Commons SHA1 8999bf5baa1b5c6f4332786797129fe01da84398). Il file è privo della cornice reale. Il suo SHA effettivo viene acquisito e registrato nel manifest di build.
+- Di conseguenza, in V78 la scena Museum è una **parete virtuale sobria senza falso bordo dorato**. Non affermare che sia l'allestimento fotografato della National Gallery o la cornice autentica. Quando la foto reale della cornice sarà accessibile, questo singolo elemento potrà essere corretto con una nuova revisione controllata.
 - La stanza museale è una scenografia digitale dichiarata, non l'attuale sala della National Gallery; l'opera risultava temporaneamente in prestito a Derby Museums nel 2026.
 - Musica: Dark Times — Kevin MacLeod, CC BY 4.0, ISRC USUAN1100747, con attribuzione nei post/ZIP.
 
@@ -12,7 +14,7 @@
 1. Critico Standard: italiano, 247 parole, voce naturale Google Gemini Gacrux, dettagli autentici; durata dal WAV, non fissa.
 2. Critico Museum: identico copione e identico file WAV SHA256 del Critico Standard, passaggio ottico continuo da sala a pittura e ritorno.
 3. Cinema Standard: 44 secondi, sei punti narrativi distinti, musica senza voce, dissolvenze brevi ed equilibrate.
-4. Cinema Museum: 52 secondi, percorso continuo, vera cornice fotografata, entrata/dettagli/uscita, musica senza voce.
+4. Cinema Museum: 52 secondi, percorso continuo, vera opera ad alta risoluzione, nessuna cornice inventata, entrata/dettagli/uscita, musica senza voce.
 
 Tutti: 9:16, codifica H264/AAC, MP4, copertina, post Facebook/Instagram/TikTok/YouTube, ZIP per singola variante, diritti e hash, zero crediti Vidu, niente pubblicazione social automatica.
 
