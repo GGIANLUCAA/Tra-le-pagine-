@@ -485,7 +485,7 @@
           "v13_preflight": "passed_structural_only",
           "technical_qa": "ffprobe H264/AAC, full decode, V55 pack, ZIP CRC and exact MP4 hash verified",
           "opening_frames": "0.1,1,3,5,7 extracted; contact sheet reviewed visually",
-          "visual_review": "First 3s readable title and cup; slow crop sequence with limited movement and repetitive composition; further full-speed artistic review needed",
+          "visual_review": "Actual 0.1/3/5/9/13/17/21/25/29/33/35s frames inspected; source authentic, opening readable; several shots remain static and reuse the same painting crop; image relatively dark; artistic approval withheld.",
           "audio_review": "not_listened_at_normal_speed",
           "human_approval": false,
           "archive_sync_pending": true,
@@ -493,7 +493,9 @@
           "archive_staging": "docs/productions/2026-10-29-socrates-cinema-standard-v55/ARCHIVE_STAGING_V55.json",
           "delivery_note": "MP4 and ZIP retrieved from GitHub artifact into current ChatGPT session and verified; do not claim site import or final V25 approval",
           "source_artwork_sha256": "eaff5a04103361fed9fba6f10ea7bed80ccdc595d664b6997c6bd32f0eee06a6",
-          "source_music_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6"
+          "source_music_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+          "audio_measurement": "ffmpeg volumedetect mean -31.5 dB max -15.7 dB; audibility/creative mix not yet approved",
+          "next_action": "Do not re-render while in review. Complete normal-speed watch/listen and user aesthetic decision; then consider measured audio gain and visual edit only if revision explicitly justified."
         },
         "cinema_museum": {
           "status": "blocked",
