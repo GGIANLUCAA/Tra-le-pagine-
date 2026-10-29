@@ -1,0 +1,51 @@
+name: ARTVISION BLAKE Brooklyn V74 - 4x1 second pilot
+on:
+  push:
+    branches:
+      - pilot/artvision-blake-brooklyn-4x1-v74
+    paths:
+      - src/artvision_blake_visual_v74.py
+      - src/artvision_blake_render_v74.py
+      - docs/productions/2026-10-29-blake-red-dragon-brooklyn-v74/COPIONE_CRITICO_V74.txt
+      - .github/workflows/artvision-blake-brooklyn-v74-pilot.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-blake-brooklyn-v74-one-render-at-time
+  cancel-in-progress: false
+jobs:
+  blake-verified-four-video-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline PIL/OpenCV renderer and existing Google voice adapter
+        run: |
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10.2" "opencv-python-headless>=4.8" "requests>=2.31" "soundfile>=0.12" "google-genai>=1.20" "scipy>=1.11"
+          command -v ffmpeg
+          command -v ffprobe
+      - name: Run actual second pilot - original Brooklyn work - no paid calls
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_TTS_FREE_QUOTA_CONFIRMED: ${{ vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
+          GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED: ${{ vars.GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED }}
+        run: |
+          python -u src/artvision_blake_render_v74.py
+      - name: Upload separate original MP4s and four individual packs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTIVISION_BLAKE_BROOKLYN_V74_ALL_AVAILABLE
+          path: |
+            output/artvision-blake-brooklyn-v74/*_COMPLETE.zip
+            output/artvision-blake-brooklyn-v74/*/*.mp4
+            output/artvision-blake-brooklyn-v74/*/COPERTINA.jpg
+            output/artvision-blake-brooklyn-v74/BLake_4X1_FINAL_STATE.json
+            output/artvision-blake-brooklyn-v74/GACRUX_GATE_V74.json
+            output/artvision-blake-brooklyn-v74/SOURCE_MANIFEST.json
+          if-no-files-found: warn
+          retention-days: 14
