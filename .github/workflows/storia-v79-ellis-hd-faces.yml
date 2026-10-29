@@ -1,0 +1,77 @@
+name: "V79 Ellis Island 1903 — NEW historical video with HD realistic faces"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v79-ellis-hd-faces.yml"
+      - "src/storia_v79_ellis_1903_hd_faces_video.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: storia-v79-ellis-1903-one-archive
+  cancel-in-progress: false
+jobs:
+  genuine_ellis_movie:
+    runs-on: ubuntu-latest
+    timeout-minutes: 49
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install zero-cost restoration stack
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install --no-cache-dir numpy pillow opencv-python-headless onnxruntime huggingface_hub gradio_client
+      - name: Verify script compiles
+        run: python -m py_compile src/storia_v79_ellis_1903_hd_faces_video.py
+      - name: Free CPU photo color and generative human HD face enhancement on actual historic film
+        run: python -u src/storia_v79_ellis_1903_hd_faces_video.py
+      - name: Independently verify original motion, AI freezes, final MP4 and ZIP
+        run: |
+          set -euo pipefail
+          D=output/storia_v79_ellis
+          test -s "$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V79.mp4"
+          test -s "$D/ELLIS_ISLAND_1903_V79_KIT.zip"
+          ffmpeg -v error -xerror -i "$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V79.mp4" -f null -
+          python src/storia_rivive_v74_effect_gate.py --video "$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V79.mp4" --min-cycles 3
+          unzip -t "$D/ELLIS_ISLAND_1903_V79_KIT.zip"
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json "$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V79.mp4"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V79_ELLIS_ISLAND_1903_NEW_VIDEO_HD_FACES_AND_PHOTOS
+          path: |
+            output/storia_v79_ellis/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V79.mp4
+            output/storia_v79_ellis/ELLIS_ISLAND_1903_V79_KIT.zip
+            output/storia_v79_ellis/ORIGINAL_*.png
+            output/storia_v79_ellis/FOTO_AI_*.png
+            output/storia_v79_ellis/COLORED_SOURCE_*.jpg
+            output/storia_v79_ellis/PHOTO_QA.json
+            output/storia_v79_ellis/FONTI_E_QA.json
+            output/storia_v79_ellis/COPERTINA.jpg
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Publish verified downloadable MP4 and ZIP direct on GitHub without social posting
+        run: |
+          set -euo pipefail
+          D=output/storia_v79_ellis
+          TAG=la-storia-rivive-ellis-island-1903-hd-faces-v79
+          files=("$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V79.mp4" "$D/ELLIS_ISLAND_1903_V79_KIT.zip" "$D/COPERTINA.jpg" "$D/FONTI_E_QA.json")
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --latest=false --prerelease --title "La Storia Rivive | ELLIS ISLAND 1903 | volti HD V79" --notes "New 1903 archival moving film by Edison/Abadie from the Library of Congress. Real moving shots followed by 3 or 4 exact-frame frozen high-definition photographic AI reconstructions. Face pixels are plausible AI extrapolations, not historically verifiable exact likenesses. Source from Commons marked Public Domain; territorial and human artistic review pending. Soundtrack created. 0 Vidu credits; not published on social or private site." "${files[@]}"
+          fi
+          local_size=$(stat -c %s "$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V79.mp4")
+          remote_size=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[]|select(.name=="LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V79.mp4")|.size')
+          test "$local_size" = "$remote_size"
+          echo "V79_DOWNLOAD_VERIFIED $local_size"
