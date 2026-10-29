@@ -1,0 +1,17 @@
+# ArtVision Museum Immersion — regola V61: NON TAGLIARE PERSONE (29/10/2026)
+
+**Feedback esplicito:** l'utente ha apprezzato Socrate Cinema Museum V60, titolo e regia, ma ha bocciato lo spettatore seduto in primo piano la cui testa era tagliata dall'inquadratura 9:16. Ha richiesto di **rimuovere il visitatore nel VIDEO**, non soltanto da una fotografia, lasciando invariato il testo.
+
+## Regola permanente per tutti i Museum 4×1
+1. **Default: sale museali senza visitatori in primo piano.** Eventuali figure sono ammesse solo se motivate artisticamente e visibili integralmente nelle parti indispensabili (testa, viso, busto, arti rilevanti) per tutta la traiettoria camera, compresi zoom e uscita. Non tagliare la testa ai bordi, non collocare visi/sagome nell'area titolo, non far sparire figure improvvisamente durante il percorso.
+2. Verificare per ogni Museum il **primo frame, i secondi 1/3/5/7, il punto di ingresso, il ritorno e l'ultimo frame** nella composizione verticale finale 9:16. Durante l'animazione osservare la traiettoria completa, NON soltanto la foto panoramica originale. Una persona intera nel 16:9 può essere tagliata dal ritaglio 9:16.
+3. Se il crop taglia un visitatore, preferire **eliminazione controllata del visitatore in tutte le scene del filmato**, ricostruzione coerente della parete e del pavimento, oppure nuova camera/nuova foto con diritti. L'eliminazione deve rispettare la foto di partenza e essere dichiarata nel dossier come modifica, senza falsificare la natura ricostruita della sala.
+4. Per Socrate V61: l'utente vuole **nessuno spettatore seduto visibile**. Il titolo inglese **THE DEATH OF SOCRATES** e la firma **JACQUES-LOUIS DAVID** restano come V60. La cornice fotografata e il dipinto autentico rimangono immutati. Le figure DIPINTE nell'opera non sono visitatori e non vanno rimosse.
+5. **Gate qualità bloccante:** se anche un solo visitatore reale o sintetico appare tagliato, il filmato è `needs_visual_correction`, non Gold Master né V25 approvato. Sostituire soltanto dopo nuovo MP4 reale, SHA256, ffprobe/decodifica, confronto fotogrammi e revisione. Una revisione è **lo stesso slot** Cinema Museum, non una quinta variante.
+
+## Correzione reale di Socrate
+Film precedente: `cinema_museum` V60 SHA256 `60c9653285352272edba9af0b032f4c4e0d4949167074a6513aea566579d8264`; difetto: visitatore seduto in basso con testa troncata nel video verticale. Conservare la prova ma NON usarla quale modello artistico approvato.
+
+Revisione corretta: `ArtVision_Socrates_Cinema_Museum_V61_Senza_Persone_Review.mp4`, SHA256 `6ae8a2cb1ad3709bea4bab801ddefdaf8e7a00b3f3f65f50ddd81af8e4414afc`, 38 secondi, 1080×1920 H264/AAC, 22.854.775 byte. Il composito di sala è stato ricostruito senza i due spettatori seduti e la panca; il dipinto e la cornice foto autentica sono conservati. Video renderizzato nativamente 720×1280 e convertito mediante Lanczos a 1080×1920 (NON risoluzione nativa 1080). Decodifica integrale PASS, ZIP completo e ZIP MP4-only Android con CRC PASS, 4 post e attribuzioni preservati. Inquadratura iniziale e ritorno esaminati: nessuna persona seduta nel composito finale. Visione e ascolto completi a velocità normale e approvazione V25 dell'utente **ancora da confermare**. Stato `rendered_needs_review`; nessun import privato attestato.
+
+La modifica è locale alla **variante Cinema Museum** di Socrate. Restano invariati tutti i master storici, l'altra versione Cinema Standard e il blocco Gacrux delle due versioni Critico. Nessuna spesa video AI e nessun autopost social.
