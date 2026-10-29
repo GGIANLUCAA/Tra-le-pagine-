@@ -1,0 +1,39 @@
+{
+  "schema": "wow-lab-creative-memory-v1",
+  "scope": "wow_lab_only",
+  "rules_version": 1,
+  "locked_original_project": true,
+  "intent": "emozione e bellezza prima del numero",
+  "avoid": [
+    "finto_3d_etichettato_vero_3d",
+    "solo_zoom",
+    "figure_doppie",
+    "bordo_tela_stirato",
+    "clip_ripetuta",
+    "titoli_su_volti",
+    "fonte_incerta",
+    "diritti_incogniti"
+  ],
+  "moments": [
+    "sorpresa",
+    "silenzio",
+    "rivelazione",
+    "immersione",
+    "poesia"
+  ],
+  "techniques": [
+    "gallery_orbit",
+    "luminous_reveal",
+    "depth_portal"
+  ],
+  "recent_render_history": "read_only_wow_lab_release_manifests",
+  "human_feedback_required_for": "artistic_gold_status",
+  "self_improvement": "technical_qa_and_diversity_only",
+  "do_not_modify": [
+    "AGENTS.md",
+    "docs/REGOLE_ATTIVE.md",
+    "config/artvision_four_variants_presets_v68.json",
+    "config/artvision_pilot_lock_v58.json"
+  ],
+  "notes": "La memoria creativa del laboratorio è separata dalla memoria e dalle regole del progetto padre."
+}
