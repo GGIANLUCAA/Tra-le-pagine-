@@ -6,6 +6,8 @@ on:
       - 'src/artvision_museum_director_v69.py'
       - 'src/artvision_museum_stage_v70.py'
       - 'src/artvision_museum_camera_v64.py'
+      - 'src/artvision_museum_frame_focus_v73.py'
+      - 'config/artvision_four_variants_presets_v68.json'
       - 'src/artvision_recipe_v68.py'
       - 'tests/test_artvision_museum_*'
       - 'docs/productions/2026-10-29-socrates-pilot-v68/MUSEUM_DIRECTOR_DOSSIER_V71.json'
@@ -28,6 +30,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_artvision_museum_stage_v70.py' -v
           python -m unittest discover -s tests -p 'test_artvision_museum_camera_v64.py' -v
           python -m unittest discover -s tests -p 'test_artvision_museum_pipeline_v71.py' -v
+          python -m unittest discover -s tests -p 'test_artvision_museum_frame_focus_v73.py' -v
       - name: Produce Socrates JSON-only plan without video/API calls
         run: |
           python src/artvision_museum_pipeline_v71.py \
