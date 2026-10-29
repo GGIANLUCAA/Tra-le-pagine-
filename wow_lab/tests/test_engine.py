@@ -70,6 +70,7 @@ class WowLabContractTests(unittest.TestCase):
     def test_module_has_no_owner_or_original_master_side_effects(self):
         cfg=json.loads((MODULE/"config.json").read_text())
         self.assertFalse(cfg["production_ready"])
+        self.assertTrue(cfg["preview_releases_enabled"])
         self.assertTrue(cfg["no_original_master_overwrite"])
         self.assertEqual(cfg["output_scope"],"wow-lab-* releases and artifacts only")
         self.assertEqual(cfg["history_scope"],"wow-lab-v1-* GitHub releases only")
