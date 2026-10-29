@@ -1,5 +1,5 @@
 {
-  "version": "V78-compatible",
+  "version": "V82-style-reference",
   "editorial_preset": "freeze_ai_photo_reference_43054_43056",
   "social_museum_v76": true,
   "default_target_duration_s": [
@@ -115,5 +115,41 @@
     "production_script": "src/storia_v78_hd_selective_identity.py",
     "documentation": "docs/LA_STORIA_RIVIVE_RITORNO_HD_V78.md",
     "previous_v77_stills": "REJECTED_QUALITY_REGRESSION"
+  },
+  "visual_reference": {
+    "status": "VERIFIED_FROM_USER_UPLOADED_MP4_FRAMES",
+    "source_files": [
+      "43054.mp4",
+      "43055.mp4",
+      "43056.mp4"
+    ],
+    "do_not_republish_reference_files": true,
+    "documentation": "docs/LA_STORIA_RIVIVE_GOLD_REFERENCE_43054_43055_43056_V82.md",
+    "effect": "authentic_monochrome_moving_film_to_exact_frame_freeze_to_modern_photoreal_full_color_AI_still",
+    "slow_preset": {
+      "name": "SLOW_MUSEUM_43054",
+      "original_bw_motion_s": 2,
+      "modern_photo_hold_s": 2,
+      "reference_cycle_count": 6
+    },
+    "fast_preset": {
+      "name": "FAST_SOCIAL_43055_43056",
+      "original_bw_motion_s": 0.93,
+      "modern_photo_hold_s": 0.93,
+      "reference_cycle_count": 9,
+      "reference_outro_ignored": true
+    },
+    "modern_photography_required": true,
+    "not_satisfied_by": [
+      "ddcolor_alone",
+      "uniform_color_grade",
+      "continually_colorized_archival_film",
+      "global_source_luminance_blur",
+      "pan_zoom_of_static_historical_photo"
+    ],
+    "face_quality": "modern_eyes_skin_hair_cloth_from_source_guided_photo_generation; acknowledge unknowable facial details",
+    "subject_identity": "no_objects_turning_to_people_or_people_turning_to_objects",
+    "titles": "English elegant city/year",
+    "user_approval": "comparative playable MP4 evidence required"
   }
 }
