@@ -292,7 +292,7 @@
         "h": 25.7,
         "w": 37.9
       },
-      "dossier_4x1_source": "GitHub Actions artifact 12882622228, ARTVISION_4X1_PLAN.json (authentic V54 dossier; not yet committed as a standalone repository JSON)",
+      "dossier_4x1_source": "GitHub Actions artifact 12884916219 (ARTVISION_4X1_PLAN.json; gate V54 passed), shared 4x1 mother plan reused for Cinema Museum V55C. Not independently added to repository as file.",
       "archive_manifest_path": "docs/productions/2026-10-29-hokusai-great-wave-v55b/ARCHIVE_STAGING_V55.json",
       "variants": {
         "critico_standard": {
@@ -321,12 +321,26 @@
           "site_verified": false
         },
         "cinema_museum": {
-          "status": "planned",
-          "blocker_code": "blocked_museum_renderer_unavailable",
-          "blocker_note": "Dedicated compatible Museum artwork-scale renderer and frame/galleries not prepared; do not relabel Standard as Museum."
+          "status": "rendered_needs_review",
+          "version": "V55C",
+          "codec": "H264/AAC 1080x1920",
+          "video_sha256": "92d017fc9b65b63799d161a33e9e9902cfb1e20c7fbbf6ba878b1d54035a6547",
+          "video_bytes": 9857686,
+          "duration_seconds": 42.708333,
+          "source_action_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40845333879",
+          "github_artifact_id": 12884916219,
+          "prior_review_prototype_sha256": [
+            "3da18e687cf862a87a815d257a87de39098ea5fafc3d0884232ab7982cb70619",
+            "63b973f5332a54de033f9f2b167238986c56eaec52909cdf84e3bd293caf4920"
+          ],
+          "notes": "Distinct Cinema Museum visual sequence with reconstructed frame+wall and original Met JP1847 woodblock, no claim genuine physical gallery; versions V55 and V55B retained as superseded attempts, not extra 4x1 variants.",
+          "initial_qa": "ffprobe H.264/AAC 1080x1920, full FFmpeg decode, V55 ZIP CRC, SHA256 confirmed; frames 0.1/1/3/5/7 and 12-frame contact visually inspected, pending actual normal-speed full watch and audio listen.",
+          "human_approval": false,
+          "archive_sync_pending": true,
+          "site_verified": false
         }
       },
-      "note": "One distinct new Cinema Standard V55B corrective version: original V55 trial has poor first frame; NOT a second 4x1 variant. V25 and private archive pending. Do not duplicate on next cycle."
+      "note": "Hokusai two genuinely different rendered Cinema variants: Standard V55B and Museum V55C. Both rendered_needs_review and archive_sync_pending. Critico Standard/Museum require original Google Gacrux voice, not free substitute. Preserve historic SHA variants; never multiply counts for corrective attempts."
     }
   ],
   "last_operational_update": {
