@@ -28,7 +28,7 @@ rec=json.loads(fetch(MUSEUM_URL,2_000_000).decode("utf-8"))
 assert rec["objectID"]==45434 and rec["isPublicDomain"] is True
 assert "Hokusai" in rec["artistDisplayName"]
 assert rec.get("primaryImage","").startswith("https://")
-assert rec.get("objectNumber","")=="JP1847",rec.get("objectNumber")
+assert rec.get("accessionNumber","")=="JP1847",rec.get("accessionNumber")
 candidates=[rec.get("primaryImage"),rec.get("primaryImageSmall")]
 img=None
 for url in candidates:
