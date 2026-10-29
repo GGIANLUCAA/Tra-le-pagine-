@@ -1083,5 +1083,29 @@
     "perform_actual_generatively_restored_test_before_final_selection": true,
     "native_4k_scan_may_be_better_but_not_automatically": true,
     "no_claim_historical_identity_fully_recovered": true
+  },
+  "artvision_4x1_reproducible_v68": {
+    "status": "user_positive_style_reference_not_individual_V25_gold",
+    "baseline_work_id": "david_death_of_socrates_met436105_1787",
+    "creative_preset": "config/artvision_four_variants_presets_v68.json",
+    "start_here": "docs/ARTVISION_START_HERE_QUATTRO_VIDEO_RIPRODUCIBILE_V68.md",
+    "baseline_evidence": "docs/productions/2026-10-29-socrates-pilot-v68/BASELINE_CREATIVE_MANIFEST_V68.json",
+    "recipe_utility": "src/artvision_recipe_v68.py",
+    "new_preferences_scope": "per_artwork_by_default",
+    "global_changes_require_explicit_owner_request_and_new_version": true,
+    "four_variant_order": [
+      "critico_standard",
+      "critico_museum",
+      "cinema_standard",
+      "cinema_museum"
+    ],
+    "same_exact_gacrux_wav_for_both_critico": true,
+    "museum_source_specific_room_and_frame": true,
+    "no_crop_visitors_V61": true,
+    "first_pilot_rendered_count": 4,
+    "first_pilot_v25_gold_master_count": 0,
+    "private_archive_import_unverified": true,
+    "keep_v58_pilot_lock_active_until_user_unlocks": true,
+    "generic_new_artwork_renderer_not_yet_end_to_end_tested": true
   }
 }
