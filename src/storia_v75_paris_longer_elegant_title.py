@@ -53,12 +53,10 @@ def cinematic_title(frame,t):
   d.text((x,y),text,font=font,fill=col)
  gold=(235,213,169,int(244*opacity))
  white=(252,247,238,int(254*opacity))
- d.line((136,110,584,110),fill=(231,204,154,int(160*opacity)),width=2)
- centered("LA STORIA RIVIVE",sans,131,(236,229,213,int(246*opacity)))
- centered("PARIGI",serif,187,white)
- centered("1896 — 1900",year,292,gold)
- d.line((207,374,513,374),fill=(231,204,154,int(140*opacity)),width=2)
- centered("FILMATI D'EPOCA",small,401,(235,230,217,int(225*opacity)))
+ d.line((136,159,584,159),fill=(231,204,154,int(160*opacity)),width=2)
+ centered("PARIGI",serif,201,white)
+ centered("1896 — 1900",year,309,gold)
+ d.line((207,391,513,391),fill=(231,204,154,int(140*opacity)),width=2)
  return cv2.cvtColor(np.asarray(Image.alpha_composite(pil,layer).convert("RGB")),cv2.COLOR_RGB2BGR)
 
 def make():
