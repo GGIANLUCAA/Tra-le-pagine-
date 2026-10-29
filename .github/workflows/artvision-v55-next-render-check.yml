@@ -1,0 +1,24 @@
+name: "ArtVision V55 — queue and archival staging verification"
+on:
+  pull_request:
+    paths:
+      - "src/artvision_next_render_v55.py"
+      - "tests/test_artvision_next_render_v55.py"
+      - "docs/productions/2026-10-29-hokusai-great-wave-v55b/ARCHIVE_STAGING_V55.json"
+      - ".github/workflows/artvision-v55-next-render-check.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test single queue ownership and accurate next action
+        run: python -m unittest discover -s tests -p "test_artvision_next_render_v55.py" -v
+      - name: Validate real Hokusai SHA and full archival document without uploading
+        run: python src/video_library_dossier_sync_v55.py docs/productions/2026-10-29-hokusai-great-wave-v55b/ARCHIVE_STAGING_V55.json --dry-run
