@@ -39,3 +39,7 @@
 - Nessun `Gold Master` o 4×1 completo senza quattro video **distinti, revisionati, consegnabili** e autorizzazione artistica/V25 prevista.
 
 **Ogni volta che una regola V53/V55 anteriore dice «coppia», «due video» o «nuovo quadro ogni due ore», per ArtVision 4×1 prevale questo contratto; per libri e restauri storici resta il proprio format.**
+
+
+## V61 — no visitatori mozzati nel 9:16 Museum (29/10/2026)
+Per Critico Museum e Cinema Museum: default sala senza visitatori in primo piano. Se presenti, non devono mai essere tagliati ai bordi nel filmato lungo tutti i fotogrammi; la verifica della sola copertina non basta. Se la persona risulta troncata, rimuoverla dall'**intero video** o riprendere composizione e camera; correggere il singolo JPG non è sufficiente. Il Socrate V61 senza spettatori è la revisione dello **stesso** Cinema Museum V60, con testo, musica, dipinto e cornice conservati. Regola dettagliata `docs/ARTVISION_MUSEUM_NO_CROPPED_VISITORS_V61_20261029.md`.
