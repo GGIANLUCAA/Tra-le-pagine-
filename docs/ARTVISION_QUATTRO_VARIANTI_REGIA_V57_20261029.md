@@ -1,6 +1,6 @@
 # ArtVision — Regia 4×1 V57: quattro film distinti, un'unica ricerca
 
-Data: 29 ottobre 2026. **Stato: test tecnico V46 con The Cyclops realmente renderizzato; non ancora approvato dall'utente come nuovo master.** Preserva il modello V46 già approvato.
+Data: 29 ottobre 2026. **Stato: test tecnico V46 con The Cyclops realmente renderizzato; approvato dall'utente come riferimento stilistico della camera Museum il 29/10/2026.** Preserva il modello V46 già approvato.
 
 ## Pilota pratico, non nuovo quadro
 
@@ -11,7 +11,11 @@ Film **The Cyclops — Odilon Redon, Museum camera V57**, nuovo filmato 34,0 sec
 - L'originale Redon è registrato con corrispondenze SIFT+RANSAC rispetto allo still museale: bounding box reale dell'immagine nell'illustrazione **x399..683, y548..904 su 1080×1920**; la prima prova con box erroneo **x346..586, y474..778 è stata scartata** perché l'opera sembrava incollata davanti alla cornice.
 - L'originale pittorico viene ricampionato **dall'immagine autentica 2846×3579 a OGNI fotogramma**, nella stessa proiezione della sala; niente cut scena museo↔quadro, niente cornice 2D improvvisata.
 - Ritmo: galleria con titolo esatto 0–3,7 s, ingresso graduale fino a 9 s, occhio del ciclope, crinale, Galatea, ritorno al quadro intero, uscita fino a 34 s.
-- QA materiale: 816 fotogrammi decodificati in OpenCV, 22 frame distribuiti realmente estratti e visionati, MP4 e ZIP con SHA256/CRC verificati. **Resta da approvare artisticamente l'intero video con visione/ascolto a velocità normale.**
+- QA materiale: 816 fotogrammi decodificati in OpenCV, 22 frame distribuiti realmente estratti e visionati, MP4 e ZIP con SHA256/CRC verificati. **L'utente ha approvato la regia del provino il 29/10/2026. La pubblicazione resta soggetta a V25.**
+
+## Conferma del modello V57 (29 ottobre 2026)
+
+Il nuovo provino di The Cyclops, 34 secondi (SHA256 4d746edb3cd1083605ff11b0dce2bbfbe0e37eda01b836b8243894c732d509bb), è stato apprezzato e approvato dall'utente come riferimento di regia con ingresso ed uscita continui. Questa approvazione riguarda lo stile della camera, non la pubblicazione V25 né le opere successive. Le due varianti Museum ereditano il movimento, ma richiedono sala/cornice specifiche per l'opera, scala realistica e verifica delle fonti. Critico Museum conserva identica voce Gacrux e stesso copione del Critico Standard; Cinema Museum resta musicale e senza voce. Le versioni Standard NON si trasformano in Museum. Ogni quadro resta composto da quattro video distinti; il provino non conta come un nuovo quadro.
 
 ## Le QUATTRO versioni obbligatorie (non ridurre o confondere)
 
@@ -39,7 +43,7 @@ Il QA V56 basato su **massimo MAD 12/255** causava falsi positivi sui film appro
 | Caso sui video autentici | Picco RGB MAD | Mediana vicina | Rapporto | Esito |
 |---|---:|---:|---:|---|
 | Cyclops V46 approvato, camera continua | 22,81 | 21,37 | 1,07 | Movimento regolare |
-| Cyclops nuovo V57, camera continua | 22,02 | 20,92 | 1,05 | Movimento regolare, approvazione artistica da ricevere |
+| Cyclops nuovo V57, camera continua | 22,02 | 20,92 | 1,05 | Movimento regolare; regia V57 approvata |
 | Hokusai Museum V55C, jump cut | 72,28 | 2,30 | 31,42 | Rifiutare |
 | Homer Museum V55B, jump cut | 65,92 | circa zero | molto alto | Rifiutare |
 
@@ -47,4 +51,4 @@ Nel gate script rifiutare un evento solo quando **contemporaneamente** picco ≥
 
 ## Stato operativo
 
-Il provino Redon V57 è **rendered_needs_review**, NON Gold Master e NON una variante extra 4×1. Non replicare automaticamente la sua identica sala per opere diverse: prima recuperare o ricostruire una stanza/oggetto realmente compatibile con scala, epoca e frame documentato. Se non si può, segnare `blocked_quality_museum_v46_not_met`, non produrre una finta Museum. In attesa di feedback sul MP4 esatto, mantenere come riferimento V46 approvato.
+Il provino Redon V57 è **approvato come modello pratico di regia Museum**, non è una nuova opera, un nuovo Gold Master automaticamente pubblicabile né una quinta variante. Non replicare automaticamente la sua identica sala per opere diverse: prima recuperare o ricostruire una stanza/oggetto realmente compatibile con scala, epoca e frame documentato. Se non si può, segnare `blocked_quality_museum_v46_not_met`, non produrre una finta Museum. Feedback positivo sul MP4 ricevuto: usare V57 per la camera, V46 Cyclops per cornice e Hiroshige per scala. Nessuna approvazione automatica dei prossimi video.
