@@ -118,6 +118,8 @@ def prepare(object_id, destination, *, expected_title, expected_artist, metadata
         'object_id': object_id, 'museum_record': f'https://www.metmuseum.org/art/collection/search/{object_id}',
         'met_api': MET_API+str(object_id), 'title': meta['title'], 'artist': meta['artistDisplayName'],
         'object_date': meta.get('objectDate'), 'dimensions_text': meta.get('dimensions'),
+        'museum_physical_measurements': meta.get('measurements', []),
+        'frame_note': 'Met measurements document dimensions, not authentic appearance; no V46 gallery approval.',
         'artwork': {'file': art.name, 'source_url': art_url, 'sha256': digest(art),
                     'width_px': width, 'height_px': height, 'rights': 'Met isPublicDomain=true / Open Access'},
         'music': {'file': music.name, 'source_url': MUSIC_URL, 'recording_page': MUSIC_PAGE,
