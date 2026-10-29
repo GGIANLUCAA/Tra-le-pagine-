@@ -76,7 +76,7 @@ def finegrain(reference,original):
  "modern signs, smooth plastic skin, cartoon, painting, CGI, different city, camera pan, fake text")
  try:
   result=client.predict(handle_file(str(reference)),prompt,negative,
-     19060414,2,1.18,.97,6,112,144,.47,18,"DDIM",api_name="/process")
+     1906,2,1.18,.97,6,112,144,.47,18,"DDIM",api_name="/process")
   item=result[1] if isinstance(result,(tuple,list)) and len(result)>1 else result
   if isinstance(item,dict):item=item.get("path")
   if not item or not Path(str(item)).is_file():raise RuntimeError("FREE_IMAGE_MODEL_OUTPUT_MISSING")
