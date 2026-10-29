@@ -1,0 +1,141 @@
+{
+  "version": "V83_2026_10_29",
+  "format": "storia_rivive",
+  "guide": "docs/LA_STORIA_RIVIVE_SORGENTI_HD_PRECHECK_V83.md",
+  "user_example_policy": {
+    "files": [
+      "43054.mp4",
+      "43055.mp4",
+      "43056.mp4"
+    ],
+    "use_for": [
+      "modern_photoreal_faces",
+      "distinct_realistic_colors",
+      "hair_skin_fabric_detail",
+      "historic_object_quality"
+    ],
+    "do_not_use_for": [
+      "editing_timing",
+      "shot_count",
+      "video_duration",
+      "outro",
+      "music",
+      "template_montage"
+    ],
+    "original_user_samples_must_not_be_republished": true
+  },
+  "source_gate": {
+    "minimum_compared_authentic_sources": 3,
+    "source_file_license_allowed": [
+      "CC0",
+      "PUBLIC_DOMAIN_VERIFIED_ITALY"
+    ],
+    "file_level_rights_review_required": true,
+    "prefer_true_scans_from_16mm_35mm": true,
+    "preferred_scan_formats": [
+      "native_5K",
+      "native_4K",
+      "native_2K",
+      "native_HD"
+    ],
+    "container_resolution_is_not_detail": true,
+    "source_file_read_and_ffprobe_required": true,
+    "frame_by_frame_review_required": true,
+    "actual_9_16_crop_review_required": true,
+    "face_min_short_edge_px": 72,
+    "preferred_face_min_short_edge_px": 100,
+    "cropped_native_pixel_count_target": 700000,
+    "do_not_force_bad_sources": true
+  },
+  "restoration_gate": {
+    "original_bw_motion_required": true,
+    "freeze_exact_source_frame_required": true,
+    "save_source_frame_and_adjacent_frames": true,
+    "real_image_to_image_photographic_reconstruction_required": true,
+    "facial_detail_and_environment_detail_required": true,
+    "two_candidates_preferred": true,
+    "manual_source_fidelity_and_semantic_qa_required": true,
+    "protect_horses_wheels_stairs_ladders_cars_windows_railings_faces_hands": true,
+    "person_object_identity_substitution_forbidden": true,
+    "no_global_v77_luminance_blend": true,
+    "never_label_hallucinated_microdetails_historically_verified": true,
+    "reject_if_source_fidelity_or_visual_quality_fails": true,
+    "ddcolor_only_not_reference_grade": true,
+    "upscale_only_not_reference_grade": true
+  },
+  "editing": {
+    "historical_film_to_restored_freeze_to_new_historical_shot": true,
+    "timing_subject_driven": true,
+    "no_reference_timing_mandate": true,
+    "first_seconds_high_impact": true,
+    "title_city_year_english": true
+  },
+  "budget": {
+    "paid_gpu_without_explicit_consent": false,
+    "vidu_credits_without_consent": 0
+  },
+  "delivery": {
+    "v55_required": true,
+    "final_only_after_actual_artist_review": true,
+    "verified_mp4_zip_cover_posts_rights_required": true,
+    "archive_verified_separately": true,
+    "social_autopublish": false
+  },
+  "candidates": [
+    {
+      "id": "san_francisco_market_street_1906_4k",
+      "source": "https://commons.wikimedia.org/wiki/File:A_Trip_Down_Market_Street_(1906).webm",
+      "resolution": [
+        3260,
+        2420
+      ],
+      "rights": "public_domain_claimed_usa_italy_verify_file",
+      "scan": "2018_35mm",
+      "review": "SOURCE_PENDING_DOWNLOAD"
+    },
+    {
+      "id": "nyc_fish_market_1903",
+      "source": "https://www.loc.gov/item/00694374",
+      "resolution": null,
+      "rights": "loc_paper_print_verify_italy",
+      "review": "SOURCE_PENDING_DOWNLOAD"
+    },
+    {
+      "id": "nyc_flatiron_1903",
+      "source": "https://www.loc.gov/item/00694378/",
+      "resolution": null,
+      "rights": "loc_paper_print_verify_italy",
+      "review": "SOURCE_PENDING_DOWNLOAD"
+    },
+    {
+      "id": "paris_belle_epoque_1896_1900",
+      "source": "https://commons.wikimedia.org/wiki/File:A_Trip_Through_Paris,_France,_Late_1890s.webm",
+      "resolution": [
+        1280,
+        720
+      ],
+      "rights": "public_domain_declared_source_usa_france",
+      "review": "SOURCE_PENDING_DOWNLOAD"
+    },
+    {
+      "id": "vienna_market_1920",
+      "source": "https://commons.wikimedia.org/wiki/File:March%C3%A9_couvert_et_sc%C3%A8nes_rurales_-_AI140423.webm",
+      "resolution": [
+        768,
+        576
+      ],
+      "rights": "CC0_declared_file",
+      "review": "SOURCE_PENDING_DOWNLOAD"
+    },
+    {
+      "id": "paris_cafe_strike_1919",
+      "source": "https://commons.wikimedia.org/wiki/File:La_Gr%C3%A8ve_des_gar%C3%A7ons_de_caf%C3%A9_-_AI94492.webm",
+      "resolution": [
+        768,
+        576
+      ],
+      "rights": "CC0_declared_file",
+      "review": "SOURCE_PENDING_DOWNLOAD"
+    }
+  ]
+}
