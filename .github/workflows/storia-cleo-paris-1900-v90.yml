@@ -1,4 +1,4 @@
-name: "La Storia Rivive V90 - Paris 1900 Cleo new film + Vidu"
+name: "La Storia Rivive V90.1 - Paris 1900 true DDColor + Vidu"
 on:
   push:
     branches: [main]
@@ -27,7 +27,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
-          python -m pip install --quiet "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "gradio_client>=1.9,<3"
+          python -m pip install --quiet "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "gradio_client>=1.9,<3" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2"
           python -m py_compile tools/storia_cleo_1900_v90_once.py
       - name: Four source-anchored color photographs and one paid Vidu 5s scene
         run: python -u tools/storia_cleo_1900_v90_once.py
