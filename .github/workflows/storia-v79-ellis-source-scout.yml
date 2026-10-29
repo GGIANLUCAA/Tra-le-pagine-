@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/storia-v79-ellis-source-scout.yml"
+      - "src/storia_v79_ellis_new_face_scout.py"
   workflow_dispatch:
 permissions:
   contents: read
