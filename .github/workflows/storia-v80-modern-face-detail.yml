@@ -1,0 +1,43 @@
+name: "V80 modern-photo faces — repair detail without changing identity"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v80-modern-face-detail.yml"
+      - "src/storia_v80_modern_face_detail.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  modern_face_detail:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip -q install --no-cache-dir numpy opencv-python-headless pillow gradio_client
+      - name: Reuse verified actual earlier restorations of true archival frames
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v79_volti output/storia_v79_kiss_late
+          curl -fLsS --retry 2 --connect-timeout 20 --max-time 140 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12904040146/zip" -o /tmp/first_photo.zip
+          unzip -oq /tmp/first_photo.zip -d output/storia_v79_volti
+          curl -fLsS --retry 2 --connect-timeout 20 --max-time 140 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12903687978/zip" -o /tmp/second_photo.zip
+          unzip -oq /tmp/second_photo.zip -d output/storia_v79_kiss_late
+          test -s output/storia_v79_volti/KISS_1896_V79_FACE_RESTORED.png
+          test -s output/storia_v79_volti/KISS_1900_V79_FACE_RESTORED.png
+          test -s output/storia_v79_kiss_late/KISS_1896_LATE_V79_FACE_RESTORED.png
+      - name: Enhance three human faces using source-guided fidelity preserving local model
+        run: python -u src/storia_v80_modern_face_detail.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V80_REALISTIC_HISTORICAL_FACES_REVIEW
+          path: output/storia_v79_refined/
+          if-no-files-found: warn
+          retention-days: 14
