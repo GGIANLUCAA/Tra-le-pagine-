@@ -1,8 +1,6 @@
-name: "La Storia Rivive V92.1 - BOMBAY 1929 - corrected 8-shot film"
+name: "LEGACY V92 Bombay 1929 - review only - superseded by mandatory V94"
 on:
-  push:
-    branches: [main]
-    paths: [".github/workflows/storia-bombay-v92-render.yml"]
+  workflow_dispatch:
 permissions:
   contents: write
   actions: read
@@ -58,8 +56,8 @@ jobs:
             output/storia_bombay_1929_v92/POST_*.txt
           retention-days: 14
           if-no-files-found: warn
-      - name: Verified direct Android download prerelease, clearly marked needs artistic review
-        if: success()
+      - name: Legacy prerelease disabled for new releases (V94 requires REAL Vidu)
+        if: ${{ false }}
         shell: bash
         run: |
           set -euo pipefail
