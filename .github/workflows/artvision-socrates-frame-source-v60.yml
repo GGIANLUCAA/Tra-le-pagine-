@@ -6,6 +6,10 @@ on:
     paths:
       - src/artvision_socrates_real_frame_v60.py
       - .github/workflows/artvision-socrates-frame-source-v60.yml
+  pull_request:
+    paths:
+      - src/artvision_socrates_real_frame_v60.py
+      - .github/workflows/artvision-socrates-frame-source-v60.yml
   workflow_dispatch:
 permissions:
   contents: read
