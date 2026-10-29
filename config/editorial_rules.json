@@ -766,6 +766,40 @@
         "4 rendered new variants",
         "voice Gacrux cache available"
       ]
+    },
+    "foreground_visitors_v61": {
+      "approved_at": "2026-10-29",
+      "status": "permanent_after_explicit_video_feedback",
+      "default": "EMPTY_GALLERY_NO_FOREGROUND_VISITORS",
+      "explicit_user_request": "Remove the foreground seated person from the VIDEO; a corrected still image is not enough. Keep the text.",
+      "fail_if": [
+        "visitor_head_cropped_by_9_16_crop",
+        "partial_foreground_person_at_frame_edge",
+        "foreground_visitor_covers_title_or_frame",
+        "visitor_during_room_entry_or_return_cut_off"
+      ],
+      "allowed_exception": "Deliberate artistic visitor only after all visible critical body parts remain inside frame for the entire camera motion and human review has explicitly confirmed it.",
+      "scope": [
+        "artvision_cinema_museum",
+        "artvision_critico_museum"
+      ],
+      "required_full_video_qa": [
+        "first_frame",
+        "1s",
+        "3s",
+        "5s",
+        "7s",
+        "frame_crossing",
+        "same_room_exit",
+        "last_frame",
+        "full_camera_path_at_normal_speed"
+      ],
+      "on_failure": "needs_visual_correction_not_gold_master",
+      "must_edit": "entire_MP4_not_only_cover_or_still",
+      "socrates_target": "Cinema Museum V61 empty gallery, title and original artwork/frame unchanged",
+      "revisions_do_not_create_new_variant": true,
+      "guide": "docs/ARTVISION_MUSEUM_NO_CROPPED_VISITORS_V61_20261029.md",
+      "no_v25_auto_approval": true
     }
   },
   "artvision_four_variants": {
