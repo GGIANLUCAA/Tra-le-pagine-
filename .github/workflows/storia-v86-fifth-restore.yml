@@ -1,0 +1,48 @@
+name: "La Storia Rivive V86 SF 1906 - restore 5th source anchor FREE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v86-fifth-restore.yml"]
+permissions:
+  contents: read
+jobs:
+  free_restoration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    env:
+      HF_HUB_DISABLE_TELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install free local CPU color model and optional free restoration UI API"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --quiet "numpy>=1.26,<2" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<0.37" "gradio_client>=1.5,<2"
+          python -m py_compile src/storia_v86_sf1906_fifth_restore.py
+      - name: "Verify original historical source and restore ONE genuine fifth shot, zero Vidu credits"
+        shell: bash
+        run: |
+          python - <<'PY'
+          import importlib.util
+          p="src/storia_v70_sf1906_source_scout.py"
+          s=importlib.util.spec_from_file_location("sf_source",p)
+          m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+          print("PUBLIC_DOMAIN_ORIGINAL",m.original(),flush=True)
+          PY
+          python -u src/storia_v86_sf1906_fifth_restore.py
+      - name: "Save photo source matching and high quality candidate before spending"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V86_SF1906_5TH_RESTORED_IMAGE_PREFLIGHT_FREE
+          path: |
+            output/storia_v86_sf1906/FIFTH_VIDU_COLOR_ANCHOR_1906.jpg
+            output/storia_v86_sf1906/SOURCE_BW_05.png
+            output/storia_v86_sf1906/SOURCE_COLOR_DDCOLOR_05.jpg
+            output/storia_v86_sf1906/SCENA_05_PRIMA_DOPO.jpg
+            output/storia_v86_sf1906/FIFTH_SCENE_RESTORATION_QA.json
+          retention-days: 14
+          if-no-files-found: warn
