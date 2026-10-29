@@ -1,0 +1,61 @@
+{
+  "schema": "artvision-v55-archive-staging-v1",
+  "video_key": "Socrate_Critico_Museum_Gacrux_V67.mp4",
+  "video_sha256": "c3be9d91b2967df4e484918b6d678b141111130eea991b63493d15b843c090a9",
+  "video_bytes": 53582121,
+  "review_state": "rendered_needs_review",
+  "posts": {
+    "facebook": "Entriamo lentamente in una sala ricostruita e raggiungiamo la cornice vera de La morte di Socrate. Da lì, la camera percorre il dipinto seguendo una critica dettagliata: coppa, gesti, discepoli, Platone, catene. Poi torna al punto di partenza. La sala è un composito digitale basato su una fotografia di un’altra galleria Met, non una ripresa dell’allestimento reale. Quale momento della visita vorreste osservare più da vicino?",
+    "instagram": "Dalla sala museale alla decisione di Socrate, e ritorno. ✨ Stessa critica approfondita, ma una regia diversa: attraversiamo la cornice reale documentata del quadro senza spettatori in primo piano. La sala è una ricostruzione fotografica dichiarata, non il museo filmato dal vivo. #MuseumImmersion #Socrate #ArteClassica",
+    "tiktok": "Entra con me nel quadro: Socrate sta per morire, ma il suo gesto racconta tutt’altro. 🖼️ Un’unica visita attraverso la cornice e dieci passaggi di critica, con voce naturale. Il museo che vedi è ricostruito digitalmente da foto con licenza, non una ripresa reale. #MuseumImmersion #ArtHistory #Socrate",
+    "youtube": "THE DEATH OF SOCRATES — Museum Immersion | Critica d’arte italiana\n\nUn viaggio continuo nella pittura di Jacques-Louis David: dalla cornice fotografata del capolavoro alla coppa, ai discepoli, a Platone e alle catene sul pavimento, per poi tornare nella stessa sala. Il racconto è identico a quello del Critico Standard, ma il percorso visivo è una vera regia Museum diversa. La sala è una ricostruzione digitale da una fotografia della Gallery 632 del Metropolitan Museum, non un documento dell’attuale installazione di Socrate. Foto e musica citate nel dossier."
+  },
+  "rights_markdown": "Pittura: The Death of Socrates (Jacques-Louis David, 1787), Met 436105 Open Access PD; https://www.metmuseum.org/art/collection/search/436105. Musica: Water Lily, Kevin MacLeod, registrazione CC BY 4.0, https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035 ; https://creativecommons.org/licenses/by/4.0/. Voce: Gacrux Google Gemini 3.8 Flash TTS, una registrazione originale su account autorizzato dall'utente, stessa per le due regie, costo effettivo non verificato. Foto cornice esatta: Szilas 2008 Wikimedia CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:David_-_The_Death_of_Socrates_-_with_frame.jpg . Sala composita modificata, Gallery 632 ripresa da 颐园居 2024 Wikimedia CC BY-SA 4.0, https://commons.wikimedia.org/wiki/File:Paintings_in_Metropolitan_Museum_of_Art_20240523.jpg ; NON è la vera installazione attuale del dipinto. Visitatori rimossi digitalmente; derivazione fotografica ShareAlike.",
+  "recipe": {
+    "schema": "artvision-critico-v67-review-only",
+    "variant": "critico_museum",
+    "video": {
+      "name": "Socrate_Critico_Museum_Gacrux_V67.mp4",
+      "sha256": "c3be9d91b2967df4e484918b6d678b141111130eea991b63493d15b843c090a9",
+      "bytes": 53582121,
+      "duration_seconds": 168.166667,
+      "width": 1080,
+      "height": 1920,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "native_render_resolution": [
+        720,
+        1280
+      ],
+      "upscale": "Lanczos"
+    },
+    "original_script_sha256": "c85c4017bec6efd0a75e46ee62b83ed4aeff14e6018e5f66f911b4fd941a0828",
+    "shared_exact_gacrux_audio_sha256": "b26b6826380c8dcc9b27a590bb6ecd43dd12107dafd367e429ad43351bd8a476",
+    "same_voice_for_two_variants": true,
+    "voice_alignment": "Whisper offline ASR with interpolation",
+    "asr_matched_fraction": 0.8885941644562334,
+    "voice_source_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40901604669",
+    "voice_alignment_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40902193743",
+    "painting_sha256": "eaff5a04103361fed9fba6f10ea7bed80ccdc595d664b6997c6bd32f0eee06a6",
+    "music_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+    "qa": {
+      "full_decode": "passed",
+      "ffprobe": "passed",
+      "zip_crc": "passed",
+      "first_frames_exported": true,
+      "full_speed_visual_listening": "pending",
+      "human_art_review": "pending",
+      "v25_approval": false,
+      "private_archive_import": false,
+      "v57_jump_gate": "passed",
+      "v57_peak_mad": 8.771,
+      "frame_registration_sift_inliers": 581,
+      "actual_museum_installation": false,
+      "foreground_visitors_removed": true
+    },
+    "audio_api_calls": "one single owner-authorized synthesis for the two variants",
+    "paid_video_ai_api_calls": 0,
+    "actual_google_tts_cost": "not independently verified"
+  },
+  "notes": "MP4 genuinely rendered in ChatGPT; SHA and bytes independently measured. Text staging only. Never claim actual private-site video import, playback or V25 approval."
+}
