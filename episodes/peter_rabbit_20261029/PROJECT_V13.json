@@ -1,0 +1,38 @@
+{
+  "schema": "project-v13-draft",
+  "status": "planning_blocked_gacrux_free_tier_unverified",
+  "episode": "peter_rabbit_20261029",
+  "format": "libri",
+  "title": "Peter Coniglio — Il giardino proibito",
+  "author": "Beatrix Potter",
+  "editorial_contract": {
+    "user_requirement": "Solo filmati COMPLETI con testo/voce se previsti, no anteprime mute come sostituti",
+    "voice": "Google Gemini Gacrux",
+    "no_paid_calls": true,
+    "no_silent_fallback": true,
+    "no_subtitles": true
+  },
+  "editorial_plan": {
+    "source": "The Tale of Peter Rabbit, 1902",
+    "narrative_arc": "flashforward giacchino -> disobbedienza -> inseguimento -> fuga -> conseguenza",
+    "hook_0_7_seconds": "giacchino blu abbandonato, domanda visiva e rivelazione del protagonista",
+    "target_duration_seconds": [
+      120,
+      180
+    ],
+    "scene_count": 20,
+    "media_sourcing": "20 original illustrations by Beatrix Potter, 1902, exact image URLs and SHA256 to be recorded by asset acquisition workflow",
+    "music": "planned original instrumental composed for this episode, NOT generated yet",
+    "cover": "planned 720x1280 original illustration + brand and author",
+    "qa_status": "not_started",
+    "rights_status": "author death 1943; source image byte inspection pending"
+  },
+  "delivery": {
+    "mp4_exists": false,
+    "voice_wav_exists": false,
+    "zip_video_exists": false,
+    "cover_exists": false,
+    "library_import_verified": false,
+    "approval": "NOT_FINAL"
+  }
+}
