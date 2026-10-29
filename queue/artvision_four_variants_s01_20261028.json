@@ -273,7 +273,9 @@
             "original_mp4_sha256": "dcac4d5155598a42fd3fc29f06f455ccf38a5f63da4a0f06ef9286cbaccc4ea8",
             "code_commit": "a9b5ccabbbd5b37715ca33307fdba450f7e981f1",
             "source_package_filename": "VIDEO_MASTER_COMPLETO.zip",
-            "source_package_note": "Original package verified in ChatGPT execution session; this is not a persistent GitHub asset or private archive import."
+            "source_package_note": "Original package verified in ChatGPT execution session; this is not a persistent GitHub asset or private archive import.",
+            "dossier_sync_run_id": 40828355188,
+            "dossier_sync_result": "dry_run_hashes_passed; live sync ARCHIVE_SYNC_PENDING_VIDEO_NOT_IMPORTED"
           }
         }
       }
@@ -285,6 +287,8 @@
     "action": "Fixed Turner Cinema Museum archive staging to reproduce original V55 four posts byte-for-byte, including original hashtags and rights/music credits; added optional SHA256 fail-closed validation and CI tests, PR #105 merged a9b5ccab. Independent local MP4 full decode, CRC ZIP, and original MP4 hashes passed. No new artistic MP4 or V25 approval.",
     "next_first_blocker": "Exact Google Gacrux voice cache unavailable for Critico; Turner Museum private MP4 absent from authorized archive, so text sync remains pending until V25-compliant import. For a new Cinema work, source assets and four-check preflight must be prepared before rendering.",
     "no_duplicate_renders": true,
-    "paid_video_calls": 0
+    "paid_video_calls": 0,
+    "archive_dossier_sync_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40828355188",
+    "archive_dossier_sync_result": "Turner Museum MP4 absent from private archive; zero attachments uploaded. Standard 7 existing attachments left untouched (remote hashes unavailable)."
   }
 }
