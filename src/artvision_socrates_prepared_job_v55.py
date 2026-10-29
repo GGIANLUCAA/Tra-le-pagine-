@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -159,6 +160,10 @@ def prepare():
         shots.append({"file":"met_original.jpg","sha256":meta["artwork"]["sha256"],
                       "mode":"whole" if key=="whole" else "detail","detail_id":key,
                       "focus":focus,"duration_seconds":seconds,"purpose":purpose+"; "+SIGNIFICANCE[i]})
+    prepared=ASSETS/"cinema_standard"/"prepared"
+    prepared.mkdir(parents=True,exist_ok=False)
+    shutil.copy2(ASSETS/"met_original.jpg",prepared/"met_original.jpg")
+    shutil.copy2(ASSETS/"water_lily_original.mp3",prepared/"water_lily_original.mp3")
     cin={"schema":"artvision-cinema-prepared-v55-v1","variant":"cinema_standard",
          "title":TITLE,"artist":ARTIST,
          "music":{"file":"water_lily_original.mp3","sha256":music["sha256"],
@@ -166,7 +171,7 @@ def prepare():
                   "recording_artist":"Kevin MacLeod","source_url":MUSIC,
                   "license_url":"https://creativecommons.org/licenses/by/4.0/"},
          "shots":shots}
-    dump(ASSETS/"CINEMA_PLAN_V55.json",cin)
+    dump(prepared/"CINEMA_PLAN_V55.json",cin)
     for name in plan["variants"]:
         file=ASSETS/name/"PROJECT_V13.json"
         p=json.loads(file.read_text())
@@ -175,9 +180,9 @@ def prepare():
             continue
         p["status"]="planned"
         p["assets"]=[
-            {"id":"art","role":"visual","file":"../met_original.jpg","sha256":meta["artwork"]["sha256"],
+            {"id":"art","role":"visual","file":"prepared/met_original.jpg","sha256":meta["artwork"]["sha256"],
              "source":source,"rights":"Met Open Access Public Domain; object 436105"},
-            {"id":"music","role":"music","file":"../water_lily_original.mp3","sha256":music["sha256"],
+            {"id":"music","role":"music","file":"prepared/water_lily_original.mp3","sha256":music["sha256"],
              "source":MUSIC,"rights":"Kevin MacLeod Water Lily CC BY 4.0, attribution mandatory"}
         ]
         p["scenes"]=[{"asset_id":"art","description":CLAIMS[i],"reason":SIGNIFICANCE[i]}
@@ -215,6 +220,19 @@ def prepare():
                                "signal_limitations":"No verified social performance data; editorial hypothesis only",
                                "analytics_feedback":"not_yet_published"}
         })
+        ep["narrative_design"].update({"story_beats":[{"beat":key,"purpose":SIGNIFICANCE[i]} for i,(key,*_) in enumerate(SCENES)],
+            "distinct_visual_needs":[{"detail":key,"visual":CLAIMS[i]} for i,(key,*_) in enumerate(SCENES)],
+            "image_count_reason":"Eight distinct painting details are semantically justified, not eight independent source images.",
+            "pace_reason":"Four-to-six-second holds let viewers identify each specific gesture before the final whole image.",
+            "reference_id":"Met436105 verified original; Cyclops references not reused as footage",
+            "portable_lessons":["Open on the cup and gestures","Use the exact official artwork pixels"],
+            "do_not_copy_reference_parameters":True})
+        p["business"].update({"audience":"Art and philosophy audiences on social platforms",
+            "viewer_promise":"Discover why Socrates is calm while others grieve",
+            "original_contribution":"A source-authentic detail sequence with ethical visual interpretation",
+            "primary_platform":"Facebook","cta":"Share your reading of the moral dilemma",
+            "experiment":"Cup-first reveal compared with conventional whole-first opening",
+            "time_budget_minutes":90,"cash_budget_eur":0})
         p["reviews"]={key:{"status":"passed","notes":note} for key,note in {
             "story":"Met catalog supports depicted hemlock, gestures and deliberate Plato inclusion; storyboard is factual with marked interpretation.",
             "visuals":"Original Met image authenticated and 8 semantic focus points cross-checked against official museum reproduction; final MP4 review pending.",
@@ -223,8 +241,8 @@ def prepare():
     dump(ASSETS/"SOCRATES_CINEMA_JOB_V16.json",{
         "adapter":"cinema_v55_prepared",
         "project_file":"output/artvision-socrates-assets-v55/cinema_standard/PROJECT_V13.json",
-        "assets_dir":"output/artvision-socrates-assets-v55",
-        "cinema_plan_file":"output/artvision-socrates-assets-v55/CINEMA_PLAN_V55.json"})
+        "assets_dir":"output/artvision-socrates-assets-v55/cinema_standard/prepared",
+        "cinema_plan_file":"output/artvision-socrates-assets-v55/cinema_standard/prepared/CINEMA_PLAN_V55.json"})
     deliver=ASSETS/"V55_EDITORIAL"
     deliver.mkdir(exist_ok=False)
     posts={
