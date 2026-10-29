@@ -262,7 +262,6 @@
           "archive_original_posts_verified": {
             "date": "2026-10-29",
             "status": "local_original_zip_sha256_matched_staging",
-            "source_zip": "/mnt/data/artvision_turner_review/VIDEO_MASTER_COMPLETO.zip",
             "post_sha256": {
               "facebook": "280698ca28e34f5634156615d71dae9ff5cece03671912767f007a0e233f2fe1",
               "instagram": "9cecca456c0df92662d1afbe26bfee94fd4679bd0070d44f2224034ebbf5cc14",
@@ -272,7 +271,9 @@
             "archive_sync_pending": true,
             "remote_text_verified": false,
             "original_mp4_sha256": "dcac4d5155598a42fd3fc29f06f455ccf38a5f63da4a0f06ef9286cbaccc4ea8",
-            "code_commit": "a9b5ccabbbd5b37715ca33307fdba450f7e981f1"
+            "code_commit": "a9b5ccabbbd5b37715ca33307fdba450f7e981f1",
+            "source_package_filename": "VIDEO_MASTER_COMPLETO.zip",
+            "source_package_note": "Original package verified in ChatGPT execution session; this is not a persistent GitHub asset or private archive import."
           }
         }
       }
