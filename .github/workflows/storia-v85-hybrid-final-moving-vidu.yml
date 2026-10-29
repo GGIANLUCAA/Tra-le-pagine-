@@ -1,0 +1,78 @@
+name: "La Storia Rivive V85 - 4 foto + finale Vidu nuovo (0 crediti)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v85-hybrid-final-moving-vidu.yml"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v85-final-moving-vidu-no-credits
+  cancel-in-progress: false
+jobs:
+  render:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PREVIEW_TAG: storia-rivive-paris-1900-1918-v85-4plus1-vidu-moving-finale
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Prepare no-credit cinematic CPU encoder"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+          python -m py_compile src/storia_rivive_hybrid_v85.py
+      - name: "Acquire two checked public technical preview files (NO VIDU API secret)"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_hybrid_v85
+          cd output/storia_hybrid_v85
+          gh release download storia-rivive-paris-1900-1918-hybrid-v83-1-color-motion-preview \
+            -p "PARIS_1900_1918_HYBRID_4PLUS1_V83_TECHNICAL_PREVIEW.mp4" --repo "$GITHUB_REPOSITORY"
+          mv PARIS_1900_1918_HYBRID_4PLUS1_V83_TECHNICAL_PREVIEW.mp4 BASE_V83.mp4
+          gh release download storia-rivive-v84-vidu-five-full-motion-previews-20261029 \
+            -p "05_1900_WALKWAY_COLOR_MOTION_BW_TO_COLOR_1S_AND_MOVING.mp4" --repo "$GITHUB_REPOSITORY"
+          mv 05_1900_WALKWAY_COLOR_MOTION_BW_TO_COLOR_1S_AND_MOVING.mp4 VIDU_V84_WALKWAY_COLOR_MOTION.mp4
+          printf "3cfc6c56450b4fdccc44444fd253bf03cb12c019115b68d2dd7b9308347300c6  BASE_V83.mp4\n" | sha256sum -c -
+          printf "52a33e09d6ca2999c1fa612569447be2a479de6d15892b5d4e91690d6ed5ae45  VIDU_V84_WALKWAY_COLOR_MOTION.mp4\n" | sha256sum -c -
+      - name: "Render 4+1 hybrid with exposure matching and new full-color-motion Vidu finale"
+        run: python -u src/storia_rivive_hybrid_v85.py
+      - name: "Save MP4, Android ZIP, QA and posts for art review"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V85_LA_STORIA_RIVIVE_PARIS_4PLUS1_VIDU_FINALE_TECHNICAL
+          path: |
+            output/storia_hybrid_v85/LA_STORIA_RIVIVE_PARIS_V85_4PLUS1_FINALE_VIDU.mp4
+            output/storia_hybrid_v85/PARIS_V85_4PLUS1_ANDROID.zip
+            output/storia_hybrid_v85/COPERTINA.jpg
+            output/storia_hybrid_v85/QA_V85.json
+            output/storia_hybrid_v85/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Technical prerelease for Android direct download only, not social/website"
+        if: success()
+        run: |
+          set -euo pipefail
+          cd output/storia_hybrid_v85
+          if gh release view "$PREVIEW_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Already released; no duplicate"; exit 0
+          fi
+          gh release create "$PREVIEW_TAG" \
+            LA_STORIA_RIVIVE_PARIS_V85_4PLUS1_FINALE_VIDU.mp4 PARIS_V85_4PLUS1_ANDROID.zip COPERTINA.jpg QA_V85.json \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "La Storia Rivive · Paris 1900–1918 · 4+1 V85 con finale Vidu animato" \
+            --notes "ANTEPRIMA TECNICA / non approvata per social. 4 scene storiche in movimento B/N -> fotografia AI moderna + 1 clip Vidu 1900 già pagata nelle cinque prove V84. Primo secondo della clip Vidu B/N→colore, altri quattro secondi in movimento a colori. Nessuna nuova richiesta Vidu in questa produzione. Le quattro scene classiche sono Parigi 1918, l ultima Parigi 1900: non una sola ripresa storica continua. Colori, microdettagli e movimento Vidu sono interpretazioni AI. Revisione artistica, semantica e diritti in Italia ancora da confermare." \
+            --prerelease
+          names="$(gh release view "$PREVIEW_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          grep -Fqx "LA_STORIA_RIVIVE_PARIS_V85_4PLUS1_FINALE_VIDU.mp4" <<< "$names"
+          grep -Fqx "PARIS_V85_4PLUS1_ANDROID.zip" <<< "$names"
+          echo "V85_ANDROID_EXTERNAL_DIRECT_LINKS_VERIFIED"
