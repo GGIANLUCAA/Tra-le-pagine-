@@ -56,6 +56,19 @@ def prepare(manifest):
     if not isinstance(recipe,dict) or recipe.get("video",{}).get("sha256")!=expected or recipe.get("review_state")!=state:
         raise ValueError("Recipe missing, wrong video hash or wrong review status")
     docs={"POST_"+k.upper()+".txt":v.strip().encode("utf8")+b"\n" for k,v in posts.items()}
+    # Optional source-package fingerprints: prove that archive captions include
+    # the original rights/music footer instead of shorter editorial drafts.
+    # Existing manifests without source fingerprints remain backward compatible.
+    original_hashes=manifest.get("source_post_sha256")
+    if original_hashes is not None:
+        if (not isinstance(original_hashes,dict)
+                or set(original_hashes)!=set(PLATFORMS)):
+            raise ValueError("Four original POST file hashes required")
+        for platform,expected_post_sha in original_hashes.items():
+            if (not isinstance(expected_post_sha,str)
+                    or not re.fullmatch(r"[a-f0-9]{64}",expected_post_sha)
+                    or digest(docs["POST_"+platform.upper()+".txt"])!=expected_post_sha):
+                raise ValueError("Original POST SHA256 mismatch: "+platform)
     docs["SOURCES_AND_RIGHTS.md"]=rights.strip().encode("utf8")+b"\n"
     docs["VIDEO_RECIPE_V13.json"]=(json.dumps(recipe,ensure_ascii=False,indent=2)+"\n").encode("utf8")
     audit={"schema":SCHEMA,"video_key":video,"local_reference_sha256":expected,
