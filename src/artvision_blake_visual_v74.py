@@ -222,20 +222,25 @@ def museum_frame(art,roomimg,t,duration,critic=False):
     # not a cut between a flat gallery background and cropped artwork.
     if t<enter:
         u=smooth(t/enter)
-        zoom=lerp(1.,11.5,u)
-        focus=(lerp(.5,.52,u),lerp(.5,.30,u))
+        # V75 QA: reach source-original pixels fully inside the image plane,
+        # not a giant frame lip or handwritten paper margin.
+        zoom=lerp(1.,18.,u)
+        focus=(lerp(.5,.52,u),lerp(.5,.34,u))
     elif t<duration-exit_time:
         u=(t-enter)/(duration-enter-exit_time)
-        points=[(.52,.30),(.52,.22),(.53,.48),(.43,.70),(.75,.72),(.51,.55)]
+        # These subject centers + a physical optical zoom keep both the
+        # actual gilded frame AND the original paper edge offscreen.
+        # The underlying image pixels are never invented or erased.
+        points=[(.52,.34),(.51,.33),(.54,.49),(.48,.66),(.69,.67),(.5,.5)]
         v=u*(len(points)-1)
         idx=min(int(v),len(points)-2)
         k=smooth(v-idx)
         focus=tuple(lerp(a,b,k) for a,b in zip(points[idx],points[idx+1]))
-        zoom=lerp(11.5,12.8,math.sin(math.pi*u)**2)
+        zoom=lerp(18.,22.,math.sin(math.pi*u)**2)
     else:
         u=smooth((t-(duration-exit_time))/exit_time)
-        zoom=lerp(11.5,1.,u)
-        focus=(lerp(.5,.5,u),lerp(.5,.5,u))
+        zoom=lerp(18.,1.,u)
+        focus=(.5,.5)
     result=museum(art,roomimg,zoom,focus)
     if t<4:
         result=label(result,64,["A DRAGON","IN A SMALL ROOM"],
