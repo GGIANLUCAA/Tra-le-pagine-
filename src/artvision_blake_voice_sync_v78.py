@@ -88,9 +88,16 @@ def _museum_keys(starts,duration):
         (starts[1],18.,.51,.32),
         (starts[2],17.,.50,.50),
         (starts[3],20.,.51,.21),
-        (starts[4],20.,.52,.40),
-        (starts[5],22.,.46,.70),
-        (starts[6],22.,.72,.72),
+        # Within the first three seconds of each spoken paragraph, place
+        # the described subject at the actual center of attention.
+        (starts[3]+3.,19.5,.52,.40),
+        (starts[4],19.5,.52,.40),
+        (starts[4]+3.,19.,.46,.70),
+        (starts[5],19.,.46,.70),
+        # Female head and arms are on the lower RIGHT of the exact sheet.
+        # Pull back so her entire face and shoulders remain on screen.
+        (starts[5]+3.,16.5,.83,.69),
+        (starts[6],16.5,.83,.69),
         (exit_start,17.,.50,.50),
         (duration,1.,.50,.50)
     ]
