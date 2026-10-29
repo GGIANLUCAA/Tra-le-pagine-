@@ -1,4 +1,4 @@
-name: ArtVision V55 — Winslow Homer two distinct Cinema variants
+name: ArtVision V55 — Winslow Homer two distinct Cinema variants V55B
 run-name: "The Gulf Stream | ArtVision 4x1 | 2x Cinema | real Met originals"
 on:
   push:
@@ -48,7 +48,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import hashlib,json,subprocess,zipfile
-          root=Path('output/artvision-homer-gulf-stream-v55')
+          root=Path('output/artvision-homer-gulf-stream-v55b')
           data=json.loads((root/'RESULT_V55.json').read_text())
           assert len(data['two_distinct_real_videos'])==2
           hashes=set()
@@ -79,27 +79,27 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ARTVISION_HOMER_GULF_STREAM_CINEMA_PAIR_V55_REVIEW
+          name: ARTVISION_HOMER_GULF_STREAM_CINEMA_PAIR_V55B_REVIEW
           path: |
-            output/artvision-homer-gulf-stream-v55/ARTVISION_4X1_PLAN.json
-            output/artvision-homer-gulf-stream-v55/MET_OPEN_ACCESS_SOURCE.json
-            output/artvision-homer-gulf-stream-v55/RESULT_V55.json
-            output/artvision-homer-gulf-stream-v55/cinema_standard_rendered/*.mp4
-            output/artvision-homer-gulf-stream-v55/cinema_standard_rendered/COPERTINA.jpg
-            output/artvision-homer-gulf-stream-v55/cinema_standard_rendered/POST_*.txt
-            output/artvision-homer-gulf-stream-v55/cinema_standard_rendered/SOURCES_AND_RIGHTS.md
-            output/artvision-homer-gulf-stream-v55/cinema_standard_rendered/VIDEO_RECIPE_V13.json
-            output/artvision-homer-gulf-stream-v55/cinema_standard_rendered/SCENE_IMAGES/*.jpg
-            output/artvision-homer-gulf-stream-v55/cinema_museum_rendered/*.mp4
-            output/artvision-homer-gulf-stream-v55/cinema_museum_rendered/COPERTINA.jpg
-            output/artvision-homer-gulf-stream-v55/cinema_museum_rendered/POST_*.txt
-            output/artvision-homer-gulf-stream-v55/cinema_museum_rendered/SOURCES_AND_RIGHTS.md
-            output/artvision-homer-gulf-stream-v55/cinema_museum_rendered/VIDEO_RECIPE_V13.json
-            output/artvision-homer-gulf-stream-v55/cinema_museum_rendered/RECONSTRUCTED_GALLERY_ORIGINAL.jpg
-            output/artvision-homer-gulf-stream-v55/cinema_museum_rendered/SCENE_IMAGES/*.jpg
-            output/artvision-homer-gulf-stream-v55/*_V55_DELIVERY/*.zip
-            output/artvision-homer-gulf-stream-v55/*_V55_DELIVERY/DELIVERY_STATUS_V55.json
-            output/artvision-homer-gulf-stream-v55/cinema_standard/assets/met_11122_original.jpg
-            output/artvision-homer-gulf-stream-v55/cinema_standard/assets/water_lily_original.mp3
+            output/artvision-homer-gulf-stream-v55b/ARTVISION_4X1_PLAN.json
+            output/artvision-homer-gulf-stream-v55b/MET_OPEN_ACCESS_SOURCE.json
+            output/artvision-homer-gulf-stream-v55b/RESULT_V55.json
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/*.mp4
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/COPERTINA.jpg
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/POST_*.txt
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/SOURCES_AND_RIGHTS.md
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/VIDEO_RECIPE_V13.json
+            output/artvision-homer-gulf-stream-v55b/cinema_standard_rendered/SCENE_IMAGES/*.jpg
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/*.mp4
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/COPERTINA.jpg
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/POST_*.txt
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/SOURCES_AND_RIGHTS.md
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/VIDEO_RECIPE_V13.json
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/RECONSTRUCTED_GALLERY_ORIGINAL.jpg
+            output/artvision-homer-gulf-stream-v55b/cinema_museum_rendered/SCENE_IMAGES/*.jpg
+            output/artvision-homer-gulf-stream-v55b/*_V55_DELIVERY/*.zip
+            output/artvision-homer-gulf-stream-v55b/*_V55_DELIVERY/DELIVERY_STATUS_V55.json
+            output/artvision-homer-gulf-stream-v55b/cinema_standard/assets/met_11122_original.jpg
+            output/artvision-homer-gulf-stream-v55b/cinema_standard/assets/water_lily_original.mp3
           if-no-files-found: error
           retention-days: 30
