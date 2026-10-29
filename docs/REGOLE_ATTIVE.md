@@ -288,6 +288,12 @@ Dettagli e differenze tra format: `docs/FILOSOFIA_FONTI_MEDIA_V33.md`.
 Le nuove chat indipendenti devono leggere o ricevere le regole esplicitamente:
 il repository non può imporle a una chat che non lo consulta.
 
+## LIBRI / RACCONTI — SOLO EPISODI COMPLETI IN CONSEGNA (29/10/2026)
+
+**Feedback esplicito dopo le anteprime non narrate di Alice, Pifferaio, Rip Van Winkle e Pinocchio:** «Cerca di darmi sempre prodotti video completi». Per le richieste di produzione LIBRI / RACCONTI la consegna attesa è **un racconto concluso** con inizio, sviluppo, finale, voce italiana **Google Gemini Gacrux effettivamente prodotta e controllata**, immagini pertinenti sincronizzate, montaggio 9:16 720×1280 H.264/AAC, qualità artistica verificata, copertina, storyboard/V13/V35, fonti e diritti, musica, quattro post e **MP4 + ZIP solo-video V36 + dossier completi realmente scaricabili**. Il vecchio schema «solo 20–40 secondi di immagini mute e musica» **non soddisfa** questa richiesta: non usarlo come sostituto automatico del video narrato. Né Edge/Diego né altro TTS può prendere il posto di Gacrux senza consenso esplicito.
+
+Se Gacrux, quote o diritti non sono confermati, continuare il lavoro gratuito consentito e riportare in modo esatto il blocco: **non dichiarare un episodio completo né produrre abitualmente anteprime mute da consegnare come video richiesto**. Il successo di FFmpeg o di uno ZIP non dimostra qualità, idoneità dei diritti o approvazione artistica. Un'eventuale anteprima richiesta appositamente resta una bozza separata e chiaramente etichettata. Nessuna chiamata Vidu/API video a pagamento e nessuna pubblicazione social implicita. **Fonte operativa:** `docs/LIBRI_CONSEGNA_COMPLETA_20261029.md`; configurazione `config/editorial_rules.json > formats.libri`. Non modifica ArtVision né master storici.
+
 ## Descrizioni social di alta qualita e recuperabili nel sito — VINCOLANTE (26/10/2026)
 
 **Conferma e irrigidimento della V28**, non un nuovo format. Ogni nuovo video ha post **differenziati** per Facebook, Instagram, TikTok e YouTube, con fatti verificati e taglio narrativo scelto sul contenuto (autore, vicenda, interpretazione prudente, contesto storico, museo, personaggi, emozione). Identita editoriale riconoscibile ma apertura, ritmo e prospettiva mai meccanicamente identici.
