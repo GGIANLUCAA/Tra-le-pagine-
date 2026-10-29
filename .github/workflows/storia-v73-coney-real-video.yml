@@ -1,0 +1,75 @@
+name: "V73 Coney Island 1903 · true motion cinematic color restoration"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v73-coney-real-video.yml"
+      - "src/storia_v73_coney_1903_video_color.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: storia-v73-coney-one-workflow
+  cancel-in-progress: false
+jobs:
+  make_real_film:
+    runs-on: ubuntu-latest
+    timeout-minutes: 37
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile and source review tests
+        run: python -m py_compile src/storia_v73_coney_1903_video_color.py
+      - name: Install zero-cost tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install --no-cache-dir opencv-python-headless numpy pillow onnxruntime huggingface_hub
+      - name: Download genuine LOC film, original CPU AI colorization and render
+        run: python -u src/storia_v73_coney_1903_video_color.py
+      - name: Verify MP4 video and complete ZIP
+        run: |
+          set -euo pipefail
+          D=output/storia_v73_coney
+          test -s "$D/CONEY_ISLAND_1903_LA_STORIA_RIVIVE_V73.mp4"
+          test -s "$D/CONEY_ISLAND_1903_KIT.zip"
+          ffmpeg -v error -xerror -i "$D/CONEY_ISLAND_1903_LA_STORIA_RIVIVE_V73.mp4" -f null -
+          unzip -t "$D/CONEY_ISLAND_1903_KIT.zip"
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json "$D/CONEY_ISLAND_1903_LA_STORIA_RIVIVE_V73.mp4"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: CONEY_ISLAND_1903_V73_ACTUAL_VIDEO_AND_QA
+          path: |
+            output/storia_v73_coney/CONEY_ISLAND_1903_LA_STORIA_RIVIVE_V73.mp4
+            output/storia_v73_coney/CONEY_ISLAND_1903_KIT.zip
+            output/storia_v73_coney/COPERTINA.jpg
+            output/storia_v73_coney/CONFRONTO_VIDEO_MOVIMENTO.jpg
+            output/storia_v73_coney/FONTI_E_QA.json
+            output/storia_v73_coney/SOURCE_QA.json
+            output/storia_v73_coney/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Release permanent downloadable MP4 and ZIP (no social publish)
+        run: |
+          set -euo pipefail
+          D=output/storia_v73_coney
+          TAG=storia-rivive-coney-island-1903-v73
+          files=("$D/CONEY_ISLAND_1903_LA_STORIA_RIVIVE_V73.mp4" "$D/CONEY_ISLAND_1903_KIT.zip" "$D/COPERTINA.jpg" "$D/FONTI_E_QA.json")
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --latest=false --title "La Storia Rivive — Coney Island 1903 (V73)" --notes "Genuine moving LOC 1903 movie, 17.6 sec, frame aligned original motion, free CPU DDColor semantic reconstruction with color emerging from real splash. No simulated historical motion; AI colors interpretative. Original music and synthesized splash; zero paid calls; human art and Italian rights review pending, no social/website publication." "${files[@]}"
+          fi
+          original_bytes=$(stat -c %s "$D/CONEY_ISLAND_1903_LA_STORIA_RIVIVE_V73.mp4")
+          remote_bytes=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[]|select(.name=="CONEY_ISLAND_1903_LA_STORIA_RIVIVE_V73.mp4")|.size')
+          test "$original_bytes" = "$remote_bytes"
+          echo "DIRECT_MP4_ASSET_VERIFIED $original_bytes"
