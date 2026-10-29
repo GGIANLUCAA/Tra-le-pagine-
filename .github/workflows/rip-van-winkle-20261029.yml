@@ -6,7 +6,7 @@ on:
       - "queue/rip_van_winkle_20261029.json"
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: libri-rip-van-winkle-20261029
   cancel-in-progress: false
@@ -55,3 +55,30 @@ jobs:
             echo "::warning::Source or rendering failed: no video claim, no paid retry."
           fi
           echo "No Gacrux TTS call; quota not confirmed. No final MP4, no Vidu charges, no archive import."
+
+      - name: Persist verified status and real run URL (not the artifact itself)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import base64,json,os,subprocess
+          from pathlib import Path
+          path=Path("output/rip_van_winkle_20261029/QA_STATO_REALE.json")
+          report=json.loads(path.read_text()) if path.exists() else {
+            "episode":"rip_van_winkle_20261029","status":"render_failed_or_source_unavailable",
+            "narrated_master_exists":False,"paid_video_calls":0}
+          report["run_id"]=os.environ["GITHUB_RUN_ID"]
+          report["run_url"]="https://github.com/"+os.environ["GITHUB_REPOSITORY"]+"/actions/runs/"+report["run_id"]
+          report["artifact_name"]="RIP_VAN_WINKLE_17_TAVOLE_ANTEPRIMA_NON_FINALE" if path.exists() else None
+          report["artifact_uploaded"]="pending_action_result" if path.exists() else False
+          report["not_final"]=True
+          data=json.dumps(report,ensure_ascii=False,indent=2)+"\n"
+          body=json.dumps({"message":"Record real Rip Van Winkle free preview run status",
+             "content":base64.b64encode(data.encode()).decode()})
+          cmd=["gh","api","-X","PUT","repos/"+os.environ["GITHUB_REPOSITORY"]+
+               "/contents/reports/rip_van_winkle_20261029_run.json","--input","-"]
+          r=subprocess.run(cmd,input=body,text=True,capture_output=True)
+          print("REPORT_PERSISTED",r.returncode==0,report["run_url"])
+          if r.returncode:print("REPORT_ERROR",r.stderr[:400])
+          PY
