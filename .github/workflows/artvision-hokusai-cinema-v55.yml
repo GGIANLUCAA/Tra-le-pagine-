@@ -1,0 +1,82 @@
+name: "ArtVision V55 — Hokusai corrected Cinema Standard V55B review"
+on:
+  push:
+    branches:
+      - "fix/artvision-next-render-selector-20261029"
+    paths:
+      - ".github/workflows/artvision-hokusai-cinema-v55.yml"
+      - "scripts/artvision_hokusai_cinema_v55.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-v55-one-render-at-a-time
+  cancel-in-progress: false
+jobs:
+  hokusai:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify free local tools and install public Python dependencies
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          command -v ffmpeg
+          command -v ffprobe
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3"
+          python -m py_compile scripts/artvision_hokusai_cinema_v55.py src/production_adapter_v16.py src/artvision_cinema_prepared_v55.py
+      - name: Verify no paid provider call and no automatic posting in new workflow
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('scripts/artvision_hokusai_cinema_v55.py').read_text()
+          for forbidden in ('VIDU_API_KEY','RUNWARE_API_KEY','KLING_API_KEY','SEEDANCE_API_KEY','GEMINI_API_KEY','requests.post('):
+              assert forbidden not in s,forbidden
+          print('OFFLINE_COMPOSITING_ONLY; PUBLIC_MEDIA_HTTP_GET; NO_PAID_VIDEO_SERVICE')
+          PY
+      - name: Obtain real Met artwork and licensed original music; enforce V13/V54 gates; render
+        run: |
+          python scripts/artvision_hokusai_cinema_v55.py
+      - name: Confirm MP4 and both V55 ZIPs with CRC and SHA
+        run: |
+          python - <<'PY'
+          import pathlib,json,hashlib,zipfile,subprocess
+          root=pathlib.Path('output/artvision-hokusai-cinema-standard-v55b')
+          videos=list(root.glob('rendered/*.mp4'))
+          assert len(videos)==1,videos
+          v=videos[0]
+          j=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','stream=codec_name,width,height','-of','json',str(v)]))
+          assert any(s.get('codec_name')=='h264' and s.get('width')==1080 and s.get('height')==1920 for s in j['streams'])
+          assert any(s.get('codec_name')=='aac' for s in j['streams'])
+          bundles=list((root/'V55_DELIVERY').glob('*.zip'))
+          assert len(bundles)>=1
+          for zipfile_path in bundles:
+              with zipfile.ZipFile(zipfile_path) as archive:assert archive.testzip() is None
+          for name in ('FACEBOOK','INSTAGRAM','TIKTOK','YOUTUBE'):
+              assert (root/'rendered'/f'POST_{name}.txt').stat().st_size>70
+          print('REAL_MP4_RENDERED_NEEDS_REVIEW',hashlib.sha256(v.read_bytes()).hexdigest(),v.stat().st_size)
+          PY
+      - name: Store MP4, packages, four posts and source/rights as private GitHub artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_HOKUSAI_CINEMA_STANDARD_V55B_NEEDS_REVIEW
+          path: |
+            output/artvision-hokusai-cinema-standard-v55b/rendered/*.mp4
+            output/artvision-hokusai-cinema-standard-v55b/rendered/COPERTINA.jpg
+            output/artvision-hokusai-cinema-standard-v55b/rendered/POST_*.txt
+            output/artvision-hokusai-cinema-standard-v55b/rendered/FONTI_E_DIRITTI.md
+            output/artvision-hokusai-cinema-standard-v55b/rendered/VIDEO_RECIPE_V13.json
+            output/artvision-hokusai-cinema-standard-v55b/V55_DELIVERY/*.zip
+            output/artvision-hokusai-cinema-standard-v55b/V55_DELIVERY/DELIVERY_STATUS_V55.json
+            output/artvision-hokusai-cinema-standard-v55b/ARTVISION_4X1_PLAN.json
+            output/artvision-hokusai-cinema-standard-v55b/MET_OPEN_ACCESS_SOURCE.json
+          if-no-files-found: error
+          retention-days: 30
