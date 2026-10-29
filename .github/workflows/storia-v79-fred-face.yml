@@ -1,0 +1,37 @@
+name: "V79 Fred Ott 1894 facial restoration one-shot free model"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v79-fred-face.yml"
+      - "src/storia_v79_fred_face.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip -q install --no-cache-dir opencv-python-headless numpy pillow gradio_client
+      - name: Recover source color base and genuine Fred source frame from existing job
+        run: |
+          mkdir -p output/storia_v79_volti
+          curl -fLsS --connect-timeout 20 --max-time 110 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12901989932/zip" --output /tmp/v79_fred_source.zip
+          unzip -oq /tmp/v79_fred_source.zip -d output/storia_v79_volti
+          test -s output/storia_v79_volti/SNEEZE_1894_ORIGINALE.png
+      - name: One conservative free face restoration
+        run: python -u src/storia_v79_fred_face.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V79_FRED_SNEEZE_1894_FACE_RESTORATION
+          path: output/storia_v79_fred/
+          retention-days: 14
