@@ -1,0 +1,30 @@
+name: "ArtVision Critico Museum V64 — continuous camera regression"
+on:
+  pull_request:
+    paths:
+      - "src/artvision_museum_camera_v64.py"
+      - "tests/test_artvision_museum_camera_v64.py"
+      - "docs/productions/2026-10-29-socrates-critico-master-v60/V64_CAMERA_CORRECTION.md"
+      - ".github/workflows/artvision-socrates-critico-camera-v64.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  continuity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test no-frame-jump and final return to original museum room
+        run: python -m unittest discover -s tests -p "test_artvision_museum_camera_v64.py" -v
+      - name: Confirm no Google requests or simulated MP4 approvals in camera module
+        run: |
+          python - <<'PY'
+          import pathlib
+          content=pathlib.Path("src/artvision_museum_camera_v64.py").read_text()
+          assert "import requests" not in content and "import subprocess" not in content
+          print("pure geometry; no Google API, MP4, archive, V25 or billing operations")
+          PY
