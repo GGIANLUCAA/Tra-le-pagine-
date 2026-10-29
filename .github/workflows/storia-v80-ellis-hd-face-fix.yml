@@ -1,0 +1,80 @@
+name: "V80 Ellis Island — replace invented bag-face and reconstruct HD human faces"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v80-ellis-hd-face-fix.yml"
+      - "src/storia_v80_ellis_face_gfpgan_video.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  face_detail:
+    runs-on: ubuntu-latest
+    timeout-minutes: 42
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+      OMP_NUM_THREADS: "4"
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip -q install --no-cache-dir onnxruntime opencv-python-headless numpy Pillow huggingface_hub
+      - run: python -m py_compile src/storia_v80_ellis_face_gfpgan_video.py
+      - name: Retrieve historic V79 MP4 and exact source AI photographs, no need to download historic film again
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v80_ellis/V79_ASSETS
+          curl -fL --retry 2 --connect-timeout 15 --max-time 150 -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/12902473547/zip" -o /tmp/v79_ellis_assets.zip
+          unzip -t /tmp/v79_ellis_assets.zip >/dev/null
+          unzip -oq /tmp/v79_ellis_assets.zip -d output/storia_v80_ellis/V79_ASSETS/
+          test -s output/storia_v80_ellis/V79_ASSETS/FOTO_AI_03.png
+          test -s output/storia_v80_ellis/V79_ASSETS/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V79.mp4
+      - name: Free public GFPGAN v1.4 CPU photo face model, surgical bag/object correction
+        run: python -u src/storia_v80_ellis_face_gfpgan_video.py
+      - name: End-to-end H264 AAC and 3 photo-freeze pattern QA
+        run: |
+          set -euo pipefail
+          D=output/storia_v80_ellis
+          test -s "$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V80_VOLTI_HD.mp4"
+          test -s "$D/ELLIS_ISLAND_1903_V80_KIT.zip"
+          ffmpeg -v error -xerror -i "$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V80_VOLTI_HD.mp4" -f null -
+          python -u src/storia_rivive_v74_effect_gate.py --video "$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V80_VOLTI_HD.mp4" --min-cycles 3
+          unzip -t "$D/ELLIS_ISLAND_1903_V80_KIT.zip"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V80_ELLIS_ISLAND_HD_FACE_RESTORED_VIDEO_AND_REVIEW
+          path: |
+            output/storia_v80_ellis/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V80_VOLTI_HD.mp4
+            output/storia_v80_ellis/ELLIS_ISLAND_1903_V80_KIT.zip
+            output/storia_v80_ellis/FOTO_AI_*_FACE_HD.png
+            output/storia_v80_ellis/CONFRONTO_VOLTI_V79_V80.jpg
+            output/storia_v80_ellis/COPERTINA.jpg
+            output/storia_v80_ellis/V80_STATUS.json
+            output/storia_v80_ellis/FACE_QA.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Upload verified MP4 ZIP direct, do not publish on any social or site
+        run: |
+          set -euo pipefail
+          D=output/storia_v80_ellis
+          TAG=la-storia-rivive-ellis-island-1903-volti-hd-v80
+          files=("$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V80_VOLTI_HD.mp4" "$D/ELLIS_ISLAND_1903_V80_KIT.zip" "$D/CONFRONTO_VOLTI_V79_V80.jpg" "$D/V80_STATUS.json")
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target main --prerelease --latest=false --title "Ellis Island 1903 · Volti fotografici HD V80 (provino)" --notes "New historical real video Ellis Island 1903. Refined from V79: remove explicitly invented human face on real patterned bag. Free GFPGAN 1.4 CPU selected real human faces only; original cinema motion, image freezes remain authentic. Face details interpreted by AI, not verified likenesses. Human art review pending. No spending and no autopublication." "${files[@]}"
+          fi
+          local=$(stat -c %s "$D/LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V80_VOLTI_HD.mp4")
+          remote=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.assets[]|select(.name=="LA_STORIA_RIVIVE_ELLIS_ISLAND_1903_V80_VOLTI_HD.mp4")|.size')
+          test "$local" = "$remote"
+          echo "ANDROID_MP4_DIRECT_CHECK_OK $local"
