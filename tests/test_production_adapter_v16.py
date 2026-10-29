@@ -38,16 +38,18 @@ class AdapterTests(unittest.TestCase):
             'format':'artvision_cinema','assets':[],
             'serial_mode':'artvision_4x1',
             'artvision_4x1_plan':'../ARTVISION_4X1_PLAN.json'}))
-        with patch.object(a,'check_project',return_value={
-            'ready':False,'blockers':['Storyboard emotivo non compilato']
-        }) as preflight:
-            with patch.object(a.subprocess,'run') as renderer:
-                with self.assertRaisesRegex(ValueError,'ArtVision 4x1 preflight'):
-                    a.execute({'adapter':'cinema_v6_vangogh_prepared',
-                               'project_file':'group/cinema_standard/project.json'},
-                              self.root/'out')
-                renderer.assert_not_called()
-                preflight.assert_called_once()
+        # Isolate the V13 gate in this unit test; actual production keeps the pilot lock.
+        with patch('artvision_pilot_guard_v58.enforce_pilot_project'):
+            with patch.object(a,'check_project',return_value={
+                'ready':False,'blockers':['Storyboard emotivo non compilato']
+            }) as preflight:
+                with patch.object(a.subprocess,'run') as renderer:
+                    with self.assertRaisesRegex(ValueError,'ArtVision 4x1 preflight'):
+                        a.execute({'adapter':'cinema_v6_vangogh_prepared',
+                                   'project_file':'group/cinema_standard/project.json'},
+                                  self.root/'out')
+                    renderer.assert_not_called()
+                    preflight.assert_called_once()
 
     def test_script_mismatch_before_any_renderer(self):
         ep=self.root/'episodes/test';ep.mkdir(parents=True);(ep/'testo.txt').write_text('Actual words.')
