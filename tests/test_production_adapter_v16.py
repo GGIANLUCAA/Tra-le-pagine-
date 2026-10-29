@@ -56,3 +56,88 @@ class AdapterTests(unittest.TestCase):
         with patch.object(a.subprocess,'run') as execute:
             with self.assertRaises(ValueError):a.execute({'adapter':'books_gemini_cache','project_file':'project.json','episode':'test'},self.root/'out')
         execute.assert_not_called()
+
+
+class PreparedCinemaV55Tests(unittest.TestCase):
+    """Synthetic fixtures prove the offline mechanism, never an art deliverable."""
+    def setUp(self):
+        from PIL import Image, ImageDraw
+        import subprocess
+        import artvision_cinema_prepared_v55 as cinema
+        self.cinema=cinema
+        self.tmp=tempfile.TemporaryDirectory()
+        self.root=Path(self.tmp.name)
+        self.assets=self.root/'assets'
+        self.assets.mkdir()
+        self.image=self.assets/'authentic-fixture.jpg'
+        im=Image.new('RGB',(1400,1000),'#3a4d57')
+        draw=ImageDraw.Draw(im)
+        for i in range(6):
+            draw.ellipse((i*160+50,80,i*160+190,520),fill=(90+i*20,70+i*10,115))
+        im.save(self.image)
+        self.music=self.assets/'music.wav'
+        subprocess.run(['ffmpeg','-nostdin','-hide_banner','-loglevel','error','-y',
+                        '-f','lavfi','-i','sine=frequency=440:duration=8',
+                        '-c:a','pcm_s16le',str(self.music)],check=True,timeout=30)
+        ref=lambda p:{'file':p.name,'sha256':cinema.sha256(p)}
+        self.plan={
+            'schema':cinema.SCHEMA,'variant':'cinema_standard',
+            'title':'An Example Artwork','artist':'Example Artist',
+            'music':{**ref(self.music),'license':'CC0','recording_title':'Fixture test tone',
+                     'recording_artist':'FFmpeg fixture','source_url':'https://example.org/test',
+                     'license_url':'https://creativecommons.org/publicdomain/zero/1.0/'},
+            'shots':[{**ref(self.image),'duration_seconds':1.5,
+                      'mode':'detail' if i<3 else 'whole',
+                      'focus':[0.2+i*.2,0.2+i*.2],
+                      'purpose':'Distinct synthetic scene for technical render number '+str(i),
+                      'detail_id':'fixture-detail-'+str(i)} for i in range(4)]}
+        self.approved={self.image.resolve(),self.music.resolve()}
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_generic_renderer_rejects_fake_museum_missing_rights_and_bad_hash(self):
+        from copy import deepcopy
+        for mutate in (
+            lambda p:p.update(variant='cinema_museum'),
+            lambda p:p['music'].update(license='unknown'),
+            lambda p:p['shots'][0].update(sha256='0'*64),
+            lambda p:p['shots'][1].update(purpose='zoom'),
+            lambda p:p['shots'][1].update(file='../outside.jpg'),
+        ):
+            candidate=deepcopy(self.plan)
+            mutate(candidate)
+            with self.assertRaises(ValueError):
+                self.cinema.validate(candidate,self.assets,self.approved)
+
+    def test_real_six_second_h264_aac_render_and_full_decode(self):
+        import subprocess
+        video,cover=self.cinema.render(self.plan,self.assets,self.approved,self.root/'out')
+        self.assertTrue(video.is_file() and cover.is_file())
+        self.assertGreater(video.stat().st_size,100000)
+        probe=subprocess.check_output(['ffprobe','-v','error','-show_entries',
+                                       'stream=codec_name,width,height','-of','json',str(video)])
+        streams=json.loads(probe)['streams']
+        self.assertTrue(any(s.get('codec_name')=='h264' and s.get('width')==1080 and s.get('height')==1920 for s in streams))
+        self.assertTrue(any(s.get('codec_name')=='aac' for s in streams))
+        subprocess.run(['ffmpeg','-nostdin','-v','error','-i',str(video),'-f','null','-'],
+                       check=True,timeout=120)
+        with self.assertRaisesRegex(ValueError,'exists'):
+            self.cinema.render(self.plan,self.assets,self.approved,self.root/'out')
+
+    def test_runner_prepared_cinema_requires_no_fake_gacrux_cache(self):
+        import production_runner_v16 as runner
+        project=self.root/'project'
+        project.mkdir()
+        (project/'art.jpg').write_bytes(self.image.read_bytes())
+        (project/'music.wav').write_bytes(self.music.read_bytes())
+        (project/'PROJECT_V13.json').write_text(json.dumps({
+            'format':'artvision_cinema',
+            'assets':[{'file':'art.jpg'},{'file':'music.wav'}]}))
+        (self.assets/'plan.json').write_text(json.dumps(self.plan))
+        with patch.object(runner,'ROOT',self.root):
+            files=runner.inputs({'adapter':'cinema_v55_prepared',
+                                 'project_file':'project/PROJECT_V13.json',
+                                 'assets_dir':'assets','cinema_plan_file':'assets/plan.json'})
+        self.assertIn(self.assets/'plan.json',files)
+        self.assertNotIn(self.root/'missing_gacrux_cache',files)
