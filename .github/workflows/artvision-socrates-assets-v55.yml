@@ -1,4 +1,4 @@
-name: "ArtVision V55 — Socrates authentic assets preflight (not a render)"
+name: "ArtVision V55 — Socrates authentic assets and one Cinema Standard render"
 on:
   push:
     branches:
@@ -7,16 +7,17 @@ on:
       - ".github/workflows/artvision-socrates-assets-v55.yml"
       - "src/artvision_met_prepared_assets_v55.py"
       - "tests/test_artvision_met_prepared_assets_v55.py"
+      - "src/artvision_socrates_prepared_job_v55.py"
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: artvision-v55-one-render-at-a-time
   cancel-in-progress: false
 jobs:
   socrates-assets:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -25,6 +26,7 @@ jobs:
       - name: Install free dependencies and run offline safety tests
         run: |
           python -m pip install --disable-pip-version-check "Pillow>=10,<13" "pytest>=8,<10"
+          ffmpeg -version | head -1
           python -m pytest -q tests/test_artvision_met_prepared_assets_v55.py
       - name: Acquire actual original Met 436105 and verified licensed recording
         run: |
@@ -48,6 +50,76 @@ jobs:
           assert not list(root.glob('*.mp4'))
           print('AUTHENTIC_ASSETS_READY_FOR_V54_V13; NO_VIDEO_RENDERED')
           PY
+      - name: Create official V54 four-brief exactly once and fill from real Met sources
+        run: |
+          python src/video_director_v13.py four-brief \
+            --topic "The Death of Socrates" --artist "Jacques Louis David" \
+            --out output/artvision-socrates-assets-v55/ARTVISION_4X1_PLAN.json
+          python src/artvision_socrates_prepared_job_v55.py --prepare
+          python src/video_director_v13.py four-check \
+            --plan output/artvision-socrates-assets-v55/ARTVISION_4X1_PLAN.json
+          python src/video_director_v13.py check \
+            --project output/artvision-socrates-assets-v55/cinema_standard/PROJECT_V13.json
+      - name: Render one actual original Cinema Standard MP4 via official V16 prepared adapter
+        run: |
+          python src/production_adapter_v16.py \
+            --job output/artvision-socrates-assets-v55/SOCRATES_CINEMA_JOB_V16.json \
+            --out output/artvision-socrates-cinema-standard-v55
+      - name: Pack MP4, cover, 4 unique posts, rights, recipe and real opening frames
+        run: |
+          python src/artvision_delivery_v55.py pack \
+            --video output/artvision-socrates-cinema-standard-v55/ARTVISION_JACQUES_LOUIS_DAVID_CINEMA_STANDARD_V55_REVIEW.mp4 \
+            --cover output/artvision-socrates-cinema-standard-v55/COPERTINA.jpg \
+            --facebook output/artvision-socrates-assets-v55/V55_EDITORIAL/POST_FACEBOOK.txt \
+            --instagram output/artvision-socrates-assets-v55/V55_EDITORIAL/POST_INSTAGRAM.txt \
+            --tiktok output/artvision-socrates-assets-v55/V55_EDITORIAL/POST_TIKTOK.txt \
+            --youtube output/artvision-socrates-assets-v55/V55_EDITORIAL/POST_YOUTUBE.txt \
+            --rights output/artvision-socrates-assets-v55/V55_EDITORIAL/FONTI_E_DIRITTI.md \
+            --recipe output/artvision-socrates-cinema-standard-v55/VIDEO_RECIPE_V13.json \
+            --out output/artvision-socrates-delivery-v55
+      - name: Create exact-hash V55 archive staging only after actual MP4 exists
+        run: |
+          python - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path("output/artvision-socrates-cinema-standard-v55")
+          src=pathlib.Path("output/artvision-socrates-assets-v55/V55_EDITORIAL")
+          video=root/"ARTVISION_JACQUES_LOUIS_DAVID_CINEMA_STANDARD_V55_REVIEW.mp4"
+          assert video.is_file() and video.stat().st_size>100000
+          sha=hashlib.sha256(video.read_bytes()).hexdigest()
+          recipe=json.loads((root/"VIDEO_RECIPE_V13.json").read_text())
+          assert recipe["video"]["sha256"]==sha
+          recipe["review_state"]="rendered_needs_review"
+          posts={k:(src/("POST_"+k.upper()+".txt")).read_text().strip() for k in ("facebook","instagram","tiktok","youtube")}
+          rights=(src/"FONTI_E_DIRITTI.md").read_text()
+          staging={"schema":"artvision-v55-archive-staging-v1","video_key":video.name,
+                   "video_sha256":sha,"video_bytes":video.stat().st_size,
+                   "review_state":"rendered_needs_review","posts":posts,
+                   "source_post_sha256":{k:hashlib.sha256((v+"\n").encode()).hexdigest() for k,v in posts.items()},
+                   "rights_markdown":rights,"recipe":recipe}
+          path=pathlib.Path("docs/productions/2026-10-29-socrates-cinema-standard-v55/ARCHIVE_STAGING_V55.json")
+          assert not path.exists(), "Do not overwrite existing manifest"
+          path.write_text(json.dumps(staging,ensure_ascii=False,indent=2)+"\n")
+          print("NEW_REAL_MP4_SHA256",sha,"BYTES",video.stat().st_size)
+          PY
+          python src/video_library_dossier_sync_v55.py --dry-run \
+            docs/productions/2026-10-29-socrates-cinema-standard-v55/ARCHIVE_STAGING_V55.json
+      - name: Persist staging manifest on production branch, not release approval
+        run: |
+          git config user.name "artvision-v55-bot"
+          git config user.email "artvision-v55-bot@users.noreply.github.com"
+          git add docs/productions/2026-10-29-socrates-cinema-standard-v55/ARCHIVE_STAGING_V55.json
+          git commit -m "ArtVision: record actual Socrates Cinema Standard SHA and four social posts (review only)"
+          git push origin HEAD:artvision-socrates-cinema-standard-v55-20261029
+      - name: Preserve new real MP4, full V55 ZIP and Android-friendly direct file
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_SOCRATES_CINEMA_STANDARD_V55_REAL_REVIEW
+          path: |
+            output/artvision-socrates-delivery-v55/
+            output/artvision-socrates-cinema-standard-v55/ADAPTER_RESULT_V16.json
+            docs/productions/2026-10-29-socrates-cinema-standard-v55/ARCHIVE_STAGING_V55.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Preserve original assets and source manifest for next Cinema Standard
         uses: actions/upload-artifact@v4
         with:
