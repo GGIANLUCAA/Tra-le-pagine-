@@ -1,0 +1,36 @@
+name: ArtVision Wright V78 — free source mirror scout (no renderer)
+on:
+  push:
+    branches: [pilot/artvision-wright-air-pump-v78]
+    paths: [.github/workflows/artvision-wright-source-scout-v78.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe separate reputable image sources without retries or any credits
+        run: |
+          python - <<'PY'
+          import re, requests
+          tests={
+            'commons_cached_thumb_2560':'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/An_Experiment_on_a_Bird_in_the_Air_Pump.jpg/2560px-An_Experiment_on_a_Bird_in_the_Air_Pump.jpg',
+            'wikiart_cdn':'https://uploads6.wikiart.org/images/joseph-wright/an-experiment-on-a-bird-in-the-air-pump-1768.jpg',
+            'wikiart_other_cdn':'https://images.wikiart.org/paintings/joseph-wright/an-experiment-on-a-bird-in-the-air-pump-1768.jpg',
+            'wellcome_iiif':'https://iiif.wellcomecollection.org/image/V0044807.jpg/full/3000,/0/default.jpg',
+            'national_gallery_page':'https://www.nationalgallery.org.uk/paintings/joseph-wright-of-derby-an-experiment-on-a-bird-in-the-air-pump',
+          }
+          for name,url in tests.items():
+            try:
+              r=requests.get(url,headers={'User-Agent':'Mozilla/5.0 (compatible; ArtVisionRightsResearch/1.0)'},timeout=10,stream=True,allow_redirects=True)
+              print('SOURCE_CHECK',name,r.status_code, r.headers.get('Content-Type'),r.headers.get('Content-Length'),r.url,flush=True)
+              if name=='national_gallery_page' and r.status_code==200:
+                b=r.content.decode('utf-8','replace')
+                for match in re.findall(r'<meta[^>]+(?:og:image|twitter:image)[^>]+>',b,re.I)[:6]:
+                  print('GALLERY_IMAGE_META',match[:450],flush=True)
+              r.close()
+            except Exception as ex:
+              print('SOURCE_FAILED',name,type(ex).__name__,str(ex)[:180],flush=True)
+          PY
