@@ -1,0 +1,93 @@
+{
+  "schema": "artvision-v55-archive-staging-v1",
+  "video_key": "ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_STANDARD_V55_REVIEW.mp4",
+  "video_sha256": "f253f21ea327e17a16ac453a18059f8e468c98f3b7e468574d5ced630fcc8689",
+  "video_bytes": 3110366,
+  "review_state": "rendered_needs_review",
+  "posts": {
+    "facebook": "Una piccola stampa, un mare gigantesco. In La grande onda di Hokusai (circa 1830–32), tre barche sembrano minuscole sotto la schiuma. Sul fondo appare il Fuji: lo avevi notato? Opera: The Great Wave, Katsushika Hokusai. Fonte immagine: Metropolitan Museum of Art JP1847, Open Access CC0. Musica: Water Lily di Kevin MacLeod, CC BY 4.0 — incompetech.com.",
+    "instagram": "Tre barche. Un’onda immensa. Un Fuji quasi invisibile. 🌊 È il miracolo prospettico di Hokusai, The Great Wave (1830–32). Guarda prima i rematori, poi la montagna. Stampa Met JP1847, immagine Open Access CC0. 🎵 Water Lily — Kevin MacLeod, CC BY 4.0 (incompetech.com). #Hokusai #TheGreatWave #ArtVision #StoriaDellArte",
+    "tiktok": "Riesci a trovare il Monte Fuji prima che appaia tutto il quadro? 🌊 Guarda le tre barche sotto la grande onda di Hokusai: la scala ti inganna. The Great Wave, c. 1830–32, Met JP1847 / CC0. Musica Water Lily — Kevin MacLeod, CC BY 4.0 incompetech.com. #Arte #Hokusai #Fuji #ArtTok",
+    "youtube": "Come può una stampa di 25,7 × 37,9 cm sembrare un oceano immenso? In The Great Wave di Katsushika Hokusai, la cresta sovrasta le tre barche e il Fuji diventa un minuscolo triangolo. In questa versione Cinema Standard osserviamo soltanto dettagli autentici, senza animazioni ingannevoli. Opera circa 1830–32, Met JP1847, riproduzione Open Access CC0. Musica originale Water Lily di Kevin MacLeod, CC BY 4.0; fonte incompetech.com, licenza creativecommons.org/licenses/by/4.0/."
+  },
+  "source_post_sha256": {
+    "facebook": "cbe1ecc8b88285d59693ec71c3bbfb0c70045c751d7b7daf892bba0d35246c17",
+    "instagram": "3fb33b5f09355276196583cf40a0b9a82b01ebca2ea02eeaf80933aaebc791cd",
+    "tiktok": "1f08772987e6f2b121df20bb13763d4382a547f6aa5665feca6665fecaed513",
+    "youtube": "37f838d354e00fbe6e86e0f6ba0b910347c0f87f40b80b17a08782caa52fd648"
+  },
+  "rights_markdown": "# The Great Wave — Met JP1847\n\nArtwork public domain, high-resolution image downloaded from official Metropolitan Museum of Art Open Access API.\nMuseum record: https://www.metmuseum.org/art/collection/search/45434\nSource metadata: https://collectionapi.metmuseum.org/public/collection/v1/objects/45434\nImage SHA256: cbb9988f2f18b9180a1cc0cf5dbb0e3bbf8f2e85d17930cf6ca9ab36fac36303\nImage itself downloaded from Met primaryImage, local image was verified.\nDimensions of this particular print: 25.7 × 37.9 cm. This is Cinema Standard: no reconstructed gallery or fake museum frame.\n\nOriginal recorded music: Water Lily — Kevin MacLeod. Source: https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035\nISRC USUAN1400035. License CC BY 4.0 https://creativecommons.org/licenses/by/4.0/\nRecording SHA256: b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6\nCopyright/platform checks may still be required before publishing. Do not publish automatically.",
+  "recipe": {
+    "schema": "video-recipe-v13",
+    "project_id": "5cecde14-dae4-4d93-8056-a3678e94f9af",
+    "format": "artvision_cinema",
+    "topic": "The Great Wave",
+    "variant": "cinema_standard",
+    "review_state": "rendered_needs_review",
+    "status": "rendered_needs_review",
+    "code": {
+      "commit": "c4f8497691704df55568eee3b13b8a9bebd8ce6c",
+      "tracked_changes": false
+    },
+    "video": {
+      "name": "ARTVISION_KATSUSHIKA_HOKUSAI_CINEMA_STANDARD_V55_REVIEW.mp4",
+      "sha256": "f253f21ea327e17a16ac453a18059f8e468c98f3b7e468574d5ced630fcc8689",
+      "bytes": 3110366
+    },
+    "cover": {
+      "name": "COPERTINA.jpg",
+      "sha256": "7065c6c25e747b457f9e1c656ce114605ee5153a9dd0f956993019c4b148af37",
+      "bytes": 1132969
+    },
+    "sources": [
+      {
+        "name": "Metropolitan Museum of Art JP1847 artwork",
+        "sha256": "cbb9988f2f18b9180a1cc0cf5dbb0e3bbf8f2e85d17930cf6ca9ab36fac36303",
+        "url": "https://www.metmuseum.org/art/collection/search/45434",
+        "rights": "Public Domain / Open Access"
+      },
+      {
+        "name": "Water Lily — Kevin MacLeod original recording",
+        "sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+        "url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035",
+        "rights": "CC BY 4.0"
+      }
+    ],
+    "duration_seconds": 31.25,
+    "dimensions_px": [
+      1080,
+      1920
+    ],
+    "video_codec": "H264",
+    "audio_codec": "AAC",
+    "technical_qa": {
+      "full_decode": "passed",
+      "original_artifact_zip_crc": "passed",
+      "v55_complete_zip_crc": "passed",
+      "opening_frames_inspected": [
+        0.1,
+        1,
+        3,
+        5,
+        7
+      ],
+      "full_speed_watch": "pending",
+      "audio_listening": "pending"
+    },
+    "release": {
+      "V25_approved": false,
+      "archive_sync_pending": true,
+      "private_catalog_verified": false,
+      "private_playback_verified": false,
+      "private_cover_verified": false,
+      "private_zip_verified": false
+    },
+    "note": "Archival recipe linked to original verified MP4 SHA; full original V13 recipe remains in GitHub Actions artifact 12882622228. No artistic approval."
+  },
+  "source_artifact": {
+    "github_run_id": 40840392325,
+    "artifact_id": 12882622228,
+    "source_branch": "fix/artvision-next-render-selector-20261029"
+  },
+  "note": "Archive text staging only; original video not imported into private site; no V25 approval, no social publication."
+}
