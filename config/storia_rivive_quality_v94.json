@@ -109,5 +109,57 @@
     "existing_final_artistic_gate": "src/storia_rivive_final_gate_v91.py",
     "require_MP4_AAC_H264_zip_cover_four_posts_rights": true,
     "publication_to_site_requires_verified_import": true
+  },
+  "additional_v96_five_scene_hard_gate": {
+    "status": "mandatory_for_new_4classic_1vidu_final_delivery",
+    "script": "src/storia_rivive_v96_guard.py",
+    "invoked_by": "src/storia_rivive_final_gate_v91.py",
+    "fail_closed": true,
+    "photography": {
+      "four_separate_original_bw_moving_shots": 4,
+      "real_image_to_image_modern_photo_restorations": 4,
+      "ddcolor_only_is_approved_photo": false,
+      "all_people_objects_and_source_face_identity_visually_verified": true,
+      "color_photo_hold_range_s": [
+        0.9,
+        3.05
+      ],
+      "reference_quality_comparison_required": true
+    },
+    "one_vidu_scene": {
+      "same_original_bw_source_shot_before_vidu": true,
+      "same_freeze_source_frame_at_video_start": true,
+      "genuine_motion_video_s": [
+        4.5,
+        5.5
+      ],
+      "no_arbitrary_second_12_insertion": true,
+      "color_by_s": 1.15,
+      "full_5s_visual_review_required": true,
+      "same_scene_palette_as_stills": true,
+      "no_provider_retry_or_extra_credits": true
+    },
+    "titles": {
+      "max_opaque_background_fraction_of_frame": 0.08,
+      "must_not_cover_faces_hands_subjects": true
+    },
+    "block_if": {
+      "human_artistic_video_review_missing": true,
+      "any_source_photo_incomplete": true,
+      "vidu_unrelated_frame": true,
+      "flat_ddcolor_face_only": true,
+      "discontinuous_audio": true,
+      "actual_shot_count_incorrect": true
+    },
+    "reported_bad_examples": [
+      "User 44371.jpg Bombay 1929: soft colors/face detail, dark overlarge title",
+      "User 44486.mp4 New York 1911: unrelated Vidu cut at 12s, color orange, four 3-4s photo holds"
+    ],
+    "reference_clip_filenames": [
+      "facebook_20261028_142708.mp4",
+      "facebook_20261028_142737.mp4",
+      "facebook_20261028_142900.mp4"
+    ],
+    "full_root_cause_audit": "docs/LA_STORIA_RIVIVE_V96_AUDIT_ERRORI_RIPETUTI_20261030.md"
   }
 }
