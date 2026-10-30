@@ -1,0 +1,25 @@
+{
+  "schema": "vidu_project_gateway_v1",
+  "request_id": "vidu-gateway-plan-smoke-20261030",
+  "mode": "plan",
+  "format": "storia_rivive",
+  "source": {
+    "release_tag": "storia-rivive-san-francisco-1906-v86-hybrid-4plus1-real-vidu",
+    "asset_name": "COPERTINA.jpg",
+    "sha256": "02a7d693e6644ec823ddfc18b1d9450ef7dccc7be6af625fdc5c423b80573ae0",
+    "subject_reviewed_by_user": true,
+    "provenance_url": "https://www.loc.gov/item/00694408/"
+  },
+  "clip": {
+    "model": "viduq2-pro-fast",
+    "resolution": "720p",
+    "seconds": 5,
+    "off_peak": false,
+    "audio": false,
+    "color_reveal_first_second": true,
+    "prompt": "Preserve the exact 1906 San Francisco historical figures and existing vintage street vehicles, each moving with natural body mechanics and stable wheel geometry in a single uninterrupted filmed moment. Do not invent new characters, machines or architectural details."
+  },
+  "distribution": {
+    "github_public_preview": false
+  }
+}
