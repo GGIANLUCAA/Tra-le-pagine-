@@ -1,0 +1,124 @@
+name: "VIDU · Gateway condiviso ChatGPT (tutte le chat del progetto)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/vidu-chatgpt-project-gateway.yml"
+      - "requests/vidu/*.json"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: vidu-chatgpt-gateway-single-provider-billable-post
+  cancel-in-progress: false
+jobs:
+  vidu_gateway:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Offline security regression tests, no paid provider requests"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/vidu_project_gateway_v1.py tests/test_vidu_project_gateway_v1.py
+          python -m unittest discover -s tests -p "test_vidu_project_gateway_v1.py" -v
+      - name: "Detect only ONE newly created project-wide Vidu request on this push"
+        shell: bash
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os, pathlib, subprocess, re
+          before=os.environ["BEFORE"];after=os.environ["AFTER"]
+          if not re.fullmatch(r"[0-9a-f]{40}",before) or not re.fullmatch(r"[0-9a-f]{40}",after):
+              raise SystemExit("Cannot determine exact pushed commit; fail closed")
+          p=subprocess.run(["git","diff","--name-only","--diff-filter=A",before,after,"--","requests/vidu"],capture_output=True,text=True,check=True)
+          matches=[s.strip() for s in p.stdout.splitlines() if s.strip()]
+          if len(matches)>1:raise SystemExit("Multiple requests in one push forbidden: one paid video at a time")
+          if matches and not re.fullmatch(r"requests/vidu/[a-z0-9][a-z0-9-]{7,63}\.json",matches[0]):
+              raise SystemExit("Invalid Vidu request path")
+          path=matches[0] if matches else ""
+          if not path:print("VIDU_GATEWAY_INSTALLED_AND_TESTED_NO_VIDEO_REQUEST")
+          else:print("VIDU_GATEWAY_UNIQUE_REQUEST_FOUND",path)
+          with open(os.environ["GITHUB_ENV"],"a") as out:
+              out.write("VIDU_REQUEST_FILE="+path+"\n")
+          PY
+      - name: "Install video tools ONLY when a request exists"
+        if: env.VIDU_REQUEST_FILE != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --quiet "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+      - name: "Serve free balance, free plan, exactly one approved paid generation, or GET-only collection"
+        if: env.VIDU_REQUEST_FILE != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u src/vidu_project_gateway_v1.py --request "$VIDU_REQUEST_FILE"
+      - name: "Preserve private credit reports, plan, videos and QA in GitHub Actions artifact"
+        if: always() && env.VIDU_REQUEST_FILE != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: VIDU_CHATGPT_PROJECT_GATEWAY_RESULT_${{ github.run_id }}
+          path: output/vidu_project_gateway/
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Optional direct Android download through GitHub prerelease, only with explicit request approval"
+        if: success() && env.VIDU_REQUEST_FILE != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,pathlib
+          d=json.loads(pathlib.Path(os.environ["VIDU_REQUEST_FILE"]).read_text())
+          distribution=d.get("distribution") or {}
+          requested=distribution.get("github_public_preview") is True
+          mode=d["mode"]
+          clip_id=d.get("collect_request_id",d["request_id"]) if mode=="collect" else d["request_id"]
+          dest=pathlib.Path("output/vidu_project_gateway")/d["request_id"]
+          original=dest/("VIDU_"+clip_id+"_ORIGINAL.mp4")
+          transformed=dest/("VIDU_"+clip_id+"_COLOR_MOTION.mp4")
+          allowed=requested and mode in ("generate","collect") and original.is_file() and transformed.is_file()
+          print("ANDROID_PUBLIC_PREVIEW_OPT_IN",allowed,"MODE",mode)
+          with open(os.environ["GITHUB_ENV"],"a") as f:
+              f.write("VIDU_RELEASE_PUBLISH="+("true" if allowed else "false")+"\n")
+              f.write("VIDU_RELEASE_ID="+clip_id+"\n")
+              f.write("VIDU_RELEASE_DIR="+str(dest)+"\n")
+          PY
+      - name: "Create preview release with real MP4 only, never private balances"
+        if: success() && env.VIDU_RELEASE_PUBLISH == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="vidu-chat-$VIDU_RELEASE_ID"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Existing preview already present. Do not overwrite or duplicate."
+            exit 0
+          fi
+          gh release create "$tag" \
+            "$VIDU_RELEASE_DIR/VIDU_${VIDU_RELEASE_ID}_ORIGINAL.mp4" \
+            "$VIDU_RELEASE_DIR/VIDU_${VIDU_RELEASE_ID}_COLOR_MOTION.mp4" \
+            "$VIDU_RELEASE_DIR/PUBLIC_STATUS.json" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Vidu ChatGPT · $VIDU_RELEASE_ID · anteprima tecnica" \
+            --notes "Anteprima tecnica ChatGPT Vidu. Movimento e colori ricostruiti con AI, non ripresa documentaria originale a colori. Solo revisione: controllo artistico, diritti e pubblicazione social non approvati. Il report crediti rimane privato nel workflow Action. Link pubblico diretto ad Android, solo perché richiesto esplicitamente." \
+            --prerelease
+          names="$(gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          grep -Fqx "VIDU_${VIDU_RELEASE_ID}_ORIGINAL.mp4" <<< "$names"
+          grep -Fqx "VIDU_${VIDU_RELEASE_ID}_COLOR_MOTION.mp4" <<< "$names"
+          echo "VIDU_CHAT_GATEWAY_ANDROID_RELEASE_VERIFIED"
