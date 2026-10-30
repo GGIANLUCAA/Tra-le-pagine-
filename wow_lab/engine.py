@@ -158,7 +158,7 @@ def select_artwork(conf: dict, stamp: str, history: list[dict], fixed_id: int | 
     elif conf.get("allow_museum_api_search"):
         queries = conf.get("search_queries", [])
         if queries:
-            index = (int(stamp[-2:]) // 2 + int(stamp[-4:-2])) % len(queries)
+            index = (int(stamp[-2:]) // 2 + int(stamp[6:8])) % len(queries)
             queries = queries[index:] + queries[:index]
         for q in queries[:3]:
             candidates.extend(discovery_ids(q, limit=9))
@@ -169,7 +169,7 @@ def select_artwork(conf: dict, stamp: str, history: list[dict], fixed_id: int | 
         candidates.sort(key=lambda n: (n in recently[:3], n in recently, n in conf["allowed_artwork_ids"]))
     problems = []
     for ident in candidates[:20]:
-        if fixed_id is None and ident == (recently[0] if recently else None):
+        if fixed_id is None and ident in recently:
             continue
         try:
             rec = get_json(object_url(ident))
