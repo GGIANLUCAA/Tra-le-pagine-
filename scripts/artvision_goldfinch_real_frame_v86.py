@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 OUT=pathlib.Path("output/artvision-fabritius-v86")
 OUT.mkdir(parents=True,exist_ok=True)
 PHOTO="https://commons.wikimedia.org/wiki/Special:Redirect/file/Carel%20fabritius%2C%20il%20cardellino%2C%201654%2C%2001.jpg"
-ALT="https://upload.wikimedia.org/wikipedia/commons/9/9e/Carel_fabritius%2C_il_cardellino%2C_1654%2C_01.jpg"
+ALT="https://upload.wikimedia.org/wikipedia/commons/f/fa/Carel_fabritius%2C_il_cardellino%2C_1654%2C_01.jpg"
 MUSIC="https://incompetech.com/music/royalty-free/mp3-royaltyfree/Water%20Lily.mp3"
 FPS=20; W=720; H=1280; DURATION=44; N=FPS*DURATION
 SHA=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
