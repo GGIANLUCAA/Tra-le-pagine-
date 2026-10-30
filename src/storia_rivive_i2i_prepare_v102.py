@@ -78,14 +78,31 @@ def verified_source_preflight(order, source_dir):
     film_sha=sha(source)
     if report.get("original_sha256")!=film_sha:
         raise ValueError("SCOUT_FILM_SHA_MISMATCH")
-    return film_sha
+    # V111: an old or tampered cached contact sheet must never become I2I input.
+    if report.get("frame_provenance_source_sha256")!=film_sha:
+        raise ValueError("FRAME_PROVENANCE_FILM_SHA_MISMATCH_OR_MISSING")
+    entries=report.get("frame_provenance")
+    if not isinstance(entries,list) or not entries:
+        raise ValueError("FRAME_PROVENANCE_MISSING")
+    frame_map={}
+    for entry in entries:
+        if not isinstance(entry,dict):
+            raise ValueError("INVALID_FRAME_PROVENANCE")
+        name=entry.get("filename")
+        digest=entry.get("sha256")
+        if (not isinstance(name,str) or not re.fullmatch(r"frame_\\d{2}\\.png",name)
+                or not isinstance(digest,str) or not re.fullmatch(r"[0-9a-f]{64}",digest)
+                or name in frame_map):
+            raise ValueError("INVALID_FRAME_PROVENANCE")
+        frame_map[name]=entry
+    return film_sha,frame_map
 
 def build(order,selection,source_dir):
     if order.get("contract")!="LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT":
         raise ValueError("Not an authenticated V101 work-order schema")
     if order.get("paid_api_call_permitted") is not False or order.get("publish_permitted") is not False:
         raise ValueError("Unsafe work-order permissions")
-    source_video_sha=verified_source_preflight(order,source_dir)
+    source_video_sha,frame_provenance=verified_source_preflight(order,source_dir)
     if selection.get("status")!="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW":
         raise ValueError("No five candidate source frames")
     chosen=selection.get("preselected",[])
@@ -110,12 +127,20 @@ def build(order,selection,source_dir):
                 f"crop={native_crop_w}px height={height}px; need >=400px crop and >=720px height"
             )
         frame_sha=sha(path)
+        recorded=frame_provenance.get(name)
+        if recorded is None:
+            raise ValueError("SOURCE_FRAME_NOT_IN_SCOUT_PROVENANCE: "+name)
+        if recorded["sha256"]!=frame_sha:
+            raise ValueError("SOURCE_FRAME_SHA_MISMATCH_WITH_SCOUT: "+name)
         if frame_sha in seen_frame_hashes:
             raise ValueError("DUPLICATE_SOURCE_FRAME_BYTES: "+name)
         seen_frame_hashes.add(frame_sha)
         jobs.append({
           "job_id":f"{order['cycle_id']}_photo_{n+1:02d}",
           "source_file":str(path),"source_sha256":frame_sha,
+          "source_film_sha256":source_video_sha,
+          "extraction_index":recorded.get("extraction_index"),
+          "exact_source_timecode_verified":False,
           "source_raster_px":[width,height],
           "target_raster_px":[720,1280],
           "target_kind":"REAL_SOURCE_LOCKED_I2I_PHOTOGRAPH",
@@ -133,6 +158,7 @@ def build(order,selection,source_dir):
     return {"version":"V102_SOURCE_LOCKED_I2I_JOBS",
       "cycle_id":order["cycle_id"],"episode_id":order["episode_id"],
       "source_video_sha256":source_video_sha,
+      "frame_provenance_guard":"V111_EXTRACTED_PNG_SHA256_MATCH_SCOUT",
       "original_frame_jobs":jobs,"photos_requested":5,
       "visual_duplicate_guard":visual_guard,
       "historical_shot_distinctness_verified":False,
