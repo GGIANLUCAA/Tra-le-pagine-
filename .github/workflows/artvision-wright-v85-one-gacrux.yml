@@ -1,0 +1,39 @@
+name: ArtVision Wright V85 — ONE original Google Gacrux voice
+on:
+  pull_request:
+    paths:
+      - "src/artvision_wright_critico_voice_v85.py"
+      - "modules/artvision_critico/production_series/wright_air_pump_v85.json"
+      - ".github/workflows/artvision-wright-v85-one-gacrux.yml"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-wright-one-gacrux-v85-no-repeat
+  cancel-in-progress: false
+jobs:
+  one-real-Gacrux-WAV:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install necessary audio and offline Italian ASR tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          pip install "google-genai>=2.25.0" "numpy>=1.26" "soundfile>=0.12" "scipy>=1.11" "faster-whisper>=1.1"
+      - name: Make one real Google Gacrux narration for BOTH Critico versions
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python src/artvision_wright_critico_voice_v85.py
+      - name: Preserve original WAV and timing after one attempt, even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_WRIGHT_ONE_REAL_GACRUX_V85
+          path: output/artvision_wright_critico_v85/
+          retention-days: 30
+          if-no-files-found: warn
