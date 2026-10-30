@@ -28,11 +28,33 @@ def sha(path):
         for block in iter(lambda:f.read(1024*1024),b""):h.update(block)
     return h.hexdigest()
 
+def verified_source_preflight(order, source_dir):
+    """Fail closed before preparing a provider-consumable source-locked job."""
+    issues=order.get("blocking_issues")
+    if not isinstance(issues,list):
+        raise ValueError("V101_SOURCE_PREFLIGHT_MISSING")
+    if issues:
+        raise ValueError("V101_SOURCE_PREFLIGHT_BLOCKED: "+", ".join(str(i) for i in issues)[:160])
+    report_path=source_dir/"SCOUT_REPORT.json"
+    if not report_path.is_file():
+        raise ValueError("SCOUT_REPORT_MISSING")
+    report=json.loads(report_path.read_text(encoding="utf-8"))
+    if report.get("status")!="REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW":
+        raise ValueError("SCOUT_SOURCE_NOT_READY")
+    source=source_dir/"ORIGINAL_ARCHIVE.webm"
+    if not source.is_file():
+        raise ValueError("ORIGINAL_ARCHIVE_MISSING")
+    film_sha=sha(source)
+    if report.get("original_sha256")!=film_sha:
+        raise ValueError("SCOUT_FILM_SHA_MISMATCH")
+    return film_sha
+
 def build(order,selection,source_dir):
     if order.get("contract")!="LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT":
         raise ValueError("Not an authenticated V101 work-order schema")
     if order.get("paid_api_call_permitted") is not False or order.get("publish_permitted") is not False:
         raise ValueError("Unsafe work-order permissions")
+    source_video_sha=verified_source_preflight(order,source_dir)
     if selection.get("status")!="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW":
         raise ValueError("No five candidate source frames")
     chosen=selection.get("preselected",[])
@@ -40,6 +62,7 @@ def build(order,selection,source_dir):
     names=[r["filename"] for r in chosen]
     if len(set(names))!=5:raise ValueError("Duplicate frames")
     jobs=[]
+    seen_frame_hashes=set()
     for n,row in enumerate(chosen):
         name=row["filename"]
         if not re.fullmatch(r"frame_\d{2}\.png",name):raise ValueError("Unsafe source filename")
@@ -49,10 +72,19 @@ def build(order,selection,source_dir):
             image.verify()
         with Image.open(path) as image:
             width,height=image.size
-        if width<320 or height<240:raise ValueError("Original source too small")
+        native_crop_w=min(width,round(height*9/16))
+        if native_crop_w<400 or height<720:
+            raise ValueError(
+                f"SOURCE_NATIVE_DETAIL_INSUFFICIENT: {name} "
+                f"crop={native_crop_w}px height={height}px; need >=400px crop and >=720px height"
+            )
+        frame_sha=sha(path)
+        if frame_sha in seen_frame_hashes:
+            raise ValueError("DUPLICATE_SOURCE_FRAME_BYTES: "+name)
+        seen_frame_hashes.add(frame_sha)
         jobs.append({
           "job_id":f"{order['cycle_id']}_photo_{n+1:02d}",
-          "source_file":str(path),"source_sha256":sha(path),
+          "source_file":str(path),"source_sha256":frame_sha,
           "source_raster_px":[width,height],
           "target_raster_px":[720,1280],
           "target_kind":"REAL_SOURCE_LOCKED_I2I_PHOTOGRAPH",
@@ -66,7 +98,7 @@ def build(order,selection,source_dir):
         })
     return {"version":"V102_SOURCE_LOCKED_I2I_JOBS",
       "cycle_id":order["cycle_id"],"episode_id":order["episode_id"],
-      "source_video_sha256":sha(source_dir/"ORIGINAL_ARCHIVE.webm"),
+      "source_video_sha256":source_video_sha,
       "original_frame_jobs":jobs,"photos_requested":5,
       "photos_generated":0,"photos_approved":0,
       "provider_requests_sent":0,"paid_api_calls":0,
