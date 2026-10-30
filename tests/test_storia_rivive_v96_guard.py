@@ -137,6 +137,24 @@ class GateTests(unittest.TestCase):
         self.assertTrue(any("V96: SCENE_1_DDCOLOR_ONLY_IS_NOT_PHOTOGRAPHIC_RESTORATION" in e for e in failures),failures)
         self.assertIn("MANDATORY_VIDU_SCENE_MISSING",failures)  # V94 also evaluated
 
+    def test_v99_new_video_cannot_claim_final_without_real_golden_comparison(self):
+        import importlib.util
+        gate_path=pathlib.Path(__file__).resolve().parents[1]/"src"/"storia_rivive_final_gate_v91.py"
+        spec=importlib.util.spec_from_file_location("delivery_v91_v99",gate_path)
+        mod=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        m=valid_manifest()
+        m["quality_policy_version"]="V94"
+        m["production_date"]="2026-10-30"
+        info={"duration_s":21.0,"valid_h264_aac":True,"sha256":"f"*64}
+        errors=mod.validate(m,info)
+        self.assertIn("V99_BENCHMARK_REAL_MP4_REPORT_MISSING",errors)
+        m["v99_benchmark_evidence"]={"version":"V99_GOLDEN_V98_REGRESSION_GATE",
+            "passed":True,"reference_sha256":"a"*64,"actual_video_sha256":"b"*64}
+        errors=mod.validate(m,info)
+        self.assertIn("V99_APPROVED_GOLDEN_REFERENCE_SHA_NOT_MATCHED",errors)
+        self.assertIn("V99_REPORT_NOT_BOUND_TO_THE_EXACT_FINAL_MP4",errors)
+
     def test_real_old_v95_review_data_does_not_pass(self):
         d={"production":"New York 1911 V95","format":"storia_rivive",
            "status":"TECHNICAL_RENDER_VISUAL_REVIEW_PENDING",
