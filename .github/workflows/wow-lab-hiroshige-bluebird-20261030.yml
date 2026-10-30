@@ -1,0 +1,97 @@
+name: "WOW LAB — Hiroshige bluebird isolated MP4 + Android download"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-hiroshige-bluebird-20261030
+    paths:
+      - "wow_lab/experiments/hiroshige_bird/render_preview.py"
+      - ".github/workflows/wow-lab-hiroshige-bluebird-20261030.yml"
+permissions:
+  contents: read
+concurrency:
+  group: "wow-lab-hiroshige-bluebird-release-20261030"
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free local rendering tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+      - name: Fetch exact CC0 source from The Metropolitan Museum of Art
+        run: python wow_lab/experiments/hiroshige_bird/source.py
+      - name: Render independent portrait H264 AAC MP4
+        run: |
+          python -m py_compile wow_lab/experiments/hiroshige_bird/render_preview.py
+          python wow_lab/experiments/hiroshige_bird/render_preview.py
+      - name: Verify real playable video, source, rights, fixed silhouette and no paid API
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,zipfile
+          base=Path("wow_lab/experiments/hiroshige_bird")
+          o=base/"output"
+          provenance=json.loads((base/"sources/SOURCE_PROVENANCE.json").read_text())
+          q=json.loads((o/"QA.json").read_text())
+          assert provenance["artwork_id"]==36725 and provenance["isPublicDomain"]
+          assert provenance["license"]=="Met Open Access CC0"
+          assert q["source_sha256"]==provenance["original_sha256"]
+          assert q["h264"] and q["aac"] and q["full_decode_ok"]
+          assert q["status"]=="needs_artistic_review" and not q["is_real_3d"]
+          assert not q["auto_social_publish"] and q["paid_api_spend"]==0
+          assert .020<q["mask_ratio"]<.036
+          assert (o/"HIROSHIGE_BLUEBIRD_WOW_ANDROID.mp4").stat().st_size>100000
+          with zipfile.ZipFile(o/"HIROSHIGE_BLUEBIRD_ANDROID_KIT.zip") as z:
+              assert z.testzip() is None
+              assert "HIROSHIGE_BLUEBIRD_WOW_ANDROID.mp4" in z.namelist()
+          print("WOW LAB new isolated CC0 video: technical QA PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_HIROSHIGE_BLUEBIRD_PREVIEW
+          path: |
+            wow_lab/experiments/hiroshige_bird/output/*
+            wow_lab/experiments/hiroshige_bird/sources/SOURCE_PROVENANCE.json
+          if-no-files-found: error
+          retention-days: 30
+  publish_preview:
+    needs: render
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: WOW_LAB_HIROSHIGE_BLUEBIRD_PREVIEW
+          path: output/
+      - name: Preserve a namespaced experimental GitHub prerelease, never core masters
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="wow-lab-hiroshige-bluebird-36725-v1-20261030"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Existing experimental preview. No overwrite."
+            exit 0
+          fi
+          gh release create "$tag" \
+            output/HIROSHIGE_BLUEBIRD_WOW_ANDROID.mp4 \
+            output/HIROSHIGE_BLUEBIRD_ANDROID_KIT.zip \
+            output/BEFORE_AFTER.jpg \
+            output/MASK_AUDIT.jpg \
+            output/QA.json \
+            output/SOURCE_PROVENANCE.json \
+            --title "WOW LAB · Hiroshige · Bluebird Escapes the Print · experimental 2.5D" \
+            --notes "Independent 11.5-second H264 AAC 720x1280 video, source Utagawa Hiroshige Weeping Cherry and Bluebird, The Metropolitan Museum of Art 36725 Open Access CC0. Original bird-specific silhouette + documented clean plate. 2.5D cinematic experiment, NOT a true 3D mesh; thin gallery frame illustrative, not the real frame. Technical QA successful; artistic review still required. No paid APIs, Vidu, social publication, or ArtVision core mutations." \
+            --target experiment/wow-lab-hiroshige-bluebird-20261030 \
+            --prerelease
+          gh release view "$tag" --json tagName,url,assets --jq '{tagName,url,assets:[.assets[].name]}'
