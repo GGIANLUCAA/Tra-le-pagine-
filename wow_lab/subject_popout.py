@@ -16,6 +16,49 @@ from mask_audit import audit
 class PreflightRejected(RuntimeError):
     pass
 
+def audit_clean_plate(source_bgr: np.ndarray, mask: np.ndarray,
+                      clean_bgr: np.ndarray) -> dict:
+    """Reject obvious invented backgrounds before any video is rendered.
+
+    A subject surrounded by patterned scenery cannot safely be removed with
+    a local inpaint. This tests the source ring AND the reconstructed region.
+    It is conservative numerical evidence, never an artistic approval.
+    """
+    if (source_bgr is None or clean_bgr is None or mask is None or
+            source_bgr.ndim != 3 or source_bgr.shape[2] != 3 or
+            clean_bgr.shape != source_bgr.shape or
+            mask.shape != source_bgr.shape[:2]):
+        return {"pass": False, "reasons": ["invalid_clean_plate_inputs"],
+                "artistic_approval": False}
+    subject = np.uint8(mask >= 128)
+    kernel = np.ones((17, 17), np.uint8)
+    ring = (cv2.dilate(subject, kernel) != 0) & (subject == 0)
+    if np.count_nonzero(ring) < 100 or np.count_nonzero(subject) < 100:
+        return {"pass": False, "reasons": ["insufficient_background_ring"],
+                "artistic_approval": False}
+    original_lab = cv2.cvtColor(source_bgr, cv2.COLOR_BGR2LAB).astype(np.float32)
+    clean_lab = cv2.cvtColor(clean_bgr, cv2.COLOR_BGR2LAB).astype(np.float32)
+    background = np.median(original_lab[ring], axis=0)
+    def q90_distance(pixels):
+        return float(np.percentile(np.linalg.norm(pixels - background, axis=1), 90))
+    background_variation = q90_distance(original_lab[ring])
+    reconstructed_variation = q90_distance(clean_lab[subject != 0])
+    reasons = []
+    if background_variation > 18:
+        reasons.append("complex_background_near_subject")
+    if reconstructed_variation > 28:
+        reasons.append("inpaint_inconsistent_with_background")
+    return {
+        "pass": not reasons,
+        "reasons": reasons,
+        "background_ring_lab_p90": round(background_variation, 2),
+        "reconstructed_region_lab_p90": round(reconstructed_variation, 2),
+        "synthetic_background": True,
+        "artistic_approval": False,
+        "requires_visual_review": True,
+    }
+
+
 
 def preflight_source(source: Image.Image, output: Path):
     """Return (cleaned_painting, original_resized, mask); persist audit first."""
@@ -58,6 +101,15 @@ def preflight_source(source: Image.Image, output: Path):
     # Invented background reconstruction, never described as authentic source.
     # A small inpaint radius is conservative; artist still must inspect reveal.
     cleaned = cv2.inpaint(bgr, mask, 5, cv2.INPAINT_TELEA)
+    plate_audit = audit_clean_plate(bgr, mask, cleaned)
+    (output / "CLEAN_PLATE_AUDIT.json").write_text(
+        json.dumps(plate_audit, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8"
+    )
+    if not plate_audit["pass"]:
+        raise PreflightRejected(
+            "WOW_LAB_CLEAN_PLATE_REJECTED: " + ",".join(plate_audit["reasons"])
+        )
     cleaned_pil = Image.fromarray(cv2.cvtColor(cleaned, cv2.COLOR_BGR2RGB))
     cleaned_pil.save(output / "CLEAN_PLATE_SYNTHETIC.jpg", quality=92)
     return cleaned_pil, reduced, Image.fromarray(mask, "L")
