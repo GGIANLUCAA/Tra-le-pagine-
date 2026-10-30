@@ -1,3 +1,13 @@
+# Aggiornamento esecutivo V77 · 30 ottobre 2026
+
+La ricerca non è più soltanto ipotetica: GitHub Actions [run 41024818174](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41024818174) ha prodotto **un vero JPEG di 6800×3871, 12.130.063 byte, SHA256 `830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9`**, in artifact **12963745760**. È la derivata *BoschFXD* da Wikimedia Commons (PD-Art/PDM), con colori rimasterizzati: **non** una scansione cromatica ufficiale Prado. È stata estratta e ispezionata come immagine, non un MP4. La licenza e il nome esatto della derivata vanno conservati nel pacchetto.
+
+La registrazione musicale **Water Lily**, Kevin MacLeod, ISRC USUAN1400035, è già disponibile in forma originale con SHA256 `b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6` e licenza **CC BY 4.0** secondo [scheda ufficiale Incompetech](https://remote.incompetech.com/music/royalty-free/index.html?Search=Search&isrc=USUAN1400035). Credito obbligatorio in tutti e quattro i post, salvo variante con altra registrazione.
+
+La modifica al blocco V58 in questa PR autorizza **solo Bosch P002823 come quarto quadro**; non attiva una serie indiscriminata. Con fonte e musica verificati è ammesso un solo rendering **Cinema Standard** dopo merge/test; i due Critico richiedono ancora nuova traccia Gacrux con verifica costo e ASR, i Museum restano in review/bloccati da V80 e dimensioni Prado non riconciliate. Nessun quinto quadro, V25 automatico o upload privato.
+
+---
+
 # Bosch · The Garden of Earthly Delights — V77 scoped preflight (30 October 2026)
 
 **Operational outcome:** research and recipe prepared; **0 new 4×1 MP4**, **0 renders started**, **0 V25 approvals**, **no queue/lock modifications**. Bosch V22 is a *historical Critico reference*, not one of the four new slots.
