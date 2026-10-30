@@ -48,6 +48,8 @@ python src/storia_rivive_final_gate_v91.py \
   --v99-source-assets dir_asset_verificati/
 ```
 
+Per ogni video candidato, V99 crea inoltre `V99_CONFRONTO_VISIVO_V98_VS_NUOVO.jpg`, una scheda a quattro righe con fotogrammi originali B/N e fotogrammi a colori del V98 accettato affiancati alle corrispondenti fasi del nuovo video. **La scheda serve a vedere la qualità, non a fingere che soggetti diversi abbiano la stessa luminosità o palette**. Va davvero osservata, insieme al filmato completo con audio, prima dell'approvazione artistica.
+
 I controlli sono **fail-closed**: se il soggetto del frame reale non corrisponde al frame usato in Vidu, se la foto non compare nel video, se manca il file Vidu o se il video non si muove a colori, il risultato è **BOCCIATO**. Non rigenerare Vidu a pagamento per correggere errori che dipendono dal montaggio.
 
 ## Non promettere ciò che non è stato fatto
