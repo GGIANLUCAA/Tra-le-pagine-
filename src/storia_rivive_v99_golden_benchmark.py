@@ -230,6 +230,45 @@ def evaluate(video,manifest,asset_folder,reference):
   "human_artistic_approval":False,
   "note":"This mechanical check cannot confirm face identity, creative quality or territorial rights."}
 
+def visual_reference_contact_sheet(golden_video,candidate_video,candidate_manifest,save_to):
+ """Four rows: accepted V98 B/W, V98 restored; candidate B/W, candidate restored.
+ This is for HUMAN A/B visual inspection; it does not turn a machine score into art approval.
+ """
+ golden=golden_timeline()
+ new=candidate_manifest.get("scenes",[])
+ if len(new)!=5:return None
+ a=cv2.VideoCapture(str(golden_video))
+ b=cv2.VideoCapture(str(candidate_video))
+ canvas=np.zeros((4*351,5*190,3),dtype=np.uint8)
+ try:
+  labels=["V98 original B/N","V98 colore","NUOVO originale B/N","NUOVO colore"]
+  for row in range(4):
+   cap=a if row<2 else b
+   timeline=golden if row<2 else new
+   color=row%2==1
+   for j,s in enumerate(timeline):
+    if not isinstance(s,dict):continue
+    start=s.get("start_s");bw=s.get("bw_motion_s");dur=s.get("duration_s")
+    if not all(type(v) in (int,float) for v in (start,bw,dur)):continue
+    t=(start+min(.30,bw*.28)) if not color else (
+       start+dur-.32 if s.get("kind")=="classic_photo" else start+bw+2.6)
+    im=grab(cap,t)
+    if im is None:continue
+    y=row*351+27
+    x=j*190+5
+    canvas[y:y+320,x:x+180]=im
+    cv2.putText(canvas,labels[row][:19],(x,y-9),cv2.FONT_HERSHEY_SIMPLEX,.35,
+                (244,240,224),1,cv2.LINE_AA)
+    cv2.putText(canvas,"SCENA "+str(j+1),(x+90,y-9),
+                cv2.FONT_HERSHEY_SIMPLEX,.34,(172,207,240),1,cv2.LINE_AA)
+ finally:
+  a.release();b.release()
+ target=Path(save_to);target.parent.mkdir(parents=True,exist_ok=True)
+ if not cv2.imwrite(str(target),canvas,[cv2.IMWRITE_JPEG_QUALITY,92]):
+  raise RuntimeError("V99_HUMAN_COMPARISON_CONTACT_SHEET_NOT_WRITTEN")
+ return str(target)
+
+
 def main():
  ap=argparse.ArgumentParser()
  ap.add_argument("--mode",choices=["reference","candidate"],required=True)
@@ -244,7 +283,14 @@ def main():
   if not (a.reference and a.manifest and a.assets):
    ap.error("candidate mode requires reference, manifest and assets")
   r=approved_reference(a.reference)
-  d=evaluate(a.video,json.loads(Path(a.manifest).read_text()),a.assets,r)
+  manifest=json.loads(Path(a.manifest).read_text())
+  d=evaluate(a.video,manifest,a.assets,r)
+  try:
+   image=Path(a.output).with_name("V99_CONFRONTO_VISIVO_V98_VS_NUOVO.jpg")
+   sheet=visual_reference_contact_sheet(a.reference,a.video,manifest,image)
+   if sheet:d["human_comparison_contact_sheet"]=str(image.name)
+  except Exception as e:
+   d.setdefault("warnings",[]).append("AB_VISUAL_SHEET_UNAVAILABLE "+type(e).__name__)
  o=Path(a.output);o.parent.mkdir(parents=True,exist_ok=True)
  o.write_text(json.dumps(d,indent=2,ensure_ascii=False)+"\n",encoding="utf8")
  print(json.dumps({"v99_reference_verified":True,"status":d.get("status","REFERENCE_VERIFIED"),
