@@ -1,0 +1,29 @@
+name: "La Storia Rivive V100 - scout API restauro gratuito (sola lettura)"
+on:
+  push:
+    branches: ["research/storia-free-hd-restoration-v100-20261030"]
+    paths:
+      - "tools/storia_free_restoration_api_probe_v100.py"
+      - ".github/workflows/storia-v100-free-restoration-api-scout.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "GET public metadata and API schema only - no GPU, no POST"
+        run: python -u tools/storia_free_restoration_api_probe_v100.py
+      - name: "Upload public diagnostics (no tokens, no images)"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V100_READONLY_PROVIDER_SCOUT
+          path: output/storia_free_services_v100/
+          if-no-files-found: warn
+          retention-days: 14
