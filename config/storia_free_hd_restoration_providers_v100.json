@@ -1,0 +1,90 @@
+{
+  "schema": "storia-historical-restoration-providers-v100",
+  "date": "2026-10-30",
+  "mode": "pilot_registry_only",
+  "production_entrypoints_untouched": true,
+  "cost_ceiling_eur": 0,
+  "require_no_paid_fallback": true,
+  "requires_actual_human_photo_qa": true,
+  "current_reference": [
+    "ddcolor",
+    "real_esrgan",
+    "finegrain_i2i",
+    "gfpgan_local"
+  ],
+  "providers": [
+    {
+      "id": "finegrain_i2i",
+      "kind": "source_guided_photo",
+      "space": "finegrain/finegrain-image-enhancer",
+      "provider": "Hugging Face Space",
+      "status": "API_METADATA_AND_SCHEMA_VERIFIED",
+      "existing_code": "src/storia_rivive_v77_safe_photo_generator.py",
+      "production_current_experiment": true,
+      "free_quota": "HF ZeroGPU limited, actual request not tested here",
+      "visual_result_approved": false
+    },
+    {
+      "id": "codeformer_space",
+      "kind": "face_region_restoration",
+      "space": "sczhou/CodeFormer",
+      "provider": "Hugging Face Space",
+      "status": "API_METADATA_AND_SCHEMA_VERIFIED",
+      "enabled": false,
+      "license": "NTU S-Lab noncommercial; verify output terms",
+      "free_quota": "HF ZeroGPU limited, actual request not tested here",
+      "visual_result_approved": false
+    },
+    {
+      "id": "gfpgan_local",
+      "kind": "face_region_restoration",
+      "repo": "https://github.com/TencentARC/GFPGAN",
+      "status": "ALREADY_EXPERIMENTED",
+      "existing_code": "src/storia_v80_ellis_face_gfpgan_video.py",
+      "requires_face_roi": true
+    },
+    {
+      "id": "seedvr2_local",
+      "kind": "temporal_video_restoration",
+      "repo": "https://github.com/ByteDance-Seed/SeedVR",
+      "status": "OPEN_SOURCE_GPU_REQUIRED_NO_FREE_HOSTED_API_CONFIRMED",
+      "enabled": false,
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "paddlegan_old_video",
+      "kind": "multi_stage_video_restoration",
+      "repo": "https://github.com/PaddlePaddle/PaddleGAN",
+      "status": "RESEARCH_GPU_CPU_RESOURCES_REQUIRED",
+      "enabled": false,
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "qwen_image_edit_alibaba",
+      "kind": "photo_edit",
+      "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "status": "FREE_TRIAL_CONDITIONAL_POTENTIAL_BILLING",
+      "enabled": false,
+      "requires_manual_free_quota_only": true
+    },
+    {
+      "id": "hypir",
+      "kind": "generative_photo",
+      "repo": "https://github.com/XPixelGroup/HYPIR",
+      "status": "NONCOMMERCIAL_GPU_REQUIRED",
+      "enabled": false
+    }
+  ],
+  "source_fidelity_gates": [
+    "same_verified_source_frame",
+    "same_person_object_counts",
+    "no_object_to_person_conversion",
+    "no_replaced_faces",
+    "realistic_eyes_and_skin",
+    "aligned_original_motion_freeze",
+    "no_fake_4k",
+    "preserve_original_luminance",
+    "artistic_review_on_exported_video",
+    "no_unapproved_publication"
+  ]
+}
