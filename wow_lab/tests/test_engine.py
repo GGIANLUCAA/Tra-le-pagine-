@@ -25,6 +25,25 @@ class WowLabContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             engine.slot_id("not-a-time")
 
+    def test_autonomous_selection_parses_utc_slot_without_crashing(self):
+        from unittest.mock import patch
+        cfg = engine.read_config(MODULE / "config.json")
+        sample = {"objectID": 436535, "isPublicDomain": True, "objectName": "Painting",
+                  "primaryImage": "https://images.metmuseum.org/test.jpg",
+                  "title": "Verified painting"}
+        with patch.object(engine, "discovery_ids", return_value=[]), patch.object(engine, "get_json", return_value=sample):
+            chosen = engine.select_artwork(cfg, "20261030T06", [])
+        self.assertEqual(chosen["objectID"], 436535)
+
+    def test_recent_six_subjects_are_never_reused(self):
+        from unittest.mock import patch
+        cfg = engine.read_config(MODULE / "config.json")
+        cfg["allow_museum_api_search"] = False
+        history = [{"object_id": value} for value in cfg["allowed_artwork_ids"]]
+        with patch.object(engine, "get_json", side_effect=AssertionError("Recent object must not be fetched")):
+            with self.assertRaisesRegex(RuntimeError, "No suitable verified CC0 artwork"):
+                engine.select_artwork(cfg, "20261030T08", history)
+
     def test_artwork_rights_fail_closed(self):
         rec = {"objectID": 436535,"isPublicDomain": True,"objectName":"Painting",
                "primaryImage":"https://images.metmuseum.org/photo.jpg"}
