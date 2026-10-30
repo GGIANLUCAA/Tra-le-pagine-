@@ -90,3 +90,4 @@ jobs:
             output/storia_rivive_v96_audit/V951_12_FRAME_QA_CONTACT.jpg
           retention-days: 14
           if-no-files-found: warn
+# Rerun combined V91/V94/V96 tests and actual old-video rejection after correcting named-code assertion.
