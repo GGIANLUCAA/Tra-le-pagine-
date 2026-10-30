@@ -557,6 +557,17 @@ def run(args):
     ensure_slot_available(stamp, past)
     rec=select_artwork(conf, stamp, past, args.test_source_id)
     source,url,source_sha=save_original(rec,out,conf)
+    # Mandatory subject extraction and mask audit BEFORE sound/video rendering.
+    from subject_popout import preflight_source, PreflightRejected
+    try:
+        clean_plate, subject_source, subject_mask = preflight_source(source, out)
+    except PreflightRejected as err:
+        (out/"REJECTED_REPORT.json").write_text(
+            json.dumps({"status":"mask_rejected","object_id":rec["objectID"],
+                        "source_sha256":source_sha,"reason":str(err),
+                        "artistic_approval":False},indent=2)+"\n",encoding="utf-8")
+        print("WOW_LAB_MASK_REJECTED: "+str(err),file=sys.stderr)
+        return 2
     modes=list(SAFE_MODES)
     latest_modes=[x.get("technique") for x in past[:2]]
     rng=random.Random(stamp+str(rec["objectID"]))
@@ -565,8 +576,12 @@ def run(args):
     mode=modes[0]
     duration=int(conf["duration_seconds"])+rng.randrange(0,4)
     fps=int(conf["fps"]); W,H=map(int,conf["size"])
-    panel=prepare_panel(source,int(W*.85),int(H*.54),mode)
+    from subject_popout import make_subject_panel, composite_popout
+    panel_target=(int(W*.85),int(H*.54))
+    panel=prepare_panel(clean_plate,*panel_target,mode)
     panel_bgra=cv2.cvtColor(np.asarray(panel),cv2.COLOR_RGBA2BGRA)
+    subject_panel=make_subject_panel(subject_source,subject_mask,
+                                     panel_bgra.shape,panel_target)
     colors=mood_colors(source)
     title=rec["title"];artist=rec.get("artistDisplayName") or "Artist unknown"
     year=rec.get("objectDate") or ""
@@ -585,6 +600,9 @@ def run(args):
         for idx in range(count):
             p=idx/max(count-1,1)
             frame=draw_video_frame(panel_bgra,W,H,p,mode,colors,title,artist,year)
+            quad=shot_params(mode,p,W,H,(panel_bgra.shape[1],panel_bgra.shape[0]))
+            frame=composite_popout(frame,subject_panel,quad,p,
+                                   1 if rec["objectID"]%2 else -1)
             if idx in (0, count//2, count-1):
                 samples.append(frame.copy())
             process.stdin.write(frame.tobytes())
@@ -599,6 +617,10 @@ def run(args):
     Image.fromarray(samples[0]).save(out/"OPENING.jpg",quality=89)
     Image.fromarray(samples[1]).save(out/"COVER.jpg",quality=92)
     Image.fromarray(samples[2]).save(out/"ENDING.jpg",quality=89)
+    comparison=Image.new("RGB",(W*2,H))
+    comparison.paste(Image.fromarray(samples[0]),(0,0))
+    comparison.paste(Image.fromarray(samples[2]),(W,0))
+    comparison.save(out/"BEFORE_AFTER_POPOUT.jpg",quality=90)
     q=qa(tmpvideo,conf,samples)
     report={
         "schema":SCHEMA,"tag":label,"slot_utc":stamp,"group":"WOW_LAB_ISOLATED",
@@ -608,6 +630,9 @@ def run(args):
         "source_license":"The Metropolitan Museum of Art · Open Access · CC0",
         "is_public_domain":bool(rec["isPublicDomain"]),"commercial_use":True,
         "technique":mode,"reconstructed_3d_mesh":False,
+        "subject_layer_extracted":True,"subject_mask_audited_before_render":True,
+        "background_clean_plate_synthesized":True,
+        "mask_semantic_completeness_verified":False,
         "audio":"original procedural synthesis","duration_seconds":duration,
         "fps":fps,"size":[W,H],"qa":q,"previous_techniques":latest_modes,
         "artistic_approval":False,"social_publication":False,"paid_api_cost":0,
@@ -632,7 +657,7 @@ def run(args):
         f"ArtVision WOW LAB · autonomous visual experiment for **{title}** by {artist}.\n\n"
         f"**Status: needs_human_review**. Preview only, not an approved master or commercial publication.\n\n"
         f"Original source: {rec.get('objectURL')}. Open Access / CC0 verified.\n\n"
-        f"Technique: **{mode}**, cinematic 2.5D (NOT true 3D). Standalone experimental engine.\n\n"
+        f"Technique: **{mode}**, independent subject-layer 2.5D pop-out (NOT true 3D). The background behind the subject is algorithmically inpainted; mask semantics and artistic quality still require review.\n\n"
         f"Technical QA: H264+AAC, full decode, frame-difference check, SHA256 in MANIFEST.json.\n"
         f"No social autopublication, Vidu, other paid API, or original ArtVision workflow triggered.\n\n"
         "<!-- WOWLAB_META "+json.dumps(meta,ensure_ascii=False,separators=(",",":"))+" -->\n",
