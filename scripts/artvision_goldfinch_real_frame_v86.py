@@ -100,7 +100,7 @@ def main():
     subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y",
        "-i",str(OUT/"SILENT.mp4"),"-ss","2.2","-i",str(music),
        "-map","0:v","-map","1:a:0","-t",str(DURATION),
-       "-af",f"volume=1.15,afade=t=out:st={DURATION-2}:d=2",
+       "-af",f"volume=2.53,afade=t=out:st={DURATION-2}:d=2",
        "-c:v","copy","-c:a","aac","-b:a","160k","-movflags","+faststart",str(movie)],check=True)
     subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-xerror","-i",str(movie),"-f","null","-"],check=True)
     probe=json.loads(subprocess.check_output(["ffprobe","-v","error","-of","json",
