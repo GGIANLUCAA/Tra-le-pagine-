@@ -160,7 +160,7 @@ def museum_frame(art,actual_frame,roomimg,t,duration,critic=False):
     elif t<duration-leave:
         u=(t-entrance)/max(.01,duration-entrance-leave)
         # Single spatial continuous trip between 7 picture regions; no teleport.
-        pts=[(.55,.39),(.62,.24),(.64,.51),(.42,.85),(.52,.23),(.24,.37),(.50,.50)]
+        pts=[(.55,.39),(.62,.24),(.64,.51),(.42,.74),(.52,.23),(.24,.37),(.50,.50)]
         x=min(len(pts)-2,int(u*(len(pts)-1)))
         k=smooth(u*(len(pts)-1)-x)
         focus=(mix(pts[x][0],pts[x+1][0],k),mix(pts[x][1],pts[x+1][1],k))
