@@ -80,4 +80,15 @@ class TestGoldenV99(unittest.TestCase):
         self.assertNotIn("human_artistic_approval",report)
         self.assertEqual(report["reference_release"],g.GOLDEN_TAG)
 
+    def test_12_real_V98_vs_video_visual_comparison_sheet(self):
+        p=os.environ.get("V99_GOLDEN_VIDEO","")
+        if not p:self.skipTest("Reference MP4 not on runner")
+        reference=g.golden_timeline()
+        # This test exercises the visual tool, not semantic approval of new faces.
+        with tempfile.TemporaryDirectory() as d:
+            out=pathlib.Path(d)/"ab-qa.jpg"
+            result=g.visual_reference_contact_sheet(p,p,{"scenes":reference},out)
+            self.assertEqual(result,str(out))
+            self.assertGreater(out.stat().st_size,60_000)
+
 if __name__=="__main__": unittest.main()
