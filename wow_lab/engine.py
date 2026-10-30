@@ -110,7 +110,8 @@ def parse_wow_release_history(releases: list[dict]) -> list[dict]:
             value = release.get(field)
             if value:
                 try:
-                    return dt.datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+                    parsed = dt.datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+                    return parsed if parsed.tzinfo else parsed.replace(tzinfo=dt.timezone.utc)
                 except ValueError:
                     continue
         return dt.datetime.min.replace(tzinfo=dt.timezone.utc)
@@ -183,8 +184,8 @@ def parse_wow_release_history(releases: list[dict]) -> list[dict]:
                         "tag": tag, "slot_utc": slot,
                         "slots_utc": [slot] if slot else [],
                         "published_at": release.get("published_at")})
-        if len(history) >= 25:
-            break
+        # Do not truncate here: an older V2 edit may reserve a slot even
+        # when its subject is already among the newest six.
     return history
 
 
