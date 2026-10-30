@@ -17,7 +17,9 @@ Stato: **BLOCCATO, nessun nuovo MP4 distribuito**. Questo documento non certific
 2. La selezione rifiuta tutti gli ID presenti negli ultimi sei record di cronologia (prima saltava soltanto l'ultimo).
 3. Due test di regressione aggiunti in `wow_lab/tests/test_engine.py`: selezione slot UTC e blocco di soggetti recenti.
 
-**Limite importante:** la cronologia del motore V1 riconosce soltanto release `wow-lab-v1-*` con metadati `WOWLAB_META`; le release sperimentali `wow-lab-madame-x-*` e `wow-lab-hokusai-*` non vengono ancora importate automaticamente. Pertanto il controllo completo degli ultimi sei contenuti non è garantito. Non considerare questo fix sufficiente per sbloccare la produzione.
+4. Il parser cronologia del branch ora riconosce anche release sperimentali `wow-lab-madame-x-*` e `wow-lab-hokusai-*` tramite l'ID oggetto dichiarato, conta V1/V2 come un solo soggetto e si arresta se l'ID non è verificabile. Due test di regressione aggiuntivi coprono questi casi.
+
+**Limite importante:** il parser è una modifica soltanto sul branch di prova, non ancora testata da un runner GitHub e non presente in `main`. Anche con cronologia corretta manca ancora la maschera per un nuovo soggetto. Non considerare il fix sufficiente per sbloccare la produzione.
 
 ## Gate artistico mancante
 
