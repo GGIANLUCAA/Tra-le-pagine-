@@ -36,7 +36,14 @@ jobs:
           assert lock['no_paid_video_calls'] and lock['no_social_publish']
           group=[g for g in queue['groups'] if g['group_id']==fourth['allowed_group_id']]
           assert len(group)==1 and group[0]['artwork']==fourth['allowed_title']
-          assert all(v['status']=='planned' for v in group[0]['variants'].values())
+          states=group[0]['variants']
+          assert all(states[v]['status']=='planned' for v in ('critico_standard','critico_museum','cinema_museum'))
+          cs=states['cinema_standard']
+          assert cs['status'] in ('planned','rendered_needs_review')
+          if cs['status']=='rendered_needs_review':
+            assert cs['rendered_mp4_sha256']=='3eb4a29c00b5d937f9385fef583a39dcccb754073328258db9f8b3b940acb2ba'
+            assert cs['rendered_mp4_bytes']==17461112
+            assert cs['zip_crc_pass'] is True and cs['V25_approved'] is False
           assert all(v.get('V25_approved') is False for v in group[0]['variants'].values())
           print('Bosch-only V76 scoped lock + zero fake MP4: PASS')
           PY
