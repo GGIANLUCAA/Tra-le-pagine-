@@ -1,0 +1,121 @@
+name: "La Storia Rivive V101 · preparazione archivistica ogni 3 ore (senza API a pagamento)"
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-rivive-v101-auto-3h.yml"
+      - "src/storia_rivive_autopilot_v101.py"
+      - "src/storia_rivive_scout_v101.py"
+      - "src/storia_rivive_flag_title_v101.py"
+      - "config/storia_rivive_autopilot_v101.json"
+      - "tests/test_storia_rivive_v101.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-rivive-v101-single-source-research
+  cancel-in-progress: false
+jobs:
+  scheduled_preparation:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout existing repository, no changes to other formats
+        uses: actions/checkout@v4
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install offline photo/title and archival inspection tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "pillow>=10,<13"
+      - name: Run fail-closed safety and flag geometry tests before research
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
+      - name: Create deterministic research work order for current UTC 3-hour window
+        shell: bash
+        run: |
+          set -euo pipefail
+          now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          python src/storia_rivive_autopilot_v101.py --now "$now" --out output/storia_v101/WORK_ORDER.json
+          python - <<'PY'
+          import json,os
+          p=json.load(open("output/storia_v101/WORK_ORDER.json"))
+          with open(os.environ["GITHUB_ENV"],"a") as f:
+              f.write("STORIA_EPISODE_ID="+p["episode_id"]+"\n")
+          print("SOURCE_RESEARCH_ONLY_3H",p["episode_id"],p["status"])
+          PY
+      - name: Cache archival source research by candidate, avoid repeated downloads
+        id: film_cache
+        uses: actions/cache@v4
+        with:
+          path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v1-${{ env.STORIA_EPISODE_ID }}
+      - name: Fetch bounded original film and make genuine B/W contact sheet
+        if: steps.film_cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_scout_v101.py --order output/storia_v101/WORK_ORDER.json --out "output/storia_v101/source-cache/$STORIA_EPISODE_ID"
+      - name: Generate historically constrained small country flag and title draft
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          sys.path.insert(0,"src")
+          from storia_rivive_flag_title_v101 import produce
+          root=Path("output/storia_v101")
+          order=json.loads((root/"WORK_ORDER.json").read_text())
+          title=order["title"]
+          result={"title_overlay_status":"OMITTED_PENDING_HISTORICAL_EVIDENCE"}
+          if title.get("flag") and title.get("place") and title.get("year"):
+              result=produce(title,str(root/"TITLE_FLAG_DRAFT.png"))
+              result["title_overlay_status"]="DRAFT_ONLY_NOT_APPROVED_MP4"
+          (root/"TITLE_FLAG_REPORT.json").write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n")
+          print(result["title_overlay_status"])
+          PY
+      - name: Record readiness honestly, no fake video delivery
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("output/storia_v101")
+          order=json.loads((root/"WORK_ORDER.json").read_text())
+          check=root/"source-cache"/order["episode_id"]/"SCOUT_REPORT.json"
+          scout=json.loads(check.read_text()) if check.is_file() else {"status":"SOURCE_SCOUT_NOT_AVAILABLE"}
+          status={"cycle_id":order["cycle_id"],"candidate":order["episode_id"],
+              "source_scout":scout.get("status"),"restored_i2i_photos_approved":0,
+              "real_vidu_clips_approved":0,"finished_mp4":False,"published":False,
+              "charged_api_requests":0,"status":"RESEARCH_PREPARATION_ONLY",
+              "next_required":"4 verified source-locked I2I photos, real Vidu, V91/V94/V96/V99 and real artistic review"}
+          (root/"CYCLE_STATUS.json").write_text(json.dumps(status,ensure_ascii=False,indent=2)+"\n")
+          print("V101_CYCLE_STATUS",json.dumps(status))
+          PY
+      - name: Preserve work order and genuine archival previews as private Actions artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V101_RESEARCH_${{ github.run_id }}
+          path: |
+            output/storia_v101/WORK_ORDER.json
+            output/storia_v101/CYCLE_STATUS.json
+            output/storia_v101/TITLE_FLAG_DRAFT.png
+            output/storia_v101/TITLE_FLAG_REPORT.json
+            output/storia_v101/source-cache/*/SCOUT_REPORT.json
+            output/storia_v101/source-cache/*/ORIGINAL_FILM_CONTACT_SHEET.jpg
+            output/storia_v101/source-cache/*/original_frames/*.jpg
+          retention-days: 14
+          if-no-files-found: warn
