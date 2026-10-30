@@ -1,0 +1,81 @@
+name: "WOW LAB · Madame X separate CC0 portrait test"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-madame-x-silhouette-20261030
+    paths:
+      - "wow_lab/experiments/madame_x/**"
+      - ".github/workflows/wow-lab-madame-x-20261030.yml"
+permissions:
+  contents: read
+concurrency:
+  group: wow-lab-madame-x-portrait
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+      - run: |
+          python -m py_compile wow_lab/experiments/madame_x/create.py
+          python wow_lab/experiments/madame_x/create.py
+      - name: Validate source, mask, audio, video before publication
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path("wow_lab/experiments/madame_x/output")
+          q=json.loads((p/"QA.json").read_text())
+          assert q["status"]=="needs_human_review" and q["technical_ok"]
+          assert q["objectID"]==12127 and q["paid_api_spend"]==0
+          assert not q["auto_social_publication"] and q["source_sha256"]
+          assert .09<q["foreground_ratio"]<.68
+          assert (p/"MADAME_X_POP_OUT_WOW_LAB.mp4").stat().st_size>90000
+          assert (p/"MADAME_X_ANDROID_KIT.zip").stat().st_size>90000
+          print("Verified independent WOW LAB release candidate")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_MADAME_X_ANDROID
+          path: wow_lab/experiments/madame_x/output/*
+          retention-days: 30
+          if-no-files-found: error
+  store_download:
+    needs: render
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: WOW_LAB_MADAME_X_ANDROID
+          path: output/
+      - name: Archive independent experimental video in GitHub Releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="wow-lab-madame-x-silhouette-v1-20261030"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Existing release; no overwrites"
+            exit 0
+          fi
+          gh release create "$tag" \
+            output/MADAME_X_POP_OUT_WOW_LAB.mp4 \
+            output/MADAME_X_ANDROID_KIT.zip \
+            output/BEFORE_AFTER.jpg \
+            output/MASK_AUDIT.jpg \
+            output/QA.json \
+            --title "WOW LAB · Madame X · portrait break test" \
+            --notes "Independent experimental 2.5D portrait effect. Original painting verified Metropolitan Museum of Art CC0, object 12127. Fictional gallery frame, not documented physical frame. Technical QA passed; human artistic review pending. No Vidu, paid AI API, social publishing or ArtVision core changes." \
+            --target experiment/wow-lab-madame-x-silhouette-20261030 \
+            --prerelease
