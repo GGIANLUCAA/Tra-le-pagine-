@@ -600,12 +600,28 @@ def run(args):
     mode=modes[0]
     duration=int(conf["duration_seconds"])+rng.randrange(0,4)
     fps=int(conf["fps"]); W,H=map(int,conf["size"])
-    from subject_popout import make_subject_panel, composite_popout
+    from subject_popout import make_subject_panel, composite_popout, audit_popout_projection
     panel_target=(int(W*.85),int(H*.54))
     panel=prepare_panel(clean_plate,*panel_target,mode)
     panel_bgra=cv2.cvtColor(np.asarray(panel),cv2.COLOR_RGBA2BGRA)
     subject_panel=make_subject_panel(subject_source,subject_mask,
                                      panel_bgra.shape,panel_target)
+    # Independent geometric evidence of an actual subject crossing the frame.
+    # A camera zoom or perspective change alone cannot pass this check.
+    probe_quad=shot_params(mode,.78,W,H,(panel_bgra.shape[1],panel_bgra.shape[0]))
+    crossing=audit_popout_projection(subject_panel,probe_quad,
+                                     horizontal_direction=1 if rec["objectID"]%2 else -1,
+                                     width=W,height=H)
+    (out/"POPOUT_GEOMETRY_PREFLIGHT.json").write_text(
+        json.dumps(crossing,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+    if not crossing["pass"]:
+        (out/"REJECTED_REPORT.json").write_text(
+            json.dumps({"status":"popout_geometry_rejected",
+                        "object_id":rec["objectID"],
+                        "reason":crossing["reasons"],
+                        "artistic_approval":False},indent=2)+"\\n",encoding="utf-8")
+        print("WOW_LAB_POPOUT_REJECTED: "+",".join(crossing["reasons"]),file=sys.stderr)
+        return 2
     colors=mood_colors(source)
     title=rec["title"];artist=rec.get("artistDisplayName") or "Artist unknown"
     year=rec.get("objectDate") or ""
