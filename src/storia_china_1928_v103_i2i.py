@@ -67,7 +67,7 @@ def restore():
         try:
             log["requests_sent"]+=1
             returned=cli.predict(handle_file(str(original)),PROMPT,NEG,
-                19280+n,2,1.14,0.97,6,112,144,0.45,18,"DDIM",api_name="/process")
+                1928+n,2,1.14,0.97,6,112,144,0.45,18,"DDIM",api_name="/process")
             obj=returned[1] if isinstance(returned,(list,tuple)) and len(returned)>1 else returned
             if isinstance(obj,dict):obj=obj.get("path")
             if not obj or not Path(str(obj)).is_file():raise RuntimeError("I2I API returned no image")
