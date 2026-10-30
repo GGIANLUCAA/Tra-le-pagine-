@@ -1,0 +1,56 @@
+name: "La Storia Rivive V99 · benchmark obbligatorio San Francisco V98"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v99-golden-regression.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real_reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      GH_TOKEN: ${{ github.token }}
+      V99_GOLDEN_VIDEO: output/storia_v99_golden/LA_STORIA_RIVIVE_SF1906_V98_FOUR_REAL_I2I_ONE_REAL_VIDU.mp4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install CPU source/video evaluation only - zero paid services"
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5"
+          python -m py_compile src/storia_rivive_v99_golden_benchmark.py tests/test_storia_rivive_v99_golden_benchmark.py
+      - name: "Fetch REAL user-accepted original SF1906 V98 MP4 - never use a fake substitute"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v99_golden
+          gh release download storia-rivive-san-francisco-1906-v98-4-real-i2i-1-real-vidu \
+            --repo "$GITHUB_REPOSITORY" \
+            -p "LA_STORIA_RIVIVE_SF1906_V98_FOUR_REAL_I2I_ONE_REAL_VIDU.mp4" \
+            -D output/storia_v99_golden
+          printf '%s\n' 'b20726893e067bbae493859ae1c51379c4abab8c2c8768d5c6f2d4ab324b47a8  output/storia_v99_golden/LA_STORIA_RIVIVE_SF1906_V98_FOUR_REAL_I2I_ONE_REAL_VIDU.mp4' | sha256sum -c -
+      - name: "Scan the genuine reference frame-by-frame; record real motion/color per scene"
+        run: |
+          python -u src/storia_rivive_v99_golden_benchmark.py \
+            --mode reference \
+            --video "$V99_GOLDEN_VIDEO" \
+            --output output/storia_v99_golden/V98_ACTUAL_ACCEPTED_BENCHMARK_METRICS.json
+      - name: "Run 12 anti-regression tests against real reference and synthetic failures"
+        run: |
+          python -m unittest discover -s tests -p "test_storia_rivive_v99_golden_benchmark.py" -v
+      - name: "Archive user-accepted golden metrics (no privacy data, no charge)"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V99_REAL_USER_APPROVED_V98_BENCHMARK_AND_12_TESTS
+          path: output/storia_v99_golden/V98_ACTUAL_ACCEPTED_BENCHMARK_METRICS.json
+          if-no-files-found: warn
+          retention-days: 30
