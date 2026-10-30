@@ -43,7 +43,7 @@ jobs:
             --mode reference \
             --video "$V99_GOLDEN_VIDEO" \
             --output output/storia_v99_golden/V98_ACTUAL_ACCEPTED_BENCHMARK_METRICS.json
-      - name: "Run V99 golden + V91/V94/V96 delivery regression suites"
+      - name: "Run V99 13 tests including actual visual A/B sheet + V91/V94/V96 quality gates"
         run: |
           python -m unittest discover -s tests -p "test_storia_rivive_v99_golden_benchmark.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_final_gate_v91.py" -v
