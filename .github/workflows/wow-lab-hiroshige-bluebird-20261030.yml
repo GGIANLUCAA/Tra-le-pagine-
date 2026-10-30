@@ -53,12 +53,13 @@ jobs:
               assert "HIROSHIGE_BLUEBIRD_WOW_ANDROID.mp4" in z.namelist()
           print("WOW LAB new isolated CC0 video: technical QA PASS")
           PY
+      - name: Include provenance beside the video for flat downloadable artifact
+        run: cp wow_lab/experiments/hiroshige_bird/sources/SOURCE_PROVENANCE.json wow_lab/experiments/hiroshige_bird/output/SOURCE_PROVENANCE.json
       - uses: actions/upload-artifact@v4
         with:
           name: WOW_LAB_HIROSHIGE_BLUEBIRD_PREVIEW
           path: |
             wow_lab/experiments/hiroshige_bird/output/*
-            wow_lab/experiments/hiroshige_bird/sources/SOURCE_PROVENANCE.json
           if-no-files-found: error
           retention-days: 30
   publish_preview:
