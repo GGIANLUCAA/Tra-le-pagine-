@@ -573,7 +573,7 @@ def require_live_preflight_context() -> None:
     """
     if os.environ.get("GITHUB_REPOSITORY") != "GGIANLUCAA/Tra-le-pagine-":
         raise RuntimeError("WOW_LAB_LIVE_PREFLIGHT_REQUIRED: repository context missing")
-    if not re.fullmatch(r"\\d+", os.environ.get("GITHUB_RUN_ID", "")):
+    if not re.fullmatch(r"\d+", os.environ.get("GITHUB_RUN_ID", "")):
         raise RuntimeError("WOW_LAB_LIVE_PREFLIGHT_REQUIRED: GitHub run ID missing")
     if not os.environ.get("GITHUB_TOKEN"):
         raise RuntimeError("WOW_LAB_LIVE_PREFLIGHT_REQUIRED: GitHub token missing")
