@@ -17,7 +17,7 @@ class PopoutGeometryGate(unittest.TestCase):
         return layer,quad
 
     def test_top_subject_visibly_crosses_frame(self):
-        layer,quad=self.sample(3)
+        layer,quad=self.sample(85)
         result=audit_popout_projection(layer,quad,width=540,height=960)
         self.assertTrue(result["pass"],result)
         self.assertGreater(result["reveal_outside_ratio"],.012)
