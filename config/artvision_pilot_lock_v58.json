@@ -52,5 +52,23 @@
     "no_paid_video_AI_without_consent": true,
     "V25_approval_manual": true
   },
-  "note_third_pilot": "Second pilot The Kiss is already 4/4 rendered review pending. User authorized continuing production. Third work Hokusai has existing 2/4 real Cinema and needs original two full Gacrux Critico MP4s. No other work allowed."
+  "note_third_pilot": "Second pilot The Kiss is already 4/4 rendered review pending. User authorized continuing production. Third work Hokusai has existing 2/4 real Cinema and needs original two full Gacrux Critico MP4s. No other work allowed.",
+  "authorized_fourth_pilot": {
+    "enabled": true,
+    "authorization": "Explicit user directive ArtVision V76 dated 2026-10-30, naming Socrates/Klimt/Hokusai/Bosch as the controlled series; fourth artwork Bosch only",
+    "allowed_group_id": "bosch_garden_earthly_delights_prado_p002823",
+    "allowed_title": "The Garden of Earthly Delights",
+    "allowed_artist": "Hieronymus Bosch",
+    "inventory": "Prado P002823",
+    "phase": "fourth_pilot_bosch_only",
+    "max_concurrent_artvision_renders": 1,
+    "automatic_fifth_artwork_selection": false,
+    "no_paid_video_ai_without_per_scene_consent": true,
+    "no_social_auto_publish": true,
+    "no_v25_auto_approval": true,
+    "per_variant_source_and_rights_preflight_required": true,
+    "only_ready_variant": "cinema_standard",
+    "note": "Bosch Cinema Standard may render after verified PD painting and exact recording license; Critico blocked until exact Gacrux WAV/script, Museum blocked pending work-specific V80 frame/scale evidence."
+  },
+  "note_fourth_pilot": "V76 user authorization supersedes older third-pilot historical no-fourth note ONLY for Bosch; no unbounded series. Earlier pilots remain review pending and immutable."
 }
