@@ -23,7 +23,7 @@ V92_TIMINGS=[
     (399.2,1.08,.48,2.35,"smiling-men"),
 ]
 # 4 classical and 1 Vidu; entire new episode is ~20s.
-KEEP=[1,3,4,6,8]
+KEEP=[1,2,3,4,5,6,7,8]
 def sha(p):
  h=hashlib.sha256()
  with open(p,"rb") as f:
@@ -87,8 +87,8 @@ def main():
    print("V95_REAL_SOURCE_CHECKED",idx,label,"corr",corr,"sat",sat,"source",timecode,"master",round(frame_offset/fps,2),flush=True)
   frame_offset+=fm+ff+fh
  cap.release()
- if len(records)!=5 or len({r["source_timecode_s"] for r in records})!=5:raise RuntimeError("FIVE_DISTINCT_SCENES_REQUIRED")
- poster=Image.new("RGB",(5*245,2*445+42),(12,17,23))
+ if len(records)!=len(KEEP) or len({r["source_timecode_s"] for r in records})!=len(KEEP):raise RuntimeError("DISTINCT_SOURCE_SHOTS_REQUIRED")
+ poster=Image.new("RGB",(len(cards)*245,2*445+42),(12,17,23))
  d=ImageDraw.Draw(poster)
  try:font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",18)
  except:font=ImageFont.load_default()
@@ -104,7 +104,8 @@ def main():
    "original_date":"11–14 January 1929","subject":"Bombay city life",
    "source_license_declared":"PD-India plus PD-1996 US, territorial review required",
    "existing_master_sha256":sha(MASTER),"selected_scenes":records,
-   "vidu_target_source_scene_number":6,
+   "vidu_target_source_scene_number":None,
+   "vidu_selection_pending_real_subject_qa":True,
    "new_vidu_paid_post_count":0,"preserved_4_classic_and_1_video":True}
  (ROOT/"V95_FREE_SOURCE_QA.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
  print("V95_PREFLIGHT_COMPLETED_NO_CREDITS",str(ROOT/"V95_FIVE_SHOTS_BEFORE_AFTER.jpg"),flush=True)
