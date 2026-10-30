@@ -6,8 +6,9 @@ consumed by a future free/approved image-to-image worker.
 """
 from __future__ import annotations
 import argparse, hashlib, json, re
+from itertools import combinations
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageOps
 
 PROMPT=(
     "Restore THIS EXACT archival film frame into a realistic, high-detail modern "
@@ -27,6 +28,36 @@ def sha(path):
     with path.open("rb") as f:
         for block in iter(lambda:f.read(1024*1024),b""):h.update(block)
     return h.hexdigest()
+
+def visual_near_duplicate_guard(paths, threshold=0.055):
+    """Detect same-composition frames despite brightness, contrast or byte changes.
+
+    This is only a conservative duplicate blocker, NOT proof of five genuine
+    historical camera shots. Human shot-boundary review remains mandatory.
+    """
+    if len(paths)!=5:
+        raise ValueError("V110_EXPECTS_FIVE_ARCHIVAL_FRAMES")
+    signatures=[]
+    for path in paths:
+        with Image.open(path) as source:
+            gray=ImageOps.grayscale(source).resize((64,64),Image.Resampling.BILINEAR)
+        values=list(gray.tobytes())
+        mean=sum(values)/len(values)
+        variance=sum((v-mean)**2 for v in values)/len(values)
+        scale=max(8.0,variance**0.5)
+        signatures.append(tuple(max(-3.0,min(3.0,(v-mean)/scale)) for v in values))
+    pairs=[]
+    for a,b in combinations(range(5),2):
+        distance=sum(abs(x-y) for x,y in zip(signatures[a],signatures[b]))/4096
+        if distance<=threshold:
+            pairs.append({"frame_a":paths[a].name,"frame_b":paths[b].name,
+                          "normalized_visual_distance":round(distance,5)})
+    return {"version":"V110","status":"VISUAL_NEAR_DUPLICATE_SOURCE_FRAMES" if pairs
+            else "NO_OBVIOUS_VISUAL_DUPLICATES_REVIEW_REQUIRED",
+            "near_duplicate_pairs":pairs,
+            "threshold":threshold,
+            "historical_shot_distinctness_verified":False,
+            "warning":"No obvious duplicates does NOT prove five different camera shots."}
 
 def verified_source_preflight(order, source_dir):
     """Fail closed before preparing a provider-consumable source-locked job."""
@@ -96,10 +127,15 @@ def build(order,selection,source_dir):
           "human_face_fidelity":"PENDING","source_geometry_gate":"PENDING",
           "scene_distinctness_gate":"PENDING","rights_gate":"PENDING"
         })
+    visual_guard=visual_near_duplicate_guard([source_dir/"original_frames"/name for name in names])
+    if visual_guard["near_duplicate_pairs"]:
+        raise ValueError("VISUAL_NEAR_DUPLICATE_SOURCE_FRAMES: "+json.dumps(visual_guard["near_duplicate_pairs"][:2]))
     return {"version":"V102_SOURCE_LOCKED_I2I_JOBS",
       "cycle_id":order["cycle_id"],"episode_id":order["episode_id"],
       "source_video_sha256":source_video_sha,
       "original_frame_jobs":jobs,"photos_requested":5,
+      "visual_duplicate_guard":visual_guard,
+      "historical_shot_distinctness_verified":False,
       "photos_generated":0,"photos_approved":0,
       "provider_requests_sent":0,"paid_api_calls":0,
       "vidu_calls":0,"publication_permitted":False,
