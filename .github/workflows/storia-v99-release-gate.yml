@@ -88,6 +88,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: STORIA_V99_RELEASE_BLOCK_OR_PASS_AUDIT_${{ github.run_id }}
-          path: candidate/V99_REAL_MP4_BENCHMARK_REPORT.json
+          path: |
+            candidate/V99_REAL_MP4_BENCHMARK_REPORT.json
+            candidate/V99_CONFRONTO_VISIVO_V98_VS_NUOVO.jpg
           if-no-files-found: warn
           retention-days: 21
