@@ -826,7 +826,36 @@
           "gallery": "composite of photographed Met Gallery 632, NOT the actual installation",
           "original_frame_photo": "Szilas 2008 CC BY-SA 4.0, exact Socrates frame",
           "foreground_visitors_absent": true,
-          "notes": "Distinct full-length Museum camera video, SAME literal Gacrux WAV as Critico Standard. Not the Cinema Museum slot. No V25 release."
+          "notes": "Distinct full-length Museum camera video, SAME literal Gacrux WAV as Critico Standard. Not the Cinema Museum slot. No V25 release.",
+          "v89_review_revision": {
+            "version": "V89R1",
+            "status": "review_only_not_gold",
+            "sha256": "e6cce47dd7adcf7d54262e9deab9ec450888e25462e739740dd6f39edc0416d3",
+            "bytes": 29208931,
+            "duration_seconds": 168.166667,
+            "resolution": "720x1280",
+            "fps": 24,
+            "original_V67_preserved": true,
+            "original_sha256": "c3be9d91b2967df4e484918b6d678b141111130eea991b63493d15b843c090a9",
+            "aac_demux_bit_identical_to_V67": true,
+            "aac_sha256": "3f1374c08615822bd8c2fd41597d98dbcc2335ca3235543e5e978d9feee44669",
+            "full_ffmpeg_decode_pass": true,
+            "library_path": "/ArtVision/Socrate/V89_recupero_originali/Socrate_Critico_Museum_V89R1_REVIEW_FINALE.mp4",
+            "library_file_id": "libfile_99357a9097008191803f9e8a5c577003",
+            "library_readback_sha256_pass": true,
+            "library_byte_cmp_pass": true,
+            "frame_removed_at_seconds": [
+              108,
+              111
+            ],
+            "remaining_artistic_issues": [
+              "thin border may remain near 105s",
+              "long zoom/face crops require revision"
+            ],
+            "v25_approved": false,
+            "site_playback_verified": false,
+            "qa_report": "docs/productions/2026-10-30-socrates-v89r1-nondestructive-frame-fix.md"
+          }
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
