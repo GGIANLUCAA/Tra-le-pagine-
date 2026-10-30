@@ -225,6 +225,17 @@ class V101Tests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"SHOT_BOUNDARY_EVIDENCE_MISSING_OR_LEGACY"):
                 i2i.build(order,selection,d)
 
+    def test_v114_pts_clock_rejects_forged_freeze_time(self):
+        # FFmpeg PTS 90 at time_base 1001/30000 is 3.003s.
+        self.assertTrue(i2i.verify_pts_timebase_consistency(90,3.003,"1001/30000"))
+        self.assertTrue(i2i.verify_pts_timebase_consistency(90,3.00300004,"1001/30000"))
+        with self.assertRaisesRegex(ValueError,"SOURCE_PTS_TIME_BASE_MISMATCH"):
+            i2i.verify_pts_timebase_consistency(90,3.0,"1001/30000")
+        with self.assertRaisesRegex(ValueError,"SOURCE_PTS_CLOCK_INVALID"):
+            i2i.verify_pts_timebase_consistency(90,3.003,"0/1000")
+        with self.assertRaisesRegex(ValueError,"SOURCE_PTS_CLOCK_INVALID"):
+            i2i.verify_pts_timebase_consistency(True,3.003,"1001/30000")
+
     def test_i2i_rejects_duplicate_or_forged_pts_evidence(self):
         from PIL import Image,ImageDraw
         with tempfile.TemporaryDirectory() as temp:
@@ -256,6 +267,13 @@ class V101Tests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"SOURCE_PTS_PROVENANCE_INVALID"):
                 i2i.build(order,selection,d)
             report["frame_provenance"][2]["source_pts_logged_from_decode"]=True
+            # Tamper the displayed timestamp but keep the PNG SHA and cut segment.
+            # V113 segment membership alone would accept 2.4s in the same segment.
+            report["frame_provenance"][2]["source_pts_time_s"]=2.4
+            report_path.write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"SOURCE_PTS_TIME_BASE_MISMATCH"):
+                i2i.build(order,selection,d)
+            report["frame_provenance"][2]["source_pts_time_s"]=2.0
             report["frame_provenance_version"]="V111_EXTRACTED_FRAME_SHA256"
             report_path.write_text(json.dumps(report))
             with self.assertRaisesRegex(ValueError,"SOURCE_PTS_PROVENANCE_VERSION_MISSING_OR_LEGACY"):
