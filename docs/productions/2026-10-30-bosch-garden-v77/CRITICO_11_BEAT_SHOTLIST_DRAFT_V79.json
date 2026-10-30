@@ -1,0 +1,173 @@
+{
+  "schema": "artvision-bosch-v79-critico-shotlist-draft",
+  "work_id": "bosch_garden_earthly_delights_prado_p002823",
+  "status": "planning_only_not_rendered",
+  "script_path": "docs/productions/2026-10-30-bosch-garden-v77/COPIONE_CRITICO_GACRUX_DRAFT_V79.txt",
+  "script_words": 323,
+  "script_authoring": "original Italian professional concise 11-chapter narration",
+  "script_source": "Museo del Prado artwork P002823, Prado encyclopedia, Commons verified artwork",
+  "shared_critico_WAV_sha256": null,
+  "shared_critico_WAV_status": "not_generated_no_authorized_cost_scope",
+  "asr_status": "pending_exact_WAV",
+  "camera_rule": "V76 semantic chapters, no movement on every sentence, no 3D invention",
+  "museum_frame_status": "blocked_V80_specific_frame_or_approved_alternative",
+  "museum_scale_status": "blocked_conflicting_prado_dimensions",
+  "chapters": [
+    {
+      "chapter": 1,
+      "semantic_id": "tree_man",
+      "focus_xy": [
+        0.865,
+        0.37
+      ],
+      "visual_reason": "Hell, tree-man body and human face",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    },
+    {
+      "chapter": 2,
+      "semantic_id": "triptych_overview",
+      "focus_xy": [
+        0.5,
+        0.5
+      ],
+      "visual_reason": "Three original panels, exact one artwork",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    },
+    {
+      "chapter": 3,
+      "semantic_id": "closed_exterior_reference",
+      "focus_xy": [
+        0.5,
+        0.5
+      ],
+      "visual_reason": "Closed exterior requires separately licensed genuine source; until then no fabricated back-side",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    },
+    {
+      "chapter": 4,
+      "semantic_id": "eden",
+      "focus_xy": [
+        0.13,
+        0.75
+      ],
+      "visual_reason": "God, Adam and Eve",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    },
+    {
+      "chapter": 5,
+      "semantic_id": "central_fountains",
+      "focus_xy": [
+        0.49,
+        0.23
+      ],
+      "visual_reason": "Blue fountain and surreal garden",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    },
+    {
+      "chapter": 6,
+      "semantic_id": "riders",
+      "focus_xy": [
+        0.5,
+        0.45
+      ],
+      "visual_reason": "Circular procession",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    },
+    {
+      "chapter": 7,
+      "semantic_id": "fruits_glass",
+      "focus_xy": [
+        0.53,
+        0.64
+      ],
+      "visual_reason": "Fruit and transparent bubble in a single wide hold",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    },
+    {
+      "chapter": 8,
+      "semantic_id": "musical_hell",
+      "focus_xy": [
+        0.82,
+        0.73
+      ],
+      "visual_reason": "Instruments and fire",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    },
+    {
+      "chapter": 9,
+      "semantic_id": "tree_man_return",
+      "focus_xy": [
+        0.865,
+        0.37
+      ],
+      "visual_reason": "Tree-man internal tavern",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    },
+    {
+      "chapter": 10,
+      "semantic_id": "three_panels",
+      "focus_xy": [
+        0.5,
+        0.5
+      ],
+      "visual_reason": "Interpretive scope, entire triptych",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    },
+    {
+      "chapter": 11,
+      "semantic_id": "closing",
+      "focus_xy": [
+        0.5,
+        0.5
+      ],
+      "visual_reason": "Three panels, one authentic work",
+      "asr_start_seconds": null,
+      "asr_end_seconds": null,
+      "museum_camera_hold": "slow_stable_until_next_chapter",
+      "estimated_time_is_not_verified": true
+    }
+  ],
+  "critico_standard": {
+    "status": "blocked_exact_WAV",
+    "camera": "meaning-driven low-motion V22, detailed shots after exact ASR",
+    "v22_old_audio_reuse_as_new_master": false
+  },
+  "critico_museum": {
+    "status": "blocked_exact_WAV_and_V80",
+    "camera": "continuous semantic 11 chapter path, same exact future WAV as Standard",
+    "no_hard_cuts": true
+  },
+  "V25_approved": false,
+  "paid_tts_called": false,
+  "paid_video_ai_called": false
+}
