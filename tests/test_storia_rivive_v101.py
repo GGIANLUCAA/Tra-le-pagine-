@@ -86,8 +86,14 @@ class V101Tests(unittest.TestCase):
             (d/"SCOUT_REPORT.json").write_text(json.dumps({
                 "status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
                 "original_sha256":i2i.sha(d/"ORIGINAL_ARCHIVE.webm")}))
+            from PIL import ImageDraw
             for i in range(1,6):
-                Image.new("RGB",(1280,720),(20*i,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+                im=Image.new("RGB",(1280,720),(40,40,40))
+                draw=ImageDraw.Draw(im)
+                x=80+(i-1)*230
+                draw.rectangle((x,70,x+150,650),fill=(220,220,220))
+                draw.ellipse((110,180+(i-1)*60,450,400+(i-1)*60),fill=(110,110,110))
+                im.save(d/"original_frames"/("frame_%02d.png"%i))
             order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
                    "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
                    "paid_api_call_permitted":False,"publish_permitted":False,
@@ -100,6 +106,34 @@ class V101Tests(unittest.TestCase):
             self.assertEqual(result["provider_requests_sent"],0)
             self.assertTrue(all(x["source_sha256"] and x["request_sent"] is False for x in result["original_frame_jobs"]))
             self.assertEqual(result["source_video_sha256"],i2i.sha(d/"ORIGINAL_ARCHIVE.webm"))
+            self.assertEqual(result["visual_duplicate_guard"]["status"],
+                             "NO_OBVIOUS_VISUAL_DUPLICATES_REVIEW_REQUIRED")
+            self.assertFalse(result["historical_shot_distinctness_verified"])
+
+    def test_i2i_blocks_exposure_variants_of_same_historical_shot(self):
+        from PIL import Image,ImageDraw,ImageEnhance
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test only")
+            (d/"SCOUT_REPORT.json").write_text(json.dumps({
+                "status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
+                "original_sha256":i2i.sha(d/"ORIGINAL_ARCHIVE.webm")}))
+            original=Image.new("RGB",(1280,720),(45,45,45))
+            draw=ImageDraw.Draw(original)
+            draw.ellipse((100,80,640,650),fill=(200,200,200))
+            draw.rectangle((710,100,1180,510),fill=(100,100,100))
+            for i in range(1,6):
+                ImageEnhance.Brightness(original).enhance(0.95+i*.02).save(
+                    d/"original_frames"/("frame_%02d.png"%i))
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
+                   "paid_api_call_permitted":False,"publish_permitted":False,
+                   "blocking_issues":[]}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            with self.assertRaisesRegex(ValueError,"VISUAL_NEAR_DUPLICATE_SOURCE_FRAMES"):
+                i2i.build(order,selection,d)
+
     def test_i2i_preflight_blocks_unverified_italian_rights(self):
         with tempfile.TemporaryDirectory() as temp:
             with self.assertRaisesRegex(ValueError,"V101_SOURCE_PREFLIGHT_BLOCKED"):
