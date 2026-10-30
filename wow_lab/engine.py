@@ -85,13 +85,60 @@ def get_json(url: str) -> dict:
     return json.loads(get_bytes(url, limit=3_000_000).decode("utf-8"))
 
 
-def recent_history() -> list[dict]:
-    """Read only prerelease descriptions with our prefix; no modifications."""
+def parse_wow_release_history(releases: list[dict]) -> list[dict]:
+    """Last distinct WOW subjects, including older experimental tag families.
+
+    If a recent release cannot be tied to a verified object ID, stop rather
+    than silently assuming the artwork is new.
+    """
+    history = []
+    seen = set()
+    for release in releases:
+        tag = str(release.get("tag_name") or "")
+        if not tag.startswith("wow-lab-"):
+            continue
+        body = str(release.get("body") or "")
+        match = re.search(r"<!-- WOWLAB_META (.*?) -->", body)
+        meta = None
+        if match:
+            try:
+                meta = json.loads(match.group(1))
+            except (ValueError, TypeError):
+                pass
+        ident = (meta or {}).get("object_id")
+        if not ident:
+            # Legacy experiments disclose their Met object/print ID in notes.
+            found = re.search(r"\b(?:object(?:\s+id)?|print)\s*(?:#|:)?\s*(\d{4,8})\b",
+                              body, flags=re.IGNORECASE)
+            if not found:
+                found = re.search(r"hokusai-(\d{4,8})", tag)
+            ident = found.group(1) if found else None
+        if not ident or not str(ident).isdigit():
+            raise RuntimeError("WOW_LAB_HISTORY_UNVERIFIED: " + tag)
+        ident = int(ident)
+        if ident in seen:
+            continue  # V1/V2 of one painting count as one subject, not two.
+        seen.add(ident)
+        history.append({"schema": SCHEMA, "object_id": ident, "tag": tag})
+        if len(history) >= 25:
+            break
+    return history
+
+
+def release_slot_exists(releases: list[dict], stamp: str) -> bool:
+    """Avoid regenerating a slot already represented by a WOW LAB release."""
+    return any(str(r.get("tag_name") or "") == PREFIX + stamp for r in releases)
+
+
+def recent_history(stamp: str | None = None) -> list[dict]:
+    """Read all WOW LAB prerelease families; never modify or guess history."""
     repository = os.environ.get("GITHUB_REPOSITORY", "")
     token = os.environ.get("GITHUB_TOKEN", "")
-    if repository != "GGIANLUCAA/Tra-le-pagine-" or not token:
-        return []
-    url = f"https://api.github.com/repos/{repository}/releases?per_page=50"
+    if repository != "GGIANLUCAA/Tra-le-pagine-":
+        return []  # Local/offline tests only.
+    if not token:
+        raise RuntimeError("WOW_LAB_HISTORY_UNAVAILABLE: missing GitHub token")
+    url = f"https://api.github.com/repos/{repository}/releases?per_page=100"
     request = urllib.request.Request(url, headers={
         "Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
         "User-Agent": "ArtVision-WowLab-Isolated",
@@ -100,24 +147,10 @@ def recent_history() -> list[dict]:
         with urllib.request.urlopen(request, timeout=12) as response:
             releases = json.load(response)
     except Exception as err:
-        print(f"WOW_LAB history unavailable, using deterministic fallback: {err}", file=sys.stderr)
-        return []
-    history = []
-    for release in releases:
-        if not str(release.get("tag_name", "")).startswith(PREFIX):
-            continue
-        body = release.get("body") or ""
-        found = re.search(r"<!-- WOWLAB_META (.*?) -->", body)
-        if not found:
-            continue
-        try:
-            meta = json.loads(found.group(1))
-        except (ValueError, TypeError):
-            continue
-        if meta.get("schema") == SCHEMA:
-            history.append(meta)
-    return history[:25]
-
+        raise RuntimeError("WOW_LAB_HISTORY_UNAVAILABLE: " + str(err)) from err
+    if stamp and release_slot_exists(releases, stamp):
+        raise RuntimeError("WOW_LAB_SLOT_ALREADY_RELEASED: " + PREFIX + stamp)
+    return parse_wow_release_history(releases)
 
 def object_url(object_id: int) -> str:
     return f"{API}/v1/objects/{object_id}"
@@ -158,7 +191,7 @@ def select_artwork(conf: dict, stamp: str, history: list[dict], fixed_id: int | 
     elif conf.get("allow_museum_api_search"):
         queries = conf.get("search_queries", [])
         if queries:
-            index = (int(stamp[-2:]) // 2 + int(stamp[-4:-2])) % len(queries)
+            index = (int(stamp[-2:]) // 2 + int(stamp[6:8])) % len(queries)
             queries = queries[index:] + queries[:index]
         for q in queries[:3]:
             candidates.extend(discovery_ids(q, limit=9))
@@ -169,7 +202,7 @@ def select_artwork(conf: dict, stamp: str, history: list[dict], fixed_id: int | 
         candidates.sort(key=lambda n: (n in recently[:3], n in recently, n in conf["allowed_artwork_ids"]))
     problems = []
     for ident in candidates[:20]:
-        if fixed_id is None and ident == (recently[0] if recently else None):
+        if fixed_id is None and ident in recently:
             continue
         try:
             rec = get_json(object_url(ident))
@@ -433,7 +466,7 @@ def run(args):
     if out == sandbox or sandbox not in out.parents:
         raise ValueError("Output must stay inside wow_lab/runs/<unique-slot>")
     out.mkdir(parents=True,exist_ok=True)
-    past=recent_history()
+    past=recent_history(stamp)
     rec=select_artwork(conf, stamp, past, args.test_source_id)
     source,url,source_sha=save_original(rec,out,conf)
     modes=list(SAFE_MODES)

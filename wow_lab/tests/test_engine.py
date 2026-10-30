@@ -25,6 +25,49 @@ class WowLabContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             engine.slot_id("not-a-time")
 
+    def test_autonomous_selection_parses_utc_slot_without_crashing(self):
+        from unittest.mock import patch
+        cfg = engine.read_config(MODULE / "config.json")
+        sample = {"objectID": 436535, "isPublicDomain": True, "objectName": "Painting",
+                  "primaryImage": "https://images.metmuseum.org/test.jpg",
+                  "title": "Verified painting"}
+        with patch.object(engine, "discovery_ids", return_value=[]), patch.object(engine, "get_json", return_value=sample):
+            chosen = engine.select_artwork(cfg, "20261030T06", [])
+        self.assertEqual(chosen["objectID"], 436535)
+
+    def test_legacy_wow_releases_count_distinct_subjects(self):
+        releases = [
+            {"tag_name": "wow-lab-madame-x-silhouette-v2-20261030",
+             "body": "Metropolitan Museum of Art CC0, object 12127."},
+            {"tag_name": "wow-lab-madame-x-silhouette-v1-20261030",
+             "body": "Metropolitan Museum of Art CC0, object 12127."},
+            {"tag_name": "wow-lab-hokusai-45434-android-20261029",
+             "body": "Met CC0 Hokusai print 45434."},
+        ]
+        history = engine.parse_wow_release_history(releases)
+        self.assertEqual([x["object_id"] for x in history], [12127, 45434])
+
+    def test_slot_collision_detected_before_render(self):
+        releases = [{"tag_name": "wow-lab-v1-20261030T08"},
+                    {"tag_name": "wow-lab-madame-x-silhouette-v2-20261030"}]
+        self.assertTrue(engine.release_slot_exists(releases, "20261030T08"))
+        self.assertFalse(engine.release_slot_exists(releases, "20261030T10"))
+
+    def test_unverified_wow_release_history_fails_closed(self):
+        with self.assertRaisesRegex(RuntimeError, "WOW_LAB_HISTORY_UNVERIFIED"):
+            engine.parse_wow_release_history([
+                {"tag_name": "wow-lab-unknown-subject", "body": "No museum object ID"}
+            ])
+
+    def test_recent_six_subjects_are_never_reused(self):
+        from unittest.mock import patch
+        cfg = engine.read_config(MODULE / "config.json")
+        cfg["allow_museum_api_search"] = False
+        history = [{"object_id": value} for value in cfg["allowed_artwork_ids"]]
+        with patch.object(engine, "get_json", side_effect=AssertionError("Recent object must not be fetched")):
+            with self.assertRaisesRegex(RuntimeError, "No suitable verified CC0 artwork"):
+                engine.select_artwork(cfg, "20261030T08", history)
+
     def test_artwork_rights_fail_closed(self):
         rec = {"objectID": 436535,"isPublicDomain": True,"objectName":"Painting",
                "primaryImage":"https://images.metmuseum.org/photo.jpg"}
