@@ -54,6 +54,24 @@ def choose(root=ROOT):
                                "topic":wave["artwork"],"artvision_4x1_variant":variant},root)
                         wstates={v:wave["variants"][v]["status"] for v in VARIANTS}
                         rendered=sum(s in ("rendered_needs_review","approved_for_final_delivery") for s in wstates.values())
+                        fourth=lock.get("authorized_fourth_pilot",{})
+                        if rendered==4 and fourth.get("enabled") is True and fourth.get("phase")=="fourth_pilot_only_no_unbounded_series":
+                            final_group=next((g for g in queue["groups"] if g.get("group_id")==fourth.get("allowed_group_id")),None)
+                            if final_group is None or final_group.get("artwork")!=fourth.get("allowed_title"):
+                                return {"status":"fourth_pilot_missing","rendering_allowed":False,"new_artwork_required":False}
+                            for variant in VARIANTS:
+                                enforce_pilot_project({"serial_mode":"artvision_4x1",
+                                    "topic":final_group["artwork"],"artvision_4x1_variant":variant},root)
+                            final_states={v:final_group["variants"][v]["status"] for v in VARIANTS}
+                            done=sum(s in ("rendered_needs_review","approved_for_final_delivery") for s in final_states.values())
+                            return {"status":"fourth_pilot_four_rendered_review_pending" if done==4 else "fourth_pilot_in_progress",
+                                    "work":final_group["group_id"],"artwork":final_group["artwork"],
+                                    "rendered_count":done,
+                                    "approved_count":sum(s=="approved_for_final_delivery" for s in final_states.values()),
+                                    "rendering_allowed":done!=4,
+                                    "new_artwork_required":False,"new_fifth_artwork_allowed":False,
+                                    "variants":final_states,
+                                    "next_action":"Four Bosch slots physically rendered; do full human V25 and real durable archive download QA. Keep fifth artwork locked, do not duplicate Bosch."}
                         return {"status":"third_pilot_four_rendered_review_pending" if rendered==4 else "third_pilot_in_progress",
                                 "work":wave["group_id"],"artwork":wave["artwork"],
                                 "rendered_count":rendered,"variants":wstates,
