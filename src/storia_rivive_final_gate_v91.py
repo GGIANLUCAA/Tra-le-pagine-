@@ -74,6 +74,24 @@ def validate(manifest, video_info):
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         failures.extend(module.inspect(manifest, phase="delivery"))
+        # New 4+1 history reels must pass the *additional* concrete source/photo/Vidu
+        # sequencing gate. V95 was allowed through an unrelated legacy exception;
+        # never let an H264/AAC or saturation check waive artistic delivery rules.
+        if module.is_new_storia(manifest):
+            if manifest.get("project_format") == "4classic_1vidu":
+                v96_path = Path(__file__).with_name("storia_rivive_v96_guard.py")
+                if not v96_path.is_file():
+                    failures.append("V96_QUALITY_GATE_NOT_INSTALLED")
+                else:
+                    v96_spec = importlib.util.spec_from_file_location("storia_quality_v96", v96_path)
+                    v96 = importlib.util.module_from_spec(v96_spec)
+                    v96_spec.loader.exec_module(v96)
+                    new_errors, _ = v96.inspect(manifest, actual_duration=duration)
+                    failures.extend("V96: " + e for e in new_errors)
+            else:
+                # Explicitly recorded alternative formats need a dedicated gate;
+                # otherwise an unlabelled job can silently skip 4+1 QA again.
+                failures.append("V96_EXPLICIT_4CLASSIC_1VIDU_EDITORIAL_PRESET_REQUIRED")
     return failures
 
 def probe(path):
