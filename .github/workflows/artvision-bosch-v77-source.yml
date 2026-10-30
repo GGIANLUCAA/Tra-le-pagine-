@@ -1,0 +1,29 @@
+name: ArtVision Bosch V77 — retrieve authentic PD 4×1 source
+on:
+  pull_request:
+    paths:
+      - src/artvision_bosch_v77_source.py
+      - .github/workflows/artvision-bosch-v77-source.yml
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install image verifier only
+        run: python -m pip install --disable-pip-version-check "Pillow>=10,<13"
+      - name: Acquire independently hosted verified public-domain triptych
+        run: python src/artvision_bosch_v77_source.py
+      - name: Retain original verified pixels and failed-source evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V77_BOSCH_PD_SOURCE_WITH_RIGHTS
+          path: output/artvision-bosch-v77-sources/
+          retention-days: 30
+          if-no-files-found: warn
