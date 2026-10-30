@@ -26,6 +26,18 @@ class SlotAndQueueHardening(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "WOW_LAB_SLOT_ALREADY_RELEASED"):
                 engine.ensure_slot_available(stamp, history)
 
+    def test_naive_and_timezone_aware_release_dates_sort_without_crash(self):
+        releases = [
+            {"tag_name":"wow-lab-v1-20261030T08",
+             "body":'<!-- WOWLAB_META {"object_id":400112,"slot":"20261030T08"} -->',
+             "published_at":"2026-10-30T08:01:00"},
+            {"tag_name":"wow-lab-v1-20261030T10",
+             "body":'<!-- WOWLAB_META {"object_id":400113,"slot":"20261030T10"} -->',
+             "published_at":"2026-10-30T10:01:00Z"},
+        ]
+        history = engine.parse_wow_release_history(releases)
+        self.assertEqual([x["object_id"] for x in history], [400113,400112])
+
     def test_no_false_slot_block_for_other_hour(self):
         history = [{"object_id":400112,"tag":"wow-lab-v1-20261030T10",
                     "slot_utc":"20261030T10","slots_utc":["20261030T10"]}]
