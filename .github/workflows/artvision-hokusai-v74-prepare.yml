@@ -1,9 +1,5 @@
 name: "ArtVision Hokusai V74 — exact Met print and shared Gacrux voice"
 on:
-  pull_request:
-    paths:
-      - "src/artvision_hokusai_v74_prepare.py"
-      - ".github/workflows/artvision-hokusai-v74-prepare.yml"
   workflow_dispatch:
 permissions:
   contents: read
