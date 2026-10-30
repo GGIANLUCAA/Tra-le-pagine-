@@ -11,6 +11,7 @@ on:
       - "src/storia_rivive_scout_v101.py"
       - "src/storia_rivive_flag_title_v101.py"
       - "src/storia_rivive_frame_rank_v101.py"
+      - "src/storia_rivive_i2i_prepare_v102.py"
       - "config/storia_rivive_autopilot_v101.json"
       - "tests/test_storia_rivive_v101.py"
 permissions:
@@ -40,7 +41,7 @@ jobs:
       - name: Run fail-closed safety and flag geometry tests before research
         run: |
           set -euo pipefail
-          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
       - name: Create deterministic research work order for current UTC 3-hour window
         shell: bash
@@ -94,6 +95,15 @@ jobs:
           python src/storia_rivive_frame_rank_v101.py \
             --frames "output/storia_v101/source-cache/$STORIA_EPISODE_ID/original_frames" \
             --out output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
+      - name: Prepare five source-SHA-locked I2I requests without invoking any paid or free provider
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_i2i_prepare_v102.py \
+            --order output/storia_v101/WORK_ORDER.json \
+            --selection output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json \
+            --source-dir "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
+            --out output/storia_v101/I2I_INPUT_MANIFEST_V102.json
       - name: Generate historically constrained small country flag and title draft
         shell: bash
         run: |
@@ -141,6 +151,7 @@ jobs:
             output/storia_v101/WORK_ORDER.json
             output/storia_v101/CYCLE_STATUS.json
             output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
+            output/storia_v101/I2I_INPUT_MANIFEST_V102.json
             output/storia_v101/TITLE_FLAG_DRAFT.png
             output/storia_v101/TITLE_FLAG_REPORT.json
             output/storia_v101/source-cache/*/SCOUT_REPORT.json
