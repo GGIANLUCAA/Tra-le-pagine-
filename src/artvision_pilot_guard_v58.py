@@ -32,6 +32,13 @@ def enforce_pilot_project(project, root=ROOT):
             fourth.get("allowed_title")=="The Garden of Earthly Delights" and
             fourth.get("automatic_fifth_artwork_selection") is False):
         permitted.add(fourth["allowed_title"])
+    fifth=lock.get("authorized_fifth_pilot", {})
+    if (fifth.get("enabled") is True and
+            fifth.get("phase")=="fifth_pilot_wright_only" and
+            fifth.get("allowed_group_id")=="wright_air_pump_1768" and
+            fifth.get("allowed_title")=="An Experiment on a Bird in the Air Pump" and
+            fifth.get("automatic_sixth_artwork_selection") is False):
+        permitted.add(fifth["allowed_title"])
     if project.get("topic") not in permitted:
         raise ValueError("ArtVision PILOT LOCK: artwork outside explicitly authorized pilots")
     variant=project.get("artvision_4x1_variant")
