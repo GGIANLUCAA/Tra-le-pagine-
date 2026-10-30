@@ -35,6 +35,24 @@ class WowLabContractTests(unittest.TestCase):
             chosen = engine.select_artwork(cfg, "20261030T06", [])
         self.assertEqual(chosen["objectID"], 436535)
 
+    def test_legacy_wow_releases_count_distinct_subjects(self):
+        releases = [
+            {"tag_name": "wow-lab-madame-x-silhouette-v2-20261030",
+             "body": "Metropolitan Museum of Art CC0, object 12127."},
+            {"tag_name": "wow-lab-madame-x-silhouette-v1-20261030",
+             "body": "Metropolitan Museum of Art CC0, object 12127."},
+            {"tag_name": "wow-lab-hokusai-45434-android-20261029",
+             "body": "Met CC0 Hokusai print 45434."},
+        ]
+        history = engine.parse_wow_release_history(releases)
+        self.assertEqual([x["object_id"] for x in history], [12127, 45434])
+
+    def test_unverified_wow_release_history_fails_closed(self):
+        with self.assertRaisesRegex(RuntimeError, "WOW_LAB_HISTORY_UNVERIFIED"):
+            engine.parse_wow_release_history([
+                {"tag_name": "wow-lab-unknown-subject", "body": "No museum object ID"}
+            ])
+
     def test_recent_six_subjects_are_never_reused(self):
         from unittest.mock import patch
         cfg = engine.read_config(MODULE / "config.json")
