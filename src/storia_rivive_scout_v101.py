@@ -106,6 +106,14 @@ def inspect(page,outdir):
     frames=outdir/"original_frames";frames.mkdir(exist_ok=True)
     period=max(1.0,duration/12)
     provenance=extract_pts_locked_frames(film,frames,duration)
+    # V113: independent FFmpeg scene-score pass on real film bytes.
+    # These are cut CANDIDATES, never an assertion of five verified camera shots.
+    from storia_rivive_shot_boundaries_v113 import detect_cut_candidates,segment_for_time
+    shot_analysis=detect_cut_candidates(film,duration,m["original_sha256"])
+    for record in provenance:
+        record["shot_candidate_segment_index"]=segment_for_time(
+            record["source_pts_time_s"],shot_analysis["cut_candidate_times_s"])
+    m["shot_boundary_analysis"]=shot_analysis
     files=[frames/entry["filename"] for entry in provenance]
     from PIL import Image,ImageDraw
     board=Image.new("RGB",(1440,792),(18,18,18));draw=ImageDraw.Draw(board)
@@ -113,7 +121,7 @@ def inspect(page,outdir):
         im=Image.open(p).convert("RGB");im.thumbnail((350,236))
         x=(k%4)*360+4;y=(k//4)*264+4
         board.paste(im,(x,y+23))
-        draw.text((x,y+3),"ORIGINAL t~"+str(round(k*period,1))+"s",fill=(240,240,240))
+        draw.text((x,y+3),"ORIGINAL t="+str(provenance[k]["source_pts_time_s"])+"s / segment "+str(provenance[k]["shot_candidate_segment_index"]),fill=(240,240,240))
     board.save(outdir/"ORIGINAL_FILM_CONTACT_SHEET.jpg",quality=90)
     # V112: each original PNG has a recorded decoded source PTS, not an
     # artificial CFR/fps-filter timestamp. Human shot review still required.
