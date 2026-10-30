@@ -43,7 +43,10 @@
     "no_social_auto_publication": true,
     "zero_paid_video_ai_without_per_scene_consent": true,
     "old_masters_immutable": true,
-    "no_new_artwork_until_existing_pilot_lock_is_explicitly_released": true
+    "no_new_artwork_until_existing_pilot_lock_is_explicitly_released": true,
+    "museum_frame_requires_per_artwork_source_and_review_v80": true,
+    "no_generic_or_fake_gilded_border_as_authentic_frame": true,
+    "museum_without_verified_or_approved_frame_cannot_be_gold_master": true
   },
   "creative": {
     "critico_pair": {
@@ -255,6 +258,15 @@
       "new": true,
       "reason": "User explicitly authorized second artwork after four Socrates videos, 29 October 2026",
       "requested_scope": "THIS_ARTWORK_ONLY",
+      "source_preset_unchanged": true
+    },
+    {
+      "number": 2,
+      "field": "invariants.V80_frame_quality_safety",
+      "previous": "Three quality safety locks absent in historical V69 snapshot",
+      "new": "Three V80 locks added without altering actual video or creative setting",
+      "reason": "Keep historical Klimt recipe explicitly aligned with subsequent permanent museum frame source and authenticity safety rules",
+      "requested_scope": "SAFETY_POLICY_ONLY",
       "source_preset_unchanged": true
     }
   ],
