@@ -1,0 +1,41 @@
+name: "La Storia Rivive V97 — Coney Island 1903 · source diversity scout (FREE)"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v97-coney-scout.yml"]
+permissions:
+  contents: read
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install CPU-only archival inspector"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+      - name: "Download REAL Library of Congress 1903 primary source with known checksum"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_coney_v97
+          url="https://tile.loc.gov/storage-services/service/mbrs/ntscrm/01831478/01831478.mov"
+          curl -fL --connect-timeout 20 --max-time 400 --retry 2 --retry-delay 6 -o output/storia_coney_v97/SOURCE_ORIGINAL.mov "$url"
+          printf "f3458277cb1bb86964fd5effa1f621dfa2c3676fd489939017ccbee190a18408  output/storia_coney_v97/SOURCE_ORIGINAL.mov\n" | sha256sum -c -
+          python -u src/storia_v97_coney_source_scout.py
+      - name: "Save 1903 full-film true timecode source contact sheet and source QA"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V97_CONEY_ISLAND_1903_REAL_PRIMARY_FILM_SCOUT
+          path: |
+            output/storia_coney_v97/FULL_FILM_TIMECODE_SCOUT.jpg
+            output/storia_coney_v97/SCOUT.json
+            output/storia_coney_v97/ORIGINAL_*.jpg
+          retention-days: 10
+          if-no-files-found: warn
