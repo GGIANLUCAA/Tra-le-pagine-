@@ -1,0 +1,91 @@
+name: "La Storia Rivive V103 · CHINA c.1928 REAL archival video + photographic I2I preview"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-china-1928-v103-production.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-china-1928-v103-source-locked-single-job
+  cancel-in-progress: false
+jobs:
+  china_v103_source_to_preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    env:
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install original film decoder and free image-to-image client (no Vidu secrets)
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "gradio_client>=1.5,<2"
+          python -m py_compile src/storia_china_1928_v103_scout.py src/storia_china_1928_v103_i2i.py src/storia_china_1928_v103_render.py
+      - name: Acquire original China 1920s PD-claimed film and extract five moving black-white shots with real timecodes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u src/storia_china_1928_v103_scout.py --run
+          test -s output/storia_china_1928_v103/SOURCE_MANIFEST.json
+          for i in 01 02 03 04 05; do
+            test -s "output/storia_china_1928_v103/SCENE_${i}_EXACT_BW.png"
+            test -s "output/storia_china_1928_v103/SCENE_${i}_SOURCE_MOVING_BW.mp4"
+          done
+      - name: Attempt FIVE genuine free source-frame-locked photorealistic I2I restorations, one call per scene
+        shell: bash
+        continue-on-error: true
+        timeout-minutes: 29
+        run: |
+          python -u src/storia_china_1928_v103_i2i.py
+      - name: Assemble genuine playable video ONLY if at least four real-color I2I passes (zero fake Vidu)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -s output/storia_china_1928_v103/I2I_STATUS.json; then
+            python -u src/storia_china_1928_v103_render.py
+          else
+            echo "NO_REAL_I2I_REPORT; SOURCE_ONLY_PREPARED; NO_FALSE_PREVIEW"
+          fi
+      - name: Preserve actual original film, genuine photographs, real MP4 if made and review dossiers privately as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CHINA_1920S_V103_AUTHENTIC_SOURCE_I2I_ACTUAL_VIDEO_REVIEW
+          path: |
+            output/storia_china_1928_v103/SOURCE_MANIFEST.json
+            output/storia_china_1928_v103/I2I_STATUS.json
+            output/storia_china_1928_v103/RENDER_STATUS.json
+            output/storia_china_1928_v103/SCENE_*_EXACT_BW.png
+            output/storia_china_1928_v103/SCENE_*_SOURCE_MOVING_BW.mp4
+            output/storia_china_1928_v103/SCENE_*_I2I_CANDIDATE.jpg
+            output/storia_china_1928_v103/CHINA_1920S_SOURCE_OVERVIEW.jpg
+            output/storia_china_1928_v103/CHINA_V103_REAL_SOURCE_VS_REAL_I2I.jpg
+            output/storia_china_1928_v103/CHINA_1920S_V103_ACTUAL_I2I_REVIEW_NOT_FINAL.mp4
+            output/storia_china_1928_v103/CHINA_1920S_V103_TECHNICAL_REVIEW_ANDROID.zip
+            output/storia_china_1928_v103/COVER_CHINA_1920S_V103.jpg
+            output/storia_china_1928_v103/POST_*.txt
+          retention-days: 14
+          if-no-files-found: error
+      - name: Final summary without false completed claims
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          r=pathlib.Path('output/storia_china_1928_v103')
+          for name in ['SOURCE_MANIFEST.json','I2I_STATUS.json','RENDER_STATUS.json']:
+              p=r/name
+              if p.exists():
+                  d=json.loads(p.read_text())
+                  print(name,'STATUS',d.get('status'),'AI_PHOTOS',d.get('photos_succeeded_automated',d.get('photos_actual_generations')),'VIDEO',any(r.glob('CHINA_*REVIEW_NOT_FINAL.mp4')))
+          print('ZERO_NEW_VIDU_REQUESTS_ZERO_PAID_VIDEO_API_SPEND_NO_SITE_OR_SOCIAL_PUBLICATION')
+          PY
