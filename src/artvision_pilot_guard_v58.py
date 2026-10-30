@@ -25,6 +25,9 @@ def enforce_pilot_project(project, root=ROOT):
     third=lock.get("authorized_third_pilot", {})
     if third.get("enabled") is True and third.get("phase")=="third_pilot_only_no_unbounded_series":
         permitted.add(third.get("allowed_title"))
+    fourth=lock.get("authorized_fourth_pilot", {})
+    if fourth.get("enabled") is True and fourth.get("phase")=="fourth_pilot_only_no_unbounded_series":
+        permitted.add(fourth.get("allowed_title"))
     if project.get("topic") not in permitted:
         raise ValueError("ArtVision PILOT LOCK: artwork outside explicitly authorized pilots")
     variant=project.get("artvision_4x1_variant")
