@@ -139,8 +139,27 @@ class V101Tests(unittest.TestCase):
                 i2i.build(order,selection,d)
 
     def test_i2i_manifest_blocks_missing_source_frame(self):
+        from PIL import Image
         with tempfile.TemporaryDirectory() as temp:
-            with self.assertRaises(ValueError):
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test only")
+            (d/"SCOUT_REPORT.json").write_text(json.dumps({
+                "status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
+                "original_sha256":i2i.sha(d/"ORIGINAL_ARCHIVE.webm")}))
+            for i in range(1,5):
+                Image.new("RGB",(1280,720),(i*30,40,70)).save(
+                    d/"original_frames"/("frame_%02d.png"%i))
+            with self.assertRaisesRegex(ValueError,"Missing original source frame"):
+                i2i.build({"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                    "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
+                    "paid_api_call_permitted":False,"publish_permitted":False,
+                    "blocking_issues":[]},
+                    {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                     "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]},d)
+
+    def test_i2i_manifest_blocks_missing_preflight_evidence(self):
+        with tempfile.TemporaryDirectory() as temp:
+            with self.assertRaisesRegex(ValueError,"V101_SOURCE_PREFLIGHT_MISSING"):
                 i2i.build({"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
                     "paid_api_call_permitted":False,"publish_permitted":False},
                     {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
