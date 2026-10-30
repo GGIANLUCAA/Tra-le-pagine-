@@ -8,10 +8,13 @@ from __future__ import annotations
 
 import argparse
 import bisect
+import hashlib
 import json
 import math
+import re
 from fractions import Fraction
 from pathlib import Path
+from PIL import Image
 
 try:
     from src.storia_rivive_motion_window_v115 import inspect_five_source_windows, check_source_window
@@ -77,6 +80,73 @@ def plan_windows(manifest, scout):
     return windows
 
 
+
+def verify_five_source_pngs(manifest, scout, film_path):
+    """V119: recheck actual source PNG bytes after V102, before any provider.
+
+    V102 already SHA-locks its files at creation time, but cached or modified
+    PNGs could change between that check and the next stage. The independent
+    scout provenance and the five local PNGs must still agree. This does NOT
+    certify the original camera shot or reconstruct a photo.
+    """
+    film_sha = manifest["source_video_sha256"]
+    if (scout.get("frame_provenance_source_sha256") != film_sha
+            or scout.get("frame_provenance_version") != "V112_SOURCE_PTS_FROM_FFMPEG_SHOWINFO"):
+        raise ValueError("SOURCE_PNG_PROVENANCE_FILM_MISMATCH")
+    rows = scout.get("frame_provenance")
+    if not isinstance(rows, list) or not rows:
+        raise ValueError("SOURCE_PNG_PROVENANCE_MISSING")
+    provenance = {}
+    for row in rows:
+        if not isinstance(row, dict) or not isinstance(row.get("filename"), str):
+            raise ValueError("SOURCE_PNG_PROVENANCE_INVALID")
+        name = row["filename"]
+        if not re.fullmatch(r"frame_\\d{2}\\.png", name) or name in provenance:
+            raise ValueError("SOURCE_PNG_PROVENANCE_INVALID")
+        provenance[name] = row
+    root = Path(film_path).parent / "original_frames"
+    seen_names, seen_hashes = set(), set()
+    for job in manifest["original_frame_jobs"]:
+        raw = job.get("source_file")
+        if not isinstance(raw, str) or not raw:
+            raise ValueError("SOURCE_PNG_PATH_MISSING")
+        path = Path(raw)
+        name = path.name
+        expected = root / name
+        if (not re.fullmatch(r"frame_\\d{2}\\.png", name)
+                or name in seen_names or path.is_symlink() or expected.is_symlink()
+                or path.resolve() != expected.resolve() or not path.is_file()):
+            raise ValueError("SOURCE_PNG_PATH_INVALID_OR_MISSING")
+        seen_names.add(name)
+        row = provenance.get(name)
+        if row is None:
+            raise ValueError("SOURCE_PNG_NOT_IN_SCOUT")
+        digest = hashlib.sha256()
+        with path.open("rb") as handle:
+            for block in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(block)
+        digest = digest.hexdigest()
+        if (digest != job.get("source_sha256") or digest != row.get("sha256")
+                or digest in seen_hashes):
+            raise ValueError("SOURCE_PNG_SHA_MISMATCH_OR_DUPLICATE")
+        seen_hashes.add(digest)
+        with Image.open(path) as im:
+            if im.format != "PNG" or list(im.size) != job.get("source_raster_px"):
+                raise ValueError("SOURCE_PNG_RASTER_MISMATCH")
+            im.verify()
+        for field in ("source_pts", "source_pts_time_s", "source_time_base",
+                      "shot_candidate_segment_index", "extraction_index"):
+            if job.get(field) != row.get(field):
+                raise ValueError("SOURCE_PNG_SCOUT_METADATA_MISMATCH: " + field)
+        if (job.get("source_pts_logged_from_decode") is not True
+                or row.get("source_pts_logged_from_decode") is not True):
+            raise ValueError("SOURCE_PNG_PTS_PROVENANCE_MISSING")
+    if len(seen_names) != 5:
+        raise ValueError("NEED_FIVE_VERIFIED_SOURCE_PNGS")
+    return {"status": "V119_FIVE_SOURCE_PNG_BYTES_VERIFIED",
+            "count": 5, "source_film_sha256": film_sha}
+
+
 def run(manifest_path, scout_path, film_path, report_path, *, inspector=inspect_five_source_windows):
     """Persist JSON evidence; return only a draft gate decision."""
     manifest_path = Path(manifest_path)
@@ -85,20 +155,23 @@ def run(manifest_path, scout_path, film_path, report_path, *, inspector=inspect_
     try:
         scout = json.loads(Path(scout_path).read_text(encoding="utf-8"))
         windows = plan_windows(manifest, scout)
+        png_evidence = verify_five_source_pngs(manifest, scout, film_path)
         evidence = inspector(film_path, manifest["source_video_sha256"], windows)
         if evidence.get("status") != "FIVE_MOTION_WINDOWS_EVIDENCED_REVIEW_REQUIRED":
             raise ValueError("DECODED_MOTION_REJECTED: " + str(evidence.get("reason", "UNKNOWN")))
+        manifest["source_png_integrity_gate"] = "V119_FIVE_SOURCE_PNG_BYTES_VERIFIED"
         manifest["source_bw_motion_gate"] = "V118_FIVE_DECODED_WINDOWS_PASS_REVIEW_REQUIRED"
         for job, window in zip(manifest["original_frame_jobs"], windows):
             job["source_bw_motion_window"] = window
             job["source_bw_motion_review"] = "DECODED_PIXELS_CHANGED_NOT_CAMERA_QA"
         result = {"status": "MOTION_EVIDENCE_PASS_REVIEW_PENDING",
                   "reason": "DECODED_MOTION_ONLY_HUMAN_REVIEW_AND_RIGHTS_STILL_REQUIRED",
-                  "evidence": evidence}
+                  "evidence": evidence, "source_png_integrity": png_evidence}
     except (ValueError, TypeError, KeyError, OSError, json.JSONDecodeError) as exc:
         # A failed gate MUST NOT leave a provider-consumable request list.
         manifest["status"] = "I2I_INPUTS_BLOCKED"
         manifest["source_bw_motion_gate"] = "V118_BLOCKED"
+        manifest["source_png_integrity_gate"] = "V119_BLOCKED"
         manifest["original_frame_jobs"] = []
         manifest["photos_requested"] = 0
         manifest["reason"] = "V118_MOTION_PREFLIGHT_BLOCKED: " + str(exc)[:180]
