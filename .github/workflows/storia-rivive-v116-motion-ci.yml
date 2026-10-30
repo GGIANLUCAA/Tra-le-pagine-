@@ -3,7 +3,11 @@ on:
   pull_request:
     paths:
       - "src/storia_rivive_motion_window_v115.py"
+      - "src/storia_rivive_motion_preflight_v118.py"
+      - ".github/workflows/storia-rivive-v101-auto-3h.yml"
       - "tests/test_storia_rivive_motion_window_v115.py"
+      - "tests/test_storia_rivive_five_windows_v117.py"
+      - "tests/test_storia_rivive_motion_preflight_v118.py"
       - ".github/workflows/storia-rivive-v116-motion-ci.yml"
   workflow_dispatch:
 permissions:
@@ -23,8 +27,10 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -qq -y ffmpeg
           ffmpeg -version
-          python -m py_compile src/storia_rivive_motion_window_v115.py tests/test_storia_rivive_motion_window_v115.py
+          python -m py_compile src/storia_rivive_motion_window_v115.py tests/test_storia_rivive_motion_window_v115.py src/storia_rivive_motion_preflight_v118.py tests/test_storia_rivive_motion_preflight_v118.py tests/test_storia_rivive_five_windows_v117.py
       - name: Test genuine encoded motion vs static, SHA and PTS (no API)
         run: |
           set -euo pipefail
           python -m unittest discover -s tests -p 'test_storia_rivive_motion_window_v115.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_five_windows_v117.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_motion_preflight_v118.py' -v
