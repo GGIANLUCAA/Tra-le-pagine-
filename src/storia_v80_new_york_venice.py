@@ -130,7 +130,14 @@ def similarity(a,b):
  return float(np.corrcoef(s,t)[0,1])
 def enhanced_ai_images(meta,records,d,dd,ss):
  from gradio_client import Client,handle_file
- client=Client("finegrain/finegrain-image-enhancer",verbose=False,hf_token=os.environ.get("HF_TOKEN") or None)
+ import inspect
+ kwargs={"verbose":False}
+ params=inspect.signature(Client).parameters
+ token=os.environ.get("HF_TOKEN")
+ if token:
+  if "hf_token" in params:kwargs["hf_token"]=token
+  elif "token" in params:kwargs["token"]=token
+ client=Client("finegrain/finegrain-image-enhancer",**kwargs)
  produced=[]
  for r in records:
   i=r["scene"];source=cv2.imread(str(d/r["source_frame"]))
