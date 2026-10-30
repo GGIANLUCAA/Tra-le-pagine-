@@ -64,7 +64,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          tag="wow-lab-madame-x-silhouette-v1-20261030"
+          tag="wow-lab-madame-x-silhouette-v2-20261030"
           if gh release view "$tag" >/dev/null 2>&1; then
             echo "Existing release; no overwrites"
             exit 0
@@ -75,7 +75,7 @@ jobs:
             output/BEFORE_AFTER.jpg \
             output/MASK_AUDIT.jpg \
             output/QA.json \
-            --title "WOW LAB · Madame X · portrait break test" \
-            --notes "Independent experimental 2.5D portrait effect. Original painting verified Metropolitan Museum of Art CC0, object 12127. Fictional gallery frame, not documented physical frame. Technical QA passed; human artistic review pending. No Vidu, paid AI API, social publishing or ArtVision core changes." \
+            --title "WOW LAB · Madame X · hand-guided profile V2" \
+            --notes "Independent experimental 2.5D portrait effect V2 after rejecting broad background mask. Original painting verified Metropolitan Museum of Art CC0, object 12127. Fictional gallery frame, not documented physical frame. Technical QA passed; human artistic review pending. No Vidu, paid AI API, social publishing or ArtVision core changes." \
             --target experiment/wow-lab-madame-x-silhouette-20261030 \
             --prerelease
