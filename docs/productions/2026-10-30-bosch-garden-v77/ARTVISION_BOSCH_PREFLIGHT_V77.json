@@ -10,7 +10,7 @@
     "medium": "grisaille and oil on oak panels",
     "official_collection_url": "https://www.museodelprado.es/en/the-collection/art-work/triptych-garden-earthly-delights/02388242-6d6a-4e9e-a992-e1311eab3609"
   },
-  "status": "preflight_blocked_no_render",
+  "status": "cinema_standard_source_music_verified_only",
   "ready_for_render": false,
   "owner_only": true,
   "max_concurrent_artvision_renders": 1,
@@ -109,10 +109,11 @@
       "frame": "no unverified historical frame"
     },
     "cinema_standard": {
-      "status": "blocked_source_and_music",
+      "status": "ready_for_single_local_render_after_bosch_only_lock_merge",
       "voice": "none",
-      "music": "verify exact recording license before use",
-      "sequence": "tree-man hook -> Eden -> central garden -> riders -> hell -> whole triptych"
+      "music": "Water Lily, Kevin MacLeod, CC BY 4.0 exact file SHA b8c4f3...",
+      "sequence": "tree-man hook -> Eden -> central garden -> riders -> hell -> whole triptych",
+      "source_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9"
     },
     "cinema_museum": {
       "status": "blocked_frame_v80",
@@ -123,10 +124,6 @@
   },
   "blockers": [
     {
-      "code": "BOSCH_SOURCE_SHA_PENDING",
-      "resolution": "Acquire a permitted authentic reproduction, verify bytes SHA256, crop/subject fidelity and source rights."
-    },
-    {
       "code": "BOSCH_PRADO_DIMENSIONS_CONFLICT",
       "resolution": "Reconcile Prado collection panel measurements with Prado encyclopedia overall measurements for V46 scale."
     },
@@ -135,16 +132,12 @@
       "resolution": "Find work-specific legal photo/frame evidence or seek explicit alternative per V80; no invented original frame."
     },
     {
-      "code": "BOSCH_MUSIC_RECORDING_LICENSE_PENDING",
-      "resolution": "Verify music file and recording rights; old V21 attribution is not proof of present recording identity."
-    },
-    {
       "code": "BOSCH_GACRUX_NEW_SCRIPT_WAV_PENDING",
       "resolution": "Create/approve new script, check authorized quota/cost scope, generate only one new WAV and ASR for Critico pair."
     },
     {
-      "code": "BOSCH_LOCK_NOT_SCOPED",
-      "resolution": "After asset/rights preflight, explicitly add only Bosch work ID to V58 guard and tests, not broad automatic unlocking."
+      "code": "BOSCH_MUSEUM_FRAME_V80_UNVERIFIED",
+      "resolution": "No Museum final render or V25 without work-specific frame evidence or specifically approved creative alternative."
     }
   ],
   "v25_approved": false,
@@ -153,5 +146,40 @@
   "paid_video_api_calls": 0,
   "render_started": false,
   "queue_modified": false,
-  "source_research_date": "2026-10-30"
+  "source_research_date": "2026-10-30",
+  "ready_for_render_by_slot": {
+    "cinema_standard": true,
+    "cinema_museum": false,
+    "critico_standard": false,
+    "critico_museum": false
+  },
+  "source_evidence": {
+    "github_run_id": 41024818174,
+    "artifact_id": 12963745760,
+    "workflow_status": "completed_success",
+    "downloaded_and_verified_in_chat_runtime": true,
+    "source_title": "File:The Garden of Earthly Delights by BoschFXD.jpg",
+    "source_dimensions_px": [
+      6800,
+      3871
+    ],
+    "source_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9",
+    "source_bytes": 12130063,
+    "license": "Wikimedia Commons PD-Art/PDM",
+    "color_note": "Color-adjusted derived file, NOT unmodified Prado colorimetry; exact source identified",
+    "source_page": "https://commons.wikimedia.org/wiki/File:The_Garden_of_Earthly_Delights_by_BoschFXD.jpg",
+    "source_delivery": "GitHub Actions artifact expires 2026-11-29; not a private archive backup"
+  },
+  "music_evidence": {
+    "title": "Water Lily",
+    "artist": "Kevin MacLeod",
+    "isrc": "USUAN1400035",
+    "source_page": "https://remote.incompetech.com/music/royalty-free/index.html?Search=Search&isrc=USUAN1400035",
+    "license": "CC BY 4.0",
+    "recording_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+    "local_bytes": 4612305,
+    "verified_against_existing_hokusai_package": true,
+    "attribution": "\"Water Lily\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/"
+  },
+  "lock_change_proposed": "Bosch-only fourth pilot guard/queue and tests in PR138, not active until merge"
 }
