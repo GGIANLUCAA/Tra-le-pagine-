@@ -1,0 +1,26 @@
+name: "WOW LAB · Zhu Ling Black Cat CC0 source"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-zhu-ling-black-cat-20261030
+    paths:
+      - "wow_lab/experiments/black_cat/source.py"
+      - ".github/workflows/wow-lab-black-cat-source-20261030.yml"
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install "Pillow>=10,<12"
+      - run: python wow_lab/experiments/black_cat/source.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_ZHU_LING_CAT_CC0_SOURCE
+          path: wow_lab/experiments/black_cat/source/*
+          retention-days: 15
+          if-no-files-found: error
