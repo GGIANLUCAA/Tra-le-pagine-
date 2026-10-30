@@ -123,6 +123,20 @@ class GateTests(unittest.TestCase):
         d.pop("scenes")
         self.assertIn("SCENE_BY_SCENE_TIMELINE_MISSING",inspect(d)[0])
 
+    def test_actual_v91_final_gate_invokes_v96_and_rejects_ddcolor(self):
+        import importlib.util
+        gate_path=pathlib.Path(__file__).resolve().parents[1]/"src"/"storia_rivive_final_gate_v91.py"
+        spec=importlib.util.spec_from_file_location("combined_final_gate_v91",gate_path)
+        mod=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        d=valid_manifest()
+        d["quality_policy_version"]="V94"
+        d["production_date"]="2026-10-30"
+        d["scenes"][0]["photo"]["method"]="DDColor_only"
+        failures=mod.validate(d,{"duration_s":21.0,"valid_h264_aac":True})
+        self.assertTrue(any("V96: SCENE_1_DDCOLOR_ONLY_IS_NOT_PHOTOGRAPHIC_RESTORATION" in e for e in failures),failures)
+        self.assertTrue(any("V94" in e for e in failures),failures)
+
     def test_real_old_v95_review_data_does_not_pass(self):
         d={"production":"New York 1911 V95","format":"storia_rivive",
            "status":"TECHNICAL_RENDER_VISUAL_REVIEW_PENDING",
