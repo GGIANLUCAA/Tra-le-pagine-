@@ -1,0 +1,114 @@
+name: "WOW LAB · Sharaku Kabuki hand V4 · verified Android render"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-sharaku-shadow-puppet-20261030
+    paths:
+      - "wow_lab/experiments/sharaku_shadow/render.py"
+      - ".github/workflows/wow-lab-sharaku-render-20261030.yml"
+permissions:
+  contents: read
+concurrency:
+  group: wow-lab-sharaku-single-video-v4
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free CPU-only tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+      - name: Retrieve authentic verified Sharaku CC0 image
+        run: |
+          python wow_lab/experiments/sharaku_shadow/source.py
+          cp wow_lab/experiments/sharaku_shadow/source/SHARAKU_WORK.png wow_lab/experiments/sharaku_shadow/SHARAKU_WORK.png
+          cp wow_lab/experiments/sharaku_shadow/source/SHARAKU_ORIGINAL.jpg wow_lab/experiments/sharaku_shadow/SHARAKU_ORIGINAL.jpg
+          cp wow_lab/experiments/sharaku_shadow/source/PROVENANCE.json wow_lab/experiments/sharaku_shadow/PROVENANCE.json
+      - name: Render final user-reviewed single-hand pop-out
+        run: |
+          python -m py_compile wow_lab/experiments/sharaku_shadow/render.py
+          python wow_lab/experiments/sharaku_shadow/render.py
+      - name: Strict technical and source-rights QA
+        run: |
+          python - <<'PY'
+          import pathlib,json,zipfile,subprocess,hashlib
+          root=pathlib.Path("wow_lab/experiments/sharaku_shadow")
+          out=root/"RENDER"
+          p=json.loads((root/"PROVENANCE.json").read_text())
+          q=json.loads((out/"QA.json").read_text())
+          video=out/"SHARAKU_KABUKI_REACH_V4_WOW_ANDROID.mp4"
+          kit=out/"SHARAKU_KABUKI_REACH_V4_ANDROID_KIT.zip"
+          assert p["met_object_id"]==37358 and p["public_domain"] and q["source_license"]=="CC0"
+          assert q["technical_pass"] and q["object_id"]==37358
+          assert q["mask_hand_qa"][0]["connected_components"]==1
+          assert q["multiple_independent_foreground_layers"]==1
+          assert q["codecs"]==["h264","aac"] and q["duration_seconds"]==11.5
+          assert q["paid_api_cost"]==0 and not q["social_published"]
+          assert hashlib.sha256((root/"SHARAKU_ORIGINAL.jpg").read_bytes()).hexdigest()==p["sha256"]
+          assert video.stat().st_size>250000 and kit.stat().st_size>250000
+          with zipfile.ZipFile(kit) as z:
+              assert z.testzip() is None
+              assert video.name in z.namelist()
+          subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-i",str(video),"-f","null","-"],check=True,timeout=100)
+          print("SHARAKU V4: full technical/source QA PASSED; artistic review still experimental.")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_SHARAKU_KABUKI_V4_ANDROID
+          path: |
+            wow_lab/experiments/sharaku_shadow/RENDER/*
+            wow_lab/experiments/sharaku_shadow/PROVENANCE.json
+          if-no-files-found: error
+          retention-days: 30
+  save_external_android_download:
+    needs: render
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: WOW_LAB_SHARAKU_KABUKI_V4_ANDROID
+          path: release_output
+      - name: Downloadable MP4 and ZIP release and independent raw mirrors
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="wow-lab-sharaku-kabuki-hand-v4-20261030"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            find release_output -maxdepth 3 -type f -printf '%p %s bytes\n'
+            video=$(find release_output -name SHARAKU_KABUKI_REACH_V4_WOW_ANDROID.mp4 -print -quit)
+            kit=$(find release_output -name SHARAKU_KABUKI_REACH_V4_ANDROID_KIT.zip -print -quit)
+            before=$(find release_output -name BEFORE_AFTER.jpg -print -quit)
+            qa=$(find release_output -name QA.json -print -quit)
+            test -s "$video" && test -s "$kit" && test -s "$before" && test -s "$qa"
+            gh release create "$tag" "$video" "$kit" "$before" "$qa" \
+              --title "WOW LAB · Sharaku Kabuki hand V4 · experimental extraction" \
+              --notes "11.5s 720x1280, H264/AAC, authentic CC0 Met 37358. Single precise five-fingered hand, no rectangular cloth strips, stage-shadow illusion, technical QA pass. This is 2.5D, not volumetric 3D. Still experimental artistically, no paid APIs, no core changes, no social posting." \
+              --target experiment/wow-lab-sharaku-shadow-puppet-20261030 \
+              --prerelease
+          fi
+          mkdir -p wow_lab/public_previews
+          video=$(find release_output -name SHARAKU_KABUKI_REACH_V4_WOW_ANDROID.mp4 -print -quit)
+          kit=$(find release_output -name SHARAKU_KABUKI_REACH_V4_ANDROID_KIT.zip -print -quit)
+          cp "$video" wow_lab/public_previews/sharaku-kabuki-hand-v4-20261030.mp4
+          cp "$kit" wow_lab/public_previews/sharaku-kabuki-hand-v4-20261030.zip
+          git config user.name "WOW LAB isolated release mirror"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wow_lab/public_previews/sharaku-kabuki-hand-v4-20261030.mp4 wow_lab/public_previews/sharaku-kabuki-hand-v4-20261030.zip
+          if ! git diff --staged --quiet; then
+            git commit -m "WOW LAB: verified Sharaku direct Android MP4 and ZIP fallback"
+            git push origin HEAD:experiment/wow-lab-sharaku-shadow-puppet-20261030
+          fi
