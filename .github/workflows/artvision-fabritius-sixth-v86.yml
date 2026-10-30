@@ -1,0 +1,78 @@
+name: "ArtVision V86 | Fabritius real frame Museum review (single owner, no paid API)"
+on:
+  push:
+    branches:
+      - artvision-goldfinch-sixth-v86-real-frame
+    paths:
+      - ".github/workflows/artvision-fabritius-sixth-v86.yml"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-single-render-v86-fabritius
+  cancel-in-progress: false
+jobs:
+  one_review_candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate sixth-only authorization and empty production queue
+        run: |
+          python - <<'PY'
+          import json
+          lock=json.load(open("config/artvision_pilot_lock_v58.json"))
+          queue=json.load(open("queue/artvision_four_variants_s01_20261028.json"))
+          jobs=json.load(open("queue/production_v15.json"))
+          s=lock.get("authorized_sixth_pilot",{})
+          assert lock["owner_automation_id"]=="6adca191603c8191a90d5190901cd034"
+          assert s.get("enabled") and s.get("phase")=="sixth_pilot_goldfinch_scoped_only"
+          assert s.get("allowed_group_id")=="fabritius_goldfinch_1654"
+          assert s.get("allowed_revision_variant")=="cinema_museum"
+          assert s.get("automatic_seventh_artwork_selection") is False
+          assert s.get("no_paid_video_ai_without_consent") is True
+          assert not jobs.get("items"),"ACTIVE_RENDER_JOBS_BLOCK"
+          g=next(x for x in queue["groups"] if x["group_id"]==s["allowed_group_id"])
+          assert g["variants"]["cinema_museum"]["status"]=="rendered_needs_review"
+          assert g["variants"]["critico_standard"]["status"]=="blocked"
+          assert g["variants"]["critico_museum"]["status"]=="blocked"
+          print("SCOPED_LOCK_AND_QUEUE_PASS no Gold approval, revision same slot")
+          PY
+      - name: Install free local dependencies
+        run: |
+          command -v ffmpeg
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=1.26,<3' 'requests>=2.31,<3'
+          python -m py_compile scripts/artvision_goldfinch_real_frame_v86.py
+      - name: Render ONE real museum revision from licensed true-frame photograph
+        run: |
+          set -euo pipefail
+          python scripts/artvision_goldfinch_real_frame_v86.py
+      - name: Independent archive / MP4 identity checks (NOT user V25)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import zipfile,json,hashlib,pathlib,subprocess
+          p=pathlib.Path("output/artvision-fabritius-v86")
+          q=json.loads((p/"QA_V86.json").read_text())
+          mp4=p/"FABRITIUS_GOLDFINCH_CINEMA_MUSEUM_V86_REVIEW.mp4"
+          assert hashlib.sha256(mp4.read_bytes()).hexdigest()==q["film_sha256"]
+          assert q["v57_over_35"]==0 and q["full_decode_pass"]
+          for file in p.glob("*.zip"):
+              with zipfile.ZipFile(file) as z:
+                  assert z.testzip() is None
+                  assert z.read(mp4.name)==mp4.read_bytes()
+          assert len(list(p.glob("POST_*.txt")))==4
+          print("INDEPENDENT_REAL_MP4_SHA_CRC_V57_PASS",q["film_sha256"],q["film_bytes"])
+          PY
+      - name: Retain actual MP4, sources and ZIP for Android (NOT social/site import)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_FABRITIUS_GOLDFINCH_V86_MUSEUM_REVIEW_BYTES
+          path: |
+            output/artvision-fabritius-v86/FABRITIUS_GOLDFINCH_CINEMA_MUSEUM_V86_REVIEW.mp4
+            output/artvision-fabritius-v86/FABRITIUS_GOLDFINCH_CINEMA_MUSEUM_V86_ANDROID.zip
+            output/artvision-fabritius-v86/FABRITIUS_GOLDFINCH_CINEMA_MUSEUM_V86_COMPLETO.zip
+            output/artvision-fabritius-v86/QA_V86.json
+            output/artvision-fabritius-v86/COVER.jpg
+            output/artvision-fabritius-v86/QA_*.jpg
+          retention-days: 30
+          if-no-files-found: error
