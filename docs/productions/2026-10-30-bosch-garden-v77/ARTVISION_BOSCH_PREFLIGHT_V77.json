@@ -1,0 +1,157 @@
+{
+  "schema": "artvision-bosch-four-variant-scoped-preflight-v77",
+  "created_at": "2026-10-30",
+  "work_id": "bosch_garden_earthly_delights_prado_p002823",
+  "artwork": {
+    "title": "The Garden of Earthly Delights Triptych",
+    "artist": "Hieronymus Bosch",
+    "inventory": "Museo Nacional del Prado P002823",
+    "date": "1490–1500",
+    "medium": "grisaille and oil on oak panels",
+    "official_collection_url": "https://www.museodelprado.es/en/the-collection/art-work/triptych-garden-earthly-delights/02388242-6d6a-4e9e-a992-e1311eab3609"
+  },
+  "status": "preflight_blocked_no_render",
+  "ready_for_render": false,
+  "owner_only": true,
+  "max_concurrent_artvision_renders": 1,
+  "measurements": {
+    "primary_collection": {
+      "panel_height_cm": 185.8,
+      "central_panel_width_cm": 172.5,
+      "wing_width_cm_each": 76.5,
+      "computed_open_width_cm": 325.5,
+      "source": "https://www.museodelprado.es/en/the-collection/art-work/triptych-garden-earthly-delights/02388242-6d6a-4e9e-a992-e1311eab3609"
+    },
+    "other_prado_reference": {
+      "height_cm": 205.5,
+      "width_cm": 384.9,
+      "source": "https://www.museodelprado.es/aprende/enciclopedia/voz/jardin-de-las-delicias-el-el-bosco/578702d4-4420-4e97-8518-8363a1fc2c9e"
+    },
+    "conflict": "Official Prado collection and Prado encyclopedia give DIFFERENT dimensions; do not silently combine. Resolve what is measured (painted panels, frame/overall) before V46 room scale or 3D."
+  },
+  "image_candidates": [
+    {
+      "role": "preferred_open_triptych",
+      "url": "https://commons.wikimedia.org/wiki/File:The_Garden_of_earthly_delights.jpg",
+      "claimed_dimensions_px": [
+        39137,
+        22279
+      ],
+      "claimed_bytes": 183383815,
+      "origin_claim": "Bosch Research and Conservation Project tiled source via dezoomify",
+      "rights_page": "Commons PDM/PD-Art; verify actual file and jurisdiction before use",
+      "downloaded": false,
+      "sha256": null
+    },
+    {
+      "role": "alternate_open_triptych",
+      "url": "https://commons.wikimedia.org/wiki/File:The_Garden_of_Earthly_Delights_by_Bosch_High_Resolution.jpg",
+      "claimed_dimensions_px": [
+        30000,
+        17078
+      ],
+      "origin_claim": "Prado Google Earth reproduction per Commons",
+      "rights_page": "Commons PD-Art; verify bytes and provenance",
+      "downloaded": false,
+      "sha256": null
+    },
+    {
+      "role": "legacy_color_adjusted_DO_NOT_ASSUME_ORIGINAL",
+      "url": "https://commons.wikimedia.org/wiki/File:The_Garden_of_Earthly_Delights_by_BoschFXD.jpg",
+      "origin_claim": "Bosch V21 source describes adjusted color layers",
+      "downloaded": false,
+      "sha256": null
+    }
+  ],
+  "museum": {
+    "frame_status": "unverified",
+    "frame_reference_url": null,
+    "frame_source_type": null,
+    "frame_image_or_model_hash": null,
+    "frame_scale_cm_or_declared_estimate": null,
+    "frame_disclosure": "No authentic Prado frame or current room image verified; do not invent gilt border or assert official gallery.",
+    "actual_room_photo_used": false,
+    "gallery_reconstruction_status": "not_started",
+    "frame_review": "blocked_V80",
+    "physical_structure_note": "Three hinged oak panels; wing opening/closing and outside grisaille must use documented images if animated, never invent a reverse."
+  },
+  "prior_reference": {
+    "reference_only": "modules/artvision_critico/production_series/bosch_director_cut_v22.json",
+    "historical_master_sha256": "2c59c58185ed3d7c51d280bf9c8442414cddf163a231fef08fd7a37d657b0ded",
+    "counts_as_new_4x1_slot": false,
+    "reference_strengths": [
+      "natural Italian narration",
+      "23 meaning-driven mostly locked shots",
+      "minimal slow push/pull <=1%",
+      "no sinusoidal camera"
+    ],
+    "voice_reuse_allowed": false
+  },
+  "storyboard_draft": {
+    "critico_standard": {
+      "status": "planned_not_rendered",
+      "voice": "new Gacrux WAV required for exact new script; no reuse of V22 audio",
+      "chapters": [
+        "tree-man visual hook",
+        "Eden left panel",
+        "central garden and oversized fruit",
+        "riders and pool",
+        "fragile glass bubble",
+        "night hell and musical instruments",
+        "three-panel return"
+      ],
+      "alignment": "WAV ASR timecodes required, 0/3/7s QA and each spoken subject centered"
+    },
+    "critico_museum": {
+      "status": "blocked_frame_v80",
+      "voice": "exact same new WAV/script as critico_standard",
+      "camera": "single continuous V57/V76 semantic chapter route, no every-sentence jumps, out to SAME frame and room",
+      "frame": "no unverified historical frame"
+    },
+    "cinema_standard": {
+      "status": "blocked_source_and_music",
+      "voice": "none",
+      "music": "verify exact recording license before use",
+      "sequence": "tree-man hook -> Eden -> central garden -> riders -> hell -> whole triptych"
+    },
+    "cinema_museum": {
+      "status": "blocked_frame_v80",
+      "voice": "none",
+      "camera": "continuous in/out with real panel scale; no artificial opening of shutters",
+      "frame": "requires documented authentic frame/hinges or specific approved alternative"
+    }
+  },
+  "blockers": [
+    {
+      "code": "BOSCH_SOURCE_SHA_PENDING",
+      "resolution": "Acquire a permitted authentic reproduction, verify bytes SHA256, crop/subject fidelity and source rights."
+    },
+    {
+      "code": "BOSCH_PRADO_DIMENSIONS_CONFLICT",
+      "resolution": "Reconcile Prado collection panel measurements with Prado encyclopedia overall measurements for V46 scale."
+    },
+    {
+      "code": "BOSCH_FRAME_V80_UNVERIFIED",
+      "resolution": "Find work-specific legal photo/frame evidence or seek explicit alternative per V80; no invented original frame."
+    },
+    {
+      "code": "BOSCH_MUSIC_RECORDING_LICENSE_PENDING",
+      "resolution": "Verify music file and recording rights; old V21 attribution is not proof of present recording identity."
+    },
+    {
+      "code": "BOSCH_GACRUX_NEW_SCRIPT_WAV_PENDING",
+      "resolution": "Create/approve new script, check authorized quota/cost scope, generate only one new WAV and ASR for Critico pair."
+    },
+    {
+      "code": "BOSCH_LOCK_NOT_SCOPED",
+      "resolution": "After asset/rights preflight, explicitly add only Bosch work ID to V58 guard and tests, not broad automatic unlocking."
+    }
+  ],
+  "v25_approved": false,
+  "mp4_count": 0,
+  "archive_import_verified": false,
+  "paid_video_api_calls": 0,
+  "render_started": false,
+  "queue_modified": false,
+  "source_research_date": "2026-10-30"
+}
