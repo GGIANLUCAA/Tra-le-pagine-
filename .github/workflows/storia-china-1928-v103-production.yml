@@ -4,9 +4,6 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/storia-china-1928-v103-production.yml"
-      - "src/storia_china_1928_v103_i2i.py"
-      - "src/storia_china_1928_v103_scout.py"
-      - "src/storia_china_1928_v103_render.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,6 +17,8 @@ jobs:
     timeout-minutes: 48
     env:
       PYTHONUNBUFFERED: "1"
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -31,7 +30,7 @@ jobs:
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
-          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "gradio_client>=1.5,<2"
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "gradio_client>=2.0,<3" "huggingface_hub>=0.25" "onnxruntime>=1.18,<2"
           python -m py_compile src/storia_china_1928_v103_scout.py src/storia_china_1928_v103_i2i.py src/storia_china_1928_v103_render.py
       - name: Acquire original China 1920s PD-claimed film and extract five moving black-white shots with real timecodes
         shell: bash
@@ -70,6 +69,7 @@ jobs:
             output/storia_china_1928_v103/SCENE_*_EXACT_BW.png
             output/storia_china_1928_v103/SCENE_*_SOURCE_MOVING_BW.mp4
             output/storia_china_1928_v103/SCENE_*_I2I_CANDIDATE.jpg
+            output/storia_china_1928_v103/SCENE_*_BASE_AI_DDCOLOR_NOT_FINAL.jpg
             output/storia_china_1928_v103/CHINA_1920S_SOURCE_OVERVIEW.jpg
             output/storia_china_1928_v103/CHINA_V103_REAL_SOURCE_VS_REAL_I2I.jpg
             output/storia_china_1928_v103/CHINA_1920S_V103_ACTUAL_I2I_REVIEW_NOT_FINAL.mp4
