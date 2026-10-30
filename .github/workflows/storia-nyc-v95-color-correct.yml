@@ -1,0 +1,63 @@
+name: "V95 New York 1911 - corrected natural Vidu color final review file"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-nyc-v95-color-correct.yml"]
+permissions:
+  contents: write
+jobs:
+  correct_existing_once:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Download existing genuine Vidu-generated master; NO Vidu API POST
+        run: |
+          mkdir -p output/storia_nyc_v95_grade
+          cd output/storia_nyc_v95_grade
+          gh release download storia-rivive-new-york-1911-v95-one-actual-vidu-review --repo "$GITHUB_REPOSITORY" -p NEW_YORK_1911_V95_REAL_VIDU.mp4 -p NEW_YORK_1911_V95_PACKAGE.zip -p V95_QA.json
+      - name: Correct oversaturated Vidu section only; maintain audio and movement
+        run: |
+          set -euo pipefail
+          cd output/storia_nyc_v95_grade
+          ffmpeg -nostdin -y -v error -i NEW_YORK_1911_V95_REAL_VIDU.mp4             -vf "hue=s=0.52:enable='between(t,12,17.03)'"             -c:v libx264 -preset veryfast -crf 19 -pix_fmt yuv420p -c:a copy -movflags +faststart             NEW_YORK_1911_V95_COLOR_CORRECTED.mp4
+          ffmpeg -nostdin -v error -xerror -i NEW_YORK_1911_V95_COLOR_CORRECTED.mp4 -f null -
+          python - <<'PY'
+          import pathlib,zipfile,json,hashlib
+          p=pathlib.Path("output/storia_nyc_v95_grade")
+          old=p/"NEW_YORK_1911_V95_PACKAGE.zip"
+          new=p/"NEW_YORK_1911_V95_CORRETTO_KIT.zip"
+          video=p/"NEW_YORK_1911_V95_COLOR_CORRECTED.mp4"
+          qa=json.loads((p/"V95_QA.json").read_text())
+          qa["color_corrected_sha256"]=hashlib.sha256(video.read_bytes()).hexdigest()
+          qa["color_correction"]="desaturated excessive orange in actual Vidu scene, seconds 12–17, NO new credits; original Vidu visual continuity and human face quality still require artistic review"
+          qa["master_artistic_approval"]=False
+          (p/"V95_QA_COLOR_CORRECTED.json").write_text(json.dumps(qa,indent=2,ensure_ascii=False))
+          with zipfile.ZipFile(old) as z,zipfile.ZipFile(new,"w",zipfile.ZIP_DEFLATED) as out:
+           for n in z.namelist():
+            if n=="NEW_YORK_1911_V95_REAL_VIDU.mp4":out.write(video,video.name)
+            elif n=="V95_QA.json":out.write(p/"V95_QA_COLOR_CORRECTED.json","V95_QA.json")
+            else:out.writestr(n,z.read(n))
+          with zipfile.ZipFile(new) as z:assert z.testzip() is None
+          print("COLOR_CORRECTED_READY",video.stat().st_size,new.stat().st_size)
+          PY
+      - name: Upload corrected MP4 and ZIP to existing GitHub prerelease
+        run: |
+          cd output/storia_nyc_v95_grade
+          gh release upload storia-rivive-new-york-1911-v95-one-actual-vidu-review             NEW_YORK_1911_V95_COLOR_CORRECTED.mp4             NEW_YORK_1911_V95_CORRETTO_KIT.zip V95_QA_COLOR_CORRECTED.json             --repo "$GITHUB_REPOSITORY" --clobber
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: NEW_YORK_1911_V95_COLOR_GRADED_REVIEW
+          path: |
+            output/storia_nyc_v95_grade/NEW_YORK_1911_V95_COLOR_CORRECTED.mp4
+            output/storia_nyc_v95_grade/NEW_YORK_1911_V95_CORRETTO_KIT.zip
+            output/storia_nyc_v95_grade/V95_QA_COLOR_CORRECTED.json
+          retention-days: 14
+          if-no-files-found: warn
