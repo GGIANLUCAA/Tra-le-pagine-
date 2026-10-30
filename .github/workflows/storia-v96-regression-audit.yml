@@ -1,0 +1,89 @@
+name: "La Storia Rivive V96 - stop recurrence and audit rejected New York preview"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v96-regression-audit.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  enforce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install only free offline QA/video inspection dependencies"
+        run: |
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5"
+          python -m py_compile src/storia_rivive_v96_guard.py tests/test_storia_rivive_v96_guard.py
+      - name: "Require 12 tests to detect every recurring failure and enforce Vidu video/photo structure"
+        run: python -m unittest discover -s tests -p "test_storia_rivive_v96_guard.py" -v
+      - name: "Download actual New York V95.1 MP4 with its original QA and source from verified GitHub release"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_rivive_v96_audit
+          gh release download storia-rivive-new-york-1911-v951-clean-color-moving-video \
+            --repo "$GITHUB_REPOSITORY" \
+            -p "NEW_YORK_1911_V951_COLOR_MOTION_REFINED.mp4" \
+            -p "V951_QA.json" \
+            -D output/storia_rivive_v96_audit
+          ls -lh output/storia_rivive_v96_audit
+      - name: "Fail-closed audit: existing V95.1 must be REJECTED as a final, not mislabelled approved"
+        shell: bash
+        run: |
+          set -euo pipefail
+          dir=output/storia_rivive_v96_audit
+          set +e
+          python -u src/storia_rivive_v96_guard.py \
+            --manifest "$dir/V951_QA.json" \
+            --video "$dir/NEW_YORK_1911_V951_COLOR_MOTION_REFINED.mp4" \
+            --report "$dir/REJECTED_V951_VISUAL_QA.json"
+          status=$?
+          set -e
+          if test "$status" -ne 2; then
+            echo "::error::V96 wrong behavior: incomplete V95.1 preview was not rejected"
+            exit 1
+          fi
+          python - <<'PY'
+          import json
+          d=json.load(open("output/storia_rivive_v96_audit/REJECTED_V951_VISUAL_QA.json"))
+          assert d["passed"] is False
+          assert "SCENE_BY_SCENE_TIMELINE_MISSING" in d["failures"]
+          assert "HUMAN_ARTISTIC_FINAL_APPROVAL_NOT_PRESENT" in d["failures"]
+          assert "V96_QUALITY_POLICY_NOT_ENFORCED" in d["failures"]
+          print("V96 CORRECTLY REJECTED OLD NY VIDEO AS FINAL",len(d["failures"]),"violations. ZERO paid video calls.",flush=True)
+          PY
+      - name: "Create visual evidence sheet of old failed sequence for future editors"
+        shell: bash
+        run: |
+          python - <<'PY'
+          from PIL import Image,ImageDraw
+          import cv2,pathlib
+          p=pathlib.Path("output/storia_rivive_v96_audit")
+          c=cv2.VideoCapture(str(p/"NEW_YORK_1911_V951_COLOR_MOTION_REFINED.mp4"))
+          times=[0.2,3.4,6.4,9.8,11.9,12.1,13.3,16.0,17.2,20.3,23.3,26.5]
+          img=Image.new("RGB",(12*164,328),(18,22,26));d=ImageDraw.Draw(img)
+          for i,t in enumerate(times):
+            c.set(cv2.CAP_PROP_POS_MSEC,t*1000);ok,fr=c.read()
+            if not ok:continue
+            im=Image.fromarray(cv2.cvtColor(fr,cv2.COLOR_BGR2RGB)).resize((162,290))
+            img.paste(im,(164*i,25));d.text((164*i+5,4),f"{t:.1f}s",fill="white")
+          c.release();img.save(p/"V951_12_FRAME_QA_CONTACT.jpg",quality=91)
+          PY
+      - name: "Save actual failure audit and visual evidence, never publish as finished film"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V96_NY_1911_REJECTED_FOR_ARTISTIC_FINAL
+          path: |
+            output/storia_rivive_v96_audit/REJECTED_V951_VISUAL_QA.json
+            output/storia_rivive_v96_audit/V951_12_FRAME_QA_CONTACT.jpg
+          retention-days: 14
+          if-no-files-found: warn
