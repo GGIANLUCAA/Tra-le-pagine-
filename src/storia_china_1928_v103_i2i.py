@@ -5,7 +5,7 @@ Uses a public Hugging Face Gradio Space without paid API credentials or Vidu.
 Never declares human identity/period authenticity. Individual failures are preserved.
 """
 from __future__ import annotations
-import hashlib, json, math, shutil, time
+import hashlib, json, math, os, shutil, time, importlib.util
 from pathlib import Path
 import cv2
 import numpy as np
@@ -37,12 +37,29 @@ def image_corr(original,generated):
     a=low(original);b=low(generated)
     if a.std()<1 or b.std()<1:return 0.0
     return float(np.corrcoef(a,b)[0,1])
+def make_real_color_base(source_frame,session,dd):
+    # Semantic color is an input to TRUE I2I, never the photographic result.
+    frame=cv2.resize(source_frame,(720,576),interpolation=cv2.INTER_AREA)
+    ab=dd.infer_ab(session,frame)
+    l=dd.l_channel(frame)
+    chroma=cv2.resize(ab,(720,576),interpolation=cv2.INTER_LINEAR)
+    lab=np.dstack((l,np.clip(chroma*1.12,-110,110))).astype(np.float32)
+    rgb=np.clip(cv2.cvtColor(lab,cv2.COLOR_LAB2RGB)*255,0,255).astype(np.uint8)
+    bgr=cv2.cvtColor(rgb,cv2.COLOR_RGB2BGR)
+    return cv2.resize(bgr,(720,1280),interpolation=cv2.INTER_CUBIC)
+
 def restore():
     source=json.loads((ROOT/"SOURCE_MANIFEST.json").read_text())
     if source.get("version")!="V103_CHINA_1920S_SOURCE_SELECT" or len(source.get("scenes",[]))!=5:
         raise RuntimeError("Missing five genuine archival source frames")
     from gradio_client import Client,handle_file
-    cli=Client(MODEL,verbose=False)
+    token=os.environ.get("HF_TOKEN","").strip()
+    if not token:raise RuntimeError("HF_TOKEN_NOT_PRESENT_STOP_BEFORE_PROVIDER_LIMIT")
+    spec=importlib.util.spec_from_file_location("real_ddcolor_v60",Path("src/storia_rivive_real_ai_v60.py"))
+    dd=importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(dd)
+    color_model,model_meta=dd.download_model()
+    cli=Client(MODEL,token=token,verbose=False)
     log={"version":"V103_REAL_GENERATIVE_PHOTOGRAPHY",
          "source_film_sha256":source["original_film_sha256"],
          "provider_space":MODEL,"paid_provider_credentials_used":False,
@@ -63,10 +80,15 @@ def restore():
         rgb=cv2.cvtColor(src,cv2.COLOR_BGR2RGB)
         contact.paste(Image.fromarray(rgb).resize((235,416)),((n-1)*240+2,23))
         brush.text(((n-1)*240+5,4),f"SCENE {n} B/W",fill=(245,245,245))
-        # Single attempt only: public free Space; failures never auto-retry.
+        color_base=ROOT/f"SCENE_{n:02d}_BASE_AI_DDCOLOR_NOT_FINAL.jpg"
+        tinted=make_real_color_base(src,color_model,dd)
+        cv2.imwrite(str(color_base),tinted,[cv2.IMWRITE_JPEG_QUALITY,96])
+        entry["ddcolor_start_image"]=color_base.name
+        entry["ddcolor_start_image_sha256"]=sha(color_base)
+        # Single genuine I2I call per scene, now with a correctly colorized input.
         try:
             log["requests_sent"]+=1
-            returned=cli.predict(handle_file(str(original)),PROMPT,NEG,
+            returned=cli.predict(handle_file(str(color_base)),PROMPT,NEG,
                 1928+n,2,1.14,0.97,6,112,144,0.45,18,"DDIM",api_name="/process")
             obj=returned[1] if isinstance(returned,(list,tuple)) and len(returned)>1 else returned
             if isinstance(obj,dict):obj=obj.get("path")
@@ -96,6 +118,10 @@ def restore():
         log["items"].append(entry)
         (ROOT/"I2I_STATUS.json").write_text(json.dumps(log,ensure_ascii=False,indent=2)+"\n")
         print("V103_IMAGE",n,entry["status"],"count",log["photos_succeeded_automated"],flush=True)
+        if "exceeded your ZeroGPU runs limit" in entry.get("error",""):
+            log["quota_exhausted"]=True
+            print("V103_PROVIDER_QUOTA_EXHAUSTED_STOP_NO_RETRY",flush=True)
+            break
     contact.save(ROOT/"CHINA_V103_REAL_SOURCE_VS_REAL_I2I.jpg",quality=92)
     if log["photos_succeeded_automated"]<4:
         log["render_ready"]=False
