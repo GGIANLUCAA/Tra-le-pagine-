@@ -955,14 +955,55 @@
           "preflight_status": "blocked_new_shared_gacrux_and_script"
         },
         "cinema_standard": {
-          "status": "planned",
+          "status": "rendered_needs_review",
           "verified_this_migration": false,
-          "rendered_mp4_sha256": null,
-          "rendered_mp4_bytes": null,
+          "rendered_mp4_sha256": "3eb4a29c00b5d937f9385fef583a39dcccb754073328258db9f8b3b940acb2ba",
+          "rendered_mp4_bytes": 17461112,
           "V25_approved": false,
           "archive_sync_pending": true,
           "site_verified": false,
-          "preflight_status": "verified_source_and_recording_ready_for_single_render"
+          "preflight_status": "verified_source_and_recording_ready_for_single_render",
+          "version": "V78C",
+          "duration_seconds": 41.65,
+          "codec": "H264/AAC 720x1280 20fps",
+          "full_ffmpeg_decode_passed": true,
+          "ffprobe_verified": true,
+          "frames_decoded": 833,
+          "v57_gray_mad_peak": 13.0025,
+          "v57_frames_above_35": 0,
+          "audio_mean_db": -21.8,
+          "audio_max_db": -5.7,
+          "source_art_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9",
+          "music_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+          "zip_android_bytes": 17461284,
+          "zip_android_sha256": "8b29958fc9a5b74a5f7f1e3e033d8217c8942c6153c4054fb5f8263c5d30914d",
+          "zip_complete_bytes": 36455560,
+          "zip_complete_sha256": "2fa9904fd758e22fad22b614a883cef3b9d5c6af6ccec02b32569064ae80e86d",
+          "zip_crc_pass": true,
+          "zip_complete_members": 24,
+          "social_posts_original_count": 4,
+          "social_posts_music_attribution_present": true,
+          "local_runtime_delivery_only": true,
+          "github_video_bytes_persisted": false,
+          "full_speed_human_review": "pending",
+          "revision_history": [
+            {
+              "version": "V78",
+              "sha256": "9ac4163d51a3c92fbd287d04fe415c71835ff3ce0fba634b8f343a5926360a03",
+              "rejected_reason": "weak end slate with large empty black space"
+            },
+            {
+              "version": "V78B",
+              "sha256": "3f44a3f60bf76004ab9b2a3a0735b263c6c31b1d8779cdf2274c7e5918b59374",
+              "rejected_reason": "measured music too quiet"
+            },
+            {
+              "version": "V78C",
+              "sha256": "3eb4a29c00b5d937f9385fef583a39dcccb754073328258db9f8b3b940acb2ba",
+              "selected_review_candidate": true
+            }
+          ],
+          "report": "docs/productions/2026-10-30-bosch-garden-v77/ARTVISION_BOSCH_CINEMA_STANDARD_V78C_REAL_MP4_QA.md"
         },
         "cinema_museum": {
           "status": "planned",
@@ -974,10 +1015,12 @@
           "site_verified": false,
           "preflight_status": "blocked_work_specific_museum_frame_v80"
         }
-      }
+      },
+      "actual_rendered_count": 1,
+      "V25_approved_count": 0
     }
   ],
-  "last_operational_update": "2026-10-30 Hokusai 4/4 real MP4 rendered in ChatGPT session, quality gates pass, package ZIP CRC; no paid video AI and no automatic social release",
+  "last_operational_update": "2026-10-30 Bosch Cinema Standard V78C true 41.65s MP4 SHA3eb4... (local runtime only), one of four slots rendered; all others planned/blocked, V25 0/4",
   "museum_regression_v56": {
     "date": "2026-10-29",
     "reason": "user rejected low-value generic museum 2D frame/room and hard cut",
