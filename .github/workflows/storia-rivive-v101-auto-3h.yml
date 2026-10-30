@@ -56,16 +56,36 @@ jobs:
           PY
       - name: Cache archival source research by candidate, avoid repeated downloads
         id: film_cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v2-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v3-${{ env.STORIA_EPISODE_ID }}
       - name: Fetch bounded original film and make genuine B/W contact sheet
         if: steps.film_cache.outputs.cache-hit != 'true'
         shell: bash
         run: |
           set -euo pipefail
           python src/storia_rivive_scout_v101.py --order output/storia_v101/WORK_ORDER.json --out "output/storia_v101/source-cache/$STORIA_EPISODE_ID"
+      - name: Confirm original film was really acquired before caching
+        id: scout_status
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os,json,pathlib
+          p=pathlib.Path("output/storia_v101/source-cache")/os.environ["STORIA_EPISODE_ID"]/"SCOUT_REPORT.json"
+          report=json.loads(p.read_text()) if p.is_file() else {}
+          ready=report.get("status")=="REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW"
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("ready="+("true" if ready else "false")+"\\n")
+          print("CACHE_SUCCESSFUL_ORIGINAL_MEDIA_ONLY",ready)
+          PY
+      - name: Cache successful original source film and true source frames only
+        if: steps.film_cache.outputs.cache-hit != 'true' && steps.scout_status.outputs.ready == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v3-${{ env.STORIA_EPISODE_ID }}
       - name: Generate historically constrained small country flag and title draft
         shell: bash
         run: |
