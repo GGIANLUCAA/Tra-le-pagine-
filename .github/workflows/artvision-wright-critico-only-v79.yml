@@ -1,0 +1,57 @@
+name: ArtVision Wright — V79 only missing Critico pair
+run-name: Wright V79 — Gacrux Critico Standard + Museum, zero uncertain billing
+on:
+  push:
+    branches:
+      - pilot/artvision-wright-air-pump-v78
+    paths:
+      - src/artvision_wright_critico_only_v79.py
+      - .github/workflows/artvision-wright-critico-only-v79.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-wright-critico-only-v79
+  cancel-in-progress: false
+jobs:
+  narrate-and-render-only-two-critico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install offline render requirements and official TTS SDK (no API calls yet)
+        run: |
+          python -m pip install -q --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10.2" "opencv-python-headless>=4.8" "requests>=2.31" "soundfile>=0.12" "google-genai>=2.25.0" "scipy>=1.11"
+          python -m py_compile src/artvision_wright_critico_only_v79.py src/artvision_wright_render_v78.py src/artvision_wright_visual_v78.py
+          if ! command -v ffprobe >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          ffprobe -version | head -n 1
+      - name: Verify image/continuity constraints
+        run: python -m unittest discover -s tests -p "test_artvision_wright_v78.py" -v
+      - name: One verified free TTS attempt if previously attested; otherwise zero paid calls
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_TTS_FREE_QUOTA_CONFIRMED: ${{ vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
+          GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED: ${{ vars.GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED }}
+        run: python -u src/artvision_wright_critico_only_v79.py
+      - name: Upload ACTUAL two Critico MP4 and ZIP, or truthful blocked-state only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_WRIGHT_V79_ONLY_CRITICO_ACTUAL_OR_BLOCKED
+          path: |
+            output/artvision-wright-air-pump-v78/critico_standard/*.mp4
+            output/artvision-wright-air-pump-v78/critico_museum/*.mp4
+            output/artvision-wright-air-pump-v78/critico_standard/*.jpg
+            output/artvision-wright-air-pump-v78/critico_museum/*.jpg
+            output/artvision-wright-air-pump-v78/critico_*_COMPLETE.zip
+            output/artvision-wright-air-pump-v78/WRIGHT_V79_MISSING_CRITICO_STATE.json
+            output/artvision-wright-air-pump-v78/GACRUX_GATE_V74.json
+            output/artvision-wright-air-pump-v78/SOURCE_MANIFEST.json
+          if-no-files-found: warn
+          retention-days: 14
