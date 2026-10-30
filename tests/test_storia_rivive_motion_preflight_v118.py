@@ -1,10 +1,12 @@
 """V118: zero-credit tests of V102 -> decoded-motion preflight."""
+import hashlib
 import json
 import tempfile
 import unittest
 from pathlib import Path
+from PIL import Image
 
-from src.storia_rivive_motion_preflight_v118 import plan_windows, run
+from src.storia_rivive_motion_preflight_v118 import plan_windows, run, verify_five_source_pngs
 
 SHA = "b" * 64
 
@@ -67,11 +69,33 @@ class TestWindows(unittest.TestCase):
 
 
 class TestPersistence(unittest.TestCase):
-    def invoke(self, inspector):
+    def invoke(self, inspector, mutate=None):
         manifest, scout = fixture()
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
             a, b, c = d/"manifest.json", d/"scout.json", d/"motion.json"
+            # V119: real PNG bytes and their independently recorded scout hashes.
+            frames = d/"original_frames"
+            frames.mkdir()
+            scout["frame_provenance_version"] = "V112_SOURCE_PTS_FROM_FFMPEG_SHOWINFO"
+            scout["frame_provenance_source_sha256"] = SHA
+            scout["frame_provenance"] = []
+            for i, job in enumerate(manifest["original_frame_jobs"]):
+                path = frames / f"frame_{i:02d}.png"
+                Image.new("RGB", (64, 64), (20*i, 40+i, 90)).save(path)
+                digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                job.update(source_file=str(path), source_sha256=digest,
+                           source_raster_px=[64, 64], extraction_index=i,
+                           source_pts_logged_from_decode=True)
+                scout["frame_provenance"].append({
+                    "filename": path.name, "sha256": digest,
+                    "source_pts": job["source_pts"],
+                    "source_pts_time_s": job["source_pts_time_s"],
+                    "source_time_base": job["source_time_base"],
+                    "shot_candidate_segment_index": job["shot_candidate_segment_index"],
+                    "extraction_index": i, "source_pts_logged_from_decode": True})
+            if mutate is not None:
+                mutate(d, manifest, scout)
             a.write_text(json.dumps(manifest), encoding="utf-8")
             b.write_text(json.dumps(scout), encoding="utf-8")
             result = run(a, b, d/"film.webm", c, inspector=inspector)
@@ -101,7 +125,50 @@ class TestPersistence(unittest.TestCase):
         self.assertEqual(result["status"], "MOTION_EVIDENCE_PASS_REVIEW_PENDING")
         self.assertEqual(len(updated["original_frame_jobs"]), 5)
         self.assertEqual(updated["source_bw_motion_gate"], "V118_FIVE_DECODED_WINDOWS_PASS_REVIEW_REQUIRED")
+        self.assertEqual(updated["source_png_integrity_gate"], "V119_FIVE_SOURCE_PNG_BYTES_VERIFIED")
         self.assertNotIn("final_approved", updated)
+
+
+    def test_cached_png_modified_after_v102_is_rejected(self):
+        def corrupt(d, manifest, scout):
+            (d/"original_frames"/"frame_00.png").write_bytes(b"tampered")
+        result, updated = self.invoke(lambda *args: self.fail("motion must not run"), mutate=corrupt)
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertIn("SOURCE_PNG_SHA_MISMATCH", result["reason"])
+        self.assertEqual(updated["original_frame_jobs"], [])
+
+    def test_scout_png_digest_forged_is_rejected(self):
+        def corrupt(d, manifest, scout):
+            scout["frame_provenance"][1]["sha256"] = "0"*64
+        result, updated = self.invoke(lambda *args: self.fail("motion must not run"), mutate=corrupt)
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertIn("SOURCE_PNG_SHA_MISMATCH", result["reason"])
+        self.assertEqual(updated["photos_requested"], 0)
+
+    def test_source_png_path_escape_is_rejected(self):
+        def corrupt(d, manifest, scout):
+            manifest["original_frame_jobs"][2]["source_file"] = str(d/"outside.png")
+        result, updated = self.invoke(lambda *args: self.fail("motion must not run"), mutate=corrupt)
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertIn("SOURCE_PNG_PATH_INVALID_OR_MISSING", result["reason"])
+        self.assertEqual(updated["original_frame_jobs"], [])
+
+    def test_png_pts_mismatch_with_scout_is_rejected(self):
+        def corrupt(d, manifest, scout):
+            scout["frame_provenance"][0]["source_pts"] += 1
+        result, updated = self.invoke(lambda *args: self.fail("motion must not run"), mutate=corrupt)
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertIn("SOURCE_PNG_SCOUT_METADATA_MISMATCH", result["reason"])
+        self.assertEqual(updated["original_frame_jobs"], [])
+
+    def test_missing_png_provenance_is_rejected(self):
+        def corrupt(d, manifest, scout):
+            scout.pop("frame_provenance")
+        result, updated = self.invoke(lambda *args: self.fail("motion must not run"), mutate=corrupt)
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertIn("SOURCE_PNG_PROVENANCE_MISSING", result["reason"])
+        self.assertEqual(updated["original_frame_jobs"], [])
+
 
 
 if __name__ == "__main__":
