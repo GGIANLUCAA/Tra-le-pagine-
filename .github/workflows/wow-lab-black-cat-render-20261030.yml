@@ -1,0 +1,112 @@
+name: "WOW LAB · Zhu Ling Ink Cat V4 · isolated MP4 Android render"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-zhu-ling-black-cat-20261030
+    paths:
+      - "wow_lab/experiments/black_cat/render.py"
+      - ".github/workflows/wow-lab-black-cat-render-20261030.yml"
+permissions:
+  contents: read
+concurrency:
+  group: wow-lab-zhu-ling-ink-cat-20261030
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install free CPU audio/video dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+      - name: Verify exact museum CC0 cat provenance and source bytes
+        run: |
+          python wow_lab/experiments/black_cat/source.py
+          cp wow_lab/experiments/black_cat/source/CAT_WORK.png wow_lab/experiments/black_cat/CAT_WORK.png
+          cp wow_lab/experiments/black_cat/source/CAT_ORIGINAL.jpg wow_lab/experiments/black_cat/CAT_ORIGINAL.jpg
+          cp wow_lab/experiments/black_cat/source/PROVENANCE.json wow_lab/experiments/black_cat/PROVENANCE.json
+      - name: Render one independent full-cat matte film with original sound
+        run: |
+          python -m py_compile wow_lab/experiments/black_cat/render.py
+          python wow_lab/experiments/black_cat/render.py
+      - name: QA source rights, audio/video, segmentation and ZIP
+        run: |
+          python - <<'PY'
+          import json,hashlib,zipfile,pathlib,subprocess
+          root=pathlib.Path("wow_lab/experiments/black_cat")
+          out=root/"RENDER"
+          source=json.loads((root/"PROVENANCE.json").read_text())
+          qa=json.loads((out/"QA.json").read_text())
+          mp4=out/"ZHU_LING_INK_CAT_V4_WOW_ANDROID.mp4"
+          kit=out/"ZHU_LING_INK_CAT_V4_ANDROID_KIT.zip"
+          assert source["object_id"]==36075 and source["is_public_domain"]
+          assert source["license"]=="Met Open Access CC0"
+          assert source["sha256"]==hashlib.sha256((root/"CAT_ORIGINAL.jpg").read_bytes()).hexdigest()
+          assert qa["technical_pass"] and qa["status"]=="experimental_needs_art_review"
+          assert qa["object_id"]==36075 and qa["source_sha256"]==source["sha256"]
+          assert not qa["flowers_extracted"] and qa["paid_api_spend"]==0
+          assert not qa["auto_social_posting"] and not qa["real_museum_frame_reproduced"]
+          assert .58<qa["mask_area_ratio"]<.71
+          assert "h264" in qa["codecs"] and "aac" in qa["codecs"]
+          assert mp4.stat().st_size>100000 and kit.stat().st_size>100000
+          with zipfile.ZipFile(kit) as z:
+              assert z.testzip() is None and mp4.name in z.namelist()
+          subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-i",str(mp4),"-f","null","-"],check=True,timeout=120)
+          print("WOW LAB BLACK CAT V4 TECH QA PASS; not artistic approval.")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_ZHU_LING_INK_CAT_V4_ANDROID
+          path: |
+            wow_lab/experiments/black_cat/RENDER/*
+            wow_lab/experiments/black_cat/PROVENANCE.json
+          retention-days: 30
+          if-no-files-found: error
+  android_external_mirror:
+    needs: render
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: WOW_LAB_ZHU_LING_INK_CAT_V4_ANDROID
+          path: release_out
+      - name: Experimental release with direct Android MP4 and ZIP raw fallback
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="wow-lab-zhu-ling-ink-cat-v4-20261030"
+          video=$(find release_out -name ZHU_LING_INK_CAT_V4_WOW_ANDROID.mp4 -print -quit)
+          zip=$(find release_out -name ZHU_LING_INK_CAT_V4_ANDROID_KIT.zip -print -quit)
+          before=$(find release_out -name BEFORE_AFTER.jpg -print -quit)
+          audit=$(find release_out -name MASK_AUDIT.jpg -print -quit)
+          qa=$(find release_out -name QA.json -print -quit)
+          test -s "$video" && test -s "$zip" && test -s "$before" && test -s "$audit" && test -s "$qa"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" "$video" "$zip" "$before" "$audit" "$qa" \
+              --title "WOW LAB · Zhu Ling · The Ink Cat V4" \
+              --notes "Separate Met CC0 art V4 (object ID 36075). Full feline silhouette, flowers NOT extracted. A small extraneous stroke by shoulder was removed, ear tips retained. 12.0s H264/AAC 720x1280. Original synthesized soundtrack, no paid APIs, Vidu, social posting, or ArtVision core changes. 2.5D experimental preview only, not real volumetric 3D; virtual frame not authentic physical mount. QA technical pass; artistic approval pending." \
+              --target experiment/wow-lab-zhu-ling-black-cat-20261030 \
+              --prerelease
+          fi
+          mkdir -p wow_lab/public_previews
+          cp "$video" wow_lab/public_previews/zhu-ling-ink-cat-v4-20261030.mp4
+          cp "$zip" wow_lab/public_previews/zhu-ling-ink-cat-v4-20261030.zip
+          git config user.name "WOW LAB isolated download mirror"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wow_lab/public_previews/zhu-ling-ink-cat-v4-20261030.mp4 wow_lab/public_previews/zhu-ling-ink-cat-v4-20261030.zip
+          if ! git diff --staged --quiet; then
+            git commit -m "WOW LAB: verified Android raw MP4 and ZIP for ink cat V4"
+            git push origin HEAD:experiment/wow-lab-zhu-ling-black-cat-20261030
+          fi
