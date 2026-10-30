@@ -135,7 +135,7 @@ class GateTests(unittest.TestCase):
         d["scenes"][0]["photo"]["method"]="DDColor_only"
         failures=mod.validate(d,{"duration_s":21.0,"valid_h264_aac":True})
         self.assertTrue(any("V96: SCENE_1_DDCOLOR_ONLY_IS_NOT_PHOTOGRAPHIC_RESTORATION" in e for e in failures),failures)
-        self.assertTrue(any("V94" in e for e in failures),failures)
+        self.assertIn("MANDATORY_VIDU_SCENE_MISSING",failures)  # V94 also evaluated
 
     def test_real_old_v95_review_data_does_not_pass(self):
         d={"production":"New York 1911 V95","format":"storia_rivive",
