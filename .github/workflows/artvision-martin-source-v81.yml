@@ -1,0 +1,55 @@
+name: Martin N05613 V81 — verify original framed and unframed source
+on:
+  push:
+    branches: [pilot/artvision-john-martin-wrath-v81]
+    paths: [.github/workflows/artvision-martin-source-v81.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install -q requests pillow
+      - name: Verify image candidates, preserve previews and report exact checksums
+        run: |
+          python - <<'PY'
+          import requests,hashlib,io,pathlib
+          from PIL import Image,ImageOps,ImageDraw
+          p=pathlib.Path('source_probe');p.mkdir(exist_ok=True)
+          sources={
+           "framed_commons":"https://upload.wikimedia.org/wikipedia/commons/4/4c/John_Martin_-_Apocalypse_-_with_frame.jpg",
+           "framed_picryl":"https://cdn2.picryl.com/photo/2023/06/03/john-martin-apocalypse-with-frame-88f1f7-1024.jpg",
+           "framed_picryl_hd":"https://cdn2.picryl.com/photo/2023/06/03/john-martin-apocalypse-with-frame-88f1f7-2048.jpg",
+           "art_commons":"https://upload.wikimedia.org/wikipedia/commons/9/9e/John_Martin_-_The_Great_Day_of_His_Wrath_-_Google_Art_Project.jpg",
+           "art_wikiart":"https://uploads6.wikiart.org/images/john-martin/the-great-day-of-his-wrath-1853.jpg",
+           "art_arc":"https://www.artrenewal.org/secureimages/artwork/24776.jpg",
+          }
+          previews=[]
+          for name,url in sources.items():
+           try:
+            r=requests.get(url,timeout=18,headers={'User-Agent':'ArtVision/1.0 (art source research; credit in media)'})
+            print('SOURCE',name,'HTTP',r.status_code,'BYTES',len(r.content),'CONTENT_TYPE',r.headers.get('Content-Type'),'URL',r.url,flush=True)
+            if r.ok and len(r.content)>100000 and r.headers.get('content-type','').startswith('image/'):
+             im=Image.open(io.BytesIO(r.content)).convert('RGB')
+             print('IMAGE_VERIFIED',name,im.size,'sha256',hashlib.sha256(r.content).hexdigest(),flush=True)
+             (p/(name+'.jpg')).write_bytes(r.content)
+             thumb=ImageOps.contain(im,(800,510))
+             tile=Image.new('RGB',(840,560),(32,33,36))
+             tile.paste(thumb,((840-thumb.width)//2,38))
+             ImageDraw.Draw(tile).text((15,13),name,fill='white')
+             previews.append(tile)
+           except Exception as ex:print('SOURCE_ERROR',name,type(ex).__name__,str(ex)[:150],flush=True)
+          if previews:
+           sheet=Image.new('RGB',(840*min(2,len(previews)),560*((len(previews)+1)//2)),(15,16,17))
+           for i,tile in enumerate(previews):sheet.paste(tile,((i%2)*840,(i//2)*560))
+           sheet.save(p/'SOURCE_CONTACT_SHEET.jpg',quality=88)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MARTIN_V81_VERIFIED_SOURCES
+          path: source_probe/
+          retention-days: 5
+          if-no-files-found: warn
