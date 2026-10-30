@@ -46,3 +46,9 @@ L'AAC delle **due** versioni Critico è bitwise identico (estrazione FFmpeg ADTS
 4. Hieronymus Bosch — *The Garden of Earthly Delights*: 4/4 MP4, pending V25; pacchetto completo creato ma nessun upload Dropbox certificato.
 
 **Le 16 varianti sono un conteggio di slot materialmente renderizzati, non 16 nuovi MP4 di questa sola esecuzione.** Il sistema preserva i master V22 e Cinema preesistenti. Questa documentazione preserva conoscenza/referenze ma NON i grossi bytes master.
+
+## Riconciliazione con l'altro Cinema Standard V78C su GitHub
+
+La coda `main` è stata aggiornata in parallelo da un'altra esecuzione dell'unico owner: contiene un **Cinema Standard V78C** più recente, SHA `3eb4a29c00b5d937f9385fef583a39dcccb754073328258db9f8b3b940acb2ba`, che corregge schermata finale e livello della musica. È un altro **candidato di revisione dello STESSO slot `cinema_standard`**, NON un quinto video del Bosch 4×1. Il pacchetto `BOSCH_4X1_PACCHETTO_COMPLETO_V84.zip` realmente creato in chat comprende il precedente Cinema Standard V77 SHA `90bb8659...`, non V78C: il manifesto della confezione conserva questa verità.
+
+La coda ufficiale registra **V78C come candidato Cinema Standard più recente** e conserva V77 come `alternative_rendered_review_mp4s`; non sostituire o sovrascrivere il ZIP già generato senza nuovo QA e ricalcolo esatto SHA. La selezione finale artistica appartiene all'utente. Rimangono gli altri tre slot reali V22 originale, Museum Critico V84, Cinema Museum V80. **Nessun video perso, nessuno slot duplicato e nessuna approvazione V25 inventata.**
