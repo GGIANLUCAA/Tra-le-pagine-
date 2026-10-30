@@ -1,0 +1,44 @@
+name: "La Storia Rivive V95 Bombay 1929 — free five-scene preflight"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v95-bombay-preflight.yml"]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  examine:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install local image analysis libraries only, zero API calls"
+        run: |
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+      - name: "Obtain source-locked real 1929 film master and SHA-reviewed source QA"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_bombay_1929_v95
+          gh release download storia-rivive-bombay-1929-v92-8-scenes-ai-review --repo "$GITHUB_REPOSITORY" \
+            -p "BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4" -p "FINAL_QA_SOURCES.json" \
+            -D output/storia_bombay_1929_v95
+          python -u src/storia_v95_bombay_preflight.py
+      - name: "Upload contact sheet and all true historical B&W / AI photo image pairs"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V95_BOMBAY_REAL_FIVE_ARCHIVAL_SHOTS_PREPAY_REVIEW
+          path: |
+            output/storia_bombay_1929_v95/V95_FIVE_SHOTS_BEFORE_AFTER.jpg
+            output/storia_bombay_1929_v95/V95_FREE_SOURCE_QA.json
+            output/storia_bombay_1929_v95/SOURCE_BW_*.png
+            output/storia_bombay_1929_v95/RESTORED_PHOTO_*.jpg
+          retention-days: 14
+          if-no-files-found: warn
