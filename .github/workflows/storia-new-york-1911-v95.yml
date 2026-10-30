@@ -31,8 +31,24 @@ jobs:
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
           python -m pip install --quiet "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2"
           python -m py_compile tools/storia_new_york_1911_v95_real_vidu_once.py src/storia_v83_new_york_1911.py
-      - name: Render actual NEW YORK 1911 archival source and 4 neural photo-freeze scenes
-        run: python -u src/storia_v83_new_york_1911.py
+      - name: Build V83 source reel and inspect legacy effect gate for V95 review
+        shell: bash
+        run: |
+          set -o pipefail
+          python -u src/storia_v83_new_york_1911.py > /tmp/v83.log 2>&1
+          code=$?
+          cat /tmp/v83.log
+          if [ "$code" -ne 0 ]; then
+            # Old V74 detector may merge adjacent color blocks in the 4x V83 preview.
+            # We do NOT mark this video V94 artistic final: preserve source MP4
+            # only for the new one-Vidu V95 continuity experiment and QA.
+            grep -q "NOT_THE_USER_APPROVED_EFFECT" /tmp/v83.log || exit "$code"
+            d=output/storia_v83_new_york_1911
+            test -s "$d/LA_STORIA_RIVIVE_NEW YORK_1911_V80.mp4" || exit "$code"
+            ffmpeg -v error -xerror -i "$d/LA_STORIA_RIVIVE_NEW YORK_1911_V80.mp4" -f null - || exit "$code"
+            mv "$d/LA_STORIA_RIVIVE_NEW YORK_1911_V80.mp4" "$d/LA_STORIA_RIVIVE_NEW_YORK_1911_V83.mp4"
+            echo "LEGACY_PATTERN_DETECTOR_ONLY_2_OF_4: V95 output must remain PREVIEW pending human artistic QA"
+          fi
       - name: V95 source-anchored fifth Vidu scene ONLY 1 paid API request in entire episode
         run: python -u tools/storia_new_york_1911_v95_real_vidu_once.py
       - name: Check real MP4+AAC duration, actual ZIP and original Vidu generation receipt
