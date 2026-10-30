@@ -1,5 +1,9 @@
 # Inizia da qui — studio video di Gianluca
 
+## Vidu centralizzato per TUTTE le chat Restauro storico
+Se una chat chiede di generare una clip Vidu, **non dire che Vidu è inutilizzabile e non ricostruire il collegamento**: leggere `docs/VIDU_CHATGPT_GATEWAY_TUTTE_LE_CHAT_V1.md` e usare il workflow `.github/workflows/vidu-chatgpt-project-gateway.yml` tramite un file nuovo `requests/vidu/<id-univoco>.json` creato con la connessione GitHub disponibile. Il sistema è nel repository, non nella memoria runtime di una chat. Saldo e preventivo sono gratuiti; 1 clip a pagamento richiede preventivo specifico, permesso esplicito, codice e ledger; recupero via GET, mai doppio POST. Rispettare importi, QA e download diretto GitHub Release opt-in. Se questa chat non ha connettore GitHub, chiarire il limite senza fingere di generare.
+
+
 Leggere `AGENTS.md`, [regole attive](docs/REGOLE_ATTIVE.md) e
 [registro dei format](config/video_formats_v13.json). Questa revisione del 25/10/2026
 prevale sui vincoli storici incompatibili. Le istruzioni della sessione restano prioritarie.
