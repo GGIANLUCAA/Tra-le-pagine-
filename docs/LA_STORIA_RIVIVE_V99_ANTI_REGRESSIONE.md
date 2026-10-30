@@ -58,3 +58,28 @@ I controlli sono **fail-closed**: se il soggetto del frame reale non corrisponde
 
 ## Migliorare senza rompere
 Cambiare una sola causa qualitativa significativa alla volta (per esempio dettaglio foto oppure raccordo colore), generare la variante, confrontare fianco a fianco col V98 e con gli ultimi esempi dell'utente, misurare se migliora. Se peggiora, scartare la variante e tornare all'ultimo video buono. Conservare MP4, seed, sorgenti e parametri dei lavori approvati per regressioni future.
+
+## Collegamento pronto per ogni workflow di nuovi video storici
+
+Il gate di controllo riutilizzabile è `.github/workflows/storia-v99-release-gate.yml`. Funziona **prima** della release (non dopo aver pubblicato). Il job che realizza il video deve caricare un artifact con MP4, manifest JSON e sottocartella `assets` contenente i file veri. Nel workflow di creazione aggiungere:
+
+```yaml
+jobs:
+  # Il job build_video deve essere già definito e caricare l'artifact qui richiesto.
+  qa_v99:
+    needs: build_video
+    uses: ./.github/workflows/storia-v99-release-gate.yml
+    with:
+      candidate_artifact_name: STORIA_VIDEO_COMPLETO_DA_CONTROLLARE
+      mp4_filename: EPISODIO.mp4
+      manifest_filename: EPISODIO_QA.json
+      assets_subdirectory: assets
+  publish_final:
+    needs: qa_v99
+    if: success()
+    # Proseguire solo se realmente superati V91/V94/V96/V99 e QA artistico.
+```
+
+**Importante:** l'aggiunta del workflow comune nel repository NON lo rende automaticamente un passaggio obbligatorio in workflow indipendenti che non lo richiamano. Per ogni nuova pipeline dell'episodio bisogna esplicitamente collegare il job `qa_v99` e rendere `publish_final` dipendente dal suo successo. I vecchi provini tecnici rimangono etichettati come provini; non ribattezzarli finali.
+
+Il gate non accetta `continue-on-error`, non avvia nuove API e non modifica i file del video per farli «passare». Se un controllo fallisce, occorre correggere la produzione e ripetere la verifica dall'MP4 reale.
