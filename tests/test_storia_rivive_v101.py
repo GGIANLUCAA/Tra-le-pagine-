@@ -60,22 +60,38 @@ class V101Tests(unittest.TestCase):
         from PIL import Image
         with tempfile.TemporaryDirectory() as temp:
             for i in range(12):
-                im=Image.new("RGB",(180,320),(40+i*5,75+i*3,125))
+                im=Image.new("RGB",(1280,720),(40+i*5,75+i*3,125))
                 im.save(Path(temp)/("frame_%02d.png"%i))
             result=frame_rank.rank(temp)
             self.assertEqual(len(result["preselected"]),5)
             self.assertEqual(result["approved_restored_photos"],0)
             self.assertTrue(all(x["approved_for_i2i"] is False for x in result["preselected"]))
+            self.assertTrue(all(x["source_native_detail_sufficient"] for x in result["preselected"]))
+    def test_rank_rejects_low_detail_480p_before_i2i(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            for i in range(12):
+                Image.new("RGB",(720,480),(40+i*5,70,100)).save(
+                    Path(temp)/("frame_%02d.png"%i))
+            result=frame_rank.rank(temp)
+            self.assertEqual(result["status"],"SOURCE_NATIVE_DETAIL_INSUFFICIENT_FOR_FIVE_SHOTS")
+            self.assertEqual(result["preselected"],[])
+            self.assertEqual(result["eligible_native_detail_frames"],0)
+
     def test_i2i_manifest_locks_five_real_source_frames(self):
         from PIL import Image
         with tempfile.TemporaryDirectory() as temp:
             d=Path(temp);(d/"original_frames").mkdir()
             (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test only")
+            (d/"SCOUT_REPORT.json").write_text(json.dumps({
+                "status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
+                "original_sha256":i2i.sha(d/"ORIGINAL_ARCHIVE.webm")}))
             for i in range(1,6):
-                Image.new("RGB",(640,480),(20*i,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+                Image.new("RGB",(1280,720),(20*i,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
             order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
                    "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
-                   "paid_api_call_permitted":False,"publish_permitted":False}
+                   "paid_api_call_permitted":False,"publish_permitted":False,
+                   "blocking_issues":[]}
             selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
                        "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
             result=i2i.build(order,selection,d)
@@ -83,6 +99,45 @@ class V101Tests(unittest.TestCase):
             self.assertEqual(result["photos_generated"],0)
             self.assertEqual(result["provider_requests_sent"],0)
             self.assertTrue(all(x["source_sha256"] and x["request_sent"] is False for x in result["original_frame_jobs"]))
+            self.assertEqual(result["source_video_sha256"],i2i.sha(d/"ORIGINAL_ARCHIVE.webm"))
+    def test_i2i_preflight_blocks_unverified_italian_rights(self):
+        with tempfile.TemporaryDirectory() as temp:
+            with self.assertRaisesRegex(ValueError,"V101_SOURCE_PREFLIGHT_BLOCKED"):
+                i2i.build({"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                    "paid_api_call_permitted":False,"publish_permitted":False,
+                    "blocking_issues":["ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW"]},
+                    {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                     "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]},
+                    Path(temp))
+
+    def test_i2i_preflight_blocks_480p_and_duplicate_bytes(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test only")
+            (d/"SCOUT_REPORT.json").write_text(json.dumps({
+                "status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
+                "original_sha256":i2i.sha(d/"ORIGINAL_ARCHIVE.webm")}))
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
+                   "paid_api_call_permitted":False,"publish_permitted":False,
+                   "blocking_issues":[]}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            for i in range(1,6):
+                Image.new("RGB",(720,480),(20*i,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+            with self.assertRaisesRegex(ValueError,"SOURCE_NATIVE_DETAIL_INSUFFICIENT"):
+                i2i.build(order,selection,d)
+            for i in range(1,6):
+                Image.new("RGB",(1280,720),(20,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+            with self.assertRaisesRegex(ValueError,"DUPLICATE_SOURCE_FRAME_BYTES"):
+                i2i.build(order,selection,d)
+            (d/"SCOUT_REPORT.json").write_text(json.dumps({
+                "status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
+                "original_sha256":"0"*64}))
+            with self.assertRaisesRegex(ValueError,"SCOUT_FILM_SHA_MISMATCH"):
+                i2i.build(order,selection,d)
+
     def test_i2i_manifest_blocks_missing_source_frame(self):
         with tempfile.TemporaryDirectory() as temp:
             with self.assertRaises(ValueError):
