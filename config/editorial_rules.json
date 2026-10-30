@@ -1192,5 +1192,31 @@
     "private_archive_import_unverified": true,
     "keep_v58_pilot_lock_active_until_user_unlocks": true,
     "generic_new_artwork_renderer_not_yet_end_to_end_tested": true
+  },
+  "artvision_4x1_bosch_fourth_v84": {
+    "effective_from": "2026-10-30",
+    "work": "The Garden of Earthly Delights",
+    "reference": "docs/productions/2026-10-30-bosch-4x1-v84/FOUR_REAL_MP4S_QA_AND_DELIVERY.md",
+    "user_request": "Continue autonomous production after three 4x1 artworks",
+    "original_critico_V22_sha256": "2c59c58185ed3d7c51d280bf9c8442414cddf163a231fef08fd7a37d657b0ded",
+    "critico_museum_V84_sha256": "73b1a97d0640123e38184db7f20334c0de4db318594a8dd728ff0e537253854b",
+    "cinema_standard_V77_sha256": "90bb86598788c475e0b0599ca505f354da8c5ffccff13016806fdbd5f02aa844",
+    "cinema_museum_V80_sha256": "67ad38e0c3ec63c6c6a9e2c925252a515208dd357d0e6c26b0c5dd762177d508",
+    "both_critico_exact_AAC_SHA256": "775232ee40d06176bb4f4462c82d66e7ac0cdcfefc4b4d8c67e9427370b15edb",
+    "new_Google_TTS_calls": 0,
+    "new_paid_video_AI_calls": 0,
+    "museum_real_prado_room_verified": false,
+    "museum_actual_historical_frame_verified": false,
+    "museum_digital_reconstruction_declared": true,
+    "V57_full_frame_peak_MAD": {
+      "critico_museum": 33.926,
+      "cinema_museum": 34.581,
+      "threshold": 35
+    },
+    "global_unbounded_series_unlocked": false,
+    "rendered_count": 4,
+    "approved_count": 0,
+    "release": "V25 human artistic review and archive site playback still pending",
+    "future_rule": "Reuse historic original good Critico Gacrux when it already exists, never regenerate solely to count output. Fix only defective slot with true A/B QA, maintain verified source/frame provenance."
   }
 }
