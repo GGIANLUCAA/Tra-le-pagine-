@@ -194,6 +194,50 @@ def recent_history() -> list[dict]:
         raise RuntimeError("WOW_LAB_HISTORY_UNAVAILABLE: " + str(err)) from err
     return parse_wow_release_history(releases)
 
+
+def active_wow_conflicts(runs: list[dict], own_run_id: str) -> list[dict]:
+    """Ignore the caller and unrelated workflows; block independent WOW jobs."""
+    conflicts = []
+    for run in runs:
+        run_id = str(run.get("id") or "")
+        if run_id and run_id == own_run_id:
+            continue
+        if run.get("status") not in ("in_progress", "queued", "waiting", "pending"):
+            continue
+        label = " ".join(str(run.get(key) or "") for key in
+                         ("name", "path", "head_branch")).lower()
+        if "wow lab" in label or "wow-lab" in label or "wow_lab" in label:
+            conflicts.append({"id": run_id, "name": run.get("name"),
+                              "status": run.get("status")})
+    return conflicts
+
+
+def ensure_no_parallel_wow_render() -> None:
+    """Read-only public Actions check; fail closed on unavailable queue."""
+    repository = os.environ.get("GITHUB_REPOSITORY", "")
+    if repository != "GGIANLUCAA/Tra-le-pagine-":
+        return  # Local tests do not acquire a GitHub runner lock.
+    own_run_id = os.environ.get("GITHUB_RUN_ID", "")
+    if not own_run_id:
+        raise RuntimeError("WOW_LAB_QUEUE_UNVERIFIED: missing current run ID")
+    for status in ("in_progress", "queued"):
+        url = (f"https://api.github.com/repos/{repository}/actions/runs?"
+               + urllib.parse.urlencode({"status": status, "per_page": 100}))
+        try:
+            payload = get_json(url)
+            runs = payload["workflow_runs"]
+            if not isinstance(runs, list):
+                raise ValueError("malformed workflow run listing")
+            if int(payload.get("total_count", len(runs))) > len(runs):
+                raise RuntimeError("queue exceeds first page; cannot verify")
+        except Exception as err:
+            raise RuntimeError("WOW_LAB_QUEUE_UNVERIFIED: " + str(err)) from err
+        conflicts = active_wow_conflicts(runs, own_run_id)
+        if conflicts:
+            raise RuntimeError("WOW_LAB_PARALLEL_RENDER: " +
+                               json.dumps(conflicts[:5], ensure_ascii=False))
+
+
 def object_url(object_id: int) -> str:
     return f"{API}/v1/objects/{object_id}"
 
@@ -508,6 +552,7 @@ def run(args):
     if out == sandbox or sandbox not in out.parents:
         raise ValueError("Output must stay inside wow_lab/runs/<unique-slot>")
     out.mkdir(parents=True,exist_ok=True)
+    ensure_no_parallel_wow_render()
     past=recent_history()
     ensure_slot_available(stamp, past)
     rec=select_artwork(conf, stamp, past, args.test_source_id)
