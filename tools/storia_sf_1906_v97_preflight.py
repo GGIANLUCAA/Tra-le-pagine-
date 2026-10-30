@@ -3,6 +3,14 @@
 NO Vidu POST, NO fake final. A bad free model MUST fail rather than publish DDColor.
 """
 from pathlib import Path
+import os
+import imageio_ffmpeg
+# Self-contained ffmpeg for minimal GitHub runners; do not depend on apt mirrors.
+_bin=Path("/tmp/storia_sf1906_bin")
+_bin.mkdir(parents=True,exist_ok=True)
+_ff=_bin/"ffmpeg"
+if not _ff.exists():_ff.symlink_to(imageio_ffmpeg.get_ffmpeg_exe())
+os.environ["PATH"]=str(_bin)+os.pathsep+os.environ.get("PATH","")
 from urllib.request import Request,urlopen
 from urllib.parse import urlencode
 import json,cv2,numpy as np,hashlib,zipfile,subprocess
