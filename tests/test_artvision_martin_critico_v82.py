@@ -34,7 +34,7 @@ class CriticoDirectorV82(unittest.TestCase):
     self.assertEqual(len(bounds),10)
     v.assign_narrative_timing(bounds)
     for i in range(9):
-      beat,u,a,b=v.beat_at(i*10+5,101.5)
+      beat,u,a,b=v.beat_at(i*10+5,91.5)
       self.assertEqual(beat,i)
   def test_exit_same_frame_room(self):
     a=v.museum_frame(self.art,self.frame,self.room,0,96,True)
