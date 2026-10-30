@@ -8,6 +8,12 @@ on:
       - src/artvision_wright_critico_only_v79.py
       - .github/workflows/artvision-wright-critico-only-v79.yml
   workflow_dispatch:
+    inputs:
+      verified_free_google_project:
+        description: "I checked Google AI Studio: key belongs to FREE Tier project with billing disabled. No charges permitted."
+        type: boolean
+        required: true
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -36,8 +42,8 @@ jobs:
       - name: One verified free TTS attempt if previously attested; otherwise zero paid calls
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_TTS_FREE_QUOTA_CONFIRMED: ${{ vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
-          GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED: ${{ vars.GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED }}
+          GEMINI_TTS_FREE_QUOTA_CONFIRMED: ${{ (github.event_name == 'workflow_dispatch' && inputs.verified_free_google_project) || vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
+          GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED: ${{ (github.event_name == 'workflow_dispatch' && inputs.verified_free_google_project) || vars.GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED }}
         run: python -u src/artvision_wright_critico_only_v79.py
       - name: Upload ACTUAL two Critico MP4 and ZIP, or truthful blocked-state only
         if: always()
