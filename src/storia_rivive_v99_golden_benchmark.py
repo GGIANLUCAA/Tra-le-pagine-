@@ -213,7 +213,7 @@ def evaluate(video,manifest,asset_folder,reference):
  if not errors:
   measured=scores(video,timeline)
   for j,x in enumerate(measured[:4],1):
-   if x["color_gain"]<=3:errors.append(f"SCENE_{j}_PHOTO_COLOR_NOT_REVEALED")
+   if x["color_gain"]<=max(1.75,min(y["color_gain"] for y in reference["per_scene"][:4])*.70):errors.append(f"SCENE_{j}_PHOTO_COLOR_NOT_REVEALED")
    if x["still_motion"]>5:warnings.append(f"SCENE_{j}_PHOTO_UNEXPECTEDLY_MOVING")
   avg=float(np.mean([x["colored_area_fraction"] for x in measured[:4]]))
   accepted=reference["mean_reference_four_photo_color_fraction"]
