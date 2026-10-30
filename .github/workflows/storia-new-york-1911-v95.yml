@@ -34,9 +34,10 @@ jobs:
       - name: Build V83 source reel and inspect legacy effect gate for V95 review
         shell: bash
         run: |
-          set -o pipefail
+          set +e
           python -u src/storia_v83_new_york_1911.py > /tmp/v83.log 2>&1
           code=$?
+          set -e
           cat /tmp/v83.log
           if [ "$code" -ne 0 ]; then
             # Old V74 detector may merge adjacent color blocks in the 4x V83 preview.
