@@ -43,9 +43,12 @@ jobs:
             --mode reference \
             --video "$V99_GOLDEN_VIDEO" \
             --output output/storia_v99_golden/V98_ACTUAL_ACCEPTED_BENCHMARK_METRICS.json
-      - name: "Run 12 calibrated anti-regression tests against actual accepted V98"
+      - name: "Run V99 golden + V91/V94/V96 delivery regression suites"
         run: |
           python -m unittest discover -s tests -p "test_storia_rivive_v99_golden_benchmark.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_final_gate_v91.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_quality_v94.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v96_guard.py" -v
       - name: "Archive user-accepted golden metrics (no privacy data, no charge)"
         if: always()
         uses: actions/upload-artifact@v4
