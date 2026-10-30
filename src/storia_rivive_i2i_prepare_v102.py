@@ -59,6 +59,28 @@ def visual_near_duplicate_guard(paths, threshold=0.055):
             "historical_shot_distinctness_verified":False,
             "warning":"No obvious duplicates does NOT prove five different camera shots."}
 
+def verify_pts_timebase_consistency(pts, pts_time_s, source_time_base):
+    """V114: the displayed seconds must agree with the decoded PTS clock.
+
+    A fabricated timestamp could otherwise point the freeze to another frame
+    while the source PNG and its SHA remain unchanged. FFmpeg showinfo rounds
+    pts_time, so allow 0.1 ms of formatting tolerance, never a frame interval.
+    """
+    if (type(pts) is not int or type(pts_time_s) not in (int, float)
+            or not math.isfinite(pts_time_s) or not isinstance(source_time_base, str)
+            or not re.fullmatch(r"\\d+/[1-9]\\d*", source_time_base)):
+        raise ValueError("SOURCE_PTS_CLOCK_INVALID")
+    numerator, denominator = map(int, source_time_base.split("/"))
+    if numerator <= 0:
+        raise ValueError("SOURCE_PTS_CLOCK_INVALID")
+    try:
+        expected = pts * numerator / denominator
+    except OverflowError as exc:
+        raise ValueError("SOURCE_PTS_CLOCK_INVALID") from exc
+    if not math.isfinite(expected) or abs(expected - pts_time_s) > 0.0001:
+        raise ValueError("SOURCE_PTS_TIME_BASE_MISMATCH")
+    return True
+
 def verified_source_preflight(order, source_dir):
     """Fail closed before preparing a provider-consumable source-locked job."""
     issues=order.get("blocking_issues")
@@ -164,6 +186,9 @@ def build(order,selection,source_dir):
         pts_time=recorded["source_pts_time_s"]
         if pts in seen_source_pts or (last_pts_time is not None and pts_time<=last_pts_time):
             raise ValueError("SELECTED_SOURCE_PTS_DUPLICATE_OR_NON_MONOTONIC")
+        # V114: SHA alone cannot detect a timestamp rewritten to another shot.
+        # Require FFmpeg PTS ticks, time base and seconds to agree before I2I.
+        verify_pts_timebase_consistency(pts,pts_time,recorded["source_time_base"])
         seen_source_pts.add(pts)
         last_pts_time=pts_time
         if frame_sha in seen_frame_hashes:
@@ -201,7 +226,7 @@ def build(order,selection,source_dir):
     return {"version":"V102_SOURCE_LOCKED_I2I_JOBS",
       "cycle_id":order["cycle_id"],"episode_id":order["episode_id"],
       "source_video_sha256":source_video_sha,
-      "frame_provenance_guard":"V113_SOURCE_PTS_PNG_SHA_AND_SHOT_SEGMENTS_MATCH_SCOUT",
+      "frame_provenance_guard":"V114_SOURCE_PTS_CLOCK_PNG_SHA_AND_SHOT_SEGMENTS_MATCH_SCOUT",
       "shot_candidate_evidence":{"version":shot_analysis["version"],
           "cut_candidate_count":len(shot_analysis["cut_candidate_times_s"]),
           "selected_segment_indices":segments,
