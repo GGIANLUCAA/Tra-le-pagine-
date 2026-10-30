@@ -86,14 +86,25 @@ def get_json(url: str) -> dict:
 
 
 def parse_wow_release_history(releases: list[dict]) -> list[dict]:
-    """Last distinct WOW subjects, including older experimental tag families.
+    """Newest distinct WOW subjects, including independently produced V1-V4.
 
-    If a recent release cannot be tied to a verified object ID, stop rather
-    than silently assuming the artwork is new.
+    A release without trustworthy Met object provenance stops the job.  A
+    publication timestamp is used for legacy releases without slot metadata;
+    this prevents multiple autonomous videos in the same two-hour window.
     """
+    def publication_time(release):
+        for field in ("published_at", "created_at"):
+            value = release.get(field)
+            if value:
+                try:
+                    return dt.datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+                except ValueError:
+                    continue
+        return dt.datetime.min.replace(tzinfo=dt.timezone.utc)
+
     history = []
     seen = set()
-    for release in releases:
+    for release in sorted(releases, key=publication_time, reverse=True):
         tag = str(release.get("tag_name") or "")
         if not tag.startswith("wow-lab-"):
             continue
@@ -105,24 +116,62 @@ def parse_wow_release_history(releases: list[dict]) -> list[dict]:
                 meta = json.loads(match.group(1))
             except (ValueError, TypeError):
                 pass
-        ident = (meta or {}).get("object_id")
-        if not ident:
-            # Legacy experiments disclose their Met object/print ID in notes.
-            found = re.search(r"\b(?:object(?:\s+id)?|print)\s*(?:#|:)?\s*(\d{4,8})\b",
-                              body, flags=re.IGNORECASE)
-            if not found:
-                found = re.search(r"hokusai-(\d{4,8})", tag)
-            ident = found.group(1) if found else None
-        if not ident or not str(ident).isdigit():
+        if meta is not None and not isinstance(meta, dict):
             raise RuntimeError("WOW_LAB_HISTORY_UNVERIFIED: " + tag)
-        ident = int(ident)
+        candidates = set()
+        if (meta or {}).get("object_id") is not None:
+            ident = str(meta["object_id"])
+            if not ident.isdigit():
+                raise RuntimeError("WOW_LAB_HISTORY_UNVERIFIED: " + tag)
+            candidates.add(int(ident))
+        # Legacy independent V4 release notes use "Met 37358"; V1-V3
+        # may instead say "print 36725" or "object ID 36075".
+        patterns = (
+            r"\b(?:object(?:\s+id)?|print)\s*(?:#|:)?\s*(\d{4,8})\b",
+            r"\bMet(?:ropolitan Museum(?: of Art)?)?\s+(?:Open Access\s+)?(?:CC0\s+)?(?:print\s+)?(\d{4,8})\b",
+            r"\b(\d{4,8})\s+Open Access\s+CC0\b",
+        )
+        for pattern in patterns:
+            candidates.update(int(n) for n in re.findall(pattern, body, re.IGNORECASE))
+        if not candidates:
+            match = re.search(r"(?:hokusai|bluebird)-(\d{4,8})(?:-|$)", tag)
+            if match:
+                candidates.add(int(match.group(1)))
+        if len(candidates) != 1:
+            raise RuntimeError("WOW_LAB_HISTORY_UNVERIFIED: " + tag)
+        ident = next(iter(candidates))
+        if ident <= 0:
+            raise RuntimeError("WOW_LAB_HISTORY_UNVERIFIED: " + tag)
+
+        slot = (meta or {}).get("slot") or (meta or {}).get("slot_utc")
+        if not slot:
+            tag_slot = re.search(r"wow-lab-v1-(\d{8}T\d{2})(?:-|$)", tag)
+            if tag_slot:
+                slot = tag_slot.group(1)
+        if not slot and publication_time(release).year > 1:
+            slot = publication_time(release).strftime("%Y%m%dT%H")
+        if slot:
+            if not re.fullmatch(r"\d{8}T\d{2}", str(slot)):
+                raise RuntimeError("WOW_LAB_SLOT_UNVERIFIED: " + tag)
+            # Floor any legacy publication hour to the scheduler's 2h slot.
+            slot = str(slot)[:-2] + f"{int(str(slot)[-2:]) // 2 * 2:02d}"
+
         if ident in seen:
-            continue  # V1/V2 of one painting count as one subject, not two.
+            continue  # Multiple versions of one artwork count as one subject.
         seen.add(ident)
-        history.append({"schema": SCHEMA, "object_id": ident, "tag": tag})
+        history.append({"schema": SCHEMA, "object_id": ident,
+                        "tag": tag, "slot_utc": slot,
+                        "published_at": release.get("published_at")})
         if len(history) >= 25:
             break
     return history
+
+
+def ensure_slot_available(stamp: str, history: list[dict]) -> None:
+    for item in history:
+        if item.get("slot_utc") == stamp:
+            raise RuntimeError("WOW_LAB_SLOT_ALREADY_RELEASED: " + stamp +
+                               " (" + str(item.get("tag")) + ")")
 
 
 def recent_history() -> list[dict]:
@@ -460,6 +509,7 @@ def run(args):
         raise ValueError("Output must stay inside wow_lab/runs/<unique-slot>")
     out.mkdir(parents=True,exist_ok=True)
     past=recent_history()
+    ensure_slot_available(stamp, past)
     rec=select_artwork(conf, stamp, past, args.test_source_id)
     source,url,source_sha=save_original(rec,out,conf)
     modes=list(SAFE_MODES)
