@@ -82,6 +82,19 @@ def get_bytes(url: str, limit: int = 18_000_000, attempts: int = 2) -> bytes:
 
 
 def get_json(url: str) -> dict:
+    # GitHub Actions requires authentication for private repository metadata.
+    # Never forward GITHUB_TOKEN to museum/image hosts or arbitrary URLs.
+    if url.startswith("https://api.github.com/repos/GGIANLUCAA/Tra-le-pagine-/actions/runs?"):
+        token = os.environ.get("GITHUB_TOKEN")
+        if not token:
+            raise RuntimeError("WOW_LAB_QUEUE_UNVERIFIED: missing GitHub token")
+        request = urllib.request.Request(url, headers={
+            "Authorization": "Bearer " + token,
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "ArtVision-WowLab-Isolated",
+        })
+        with urllib.request.urlopen(request, timeout=15) as response:
+            return json.load(response)
     return json.loads(get_bytes(url, limit=3_000_000).decode("utf-8"))
 
 
@@ -157,10 +170,18 @@ def parse_wow_release_history(releases: list[dict]) -> list[dict]:
             slot = str(slot)[:-2] + f"{int(str(slot)[-2:]) // 2 * 2:02d}"
 
         if ident in seen:
-            continue  # Multiple versions of one artwork count as one subject.
+            # The latest six distinct subjects stay deduplicated, but ALL
+            # published slots remain reserved, including V1/V2 re-edits.
+            for previous in history:
+                if previous["object_id"] == ident:
+                    if slot and slot not in previous["slots_utc"]:
+                        previous["slots_utc"].append(slot)
+                    break
+            continue
         seen.add(ident)
         history.append({"schema": SCHEMA, "object_id": ident,
                         "tag": tag, "slot_utc": slot,
+                        "slots_utc": [slot] if slot else [],
                         "published_at": release.get("published_at")})
         if len(history) >= 25:
             break
@@ -169,7 +190,7 @@ def parse_wow_release_history(releases: list[dict]) -> list[dict]:
 
 def ensure_slot_available(stamp: str, history: list[dict]) -> None:
     for item in history:
-        if item.get("slot_utc") == stamp:
+        if stamp in item.get("slots_utc", [item.get("slot_utc")]):
             raise RuntimeError("WOW_LAB_SLOT_ALREADY_RELEASED: " + stamp +
                                " (" + str(item.get("tag")) + ")")
 
@@ -192,6 +213,8 @@ def recent_history() -> list[dict]:
             releases = json.load(response)
     except Exception as err:
         raise RuntimeError("WOW_LAB_HISTORY_UNAVAILABLE: " + str(err)) from err
+    if len(releases) >= 100:
+        raise RuntimeError("WOW_LAB_HISTORY_UNVERIFIED: release listing may be truncated")
     return parse_wow_release_history(releases)
 
 
@@ -220,7 +243,7 @@ def ensure_no_parallel_wow_render() -> None:
     own_run_id = os.environ.get("GITHUB_RUN_ID", "")
     if not own_run_id:
         raise RuntimeError("WOW_LAB_QUEUE_UNVERIFIED: missing current run ID")
-    for status in ("in_progress", "queued"):
+    for status in ("in_progress", "queued", "waiting", "pending"):
         url = (f"https://api.github.com/repos/{repository}/actions/runs?"
                + urllib.parse.urlencode({"status": status, "per_page": 100}))
         try:
