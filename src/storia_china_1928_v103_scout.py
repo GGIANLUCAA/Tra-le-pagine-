@@ -12,6 +12,8 @@ from PIL import Image, ImageDraw
 PAGE="https://commons.wikimedia.org/wiki/File:China_and_the_Chinese%2C_1920s_-_Travelfilmarchive.webm"
 OUT=Path("output/storia_china_1928_v103")
 UA="TraLePagine-StoriaResearch/1.0 (GitHub GGIANLUCAA/Tra-le-pagine-)"
+TOP_TRIM=16
+BOTTOM_TRIM=58  # remove burnt-in archive timecode; never paint invented pixels
 def sha(path):
     d=hashlib.sha256()
     with open(path,"rb") as f:
@@ -53,6 +55,7 @@ def download():
     return dest,info,video,float(probes["format"]["duration"])
 
 def boxfocus(frame):
+    frame=frame[TOP_TRIM:frame.shape[0]-BOTTOM_TRIM]
     h,w=frame.shape[:2]
     # A vertical crop of the native film is unavoidable. Keep subject-centering consistent.
     detector=cv2.CascadeClassifier(cv2.data.haarcascades+"haarcascade_frontalface_default.xml")
@@ -66,9 +69,9 @@ def boxfocus(frame):
     return left,cropw,len(faces)
 
 def vertical(frame,left,width):
-    # Pixel-preserving geometry, no new faces/objects. Native crop 270x480 -> 720x1280.
+    # Preserve only real filmed pixels while removing the burn-in timecode band.
     h,w=frame.shape[:2]
-    piece=frame[:,left:left+width]
+    piece=frame[TOP_TRIM:h-BOTTOM_TRIM,left:left+width]
     return cv2.resize(piece,(720,1280),interpolation=cv2.INTER_CUBIC)
 
 def scout():
@@ -123,9 +126,9 @@ def scout():
         bw_clip=OUT/f"SCENE_{idx:02d}_SOURCE_MOVING_BW.mp4"
         # The selected frame is the end of the original moving excerpt.
         run(["ffmpeg","-nostdin","-y","-v","error","-ss",str(max(0,t-1.25)),"-i",str(source),
-            "-t","1.25","-vf",f"crop={width}:ih:{left}:0,scale=720:1280:flags=lanczos,fps=30",
+            "-t","1.25","-vf",f"crop={width}:ih-{TOP_TRIM+BOTTOM_TRIM}:{left}:{TOP_TRIM},scale=720:1280:flags=lanczos,fps=30",
             "-an","-c:v","libx264","-preset","veryfast","-crf","19","-pix_fmt","yuv420p",str(bw_clip)],120)
-        data.append({"scene":idx,"source_time_s":t,"source_native_crop":{"left":left,"width":width},
+        data.append({"scene":idx,"source_time_s":t,"source_native_crop":{"left":left,"width":width,"top":TOP_TRIM,"bottom_removed":BOTTOM_TRIM},
             "source_exact_frame_file":source_frame.name,"source_exact_frame_sha256":sha(source_frame),
             "moving_original_excerpt":bw_clip.name,"original_motion_sha256":sha(bw_clip),
             "detected_faces_advisory":faces,"motion_score":round(movement,2),
