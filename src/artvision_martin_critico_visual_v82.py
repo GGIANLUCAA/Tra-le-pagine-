@@ -9,6 +9,8 @@ import numpy as np
 import artvision_martin_visual_v81 as old
 
 W,H,FPS=old.W,old.H,old.FPS
+APERTURE=old.APERTURE
+room=old.room
 BEAT_BOUNDARIES=None
 # Directions here correspond ONE-TO-ONE to nine paragraphs of COPIONE_CRITICO_V82.
 # Details from inspected image: lightning x=.16 y=.09; left rock x=.33 y=.27;
@@ -75,7 +77,9 @@ def _wide(art,progress):
     veil=Image.new("RGB",(W,H),(19,18,20))
     bg=Image.blend(base,veil,.51)
     canvas=art.copy()
-    canvas.thumbnail((W-34, H-90),Image.Resampling.LANCZOS)
+    # Slow 2.5% photographic push; not a recycled zoom disguised as a new scene.
+    scale=.955+.045*old.smooth(progress)
+    canvas.thumbnail((int((W-34)*scale), int((H-90)*scale)),Image.Resampling.LANCZOS)
     x=(W-canvas.width)//2;y=(H-canvas.height)//2
     bg.paste(canvas,(x,y))
     return bg
