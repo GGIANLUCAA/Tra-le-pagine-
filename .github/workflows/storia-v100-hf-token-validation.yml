@@ -1,0 +1,76 @@
+name: "La Storia Rivive V100 - verifica sicura HF_TOKEN"
+on:
+  push:
+    branches: ["research/storia-free-hd-restoration-v100-20261030"]
+    paths:
+      - ".github/workflows/storia-v100-hf-token-validation.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - name: "Verify authentication and Finegrain metadata, no inference"
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.error
+          from pathlib import Path
+          token=os.getenv("HF_TOKEN","").strip()
+          result={"schema":"storia-hf-token-v100","secret_present":bool(token),
+                  "hf_authenticated":False,"finegrain_metadata_accessible":False,
+                  "inference_calls":0,"image_uploads":0,"paid_calls":0,
+                  "free_gpu_quota_verified":False,
+                  "note":"Authenticated metadata check only; not proof of remaining ZeroGPU quota."}
+          def get(url,headers):
+              try:
+                  req=urllib.request.Request(url,headers=headers)
+                  with urllib.request.urlopen(req,timeout=18) as resp:
+                      return resp.status,json.load(resp)
+              except urllib.error.HTTPError as exc:
+                  return exc.code,None
+              except (TimeoutError,urllib.error.URLError,ValueError, OSError):
+                  return 0,None
+          if token:
+              status,payload=get("https://huggingface.co/api/whoami-v2",
+                  {"Authorization":"Bearer "+token,"Accept":"application/json"})
+              result["hf_auth_http_status"]=status
+              result["hf_authenticated"]=(status==200 and isinstance(payload,dict) and bool(payload.get("name")))
+              status,metadata=get("https://huggingface.co/api/spaces/finegrain/finegrain-image-enhancer",
+                  {"Authorization":"Bearer "+token,"Accept":"application/json"})
+              result["finegrain_http_status"]=status
+              result["finegrain_metadata_accessible"]=(status==200 and isinstance(metadata,dict))
+              if result["finegrain_metadata_accessible"]:
+                  result["finegrain_runtime_stage"]=(metadata.get("runtime") or {}).get("stage")
+          else:
+              result["hf_auth_http_status"]=None
+              result["finegrain_http_status"]=None
+          print("HF_TOKEN_PRESENT:",result["secret_present"])
+          print("HF_TOKEN_AUTHENTICATED:",result["hf_authenticated"])
+          print("FINEGRAIN_METADATA_ACCESSIBLE:",result["finegrain_metadata_accessible"])
+          print("INFERENCE_CALLS: 0; NO_CHARGES; NO_IMAGE_UPLOAD")
+          Path("HF_TOKEN_V100_DIAGNOSTIC.json").write_text(json.dumps(result,indent=2)+"\n")
+          summary=os.getenv("GITHUB_STEP_SUMMARY")
+          if summary:
+              Path(summary).write_text(
+                  "## Hugging Face token V100 (no inference)\n"+
+                  "- Token present: **"+str(result["secret_present"])+"**\n"+
+                  "- Hugging Face authentication: **"+str(result["hf_authenticated"])+"**\n"+
+                  "- Finegrain public metadata accessible: **"+str(result["finegrain_metadata_accessible"])+"**\n"+
+                  "- Free GPU quota: **not checked**\n"+
+                  "- Generations: **0**; paid calls: **0**\n")
+          if not (result["hf_authenticated"] and result["finegrain_metadata_accessible"]):
+              raise SystemExit("HF_TOKEN_AUTH_OR_FINEGRAIN_CHECK_FAILED")
+          PY
+      - name: "Save non-secret diagnostic"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: HF_TOKEN_V100_DIAGNOSTIC_NO_CREDENTIALS
+          path: HF_TOKEN_V100_DIAGNOSTIC.json
+          if-no-files-found: warn
+          retention-days: 7
