@@ -138,6 +138,31 @@ class V101Tests(unittest.TestCase):
             self.assertEqual(selected["sha256"],i2i.sha(frames/selected["filename"]))
 
 
+    def test_v113_rank_selects_one_frame_per_detected_segment(self):
+        from PIL import Image,ImageDraw
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);frames=d/"original_frames";frames.mkdir()
+            for i in range(12):
+                im=Image.new("RGB",(1280,720),(35,35,35))
+                ImageDraw.Draw(im).rectangle((i*80,80,i*80+100,630),fill=(220,220,220))
+                im.save(frames/("frame_%02d.png"%i))
+            def report(segments):
+                (d/"SCOUT_REPORT.json").write_text(json.dumps({
+                    "shot_boundary_analysis":{"version":"V113_FFMPEG_SCENE_CANDIDATES",
+                        "status":"FIVE_SEGMENTS_POSSIBLE_REVIEW_REQUIRED"},
+                    "frame_provenance":[{"filename":"frame_%02d.png"%i,
+                        "shot_candidate_segment_index":segment}
+                        for i,segment in enumerate(segments)]}))
+            report([i//2 for i in range(12)])
+            good=frame_rank.rank(frames)
+            self.assertEqual(len(good["preselected"]),5)
+            self.assertEqual(len(set(good["selected_shot_candidate_segments"])),5)
+            self.assertFalse(good["preselected"][0]["historical_shot_distinctness_verified"])
+            report([0]*12)
+            blocked=frame_rank.rank(frames)
+            self.assertEqual(blocked["status"],"INSUFFICIENT_DISTINCT_SHOT_CANDIDATES")
+            self.assertEqual(blocked["preselected"],[])
+
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"),"FFmpeg required")
     def test_v113_cut_candidates_come_from_real_video_not_frame_differences(self):
         """Five hard-cut segments versus one continuous shot, decoded from actual MP4."""
