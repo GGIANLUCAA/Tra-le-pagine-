@@ -613,13 +613,13 @@ def run(args):
                                      horizontal_direction=1 if rec["objectID"]%2 else -1,
                                      width=W,height=H)
     (out/"POPOUT_GEOMETRY_PREFLIGHT.json").write_text(
-        json.dumps(crossing,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+        json.dumps(crossing,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     if not crossing["pass"]:
         (out/"REJECTED_REPORT.json").write_text(
             json.dumps({"status":"popout_geometry_rejected",
                         "object_id":rec["objectID"],
                         "reason":crossing["reasons"],
-                        "artistic_approval":False},indent=2)+"\\n",encoding="utf-8")
+                        "artistic_approval":False},indent=2)+"\n",encoding="utf-8")
         print("WOW_LAB_POPOUT_REJECTED: "+",".join(crossing["reasons"]),file=sys.stderr)
         return 2
     colors=mood_colors(source)
