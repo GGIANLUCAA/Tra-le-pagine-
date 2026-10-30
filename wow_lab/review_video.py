@@ -9,6 +9,7 @@ import json
 import subprocess
 from pathlib import Path
 import cv2
+import numpy as np
 from PIL import Image, ImageDraw
 
 def review(video: Path) -> dict:
@@ -44,6 +45,15 @@ def review(video: Path) -> dict:
         rgb=cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
         stills.append(Image.fromarray(rgb))
     capture.release()
+    # Multiple meaningful transitions are required; a still with an AAC track
+    # is not a WOW LAB moving-image deliverable.
+    valid=[f for f in stills if f is not None]
+    differences=[]
+    for previous, current in zip(valid, valid[1:]):
+        before=np.asarray(previous.resize((135,240)),dtype=np.int16)
+        after=np.asarray(current.resize((135,240)),dtype=np.int16)
+        differences.append(round(float(np.mean(np.abs(after-before))),3))
+    active_transitions=sum(value>1.2 for value in differences)
     thumb_w,thumb_h=270,480
     sheet=Image.new("RGB",(thumb_w*4, (thumb_h+42)*2),(22,22,22))
     draw=ImageDraw.Draw(sheet)
@@ -58,7 +68,8 @@ def review(video: Path) -> dict:
     passed=bool(v and a and v.get("codec_name")=="h264"
                 and a.get("codec_name")=="aac"
                 and duration>=8 and decode.returncode==0
-                and all(frame is not None for frame in stills))
+                and all(frame is not None for frame in stills)
+                and active_transitions >= 3)
     result={
         "technical_pass":passed,
         "video_codec":v.get("codec_name") if v else None,
@@ -67,7 +78,10 @@ def review(video: Path) -> dict:
         "fps":fps,"frame_count":count,
         "full_decode_pass":decode.returncode==0,
         "decode_errors":decode.stderr[-2000:],
-        "sampled_frames":len([f for f in stills if f is not None]),
+        "sampled_frames":len(valid),
+        "inter_sample_mean_abs_differences":differences,
+        "active_transitions":active_transitions,
+        "required_active_transitions":3,
         "contact_sheet":"VIDEO_CONTACT_SHEET.jpg",
         "mask_semantics_verified":False,
         "artistic_approval":False,
