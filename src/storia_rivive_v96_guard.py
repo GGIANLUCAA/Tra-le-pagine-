@@ -27,7 +27,10 @@ def inspect(data, actual_duration=None):
     if not isinstance(data,dict):
         return ["MANIFEST_IS_NOT_JSON_OBJECT"],[]
     need(data.get("format")=="storia_rivive","WRONG_OR_MISSING_HISTORY_FORMAT")
-    need(data.get("quality_policy_version") in ("V94+V96","V96"),"V96_QUALITY_POLICY_NOT_ENFORCED")
+    need(data.get("quality_policy_version") in ("V94","V94+V96","V96"),"V96_QUALITY_POLICY_NOT_ENFORCED")
+    # The V94 policy applies at the same time; the official combined manifest
+    # keeps quality_policy_version=V94 and adds project_format=4classic_1vidu.
+    # V91 actually invokes this V96 gate, so the check cannot be skipped via tag.
     need(data.get("project_format")=="4classic_1vidu","WRONG_FIVE_SCENE_PRESET")
     need(isinstance(data.get("episode_id"),str) and len(data["episode_id"])>=8,"UNIQUE_EPISODE_ID_MISSING")
     need(TRUE(data.get("copyright_italy_checked")),"TERRITORIAL_RIGHTS_REVIEW_PENDING")
