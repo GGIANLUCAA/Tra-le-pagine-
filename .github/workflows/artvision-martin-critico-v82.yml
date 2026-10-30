@@ -1,0 +1,57 @@
+name: ArtVision Martin V82 — two better Critico only
+run-name: Martin Critico V82 — shorter Gacrux, semantic shots, museum V80
+on:
+  push:
+    branches: [pilot/artvision-martin-critico-v82]
+    paths:
+      - .github/workflows/artvision-martin-critico-v82.yml
+      - src/artvision_martin_critico_visual_v82.py
+      - src/artvision_martin_critico_only_v82.py
+      - docs/productions/2026-10-30-martin-wrath-v82/**
+      - tests/test_artvision_martin_critico_v82.py
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-martin-critico-v82-pilot
+  cancel-in-progress: false
+jobs:
+  revised-two-critico-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free local video/audio libraries
+        run: |
+          python -m pip install -q --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10.2" "opencv-python-headless>=4.8" "requests>=2.31" "soundfile>=0.12" "google-genai>=2.25.0" "scipy>=1.11"
+          if ! command -v ffprobe >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          python -m py_compile src/artvision_martin_critico_visual_v82.py src/artvision_martin_critico_only_v82.py
+      - name: Hard gate real frame visibility and story beats
+        run: python -m unittest discover -s tests -p "test_artvision_martin_critico_v82.py" -v
+      - name: Generate one short real Gacrux WAV and two coherent Critico MP4s
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_TTS_FREE_QUOTA_CONFIRMED: "true"
+          GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED: "true"
+        run: python -u src/artvision_martin_critico_only_v82.py
+      - name: Upload only actual Critico files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_MARTIN_V82_CRITICO_SHORT_SEMANTIC
+          path: |
+            output/artvision-martin-wrath-critico-v82/critico_*/*.mp4
+            output/artvision-martin-wrath-critico-v82/critico_*/COPERTINA.jpg
+            output/artvision-martin-wrath-critico-v82/critico_*_COMPLETE.zip
+            output/artvision-martin-wrath-critico-v82/MARTIN_CRITICO_V82_STATE.json
+            output/artvision-martin-wrath-critico-v82/MARTIN_CRITICO_V82_SEMANTIC_TIMING.json
+            output/artvision-martin-wrath-critico-v82/GACRUX_GATE_V81.json
+            output/artvision-martin-wrath-critico-v82/SOURCE_MANIFEST.json
+          if-no-files-found: warn
+          retention-days: 14
