@@ -18,7 +18,7 @@ Le valutazioni qui riguardano **fotogrammi e metadata** e non sono una trascrizi
 - I valori sotto sono **intervalli sperimentali di regia**, NON soglie psicologiche universalmente misurate, e non autorizzano a contraddire i gate attivi.
 
 ## LA STORIA RIVIVE — affinamento di V70 senza alterare V61/V94
-Restano INVARIATI: durata consentita 14–35 s, media editoriale ~25 s NON obbligatoria, originale B/N in movimento → fermo sul vero frame → FOTO AI a colori FEDELE e ferma, primo reveal concluso entro ~1,5s, una e una sola clip Vidu effettiva ~5s dove prevista V94, senza nuove spese fuori contratto. Vidu richiede ≥3,5s di movimento a colori dopo il suo reveal: NON applicare allo slot Vidu il normale schema foto ferma.
+Restano INVARIATI: durata consentita 14–35 s, media editoriale ~25 s NON obbligatoria, originale B/N in movimento → fermo sul vero frame → FOTO AI a colori FEDELE e ferma, primo reveal concluso entro ~1,5s, almeno UNA clip Vidu effettiva ~5s (V94: una sola richiesta fatturabile per episodio), senza nuove spese fuori contratto. Vidu richiede ≥3,5s di movimento a colori dopo il suo reveal: NON applicare allo slot Vidu il normale schema foto ferma.
 
 **Ipotesi di bilanciamento, da sperimentare nella finestra V70 0,55–1,80 / 0,18–0,80 / 1,05–3,05 s:**
 - Volto: B/N 0,7–1,0; trasformazione 0,25–0,40; colore 2,0–2,8 s.
