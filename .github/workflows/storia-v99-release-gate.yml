@@ -1,0 +1,93 @@
+name: "La Storia Rivive V99 · controllo pre-release condiviso"
+on:
+  workflow_call:
+    inputs:
+      candidate_artifact_name:
+        description: "Artifact from a previous build job containing actual MP4, manifest and all verified source assets"
+        type: string
+        required: true
+      mp4_filename:
+        description: "Basename of final actual MP4 file inside the artifact root"
+        type: string
+        required: true
+      manifest_filename:
+        description: "Basename of full V91+V94+V96+V99 QA manifest JSON in the artifact root"
+        type: string
+        required: true
+      assets_subdirectory:
+        description: "Subdirectory with original archive film, source photos, four I2I images and actual Vidu clip"
+        type: string
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  quality_before_publication:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ARTIFACT: ${{ inputs.candidate_artifact_name }}
+      VIDEO: ${{ inputs.mp4_filename }}
+      MANIFEST: ${{ inputs.manifest_filename }}
+      ASSETS: ${{ inputs.assets_subdirectory }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install no-charge video/QA tools (never ask for Vidu secrets)"
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5"
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.candidate_artifact_name }}
+          path: candidate
+      - name: "Verify candidate input filenames and fetch immutable user-accepted real V98"
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$VIDEO" =~ ^[A-Za-z0-9_.-]+\.mp4$ ]]
+          [[ "$MANIFEST" =~ ^[A-Za-z0-9_.-]+\.json$ ]]
+          [[ "$ASSETS" =~ ^[A-Za-z0-9_.-]+$ ]]
+          test -s "candidate/$VIDEO"
+          test -s "candidate/$MANIFEST"
+          test -d "candidate/$ASSETS"
+          mkdir -p golden
+          gh release download storia-rivive-san-francisco-1906-v98-4-real-i2i-1-real-vidu \
+            -p LA_STORIA_RIVIVE_SF1906_V98_FOUR_REAL_I2I_ONE_REAL_VIDU.mp4 \
+            --repo "$GITHUB_REPOSITORY" -D golden
+          printf '%s\n' 'b20726893e067bbae493859ae1c51379c4abab8c2c8768d5c6f2d4ab324b47a8  golden/LA_STORIA_RIVIVE_SF1906_V98_FOUR_REAL_I2I_ONE_REAL_VIDU.mp4' | sha256sum -c -
+      - name: "V99 actual MP4 and source-photo-Vidu frame correlation, movement and color"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v99_golden_benchmark.py \
+            --mode candidate \
+            --video "candidate/$VIDEO" \
+            --reference golden/LA_STORIA_RIVIVE_SF1906_V98_FOUR_REAL_I2I_ONE_REAL_VIDU.mp4 \
+            --manifest "candidate/$MANIFEST" \
+            --assets "candidate/$ASSETS" \
+            --output candidate/V99_REAL_MP4_BENCHMARK_REPORT.json
+      - name: "V91 combines authentic V94, V96, V99 and actually watched human artistic approval"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_final_gate_v91.py \
+            --video "candidate/$VIDEO" \
+            --manifest "candidate/$MANIFEST" \
+            --v99-golden-reference golden/LA_STORIA_RIVIVE_SF1906_V98_FOUR_REAL_I2I_ONE_REAL_VIDU.mp4 \
+            --v99-source-assets "candidate/$ASSETS"
+          echo "V99_READY_FOR_FINAL_RELEASE_AFTER_ALL_FOUR_GATES"
+      - name: "Preserve technical audit when blocked, do not silently approve"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V99_RELEASE_BLOCK_OR_PASS_AUDIT_${{ github.run_id }}
+          path: candidate/V99_REAL_MP4_BENCHMARK_REPORT.json
+          if-no-files-found: warn
+          retention-days: 21
