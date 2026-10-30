@@ -29,10 +29,10 @@ def sha(p):
  with open(p,"rb") as f:
   for chunk in iter(lambda:f.read(1<<20),b""):h.update(chunk)
  return h.hexdigest()
-def frame_at(cap, t):
- cap.set(cv2.CAP_PROP_POS_MSEC,t*1000)
+def frame_at(cap, frame_id):
+ cap.set(cv2.CAP_PROP_POS_FRAMES,int(frame_id))
  ok,f=cap.read()
- if not ok:raise RuntimeError("Cannot retrieve frame at "+str(t))
+ if not ok:raise RuntimeError("Cannot retrieve frame "+str(frame_id))
  if f.shape[:2]!=(1280,720):raise RuntimeError("Wrong source image size")
  return f
 def image_corr(a,b):
@@ -53,12 +53,14 @@ def main():
  cap=cv2.VideoCapture(str(MASTER))
  fps=cap.get(cv2.CAP_PROP_FPS)
  if not 23<=fps<=25:raise RuntimeError("SOURCE_FRAMERATE_UNEXPECTED")
- sec=0;records=[];cards=[]
+ frame_offset=0;records=[];cards=[]
  for idx,(timecode,motion,fade,hold,label) in enumerate(V92_TIMINGS,1):
+  fm,ff,fh=(round(motion*fps),round(fade*fps),round(hold*fps))
   if idx in KEEP:
-   # -0.13 s before still transition and +0.4 s after image is fully colored
-   orig=frame_at(cap, sec+motion-.12)
-   pic=frame_at(cap, sec+motion+fade+min(.55,hold/3))
+   # The renderer emits exact rounded frame counts, not summed floating-point seconds.
+   # Its LAST real B/W frame is the source anchor, not an arbitrary moving frame .12s earlier.
+   orig=frame_at(cap,frame_offset+fm-1)
+   pic=frame_at(cap,frame_offset+fm+ff+min(round(.50*fps),fh-2))
    bw=ROOT/f"SOURCE_BW_{idx:02}.png"
    colored=ROOT/f"RESTORED_PHOTO_{idx:02}.jpg"
    cv2.imwrite(str(bw),orig)
@@ -76,12 +78,14 @@ def main():
     "human_subject_verification":"PENDING",
     "image_to_image_modern_face_restoration":"NOT_YET_VERIFIED",
     "source_rights_italy":"PENDING",
-    "v92_master_segment_start_s":round(sec,3),
-    "v92_master_segment_end_s":round(sec+motion+fade+hold,3),
-    "v92_frozen_photo_start_s":round(sec+motion+fade,3)}
+    "v92_master_segment_start_s":round(frame_offset/fps,3),
+    "v92_master_segment_end_s":round((frame_offset+fm+ff+fh)/fps,3),
+    "v92_frozen_photo_start_s":round((frame_offset+fm+ff)/fps,3),
+    "v92_start_frame":frame_offset,
+    "v92_end_frame_exclusive":frame_offset+fm+ff+fh}
    records.append(checks);cards.append((idx,orig,pic,corr,sat,label))
-   print("V95_REAL_SOURCE_CHECKED",idx,label,"corr",corr,"sat",sat,"source",timecode,"master",round(sec,2),flush=True)
-  sec+=motion+fade+hold
+   print("V95_REAL_SOURCE_CHECKED",idx,label,"corr",corr,"sat",sat,"source",timecode,"master",round(frame_offset/fps,2),flush=True)
+  frame_offset+=fm+ff+fh
  cap.release()
  if len(records)!=5 or len({r["source_timecode_s"] for r in records})!=5:raise RuntimeError("FIVE_DISTINCT_SCENES_REQUIRED")
  poster=Image.new("RGB",(5*245,2*445+42),(12,17,23))
