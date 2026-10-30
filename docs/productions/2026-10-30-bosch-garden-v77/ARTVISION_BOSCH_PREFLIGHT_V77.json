@@ -10,7 +10,7 @@
     "medium": "grisaille and oil on oak panels",
     "official_collection_url": "https://www.museodelprado.es/en/the-collection/art-work/triptych-garden-earthly-delights/02388242-6d6a-4e9e-a992-e1311eab3609"
   },
-  "status": "cinema_standard_source_music_verified_only",
+  "status": "one_real_cinema_standard_rendered_needs_review",
   "ready_for_render": false,
   "owner_only": true,
   "max_concurrent_artvision_renders": 1,
@@ -109,11 +109,14 @@
       "frame": "no unverified historical frame"
     },
     "cinema_standard": {
-      "status": "ready_for_single_local_render_after_bosch_only_lock_merge",
+      "status": "rendered_needs_review",
       "voice": "none",
       "music": "Water Lily, Kevin MacLeod, CC BY 4.0 exact file SHA b8c4f3...",
       "sequence": "tree-man hook -> Eden -> central garden -> riders -> hell -> whole triptych",
-      "source_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9"
+      "source_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9",
+      "video_sha256": "3eb4a29c00b5d937f9385fef583a39dcccb754073328258db9f8b3b940acb2ba",
+      "video_bytes": 17461112,
+      "report": "docs/productions/2026-10-30-bosch-garden-v77/ARTVISION_BOSCH_CINEMA_STANDARD_V78C_REAL_MP4_QA.md"
     },
     "cinema_museum": {
       "status": "blocked_frame_v80",
@@ -141,14 +144,14 @@
     }
   ],
   "v25_approved": false,
-  "mp4_count": 0,
+  "mp4_count": 1,
   "archive_import_verified": false,
   "paid_video_api_calls": 0,
-  "render_started": false,
+  "render_started": true,
   "queue_modified": false,
   "source_research_date": "2026-10-30",
   "ready_for_render_by_slot": {
-    "cinema_standard": true,
+    "cinema_standard": false,
     "cinema_museum": false,
     "critico_standard": false,
     "critico_museum": false
@@ -181,5 +184,19 @@
     "verified_against_existing_hokusai_package": true,
     "attribution": "\"Water Lily\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/"
   },
-  "lock_change_proposed": "Bosch-only fourth pilot guard/queue and tests in PR138, not active until merge"
+  "lock_change_proposed": "Bosch-only fourth pilot guard/queue and tests in PR138, not active until merge",
+  "actual_delivery": {
+    "cinema_standard": {
+      "status": "rendered_needs_review",
+      "version": "V78C",
+      "mp4_sha256": "3eb4a29c00b5d937f9385fef583a39dcccb754073328258db9f8b3b940acb2ba",
+      "mp4_bytes": 17461112,
+      "zip_crc_pass": true,
+      "chat_runtime_only": true,
+      "V25_approved": false
+    },
+    "critico_standard": "not_rendered",
+    "critico_museum": "not_rendered",
+    "cinema_museum": "not_rendered"
+  }
 }
