@@ -33,7 +33,7 @@ Nel workflow NY V95 precedente, il renderer V83 aveva lanciato `NOT_THE_USER_APP
 
 **Correzioni già applicate al repository**
 1. `src/storia_rivive_v96_guard.py`: nuovo gate V96 richiede 4 reali source-film→foto image-to-image e 1 sola vera clip Vidu su 5ª fonte, timeline collegata, hold motivati, titolo non coprente, QA semantico/volti, identità di sorgente, palette, audio/diritti, revisione umana: tutti predefiniti **non approvati** fino a prova concreta.
-2. `tests/test_storia_rivive_v96_guard.py`: **12 test** che simulano precisamente errori sopra, tutti passati.
+2. `tests/test_storia_rivive_v96_guard.py`: **13 test V96** che simulano precisamente gli errori sopra, tutti passati; unitamente a **5 V91 + 13 V94**: **31 test** superati nella GitHub Action del 30/10/2026.
 3. `.github/workflows/storia-v96-regression-audit.yml`: Action gratuita legge il *vero MP4 V95.1* e verifica che il gate lo respinga come finale. Risultato atteso: **REJECT** con motivazione, non rilascio fittizio.
 4. `src/storia_rivive_final_gate_v91.py`: per nuovi filmati storici richiesti nel preset 4classiche+1Vidu integra il gate V96 oltre a V94; non viene compromesso ArtVision 4×1.
 5. `.github/workflows/storia-new-york-1911-v95.yml`: **DISABILITATO** per prevenire un riavvio a pagamento e rimosso l'aggiramento `NOT_THE_USER_APPROVED_EFFECT`; lo storico della release resta disponibile come esempio di errore.
@@ -47,3 +47,6 @@ Nel workflow NY V95 precedente, il renderer V83 aveva lanciato `NOT_THE_USER_APP
 - Una sola scena Vidu di circa 5s, generata **dopo** l'approvazione visiva della foto sorgente, inserita nel giusto punto e avviata dal vero filmato B/N della stessa inquadratura.
 - Nessun altro credito Vidu per tentare di nascondere errori di montaggio.
 - Dopo il montaggio, QA **completo** a velocità reale, inclusa musica; eseguire i gate V91+V94+V96, non solo verifiche H264/AAC; release finale solo dopo esito completo e diritti.
+
+## Verifica V96 realmente eseguita
+Action `https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41026491868`: **SUCCESS**. Suite 13 V96 + 5 V91 + 13 V94 = **31 test superati**. Il gate ha letto direttamente il vero MP4 New York V95.1 e ha restituito **REJECT** come master artistico con **14 motivazioni**, come previsto. Ha anche salvato un contact sheet a 12 fotogrammi e il report di rifiuto in un artifact GitHub. Questo SUCCESS significa che il controllo ha riconosciuto correttamente il filmato difettoso, **non** che il vecchio filmato sia stato promosso a master. Nessuna richiesta Vidu effettuata durante il test.
