@@ -141,6 +141,8 @@ jobs:
           i2i=json.loads(i2i_path.read_text()) if i2i_path.is_file() else {"status":"I2I_INPUTS_BLOCKED"}
           low_detail=rank.get("status")=="SOURCE_NATIVE_DETAIL_INSUFFICIENT_FOR_FIVE_SHOTS"
           insufficient_cuts=scout.get("shot_boundary_analysis",{}).get("status")=="INSUFFICIENT_CUT_CANDIDATES"
+          insufficient_selected_shots=rank.get("status") in (
+              "INSUFFICIENT_DISTINCT_SHOT_CANDIDATES","SHOT_SEGMENT_PROVENANCE_INCOMPLETE")
           status={"cycle_id":order["cycle_id"],"candidate":order["episode_id"],
               "source_scout":scout.get("status"),
               "source_preflight_blocking_issues":order.get("blocking_issues",[]),
@@ -150,7 +152,7 @@ jobs:
               "restored_i2i_photos_approved":0,
               "real_vidu_clips_approved":0,"finished_mp4":False,"published":False,
               "charged_api_requests":0,
-              "status":"SOURCE_REJECTED" if (low_detail or insufficient_cuts) else "ASSETS_PENDING",
+              "status":"SOURCE_REJECTED" if (low_detail or insufficient_cuts or insufficient_selected_shots) else "ASSETS_PENDING",
               "cut_candidate_count":scout.get("shot_boundary_analysis",{}).get("cut_candidate_count"),
               "historical_camera_shots_verified":False,
               "next_required":"Resolve source rights and native quality, then 4 genuine I2I photos, 1 real Vidu, V91/V94/V96/V99 and artistic review"}
