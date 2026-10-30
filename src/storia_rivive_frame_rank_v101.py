@@ -69,7 +69,7 @@ def rank(folder):
         segment=segment_by_name[imgs[idx].name] if segment_by_name is not None else None
         if segment_by_name is not None and segment in used_segments:
             continue
-        if all(abs(idx-v)>=separation for v in chosen):
+        if segment_by_name is not None or all(abs(idx-v)>=separation for v in chosen):
             chosen.append(idx)
             if segment_by_name is not None:
                 used_segments.add(segment)
