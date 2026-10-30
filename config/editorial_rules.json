@@ -981,6 +981,29 @@
       "preserve_historic_masters": true,
       "approval_of_socrates_from_reference": false,
       "bosch_reference_filename": "39775.mp4"
+    },
+    "museum_camera_v76": {
+      "verified_reference": "docs/ARTVISION_CAMERA_MUSEUM_11_BEAT_V76_20261030.md",
+      "effective_from": "2026-10-30",
+      "museum_critico_major_camera_movements": "chapter_level_not_every_sentence",
+      "critic_standard_exact_spoken_sentence_alignment": true,
+      "no_zooming_exhibit_wall_labels_in_foreground": true,
+      "continuous_in_out_no_hard_cuts": true,
+      "V57_full_frame_jump_gate_required": true,
+      "failure_demonstration": {
+        "v75_peak_gray_mad": 47.477,
+        "v75_rejected": true
+      },
+      "corrected_demonstration": {
+        "v76_peak_gray_mad": 28.042,
+        "cut_threshold": 35,
+        "v76_hard_cut_candidates": 0,
+        "v76_technically_passed": true
+      },
+      "framing_is_work_specific": true,
+      "museum_actual_frame_reproduction_requires_verified_source_v80": true,
+      "reconstruction_must_be_explicitly_declared": true,
+      "no_Gold_master_without_artistic_human_review": true
     }
   },
   "delivery_v55": {

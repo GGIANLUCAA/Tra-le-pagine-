@@ -296,14 +296,78 @@
       "archive_manifest_path": "docs/productions/2026-10-29-hokusai-great-wave-v55b/ARCHIVE_STAGING_V55.json",
       "variants": {
         "critico_standard": {
-          "status": "blocked",
-          "blocker_code": "blocked_voice_unavailable",
-          "blocker_note": "Exact Google Gacrux voice cache and timing not verified; do not use synthetic substitute."
+          "status": "rendered_needs_review",
+          "version": "V74",
+          "sha256": "20eee2b33cdf8a007213a2ce92b9c98c16bd63b5b93d8e91083dbf9614959ba3",
+          "video_bytes": 29580622,
+          "duration_seconds": 232.7,
+          "codec": "H264/AAC 720x1280 20fps",
+          "local_chatgpt_video_path": "/mnt/data/HOKUSAI_V74/01_Hokusai_Critico_Standard_Android.mp4",
+          "original_critico_WAV_SHA256": "9ddb4843356843d84994b12b3db05c47119311f9cb42626aff1acf59ff03f913",
+          "exact_same_critico_AAC_SHA256": "fc28ce63b9ae9b86785da63af3c4d4e8e12cf9cc7c705d2348607a55b4ad8580",
+          "original_11_beat_script_SHA256": "fe65100497a877cbe05851164024e4b5ad3eb9a44d217663fadafa96d2853d71",
+          "voice_model": "Google Gemini 3.8 Flash TTS Gacrux",
+          "narration_words": 565,
+          "narration_sentences": 52,
+          "asr_matched_fraction": 0.8747855917667239,
+          "Met_object_id": 45434,
+          "Met_accession": "JP1847",
+          "original_art_SHA256": "cbb9988f2f18b9180a1cc0cf5dbb0e3bbf8f2e85d17930cf6ca9ab36fac36303",
+          "original_music_SHA256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+          "technical_full_decode": "passed",
+          "V25_approved": false,
+          "human_full_speed_artistic_review": "pending",
+          "site_verified": false,
+          "archive_sync_pending": true,
+          "historical_Cinema_slots_unchanged": true,
+          "one_Google_WAV_for_both_Critico": true,
+          "no_paid_video_AI_calls": true,
+          "archive_staging": "docs/productions/2026-10-30-hokusai-critico-standard-v76/ARCHIVE_STAGING_V55.json"
         },
         "critico_museum": {
-          "status": "blocked",
-          "blocker_code": "blocked_voice_unavailable",
-          "blocker_note": "Exact Google Gacrux voice cache and timing not verified; no Museum renderer approval."
+          "status": "rendered_needs_review",
+          "version": "V76",
+          "sha256": "76576d24242d4c173502d85acd34d7c233fbeb6f55e00e05a5c6e8ae15ac93bb",
+          "video_bytes": 33384102,
+          "duration_seconds": 232.7,
+          "codec": "H264/AAC 720x1280 20fps",
+          "local_chatgpt_video_path": "/mnt/data/HOKUSAI_V74/02_Hokusai_Critico_Museum_Android.mp4",
+          "original_critico_WAV_SHA256": "9ddb4843356843d84994b12b3db05c47119311f9cb42626aff1acf59ff03f913",
+          "exact_same_critico_AAC_SHA256": "fc28ce63b9ae9b86785da63af3c4d4e8e12cf9cc7c705d2348607a55b4ad8580",
+          "original_11_beat_script_SHA256": "fe65100497a877cbe05851164024e4b5ad3eb9a44d217663fadafa96d2853d71",
+          "voice_model": "Google Gemini 3.8 Flash TTS Gacrux",
+          "narration_words": 565,
+          "narration_sentences": 52,
+          "asr_matched_fraction": 0.8747855917667239,
+          "Met_object_id": 45434,
+          "Met_accession": "JP1847",
+          "original_art_SHA256": "cbb9988f2f18b9180a1cc0cf5dbb0e3bbf8f2e85d17930cf6ca9ab36fac36303",
+          "original_music_SHA256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+          "technical_full_decode": "passed",
+          "V25_approved": false,
+          "human_full_speed_artistic_review": "pending",
+          "site_verified": false,
+          "archive_sync_pending": true,
+          "historical_Cinema_slots_unchanged": true,
+          "one_Google_WAV_for_both_Critico": true,
+          "no_paid_video_AI_calls": true,
+          "archive_staging": "docs/productions/2026-10-30-hokusai-critico-museum-v76/ARCHIVE_STAGING_V55.json",
+          "museum_genuine_Met_gallery_photo": false,
+          "museum_room": "digital reconstruction, NOT actual Met gallery",
+          "museum_frame": "digital modern conservation mount, NOT historic original frame",
+          "museum_material_source_review": "V80 requires human approval; reconstruction disclosed",
+          "V57_full_frame_peak_grayscale_MAD": 28.042,
+          "V57_hard_cut_threshold": 35,
+          "V57_discontinuities": 0,
+          "V57_gate_passed": true,
+          "rejected_revisions": [
+            "V74 digital wall label zoom",
+            "V75 fast camera changes"
+          ],
+          "original_met_print_cm": [
+            37.9,
+            25.7
+          ]
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -366,7 +430,23 @@
           "technical_status_preserved": "rendered_needs_review"
         }
       },
-      "note": "Hokusai two genuinely different rendered Cinema variants: Standard V55B and Museum V55C. Both rendered_needs_review and archive_sync_pending. Critico Standard/Museum require original Google Gacrux voice, not free substitute. Preserve historic SHA variants; never multiply counts for corrective attempts."
+      "note": "Third ArtVision pilot now four distinct real MP4. Critico Standard V74 and Museum V76 share exact original Gacrux WAV and exact AAC bits. Historic Cinema Standard V55 + Cinema Museum V55C reused unchanged. 0 V25 approvals; digital room/frame not actual Met; playback private archive pending. V57 V76 gate pass peak28.04.",
+      "four_video_pilot": {
+        "target_count": 4,
+        "real_rendered_count": 4,
+        "approved_count": 0,
+        "rendered_slots": [
+          "critico_standard",
+          "critico_museum",
+          "cinema_standard",
+          "cinema_museum"
+        ],
+        "status": "FOUR_DISTINCT_REAL_MP4_REVIEW_PENDING",
+        "no_auto_next_painting_without_editorial_gate": true,
+        "authentic_Met_JP1847_source_verified": true,
+        "voice_one_Gacrux_WAV_verified": true,
+        "legacy_Cinema_MP4s_reused_without_duplication": true
+      }
     },
     {
       "group_id": "homer_gulf_stream_met11122_1899",
@@ -821,7 +901,7 @@
       "note": "Four real new Klimt MP4s technically produced by approved artistic 4x1 pipeline V72/V73 on 2026-10-29, four distinct SHA. Museum floor-camera flaw corrected; V73 supersedes bad reviews of identical slots. 0 V25 approvals, website import not verified. No social posting."
     }
   ],
-  "last_operational_update": "29 Oct 2026 Klimt 4/4 distinct MP4s real (Critico V72/V73, Cinema V72/V73), reviewed technically only; 0 V25. Socrates 4/4 remains in review. Freeze automatic third painting.",
+  "last_operational_update": "2026-10-30 Hokusai 4/4 real MP4 rendered in ChatGPT session, quality gates pass, package ZIP CRC; no paid video AI and no automatic social release",
   "museum_regression_v56": {
     "date": "2026-10-29",
     "reason": "user rejected low-value generic museum 2D frame/room and hard cut",

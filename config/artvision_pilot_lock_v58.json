@@ -37,5 +37,20 @@
     "no_new_third_artwork": true,
     "user_approves_series_only_after_second_pilot_review": true
   },
-  "note_second_pilot": "Socrates remains immutable and in review. Klimt alone expressly allowed as second 4x1 pilot; does not release series or other existing queued works."
+  "note_second_pilot": "Socrates remains immutable and in review. Klimt alone expressly allowed as second 4x1 pilot; does not release series or other existing queued works.",
+  "authorized_third_pilot": {
+    "enabled": true,
+    "authorization": "User explicitly requested continuation of ArtVision 4×1 production on 2026-10-30 after Socrates and Klimt; Hokusai is previously agreed next artwork",
+    "allowed_group_id": "hokusai_great_wave_met45434_1830",
+    "allowed_title": "The Great Wave",
+    "allowed_artist": "Katsushika Hokusai",
+    "phase": "third_pilot_only_no_unbounded_series",
+    "previous_cinema_slots_are_original_review_mp4": true,
+    "critico_wav_google_Gacrux_one_shared": true,
+    "no_new_fourth_artwork_without_next_user_instruction": true,
+    "no_social_auto_publish": true,
+    "no_paid_video_AI_without_consent": true,
+    "V25_approval_manual": true
+  },
+  "note_third_pilot": "Second pilot The Kiss is already 4/4 rendered review pending. User authorized continuing production. Third work Hokusai has existing 2/4 real Cinema and needs original two full Gacrux Critico MP4s. No other work allowed."
 }

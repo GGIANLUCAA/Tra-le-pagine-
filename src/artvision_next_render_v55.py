@@ -44,6 +44,21 @@ def choose(root=ROOT):
                             "topic":next_group["artwork"],"artvision_4x1_variant":variant},root)
                     second_states={v:next_group["variants"][v]["status"] for v in VARIANTS}
                     count=sum(s in ("rendered_needs_review","approved_for_final_delivery") for s in second_states.values())
+                    third=lock.get("authorized_third_pilot",{})
+                    if count==4 and third.get("enabled") is True and third.get("phase")=="third_pilot_only_no_unbounded_series":
+                        wave=next((g for g in queue["groups"] if g.get("group_id")==third.get("allowed_group_id")),None)
+                        if wave is None or wave.get("artwork")!=third.get("allowed_title"):
+                            return {"status":"third_pilot_missing","new_artwork_required":False,"rendering_allowed":False}
+                        for variant in VARIANTS:
+                            enforce_pilot_project({"serial_mode":"artvision_4x1",
+                               "topic":wave["artwork"],"artvision_4x1_variant":variant},root)
+                        wstates={v:wave["variants"][v]["status"] for v in VARIANTS}
+                        rendered=sum(s in ("rendered_needs_review","approved_for_final_delivery") for s in wstates.values())
+                        return {"status":"third_pilot_four_rendered_review_pending" if rendered==4 else "third_pilot_in_progress",
+                                "work":wave["group_id"],"artwork":wave["artwork"],
+                                "rendered_count":rendered,"variants":wstates,
+                                "new_artwork_required":False,"new_fourth_artwork_allowed":False,
+                                "next_action":"Complete the exact 2 missing Hokusai Critico slots with same Google Gacrux WAV; preserve 2 existing Cinema MP4s, no auto 4th work."}
                     return {"status":"second_pilot_preproduction" if count==0 else
                              ("second_pilot_four_rendered_review_pending" if count==4 else "second_pilot_in_progress"),
                              "work":next_group["group_id"],"artwork":next_group["artwork"],

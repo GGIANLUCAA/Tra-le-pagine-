@@ -1,0 +1,53 @@
+name: "ArtVision Hokusai V74 — exact Met print and shared Gacrux voice"
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install official-source raster validation
+        run: pip install Pillow
+      - name: Retrieve exact Met JP1847 public-domain artwork
+        run: python src/artvision_hokusai_v74_prepare.py art
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARTVISION_HOKUSAI_V74_MET_ORIGINAL
+          path: output/hokusai-v74/art/
+          retention-days: 30
+          if-no-files-found: warn
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    concurrency:
+      group: artvision-hokusai-one-google-gacrux-v74
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install audio dependencies and offline Whisper ASR
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          pip install "google-genai>=2.25.0" "numpy>=1.26" "soundfile>=0.12" "scipy>=1.11" "faster-whisper>=1.1"
+      - name: Synthesize ONE authentic 11-section Gacrux Italian critical narration
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python src/artvision_hokusai_v74_prepare.py voice
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARTVISION_HOKUSAI_V74_ONE_GACRUX_WAV
+          path: output/hokusai-v74/voice/
+          retention-days: 30
+          if-no-files-found: warn
