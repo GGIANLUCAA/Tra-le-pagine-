@@ -1,0 +1,73 @@
+name: "V95 La Storia Rivive NEW YORK 1911 - one real prepaid Vidu"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-new-york-1911-v95.yml"]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-new-york-1911-v95-single-vidu-billable-post
+  cancel-in-progress: false
+jobs:
+  render:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    env:
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_XET: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OMP_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install neural colorization and movie utilities
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --quiet "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2"
+          python -m py_compile tools/storia_new_york_1911_v95_real_vidu_once.py src/storia_v83_new_york_1911.py
+      - name: Render actual NEW YORK 1911 archival source and 4 neural photo-freeze scenes
+        run: python -u src/storia_v83_new_york_1911.py
+      - name: V95 source-anchored fifth Vidu scene ONLY 1 paid API request in entire episode
+        run: python -u tools/storia_new_york_1911_v95_real_vidu_once.py
+      - name: Check real MP4+AAC duration, actual ZIP and original Vidu generation receipt
+        run: |
+          set -euo pipefail
+          d=output/storia_new_york_1911_v95
+          test -s "$d/NEW_YORK_1911_V95_REAL_VIDU.mp4"
+          test -s "$d/NEW_YORK_1911_V95_PACKAGE.zip"
+          test -s "$d/VIDU_NEW_YORK_1911_REAL_5S.mp4"
+          ffmpeg -v error -xerror -i "$d/NEW_YORK_1911_V95_REAL_VIDU.mp4" -f null -
+          unzip -t "$d/NEW_YORK_1911_V95_PACKAGE.zip"
+          ffprobe -v error -show_entries stream=codec_name,width,height:format=duration,size -of json "$d/NEW_YORK_1911_V95_REAL_VIDU.mp4"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: STORIA_NEW_YORK_1911_V95_VIDU_REAL_MOTION
+          path: |
+            output/storia_new_york_1911_v95/NEW_YORK_1911_V95_REAL_VIDU.mp4
+            output/storia_new_york_1911_v95/NEW_YORK_1911_V95_PACKAGE.zip
+            output/storia_new_york_1911_v95/VIDU_NEW_YORK_1911_REAL_5S.mp4
+            output/storia_new_york_1911_v95/VIDU_REAL_RECEIPT.json
+            output/storia_new_york_1911_v95/VIDU_SOURCE_LOCKED_NEURAL_COLOR.jpg
+            output/storia_new_york_1911_v95/V95_QA.json
+            output/storia_new_york_1911_v95/COVER.jpg
+            output/storia_new_york_1911_v95/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Release permanent direct links as QA preview, NOT false final/artistic approval
+        if: success()
+        run: |
+          set -euo pipefail
+          tag="storia-rivive-new-york-1911-v95-one-actual-vidu-review"
+          d=output/storia_new_york_1911_v95
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Existing V95 release; do not replace or charge again"
+            exit 0
+          fi
+          gh release create "$tag" "$d/NEW_YORK_1911_V95_REAL_VIDU.mp4"             "$d/NEW_YORK_1911_V95_PACKAGE.zip" "$d/COVER.jpg" "$d/V95_QA.json"             --repo "$GITHUB_REPOSITORY" --prerelease             --title "La Storia Rivive · New York 1911 · V95 real Vidu scene (review)"             --notes "Historical original authentic Wikimedia Commons movie 1911, 4 source-aligned neural color freezes plus one paid real Vidu-generated 5s moving insert; music, cover, social captions. AI changes/human identity and Italian territorial source rights require manual artistic review. Preview only, not published to private site or socials."
