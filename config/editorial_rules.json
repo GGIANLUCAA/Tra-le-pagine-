@@ -1192,5 +1192,59 @@
     "private_archive_import_unverified": true,
     "keep_v58_pilot_lock_active_until_user_unlocks": true,
     "generic_new_artwork_renderer_not_yet_end_to_end_tested": true
+  },
+  "artvision_4x1_wright_fifth_v85": {
+    "effective_date": "2026-10-30",
+    "status": "four_real_mp4s_technically_verified_V25_pending",
+    "artwork": "An Experiment on a Bird in the Air Pump",
+    "artist": "Joseph Wright of Derby",
+    "museum_inventory": "NG725",
+    "physical_dimensions_cm": [
+      183,
+      244
+    ],
+    "authoritative_dossier": "docs/productions/2026-10-30-wright-air-pump-four-v85/FOUR_REAL_MP4S_QA_AND_DELIVERY.md",
+    "exact_critic_script": "modules/artvision_critico/production_series/wright_air_pump_v85.json",
+    "four_slots": {
+      "critico_standard": {
+        "version": "V85",
+        "sha256": "0d3a171f5a760463e66f16d6eaab50eac7c44fb72115dc2a734fe822be6b8323"
+      },
+      "critico_museum": {
+        "version": "V85",
+        "sha256": "462f0afd6643a023110f48ce287cfada56d15293d375ac905098e6778f9cb94c"
+      },
+      "cinema_standard": {
+        "version": "V52B historic original",
+        "sha256": "ec4525c155334a02696bfa05d745005bea3084f178043c9eaf1dca6d7bfe29e2"
+      },
+      "cinema_museum": {
+        "version": "V85 new replacement of V55 same slot",
+        "sha256": "ae5af74ed0a35e1d6ebfe31081b543b2778ce5b1a1c7b88dcfe712f516192a99"
+      }
+    },
+    "google_Gacrux_voice_one_call_sha256": "d31a0bb8ea3a53af4c45d88db3e7d3e3e9a478115618fb73c8ad99e5268885ef",
+    "exact_same_critic_AAC_sha256": "f7d399e2e7fb2b08e3dbcfa8daff9f313bf32c902472dd9e10deb45f4c54d5c4",
+    "voice_ASR_match_fraction": 0.9183266932270916,
+    "original_gilded_frame_specific_image_documented": true,
+    "frame_photo_license": "Sailko, Wikimedia Commons CC BY 3.0",
+    "surrounding_museum_gallery_real": false,
+    "room_and_floor_digitally_reconstructed_disclosure_mandatory": true,
+    "V57_Museum_jump_QA": {
+      "critico_museum_peak_grayscale_MAD": 24.155,
+      "cinema_museum_peak_grayscale_MAD": 28.147,
+      "threshold": 35,
+      "count_over_limit": 0
+    },
+    "reference_quality_from": [
+      "Socrates V67/V61",
+      "Klimt V73",
+      "Hokusai V76",
+      "Bosch V84"
+    ],
+    "archive_Dropbox_upload_pending": true,
+    "site_publication_false": true,
+    "no_sixth_artwork_automatically": true,
+    "gold_master_approved_count": 0
   }
 }
