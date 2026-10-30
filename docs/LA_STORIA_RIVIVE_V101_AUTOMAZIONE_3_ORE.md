@@ -33,3 +33,10 @@ python src/storia_rivive_autopilot_v101.py --now 2026-10-30T15:00:00Z --out outp
 ```
 
 Gli stati tecnici possibili comprendono `SOURCE_PREFLIGHT_REVIEW_REQUIRED`, `SOURCE_SCOUT_BLOCKED_NO_PRODUCTION`, `REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW`; non equivalgono mai a `FINAL` o `PUBLISHED`.
+
+
+## Estensione V102 — contratti I2I source-locked (30/10/2026)
+- `src/storia_rivive_i2i_prepare_v102.py` trasforma cinque fotogrammi PNG autentici estratti dal filmato in cinque richieste I2I con SHA256 di origine, prompt anti-allucinazione e ruoli (4 fotografie + 1 riferimento per Vidu).
+- Output in ogni esecuzione: `I2I_INPUT_MANIFEST_V102.json`. L'output contiene **zero fotografie generate**, **zero chiamate API**, nessuna attestazione di volti approvati e nessuna autorizzazione di pubblicazione.
+- Il modulo verifica presenza, decodificabilità, dimensioni e unicità dei cinque frame. Non confondere fotogrammi distinti per tempo con cinque inquadrature realmente differenti: serve controllo visivo.
+- La successiva integrazione con un provider gratuito/approvato deve consumare solo queste richieste, controllare quota/costi reali, registrare input/output SHA e scartare qualsiasi scena con geometria/identità alterate. Non usare provider a pagamento in automatico senza consenso esplicito.
