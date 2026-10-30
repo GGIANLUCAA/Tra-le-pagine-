@@ -1,0 +1,185 @@
+{
+  "schema": "artvision-bosch-four-variant-scoped-preflight-v77",
+  "created_at": "2026-10-30",
+  "work_id": "bosch_garden_earthly_delights_prado_p002823",
+  "artwork": {
+    "title": "The Garden of Earthly Delights Triptych",
+    "artist": "Hieronymus Bosch",
+    "inventory": "Museo Nacional del Prado P002823",
+    "date": "1490–1500",
+    "medium": "grisaille and oil on oak panels",
+    "official_collection_url": "https://www.museodelprado.es/en/the-collection/art-work/triptych-garden-earthly-delights/02388242-6d6a-4e9e-a992-e1311eab3609"
+  },
+  "status": "cinema_standard_source_music_verified_only",
+  "ready_for_render": false,
+  "owner_only": true,
+  "max_concurrent_artvision_renders": 1,
+  "measurements": {
+    "primary_collection": {
+      "panel_height_cm": 185.8,
+      "central_panel_width_cm": 172.5,
+      "wing_width_cm_each": 76.5,
+      "computed_open_width_cm": 325.5,
+      "source": "https://www.museodelprado.es/en/the-collection/art-work/triptych-garden-earthly-delights/02388242-6d6a-4e9e-a992-e1311eab3609"
+    },
+    "other_prado_reference": {
+      "height_cm": 205.5,
+      "width_cm": 384.9,
+      "source": "https://www.museodelprado.es/aprende/enciclopedia/voz/jardin-de-las-delicias-el-el-bosco/578702d4-4420-4e97-8518-8363a1fc2c9e"
+    },
+    "conflict": "Official Prado collection and Prado encyclopedia give DIFFERENT dimensions; do not silently combine. Resolve what is measured (painted panels, frame/overall) before V46 room scale or 3D."
+  },
+  "image_candidates": [
+    {
+      "role": "preferred_open_triptych",
+      "url": "https://commons.wikimedia.org/wiki/File:The_Garden_of_earthly_delights.jpg",
+      "claimed_dimensions_px": [
+        39137,
+        22279
+      ],
+      "claimed_bytes": 183383815,
+      "origin_claim": "Bosch Research and Conservation Project tiled source via dezoomify",
+      "rights_page": "Commons PDM/PD-Art; verify actual file and jurisdiction before use",
+      "downloaded": false,
+      "sha256": null
+    },
+    {
+      "role": "alternate_open_triptych",
+      "url": "https://commons.wikimedia.org/wiki/File:The_Garden_of_Earthly_Delights_by_Bosch_High_Resolution.jpg",
+      "claimed_dimensions_px": [
+        30000,
+        17078
+      ],
+      "origin_claim": "Prado Google Earth reproduction per Commons",
+      "rights_page": "Commons PD-Art; verify bytes and provenance",
+      "downloaded": false,
+      "sha256": null
+    },
+    {
+      "role": "legacy_color_adjusted_DO_NOT_ASSUME_ORIGINAL",
+      "url": "https://commons.wikimedia.org/wiki/File:The_Garden_of_Earthly_Delights_by_BoschFXD.jpg",
+      "origin_claim": "Bosch V21 source describes adjusted color layers",
+      "downloaded": false,
+      "sha256": null
+    }
+  ],
+  "museum": {
+    "frame_status": "unverified",
+    "frame_reference_url": null,
+    "frame_source_type": null,
+    "frame_image_or_model_hash": null,
+    "frame_scale_cm_or_declared_estimate": null,
+    "frame_disclosure": "No authentic Prado frame or current room image verified; do not invent gilt border or assert official gallery.",
+    "actual_room_photo_used": false,
+    "gallery_reconstruction_status": "not_started",
+    "frame_review": "blocked_V80",
+    "physical_structure_note": "Three hinged oak panels; wing opening/closing and outside grisaille must use documented images if animated, never invent a reverse."
+  },
+  "prior_reference": {
+    "reference_only": "modules/artvision_critico/production_series/bosch_director_cut_v22.json",
+    "historical_master_sha256": "2c59c58185ed3d7c51d280bf9c8442414cddf163a231fef08fd7a37d657b0ded",
+    "counts_as_new_4x1_slot": false,
+    "reference_strengths": [
+      "natural Italian narration",
+      "23 meaning-driven mostly locked shots",
+      "minimal slow push/pull <=1%",
+      "no sinusoidal camera"
+    ],
+    "voice_reuse_allowed": false
+  },
+  "storyboard_draft": {
+    "critico_standard": {
+      "status": "planned_not_rendered",
+      "voice": "new Gacrux WAV required for exact new script; no reuse of V22 audio",
+      "chapters": [
+        "tree-man visual hook",
+        "Eden left panel",
+        "central garden and oversized fruit",
+        "riders and pool",
+        "fragile glass bubble",
+        "night hell and musical instruments",
+        "three-panel return"
+      ],
+      "alignment": "WAV ASR timecodes required, 0/3/7s QA and each spoken subject centered"
+    },
+    "critico_museum": {
+      "status": "blocked_frame_v80",
+      "voice": "exact same new WAV/script as critico_standard",
+      "camera": "single continuous V57/V76 semantic chapter route, no every-sentence jumps, out to SAME frame and room",
+      "frame": "no unverified historical frame"
+    },
+    "cinema_standard": {
+      "status": "ready_for_single_local_render_after_bosch_only_lock_merge",
+      "voice": "none",
+      "music": "Water Lily, Kevin MacLeod, CC BY 4.0 exact file SHA b8c4f3...",
+      "sequence": "tree-man hook -> Eden -> central garden -> riders -> hell -> whole triptych",
+      "source_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9"
+    },
+    "cinema_museum": {
+      "status": "blocked_frame_v80",
+      "voice": "none",
+      "camera": "continuous in/out with real panel scale; no artificial opening of shutters",
+      "frame": "requires documented authentic frame/hinges or specific approved alternative"
+    }
+  },
+  "blockers": [
+    {
+      "code": "BOSCH_PRADO_DIMENSIONS_CONFLICT",
+      "resolution": "Reconcile Prado collection panel measurements with Prado encyclopedia overall measurements for V46 scale."
+    },
+    {
+      "code": "BOSCH_FRAME_V80_UNVERIFIED",
+      "resolution": "Find work-specific legal photo/frame evidence or seek explicit alternative per V80; no invented original frame."
+    },
+    {
+      "code": "BOSCH_GACRUX_NEW_SCRIPT_WAV_PENDING",
+      "resolution": "Create/approve new script, check authorized quota/cost scope, generate only one new WAV and ASR for Critico pair."
+    },
+    {
+      "code": "BOSCH_MUSEUM_FRAME_V80_UNVERIFIED",
+      "resolution": "No Museum final render or V25 without work-specific frame evidence or specifically approved creative alternative."
+    }
+  ],
+  "v25_approved": false,
+  "mp4_count": 0,
+  "archive_import_verified": false,
+  "paid_video_api_calls": 0,
+  "render_started": false,
+  "queue_modified": false,
+  "source_research_date": "2026-10-30",
+  "ready_for_render_by_slot": {
+    "cinema_standard": true,
+    "cinema_museum": false,
+    "critico_standard": false,
+    "critico_museum": false
+  },
+  "source_evidence": {
+    "github_run_id": 41024818174,
+    "artifact_id": 12963745760,
+    "workflow_status": "completed_success",
+    "downloaded_and_verified_in_chat_runtime": true,
+    "source_title": "File:The Garden of Earthly Delights by BoschFXD.jpg",
+    "source_dimensions_px": [
+      6800,
+      3871
+    ],
+    "source_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9",
+    "source_bytes": 12130063,
+    "license": "Wikimedia Commons PD-Art/PDM",
+    "color_note": "Color-adjusted derived file, NOT unmodified Prado colorimetry; exact source identified",
+    "source_page": "https://commons.wikimedia.org/wiki/File:The_Garden_of_Earthly_Delights_by_BoschFXD.jpg",
+    "source_delivery": "GitHub Actions artifact expires 2026-11-29; not a private archive backup"
+  },
+  "music_evidence": {
+    "title": "Water Lily",
+    "artist": "Kevin MacLeod",
+    "isrc": "USUAN1400035",
+    "source_page": "https://remote.incompetech.com/music/royalty-free/index.html?Search=Search&isrc=USUAN1400035",
+    "license": "CC BY 4.0",
+    "recording_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+    "local_bytes": 4612305,
+    "verified_against_existing_hokusai_package": true,
+    "attribution": "\"Water Lily\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/"
+  },
+  "lock_change_proposed": "Bosch-only fourth pilot guard/queue and tests in PR138, not active until merge"
+}

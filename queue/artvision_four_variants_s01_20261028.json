@@ -899,6 +899,82 @@
       },
       "notes": "SECOND work ONLY. Do not reuse Klimt historical V2 or V6 videos as new 4×1 variants; existing code/script can be reused after verified original identities, licenses, and fresh footage. No fake MP4s, no paid video API.",
       "note": "Four real new Klimt MP4s technically produced by approved artistic 4x1 pipeline V72/V73 on 2026-10-29, four distinct SHA. Museum floor-camera flaw corrected; V73 supersedes bad reviews of identical slots. 0 V25 approvals, website import not verified. No social posting."
+    },
+    {
+      "group_id": "bosch_garden_earthly_delights_prado_p002823",
+      "artwork": "The Garden of Earthly Delights",
+      "artist": "Hieronymus Bosch",
+      "museum": "Museo Nacional del Prado",
+      "inventory": "P002823",
+      "year": "circa 1490–1500",
+      "official_source": "https://www.museodelprado.es/en/the-collection/art-work/triptych-garden-earthly-delights/02388242-6d6a-4e9e-a992-e1311eab3609",
+      "physical_dimensions_cm": {
+        "status": "prado_discrepant_sources_no_museum_scale_certified",
+        "prado_collection_panels": {
+          "height": 185.8,
+          "central_width": 172.5,
+          "wing_width": 76.5
+        },
+        "prado_encyclopedia": {
+          "height": 205.5,
+          "open_width": 384.9
+        }
+      },
+      "dossier_4x1_path": "docs/productions/2026-10-30-bosch-garden-v77/ARTVISION_BOSCH_PREFLIGHT_V77.json",
+      "source_artifact_id": 12963745760,
+      "source_artifact_run_id": 41024818174,
+      "source_verified_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9",
+      "source_resolution_px": [
+        6800,
+        3871
+      ],
+      "source_caveat": "BoschFXD is a color-adjusted faithful PD reproduction, not a museum-colorimetry certificate",
+      "music_sha256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+      "music_license": "Water Lily Kevin MacLeod CC BY 4.0, attribution required",
+      "prior_bosch_v22_reference_sha256": "2c59c58185ed3d7c51d280bf9c8442414cddf163a231fef08fd7a37d657b0ded",
+      "prior_reference_counts_as_new_slot": false,
+      "variants": {
+        "critico_standard": {
+          "status": "planned",
+          "verified_this_migration": false,
+          "rendered_mp4_sha256": null,
+          "rendered_mp4_bytes": null,
+          "V25_approved": false,
+          "archive_sync_pending": true,
+          "site_verified": false,
+          "preflight_status": "blocked_new_shared_gacrux_and_script"
+        },
+        "critico_museum": {
+          "status": "planned",
+          "verified_this_migration": false,
+          "rendered_mp4_sha256": null,
+          "rendered_mp4_bytes": null,
+          "V25_approved": false,
+          "archive_sync_pending": true,
+          "site_verified": false,
+          "preflight_status": "blocked_new_shared_gacrux_and_script"
+        },
+        "cinema_standard": {
+          "status": "planned",
+          "verified_this_migration": false,
+          "rendered_mp4_sha256": null,
+          "rendered_mp4_bytes": null,
+          "V25_approved": false,
+          "archive_sync_pending": true,
+          "site_verified": false,
+          "preflight_status": "verified_source_and_recording_ready_for_single_render"
+        },
+        "cinema_museum": {
+          "status": "planned",
+          "verified_this_migration": false,
+          "rendered_mp4_sha256": null,
+          "rendered_mp4_bytes": null,
+          "V25_approved": false,
+          "archive_sync_pending": true,
+          "site_verified": false,
+          "preflight_status": "blocked_work_specific_museum_frame_v80"
+        }
+      }
     }
   ],
   "last_operational_update": "2026-10-30 Hokusai 4/4 real MP4 rendered in ChatGPT session, quality gates pass, package ZIP CRC; no paid video AI and no automatic social release",
@@ -915,5 +991,6 @@
     ],
     "rule": "Do not count technical MP4 as approved Museum; block final delivery until new V46-quality render with real continuity and reference comparisons."
   },
-  "note_second_pilot_v69": "User explicitly authorized The Kiss after Socrates; maintain single owner, other works frozen, Klimt queued V69 as authorized second pilot (0 MP4)."
+  "note_second_pilot_v69": "User explicitly authorized The Kiss after Socrates; maintain single owner, other works frozen, Klimt queued V69 as authorized second pilot (0 MP4).",
+  "note_fourth_pilot_v76": "2026-10-30 explicit Bosch fourth pilot, one renderer, no fifth work. Bosch Cinema Standard source/music verified; no rendered video status until actual MP4 hash+bytes; Critico and Museum remain blocked."
 }

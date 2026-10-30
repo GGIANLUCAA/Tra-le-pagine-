@@ -1,0 +1,42 @@
+name: ArtVision V76 — Bosch-only fourth pilot lock regression
+on:
+  pull_request:
+    paths:
+      - config/artvision_pilot_lock_v58.json
+      - src/artvision_pilot_guard_v58.py
+      - src/artvision_next_render_v55.py
+      - tests/test_artvision_bosch_fourth_pilot_v76.py
+      - .github/workflows/artvision-bosch-v76-lock-tests.yml
+permissions:
+  contents: read
+jobs:
+  scoped-lock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run fourth-pilot exact artwork tests and old pilot guard
+        run: |
+          python -m unittest discover -s tests -p 'test_artvision_bosch_fourth_pilot_v76.py' -v
+          python -m unittest discover -s tests -p 'test_artvision_pilot_guard_v58.py' -v
+      - name: Validate JSON, no fifth work, no auto approval
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          lock=json.loads(Path('config/artvision_pilot_lock_v58.json').read_text())
+          queue=json.loads(Path('queue/artvision_four_variants_s01_20261028.json').read_text())
+          fourth=lock['authorized_fourth_pilot']
+          assert fourth['allowed_group_id']=='bosch_garden_earthly_delights_prado_p002823'
+          assert fourth['automatic_fifth_artwork_selection'] is False
+          assert lock['automatic_new_artwork_selection'] is False
+          assert lock['no_paid_video_calls'] and lock['no_social_publish']
+          group=[g for g in queue['groups'] if g['group_id']==fourth['allowed_group_id']]
+          assert len(group)==1 and group[0]['artwork']==fourth['allowed_title']
+          assert all(v['status']=='planned' for v in group[0]['variants'].values())
+          assert all(v.get('V25_approved') is False for v in group[0]['variants'].values())
+          print('Bosch-only V76 scoped lock + zero fake MP4: PASS')
+          PY

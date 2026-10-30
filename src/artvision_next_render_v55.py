@@ -54,6 +54,32 @@ def choose(root=ROOT):
                                "topic":wave["artwork"],"artvision_4x1_variant":variant},root)
                         wstates={v:wave["variants"][v]["status"] for v in VARIANTS}
                         rendered=sum(s in ("rendered_needs_review","approved_for_final_delivery") for s in wstates.values())
+                        # V76: exact fourth pilot, never a generic queue release.
+                        fourth=lock.get("authorized_fourth_pilot",{})
+                        if (rendered==4 and fourth.get("enabled") is True and
+                            fourth.get("phase")=="fourth_pilot_bosch_only" and
+                            fourth.get("allowed_group_id")=="bosch_garden_earthly_delights_prado_p002823" and
+                            fourth.get("automatic_fifth_artwork_selection") is False):
+                            bosch=next((g for g in queue["groups"] if
+                                g.get("group_id")==fourth.get("allowed_group_id") and
+                                g.get("artwork")==fourth.get("allowed_title")),None)
+                            if bosch is None:
+                                return {"status":"fourth_pilot_missing","rendering_allowed":False,
+                                        "new_artwork_required":False}
+                            for v in VARIANTS:
+                                enforce_pilot_project({"serial_mode":"artvision_4x1",
+                                    "topic":bosch["artwork"],"artvision_4x1_variant":v},root)
+                            bstates={v:bosch["variants"][v]["status"] for v in VARIANTS}
+                            bcount=sum(s in ("rendered_needs_review","approved_for_final_delivery")
+                                       for s in bstates.values())
+                            return {"status":"fourth_pilot_four_rendered_review_pending" if bcount==4
+                                      else "fourth_pilot_in_progress",
+                                    "work":bosch["group_id"],"artwork":bosch["artwork"],
+                                    "rendered_count":bcount,"variants":bstates,
+                                    "new_artwork_required":False,"new_fifth_artwork_allowed":False,
+                                    "rendering_allowed":bcount<4,
+                                    "next_action":"Only Bosch scoped slots after asset/rights/voice/frame gates; "
+                                      "Cinema Standard first. No fifth work or paid AI calls."}
                         return {"status":"third_pilot_four_rendered_review_pending" if rendered==4 else "third_pilot_in_progress",
                                 "work":wave["group_id"],"artwork":wave["artwork"],
                                 "rendered_count":rendered,"variants":wstates,
