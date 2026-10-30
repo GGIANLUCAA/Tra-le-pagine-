@@ -23,6 +23,10 @@ jobs:
           python-version: "3.11"
       - name: Install offline image test dependency
         run: python -m pip install -q "pillow>=10,<13"
+      - name: Confirm FFmpeg available for native PTS regression test
+        run: |
+          ffmpeg -version | head -1
+          ffprobe -version | head -1
       - name: Compile source-preflight modules
         run: |
           python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py
