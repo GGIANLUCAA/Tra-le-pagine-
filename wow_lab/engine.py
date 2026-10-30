@@ -706,6 +706,25 @@ def run(args):
         (out/"REJECTED_REPORT.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
         print(json.dumps({"status":"technical_reject","qa":q},ensure_ascii=False))
         return 2
+    # Second, independent QA: full decode and an eight-frame contact sheet.
+    # Technical success never grants semantic-mask or artistic approval.
+    try:
+        from review_video import review
+        video_review = review(tmpvideo)
+    except Exception as err:
+        report["status"] = "technical_reject"
+        report["video_review_error"] = str(err)[:500]
+        (out/"REJECTED_REPORT.json").write_text(
+            json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+        print("WOW_LAB_VIDEO_REVIEW_FAILED: "+str(err),file=sys.stderr)
+        return 2
+    report["video_review"] = video_review
+    if not video_review["technical_pass"]:
+        report["status"] = "technical_reject"
+        (out/"REJECTED_REPORT.json").write_text(
+            json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+        print("WOW_LAB_VIDEO_REVIEW_REJECTED",file=sys.stderr)
+        return 2
     create_social(out,rec,mode)
     (out/"MANIFEST.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     (out/"RIGHTS.txt").write_text(
