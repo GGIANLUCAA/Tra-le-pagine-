@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/storia-china-1928-v103-production.yml"
+      - "src/storia_china_1928_v103_i2i.py"
+      - "src/storia_china_1928_v103_scout.py"
+      - "src/storia_china_1928_v103_render.py"
   workflow_dispatch:
 permissions:
   contents: read
