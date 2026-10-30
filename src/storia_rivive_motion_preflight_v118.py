@@ -14,9 +14,9 @@ from fractions import Fraction
 from pathlib import Path
 
 try:
-    from src.storia_rivive_motion_window_v115 import inspect_five_source_windows
+    from src.storia_rivive_motion_window_v115 import inspect_five_source_windows, check_source_window
 except ModuleNotFoundError:
-    from storia_rivive_motion_window_v115 import inspect_five_source_windows
+    from storia_rivive_motion_window_v115 import inspect_five_source_windows, check_source_window
 
 
 def plan_windows(manifest, scout):
@@ -67,6 +67,9 @@ def plan_windows(manifest, scout):
         target_start = max(0.0, segment_start + 0.05, second - 1.35)
         start_pts = math.ceil(Fraction(str(target_start)) / period)
         window = {"start_pts": start_pts, "freeze_pts": pts, "time_base": base}
+        valid, reason = check_source_window(start_pts, pts, base)
+        if not valid:
+            raise ValueError("INVALID_PRE_FREEZE_WINDOW: " + reason)
         windows.append(window)
         segments.append(segment)
     if len(set(segments)) != 5:
@@ -79,8 +82,8 @@ def run(manifest_path, scout_path, film_path, report_path, *, inspector=inspect_
     manifest_path = Path(manifest_path)
     report_path = Path(report_path)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    scout = json.loads(Path(scout_path).read_text(encoding="utf-8"))
     try:
+        scout = json.loads(Path(scout_path).read_text(encoding="utf-8"))
         windows = plan_windows(manifest, scout)
         evidence = inspector(film_path, manifest["source_video_sha256"], windows)
         if evidence.get("status") != "FIVE_MOTION_WINDOWS_EVIDENCED_REVIEW_REQUIRED":
@@ -92,7 +95,7 @@ def run(manifest_path, scout_path, film_path, report_path, *, inspector=inspect_
         result = {"status": "MOTION_EVIDENCE_PASS_REVIEW_PENDING",
                   "reason": "DECODED_MOTION_ONLY_HUMAN_REVIEW_AND_RIGHTS_STILL_REQUIRED",
                   "evidence": evidence}
-    except (ValueError, TypeError, KeyError, OSError) as exc:
+    except (ValueError, TypeError, KeyError, OSError, json.JSONDecodeError) as exc:
         # A failed gate MUST NOT leave a provider-consumable request list.
         manifest["status"] = "I2I_INPUTS_BLOCKED"
         manifest["source_bw_motion_gate"] = "V118_BLOCKED"
