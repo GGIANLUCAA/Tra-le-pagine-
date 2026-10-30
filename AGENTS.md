@@ -1,5 +1,9 @@
 # Studio video di Gianluca — istruzioni attive
 
+## PRIORITÀ · V99 confronto reale obbligatorio con benchmark utente V98 (30/10/2026)
+**Prima di qualsiasi NUOVO video «La Storia Rivive»**, leggere `docs/LA_STORIA_RIVIVE_V99_ANTI_REGRESSIONE.md`. L'utente ha approvato San Francisco 1906 **V98 come livello minimo accettabile**. Non basta promettere di seguirlo: `src/storia_rivive_v99_golden_benchmark.py` misura il **vero** MP4 rispetto al V98 autenticato SHA-256 (4 restauri I2I e una sola vera clip Vidu source-locked, audio H264/AAC, ritmo, foto/film/frame e movimento a colori). Il gate finale `src/storia_rivive_final_gate_v91.py` esegue anche V99 sui file originali prima di considerare un nuovo 4+1 come finale. Conservare i 4 restauri realistici e la quinta clip Vidu, respingere DDColor-only, frame/clip sbagliati, foto duplicate, Vidu senza movimento e hold troppo lunghi. Confronto artistico visivo e controllo reale di volti/oggetti, diritti e sito/social restano distinti: **il PASS tecnico non è approvazione artistica**. Nessuna API pagata per test V99. ArtVision 4×1 invariato.
+
+
 ## BENCHMARK UTENTE ACCETTATO · La Storia Rivive San Francisco V98 (30/10/2026)
 L'utente ha definito il V98 **«un lavoro accettabile»**: da ora è il **livello MINIMO qualitativo e stilistico di partenza**, non opera perfetta né permesso di pubblicazione. **LEGGERE** `docs/LA_STORIA_RIVIVE_V98_BENCHMARK_ACCETTABILE.md` prima di produrre altri video storici. Preservare i 4 veri restauri Finegrain image-to-image + 1 clip Vidu source-locked sul frame autentico (t=43s), film B/N→freeze→foto e quinta scena B/N→Vidu movimento a colori; MP4 ~19,57s, 720×1280 con musica continua. Migliorare per piccoli passi comprovati A/B, non ricadere in DDColor-only, foto fisse per 4s, titoli neri grandi o Vidu inserito da riprese differenti. V94/V96, diritti e QA su ogni nuovo episodio restano obbligatori. Nessuna spesa o pubblicazione implicita.
 
