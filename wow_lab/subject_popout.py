@@ -86,7 +86,8 @@ def make_subject_panel(source: Image.Image, mask: Image.Image,
 
 
 def audit_popout_projection(subject_bgra: np.ndarray, quad: np.ndarray,
-                            progress: float = .78, horizontal_direction: int = 1) -> dict:
+                            progress: float = .78, horizontal_direction: int = 1,
+                            width: int = 540, height: int = 960) -> dict:
     """Fail closed unless the extracted layer visibly crosses the frame.
 
     This is geometric evidence only, not artistic approval or true 3D.
@@ -98,7 +99,7 @@ def audit_popout_projection(subject_bgra: np.ndarray, quad: np.ndarray,
         return {"pass": False, "reasons": ["invalid_frame_quad"]}
     sh, sw = subject_bgra.shape[:2]
     # Match the final output canvas used by the isolated vertical renderer.
-    w, h = 540, 960
+    w, h = width, height
     corners = np.float32([[0, 0], [sw-1, 0], [sw-1, sh-1], [0, sh-1]])
     matrix = cv2.getPerspectiveTransform(corners, quad.astype(np.float32))
     layer = cv2.warpPerspective(subject_bgra[:, :, 3], matrix, (w, h))
