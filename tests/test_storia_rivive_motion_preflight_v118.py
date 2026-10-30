@@ -62,8 +62,8 @@ class TestWindows(unittest.TestCase):
     def test_cut_too_close_means_short_window_not_approved(self):
         manifest, scout = fixture()
         manifest["original_frame_jobs"][1].update(source_pts=5100, source_pts_time_s=5.1)
-        windows = plan_windows(manifest, scout)
-        self.assertLess((windows[1]["freeze_pts"]-windows[1]["start_pts"])/1000, 0.9)
+        with self.assertRaisesRegex(ValueError, "PRE_FREEZE_WINDOW_TOO_SHORT"):
+            plan_windows(manifest, scout)
 
 
 class TestPersistence(unittest.TestCase):
@@ -77,6 +77,16 @@ class TestPersistence(unittest.TestCase):
             result = run(a, b, d/"film.webm", c, inspector=inspector)
             self.assertTrue(c.is_file())
             return result, json.loads(a.read_text(encoding="utf-8"))
+
+    def test_missing_scout_blocks_requests(self):
+        manifest, _ = fixture()
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            a, c = d/"manifest.json", d/"motion.json"
+            a.write_text(json.dumps(manifest), encoding="utf-8")
+            result = run(a, d/"missing_scout.json", d/"film.webm", c)
+            self.assertEqual(result["status"], "BLOCKED")
+            self.assertEqual(json.loads(a.read_text())["original_frame_jobs"], [])
 
     def test_rejection_disables_source_requests(self):
         result, updated = self.invoke(lambda *args: {"status": "BLOCKED", "reason": "STATIC"})
