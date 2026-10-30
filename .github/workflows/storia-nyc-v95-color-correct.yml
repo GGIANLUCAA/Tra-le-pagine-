@@ -30,7 +30,7 @@ jobs:
           ffmpeg -nostdin -v error -xerror -i NEW_YORK_1911_V95_COLOR_CORRECTED.mp4 -f null -
           python - <<'PY'
           import pathlib,zipfile,json,hashlib
-          p=pathlib.Path("output/storia_nyc_v95_grade")
+          p=pathlib.Path(".")
           old=p/"NEW_YORK_1911_V95_PACKAGE.zip"
           new=p/"NEW_YORK_1911_V95_CORRETTO_KIT.zip"
           video=p/"NEW_YORK_1911_V95_COLOR_CORRECTED.mp4"
