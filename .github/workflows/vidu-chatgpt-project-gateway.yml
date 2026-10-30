@@ -70,12 +70,14 @@ jobs:
         run: |
           set -euo pipefail
           python -u src/vidu_project_gateway_v1.py --request "$VIDU_REQUEST_FILE"
-      - name: "Preserve private credit reports, plan, videos and QA in GitHub Actions artifact"
+      - name: "Preserve plan, videos and QA artifact; EXCLUDE account credit balances on public repo"
         if: always() && env.VIDU_REQUEST_FILE != ''
         uses: actions/upload-artifact@v4
         with:
           name: VIDU_CHATGPT_PROJECT_GATEWAY_RESULT_${{ github.run_id }}
-          path: output/vidu_project_gateway/
+          path: |
+            output/vidu_project_gateway/
+            !output/vidu_project_gateway/**/PRIVATE_CREDIT_REPORT.json
           retention-days: 14
           if-no-files-found: warn
       - name: "Optional direct Android download through GitHub prerelease, only with explicit request approval"
