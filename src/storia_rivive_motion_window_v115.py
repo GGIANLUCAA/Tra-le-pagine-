@@ -98,3 +98,24 @@ def inspect_source_motion(video_path, expected_sha256, start_pts, freeze_pts, ti
                    "reason": "DECODED_SOURCE_PIXEL_MOTION_PRESENT_NOT_ARTISTIC_QA",
                    "motion_verified": True})
     return result
+
+
+def inspect_five_source_windows(video_path, expected_sha256, windows):
+    """Fail closed unless all five original shots have measurable pre-freeze motion.
+
+    `windows` must contain exactly five dicts with start_pts, freeze_pts and
+    time_base. Does not assert camera cuts, rights or artistic approval.
+    """
+    if not isinstance(windows, list) or len(windows) != 5:
+        return {"status": "BLOCKED", "reason": "NEED_FIVE_SOURCE_WINDOWS", "results": []}
+    results = []
+    for index, window in enumerate(windows):
+        if not isinstance(window, dict):
+            return {"status": "BLOCKED", "reason": "INVALID_WINDOW_METADATA", "results": results}
+        evidence = inspect_source_motion(video_path, expected_sha256,
+            window.get("start_pts"), window.get("freeze_pts"), window.get("time_base"))
+        results.append({"scene": index + 1, **evidence})
+        if not evidence["motion_verified"]:
+            return {"status": "BLOCKED", "reason": "SCENE_MOTION_REJECTED", "results": results}
+    return {"status": "FIVE_MOTION_WINDOWS_EVIDENCED_REVIEW_REQUIRED",
+            "reason": "MOTION_ONLY_NOT_HISTORICAL_CAMERA_SHOT_QA", "results": results}
