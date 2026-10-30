@@ -1,0 +1,48 @@
+name: "La Storia Rivive V98 — complete 2 missing modern image2image photos on fresh runner"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v98-bombay-finish-photos.yml"]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  finish_photo_set:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN || secrets.HUGGINGFACE_TOKEN || secrets.HF_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install nonbillable image-to-image API client"
+        run: |
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "gradio_client>=1.5,<2"
+      - name: "Restore already-verified 3 actual I2I photos and all historical originals"
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_bombay_v98
+          cd output/storia_bombay_v98
+          curl -fsSL --retry 2 --connect-timeout 20 --max-time 130 -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12964498548/zip" -o FIRST_THREE_PHOTOS.zip
+          unzip -oq FIRST_THREE_PHOTOS.zip
+          curl -fsSL --retry 2 --connect-timeout 20 --max-time 130 -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12956729021/zip" -o EIGHT_ORIGINALS.zip
+          unzip -ojq EIGHT_ORIGINALS.zip "RESTORED_PHOTO_07.jpg" "RESTORED_PHOTO_08.jpg" "V95_FREE_SOURCE_QA.json"
+      - name: "Generate ONLY remaining scene 7/8 real image2image restorations, zero video API credits"
+        run: python -u src/storia_v98_bombay_complete_remaining.py
+      - name: "Preserve all five images, real source comparisons and honest QA"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V98_BOMBAY_ALL_FIVE_SOURCE_LOCKED_REAL_I2I_PHOTOS
+          path: |
+            output/storia_bombay_v98/RESTORATION_FINAL_*.jpg
+            output/storia_bombay_v98/SOURCE_BW_*.png
+            output/storia_bombay_v98/V98_FIVE_SCENES_REAL_I2I_COMPARE.jpg
+            output/storia_bombay_v98/V98_FIVE_REAL_PHOTOS_QA.json
+          retention-days: 14
+          if-no-files-found: warn
