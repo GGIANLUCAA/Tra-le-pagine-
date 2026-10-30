@@ -1,0 +1,100 @@
+name: "La Storia Rivive V98.1 — Bombay 1929 palette finale senza nuovi crediti"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v981-bombay-natural-color.yml"]
+permissions:
+  contents: write
+concurrency:
+  group: storia-v981-bombay-no-credit-existing-real-vidu
+  cancel-in-progress: false
+jobs:
+  correct:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OLD_TAG: storia-rivive-bombay-1929-v98-five-real-i2i-one-real-vidu
+      NEW_TAG: storia-rivive-bombay-1929-v981-natural-color-real-vidu
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Install only FFmpeg and ZIP, NO Vidu secret/API"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg unzip
+      - name: "Retrieve VERIFIED actual V98 Bombay 1929 video and package"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_bombay_v981
+          cd output/storia_bombay_v981
+          gh release download "$OLD_TAG" --repo "$GITHUB_REPOSITORY" \
+            -p "BOMBAY_1929_V98_4PHOTO_1VIDU.mp4" -p "BOMBAY_1929_V98_ANDROID.zip" -p "V98_QA_PUBLIC.json"
+          printf "c1262dd5d111f421460fd0ea628411d806d52cc99a571faa37868fe27aa24e8d  BOMBAY_1929_V98_4PHOTO_1VIDU.mp4\n" | sha256sum -c -
+          unzip -j -q BOMBAY_1929_V98_ANDROID.zip "COVER_V98.jpg" "POST_*.txt" "V98_FIVE_SOURCE_TO_RESTORATION_PAIRS.jpg"
+      - name: "Fix ONLY overcolored workers 6.60–9.76s, retain actual 5s Vidu motion and 4 I2I image scenes"
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_bombay_v981
+          ffmpeg -nostdin -y -v error \
+            -i BOMBAY_1929_V98_4PHOTO_1VIDU.mp4 \
+            -vf "hue=s=0.68:enable='between(t,6.60,9.76)'" \
+            -map 0:v:0 -map 0:a:0 -c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p -c:a copy \
+            -movflags +faststart BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4
+          ffmpeg -nostdin -v error -xerror -i BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4 -f null -
+          python - <<'PY'
+          import subprocess,json,hashlib,zipfile,pathlib
+          q=json.load(open("V98_QA_PUBLIC.json"))
+          f=pathlib.Path("BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4")
+          p=subprocess.run(["ffprobe","-v","error","-show_entries","format=duration:stream=codec_name","-of","json",str(f)],capture_output=True,text=True,check=True)
+          data=json.loads(p.stdout);sec=float(data["format"]["duration"]);codecs={x["codec_name"] for x in data["streams"]}
+          assert abs(sec-19.133333)<0.06 and {"h264","aac"}<=codecs
+          assert q["classic_real_I2I_photographs"]==4 and q["vidu_genuine_generated_motion_shots"]==1
+          q.update({"version":"V98.1","status":"RENDERED_ARTISTIC_REVIEW_PENDING",
+                    "new_vidu_credits_for_palette_correction":0,
+                    "Vidu_original_motion_untouched":True,
+                    "only_scene_4_color_corrected_at_s":[6.60,9.76],
+                    "color_treatment":"conservative reduction of unrealistic red/cyan chroma in the workers scene",
+                    "rest_of_5_shots_music_preserved":True,
+                    "final_mp4_sha256":hashlib.sha256(f.read_bytes()).hexdigest()})
+          pathlib.Path("V981_QA.json").write_text(json.dumps(q,ensure_ascii=False,indent=2)+"\n")
+          with zipfile.ZipFile("BOMBAY_1929_V981_ANDROID.zip","w",zipfile.ZIP_DEFLATED) as z:
+            for name in [f.name,"COVER_V98.jpg","V981_QA.json","V98_FIVE_SOURCE_TO_RESTORATION_PAIRS.jpg",
+                         "POST_FACEBOOK.txt","POST_INSTAGRAM.txt","POST_TIKTOK.txt","POST_YOUTUBE.txt"]:
+              z.write(name,name)
+          with zipfile.ZipFile("BOMBAY_1929_V981_ANDROID.zip") as z:
+            assert z.testzip() is None
+          print("BOMBAY_V981_REAL_MP4_AND_ANDROID_ZIP_DECODED",sec,flush=True)
+          PY
+      - name: "Publish verified V98.1 direct MP4 and Android ZIP prerelease for visual review only"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_bombay_v981
+          if gh release view "$NEW_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Already published this exactly deduped preview"; exit 0
+          fi
+          gh release create "$NEW_TAG" \
+            BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4 \
+            BOMBAY_1929_V981_ANDROID.zip \
+            COVER_V98.jpg V981_QA.json V98_FIVE_SOURCE_TO_RESTORATION_PAIRS.jpg \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "La Storia Rivive · BOMBAY 1929 V98.1 · genuine 4+1, natural color" \
+            --notes "Review preview only: four genuine archival black-and-white film to modern real image-to-image photo restoration cycles plus ONE genuinely moving 5-second Vidu color scene from an exact matched original 1929 frame. V98.1 only corrects unnatural bright color in the workers segment, leaving existing Vidu and soundtrack untouched. 0 NEW Vidu credits for V98.1 (V98 parent generation paid 16 credits). AI imagery/colors/movement are interpretive, not real original color historical film; artistic human and Italy copyright review pending. NOT social/site published."
+          names="$(gh release view "$NEW_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          grep -Fqx "BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4" <<< "$names"
+          grep -Fqx "BOMBAY_1929_V981_ANDROID.zip" <<< "$names"
+          echo "V981_REAL_ANDROID_DOWNLOADS_VERIFIED"
+      - name: "Keep quality report and actual corrected files"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BOMBAY_V981_ACTUAL_NATURAL_COLOR_4PLUS1_ANDROID_QA
+          path: |
+            output/storia_bombay_v981/BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4
+            output/storia_bombay_v981/BOMBAY_1929_V981_ANDROID.zip
+            output/storia_bombay_v981/V981_QA.json
+          retention-days: 14
+          if-no-files-found: warn
