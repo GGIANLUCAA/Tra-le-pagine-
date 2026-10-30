@@ -108,10 +108,12 @@ def inspect_five_source_windows(video_path, expected_sha256, windows):
     """
     if not isinstance(windows, list) or len(windows) != 5:
         return {"status": "BLOCKED", "reason": "NEED_FIVE_SOURCE_WINDOWS", "results": []}
+    # Validate all five metadata records BEFORE touching or decoding the film.
+    required = ("start_pts", "freeze_pts", "time_base")
+    if any(not isinstance(w, dict) or any(key not in w for key in required) for w in windows):
+        return {"status": "BLOCKED", "reason": "INVALID_WINDOW_METADATA", "results": []}
     results = []
     for index, window in enumerate(windows):
-        if not isinstance(window, dict):
-            return {"status": "BLOCKED", "reason": "INVALID_WINDOW_METADATA", "results": results}
         evidence = inspect_source_motion(video_path, expected_sha256,
             window.get("start_pts"), window.get("freeze_pts"), window.get("time_base"))
         results.append({"scene": index + 1, **evidence})
