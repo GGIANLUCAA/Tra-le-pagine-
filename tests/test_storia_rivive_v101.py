@@ -215,10 +215,12 @@ class V101Tests(unittest.TestCase):
                        "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
             for i in range(1,6):
                 Image.new("RGB",(720,480),(20*i,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+            bind_scout_frame_hashes(d)
             with self.assertRaisesRegex(ValueError,"SOURCE_NATIVE_DETAIL_INSUFFICIENT"):
                 i2i.build(order,selection,d)
             for i in range(1,6):
                 Image.new("RGB",(1280,720),(20,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+            bind_scout_frame_hashes(d)
             with self.assertRaisesRegex(ValueError,"DUPLICATE_SOURCE_FRAME_BYTES"):
                 i2i.build(order,selection,d)
             (d/"SCOUT_REPORT.json").write_text(json.dumps({
@@ -238,6 +240,7 @@ class V101Tests(unittest.TestCase):
             for i in range(1,5):
                 Image.new("RGB",(1280,720),(i*30,40,70)).save(
                     d/"original_frames"/("frame_%02d.png"%i))
+            bind_scout_frame_hashes(d)
             with self.assertRaisesRegex(ValueError,"Missing original source frame"):
                 i2i.build({"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
                     "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
