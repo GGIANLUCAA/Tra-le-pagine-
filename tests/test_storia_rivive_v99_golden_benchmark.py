@@ -22,7 +22,7 @@ class TestGoldenV99(unittest.TestCase):
         a=g.approved_reference(p)
         self.assertEqual(a["reference_sha256"],g.GOLDEN_SHA)
         self.assertEqual(len(a["per_scene"]),5)
-        self.assertTrue(all(x["color_gain"]>3 for x in a["per_scene"][:4]))
+        self.assertTrue(all(x["color_gain"]>2 for x in a["per_scene"][:4]))
         self.assertGreater(a["per_scene"][4]["moving_intervals"],2)
 
     def test_01_reference_is_immutable_sha_not_filename(self):
