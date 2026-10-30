@@ -33,3 +33,31 @@ Controllo realizzato in questa sessione usando `files.list` e `files.materialize
 2. **Non ancora V25 Gold**: 0 approvazioni proprietario; QA umano completo e refinements regia ancora richiesti. Correzioni come nuove revisioni dello stesso slot, senza perdere master e senza tagli audio arbitrari.
 3. **Player sul sito / Android e import R2 singolo video**: NON verificati da questo controllo. La sola disponibilità dell'archivio e il conteggio aggregato della videoteca non prova la presenza o riproduzione di questi 8 MP4.
 4. Restare sui due piloti, nessuna sesta opera, nessun social pubblicato, nessuna spesa API non autorizzata. Arte e accuratezza delle inquadrature precedono cadenza e volume.
+
+
+## Integrazione V90 — verifica fisica R2 e focus Socrate (esecuzione successiva)
+
+**Accesso R2 reale:** API Cloudflare con permessi di lettura; bucket `video-library-studio`, scansione completa di **2.795 chiavi in 3 pagine**, filtrate per gli otto basename del backup. I seguenti **7/8 oggetti MP4 sono presenti** con dimensione esattamente corrispondente ai byte del ZIP V90:
+
+| Opera | Variante | Oggetto R2 | Dimensione | Esito |
+|---|---|---|---:|---|
+| Klimt | Critico Standard | `01_Klimt_Critico_Standard_Gacrux.mp4` | 17.136.945 | PRESENTE |
+| Klimt | Critico Museum | `02_Klimt_Critico_Museum_Gacrux.mp4` | 13.583.486 | PRESENTE |
+| Klimt | Cinema Standard | `03_Klimt_Cinema_Standard.mp4` | 3.774.837 | PRESENTE |
+| Klimt | Cinema Museum | `04_Klimt_Cinema_Museum.mp4` | 4.343.198 | PRESENTE |
+| Socrate | Critico Standard V67 | `Socrate_Critico_Standard_Gacrux_V67.mp4` | 15.575.097 | PRESENTE |
+| Socrate | Critico Museum V67 | `Socrate_Critico_Museum_Gacrux_V67.mp4` | 53.582.121 | PRESENTE |
+| Socrate | Cinema Standard V59 | `ArtVision_Socrates_Cinema_Standard_V59_Revision_Review.mp4` | 17.855.540 | PRESENTE |
+| Socrate | Cinema Museum V61 | `ArtVision_Socrates_Cinema_Museum_V61_Senza_Persone_Review.mp4` | 22.854.775 | **ASSENTE** dal bucket controllato |
+
+Le quattro varianti Klimt hanno anche JPEG omonimi e quattro oggetti `catalog/editorial/*.mp4.json`; Socrate V67 Critico e V59 Cinema Standard hanno JPEG e metadati catalogo. La revisione Socrate Museum **V89R1 non compare come oggetto R2**; non sostituisce automaticamente il master V67.
+
+**Limite delle prove:** GET lista R2 e corrispondenza di basename/dimensione dimostrano presenza degli oggetti, **non** identità SHA dei loro byte, import effettivo nel database dell'app, disponibilità nel player, playback Android o V25. Non chiamare `site_verified=true`. Per il Cinema Museum Socrate il backup privato V67 è stato nuovamente materializzato: **117.280.478 B, SHA256 `bd075b4f39600eea64712970e812a2ca967128326f27674a79d3cc7da40ed462`, ZIP CRC PASS**, e il membro V61 da 22.854.775 B è disponibile per un eventuale import autorizzato. Nessun nuovo upload R2 effettuato.
+
+**Autocritica visiva concreta sul V89R1** (MP4 reale, SHA256 `e6cce47dd7adcf7d54262e9deab9ec450888e25462e739740dd6f39edc0416d3`; fotogrammi ogni 4s da 0 a 164s, confrontati con ASR V66):
+- **29,9–48,36s**, voce sulle *due mani* di Socrate: il crop 32–48s mantiene il corpo e la mano alzata ma la coppa/mano tesa sono in parte fuori campo. Correzione necessaria con sorgente arte HD e composizione che includa **entrambi** i gesti, senza inventare dettagli.
+- **92,32–106,26s**, voce su *Platone*: intorno a 92–96s Platone è visibile, ma 100–106s il frame si sposta sulla veste rossa e la gamba di un'altra figura. **Mancata corrispondenza parola-scena osservata**, prima correzione prioritaria.
+- **107,64–121,4s**, voce sulle catene: i fotogrammi 108–112s mostrano le catene senza la cornice nel V89R1; difetto di cornice V67 già mitigato. Non rigenerare questa parte.
+- La durata del close-up su Socrate 28–52s rimane eccessivamente omogenea; serve variare scala con dettaglio pertinente, non zoom arbitrario.
+
+**Stato revisione:** il tentativo locale di ricomporre la scena di Platone non ha prodotto un MP4 completo verificato; nessuna V90R2 dichiarata, nessun master sovrascritto. Il lavoro richiede edit video non distruttivo e confronto di fotogrammi più accurato prima di consegnare una nuova variante. Player sito/Android e Gold V25 ancora **NON VERIFICATI**. Nessun acquisto, nuova opera, pubblicazione o automazione duplicata.
