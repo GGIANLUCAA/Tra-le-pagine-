@@ -1,0 +1,105 @@
+name: "La Storia Rivive V98 · SF1906 4 real I2I + exact-frame 1 Vidu (0 credits)"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-sf1906-v98-exact-frame-vidu.yml"]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-sf1906-v98-same-historic-frame-reuse-one-vidu
+  cancel-in-progress: false
+jobs:
+  final_hybrid_review:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_RUN: "41049248482"
+      V98_TAG: "storia-rivive-san-francisco-1906-v98-4-real-i2i-1-real-vidu"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install local video QA tools only, no Vidu API access
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --quiet "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+          python -m py_compile tools/storia_sf1906_v98_reuse_real_vidu_43s.py
+      - name: Retrieve four user-approved real Finegrain I2I photographs and original real 1906 film
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/sf1906_v98_correct_4photo_1vidu
+          d=output/sf1906_v98_correct_4photo_1vidu
+          gh run download "$SOURCE_RUN" --repo "$GITHUB_REPOSITORY" --name SF1906_V97_REAL_ARCHIVE_QA_PREVIEW --dir "$d"
+          test -s "$d/ORIGINAL_ARCHIVE.webm"
+          test -s "$d/PHOTO_QA.json"
+          for n in 01 02 03 04; do
+            test -s "$d/PHOTO_AI_${n}.png"
+            test -s "$d/FRAME_${n}_SOURCE.png"
+          done
+          gh release download storia-rivive-sf1906-v97-i2i-qa-review \
+            --repo "$GITHUB_REPOSITORY" \
+            -p SF1906_V97_FOUR_RESTORATIONS_QA_PREVIEW_NOT_FINAL.mp4 \
+            -p V97_PREVIEW_STATUS.json \
+            -D "$d" --clobber
+          printf '%s\n' '84b60dcb974c405e6e3f0d99e15db8e1647940b9aa2dfeac8ae8a3a6eb472ef5  output/sf1906_v98_correct_4photo_1vidu/SF1906_V97_FOUR_RESTORATIONS_QA_PREVIEW_NOT_FINAL.mp4' | sha256sum -c -
+      - name: Retrieve ONE real previously paid Vidu 43s segment without generating or spending again
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/sf1906_v98_correct_4photo_1vidu
+          gh release download storia-rivive-san-francisco-1906-v86-hybrid-4plus1-real-vidu \
+            --repo "$GITHUB_REPOSITORY" \
+            -p VIDU_SF1906_05_COLOR_MOTION.mp4 \
+            -p QA_PUBLIC_V86.json \
+            -D "$d"
+          printf '%s\n' '3b383a5f75021b8dd872eff61cb1514cd625a2c373109fa866013c697dac28bd  output/sf1906_v98_correct_4photo_1vidu/VIDU_SF1906_05_COLOR_MOTION.mp4' | sha256sum -c -
+      - name: Render actual new hybrid five-scene MP4 matching Vidu EXACT genuine source frame
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u tools/storia_sf1906_v98_reuse_real_vidu_43s.py
+      - name: Store playable MP4, Android ZIP, stills, cover and QA securely as run artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SF1906_V98_FIVE_SCENE_REAL_SOURCE_MATCHED_VIDU
+          path: |
+            output/sf1906_v98_correct_4photo_1vidu/LA_STORIA_RIVIVE_SF1906_V98_FOUR_REAL_I2I_ONE_REAL_VIDU.mp4
+            output/sf1906_v98_correct_4photo_1vidu/SAN_FRANCISCO_1906_V98_ANDROID_KIT.zip
+            output/sf1906_v98_correct_4photo_1vidu/COPERTINA_V98.jpg
+            output/sf1906_v98_correct_4photo_1vidu/V98_FIVE_SCENES_REAL_ORIGINAL_RESTORED.jpg
+            output/sf1906_v98_correct_4photo_1vidu/QA_V98.json
+            output/sf1906_v98_correct_4photo_1vidu/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Publish actual verified Android MP4 and ZIP as TECHNICAL prerelease, never fake artistic final
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/sf1906_v98_correct_4photo_1vidu
+          if gh release view "$V98_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'Existing review prerelease verified; do not duplicate.'
+            exit 0
+          fi
+          gh release create "$V98_TAG" \
+            "$d/LA_STORIA_RIVIVE_SF1906_V98_FOUR_REAL_I2I_ONE_REAL_VIDU.mp4" \
+            "$d/SAN_FRANCISCO_1906_V98_ANDROID_KIT.zip" \
+            "$d/COPERTINA_V98.jpg" \
+            "$d/V98_FIVE_SCENES_REAL_ORIGINAL_RESTORED.jpg" \
+            "$d/QA_V98.json" \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title 'La Storia Rivive · San Francisco 1906 · V98 true I2I + matched Vidu' \
+            --notes 'One coherent 1906 film: first four actual V97 generative Finegrain photo restorations, fifth authentic B/W moving shot from 43s of that same original Miles Brothers film matched to the first frame of the existing actual V86 Vidu generated 5s moving video. First 1s gray→color in true motion, one continuous original soundtrack. ZERO NEW API credits, Vidu re-used, source/timecode/sha checked. Technical video review; human final semantic QA and rights review before social/site publishing. Digital colors and animation interpretive, not authentic historical period color film.'
+          names="$(gh release view "$V98_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          grep -Fqx LA_STORIA_RIVIVE_SF1906_V98_FOUR_REAL_I2I_ONE_REAL_VIDU.mp4 <<< "$names"
+          grep -Fqx SAN_FRANCISCO_1906_V98_ANDROID_KIT.zip <<< "$names"
+          echo "SF1906_V98_VERIFIED_REAL_ANDROID_DOWNLOAD_NO_NEW_PAID_VIDU"
