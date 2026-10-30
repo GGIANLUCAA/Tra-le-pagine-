@@ -24,7 +24,7 @@ def metadata(page):
     info=pages[0]["imageinfo"][0];link=info.get("url","")
     v=urlparse(link)
     if v.scheme!="https" or v.netloc!="upload.wikimedia.org" or not link.lower().endswith((".webm",".ogv",".mp4",".mov")):
-        raise ValueError("Unapproved archive video URL")
+        raise ValueError("Unapproved archive video URL: host="+v.netloc+" path_extension="+v.path[-80:])
     return {"source_page":page,"filename":title,"download_url":link,
             "size_bytes":info.get("size"),
             "license_metadata":info.get("extmetadata",{}).get("LicenseShortName",{}).get("value","UNKNOWN"),
