@@ -5,7 +5,7 @@ No provider calls, no AI image output claims, no publication. The result can be
 consumed by a future free/approved image-to-image worker.
 """
 from __future__ import annotations
-import argparse, hashlib, json, math, re
+import argparse, bisect, hashlib, json, math, re
 from itertools import combinations
 from pathlib import Path
 from PIL import Image, ImageOps
@@ -86,6 +86,20 @@ def verified_source_preflight(order, source_dir):
     entries=report.get("frame_provenance")
     if not isinstance(entries,list) or not entries:
         raise ValueError("FRAME_PROVENANCE_MISSING")
+    # V113: scene-cut evidence must come from a separate real-film FFmpeg pass.
+    # Candidate segments alone do NOT prove genuine historical camera changes.
+    cuts_report=report.get("shot_boundary_analysis")
+    if not isinstance(cuts_report,dict) or cuts_report.get("version")!="V113_FFMPEG_SCENE_CANDIDATES":
+        raise ValueError("SHOT_BOUNDARY_EVIDENCE_MISSING_OR_LEGACY")
+    if cuts_report.get("source_sha256")!=film_sha:
+        raise ValueError("SHOT_BOUNDARY_FILM_SHA_MISMATCH")
+    cuts=cuts_report.get("cut_candidate_times_s")
+    if (not isinstance(cuts,list) or len(cuts)<4 or len(cuts)>999
+            or cuts_report.get("status")!="FIVE_SEGMENTS_POSSIBLE_REVIEW_REQUIRED"
+            or cuts_report.get("historical_camera_shots_verified") is not False
+            or any(type(t) not in (int,float) or not math.isfinite(t) or t<=0 for t in cuts)
+            or any(a>=b for a,b in zip(cuts,cuts[1:]))):
+        raise ValueError("INSUFFICIENT_OR_INVALID_SHOT_BOUNDARY_CANDIDATES")
     frame_map={}
     for entry in entries:
         if not isinstance(entry,dict):
@@ -103,15 +117,18 @@ def verified_source_preflight(order, source_dir):
                 or entry.get("source_pts_logged_from_decode") is not True
                 or type(entry.get("extraction_index")) is not int):
             raise ValueError("SOURCE_PTS_PROVENANCE_INVALID")
+        segment=entry.get("shot_candidate_segment_index")
+        if type(segment) is not int or segment!=bisect.bisect_right(cuts,pts_time):
+            raise ValueError("SHOT_SEGMENT_PROVENANCE_MISMATCH: "+name)
         frame_map[name]=entry
-    return film_sha,frame_map
+    return film_sha,frame_map,cuts_report
 
 def build(order,selection,source_dir):
     if order.get("contract")!="LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT":
         raise ValueError("Not an authenticated V101 work-order schema")
     if order.get("paid_api_call_permitted") is not False or order.get("publish_permitted") is not False:
         raise ValueError("Unsafe work-order permissions")
-    source_video_sha,frame_provenance=verified_source_preflight(order,source_dir)
+    source_video_sha,frame_provenance,shot_analysis=verified_source_preflight(order,source_dir)
     if selection.get("status")!="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW":
         raise ValueError("No five candidate source frames")
     chosen=selection.get("preselected",[])
@@ -173,6 +190,9 @@ def build(order,selection,source_dir):
           "human_face_fidelity":"PENDING","source_geometry_gate":"PENDING",
           "scene_distinctness_gate":"PENDING","rights_gate":"PENDING"
         })
+    segments=[job["shot_candidate_segment_index"] for job in jobs]
+    if len(set(segments))!=5:
+        raise ValueError("FIVE_DISTINCT_SHOT_CANDIDATES_NOT_FOUND: "+str(segments))
     visual_guard=visual_near_duplicate_guard([source_dir/"original_frames"/name for name in names])
     if visual_guard["near_duplicate_pairs"]:
         raise ValueError("VISUAL_NEAR_DUPLICATE_SOURCE_FRAMES: "+json.dumps(visual_guard["near_duplicate_pairs"][:2]))
