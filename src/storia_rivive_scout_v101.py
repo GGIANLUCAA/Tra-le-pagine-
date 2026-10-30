@@ -67,6 +67,19 @@ def inspect(page,outdir):
         board.paste(im,(x,y+23))
         draw.text((x,y+3),"ORIGINAL t~"+str(round(k*period,1))+"s",fill=(240,240,240))
     board.save(outdir/"ORIGINAL_FILM_CONTACT_SHEET.jpg",quality=90)
+    # V111: bind every extracted PNG to the exact downloaded film digest.
+    # FPS sampling does NOT establish exact original timecodes or distinct shots.
+    m["frame_provenance_version"]="V111_EXTRACTED_FRAME_SHA256"
+    m["frame_provenance_source_sha256"]=m["original_sha256"]
+    m["frame_provenance"]=[
+        {"filename":p.name,
+         "sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+         "extraction_index":i,
+         "sampling_period_s_approx":round(period,4),
+         "exact_source_timecode_verified":False,
+         "historical_camera_shot_verified":False}
+        for i,p in enumerate(files)
+    ]
     m["source_frames_extracted"]=len(files)
     m["status"]="REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW"
     return m
