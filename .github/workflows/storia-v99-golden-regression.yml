@@ -43,7 +43,7 @@ jobs:
             --mode reference \
             --video "$V99_GOLDEN_VIDEO" \
             --output output/storia_v99_golden/V98_ACTUAL_ACCEPTED_BENCHMARK_METRICS.json
-      - name: "Run 12 anti-regression tests against real reference and synthetic failures"
+      - name: "Run 12 calibrated anti-regression tests against actual accepted V98"
         run: |
           python -m unittest discover -s tests -p "test_storia_rivive_v99_golden_benchmark.py" -v
       - name: "Archive user-accepted golden metrics (no privacy data, no charge)"
