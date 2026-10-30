@@ -86,20 +86,9 @@ def segment(image):
     poly=np.array([(int(x*w),int(y*h)) for x,y in outline],np.int32)
     contour=np.zeros((h,w),np.uint8)
     cv2.fillPoly(contour,[poly],255)
-    # Optional narrow band color-assisted boundary refinement, but never allow
-    # expanding beyond a ~4-pixel moat around the hand-approved shape.
-    fringe=cv2.dilate(contour,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
-    core=cv2.erode(contour,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
-    gc=np.full((h,w),cv2.GC_BGD,np.uint8)
-    gc[fringe>0]=cv2.GC_PR_BGD
-    gc[contour>0]=cv2.GC_PR_FGD
-    gc[core>0]=cv2.GC_FGD
-    bg=np.zeros((1,65),np.float64);fg=np.zeros((1,65),np.float64)
-    # GrabCut at source resolution to let boundaries align to original edges.
-    cv2.grabCut(cv2.cvtColor(img,cv2.COLOR_RGB2BGR),gc,None,bg,fg,3,cv2.GC_INIT_WITH_MASK)
-    m=np.uint8(np.isin(gc,[cv2.GC_FGD,cv2.GC_PR_FGD]))*255
-    m=cv2.bitwise_and(m,fringe)
-    m=cv2.GaussianBlur(m,(5,5),.95)
+    # Strict artwork-specific contour. No GrabCut expansion: the earlier
+    # automatic model included background, so this is a conservative mask.
+    m=cv2.GaussianBlur(contour,(5,5),.8)
     ratio=float((m>128).mean())
     if not .07<ratio<.33:raise RuntimeError(f"SEGMENTATION_REJECT: ratio {ratio:.3f}")
     xx,yy,bw,bh=cv2.boundingRect((m>128).astype(np.uint8))
