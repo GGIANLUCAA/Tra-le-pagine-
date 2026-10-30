@@ -101,6 +101,7 @@ def run(manifest_path, scout_path, film_path, report_path, *, inspector=inspect_
         manifest["source_bw_motion_gate"] = "V118_BLOCKED"
         manifest["original_frame_jobs"] = []
         manifest["photos_requested"] = 0
+        manifest["reason"] = "V118_MOTION_PREFLIGHT_BLOCKED: " + str(exc)[:180]
         result = {"status": "BLOCKED", "reason": str(exc)[:250]}
     manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     report_path.parent.mkdir(parents=True, exist_ok=True)
