@@ -1,5 +1,9 @@
 # Regole attive — 25 ottobre 2026 (revisione 3, Audience V32 + Fonti V33)
 
+## Audit psicovisivo Wright/Klimt e perfezionamento ritmo (30/10/2026)
+
+Prima di nuovi montaggi, usare come **guida di studio complementare** `docs/REGIA_PSICOVISIVA_WRIGHT_KLIMT_E_STORIA_RIVIVE_2026_10_30.md`: l'audit dei quattro MP4 distingue le criticità reali dei quadri dalle ipotesi sul B/N→colore storico; ogni dettaglio mostrato deve rispettare il tempo di comprensione e la frase narrata, senza immagini ripetute. La proposta sperimentale dà normalmente più tempo al fotogramma restaurato a colori che alla fase B/N, rispettando sempre il planner/gate V70, la clip Vidu V94, la cornice autentica V80 e la precedenza V58 sui nuovi quadri. **Non sono nuovi tempi universali o autorizzazioni di render, spesa, approvazione o pubblicazione**: i confronti A/B con materiale identico devono precedere qualsiasi cambio obbligatorio al renderer.
+
 ## ArtVision V80 — cornice museale autentica, regola globale obbligatoria (30/10/2026)
 
 **Priorità assoluta di regia nei due Museum per OGNI nuovo quadro:** leggere `docs/ARTVISION_MUSEUM_CORNICI_V80_REGOLA_GLOBALE.md` prima di generare camere, sala o cornici. Ricerca per opera precisa: museo, inventario, dimensioni reali, fotografia/documentazione della cornice esattamente associata a quel dipinto. La cornice deve essere **vera/documentata** oppure una **ricostruzione fedele, motivata da fonti e dichiarata**; mai cornici dorate inventate, decorative o ripetute per quadri diversi. Se la cornice non è documentabile, non rivendicarne l'autenticità e non approvare il master Museum.
