@@ -90,7 +90,7 @@ def verified_source_preflight(order, source_dir):
             raise ValueError("INVALID_FRAME_PROVENANCE")
         name=entry.get("filename")
         digest=entry.get("sha256")
-        if (not isinstance(name,str) or not re.fullmatch(r"frame_\\d{2}\\.png",name)
+        if (not isinstance(name,str) or not re.fullmatch(r"frame_\d{2}\.png",name)
                 or not isinstance(digest,str) or not re.fullmatch(r"[0-9a-f]{64}",digest)
                 or name in frame_map):
             raise ValueError("INVALID_FRAME_PROVENANCE")
