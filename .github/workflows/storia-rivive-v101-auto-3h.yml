@@ -61,7 +61,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v3-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v4-frame-sha-${{ env.STORIA_EPISODE_ID }}
       - name: Fetch bounded original film and make genuine B/W contact sheet
         if: steps.film_cache.outputs.cache-hit != 'true'
         shell: bash
@@ -87,7 +87,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v3-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v4-frame-sha-${{ env.STORIA_EPISODE_ID }}
       - name: Rank actual native-resolution source frames without claiming facial identity
         shell: bash
         run: |
