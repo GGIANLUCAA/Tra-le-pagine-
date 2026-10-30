@@ -104,6 +104,15 @@ jobs:
             --selection output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json \
             --source-dir "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
             --out output/storia_v101/I2I_INPUT_MANIFEST_V102.json
+      - name: V118 reject nonmoving source windows before any I2I integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_motion_preflight_v118.py \
+            --manifest output/storia_v101/I2I_INPUT_MANIFEST_V102.json \
+            --scout "output/storia_v101/source-cache/$STORIA_EPISODE_ID/SCOUT_REPORT.json" \
+            --film "output/storia_v101/source-cache/$STORIA_EPISODE_ID/ORIGINAL_ARCHIVE.webm" \
+            --out output/storia_v101/MOTION_EVIDENCE_V118.json
       - name: Generate historically constrained small country flag and title draft
         shell: bash
         run: |
@@ -152,6 +161,7 @@ jobs:
             output/storia_v101/CYCLE_STATUS.json
             output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
             output/storia_v101/I2I_INPUT_MANIFEST_V102.json
+            output/storia_v101/MOTION_EVIDENCE_V118.json
             output/storia_v101/TITLE_FLAG_DRAFT.png
             output/storia_v101/TITLE_FLAG_REPORT.json
             output/storia_v101/source-cache/*/SCOUT_REPORT.json
