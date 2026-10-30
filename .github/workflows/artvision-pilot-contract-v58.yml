@@ -31,6 +31,7 @@ jobs:
           python -m unittest discover -s tests -p "test_artvision_pilot_guard_v58.py" -v
           python -m unittest discover -s tests -p "test_artvision_pilot_queue_v58.py" -v
           python -m unittest discover -s tests -p "test_artvision_next_render_v55.py" -v
+          python -m unittest discover -s tests -p "test_artvision_fourth_pilot_v84.py" -v
           python -m unittest discover -s tests -p "test_artvision_third_pilot_v74.py" -v
       - name: Prove adapter entrypoint enforces lock before actual render
         run: |

@@ -935,24 +935,58 @@
       "prior_reference_counts_as_new_slot": false,
       "variants": {
         "critico_standard": {
-          "status": "planned",
-          "verified_this_migration": false,
-          "rendered_mp4_sha256": null,
-          "rendered_mp4_bytes": null,
+          "status": "rendered_needs_review",
+          "verified_this_migration": true,
+          "rendered_mp4_sha256": "2c59c58185ed3d7c51d280bf9c8442414cddf163a231fef08fd7a37d657b0ded",
+          "rendered_mp4_bytes": 82328457,
           "V25_approved": false,
           "archive_sync_pending": true,
           "site_verified": false,
-          "preflight_status": "blocked_new_shared_gacrux_and_script"
+          "artist": "Hieronymus Bosch",
+          "painting_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9",
+          "music_SHA256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+          "museum_creative_room_and_frame_declaration": "Not actual Prado gallery or historically verified frame",
+          "no_paid_video_AI_calls": true,
+          "source_rights": "Public Domain Mark painting, CC BY 4.0 music",
+          "full_ffmpeg_decode_passed": true,
+          "full_speed_human_review": "pending",
+          "version": "V22 original user-provided (reused unmodified)",
+          "duration_seconds": 124.192667,
+          "codec": "H264/AAC 1080x1920 20fps",
+          "reused_historical_reference": true,
+          "newly_rendered_this_cycle": false,
+          "shared_critico_AAC_sha256": "775232ee40d06176bb4f4462c82d66e7ac0cdcfefc4b4d8c67e9427370b15edb",
+          "review_ref": "docs/productions/2026-10-30-bosch-4x1-v84/CRITICO_STANDARD_ARCHIVE_STAGING_V55.json"
         },
         "critico_museum": {
-          "status": "planned",
-          "verified_this_migration": false,
-          "rendered_mp4_sha256": null,
-          "rendered_mp4_bytes": null,
+          "status": "rendered_needs_review",
+          "verified_this_migration": true,
+          "rendered_mp4_sha256": "73b1a97d0640123e38184db7f20334c0de4db318594a8dd728ff0e537253854b",
+          "rendered_mp4_bytes": 26027565,
           "V25_approved": false,
           "archive_sync_pending": true,
           "site_verified": false,
-          "preflight_status": "blocked_new_shared_gacrux_and_script"
+          "artist": "Hieronymus Bosch",
+          "painting_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9",
+          "music_SHA256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+          "museum_creative_room_and_frame_declaration": "Not actual Prado gallery or historically verified frame",
+          "no_paid_video_AI_calls": true,
+          "source_rights": "Public Domain Mark painting, CC BY 4.0 music",
+          "full_ffmpeg_decode_passed": true,
+          "full_speed_human_review": "pending",
+          "version": "V84",
+          "duration_seconds": 124.2,
+          "codec": "H264/AAC 720x1280 20fps",
+          "newly_rendered_this_cycle": true,
+          "shared_critico_AAC_sha256": "775232ee40d06176bb4f4462c82d66e7ac0cdcfefc4b4d8c67e9427370b15edb",
+          "v57_full_frame": {
+            "frames": 2484,
+            "peak_mad": 33.926,
+            "threshold": 35,
+            "frames_above_threshold": 0,
+            "pass": true
+          },
+          "review_ref": "docs/productions/2026-10-30-bosch-4x1-v84/CRITICO_MUSEUM_ARCHIVE_STAGING_V55.json"
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -1003,24 +1037,79 @@
               "selected_review_candidate": true
             }
           ],
-          "report": "docs/productions/2026-10-30-bosch-garden-v77/ARTVISION_BOSCH_CINEMA_STANDARD_V78C_REAL_MP4_QA.md"
+          "report": "docs/productions/2026-10-30-bosch-garden-v77/ARTVISION_BOSCH_CINEMA_STANDARD_V78C_REAL_MP4_QA.md",
+          "alternative_rendered_review_mp4s": [
+            {
+              "version": "V77 alternate independently rendered",
+              "sha256": "90bb86598788c475e0b0599ca505f354da8c5ffccff13016806fdbd5f02aa844",
+              "bytes": 11551250,
+              "duration_seconds": 49.7,
+              "file": "/mnt/data/BOSCH_4X1_V77/03_Bosch_Cinema_Standard_V77.mp4",
+              "notes": "Contained in the complete V84 and Android V84 ZIPs, which were verified as delivered in current chat; not fifth slot."
+            }
+          ],
+          "selected_review_candidate": "V78C existing on main with end slate/music corrections, separate from V84 bundle candidate V77"
         },
         "cinema_museum": {
-          "status": "planned",
-          "verified_this_migration": false,
-          "rendered_mp4_sha256": null,
-          "rendered_mp4_bytes": null,
+          "status": "rendered_needs_review",
+          "verified_this_migration": true,
+          "rendered_mp4_sha256": "67ad38e0c3ec63c6c6a9e2c925252a515208dd357d0e6c26b0c5dd762177d508",
+          "rendered_mp4_bytes": 10962109,
           "V25_approved": false,
           "archive_sync_pending": true,
           "site_verified": false,
-          "preflight_status": "blocked_work_specific_museum_frame_v80"
+          "artist": "Hieronymus Bosch",
+          "painting_sha256": "830978840378c93991b16ed9219e1a78343c633aa8b62035fa65bf9f9ff26cd9",
+          "music_SHA256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+          "museum_creative_room_and_frame_declaration": "Not actual Prado gallery or historically verified frame",
+          "no_paid_video_AI_calls": true,
+          "source_rights": "Public Domain Mark painting, CC BY 4.0 music",
+          "full_ffmpeg_decode_passed": true,
+          "full_speed_human_review": "pending",
+          "version": "V80",
+          "duration_seconds": 51.6,
+          "codec": "H264/AAC 720x1280 20fps",
+          "newly_rendered_this_cycle": true,
+          "v57_full_frame": {
+            "frames": 1032,
+            "peak_mad": 34.581,
+            "threshold": 35,
+            "frames_above_threshold": 0,
+            "pass": true
+          },
+          "review_ref": "docs/productions/2026-10-30-bosch-4x1-v84/CINEMA_MUSEUM_ARCHIVE_STAGING_V55.json"
         }
       },
-      "actual_rendered_count": 1,
-      "V25_approved_count": 0
+      "actual_rendered_count": 4,
+      "V25_approved_count": 0,
+      "four_video_pilot": {
+        "target_count": 4,
+        "real_rendered_slots": 4,
+        "approved_count": 0,
+        "status": "FOUR_REAL_VARIANTS_WITH_V78C_CINEMA_REVIEW_ALTERNATIVE",
+        "reused_original_Bosch_critico_V22": true,
+        "distinct_video_sha256_verified": true,
+        "exact_audio_shared_critico_SHA256": "775232ee40d06176bb4f4462c82d66e7ac0cdcfefc4b4d8c67e9427370b15edb",
+        "actual_site_archive_import_verified": false,
+        "automatic_new_fifth_work": false
+      },
+      "delivered_chat_package": {
+        "filename": "BOSCH_4X1_PACCHETTO_COMPLETO_V84.zip",
+        "bytes": 154136164,
+        "sha256": "7b9ca1f274cf5cffbd585f42b4b550424b5813c57f4c0d60a9a64c4450c74f56",
+        "cinema_standard_in_package": "V77 alternate",
+        "android_zip": "BOSCH_4_VIDEO_ANDROID_V84.zip",
+        "android_zip_bytes": 66325249,
+        "android_zip_sha256": "c7e9f50eac0308278c4a6e94d3b01472505234185063d3160b91e8e95ba67463",
+        "zip_crc_pass": true,
+        "site_uploaded": false,
+        "dropbox_uploaded": false,
+        "shared_links_not_persistent": true
+      },
+      "note_reconcile_v84": "Two concurrent Bosch Cinema Standard reviews exist: main's V78C (3eb4...) corrected end slate/music, and current ChatGPT package V77 (90bb...) delivered. Same EXACT Cinema Standard slot, not an extra variant. Keep both SHA and select after user V25. Three other slots now genuinely completed. Museum is artistic reconstruction, no genuine Prado room/frame."
     }
   ],
-  "last_operational_update": "2026-10-30 Bosch Cinema Standard V78C true 41.65s MP4 SHA3eb4... (local runtime only), one of four slots rendered; all others planned/blocked, V25 0/4",
+  "last_operational_update": "2026-10-30 Bosch 4x1 V84 four real variants, with one alternate Cinema Standard V77; V78C selected review on main, zero V25, source PD and museum digital reconstruction acknowledged. 16 unique slots across initial four-artwork series.",
   "museum_regression_v56": {
     "date": "2026-10-29",
     "reason": "user rejected low-value generic museum 2D frame/room and hard cut",
