@@ -247,12 +247,13 @@ def main():
             vidu.set(cv2.CAP_PROP_POS_FRAMES,min(vidunc-1,round(i*vidufps/FPS)))
             ok,f=vidu.read()
             if not ok:raise RuntimeError("TRUNCATED_REAL_VIDU_MOTION")
-            if prev is not None and i%15==0:
-                gray=cv2.resize(cv2.cvtColor(f,cv2.COLOR_BGR2GRAY),(180,320)).astype("float32")
-                old=cv2.resize(cv2.cvtColor(prev,cv2.COLOR_BGR2GRAY),(180,320)).astype("float32")
-                motion_samples.append({"vidu_s":round(i/FPS,2),"motion_delta":round(float(np.abs(gray-old).mean()),3),
-                  "saturation_median":round(float(np.median(cv2.cvtColor(f,cv2.COLOR_BGR2HSV)[:,:,1])),1)})
-            prev=f
+            if i%15==0:
+                if prev is not None:
+                    gray=cv2.resize(cv2.cvtColor(f,cv2.COLOR_BGR2GRAY),(180,320)).astype("float32")
+                    old=cv2.resize(cv2.cvtColor(prev,cv2.COLOR_BGR2GRAY),(180,320)).astype("float32")
+                    motion_samples.append({"vidu_s":round(i/FPS,2),"motion_delta":round(float(np.abs(gray-old).mean()),3),
+                      "saturation_median":round(float(np.median(cv2.cvtColor(f,cv2.COLOR_BGR2HSV)[:,:,1])),1)})
+                prev=f
             proc.stdin.write(f.tobytes())
     finally:
         source.release();vidu.release();preview.release()
