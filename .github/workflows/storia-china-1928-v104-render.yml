@@ -1,0 +1,82 @@
+name: "La Storia Rivive V104 · CHINA 1928 · true neural color photographs + real archival color motion"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-china-1928-v104-render.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-china-1928-v104-single-render
+  cancel-in-progress: false
+jobs:
+  real_neural_color_film_candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 52
+    env:
+      PYTHONUNBUFFERED: "1"
+      OMP_NUM_THREADS: "4"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install open-source neural film models and 1080p compositor
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "numpy>=1.26,<2" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2"
+          python -m py_compile src/storia_china_1928_v103_scout.py src/storia_china_1928_v104_complete_film.py src/storia_rivive_real_ai_v60.py src/storia_rivive_real_photo_ai_v62.py
+      - name: Recover the exact genuine China 1920s archive (no historical edits)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u src/storia_china_1928_v103_scout.py --run
+          test -s output/storia_china_1928_v103/ORIGINAL_ARCHIVE.webm
+      - name: Render a real 1080x1920 H264 AAC video with four learned restored color photos
+        shell: bash
+        timeout-minutes: 42
+        run: |
+          set -euo pipefail
+          python -u src/storia_china_1928_v104_complete_film.py
+          test -s output/storia_china_1928_v104/CHINA_1928_V104_FOTOGRAFIE_AI_COLOR_MOTION_NON_VIDU_REVIEW.mp4
+          test -s output/storia_china_1928_v104/CHINA_1928_V104_EDITORIAL_CANDIDATE_ANDROID.zip
+      - name: Upload actual video MP4 / Android ZIP / real frame source comparisons
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CHINA_1928_V104_REAL_NEURAL_PHOTOS_AND_COLOR_MOTION_REVIEW
+          path: |
+            output/storia_china_1928_v104/CHINA_1928_V104_FOTOGRAFIE_AI_COLOR_MOTION_NON_VIDU_REVIEW.mp4
+            output/storia_china_1928_v104/CHINA_1928_V104_EDITORIAL_CANDIDATE_ANDROID.zip
+            output/storia_china_1928_v104/REAL_SOURCE_VS_NEURAL_RESTORATION.jpg
+            output/storia_china_1928_v104/ACTUAL_MP4_FIVE_BEFORE_AFTER_CONTACT.jpg
+            output/storia_china_1928_v104/PHOTO_QA.json
+            output/storia_china_1928_v104/TECHNICAL_REVIEW.json
+            output/storia_china_1928_v104/COVER.jpg
+            output/storia_china_1928_v104/POST_*.txt
+            output/storia_china_1928_v104/SCENE_*_LEARNED_COLOR_PHOTO.png
+            output/storia_china_1928_v104/SCENE_*_EXACT_LAST_MOVING_FRAME.png
+            output/storia_china_1928_v103/SOURCE_MANIFEST.json
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Announce real completion status and no fake Vidu
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path("output/storia_china_1928_v104/TECHNICAL_REVIEW.json")
+          if not p.is_file():
+              print("V104_BUILD_DID_NOT_COMPLETE; NO_FALSE_DELIVERY")
+          else:
+              j=json.loads(p.read_text())
+              print("V104_ACTUAL_MP4",j["duration_s"],j["resolution"],
+                    "FOUR_NEURAL_PHOTOS",j["true_real_learned_photo_restorations"],
+                    "REAL_VIDU_PRESENT",j["real_Vidu_clip_present"],
+                    "SPEND",j["no_paid_API_calls"],"FINAL_GATES",j["V94_V96_V99_final_release_gate_passed"])
+          PY
