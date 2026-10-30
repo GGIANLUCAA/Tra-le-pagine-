@@ -42,3 +42,4 @@ jobs:
             output/storia_bombay_1929_v95/RESTORED_PHOTO_*.jpg
           retention-days: 14
           if-no-files-found: warn
+# Use exact rounded-frame source anchors; preflight remains free and must fail closed.
