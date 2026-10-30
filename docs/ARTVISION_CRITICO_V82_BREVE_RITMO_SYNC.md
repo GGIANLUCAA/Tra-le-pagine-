@@ -26,3 +26,17 @@
 - Consegna MP4 reali, cover, 4 testi social distinti per variante, ZIP integri, provenienza/licenze e stato review veritiero; sito privato verificato separatamente.
 
 **Caso di prova:** `pilot/artvision-martin-critico-v82` contiene il copione corretto 211 parole e 9 beat con inquadrature motivate per *The Great Day of His Wrath*, isolato dai due Cinema V81. La sola esistenza di un MP4 e il passaggio dei test non significano apprezzamento artistico.
+
+
+## V83 — correzione CAMERA MUSEUM dopo QA del video John Martin (30/10/2026)
+
+La prima versione Critico Museum V82 aveva ancora una ripresa **troppo ingrandita e sfocata**, benché il test cornice fosse passato. Regola tecnica ulteriore: **passare la verifica delle cornici NON basta: l'interno del quadro deve restare leggibile e vario**.
+
+- Inizio: mantenere la vera foto della cornice visibile e leggibile per circa 1–2 s; poi avanzare nel quadro (esempio pilota z=1→5,4 in 3,2 s).
+- Una volta che il bordo è davvero fuori dall'inquadratura, usare i pixel del dipinto direttamente (non una fotografia di sala enormemente ingrandita). **Zoom moderati ~1,1–1,5× rispetto alla sezione pittorica verticale** a seconda di risoluzione e oggetto; niente proiezioni estreme z=19–23 della piccola immagine museale come contenuto di tutta la spiegazione.
+- All'interno: percorsi continui ma con soggetti effettivamente distinguibili (persone, lampi, rocce, città, fuoco); predisporre prima la mappa immagine→frase, e mantenere una pausa breve per l'occhio.
+- Finale: portare la camera al centro dell'opera e tornare alla vera fotografia incorniciata soltanto nell'ultima uscita prospettica, mai durante la spiegazione.
+- **Gate visivo aggiuntivo:** contatto storyboard estratto dal MP4 reale ai secondi 0/2/4/8/18/35/41/52/61/72/83/90/91.5 e controllo a schermo Android. Se almeno 2 passaggi interni appaiono sostanzialmente uguali o irriconoscibili, NON approvare: rivedere focale/fonte prima di pubblicare.
+- Per la versione John Martin V83 il codice locale ha riutilizzato *senza alcuna nuova chiamata vocale* la traccia AAC ESATTAMENTE identica del Critico Standard V82 (SHA256 verificato); il rendering dei due Cinema e dei due Critico precedenti rimane immutato. Video V83 ha sorgente arte 1000×640, dunque non è fedeltà 4K nativa e resta in review artistica.
+
+Il rendering V83 locale costituisce una revisione controllata a posteriori del Museum; non sovrascrivere il codice/il video V82 senza conservare la versione precedente. **Questa correzione non autorizza a inventare la cornice né a ignorare V80.**
