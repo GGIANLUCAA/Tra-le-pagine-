@@ -35,9 +35,21 @@ def write(path,doc):path.write_text(json.dumps(doc,ensure_ascii=False,indent=2)+
 def main():
  src,info=base.acquire(META,OUT)
  records=base.grab_stills(src,META,OUT)
- dd,ss,model=base.load_dd()
- # Source-locked neural color is only the first step; never count as photo.
- photos=base.enhanced_ai_images(META,records[:4],OUT,dd,ss)
+ # Recover the four actual free I2I photos from the earlier QA artifact.
+ # Never consume four more ZeroGPU requests just because the video encoder was missing.
+ photo_cache=OUT/"PHOTO_QA.json"
+ photos=[]
+ if photo_cache.exists():
+  try:
+   existing=json.loads(photo_cache.read_text())
+   if len(existing)==4 and all((OUT/p["photo_file"]).is_file() and base.sha(OUT/p["photo_file"])==p["photo_sha256"] for p in existing):
+    photos=existing
+    print("REUSED_FOUR_REAL_I2I_IMAGES_FROM_VERIFIED_PREVIOUS_ARTIFACT",flush=True)
+  except (ValueError,KeyError,TypeError):pass
+ if not photos:
+  dd,ss,model=base.load_dd()
+  # Source-locked neural color is only the first step; never count as photo.
+  photos=base.enhanced_ai_images(META,records[:4],OUT,dd,ss)
  if len(photos)!=4:raise RuntimeError("V97_FAIL_CLOSED_ALL_FOUR_REAL_IMAGE2IMAGE_REQUIRED_"+str(len(photos)))
  # Explicitly exclude hallucinations; correlation is NOT a substitute for a visual reviewer.
  board=Image.new("RGB",(5*215,2*405),(13,15,18));draw=ImageDraw.Draw(board)
