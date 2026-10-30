@@ -564,6 +564,27 @@ def create_social(out: Path, rec: dict, mode: str):
         (out/filename).write_text(description+"\n",encoding="utf-8")
 
 
+def require_live_preflight_context() -> None:
+    """Never render a publishable candidate without live GitHub history/queue.
+
+    Local unit tests may call pure functions without credentials; the real
+    rendering entrypoint may not silently treat missing GitHub context as an
+    empty release history or empty Actions queue.
+    """
+    if os.environ.get("GITHUB_REPOSITORY") != "GGIANLUCAA/Tra-le-pagine-":
+        raise RuntimeError("WOW_LAB_LIVE_PREFLIGHT_REQUIRED: repository context missing")
+    if not re.fullmatch(r"\\d+", os.environ.get("GITHUB_RUN_ID", "")):
+        raise RuntimeError("WOW_LAB_LIVE_PREFLIGHT_REQUIRED: GitHub run ID missing")
+    if not os.environ.get("GITHUB_TOKEN"):
+        raise RuntimeError("WOW_LAB_LIVE_PREFLIGHT_REQUIRED: GitHub token missing")
+
+
+def require_fresh_run_directory(out: Path) -> None:
+    """A retry must not overwrite an earlier WOW LAB candidate or audit."""
+    if out.exists() and any(out.iterdir()):
+        raise RuntimeError("WOW_LAB_RUN_DIRECTORY_ALREADY_POPULATED: " + str(out))
+
+
 def run(args):
     conf=read_config(ROOT/"config.json")
     if not conf["enabled"]:
@@ -575,10 +596,13 @@ def run(args):
     sandbox = (ROOT / "runs").resolve()
     if out == sandbox or sandbox not in out.parents:
         raise ValueError("Output must stay inside wow_lab/runs/<unique-slot>")
-    out.mkdir(parents=True,exist_ok=True)
+    require_live_preflight_context()
+    require_fresh_run_directory(out)
     ensure_no_parallel_wow_render()
     past=recent_history()
     ensure_slot_available(stamp, past)
+    # Do not create or overwrite a run folder until both live checks pass.
+    out.mkdir(parents=True,exist_ok=True)
     rec=select_artwork(conf, stamp, past, args.test_source_id)
     source,url,source_sha=save_original(rec,out,conf)
     # Mandatory subject extraction and mask audit BEFORE sound/video rendering.
