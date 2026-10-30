@@ -1,0 +1,48 @@
+name: "La Storia Rivive V95 — restaurare volti Bombay gratis prima di Vidu"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v95-bombay-face-free.yml"]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  photograph:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install CPU image checks and free I2I client (NO VIDU POST)"
+        run: |
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "gradio_client>=1.5,<2"
+          python -m py_compile src/storia_v95_bombay_face_preflight.py
+      - name: "Download all 8 real source snapshots verified in prior free scout"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_bombay_1929_v95
+          cd output/storia_bombay_1929_v95
+          curl -fsSL --retry 2 --connect-timeout 20 --max-time 160 \
+            -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12956729021/zip" -o EIGHT_SHOT_SOURCE.zip
+          unzip -j -q EIGHT_SHOT_SOURCE.zip "SOURCE_BW_08.png" "RESTORED_PHOTO_08.jpg" "V95_FREE_SOURCE_QA.json"
+          python -u src/storia_v95_bombay_face_preflight.py
+      - name: "Upload real source→photo→I2I sample and faithful photo SHA before paid generation"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V95_BOMBAY_FACE_I2I_FREE_SOURCE_VERIFICATION
+          path: |
+            output/storia_bombay_1929_v95/V95_VIDU_BOMBAY_MEN_COLOR_ANCHOR.jpg
+            output/storia_bombay_1929_v95/V95_FACE_FIDELITY_PREPAY_REVIEW.jpg
+            output/storia_bombay_1929_v95/V95_FACE_RESTORATION_QA.json
+            output/storia_bombay_1929_v95/RESTORED_PHOTO_08.jpg
+            output/storia_bombay_1929_v95/SOURCE_BW_08.png
+          retention-days: 14
+          if-no-files-found: warn
