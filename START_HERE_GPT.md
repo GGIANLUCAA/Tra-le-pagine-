@@ -1,5 +1,9 @@
 # Inizia da qui — studio video di Gianluca
 
+## BLOCCO V96: prima di qualsiasi NUOVO video storico, leggimi
+`docs/LA_STORIA_RIVIVE_V96_AUDIT_ERRORI_RIPETUTI_20261030.md` e `src/storia_rivive_v96_guard.py` spiegano gli errori visti dall'utente (NY V95.1 `44486.mp4`, Bombay `44371.jpg`): DDColor non basta per foto moderne/volti, l'inserimento Vidu da ripresa storica diversa causa stacchi, 4 hold >3s troppo lunghi, colore arancio e maxi titoli opachi coprono/alterano la scena. OBBLIGATORI: 4 foto vere image-to-image source-locked e 1 clip Vidu che prosegue dal *proprio* frame B/N originale, palette e tempistiche scelte, niente persone inventate, QA umano. Nuovo storico 4+1 passa V91+V94+V96 prima di essere definito finito o pubblicato. Il vecchio workflow New York è stato disabilitato; non usare un MP4 tecnicamente valido come master finale. La correzione non richiede nuove spese.
+
+
 ## Vidu centralizzato per TUTTE le chat Restauro storico
 Se una chat chiede di generare una clip Vidu, **non dire che Vidu è inutilizzabile e non ricostruire il collegamento**: leggere `docs/VIDU_CHATGPT_GATEWAY_TUTTE_LE_CHAT_V1.md` e usare il workflow `.github/workflows/vidu-chatgpt-project-gateway.yml` tramite un file nuovo `requests/vidu/<id-univoco>.json` creato con la connessione GitHub disponibile. Il sistema è nel repository, non nella memoria runtime di una chat. Saldo e preventivo sono gratuiti; 1 clip a pagamento richiede preventivo specifico, permesso esplicito, codice e ledger; recupero via GET, mai doppio POST. Rispettare importi, QA e download diretto GitHub Release opt-in. Se questa chat non ha connettore GitHub, chiarire il limite senza fingere di generare.
 
