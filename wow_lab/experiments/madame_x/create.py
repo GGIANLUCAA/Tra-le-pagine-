@@ -55,51 +55,65 @@ def get_source():
             print("Authentic source candidate unavailable: ",str(e)[:120])
     raise RuntimeError("No verified high-resolution museum image")
 def segment(image):
-    """Conservative portrait-specific region mask: body in center, dark background outside.
-    GrabCut fails closed when the subject cannot be cleanly distinguished."""
+    """Hand-guided, artwork-specific contour. Fail closed if the mask is too wide.
+
+    The previous generic GrabCut segmented an entire rectangular interior,
+    pulling the painting background outward. A deliberately conservative
+    manually traced profile wins over a false claim of full-body extraction.
+    """
     img=np.asarray(image)
     h,w=img.shape[:2]
-    sw,sh=600,int(600*h/w)
-    small=cv2.resize(img,(sw,sh),interpolation=cv2.INTER_AREA)
-    # Portrait centered. High-confidence foreground = face, upper torso, illuminated arm.
-    gc=np.full((sh,sw),cv2.GC_PR_BGD,np.uint8)
-    cv2.rectangle(gc,(int(sw*.13),int(sh*.08)),(int(sw*.92),int(sh*.93)),cv2.GC_PR_FGD,-1)
-    # outer 10% definitely museum background, not part of the sitter
-    gc[:int(sh*.07),:]=cv2.GC_BGD
-    gc[int(sh*.95):,:]=cv2.GC_BGD
-    gc[:,:int(sw*.08)]=cv2.GC_BGD
-    gc[:,int(sw*.95):]=cv2.GC_BGD
-    # known body placements drawn from visible work structure, not blind pixel brightness
-    seeds=np.zeros((sh,sw),np.uint8)
-    for xx,yy,rx,ry in [(.51,.28,.09,.105),(.53,.42,.16,.10),(.60,.61,.22,.10),(.46,.70,.20,.14)]:
-        cv2.ellipse(seeds,(int(sw*xx),int(sh*yy)),(int(sw*rx),int(sh*ry)),0,0,360,255,-1)
-    gc[seeds>0]=cv2.GC_FGD
+    # Coordinates relative to the source canvas. Accurate for Met object 12127
+    # only; NEVER use these polygon points with another portrait.
+    outline=[
+      (.49,.157),(.54,.159),(.58,.180),(.60,.210),(.60,.234),
+      (.621,.249),(.625,.272),(.610,.293),(.589,.303),
+      (.554,.309),(.539,.342),(.606,.355),(.654,.370),
+      (.682,.405),(.696,.454),(.713,.506),(.731,.555),
+      (.734,.592),(.716,.613),(.698,.601),(.690,.568),
+      (.676,.534),(.658,.503),(.652,.468),(.643,.442),
+      (.638,.456),(.641,.513),(.669,.592),(.709,.675),
+      (.721,.746),(.734,.810),(.745,.906),(.698,.922),
+      (.652,.926),(.600,.927),(.544,.928),(.491,.927),
+      (.436,.923),(.391,.918),(.368,.905),(.379,.861),
+      (.393,.807),(.409,.750),(.406,.687),(.405,.640),
+      (.380,.617),(.349,.599),(.317,.625),(.294,.641),
+      (.271,.621),(.258,.600),(.268,.571),(.286,.535),
+      (.301,.480),(.316,.432),(.338,.389),(.373,.364),
+      (.430,.347),(.453,.334),(.445,.315),(.430,.300),
+      (.422,.273),(.432,.235),(.442,.207),(.461,.179)
+    ]
+    poly=np.array([(int(x*w),int(y*h)) for x,y in outline],np.int32)
+    contour=np.zeros((h,w),np.uint8)
+    cv2.fillPoly(contour,[poly],255)
+    # Optional narrow band color-assisted boundary refinement, but never allow
+    # expanding beyond a ~4-pixel moat around the hand-approved shape.
+    fringe=cv2.dilate(contour,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
+    core=cv2.erode(contour,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
+    gc=np.full((h,w),cv2.GC_BGD,np.uint8)
+    gc[fringe>0]=cv2.GC_PR_BGD
+    gc[contour>0]=cv2.GC_PR_FGD
+    gc[core>0]=cv2.GC_FGD
     bg=np.zeros((1,65),np.float64);fg=np.zeros((1,65),np.float64)
-    cv2.grabCut(cv2.cvtColor(small,cv2.COLOR_RGB2BGR),gc,None,bg,fg,5,cv2.GC_INIT_WITH_MASK)
+    # GrabCut at source resolution to let boundaries align to original edges.
+    cv2.grabCut(cv2.cvtColor(img,cv2.COLOR_RGB2BGR),gc,None,bg,fg,3,cv2.GC_INIT_WITH_MASK)
     m=np.uint8(np.isin(gc,[cv2.GC_FGD,cv2.GC_PR_FGD]))*255
-    # Keep only component connected to face and torso seed.
-    labels_count,labels,stats,centers=cv2.connectedComponentsWithStats(m,8)
-    good=[]
-    for i in range(1,labels_count):
-        if stats[i,cv2.CC_STAT_AREA] > m.size*.002:
-            good.append(i)
-    if not good:raise RuntimeError("SEGMENTATION_REJECT: no foreground found")
-    priority=max(good,key=lambda k:stats[k,cv2.CC_STAT_AREA])
-    m=np.where(labels==priority,255,0).astype(np.uint8)
-    m=cv2.morphologyEx(m,cv2.MORPH_CLOSE,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
-    m=cv2.resize(m,(w,h),interpolation=cv2.INTER_LINEAR)
-    m=cv2.GaussianBlur(m,(5,5),1.0)
+    m=cv2.bitwise_and(m,fringe)
+    m=cv2.GaussianBlur(m,(5,5),.95)
     ratio=float((m>128).mean())
-    if not .09<ratio<.68:raise RuntimeError(f"SEGMENTATION_REJECT: ratio {ratio:.2f}")
-    x,y,bw,bh=cv2.boundingRect((m>120).astype(np.uint8))
-    if bw<w*.18 or bh<h*.22:raise RuntimeError("SEGMENTATION_REJECT: no full portrait profile")
-    rgba=np.dstack([img,m])
-    comparison=Image.fromarray(img,"RGB")
-    marks=np.array(comparison)
-    marks[:,:,0]=np.uint8(np.clip(marks[:,:,0].astype(float)*.7+m*.27,0,255))
-    marks[:,:,1]=np.uint8(marks[:,:,1].astype(float)*(.9-.35*m/255))
-    Image.fromarray(marks).resize((500,int(500*h/w))).save(OUT/"MASK_AUDIT.jpg",quality=90)
-    return Image.fromarray(rgba,"RGBA"),m,ratio
+    if not .07<ratio<.33:raise RuntimeError(f"SEGMENTATION_REJECT: ratio {ratio:.3f}")
+    xx,yy,bw,bh=cv2.boundingRect((m>128).astype(np.uint8))
+    if bw>w*.62 or bh<h*.85:raise RuntimeError("SEGMENTATION_REJECT: background leaking")
+    # Explicitly test top right region: far background cannot enter the mask.
+    if float((m[int(h*.13):int(h*.32),int(w*.70):]>30).mean())>.003:
+        raise RuntimeError("SEGMENTATION_REJECT: top-right background contamination")
+    a=np.dstack([img,m])
+    marked=img.astype(np.float32)
+    marked[:,:,0]=np.clip(marked[:,:,0]*.65+m*.33,0,255)
+    marked[:,:,1]=marked[:,:,1]*(1-m/255*.55)
+    Image.fromarray(marked.astype("uint8")).resize((500,int(500*h/w))).save(OUT/"MASK_AUDIT.jpg",quality=92)
+    return Image.fromarray(a,"RGBA"),m,ratio
+
 def paint_clean(im,m):
     """Neutral, conservative gallery fill under subject. Not claimed museum authenticity."""
     a=np.asarray(im).copy()
