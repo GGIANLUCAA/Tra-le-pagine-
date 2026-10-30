@@ -77,7 +77,7 @@ jobs:
           report=json.loads(p.read_text()) if p.is_file() else {}
           ready=report.get("status")=="REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW"
           with open(os.environ["GITHUB_OUTPUT"],"a") as f:
-              f.write("ready="+("true" if ready else "false")+"\\n")
+              print("ready="+("true" if ready else "false"),file=f)
           print("CACHE_SUCCESSFUL_ORIGINAL_MEDIA_ONLY",ready)
           PY
       - name: Cache successful original source film and true source frames only
