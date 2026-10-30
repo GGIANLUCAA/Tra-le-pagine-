@@ -68,7 +68,7 @@ def verify_pts_timebase_consistency(pts, pts_time_s, source_time_base):
     """
     if (type(pts) is not int or type(pts_time_s) not in (int, float)
             or not math.isfinite(pts_time_s) or not isinstance(source_time_base, str)
-            or not re.fullmatch(r"\\d+/[1-9]\\d*", source_time_base)):
+            or not re.fullmatch(r"\d+/[1-9]\d*", source_time_base)):
         raise ValueError("SOURCE_PTS_CLOCK_INVALID")
     numerator, denominator = map(int, source_time_base.split("/"))
     if numerator <= 0:
