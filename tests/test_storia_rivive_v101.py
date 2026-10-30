@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import shutil
+import subprocess
 
 ROOT=Path(__file__).resolve().parents[1]
 def load(name):
@@ -19,13 +21,15 @@ scout=load("storia_rivive_scout_v101")
 frame_rank=load("storia_rivive_frame_rank_v101")
 i2i=load("storia_rivive_i2i_prepare_v102")
 def bind_scout_frame_hashes(folder):
-    """Offline stand-in for V111 scout provenance; no claim of real film decoding."""
+    """Synthetic V112 provenance fixture; never a claim of real film decoding."""
     report_path=folder/"SCOUT_REPORT.json"
     report=json.loads(report_path.read_text())
     report["frame_provenance_source_sha256"]=i2i.sha(folder/"ORIGINAL_ARCHIVE.webm")
-    report["frame_provenance_version"]="V111_EXTRACTED_FRAME_SHA256"
+    report["frame_provenance_version"]="V112_SOURCE_PTS_FROM_FFMPEG_SHOWINFO"
     report["frame_provenance"]=[
         {"filename":p.name,"sha256":i2i.sha(p),"extraction_index":idx,
+         "source_pts":idx*1000,"source_pts_time_s":float(idx),
+         "source_time_base":"1/1000","source_pts_logged_from_decode":True,
          "exact_source_timecode_verified":False,"historical_camera_shot_verified":False}
         for idx,p in enumerate(sorted((folder/"original_frames").glob("frame_*.png")))
     ]
@@ -91,6 +95,73 @@ class V101Tests(unittest.TestCase):
             self.assertEqual(result["preselected"],[])
             self.assertEqual(result["eligible_native_detail_frames"],0)
 
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"),"FFmpeg required")
+    def test_scout_pts_are_actual_redecodable_source_frames(self):
+        """A real synthetic VIDEO decode must reproduce a sampled PNG by PTS."""
+        from PIL import Image, ImageChops
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp)
+            film=d/"test_original.mp4"
+            frames=d/"original_frames";frames.mkdir()
+            subprocess.run([
+                "ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y",
+                "-f","lavfi","-i","testsrc2=size=1280x720:rate=6:duration=13",
+                "-c:v","mpeg4","-q:v","6",str(film)
+            ],check=True,timeout=80)
+            provenance=scout.extract_pts_locked_frames(film,frames,13.0)
+            self.assertEqual(len(provenance),12)
+            self.assertEqual([x["extraction_index"] for x in provenance],list(range(12)))
+            self.assertTrue(all(x["source_pts_logged_from_decode"] for x in provenance))
+            self.assertTrue(all(a["source_pts_time_s"]<b["source_pts_time_s"]
+                                for a,b in zip(provenance,provenance[1:])))
+            self.assertTrue(all(not x["exact_source_timecode_verified"] for x in provenance))
+            selected=provenance[6]
+            independently_decoded=d/"redecoded.png"
+            subprocess.run([
+                "ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y",
+                "-i",str(film),"-vf",f"select='eq(pts,{selected['source_pts']})'",
+                "-fps_mode","vfr","-frames:v","1",str(independently_decoded)
+            ],check=True,timeout=80)
+            with Image.open(frames/selected["filename"]) as a,Image.open(independently_decoded) as b:
+                self.assertIsNone(ImageChops.difference(a.convert("RGB"),b.convert("RGB")).getbbox())
+            self.assertEqual(selected["sha256"],i2i.sha(frames/selected["filename"]))
+
+    def test_i2i_rejects_duplicate_or_forged_pts_evidence(self):
+        from PIL import Image,ImageDraw
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test film")
+            (d/"SCOUT_REPORT.json").write_text(json.dumps({
+                "status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
+                "original_sha256":i2i.sha(d/"ORIGINAL_ARCHIVE.webm")}))
+            for i in range(1,6):
+                im=Image.new("RGB",(1280,720),(35,35,35))
+                ImageDraw.Draw(im).rectangle((i*170,80,i*170+130,630),fill=(230,230,230))
+                im.save(d/"original_frames"/("frame_%02d.png"%i))
+            bind_scout_frame_hashes(d)
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-test-pts","episode_id":"test_pts",
+                   "paid_api_call_permitted":False,"publish_permitted":False,
+                   "blocking_issues":[]}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            report_path=d/"SCOUT_REPORT.json"
+            report=json.loads(report_path.read_text())
+            report["frame_provenance"][2]["source_pts"]=report["frame_provenance"][1]["source_pts"]
+            report_path.write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"SELECTED_SOURCE_PTS_DUPLICATE_OR_NON_MONOTONIC"):
+                i2i.build(order,selection,d)
+            report["frame_provenance"][2]["source_pts"]=2000
+            report["frame_provenance"][2]["source_pts_logged_from_decode"]=False
+            report_path.write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"SOURCE_PTS_PROVENANCE_INVALID"):
+                i2i.build(order,selection,d)
+            report["frame_provenance"][2]["source_pts_logged_from_decode"]=True
+            report["frame_provenance_version"]="V111_EXTRACTED_FRAME_SHA256"
+            report_path.write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"SOURCE_PTS_PROVENANCE_VERSION_MISSING_OR_LEGACY"):
+                i2i.build(order,selection,d)
+
     def test_i2i_manifest_locks_five_real_source_frames(self):
         from PIL import Image
         with tempfile.TemporaryDirectory() as temp:
@@ -123,6 +194,8 @@ class V101Tests(unittest.TestCase):
             self.assertEqual(result["visual_duplicate_guard"]["status"],
                              "NO_OBVIOUS_VISUAL_DUPLICATES_REVIEW_REQUIRED")
             self.assertFalse(result["historical_shot_distinctness_verified"])
+            self.assertEqual(result["original_frame_jobs"][0]["source_pts_time_s"],0.0)
+            self.assertTrue(result["original_frame_jobs"][0]["source_pts_logged_from_decode"])
 
     def test_i2i_blocks_exposure_variants_of_same_historical_shot(self):
         from PIL import Image,ImageDraw,ImageEnhance
