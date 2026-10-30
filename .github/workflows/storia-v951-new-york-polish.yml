@@ -1,0 +1,75 @@
+name: "La Storia Rivive V95.1 — New York 1911 colore e movimento puliti FREE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v951-new-york-polish.yml"]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v951-ny-free-polish-no-new-provider-video
+  cancel-in-progress: false
+jobs:
+  polish:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: storia-rivive-new-york-1911-v951-clean-color-moving-video
+      OLD_TAG: storia-rivive-new-york-1911-v95-one-actual-vidu-review
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install CPU tools, no Vidu API secret"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg unzip
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5"
+          python -m py_compile src/storia_v951_new_york_polish_no_credit.py
+      - name: "Recover proven paid New York real video, QA, cover and four genuine social captions"
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_new_york_1911_v951
+          mkdir -p "$d"
+          gh release download "$OLD_TAG" --repo "$GITHUB_REPOSITORY" \
+            -p NEW_YORK_1911_V95_REAL_VIDU.mp4 \
+            -p NEW_YORK_1911_V95_PACKAGE.zip \
+            -p V95_QA.json -D "$d"
+          unzip -j -q "$d/NEW_YORK_1911_V95_PACKAGE.zip" "COVER.jpg" "POST_*.txt" -d "$d"
+          python -u src/storia_v951_new_york_polish_no_credit.py
+      - name: "Keep real MP4 and Android ZIP for private QA recovery"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEW_YORK_1911_V951_COLOR_CLEANUP_NO_CREDITS
+          path: |
+            output/storia_new_york_1911_v951/NEW_YORK_1911_V951_COLOR_MOTION_REFINED.mp4
+            output/storia_new_york_1911_v951/NEW_YORK_1911_V951_ANDROID.zip
+            output/storia_new_york_1911_v951/V951_QA.json
+            output/storia_new_york_1911_v951/COVER.jpg
+            output/storia_new_york_1911_v951/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Verified direct Android technical preview, no site or social publishing"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_new_york_1911_v951
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "EXISTING_FREE_POLISH_RELEASE_FOUND"; exit 0
+          fi
+          gh release create "$TAG" \
+            "$d/NEW_YORK_1911_V951_COLOR_MOTION_REFINED.mp4" \
+            "$d/NEW_YORK_1911_V951_ANDROID.zip" "$d/COVER.jpg" "$d/V951_QA.json" \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "La Storia Rivive · New York 1911 · V95.1 motion/color improved" \
+            --notes "Technical preview. Four source-anchored original-film/AI-photo freezes + ONE previously generated real Vidu five-second segment. The SAME Vidu moving frames become B/W then color in the first ~1s with moderate color temperature correction; one continuous original music track. No new Vidu request or credits for this enhancement (the single previous V95 task used 16 credits). Historic colors and AI motion are reconstructions, NOT genuine archival color footage. Human face fidelity and Italian territorial rights review still pending; no social/site publication."
+          for asset in NEW_YORK_1911_V951_COLOR_MOTION_REFINED.mp4 NEW_YORK_1911_V951_ANDROID.zip; do
+            gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fqx "$asset"
+          done
+          echo "V951_DIRECT_ANDROID_ASSETS_VERIFIED_NO_NEW_PROVIDER_CREDITS"
