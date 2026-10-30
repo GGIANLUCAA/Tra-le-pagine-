@@ -88,6 +88,18 @@ def validate(manifest, video_info):
                     v96_spec.loader.exec_module(v96)
                     new_errors, _ = v96.inspect(manifest, actual_duration=duration)
                     failures.extend("V96: " + e for e in new_errors)
+                # V99 reads ACTUAL MP4/source assets independently and compares against
+                # immutable, user-accepted SF1906 V98. No boolean-only waiver.
+                evidence = manifest.get("v99_benchmark_evidence")
+                if not isinstance(evidence, dict) or evidence.get("version") != "V99_GOLDEN_V98_REGRESSION_GATE":
+                    failures.append("V99_BENCHMARK_REAL_MP4_REPORT_MISSING")
+                else:
+                    if evidence.get("passed") is not True:
+                        failures.append("V99_BENCHMARK_TECHNICAL_REGRESSION_REJECTED")
+                    if evidence.get("reference_sha256") != "b20726893e067bbae493859ae1c51379c4abab8c2c8768d5c6f2d4ab324b47a8":
+                        failures.append("V99_APPROVED_GOLDEN_REFERENCE_SHA_NOT_MATCHED")
+                    if evidence.get("actual_video_sha256") != video_info.get("sha256"):
+                        failures.append("V99_REPORT_NOT_BOUND_TO_THE_EXACT_FINAL_MP4")
             else:
                 # Explicitly recorded alternative formats need a dedicated gate;
                 # otherwise an unlabelled job can silently skip 4+1 QA again.
@@ -109,6 +121,8 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--video",required=True)
     ap.add_argument("--manifest",required=True)
+    ap.add_argument("--v99-golden-reference",help="Actual immutable V98 video from GitHub release")
+    ap.add_argument("--v99-source-assets",help="Directory of actual source film, all 4 I2I photos and the Vidu clip")
     args=ap.parse_args()
     p=Path(args.video);m=Path(args.manifest)
     if not p.is_file() or not m.is_file():
@@ -116,7 +130,33 @@ def main():
     try: data=json.loads(m.read_text(encoding="utf-8"))
     except (ValueError,UnicodeError) as e:
         print(json.dumps({"approved":False,"failures":["manifest invalid: "+str(e)]}));return 2
+    # Recalculate V99 against ACTUAL MP4 bytes on every new delivery.
+    # Never trust a manifest that merely claims V99 'passed'.
+    import hashlib, importlib.util
+    h=hashlib.sha256()
+    with p.open("rb") as f:
+        for chunk in iter(lambda:f.read(1<<20),b""):h.update(chunk)
     info=probe(p)
+    info["sha256"]=h.hexdigest()
+    new_storia=(str(data.get("format","")).lower().strip()=="storia_rivive" and
+                data.get("project_format")=="4classic_1vidu" and
+                (data.get("quality_policy_version")=="V94" or
+                 not data.get("production_date") or
+                 str(data.get("production_date"))>="2026-10-30"))
+    if new_storia:
+        if not args.v99_golden_reference or not args.v99_source_assets:
+            data["v99_benchmark_evidence"]={"version":"V99_GOLDEN_V98_REGRESSION_GATE",
+                "passed":False,"error":"MISSING_REAL_GOLDEN_OR_SOURCE_ASSETS"}
+        else:
+            try:
+                module_path=Path(__file__).with_name("storia_rivive_v99_golden_benchmark.py")
+                spec=importlib.util.spec_from_file_location("storia_golden_v99",module_path)
+                module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+                baseline=module.approved_reference(args.v99_golden_reference)
+                data["v99_benchmark_evidence"]=module.evaluate(p,data,args.v99_source_assets,baseline)
+            except Exception as exc:
+                data["v99_benchmark_evidence"]={"version":"V99_GOLDEN_V98_REGRESSION_GATE",
+                    "passed":False,"error":"V99_REAL_EVIDENCE_ERROR "+type(exc).__name__+": "+str(exc)[:250]}
     fails=validate(data,info)
     print(json.dumps({"approved":not fails,"duration_s":info["duration_s"],
                       "failures":fails},ensure_ascii=False,indent=2))
