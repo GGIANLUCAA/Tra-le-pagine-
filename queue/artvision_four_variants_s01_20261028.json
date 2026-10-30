@@ -779,7 +779,16 @@
           "introduction": "No source crop ghosting; clean editorial cuts",
           "notes": "Original full-length Critico V2-style with 10 Gacrux synchronized sections; not a duplicated Cinema Standard. No V25 release.",
           "v90_original_zip_backup_hash_verified": true,
-          "v90_full_decode_verified": true
+          "v90_full_decode_verified": true,
+          "r2_inventory_v90": {
+            "bucket": "video-library-studio",
+            "object_key": "Socrate_Critico_Standard_Gacrux_V67.mp4",
+            "expected_size_bytes": 15575097,
+            "object_list_present": true,
+            "evidence": "Cloudflare R2 List Objects API, full bucket scan 2795 objects, 3 pages; filename and size match for present objects",
+            "r2_bytes_readback_sha256_verified": false,
+            "site_player_verified": false
+          }
         },
         "critico_museum": {
           "status": "rendered_needs_review",
@@ -859,7 +868,16 @@
             "qa_report": "docs/productions/2026-10-30-socrates-v89r1-nondestructive-frame-fix.md"
           },
           "v90_original_zip_backup_hash_verified": true,
-          "v90_full_decode_verified": true
+          "v90_full_decode_verified": true,
+          "r2_inventory_v90": {
+            "bucket": "video-library-studio",
+            "object_key": "Socrate_Critico_Museum_Gacrux_V67.mp4",
+            "expected_size_bytes": 53582121,
+            "object_list_present": true,
+            "evidence": "Cloudflare R2 List Objects API, full bucket scan 2795 objects, 3 pages; filename and size match for present objects",
+            "r2_bytes_readback_sha256_verified": false,
+            "site_player_verified": false
+          }
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -887,7 +905,16 @@
           "audio_measurement": "ffmpeg volumedetect mean -31.5 dB max -15.7 dB; audibility/creative mix not yet approved",
           "next_action": "Do not re-render while in review. Complete normal-speed watch/listen and user aesthetic decision; then consider measured audio gain and visual edit only if revision explicitly justified.",
           "v90_original_zip_backup_hash_verified": true,
-          "v90_full_decode_verified": true
+          "v90_full_decode_verified": true,
+          "r2_inventory_v90": {
+            "bucket": "video-library-studio",
+            "object_key": "ArtVision_Socrates_Cinema_Standard_V59_Revision_Review.mp4",
+            "expected_size_bytes": 17855540,
+            "object_list_present": true,
+            "evidence": "Cloudflare R2 List Objects API, full bucket scan 2795 objects, 3 pages; filename and size match for present objects",
+            "r2_bytes_readback_sha256_verified": false,
+            "site_player_verified": false
+          }
         },
         "cinema_museum": {
           "status": "rendered_needs_review",
@@ -933,7 +960,16 @@
           "user_feedback": "V60 Museum aesthetically liked but seated person looking at artwork had cropped head; remove from VIDEO, text okay. V61 has gallery visitors removed, same artwork, frame, title and movement.",
           "no_cropped_foreground_visitors_v61": true,
           "v90_original_zip_backup_hash_verified": true,
-          "v90_full_decode_verified": true
+          "v90_full_decode_verified": true,
+          "r2_inventory_v90": {
+            "bucket": "video-library-studio",
+            "object_key": "ArtVision_Socrates_Cinema_Museum_V61_Senza_Persone_Review.mp4",
+            "expected_size_bytes": 22854775,
+            "object_list_present": false,
+            "evidence": "Cloudflare R2 List Objects API, full bucket scan 2795 objects, 3 pages; filename and size match for present objects",
+            "r2_bytes_readback_sha256_verified": false,
+            "site_player_verified": false
+          }
         }
       },
       "note": "PILOT SOCRATES EXACTLY FOUR distinct variants have REAL MP4s (2 Critico V67, 2 Cinema V59/V61); 0 V25 approvals. Both Critico reuse identical Google Gacrux original WAV SHA b26b... with ASR 88.9%, ten beats. Before unlocking second artwork, user must review/reject/correct all four; no automatic series restart.",
@@ -1051,7 +1087,16 @@
           "chatgpt_file_session": "/mnt/data/01_Klimt_Critico_Standard_Gacrux.mp4",
           "archive_staging": "docs/productions/2026-10-29-klimt-critico-standard-v73/ARCHIVE_STAGING_V55.json",
           "v90_backup_raw_bytes_verified": true,
-          "v90_full_decode_verified": true
+          "v90_full_decode_verified": true,
+          "r2_inventory_v90": {
+            "bucket": "video-library-studio",
+            "object_key": "01_Klimt_Critico_Standard_Gacrux.mp4",
+            "expected_size_bytes": 17136945,
+            "object_list_present": true,
+            "evidence": "Cloudflare R2 List Objects API, full bucket scan 2795 objects, 3 pages; filename and size match for present objects",
+            "r2_bytes_readback_sha256_verified": false,
+            "site_player_verified": false
+          }
         },
         "critico_museum": {
           "status": "rendered_needs_review",
@@ -1089,7 +1134,16 @@
             }
           ],
           "v90_backup_raw_bytes_verified": true,
-          "v90_full_decode_verified": true
+          "v90_full_decode_verified": true,
+          "r2_inventory_v90": {
+            "bucket": "video-library-studio",
+            "object_key": "02_Klimt_Critico_Museum_Gacrux.mp4",
+            "expected_size_bytes": 13583486,
+            "object_list_present": true,
+            "evidence": "Cloudflare R2 List Objects API, full bucket scan 2795 objects, 3 pages; filename and size match for present objects",
+            "r2_bytes_readback_sha256_verified": false,
+            "site_player_verified": false
+          }
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -1123,7 +1177,16 @@
           "chatgpt_file_session": "/mnt/data/03_Klimt_Cinema_Standard.mp4",
           "archive_staging": "docs/productions/2026-10-29-klimt-cinema-standard-v73/ARCHIVE_STAGING_V55.json",
           "v90_backup_raw_bytes_verified": true,
-          "v90_full_decode_verified": true
+          "v90_full_decode_verified": true,
+          "r2_inventory_v90": {
+            "bucket": "video-library-studio",
+            "object_key": "03_Klimt_Cinema_Standard.mp4",
+            "expected_size_bytes": 3774837,
+            "object_list_present": true,
+            "evidence": "Cloudflare R2 List Objects API, full bucket scan 2795 objects, 3 pages; filename and size match for present objects",
+            "r2_bytes_readback_sha256_verified": false,
+            "site_player_verified": false
+          }
         },
         "cinema_museum": {
           "status": "rendered_needs_review",
@@ -1160,7 +1223,16 @@
             }
           ],
           "v90_backup_raw_bytes_verified": true,
-          "v90_full_decode_verified": true
+          "v90_full_decode_verified": true,
+          "r2_inventory_v90": {
+            "bucket": "video-library-studio",
+            "object_key": "04_Klimt_Cinema_Museum.mp4",
+            "expected_size_bytes": 4343198,
+            "object_list_present": true,
+            "evidence": "Cloudflare R2 List Objects API, full bucket scan 2795 objects, 3 pages; filename and size match for present objects",
+            "r2_bytes_readback_sha256_verified": false,
+            "site_player_verified": false
+          }
         }
       },
       "four_video_pilot": {
