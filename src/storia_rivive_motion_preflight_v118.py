@@ -101,7 +101,7 @@ def verify_five_source_pngs(manifest, scout, film_path):
         if not isinstance(row, dict) or not isinstance(row.get("filename"), str):
             raise ValueError("SOURCE_PNG_PROVENANCE_INVALID")
         name = row["filename"]
-        if not re.fullmatch(r"frame_\\d{2}\\.png", name) or name in provenance:
+        if not re.fullmatch(r"frame_\d{2}\.png", name) or name in provenance:
             raise ValueError("SOURCE_PNG_PROVENANCE_INVALID")
         provenance[name] = row
     root = Path(film_path).parent / "original_frames"
@@ -113,7 +113,7 @@ def verify_five_source_pngs(manifest, scout, film_path):
         path = Path(raw)
         name = path.name
         expected = root / name
-        if (not re.fullmatch(r"frame_\\d{2}\\.png", name)
+        if (not re.fullmatch(r"frame_\d{2}\.png", name)
                 or name in seen_names or path.is_symlink() or expected.is_symlink()
                 or path.resolve() != expected.resolve() or not path.is_file()):
             raise ValueError("SOURCE_PNG_PATH_INVALID_OR_MISSING")
