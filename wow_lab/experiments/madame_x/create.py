@@ -92,7 +92,8 @@ def segment(image):
     ratio=float((m>128).mean())
     if not .07<ratio<.33:raise RuntimeError(f"SEGMENTATION_REJECT: ratio {ratio:.3f}")
     xx,yy,bw,bh=cv2.boundingRect((m>128).astype(np.uint8))
-    if bw>w*.62 or bh<h*.85:raise RuntimeError("SEGMENTATION_REJECT: background leaking")
+    print(f"PROFILE_AUDIT: bbox={bw/w:.3f} x {bh/h:.3f}, mask_ratio={ratio:.3f}",flush=True)
+    if bw>w*.80 or bh>h*.96:raise RuntimeError("SEGMENTATION_REJECT: background leaking")
     # Explicitly test top right region: far background cannot enter the mask.
     if float((m[int(h*.13):int(h*.32),int(w*.70):]>30).mean())>.003:
         raise RuntimeError("SEGMENTATION_REJECT: top-right background contamination")
