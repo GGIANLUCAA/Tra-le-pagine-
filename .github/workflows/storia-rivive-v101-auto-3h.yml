@@ -59,7 +59,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v1-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v2-${{ env.STORIA_EPISODE_ID }}
       - name: Fetch bounded original film and make genuine B/W contact sheet
         if: steps.film_cache.outputs.cache-hit != 'true'
         shell: bash
@@ -116,6 +116,6 @@ jobs:
             output/storia_v101/TITLE_FLAG_REPORT.json
             output/storia_v101/source-cache/*/SCOUT_REPORT.json
             output/storia_v101/source-cache/*/ORIGINAL_FILM_CONTACT_SHEET.jpg
-            output/storia_v101/source-cache/*/original_frames/*.jpg
+            output/storia_v101/source-cache/*/original_frames/*.png
           retention-days: 14
           if-no-files-found: warn
