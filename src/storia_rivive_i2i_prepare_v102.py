@@ -5,7 +5,7 @@ No provider calls, no AI image output claims, no publication. The result can be
 consumed by a future free/approved image-to-image worker.
 """
 from __future__ import annotations
-import argparse, hashlib, json, re
+import argparse, hashlib, json, math, re
 from itertools import combinations
 from pathlib import Path
 from PIL import Image, ImageOps
@@ -81,6 +81,8 @@ def verified_source_preflight(order, source_dir):
     # V111: an old or tampered cached contact sheet must never become I2I input.
     if report.get("frame_provenance_source_sha256")!=film_sha:
         raise ValueError("FRAME_PROVENANCE_FILM_SHA_MISMATCH_OR_MISSING")
+    if report.get("frame_provenance_version")!="V112_SOURCE_PTS_FROM_FFMPEG_SHOWINFO":
+        raise ValueError("SOURCE_PTS_PROVENANCE_VERSION_MISSING_OR_LEGACY")
     entries=report.get("frame_provenance")
     if not isinstance(entries,list) or not entries:
         raise ValueError("FRAME_PROVENANCE_MISSING")
@@ -90,10 +92,17 @@ def verified_source_preflight(order, source_dir):
             raise ValueError("INVALID_FRAME_PROVENANCE")
         name=entry.get("filename")
         digest=entry.get("sha256")
+        pts=entry.get("source_pts")
+        pts_time=entry.get("source_pts_time_s")
+        base=entry.get("source_time_base")
         if (not isinstance(name,str) or not re.fullmatch(r"frame_\d{2}\.png",name)
                 or not isinstance(digest,str) or not re.fullmatch(r"[0-9a-f]{64}",digest)
-                or name in frame_map):
-            raise ValueError("INVALID_FRAME_PROVENANCE")
+                or name in frame_map or type(pts) is not int
+                or type(pts_time) not in (int,float) or not math.isfinite(pts_time)
+                or not isinstance(base,str) or not re.fullmatch(r"\d+/[1-9]\d*",base)
+                or entry.get("source_pts_logged_from_decode") is not True
+                or type(entry.get("extraction_index")) is not int):
+            raise ValueError("SOURCE_PTS_PROVENANCE_INVALID")
         frame_map[name]=entry
     return film_sha,frame_map
 
@@ -111,6 +120,8 @@ def build(order,selection,source_dir):
     if len(set(names))!=5:raise ValueError("Duplicate frames")
     jobs=[]
     seen_frame_hashes=set()
+    last_pts_time=None
+    seen_source_pts=set()
     for n,row in enumerate(chosen):
         name=row["filename"]
         if not re.fullmatch(r"frame_\d{2}\.png",name):raise ValueError("Unsafe source filename")
@@ -132,6 +143,12 @@ def build(order,selection,source_dir):
             raise ValueError("SOURCE_FRAME_NOT_IN_SCOUT_PROVENANCE: "+name)
         if recorded["sha256"]!=frame_sha:
             raise ValueError("SOURCE_FRAME_SHA_MISMATCH_WITH_SCOUT: "+name)
+        pts=recorded["source_pts"]
+        pts_time=recorded["source_pts_time_s"]
+        if pts in seen_source_pts or (last_pts_time is not None and pts_time<=last_pts_time):
+            raise ValueError("SELECTED_SOURCE_PTS_DUPLICATE_OR_NON_MONOTONIC")
+        seen_source_pts.add(pts)
+        last_pts_time=pts_time
         if frame_sha in seen_frame_hashes:
             raise ValueError("DUPLICATE_SOURCE_FRAME_BYTES: "+name)
         seen_frame_hashes.add(frame_sha)
@@ -139,7 +156,11 @@ def build(order,selection,source_dir):
           "job_id":f"{order['cycle_id']}_photo_{n+1:02d}",
           "source_file":str(path),"source_sha256":frame_sha,
           "source_film_sha256":source_video_sha,
-          "extraction_index":recorded.get("extraction_index"),
+          "extraction_index":recorded["extraction_index"],
+          "source_pts":recorded["source_pts"],
+          "source_pts_time_s":recorded["source_pts_time_s"],
+          "source_time_base":recorded["source_time_base"],
+          "source_pts_logged_from_decode":True,
           "exact_source_timecode_verified":False,
           "source_raster_px":[width,height],
           "target_raster_px":[720,1280],
@@ -158,7 +179,7 @@ def build(order,selection,source_dir):
     return {"version":"V102_SOURCE_LOCKED_I2I_JOBS",
       "cycle_id":order["cycle_id"],"episode_id":order["episode_id"],
       "source_video_sha256":source_video_sha,
-      "frame_provenance_guard":"V111_EXTRACTED_PNG_SHA256_MATCH_SCOUT",
+      "frame_provenance_guard":"V112_SOURCE_PTS_AND_PNG_SHA256_MATCH_SCOUT",
       "original_frame_jobs":jobs,"photos_requested":5,
       "visual_duplicate_guard":visual_guard,
       "historical_shot_distinctness_verified":False,
