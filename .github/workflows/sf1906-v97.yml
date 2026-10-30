@@ -5,12 +5,14 @@ on:
     paths: [".github/workflows/sf1906-v97.yml"]
 permissions:
   contents: read
+  actions: read
 jobs:
   preview:
     runs-on: ubuntu-latest
     timeout-minutes: 42
     env:
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -18,8 +20,14 @@ jobs:
           python-version: "3.11"
       - name: Install offline and free image restoration dependencies
         run: |
-          ffmpeg -version | head -n 1
-          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2" "gradio_client>=1.3,<3"
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2" "gradio_client>=1.3,<3" "imageio-ffmpeg>=0.5,<1"
+      - name: Reuse four actual free I2I photo files from completed prior attempt
+        shell: bash
+        run: |
+          mkdir -p output/storia_sf_1906_v97
+          gh run download 41048946935 --repo "$GITHUB_REPOSITORY" --name SF1906_V97_REAL_ARCHIVE_QA_PREVIEW --dir output/storia_sf_1906_v97
+          test -s output/storia_sf_1906_v97/PHOTO_QA.json
+          ls -lh output/storia_sf_1906_v97/PHOTO_AI_*.png
       - name: Create historical film QA preview without spending credits
         run: python -u tools/storia_sf_1906_v97_preflight.py
       - name: Save MP4 and frame comparisons for inspection
