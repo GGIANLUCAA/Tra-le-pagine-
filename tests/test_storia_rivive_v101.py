@@ -18,6 +18,19 @@ flag=load("storia_rivive_flag_title_v101")
 scout=load("storia_rivive_scout_v101")
 frame_rank=load("storia_rivive_frame_rank_v101")
 i2i=load("storia_rivive_i2i_prepare_v102")
+def bind_scout_frame_hashes(folder):
+    """Offline stand-in for V111 scout provenance; no claim of real film decoding."""
+    report_path=folder/"SCOUT_REPORT.json"
+    report=json.loads(report_path.read_text())
+    report["frame_provenance_source_sha256"]=i2i.sha(folder/"ORIGINAL_ARCHIVE.webm")
+    report["frame_provenance_version"]="V111_EXTRACTED_FRAME_SHA256"
+    report["frame_provenance"]=[
+        {"filename":p.name,"sha256":i2i.sha(p),"extraction_index":idx,
+         "exact_source_timecode_verified":False,"historical_camera_shot_verified":False}
+        for idx,p in enumerate(sorted((folder/"original_frames").glob("frame_*.png")))
+    ]
+    report_path.write_text(json.dumps(report))
+
 PROFILE={"format":"storia_rivive","schedule_hours":3,"paid_calls_allowed":False,"social_autopublish":False}
 BANK={"candidates":[
     {"id":"paris_swim_1918","source_page":"https://commons.wikimedia.org/wiki/File:Example.webm","license":"CC0_as_declared","year":1918},
@@ -94,6 +107,7 @@ class V101Tests(unittest.TestCase):
                 draw.rectangle((x,70,x+150,650),fill=(220,220,220))
                 draw.ellipse((110,180+(i-1)*60,450,400+(i-1)*60),fill=(110,110,110))
                 im.save(d/"original_frames"/("frame_%02d.png"%i))
+            bind_scout_frame_hashes(d)
             order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
                    "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
                    "paid_api_call_permitted":False,"publish_permitted":False,
@@ -125,6 +139,7 @@ class V101Tests(unittest.TestCase):
             for i in range(1,6):
                 ImageEnhance.Brightness(original).enhance(0.95+i*.02).save(
                     d/"original_frames"/("frame_%02d.png"%i))
+            bind_scout_frame_hashes(d)
             order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
                    "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
                    "paid_api_call_permitted":False,"publish_permitted":False,
@@ -132,6 +147,46 @@ class V101Tests(unittest.TestCase):
             selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
                        "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
             with self.assertRaisesRegex(ValueError,"VISUAL_NEAR_DUPLICATE_SOURCE_FRAMES"):
+                i2i.build(order,selection,d)
+
+    def test_i2i_rejects_source_frame_modified_after_scout_hash(self):
+        from PIL import Image, ImageDraw
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic film bytes")
+            (d/"SCOUT_REPORT.json").write_text(json.dumps({
+                "status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
+                "original_sha256":i2i.sha(d/"ORIGINAL_ARCHIVE.webm")}))
+            for i in range(1,6):
+                im=Image.new("RGB",(1280,720),(35,35,35))
+                ImageDraw.Draw(im).rectangle((i*170,60,i*170+120,650),fill=(200,200,200))
+                im.save(d/"original_frames"/("frame_%02d.png"%i))
+            bind_scout_frame_hashes(d)
+            Image.new("RGB",(1280,720),(123,123,123)).save(
+                d/"original_frames"/"frame_03.png")
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-20261030-1200","episode_id":"test_film",
+                   "paid_api_call_permitted":False,"publish_permitted":False,
+                   "blocking_issues":[]}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            with self.assertRaisesRegex(ValueError,"SOURCE_FRAME_SHA_MISMATCH_WITH_SCOUT"):
+                i2i.build(order,selection,d)
+
+    def test_i2i_rejects_legacy_scout_without_frame_provenance(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp)
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic film bytes")
+            (d/"SCOUT_REPORT.json").write_text(json.dumps({
+                "status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
+                "original_sha256":i2i.sha(d/"ORIGINAL_ARCHIVE.webm")}))
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-20261030-1200","episode_id":"test_film",
+                   "paid_api_call_permitted":False,"publish_permitted":False,
+                   "blocking_issues":[]}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            with self.assertRaisesRegex(ValueError,"FRAME_PROVENANCE_FILM_SHA_MISMATCH_OR_MISSING"):
                 i2i.build(order,selection,d)
 
     def test_i2i_preflight_blocks_unverified_italian_rights(self):
