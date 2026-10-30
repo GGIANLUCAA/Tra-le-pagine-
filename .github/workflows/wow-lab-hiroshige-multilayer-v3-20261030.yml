@@ -1,0 +1,126 @@
+name: "WOW LAB V3 · Hiroshige multi-object paper theatre · independent"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-hiroshige-bluebird-multilayer-v3-20261030
+    paths:
+      - "wow_lab/experiments/hiroshige_bird/render_multilayer_v3.py"
+      - ".github/workflows/wow-lab-hiroshige-multilayer-v3-20261030.yml"
+permissions:
+  contents: read
+concurrency:
+  group: wow-lab-hiroshige-multilayer-v3-only
+  cancel-in-progress: false
+jobs:
+  render_verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install only free local CPU rendering tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+      - name: Fetch and verify authentic Met CC0 print
+        run: |
+          python wow_lab/experiments/hiroshige_bird/source.py
+          python - <<'PY'
+          import json
+          p="wow_lab/experiments/hiroshige_bird/sources/SOURCE_PROVENANCE.json"
+          d=json.load(open(p))
+          assert d["artwork_id"]==36725 and d["isPublicDomain"]
+          assert d["license"]=="Met Open Access CC0" and d["original_sha256"]
+          print("Source licensed and verified")
+          PY
+      - name: Render complete independent 12.5-second MP4 with original sound
+        run: |
+          python -m py_compile wow_lab/experiments/hiroshige_bird/render_multilayer_v3.py
+          python wow_lab/experiments/hiroshige_bird/render_multilayer_v3.py \
+            --source wow_lab/experiments/hiroshige_bird/sources/HIROSHIGE_36725_WORK.png \
+            --original wow_lab/experiments/hiroshige_bird/sources/HIROSHIGE_36725_ORIGINAL.jpg \
+            --output wow_lab/experiments/hiroshige_bird/output_v3
+      - name: Technical QA, source SHA and packaging
+        run: |
+          python - <<'PY'
+          import json,zipfile,pathlib,subprocess
+          root=pathlib.Path("wow_lab/experiments/hiroshige_bird")
+          q=json.loads((root/"output_v3/QA.json").read_text())
+          p=json.loads((root/"sources/SOURCE_PROVENANCE.json").read_text())
+          assert q["image_original_sha256"]==p["original_sha256"]
+          assert q["status"]=="needs_artistic_review" and q["technical_pass"]
+          assert q["source_object_id"]==36725 and q["paid_api_cost"]==0 and not q["social_published"]
+          assert q["masks"]["bird_full"]["bbox"][1]<160
+          assert q["masks"]["bird_full"]["bbox"][3]>725
+          v=root/"output_v3/HIROSHIGE_BLUEBIRD_WOW_V3_MULTILAYER.mp4"
+          assert v.stat().st_size>200000
+          res=subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-i",str(v),"-f","null","-"],capture_output=True,text=True,timeout=110)
+          assert res.returncode==0, res.stderr
+          z=root/"output_v3/HIROSHIGE_BLUEBIRD_WOW_V3_ANDROID_KIT.zip"
+          with zipfile.ZipFile(z) as arc:
+            assert arc.testzip() is None
+            assert v.name in arc.namelist()
+          print("WOW LAB V3: technical QA pass; artistic approval still pending")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_HIROSHIGE_V3_MULTILAYER_ANDROID
+          path: wow_lab/experiments/hiroshige_bird/output_v3/*
+          retention-days: 30
+          if-no-files-found: error
+  publish_experimental_files:
+    needs: render_verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: WOW_LAB_HIROSHIGE_V3_MULTILAYER_ANDROID
+          path: output/
+      - name: Publish only separate prerelease, never import to ArtVision site
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="wow-lab-hiroshige-bluebird-multilayer-v3-20261030"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" \
+              output/HIROSHIGE_BLUEBIRD_WOW_V3_MULTILAYER.mp4 \
+              output/HIROSHIGE_BLUEBIRD_WOW_V3_ANDROID_KIT.zip \
+              output/09_BEFORE_AFTER.jpg \
+              output/10_CONTACT_SHEET.jpg \
+              output/02_MASK_AUDIT.jpg \
+              output/QA.json \
+              --title "WOW LAB V3 · Hiroshige · Bluebird multi-object 2.5D" \
+              --notes "Original verified Met Open Access CC0 print 36725. New 12.5s H.264/AAC 720x1280 video: complete silhouette including long tail and head, three flower groups, six floating petals animated in sequence, paper-cut portal and original sound. This is an experimental 2.5D illustration, not real 3D. Technical QA passed, artistic review still needed. No paid APIs, Vidu use, social publishing, main branch changes or core ArtVision interference." \
+              --target experiment/wow-lab-hiroshige-bluebird-multilayer-v3-20261030 \
+              --prerelease
+          fi
+      - name: Make a second Android-friendly RAW MP4 and ZIP mirror
+        run: |
+          set -euo pipefail
+          mkdir -p wow_lab/public_previews
+          cp output/HIROSHIGE_BLUEBIRD_WOW_V3_MULTILAYER.mp4 wow_lab/public_previews/hiroshige-bluebird-multilayer-v3-20261030.mp4
+          cp output/HIROSHIGE_BLUEBIRD_WOW_V3_ANDROID_KIT.zip wow_lab/public_previews/hiroshige-bluebird-multilayer-v3-20261030.zip
+          python - <<'PY'
+          import zipfile
+          p="wow_lab/public_previews/hiroshige-bluebird-multilayer-v3-20261030.mp4"
+          assert open(p,"rb").read(16)[4:8]==b"ftyp"
+          z="wow_lab/public_previews/hiroshige-bluebird-multilayer-v3-20261030.zip"
+          with zipfile.ZipFile(z) as a:assert a.testzip() is None
+          PY
+          git config user.name "WOW LAB experimental publisher"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wow_lab/public_previews/hiroshige-bluebird-multilayer-v3-20261030.mp4 wow_lab/public_previews/hiroshige-bluebird-multilayer-v3-20261030.zip
+          if ! git diff --cached --quiet; then
+            git commit -m "WOW LAB V3: independent Android raw download mirrors"
+            git push origin HEAD:experiment/wow-lab-hiroshige-bluebird-multilayer-v3-20261030
+          fi
