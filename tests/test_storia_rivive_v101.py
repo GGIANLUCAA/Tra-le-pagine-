@@ -17,6 +17,7 @@ auto=load("storia_rivive_autopilot_v101")
 flag=load("storia_rivive_flag_title_v101")
 scout=load("storia_rivive_scout_v101")
 frame_rank=load("storia_rivive_frame_rank_v101")
+i2i=load("storia_rivive_i2i_prepare_v102")
 PROFILE={"format":"storia_rivive","schedule_hours":3,"paid_calls_allowed":False,"social_autopublish":False}
 BANK={"candidates":[
     {"id":"paris_swim_1918","source_page":"https://commons.wikimedia.org/wiki/File:Example.webm","license":"CC0_as_declared","year":1918},
@@ -65,6 +66,30 @@ class V101Tests(unittest.TestCase):
             self.assertEqual(len(result["preselected"]),5)
             self.assertEqual(result["approved_restored_photos"],0)
             self.assertTrue(all(x["approved_for_i2i"] is False for x in result["preselected"]))
+    def test_i2i_manifest_locks_five_real_source_frames(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test only")
+            for i in range(1,6):
+                Image.new("RGB",(640,480),(20*i,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
+                   "paid_api_call_permitted":False,"publish_permitted":False}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            result=i2i.build(order,selection,d)
+            self.assertEqual(len(result["original_frame_jobs"]),5)
+            self.assertEqual(result["photos_generated"],0)
+            self.assertEqual(result["provider_requests_sent"],0)
+            self.assertTrue(all(x["source_sha256"] and x["request_sent"] is False for x in result["original_frame_jobs"]))
+    def test_i2i_manifest_blocks_missing_source_frame(self):
+        with tempfile.TemporaryDirectory() as temp:
+            with self.assertRaises(ValueError):
+                i2i.build({"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                    "paid_api_call_permitted":False,"publish_permitted":False},
+                    {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                     "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]},Path(temp))
     def test_source_rights_not_self_approved(self):
         a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE)
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",a["blocking_issues"])
