@@ -1,0 +1,78 @@
+{
+  "schema": "artvision-v55-archive-staging-v1",
+  "review_state": "rendered_needs_review",
+  "artwork": "Under the Wave off Kanagawa (The Great Wave)",
+  "artist": "Katsushika Hokusai",
+  "Met_object_id": 45434,
+  "Met_accession": "JP1847",
+  "physical_print_cm": {
+    "height": 25.7,
+    "width": 37.9
+  },
+  "original_image_SHA256": "cbb9988f2f18b9180a1cc0cf5dbb0e3bbf8f2e85d17930cf6ca9ab36fac36303",
+  "source_art_URL": "https://www.metmuseum.org/art/collection/search/45434",
+  "source_rights": "Metropolitan Museum of Art Open Access / Public Domain / CC0",
+  "music": {
+    "title": "Water Lily",
+    "author": "Kevin MacLeod",
+    "recording_SHA256": "b8c4f3b03a50af34c01a3f3b986a3d411f56a6c0c9a5b00807ccb5d83c74e8c6",
+    "license": "CC BY 4.0",
+    "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400035",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "voice": {
+    "provider": "Google Gemini 3.8 Flash TTS",
+    "voice": "Gacrux",
+    "original_WAV_sha256": "9ddb4843356843d84994b12b3db05c47119311f9cb42626aff1acf59ff03f913",
+    "spoken_duration_seconds": 231.04,
+    "script_words": 565,
+    "ASR_match_fraction": 0.8747855917667239,
+    "shared_exact_AAC_sha256": "fc28ce63b9ae9b86785da63af3c4d4e8e12cf9cc7c705d2348607a55b4ad8580"
+  },
+  "package": {
+    "complete_zip_name": "HOKUSAI_4X1_PACCHETTO_COMPLETO_V76.zip",
+    "complete_zip_SHA256": "6c4b51689b509e81d01a2aedf9732120b08accae7e01c3ec9c2c24396ec039d1",
+    "android_zip_name": "HOKUSAI_QUATTRO_FILMATI_ANDROID_V76.zip",
+    "android_zip_SHA256": "bc51f80990c81044535422d820e84ecf91d35d39c129ca7e5791510da64dd884"
+  },
+  "verification": {
+    "video_full_decode": "passed",
+    "four_distinct_MP4_SHA": "passed",
+    "aac_identical_between_Critico": "passed",
+    "zip_crc": "passed",
+    "human_full_speed_visual_audio_review": "pending",
+    "V25_approved": false,
+    "private_archive_imported": false,
+    "private_download_playback_verified": false,
+    "social_auto_published": false,
+    "paid_video_AI_calls": 0,
+    "actual_Google_TTS_cost": "not independently verified"
+  },
+  "variant": "critico_museum",
+  "video_key": "02_Hokusai_Critico_Museum_Android.mp4",
+  "video_sha256": "76576d24242d4c173502d85acd34d7c233fbeb6f55e00e05a5c6e8ae15ac93bb",
+  "video_bytes": 33384102,
+  "duration_seconds": 232.7,
+  "video_codec": "H264/AAC",
+  "display_resolution": "720x1280",
+  "posts": {
+    "facebook": "Una stampa larga soltanto 37,9 centimetri può contenere una mareggiata gigantesca. Il Critico Museum attraversa una sala digitale ricostruita, si avvicina alla Grande onda di Hokusai, segue l'onda, il Fuji e gli uomini nei battelli, poi ritorna allo stesso foglio incorniciato. La narrazione Google Gacrux è identica a quella della versione Standard. La sala e il montaggio conservativo sono ricostruzioni dichiarate, NON riprese dell'allestimento Met.",
+    "instagram": "Da un piccolo foglio di carta a un oceano. 🌊 Museum Immersion di Hokusai, con camera continua e stessa critica narrata dello Standard. Sala e cornice sono ricostruzioni digitali dichiarate, non un museo filmato dal vivo. #MuseumImmersion #Hokusai #ArtVision",
+    "tiktok": "Sembra un'onda gigantesca, ma il supporto originale misura 25,7 × 37,9 cm. 😲 Entra con noi in una sala museo ricostruita e scopri la Grande onda di Hokusai, senza inventare persone o animare l'acqua. #Hokusai #MuseumImmersion",
+    "youtube": "THE GREAT WAVE — MUSEUM IMMERSION CRITICO | Katsushika Hokusai. Visita cinematografica digitale alla stampa Met JP1847, c. 1830–32, rispettandone le dimensioni documentate (25,7 × 37,9 cm). Identico copione e WAV Gacrux del Critico Standard; regia Museum continua differente. ATTENZIONE: ambiente e montaggio conservativo sono ricostruzioni artistiche, NON la vera sala del Met o una cornice storica. Arte PD/Open Access; musica Water Lily — Kevin MacLeod CC BY 4.0."
+  },
+  "camera_QA": {
+    "V57_peak_grayscale_MAD": 28.042,
+    "hard_cut_threshold": 35,
+    "hard_cuts": 0,
+    "passed": true,
+    "museum_room": "DECLARED DIGITAL RECONSTRUCTION, not Metropolitan Museum gallery",
+    "frame": "DECLARED MODERN NEUTRAL CONSERVATION MOUNT, not original historic frame",
+    "old_rejected_versions": [
+      "V74 oversized gallery label",
+      "V75 fast continuous camera"
+    ],
+    "delivered_version": "V76"
+  },
+  "production_note": "REAL_MP4_RENDERED_AND_CRC_TESTED_IN_CHATGPT; repository has manifest, not the video bytes; private archive not verified"
+}
