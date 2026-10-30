@@ -1,0 +1,59 @@
+name: "La Storia Rivive V98 — 5 real photographic image2image restorations (free)"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v98-bombay-real-photos.yml"]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real_photo_restoration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install photo verification and free image2image client"
+        run: |
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "gradio_client>=1.5,<2"
+          python -m py_compile src/storia_v98_bombay_five_photos.py
+      - name: "Retrieve exact 8 DIFFERENT original archival scene images by GitHub artifact"
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_bombay_v98
+          mkdir -p "$d"
+          curl -fsSL --connect-timeout 20 --max-time 130 --retry 2 \
+            -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12956729021/zip" -o "$d/EIGHT_REAL_SOURCE_FRAMES.zip"
+          cd "$d"
+          unzip -j -q EIGHT_REAL_SOURCE_FRAMES.zip "SOURCE_BW_0*.png" "RESTORED_PHOTO_0*.jpg" "V95_FREE_SOURCE_QA.json"
+          python - <<'PY'
+          import json,hashlib,pathlib
+          q=json.load(open("V95_FREE_SOURCE_QA.json"))
+          assert len(q["selected_scenes"])==8
+          for s in q["selected_scenes"]:
+            i=s["scene"];a=pathlib.Path(f"SOURCE_BW_{i:02d}.png");b=pathlib.Path(f"RESTORED_PHOTO_{i:02d}.jpg")
+            assert hashlib.sha256(a.read_bytes()).hexdigest()==s["original_BW_frame_sha256"]
+            assert hashlib.sha256(b.read_bytes()).hexdigest()==s["existing_AI_color_photo_sha256"]
+          print("ALL_EIGHT_TRUE_ARCHIVAL_FRAMES_MATCH_SHA_PREPAY_ZERO_CREDITS")
+          PY
+      - name: "Make FIVE source-locked modern-looking image2image photos, fail if any weak photo"
+        run: python -u src/storia_v98_bombay_five_photos.py
+      - name: "Save original-vs-DDColor-vs-REAL-i2i contact, individual images and exact hashes"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V98_BOMBAY_FIVE_TRUE_PHOTOGRAPHIC_IMAGES_BEFORE_PAID_VIDU
+          path: |
+            output/storia_bombay_v98/SOURCE_BW_0*.png
+            output/storia_bombay_v98/RESTORATION_FINAL_*.jpg
+            output/storia_bombay_v98/I2I_PHOTO_*_VARIANT_*.jpg
+            output/storia_bombay_v98/V98_SOURCE_VS_DDCOLOR_VS_I2I.jpg
+            output/storia_bombay_v98/V98_FREE_I2I_QA.json
+          retention-days: 14
+          if-no-files-found: warn
