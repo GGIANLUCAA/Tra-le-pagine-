@@ -1,0 +1,71 @@
+name: "DIAGNOSTICA SOLO LETTURA - Google TTS KEY2"
+on:
+  push:
+    branches:
+      - "test/gemini-second-key-free-tts-20261030"
+    paths:
+      - ".github/workflows/google-tts-key2-diagnostic.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GEMINI_API_KEY2: ${{ secrets.GEMINI_API_KEY2 }}
+    steps:
+      - name: Verifica la seconda chiave e l'elenco modelli - nessuna sintesi
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, urllib.request, urllib.error
+          key=os.environ.get("GEMINI_API_KEY2","").strip()
+          report={"schema":"gemini-key2-readonly-v1","secret_present":bool(key),
+                  "api_authentication":"not_tested","tts_generation":"NOT_ATTEMPTED",
+                  "billing_verified":False,"production_modified":False}
+          target=pathlib.Path("gemini_key2_diagnostic.json")
+          def save():
+              target.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
+              pathlib.Path(os.environ.get("GITHUB_STEP_SUMMARY","/dev/null")).write_text(
+                  "### Gemini API KEY2 - controllo senza sintesi\n\n"+
+                  "- Secret trovato: **"+str(report["secret_present"])+"**\n"+
+                  "- Autenticazione API: **"+report["api_authentication"]+"**\n"+
+                  "- Audio generato: **NO**\n"+
+                  "- Fatturazione verificata: **NO**\n"+
+                  "- Modelli TTS visibili: **"+", ".join(report.get("tts_models",[]))+"**\n")
+          if not key:
+              print("FAIL: GEMINI_API_KEY2 non presente nell'ambiente Actions.")
+              report["api_authentication"]="SECRET_MISSING"
+              save()
+              raise SystemExit(2)
+          req=urllib.request.Request(
+              "https://generativelanguage.googleapis.com/v1beta/models?pageSize=100",
+              headers={"x-goog-api-key":key, "Accept":"application/json"})
+          try:
+              with urllib.request.urlopen(req,timeout=20) as res:
+                  payload=json.load(res)
+              names=[str(m.get("name","")).removeprefix("models/") for m in payload.get("models",[])]
+              tts=sorted(n for n in names if "tts" in n.lower())
+              report.update(api_authentication="OK",tts_models=tts,
+                            expected_model_visible="gemini-3.8-flash-tts" in names)
+              print("PASS: seconda chiave accettata da Gemini API.")
+              print("Modelli TTS disponibili:",", ".join(tts) or "nessuno nell'elenco ricevuto")
+          except urllib.error.HTTPError as ex:
+              report["api_authentication"]="HTTP_"+str(ex.code)
+              print("FAIL: Gemini API HTTP",ex.code,"(chiave non valida, permessi, limiti o servizio non disponibile)")
+          except (TimeoutError,urllib.error.URLError,ValueError) as ex:
+              report["api_authentication"]="CONNECTIVITY_OR_RESPONSE_ERROR"
+              print("FAIL: accesso API non confermato:",type(ex).__name__)
+          save()
+          if report["api_authentication"]!="OK":
+              raise SystemExit(3)
+          PY
+      - name: Salva esito diagnostico (senza chiavi)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GEMINI_KEY2_DIAGNOSTIC
+          path: gemini_key2_diagnostic.json
+          if-no-files-found: warn
+          retention-days: 7
