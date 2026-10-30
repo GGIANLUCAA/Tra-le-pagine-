@@ -1,0 +1,107 @@
+name: "La Storia Rivive V98 — Bombay 1929 real photographic 4+1 and ONE Vidu"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v98-bombay-one-vidu-video.yml"]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-v98-bombay-1929-scene-08-unique-paid-clip
+  cancel-in-progress: false
+jobs:
+  final_montage:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      TAG: storia-rivive-bombay-1929-v98-five-real-i2i-one-real-vidu
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install trusted free video and quality libraries"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg unzip
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+          python -m py_compile src/storia_v98_bombay_vidu_once.py src/storia_v98_bombay_hybrid_compose.py
+      - name: "Retrieve FIVE SHA-verified genuinely generated image-to-image photos and their exact archival B/W source frames"
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_bombay_v98
+          mkdir -p "$d"
+          curl -fsSL --retry 2 --connect-timeout 20 --max-time 130 \
+            -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12964718836/zip" -o "$d/V98_FIVE_NEW_REAL_PHOTOS.zip"
+          unzip -ojq "$d/V98_FIVE_NEW_REAL_PHOTOS.zip" -d "$d" "RESTORATION_FINAL_*.jpg" "SOURCE_BW_*.png" "V98_FIVE_REAL_PHOTOS_QA.json"
+          curl -fsSL --retry 2 --connect-timeout 20 --max-time 130 \
+            -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/12956729021/zip" -o "$d/V95_EIGHT_ORIGINAL_REAL_SHOTS.zip"
+          unzip -ojq "$d/V95_EIGHT_ORIGINAL_REAL_SHOTS.zip" -d "$d" "V95_FREE_SOURCE_QA.json"
+          gh release download storia-rivive-bombay-1929-v92-8-scenes-ai-review \
+            --repo "$GITHUB_REPOSITORY" -p "BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4" -D "$d"
+          printf "3520595c7eb2d9be30d0fc33292726f0ab277d276b838f4d1d213a83c74a3890  $d/BOMBAY_1929_LA_STORIA_RIVIVE_V92.mp4\n" | sha256sum -c -
+          python - <<'PY'
+          import json,pathlib,hashlib
+          d=pathlib.Path("output/storia_bombay_v98")
+          r=json.loads((d/"V98_FIVE_REAL_PHOTOS_QA.json").read_text())
+          s=json.loads((d/"V95_FREE_SOURCE_QA.json").read_text())
+          by={x["scene"]:x for x in s["selected_scenes"]}
+          assert r["all_five_generated_image_to_image"] is True
+          assert {x["scene"] for x in r["photographic_images"]}=={2,4,5,7,8}
+          for row in r["photographic_images"]:
+            i=row["scene"]
+            a=d/f"SOURCE_BW_{i:02d}.png";b=d/f"RESTORATION_FINAL_{i:02d}.jpg"
+            assert hashlib.sha256(a.read_bytes()).hexdigest()==by[i]["original_BW_frame_sha256"]
+            assert hashlib.sha256(b.read_bytes()).hexdigest()==row["new_i2i_photo_sha256"]
+            assert row["method"]=="real_image_to_image_photographic_restoration"
+            assert row["source_to_output_corr"]>=.98
+          print("V98_FIVE_TRUE_I2I_IMAGES_AUTHENTIC_SOURCE_FRAMES_VERIFIED_BEFORE_VIDU_SPEND",flush=True)
+          PY
+      - name: "Create EXACTLY ONE new real Vidu 5s motion from the SAME 1929 film frame, 16 prepaid credits maximum"
+        run: python -u src/storia_v98_bombay_vidu_once.py
+      - name: "Assemble 4 real moving-film→freeze→i2i photos + 1 actual moving Vidu section with continuous original audio"
+        run: python -u src/storia_v98_bombay_hybrid_compose.py
+      - name: "Archive MP4, Vidu original and processed, full QA and rights-review previews privately"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V98_BOMBAY_REAL_I2I_4PLUS1_GENUINE_VIDU_PREVIEW_AND_QA
+          path: |
+            output/storia_bombay_v98/BOMBAY_1929_V98_4PHOTO_1VIDU.mp4
+            output/storia_bombay_v98/BOMBAY_1929_V98_ANDROID.zip
+            output/storia_bombay_v98/VIDU_BOMBAY_1929_08_ORIGINAL.mp4
+            output/storia_bombay_v98/VIDU_BOMBAY_1929_08_BW_COLOR_MOVING.mp4
+            output/storia_bombay_v98/V98_VIDU_QA_PRIVATE.json
+            output/storia_bombay_v98/V98_QA_PUBLIC.json
+            output/storia_bombay_v98/V98_FIVE_SOURCE_TO_RESTORATION_PAIRS.jpg
+            output/storia_bombay_v98/COVER_V98.jpg
+            output/storia_bombay_v98/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Publish only a technical preview Android MP4 and ZIP to a real GitHub Release (not social or website)"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_bombay_v98
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "EXISTING_RELEASE_DEDUPED"; exit 0
+          fi
+          gh release create "$TAG" \
+            "$d/BOMBAY_1929_V98_4PHOTO_1VIDU.mp4" \
+            "$d/BOMBAY_1929_V98_ANDROID.zip" \
+            "$d/VIDU_BOMBAY_1929_08_BW_COLOR_MOVING.mp4" \
+            "$d/COVER_V98.jpg" "$d/V98_FIVE_SOURCE_TO_RESTORATION_PAIRS.jpg" "$d/V98_QA_PUBLIC.json" \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "La Storia Rivive · BOMBAY 1929 V98 · 4 real photographic restorations + 1 Vidu" \
+            --notes "PREVIEW FOR ARTISTIC REVIEW. Five genuinely distinct original historical archival shots from Bombay (Jan 1929). Four original black-and-white moving films freeze on their authentic frame and become real image-to-image photographic color restorations, NOT DDColor-only stills. The final fifth shot uses original film B/W from precisely the same source frame, continuing into one real Vidu Q2 Pro Fast 5s clip at color. A single 16-credit paid generation, no retries. All AI color, faces, textiles, details and movement are interpretive, not historical footage in genuine color. Human semantic and Italian territorial rights approval is pending; no social/media or private site publication."
+          names="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          grep -Fqx "BOMBAY_1929_V98_4PHOTO_1VIDU.mp4" <<< "$names"
+          grep -Fqx "BOMBAY_1929_V98_ANDROID.zip" <<< "$names"
+          echo "V98_REAL_ANDROID_MP4_ZIP_VERIFIED_ON_GITHUB"
