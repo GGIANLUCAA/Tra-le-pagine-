@@ -1,0 +1,47 @@
+name: "WOW LAB · Bluebird Android raw direct-file mirror"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-hiroshige-bluebird-20261030
+    paths:
+      - ".github/workflows/wow-lab-bluebird-raw-mirror-20261030.yml"
+permissions:
+  contents: write
+concurrency:
+  group: "wow-lab-bluebird-raw-mirror-20261030"
+  cancel-in-progress: false
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: true
+      - name: Copy verified release MP4 into isolated public raw path
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="wow-lab-hiroshige-bluebird-36725-v1-20261030"
+          mkdir -p wow_lab/public_previews
+          if [ -f wow_lab/public_previews/hiroshige-bluebird-20261030.mp4 ]; then
+            echo "Direct mirror already present"
+            exit 0
+          fi
+          gh release download "$tag" --pattern HIROSHIGE_BLUEBIRD_WOW_ANDROID.mp4 --dir wow_lab/public_previews
+          mv wow_lab/public_previews/HIROSHIGE_BLUEBIRD_WOW_ANDROID.mp4 wow_lab/public_previews/hiroshige-bluebird-20261030.mp4
+          test "$(wc -c < wow_lab/public_previews/hiroshige-bluebird-20261030.mp4)" -gt 100000
+          python - <<'PY'
+          p="wow_lab/public_previews/hiroshige-bluebird-20261030.mp4"
+          with open(p,"rb") as f:
+              assert f.read(16)[4:8]==b'ftyp'
+          print("Valid MP4 header and size")
+          PY
+          git config user.name "WOW LAB isolated file publisher"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wow_lab/public_previews/hiroshige-bluebird-20261030.mp4
+          git commit -m "WOW LAB: Android-friendly direct raw MP4 mirror, no main branch change"
+          git push origin HEAD:experiment/wow-lab-hiroshige-bluebird-20261030
+          echo "RAW_URL=https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/experiment/wow-lab-hiroshige-bluebird-20261030/wow_lab/public_previews/hiroshige-bluebird-20261030.mp4"
