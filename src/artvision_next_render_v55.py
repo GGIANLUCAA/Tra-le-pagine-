@@ -72,6 +72,31 @@ def choose(root=ROOT):
                             bstates={v:bosch["variants"][v]["status"] for v in VARIANTS}
                             bcount=sum(s in ("rendered_needs_review","approved_for_final_delivery")
                                        for s in bstates.values())
+                            fifth=lock.get("authorized_fifth_pilot",{})
+                            if (bcount==4 and fifth.get("enabled") is True and
+                                fifth.get("phase")=="fifth_pilot_wright_only" and
+                                fifth.get("allowed_group_id")=="wright_air_pump_1768" and
+                                fifth.get("automatic_sixth_artwork_selection") is False):
+                                wright=next((g for g in queue["groups"] if
+                                    g.get("group_id")==fifth.get("allowed_group_id") and
+                                    g.get("artwork")==fifth.get("allowed_title")),None)
+                                if wright is None:
+                                    return {"status":"fifth_pilot_missing","rendering_allowed":False,
+                                            "new_artwork_required":False}
+                                for v in VARIANTS:
+                                    enforce_pilot_project({"serial_mode":"artvision_4x1",
+                                        "topic":wright["artwork"],"artvision_4x1_variant":v},root)
+                                fifth_states={v:wright["variants"][v]["status"] for v in VARIANTS}
+                                fifth_count=sum(s in ("rendered_needs_review","approved_for_final_delivery")
+                                                for s in fifth_states.values())
+                                return {"status":"fifth_pilot_four_rendered_review_pending" if fifth_count==4 else "fifth_pilot_in_progress",
+                                        "work":wright["group_id"],"artwork":wright["artwork"],
+                                        "rendered_count":fifth_count,
+                                        "approved_count":sum(s=="approved_for_final_delivery" for s in fifth_states.values()),
+                                        "variants":fifth_states,
+                                        "rendering_allowed":fifth_count!=4,
+                                        "new_artwork_required":False,"new_sixth_artwork_allowed":False,
+                                        "next_action":"Wright five-work pilot has four genuine MP4s, one same Gacrux WAV and documented real frame. No automatic sixth work; V25 review, archivability, access only."}
                             return {"status":"fourth_pilot_four_rendered_review_pending" if bcount==4
                                       else "fourth_pilot_in_progress",
                                     "work":bosch["group_id"],"artwork":bosch["artwork"],

@@ -22,7 +22,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_artvision_bosch_fourth_pilot_v76.py' -v
           python -m unittest discover -s tests -p 'test_artvision_pilot_guard_v58.py' -v
-      - name: Validate JSON, no fifth work, no auto approval
+      - name: Validate Bosch completed four-review states and exact fifth Wright scope
         run: |
           python - <<'PY'
           import json
@@ -37,13 +37,20 @@ jobs:
           group=[g for g in queue['groups'] if g['group_id']==fourth['allowed_group_id']]
           assert len(group)==1 and group[0]['artwork']==fourth['allowed_title']
           states=group[0]['variants']
-          assert all(states[v]['status']=='planned' for v in ('critico_standard','critico_museum','cinema_museum'))
-          cs=states['cinema_standard']
-          assert cs['status'] in ('planned','rendered_needs_review')
-          if cs['status']=='rendered_needs_review':
-            assert cs['rendered_mp4_sha256']=='3eb4a29c00b5d937f9385fef583a39dcccb754073328258db9f8b3b940acb2ba'
-            assert cs['rendered_mp4_bytes']==17461112
-            assert cs['zip_crc_pass'] is True and cs['V25_approved'] is False
-          assert all(v.get('V25_approved') is False for v in group[0]['variants'].values())
-          print('Bosch-only V76 scoped lock + zero fake MP4: PASS')
+          assert all(states[v]['status']=='rendered_needs_review' for v in
+                     ('critico_standard','critico_museum','cinema_standard','cinema_museum'))
+          expected={
+            'critico_standard':'2c59c58185ed3d7c51d280bf9c8442414cddf163a231fef08fd7a37d657b0ded',
+            'critico_museum':'73b1a97d0640123e38184db7f20334c0de4db318594a8dd728ff0e537253854b',
+            'cinema_standard':'3eb4a29c00b5d937f9385fef583a39dcccb754073328258db9f8b3b940acb2ba',
+            'cinema_museum':'67ad38e0c3ec63c6c6a9e2c925252a515208dd357d0e6c26b0c5dd762177d508'
+          }
+          assert all(states[v]['rendered_mp4_sha256']==sha for v,sha in expected.items())
+          assert all(v.get('V25_approved') is False for v in states.values())
+          fifth=lock['authorized_fifth_pilot']
+          assert fifth['enabled'] and fifth['phase']=='fifth_pilot_wright_only'
+          assert fifth['allowed_group_id']=='wright_air_pump_1768'
+          assert fifth['automatic_sixth_artwork_selection'] is False
+          assert all(g.get('group_id')!='a_sixth_unapproved_artwork' for g in queue['groups'])
+          print('Bosch historical tests preserved; fifth Wright exact authorization; no sixth: PASS')
           PY
