@@ -912,7 +912,30 @@
         "approved_count": 0,
         "status": "FOUR_RENDERED_HUMAN_REVIEW_PENDING",
         "no_auto_second_artwork": true,
-        "next_action": "User visual/audio review all four videos, correct any flaws, obtain V25 approval and verify private archive before series; do not rerender approved variants."
+        "next_action": "User visual/audio review all four videos, correct any flaws, obtain V25 approval and verify private archive before series; do not rerender approved variants.",
+        "v89_verified_backup_library": {
+          "date": "2026-10-30",
+          "type": "actual_zip_bytes_readback_not_site_playback",
+          "original_zip_sha256": "bd075b4f39600eea64712970e812a2ca967128326f27674a79d3cc7da40ed462",
+          "original_zip_bytes": 117280478,
+          "backup_library_path": "/ArtVision/Socrate/V89_recupero_originali/ARTVISION_SOCRATES_4X1_COMPLETO_PILOTA_V67_BACKUP.zip",
+          "backup_library_file_id": "libfile_4e8ed3559f6c8191ad88b2c47b2db807",
+          "backup_download_readback_sha256": "bd075b4f39600eea64712970e812a2ca967128326f27674a79d3cc7da40ed462",
+          "backup_zip_crc_pass": true,
+          "zip_members": 87,
+          "cover_count": 4,
+          "post_count": 16,
+          "original_mp4_sha256_match_all_four": true,
+          "full_ffmpeg_decode_all_four": true,
+          "critic_aac_bit_identical_sha256": "3f1374c08615822bd8c2fd41597d98dbcc2335ca3235543e5e978d9feee44669",
+          "original_wav_recovered_sha256": "b26b6826380c8dcc9b27a590bb6ecd43dd12107dafd367e429ad43351bd8a476",
+          "museum_frame_visible_during_chains_at_seconds": 111,
+          "artistic_qa": "needs_non_destructive_museum_revision",
+          "site_playback_verified": false,
+          "android_playback_verified": false,
+          "v25_approved_count": 0,
+          "evidence": "docs/productions/2026-10-30-artvision-v89-real-byte-readback-socrates-klimt.md"
+        }
       }
     },
     {
@@ -1087,7 +1110,26 @@
         "shared_critic_voice_sha256": "fe5bab5c9c52567c04959b387459178caa4a268c8f64671582bab10c81214371",
         "release_pending": true,
         "private_archive_pending": true,
-        "next_action": "Get actual owner review all four Klimt variants; correct flaws as SAME slots; V25/private archive separate."
+        "next_action": "Get actual owner review all four Klimt variants; correct flaws as SAME slots; V25/private archive separate.",
+        "v89_partial_recovery": {
+          "date": "2026-10-30",
+          "dropbox_zip_metadata_size_bytes": 65968295,
+          "dropbox_four_mp4_metadata_sizes_match_queue": true,
+          "locally_recovered_mp4_sha_verified": [
+            "critico_museum",
+            "cinema_museum"
+          ],
+          "locally_recovered_mp4_full_decode_pass": [
+            "critico_museum",
+            "cinema_museum"
+          ],
+          "dropbox_zip_readback_hash_verified": false,
+          "dropbox_materialization_error": "Dropbox file materialize failed",
+          "site_playback_verified": false,
+          "android_playback_verified": false,
+          "v25_approved_count": 0,
+          "evidence": "docs/productions/2026-10-30-artvision-v89-real-byte-readback-socrates-klimt.md"
+        }
       },
       "notes": "SECOND work ONLY. Do not reuse Klimt historical V2 or V6 videos as new 4×1 variants; existing code/script can be reused after verified original identities, licenses, and fresh footage. No fake MP4s, no paid video API.",
       "note": "Four real new Klimt MP4s technically produced by approved artistic 4x1 pipeline V72/V73 on 2026-10-29, four distinct SHA. Museum floor-camera flaw corrected; V73 supersedes bad reviews of identical slots. 0 V25 approvals, website import not verified. No social posting."
