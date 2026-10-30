@@ -55,9 +55,9 @@ def inspect(page,outdir):
     frames=outdir/"original_frames";frames.mkdir(exist_ok=True)
     period=max(1.0,duration/12)
     subprocess.run(["ffmpeg","-nostdin","-y","-v","error","-i",str(film),
-                    "-vf","fps=1/"+str(round(period,4))+",scale=360:-2",
-                    "-frames:v","12",str(frames/"frame_%02d.jpg")],timeout=150,check=True)
-    files=sorted(frames.glob("frame_*.jpg"))
+                    "-vf","fps=1/"+str(round(period,4)),
+                    "-frames:v","12",str(frames/"frame_%02d.png")],timeout=150,check=True)
+    files=sorted(frames.glob("frame_*.png"))
     if len(files)<3:raise ValueError("Not enough real film frames")
     from PIL import Image,ImageDraw
     board=Image.new("RGB",(1440,792),(18,18,18));draw=ImageDraw.Draw(board)
@@ -78,6 +78,7 @@ def main():
     order=json.loads(Path(a.order).read_text(encoding="utf-8"))
     try:report=inspect(order["source_page"],dir)
     except Exception as e:
+        print("SOURCE_SCOUT_ERROR",type(e).__name__,str(e)[:300])
         report={"status":"SOURCE_SCOUT_BLOCKED_NO_PRODUCTION","error_type":type(e).__name__,
                 "reason":str(e)[:300],"social_publish_permitted":False}
     (dir/"SCOUT_REPORT.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
