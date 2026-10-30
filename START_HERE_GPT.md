@@ -1,5 +1,9 @@
 # Inizia da qui — studio video di Gianluca
 
+## V99 · Come non peggiorare «La Storia Rivive» rispetto al video V98
+Il benchmark minimo **accettato dall'utente** è San Francisco 1906 V98. Per ogni NUOVO 4+1 usare `docs/LA_STORIA_RIVIVE_V99_ANTI_REGRESSIONE.md`, il codice `src/storia_rivive_v99_golden_benchmark.py` e il gate finale V91/V94/V96/V99. Comparare video reale e asset originali al riferimento SHA verificato: 4 fotografie reali image-to-image da frame B/N, 1 sola vera Vidu che prosegue dalla propria ripresa storica, ritmo e palette coerenti, MP4+audio, ZIP Android. Un controllo tecnico passato non equivale a giudizio artistico: guardare e confrontare scene/volti/oggetti. Fermare regressioni, non consegnare come finale un MP4 bocciato. Non generare Vidu a pagamento per errori di montaggio; non cambiare ArtVision 4×1.
+
+
 ## BLOCCO V96: prima di qualsiasi NUOVO video storico, leggimi
 `docs/LA_STORIA_RIVIVE_V96_AUDIT_ERRORI_RIPETUTI_20261030.md` e `src/storia_rivive_v96_guard.py` spiegano gli errori visti dall'utente (NY V95.1 `44486.mp4`, Bombay `44371.jpg`): DDColor non basta per foto moderne/volti, l'inserimento Vidu da ripresa storica diversa causa stacchi, 4 hold >3s troppo lunghi, colore arancio e maxi titoli opachi coprono/alterano la scena. OBBLIGATORI: 4 foto vere image-to-image source-locked e 1 clip Vidu che prosegue dal *proprio* frame B/N originale, palette e tempistiche scelte, niente persone inventate, QA umano. Nuovo storico 4+1 passa V91+V94+V96 prima di essere definito finito o pubblicato. Il vecchio workflow New York è stato disabilitato; non usare un MP4 tecnicamente valido come master finale. La correzione non richiede nuove spese.
 
