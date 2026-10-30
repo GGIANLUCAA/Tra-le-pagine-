@@ -16,6 +16,7 @@ def load(name):
 auto=load("storia_rivive_autopilot_v101")
 flag=load("storia_rivive_flag_title_v101")
 scout=load("storia_rivive_scout_v101")
+frame_rank=load("storia_rivive_frame_rank_v101")
 PROFILE={"format":"storia_rivive","schedule_hours":3,"paid_calls_allowed":False,"social_autopublish":False}
 BANK={"candidates":[
     {"id":"paris_swim_1918","source_page":"https://commons.wikimedia.org/wiki/File:Example.webm","license":"CC0_as_declared","year":1918},
@@ -54,6 +55,16 @@ class V101Tests(unittest.TestCase):
             self.assertEqual(image.size,(720,1280))
             self.assertEqual(image.getpixel((52,65))[:3],(0,35,149))
             self.assertEqual(image.getpixel((10,10))[3],0)
+    def test_quality_rank_does_not_forge_approved_photos(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            for i in range(12):
+                im=Image.new("RGB",(180,320),(40+i*5,75+i*3,125))
+                im.save(Path(temp)/("frame_%02d.png"%i))
+            result=frame_rank.rank(temp)
+            self.assertEqual(len(result["preselected"]),5)
+            self.assertEqual(result["approved_restored_photos"],0)
+            self.assertTrue(all(x["approved_for_i2i"] is False for x in result["preselected"]))
     def test_source_rights_not_self_approved(self):
         a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE)
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",a["blocking_issues"])
