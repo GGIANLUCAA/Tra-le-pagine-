@@ -85,6 +85,54 @@ def make_subject_panel(source: Image.Image, mask: Image.Image,
     return subject
 
 
+def audit_popout_projection(subject_bgra: np.ndarray, quad: np.ndarray,
+                            progress: float = .78, horizontal_direction: int = 1) -> dict:
+    """Fail closed unless the extracted layer visibly crosses the frame.
+
+    This is geometric evidence only, not artistic approval or true 3D.
+    Called before soundtrack/FFmpeg creation.
+    """
+    if subject_bgra.ndim != 3 or subject_bgra.shape[2] != 4:
+        return {"pass": False, "reasons": ["invalid_subject_layer"]}
+    if quad.shape != (4, 2):
+        return {"pass": False, "reasons": ["invalid_frame_quad"]}
+    sh, sw = subject_bgra.shape[:2]
+    # Match the final output canvas used by the isolated vertical renderer.
+    w, h = 540, 960
+    corners = np.float32([[0, 0], [sw-1, 0], [sw-1, sh-1], [0, sh-1]])
+    matrix = cv2.getPerspectiveTransform(corners, quad.astype(np.float32))
+    layer = cv2.warpPerspective(subject_bgra[:, :, 3], matrix, (w, h))
+    initial = layer > 32
+    frame = np.zeros((h, w), np.uint8)
+    cv2.fillConvexPoly(frame, np.round(quad).astype(np.int32), 255)
+    initial_total = int(np.count_nonzero(initial))
+    if initial_total == 0:
+        return {"pass": False, "reasons": ["empty_projected_subject"]}
+    initial_outside = float(np.count_nonzero(initial & (frame == 0))) / initial_total
+    t = float(np.clip((progress - .22) / .46, 0, 1))
+    lift = t*t*(3-2*t)
+    center = (float(np.mean(quad[:, 0])), float(np.mean(quad[:, 1])))
+    transform = cv2.getRotationMatrix2D(center, 0, 1 + .12*lift)
+    transform[0, 2] += horizontal_direction * 16 * lift
+    transform[1, 2] -= min(h*.105, 110) * lift
+    moved = cv2.warpAffine(layer, transform, (w, h))
+    final = moved > 32
+    final_total = int(np.count_nonzero(final))
+    final_outside = (float(np.count_nonzero(final & (frame == 0))) /
+                     max(final_total, 1))
+    reasons = []
+    if initial_outside > .005:
+        reasons.append("subject_already_outside_frame_at_opening")
+    if final_outside < .012:
+        reasons.append("no_visible_subject_frame_crossing")
+    if final_outside > .65:
+        reasons.append("excessive_subject_displacement")
+    return {"pass": not reasons, "reasons": reasons,
+            "opening_outside_ratio": round(initial_outside, 5),
+            "reveal_outside_ratio": round(final_outside, 5),
+            "true_3d": False, "artistic_approval": False}
+
+
 def composite_popout(base_rgb: np.ndarray, subject_bgra: np.ndarray,
                      quad: np.ndarray, progress: float,
                      horizontal_direction: int = 1) -> np.ndarray:
@@ -97,7 +145,7 @@ def composite_popout(base_rgb: np.ndarray, subject_bgra: np.ndarray,
                                 flags=cv2.INTER_LINEAR,
                                 borderMode=cv2.BORDER_CONSTANT,
                                 borderValue=(0, 0, 0, 0))
-    t = np.clip((progress - .13) / .49, 0, 1)
+    t = np.clip((progress - .22) / .46, 0, 1)
     lift = float(t*t*(3-2*t))
     # 0-2s: source painting. 2-7s: silhouette crosses frame. Final hold.
     center = (float(np.mean(quad[:, 0])), float(np.mean(quad[:, 1])))
