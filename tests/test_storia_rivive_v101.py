@@ -20,6 +20,7 @@ flag=load("storia_rivive_flag_title_v101")
 scout=load("storia_rivive_scout_v101")
 frame_rank=load("storia_rivive_frame_rank_v101")
 i2i=load("storia_rivive_i2i_prepare_v102")
+shot=load("storia_rivive_shot_boundaries_v113")
 def bind_scout_frame_hashes(folder):
     """Synthetic V112 provenance fixture; never a claim of real film decoding."""
     report_path=folder/"SCOUT_REPORT.json"
@@ -33,6 +34,16 @@ def bind_scout_frame_hashes(folder):
          "exact_source_timecode_verified":False,"historical_camera_shot_verified":False}
         for idx,p in enumerate(sorted((folder/"original_frames").glob("frame_*.png")))
     ]
+    # Synthetic boundary fixtures test the guard, NOT authentic camera-shot detection.
+    cuts=[0.5,1.5,2.5,3.5]
+    report["shot_boundary_analysis"]={
+        "version":"V113_FFMPEG_SCENE_CANDIDATES",
+        "source_sha256":report["frame_provenance_source_sha256"],
+        "status":"FIVE_SEGMENTS_POSSIBLE_REVIEW_REQUIRED",
+        "cut_candidate_times_s":cuts,
+        "historical_camera_shots_verified":False}
+    for entry in report["frame_provenance"]:
+        entry["shot_candidate_segment_index"]=shot.segment_for_time(entry["source_pts_time_s"],cuts)
     report_path.write_text(json.dumps(report))
 
 PROFILE={"format":"storia_rivive","schedule_hours":3,"paid_calls_allowed":False,"social_autopublish":False}
@@ -125,6 +136,69 @@ class V101Tests(unittest.TestCase):
             with Image.open(frames/selected["filename"]) as a,Image.open(independently_decoded) as b:
                 self.assertIsNone(ImageChops.difference(a.convert("RGB"),b.convert("RGB")).getbbox())
             self.assertEqual(selected["sha256"],i2i.sha(frames/selected["filename"]))
+
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"),"FFmpeg required")
+    def test_v113_cut_candidates_come_from_real_video_not_frame_differences(self):
+        """Five hard-cut segments versus one continuous shot, decoded from actual MP4."""
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp)
+            def encode(colors,filename):
+                cmd=["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y"]
+                for color in colors:
+                    cmd+=["-f","lavfi","-i",f"color=c={color}:s=640x360:r=6:d=2"]
+                cmd+=["-filter_complex",
+                      "".join(f"[{i}:v]" for i in range(len(colors)))+
+                      f"concat=n={len(colors)}:v=1:a=0[v]",
+                      "-map","[v]","-c:v","mpeg4","-q:v","4",str(d/filename)]
+                subprocess.run(cmd,check=True,timeout=70)
+                return d/filename
+            cuts=encode(["black","white","black","white","black"],"five_shots.mp4")
+            result=shot.detect_cut_candidates(cuts,10.0,"a"*64)
+            self.assertEqual(result["status"],"FIVE_SEGMENTS_POSSIBLE_REVIEW_REQUIRED")
+            self.assertEqual(result["cut_candidate_times_s"],[2.0,4.0,6.0,8.0])
+            self.assertFalse(result["historical_camera_shots_verified"])
+            single=encode(["black"],"single_shot.mp4")
+            blocked=shot.detect_cut_candidates(single,2.0,"b"*64)
+            self.assertEqual(blocked["status"],"INSUFFICIENT_CUT_CANDIDATES")
+            self.assertEqual(blocked["cut_candidate_count"],0)
+
+    def test_v113_i2i_rejects_five_distinct_pngs_from_only_four_segments(self):
+        from PIL import Image,ImageDraw
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic fixture, not a real film")
+            (d/"SCOUT_REPORT.json").write_text(json.dumps({
+                "status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
+                "original_sha256":i2i.sha(d/"ORIGINAL_ARCHIVE.webm")}))
+            for i in range(1,6):
+                im=Image.new("RGB",(1280,720),(35,35,35))
+                ImageDraw.Draw(im).rectangle((i*190,80,i*190+110,640),fill=(225,225,225))
+                im.save(d/"original_frames"/("frame_%02d.png"%i))
+            bind_scout_frame_hashes(d)
+            report_path=d/"SCOUT_REPORT.json"
+            report=json.loads(report_path.read_text())
+            report["shot_boundary_analysis"]["cut_candidate_times_s"]=[0.5,1.5,2.5,9.5]
+            for entry in report["frame_provenance"]:
+                entry["shot_candidate_segment_index"]=shot.segment_for_time(
+                    entry["source_pts_time_s"],[0.5,1.5,2.5,9.5])
+            report_path.write_text(json.dumps(report))
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-test-v113","episode_id":"synthetic_shots",
+                   "paid_api_call_permitted":False,"publish_permitted":False,
+                   "blocking_issues":[]}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            with self.assertRaisesRegex(ValueError,"FIVE_DISTINCT_SHOT_CANDIDATES_NOT_FOUND"):
+                i2i.build(order,selection,d)
+            report["shot_boundary_analysis"]["source_sha256"]="0"*64
+            report_path.write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"SHOT_BOUNDARY_FILM_SHA_MISMATCH"):
+                i2i.build(order,selection,d)
+            report.pop("shot_boundary_analysis")
+            report_path.write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"SHOT_BOUNDARY_EVIDENCE_MISSING_OR_LEGACY"):
+                i2i.build(order,selection,d)
 
     def test_i2i_rejects_duplicate_or_forged_pts_evidence(self):
         from PIL import Image,ImageDraw
