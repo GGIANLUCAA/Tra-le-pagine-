@@ -32,6 +32,7 @@ jobs:
           python -m unittest discover -s tests -p "test_artvision_pilot_queue_v58.py" -v
           python -m unittest discover -s tests -p "test_artvision_next_render_v55.py" -v
           python -m unittest discover -s tests -p "test_artvision_fourth_pilot_v84.py" -v
+          python -m unittest discover -s tests -p "test_artvision_fifth_pilot_v85.py" -v
           python -m unittest discover -s tests -p "test_artvision_third_pilot_v74.py" -v
       - name: Prove adapter entrypoint enforces lock before actual render
         run: |
@@ -55,7 +56,7 @@ jobs:
           output=subprocess.check_output(["python","src/artvision_next_render_v55.py","--json"],text=True)
           status=json.loads(output)
           assert status.get("new_artwork_required") is False, status
-          assert status["status"] in ("pilot_in_progress","existing_jobs_take_priority","pilot_four_rendered_review_pending","pilot_awaiting_explicit_second_pilot","second_pilot_preproduction","second_pilot_in_progress","second_pilot_four_rendered_review_pending","third_pilot_in_progress","third_pilot_four_rendered_review_pending","fourth_pilot_in_progress","fourth_pilot_four_rendered_review_pending"),status
+          assert status["status"] in ("pilot_in_progress","existing_jobs_take_priority","pilot_four_rendered_review_pending","pilot_awaiting_explicit_second_pilot","second_pilot_preproduction","second_pilot_in_progress","second_pilot_four_rendered_review_pending","third_pilot_in_progress","third_pilot_four_rendered_review_pending","fourth_pilot_in_progress","fourth_pilot_four_rendered_review_pending","fifth_pilot_in_progress","fifth_pilot_four_rendered_review_pending"),status
           if status["status"] in ("pilot_four_rendered_review_pending","pilot_awaiting_explicit_second_pilot"):
             assert status["rendered_count"]==4, status
             assert status["rendering_allowed"] is False, status
@@ -69,5 +70,10 @@ jobs:
             assert status["work"]=="bosch_garden_earthly_delights_prado_p002823",status
             assert status["new_fifth_artwork_allowed"] is False,status
             assert status["artwork"]=="The Garden of Earthly Delights",status
+          if status["status"].startswith("fifth_pilot"):
+            assert status["work"]=="wright_air_pump_1768",status
+            assert status["new_sixth_artwork_allowed"] is False,status
+            assert status["rendered_count"]==4,status
+            assert status["rendering_allowed"] is False,status
           print(status["status"])
           PY
