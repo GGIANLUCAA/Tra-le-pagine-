@@ -6,6 +6,8 @@ on:
       - "tests/test_storia_rivive_v150_longer_bw_review.py"
       - "src/storia_rivive_v151_source_locked_handoff.py"
       - "tests/test_storia_rivive_v151_source_locked_handoff.py"
+      - "src/storia_rivive_v152_editorial_preflight.py"
+      - "tests/test_storia_rivive_v152_editorial_preflight.py"
       - ".github/workflows/storia-v150-longer-bw-technical-review.yml"
   workflow_dispatch:
 
@@ -34,6 +36,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p "test_storia_rivive_v150_longer_bw_review.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v151_source_locked_handoff.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v152_editorial_preflight.py" -v
 
   original_source_batch:
     needs: unit_tests
@@ -160,6 +163,11 @@ jobs:
           assert not r["rights_italy_verified"] and not r["artistic_approved"]
           assert not r["publish_permitted"] and not r["gateway_scene_permission_granted"]
           assert not r["source_subjects_are_a_coherent_single_episode_verified"]
+          e=r["editorial_preflight"]
+          assert e["status"]=="V152_EDITORIAL_SOURCE_COHERENCE_BLOCKED"
+          assert e["source_years"]==[1896,1897,1898,1900]
+          assert e["scenes_without_documented_place"]==[2,3,5]
+          assert not e["provider_jobs_may_start"] and not e["rights_italy_verified"]
           print("V151_TRUE_NATIVE_FRAMES_5_NO_AI_NO_VIDU_NO_SPEND")
           PY
       - name: Store original frame pixels and contact sheet for genuine human QA only
@@ -168,6 +176,7 @@ jobs:
           name: STORIA_V151_FIVE_REAL_ORIGINAL_FREEZES_I2I_INPUTS_NOT_GENERATED_${{ github.run_id }}
           path: |
             output/storia_v151_review_ready/V151_SOURCE_LOCKED_HANDOFF.json
+            output/storia_v151_review_ready/V152_EDITORIAL_PREFLIGHT.json
             output/storia_v151_review_ready/V151_FIVE_ORIGINAL_FRAMES_VISUAL_REVIEW.jpg
             output/storia_v151_review_ready/native_frames/*.png
             output/storia_v151_review_ready/review_crops/*.png

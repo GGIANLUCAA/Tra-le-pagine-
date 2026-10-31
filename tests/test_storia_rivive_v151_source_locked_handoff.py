@@ -82,6 +82,11 @@ class V151NativeFrameHandoff(unittest.TestCase):
             self.assertFalse(report["rights_italy_verified"])
             self.assertFalse(report["publish_permitted"])
             self.assertFalse(report["source_subjects_are_a_coherent_single_episode_verified"])
+            editorial=report["editorial_preflight"]
+            self.assertEqual(editorial["status"],"V152_EDITORIAL_SOURCE_COHERENCE_BLOCKED")
+            self.assertFalse(editorial["provider_jobs_may_start"])
+            self.assertEqual(editorial["scenes_without_documented_place"],[2,3,5])
+            self.assertTrue((out/"V152_EDITORIAL_PREFLIGHT.json").is_file())
             for row in report["freeze_frames"]:
                 self.assertEqual(row["native_original_frame_sha256"],
                                  sha256_file(out/row["native_original_frame_file"]))
