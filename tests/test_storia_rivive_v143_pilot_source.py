@@ -35,7 +35,8 @@ class TestV143Pilots(unittest.TestCase):
         self.assertTrue(any("Library of Congress" in r for r in src["risks"]))
 
     def test_sha_bound_prior_four_rejected_sources_never_reenter_rotation(self):
-        selected=build_work_order(BANK,"2026-10-31T15:00:00Z",PROFILE,REJECTED,LOW)
+        prior={"version":REJECTED["version"],"rejected":[r for r in REJECTED["rejected"] if r["candidate_id"]!=NAME]}
+        selected=build_work_order(BANK,"2026-10-31T15:00:00Z",PROFILE,prior,LOW)
         self.assertEqual(selected["episode_id"],NAME)
         self.assertEqual(len(selected["excluded_sha_bound_sources"]),4)
         self.assertEqual(len(selected["excluded_low_native_raster_sources"]),7)
@@ -45,6 +46,28 @@ class TestV143Pilots(unittest.TestCase):
         self.assertFalse(selected["video_completed"])
         self.assertEqual(selected["credits_spent"],0)
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",selected["blocking_issues"])
+
+    def test_v144_real_sha_bound_rejection_skips_repeated_trench_download(self):
+        rows=[r for r in REJECTED["rejected"] if r["candidate_id"]==NAME]
+        self.assertEqual(len(rows),1)
+        row=rows[0]
+        self.assertEqual(row["source_page"],PAGE)
+        self.assertEqual(row["film_sha256"],"2ddcf2bf79487cb22ea119247599bb378e62c8a84e93dbe403a9a7039385cd85")
+        self.assertEqual(row["audit_status"],"SOURCE_REJECTED_V136_INSUFFICIENT_MOTION_VARIETY")
+        self.assertEqual(row["evidence_url"],"https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41210442497")
+        for hour in ("2026-10-31T15:00:00Z","2026-11-01T00:00:00Z","2026-11-01T12:00:00Z"):
+            with self.subTest(hour=hour):
+                order=build_work_order(BANK,hour,PROFILE,REJECTED,LOW)
+                self.assertEqual(order["episode_id"],"no_eligible_source")
+                self.assertTrue(order["skip_source_acquisition"])
+                self.assertEqual(order["status"],"SOURCE_RESEARCH_SKIPPED_NO_NATIVE_HD_CANDIDATES")
+                self.assertEqual(len(order["excluded_sha_bound_sources"]),5)
+                self.assertIn(NAME,order["excluded_sha_bound_sources"])
+                self.assertEqual(len(order["excluded_low_native_raster_sources"]),7)
+                self.assertFalse(order["paid_api_call_permitted"])
+                self.assertFalse(order["publish_permitted"])
+                self.assertFalse(order["video_completed"])
+                self.assertEqual(order["credits_spent"],0)
 
     def test_workflow_uses_real_bounded_source_and_never_calls_paid_providers(self):
         s=TEXT
