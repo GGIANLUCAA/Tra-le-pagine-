@@ -39,9 +39,11 @@ def main():
     result={"work_id":j["work_id"],"words":words,"chapters":9,"voice":"Gacrux",
             "model":gemini_voice.MODEL,"script_sha256":hashlib.sha256(speech.encode()).hexdigest(),
             "one_shared_voice_for":["critico_standard","critico_museum"],
-            "no_new_paid_API_authorized":True,"V25_Gold":False}
-    # A generic Google API key cannot identify project billing tier. Only an
-    # externally verified Free-tier project may start this single TTS call.
+            "no_new_paid_API_authorized":True,"project_tier_evidence":"owner_attested_free_no_billing_linked_second_account_2026-10-30","V25_Gold":False}
+    # The owner's second AI Studio account was explicitly reported Free and
+    # without a linked billing account on 30 Oct 2026, and GEMINI_API_KEY2 was set.
+    # Workflow injects ONLY this second key and flags that attested tier. No claim
+    # of an independent Google billing audit: the primary key is never used here.
     # See https://ai.google.dev/gemini-api/docs/billing
     if os.getenv("ARTVISION_GEMINI_PROJECT_BILLING_TIER")!="Free":
         result["status"]="BLOCKED_BILLING_TIER_NOT_VERIFIED_FREE_NO_TTS_CALL"
