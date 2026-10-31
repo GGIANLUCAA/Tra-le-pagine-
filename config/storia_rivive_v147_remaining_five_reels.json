@@ -1,0 +1,65 @@
+{
+  "version": "V147_ARCHIVE_RECOVERY_TWO_THROTTLE_SAFE_BATCHES",
+  "episode": "five_real_archival_reels_1896_1902",
+  "rights_italy_verified": false,
+  "modern_derivative_rights_verified": false,
+  "human_artist_approved": false,
+  "paid_api_permitted": false,
+  "publish_permitted": false,
+  "max_original_source_bytes_each": 75000000,
+  "max_batch_original_source_bytes": 120000000,
+  "source_batches": [
+    {
+      "id": "a",
+      "reels": [
+        {
+          "id": "rough_port_1899",
+          "year": 1899,
+          "place_label": "1899",
+          "page": "https://commons.wikimedia.org/wiki/File:Mauvais_temps_au_port_-_Film_1899.webm",
+          "subject_group": "port_waves"
+        },
+        {
+          "id": "girl_cat_1900",
+          "year": 1900,
+          "place_label": "1900",
+          "page": "https://commons.wikimedia.org/wiki/File:La_Petite_fille_et_son_chat_-_Film_1900.webm",
+          "subject_group": "child_animal"
+        },
+        {
+          "id": "children_marbles_1896",
+          "year": 1896,
+          "place_label": "1896",
+          "page": "https://commons.wikimedia.org/wiki/File:Enfants_jouant_aux_billes_-_Court_métrage_1896.webm",
+          "subject_group": "children_playing"
+        }
+      ]
+    },
+    {
+      "id": "b",
+      "reels": [
+        {
+          "id": "martinique_market_1902",
+          "year": 1902,
+          "place_label": "FORT-DE-FRANCE · 1902",
+          "page": "https://commons.wikimedia.org/wiki/File:Fort_de_France_le_marché_-_Film_1902.webm",
+          "subject_group": "market_crowd"
+        },
+        {
+          "id": "moving_whaleboat_1897",
+          "year": 1897,
+          "place_label": "1897",
+          "page": "https://commons.wikimedia.org/wiki/File:Vue_prise_d'une_baleinière_en_marche_-_Court_métrage_1897.webm",
+          "subject_group": "moving_boat"
+        }
+      ]
+    }
+  ],
+  "baseline_evidence": {
+    "run": 41221612482,
+    "artifact_id": 13050560931,
+    "verified_originals": 3,
+    "moving_reels": 1,
+    "whitelist_archive_source": "https://commons.wikimedia.org"
+  }
+}
