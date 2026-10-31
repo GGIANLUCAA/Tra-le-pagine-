@@ -89,5 +89,25 @@
     "no_v25_auto_approval": true,
     "archive_rights_require_actual_verification": true
   },
-  "note_fifth_pilot": "Wright NG725 fifth 4x1 expressly authorized by user. Four distinct real MP4 slots delivered V85; no automatic sixth painting. Previous four artworks remain immutable."
+  "note_fifth_pilot": "Wright NG725 fifth 4x1 expressly authorized by user. Four distinct real MP4 slots delivered V85; no automatic sixth painting. Previous four artworks remain immutable.",
+  "authorized_sixth_pilot": {
+    "enabled": true,
+    "authorization": "User explicit 2026-10-30: 'Continua con un nuovo video' then 'Vai procedi'; sixth artwork selected from pre-existing curated queue for no-cost camera QA",
+    "allowed_group_id": "fabritius_goldfinch_1654",
+    "allowed_title": "The Goldfinch",
+    "allowed_artist": "Carel Fabritius",
+    "museum_accession": "Mauritshuis 605",
+    "phase": "sixth_pilot_goldfinch_scoped_only",
+    "allowed_revision_variant": "cinema_museum",
+    "previous_cinema_museum_v50_unchanged": true,
+    "remaining_critico_slots": "blocked_without_verified_single_Gacrux_WAV_and_cost_scope",
+    "max_concurrent_artvision_renders": 1,
+    "automatic_seventh_artwork_selection": false,
+    "no_paid_video_ai_without_consent": true,
+    "no_paid_TTS_without_cost_verification": true,
+    "no_v25_auto_approval": true,
+    "no_social_publish": true,
+    "no_private_upload_without_exact_path_consent": true
+  },
+  "note_sixth_pilot": "Exact sixth artwork user-authorized, V86 is a same-slot Museum camera/frame correction candidate only; two previously rendered Cinema slots remain review pending, Critico blocked. All prior five artworks immutable."
 }
