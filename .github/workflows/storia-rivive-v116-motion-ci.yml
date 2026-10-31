@@ -15,6 +15,8 @@ on:
       - "tests/test_storia_rivive_v124.py"
       - "src/storia_rivive_v125_real_motion_audit.py"
       - "tests/test_storia_rivive_v125.py"
+      - "src/storia_rivive_v126_balanced_motion_review.py"
+      - "tests/test_storia_rivive_v126.py"
       - "tests/test_storia_rivive_v122_cache_contract.py"
       - ".github/workflows/storia-rivive-v116-motion-ci.yml"
   workflow_dispatch:
@@ -48,4 +50,5 @@ jobs:
           python -m unittest discover -s tests -p 'test_storia_rivive_v123.py' -v
           python -m unittest discover -s tests -p 'test_storia_rivive_v124.py' -v
           python -m unittest discover -s tests -p 'test_storia_rivive_v125.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v126.py' -v
           python -m unittest discover -s tests -p 'test_storia_rivive_v122_cache_contract.py' -v
