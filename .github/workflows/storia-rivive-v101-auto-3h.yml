@@ -17,6 +17,7 @@ on:
       - "tests/test_storia_rivive_v101.py"
       - "tests/test_storia_rivive_v121.py"
       - "tests/test_storia_rivive_v122.py"
+      - "tests/test_storia_rivive_v123.py"
 permissions:
   contents: read
 concurrency:
@@ -48,6 +49,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v121.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v122.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v123.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v122_cache_contract.py" -v
       - name: Create deterministic research work order for current UTC 3-hour window
         shell: bash
@@ -160,7 +162,8 @@ jobs:
           native_media_rejected=scout.get("status") in ("SOURCE_NATIVE_DETAIL_INSUFFICIENT_SKIP_DOWNLOAD","SOURCE_RASTER_METADATA_MISSING_SKIP_DOWNLOAD")
           insufficient_selected_shots=rank.get("status") in (
               "INSUFFICIENT_DISTINCT_SHOT_CANDIDATES","SHOT_SEGMENT_PROVENANCE_INCOMPLETE",
-              "SHOT_BOUNDARY_PTS_EVIDENCE_INVALID","INSUFFICIENT_PRE_FREEZE_SOURCE_WINDOWS")
+              "SHOT_BOUNDARY_PTS_EVIDENCE_INVALID","INSUFFICIENT_PRE_FREEZE_SOURCE_WINDOWS",
+              "INSUFFICIENT_PHOTOGRAPHIC_SCENE_CANDIDATES")
           status={"cycle_id":order["cycle_id"],"candidate":order["episode_id"],
               "source_scout":scout.get("status"),
               "native_original_raster_px":[scout.get("original_width_px"),scout.get("original_height_px")],
@@ -168,6 +171,7 @@ jobs:
               "source_preflight_blocking_issues":order.get("blocking_issues",[]),
               "native_frame_selection":rank.get("status"),
               "eligible_pre_freeze_source_windows":rank.get("eligible_pre_freeze_source_windows",0),
+              "eligible_photographic_scene_candidates":rank.get("eligible_photographic_scene_candidates",0),
               "i2i_input_preparation":i2i.get("status"),
               "source_bw_motion_preflight":motion.get("status"),
               "i2i_block_reason":i2i.get("reason"),
