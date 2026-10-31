@@ -12,9 +12,15 @@ import math
 import re
 from pathlib import Path
 
-from src.storia_rivive_v126_balanced_motion_review import (
-    _validate_and_candidates, choose_balanced_review, MIN_REGION_COVERAGE,
-)
+try:
+    from src.storia_rivive_v126_balanced_motion_review import (
+        _validate_and_candidates, choose_balanced_review, MIN_REGION_COVERAGE,
+    )
+except ModuleNotFoundError:
+    # GitHub Actions invokes this as python src/script.py, not python -m src.script.
+    from storia_rivive_v126_balanced_motion_review import (
+        _validate_and_candidates, choose_balanced_review, MIN_REGION_COVERAGE,
+    )
 
 SHA = re.compile(r"[0-9a-f]{64}\Z")
 FRAME = re.compile(r"frame_\d{2}\.png\Z")
