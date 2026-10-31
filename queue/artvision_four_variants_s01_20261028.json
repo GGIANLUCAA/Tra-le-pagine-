@@ -1995,7 +1995,40 @@
           "duration_seconds": 110.65,
           "library_path": "/ArtVision/Bocklin/V103_QUATTRO_VARIANTI_COMPLETE/",
           "asr_matching_fraction": 0.8628318584070797,
-          "github_actions_run": 41231513083
+          "github_actions_run": 41231513083,
+          "v105_nondestructive_revision": {
+            "status": "candidate_review_only",
+            "filename": "Boecklin_1883_critico_museum_V105_CONTINUOUS_ENTRY_EXIT_REVIEW.mp4",
+            "sha256": "a90df875f26532137d1fd0e415bb3795be4f68f1c3ab9d854edb52ba087c662c",
+            "bytes": 14442272,
+            "duration_seconds": 110.65,
+            "full_ffmpeg_decode": "PASS_original_and_library_readback",
+            "library_readback_sha_identical": true,
+            "audio_AAC_ADTS_SHA256": "3f46d52d8e0a09974bd144c62a77f5357c1ec5cc63e9c3cee956c8853edd505e",
+            "audio_identical_to_V102": true,
+            "corrected_frame_ranges": [
+              [
+                80,
+                99
+              ],
+              [
+                2053,
+                2072
+              ]
+            ],
+            "entry_peak_MAD_original": 40.46,
+            "entry_peak_MAD_V105": 27.29,
+            "exit_peak_MAD_original": 50.23,
+            "exit_peak_MAD_V105": 31.55,
+            "library_path": "/ArtVision/Bocklin/V105_CRITICO_MUSEUM_CONTINUITY_REVIEW/",
+            "documentation": "docs/productions/2026-10-31-artvision-bocklin-v105-critico-museum-continuity-readback.md",
+            "renderer": "src/artvision_bocklin_museum_continuity_v105.py",
+            "original_V102_preserved": true,
+            "V25_approved": false,
+            "site_verified": false,
+            "human_full_artistic_QA": "pending",
+            "no_TTS_or_API_calls": true
+          }
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
