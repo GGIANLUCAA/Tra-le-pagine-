@@ -52,13 +52,26 @@ BANK={"candidates":[
     {"id":"paris_train_1918","source_page":"https://commons.wikimedia.org/wiki/File:Example2.webm","license":"CC0_as_declared","year":1918}
 ]}
 
+def cotton_only_v133_fixture():
+    """The old V133 single-film tests intentionally use a one-source bank.
+    
+    Keep them scoped while V139's separate integration tests exercise the
+    full three-source persisted rejection registry against the full queue.
+    """
+    full=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+    rows=[r for r in full["rejected"] if r["candidate_id"]=="france_cotton_mill_1920"]
+    if len(rows)!=1:
+        raise AssertionError("Missing original historical V133 film veto")
+    return {"version":full["version"],"rejected":rows}
+
+
 class V101Tests(unittest.TestCase):
     def test_v133_skips_rejected_source_without_repeating_research(self):
         bank={"candidates":[*BANK["candidates"], {
             "id":"france_cotton_mill_1920",
             "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm",
             "license":"PDM"}]}
-        registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        registry=cotton_only_v133_fixture()
         for hour in (0,3,6,9,12,15,18,21):
             order=auto.build_work_order(bank,f"2026-10-31T{hour:02d}:00:00Z",PROFILE,registry)
             self.assertNotEqual(order["episode_id"],"france_cotton_mill_1920")
@@ -69,7 +82,7 @@ class V101Tests(unittest.TestCase):
     def test_v133_all_rejected_skips_cleanly_and_never_approves(self):
         candidate={"id":"france_cotton_mill_1920",
             "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm"}
-        registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        registry=cotton_only_v133_fixture()
         order=auto.build_work_order({"candidates":[candidate]},
                                    "2026-10-31T09:00:00Z",PROFILE,registry)
         self.assertEqual(order["status"],"SOURCE_REJECTED_ALL_KNOWN")
@@ -82,7 +95,7 @@ class V101Tests(unittest.TestCase):
     def test_v133_stale_or_forged_rejection_is_fail_closed(self):
         bank={"candidates":[{"id":"france_cotton_mill_1920",
             "source_page":"https://commons.wikimedia.org/wiki/File:Changed.webm"}]}
-        registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        registry=cotton_only_v133_fixture()
         with self.assertRaisesRegex(ValueError,"STALE_REJECTION"):
             auto.build_work_order(bank,"2026-10-31T09:00:00Z",PROFILE,registry)
         bank["candidates"][0]["source_page"]=registry["rejected"][0]["source_page"]
@@ -93,7 +106,7 @@ class V101Tests(unittest.TestCase):
     def test_v133_duplicate_and_missing_rejection_evidence_blocked(self):
         bank={"candidates":[{"id":"france_cotton_mill_1920",
             "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm"}]}
-        registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        registry=cotton_only_v133_fixture()
         registry["rejected"].append(dict(registry["rejected"][0]))
         with self.assertRaisesRegex(ValueError,"UNKNOWN_OR_DUPLICATE"):
             auto.build_work_order(bank,"2026-10-31T09:00:00Z",PROFILE,registry)
