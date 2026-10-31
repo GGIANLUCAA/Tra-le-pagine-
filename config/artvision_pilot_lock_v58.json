@@ -89,5 +89,25 @@
     "no_v25_auto_approval": true,
     "archive_rights_require_actual_verification": true
   },
-  "note_fifth_pilot": "Wright NG725 fifth 4x1 expressly authorized by user. Four distinct real MP4 slots delivered V85; no automatic sixth painting. Previous four artworks remain immutable."
+  "note_fifth_pilot": "Wright NG725 fifth 4x1 expressly authorized by user. Four distinct real MP4 slots delivered V85; no automatic sixth painting. Previous four artworks remain immutable.",
+  "authorized_sixth_pilot": {
+    "enabled": true,
+    "authorization": "Explicit user 2026-10-31: Bene allora passiamo alla produzione di un altra opera; Ok procedi",
+    "allowed_group_id": "bocklin_isle_of_dead_1883_berlin_ng2_80",
+    "allowed_title": "Isle of the Dead",
+    "allowed_artist": "Arnold Böcklin",
+    "museum_accession": "NG 2/80",
+    "museum_object_id": "obj:967648",
+    "phase": "sixth_pilot_bocklin_only",
+    "automatic_seventh_artwork_selection": false,
+    "source_preflight_required": true,
+    "source_bytes_sha_required_before_render": true,
+    "frame_reference": "https://commons.wikimedia.org/wiki/File:Arnold_b%C3%B6cklin,_l%27isola_dei_morti,_1883,_01.jpg",
+    "no_paid_video_ai_without_explicit_cost_consent": true,
+    "no_paid_tts_without_verified_quota_or_consent": true,
+    "no_social_auto_publish": true,
+    "no_v25_auto_approval": true,
+    "max_concurrent_artvision_renders": 1,
+    "existing_five_pilots_immutable": true
+  }
 }

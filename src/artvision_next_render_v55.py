@@ -89,6 +89,35 @@ def choose(root=ROOT):
                                 fifth_states={v:wright["variants"][v]["status"] for v in VARIANTS}
                                 fifth_count=sum(s in ("rendered_needs_review","approved_for_final_delivery")
                                                 for s in fifth_states.values())
+                                sixth=lock.get("authorized_sixth_pilot", {})
+                                if (fifth_count==4 and sixth.get("enabled") is True and
+                                    sixth.get("phase")=="sixth_pilot_bocklin_only" and
+                                    sixth.get("allowed_group_id")=="bocklin_isle_of_dead_1883_berlin_ng2_80" and
+                                    sixth.get("automatic_seventh_artwork_selection") is False):
+                                    island=next((g for g in queue["groups"] if
+                                        g.get("group_id")==sixth["allowed_group_id"] and
+                                        g.get("artwork")==sixth.get("allowed_title")),None)
+                                    if island is None:
+                                        return {"status":"sixth_pilot_missing","rendering_allowed":False,
+                                                "new_artwork_required":False}
+                                    for v in VARIANTS:
+                                        enforce_pilot_project({"serial_mode":"artvision_4x1",
+                                            "topic":island["artwork"],"artvision_4x1_variant":v},root)
+                                    sixth_states={v:island["variants"][v]["status"] for v in VARIANTS}
+                                    six_count=sum(s in ("rendered_needs_review","approved_for_final_delivery")
+                                                  for s in sixth_states.values())
+                                    source_ok=island.get("source_sha256_verified") is True
+                                    variant_ready=any(island["variants"][v].get("status")=="ready_for_render" and
+                                                      not island["variants"][v].get("preflight_blockers",[]) for v in VARIANTS)
+                                    return {"status":"sixth_pilot_preflight_pending" if not (source_ok and variant_ready) else
+                                                ("sixth_pilot_four_rendered_review_pending" if six_count==4 else "sixth_pilot_in_progress"),
+                                            "work":island["group_id"],"artwork":island["artwork"],
+                                            "rendered_count":six_count,
+                                            "approved_count":sum(s=="approved_for_final_delivery" for s in sixth_states.values()),
+                                            "variants":sixth_states,
+                                            "rendering_allowed":source_ok and variant_ready and six_count<4,
+                                            "new_artwork_required":False,"new_seventh_artwork_allowed":False,
+                                            "next_action":"Bocklin third 1883 version NG 2/80 only. First verify source bytes/hash and music/TTS/frame gates, then physically render four separate MP4s and QA. No paid calls without consent; no seventh work."}
                                 return {"status":"fifth_pilot_four_rendered_review_pending" if fifth_count==4 else "fifth_pilot_in_progress",
                                         "work":wright["group_id"],"artwork":wright["artwork"],
                                         "rendered_count":fifth_count,

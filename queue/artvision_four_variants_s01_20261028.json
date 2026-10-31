@@ -1875,6 +1875,105 @@
         "shared_links_not_persistent": true
       },
       "note_reconcile_v84": "Two concurrent Bosch Cinema Standard reviews exist: main's V78C (3eb4...) corrected end slate/music, and current ChatGPT package V77 (90bb...) delivered. Same EXACT Cinema Standard slot, not an extra variant. Keep both SHA and select after user V25. Three other slots now genuinely completed. Museum is artistic reconstruction, no genuine Prado room/frame."
+    },
+    {
+      "group_id": "bocklin_isle_of_dead_1883_berlin_ng2_80",
+      "artwork": "Isle of the Dead",
+      "artwork_original_title": "Die Toteninsel",
+      "artist": "Arnold Böcklin",
+      "year": 1883,
+      "museum": "Alte Nationalgalerie, Staatliche Museen zu Berlin",
+      "museum_inventory": "NG 2/80",
+      "museum_object_id": "obj:967648",
+      "physical_dimensions_cm": {
+        "h": 80,
+        "w": 150
+      },
+      "medium": "Oil on wood",
+      "official_source": "https://search.smb.museum/en/object/obj-967648",
+      "artwork_pd_image_url": "https://commons.wikimedia.org/wiki/File:Arnold_B%C3%B6cklin_-_Die_Toteninsel_-_Google_Art_Project.jpg",
+      "artwork_source_resolution": [
+        4933,
+        2628
+      ],
+      "artwork_license": "Public Domain Mark 1.0; Commons faithful reproduction of PD painting",
+      "museum_frame_photo_url": "https://commons.wikimedia.org/wiki/File:Arnold_b%C3%B6cklin,_l%27isola_dei_morti,_1883,_01.jpg",
+      "museum_frame_photo_author": "Sailko",
+      "museum_frame_photo_license": "CC BY 3.0; attribution and link required; modern frame photographed 2018, NOT claimed historical original",
+      "gallery_room": "Digital reconstruction only, NOT an actual Alte Nationalgalerie room",
+      "status": "sixth_pilot_authorized_source_preflight",
+      "allowed_by_user": "Explicit new sixth pilot 31 October 2026; Ok procedi",
+      "no_paid_tts_or_video_without_consent": true,
+      "source_bytes_downloaded": false,
+      "source_sha256_verified": false,
+      "variants": {
+        "critico_standard": {
+          "status": "preflight_pending",
+          "V25_approved": false,
+          "site_verified": false,
+          "archive_sync_pending": true,
+          "rendered_mp4_sha256": null,
+          "bytes": null,
+          "source_asset_sha256": null,
+          "full_ffmpeg_decode": "not_run",
+          "social_published": false,
+          "preflight_blockers": [
+            "source_bytes_sha",
+            "narration_WAV_Gacrux_cost_verified",
+            "script_timecoded_QA"
+          ]
+        },
+        "critico_museum": {
+          "status": "preflight_pending",
+          "V25_approved": false,
+          "site_verified": false,
+          "archive_sync_pending": true,
+          "rendered_mp4_sha256": null,
+          "bytes": null,
+          "source_asset_sha256": null,
+          "full_ffmpeg_decode": "not_run",
+          "social_published": false,
+          "preflight_blockers": [
+            "source_bytes_sha",
+            "narration_WAV_Gacrux_cost_verified",
+            "frame_asset_sha",
+            "continuous_camera_QA"
+          ]
+        },
+        "cinema_standard": {
+          "status": "preflight_pending",
+          "V25_approved": false,
+          "site_verified": false,
+          "archive_sync_pending": true,
+          "rendered_mp4_sha256": null,
+          "bytes": null,
+          "source_asset_sha256": null,
+          "full_ffmpeg_decode": "not_run",
+          "social_published": false,
+          "preflight_blockers": [
+            "source_bytes_sha",
+            "licensed_music_or_original_score",
+            "artistic_QA"
+          ]
+        },
+        "cinema_museum": {
+          "status": "preflight_pending",
+          "V25_approved": false,
+          "site_verified": false,
+          "archive_sync_pending": true,
+          "rendered_mp4_sha256": null,
+          "bytes": null,
+          "source_asset_sha256": null,
+          "full_ffmpeg_decode": "not_run",
+          "social_published": false,
+          "preflight_blockers": [
+            "source_bytes_sha",
+            "frame_asset_sha",
+            "licensed_music_or_original_score",
+            "continuous_camera_QA"
+          ]
+        }
+      }
     }
   ],
   "last_operational_update": "2026-10-30 Wright NG725 fifth 4x1 user-authorized: 4 MP4 real, 2 Critico new one Gacrux WAV + 1 Cinema Museum V85 new, 1 Cinema V52B historical exact original, 0 V25 Gold, no archive upload. ZIP CRC PASS",
@@ -1892,5 +1991,12 @@
     "rule": "Do not count technical MP4 as approved Museum; block final delivery until new V46-quality render with real continuity and reference comparisons."
   },
   "note_second_pilot_v69": "User explicitly authorized The Kiss after Socrates; maintain single owner, other works frozen, Klimt queued V69 as authorized second pilot (0 MP4).",
-  "note_fourth_pilot_v76": "2026-10-30 explicit Bosch fourth pilot, one renderer, no fifth work. Bosch Cinema Standard source/music verified; no rendered video status until actual MP4 hash+bytes; Critico and Museum remain blocked."
+  "note_fourth_pilot_v76": "2026-10-30 explicit Bosch fourth pilot, one renderer, no fifth work. Bosch Cinema Standard source/music verified; no rendered video status until actual MP4 hash+bytes; Critico and Museum remain blocked.",
+  "sixth_pilot_update": {
+    "date": "2026-10-31",
+    "event": "sixth_bocklin_authorized_preflight",
+    "rendered_new_mp4": 0,
+    "existing_20_slots_unchanged": true,
+    "notes": "This queue update is an authorization/preflight, not proof of four MP4s."
+  }
 }
