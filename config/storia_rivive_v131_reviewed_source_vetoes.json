@@ -1,0 +1,17 @@
+{
+  "version": "V131_REVIEWED_SOURCE_VETOES",
+  "source_vetoes": [
+    {
+      "film_sha256": "e3022cb130442f7695d411724ae619fc8c184696ddae30293958c1c75ec8ffd9",
+      "frame": "frame_34.png",
+      "freeze_s": 357.36,
+      "reason": "V130 real contact sheet: broad overexposed highlights in machinery; faithful restoration cannot recover lost source detail."
+    },
+    {
+      "film_sha256": "e3022cb130442f7695d411724ae619fc8c184696ddae30293958c1c75ec8ffd9",
+      "frame": "frame_48.png",
+      "freeze_s": 509.88,
+      "reason": "V130 real contact sheet: people and faces are too small for identity-faithful modern-photo I2I."
+    }
+  ]
+}
