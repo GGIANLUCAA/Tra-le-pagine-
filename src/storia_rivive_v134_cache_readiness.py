@@ -22,17 +22,30 @@ def digest(path):
     return h.hexdigest()
 
 
-def assess(cache_dir):
+def assess(cache_dir, order):
+    """Bind cached bytes to the *current* candidate and exact archival page.
+
+    SHA-valid bytes from a different film are not an acceptable cache hit.
+    This remains research-only; rights and scene quality are NOT approved.
+    """
     root = Path(cache_dir)
     blocked = {"ready": False, "status": "SOURCE_CACHE_INTEGRITY_BLOCKED",
                "paid_api_call_permitted": False, "publish_permitted": False}
     try:
+        if (not isinstance(order, dict)
+                or order.get("contract") != "LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT"
+                or order.get("episode_id") != root.name
+                or not isinstance(order.get("source_page"), str)
+                or not order["source_page"].startswith("https://commons.wikimedia.org/wiki/File:")):
+            return {**blocked, "reason": "CURRENT_WORK_ORDER_SOURCE_BINDING_INVALID"}
         report_path = root / "SCOUT_REPORT.json"
         if not report_path.is_file() or report_path.is_symlink():
             return {**blocked, "reason": "SCOUT_REPORT_MISSING"}
         report = json.loads(report_path.read_text(encoding="utf-8"))
         if not isinstance(report, dict) or report.get("status") != "REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW":
             return {**blocked, "reason": "SCOUT_NOT_READY"}
+        if report.get("source_page") != order["source_page"]:
+            return {**blocked, "reason": "CACHED_FILM_SOURCE_PAGE_MISMATCH"}
         film = root / "ORIGINAL_ARCHIVE.webm"
         if not film.is_file() or film.is_symlink():
             return {**blocked, "reason": "ORIGINAL_FILM_MISSING"}
@@ -75,6 +88,8 @@ def assess(cache_dir):
             return {**blocked, "reason": "SOURCE_PNG_NAME_MISMATCH"}
         return {"ready": True, "status": "SOURCE_CACHE_BYTES_VERIFIED_REVIEW_REQUIRED",
                 "verified_source_png_count": len(rows),
+                "candidate_id": order["episode_id"],
+                "source_page_sha256": hashlib.sha256(order["source_page"].encode("utf-8")).hexdigest(),
                 "paid_api_call_permitted": False, "publish_permitted": False,
                 "note": "Byte integrity only; not proof of native detail, five shots or rights."}
     except (OSError, ValueError, TypeError, OverflowError, KeyError, json.JSONDecodeError):
@@ -84,9 +99,11 @@ def assess(cache_dir):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--cache-dir", required=True)
+    parser.add_argument("--order", required=True, help="Current V101 WORK_ORDER.json")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
-    result = assess(args.cache_dir)
+    order = json.loads(Path(args.order).read_text(encoding="utf-8"))
+    result = assess(args.cache_dir, order)
     path = Path(args.out)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
