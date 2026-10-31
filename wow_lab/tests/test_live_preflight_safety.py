@@ -53,13 +53,14 @@ class LivePreflightSafety(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             out = Path(folder)
             (out / "SUBJECT_PREFLIGHT.json").write_text('{"technical_pass":false}')
-            with self.assertRaisesRegex(RuntimeError, "WOW_LAB_RUN_DIRECTORY_ALREADY_POPULATED"):
+            with self.assertRaisesRegex(RuntimeError, "WOW_LAB_RUN_DIRECTORY_ALREADY_EXISTS"):
                 engine.require_fresh_run_directory(out)
 
-    def test_empty_or_missing_run_directory_accepted(self):
+    def test_existing_empty_directory_rejected_but_missing_directory_accepted(self):
         with tempfile.TemporaryDirectory() as folder:
             out = Path(folder)
-            engine.require_fresh_run_directory(out)
+            with self.assertRaisesRegex(RuntimeError, "WOW_LAB_RUN_DIRECTORY_ALREADY_EXISTS"):
+                engine.require_fresh_run_directory(out)
             engine.require_fresh_run_directory(out / "fresh")
 
     def test_render_gate_runs_before_network_and_output_writes(self):
@@ -68,9 +69,9 @@ class LivePreflightSafety(unittest.TestCase):
         self.assertLess(run.index("require_live_preflight_context()"),
                         run.index("ensure_no_parallel_wow_render()"))
         self.assertLess(run.index("require_fresh_run_directory(out)"),
-                        run.index("out.mkdir(parents=True,exist_ok=True)"))
+                        run.index("out.mkdir(parents=True,exist_ok=False)"))
         self.assertLess(run.index("ensure_slot_available(stamp, past)"),
-                        run.index("out.mkdir(parents=True,exist_ok=True)"))
+                        run.index("out.mkdir(parents=True,exist_ok=False)"))
 
 
 if __name__ == "__main__":
