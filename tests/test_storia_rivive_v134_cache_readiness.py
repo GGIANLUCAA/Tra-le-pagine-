@@ -151,7 +151,7 @@ def fixture_after_duplicate(root):
                      "source_pts_logged_from_decode": True,
                      "source_pts": i * 1000, "source_pts_time_s": float(i)})
     return {"status": "REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
-        "source_page": SOURCE_PAGE,
+            "source_page": SOURCE_PAGE,
             "original_sha256": sha(film),
             "frame_provenance_source_sha256": sha(film),
             "frame_provenance_version": "V112_SOURCE_PTS_FROM_FFMPEG_SHOWINFO",
