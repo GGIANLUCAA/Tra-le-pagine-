@@ -112,7 +112,7 @@ jobs:
           from pathlib import Path
           report=json.loads(Path("output/storia_v142_constantinople/adaptive/ADAPTIVE_GATE_V143.json").read_text())
           with open(os.environ["GITHUB_OUTPUT"],"a") as out:
-              out.write("ready="+("true" if report["ready"] else "false")+"\\n")
+              out.write("ready="+("true" if report["ready"] else "false")+"\n")
           print("V143_SOURCE_HANDOFF",report["status"],report["reason"])
           PY
       - name: Check actual source motion on the original film
