@@ -12,7 +12,7 @@ import unittest
 from pathlib import Path
 
 from src.storia_rivive_adaptive_sampling_v124 import (
-    choose_targets, extract_target_frames, inspect, sha256_file, spread_review_shortlist
+    choose_targets, extract_target_frames, inspect, sha256_file, spread_review_shortlist, exact_pts_time_from_showinfo
 )
 
 def candidates():
@@ -45,6 +45,31 @@ class V124Sampling(unittest.TestCase):
         meta["cut_candidate_times_s"] = [1.0, 2.0, 3.0, 4.0, 5.0]
         with self.assertRaisesRegex(ValueError, "NOT_ENOUGH_LONG_SOURCE_SEGMENTS"):
             choose_targets(meta, 6.1)
+
+    def test_real_1916_ogg_showinfo_rounded_pts_are_not_forgery(self):
+        # Actual unmodified Commons Theora source has timebase 100/2997.
+        # Observed frame_12: pts=4367, showinfo pts_time=145.712
+        # although the exact timestamp is 145.7123790457...
+        from fractions import Fraction
+        exact = float(Fraction(4367*100,2997))
+        self.assertAlmostEqual(exact_pts_time_from_showinfo(
+            4367,"100/2997","145.712"),exact,places=9)
+        self.assertAlmostEqual(exact_pts_time_from_showinfo(
+            3970,"100/2997","132.466"),
+            float(Fraction(3970*100,2997)),places=9)
+        # A forged rounded time beyond the printed 0.001 precision is rejected.
+        for bad in ("145.713","145.710","146.712","not-a-time"):
+            with self.subTest(bad=bad):
+                with self.assertRaisesRegex(ValueError,"V124_SOURCE_PTS_NOT_GENUINE"):
+                    exact_pts_time_from_showinfo(4367,"100/2997",bad)
+
+    def test_ogg_source_pts_time_base_cannot_be_forged(self):
+        for bad_base in ("100/0","0/2997","100/xx","-2/2997"):
+            with self.subTest(base=bad_base):
+                with self.assertRaisesRegex(ValueError,"V124_SOURCE_PTS_NOT_GENUINE"):
+                    exact_pts_time_from_showinfo(4367,bad_base,"145.712")
+        with self.assertRaisesRegex(ValueError,"V124_SOURCE_PTS_NOT_GENUINE"):
+            exact_pts_time_from_showinfo(-1,"100/2997","-0.03337")
 
     def test_no_duplicate_candidates_when_limited(self):
         cuts = [3.0*(i+1) for i in range(90)]

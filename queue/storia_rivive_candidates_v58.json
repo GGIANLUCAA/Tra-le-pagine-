@@ -1,5 +1,5 @@
 {
-  "version": "V121_2026_10_31",
+  "version": "V142_2026_10_31",
   "status": "seven_low_raster_sources_audited_three_1080p_research_candidates_unverified",
   "ranking_is": "EDITORIAL_HYPOTHESES_NOT_VIEW_COUNTS_RASTER_CLAIMS_NOT_FRAME_QA",
   "rights_note": "CC0 dichiarata nella scheda dei singoli file Wikimedia; non certifica altri diritti o aspetti storici. Licenze originali riconfermare alla produzione",
@@ -205,6 +205,42 @@
         "1080p nominale con bitrate basso: possibile upscale e volto poco dettagliato",
         "Cinque veri shot e origine footage da verificare nei byte, no pubblicazione senza clearance"
       ]
+    },
+    {
+      "id": "constantinople_messter_1916",
+      "title": "Costantinopoli 1916 — il cinegiornale ritrovato",
+      "event": "Arrivo/partenza del generale August von Mackensen a Costantinopoli; ufficiali, folla alla stazione, corteo e gesti nelle cronache del 1916, da verificare sul frammento esatto.",
+      "year": 1916,
+      "date_precision": "1916_original_newsreel_date_confirm_fragment_timing",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Messter_Woche_Mackensen_in_Constantinople_1916_filmed_by_Nelson_Edwards.ogg",
+      "license": "PUBLIC_DOMAIN",
+      "license_origin_country_claim": "German Bundesarchiv filmportal / EFG1914 labels related Messter-Woche Einzelsujets No.51 as Public Domain; exact 2m39 derivative linkage not independently established",
+      "duration_seconds": 159,
+      "theme": "Istanbul/ferrovia/folla/gesti/cinegiornale 1916",
+      "editorial_priority": "A_RESEARCH_ONLY",
+      "hypothesis": "Arrivi alla stazione e saluti di folla in un contesto ottomano raro: gancio visivo se il documento mostra 5 vere inquadrature diverse con volti e movimento leggibili.",
+      "commons_original_raster_claim_px": [
+        1920,
+        1080
+      ],
+      "commons_original_file_size_mb_approx": 99.95,
+      "source_archive_references": [
+        "https://www.filmportal.de/video/messter-woche-einzelsujets",
+        "https://www.europeanfilmgateway.eu/detail/messter-woche%20einzelsujets%20nr.%2051%20%5Barchivtitel%5D/barch%3A%3Afd8bc192b57cf3940b83e51c6ef0e794"
+      ],
+      "source_archive_verification": "UNVERIFIED_EXCERPT_MAPPING_AND_REUSE_LICENSE_ITALY",
+      "risks": [
+        "Commons uploaded OGG Theora/Vorbis by Ron van Dopperen from German Film Archives; match 2m39 to Bundesarchiv longer 9m45 original reel before licencing any scene.",
+        "Public Domain claim of original historical newsreel from Bundesarchiv and cameraman Nelson Edwards (d.1954) is evidence, NOT independent clearance of modern digital file, performer/image or Italy territorial re-use.",
+        "1920x1080 is an encoded raster not proof of native film detail; test face detail and 9:16 crop on true bytes, not AI upscaled.",
+        "Cinque segmenti moving original distinct and non-intertitle needed; no Vidu/I2I unless five QA gates and per-scene credit authorization satisfied.",
+        "German WWI newsreel and colonial propaganda source: historical context required; avoid approving propagandistic narration or promoting combat footage."
+      ],
+      "rights_italy_verified": false,
+      "historical_attribution_verified": false,
+      "source_native_visual_review": false,
+      "original_film_sha256_verified": false
     }
-  ]
+  ],
+  "last_added_real_film_candidate": "constantinople_messter_1916"
 }

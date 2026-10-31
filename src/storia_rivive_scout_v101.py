@@ -23,7 +23,7 @@ def metadata(page):
     if not pages or not pages[0].get("imageinfo"):raise ValueError("Missing archival file metadata")
     info=pages[0]["imageinfo"][0];link=info.get("url","")
     v=urlparse(link)
-    if v.scheme!="https" or v.netloc!="upload.wikimedia.org" or not v.path.lower().endswith((".webm",".ogv",".mp4",".mov")):
+    if v.scheme!="https" or v.netloc!="upload.wikimedia.org" or not v.path.lower().endswith((".webm",".ogv",".ogg",".mp4",".mov")):
         raise ValueError("Unapproved archive video URL: host="+v.netloc+" path_extension="+v.path[-80:])
     return {"source_page":page,"filename":title,"download_url":link,
             "size_bytes":info.get("size"),
@@ -138,6 +138,8 @@ def inspect(page,outdir):
     size=m["size_bytes"]
     if not isinstance(size,int) or size<=0 or size>MAX_BYTES:
         m["status"]="MANUAL_ACQUISITION_REQUIRED_SIZE_LIMIT";return m
+    # The container is verified by FFprobe on actual bytes, not by the staging suffix.
+    # Commons Ogg/Theora files remain in this SHA-locked staging path for V134/V125 compatibility.
     film=outdir/"ORIGINAL_ARCHIVE.webm"
     with urlopen(Request(m["download_url"],headers={"User-Agent":USER_AGENT}),timeout=60) as src,film.open("wb") as target:
         n=0;h=hashlib.sha256()

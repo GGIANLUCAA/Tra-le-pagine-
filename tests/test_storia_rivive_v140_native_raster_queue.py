@@ -20,6 +20,9 @@ SEVEN={"paris_swim_1918","paris_train_1918","beirut_1919_street",
        "paris_cafe_strike_1919","paris_champs_1918","market_rural_1920",
        "china_daily_life_1928"}
 THREE={"france_cotton_mill_1920","white_house_1917_1921","versailles_treaty_1919"}
+# Keep the V140 snapshot stable when the producer adds the next *new* candidate.
+KNOWN_V140_BANK={"candidates":[c for c in BANK["candidates"] if c["id"] in (SEVEN|THREE)]}
+
 
 
 class TestV140ResearchQueue(unittest.TestCase):
@@ -38,7 +41,7 @@ class TestV140ResearchQueue(unittest.TestCase):
             sum(r["commons_original_raster_px"]==[768,576] for r in rows),6)
 
     def test_full_current_queue_skips_gracefully_until_new_hd_source_added(self):
-        order=build_work_order(BANK,"2026-10-31T12:00:00Z",PROFILE,REJECTED,LOW_RASTER)
+        order=build_work_order(KNOWN_V140_BANK,"2026-10-31T12:00:00Z",PROFILE,REJECTED,LOW_RASTER)
         self.assertEqual(order["episode_id"],"no_eligible_source")
         self.assertEqual(order["status"],"SOURCE_RESEARCH_SKIPPED_NO_NATIVE_HD_CANDIDATES")
         self.assertIn("NO_NATIVE_HD_CANDIDATE_IN_CURRENT_RESEARCH_QUEUE",order["blocking_issues"])
@@ -53,7 +56,7 @@ class TestV140ResearchQueue(unittest.TestCase):
         start=dt.datetime(2026,10,31,tzinfo=dt.timezone.utc)
         for i in range(24):
             now=(start+dt.timedelta(hours=i*3)).isoformat()
-            order=build_work_order(BANK,now,PROFILE,REJECTED,LOW_RASTER)
+            order=build_work_order(KNOWN_V140_BANK,now,PROFILE,REJECTED,LOW_RASTER)
             with self.subTest(now=now):
                 self.assertTrue(order["skip_source_acquisition"])
                 self.assertEqual(order["status"],"SOURCE_RESEARCH_SKIPPED_NO_NATIVE_HD_CANDIDATES")
@@ -61,7 +64,7 @@ class TestV140ResearchQueue(unittest.TestCase):
                 self.assertFalse(order["human_approved"])
 
     def test_new_hd_film_can_enter_queue_without_fabricating_approval(self):
-        bank=copy.deepcopy(BANK)
+        bank=copy.deepcopy(KNOWN_V140_BANK)
         bank["candidates"].append({
             "id":"new_verified_source_scan_1924",
             "source_page":"https://commons.wikimedia.org/wiki/File:New_original_scan_1924.webm",
@@ -71,6 +74,18 @@ class TestV140ResearchQueue(unittest.TestCase):
         self.assertFalse(order["skip_source_acquisition"])
         self.assertFalse(order["paid_api_call_permitted"])
         self.assertFalse(order["publish_permitted"])
+        self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",order["blocking_issues"])
+
+    def test_new_real_constantinople_film_enters_research_queue_but_not_production(self):
+        order=build_work_order(BANK,"2026-10-31T14:00:00Z",PROFILE,REJECTED,LOW_RASTER)
+        self.assertEqual(order["episode_id"],"constantinople_messter_1916")
+        self.assertEqual(len(order["excluded_sha_bound_sources"]),3)
+        self.assertEqual(len(order["excluded_low_native_raster_sources"]),7)
+        self.assertFalse(order["skip_source_acquisition"])
+        self.assertEqual(order["status"],"SOURCE_PREFLIGHT_REVIEW_REQUIRED")
+        self.assertFalse(order["paid_api_call_permitted"])
+        self.assertFalse(order["publish_permitted"])
+        self.assertFalse(order["video_completed"])
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",order["blocking_issues"])
 
     def test_stale_page_is_not_silently_excluded(self):
