@@ -28,7 +28,7 @@ jobs:
           assert j['max_paid_api_calls']==0
           assert j['run_once_only'] is True
           if os.environ.get('ART_VOICE_TIER')!='Free':
-              print('BLOCKED - Google AI Studio project Free tier not verified. No voice call authorized.')
+              raise SystemExit('BLOCKED - Google AI Studio project Free tier not verified. No voice call authorized.')
           else:
               print('Project declared Free tier; proceed with one voice attempt.')
           PY
