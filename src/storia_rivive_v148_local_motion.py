@@ -46,6 +46,15 @@ def local_motion_in_gray_frames(frames, *, tile_raw_min=6.5,
             ImageFilter.GaussianBlur(1.25)).tobytes() for buf in frames]
     perpair=[];any_tiles=set()
     for prev,curr in zip(blurred,blurred[1:]):
+        # A fixed illuminated patch can fool tile spatial residuals at its
+        # boundaries. Real displacement creates both newly brightened and
+        # newly darkened pixels in THE SAME frame pair. This signed-polarity
+        # guard rejects exposure-only patches without relaxing V115.
+        signed_full=[b-a for a,b in zip(prev,curr)]
+        mean_global=sum(signed_full)/len(signed_full)
+        significant_positive=sum(v-mean_global>=12 for v in signed_full)
+        significant_negative=sum(v-mean_global<=-12 for v in signed_full)
+        bidirectional=significant_positive>=50 and significant_negative>=50
         active=set();tile=PROXY//GRID
         for cy in range(GRID):
             for cx in range(GRID):
@@ -60,13 +69,16 @@ def local_motion_in_gray_frames(frames, *, tile_raw_min=6.5,
                 if raw>=tile_raw_min and centered>=tile_spatial_min:
                     active.add((cx,cy))
         adjacent=sum(1 for x,y in active if (x+1,y) in active or (x,y+1) in active)
-        perpair.append({"active_regions":len(active),"adjacent_regions":adjacent})
-        if adjacent>=1 and len(active)>=2:
+        perpair.append({"active_regions":len(active),"adjacent_regions":adjacent,
+                        "bidirectional_edge_displacement":bidirectional})
+        if adjacent>=1 and len(active)>=2 and bidirectional:
             any_tiles.update(active)
-    qualifying=sum(p["adjacent_regions"]>=1 and p["active_regions"]>=2 for p in perpair)
+    qualifying=sum(p["adjacent_regions"]>=1 and p["active_regions"]>=2
+                   and p["bidirectional_edge_displacement"] for p in perpair)
     largest=max((p["adjacent_regions"] for p in perpair),default=0)
     result={**blocked,"frames_checked":len(frames),"qualifying_pairs":qualifying,
             "changed_tile_regions":len(any_tiles),"max_adjacent_pairs":largest,
+            "bidirectional_change_pairs":sum(p["bidirectional_edge_displacement"] for p in perpair),
             "tile_raw_threshold":tile_raw_min,"tile_spatial_threshold":tile_spatial_min}
     if qualifying>=min_pairs and len(any_tiles)>=3:
         return {**result,"status":"V148_LOCAL_MOTION_PASS_REVIEW_ONLY",
