@@ -1,0 +1,74 @@
+name: "La Storia Rivive V148 | localized real movement on two original films"
+
+on:
+  pull_request:
+    paths:
+      - "config/storia_rivive_v148_two_source_local_motion_recheck.json"
+      - "src/storia_rivive_v148_local_motion.py"
+      - "src/storia_rivive_v148_recheck_two_originals.py"
+      - "tests/test_storia_rivive_v148_local_motion.py"
+      - "tests/test_storia_rivive_v148_two_original_recheck.py"
+      - ".github/workflows/storia-v148-two-local-motion-source-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: storia-v148-two-real-archive-motion-rechecks-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  local_motion_on_true_historic_source_bytes:
+    if: github.run_attempt == 1 && (github.event_name == 'workflow_dispatch' || github.head_ref == 'storia-v148-local-motion-scene-evidence-20261031')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free image and video inspection software
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: Regress persistent local subject motion vs synthetic grain/flicker
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p "test_storia_rivive_v148_local_motion.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v148_two_original_recheck.py" -v
+      - name: Verify Commons video ORIGINAL SHA1 SHA256 and local subject movement at prior PTS
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v148_recheck_two_originals.py \
+            --manifest config/storia_rivive_v148_two_source_local_motion_recheck.json \
+            --out output/storia_v148_original_local_motion
+      - name: Assert no fabricated five-shot rights or provider work
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path("output/storia_v148_original_local_motion/V148_TWO_ORIGINALS_RECHECK.json").read_text())
+          assert p["version"]=="V148_TWO_EXACT_SOURCE_LOCAL_MOTION_RECHECK"
+          assert len(p["sources"])==2
+          assert 0<=p["additional_local_moving_reels"]<=2
+          assert p["possible_total_distinct_moving_original_reels"]==p["additional_local_moving_reels"]+3
+          assert not p["five_genuine_camera_shots_artistic_review"]
+          assert not p["rights_italy_verified"] and not p["modern_restoration_rights_verified"]
+          assert p["real_i2i_photos_generated"]==0 and p["vidu_clips_generated"]==0
+          assert p["paid_calls"]==0 and not p["published"] and not p["video_finished"]
+          print("V148_REAL_ORIGINAL_LOCAL_MOTION_RECHECK",p["status"],
+                "additional",p["additional_local_moving_reels"],
+                "reviewable_total",p["possible_total_distinct_moving_original_reels"])
+          PY
+      - name: Preserve SHA/PTS motion metrics, never original films
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V148_LOCAL_MOTION_REVIEW_${{ github.run_id }}
+          path: output/storia_v148_original_local_motion/V148_TWO_ORIGINALS_RECHECK.json
+          retention-days: 14
+          if-no-files-found: warn

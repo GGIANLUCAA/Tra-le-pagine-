@@ -1,0 +1,73 @@
+{
+  "version": "V148_TWO_AUTHENTIC_SHA_BOUND_RECHECKS",
+  "original_checks_from": {
+    "V146_run": 41221612482,
+    "V146_artifact": 13050560931
+  },
+  "research_only": true,
+  "rights_italy_verified": false,
+  "artistically_approved": false,
+  "vidu_permitted": false,
+  "photo_i2i_permitted": false,
+  "publish_permitted": false,
+  "sources": [
+    {
+      "id": "perrache_train_arrival_1896",
+      "page": "https://commons.wikimedia.org/wiki/File:Arrivée_d'un_train_à_Perrache_-_Court_métrage_1896.webm",
+      "original_sha256": "527dd3656557560e71aa9d5871fd5d4e166b2ecffa11cc7dd1abd9bc0521a4f6",
+      "original_sha1": "a106a9bcb004e8d03309f73e570b95d680329ba9",
+      "original_w": 1920,
+      "original_h": 1080,
+      "prior_v115_status": "V146_NO_PHOTOGRAPHIC_MOVEMENT_REEL_REJECTED",
+      "verified_windows": [
+        {
+          "start_pts": 7657,
+          "freeze_pts": 9007,
+          "time_base": "1/1000",
+          "original_frame_sha256": "81b6830a9e0548d49d3362f629a8f3e1481c047c2a186cc09183af29621c208b"
+        },
+        {
+          "start_pts": 19240,
+          "freeze_pts": 20590,
+          "time_base": "1/1000",
+          "original_frame_sha256": "dc934c487c5780731793c37b6a211b973e50a147a971aafc1489e5a01eadd44f"
+        },
+        {
+          "start_pts": 30407,
+          "freeze_pts": 31757,
+          "time_base": "1/1000",
+          "original_frame_sha256": "b806dfa249455514fb3bdf5cf712a3568107f7f06bfa8cf39dda862686d0bdf0"
+        }
+      ]
+    },
+    {
+      "id": "workers_sidewalk_1898",
+      "page": "https://commons.wikimedia.org/wiki/File:Ouvriers_réparant_un_trottoir_en_bitume_-_Court_métrage_1898.webm",
+      "original_sha256": "31201312acdaf11f61a264752007731329caa5e05d3be24c2df3ad0dfa03d54e",
+      "original_sha1": "71e718690a4e9b64024fcece5a4788bce95fb412",
+      "original_w": 1920,
+      "original_h": 1080,
+      "prior_v115_status": "V146_NO_PHOTOGRAPHIC_MOVEMENT_REEL_REJECTED",
+      "verified_windows": [
+        {
+          "start_pts": 9483,
+          "freeze_pts": 10833,
+          "time_base": "1/1000",
+          "original_frame_sha256": "00df97e834d60027da1c6a8e222f7d62585358b74dd147bdb0000c0bc10d5914"
+        },
+        {
+          "start_pts": 23383,
+          "freeze_pts": 24733,
+          "time_base": "1/1000",
+          "original_frame_sha256": "c8dff54b73330b5bc702f0e44efbee62269d5fa554b8398e58e84f64c7cf9646"
+        },
+        {
+          "start_pts": 36783,
+          "freeze_pts": 38133,
+          "time_base": "1/1000",
+          "original_frame_sha256": "9c09106498bad3230f53068c54f6c044a66b17a315fd7d9e2a1b4cc78484f1b7"
+        }
+      ]
+    }
+  ]
+}
