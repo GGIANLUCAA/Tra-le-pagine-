@@ -84,6 +84,7 @@ jobs:
           python src/storia_rivive_v126_frame_diversity.py \
             --v125 output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json \
             --frames output/storia_v121_real/adaptive/original_frames \
+            --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
             --out output/storia_v121_real/adaptive/FRAME_DIVERSITY_V126.json
       - name: Record physical evidence, never label the result as approved
         shell: bash
