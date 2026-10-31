@@ -28,8 +28,8 @@ class MainWorkflowFailureRegression(unittest.TestCase):
             "allow_museum_api_search": True,
             "search_queries": ["moth", "butterfly", "bird"],
         }
-        with patch.object(engine, "discovery_ids", return_value=[]), \\
-             patch.object(engine, "get_json", return_value=record):
+        with (patch.object(engine, "discovery_ids", return_value=[]),
+              patch.object(engine, "get_json", return_value=record)):
             for day in ("20261030", "20261031", "20261101"):
                 for hour in range(0, 24, 2):
                     with self.subTest(day=day, hour=hour):
