@@ -514,11 +514,11 @@ class V101Tests(unittest.TestCase):
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",a["blocking_issues"])
 
     def test_v138_real_audited_rejections_are_omitted_from_autopilot(self):
-        """Three films failed real source audits: no silent return to bad footage."""
+        """Four films failed real source audits: no silent return to bad footage."""
         catalog=json.loads((ROOT/"queue/storia_rivive_candidates_v58.json").read_text())
         registry=json.loads((ROOT/"config/storia_rivive_v133_rejected_films.json").read_text())
         expected={"france_cotton_mill_1920","white_house_1917_1921",
-                  "versailles_treaty_1919"}
+                  "versailles_treaty_1919","constantinople_messter_1916"}
         self.assertEqual(auto.rejected_source_ids(catalog["candidates"],registry), expected)
         order=auto.build_work_order(catalog,"2026-10-31T12:00:00Z",PROFILE,registry)
         self.assertTrue(expected.issubset(set(order["excluded_sha_bound_sources"])))
