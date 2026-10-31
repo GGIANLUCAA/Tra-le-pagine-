@@ -22,8 +22,8 @@ cv2.rectangle(m,(0,0),(720,210),cv2.GC_BGD,-1);cv2.rectangle(m,(0,975),(720,1280
 cv2.grabCut(im,m,None,np.zeros((1,65),np.float64),np.zeros((1,65),np.float64),7,cv2.GC_INIT_WITH_MASK)
 alpha=np.where((m==1)|(m==3),255,0).astype('uint8');alpha=cv2.GaussianBlur(alpha,(5,5),1)
 cut=np.dstack((np.asarray(im0),alpha))[220:966,62:590,:]
-dog=Image.fromarray(cut,'RGBA');dog.thumbnail((240,347),Image.Resampling.LANCZOS)
-x=int(os.environ.get('DOG_X','266')); y=int(os.environ.get('DOG_Y','630'))
+dog=Image.fromarray(cut,'RGBA');dog.thumbnail((175,260),Image.Resampling.LANCZOS)
+x=int(os.environ.get('DOG_X','160')); y=int(os.environ.get('DOG_Y','390'))
 base=photo.convert('RGBA');base.alpha_composite(dog,(x,y))
 out=ImageEnhance.Contrast(base.convert('RGB')).enhance(1.04)
 p=root/'CANE_OLIMPICO_PRIMO_FOTOGRAMMA.jpg';out.save(p,quality=94,subsampling=0,optimize=True)
