@@ -22,5 +22,16 @@
   "social_auto_publish": false,
   "Gold_V25": false,
   "no_seventh_pilot": true,
-  "deliver_only_genuine_MP4": true
+  "deliver_only_genuine_MP4": true,
+  "attempt_2": {
+    "reason": "First run 41227581466 failed at preflight before any Google call; no WAV, MP4 or artifact existed",
+    "approved_second_key": "GEMINI_API_KEY2",
+    "owner_prior_account_statement": "30 October 2026: second Google AI Studio account Free with no linked billing account; key2 configured and tested",
+    "trigger_origin": "2026-10-31 user confirms Google key previously generated content",
+    "billing_policy": "Second Free account only, do not fall back to primary; if secret2 absent, fail closed; no paid API",
+    "no_automatic_retries": true,
+    "expected_output": "one actual Gacrux WAV and two Critico MP4 sharing identical AAC; review not Gold"
+  },
+  "previous_failed_run_id": 41227581466,
+  "previous_failed_run_no_api_calls": true
 }
