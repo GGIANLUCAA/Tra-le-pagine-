@@ -1,5 +1,5 @@
 {
-  "version": "V142_2026_10_31",
+  "version": "V143_2026_10_31",
   "status": "seven_low_raster_sources_audited_three_1080p_research_candidates_unverified",
   "ranking_is": "EDITORIAL_HYPOTHESES_NOT_VIEW_COUNTS_RASTER_CLAIMS_NOT_FRAME_QA",
   "rights_note": "CC0 dichiarata nella scheda dei singoli file Wikimedia; non certifica altri diritti o aspetti storici. Licenze originali riconfermare alla produzione",
@@ -240,7 +240,38 @@
       "historical_attribution_verified": false,
       "source_native_visual_review": false,
       "original_film_sha256_verified": false
+    },
+    {
+      "id": "russian_trenches_1915",
+      "title": "1915 — dentro le trincee dimenticate",
+      "event": "Riprese storiche di Albert K. Dawson durante l'ispezione delle trincee russe nell'agosto 1915; soggetti e luogo esatto da verificare sul film originale.",
+      "year": 1915,
+      "date_precision": "1915_08_08_archival_uploaded_date_unverified_for_all_sequences",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Into_the_Catacombs_of_War_-_Albert_Dawson_Inspecting_Russian_Trenches_(August_1915).ogg",
+      "license": "PUBLIC_DOMAIN",
+      "duration_seconds": 295,
+      "theme": "trincee_1915/luoghi_nascosti/persone/lavoro_storico",
+      "editorial_priority": "A_RESEARCH_ONLY",
+      "hypothesis": "Scene rare di un luogo nascosto della Grande Guerra, con forte impatto visivo se l'originale HD realmente mostra almeno cinque riprese diverse e con movimento.",
+      "commons_original_raster_claim_px": [
+        1920,
+        1080
+      ],
+      "commons_original_file_size_mb_approx": 106.01,
+      "source_archive_references": [
+        "https://commons.wikimedia.org/wiki/File:Into_the_Catacombs_of_War_-_Albert_Dawson_Inspecting_Russian_Trenches_(August_1915).ogg"
+      ],
+      "rights_italy_verified": false,
+      "historical_attribution_verified": false,
+      "source_native_visual_review": false,
+      "original_film_sha256_verified": false,
+      "risks": [
+        "Stato Commons public domain USA non prova automaticamente diritti riuso Italia; originale cameraman/fotografo e moderna digitalizzazione da accertare.",
+        "Filmato Ogg 1920x1080 di 295s pubblicato nel 2022 da Ron van Dopperen da Library of Congress; verificare collegamento all'originale LOC.",
+        "Possibili cartelli, scene statiche o bassissima luce; cinque riprese e cinque finestre di movimento da testare su file autentico con FFmpeg.",
+        "Contesto di guerra e sofferenza, niente scene grafiche violente; non usare propaganda come narrazione, non inventare volti/oggetti."
+      ]
     }
   ],
-  "last_added_real_film_candidate": "constantinople_messter_1916"
+  "last_added_real_film_candidate": "russian_trenches_1915"
 }
