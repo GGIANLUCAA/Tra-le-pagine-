@@ -105,6 +105,10 @@ class V131Tests(unittest.TestCase):
         motion["five_prefreeze_proxy_strips"][0]["freeze_source_pts_time_s"] = float("nan")
         with self.assertRaisesRegex(ValueError, "SHA_PTS_MISMATCH"):
             evaluate(visual, motion, registry)
+        visual["five_review_frames"][0]["source_pts_time_s"] = 10**1000
+        motion["five_prefreeze_proxy_strips"][0]["freeze_source_pts_time_s"] = 10**1000
+        with self.assertRaisesRegex(ValueError, "SHA_PTS_MISMATCH"):
+            evaluate(visual, motion, registry)
 
     def test_invalid_input_replaces_prior_report_with_blocked_state(self):
         with tempfile.TemporaryDirectory() as tmp:
