@@ -11,6 +11,8 @@ on:
       - "tests/test_storia_rivive_v121.py"
       - "tests/test_storia_rivive_v122.py"
       - "tests/test_storia_rivive_v123.py"
+      - "src/storia_rivive_adaptive_sampling_v124.py"
+      - "tests/test_storia_rivive_v124.py"
       - ".github/workflows/storia-rivive-v101-auto-3h.yml"
       - ".github/workflows/storia-v109-source-preflight-tests.yml"
   workflow_dispatch:
@@ -43,3 +45,4 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v121.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v122.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v123.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v124.py" -v
