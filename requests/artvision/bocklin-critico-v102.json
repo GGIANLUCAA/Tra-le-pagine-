@@ -33,5 +33,17 @@
     "expected_output": "one actual Gacrux WAV and two Critico MP4 sharing identical AAC; review not Gold"
   },
   "previous_failed_run_id": 41227581466,
-  "previous_failed_run_no_api_calls": true
+  "previous_failed_run_no_api_calls": true,
+  "attempt_3": {
+    "reason": "Second run 41231162328 successfully passed secondary Free account preflight but failed to find ffmpeg during dependencies. TTS, assets and render steps were skipped; no Google call, no WAV, no MP4.",
+    "runner_fix": "Use proven imageio-ffmpeg static binary with GITHUB_PATH and verify painting source SHA before invoking TTS",
+    "rerun_policy": "One single attempt on main after skipped TTS; never auto-retry if Gacrux step executed even if later steps failed",
+    "google_key": "GEMINI_API_KEY2 (owner confirmed Free without linked billing)",
+    "api_cost_limit": "zero paid calls; terminate if second secret missing"
+  },
+  "previous_failed_run_ids": [
+    41227581466,
+    41231162328
+  ],
+  "no_voice_calls_in_preceding_attempts": true
 }
