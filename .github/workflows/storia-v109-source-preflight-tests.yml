@@ -9,6 +9,7 @@ on:
       - "src/storia_rivive_i2i_prepare_v102.py"
       - "tests/test_storia_rivive_v101.py"
       - "tests/test_storia_rivive_v121.py"
+      - "tests/test_storia_rivive_v122.py"
       - ".github/workflows/storia-rivive-v101-auto-3h.yml"
       - ".github/workflows/storia-v109-source-preflight-tests.yml"
   workflow_dispatch:
@@ -39,3 +40,4 @@ jobs:
           set -euo pipefail
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v121.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v122.py" -v
