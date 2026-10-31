@@ -25,6 +25,9 @@ def case():
               "human_artistic_approved": False, "video_finished": False,
               "five_prefreeze_proxy_strips": [
                   {"source_frame": n, "freeze_source_pts_time_s": t,
+                   "pre_freeze_start_pts": round(t*100)-100,
+                   "freeze_pts": round(t*100), "source_time_base": "1/100",
+                   "proxy_decoded_frame_count": 5,
                    "proxy_rgb_sha256": f"{i+10:064x}"} for i, (n, t) in enumerate(zip(NAMES, TIMES))]}
     registry = {"version": "V131_REVIEWED_SOURCE_VETOES", "source_vetoes": [
         {"film_sha256": FILM, "frame": "frame_34.png", "freeze_s": 357.36,
@@ -76,6 +79,31 @@ class V131Tests(unittest.TestCase):
         visual["human_artistic_approved"] = False
         motion["five_prefreeze_proxy_strips"].pop()
         with self.assertRaisesRegex(ValueError, "FIVE_SOURCE_WINDOWS_REQUIRED"):
+            evaluate(visual, motion, registry)
+
+    def test_native_freeze_pts_and_proxy_frame_count_must_match(self):
+        visual, motion, registry = case()
+        motion["five_prefreeze_proxy_strips"][0]["freeze_pts"] += 1
+        with self.assertRaisesRegex(ValueError, "SHA_PTS_MISMATCH"):
+            evaluate(visual, motion, registry)
+        motion["five_prefreeze_proxy_strips"][0]["freeze_pts"] -= 1
+        motion["five_prefreeze_proxy_strips"][0]["proxy_decoded_frame_count"] = 2
+        with self.assertRaisesRegex(ValueError, "SHA_PTS_MISMATCH"):
+            evaluate(visual, motion, registry)
+        motion["five_prefreeze_proxy_strips"][0]["proxy_decoded_frame_count"] = 5
+        motion["five_prefreeze_proxy_strips"][0]["pre_freeze_start_pts"] = 0
+        with self.assertRaisesRegex(ValueError, "SHA_PTS_MISMATCH"):
+            evaluate(visual, motion, registry)
+
+    def test_nonfinite_timestamps_cannot_bypass_veto(self):
+        visual, motion, registry = case()
+        registry["source_vetoes"][0]["freeze_s"] = float("nan")
+        with self.assertRaisesRegex(ValueError, "STALE_OR_MALFORMED_VETO"):
+            evaluate(visual, motion, registry)
+        registry["source_vetoes"][0]["freeze_s"] = 357.36
+        visual["five_review_frames"][0]["source_pts_time_s"] = float("nan")
+        motion["five_prefreeze_proxy_strips"][0]["freeze_source_pts_time_s"] = float("nan")
+        with self.assertRaisesRegex(ValueError, "SHA_PTS_MISMATCH"):
             evaluate(visual, motion, registry)
 
     def test_invalid_input_replaces_prior_report_with_blocked_state(self):
