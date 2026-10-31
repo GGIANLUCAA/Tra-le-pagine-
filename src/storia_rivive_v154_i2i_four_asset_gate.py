@@ -159,6 +159,12 @@ def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) ->
             raise ValueError("V154_NATIVE_RASTER_NOT_DOCUMENTED")
         _verified_png(root, row["native_original_frame_file"], row["native_original_frame_sha256"], tuple(raster))
         _verified_png(root, row["vertical_review_file"], row["vertical_review_sha256"], (720, 1280))
+    # Five numbered rows are not evidence of five different archival frames.
+    # Exact byte reuse is an objective fail; different camera shots still need
+    # actual film review, since different PNGs may show the same shot.
+    for key in ("source_id", "native_original_frame_sha256", "vertical_review_sha256"):
+        if len({row.get(key) for row in rows}) != 5:
+            raise ValueError("V157_DUPLICATE_FIVE_SCENE_SOURCE_" + key.upper())
     jobs = candidates.get("jobs")
     if not isinstance(jobs, list) or len(jobs) > 4:
         raise ValueError("V154_MAX_FOUR_I2I_JOBS")
@@ -198,6 +204,12 @@ def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) ->
             raise ValueError("V154_KNOWN_ARTISTICALLY_REJECTED_I2I_SHA")
         source = _safe_file(root, row["vertical_review_file"])
         with Image.open(photo) as restored, Image.open(source) as original:
+            # RGB conversion silently discards alpha: a transparent fake photo
+            # can otherwise pass SHA, colour and structural checks.
+            if ("transparency" in restored.info or
+                    ("A" in restored.getbands() and
+                     restored.getchannel("A").getextrema()[0] != 255)):
+                raise ValueError("V157_TRANSPARENT_RESTORATION_NOT_VISIBLE")
             rgb = restored.convert("RGB")
             if ImageChops.difference(rgb, original.convert("RGB")).getbbox() is None:
                 raise ValueError("V154_PHOTO_IS_UNCHANGED_SOURCE_NOT_I2I")
@@ -217,6 +229,7 @@ def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) ->
     return {"version": "V154", "status": "V154_SOURCE_EDITORIAL_BLOCKED" if not missing else "V154_I2I_ASSETS_PENDING_AND_EDITORIAL_BLOCKED",
             "real_i2i_photo_files_sha_verified": len(completed), "missing_i2i_scenes": missing,
             "verified_byte_evidence": completed, "model_invocation_independently_verified": False,
+            "five_source_frame_byte_distinctness_verified": True,
             "five_shot_coherence_verified": False, "rights_italy_verified": False,
             "face_object_identity_verified": False, "human_artistic_approval": False,
             "vidu_clip_generated": False, "master_eligible": False,
