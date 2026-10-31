@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 9
     env:
       GH_TOKEN: ${{ github.token }}
-      STAGE_REQUEST_ID: "cane-olympic-20261031-v3"
+      STAGE_REQUEST_ID: "cane-olympic-20261031-v3b"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
