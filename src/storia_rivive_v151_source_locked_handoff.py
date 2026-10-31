@@ -20,10 +20,12 @@ try:
     from src.storia_rivive_v149_authentic_bw_proxy import validate, sha256_file
     from src.storia_rivive_v150_longer_bw_review import EXTRA_MS, STATUS as CLIP_STATUS
     from src.storia_rivive_i2i_prepare_v102 import PROMPT, NEGATIVE
+    from src.storia_rivive_v152_editorial_preflight import audit as audit_editorial
 except ModuleNotFoundError:
     from storia_rivive_v149_authentic_bw_proxy import validate, sha256_file
     from storia_rivive_v150_longer_bw_review import EXTRA_MS, STATUS as CLIP_STATUS
     from storia_rivive_i2i_prepare_v102 import PROMPT, NEGATIVE
+    from storia_rivive_v152_editorial_preflight import audit as audit_editorial
 
 BATCH_STATUS = "V150_EXTENDED_BW_SOURCE_BATCH_READY"
 OUTPUT_STATUS = "V151_FIVE_EXACT_SOURCE_FRAMES_PREPARED_AWAITING_HUMAN_SOURCE_AND_RIGHTS_REVIEW"
@@ -198,6 +200,12 @@ def prepare(manifest, artifact_root, destination):
         "freeze_frames": rows,
         "next_action": "Human visual + territorial rights review; choose one coherent episode; only then genuine I2I/provider and approved Vidu plan."
     }
+    # V152: five SHA-verified films do not automatically form one coherent episode.
+    editorial = audit_editorial(
+        json.loads(Path(manifest).read_text(encoding="utf-8")), result)
+    result["editorial_preflight"] = editorial
+    (out / "V152_EDITORIAL_PREFLIGHT.json").write_text(
+        json.dumps(editorial, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     (out / "V151_SOURCE_LOCKED_HANDOFF.json").write_text(
         json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return result
