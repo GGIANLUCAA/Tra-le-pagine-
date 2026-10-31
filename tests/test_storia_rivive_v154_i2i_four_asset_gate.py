@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageOps
 
 from src.storia_rivive_v154_i2i_four_asset_gate import audit
 
@@ -13,14 +13,24 @@ def sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
+def striped(path, size, scene, tinted=False):
+    image = Image.new("RGB", size)
+    draw = ImageDraw.Draw(image)
+    for y in range(0, size[1], 64):
+        level = (45 if (y // 64) % 2 == 0 else 175) + scene
+        fill = (level + 8, level + 20, level + 30) if tinted else (level,) * 3
+        draw.rectangle((0, y, size[0] - 1, min(y + 63, size[1] - 1)), fill=fill)
+    image.save(path)
+
+
 def fixture(root):
     root = Path(root)
     rows, jobs = [], []
     for scene in range(1, 6):
         original = root / f"original_{scene}.png"
         crop = root / f"crop_{scene}.png"
-        Image.new("RGB", (1280, 720), (scene * 10, scene * 10, scene * 10)).save(original)
-        Image.new("RGB", (720, 1280), (scene * 10, scene * 10, scene * 10)).save(crop)
+        striped(original, (1280, 720), scene)
+        striped(crop, (720, 1280), scene)
         rows.append({"scene": scene, "role": "I2I_PHOTO_CANDIDATE_NOT_GENERATED" if scene < 5 else "VIDU_ANCHOR_NOT_SUBMITTED",
                      "source_id": f"source_{scene}", "native_raster": [1280, 720],
                      "native_original_frame_file": original.name, "native_original_frame_sha256": sha(original),
@@ -30,7 +40,7 @@ def fixture(root):
                      "face_and_object_fidelity_verified": False, "rights_italy_verified": False})
         if scene < 5:
             output = root / f"ai_{scene}.png"
-            Image.new("RGB", (720, 1280), (scene * 10 + 8, scene * 10 + 20, scene * 10 + 35)).save(output)
+            striped(output, (720, 1280), scene, tinted=True)
             jobs.append({"scene": scene, "source_id": f"source_{scene}",
                          "source_frame_sha256": sha(original), "source_crop_sha256": sha(crop),
                          "source_crop_file": crop.name, "restored_photo_file": output.name,
@@ -127,6 +137,29 @@ class FourI2IByteGate(unittest.TestCase):
     def test_no_editorial_preflight_no_pass(self):
         self.h["editorial_preflight"].pop("provider_jobs_may_start")
         with self.assertRaisesRegex(ValueError, "EDITORIAL_PREFLIGHT"):
+            self.check()
+
+    def test_uniform_color_fake_rejected_even_with_correct_sha(self):
+        output = self.root / "ai_1.png"
+        Image.new("RGB", (720, 1280), (80, 130, 180)).save(output)
+        self.c["jobs"][0]["restored_photo_sha256"] = sha(output)
+        with self.assertRaisesRegex(ValueError, "LOW_DETAIL_OR_FLAT_OUTPUT"):
+            self.check()
+
+    def test_unrelated_colored_image_rejected_even_with_correct_sha(self):
+        output = self.root / "ai_1.png"
+        with Image.open(output) as image:
+            ImageOps.invert(image.convert("RGB")).save(output)
+        self.c["jobs"][0]["restored_photo_sha256"] = sha(output)
+        with self.assertRaisesRegex(ValueError, "SOURCE_STRUCTURE_MISMATCH"):
+            self.check()
+
+    def test_low_detail_source_cannot_claim_faithful_restoration(self):
+        crop = self.root / "crop_1.png"
+        Image.new("RGB", (720, 1280), (90, 90, 90)).save(crop)
+        self.h["freeze_frames"][0]["vertical_review_sha256"] = sha(crop)
+        self.c["jobs"][0]["source_crop_sha256"] = sha(crop)
+        with self.assertRaisesRegex(ValueError, "LOW_DETAIL_SOURCE_NEEDS_REVIEW"):
             self.check()
 
     def test_output_path_traversal_rejected(self):
