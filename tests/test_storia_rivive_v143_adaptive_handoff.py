@@ -27,7 +27,7 @@ class TestV143AdaptiveHandoff(unittest.TestCase):
         self.assertEqual(result["status"], "V143_ADAPTIVE_REVIEW_EVIDENCE_READY")
         self.assertNotIn("APPROVED", result["status"])
 
-    def test_real_v142_no_v113_shots_rejected_without_downstream_crash(self):
+    def test_insufficient_v113_shots_rejected_without_downstream_crash(self):
         a, r, s, ready = fixture()
         a = {"status": "V124_ADAPTIVE_SOURCE_RESEARCH_BLOCKED",
              "reason": "V124_SHOT_ANALYSIS_UNAVAILABLE", "paid_calls": 0}
