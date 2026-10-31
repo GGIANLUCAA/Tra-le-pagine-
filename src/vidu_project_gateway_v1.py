@@ -88,7 +88,12 @@ def validate_common(data):
     clip = data.get("clip")
     if not isinstance(src, dict) or not isinstance(clip, dict):
         raise GateError("SOURCE_AND_CLIP_REQUIRED")
-    if not RELEASE_RE.fullmatch(src.get("release_tag", "")) or not ASSET_RE.fullmatch(src.get("asset_name", "")):
+    # For PERSONAL work, accept an unreferenced Git image blob.
+    # The blob is only reachable by its unpredictable SHA, never committed into a public tree.
+    if data.get("format") == "personale" and isinstance(src.get("git_blob_sha"), str):
+        if not re.fullmatch(r"[0-9a-f]{40}", src["git_blob_sha"]) or src.get("asset_name") != "photo.jpg":
+            raise GateError("PERSONAL_SOURCE_REQUIRES_VERIFIED_GIT_BLOB_AND_PHOTO_NAME")
+    elif not RELEASE_RE.fullmatch(src.get("release_tag", "")) or not ASSET_RE.fullmatch(src.get("asset_name", "")):
         raise GateError("SOURCE_MUST_BE_IMAGE_FROM_THIS_REPOSITORY_GITHUB_RELEASE")
     if not SHA_RE.fullmatch(src.get("sha256", "")):
         raise GateError("SOURCE_EXACT_SHA256_REQUIRED")
@@ -172,9 +177,20 @@ def source_image(data, output):
     from PIL import Image
     src = data["source"]
     output.mkdir(parents=True, exist_ok=True)
-    cmd(["gh", "release", "download", src["release_tag"], "--repo", REPO,
-         "-p", src["asset_name"], "-D", str(output)], 150)
-    path = output / src["asset_name"]
+    if data.get("format") == "personale" and src.get("git_blob_sha"):
+        # Read-only Git blob fetch; no public release or branch commit of the user's photo.
+        blob_response = json.loads(cmd(["gh", "api", "repos/" + REPO + "/git/blobs/" + src["git_blob_sha"]], 75))
+        if blob_response.get("encoding") != "base64" or not isinstance(blob_response.get("content"), str):
+            raise GateError("PERSONAL_GIT_BLOB_NOT_BASE64")
+        image_bytes = base64.b64decode(blob_response["content"], validate=False)
+        if not 8_000 <= len(image_bytes) < 9_500_000:
+            raise GateError("PERSONAL_SOURCE_BYTES_OUT_OF_RANGE")
+        path = output / "photo.jpg"
+        path.write_bytes(image_bytes)
+    else:
+        cmd(["gh", "release", "download", src["release_tag"], "--repo", REPO,
+             "-p", src["asset_name"], "-D", str(output)], 150)
+        path = output / src["asset_name"]
     if not path.is_file() or not 10_000 <= path.stat().st_size < 9_500_000:
         raise GateError("SOURCE_IMAGE_SIZE_UNEXPECTED")
     if sha256_file(path) != src["sha256"]:
@@ -182,8 +198,18 @@ def source_image(data, output):
     with Image.open(path) as im:
         im.verify()
     with Image.open(path) as im:
-        if min(im.size) < 500 or max(im.size) > 5000 or max(im.size) / min(im.size) > 3:
+        if max(im.size) > 5000 or max(im.size) / min(im.size) > 3:
             raise GateError("SOURCE_IMAGE_NOT_SUITABLE_FOR_VIDEO")
+        if min(im.size) < 500:
+            if data.get("format") != "personale" or min(im.size) < 320:
+                raise GateError("SOURCE_IMAGE_TOO_SMALL_NO_PAID_POST")
+            from PIL import ImageFilter
+            # Upscale is only for the single personal video, not ArtVision/Restauro.
+            enlarged = im.convert("RGB").resize((720, 1280), Image.Resampling.LANCZOS)
+            enlarged = enlarged.filter(ImageFilter.UnsharpMask(radius=1.4, percent=75, threshold=2))
+            converted = output / "personal_720x1280.jpg"
+            enlarged.save(converted, quality=93, optimize=True)
+            return converted
     return path
 
 
