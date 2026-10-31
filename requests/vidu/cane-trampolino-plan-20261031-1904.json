@@ -1,0 +1,25 @@
+{
+  "schema": "vidu_project_gateway_v1",
+  "request_id": "cane-trampolino-plan-20261031-1904",
+  "mode": "plan",
+  "format": "personale",
+  "source": {
+    "git_blob_sha": "6ad7cb0997a27957c50065039687c3df56b4614d",
+    "asset_name": "photo.jpg",
+    "sha256": "d1eb1899f2162ee4c76fa60743531f725c5a4548dc43689a3e6548320e2474e5",
+    "subject_reviewed_by_user": true,
+    "provenance_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/vidu_image_stage/cane-trampolino-20261031-1903.json"
+  },
+  "clip": {
+    "model": "viduq2-pro-fast",
+    "resolution": "720p",
+    "seconds": 10,
+    "off_peak": false,
+    "audio": false,
+    "color_reveal_first_second": false,
+    "prompt": "Create a hilarious ultra-photorealistic 10-second vertical dog video. The EXACT shaggy light-gray beige dog from the provided reference must stay recognizable at all times: same warm brown eyes, black nose, messy long gray-beige rough fur, friendly face, legs and body. Start with this same dog actively springing above the trampoline right beside the bright turquoise backyard swimming pool, already bouncing in the first frame (no zoom on a photo). 0-2 seconds: two lively real bounces with the dog's fur moving naturally, each bounce compressing the mat on landing. 2-5 seconds: increasingly impressive bounces, camera follows smoothly and widens to show the pool and trampoline in the same continuous environment. 5-7.5 seconds: one enormous bounce sends the dog high over the pool, completing an amusing and visually spectacular smooth backward somersault; coherent limbs and stable canine anatomy. 7.5-9 seconds: the dog gently and safely splashes down in the swimming pool, causing an enormous sparkling water splash and droplets that reach the lens. 9-10 seconds: the same dog pops back above the water, dog-paddles and gives the camera a sweet surprised happy look, wet fluffy fur plastered against the face. Realistic daylight, humorous kinetic energy, clear full-body movement, one fluid continuous movie shot, 9:16 portrait, 720p. DO NOT generate still-photo zoom, frozen dog, morphing, breed swaps, cloned dog, extra legs, human limbs, impossible anatomy, discontinuous pool/trampoline positions, on-screen text, captions or logos."
+  },
+  "distribution": {
+    "github_public_preview": false
+  }
+}
