@@ -53,6 +53,31 @@ BANK={"candidates":[
 ]}
 
 class V101Tests(unittest.TestCase):
+    def test_v159_same_archival_page_is_not_a_new_episode(self):
+        bank = {"candidates": [
+            {"id": "first_film", "source_page": "https://commons.wikimedia.org/wiki/File:Paris_Market.webm",
+             "license": "PDM"},
+            {"id": "duplicate_film", "source_page": "https://commons.wikimedia.org/wiki/File:Paris%20Market.webm?uselang=en#filehistory",
+             "license": "PDM"},
+            {"id": "another_film", "source_page": "https://commons.wikimedia.org/wiki/File:Other_Film.webm",
+             "license": "PDM"}]}
+        for hour in range(0, 24, 3):
+            order = auto.build_work_order(bank, f"2026-10-31T{hour:02d}:00:00Z", PROFILE)
+            self.assertNotEqual(order["episode_id"], "duplicate_film")
+            self.assertEqual(order["excluded_duplicate_source_page_candidates"], ["duplicate_film"])
+            self.assertFalse(order["paid_api_call_permitted"])
+            self.assertFalse(order["video_completed"])
+
+    def test_v159_loc_alias_and_query_do_not_duplicate_source(self):
+        bank = {"candidates": [
+            {"id": "first_loc", "source_page": "https://www.loc.gov/item/00694391/"},
+            {"id": "second_loc", "source_page": "https://loc.gov/item/00694391/?fo=json"}]}
+        order = auto.build_work_order(bank, "2026-10-31T09:00:00Z", PROFILE)
+        self.assertEqual(order["episode_id"], "first_loc")
+        self.assertEqual(order["excluded_duplicate_source_page_candidates"], ["second_loc"])
+        self.assertFalse(order["skip_source_acquisition"])
+        self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW", order["blocking_issues"])
+
     def test_v133_skips_rejected_source_without_repeating_research(self):
         bank={"candidates":[*BANK["candidates"], {
             "id":"france_cotton_mill_1920",
