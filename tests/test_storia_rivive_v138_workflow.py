@@ -62,7 +62,7 @@ class TestV138VersaillesAudit(unittest.TestCase):
         self.assertNotIn("write-all",s)
         self.assertNotIn("secrets.",s)
         self.assertNotIn("VIDU_API",s)
-        self.assertNotIn("purchase",s.lower())
+        self.assertNotIn("api.vidu.com",s.lower())
         self.assertIn("Unexpected paid or publication permission",s)
         self.assertIn('"credits_spent":0,"publication_permitted":False',s)
 
