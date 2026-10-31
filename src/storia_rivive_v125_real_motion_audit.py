@@ -100,6 +100,9 @@ def audit(film_path, scout_path, selection_path, output_path, *, inspector=None)
     inspect_motion = inspector if inspector is not None else inspect_source_motion
     checked = []
     passing = []
+    # Validate every candidate window BEFORE decoding any frame. A tampered
+    # later candidate must not cause earlier FFmpeg work or partial approval.
+    planned = []
     for row in candidates:
         original = file_map[row["filename"]]
         # Prefer hard failure over silent fallback when ranking source mismatch:
@@ -120,6 +123,8 @@ def audit(film_path, scout_path, selection_path, output_path, *, inspector=None)
                 or any(embedded.get(k) != window.get(k)
                        for k in ("start_pts", "freeze_pts", "time_base"))):
             raise ValueError("V125_RANKED_SOURCE_PTS_WINDOW_TAMPERED")
+        planned.append((row, original, window))
+    for row, original, window in planned:
         evidence = inspect_motion(film, digest, window["start_pts"],
                                   window["freeze_pts"], window["time_base"])
         pass_motion = (evidence.get("status") == "MOTION_EVIDENCE_PASS"
