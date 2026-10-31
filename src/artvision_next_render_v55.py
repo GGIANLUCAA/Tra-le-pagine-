@@ -107,13 +107,15 @@ def choose(root=ROOT):
                                     six_count=sum(s in ("rendered_needs_review","approved_for_final_delivery")
                                                   for s in sixth_states.values())
                                     source_ok=island.get("source_sha256_verified") is True
-                                    return {"status":"sixth_pilot_preflight_pending" if not source_ok else
+                                    variant_ready=any(island["variants"][v].get("status")=="ready_for_render" and
+                                                      not island["variants"][v].get("preflight_blockers",[]) for v in VARIANTS)
+                                    return {"status":"sixth_pilot_preflight_pending" if not (source_ok and variant_ready) else
                                                 ("sixth_pilot_four_rendered_review_pending" if six_count==4 else "sixth_pilot_in_progress"),
                                             "work":island["group_id"],"artwork":island["artwork"],
                                             "rendered_count":six_count,
                                             "approved_count":sum(s=="approved_for_final_delivery" for s in sixth_states.values()),
                                             "variants":sixth_states,
-                                            "rendering_allowed":source_ok and six_count<4,
+                                            "rendering_allowed":source_ok and variant_ready and six_count<4,
                                             "new_artwork_required":False,"new_seventh_artwork_allowed":False,
                                             "next_action":"Bocklin third 1883 version NG 2/80 only. First verify source bytes/hash and music/TTS/frame gates, then physically render four separate MP4s and QA. No paid calls without consent; no seventh work."}
                                 return {"status":"fifth_pilot_four_rendered_review_pending" if fifth_count==4 else "fifth_pilot_in_progress",
