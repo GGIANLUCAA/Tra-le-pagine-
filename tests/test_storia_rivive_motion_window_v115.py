@@ -42,6 +42,21 @@ class DecodedSourceMotionTests(unittest.TestCase):
                             '-f', 'lavfi', '-i', kind, '-t', '3', '-an',
                             '-c:v', 'mpeg4', '-q:v', '3', str(path)],
                            check=True, timeout=30)
+        # V120: an unmoving checkerboard with drastic global exposure flicker.
+        # Encoded frames REALLY differ; raw interframe pixel delta alone passes.
+        cls.flicker = Path(cls.tmp.name) / 'flicker.mp4'
+        raw = Path(cls.tmp.name) / 'flicker.gray'
+        low = bytes(60 + 40 * ((x // 16 + y // 16) % 2)
+                    for y in range(128) for x in range(128))
+        high = bytes(v + 100 for v in low)
+        with raw.open('wb') as output:
+            for n in range(90):
+                output.write(high if (n // 4) % 2 else low)
+        subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y',
+                        '-f', 'rawvideo', '-pixel_format', 'gray',
+                        '-video_size', '128x128', '-framerate', '30',
+                        '-i', str(raw), '-c:v', 'mpeg4', '-q:v', '3',
+                        str(cls.flicker)], check=True, timeout=30)
 
     @classmethod
     def tearDownClass(cls):
@@ -59,6 +74,16 @@ class DecodedSourceMotionTests(unittest.TestCase):
     def test_static_film_fails(self):
         evidence = inspect_source_motion(self.static, self.sha(self.static), 0, 45, '1/30')
         self.assertEqual(evidence['reason'], 'SOURCE_WINDOW_STATIC_OR_TOO_LITTLE_MOTION', evidence)
+
+    def test_global_exposure_flicker_does_not_count_as_motion(self):
+        evidence = inspect_source_motion(self.flicker, self.sha(self.flicker),
+                                         0, 45, '1/30')
+        self.assertEqual(evidence['status'], 'BLOCKED', evidence)
+        self.assertEqual(evidence['reason'], 'SOURCE_WINDOW_EXPOSURE_FLICKER_NOT_MOTION', evidence)
+        self.assertGreater(evidence['max_mean_pixel_delta'], 80, evidence)
+        self.assertLess(evidence['max_spatial_pixel_delta'], 6, evidence)
+        self.assertGreaterEqual(evidence['exposure_only_pairs'], 2)
+        self.assertEqual(evidence['changed_pairs'], 0)
 
     def test_wrong_source_sha_fails_before_decode(self):
         evidence = inspect_source_motion(self.moving, '0' * 64, 0, 45, '1/30')
