@@ -3,7 +3,7 @@
 from __future__ import annotations
 import argparse, datetime as dt, json, re
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 
 def slot_at(value):
     t=dt.datetime.fromisoformat(value.replace("Z","+00:00"))
@@ -27,6 +27,23 @@ def candidate_issues(c):
     if c.get("source_native_visual_review") is not True:
         issues.append("NATIVE_VIDEO_FACE_AND_CROP_REVIEW_PENDING")
     return issues
+
+
+def canonical_source_page(page):
+    """Canonical research identity: URL variants are not new archival films.
+
+    Strip query/fragment and normalize Commons space/underscore encoding.
+    This does NOT establish film byte identity, five shots or reuse rights.
+    """
+    if not isinstance(page, str):
+        return None
+    u = urlparse(page)
+    if u.scheme != "https" or not u.hostname or not u.path:
+        return None
+    host = u.hostname.lower()
+    if host == "www.loc.gov":
+        host = "loc.gov"
+    return (host, unquote(u.path).replace(" ", "_").rstrip("/"))
 
 
 def rejected_source_ids(entries, registry):
@@ -121,7 +138,21 @@ def build_work_order(bank,now,profile,rejections=None,low_raster_registry=None):
     if len(set(ids))!=len(ids): raise ValueError("Duplicate candidate")
     excluded = rejected_source_ids(entries, rejections)
     excluded_sd = known_low_raster_ids(entries, low_raster_registry)
-    eligible = [c for c in entries if c["id"] not in excluded and c["id"] not in excluded_sd]
+    # V159: do not rotate the same archival page under several candidate IDs.
+    # Keep the first eligible candidate; rejected/SD candidates never reserve a page.
+    eligible = []
+    duplicate_source_pages = []
+    seen_source_pages = set()
+    for candidate in entries:
+        if candidate["id"] in excluded or candidate["id"] in excluded_sd:
+            continue
+        page_key = canonical_source_page(candidate.get("source_page"))
+        if page_key is not None and page_key in seen_source_pages:
+            duplicate_source_pages.append(candidate["id"])
+            continue
+        if page_key is not None:
+            seen_source_pages.add(page_key)
+        eligible.append(candidate)
     no_source = not eligible
     c = (eligible[(int(slot.timestamp())//10800)%len(eligible)] if eligible else
          {"id": "no_eligible_source", "title": None, "source_page": None})
@@ -137,6 +168,7 @@ def build_work_order(bank,now,profile,rejections=None,low_raster_registry=None):
       "episode_id":c["id"],"subject":c.get("title"),"source_page":c.get("source_page"),
       "excluded_sha_bound_sources":sorted(excluded),
       "excluded_low_native_raster_sources":sorted(excluded_sd),
+      "excluded_duplicate_source_page_candidates":sorted(duplicate_source_pages),
       "skip_source_acquisition":no_source,
       "source_license_claim":c.get("license"),"title":title,
       "requested_scenes":{"classic_real_i2i_photos":4,"source_locked_vidu":1},
