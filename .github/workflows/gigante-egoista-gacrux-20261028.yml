@@ -1,0 +1,59 @@
+name: Il gigante egoista - Gacrux narration single run
+on:
+  push:
+    branches: [episode/il-gigante-egoista-20261028-gacrux]
+    paths: [queue/gigante_egoista_gacrux_once_20261028.request]
+permissions:
+  contents: write
+concurrency:
+  group: gigante-egoista-gacrux-20261028-once
+  cancel-in-progress: false
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: No-cost preflight and secret availability
+        shell: bash
+        run: |
+          test -n "${GEMINI_API_KEY:-}" || { echo "::error::Gemini TTS unavailable; no voice substitution"; exit 2; }
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('episodes/il_gigante_egoista_20261028/COPIONE_ITALIANO.txt').read_text()
+          assert len(text.split('\n\n'))==16
+          assert 300<=len(text.split())<=470
+          print('Voice configured, 16 story beats. No video credit calls. Single voice request, no retry.')
+          PY
+      - name: Install free alignment and Gemini libraries
+        run: |
+          python -m pip install --disable-pip-version-check -q "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "google-genai>=2.25,<3" "imageio-ffmpeg>=0.5" "faster-whisper>=1.1,<2"
+          mkdir -p "$RUNNER_TEMP/ffbin"
+          ln -sf "$(python -c 'import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())')" "$RUNNER_TEMP/ffbin/ffmpeg"
+          echo "$RUNNER_TEMP/ffbin" >> "$GITHUB_PATH"
+      - name: Generate exactly one Google Gemini Gacrux Italian voice performance
+        run: python tools/gigante_egoista_gacrux_once_20261028.py
+      - name: Archive voice and timings even if later checks fail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIGANTE_EGOISTA_GACRUX_20261028
+          path: output/il_gigante_egoista_20261028/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Store artifact run locator
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          echo '{"run_id":${{ github.run_id }},"workflow":"gigante-egoista-gacrux-20261028.yml","voice_run_attempted":true}' > locator.json
+          gh api -X PUT "repos/${{ github.repository }}/contents/queue/gigante_egoista_gacrux_run_locator_20261028.json" \
+            -f branch="${{ github.ref_name }}" \
+            -f message="Record isolated Giant voice run locator" \
+            -f content="$(base64 -w0 locator.json)"

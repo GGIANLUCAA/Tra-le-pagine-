@@ -1,0 +1,34 @@
+name: Giant offline V13 source bundle
+on:
+  push:
+    branches: [episode/il-gigante-egoista-20261028-gacrux]
+    paths: [queue/gigante_egoista_v13_sources_20261028.request]
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Archive exact repository V13 V33 V35 V36 scripts and configs
+        run: |
+          mkdir -p export/src export/config export/docs
+          cp src/video_director_v13.py src/editorial_rules.py src/media_source_priority_v33.py src/narrative_variation_v38.py export/src/
+          cp config/editorial_rules.json config/video_formats_v13.json config/cinematic_techniques_v23.json export/config/
+          cp docs/REGOLE_ATTIVE.md docs/FILOSOFIA_FONTI_MEDIA_V33.md docs/VIDEO_DOWNLOAD_V36.md export/docs/
+          if test -f docs/VIDEO_SCENE_SHEETS_V35.md; then cp docs/VIDEO_SCENE_SHEETS_V35.md export/docs/; fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GIGANTE_V13_OFFLINE_SOURCES
+          path: export/
+          retention-days: 7
+      - name: Store source locator
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo '{"run_id":${{ github.run_id }}}' > locator.json
+          gh api -X PUT "repos/${{ github.repository }}/contents/queue/gigante_v13_sources_locator_20261028.json" \
+            -f branch="${{ github.ref_name }}" -f message="Store V13 source export locator" \
+            -f content="$(base64 -w0 locator.json)"
