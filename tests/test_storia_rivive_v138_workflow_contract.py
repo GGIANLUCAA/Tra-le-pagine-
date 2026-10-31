@@ -30,8 +30,9 @@ class VersaillesWorkflowSafetyTests(unittest.TestCase):
 
     def test_workflow_no_schedule_or_paid_publishing_service(self):
         workflow = self.text
-        self.assertIn("  pull_request:", workflow)
+        self.assertIn("  workflow_call:", workflow)
         self.assertIn("  workflow_dispatch:", workflow)
+        self.assertNotIn("  pull_request:", workflow)
         self.assertNotIn("  schedule:", workflow)
         self.assertIn("  contents: read", workflow)
         self.assertNotIn("contents: write", workflow)
