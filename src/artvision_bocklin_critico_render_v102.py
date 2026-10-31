@@ -36,7 +36,7 @@ def verified_voice(voice_dir,chapters):
     p=c.get("profile",{})
     if p.get("model")!="gemini-3.8-flash-tts" or p.get("voice")!="Gacrux":
         raise ValueError("Voice provider mismatch")
-    if a.get("method")!="asr_with_interpolation" or (a.get("matched_fraction") or 0)<.70:
+    if a.get("method")!="asr_with_interpolation" or (a.get("matched_fraction") or 0)<.85:
         raise ValueError("No sufficiently grounded ASR alignment")
     x,sr=sf.read(wav,dtype="float32")
     if sr!=24000 or x.ndim!=1 or not np.isfinite(x).all(): raise ValueError("WAV invalid")
@@ -99,9 +99,11 @@ def video(variant,im,photo,marks,out):
                 x=px+(x-px)*move;y=py+(y-py)*move;z=pz+(z-pz)*move
                 sec=n/FPS
                 if sec<5:
-                    image=crop(gallery,.5,.5,1+2.55*easing(sec/5))
+                    progress=easing(sec/5)
+                    image=crop(gallery,.5-.12*progress,.5+.09*progress,1+2.55*progress)
                 elif sec>last/FPS-7:
-                    image=crop(gallery,.5,.5,3.55-2.55*easing((sec-(last/FPS-7))/7))
+                    progress=easing((sec-(last/FPS-7))/7)
+                    image=crop(gallery,.38+.12*progress,.59-.09*progress,3.55-2.55*progress)
                 else:
                     image=crop(im,x,y,max(1.10,z))
             else:
