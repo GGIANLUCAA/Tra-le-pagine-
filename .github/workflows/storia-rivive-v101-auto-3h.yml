@@ -62,7 +62,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v6-shot-cut-evidence-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v7-native-raster-preflight-${{ env.STORIA_EPISODE_ID }}
       - name: Fetch bounded original film and make genuine B/W contact sheet
         if: steps.film_cache.outputs.cache-hit != 'true'
         shell: bash
@@ -152,10 +152,13 @@ jobs:
           motion=json.loads(motion_path.read_text()) if motion_path.is_file() else {"status":"BLOCKED"}
           low_detail=rank.get("status")=="SOURCE_NATIVE_DETAIL_INSUFFICIENT_FOR_FIVE_SHOTS"
           insufficient_cuts=scout.get("shot_boundary_analysis",{}).get("status")=="INSUFFICIENT_CUT_CANDIDATES"
+          native_media_rejected=scout.get("status") in ("SOURCE_NATIVE_DETAIL_INSUFFICIENT_SKIP_DOWNLOAD","SOURCE_RASTER_METADATA_MISSING_SKIP_DOWNLOAD")
           insufficient_selected_shots=rank.get("status") in (
               "INSUFFICIENT_DISTINCT_SHOT_CANDIDATES","SHOT_SEGMENT_PROVENANCE_INCOMPLETE")
           status={"cycle_id":order["cycle_id"],"candidate":order["episode_id"],
               "source_scout":scout.get("status"),
+              "native_original_raster_px":[scout.get("original_width_px"),scout.get("original_height_px")],
+              "native_media_rejected_before_download":native_media_rejected,
               "source_preflight_blocking_issues":order.get("blocking_issues",[]),
               "native_frame_selection":rank.get("status"),
               "i2i_input_preparation":i2i.get("status"),
@@ -164,7 +167,7 @@ jobs:
               "restored_i2i_photos_approved":0,
               "real_vidu_clips_approved":0,"finished_mp4":False,"published":False,
               "charged_api_requests":0,
-              "status":"SOURCE_REJECTED" if (low_detail or insufficient_cuts or insufficient_selected_shots) else "ASSETS_PENDING",
+              "status":"SOURCE_REJECTED" if (low_detail or native_media_rejected or insufficient_cuts or insufficient_selected_shots) else "ASSETS_PENDING",
               "cut_candidate_count":scout.get("shot_boundary_analysis",{}).get("cut_candidate_count"),
               "historical_camera_shots_verified":False,
               "next_required":"Resolve source rights and native quality, then 4 genuine I2I photos, 1 real Vidu, V91/V94/V96/V99 and artistic review"}
