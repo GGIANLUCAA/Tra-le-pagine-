@@ -1,0 +1,117 @@
+name: "La Storia Rivive V150 | longer authentic B/W source-only review"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_v150_longer_bw_review.py"
+      - "tests/test_storia_rivive_v150_longer_bw_review.py"
+      - ".github/workflows/storia-v150-longer-bw-technical-review.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: storia-v150-longer-original-only-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  unit_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free FFmpeg and Python dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: V150 all six tests including encoded MP4, SHA tampering and fail closed
+        run: python -m unittest discover -s tests -p "test_storia_rivive_v150_longer_bw_review.py" -v
+
+  original_source_batch:
+    needs: unit_tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    strategy:
+      fail-fast: false
+      matrix:
+        batch: [a, b]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free FFmpeg, no AI or paid service credentials
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: SHA-verify original archives and create 2.4s authentic B/W preview clips
+        run: |
+          set -euo pipefail
+          python -m src.storia_rivive_v150_longer_bw_review \
+            --manifest config/storia_rivive_v149_five_original_motion_preview.json \
+            --batch "${{ matrix.batch }}" \
+            --out "output/storia_v150_${{ matrix.batch }}"
+      - name: Fail if original film motion or provenance missing
+        env:
+          BATCH: ${{ matrix.batch }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path("output/storia_v150_"+os.environ["BATCH"])/"V150_BATCH_REPORT.json"
+          r=json.loads(p.read_text(encoding="utf-8"))
+          assert r["status"]=="V150_EXTENDED_BW_SOURCE_BATCH_READY",r
+          assert not r["is_finished_video"] and not r["publish_permitted"]
+          assert not r["rights_italy_verified"] and not r["artistic_approved"]
+          assert r["paid_api_calls"]==0 and r["real_i2i_generated"]==r["real_vidu_generated"]==0
+          PY
+      - name: Retain only short preview clips, not original copyrighted archive files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V150_LONGER_BW_${{ matrix.batch }}_${{ github.run_id }}
+          path: |
+            output/storia_v150_${{ matrix.batch }}/V150_BATCH_REPORT.json
+            output/storia_v150_${{ matrix.batch }}/preview/*.mp4
+          retention-days: 14
+          if-no-files-found: warn
+
+  combine_longer_preview:
+    needs: original_source_batch
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free FFmpeg and Pillow
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: STORIA_V150_LONGER_BW_*
+          path: output/storia_v150_batches
+          merge-multiple: false
+      - name: Verify all 5 source / frame / clip SHA before concatenation
+        run: |
+          python -m src.storia_rivive_v150_longer_bw_review \
+            --manifest config/storia_rivive_v149_five_original_motion_preview.json \
+            --artifacts output/storia_v150_batches \
+            --out output/storia_v150_review/STORIA_V150_LONGER_REAL_BW_PREVIEW_NOT_FINAL.mp4
+      - name: Upload verifiable, review-only longer preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V150_LONGER_REAL_BW_TECHNICAL_PREVIEW_${{ github.run_id }}
+          path: |
+            output/storia_v150_review/STORIA_V150_LONGER_REAL_BW_PREVIEW_NOT_FINAL.mp4
+            output/storia_v150_review/V150_REVIEW_ONLY_REPORT.json
+          retention-days: 14
+          if-no-files-found: error
