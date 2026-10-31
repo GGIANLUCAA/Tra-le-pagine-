@@ -151,6 +151,54 @@ def extract_target_frames(film, folder, targets, *, max_runtime_s=230):
     return records
 
 
+def spread_review_shortlist(selection, provenance, duration_s):
+    """Prefer one actual source frame per fifth of the film for editorial review.
+
+    Does NOT authenticate shots or human subjects. Never mark a source approved.
+    If one film region has no safe photographic sample, fail closed rather than
+    presenting a visually repetitive shortlist as five distinct historical shots.
+    """
+    rows = selection.get("all_candidates", [])
+    if not isinstance(rows, list) or not rows:
+        return {"status": "V124_NO_PHOTOGRAPHIC_FRAMES", "preselected": []}
+    by_name = {p.get("filename"): p for p in provenance if isinstance(p, dict)}
+    candidates = []
+    for row in rows:
+        if (row.get("source_picture_content_eligible") is not True
+                or row.get("source_native_detail_sufficient") is not True
+                or row.get("pre_freeze_window_viable") is not True):
+            continue
+        source = by_name.get(row.get("filename"))
+        if not source or type(source.get("shot_candidate_segment_index")) is not int:
+            continue
+        seconds = source.get("source_pts_time_s")
+        if type(seconds) not in (int, float) or not math.isfinite(seconds) or not 0 <= seconds < duration_s:
+            continue
+        bucket = min(4, int(seconds * 5 / duration_s))
+        candidates.append({**row, "source_pts_time_s": seconds, "review_time_bucket": bucket,
+                           "candidate_segment_index": source["shot_candidate_segment_index"]})
+    five = []
+    used_segments = set()
+    for bucket in range(5):
+        ranked = sorted(
+            (x for x in candidates
+             if x["review_time_bucket"] == bucket and x["candidate_segment_index"] not in used_segments),
+            key=lambda x: (-x["source_visual_quality_score"], x["source_pts_time_s"]))
+        if not ranked:
+            return {"status": "V124_NOT_FIVE_SPREAD_REGIONS", "preselected": [],
+                    "regions_with_eligible_photo": sorted({x["review_time_bucket"] for x in candidates}),
+                    "photographic_candidates_not_approved": len(candidates)}
+        chosen = ranked[0]
+        used_segments.add(chosen["candidate_segment_index"])
+        five.append(chosen)
+    return {"status": "V124_FIVE_TIME_SPREAD_SOURCE_CANDIDATES_REVIEW_ONLY",
+            "preselected": five,
+            "region_count": 5,
+            "photographic_candidates_not_approved": len(candidates),
+            "historical_camera_shots_verified": False,
+            "artistic_approved": False}
+
+
 def contact_sheet(frames, provenance, output, *, columns=6, rows=None):
     paths = sorted(Path(frames).glob("frame_*.png"))
     if len(paths) != len(provenance):
@@ -202,6 +250,13 @@ def inspect(film_path, original_scout_path, output_root, *, limit=MAX_TARGETS):
         json.dumps(derived, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     contact_sheet(frames, provenance, root / "ADAPTIVE_CONTACT_SHEET_V124.jpg")
     selection = rank(frames)
+    original_score_shortlist = [r["filename"] for r in selection.get("preselected", [])]
+    spread = spread_review_shortlist(selection, provenance, scout["duration_s"])
+    selection["original_score_only_preselected_files"] = original_score_shortlist
+    selection["adaptive_temporal_spread_review"] = spread
+    selection["preselected"] = spread["preselected"]
+    if spread["status"] != "V124_FIVE_TIME_SPREAD_SOURCE_CANDIDATES_REVIEW_ONLY":
+        selection["status"] = "INSUFFICIENT_TEMPORALLY_DIVERSE_PHOTOGRAPHIC_SOURCE_CANDIDATES"
     selection["adaptive_frame_source_sha256"] = source_sha
     selection["adaptive_review_only_not_camera_approval"] = True
     selection["sampled_candidate_segment_count"] = len(targets)
@@ -216,6 +271,7 @@ def inspect(film_path, original_scout_path, output_root, *, limit=MAX_TARGETS):
         "photographic_candidates": selection.get("eligible_photographic_scene_candidates", 0),
         "preselected": [z["filename"] for z in selection.get("preselected", [])],
         "selection_status": selection.get("status"),
+        "temporal_spread_status": spread.get("status"),
         "italy_rights_verified": False,
         "artistic_approved": False,
         "paid_calls": 0,
