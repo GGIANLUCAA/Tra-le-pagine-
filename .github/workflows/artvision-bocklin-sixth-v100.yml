@@ -34,6 +34,8 @@ jobs:
           assert len(groups)==1 and groups[0]['museum_inventory']=='NG 2/80'
           assert not groups[0].get('source_sha256_verified',False)
           PY
+      - name: Validate sixth pilot guard regression
+        run: python -m unittest discover -s tests -p test_artvision_bocklin_v100_guard.py -v
       - name: Render two REAL Cinema review candidates (no paid APIs)
         run: |
           python src/artvision_bocklin_sixth_v100.py --output "$RUNNER_TEMP/bocklin"
