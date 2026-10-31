@@ -962,6 +962,50 @@
             "evidence": "Cloudflare R2 List Objects API, full bucket scan 2795 objects, 3 pages; filename and size match for present objects",
             "r2_bytes_readback_sha256_verified": false,
             "site_player_verified": false
+          },
+          "v94_nondestructive_revision": {
+            "version": "V94",
+            "date": "2026-10-31",
+            "same_slot_revision": true,
+            "artwork": "The Death of Socrates",
+            "slot": "cinema_standard",
+            "status": "rendered_verified_private_library_readback_pending_owner_artistic_review",
+            "mp4_name": "Socrate_Cinema_Standard_V94_PLATONE_FINALE_FULL_REVIEW.mp4",
+            "mp4_sha256": "f5fea085aa17b77b2a498f2b1ec89433475814eb0433681c31f7d6e9018526d8",
+            "mp4_bytes": 16417266,
+            "duration_seconds": 35.041667,
+            "frame_count": 841,
+            "fps": 24,
+            "resolution": "720x1280",
+            "codec": "H264/AAC",
+            "audio_aac_bit_identical_to_v59_sha256": "80ff682ac731b0dd78fc4fa52413d2cb27747d49a3bc1fd64ab4850077145bc0",
+            "full_ffmpeg_decode_pass": true,
+            "source_original_artwork_only": true,
+            "edits": [
+              {
+                "from": 18.25,
+                "to": 21.88,
+                "change": "Plato original painting detail replaces repetitive legs"
+              },
+              {
+                "from": 30,
+                "to": 35.04,
+                "change": "larger complete painting on painting-derived blurred background replaces tiny frame with black bands"
+              }
+            ],
+            "private_library_mp4": "/ArtVision/Socrate/V94_CINEMA_STANDARD_FOCUS/Socrate_Cinema_Standard_V94_PLATONE_FINALE_FULL_REVIEW.mp4",
+            "private_library_zip": "/ArtVision/Socrate/V94_CINEMA_STANDARD_FOCUS/SOCRATE_CINEMA_STANDARD_V94_REVIEW_ANDROID.zip",
+            "zip_bytes": 16925832,
+            "zip_sha256": "e9d31ccf1bf679481f3aff41efc951e429a4bc20f91c309989a796779d62a44c",
+            "zip_crc_pass": true,
+            "library_download_readback_sha_verified": true,
+            "site_import_verified": false,
+            "android_playback_verified": false,
+            "owner_gold_v25_approved": false,
+            "master_original_unchanged": true,
+            "source_v93_consolidated_zip_unchanged": true,
+            "new_paid_api_calls": 0,
+            "evidence": "docs/productions/2026-10-31-artvision-socrates-cinema-standard-v94-plato-ending-sha-readback.md"
           }
         },
         "cinema_museum": {
