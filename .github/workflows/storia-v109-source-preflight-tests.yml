@@ -40,6 +40,8 @@ on:
       - "src/storia_rivive_v141_live_sd_recheck.py"
       - "tests/test_storia_rivive_v141_live_sd_recheck.py"
       - "tests/test_storia_rivive_v142_pilot_source.py"
+      - "tests/test_storia_rivive_v143_pilot_source.py"
+      - ".github/workflows/storia-v143-trenches-source-audit.yml"
       - ".github/workflows/storia-v142-constantinople-source-audit.yml"
       - "queue/storia_rivive_candidates_v58.json"
   workflow_dispatch:
@@ -85,7 +87,8 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v140_native_raster_queue.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v141_live_sd_recheck.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v142_pilot_source.py" -v
-      - name: V142 real 3-hour research queue selects new source without any credits
+          python -m unittest discover -s tests -p "test_storia_rivive_v143_pilot_source.py" -v
+      - name: V143 actual 3-hour queue selects new 1915 trenches source, zero credits
         shell: bash
         run: |
           set -euo pipefail
@@ -95,14 +98,14 @@ jobs:
           from pathlib import Path
           p=json.loads(Path("/tmp/STORIA_V140_WORK_ORDER.json").read_text())
           assert p["status"]=="SOURCE_PREFLIGHT_REVIEW_REQUIRED",p
-          assert p["episode_id"]=="constantinople_messter_1916",p
+          assert p["episode_id"]=="russian_trenches_1915",p
           assert p["skip_source_acquisition"] is False,p
-          assert len(p["excluded_sha_bound_sources"])==3,p
+          assert len(p["excluded_sha_bound_sources"])==4,p
           assert len(p["excluded_low_native_raster_sources"])==7,p
           assert p["paid_api_call_permitted"] is False,p
           assert p["publish_permitted"] is False,p
           assert p["video_completed"] is False,p
-          print("V142_REAL_QUEUE_NEW_SOURCE",p["episode_id"],p["status"],"3_qa_rejections","7_sd_origins","0_credits")
+          print("V143_REAL_QUEUE_NEW_SOURCE",p["episode_id"],p["status"],"4_qa_rejections","7_sd_origins","0_credits")
           PY
 
 
