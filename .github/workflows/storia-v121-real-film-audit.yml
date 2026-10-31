@@ -77,6 +77,15 @@ jobs:
             --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
             --rank output/storia_v121_real/adaptive/ADAPTIVE_RANK_V124.json \
             --out output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json
+      - name: V126 propose five balanced motion candidates across minimum three original film regions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v126_balanced_motion_review.py \
+            --motion output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json \
+            --rank output/storia_v121_real/adaptive/ADAPTIVE_RANK_V124.json \
+            --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
+            --out output/storia_v121_real/adaptive/FIVE_MOVING_REVIEW_V126.json
       - name: V126b flag near-duplicate or low-detail original PNGs before artistic review
         shell: bash
         run: |
@@ -86,6 +95,17 @@ jobs:
             --frames output/storia_v121_real/adaptive/original_frames \
             --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
             --out output/storia_v121_real/adaptive/FRAME_DIVERSITY_V126.json
+      - name: V128 audit balanced real PNGs and create a review-only five-frame contact sheet
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v128_balanced_frame_review.py \
+            --balanced output/storia_v121_real/adaptive/FIVE_MOVING_REVIEW_V126.json \
+            --motion output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json \
+            --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
+            --frames output/storia_v121_real/adaptive/original_frames \
+            --out output/storia_v121_real/adaptive/BALANCED_VISUAL_REVIEW_V128.json \
+            --contact output/storia_v121_real/adaptive/BALANCED_CONTACT_SHEET_V128.jpg
       - name: Record physical evidence, never label the result as approved
         shell: bash
         run: |
@@ -102,6 +122,10 @@ jobs:
           motion=json.loads(motion_path.read_text(encoding="utf-8")) if motion_path.is_file() else {"status":"V125_NOT_RUN"}
           diversity_path=root/"adaptive"/"FRAME_DIVERSITY_V126.json"
           diversity=json.loads(diversity_path.read_text(encoding="utf-8")) if diversity_path.is_file() else {"status":"V126_NOT_RUN"}
+          balanced_path=root/"adaptive"/"FIVE_MOVING_REVIEW_V126.json"
+          balanced=json.loads(balanced_path.read_text(encoding="utf-8")) if balanced_path.is_file() else {"status":"V126_BALANCED_NOT_RUN"}
+          balanced_visual_path=root/"adaptive"/"BALANCED_VISUAL_REVIEW_V128.json"
+          balanced_visual=json.loads(balanced_visual_path.read_text(encoding="utf-8")) if balanced_visual_path.is_file() else {"status":"V128_NOT_RUN"}
 
 
           rank_path=root/"FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json"
@@ -121,6 +145,10 @@ jobs:
               "adaptive_selection_status":adaptive.get("selection_status"),
               "bw_motion_evidence_status":motion.get("status"),
               "original_frame_diversity_status":diversity.get("status"),
+              "balanced_original_motion_selection_status":balanced.get("status"),
+              "balanced_five_frame_files":[r.get("filename") for r in balanced.get("five_review_candidates",[])],
+              "balanced_visual_review_status":balanced_visual.get("status"),
+              "balanced_visual_source_sha_pts_checked":balanced_visual.get("original_pts_sha_motion_evidence_crosschecked",False),
               "near_duplicate_original_frame_pairs":diversity.get("near_duplicate_pairs",[]),
               "bw_moving_photo_candidates":motion.get("source_motion_candidates_pass",0),
               "bw_source_5_review_frame_files":[r["filename"] for r in motion.get("five_review_shots",[])],
@@ -161,6 +189,9 @@ jobs:
             output/storia_v121_real/adaptive/ADAPTIVE_CONTACT_SHEET_V124.jpg
             output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json
             output/storia_v121_real/adaptive/FRAME_DIVERSITY_V126.json
+            output/storia_v121_real/adaptive/FIVE_MOVING_REVIEW_V126.json
+            output/storia_v121_real/adaptive/BALANCED_VISUAL_REVIEW_V128.json
+            output/storia_v121_real/adaptive/BALANCED_CONTACT_SHEET_V128.jpg
 
           retention-days: 14
           if-no-files-found: warn
