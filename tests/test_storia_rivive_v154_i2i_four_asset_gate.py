@@ -6,7 +6,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageOps
 
-from src.storia_rivive_v154_i2i_four_asset_gate import audit
+from src.storia_rivive_v154_i2i_four_asset_gate import audit, _safe_file
 
 
 def sha(p):
@@ -243,6 +243,56 @@ class FourI2IByteGate(unittest.TestCase):
         self.c["jobs"][0]["restored_photo_file"] = "../outside.png"
         with self.assertRaisesRegex(ValueError, "UNSAFE_ASSET_PATH"):
             self.check()
+
+
+
+class V158AssetPathHardening(unittest.TestCase):
+    """Fail-closed checks on actual filesystem paths, without provider calls."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        (self.root / "nested").mkdir()
+        self.real = self.root / "nested" / "original.png"
+        self.real.write_bytes(b"synthetic-asset-for-path-test")
+
+    def test_normal_nested_asset_still_allowed(self):
+        self.assertEqual(_safe_file(self.root, "nested/original.png"), self.real)
+
+    def test_in_tree_directory_symlink_is_rejected(self):
+        # Previously resolve() stayed inside root and path.is_symlink()
+        # checked only the leaf, so a directory symlink was accepted.
+        (self.root / "alias").symlink_to(self.root / "nested", target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, "V154_MISSING_OR_UNSAFE_REAL_ASSET"):
+            _safe_file(self.root, "alias/original.png")
+
+    def test_outside_directory_symlink_is_rejected(self):
+        with tempfile.TemporaryDirectory() as outside:
+            external = Path(outside) / "frame.png"
+            external.write_bytes(b"outside")
+            (self.root / "outside").symlink_to(Path(outside), target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "V154_MISSING_OR_UNSAFE_REAL_ASSET"):
+                _safe_file(self.root, "outside/frame.png")
+
+    def test_direct_file_symlink_is_rejected(self):
+        (self.root / "alias.png").symlink_to(self.real)
+        with self.assertRaisesRegex(ValueError, "V154_MISSING_OR_UNSAFE_REAL_ASSET"):
+            _safe_file(self.root, "alias.png")
+
+    def test_windows_separator_rejected_even_if_linux_filename_exists(self):
+        (self.root / "nested\\original.png").write_bytes(b"confusing-path")
+        with self.assertRaisesRegex(ValueError, "V154_UNSAFE_ASSET_PATH"):
+            _safe_file(self.root, "nested\\original.png")
+
+    def test_embedded_null_rejected(self):
+        with self.assertRaisesRegex(ValueError, "V154_UNSAFE_ASSET_PATH"):
+            _safe_file(self.root, "nested/original.png\\x00")
+
+    def test_parent_traversal_rejected(self):
+        with self.assertRaisesRegex(ValueError, "V154_UNSAFE_ASSET_PATH"):
+            _safe_file(self.root, "nested/../nested/original.png")
+
 
 
 if __name__ == "__main__":
