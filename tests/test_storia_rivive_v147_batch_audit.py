@@ -34,7 +34,7 @@ def create_batch_files(root,manifest,*,all_pass=True):
     for item in manifest["source_batches"]:
         batch=item["id"]
         folder=Path(root)/f"STORIA_V147_BATCH_{batch.upper()}_FIXTURE"
-        folder.mkdir(parents=True)
+        folder.mkdir(parents=True,exist_ok=True)
         entries=[reel(x,all_pass) for x in item["reels"]]
         content={"version":"V147_TWO_BATCH_NO_REDOWNLOAD_ARCHIVAL_RESEARCH",
                  "status":"V147_SOURCE_REVIEW_ONLY","batch":batch,"source_reels":entries,
