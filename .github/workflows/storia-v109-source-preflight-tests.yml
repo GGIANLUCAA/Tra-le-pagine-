@@ -104,3 +104,51 @@ jobs:
   v136_new_real_source_audit:
     if: github.event_name == 'pull_request' && contains(github.event.pull_request.title, 'V136')
     uses: ./.github/workflows/storia-v136-white-house-source-audit.yml
+
+  v141_real_commons_metadata_smoke:
+    # Run real FREE Commons metadata reads on the V141 PR only. No archive
+    # download, image generation, Vidu POST, publication or credentials.
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.title, 'V141')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Read current Commons original dimensions (real network)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v141_live_sd_recheck.py \
+            --out output/storia_v141_live/LIVE_SD_SNAPSHOT_RECHECK_V141.json
+      - name: Assert no source or paid permission regardless of network outcome
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path("output/storia_v141_live/LIVE_SD_SNAPSHOT_RECHECK_V141.json").read_text())
+          assert p["contract"]=="V141_COMMONS_SD_LIVE_RECHECK_RESEARCH_ONLY"
+          assert p["checked_count"]==7 and len(p["sources"])==7
+          assert len({row["candidate_id"] for row in p["sources"]})==7
+          assert not any(p[k] for k in ("source_acquisition_permitted",
+              "i2i_permitted","vidu_post_permitted","publication_permitted"))
+          allowed={"ALL_LOW_RASTER_SNAPSHOTS_CURRENT",
+                   "SOURCE_SNAPSHOT_REVIEW_REQUIRED","SOURCE_SNAPSHOT_CHECK_UNAVAILABLE"}
+          assert p["status"] in allowed
+          print("V141_LIVE_COMMONS_RECHECK",p["status"],"sources",7,"paid_calls",0)
+          if p["status"]=="SOURCE_SNAPSHOT_CHECK_UNAVAILABLE":
+              print("V141_NETWORK_UNAVAILABLE_NO_SOURCE_PROMOTION")
+          PY
+      - name: Preserve real response evidence for manual source review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V141_LIVE_COMMONS_RECHECK_${{ github.run_id }}
+          path: output/storia_v141_live/LIVE_SD_SNAPSHOT_RECHECK_V141.json
+          if-no-files-found: warn
+          retention-days: 7
