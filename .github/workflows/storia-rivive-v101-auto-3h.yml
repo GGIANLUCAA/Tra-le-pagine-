@@ -19,6 +19,8 @@ on:
       - "config/storia_rivive_v133_rejected_films.json"
       - "config/storia_rivive_v140_low_raster_sources.json"
       - "tests/test_storia_rivive_v140_native_raster_queue.py"
+      - "src/storia_rivive_v141_live_sd_recheck.py"
+      - "tests/test_storia_rivive_v141_live_sd_recheck.py"
       - "tests/test_storia_rivive_v101.py"
       - "tests/test_storia_rivive_v121.py"
       - "tests/test_storia_rivive_v122.py"
@@ -50,9 +52,10 @@ jobs:
       - name: Run fail-closed safety and flag geometry tests before research
         run: |
           set -euo pipefail
-          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_shot_boundaries_v113.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v134_cache_readiness.py
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_shot_boundaries_v113.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v134_cache_readiness.py src/storia_rivive_v141_live_sd_recheck.py
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v140_native_raster_queue.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v141_live_sd_recheck.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v134_cache_readiness.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v121.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v122.py" -v
@@ -76,6 +79,12 @@ jobs:
               f.write("STORIA_SOURCE_SKIPPED="+("true" if p.get("skip_source_acquisition") else "false")+"\n")
           print("SOURCE_RESEARCH_ONLY_3H",p["episode_id"],p["status"])
           PY
+      - name: V141 recheck excluded Commons SD originals for a changed native raster
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v141_live_sd_recheck.py \
+            --out output/storia_v101/LIVE_SD_SNAPSHOT_RECHECK_V141.json
       - name: Cache archival source research by candidate, avoid repeated downloads
         if: env.STORIA_SOURCE_SKIPPED != 'true'
         id: film_cache
@@ -187,7 +196,10 @@ jobs:
               "INSUFFICIENT_DISTINCT_SHOT_CANDIDATES","SHOT_SEGMENT_PROVENANCE_INCOMPLETE",
               "SHOT_BOUNDARY_PTS_EVIDENCE_INVALID","INSUFFICIENT_PRE_FREEZE_SOURCE_WINDOWS",
               "INSUFFICIENT_PHOTOGRAPHIC_SCENE_CANDIDATES")
+          live_path=root/"LIVE_SD_SNAPSHOT_RECHECK_V141.json"
+          live=json.loads(live_path.read_text()) if live_path.is_file() else {"status":"SOURCE_SNAPSHOT_CHECK_UNAVAILABLE"}
           status={"cycle_id":order["cycle_id"],"candidate":order["episode_id"],
+              "low_raster_live_recheck_status":live.get("status"),
               "source_scout":scout.get("status"),
               "source_cache_integrity":readiness.get("status"),
               "source_cache_reason":readiness.get("reason"),
@@ -206,7 +218,7 @@ jobs:
               "restored_i2i_photos_approved":0,
               "real_vidu_clips_approved":0,"finished_mp4":False,"published":False,
               "charged_api_requests":0,
-              "status":order["status"] if order.get("skip_source_acquisition") else ("SOURCE_REJECTED" if (not scout_ready or low_detail or native_media_rejected or insufficient_cuts or insufficient_selected_shots) else "ASSETS_PENDING"),
+              "status":("SOURCE_RESEARCH_RECHECK_REQUIRED" if order.get("skip_source_acquisition") and live.get("status")=="SOURCE_SNAPSHOT_REVIEW_REQUIRED" else order["status"]) if order.get("skip_source_acquisition") else ("SOURCE_REJECTED" if (not scout_ready or low_detail or native_media_rejected or insufficient_cuts or insufficient_selected_shots) else "ASSETS_PENDING"),
               "cut_candidate_count":scout.get("shot_boundary_analysis",{}).get("cut_candidate_count"),
               "historical_camera_shots_verified":False,
               "next_required":("Discover a genuinely new native-HD historical source before any asset generation" if order.get("skip_source_acquisition") else "Resolve source rights and native quality, then 4 genuine I2I photos, 1 real Vidu, V91/V94/V96/V99 and artistic review")}
