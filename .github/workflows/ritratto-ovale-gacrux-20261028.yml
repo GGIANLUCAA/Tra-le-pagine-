@@ -1,0 +1,59 @@
+name: "LIBRI - Il ritratto ovale - Google Gacrux (singola esecuzione)"
+on:
+  push:
+    branches:
+      - episode/ritratto-ovale-20261028-preproduction-v1
+    paths:
+      - ".github/workflows/ritratto-ovale-gacrux-20261028.yml"
+permissions:
+  contents: read
+concurrency:
+  group: ritratto-ovale-gacrux-once-20261028
+  cancel-in-progress: false
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Preflight before any Google generation
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo "::error::No Gemini key, no voice generated"; exit 2; }
+          test -s episodes/ritratto_ovale_20261028/COPIONE_IT.txt
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('episodes/ritratto_ovale_20261028/COPIONE_IT.txt').read_text(encoding='utf-8')
+          assert "Il castello sembrava" in text and "continuava a sorridere." in text
+          assert len(text) > 1700
+          print("Preflight text passed; one Gacrux request permitted by user, no paid video calls")
+          PY
+      - name: Install audio and alignment dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "google-genai>=2.25,<3" "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "faster-whisper>=1.1,<2"
+      - name: Narrate entire Italian story exactly once with existing Google Gacrux integration
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from gemini_voice import synthesize,voice_profile
+          text=Path('episodes/ritratto_ovale_20261028/COPIONE_IT.txt').read_text(encoding='utf-8').strip()
+          out=Path('output/ritratto_ovale_gacrux_20261028')
+          samples,timed=synthesize(text,out)
+          assert len(samples)>24000*100, 'Narration too short: reject'
+          info={'title':'Il ritratto ovale','author':'Edgar Allan Poe','status':'voice_generated_needs_review','profile':voice_profile(),'duration_seconds':len(samples)/24000,'timed_sentences':timed}
+          (out/'VOICE_PRODUCTION.json').write_text(json.dumps(info,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: RITRATTO_OVALE_GACRUX_20261028
+          path: output/ritratto_ovale_gacrux_20261028/
+          if-no-files-found: warn
+          retention-days: 14

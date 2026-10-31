@@ -1,0 +1,38 @@
+name: "Vidu - Ritratto Ovale - Saldo API gratuito solo lettura"
+on:
+  push:
+    branches:
+      - episode/ritratto-ovale-20261028-preproduction-v1
+    paths:
+      - ".github/workflows/ritratto-ovale-vidu-balance-20261028.yml"
+permissions:
+  contents: read
+jobs:
+  balance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VIDU_API_KEY: ${{ secrets.VIDU_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check read-only Vidu API wallet (NO GENERATION)
+        run: |
+          python - <<'PY'
+          import os,sys
+          if not os.environ.get("VIDU_API_KEY"):
+              print("RESULT=NO_API_KEY; NO COST; NO VIDEO GENERATED")
+              sys.exit(2)
+          from src.i2v_budget_v41 import get_balance
+          try:
+              b=get_balance(os.environ["VIDU_API_KEY"])
+              print("API_CONNECTED=",bool(b["api_access_ok"]))
+              print("HAS_AT_LEAST_EIGHT_CREDITS=",b["available_credits"]>=8)
+              print("NO VIDEO TASK SUBMITTED; NO CREDIT CHARGED")
+              if b["available_credits"]<8:sys.exit(3)
+          except Exception as e:
+              print("READ_ONLY_BALANCE_ERROR=",type(e).__name__,str(e)[:200])
+              sys.exit(4)
+          PY
