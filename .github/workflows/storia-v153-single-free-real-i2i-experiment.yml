@@ -1,0 +1,121 @@
+name: "La Storia Rivive V153 | ONE free real photographic I2I scene-02 experiment"
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "src/storia_rivive_v153_one_free_i2i_cat.py"
+      - "tests/test_storia_rivive_v153_one_free_i2i_cat.py"
+      - ".github/workflows/storia-v153-single-free-real-i2i-experiment.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: storia-v153-free-cat-one-original-${{ github.head_ref }}
+  cancel-in-progress: false
+
+jobs:
+  unit_safety_and_real_encoding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free CPU dependencies ONLY, without Finegrain/Vidu credentials
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5" "pillow>=10,<13"
+      - name: Fail-closed 8 tests, real FFmpeg MP4 and no provider POST in unit tests
+        run: |
+          python -m unittest discover -s tests -p "test_storia_rivive_v153_one_free_i2i_cat.py" -v
+
+  SINGLE_FREE_I2I_PROOF_NOT_PRODUCTION:
+    needs: unit_safety_and_real_encoding
+    # One real attempt on PR creation only. Synchronize/re-run never makes
+    # a second anonymous ZeroGPU request or a second provider call.
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'opened' &&
+      github.head_ref == 'storia-v153-single-free-i2i-candidate-20261031' &&
+      github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free packages, public model only, no provider tokens
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q \
+            "numpy>=1.26,<3" \
+            "opencv-python-headless>=4.8,<5" \
+            "pillow>=10,<13" \
+            "onnxruntime>=1.18,<2" \
+            "huggingface_hub>=0.25,<1" \
+            "gradio_client>=1.0,<3"
+      - name: Retrieve authentic source SHA/PTS locked PNGs from previously SUCCESSFUL V152; do not download films again
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v153_verified_source
+          gh run download 41229046627 \
+            --repo "GGIANLUCAA/Tra-le-pagine-" \
+            --name "STORIA_V151_FIVE_REAL_ORIGINAL_FREEZES_I2I_INPUTS_NOT_GENERATED_41229046627" \
+            --dir output/storia_v153_verified_source
+          mkdir -p output/storia_v153_source_bw
+          gh run download 41229046627 \
+            --repo "GGIANLUCAA/Tra-le-pagine-" \
+            --name "STORIA_V150_LONGER_BW_a_41229046627" \
+            --dir output/storia_v153_source_bw
+          cp output/storia_v153_source_bw/preview/scene_02_V150_BW_LONGER.mp4 \
+             output/storia_v153_verified_source/scene_02_V150_BW_LONGER.mp4
+      - name: One free public Finegrain I2I (from exact frame 02 only), no paid/VIDU POST
+        run: |
+          set -euo pipefail
+          python -m src.storia_rivive_v153_one_free_i2i_cat \
+            --source-artifact output/storia_v153_verified_source \
+            --out output/storia_v153_one_free_sample
+      - name: Assert conservative result, no QA forgery and no publish rights
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path("output/storia_v153_one_free_sample/V153_EXPERIMENT_REPORT.json")
+          assert path.is_file(),"V153_NO_SOURCE_AUTHENTICATED_REPORT"
+          r=json.loads(path.read_text(encoding="utf-8"))
+          assert r["version"]=="V153"
+          assert r["production_v152_editorial_gate_still_blocked"]
+          assert not r["source_episode_coherence_verified"]
+          assert not r["rights_italy_verified"] and not r["artistically_approved"]
+          assert not r["finished_video"] and not r["social_published"] and not r["website_published"]
+          assert r["vidu_calls"]==r["paid_calls"]==0
+          assert r["free_provider_requests_sent"]<=1
+          print("V153_SOURCE_LOCKED_EXPERIMENT",r["status"],
+                "real_candidate",r["real_i2i_generated"],
+                "technical_pass",r["technical_candidate_pass"],
+                "free_requests",r["free_provider_requests_sent"],"paid",0)
+          PY
+      - name: Keep actual images/MP4 only as PRIVATE REVIEW artifacts, no release
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V153_ONE_FREE_REAL_I2I_CAT_REVIEW_ONLY_${{ github.run_id }}
+          path: |
+            output/storia_v153_one_free_sample/V153_EXPERIMENT_REPORT.json
+            output/storia_v153_one_free_sample/SCENE02_DDCOLOR_BASE_NOT_RESTORED.jpg
+            output/storia_v153_one_free_sample/SCENE02_FREE_I2I_CANDIDATE.png
+            output/storia_v153_one_free_sample/SCENE02_BW_VS_FREE_I2I_REVIEW.jpg
+            output/storia_v153_one_free_sample/SCENE02_BW_FREEZE_REAL_I2I_REVIEW_ONLY.mp4
+          if-no-files-found: warn
+          retention-days: 14
