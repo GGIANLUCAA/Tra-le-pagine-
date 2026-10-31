@@ -37,6 +37,8 @@ on:
       - "tests/test_storia_rivive_v136_source_decision.py"
       - "config/storia_rivive_v140_low_raster_sources.json"
       - "tests/test_storia_rivive_v140_native_raster_queue.py"
+      - "src/storia_rivive_v141_live_sd_recheck.py"
+      - "tests/test_storia_rivive_v141_live_sd_recheck.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -59,7 +61,7 @@ jobs:
           ffprobe -version
       - name: Compile source-preflight modules
         run: |
-          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_shot_boundaries_v113.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v134_cache_readiness.py
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_shot_boundaries_v113.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v134_cache_readiness.py src/storia_rivive_v141_live_sd_recheck.py
       - name: Regression tests - no paid API, no network, no social publication
         run: |
           set -euo pipefail
@@ -78,6 +80,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v132_veto_aware_alternatives.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v136_source_decision.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v140_native_raster_queue.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v141_live_sd_recheck.py" -v
       - name: V140 run actual three-hour CLI with full current research queue
         shell: bash
         run: |
