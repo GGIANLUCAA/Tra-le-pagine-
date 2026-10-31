@@ -151,7 +151,7 @@ jobs:
               if not f.is_file():return {}
               try:return json.loads(f.read_text())
               except (OSError,ValueError):return {}
-          scout=load("source/SCOUT_REPORT.json")
+          scout=load("white_house_1917_1921/SCOUT_REPORT.json")
           readiness=load("SOURCE_READINESS_V134.json")
           motion=load("adaptive/REAL_BW_MOTION_V125.json")
           balanced=load("adaptive/FIVE_MOVING_REVIEW_V126.json")
