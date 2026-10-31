@@ -1,6 +1,6 @@
 """Fail-closed offline pre-freeze motion evidence for La Storia Rivive.
 
-A pass proves only that decoded source pixels change in the pre-freeze window.
+A pass proves only that decoded source pixels show spatial changes in the pre-freeze window; uniform exposure flicker alone is rejected.
 It does NOT certify five shots, rights, fidelity, or artistic approval.
 """
 from __future__ import annotations
@@ -38,15 +38,19 @@ def check_source_window(start_pts, freeze_pts, time_base, *, min_seconds=0.9, ma
 
 def inspect_source_motion(video_path, expected_sha256, start_pts, freeze_pts, time_base,
                           *, ffmpeg="ffmpeg", min_mean_pixel_delta=8.0,
-                          min_changed_pairs=2):
-    """Decode the actual SHA-bound film; reject static holds before I2I.
+                          min_spatial_pixel_delta=6.0, min_changed_pairs=2):
+    """Decode SHA-bound film and reject static holds AND exposure-only flicker.
 
-    The 8fps 64x64 grayscale proxy is used only for motion analysis, never
-    for source-locking the exact freeze frame or photographic restoration.
+    Mean-centering each interframe pixel difference removes a uniform global
+    brightness shift (common in aged film). Spatial residuals must also change.
+    This is an advisory proxy: grain, local flicker and camera motion can still
+    mimic subject motion, so five genuine camera shots require visual review.
+    The 8fps 64x64 proxy is never used for exact freeze source-locking.
     """
     ok, reason = check_source_window(start_pts, freeze_pts, time_base)
     result = {"status": "BLOCKED", "reason": reason, "motion_verified": False,
-              "sample_count": 0, "changed_pairs": 0, "max_mean_pixel_delta": 0.0}
+              "sample_count": 0, "changed_pairs": 0, "max_mean_pixel_delta": 0.0,
+              "max_spatial_pixel_delta": 0.0, "exposure_only_pairs": 0}
     if not ok:
         return result
     if not isinstance(expected_sha256, str) or len(expected_sha256) != 64 or any(c not in '0123456789abcdef' for c in expected_sha256):
@@ -87,12 +91,25 @@ def inspect_source_motion(video_path, expected_sha256, start_pts, freeze_pts, ti
     if len(samples) < 5:
         result["reason"] = "SOURCE_WINDOW_INSUFFICIENT_DECODED_FRAMES"
         return result
-    deltas = [sum(abs(a-b) for a, b in zip(prev, curr)) / 4096
-              for prev, curr in zip(samples, samples[1:])]
-    result["max_mean_pixel_delta"] = round(max(deltas), 3)
-    result["changed_pairs"] = sum(v >= min_mean_pixel_delta for v in deltas)
+    raw_deltas, spatial_deltas = [], []
+    for prev, curr in zip(samples, samples[1:]):
+        signed = [int(b) - int(a) for a, b in zip(prev, curr)]
+        exposure_shift = sum(signed) / len(signed)
+        raw_deltas.append(sum(abs(v) for v in signed) / len(signed))
+        spatial_deltas.append(sum(abs(v - exposure_shift) for v in signed) / len(signed))
+    result["max_mean_pixel_delta"] = round(max(raw_deltas), 3)
+    result["max_spatial_pixel_delta"] = round(max(spatial_deltas), 3)
+    result["changed_pairs"] = sum(
+        raw >= min_mean_pixel_delta and spatial >= min_spatial_pixel_delta
+        for raw, spatial in zip(raw_deltas, spatial_deltas))
+    result["exposure_only_pairs"] = sum(
+        raw >= min_mean_pixel_delta and spatial < min_spatial_pixel_delta
+        for raw, spatial in zip(raw_deltas, spatial_deltas))
     if result["changed_pairs"] < min_changed_pairs:
-        result["reason"] = "SOURCE_WINDOW_STATIC_OR_TOO_LITTLE_MOTION"
+        result["reason"] = (
+            "SOURCE_WINDOW_EXPOSURE_FLICKER_NOT_MOTION"
+            if result["exposure_only_pairs"] >= min_changed_pairs
+            else "SOURCE_WINDOW_STATIC_OR_TOO_LITTLE_MOTION")
         return result
     result.update({"status": "MOTION_EVIDENCE_PASS",
                    "reason": "DECODED_SOURCE_PIXEL_MOTION_PRESENT_NOT_ARTISTIC_QA",
