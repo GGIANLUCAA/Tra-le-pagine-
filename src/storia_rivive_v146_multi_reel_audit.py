@@ -315,5 +315,5 @@ if __name__=="__main__":
     a=p.parse_args()
     try:
         audit(a.manifest,a.out)
-    except (ValueError,KeyError,TypeError,JSONDecodeError) as exc:
+    except (ValueError,KeyError,TypeError,json.JSONDecodeError) as exc:
         raise SystemExit("V146_MANIFEST_FAILURE_NO_SOURCE_APPROVAL: "+str(exc)[:180])
