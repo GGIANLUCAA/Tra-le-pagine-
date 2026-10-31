@@ -1,5 +1,12 @@
 name: "La Storia Rivive V109 · source-native preflight tests (offline)"
 on:
+  push:
+    branches:
+      - storia-v131-editorial-veto-20261031
+    paths:
+      - ".github/workflows/storia-v109-source-preflight-tests.yml"
+      - "src/storia_rivive_v132_veto_aware_alternatives.py"
+      - "tests/test_storia_rivive_v132_veto_aware_alternatives.py"
   pull_request:
     paths:
       - "src/storia_rivive_autopilot_v101.py"
