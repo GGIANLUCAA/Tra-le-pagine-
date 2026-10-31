@@ -22,6 +22,10 @@ Feedback esplicito: il Critico John Martin V81 era troppo lungo (2m25), noioso e
 
 ## ArtVision V68 — MODULO 4×1 RIUTILIZZABILE (feedback del 29/10/2026)
 
+**Per ArtVision Critico applicare anche la nuova regola globale 30/10/2026 su corrispondenza frase-dettaglio, centratura, tempi, autocritica sul video vero e non-regressione:** docs/ARTVISION_REGIA_AUTOCRITICA_FOCUS_20261030.md e controllo offline src/artvision_narrative_focus_gate.py. Non dichiarare integrazione nel renderer prima che esista un manifest reale con frame review; il lock pilota V58 rimane attivo.
+
+
+
 **LEGGERE PER PRIMO** `docs/ARTVISION_START_HERE_QUATTRO_VIDEO_RIPRODUCIBILE_V68.md` e `config/artvision_four_variants_presets_v68.json` quando l'utente chiede un quadro, una variante, un nuovo preset o una regola di regia. Socrate ha **4 MP4 realmente renderizzati**, con Museo/cornice/spiegazione giudicati **BUONA BASE ARTISTICA MIGLIORABILE**: preservare quel modello, non ripartire da zero e non attribuire V25 Gold Master a nessuna variante senza approvazione specifica. Preset globale + ricetta PER OPERA + log versionato delle modifiche; nuove preferenze locali non toccano gli altri quadri. Il pilot lock V58 resta attivo finché non viene autorizzato esplicitamente il secondo pilota; serie automatica NON sbloccata. Per la regia Museum usare l'integrazione **V72** (fonti V69, scala fisica V72, camera V64, ricette V68), descritta in `docs/ARTVISION_MUSEUM_V72_ANDROID_GUIDA.md`: workflow e 31 test superati sul pilota Socrate. È un sistema di pianificazione verificato, **non un renderer generico né un MP4 nuovo**. Nessuna nuova opera, Gold Master o spesa autorizzata da questa integrazione. Gli output MP4/WAV grandi devono essere salvati davvero nell'archivio privato: un manifest SHA su GitHub non significa backup dei byte.
 
 
