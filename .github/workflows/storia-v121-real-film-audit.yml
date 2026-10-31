@@ -139,6 +139,30 @@ jobs:
           assert not any(report[k] for k in ("i2i_permitted","vidu_permitted","paid_api_call_permitted","publish_permitted"))
           print("V131_VERIFIED_COTTON_EDITORIAL_HOLD",report["status"])
           PY
+      - name: V132 assess whether vetoed original shots can be replaced without paid APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v132_veto_aware_alternatives.py \
+            --motion output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json \
+            --rank output/storia_v121_real/adaptive/ADAPTIVE_RANK_V124.json \
+            --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
+            --vetoes config/storia_rivive_v131_reviewed_source_vetoes.json \
+            --out output/storia_v121_real/adaptive/VETO_AWARE_ALTERNATIVES_V132.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("output/storia_v121_real/adaptive/VETO_AWARE_ALTERNATIVES_V132.json")
+          r=json.loads(p.read_text(encoding="utf-8"))
+          assert r["source_film_sha256"]=="e3022cb130442f7695d411724ae619fc8c184696ddae30293958c1c75ec8ffd9"
+          assert r["status"]=="SOURCE_REJECTED_V132_INSUFFICIENT_DIVERSITY_AFTER_VETO",r
+          assert r["original_verified_motion_candidates"]==8,r
+          assert r["verified_motion_candidates_after_veto"]==6,r
+          assert r["timeline_regions_after_veto"]==[2,4],r
+          assert r["alternative_five_frame_names"]==[],r
+          assert not any(r[k] for k in ("i2i_permitted","vidu_permitted","paid_api_call_permitted","publish_permitted"))
+          print("V132_REAL_SOURCE_REJECTED_AFTER_VETO",r["status"])
+          PY
       - name: Record physical evidence, never label the result as approved
         shell: bash
         run: |
@@ -163,6 +187,8 @@ jobs:
           motion_strips=json.loads(motion_strips_path.read_text(encoding="utf-8")) if motion_strips_path.is_file() else {"status":"V129_NOT_RUN"}
           editorial_path=root/"adaptive"/"SOURCE_EDITORIAL_GATE_V131.json"
           editorial=json.loads(editorial_path.read_text(encoding="utf-8")) if editorial_path.is_file() else {"status":"V131_NOT_RUN"}
+          alternative_path=root/"adaptive"/"VETO_AWARE_ALTERNATIVES_V132.json"
+          alternatives=json.loads(alternative_path.read_text(encoding="utf-8")) if alternative_path.is_file() else {"status":"V132_NOT_RUN"}
 
 
           rank_path=root/"FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json"
@@ -187,6 +213,9 @@ jobs:
               "balanced_visual_review_status":balanced_visual.get("status"),
               "actual_prefreeze_motion_strip_status":motion_strips.get("status"),
               "source_editorial_gate_status":editorial.get("status"),
+              "veto_aware_alternative_status":alternatives.get("status"),
+              "motion_candidates_after_veto":alternatives.get("verified_motion_candidates_after_veto",0),
+              "timeline_regions_after_veto":alternatives.get("timeline_regions_after_veto",[]),
               "source_editorial_veto_frames":[r.get("frame") for r in editorial.get("source_review_vetoes",[])],
               "source_paid_api_permitted":editorial.get("paid_api_call_permitted",False),
               "actual_prefreeze_motion_proxy_samples":[x.get("source_frame") for x in motion_strips.get("five_prefreeze_proxy_strips",[])],
@@ -237,6 +266,7 @@ jobs:
             output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.json
             output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.jpg
             output/storia_v121_real/adaptive/SOURCE_EDITORIAL_GATE_V131.json
+            output/storia_v121_real/adaptive/VETO_AWARE_ALTERNATIVES_V132.json
 
           retention-days: 14
           if-no-files-found: warn
