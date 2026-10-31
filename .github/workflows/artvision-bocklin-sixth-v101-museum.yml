@@ -1,0 +1,66 @@
+name: ArtVision Böcklin · V101 Cinema Museum continuous camera
+on:
+  push:
+    branches: [main]
+    paths: [requests/artvision/bocklin-sixth-v101-museum.json]
+permissions:
+  contents: read
+concurrency:
+  group: artvision-sixth-bocklin-v100
+  cancel-in-progress: false
+jobs:
+  museum_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - name: FFmpeg and image runtime
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check pillow numpy imageio-ffmpeg
+          mkdir -p "$RUNNER_TEMP/bin"
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          import os
+          src=Path(get_ffmpeg_exe())
+          assert src.is_file()
+          (Path(os.environ["RUNNER_TEMP"])/"bin"/"ffmpeg").symlink_to(src)
+          PY
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/ffmpeg" -hide_banner -encoders | grep -q libx264
+      - name: Guard sixth work and exact Museum variant
+        run: |
+          python -m unittest discover -s tests -p test_artvision_bocklin_v100_guard.py -v
+          python - <<'PY'
+          import json
+          p=json.load(open("requests/artvision/bocklin-sixth-v101-museum.json"))
+          assert p["work_id"]=="bocklin_isle_of_dead_1883_berlin_ng2_80"
+          assert p["variant"]=="cinema_museum"
+          assert p["max_paid_api_calls"]==0
+          assert p["no_new_artwork"] is True
+          PY
+      - name: Render V101 one Museum revision only
+        run: python src/artvision_bocklin_sixth_v101.py --output "$RUNNER_TEMP/bocklin-v101"
+      - name: Validate exact real output and full decode
+        run: |
+          test -s "$RUNNER_TEMP/bocklin-v101/Boecklin_1883_cinema_museum_V101_CONTINUOUS_ENTRY_REVIEW.mp4"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          q=json.loads((Path(os.environ["RUNNER_TEMP"])/"bocklin-v101"/"QA_V101.json").read_text())
+          assert len(q["museum_revision_MP4"])==1
+          x=q["museum_revision_MP4"]["cinema_museum"]
+          assert x["duration_seconds"]==52 and x["ffmpeg_full_decode"]=="PASS"
+          assert q["critico_MP4"]==0 and q["V25_approved"]==0
+          print(json.dumps(q,indent=2,ensure_ascii=False))
+          PY
+      - name: Upload actual MP4 and QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: BOECKLIN_NG2-80_V101_MUSEUM_CONTINUOUS_REVIEW
+          path: |
+            ${{ runner.temp }}/bocklin-v101/Boecklin_1883_cinema_museum_V101_CONTINUOUS_ENTRY_REVIEW.mp4
+            ${{ runner.temp }}/bocklin-v101/QA_V101.json
+          retention-days: 30
+          if-no-files-found: error
