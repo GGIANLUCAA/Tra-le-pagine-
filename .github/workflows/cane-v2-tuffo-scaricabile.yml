@@ -27,6 +27,11 @@ jobs:
           test -n "$old" && test -n "$new" && test -s "$old" && test -s "$new"
           echo "OLD_VIDEO=$old" >> "$GITHUB_ENV"
           echo "NEW_VIDEO=$new" >> "$GITHUB_ENV"
+      - name: "Install ffmpeg video encoder for GitHub runner"
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends ffmpeg
       - name: "Assemble 118 trampoline frames plus 122 swimming pool frames"
         shell: bash
         run: |
