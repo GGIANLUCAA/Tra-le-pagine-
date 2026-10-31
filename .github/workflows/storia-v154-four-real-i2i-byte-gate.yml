@@ -18,7 +18,7 @@ jobs:
           python-version: '3.11'
       - name: Install Pillow only (no model, no API credentials)
         run: python -m pip install -q 'pillow>=10,<13'
-      - name: Verify 18 fail-closed provenance, structure and anti-tint tests on synthetic PNG bytes
+      - name: Verify 23 offline tests including V157 source uniqueness and PNG visibility
         run: python -m unittest discover -s tests -p 'test_storia_rivive_v154_i2i_four_asset_gate.py' -v
 
   real_bytes_regression_from_existing_artifacts:
