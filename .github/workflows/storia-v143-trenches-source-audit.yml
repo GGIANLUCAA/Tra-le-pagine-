@@ -13,7 +13,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   real_source_audit:
-    if: github.run_attempt == 1
+    # Only the original V143 research PR or an explicit manual dispatch may
+    # re-download the 106 MB archive; stacked QA PRs use saved V143 evidence.
+    if: github.run_attempt == 1 && (github.event_name == 'workflow_dispatch' || github.head_ref == 'storia-v143-trench1915-source-research-20261031')
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
