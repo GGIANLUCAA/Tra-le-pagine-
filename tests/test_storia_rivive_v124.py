@@ -12,7 +12,7 @@ import unittest
 from pathlib import Path
 
 from src.storia_rivive_adaptive_sampling_v124 import (
-    choose_targets, extract_target_frames, inspect, sha256_file
+    choose_targets, extract_target_frames, inspect, sha256_file, spread_review_shortlist
 )
 
 def candidates():
@@ -42,9 +42,9 @@ class V124Sampling(unittest.TestCase):
 
     def test_tiny_segments_fail_without_decoding(self):
         meta = candidates()
-        meta["cut_candidate_times_s"] = [2.0, 4.0, 6.0, 8.0, 10.0]
+        meta["cut_candidate_times_s"] = [1.0, 2.0, 3.0, 4.0, 5.0]
         with self.assertRaisesRegex(ValueError, "NOT_ENOUGH_LONG_SOURCE_SEGMENTS"):
-            choose_targets(meta, 11.1)
+            choose_targets(meta, 6.1)
 
     def test_no_duplicate_candidates_when_limited(self):
         cuts = [3.0*(i+1) for i in range(90)]
@@ -52,6 +52,52 @@ class V124Sampling(unittest.TestCase):
         samples = choose_targets(analysis, 273.0, limit=48)
         self.assertEqual(len(samples), 48)
         self.assertEqual(len({x["candidate_segment_index"] for x in samples}), 48)
+
+    def test_real_1920_verified_photo_metrics_yield_wide_spread_instead_of_late_repeats(self):
+        # Filename, actual original source PTS seconds, V113 segment, V123 score,
+        # from GitHub Actions authentic archived report 41157549529.
+        # Metadata only: real film frames are NOT embedded in this test.
+        observed = [
+            (3,22.16,5,.4685),(4,30.68,8,.6968),
+            (9,85.16,25,.7861),(10,98.16,28,.7883),
+            (11,105.0,30,.6715),(14,143.16,39,.6378),
+            (16,161.16,46,.7187),(20,199.68,58,.7573),
+            (21,210.16,61,.8092),(23,232.36,66,.8129),
+            (25,260.68,73,.8536),(26,269.68,76,.7736),
+            (27,277.96,78,.7889),(34,357.36,103,.8119),
+            (37,390.52,111,.8569),(40,425.0,119,.8012),
+            (42,452.88,128,.8947),(43,461.68,130,.8588),
+            (46,492.52,139,.8246),(47,498.36,141,.7674),
+            (48,509.88,144,.8660)]
+        scored=[{"filename":f"frame_{n:02d}.png",
+                 "source_visual_quality_score":score,
+                 "source_picture_content_eligible":True,
+                 "source_native_detail_sufficient":True,
+                 "pre_freeze_window_viable":True}
+                for n, seconds, seg, score in observed]
+        provenance=[{"filename":f"frame_{n:02d}.png",
+                     "source_pts_time_s":seconds,
+                     "shot_candidate_segment_index":seg}
+                    for n, seconds, seg, score in observed]
+        result=spread_review_shortlist({"all_candidates":scored},provenance,524.96)
+        self.assertEqual(result["status"],"V124_FIVE_TIME_SPREAD_SOURCE_CANDIDATES_REVIEW_ONLY")
+        self.assertEqual([x["filename"] for x in result["preselected"]],
+                         ["frame_10.png","frame_20.png","frame_25.png","frame_37.png","frame_42.png"])
+        self.assertEqual({x["review_time_bucket"] for x in result["preselected"]},set(range(5)))
+        self.assertFalse(result["artistic_approved"])
+        self.assertFalse(result["historical_camera_shots_verified"])
+
+    def test_temporal_shortlist_rejects_one_region_empty(self):
+        result=spread_review_shortlist(
+            {"all_candidates":[{"filename":f"frame_{i:02d}.png",
+                 "source_visual_quality_score":.9,
+                 "source_picture_content_eligible":True,
+                 "source_native_detail_sufficient":True,
+                 "pre_freeze_window_viable":True} for i in range(1,6)]},
+            [{"filename":f"frame_{i:02d}.png","source_pts_time_s":100+i,
+              "shot_candidate_segment_index":i} for i in range(1,6)],525)
+        self.assertEqual(result["status"],"V124_NOT_FIVE_SPREAD_REGIONS")
+        self.assertEqual(result["preselected"],[])
 
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "FFmpeg required")
     def test_encoded_source_video_native_pts_and_sha_survive_research(self):
