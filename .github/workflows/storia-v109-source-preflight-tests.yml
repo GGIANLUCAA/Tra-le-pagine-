@@ -88,7 +88,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v141_live_sd_recheck.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v142_pilot_source.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v143_pilot_source.py" -v
-      - name: V143 actual 3-hour queue selects new 1915 trenches source, zero credits
+      - name: V144 real audit rejects 1915 source and safely skips paid production
         shell: bash
         run: |
           set -euo pipefail
@@ -97,15 +97,16 @@ jobs:
           import json
           from pathlib import Path
           p=json.loads(Path("/tmp/STORIA_V140_WORK_ORDER.json").read_text())
-          assert p["status"]=="SOURCE_PREFLIGHT_REVIEW_REQUIRED",p
-          assert p["episode_id"]=="russian_trenches_1915",p
-          assert p["skip_source_acquisition"] is False,p
-          assert len(p["excluded_sha_bound_sources"])==4,p
+          assert p["status"]=="SOURCE_RESEARCH_SKIPPED_NO_NATIVE_HD_CANDIDATES",p
+          assert p["episode_id"]=="no_eligible_source",p
+          assert p["skip_source_acquisition"] is True,p
+          assert len(p["excluded_sha_bound_sources"])==5,p
+          assert "russian_trenches_1915" in p["excluded_sha_bound_sources"],p
           assert len(p["excluded_low_native_raster_sources"])==7,p
           assert p["paid_api_call_permitted"] is False,p
           assert p["publish_permitted"] is False,p
           assert p["video_completed"] is False,p
-          print("V143_REAL_QUEUE_NEW_SOURCE",p["episode_id"],p["status"],"4_qa_rejections","7_sd_origins","0_credits")
+          print("V144_REAL_QUEUE_SHA_REJECTION",p["episode_id"],p["status"],"5_qa_rejections","7_sd_origins","0_credits")
           PY
 
 
