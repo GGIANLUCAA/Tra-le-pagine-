@@ -7,21 +7,10 @@
     "met_open_access_cc0"
   ],
   "allowed_artwork_ids": [
-    436535,
-    436524,
-    436105
+    400112
   ],
-  "allow_museum_api_search": true,
-  "search_queries": [
-    "dramatic landscape",
-    "sea storm painting",
-    "portrait",
-    "night landscape",
-    "mythology painting",
-    "mountain painting",
-    "flowers oil painting",
-    "ship at sea"
-  ],
+  "allow_museum_api_search": false,
+  "search_queries": [],
   "min_image_width": 850,
   "min_image_height": 600,
   "aspect": "9:16",
@@ -36,7 +25,7 @@
     "luminous_reveal",
     "depth_portal"
   ],
-  "initial_selection": "curated_then_discovery",
+  "initial_selection": "single_verified_source_then_mask_review",
   "quality": {
     "min_video_bytes": 50000,
     "require_h264": true,
@@ -65,5 +54,5 @@
   "stop_mechanism": "set wow_lab/config.json enabled=false or disable the WOW LAB GitHub Actions workflow",
   "preview_releases_enabled": true,
   "production_ready": false,
-  "status": "experimental: technical QA only; must not be called approved or viral"
+  "status": "experimental: single CC0 moth candidate 400112; mask not reviewed; reject if unsuitable; no automatic replacement with landscape or invented silhouette"
 }
