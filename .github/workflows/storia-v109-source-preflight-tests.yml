@@ -40,6 +40,8 @@ on:
       - "src/storia_rivive_v141_live_sd_recheck.py"
       - "tests/test_storia_rivive_v141_live_sd_recheck.py"
       - "tests/test_storia_rivive_v142_pilot_source.py"
+      - "src/storia_rivive_v143_adaptive_handoff.py"
+      - "tests/test_storia_rivive_v143_adaptive_handoff.py"
       - ".github/workflows/storia-v142-constantinople-source-audit.yml"
       - "queue/storia_rivive_candidates_v58.json"
   workflow_dispatch:
@@ -64,7 +66,7 @@ jobs:
           ffprobe -version
       - name: Compile source-preflight modules
         run: |
-          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_shot_boundaries_v113.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v134_cache_readiness.py src/storia_rivive_v141_live_sd_recheck.py
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_shot_boundaries_v113.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v134_cache_readiness.py src/storia_rivive_v141_live_sd_recheck.py src/storia_rivive_v143_adaptive_handoff.py
       - name: Regression tests - no paid API, no network, no social publication
         run: |
           set -euo pipefail
@@ -85,6 +87,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v140_native_raster_queue.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v141_live_sd_recheck.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v142_pilot_source.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v143_adaptive_handoff.py" -v
       - name: V142 real 3-hour research queue selects new source without any credits
         shell: bash
         run: |
