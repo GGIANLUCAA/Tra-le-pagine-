@@ -21,6 +21,8 @@ on:
       - "tests/test_storia_rivive_v126_frame_diversity.py"
       - "src/storia_rivive_v128_balanced_frame_review.py"
       - "tests/test_storia_rivive_v128_balanced_frame_review.py"
+      - "src/storia_rivive_v129_prefreeze_motion_strips.py"
+      - "tests/test_storia_rivive_v129_prefreeze_motion_strips.py"
       - ".github/workflows/storia-rivive-v101-auto-3h.yml"
       - ".github/workflows/storia-v109-source-preflight-tests.yml"
   workflow_dispatch:
@@ -58,3 +60,4 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v126.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v126_frame_diversity.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v128_balanced_frame_review.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v129_prefreeze_motion_strips.py" -v
