@@ -1,0 +1,86 @@
+name: "La Storia Rivive V146 | five distinct real Lumiere reels, no credits"
+
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_v146_multi_reel_audit.py"
+      - "tests/test_storia_rivive_v146_multi_reel.py"
+      - "config/storia_rivive_v146_five_lumiere_reels.json"
+      - ".github/workflows/storia-v146-five-real-reels-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: storia-v146-five-real-source-research-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  six_real_originals_research_only:
+    # Five separate original films, *not* five cuts invented from one static reel.
+    # Never schedule expensive Commons downloads on unrelated stacked PRs.
+    if: github.run_attempt == 1 && (github.event_name == 'workflow_dispatch' || github.head_ref == 'storia-v146-five-real-lumiere-reels-20261031')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free frame QA and real FFmpeg tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: V146 regression on actual encoded motion and forged source hashes
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p "test_storia_rivive_v146_multi_reel.py" -v
+      - name: Download only six exact Commons original films with bounded metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v146_multi_reel_audit.py \
+            --manifest config/storia_rivive_v146_five_lumiere_reels.json \
+            --out output/storia_v146_five_original_reels
+      - name: Verify evidence is truthful and no provider calls have occurred
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("output/storia_v146_five_original_reels/MULTI_REEL_AUDIT_V146.json")
+          o=json.loads(p.read_text(encoding="utf-8"))
+          assert o["version"]=="V146_MULTI_REEL_AUTHENTIC_MOVEMENT_AUDIT"
+          assert o["attempted_original_reels"]==6
+          assert o["status"] in {
+            "V146_FIVE_DISTINCT_ORIGINAL_MOVING_REELS_REVIEW_REQUIRED",
+            "V146_INSUFFICIENT_DISTINCT_MOVING_ARCHIVAL_REELS"}
+          assert o["api_paid_calls"]==0
+          assert o["photo_i2i_generated"]==0 and o["vidu_clips_generated"]==0
+          assert o["video_completed"] is False and o["publish_permitted"] is False
+          assert o["italian_rights_verified"] is False
+          assert o["modern_restoration_rights_verified"] is False
+          assert o["five_genuine_different_camera_shots_artistically_verified"] is False
+          candidates=o["five_review_candidates"]
+          assert len(candidates) in (0,5)
+          if candidates:
+            assert len({c["source_sha256"] for c in candidates})==5
+            assert len({c["source_page"] for c in candidates})==5
+            assert all(c["freeze"]["motion_verified"] for c in candidates)
+          print("V146_REAL_ARCHIVES",o["status"],"moving",o["distinct_moving_original_reels"],
+                "selected",len(candidates),"paid_calls",0,"publish",False)
+          PY
+      - name: Archive research evidence, NOT source films or final video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V146_FIVE_REAL_LUMIERE_REELS_${{ github.run_id }}
+          path: |
+            output/storia_v146_five_original_reels/MULTI_REEL_AUDIT_V146.json
+            output/storia_v146_five_original_reels/SIX_ARCHIVAL_REELS_CONTACT_SHEET_V146.jpg
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,99 @@
+{
+  "version": "V146_MULTI_ARCHIVE_FIVE_REAL_REELS_RESEARCH_ONLY",
+  "episode": "five_lumiere_1896_1900",
+  "working_title": "Il mondo in movimento · 1896–1900",
+  "status": "RESEARCH_ONLY_NOT_APPROVED_FOR_GENERATION",
+  "minimum_distinct_moving_original_films": 5,
+  "max_original_source_bytes_each": 75000000,
+  "max_combined_original_source_bytes": 190000000,
+  "max_download_count": 6,
+  "research_qa_only": true,
+  "rights_italy_verified": false,
+  "modern_restoration_rights_verified": false,
+  "visual_artist_approval": false,
+  "i2i_permitted": false,
+  "vidu_post_permitted": false,
+  "publish_permitted": false,
+  "editorial_notes": [
+    "Use five distinct original film reels and original pre-freeze movement: a restored still does not replace authentic B/W motion.",
+    "V146 is source scouting only; the fact that Commons labels each file Public Domain does not confirm the 2015 restoration or Italy rights.",
+    "A film page may describe France but not specify city; never invent a city caption.",
+    "Do not claim five *camera angles* or different physical subjects until human visual review of the original clips.",
+    "Candidate 6 is a fallback; the two Perrache train films must be reviewed for visual duplicates before approval.",
+    "Never use DDColor-only photo outputs; first V98-level pilot must contain four true I2I and one source-locked Vidu with gated credit authorization."
+  ],
+  "sources": [
+    {
+      "id": "perrache_train_arrival_1896",
+      "year": 1896,
+      "place_label": "LYON · 1896",
+      "place_verification": "Perrache station (Lyon) described in original film title",
+      "scene_role": "train arriving into station",
+      "page": "https://commons.wikimedia.org/wiki/File:Arrivée_d'un_train_à_Perrache_-_Court_métrage_1896.webm",
+      "claimed_original_width_px": 1920,
+      "claimed_original_height_px": 1080,
+      "claimed_size_mb": 33.6,
+      "ordinal": 1
+    },
+    {
+      "id": "lyon_perrache_train_panorama_1896",
+      "year": 1896,
+      "place_label": "LYON · 1896",
+      "place_verification": "Perrache train station Lyon explicitly in original title",
+      "scene_role": "travel into station, likely moving viewpoint",
+      "page": "https://commons.wikimedia.org/wiki/File:Panorama_de_l’arrivée_en_gare_de_Perrache_pris_du_train_-_Court_métrgé_1896.webm",
+      "claimed_original_width_px": 1920,
+      "claimed_original_height_px": 1080,
+      "claimed_size_mb": 17.39,
+      "ordinal": 2
+    },
+    {
+      "id": "workers_sidewalk_1898",
+      "year": 1898,
+      "place_label": "1898",
+      "place_verification": "precise city not verified",
+      "scene_role": "workers repairing asphalt sidewalk",
+      "page": "https://commons.wikimedia.org/wiki/File:Ouvriers_réparant_un_trottoir_en_bitume_-_Court_métrage_1898.webm",
+      "claimed_original_width_px": 1920,
+      "claimed_original_height_px": 1080,
+      "claimed_size_mb": 12.54,
+      "ordinal": 3
+    },
+    {
+      "id": "rough_port_1899",
+      "year": 1899,
+      "place_label": "1899",
+      "place_verification": "port geography not verified",
+      "scene_role": "strong wind and waves at a historic port",
+      "page": "https://commons.wikimedia.org/wiki/File:Mauvais_temps_au_port_-_Film_1899.webm",
+      "claimed_original_width_px": 1920,
+      "claimed_original_height_px": 1080,
+      "claimed_size_mb": 39.48,
+      "ordinal": 4
+    },
+    {
+      "id": "girl_cat_1900",
+      "year": 1900,
+      "place_label": "1900",
+      "place_verification": "precise city not verified",
+      "scene_role": "child interacting with a cat",
+      "page": "https://commons.wikimedia.org/wiki/File:La_Petite_fille_et_son_chat_-_Film_1900.webm",
+      "claimed_original_width_px": 1920,
+      "claimed_original_height_px": 1080,
+      "claimed_size_mb": 27.91,
+      "ordinal": 5
+    },
+    {
+      "id": "children_marbles_1896",
+      "year": 1896,
+      "place_label": "1896",
+      "place_verification": "precise city not verified",
+      "scene_role": "children playing marbles; fallback for visual repetition",
+      "page": "https://commons.wikimedia.org/wiki/File:Enfants_jouant_aux_billes_-_Court_métrage_1896.webm",
+      "claimed_original_width_px": 1280,
+      "claimed_original_height_px": 720,
+      "claimed_size_mb": 10.29,
+      "ordinal": 6
+    }
+  ]
+}

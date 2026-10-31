@@ -41,6 +41,9 @@ on:
       - "tests/test_storia_rivive_v141_live_sd_recheck.py"
       - "tests/test_storia_rivive_v142_pilot_source.py"
       - "tests/test_storia_rivive_v143_pilot_source.py"
+      - "src/storia_rivive_v146_multi_reel_audit.py"
+      - "tests/test_storia_rivive_v146_multi_reel.py"
+      - "config/storia_rivive_v146_five_lumiere_reels.json"
       - ".github/workflows/storia-v143-trenches-source-audit.yml"
       - ".github/workflows/storia-v142-constantinople-source-audit.yml"
       - "queue/storia_rivive_candidates_v58.json"
@@ -88,6 +91,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v141_live_sd_recheck.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v142_pilot_source.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v143_pilot_source.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v146_multi_reel.py" -v
       - name: V144 real audit rejects 1915 source and safely skips paid production
         shell: bash
         run: |
