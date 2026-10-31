@@ -1950,7 +1950,7 @@
       "source_sha256_verified": true,
       "variants": {
         "critico_standard": {
-          "status": "preflight_pending",
+          "status": "blocked_google_free_tier_unverified",
           "V25_approved": false,
           "site_verified": false,
           "archive_sync_pending": true,
@@ -1960,13 +1960,13 @@
           "full_ffmpeg_decode": "not_run",
           "social_published": false,
           "preflight_blockers": [
-            "Google_AI_Studio_PROJECT_BILLING_TIER_Free_not_verified",
-            "single_Gacrux_WAV_missing",
-            "ASR_synchronization_and_artistic_QA_pending"
+            "GitHub Actions V102 run 41227581466 preflight failed: ART_VOICE_TIER unset",
+            "single_Gacrux_WAV_not_generated",
+            "ASR_and_real_MP4_QA_not_executed"
           ]
         },
         "critico_museum": {
-          "status": "preflight_pending",
+          "status": "blocked_google_free_tier_unverified",
           "V25_approved": false,
           "site_verified": false,
           "archive_sync_pending": true,
@@ -1976,9 +1976,9 @@
           "full_ffmpeg_decode": "not_run",
           "social_published": false,
           "preflight_blockers": [
-            "Google_AI_Studio_PROJECT_BILLING_TIER_Free_not_verified",
-            "single_Gacrux_WAV_missing",
-            "ASR_synchronization_and_artistic_QA_pending"
+            "GitHub Actions V102 run 41227581466 preflight failed: ART_VOICE_TIER unset",
+            "single_Gacrux_WAV_not_generated",
+            "ASR_and_real_MP4_QA_not_executed"
           ]
         },
         "cinema_standard": {
@@ -2062,12 +2062,29 @@
         "chapters": 9,
         "voice_project_tier_verified": "pending",
         "render_request_triggered": true,
-        "workflow_run_success": "not_verified",
+        "workflow_run_success": false,
         "actual_gacrux_wav_generated": false,
         "verified_new_mp4_count": 0,
         "paid_API_spend_authorized": false,
         "preexisting_cinema_preserved": true,
-        "notes": "No invented MP4 or SHA. Project Free tier must be externally verified before the one permitted Gacrux call; trigger is fail-closed."
+        "notes": "No invented MP4 or SHA. Project Free tier must be externally verified before the one permitted Gacrux call; trigger is fail-closed.",
+        "workflow_run_id": 41227581466,
+        "workflow_job_id": 124614844171,
+        "workflow_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41227581466",
+        "workflow_conclusion": "failure",
+        "workflow_first_failed_step": "Preflight without API calls or secrets leakage",
+        "github_var_artvision_gemini_project_billing_tier": "empty_unset_at_run",
+        "blocker_verified_from_github_job_log": "BLOCKED - Google AI Studio project Free tier not verified. No voice call authorized.",
+        "tts_step_skipped": true,
+        "source_download_step_skipped": true,
+        "mp4_render_step_skipped": true,
+        "artifact_count": 0,
+        "no_paid_api_calls_executed_in_run": true,
+        "renderer_narration_frame_overlap_fixed_commit": "c52b0319a1c76be812a2ef1b4d99c78cdee85155",
+        "renderer_voice_delay_seconds": 5,
+        "renderer_museum_exit_after_voice_seconds": 7,
+        "renderer_smoke_test": "synthetic fixtures only, both variants full FFmpeg decode PASS at 21s; not real deliverables",
+        "followup": "Await explicit proof of Google project Free tier; do not rerun while blocked. No V25 Gold or R2 Android verification."
       }
     }
   ],
