@@ -25,3 +25,17 @@
 5. Solo dopo diritti Italia verificati, piano di costo e approvazione Vidu appropriata, 4 veri I2I + 1 clip Vidu source-locked, V91/V94/V96/V99 sul vero MP4, 3 piloti distinti e controlli Android/download.
 
 **Nessuna spesa, nessuna pubblicazione, nessuna modifica ArtVision/WOW LAB/V98.**
+
+
+## Esito reale della prima acquisizione V138 (31 ottobre 2026)
+
+La [GitHub Action V138 #41198837596](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41198837596) è terminata **SUCCESS** come job di ricerca. L'[artifact #13041891851](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41198837596/artifacts/13041891851) è stato materialmente scaricato, estratto e il `REAL_SOURCE_AUDIT_V138.json` letto; il contact sheet originale dei nove campioni è stato aperto e osservato.
+
+- Impronta originale: `a29801c567fa7f237fed71a686b853a5c37e1323aed7a53c5a73265b975dadf8`, raster decodificato `1920×1080`, SHA e frame originali verificati da V134.
+- V124: soltanto **9 candidati fotografici** campionati; nel contact sheet si distinguono monumenti, folla, veicoli e delegati, con diverse pose ripetitive presso automobili e scale.
+- V125: **1 sola finestra** con movimento B/N verificato con l'attuale algoritmo. V126: nessuna cinquina valida; V128 e V129 bloccati per mancanza di input. Stato finale reale: `SOURCE_REJECTED_V136_INSUFFICIENT_MOTION_VARIETY`.
+- Questo è un rifiuto **dell'attuale selezione e metodologia di sampling**, non una sentenza storica che il film non contenga cinque cambi camera nel suo complesso. Prima di considerare un eventuale riesame occorre una nuova prova, conservando SHA e limiti. **Nessun I2I, Vidu, MP4 finale o diritti Italia autorizzati.**
+
+È stata aggiunta al registro V133 una esclusione **con ID + pagina + SHA + audit GitHub verificato**, così che i cicli V101 non riscarichino inutilmente anche questa stessa fonte. Identica regola per la pellicola White House 1917–1921 (V136) e la filatura 1920 (V132). Le esclusioni si possono riesaminare con nuova evidenza, non rappresentano divieti di diritto d'autore.
+
+**CI del fix**: [V109 #41199149983](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41199149983), **133/133 test PASS** (14 suite, inclusi 4 nuovi test sul registro). I workflow V138 finali sono **solo manuali/riutilizzabili** (`workflow_dispatch`/`workflow_call`), niente nuovo scheduler o nuovi job Vidu.
