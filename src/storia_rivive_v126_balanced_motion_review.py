@@ -11,6 +11,7 @@ import argparse
 import json
 import math
 import re
+from fractions import Fraction
 from pathlib import Path
 
 SOURCE_SHA = re.compile(r"[0-9a-f]{64}\Z")
@@ -32,7 +33,9 @@ def _validate_and_candidates(motion, rank, scout):
             or rank.get("adaptive_review_only_not_camera_approval") is not True):
         raise ValueError("V126_SOURCE_REPORT_SHA_OR_STATE_MISMATCH")
     duration = motion.get("source_duration_s")
-    if type(duration) not in (int, float) or not math.isfinite(duration) or duration <= 0:
+    if (type(duration) not in (int, float) or not math.isfinite(duration)
+            or duration <= 0 or (scout.get("duration_s") is not None
+            and scout.get("duration_s") != duration)):
         raise ValueError("V126_FILM_DURATION_INVALID")
     originals = scout.get("frame_provenance")
     if not isinstance(originals, list) or not 5 <= len(originals) <= 48:
@@ -91,6 +94,16 @@ def _validate_and_candidates(motion, rank, scout):
         time = original.get("source_pts_time_s")
         if type(time) not in (int,float) or not math.isfinite(time) or not 0<=time<duration:
             raise ValueError("V126_SOURCE_FRAME_TIME_OUT_OF_BOUNDS")
+        clock=original.get("source_time_base")
+        ticks=original.get("source_pts")
+        try:
+            n, d=map(int,clock.split("/"))
+            valid_clock=(type(ticks) is int and n>0 and d>0
+                         and abs(float(ticks*Fraction(n,d))-time)<=0.0001)
+        except (AttributeError,TypeError,ValueError,ZeroDivisionError):
+            valid_clock=False
+        if not valid_clock:
+            raise ValueError("V126_FRAME_NATIVE_PTS_CLOCK_MISMATCH")
         sha = original.get("sha256")
         if not isinstance(sha,str) or SOURCE_SHA.fullmatch(sha) is None:
             raise ValueError("V126_ORIGINAL_FRAME_SHA_MISSING")
