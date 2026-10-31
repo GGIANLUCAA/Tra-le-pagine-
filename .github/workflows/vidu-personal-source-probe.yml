@@ -1,0 +1,27 @@
+name: "Vidu Personal - Free Source Quality Probe"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "personal_vidu/source_probe_request.json"
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Fetch photo proxy diagnostic (no Vidu credits)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, urllib.request, subprocess, base64
+          source="https://vidu-photo-probe-temporary.600led.workers.dev/probe"
+          try:
+            with urllib.request.urlopen(source,timeout=45) as r: data=json.load(r)
+          except Exception as exc: data={"error":type(exc).__name__ +": "+str(exc)[:250]}
+          payload=base64.b64encode((json.dumps(data,indent=2)+"\n").encode()).decode()
+          subprocess.run(["gh","api","repos/GGIANLUCAA/Tra-le-pagine-/contents/personal_vidu/source_probe_result.json","-X","PUT","-f","message=Record free Vidu personal source quality diagnostic","-f","content="+payload,"-f","branch=main"],check=True)
+          PY
