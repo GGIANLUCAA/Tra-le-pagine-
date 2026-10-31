@@ -15,6 +15,7 @@ import json
 import math
 import re
 import subprocess
+import time
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -188,14 +189,36 @@ def process_one(item,root,*,lookup=metadata,download=download_source,
     return report
 
 
-def run(manifest,outdir,batch):
+def process_with_rate_limit_policy(item, root, *, worker=process_one, sleep=time.sleep):
+    """Retry at most once after a Commons HTTP 429, never after a SHA/rights failure.
+
+    This is GET-only archive research. A failed second attempt remains blocked;
+    never mark a missing original film as a verified clip.
+    """
+    first=worker(item,root)
+    if (first.get("status")!="V149_ARCHIVE_OR_PREVIEW_BLOCKED_NOT_APPROVED"
+            or re.search(r"\\bHTTP Error 429\\b",first.get("reason","")) is None):
+        return first
+    sleep(60)
+    second=worker(item,root)
+    second["commons_429_backoff_seconds"]=60
+    second["commons_429_retry_count"]=1
+    return second
+
+
+def run(manifest,outdir,batch,*,worker=process_one,sleep=time.sleep):
     m=json.loads(Path(manifest).read_text(encoding="utf-8"))
     shots=validate(m)
     if batch not in ("a","b"):
         raise ValueError("V149_BATCH_NOT_RECOGNIZED")
     root=Path(outdir);root.mkdir(parents=True,exist_ok=True)
     chosen=[x for x in shots if x["batch"]==batch]
-    result=[process_one(x,root) for x in chosen]
+    result=[]
+    for index,item in enumerate(chosen):
+        # Avoid a rapid third Commons download that triggered HTTP 429 in V149.
+        if index:
+            sleep(12)
+        result.append(process_with_rate_limit_policy(item,root,worker=worker,sleep=sleep))
     report={
         "version":EXPECTED_VERSION,"batch":batch,
         "status":("V149_ORIGINAL_BW_CLIPS_READY_FOR_PRIVATE_QA" if
