@@ -332,11 +332,18 @@ def select_artwork(conf: dict, stamp: str, history: list[dict], fixed_id: int | 
 
 
 def save_original(rec: dict, out: Path, conf: dict):
+    if not valid_object(rec):
+        raise RuntimeError("WOW_LAB_SOURCE_RIGHTS_UNVERIFIED")
     url = rec.get("primaryImage") or rec.get("primaryImageSmall")
     if not url or not url.startswith("https://"):
         raise RuntimeError("No original official Met image URL")
+    # Verified via the Met artwork page's own 'Download Image' link.
+    # Only this exact object has a known IIIF image ID; never guess others.
+    official_iiif = {
+        400112: "https://collectionapi.metmuseum.org/api/collection/v1/iiif/400112/770372/main-image",
+    }.get(int(rec["objectID"]))
     failures = []
-    for candidate in list(dict.fromkeys([url, rec.get("primaryImageSmall")])):
+    for candidate in dict.fromkeys([url, rec.get("primaryImageSmall"), official_iiif]):
         if not candidate:
             continue
         try:
