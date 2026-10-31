@@ -51,8 +51,8 @@ def run(object_id: int, out: Path) -> int:
     sandbox = (ROOT / "runs").resolve()
     if sandbox not in out.parents:
         raise ValueError("Output must be a unique folder under wow_lab/runs/")
-    if out.exists() and any(out.iterdir()):
-        raise RuntimeError("WOW_LAB_PREFLIGHT_DIRECTORY_ALREADY_POPULATED")
+    if out.exists():
+        raise RuntimeError("WOW_LAB_PREFLIGHT_DIRECTORY_ALREADY_EXISTS")
     config = engine.read_config(ROOT / "config.json")
     record = engine.get_json(engine.object_url(object_id))
     if record.get("objectID") != object_id or not engine.valid_object(record):
