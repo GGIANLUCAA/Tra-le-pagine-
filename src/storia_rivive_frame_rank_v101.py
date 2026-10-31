@@ -159,11 +159,11 @@ def rank(folder):
             if segment_by_name is not None:
                 used_segments.add(segment)
         if len(chosen)>=5:break
+    native_count=sum(row["source_native_detail_sufficient"] for row in scored)
+    native_temporal_count=sum(
+        row["source_native_detail_sufficient"] and row.get("pre_freeze_window_viable",True)
+        for row in scored)
     if len(chosen)<5:
-        native_count=sum(row["source_native_detail_sufficient"] for row in scored)
-        native_temporal_count=sum(
-            row["source_native_detail_sufficient"] and row.get("pre_freeze_window_viable",True)
-            for row in scored)
         reason=("SOURCE_NATIVE_DETAIL_INSUFFICIENT_FOR_FIVE_SHOTS"
                 if native_count<5 else
                 "INSUFFICIENT_PRE_FREEZE_SOURCE_WINDOWS"
