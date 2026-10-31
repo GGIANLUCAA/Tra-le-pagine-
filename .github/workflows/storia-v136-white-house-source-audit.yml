@@ -1,8 +1,6 @@
 name: "La Storia Rivive V136 | White House 1917-1921 real source audit (free)"
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/storia-v136-white-house-source-audit.yml"
+  workflow_call:
   workflow_dispatch:
 permissions:
   contents: read
