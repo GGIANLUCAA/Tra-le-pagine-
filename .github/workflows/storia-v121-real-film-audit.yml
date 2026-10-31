@@ -118,6 +118,25 @@ jobs:
             --frames output/storia_v121_real/adaptive/original_frames \
             --out output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.json \
             --sheet output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.jpg
+      - name: V131 apply SHA-bound editorial veto from real V130 visual review (no provider)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v131_editorial_hold.py \
+            --visual output/storia_v121_real/adaptive/BALANCED_VISUAL_REVIEW_V128.json \
+            --motion output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.json \
+            --vetoes config/storia_rivive_v131_reviewed_source_vetoes.json \
+            --out output/storia_v121_real/adaptive/SOURCE_EDITORIAL_GATE_V131.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("output/storia_v121_real/adaptive/SOURCE_EDITORIAL_GATE_V131.json")
+          report=json.loads(p.read_text(encoding="utf-8"))
+          assert report["status"]=="SOURCE_ARTISTIC_REVIEW_HOLD", report["status"]
+          assert {r["frame"] for r in report["source_review_vetoes"]}=={"frame_34.png","frame_48.png"}
+          assert not any(report[k] for k in ("i2i_permitted","vidu_permitted","paid_api_call_permitted","publish_permitted"))
+          print("V131_VERIFIED_COTTON_EDITORIAL_HOLD",report["status"])
+          PY
       - name: Record physical evidence, never label the result as approved
         shell: bash
         run: |
@@ -140,6 +159,8 @@ jobs:
           balanced_visual=json.loads(balanced_visual_path.read_text(encoding="utf-8")) if balanced_visual_path.is_file() else {"status":"V128_NOT_RUN"}
           motion_strips_path=root/"adaptive"/"PREFREEZE_MOTION_STRIPS_V129.json"
           motion_strips=json.loads(motion_strips_path.read_text(encoding="utf-8")) if motion_strips_path.is_file() else {"status":"V129_NOT_RUN"}
+          editorial_path=root/"adaptive"/"SOURCE_EDITORIAL_GATE_V131.json"
+          editorial=json.loads(editorial_path.read_text(encoding="utf-8")) if editorial_path.is_file() else {"status":"V131_NOT_RUN"}
 
 
           rank_path=root/"FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json"
@@ -163,6 +184,9 @@ jobs:
               "balanced_five_frame_files":[r.get("filename") for r in balanced.get("five_review_candidates",[])],
               "balanced_visual_review_status":balanced_visual.get("status"),
               "actual_prefreeze_motion_strip_status":motion_strips.get("status"),
+              "source_editorial_gate_status":editorial.get("status"),
+              "source_editorial_veto_frames":[r.get("frame") for r in editorial.get("source_review_vetoes",[])],
+              "source_paid_api_permitted":editorial.get("paid_api_call_permitted",False),
               "actual_prefreeze_motion_proxy_samples":[x.get("source_frame") for x in motion_strips.get("five_prefreeze_proxy_strips",[])],
               "balanced_visual_source_sha_pts_checked":balanced_visual.get("original_pts_sha_motion_evidence_crosschecked",False),
               "near_duplicate_original_frame_pairs":diversity.get("near_duplicate_pairs",[]),
@@ -210,6 +234,7 @@ jobs:
             output/storia_v121_real/adaptive/BALANCED_CONTACT_SHEET_V128.jpg
             output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.json
             output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.jpg
+            output/storia_v121_real/adaptive/SOURCE_EDITORIAL_GATE_V131.json
 
           retention-days: 14
           if-no-files-found: warn
