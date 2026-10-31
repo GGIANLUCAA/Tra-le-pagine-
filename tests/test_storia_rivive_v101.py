@@ -59,6 +59,8 @@ class V101Tests(unittest.TestCase):
             "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm",
             "license":"PDM"}]}
         registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        # This V133 fixture deliberately tests only the original cotton source.
+        registry["rejected"]=[x for x in registry["rejected"] if x["candidate_id"]=="france_cotton_mill_1920"]
         for hour in (0,3,6,9,12,15,18,21):
             order=auto.build_work_order(bank,f"2026-10-31T{hour:02d}:00:00Z",PROFILE,registry)
             self.assertNotEqual(order["episode_id"],"france_cotton_mill_1920")
@@ -70,6 +72,8 @@ class V101Tests(unittest.TestCase):
         candidate={"id":"france_cotton_mill_1920",
             "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm"}
         registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        # This V133 fixture deliberately tests only the original cotton source.
+        registry["rejected"]=[x for x in registry["rejected"] if x["candidate_id"]=="france_cotton_mill_1920"]
         order=auto.build_work_order({"candidates":[candidate]},
                                    "2026-10-31T09:00:00Z",PROFILE,registry)
         self.assertEqual(order["status"],"SOURCE_REJECTED_ALL_KNOWN")
@@ -83,6 +87,8 @@ class V101Tests(unittest.TestCase):
         bank={"candidates":[{"id":"france_cotton_mill_1920",
             "source_page":"https://commons.wikimedia.org/wiki/File:Changed.webm"}]}
         registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        # This V133 fixture deliberately tests only the original cotton source.
+        registry["rejected"]=[x for x in registry["rejected"] if x["candidate_id"]=="france_cotton_mill_1920"]
         with self.assertRaisesRegex(ValueError,"STALE_REJECTION"):
             auto.build_work_order(bank,"2026-10-31T09:00:00Z",PROFILE,registry)
         bank["candidates"][0]["source_page"]=registry["rejected"][0]["source_page"]
@@ -94,6 +100,8 @@ class V101Tests(unittest.TestCase):
         bank={"candidates":[{"id":"france_cotton_mill_1920",
             "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm"}]}
         registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        # This V133 fixture deliberately tests only the original cotton source.
+        registry["rejected"]=[x for x in registry["rejected"] if x["candidate_id"]=="france_cotton_mill_1920"]
         registry["rejected"].append(dict(registry["rejected"][0]))
         with self.assertRaisesRegex(ValueError,"UNKNOWN_OR_DUPLICATE"):
             auto.build_work_order(bank,"2026-10-31T09:00:00Z",PROFILE,registry)
@@ -504,5 +512,52 @@ class V101Tests(unittest.TestCase):
     def test_source_rights_not_self_approved(self):
         a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE)
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",a["blocking_issues"])
+
+    def test_v138_real_audited_rejections_are_omitted_from_autopilot(self):
+        """Three films failed real source audits: no silent return to bad footage."""
+        catalog=json.loads((ROOT/"queue/storia_rivive_candidates_v58.json").read_text())
+        registry=json.loads((ROOT/"config/storia_rivive_v133_rejected_films.json").read_text())
+        expected={"france_cotton_mill_1920","white_house_1917_1921",
+                  "versailles_treaty_1919"}
+        self.assertEqual(auto.rejected_source_ids(catalog["candidates"],registry), expected)
+        order=auto.build_work_order(catalog,"2026-10-31T12:00:00Z",PROFILE,registry)
+        self.assertTrue(expected.issubset(set(order["excluded_sha_bound_sources"])))
+        self.assertNotIn(order["episode_id"],expected)
+        self.assertFalse(order["paid_api_call_permitted"])
+        self.assertFalse(order["publish_permitted"])
+
+    def test_v138_when_only_rejected_films_remain_skip_download(self):
+        catalog=json.loads((ROOT/"queue/storia_rivive_candidates_v58.json").read_text())
+        registry=json.loads((ROOT/"config/storia_rivive_v133_rejected_films.json").read_text())
+        selected=[x for x in catalog["candidates"]
+                  if x["id"] in {r["candidate_id"] for r in registry["rejected"]}]
+        result=auto.build_work_order({"candidates":selected},
+                                     "2026-10-31T12:00:00Z",PROFILE,registry)
+        self.assertEqual(result["status"],"SOURCE_REJECTED_ALL_KNOWN")
+        self.assertTrue(result["skip_source_acquisition"])
+        self.assertFalse(result["video_completed"])
+        self.assertFalse(result["human_approved"])
+
+    def test_v138_rejection_needs_exact_validated_audit_status(self):
+        catalog=json.loads((ROOT/"queue/storia_rivive_candidates_v58.json").read_text())
+        registry=json.loads((ROOT/"config/storia_rivive_v133_rejected_films.json").read_text())
+        for status in ("ERROR","SOURCE_RESEARCH_REVIEW_REQUIRED",
+                       "SOURCE_REJECTED_V136", "", None):
+            bad=json.loads(json.dumps(registry))
+            bad["rejected"][-1]["audit_status"]=status
+            with self.assertRaisesRegex(ValueError,"V133_REJECTION_EVIDENCE_INVALID"):
+                auto.rejected_source_ids(catalog["candidates"],bad)
+
+    def test_v138_rejection_is_bound_to_exact_candidate_page_and_sha(self):
+        catalog=json.loads((ROOT/"queue/storia_rivive_candidates_v58.json").read_text())
+        registry=json.loads((ROOT/"config/storia_rivive_v133_rejected_films.json").read_text())
+        changed=json.loads(json.dumps(registry))
+        changed["rejected"][-1]["film_sha256"]="not-verified"
+        with self.assertRaisesRegex(ValueError,"V133_REJECTION_EVIDENCE_INVALID"):
+            auto.rejected_source_ids(catalog["candidates"],changed)
+        changed=json.loads(json.dumps(registry))
+        changed["rejected"][-1]["source_page"]="https://commons.wikimedia.org/wiki/File:Some_other_film.webm"
+        with self.assertRaisesRegex(ValueError,"V133_STALE_REJECTION_SOURCE_CHANGED"):
+            auto.rejected_source_ids(catalog["candidates"],changed)
 
 if __name__=="__main__":unittest.main()
