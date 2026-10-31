@@ -82,6 +82,34 @@ def _source_structure_correlation(original: Image.Image, restored: Image.Image) 
     return round(correlation, 4)
 
 
+
+def _source_luminance_residual(original: Image.Image, restored: Image.Image) -> float:
+    """Reject mere color tint / global exposure changes, not certify real I2I.
+
+    Fit an affine luminance transform on real pixel arrays. A source merely
+    colorized with fixed channel offsets or contrast has almost zero residual.
+    Residual texture can also be synthetic noise: artistic QA and provider
+    evidence remain mandatory; this is a necessary rejection check only.
+    """
+    size = (256, 256)
+    source = list(original.convert("L").resize(size, Image.Resampling.BILINEAR).getdata())
+    output = list(restored.convert("L").resize(size, Image.Resampling.BILINEAR).getdata())
+    n = len(source)
+    mean_source = sum(source) / n
+    mean_output = sum(output) / n
+    variance = sum((v - mean_source) ** 2 for v in source)
+    if variance / n < 16:
+        raise ValueError("V156_SOURCE_LUMA_TOO_FLAT_FOR_DETAIL_CHECK")
+    slope = sum((a - mean_source) * (b - mean_output)
+                for a, b in zip(source, output)) / variance
+    intercept = mean_output - slope * mean_source
+    rms = (sum((b - (slope * a + intercept)) ** 2
+               for a, b in zip(source, output)) / n) ** 0.5
+    if rms < 4.0:
+        raise ValueError("V156_COLOR_TINT_OR_AFFINE_LUMA_ONLY")
+    return round(rms, 3)
+
+
 def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) -> dict:
     root = Path(root)
     if (handoff.get("version") != "V151" or handoff.get("real_source_frames_sha_verified") != 5
@@ -131,6 +159,12 @@ def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) ->
             raise ValueError("V154_NATIVE_RASTER_NOT_DOCUMENTED")
         _verified_png(root, row["native_original_frame_file"], row["native_original_frame_sha256"], tuple(raster))
         _verified_png(root, row["vertical_review_file"], row["vertical_review_sha256"], (720, 1280))
+    # Five numbered rows are not evidence of five different archival frames.
+    # Exact byte reuse is an objective fail; different camera shots still need
+    # actual film review, since different PNGs may show the same shot.
+    for key in ("source_id", "native_original_frame_sha256", "vertical_review_sha256"):
+        if len({row.get(key) for row in rows}) != 5:
+            raise ValueError("V157_DUPLICATE_FIVE_SCENE_SOURCE_" + key.upper())
     jobs = candidates.get("jobs")
     if not isinstance(jobs, list) or len(jobs) > 4:
         raise ValueError("V154_MAX_FOUR_I2I_JOBS")
@@ -170,6 +204,12 @@ def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) ->
             raise ValueError("V154_KNOWN_ARTISTICALLY_REJECTED_I2I_SHA")
         source = _safe_file(root, row["vertical_review_file"])
         with Image.open(photo) as restored, Image.open(source) as original:
+            # RGB conversion silently discards alpha: a transparent fake photo
+            # can otherwise pass SHA, colour and structural checks.
+            if ("transparency" in restored.info or
+                    ("A" in restored.getbands() and
+                     restored.getchannel("A").getextrema()[0] != 255)):
+                raise ValueError("V157_TRANSPARENT_RESTORATION_NOT_VISIBLE")
             rgb = restored.convert("RGB")
             if ImageChops.difference(rgb, original.convert("RGB")).getbbox() is None:
                 raise ValueError("V154_PHOTO_IS_UNCHANGED_SOURCE_NOT_I2I")
@@ -177,15 +217,19 @@ def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) ->
             if max(stats.mean) - min(stats.mean) < 2.0:
                 raise ValueError("V154_OUTPUT_STILL_GRAYSCALE")
             structure_corr = _source_structure_correlation(original, rgb)
+            luma_residual = _source_luminance_residual(original, rgb)
         completed.append({"scene": job["scene"], "source_frame_sha256": row["native_original_frame_sha256"],
                           "actual_photo_sha256": photo_sha, "provider_reference_is_self_reported": True,
-                          "source_structure_correlation": structure_corr, "human_identity_review_still_required": True})
+                          "source_structure_correlation": structure_corr,
+                          "source_luminance_residual_rms": luma_residual,
+                          "human_identity_review_still_required": True})
     missing = sorted(set(range(1, 5)) - {j["scene"] for j in jobs})
     # V152 source selection is still blocked. Even four technically valid files
     # cannot turn it into a coherent, rights-cleared, artistically approved film.
     return {"version": "V154", "status": "V154_SOURCE_EDITORIAL_BLOCKED" if not missing else "V154_I2I_ASSETS_PENDING_AND_EDITORIAL_BLOCKED",
             "real_i2i_photo_files_sha_verified": len(completed), "missing_i2i_scenes": missing,
             "verified_byte_evidence": completed, "model_invocation_independently_verified": False,
+            "five_source_frame_byte_distinctness_verified": True,
             "five_shot_coherence_verified": False, "rights_italy_verified": False,
             "face_object_identity_verified": False, "human_artistic_approval": False,
             "vidu_clip_generated": False, "master_eligible": False,
