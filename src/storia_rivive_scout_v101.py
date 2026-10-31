@@ -27,8 +27,32 @@ def metadata(page):
         raise ValueError("Unapproved archive video URL: host="+v.netloc+" path_extension="+v.path[-80:])
     return {"source_page":page,"filename":title,"download_url":link,
             "size_bytes":info.get("size"),
+            # V121: Commons imageinfo reports ORIGINAL uploaded media dimensions;
+            # never infer HD from a display thumbnail, filename or AI upscaling.
+            "original_width_px":info.get("width"),
+            "original_height_px":info.get("height"),
             "license_metadata":info.get("extmetadata",{}).get("LicenseShortName",{}).get("value","UNKNOWN"),
             "historical_rights_italy_approved":False,"social_publish_permitted":False}
+
+
+def native_raster_preflight(m):
+    """Reject inadequate or missing Commons original raster BEFORE download.
+
+    Passing this metadata filter is not proof of actual decoded resolution,
+    Italian rights, five camera shots, facial readability or master quality.
+    """
+    width, height = m.get("original_width_px"), m.get("original_height_px")
+    if type(width) is not int or type(height) is not int or width <= 0 or height <= 0:
+        return {"status": "SOURCE_RASTER_METADATA_MISSING_SKIP_DOWNLOAD",
+                "native_raster_eligible": False, "native_portrait_crop_width_px": None}
+    portrait_width = min(width, round(height * 9 / 16))
+    allowed = portrait_width >= 400 and height >= 720
+    return {"status": ("SOURCE_RASTER_METADATA_PASS_REQUIRES_DECODE_AND_RIGHTS"
+                        if allowed else "SOURCE_NATIVE_DETAIL_INSUFFICIENT_SKIP_DOWNLOAD"),
+            "native_raster_eligible": allowed,
+            "native_portrait_crop_width_px": portrait_width,
+            "minimum_native_portrait_crop_width_px": 400,
+            "minimum_original_height_px": 720}
 
 def extract_pts_locked_frames(film, frames, duration):
     """Sample native decoded frames without rewriting original PTS via an fps filter.
@@ -84,6 +108,12 @@ def extract_pts_locked_frames(film, frames, duration):
 def inspect(page,outdir):
     outdir.mkdir(parents=True,exist_ok=True)
     m=metadata(page)
+    raster=native_raster_preflight(m)
+    m.update(raster)
+    if not raster["native_raster_eligible"]:
+        # No media request, no FFmpeg, no credits and no fake native-HD status.
+        m["original_media_downloaded"]=False
+        return m
     size=m["size_bytes"]
     if not isinstance(size,int) or size<=0 or size>MAX_BYTES:
         m["status"]="MANUAL_ACQUISITION_REQUIRED_SIZE_LIMIT";return m
@@ -98,9 +128,18 @@ def inspect(page,outdir):
             h.update(buf);target.write(buf)
     if n!=size:raise ValueError("Source media length mismatch")
     m["original_sha256"]=h.hexdigest()
-    probe=subprocess.run(["ffprobe","-v","error","-show_entries","format=duration","-of","json",str(film)],
+    probe=subprocess.run(["ffprobe","-v","error","-show_entries",
+                          "format=duration:stream=codec_type,width,height",
+                          "-of","json",str(film)],
                          capture_output=True,text=True,timeout=35,check=True)
-    duration=float(json.loads(probe.stdout)["format"]["duration"])
+    payload=json.loads(probe.stdout)
+    decoded=next((row for row in payload.get("streams",[]) if row.get("codec_type")=="video"),None)
+    if not isinstance(decoded,dict) or (
+            decoded.get("width"), decoded.get("height")) != (
+            m["original_width_px"], m["original_height_px"]):
+        raise ValueError("SOURCE_DECODED_RASTER_DIFFERS_FROM_COMMONS_ORIGINAL_METADATA")
+    m["decoded_video_raster_verified"]=True
+    duration=float(payload["format"]["duration"])
     if not 1<=duration<=10000:raise ValueError("Source duration suspicious")
     m["duration_s"]=duration
     frames=outdir/"original_frames";frames.mkdir(exist_ok=True)
