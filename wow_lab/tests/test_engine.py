@@ -28,12 +28,28 @@ class WowLabContractTests(unittest.TestCase):
     def test_autonomous_selection_parses_utc_slot_without_crashing(self):
         from unittest.mock import patch
         cfg = engine.read_config(MODULE / "config.json")
-        sample = {"objectID": 436535, "isPublicDomain": True, "objectName": "Painting",
+        sample = {"objectID": 400112, "isPublicDomain": True, "objectName": "Drawing",
                   "primaryImage": "https://images.metmuseum.org/test.jpg",
-                  "title": "Verified painting"}
+                  "title": "A Moth"}
         with patch.object(engine, "discovery_ids", return_value=[]), patch.object(engine, "get_json", return_value=sample):
             chosen = engine.select_artwork(cfg, "20261030T06", [])
-        self.assertEqual(chosen["objectID"], 436535)
+        self.assertEqual(chosen["objectID"], 400112)
+
+    def test_wrong_met_object_id_never_passes_candidate_selection(self):
+        from unittest.mock import patch
+        cfg = engine.read_config(MODULE / "config.json")
+        wrong = {"objectID": 436535, "isPublicDomain": True, "objectName": "Painting",
+                 "primaryImage": "https://images.metmuseum.org/test.jpg",
+                 "title": "Other work"}
+        with patch.object(engine, "get_json", return_value=wrong):
+            with self.assertRaisesRegex(RuntimeError, "museum_object_id_mismatch"):
+                engine.select_artwork(cfg, "20261031T04", [])
+
+    def test_single_subject_mask_first_selection_configuration(self):
+        cfg = engine.read_config(MODULE / "config.json")
+        self.assertEqual(cfg["allowed_artwork_ids"], [400112])
+        self.assertFalse(cfg["allow_museum_api_search"])
+        self.assertFalse(cfg["production_ready"])
 
     def test_legacy_wow_releases_count_distinct_subjects(self):
         releases = [
