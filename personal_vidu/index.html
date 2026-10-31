@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vidu Personale · Video dalla foto</title>
+<style>
+:root{color-scheme:dark;--bg:#0c1120;--surface:#171f32;--border:#34425d;--text:#f3f6ff;--muted:#b7c3d9;--a:#8ba5ff;--ok:#86edc0}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#223256,#0c1120 65%);color:var(--text);font-family:system-ui,-apple-system,Roboto,sans-serif;font-size:15px;line-height:1.55}main{max-width:720px;margin:0 auto;padding:24px 18px 70px}h1{font-size:29px;letter-spacing:-.7px;margin:8px 0 4px}.eyebrow{font-size:12px;color:var(--a);letter-spacing:1.3px;font-weight:800;text-transform:uppercase}p{color:var(--muted)}section{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;margin:18px 0;box-shadow:0 12px 35px #0002}h2{font-size:18px;margin:0 0 13px}.field{margin:16px 0}label{display:block;font-weight:650;margin:0 0 7px}input,textarea,select,button{font:inherit}input[type=password],input[type=file],select,textarea{width:100%;background:#0e1526;color:var(--text);border:1px solid #52617a;border-radius:12px;padding:12px}textarea{min-height:235px;resize:vertical}input[type=checkbox]{width:18px;height:18px;accent-color:var(--a)}.check{display:flex;gap:10px;align-items:flex-start;margin:15px 0;color:var(--text)}.check label{font-weight:450;margin:0}button{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:12px;background:#a4b4ff;color:#10192e;font-weight:750;padding:14px 18px;min-height:49px;width:100%;cursor:pointer}button:disabled{opacity:.43;cursor:not-allowed}.secondary{background:#2a3b5d;color:#fff}#preview{max-width:100%;max-height:410px;display:none;object-fit:contain;background:#080d16;border-radius:12px;margin:10px auto}#status{white-space:pre-wrap;padding:14px;border:1px solid #536488;background:#0e1728;border-radius:12px;min-height:58px;color:#e4edff}.small{font-size:12px;color:var(--muted)}a{color:#b8c7ff}strong{color:#fff}.price{font-size:26px;font-weight:800;color:var(--ok)}.hidden{display:none}#confirmArea{border-top:1px solid var(--border);padding-top:16px;margin-top:16px}
+</style></head>
+<body><main>
+<div class="eyebrow">Studio personale · indipendente da ArtVision</div>
+<h1>Vidu Personale</h1>
+<p>Trasforma una tua fotografia in un video. Si usano i crediti <strong>Vidu API già configurati in GitHub</strong>, senza copiare la chiave Vidu su questo sito.</p>
+<section><h2>1. Accesso GitHub sicuro</h2>
+<p class="small">Serve un token GitHub fine-grained limitato al repository <strong>GGIANLUCAA/Tra-le-pagine-</strong> con permessi <strong>Contents: read/write</strong> e <strong>Actions: read</strong>. Resta in memoria solo mentre questa scheda è aperta; non viene salvato. Non utilizzare il token Vidu qui.</p>
+<div class="field"><label for="token">Token GitHub (non la chiave Vidu)</label><input id="token" type="password" autocomplete="off" placeholder="github_pat_..."></div>
+<a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">Crea un token fine-grained su GitHub</a>
+</section>
+<section><h2>2. La fotografia</h2>
+<div class="field"><label for="photo">Carica una foto JPG, PNG o WebP</label><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"></div>
+<img id="preview" alt="Anteprima fotografia ritagliata 9:16">
+<p class="small">La foto viene adattata a 720×1280 (formato social 9:16) e caricata come asset di una <strong>release GitHub in bozza</strong>, non pubblicata. Non usare immagini particolarmente riservate. Il prompt e i dati tecnici del lavoro resteranno visibili nel repository pubblico.</p>
+</section>
+<section><h2>3. Regia e impostazioni</h2>
+<div class="field"><label for="duration">Durata</label><select id="duration"><option value="5">5 secondi · 16 crediti stimati</option><option value="8">8 secondi · 22 crediti stimati</option><option value="10" selected>10 secondi · 26 crediti stimati</option></select></div>
+<div class="field"><label for="prompt">Prompt cinematografico</label><textarea id="prompt">Create an extraordinary, photorealistic cinematic fantasy video of this exact dog, preserving its identity, facial features, fur pattern and body anatomy. A tiny golden firefly flies in front of the dog's nose. The dog follows it with subtle natural eye and ear movements. The light blossoms into hundreds of luminous golden and blue particles, swirling through the air to form a beautiful miniature galaxy behind the dog. Realistic fur gently moves in a soft breeze, with physically accurate reflections, elegant light rays, and depth of field. The camera moves slowly closer to the dog's face, capturing a magical moment of wonder and a final gentle sparkle near the lens. Continuous single shot, natural animal behavior, elegant cinematic fantasy visual effects, realistic physics. No cuts, no extra paws, no morphing, no deformed face, no text, no logos, no duplication.</textarea></div>
+<div class="price"><span id="credits">26</span> crediti stimati</div>
+<p class="small">Modello: Vidu Q2 Pro Fast · 720p · senza audio · senza effetto B/N→colore. Il costo effettivo è soggetto al listino del fornitore. Nessuna operazione a pagamento parte da questa schermata senza il passaggio 5.</p>
+<button id="planBtn">Prepara preventivo gratuito</button>
+</section>
+<section><h2>4. Controllo e risultati</h2><div id="status" role="status">Pronto. Inserisci il token, scegli una foto e prepara il preventivo.</div><div id="planLink"></div>
+<div id="confirmArea" class="hidden"><h2>5. Autorizzazione singola generazione</h2><p>Il preventivo GitHub è terminato correttamente. La generazione costa al massimo <strong><span id="costConfirm"></span> crediti</strong> in base al modello e alla durata selezionati.</p>
+<div class="check"><input type="checkbox" id="approve"><label for="approve">Autorizzo espressamente questa singola generazione Vidu, per la foto e il prompt visualizzati, fino al limite indicato. So che consumerà crediti API.</label></div>
+<button id="generateBtn" disabled>Genera il video con i miei crediti API</button></div>
+</section>
+<p class="small">Progetto personale sperimentale. La foto non viene inviata finché non premi «Prepara preventivo». Non vengono avviate generazioni automaticamente; il pulsante Genera invia una sola richiesta approvata. In caso di timeout non reinviare: controlla il job originale.</p>
+</main>
+<script>
+"use strict";
+const REPO="GGIANLUCAA/Tra-le-pagine-",WORKFLOW="vidu-chatgpt-project-gateway.yml";
+const $=id=>document.getElementById(id);
+const state={plan:null,run:null,source:null,clip:null,hash:null,upload:false,busy:false};
+const text=(m)=>{$("status").textContent=m};
+const cost=()=>8+2*(Number($("duration").value)-1);
+$("duration").onchange=()=>{$("credits").textContent=cost();resetPlan()};
+$("prompt").oninput=resetPlan;
+$("photo").onchange=()=>{resetPlan();preparePreview().catch(e=>text("Foto non valida: "+e.message))};
+function resetPlan(){state.plan=null;$("confirmArea").classList.add("hidden");$("approve").checked=false;$("generateBtn").disabled=true}
+$("approve").onchange=()=>{$("generateBtn").disabled=!$("approve").checked};
+function token(){let t=$("token").value.trim();if(!t||!/^github_pat_|^ghp_/.test(t))throw Error("Inserisci il token GitHub (github_pat_...). Non usare la chiave Vidu.");return t}
+async function gh(path,opts={}){
+ let headers={Authorization:"Bearer "+token(),Accept:"application/vnd.github+json",...opts.headers};
+ let r=await fetch("/gh/"+path,{method:opts.method||"GET",headers,body:opts.body});
+ let content=await r.text();let data;try{data=JSON.parse(content)}catch{data={message:content.slice(0,250)}}
+ if(!r.ok)throw Error("GitHub HTTP "+r.status+": "+(data.message||"Operazione non riuscita"));
+ return data;
+}
+async function previewBlob(){
+ const file=$("photo").files?.[0];if(!file)throw Error("Seleziona una foto");
+ if(file.size>20e6)throw Error("Foto oltre 20MB; scegli una più leggera");
+ const bitmap=await createImageBitmap(file);const canvas=document.createElement("canvas");
+ canvas.width=720;canvas.height=1280;const ctx=canvas.getContext("2d");
+ const scale=Math.max(720/bitmap.width,1280/bitmap.height);
+ const w=bitmap.width*scale,h=bitmap.height*scale;ctx.drawImage(bitmap,(720-w)/2,(1280-h)/2,w,h);
+ bitmap.close();
+ return await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error("Impossibile convertire la foto")),"image/jpeg",0.91));
+}
+let lastPreview=null;
+async function preparePreview(){const blob=await previewBlob();if(lastPreview)URL.revokeObjectURL(lastPreview);lastPreview=URL.createObjectURL(blob);$("preview").src=lastPreview;$("preview").style.display="block"}
+function ident(prefix){return prefix+"-"+Date.now().toString(36)+"-"+crypto.getRandomValues(new Uint32Array(1))[0].toString(36)}
+async function sha(blob){const arr=await blob.arrayBuffer();return [...new Uint8Array(await crypto.subtle.digest("SHA-256",arr))].map(x=>x.toString(16).padStart(2,"0")).join("")}
+function base64(str){return btoa(Array.from(new TextEncoder().encode(str),x=>String.fromCharCode(x)).join(""))}
+async function addRequest(body){
+ const filename="requests/vidu/"+body.request_id+".json";
+ const response=await gh("api/contents/"+filename,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:"Personal Vidu "+body.mode+" "+body.request_id,content:base64(JSON.stringify(body))})});
+ return response.commit.sha;
+}
+function dataFor(mode,requestId,source,clip){return {schema:"vidu_project_gateway_v1",request_id:requestId,mode,format:"personale",source,clip,distribution:{github_public_preview:false}}}
+async function uploadPhoto(blob){
+ const tag=ident("personal-vidu-source");
+ const release=await gh("api/releases",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({tag_name:tag,name:"Foto privata per "+tag,draft:true,prerelease:true,body:"Foto input per Vidu Personale; non pubblicare."})});
+ try {
+  await gh("uploads/releases/"+release.id+"/assets?name=photo.jpg",{method:"POST",headers:{"Content-Type":"image/jpeg"},body:blob});
+ }catch(e){throw Error("Bozza GitHub creata ma caricamento foto fallito: "+e.message)}
+ return {release_tag:tag,asset_name:"photo.jpg",sha256:await sha(blob),subject_reviewed_by_user:true,provenance_url:"https://github.com/"+REPO+"/releases/tag/"+tag};
+}
+function runUrl(id){return "https://github.com/"+REPO+"/actions/runs/"+id}
+function showLink(id,label){const p=$("planLink");p.replaceChildren();let a=document.createElement("a");a.href=runUrl(id);a.target="_blank";a.rel="noopener noreferrer";a.textContent=label;p.appendChild(a)}
+async function waitForRun(commit){
+ for(let i=0;i<55;i++){
+  await new Promise(r=>setTimeout(r,4500));
+  const d=await gh("api/actions/workflows/"+WORKFLOW+"/runs?event=push&per_page=40&head_sha="+encodeURIComponent(commit));
+  const run=(d.workflow_runs||[]).find(x=>x.head_sha===commit);
+  if(!run)continue;
+  showLink(run.id,"Apri il controllo su GitHub Actions");
+  if(run.status==="completed")return run;
+  text("GitHub sta eseguendo il controllo gratuito… Nessun video pagato è stato avviato.");
+ }
+ throw Error("Controllo ancora in esecuzione. Apri GitHub Actions; non ripetere la richiesta.");
+}
+async function fingerprint(source,clip){
+ const canonical={audio:clip.audio,color_reveal_first_second:clip.color_reveal_first_second,credits_estimated:8+2*(clip.seconds-1),model:clip.model,off_peak:clip.off_peak,prompt:clip.prompt,resolution:clip.resolution,seconds:clip.seconds,source_sha256:source.sha256};
+ const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(JSON.stringify(canonical)));
+ return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,"0")).join("").slice(0,12).toUpperCase();
+}
+$("planBtn").onclick=async()=>{
+ if(state.busy)return;
+ try{
+  const prompt=$("prompt").value.trim();if(prompt.length<45||prompt.length>2900)throw Error("Il prompt deve essere lungo fra 45 e 2900 caratteri");
+  token();state.busy=true;$("planBtn").disabled=true;resetPlan();
+  text("Preparazione della foto nel formato social 9:16…");const blob=await previewBlob();
+  text("Caricamento della foto in una release GitHub privata in bozza…");const source=await uploadPhoto(blob);
+  const clip={model:"viduq2-pro-fast",resolution:"720p",seconds:Number($("duration").value),prompt,off_peak:false,audio:false,color_reveal_first_second:false};
+  const id=ident("personal-plan");const plan=dataFor("plan",id,source,clip);
+  const hash=await fingerprint(source,clip);
+  text("Invio del preventivo gratuito al workflow GitHub…");
+  const commit=await addRequest(plan);const run=await waitForRun(commit);
+  if(run.conclusion!=="success")throw Error("Preventivo non superato; leggi il dettaglio GitHub Actions. Non è stato addebitato alcun video.");
+  state.plan=plan;state.source=source;state.clip=clip;state.hash=hash;state.run=run;
+  $("costConfirm").textContent=String(cost());$("confirmArea").classList.remove("hidden");
+  text("Preventivo gratuito completato con successo.\nCosto teorico: "+cost()+" crediti.\nGenerazione NON avviata. Per procedere serve la conferma esplicita in basso.");
+ }catch(e){text("ERRORE: "+e.message)}
+ finally{state.busy=false;$("planBtn").disabled=false}
+};
+$("generateBtn").onclick=async()=>{
+ if(state.busy||!state.plan||!$("approve").checked)return;
+ try{
+  const currentPrompt=$("prompt").value.trim(),sec=Number($("duration").value);
+  if(currentPrompt!==state.clip.prompt||sec!==state.clip.seconds)throw Error("Prompt o durata modificati: ripeti il preventivo");
+  token();state.busy=true;$("generateBtn").disabled=true;$("planBtn").disabled=true;
+  const approvalCredits=cost();
+  const id=ident("personal-video");
+  const gen=dataFor("generate",id,state.source,state.clip);
+  gen.spend={approved_max_credits:approvalCredits,approved_plan_code:state.hash,authorization_phrase:"AUTORIZZO_"+approvalCredits+"_CREDITI_VIDU",user_approved_this_exact_scene:true};
+  text("Invio di UNA generazione autorizzata a GitHub. Non chiudere e non ripetere la richiesta.");
+  const commit=await addRequest(gen);
+  text("Richiesta inviata. Attendo l'esito dell'unica generazione Vidu… Non premere nuovamente Genera.");
+  const run=await waitForRun(commit);
+  if(run.conclusion==="success")text("Generazione terminata. Apri il link GitHub Actions qui sotto e scarica l'artefatto VIDU_CHATGPT_PROJECT_GATEWAY_RESULT… contenente il video MP4 originale.");
+  else text("La generazione richiede verifica su GitHub Actions. NON ripetere: potrebbe aver già consumato crediti. Usa il link sotto.");
+ }catch(e){text("ATTENZIONE: "+e.message+"\nSe la richiesta di generazione è stata inviata, NON ritentare senza verificare il job GitHub.")}
+ finally{state.busy=false;$("planBtn").disabled=false;$("generateBtn").disabled=true;$("approve").checked=false}
+};
+</script></body></html>
