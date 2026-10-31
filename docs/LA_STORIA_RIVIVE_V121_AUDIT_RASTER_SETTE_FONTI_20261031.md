@@ -24,7 +24,7 @@ Queste sono **dimensioni dei video originariamente caricati su Commons**, non de
 - Se il file è 768×576 o 720×480, il preflight risponde `SOURCE_NATIVE_DETAIL_INSUFFICIENT_SKIP_DOWNLOAD`, non crea file video, non avvia FFmpeg, I2I o Vidu. Altezze native almeno 720 pixel e crop 9:16 almeno 400 pixel sono solo requisiti minimi, non approvazioni.
 - Se la scheda passa, `ffprobe` verifica **anche i byte realmente scaricati**: larghezza e altezza decodificate devono coincidere con il metadata Commons oppure scatta `SOURCE_DECODED_RASTER_DIFFERS_FROM_COMMONS_ORIGINAL_METADATA`.
 - `.github/workflows/storia-rivive-v101-auto-3h.yml` registra `native_original_raster_px` e `native_media_rejected_before_download` in `CYCLE_STATUS.json`; rifiuta la fonte con `SOURCE_REJECTED` e rigenera la cache come `v7-native-raster-preflight`. Il cron resta **solo di ricerca**, non diventa un generatore video.
-- Test unitari offline V121 simulano API Commons, risoluzioni reali della coda e verificano che per le fonti povere **non sia chiamato il download**.
+- Test unitari offline V121 simulano API Commons, risoluzioni reali della coda e verificano che per le fonti povere **non sia chiamato il download**. Un test separato codifica un breve MP4 1280×720 con FFmpeg e ne verifica il raster tramite FFprobe, distinguendo così il controllo sui byte dalla sola scheda metadata. Non è una pellicola storica e non certifica cinque riprese.
 
 ## Limiti reali e prossimo passo
 
