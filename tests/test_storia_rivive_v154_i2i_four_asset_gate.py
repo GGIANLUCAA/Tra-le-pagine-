@@ -200,6 +200,45 @@ class FourI2IByteGate(unittest.TestCase):
         self.assertFalse(report["model_invocation_independently_verified"])
         self.assertFalse(report["master_eligible"])
 
+    def test_v157_duplicate_native_frame_bytes_cannot_claim_five_sources(self):
+        target = self.root / "original_2.png"
+        target.write_bytes((self.root / "original_1.png").read_bytes())
+        self.h["freeze_frames"][1]["native_original_frame_sha256"] = sha(target)
+        with self.assertRaisesRegex(ValueError, "V157_DUPLICATE_FIVE_SCENE_SOURCE_NATIVE_ORIGINAL_FRAME_SHA256"):
+            self.check()
+
+    def test_v157_duplicate_vertical_crop_bytes_rejected(self):
+        target = self.root / "crop_2.png"
+        target.write_bytes((self.root / "crop_1.png").read_bytes())
+        self.h["freeze_frames"][1]["vertical_review_sha256"] = sha(target)
+        with self.assertRaisesRegex(ValueError, "V157_DUPLICATE_FIVE_SCENE_SOURCE_VERTICAL_REVIEW_SHA256"):
+            self.check()
+
+    def test_v157_duplicate_source_id_rejected(self):
+        self.h["freeze_frames"][1]["source_id"] = self.h["freeze_frames"][0]["source_id"]
+        with self.assertRaisesRegex(ValueError, "V157_DUPLICATE_FIVE_SCENE_SOURCE_SOURCE_ID"):
+            self.check()
+
+    def test_v157_transparent_png_cannot_be_passed_as_photo(self):
+        output = self.root / "ai_1.png"
+        with Image.open(output) as image:
+            rgba = image.convert("RGBA")
+            rgba.putalpha(0)
+            rgba.save(output)
+        self.c["jobs"][0]["restored_photo_sha256"] = sha(output)
+        with self.assertRaisesRegex(ValueError, "V157_TRANSPARENT_RESTORATION_NOT_VISIBLE"):
+            self.check()
+
+    def test_v157_opaque_rgba_remains_valid_for_review_only(self):
+        output = self.root / "ai_1.png"
+        with Image.open(output) as image:
+            image.convert("RGBA").save(output)
+        self.c["jobs"][0]["restored_photo_sha256"] = sha(output)
+        report = self.check()
+        self.assertTrue(report["five_source_frame_byte_distinctness_verified"])
+        self.assertFalse(report["five_shot_coherence_verified"])
+        self.assertFalse(report["master_eligible"])
+
     def test_output_path_traversal_rejected(self):
         self.c["jobs"][0]["restored_photo_file"] = "../outside.png"
         with self.assertRaisesRegex(ValueError, "UNSAFE_ASSET_PATH"):
