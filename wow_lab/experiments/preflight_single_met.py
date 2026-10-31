@@ -58,7 +58,21 @@ def run(object_id: int, out: Path) -> int:
     if record.get("objectID") != object_id or not engine.valid_object(record):
         raise RuntimeError("WOW_LAB_SOURCE_RIGHTS_OR_IMAGE_UNVERIFIED")
     out.mkdir(parents=True, exist_ok=False)
-    image, url, digest = engine.save_original(record, out, config)
+    try:
+        image, url, digest = engine.save_original(record, out, config)
+    except Exception as exc:
+        failure = {
+            "object_id": object_id,
+            "status": "source_acquisition_blocked",
+            "reason": str(exc)[:500],
+            "rendered": False,
+            "artistic_approval": False,
+            "publishable": False,
+        }
+        (out / "PREFLIGHT_RESULT.json").write_text(
+            json.dumps(failure, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8")
+        raise
     result = {
         "object_id": object_id, "title": record.get("title"),
         "artist": record.get("artistDisplayName"),
