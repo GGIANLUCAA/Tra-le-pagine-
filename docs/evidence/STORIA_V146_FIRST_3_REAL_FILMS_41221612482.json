@@ -1,0 +1,66 @@
+{
+  "version": "V147_ORIGINAL_PREVIOUS_RUN_EVIDENCE_REVIEW_ONLY",
+  "source_run": 41221612482,
+  "source_artifact": 13050560931,
+  "source_page": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41221612482",
+  "first_three_originals": [
+    {
+      "reel_id": "perrache_train_arrival_1896",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Arrivée_d'un_train_à_Perrache_-_Court_métrage_1896.webm",
+      "year": 1896,
+      "place_label": "LYON · 1896",
+      "status": "V146_NO_PHOTOGRAPHIC_MOVEMENT_REEL_REJECTED",
+      "original_sha256": "527dd3656557560e71aa9d5871fd5d4e166b2ecffa11cc7dd1abd9bc0521a4f6",
+      "original_sha1": "a106a9bcb004e8d03309f73e570b95d680329ba9",
+      "best_moving_freeze": null
+    },
+    {
+      "reel_id": "lyon_perrache_train_panorama_1896",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Panorama_de_l’arrivée_en_gare_de_Perrache_pris_du_train_-_Court_métrgé_1896.webm",
+      "year": 1896,
+      "place_label": "LYON · 1896",
+      "status": "V146_ONE_MOVING_ORIGINAL_SOURCE_REVIEW_ONLY",
+      "original_sha256": "fe48cbc9febe28059fb479bc8852ef12afc1bc1ee08b005b0ac51e60787436f9",
+      "original_sha1": "1347b600e3ef6241b5bea8dad0b5106187d80d6",
+      "best_moving_freeze": {
+        "filename": "freeze_01.png",
+        "source_pts": 8967,
+        "source_pts_time_s": 8.967,
+        "source_time_base": "1/1000",
+        "source_pts_logged_from_decode": true,
+        "frame_sha256": "0a3236e2fc898eaee0cffbf2923b8d85756c4ae72f966dcc51c2709de9e4501a",
+        "target_time_s": 8.967,
+        "original_picture_content": true,
+        "original_native_detail": true,
+        "visual_quality_advisory": 0.7737,
+        "source_picture_guard": null,
+        "start_pts": 7618,
+        "freeze_pts": 8967,
+        "time_base": "1/1000",
+        "pre_freeze_length_s": 1.349,
+        "motion_verified": true,
+        "rights_italy_verified": false,
+        "artistically_approved": false,
+        "status": "MOTION_EVIDENCE_PASS_REVIEW_REQUIRED",
+        "reason": "DECODED_SOURCE_PIXEL_MOTION_PRESENT_NOT_ARTISTIC_QA",
+        "motion_sample_count": 11,
+        "motion_changed_pairs": 7,
+        "motion_spatial_delta": 12.38
+      }
+    },
+    {
+      "reel_id": "workers_sidewalk_1898",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ouvriers_réparant_un_trottoir_en_bitume_-_Court_métrage_1898.webm",
+      "year": 1898,
+      "place_label": "1898",
+      "status": "V146_NO_PHOTOGRAPHIC_MOVEMENT_REEL_REJECTED",
+      "original_sha256": "31201312acdaf11f61a264752007731329caa5e05d3be24c2df3ad0dfa03d54e",
+      "original_sha1": "71e718690a4e9b64024fcece5a4788bce95fb412",
+      "best_moving_freeze": null
+    }
+  ],
+  "verified_original_sha_count": 3,
+  "unapproved": true,
+  "italy_rights_verified": false,
+  "paid_api_calls": 0
+}
