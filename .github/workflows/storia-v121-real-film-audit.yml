@@ -59,6 +59,15 @@ jobs:
           python src/storia_rivive_frame_rank_v101.py \
             --frames output/storia_v121_real/source/original_frames \
             --out output/storia_v121_real/FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json
+      - name: V124 supplement twelve original frames from spaced authentic shot windows
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_adaptive_sampling_v124.py \
+            --film output/storia_v121_real/source/ORIGINAL_ARCHIVE.webm \
+            --scout output/storia_v121_real/source/SCOUT_REPORT.json \
+            --out output/storia_v121_real/adaptive \
+            --limit 48
       - name: Record physical evidence, never label the result as approved
         shell: bash
         run: |
@@ -69,6 +78,9 @@ jobs:
           root=Path("output/storia_v121_real")
           report=json.loads((root/"source"/"SCOUT_REPORT.json").read_text(encoding="utf-8"))
           source=root/"source"/"ORIGINAL_ARCHIVE.webm"
+          adaptive_path=root/"adaptive"/"ADAPTIVE_STATUS_V124.json"
+          adaptive=json.loads(adaptive_path.read_text(encoding="utf-8")) if adaptive_path.is_file() else {"status":"V124_NOT_RUN"}
+
           rank_path=root/"FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json"
           rank=json.loads(rank_path.read_text(encoding="utf-8")) if rank_path.is_file() else {"status":"NO_FRAME_RANKING"}
           status={
@@ -80,6 +92,11 @@ jobs:
               "decoded_raster_verified":report.get("decoded_video_raster_verified",False),
               "source_frame_count":report.get("source_frames_extracted",0),
               "frame_selection_status":rank.get("status"),
+              "adaptive_sampling_status":adaptive.get("status"),
+              "adaptive_sampled_original_frames":adaptive.get("sampled",0),
+              "adaptive_photo_candidates_not_approved":adaptive.get("photographic_candidates",0),
+              "adaptive_selection_status":adaptive.get("selection_status"),
+
               "eligible_pre_freeze_source_windows":rank.get("eligible_pre_freeze_source_windows",0),
               "eligible_photographic_scene_candidates":rank.get("eligible_photographic_scene_candidates",0),
               "proposed_frame_files":[entry.get("filename") for entry in rank.get("preselected",[])],
@@ -109,5 +126,10 @@ jobs:
             output/storia_v121_real/source/SCOUT_REPORT.json
             output/storia_v121_real/FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json
             output/storia_v121_real/source/ORIGINAL_FILM_CONTACT_SHEET.jpg
+            output/storia_v121_real/adaptive/ADAPTIVE_STATUS_V124.json
+            output/storia_v121_real/adaptive/ADAPTIVE_RANK_V124.json
+            output/storia_v121_real/adaptive/SCOUT_REPORT.json
+            output/storia_v121_real/adaptive/ADAPTIVE_CONTACT_SHEET_V124.jpg
+
           retention-days: 14
           if-no-files-found: warn
