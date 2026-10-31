@@ -134,6 +134,8 @@ jobs:
           report=json.loads(p.read_text(encoding="utf-8"))
           assert report["status"]=="SOURCE_ARTISTIC_REVIEW_HOLD", report["status"]
           assert {r["frame"] for r in report["source_review_vetoes"]}=={"frame_34.png","frame_48.png"}
+          assert report["exact_native_freeze_pts_crosschecked"] is True
+          assert report["prefreeze_proxy_frame_counts_crosschecked"] is True
           assert not any(report[k] for k in ("i2i_permitted","vidu_permitted","paid_api_call_permitted","publish_permitted"))
           print("V131_VERIFIED_COTTON_EDITORIAL_HOLD",report["status"])
           PY
