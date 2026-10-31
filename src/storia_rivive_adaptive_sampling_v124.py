@@ -7,6 +7,8 @@ I2I, call Vidu, certify camera shots, clear Italian rights or publish video.
 from __future__ import annotations
 
 import argparse
+from decimal import Decimal, InvalidOperation
+from fractions import Fraction
 import bisect
 import hashlib
 import json
@@ -85,6 +87,35 @@ def choose_targets(analysis, duration, *, limit=MAX_TARGETS):
     return eligible
 
 
+def exact_pts_time_from_showinfo(ticks, time_base, printed_time):
+    """Use authoritative source PTS; check FFmpeg's *rounded* showinfo text.
+
+    FFmpeg prints ~6 significant figures, not a fixed decimal precision:
+    e.g. 4367 ticks at 100/2997 s = 145.712379..., displayed as '145.712'.
+    A hardcoded 0.0001 second check incorrectly rejects genuine frames.
+    Compare against HALF the printed decimal unit, then preserve the exact
+    rational timestamp as float for downstream V118/V125 validation.
+    """
+    if type(ticks) is not int or ticks < 0 or not isinstance(time_base,str):
+        raise ValueError("V124_SOURCE_PTS_NOT_GENUINE_OR_MONOTONIC")
+    try:
+        n,d=map(int,time_base.split("/"))
+        shown=Decimal(printed_time)
+        if n<=0 or d<=0 or not shown.is_finite():
+            raise ValueError("Invalid time base")
+        exact=Fraction(ticks*n,d)
+        shown_fraction=Fraction(shown)
+        precision=max(0,-shown.as_tuple().exponent)
+        # A 0.1µs guard absorbs finite binary decimal rendering jitter.
+        tolerance=Fraction(1,2*10**precision)+Fraction(1,10**7)
+        if abs(exact-shown_fraction)>tolerance:
+            raise ValueError("Printed time incompatible with true source PTS")
+        return float(exact)
+    except (AttributeError, ValueError, TypeError, ZeroDivisionError,
+            InvalidOperation, OverflowError) as exc:
+        raise ValueError("V124_SOURCE_PTS_NOT_GENUINE_OR_MONOTONIC") from exc
+
+
 def extract_target_frames(film, folder, targets, *, max_runtime_s=230):
     """One original-film FFmpeg decode, no CFR conversion, exact showinfo PTS.
 
@@ -120,14 +151,12 @@ def extract_target_frames(film, folder, targets, *, max_runtime_s=230):
         raise ValueError("V124_NATIVE_PTS_OUTPUT_COUNT_OR_TIMEBASE_INVALID")
     records = []
     last = -1.0
-    n, d = map(int, bases[0].split("/"))
     for i, (show_n, pts, pts_time) in enumerate(pts_rows):
         frame = files[i]
-        seconds = float(pts_time)
         ticks = int(pts)
+        seconds = exact_pts_time_from_showinfo(ticks,bases[0],pts_time)
         if (int(show_n) != i or not math.isfinite(seconds)
                 or seconds <= last
-                or abs(ticks * n / d - seconds) > 0.0001
                 or seconds + 0.0001 < targets[i]["target_time_s"]):
             raise ValueError("V124_SOURCE_PTS_NOT_GENUINE_OR_MONOTONIC")
         last = seconds
