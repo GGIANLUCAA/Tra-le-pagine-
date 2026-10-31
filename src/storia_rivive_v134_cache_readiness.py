@@ -59,7 +59,7 @@ def assess(cache_dir):
             if not isinstance(row, dict):
                 return {**blocked, "reason": "SOURCE_PNG_PROVENANCE_INVALID"}
             name, expected = row.get("filename"), row.get("sha256")
-            if (not isinstance(name, str) or not re.fullmatch(r"frame_\\d{2}\\.png", name)
+            if (not isinstance(name, str) or not re.fullmatch(r"frame_[0-9]{2}[.]png", name)
                     or name in seen or not isinstance(expected, str)
                     or not re.fullmatch(r"[0-9a-f]{64}", expected)
                     or row.get("source_pts_logged_from_decode") is not True
