@@ -1960,8 +1960,9 @@
           "full_ffmpeg_decode": "not_run",
           "social_published": false,
           "preflight_blockers": [
-            "narration_WAV_Gacrux_cost_verified",
-            "script_timecoded_QA"
+            "Google_AI_Studio_PROJECT_BILLING_TIER_Free_not_verified",
+            "single_Gacrux_WAV_missing",
+            "ASR_synchronization_and_artistic_QA_pending"
           ]
         },
         "critico_museum": {
@@ -1975,8 +1976,9 @@
           "full_ffmpeg_decode": "not_run",
           "social_published": false,
           "preflight_blockers": [
-            "narration_WAV_Gacrux_cost_verified",
-            "continuous_camera_QA"
+            "Google_AI_Studio_PROJECT_BILLING_TIER_Free_not_verified",
+            "single_Gacrux_WAV_missing",
+            "ASR_synchronization_and_artistic_QA_pending"
           ]
         },
         "cinema_standard": {
@@ -2048,6 +2050,24 @@
         "gold_V25_formal_certification": false,
         "publication_consent": false,
         "comments": "Preserve these two review versions as a positive quality benchmark. Do not replace or re-render without a proven new defect; proceed with remaining two Critico after verified zero cost or explicit cost approval."
+      },
+      "critico_v102_preparation": {
+        "date": "2026-10-31",
+        "request_path": "requests/artvision/bocklin-critico-v102.json",
+        "request_commit": "91ef9a3249b5057e90a05a56a710c27304f8cace",
+        "voice_script": "src/artvision_bocklin_critico_voice_v102.py",
+        "renderer": "src/artvision_bocklin_critico_render_v102.py",
+        "workflow": ".github/workflows/artvision-bocklin-critico-v102.yml",
+        "narration_words": 217,
+        "chapters": 9,
+        "voice_project_tier_verified": "pending",
+        "render_request_triggered": true,
+        "workflow_run_success": "not_verified",
+        "actual_gacrux_wav_generated": false,
+        "verified_new_mp4_count": 0,
+        "paid_API_spend_authorized": false,
+        "preexisting_cinema_preserved": true,
+        "notes": "No invented MP4 or SHA. Project Free tier must be externally verified before the one permitted Gacrux call; trigger is fail-closed."
       }
     }
   ],
