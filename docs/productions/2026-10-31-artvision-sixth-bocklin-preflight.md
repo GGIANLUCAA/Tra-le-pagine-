@@ -1,15 +1,25 @@
-# ArtVision sesta opera — preflight controllato (31/10/2026)
+# ArtVision sesta opera · Arnold Böcklin NG 2/80 — preflight documentato
 
-Autorizzazione: utente chiede esplicitamente un'altra opera per valutare la qualità del risultato. Non equivale a sbloccare una serie illimitata.
+Autorizzazione del 31/10/2026: l'utente richiede una sesta opera 4×1, poi «Ok procedi». Solo questo esemplare, non una serie illimitata.
 
-## Candidato
-Arnold Böcklin, *Die Toteninsel / L'isola dei morti*, versione 1883, Alte Nationalgalerie, Berlino. ATTENZIONE: esistono più versioni; prima di qualsiasi rendering fissare numero inventario, dimensioni, immagine ad alta risoluzione, fonte istituzionale e diritti dell'esemplare specifico. Non confondere con versioni 1880/1886.
+## Identificazione certa e diritti
+- Arnold Böcklin, Die Toteninsel / L'isola dei morti, TERZA versione, 1883, Alte Nationalgalerie (Berlino), inventario NG 2/80, olio su tavola, 80 × 150 cm.
+- Fonte istituzionale: https://search.smb.museum/en/object/obj-967648 (obj 967648). Il museo parla di rematore, figura bianca, cassa funeraria, cipressi, acqua immobile e soglia oscura. Non affermare identità mitologiche non certe.
+- Riproduzione della stessa versione PD/PDM 1.0 (4933×2628): https://commons.wikimedia.org/wiki/File:Arnold_B%C3%B6cklin_-_Die_Toteninsel_-_Google_Art_Project.jpg
+- Foto della cornice dello STESSO dipinto esposto nel 2018 (4680×2742): Sailko CC BY 3.0, https://commons.wikimedia.org/wiki/File:Arnold_b%C3%B6cklin,_l%27isola_dei_morti,_1883,_01.jpg . Riconoscere autore, licenza, 2018; non affermare cornice originale ottocentesca.
+- Sala Museum RICOSTRUITA DIGITALMENTE, non vera Alte Nationalgalerie.
 
-## Contratto di produzione
-Esattamente 4 slot: Critico Standard e Critico Museum con stessa identica voce; Cinema Standard e Cinema Museum musicali. Cornice visibile soltanto in apertura/chiusura Museum; nessuna sala dichiarata autentica senza documentazione. Inquadrature aderenti alla narrazione; evitare ghosting, salti di nitidezza, ritagli errati, zoom ripetitivi. QA artistico e tecnico, MP4 reali con hash e decodifica completa, backup/download di ritorno e verifica playback prima di Gold V25.
+## Lavoro realmente predisposto
+- Nel lock V58 autorizzato soltanto bocklin_isle_of_dead_1883_berlin_ng2_80, no settima opera.
+- Quattro slot registrati nella coda, tutti preflight_pending e 0 V25 Gold; nessun falso SHA MP4.
+- Script e storyboard: modules/artvision_critico/production_series/bocklin_isle_of_dead_1883_v100.json
+- Il renderer src/artvision_bocklin_sixth_v100.py scarica e verifica risoluzioni, calcola SHA reali e produce i due Cinema come candidati con musica ambientale sintetizzata originale, poi FFmpeg full decode. NESSUNA chiamata AI a pagamento.
+- L'esecuzione one-shot .github/workflows/artvision-bocklin-sixth-v100.yml si avvia SOLO con file di richiesta esplicito su main, salva due veri MP4 e QA come GitHub Actions artifact per 30 giorni.
+- Critico Standard e Critico Museum restano bloccati finché non è disponibile UNA WAV naturale Gacrux condivisa con quote e costi effettivi verificati; non usare TTS robotiche o addebiti presunti gratuiti.
+- La presenza di codice, manifest e workflow NON costituisce prova di MP4 finiti. Prima di dichiarare il risultato servono GitHub Actions run riuscito, SHA, byte reali, FFmpeg full decode e review. Gold V25 resta 0 e il sito R2/Android non è verificato.
 
-## Blocchi e salvaguardie
-Preflight fonti/licenze, artwork originale, musica licenziata e costo voce prima del rendering. Nessun addebito API senza consenso informato sul costo, nessuna pubblicazione social, nessuna nuova automazione, nessuna modifica ai master Socrate/Klimt/Hokusai/Bosch/Wright o ai loro ZIP. L'import R2/Android di Socrate V61 resta pending fino a fileParams genuino. Gold V25 resta 0 senza valutazione proprietario.
-
-## Stato reale
-Solo preflight di produzione creato; nessun MP4 della sesta opera è stato generato, nessun costo sostenuto. Il lock V58 non viene modificato in questa fase; occorre aggiornamento circoscritto al sesto gruppo dopo verifica fonti e asset.
+## Vincoli regia e sicurezza
+- Cinema Standard circa 44 secondi, varietà inquadrature: barca, panorama, rocce, cipressi, ingresso, figura, luce, ritorno all'insieme.
+- Cinema Museum circa 52 secondi: la stessa cornice documentata solo all'inizio e fine; interni autentici senza frame. La continuità approach/exit deve essere revisionata su video reale, niente ghosting o salti di nitidezza.
+- Critico 9 capitoli, circa 80–105s, inquadratura giusta mentre la voce nomina il soggetto; stessa WAV in Standard e Museum.
+- Conservare i 20 MP4 slot precedenti, V97 Klimt, V95 Socrate e ZIP; nessuna pubblicazione social, nessuna automazione aggiuntiva, nessuna spesa API, nessuna settima opera.
