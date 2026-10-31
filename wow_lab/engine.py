@@ -580,9 +580,9 @@ def require_live_preflight_context() -> None:
 
 
 def require_fresh_run_directory(out: Path) -> None:
-    """A retry must not overwrite an earlier WOW LAB candidate or audit."""
-    if out.exists() and any(out.iterdir()):
-        raise RuntimeError("WOW_LAB_RUN_DIRECTORY_ALREADY_POPULATED: " + str(out))
+    """Never reuse a WOW LAB run directory, not even an empty one."""
+    if out.exists():
+        raise RuntimeError("WOW_LAB_RUN_DIRECTORY_ALREADY_EXISTS: " + str(out))
 
 
 def run(args):
@@ -602,7 +602,8 @@ def run(args):
     past=recent_history()
     ensure_slot_available(stamp, past)
     # Do not create or overwrite a run folder until both live checks pass.
-    out.mkdir(parents=True,exist_ok=True)
+    # Atomic directory creation is the last local anti-duplicate barrier.
+    out.mkdir(parents=True,exist_ok=False)
     rec=select_artwork(conf, stamp, past, args.test_source_id)
     source,url,source_sha=save_original(rec,out,conf)
     # Mandatory subject extraction and mask audit BEFORE sound/video rendering.
