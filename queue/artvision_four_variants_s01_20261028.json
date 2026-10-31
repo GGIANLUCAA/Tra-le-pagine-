@@ -1943,11 +1943,11 @@
       "museum_frame_photo_author": "Sailko",
       "museum_frame_photo_license": "CC BY 3.0; attribution and link required; modern frame photographed 2018, NOT claimed historical original",
       "gallery_room": "Digital reconstruction only, NOT an actual Alte Nationalgalerie room",
-      "status": "sixth_pilot_authorized_source_preflight",
+      "status": "sixth_pilot_two_cinema_rendered_needs_review",
       "allowed_by_user": "Explicit new sixth pilot 31 October 2026; Ok procedi",
       "no_paid_tts_or_video_without_consent": true,
-      "source_bytes_downloaded": false,
-      "source_sha256_verified": false,
+      "source_bytes_downloaded": true,
+      "source_sha256_verified": true,
       "variants": {
         "critico_standard": {
           "status": "preflight_pending",
@@ -1960,7 +1960,6 @@
           "full_ffmpeg_decode": "not_run",
           "social_published": false,
           "preflight_blockers": [
-            "source_bytes_sha",
             "narration_WAV_Gacrux_cost_verified",
             "script_timecoded_QA"
           ]
@@ -1976,46 +1975,58 @@
           "full_ffmpeg_decode": "not_run",
           "social_published": false,
           "preflight_blockers": [
-            "source_bytes_sha",
             "narration_WAV_Gacrux_cost_verified",
-            "frame_asset_sha",
             "continuous_camera_QA"
           ]
         },
         "cinema_standard": {
-          "status": "preflight_pending",
+          "status": "rendered_needs_review",
           "V25_approved": false,
           "site_verified": false,
-          "archive_sync_pending": true,
-          "rendered_mp4_sha256": null,
-          "bytes": null,
-          "source_asset_sha256": null,
-          "full_ffmpeg_decode": "not_run",
+          "archive_sync_pending": false,
+          "rendered_mp4_sha256": "b176560a2d58e4aba6b782d2f02e3b5d22674fc7e16ea520620c83134bf90f26",
+          "bytes": 5169480,
+          "source_asset_sha256": "f9a7c33f1b7a2aae03aacd192706faee3740cfd9d1d277516dec39795f405ce3",
+          "full_ffmpeg_decode": "PASS_original_and_library_readback",
           "social_published": false,
           "preflight_blockers": [
-            "source_bytes_sha",
-            "licensed_music_or_original_score",
-            "artistic_QA"
-          ]
+            "human_full_artistic_QA",
+            "R2_Android_player_not_verified"
+          ],
+          "duration_seconds": 44,
+          "library_path": "/ArtVision/Bocklin/V101_TWO_CINEMA_REVIEW/",
+          "version": "V100",
+          "github_actions_run": 41219085045
         },
         "cinema_museum": {
-          "status": "preflight_pending",
+          "status": "rendered_needs_review",
           "V25_approved": false,
           "site_verified": false,
-          "archive_sync_pending": true,
-          "rendered_mp4_sha256": null,
-          "bytes": null,
-          "source_asset_sha256": null,
-          "full_ffmpeg_decode": "not_run",
+          "archive_sync_pending": false,
+          "rendered_mp4_sha256": "c9f40502b5efdf216ebfe322344aed21f19913a2b869d144b2519bd2b3bd7132",
+          "bytes": 6086102,
+          "source_asset_sha256": "f9a7c33f1b7a2aae03aacd192706faee3740cfd9d1d277516dec39795f405ce3",
+          "full_ffmpeg_decode": "PASS_original_and_library_readback",
           "social_published": false,
           "preflight_blockers": [
-            "source_bytes_sha",
-            "frame_asset_sha",
-            "licensed_music_or_original_score",
-            "continuous_camera_QA"
-          ]
+            "human_full_artistic_QA",
+            "R2_Android_player_not_verified"
+          ],
+          "duration_seconds": 52,
+          "library_path": "/ArtVision/Bocklin/V101_TWO_CINEMA_REVIEW/",
+          "version": "V101",
+          "github_actions_run": 41219344125
         }
-      }
+      },
+      "source_art_sha256": "f9a7c33f1b7a2aae03aacd192706faee3740cfd9d1d277516dec39795f405ce3",
+      "source_frame_sha256": "72655ceea488c5f4ecf207dd5a419618685b0ee0c59d553f63cbbba0bb623b65",
+      "archive_readback_verified": true,
+      "archive_two_cinema_zip_sha256": "0069b3d6a24d5c3d5df04f079c3a14a073af96d1549e168b70cacd54029a4430",
+      "archive_two_cinema_zip_bytes": 11587816,
+      "archive_two_cinema_zip_crc": "PASS",
+      "artistic_review": "pending",
+      "gold_V25_count": 0,
+      "critico_mp4_count": 0
     }
   ],
   "last_operational_update": "2026-10-30 Wright NG725 fifth 4x1 user-authorized: 4 MP4 real, 2 Critico new one Gacrux WAV + 1 Cinema Museum V85 new, 1 Cinema V52B historical exact original, 0 V25 Gold, no archive upload. ZIP CRC PASS",
@@ -2034,11 +2045,5 @@
   },
   "note_second_pilot_v69": "User explicitly authorized The Kiss after Socrates; maintain single owner, other works frozen, Klimt queued V69 as authorized second pilot (0 MP4).",
   "note_fourth_pilot_v76": "2026-10-30 explicit Bosch fourth pilot, one renderer, no fifth work. Bosch Cinema Standard source/music verified; no rendered video status until actual MP4 hash+bytes; Critico and Museum remain blocked.",
-  "sixth_pilot_update": {
-    "date": "2026-10-31",
-    "event": "sixth_bocklin_authorized_preflight",
-    "rendered_new_mp4": 0,
-    "existing_20_slots_unchanged": true,
-    "notes": "This queue update is an authorization/preflight, not proof of four MP4s."
-  }
+  "sixth_pilot_update": "2026-10-31 Böcklin NG2/80: two real Cinema MP4 verified (Standard V100, Museum V101 continuous entry/exit); FFmpeg full decode, Library upload/download SHA identical, two-video ZIP CRC PASS; 2 Critico still blocked Gacrux cost/quote; V25=0; R2 Android unverified. No seventh."
 }
