@@ -143,7 +143,7 @@ class V101Tests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             d=Path(temp);frames=d/"original_frames";frames.mkdir()
             for i in range(12):
-                im=Image.new("RGB",(1280,720),(35,35,35))
+                im=Image.new("RGB",(1280,720),(85,85,85))
                 ImageDraw.Draw(im).rectangle((i*80,80,i*80+100,630),fill=(220,220,220))
                 im.save(frames/("frame_%02d.png"%i))
             def report(segments):
