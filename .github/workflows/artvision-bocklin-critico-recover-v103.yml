@@ -1,0 +1,118 @@
+name: ArtVision Böcklin · Finish two Critico from EXISTING Gacrux WAV V103
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/bocklin-critico-recover-v103.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-bocklin-critico-recover-v103-from-existing-WAV
+  cancel-in-progress: false
+jobs:
+  offline_critico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reuse already-generated genuine voice WAV from run 41231258203
+        uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_BOECKLIN_NG2-80_CRITICO_V102_REVIEW
+          run-id: 41231258203
+          github-token: ${{ github.token }}
+          path: output/artvision_bocklin_critico_v102
+      - name: Install exact ASR compatible PyAV; static FFmpeg
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "faster-whisper==1.2.1" "av==17.1.0" numpy pillow soundfile scipy opencv-python-headless imageio-ffmpeg
+          mkdir -p "$RUNNER_TEMP/bin"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from imageio_ffmpeg import get_ffmpeg_exe
+          dest=Path(os.environ["RUNNER_TEMP"])/"bin"/"ffmpeg"
+          dest.symlink_to(Path(get_ffmpeg_exe()))
+          import av
+          assert av.__version__.startswith("17."), "PyAV unexpected version; no TTS calls"
+          print("Offline ASR compatible with PyAV:",av.__version__)
+          PY
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/ffmpeg" -hide_banner -encoders | grep -q libx264
+      - name: Verify genuine WAV SHA and perform offline ASR before any video
+        run: |
+          python - <<'PY'
+          import sys,hashlib,json
+          from pathlib import Path
+          sys.path.insert(0,"src")
+          import gemini_voice
+          from faster_whisper.audio import decode_audio
+          root=Path("output/artvision_bocklin_critico_v102")
+          wav=root/"VOCE.wav"
+          assert wav.is_file() and wav.stat().st_size>4500000
+          digest=hashlib.sha256(wav.read_bytes()).hexdigest()
+          assert digest=="f567835c07ae952c5d7390122f08ad44a2e3d99d694592ec04de8a30bc6821e5"
+          report=json.loads((root/"VOICE_RESULT_V102.json").read_text())
+          assert report["status"]=="ONE_SHARED_GACRUX_WAV_READY"
+          assert report["wav_sha256"]==digest and report["voice"]=="Gacrux"
+          decoded=decode_audio(str(wav))
+          assert len(decoded)>1000000, "PyAV did not decode genuine voice"
+          j=json.loads(Path("modules/artvision_critico/production_series/bocklin_isle_of_dead_1883_v100.json").read_text())
+          text="\n\n".join(b["text"] for b in j["critico"]["chapters"])
+          assert len(text.split())==217
+          timed=gemini_voice.align(gemini_voice.sentences(text),wav,report["duration_seconds"])
+          gemini_voice._save_voice_cache(text,root,timed)
+          a=json.loads((root/"ALLINEAMENTO_VOCE.json").read_text())
+          print("V103 OFFLINE ASR",a)
+          assert a["method"]=="asr_with_interpolation", "Do not render from estimated timing"
+          assert a["matched_fraction"]>=.85, "Alignment below quality minimum"
+          assert len(timed)==a["sentence_count"]
+          PY
+      - name: Download specific public-domain artwork and exact documented framed photo
+        run: |
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0,"src")
+          from artvision_bocklin_sixth_v101 import obtain,SOURCE,FRAME,sha
+          p=Path("output/artvision_bocklin_critico_v102")
+          obtain(SOURCE,p/"art_ng2_80.jpg",(4933,2628))
+          obtain(FRAME,p/"frame_2018.jpg",(4680,2742))
+          assert sha(p/"art_ng2_80.jpg")=="f9a7c33f1b7a2aae03aacd192706faee3740cfd9d1d277516dec39795f405ce3"
+          assert sha(p/"frame_2018.jpg")=="72655ceea488c5f4ecf207dd5a419618685b0ee0c59d553f63cbbba0bb623b65"
+          PY
+      - name: Produce two Critico MP4 from same preserved WAV without ANY Google/API secrets
+        run: |
+          python src/artvision_bocklin_critico_render_v102.py \
+            --recipe modules/artvision_critico/production_series/bocklin_isle_of_dead_1883_v100.json \
+            --art output/artvision_bocklin_critico_v102/art_ng2_80.jpg \
+            --frame output/artvision_bocklin_critico_v102/frame_2018.jpg \
+            --voice-dir output/artvision_bocklin_critico_v102 \
+            --output output/artvision_bocklin_critico_v102
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("output/artvision_bocklin_critico_v102")
+          qa=json.loads((p/"BOECKLIN_CRITICO_V102_QA.json").read_text())
+          assert set(qa["files"])=={"critico_standard","critico_museum"}
+          assert qa["shared_voice_WAV_SHA256"]=="f567835c07ae952c5d7390122f08ad44a2e3d99d694592ec04de8a30bc6821e5"
+          assert all(v["ffmpeg_full_decode"]=="PASS" for v in qa["files"].values())
+          print("Both real MP4 complete with one saved WAV.")
+          PY
+      - name: Preserve WAV, voice timecodes, two genuine MP4s and hashes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BOECKLIN_NG2-80_V103_CRITICO_TWO_REAL_MP4S_REVIEW
+          path: |
+            output/artvision_bocklin_critico_v102/VOCE.wav
+            output/artvision_bocklin_critico_v102/VOICE_CACHE_V13.json
+            output/artvision_bocklin_critico_v102/ALLINEAMENTO_VOCE.json
+            output/artvision_bocklin_critico_v102/VOICE_RESULT_V102.json
+            output/artvision_bocklin_critico_v102/COPIONE_ESATTO_V102.txt
+            output/artvision_bocklin_critico_v102/Boecklin_1883_critico_standard_V102_GACRUX_REVIEW.mp4
+            output/artvision_bocklin_critico_v102/Boecklin_1883_critico_museum_V102_GACRUX_REVIEW.mp4
+            output/artvision_bocklin_critico_v102/BOECKLIN_CRITICO_V102_QA.json
+          if-no-files-found: warn
+          retention-days: 30
