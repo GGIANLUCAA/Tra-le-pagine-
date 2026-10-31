@@ -1,0 +1,31 @@
+{
+  "schema": "vidu_project_gateway_v1",
+  "request_id": "cane-piscina-tuffo-generate-v2-20261031-2018",
+  "mode": "generate",
+  "format": "personale",
+  "source": {
+    "git_blob_sha": "b519e76f5062b4aea01a09aa96ed61fd2dc4261c",
+    "asset_name": "photo.jpg",
+    "sha256": "62867cba6ccef5212d185c4af45fdc068d6c16ced7963be7fd34db6f6ae43aa4",
+    "subject_reviewed_by_user": true,
+    "provenance_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/vidu_image_stage/cane-tuffo-piscina-v2-20261031-2016.json"
+  },
+  "clip": {
+    "model": "viduq2-pro-fast",
+    "resolution": "720p",
+    "seconds": 5,
+    "off_peak": false,
+    "audio": false,
+    "color_reveal_first_second": false,
+    "prompt": "Continue this real dynamic action from the exact frame: a little shaggy light-gray beige dog, black nose, brown eyes, is directly above the brilliant turquoise WATER of a real swimming pool, not on a trampoline. The raised blue-rimmed trampoline is a SEPARATE OBJECT on the LEFT side of the scene and must remain behind the dog, untouched by water. At 0 to 0.7 seconds the same gray shaggy dog drops head-first directly INTO THE BLUE POOL WATER under its paws. At 0.7 to 2 seconds its entire body plunges below the water surface causing one enormous genuine turbulent SPLASH IN THE POOL (not on the trampoline), underwater bubbles and bright droplets. At 2 to 4.5 seconds the SAME dog surfaces in the BLUE POOL, its messy gray fur is thoroughly wet and darkened, it paddles vigorously in the water, splashes and lifts its face happily, looking to camera. At 4.5 to 5 seconds it remains clearly floating and SWIMMING INSIDE THE POOL with natural wet fur and ripples all around its body. Visually clear separate black trampoline mat LEFT, blue swimming pool RIGHT and FOREGROUND. Camera follows action into water in one coherent cinematic shot. No black mat in foreground, no wet trampoline, no water on top of trampoline, no inflatable mattress, no dog standing on water, no floating mid-air, no dog breed change, no golden dog, no morphing, no cloned dogs, no extra legs, no captions, 9:16 vertical, 720p, real moving action."
+  },
+  "distribution": {
+    "github_public_preview": false
+  },
+  "spend": {
+    "approved_max_credits": 16,
+    "approved_plan_code": "E58F6C72F1A3",
+    "authorization_phrase": "AUTORIZZO_16_CREDITI_VIDU",
+    "user_approved_this_exact_scene": true
+  }
+}
