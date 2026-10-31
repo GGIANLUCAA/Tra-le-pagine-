@@ -1,9 +1,7 @@
 name: "La Storia Rivive V138 | Versailles 1919 real source audit (free research)"
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/storia-v138-versailles-source-audit.yml"
-      - "tests/test_storia_rivive_v138_workflow_contract.py"
+  # Explicit research only; prevents repeated 46MB downloads on unrelated PR updates.
+  workflow_call:
   workflow_dispatch:
 permissions:
   contents: read
