@@ -20,9 +20,9 @@ class PreviewPackageGateTests(unittest.TestCase):
             for name in REQUIRED:
                 (root/name).write_bytes(b"placeholder")
             for name in ("MASK_BEFORE_RENDER.jpg","VIDEO_CONTACT_SHEET.jpg","COVER.jpg"):
-                (root/name).write_bytes(b"\\xff\\xd8\\xff" + b"sample")
-            (root/"SUBJECT_MASK.png").write_bytes(b"\\x89PNG\\r\\n\\x1a\\n" + b"sample")
-            (root/"WOW_LAB_PREVIEW.mp4").write_bytes(b"\\x00\\x00\\x00\\x18ftypisom" + b"sample")
+                (root/name).write_bytes(b"\xff\xd8\xff" + b"sample")
+            (root/"SUBJECT_MASK.png").write_bytes(b"\x89PNG\r\n\x1a\n" + b"sample")
+            (root/"WOW_LAB_PREVIEW.mp4").write_bytes(b"\x00\x00\x00\x18ftypisom" + b"sample")
             data={
                 "SUBJECT_PREFLIGHT.json":{"technical_pass":True,"artistic_approval":False},
                 "CLEAN_PLATE_AUDIT.json":{"pass":True,"artistic_approval":False},
@@ -60,9 +60,9 @@ class PreviewPackageGateTests(unittest.TestCase):
             for name in REQUIRED:
                 (root/name).write_bytes(b"placeholder")
             for name in ("MASK_BEFORE_RENDER.jpg","VIDEO_CONTACT_SHEET.jpg","COVER.jpg"):
-                (root/name).write_bytes(b"\\xff\\xd8\\xff" + b"sample")
-            (root/"SUBJECT_MASK.png").write_bytes(b"\\x89PNG\\r\\n\\x1a\\n" + b"sample")
-            (root/"WOW_LAB_PREVIEW.mp4").write_bytes(b"\\x00\\x00\\x00\\x18ftypisom" + b"sample")
+                (root/name).write_bytes(b"\xff\xd8\xff" + b"sample")
+            (root/"SUBJECT_MASK.png").write_bytes(b"\x89PNG\r\n\x1a\n" + b"sample")
+            (root/"WOW_LAB_PREVIEW.mp4").write_bytes(b"\x00\x00\x00\x18ftypisom" + b"sample")
             data={
                 "SUBJECT_PREFLIGHT.json":{"technical_pass":False},
                 "CLEAN_PLATE_AUDIT.json":{"pass":True},
