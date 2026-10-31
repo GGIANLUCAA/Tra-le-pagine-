@@ -1,12 +1,14 @@
 """V121: source resolution from real Commons imageinfo, never thumbnail or upscale."""
 import io
 import json
+import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from src.storia_rivive_scout_v101 import native_raster_preflight, inspect, metadata
+from src.storia_rivive_scout_v101 import native_raster_preflight, inspect, metadata, verify_decoded_original_raster
 
 COMMONS="https://commons.wikimedia.org/wiki/File:Example.webm"
 
@@ -59,6 +61,30 @@ class V121SourceRasterTests(unittest.TestCase):
             self.assertEqual(result["status"],"SOURCE_NATIVE_DETAIL_INSUFFICIENT_SKIP_DOWNLOAD")
             self.assertFalse(result["original_media_downloaded"])
             self.assertFalse((Path(temp)/"ORIGINAL_ARCHIVE.webm").exists())
+
+    def test_ffprobe_video_stream_missing_or_wrong_fails(self):
+        original={"original_width_px":1280,"original_height_px":720}
+        with self.assertRaisesRegex(ValueError,"SOURCE_DECODED_RASTER_DIFFERS"):
+            verify_decoded_original_raster({"streams":[{"codec_type":"audio"}]},original)
+        with self.assertRaisesRegex(ValueError,"SOURCE_DECODED_RASTER_DIFFERS"):
+            verify_decoded_original_raster({"streams":[{"codec_type":"video","width":640,"height":480}]},original)
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"),"FFmpeg required")
+    def test_ffprobe_confirms_real_decoded_video_raster(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p=Path(temp)/"raster_fixture.mp4"
+            subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-nostdin","-y",
+                            "-f","lavfi","-i","testsrc2=size=1280x720:rate=1:duration=1",
+                            "-frames:v","1","-c:v","mpeg4",str(p)],check=True,timeout=30)
+            result=subprocess.run(["ffprobe","-v","error","-show_entries",
+                "stream=codec_type,width,height","-of","json",str(p)],
+                capture_output=True,text=True,check=True,timeout=20)
+            info=json.loads(result.stdout)
+            self.assertTrue(verify_decoded_original_raster(info,{
+                "original_width_px":1280,"original_height_px":720}))
+            with self.assertRaisesRegex(ValueError,"SOURCE_DECODED_RASTER_DIFFERS"):
+                verify_decoded_original_raster(info,{
+                    "original_width_px":1920,"original_height_px":1080})
 
     def test_missing_dimensions_never_downloads(self):
         source={"source_page":COMMONS,"download_url":"https://upload.wikimedia.org/wikipedia/commons/0/00/Example.webm",
