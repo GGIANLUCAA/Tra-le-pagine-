@@ -81,6 +81,7 @@ jobs:
               "source_frame_count":report.get("source_frames_extracted",0),
               "frame_selection_status":rank.get("status"),
               "eligible_pre_freeze_source_windows":rank.get("eligible_pre_freeze_source_windows",0),
+              "eligible_photographic_scene_candidates":rank.get("eligible_photographic_scene_candidates",0),
               "proposed_frame_files":[entry.get("filename") for entry in rank.get("preselected",[])],
 
               "candidate_cut_count":report.get("shot_boundary_analysis",{}).get("cut_candidate_count"),
