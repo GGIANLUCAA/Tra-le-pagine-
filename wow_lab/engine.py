@@ -316,6 +316,11 @@ def select_artwork(conf: dict, stamp: str, history: list[dict], fixed_id: int | 
             continue
         try:
             rec = get_json(object_url(ident))
+            # Fail closed on a mismatched or malformed API record: never render
+            # a different museum object under the candidate's identity.
+            if not isinstance(rec, dict) or rec.get("objectID") != ident:
+                problems.append(f"{ident}:museum_object_id_mismatch")
+                continue
             if not valid_object(rec):
                 continue
             if not str(rec.get("title") or "").strip():
