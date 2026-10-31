@@ -10,7 +10,7 @@ import numpy as np
 import soundfile as sf
 from PIL import Image, ImageEnhance, ImageFilter
 W,H,FPS=720,1280,20
-DELAY,TAIL=1.4,3.0
+DELAY,TAIL=5.0,7.0
 ART_SHA="f9a7c33f1b7a2aae03aacd192706faee3740cfd9d1d277516dec39795f405ce3"
 FRAME_SHA="72655ceea488c5f4ecf207dd5a419618685b0ee0c59d553f63cbbba0bb623b65"
 
@@ -98,11 +98,11 @@ def video(variant,im,photo,marks,out):
                 move=easing((n-start)/max(1,(end-start)*.35))
                 x=px+(x-px)*move;y=py+(y-py)*move;z=pz+(z-pz)*move
                 sec=n/FPS
-                if sec<5:
-                    progress=easing(sec/5)
+                if sec<DELAY:
+                    progress=easing(sec/DELAY)
                     image=crop(gallery,.5-.12*progress,.5+.09*progress,1+2.55*progress)
-                elif sec>last/FPS-7:
-                    progress=easing((sec-(last/FPS-7))/7)
+                elif sec>=last/FPS-TAIL:
+                    progress=easing((sec-(last/FPS-TAIL))/TAIL)
                     image=crop(gallery,.38+.12*progress,.59-.09*progress,3.55-2.55*progress)
                 else:
                     image=crop(im,x,y,max(1.10,z))
@@ -155,6 +155,8 @@ def main():
         "audio_AAC_source_SHA256":sha(shared),"alignment":alignment,"files":files,
         "artwork_source_SHA256":ART_SHA,"frame_photo_SHA256":FRAME_SHA,
         "room":"digital reconstruction, not real Berlin museum",
+        "museum_frame_only_before_after_voice":True,"voice_delay_seconds":DELAY,
+        "museum_exit_after_narration_seconds":TAIL,
         "credit":"Frame photo 2018 Sailko CC BY 3.0",
         "R2_Android_verified":False,"V25_Gold":0,"no_api_calls_by_renderer":True}
     (out/"BOECKLIN_CRITICO_V102_QA.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2))
