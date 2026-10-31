@@ -5,6 +5,9 @@ on:
     paths:
       - "src/storia_rivive_v153_one_free_i2i_cat.py"
       - "tests/test_storia_rivive_v153_one_free_i2i_cat.py"
+      - "src/storia_rivive_v153_artistic_negative_gate.py"
+      - "tests/test_storia_rivive_v153_artistic_negative_gate.py"
+      - "config/storia_rivive_v153_rejected_i2i_samples.json"
       - ".github/workflows/storia-v153-single-free-real-i2i-experiment.yml"
 
 permissions:
@@ -33,6 +36,7 @@ jobs:
       - name: Fail-closed 8 tests, real FFmpeg MP4 and no provider POST in unit tests
         run: |
           python -m unittest discover -s tests -p "test_storia_rivive_v153_one_free_i2i_cat.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v153_artistic_negative_gate.py" -v
 
   SINGLE_FREE_I2I_PROOF_NOT_PRODUCTION:
     needs: unit_safety_and_real_encoding
@@ -118,4 +122,57 @@ jobs:
             output/storia_v153_one_free_sample/SCENE02_BW_VS_FREE_I2I_REVIEW.jpg
             output/storia_v153_one_free_sample/SCENE02_BW_FREEZE_REAL_I2I_REVIEW_ONLY.mp4
           if-no-files-found: warn
+          retention-days: 14
+
+  REAL_IMAGE_ARTISTIC_NEGATIVE_QA:
+    needs: unit_safety_and_real_encoding
+    # Run on update only: the original one-shot is already completed and must
+    # NOT be submitted a second time. This is read-only QA of existing bytes.
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'synchronize' &&
+      github.head_ref == 'storia-v153-single-free-i2i-candidate-20261031'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Read-only FFprobe/Pillow, no model, no provider credentials
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: Download previous one-shot REAL candidate image + 4.567 s MP4 (without generating)
+        run: |
+          mkdir -p output/storia_v153_artistic_negative_qa
+          gh run download 41232282689 \
+            --repo "GGIANLUCAA/Tra-le-pagine-" \
+            --name "STORIA_V153_ONE_FREE_REAL_I2I_CAT_REVIEW_ONLY_41232282689" \
+            --dir output/storia_v153_artistic_negative_qa
+      - name: SHA-verify actual image/video then REJECT known false face/animal transformations
+        run: |
+          python -m src.storia_rivive_v153_artistic_negative_gate \
+            --artifact-dir output/storia_v153_artistic_negative_qa \
+            --registry config/storia_rivive_v153_rejected_i2i_samples.json \
+            --out output/storia_v153_artistic_negative_qa/V153_REAL_IMAGE_ARTISTIC_REJECT_REPORT.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("output/storia_v153_artistic_negative_qa/V153_REAL_IMAGE_ARTISTIC_REJECT_REPORT.json").read_text())
+          assert r["status"]=="V153_VISUAL_IDENTITY_QA_REJECT_KNOWN_HALLUCINATION_RISK"
+          assert not r["master_eligible"] and not r["candidate_allowed_as_reused_i2i"]
+          assert not r["human_artistic_approval"] and not r["rights_italy_verified"]
+          assert r["credits_spent_during_this_QA"]==0
+          print("V153_REAL_IMAGE_REJECTED_FOR_QUALITY_NOT_TECHNICALLY_APPROVED_MASTER")
+          PY
+      - name: Archive QA NEGATIVE finding; never publish the rejected image/MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V153_REAL_I2I_VISUAL_REJECT_QA_ONLY_${{ github.run_id }}
+          path: output/storia_v153_artistic_negative_qa/V153_REAL_IMAGE_ARTISTIC_REJECT_REPORT.json
+          if-no-files-found: error
           retention-days: 14
