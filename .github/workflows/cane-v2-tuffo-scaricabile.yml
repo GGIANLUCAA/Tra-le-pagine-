@@ -1,0 +1,83 @@
+name: "Cane · V2 tuffo corretto scaricabile (zero crediti)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/cane_v2_download/*.json"
+permissions:
+  contents: read
+  actions: read
+jobs:
+  package_video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Fetch exact two already paid Vidu clips (no further generation)"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/dog-v2/old /tmp/dog-v2/new output
+          gh run download 41227582907 -R "$GITHUB_REPOSITORY" -n VIDU_CHATGPT_PROJECT_GATEWAY_RESULT_41227582907 -D /tmp/dog-v2/old
+          gh run download 41231801609 -R "$GITHUB_REPOSITORY" -n VIDU_CHATGPT_PROJECT_GATEWAY_RESULT_41231801609 -D /tmp/dog-v2/new
+          old="$(find /tmp/dog-v2/old -name '*_ORIGINAL.mp4' | head -1)"
+          new="$(find /tmp/dog-v2/new -name '*_ORIGINAL.mp4' | head -1)"
+          test -n "$old" && test -n "$new" && test -s "$old" && test -s "$new"
+          echo "OLD_VIDEO=$old" >> "$GITHUB_ENV"
+          echo "NEW_VIDEO=$new" >> "$GITHUB_ENV"
+      - name: "Assemble 118 trampoline frames plus 122 swimming pool frames"
+        shell: bash
+        run: |
+          set -euo pipefail
+          ffmpeg -nostdin -y -v error -i "$OLD_VIDEO" -vf "trim=end_frame=118,setpts=PTS-STARTPTS,fps=24,scale=720:1280:flags=lanczos,format=yuv420p" -an -c:v libx264 -preset fast -crf 18 /tmp/dog-v2/bounce.mp4
+          ffmpeg -nostdin -y -v error -i "$NEW_VIDEO" -vf "trim=end_frame=122,setpts=PTS-STARTPTS,fps=24,scale=720:1280:flags=lanczos,format=yuv420p" -an -c:v libx264 -preset fast -crf 18 /tmp/dog-v2/pool.mp4
+          printf "file '/tmp/dog-v2/bounce.mp4'\nfile '/tmp/dog-v2/pool.mp4'\n" >/tmp/dog-v2/join.txt
+          ffmpeg -nostdin -y -v error -f concat -safe 0 -i /tmp/dog-v2/join.txt -c copy /tmp/dog-v2/join.mp4
+      - name: "Generate original boing and splash sounds, no copyright music"
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import math,random,wave,array
+          random.seed(74235);rate=44100;out=array.array('h')
+          for i in range(rate*10):
+              t=i/rate
+              x=(random.random()-.5)*.004
+              for event in (.35,1.75,2.75,3.75,4.5):
+                  u=t-event
+                  if 0<=u<.29:
+                      ph=2*math.pi*(125*u+650*(1-math.exp(-15*u))/15)
+                      x+=.26*math.sin(ph)*(1-math.exp(-120*u))*math.exp(-12*u)
+              u=t-5.85
+              if 0<=u<1.35:
+                  x+=(random.random()-.5)*.41*(1-math.exp(-70*u))*math.exp(-3*u)
+              for event in (6.5,7.1,7.6,8.3,9.0):
+                  v=t-event
+                  if 0<=v<.25:
+                      x+=.044*math.sin(2*math.pi*(430+190*v)*v)*math.exp(-16*v)
+              out.append(int(min(.94,max(-.94,x))*32767))
+          with wave.open('/tmp/dog-v2/sfx.wav','wb') as w:
+              w.setnchannels(1);w.setsampwidth(2);w.setframerate(rate);w.writeframes(out.tobytes())
+          PY
+          ffmpeg -nostdin -y -v error -i /tmp/dog-v2/join.mp4 -i /tmp/dog-v2/sfx.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 160k -movflags +faststart output/CANE_TRAMPOLINO_TUFFO_PISCINA_V2_10S.mp4
+      - name: "Decode and duration check"
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s output/CANE_TRAMPOLINO_TUFFO_PISCINA_V2_10S.mp4
+          ffmpeg -nostdin -v error -xerror -i output/CANE_TRAMPOLINO_TUFFO_PISCINA_V2_10S.mp4 -f null -
+          python3 - <<'PY'
+          import json,subprocess
+          p='output/CANE_TRAMPOLINO_TUFFO_PISCINA_V2_10S.mp4'
+          d=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-show_entries','stream=width,height','-of','json',p]))
+          assert abs(float(d['format']['duration'])-10)<.1,d
+          assert any(x.get('width')==720 and x.get('height')==1280 for x in d['streams']),d
+          print('CANE_V2_BACKUP_READY',p,'duration',d['format']['duration'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CANE_TRAMPOLINO_TUFFO_PISCINA_V2_10S
+          path: output/CANE_TRAMPOLINO_TUFFO_PISCINA_V2_10S.mp4
+          retention-days: 30
+          if-no-files-found: error
