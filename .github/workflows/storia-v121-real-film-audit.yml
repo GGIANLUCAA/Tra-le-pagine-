@@ -1,5 +1,10 @@
 name: "La Storia Rivive V121 | prova gratuita su pellicola storica reale (solo ricerca)"
 on:
+  push:
+    branches:
+      - storia-v131-editorial-veto-20261031
+    paths:
+      - ".github/workflows/storia-v121-real-film-audit.yml"
   pull_request:
     paths:
       - ".github/workflows/storia-v121-real-film-audit.yml"
