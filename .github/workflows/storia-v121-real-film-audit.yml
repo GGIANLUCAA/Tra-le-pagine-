@@ -200,7 +200,7 @@ jobs:
           rank=json.loads(rank_path.read_text(encoding="utf-8")) if rank_path.is_file() else {"status":"NO_FRAME_RANKING"}
           status={
               "episode_id":"france_cotton_mill_1920",
-              "status":report.get("status","SOURCE_SCOUT_BLOCKED_NO_PRODUCTION"),
+              "status":alternatives.get("status") if alternatives.get("status") in ("SOURCE_REJECTED_V132_INSUFFICIENT_DIVERSITY_AFTER_VETO","SOURCE_AUDIT_INVALID") else editorial.get("status",report.get("status","SOURCE_SCOUT_BLOCKED_NO_PRODUCTION")),
               "original_media_bytes_verified":bool(source.is_file() and report.get("original_sha256")),
               "original_video_sha256":report.get("original_sha256"),
               "original_raster_px":[report.get("original_width_px"),report.get("original_height_px")],
@@ -244,6 +244,7 @@ jobs:
           }
           (root/"REAL_FILM_AUDIT_V121.json").write_text(
               json.dumps(status,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          assert status["status"]=="SOURCE_REJECTED_V132_INSUFFICIENT_DIVERSITY_AFTER_VETO",status["status"]
           print("REAL_FILM_AUDIT",json.dumps({k:v for k,v in status.items()
                 if k in ("episode_id","status","original_media_bytes_verified",
                          "original_raster_px","candidate_cut_count","source_frame_count")}))
