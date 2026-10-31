@@ -14,7 +14,7 @@ from pathlib import Path
 
 from src.storia_rivive_v149_authentic_bw_proxy import (
     validate,render_clip,probe_clip,exact_frame_png_from_pts,
-    process_one,run
+    process_one,process_with_rate_limit_policy,run
 )
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -95,6 +95,67 @@ class V149BWSafePreview(unittest.TestCase):
             report=process_one(s,Path(d),lookup=fake_lookup,download=forbidden_download)
             self.assertEqual(report["status"],"V149_ARCHIVE_OR_PREVIEW_BLOCKED_NOT_APPROVED")
             self.assertIn("SHA1_OR_PAGE_CHANGED",report["reason"])
+
+    def test_commons_429_get_only_one_bounded_retry(self):
+        shot=DATA["sources"][2]
+        calls=[]
+        waits=[]
+        def worker(item,root):
+            calls.append(item["id"])
+            if len(calls)==1:
+                return {"status":"V149_ARCHIVE_OR_PREVIEW_BLOCKED_NOT_APPROVED",
+                        "reason":"HTTP Error 429: Too many requests"}
+            return {"status":"V149_TRUE_SOURCE_BW_MOVING_MP4_REVIEW_ONLY"}
+        with tempfile.TemporaryDirectory() as d:
+            report=process_with_rate_limit_policy(
+                shot,Path(d),worker=worker,sleep=waits.append)
+        self.assertEqual(calls,[shot["id"],shot["id"]])
+        self.assertEqual(waits,[60])
+        self.assertEqual(report["commons_429_retry_count"],1)
+        self.assertEqual(report["status"],"V149_TRUE_SOURCE_BW_MOVING_MP4_REVIEW_ONLY")
+
+    def test_commons_429_twice_stays_blocked_no_third_request(self):
+        calls=[]
+        def worker(item,root):
+            calls.append(item["id"])
+            return {"status":"V149_ARCHIVE_OR_PREVIEW_BLOCKED_NOT_APPROVED",
+                    "reason":"HTTP Error 429: Too many requests"}
+        with tempfile.TemporaryDirectory() as d:
+            report=process_with_rate_limit_policy(
+                DATA["sources"][0],Path(d),worker=worker,sleep=lambda _:None)
+        self.assertEqual(len(calls),2)
+        self.assertEqual(report["status"],"V149_ARCHIVE_OR_PREVIEW_BLOCKED_NOT_APPROVED")
+        self.assertEqual(report["commons_429_retry_count"],1)
+
+    def test_sha_mismatch_never_retried_even_if_later_network_recovers(self):
+        calls=[]
+        waits=[]
+        def worker(item,root):
+            calls.append(item["id"])
+            return {"status":"V149_ARCHIVE_OR_PREVIEW_BLOCKED_NOT_APPROVED",
+                    "reason":"V149_FILM_SHA256_CHANGED_FROM_REAL_AUDIT"}
+        with tempfile.TemporaryDirectory() as d:
+            report=process_with_rate_limit_policy(
+                DATA["sources"][0],Path(d),worker=worker,sleep=waits.append)
+        self.assertEqual(len(calls),1)
+        self.assertEqual(waits,[])
+        self.assertIn("SHA256_CHANGED",report["reason"])
+
+    def test_batch_a_paces_requests_and_does_not_claim_final(self):
+        waits=[]
+        seen=[]
+        def worker(item,root):
+            seen.append(item["scene"])
+            return {"scene":item["scene"],
+                    "status":"V149_TRUE_SOURCE_BW_MOVING_MP4_REVIEW_ONLY"}
+        with tempfile.TemporaryDirectory() as d:
+            report=run(MANIFEST,Path(d),"a",worker=worker,sleep=waits.append)
+        self.assertEqual(seen,[1,2,3])
+        self.assertEqual(waits,[12,12])
+        self.assertEqual(report["clips_verified"],3)
+        self.assertFalse(report["is_finished_video"])
+        self.assertFalse(report["publish_permitted"])
+        self.assertEqual(report["paid_api_calls"],0)
 
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"),
                          "Requires actual FFmpeg encoding and source PNG re-decode")
