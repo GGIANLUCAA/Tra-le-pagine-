@@ -1033,7 +1033,7 @@
         "approved_count": 0,
         "status": "FOUR_RENDERED_HUMAN_REVIEW_PENDING",
         "no_auto_second_artwork": true,
-        "next_action": "4 original MP4 backup+decode verified. Review Museum V89R1 and remaining artistic issues as same-slot revisions, verify Android/site player, obtain V25; no new artwork.",
+        "next_action": "V93 four-real-MP4 ZIP backed up with SHA readback; next: owner fileParams selection for site importer (V61 first), then verify R2 object, database catalog and actual Android playback; Gold V25 pending.",
         "v89_verified_backup_library": {
           "date": "2026-10-30",
           "type": "actual_zip_bytes_readback_not_site_playback",
@@ -1073,6 +1073,41 @@
           "artistic_review_pending": true,
           "V25_approved_count": 0,
           "evidence": "docs/productions/2026-10-30-artvision-v90-due-piloti-recuperati-e-verificati.md"
+        },
+        "v93_consolidated_verified_package": {
+          "version": "V93",
+          "date": "2026-10-31",
+          "status": "four_real_mp4_verified_private_zip_readback_pending_website_player_v25",
+          "zip_name": "SOCRATE_4X1_PILOTA_RIFINITO_V93_ANDROID.zip",
+          "library_path": "/ArtVision/Socrate/V93_QUATTRO_VARIANTI_RIFINITE/SOCRATE_4X1_PILOTA_RIFINITO_V93_ANDROID.zip",
+          "zip_bytes": 96022153,
+          "zip_sha256": "79c2a0da8e4a10ee054356cc75a34f2376d94394461a471777d127ee79fa5fcf",
+          "zip_members": 95,
+          "mp4_count": 4,
+          "cover_count": 4,
+          "social_drafts_count": 16,
+          "zip_crc_pass": true,
+          "four_mp4_full_decode_pass": true,
+          "critic_aac_byte_identical_sha256": "3f1374c08615822bd8c2fd41597d98dbcc2335ca3235543e5e978d9feee44669",
+          "mp4_sha256": {
+            "critico_standard": "f68592a8d65d5d774494f49892a4b8be8f9bbe7842ab19631f85046f0adf19c3",
+            "critico_museum": "70056c330512c9e4ec657af6ae6ce433f4e0a6e60cf7a64207a6c10ff1954d2f",
+            "cinema_standard": "0f946f74397c780c9357f545d0a9712926bf02eb3f43ba4866eba7cda8828540",
+            "cinema_museum": "6ae8a2cb1ad3709bea4bab801ddefdaf8e7a00b3f3f65f50ddd81af8e4414afc"
+          },
+          "source_master_backup_unchanged": true,
+          "private_library_download_readback_sha_verified": true,
+          "standalone_import_ready": {
+            "critico_standard": "/ArtVision/Socrate/V93_QUATTRO_VARIANTI_RIFINITE/Socrate_Critico_Standard_Gacrux_V67.mp4",
+            "critico_museum": "/ArtVision/Socrate/V90R3_MANIGESTI_FOCUS/Socrate_Critico_Museum_V90R3_MANIGESTI_FOCUS_REVIEW.mp4",
+            "cinema_standard": "/ArtVision/Socrate/V93_QUATTRO_VARIANTI_RIFINITE/ArtVision_Socrates_Cinema_Standard_V59_Revision_Review.mp4",
+            "cinema_museum": "/ArtVision/Socrate/R2_IMPORT_STAGING_V61/ArtVision_Socrates_Cinema_Museum_V61_Senza_Persone_Review.mp4"
+          },
+          "site_import_verified": false,
+          "site_playback_verified": false,
+          "android_playback_verified": false,
+          "owner_gold_v25_approved_count": 0,
+          "evidence": "docs/productions/2026-10-31-artvision-socrates-v93-4x1-backup-readback-and-site-import.md"
         }
       }
     },
