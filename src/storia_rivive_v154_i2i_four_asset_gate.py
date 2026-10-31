@@ -82,6 +82,34 @@ def _source_structure_correlation(original: Image.Image, restored: Image.Image) 
     return round(correlation, 4)
 
 
+
+def _source_luminance_residual(original: Image.Image, restored: Image.Image) -> float:
+    """Reject mere color tint / global exposure changes, not certify real I2I.
+
+    Fit an affine luminance transform on real pixel arrays. A source merely
+    colorized with fixed channel offsets or contrast has almost zero residual.
+    Residual texture can also be synthetic noise: artistic QA and provider
+    evidence remain mandatory; this is a necessary rejection check only.
+    """
+    size = (256, 256)
+    source = list(original.convert("L").resize(size, Image.Resampling.BILINEAR).getdata())
+    output = list(restored.convert("L").resize(size, Image.Resampling.BILINEAR).getdata())
+    n = len(source)
+    mean_source = sum(source) / n
+    mean_output = sum(output) / n
+    variance = sum((v - mean_source) ** 2 for v in source)
+    if variance / n < 16:
+        raise ValueError("V156_SOURCE_LUMA_TOO_FLAT_FOR_DETAIL_CHECK")
+    slope = sum((a - mean_source) * (b - mean_output)
+                for a, b in zip(source, output)) / variance
+    intercept = mean_output - slope * mean_source
+    rms = (sum((b - (slope * a + intercept)) ** 2
+               for a, b in zip(source, output)) / n) ** 0.5
+    if rms < 4.0:
+        raise ValueError("V156_COLOR_TINT_OR_AFFINE_LUMA_ONLY")
+    return round(rms, 3)
+
+
 def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) -> dict:
     root = Path(root)
     if (handoff.get("version") != "V151" or handoff.get("real_source_frames_sha_verified") != 5
@@ -177,9 +205,12 @@ def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) ->
             if max(stats.mean) - min(stats.mean) < 2.0:
                 raise ValueError("V154_OUTPUT_STILL_GRAYSCALE")
             structure_corr = _source_structure_correlation(original, rgb)
+            luma_residual = _source_luminance_residual(original, rgb)
         completed.append({"scene": job["scene"], "source_frame_sha256": row["native_original_frame_sha256"],
                           "actual_photo_sha256": photo_sha, "provider_reference_is_self_reported": True,
-                          "source_structure_correlation": structure_corr, "human_identity_review_still_required": True})
+                          "source_structure_correlation": structure_corr,
+                          "source_luminance_residual_rms": luma_residual,
+                          "human_identity_review_still_required": True})
     missing = sorted(set(range(1, 5)) - {j["scene"] for j in jobs})
     # V152 source selection is still blocked. Even four technically valid files
     # cannot turn it into a coherent, rights-cleared, artistically approved film.
