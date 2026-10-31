@@ -33,10 +33,10 @@ def _safe_file(root: Path, rel: str) -> Path:
     if not isinstance(rel, str) or not rel or Path(rel).is_absolute():
         raise ValueError("V154_UNSAFE_ASSET_PATH")
     parts = Path(rel).parts
-    if any(p in ("..", ".") for p in parts):
+    if any(p in ("..", ".") for p in parts) or "\\" in rel or "\x00" in rel:
         raise ValueError("V154_UNSAFE_ASSET_PATH")
     path = root.joinpath(*parts)
-    if not path.resolve().is_relative_to(root.resolve()) or not path.is_file() or path.is_symlink():
+    if (not path.resolve().is_relative_to(root.resolve()) or not path.is_file()\n            or any(p.is_symlink() for p in (path, *path.parents) if p != root and p.is_relative_to(root))):
         raise ValueError("V154_MISSING_OR_UNSAFE_REAL_ASSET")
     return path
 
