@@ -1,0 +1,50 @@
+name: Connect Vidu to private panel (no video generation)
+on:
+  push:
+    branches: ['feature/vidu-mobile-panel']
+    paths: ['.github/workflows/vidu-connect-once.yml']
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  connect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Transfer the requested secret directly to the private panel
+        env:
+          VIDU_KEY: ${{ secrets.VIDUOK }}
+        shell: python
+        run: |
+          import os, json, urllib.request, urllib.parse, sys
+          stage='github_identity'
+          key=os.environ.get('VIDU_KEY','').strip()
+          if not key:
+              sys.exit('Secret VIDUOK non disponibile: aggiungerlo in Repository secrets, Actions.')
+          destination='https://tra-le-pagine-vidu.600led.workers.dev'
+          try:
+              url=os.environ['ACTIONS_ID_TOKEN_REQUEST_URL']+'&audience='+urllib.parse.quote(destination,safe='')
+              req=urllib.request.Request(url,headers={'Authorization':'Bearer '+os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']})
+              with urllib.request.urlopen(req,timeout=20) as response:
+                  token=json.load(response)['value']
+              stage='panel_import'
+              payload=json.dumps({'key':key}).encode()
+              req=urllib.request.Request(destination+'/api/github-connect',data=payload,headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'},method='POST')
+              with urllib.request.urlopen(req,timeout=45) as response:
+                  result=json.load(response)
+              if result.get('connected') is not True:
+                  sys.exit('Collegamento non confermato.')
+              print('VIDU_CONNECTED: chiave salvata cifrata, verifica saldo riuscita. Nessun video generato.')
+          except Exception as error:
+              # Never print provider payloads, credential values, request headers or tokens.
+              code=getattr(error,'code',None)
+              print('Stage: '+stage)
+              if stage=='panel_import' and code:
+                  raw=error.read(2048).decode('utf-8','replace')
+                  try:
+                      diagnostic=json.loads(raw).get('reason','unspecified')
+                      if diagnostic in ['disabled','token','claims','jwks','key','signature']:
+                          print('Import check: '+diagnostic)
+                  except Exception:
+                      print('Response format: non-JSON')
+              sys.exit('Collegamento non completato'+(' (HTTP '+str(code)+')' if code else '')+'. Nessuna generazione eseguita.')
