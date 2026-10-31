@@ -7,6 +7,7 @@ research evidence, not a permanent verdict about future uploaded originals.
 from __future__ import annotations
 import argparse
 import json
+import re
 from pathlib import Path
 
 from storia_rivive_scout_v101 import metadata
@@ -30,24 +31,46 @@ def recheck_low_raster_snapshots(registry, lookup=metadata):
                 or not isinstance(raster, list) or len(raster) != 2
                 or any(type(n) is not int or n <= 0 for n in raster)):
             raise ValueError("V141_INVALID_SNAPSHOT")
+        baseline = row.get("commons_original_sha1")
+        if baseline is not None and (not isinstance(baseline, str)
+                or re.fullmatch(r"[0-9a-f]{40}", baseline) is None):
+            raise ValueError("V145_INVALID_ORIGINAL_SHA1_BASELINE")
         seen.add(ident)
+        live_sha1 = None
+        content_identity = "BASELINE_NOT_RECORDED" if baseline is None else "LIVE_FINGERPRINT_UNAVAILABLE"
         try:
             live = lookup(page)
             width, height = live.get("original_width_px"), live.get("original_height_px")
+            fingerprint = live.get("original_sha1")
+            if isinstance(fingerprint, str) and re.fullmatch(r"[0-9a-f]{40}", fingerprint):
+                live_sha1 = fingerprint
+            if baseline is not None and live_sha1 is not None:
+                content_identity = "MATCH" if baseline == live_sha1 else "CHANGED"
             if type(width) is not int or type(height) is not int or width <= 0 or height <= 0:
                 state = "LIVE_RASTER_METADATA_UNAVAILABLE"
                 measured = None
             else:
                 measured = [width, height]
-                state = ("SNAPSHOT_UNCHANGED" if measured == raster
-                         else "RASTER_CHANGED_REQUIRES_NEW_SOURCE_REVIEW")
+                if measured != raster:
+                    state = "RASTER_CHANGED_REQUIRES_NEW_SOURCE_REVIEW"
+                elif content_identity == "CHANGED":
+                    state = "ORIGINAL_CONTENT_CHANGED_REQUIRES_NEW_SOURCE_REVIEW"
+                elif baseline is not None and content_identity != "MATCH":
+                    state = "LIVE_FINGERPRINT_UNAVAILABLE"
+                else:
+                    state = "SNAPSHOT_UNCHANGED"
         except Exception:
             # No API exception details or provider URLs in public logs.
             state, measured = "RECHECK_PENDING_NETWORK_ERROR", None
         checked.append({"candidate_id": ident, "snapshot_raster_px": raster,
-                        "live_raster_px": measured, "status": state})
+                        "live_raster_px": measured,
+                        "snapshot_original_sha1": baseline,
+                        "live_original_sha1": live_sha1,
+                        "original_content_identity": content_identity,
+                        "status": state})
     statuses = {r["status"] for r in checked}
-    if "RASTER_CHANGED_REQUIRES_NEW_SOURCE_REVIEW" in statuses:
+    if statuses & {"RASTER_CHANGED_REQUIRES_NEW_SOURCE_REVIEW",
+                   "ORIGINAL_CONTENT_CHANGED_REQUIRES_NEW_SOURCE_REVIEW"}:
         overall = "SOURCE_SNAPSHOT_REVIEW_REQUIRED"
     elif statuses != {"SNAPSHOT_UNCHANGED"}:
         overall = "SOURCE_SNAPSHOT_CHECK_UNAVAILABLE"
@@ -55,9 +78,12 @@ def recheck_low_raster_snapshots(registry, lookup=metadata):
         overall = "ALL_LOW_RASTER_SNAPSHOTS_CURRENT"
     return {"contract": "V141_COMMONS_SD_LIVE_RECHECK_RESEARCH_ONLY",
             "status": overall, "checked_count": len(checked), "sources": checked,
+            "v145_content_fingerprint_inventory": True,
+            "same_raster_original_bytes_verified": all(
+                r["original_content_identity"] == "MATCH" and r["status"] == "SNAPSHOT_UNCHANGED" for r in checked),
             "source_acquisition_permitted": False, "i2i_permitted": False,
             "vidu_post_permitted": False, "publication_permitted": False,
-            "note": "Raster-only check. Same-raster replacements, image quality and Italian rights still need independent review."}
+            "note": "V145: Commons original SHA1 is public research evidence only. Without a stored baseline, same-raster replacement remains UNVERIFIED; no rights, quality or production clearance."}
 
 
 def main():

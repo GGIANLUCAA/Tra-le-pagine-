@@ -66,6 +66,28 @@ class V121SourceRasterTests(unittest.TestCase):
         self.assertFalse(m["historical_rights_italy_approved"])
         self.assertFalse(m["social_publish_permitted"])
 
+    def test_commons_original_sha1_is_parsed_without_downloading_media(self):
+        response={"query":{"pages":[{"imageinfo":[{
+            "url":"https://upload.wikimedia.org/wikipedia/commons/0/00/Example.webm",
+            "size":3200000,"width":768,"height":576,"sha1":"A"*40}]}]}}
+        with patch("src.storia_rivive_scout_v101.urlopen",
+                   return_value=_FakeApiResponse(json.dumps(response).encode())) as request:
+            m=metadata(COMMONS)
+        self.assertEqual(m["original_sha1"],"a"*40)
+        self.assertIn("sha1",request.call_args.args[0].full_url)
+        self.assertFalse(m["historical_rights_italy_approved"])
+
+    def test_commons_missing_or_invalid_sha1_never_invents_identity(self):
+        for invalid in (None, "invalid", "a"*39, 123):
+            with self.subTest(invalid=invalid):
+                response={"query":{"pages":[{"imageinfo":[{
+                    "url":"https://upload.wikimedia.org/wikipedia/commons/0/00/Example.webm",
+                    "size":3200000,"width":768,"height":576,"sha1":invalid}]}]}}
+                with patch("src.storia_rivive_scout_v101.urlopen",
+                           return_value=_FakeApiResponse(json.dumps(response).encode())):
+                    m=metadata(COMMONS)
+                self.assertIsNone(m["original_sha1"])
+
     def test_low_resolution_never_downloads_original_video(self):
         source={"source_page":COMMONS,"download_url":"https://upload.wikimedia.org/wikipedia/commons/0/00/Example.webm",
                 "size_bytes":3000000,"original_width_px":768,"original_height_px":576,
