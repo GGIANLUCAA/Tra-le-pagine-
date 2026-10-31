@@ -53,6 +53,55 @@ BANK={"candidates":[
 ]}
 
 class V101Tests(unittest.TestCase):
+    def test_v133_skips_rejected_source_without_repeating_research(self):
+        bank={"candidates":[*BANK["candidates"], {
+            "id":"france_cotton_mill_1920",
+            "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm",
+            "license":"PDM"}]}
+        registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        for hour in (0,3,6,9,12,15,18,21):
+            order=auto.build_work_order(bank,f"2026-10-31T{hour:02d}:00:00Z",PROFILE,registry)
+            self.assertNotEqual(order["episode_id"],"france_cotton_mill_1920")
+            self.assertEqual(order["excluded_sha_bound_sources"],["france_cotton_mill_1920"])
+            self.assertFalse(order["skip_source_acquisition"])
+            self.assertFalse(order["paid_api_call_permitted"])
+
+    def test_v133_all_rejected_skips_cleanly_and_never_approves(self):
+        candidate={"id":"france_cotton_mill_1920",
+            "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm"}
+        registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        order=auto.build_work_order({"candidates":[candidate]},
+                                   "2026-10-31T09:00:00Z",PROFILE,registry)
+        self.assertEqual(order["status"],"SOURCE_REJECTED_ALL_KNOWN")
+        self.assertEqual(order["episode_id"],"no_eligible_source")
+        self.assertIsNone(order["source_page"])
+        self.assertTrue(order["skip_source_acquisition"])
+        self.assertFalse(order["video_completed"])
+        self.assertFalse(order["publish_permitted"])
+
+    def test_v133_stale_or_forged_rejection_is_fail_closed(self):
+        bank={"candidates":[{"id":"france_cotton_mill_1920",
+            "source_page":"https://commons.wikimedia.org/wiki/File:Changed.webm"}]}
+        registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        with self.assertRaisesRegex(ValueError,"STALE_REJECTION"):
+            auto.build_work_order(bank,"2026-10-31T09:00:00Z",PROFILE,registry)
+        bank["candidates"][0]["source_page"]=registry["rejected"][0]["source_page"]
+        registry["rejected"][0]["film_sha256"]="not-verified"
+        with self.assertRaisesRegex(ValueError,"REJECTION_EVIDENCE_INVALID"):
+            auto.build_work_order(bank,"2026-10-31T09:00:00Z",PROFILE,registry)
+
+    def test_v133_duplicate_and_missing_rejection_evidence_blocked(self):
+        bank={"candidates":[{"id":"france_cotton_mill_1920",
+            "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm"}]}
+        registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        registry["rejected"].append(dict(registry["rejected"][0]))
+        with self.assertRaisesRegex(ValueError,"UNKNOWN_OR_DUPLICATE"):
+            auto.build_work_order(bank,"2026-10-31T09:00:00Z",PROFILE,registry)
+        registry["rejected"].pop()
+        registry["rejected"][0]["evidence_url"]="https://example.com/not-a-run"
+        with self.assertRaisesRegex(ValueError,"REJECTION_EVIDENCE_INVALID"):
+            auto.build_work_order(bank,"2026-10-31T09:00:00Z",PROFILE,registry)
+
     def test_cycle_is_stable(self):
         a=auto.build_work_order(BANK,"2026-10-30T15:01:00Z",PROFILE)
         b=auto.build_work_order(BANK,"2026-10-30T17:59:59Z",PROFILE)

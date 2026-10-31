@@ -14,6 +14,7 @@ on:
       - "src/storia_rivive_frame_rank_v101.py"
       - "src/storia_rivive_i2i_prepare_v102.py"
       - "config/storia_rivive_autopilot_v101.json"
+      - "config/storia_rivive_v133_rejected_films.json"
       - "tests/test_storia_rivive_v101.py"
       - "tests/test_storia_rivive_v121.py"
       - "tests/test_storia_rivive_v122.py"
@@ -62,21 +63,24 @@ jobs:
           p=json.load(open("output/storia_v101/WORK_ORDER.json"))
           with open(os.environ["GITHUB_ENV"],"a") as f:
               f.write("STORIA_EPISODE_ID="+p["episode_id"]+"\n")
+              f.write("STORIA_SOURCE_SKIPPED="+("true" if p.get("skip_source_acquisition") else "false")+"\n")
           print("SOURCE_RESEARCH_ONLY_3H",p["episode_id"],p["status"])
           PY
       - name: Cache archival source research by candidate, avoid repeated downloads
+        if: env.STORIA_SOURCE_SKIPPED != 'true'
         id: film_cache
         uses: actions/cache/restore@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
           key: storia-v101-archival-scout-v7-native-raster-preflight-${{ env.STORIA_EPISODE_ID }}
       - name: Fetch bounded original film and make genuine B/W contact sheet
-        if: steps.film_cache.outputs.cache-hit != 'true'
+        if: env.STORIA_SOURCE_SKIPPED != 'true' && steps.film_cache.outputs.cache-hit != 'true'
         shell: bash
         run: |
           set -euo pipefail
           python src/storia_rivive_scout_v101.py --order output/storia_v101/WORK_ORDER.json --out "output/storia_v101/source-cache/$STORIA_EPISODE_ID"
       - name: Confirm original film was really acquired before caching
+        if: env.STORIA_SOURCE_SKIPPED != 'true'
         id: scout_status
         shell: bash
         run: |
@@ -91,12 +95,13 @@ jobs:
           print("CACHE_SUCCESSFUL_ORIGINAL_MEDIA_ONLY",ready)
           PY
       - name: Cache successful original source film and true source frames only
-        if: steps.film_cache.outputs.cache-hit != 'true' && steps.scout_status.outputs.ready == 'true'
+        if: env.STORIA_SOURCE_SKIPPED != 'true' && steps.film_cache.outputs.cache-hit != 'true' && steps.scout_status.outputs.ready == 'true'
         uses: actions/cache/save@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
           key: storia-v101-archival-scout-v7-native-raster-preflight-${{ env.STORIA_EPISODE_ID }}
       - name: Rank actual native-resolution source frames without claiming facial identity
+        if: env.STORIA_SOURCE_SKIPPED != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -104,6 +109,7 @@ jobs:
             --frames "output/storia_v101/source-cache/$STORIA_EPISODE_ID/original_frames" \
             --out output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
       - name: Prepare five source-SHA-locked I2I requests without invoking any paid or free provider
+        if: env.STORIA_SOURCE_SKIPPED != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -113,6 +119,7 @@ jobs:
             --source-dir "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
             --out output/storia_v101/I2I_INPUT_MANIFEST_V102.json
       - name: V118 reject nonmoving source windows before any I2I integration
+        if: env.STORIA_SOURCE_SKIPPED != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -169,6 +176,8 @@ jobs:
               "native_original_raster_px":[scout.get("original_width_px"),scout.get("original_height_px")],
               "native_media_rejected_before_download":native_media_rejected,
               "source_preflight_blocking_issues":order.get("blocking_issues",[]),
+              "excluded_sha_bound_sources":order.get("excluded_sha_bound_sources",[]),
+              "source_acquisition_skipped_by_rejection_registry":order.get("skip_source_acquisition",False),
               "native_frame_selection":rank.get("status"),
               "eligible_pre_freeze_source_windows":rank.get("eligible_pre_freeze_source_windows",0),
               "eligible_photographic_scene_candidates":rank.get("eligible_photographic_scene_candidates",0),
@@ -178,7 +187,7 @@ jobs:
               "restored_i2i_photos_approved":0,
               "real_vidu_clips_approved":0,"finished_mp4":False,"published":False,
               "charged_api_requests":0,
-              "status":"SOURCE_REJECTED" if (low_detail or native_media_rejected or insufficient_cuts or insufficient_selected_shots) else "ASSETS_PENDING",
+              "status":"SOURCE_REJECTED" if (order.get("skip_source_acquisition") or low_detail or native_media_rejected or insufficient_cuts or insufficient_selected_shots) else "ASSETS_PENDING",
               "cut_candidate_count":scout.get("shot_boundary_analysis",{}).get("cut_candidate_count"),
               "historical_camera_shots_verified":False,
               "next_required":"Resolve source rights and native quality, then 4 genuine I2I photos, 1 real Vidu, V91/V94/V96/V99 and artistic review"}
