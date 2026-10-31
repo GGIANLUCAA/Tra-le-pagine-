@@ -115,7 +115,7 @@ class V146MultiReelTests(unittest.TestCase):
     def test_actual_encoded_video_native_pts_and_movie_motion_on_bytes(self):
         with tempfile.TemporaryDirectory() as tmp:
             folder=Path(tmp)
-            film=folder/"ORIGINAL_ARCHIVE.webm"
+            film=folder/"ORIGINAL_ARCHIVE.mp4"
             # Synthetic genuine motion (scroll) is merely a regression fixture.
             subprocess.run(["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y",
                             "-f","lavfi","-i","testsrc2=size=1280x720:rate=12:duration=35,scroll=h=0.1",
