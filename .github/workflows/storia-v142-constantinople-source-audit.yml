@@ -166,7 +166,7 @@ jobs:
           strips=load("adaptive/PREFREEZE_MOTION_STRIPS_V129.json")
           status={
             "candidate":"constantinople_messter_1916",
-            "source_page":"https://commons.wikimedia.org/wiki/File:The_signing_of_the_peace_treaty_of_Constantinople_(16_fps).webm",
+            "source_page":"https://commons.wikimedia.org/wiki/File:Messter_Woche_Mackensen_in_Constantinople_1916_filmed_by_Nelson_Edwards.ogg",
             "source_sha256":scout.get("original_sha256"),
             "original_raster_px":[scout.get("original_width_px"),scout.get("original_height_px")],
             "source_scout_status":scout.get("status","NOT_RUN"),
