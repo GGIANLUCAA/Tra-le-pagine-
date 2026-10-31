@@ -55,6 +55,33 @@ def _verified_png(root: Path, rel: str, sha: str, expected_size: tuple[int, int]
     return path
 
 
+def _source_structure_correlation(original: Image.Image, restored: Image.Image) -> float:
+    """Cheap rejection of flat images or unrelated compositions, NOT I2I proof.
+
+    Low-resolution luminance preserves major shapes while ignoring hue changes.
+    Genuine restorations still require a separate human review of identity.
+    """
+    size = (64, 64)
+    source = list(original.convert("L").resize(size, Image.Resampling.BILINEAR).getdata())
+    result = list(restored.convert("L").resize(size, Image.Resampling.BILINEAR).getdata())
+    n = len(source)
+    mean_source = sum(source) / n
+    mean_result = sum(result) / n
+    centered_source = [v - mean_source for v in source]
+    centered_result = [v - mean_result for v in result]
+    variance_source = sum(v * v for v in centered_source)
+    variance_result = sum(v * v for v in centered_result)
+    if variance_source / n < 16:
+        raise ValueError("V155_LOW_DETAIL_SOURCE_NEEDS_REVIEW")
+    if variance_result / n < 64:
+        raise ValueError("V155_LOW_DETAIL_OR_FLAT_OUTPUT")
+    covariance = sum(a * b for a, b in zip(centered_source, centered_result))
+    correlation = covariance / (variance_source * variance_result) ** 0.5
+    if correlation < 0.25:
+        raise ValueError("V155_SOURCE_STRUCTURE_MISMATCH")
+    return round(correlation, 4)
+
+
 def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) -> dict:
     root = Path(root)
     if (handoff.get("version") != "V151" or handoff.get("real_source_frames_sha_verified") != 5
@@ -149,8 +176,10 @@ def audit(handoff: dict, candidates: dict, root: str | Path, negatives: dict) ->
             stats = ImageStat.Stat(rgb)
             if max(stats.mean) - min(stats.mean) < 2.0:
                 raise ValueError("V154_OUTPUT_STILL_GRAYSCALE")
+            structure_corr = _source_structure_correlation(original, rgb)
         completed.append({"scene": job["scene"], "source_frame_sha256": row["native_original_frame_sha256"],
-                          "actual_photo_sha256": photo_sha, "provider_reference_is_self_reported": True})
+                          "actual_photo_sha256": photo_sha, "provider_reference_is_self_reported": True,
+                          "source_structure_correlation": structure_corr, "human_identity_review_still_required": True})
     missing = sorted(set(range(1, 5)) - {j["scene"] for j in jobs})
     # V152 source selection is still blocked. Even four technically valid files
     # cannot turn it into a coherent, rights-cleared, artistically approved film.
