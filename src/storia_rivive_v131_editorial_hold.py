@@ -6,11 +6,28 @@ A veto, never an approval engine: no I2I, Vidu or publication permission.
 from __future__ import annotations
 import argparse
 import json
+import math
 import re
+from fractions import Fraction
 from pathlib import Path
 
 SHA = re.compile(r"[0-9a-f]{64}\Z")
 FRAME = re.compile(r"frame_\d{2}\.png\Z")
+
+def valid_prefreeze_pts(strip, stamp):
+    """Match V129's exact native freeze PTS to V128's audited frame time."""
+    start, freeze, clock = (strip.get("pre_freeze_start_pts"),
+                            strip.get("freeze_pts"), strip.get("source_time_base"))
+    if (type(start) is not int or type(freeze) is not int
+            or start < 0 or freeze <= start or not isinstance(clock, str)):
+        return False
+    try:
+        period = Fraction(clock)
+        duration = (freeze - start) * period
+        return (period > 0 and 0 < duration <= Fraction(5, 2)
+                and abs(float(freeze * period) - stamp) <= 0.0001)
+    except (ValueError, ZeroDivisionError, OverflowError):
+        return False
 
 def evaluate(visual, motion, registry):
     film = visual.get("source_film_sha256")
@@ -44,11 +61,14 @@ def evaluate(visual, motion, registry):
         if (not isinstance(name, str) or not FRAME.fullmatch(name) or name in indexed
                 or not isinstance(digest, str) or not SHA.fullmatch(digest)
                 or frame.get("source_film_sha256") != film
-                or type(stamp) not in (int, float) or stamp < 0
+                or type(stamp) not in (int, float) or not math.isfinite(stamp) or stamp < 0
                 or strip.get("source_frame") != name
                 or strip.get("freeze_source_pts_time_s") != stamp
                 or not isinstance(strip.get("proxy_rgb_sha256"), str)
-                or not SHA.fullmatch(strip["proxy_rgb_sha256"])):
+                or not SHA.fullmatch(strip["proxy_rgb_sha256"])
+                or type(strip.get("proxy_decoded_frame_count")) is not int
+                or not 3 <= strip["proxy_decoded_frame_count"] <= 10
+                or not valid_prefreeze_pts(strip, stamp)):
             raise ValueError("V131_FRAME_STRIP_SHA_PTS_MISMATCH")
         indexed[name] = {"freeze_s": stamp, "frame_sha256": digest}
     if (registry.get("version") != "V131_REVIEWED_SOURCE_VETOES"
@@ -62,6 +82,7 @@ def evaluate(visual, motion, registry):
             continue
         name, reason = veto.get("frame"), veto.get("reason")
         if (name not in indexed or name in seen or type(veto.get("freeze_s")) not in (int, float)
+                or not math.isfinite(veto["freeze_s"])
                 or abs(indexed[name]["freeze_s"] - veto["freeze_s"]) > .02
                 or not isinstance(reason, str) or not 8 <= len(reason) <= 220):
             raise ValueError("V131_STALE_OR_MALFORMED_VETO_REQUIRES_REVIEW")
@@ -73,6 +94,8 @@ def evaluate(visual, motion, registry):
         "status": "SOURCE_ARTISTIC_REVIEW_HOLD" if holds else "SOURCE_ARTISTIC_REVIEW_REQUIRED",
         "source_film_sha256": film, "source_review_vetoes": holds,
         "five_original_windows_crosschecked": True,
+        "exact_native_freeze_pts_crosschecked": True,
+        "prefreeze_proxy_frame_counts_crosschecked": True,
         "italian_rights_verified": False, "five_genuine_camera_shots_approved": False,
         "human_artistic_approved": False, "i2i_permitted": False,
         "vidu_permitted": False, "paid_api_call_permitted": False,
