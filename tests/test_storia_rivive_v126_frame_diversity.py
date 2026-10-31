@@ -115,7 +115,7 @@ class V126FrameDiversityTests(unittest.TestCase):
             data["five_genuine_camera_shots_approved"]=False
             data["five_review_shots"][4]["timeline_region"]=0
             report.write_text(json.dumps(data))
-            with self.assertRaisesRegex(ValueError,"TIME_REGION"):
+            with self.assertRaisesRegex(ValueError,"FAKE_TIMELINE_REGION_OR_SEGMENT"):
                 audit(report,frames,out,scout)
 
 
