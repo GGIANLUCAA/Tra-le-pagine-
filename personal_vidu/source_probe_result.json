@@ -1,3 +1,24 @@
-{
-  "error": "HTTPError: HTTP Error 403: Forbidden"
-}
+[
+  {
+    "kind": "thumbnail_signed",
+    "accessible": true,
+    "bytes": 10491,
+    "size": [
+      112,
+      199
+    ],
+    "sha256": "13f1577e8fb29688decd5065d8cf9f5f179e7c309e7f3a74a1c22975c3734427"
+  },
+  {
+    "kind": "full_signed_1536",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "kind": "large_signed_1024",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  },
+  {
+    "kind": "large_no_x_canva_quality",
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  }
+]
