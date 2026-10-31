@@ -106,6 +106,18 @@ jobs:
             --frames output/storia_v121_real/adaptive/original_frames \
             --out output/storia_v121_real/adaptive/BALANCED_VISUAL_REVIEW_V128.json \
             --contact output/storia_v121_real/adaptive/BALANCED_CONTACT_SHEET_V128.jpg
+      - name: V129 show 3 actual B/W film motion samples before each candidate freeze (review only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v129_prefreeze_motion_strips.py \
+            --film output/storia_v121_real/source/ORIGINAL_ARCHIVE.webm \
+            --balanced output/storia_v121_real/adaptive/FIVE_MOVING_REVIEW_V126.json \
+            --motion output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json \
+            --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
+            --frames output/storia_v121_real/adaptive/original_frames \
+            --out output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.json \
+            --sheet output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.jpg
       - name: Record physical evidence, never label the result as approved
         shell: bash
         run: |
@@ -126,6 +138,8 @@ jobs:
           balanced=json.loads(balanced_path.read_text(encoding="utf-8")) if balanced_path.is_file() else {"status":"V126_BALANCED_NOT_RUN"}
           balanced_visual_path=root/"adaptive"/"BALANCED_VISUAL_REVIEW_V128.json"
           balanced_visual=json.loads(balanced_visual_path.read_text(encoding="utf-8")) if balanced_visual_path.is_file() else {"status":"V128_NOT_RUN"}
+          motion_strips_path=root/"adaptive"/"PREFREEZE_MOTION_STRIPS_V129.json"
+          motion_strips=json.loads(motion_strips_path.read_text(encoding="utf-8")) if motion_strips_path.is_file() else {"status":"V129_NOT_RUN"}
 
 
           rank_path=root/"FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json"
@@ -148,6 +162,8 @@ jobs:
               "balanced_original_motion_selection_status":balanced.get("status"),
               "balanced_five_frame_files":[r.get("filename") for r in balanced.get("five_review_candidates",[])],
               "balanced_visual_review_status":balanced_visual.get("status"),
+              "actual_prefreeze_motion_strip_status":motion_strips.get("status"),
+              "actual_prefreeze_motion_proxy_samples":[x.get("source_frame") for x in motion_strips.get("five_prefreeze_proxy_strips",[])],
               "balanced_visual_source_sha_pts_checked":balanced_visual.get("original_pts_sha_motion_evidence_crosschecked",False),
               "near_duplicate_original_frame_pairs":diversity.get("near_duplicate_pairs",[]),
               "bw_moving_photo_candidates":motion.get("source_motion_candidates_pass",0),
@@ -192,6 +208,8 @@ jobs:
             output/storia_v121_real/adaptive/FIVE_MOVING_REVIEW_V126.json
             output/storia_v121_real/adaptive/BALANCED_VISUAL_REVIEW_V128.json
             output/storia_v121_real/adaptive/BALANCED_CONTACT_SHEET_V128.jpg
+            output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.json
+            output/storia_v121_real/adaptive/PREFREEZE_MOTION_STRIPS_V129.jpg
 
           retention-days: 14
           if-no-files-found: warn
