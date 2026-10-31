@@ -63,7 +63,7 @@ def source_picture_content_guard(gray):
     dark=sum(v<45 for v in values)/n
     bright=sum(v>160 for v in values)/n
     risk=(("LIKELY_INTERTITLE_LOGO_OR_BLACK_CARD"
-           if dark>=0.79 and bright>=0.025 else
+           if dark>=0.76 and bright>=0.025 else
            "LIKELY_DIAGRAM_OR_LIGHT_CARD"
            if bright>=0.50 and dark<=0.35 else None))
     return {"source_picture_content_eligible":risk is None,
