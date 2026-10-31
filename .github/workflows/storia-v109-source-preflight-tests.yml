@@ -39,6 +39,9 @@ on:
       - "tests/test_storia_rivive_v140_native_raster_queue.py"
       - "src/storia_rivive_v141_live_sd_recheck.py"
       - "tests/test_storia_rivive_v141_live_sd_recheck.py"
+      - "tests/test_storia_rivive_v142_pilot_source.py"
+      - ".github/workflows/storia-v142-constantinople-source-audit.yml"
+      - "queue/storia_rivive_candidates_v58.json"
   workflow_dispatch:
 permissions:
   contents: read
@@ -81,7 +84,8 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v136_source_decision.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v140_native_raster_queue.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v141_live_sd_recheck.py" -v
-      - name: V140 run actual three-hour CLI with full current research queue
+          python -m unittest discover -s tests -p "test_storia_rivive_v142_pilot_source.py" -v
+      - name: V142 real 3-hour research queue selects new source without any credits
         shell: bash
         run: |
           set -euo pipefail
@@ -90,14 +94,15 @@ jobs:
           import json
           from pathlib import Path
           p=json.loads(Path("/tmp/STORIA_V140_WORK_ORDER.json").read_text())
-          assert p["status"]=="SOURCE_RESEARCH_SKIPPED_NO_NATIVE_HD_CANDIDATES",p
-          assert p["skip_source_acquisition"] is True,p
+          assert p["status"]=="SOURCE_PREFLIGHT_REVIEW_REQUIRED",p
+          assert p["episode_id"]=="constantinople_messter_1916",p
+          assert p["skip_source_acquisition"] is False,p
           assert len(p["excluded_sha_bound_sources"])==3,p
           assert len(p["excluded_low_native_raster_sources"])==7,p
           assert p["paid_api_call_permitted"] is False,p
           assert p["publish_permitted"] is False,p
           assert p["video_completed"] is False,p
-          print("V140_REAL_QUEUE_NO_DOWNLOAD",p["status"],"3_qa_rejections","7_sd_origins","0_credits")
+          print("V142_REAL_QUEUE_NEW_SOURCE",p["episode_id"],p["status"],"3_qa_rejections","7_sd_origins","0_credits")
           PY
 
 
