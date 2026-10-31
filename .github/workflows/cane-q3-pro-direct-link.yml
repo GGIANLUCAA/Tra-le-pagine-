@@ -1,0 +1,43 @@
+name: "Cane Q3 Pro · Download MP4 diretto temporaneo"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/cane_q3_direct_link/*.json"
+permissions:
+  contents: read
+jobs:
+  fetch_provider_link:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Fetch only existing Q3 Pro creation URL with GET (zero credits)"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import urllib.request,urllib.parse,os,json,pathlib
+          task="1014224563153682432"
+          k=os.environ.get("VIDU_API_KEY","")
+          if not k:raise SystemExit("Missing API credentials")
+          req=urllib.request.Request("https://api.vidu.com/ent/v2/tasks/"+task+"/creations",headers={"Authorization":"Token "+k,"Accept":"application/json"})
+          with urllib.request.urlopen(req,timeout=40) as r:j=json.loads(r.read(1300000))
+          if j.get("state")!="success":raise SystemExit("Vidu provider task not successful")
+          creations=j.get("creations") or []
+          url=creations[0].get("url","") if creations else ""
+          p=urllib.parse.urlparse(url)
+          if p.scheme!="https" or not p.netloc:raise SystemExit("No valid video URL")
+          pathlib.Path("private_output").mkdir(exist_ok=True)
+          payload={"model":"viduq3-pro","task_id":task,"temporary_direct_mp4_url":url,"visibility":"only private Actions artifact","new_credits_used":0}
+          pathlib.Path("private_output/CANE_Q3_PRO_LINK_PRIVATO.json").write_text(json.dumps(payload))
+          print("Q3_PRO_LINK_RECEIVED_PRIVATE_ARTIFACT_ONLY",task)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CANE_Q3_PRO_DOWNLOAD_LINK_PRIVATO
+          path: private_output/CANE_Q3_PRO_LINK_PRIVATO.json
+          retention-days: 2
+          if-no-files-found: error
