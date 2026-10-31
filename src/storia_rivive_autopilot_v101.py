@@ -28,7 +28,43 @@ def candidate_issues(c):
         issues.append("NATIVE_VIDEO_FACE_AND_CROP_REVIEW_PENDING")
     return issues
 
-def build_work_order(bank,now,profile):
+
+def rejected_source_ids(entries, registry):
+    """Exclude only a source with exact ID+page and a documented film SHA.
+
+    A stale registry entry must fail closed rather than silently exclude a
+    changed source or approve a different video. Evidence is research-only.
+    """
+    if registry is None:
+        return set()
+    if (not isinstance(registry, dict)
+            or registry.get("version") != "V133_SHA_BOUND_SOURCE_REJECTIONS"
+            or not isinstance(registry.get("rejected"), list)):
+        raise ValueError("V133_REJECTION_REGISTRY_INVALID")
+    by_id = {c["id"]: c for c in entries}
+    excluded = set()
+    for row in registry["rejected"]:
+        if not isinstance(row, dict):
+            raise ValueError("V133_REJECTION_ENTRY_INVALID")
+        ident = row.get("candidate_id")
+        if (not isinstance(ident, str) or ident not in by_id
+                or ident in excluded):
+            raise ValueError("V133_REJECTION_UNKNOWN_OR_DUPLICATE_ID")
+        if row.get("source_page") != by_id[ident].get("source_page"):
+            raise ValueError("V133_STALE_REJECTION_SOURCE_CHANGED")
+        if (not isinstance(row.get("film_sha256"), str)
+                or not re.fullmatch(r"[0-9a-f]{64}", row["film_sha256"])
+                or row.get("audit_status") != "SOURCE_REJECTED_V132_INSUFFICIENT_DIVERSITY_AFTER_VETO"
+                or not isinstance(row.get("reason"), str)
+                or len(row["reason"].strip()) < 16
+                or not isinstance(row.get("evidence_url"), str)
+                or not row["evidence_url"].startswith(
+                    "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/")):
+            raise ValueError("V133_REJECTION_EVIDENCE_INVALID")
+        excluded.add(ident)
+    return excluded
+
+def build_work_order(bank,now,profile,rejections=None):
     slot=slot_at(now)
     entries=bank.get("candidates",[])
     if not isinstance(entries,list) or not entries: raise ValueError("No candidates")
@@ -39,8 +75,13 @@ def build_work_order(bank,now,profile):
     if any(not isinstance(i,str) or not re.fullmatch("[a-z0-9_]{6,64}",i) for i in ids):
         raise ValueError("Invalid candidates")
     if len(set(ids))!=len(ids): raise ValueError("Duplicate candidate")
-    c=entries[(int(slot.timestamp())//10800)%len(entries)]
-    issues=candidate_issues(c)
+    excluded = rejected_source_ids(entries, rejections)
+    eligible = [c for c in entries if c["id"] not in excluded]
+    no_source = not eligible
+    c = (eligible[(int(slot.timestamp())//10800)%len(eligible)] if eligible else
+         {"id": "no_eligible_source", "title": None, "source_page": None})
+    issues = (["NO_ELIGIBLE_SOURCE_AFTER_SHA_BOUND_REJECTIONS"] if no_source
+              else candidate_issues(c))
     flag=profile.get("historical_flags",{}).get(c["id"])
     title={"place":None,"year":c.get("year"),"flag":None,"flag_status":"OMITTED_UNTIL_VERIFIED"}
     if isinstance(flag,dict) and flag.get("historical_reviewed") is True and flag.get("supported_by_renderer") is True:
@@ -48,6 +89,8 @@ def build_work_order(bank,now,profile):
     return {"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
       "cycle_utc":slot.isoformat(),"cycle_id":"storia-"+slot.strftime("%Y%m%d-%H%M"),
       "episode_id":c["id"],"subject":c.get("title"),"source_page":c.get("source_page"),
+      "excluded_sha_bound_sources":sorted(excluded),
+      "skip_source_acquisition":no_source,
       "source_license_claim":c.get("license"),"title":title,
       "requested_scenes":{"classic_real_i2i_photos":4,"source_locked_vidu":1},
       "future_vidu_max_after_gate_update":2,"duration_range_seconds":[14,35],
@@ -55,7 +98,9 @@ def build_work_order(bank,now,profile):
       "paid_api_call_permitted":False,"credits_spent":0,"publish_permitted":False,
       "golden_reference":"SF1906 V98 SHA256 b20726893e067bbae493859ae1c51379c4abab8c2c8768d5c6f2d4ab324b47a8",
       "required_quality_gates":["V91","V94","V96","V99"],"blocking_issues":issues,
-      "status":"SOURCE_PREFLIGHT_REVIEW_REQUIRED" if issues else "READY_FOR_ASSET_ACQUISITION_NOT_RENDER",
+      "status":("SOURCE_REJECTED_ALL_KNOWN" if no_source else
+                "SOURCE_PREFLIGHT_REVIEW_REQUIRED" if issues else
+                "READY_FOR_ASSET_ACQUISITION_NOT_RENDER"),
       "video_completed":False,"human_approved":False,
       "note":"Repeated queue item is a research candidate, never automatically a distinct finished episode."}
 
@@ -63,11 +108,13 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument("--bank",default="queue/storia_rivive_candidates_v58.json")
     p.add_argument("--profile",default="config/storia_rivive_autopilot_v101.json")
+    p.add_argument("--rejections",default="config/storia_rivive_v133_rejected_films.json")
     p.add_argument("--now",required=True)
     p.add_argument("--out",required=True)
     a=p.parse_args()
     data=build_work_order(json.loads(Path(a.bank).read_text(encoding="utf-8")),a.now,
-                          json.loads(Path(a.profile).read_text(encoding="utf-8")))
+                          json.loads(Path(a.profile).read_text(encoding="utf-8")),
+                          json.loads(Path(a.rejections).read_text(encoding="utf-8")))
     out=Path(a.out);out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"cycle":data["cycle_id"],"candidate":data["episode_id"],
