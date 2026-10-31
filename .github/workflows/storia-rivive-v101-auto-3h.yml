@@ -62,10 +62,14 @@ jobs:
           now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           python src/storia_rivive_autopilot_v101.py --now "$now" --out output/storia_v101/WORK_ORDER.json
           python - <<'PY'
-          import json,os
+          import hashlib,json,os
           p=json.load(open("output/storia_v101/WORK_ORDER.json"))
+          page=p.get("source_page")
+          # V135: a candidate ID alone cannot identify a revised Commons film page.
+          page_fingerprint=hashlib.sha256(page.encode("utf-8")).hexdigest()[:16] if isinstance(page,str) else "no-source"
           with open(os.environ["GITHUB_ENV"],"a") as f:
               f.write("STORIA_EPISODE_ID="+p["episode_id"]+"\n")
+              f.write("STORIA_SOURCE_PAGE_SHA256="+page_fingerprint+"\n")
               f.write("STORIA_SOURCE_SKIPPED="+("true" if p.get("skip_source_acquisition") else "false")+"\n")
           print("SOURCE_RESEARCH_ONLY_3H",p["episode_id"],p["status"])
           PY
@@ -75,7 +79,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v7-native-raster-preflight-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v8-source-page-${{ env.STORIA_EPISODE_ID }}-${{ env.STORIA_SOURCE_PAGE_SHA256 }}
       - name: Fetch bounded original film and make genuine B/W contact sheet
         if: env.STORIA_SOURCE_SKIPPED != 'true' && steps.film_cache.outputs.cache-hit != 'true'
         shell: bash
@@ -90,6 +94,7 @@ jobs:
           set -euo pipefail
           python src/storia_rivive_v134_cache_readiness.py \
             --cache-dir "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
+            --order output/storia_v101/WORK_ORDER.json \
             --out output/storia_v101/SOURCE_READINESS_V134.json
           python - <<'PY'
           import json,os
@@ -104,7 +109,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v7-native-raster-preflight-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v8-source-page-${{ env.STORIA_EPISODE_ID }}-${{ env.STORIA_SOURCE_PAGE_SHA256 }}
       - name: Rank actual native-resolution source frames without claiming facial identity
         if: env.STORIA_SOURCE_SKIPPED != 'true' && steps.scout_status.outputs.ready == 'true'
         shell: bash

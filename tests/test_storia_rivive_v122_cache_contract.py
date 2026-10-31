@@ -23,7 +23,11 @@ class V122ArchivalCacheContract(unittest.TestCase):
         )
         self.assertEqual(len(keys), 2, "Expected exactly one restore and one save key")
         self.assertEqual(keys[0], keys[1], "Cache miss every cycle: restore/save key mismatch")
-        self.assertIn("v7-native-raster-preflight", keys[0])
+        self.assertIn("v8-source-page", keys[0])
+        self.assertIn("STORIA_EPISODE_ID", keys[0])
+        self.assertIn("STORIA_SOURCE_PAGE_SHA256", keys[0])
+        self.assertIn('hashlib.sha256(page.encode("utf-8"))', self.workflow)
+        self.assertIn("--order output/storia_v101/WORK_ORDER.json", self.workflow)
 
     def test_restore_and_save_share_same_candidate_directory(self):
         paths = re.findall(
