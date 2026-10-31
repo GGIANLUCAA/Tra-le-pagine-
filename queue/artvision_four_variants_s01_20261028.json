@@ -1504,6 +1504,50 @@
             "android_playback_verified": false,
             "artistic_approval_v25": false,
             "evidence": "docs/productions/2026-10-31-artvision-klimt-cinema-v92-real-mp4-readback.md"
+          },
+          "v96_nondestructive_revision": {
+            "version": "V96",
+            "date": "2026-10-31",
+            "same_slot_revision": true,
+            "status": "rendered_verified_library_readback_pending_owner_artistic_review",
+            "source_v92_sha256": "abc53905dda19f66e3bed9bed4bfc96e7627c583b52ca976dbff3dc70131cd10",
+            "mp4_name": "Klimt_Cinema_Museum_V96_CLEAN_ENTRY_EXIT_REVIEW.mp4",
+            "mp4_sha256": "ef4c96d6d1882e3288f4105d76983e871f63290bb25d3af66fc7426019237522",
+            "mp4_bytes": 36373510,
+            "duration_seconds": 52,
+            "fps": 20,
+            "frame_count": 1040,
+            "resolution": "720x1280",
+            "codec": "H264/AAC",
+            "audio_aac_bit_identical_to_v92_sha256": "5d68dcdf5cd3ad27e3ecd1bf08ec3f04b3e6929227458bfab18e927820804e9d",
+            "full_ffmpeg_decode_pass": true,
+            "edits": [
+              {
+                "from": 10.5,
+                "to": 11.3,
+                "issue": "museum frame and painting ghost double-exposure",
+                "change": "geometrically aligned zoom-in with no long cross dissolve"
+              },
+              {
+                "from": 41.3,
+                "to": 42.1,
+                "issue": "museum return ghost double-exposure",
+                "change": "geometrically aligned zoom-out without long overlap"
+              }
+            ],
+            "private_library_mp4": "/ArtVision/Klimt/V96_CINEMA_MUSEUM_ENTRY_EXIT/Klimt_Cinema_Museum_V96_CLEAN_ENTRY_EXIT_REVIEW.mp4",
+            "library_download_readback_sha_verified": true,
+            "readback_full_decode_pass": true,
+            "source_v92_preserved": true,
+            "klimt_v92_4x1_zip_unchanged": true,
+            "other_three_slots_unchanged": true,
+            "new_ai_tts_api_calls": 0,
+            "site_import_verified": false,
+            "android_playback_verified": false,
+            "V25_approved": false,
+            "human_full_watch": "pending",
+            "museum_digital_reconstruction_disclosed": true,
+            "evidence": "docs/productions/2026-10-31-artvision-klimt-cinema-museum-v96-ghosting-transition-fix.md"
           }
         }
       },
