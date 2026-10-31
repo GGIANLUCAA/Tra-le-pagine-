@@ -44,6 +44,18 @@ class GatewayChecks(unittest.TestCase):
         v["clip"]["seconds"] = 8
         self.assertEqual(g.quote(v), 22)
 
+    def test_personal_10_seconds_isolated_from_production(self):
+        personal = payload()
+        personal["format"] = "personale"
+        personal["clip"]["seconds"] = 10
+        personal["clip"]["color_reveal_first_second"] = False
+        g.validate_common(personal)
+        self.assertEqual(g.quote(personal), 26)
+        standard = payload()
+        standard["clip"]["seconds"] = 10
+        with self.assertRaises(g.GateError):
+            g.validate_common(standard)
+
     def test_wrong_photo_rejected_pre_spend(self):
         v = payload()
         v["source"]["subject_reviewed_by_user"] = False
