@@ -19,5 +19,12 @@
   "approve_gold_v25": false,
   "change_old_20_slots": false,
   "auto_start_next_work": false,
-  "site_import_requires_genuine_fileParams": true
+  "site_import_requires_genuine_fileParams": true,
+  "retry": {
+    "attempt": 2,
+    "reason": "GitHub Actions run 41209993018 failed because ffmpeg was not installed; fixed via bundled imageio-ffmpeg in commit ac54319583f84e3f2ff2373ada9f94752b0a9693",
+    "previous_run_id": 41209993018,
+    "only_two_cinema_candidates": true,
+    "no_paid_api_calls": true
+  }
 }
