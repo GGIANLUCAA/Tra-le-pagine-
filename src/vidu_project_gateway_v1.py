@@ -101,8 +101,12 @@ def validate_common(data):
         raise GateError("PRECISE_PHYSICAL_MOTION_PROMPT_REQUIRED")
     if clip.get("model") != "viduq2-pro-fast" or clip.get("resolution") != "720p":
         raise GateError("ONLY_VERIFIED_Q2_PRO_FAST_720P_PRESET")
-    if type(clip.get("seconds")) is not int or not 2 <= clip["seconds"] <= 8:
-        raise GateError("DURATION_MUST_BE_BETWEEN_2_AND_8")
+    # Solo la pagina PERSONALE puo' richiedere 9–10 s.
+    # Nessuna estensione delle regole delle produzioni storiche/ArtVision.
+    personal = data.get("format") == "personale"
+    duration_max = 10 if personal else 8
+    if type(clip.get("seconds")) is not int or not 2 <= clip["seconds"] <= duration_max:
+        raise GateError("DURATION_MUST_BE_BETWEEN_2_AND_" + str(duration_max))
     if clip.get("off_peak") is not False:
         raise GateError("ONLY_NORMAL_PRICING_VERIFIED_IN_V1")
     if clip.get("audio") is not False:
@@ -110,7 +114,7 @@ def validate_common(data):
     if clip.get("color_reveal_first_second") not in (True, False):
         raise GateError("EXPLICIT_COLOR_REVEAL_SETTING_REQUIRED")
     format_name = data.get("format")
-    if format_name not in ("storia_rivive", "artvision", "tra_le_pagine", "effetti_wow"):
+    if format_name not in ("storia_rivive", "artvision", "tra_le_pagine", "effetti_wow", "personale"):
         raise GateError("FORMAT_MUST_BE_EXPLICIT")
 
 
