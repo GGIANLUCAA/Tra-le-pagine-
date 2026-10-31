@@ -1,5 +1,12 @@
 name: "La Storia Rivive V109 · source-native preflight tests (offline)"
 on:
+  # V130: temporary research-branch CI, no schedule, POST, I2I or publishing.
+  # Remove this branch-only trigger before integrating into main.
+  push:
+    branches:
+      - "storia-v126-near-duplicate-guard-20261031"
+    paths:
+      - ".github/workflows/storia-v109-source-preflight-tests.yml"
   pull_request:
     paths:
       - "src/storia_rivive_autopilot_v101.py"
