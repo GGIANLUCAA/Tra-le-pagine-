@@ -27,10 +27,10 @@ def validate_preview_package(directory: Path) -> dict:
     # A non-empty placeholder is not an image or video. Reject invalid signatures
     # even when JSON reports claim a technical pass.
     signatures = {
-        "SUBJECT_MASK.png": lambda b: b.startswith(b"\\x89PNG\\r\\n\\x1a\\n"),
-        "MASK_BEFORE_RENDER.jpg": lambda b: b.startswith(b"\\xff\\xd8\\xff"),
-        "VIDEO_CONTACT_SHEET.jpg": lambda b: b.startswith(b"\\xff\\xd8\\xff"),
-        "COVER.jpg": lambda b: b.startswith(b"\\xff\\xd8\\xff"),
+        "SUBJECT_MASK.png": lambda b: b.startswith(b"\x89PNG\r\n\x1a\n"),
+        "MASK_BEFORE_RENDER.jpg": lambda b: b.startswith(b"\xff\xd8\xff"),
+        "VIDEO_CONTACT_SHEET.jpg": lambda b: b.startswith(b"\xff\xd8\xff"),
+        "COVER.jpg": lambda b: b.startswith(b"\xff\xd8\xff"),
         "WOW_LAB_PREVIEW.mp4": lambda b: len(b) >= 12 and b[4:8] == b"ftyp",
     }
     for name, check in signatures.items():
