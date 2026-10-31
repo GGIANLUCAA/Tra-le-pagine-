@@ -1,0 +1,29 @@
+{
+  "version": "V153_KNOWN_I2I_ARTISTIC_REJECTS_V1",
+  "purpose": "Negative-example registry: prevent a technically passing but visually suspect AI reconstruction from being used as an approved source-locked photograph.",
+  "not_a_user_approval": true,
+  "production_rights_italy_verified": false,
+  "entries": [
+    {
+      "scene": 2,
+      "source_id": "girl_cat_1900",
+      "source_frame_sha256": "37da59961c75fddea7609ab2d29302f0171dd2c45f9e823ebc8059b7ab810534",
+      "source_crop_sha256": "209320b0bcf9b734e28f5160542c6d99a4043dedf09d0ed36e84833d4a367b25",
+      "ai_photo_sha256": "9f6f4d33618a8e4a85d8cb6304983d05f822bdb9eb30bab8828eeabad5e04614",
+      "model": "finegrain/finegrain-image-enhancer",
+      "technical_luma_correlation": 0.9988,
+      "technical_saturation_mean": 47.53,
+      "inspection": "ASSISTANT_VISUAL_REVIEW_REJECT_NOT_HUMAN_APPROVAL",
+      "reasons": [
+        "Possible unsupported extra human-like face or head behind the cat at top of the restored image",
+        "Cat muzzle/eyes/fur visibly reinterpreted rather than proven from original pixels",
+        "Child facial features appear generatively reconstructed and need rigorous identity-preservation QA"
+      ],
+      "pilot_reuse_permitted": false,
+      "serial_production_permitted": false,
+      "social_or_site_publication_permitted": false,
+      "artifact_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41232282689/artifacts/13054570645",
+      "note": "Technical correlation measures coarse geometry, not fidelity of face/count/animal identity. The 4.567s MP4 is an experimental technical sample, not a usable restored chapter."
+    }
+  ]
+}
