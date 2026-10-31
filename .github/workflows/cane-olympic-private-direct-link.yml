@@ -1,0 +1,43 @@
+name: "Cane Olimpico · Link MP4 temporaneo diretto (solo GET)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/cane_olympic_direct/*.json"
+permissions:
+  contents: read
+jobs:
+  retrieve_direct:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Get-only Vidu creation URL privately, never print to logs or GitHub branch"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import urllib.request,json,pathlib,os,urllib.parse
+          task="1014198829395775488"
+          key=os.getenv('VIDU_API_KEY')
+          if not key:raise SystemExit("VIDU secret missing")
+          req=urllib.request.Request('https://api.vidu.com/ent/v2/tasks/'+task+'/creations',headers={'Authorization':'Token '+key,'Accept':'application/json'})
+          with urllib.request.urlopen(req,timeout=40) as resp:data=json.loads(resp.read(1500000))
+          state=data.get('state')
+          pathlib.Path('private_output').mkdir(exist_ok=True)
+          if state!='success':raise SystemExit('VIDEO_NOT_READY_NO_PAID_RETRY')
+          url=(data.get('creations') or [{}])[0].get('url')
+          p=urllib.parse.urlparse(url or '')
+          if p.scheme!='https' or not p.netloc:raise SystemExit('MISSING_MP4_URL')
+          payload={'task_id':task,'state':'success','temporary_direct_mp4_url':url,'note':'Treat this as private temporary signed CDN link. Do not publish link to repository or log.'}
+          pathlib.Path('private_output/VIDU_DIRECT_TEMPORARY_LINK.json').write_text(json.dumps(payload,indent=2))
+          print('VIDU_PERSONAL_DIRECT_URL_SAVED_TO_PRIVATE_ARTIFACT_ONLY',task)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CANE_OLIMPICO_VIDEO_LINK_PRIVATO
+          path: private_output/VIDU_DIRECT_TEMPORARY_LINK.json
+          retention-days: 2
+          if-no-files-found: error
