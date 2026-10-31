@@ -117,7 +117,7 @@ jobs:
   v141_real_commons_metadata_smoke:
     # Run real FREE Commons metadata reads on the V141 PR only. No archive
     # download, image generation, Vidu POST, publication or credentials.
-    if: github.event_name == 'pull_request' && contains(github.event.pull_request.title, 'V141')
+    if: github.event_name == 'pull_request' && (contains(github.event.pull_request.title, 'V141') || contains(github.event.pull_request.title, 'V145'))
     runs-on: ubuntu-latest
     timeout-minutes: 8
     permissions:
@@ -144,6 +144,10 @@ jobs:
           assert p["contract"]=="V141_COMMONS_SD_LIVE_RECHECK_RESEARCH_ONLY"
           assert p["checked_count"]==7 and len(p["sources"])==7
           assert len({row["candidate_id"] for row in p["sources"]})==7
+          assert p["v145_content_fingerprint_inventory"] is True
+          assert all("original_content_identity" in row for row in p["sources"])
+          assert p["same_raster_original_bytes_verified"] is False or all(
+              row["original_content_identity"]=="MATCH" for row in p["sources"])
           assert not any(p[k] for k in ("source_acquisition_permitted",
               "i2i_permitted","vidu_post_permitted","publication_permitted"))
           allowed={"ALL_LOW_RASTER_SNAPSHOTS_CURRENT",
