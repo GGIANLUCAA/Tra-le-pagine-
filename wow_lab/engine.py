@@ -730,12 +730,12 @@ def run(args):
     from package_gate import validate_preview_package
     package_check = validate_preview_package(out)
     (out/"PACKAGE_GATE.json").write_text(
-        json.dumps(package_check,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+        json.dumps(package_check,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     if not package_check["technical_preview_package_pass"]:
         (out/"REJECTED_REPORT.json").write_text(
             json.dumps({"status":"incomplete_preview_package",
                         "reasons":package_check["reasons"],
-                        "artistic_approval":False},ensure_ascii=False,indent=2)+"\\n",
+                        "artistic_approval":False},ensure_ascii=False,indent=2)+"\n",
             encoding="utf-8")
         print("WOW_LAB_PACKAGE_REJECTED: "+",".join(package_check["reasons"]),file=sys.stderr)
         return 2
