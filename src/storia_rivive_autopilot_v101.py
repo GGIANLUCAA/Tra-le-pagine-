@@ -54,7 +54,9 @@ def rejected_source_ids(entries, registry):
             raise ValueError("V133_STALE_REJECTION_SOURCE_CHANGED")
         if (not isinstance(row.get("film_sha256"), str)
                 or not re.fullmatch(r"[0-9a-f]{64}", row["film_sha256"])
-                or row.get("audit_status") != "SOURCE_REJECTED_V132_INSUFFICIENT_DIVERSITY_AFTER_VETO"
+                or row.get("audit_status") not in (
+                    "SOURCE_REJECTED_V132_INSUFFICIENT_DIVERSITY_AFTER_VETO",
+                    "SOURCE_REJECTED_V136_INSUFFICIENT_MOTION_VARIETY")
                 or not isinstance(row.get("reason"), str)
                 or len(row["reason"].strip()) < 16
                 or not isinstance(row.get("evidence_url"), str)
