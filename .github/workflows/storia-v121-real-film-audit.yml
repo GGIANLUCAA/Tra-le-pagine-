@@ -77,6 +77,15 @@ jobs:
             --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
             --rank output/storia_v121_real/adaptive/ADAPTIVE_RANK_V124.json \
             --out output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json
+      - name: V126 build conservative five-moving-shot review only (zero API)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v126_balanced_motion_review.py \
+            --motion output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json \
+            --rank output/storia_v121_real/adaptive/ADAPTIVE_RANK_V124.json \
+            --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
+            --out output/storia_v121_real/adaptive/FIVE_MOVING_REVIEW_V126.json
       - name: Record physical evidence, never label the result as approved
         shell: bash
         run: |
@@ -91,6 +100,9 @@ jobs:
           adaptive=json.loads(adaptive_path.read_text(encoding="utf-8")) if adaptive_path.is_file() else {"status":"V124_NOT_RUN"}
           motion_path=root/"adaptive"/"REAL_BW_MOTION_V125.json"
           motion=json.loads(motion_path.read_text(encoding="utf-8")) if motion_path.is_file() else {"status":"V125_NOT_RUN"}
+          review_path=root/"adaptive"/"FIVE_MOVING_REVIEW_V126.json"
+          review=json.loads(review_path.read_text(encoding="utf-8")) if review_path.is_file() else {"status":"V126_NOT_RUN"}
+
 
 
           rank_path=root/"FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json"
@@ -111,6 +123,10 @@ jobs:
               "bw_motion_evidence_status":motion.get("status"),
               "bw_moving_photo_candidates":motion.get("source_motion_candidates_pass",0),
               "bw_source_5_review_frame_files":[r["filename"] for r in motion.get("five_review_shots",[])],
+              "v126_five_moving_review_status":review.get("status"),
+              "v126_five_moving_review_frames":[r["filename"] for r in review.get("five_review_candidates",[])],
+              "v126_human_artistic_approved":False,
+
 
 
               "eligible_pre_freeze_source_windows":rank.get("eligible_pre_freeze_source_windows",0),
@@ -147,6 +163,7 @@ jobs:
             output/storia_v121_real/adaptive/SCOUT_REPORT.json
             output/storia_v121_real/adaptive/ADAPTIVE_CONTACT_SHEET_V124.jpg
             output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json
+            output/storia_v121_real/adaptive/FIVE_MOVING_REVIEW_V126.json
 
           retention-days: 14
           if-no-files-found: warn
