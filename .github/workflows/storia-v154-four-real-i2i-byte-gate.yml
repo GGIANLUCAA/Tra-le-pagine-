@@ -1,0 +1,93 @@
+name: La Storia Rivive V154 | offline four-I2I asset source-lock gate
+on:
+  pull_request:
+    paths:
+      - 'src/storia_rivive_v154_i2i_four_asset_gate.py'
+      - 'tests/test_storia_rivive_v154_i2i_four_asset_gate.py'
+      - '.github/workflows/storia-v154-four-real-i2i-byte-gate.yml'
+permissions:
+  contents: read
+jobs:
+  offline_no_spend_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Pillow only (no model, no API credentials)
+        run: python -m pip install -q 'pillow>=10,<13'
+      - name: Verify 12 fail-closed provenance tests on synthetic PNG bytes
+        run: python -m unittest discover -s tests -p 'test_storia_rivive_v154_i2i_four_asset_gate.py' -v
+
+  real_bytes_regression_from_existing_artifacts:
+    # One read-only proof on PR creation. The old artifacts have a retention
+    # period; do not turn a later expiration into a recurring CI failure.
+    if: github.event.action == 'opened' && github.head_ref == 'storia-v154-four-i2i-provenance-gate-20261031'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Pillow and GitHub CLI only (no AI provider)
+        run: python -m pip install -q 'pillow>=10,<13'
+      - name: Read existing authentic V151 PNG bytes and known-rejected V153 I2I
+        run: |
+          set -euo pipefail
+          mkdir -p output/v154_existing_v151 output/v154_existing_v153
+          gh run download 41229046627 --repo GGIANLUCAA/Tra-le-pagine- \
+            --name STORIA_V151_FIVE_REAL_ORIGINAL_FREEZES_I2I_INPUTS_NOT_GENERATED_41229046627 \
+            --dir output/v154_existing_v151
+          gh run download 41232282689 --repo GGIANLUCAA/Tra-le-pagine- \
+            --name STORIA_V153_ONE_FREE_REAL_I2I_CAT_REVIEW_ONLY_41232282689 \
+            --dir output/v154_existing_v153
+      - name: Verify all five original PNG SHA and reject the REAL V153 hallucination-risk photo
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, shutil
+          from pathlib import Path
+          from src.storia_rivive_v154_i2i_four_asset_gate import audit
+          root=Path('output/v154_existing_v151')
+          h=json.loads((root/'V151_SOURCE_LOCKED_HANDOFF.json').read_text())
+          negatives=json.loads(Path('config/storia_rivive_v153_rejected_i2i_samples.json').read_text())
+          candidate={'version':'V154','source_handoff_version':'V151',
+                     'rights_italy_verified':False,'human_artistic_approval':False,
+                     'publish_permitted':False,'jobs':[]}
+          report=audit(h,candidate,root,negatives)
+          assert report['missing_i2i_scenes']==[1,2,3,4]
+          assert report['real_i2i_photo_files_sha_verified']==0
+          assert not report['master_eligible']
+          print('V154_REAL_SOURCE_BYTES_VERIFIED_FIVE; I2I still missing, 0 paid')
+          photo=Path('output/v154_existing_v153/SCENE02_FREE_I2I_CANDIDATE.png')
+          assert photo.is_file(), 'V154_REAL_REJECTED_PHOTO_MISSING'
+          shutil.copyfile(photo,root/'V153_KNOWN_BAD_SAMPLE.png')
+          row=h['freeze_frames'][1]
+          candidate['jobs']=[{
+            'scene':2,'source_id':row['source_id'],
+            'source_frame_sha256':row['native_original_frame_sha256'],
+            'source_crop_sha256':row['vertical_review_sha256'],
+            'source_crop_file':row['vertical_review_file'],
+            'restored_photo_file':'V153_KNOWN_BAD_SAMPLE.png',
+            'restored_photo_sha256':negatives['entries'][0]['ai_photo_sha256'],
+            'method':'generative_image_to_image',
+            'model':'finegrain/finegrain-image-enhancer',
+            'provider_request_reference':'existing-v153-one-shot',
+            'human_visual_review':'pending',
+            'rights_italy_verified':False,'artistically_approved':False}]
+          try:
+            audit(h,candidate,root,negatives)
+          except ValueError as e:
+            assert 'V154_KNOWN_ARTISTICALLY_REJECTED_I2I_SHA' in str(e),str(e)
+          else:
+            raise AssertionError('V154_FAILED_TO_REJECT_REAL_V153_KNOWN_BAD_IMAGE')
+          print('V154_REAL_REJECTED_IMAGE_BLOCKED_BY_SHA; no new AI/VIDU calls')
+          PY
