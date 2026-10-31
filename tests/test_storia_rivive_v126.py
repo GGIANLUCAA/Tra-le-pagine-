@@ -46,7 +46,7 @@ def fixture():
             "changed_pairs":changed,"sample_count":11,
             "max_spatial_pixel_delta":spatial,**window})
     scout={"original_sha256":FILM_SHA,"frame_provenance_source_sha256":FILM_SHA,
-        "frame_provenance":provenance}
+        "duration_s":524.96,"frame_provenance":provenance}
     rank={"adaptive_frame_source_sha256":FILM_SHA,
         "adaptive_review_only_not_camera_approval":True,
         "all_candidates":ranked}
@@ -78,10 +78,10 @@ class TestV126Balanced(unittest.TestCase):
 
     def test_one_or_two_time_regions_not_enough(self):
         motion,rank,scout=fixture()
-        for i,row in enumerate(scout["frame_provenance"]):
-            row["source_pts_time_s"]=425+i*13
-            rank["all_candidates"][i]["source_visual_quality_score"]=.7
-            motion["motion_audit"][i]["source_time_s"]=row["source_pts_time_s"]
+        # Preserve real PTS but make the simulated film much longer, putting
+        # all eight distinct moving samples in its first timeline region.
+        motion["source_duration_s"]=3000.0
+        scout["duration_s"]=3000.0
         result=choose_balanced_review(motion,rank,scout)
         self.assertEqual(result["status"],"V126_INSUFFICIENT_MOTION_SCENE_VARIETY")
         self.assertEqual(result["five_review_candidates"],[])
@@ -104,6 +104,13 @@ class TestV126Balanced(unittest.TestCase):
         motion,rank,scout=fixture()
         motion["motion_audit"][4]["source_pts"]=2
         with self.assertRaisesRegex(ValueError,"MOTION_PTS_OR_SEGMENT_MISMATCH"):
+            choose_balanced_review(motion,rank,scout)
+
+    def test_forged_original_clock_fails_even_if_motion_report_is_consistent(self):
+        motion,rank,scout=fixture()
+        scout["frame_provenance"][1]["source_pts_time_s"]+=0.1
+        motion["motion_audit"][1]["source_time_s"]+=0.1
+        with self.assertRaisesRegex(ValueError,"FRAME_NATIVE_PTS_CLOCK_MISMATCH"):
             choose_balanced_review(motion,rank,scout)
 
     def test_fake_motion_pass_below_decoding_threshold_is_not_accepted(self):
