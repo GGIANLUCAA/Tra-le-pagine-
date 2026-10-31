@@ -1,0 +1,25 @@
+{
+  "schema": "artvision-critico-offline-recover-v103",
+  "work_id": "bocklin_isle_of_dead_1883_berlin_ng2_80",
+  "date": "2026-10-31",
+  "reason": "Gacrux WAV generated successfully once in run 41231258203 but renderer failed after faster-whisper/PyAV19 metadata_errors incompatibility; recover with av17, no Google call",
+  "original_voice_run": 41231258203,
+  "original_voice_artifact": 13053872125,
+  "original_genuine_wav_sha256": "f567835c07ae952c5d7390122f08ad44a2e3d99d694592ec04de8a30bc6821e5",
+  "original_genuine_wav_duration_seconds": 98.64,
+  "original_genuine_voice": "Gacrux",
+  "offline_asr_minimum_match": 0.85,
+  "expected_new_mp4_slots": [
+    "critico_standard",
+    "critico_museum"
+  ],
+  "GoogleTTS_call_count_for_this_recovery": 0,
+  "workflow_injects_no_gemini_secret": true,
+  "no_AI_API_calls": true,
+  "no_paid_expenses": true,
+  "no_sixth_artwork_changes": true,
+  "no_seventh_artwork": true,
+  "previous_two_cinema_immutable": true,
+  "existing_twenty_slots_immutable": true,
+  "Gold_V25": false
+}
