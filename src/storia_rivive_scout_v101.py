@@ -16,7 +16,7 @@ def metadata(page):
     title=unquote(u.path[len("/wiki/"):]).replace("_"," ")
     uri="https://commons.wikimedia.org/w/api.php?"+urlencode({
         "action":"query","format":"json","formatversion":"2","titles":title,
-        "prop":"imageinfo","iiprop":"url|size|extmetadata"})
+        "prop":"imageinfo","iiprop":"url|size|sha1|extmetadata"})
     with urlopen(Request(uri,headers={"User-Agent":USER_AGENT}),timeout=30) as response:
         data=json.load(response)
     pages=data.get("query",{}).get("pages",[])
@@ -31,6 +31,10 @@ def metadata(page):
             # never infer HD from a display thumbnail, filename or AI upscaling.
             "original_width_px":info.get("width"),
             "original_height_px":info.get("height"),
+            # V145: public Commons ORIGINAL content fingerprint; no film download.
+            # Absent/malformed SHA1 must never count as proof of unchanged bytes.
+            "original_sha1": (info.get("sha1").lower() if isinstance(info.get("sha1"),str)
+                              and re.fullmatch(r"[0-9a-fA-F]{40}",info["sha1"]) else None),
             "license_metadata":info.get("extmetadata",{}).get("LicenseShortName",{}).get("value","UNKNOWN"),
             "historical_rights_italy_approved":False,"social_publish_permitted":False}
 
