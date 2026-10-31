@@ -1,0 +1,37 @@
+name: "La Storia Rivive V109 · source-native preflight tests (offline)"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_autopilot_v101.py"
+      - "src/storia_rivive_scout_v101.py"
+      - "src/storia_rivive_shot_boundaries_v113.py"
+      - "src/storia_rivive_frame_rank_v101.py"
+      - "src/storia_rivive_i2i_prepare_v102.py"
+      - "tests/test_storia_rivive_v101.py"
+      - ".github/workflows/storia-rivive-v101-auto-3h.yml"
+      - ".github/workflows/storia-v109-source-preflight-tests.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline_preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install offline image test dependency
+        run: python -m pip install -q "pillow>=10,<13"
+      - name: Install FFmpeg for real PTS re-decode regression (no API)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          ffmpeg -version
+          ffprobe -version
+      - name: Compile source-preflight modules
+        run: |
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_shot_boundaries_v113.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py
+      - name: Regression tests - no paid API, no network, no social publication
+        run: python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v

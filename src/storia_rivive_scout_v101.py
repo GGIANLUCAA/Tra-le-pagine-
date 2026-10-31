@@ -2,7 +2,7 @@
 """V101: bounded archival film scout. No image-generation or paid providers.
 Media, copyright and identity require independent review before production.
 """
-import argparse,hashlib,json,subprocess
+import argparse,hashlib,json,math,re,subprocess
 from pathlib import Path
 from urllib.parse import urlparse,unquote,urlencode
 from urllib.request import urlopen,Request
@@ -30,6 +30,57 @@ def metadata(page):
             "license_metadata":info.get("extmetadata",{}).get("LicenseShortName",{}).get("value","UNKNOWN"),
             "historical_rights_italy_approved":False,"social_publish_permitted":False}
 
+def extract_pts_locked_frames(film, frames, duration):
+    """Sample native decoded frames without rewriting original PTS via an fps filter.
+
+    showinfo runs AFTER timestamp-preserving select. Its pts/pts_time identify
+    the actual decoded archival frame that produced each PNG. This is evidence
+    of the FFmpeg decode, not independent re-decoding or a camera-cut review.
+    """
+    period=max(1.0,duration/12)
+    expression="select='isnan(prev_selected_t)+gte(t,prev_selected_t+"+str(round(period,6))+")',showinfo"
+    result=subprocess.run([
+        "ffmpeg","-nostdin","-y","-hide_banner","-loglevel","info",
+        "-i",str(film),"-an","-sn","-vf",expression,
+        "-fps_mode","vfr","-frames:v","12",str(frames/"frame_%02d.png")
+    ],capture_output=True,text=True,timeout=150,check=True)
+    matches=re.findall(
+        r"\[Parsed_showinfo_\d+\s+@[^\]]+\]\s+n:\s*(\d+)\s+pts:\s*(-?\d+)\s+pts_time:\s*([+-]?(?:\d+(?:\.\d*)?|\.\d+))",
+        result.stderr)
+    bases=re.findall(r"\[Parsed_showinfo_\d+\s+@[^\]]+\]\s+config in time_base:\s*(\d+/\d+)",result.stderr)
+    files=sorted(frames.glob("frame_*.png"))
+    if (not bases or not matches or len(matches)!=len(files) or len(files)<3
+            or len(files)>12):
+        raise ValueError("SOURCE_PTS_PROVENANCE_MISSING_OR_FRAME_COUNT_MISMATCH")
+    records=[]
+    last_pts_time=None
+    last_pts=None
+    for i,(n,pts,t) in enumerate(matches):
+        seconds=float(t)
+        ticks=int(pts)
+        if (int(n)!=i or not math.isfinite(seconds)
+                or (last_pts_time is not None and seconds<=last_pts_time)
+                or (last_pts is not None and ticks<=last_pts)):
+            raise ValueError("SOURCE_PTS_NON_MONOTONIC_OR_INVALID")
+        last_pts_time=seconds
+        last_pts=ticks
+        p=files[i]
+        records.append({
+            "filename":p.name,
+            "sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+            "extraction_index":i,
+            "source_pts":ticks,
+            "source_pts_time_s":seconds,
+            "source_time_base":bases[0],
+            "source_pts_logged_from_decode":True,
+            "sampling_period_s_approx":round(period,6),
+            "exact_source_timecode_verified":False,
+            "historical_camera_shot_verified":False
+        })
+    if records[-1]["source_pts_time_s"]-records[0]["source_pts_time_s"]>duration+2:
+        raise ValueError("SOURCE_PTS_SPAN_EXCEEDS_FILM_DURATION")
+    return records
+
 def inspect(page,outdir):
     outdir.mkdir(parents=True,exist_ok=True)
     m=metadata(page)
@@ -54,19 +105,29 @@ def inspect(page,outdir):
     m["duration_s"]=duration
     frames=outdir/"original_frames";frames.mkdir(exist_ok=True)
     period=max(1.0,duration/12)
-    subprocess.run(["ffmpeg","-nostdin","-y","-v","error","-i",str(film),
-                    "-vf","fps=1/"+str(round(period,4)),
-                    "-frames:v","12",str(frames/"frame_%02d.png")],timeout=150,check=True)
-    files=sorted(frames.glob("frame_*.png"))
-    if len(files)<3:raise ValueError("Not enough real film frames")
+    provenance=extract_pts_locked_frames(film,frames,duration)
+    # V113: independent FFmpeg scene-score pass on real film bytes.
+    # These are cut CANDIDATES, never an assertion of five verified camera shots.
+    from storia_rivive_shot_boundaries_v113 import detect_cut_candidates,segment_for_time
+    shot_analysis=detect_cut_candidates(film,duration,m["original_sha256"])
+    for record in provenance:
+        record["shot_candidate_segment_index"]=segment_for_time(
+            record["source_pts_time_s"],shot_analysis["cut_candidate_times_s"])
+    m["shot_boundary_analysis"]=shot_analysis
+    files=[frames/entry["filename"] for entry in provenance]
     from PIL import Image,ImageDraw
     board=Image.new("RGB",(1440,792),(18,18,18));draw=ImageDraw.Draw(board)
     for k,p in enumerate(files[:12]):
         im=Image.open(p).convert("RGB");im.thumbnail((350,236))
         x=(k%4)*360+4;y=(k//4)*264+4
         board.paste(im,(x,y+23))
-        draw.text((x,y+3),"ORIGINAL t~"+str(round(k*period,1))+"s",fill=(240,240,240))
+        draw.text((x,y+3),"ORIGINAL t="+str(provenance[k]["source_pts_time_s"])+"s / segment "+str(provenance[k]["shot_candidate_segment_index"]),fill=(240,240,240))
     board.save(outdir/"ORIGINAL_FILM_CONTACT_SHEET.jpg",quality=90)
+    # V112: each original PNG has a recorded decoded source PTS, not an
+    # artificial CFR/fps-filter timestamp. Human shot review still required.
+    m["frame_provenance_version"]="V112_SOURCE_PTS_FROM_FFMPEG_SHOWINFO"
+    m["frame_provenance_source_sha256"]=m["original_sha256"]
+    m["frame_provenance"]=provenance
     m["source_frames_extracted"]=len(files)
     m["status"]="REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW"
     return m

@@ -9,6 +9,7 @@ on:
       - ".github/workflows/storia-rivive-v101-auto-3h.yml"
       - "src/storia_rivive_autopilot_v101.py"
       - "src/storia_rivive_scout_v101.py"
+      - "src/storia_rivive_shot_boundaries_v113.py"
       - "src/storia_rivive_flag_title_v101.py"
       - "src/storia_rivive_frame_rank_v101.py"
       - "src/storia_rivive_i2i_prepare_v102.py"
@@ -41,7 +42,7 @@ jobs:
       - name: Run fail-closed safety and flag geometry tests before research
         run: |
           set -euo pipefail
-          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_shot_boundaries_v113.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
       - name: Create deterministic research work order for current UTC 3-hour window
         shell: bash
@@ -61,7 +62,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v3-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v6-shot-cut-evidence-${{ env.STORIA_EPISODE_ID }}
       - name: Fetch bounded original film and make genuine B/W contact sheet
         if: steps.film_cache.outputs.cache-hit != 'true'
         shell: bash
@@ -87,7 +88,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v3-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v6-shot-cut-evidence-${{ env.STORIA_EPISODE_ID }}
       - name: Rank actual native-resolution source frames without claiming facial identity
         shell: bash
         run: |
@@ -134,11 +135,27 @@ jobs:
           order=json.loads((root/"WORK_ORDER.json").read_text())
           check=root/"source-cache"/order["episode_id"]/"SCOUT_REPORT.json"
           scout=json.loads(check.read_text()) if check.is_file() else {"status":"SOURCE_SCOUT_NOT_AVAILABLE"}
+          rank_path=root/"FIVE_BW_FRAME_CANDIDATES.json"
+          rank=json.loads(rank_path.read_text()) if rank_path.is_file() else {"status":"SOURCE_FRAME_SELECTION_BLOCKED"}
+          i2i_path=root/"I2I_INPUT_MANIFEST_V102.json"
+          i2i=json.loads(i2i_path.read_text()) if i2i_path.is_file() else {"status":"I2I_INPUTS_BLOCKED"}
+          low_detail=rank.get("status")=="SOURCE_NATIVE_DETAIL_INSUFFICIENT_FOR_FIVE_SHOTS"
+          insufficient_cuts=scout.get("shot_boundary_analysis",{}).get("status")=="INSUFFICIENT_CUT_CANDIDATES"
+          insufficient_selected_shots=rank.get("status") in (
+              "INSUFFICIENT_DISTINCT_SHOT_CANDIDATES","SHOT_SEGMENT_PROVENANCE_INCOMPLETE")
           status={"cycle_id":order["cycle_id"],"candidate":order["episode_id"],
-              "source_scout":scout.get("status"),"restored_i2i_photos_approved":0,
+              "source_scout":scout.get("status"),
+              "source_preflight_blocking_issues":order.get("blocking_issues",[]),
+              "native_frame_selection":rank.get("status"),
+              "i2i_input_preparation":i2i.get("status"),
+              "i2i_block_reason":i2i.get("reason"),
+              "restored_i2i_photos_approved":0,
               "real_vidu_clips_approved":0,"finished_mp4":False,"published":False,
-              "charged_api_requests":0,"status":"RESEARCH_PREPARATION_ONLY",
-              "next_required":"4 verified source-locked I2I photos, real Vidu, V91/V94/V96/V99 and real artistic review"}
+              "charged_api_requests":0,
+              "status":"SOURCE_REJECTED" if (low_detail or insufficient_cuts or insufficient_selected_shots) else "ASSETS_PENDING",
+              "cut_candidate_count":scout.get("shot_boundary_analysis",{}).get("cut_candidate_count"),
+              "historical_camera_shots_verified":False,
+              "next_required":"Resolve source rights and native quality, then 4 genuine I2I photos, 1 real Vidu, V91/V94/V96/V99 and artistic review"}
           (root/"CYCLE_STATUS.json").write_text(json.dumps(status,ensure_ascii=False,indent=2)+"\n")
           print("V101_CYCLE_STATUS",json.dumps(status))
           PY
