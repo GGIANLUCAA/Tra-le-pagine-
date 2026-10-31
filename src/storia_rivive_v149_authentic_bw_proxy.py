@@ -197,7 +197,7 @@ def process_with_rate_limit_policy(item, root, *, worker=process_one, sleep=time
     """
     first=worker(item,root)
     if (first.get("status")!="V149_ARCHIVE_OR_PREVIEW_BLOCKED_NOT_APPROVED"
-            or re.search(r"\\bHTTP Error 429\\b",first.get("reason","")) is None):
+            or re.search(r"\bHTTP Error 429\b",first.get("reason","")) is None):
         return first
     sleep(60)
     second=worker(item,root)
