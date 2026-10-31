@@ -877,7 +877,55 @@
             "evidence": "Cloudflare R2 List Objects API, full bucket scan 2795 objects, 3 pages; filename and size match for present objects",
             "r2_bytes_readback_sha256_verified": false,
             "site_player_verified": false
-          }
+          },
+          "v90r2_review_revision": {
+            "version": "V90R2",
+            "status": "technical_qa_pass_artistic_review_pending",
+            "sha256": "56ff2c686a33479f538fa5c48a6265049fba64fbeebc8d377000914a276db7f4",
+            "bytes": 22570915,
+            "duration_seconds": 168.125,
+            "original_V67_preserved": true,
+            "aac_sha256": "3f1374c08615822bd8c2fd41597d98dbcc2335ca3235543e5e978d9feee44669",
+            "library_zip_path": "/ArtVision/Socrate/V90R2_PLATONE_FOCUS/SOCRATE_CRITICO_MUSEUM_V90R2_REVIEW_ANDROID.zip",
+            "library_readback_sha256_pass": true,
+            "site_player_verified": false,
+            "v25_approved": false,
+            "qa_report": "docs/productions/2026-10-31-artvision-v90r2-platone-e-v61-staging-reale.md"
+          },
+          "v90r3_review_revision": {
+            "version": "V90R3",
+            "status": "technical_qa_pass_artistic_review_pending",
+            "sha256": "70056c330512c9e4ec657af6ae6ce433f4e0a6e60cf7a64207a6c10ff1954d2f",
+            "bytes": 31174232,
+            "duration_seconds": 168.125,
+            "video_frames": 4035,
+            "resolution": "720x1280",
+            "fps": 24,
+            "full_ffmpeg_decode_pass": true,
+            "original_V67_preserved": true,
+            "source_V90R2_preserved": true,
+            "aac_demux_bit_identical_to_V67": true,
+            "aac_sha256": "3f1374c08615822bd8c2fd41597d98dbcc2335ca3235543e5e978d9feee44669",
+            "revised_segment_seconds": [
+              30,
+              38.5
+            ],
+            "source_real_frame": "Original V67 museum MP4 at 26.4s; Met PD painting",
+            "library_mp4_path": "/ArtVision/Socrate/V90R3_MANIGESTI_FOCUS/Socrate_Critico_Museum_V90R3_MANIGESTI_FOCUS_REVIEW.mp4",
+            "library_mp4_file_id": "file_000000004f4481f5af27cc9d9ac4f311",
+            "library_zip_path": "/ArtVision/Socrate/V90R3_MANIGESTI_FOCUS/SOCRATE_CRITICO_MUSEUM_V90R3_REVIEW_ANDROID.zip",
+            "library_zip_file_id": "file_000000000c9081f59f96505e6534a759",
+            "library_zip_sha256": "c184d0fe63a5cb16cd0bca11a26594179665a8bf30397f59a12a09ab59c9ea33",
+            "library_zip_bytes": 31773543,
+            "library_zip_crc_pass": true,
+            "library_mp4_readback_sha256_pass": true,
+            "library_zip_readback_sha256_pass": true,
+            "site_player_verified": false,
+            "r2_import_verified": false,
+            "v25_approved": false,
+            "qa_report": "docs/productions/2026-10-31-socrates-v90r3-real-hands-focus.md"
+          },
+          "latest_technical_review_revision": "V90R3"
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
