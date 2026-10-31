@@ -19,6 +19,22 @@ class _FakeApiResponse(io.BytesIO):
         self.close()
 
 class V121SourceRasterTests(unittest.TestCase):
+    def test_new_hd_research_queue_is_real_but_not_approved(self):
+        candidates=json.loads((Path(__file__).resolve().parents[1]/
+            "queue/storia_rivive_candidates_v58.json").read_text(encoding="utf-8"))["candidates"]
+        ids=["france_cotton_mill_1920","white_house_1917_1921","versailles_treaty_1919"]
+        for episode_id in ids:
+            with self.subTest(episode_id=episode_id):
+                rows=[r for r in candidates if r.get("id")==episode_id]
+                self.assertEqual(len(rows),1)
+                entry=rows[0]
+                self.assertEqual(entry["commons_original_raster_claim_px"],[1920,1080])
+                self.assertFalse(entry.get("rights_italy_verified",False))
+                self.assertFalse(entry.get("historical_attribution_verified",False))
+                self.assertFalse(entry.get("source_native_visual_review",False))
+                self.assertLess(entry["commons_original_file_size_mb_approx"],160)
+                self.assertTrue(entry["source_page"].startswith("https://commons.wikimedia.org/wiki/File:"))
+
     def test_commons_576p_is_rejected(self):
         status=native_raster_preflight({"original_width_px":768,"original_height_px":576})
         self.assertEqual(status["status"],"SOURCE_NATIVE_DETAIL_INSUFFICIENT_SKIP_DOWNLOAD")
