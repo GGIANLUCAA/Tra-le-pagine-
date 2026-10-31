@@ -232,6 +232,7 @@ jobs:
           name: STORIA_V101_RESEARCH_${{ github.run_id }}
           path: |
             output/storia_v101/WORK_ORDER.json
+            output/storia_v101/LIVE_SD_SNAPSHOT_RECHECK_V141.json
             output/storia_v101/SOURCE_READINESS_V134.json
             output/storia_v101/CYCLE_STATUS.json
             output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
