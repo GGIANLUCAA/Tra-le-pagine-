@@ -54,6 +54,27 @@ def native_raster_preflight(m):
             "minimum_native_portrait_crop_width_px": 400,
             "minimum_original_height_px": 720}
 
+
+def verify_decoded_original_raster(probe_payload, source_metadata):
+    """Require actual FFprobe-decoded source dimensions to match Commons imageinfo.
+
+    Intended to run after download for candidates that passed V121 metadata.
+    A matching raster is not artistic, legal or provenance approval.
+    """
+    rows = probe_payload.get("streams", []) if isinstance(probe_payload, dict) else []
+    if not isinstance(rows, list):
+        raise ValueError("SOURCE_VIDEO_STREAM_METADATA_INVALID")
+    decoded = next((r for r in rows if isinstance(r, dict) and r.get("codec_type") == "video"), None)
+    if not isinstance(decoded, dict) or (
+            decoded.get("width"), decoded.get("height")) != (
+            source_metadata.get("original_width_px"), source_metadata.get("original_height_px")):
+        raise ValueError("SOURCE_DECODED_RASTER_DIFFERS_FROM_COMMONS_ORIGINAL_METADATA")
+    measured = native_raster_preflight({
+        "original_width_px": decoded["width"], "original_height_px": decoded["height"]})
+    if not measured["native_raster_eligible"]:
+        raise ValueError("SOURCE_DECODED_RASTER_BELOW_NATIVE_DETAIL_MINIMUM")
+    return True
+
 def extract_pts_locked_frames(film, frames, duration):
     """Sample native decoded frames without rewriting original PTS via an fps filter.
 
@@ -133,11 +154,7 @@ def inspect(page,outdir):
                           "-of","json",str(film)],
                          capture_output=True,text=True,timeout=35,check=True)
     payload=json.loads(probe.stdout)
-    decoded=next((row for row in payload.get("streams",[]) if row.get("codec_type")=="video"),None)
-    if not isinstance(decoded,dict) or (
-            decoded.get("width"), decoded.get("height")) != (
-            m["original_width_px"], m["original_height_px"]):
-        raise ValueError("SOURCE_DECODED_RASTER_DIFFERS_FROM_COMMONS_ORIGINAL_METADATA")
+    verify_decoded_original_raster(payload,m)
     m["decoded_video_raster_verified"]=True
     duration=float(payload["format"]["duration"])
     if not 1<=duration<=10000:raise ValueError("Source duration suspicious")
