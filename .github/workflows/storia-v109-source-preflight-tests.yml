@@ -35,6 +35,10 @@ on:
       - ".github/workflows/storia-v136-white-house-source-audit.yml"
       - "src/storia_rivive_v136_source_decision.py"
       - "tests/test_storia_rivive_v136_source_decision.py"
+      - "config/storia_rivive_v133_rejected_films.json"
+      - "tests/test_storia_rivive_v139_rejection_rotation.py"
+      - ".github/workflows/storia-v138-versailles-source-audit.yml"
+      - "tests/test_storia_rivive_v138_workflow.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -75,6 +79,8 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v131_editorial_hold.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v132_veto_aware_alternatives.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v136_source_decision.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v138_workflow.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v139_rejection_rotation.py" -v
 
   v136_new_real_source_audit:
     if: github.event_name == 'pull_request' && contains(github.event.pull_request.title, 'V136')
