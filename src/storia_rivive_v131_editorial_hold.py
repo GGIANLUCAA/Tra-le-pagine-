@@ -14,6 +14,11 @@ from pathlib import Path
 SHA = re.compile(r"[0-9a-f]{64}\Z")
 FRAME = re.compile(r"frame_\d{2}\.png\Z")
 
+def finite_source_seconds(value):
+    """Reject NaN/Infinity and unbounded integers without float overflow."""
+    return (type(value) in (int, float) and 0 <= value <= 1_000_000_000
+            and math.isfinite(value))
+
 def valid_prefreeze_pts(strip, stamp):
     """Match V129's exact native freeze PTS to V128's audited frame time."""
     start, freeze, clock = (strip.get("pre_freeze_start_pts"),
@@ -61,7 +66,7 @@ def evaluate(visual, motion, registry):
         if (not isinstance(name, str) or not FRAME.fullmatch(name) or name in indexed
                 or not isinstance(digest, str) or not SHA.fullmatch(digest)
                 or frame.get("source_film_sha256") != film
-                or type(stamp) not in (int, float) or not math.isfinite(stamp) or stamp < 0
+                or not finite_source_seconds(stamp)
                 or strip.get("source_frame") != name
                 or strip.get("freeze_source_pts_time_s") != stamp
                 or not isinstance(strip.get("proxy_rgb_sha256"), str)
@@ -81,8 +86,7 @@ def evaluate(visual, motion, registry):
         if veto["film_sha256"] != film:
             continue
         name, reason = veto.get("frame"), veto.get("reason")
-        if (name not in indexed or name in seen or type(veto.get("freeze_s")) not in (int, float)
-                or not math.isfinite(veto["freeze_s"])
+        if (name not in indexed or name in seen or not finite_source_seconds(veto.get("freeze_s"))
                 or abs(indexed[name]["freeze_s"] - veto["freeze_s"]) > .02
                 or not isinstance(reason, str) or not 8 <= len(reason) <= 220):
             raise ValueError("V131_STALE_OR_MALFORMED_VETO_REQUIRES_REVIEW")
