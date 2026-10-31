@@ -80,7 +80,7 @@ def recheck_low_raster_snapshots(registry, lookup=metadata):
             "status": overall, "checked_count": len(checked), "sources": checked,
             "v145_content_fingerprint_inventory": True,
             "same_raster_original_bytes_verified": all(
-                r["original_content_identity"] == "MATCH" for r in checked),
+                r["original_content_identity"] == "MATCH" and r["status"] == "SNAPSHOT_UNCHANGED" for r in checked),
             "source_acquisition_permitted": False, "i2i_permitted": False,
             "vidu_post_permitted": False, "publication_permitted": False,
             "note": "V145: Commons original SHA1 is public research evidence only. Without a stored baseline, same-raster replacement remains UNVERIFIED; no rights, quality or production clearance."}
