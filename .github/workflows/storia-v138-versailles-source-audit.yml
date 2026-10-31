@@ -1,0 +1,206 @@
+name: "La Storia Rivive V138 | Versailles 1919 real source audit (free research)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v138-versailles-source-audit.yml"
+      - "tests/test_storia_rivive_v138_workflow_contract.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-v138-versailles-source-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  real_source_audit:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install only free media inspection dependencies
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: Verify V138 offline workflow guardrails before any archive request
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p "test_storia_rivive_v138_workflow_contract.py" -v
+      - name: Select exact NEW historical candidate without any approval flags
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from src.storia_rivive_autopilot_v101 import build_work_order
+          bank=json.loads(Path("queue/storia_rivive_candidates_v58.json").read_text(encoding="utf-8"))
+          selected=[c for c in bank["candidates"] if c["id"]=="versailles_treaty_1919"]
+          if len(selected)!=1:
+              raise SystemExit("Versailles archival candidate missing or duplicated")
+          profile=json.loads(Path("config/storia_rivive_autopilot_v101.json").read_text(encoding="utf-8"))
+          order=build_work_order({"candidates":selected},"2026-10-31T12:00:00Z",profile)
+          if order["paid_api_call_permitted"] or order["publish_permitted"]:
+              raise SystemExit("Unexpected paid or publication permission")
+          root=Path("output/storia_v138_versailles")
+          root.mkdir(parents=True,exist_ok=True)
+          (root/"WORK_ORDER.json").write_text(json.dumps(order,ensure_ascii=False,indent=2)+"\n")
+          print("V138_SOURCE_RESEARCH_ONLY",order["episode_id"],order["status"])
+          PY
+      - name: Download bounded ORIGINAL Commons film and extract real PTS frames
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_scout_v101.py \
+            --order output/storia_v138_versailles/WORK_ORDER.json \
+            --out output/storia_v138_versailles/versailles_treaty_1919
+      - name: Verify actual source SHA and original frame bytes before advanced analysis
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v134_cache_readiness.py \
+            --cache-dir output/storia_v138_versailles/versailles_treaty_1919 \
+            --order output/storia_v138_versailles/WORK_ORDER.json \
+            --out output/storia_v138_versailles/SOURCE_READINESS_V134.json
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path("output/storia_v138_versailles/SOURCE_READINESS_V134.json")
+          report=json.loads(p.read_text())
+          # The cache checker expects a directory named after the episode ID.
+          # The source path here is fixed, so do not claim a pass on a mismatch.
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("ready="+("true" if report.get("ready") is True else "false")+"\n")
+          print("V138_SOURCE_BYTE_READINESS",report["status"],report.get("reason"))
+          PY
+      - name: Rank genuine archival frames, never claim five verified camera shots
+        if: steps.source.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_frame_rank_v101.py \
+            --frames output/storia_v138_versailles/versailles_treaty_1919/original_frames \
+            --out output/storia_v138_versailles/FIVE_BW_FRAME_CANDIDATES.json
+      - name: Sample up to 48 additional genuine frames from source timeline
+        if: steps.source.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_adaptive_sampling_v124.py \
+            --film output/storia_v138_versailles/versailles_treaty_1919/ORIGINAL_ARCHIVE.webm \
+            --scout output/storia_v138_versailles/versailles_treaty_1919/SCOUT_REPORT.json \
+            --out output/storia_v138_versailles/adaptive --limit 48
+      - name: Check actual source motion on the original film
+        if: steps.source.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v125_real_motion_audit.py \
+            --film output/storia_v138_versailles/versailles_treaty_1919/ORIGINAL_ARCHIVE.webm \
+            --scout output/storia_v138_versailles/adaptive/SCOUT_REPORT.json \
+            --rank output/storia_v138_versailles/adaptive/ADAPTIVE_RANK_V124.json \
+            --out output/storia_v138_versailles/adaptive/REAL_BW_MOTION_V125.json
+      - name: Select five balanced motion windows across distinct timeline regions
+        if: steps.source.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v126_balanced_motion_review.py \
+            --motion output/storia_v138_versailles/adaptive/REAL_BW_MOTION_V125.json \
+            --rank output/storia_v138_versailles/adaptive/ADAPTIVE_RANK_V124.json \
+            --scout output/storia_v138_versailles/adaptive/SCOUT_REPORT.json \
+            --out output/storia_v138_versailles/adaptive/FIVE_MOVING_REVIEW_V126.json
+      - name: Audit duplicate archival frames
+        if: steps.source.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v126_frame_diversity.py \
+            --v125 output/storia_v138_versailles/adaptive/REAL_BW_MOTION_V125.json \
+            --frames output/storia_v138_versailles/adaptive/original_frames \
+            --scout output/storia_v138_versailles/adaptive/SCOUT_REPORT.json \
+            --out output/storia_v138_versailles/adaptive/FRAME_DIVERSITY_V126.json
+      - name: Build five-frame visual review sheet, no fabricated artistic signoff
+        if: steps.source.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v128_balanced_frame_review.py \
+            --balanced output/storia_v138_versailles/adaptive/FIVE_MOVING_REVIEW_V126.json \
+            --motion output/storia_v138_versailles/adaptive/REAL_BW_MOTION_V125.json \
+            --scout output/storia_v138_versailles/adaptive/SCOUT_REPORT.json \
+            --frames output/storia_v138_versailles/adaptive/original_frames \
+            --out output/storia_v138_versailles/adaptive/BALANCED_VISUAL_REVIEW_V128.json \
+            --contact output/storia_v138_versailles/adaptive/BALANCED_CONTACT_SHEET_V128.jpg
+      - name: Produce actual pre-freeze movement strips for human inspection
+        if: steps.source.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v129_prefreeze_motion_strips.py \
+            --film output/storia_v138_versailles/versailles_treaty_1919/ORIGINAL_ARCHIVE.webm \
+            --balanced output/storia_v138_versailles/adaptive/FIVE_MOVING_REVIEW_V126.json \
+            --motion output/storia_v138_versailles/adaptive/REAL_BW_MOTION_V125.json \
+            --scout output/storia_v138_versailles/adaptive/SCOUT_REPORT.json \
+            --frames output/storia_v138_versailles/adaptive/original_frames \
+            --out output/storia_v138_versailles/adaptive/PREFREEZE_MOTION_STRIPS_V129.json \
+            --sheet output/storia_v138_versailles/adaptive/PREFREEZE_MOTION_STRIPS_V129.jpg
+      - name: Record source status truthfully even when scouting or QA fails
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from src.storia_rivive_v136_source_decision import source_state
+          root=Path("output/storia_v138_versailles")
+          def load(p):
+              f=root/p
+              if not f.is_file():return {}
+              try:return json.loads(f.read_text())
+              except (OSError,ValueError):return {}
+          scout=load("versailles_treaty_1919/SCOUT_REPORT.json")
+          readiness=load("SOURCE_READINESS_V134.json")
+          motion=load("adaptive/REAL_BW_MOTION_V125.json")
+          balanced=load("adaptive/FIVE_MOVING_REVIEW_V126.json")
+          visual=load("adaptive/BALANCED_VISUAL_REVIEW_V128.json")
+          strips=load("adaptive/PREFREEZE_MOTION_STRIPS_V129.json")
+          status={
+            "candidate":"versailles_treaty_1919",
+            "source_page":"https://commons.wikimedia.org/wiki/File:The_signing_of_the_peace_treaty_of_Versailles_(16_fps).webm",
+            "source_sha256":scout.get("original_sha256"),
+            "original_raster_px":[scout.get("original_width_px"),scout.get("original_height_px")],
+            "source_scout_status":scout.get("status","NOT_RUN"),
+            "source_bytes_verified":readiness.get("ready") is True,
+            "source_readiness_reason":readiness.get("reason"),
+            "motion_status":motion.get("status","NOT_RUN"),
+            "motion_candidate_count":motion.get("source_motion_candidates_pass",0),
+            "balanced_status":balanced.get("status","NOT_RUN"),
+            "balanced_candidate_count":len(balanced.get("five_review_candidates",[])),
+            "visual_review_sheet_status":visual.get("status","NOT_RUN"),
+            "prefreeze_strips_status":strips.get("status","NOT_RUN"),
+            "rights_italy_verified":False,
+            "historical_shots_artistically_verified":False,
+            "i2i_generated":0,"vidu_generated":0,"mp4_generated":False,
+            "credits_spent":0,"publication_permitted":False,
+            "status":source_state(readiness,motion,balanced,visual,strips)
+          }
+          root.mkdir(parents=True,exist_ok=True)
+          (root/"REAL_SOURCE_AUDIT_V138.json").write_text(json.dumps(status,ensure_ascii=False,indent=2)+"\n")
+          print("V138_REAL_SOURCE_AUDIT",json.dumps(status))
+          PY
+      - name: Save only source metadata and review sheets, not original film or secrets
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V138_VERSAILLES_SOURCE_AUDIT_${{ github.run_id }}
+          path: |
+            output/storia_v138_versailles/WORK_ORDER.json
+            output/storia_v138_versailles/REAL_SOURCE_AUDIT_V138.json
+            output/storia_v138_versailles/SOURCE_READINESS_V134.json
+            output/storia_v138_versailles/versailles_treaty_1919/SCOUT_REPORT.json
+            output/storia_v138_versailles/versailles_treaty_1919/ORIGINAL_FILM_CONTACT_SHEET.jpg
+            output/storia_v138_versailles/FIVE_BW_FRAME_CANDIDATES.json
+            output/storia_v138_versailles/adaptive/*.json
+            output/storia_v138_versailles/adaptive/*CONTACT_SHEET*.jpg
+            output/storia_v138_versailles/adaptive/PREFREEZE_MOTION_STRIPS_V129.jpg
+          retention-days: 14
+          if-no-files-found: warn
