@@ -143,6 +143,7 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
+          from src.storia_rivive_v136_source_decision import source_state
           root=Path("output/storia_v136_white_house")
           def load(p):
               f=root/p
@@ -173,7 +174,7 @@ jobs:
             "historical_shots_artistically_verified":False,
             "i2i_generated":0,"vidu_generated":0,"mp4_generated":False,
             "credits_spent":0,"publication_permitted":False,
-            "status":"SOURCE_RESEARCH_REVIEW_REQUIRED" if readiness.get("ready") is True else "SOURCE_REJECTED_OR_UNVERIFIED"
+            "status":source_state(readiness,motion,balanced,visual,strips)
           }
           root.mkdir(parents=True,exist_ok=True)
           (root/"REAL_SOURCE_AUDIT_V136.json").write_text(json.dumps(status,ensure_ascii=False,indent=2)+"\n")
