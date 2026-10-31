@@ -3,6 +3,8 @@ import importlib.util
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
+import json
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,6 +19,25 @@ class SingleMetPreflightTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaisesRegex(ValueError, "wow_lab/runs"):
                 module.run(400112, Path(directory) / "outside")
+
+    def test_failed_source_download_writes_blocked_report_without_video(self):
+        (ROOT / "runs").mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=ROOT / "runs") as parent:
+            out = Path(parent) / "single-candidate"
+            record = {
+                "objectID": 400112, "isPublicDomain": True,
+                "objectName": "Drawing", "title": "A Moth",
+                "primaryImage": "https://images.metmuseum.org/CRDImages/dp/original/DP820071.jpg",
+            }
+            with (patch.object(module.engine, "get_json", return_value=record),
+                  patch.object(module.engine, "save_original",
+                               side_effect=RuntimeError("source host unavailable"))):
+                with self.assertRaisesRegex(RuntimeError, "source host unavailable"):
+                    module.run(400112, out)
+            report = json.loads((out / "PREFLIGHT_RESULT.json").read_text())
+            self.assertEqual(report["status"], "source_acquisition_blocked")
+            self.assertFalse(report["publishable"])
+            self.assertFalse(list(out.glob("*.mp4")))
 
     def test_contact_sheet_shows_source_mask_and_clean_plate(self):
         with tempfile.TemporaryDirectory() as directory:
