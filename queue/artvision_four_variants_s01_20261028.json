@@ -1976,13 +1976,7 @@
       }
     }
   ],
-  "last_operational_update": {
-    "date": "2026-10-31",
-    "event": "sixth_bocklin_authorized_preflight",
-    "rendered_new_mp4": 0,
-    "existing_20_slots_unchanged": true,
-    "notes": "This queue update is an authorization/preflight, not proof of four MP4s."
-  },
+  "last_operational_update": "2026-10-30 Wright NG725 fifth 4x1 user-authorized: 4 MP4 real, 2 Critico new one Gacrux WAV + 1 Cinema Museum V85 new, 1 Cinema V52B historical exact original, 0 V25 Gold, no archive upload. ZIP CRC PASS",
   "museum_regression_v56": {
     "date": "2026-10-29",
     "reason": "user rejected low-value generic museum 2D frame/room and hard cut",
@@ -1997,5 +1991,12 @@
     "rule": "Do not count technical MP4 as approved Museum; block final delivery until new V46-quality render with real continuity and reference comparisons."
   },
   "note_second_pilot_v69": "User explicitly authorized The Kiss after Socrates; maintain single owner, other works frozen, Klimt queued V69 as authorized second pilot (0 MP4).",
-  "note_fourth_pilot_v76": "2026-10-30 explicit Bosch fourth pilot, one renderer, no fifth work. Bosch Cinema Standard source/music verified; no rendered video status until actual MP4 hash+bytes; Critico and Museum remain blocked."
+  "note_fourth_pilot_v76": "2026-10-30 explicit Bosch fourth pilot, one renderer, no fifth work. Bosch Cinema Standard source/music verified; no rendered video status until actual MP4 hash+bytes; Critico and Museum remain blocked.",
+  "sixth_pilot_update": {
+    "date": "2026-10-31",
+    "event": "sixth_bocklin_authorized_preflight",
+    "rendered_new_mp4": 0,
+    "existing_20_slots_unchanged": true,
+    "notes": "This queue update is an authorization/preflight, not proof of four MP4s."
+  }
 }
