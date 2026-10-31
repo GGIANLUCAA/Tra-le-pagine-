@@ -39,6 +39,14 @@ def enforce_pilot_project(project, root=ROOT):
             fifth.get("allowed_title")=="An Experiment on a Bird in the Air Pump" and
             fifth.get("automatic_sixth_artwork_selection") is False):
         permitted.add(fifth["allowed_title"])
+    sixth=lock.get("authorized_sixth_pilot", {})
+    if (sixth.get("enabled") is True and
+            sixth.get("phase")=="sixth_pilot_bocklin_only" and
+            sixth.get("allowed_group_id")=="bocklin_isle_of_dead_1883_berlin_ng2_80" and
+            sixth.get("allowed_title")=="Isle of the Dead" and
+            sixth.get("automatic_seventh_artwork_selection") is False and
+            fifth.get("enabled") is True):
+        permitted.add(sixth["allowed_title"])
     if project.get("topic") not in permitted:
         raise ValueError("ArtVision PILOT LOCK: artwork outside explicitly authorized pilots")
     variant=project.get("artvision_4x1_variant")
