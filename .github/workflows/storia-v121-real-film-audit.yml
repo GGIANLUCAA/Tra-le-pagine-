@@ -52,6 +52,13 @@ jobs:
           python src/storia_rivive_scout_v101.py \
             --order output/storia_v121_real/WORK_ORDER.json \
             --out output/storia_v121_real/source
+      - name: V122 rank actual source PNG frames for pre-freeze windows (no AI)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_frame_rank_v101.py \
+            --frames output/storia_v121_real/source/original_frames \
+            --out output/storia_v121_real/FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json
       - name: Record physical evidence, never label the result as approved
         shell: bash
         run: |
@@ -62,6 +69,8 @@ jobs:
           root=Path("output/storia_v121_real")
           report=json.loads((root/"source"/"SCOUT_REPORT.json").read_text(encoding="utf-8"))
           source=root/"source"/"ORIGINAL_ARCHIVE.webm"
+          rank_path=root/"FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json"
+          rank=json.loads(rank_path.read_text(encoding="utf-8")) if rank_path.is_file() else {"status":"NO_FRAME_RANKING"}
           status={
               "episode_id":"france_cotton_mill_1920",
               "status":report.get("status","SOURCE_SCOUT_BLOCKED_NO_PRODUCTION"),
@@ -70,6 +79,10 @@ jobs:
               "original_raster_px":[report.get("original_width_px"),report.get("original_height_px")],
               "decoded_raster_verified":report.get("decoded_video_raster_verified",False),
               "source_frame_count":report.get("source_frames_extracted",0),
+              "frame_selection_status":rank.get("status"),
+              "eligible_pre_freeze_source_windows":rank.get("eligible_pre_freeze_source_windows",0),
+              "proposed_frame_files":[entry.get("filename") for entry in rank.get("preselected",[])],
+
               "candidate_cut_count":report.get("shot_boundary_analysis",{}).get("cut_candidate_count"),
               "italian_rights_verified":False,
               "five_genuine_camera_shots_verified":False,
@@ -93,5 +106,7 @@ jobs:
             output/storia_v121_real/WORK_ORDER.json
             output/storia_v121_real/REAL_FILM_AUDIT_V121.json
             output/storia_v121_real/source/SCOUT_REPORT.json
+            output/storia_v121_real/FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json
+            output/storia_v121_real/source/ORIGINAL_FILM_CONTACT_SHEET.jpg
           retention-days: 14
           if-no-files-found: warn
