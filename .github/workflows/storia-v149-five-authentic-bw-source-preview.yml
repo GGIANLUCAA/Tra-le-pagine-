@@ -1,0 +1,122 @@
+name: "La Storia Rivive V149 | 5 genuine moving source-only B/W previews"
+
+on:
+  pull_request:
+    paths:
+      - "config/storia_rivive_v149_five_original_motion_preview.json"
+      - "src/storia_rivive_v149_authentic_bw_proxy.py"
+      - "src/storia_rivive_v149_combine_bw_preview.py"
+      - "tests/test_storia_rivive_v149_authentic_bw_preview.py"
+      - ".github/workflows/storia-v149-five-authentic-bw-source-preview.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: storia-v149-five-real-source-bw-preview-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source_locked_archive_clips:
+    if: github.run_attempt == 1 && (github.event_name == 'workflow_dispatch' || github.head_ref == 'storia-v149-five-authentic-bw-motion-proxy-20261031')
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    strategy:
+      fail-fast: false
+      matrix:
+        batch: [a, b]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free video and real source byte tools only
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: Test source SHA PTS anti-fake and genuine silent preview encoding
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p "test_storia_rivive_v149_authentic_bw_preview.py" -v
+      - name: Physically decode exactly this batch of Commons original films and create 1.35s B/W review clips
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v149_authentic_bw_proxy.py \
+            --manifest config/storia_rivive_v149_five_original_motion_preview.json \
+            --batch "${{ matrix.batch }}" \
+            --out "output/storia_v149_source_batch_${{ matrix.batch }}"
+      - name: Confirm five film preview files are NOT restored masters
+        shell: bash
+        env:
+          BATCH: ${{ matrix.batch }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path("output/storia_v149_source_batch_"+os.environ["BATCH"])
+          report=json.loads((root/"BW_PREVIEW_SOURCE_REPORT_V149.json").read_text())
+          assert report["batch"]==os.environ["BATCH"]
+          assert not report["is_finished_video"]
+          assert report["paid_api_calls"]==0 and not report["publish_permitted"]
+          assert not report["rights_italy_verified"] and not report["artistic_approved"]
+          assert report["new_true_i2i_photos"]==0 and report["new_vidu_clips"]==0
+          print("V149_BW_SOURCE_REAL",report["status"],
+                "verified_clips",report["clips_verified"],
+                "blocked",[(r["id"],r.get("reason","")) for r in report["source_clips"]
+                            if r["status"]!="V149_TRUE_SOURCE_BW_MOVING_MP4_REVIEW_ONLY"])
+          PY
+      - name: Upload only short private source-preview clips and provenance, NEVER full original films
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V149_BW_SOURCE_BATCH_${{ matrix.batch }}_${{ github.run_id }}
+          path: |
+            output/storia_v149_source_batch_${{ matrix.batch }}/BW_PREVIEW_SOURCE_REPORT_V149.json
+            output/storia_v149_source_batch_${{ matrix.batch }}/preview_clips/*.mp4
+          if-no-files-found: warn
+          retention-days: 14
+
+  combine_five_actual_source_movements:
+    if: always() && github.run_attempt == 1 && (github.event_name == 'workflow_dispatch' || github.head_ref == 'storia-v149-five-authentic-bw-motion-proxy-20261031')
+    needs: [source_locked_archive_clips]
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install only free FFmpeg and Pillow for SHA checks
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: Download current-run 3+2 preview artifacts, no full historical films
+        uses: actions/download-artifact@v4
+        with:
+          pattern: STORIA_V149_BW_SOURCE_BATCH_*
+          path: output/storia_v149_clip_batches
+          merge-multiple: false
+      - name: Verify five film/frame SHAs PTS and produce one silent source-only editor preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v149_combine_bw_preview.py \
+            --manifest config/storia_rivive_v149_five_original_motion_preview.json \
+            --artifacts output/storia_v149_clip_batches \
+            --out output/storia_v149_five_movements/STORIA_V149_FIVE_ORIGINAL_BW_MOVEMENTS_TECHNICAL_NOT_FINAL.mp4
+      - name: Preserve real file preview and verifiable source provenance, not claim final 4+1
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V149_FIVE_BW_MOVING_FILMS_TECHNICAL_PREVIEW_${{ github.run_id }}
+          path: |
+            output/storia_v149_five_movements/STORIA_V149_FIVE_ORIGINAL_BW_MOVEMENTS_TECHNICAL_NOT_FINAL.mp4
+            output/storia_v149_five_movements/BW_TECHNICAL_MASTER_REPORT_V149.json
+          if-no-files-found: warn
+          retention-days: 14
