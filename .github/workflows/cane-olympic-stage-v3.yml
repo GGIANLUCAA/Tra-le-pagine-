@@ -1,0 +1,30 @@
+name: "Cane Olimpico V3 · Preparazione fotogramma reale (gratis)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/cane_olympic_v3/*.json"
+permissions:
+  contents: write
+jobs:
+  stage_olympic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    env:
+      GH_TOKEN: ${{ github.token }}
+      STAGE_REQUEST_ID: "cane-olympic-20261031-v3"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install image tools
+        run: python -m pip install --quiet pillow "numpy<2.3" opencv-python-headless
+      - name: Create private full-res real springboard + grey dog source, zero Vidu credits
+        run: python src/cane_olympic_stage_v3.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CANE_OLIMPICO_FOTOGRAMMA_V3
+          path: "${{ runner.temp }}/cane_olympic/CANE_OLIMPICO_PRIMO_FOTOGRAMMA.jpg"
+          retention-days: 14
+          if-no-files-found: error
