@@ -59,6 +59,8 @@ class V101Tests(unittest.TestCase):
             "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm",
             "license":"PDM"}]}
         registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        # This V133 fixture deliberately tests only the original cotton source.
+        registry["rejected"]=[x for x in registry["rejected"] if x["candidate_id"]=="france_cotton_mill_1920"]
         for hour in (0,3,6,9,12,15,18,21):
             order=auto.build_work_order(bank,f"2026-10-31T{hour:02d}:00:00Z",PROFILE,registry)
             self.assertNotEqual(order["episode_id"],"france_cotton_mill_1920")
@@ -70,6 +72,8 @@ class V101Tests(unittest.TestCase):
         candidate={"id":"france_cotton_mill_1920",
             "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm"}
         registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        # This V133 fixture deliberately tests only the original cotton source.
+        registry["rejected"]=[x for x in registry["rejected"] if x["candidate_id"]=="france_cotton_mill_1920"]
         order=auto.build_work_order({"candidates":[candidate]},
                                    "2026-10-31T09:00:00Z",PROFILE,registry)
         self.assertEqual(order["status"],"SOURCE_REJECTED_ALL_KNOWN")
@@ -83,6 +87,8 @@ class V101Tests(unittest.TestCase):
         bank={"candidates":[{"id":"france_cotton_mill_1920",
             "source_page":"https://commons.wikimedia.org/wiki/File:Changed.webm"}]}
         registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        # This V133 fixture deliberately tests only the original cotton source.
+        registry["rejected"]=[x for x in registry["rejected"] if x["candidate_id"]=="france_cotton_mill_1920"]
         with self.assertRaisesRegex(ValueError,"STALE_REJECTION"):
             auto.build_work_order(bank,"2026-10-31T09:00:00Z",PROFILE,registry)
         bank["candidates"][0]["source_page"]=registry["rejected"][0]["source_page"]
@@ -94,6 +100,8 @@ class V101Tests(unittest.TestCase):
         bank={"candidates":[{"id":"france_cotton_mill_1920",
             "source_page":"https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm"}]}
         registry=json.loads((ROOT/"config"/"storia_rivive_v133_rejected_films.json").read_text())
+        # This V133 fixture deliberately tests only the original cotton source.
+        registry["rejected"]=[x for x in registry["rejected"] if x["candidate_id"]=="france_cotton_mill_1920"]
         registry["rejected"].append(dict(registry["rejected"][0]))
         with self.assertRaisesRegex(ValueError,"UNKNOWN_OR_DUPLICATE"):
             auto.build_work_order(bank,"2026-10-31T09:00:00Z",PROFILE,registry)
