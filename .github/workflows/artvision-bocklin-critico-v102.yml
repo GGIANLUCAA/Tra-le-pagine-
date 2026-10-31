@@ -32,11 +32,38 @@ jobs:
               raise SystemExit('BLOCKED - GEMINI_API_KEY2 absent; no TTS call authorized.')
           print('Using previously user-attested second AI Studio project: Free/no billing. Never use paid primary key in this workflow.')
           PY
-      - name: Python and FFmpeg dependencies
+      - name: Python and static FFmpeg dependency (same proven fix as Cinema V100)
         run: |
-          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" numpy pillow soundfile scipy faster-whisper opencv-python-headless
-          ffmpeg -version | head -1
-          ffmpeg -hide_banner -encoders | grep -q libx264
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" numpy pillow soundfile scipy faster-whisper opencv-python-headless imageio-ffmpeg
+          mkdir -p "$RUNNER_TEMP/bin"
+          python - <<'PY'
+          from pathlib import Path
+          from imageio_ffmpeg import get_ffmpeg_exe
+          import os
+          source=Path(get_ffmpeg_exe())
+          assert source.is_file(), "Static ffmpeg binary unavailable"
+          destination=Path(os.environ["RUNNER_TEMP"])/"bin"/"ffmpeg"
+          destination.symlink_to(source)
+          print("Static FFmpeg available; no system apt dependency")
+          PY
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/ffmpeg" -version | head -1
+          "$RUNNER_TEMP/bin/ffmpeg" -hide_banner -encoders | grep -q libx264
+      - name: Download authenticated artwork/frame and compare SHA256 before render
+        run: |
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0,'src')
+          from artvision_bocklin_sixth_v101 import obtain,SOURCE,FRAME,sha
+          dest=Path('output/artvision_bocklin_critico_v102')
+          dest.mkdir(parents=True,exist_ok=True)
+          obtain(SOURCE,dest/'art_ng2_80.jpg',(4933,2628))
+          obtain(FRAME,dest/'frame_2018.jpg',(4680,2742))
+          assert sha(dest/'art_ng2_80.jpg')=='f9a7c33f1b7a2aae03aacd192706faee3740cfd9d1d277516dec39795f405ce3'
+          assert sha(dest/'frame_2018.jpg')=='72655ceea488c5f4ecf207dd5a419618685b0ee0c59d553f63cbbba0bb623b65'
+          PY
       - name: Only ONE real Italian Gacrux narration (never re-bill retries)
         env:
           # Only the second, historically user-attested Free/no-billing Google AI Studio project.
@@ -51,19 +78,6 @@ jobs:
           r=json.load(open(p))
           assert r['status']=='ONE_SHARED_GACRUX_WAV_READY',r['status']
           assert r['voice']=='Gacrux'
-          PY
-      - name: Download authenticated artwork/frame and compare SHA256 before render
-        run: |
-          python - <<'PY'
-          import sys
-          from pathlib import Path
-          sys.path.insert(0,'src')
-          from artvision_bocklin_sixth_v101 import obtain,SOURCE,FRAME,sha
-          dest=Path('output/artvision_bocklin_critico_v102')
-          obtain(SOURCE,dest/'art_ng2_80.jpg',(4933,2628))
-          obtain(FRAME,dest/'frame_2018.jpg',(4680,2742))
-          assert sha(dest/'art_ng2_80.jpg')=='f9a7c33f1b7a2aae03aacd192706faee3740cfd9d1d277516dec39795f405ce3'
-          assert sha(dest/'frame_2018.jpg')=='72655ceea488c5f4ecf207dd5a419618685b0ee0c59d553f63cbbba0bb623b65'
           PY
       - name: Two genuine Critico MP4 with IDENTICAL shared AAC and complete decode
         run: |
