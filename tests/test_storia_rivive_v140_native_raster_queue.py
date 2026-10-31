@@ -79,7 +79,8 @@ class TestV140ResearchQueue(unittest.TestCase):
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",order["blocking_issues"])
 
     def test_next_real_trench_film_enters_research_queue_but_not_production(self):
-        order=build_work_order(BANK,"2026-10-31T14:00:00Z",PROFILE,REJECTED,LOW_RASTER)
+        prior={"version":REJECTED["version"],"rejected":[r for r in REJECTED["rejected"] if r["candidate_id"]!="russian_trenches_1915"]}
+        order=build_work_order(BANK,"2026-10-31T14:00:00Z",PROFILE,prior,LOW_RASTER)
         self.assertEqual(order["episode_id"],"russian_trenches_1915")
         self.assertEqual(len(order["excluded_sha_bound_sources"]),4)
         self.assertEqual(len(order["excluded_low_native_raster_sources"]),7)
