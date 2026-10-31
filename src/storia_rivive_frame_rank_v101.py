@@ -51,6 +51,27 @@ def pre_freeze_window_evidence(entry, cuts):
             "candidate_segment_index": segment}
 
 
+def source_picture_content_guard(gray):
+    """V123: advisory pixel-only filter for high-risk cards and schematics.
+
+    A dark intertitle with small white type or a bright technical diagram is
+    not a photographic historical shot even if its edges score highly.
+    This is deliberately conservative, NOT OCR or proof of live footage.
+    """
+    values=gray.tobytes()
+    n=len(values)
+    dark=sum(v<45 for v in values)/n
+    bright=sum(v>160 for v in values)/n
+    risk=(("LIKELY_INTERTITLE_LOGO_OR_BLACK_CARD"
+           if dark>=0.79 and bright>=0.025 else
+           "LIKELY_DIAGRAM_OR_LIGHT_CARD"
+           if bright>=0.50 and dark<=0.35 else None))
+    return {"source_picture_content_eligible":risk is None,
+            "source_picture_content_rejection":risk,
+            "dark_pixel_fraction_advisory":round(dark,3),
+            "bright_pixel_fraction_advisory":round(bright,3)}
+
+
 def measure(path):
     with Image.open(path) as raw:
         w,h=raw.size
@@ -66,9 +87,11 @@ def measure(path):
     source_pixel_ratio=min(1.0,(native_crop_w*h)/(720*1280))
     score=round(0.28*min(1,contrast/75)+0.30*min(1,detail/75)+
                 0.12*exposure+0.30*source_pixel_ratio,4)
+    picture_guard=source_picture_content_guard(gray)
     return {"filename":path.name,"raster_px":[w,h],"native_portrait_crop_px":[native_crop_w,h],
             "contrast_advisory":round(contrast,2),"edge_detail_advisory":round(detail,2),
             "source_visual_quality_score":score,
+            **picture_guard,
             "source_native_detail_sufficient":native_detail_ok,
             "source_native_detail_rejection":None if native_detail_ok else "NATIVE_PORTRAIT_CROP_BELOW_400PX_OR_HEIGHT_BELOW_720PX",
             "face_identity_verified":False,
@@ -121,6 +144,7 @@ def rank(folder):
     # Reserve different time positions; cut candidates do not prove camera shots.
     ranked=sorted(
         (n for n in range(len(scored)) if scored[n]["source_native_detail_sufficient"]
+         and scored[n]["source_picture_content_eligible"]
          and scored[n].get("pre_freeze_window_viable",True)),
         key=lambda n:(-scored[n]["source_visual_quality_score"],n))
     chosen=[]
@@ -137,14 +161,20 @@ def rank(folder):
         if len(chosen)>=5:break
     if len(chosen)<5:
         native_count=sum(row["source_native_detail_sufficient"] for row in scored)
+        native_temporal_count=sum(
+            row["source_native_detail_sufficient"] and row.get("pre_freeze_window_viable",True)
+            for row in scored)
         reason=("SOURCE_NATIVE_DETAIL_INSUFFICIENT_FOR_FIVE_SHOTS"
                 if native_count<5 else
                 "INSUFFICIENT_PRE_FREEZE_SOURCE_WINDOWS"
-                if len(ranked)<5 and segment_by_name is not None else
+                if native_temporal_count<5 and segment_by_name is not None else
+                "INSUFFICIENT_PHOTOGRAPHIC_SCENE_CANDIDATES"
+                if len(ranked)<5 else
                 "INSUFFICIENT_DISTINCT_SHOT_CANDIDATES")
         return {"status":reason,
                 "original_source_frames":len(scored),"eligible_native_detail_frames":native_count,
-                "eligible_pre_freeze_source_windows":len(ranked),
+                "eligible_pre_freeze_source_windows":native_temporal_count,
+                "eligible_photographic_scene_candidates":len(ranked),
                 "minimum_native_portrait_crop_px":400,"minimum_native_height_px":720,
                 "all_candidates":scored,"preselected":[],
                 "approved_restored_photos":0,
@@ -152,7 +182,8 @@ def rank(folder):
     selected=[scored[n] for n in sorted(chosen)]
     return {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
             "original_source_frames":len(scored),"preselected":selected,
-            "eligible_pre_freeze_source_windows":len(ranked),
+            "eligible_pre_freeze_source_windows":native_temporal_count,
+            "eligible_photographic_scene_candidates":len(ranked),
             "all_candidates":scored,"approved_restored_photos":0,
             "selection_is_not_verified_distinct_film_shots":True,
             "selected_shot_candidate_segments":([segment_by_name[imgs[n].name] for n in sorted(chosen)]
