@@ -66,7 +66,49 @@ def rejected_source_ids(entries, registry):
         excluded.add(ident)
     return excluded
 
-def build_work_order(bank,now,profile,rejections=None):
+def known_low_raster_ids(entries, registry):
+    """Skip only a fixed, evidenced Commons original raster below V109 crop needs.
+
+    This is a *snapshot of the published file*, not a claim that the underlying
+    museum negative lacks detail. If an archive uploads a different HD scan,
+    its new page/version must be reviewed as a NEW candidate.
+    """
+    if registry is None:
+        return set()
+    if (not isinstance(registry,dict)
+            or registry.get("version") != "V140_COMMONS_ORIGINAL_RASTER_RESEARCH_SKIPS"
+            or not isinstance(registry.get("excluded"),list)):
+        raise ValueError("V140_LOW_RASTER_REGISTRY_INVALID")
+    by_id={c["id"]:c for c in entries}
+    excluded=set()
+    for row in registry["excluded"]:
+        if not isinstance(row,dict):
+            raise ValueError("V140_LOW_RASTER_ENTRY_INVALID")
+        ident=row.get("candidate_id")
+        if not isinstance(ident,str) or ident in excluded or ident not in by_id:
+            raise ValueError("V140_LOW_RASTER_ID_UNKNOWN_OR_DUPLICATE")
+        if row.get("source_page") != by_id[ident].get("source_page"):
+            raise ValueError("V140_LOW_RASTER_SOURCE_PAGE_CHANGED")
+        pixels=row.get("commons_original_raster_px")
+        if (not isinstance(pixels,list) or len(pixels)!=2
+                or any(type(v) is not int or v<=0 for v in pixels)):
+            raise ValueError("V140_LOW_RASTER_DIMENSIONS_INVALID")
+        width,height=pixels
+        portrait_crop_width=min(width,round(height*9/16))
+        if height>=720 and portrait_crop_width>=400:
+            raise ValueError("V140_SOURCE_MEETS_NATIVE_RASTER_MINIMUM_DO_NOT_SKIP")
+        if (row.get("verified_snapshot_utc") != "2026-10-31"
+                or not isinstance(row.get("evidence_url"),str)
+                or not row["evidence_url"].startswith(
+                    "https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/")
+                or not isinstance(row.get("reason"),str)
+                or len(row["reason"].strip())<35):
+            raise ValueError("V140_LOW_RASTER_EVIDENCE_INCOMPLETE")
+        excluded.add(ident)
+    return excluded
+
+
+def build_work_order(bank,now,profile,rejections=None,low_raster_registry=None):
     slot=slot_at(now)
     entries=bank.get("candidates",[])
     if not isinstance(entries,list) or not entries: raise ValueError("No candidates")
@@ -78,11 +120,13 @@ def build_work_order(bank,now,profile,rejections=None):
         raise ValueError("Invalid candidates")
     if len(set(ids))!=len(ids): raise ValueError("Duplicate candidate")
     excluded = rejected_source_ids(entries, rejections)
-    eligible = [c for c in entries if c["id"] not in excluded]
+    excluded_sd = known_low_raster_ids(entries, low_raster_registry)
+    eligible = [c for c in entries if c["id"] not in excluded and c["id"] not in excluded_sd]
     no_source = not eligible
     c = (eligible[(int(slot.timestamp())//10800)%len(eligible)] if eligible else
          {"id": "no_eligible_source", "title": None, "source_page": None})
-    issues = (["NO_ELIGIBLE_SOURCE_AFTER_SHA_BOUND_REJECTIONS"] if no_source
+    issues = (["NO_NATIVE_HD_CANDIDATE_IN_CURRENT_RESEARCH_QUEUE"] if no_source and excluded_sd
+              else ["NO_ELIGIBLE_SOURCE_AFTER_SHA_BOUND_REJECTIONS"] if no_source
               else candidate_issues(c))
     flag=profile.get("historical_flags",{}).get(c["id"])
     title={"place":None,"year":c.get("year"),"flag":None,"flag_status":"OMITTED_UNTIL_VERIFIED"}
@@ -92,6 +136,7 @@ def build_work_order(bank,now,profile,rejections=None):
       "cycle_utc":slot.isoformat(),"cycle_id":"storia-"+slot.strftime("%Y%m%d-%H%M"),
       "episode_id":c["id"],"subject":c.get("title"),"source_page":c.get("source_page"),
       "excluded_sha_bound_sources":sorted(excluded),
+      "excluded_low_native_raster_sources":sorted(excluded_sd),
       "skip_source_acquisition":no_source,
       "source_license_claim":c.get("license"),"title":title,
       "requested_scenes":{"classic_real_i2i_photos":4,"source_locked_vidu":1},
@@ -100,7 +145,8 @@ def build_work_order(bank,now,profile,rejections=None):
       "paid_api_call_permitted":False,"credits_spent":0,"publish_permitted":False,
       "golden_reference":"SF1906 V98 SHA256 b20726893e067bbae493859ae1c51379c4abab8c2c8768d5c6f2d4ab324b47a8",
       "required_quality_gates":["V91","V94","V96","V99"],"blocking_issues":issues,
-      "status":("SOURCE_REJECTED_ALL_KNOWN" if no_source else
+      "status":("SOURCE_RESEARCH_SKIPPED_NO_NATIVE_HD_CANDIDATES" if no_source and excluded_sd else
+                "SOURCE_REJECTED_ALL_KNOWN" if no_source else
                 "SOURCE_PREFLIGHT_REVIEW_REQUIRED" if issues else
                 "READY_FOR_ASSET_ACQUISITION_NOT_RENDER"),
       "video_completed":False,"human_approved":False,
@@ -111,12 +157,14 @@ def main():
     p.add_argument("--bank",default="queue/storia_rivive_candidates_v58.json")
     p.add_argument("--profile",default="config/storia_rivive_autopilot_v101.json")
     p.add_argument("--rejections",default="config/storia_rivive_v133_rejected_films.json")
+    p.add_argument("--low-native-raster-sources",default="config/storia_rivive_v140_low_raster_sources.json")
     p.add_argument("--now",required=True)
     p.add_argument("--out",required=True)
     a=p.parse_args()
     data=build_work_order(json.loads(Path(a.bank).read_text(encoding="utf-8")),a.now,
                           json.loads(Path(a.profile).read_text(encoding="utf-8")),
-                          json.loads(Path(a.rejections).read_text(encoding="utf-8")))
+                          json.loads(Path(a.rejections).read_text(encoding="utf-8")),
+                          json.loads(Path(a.low_native_raster_sources).read_text(encoding="utf-8")))
     out=Path(a.out);out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"cycle":data["cycle_id"],"candidate":data["episode_id"],

@@ -35,6 +35,8 @@ on:
       - ".github/workflows/storia-v136-white-house-source-audit.yml"
       - "src/storia_rivive_v136_source_decision.py"
       - "tests/test_storia_rivive_v136_source_decision.py"
+      - "config/storia_rivive_v140_low_raster_sources.json"
+      - "tests/test_storia_rivive_v140_native_raster_queue.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -75,6 +77,26 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v131_editorial_hold.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v132_veto_aware_alternatives.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v136_source_decision.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v140_native_raster_queue.py" -v
+      - name: V140 run actual three-hour CLI with full current research queue
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_autopilot_v101.py --now 2026-10-31T12:00:00Z --out /tmp/STORIA_V140_WORK_ORDER.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path("/tmp/STORIA_V140_WORK_ORDER.json").read_text())
+          assert p["status"]=="SOURCE_RESEARCH_SKIPPED_NO_NATIVE_HD_CANDIDATES",p
+          assert p["skip_source_acquisition"] is True,p
+          assert len(p["excluded_sha_bound_sources"])==3,p
+          assert len(p["excluded_low_native_raster_sources"])==7,p
+          assert p["paid_api_call_permitted"] is False,p
+          assert p["publish_permitted"] is False,p
+          assert p["video_completed"] is False,p
+          print("V140_REAL_QUEUE_NO_DOWNLOAD",p["status"],"3_qa_rejections","7_sd_origins","0_credits")
+          PY
+
 
   v136_new_real_source_audit:
     if: github.event_name == 'pull_request' && contains(github.event.pull_request.title, 'V136')
