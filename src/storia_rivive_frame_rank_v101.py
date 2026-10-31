@@ -143,7 +143,8 @@ def rank(folder):
                 if len(ranked)<5 and segment_by_name is not None else
                 "INSUFFICIENT_DISTINCT_SHOT_CANDIDATES")
         return {"status":reason,
-                "original_source_frames":len(scored),"eligible_native_detail_frames":len(ranked),
+                "original_source_frames":len(scored),"eligible_native_detail_frames":native_count,
+                "eligible_pre_freeze_source_windows":len(ranked),
                 "minimum_native_portrait_crop_px":400,"minimum_native_height_px":720,
                 "all_candidates":scored,"preselected":[],
                 "approved_restored_photos":0,
@@ -151,6 +152,7 @@ def rank(folder):
     selected=[scored[n] for n in sorted(chosen)]
     return {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
             "original_source_frames":len(scored),"preselected":selected,
+            "eligible_pre_freeze_source_windows":len(ranked),
             "all_candidates":scored,"approved_restored_photos":0,
             "selection_is_not_verified_distinct_film_shots":True,
             "selected_shot_candidate_segments":([segment_by_name[imgs[n].name] for n in sorted(chosen)]
