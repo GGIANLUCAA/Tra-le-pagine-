@@ -1,12 +1,5 @@
 name: "La Storia Rivive V121 | prova gratuita su pellicola storica reale (solo ricerca)"
 on:
-  # V130: temporary research-branch CI, no schedule, POST, I2I or publishing.
-  # Remove this branch-only trigger before integrating into main.
-  push:
-    branches:
-      - "storia-v126-near-duplicate-guard-20261031"
-    paths:
-      - ".github/workflows/storia-v121-real-film-audit.yml"
   pull_request:
     paths:
       - ".github/workflows/storia-v121-real-film-audit.yml"
