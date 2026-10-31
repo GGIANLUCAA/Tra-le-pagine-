@@ -1,0 +1,169 @@
+name: "La Storia Rivive V121 | prova gratuita su pellicola storica reale (solo ricerca)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v121-real-film-audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-v121-one-real-source-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  real_archival_source_audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free video-analysis tools only
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: Build unapproved work order for one exact Commons documentary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from src.storia_rivive_autopilot_v101 import build_work_order
+          bank=json.loads(Path("queue/storia_rivive_candidates_v58.json").read_text(encoding="utf-8"))
+          found=[x for x in bank["candidates"] if x["id"]=="france_cotton_mill_1920"]
+          if len(found)!=1:
+              raise SystemExit("Missing or duplicate historical candidate")
+          profile=json.loads(Path("config/storia_rivive_autopilot_v101.json").read_text(encoding="utf-8"))
+          order=build_work_order({"candidates":found},"2026-10-31T00:00:00Z",profile)
+          if order["paid_api_call_permitted"] or order["publish_permitted"]:
+              raise SystemExit("Unsafe source preflight permissions")
+          path=Path("output/storia_v121_real/WORK_ORDER.json")
+          path.parent.mkdir(parents=True,exist_ok=True)
+          path.write_text(json.dumps(order,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("REAL_ARCHIVAL_RESEARCH_ONLY",order["episode_id"],order["status"])
+          PY
+      - name: Download and inspect ONE real archive original, no AI APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_scout_v101.py \
+            --order output/storia_v121_real/WORK_ORDER.json \
+            --out output/storia_v121_real/source
+      - name: V122 rank actual source PNG frames for pre-freeze windows (no AI)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_frame_rank_v101.py \
+            --frames output/storia_v121_real/source/original_frames \
+            --out output/storia_v121_real/FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json
+      - name: V124 supplement twelve original frames from spaced authentic shot windows
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_adaptive_sampling_v124.py \
+            --film output/storia_v121_real/source/ORIGINAL_ARCHIVE.webm \
+            --scout output/storia_v121_real/source/SCOUT_REPORT.json \
+            --out output/storia_v121_real/adaptive \
+            --limit 48
+      - name: V125 verify spatial B/W movement on SHA-bound real photo candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v125_real_motion_audit.py \
+            --film output/storia_v121_real/source/ORIGINAL_ARCHIVE.webm \
+            --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
+            --rank output/storia_v121_real/adaptive/ADAPTIVE_RANK_V124.json \
+            --out output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json
+      - name: V126 build conservative five-moving-shot review only (zero API)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v126_balanced_motion_review.py \
+            --motion output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json \
+            --rank output/storia_v121_real/adaptive/ADAPTIVE_RANK_V124.json \
+            --scout output/storia_v121_real/adaptive/SCOUT_REPORT.json \
+            --out output/storia_v121_real/adaptive/FIVE_MOVING_REVIEW_V126.json
+      - name: Record physical evidence, never label the result as approved
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("output/storia_v121_real")
+          report=json.loads((root/"source"/"SCOUT_REPORT.json").read_text(encoding="utf-8"))
+          source=root/"source"/"ORIGINAL_ARCHIVE.webm"
+          adaptive_path=root/"adaptive"/"ADAPTIVE_STATUS_V124.json"
+          adaptive=json.loads(adaptive_path.read_text(encoding="utf-8")) if adaptive_path.is_file() else {"status":"V124_NOT_RUN"}
+          motion_path=root/"adaptive"/"REAL_BW_MOTION_V125.json"
+          motion=json.loads(motion_path.read_text(encoding="utf-8")) if motion_path.is_file() else {"status":"V125_NOT_RUN"}
+          review_path=root/"adaptive"/"FIVE_MOVING_REVIEW_V126.json"
+          review=json.loads(review_path.read_text(encoding="utf-8")) if review_path.is_file() else {"status":"V126_NOT_RUN"}
+
+
+
+          rank_path=root/"FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json"
+          rank=json.loads(rank_path.read_text(encoding="utf-8")) if rank_path.is_file() else {"status":"NO_FRAME_RANKING"}
+          status={
+              "episode_id":"france_cotton_mill_1920",
+              "status":report.get("status","SOURCE_SCOUT_BLOCKED_NO_PRODUCTION"),
+              "original_media_bytes_verified":bool(source.is_file() and report.get("original_sha256")),
+              "original_video_sha256":report.get("original_sha256"),
+              "original_raster_px":[report.get("original_width_px"),report.get("original_height_px")],
+              "decoded_raster_verified":report.get("decoded_video_raster_verified",False),
+              "source_frame_count":report.get("source_frames_extracted",0),
+              "frame_selection_status":rank.get("status"),
+              "adaptive_sampling_status":adaptive.get("status"),
+              "adaptive_sampled_original_frames":adaptive.get("sampled",0),
+              "adaptive_photo_candidates_not_approved":adaptive.get("photographic_candidates",0),
+              "adaptive_selection_status":adaptive.get("selection_status"),
+              "bw_motion_evidence_status":motion.get("status"),
+              "bw_moving_photo_candidates":motion.get("source_motion_candidates_pass",0),
+              "bw_source_5_review_frame_files":[r["filename"] for r in motion.get("five_review_shots",[])],
+              "v126_five_moving_review_status":review.get("status"),
+              "v126_five_moving_review_frames":[r["filename"] for r in review.get("five_review_candidates",[])],
+              "v126_human_artistic_approved":False,
+
+
+
+              "eligible_pre_freeze_source_windows":rank.get("eligible_pre_freeze_source_windows",0),
+              "eligible_photographic_scene_candidates":rank.get("eligible_photographic_scene_candidates",0),
+              "proposed_frame_files":[entry.get("filename") for entry in rank.get("preselected",[])],
+
+              "candidate_cut_count":report.get("shot_boundary_analysis",{}).get("cut_candidate_count"),
+              "italian_rights_verified":False,
+              "five_genuine_camera_shots_verified":False,
+              "artistic_review":False,
+              "photos_i2i_generated":0,"vidu_generated":0,
+              "mp4_finished":False,"published":False,
+              "paid_api_calls":0
+          }
+          (root/"REAL_FILM_AUDIT_V121.json").write_text(
+              json.dumps(status,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("REAL_FILM_AUDIT",json.dumps({k:v for k,v in status.items()
+                if k in ("episode_id","status","original_media_bytes_verified",
+                         "original_raster_px","candidate_cut_count","source_frame_count")}))
+          PY
+      - name: Preserve metadata evidence only; never publish original film
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V121_ONE_REAL_ARCHIVE_AUDIT_${{ github.run_id }}
+          path: |
+            output/storia_v121_real/WORK_ORDER.json
+            output/storia_v121_real/REAL_FILM_AUDIT_V121.json
+            output/storia_v121_real/source/SCOUT_REPORT.json
+            output/storia_v121_real/FIVE_REAL_FILM_SOURCE_CANDIDATES_V122.json
+            output/storia_v121_real/source/ORIGINAL_FILM_CONTACT_SHEET.jpg
+            output/storia_v121_real/adaptive/ADAPTIVE_STATUS_V124.json
+            output/storia_v121_real/adaptive/ADAPTIVE_RANK_V124.json
+            output/storia_v121_real/adaptive/SCOUT_REPORT.json
+            output/storia_v121_real/adaptive/ADAPTIVE_CONTACT_SHEET_V124.jpg
+            output/storia_v121_real/adaptive/REAL_BW_MOTION_V125.json
+            output/storia_v121_real/adaptive/FIVE_MOVING_REVIEW_V126.json
+
+          retention-days: 14
+          if-no-files-found: warn

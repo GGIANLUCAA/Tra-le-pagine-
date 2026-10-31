@@ -1,0 +1,54 @@
+name: "La Storia Rivive V116 · source motion regression (offline)"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_motion_window_v115.py"
+      - "src/storia_rivive_motion_preflight_v118.py"
+      - ".github/workflows/storia-rivive-v101-auto-3h.yml"
+      - "tests/test_storia_rivive_motion_window_v115.py"
+      - "tests/test_storia_rivive_five_windows_v117.py"
+      - "tests/test_storia_rivive_motion_preflight_v118.py"
+      - "src/storia_rivive_frame_rank_v101.py"
+      - "tests/test_storia_rivive_v122.py"
+      - "tests/test_storia_rivive_v123.py"
+      - "src/storia_rivive_adaptive_sampling_v124.py"
+      - "tests/test_storia_rivive_v124.py"
+      - "src/storia_rivive_v125_real_motion_audit.py"
+      - "tests/test_storia_rivive_v125.py"
+      - "src/storia_rivive_v126_balanced_motion_review.py"
+      - "tests/test_storia_rivive_v126.py"
+      - "tests/test_storia_rivive_v122_cache_contract.py"
+      - ".github/workflows/storia-rivive-v116-motion-ci.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  motion_window_guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg and compile motion guard
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          ffmpeg -version
+          python -m pip install -q 'pillow>=10,<13'
+          python -m py_compile src/storia_rivive_motion_window_v115.py tests/test_storia_rivive_motion_window_v115.py src/storia_rivive_motion_preflight_v118.py tests/test_storia_rivive_motion_preflight_v118.py tests/test_storia_rivive_five_windows_v117.py
+      - name: Test genuine encoded motion vs static, SHA and PTS (no API)
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_storia_rivive_motion_window_v115.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_five_windows_v117.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_motion_preflight_v118.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v101.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v122.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v123.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v124.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v125.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v126.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v122_cache_contract.py' -v

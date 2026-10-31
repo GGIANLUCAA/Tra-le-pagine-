@@ -1,7 +1,7 @@
 {
-  "version": "V58_2026_10_28",
-  "status": "real_source_pages_verified_video_frames_not_yet_reviewed",
-  "ranking_is": "EDITORIAL_HYPOTHESES_NOT_VIEW_COUNTS",
+  "version": "V121_2026_10_31",
+  "status": "seven_low_raster_sources_audited_three_1080p_research_candidates_unverified",
+  "ranking_is": "EDITORIAL_HYPOTHESES_NOT_VIEW_COUNTS_RASTER_CLAIMS_NOT_FRAME_QA",
   "rights_note": "CC0 dichiarata nella scheda dei singoli file Wikimedia; non certifica altri diritti o aspetti storici. Licenze originali riconfermare alla produzione",
   "selection_rule": "A if story/motion/color/crop probable; then actual shot review mandatory; no fake engagement data",
   "candidates": [
@@ -135,6 +135,75 @@
         "revisione dei diritti residui Italia",
         "licenza Commons da verificare prima della pubblicazione",
         "soggetti, timecode e inquadrature da revisionare"
+      ]
+    },
+    {
+      "id": "france_cotton_mill_1920",
+      "title": "Francia 1920 — il lavoro nelle filature",
+      "event": "Documentario storico francese sul lavoro nel processo di filatura e tessitura del cotone",
+      "year": 1920,
+      "date_precision": "1920_film_title",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Filature_et_Tissage_du_coton_(1920).webm",
+      "license": "PDM",
+      "duration_seconds": 525,
+      "theme": "fabbriche/lavoro/macchinari",
+      "editorial_priority": "A",
+      "hypothesis": "Macchinari e gesti manuali permettono un reveal colore forte se cinque riprese leggibili e autentiche sono confermate",
+      "commons_original_raster_claim_px": [
+        1920,
+        1080
+      ],
+      "commons_original_file_size_mb_approx": 63.47,
+      "risks": [
+        "Diritti Italia e provenienza dell'autore sconosciuto: verificare prima di I2I/pubblicazione",
+        "1080p nominale: controllare se vera scansione e nitidezza nativa, bitrate ~1 Mbps",
+        "almeno cinque vere riprese e volti/mani da verificare sul video"
+      ]
+    },
+    {
+      "id": "white_house_1917_1921",
+      "title": "Casa Bianca 1917–1921 — pecore, folla e scene d'epoca",
+      "event": "Compilazione di filmati originali NARA: pecore sul prato della Casa Bianca, parate e altre riprese in momenti diversi",
+      "year": null,
+      "date_precision": "multi_year_1917_1921",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Video_Clips_of_Woodrow_Wilson_(1917-1921,_Part_1).webm",
+      "license": "PUBLIC_DOMAIN",
+      "duration_seconds": 624,
+      "theme": "vita_pubblica/sorpresa/casa_bianca",
+      "editorial_priority": "B",
+      "hypothesis": "Pecore presso la Casa Bianca come gancio sorprendente, senza attribuire un anno specifico prima della verifica delle singole riprese",
+      "commons_original_raster_claim_px": [
+        1920,
+        1080
+      ],
+      "commons_original_file_size_mb_approx": 117.74,
+      "risks": [
+        "Compilazione multianno: mai attribuire date identiche a spezzoni diversi",
+        "Diritti territoriali/riuso e copyright di eventuale digitalizzazione da verificare",
+        "Campionamento FFmpeg e controllo cinque veri shot, volti e compressione 1080p nominale"
+      ]
+    },
+    {
+      "id": "versailles_treaty_1919",
+      "title": "Versailles 1919 — i protagonisti della firma della pace",
+      "event": "Filmato originale della cerimonia del trattato del 1919: arrivi, delegati, firme e folla",
+      "year": 1919,
+      "date_precision": "1919_reel_footage",
+      "source_page": "https://commons.wikimedia.org/wiki/File:The_signing_of_the_peace_treaty_of_Versailles_(16_fps).webm",
+      "license": "PUBLIC_DOMAIN",
+      "duration_seconds": 497,
+      "theme": "diplomazia/folle/gesti/storia",
+      "editorial_priority": "B",
+      "hypothesis": "Stacchi storici su volti, penne e folla, con primo reveal entro 1.4s solo se fotogrammi leggibili",
+      "commons_original_raster_claim_px": [
+        1920,
+        1080
+      ],
+      "commons_original_file_size_mb_approx": 44.1,
+      "risks": [
+        "Wikimedia avverte sul pubblico dominio fuori dagli USA; diritti Italia NON verificati",
+        "1080p nominale con bitrate basso: possibile upscale e volto poco dettagliato",
+        "Cinque veri shot e origine footage da verificare nei byte, no pubblicazione senza clearance"
       ]
     }
   ]

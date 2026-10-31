@@ -143,14 +143,20 @@ class V101Tests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             d=Path(temp);frames=d/"original_frames";frames.mkdir()
             for i in range(12):
-                im=Image.new("RGB",(1280,720),(35,35,35))
+                im=Image.new("RGB",(1280,720),(85,85,85))
                 ImageDraw.Draw(im).rectangle((i*80,80,i*80+100,630),fill=(220,220,220))
                 im.save(frames/("frame_%02d.png"%i))
             def report(segments):
+                cuts=[2.0,4.0,6.0,8.0,10.0]
+                # Every synthetic freeze is >=1.3s into its proposed segment.
+                times=[1.3+2*(i//2)+0.5*(i%2) for i in range(12)]
                 (d/"SCOUT_REPORT.json").write_text(json.dumps({
                     "shot_boundary_analysis":{"version":"V113_FFMPEG_SCENE_CANDIDATES",
-                        "status":"FIVE_SEGMENTS_POSSIBLE_REVIEW_REQUIRED"},
+                        "status":"FIVE_SEGMENTS_POSSIBLE_REVIEW_REQUIRED",
+                        "cut_candidate_times_s":cuts},
                     "frame_provenance":[{"filename":"frame_%02d.png"%i,
+                        "source_pts":round(times[i]*1000),
+                        "source_pts_time_s":times[i],"source_time_base":"1/1000",
                         "shot_candidate_segment_index":segment}
                         for i,segment in enumerate(segments)]}))
             report([i//2 for i in range(12)])
@@ -160,7 +166,7 @@ class V101Tests(unittest.TestCase):
             self.assertFalse(good["preselected"][0]["historical_shot_distinctness_verified"])
             report([0]*12)
             blocked=frame_rank.rank(frames)
-            self.assertEqual(blocked["status"],"INSUFFICIENT_DISTINCT_SHOT_CANDIDATES")
+            self.assertEqual(blocked["status"],"INSUFFICIENT_PRE_FREEZE_SOURCE_WINDOWS")
             self.assertEqual(blocked["preselected"],[])
 
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"),"FFmpeg required")

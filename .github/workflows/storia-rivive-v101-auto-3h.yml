@@ -15,6 +15,9 @@ on:
       - "src/storia_rivive_i2i_prepare_v102.py"
       - "config/storia_rivive_autopilot_v101.json"
       - "tests/test_storia_rivive_v101.py"
+      - "tests/test_storia_rivive_v121.py"
+      - "tests/test_storia_rivive_v122.py"
+      - "tests/test_storia_rivive_v123.py"
 permissions:
   contents: read
 concurrency:
@@ -44,6 +47,10 @@ jobs:
           set -euo pipefail
           python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_shot_boundaries_v113.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v121.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v122.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v123.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v122_cache_contract.py" -v
       - name: Create deterministic research work order for current UTC 3-hour window
         shell: bash
         run: |
@@ -62,7 +69,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v6-shot-cut-evidence-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v7-native-raster-preflight-${{ env.STORIA_EPISODE_ID }}
       - name: Fetch bounded original film and make genuine B/W contact sheet
         if: steps.film_cache.outputs.cache-hit != 'true'
         shell: bash
@@ -88,7 +95,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v6-shot-cut-evidence-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v7-native-raster-preflight-${{ env.STORIA_EPISODE_ID }}
       - name: Rank actual native-resolution source frames without claiming facial identity
         shell: bash
         run: |
@@ -105,6 +112,15 @@ jobs:
             --selection output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json \
             --source-dir "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
             --out output/storia_v101/I2I_INPUT_MANIFEST_V102.json
+      - name: V118 reject nonmoving source windows before any I2I integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_motion_preflight_v118.py \
+            --manifest output/storia_v101/I2I_INPUT_MANIFEST_V102.json \
+            --scout "output/storia_v101/source-cache/$STORIA_EPISODE_ID/SCOUT_REPORT.json" \
+            --film "output/storia_v101/source-cache/$STORIA_EPISODE_ID/ORIGINAL_ARCHIVE.webm" \
+            --out output/storia_v101/MOTION_EVIDENCE_V118.json
       - name: Generate historically constrained small country flag and title draft
         shell: bash
         run: |
@@ -139,20 +155,30 @@ jobs:
           rank=json.loads(rank_path.read_text()) if rank_path.is_file() else {"status":"SOURCE_FRAME_SELECTION_BLOCKED"}
           i2i_path=root/"I2I_INPUT_MANIFEST_V102.json"
           i2i=json.loads(i2i_path.read_text()) if i2i_path.is_file() else {"status":"I2I_INPUTS_BLOCKED"}
+          motion_path=root/"MOTION_EVIDENCE_V118.json"
+          motion=json.loads(motion_path.read_text()) if motion_path.is_file() else {"status":"BLOCKED"}
           low_detail=rank.get("status")=="SOURCE_NATIVE_DETAIL_INSUFFICIENT_FOR_FIVE_SHOTS"
           insufficient_cuts=scout.get("shot_boundary_analysis",{}).get("status")=="INSUFFICIENT_CUT_CANDIDATES"
+          native_media_rejected=scout.get("status") in ("SOURCE_NATIVE_DETAIL_INSUFFICIENT_SKIP_DOWNLOAD","SOURCE_RASTER_METADATA_MISSING_SKIP_DOWNLOAD")
           insufficient_selected_shots=rank.get("status") in (
-              "INSUFFICIENT_DISTINCT_SHOT_CANDIDATES","SHOT_SEGMENT_PROVENANCE_INCOMPLETE")
+              "INSUFFICIENT_DISTINCT_SHOT_CANDIDATES","SHOT_SEGMENT_PROVENANCE_INCOMPLETE",
+              "SHOT_BOUNDARY_PTS_EVIDENCE_INVALID","INSUFFICIENT_PRE_FREEZE_SOURCE_WINDOWS",
+              "INSUFFICIENT_PHOTOGRAPHIC_SCENE_CANDIDATES")
           status={"cycle_id":order["cycle_id"],"candidate":order["episode_id"],
               "source_scout":scout.get("status"),
+              "native_original_raster_px":[scout.get("original_width_px"),scout.get("original_height_px")],
+              "native_media_rejected_before_download":native_media_rejected,
               "source_preflight_blocking_issues":order.get("blocking_issues",[]),
               "native_frame_selection":rank.get("status"),
+              "eligible_pre_freeze_source_windows":rank.get("eligible_pre_freeze_source_windows",0),
+              "eligible_photographic_scene_candidates":rank.get("eligible_photographic_scene_candidates",0),
               "i2i_input_preparation":i2i.get("status"),
+              "source_bw_motion_preflight":motion.get("status"),
               "i2i_block_reason":i2i.get("reason"),
               "restored_i2i_photos_approved":0,
               "real_vidu_clips_approved":0,"finished_mp4":False,"published":False,
               "charged_api_requests":0,
-              "status":"SOURCE_REJECTED" if (low_detail or insufficient_cuts or insufficient_selected_shots) else "ASSETS_PENDING",
+              "status":"SOURCE_REJECTED" if (low_detail or native_media_rejected or insufficient_cuts or insufficient_selected_shots) else "ASSETS_PENDING",
               "cut_candidate_count":scout.get("shot_boundary_analysis",{}).get("cut_candidate_count"),
               "historical_camera_shots_verified":False,
               "next_required":"Resolve source rights and native quality, then 4 genuine I2I photos, 1 real Vidu, V91/V94/V96/V99 and artistic review"}
@@ -169,6 +195,7 @@ jobs:
             output/storia_v101/CYCLE_STATUS.json
             output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
             output/storia_v101/I2I_INPUT_MANIFEST_V102.json
+            output/storia_v101/MOTION_EVIDENCE_V118.json
             output/storia_v101/TITLE_FLAG_DRAFT.png
             output/storia_v101/TITLE_FLAG_REPORT.json
             output/storia_v101/source-cache/*/SCOUT_REPORT.json
