@@ -25,7 +25,7 @@ def fixture(path):
     # Bytes contain a synthetic moving archive analog; no historic footage.
     if shutil.which("ffmpeg"):
         subprocess.run(["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y",
-                        "-f","lavfi","-i","testsrc2=size=640x360:rate=12:duration=20",
+                        "-f","lavfi","-i","testsrc2=size=640x360:rate=12:duration=20,scroll=h=0.125",
                         "-c:v","mpeg4","-q:v","8",str(film)],check=True,timeout=60)
     else:
         film.write_bytes(b"offline film fixture, not a real movie")
@@ -106,7 +106,7 @@ class V125Tests(unittest.TestCase):
             self.assertEqual(result["status"],"V125_MOTION_SOURCE_SELECTION_BLOCKED")
             self.assertEqual(len(result["five_review_shots"]),0)
             self.assertEqual(result["source_motion_candidates_pass"],4)
-            self.assertIn("SOURCE_WINDOW_STATIC", [x["reason"] for x in result["motion_audit"]])
+            self.assertTrue(any("SOURCE_WINDOW_STATIC" in x["reason"] for x in result["motion_audit"]))
 
     def test_altered_original_frame_blocks_before_any_motion(self):
         with tempfile.TemporaryDirectory() as root:
