@@ -287,7 +287,7 @@ class V158AssetPathHardening(unittest.TestCase):
 
     def test_embedded_null_rejected(self):
         with self.assertRaisesRegex(ValueError, "V154_UNSAFE_ASSET_PATH"):
-            _safe_file(self.root, "nested/original.png\\x00")
+            _safe_file(self.root, "nested/original.png" + chr(0))
 
     def test_parent_traversal_rejected(self):
         with self.assertRaisesRegex(ValueError, "V154_UNSAFE_ASSET_PATH"):
