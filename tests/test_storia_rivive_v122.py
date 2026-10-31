@@ -61,7 +61,7 @@ class TestRealFilmTemporalWindow(unittest.TestCase):
             base=Path(root); folder=base/"original_frames";folder.mkdir()
             for i in range(12):
                 # Artificial pixels only; real 1920 film is NOT bundled or reused.
-                pic=Image.new("RGB",(1280,720),(25+i*9,35,48))
+                pic=Image.new("RGB",(1280,720),(80+i*6,85,90))
                 ImageDraw.Draw(pic).rectangle((100+i*12,120,380+i*12,630),
                                                fill=(160,175,190))
                 pic.save(folder/f"frame_{i+1:02d}.png")
