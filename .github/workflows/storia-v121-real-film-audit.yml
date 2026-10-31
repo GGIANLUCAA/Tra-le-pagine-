@@ -1,0 +1,97 @@
+name: "La Storia Rivive V121 | prova gratuita su pellicola storica reale (solo ricerca)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v121-real-film-audit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-v121-one-real-source-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  real_archival_source_audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free video-analysis tools only
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: Build unapproved work order for one exact Commons documentary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from src.storia_rivive_autopilot_v101 import build_work_order
+          bank=json.loads(Path("queue/storia_rivive_candidates_v58.json").read_text(encoding="utf-8"))
+          found=[x for x in bank["candidates"] if x["id"]=="france_cotton_mill_1920"]
+          if len(found)!=1:
+              raise SystemExit("Missing or duplicate historical candidate")
+          profile=json.loads(Path("config/storia_rivive_autopilot_v101.json").read_text(encoding="utf-8"))
+          order=build_work_order({"candidates":found},"2026-10-31T00:00:00Z",profile)
+          if order["paid_api_call_permitted"] or order["publish_permitted"]:
+              raise SystemExit("Unsafe source preflight permissions")
+          path=Path("output/storia_v121_real/WORK_ORDER.json")
+          path.parent.mkdir(parents=True,exist_ok=True)
+          path.write_text(json.dumps(order,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("REAL_ARCHIVAL_RESEARCH_ONLY",order["episode_id"],order["status"])
+          PY
+      - name: Download and inspect ONE real archive original, no AI APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_scout_v101.py \
+            --order output/storia_v121_real/WORK_ORDER.json \
+            --out output/storia_v121_real/source
+      - name: Record physical evidence, never label the result as approved
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("output/storia_v121_real")
+          report=json.loads((root/"source"/"SCOUT_REPORT.json").read_text(encoding="utf-8"))
+          source=root/"source"/"ORIGINAL_ARCHIVE.webm"
+          status={
+              "episode_id":"france_cotton_mill_1920",
+              "status":report.get("status","SOURCE_SCOUT_BLOCKED_NO_PRODUCTION"),
+              "original_media_bytes_verified":bool(source.is_file() and report.get("original_sha256")),
+              "original_video_sha256":report.get("original_sha256"),
+              "original_raster_px":[report.get("original_width_px"),report.get("original_height_px")],
+              "decoded_raster_verified":report.get("decoded_video_raster_verified",False),
+              "source_frame_count":report.get("source_frames_extracted",0),
+              "candidate_cut_count":report.get("shot_boundary_analysis",{}).get("cut_candidate_count"),
+              "italian_rights_verified":False,
+              "five_genuine_camera_shots_verified":False,
+              "artistic_review":False,
+              "photos_i2i_generated":0,"vidu_generated":0,
+              "mp4_finished":False,"published":False,
+              "paid_api_calls":0
+          }
+          (root/"REAL_FILM_AUDIT_V121.json").write_text(
+              json.dumps(status,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("REAL_FILM_AUDIT",json.dumps({k:v for k,v in status.items()
+                if k in ("episode_id","status","original_media_bytes_verified",
+                         "original_raster_px","candidate_cut_count","source_frame_count")}))
+          PY
+      - name: Preserve metadata evidence only; never publish original film
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V121_ONE_REAL_ARCHIVE_AUDIT_${{ github.run_id }}
+          path: |
+            output/storia_v121_real/WORK_ORDER.json
+            output/storia_v121_real/REAL_FILM_AUDIT_V121.json
+            output/storia_v121_real/source/SCOUT_REPORT.json
+          retention-days: 14
+          if-no-files-found: warn
