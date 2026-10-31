@@ -2028,6 +2028,47 @@
             "site_verified": false,
             "human_full_artistic_QA": "pending",
             "no_TTS_or_API_calls": true
+          },
+          "v106_nondestructive_revision": {
+            "status": "candidate_review_only",
+            "version": "V106",
+            "filename": "02_Critico_Museum_V106_CANDIDATO.mp4",
+            "sha256": "c1c54dba4f0198df3a8f82e11513378bccf2831647dca01741163250c857a263",
+            "bytes": 18673966,
+            "duration_seconds": 110.65,
+            "full_ffmpeg_decode": "PASS_V107",
+            "shared_audio_AAC_ADTS_SHA256": "3f46d52d8e0a09974bd144c62a77f5357c1ec5cc63e9c3cee956c8853edd505e",
+            "audio_identical_to_V102": true,
+            "original_V102_preserved": true,
+            "original_V105_preserved": true,
+            "library_path": "/ArtVision/Bocklin/V106_REVIEW_4X1_ANDROID/",
+            "documentation": "docs/productions/2026-10-31-artvision-bocklin-v106-micro-motion-review.md",
+            "v107_package_documentation": "docs/productions/2026-10-31-artvision-bocklin-v107-review-packages-verified.md",
+            "V25_approved": false,
+            "site_verified": false,
+            "human_full_artistic_QA": "pending",
+            "no_new_TTS_or_API_calls": true
+          },
+          "v108_visual_focus_qa": {
+            "status": "documented_visual_focus_defect_not_corrected",
+            "date": "2026-11-01",
+            "samples_seconds": [
+              24,
+              90
+            ],
+            "expected_recipe_chapters": [
+              2,
+              8
+            ],
+            "expected_focus": "intero dipinto",
+            "observed": "Critico Standard shows whole painting; Critico Museum V106 shows central vertical cypress crop in both sampled frames",
+            "renderer_root_cause": "Museum always uses portrait crop max(1.10,z) even when recipe chapter zoom=1",
+            "artistic_full_review": "pending",
+            "voice_sentence_sync": "not_verified",
+            "new_video_rendered": false,
+            "master_unchanged": true,
+            "report": "docs/productions/2026-11-01-artvision-bocklin-v108-focus-full-painting-qa.md",
+            "next_action": "Only non-destructive geometric whole-painting correction after QA; avoid crossfade ghosting"
           }
         },
         "cinema_standard": {
@@ -2173,7 +2214,35 @@
       },
       "production_ready_for_seventh": false,
       "site_verified": false,
-      "social_published": false
+      "social_published": false,
+      "v107_review_archive": {
+        "library_folder": "/ArtVision/Bocklin/V106_REVIEW_4X1_ANDROID/",
+        "complete_zip": {
+          "filename": "ARTVISION_BOECKLIN_4X1_V106_REVIEW_COMPLETO.zip",
+          "bytes": 46200145,
+          "sha256": "e864f4803f5094b4a926c687921a0e64a2f2af24fca8087c1bb2be27cd812dc5",
+          "file_id": "file_00000000a7e48246925331bb57cdccdb",
+          "library_readback_sha_verified_v107": true,
+          "sha_reverified_v108": true
+        },
+        "android_zip": {
+          "filename": "ARTVISION_BOECKLIN_4_VIDEO_V106_ANDROID.zip",
+          "bytes": 35489537,
+          "sha256": "65dc2ebfb1b879491424b180594fc90d43f65ac2b87a0cca8951e3541caa6454",
+          "file_id": "file_00000000745081f48cabf380970dec74",
+          "library_readback_sha_verified_v107": true
+        },
+        "selected_slots": [
+          "critico_standard_V102",
+          "critico_museum_V106_candidate",
+          "cinema_standard_V100",
+          "cinema_museum_V101"
+        ],
+        "master_museum_V102_also_preserved": true,
+        "V25_Gold": 0,
+        "site_playback_verified": false,
+        "report": "docs/productions/2026-10-31-artvision-bocklin-v107-review-packages-verified.md"
+      }
     }
   ],
   "last_operational_update": "2026-10-30 Wright NG725 fifth 4x1 user-authorized: 4 MP4 real, 2 Critico new one Gacrux WAV + 1 Cinema Museum V85 new, 1 Cinema V52B historical exact original, 0 V25 Gold, no archive upload. ZIP CRC PASS",
