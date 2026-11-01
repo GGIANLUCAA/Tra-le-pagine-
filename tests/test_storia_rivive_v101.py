@@ -90,6 +90,17 @@ class V101Tests(unittest.TestCase):
                     "paid_api_call_permitted":False,"publish_permitted":False},
                     {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
                      "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]},Path(temp))
+    def test_used_candidate_is_not_reselected(self):
+        a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",{**PROFILE,"used_episode_ids":["paris_swim_1918"]})
+        self.assertEqual(a["episode_id"],"paris_train_1918")
+    def test_exhausted_queue_skips_without_spend(self):
+        a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",{**PROFILE,"used_episode_ids":["paris_swim_1918","paris_train_1918"]})
+        self.assertEqual(a["status"],"SOURCE_REJECTED_QUEUE_EXHAUSTED")
+        self.assertFalse(a["paid_api_call_permitted"])
+        self.assertFalse(a["video_completed"])
+    def test_malformed_used_ledger_rejected(self):
+        with self.assertRaises(ValueError):
+            auto.build_work_order(BANK,"2026-10-30T15:00:00Z",{**PROFILE,"used_episode_ids":"paris_swim_1918"})
     def test_source_rights_not_self_approved(self):
         a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE)
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",a["blocking_issues"])
