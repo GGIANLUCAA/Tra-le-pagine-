@@ -1,0 +1,77 @@
+{
+  "schema": "artvision-v119-benchmark-media-verified",
+  "checked_on": "2026-11-02",
+  "purpose": "Concrete owner-approved museum benchmarks for future actual MP4 comparison, not reusable 3D room models",
+  "source_provenance": "User's connected Google Drive, original MP4 files fetched as raw originals and inspected locally",
+  "actual_checks": [
+    "Google Drive file metadata",
+    "stream dimensions/fps/duration by ffprobe",
+    "local SHA256",
+    "12 sampled frames across each movie in opening/detail/return"
+  ],
+  "limits": [
+    "Not full-speed artistic review of both movies",
+    "Not camera-calibrated 3D geometry",
+    "Not proof that any V119 candidate preset already exists"
+  ],
+  "references": [
+    {
+      "id": "CYCLOPS_V46_APPROVED",
+      "file": "ArtVision_The_Cyclops_SENZA_STRISCE_CORRETTO_20261027.mp4",
+      "source_url": "https://drive.google.com/file/d/1w9mb1N5hrGAaB870JANHoKk98MiibtpW/view",
+      "sha256": "b4eb941699b50a59e13f81d27b94664dea98a6acda9f974c8bdd763c9cf98a43",
+      "file_size_bytes": 89672847,
+      "duration_seconds": 64.686687,
+      "width": 1080,
+      "height": 1920,
+      "fps": 24,
+      "descriptive_findings": "Dark burgundy architectural gallery, warm realistic accent lighting, parquet floor with sheen/reflections, gilded relief frame, entry and return to same composition; painting explored in intervening shots.",
+      "sampled_seconds": [
+        0,
+        5.8,
+        11.7,
+        17.5,
+        23.3,
+        29.2,
+        35,
+        40.8,
+        46.7,
+        52.5,
+        58.3,
+        64.2
+      ],
+      "borrow": "Model depth, frame texture, lighting and continuous camera concept; do not reuse cropped room still as substitute for real motion."
+    },
+    {
+      "id": "HIROSHIGE_SCALE_V46_APPROVED",
+      "file": "ARTVISION_HIROSHIGE_MUSEUM_SCALE_ANDROID_20261027.mp4",
+      "source_url": "https://drive.google.com/file/d/14X8_TObXEijGlBg8HuyR6ITTlPjJk0dA/view",
+      "sha256": "4c652f526b91bb22332055e0484f3a616d1168ae85599bb7e81da197ce29356c",
+      "file_size_bytes": 66691253,
+      "duration_seconds": 64.708333,
+      "width": 1080,
+      "height": 1920,
+      "fps": 24,
+      "descriptive_findings": "Small vertical print within restrained traditional frame, dark green-brown wall and wooden wainscoting; person at left in room-wide shot gives scale. Closing shot returns to room. Enlarged view comes from camera approach.",
+      "sampled_seconds": [
+        0,
+        5.8,
+        11.7,
+        17.5,
+        23.3,
+        29.2,
+        35,
+        40.9,
+        46.7,
+        52.5,
+        58.3,
+        64.2
+      ],
+      "borrow": "Physical-scale presentation and transition for small art; never scale print itself to occupy a huge wall."
+    }
+  ],
+  "status": "benchmark_bytes_verified_reference_only",
+  "authored_presets_ready": 0,
+  "frames_ready": 0,
+  "human_artistic_approval_for_any_new_preset": false
+}
