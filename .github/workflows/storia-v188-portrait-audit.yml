@@ -12,6 +12,12 @@ on:
       - 'src/storia_rivive_v188_portrait_audit.py'
       - 'tests/test_storia_rivive_v188_portrait_audit.py'
       - '.github/workflows/storia-v188-portrait-audit.yml'
+  workflow_dispatch:
+    inputs:
+      run_real_archive:
+        description: 'Re-run real V187 artifact crop audit only while artifact exists'
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
@@ -31,7 +37,7 @@ jobs:
           python -m py_compile src/storia_rivive_v188_portrait_audit.py tests/test_storia_rivive_v188_portrait_audit.py
           python -m unittest discover -s tests -p 'test_storia_rivive_v188_portrait_audit.py' -v
   one-real-archive-artifact:
-    if: github.event_name == 'pull_request' && github.head_ref == 'storia-v183-production-candidate-20261101' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name == 'workflow_dispatch' && inputs.run_real_archive == true
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
