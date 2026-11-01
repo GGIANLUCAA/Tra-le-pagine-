@@ -1,0 +1,47 @@
+name: ArtVision Malczewski V112 · source recovery only
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/malczewski-v112-source.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-malczewski-v112-source-once
+  cancel-in-progress: false
+jobs:
+  original_image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify only recovery of already generated painting
+        run: |
+          python - <<'PY'
+          import json
+          j=json.load(open('requests/artvision/malczewski-v112-source.json'))
+          assert j['source_run_id']==41260215643 and j['no_api_or_tts'] is True
+          PY
+      - name: Recover authentic exact source without any rendering or voice
+        run: |
+          set -euo pipefail
+          mkdir -p recovered original
+          gh run download 41260215643 -n ARTVISION_MALCZEWSKI_MNP_FR56_V110_TRUE_MP4_REVIEW -D recovered
+          python - <<'PY'
+          import pathlib,shutil,hashlib
+          paths=list(pathlib.Path('recovered').rglob('Bledne_kolo_MNP_FR56_PD.jpg'))
+          assert len(paths)==1,paths
+          p=paths[0]
+          assert hashlib.sha256(p.read_bytes()).hexdigest()=='0ff83e09be9465a696b8956065f93ddd78f9fb3c1f1e8ebd87b98bc792cad5b9'
+          shutil.copy2(p,'original/Bledne_kolo_MNP_FR56_PD.jpg')
+          print('Authentic source recovered:',p.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MALCZEWSKI_V112_ONLY_AUTHENTIC_SOURCE_IMAGE
+          path: original/Bledne_kolo_MNP_FR56_PD.jpg
+          retention-days: 14
+          if-no-files-found: error
