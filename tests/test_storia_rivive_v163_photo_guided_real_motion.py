@@ -107,6 +107,51 @@ class MotionPhotoTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'UNKNOWN_INDEX'):
                 v.scene_photo_sha(6,root)
 
+    def test_all_stills_preflight_validates_ten_real_decoded_pngs(self):
+        import hashlib
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            base=Path(td)/'source'
+            photos=Path(td)/'photos'
+            photos.mkdir()
+            freeze_sha={}; i2i_sha={}; dd_sha={}
+            for i in range(1,6):
+                folder=base/f'scene_{i:02d}'
+                folder.mkdir(parents=True)
+                freeze=folder/'EXACT_MP4_LAST_MOTION_FRAME.png'
+                color=(photos/f'PHOTO_I2I_{i:02d}.png' if i<=3
+                       else photos/f'NEURAL_DDCOLOR_{i:02d}.png')
+                frame=np.full((576,720,3),i*19,dtype=np.uint8)
+                self.assertTrue(cv2.imwrite(str(freeze),frame))
+                frame[:,:,1]=i*29
+                self.assertTrue(cv2.imwrite(str(color),frame))
+                digest=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+                freeze_sha[i]=digest(freeze)
+                (i2i_sha if i<=3 else dd_sha)[i]=digest(color)
+            args=(base,photos,freeze_sha,i2i_sha,dd_sha)
+            verified=v.verify_still_assets(*args)
+            self.assertEqual(len(verified),10)
+            self.assertEqual(verified['4_color'],dd_sha[4])
+
+            # Even one changed image must fail before an encoder is started.
+            target=photos/'NEURAL_DDCOLOR_04.png'
+            target.write_bytes(b'tampered')
+            with self.assertRaisesRegex(ValueError,'STILL_ASSET_SHA_CHANGED_4_color'):
+                v.verify_still_assets(*args)
+            # Matching SHA of an invalid PNG must not bypass real decoding.
+            dd_sha[4]=digest(target)
+            with self.assertRaisesRegex(ValueError,'STILL_ASSET_GEOMETRY_INVALID_4_color'):
+                v.verify_still_assets(*args)
+            target.unlink()
+            with self.assertRaisesRegex(ValueError,'STILL_ASSET_MISSING_OR_LINK_4_color'):
+                v.verify_still_assets(*args)
+
+    def test_still_preflight_rejects_incomplete_manifests(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            with self.assertRaisesRegex(ValueError,'STILL_ASSET_MANIFEST_INVALID'):
+                v.verify_still_assets(td,td,{1:'0'*64},{1:'0'*64},{4:'0'*64})
+
     def test_streamed_scenes_preserve_exact_frame_order_and_pixels(self):
         import io
         a=np.zeros((v.H,v.W,3),dtype=np.uint8)
