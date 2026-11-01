@@ -322,7 +322,13 @@ def main():
                 hsv[...,1]=np.clip(hsv[...,1].astype(np.float32)*(.50 if i==4 else .64),0,255).astype(np.uint8)
                 photo=cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
             gray_bg,color_bg=background(archive_anchor,photo,scene)
-            whole=[];conf=[];err=[];movement=[];colored_frames=0
+            # V169: emit each processed moving frame immediately. V166 buffered
+            # one whole 720x1280 scene in RAM (hundreds of MiB) despite streaming
+            # between scenes. Keep only the previous frame and 3 QA samples.
+            conf=[];err=[];movement=[];colored_frames=0
+            prev_shown=None;first_shown=None;colored_shown=None
+            scene_frames=0
+            colored_sample_index=min(len(real_frames)-1,28)
             for k,frame in enumerate(real_frames):
                 colorized,confidence,mismatch=transfer_color_motion(frame,archive_anchor,photo,engine,near_anchor=(k==len(real_frames)-1))
                 conf.append(confidence);err.append(mismatch)
@@ -337,39 +343,48 @@ def main():
                 if final_fade>0:
                     current=cv2.addWeighted(current,1-final_fade,photo,final_fade,0)
                 shown=composer(current,gray_bg,color_bg,max(alpha,final_fade),scene)
-                whole.append(shown)
-                if len(whole)>1:
-                    # Visual motion sanity: real changes in content, excludes static zoom.
-                    prev=whole[-2][300:980];now=shown[300:980]
+                if prev_shown is not None:
+                    prev=prev_shown[300:980];now=shown[300:980]
                     movement.append(float(np.mean(cv2.absdiff(cv2.cvtColor(prev,cv2.COLOR_BGR2GRAY),cv2.cvtColor(now,cv2.COLOR_BGR2GRAY)))))
+                if k==0:first_shown=shown
+                if k==colored_sample_index:colored_shown=shown
+                nframes=stream_scene_frames((shown,),proc.stdin,nframes,dest/'V163_COPERTINA.jpg')
+                scene_frames+=1
+                prev_shown=shown
+            original_motion_frames=len(real_frames)
+            del real_frames
             # Source-locked photograph, with same composition and no invented motion.
+            after_count=0
             if i<5:
                 n=int(round(hold*FPS))
                 frozen=composer(photo,gray_bg,color_bg,1.,scene)
-                whole.extend([frozen]*n)
+                nframes=stream_scene_frames((frozen for _ in range(n)),proc.stdin,nframes,dest/'V163_COPERTINA.jpg')
+                scene_frames+=n
+                prev_shown=frozen
             else:
                 # Genuine *moving* archive post-freeze; source matched, never claim Vidu.
                 after_frames=load_clip(BASE/f'scene_{scene}'/'real_original_after_freeze.mp4')
-                for k,frame in enumerate(after_frames):
+                after_count=len(after_frames)
+                for frame in after_frames:
                     # Calculate actual dense current-to-anchor flow (motion remains source film).
                     colorized,confidence,mismatch=transfer_color_motion(frame,archive_anchor,photo,engine)
                     conf.append(confidence);err.append(mismatch)
                     shown=composer(colorized,gray_bg,color_bg,1,scene)
-                    if whole:
-                        prev=whole[-1][300:980];now=shown[300:980]
+                    if prev_shown is not None:
+                        prev=prev_shown[300:980];now=shown[300:980]
                         movement.append(float(np.mean(cv2.absdiff(cv2.cvtColor(prev,cv2.COLOR_BGR2GRAY),cv2.cvtColor(now,cv2.COLOR_BGR2GRAY)))))
-                    whole.append(shown)
-            # Add clean but non-intrusive text on every frame, small text only.
-            nframes=stream_scene_frames(whole,proc.stdin,nframes,dest/'V163_COPERTINA.jpg')
-            # sample exact actual source moment and its matched color motion, plus photo.
-            sample.append((scene,cv2.resize(whole[0],(360,640)),cv2.resize(whole[min(len(real_frames)-1,28)],(360,640)),cv2.resize(whole[-1],(360,640))))
+                    nframes=stream_scene_frames((shown,),proc.stdin,nframes,dest/'V163_COPERTINA.jpg')
+                    scene_frames+=1
+                    prev_shown=shown
+                del after_frames
+            # Three actual frame samples, identical indices to the buffered V163.
+            sample.append((scene,cv2.resize(first_shown,(360,640)),cv2.resize(colored_shown,(360,640)),cv2.resize(prev_shown,(360,640))))
             qa_scenes.append({'scene':i,'original_freeze_sha256':orig_anchor_sha,'photo_sha256':scene_photo_sha(i,PHOTO),
-                              'photo_kind':photo_method,'original_moving_frames':len(real_frames),'full_color_motion_frames_over_40pct_reveal':colored_frames,
+                              'photo_kind':photo_method,'original_moving_frames':original_motion_frames,'full_color_motion_frames_over_40pct_reveal':colored_frames,
                               'mean_flow_match_confidence':round(float(np.mean(conf)),4),'mean_source_motion_delta_gray':round(float(np.mean(movement)),3),
-                              'photo_motion_color_transferred':i<=3,'fifth_after_freeze_real_motion_frames':len(after_frames) if i==5 else 0,
+                              'photo_motion_color_transferred':i<=3,'fifth_after_freeze_real_motion_frames':after_count,
                               'QA_status':'REVIEW_REQUIRED'})
-            print('V163_SCENE',i,'FRAMES',len(whole),'PHOTO',photo_method,'CONF',qa_scenes[-1]['mean_flow_match_confidence'],flush=True)
-            del whole
+            print('V163_SCENE',i,'FRAMES',scene_frames,'PHOTO',photo_method,'CONF',qa_scenes[-1]['mean_flow_match_confidence'],flush=True)
         # Frames are streamed in the original order to one FFmpeg encoder.
         duration=nframes/FPS
         if not 14<=duration<=35:
