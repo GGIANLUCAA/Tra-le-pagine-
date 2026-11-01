@@ -43,3 +43,23 @@ Stato di produzione: **nessun nuovo MP4 approvato**, 0 I2I, 0 Vidu, 0 crediti, n
 - **Regola di sicurezza:** come chiarisce anche il titolare dei Prelinger Archives nelle FAQ ufficiali aggiornate il 27 maggio 2026, la licenza va verificata singolarmente: non tutti i suoi film sono Public Domain. Non confondere date di pubblicazione nel catalogo digitale con le date delle scene.
 
 Nessun nuovo episodio prodotto; la priorità rimane reperire almeno una fonte coerente con sufficiente dettaglio **e** chiara provenienza/licenza territoriale, poi prova temporale GPU con disponibilità/quote effettivamente controllate e confronto con i reference 43055/43056.
+
+
+## V175 — secondo archivio verificabile: Library of Congress, non solo Prelinger
+
+- Fonti autorevoli: https://www.loc.gov/collections/national-screening-room/about-this-collection/ (il catalogo distribuisce diversi titoli anche come ProRes 422 MOV, formato lossless-ish più adatto del mini-MP4), e https://www.loc.gov/collections/national-screening-room/about-this-collection/rights-and-access/ (per i film può esserci copyright in altre nazioni; la disponibilità online **NON equivale a permesso Italia**).
+- Nuovo codice read-only `src/storia_rivive_v175_loc_source_probe.py` controlla tre vere schede: `2012600307` (*A Corner in Wheat*, 1909, attori spesso in vista), `00694365` (panorama New York 1903, controllo negativo perché volti piccoli), `00694408` (San Francisco 1906, V98 preesistente solo come controllo di non-duplicazione).
+- Richiede `?fo=json` alla scheda del singolo film; estrae URL solo su host LOC HTTPS allowlisted e con estensioni video, senza scaricare media; numero, categoria e URL nelle prove JSON private. **Né MOV né ProRes bastano a dichiarare risoluzione nativa 1080p/2K**: richiedono FFprobe dei byte e valutazione fotogrammi/volti. Diritti Italia e copyright soggettivo restano PENDING. Nessun nuovo MP4 in questa fase.
+- Sei nuovi test coprono host URLs falsi, traversali, risposte senza download, nessuna falsa approvazione raster o diritti. Output previsto `V175_LOC_SOURCE_METADATA.json` da CI di ricerca V173 estesa. Dopo un errore di rete eventuale segnalare il blocco specifico, non inventare una sorgente di alta qualità.
+
+## V176 — correzione del vero AUTOPILOTA V101 (non solo un documento)
+
+La V101 precedente scaricava e proponeva fotogrammi anche da scansioni **352×240, 720×576 e 1280×720**, che risultano inadeguate al benchmark visivo dell'utente quando ritagliate per un video verticale 720×1280. Una scheda d'archivio con dicitura HD o un MP4 720p non dimostra la presenza di dettagli sufficienti nel ritaglio verticale.
+
+- Cambiato davvero `src/storia_rivive_scout_v101.py`: la `ffprobe` legge codec, larghezza, altezza e SAR dell'originale; `v176_source_raster_gate` richiede *sorgente codificata* h >= 1000px **e** >=0,64 del numero di pixel del ritaglio centrale 9:16 richiesto per 720×1280. Le due soglie sono conservative e non sono né equivalenti a HD nativo da pellicola né garanzia di visi perfetti; la qualità ottica storica richiede QA visivo.
+- Se non passa, stato `REJECT_LOW_SOURCE_PIXELS_FOR_REFERENCE_LEVEL_MOTION`, `source_frames_extracted=0`, nessuna preparazione fittizia del master/I2I/Vidu. L'originale resta un download di ricerca, non un video artificiosamente ingrandito.
+- Cambiate davvero entrambe le chiavi cache nel workflow V101 da `storia-v101-archival-scout-v3-` a `storia-v101-archival-scout-v4-v176-quality-`: evita che una vecchia pellicola SD memorizzata nella cache possa scavalcare il controllo dopo un eventuale merge approvato.
+- Test riproducibili `tests/test_storia_rivive_v176_quality_source_gate.py`: Parigi 720×576 e moda 1917 352×240 scartati, 1280×720 non sufficiente per crop, 1920×1080 solo eligible-for-human-review, 4K NON automaticamente user-approved, mancanza raster fail-closed, nessuna asserzione di diritti/volti/foto/Vidu.
+- [CI V176 #41297113958](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41297113958) **SUCCESS**: test V101 esistenti e test V176, compreso invalidamento cache. **Le modifiche sono solo nella PR draft, non ancora sul cron main**; non forzare merge o attivare costi/produzione 3h senza revisione.
+
+**V177 prossimo blocco:** selezionare da LOC una scansione effettivamente sufficiente *sui byte*, con soggetti più vicini e almeno 5 shot; solo allora pianificare temporal video restoration su GPU disponibile con budget verificato, senza trasformare un mero MOV compresso in falsa fotografia 4K.
