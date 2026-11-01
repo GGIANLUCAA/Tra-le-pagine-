@@ -3,6 +3,11 @@ on:
   schedule:
     - cron: "17 */3 * * *"
   workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v101-auto-3h.yml"
+      - "src/storia_rivive_v196_scout_gate.py"
+      - "tests/test_storia_rivive_v196_scout_gate.py"
   push:
     branches: [main]
     paths:
@@ -12,16 +17,33 @@ on:
       - "src/storia_rivive_flag_title_v101.py"
       - "src/storia_rivive_frame_rank_v101.py"
       - "src/storia_rivive_i2i_prepare_v102.py"
+      - "src/storia_rivive_v196_scout_gate.py"
       - "config/storia_rivive_autopilot_v101.json"
       - "tests/test_storia_rivive_v101.py"
+      - "tests/test_storia_rivive_v196_scout_gate.py"
 permissions:
   contents: read
 concurrency:
   group: storia-rivive-v101-single-source-research
   cancel-in-progress: false
 jobs:
+  offline_v196_regression:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -q "pillow>=10,<13"
+      - name: Verify fail-closed V196 cache and V101 compatibility without provider calls
+        run: |
+          python -m py_compile src/storia_rivive_v196_scout_gate.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v196_scout_gate.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
   scheduled_preparation:
-    if: github.run_attempt == 1
+    if: github.event_name != 'pull_request' && github.run_attempt == 1
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -41,8 +63,9 @@ jobs:
       - name: Run fail-closed safety and flag geometry tests before research
         run: |
           set -euo pipefail
-          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v196_scout_gate.py
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v196_scout_gate.py" -v
       - name: Create deterministic research work order for current UTC 3-hour window
         shell: bash
         run: |
@@ -68,20 +91,15 @@ jobs:
         run: |
           set -euo pipefail
           python src/storia_rivive_scout_v101.py --order output/storia_v101/WORK_ORDER.json --out "output/storia_v101/source-cache/$STORIA_EPISODE_ID"
-      - name: Confirm original film was really acquired before caching
+      - name: V196 verify actual cached film SHA and decodable PNGs before any frame ranking
         id: scout_status
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
-          import os,json,pathlib
-          p=pathlib.Path("output/storia_v101/source-cache")/os.environ["STORIA_EPISODE_ID"]/"SCOUT_REPORT.json"
-          report=json.loads(p.read_text()) if p.is_file() else {}
-          ready=report.get("status")=="REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW"
-          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
-              print("ready="+("true" if ready else "false"),file=f)
-          print("CACHE_SUCCESSFUL_ORIGINAL_MEDIA_ONLY",ready)
-          PY
+          python src/storia_rivive_v196_scout_gate.py \
+            --order output/storia_v101/WORK_ORDER.json \
+            --cache "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
+            --out output/storia_v101/SCOUT_GATE_V196.json
       - name: Cache successful original source film and true source frames only
         if: steps.film_cache.outputs.cache-hit != 'true' && steps.scout_status.outputs.ready == 'true'
         uses: actions/cache/save@v4
@@ -89,6 +107,7 @@ jobs:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
           key: storia-v101-archival-scout-v3-${{ env.STORIA_EPISODE_ID }}
       - name: Rank actual native-resolution source frames without claiming facial identity
+        if: steps.scout_status.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -96,6 +115,7 @@ jobs:
             --frames "output/storia_v101/source-cache/$STORIA_EPISODE_ID/original_frames" \
             --out output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
       - name: Prepare five source-SHA-locked I2I requests without invoking any paid or free provider
+        if: steps.scout_status.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -134,11 +154,14 @@ jobs:
           order=json.loads((root/"WORK_ORDER.json").read_text())
           check=root/"source-cache"/order["episode_id"]/"SCOUT_REPORT.json"
           scout=json.loads(check.read_text()) if check.is_file() else {"status":"SOURCE_SCOUT_NOT_AVAILABLE"}
+          gate=json.loads((root/"SCOUT_GATE_V196.json").read_text())
           status={"cycle_id":order["cycle_id"],"candidate":order["episode_id"],
               "source_scout":scout.get("status"),"restored_i2i_photos_approved":0,
               "real_vidu_clips_approved":0,"finished_mp4":False,"published":False,
-              "charged_api_requests":0,"status":"RESEARCH_PREPARATION_ONLY",
-              "next_required":"4 verified source-locked I2I photos, real Vidu, V91/V94/V96/V99 and real artistic review"}
+              "charged_api_requests":0,
+              "source_cache_verified":gate["ready"],"source_cache_block_reason":None if gate["ready"] else gate["reason"],
+              "status":"RESEARCH_PREPARATION_ONLY" if gate["ready"] else "SOURCE_SCOUT_BLOCKED_NO_PRODUCTION",
+              "next_required":"4 verified source-locked I2I photos, real Vidu, V91/V94/V96/V99 and real artistic review" if gate["ready"] else "Replace/reacquire invalid source; do not start I2I or Vidu"}
           (root/"CYCLE_STATUS.json").write_text(json.dumps(status,ensure_ascii=False,indent=2)+"\n")
           print("V101_CYCLE_STATUS",json.dumps(status))
           PY
@@ -149,6 +172,7 @@ jobs:
           name: STORIA_V101_RESEARCH_${{ github.run_id }}
           path: |
             output/storia_v101/WORK_ORDER.json
+            output/storia_v101/SCOUT_GATE_V196.json
             output/storia_v101/CYCLE_STATUS.json
             output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
             output/storia_v101/I2I_INPUT_MANIFEST_V102.json
