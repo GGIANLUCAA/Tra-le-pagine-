@@ -109,5 +109,21 @@
     "no_v25_auto_approval": true,
     "max_concurrent_artvision_renders": 1,
     "existing_five_pilots_immutable": true
+  },
+  "authorized_seventh_pilot": {
+    "enabled": true,
+    "authorization": "Explicit user 2026-11-01: Ok procedi alla creazione, after selecting Jacek Malczewski Błędne koło as original seventh 4×1 artwork",
+    "allowed_group_id": "malczewski_bledne_kolo_1897_mnp_fr56",
+    "allowed_artist": "Jacek Malczewski",
+    "allowed_title": "Błędne koło",
+    "museum_accession": "MNP FR 56",
+    "phase": "seventh_pilot_malczewski_only_ALREADY_4x1_REVIEW_RENDERED",
+    "four_slots_rendered": "V110 genuine, V111 archive-ready compression",
+    "automatic_eighth_artwork_selection": false,
+    "no_repeated_Gacrux_calls": true,
+    "no_paid_video_ai_without_owner_consent": true,
+    "no_social_auto_publish": true,
+    "no_v25_auto_approval": true,
+    "existing_six_artworks_immutable": true
   }
 }
