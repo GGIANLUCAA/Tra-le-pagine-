@@ -178,11 +178,10 @@ class V101Tests(unittest.TestCase):
 
     def test_i2i_manifest_blocks_missing_source_frame(self):
         with tempfile.TemporaryDirectory() as temp:
-            with self.assertRaises(ValueError):
-                i2i.build({"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
-                    "paid_api_call_permitted":False,"publish_permitted":False},
-                    {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
-                     "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]},Path(temp))
+            d=Path(temp);order,selection,_=v181_source_fixture(d)
+            (d/"original_frames"/"frame_03.png").unlink()
+            with self.assertRaisesRegex(ValueError,"Missing original source frame"):
+                i2i.build(order,selection,d)
     def test_source_rights_not_self_approved(self):
         a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE)
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",a["blocking_issues"])
