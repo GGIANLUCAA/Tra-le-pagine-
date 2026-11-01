@@ -23,7 +23,7 @@ jobs:
           python - <<'PY'
           import json
           data=json.load(open('/tmp/v192_inspect/RUN_LIST.json'))
-          sha='246eb582e1cd431390ddcc1da1b84f5198fb1a13'
+          sha='57437962008dd74481c4cf876fa9f720a984f3a5'
           matched=[v for v in data if v['headSha']==sha]
           print('V192_ORIGINAL_HEAD_RUNS',[(v['databaseId'],v['event'],v['status'],v['conclusion']) for v in matched])
           with open('/tmp/v192_inspect/ORIGINAL_HEAD_RUNS.json','w') as f:json.dump(matched,f,indent=2)
