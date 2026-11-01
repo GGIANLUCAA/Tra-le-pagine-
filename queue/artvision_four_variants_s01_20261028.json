@@ -2158,7 +2158,24 @@
             "no_api_or_tts_calls": true,
             "other_three_variants_unchanged": true,
             "master_V102_V106_V109_preserved": true,
-            "not_selected_as_persistent_candidate": true
+            "not_selected_as_persistent_candidate": true,
+          "v110_additional_physical_focus_QA": {
+            "status": "NEW_QUALITY_RISK_VERIFIED_NOT_FIXED",
+            "date": "2026-11-01",
+            "comparison_baseline_SHA256": "07944553bf1f1547acc34f54185690f1f0c28c20f12cdc888eb24c8b6854a189",
+            "comparison_candidate_SHA256": "34404bd5c76626e4bcbf25aca206b9c690d5d4071604a6a6eaf093bc01aa06ff",
+            "focus_window_seconds": [28.25, 41.15],
+            "grayscale_laplacian_mean_baseline": 225.427,
+            "grayscale_laplacian_mean_candidate": 117.969,
+            "relative_sharpness_loss_percent": 47.67,
+            "long_static_holds_seconds": [[20.0, 25.8], [82.15, 88.3]],
+            "all_frames_decoded_both": 2213,
+            "quality_gate": "src/artvision_focus_regression_gate_v110.py",
+            "assessment": "V110 improves water framing but loses measured detail in its zoom and retains two ~6s still holds; manual full-speed artistic review needed before promotion",
+            "V25_Gold": false,
+            "R2_Android_playback_verified": false,
+            "source_masters_unchanged": true
+          }
           }
         },
         "cinema_standard": {
