@@ -43,7 +43,7 @@ def history_exclusions(history):
         status=entry.get("status")
         evidence=entry.get("evidence")
         if (not isinstance(episode,str) or not re.fullmatch("[a-z0-9_]{6,64}",episode)
-                or status not in allowed or not isinstance(evidence,str)
+                or not isinstance(status,str) or status not in allowed or not isinstance(evidence,str)
                 or not evidence.startswith("docs/") or not evidence.endswith(".md")
                 or ".." in evidence):
             raise ValueError("Invalid history evidence, status or episode")
