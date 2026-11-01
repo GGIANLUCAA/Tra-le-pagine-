@@ -65,7 +65,7 @@ def render(source, output, times=TIMES, expected_sha1=SOURCE_SHA1):
                 frame = scratch / f"freeze{index}.png"
                 # Frame 41 is the LAST decoded frame of the 42-frame encoded segment.
                 command("ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-                        "-i", str(motion), "-vf", r"select=eq(n\\,41)",
+                        "-i", str(motion), "-vf", r"select=eq(n\,41)",
                         "-vsync", "0", "-frames:v", "1", str(frame))
                 if not frame.is_file():
                     raise RuntimeError("FREEZE_NOT_EXACT")
@@ -76,7 +76,7 @@ def render(source, output, times=TIMES, expected_sha1=SOURCE_SHA1):
                         "-crf", "24", "-pix_fmt", "yuv420p", "-r", "30", str(hold))
                 clips.append(hold)
         listing = scratch / "clips.txt"
-        listing.write_text("".join(f"file '{p}'\\n" for p in clips), encoding="utf-8")
+        listing.write_text("".join(f"file '{p}'\n" for p in clips), encoding="utf-8")
         joined = scratch / "joined.mp4"
         command("ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
                 "-f", "concat", "-safe", "0", "-i", str(listing),
@@ -104,10 +104,10 @@ def render(source, output, times=TIMES, expected_sha1=SOURCE_SHA1):
                 "-ss", ".6", "-i", str(video), "-frames:v", "1", "-q:v", "3", str(cover))
     posts = output / "POST_SOCIAL_4.txt"
     posts.write_text(
-        "Instagram: PARIGI · 1918. Cinque riprese autentiche, provino B/N. #Storia\\n\\n"
-        "TikTok: Parigi 1918: cinque sguardi dalla pellicola originale. #Archivio\\n\\n"
-        "Facebook: Cinque scene d'archivio del 1918. Anteprima tecnica, non restauro AI.\\n\\n"
-        "YouTube Shorts: Paris 1918 — original archival motion, B/W preview; no I2I or Vidu.\\n",
+        "Instagram: PARIGI · 1918. Cinque riprese autentiche, provino B/N. #Storia\n\n"
+        "TikTok: Parigi 1918: cinque sguardi dalla pellicola originale. #Archivio\n\n"
+        "Facebook: Cinque scene d'archivio del 1918. Anteprima tecnica, non restauro AI.\n\n"
+        "YouTube Shorts: Paris 1918 — original archival motion, B/W preview; no I2I or Vidu.\n",
         encoding="utf-8")
     qa = {"status": "RENDERED_NEEDS_REVIEW", "source_sha1": expected_sha1,
           "timecodes_s": list(times), "video_sha256": sha(video),
@@ -119,7 +119,7 @@ def render(source, output, times=TIMES, expected_sha1=SOURCE_SHA1):
           "publish_permitted": False, "credits_spent": 0,
           "note": "Original B/W motion and grayscale freeze only, not restored photographs."}
     report = output / "QA_V161.json"
-    report.write_text(json.dumps(qa, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+    report.write_text(json.dumps(qa, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     kit = output / (STEM + "_ANDROID_KIT.zip")
     with zipfile.ZipFile(kit, "w", zipfile.ZIP_DEFLATED) as archive:
         for path in (video, cover, posts, report):
