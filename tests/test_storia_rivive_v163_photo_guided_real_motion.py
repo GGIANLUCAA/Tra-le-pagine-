@@ -90,6 +90,23 @@ class MotionPhotoTests(unittest.TestCase):
         self.assertEqual(len(v.DDCOLOR_SHA),2)
 
 
+    def test_photo_sha_selects_real_i2i_without_eager_missing_ddcolor_lookup(self):
+        # Regression: dict.get(i, sha(NEURAL_DDCOLOR_i)) evaluated sha() for
+        # scenes 1..3 even when PHOTO_SHA[i] existed, crashing full render.
+        import hashlib
+        import tempfile
+        with tempfile.TemporaryDirectory() as root:
+            for i in (1, 2, 3):
+                self.assertEqual(v.scene_photo_sha(i,root),v.PHOTO_SHA[i])
+            for i in (4, 5):
+                payload=f'actual neural source {i}'.encode()
+                (Path(root)/f'NEURAL_DDCOLOR_{i:02d}.png').write_bytes(payload)
+                self.assertEqual(v.scene_photo_sha(i,root),hashlib.sha256(payload).hexdigest())
+            with self.assertRaises(FileNotFoundError):
+                v.scene_photo_sha(4,Path(root)/'missing')
+            with self.assertRaisesRegex(ValueError,'UNKNOWN_INDEX'):
+                v.scene_photo_sha(6,root)
+
     def test_streamed_scenes_preserve_exact_frame_order_and_pixels(self):
         import io
         a=np.zeros((v.H,v.W,3),dtype=np.uint8)
