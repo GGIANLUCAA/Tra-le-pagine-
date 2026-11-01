@@ -1,0 +1,58 @@
+name: "La Storia Rivive V173 - film 1917 fashion source native fidelity before any I2I"
+on:
+  push:
+    branches: [storia-v173-film1917-native-quality-scout-20261101]
+    paths:
+      - ".github/workflows/storia-v173-fashion1917-source-preflight.yml"
+      - "src/storia_rivive_v173_fashion1917_source_scout.py"
+      - "tests/test_storia_rivive_v173_fashion1917_source_scout.py"
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v173-fashion1917-source-preflight.yml"
+      - "src/storia_rivive_v173_fashion1917_source_scout.py"
+      - "tests/test_storia_rivive_v173_fashion1917_source_scout.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v173-fashion1917-native-research
+  cancel-in-progress: false
+jobs:
+  source_quality_before_provider:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install only free media inspection tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "Pillow>=10,<13"
+      - name: Source and legal/byte-budget safety tests (no external API billing)
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_v173_fashion1917_source_scout.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v173_fashion1917_source_scout.py" -v
+      - name: Inspect exact Internet Archive film metadata (free)
+        run: |
+          python -u src/storia_rivive_v173_fashion1917_source_scout.py --out output/storia_v173_meta
+      - name: Attempt single bounded genuine film download and inspect five independent frames
+        continue-on-error: true
+        timeout-minutes: 10
+        run: |
+          python -u src/storia_rivive_v173_fashion1917_source_scout.py --out output/storia_v173_real --download
+      - name: Preserve honest evidence privately, never the whole original film
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V173_FASHION1917_SOURCE_NATIVE_QUALITY_REVIEW
+          path: |
+            output/storia_v173_meta/V173_FASHION_SOURCE_QUALITY_AUDIT.json
+            output/storia_v173_real/V173_FASHION_SOURCE_QUALITY_AUDIT.json
+            output/storia_v173_real/REAL_SOURCE_SHOT_*.png
+            output/storia_v173_real/REAL_FIVE_SHOTS_PRIVATE_REVIEW.jpg
+          retention-days: 14
+          if-no-files-found: warn
