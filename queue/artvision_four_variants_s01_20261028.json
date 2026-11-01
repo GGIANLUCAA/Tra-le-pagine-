@@ -2125,6 +2125,40 @@
             "renderer": "src/artvision_bocklin_v109_whole_painting_focus.py",
             "no_api_or_tts_calls": true,
             "no_new_zip": true
+          },
+          "v110_nondestructive_revision": {
+            "status": "real_MP4_rendered_local_technical_QA_pass_Library_MP4_upload_blocked",
+            "date": "2026-11-01",
+            "filename": "BOECKLIN_CRITICO_MUSEUM_V110_ACQUA_SINCRONA_REVIEW.mp4",
+            "bytes": 16722838,
+            "sha256": "34404bd5c76626e4bcbf25aca206b9c690d5d4071604a6a6eaf093bc01aa06ff",
+            "source_V109_sha256": "07944553bf1f1547acc34f54185690f1f0c28c20f12cdc888eb24c8b6854a189",
+            "duration_seconds": 110.65,
+            "frame_count": 2213,
+            "resolution": "720x1280",
+            "fps": 20,
+            "full_ffmpeg_decode": "PASS",
+            "aac_demux_sha256": "3f46d52d8e0a09974bd144c62a77f5357c1ec5cc63e9c3cee956c8853edd505e",
+            "aac_bit_identical_to_V109_V106_V102": true,
+            "corrected_focus": "acqua al centro durante le frasi sulla sua immobilita",
+            "water_voice_video_seconds": [29.72, 39.7],
+            "modified_interval_seconds": [28.25, 41.15],
+            "modified_frames": 259,
+            "v57_peak_MAD_180x320": 31.477,
+            "v57_frames_above_35": 0,
+            "source_painting_pixels": "Existing verified V109 frame pixels only; geometric virtual camera, no AI",
+            "library_mp4_upload_status": "FAILED_library_storage_limit_exceeded",
+            "library_mp4_readback_verified": false,
+            "site_player_verified": false,
+            "R2_import_verified": false,
+            "human_complete_artistic_review": "pending",
+            "V25_approved": false,
+            "report": "docs/productions/2026-11-01-artvision-bocklin-v110-water-focus-real-mp4-library-block.md",
+            "renderer": "src/artvision_bocklin_v110_water_focus.py",
+            "no_api_or_tts_calls": true,
+            "other_three_variants_unchanged": true,
+            "master_V102_V106_V109_preserved": true,
+            "not_selected_as_persistent_candidate": true
           }
         },
         "cinema_standard": {
@@ -2299,7 +2333,7 @@
         "site_playback_verified": false,
         "report": "docs/productions/2026-10-31-artvision-bocklin-v107-review-packages-verified.md"
       },
-      "latest_local_candidate": "critico_museum_V109_not_persisted",
+      "latest_local_candidate": "critico_museum_V110_not_persisted",
       "library_storage_blocker_2026_11_01": "Library storage limit exceeded on V109 MP4; no automatic deletion of masters; do not declare backup or delivery persistent"
     },
     {
