@@ -85,5 +85,36 @@ class V177Tests(unittest.TestCase):
             self.assertTrue((Path(td)/"V177_REAL_LOC_FILM_BYTE_QA.json").exists())
 
 
+    def test_v178_oversized_loc_file_does_not_trigger_range_or_download(self):
+        # The true 1909 LOC MP4 HEAD reported 523,989,414 bytes.
+        big={"status_code":200,"content_length_bytes":523989414,
+             "content_type":"video/mp4","accept_ranges":"bytes"}
+        with tempfile.TemporaryDirectory() as td:
+            with patch.object(m,"probe_remote_headers",return_value=big) as head, \
+                 patch.object(m,"short_range",side_effect=AssertionError("DONT_RETRY_429")) as partial, \
+                 patch.object(m,"stream_exact",side_effect=AssertionError("OVERSIZE_DOWNLOAD_FORBIDDEN")) as full:
+                r=m.execute(Path(td))
+            self.assertEqual(head.call_count,2)
+            partial.assert_not_called()
+            full.assert_not_called()
+            self.assertEqual(r["formats"]["mp4"]["status"],"TOO_LARGE_FULL_DOWNLOAD_AND_RANGE_SKIPPED")
+            self.assertFalse(r["formats"]["mp4"]["native_hd_verified"])
+            self.assertEqual(r["status"],"SCOUT_COMPLETE_NO_MASTER")
+
+    def test_v178_loc_429_stops_other_format_without_retry(self):
+        from urllib.error import HTTPError
+        rate=HTTPError(m.MP4,429,"Too Many Requests",{"Retry-After":"120"},None)
+        with tempfile.TemporaryDirectory() as td:
+            with patch.object(m,"probe_remote_headers",side_effect=rate) as head, \
+                 patch.object(m,"short_range",side_effect=AssertionError("DO_NOT_PROBE")) as partial:
+                r=m.execute(Path(td))
+            self.assertEqual(head.call_count,1)
+            partial.assert_not_called()
+            self.assertEqual(r["status"],"SCOUT_RATE_LIMITED_DEFERRED_NO_RETRY")
+            self.assertEqual(r["formats"]["mp4"]["retry_after_header"],"120")
+            self.assertEqual(r["formats"]["mov"]["status"],"SKIPPED_LOC_RATE_LIMIT_PREVENT_DUPLICATE_REQUESTS")
+            self.assertEqual(r["vidu_credits_spent"],0)
+
+
 if __name__=="__main__":
     unittest.main()
