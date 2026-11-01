@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Offline V101 tests; no remote network or secrets."""
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import tempfile
