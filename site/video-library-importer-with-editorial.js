@@ -35,7 +35,35 @@ export default{async fetch(request,env){
   }
   return resp({ok:true,created,pending:Math.max(0,pending.length-batch.length),unavailable,total:candidates.length,existing:existing.size});
  }
- const aid=u.searchParams.get('artifact')||'';if(route==='/artifact-status'&&method==='GET'){if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad ID'},400);const o=await env.VIDEOS.head('sync/gh/'+aid+'.json');return resp({synced:!!o});}if(route==='/artifact-mark'&&method==='POST'){if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad ID'},400);const d=await request.json();await env.VIDEOS.put('sync/gh/'+aid+'.json',JSON.stringify({id:aid,name:String(d.name||'').slice(0,160),when:new Date().toISOString()}),{httpMetadata:{contentType:'application/json'}});return resp({synced:true});}
+ // Archive import and public release are distinct: previews must be archived privately.
+ if(route==='/ingest-stage'&&method==='POST'){
+  const key=u.searchParams.get('key')||'';
+  if(!/^[\\w(). -]{1,180}\\.(mp4|mov|m4v)$/i.test(key)||key.includes('..'))return resp({error:'Invalid video name'},400);
+  for(let attempt=0;attempt<5;attempt++){
+   const o=await env.VIDEOS.get('catalog/manage.json');
+   let entries={};try{if(o)entries=await o.json()}catch{return resp({error:'Unable to read current private catalog'},503)}
+   if(entries[key])return resp({ok:true,staged:!!entries[key].hidden,existing:true});
+   entries[key]={hidden:true,version:'draft',note:'Importato automaticamente in Studio: revisione artistica e diritti in attesa.'};
+   const written=await env.VIDEOS.put('catalog/manage.json',JSON.stringify(entries),{httpMetadata:{contentType:'application/json'},onlyIf:o?{etagMatches:o.etag}:{etagDoesNotMatch:'*'}});
+   if(written)return resp({ok:true,staged:true,created:true});
+  }
+  return resp({error:'Concurrent catalog update; retry later'},409);
+ }
+ const aid=u.searchParams.get('artifact')||'';
+ if(route==='/artifact-status'&&method==='GET'){
+  if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad ID'},400);
+  const o=await env.VIDEOS.get('sync/gh/'+aid+'.json');
+  if(!o)return resp({synced:false});
+  let m={};try{m=await o.json()}catch{}
+  return resp({synced:m.state==='complete',legacy:!m.state,state:m.state||'legacy'});
+ }
+ if(route==='/artifact-mark'&&method==='POST'){
+  if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad ID'},400);
+  const d=await request.json();
+  const state=['complete','no-video'].includes(d.state)?d.state:'complete';
+  await env.VIDEOS.put('sync/gh/'+aid+'.json',JSON.stringify({id:aid,name:String(d.name||'').slice(0,160),state,visibility:String(d.visibility||'').slice(0,30),when:new Date().toISOString()}),{httpMetadata:{contentType:'application/json'}});
+  return resp({synced:state==='complete',state});
+ }
  if(route==='/manifest'&&method==='POST'){
    const t=await request.text();if(t.length>900000)return resp({error:'Manifest too large'},413);
    let data;try{data=JSON.parse(t)}catch{return resp({error:'Invalid JSON'},400)}
