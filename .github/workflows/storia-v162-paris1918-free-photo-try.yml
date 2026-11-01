@@ -5,6 +5,9 @@ on:
     paths:
       - ".github/workflows/storia-v162-paris1918-free-photo-try.yml"
   workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v162-paris1918-free-photo-try.yml"
 permissions:
   contents: read
 concurrency:
