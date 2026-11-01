@@ -1,5 +1,5 @@
 name: La Storia Rivive V192 ONE free real generative I2I photo from historical source
-# ONE correction retry only: first run stopped before any provider request due to incomplete SHA constant.
+# One final first provider attempt after source SHA and unittest syntax were verified; previous attempts stopped before external calls.
 on:
   push:
     branches: [storia-v183-production-candidate-20261101]
