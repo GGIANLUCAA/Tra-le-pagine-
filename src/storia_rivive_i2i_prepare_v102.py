@@ -62,7 +62,7 @@ def verify_archival_source(source_dir):
             or type(count) is not int or count!=len(frame_hashes)):
         raise ValueError("Missing or invalid V182 source frame SHA manifest")
     for name,expected in frame_hashes.items():
-        if (not isinstance(name,str) or not re.fullmatch(r"frame_\\d{2}\\.png",name)
+        if (not isinstance(name,str) or not re.fullmatch(r"frame_\d{2}\.png",name)
                 or not isinstance(expected,str) or not re.fullmatch(r"[a-f0-9]{64}",expected)):
             raise ValueError("Invalid V182 source frame SHA entry")
         frame_path=source_dir/"original_frames"/name
