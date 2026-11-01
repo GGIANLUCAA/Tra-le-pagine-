@@ -125,16 +125,52 @@ def grade(frame):
     return cv2.cvtColor(cv2.merge((l,a,b)),cv2.COLOR_LAB2BGR)
 
 
-def load_clip(path):
-    cap=cv2.VideoCapture(str(path)); frames=[]
-    while True:
-        ok,fr=cap.read()
-        if not ok:break
-        assert fr.shape[:2]==(576,720),f'Unexpected source geometry {fr.shape}'
-        frames.append(grade(fr))
-    cap.release()
-    if len(frames)<30:raise ValueError('NO_ACTUAL_MOVING_FRAMES')
-    return frames
+def scan_clip(path):
+    """Count decoded source frames and grade ONLY the final real frame.
+
+    Two-pass decoding bounds RAM independently of clip length. Never trust
+    CAP_PROP_FRAME_COUNT or seek to an approximate keyframe for the freeze.
+    """
+    cap=cv2.VideoCapture(str(path))
+    if not cap.isOpened():
+        raise ValueError('SOURCE_CLIP_UNREADABLE')
+    count=0
+    last=None
+    try:
+        while True:
+            ok,fr=cap.read()
+            if not ok:
+                break
+            if fr.shape[:2]!=(576,720):
+                raise ValueError(f'SOURCE_CLIP_GEOMETRY_INVALID: {fr.shape}')
+            count+=1
+            last=fr
+    finally:
+        cap.release()
+    if count<30:
+        raise ValueError('NO_ACTUAL_MOVING_FRAMES')
+    return count,grade(last)
+
+
+def iter_clip(path,expected_count):
+    """Decode/grade one frame at a time; reject a changed second-pass count."""
+    cap=cv2.VideoCapture(str(path))
+    if not cap.isOpened():
+        raise ValueError('SOURCE_CLIP_UNREADABLE')
+    count=0
+    try:
+        while True:
+            ok,fr=cap.read()
+            if not ok:
+                break
+            if fr.shape[:2]!=(576,720):
+                raise ValueError(f'SOURCE_CLIP_GEOMETRY_INVALID: {fr.shape}')
+            count+=1
+            yield grade(fr)
+        if count!=expected_count:
+            raise ValueError('SOURCE_CLIP_SECOND_PASS_COUNT_MISMATCH')
+    finally:
+        cap.release()
 
 
 def smooth(t):
@@ -302,8 +338,8 @@ def main():
         engine=cv2.DISOpticalFlow_create(cv2.DISOPTICAL_FLOW_PRESET_MEDIUM)
         engine.setFinestScale(1)
         for i,(scene,label,hold,_) in enumerate(SCENES,1):
-            real_frames=load_clip(BASE/f'scene_{scene}'/'real_original_motion.mp4')
-            archive_anchor=real_frames[-1]
+            motion_path=BASE/f'scene_{scene}'/'real_original_motion.mp4'
+            original_motion_frames,archive_anchor=scan_clip(motion_path)
             exact=BASE/f'scene_{scene}'/'EXACT_MP4_LAST_MOTION_FRAME.png'
             # exact PNG equality with the film's last frame after V162 grade
             assert sha(exact)==SOURCE_FREEZE_SHA[i], f'SOURCE_FREEZE_SHA_CHANGED_{scene}'
@@ -322,15 +358,18 @@ def main():
                 hsv[...,1]=np.clip(hsv[...,1].astype(np.float32)*(.50 if i==4 else .64),0,255).astype(np.uint8)
                 photo=cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
             gray_bg,color_bg=background(archive_anchor,photo,scene)
+            # V170: decode source twice without buffering its full frame array;
+            # first pass gets the exact last-frame anchor and count, second
+            # pass streams graded frames. No frame seek approximation.
             # V169: emit each processed moving frame immediately. V166 buffered
             # one whole 720x1280 scene in RAM (hundreds of MiB) despite streaming
             # between scenes. Keep only the previous frame and 3 QA samples.
             conf=[];err=[];movement=[];colored_frames=0
             prev_shown=None;first_shown=None;colored_shown=None
             scene_frames=0
-            colored_sample_index=min(len(real_frames)-1,28)
-            for k,frame in enumerate(real_frames):
-                colorized,confidence,mismatch=transfer_color_motion(frame,archive_anchor,photo,engine,near_anchor=(k==len(real_frames)-1))
+            colored_sample_index=min(original_motion_frames-1,28)
+            for k,frame in enumerate(iter_clip(motion_path,original_motion_frames)):
+                colorized,confidence,mismatch=transfer_color_motion(frame,archive_anchor,photo,engine,near_anchor=(k==original_motion_frames-1))
                 conf.append(confidence);err.append(mismatch)
                 t=k/FPS
                 alpha=float(smooth((t-.17)/.46))
@@ -338,7 +377,7 @@ def main():
                 current=cv2.addWeighted(frame,1-alpha,colorized,alpha,0)
                 # Guide the end of the moving shot into EXACT same source photo,
                 # with 0.10s crossfade, not artificial extra camera motion.
-                end_t=(len(real_frames)-1-k)/FPS
+                end_t=(original_motion_frames-1-k)/FPS
                 final_fade=float(smooth((.12-end_t)/.12))
                 if final_fade>0:
                     current=cv2.addWeighted(current,1-final_fade,photo,final_fade,0)
@@ -351,8 +390,6 @@ def main():
                 nframes=stream_scene_frames((shown,),proc.stdin,nframes,dest/'V163_COPERTINA.jpg')
                 scene_frames+=1
                 prev_shown=shown
-            original_motion_frames=len(real_frames)
-            del real_frames
             # Source-locked photograph, with same composition and no invented motion.
             after_count=0
             if i<5:
@@ -363,9 +400,9 @@ def main():
                 prev_shown=frozen
             else:
                 # Genuine *moving* archive post-freeze; source matched, never claim Vidu.
-                after_frames=load_clip(BASE/f'scene_{scene}'/'real_original_after_freeze.mp4')
-                after_count=len(after_frames)
-                for frame in after_frames:
+                after_path=BASE/f'scene_{scene}'/'real_original_after_freeze.mp4'
+                after_count,_=scan_clip(after_path)
+                for frame in iter_clip(after_path,after_count):
                     # Calculate actual dense current-to-anchor flow (motion remains source film).
                     colorized,confidence,mismatch=transfer_color_motion(frame,archive_anchor,photo,engine)
                     conf.append(confidence);err.append(mismatch)
@@ -376,7 +413,6 @@ def main():
                     nframes=stream_scene_frames((shown,),proc.stdin,nframes,dest/'V163_COPERTINA.jpg')
                     scene_frames+=1
                     prev_shown=shown
-                del after_frames
             # Three actual frame samples, identical indices to the buffered V163.
             sample.append((scene,cv2.resize(first_shown,(360,640)),cv2.resize(colored_shown,(360,640)),cv2.resize(prev_shown,(360,640))))
             qa_scenes.append({'scene':i,'original_freeze_sha256':orig_anchor_sha,'photo_sha256':scene_photo_sha(i,PHOTO),

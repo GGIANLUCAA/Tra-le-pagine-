@@ -255,4 +255,52 @@ class MotionPhotoTests(unittest.TestCase):
         self.assertIn('stream_scene_frames((shown,),proc.stdin',source)
         self.assertIn('stream_scene_frames((frozen for _ in range(n))',source)
 
+
+    def test_v170_scan_and_stream_same_last_frame_without_source_buffer(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/'real_motion.avi'
+            writer=cv2.VideoWriter(str(path),cv2.VideoWriter_fourcc(*'MJPG'),30,(720,576))
+            self.assertTrue(writer.isOpened())
+            try:
+                for i in range(32):
+                    frame=np.full((576,720,3),i*5,dtype=np.uint8)
+                    cv2.rectangle(frame,(80+i,100),(180+i,200),(20,180,240),-1)
+                    writer.write(frame)
+            finally:
+                writer.release()
+            count,anchor=v.scan_clip(path)
+            self.assertEqual(count,32)
+            last=None
+            decoded=0
+            for last in v.iter_clip(path,count):
+                decoded+=1
+            self.assertEqual(decoded,32)
+            np.testing.assert_array_equal(anchor,last)
+            with self.assertRaisesRegex(ValueError,'SECOND_PASS_COUNT_MISMATCH'):
+                list(v.iter_clip(path,count+1))
+
+    def test_v170_source_scan_rejects_short_or_wrong_geometry(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            for filename,dimensions,frames in [('short.avi',(720,576),20),('wrong.avi',(320,240),32)]:
+                path=Path(td)/filename
+                writer=cv2.VideoWriter(str(path),cv2.VideoWriter_fourcc(*'MJPG'),30,dimensions)
+                self.assertTrue(writer.isOpened())
+                try:
+                    for i in range(frames):
+                        writer.write(np.full((dimensions[1],dimensions[0],3),i*5,dtype=np.uint8))
+                finally:
+                    writer.release()
+                with self.assertRaisesRegex(ValueError,'NO_ACTUAL_MOVING_FRAMES' if frames<30 else 'SOURCE_CLIP_GEOMETRY_INVALID'):
+                    v.scan_clip(path)
+
+    def test_v170_renderer_has_no_full_source_frame_lists(self):
+        source=MODULE.read_text(encoding='utf-8')
+        self.assertNotIn('load_clip(',source)
+        self.assertNotIn('real_frames=',source)
+        self.assertNotIn('after_frames=',source)
+        self.assertIn('iter_clip(motion_path,original_motion_frames)',source)
+        self.assertIn('iter_clip(after_path,after_count)',source)
+
 if __name__=='__main__':unittest.main()
