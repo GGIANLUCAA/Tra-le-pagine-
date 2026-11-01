@@ -1,0 +1,73 @@
+name: La Storia Rivive V194 three source-locked REAL photo I2I free attempts (no paid credits)
+on:
+  push:
+    branches: [storia-v183-production-candidate-20261101]
+    paths:
+      - 'src/storia_rivive_v194_three_free_real_i2i.py'
+      - 'tests/test_storia_rivive_v194_three_free_real_i2i.py'
+      - '.github/workflows/storia-v194-three-free-photo-i2i.yml'
+  pull_request:
+    paths:
+      - 'src/storia_rivive_v194_three_free_real_i2i.py'
+      - 'tests/test_storia_rivive_v194_three_free_real_i2i.py'
+      - '.github/workflows/storia-v194-three-free-photo-i2i.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v194-free-i2i-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python image tools, no credential
+        run: python -m pip install -q 'pillow>=10,<13' 'numpy>=1.26,<3'
+      - name: Four real PNG and SHA test cases
+        run: |
+          python -m py_compile src/storia_rivive_v194_three_free_real_i2i.py tests/test_storia_rivive_v194_three_free_real_i2i.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v194_three_free_real_i2i.py' -v
+  real-free-three-photo-candidates:
+    needs: offline-tests
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, 'RUN_V194_THREE_FREE_I2I_ONCE') && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free public Gradio + pillow, no provider token
+        run: python -m pip install -q 'pillow>=10,<13' 'numpy>=1.26,<3' 'gradio_client>=1.0,<3'
+      - name: Reuse V191 exact frames (verified source, no 318MB film download)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/storia_v194_input
+          gh run download 41342120383 --repo GGIANLUCAA/Tra-le-pagine- --name storia-v191-real-i2i-production-inputs-4plus1-review-only --dir /tmp/storia_v194_input
+      - name: Maximum THREE free anonymous edits, strictly no retries or paid tokens
+        run: |
+          python src/storia_rivive_v194_three_free_real_i2i.py --sources /tmp/storia_v194_input --out /tmp/storia_v194_result
+      - name: Validate no fictitious human approval or publishing
+        if: always()
+        run: |
+          if [ ! -f /tmp/storia_v194_result/V194_I2I_REAL_RESULTS.json ]; then echo 'NO_RESULT_PREPROVIDER_FAILURE'; exit 0; fi
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/storia_v194_result/V194_I2I_REAL_RESULTS.json'))
+          assert d['total_anonymous_provider_attempts']<=3
+          assert d['credits_spent']==0 and d['paid_calls']==0
+          assert d['human_approved']==False and d['publish_permitted']==False
+          assert d['four_approved_restorations']==0 and not d['final_mp4_produced']
+          print('REAL_FREE_I2I_IMAGES',sum(x['real_i2i_generated'] for x in d['scenes']))
+          print('QUALITY_NOT_YET_APPROVED_OR_PUBLISHED')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: storia-v194-3-free-actual-i2i-photo-candidates-not-approved
+          path: |
+            /tmp/storia_v194_result/V194_I2I_REAL_RESULTS.json
+            /tmp/storia_v194_result/SCENE*_REAL_GENERATIVE_I2I_CANDIDATE.png
+            /tmp/storia_v194_result/SCENE*_ORIGINAL_VS_I2I.jpg
+          if-no-files-found: warn
+          retention-days: 4
