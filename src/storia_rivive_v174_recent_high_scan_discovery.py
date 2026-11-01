@@ -22,7 +22,7 @@ API_METADATA_PREFIX = "https://archive.org/metadata/"
 ALLOWED_IDENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_\-.]{1,99}$")
 START_UPLOADED = "2023-01-01T00:00:00Z"
 MAX_SEARCH_ROWS = 80
-MAX_ITEM_FETCHES = 12
+MAX_ITEM_FETCHES = 24
 SOURCE_YEAR_MIN = 1895
 SOURCE_YEAR_MAX = 1935
 QUERY_VARIANTS = (
@@ -132,18 +132,34 @@ def discover() -> dict:
     try:
         matches=search_ids()
         report["search_matching_identifiers"]=len(matches)
+        report["search_preview"]=[{
+            "identifier": str(d.get("identifier",""))[:100],
+            "title": str(d.get("title",""))[:100],
+            "date": str(d.get("date",""))[:40],
+            "year": str(d.get("year",""))[:40],
+            "publicdate": str(d.get("publicdate",""))[:40],
+            "search_license_declared": str(d.get("licenseurl",""))[:180],
+        } for d in matches[:25]]
+        report["item_metadata_examined"]=0
+        report["exclusion_counts"]={"no_film_year":0,"no_exact_public_domain_item_mark":0,"no_video_file":0}
         for doc in matches[:MAX_ITEM_FETCHES]:
             identifier = safe_id(doc["identifier"])
             try:
                 data=metadata_get(API_METADATA_PREFIX+identifier)
+                report["item_metadata_examined"]+=1
                 metadata=data.get("metadata",{})
                 if not isinstance(metadata,dict) or metadata.get("identifier") != identifier:
                     raise ValueError("ITEM_METADATA_ID_MISMATCH")
                 year=parse_historical_year(metadata)
-                if year is None or not public_domain_exact(metadata):
+                if year is None:
+                    report["exclusion_counts"]["no_film_year"]+=1
+                    continue
+                if not public_domain_exact(metadata):
+                    report["exclusion_counts"]["no_exact_public_domain_item_mark"]+=1
                     continue
                 files=video_files(data.get("files",[]))
                 if not files:
+                    report["exclusion_counts"]["no_video_file"]+=1
                     continue
                 report["candidates"].append({
                     "identifier":identifier,
