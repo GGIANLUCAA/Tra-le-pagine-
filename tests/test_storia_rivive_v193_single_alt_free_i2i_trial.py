@@ -8,7 +8,7 @@ from unittest.mock import patch
 from PIL import Image
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"src"))
-import storia_rivive_v193_single_public_i2i_real_trial as mod
+import storia_rivive_v193_single_alt_free_i2i_trial as mod
 
 
 def handoff():
