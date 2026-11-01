@@ -19,7 +19,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/v195_read
-          gh api -X GET 'repos/GGIANLUCAA/Tra-le-pagine-/actions/runs?head_sha=5c515ca5170fec6b4f1ad1222278f11f13bcb209&per_page=100' > /tmp/v195_read/RUNS.json
+          gh api -X GET 'repos/GGIANLUCAA/Tra-le-pagine-/actions/runs?head_sha=b7e95a6b8b61eae2f7aca9f3d4dcac2281b2a0f7&per_page=100' > /tmp/v195_read/RUNS.json
           ID=$(python - <<'PY'
           import json
           xs=json.load(open('/tmp/v195_read/RUNS.json'))['workflow_runs']
