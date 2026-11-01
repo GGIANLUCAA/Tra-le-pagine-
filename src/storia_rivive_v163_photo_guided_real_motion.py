@@ -318,7 +318,7 @@ def main():
         d.text((728,ri*640+8),f'SCENA {scene} - finale',fill='white')
     board.save(dest/'V163_SCENE_REALI_CONFRONTO.jpg',quality=89)
     cover=dest/'V163_COPERTINA.jpg';Image.fromarray(cv2.cvtColor(tracks[23],cv2.COLOR_BGR2RGB)).save(cover,quality=92)
-    qa={'version':'V163','video_status':'rendered_needs_review','focus':'improved moving-shot color and source photo guided transfer, never imaginary animation',
+    qa={'version':'V163','video_status':'rendered_rejected_artistic_quality','focus':'improved moving-shot color and source photo guided transfer, never imaginary animation',
         'source_origin':'Musee Albert-Kahn / Wikimedia Commons original AI139599 verified in V160/V162','source_sha1':'aa471da773d14f422d1387654601ca03b5224455',
         'source_PTS_and_shot_selection_unchanged':True,'verified_six_motion_clips_sha256':verified_motion_sha,
         'v162_same_three_i2i_photos_reused_byte_exact':True,'photographs_changed_or_regenerated':False,
@@ -329,7 +329,9 @@ def main():
         'scenes':qa_scenes,'movie_file':movie.name,'movie_sha256':sha(movie),'bytes':movie.stat().st_size,
         'duration_seconds':duration,'frames':nframes,'codec':'H264/AAC','full_ffmpeg_decode':'PASS','sha256_source_photos':[PHOTO_SHA[i] for i in sorted(PHOTO_SHA)],
         'fourth_i2i_status':'MISSING_PREEXISTING_FREE_PROVIDER_FAILURE','fifth_real_vidu':'MISSING_NO_CREDIT_SPENT',
-        'V99_final_gate':'NOT_PASSED_NO_REAL_VIDU_OR_FOURTH_I2I','italian_rights_review':'PENDING','human_artistic_QA':'PENDING','published':False}
+        'V99_final_gate':'NOT_PASSED_NO_REAL_VIDU_OR_FOURTH_I2I','italian_rights_review':'PENDING','human_artistic_QA':'REJECTED_USER_REFERENCES_43055_43056',
+        'moving_restoration_photoreal_target_met':False,
+        'quality_ref_v165':'docs/LA_STORIA_RIVIVE_V165_BENCHMARK_VISIVO_43055_43056.md','published':False}
     (dest/'V163_QA.json').write_text(json.dumps(qa,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     (dest/'V163_POST_SOCIAL_BOZZE.txt').write_text('FACEBOOK: Parigi, 1918: pellicola originale e ricostruzione cromatica guidata da vere foto restaurate. Prova in revisione, non pubblicata.\nINSTAGRAM: PARIGI · 1918. Una città che torna a muoversi a colori. Ricostruzione artistica digitale in revisione.\nTIKTOK: Fotogrammi veri. Colori e dettagli ricostruiti. Movimento originale del 1918.\nYOUTUBE SHORTS: Parigi 1918 · Pellicola originale in movimento, fotografia AI e ricostruzione cromatica.\n',encoding='utf-8')
     pkg=dest/'LA_STORIA_RIVIVE_PARIGI_1918_V163_KIT_ANDROID.zip'
