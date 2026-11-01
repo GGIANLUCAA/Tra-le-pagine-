@@ -357,4 +357,59 @@ class MotionPhotoTests(unittest.TestCase):
                     v.render_performance_snapshot(time.perf_counter(),times)
 
 
+    def test_v173_preflight_accepts_real_decodable_pcm_before_render(self):
+        import tempfile
+        import wave
+        with tempfile.TemporaryDirectory() as td:
+            wav=Path(td)/'MUSICA_ORIGINALE.wav'
+            with wave.open(str(wav),'wb') as out:
+                out.setnchannels(1)
+                out.setsampwidth(2)
+                out.setframerate(8000)
+                out.writeframes(b'\\x00\\x00'*(17*8000))
+            result=v.verify_audio_preflight(td)
+            self.assertAlmostEqual(result['duration_seconds'],17.0)
+            self.assertEqual(result['sha256'],v.sha(wav))
+            self.assertEqual(result['sample_rate_hz'],8000)
+
+    def test_v173_preflight_rejects_missing_short_or_truncated_wav(self):
+        import tempfile
+        import wave
+        with tempfile.TemporaryDirectory() as td:
+            wav=Path(td)/'MUSICA_ORIGINALE.wav'
+            with self.assertRaisesRegex(ValueError,'AUDIO_SOURCE_MISSING_OR_LINK'):
+                v.verify_audio_preflight(td)
+            with wave.open(str(wav),'wb') as out:
+                out.setnchannels(1)
+                out.setsampwidth(2)
+                out.setframerate(8000)
+                out.writeframes(b'\\x00\\x00'*(3*8000))
+            with self.assertRaisesRegex(ValueError,'AUDIO_SOURCE_DURATION_INVALID'):
+                v.verify_audio_preflight(td)
+            with wave.open(str(wav),'wb') as out:
+                out.setnchannels(1)
+                out.setsampwidth(2)
+                out.setframerate(8000)
+                out.writeframes(b'\\x00\\x00'*(17*8000))
+            with wav.open('r+b') as fh:
+                fh.truncate(2000)
+            with self.assertRaisesRegex(ValueError,'AUDIO_SOURCE_TRUNCATED'):
+                v.verify_audio_preflight(td)
+
+    def test_v173_preflight_rejects_audio_symlink(self):
+        import tempfile
+        import wave
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            actual=root/'elsewhere.wav'
+            with wave.open(str(actual),'wb') as out:
+                out.setnchannels(1)
+                out.setsampwidth(2)
+                out.setframerate(8000)
+                out.writeframes(b'\\x00\\x00'*(17*8000))
+            (root/'MUSICA_ORIGINALE.wav').symlink_to(actual)
+            with self.assertRaisesRegex(ValueError,'AUDIO_SOURCE_MISSING_OR_LINK'):
+                v.verify_audio_preflight(root)
+
+
 if __name__=='__main__':unittest.main()
