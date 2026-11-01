@@ -1,0 +1,115 @@
+name: ArtVision V117 - Complete eight missing Gacrux Critico, preserve Cinema
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/missing-eight-critico-v117-20261101.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-v117-eight-critico-incomplete-one-shot-no-cinema
+  cancel-in-progress: false
+jobs:
+  complete_missing_pair:
+    name: Complete missing paired Critico - ${{ matrix.work_id }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        work_id:
+          - fabritius_goldfinch_1654
+          - seurat_grande_jatte_1884
+          - turner_fighting_temeraire_1839
+          - homer_gulf_stream_met11122_1899
+    env:
+      ARTVISION_EXACT_WORK_ID: ${{ matrix.work_id }}
+      ARTVISION_OUT: output/artvision_missing_critico_v117
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate ONLY user-approved missing Critico and preserve both old Cinema masters
+        run: |
+          set -euo pipefail
+          python -m py_compile src/artvision_missing_critico_v117.py
+          python - <<'PY'
+          import json,os
+          r=json.load(open('requests/artvision/missing-eight-critico-v117-20261101.json'))
+          assert r['one_shot_only'] and r['max_paid_video_ai_calls']==0
+          assert r['no_social_publish'] and r['never_rerender_existing_cinema']
+          ids=r['four_previous_incomplete_artworks']
+          assert len(ids)==4 and len(set(ids))==4
+          k=os.environ['ARTVISION_EXACT_WORK_ID'];assert k in ids
+          c=json.load(open('modules/artvision_critico/production_series/2026_11_01_missing_critico_v117/'+k+'.json'))
+          assert c['work_id']==k and c['missing_variant_ids']==['critico_standard','critico_museum']
+          q=json.load(open('queue/artvision_four_variants_s01_20261028.json'))
+          g=next(x for x in q['groups'] if x['group_id']==k)
+          assert g['variants']['cinema_standard']['status']=='rendered_needs_review'
+          assert g['variants']['cinema_museum']['status']=='rendered_needs_review'
+          assert g['variants']['critico_standard']['status']=='blocked'
+          assert g['variants']['critico_museum']['status']=='blocked'
+          print('AUTHORIZED strictly existing unrendered Critico pair for',k,flush=True)
+          PY
+      - name: Install exact Python utilities and encoder
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" pillow numpy scipy soundfile imageio-ffmpeg
+          mkdir -p "$RUNNER_TEMP/bin"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from imageio_ffmpeg import get_ffmpeg_exe
+          f=Path(get_ffmpeg_exe());assert f.is_file()
+          (Path(os.environ['RUNNER_TEMP'])/'bin'/'ffmpeg').symlink_to(f)
+          PY
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/ffmpeg" -encoders -hide_banner | grep -q libx264
+      - name: Preflight exact museum-source PD original and scene cards (ZERO voice calls)
+        run: |
+          python src/artvision_missing_critico_v117.py --mode preflight
+      - name: Single natural Italian Gacrux voice, identical AAC in BOTH actual MP4
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          ARTVISION_GEMINI_PROJECT_BILLING_TIER: Free
+        run: |
+          python src/artvision_missing_critico_v117.py --mode critico
+      - name: Validate exactly TWO new MP4, full FFmpeg decode, same AAC, no Cinema
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          d=Path('output/artvision_missing_critico_v117')/os.environ['ARTVISION_EXACT_WORK_ID']
+          q=json.loads((d/'QA_V117.json').read_text())
+          assert set(q['files'])=={'critico_standard','critico_museum'},str(q.get('voice'))
+          assert q['files_generated_count']==2 and q['zip_crc_verified'] is True
+          hashes=[]
+          for key,datum in q['files'].items():
+           f=d/datum['name'];assert f.is_file() and f.stat().st_size==datum['bytes']
+           assert hashlib.sha256(f.read_bytes()).hexdigest()==datum['sha256']
+           subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(f),'-f','null','-'],check=True)
+           out=d/(key+'_test.aac')
+           subprocess.run(['ffmpeg','-v','error','-y','-i',str(f),'-map','0:a:0','-c:a','copy','-f','adts',str(out)],check=True)
+           hashes.append(hashlib.sha256(out.read_bytes()).hexdigest())
+           out.unlink()
+          assert hashes[0]==hashes[1]
+          q['shared_critic_ADTS_sha256']=hashes[0]
+          q['full_decode_runner_PASSED']=True
+          q['human_review_pending']=True
+          q['Cinema_master_bytes_untouched']=True
+          (d/'QA_V117.json').write_text(json.dumps(q,ensure_ascii=False,indent=2)+'\n')
+          print('VERIFIED TWO NEW MP4',os.environ['ARTVISION_EXACT_WORK_ID'],hashes[0])
+          PY
+      - name: Archive actual two videos, original WAV, source and QA for manual user review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V117_${{ matrix.work_id }}_TWO_NEW_CRITICO_REVIEW
+          path: |
+            output/artvision_missing_critico_v117/${{ matrix.work_id }}/*_V117_REVIEW.mp4
+            output/artvision_missing_critico_v117/${{ matrix.work_id }}/*_V117.zip
+            output/artvision_missing_critico_v117/${{ matrix.work_id }}/*.json
+            output/artvision_missing_critico_v117/${{ matrix.work_id }}/VOCE.wav
+            output/artvision_missing_critico_v117/${{ matrix.work_id }}/cards/title.jpg
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 4
