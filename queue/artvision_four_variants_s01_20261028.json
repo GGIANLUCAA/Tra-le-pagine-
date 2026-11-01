@@ -2218,6 +2218,50 @@
             "site_player_verified": false,
             "master_versions_unchanged": true,
             "new_API_TTS_calls": 0
+          },
+          "v112_nondestructive_revision": {
+            "status": "real_MP4_rendered_local_technical_QA_pass_Library_MP4_capacity_blocked",
+            "date": "2026-11-01",
+            "filename": "BOECKLIN_CRITICO_MUSEUM_V112_MUSEO_RICOMPOSTO_REVIEW.mp4",
+            "bytes": 19861468,
+            "sha256": "a15b42e399077bef9424258d8c198790a7659333f8ff25141bdf4d17a2254f5d",
+            "source_V109_sha256": "07944553bf1f1547acc34f54185690f1f0c28c20f12cdc888eb24c8b6854a189",
+            "duration_seconds": 110.65,
+            "frame_count": 2213,
+            "resolution": "720x1280",
+            "fps": 20,
+            "full_ffmpeg_decode": "PASS",
+            "v57_peak_MAD_180x320": 32.048,
+            "v57_frames_above_35": 0,
+            "audio_AAC_ADTS_sha256": "3f46d52d8e0a09974bd144c62a77f5357c1ec5cc63e9c3cee956c8853edd505e",
+            "audio_bit_identical_to_V109": true,
+            "correction": "flat grey museum void replaced in intro/outro by camera-registered digital gallery based on liked Socrates V90R3",
+            "corrected_windows_seconds": [
+              [
+                0,
+                5
+              ],
+              [
+                103.1,
+                110.65
+              ]
+            ],
+            "why_not_based_on_V110": "V110 measured 47.67% sharpness loss in water focus, V109 retained as sharper base",
+            "room_actual_Berlin_gallery_verified": false,
+            "library_MP4_upload_status": "NOT_UPLOADED_capacity_exceeded_in_same_cycle_for_V111_MP4",
+            "library_QA_JSON_path": "/ArtVision/Bocklin/V112_MUSEO_RICOMPOSTO_REVIEW/V112_MUSEUM_COMPOSITION_QA.json",
+            "library_QA_JSON_readback_SHA_identical": true,
+            "library_MP4_readback_verified": false,
+            "site_player_verified": false,
+            "R2_import_verified": false,
+            "human_full_artistic_QA": "pending",
+            "V25_approved": false,
+            "report": "docs/productions/2026-11-01-artvision-bocklin-v112-museum-composition-review.md",
+            "renderer_local": "/mnt/data/bocklin_v109/render_museum_v112.py",
+            "other_three_variants_unchanged": true,
+            "masters_V102_V106_V109_V110_preserved": true,
+            "no_new_TTS_AI_API_calls": true,
+            "social_published": false
           }
         },
         "cinema_standard": {
