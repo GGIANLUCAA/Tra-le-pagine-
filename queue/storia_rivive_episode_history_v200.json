@@ -1,0 +1,13 @@
+{
+  "version": "V200_EDITORIAL_HISTORY_READ_ONLY",
+  "scope": "La Storia Rivive V101 scouting only; exclusion is not final approval",
+  "update_policy": "Only record episodes with an existing, reviewed evidence document. A hold is not a finished video. Manual PR review required to remove a hold; this ledger never authorizes I2I, Vidu, publishing or spending.",
+  "entries": [
+    {
+      "episode_id": "china_daily_life_1928",
+      "status": "rendered_needs_review",
+      "evidence": "docs/LA_STORIA_RIVIVE_CHINA_1928_V107_ESITO_E_GUARDRAIL.md",
+      "reason": "V107 produced an actual DDColor-based MP4 without a real Vidu scene and without V98 quality approval; prevent automatic duplicate scouting until an editorial rework is explicitly chosen."
+    }
+  ]
+}
