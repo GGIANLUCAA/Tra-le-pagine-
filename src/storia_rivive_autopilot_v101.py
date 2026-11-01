@@ -39,7 +39,17 @@ def build_work_order(bank,now,profile):
     if any(not isinstance(i,str) or not re.fullmatch("[a-z0-9_]{6,64}",i) for i in ids):
         raise ValueError("Invalid candidates")
     if len(set(ids))!=len(ids): raise ValueError("Duplicate candidate")
-    c=entries[(int(slot.timestamp())//10800)%len(entries)]
+    used=profile.get("used_episode_ids",[])
+    if not isinstance(used,list) or any(not isinstance(x,str) for x in used):
+        raise ValueError("Invalid used_episode_ids ledger")
+    available=[c for c in entries if c["id"] not in set(used)]
+    if not available:
+        return {"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                "cycle_utc":slot.isoformat(),"cycle_id":"storia-"+slot.strftime("%Y%m%d-%H%M"),
+                "status":"SOURCE_REJECTED_QUEUE_EXHAUSTED","blocking_issues":["NO_UNUSED_CANDIDATES"],
+                "paid_api_call_permitted":False,"credits_spent":0,"publish_permitted":False,
+                "video_completed":False,"human_approved":False}
+    c=available[(int(slot.timestamp())//10800)%len(available)]
     issues=candidate_issues(c)
     flag=profile.get("historical_flags",{}).get(c["id"])
     title={"place":None,"year":c.get("year"),"flag":None,"flag_status":"OMITTED_UNTIL_VERIFIED"}
