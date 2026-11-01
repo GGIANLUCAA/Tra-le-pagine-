@@ -39,3 +39,9 @@ Bloccanti:
 ## Iterazione successiva effettivamente utile
 
 Usare V197 come riferimento concreto; migliorare **fedeltà dei volti** con confronto su stessi frame, documentare diritti, poi Vidu `balance`/ `plan` gratuitamente con source-lock della quinta scena e per-scena autorizzazione effettiva prima della singola POST. In assenza di provider/diritti/qualità, restare `rendered_needs_review` e non `final_approved`. Non alterare ArtVision, WOW LAB, V98 e cron V101.
+
+## Vidu — verifica gratuita GET sui byte reali, senza saldo divulgato
+
+Workflow [GitHub Actions 41346744470](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41346744470) **SUCCESS**: riutilizza soltanto il precedente `balance` GET della richiesta `storia-v191-balance-20261101`, eseguito nel gateway unico run **41341787914**, che aveva esito `success`. Sanitizzazione dell'artifact pubblico: `api_access_ok=true`, `numeric_balance_disclosed=false`, `no_paid_generation_sent_by_this_job=true`. **Non certifica un numero di crediti disponibile né l'intercambiabilità Pro consumer/API**. Nessuna POST Vidu di generazione e zero spese in questa verifica.
+
+Per trasformare la scena #5 granaio in una vera clip Vidu: usare la stessa immagine/fingerprint SHA V190, renderla fonte *privata* accessibile al gateway senza pubblicarla inconsapevolmente, richiedere PREVENTIVO GRATUITO `plan`, verificare quota e costo reale, ottenere autorizzazione esplicita esattamente per quella scena e importo, poi un solo POST con ledger idempotente e recupero GET. **Non** dichiarare V197 pubblicabile finché questi passi e QA artistico/diritti non sono completati.
