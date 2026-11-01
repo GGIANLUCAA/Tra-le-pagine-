@@ -1,0 +1,55 @@
+name: La Storia Rivive V194 read actual single batch free I2I artifact, no provider
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/storia-v194-read-free-photo-artifact.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  watch-read-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Watch original V194 one-shot run only, fetch photos or error report
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v194_saved
+          gh api -X GET 'repos/GGIANLUCAA/Tra-le-pagine-/actions/runs?head_sha=9b024b17dfc9bc37df89fcea5307a201eae1916e&per_page=100' > /tmp/v194_saved/RUNS.json
+          RUN=$(python - <<'PY'
+          import json
+          o=json.load(open('/tmp/v194_saved/RUNS.json'))
+          r=[x for x in o['workflow_runs'] if x['event']=='push' and 'V194' in x['name']]
+          print(r[0]['id'] if r else '')
+          PY
+          )
+          if [ -z "$RUN" ]; then
+            echo 'V194_ORIGINAL_PUSH_RUN_NOT_FOUND' > /tmp/v194_saved/NO_RUN.txt
+            exit 0
+          fi
+          gh run watch "$RUN" --repo GGIANLUCAA/Tra-le-pagine- --interval 10 --exit-status || true
+          gh run view "$RUN" --repo GGIANLUCAA/Tra-le-pagine- --json databaseId,status,conclusion,jobs > /tmp/v194_saved/ORIGINAL_RUN_STATUS.json
+          gh run download "$RUN" --repo GGIANLUCAA/Tra-le-pagine- --name storia-v194-3-free-actual-i2i-photo-candidates-not-approved --dir /tmp/v194_saved/photos || true
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/tmp/v194_saved/photos/V194_I2I_REAL_RESULTS.json')
+          if p.exists():
+            d=json.loads(p.read_text())
+            print('V194_REAL_GENERATED_PHOTOS',sum(x['real_i2i_generated'] for x in d['scenes']))
+            print('V194_PAID_CALLS',d['paid_calls'])
+            print('V194_STATUS',d['status'])
+          else: print('V194_REPORT_MISSING')
+          PY
+      - name: Preserve read-only results privately
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: storia-v194-collected-existing-photo-candidates-read-only
+          path: /tmp/v194_saved/
+          if-no-files-found: warn
+          retention-days: 4
