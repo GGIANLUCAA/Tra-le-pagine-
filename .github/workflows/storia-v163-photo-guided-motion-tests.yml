@@ -1,0 +1,46 @@
+name: "La Storia Rivive V163 - photo-guided real film motion offline tests"
+on:
+  push:
+    branches: [storia-v160-paris1918-real-film-review]
+    paths:
+      - ".github/workflows/storia-v163-photo-guided-motion-tests.yml"
+      - "src/storia_rivive_v163_photo_guided_real_motion.py"
+      - "tests/test_storia_rivive_v163_photo_guided_real_motion.py"
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v163-photo-guided-motion-tests.yml"
+      - "src/storia_rivive_v163_photo_guided_real_motion.py"
+      - "tests/test_storia_rivive_v163_photo_guided_real_motion.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v163-source-locked-motion-tests
+  cancel-in-progress: false
+jobs:
+  offline_photo_motion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install lightweight free CV testing dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install -q "numpy>=1.26,<2.4" "opencv-python-headless>=4.9,<5" "Pillow>=10,<13"
+      - name: Compile and test actual color transfer, real motion and fail-closed geometry
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_v163_photo_guided_real_motion.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v163_photo_guided_real_motion.py" -v
+      - name: Keep false master claims blocked
+        run: |
+          python - <<'PY'
+          import pathlib
+          src=pathlib.Path("src/storia_rivive_v163_photo_guided_real_motion.py").read_text()
+          assert "SOURCE_FREEZE_SHA" in src and "PHOTO_SHA" in src
+          assert "real_vidu_clip_count':0" in src
+          assert "'V99_final_gate':'NOT_PASSED" in src
+          print("SHA-LOCKED, NO VIDU, NOT FINAL")
+          PY
