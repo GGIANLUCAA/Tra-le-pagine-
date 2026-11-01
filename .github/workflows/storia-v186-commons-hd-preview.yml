@@ -29,7 +29,7 @@ jobs:
           python -m py_compile src/storia_rivive_v186_commons_preview.py tests/test_storia_rivive_v186_commons_preview.py
           python -m unittest discover -s tests -p 'test_storia_rivive_v186_commons_preview.py' -v
   source-sample:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/storia-v183-production-candidate-20261101'
+    if: github.event_name == 'pull_request' && github.head_ref == 'storia-v183-production-candidate-20261101' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
