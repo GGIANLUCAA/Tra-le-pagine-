@@ -1,5 +1,9 @@
 # ArtVision 4x1 — contratto operativo (28 ottobre 2026)
 
+## OVERRIDE ARTISTICO V118 (01/11/2026) — OBBLIGATORIO PER CONSEGNE MUSEUM
+L'utente ha ribadito: **«Come regola le cornici e i musei devono essere sempre fatti bene»**. Attivare `docs/ARTVISION_MUSEUM_V118_QUALITA_OBBLIGATORIA_20261101.md` e V80 per qualsiasi Museum, **indipendentemente da successo tecnico di FFmpeg, 4 MP4 e ZIP**. Prima della consegna come prodotto finito/approvato: ricerca cornice vera o dichiarazione di alternativa specificamente approvata, sala fotocredibile con materiali/luce/prospettiva/scale fisiche coerenti, **reale test VIDEO MP4** su intro e uscita, cornice fuori campo per tutta la spiegazione, stessa stanza al finale, QA visuale umano documentato. Se il risultato sembra artificiale o non è stato verificato, `museum_approved=false`, Gold V25 bloccato, non pubblicare e indicare solo anteprima `rendered_needs_review`. Correggere esclusivamente le due versioni Museum difettose, non gli Standard e gli audio approvati. Nessuna nuova spesa né duplicazione in automatico.
+
+
 ## Scopo
 Per ogni nuova opera selezionata, preparare **quattro varianti** da un unico dossier verificato, senza considerare un piano come produzione completata:
 1. Critico Standard: copertina standard, voce naturale Gacrux verificata, narrazione sincronizzata, ingresso standard.
