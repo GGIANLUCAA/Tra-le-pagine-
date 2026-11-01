@@ -217,4 +217,42 @@ class MotionPhotoTests(unittest.TestCase):
                                    capture_output=True,text=True,check=True,timeout=30)
             self.assertEqual(decoded.stdout.strip(),'4')
 
+
+    def test_v169_single_frame_stream_matches_buffered_bytes(self):
+        # The production renderer now streams one frame at a time. Its encoded
+        # pixel input must be byte-for-byte identical to the old per-scene batch.
+        import io
+        a=np.full((v.H,v.W,3),72,dtype=np.uint8)
+        b=a.copy();b[320:370,220:280]=(18,88,210)
+        c=b.copy();c[550:590,300:345]=(125,155,180)
+        frames=[a,b,c]
+        old=io.BytesIO()
+        self.assertEqual(v.stream_scene_frames(frames,old,0),3)
+        new=io.BytesIO()
+        idx=0
+        for frame in frames:
+            idx=v.stream_scene_frames((frame,),new,idx)
+        self.assertEqual(idx,3)
+        self.assertEqual(new.getvalue(),old.getvalue())
+
+    def test_v169_repeated_photo_generator_is_not_recomposed(self):
+        import io
+        from unittest.mock import patch
+        still=np.full((v.H,v.W,3),94,dtype=np.uint8)
+        sink=io.BytesIO()
+        with patch.object(v,'title_frame',wraps=v.title_frame) as titled:
+            count=v.stream_scene_frames((still for _ in range(5)),sink,30)
+        self.assertEqual(count,35)
+        self.assertEqual(titled.call_count,1)
+        self.assertEqual(len(sink.getvalue()),5*v.H*v.W*3)
+
+    def test_v169_renderer_does_not_buffer_composed_scenes(self):
+        # Protect against reintroducing hundreds of 720x1280 BGR arrays.
+        source=MODULE.read_text(encoding='utf-8')
+        self.assertNotIn('whole.append(',source)
+        self.assertNotIn('whole.extend(',source)
+        self.assertNotIn('whole=[]',source)
+        self.assertIn('stream_scene_frames((shown,),proc.stdin',source)
+        self.assertIn('stream_scene_frames((frozen for _ in range(n))',source)
+
 if __name__=='__main__':unittest.main()
