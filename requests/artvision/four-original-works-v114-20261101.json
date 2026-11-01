@@ -1,0 +1,27 @@
+{
+  "schema": "artvision-four-independent-artworks-v114-one-shot",
+  "date": "2026-11-01",
+  "user_instruction": "Procedi con una nuova produzione di 4 nuove opere non già fatte in passato",
+  "exact_four_work_ids": [
+    "rosa_bonheur_horse_fair_met_87_25",
+    "millais_blind_girl_birmingham_1892p3",
+    "burne_jones_arthur_avalon_ponce_63_0369",
+    "vedder_sphinx_seashore_deyoung_1979_7_102"
+  ],
+  "expected_new_artwork_count": 4,
+  "expected_variants_per_artwork": 4,
+  "expected_real_mp4_max": 16,
+  "one_shot_only": true,
+  "max_paid_api_calls": 0,
+  "no_social_publish": true,
+  "no_automatic_eighth_etc": true,
+  "no_reuse_of_older_work": true,
+  "owner_attested_second_google_project_free_no_billing_2026_10_30": true,
+  "google_voice_retries_forbidden": true,
+  "previous_artworks_and_masters_preserved": true,
+  "V25_Gold_auto_approval": false,
+  "single_renderer_at_time": true,
+  "source_image_pd_sha_or_dimensions_verified_before_render": true,
+  "museum_rooms_are_digital_reconstructions_and_frames_not_verified_historic": true,
+  "note": "One workflow with 4 matrix entries serialized max-parallel=1. Each work uses only its own PD painting; exactly one Gacrux voice call per work if owner-attested Free and secret available; no reruns or costs if voice fails. Separate artifacts per painting, no Library upload if storage remains full."
+}
