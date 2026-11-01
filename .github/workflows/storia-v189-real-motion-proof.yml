@@ -15,7 +15,7 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: storia-v189-real-motion-\${{ github.ref }}
+  group: storia-v189-real-motion-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   offline-tests:
@@ -41,7 +41,7 @@ jobs:
       - name: Retrieve existing V187 source frames and provenance (9MB, no external film request)
         shell: bash
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           mkdir -p /tmp/v189_v187
