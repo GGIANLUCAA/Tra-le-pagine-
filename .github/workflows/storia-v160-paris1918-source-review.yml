@@ -57,7 +57,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          sudo apt-get update -qq\n          sudo apt-get install -qq -y ffmpeg\n          ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json v160_source/PARIS_1918_AI139599_ORIGINAL.webm > v160_source/FFPROBE.json
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json v160_source/PARIS_1918_AI139599_ORIGINAL.webm > v160_source/FFPROBE.json
           python - <<'PY'
           import json
           p=json.load(open("v160_source/FFPROBE.json"))
