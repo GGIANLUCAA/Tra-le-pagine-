@@ -8,7 +8,7 @@ confidence. This is NOT framewise generative I2I nor Vidu animation.
 No network/API calls; asserts exact V162 inputs and produces review-only MP4/ZIP.
 """
 from __future__ import annotations
-import argparse, hashlib, json, math, os, shutil, subprocess, wave, zipfile
+import argparse, hashlib, json, math, os, resource, shutil, subprocess, time, wave, zipfile
 from pathlib import Path
 import cv2
 import numpy as np
@@ -163,6 +163,33 @@ def verify_muxed_movie(movie, expected_frames):
             'video_duration_seconds':video_seconds,
             'audio_duration_seconds':audio_seconds,
             'container_duration_seconds':container_seconds}
+
+
+def render_performance_snapshot(started_at, scene_times):
+    """V172: report measured Linux runner cost, not guessed memory savings.
+
+    ru_maxrss is KiB on Linux. Child RSS is the maximum of a *single*
+    reaped child, not simultaneous total RAM, and is reported separately.
+    A full source render is still required to benchmark the real episode.
+    """
+    if not isinstance(scene_times, list) or any(
+        not isinstance(x, (int, float)) or not math.isfinite(x) or x < 0
+        for x in scene_times
+    ):
+        raise ValueError('RENDER_PERFORMANCE_SCENE_TIMES_INVALID')
+    elapsed = time.perf_counter() - started_at
+    if not math.isfinite(elapsed) or elapsed < 0:
+        raise ValueError('RENDER_PERFORMANCE_CLOCK_INVALID')
+    parent = resource.getrusage(resource.RUSAGE_SELF)
+    children = resource.getrusage(resource.RUSAGE_CHILDREN)
+    return {
+        'wall_seconds': round(elapsed, 3),
+        'scene_wall_seconds': [round(x, 3) for x in scene_times],
+        'peak_renderer_rss_mib': round(parent.ru_maxrss / 1024, 2),
+        'peak_reaped_child_rss_mib': round(children.ru_maxrss / 1024, 2),
+        'rss_semantics': 'Linux ru_maxrss: independent peak of renderer and maximum reaped child; NOT simultaneous total RAM',
+        'benchmark_scope': 'full_source_render_only_if_all_six_real_clips_processed',
+    }
 
 
 def grade(frame):
@@ -373,6 +400,8 @@ def main():
     pa.add_argument('--photos-v162-dir',default=str(PHOTO))
     pa.add_argument('--out',default='output/storia_paris_v163_photo_guided')
     a=pa.parse_args()
+    started_at=time.perf_counter()
+    scene_wall_times=[]
     BASE=Path(a.source_v162_dir); PHOTO=Path(a.photos_v162_dir)
     # Check the six full motion clips before any output directory is created.
     verified_motion_sha=verify_motion_clips(BASE)
@@ -387,6 +416,7 @@ def main():
         engine=cv2.DISOpticalFlow_create(cv2.DISOPTICAL_FLOW_PRESET_MEDIUM)
         engine.setFinestScale(1)
         for i,(scene,label,hold,_) in enumerate(SCENES,1):
+            scene_started=time.perf_counter()
             motion_path=BASE/f'scene_{scene}'/'real_original_motion.mp4'
             original_motion_frames,archive_anchor=scan_clip(motion_path)
             exact=BASE/f'scene_{scene}'/'EXACT_MP4_LAST_MOTION_FRAME.png'
@@ -464,6 +494,7 @@ def main():
                     prev_shown=shown
             # Three actual frame samples, identical indices to the buffered V163.
             sample.append((scene,cv2.resize(first_shown,(360,640)),cv2.resize(colored_shown,(360,640)),cv2.resize(prev_shown,(360,640))))
+            scene_wall_times.append(time.perf_counter()-scene_started)
             qa_scenes.append({'scene':i,'original_freeze_sha256':orig_anchor_sha,'photo_sha256':scene_photo_sha(i,PHOTO),
                               'photo_kind':photo_method,'original_moving_frames':original_motion_frames,'full_color_motion_frames_over_40pct_reveal':colored_frames,
                               'mean_flow_match_confidence':round(float(np.mean(conf)),4),'mean_source_motion_delta_gray':round(float(np.mean(movement)),3),
@@ -524,7 +555,8 @@ def main():
         'new_photo_guided_real_moving_shots':3,'ddcolor_derived_color_moving_shots':2,'scene_raster_720x576_source_encoded_sar_non_square':True,
         'display_main_subject_area':'720x768 cropped from 540px width, vertical composition, full source available separately',
         'scenes':qa_scenes,'movie_file':movie.name,'movie_sha256':sha(movie),'bytes':movie.stat().st_size,
-        'duration_seconds':duration,'frames':nframes,'codec':'H264/AAC','full_ffmpeg_decode':'PASS','muxed_media_verified_v171':verified_mux,'sha256_source_photos':[PHOTO_SHA[i] for i in sorted(PHOTO_SHA)],
+        'duration_seconds':duration,'frames':nframes,'codec':'H264/AAC','full_ffmpeg_decode':'PASS','muxed_media_verified_v171':verified_mux,
+        'render_performance_v172':render_performance_snapshot(started_at,scene_wall_times),'sha256_source_photos':[PHOTO_SHA[i] for i in sorted(PHOTO_SHA)],
         'fourth_i2i_status':'MISSING_PREEXISTING_FREE_PROVIDER_FAILURE','fifth_real_vidu':'MISSING_NO_CREDIT_SPENT',
         'V99_final_gate':'NOT_PASSED_NO_REAL_VIDU_OR_FOURTH_I2I','italian_rights_review':'PENDING','human_artistic_QA':'REJECTED_USER_REFERENCES_43055_43056',
         'moving_restoration_photoreal_target_met':False,
