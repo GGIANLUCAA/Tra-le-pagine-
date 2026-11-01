@@ -1,0 +1,123 @@
+name: ArtVision V116 - 4 original artworks 16 videos with refined gallery
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/four-original-works-v116-20261101.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-v116-four-new-works-single-run-no-retry
+  cancel-in-progress: false
+jobs:
+  four_paintings_one_at_a_time:
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        work_id:
+          - landseer_man_proposes_1864_royal_holloway_thc0032
+          - ford_madox_brown_last_england_1855_birmingham_1891p24
+          - bastien_lepage_joan_1879_met_89_21_1
+          - briton_riviere_daniel_1890_manchester_1937_123
+    env:
+      ARTVISION_EXACT_WORK_ID: ${{ matrix.work_id }}
+      ARTVISION_OUT: output/artvision_v116
+      HF_HUB_DISABLE_TELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Strict one-shot authorisation and non-duplication, no paid service
+        run: |
+          set -euo pipefail
+          python -m py_compile src/artvision_four_original_v116.py
+          python - <<'PY'
+          import json,os
+          request=json.load(open('requests/artvision/four-original-works-v114-20261101.json'))
+          assert request['one_shot_only'] and request['max_paid_api_calls']==0
+          assert request['no_social_publish'] and request['no_automatic_eighth_etc'] is True
+          names=request['exact_four_work_ids']
+          assert len(names)==4 and len(set(names))==4
+          work=os.environ['ARTVISION_EXACT_WORK_ID']
+          assert work in names
+          config=json.load(open('modules/artvision_critico/production_series/2026_11_01_four_original_v116/'+work+'.json'))
+          assert config['work_id']==work and len(config['story'])==9
+          queue=json.load(open('queue/artvision_four_variants_s01_20261028.json'))
+          if any(g.get('group_id')==work and g.get('completed_four_slots_review') for g in queue['groups']):
+            raise SystemExit('STOP: Already produced in queue, do not regenerate')
+          print('AUTHORIZED NEW WORK ONLY:',work,flush=True)
+          PY
+      - name: Python runtime + static FFmpeg
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" pillow numpy soundfile scipy faster-whisper imageio-ffmpeg
+          mkdir -p "$RUNNER_TEMP/bin"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from imageio_ffmpeg import get_ffmpeg_exe
+          src=Path(get_ffmpeg_exe());assert src.is_file()
+          (Path(os.environ['RUNNER_TEMP'])/'bin'/'ffmpeg').symlink_to(src)
+          PY
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/ffmpeg" -version | head -1
+          "$RUNNER_TEMP/bin/ffmpeg" -encoders -hide_banner | grep -q libx264
+      - name: Render exact source Cinema Standard + Cinema Museum without billable calls
+        run: |
+          python src/artvision_four_original_v116.py --mode cinema
+      - name: One voice only for this work from owner-attested second Free no-billing project
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          ARTVISION_GEMINI_PROJECT_BILLING_TIER: Free
+        run: |
+          python src/artvision_four_original_v116.py --mode critico
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path('output/artvision_v116')/os.environ['ARTVISION_EXACT_WORK_ID']/ 'QA_V116.json'
+          j=json.loads(p.read_text())
+          print('FOUR_VARIANT_RENDER_COUNT:',j['files_generated_count'])
+          print('VOICE_STATE:',j.get('voice',{}).get('status','not-attempted'))
+          print('ARTWORK_SOURCE_SHA256:',j['source_sha256'])
+          PY
+      - name: Verify real video files, complete FFmpeg decode and exact shared Critico AAC
+        run: |
+          python - <<'PY'
+          import os,json,subprocess,hashlib
+          from pathlib import Path
+          p=Path('output/artvision_v116')/os.environ['ARTVISION_EXACT_WORK_ID']
+          j=json.loads((p/'QA_V116.json').read_text())
+          assert len(j['files'])>=2 and all(row['full_decode']=='PASS' for row in j['files'].values())
+          for k,row in j['files'].items():
+            file=p/row['name'];assert file.exists() and file.stat().st_size==row['bytes']
+            assert hashlib.sha256(file.read_bytes()).hexdigest()==row['sha256']
+            subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(file),'-f','null','-'],check=True)
+          if j['files_generated_count']==4:
+            audio=[]
+            for k in ('critico_standard','critico_museum'):
+              f=p/j['files'][k]['name'];out=p/(k+'.aac')
+              subprocess.run(['ffmpeg','-v','error','-y','-i',str(f),'-map','0:a:0','-c:a','copy','-f','adts',str(out)],check=True)
+              audio.append(hashlib.sha256(out.read_bytes()).hexdigest())
+              out.unlink()
+            assert audio[0]==audio[1], 'Critical videos do not share bit-identical AAC'
+            j['critico_shared_AAC_ADTS_sha256']=audio[0]
+          j['runner_full_decode_pass']=list(j['files'])
+          (p/'QA_V116.json').write_text(json.dumps(j,indent=2,ensure_ascii=False)+'\n')
+          print('VIDEO_RESULT:',len(j['files']),j['files_generated_count'],j['runner_full_decode_pass'])
+          PY
+      - name: Preserve actual MP4 and both audio source cache and source/rights QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V116_${{ matrix.work_id }}_REAL_VIDEO_REVIEW
+          path: |
+            output/artvision_v116/${{ matrix.work_id }}/*.mp4
+            output/artvision_v116/${{ matrix.work_id }}/*_REVIEW.zip
+            output/artvision_v116/${{ matrix.work_id }}/*.json
+            output/artvision_v116/${{ matrix.work_id }}/*.txt
+            output/artvision_v116/${{ matrix.work_id }}/VOCE.wav
+            output/artvision_v116/${{ matrix.work_id }}/cards/title.jpg
+          compression-level: 5
+          if-no-files-found: warn
+          retention-days: 30
