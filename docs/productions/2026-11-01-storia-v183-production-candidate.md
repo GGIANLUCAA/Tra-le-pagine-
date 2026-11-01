@@ -82,3 +82,25 @@ Questa modifica è un handoff editoriale, **non** un episodio prodotto. Nessun M
 - Artifact GitHub `v188-real-source-portrait-crops-review-only` **ID 13095735791**, ~11,18 MB, retention fino al 04/11/2026 18:23 UTC. Contiene il JSON SHA/QA, 27 crop originali e una contact sheet dei cinque candidati; nessun I2I e nessun MP4.
 - Primo run reale https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41336215543 aveva **fallito correttamente** con `UNSAFE_ZIP_MEMBER` perché il comando ZIP inseriva anche entry di directory; correzione nel workflow con `zip -r -D` per non introdurre directory entries, mantenendo il parser rigoroso. Rerun CI riuscito come sopra.
 - **Anti-duplicazione**: dopo il PASS il job reale V188 è stato riportato a `workflow_dispatch` con input esplicito `run_real_archive`; i successivi commit/PR eseguono soltanto test gratuiti, non riacquisizioni né job reali automatici. ArtVision/WOW LAB/V98/V101 e gateway Vidu invariati.
+
+
+## V189 — CINQUE VERE RIPRESE IN MOVIMENTO + freeze corrispondente: prova MP4 reale (01/11/2026)
+
+**Nuovo avanzamento produttivo sui byte veri, non solo test sintetici:** un job GitHub Actions ha riletto il catalogo archivistico V187 da artifact GitHub, ha verificato dieci PNG SHA-locked e intervalli di taglio, ha riscaricato UNA VOLTA il derivato Commons VP9 autenticato SHA256 `eacbb947105f9143632e3d4e933ee5e200ba98f5d588c11c552dfb94787de1d9` (non master nativo), ed estratto cinque segmenti della **pellicola autentica in movimento**, senza fotografie AI né Vidu. Non è stato usato alcun servizio a pagamento.
+
+**Cinque soggetti/preselezioni editoriali distinte (tutti scene recitate di un film di finzione del 1909):**
+1. `shot_03.png` t=162,25s ufficio/finanziere, crop sinistro
+2. `shot_04.png` t=226,00s borsa/affollamento, crop centrale
+3. `shot_06.png` t=449,25s banchetto, crop centrale
+4. `shot_07.png` t=514,50s fattoria/consegna, crop centrale
+5. `shot_08.png` t=641,00s granaio/uomo che gesticola, crop destro.
+
+Le cinque scene sono intervalli di taglio **distinti del catalogo**. A ciascuna: circa 2,15s di pellicola B/N reale, poi 0,75s di fermo **derivato dall'ULTIMO fotogramma decodificato della clip prodotta**, SHA-256 per ogni MP4/freezeframe. Il frame fermato non è impropriamente dichiarato identico al PNG V187 campionato al t nominale. Il movimento è misurato sui fotogrammi decodificati (delta luma medio 5,8198; 22,0263; 11,3829; 7,6211; 7,2352 rispettivamente). I 603×1072 pixel **reali** del crop dal derivato sono scalati a 720×1280 per codifica; NON scansione 720p nativa e NON restauri HD.
+
+**Esecuzione verificata:** GitHub Actions [run #41340599822](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41340599822) SUCCESS, job test **7/7 PASS** + job REAL-FILM SUCCESS. Artifact privato `v189-five-real-film-moving-scenes-bw-proof-not-final` ID **13096079759** (~9,06 MB), con 5 MP4 di movimento, 5 PNG freeze, MP4 unica prova e report SHA; conservazione limitata (3 giorni). Riacquisizione derivato limitata, cancellato il WEBM da 318 MB dopo la lavorazione. No Release pubblica/sito/social.
+
+**MP4 prova autentica realmente scaricato e verificato localmente**: `V189_TRUE_BW_MOTION_FIVE_SCENES_PROOF_NOT_FINAL.mp4`, **14,400 s, 720×1280, H264, 25fps, 360 frame, 3.219.212 byte**, SHA-256 `b7742b2b9b5941fabf405c4ff6a557cf5e025150a6933631043cafe75f878380`. Decodifica integrale FFmpeg PASS. Controllo supplementare **locale** al confine ultima immagine in movimento→freeze: delta medio in grigio (0–255) **0,05; 0,13; 0,08; 0,14; 0,34**, correlazione **0,99977–0,99999**. Sono verifiche di continuità del *provino B/N*, non prova di colori restaurati o audio.
+
+**Stato rigidamente NON FINAL:** l'MP4 di prova è SILENZIOSO, in B/N, senza vera foto generativa I2I, Vidu o colonna sonora. Diritti territoriali Italia, autenticità della scansione di origine, qualità finale V98, QA artistico e gate V91/V94/V96/V99 restano **PENDING**; `provider_jobs_may_start=false`, `publish_permitted=false`. Non è una licenza a consumare Vidu senza consenso scena e saldo verificato. ArtVision, WOW LAB, V98, V101 cron e gateway intatti.
+
+**Passo successivo:** selezionare dai cinque freeze ancorati i quattro soggetti per veri restauri I2I e uno per la Vidu, verificare qualità visiva per 9:16 e diritti italiani, poi verificare accesso/free quota e autorizzazione scena del gateway. Non promuovere questa prova silenziosa a video finito.
