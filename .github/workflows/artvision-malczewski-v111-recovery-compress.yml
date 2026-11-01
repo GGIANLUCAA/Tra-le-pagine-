@@ -1,0 +1,137 @@
+name: ArtVision Malczewski V111 · ONLY recover/recompress real V110 MP4 no TTS
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/malczewski-v111-recovery.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-malczewski-v111-recover-once-no-tts
+  cancel-in-progress: false
+jobs:
+  recover_4_real_mp4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: \${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert one-time archival action, absolutely NO TTS/API calls
+        run: |
+          python - <<'PY'
+          import json
+          j=json.load(open('requests/artvision/malczewski-v111-recovery.json'))
+          assert j['source_run_id']==41260215643 and j['artifact_id']==13064523700
+          assert j['recovery_only'] and j['no_voice_generation'] and j['max_paid_calls']==0
+          PY
+      - name: Retrieve verified V110 real artifact through authorized GitHub token
+        run: |
+          set -euo pipefail
+          mkdir -p recovered
+          gh run download 41260215643 -n ARTVISION_MALCZEWSKI_MNP_FR56_V110_TRUE_MP4_REVIEW -D recovered
+          python - <<'PY'
+          from pathlib import Path
+          a=sorted(Path('recovered').rglob('*.mp4'))
+          print('Real MP4 count from original artifact',len(a))
+          for f in a: print(f,f.stat().st_size)
+          assert len(a)==4,'Expected exactly four pre-existing real MP4, not duplicated'
+          assert any('CRITICO_STANDARD' in p.name for p in a)
+          assert any('CRITICO_MUSEUM' in p.name for p in a)
+          assert any('CINEMA_STANDARD' in p.name for p in a)
+          assert any('CINEMA_MUSEUM' in p.name for p in a)
+          PY
+      - name: Static FFmpeg + Pillow for loss-aware Android transcode, AAC bit-identical
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check imageio-ffmpeg pillow
+          mkdir -p "$RUNNER_TEMP/bin"
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          import os
+          source=Path(get_ffmpeg_exe())
+          target=Path(os.environ['RUNNER_TEMP'])/'bin'/'ffmpeg'
+          target.symlink_to(source)
+          PY
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Reencode only VIDEO on verified originals, COPY exact AAC, four files, QA
+        run: |
+          set -euo pipefail
+          mkdir -p deliver
+          python - <<'PY'
+          import hashlib,subprocess,json,zipfile,shutil
+          from pathlib import Path
+          from PIL import Image,ImageDraw,ImageFont
+          base=Path('recovered');out=Path('deliver')
+          expected={
+            'CINEMA_STANDARD':'906c456a01add38556ae6798a26cf128c195ab91b6415a41ef6ad40287942732',
+            'CINEMA_MUSEUM':'4693214a38b8594d146b34c20012d776708bc00a52d43771e6aa2bc1848f0990',
+            'CRITICO_STANDARD':'a54148eb6c56679e16395af661bd319bd86bf97164b66c5106bfef2e5bb2a2b7',
+            'CRITICO_MUSEUM':'43300566a571ca2635dcbf0175b14df535e0d4e7292e82d284aacf0536c61025'
+          }
+          def sha(p):
+            h=hashlib.sha256()
+            with open(p,'rb') as f:
+              for b in iter(lambda:f.read(2**20),b''):h.update(b)
+            return h.hexdigest()
+          def ffc(args):subprocess.run(['ffmpeg','-v','error','-y']+list(map(str,args)),check=True)
+          report={'work_id':'malczewski_bledne_kolo_1897_mnp_fr56','step':'V111 technical compression of V110 real MP4','source_run_id':41260215643,'TTS_calls_during_V111':0,'new_AI_generated':False,'V25_Gold':0,'android_player_verified':False,'files':{},'source_sha256':'0ff83e09be9465a696b8956065f93ddd78f9fb3c1f1e8ebd87b98bc792cad5b9'}
+          for label,oldhash in expected.items():
+            candidates=list(base.rglob(f'MALCZEWSKI_{label}_V110_REVIEW.mp4'))
+            assert len(candidates)==1,(label,candidates)
+            old=candidates[0];assert sha(old)==oldhash,(label,'V110 master source SHA mismatch')
+            dest=out/f'MALCZEWSKI_{label}_V111_ANDROID_REVIEW.mp4'
+            ffc(['-i',old,'-map','0:v:0','-map','0:a:0','-c:v','libx264','-preset','medium','-crf','24','-pix_fmt','yuv420p','-c:a','copy','-movflags','+faststart',dest])
+            subprocess.run(['ffmpeg','-v','error','-xerror','-i',dest,'-f','null','-'],check=True)
+            report['files'][label]={'file':dest.name,'sha256':sha(dest),'bytes':dest.stat().st_size,'source_original_sha256':oldhash,'full_decode':'PASS','audio_transcoded':False,'review_only':True}
+          # Extract identical AAC data from both critic outputs without changing a single audio sample/packet.
+          audio=[]
+          for lab in ('CRITICO_STANDARD','CRITICO_MUSEUM'):
+            p=out/report['files'][lab]['file'];a=out/(lab+'.aac')
+            ffc(['-i',p,'-map','0:a:0','-c:a','copy','-f','adts',a]);audio.append(sha(a));a.unlink()
+          assert audio[0]==audio[1],f'Critico AAC mismatch {audio}'
+          report['shared_critico_AAC_SHA256']=audio[0]
+          # Existing cover from REAL painting, never fabricate a different historic painting.
+          candidates=list(base.rglob('title.jpg'))
+          if candidates:
+            src=Image.open(candidates[0]).convert('RGB')
+            for lab in expected:
+              pic=src.copy();draw=ImageDraw.Draw(pic,'RGBA')
+              draw.rectangle((0,1130,720,1235),fill=(11,12,13,210))
+              try:ft=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',24)
+              except OSError:ft=ImageFont.load_default()
+              draw.text((360,1180),lab.replace('_','  '),font=ft,anchor='mm',fill=(242,230,202))
+              pic.save(out/f'COPERTINA_{lab}_V111.jpg',quality=92)
+          for n in ['SOCIAL_BOZZE.txt','VOICE_STATE.json','ALLINEAMENTO_VOCE.json']:
+            fs=list(base.rglob(n))
+            if fs:shutil.copy2(fs[0],out/n)
+          (out/'QA_V111.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          for nm,extra in [('MALCZEWSKI_4_VIDEO_ANDROID_V111.zip',False),('MALCZEWSKI_4X1_COMPLETO_V111.zip',True)]:
+            zp=out/nm
+            with zipfile.ZipFile(zp,'w',zipfile.ZIP_DEFLATED,compresslevel=3) as z:
+              for lab in expected:
+                p=out/report['files'][lab]['file'];z.write(p,p.name)
+              if extra:
+                for p in sorted(out.glob('COPERTINA*.jpg')):z.write(p,p.name)
+                for p in sorted(out.glob('*.txt')):z.write(p,p.name)
+                z.write(out/'QA_V111.json','QA_V111.json')
+            with zipfile.ZipFile(zp) as z:assert z.testzip() is None
+            report[nm]={'sha256':sha(zp),'bytes':zp.stat().st_size,'CRC':'PASS'}
+          (out/'QA_V111.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - name: Archive only final 4 real MP4, covers, QA and ZIP; no redundant old 677MB bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_MALCZEWSKI_V111_ANDROID_FOUR_MP4_NO_NEW_TTS
+          path: |
+            deliver/*.mp4
+            deliver/*.zip
+            deliver/*.jpg
+            deliver/*.json
+            deliver/*.txt
+          retention-days: 30
+          if-no-files-found: warn
