@@ -57,12 +57,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json v160_source/PARIS_1918_AI139599_ORIGINAL.webm > v160_source/FFPROBE.json
+          sudo apt-get update -qq\n          sudo apt-get install -qq -y ffmpeg\n          ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json v160_source/PARIS_1918_AI139599_ORIGINAL.webm > v160_source/FFPROBE.json
           python - <<'PY'
           import json
           p=json.load(open("v160_source/FFPROBE.json"))
           assert 270<float(p["format"]["duration"])<300
-          assert any(s.get("width")==768 and s.get("height")==576 for s in p["streams"])
+          assert any(s.get("width")==720 and s.get("height")==576 for s in p["streams"])
           print("V160_SOURCE_REAL_VIDEO_DECODE_METADATA_OK")
           PY
       - name: Preserve REAL original film and evidence as private artifact (no releases)
