@@ -110,6 +110,48 @@ def verify_still_assets(base, photo_dir, freeze_sha=None, i2i_sha=None, ddcolor_
     return checked
 
 
+
+def verify_audio_preflight(base):
+    """V173: validate the real V162 WAV *before* expensive source rendering.
+
+    A missing, truncated, or too-short soundtrack previously failed only after
+    FFmpeg had encoded the entire film. This is a byte-level PCM check, not
+    musical/artist approval. The 14-second floor follows the editorial reel
+    minimum; final audio/video duration is still verified by V171.
+    """
+    path = Path(base) / 'MUSICA_ORIGINALE.wav'
+    if not path.is_file() or path.is_symlink():
+        raise ValueError('AUDIO_SOURCE_MISSING_OR_LINK')
+    if path.stat().st_size > 128 * 1024 * 1024:
+        raise ValueError('AUDIO_SOURCE_OVERSIZE')
+    try:
+        with wave.open(str(path), 'rb') as source:
+            channels = source.getnchannels()
+            sample_width = source.getsampwidth()
+            rate = source.getframerate()
+            expected_frames = source.getnframes()
+            if (source.getcomptype() != 'NONE' or channels not in (1, 2)
+                or sample_width not in (1, 2, 3, 4)
+                or not 8000 <= rate <= 192000):
+                raise ValueError('AUDIO_SOURCE_FORMAT_INVALID')
+            seconds = expected_frames / rate
+            if not 14 <= seconds <= 180:
+                raise ValueError('AUDIO_SOURCE_DURATION_INVALID')
+            frame_bytes = channels * sample_width
+            decoded_frames = 0
+            while decoded_frames < expected_frames:
+                payload = source.readframes(min(65536, expected_frames - decoded_frames))
+                if not payload or len(payload) % frame_bytes:
+                    raise ValueError('AUDIO_SOURCE_TRUNCATED')
+                decoded_frames += len(payload) // frame_bytes
+            if decoded_frames != expected_frames:
+                raise ValueError('AUDIO_SOURCE_TRUNCATED')
+    except (wave.Error, EOFError, OSError, ZeroDivisionError) as exc:
+        raise ValueError('AUDIO_SOURCE_WAV_UNREADABLE') from exc
+    return {'sha256': sha(path), 'duration_seconds': round(seconds, 3),
+            'channels': channels, 'sample_rate_hz': rate}
+
+
 def ff(args,timeout=150):
     r=subprocess.run(args,capture_output=True,text=True,timeout=timeout)
     if r.returncode:raise RuntimeError('ffmpeg failed '+r.stderr[-1200:])
@@ -408,6 +450,8 @@ def main():
     # Check all 10 source/photo PNGs before output directory or encoder exists.
     # A missing fourth/fifth DDColor input must not waste an entire partial render.
     verified_still_sha=verify_still_assets(BASE,PHOTO)
+    # V173: reject bad soundtrack before creating output or starting FFmpeg.
+    verified_audio=verify_audio_preflight(BASE)
     dest=Path(a.out);dest.mkdir(parents=True,exist_ok=True)
     nframes=0;qa_scenes=[];sample=[]
     raw=dest/'V163_RENDER_VIDEO_ONLY.mp4'
@@ -549,6 +593,7 @@ def main():
         'source_origin':'Musee Albert-Kahn / Wikimedia Commons original AI139599 verified in V160/V162','source_sha1':'aa471da773d14f422d1387654601ca03b5224455',
         'source_PTS_and_shot_selection_unchanged':True,'verified_six_motion_clips_sha256':verified_motion_sha,
         'verified_ten_still_assets_sha256':verified_still_sha,
+        'verified_original_wav_v173':verified_audio,
         'v162_same_three_i2i_photos_reused_byte_exact':True,'photographs_changed_or_regenerated':False,
         'generative_photo_i2i_count':3,'true_frame_by_frame_generative_i2i':0,'real_vidu_clip_count':0,'paid_credits_consumed':0,
         'optical_flow_method':'OpenCV DIS current-to-exact freeze, bounded luminance residual & occlusion-aware chroma; no invented motion',
