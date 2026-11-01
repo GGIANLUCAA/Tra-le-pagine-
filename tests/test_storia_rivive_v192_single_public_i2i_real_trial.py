@@ -34,7 +34,9 @@ class V192Tests(unittest.TestCase):
         self.manifest.write_text(json.dumps(handoff()))
     def test_source_hash_constant_is_full_real_sha256(self):
         self.assertEqual(len(mod.SOURCE_SHA), 64)
-        self.assertRegex(mod.SOURCE_SHA, r'^[0-9a-f]{64}
+        self.assertEqual(mod.SOURCE_SHA, "927dd324df4f88ef0dd12b31ccf0aade9fa901875ffcc5b688f74ecc57e1d32f")
+
+    def test_actual_verification_requires_real_hash(self):
         with self.assertRaisesRegex(ValueError,"SOURCE_FRAME_SHA_CHANGED"):
             mod.verified_source(self.source,self.manifest)
     def test_strict_source_role(self):
