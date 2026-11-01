@@ -34,7 +34,7 @@ jobs:
           python -m py_compile src/artvision_four_original_v116.py
           python - <<'PY'
           import json,os
-          request=json.load(open('requests/artvision/four-original-works-v114-20261101.json'))
+          request=json.load(open('requests/artvision/four-original-works-v116-20261101.json'))
           assert request['one_shot_only'] and request['max_paid_api_calls']==0
           assert request['no_social_publish'] and request['no_automatic_eighth_etc'] is True
           names=request['exact_four_work_ids']
