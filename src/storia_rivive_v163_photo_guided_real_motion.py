@@ -24,12 +24,51 @@ SOURCE_FREEZE_SHA={1:'9dca53726983e4f794fcc5aecf99a77d6f57f4bdf946c08ec1942d7ea5
 DDCOLOR_SHA={4:'0cbf5919331bd14013349ea7d96289c04b355d2b9e792c0da536d7742b15fa59',5:'934ce5f2bfe250960635bda8b2569e5db20e36999cb26440bc235c6a66b1ad3a'}
 PHOTO_SHA={1:'5648bc952703a31dfbfec7501be04ff34a9297437a180cfd73a2f12258f7f64c',2:'fd6eaee3c6e4ba070b4f6ffeb357284360b102d3c2e9a2b47daa282a2e7e1fc0',3:'d2d1d0eef1c2fd0bd195c914d45652345c2c5282d7f2bbcefee7fb133c81d442'}
 
+# V164: the five *moving* original clips are immutable, not merely their last
+# frozen frame. Without these locks a substituted/zoomed clip ending on the
+# same photograph would pass SOURCE_FREEZE_SHA and look historically authentic.
+# These hashes were measured from V162 real_original_motion.mp4 byte files.
+MOTION_CLIP_SHA = {
+    'scene_01/real_original_motion.mp4': 'e459da56b86fa6d45fc21e764bc490cc40d610ff35814faa3ee2c0c97a80e45a',
+    'scene_02/real_original_motion.mp4': '07b7714c856830f02da8d6cd7f2438a50ce01b18a5853cfb070f46b37aafb3b0',
+    'scene_03/real_original_motion.mp4': '8208d4c96c9798db986b1642d4c99cda68d705bdcef9559953a152a38a154863',
+    'scene_04/real_original_motion.mp4': '471b2f96580ccbdb0ba5ea5c019ee76b795acf5ccd0cf917c2006dbde4464a0b',
+    'scene_05/real_original_motion.mp4': 'feedb65f0160fe77f5aaddc27acc14138af3672648de5bb17dbb0052f13f449f',
+    'scene_05/real_original_after_freeze.mp4': '82b45d1ee65726355f169328738cbd3091da9fa14cb44ea9f5352f4296145bfe',
+}
+
 
 def sha(p):
     h=hashlib.sha256()
     with open(p,'rb') as f:
         for block in iter(lambda:f.read(1024*1024),b''):h.update(block)
     return h.hexdigest()
+
+
+def verify_motion_clips(base, expected=None):
+    """Fail closed before decoding/rendering if ANY actual motion bytes change.
+
+    `expected` is injectable solely to unit-test the verifier without shipping
+    the copyrighted archival source clips in the GitHub repository. Production
+    always uses MOTION_CLIP_SHA, which is immutable in the renderer.
+    """
+    expected = MOTION_CLIP_SHA if expected is None else expected
+    if len(expected) != 6 or len(set(expected.values())) != 6:
+        raise ValueError('SOURCE_MOTION_FINGERPRINT_MANIFEST_INVALID')
+    verified = {}
+    for rel, digest in sorted(expected.items()):
+        if len(digest) != 64 or any(c not in '0123456789abcdef' for c in digest):
+            raise ValueError('SOURCE_MOTION_FINGERPRINT_INVALID')
+        if Path(rel).is_absolute() or '..' in Path(rel).parts:
+            raise ValueError('SOURCE_MOTION_PATH_UNSAFE')
+        path = Path(base) / rel
+        if not path.is_file() or path.is_symlink():
+            raise ValueError('SOURCE_MOTION_CLIP_MISSING_OR_LINK: ' + rel)
+        actual = sha(path)
+        if actual != digest:
+            raise ValueError('SOURCE_MOTION_SHA_CHANGED: ' + rel)
+        verified[rel] = actual
+    return verified
 
 
 def ff(args,timeout=150):
@@ -173,6 +212,8 @@ def main():
     pa.add_argument('--out',default='output/storia_paris_v163_photo_guided')
     a=pa.parse_args()
     BASE=Path(a.source_v162_dir); PHOTO=Path(a.photos_v162_dir)
+    # Check the six full motion clips before any output directory is created.
+    verified_motion_sha=verify_motion_clips(BASE)
     dest=Path(a.out);dest.mkdir(parents=True,exist_ok=True)
     for i,expected in PHOTO_SHA.items():
         p=PHOTO/f'PHOTO_I2I_{i:02d}.png'
@@ -279,7 +320,8 @@ def main():
     cover=dest/'V163_COPERTINA.jpg';Image.fromarray(cv2.cvtColor(tracks[23],cv2.COLOR_BGR2RGB)).save(cover,quality=92)
     qa={'version':'V163','video_status':'rendered_needs_review','focus':'improved moving-shot color and source photo guided transfer, never imaginary animation',
         'source_origin':'Musee Albert-Kahn / Wikimedia Commons original AI139599 verified in V160/V162','source_sha1':'aa471da773d14f422d1387654601ca03b5224455',
-        'source_PTS_and_shot_selection_unchanged':True,'v162_same_three_i2i_photos_reused_byte_exact':True,'photographs_changed_or_regenerated':False,
+        'source_PTS_and_shot_selection_unchanged':True,'verified_six_motion_clips_sha256':verified_motion_sha,
+        'v162_same_three_i2i_photos_reused_byte_exact':True,'photographs_changed_or_regenerated':False,
         'generative_photo_i2i_count':3,'true_frame_by_frame_generative_i2i':0,'real_vidu_clip_count':0,'paid_credits_consumed':0,
         'optical_flow_method':'OpenCV DIS current-to-exact freeze, bounded luminance residual & occlusion-aware chroma; no invented motion',
         'new_photo_guided_real_moving_shots':3,'ddcolor_derived_color_moving_shots':2,'scene_raster_720x576_source_encoded_sar_non_square':True,
