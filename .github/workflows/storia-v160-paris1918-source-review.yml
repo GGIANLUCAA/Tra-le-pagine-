@@ -4,6 +4,7 @@ on:
     branches: [storia-v160-paris1918-real-film-review]
     paths:
       - ".github/workflows/storia-v160-paris1918-source-review.yml"
+      - "src/storia_paris1918_v161_preview.py"
   pull_request:
     paths:
       - ".github/workflows/storia-v160-paris1918-source-review.yml"
@@ -17,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
+      - uses: actions/checkout@v4
       - name: Download ONE original CC0-declared archive film and check exact SHA1
         shell: bash
         run: |
@@ -67,6 +69,37 @@ jobs:
           assert any(s.get("width")==720 and s.get("height")==576 for s in p["streams"])
           print("V160_SOURCE_REAL_VIDEO_DECODE_METADATA_OK")
           PY
+      - name: V161 render PRIVATE MP4 and Android ZIP from verified archive bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import tempfile
+          from pathlib import Path
+          from src.storia_paris1918_v161_preview import render
+          with tempfile.TemporaryDirectory() as directory:
+              fake = Path(directory) / "fake.webm"
+              fake.write_bytes(b"not a verified archive film")
+              try:
+                  render(fake, Path(directory) / "output")
+              except ValueError as error:
+                  assert "SOURCE_SHA1_MISMATCH" in str(error)
+              else:
+                  raise AssertionError("Source hash guard failed")
+          print("V161_NEGATIVE_SOURCE_HASH_TEST_PASS")
+          PY
+          python src/storia_paris1918_v161_preview.py \
+            --source v160_source/PARIS_1918_AI139599_ORIGINAL.webm \
+            --out v161_preview
+          test -s v161_preview/LA_STORIA_RIVIVE_PARIGI_1918_V161_PROVINO_BN.mp4
+          test -s v161_preview/LA_STORIA_RIVIVE_PARIGI_1918_V161_PROVINO_BN_ANDROID_KIT.zip
+      - name: Upload V161 PRIVATE preview MP4 and ZIP for review (NOT a release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V161_PARIS1918_BW_MP4_ANDROID_REVIEW_NOT_FINAL
+          path: v161_preview/
+          retention-days: 7
+          if-no-files-found: error
       - name: Preserve REAL original film and evidence as private artifact (no releases)
         if: always()
         uses: actions/upload-artifact@v4
