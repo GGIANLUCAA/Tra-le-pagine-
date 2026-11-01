@@ -101,6 +101,41 @@ class V101Tests(unittest.TestCase):
     def test_malformed_used_ledger_rejected(self):
         with self.assertRaises(ValueError):
             auto.build_work_order(BANK,"2026-10-30T15:00:00Z",{**PROFILE,"used_episode_ids":"paris_swim_1918"})
+    def test_v200_history_holds_incomplete_existing_episode(self):
+        bank={"candidates":[*BANK["candidates"],{
+            "id":"china_daily_life_1928",
+            "source_page":"https://commons.wikimedia.org/wiki/File:China.webm",
+            "license":"PUBLIC_DOMAIN","year":1928}]}
+        history={"entries":[{"episode_id":"china_daily_life_1928",
+                            "status":"rendered_needs_review",
+                            "evidence":"docs/LA_STORIA_RIVIVE_CHINA_1928_V107_ESITO_E_GUARDRAIL.md"}]}
+        for hour in range(0,24,3):
+            result=auto.build_work_order(bank,f"2026-10-30T{hour:02d}:00:00Z",PROFILE,history)
+            self.assertNotEqual(result["episode_id"],"china_daily_life_1928")
+            self.assertFalse(result["paid_api_call_permitted"])
+    def test_v200_history_exhausted_is_safe_for_workflow(self):
+        history={"entries":[{"episode_id":x["id"],"status":"assets_pending",
+                             "evidence":"docs/LA_STORIA_RIVIVE_V108_MANDATO_AUTOMAZIONE_CREDITI_20261030.md"}
+                            for x in BANK["candidates"]]}
+        result=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE,history)
+        self.assertIsNone(result["episode_id"])
+        self.assertIsNone(result["title"])
+        self.assertEqual(result["status"],"SOURCE_REJECTED_QUEUE_EXHAUSTED")
+        self.assertFalse(result["publish_permitted"])
+        self.assertFalse(result["paid_api_call_permitted"])
+    def test_v200_history_rejects_missing_evidence_and_duplicate(self):
+        valid={"episode_id":"paris_swim_1918","status":"rendered_needs_review",
+               "evidence":"docs/LA_STORIA_RIVIVE_CHINA_1928_V107_ESITO_E_GUARDRAIL.md"}
+        for bad in ({"entries":[{**valid,"evidence":"https://example.invalid/false"}]},
+                    {"entries":[valid,valid]},
+                    {"entries":[{**valid,"status":"approved_without_review"}]},
+                    {"entries":"not_a_list"}):
+            with self.subTest(bad=bad),self.assertRaises(ValueError):
+                auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE,bad)
+    def test_v200_repository_history_file_is_valid(self):
+        history=json.loads((ROOT/"queue"/"storia_rivive_episode_history_v200.json").read_text(encoding="utf-8"))
+        self.assertIn("china_daily_life_1928",auto.history_exclusions(history))
+        self.assertFalse(any(x.get("status")=="final_approved" for x in history["entries"]))
     def test_source_rights_not_self_approved(self):
         a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE)
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",a["blocking_issues"])
