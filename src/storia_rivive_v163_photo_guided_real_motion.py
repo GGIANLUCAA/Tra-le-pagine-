@@ -222,6 +222,19 @@ def stream_scene_frames(frames, sink, first_frame_index, cover_path=None):
     return first_frame_index
 
 
+def scene_photo_sha(scene_index, photo_dir):
+    """Return the SHA of the actual photo source used by this scene.
+
+    Do not use dict.get(key, sha(path)): Python evaluates the fallback eagerly,
+    which would read nonexistent NEURAL_DDCOLOR_01..03 files even for I2I scenes.
+    """
+    if scene_index in PHOTO_SHA:
+        return PHOTO_SHA[scene_index]
+    if scene_index in DDCOLOR_SHA:
+        return sha(Path(photo_dir) / f'NEURAL_DDCOLOR_{scene_index:02d}.png')
+    raise ValueError('SCENE_PHOTO_SHA_UNKNOWN_INDEX')
+
+
 def audio(duration,path):
     # Reuse V162 original music without remixing, appropriate for A/B comparability.
     inp=BASE/'MUSICA_ORIGINALE.wav'
@@ -311,7 +324,7 @@ def main():
             nframes=stream_scene_frames(whole,proc.stdin,nframes,dest/'V163_COPERTINA.jpg')
             # sample exact actual source moment and its matched color motion, plus photo.
             sample.append((scene,cv2.resize(whole[0],(360,640)),cv2.resize(whole[min(len(real_frames)-1,28)],(360,640)),cv2.resize(whole[-1],(360,640))))
-            qa_scenes.append({'scene':i,'original_freeze_sha256':orig_anchor_sha,'photo_sha256':PHOTO_SHA.get(i,sha(PHOTO/f'NEURAL_DDCOLOR_{i:02d}.png')),
+            qa_scenes.append({'scene':i,'original_freeze_sha256':orig_anchor_sha,'photo_sha256':scene_photo_sha(i,PHOTO),
                               'photo_kind':photo_method,'original_moving_frames':len(real_frames),'full_color_motion_frames_over_40pct_reveal':colored_frames,
                               'mean_flow_match_confidence':round(float(np.mean(conf)),4),'mean_source_motion_delta_gray':round(float(np.mean(movement)),3),
                               'photo_motion_color_transferred':i<=3,'fifth_after_freeze_real_motion_frames':len(after_frames) if i==5 else 0,
