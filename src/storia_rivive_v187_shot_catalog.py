@@ -86,6 +86,18 @@ def near_duplicate(a, b):
     return mean_diff < 10 and hamming <= 8
 
 
+
+def dark_or_title_like(signature):
+    """Reject unreadable near-black samples, including black intertitle cards.
+
+    This is only a conservative frame heuristic, NOT semantic title detection.
+    """
+    if len(signature) != 72:
+        raise ValueError('INVALID_SIGNATURE')
+    return (sum(signature) / 72 < 20
+            and sum(x < 35 for x in signature) / 72 >= 0.85)
+
+
 def catalog(source, sha256, out_dir, count=12, threshold=0.14):
     source, out_dir = Path(source), Path(out_dir)
     report = {'version': 'V187', 'status': 'CATALOG_BLOCKED', 'source_sha256': sha256,
@@ -112,6 +124,9 @@ def catalog(source, sha256, out_dir, count=12, threshold=0.14):
         signatures = []
         for candidate in options:
             signature = grayscale_signature(source, candidate['sample_seconds'])
+            if dark_or_title_like(signature):
+                report.setdefault('excluded_dark_or_title_like', []).append(candidate)
+                continue
             if any(near_duplicate(signature, old) for old in signatures):
                 report.setdefault('excluded_near_duplicates', []).append(candidate)
                 continue
