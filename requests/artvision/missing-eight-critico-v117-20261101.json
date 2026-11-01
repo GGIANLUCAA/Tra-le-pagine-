@@ -1,0 +1,29 @@
+{
+  "schema": "artvision-fill-previously-blocked-critico-v117-one-shot",
+  "on_date": "2026-11-01",
+  "instruction": "User: «Sì mi soddisfa per adesso procedi con i video mancanti»; proceed with exactly the missing Critico slots in already-queued artwork groups.",
+  "four_previous_incomplete_artworks": [
+    "fabritius_goldfinch_1654",
+    "seurat_grande_jatte_1884",
+    "turner_fighting_temeraire_1839",
+    "homer_gulf_stream_met11122_1899"
+  ],
+  "missing_variant_ids": [
+    "critico_standard",
+    "critico_museum"
+  ],
+  "missing_new_mp4_expected": 8,
+  "one_shot_only": true,
+  "max_paid_video_ai_calls": 0,
+  "no_social_publish": true,
+  "never_rerender_existing_cinema": true,
+  "never_touch_16_v116_or_16_v114": true,
+  "one_new_shared_gacrux_WAV_per_painting_only": true,
+  "no_voice_retry_or_costs": true,
+  "second_owner_attested_GEMINI_API_KEY2_Free_NoBilling": true,
+  "billing_not_independently_verified": true,
+  "archive_old_masters_immutable": true,
+  "only_review_not_gold_V25": true,
+  "manual_owner_approval_required_for_publish": true,
+  "output_is_8_real_MP4_plus_4_small_zips": true
+}
