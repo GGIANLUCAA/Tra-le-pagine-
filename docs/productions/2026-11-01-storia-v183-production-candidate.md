@@ -25,3 +25,12 @@ Questa modifica è un handoff editoriale, **non** un episodio prodotto. Nessun M
 - Test offline `tests/test_storia_rivive_v184_source_intake.py` e CI `.github/workflows/storia-v184-source-intake.yml`: sei regressioni + due file video sintetici FFmpeg per prova su byte veri; esito CI da controllare separatamente. Non è ancora stato testato sul film LOC.
 
 **Stato produttivo dopo V184:** nessuna nuova fotografia I2I, clip Vidu o MP4; il candidato resta bloccato per verifica effettiva del file, cinque riprese e diritti Italia. ArtVision, WOW LAB, V98, V101 cron e gateway Vidu invariati.
+
+## V185 — scouting vero sui frame nativi, senza inventare cinque riprese
+
+- Nuovo `src/storia_rivive_v185_storyboard_scout.py`: legge una pellicola **locale** e SHA-locked, richiama V184 (rifiuto SD), decodifica realmente con FFmpeg, individua possibili stacchi con `scene` su proxy 320 px e salva cinque **PNG originali a risoluzione nativa** con SHA-256 distinti. La proxy è soltanto per la ricerca, **non** una foto restaurata né un upscaling.
+- Non riutilizza la stessa inquadratura per riempire la cinquina se ci sono pochi tagli; `SCOUT_BLOCKED` se meno di cinque candidati, hash errato, media SD, symlink o errore FFmpeg. Non sovrascrive una cartella già esistente.
+- Il manifest `V185_STORYBOARD.json` dichiara sempre `five_distinct_shots_verified=false`, `freeze_pts_verified=false`, `rights_italy_verified=false`, `provider_jobs_may_start=false`, `publish_permitted=false`. I tagli rilevati automaticamente NON provano che cinque riprese siano diverse, né l'esatto frame finale di freeze. Per gli errori si può salvare `--report /percorso/report.json`.
+- Uso quando il vero film HD sarà stato acquisito legittimamente: `python src/storia_rivive_v185_storyboard_scout.py --file /percorso/film.webm --expected-sha256 <sha256-reale> --out-dir /percorso/storyboard --report /percorso/report.json`. **Non eseguire finché manca il file vero**.
+- Test locali eseguiti su byte di MP4 sintetici reali: **8/8 PASS** (sei scene, una sola scena, SD, SHA errato/mancante, symlink padre, output preesistente, errore FFmpeg). CI separata `.github/workflows/storia-v185-storyboard-scout.yml` da verificare sul commit.
+- Nessun film LOC 1,64 GB acquisito, nessuna revisione diritti Italia, nessun I2I/Vidu, nessun MP4 finale, nessuna spesa. V98, ArtVision, WOW LAB, gateway e cron V101 non modificati.
