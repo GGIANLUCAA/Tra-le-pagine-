@@ -125,5 +125,31 @@
     "no_social_auto_publish": true,
     "no_v25_auto_approval": true,
     "existing_six_artworks_immutable": true
-  }
+  },
+  "authorized_four_original_20261101_batch": {
+    "enabled": true,
+    "authorization": "Explicit user 2026-11-01: Procedi con una nuova produzione di 4 nuove opere non già fatte in passato",
+    "phase": "V114_four_new_paintings_16_REVIEW_MP4_COMPLETED",
+    "allowed_group_ids": [
+      "rosa_bonheur_horse_fair_met_87_25",
+      "millais_blind_girl_birmingham_1892p3",
+      "burne_jones_arthur_avalon_ponce_63_0369",
+      "vedder_sphinx_seashore_deyoung_1979_7_102"
+    ],
+    "distinct_artworks": 4,
+    "variants_per_artwork": 4,
+    "real_mp4_completed_in_review": 16,
+    "workflow_run": 41319811187,
+    "same_owner_automation_only": true,
+    "one_new_Gacrux_WAV_per_work_only": true,
+    "no_retries_or_duplicate_paid_TTS": true,
+    "no_paid_video_AI_calls": true,
+    "no_social_auto_publish": true,
+    "no_v25_auto_approval": true,
+    "legacy_master_preserved": true,
+    "automatic_further_artwork_selection": false,
+    "delivery_library_full_use_artifact_review_only": true,
+    "Note": "User's latest approval authorizes ONLY these four exact artworks, no arbitrary future subjects. Four studio-scene digital reconstructions are not authenticated galleries or historic frames."
+  },
+  "automatic_twelfth_or_future_artwork_selection": false
 }
