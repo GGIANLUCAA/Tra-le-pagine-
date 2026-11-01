@@ -295,6 +295,42 @@ class MotionPhotoTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError,'NO_ACTUAL_MOVING_FRAMES' if frames<30 else 'SOURCE_CLIP_GEOMETRY_INVALID'):
                     v.scan_clip(path)
 
+    def test_v171_muxed_movie_decodes_exact_frames_and_soundtrack(self):
+        # Real FFmpeg/H264/AAC bytes, not mocked ffprobe metadata. A valid
+        # container with a missing soundtrack or truncated reel must fail.
+        import shutil
+        import subprocess
+        import tempfile
+        self.assertTrue(shutil.which('ffmpeg') and shutil.which('ffprobe'), 'FFMPEG_REQUIRED_FOR_MUX_QA')
+        with tempfile.TemporaryDirectory() as td:
+            good=Path(td)/'good.mp4'
+            command=['ffmpeg','-nostdin','-y','-v','error',
+                     '-f','lavfi','-i','color=c=black:s=720x1280:r=30:d=0.5',
+                     '-f','lavfi','-i','sine=frequency=440:sample_rate=48000:duration=0.5',
+                     '-c:v','libx264','-preset','ultrafast','-threads','2',
+                     '-pix_fmt','yuv420p','-c:a','aac','-shortest',str(good)]
+            subprocess.run(command,check=True,capture_output=True,timeout=60)
+            verified=v.verify_muxed_movie(good,15)
+            self.assertEqual(verified['decoded_video_frames'],15)
+            self.assertAlmostEqual(verified['audio_duration_seconds'],.5,delta=.08)
+            with self.assertRaisesRegex(ValueError,'MUX_VIDEO_FRAME_COUNT_MISMATCH'):
+                v.verify_muxed_movie(good,16)
+            silent=Path(td)/'silent.mp4'
+            subprocess.run(['ffmpeg','-nostdin','-y','-v','error','-i',str(good),
+                            '-c:v','copy','-an',str(silent)],
+                           check=True,capture_output=True,timeout=30)
+            with self.assertRaisesRegex(ValueError,'MUX_VIDEO_AUDIO_STREAM_COUNT_INVALID'):
+                v.verify_muxed_movie(silent,15)
+            short_audio=Path(td)/'short_audio.mp4'
+            subprocess.run(['ffmpeg','-nostdin','-y','-v','error',
+                            '-f','lavfi','-i','color=c=black:s=720x1280:r=30:d=0.5',
+                            '-f','lavfi','-i','sine=frequency=440:sample_rate=48000:duration=0.15',
+                            '-c:v','libx264','-preset','ultrafast','-threads','2',
+                            '-pix_fmt','yuv420p','-c:a','aac',str(short_audio)],
+                           check=True,capture_output=True,timeout=60)
+            with self.assertRaisesRegex(ValueError,'MUX_AUDIO_TRUNCATED'):
+                v.verify_muxed_movie(short_audio,15)
+
     def test_v170_renderer_has_no_full_source_frame_lists(self):
         source=MODULE.read_text(encoding='utf-8')
         self.assertNotIn('load_clip(',source)
