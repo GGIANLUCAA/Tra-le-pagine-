@@ -28,6 +28,35 @@ def sha(path):
         for block in iter(lambda:f.read(1024*1024),b""):h.update(block)
     return h.hexdigest()
 
+def verify_archival_source(source_dir):
+    """V181: bind every I2I job to V176-accepted real source bytes and native raster.
+
+    The scout report is an automated preflight, never a copyright or shot approval.
+    Reject stale caches, absent reports, SD footage and upscaled/mixed frame PNGs.
+    """
+    film=source_dir/"ORIGINAL_ARCHIVE.webm"
+    report_path=source_dir/"SCOUT_REPORT.json"
+    if not film.is_file() or not report_path.is_file():
+        raise ValueError("Missing authentic film or V176 scout report")
+    report=json.loads(report_path.read_text(encoding="utf-8"))
+    if report.get("status")!="REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW":
+        raise ValueError("Archival source not approved for frame preselection")
+    gate=report.get("source_raster_quality_gate_v176")
+    if not isinstance(gate,dict) or gate.get("status")!="SOURCE_ENCODED_RASTER_ELIGIBLE_FOR_VISUAL_REVIEW":
+        raise ValueError("V176 encoded source raster gate not passed")
+    raster=gate.get("encoded_raster_px")
+    if not isinstance(raster,list) or len(raster)!=2 or any(type(x) is not int for x in raster):
+        raise ValueError("Invalid native encoded raster evidence")
+    width,height=raster
+    crop_width=min(width,round(height*9/16))
+    if height<1000 or crop_width*height/(720*1280)<0.64:
+        raise ValueError("Source below V176 native portrait pixel threshold")
+    source_sha=sha(film)
+    if report.get("original_sha256")!=source_sha:
+        raise ValueError("Original archival film SHA differs from scout report")
+    return tuple(raster),source_sha
+
+
 def build(order,selection,source_dir):
     if order.get("contract")!="LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT":
         raise ValueError("Not an authenticated V101 work-order schema")
@@ -35,6 +64,8 @@ def build(order,selection,source_dir):
         raise ValueError("Unsafe work-order permissions")
     if selection.get("status")!="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW":
         raise ValueError("No five candidate source frames")
+    source_dir=Path(source_dir)
+    native_raster,source_sha=verify_archival_source(source_dir)
     chosen=selection.get("preselected",[])
     if len(chosen)!=5:raise ValueError("Need five genuine distinct frame positions")
     names=[r["filename"] for r in chosen]
@@ -49,7 +80,8 @@ def build(order,selection,source_dir):
             image.verify()
         with Image.open(path) as image:
             width,height=image.size
-        if width<320 or height<240:raise ValueError("Original source too small")
+        if (width,height)!=native_raster:
+            raise ValueError("Frame raster differs from verified native film raster; possible upscale or mixed source")
         jobs.append({
           "job_id":f"{order['cycle_id']}_photo_{n+1:02d}",
           "source_file":str(path),"source_sha256":sha(path),
@@ -66,7 +98,7 @@ def build(order,selection,source_dir):
         })
     return {"version":"V102_SOURCE_LOCKED_I2I_JOBS",
       "cycle_id":order["cycle_id"],"episode_id":order["episode_id"],
-      "source_video_sha256":sha(source_dir/"ORIGINAL_ARCHIVE.webm"),
+      "source_video_sha256":source_sha,
       "original_frame_jobs":jobs,"photos_requested":5,
       "photos_generated":0,"photos_approved":0,
       "provider_requests_sent":0,"paid_api_calls":0,
