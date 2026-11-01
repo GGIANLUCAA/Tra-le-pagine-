@@ -37,6 +37,11 @@ def v181_source_fixture(folder, *, raster=(1920,1080), frame_raster=None):
             folder/"original_frames"/("frame_%02d.png"%i))
     report={"status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
             "original_sha256":hashlib.sha256(film.read_bytes()).hexdigest(),
+            "source_frames_extracted":5,
+            "original_frame_sha256_v182":{
+                "frame_%02d.png"%i:hashlib.sha256(
+                    (folder/"original_frames"/("frame_%02d.png"%i)).read_bytes()
+                ).hexdigest() for i in range(1,6)},
             "source_raster_quality_gate_v176":{
                 "status":"SOURCE_ENCODED_RASTER_ELIGIBLE_FOR_VISUAL_REVIEW",
                 "encoded_raster_px":list(raster)}}
@@ -130,6 +135,8 @@ class V101Tests(unittest.TestCase):
             result=i2i.build(order,selection,d)
             self.assertEqual(len(result["original_frame_jobs"]),5)
             self.assertEqual(result["photos_generated"],0)
+            self.assertEqual(result["frame_provenance_gate_v182"],
+                             "PASS_ALL_SCOUT_PNG_SHA256_VERIFIED")
             self.assertEqual(result["provider_requests_sent"],0)
             self.assertTrue(all(x["source_sha256"] and x["request_sent"] is False
                                 for x in result["original_frame_jobs"]))
@@ -175,6 +182,49 @@ class V101Tests(unittest.TestCase):
             (d/"SCOUT_REPORT.json").write_text(json.dumps(report))
             with self.assertRaisesRegex(ValueError,"not approved"):
                 i2i.build(order,selection,d)
+
+    def test_v182_rejects_swapped_png_with_identical_dimensions(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);order,selection,_=v181_source_fixture(d)
+            Image.new("RGB",(1920,1080),(244,7,13)).save(
+                d/"original_frames"/"frame_03.png")
+            with self.assertRaisesRegex(ValueError,"V182 source frame SHA mismatch"):
+                i2i.build(order,selection,d)
+
+    def test_v182_rejects_old_cache_without_frame_sha_manifest(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);order,selection,report=v181_source_fixture(d)
+            report.pop("original_frame_sha256_v182")
+            (d/"SCOUT_REPORT.json").write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"V182 source frame SHA manifest"):
+                i2i.build(order,selection,d)
+
+    def test_v182_rejects_incomplete_or_forged_frame_manifest(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);order,selection,report=v181_source_fixture(d)
+            report["original_frame_sha256_v182"]["frame_03.png"]="0"*64
+            (d/"SCOUT_REPORT.json").write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"V182 source frame SHA mismatch"):
+                i2i.build(order,selection,d)
+            report["original_frame_sha256_v182"]["../escape.png"]="0"*64
+            report["source_frames_extracted"]=6
+            (d/"SCOUT_REPORT.json").write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"Invalid V182 source frame SHA entry"):
+                i2i.build(order,selection,d)
+
+    def test_v182_cache_invalidates_unhashed_pre_v182_frames(self):
+        workflow=(ROOT/".github/workflows/storia-rivive-v101-auto-3h.yml").read_text()
+        self.assertEqual(workflow.count(
+            "storia-v101-archival-scout-v5-v182-frame-sha-"),2)
+
+    def test_v182_scout_file_hash_is_byte_exact(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as temp:
+            p=Path(temp)/"frame_01.png"
+            p.write_bytes(b"synthetic PNG bytes used only for SHA test")
+            self.assertEqual(scout.file_sha256(p),
+                             hashlib.sha256(p.read_bytes()).hexdigest())
 
     def test_i2i_manifest_blocks_missing_source_frame(self):
         with tempfile.TemporaryDirectory() as temp:
