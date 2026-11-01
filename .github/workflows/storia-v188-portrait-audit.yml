@@ -31,7 +31,7 @@ jobs:
           python -m py_compile src/storia_rivive_v188_portrait_audit.py tests/test_storia_rivive_v188_portrait_audit.py
           python -m unittest discover -s tests -p 'test_storia_rivive_v188_portrait_audit.py' -v
   one-real-archive-artifact:
-    if: github.event_name == 'push' && contains(github.event.head_commit.message, 'RUN_REAL_CROP_AUDIT_V188_ONCE')
+    if: github.event_name == 'pull_request' && github.head_ref == 'storia-v183-production-candidate-20261101' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
