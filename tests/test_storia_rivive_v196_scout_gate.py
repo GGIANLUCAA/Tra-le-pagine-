@@ -79,6 +79,30 @@ class V196ScoutGateTests(unittest.TestCase):
         (self.frames / "frame_04.png").write_bytes(b"not png")
         self.check_blocked("FRAME_PNG_DECODE_FAILED")
 
+    def test_repeated_png_pixels_rejected_even_with_distinct_png_files(self):
+        # Different PNG metadata/encoding must not disguise identical film pixels.
+        from PIL import PngImagePlugin
+        meta = PngImagePlugin.PngInfo()
+        meta.add_text("source", "different-encoding-same-frame")
+        with Image.open(self.frames / "frame_00.png") as image:
+            image.save(self.frames / "frame_04.png", pnginfo=meta, compress_level=0)
+        self.assertNotEqual(
+            (self.frames / "frame_00.png").read_bytes(),
+            (self.frames / "frame_04.png").read_bytes(),
+        )
+        self.check_blocked("INSUFFICIENT_DISTINCT_SOURCE_FRAME_PIXELS")
+
+    def test_mixed_native_source_dimensions_rejected(self):
+        Image.new("RGB", (64, 128), (99, 99, 99)).save(self.frames / "frame_04.png")
+        self.check_blocked("MIXED_SOURCE_FRAME_GEOMETRY")
+
+    def test_distinct_pixels_are_counted_without_claiming_five_shots(self):
+        result = v196.inspect_cache(ORDER, self.root)
+        self.assertTrue(result["ready"])
+        self.assertEqual(result["distinct_source_frame_pixels"], 5)
+        self.assertNotIn("shots_verified", result)
+
+
     def test_unsafe_permissions(self):
         result = v196.inspect_cache({**ORDER, "paid_api_call_permitted": True}, self.root)
         self.assertEqual(result["reason"], "UNSAFE_WORK_ORDER_PERMISSIONS")
