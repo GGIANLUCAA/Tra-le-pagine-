@@ -132,8 +132,7 @@ class MotionPhotoTests(unittest.TestCase):
         import shutil
         import subprocess
         import tempfile
-        if not shutil.which('ffmpeg') or not shutil.which('ffprobe'):
-            self.skipTest('ffmpeg/ffprobe unavailable')
+        self.assertTrue(shutil.which('ffmpeg') and shutil.which('ffprobe'), 'FFMPEG_REQUIRED_FOR_STREAMING_QA')
         with tempfile.TemporaryDirectory() as td:
             output=Path(td)/'stream.mp4'
             cmd=['ffmpeg','-nostdin','-y','-v','error','-f','rawvideo',
