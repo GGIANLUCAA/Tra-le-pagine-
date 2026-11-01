@@ -27,10 +27,18 @@ def build_status(order, scout, selection=None, i2i=None):
     selection = selection if isinstance(selection, dict) else {}
     i2i = i2i if isinstance(i2i, dict) else {}
     source = scout.get("status", "SOURCE_SCOUT_NOT_AVAILABLE")
-    rejected = isinstance(source, str) and (source.startswith("REJECT_") or source in HARD_REJECT)
+    preselection_rejected = (source == READY and selection.get("status") in {
+        "SOURCE_TOO_FEW_DISTINCT_CANDIDATE_FRAMES",
+        "SOURCE_TOO_FEW_VISUALLY_DIVERSE_CANDIDATE_FRAMES",
+        "SOURCE_FRAME_SELECTION_BLOCKED",
+    })
+    rejected = (isinstance(source, str) and
+                (source.startswith("REJECT_") or source in HARD_REJECT)) or preselection_rejected
     prepared = source == READY and i2i.get("status") == "I2I_INPUTS_PREPARED_NO_AI_GENERATION"
     selected = source == READY and selection.get("status") == "FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW"
-    if rejected:
+    if preselection_rejected:
+        next_step = "Source frame preselection rejected by heuristic; review five real moving shots or choose another source; no I2I or Vidu"
+    elif rejected:
         next_step = "Find a higher-quality authentic source and verify Italian rights; no I2I or Vidu"
     elif source != READY:
         next_step = "Recover or retry original archival source safely; no paid API or production"
@@ -40,6 +48,7 @@ def build_status(order, scout, selection=None, i2i=None):
         "cycle_id": order["cycle_id"],
         "candidate": order["episode_id"],
         "source_scout": source,
+        "frame_preselection_status": selection.get("status", "NOT_RUN"),
         "source_raster_quality_gate_v176": scout.get("source_raster_quality_gate_v176"),
         "source_frames_preselected_not_shots_verified": 5 if selected else 0,
         "source_locked_i2i_jobs_prepared_not_generated": 5 if prepared else 0,
