@@ -3343,5 +3343,32 @@
   },
   "note_second_pilot_v69": "User explicitly authorized The Kiss after Socrates; maintain single owner, other works frozen, Klimt queued V69 as authorized second pilot (0 MP4).",
   "note_fourth_pilot_v76": "2026-10-30 explicit Bosch fourth pilot, one renderer, no fifth work. Bosch Cinema Standard source/music verified; no rendered video status until actual MP4 hash+bytes; Critico and Museum remain blocked.",
-  "sixth_pilot_update": "2026-10-31 Böcklin NG2/80: two real Cinema MP4 verified (Standard V100, Museum V101 continuous entry/exit); FFmpeg full decode, Library upload/download SHA identical, two-video ZIP CRC PASS; 2 Critico still blocked Gacrux cost/quote; V25=0; R2 Android unverified. No seventh."
+  "sixth_pilot_update": "2026-10-31 Böcklin NG2/80: two real Cinema MP4 verified (Standard V100, Museum V101 continuous entry/exit); FFmpeg full decode, Library upload/download SHA identical, two-video ZIP CRC PASS; 2 Critico still blocked Gacrux cost/quote; V25=0; R2 Android unverified. No seventh.",
+  "museum_quality_gate_v118": {
+    "required": true,
+    "owner_directive": "Come regola le cornici e i musei devono essere sempre fatti bene",
+    "doc": "docs/ARTVISION_MUSEUM_V118_QUALITA_OBBLIGATORIA_20261101.md",
+    "applies_to": [
+      "critico_museum",
+      "cinema_museum"
+    ],
+    "source_and_exact_frame_research_required": true,
+    "no_fake_claims_of_authentic_historical_frame": true,
+    "gallery_realism_review_required": true,
+    "scene_video_intro_and_outro_real_mp4_required": true,
+    "scene_temporal_continuity_and_same_room_required": true,
+    "painting_real_physical_scale_cm_required": true,
+    "frame_visible_only_intro_outro": true,
+    "artwork_original_unmodified": true,
+    "rendered_and_ffmpeg_pass_is_not_artistic_approval": true,
+    "human_artistic_review_before_promotion": true,
+    "if_bad_or_unreviewed_status": "rendered_needs_review",
+    "museum_approved_default": false,
+    "v25_gold_auto_approval": false,
+    "fail_release_if_museum_not_approved": true,
+    "preserve_approved_standard_audio_and_masters": true,
+    "no_new_spending_without_consent": true,
+    "applies_to_future_automations_and_chats": true,
+    "keep_legacy_artifacts_unchanged": true
+  }
 }
