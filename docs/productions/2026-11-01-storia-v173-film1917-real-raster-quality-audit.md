@@ -63,3 +63,29 @@ La V101 precedente scaricava e proponeva fotogrammi anche da scansioni **352×24
 - [CI V176 #41297113958](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41297113958) **SUCCESS**: test V101 esistenti e test V176, compreso invalidamento cache. **Le modifiche sono solo nella PR draft, non ancora sul cron main**; non forzare merge o attivare costi/produzione 3h senza revisione.
 
 **V177 prossimo blocco:** selezionare da LOC una scansione effettivamente sufficiente *sui byte*, con soggetti più vicini e almeno 5 shot; solo allora pianificare temporal video restoration su GPU disponibile con budget verificato, senza trasformare un mero MOV compresso in falsa fotografia 4K.
+
+
+## V175 — prove sui veri metadati Library of Congress (non URL inventati)
+
+[CI archivistica #41297254420](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41297254420) SUCCESS, artifact privato `V175_LOC_SOURCE_METADATA.json`, recuperato e letto realmente. Il nuovo `src/storia_rivive_v175_loc_source_probe.py` ha verificato i file per ciascuna scheda LOC:
+
+- *A Corner in Wheat* (1909), https://www.loc.gov/item/2012600307/ :
+  - MP4 ufficiale: `https://tile.loc.gov/storage-services/service/mbrs/ntscrm/00047539/00047539.mp4`
+  - MOV ufficiale: `https://tile.loc.gov/storage-services/service/mbrs/ntscrm/00047539/00047539.mov`
+  - **Entrambi identificati nei dati JSON della scheda LOC**, MA **risoluzione nativa non verificata** a questo stadio. Film del 1909 **di finzione con attori**, da NON presentare come ripresa spontanea di strada.
+- Panorama di New York (1903), https://www.loc.gov/item/00694365/ : MP4 e MOV ufficiali `00045654` trovati nei metadati; soggetto panoramico adatto come controllo negativo per volti minuscoli, non selezionato come master.
+- San Francisco 1906 `00694408` era solo benchmark già noto V98: query metadata ha restituito **HTTP 429**, nessun tentativo di superare il limite e nessuna nuova copia/riuso dichiarato.
+
+Lo script filtra esattamente HTTPS e host LOC attesi, senza recuperare dati da domini esterni o attribuire diritti italiani. Sei unit-test specifici per id/url/download/claim, tutti disponibili nella workflow V173 estesa.
+
+## V177–V178 — verifica media reali e protezione del server archivistico
+
+- [CI #41297546222](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41297546222) **SUCCESS come workflow**, con 7 test offline riusciti; è riuscita la chiamata **HTTP HEAD sul vero file MP4 ufficiale**, ma **NON** il download video / FFprobe a causa del rate limit del server.
+- HEAD MP4 `00047539.mp4` ha restituito **523.989.414 byte** (~500 MiB), Content-Type `video/mp4`, Accept-Ranges `bytes`. Dimensione reale dichiarata HTTP, **NON** prova di raster HD/4K o di movimenti fotorealistici.
+- La richiesta successiva di un frammento del MP4 ha ricevuto **HTTP 429 Too Many Requests**; HEAD del MOV ha ricevuto 429. Nessun file completo scaricato, nessun frame da questi URL verificato, nessuna risoluzione affermata. Artifact privato GitHub ID `13079682041`: `V177_REAL_LOC_FILM_BYTE_QA.json` autentico.
+- Correzione concreta `src/storia_rivive_v177_loc_actual_media_probe.py` **V178**: se HEAD supera il limite 100 MiB, **non** inviare neppure richieste Range; quando compare HTTP 429, segnare `SCOUT_RATE_LIMITED_DEFERRED_NO_RETRY` e non interrogare il formato successivo. I futuri probe online sono **solo con avvio manuale** dopo il reset del rate limit; i test di sicurezza continuano automaticamente.
+- [CI di sicurezza V178 #41297762898](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41297762898) SUCCESS, **9/9 test**; include verifica che il MP4 da 523.989.414 byte non attivi Range/download e che 429 blocchi anche la verifica MOV. Nessun accesso LOC live è stato ripetuto da questa CI.
+
+### Stato realistico
+
+Nessun master video nuovo, nessuna fonte 1080p/2K approvata, nessuna foto I2I né video Vidu prodotto in questa lavorazione. Valore ottenuto: **blocco reale delle vecchie sorgenti SD nell’autopilota** e secondo canale di ricerca ufficiale con file verificabili, senza costi o richieste ripetute al server in 429. Restano da verificare formato codificato effettivo della copia LOC, qualità ottica dell'originale, cinque shot leggibili e diritti per l'Italia. **La PR è draft; il main e il cron V101 non sono stati mutati.**
