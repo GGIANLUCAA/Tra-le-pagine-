@@ -116,6 +116,55 @@ def ff(args,timeout=150):
     return r.stdout
 
 
+def verify_muxed_movie(movie, expected_frames):
+    """V171: decode the ACTUAL muxed MP4; reject truncated video or audio.
+
+    A successful FFmpeg exit and H264/AAC codec names alone do not prove that
+    -shortest preserved every frame or that the soundtrack spans the reel.
+    No human/artistic approval is implied by this technical check.
+    """
+    if not isinstance(expected_frames, int) or expected_frames <= 0:
+        raise ValueError('MUX_EXPECTED_FRAME_COUNT_INVALID')
+    data=json.loads(ff(['ffprobe','-v','error','-count_frames',
+                        '-show_entries',
+                        'format=duration:stream=codec_type,codec_name,width,height,pix_fmt,avg_frame_rate,nb_read_frames,duration',
+                        '-of','json',str(movie)],timeout=200))
+    video=[s for s in data.get('streams',[]) if s.get('codec_type')=='video']
+    audio_streams=[s for s in data.get('streams',[]) if s.get('codec_type')=='audio']
+    if len(video)!=1 or len(audio_streams)!=1:
+        raise ValueError('MUX_VIDEO_AUDIO_STREAM_COUNT_INVALID')
+    v=video[0]; a=audio_streams[0]
+    if (v.get('codec_name')!='h264' or v.get('width')!=W or
+        v.get('height')!=H or v.get('pix_fmt')!='yuv420p' or
+        a.get('codec_name')!='aac'):
+        raise ValueError('MUX_ANDROID_CODEC_OR_GEOMETRY_INVALID')
+    try:
+        numerator,denominator=map(int,v['avg_frame_rate'].split('/'))
+        decoded=int(v['nb_read_frames'])
+        video_seconds=float(v['duration'])
+        audio_seconds=float(a['duration'])
+        container_seconds=float(data['format']['duration'])
+    except (KeyError,ValueError,TypeError,ZeroDivisionError) as exc:
+        raise ValueError('MUX_MEDIA_METADATA_INCOMPLETE') from exc
+    if denominator==0 or numerator!=FPS*denominator:
+        raise ValueError('MUX_FRAME_RATE_MISMATCH')
+    if decoded!=expected_frames:
+        raise ValueError(f'MUX_VIDEO_FRAME_COUNT_MISMATCH: {decoded} != {expected_frames}')
+    expected_seconds=expected_frames/FPS
+    if (abs(video_seconds-expected_seconds)>.06 or
+        abs(container_seconds-expected_seconds)>.15):
+        raise ValueError('MUX_DURATION_MISMATCH')
+    if audio_seconds < expected_seconds-.12:
+        raise ValueError('MUX_AUDIO_TRUNCATED')
+    # Counted frames can still be damaged: actually decode every stream.
+    ff(['ffmpeg','-nostdin','-v','error','-xerror','-i',str(movie),
+        '-f','null','-'],timeout=200)
+    return {'decoded_video_frames':decoded,
+            'video_duration_seconds':video_seconds,
+            'audio_duration_seconds':audio_seconds,
+            'container_duration_seconds':container_seconds}
+
+
 def grade(frame):
     # Identical to V162, so the freeze used for I2I is pixel-aligned.
     bgr=cv2.cvtColor(frame,cv2.COLOR_BGR2LAB)
@@ -446,11 +495,13 @@ def main():
         raise
     wav=dest/'MUSICA_ORIGINALE_V162_REUSED.wav';audio(duration,wav)
     movie=dest/FILENAME
-    ff(['ffmpeg','-nostdin','-y','-v','error','-i',str(raw),'-i',str(wav),'-c:v','copy','-c:a','aac','-b:a','128k','-shortest','-movflags','+faststart',str(movie)])
-    ff(['ffmpeg','-nostdin','-v','error','-xerror','-i',str(movie),'-f','null','-'],timeout=200)
-    probe=json.loads(ff(['ffprobe','-v','error','-show_entries','format=duration,size:stream=codec_name,width,height','-of','json',str(movie)]))
-    assert any(s.get('codec_name')=='h264' and s.get('width')==W and s.get('height')==H for s in probe['streams'])
-    assert any(s.get('codec_name')=='aac' for s in probe['streams'])
+    try:
+        ff(['ffmpeg','-nostdin','-y','-v','error','-i',str(raw),'-i',str(wav),'-c:v','copy','-c:a','aac','-b:a','128k','-shortest','-movflags','+faststart',str(movie)])
+        verified_mux=verify_muxed_movie(movie,nframes)
+    except BaseException:
+        # A failed mux or missing frames/audio must never leave a deliverable.
+        movie.unlink(missing_ok=True)
+        raise
     # Contact sheet documents changes in real pixels (not an invented image).
     board=Image.new('RGB',(1080,5*640),(16,16,18));d=ImageDraw.Draw(board)
     for ri,(scene,first,colored,last) in enumerate(sample):
@@ -473,7 +524,7 @@ def main():
         'new_photo_guided_real_moving_shots':3,'ddcolor_derived_color_moving_shots':2,'scene_raster_720x576_source_encoded_sar_non_square':True,
         'display_main_subject_area':'720x768 cropped from 540px width, vertical composition, full source available separately',
         'scenes':qa_scenes,'movie_file':movie.name,'movie_sha256':sha(movie),'bytes':movie.stat().st_size,
-        'duration_seconds':duration,'frames':nframes,'codec':'H264/AAC','full_ffmpeg_decode':'PASS','sha256_source_photos':[PHOTO_SHA[i] for i in sorted(PHOTO_SHA)],
+        'duration_seconds':duration,'frames':nframes,'codec':'H264/AAC','full_ffmpeg_decode':'PASS','muxed_media_verified_v171':verified_mux,'sha256_source_photos':[PHOTO_SHA[i] for i in sorted(PHOTO_SHA)],
         'fourth_i2i_status':'MISSING_PREEXISTING_FREE_PROVIDER_FAILURE','fifth_real_vidu':'MISSING_NO_CREDIT_SPENT',
         'V99_final_gate':'NOT_PASSED_NO_REAL_VIDU_OR_FOURTH_I2I','italian_rights_review':'PENDING','human_artistic_QA':'REJECTED_USER_REFERENCES_43055_43056',
         'moving_restoration_photoreal_target_met':False,
