@@ -6,6 +6,7 @@ source material just because an AI upscaler can produce a 4K output.
 """
 import importlib.util
 import json
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -83,6 +84,24 @@ class V176RasterGate(unittest.TestCase):
             self.assertFalse((Path(d)/"original_frames").exists())
             self.assertEqual(run.call_count,1)
             self.assertEqual((Path(d)/"ORIGINAL_ARCHIVE.webm").read_bytes(),sample)
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"),"FFmpeg not installed")
+    def test_actual_ffprobe_bytes_not_advertised_resolution(self):
+        with tempfile.TemporaryDirectory() as d:
+            for w,h,accepted in ((352,240,False),(1920,1080,True)):
+                with self.subTest(encoded=(w,h)):
+                    p=Path(d)/("real_%sx%s.mp4"%(w,h))
+                    subprocess.run(["ffmpeg","-nostdin","-y","-loglevel","error",
+                        "-f","lavfi","-i",f"color=c=black:s={w}x{h}:r=1",
+                        "-frames:v","1","-c:v","mpeg4","-q:v","5",str(p)],
+                        check=True,capture_output=True,timeout=25)
+                    actual=subprocess.run(["ffprobe","-v","error","-show_entries",
+                        "stream=codec_type,width,height","-of","json",str(p)],
+                        check=True,capture_output=True,text=True,timeout=15)
+                    q=m.v176_source_raster_gate(json.loads(actual.stdout))
+                    self.assertEqual(q["encoded_raster_px"],[w,h])
+                    self.assertEqual(q["status"]=="SOURCE_ENCODED_RASTER_ELIGIBLE_FOR_VISUAL_REVIEW",accepted)
+                    self.assertFalse(q["minimum_reference_43055_43056_met"])
 
     def test_no_fake_hd_from_a_filename(self):
         q=m.v176_source_raster_gate(probe(352,240))
