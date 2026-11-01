@@ -1,0 +1,82 @@
+name: ArtVision · Malczewski Błędne koło (seventh 4x1 V110)
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/malczewski-seventh-v110.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-malczewski-v110-one-shot
+  cancel-in-progress: false
+jobs:
+  four_variants_only_if_free:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      ARTVISION_EXACT_WORK_ID: malczewski_bledne_kolo_1897_mnp_fr56
+      ARTVISION_OUT: output/artvision_malczewski_v110
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert explicitly authorized seventh painting and no paid calls
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('requests/artvision/malczewski-seventh-v110.json'))
+          assert x['work_id']=='malczewski_bledne_kolo_1897_mnp_fr56'
+          assert x['authorized_by_owner'] and x['one_shot_only']
+          assert x['max_paid_api_calls']==0 and x['publish_social'] is False
+          assert x['expected_original_sha1']=='94a56db15afd68bad5d1322e8b13a7d8970335e3'
+          print('ArtVision 4x1 seventh work scoped. No paid API, no publication, no changes to older works.')
+          PY
+      - name: Install video dependencies and static FFmpeg
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check pillow numpy scipy soundfile imageio-ffmpeg 'google-genai>=2.25.0' 'faster-whisper==1.2.1' 'av==17.1.0'
+          mkdir -p "$RUNNER_TEMP/bin"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from imageio_ffmpeg import get_ffmpeg_exe
+          source=Path(get_ffmpeg_exe())
+          assert source.is_file()
+          (Path(os.environ['RUNNER_TEMP'])/'bin'/'ffmpeg').symlink_to(source)
+          PY
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/ffmpeg" -hide_banner -encoders | grep -q libx264
+      - name: Produce two Cinema MP4 from exact public-domain artwork
+        run: |
+          python src/artvision_malczewski_seventh_v110.py --mode cinema
+          test -s output/artvision_malczewski_v110/MALCZEWSKI_CINEMA_STANDARD_V110_REVIEW.mp4
+          test -s output/artvision_malczewski_v110/MALCZEWSKI_CINEMA_MUSEUM_V110_REVIEW.mp4
+      - name: Attempt one Gacrux narration only from owner's second Free-no-billing account, then two Critico
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          ARTVISION_GEMINI_PROJECT_BILLING_TIER: Free
+          HF_HUB_DISABLE_TELEMETRY: '1'
+        run: |
+          python src/artvision_malczewski_seventh_v110.py --mode critico
+          python - <<'PY'
+          import json
+          x=json.load(open('output/artvision_malczewski_v110/QA_V110.json'))
+          print('Outputs physically produced',list(x['files']))
+          print('Voice status',x.get('voice',{}).get('status'))
+          assert x['files']['cinema_standard']['full_decode']=='PASS'
+          assert x['files']['cinema_museum']['full_decode']=='PASS'
+          PY
+      - name: Upload actual files with QA, exact image SHA and voice recovery, even if later failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_MALCZEWSKI_MNP_FR56_V110_TRUE_MP4_REVIEW
+          path: |
+            output/artvision_malczewski_v110/*.mp4
+            output/artvision_malczewski_v110/*.zip
+            output/artvision_malczewski_v110/*.json
+            output/artvision_malczewski_v110/*.txt
+            output/artvision_malczewski_v110/VOCE.wav
+            output/artvision_malczewski_v110/Bledne_kolo_MNP_FR56_PD.jpg
+            output/artvision_malczewski_v110/cards/title.jpg
+          retention-days: 30
+          if-no-files-found: warn
