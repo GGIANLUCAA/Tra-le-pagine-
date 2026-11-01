@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse,hashlib,json,re,subprocess
 from pathlib import Path
 from urllib.request import Request,urlopen
+from urllib.error import HTTPError
 from urllib.parse import urlparse
 
 ITEM="2012600307"
@@ -138,40 +139,59 @@ def execute(out:Path)->dict:
       "human_artist_quality_approved":False,"candidate_rejected_or_needs_review":True,
       "formats":{}}
     try:
+        # V178: respect LOC's HTTP 429. Never retry automatically or continue
+        # across formats when rate-limited. Files >100MiB are kept in the
+        # research backlog from HEAD metadata; do not request range samples.
+        globally_rate_limited=False
         for label,uri in (("mp4",MP4),("mov",MOV)):
             state={"url":uri,"download_full_media_allowed":False,"native_hd_verified":False}
+            if globally_rate_limited:
+                state["status"]="SKIPPED_LOC_RATE_LIMIT_PREVENT_DUPLICATE_REQUESTS"
+                result["formats"][label]=state
+                continue
             try:
                 state["head"]=probe_remote_headers(uri)
-                state["header_sample"]=short_range(uri)
                 total=state["head"]["content_length_bytes"]
                 if total is None:
-                    state["status"]="UNKNOWN_CONTENT_LENGTH_NO_FULL_DOWNLOAD"
+                    state["status"]="UNKNOWN_CONTENT_LENGTH_NO_RANGE_OR_DOWNLOAD"
                 elif total>DOWNLOAD_CAP:
-                    state["status"]="TOO_LARGE_FULL_DOWNLOAD_SKIPPED_ONLY_64K_PROBE"
+                    state["status"]="TOO_LARGE_FULL_DOWNLOAD_AND_RANGE_SKIPPED"
+                    state["reason"]="Actual Content-Length is larger than bounded research cap; no assumptions on encoded/native raster"
+                    state["range_requested"]=False
                 elif total<100000:
-                    state["status"]="SUSPICIOUSLY_SMALL_MEDIA_NO_FULL_DOWNLOAD"
-                elif label=="mov":
-                    # If MOV is small enough, run a real sample; never claim resolution
-                    # from an extension. No advantage over MP4 if both raster equal.
-                    state["status"]="MOV_METADATA_ONLY_FULL_DOWNLOAD_NOT_REQUIRED"
+                    state["status"]="SUSPICIOUSLY_SMALL_MEDIA_NO_RANGE_OR_DOWNLOAD"
                 else:
-                    state["download_full_media_allowed"]=True
-                    target=out/"TEMP_LOC_RESEARCH_SOURCE.mp4"
-                    try:
-                        state["byte_verified"]=stream_exact(uri,target,total)
-                        state["real_ffprobe"]=ffprobe(target)
-                        state.update(real_frames(target,state["real_ffprobe"]["duration_seconds"],out))
-                        state["status"]="REAL_MP4_ENCODED_RASTER_VERIFIED_REVIEW_REQUIRED"
-                    finally:
-                        target.unlink(missing_ok=True)
+                    state["header_sample"]=short_range(uri)
+                    if label=="mov":
+                        state["status"]="MOV_HEADER_ONLY_FULL_DOWNLOAD_NOT_REQUIRED"
+                    else:
+                        state["download_full_media_allowed"]=True
+                        target=out/"TEMP_LOC_RESEARCH_SOURCE.mp4"
+                        try:
+                            state["byte_verified"]=stream_exact(uri,target,total)
+                            state["real_ffprobe"]=ffprobe(target)
+                            state.update(real_frames(target,state["real_ffprobe"]["duration_seconds"],out))
+                            state["status"]="REAL_MP4_ENCODED_RASTER_VERIFIED_REVIEW_REQUIRED"
+                        finally:
+                            target.unlink(missing_ok=True)
+            except HTTPError as e:
+                if e.code==429:
+                    state["status"]="LOC_HTTP_429_RATE_LIMIT_NO_RETRY"
+                    state["retry_after_header"]=str(e.headers.get("Retry-After",""))[:30] if e.headers else ""
+                    globally_rate_limited=True
+                    result["loc_rate_limited"]=True
+                else:
+                    state["status"]="LOC_HTTP_ACCESS_BLOCKED_NO_RETRY"
+                    state["http_status"]=e.code
             except Exception as e:
                 state["status"]="LOC_DOWNLOAD_OR_INSPECTION_BLOCKED"
                 state["error_type"]=type(e).__name__
                 state["error_summary"]=str(e)[:180]
             result["formats"][label]=state
-        result["status"]="SCOUT_COMPLETE_NO_MASTER" if any(
-          x["status"]!="LOC_DOWNLOAD_OR_INSPECTION_BLOCKED" for x in result["formats"].values()
-        ) else "SCOUT_BLOCKED_LOC_MEDIA_ENDPOINTS"
+        result["status"]="SCOUT_RATE_LIMITED_DEFERRED_NO_RETRY" if result.get("loc_rate_limited") else (
+            "SCOUT_COMPLETE_NO_MASTER" if any(
+                x["status"] not in ("LOC_DOWNLOAD_OR_INSPECTION_BLOCKED","LOC_HTTP_ACCESS_BLOCKED_NO_RETRY") for x in result["formats"].values()
+            ) else "SCOUT_BLOCKED_LOC_MEDIA_ENDPOINTS")
     except Exception as exc:
         result["status"]="SCOUT_BLOCKED_NO_PRODUCTION"
         result["error_type"]=type(exc).__name__
