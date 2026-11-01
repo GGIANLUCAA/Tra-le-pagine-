@@ -91,6 +91,7 @@ jobs:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
           key: storia-v101-archival-scout-v4-v176-quality-${{ env.STORIA_EPISODE_ID }}
       - name: Rank actual native-resolution source frames without claiming facial identity
+        id: frame_rank
         if: steps.scout_status.outputs.ready == 'true'
         shell: bash
         run: |
@@ -98,8 +99,17 @@ jobs:
           python src/storia_rivive_frame_rank_v101.py \
             --frames "output/storia_v101/source-cache/$STORIA_EPISODE_ID/original_frames" \
             --out output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
+          python - <<'PY'
+          import json,os
+          p=json.load(open("output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json"))
+          ready=(p.get("status")=="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW"
+                 and len(p.get("preselected",[]))==5)
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              print("ready="+("true" if ready else "false"),file=f)
+          print("V180_FRAME_DIVERSITY_PREFLIGHT",ready,p.get("status"))
+          PY
       - name: Prepare five source-SHA-locked I2I requests without invoking any paid or free provider
-        if: steps.scout_status.outputs.ready == 'true'
+        if: steps.frame_rank.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
