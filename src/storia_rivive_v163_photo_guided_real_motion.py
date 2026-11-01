@@ -8,7 +8,7 @@ confidence. This is NOT framewise generative I2I nor Vidu animation.
 No network/API calls; asserts exact V162 inputs and produces review-only MP4/ZIP.
 """
 from __future__ import annotations
-import argparse, hashlib, json, math, os, shutil, subprocess, wave, zipfile
+import argparse, hashlib, json, math, os, resource, shutil, subprocess, time, wave, zipfile
 from pathlib import Path
 import cv2
 import numpy as np
@@ -71,10 +71,167 @@ def verify_motion_clips(base, expected=None):
     return verified
 
 
+
+def verify_still_assets(base, photo_dir, freeze_sha=None, i2i_sha=None, ddcolor_sha=None):
+    """Fail before launching FFmpeg if ANY of the five still inputs is invalid.
+
+    All five source freezes and all five matched color inputs are checked
+    against immutable SHA-256, real image decoding, and source geometry.
+    Expected maps can be injected by offline tests; production uses locks.
+    """
+    freeze_sha = SOURCE_FREEZE_SHA if freeze_sha is None else freeze_sha
+    i2i_sha = PHOTO_SHA if i2i_sha is None else i2i_sha
+    ddcolor_sha = DDCOLOR_SHA if ddcolor_sha is None else ddcolor_sha
+    if (set(freeze_sha) != set(range(1, 6)) or
+        set(i2i_sha) != {1, 2, 3} or set(ddcolor_sha) != {4, 5}):
+        raise ValueError('STILL_ASSET_MANIFEST_INVALID')
+    checked = {}
+    for i in range(1, 6):
+        freeze = Path(base) / f'scene_{i:02d}' / 'EXACT_MP4_LAST_MOTION_FRAME.png'
+        color = (Path(photo_dir) / f'PHOTO_I2I_{i:02d}.png' if i <= 3
+                 else Path(photo_dir) / f'NEURAL_DDCOLOR_{i:02d}.png')
+        for role, path, expected in (
+            ('freeze', freeze, freeze_sha[i]),
+            ('color', color, (i2i_sha if i <= 3 else ddcolor_sha)[i]),
+        ):
+            if not isinstance(expected, str) or len(expected) != 64 or any(
+                c not in '0123456789abcdef' for c in expected
+            ):
+                raise ValueError(f'STILL_ASSET_FINGERPRINT_INVALID_{i}_{role}')
+            if not path.is_file() or path.is_symlink():
+                raise ValueError(f'STILL_ASSET_MISSING_OR_LINK_{i}_{role}')
+            actual = sha(path)
+            if actual != expected:
+                raise ValueError(f'STILL_ASSET_SHA_CHANGED_{i}_{role}')
+            pixels = cv2.imread(str(path), cv2.IMREAD_COLOR)
+            if pixels is None or pixels.shape != (576, 720, 3):
+                raise ValueError(f'STILL_ASSET_GEOMETRY_INVALID_{i}_{role}')
+            checked[f'{i}_{role}'] = actual
+    return checked
+
+
+
+def verify_audio_preflight(base):
+    """V173: validate the real V162 WAV *before* expensive source rendering.
+
+    A missing, truncated, or too-short soundtrack previously failed only after
+    FFmpeg had encoded the entire film. This is a byte-level PCM check, not
+    musical/artist approval. The 14-second floor follows the editorial reel
+    minimum; final audio/video duration is still verified by V171.
+    """
+    path = Path(base) / 'MUSICA_ORIGINALE.wav'
+    if not path.is_file() or path.is_symlink():
+        raise ValueError('AUDIO_SOURCE_MISSING_OR_LINK')
+    if path.stat().st_size > 128 * 1024 * 1024:
+        raise ValueError('AUDIO_SOURCE_OVERSIZE')
+    try:
+        with wave.open(str(path), 'rb') as source:
+            channels = source.getnchannels()
+            sample_width = source.getsampwidth()
+            rate = source.getframerate()
+            expected_frames = source.getnframes()
+            if (source.getcomptype() != 'NONE' or channels not in (1, 2)
+                or sample_width not in (1, 2, 3, 4)
+                or not 8000 <= rate <= 192000):
+                raise ValueError('AUDIO_SOURCE_FORMAT_INVALID')
+            seconds = expected_frames / rate
+            if not 14 <= seconds <= 180:
+                raise ValueError('AUDIO_SOURCE_DURATION_INVALID')
+            frame_bytes = channels * sample_width
+            decoded_frames = 0
+            while decoded_frames < expected_frames:
+                payload = source.readframes(min(65536, expected_frames - decoded_frames))
+                if not payload or len(payload) % frame_bytes:
+                    raise ValueError('AUDIO_SOURCE_TRUNCATED')
+                decoded_frames += len(payload) // frame_bytes
+            if decoded_frames != expected_frames:
+                raise ValueError('AUDIO_SOURCE_TRUNCATED')
+    except (wave.Error, EOFError, OSError, ZeroDivisionError) as exc:
+        raise ValueError('AUDIO_SOURCE_WAV_UNREADABLE') from exc
+    return {'sha256': sha(path), 'duration_seconds': round(seconds, 3),
+            'channels': channels, 'sample_rate_hz': rate}
+
+
 def ff(args,timeout=150):
     r=subprocess.run(args,capture_output=True,text=True,timeout=timeout)
     if r.returncode:raise RuntimeError('ffmpeg failed '+r.stderr[-1200:])
     return r.stdout
+
+
+def verify_muxed_movie(movie, expected_frames):
+    """V171: decode the ACTUAL muxed MP4; reject truncated video or audio.
+
+    A successful FFmpeg exit and H264/AAC codec names alone do not prove that
+    -shortest preserved every frame or that the soundtrack spans the reel.
+    No human/artistic approval is implied by this technical check.
+    """
+    if not isinstance(expected_frames, int) or expected_frames <= 0:
+        raise ValueError('MUX_EXPECTED_FRAME_COUNT_INVALID')
+    data=json.loads(ff(['ffprobe','-v','error','-count_frames',
+                        '-show_entries',
+                        'format=duration:stream=codec_type,codec_name,width,height,pix_fmt,avg_frame_rate,nb_read_frames,duration',
+                        '-of','json',str(movie)],timeout=200))
+    video=[s for s in data.get('streams',[]) if s.get('codec_type')=='video']
+    audio_streams=[s for s in data.get('streams',[]) if s.get('codec_type')=='audio']
+    if len(video)!=1 or len(audio_streams)!=1:
+        raise ValueError('MUX_VIDEO_AUDIO_STREAM_COUNT_INVALID')
+    v=video[0]; a=audio_streams[0]
+    if (v.get('codec_name')!='h264' or v.get('width')!=W or
+        v.get('height')!=H or v.get('pix_fmt')!='yuv420p' or
+        a.get('codec_name')!='aac'):
+        raise ValueError('MUX_ANDROID_CODEC_OR_GEOMETRY_INVALID')
+    try:
+        numerator,denominator=map(int,v['avg_frame_rate'].split('/'))
+        decoded=int(v['nb_read_frames'])
+        video_seconds=float(v['duration'])
+        audio_seconds=float(a['duration'])
+        container_seconds=float(data['format']['duration'])
+    except (KeyError,ValueError,TypeError,ZeroDivisionError) as exc:
+        raise ValueError('MUX_MEDIA_METADATA_INCOMPLETE') from exc
+    if denominator==0 or numerator!=FPS*denominator:
+        raise ValueError('MUX_FRAME_RATE_MISMATCH')
+    if decoded!=expected_frames:
+        raise ValueError(f'MUX_VIDEO_FRAME_COUNT_MISMATCH: {decoded} != {expected_frames}')
+    expected_seconds=expected_frames/FPS
+    if (abs(video_seconds-expected_seconds)>.06 or
+        abs(container_seconds-expected_seconds)>.15):
+        raise ValueError('MUX_DURATION_MISMATCH')
+    if audio_seconds < expected_seconds-.12:
+        raise ValueError('MUX_AUDIO_TRUNCATED')
+    # Counted frames can still be damaged: actually decode every stream.
+    ff(['ffmpeg','-nostdin','-v','error','-xerror','-i',str(movie),
+        '-f','null','-'],timeout=200)
+    return {'decoded_video_frames':decoded,
+            'video_duration_seconds':video_seconds,
+            'audio_duration_seconds':audio_seconds,
+            'container_duration_seconds':container_seconds}
+
+
+def render_performance_snapshot(started_at, scene_times):
+    """V172: report measured Linux runner cost, not guessed memory savings.
+
+    ru_maxrss is KiB on Linux. Child RSS is the maximum of a *single*
+    reaped child, not simultaneous total RAM, and is reported separately.
+    A full source render is still required to benchmark the real episode.
+    """
+    if not isinstance(scene_times, list) or any(
+        not isinstance(x, (int, float)) or not math.isfinite(x) or x < 0
+        for x in scene_times
+    ):
+        raise ValueError('RENDER_PERFORMANCE_SCENE_TIMES_INVALID')
+    elapsed = time.perf_counter() - started_at
+    if not math.isfinite(elapsed) or elapsed < 0:
+        raise ValueError('RENDER_PERFORMANCE_CLOCK_INVALID')
+    parent = resource.getrusage(resource.RUSAGE_SELF)
+    children = resource.getrusage(resource.RUSAGE_CHILDREN)
+    return {
+        'wall_seconds': round(elapsed, 3),
+        'scene_wall_seconds': [round(x, 3) for x in scene_times],
+        'peak_renderer_rss_mib': round(parent.ru_maxrss / 1024, 2),
+        'peak_reaped_child_rss_mib': round(children.ru_maxrss / 1024, 2),
+        'rss_semantics': 'Linux ru_maxrss: independent peak of renderer and maximum reaped child; NOT simultaneous total RAM',
+        'benchmark_scope': 'full_source_render_only_if_all_six_real_clips_processed',
+    }
 
 
 def grade(frame):
@@ -86,16 +243,52 @@ def grade(frame):
     return cv2.cvtColor(cv2.merge((l,a,b)),cv2.COLOR_LAB2BGR)
 
 
-def load_clip(path):
-    cap=cv2.VideoCapture(str(path)); frames=[]
-    while True:
-        ok,fr=cap.read()
-        if not ok:break
-        assert fr.shape[:2]==(576,720),f'Unexpected source geometry {fr.shape}'
-        frames.append(grade(fr))
-    cap.release()
-    if len(frames)<30:raise ValueError('NO_ACTUAL_MOVING_FRAMES')
-    return frames
+def scan_clip(path):
+    """Count decoded source frames and grade ONLY the final real frame.
+
+    Two-pass decoding bounds RAM independently of clip length. Never trust
+    CAP_PROP_FRAME_COUNT or seek to an approximate keyframe for the freeze.
+    """
+    cap=cv2.VideoCapture(str(path))
+    if not cap.isOpened():
+        raise ValueError('SOURCE_CLIP_UNREADABLE')
+    count=0
+    last=None
+    try:
+        while True:
+            ok,fr=cap.read()
+            if not ok:
+                break
+            if fr.shape[:2]!=(576,720):
+                raise ValueError(f'SOURCE_CLIP_GEOMETRY_INVALID: {fr.shape}')
+            count+=1
+            last=fr
+    finally:
+        cap.release()
+    if count<30:
+        raise ValueError('NO_ACTUAL_MOVING_FRAMES')
+    return count,grade(last)
+
+
+def iter_clip(path,expected_count):
+    """Decode/grade one frame at a time; reject a changed second-pass count."""
+    cap=cv2.VideoCapture(str(path))
+    if not cap.isOpened():
+        raise ValueError('SOURCE_CLIP_UNREADABLE')
+    count=0
+    try:
+        while True:
+            ok,fr=cap.read()
+            if not ok:
+                break
+            if fr.shape[:2]!=(576,720):
+                raise ValueError(f'SOURCE_CLIP_GEOMETRY_INVALID: {fr.shape}')
+            count+=1
+            yield grade(fr)
+        if count!=expected_count:
+            raise ValueError('SOURCE_CLIP_SECOND_PASS_COUNT_MISMATCH')
+    finally:
+        cap.release()
 
 
 def smooth(t):
@@ -197,6 +390,44 @@ def title_frame(frame):
     return cv2.cvtColor(np.asarray(img),cv2.COLOR_RGB2BGR)
 
 
+
+def stream_scene_frames(frames, sink, first_frame_index, cover_path=None):
+    """Write one scene to the encoder immediately, without retaining the full reel.
+
+    Frame arrays are immutable during this call. Consecutive repeats of the same
+    still object reuse the identical title pixels, not a new rendering. The
+    24th global frame remains the original V163 cover reference (index 23).
+    """
+    previous_frame = None
+    previous_titled = None
+    for frame in frames:
+        if not isinstance(frame, np.ndarray) or frame.shape != (H, W, 3) or frame.dtype != np.uint8:
+            raise ValueError('STREAM_FRAME_GEOMETRY_INVALID')
+        if frame is previous_frame:
+            titled = previous_titled
+        else:
+            titled = title_frame(frame)
+        if first_frame_index == 23 and cover_path is not None:
+            Image.fromarray(cv2.cvtColor(titled, cv2.COLOR_BGR2RGB)).save(cover_path, quality=92)
+        sink.write(np.ascontiguousarray(titled).tobytes())
+        previous_frame, previous_titled = frame, titled
+        first_frame_index += 1
+    return first_frame_index
+
+
+def scene_photo_sha(scene_index, photo_dir):
+    """Return the SHA of the actual photo source used by this scene.
+
+    Do not use dict.get(key, sha(path)): Python evaluates the fallback eagerly,
+    which would read nonexistent NEURAL_DDCOLOR_01..03 files even for I2I scenes.
+    """
+    if scene_index in PHOTO_SHA:
+        return PHOTO_SHA[scene_index]
+    if scene_index in DDCOLOR_SHA:
+        return sha(Path(photo_dir) / f'NEURAL_DDCOLOR_{scene_index:02d}.png')
+    raise ValueError('SCENE_PHOTO_SHA_UNKNOWN_INDEX')
+
+
 def audio(duration,path):
     # Reuse V162 original music without remixing, appropriate for A/B comparability.
     inp=BASE/'MUSICA_ORIGINALE.wav'
@@ -211,103 +442,141 @@ def main():
     pa.add_argument('--photos-v162-dir',default=str(PHOTO))
     pa.add_argument('--out',default='output/storia_paris_v163_photo_guided')
     a=pa.parse_args()
+    started_at=time.perf_counter()
+    scene_wall_times=[]
     BASE=Path(a.source_v162_dir); PHOTO=Path(a.photos_v162_dir)
     # Check the six full motion clips before any output directory is created.
     verified_motion_sha=verify_motion_clips(BASE)
+    # Check all 10 source/photo PNGs before output directory or encoder exists.
+    # A missing fourth/fifth DDColor input must not waste an entire partial render.
+    verified_still_sha=verify_still_assets(BASE,PHOTO)
+    # V173: reject bad soundtrack before creating output or starting FFmpeg.
+    verified_audio=verify_audio_preflight(BASE)
     dest=Path(a.out);dest.mkdir(parents=True,exist_ok=True)
-    for i,expected in PHOTO_SHA.items():
-        p=PHOTO/f'PHOTO_I2I_{i:02d}.png'
-        assert p.is_file() and sha(p)==expected,f'Exact V162 I2I photo lost or changed: scene {i}'
-    tracks=[];qa_scenes=[];sample=[]
-    engine=cv2.DISOpticalFlow_create(cv2.DISOPTICAL_FLOW_PRESET_MEDIUM)
-    engine.setFinestScale(1)
-    for i,(scene,label,hold,_) in enumerate(SCENES,1):
-        real_frames=load_clip(BASE/f'scene_{scene}'/'real_original_motion.mp4')
-        archive_anchor=real_frames[-1]
-        exact=BASE/f'scene_{scene}'/'EXACT_MP4_LAST_MOTION_FRAME.png'
-        # exact PNG equality with the film's last frame after V162 grade
-        assert sha(exact)==SOURCE_FREEZE_SHA[i], f'SOURCE_FREEZE_SHA_CHANGED_{scene}'
-        assert np.mean(np.abs(archive_anchor.astype(np.int16)-cv2.imread(str(exact)).astype(np.int16)))<.05, f'SOURCE_FREEZE_DISAGREES_{scene}'
-        orig_anchor_sha=sha(exact)
-        if i<=3:
-            photo=cv2.imread(str(PHOTO/f'PHOTO_I2I_{i:02d}.png'))
-            photo_method='REAL_FINEGRAIN_I2I_V162_REUSED'
-        else:
-            reference=PHOTO/f'NEURAL_DDCOLOR_{i:02d}.png'
-            assert sha(reference)==DDCOLOR_SHA[i], f'NEURAL_ANCHOR_SHA_CHANGED_{scene}'
-            photo=cv2.imread(str(reference))
-            photo_method='DDCOLOR_ONLY_NO_GENERATIVE_I2I'
-            # Avoid artificial neon-magenta on scene 4 and 5, conservatively.
-            hsv=cv2.cvtColor(photo,cv2.COLOR_BGR2HSV)
-            hsv[...,1]=np.clip(hsv[...,1].astype(np.float32)*(.50 if i==4 else .64),0,255).astype(np.uint8)
-            photo=cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
-        gray_bg,color_bg=background(archive_anchor,photo,scene)
-        whole=[];conf=[];err=[];movement=[];colored_frames=0
-        for k,frame in enumerate(real_frames):
-            colorized,confidence,mismatch=transfer_color_motion(frame,archive_anchor,photo,engine,near_anchor=(k==len(real_frames)-1))
-            conf.append(confidence);err.append(mismatch)
-            t=k/FPS
-            alpha=float(smooth((t-.17)/.46))
-            if alpha>.4:colored_frames+=1
-            current=cv2.addWeighted(frame,1-alpha,colorized,alpha,0)
-            # Guide the end of the moving shot into EXACT same source photo,
-            # with 0.10s crossfade, not artificial extra camera motion.
-            end_t=(len(real_frames)-1-k)/FPS
-            final_fade=float(smooth((.12-end_t)/.12))
-            if final_fade>0:
-                current=cv2.addWeighted(current,1-final_fade,photo,final_fade,0)
-            shown=composer(current,gray_bg,color_bg,max(alpha,final_fade),scene)
-            whole.append(shown)
-            if len(whole)>1:
-                # Visual motion sanity: real changes in content, excludes static zoom.
-                prev=whole[-2][300:980];now=shown[300:980]
-                movement.append(float(np.mean(cv2.absdiff(cv2.cvtColor(prev,cv2.COLOR_BGR2GRAY),cv2.cvtColor(now,cv2.COLOR_BGR2GRAY)))))
-        # Source-locked photograph, with same composition and no invented motion.
-        if i<5:
-            n=int(round(hold*FPS))
-            for k in range(n):
-                frozen=composer(photo,gray_bg,color_bg,1.,scene)
-                whole.append(frozen)
-        else:
-            # Genuine *moving* archive post-freeze; source matched, never claim Vidu.
-            after_frames=load_clip(BASE/f'scene_{scene}'/'real_original_after_freeze.mp4')
-            for k,frame in enumerate(after_frames):
-                # Calculate actual dense current-to-anchor flow (motion remains source film).
-                colorized,confidence,mismatch=transfer_color_motion(frame,archive_anchor,photo,engine)
-                conf.append(confidence);err.append(mismatch)
-                shown=composer(colorized,gray_bg,color_bg,1,scene)
-                if whole:
-                    prev=whole[-1][300:980];now=shown[300:980]
-                    movement.append(float(np.mean(cv2.absdiff(cv2.cvtColor(prev,cv2.COLOR_BGR2GRAY),cv2.cvtColor(now,cv2.COLOR_BGR2GRAY)))))
-                whole.append(shown)
-        # Add clean but non-intrusive text on every frame, small text only.
-        tracks.extend(title_frame(f) for f in whole)
-        # sample exact actual source moment and its matched color motion, plus photo.
-        sample.append((scene,cv2.resize(whole[0],(360,640)),cv2.resize(whole[min(len(real_frames)-1,28)],(360,640)),cv2.resize(whole[-1],(360,640))))
-        qa_scenes.append({'scene':i,'original_freeze_sha256':orig_anchor_sha,'photo_sha256':PHOTO_SHA.get(i,sha(PHOTO/f'NEURAL_DDCOLOR_{i:02d}.png')),
-                          'photo_kind':photo_method,'original_moving_frames':len(real_frames),'full_color_motion_frames_over_40pct_reveal':colored_frames,
-                          'mean_flow_match_confidence':round(float(np.mean(conf)),4),'mean_source_motion_delta_gray':round(float(np.mean(movement)),3),
-                          'photo_motion_color_transferred':i<=3,'fifth_after_freeze_real_motion_frames':len(after_frames) if i==5 else 0,
-                          'QA_status':'REVIEW_REQUIRED'})
-        print('V163_SCENE',i,'FRAMES',len(whole),'PHOTO',photo_method,'CONF',qa_scenes[-1]['mean_flow_match_confidence'],flush=True)
-    # With 5 scenes, 17 seconds at 30fps; the new motion color does not change length.
-    nframes=len(tracks);duration=nframes/FPS
-    assert 14<=duration<=35
+    nframes=0;qa_scenes=[];sample=[]
     raw=dest/'V163_RENDER_VIDEO_ONLY.mp4'
     proc=subprocess.Popen(['ffmpeg','-nostdin','-y','-v','error','-f','rawvideo','-pix_fmt','bgr24','-s','720x1280','-r',str(FPS),'-i','-','-an','-c:v','libx264','-preset','ultrafast','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',str(raw)],stdin=subprocess.PIPE,stderr=subprocess.PIPE)
     try:
-        for frame in tracks:
-            proc.stdin.write(np.ascontiguousarray(frame).tobytes())
-    finally:
-        proc.stdin.close();error=proc.stderr.read().decode(errors='replace');rc=proc.wait()
-    if rc:raise RuntimeError('Encoding failed '+error[-500:])
+        engine=cv2.DISOpticalFlow_create(cv2.DISOPTICAL_FLOW_PRESET_MEDIUM)
+        engine.setFinestScale(1)
+        for i,(scene,label,hold,_) in enumerate(SCENES,1):
+            scene_started=time.perf_counter()
+            motion_path=BASE/f'scene_{scene}'/'real_original_motion.mp4'
+            original_motion_frames,archive_anchor=scan_clip(motion_path)
+            exact=BASE/f'scene_{scene}'/'EXACT_MP4_LAST_MOTION_FRAME.png'
+            # exact PNG equality with the film's last frame after V162 grade
+            assert sha(exact)==SOURCE_FREEZE_SHA[i], f'SOURCE_FREEZE_SHA_CHANGED_{scene}'
+            assert np.mean(np.abs(archive_anchor.astype(np.int16)-cv2.imread(str(exact)).astype(np.int16)))<.05, f'SOURCE_FREEZE_DISAGREES_{scene}'
+            orig_anchor_sha=sha(exact)
+            if i<=3:
+                photo=cv2.imread(str(PHOTO/f'PHOTO_I2I_{i:02d}.png'))
+                photo_method='REAL_FINEGRAIN_I2I_V162_REUSED'
+            else:
+                reference=PHOTO/f'NEURAL_DDCOLOR_{i:02d}.png'
+                assert sha(reference)==DDCOLOR_SHA[i], f'NEURAL_ANCHOR_SHA_CHANGED_{scene}'
+                photo=cv2.imread(str(reference))
+                photo_method='DDCOLOR_ONLY_NO_GENERATIVE_I2I'
+                # Avoid artificial neon-magenta on scene 4 and 5, conservatively.
+                hsv=cv2.cvtColor(photo,cv2.COLOR_BGR2HSV)
+                hsv[...,1]=np.clip(hsv[...,1].astype(np.float32)*(.50 if i==4 else .64),0,255).astype(np.uint8)
+                photo=cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
+            gray_bg,color_bg=background(archive_anchor,photo,scene)
+            # V170: decode source twice without buffering its full frame array;
+            # first pass gets the exact last-frame anchor and count, second
+            # pass streams graded frames. No frame seek approximation.
+            # V169: emit each processed moving frame immediately. V166 buffered
+            # one whole 720x1280 scene in RAM (hundreds of MiB) despite streaming
+            # between scenes. Keep only the previous frame and 3 QA samples.
+            conf=[];err=[];movement=[];colored_frames=0
+            prev_shown=None;first_shown=None;colored_shown=None
+            scene_frames=0
+            colored_sample_index=min(original_motion_frames-1,28)
+            for k,frame in enumerate(iter_clip(motion_path,original_motion_frames)):
+                colorized,confidence,mismatch=transfer_color_motion(frame,archive_anchor,photo,engine,near_anchor=(k==original_motion_frames-1))
+                conf.append(confidence);err.append(mismatch)
+                t=k/FPS
+                alpha=float(smooth((t-.17)/.46))
+                if alpha>.4:colored_frames+=1
+                current=cv2.addWeighted(frame,1-alpha,colorized,alpha,0)
+                # Guide the end of the moving shot into EXACT same source photo,
+                # with 0.10s crossfade, not artificial extra camera motion.
+                end_t=(original_motion_frames-1-k)/FPS
+                final_fade=float(smooth((.12-end_t)/.12))
+                if final_fade>0:
+                    current=cv2.addWeighted(current,1-final_fade,photo,final_fade,0)
+                shown=composer(current,gray_bg,color_bg,max(alpha,final_fade),scene)
+                if prev_shown is not None:
+                    prev=prev_shown[300:980];now=shown[300:980]
+                    movement.append(float(np.mean(cv2.absdiff(cv2.cvtColor(prev,cv2.COLOR_BGR2GRAY),cv2.cvtColor(now,cv2.COLOR_BGR2GRAY)))))
+                if k==0:first_shown=shown
+                if k==colored_sample_index:colored_shown=shown
+                nframes=stream_scene_frames((shown,),proc.stdin,nframes,dest/'V163_COPERTINA.jpg')
+                scene_frames+=1
+                prev_shown=shown
+            # Source-locked photograph, with same composition and no invented motion.
+            after_count=0
+            if i<5:
+                n=int(round(hold*FPS))
+                frozen=composer(photo,gray_bg,color_bg,1.,scene)
+                nframes=stream_scene_frames((frozen for _ in range(n)),proc.stdin,nframes,dest/'V163_COPERTINA.jpg')
+                scene_frames+=n
+                prev_shown=frozen
+            else:
+                # Genuine *moving* archive post-freeze; source matched, never claim Vidu.
+                after_path=BASE/f'scene_{scene}'/'real_original_after_freeze.mp4'
+                after_count,_=scan_clip(after_path)
+                for frame in iter_clip(after_path,after_count):
+                    # Calculate actual dense current-to-anchor flow (motion remains source film).
+                    colorized,confidence,mismatch=transfer_color_motion(frame,archive_anchor,photo,engine)
+                    conf.append(confidence);err.append(mismatch)
+                    shown=composer(colorized,gray_bg,color_bg,1,scene)
+                    if prev_shown is not None:
+                        prev=prev_shown[300:980];now=shown[300:980]
+                        movement.append(float(np.mean(cv2.absdiff(cv2.cvtColor(prev,cv2.COLOR_BGR2GRAY),cv2.cvtColor(now,cv2.COLOR_BGR2GRAY)))))
+                    nframes=stream_scene_frames((shown,),proc.stdin,nframes,dest/'V163_COPERTINA.jpg')
+                    scene_frames+=1
+                    prev_shown=shown
+            # Three actual frame samples, identical indices to the buffered V163.
+            sample.append((scene,cv2.resize(first_shown,(360,640)),cv2.resize(colored_shown,(360,640)),cv2.resize(prev_shown,(360,640))))
+            scene_wall_times.append(time.perf_counter()-scene_started)
+            qa_scenes.append({'scene':i,'original_freeze_sha256':orig_anchor_sha,'photo_sha256':scene_photo_sha(i,PHOTO),
+                              'photo_kind':photo_method,'original_moving_frames':original_motion_frames,'full_color_motion_frames_over_40pct_reveal':colored_frames,
+                              'mean_flow_match_confidence':round(float(np.mean(conf)),4),'mean_source_motion_delta_gray':round(float(np.mean(movement)),3),
+                              'photo_motion_color_transferred':i<=3,'fifth_after_freeze_real_motion_frames':after_count,
+                              'QA_status':'REVIEW_REQUIRED'})
+            print('V163_SCENE',i,'FRAMES',scene_frames,'PHOTO',photo_method,'CONF',qa_scenes[-1]['mean_flow_match_confidence'],flush=True)
+        # Frames are streamed in the original order to one FFmpeg encoder.
+        duration=nframes/FPS
+        if not 14<=duration<=35:
+            raise ValueError('RENDER_DURATION_OUT_OF_BOUNDS')
+        proc.stdin.close()
+        error=proc.stderr.read().decode(errors='replace')
+        rc=proc.wait()
+        if rc:
+            raise RuntimeError('Encoding failed '+error[-500:])
+    except BaseException:
+        # A failed source/encoder must not leave a partial MP4 or a child process.
+        if proc.poll() is None:
+            proc.kill()
+        if proc.stdin and not proc.stdin.closed:
+            try:
+                proc.stdin.close()
+            except BrokenPipeError:
+                pass
+        if proc.stderr:
+            proc.stderr.close()
+        proc.wait()
+        raw.unlink(missing_ok=True)
+        raise
     wav=dest/'MUSICA_ORIGINALE_V162_REUSED.wav';audio(duration,wav)
     movie=dest/FILENAME
-    ff(['ffmpeg','-nostdin','-y','-v','error','-i',str(raw),'-i',str(wav),'-c:v','copy','-c:a','aac','-b:a','128k','-shortest','-movflags','+faststart',str(movie)])
-    ff(['ffmpeg','-nostdin','-v','error','-xerror','-i',str(movie),'-f','null','-'],timeout=200)
-    probe=json.loads(ff(['ffprobe','-v','error','-show_entries','format=duration,size:stream=codec_name,width,height','-of','json',str(movie)]))
-    assert any(s.get('codec_name')=='h264' and s.get('width')==W and s.get('height')==H for s in probe['streams'])
-    assert any(s.get('codec_name')=='aac' for s in probe['streams'])
+    try:
+        ff(['ffmpeg','-nostdin','-y','-v','error','-i',str(raw),'-i',str(wav),'-c:v','copy','-c:a','aac','-b:a','128k','-shortest','-movflags','+faststart',str(movie)])
+        verified_mux=verify_muxed_movie(movie,nframes)
+    except BaseException:
+        # A failed mux or missing frames/audio must never leave a deliverable.
+        movie.unlink(missing_ok=True)
+        raise
     # Contact sheet documents changes in real pixels (not an invented image).
     board=Image.new('RGB',(1080,5*640),(16,16,18));d=ImageDraw.Draw(board)
     for ri,(scene,first,colored,last) in enumerate(sample):
@@ -317,17 +586,22 @@ def main():
         d.text((368,ri*640+8),f'SCENA {scene} - movimento restaurato',fill='white')
         d.text((728,ri*640+8),f'SCENA {scene} - finale',fill='white')
     board.save(dest/'V163_SCENE_REALI_CONFRONTO.jpg',quality=89)
-    cover=dest/'V163_COPERTINA.jpg';Image.fromarray(cv2.cvtColor(tracks[23],cv2.COLOR_BGR2RGB)).save(cover,quality=92)
+    cover=dest/'V163_COPERTINA.jpg'
+    if not cover.is_file():
+        raise RuntimeError('STREAM_COVER_MISSING')
     qa={'version':'V163','video_status':'rendered_rejected_artistic_quality','focus':'improved moving-shot color and source photo guided transfer, never imaginary animation',
         'source_origin':'Musee Albert-Kahn / Wikimedia Commons original AI139599 verified in V160/V162','source_sha1':'aa471da773d14f422d1387654601ca03b5224455',
         'source_PTS_and_shot_selection_unchanged':True,'verified_six_motion_clips_sha256':verified_motion_sha,
+        'verified_ten_still_assets_sha256':verified_still_sha,
+        'verified_original_wav_v173':verified_audio,
         'v162_same_three_i2i_photos_reused_byte_exact':True,'photographs_changed_or_regenerated':False,
         'generative_photo_i2i_count':3,'true_frame_by_frame_generative_i2i':0,'real_vidu_clip_count':0,'paid_credits_consumed':0,
         'optical_flow_method':'OpenCV DIS current-to-exact freeze, bounded luminance residual & occlusion-aware chroma; no invented motion',
         'new_photo_guided_real_moving_shots':3,'ddcolor_derived_color_moving_shots':2,'scene_raster_720x576_source_encoded_sar_non_square':True,
         'display_main_subject_area':'720x768 cropped from 540px width, vertical composition, full source available separately',
         'scenes':qa_scenes,'movie_file':movie.name,'movie_sha256':sha(movie),'bytes':movie.stat().st_size,
-        'duration_seconds':duration,'frames':nframes,'codec':'H264/AAC','full_ffmpeg_decode':'PASS','sha256_source_photos':[PHOTO_SHA[i] for i in sorted(PHOTO_SHA)],
+        'duration_seconds':duration,'frames':nframes,'codec':'H264/AAC','full_ffmpeg_decode':'PASS','muxed_media_verified_v171':verified_mux,
+        'render_performance_v172':render_performance_snapshot(started_at,scene_wall_times),'sha256_source_photos':[PHOTO_SHA[i] for i in sorted(PHOTO_SHA)],
         'fourth_i2i_status':'MISSING_PREEXISTING_FREE_PROVIDER_FAILURE','fifth_real_vidu':'MISSING_NO_CREDIT_SPENT',
         'V99_final_gate':'NOT_PASSED_NO_REAL_VIDU_OR_FOURTH_I2I','italian_rights_review':'PENDING','human_artistic_QA':'REJECTED_USER_REFERENCES_43055_43056',
         'moving_restoration_photoreal_target_met':False,

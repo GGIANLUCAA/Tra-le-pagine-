@@ -29,6 +29,10 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install -q "numpy>=1.26,<2.4" "opencv-python-headless>=4.9,<5" "Pillow>=10,<13"
+      - name: Install FFmpeg for real H264 pipe roundtrip
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
       - name: Compile and test actual color transfer, real motion and fail-closed geometry
         run: |
           set -euo pipefail
