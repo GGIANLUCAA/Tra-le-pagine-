@@ -32,6 +32,7 @@ def inspect_cache(order: dict, cache_dir: Path) -> dict:
         "ready": False,
         "reason": "UNKNOWN",
         "verified_original_frames": 0,
+        "distinct_source_frame_pixels": 0,
         "restored_photos": 0,
         "vidu_clips": 0,
         "paid_calls": 0,
@@ -76,6 +77,11 @@ def inspect_cache(order: dict, cache_dir: Path) -> dict:
     frames = sorted(frames_dir.glob("frame_*.png"))
     if len(frames) < 5 or report.get("source_frames_extracted") != len(frames):
         return block("INSUFFICIENT_OR_INCONSISTENT_FRAMES")
+    # A valid PNG filename/hash does not mean a distinct source image. Compare
+    # decoded RGB pixels, not compressed PNG bytes (metadata/compression differ).
+    # This is a research-cache sanity check, NOT proof of five different shots.
+    unique_pixels = set()
+    native_size = None
     for frame in frames:
         if frame.is_symlink():
             return block("FRAME_PATH_NOT_REGULAR")
@@ -84,14 +90,22 @@ def inspect_cache(order: dict, cache_dir: Path) -> dict:
                 if image.format != "PNG" or min(image.size) < 32:
                     return block("FRAME_NOT_VALID_NATIVE_PNG")
                 image.load()
+                if native_size is None:
+                    native_size = image.size
+                elif image.size != native_size:
+                    return block("MIXED_SOURCE_FRAME_GEOMETRY")
+                unique_pixels.add(hashlib.sha256(image.convert("RGB").tobytes()).digest())
         except (OSError, ValueError):
             return block("FRAME_PNG_DECODE_FAILED")
+    if len(unique_pixels) < 5:
+        return block("INSUFFICIENT_DISTINCT_SOURCE_FRAME_PIXELS")
 
     result.update({
         "status": "REAL_BW_FILM_FRAMES_VERIFIED_FOR_RESEARCH_ONLY",
         "ready": True,
         "reason": "SOURCE_BYTES_AND_FRAMES_VERIFIED_NOT_ARTISTICALLY_APPROVED",
         "verified_original_frames": len(frames),
+        "distinct_source_frame_pixels": len(unique_pixels),
         "original_film_sha256": expected_sha.lower(),
     })
     return result
