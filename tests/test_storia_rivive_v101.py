@@ -59,13 +59,45 @@ class V101Tests(unittest.TestCase):
     def test_quality_rank_does_not_forge_approved_photos(self):
         from PIL import Image
         with tempfile.TemporaryDirectory() as temp:
+            from PIL import ImageDraw
+            import random
             for i in range(12):
-                im=Image.new("RGB",(180,320),(40+i*5,75+i*3,125))
+                rng=random.Random(1000+i)
+                im=Image.new("RGB",(180,320),(60,60,60))
+                draw=ImageDraw.Draw(im)
+                for _ in range(60):
+                    x,y=rng.randrange(180),rng.randrange(320)
+                    draw.rectangle((x,y,min(179,x+35),min(319,y+35)),
+                                   fill=(rng.randrange(256),)*3)
                 im.save(Path(temp)/("frame_%02d.png"%i))
             result=frame_rank.rank(temp)
             self.assertEqual(len(result["preselected"]),5)
             self.assertEqual(result["approved_restored_photos"],0)
             self.assertTrue(all(x["approved_for_i2i"] is False for x in result["preselected"]))
+    def test_identical_frames_do_not_count_as_five_shots(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            for i in range(12):
+                Image.new("RGB",(180,320),(90,90,90)).save(
+                    Path(temp)/("frame_%02d.png"%i))
+            result=frame_rank.rank(temp)
+            self.assertEqual(result["status"],
+                             "SOURCE_TOO_FEW_VISUALLY_DIVERSE_CANDIDATE_FRAMES")
+            self.assertEqual(result["preselected"],[])
+            self.assertEqual(result["approved_restored_photos"],0)
+
+    def test_brightness_changes_are_not_five_distinct_shots(self):
+        from PIL import Image,ImageDraw
+        with tempfile.TemporaryDirectory() as temp:
+            for i in range(12):
+                im=Image.new("RGB",(180,320),(30+i*3,)*3)
+                draw=ImageDraw.Draw(im)
+                draw.rectangle((50,50,130,250),fill=(120+i*3,)*3)
+                im.save(Path(temp)/("frame_%02d.png"%i))
+            result=frame_rank.rank(temp)
+            self.assertEqual(result["preselected"],[])
+            self.assertTrue(result["visual_diversity_is_only_a_heuristic"])
+
     def test_i2i_manifest_locks_five_real_source_frames(self):
         from PIL import Image
         with tempfile.TemporaryDirectory() as temp:
