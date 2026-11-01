@@ -1,0 +1,28 @@
+name: ArtVision V119 Museum anti-regression gate
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/artvision-museum-v119-quality.yml
+      - src/artvision_museum_v119_guard.py
+      - tests/test_artvision_museum_v119_guard.py
+      - config/artvision_museum_library_v119.json
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  v119_structural_preflight:
+    name: V119 museum presets structural validation (not artistic approval)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify V119 catalog is coherent (not claiming video approval)
+        run: |
+          python src/artvision_museum_v119_guard.py --catalog config/artvision_museum_library_v119.json
+      - name: Reject legacy bitmap fallback, fake preset approvals, bad physical scale
+        run: |
+          python -m unittest discover -s tests -p 'test_artvision_museum_v119_guard.py' -v
