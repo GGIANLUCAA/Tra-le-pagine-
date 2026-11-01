@@ -282,20 +282,46 @@
       "dossier_preflight": "official_four_check_passed_2026-10-28T19:24:00+01:00",
       "variants": {
         "critico_standard": {
-          "status": "blocked",
+          "status": "rendered_needs_review",
           "legacy_prior": "planned_voice_and_script_preflight",
           "verified_this_migration": false,
           "blocker_code": "blocked_voice_unavailable",
           "blocker_note": "No exact-script Google Gacrux WAV plus verified cache/alignment has been presented for this variant; do not substitute another TTS or mark rendered. Resume only after a matching verified cache is recovered.",
-          "blocker_reviewed_date": "2026-10-29"
+          "blocker_reviewed_date": "2026-10-29",
+          "version": "V117 missing Critico completion",
+          "filename": "FABRITIUS_GOLDFINCH_CRITICO_STANDARD_V117_REVIEW.mp4",
+          "bytes": 11856857,
+          "sha256": "d1bb19d660975f06df33e9c9e44a3991c7eb0817b81573ba2cfcbb9d74e7fcde",
+          "seconds": 99.52,
+          "full_ffmpeg_decode": "PASS downloaded artifact readback and runner",
+          "artifact_id": 13101194533,
+          "source_run_id": 41351647619,
+          "shared_voice_wav_sha256": "f94cf545615c204fb5c3ba813c9189386073cac3d140b65c05df0ca82b833d79",
+          "shared_audio_aac_ADTS_sha256": "7a5630505b3d6da889fb1addf01213067411c794c42684704ea381dc7506c80f",
+          "V25_approved": false,
+          "human_review": "pending",
+          "museum_room_historic": false
         },
         "critico_museum": {
-          "status": "blocked",
+          "status": "rendered_needs_review",
           "legacy_prior": "planned_voice_and_script_preflight",
           "verified_this_migration": false,
           "blocker_code": "blocked_voice_unavailable",
           "blocker_note": "No exact-script Google Gacrux WAV plus verified cache/alignment has been presented for this variant; do not substitute another TTS or mark rendered. Resume only after a matching verified cache is recovered.",
-          "blocker_reviewed_date": "2026-10-29"
+          "blocker_reviewed_date": "2026-10-29",
+          "version": "V117 missing Critico completion",
+          "filename": "FABRITIUS_GOLDFINCH_CRITICO_MUSEUM_V117_REVIEW.mp4",
+          "bytes": 12865992,
+          "sha256": "b0402f864e3f5439072aaab588d4a62328faf9db302d26fc0ef9142ef7182512",
+          "seconds": 99.52,
+          "full_ffmpeg_decode": "PASS downloaded artifact readback and runner",
+          "artifact_id": 13101194533,
+          "source_run_id": 41351647619,
+          "shared_voice_wav_sha256": "f94cf545615c204fb5c3ba813c9189386073cac3d140b65c05df0ca82b833d79",
+          "shared_audio_aac_ADTS_sha256": "7a5630505b3d6da889fb1addf01213067411c794c42684704ea381dc7506c80f",
+          "V25_approved": false,
+          "human_review": "pending",
+          "museum_room_historic": false
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -322,7 +348,12 @@
           "hash_verified_against_library_original": true,
           "human_approval": false
         }
-      }
+      },
+      "v117_missing_critico_filled_count": 2,
+      "v117_two_cinema_previous_master_immutable": true,
+      "v117_artifact_id": 13101194533,
+      "v117_src_sha256": "b3c68e063addcb1cb4b49fb58b240750084b74cfb5957d91afa4db688f55830c",
+      "v117_gold_status": "0 owner approval pending"
     },
     {
       "group_id": "seurat_grande_jatte_1884",
@@ -3005,7 +3036,9 @@
       "Android_R2_player_verified": false,
       "social_published": false,
       "auto_next_work_authorized": false,
-      "report": "docs/productions/2026-11-01-artvision-v116-quattro-opere-sedici-video-delivery.md"
+      "report": "docs/productions/2026-11-01-artvision-v116-quattro-opere-sedici-video-delivery.md",
+      "owner_feedback_2026_11_01": "User explicitly said «Sì mi soddisfa per adesso» after viewing delivered V116; provisional positive artistic satisfaction, not explicit V25 Gold. Existing videos unchanged.",
+      "owner_provisional_satisfaction": true
     },
     {
       "group_id": "ford_madox_brown_last_england_1855_birmingham_1891p24",
@@ -3086,7 +3119,9 @@
       "Android_R2_player_verified": false,
       "social_published": false,
       "auto_next_work_authorized": false,
-      "report": "docs/productions/2026-11-01-artvision-v116-quattro-opere-sedici-video-delivery.md"
+      "report": "docs/productions/2026-11-01-artvision-v116-quattro-opere-sedici-video-delivery.md",
+      "owner_feedback_2026_11_01": "User explicitly said «Sì mi soddisfa per adesso» after viewing delivered V116; provisional positive artistic satisfaction, not explicit V25 Gold. Existing videos unchanged.",
+      "owner_provisional_satisfaction": true
     },
     {
       "group_id": "bastien_lepage_joan_1879_met_89_21_1",
@@ -3167,7 +3202,9 @@
       "Android_R2_player_verified": false,
       "social_published": false,
       "auto_next_work_authorized": false,
-      "report": "docs/productions/2026-11-01-artvision-v116-quattro-opere-sedici-video-delivery.md"
+      "report": "docs/productions/2026-11-01-artvision-v116-quattro-opere-sedici-video-delivery.md",
+      "owner_feedback_2026_11_01": "User explicitly said «Sì mi soddisfa per adesso» after viewing delivered V116; provisional positive artistic satisfaction, not explicit V25 Gold. Existing videos unchanged.",
+      "owner_provisional_satisfaction": true
     },
     {
       "group_id": "briton_riviere_daniel_1890_manchester_1937_123",
@@ -3248,7 +3285,9 @@
       "Android_R2_player_verified": false,
       "social_published": false,
       "auto_next_work_authorized": false,
-      "report": "docs/productions/2026-11-01-artvision-v116-quattro-opere-sedici-video-delivery.md"
+      "report": "docs/productions/2026-11-01-artvision-v116-quattro-opere-sedici-video-delivery.md",
+      "owner_feedback_2026_11_01": "User explicitly said «Sì mi soddisfa per adesso» after viewing delivered V116; provisional positive artistic satisfaction, not explicit V25 Gold. Existing videos unchanged.",
+      "owner_provisional_satisfaction": true
     }
   ],
   "last_operational_update": "2026-10-30 Wright NG725 fifth 4x1 user-authorized: 4 MP4 real, 2 Critico new one Gacrux WAV + 1 Cinema Museum V85 new, 1 Cinema V52B historical exact original, 0 V25 Gold, no archive upload. ZIP CRC PASS",
