@@ -11,6 +11,8 @@
 - Workflow di test: `.github/workflows/storia-v99-golden-regression.yml`, senza API a pagamento.
 - Eseguite 12 verifiche di regressione sul file originale; non sostituire l'MP4 con un nome o un rapporto simulato.
 
+**Requisito qualitativo aggiuntivo dal 1 novembre 2026:** la qualità estetica in **MOVIMENTO** deve raggiungere i video di esempio dell'utente `43055`/`43056`, non soltanto l'immagine I2I ferma. L'audit sui due veri filmati è in `docs/LA_STORIA_RIVIVE_V165_BENCHMARK_VISIVO_43055_43056.md`; lettura e confronto visivo del nuovo MP4 sono necessari, ma non sostituiscono i gate V91/V94/V96/V99, la fedeltà storica e la revisione umana. Parigi V163 rimane bocciato artisticamente nonostante essere decodificabile e colore in movimento. Nessun punteggio automatico misura la bellezza; evitare di promettere il risultato da sorgenti SD inadatte.
+
 **Nota importante del vero benchmark:** la terza fotografia di V98 ha colore tenue (guadagno di saturazione modesto ~2,89 in una misurazione). Quindi le soglie sono tarate sul V98 **reale**, non su valori inventati che boccierebbero proprio il video accettato. Questo non impedisce di migliorare una fotografia poco vivida quando la sua fonte lo consente.
 
 ## Come deve procedere ogni produzione

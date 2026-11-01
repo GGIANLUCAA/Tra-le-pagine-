@@ -1,0 +1,140 @@
+name: "La Storia Rivive V162 · Paris 1918 real I2I free candidate, no Vidu spend"
+on:
+  push:
+    branches: [storia-v160-paris1918-real-film-review]
+    paths:
+      - ".github/workflows/storia-v162-paris1918-free-photo-try.yml"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v162-paris1918-free-photo-try.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v162-paris1918-free-photo-review
+  cancel-in-progress: false
+jobs:
+  four_photo_candidates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free image inference deps and ffmpeg (no paid API or secrets)
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "numpy>=1.26,<2" "opencv-python-headless>=4.9,<5" "Pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2" "gradio_client>=1.4,<3"
+      - name: Verify original Commons movie byte hash and create five authentic exact PTS anchors
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v162_photo_try
+          python - <<'PY'
+          import hashlib,json,pathlib,urllib.parse,urllib.request
+          title="File:Arrivée d'un train de Marseille et voyageurs dans la cour de la gare de Lyon. La traversée de Paris à la nage - AI139599.webm"
+          sha1="aa471da773d14f422d1387654601ca03b5224455"
+          agent="LaStoriaRivive/1.0 (GH GGIANLUCAA/Tra-le-pagine-)"
+          q=urllib.parse.urlencode({"action":"query","format":"json","formatversion":"2","titles":title,"prop":"imageinfo","iiprop":"url|size|sha1|extmetadata"})
+          req=urllib.request.Request("https://commons.wikimedia.org/w/api.php?"+q,headers={"User-Agent":agent})
+          with urllib.request.urlopen(req,timeout=40) as f: doc=json.load(f)
+          info=doc["query"]["pages"][0]["imageinfo"][0]
+          assert info.get("sha1")==sha1 and "CC0" in info.get("extmetadata",{}).get("LicenseShortName",{}).get("value",""), "Source or license changed; do not run inference"
+          assert 0<int(info["size"])<18000000 and info["url"].startswith("https://upload.wikimedia.org/")
+          source=pathlib.Path("output/storia_v162_photo_try/ARCHIVAL_ORIGINAL.webm")
+          with urllib.request.urlopen(urllib.request.Request(info["url"],headers={"User-Agent":agent}),timeout=90) as f, source.open("wb") as o:
+              while True:
+                  data=f.read(1048576)
+                  if not data:break
+                  o.write(data)
+                  if o.tell()>18000000:raise RuntimeError("Original media exceeds bound")
+          assert hashlib.sha1(source.read_bytes()).hexdigest()==sha1 and source.stat().st_size==int(info["size"])
+          print("SOURCE_SHA1_AND_CC0_DECLARED_PASS",source.stat().st_size)
+          PY
+      - name: Run real local ONNX neural color and at most one free Finegrain request per photograph
+        shell: bash
+        timeout-minutes: 33
+        run: |
+          set -euo pipefail
+          python -u - <<'PY'
+          import cv2,hashlib,importlib.util,json,numpy as np,subprocess,pathlib
+          from PIL import Image
+          folder=pathlib.Path("output/storia_v162_photo_try")
+          source=folder/"ARCHIVAL_ORIGINAL.webm"
+          starts=[(22.90,1.28),(86.80,1.25),(132.10,1.30),(208.65,1.30),(238.90,1.40)]
+          spec=importlib.util.spec_from_file_location("dd", "src/storia_rivive_real_ai_v60.py")
+          dd=importlib.util.module_from_spec(spec);spec.loader.exec_module(dd)
+          session,model=dd.download_model()
+          def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+          results=[]
+          for idx,(start,duration) in enumerate(starts,1):
+              dest=folder/f"MOTION_{idx:02d}.mp4"
+              subprocess.run(["ffmpeg","-nostdin","-y","-v","error","-ss",str(start),"-i",str(source),"-t",str(duration),"-vf","fps=30,scale=720:576:flags=lanczos","-an","-c:v","libx264","-crf","17","-preset","fast",str(dest)],check=True)
+              cap=cv2.VideoCapture(str(dest));frame=None;frames=0
+              while True:
+                  ok,x=cap.read()
+                  if not ok:break
+                  frame=x.copy();frames+=1
+              cap.release()
+              assert frame is not None and frames>=32
+              orig=folder/f"ORIGINAL_EXACT_{idx:02d}.png"
+              cv2.imwrite(str(orig),frame)
+              ab=dd.infer_ab(session,frame)
+              lab=np.dstack((dd.l_channel(frame),np.clip(cv2.resize(ab,(720,576),interpolation=cv2.INTER_CUBIC)*1.03,-110,110))).astype(np.float32)
+              rgb=np.clip(cv2.cvtColor(lab,cv2.COLOR_LAB2RGB)*255,0,255).astype(np.uint8)
+              base=folder/f"NEURAL_DDCOLOR_{idx:02d}.png";Image.fromarray(rgb).save(base)
+              results.append({"scene":idx,"motion_original_SHA256":sha(orig),"neural_color_SHA256":sha(base),"i2i_attempted":False,"i2i_valid":False})
+          print("REAL_NEURAL_COLOR_IMAGES",len(results),flush=True)
+          try:
+              from gradio_client import Client, handle_file
+              client=Client("finegrain/finegrain-image-enhancer",verbose=False)
+              prompt="Source-locked photograph restoration of EXACT original 1918 Paris archival scene, same faces, positions, clothing, shops, text, tram tracks and perspective. Historically plausible subtle full color and restored photographic texture. Never invent people or modern features."
+              negative="changed people, invented faces, extra hands, added objects, different camera, fake text, oversaturation, cartoon, painting, modern clothing"
+              for idx in range(1,5):
+                  base=folder/f"NEURAL_DDCOLOR_{idx:02d}.png"
+                  print("FREE_PUBLIC_I2I_START",idx,flush=True)
+                  results[idx-1]["i2i_attempted"]=True
+                  try:
+                      candidate=client.predict(handle_file(str(base)),prompt,negative,1918+idx,2,1.16,.97,6,112,144,.45,18,"DDIM",api_name="/process")
+                      file=candidate[1] if isinstance(candidate,(list,tuple)) and len(candidate)>1 else candidate
+                      if isinstance(file,dict):file=file.get("path")
+                      frame=cv2.imread(str(file)) if file else None
+                      if frame is None:raise RuntimeError("Free model returned no decodable image")
+                      original=cv2.imread(str(folder/f"ORIGINAL_EXACT_{idx:02d}.png"))
+                      frame=cv2.resize(frame,(720,576))
+                      def reduced(f):
+                          g=cv2.cvtColor(f,cv2.COLOR_BGR2GRAY)
+                          return cv2.GaussianBlur(cv2.resize(g,(64,64)),(7,7),0).ravel().astype(np.float32)
+                      corr=float(np.corrcoef(reduced(original),reduced(frame))[0,1])
+                      saturation=float(np.median(cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)[:,:,1]))
+                      if corr<.78 or saturation<9 or saturation>185:raise RuntimeError("Free I2I rejected by fidelity/chroma gate")
+                      out=folder/f"PHOTO_I2I_{idx:02d}.png"
+                      cv2.imwrite(str(out),frame)
+                      results[idx-1].update({"i2i_valid":True,"i2i_sha256":sha(out),"coarse_corr":round(corr,4),"model":"finegrain/finegrain-image-enhancer"})
+                      print("FREE_PUBLIC_I2I_IMAGE_SUCCESS",idx,corr,flush=True)
+                  except Exception as exc:
+                      results[idx-1]["i2i_error_type"]=type(exc).__name__
+                      print("FREE_PUBLIC_I2I_FAILED_ABORT_FURTHER_QUOTA",idx,type(exc).__name__,flush=True)
+                      break
+          except Exception as exc:
+              print("FREE_PUBLIC_I2I_GATEWAY_NOT_AVAILABLE",type(exc).__name__,flush=True)
+          report={"version":"V162","source_sha1":"aa471da773d14f422d1387654601ca03b5224455","neural_color_model":model,"scenes":results,"real_i2i_count":sum(x["i2i_valid"] for x in results),"real_vidu_count":0,"paid_provider_requests":0,"credits_used":0,"rights_italy_independent_review":False,"artistically_approved":False,"not_ready_for_master":True,"social_published":False}
+          (folder/"V162_NEURAL_CANDIDATE_QA.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n")
+          print("V162_QA",report["real_i2i_count"],"OF_4_REAL_I2I, NO_VIDU, NO_SPEND",flush=True)
+          PY
+      - name: Preserve real image outputs and provenance as private Actions artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V162_PARIS1918_REAL_NEURAL_PHOTO_CANDIDATES_PRIVATE
+          path: |
+            output/storia_v162_photo_try/ORIGINAL_EXACT_*.png
+            output/storia_v162_photo_try/NEURAL_DDCOLOR_*.png
+            output/storia_v162_photo_try/PHOTO_I2I_*.png
+            output/storia_v162_photo_try/V162_NEURAL_CANDIDATE_QA.json
+          retention-days: 14
+          if-no-files-found: warn

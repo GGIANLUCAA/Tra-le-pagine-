@@ -1,0 +1,43 @@
+name: "La Storia Rivive V165 - user reference photo-motion quality audit tests"
+on:
+  push:
+    branches: [storia-v160-paris1918-real-film-review]
+    paths:
+      - ".github/workflows/storia-v165-reference-visual-audit.yml"
+      - "src/storia_rivive_v165_reference_audit.py"
+      - "tests/test_storia_rivive_v165_reference_audit.py"
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v165-reference-visual-audit.yml"
+      - "src/storia_rivive_v165_reference_audit.py"
+      - "tests/test_storia_rivive_v165_reference_audit.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v165-reference-visual-audit
+  cancel-in-progress: false
+jobs:
+  verify_visual_audit_tool:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free image diagnostics (NEVER read or upload private video samples)
+        run: |
+          python -m pip install -q "numpy>=1.26,<2" "opencv-python-headless>=4.9,<5" "Pillow>=10,<13"
+      - name: Compile and run fail-closed reference / letterbox test
+        run: |
+          python -m py_compile src/storia_rivive_v165_reference_audit.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v165_reference_audit.py' -v
+      - name: Ensure this tool cannot certify master or publication
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          content = Path('src/storia_rivive_v165_reference_audit.py').read_text()
+          for marker in ("'human_artistic_review': 'REQUIRED'", "'user_approved_candidate': False", "'final_quality_pass': False", "'social_publication_permitted': False"):
+              assert marker in content, "V165 falsely claims approval or publication"
+          print("V165_DOES_NOT_AUTO_APPROVE_QUALITY")
+          PY
