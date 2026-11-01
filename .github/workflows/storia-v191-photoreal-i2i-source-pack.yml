@@ -1,0 +1,75 @@
+name: La Storia Rivive V191 verified photoreal I2I source pack (no provider, no spend)
+on:
+  pull_request:
+    paths:
+      - 'src/storia_rivive_v191_photoreal_i2i_source_pack.py'
+      - 'tests/test_storia_rivive_v191_photoreal_i2i_source_pack.py'
+      - '.github/workflows/storia-v191-photoreal-i2i-source-pack.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v191-real-sources-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline-source-and-safety-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg and FFprobe for real byte validation
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Nine unit tests, no provider, no paid services
+        run: |
+          python -m py_compile src/storia_rivive_v191_photoreal_i2i_source_pack.py tests/test_storia_rivive_v191_photoreal_i2i_source_pack.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v191_photoreal_i2i_source_pack.py' -v
+  stage-real-five-scenes:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'storia-v183-production-candidate-20261101'
+    needs: offline-source-and-safety-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg and FFprobe
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Download already verified original source anchors, no film redownload
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/storia_v191/v190 /tmp/storia_v191/v189
+          gh run download 41341420947 --repo GGIANLUCAA/Tra-le-pagine- --name v190-verified-source-anchors-no-ai-no-vidu-not-final --dir /tmp/storia_v191/v190
+          gh run download 41340599822 --repo GGIANLUCAA/Tra-le-pagine- --name v189-five-real-film-moving-scenes-bw-proof-not-final --dir /tmp/storia_v191/v189
+          (cd /tmp/storia_v191/v190 && zip -q -D /tmp/v191_v190_sources.zip *.png *.json)
+          (cd /tmp/storia_v191/v189 && zip -q -D /tmp/v191_v189_motion.zip *.mp4 *.json)
+      - name: Validate and pack 4 true film-frame I2I sources plus source-locked Vidu frame
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v191_photoreal_i2i_source_pack.py --v190-artifact /tmp/v191_v190_sources.zip --v189-artifact /tmp/v191_v189_motion.zip --out-dir /tmp/V191_I2I_PRODUCTION_INPUTS
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path('/tmp/V191_I2I_PRODUCTION_INPUTS')
+          m=json.loads((p/'V191_PRODUCTION_HANDOFF.json').read_text())
+          assert len(m['photo_i2i_jobs'])==4 and m['vidu_job']['scene']==5
+          assert m['target_film_duration_s']==22.55
+          assert m['i2i_generated']==m['vidu_generated']==m['credits_spent']==0
+          assert not m['final_mp4_created'] and not m['publish_permitted']
+          assert m['source_raster_effective_unscaled_pixels']==[603,1072]
+          for x in m['photo_i2i_jobs']+[m['vidu_job']]:
+            assert hashlib.sha256((p/x['source_file']).read_bytes()).hexdigest()==x['source_sha256']
+          assert len(list(p.glob('*.png')))==5 and len(list(p.glob('*.mp4')))==5
+          print('V191_REAL_FIVE_FREEZE_PNG_SHA_VERIFIED')
+          print('V191_FIVE_ACTUAL_MOVING_FILM_CLIPS_VERIFIED')
+          print('V191_FOUR_GENUINE_I2I_REQUESTS_STAGED_NOT_SUBMITTED')
+          print('V191_FIFTH_VIDU_ANCHOR_STAGED_NOT_AUTHORIZED')
+          print('V191_4K_TARGET_NOT_ORIGINAL_SOURCE_4K')
+          PY
+      - name: Preserve source-only private production pack, no Release/social/site
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v191-real-i2i-production-inputs-4plus1-review-only
+          path: /tmp/V191_I2I_PRODUCTION_INPUTS/
+          if-no-files-found: error
+          retention-days: 7
