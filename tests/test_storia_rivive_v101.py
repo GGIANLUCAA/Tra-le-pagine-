@@ -24,6 +24,31 @@ BANK={"candidates":[
     {"id":"paris_train_1918","source_page":"https://commons.wikimedia.org/wiki/File:Example2.webm","license":"CC0_as_declared","year":1918}
 ]}
 
+def v181_source_fixture(folder, *, raster=(1920,1080), frame_raster=None):
+    """Offline source/PNG bytes with a V176-style verified report, no network."""
+    from PIL import Image
+    import hashlib
+    folder=Path(folder)
+    (folder/"original_frames").mkdir(exist_ok=True)
+    film=folder/"ORIGINAL_ARCHIVE.webm"
+    film.write_bytes(b"synthetic offline archival source for contract tests")
+    for i in range(1,6):
+        Image.new("RGB",frame_raster or raster,(20*i,40,70)).save(
+            folder/"original_frames"/("frame_%02d.png"%i))
+    report={"status":"REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW",
+            "original_sha256":hashlib.sha256(film.read_bytes()).hexdigest(),
+            "source_raster_quality_gate_v176":{
+                "status":"SOURCE_ENCODED_RASTER_ELIGIBLE_FOR_VISUAL_REVIEW",
+                "encoded_raster_px":list(raster)}}
+    (folder/"SCOUT_REPORT.json").write_text(json.dumps(report))
+    order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+           "cycle_id":"storia-20261030-1200","episode_id":"source_fixture",
+           "paid_api_call_permitted":False,"publish_permitted":False}
+    selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+               "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+    return order,selection,report
+
+
 class V101Tests(unittest.TestCase):
     def test_cycle_is_stable(self):
         a=auto.build_work_order(BANK,"2026-10-30T15:01:00Z",PROFILE)
@@ -99,22 +124,58 @@ class V101Tests(unittest.TestCase):
             self.assertTrue(result["visual_diversity_is_only_a_heuristic"])
 
     def test_i2i_manifest_locks_five_real_source_frames(self):
-        from PIL import Image
         with tempfile.TemporaryDirectory() as temp:
-            d=Path(temp);(d/"original_frames").mkdir()
-            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test only")
-            for i in range(1,6):
-                Image.new("RGB",(640,480),(20*i,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
-            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
-                   "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
-                   "paid_api_call_permitted":False,"publish_permitted":False}
-            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
-                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            d=Path(temp)
+            order,selection,_=v181_source_fixture(d)
             result=i2i.build(order,selection,d)
             self.assertEqual(len(result["original_frame_jobs"]),5)
             self.assertEqual(result["photos_generated"],0)
             self.assertEqual(result["provider_requests_sent"],0)
-            self.assertTrue(all(x["source_sha256"] and x["request_sent"] is False for x in result["original_frame_jobs"]))
+            self.assertTrue(all(x["source_sha256"] and x["request_sent"] is False
+                                for x in result["original_frame_jobs"]))
+            self.assertTrue(all(x["source_raster_px"]==[1920,1080]
+                                for x in result["original_frame_jobs"]))
+
+    def test_v181_i2i_rejects_missing_scout_evidence(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);order,selection,_=v181_source_fixture(d)
+            (d/"SCOUT_REPORT.json").unlink()
+            with self.assertRaisesRegex(ValueError,"scout report"):
+                i2i.build(order,selection,d)
+
+    def test_v181_i2i_rejects_stale_cache_sha(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);order,selection,_=v181_source_fixture(d)
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"changed film without re-scout")
+            with self.assertRaisesRegex(ValueError,"SHA differs"):
+                i2i.build(order,selection,d)
+
+    def test_v181_i2i_rejects_sd_source_even_if_report_claims_pass(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);order,selection,_=v181_source_fixture(d,raster=(720,480))
+            with self.assertRaisesRegex(ValueError,"pixel threshold"):
+                i2i.build(order,selection,d)
+
+    def test_v181_i2i_rejects_upscaled_or_mixed_png_raster(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);order,selection,_=v181_source_fixture(
+                d,raster=(1920,1080),frame_raster=(1280,720))
+            with self.assertRaisesRegex(ValueError,"Frame raster differs"):
+                i2i.build(order,selection,d)
+
+    def test_v181_i2i_rejects_unverified_or_failed_scout_gate(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);order,selection,report=v181_source_fixture(d)
+            report["source_raster_quality_gate_v176"]["status"]="REJECT_LOW_SOURCE_PIXELS_FOR_REFERENCE_LEVEL_MOTION"
+            (d/"SCOUT_REPORT.json").write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"gate not passed"):
+                i2i.build(order,selection,d)
+            report["source_raster_quality_gate_v176"]["status"]="SOURCE_ENCODED_RASTER_ELIGIBLE_FOR_VISUAL_REVIEW"
+            report["status"]="SOURCE_SCOUT_BLOCKED_NO_PRODUCTION"
+            (d/"SCOUT_REPORT.json").write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError,"not approved"):
+                i2i.build(order,selection,d)
+
     def test_i2i_manifest_blocks_missing_source_frame(self):
         with tempfile.TemporaryDirectory() as temp:
             with self.assertRaises(ValueError):
