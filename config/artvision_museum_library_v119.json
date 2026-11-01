@@ -1,0 +1,144 @@
+{
+  "schema": "artvision-museum-library-v119",
+  "revision_date": "2026-11-02",
+  "status": "design_candidates_only_no_assets_or_approval",
+  "owner_directive": "Reuse 5+ high-quality rooms and frames, preserve real-scale painting size and never regress.",
+  "approved_reference_videos": [
+    {
+      "id": "redon_cyclops_v46",
+      "role": "frame_quality_continuous_camera_no_stripes",
+      "source": "docs/ARTVISION_MUSEUM_IMMERSION_MODELLO_APPROVATO_V46.md",
+      "status": "owner_approved_reference_not_preset_asset"
+    },
+    {
+      "id": "hiroshige_sudden_shower_v46",
+      "role": "physical_scale_and_room_proportion",
+      "source": "docs/ARTVISION_MUSEUM_IMMERSION_MODELLO_APPROVATO_V46.md",
+      "status": "owner_approved_reference_not_preset_asset"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "GAL01",
+      "name": "classic_light_gallery",
+      "primary_fit": "traditional_medium",
+      "status": "candidate_unbuilt",
+      "real_3d_or_photographic_asset_sha256": null,
+      "asset_source_url": null,
+      "license": null,
+      "preview_mp4_sha256": null,
+      "artistic_approval": false
+    },
+    {
+      "id": "GAL02",
+      "name": "neutral_contemporary_gallery",
+      "primary_fit": "modern_mid_size",
+      "status": "candidate_unbuilt",
+      "real_3d_or_photographic_asset_sha256": null,
+      "asset_source_url": null,
+      "license": null,
+      "preview_mp4_sha256": null,
+      "artistic_approval": false
+    },
+    {
+      "id": "GAL03",
+      "name": "small_artwork_cabinet",
+      "primary_fit": "small_paintings_prints_drawings",
+      "status": "candidate_unbuilt",
+      "real_3d_or_photographic_asset_sha256": null,
+      "asset_source_url": null,
+      "license": null,
+      "preview_mp4_sha256": null,
+      "artistic_approval": false
+    },
+    {
+      "id": "GAL04",
+      "name": "monumental_hall",
+      "primary_fit": "very_large_canvas_polyptych",
+      "status": "candidate_unbuilt",
+      "real_3d_or_photographic_asset_sha256": null,
+      "asset_source_url": null,
+      "license": null,
+      "preview_mp4_sha256": null,
+      "artistic_approval": false
+    },
+    {
+      "id": "GAL05",
+      "name": "dark_historic_gallery",
+      "primary_fit": "historical_dark_wall_context",
+      "status": "candidate_unbuilt",
+      "real_3d_or_photographic_asset_sha256": null,
+      "asset_source_url": null,
+      "license": null,
+      "preview_mp4_sha256": null,
+      "artistic_approval": false
+    }
+  ],
+  "frames": [
+    {
+      "id": "FRA01",
+      "name": "documented_gilt_historic",
+      "status": "candidate_unbuilt",
+      "authentic_to_any_specific_artwork": false,
+      "asset_sha256": null,
+      "source_or_model_rights": null,
+      "preview_mp4_sha256": null,
+      "artistic_approval": false
+    },
+    {
+      "id": "FRA02",
+      "name": "documented_dark_wood",
+      "status": "candidate_unbuilt",
+      "authentic_to_any_specific_artwork": false,
+      "asset_sha256": null,
+      "source_or_model_rights": null,
+      "preview_mp4_sha256": null,
+      "artistic_approval": false
+    },
+    {
+      "id": "FRA03",
+      "name": "natural_wood_classic",
+      "status": "candidate_unbuilt",
+      "authentic_to_any_specific_artwork": false,
+      "asset_sha256": null,
+      "source_or_model_rights": null,
+      "preview_mp4_sha256": null,
+      "artistic_approval": false
+    },
+    {
+      "id": "FRA04",
+      "name": "minimal_black_bronze",
+      "status": "candidate_unbuilt",
+      "authentic_to_any_specific_artwork": false,
+      "asset_sha256": null,
+      "source_or_model_rights": null,
+      "preview_mp4_sha256": null,
+      "artistic_approval": false
+    },
+    {
+      "id": "FRA05",
+      "name": "works_on_paper_mat_mount",
+      "status": "candidate_unbuilt",
+      "authentic_to_any_specific_artwork": false,
+      "asset_sha256": null,
+      "source_or_model_rights": null,
+      "preview_mp4_sha256": null,
+      "artistic_approval": false
+    }
+  ],
+  "selection_contract": {
+    "authentic_documented_frame_has_priority": true,
+    "unverified_frame_requires_explicit_per_artwork_owner_exception": true,
+    "room_preset_must_be_approved_before_final_delivery": true,
+    "no_generic_procedural_raster_fallback": true,
+    "preserve_original_image_content": true,
+    "dimensions_cm_from_object_catalogue_required": true,
+    "artwork_plane_meters": "width_cm / 100; height_cm / 100",
+    "frame_outer_dimensions_recorded_separately": true,
+    "camera_moves_artwork_scale_constant": true,
+    "real_world_scale_reference_required": true,
+    "same_room_and_frame_on_exit": true,
+    "intro_outro_real_mp4_review_required": true,
+    "no_gold_without_human_review": true
+  }
+}
