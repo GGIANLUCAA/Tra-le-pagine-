@@ -82,9 +82,50 @@ class V101Tests(unittest.TestCase):
                        "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
             result=i2i.build(order,selection,d)
             self.assertEqual(len(result["original_frame_jobs"]),5)
+            self.assertEqual(result["photos_requested"],4)
+            self.assertEqual(result["photo_jobs_prepared"],4)
+            self.assertEqual(result["source_frames_prepared"],5)
+            self.assertEqual(sum(x["target_kind"]=="REAL_SOURCE_LOCKED_I2I_PHOTOGRAPH" for x in result["original_frame_jobs"]),4)
+            self.assertEqual(result["original_frame_jobs"][4]["target_kind"],"VIDU_SOURCE_ANCHOR_NO_I2I")
+            self.assertIsNone(result["original_frame_jobs"][4]["prompt"])
+            self.assertIsNone(result["original_frame_jobs"][4]["target_raster_px"])
+            self.assertEqual(result["vidu_source_anchor"]["source_sha256"],result["original_frame_jobs"][4]["source_sha256"])
+            self.assertFalse(result["vidu_source_anchor"]["vidu_request_sent"])
             self.assertEqual(result["photos_generated"],0)
             self.assertEqual(result["provider_requests_sent"],0)
             self.assertTrue(all(x["source_sha256"] and x["request_sent"] is False for x in result["original_frame_jobs"]))
+    def test_v201_rejects_same_pixels_even_if_png_compression_differs(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test only")
+            for i in range(1,6):
+                color=(20 if i<=2 else i*30,40,70)
+                Image.new("RGB",(640,480),color).save(
+                    d/"original_frames"/("frame_%02d.png"%i),
+                    compress_level=0 if i==1 else 9)
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
+                   "paid_api_call_permitted":False,"publish_permitted":False}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            with self.assertRaisesRegex(ValueError,"Duplicate decoded source pixels"):
+                i2i.build(order,selection,d)
+    def test_v201_rejects_mixed_original_frame_geometry(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test only")
+            for i in range(1,6):
+                Image.new("RGB",(800,480) if i==5 else (640,480),
+                          (20*i,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
+                   "paid_api_call_permitted":False,"publish_permitted":False}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            with self.assertRaisesRegex(ValueError,"Mixed original frame geometry"):
+                i2i.build(order,selection,d)
     def test_i2i_manifest_blocks_missing_source_frame(self):
         with tempfile.TemporaryDirectory() as temp:
             with self.assertRaises(ValueError):
