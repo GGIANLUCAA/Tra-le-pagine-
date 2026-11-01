@@ -89,4 +89,71 @@ class MotionPhotoTests(unittest.TestCase):
         self.assertEqual(len(set(v.PHOTO_SHA.values())),3)
         self.assertEqual(len(v.DDCOLOR_SHA),2)
 
+
+    def test_streamed_scenes_preserve_exact_frame_order_and_pixels(self):
+        import io
+        a=np.zeros((v.H,v.W,3),dtype=np.uint8)
+        b=a.copy()
+        b[120:150,240:310]=(10,80,220)
+        sink=io.BytesIO()
+        end=v.stream_scene_frames([a,b],sink,0)
+        expected=v.title_frame(a).tobytes()+v.title_frame(b).tobytes()
+        self.assertEqual(end,2)
+        self.assertEqual(sink.getvalue(),expected)
+
+    def test_repeated_hold_is_encoded_without_repeated_title_render(self):
+        import tempfile
+        from unittest.mock import patch
+        from PIL import Image
+        class CountingSink:
+            def __init__(self): self.byte_count=0
+            def write(self,data): self.byte_count+=len(data)
+        still=np.full((v.H,v.W,3),95,dtype=np.uint8)
+        sink=CountingSink()
+        with tempfile.TemporaryDirectory() as td:
+            cover=Path(td)/'cover.jpg'
+            with patch.object(v,'title_frame',wraps=v.title_frame) as mock_title:
+                count=v.stream_scene_frames([still]*24,sink,0,cover)
+            self.assertEqual(mock_title.call_count,1)
+            self.assertEqual(count,24)
+            self.assertEqual(sink.byte_count,24*v.H*v.W*3)
+            self.assertTrue(cover.is_file())
+            with Image.open(cover) as img:
+                self.assertEqual(img.size,(v.W,v.H))
+
+    def test_stream_rejects_wrong_shape_and_dtype(self):
+        import io
+        with self.assertRaisesRegex(ValueError,'STREAM_FRAME_GEOMETRY_INVALID'):
+            v.stream_scene_frames([np.zeros((50,50,3),dtype=np.uint8)],io.BytesIO(),0)
+        with self.assertRaisesRegex(ValueError,'STREAM_FRAME_GEOMETRY_INVALID'):
+            v.stream_scene_frames([np.zeros((v.H,v.W,3),dtype=np.float32)],io.BytesIO(),0)
+
+    def test_real_ffmpeg_streaming_roundtrip_four_frames(self):
+        import shutil
+        import subprocess
+        import tempfile
+        if not shutil.which('ffmpeg') or not shutil.which('ffprobe'):
+            self.skipTest('ffmpeg/ffprobe unavailable')
+        with tempfile.TemporaryDirectory() as td:
+            output=Path(td)/'stream.mp4'
+            cmd=['ffmpeg','-nostdin','-y','-v','error','-f','rawvideo',
+                 '-pix_fmt','bgr24','-s',f'{v.W}x{v.H}','-r','30','-i','-',
+                 '-an','-c:v','libx264','-preset','ultrafast','-pix_fmt','yuv420p',str(output)]
+            proc=subprocess.Popen(cmd,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+            try:
+                still=np.full((v.H,v.W,3),105,dtype=np.uint8)
+                self.assertEqual(v.stream_scene_frames([still]*4,proc.stdin,0),4)
+                proc.stdin.close()
+                error=proc.stderr.read().decode(errors='replace')
+                self.assertEqual(proc.wait(timeout=40),0,error[-500:])
+            finally:
+                if proc.poll() is None: proc.kill()
+                if proc.stdin and not proc.stdin.closed: proc.stdin.close()
+                proc.stderr.close()
+                proc.wait()
+            decoded=subprocess.run(['ffprobe','-v','error','-count_frames','-select_streams','v:0',
+                                    '-show_entries','stream=nb_read_frames','-of','csv=p=0',str(output)],
+                                   capture_output=True,text=True,check=True,timeout=30)
+            self.assertEqual(decoded.stdout.strip(),'4')
+
 if __name__=='__main__':unittest.main()
