@@ -8,6 +8,14 @@ from urllib.parse import urlparse,unquote,urlencode
 from urllib.request import urlopen,Request
 
 MAX_BYTES=160*1024*1024
+def file_sha256(path):
+    """Stream hashes; avoid loading high-resolution PNGs into memory."""
+    digest=hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda:handle.read(1024*1024),b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
 USER_AGENT="LaStoriaRiviveHistoricalResearch/1.0 (GitHub GGIANLUCAA/Tra-le-pagine-)"
 def metadata(page):
     u=urlparse(page)
@@ -111,6 +119,9 @@ def inspect(page,outdir):
                     "-frames:v","12",str(frames/"frame_%02d.png")],timeout=150,check=True)
     files=sorted(frames.glob("frame_*.png"))
     if len(files)<3:raise ValueError("Not enough real film frames")
+    # V182: bind each decoded archival PNG to the source scout report.
+    # The I2I handoff checks these byte hashes before ANY provider request.
+    m["original_frame_sha256_v182"]={p.name:file_sha256(p) for p in files}
     from PIL import Image,ImageDraw
     board=Image.new("RGB",(1440,792),(18,18,18));draw=ImageDraw.Draw(board)
     for k,p in enumerate(files[:12]):
