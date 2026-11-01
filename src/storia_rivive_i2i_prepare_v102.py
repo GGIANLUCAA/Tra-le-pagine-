@@ -54,7 +54,23 @@ def verify_archival_source(source_dir):
     source_sha=sha(film)
     if report.get("original_sha256")!=source_sha:
         raise ValueError("Original archival film SHA differs from scout report")
-    return tuple(raster),source_sha
+    # V182: matching dimensions are insufficient. A stale or swapped PNG can
+    # otherwise be presented as a source frame from the verified film.
+    frame_hashes=report.get("original_frame_sha256_v182")
+    count=report.get("source_frames_extracted")
+    if (not isinstance(frame_hashes,dict) or not 5<=len(frame_hashes)<=12
+            or type(count) is not int or count!=len(frame_hashes)):
+        raise ValueError("Missing or invalid V182 source frame SHA manifest")
+    for name,expected in frame_hashes.items():
+        if (not isinstance(name,str) or not re.fullmatch(r"frame_\\d{2}\\.png",name)
+                or not isinstance(expected,str) or not re.fullmatch(r"[a-f0-9]{64}",expected)):
+            raise ValueError("Invalid V182 source frame SHA entry")
+        frame_path=source_dir/"original_frames"/name
+        if not frame_path.is_file():
+            raise ValueError("Missing original source frame from V182 scout manifest")
+        if sha(frame_path)!=expected:
+            raise ValueError("V182 source frame SHA mismatch; stale or swapped PNG")
+    return tuple(raster),source_sha,frame_hashes
 
 
 def build(order,selection,source_dir):
@@ -65,7 +81,7 @@ def build(order,selection,source_dir):
     if selection.get("status")!="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW":
         raise ValueError("No five candidate source frames")
     source_dir=Path(source_dir)
-    native_raster,source_sha=verify_archival_source(source_dir)
+    native_raster,source_sha,frame_hashes=verify_archival_source(source_dir)
     chosen=selection.get("preselected",[])
     if len(chosen)!=5:raise ValueError("Need five genuine distinct frame positions")
     names=[r["filename"] for r in chosen]
@@ -76,6 +92,8 @@ def build(order,selection,source_dir):
         if not re.fullmatch(r"frame_\d{2}\.png",name):raise ValueError("Unsafe source filename")
         path=source_dir/"original_frames"/name
         if not path.is_file():raise ValueError("Missing original source frame")
+        if name not in frame_hashes or sha(path)!=frame_hashes[name]:
+            raise ValueError("Selected frame not locked to V182 scout report")
         with Image.open(path) as image:
             image.verify()
         with Image.open(path) as image:
@@ -99,6 +117,7 @@ def build(order,selection,source_dir):
     return {"version":"V102_SOURCE_LOCKED_I2I_JOBS",
       "cycle_id":order["cycle_id"],"episode_id":order["episode_id"],
       "source_video_sha256":source_sha,
+      "frame_provenance_gate_v182":"PASS_ALL_SCOUT_PNG_SHA256_VERIFIED",
       "original_frame_jobs":jobs,"photos_requested":5,
       "photos_generated":0,"photos_approved":0,
       "provider_requests_sent":0,"paid_api_calls":0,
