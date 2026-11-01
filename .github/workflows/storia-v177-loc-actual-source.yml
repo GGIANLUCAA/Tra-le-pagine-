@@ -1,0 +1,53 @@
+name: "La Storia Rivive V177 - verify REAL LOC 1909 film MP4/MOV bytes and raster"
+on:
+  push:
+    branches: [storia-v173-film1917-native-quality-scout-20261101]
+    paths:
+      - ".github/workflows/storia-v177-loc-actual-source.yml"
+      - "src/storia_rivive_v177_loc_actual_media_probe.py"
+      - "tests/test_storia_rivive_v177_loc_actual_media_probe.py"
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v177-loc-actual-source.yml"
+      - "src/storia_rivive_v177_loc_actual_media_probe.py"
+      - "tests/test_storia_rivive_v177_loc_actual_media_probe.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v177-loc-actual-source
+  cancel-in-progress: false
+jobs:
+  real_LOC_media_source_quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free exact video-inspection dependencies
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "Pillow>=10,<13"
+      - name: Safety tests for URL pinning, bytes, and fail-closed quality
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_v177_loc_actual_media_probe.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v177_loc_actual_media_probe.py" -v
+      - name: One bounded authentic LOC film MP4 and 64K MOV header check
+        timeout-minutes: 7
+        run: |
+          python -u src/storia_rivive_v177_loc_actual_media_probe.py --out output/storia_v177_loc
+      - name: Preserve only private SHA proof, true source frames and QA JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V177_LOC_1909_REAL_MP4_RASTER_AND_FRAMES_REVIEW
+          path: |
+            output/storia_v177_loc/V177_REAL_LOC_FILM_BYTE_QA.json
+            output/storia_v177_loc/LOC_ORIGINAL_REAL_FRAME_*.png
+            output/storia_v177_loc/LOC_FIVE_UNRETOUCHED_FRAMES_PRIVATE.jpg
+          retention-days: 14
+          if-no-files-found: warn
