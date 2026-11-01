@@ -2141,8 +2141,14 @@
             "aac_demux_sha256": "3f46d52d8e0a09974bd144c62a77f5357c1ec5cc63e9c3cee956c8853edd505e",
             "aac_bit_identical_to_V109_V106_V102": true,
             "corrected_focus": "acqua al centro durante le frasi sulla sua immobilita",
-            "water_voice_video_seconds": [29.72, 39.7],
-            "modified_interval_seconds": [28.25, 41.15],
+            "water_voice_video_seconds": [
+              29.72,
+              39.7
+            ],
+            "modified_interval_seconds": [
+              28.25,
+              41.15
+            ],
             "modified_frames": 259,
             "v57_peak_MAD_180x320": 31.477,
             "v57_frames_above_35": 0,
@@ -2159,23 +2165,59 @@
             "other_three_variants_unchanged": true,
             "master_V102_V106_V109_preserved": true,
             "not_selected_as_persistent_candidate": true,
-          "v110_additional_physical_focus_QA": {
-            "status": "NEW_QUALITY_RISK_VERIFIED_NOT_FIXED",
+            "v110_additional_physical_focus_QA": {
+              "status": "NEW_QUALITY_RISK_VERIFIED_NOT_FIXED",
+              "date": "2026-11-01",
+              "comparison_baseline_SHA256": "07944553bf1f1547acc34f54185690f1f0c28c20f12cdc888eb24c8b6854a189",
+              "comparison_candidate_SHA256": "34404bd5c76626e4bcbf25aca206b9c690d5d4071604a6a6eaf093bc01aa06ff",
+              "focus_window_seconds": [
+                28.25,
+                41.15
+              ],
+              "grayscale_laplacian_mean_baseline": 225.427,
+              "grayscale_laplacian_mean_candidate": 117.969,
+              "relative_sharpness_loss_percent": 47.67,
+              "long_static_holds_seconds": [
+                [
+                  20,
+                  25.8
+                ],
+                [
+                  82.15,
+                  88.3
+                ]
+              ],
+              "all_frames_decoded_both": 2213,
+              "quality_gate": "src/artvision_focus_regression_gate_v110.py",
+              "assessment": "V110 improves water framing but loses measured detail in its zoom and retains two ~6s still holds; manual full-speed artistic review needed before promotion",
+              "V25_Gold": false,
+              "R2_Android_playback_verified": false,
+              "source_masters_unchanged": true
+            }
+          },
+          "v111_asr_sentence_visual_qa": {
             "date": "2026-11-01",
-            "comparison_baseline_SHA256": "07944553bf1f1547acc34f54185690f1f0c28c20f12cdc888eb24c8b6854a189",
-            "comparison_candidate_SHA256": "34404bd5c76626e4bcbf25aca206b9c690d5d4071604a6a6eaf093bc01aa06ff",
-            "focus_window_seconds": [28.25, 41.15],
-            "grayscale_laplacian_mean_baseline": 225.427,
-            "grayscale_laplacian_mean_candidate": 117.969,
-            "relative_sharpness_loss_percent": 47.67,
-            "long_static_holds_seconds": [[20.0, 25.8], [82.15, 88.3]],
-            "all_frames_decoded_both": 2213,
-            "quality_gate": "src/artvision_focus_regression_gate_v110.py",
-            "assessment": "V110 improves water framing but loses measured detail in its zoom and retains two ~6s still holds; manual full-speed artistic review needed before promotion",
-            "V25_Gold": false,
-            "R2_Android_playback_verified": false,
-            "source_masters_unchanged": true
-          }
+            "status": "REAL_READ_ONLY_19_SENTENCE_FRAME_SAMPLING_TESTED",
+            "script": "src/artvision_bocklin_sentence_qa_v111.py",
+            "script_commit": "ff4600833a5185f49c4c077040f8265f6bd251b9",
+            "candidate_V110_SHA256": "34404bd5c76626e4bcbf25aca206b9c690d5d4071604a6a6eaf093bc01aa06ff",
+            "source_recovery_artifact_id": 13053703331,
+            "ASR_cache_SHA256": "6cfe2a3056cb79aceaa55298596ace808ce912300912540b425b7e24a40b8f14",
+            "ASR_method": "asr_with_interpolation",
+            "ASR_matched_fraction": 0.8628318584070797,
+            "sentence_midpoints_sampled": 19,
+            "local_contact_sheets_generated": 3,
+            "wrong_estimated_cache_rejected_in_test": true,
+            "original_V102_cache_method": "estimated_not_allowed",
+            "full_speed_human_review": "pending",
+            "new_MP4_rendered": false,
+            "local_QA_images_persisted_in_library": false,
+            "library_MP4_upload_blocked": true,
+            "V110_focus_sharpness_regression_remains": true,
+            "V25_approved": false,
+            "site_player_verified": false,
+            "master_versions_unchanged": true,
+            "new_API_TTS_calls": 0
           }
         },
         "cinema_standard": {
