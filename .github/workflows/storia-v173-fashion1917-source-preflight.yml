@@ -8,6 +8,8 @@ on:
       - "tests/test_storia_rivive_v173_fashion1917_source_scout.py"
       - "src/storia_rivive_v174_recent_high_scan_discovery.py"
       - "tests/test_storia_rivive_v174_recent_high_scan_discovery.py"
+      - "src/storia_rivive_v175_loc_source_probe.py"
+      - "tests/test_storia_rivive_v175_loc_source_probe.py"
   pull_request:
     paths:
       - ".github/workflows/storia-v173-fashion1917-source-preflight.yml"
@@ -15,6 +17,8 @@ on:
       - "tests/test_storia_rivive_v173_fashion1917_source_scout.py"
       - "src/storia_rivive_v174_recent_high_scan_discovery.py"
       - "tests/test_storia_rivive_v174_recent_high_scan_discovery.py"
+      - "src/storia_rivive_v175_loc_source_probe.py"
+      - "tests/test_storia_rivive_v175_loc_source_probe.py"
 permissions:
   contents: read
 concurrency:
@@ -42,6 +46,8 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v173_fashion1917_source_scout.py" -v
           python -m py_compile src/storia_rivive_v174_recent_high_scan_discovery.py
           python -m unittest discover -s tests -p "test_storia_rivive_v174_recent_high_scan_discovery.py" -v
+          python -m py_compile src/storia_rivive_v175_loc_source_probe.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v175_loc_source_probe.py" -v
       - name: Inspect exact Internet Archive film metadata (free)
         run: |
           python -u src/storia_rivive_v173_fashion1917_source_scout.py --out output/storia_v173_meta
@@ -55,6 +61,11 @@ jobs:
         timeout-minutes: 4
         run: |
           python -u src/storia_rivive_v174_recent_high_scan_discovery.py --out output/storia_v174_recent
+      - name: Inspect LOC National Screening Room real download metadata, zero paid calls
+        continue-on-error: true
+        timeout-minutes: 4
+        run: |
+          python -u src/storia_rivive_v175_loc_source_probe.py --out output/storia_v175_loc
       - name: Preserve honest evidence privately, never the whole original film
         if: always()
         uses: actions/upload-artifact@v4
@@ -66,5 +77,6 @@ jobs:
             output/storia_v173_real/REAL_SOURCE_SHOT_*.png
             output/storia_v173_real/REAL_FIVE_SHOTS_PRIVATE_REVIEW.jpg
             output/storia_v174_recent/V174_RECENT_PRELINGER_METADATA_CANDIDATES.json
+            output/storia_v175_loc/V175_LOC_SOURCE_METADATA.json
           retention-days: 14
           if-no-files-found: warn
