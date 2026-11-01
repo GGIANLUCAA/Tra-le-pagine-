@@ -101,7 +101,7 @@ def render(source, output, times=TIMES, expected_sha1=SOURCE_SHA1):
         assert any(s.get("codec_name") == "aac" for s in final["streams"])
         cover = output / (STEM + "_COVER.jpg")
         command("ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-                "-ss", ".6", "-i", str(video), "-frames:v", "1", "-q:v", "3", str(cover))
+                "-ss", "0.6", "-i", str(video), "-frames:v", "1", "-q:v", "3", str(cover))
     posts = output / "POST_SOCIAL_4.txt"
     posts.write_text(
         "Instagram: PARIGI · 1918. Cinque riprese autentiche, provino B/N. #Storia\n\n"
