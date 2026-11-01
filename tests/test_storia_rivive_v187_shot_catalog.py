@@ -29,6 +29,11 @@ class V187Tests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'INVALID_SIGNATURE'):
             v187.near_duplicate([1], [1])
 
+    def test_near_black_intertitle_rejected_without_false_approval(self):
+        self.assertTrue(v187.dark_or_title_like([4]*72))
+        self.assertFalse(v187.dark_or_title_like([80]*72))
+        self.assertFalse(v187.dark_or_title_like([8]*40 + [150]*32))
+
     def test_out_dir_never_overwritten(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d)/'existing'
