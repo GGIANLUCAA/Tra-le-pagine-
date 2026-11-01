@@ -30,3 +30,16 @@ Prima di consumare una sola chiamata I2I o Vidu, è stato effettivamente recuper
 Serve una scansione ottica migliore (possibilmente 2K/4K con persone grandi e cinque riprese coerenti) e una vera pipeline di **restauro video temporale**, non sola fotografia I2I/colore propagato con optical flow. I modelli open source FlashVSR/SeedVR2 usano GPU sostanziali e non sono già eseguibili per magia sul runner GitHub gratuito; prima di invocarli controllare compatibilità e costo effettivo. Non spenderci crediti Vidu né creare richieste non autorizzate per risolvere un difetto di qualità del filmato originale.
 
 Stato di produzione: **nessun nuovo MP4 approvato**, 0 I2I, 0 Vidu, 0 crediti, niente pubblicazione, diritti italiani ancora da verificare. V98, ArtVision, WOW LAB, scheduler delle 3h e gateway Vidu invariati.
+
+
+## V174 — ricerca archivio scansioni recenti, esito basato sui metadati veri
+
+[GitHub Actions #41295236656](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41295236656) **SUCCESS**, 12/12 test (6 V173 + 6 V174), bitstream originale moda 1917 verificato di nuovo, più ricerca metadata Internet Archive:
+
+- Ricerca limitata a film Prelinger **pubblicati nell'archivio dal 2023** con anno storico dal 1895 al 1935: **54** record trovati.
+- Metadati integrali del singolo titolo effettivamente consultati per **24** record più recenti: tutte e **24** le schede **non avevano una dichiarazione Public Domain/CC0 esatta a livello di item**. Il software li ha esclusi per evitare attribuzioni di diritti non verificate.
+- Nessun candidato certificato all'interno di questo **campione limitato**; **non** significa che non esistano scansioni HD/4K o film legalmente riutilizzabili in altri cataloghi, né che i 24 titoli siano sicuramente protetti.
+- `V174_RECENT_PRELINGER_METADATA_CANDIDATES.json` nell'artifact privato GitHub `13078913329`: 54 identificatori di ricerca, 24 oggetti esaminati, ripartizione `no_film_year=0`, `no_exact_public_domain_item_mark=24`, `no_video_file=0`; **0 media scaricati** in V174, **0 risoluzioni HD dichiarate verificate**.
+- **Regola di sicurezza:** come chiarisce anche il titolare dei Prelinger Archives nelle FAQ ufficiali aggiornate il 27 maggio 2026, la licenza va verificata singolarmente: non tutti i suoi film sono Public Domain. Non confondere date di pubblicazione nel catalogo digitale con le date delle scene.
+
+Nessun nuovo episodio prodotto; la priorità rimane reperire almeno una fonte coerente con sufficiente dettaglio **e** chiara provenienza/licenza territoriale, poi prova temporale GPU con disponibilità/quote effettivamente controllate e confronto con i reference 43055/43056.
