@@ -24,25 +24,54 @@ def measure(path):
             "source_visual_quality_score":score,"face_identity_verified":False,
             "historical_shot_distinctness_verified":False,"approved_for_i2i":False}
 
+def portrait_dhash(path):
+    """64-bit visual fingerprint of the actual central 9:16 crop.
+
+    This is a conservative duplicate-screening heuristic, NOT evidence that
+    two film frames belong to different camera shots. Brightness-only changes
+    intentionally retain the same fingerprint.
+    """
+    with Image.open(path) as raw:
+        gray=ImageOps.grayscale(raw)
+        w,h=gray.size
+        crop_w=min(w,round(h*9/16))
+        x=(w-crop_w)//2
+        pixels=list(gray.crop((x,0,x+crop_w,h)).resize(
+            (9,8),Image.Resampling.LANCZOS).getdata())
+    value=0
+    for y in range(8):
+        for x in range(8):
+            value=(value<<1)|int(pixels[y*9+x]>pixels[y*9+x+1])
+    return value
+
+
 def rank(folder):
     folder=Path(folder)
     imgs=sorted(folder.glob("frame_*.png"))
     if not imgs:raise ValueError("No native archival source PNG frames to evaluate")
     scored=[measure(p) for p in imgs]
+    fingerprints=[portrait_dhash(p) for p in imgs]
     # Reserve different time positions; scores do not prove distinct camera shots.
     ranked=sorted(range(len(scored)),key=lambda n:(-scored[n]["source_visual_quality_score"],n))
     chosen=[]
     separation=max(1,len(scored)//6)
     for idx in ranked:
-        if all(abs(idx-v)>=separation for v in chosen):chosen.append(idx)
+        if (all(abs(idx-v)>=separation for v in chosen) and
+                all((fingerprints[idx]^fingerprints[v]).bit_count()>=12 for v in chosen)):
+            chosen.append(idx)
         if len(chosen)>=5:break
     if len(chosen)<5:
-        return {"status":"SOURCE_TOO_FEW_DISTINCT_CANDIDATE_FRAMES","candidates":scored,"preselected":[]}
+        return {"status":"SOURCE_TOO_FEW_VISUALLY_DIVERSE_CANDIDATE_FRAMES",
+                "candidates":scored,"preselected":[],
+                "approved_restored_photos":0,
+                "visual_diversity_is_only_a_heuristic":True,
+                "next":"Find a more visually varied authentic film or manually review five real moving shots; do not start I2I or Vidu"}
     selected=[scored[n] for n in sorted(chosen)]
     return {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
             "original_source_frames":len(scored),"preselected":selected,
             "all_candidates":scored,"approved_restored_photos":0,
             "selection_is_not_verified_distinct_film_shots":True,
+            "visual_diversity_heuristic":"central 9:16 64-bit dHash, minimum Hamming distance 12; NOT shot verification",
             "next":"Review authentic source clip for five distinct moving shots, true timecodes and facial details before I2I"}
 
 if __name__=="__main__":
