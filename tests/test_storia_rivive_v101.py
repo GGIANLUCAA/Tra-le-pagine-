@@ -2,6 +2,8 @@
 """Offline V101 tests; no remote network or secrets."""
 import importlib.util
 import json
+import subprocess
+import sys
 from pathlib import Path
 import tempfile
 import unittest
@@ -136,6 +138,37 @@ class V101Tests(unittest.TestCase):
         history=json.loads((ROOT/"queue"/"storia_rivive_episode_history_v200.json").read_text(encoding="utf-8"))
         self.assertIn("china_daily_life_1928",auto.history_exclusions(history))
         self.assertFalse(any(x.get("status")=="final_approved" for x in history["entries"]))
+    def test_v200_cli_exhausted_history_writes_skip_without_media(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp)
+            bank=d/"bank.json";profile=d/"profile.json";history=d/"history.json";out=d/"order.json"
+            bank.write_text(json.dumps(BANK),encoding="utf-8")
+            profile.write_text(json.dumps(PROFILE),encoding="utf-8")
+            history.write_text(json.dumps({"entries":[
+                {"episode_id":x["id"],"status":"assets_pending",
+                 "evidence":"docs/LA_STORIA_RIVIVE_V108_MANDATO_AUTOMAZIONE_CREDITI_20261030.md"}
+                for x in BANK["candidates"]]}),encoding="utf-8")
+            p=subprocess.run([sys.executable,str(ROOT/"src"/"storia_rivive_autopilot_v101.py"),
+                              "--bank",str(bank),"--profile",str(profile),"--history",str(history),
+                              "--now","2026-10-30T15:00:00Z","--out",str(out)],
+                             capture_output=True,text=True,check=True)
+            data=json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(data["status"],"SOURCE_REJECTED_QUEUE_EXHAUSTED")
+            self.assertIsNone(data["episode_id"])
+            self.assertEqual(json.loads(p.stdout)["paid_calls"],0)
+    def test_v200_cli_missing_history_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp)
+            bank=d/"bank.json";profile=d/"profile.json";out=d/"order.json"
+            bank.write_text(json.dumps(BANK),encoding="utf-8")
+            profile.write_text(json.dumps(PROFILE),encoding="utf-8")
+            p=subprocess.run([sys.executable,str(ROOT/"src"/"storia_rivive_autopilot_v101.py"),
+                              "--bank",str(bank),"--profile",str(profile),
+                              "--history",str(d/"missing.json"),
+                              "--now","2026-10-30T15:00:00Z","--out",str(out)],
+                             capture_output=True,text=True)
+            self.assertNotEqual(p.returncode,0)
+            self.assertFalse(out.exists())
     def test_source_rights_not_self_approved(self):
         a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE)
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",a["blocking_issues"])
