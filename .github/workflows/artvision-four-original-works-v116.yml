@@ -113,7 +113,7 @@ jobs:
           name: ARTVISION_V116_${{ matrix.work_id }}_REAL_VIDEO_REVIEW
           path: |
             output/artvision_v116/${{ matrix.work_id }}/*.mp4
-            output/artvision_v116/${{ matrix.work_id }}/*_REVIEW.zip
+            output/artvision_v116/${{ matrix.work_id }}/*_V116.zip
             output/artvision_v116/${{ matrix.work_id }}/*.json
             output/artvision_v116/${{ matrix.work_id }}/*.txt
             output/artvision_v116/${{ matrix.work_id }}/VOCE.wav
