@@ -16,7 +16,7 @@ from PIL import Image, ImageOps, ImageFilter, ImageStat
 
 SCENE = 3  # banquet: real distinct historical-film shot
 SCENE_NAME = "03_banquet_last_real_film_frame.png"
-SOURCE_SHA = "927dd324df9d75667e67ae66db42e724d0117a6bbcd6a50b706f5eb4002654"
+SOURCE_SHA = "927dd324df4f88ef0dd12b31ccf0aade9fa901875ffcc5b688f74ecc57e1d32f"
 SPACE = "kulkas2pintu/QWEN_EDIT_IMAGE"
 PROMPT = (
     "Carefully image-edit THIS EXACT 1909 monochrome banquet movie frame into a"
