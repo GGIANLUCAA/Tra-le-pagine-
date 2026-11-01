@@ -19,7 +19,7 @@ Senza inventare una sessione di ascolto umano: il controllo fra parole e immagin
 - `/mnt/data/ArtVision_V116_Brown/BROWN_LAST_ENGLAND_4_VIDEO_ANDROID_V116.zip` (52.345.040 B)
 - `/mnt/data/ArtVision_V116_Giovanna/BASTIEN_JOAN_4_VIDEO_ANDROID_V116.zip` (58.398.903 B)
 - `/mnt/data/ArtVision_V116_Daniele/RIVIERE_DANIEL_4_VIDEO_ANDROID_V116.zip` (21.010.344 B)
-- **ZIP COMPLETO 16 VIDEO**: `/mnt/data/ARTVISION_V116_4_OPERE_16_VIDEO_ANDROID.zip`, **146.283.xxx B (dimensione esatta da manifest locale da registrare separatamente)**, **SHA256 `c8197bae4dd30de10a6dc2619fda789b0cfba9b893b2d656867bd4abdbeb4066`**, contiene esattamente **16 MP4 + 4 copertine titolo + 4 testi social bozza + 4 QA + manifest SHA**, **29 membri e CRC PASS**. Nessuna pubblicazione social.
+- **ZIP COMPLETO 16 VIDEO**: `/mnt/data/ARTVISION_V116_4_OPERE_16_VIDEO_ANDROID.zip`, **146.279.833 B (verificati sul file ZIP locale)**, **SHA256 `c8197bae4dd30de10a6dc2619fda789b0cfba9b893b2d656867bd4abdbeb4066`**, contiene esattamente **16 MP4 + 4 copertine titolo + 4 testi social bozza + 4 QA + manifest SHA**, **29 membri e CRC PASS**. Nessuna pubblicazione social.
 - GitHub artifacts 4 singoli sono recuperabili dall'[Action run](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41349097349) per 30 giorni, NON backup permanente. Se link chat non funziona, usare questi link autenticandosi GitHub.
 - **Library ChatGPT ancora piena secondo errore reale V113**: non è stato effettuato upload V116 lì, né cancellazione. NON dichiarare nessun SHA Library readback, R2 o player Android reali. L'esistenza di file MP4 compatibili Android e FFmpeg full decode non prova apertura sul telefono dell'utente.
 
