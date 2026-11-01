@@ -373,17 +373,25 @@
           "status": "blocked",
           "legacy_prior": "planned_voice_and_script_preflight",
           "verified_this_migration": false,
-          "blocker_code": "blocked_voice_unavailable",
-          "blocker_note": "No exact-script Google Gacrux WAV plus verified cache/alignment has been presented for this variant; do not substitute another TTS or mark rendered. Resume only after a matching verified cache is recovered.",
-          "blocker_reviewed_date": "2026-10-29"
+          "blocker_code": "v117_voice_call_hung_cancelled_timeout_no_wav_mp4",
+          "blocker_note": "2026-11-01 GitHub V117 Seurat source preflight passed, Gacrux stage hung until 100-minute job timeout; canceled. Artifact 13105055330 has artwork provenance, QA JSON and title JPG only; no VOCE.wav or MP4. Do not blindly retry TTS since prior external call outcome remains uncertain. Investigate TTS status and safe reuse before any new generation.",
+          "blocker_reviewed_date": "2026-10-29",
+          "source_run_id": 41351647619,
+          "artifact_id": 13105055330,
+          "last_checked_date": "2026-11-02",
+          "V25_approved": false
         },
         "critico_museum": {
           "status": "blocked",
           "legacy_prior": "planned_voice_and_script_preflight",
           "verified_this_migration": false,
-          "blocker_code": "blocked_voice_unavailable",
-          "blocker_note": "No exact-script Google Gacrux WAV plus verified cache/alignment has been presented for this variant; do not substitute another TTS or mark rendered. Resume only after a matching verified cache is recovered.",
-          "blocker_reviewed_date": "2026-10-29"
+          "blocker_code": "v117_voice_call_hung_cancelled_timeout_no_wav_mp4",
+          "blocker_note": "2026-11-01 GitHub V117 Seurat source preflight passed, Gacrux stage hung until 100-minute job timeout; canceled. Artifact 13105055330 has artwork provenance, QA JSON and title JPG only; no VOCE.wav or MP4. Do not blindly retry TTS since prior external call outcome remains uncertain. Investigate TTS status and safe reuse before any new generation.",
+          "blocker_reviewed_date": "2026-10-29",
+          "source_run_id": 41351647619,
+          "artifact_id": 13105055330,
+          "last_checked_date": "2026-11-02",
+          "V25_approved": false
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -426,14 +434,30 @@
       "dossier_preflight": "official_four_check_passed_in_github_actions_run_40753869951_2026-10-28",
       "variants": {
         "critico_standard": {
-          "status": "blocked",
+          "status": "rendered_needs_review",
           "legacy_prior": "blocked_voice_unavailable",
-          "verified_this_migration": false
+          "verified_this_migration": false,
+          "version": "V117",
+          "source_run_id": 41351647619,
+          "artifact_id": 13104524785,
+          "runner_technical_validation": "success_2_MP4_full_ffmpeg_decode_identical_AAC_ZIP_uploaded",
+          "local_file_readback_this_turn": false,
+          "human_artistic_review": "pending",
+          "V25_approved": false
         },
         "critico_museum": {
-          "status": "blocked",
+          "status": "rendered_needs_review",
           "legacy_prior": "blocked_voice_unavailable",
-          "verified_this_migration": false
+          "verified_this_migration": false,
+          "version": "V117",
+          "source_run_id": 41351647619,
+          "artifact_id": 13104524785,
+          "runner_technical_validation": "success_2_MP4_full_ffmpeg_decode_identical_AAC_ZIP_uploaded",
+          "local_file_readback_this_turn": false,
+          "human_artistic_review": "pending",
+          "V25_approved": false,
+          "museum_v119_approval": false,
+          "museum_quality_gate": "blocked_until_realistic_gallery_and_frame_visual_review"
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -693,16 +717,28 @@
       "status": "two_cinema_rendered_needs_review_two_critico_blocked",
       "variants": {
         "critico_standard": {
-          "status": "blocked",
-          "blocker_code": "blocked_voice_unavailable",
-          "blocker_note": "Exact Google Gacrux Italian voice WAV and verified cache for complete critic narration unavailable; no alternate TTS or charged API without user authorization.",
-          "human_approval": false
+          "status": "rendered_needs_review",
+          "human_approval": false,
+          "version": "V117",
+          "source_run_id": 41351647619,
+          "artifact_id": 13104649300,
+          "runner_technical_validation": "success_2_MP4_full_ffmpeg_decode_identical_AAC_ZIP_uploaded",
+          "local_file_readback_this_turn": false,
+          "human_artistic_review": "pending",
+          "V25_approved": false
         },
         "critico_museum": {
-          "status": "blocked",
-          "blocker_code": "blocked_voice_unavailable",
-          "blocker_note": "Exact same Gacrux speech and spoken script as Critico Standard required, gallery direction then return; no voice available.",
-          "human_approval": false
+          "status": "rendered_needs_review",
+          "human_approval": false,
+          "version": "V117",
+          "source_run_id": 41351647619,
+          "artifact_id": 13104649300,
+          "runner_technical_validation": "success_2_MP4_full_ffmpeg_decode_identical_AAC_ZIP_uploaded",
+          "local_file_readback_this_turn": false,
+          "human_artistic_review": "pending",
+          "V25_approved": false,
+          "museum_v119_approval": false,
+          "museum_quality_gate": "blocked_until_realistic_gallery_and_frame_visual_review"
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -3370,5 +3406,20 @@
     "no_new_spending_without_consent": true,
     "applies_to_future_automations_and_chats": true,
     "keep_legacy_artifacts_unchanged": true
+  },
+  "v119_status_update_20261102": {
+    "source_workflow_run_id": 41351647619,
+    "v117_complete_runner_only": [
+      "fabritius_goldfinch_1654",
+      "turner_fighting_temeraire_1839",
+      "homer_gulf_stream_met11122_1899"
+    ],
+    "seurat": "cancelled_after_100_minutes_no_wav_or_mp4_in_recovered_artifact",
+    "museum_preset_catalog": "config/artvision_museum_library_v119.json",
+    "museum_gate": "src/artvision_museum_v119_guard.py",
+    "real_benchmark_manifest": "config/artvision_v119_verified_reference_media.json",
+    "museum_artistic_approval": "not_assumed_for_v117_or_candidates",
+    "social_publish": false,
+    "no_charge_or_duplicate_tts_auto_retry": true
   }
 }
