@@ -76,7 +76,7 @@ def build_work_order(bank,now,profile,history=None):
                 "status":"SOURCE_REJECTED_QUEUE_EXHAUSTED","blocking_issues":["NO_UNUSED_CANDIDATES"],
                 "paid_api_call_permitted":False,"credits_spent":0,"publish_permitted":False,
                 "video_completed":False,"human_approved":False,
-                "note":"Editorial history exhausted: skip source acquisition, I2I and Vidu."
+                "note":"Editorial history exhausted: skip source acquisition, I2I and Vidu."}
     c=available[(int(slot.timestamp())//10800)%len(available)]
     issues=candidate_issues(c)
     flag=profile.get("historical_flags",{}).get(c["id"])
