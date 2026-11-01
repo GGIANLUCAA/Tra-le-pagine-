@@ -339,4 +339,22 @@ class MotionPhotoTests(unittest.TestCase):
         self.assertIn('iter_clip(motion_path,original_motion_frames)',source)
         self.assertIn('iter_clip(after_path,after_count)',source)
 
+    def test_v172_runtime_snapshot_records_measured_seconds_and_peak_rss(self):
+        import time
+        metrics=v.render_performance_snapshot(time.perf_counter()-.1,[.012,.024,.036,.048,.06])
+        self.assertEqual(len(metrics['scene_wall_seconds']),5)
+        self.assertGreaterEqual(metrics['wall_seconds'],.09)
+        self.assertGreater(metrics['peak_renderer_rss_mib'],0)
+        self.assertGreaterEqual(metrics['peak_reaped_child_rss_mib'],0)
+        self.assertIn('NOT simultaneous total RAM',metrics['rss_semantics'])
+        self.assertIn('six_real_clips',metrics['benchmark_scope'])
+
+    def test_v172_runtime_snapshot_rejects_unmeasurable_values(self):
+        import time
+        for times in ([-1.0],[float('nan')],[float('inf')],'five scenes'):
+            with self.subTest(times=times):
+                with self.assertRaisesRegex(ValueError,'SCENE_TIMES_INVALID'):
+                    v.render_performance_snapshot(time.perf_counter(),times)
+
+
 if __name__=='__main__':unittest.main()
