@@ -39,3 +39,9 @@ Freeze acquisito **dall'ultimo frame effettivo del segmento MP4 decodificato** p
 ## Prossimo passo
 
 Ricerca di fonte 2K/HD con cinque shot coerenti, diritti territoriali verificabili, produzione reale di quattro restauri I2I con revisione umana e quinta clip Vidu autorizzata e deduplicata; confronto diretto con V98 prima di master/serie. L'ulteriore sperimentazione su V160 può servire a studiare gli inquadramenti, **non** sostituire il vero 4+1.
+
+## V161 · riproducibilità GitHub Actions (1 novembre 2026)
+
+Il provino V160 era stato prodotto solo nell'ambiente della conversazione: il workflow originario conservava **la pellicola**, non l'MP4. La modifica V161 introduce `src/storia_paris1918_v161_preview.py` e collega il render a `.github/workflows/storia-v160-paris1918-source-review.yml` dopo la verifica dei byte SHA1 originali. Crea un **nuovo provino tecnico B/N** con 5 finestre temporali, 4 freeze dall'ultimo frame decodificato di ogni segmento, quinta scena originale in movimento, sottofondo sintetico originale, MP4 H264/AAC, copertina, 4 testi social, QA JSON e ZIP Android. L'output è salvato in un artifact Actions di revisione (7 giorni), **non** in release pubblica.
+
+Non confondere il provino V161 con il V160: il V161 è dichiaratamente **in bianco e nero**, senza falsa tinta presentata come I2I, e ha SHA/byte diversi. Il controllo sorgente rifiuta SHA1 diverso e il render richiede decodifica completa FFmpeg e contenitore H264/AAC 14–35 s. I 5 timecode non equivalgono da soli a un'approvazione visiva delle cinque riprese. Rimangono **zero** I2I, **zero** Vidu, nessuna verifica indipendente dei diritti italiani, nessuna approvazione artistica o pubblicazione. Stato `RENDERED_NEEDS_REVIEW` solo quando il workflow ha davvero creato e verificato il file; in caso di job fallito, non dichiarare il video disponibile. Nessun credito consumato.
