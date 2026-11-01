@@ -71,6 +71,45 @@ def verify_motion_clips(base, expected=None):
     return verified
 
 
+
+def verify_still_assets(base, photo_dir, freeze_sha=None, i2i_sha=None, ddcolor_sha=None):
+    """Fail before launching FFmpeg if ANY of the five still inputs is invalid.
+
+    All five source freezes and all five matched color inputs are checked
+    against immutable SHA-256, real image decoding, and source geometry.
+    Expected maps can be injected by offline tests; production uses locks.
+    """
+    freeze_sha = SOURCE_FREEZE_SHA if freeze_sha is None else freeze_sha
+    i2i_sha = PHOTO_SHA if i2i_sha is None else i2i_sha
+    ddcolor_sha = DDCOLOR_SHA if ddcolor_sha is None else ddcolor_sha
+    if (set(freeze_sha) != set(range(1, 6)) or
+        set(i2i_sha) != {1, 2, 3} or set(ddcolor_sha) != {4, 5}):
+        raise ValueError('STILL_ASSET_MANIFEST_INVALID')
+    checked = {}
+    for i in range(1, 6):
+        freeze = Path(base) / f'scene_{i:02d}' / 'EXACT_MP4_LAST_MOTION_FRAME.png'
+        color = (Path(photo_dir) / f'PHOTO_I2I_{i:02d}.png' if i <= 3
+                 else Path(photo_dir) / f'NEURAL_DDCOLOR_{i:02d}.png')
+        for role, path, expected in (
+            ('freeze', freeze, freeze_sha[i]),
+            ('color', color, (i2i_sha if i <= 3 else ddcolor_sha)[i]),
+        ):
+            if not isinstance(expected, str) or len(expected) != 64 or any(
+                c not in '0123456789abcdef' for c in expected
+            ):
+                raise ValueError(f'STILL_ASSET_FINGERPRINT_INVALID_{i}_{role}')
+            if not path.is_file() or path.is_symlink():
+                raise ValueError(f'STILL_ASSET_MISSING_OR_LINK_{i}_{role}')
+            actual = sha(path)
+            if actual != expected:
+                raise ValueError(f'STILL_ASSET_SHA_CHANGED_{i}_{role}')
+            pixels = cv2.imread(str(path), cv2.IMREAD_COLOR)
+            if pixels is None or pixels.shape != (576, 720, 3):
+                raise ValueError(f'STILL_ASSET_GEOMETRY_INVALID_{i}_{role}')
+            checked[f'{i}_{role}'] = actual
+    return checked
+
+
 def ff(args,timeout=150):
     r=subprocess.run(args,capture_output=True,text=True,timeout=timeout)
     if r.returncode:raise RuntimeError('ffmpeg failed '+r.stderr[-1200:])
@@ -252,10 +291,10 @@ def main():
     BASE=Path(a.source_v162_dir); PHOTO=Path(a.photos_v162_dir)
     # Check the six full motion clips before any output directory is created.
     verified_motion_sha=verify_motion_clips(BASE)
+    # Check all 10 source/photo PNGs before output directory or encoder exists.
+    # A missing fourth/fifth DDColor input must not waste an entire partial render.
+    verified_still_sha=verify_still_assets(BASE,PHOTO)
     dest=Path(a.out);dest.mkdir(parents=True,exist_ok=True)
-    for i,expected in PHOTO_SHA.items():
-        p=PHOTO/f'PHOTO_I2I_{i:02d}.png'
-        assert p.is_file() and sha(p)==expected,f'Exact V162 I2I photo lost or changed: scene {i}'
     nframes=0;qa_scenes=[];sample=[]
     raw=dest/'V163_RENDER_VIDEO_ONLY.mp4'
     proc=subprocess.Popen(['ffmpeg','-nostdin','-y','-v','error','-f','rawvideo','-pix_fmt','bgr24','-s','720x1280','-r',str(FPS),'-i','-','-an','-c:v','libx264','-preset','ultrafast','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',str(raw)],stdin=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -376,6 +415,7 @@ def main():
     qa={'version':'V163','video_status':'rendered_rejected_artistic_quality','focus':'improved moving-shot color and source photo guided transfer, never imaginary animation',
         'source_origin':'Musee Albert-Kahn / Wikimedia Commons original AI139599 verified in V160/V162','source_sha1':'aa471da773d14f422d1387654601ca03b5224455',
         'source_PTS_and_shot_selection_unchanged':True,'verified_six_motion_clips_sha256':verified_motion_sha,
+        'verified_ten_still_assets_sha256':verified_still_sha,
         'v162_same_three_i2i_photos_reused_byte_exact':True,'photographs_changed_or_regenerated':False,
         'generative_photo_i2i_count':3,'true_frame_by_frame_generative_i2i':0,'real_vidu_clip_count':0,'paid_credits_consumed':0,
         'optical_flow_method':'OpenCV DIS current-to-exact freeze, bounded luminance residual & occlusion-aware chroma; no invented motion',
