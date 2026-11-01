@@ -50,6 +50,19 @@ class V179CycleTests(unittest.TestCase):
         self.assertEqual(r["restored_i2i_photos_approved"], 0)
         self.assertEqual(r["real_vidu_clips_approved"], 0)
 
+    def test_duplicate_source_frames_reject_cycle_without_i2i(self):
+        r = module.build_status(
+            ORDER, {"status": module.READY},
+            {"status": "SOURCE_TOO_FEW_VISUALLY_DIVERSE_CANDIDATE_FRAMES",
+             "preselected": []}, {})
+        self.assertEqual(r["status"], "SOURCE_REJECTED")
+        self.assertEqual(r["frame_preselection_status"],
+                         "SOURCE_TOO_FEW_VISUALLY_DIVERSE_CANDIDATE_FRAMES")
+        self.assertEqual(r["source_frames_preselected_not_shots_verified"], 0)
+        self.assertEqual(r["source_locked_i2i_jobs_prepared_not_generated"], 0)
+        self.assertEqual(r["charged_api_requests"], 0)
+        self.assertFalse(r["human_approved"])
+
     def test_missing_scout_report_never_claims_success(self):
         r = module.build_status(ORDER, {}, {}, {})
         self.assertEqual(r["source_scout"], "SOURCE_SCOUT_NOT_AVAILABLE")
@@ -63,8 +76,7 @@ class V179CycleTests(unittest.TestCase):
 
     def test_workflow_skips_rank_and_i2i_on_rejected_source(self):
         w = (ROOT / ".github/workflows/storia-rivive-v101-auto-3h.yml").read_text()
-        for step in ("Rank actual native-resolution source frames",
-                     "Prepare five source-SHA-locked I2I requests"):
+        for step in ("Rank actual native-resolution source frames",):
             start = w.index("      - name: " + step)
             end = w.find("      - name:", start + 1)
             section = w[start:end if end >= 0 else None]
@@ -72,6 +84,14 @@ class V179CycleTests(unittest.TestCase):
         self.assertIn("python src/storia_rivive_v179_cycle_status.py", w)
         self.assertIn("output/storia_v101/CYCLE_STATUS.json", w)
         self.assertIn("if: always()", w)
+        rank_start = w.index("      - name: Rank actual native-resolution source frames")
+        rank_end = w.index("      - name: Prepare five source-SHA-locked I2I requests",rank_start)
+        self.assertIn("id: frame_rank",w[rank_start:rank_end])
+        self.assertIn("V180_FRAME_DIVERSITY_PREFLIGHT",w[rank_start:rank_end])
+        prep_start = rank_end
+        prep_end = w.index("      - name:",prep_start+1)
+        self.assertIn("if: steps.frame_rank.outputs.ready == 'true'",
+                      w[prep_start:prep_end])
 
 
 if __name__ == "__main__":
