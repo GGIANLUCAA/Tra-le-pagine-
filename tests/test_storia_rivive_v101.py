@@ -207,6 +207,10 @@ class V101Tests(unittest.TestCase):
             (d/"SCOUT_REPORT.json").write_text(json.dumps(report))
             with self.assertRaisesRegex(ValueError,"V182 source frame SHA mismatch"):
                 i2i.build(order,selection,d)
+            # Restore the valid digest so the second assertion tests the
+            # invalid manifest key rather than the previous forged hash.
+            report["original_frame_sha256_v182"]["frame_03.png"]=hashlib.sha256(
+                (d/"original_frames"/"frame_03.png").read_bytes()).hexdigest()
             report["original_frame_sha256_v182"]["../escape.png"]="0"*64
             report["source_frames_extracted"]=6
             (d/"SCOUT_REPORT.json").write_text(json.dumps(report))
