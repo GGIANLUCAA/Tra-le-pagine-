@@ -2293,6 +2293,43 @@
             "masters_V102_V106_V109_V110_preserved": true,
             "no_new_TTS_AI_API_calls": true,
             "social_published": false
+          },
+          "v113_nondestructive_revision": {
+            "status": "real_MP4_rendered_local_technical_QA_pass_Library_MP4_capacity_blocked",
+            "date": "2026-11-01",
+            "filename": "BOECKLIN_CRITICO_MUSEUM_V113_ACQUA_NITIDA_MUSEO_REVIEW.mp4",
+            "bytes": 21053055,
+            "sha256": "62635982936620472af27b6dcaf20b2586a2d81303674655d9e11f177c17d508",
+            "source_V112_sha256": "a15b42e399077bef9424258d8c198790a7659333f8ff25141bdf4d17a2254f5d",
+            "corrected_interval_seconds": [
+              28.2,
+              41.2
+            ],
+            "voice_water_video_seconds": [
+              29.72,
+              39.7
+            ],
+            "max_geometric_zoom": 1.45,
+            "sharpness_loss_percent_vs_V112_32_38s": 12.95,
+            "full_ffmpeg_decode": "PASS",
+            "frame_count": 2213,
+            "duration_seconds": 110.65,
+            "V57_peak_MAD": 32.184,
+            "V57_frames_above_35": 0,
+            "AAC_bit_identical_to_V112": true,
+            "AAC_ADTS_sha256": "3f46d52d8e0a09974bd144c62a77f5357c1ec5cc63e9c3cee956c8853edd505e",
+            "QA_JSON_library_readback_sha256": "a7847dadcdd5782c053930a76b165f451838701404c8f5870288dfc3b54bc260",
+            "library_MP4_persisted": false,
+            "library_MP4_error": "library_storage_limit_exceeded",
+            "R2_imported": false,
+            "android_site_playback_verified": false,
+            "human_full_review": false,
+            "V25_approved": false,
+            "no_new_TTS_or_AI_calls": true,
+            "no_social_publication": true,
+            "preserved_master_versions": true,
+            "renderer": "src/artvision_bocklin_v113_water_focus_balanced.py",
+            "report": "docs/productions/2026-11-01-artvision-bocklin-v113-water-focus-balanced-museum.md"
           }
         },
         "cinema_standard": {
