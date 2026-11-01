@@ -42,6 +42,47 @@ class MotionPhotoTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'GEOMETRY'):
             v.transfer_color_motion(self.current[:500],self.anchor,self.photo,self.engine)
 
+
+    def test_motion_clip_sha_contract_six_real_assets(self):
+        self.assertEqual(len(v.MOTION_CLIP_SHA),6)
+        self.assertEqual(len(set(v.MOTION_CLIP_SHA.values())),6)
+        self.assertEqual(sum(k.endswith('/real_original_motion.mp4') for k in v.MOTION_CLIP_SHA),5)
+        self.assertIn('scene_05/real_original_after_freeze.mp4',v.MOTION_CLIP_SHA)
+
+    def test_reject_replaced_moving_frames_with_same_final_anchor(self):
+        import hashlib
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as root:
+            expected={}
+            for key in v.MOTION_CLIP_SHA:
+                p=Path(root)/key
+                p.parent.mkdir(parents=True,exist_ok=True)
+                # Identical anchor suffix across two possible source clips;
+                # only the earlier real moving content differs.
+                p.write_bytes(key.encode()+b' ORIGINAL_MOVING_FRAMES | SAME_LAST_FREEZE')
+                expected[key]=hashlib.sha256(p.read_bytes()).hexdigest()
+            self.assertEqual(v.verify_motion_clips(root,expected),expected)
+            changed=Path(root)/'scene_03/real_original_motion.mp4'
+            changed.write_bytes(b'FAKE_ZOOMED_PHOTO | SAME_LAST_FREEZE')
+            with self.assertRaisesRegex(ValueError,'SOURCE_MOTION_SHA_CHANGED'):
+                v.verify_motion_clips(root,expected)
+            changed.unlink()
+            with self.assertRaisesRegex(ValueError,'SOURCE_MOTION_CLIP_MISSING'):
+                v.verify_motion_clips(root,expected)
+
+    def test_motion_manifest_rejects_duplicate_or_unsafe_paths(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as root:
+            invalid=dict(v.MOTION_CLIP_SHA)
+            invalid['scene_01/real_original_motion.mp4']=invalid['scene_02/real_original_motion.mp4']
+            with self.assertRaisesRegex(ValueError,'MANIFEST_INVALID'):
+                v.verify_motion_clips(root,invalid)
+            invalid=dict(v.MOTION_CLIP_SHA)
+            invalid['../outside.mp4']=invalid.pop('scene_01/real_original_motion.mp4')
+            with self.assertRaisesRegex(ValueError,'PATH_UNSAFE'):
+                v.verify_motion_clips(root,invalid)
+
     def test_scene_source_fingerprint_contract(self):
         self.assertEqual(len(v.SOURCE_FREEZE_SHA),5)
         self.assertEqual(len(set(v.SOURCE_FREEZE_SHA.values())),5)
