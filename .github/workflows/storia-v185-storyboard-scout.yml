@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Compile real code
         run: python -m py_compile src/storia_rivive_v185_storyboard_scout.py tests/test_storia_rivive_v185_storyboard_scout.py
-      - name: FFmpeg installed
-        run: ffmpeg -version && ffprobe -version
+      - name: Install FFmpeg and FFprobe on runner
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg && ffmpeg -version && ffprobe -version
       - name: Eight tests including actual synthetic MP4 frame extraction
         run: python -m unittest discover -s tests -p 'test_storia_rivive_v185_storyboard_scout.py' -v
