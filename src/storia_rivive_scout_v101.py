@@ -30,6 +30,47 @@ def metadata(page):
             "license_metadata":info.get("extmetadata",{}).get("LicenseShortName",{}).get("value","UNKNOWN"),
             "historical_rights_italy_approved":False,"social_publish_permitted":False}
 
+# V176 quality gate from the user's authenticated reference videos 43055/43056.
+# Only the ACTUAL encoded pixels in the source MP4 (not an advertised HD/4K label)
+# may be examined here. Optical film scan resolution and faces need human review.
+MIN_ENCODED_SOURCE_HEIGHT=1000
+MIN_NATIVE_PORTRAIT_PIXEL_RATIO=.64
+
+
+def v176_source_raster_gate(ffprobe_data):
+    """Fail closed on insufficient 9:16 source pixels before V101 SHA/I2I preparation.
+
+    A 1080p landscape film offers a genuine central native 608x1080 crop:
+    ~=71% of the final 720x1280 pixel area before resampling.
+    This cannot by itself prove sharp faces, licensed footage, or 2K scans.
+    """
+    streams=ffprobe_data.get("streams",[])
+    stream=next((x for x in streams if x.get("codec_type")=="video"),None)
+    if not stream:
+        return {"status":"SOURCE_NO_VIDEO_STREAM","encoded_pixel_geometry_verified":False}
+    try:
+        w,h=int(stream["width"]),int(stream["height"])
+    except (KeyError,ValueError,TypeError):
+        return {"status":"SOURCE_MISSING_ENCODED_RASTER","encoded_pixel_geometry_verified":False}
+    if not (16<=w<=16000 and 16<=h<=16000):
+        return {"status":"SOURCE_INVALID_ENCODED_RASTER","encoded_pixel_geometry_verified":False}
+    cropw=min(w,round(h*9/16))
+    ratio=(cropw*h)/(720*1280)
+    accepted=(h>=MIN_ENCODED_SOURCE_HEIGHT and ratio>=MIN_NATIVE_PORTRAIT_PIXEL_RATIO)
+    return {
+        "status":"SOURCE_ENCODED_RASTER_ELIGIBLE_FOR_VISUAL_REVIEW" if accepted else "REJECT_LOW_SOURCE_PIXELS_FOR_REFERENCE_LEVEL_MOTION",
+        "encoded_pixel_geometry_verified":True,
+        "encoded_raster_px":[w,h],"native_central_portrait_crop_px":[cropw,h],
+        "source_to_720x1280_portrait_pixel_area_ratio":round(ratio,5),
+        "native_scan_quality_or_face_detail_verified":False,
+        "italian_rights_verified":False,
+        "subject_large_and_legible_verified":False,
+        "four_photo_i2i_verified":False,
+        "vidu_motion_verified":False,
+        "minimum_reference_43055_43056_met":False,
+    }
+
+
 def inspect(page,outdir):
     outdir.mkdir(parents=True,exist_ok=True)
     m=metadata(page)
@@ -47,11 +88,22 @@ def inspect(page,outdir):
             h.update(buf);target.write(buf)
     if n!=size:raise ValueError("Source media length mismatch")
     m["original_sha256"]=h.hexdigest()
-    probe=subprocess.run(["ffprobe","-v","error","-show_entries","format=duration","-of","json",str(film)],
+    probe=subprocess.run(["ffprobe","-v","error","-show_entries",
+                         "format=duration:stream=codec_type,codec_name,width,height,sample_aspect_ratio",
+                         "-of","json",str(film)],
                          capture_output=True,text=True,timeout=35,check=True)
-    duration=float(json.loads(probe.stdout)["format"]["duration"])
+    probe_data=json.loads(probe.stdout)
+    duration=float(probe_data["format"]["duration"])
     if not 1<=duration<=10000:raise ValueError("Source duration suspicious")
     m["duration_s"]=duration
+    quality=v176_source_raster_gate(probe_data)
+    m["source_raster_quality_gate_v176"]=quality
+    if quality["status"]!="SOURCE_ENCODED_RASTER_ELIGIBLE_FOR_VISUAL_REVIEW":
+        m["status"]=quality["status"]
+        m["source_frames_extracted"]=0
+        m["finished_mp4"]=False
+        m["next"]="Reject current film or obtain a better actual scan; no AI or Vidu generation"
+        return m
     frames=outdir/"original_frames";frames.mkdir(exist_ok=True)
     period=max(1.0,duration/12)
     subprocess.run(["ffmpeg","-nostdin","-y","-v","error","-i",str(film),
