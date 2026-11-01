@@ -19,12 +19,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/v193_inspect
-          gh run list --repo GGIANLUCAA/Tra-le-pagine- --workflow storia-v193-one-free-alt-i2i.yml --branch storia-v183-production-candidate-20261101 --limit 30 --json databaseId,event,headSha,status,conclusion > /tmp/v193_inspect/RUN_LIST.json
+          gh api -X GET "repos/GGIANLUCAA/Tra-le-pagine-/actions/runs?branch=storia-v183-production-candidate-20261101&per_page=100" > /tmp/v193_inspect/RUN_LIST.json
           RUN_ID=$(python - <<'PY'
           import json
-          xs=json.load(open('/tmp/v193_inspect/RUN_LIST.json'))
-          xs=[x for x in xs if x['event']=='push' and x['headSha']=='a13ebfdf8d42f58c2094a0d9918c05014e7d8e4c']
-          print(xs[0]['databaseId'] if xs else '')
+          data=json.load(open('/tmp/v193_inspect/RUN_LIST.json'))
+          xs=[x for x in data['workflow_runs'] if x['event']=='push' and x['head_sha']=='a13ebfdf8d42f58c2094a0d9918c05014e7d8e4c']
+          print(xs[0]['id'] if xs else '')
           PY
           )
           if [ -z "$RUN_ID" ]; then
