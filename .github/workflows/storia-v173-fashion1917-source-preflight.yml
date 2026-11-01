@@ -6,11 +6,15 @@ on:
       - ".github/workflows/storia-v173-fashion1917-source-preflight.yml"
       - "src/storia_rivive_v173_fashion1917_source_scout.py"
       - "tests/test_storia_rivive_v173_fashion1917_source_scout.py"
+      - "src/storia_rivive_v174_recent_high_scan_discovery.py"
+      - "tests/test_storia_rivive_v174_recent_high_scan_discovery.py"
   pull_request:
     paths:
       - ".github/workflows/storia-v173-fashion1917-source-preflight.yml"
       - "src/storia_rivive_v173_fashion1917_source_scout.py"
       - "tests/test_storia_rivive_v173_fashion1917_source_scout.py"
+      - "src/storia_rivive_v174_recent_high_scan_discovery.py"
+      - "tests/test_storia_rivive_v174_recent_high_scan_discovery.py"
 permissions:
   contents: read
 concurrency:
@@ -36,6 +40,8 @@ jobs:
           set -euo pipefail
           python -m py_compile src/storia_rivive_v173_fashion1917_source_scout.py
           python -m unittest discover -s tests -p "test_storia_rivive_v173_fashion1917_source_scout.py" -v
+          python -m py_compile src/storia_rivive_v174_recent_high_scan_discovery.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v174_recent_high_scan_discovery.py" -v
       - name: Inspect exact Internet Archive film metadata (free)
         run: |
           python -u src/storia_rivive_v173_fashion1917_source_scout.py --out output/storia_v173_meta
@@ -44,6 +50,11 @@ jobs:
         timeout-minutes: 10
         run: |
           python -u src/storia_rivive_v173_fashion1917_source_scout.py --out output/storia_v173_real --download
+      - name: Find recent potentially high-resolution original archival scans (metadata only)
+        continue-on-error: true
+        timeout-minutes: 4
+        run: |
+          python -u src/storia_rivive_v174_recent_high_scan_discovery.py --out output/storia_v174_recent
       - name: Preserve honest evidence privately, never the whole original film
         if: always()
         uses: actions/upload-artifact@v4
@@ -54,5 +65,6 @@ jobs:
             output/storia_v173_real/V173_FASHION_SOURCE_QUALITY_AUDIT.json
             output/storia_v173_real/REAL_SOURCE_SHOT_*.png
             output/storia_v173_real/REAL_FIVE_SHOTS_PRIVATE_REVIEW.jpg
+            output/storia_v174_recent/V174_RECENT_PRELINGER_METADATA_CANDIDATES.json
           retention-days: 14
           if-no-files-found: warn
