@@ -9,7 +9,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from style_gate_v163 import analyze,inspect
+from src.storia_rivive_v163_rapid_reveal_qa import analyze,inspect
 
 
 def synthetic_frames(*, scenes=8, move=True, repeat=False, trailing_black=0):
