@@ -1,0 +1,68 @@
+name: ArtVision Night Watch Cinema Standard V132 - one shot
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/nightwatch-cinema-v132-one-shot.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-nightwatch-cinema-standard-v132-single-request
+  cancel-in-progress: false
+jobs:
+  owner_exact_night_watch_cinema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - name: Authorisation and zero-service-spend guard
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          p='requests/artvision/nightwatch-cinema-v132-one-shot.json'
+          q=json.load(open(p))
+          assert q['work_id']=='rembrandt_night_watch_1642_rijks_sk_c_5'
+          assert q['variant']=='cinema_standard'
+          assert q['owner_selected'] is True and q['one_shot_only'] is True
+          assert q['external_paid_api_calls']==0 and q['autopublish'] is False
+          assert q['museum_approved'] is False and q['gold_v25'] is False
+          print('Owner authorised one exact standalone Cinema Standard candidate, not 4x1')
+          PY
+      - name: Local open-source renderer
+        run: |
+          python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'numpy>=1.26,<3'
+          ffmpeg -version | head -1
+          python -m py_compile src/artvision_nightwatch_cinema_standard_v132.py
+      - name: Download exact public-domain original and render actual film
+        run: |
+          set -euo pipefail
+          python src/artvision_nightwatch_cinema_standard_v132.py
+      - name: Independent full decoding and SHA readback
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,hashlib,subprocess
+          from pathlib import Path
+          p=Path('output/nightwatch_v132')
+          q=json.loads((p/'QA_NIGHT_WATCH_V132.json').read_text())
+          v=p/q['result_file']
+          assert v.is_file() and v.stat().st_size==q['result_bytes']
+          assert hashlib.sha256(v.read_bytes()).hexdigest()==q['result_sha256']
+          subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(v),'-f','null','-'],check=True)
+          assert not q['museum_produced'] and not q['critico_produced']
+          assert q['spent_api_credits']==0 and not q['social_published'] and not q['Gold_V25']
+          print('VERIFIED ONE REAL REVIEW MP4 SHA',q['result_sha256'],'bytes',q['result_bytes'])
+          PY
+      - name: Preserve true MP4 and its source/QA/cover as GitHub artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_NIGHT_WATCH_V132_ONE_CINEMA_STANDARD_REVIEW
+          path: |
+            output/nightwatch_v132/THE_NIGHT_WATCH_CINEMA_STANDARD_V132_REVIEW.mp4
+            output/nightwatch_v132/QA_NIGHT_WATCH_V132.json
+            output/nightwatch_v132/frames/00_cover.jpg
+          compression-level: 2
+          retention-days: 30
+          if-no-files-found: warn
