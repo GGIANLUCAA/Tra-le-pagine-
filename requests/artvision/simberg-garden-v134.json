@@ -21,5 +21,16 @@
   "require_mp4_decode": true,
   "require_sha": true,
   "require_private_artifact": true,
-  "previous_masters_preserved": true
+  "previous_masters_preserved": true,
+  "retry_after_failed_pre_render": {
+    "failed_run_id": 41523878356,
+    "failed_job_id": 125546491610,
+    "failed_at_step": "Install no-paid runtime dependencies",
+    "error": "ffprobe command not found",
+    "render_started": false,
+    "artifacts_created": 0,
+    "fix_renderer_commit": "35a48c85d74c644c9aac07a1b0decc804a40ba9b",
+    "fix_workflow_commit": "4e59083ed93678a7d07687a0b93c965aeb1893c0",
+    "retry_safe_no_paid_calls": true
+  }
 }
