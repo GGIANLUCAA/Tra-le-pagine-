@@ -135,8 +135,12 @@ def main():
   proc.kill();raise
  if frames!=960:raise ValueError(f"Unexpected frames {frames}")
  run(["ffmpeg","-v","error","-i",mp4,"-f","null","-"])
- ffprobe=json.loads(run(["ffprobe","-v","error","-show_entries","format=duration,size:stream=codec_type,codec_name,width,height,r_frame_rate","-of","json",mp4]))
- if abs(float(ffprobe["format"]["duration"])-48)>.1:raise ValueError("Duration mismatch")
+ cap=cv2.VideoCapture(str(mp4))
+ if not cap.isOpened():raise ValueError("MP4 could not be opened for readback")
+ readback={"width":int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),"height":int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),"frames":int(cap.get(cv2.CAP_PROP_FRAME_COUNT)),"fps":float(cap.get(cv2.CAP_PROP_FPS))}
+ cap.release()
+ if readback["width"]!=W or readback["height"]!=H or readback["frames"]!=frames or abs(readback["fps"]-FPS)>.01:raise ValueError(f"MP4 video readback mismatch: {readback}")
+ ffprobe={"format":{"duration":frames/FPS,"size":mp4.stat().st_size},"video_readback":readback,"audio_verified_by_full_ffmpeg_decode":True}
  img_sheet=np.full((3*350,4*194,3),17,dtype=np.uint8)
  for i,(name,frame) in enumerate(mid):
   y=(i//4)*350+6;x=(i%4)*194+6;img_sheet[y:y+320,x:x+180]=frame
