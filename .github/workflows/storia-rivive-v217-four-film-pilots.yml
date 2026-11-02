@@ -50,7 +50,7 @@ jobs:
         episode:
           - "delhi_ruins_1910_v217"
           - "fiesole_straw_hats_1912_v220"
-          - "french_fashion_birds_1922_v220"
+          - "early_cinema_sorrows_1910_v225"
           - "lusitania_departure_1915_v220"
     env:
       EPISODE_ID: ${{ matrix.episode }}
