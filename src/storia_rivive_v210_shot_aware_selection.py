@@ -65,8 +65,13 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) 
     if isinstance(duration, bool) or not isinstance(duration, (float, int)) or not math.isfinite(duration) or duration < 5:
         return block("INVALID_DURATION")
     period = max(1.0, duration / 12)
-    if duration > MAX_SECONDS:
-        return block("SOURCE_TOO_LONG_FOR_BOUNDED_SCENE_SCAN")
+    # V214: a long authentic reel is not automatically unusable. Inspect only
+    # its first bounded window, and accept frames sampled within that window.
+    # Never claim that later scenes were examined. No change to source SHA.
+    scan_seconds = min(float(duration), float(MAX_SECONDS))
+    result["film_duration_s"] = round(float(duration), 3)
+    result["cut_scan_seconds"] = round(scan_seconds, 3)
+    result["cut_scan_is_partial"] = duration > MAX_SECONDS
     film = cache / "ORIGINAL_ARCHIVE.webm"
     expected = scout.get("original_sha256")
     if (film.is_symlink() or not film.is_file() or not 0 < film.stat().st_size <= MAX_BYTES
@@ -113,12 +118,12 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) 
     result["minimum_native_portrait_crop_px"] = [min_crop_width, min_native_height]
     result["native_detail_preflight"] = "V212_ACTUAL_DECODED_SOURCE_PIXELS"
     try:
-        boundaries = detector(film, float(duration))
+        boundaries = detector(film, scan_seconds)
     except Exception:
         return block("CUT_DETECTION_FAILED")
     if not isinstance(boundaries, list) or any(not isinstance(x, (int, float)) or not math.isfinite(x) for x in boundaries):
         return block("INVALID_DETECTOR_OUTPUT")
-    boundaries = sorted(set(float(x) for x in boundaries if 0 < x < duration))
+    boundaries = sorted(set(float(x) for x in boundaries if 0 < x < scan_seconds))
     candidates = []
     seen_names = set()
     for row in frames:
@@ -133,7 +138,7 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) 
         score = row.get("source_visual_quality_score")
         if isinstance(score, bool) or not isinstance(score, (int, float)) or not math.isfinite(score):
             return block("INVALID_SCORE")
-        if t < LEAD_SECONDS + 0.1 or t >= duration:
+        if t < LEAD_SECONDS + 0.1 or t >= scan_seconds:
             continue
         segment = bisect.bisect_right(boundaries, t)
         if segment != bisect.bisect_right(boundaries, t - LEAD_SECONDS):
@@ -150,6 +155,7 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) 
     result["candidate_segments_available"] = len(segments)
     result["detected_cut_count"] = len(boundaries)
     result["portrait_candidates_checked"] = len(candidates)
+    result["unscanned_late_frames"] = sum(1 for row in frames if (int(row["filename"][6:8]) - 1) * period >= scan_seconds)
     if len(segments) < 5:
         return block("FIVE_SHOT_SEGMENTS_WITH_VALID_LEADIN_UNAVAILABLE")
 
