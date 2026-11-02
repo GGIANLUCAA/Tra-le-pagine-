@@ -25,3 +25,11 @@ V214 scansionava i primi 420 s ma il vecchio scout V101 distribuiva 12 campioni 
 5. **Nessun MP4, I2I o Vidu generato da questa scheda.** Nessun credito consumato, nessuna pubblicazione.
 
 Non sostituire mai V98 San Francisco con un nuovo filmato inferiore; ArtVision/WOW LAB restano intatti.
+
+## Esito reale del primo scout HD (02/11/2026) — SOURCE_REJECTED
+
+- [GitHub Actions run V215 #41421362529](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41421362529) **SUCCESS tecnico**: ha scaricato davvero i 66.553.161 byte Commons, film originale SHA-256 `e3022cb130442f7695d411724ae619fc8c184696ddae30293958c1c75ec8ffd9`; 12 PNG 1920×1080 e contatto-sheet reale in [artifact #13130765026](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41421362529/artifacts/13130765026). Non è un MP4 nuovo.
+- La pre-selezione automatica V210 precedente aveva **falsamente scelto cinque titoli/diagrammi**: `frame_02` (35s), `frame_04` (105s), `frame_06` (175s), `frame_07` (210s), `frame_11` (350s). Questi cinque NON sono cinque vere riprese cinematografiche utili al restauro V98.
+- Ho ispezionato il **vero contatto-sheet 12/12**: 10 frame su 12 sono cartelli testuali su nero; `frame_06` è uno schema/disegno, `frame_10` (315s) mostra realmente bobine e filati. Non ci sono cinque scene autentiche cinematografiche nel campione. Le parole dei cartelli e la grafica non devono diventare «volti restaurati» con I2I.
+- Il nuovo filtro V216 intercetta i cartelli ad alto contrasto su nero **prima** del ranking: nei 12 PNG del pilot, 10 hanno frazione pixel quasi neri ≥ 0,70 e pixel chiari ≥ 0,02 (campionamento 160×90). Il filtro è conservativo e non sostituisce la revisione di scene notturne o il giudizio umano; la prova locale sui PNG reali evidenzia solo due campioni non classificati come cartelli, uno dei quali è uno schema.
+- **Decisione:** `source_rejected` per questo candidato specifico nel ciclo V101; nessun restauro, nessuna clip Vidu, nessun video finale, nessuna spesa. Il film rimane una fonte documentaria valida per ricerca storica, ma non soddisfa questo formato 4+1. Passare a un nuovo soggetto con 5 vere riprese di persone/oggetti, non insistere con l'I2I sui cartelli.
