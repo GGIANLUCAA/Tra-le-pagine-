@@ -134,5 +134,45 @@ class FourPilotSourceReviewTest(unittest.TestCase):
                 v217.endpoint_alignment(root / "clip.mp4", frame)
 
 
+    def test_v224_four_real_source_frame_i2i_jobs_and_unique_episode_ids(self):
+        # The handoff is a real, byte-hashed request manifest, NOT four
+        # generated photographs or permission to spend Vidu credits.
+        from PIL import Image
+        import storia_rivive_i2i_prepare_v102 as v102
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            frames = root / "original_frames"
+            frames.mkdir()
+            (root / "ORIGINAL_ARCHIVE.webm").write_bytes(b"offline test archive")
+            for i in range(1, 6):
+                Image.new("RGB", (1280, 720),
+                          (i * 29, i * 19, i * 11)).save(
+                              frames / f"frame_{i:02d}.png")
+            selection = {
+                "status": "FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                "preselected": [{"filename": f"frame_{i:02d}.png"}
+                                for i in range(1, 6)],
+            }
+            orders = [v217.prepare(self.source, item["id"], root / item["id"])
+                      for item in self.source["episodes"]]
+            self.assertEqual(len({o["cycle_id"] for o in orders}), 4)
+            first = v102.build(orders[0], selection, root)
+            second = v102.build(orders[1], selection, root)
+            self.assertEqual(first["photo_jobs_prepared"], 4)
+            self.assertEqual(first["photos_generated"], 0)
+            self.assertEqual(first["provider_requests_sent"], 0)
+            self.assertEqual(first["vidu_calls"], 0)
+            self.assertFalse(first["publication_permitted"])
+            self.assertEqual(len(first["original_frame_jobs"]), 5)
+            self.assertEqual(sum(j["target_kind"] == "REAL_SOURCE_LOCKED_I2I_PHOTOGRAPH"
+                                 for j in first["original_frame_jobs"]), 4)
+            self.assertEqual(sum(j["target_kind"] == "VIDU_SOURCE_ANCHOR_NO_I2I"
+                                 for j in first["original_frame_jobs"]), 1)
+            self.assertTrue(all(len(j["source_sha256"]) == 64
+                                for j in first["original_frame_jobs"]))
+            self.assertTrue(set(j["job_id"] for j in first["original_frame_jobs"])
+                              .isdisjoint(j["job_id"] for j in second["original_frame_jobs"]))
+
+
 if __name__ == "__main__":
     unittest.main()
