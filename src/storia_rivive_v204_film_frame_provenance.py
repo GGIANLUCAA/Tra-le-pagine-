@@ -138,6 +138,8 @@ def inspect(manifest: dict, report: dict, cache: Path) -> dict:
         "verified_film_extracted_frames": 5,
         "source_film_sha256": expected.lower(),
         "fps_filter": fps_filter,
+        "selected_frame_names": [name for name, _, _ in selected],
+        "selected_frame_pixel_sha256": [pixels for _, _, pixels in selected],
     })
     return result
 
