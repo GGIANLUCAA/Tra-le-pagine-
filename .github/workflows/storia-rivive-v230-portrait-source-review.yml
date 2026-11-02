@@ -1,0 +1,87 @@
+name: "La Storia Rivive V230 · real actor-safe portrait source preview (NO PAID API)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v230-portrait-source-review.yml"
+      - "config/storia_rivive_v230_source_crops.json"
+      - "src/storia_rivive_v230_curated_portrait.py"
+      - "tests/test_storia_rivive_v230_curated_portrait.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v230-portrait-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  v230_review:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 26
+    env:
+      EPISODE_ID: early_cinema_sorrows_1910_v225
+    steps:
+      - uses: actions/checkout@v4
+      - name: One-shot commit gate, never repeat download on unrelated changes
+        id: once
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$PR_HEAD_SHA"
+          SUBJECT="$(git log -1 --format=%s "$PR_HEAD_SHA")"
+          if [[ "$SUBJECT" == 'storia V230: source-locked portrait preview once [V230-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+            echo 'V230_ONE_SHOT_CONFIRMED'
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V230_SKIP_DUPLICATE_REVIEW'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.once.outputs.allowed == 'true'
+        with:
+          python-version: "3.11"
+      - name: Install only free local decoders and Pillow
+        if: steps.once.outputs.allowed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "pillow>=10,<13"
+      - name: Run source and custom portrait regressions before film download
+        if: steps.once.outputs.allowed == 'true'
+        run: |
+          python -m unittest discover -s tests -p "test_storia_rivive_v230_curated_portrait.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v217_four_pilot_source_review.py" -v
+      - name: Acquire true 1910 film and source-locked five selected frames
+        if: steps.once.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          TARGET="output/v230/$EPISODE_ID"
+          SOURCE="output/v230/source/$EPISODE_ID"
+          python src/storia_rivive_v217_four_pilot_source_review.py --manifest queue/storia_rivive_four_pilots_v217.json --episode "$EPISODE_ID" --out "$TARGET"
+          python src/storia_rivive_scout_v101.py --order "$TARGET/WORK_ORDER.json" --out "$SOURCE"
+          python src/storia_rivive_frame_rank_v101.py --frames "$SOURCE/original_frames" --out "$TARGET/V101_RANKING.json"
+          python src/storia_rivive_v210_shot_aware_selection.py --ranking "$TARGET/V101_RANKING.json" --scout "$SOURCE/SCOUT_REPORT.json" --cache "$SOURCE" --exclusions config/storia_rivive_v221_source_frame_exclusions.json --out "$TARGET/SHOT_AWARE_SELECTION_V210.json"
+          python src/storia_rivive_v217_four_pilot_source_review.py --manifest queue/storia_rivive_four_pilots_v217.json --episode "$EPISODE_ID" --out "$TARGET" --cache "$SOURCE" --finish
+      - name: Build five REAL reframed 9:16 motion shots and SHA reports, no photo or Vidu
+        if: steps.once.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v230_curated_portrait.py \
+            --config config/storia_rivive_v230_source_crops.json \
+            --selection "output/v230/$EPISODE_ID/SHOT_AWARE_SELECTION_V210.json" \
+            --scout "output/v230/source/$EPISODE_ID/SCOUT_REPORT.json" \
+            --source "output/v230/source/$EPISODE_ID" \
+            --episode "$EPISODE_ID" \
+            --out "output/v230/$EPISODE_ID/V230_PORTRAIT_SOURCE"
+      - name: Upload actual preview MP4, cropped source PNGs and source SHA QA, not full film
+        if: always() && steps.once.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: v230-1910-curated-portrait-source-review-not-final
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v230/${{ env.EPISODE_ID }}/V230_PORTRAIT_SOURCE/
+            output/v230/${{ env.EPISODE_ID }}/SHOT_AWARE_SELECTION_V210.json
+            output/v230/${{ env.EPISODE_ID }}/V217_RESEARCH_REPORT.json
+            output/v230/source/${{ env.EPISODE_ID }}/SCOUT_REPORT.json
