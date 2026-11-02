@@ -47,7 +47,14 @@ def likely_intertitle(path: Path) -> bool:
     total = 160 * 90
     dark = sum(hist[:40]) / total
     bright = sum(hist[160:]) / total
-    return dark >= 0.70 and bright >= 0.02
+    # V219: real Paramountown (1922) source cards are *faint grey*, not
+    # bright white: 70s/140s text cards had <0.1% pixels >=160 and the
+    # previous bright-pixel-only heuristic admitted them as camera shots.
+    # A near-black source with no recoverable photographic detail must not
+    # become an I2I request, whether it is an intertitle or an underexposed
+    # frame. This remains a conservative prefilter, not visual approval.
+    mean_luma = sum(level * count for level, count in enumerate(hist)) / total
+    return (dark >= 0.70 and bright >= 0.02) or (dark >= 0.88 and mean_luma <= 26)
 
 
 def sha256_stream(path: Path) -> str:

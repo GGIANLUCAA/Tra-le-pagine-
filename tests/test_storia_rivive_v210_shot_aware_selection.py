@@ -68,6 +68,45 @@ class ShotAwareSelectionTests(unittest.TestCase):
             self.assertEqual(result["preselected"], [])
             self.assertFalse(result["provider_calls_permitted"])
 
+    def test_v219_faint_grey_intertitle_is_not_photographic_source(self):
+        # Paramountown 1922 had dark cards with faint grey text; V216's
+        # bright>=2% check missed them. No OCR or artificial title metadata.
+        from PIL import ImageDraw
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "faint_card.png"
+            card = Image.new("RGB", (1280, 720), (16, 16, 16))
+            draw = ImageDraw.Draw(card)
+            draw.rectangle((100, 80, 1180, 650), outline=(75, 75, 75), width=3)
+            for y in (210, 260, 310, 360):
+                draw.rectangle((350, y, 930, y + 8), fill=(75, 75, 75))
+            card.save(path)
+            self.assertTrue(v210.likely_intertitle(path))
+            # Dark-looking but visibly photographic geometry must remain
+            # eligible for later human review, not automatically certified.
+            photo = Image.new("RGB", (1280, 720), (65, 65, 65))
+            ImageDraw.Draw(photo).ellipse((280, 80, 1050, 680), fill=(125, 125, 125))
+            photo.save(path)
+            self.assertFalse(v210.likely_intertitle(path))
+
+    def test_v219_faint_cards_cannot_fill_five_photographic_segments(self):
+        from PIL import ImageDraw
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            for i in range(2, 10):
+                path = root / "original_frames" / f"frame_{i:02d}.png"
+                card = Image.new("RGB", (1280, 720), (16, 16, 16))
+                draw = ImageDraw.Draw(card)
+                for y in (210, 260, 310, 360):
+                    draw.rectangle((350, y, 930, y + 8), fill=(75, 75, 75))
+                card.save(path)
+            result = v210.select(ranking, scout, root,
+                                 detector=lambda *_: [8, 18, 28, 38, 48])
+            self.assertEqual(result["reason"], "FIVE_PHOTOGRAPHIC_CANDIDATE_SEGMENTS_UNAVAILABLE")
+            self.assertGreaterEqual(result["likely_intertitle_count"], 8)
+            self.assertEqual(result["preselected"], [])
+            self.assertFalse(result["provider_calls_permitted"])
+
     def test_single_shot_does_not_produce_fake_five(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
