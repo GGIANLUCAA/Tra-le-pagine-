@@ -1,0 +1,34 @@
+name: ArtVision V121 - gallery photo source audit tests
+on:
+  pull_request:
+    paths:
+      - 'src/artvision_v121_photo_source_audit.py'
+      - 'tests/test_artvision_v121_photo_source_audit.py'
+      - 'config/artvision_v121_photo_source_visual_audit.json'
+      - '.github/workflows/artvision-v121-photo-source-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrity_fails_closed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run offline ZIP/provenance/tampering regressions
+        run: python -m unittest discover -s tests -p 'test_artvision_v121_photo_source_audit.py' -v
+      - name: 'Preserve V119 status: no automatic approval of candidate photographs'
+        run: |
+          python - <<'PY'
+          import json
+          library=json.load(open('config/artvision_museum_library_v119.json'))
+          review=json.load(open('config/artvision_v121_photo_source_visual_audit.json'))
+          assert len(review['entries']) == 5
+          assert review['accepted_room_preset_count'] == 0
+          assert all(not e['eligible_for_museum_final'] for e in review['entries'])
+          assert not any(x['status']=='approved' for x in library['rooms'])
+          print('V121 photo provenance only. Zero approved Museum presets, zero approved videos.')
+          PY
