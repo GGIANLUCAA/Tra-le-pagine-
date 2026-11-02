@@ -43,6 +43,12 @@ class ShotAwareSelectionTests(unittest.TestCase):
             self.assertEqual(result["status"], v210.READY, result)
             self.assertEqual(len(result["preselected"]), 5)
             self.assertEqual(len(set(result["candidate_segment_times_s"])), 5)
+            # FFmpeg fps=1/5 chooses the midpoint t=2.5, 7.5, ...;
+            # using t=0,5,... made preview endpoints different from PNGs.
+            self.assertTrue(all((t - 2.5) % 5 == 0
+                                for t in result["candidate_segment_times_s"]))
+            self.assertEqual(result["source_frame_timestamp_model"],
+                             "V223_FFMPEG_FPS_BIN_MIDPOINT_NOT_LEFT_EDGE")
             self.assertFalse(result["five_distinct_shots_approved"])
             self.assertFalse(result["provider_calls_permitted"])
 
@@ -185,10 +191,11 @@ class ShotAwareSelectionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             _, ranking, scout = fixture(root)
-            # Samples at 5-second intervals; cut just before sample makes it unsafe.
+            # Midpoint samples at 2.5,7.5,...; a cut 0.5s before each
+            # sample makes the 1.2s motion lead-in cross into another shot.
             result = v210.select(ranking, scout, root,
-                                 detector=lambda *_: [4.5, 9.5, 14.5, 19.5, 24.5,
-                                                      29.5, 34.5, 39.5, 44.5, 49.5])
+                                 detector=lambda *_: [2, 7, 12, 17, 22, 27,
+                                                      32, 37, 42, 47, 52, 57])
             self.assertEqual(result["reason"], "FIVE_SHOT_SEGMENTS_WITH_VALID_LEADIN_UNAVAILABLE")
 
     def test_modified_source_is_rejected(self):
