@@ -61,7 +61,7 @@ def prepare(manifest: dict, episode_id: str, out: Path) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     order = {
         "contract": "LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
-        "cycle_id": "v217_four_unique_source_research",
+        "cycle_id": "v217_four_unique_source_research_" + episode_id,
         "episode_id": episode_id,
         "source_page": item["source_page"],
         "paid_api_call_permitted": False,
