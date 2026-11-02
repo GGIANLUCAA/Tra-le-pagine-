@@ -1,6 +1,7 @@
 name: Video Library Studio - Automatic Import
 on:
   push:
+    branches: [main]
     paths:
       - .github/workflows/video-library-r2-import.yml
   schedule:
