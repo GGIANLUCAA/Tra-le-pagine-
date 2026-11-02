@@ -64,7 +64,11 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) 
     duration = scout.get("duration_s")
     if isinstance(duration, bool) or not isinstance(duration, (float, int)) or not math.isfinite(duration) or duration < 5:
         return block("INVALID_DURATION")
-    period = max(1.0, duration / 12)
+    period = scout.get("sampling_period_s", max(1.0, duration / 12))
+    if isinstance(period, bool) or not isinstance(period, (float, int)) or not math.isfinite(period):
+        return block("INVALID_SCOUT_SAMPLING_PERIOD")
+    if period < 1 or period > max(1.0, duration / 12) + 0.001:
+        return block("SCOUT_SAMPLING_PERIOD_OUT_OF_BOUNDS")
     # V214: a long authentic reel is not automatically unusable. Inspect only
     # its first bounded window, and accept frames sampled within that window.
     # Never claim that later scenes were examined. No change to source SHA.
