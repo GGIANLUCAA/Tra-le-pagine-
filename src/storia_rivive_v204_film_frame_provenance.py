@@ -107,7 +107,13 @@ def inspect(manifest: dict, report: dict, cache: Path) -> dict:
 
     # V101 scout uses this exact fps filter, count and naming convention.
     # A mismatched decoder/version fails safely rather than certifying fake provenance.
-    period = max(1.0, duration / 12)
+    # V215: use the period recorded by the actual scout. Legacy cache without
+    # metadata remains compatible, but new v4 caches always bind this value.
+    period = report.get("sampling_period_s", max(1.0, duration / 12))
+    if isinstance(period, bool) or not isinstance(period, (int, float)) or not math.isfinite(period):
+        return block("INVALID_SCOUT_SAMPLING_PERIOD")
+    if period < 1 or period > max(1.0, duration / 12) + 0.001:
+        return block("SCOUT_SAMPLING_PERIOD_OUT_OF_BOUNDS")
     fps_filter = "fps=1/" + str(round(period, 4))
     try:
         with tempfile.TemporaryDirectory(prefix="storia-v204-") as tmp:
