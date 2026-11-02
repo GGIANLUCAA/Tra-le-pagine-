@@ -117,6 +117,18 @@ class V215BoundedScouting(unittest.TestCase):
             self.assertEqual(result["status"], "FIVE_FRAMES_REEXTRACTED_FROM_FILM_REVIEW_PENDING", result)
             self.assertEqual(result["fps_filter"], "fps=1/35.0")
 
+    def test_v216_real_source_rejected_after_actual_contact_sheet_review(self):
+        auto = load("storia_rivive_autopilot_v101")
+        history = json.loads((ROOT / "queue" / "storia_rivive_episode_history_v200.json").read_text())
+        bank = json.loads((ROOT / "queue" / "storia_rivive_candidates_v58.json").read_text())
+        candidate = next(x for x in bank["candidates"]
+                         if x["id"] == "france_cotton_mill_1920")
+        self.assertFalse(candidate["rights_italy_verified"])
+        self.assertEqual(candidate["license"], "PUBLIC_DOMAIN")
+        self.assertIn(candidate["id"], auto.history_exclusions(history))
+        self.assertEqual(next(x["status"] for x in history["entries"]
+                              if x["episode_id"] == candidate["id"]), "source_rejected")
+
     def test_invalid_sampling_period_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
             folder = Path(tmp)
