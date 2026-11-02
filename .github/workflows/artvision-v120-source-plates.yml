@@ -1,0 +1,105 @@
+name: ArtVision V120 - Public domain photographic gallery plates, one shot
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/v120_source_gallery_probe.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-v120-gallery-plates-one-shot
+  cancel-in-progress: false
+jobs:
+  get_licensed_gallery_images:
+    name: Retrieve actual gallery photographs - no generative images or billing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify read-only owner request and safe list
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('requests/artvision/v120_source_gallery_probe.json'))
+          assert d['one_shot'] and d['no_paid_APIs'] and d['no_social_publish']
+          assert d['no_painting_masters_modified'] and d['candidate_only_not_user_approved']
+          PY
+      - name: Install Pillow for actual photograph preview and basic QA
+        run: python -m pip install 'Pillow>=11,<14'
+      - name: Download real rooms from authenticated Commons filename and preserve rights
+        run: |
+          python - <<'PY'
+          import os,json,hashlib,urllib.request,urllib.parse,io,zipfile
+          from pathlib import Path
+          from PIL import Image,ImageOps,ImageDraw
+          root=Path('output/artvision_v120_photographic_candidate_plates')
+          root.mkdir(parents=True,exist_ok=True)
+          # Each photographed venue is REAL; its depicted exhibition is NOT the historical
+          # home of any newly composited artwork. Claim it as a staged composite only.
+          entries=[
+           ('GAL01','Interior - Corcoran Gallery of Art - DSC01195.JPG','CC0 1.0','Daderot',
+            'https://commons.wikimedia.org/wiki/File:Interior_-_Corcoran_Gallery_of_Art_-_DSC01195.JPG'),
+           ('GAL02','Museum Barberini Innenraum leer.jpg','CC BY 4.0','Daniel Naber',
+            'https://commons.wikimedia.org/wiki/File:Museum_Barberini_Innenraum_leer.jpg'),
+           ('GAL03','MuseumoftheWalls exhibition.jpg','CC0 1.0','Roundtheworld',
+            'https://commons.wikimedia.org/wiki/File:MuseumoftheWalls_exhibition.jpg'),
+           ('GAL04','Room 70 Begining the Collection.jpg','CC0 1.0','14GTR',
+            'https://commons.wikimedia.org/wiki/File:Room_70_Begining_the_Collection.jpg'),
+           ('GAL05','Game Room - Interior of the gallery.jpg','CC0 1.0','Loralielo',
+            'https://commons.wikimedia.org/wiki/File:Game_Room_-_Interior_of_the_gallery.jpg')
+          ]
+          data={'schema':'artvision-v120-gallery-photo-candidates','asset_count':0,
+                'notice':'Real photographic source, not the real room for any overlaid artwork. All source candidates ONLY. Never autoapprove.',
+                'items':[]}
+          tiles=[]
+          for ident,title,license,author,page in entries:
+           name=title.replace(' ','_')
+           h=hashlib.md5(name.encode()).hexdigest()
+           url='https://upload.wikimedia.org/wikipedia/commons/'+h[0]+'/'+h[:2]+'/'+urllib.parse.quote(name)
+           row=dict(id=ident,title=title,license=license,author=author,source_page=page,
+                    exact_image_url=url,photo_of_actual_location=True,
+                    hypothetical_artwork_in_room_is_digital_composite=True,
+                    historic_museum_of_artwork=False,status='download_pending_review')
+           try:
+            req=urllib.request.Request(url,headers={'User-Agent':'ArtVision-Research/1.0 (artvision@openai.com)'})
+            with urllib.request.urlopen(req,timeout=65) as f:
+             content_type=f.headers.get('Content-Type','')
+             buf=f.read(19_000_001)
+            if len(buf)<120_000 or len(buf)>19_000_000 or 'image' not in content_type:raise ValueError('Non-image/invalid size')
+            with Image.open(io.BytesIO(buf)) as image:
+             im=ImageOps.exif_transpose(image).convert('RGB')
+             if min(im.size)<700:raise ValueError('too low resolution')
+             path=root/(ident+'_PHOTOGRAPH.jpg')
+             im.save(path,quality=90,optimize=True)
+             row.update(status='photo_downloaded_unreviewed',dimensions=list(im.size),bytes=path.stat().st_size,
+                        sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                        local_basename=path.name)
+             im.thumbnail((355,340),Image.Resampling.LANCZOS)
+             tile=Image.new('RGB',(400,390),'#e6e6e6')
+             tile.paste(im,((400-im.width)//2,10))
+             ImageDraw.Draw(tile).text((15,354),ident+' '+title[:33],fill='#111')
+             tiles.append(tile)
+            print('PHOTO PASS',ident,row['bytes'],flush=True)
+           except Exception as e:
+            row.update(status='download_failed',error=str(e)[:300])
+            print('PHOTO FAIL',ident,str(e)[:180],flush=True)
+           data['items'].append(row)
+          data['asset_count']=sum(e['status']=='photo_downloaded_unreviewed' for e in data['items'])
+          if tiles:
+           sheet=Image.new('RGB',(400*len(tiles),390),'#fff')
+           for i,im in enumerate(tiles):sheet.paste(im,(i*400,0))
+           sheet.save(root/'FIVE_REAL_GALLERY_PHOTOGRAPHS_CONTACT.jpg',quality=91)
+          (root/'PROVENANCE_AND_RIGHTS.json').write_text(json.dumps(data,indent=2,ensure_ascii=False)+'\n')
+          (root/'README_NOT_A_RENDER.txt').write_text('These are 5 sourced gallery PHOTOGRAPHS for further study. They do not themselves constitute photorealistic moving Museum videos, approved templates or final artwork interiors. Credit each photographer and their license. Any combination with artwork is a declared digital installation, not historical evidence.\n')
+          if data['asset_count']<2:raise RuntimeError('No usable gallery sources, stop')
+          print(json.dumps({'downloaded':data['asset_count'],'candidate_rooms':5,'approved_rooms':0},indent=2))
+          PY
+      - name: Package actual sources for independent visual selection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V120_FIVE_REAL_GALLERY_SOURCES_REVIEW
+          path: output/artvision_v120_photographic_candidate_plates/
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 6
