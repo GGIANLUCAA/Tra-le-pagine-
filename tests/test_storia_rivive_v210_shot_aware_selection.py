@@ -1,9 +1,11 @@
 """V210 source-locked shot-aware preselection regressions; no external calls."""
 import hashlib
+import random
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import storia_rivive_v210_shot_aware_selection as v210
@@ -18,6 +20,15 @@ def fixture(folder):
                "source_visual_quality_score": round(0.50 + (i % 3) * 0.1, 3)}
               for i in range(1, 13)]
     ranking = {"status": v210.READY, "all_candidates": frames}
+    original = folder / "original_frames"
+    original.mkdir()
+    for i in range(1, 13):
+        rng = random.Random(i)
+        pixels = [v for _ in range(96 * 72)
+                  for v in [(k := rng.randrange(40, 225), k, k)]]
+        image = Image.new("RGB", (96, 72))
+        image.putdata(pixels)
+        image.resize((640, 480), Image.Resampling.NEAREST).save(original / f"frame_{i:02d}.png")
     return film, ranking, scout
 
 
@@ -58,6 +69,47 @@ class ShotAwareSelectionTests(unittest.TestCase):
             film.write_bytes(b"changed")
             result = v210.select(ranking, scout, root, detector=lambda *_: [8, 18, 28, 38, 48])
             self.assertEqual(result["reason"], "SOURCE_HASH_CHANGED")
+
+    def test_repeated_portrait_selects_lower_ranked_alternative(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            original = root / "original_frames"
+            # Two different cut segments repeat the exact same visible shot.
+            (original / "frame_04.png").write_bytes((original / "frame_05.png").read_bytes())
+            result = v210.select(ranking, scout, root,
+                                 detector=lambda *_: [8, 18, 28, 38])
+            self.assertEqual(result["status"], v210.READY, result)
+            names = [row["filename"] for row in result["preselected"]]
+            self.assertFalse("frame_04.png" in names and "frame_05.png" in names)
+            self.assertEqual(len(names), 5)
+            self.assertEqual(result["visible_portrait_novelty_preflight"],
+                             "V205_THRESHOLDS_REUSED_ON_SOURCE_PNG")
+
+    def test_all_portraits_identical_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            original = root / "original_frames"
+            repeated = (original / "frame_01.png").read_bytes()
+            for i in range(2, 13):
+                (original / f"frame_{i:02d}.png").write_bytes(repeated)
+            result = v210.select(ranking, scout, root,
+                                 detector=lambda *_: [8, 18, 28, 38, 48])
+            self.assertEqual(result["reason"],
+                             "FIVE_VISUALLY_DISTINCT_SHOT_CANDIDATES_UNAVAILABLE")
+            self.assertEqual(result["preselected"], [])
+            self.assertFalse(result["provider_calls_permitted"])
+
+    def test_missing_source_png_blocks_before_i2i(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            (root / "original_frames" / "frame_05.png").unlink()
+            result = v210.select(ranking, scout, root,
+                                 detector=lambda *_: [8, 18, 28, 38, 48])
+            self.assertEqual(result["reason"], "SOURCE_FRAME_MISSING_OR_UNSAFE")
+            self.assertEqual(result["preselected"], [])
 
     def test_overlong_source_is_bounded(self):
         with tempfile.TemporaryDirectory() as tmp:
