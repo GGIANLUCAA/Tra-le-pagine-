@@ -67,6 +67,7 @@ class V101Tests(unittest.TestCase):
             result=frame_rank.rank(temp)
             self.assertEqual(len(result["preselected"]),5)
             self.assertEqual(result["approved_restored_photos"],0)
+            self.assertNotIn("frame_01.png",[x["filename"] for x in result["preselected"]])
             self.assertTrue(all(x["approved_for_i2i"] is False for x in result["preselected"]))
     def test_i2i_manifest_locks_five_real_source_frames(self):
         from PIL import Image
