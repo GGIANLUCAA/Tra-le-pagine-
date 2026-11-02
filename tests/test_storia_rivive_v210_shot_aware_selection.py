@@ -88,6 +88,20 @@ class ShotAwareSelectionTests(unittest.TestCase):
             photo.save(path)
             self.assertFalse(v210.likely_intertitle(path))
 
+    def test_v219_dark_car_shape_not_rejected_as_intertitle(self):
+        # The real Paramountown 175s frame is a car against a dark backdrop;
+        # V216 rejected it because it has >2% bright pixels on black.
+        from PIL import ImageDraw
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "car_like_photo.png"
+            image = Image.new("RGB", (1280, 720), (18, 18, 18))
+            draw = ImageDraw.Draw(image)
+            draw.ellipse((160, 300, 940, 570), fill=(135, 135, 135))
+            draw.ellipse((290, 490, 420, 640), fill=(170, 170, 170))
+            draw.ellipse((730, 490, 860, 640), fill=(170, 170, 170))
+            image.save(path)
+            self.assertFalse(v210.likely_intertitle(path))
+
     def test_v219_faint_cards_cannot_fill_five_photographic_segments(self):
         from PIL import ImageDraw
         with tempfile.TemporaryDirectory() as tmp:

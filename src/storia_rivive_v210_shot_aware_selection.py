@@ -47,14 +47,46 @@ def likely_intertitle(path: Path) -> bool:
     total = 160 * 90
     dark = sum(hist[:40]) / total
     bright = sum(hist[160:]) / total
-    # V219: real Paramountown (1922) source cards are *faint grey*, not
-    # bright white: 70s/140s text cards had <0.1% pixels >=160 and the
-    # previous bright-pixel-only heuristic admitted them as camera shots.
-    # A near-black source with no recoverable photographic detail must not
-    # become an I2I request, whether it is an intertitle or an underexposed
-    # frame. This remains a conservative prefilter, not visual approval.
     mean_luma = sum(level * count for level, count in enumerate(hist)) / total
-    return (dark >= 0.70 and bright >= 0.02) or (dark >= 0.88 and mean_luma <= 26)
+    # V219: real Paramountown cards at 70/140s have grey text (<0.1%
+    # pixels >=160). V216 also falsely rejected the actual 175s car shot:
+    # dark background + large, connected bright vehicle != a title card.
+    # Keep dark but genuinely structured photographic regions for review.
+    if dark < 0.70:
+        return False
+    if dark >= 0.88 and mean_luma <= 26:
+        return True  # unreadably dark or faint text; never feed I2I
+    pixels = gray.tobytes()  # 160x90 grayscale, no OCR or new dependency
+    visited = bytearray(total)
+    largest = 0
+    for i, value in enumerate(pixels):
+        if value < 100 or visited[i]:
+            continue
+        visited[i] = 1
+        pending = [i]
+        area = 0
+        while pending:
+            k = pending.pop()
+            area += 1
+            x = k % 160
+            neighbors = (k - 160 if k >= 160 else -1,
+                         k + 160 if k < total - 160 else -1,
+                         k - 1 if x else -1,
+                         k + 1 if x < 159 else -1)
+            for n in neighbors:
+                if n >= 0 and not visited[n] and pixels[n] >= 100:
+                    visited[n] = 1
+                    pending.append(n)
+        largest = max(largest, area)
+        if largest >= 250:
+            break
+    if largest < 250:
+        return True  # isolated lettering or irrecoverably dark source
+    # V216's synthetic high-contrast cards are long repeated horizontal
+    # lines; reject them without treating the actual bright car as text.
+    broad_rows = sum(sum(pixels[y * 160 + x] >= 100 for x in range(160)) >= 90
+                     for y in range(90))
+    return bright >= 0.02 and broad_rows >= 12
 
 
 def sha256_stream(path: Path) -> str:
