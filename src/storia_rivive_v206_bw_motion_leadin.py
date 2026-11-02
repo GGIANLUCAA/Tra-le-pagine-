@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""V206: check genuine local B/W motion BEFORE each selected archival freeze.
+"""V206/V207: check sustained visible 9:16 B/W motion before each archival freeze.
 
 V204 proves source pixels; V205 detects near-duplicate stills. Neither proves
 that a 1.2s moving B/W lead-in exists for each of the five selected frames.
@@ -36,9 +36,14 @@ def sha256(path: Path) -> str:
 
 def metric(first: Path, last: Path) -> dict:
     """Remove global exposure variation; require spatial change as well."""
-    with Image.open(first) as a, Image.open(last) as b:
-        x = ImageOps.grayscale(a).resize((96, 96))
-        y = ImageOps.grayscale(b).resize((96, 96))
+    def visible_portrait(path: Path):
+        with Image.open(path) as source:
+            w, h = source.size
+            crop_w = min(w, (h * 9) // 16)
+            left = (w - crop_w) // 2
+            # Motion outside the actual 9:16 output must not count.
+            return ImageOps.grayscale(source.crop((left, 0, left + crop_w, h))).resize((96, 96))
+    x, y = visible_portrait(first), visible_portrait(last)
     raw = ImageStat.Stat(ImageChops.difference(x, y)).mean[0]
     norm = ImageStat.Stat(ImageChops.difference(
         ImageOps.autocontrast(x), ImageOps.autocontrast(y))).mean[0]
@@ -46,17 +51,31 @@ def metric(first: Path, last: Path) -> dict:
             "moving": raw >= 4.0 and norm >= 3.0}
 
 
+def sequence_metric(frames: list[Path]) -> dict:
+    """Require motion across multiple time intervals, not a single abrupt cut."""
+    if len(frames) < 4:
+        raise ValueError("Four time samples required")
+    intervals = [metric(frames[i], frames[i + 1]) for i in range(len(frames) - 1)]
+    moving_intervals = sum(bool(part["moving"]) for part in intervals)
+    result = metric(frames[0], frames[-1])
+    result.update({"moving": moving_intervals >= 2,
+                   "moving_intervals": moving_intervals,
+                   "interval_evidence": intervals,
+                   "visible_portrait_only": True})
+    return result
+
+
 def sample(film: Path, before: float, folder: Path) -> dict:
     folder.mkdir(parents=True, exist_ok=True)
     cmd = ["ffmpeg", "-nostdin", "-y", "-v", "error", "-ss", f"{before:.4f}",
            "-i", str(film), "-t", str(LEAD_SECONDS),
-           "-vf", "fps=3,scale=96:96", "-frames:v", "4",
+           "-vf", "fps=3,scale=320:-2", "-frames:v", "4",
            str(folder / "motion_%02d.png")]
     subprocess.run(cmd, check=True, capture_output=True, timeout=100)
     frames = sorted(folder.glob("motion_*.png"))
-    if len(frames) < 3:
+    if len(frames) < 4:
         raise ValueError("Insufficient decoded film motion frames")
-    return metric(frames[0], frames[-1])
+    return sequence_metric(frames)
 
 
 def inspect(manifest: dict, provenance: dict, novelty: dict,
