@@ -202,9 +202,25 @@
         "duration_s": 54.625,
         "full_decode_20261102": "PASS",
         "artistic_review": "pending",
-        "reuse_only_after_quality_review": true
+        "reuse_only_after_quality_review": true,
+        "non_destructive_cover_revision": {
+          "version": "V129",
+          "status": "rendered_needs_review_not_new_4x1",
+          "new_mp4_sha256": "ad77e5e795fcbad47baa7eec9fb22a64b15bc8bfc85d82d2d5cab633e20fdcbc",
+          "bytes": 70222855,
+          "duration_seconds": 54.625,
+          "codec": "H264/AAC 1080x1920 24fps",
+          "audio_AAC_ADTS_original_identical_sha256": "5e960406c1d8eb465ab5bf3fc4431ff5f1d17c1826bd7ed7e919d7c83a2b5256",
+          "full_ffmpeg_decode_pass": true,
+          "owner_approved": false,
+          "gold_v25": false,
+          "stored_on_github_or_r2": false,
+          "library_upload": "failed_library_storage_limit_exceeded",
+          "chat_file_only": true,
+          "report": "docs/productions/2026-11-02-artvision-v129-two-cinema-title-revisions-qa.md"
+        }
       },
-      "editorial_note": "Existing Cinema V25 cover lacks English artwork title; source 2126x1517 needs higher-res alternative; no automatic re-render",
+      "editorial_note": "Existing Cinema V25 cover lacks English artwork title; source 2126x1517 needs higher-res alternative; no automatic re-render V129 revised cover title visibly correct; original master preserved. Library storage quota full; backup pending.",
       "preflight_status": "research_incomplete_not_render_authorized",
       "four_slots": [
         "critico_standard",
@@ -240,9 +256,25 @@
         "duration_s": 53.167,
         "full_decode_20261102": "PASS",
         "artistic_review": "pending",
-        "reuse_only_after_quality_review": true
+        "reuse_only_after_quality_review": true,
+        "non_destructive_cover_revision": {
+          "version": "V129",
+          "status": "rendered_needs_review_not_new_4x1",
+          "new_mp4_sha256": "f0fdc56e8f6933cdb3b546b00c706cca0e2a39a204506ecc51a4c6870173a325",
+          "bytes": 73933155,
+          "duration_seconds": 53.167,
+          "codec": "H264/AAC 1080x1920 24fps",
+          "audio_AAC_ADTS_original_identical_sha256": "c9a41aad4fa6287726fc138bb0ff40e345d38519eb68a3540cb9b549010b7c89",
+          "full_ffmpeg_decode_pass": true,
+          "owner_approved": false,
+          "gold_v25": false,
+          "stored_on_github_or_r2": false,
+          "library_upload": "failed_library_storage_limit_exceeded",
+          "chat_file_only": true,
+          "report": "docs/productions/2026-11-02-artvision-v129-two-cinema-title-revisions-qa.md"
+        }
       },
-      "editorial_note": "Existing Cinema V25 cover lacks English artwork title; painting asset 2000x2942 needs resolution review",
+      "editorial_note": "Existing Cinema V25 cover lacks English artwork title; painting asset 2000x2942 needs resolution review V129 revised cover title visibly correct; original master preserved. Library storage quota full; backup pending.",
       "preflight_status": "research_incomplete_not_render_authorized",
       "four_slots": [
         "critico_standard",
@@ -360,5 +392,6 @@
     "no_v25_auto_gold": true,
     "no_claim_four_mp4_without_four_real_files": true
   },
-  "note": "Three earlier standalone Cinema masters recovered/verified are NOT new 4x1 deliveries. The Fall of Rebel Angels source+music and 3 legacy Cinema MP4s are physically available in this run, no Museum/voice approved. Preserve all old masters."
+  "note": "Three earlier standalone Cinema masters recovered/verified are NOT new 4x1 deliveries. The Fall of Rebel Angels source+music and 3 legacy Cinema MP4s are physically available in this run, no Museum/voice approved. Preserve all old masters.",
+  "last_non_destructive_revision_v129": "Two legacy Cinema Standard candidates revised in ChatGPT; 0 new 4x1 slots and Library backup blocked by storage limit"
 }
