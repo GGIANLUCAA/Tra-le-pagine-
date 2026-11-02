@@ -21,6 +21,13 @@ Data ricerca: 2026-11-02. Owner unico ArtVision 4×1: `6adca191603c8191a90d51909
 - Il Rijksmuseum pubblica immagini ultra-dettagliate (717 gigapixel, comunicato 03/01/2022: https://www.rijksmuseum.nl/en/press/press-releases/rijksmuseum-publishes-717-gigapixel-photograph-of-the-night-watch ), ma questo **non** significa che il file 717 GP sia stato scaricato, che si possa usarlo senza controlli o che rappresenti una scena 3D.
 - **Gate aperti:** download e SHA-256 reale del file preciso, frame/sala foto compatibili, licenza BY-SA o alternativa, dimensioni dell'area pittorica, anteprima video V118/V119, musica e voce. Stato 0/4.
 
+
+### Alternative per evitare una licenza ShareAlike nel Museum di Rembrandt
+
+- **Fotografia 2024 con licenza CC BY 4.0 (non SA)**: https://commons.wikimedia.org/wiki/File:The_Night_Watch_undergoing_restoration,_on_exhibit_in_2024.jpg ; fotografo **Vbena**, 24/06/2024, **4080×3072**, fonte indipendente con attribuzione. Documenta **l'opera durante restauro/esposizione**, non una sala storica libera da ponteggi. Non usarla come sala museale normale senza verificare visivamente l'inquadratura e dichiarare il contesto. La licenza consente adattamenti con attribuzione, salvo diritti terzi.
+- **Foto storica della sala 1984, CC0 dichiarata**: https://commons.wikimedia.org/wiki/File:Rijksmuseum_Amsterdam,_Nightwatch_room_after_restoration,_1984.jpg , **5382×4062**, fonte Rijksmuseum archivio storico. Non presenta la sala corrente; l'etichetta CC0 della pagina va verificata sul file esatto e rispetto agli eventuali diritti terzi. È una **referenza architettonica**, non autorizzazione a spacciare una sala 1984 per l'attuale.
+- La fotografia 2016 CC BY-SA 2.0 resta candidata di ricerca; **preferire la fonte CC BY 4.0 o CC0 quando tecnicamente idonea**, senza falsificare anno, montatura o stato di conservazione.
+
 ## Stato operativo
 
 - **Nessuna modifica a master, V129, ZIP, Gold, pubblicazioni o autorizzazioni economiche**.
