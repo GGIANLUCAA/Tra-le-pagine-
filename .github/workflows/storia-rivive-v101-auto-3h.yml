@@ -7,6 +7,8 @@ on:
     paths:
       - ".github/workflows/storia-rivive-v101-auto-3h.yml"
       - "src/storia_rivive_v196_scout_gate.py"
+      - "src/storia_rivive_v202_source_handoff.py"
+      - "tests/test_storia_rivive_v202_source_handoff.py"
       - "src/storia_rivive_autopilot_v101.py"
       - "queue/storia_rivive_episode_history_v200.json"
       - "tests/test_storia_rivive_v101.py"
@@ -67,9 +69,10 @@ jobs:
       - name: Run fail-closed safety and flag geometry tests before research
         run: |
           set -euo pipefail
-          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v196_scout_gate.py
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v196_scout_gate.py src/storia_rivive_v202_source_handoff.py
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v196_scout_gate.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v202_source_handoff.py" -v
       - name: Create deterministic research work order for current UTC 3-hour window
         shell: bash
         run: |
@@ -131,6 +134,17 @@ jobs:
             --selection output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json \
             --source-dir "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
             --out output/storia_v101/I2I_INPUT_MANIFEST_V102.json
+      - name: V202 attest four photo source frames and the fifth Vidu anchor against actual scout bytes
+        if: steps.scout_status.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v202_source_handoff.py \
+            --manifest output/storia_v101/I2I_INPUT_MANIFEST_V102.json \
+            --order output/storia_v101/WORK_ORDER.json \
+            --scout-report "output/storia_v101/source-cache/$STORIA_EPISODE_ID/SCOUT_REPORT.json" \
+            --cache "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
+            --out output/storia_v101/SOURCE_HANDOFF_V202.json
       - name: Generate historically constrained small country flag and title draft
         if: env.STORIA_SOURCE_READY == 'true'
         shell: bash
@@ -174,9 +188,11 @@ jobs:
               scout=json.loads(check.read_text()) if check.is_file() else {"status":"SOURCE_SCOUT_NOT_AVAILABLE"}
               gate=json.loads((root/"SCOUT_GATE_V196.json").read_text())
               scout_status=scout.get("status")
-              ready=gate["ready"]
-              reason=None if ready else gate["reason"]
-              status_name="RESEARCH_PREPARATION_ONLY" if ready else "SOURCE_SCOUT_BLOCKED_NO_PRODUCTION"
+              handoff_path=root/"SOURCE_HANDOFF_V202.json"
+              handoff=json.loads(handoff_path.read_text()) if handoff_path.is_file() else {}
+              ready=gate["ready"] and handoff.get("status")=="SOURCE_HANDOFF_BYTES_VERIFIED_REVIEW_PENDING"
+              reason=None if ready else (handoff.get("reason") if gate["ready"] else gate["reason"])
+              status_name="SOURCE_HANDOFF_VERIFIED_REVIEW_PENDING" if ready else "SOURCE_HANDOFF_BLOCKED_NO_PRODUCTION"
               next_required=("4 verified source-locked I2I photos, real Vidu, V91/V94/V96/V99 and real artistic review"
                              if ready else "Replace/reacquire invalid source; do not start I2I or Vidu")
           status={"cycle_id":order["cycle_id"],"candidate":candidate,
@@ -199,6 +215,7 @@ jobs:
             output/storia_v101/CYCLE_STATUS.json
             output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
             output/storia_v101/I2I_INPUT_MANIFEST_V102.json
+            output/storia_v101/SOURCE_HANDOFF_V202.json
             output/storia_v101/TITLE_FLAG_DRAFT.png
             output/storia_v101/TITLE_FLAG_REPORT.json
             output/storia_v101/source-cache/*/SCOUT_REPORT.json
