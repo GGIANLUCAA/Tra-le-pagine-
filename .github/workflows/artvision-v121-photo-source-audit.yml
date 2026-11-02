@@ -20,7 +20,7 @@ jobs:
           python-version: '3.12'
       - name: Run offline ZIP/provenance/tampering regressions
         run: python -m unittest discover -s tests -p 'test_artvision_v121_photo_source_audit.py' -v
-      - name: Preserve V119 status: no automatic approval of candidate photographs
+      - name: 'Preserve V119 status: no automatic approval of candidate photographs'
         run: |
           python - <<'PY'
           import json
