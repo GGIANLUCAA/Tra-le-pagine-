@@ -77,3 +77,7 @@ Sorgenti fisiche riacquisite e hash:
 Prossima azione utile: verificare e costruire un **primo** preset Museum V119 realmente credibile con provino e cornice documentata (non galleria raster V114), poi source/rights e WAV zero-spesa verificata. Solo dopo passare ai render sequenziali; conservare i tre vecchi Cinema come candidati, senza contarli come nuove consegne.
 
 **Stato di questa esecuzione:** deduplica e recupero 3 MP4 reali, fonte+musica Bruegel, registrazione coda e lock; **0 nuove serie 4×1 e 0 nuovi MP4 renderizzati**. Gold V25 0, pubblicazioni 0, nuove spese 0.
+
+## Ricerca supplementare cornice Bruegel (02/11)
+
+È stata individuata la [fotografia di Sailko del preciso dipinto Bruegel, Bruxelles inv. 584](https://commons.wikimedia.org/wiki/File:Pieter_bruegel_il_vecchio,_Caduta_degli_angeli_ribelli,_1562,_37.JPG), scattata il 9 marzo 2016 e pubblicata CC BY 3.0 (3456×2304). **Non è ancora accertato tramite ispezione del file che mostri integralmente la cornice**: candidato documentale, non certificazione di cornice autentica, e non autorizza il rendering Museum V118/V119.
