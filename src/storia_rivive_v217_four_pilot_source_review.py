@@ -106,7 +106,9 @@ def endpoint_alignment(clip: Path, reference: Path) -> dict:
     normalized = ImageStat.Stat(ImageChops.difference(
         ImageOps.autocontrast(source), ImageOps.autocontrast(actual))).mean[0]
     # Conservative pixelwise preflight, NOT exact-frame or artistic approval.
-    return {"source_frame": reference.name, "luma_mae": round(raw, 2),
+    return {"source_frame": reference.name,
+            "source_frame_sha256": hashlib.sha256(reference.read_bytes()).hexdigest(),
+            "luma_mae": round(raw, 2),
             "contrast_mae": round(normalized, 2),
             "endpoint_visually_aligned": raw <= 24 and normalized <= 38}
 
@@ -139,7 +141,9 @@ def render_source_only_preview(
             "-movflags", "+faststart", str(clip)]
         subprocess.run(cmd, check=True, capture_output=True, timeout=90)
         clips.append(clip)
-        alignment.append(endpoint_alignment(clip, reference_frames[idx]))
+        match = endpoint_alignment(clip, reference_frames[idx])
+        match["selected_timecode_s"] = round(float(timestamp), 3)
+        alignment.append(match)
     (out / "SOURCE_ENDPOINT_ALIGNMENT_V223.json").write_text(
         json.dumps({"version": "V223_SOURCE_PREVIEW_ENDPOINT_EVIDENCE",
                     "alignment_is_not_exact_frame_certification": True,
