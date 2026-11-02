@@ -164,7 +164,7 @@ def main():
   if rc:raise RuntimeError(err.decode("utf-8","replace")[-2000:])
  except Exception:
   proc.kill();raise
- if frames!=960:raise ValueError(f"Unexpected frames {frames}")
+ if frames!=round(DURATION*FPS):raise ValueError(f"Unexpected frames {frames}; expected {round(DURATION*FPS)}")
  run(["ffmpeg","-v","error","-i",mp4,"-f","null","-"])
  cap=cv2.VideoCapture(str(mp4))
  if not cap.isOpened():raise ValueError("MP4 could not be opened for readback")
