@@ -62,6 +62,31 @@
         "status": "work-specific_photograph_candidate_not_yet_visual_frame_verified",
         "attribution_required": true,
         "source": "Wikimedia Commons file page"
+      },
+      "v131_source_and_legacy_video_qa": {
+        "date": "2026-11-02",
+        "status": "physical_readback_pass_legacy_only_no_new_4x1",
+        "source_artifact_id": 12775741359,
+        "artifact_zip_sha256": "3265e5f24b9078b312779b0b9c44d0dcc9d96fc39271a217fe399cfc2b35b143",
+        "source_artwork_sha256": "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5",
+        "source_artwork_pixels": [
+          3840,
+          2772
+        ],
+        "music_recording_sha256": "00a2fee94641761f37e74973eaaa654e1a8a628269f585707d46987558d07573",
+        "music_title": "Evening of Chaos",
+        "music_artist": "Kevin MacLeod",
+        "music_isrc": "USUAN1300041",
+        "music_license": "CC BY 4.0 attribution required",
+        "music_official_url": "https://remote.incompetech.com/music/royalty-free/index.html?Search=Search&isrc=USUAN1300041",
+        "legacy_mp4_full_decode": "PASS",
+        "legacy_mp4_sha256": "0bd2fb6e0aadd02ae1eab56fa804f5fcb914c15330121765e28ba5878531f12a",
+        "legacy_visual_qa": "11 timestamps inspected, repetition 5s/8s and 0.5s/2s; English cover already present; not V25 approved",
+        "museum_frame_exact_verified": false,
+        "museum_room_v119_approved": false,
+        "shared_critico_wav_verified": false,
+        "new_mp4_rendered": 0,
+        "report": "docs/productions/2026-11-02-artvision-v131-bruegel-source-readback-cinema-qa.md"
       }
     },
     {
@@ -488,5 +513,6 @@
     "source_downloads_verified": 0,
     "museum_presets_approved": 0,
     "commercial_rights_not_globally_cleared": true
-  }
+  },
+  "last_v131_source_readback_20261102": "Bruegel #1 source+music artifact CRC/SHA readback and legacy MP4 FFmpeg/11-frame QA; 0 new 4x1 slots, Museum/voice/delivery still blocked"
 }
