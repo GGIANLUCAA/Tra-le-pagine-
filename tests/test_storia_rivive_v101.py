@@ -127,6 +127,28 @@ class V101Tests(unittest.TestCase):
                        "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
             with self.assertRaisesRegex(ValueError,"Mixed original frame geometry"):
                 i2i.build(order,selection,d)
+    def test_i2i_rejects_symlink_frame(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic")
+            for i in range(1,6):
+                Image.new("RGB",(640,480),(i*30,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+            (d/"original_frames"/"frame_05.png").unlink()
+            (d/"original_frames"/"frame_05.png").symlink_to(d/"original_frames"/"frame_04.png")
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT","cycle_id":"storia-test",
+                   "episode_id":"test_episode","paid_api_call_permitted":False,"publish_permitted":False}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            with self.assertRaisesRegex(ValueError,"Symlink"):
+                i2i.build(order,selection,d)
+    def test_i2i_rejects_malformed_selection(self):
+        with tempfile.TemporaryDirectory() as temp:
+            with self.assertRaises(ValueError):
+                i2i.build({"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                           "paid_api_call_permitted":False,"publish_permitted":False},
+                          {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                           "preselected":[None]*5},Path(temp))
     def test_i2i_manifest_blocks_missing_source_frame(self):
         with tempfile.TemporaryDirectory() as temp:
             with self.assertRaises(ValueError):
