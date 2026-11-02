@@ -1,6 +1,7 @@
 """V210 source-locked shot-aware preselection regressions; no external calls."""
 import hashlib
 import random
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -35,6 +36,32 @@ def fixture(folder):
 
 
 class ShotAwareSelectionTests(unittest.TestCase):
+    def test_v223_ffmpeg_fps_midpoint_matches_actual_source_pixels(self):
+        # Reproduce the FFmpeg sampling bug with real decoded frames.
+        # fps=1/3 samples input seconds 1,4,7,10, NOT 0,3,6,9.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            film = root / "synthetic.mp4"
+            subprocess.run([
+                "ffmpeg", "-nostdin", "-v", "error", "-y",
+                "-f", "lavfi", "-i", "testsrc2=size=160x90:rate=1:duration=12",
+                "-c:v", "libx264", "-preset", "ultrafast", str(film)],
+                check=True, capture_output=True, timeout=30)
+            subprocess.run([
+                "ffmpeg", "-nostdin", "-v", "error", "-y", "-i", str(film),
+                "-vf", "fps=1/3", "-frames:v", "4",
+                str(root / "sample_%02d.png")],
+                check=True, capture_output=True, timeout=30)
+            subprocess.run([
+                "ffmpeg", "-nostdin", "-v", "error", "-y", "-i", str(film),
+                "-vsync", "0", str(root / "raw_%02d.png")],
+                check=True, capture_output=True, timeout=30)
+            for index, source_index in enumerate((2, 5, 8, 11), 1):
+                with Image.open(root / ("sample_%02d.png" % index)) as sample:
+                    with Image.open(root / ("raw_%02d.png" % source_index)) as source:
+                        self.assertEqual(sample.convert("RGB").tobytes(),
+                                         source.convert("RGB").tobytes())
+
     def test_uses_five_distinct_segments_instead_of_score_only(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
