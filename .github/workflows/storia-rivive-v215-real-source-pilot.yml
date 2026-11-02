@@ -1,9 +1,7 @@
 name: "La Storia Rivive V215 — vera pellicola HD: scout pilota gratuito"
+# First real source trial completed in run 41421362529. Future reruns are
+# manual only: do not redownload the same 63MB reel on every PR revision.
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/storia-rivive-v215-real-source-pilot.yml"
-      - "src/storia_rivive_v215_real_source_trial.py"
   workflow_dispatch:
 permissions:
   contents: read
