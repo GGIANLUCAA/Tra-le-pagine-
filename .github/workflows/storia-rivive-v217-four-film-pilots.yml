@@ -6,6 +6,8 @@ on:
       - "queue/storia_rivive_four_pilots_v217.json"
       - "src/storia_rivive_v217_four_pilot_source_review.py"
       - "src/storia_rivive_frame_rank_v101.py"
+      - "src/storia_rivive_v210_shot_aware_selection.py"
+      - "tests/test_storia_rivive_v210_shot_aware_selection.py"
       - "tests/test_storia_rivive_v217_four_pilot_source_review.py"
       - "tests/test_storia_rivive_v218_global_temporal_selection.py"
   workflow_dispatch:
@@ -31,6 +33,7 @@ jobs:
       - name: Six V217 regressions including decodable actual synthetic source preview MP4
         run: |
           python -m py_compile src/storia_rivive_v217_four_pilot_source_review.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v210_shot_aware_selection.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v217_four_pilot_source_review.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v218_global_temporal_selection.py" -v
 
