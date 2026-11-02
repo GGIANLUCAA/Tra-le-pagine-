@@ -33,7 +33,7 @@ def rank(folder):
     # V206 requires 1.2 seconds of genuine film BEFORE each selected freeze.
     # The first scout sample has no preceding footage and cannot be a valid shot.
     eligible=[n for n,row in enumerate(scored)
-              if re.fullmatch(r"frame_(?:0[2-9]|1[0-2])\\.png",row["filename"])]
+              if re.fullmatch(r"frame_(?:0[2-9]|1[0-2])\.png",row["filename"])]
     ranked=sorted(eligible,key=lambda n:(-scored[n]["source_visual_quality_score"],n))
     chosen=[]
     separation=max(1,len(scored)//6)
