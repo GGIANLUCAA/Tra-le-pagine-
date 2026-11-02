@@ -321,7 +321,23 @@
           "shared_audio_aac_ADTS_sha256": "7a5630505b3d6da889fb1addf01213067411c794c42684704ea381dc7506c80f",
           "V25_approved": false,
           "human_review": "pending",
-          "museum_room_historic": false
+          "museum_room_historic": false,
+          "v126_nondestructive_revision": {
+            "status": "rendered_needs_review",
+            "filename": "FABRITIUS_GOLDFINCH_CRITICO_MUSEUM_V126_PHOTO_ROOM_REVIEW.mp4",
+            "bytes": 22250664,
+            "sha256": "81633c939465807f70f9d1ea1aaca90d9984cb59dd87d196bccadb95dd46ecb8",
+            "duration_seconds": 99.55,
+            "ffmpeg_full_decode": "PASS on physically rendered local MP4",
+            "same_AAC_as_v117_and_critico_standard": true,
+            "visual_method": "Reuse existing more photographic Cinema Museum intro/outro; preserve V117 middle, original V117 MP4 and identical AAC",
+            "museum_artistic_approved": false,
+            "V25_Gold": false,
+            "permanent_private_archive_verified": false,
+            "Android_R2_playback_verified": false,
+            "human_full_speed_review": "pending",
+            "report": "docs/productions/2026-11-02-artvision-v126-turner-fabritius-four-real-mp4-review.md"
+          }
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -353,7 +369,22 @@
       "v117_two_cinema_previous_master_immutable": true,
       "v117_artifact_id": 13101194533,
       "v117_src_sha256": "b3c68e063addcb1cb4b49fb58b240750084b74cfb5957d91afa4db688f55830c",
-      "v117_gold_status": "0 owner approval pending"
+      "v117_gold_status": "0 owner approval pending",
+      "v126_four_slot_local_review": {
+        "slots": 4,
+        "mp4_full_decode_pass": 4,
+        "package_filename": "ARTVISION_FABRITIUS_4X1_V126_REVIEW_ANDROID_VERIFIED.zip",
+        "package_bytes": 93084575,
+        "package_sha256": "b9447b89ec645d0036fffdd64d19bf4f73285e6bb3e0df25a8facd8c4c125623",
+        "zip_crc_and_mp4_sha_readback": "PASS in container",
+        "covers_english": 4,
+        "social_drafts_unpublished": 16,
+        "library_upload_verified": false,
+        "site_playback_verified": false,
+        "Gold_V25": 0,
+        "previous_masters_preserved": true,
+        "report": "docs/productions/2026-11-02-artvision-v126-turner-fabritius-four-real-mp4-review.md"
+      }
     },
     {
       "group_id": "seurat_grande_jatte_1884",
@@ -457,7 +488,23 @@
           "human_artistic_review": "pending",
           "V25_approved": false,
           "museum_v119_approval": false,
-          "museum_quality_gate": "blocked_until_realistic_gallery_and_frame_visual_review"
+          "museum_quality_gate": "blocked_until_realistic_gallery_and_frame_visual_review",
+          "v126_nondestructive_revision": {
+            "status": "rendered_needs_review",
+            "filename": "TURNER_TEMERAIRE_CRITICO_MUSEUM_V126_PHOTO_ROOM_REVIEW.mp4",
+            "bytes": 21242775,
+            "sha256": "6270a844b0f39ce5a954e27790de0d1df62da6d9c0ad8b45b6ed466a678275dd",
+            "duration_seconds": 99.45,
+            "ffmpeg_full_decode": "PASS on physically rendered local MP4",
+            "same_AAC_as_v117_and_critico_standard": true,
+            "visual_method": "Reuse existing more photographic Cinema Museum intro/outro; preserve V117 middle, original V117 MP4 and identical AAC",
+            "museum_artistic_approved": false,
+            "V25_Gold": false,
+            "permanent_private_archive_verified": false,
+            "Android_R2_playback_verified": false,
+            "human_full_speed_review": "pending",
+            "report": "docs/productions/2026-11-02-artvision-v126-turner-fabritius-four-real-mp4-review.md"
+          }
         },
         "cinema_standard": {
           "status": "rendered_needs_review",
@@ -525,6 +572,21 @@
             "dossier_sync_result": "dry_run_hashes_passed; live sync ARCHIVE_SYNC_PENDING_VIDEO_NOT_IMPORTED"
           }
         }
+      },
+      "v126_four_slot_local_review": {
+        "slots": 4,
+        "mp4_full_decode_pass": 4,
+        "package_filename": "ARTVISION_TURNER_4X1_V126_REVIEW_ANDROID_VERIFIED.zip",
+        "package_bytes": 62757280,
+        "package_sha256": "dc32c8e72d5f821c1885377c6ae601e445e20349e487690ec9badea6ac31e584",
+        "zip_crc_and_mp4_sha_readback": "PASS in container",
+        "covers_english": 4,
+        "social_drafts_unpublished": 16,
+        "library_upload_verified": false,
+        "site_playback_verified": false,
+        "Gold_V25": 0,
+        "previous_masters_preserved": true,
+        "report": "docs/productions/2026-11-02-artvision-v126-turner-fabritius-four-real-mp4-review.md"
       }
     },
     {
