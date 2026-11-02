@@ -53,6 +53,8 @@ jobs:
         with:
           python-version: "3.11"
       - run: python -m pip install -q "pillow>=10,<13"
+      - name: Install FFmpeg for V209 synthetic film regression
+        run: sudo apt-get update -qq && sudo apt-get install -qq -y ffmpeg
       - name: Verify fail-closed V196 cache and V101 compatibility without provider calls
         run: |
           python -m py_compile src/storia_rivive_v196_scout_gate.py
