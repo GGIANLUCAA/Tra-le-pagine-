@@ -139,12 +139,27 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          status=0
           python src/storia_rivive_v202_source_handoff.py \
             --manifest output/storia_v101/I2I_INPUT_MANIFEST_V102.json \
             --order output/storia_v101/WORK_ORDER.json \
             --scout-report "output/storia_v101/source-cache/$STORIA_EPISODE_ID/SCOUT_REPORT.json" \
             --cache "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
-            --out output/storia_v101/SOURCE_HANDOFF_V202.json
+            --out output/storia_v101/SOURCE_HANDOFF_V202.json || status=$?
+          # A rejected source is a normal skip, not a false production success.
+          # Unexpected exit codes or a missing/unsafe rejection report still fail CI.
+          if [ "$status" -ne 0 ]; then
+            [ "$status" -eq 2 ] || exit "$status"
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("output/storia_v101/SOURCE_HANDOFF_V202.json").read_text())
+          assert data["status"] == "SOURCE_HANDOFF_BLOCKED"
+          assert data["provider_calls_permitted"] is False
+          assert data["publish_permitted"] is False
+          print("V203_SAFE_SOURCE_SKIP", data["reason"])
+          PY
+          fi
       - name: Generate historically constrained small country flag and title draft
         if: env.STORIA_SOURCE_READY == 'true'
         shell: bash

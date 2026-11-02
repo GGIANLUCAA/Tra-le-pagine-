@@ -38,13 +38,13 @@ def fixture(root):
     jobs = []
     for n in range(5):
         path = frames / ("frame_%02d.png" % (n + 1))
-        Image.new("RGB", (640, 480), (20 + n * 25, 30 + n, 80)).save(path)
+        Image.new("RGB", (1280, 720), (20 + n * 25, 30 + n, 80)).save(path)
         with Image.open(path) as image:
             pixels = hashlib.sha256(image.convert("RGB").tobytes()).hexdigest()
         photo = n < 4
         jobs.append({
             "source_file": str(path), "source_sha256": sha(path),
-            "source_pixel_sha256": pixels, "source_raster_px": [640, 480],
+            "source_pixel_sha256": pixels, "source_raster_px": [1280, 720],
             "target_kind": "REAL_SOURCE_LOCKED_I2I_PHOTOGRAPH" if photo else "VIDU_SOURCE_ANCHOR_NO_I2I",
             "role": "STATIC_COLOR_REVEAL" if photo else "VIDU_SOURCE_ANCHOR_NOT_RENDERED",
             "prompt": "Restore exact frame faithfully" if photo else None,
@@ -85,6 +85,7 @@ class SourceHandoffTests(unittest.TestCase):
         self.assertEqual(result["verified_vidu_source_anchors"], 1)
         self.assertFalse(result["provider_calls_permitted"])
         self.assertFalse(result["publish_permitted"])
+        self.assertEqual(result["native_portrait_crop_px"], [405, 720])
 
     def test_reject_film_swapped_after_scout(self):
         self.assertEqual(self.run_case(lambda m, o, r, c:
@@ -99,9 +100,35 @@ class SourceHandoffTests(unittest.TestCase):
             r.update(source_page="https://commons.wikimedia.org/wiki/File:Wrong.webm"))["reason"],
             "SCOUT_REPORT_NOT_BOUND_TO_ORDER")
 
+    def test_reject_sd_480p_even_with_updated_sha_and_metadata(self):
+        def mutate(m, o, r, c):
+            path = c / "original_frames/frame_01.png"
+            Image.new("RGB", (854, 480), (20, 30, 80)).save(path)
+            with Image.open(path) as image:
+                pixel_sha = hashlib.sha256(image.convert("RGB").tobytes()).hexdigest()
+            m["original_frame_jobs"][0].update(
+                source_sha256=sha(path), source_pixel_sha256=pixel_sha,
+                source_raster_px=[854, 480],
+            )
+        self.assertEqual(self.run_case(mutate)["reason"],
+                         "SOURCE_NATIVE_PORTRAIT_CROP_TOO_SMALL")
+
+    def test_reject_narrow_portrait_crop_despite_tall_source(self):
+        def mutate(m, o, r, c):
+            path = c / "original_frames/frame_01.png"
+            Image.new("RGB", (360, 1080), (20, 30, 80)).save(path)
+            with Image.open(path) as image:
+                pixel_sha = hashlib.sha256(image.convert("RGB").tobytes()).hexdigest()
+            m["original_frame_jobs"][0].update(
+                source_sha256=sha(path), source_pixel_sha256=pixel_sha,
+                source_raster_px=[360, 1080],
+            )
+        self.assertEqual(self.run_case(mutate)["reason"],
+                         "SOURCE_NATIVE_PORTRAIT_CROP_TOO_SMALL")
+
     def test_reject_native_png_tampered(self):
         def mutate(m, o, r, c):
-            Image.new("RGB", (640, 480), (0, 0, 0)).save(c / "original_frames/frame_03.png")
+            Image.new("RGB", (1280, 720), (0, 0, 0)).save(c / "original_frames/frame_03.png")
         self.assertEqual(self.run_case(mutate)["reason"], "SOURCE_FRAME_BYTES_SHA_MISMATCH")
 
     def test_reject_external_png_even_with_matching_hash(self):

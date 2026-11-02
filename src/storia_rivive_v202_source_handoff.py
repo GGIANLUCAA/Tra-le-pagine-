@@ -16,6 +16,10 @@ from PIL import Image
 
 READY = "REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW"
 MAX_FILM_BYTES = 160 * 1024 * 1024
+# V203: reject unusable native 9:16 crops before preparing paid I2I/Vidu.
+# These are conservative technical floors, NOT a certification of face detail.
+MIN_NATIVE_PORTRAIT_WIDTH = 400
+MIN_NATIVE_HEIGHT = 720
 
 
 def digest_file(path: Path) -> str:
@@ -110,6 +114,9 @@ def inspect(manifest: dict, order: dict, report: dict, cache: Path) -> dict:
             return block("SOURCE_PNG_DECODE_FAILED")
         if min(width, height) < 240 or job.get("source_raster_px") != [width, height]:
             return block("SOURCE_RASTER_MISMATCH")
+        native_portrait_width = min(width, (height * 9) // 16)
+        if height < MIN_NATIVE_HEIGHT or native_portrait_width < MIN_NATIVE_PORTRAIT_WIDTH:
+            return block("SOURCE_NATIVE_PORTRAIT_CROP_TOO_SMALL")
         if geometry is None:
             geometry = (width, height)
         elif geometry != (width, height):
@@ -150,6 +157,8 @@ def inspect(manifest: dict, order: dict, report: dict, cache: Path) -> dict:
         "verified_photo_source_frames": 4,
         "verified_vidu_source_anchors": 1,
         "source_film_sha256": film_sha,
+        "native_portrait_crop_px": [native_portrait_width, height],
+        "native_crop_preflight_only": True,
     })
     return result
 
