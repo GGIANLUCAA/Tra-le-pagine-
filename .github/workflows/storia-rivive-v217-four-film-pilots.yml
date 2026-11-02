@@ -5,7 +5,9 @@ on:
       - ".github/workflows/storia-rivive-v217-four-film-pilots.yml"
       - "queue/storia_rivive_four_pilots_v217.json"
       - "src/storia_rivive_v217_four_pilot_source_review.py"
+      - "src/storia_rivive_frame_rank_v101.py"
       - "tests/test_storia_rivive_v217_four_pilot_source_review.py"
+      - "tests/test_storia_rivive_v218_global_temporal_selection.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -30,6 +32,7 @@ jobs:
         run: |
           python -m py_compile src/storia_rivive_v217_four_pilot_source_review.py
           python -m unittest discover -s tests -p "test_storia_rivive_v217_four_pilot_source_review.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v218_global_temporal_selection.py" -v
 
   source_scout:
     needs: offline_v217_tests
