@@ -10,6 +10,9 @@ on:
       - "Produzione V16 - coda autonoma e ripresa"
       - "ArtVision Cinema V6 - film curatoriale"
       - "Tra le Pagine - Render episodio con effetti V4"
+      - "ArtVision V116 - 4 original artworks 16 videos with refined gallery"
+      - "VIDU · Gateway condiviso ChatGPT (tutte le chat del progetto)"
+      - "WOW LAB V1 — Autonomous isolated 2-hour visual studio"
     types: [completed]
     branches: [main]
   workflow_dispatch:
@@ -183,7 +186,8 @@ jobs:
               r.raise_for_status();chunk=r.json().get('artifacts',[])
               artifacts.extend(a for a in chunk if not a.get('expired') and a.get('name')!='github-pages')
               if len(chunk)<100:break
-          artifacts.sort(key=lambda a:(a.get('size_in_bytes') or 0,a.get('id') or 0))
+          # Recent productions first: prioritize new videos in the next direct import cycle.
+          artifacts.sort(key=lambda a:(a.get('created_at') or '',a.get('id') or 0),reverse=True)
           print('Nonexpired candidate artifacts:',len(artifacts),flush=True)
           downloaded=published=errors=0
           for a in artifacts:
@@ -202,14 +206,20 @@ jobs:
                           videos=[n for n in files if n.lower().endswith(('.mp4','.m4v','.mov'))]
                           if not videos:
                               cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']});continue
-                          allowed,reason=publication_gate(z,videos)
-                          if not allowed:
-                              print('SKIPPED UNREVIEWED:',a['name'],reason,flush=True)
-                              cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']})
-                              continue
-                          print('PUBLICATION GATE:',a['name'],reason,flush=True)
+                          # 2026-11-02 owner request: automatically archive NEW finished video files
+                          # on the website even if artistic V25 approval is pending.
+                          # This is site ingestion only, never social publishing or Gold approval.
+                          is_auto_archive=(a.get('created_at') or '')>='2026-11-02T09:00:00Z'
+                          if is_auto_archive:
+                              print('DIRECT SITE IMPORT (ART REVIEW NOT REQUIRED):',a['name'],flush=True)
+                          else:
+                              allowed,reason=publication_gate(z,videos)
+                              if not allowed:
+                                  print('LEGACY UNREVIEWED (not new auto-import):',a['name'],reason,flush=True)
+                                  continue
+                              print('LEGACY APPROVED IMPORT:',a['name'],reason,flush=True)
                           downloaded+=1
-                          for n in files:
+                          for n in videos:
                               name=pathlib.PurePosixPath(n).name
                               safe=re.sub(r'[^A-Za-z0-9_(). -]','_',name)[:180]
                               if not safe:continue
@@ -217,6 +227,23 @@ jobs:
                               with z.open(n) as src,fp.open('wb') as dst:
                                   import shutil;shutil.copyfileobj(src,dst)
                               if upload(fp,safe):published+=1
+                          # Add actual video objects to the website's editorial catalog now;
+                          # missing social copy/cover must NOT block the MP4 transfer.
+                          saved_keys=[]
+                          for n in videos:
+                              clean=re.sub(r'[^A-Za-z0-9_(). -]','_',pathlib.PurePosixPath(n).name)[:180]
+                              src_fp=wd/clean
+                              key=clean
+                              if status(key).get('size')!=src_fp.stat().st_size:
+                                  key=src_fp.stem+'__'+str(src_fp.stat().st_size)+src_fp.suffix
+                              if not status(key).get('exists'):
+                                  raise ValueError('Video missing after direct website upload: '+key)
+                              saved_keys.append(key)
+                          if saved_keys:
+                              seeded=cf('POST','/editorial-seed',json={'items':saved_keys})
+                              if not seeded.get('ok'):
+                                  raise ValueError('Site editorial catalog seed failed: '+repr(seeded))
+                              print('SITE CATALOG REGISTERED:',saved_keys,flush=True)
                           # V55: save source posts and production records next to their video in R2.
                           # The site then recovers authentic copy instead of auto-generated placeholders.
                           known={
@@ -228,7 +255,10 @@ jobs:
                             'TECNICHE_REGIA.md','POST_EDITORIAL_RESEARCH.json'}
                           v55=any(pathlib.PurePosixPath(m).name in ('DELIVERY_MANIFEST_V55.json','ARTVISION_DELIVERY_V55.json') for m in z.namelist())
                           text_items=[m for m in z.namelist() if pathlib.PurePosixPath(m).name in known and not m.endswith('/')]
-                          if v55:
+                          if v55 and is_auto_archive:
+                              missing=[social for social in ('POST_FACEBOOK.txt','POST_INSTAGRAM.txt','POST_TIKTOK.txt','POST_YOUTUBE.txt') if not any(pathlib.PurePosixPath(m).name==social for m in text_items)]
+                              if missing: print('EDITORIAL DRAFT (MP4 already archived), missing:',missing,flush=True)
+                          elif v55:
                               for social in ('POST_FACEBOOK.txt','POST_INSTAGRAM.txt','POST_TIKTOK.txt','POST_YOUTUBE.txt'):
                                   if not any(pathlib.PurePosixPath(m).name==social for m in text_items):
                                       raise ValueError('V55 missing required social attachment: '+social)
