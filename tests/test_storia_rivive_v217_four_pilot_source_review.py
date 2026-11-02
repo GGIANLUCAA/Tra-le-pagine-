@@ -74,8 +74,22 @@ class FourPilotSourceReviewTest(unittest.TestCase):
                 "-f", "lavfi", "-i", "testsrc2=size=640x360:rate=24:duration=13",
                 "-an", "-c:v", "libvpx-vp9", "-b:v", "600k", str(film)],
                 check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, timeout=60)
+            times = [1.5, 3.8, 6.0, 8.4, 11.0]
+            references = []
+            for i, t in enumerate(times, 1):
+                frame = root / ("frame_%02d.png" % i)
+                subprocess.run([
+                    "ffmpeg", "-nostdin", "-v", "error", "-y",
+                    "-ss", str(t), "-i", str(film), "-frames:v", "1", str(frame)],
+                    check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, timeout=30)
+                references.append(frame)
             review = v217.render_source_only_preview(
-                film, [1.5, 3.8, 6.0, 8.4, 11.0], root / "review")
+                film, times, root / "review", references)
+            self.assertTrue((root / "review" / "SOURCE_ENDPOINT_ALIGNMENT_V223.json").is_file())
+            evidence = json.loads((root / "review" /
+                                   "SOURCE_ENDPOINT_ALIGNMENT_V223.json").read_text())
+            self.assertEqual(len(evidence["checks"]), 5)
+            self.assertTrue(all(x["endpoint_visually_aligned"] for x in evidence["checks"]))
             self.assertEqual(review["source_shots"], 5)
             self.assertTrue((root / "review" / review["review_preview"]).is_file())
             self.assertEqual(review["width"], 720)
@@ -83,6 +97,41 @@ class FourPilotSourceReviewTest(unittest.TestCase):
             self.assertFalse(review["has_i2i_photos"])
             self.assertFalse(review["has_vidu_clip"])
             self.assertFalse(review["final_video"])
+
+
+    def test_v223_wrong_original_frame_blocks_source_preview(self):
+        # A card or different shot must never be accepted as a matching
+        # endpoint simply because the selected timecode is numerically valid.
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            film = root / "ORIGINAL_ARCHIVE.webm"
+            subprocess.run([
+                "ffmpeg", "-nostdin", "-v", "error", "-y",
+                "-f", "lavfi", "-i", "testsrc2=size=640x360:rate=24:duration=13",
+                "-an", "-c:v", "libvpx-vp9", "-b:v", "600k", str(film)],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, timeout=60)
+            references = []
+            for i in range(1, 6):
+                frame = root / ("frame_%02d.png" % i)
+                Image.new("RGB", (640, 360), (255, 255, 255)).save(frame)
+                references.append(frame)
+            with self.assertRaisesRegex(ValueError, "SOURCE_PREVIEW_FRAME_MISMATCH"):
+                v217.render_source_only_preview(
+                    film, [1.5, 3.8, 6.0, 8.4, 11.0], root / "review", references)
+            evidence = json.loads((root / "review" /
+                                   "SOURCE_ENDPOINT_ALIGNMENT_V223.json").read_text())
+            self.assertEqual(len(evidence["checks"]), 5)
+            self.assertTrue(any(not x["endpoint_visually_aligned"]
+                                for x in evidence["checks"]))
+
+    def test_v223_rejects_non_source_reference_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            frame = root / "untrusted.png"
+            frame.write_bytes(b"not an archive frame")
+            with self.assertRaisesRegex(ValueError, "INVALID_SOURCE_REFERENCE_FRAME"):
+                v217.endpoint_alignment(root / "clip.mp4", frame)
 
 
 if __name__ == "__main__":
