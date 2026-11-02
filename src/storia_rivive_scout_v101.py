@@ -53,7 +53,13 @@ def inspect(page,outdir):
     if not 1<=duration<=10000:raise ValueError("Source duration suspicious")
     m["duration_s"]=duration
     frames=outdir/"original_frames";frames.mkdir(exist_ok=True)
-    period=max(1.0,duration/12)
+    # V215: sample all twelve candidate frames INSIDE the bounded 420s cut scan.
+    # Long archival reels otherwise supply too few frames before V210 stops scanning.
+    sample_window=min(duration,420.0)
+    period=max(1.0,sample_window/12)
+    m["sampling_window_s"]=round(sample_window,4)
+    m["sampling_period_s"]=round(period,4)
+    m["sampling_scope"]="FIRST_BOUNDED_420_SECONDS"
     subprocess.run(["ffmpeg","-nostdin","-y","-v","error","-i",str(film),
                     "-vf","fps=1/"+str(round(period,4)),
                     "-frames:v","12",str(frames/"frame_%02d.png")],timeout=150,check=True)
