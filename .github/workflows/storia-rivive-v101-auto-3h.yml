@@ -10,6 +10,8 @@ on:
       - "src/storia_rivive_v202_source_handoff.py"
       - "src/storia_rivive_v204_film_frame_provenance.py"
       - "src/storia_rivive_v205_visual_novelty.py"
+      - "src/storia_rivive_v206_bw_motion_leadin.py"
+      - "tests/test_storia_rivive_v206_bw_motion_leadin.py"
       - "tests/test_storia_rivive_v205_visual_novelty.py"
       - "tests/test_storia_rivive_v204_film_frame_provenance.py"
       - "tests/test_storia_rivive_v202_source_handoff.py"
@@ -74,12 +76,13 @@ jobs:
       - name: Run fail-closed safety and flag geometry tests before research
         run: |
           set -euo pipefail
-          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v196_scout_gate.py src/storia_rivive_v202_source_handoff.py src/storia_rivive_v204_film_frame_provenance.py src/storia_rivive_v205_visual_novelty.py
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v196_scout_gate.py src/storia_rivive_v202_source_handoff.py src/storia_rivive_v204_film_frame_provenance.py src/storia_rivive_v205_visual_novelty.py src/storia_rivive_v206_bw_motion_leadin.py
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v196_scout_gate.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v202_source_handoff.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v204_film_frame_provenance.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v205_visual_novelty.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v206_bw_motion_leadin.py" -v
       - name: Create deterministic research work order for current UTC 3-hour window
         shell: bash
         run: |
@@ -225,6 +228,35 @@ jobs:
           else
             echo "verified=true" >> "$GITHUB_OUTPUT"
           fi
+      - name: V206 prove five local B/W moving lead-ins before archival freeze frames
+        id: bw_motion
+        if: steps.visual_novelty.outputs.verified == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          python src/storia_rivive_v206_bw_motion_leadin.py \
+            --manifest output/storia_v101/I2I_INPUT_MANIFEST_V102.json \
+            --provenance output/storia_v101/FILM_FRAME_PROVENANCE_V204.json \
+            --novelty output/storia_v101/VISUAL_NOVELTY_V205.json \
+            --scout "output/storia_v101/source-cache/$STORIA_EPISODE_ID/SCOUT_REPORT.json" \
+            --cache "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
+            --out output/storia_v101/BW_MOTION_V206.json || status=$?
+          if [ "$status" -ne 0 ]; then
+            [ "$status" -eq 2 ] || exit "$status"
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("output/storia_v101/BW_MOTION_V206.json").read_text())
+          assert data["status"] == "BW_MOTION_BLOCKED"
+          assert data["provider_calls_permitted"] is False
+          assert data["publish_permitted"] is False
+          print("V206_SAFE_SOURCE_SKIP", data["reason"])
+          PY
+            echo "verified=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "verified=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Generate historically constrained small country flag and title draft
         if: env.STORIA_SOURCE_READY == 'true'
         shell: bash
@@ -274,13 +306,17 @@ jobs:
               provenance=json.loads(provenance_path.read_text()) if provenance_path.is_file() else {}
               novelty_path=root/"VISUAL_NOVELTY_V205.json"
               novelty=json.loads(novelty_path.read_text()) if novelty_path.is_file() else {}
+              motion_path=root/"BW_MOTION_V206.json"
+              motion=json.loads(motion_path.read_text()) if motion_path.is_file() else {}
               ready=(gate["ready"] and handoff.get("status")=="SOURCE_HANDOFF_BYTES_VERIFIED_REVIEW_PENDING"
                      and provenance.get("status")=="FIVE_FRAMES_REEXTRACTED_FROM_FILM_REVIEW_PENDING"
-                     and novelty.get("status")=="FIVE_VISUALLY_NONREDUNDANT_FRAMES_SHOT_REVIEW_PENDING")
+                     and novelty.get("status")=="FIVE_VISUALLY_NONREDUNDANT_FRAMES_SHOT_REVIEW_PENDING"
+                     and motion.get("status")=="FIVE_BW_MOTION_LEADINS_SHOT_REVIEW_PENDING")
               reason=(None if ready else gate["reason"] if not gate["ready"]
                       else handoff.get("reason") if handoff.get("status")!="SOURCE_HANDOFF_BYTES_VERIFIED_REVIEW_PENDING"
                       else provenance.get("reason","V204_PROVENANCE_MISSING") if provenance.get("status")!="FIVE_FRAMES_REEXTRACTED_FROM_FILM_REVIEW_PENDING"
-                      else novelty.get("reason","V205_NOVELTY_MISSING"))
+                      else novelty.get("reason","V205_NOVELTY_MISSING") if novelty.get("status")!="FIVE_VISUALLY_NONREDUNDANT_FRAMES_SHOT_REVIEW_PENDING"
+                      else motion.get("reason","V206_MOTION_MISSING"))
               status_name="SOURCE_HANDOFF_VERIFIED_REVIEW_PENDING" if ready else "SOURCE_HANDOFF_BLOCKED_NO_PRODUCTION"
               next_required=("4 verified source-locked I2I photos, real Vidu, V91/V94/V96/V99 and real artistic review"
                              if ready else "Replace/reacquire invalid source; do not start I2I or Vidu")
@@ -307,6 +343,7 @@ jobs:
             output/storia_v101/SOURCE_HANDOFF_V202.json
             output/storia_v101/FILM_FRAME_PROVENANCE_V204.json
             output/storia_v101/VISUAL_NOVELTY_V205.json
+            output/storia_v101/BW_MOTION_V206.json
             output/storia_v101/TITLE_FLAG_DRAFT.png
             output/storia_v101/TITLE_FLAG_REPORT.json
             output/storia_v101/source-cache/*/SCOUT_REPORT.json
