@@ -89,7 +89,7 @@ def endpoint_alignment(clip: Path, reference: Path) -> dict:
     Ignore the preview's top text overlay, never infer source lock from names.
     """
     if reference.is_symlink() or not reference.is_file() or not re.fullmatch(
-            r"frame_(0[1-9]|1[0-2])\\.png", reference.name):
+            r"frame_(0[1-9]|1[0-2])\.png", reference.name):
         raise ValueError("INVALID_SOURCE_REFERENCE_FRAME")
     with Image.open(reference) as original:
         if original.format != "PNG":
@@ -143,7 +143,7 @@ def render_source_only_preview(
     (out / "SOURCE_ENDPOINT_ALIGNMENT_V223.json").write_text(
         json.dumps({"version": "V223_SOURCE_PREVIEW_ENDPOINT_EVIDENCE",
                     "alignment_is_not_exact_frame_certification": True,
-                    "checks": alignment}, indent=2) + "\\n", encoding="utf-8")
+                    "checks": alignment}, indent=2) + "\n", encoding="utf-8")
     if not all(item["endpoint_visually_aligned"] for item in alignment):
         raise ValueError("SOURCE_PREVIEW_FRAME_MISMATCH")
     paths = out / "concat.txt"
@@ -198,7 +198,7 @@ def finish(manifest: dict, episode_id: str, cache: Path, output: Path) -> dict:
         try:
             if (not isinstance(chosen, list) or len(chosen) != 5
                     or any(not isinstance(x, dict) or not isinstance(x.get("filename"), str)
-                           or not re.fullmatch(r"frame_(0[1-9]|1[0-2])\\.png", x["filename"])
+                           or not re.fullmatch(r"frame_(0[1-9]|1[0-2])\.png", x["filename"])
                            for x in chosen)):
                 raise ValueError("SOURCE_PREVIEW_INVALID_SELECTED_FRAMES")
             expected = scout.get("original_sha256")
