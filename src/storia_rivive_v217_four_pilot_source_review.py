@@ -107,7 +107,7 @@ def render_source_only_preview(
     paths.write_text("".join("file '%s'\n" % p.name for p in clips), encoding="utf-8")
     preview = out / "SOURCE_REVIEW_ONLY_NOT_FINAL.mp4"
     subprocess.run(["ffmpeg", "-nostdin", "-hide_banner", "-v", "error", "-y",
-                    "-f", "concat", "-safe", "0", "-i", str(paths),
+                    "-f", "concat", "-safe", "0", "-i", str(paths.resolve()),
                     "-c:v", "copy", "-movflags", "+faststart", str(preview)],
                    check=True, capture_output=True, timeout=50, cwd=out)
     probe = subprocess.run(
