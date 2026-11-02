@@ -5,6 +5,7 @@ on:
       - ".github/workflows/storia-rivive-v217-four-film-pilots.yml"
       - "queue/storia_rivive_four_pilots_v217.json"
       - "src/storia_rivive_v217_four_pilot_source_review.py"
+      - "src/storia_rivive_i2i_prepare_v102.py"
       - "src/storia_rivive_frame_rank_v101.py"
       - "src/storia_rivive_v210_shot_aware_selection.py"
       - "config/storia_rivive_v221_source_frame_exclusions.json"
@@ -113,6 +114,51 @@ jobs:
             --episode "$EPISODE_ID" \
             --out "output/v217/$EPISODE_ID" \
             --cache "output/v217/source/$EPISODE_ID" --finish
+      - name: V224 prepare actual source-locked I2I requests and Vidu anchor, zero provider calls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - "$EPISODE_ID" <<'PY'
+          import hashlib
+          import json
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, "src")
+          from storia_rivive_i2i_prepare_v102 import build
+
+          episode = sys.argv[1]
+          target = Path("output/v217") / episode
+          source = Path("output/v217/source") / episode
+          report = json.loads((target / "V217_RESEARCH_REPORT.json").read_text())
+          if report.get("status") != "FIVE_SOURCE_SHOTS_REVIEW_PENDING":
+              print("V224_SOURCE_NOT_QUALIFIED_NO_I2I_HANDOFF", report.get("reason"))
+              raise SystemExit(0)
+          alignment = json.loads((target / "SOURCE_ENDPOINT_ALIGNMENT_V223.json").read_text())
+          selection = json.loads((target / "SHOT_AWARE_SELECTION_V210.json").read_text())
+          checks = alignment.get("checks", [])
+          chosen = selection.get("preselected", [])
+          if (len(checks) != 5 or len(chosen) != 5
+                  or any(check.get("endpoint_visually_aligned") is not True
+                         or check.get("source_frame") != row.get("filename")
+                         for check, row in zip(checks, chosen))):
+              raise SystemExit("V224_SOURCE_ALIGNMENT_FAILED_CANNOT_PREPARE_I2I")
+          for check in checks:
+              frame = source / "original_frames" / check["source_frame"]
+              if hashlib.sha256(frame.read_bytes()).hexdigest() != check["source_frame_sha256"]:
+                  raise SystemExit("V224_SOURCE_FRAME_HASH_CHANGED")
+          order = json.loads((target / "WORK_ORDER.json").read_text())
+          jobs = build(order, selection, source)
+          if (jobs["photos_generated"] != 0 or jobs["provider_requests_sent"] != 0
+                  or jobs["vidu_calls"] != 0 or jobs["photo_jobs_prepared"] != 4
+                  or jobs["source_frames_prepared"] != 5
+                  or jobs["publication_permitted"] is not False):
+              raise SystemExit("V224_UNSAFE_I2I_HANDOFF")
+          jobs["v224_handoff"] = "FIVE_SOURCE_CANDIDATES_SOURCE_LOCKED_NOT_ARTISTICALLY_APPROVED"
+          jobs["endpoint_alignment_is_not_exact_frame_certification"] = True
+          (target / "I2I_INPUT_MANIFEST_V102.json").write_text(
+              json.dumps(jobs, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          print("V224_FOUR_REAL_FRAME_I2I_INPUTS_PREPARED_ONE_VIDU_ANCHOR_NO_GENERATION", episode)
+          PY
       - name: Upload source footage evidence, contact sheet and any REAL preview for QA
         uses: actions/upload-artifact@v4
         with:
