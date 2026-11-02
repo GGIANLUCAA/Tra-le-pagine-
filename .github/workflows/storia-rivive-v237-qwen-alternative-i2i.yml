@@ -108,6 +108,8 @@ jobs:
           report['paid_credit_spend_allowed']=False
           p.write_text(json.dumps(report,indent=2)+'\n')
           print('V237_VERIFIED',report['status'],'NO_PAID_API_NO_VIDU_FINAL_0_OF_4')
+          if not success:
+              raise SystemExit('V237_FREE_PROVIDER_DID_NOT_RETURN_A_REAL_IMAGE')
           PY
       - name: Store actual source/new photo comparison as PRIVATE QA artifact, never release
         if: always() && steps.gate.outputs.allowed == 'true'
