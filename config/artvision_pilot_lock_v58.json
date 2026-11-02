@@ -174,5 +174,35 @@
     "ChatGPT_Library_backup_blocked_full": "last_reported_storage_full_in_V113; no V116 upload attempted",
     "ChatGPT_Library_backup_verified": false,
     "artifact_retention_days": 30
+  },
+  "authorized_mass_series_20261102": {
+    "enabled": true,
+    "authorization": "Owner explicit directive 2026-11-02: Vai continua con la produzione di massa. Supersedes only earlier restrictions on choosing seventh and later NEW distinct artworks, not quality/economic/safety gates.",
+    "precedence": "This field supersedes earlier false flags restricting seventh-and-later artwork selection. Older pilot scopes and existing master protections remain historical.",
+    "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+    "new_artworks_distinct_from_existing": true,
+    "no_duplicate_group_ids": true,
+    "sequential_render_only": true,
+    "max_concurrent_artvision_renders": 1,
+    "exact_four_slots": [
+      "critico_standard",
+      "critico_museum",
+      "cinema_standard",
+      "cinema_museum"
+    ],
+    "same_voice_for_critico_pair": true,
+    "new_tts_only_if_free_quota_and_actual_billing_verified": true,
+    "no_paid_api_calls_without_separate_specific_cost_consent": true,
+    "vidu_included_credits_only_if_verified": true,
+    "museum_quality_gate": "V118/V119; photo-real true-scale room and work-specific documented frame, human review; no procedural-raster fallback",
+    "museum_preset_status_as_of_20261102": "0 approved, new Museum final render/delivery blocked until compliant",
+    "public_social_publication": false,
+    "private_archive_only_if_permission_storage_readback_verified": true,
+    "no_master_overwrite_or_delete": true,
+    "no_automatic_v25_gold": true,
+    "no_automatic_release_or_publish": true,
+    "artifact_must_be_real_mp4_full_ffmpeg_decode_and_download_readback": true,
+    "skip_cycle_if_quality_sources_cost_or_archive_not_verified": true,
+    "current_production_state": "authorized_but_quality_preflight_blocked; do not trigger old V114/V116/V117 renderers"
   }
 }
