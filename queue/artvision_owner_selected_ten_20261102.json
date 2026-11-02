@@ -104,7 +104,26 @@
         "sha1_commons": "0d3fc8b7381774f9dd001e17de0f22888f6aba90",
         "status": "framed_exact_work_independent_photo_licensed_not_historical_frame_attestation_not_downloaded",
         "attribution_required": true,
-        "owner_approval": false
+        "owner_approval": false,
+        "commons_file_sha1_claimed": "0d3fc8b7381774f9dd001e17de0f22888f6aba90",
+        "commons_bytes_claimed": 7515342,
+        "commons_category": "Framed paintings",
+        "copyright_territory_review": "Sailko CC BY 3.0 independently licensed photo; distinct Tate/Google Art Project clean reproduction has UK Tate copyright claim; do not conflate their rights",
+        "frame_historically_original_verified": false,
+        "file_sha256_download_verified": false,
+        "full_frame_and_perspective_visual_review": false,
+        "documentation": "docs/productions/2026-11-02-artvision-v130-source-rights-lady-nightwatch.md"
+      },
+      "clean_image_rights_caveat": {
+        "commons_url": "https://commons.wikimedia.org/wiki/File:John_William_Waterhouse_-_The_Lady_of_Shalott_-_Google_Art_Project_edit.jpg",
+        "size_px": [
+          4180,
+          3208
+        ],
+        "commons_license_label": "PDM PD-Art",
+        "tate_uk_copyright_claim_on_specific_reproduction": true,
+        "multi_territory_commercial_clearance_verified": false,
+        "do_not_render_until_resolved": true
       }
     },
     {
@@ -134,7 +153,35 @@
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
-      "Gold_V25": false
+      "Gold_V25": false,
+      "hd_image_candidate": {
+        "url": "https://commons.wikimedia.org/wiki/File:The_Nightwatch_by_Rembrandt_-_Rijksmuseum.jpg",
+        "pixels": [
+          14168,
+          11528
+        ],
+        "commons_bytes_claimed": 36661073,
+        "commons_sha1_claimed": "53db595a5a1bca243b152b175d65f0f2f1ab1ff8",
+        "license_claim": "Commons PDM / PD-Art; Rijksmuseum policy supports PD/CC0 reuse where applicable",
+        "local_download_sha256_verified": false,
+        "ai_edge_reconstruction_2021_excluded": true
+      },
+      "museum_gallery_photo_candidate": {
+        "url": "https://commons.wikimedia.org/wiki/File:Nachtwacht_(27008744135).jpg",
+        "author": "Eric de Redelijkheid",
+        "photo_date": "2016-05-11",
+        "pixels": [
+          4608,
+          3456
+        ],
+        "license": "CC BY-SA 2.0",
+        "source_identifies_exact_work_and_actual_gallery": true,
+        "share_alike_derivative_compatibility_verified": false,
+        "status": "licensed_reference_research_only_not_approved_for_commercial_master",
+        "local_download_sha256_verified": false,
+        "visual_review": false
+      },
+      "source_research_report": "docs/productions/2026-11-02-artvision-v130-source-rights-lady-nightwatch.md"
     },
     {
       "id": "bruegel_tower_babel_1563_khm_gg1026",
@@ -407,5 +454,14 @@
     "no_claim_four_mp4_without_four_real_files": true
   },
   "note": "Three earlier standalone Cinema masters recovered/verified are NOT new 4x1 deliveries. The Fall of Rebel Angels source+music and 3 legacy Cinema MP4s are physically available in this run, no Museum/voice approved. Preserve all old masters.",
-  "last_non_destructive_revision_v129": "Two legacy Cinema Standard candidates revised in ChatGPT; 0 new 4x1 slots and Library backup blocked by storage limit"
+  "last_non_destructive_revision_v129": "Two legacy Cinema Standard candidates revised in ChatGPT; 0 new 4x1 slots and Library backup blocked by storage limit",
+  "latest_source_research_v130": {
+    "date": "2026-11-02",
+    "report": "docs/productions/2026-11-02-artvision-v130-source-rights-lady-nightwatch.md",
+    "new_4x1_mp4": 0,
+    "owner_selected_work_count": 10,
+    "source_downloads_verified": 0,
+    "museum_presets_approved": 0,
+    "commercial_rights_not_globally_cleared": true
+  }
 }
