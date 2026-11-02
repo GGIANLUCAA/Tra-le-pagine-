@@ -115,7 +115,11 @@ def inspect(manifest: dict, provenance: dict, novelty: dict,
     names = provenance.get("selected_frame_names")
     if not isinstance(jobs, list) or len(jobs) != 5 or not isinstance(names, list) or len(names) != 5:
         return block("INVALID_FIVE_FRAME_BINDING")
-    period = max(1.0, duration / 12)
+    period = scout.get("sampling_period_s", max(1.0, duration / 12))
+    if isinstance(period, bool) or not isinstance(period, (int, float)) or not math.isfinite(period):
+        return block("INVALID_SCOUT_SAMPLING_PERIOD")
+    if period < 1 or period > max(1.0, duration / 12) + 0.001:
+        return block("SCOUT_SAMPLING_PERIOD_OUT_OF_BOUNDS")
     if provenance.get("fps_filter") != "fps=1/" + str(round(period, 4)):
         return block("SCOUT_FPS_MISMATCH")
     evidence = []
