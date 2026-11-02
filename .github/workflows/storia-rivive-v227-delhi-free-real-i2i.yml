@@ -1,0 +1,163 @@
+name: "La Storia Rivive V227 · Delhi real film ONE free I2I source comparison (NO VIDU)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v227-delhi-free-real-i2i.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v227-delhi-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  free_photo:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    env:
+      EPISODE_ID: delhi_ruins_1910_v217
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free CPU restoration and actual video decoder
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5" "onnxruntime>=1.17,<2" "huggingface_hub>=0.26,<1" "gradio_client>=1,<2"
+      - name: Offline regressions before any free provider attempt
+        run: |
+          python -m unittest discover -s tests -p 'test_storia_rivive_v210_shot_aware_selection.py' -q
+          python -m unittest discover -s tests -p 'test_storia_rivive_v217_four_pilot_source_review.py' -q
+          python -m unittest discover -s tests -p 'test_storia_rivive_v77_identity_guard.py' -q
+      - name: Download real 1912 film, inspect five source shots, verify preview endpoints
+        run: |
+          set -euo pipefail
+          TARGET="output/v227/$EPISODE_ID"
+          SOURCE="output/v227/source/$EPISODE_ID"
+          mkdir -p "$TARGET"
+          python src/storia_rivive_v217_four_pilot_source_review.py \
+            --manifest queue/storia_rivive_four_pilots_v217.json \
+            --episode "$EPISODE_ID" --out "$TARGET"
+          python src/storia_rivive_scout_v101.py \
+            --order "$TARGET/WORK_ORDER.json" --out "$SOURCE"
+          python src/storia_rivive_frame_rank_v101.py \
+            --frames "$SOURCE/original_frames" --out "$TARGET/V101_RANKING.json"
+          python src/storia_rivive_v210_shot_aware_selection.py \
+            --ranking "$TARGET/V101_RANKING.json" \
+            --scout "$SOURCE/SCOUT_REPORT.json" --cache "$SOURCE" \
+            --exclusions config/storia_rivive_v221_source_frame_exclusions.json \
+            --out "$TARGET/SHOT_AWARE_SELECTION_V210.json"
+          python src/storia_rivive_v217_four_pilot_source_review.py \
+            --manifest queue/storia_rivive_four_pilots_v217.json \
+            --episode "$EPISODE_ID" --out "$TARGET" --cache "$SOURCE" --finish
+      - name: V102 source-lock exact frame_04 and prepare original portrait crop
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,sys
+          from pathlib import Path
+          from PIL import Image
+          sys.path.insert(0,"src")
+          from storia_rivive_i2i_prepare_v102 import build
+          eid="delhi_ruins_1910_v217"
+          base=Path("output/v227")
+          source=base/"source"/eid
+          out=base/eid
+          scout=json.loads((source/"SCOUT_REPORT.json").read_text())
+          selection=json.loads((out/"SHOT_AWARE_SELECTION_V210.json").read_text())
+          report=json.loads((out/"V217_RESEARCH_REPORT.json").read_text())
+          align=json.loads((out/"SOURCE_ENDPOINT_ALIGNMENT_V223.json").read_text())
+          order=json.loads((out/"WORK_ORDER.json").read_text())
+          film_sha="0a0de7b032cdb19e34d4dac5a6efca02dfa4b00260411aa82290c54b2899f278"
+          frame_sha="8771b50f5a26b3e27eadf00ad085f998bfe2d552daa7f8492027a4c40c6c2a71"
+          if (scout.get("original_sha256")!=film_sha or
+              report.get("status")!="FIVE_SOURCE_SHOTS_REVIEW_PENDING" or
+              selection.get("status")!="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW" or
+              len(align.get("checks",[]))!=5 or
+              any(x.get("endpoint_visually_aligned") is not True for x in align["checks"])):
+              raise SystemExit("V227_REAL_SOURCE_OR_ENDPOINT_NOT_VERIFIED")
+          jobs=build(order,selection,source)
+          job=jobs["original_frame_jobs"][1]
+          full=source/"original_frames"/"frame_04.png"
+          sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+          if (job["source_sha256"]!=frame_sha or
+              job["source_file"]!=str(full) or
+              sha(full)!=frame_sha or
+              job["target_kind"]!="REAL_SOURCE_LOCKED_I2I_PHOTOGRAPH" or
+              jobs["source_video_sha256"]!=film_sha or
+              jobs["provider_requests_sent"]!=0 or
+              jobs["photos_generated"]!=0 or
+              jobs["publication_permitted"] is not False):
+              raise SystemExit("V227_EXACT_SOURCE_JOB_HASH_OR_SAFETY_MISMATCH")
+          with Image.open(full) as im:
+              rgb=im.convert("RGB")
+              w,h=rgb.size
+              cropw=round(h*9/16)
+              left=(w-cropw)//2
+              dest=out/"SOURCE_FRAME_04_PORTRAIT.png"
+              rgb.crop((left,0,left+cropw,h)).save(dest)
+          lock={"version":"V227_ONE_FREE_REAL_I2I_ATTEMPT",
+                "episode_id":eid,"source_film_sha256":film_sha,
+                "original_frame_sha256":frame_sha,
+                "source_timecode_s":selection["candidate_segment_times_s"][2],
+                "portrait_crop_left_px":left,"portrait_crop_width_px":cropw,
+                "portrait_source_sha256":sha(dest),
+                "research_only":True,"italian_rights_verified":False,
+                "credit_spend_allowed":False,"vidu_calls_allowed":False,
+                "publication_permitted":False,"human_artistic_approval":False}
+          (out/"V227_SOURCE_LOCK.json").write_text(json.dumps(lock,indent=2)+"\n")
+          (out/"I2I_INPUT_MANIFEST_V102.json").write_text(json.dumps(jobs,indent=2)+"\n")
+          print("V227_SOURCE_LOCKED",frame_sha[:12],left,cropw)
+          PY
+      - name: ONE free Finegrain image-to-image on DIFFERENT 1910 film source, no retry
+        id: i2i
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v77_safe_photo_generator.py \
+            --source "output/v227/$EPISODE_ID/SOURCE_FRAME_04_PORTRAIT.png" \
+            --outdir "output/v227/$EPISODE_ID/ONE_REAL_I2I_CANDIDATE" \
+            --verified-objects "One adult male rider on a large four-legged animal on an iron lattice bridge; wooden plank deck, repeated diagonal steel girders, overhead beams, hanging lamp; no extra people, animals, vehicles or modern signs" \
+            --denoise-strength 0.22
+      - name: Record real bytes or provider failure, never claim final
+        if: always()
+        env:
+          PROVIDER_OUTCOME: ${{ steps.i2i.outcome }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path("output/v227/delhi_ruins_1910_v217")
+          out.mkdir(parents=True,exist_ok=True)
+          photo=out/"ONE_REAL_I2I_CANDIDATE"/"FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png"
+          qa=out/"ONE_REAL_I2I_CANDIDATE"/"OBJECT_IDENTITY_QA_V77.json"
+          ok=os.getenv("PROVIDER_OUTCOME")=="success" and photo.is_file() and qa.is_file()
+          result={"version":"V227_REAL_FREE_I2I_BYTE_RESULT",
+                  "status":"REAL_I2I_CANDIDATE_NEEDS_ARTISTIC_QA" if ok else "FREE_PROVIDER_FAILED_OR_QUOTA",
+                  "real_i2i_photos":1 if ok else 0,
+                  "vidu_clips":0,"finished_mp4":False,"finished_zip":False,
+                  "new_final_episodes_delivered":0,
+                  "paid_credits_spent":0,"publish_permitted":False,
+                  "italian_rights_verified":False,"human_artistic_approval":False,
+                  "no_ddcolor_only_as_final":True}
+          if ok:
+              result["photo_sha256"]=hashlib.sha256(photo.read_bytes()).hexdigest()
+              result["photo_bytes"]=photo.stat().st_size
+              result["source_crop_sha256"]=json.loads(qa.read_text()).get("input_sha256")
+          (out/"V227_REAL_I2I_RESULT.json").write_text(json.dumps(result,indent=2)+"\n")
+          print("V227_I2I_REAL_MEDIA_STATUS",result["status"],"NO_FINAL")
+          PY
+      - name: Upload source and real I2I evidence only, no public release
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v227-delhi-one-free-i2i-review-only
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v227/delhi_ruins_1910_v217/
+            output/v227/source/delhi_ruins_1910_v217/SCOUT_REPORT.json
+            output/v227/source/delhi_ruins_1910_v217/ORIGINAL_FILM_CONTACT_SHEET.jpg
+          # Never upload the full film or publish to the site/social.
