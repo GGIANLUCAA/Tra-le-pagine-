@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 22
     steps:
       - uses: actions/checkout@v4
-      - name: One-shot gate: only first intentional source download
+      - name: "One-shot gate: only first intentional source download"
         id: gate
         shell: bash
         env:
