@@ -17,6 +17,8 @@ def fixture(folder):
     scout = {"original_sha256": hashlib.sha256(film.read_bytes()).hexdigest(),
              "duration_s": 60.0, "source_frames_extracted": 12}
     frames = [{"filename": f"frame_{i:02d}.png",
+               "raster_px": [1280, 720],
+               "native_portrait_crop_px": [405, 720],
                "source_visual_quality_score": round(0.50 + (i % 3) * 0.1, 3)}
               for i in range(1, 13)]
     ranking = {"status": v210.READY, "all_candidates": frames}
@@ -28,7 +30,7 @@ def fixture(folder):
         pixels = [(shade, shade, shade) for shade in shades]
         image = Image.new("RGB", (96, 72))
         image.putdata(pixels)
-        image.resize((640, 480), Image.Resampling.NEAREST).save(original / f"frame_{i:02d}.png")
+        image.resize((1280, 720), Image.Resampling.NEAREST).save(original / f"frame_{i:02d}.png")
     return film, ranking, scout
 
 
@@ -109,6 +111,47 @@ class ShotAwareSelectionTests(unittest.TestCase):
             result = v210.select(ranking, scout, root,
                                  detector=lambda *_: [8, 18, 28, 38, 48])
             self.assertEqual(result["reason"], "SOURCE_FRAME_MISSING_OR_UNSAFE")
+            self.assertEqual(result["preselected"], [])
+
+    def test_v212_rejects_real_480p_before_cut_scan(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            low = root / "original_frames" / "frame_05.png"
+            with Image.open(low) as source:
+                source.resize((720, 480)).save(low)
+            ranking["all_candidates"][4]["raster_px"] = [720, 480]
+            ranking["all_candidates"][4]["native_portrait_crop_px"] = [270, 480]
+            calls = []
+            def detector(*args):
+                calls.append(args)
+                return [8, 18, 28, 38, 48]
+            result = v210.select(ranking, scout, root, detector=detector)
+            self.assertEqual(result["reason"], "INSUFFICIENT_NATIVE_PORTRAIT_DETAIL")
+            self.assertEqual(result["native_portrait_crop_px"], [270, 480])
+            self.assertFalse(result["provider_calls_permitted"])
+            self.assertEqual(calls, [])
+
+    def test_v212_rejects_forged_ranking_geometry(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            ranking["all_candidates"][2]["native_portrait_crop_px"] = [900, 720]
+            result = v210.select(ranking, scout, root, detector=lambda *_: [8, 18, 28, 38, 48])
+            self.assertEqual(result["reason"], "RANKING_NATIVE_GEOMETRY_MISMATCH")
+            self.assertEqual(result["preselected"], [])
+
+    def test_v212_rejects_mixed_native_geometry(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            changed = root / "original_frames" / "frame_03.png"
+            with Image.open(changed) as source:
+                source.resize((1920, 1080)).save(changed)
+            ranking["all_candidates"][2]["raster_px"] = [1920, 1080]
+            ranking["all_candidates"][2]["native_portrait_crop_px"] = [608, 1080]
+            result = v210.select(ranking, scout, root, detector=lambda *_: [8, 18, 28, 38, 48])
+            self.assertEqual(result["reason"], "MIXED_NATIVE_SOURCE_GEOMETRY")
             self.assertEqual(result["preselected"], [])
 
     def test_overlong_source_is_bounded(self):
