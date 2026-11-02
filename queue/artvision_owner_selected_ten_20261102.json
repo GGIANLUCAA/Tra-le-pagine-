@@ -346,7 +346,25 @@
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
-      "Gold_V25": false
+      "Gold_V25": false,
+      "v134_cinema_candidate": {
+        "status": "render_requested_not_verified",
+        "request": "requests/artvision/simberg-garden-v134.json",
+        "request_commit": "b12bf9e8451f7ddcb80fa8b41f8aabbcd771e5b5",
+        "workflow": ".github/workflows/artvision-simberg-garden-v134.yml",
+        "render_script": "src/artvision_garden_v134.py",
+        "public_title": "The Garden of Death",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Hugo_Simberg_-_The_Garden_of_Death_-_Google_Art_Project.jpg",
+        "rights_collection_CC0_reference": "https://www.finna.fi/Record/kansallisgalleria.0A48459FA177256B62CC6FD2D340317E",
+        "artwork_media_download_verified": false,
+        "mp4_full_decode_verified": false,
+        "artifact_readback_verified": false,
+        "slots_delivered_increment": 0,
+        "paid_api_calls": 0,
+        "social_published": false,
+        "gold_v25": false,
+        "notes": "New no-paid render requested on push; do not claim MP4 until artifact actual and verified. Avoid duplicate render requests."
+      }
     },
     {
       "id": "bruegel_triumph_death_1562_prado_p001393",
