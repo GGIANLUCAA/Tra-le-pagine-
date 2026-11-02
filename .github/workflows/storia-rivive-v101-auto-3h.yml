@@ -17,6 +17,7 @@ on:
       - "tests/test_storia_rivive_v206_bw_motion_leadin.py"
       - "tests/test_storia_rivive_v209_shot_boundary_review.py"
       - "tests/test_storia_rivive_v210_shot_aware_selection.py"
+      - "tests/test_storia_rivive_v215_bounded_sampling.py"
       - "tests/test_storia_rivive_v213_license_metadata_gate.py"
       - "tests/test_storia_rivive_v205_visual_novelty.py"
       - "tests/test_storia_rivive_v204_film_frame_provenance.py"
@@ -41,6 +42,7 @@ on:
       - "src/storia_rivive_v213_license_metadata_gate.py"
       - "tests/test_storia_rivive_v209_shot_boundary_review.py"
       - "tests/test_storia_rivive_v210_shot_aware_selection.py"
+      - "tests/test_storia_rivive_v215_bounded_sampling.py"
       - "tests/test_storia_rivive_v213_license_metadata_gate.py"
       - "config/storia_rivive_autopilot_v101.json"
       - "queue/storia_rivive_episode_history_v200.json"
@@ -72,6 +74,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v205_visual_novelty.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v209_shot_boundary_review.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v210_shot_aware_selection.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v215_bounded_sampling.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v213_license_metadata_gate.py" -v
   scheduled_preparation:
     if: github.event_name != 'pull_request' && github.run_attempt == 1
@@ -102,6 +105,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v205_visual_novelty.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v209_shot_boundary_review.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v210_shot_aware_selection.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v215_bounded_sampling.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v213_license_metadata_gate.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v206_bw_motion_leadin.py" -v
       - name: Create deterministic research work order for current UTC 3-hour window
