@@ -15,7 +15,7 @@ import math
 import re
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageStat
+from PIL import Image, ImageChops, ImageOps, ImageStat
 from storia_rivive_v205_visual_novelty import fingerprint
 
 from storia_rivive_v209_shot_boundary_review import detect_boundaries, MAX_BYTES, MAX_SECONDS, LEAD_SECONDS
@@ -32,6 +32,22 @@ def portraits_are_distinct(a, b) -> bool:
     normalized = ImageStat.Stat(ImageChops.difference(norm_a, norm_b)).mean[0]
     distance = (hash_a ^ hash_b).bit_count()
     return not (min(raw, normalized) < 8 or (distance <= 5 and normalized < 20))
+
+
+def likely_intertitle(path: Path) -> bool:
+    """V216 conservative text-card prefilter, not a scene/rights certificate.
+
+    Real 1920 cotton-film pilot had 10/12 samples dominated by bright
+    subtitles on black backgrounds; raw edge score incorrectly ranked them
+    as the best five 'restoration' sources.
+    """
+    with Image.open(path) as source:
+        gray = ImageOps.grayscale(source).resize((160, 90))
+        hist = gray.histogram()
+    total = 160 * 90
+    dark = sum(hist[:40]) / total
+    bright = sum(hist[160:]) / total
+    return dark >= 0.70 and bright >= 0.02
 
 
 def sha256_stream(path: Path) -> str:
@@ -129,6 +145,7 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) 
         return block("INVALID_DETECTOR_OUTPUT")
     boundaries = sorted(set(float(x) for x in boundaries if 0 < x < scan_seconds))
     candidates = []
+    intertitles = []
     seen_names = set()
     for row in frames:
         if not isinstance(row, dict):
@@ -151,17 +168,23 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) 
         if source.is_symlink() or not source.is_file():
             return block("SOURCE_FRAME_MISSING_OR_UNSAFE")
         try:
+            if likely_intertitle(source):
+                intertitles.append(name)
+                continue
             pixels = fingerprint(source)
         except (OSError, ValueError):
             return block("SOURCE_PORTRAIT_DECODE_FAILED")
         candidates.append((index, segment, float(score), row, t, pixels))
     segments = {item[1] for item in candidates}
     result["candidate_segments_available"] = len(segments)
+    result["likely_intertitle_frames_filtered"] = intertitles
+    result["likely_intertitle_count"] = len(intertitles)
     result["detected_cut_count"] = len(boundaries)
     result["portrait_candidates_checked"] = len(candidates)
     result["unscanned_late_frames"] = sum(1 for row in frames if (int(row["filename"][6:8]) - 1) * period >= scan_seconds)
     if len(segments) < 5:
-        return block("FIVE_SHOT_SEGMENTS_WITH_VALID_LEADIN_UNAVAILABLE")
+        return block("FIVE_PHOTOGRAPHIC_CANDIDATE_SEGMENTS_UNAVAILABLE" if intertitles
+                     else "FIVE_SHOT_SEGMENTS_WITH_VALID_LEADIN_UNAVAILABLE")
 
     # Check the actual visible 9:16 image, not just the camera-cut heuristic.
     # Enumerate <= 12 choose 5 (792) combinations, deterministic and cheap.
