@@ -90,7 +90,19 @@ def run_candidate(source_path: Path, outdir: Path, verified_objects: str,
     # strength diffusion can freely reinterpret small silhouettes as people.
     # V77 deliberately limits it, strengthens structural conditioning and uses
     # fewer prompt-driven changes. One call only; no quota-wasting retries.
-    client = Client('finegrain/finegrain-image-enhancer', verbose=False)
+    # Reuse an already configured HF_TOKEN when present for the provider's
+    # existing free quota. Never print the token or change payment settings.
+    import os
+    hf_token = os.environ.get('HF_TOKEN', '').strip()
+    if hf_token:
+        try:
+            client = Client('finegrain/finegrain-image-enhancer',
+                            hf_token=hf_token, verbose=False)
+        except TypeError:
+            client = Client('finegrain/finegrain-image-enhancer',
+                            token=hf_token, verbose=False)
+    else:
+        client = Client('finegrain/finegrain-image-enhancer', verbose=False)
     response = client.predict(handle_file(str(base)), prompt, negative,
                               77, 2, 1.30, 1.0, 5, 112, 144,
                               denoise_strength, 18, 'DDIM', api_name='/process')
