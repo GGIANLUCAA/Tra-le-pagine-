@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""V206 tests: real FFmpeg motion, static footage, flicker, missing lead-in."""
+"""V206/V207 tests: real motion, portrait-only motion, static cuts, flicker."""
 import hashlib
 import importlib.util
 import shutil
@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location(
@@ -100,6 +100,43 @@ class ExposureOnlyTests(unittest.TestCase):
             a = Path(tmp) / "a.png"
             Image.new("RGB", (96, 96), (120, 120, 120)).save(a)
             self.assertFalse(v206.metric(a, a)["moving"])
+
+    def test_motion_only_in_landscape_edges_is_not_reel_motion(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a, b = Path(tmp) / "a.png", Path(tmp) / "b.png"
+            original = Image.new("RGB", (320, 180), (120, 120, 120))
+            changed = original.copy()
+            draw = ImageDraw.Draw(changed)
+            # Only x<90 and x>230 change; the 9:16 center crop is x=109..210.
+            for x in range(0, 90, 8):
+                draw.rectangle((x, 0, x + 3, 179), fill=(20, 220, 20))
+            for x in range(231, 320, 8):
+                draw.rectangle((x, 0, x + 3, 179), fill=(230, 20, 20))
+            original.save(a)
+            changed.save(b)
+            self.assertFalse(v206.metric(a, b)["moving"])
+
+    def test_one_hard_cut_between_two_static_shots_is_not_sustained_motion(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = [Path(tmp) / f"frame_{i}.png" for i in range(4)]
+            a = Image.new("RGB", (320, 180), (60, 60, 60))
+            b = Image.new("RGB", (320, 180), (60, 60, 60))
+            ImageDraw.Draw(a).rectangle((115, 10, 195, 150), fill=(230, 230, 230))
+            ImageDraw.Draw(b).ellipse((115, 10, 195, 150), fill=(230, 230, 230))
+            for p, im in zip(paths, [a, a, b, b]):
+                im.save(p)
+            result = v206.sequence_metric(paths)
+            self.assertEqual(result["moving_intervals"], 1, result)
+            self.assertFalse(result["moving"], result)
+            self.assertTrue(result["visible_portrait_only"])
+
+    def test_short_sample_cannot_fake_sustained_motion(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = [Path(tmp) / f"frame_{i}.png" for i in range(3)]
+            for p in paths:
+                Image.new("RGB", (320, 180), (120, 120, 120)).save(p)
+            with self.assertRaises(ValueError):
+                v206.sequence_metric(paths)
 
 
 if __name__ == "__main__":
