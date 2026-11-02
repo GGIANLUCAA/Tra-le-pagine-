@@ -1,0 +1,351 @@
+{
+  "schema": "artvision-owner-selected-ten-v128",
+  "directive_date": "2026-11-02",
+  "verified_on": "2026-11-02",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "status": "owner_confirmed_preflight_not_4x1_produced",
+  "editorial_order_basis": "alternate intense/delicate, famous/rare, small/monumental; user first choice first; Dali last as rights-blocked",
+  "duplicates_checked_against": [
+    "queue/artvision_four_variants_s01_20261028.json",
+    "queue/artvision_autoproduction_v31_state.json",
+    "docs/PRODUCTION_AUDIT_2026-10-23.json"
+  ],
+  "existing_cinema_candidates_count": 3,
+  "works": [
+    {
+      "id": "bruegel_fall_rebel_angels_1562_rmfb_584",
+      "title_en": "The Fall of the Rebel Angels",
+      "artist": "Pieter Bruegel the Elder",
+      "year": 1562,
+      "museum": "Royal Museums of Fine Arts of Belgium",
+      "accession": "584",
+      "painting_cm": {
+        "height": 117,
+        "width": 162
+      },
+      "official_object_url": "https://fine-arts-museum.be/fr/la-collection/pieter-i-bruegel-la-chute-des-anges-rebelles",
+      "art_image_source_page": "https://commons.wikimedia.org/wiki/File:Pieter_Bruegel_the_Elder_-_The_Fall_of_the_Rebel_Angels_-_Google_Art_Project.jpg",
+      "art_rights_preflight": "PDM Commons faithful reproduction; exact existing 3840x2772 JPEG SHA 09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5; review Belgian museum terms and Italian cultural heritage reuse",
+      "preexisting_cinema_candidate": {
+        "format": "cinema_v6_legacy_not_4x1",
+        "file": "ArtVision_Bruegel_20261027.mp4",
+        "library_path": "/ArtVision/ArtVision_Bruegel_20261027.mp4",
+        "sha256": "0bd2fb6e0aadd02ae1eab56fa804f5fcb914c15330121765e28ba5878531f12a",
+        "bytes": 19376181,
+        "duration_s": 55.25,
+        "full_decode_20261102": "PASS",
+        "artistic_review": "pending",
+        "reuse_only_after_quality_review": true
+      },
+      "editorial_note": "User first choice; existing Cinema V6 is not a new 4x1 slot; frame not yet documented",
+      "preflight_status": "research_incomplete_not_render_authorized",
+      "four_slots": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "slots_delivered_this_selection": 0,
+      "museum_approved": false,
+      "voice_cost_verified": false,
+      "publication_authorized": false,
+      "Gold_V25": false
+    },
+    {
+      "id": "waterhouse_lady_shalott_1888_tate_n01543",
+      "title_en": "The Lady of Shalott",
+      "artist": "John William Waterhouse",
+      "year": 1888,
+      "museum": "Tate Britain",
+      "accession": "N01543",
+      "painting_cm": {
+        "height": 153,
+        "width": 200
+      },
+      "official_object_url": "https://www.tate.org.uk/art/artworks/waterhouse-the-lady-of-shalott-n01543",
+      "art_image_source_page": "https://commons.wikimedia.org/wiki/File:John_William_Waterhouse_-_The_Lady_of_Shalott_-_Google_Art_Project_edit.jpg",
+      "art_rights_preflight": "Work public domain; file-by-file Commons PD-Art and Tate image credit/conditions require validation",
+      "preexisting_cinema_candidate": null,
+      "editorial_note": "Frame dimensions 200x246x23 cm reported in third-party Tate-derived listing; primary verification pending",
+      "preflight_status": "research_incomplete_not_render_authorized",
+      "four_slots": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "slots_delivered_this_selection": 0,
+      "museum_approved": false,
+      "voice_cost_verified": false,
+      "publication_authorized": false,
+      "Gold_V25": false
+    },
+    {
+      "id": "rembrandt_night_watch_1642_rijks_sk_c_5",
+      "title_en": "The Night Watch",
+      "artist": "Rembrandt van Rijn",
+      "year": 1642,
+      "museum": "Rijksmuseum",
+      "accession": "SK-C-5",
+      "painting_cm": {
+        "height": 379.5,
+        "width": 453.5
+      },
+      "official_object_url": "https://www.rijksmuseum.nl/en/collection/object/The-Night-Watch-Militia-Company-of-District-II-under-the-Command-of-Captain-Frans-Banninck-Cocq--3137deb45cd7765f9a76084a16c99544",
+      "art_image_source_page": "https://www.rijksmuseum.nl/en/collection/object/The-Night-Watch-Militia-Company-of-District-II-under-the-Command-of-Captain-Frans-Banninck-Cocq--3137deb45cd7765f9a76084a16c99544",
+      "art_rights_preflight": "Rijksmuseum object marked Public domain; data.rijksmuseum.nl/policy permits commercial reuse of public-domain/CC0 images; verify exact image downloaded",
+      "preexisting_cinema_candidate": null,
+      "editorial_note": "Current painting only, NOT 2021 AI reconstruction. Rijksmuseum lists 379.5x453.5 overall and elsewhere 363x438 remaining original painted surface; resolve scale against actual asset before render",
+      "preflight_status": "research_incomplete_not_render_authorized",
+      "four_slots": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "slots_delivered_this_selection": 0,
+      "museum_approved": false,
+      "voice_cost_verified": false,
+      "publication_authorized": false,
+      "Gold_V25": false
+    },
+    {
+      "id": "bruegel_tower_babel_1563_khm_gg1026",
+      "title_en": "The Tower of Babel",
+      "artist": "Pieter Bruegel the Elder",
+      "year": 1563,
+      "museum": "Kunsthistorisches Museum Wien",
+      "accession": "GG 1026",
+      "painting_cm": {
+        "height": 114.4,
+        "width": 155.5
+      },
+      "official_object_url": "https://www.khm.at/en/objectdb/detail/323",
+      "art_image_source_page": "https://commons.wikimedia.org/wiki/File:The_Tower_of_Babel_(Bruegel).jpg",
+      "art_rights_preflight": "KHM object page official download PRIVATE USE ONLY; do NOT reuse official KHM download commercially. Independent Commons PDM file has to be assessed for legal provenance/territory",
+      "preexisting_cinema_candidate": null,
+      "editorial_note": "Specific LARGE Vienna version (not Rotterdam small). KHM documents framed 135x176x6.5 cm, object 114.4x155.5x3.8 cm",
+      "preflight_status": "research_incomplete_not_render_authorized",
+      "four_slots": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "slots_delivered_this_selection": 0,
+      "museum_approved": false,
+      "voice_cost_verified": false,
+      "publication_authorized": false,
+      "Gold_V25": false
+    },
+    {
+      "id": "simberg_garden_death_1896_fng_a_ii_968_16",
+      "title_en": "The Garden of Death",
+      "artist": "Hugo Simberg",
+      "year": 1896,
+      "museum": "Finnish National Gallery / Ateneum",
+      "accession": "A II 968:16",
+      "painting_cm": {
+        "height": 15.8,
+        "width": 17.5
+      },
+      "official_object_url": "https://kokoelmat.fng.fi/app?si=A+II+968%3A16",
+      "art_image_source_page": "https://commons.wikimedia.org/wiki/File:Hugo_Simberg_-_The_Garden_of_Death_-_Google_Art_Project.jpg",
+      "art_rights_preflight": "1896 original public domain; exact image rights and Finnish National Gallery conditions require file-specific check",
+      "preexisting_cinema_candidate": null,
+      "editorial_note": "Tiny original watercolor/gouache, NOT the 1906 Tampere Cathedral fresco; avoid wrong oil/canvas description on some metadata pages",
+      "preflight_status": "research_incomplete_not_render_authorized",
+      "four_slots": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "slots_delivered_this_selection": 0,
+      "museum_approved": false,
+      "voice_cost_verified": false,
+      "publication_authorized": false,
+      "Gold_V25": false
+    },
+    {
+      "id": "bruegel_triumph_death_1562_prado_p001393",
+      "title_en": "The Triumph of Death",
+      "artist": "Pieter Bruegel the Elder",
+      "year": "1562–1563",
+      "museum": "Museo del Prado",
+      "accession": "P001393",
+      "painting_cm": {
+        "height": 117,
+        "width": 162
+      },
+      "official_object_url": "https://www.museodelprado.es/en/the-collection/art-work/the-triumph-of-death/d3d82b0b-9bf2-4082-ab04-66ed53196ccc",
+      "art_image_source_page": "https://commons.wikimedia.org/wiki/File:The_Triumph_of_Death_by_Pieter_Bruegel_the_Elder.jpg",
+      "art_rights_preflight": "Commons PD-Art claim; source EXIF Prado copyright noted on other versions; museum reuse and Italian territorial terms pending",
+      "preexisting_cinema_candidate": {
+        "format": "cinema_v25_legacy_not_4x1",
+        "artifact_id": 12508078179,
+        "sha256": "635274e289cdcd81021eb6ec0599d2876e71a61754d2c65974b729f50c75039b",
+        "bytes": 12035085,
+        "duration_s": 54.625,
+        "full_decode_20261102": "PASS",
+        "artistic_review": "pending",
+        "reuse_only_after_quality_review": true
+      },
+      "editorial_note": "Existing Cinema V25 cover lacks English artwork title; source 2126x1517 needs higher-res alternative; no automatic re-render",
+      "preflight_status": "research_incomplete_not_render_authorized",
+      "four_slots": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "slots_delivered_this_selection": 0,
+      "museum_approved": false,
+      "voice_cost_verified": false,
+      "publication_authorized": false,
+      "Gold_V25": false
+    },
+    {
+      "id": "waterhouse_magic_circle_1886_tate_n01572",
+      "title_en": "The Magic Circle",
+      "artist": "John William Waterhouse",
+      "year": 1886,
+      "museum": "Tate Britain",
+      "accession": "N01572",
+      "painting_cm": {
+        "height": 182.9,
+        "width": 127
+      },
+      "official_object_url": "https://www.tate.org.uk/art/artworks/waterhouse-the-magic-circle-n01572",
+      "art_image_source_page": "https://commons.wikimedia.org/wiki/File:The_Magic_Circle_-_John_William_Waterhouse.jpg",
+      "art_rights_preflight": "Work public domain; Commons PD-Art claim and Tate reproduction terms to verify for exact image",
+      "preexisting_cinema_candidate": {
+        "format": "cinema_v25_legacy_not_4x1",
+        "artifact_id": 12507493208,
+        "sha256": "9e0375eef40ef4e7796b9017091b862661b63384a7961e64d84d8c6d97aa4110",
+        "bytes": 12539862,
+        "duration_s": 53.167,
+        "full_decode_20261102": "PASS",
+        "artistic_review": "pending",
+        "reuse_only_after_quality_review": true
+      },
+      "editorial_note": "Existing Cinema V25 cover lacks English artwork title; painting asset 2000x2942 needs resolution review",
+      "preflight_status": "research_incomplete_not_render_authorized",
+      "four_slots": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "slots_delivered_this_selection": 0,
+      "museum_approved": false,
+      "voice_cost_verified": false,
+      "publication_authorized": false,
+      "Gold_V25": false
+    },
+    {
+      "id": "blake_ghost_flea_1819_tate_n05889",
+      "title_en": "The Ghost of a Flea",
+      "artist": "William Blake",
+      "year": "1819–1820",
+      "museum": "Tate Britain",
+      "accession": "N05889",
+      "painting_cm": {
+        "height": 21.4,
+        "width": 16.2
+      },
+      "official_object_url": "https://www.tate.org.uk/art/artworks/blake-the-ghost-of-a-flea-n05889",
+      "art_image_source_page": "https://commons.wikimedia.org/wiki/File:William_Blake_-_The_Ghost_of_a_Flea_-_Google_Art_Project.jpg",
+      "art_rights_preflight": "PD-Art Commons faithful reproduction; check actual file and Tate terms",
+      "preexisting_cinema_candidate": null,
+      "editorial_note": "Miniature 21.4x16.2 cm, frame approx 38.2x32.4x5 cm documented on Commons quoting Tate; preserve tiny real scale",
+      "preflight_status": "research_incomplete_not_render_authorized",
+      "four_slots": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "slots_delivered_this_selection": 0,
+      "museum_approved": false,
+      "voice_cost_verified": false,
+      "publication_authorized": false,
+      "Gold_V25": false
+    },
+    {
+      "id": "delacroix_death_sardanapalus_1827_louvre_rf2346",
+      "title_en": "The Death of Sardanapalus",
+      "artist": "Eugène Delacroix",
+      "year": 1827,
+      "museum": "Musée du Louvre",
+      "accession": "RF 2346",
+      "painting_cm": {
+        "height": 392,
+        "width": 496
+      },
+      "official_object_url": "https://collections.louvre.fr/ark:/53355/cl010065757",
+      "art_image_source_page": "https://commons.wikimedia.org/wiki/Category:The_Death_of_Sardanapalus",
+      "art_rights_preflight": "Work public domain; specific image rights and Louvre download terms still unverified",
+      "preexisting_cinema_candidate": null,
+      "editorial_note": "Large painting; violence and nudity require careful editorial/age/platform suitability review; no misleading historical museum",
+      "preflight_status": "research_incomplete_not_render_authorized",
+      "four_slots": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "slots_delivered_this_selection": 0,
+      "museum_approved": false,
+      "voice_cost_verified": false,
+      "publication_authorized": false,
+      "Gold_V25": false
+    },
+    {
+      "id": "dali_temptation_st_anthony_1946_fg_dali_p625",
+      "title_en": "The Temptation of St. Anthony",
+      "artist": "Salvador Dalí",
+      "year": 1946,
+      "museum": "Royal Museums of Fine Arts of Belgium",
+      "accession": "Fundació Dalí catalogue P 625",
+      "painting_cm": {
+        "height": 89.5,
+        "width": 119.5
+      },
+      "official_object_url": "https://catalogues.salvador-dali.org/catalogues/es/heritageobject/363-981e/",
+      "art_image_source_page": "https://catalogues.salvador-dali.org/catalogues/es/heritageobject/363-981e/",
+      "art_rights_preflight": "COPYRIGHT PROTECTED © Salvador Dalí Fundació Gala-Salvador Dalí. No explicit reproduction and derivative license on record; do not render, copy image or distribute",
+      "preexisting_cinema_candidate": null,
+      "editorial_note": "OWNER-SELECTED but rights-blocked; advance to next authorized painting without consuming any credits",
+      "preflight_status": "rights_blocked_no_render_no_distribution",
+      "four_slots": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "slots_delivered_this_selection": 0,
+      "museum_approved": false,
+      "voice_cost_verified": false,
+      "publication_authorized": false,
+      "Gold_V25": false
+    }
+  ],
+  "global_render_gate": {
+    "no_new_render_until_source_bytes_sha_and_exact_file_license_verified": true,
+    "museum_v118_v119_approved_assets_required": true,
+    "current_approved_gallery_presets": 0,
+    "documented_frame_or_owner_exception_required": true,
+    "exact_same_natural_critico_audio": true,
+    "tts_billing_verified_free_required": true,
+    "licensed_music_sha_and_attribution_required": true,
+    "sequential_render_only": true,
+    "ffmpeg_full_decode_and_hash_required": true,
+    "private_archive_readback_required": true,
+    "no_social_publish": true,
+    "no_paid_calls": true,
+    "no_v25_auto_gold": true,
+    "no_claim_four_mp4_without_four_real_files": true
+  },
+  "note": "Three earlier standalone Cinema masters recovered/verified are NOT new 4x1 deliveries. The Fall of Rebel Angels source+music and 3 legacy Cinema MP4s are physically available in this run, no Museum/voice approved. Preserve all old masters."
+}
