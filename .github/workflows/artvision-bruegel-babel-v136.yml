@@ -1,0 +1,76 @@
+name: ArtVision · Bruegel Tower of Babel Vienna Cinema V136
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/bruegel-babel-v136.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-bruegel-babel-v136
+  cancel-in-progress: false
+jobs:
+  cinema_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact authorized selected work
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("requests/artvision/bruegel-babel-v136.json").read_text())
+          q=json.loads(Path("queue/artvision_owner_selected_ten_20261102.json").read_text())
+          assert r["work_id"]=="bruegel_tower_babel_1563_khm_gg1026"
+          assert r["variant"]=="cinema_standard" and r["public_title"]=="The Tower of Babel"
+          assert not r["allow_paid_calls"] and not r["social_publish"] and not r["gold_v25"]
+          assert r["museum_accession"]=="GG 1026" and r["museum_city"]=="Vienna"
+          assert r["public_title"].lower().find("standard")<0 and "artvision" not in r["public_title"].lower()
+          assert any(w["id"]==r["work_id"] and w["slots_delivered_this_selection"]==0 for w in q["works"])
+          PY
+      - name: Install no-paid runtime dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check numpy pillow opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          src=Path(get_ffmpeg_exe())
+          assert src.is_file()
+          Path("/tmp/artvision-bin/ffmpeg").symlink_to(src)
+          PY
+          echo "/tmp/artvision-bin" >> "$GITHUB_PATH"
+          /tmp/artvision-bin/ffmpeg -version | head -1
+      - name: Render only one MP4 candidate
+        run: python src/artvision_babel_v136.py --output /tmp/babel_v136
+      - name: Validate physical MP4 and SHA
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("/tmp/babel_v136")
+          q=json.loads((p/"QA_V136.json").read_text())
+          f=p/q["mp4"]["filename"]
+          assert f.is_file() and f.stat().st_size>100000
+          assert hashlib.sha256(f.read_bytes()).hexdigest()==q["mp4"]["sha256"]
+          assert q["mp4"]["full_ffmpeg_decode"]=="PASS"
+          assert q["mp4"]["frames"]==1188 and abs(q["mp4"]["duration_seconds"]-59.4)<.01
+          assert q["gold_v25"] is False and q["social_published"] is False
+          assert (p/"BRUEGEL_BABEL_V136_CINEMA_REVIEW_PACKAGE.zip").is_file()
+          print("VERIFIED",q["mp4"]["sha256"],f.stat().st_size)
+          PY
+      - name: Save real MP4 and package for readback
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_BABEL_1563_V136_CINEMA_REVIEW_MP4
+          path: |
+            /tmp/babel_v136/BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_V136_REVIEW.mp4
+            /tmp/babel_v136/BRUEGEL_BABEL_V136_CINEMA_REVIEW_PACKAGE.zip
+            /tmp/babel_v136/QA_V136.json
+            /tmp/babel_v136/COVER.jpg
+            /tmp/babel_v136/CONTACT_SHEET_V136.jpg
+          if-no-files-found: error
+          retention-days: 30
