@@ -10,7 +10,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   free_photo:
-    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    # pull_request.paths matches the entire PR diff; only the one approved pilot head may run.
+    # Subsequent PR commits MUST NOT repeat the free-provider request.
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.sha == '88063128ef18ec0824263eb7e39c63e930b80d2e' && github.run_attempt == 1
     runs-on: ubuntu-latest
     timeout-minutes: 24
     env:
@@ -31,7 +33,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_storia_rivive_v210_shot_aware_selection.py' -q
           python -m unittest discover -s tests -p 'test_storia_rivive_v217_four_pilot_source_review.py' -q
           python -m unittest discover -s tests -p 'test_storia_rivive_v77_identity_guard.py' -q
-      - name: Download real 1912 film, inspect five source shots, verify preview endpoints
+      - name: Download real Delhi 1910 film, inspect five source shots, verify preview endpoints
         run: |
           set -euo pipefail
           TARGET="output/v227/$EPISODE_ID"

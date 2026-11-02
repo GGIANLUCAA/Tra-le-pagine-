@@ -10,7 +10,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   free_photo:
-    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    # pull_request.paths matches the entire PR diff; only the one approved pilot head may run.
+    # Subsequent PR commits MUST NOT repeat the free-provider request.
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.sha == 'a411735942e0c91da1d2c67c937c22b5364c0343' && github.run_attempt == 1
     runs-on: ubuntu-latest
     timeout-minutes: 24
     env:
