@@ -101,6 +101,8 @@ jobs:
                         paid_credit_spend_allowed=False)
           p.write_text(json.dumps(report,indent=2)+'\n')
           print('V238_RESULT',report['status'],'NEW_FINAL_0_OF_4')
+          if not ok:
+              raise SystemExit('V238_FREE_PROVIDER_DID_NOT_RETURN_A_REAL_IMAGE')
           PY
       - name: Upload only real generated image and A/B QA evidence, never release
         if: always() && steps.gate.outputs.allowed == 'true'
