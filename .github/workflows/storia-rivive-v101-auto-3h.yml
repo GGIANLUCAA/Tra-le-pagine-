@@ -13,9 +13,11 @@ on:
       - "src/storia_rivive_v206_bw_motion_leadin.py"
       - "src/storia_rivive_v209_shot_boundary_review.py"
       - "src/storia_rivive_v210_shot_aware_selection.py"
+      - "src/storia_rivive_v213_license_metadata_gate.py"
       - "tests/test_storia_rivive_v206_bw_motion_leadin.py"
       - "tests/test_storia_rivive_v209_shot_boundary_review.py"
       - "tests/test_storia_rivive_v210_shot_aware_selection.py"
+      - "tests/test_storia_rivive_v213_license_metadata_gate.py"
       - "tests/test_storia_rivive_v205_visual_novelty.py"
       - "tests/test_storia_rivive_v204_film_frame_provenance.py"
       - "tests/test_storia_rivive_v202_source_handoff.py"
@@ -35,8 +37,10 @@ on:
       - "src/storia_rivive_v196_scout_gate.py"
       - "src/storia_rivive_v209_shot_boundary_review.py"
       - "src/storia_rivive_v210_shot_aware_selection.py"
+      - "src/storia_rivive_v213_license_metadata_gate.py"
       - "tests/test_storia_rivive_v209_shot_boundary_review.py"
       - "tests/test_storia_rivive_v210_shot_aware_selection.py"
+      - "tests/test_storia_rivive_v213_license_metadata_gate.py"
       - "config/storia_rivive_autopilot_v101.json"
       - "queue/storia_rivive_episode_history_v200.json"
       - "tests/test_storia_rivive_v101.py"
@@ -67,6 +71,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v205_visual_novelty.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v209_shot_boundary_review.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v210_shot_aware_selection.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v213_license_metadata_gate.py" -v
   scheduled_preparation:
     if: github.event_name != 'pull_request' && github.run_attempt == 1
     runs-on: ubuntu-latest
@@ -88,7 +93,7 @@ jobs:
       - name: Run fail-closed safety and flag geometry tests before research
         run: |
           set -euo pipefail
-          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v196_scout_gate.py src/storia_rivive_v202_source_handoff.py src/storia_rivive_v204_film_frame_provenance.py src/storia_rivive_v205_visual_novelty.py src/storia_rivive_v206_bw_motion_leadin.py src/storia_rivive_v209_shot_boundary_review.py src/storia_rivive_v210_shot_aware_selection.py
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v196_scout_gate.py src/storia_rivive_v202_source_handoff.py src/storia_rivive_v204_film_frame_provenance.py src/storia_rivive_v205_visual_novelty.py src/storia_rivive_v206_bw_motion_leadin.py src/storia_rivive_v209_shot_boundary_review.py src/storia_rivive_v210_shot_aware_selection.py src/storia_rivive_v213_license_metadata_gate.py
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v196_scout_gate.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v202_source_handoff.py" -v
@@ -96,6 +101,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v205_visual_novelty.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v209_shot_boundary_review.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v210_shot_aware_selection.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v213_license_metadata_gate.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v206_bw_motion_leadin.py" -v
       - name: Create deterministic research work order for current UTC 3-hour window
         shell: bash
@@ -140,8 +146,32 @@ jobs:
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
           key: storia-v101-archival-scout-v3-${{ env.STORIA_EPISODE_ID }}
-      - name: Rank actual native-resolution source frames without claiming facial identity
+      - name: V213 verify current Commons license label matches candidate claim (not Italian rights)
+        id: license_gate
         if: steps.scout_status.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v213_license_metadata_gate.py \
+            --order output/storia_v101/WORK_ORDER.json \
+            --scout "output/storia_v101/source-cache/$STORIA_EPISODE_ID/SCOUT_REPORT.json" \
+            --v196 output/storia_v101/SCOUT_GATE_V196.json \
+            --out output/storia_v101/LICENSE_METADATA_V213.json
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          report=json.loads(Path("output/storia_v101/LICENSE_METADATA_V213.json").read_text())
+          ready=(report.get("status")=="SOURCE_LICENSE_CLAIM_MATCHED_RIGHTS_REVIEW_PENDING"
+                 and report.get("research_ready") is True)
+          assert report.get("italian_rights_approved") is False
+          assert report.get("provider_calls_permitted") is False
+          assert report.get("publish_permitted") is False
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("ready="+str(ready).lower()+"\n")
+          print("V213_LICENSE_CLAIM",report["status"],report["reason"])
+          PY
+      - name: Rank actual native-resolution source frames without claiming facial identity
+        if: steps.license_gate.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -150,7 +180,7 @@ jobs:
             --out output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
       - name: V210 choose source frames from different detected camera-shot candidates
         id: shot_rank
-        if: steps.scout_status.outputs.ready == 'true'
+        if: steps.license_gate.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -373,16 +403,20 @@ jobs:
               novelty=json.loads(novelty_path.read_text()) if novelty_path.is_file() else {}
               motion_path=root/"BW_MOTION_V206.json"
               motion=json.loads(motion_path.read_text()) if motion_path.is_file() else {}
+              license_path=root/"LICENSE_METADATA_V213.json"
+              license=json.loads(license_path.read_text()) if license_path.is_file() else {}
               selection_path=root/"SHOT_AWARE_SELECTION_V210.json"
               selection=json.loads(selection_path.read_text()) if selection_path.is_file() else {}
               cuts_path=root/"SHOT_CANDIDATES_V209.json"
               cuts=json.loads(cuts_path.read_text()) if cuts_path.is_file() else {}
-              ready=(gate["ready"] and handoff.get("status")=="SOURCE_HANDOFF_BYTES_VERIFIED_REVIEW_PENDING"
+              ready=(gate["ready"] and license.get("research_ready") is True
+                     and handoff.get("status")=="SOURCE_HANDOFF_BYTES_VERIFIED_REVIEW_PENDING"
                      and provenance.get("status")=="FIVE_FRAMES_REEXTRACTED_FROM_FILM_REVIEW_PENDING"
                      and novelty.get("status")=="FIVE_VISUALLY_NONREDUNDANT_FRAMES_SHOT_REVIEW_PENDING"
                      and motion.get("status")=="FIVE_BW_MOTION_LEADINS_SHOT_REVIEW_PENDING"
                      and cuts.get("status")=="FIVE_SHOT_BOUNDARY_CANDIDATES_REVIEW_PENDING")
               reason=(None if ready else gate["reason"] if not gate["ready"]
+                      else license.get("reason","V213_LICENSE_METADATA_MISSING") if license.get("research_ready") is not True
                       else selection.get("reason","V210_SELECTION_MISSING") if selection.get("status")!="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW"
                       else handoff.get("reason") if handoff.get("status")!="SOURCE_HANDOFF_BYTES_VERIFIED_REVIEW_PENDING"
                       else provenance.get("reason","V204_PROVENANCE_MISSING") if provenance.get("status")!="FIVE_FRAMES_REEXTRACTED_FROM_FILM_REVIEW_PENDING"
@@ -409,6 +443,7 @@ jobs:
           path: |
             output/storia_v101/WORK_ORDER.json
             output/storia_v101/SCOUT_GATE_V196.json
+            output/storia_v101/LICENSE_METADATA_V213.json
             output/storia_v101/CYCLE_STATUS.json
             output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
             output/storia_v101/SHOT_AWARE_SELECTION_V210.json
