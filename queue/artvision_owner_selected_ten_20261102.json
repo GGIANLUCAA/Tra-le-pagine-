@@ -340,7 +340,28 @@
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
-      "Gold_V25": false
+      "Gold_V25": false,
+      "v136_cinema_candidate": {
+        "status": "render_requested_not_verified",
+        "request": "requests/artvision/bruegel-babel-v136.json",
+        "request_commit": "96ac4555508cd88e5e5c1048d82994132686b364",
+        "workflow": ".github/workflows/artvision-bruegel-babel-v136.yml",
+        "renderer": "src/artvision_babel_v136.py",
+        "source_page": "https://commons.wikimedia.org/wiki/File:The_Tower_of_Babel_(Bruegel).jpg",
+        "museum_accession": "GG 1026",
+        "public_title": "The Tower of Babel",
+        "duration_target_s": 59.4,
+        "source_image_readback_verified": false,
+        "new_mp4_bytes_verified": false,
+        "artifact_readback_verified": false,
+        "public_title_has_standard": false,
+        "public_title_has_project": false,
+        "new_paid_costs": 0,
+        "gold_v25": false,
+        "social_published": false,
+        "slots_delivered_increment": 0,
+        "duplicate_guard": "one request only; do not rerun until execution status and artifact checked"
+      }
     },
     {
       "id": "simberg_garden_death_1896_fng_a_ii_968_16",
