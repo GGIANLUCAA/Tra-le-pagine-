@@ -7,6 +7,7 @@ on:
       - "src/storia_rivive_v217_four_pilot_source_review.py"
       - "src/storia_rivive_frame_rank_v101.py"
       - "src/storia_rivive_v210_shot_aware_selection.py"
+      - "config/storia_rivive_v221_source_frame_exclusions.json"
       - "tests/test_storia_rivive_v210_shot_aware_selection.py"
       - "tests/test_storia_rivive_v217_four_pilot_source_review.py"
       - "tests/test_storia_rivive_v218_global_temporal_selection.py"
@@ -99,6 +100,7 @@ jobs:
               --ranking "$TARGET/V101_RANKING.json" \
               --scout "$REPORT" \
               --cache "$SRC" \
+              --exclusions config/storia_rivive_v221_source_frame_exclusions.json \
               --out "$TARGET/SHOT_AWARE_SELECTION_V210.json"
           else
             echo "Source not ready: no ranked scenes and no preview; free skip."
