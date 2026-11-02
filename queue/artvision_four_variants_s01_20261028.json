@@ -2366,6 +2366,30 @@
             "preserved_master_versions": true,
             "renderer": "src/artvision_bocklin_v113_water_focus_balanced.py",
             "report": "docs/productions/2026-11-01-artvision-bocklin-v113-water-focus-balanced-museum.md"
+          },
+          "v120_museum_flat_wall_QA": {
+            "date": "2026-11-02",
+            "status": "REAL_MP4_FRAMES_VERIFIED_FLAT_GREY_WALL_V118_V119_BLOCKER",
+            "gate": "src/artvision_museum_flat_wall_gate_v120.py",
+            "report": "docs/productions/2026-11-02-artvision-bocklin-v120-flat-wall-real-mp4-qa.md",
+            "method": "FFmpeg real frames 0.20s and duration_minus_1s, dominant 8-level RGB bin",
+            "threshold_fraction": 0.45,
+            "standard_variants_unchanged": true,
+            "masters_unchanged": true,
+            "new_video_rendered": false,
+            "site_player_verified": false,
+            "owner_V25_approved": false,
+            "mp4_candidate_sha256": "c1c54dba4f0198df3a8f82e11513378bccf2831647dca01741163250c857a263",
+            "candidate_intro_outro_dominant_fraction": [
+              0.700729,
+              0.646458
+            ],
+            "master_V102_intro_outro_dominant_fraction": [
+              0.703455,
+              0.651285
+            ],
+            "museum_approved": false,
+            "needs_real_gallery_and_visual_review": true
           }
         },
         "cinema_standard": {
@@ -2416,6 +2440,27 @@
             "decision": "well_done_positive",
             "scope": "Cinema review candidate",
             "gold_V25": false
+          },
+          "v120_museum_flat_wall_QA": {
+            "date": "2026-11-02",
+            "status": "REAL_MP4_FRAMES_VERIFIED_FLAT_GREY_WALL_V118_V119_BLOCKER",
+            "gate": "src/artvision_museum_flat_wall_gate_v120.py",
+            "report": "docs/productions/2026-11-02-artvision-bocklin-v120-flat-wall-real-mp4-qa.md",
+            "method": "FFmpeg real frames 0.20s and duration_minus_1s, dominant 8-level RGB bin",
+            "threshold_fraction": 0.45,
+            "standard_variants_unchanged": true,
+            "masters_unchanged": true,
+            "new_video_rendered": false,
+            "site_player_verified": false,
+            "owner_V25_approved": false,
+            "mp4_candidate_sha256": "c9f40502b5efdf216ebfe322344aed21f19913a2b869d144b2519bd2b3bd7132",
+            "candidate_intro_outro_dominant_fraction": [
+              0.64809,
+              0.498507
+            ],
+            "museum_approved": false,
+            "needs_real_gallery_and_visual_review": true,
+            "owner_historic_positive_feedback_preserved": true
           }
         }
       },
@@ -2541,7 +2586,17 @@
         "report": "docs/productions/2026-10-31-artvision-bocklin-v107-review-packages-verified.md"
       },
       "latest_local_candidate": "critico_museum_V110_not_persisted",
-      "library_storage_blocker_2026_11_01": "Library storage limit exceeded on V109 MP4; no automatic deletion of masters; do not declare backup or delivery persistent"
+      "library_storage_blocker_2026_11_01": "Library storage limit exceeded on V109 MP4; no automatic deletion of masters; do not declare backup or delivery persistent",
+      "v120_read_only_real_video_QA": {
+        "date": "2026-11-02",
+        "museum_flat_wall_flagged": 3,
+        "standard_flagged": 0,
+        "sampled_real_MP4": 5,
+        "source_library_folder": "/ArtVision/Bocklin/V106_REVIEW_4X1_ANDROID/",
+        "new_video_created": false,
+        "Gold_V25": 0,
+        "report": "docs/productions/2026-11-02-artvision-bocklin-v120-flat-wall-real-mp4-qa.md"
+      }
     },
     {
       "group_id": "malczewski_bledne_kolo_1897_mnp_fr56",
