@@ -84,9 +84,11 @@ def likely_intertitle(path: Path) -> bool:
         return True  # isolated lettering or irrecoverably dark source
     # V216's synthetic high-contrast cards are long repeated horizontal
     # lines; reject them without treating the actual bright car as text.
-    broad_rows = sum(sum(pixels[y * 160 + x] >= 100 for x in range(160)) >= 90
-                     for y in range(90))
-    return bright >= 0.02 and broad_rows >= 12
+    broad_rows = [sum(pixels[y * 160 + x] >= 100 for x in range(160)) >= 90
+                  for y in range(90)]
+    separated_text_lines = sum(flag and (y == 0 or not broad_rows[y - 1])
+                               for y, flag in enumerate(broad_rows))
+    return bright >= 0.02 and separated_text_lines >= 3
 
 
 def sha256_stream(path: Path) -> str:
