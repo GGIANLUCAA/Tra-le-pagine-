@@ -21,6 +21,11 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
+try:
+    from .artvision_identity_delivery_v122_guard import check_final_handoff
+except ImportError:  # CLI: python src/artvision_delivery_v55.py pack ...
+    from artvision_identity_delivery_v122_guard import check_final_handoff
+
 SITE = "https://video-library-studio.600led.workers.dev"
 SOCIAL = ("facebook", "instagram", "tiktok", "youtube")
 SCHEMA = "artvision-delivery-v55"
@@ -224,6 +229,15 @@ def pack(video, cover, posts, rights, recipe, out, opening_review=None, release_
                 or any(not isinstance(checks.get(key), dict)
                        or checks[key].get("passed") is not True for key in expected_reviews)):
             raise ValueError("V25: contratto non approvato per SHA256 esatto del master")
+        # V122 extends the old presence-only V25 checks with evidence linked
+        # to the exact MP4, cover, four captions and frozen series template.
+        # A review-only ZIP can still be created without claiming final release.
+        identity_issues = check_final_handoff(
+            recipe_data, contract.get("identity_v122"), sha, filehash(cover),
+            {key: filehash(posts[key]) for key in SOCIAL},
+        )
+        if identity_issues:
+            raise ValueError("V122: consegna finale bloccata: " + "; ".join(identity_issues))
         shutil.copy2(release_path, stage / "ARTVISION_CONTRACT_V25.json")
     if opening_review:
         review = json.loads(require_file(opening_review, ("json",)).read_text(encoding="utf-8"))
@@ -257,6 +271,7 @@ def pack(video, cover, posts, rights, recipe, out, opening_review=None, release_
         },
         "release_gate": {
             "museum_v46_status": "verified_by_sha_and_review" if museum_v46_qa_verified else ("pending_or_blocked" if museum_variant else "not_applicable"),
+            "identity_v122_status": "hash_bound_review_attested" if release_contract else "pending_not_final_checked",
             "status": "packaged_needs_review_or_import" if blockers else "package_technically_verified",
             "opening_blockers": blockers,
             "artistic_approval": "not_certified",
