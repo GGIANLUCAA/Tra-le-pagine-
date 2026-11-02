@@ -154,13 +154,48 @@ class ShotAwareSelectionTests(unittest.TestCase):
             self.assertEqual(result["reason"], "MIXED_NATIVE_SOURCE_GEOMETRY")
             self.assertEqual(result["preselected"], [])
 
-    def test_overlong_source_is_bounded(self):
+    def test_v214_long_realistic_hd_reel_uses_only_first_bounded_window(self):
+        # A known 1920x1080 archival reel lasts ~525s; previous V210
+        # rejected it without examining even the first 420 seconds.
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             _, ranking, scout = fixture(root)
-            scout["duration_s"] = 489.0
-            result = v210.select(ranking, scout, root, detector=lambda *_: [])
-            self.assertEqual(result["reason"], "SOURCE_TOO_LONG_FOR_BOUNDED_SCENE_SCAN")
+            scout["duration_s"] = 524.96
+            calls = []
+            def detector(film, seconds):
+                calls.append(seconds)
+                return [25, 70, 115, 160, 205, 250, 295, 340, 385]
+            result = v210.select(ranking, scout, root, detector=detector)
+            self.assertEqual(calls, [v210.MAX_SECONDS])
+            self.assertEqual(result["status"], v210.READY, result)
+            self.assertTrue(result["cut_scan_is_partial"])
+            self.assertEqual(result["cut_scan_seconds"], 420)
+            self.assertGreaterEqual(result["unscanned_late_frames"], 1)
+            self.assertEqual(len(result["preselected"]), 5)
+            self.assertTrue(all(t < 420 for t in result["candidate_segment_times_s"]))
+            self.assertFalse(result["provider_calls_permitted"])
+            self.assertFalse(result["five_distinct_shots_approved"])
+
+    def test_v214_late_only_cuts_cannot_fabricate_five_early_shots(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            scout["duration_s"] = 524.96
+            result = v210.select(ranking, scout, root,
+                                 detector=lambda *_: [440, 455, 470, 490, 510])
+            self.assertEqual(result["reason"], "FIVE_SHOT_SEGMENTS_WITH_VALID_LEADIN_UNAVAILABLE")
+            self.assertEqual(result["detected_cut_count"], 0)
+            self.assertEqual(result["preselected"], [])
+            self.assertFalse(result["provider_calls_permitted"])
+
+    def test_v214_source_too_short_in_first_window_still_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            scout["duration_s"] = 524.96
+            result = v210.select(ranking, scout, root, detector=lambda *_: [30, 75])
+            self.assertEqual(result["reason"], "FIVE_SHOT_SEGMENTS_WITH_VALID_LEADIN_UNAVAILABLE")
+            self.assertFalse(result["provider_calls_permitted"])
 
 
 if __name__ == "__main__":
