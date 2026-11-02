@@ -85,6 +85,9 @@ class FilmFrameProvenanceTests(unittest.TestCase):
         self.assertFalse(result["provider_calls_permitted"])
         self.assertFalse(result["publish_permitted"])
         self.assertFalse(result["five_distinct_shots_approved"])
+        self.assertEqual(result["selected_frame_names"], [f"frame_{n:02d}.png" for n in range(1, 6)])
+        self.assertEqual(result["selected_frame_pixel_sha256"],
+                         [job["source_pixel_sha256"] for job in self.manifest["original_frame_jobs"]])
 
     def test_png_replacement_with_matching_manifest_hash_still_blocked(self):
         path = self.cache / "original_frames/frame_03.png"
