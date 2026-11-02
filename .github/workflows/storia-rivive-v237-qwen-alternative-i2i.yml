@@ -1,0 +1,121 @@
+name: "La Storia Rivive V237 · genuine alternative Qwen photo on Lusitania source (NO PAID API)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v237-qwen-alternative-i2i.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v237-qwen-once-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  one_free_alternative_i2i:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prevent repeated free-provider attempts on future PR commits
+        id: gate
+        shell: bash
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$PR_HEAD_SHA"
+          SUBJECT="$(git log -1 --format=%s "$PR_HEAD_SHA")"
+          if [[ "$SUBJECT" == 'storia V237: one alternative free Qwen I2I A/B on authentic 1915 portrait [V237-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V237_REPLAY_PREVENTED'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install free Gradio client and Pillow, no paid inference provider
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m pip install -q "pillow>=10,<13" "gradio_client>=1,<2"
+      - name: Offline regression tests before any free inference attempt
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m unittest discover -s tests -p 'test_storia_rivive_v237_qwen_photo_ab.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v77_identity_guard.py' -q
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: v236-lusitania-face-first-real-film-and-one-free-i2i-NOT-FINAL
+          run-id: 41536737929
+          github-token: ${{ github.token }}
+          path: output/v237/v236_original_media
+      - name: Lock real V236 source PNG and REJECTED Finegrain baseline to exact SHA256
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          E=lusitania_departure_1915_v220
+          ROOT="output/v237/v236_original_media/$E"
+          SOURCE="$ROOT/FOUR_PHOTO_INPUTS_ONE_VIDU_ANCHOR/frame_04.png"
+          PRIOR="$ROOT/FACE_FIRST_REAL_I2I_CANDIDATE/FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png"
+          echo "716a886ab8583f87d2f9c28e7cb7a236f4243f029e95f29e2cfed85ddf029f10  $SOURCE" | sha256sum --check --status
+          echo "21544bcbf9acb39577141ad9a4ac1c8f7c4da183acc74932dcffd76ff20733a4  $PRIOR" | sha256sum --check --status
+          python src/storia_rivive_v237_qwen_photo_ab.py \
+            --source "$SOURCE" --prior "$PRIOR" --out output/v237/alternative_qwen_ab --offline
+      - name: ONE anonymous public ZeroGPU Qwen Image Edit generation, no token or paid API
+        if: steps.gate.outputs.allowed == 'true'
+        id: qwen
+        continue-on-error: true
+        env:
+          HF_TOKEN: ''
+          HUGGING_FACE_HUB_TOKEN: ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          E=lusitania_departure_1915_v220
+          ROOT="output/v237/v236_original_media/$E"
+          timeout 720s python src/storia_rivive_v237_qwen_photo_ab.py \
+            --source "$ROOT/FOUR_PHOTO_INPUTS_ONE_VIDU_ANCHOR/frame_04.png" \
+            --prior "$ROOT/FACE_FIRST_REAL_I2I_CANDIDATE/FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png" \
+            --out output/v237/alternative_qwen_ab
+      - name: Record provider result accurately; no invented output or artistic PASS
+        if: always() && steps.gate.outputs.allowed == 'true'
+        env:
+          PROVIDER_OUTCOME: ${{ steps.qwen.outcome }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          out=Path('output/v237/alternative_qwen_ab')
+          out.mkdir(parents=True,exist_ok=True)
+          p=out/'V237_REAL_MEDIA_STATUS.json'
+          report=json.loads(p.read_text())
+          success=os.getenv('PROVIDER_OUTCOME')=='success' and (out/'V237_QWEN_REAL_I2I_CANDIDATE.png').is_file()
+          if not success:
+              report['status']='ANONYMOUS_FREE_PROVIDER_UNAVAILABLE_OR_QUOTA_NO_IMAGE'
+              report['provider_attempts']=1
+              report['new_real_i2i_candidates']=0
+          else:
+              if report.get('new_real_i2i_candidates')!=1 or not report.get('generated_photo_sha256'):
+                  raise SystemExit('V237_GENERATED_PHOTO_NOT_VERIFIED')
+          report['human_artistic_approved']=False
+          report['final_mp4']=False
+          report['final_zip']=False
+          report['new_final_episodes_delivered']=0
+          report['publish_allowed']=False
+          report['paid_credit_spend_allowed']=False
+          p.write_text(json.dumps(report,indent=2)+'\n')
+          print('V237_VERIFIED',report['status'],'NO_PAID_API_NO_VIDU_FINAL_0_OF_4')
+          PY
+      - name: Store actual source/new photo comparison as PRIVATE QA artifact, never release
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v237-one-alternative-qwen-real-i2i-vs-rejected-finegrain-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v237/alternative_qwen_ab/
+          # Do not upload film, account token, balance, or publish social/site.
