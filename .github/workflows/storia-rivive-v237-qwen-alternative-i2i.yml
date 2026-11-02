@@ -38,7 +38,7 @@ jobs:
       - name: Install free Gradio client and Pillow, no paid inference provider
         if: steps.gate.outputs.allowed == 'true'
         run: |
-          python -m pip install -q "pillow>=10,<13" "gradio_client>=1,<2"
+          python -m pip install -q "pillow>=10,<13" "gradio_client>=1,<2" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
       - name: Offline regression tests before any free inference attempt
         if: steps.gate.outputs.allowed == 'true'
         run: |
