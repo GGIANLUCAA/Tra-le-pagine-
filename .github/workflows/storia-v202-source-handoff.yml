@@ -6,6 +6,8 @@ on:
       - "src/storia_rivive_v202_source_handoff.py"
       - "tests/test_storia_rivive_v202_source_handoff.py"
       - "src/storia_rivive_v204_film_frame_provenance.py"
+      - "src/storia_rivive_v206_bw_motion_leadin.py"
+      - "tests/test_storia_rivive_v206_bw_motion_leadin.py"
       - "tests/test_storia_rivive_v204_film_frame_provenance.py"
       - ".github/workflows/storia-v202-source-handoff.yml"
   pull_request:
@@ -13,6 +15,8 @@ on:
       - "src/storia_rivive_v202_source_handoff.py"
       - "tests/test_storia_rivive_v202_source_handoff.py"
       - "src/storia_rivive_v204_film_frame_provenance.py"
+      - "src/storia_rivive_v206_bw_motion_leadin.py"
+      - "tests/test_storia_rivive_v206_bw_motion_leadin.py"
       - "tests/test_storia_rivive_v204_film_frame_provenance.py"
       - ".github/workflows/storia-v202-source-handoff.yml"
   workflow_dispatch:
@@ -37,5 +41,9 @@ jobs:
         run: |
           python -m py_compile src/storia_rivive_v204_film_frame_provenance.py tests/test_storia_rivive_v204_film_frame_provenance.py
           python -m unittest discover -s tests -p "test_storia_rivive_v204_film_frame_provenance.py" -v
+      - name: V206 real FFmpeg B/W motion lead-in tests (no provider calls)
+        run: |
+          python -m py_compile src/storia_rivive_v206_bw_motion_leadin.py tests/test_storia_rivive_v206_bw_motion_leadin.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v206_bw_motion_leadin.py" -v
       - name: Existing V101/V102 regression tests
         run: python -m unittest discover -s tests -p 'test_storia_rivive_v101.py' -v
