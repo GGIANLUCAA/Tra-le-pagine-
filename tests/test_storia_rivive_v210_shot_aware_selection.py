@@ -24,8 +24,8 @@ def fixture(folder):
     original.mkdir()
     for i in range(1, 13):
         rng = random.Random(i)
-        pixels = [v for _ in range(96 * 72)
-                  for v in [(k := rng.randrange(40, 225), k, k)]]
+        shades = [rng.randrange(40, 225) for _ in range(96 * 72)]
+        pixels = [(shade, shade, shade) for shade in shades]
         image = Image.new("RGB", (96, 72))
         image.putdata(pixels)
         image.resize((640, 480), Image.Resampling.NEAREST).save(original / f"frame_{i:02d}.png")
