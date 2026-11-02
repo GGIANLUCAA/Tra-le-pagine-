@@ -203,6 +203,25 @@
     "no_automatic_release_or_publish": true,
     "artifact_must_be_real_mp4_full_ffmpeg_decode_and_download_readback": true,
     "skip_cycle_if_quality_sources_cost_or_archive_not_verified": true,
-    "current_production_state": "authorized_but_quality_preflight_blocked; do not trigger old V114/V116/V117 renderers"
+    "current_production_state": "authorized_but_quality_preflight_blocked; do not trigger old V114/V116/V117 renderers",
+    "owner_selected_ten_queue": "queue/artvision_owner_selected_ten_20261102.json",
+    "selection_precedence": "owner_selected_ten_over_autonomous_selection"
+  },
+  "owner_selected_ten_20261102": {
+    "enabled": true,
+    "precedence": "owner explicit 2026-11-02; supersedes autonomous selection and earlier seventh-artwork prohibitions ONLY",
+    "selection_file": "queue/artvision_owner_selected_ten_20261102.json",
+    "one_owner_automation_id": "6adca191603c8191a90d5190901cd034",
+    "exactly_ten_selected": true,
+    "skip_dali_until_written_reproduction_and_derivative_license": true,
+    "existing_standalone_cinema_reuse_candidates": 3,
+    "no_duplicate_4x1_render": true,
+    "zero_approved_museum_presets_as_of_20261102": true,
+    "fail_closed_until_v118_v119_room_frame_rights_and_tts_preflight": true,
+    "concurrent_renders_max": 1,
+    "zero_paid_calls": true,
+    "zero_auto_gold": true,
+    "zero_social_publication": true,
+    "do_not_change_historical_masters": true
   }
 }
