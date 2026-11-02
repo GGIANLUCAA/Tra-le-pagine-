@@ -143,5 +143,25 @@ class SourceHandoffTests(unittest.TestCase):
         self.assertEqual(self.run_case(mutate)["reason"], "SOURCE_FRAME_OUTSIDE_VERIFIED_CACHE")
 
 
+    def test_real_v102_builder_output_round_trip(self):
+        """Exercise the actual V102 handoff, not only a hand-crafted manifest."""
+        v102_spec = importlib.util.spec_from_file_location(
+            "v102", ROOT / "src" / "storia_rivive_i2i_prepare_v102.py")
+        v102 = importlib.util.module_from_spec(v102_spec)
+        v102_spec.loader.exec_module(v102)
+        with tempfile.TemporaryDirectory() as temp:
+            m, order, report, cache = fixture(Path(temp))
+            selection = {
+                "status": "FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                "preselected": [{"filename": "frame_%02d.png" % n} for n in range(1, 6)],
+            }
+            actual = v102.build(order, selection, cache)
+            self.assertEqual(actual["photos_requested"], 4)
+            self.assertEqual(actual["vidu_source_anchor"]["source_sha256"],
+                             actual["original_frame_jobs"][4]["source_sha256"])
+            checked = handoff.inspect(actual, order, report, cache)
+            self.assertEqual(checked["status"], "SOURCE_HANDOFF_BYTES_VERIFIED_REVIEW_PENDING")
+            self.assertEqual(checked["verified_photo_source_frames"], 4)
+
 if __name__ == "__main__":
     unittest.main()
