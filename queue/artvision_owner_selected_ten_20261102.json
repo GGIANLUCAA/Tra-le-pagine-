@@ -10,7 +10,7 @@
     "queue/artvision_autoproduction_v31_state.json",
     "docs/PRODUCTION_AUDIT_2026-10-23.json"
   ],
-  "existing_cinema_candidates_count": 3,
+  "existing_cinema_candidates_count": 4,
   "works": [
     {
       "id": "bruegel_fall_rebel_angels_1562_rmfb_584",
@@ -113,6 +113,29 @@
         "spent_api_credits": 0,
         "legacy_master_preserved": true,
         "report": "docs/productions/2026-11-02-artvision-v133-bruegel-cinema-standard-real-mp4.md"
+      },
+      "new_cinema_standard_v135": {
+        "status": "real_non_destructive_revision_same_slot_clean_public_title_verified",
+        "original_v133_sha256": "744ba3e924df222cde88558d42a1c454e743f3b9f673c6addb7213f497653078",
+        "filename": "BRUEGEL_FALL_REBEL_ANGELS_CINEMA_STANDARD_V135_CLEAN_PUBLIC_TITLE_REVIEW.mp4",
+        "bytes": 19883963,
+        "sha256": "346c361919da8cfa652a8f451d2a9879a384f870cdbf2d0a936f290f996e92f5",
+        "duration_s": 48,
+        "video": "H264 720x1280 20fps",
+        "audio": "AAC bit-identical to V133 ADTS SHA 672f0cccfc59ce8dda31c8e2602d62553d20b95405dab856158d044bc89cd936",
+        "title_card_clean": "PASS; prohibited project/variant footer removed only frames 0-49 and 890-959",
+        "cover_clean": "PASS",
+        "social_draft_clean": "PASS",
+        "full_ffmpeg_decode": "PASS",
+        "zip_bytes": 37172085,
+        "zip_sha256": "de5bce5a684945898eb8ffdfd61f825ce5156445d9bcb8b536a1e4af14e700a2",
+        "zip_crc": "PASS",
+        "storage": "current conversation sandbox only; permanent Library quota previously exceeded",
+        "site_playback_verified": false,
+        "gold_v25": false,
+        "paid_api_calls": 0,
+        "additional_slots": 0,
+        "report": "docs/productions/2026-11-02-artvision-v135-two-verified-cinema-reviews.md"
       }
     },
     {
@@ -335,35 +358,53 @@
       "art_rights_preflight": "1896 original public domain; exact image rights and Finnish National Gallery conditions require file-specific check",
       "preexisting_cinema_candidate": null,
       "editorial_note": "Tiny original watercolor/gouache, NOT the 1906 Tampere Cathedral fresco; avoid wrong oil/canvas description on some metadata pages",
-      "preflight_status": "research_incomplete_not_render_authorized",
+      "preflight_status": "one_cinema_standard_review_mp4_rendered_verified_three_slots_pending",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 0,
+      "slots_delivered_this_selection": 1,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
       "Gold_V25": false,
       "v134_cinema_candidate": {
-        "status": "render_requested_not_verified",
+        "status": "real_mp4_artifact_downloaded_full_decode_SHA_zip_crc_PASS_one_slot_review_not_gold",
         "request": "requests/artvision/simberg-garden-v134.json",
-        "request_commit": "b12bf9e8451f7ddcb80fa8b41f8aabbcd771e5b5",
         "workflow": ".github/workflows/artvision-simberg-garden-v134.yml",
-        "render_script": "src/artvision_garden_v134.py",
-        "public_title": "The Garden of Death",
-        "source_page": "https://commons.wikimedia.org/wiki/File:Hugo_Simberg_-_The_Garden_of_Death_-_Google_Art_Project.jpg",
-        "rights_collection_CC0_reference": "https://www.finna.fi/Record/kansallisgalleria.0A48459FA177256B62CC6FD2D340317E",
-        "artwork_media_download_verified": false,
-        "mp4_full_decode_verified": false,
-        "artifact_readback_verified": false,
-        "slots_delivered_increment": 0,
-        "paid_api_calls": 0,
-        "social_published": false,
+        "github_run_id": 41535956792,
+        "github_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41535956792",
+        "github_artifact_id": 13183352784,
+        "github_artifact_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41535956792/artifacts/13183352784",
+        "artifact_retention_expires_at": "2026-12-02T22:17:49Z",
+        "mp4_filename": "SIMBERG_THE_GARDEN_OF_DEATH_CINEMA_V134_REVIEW.mp4",
+        "mp4_bytes": 5123709,
+        "mp4_sha256": "2ec7e57ac37c521c2d8e224ed026d651f44a201790ae55f02e902c771d891152",
+        "duration_s": 48,
+        "video": "H264 720x1280 20fps",
+        "audio": "AAC original synthesized",
+        "source_image_sha256": "514bf455d7cdc3543e3ee8ff49f206370ef34121c72e49e04353e3e902f530a5",
+        "source_image_pixels": [
+          4001,
+          3609
+        ],
+        "source_rights": "Commons PD-Art/PDM, territorial legal review pending",
+        "zip_bytes": 11546669,
+        "zip_sha256": "e9d380129488d9edff95e901291a87d95db4d1e00d3ca8fdb7d9adde610acf32",
+        "full_ffmpeg_decode": "PASS local download",
+        "mp4_sha256_readback": "MATCH",
+        "zip_crc_readback": "PASS",
+        "artistic_review": "PENDING",
+        "museum_approved": false,
+        "critico_voice_verified": false,
+        "site_playback_verified": false,
         "gold_v25": false,
-        "notes": "New no-paid render requested on push; do not claim MP4 until artifact actual and verified. Avoid duplicate render requests."
+        "social_published": false,
+        "paid_api_calls": 0,
+        "slots_delivered_increment": 1,
+        "report": "docs/productions/2026-11-02-artvision-v135-two-verified-cinema-reviews.md"
       }
     },
     {
@@ -590,5 +631,7 @@
     "commercial_rights_not_globally_cleared": true
   },
   "last_v131_source_readback_20261102": "Bruegel #1 source+music artifact CRC/SHA readback and legacy MP4 FFmpeg/11-frame QA; 0 new 4x1 slots, Museum/voice/delivery still blocked",
-  "last_selected_ten_update_20261102": "V133 one new Bruegel Cinema Standard review real MP4 23,398,879 B SHA 744ba3e924df222cde88558d42a1c454e743f3b9f673c6addb7213f497653078; 3/4 Bruegel pending; Library quota exceeded; no publication/Gold"
+  "last_selected_ten_update_20261102": "V133 one new Bruegel Cinema Standard review real MP4 23,398,879 B SHA 744ba3e924df222cde88558d42a1c454e743f3b9f673c6addb7213f497653078; 3/4 Bruegel pending; Library quota exceeded; no publication/Gold",
+  "last_verified_review": "2026-11-02",
+  "total_selected_new_cinema_review_slots_verified": 3
 }
