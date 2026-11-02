@@ -24,6 +24,26 @@ class FourPilotSourceReviewTest(unittest.TestCase):
         for item in self.source["episodes"]:
             self.assertIn("ITALIAN_RIGHTS_NOT_REVIEWED", item["rights_status"])
 
+    def test_v225_french_title_rejected_and_new_source_only_research(self):
+        import storia_rivive_v210_shot_aware_selection as v210
+        ids = {item["id"] for item in self.source["episodes"]}
+        self.assertNotIn("french_fashion_birds_1922_v220", ids)
+        self.assertIn("early_cinema_sorrows_1910_v225", ids)
+        new = next(x for x in self.source["episodes"]
+                   if x["id"] == "early_cinema_sorrows_1910_v225")
+        self.assertIn("fiction", new["visual_risks"][0].lower())
+        self.assertIn("ITALIAN_RIGHTS_NOT_REVIEWED", new["rights_status"])
+        self.assertFalse(self.source["italian_rights_approved"])
+        config = json.loads((MANIFEST.parents[1] / "config" /
+                             "storia_rivive_v221_source_frame_exclusions.json").read_text())
+        french_original_sha = ("cd4143f53b5af364af169fa4483ca141fe50923"
+                               "c36f5ed4bcf891890f01a91d4")
+        excluded, reason = v210.source_review_exclusions(config, french_original_sha)
+        self.assertEqual(excluded, {"frame_01.png"})
+        self.assertIn("opening title", reason)
+        other, _ = v210.source_review_exclusions(config, "0" * 64)
+        self.assertEqual(other, set())
+
     def test_duplicate_sources_blocked(self):
         with tempfile.TemporaryDirectory() as tmp:
             manifest = copy.deepcopy(self.source)
