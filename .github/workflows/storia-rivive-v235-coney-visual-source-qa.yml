@@ -1,0 +1,79 @@
+name: "La Storia Rivive V235 · Coney Island authentic 1080p visual source QA (NO API)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v235-coney-visual-source-qa.yml"
+      - "src/storia_rivive_v235_coney_original_film_audit.py"
+      - "tests/test_storia_rivive_v235_coney_original_film_audit.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v235-coney-source-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  audit_actual_original_source:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - name: One-shot authentic Coney candidate gate
+        id: gate
+        shell: bash
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 origin "$PR_HEAD_SHA"
+          SUBJECT="$(git log -1 --format=%s "$PR_HEAD_SHA")"
+          if [[ "$SUBJECT" == 'storia V235: first real Coney Island source QA only [V235-ONCE]' ]]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+            echo "V235_REPLAY_PREVENTED"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: "3.11"
+      - name: Free FFmpeg/Pillow for original film decode
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: Offline tests prevent invalid film and already-color sources
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile src/storia_rivive_v235_coney_original_film_audit.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v235_coney_original_film_audit.py" -v
+      - name: Get original 1903 film from Wikimedia and independently verify size + SHA1
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/v235/ORIGINAL_SOURCE
+          curl --fail --location --silent --show-error --retry 0 --max-time 600 \
+            "https://upload.wikimedia.org/wikipedia/commons/2/2e/Coney_Island%2C_New_York%2C_August_13%2C_1903.webm" \
+            -o output/v235/ORIGINAL_SOURCE/ORIGINAL_ARCHIVE.webm
+          echo "94801a18ec42b2b312fae88d5ba1dc1c47ab2306  output/v235/ORIGINAL_SOURCE/ORIGINAL_ARCHIVE.webm" | sha1sum --check --status
+          test "$(stat -c%s output/v235/ORIGINAL_SOURCE/ORIGINAL_ARCHIVE.webm)" = 198831577
+      - name: Actual twenty-shot 1080p frame decode, mono check, crop contact sheet
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v235_coney_original_film_audit.py \
+            --film output/v235/ORIGINAL_SOURCE/ORIGINAL_ARCHIVE.webm \
+            --out output/v235/REAL_FRAME_SOURCE_REVIEW
+      - name: Source-only visual QA artifact, not a video or generative approval
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v235-coney-1903-real-1080-source-review-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v235/REAL_FRAME_SOURCE_REVIEW/CONTACT_20_SOURCE_FRAMES_9x16_QA.jpg
+            output/v235/REAL_FRAME_SOURCE_REVIEW/SOURCE_REAL_MEDIA_AUDIT_V235.json
+            output/v235/REAL_FRAME_SOURCE_REVIEW/FRAMES_ORIGINAL/*.png
+          # No original film distribution, no paid API, no Vidu, no site/social.
