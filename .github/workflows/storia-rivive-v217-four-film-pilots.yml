@@ -1,0 +1,119 @@
+name: "La Storia Rivive V217 · four new source-film pilot reviews (NO PAID API)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v217-four-film-pilots.yml"
+      - "queue/storia_rivive_four_pilots_v217.json"
+      - "src/storia_rivive_v217_four_pilot_source_review.py"
+      - "tests/test_storia_rivive_v217_four_pilot_source_review.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-v217-four-scout-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline_v217_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install actual local video toolchain and no-cost image dependency
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "pillow>=10,<13"
+      - name: Six V217 regressions including decodable actual synthetic source preview MP4
+        run: |
+          python -m py_compile src/storia_rivive_v217_four_pilot_source_review.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v217_four_pilot_source_review.py" -v
+
+  source_scout:
+    needs: offline_v217_tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        episode:
+          - "delhi_ruins_1910_v217"
+          - "granada_alhambra_1914_v217"
+          - "silent_cinema_1909_v217"
+          - "paramount_studios_1922_v217"
+    env:
+      EPISODE_ID: ${{ matrix.episode }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg to inspect actual archival original bytes only
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "pillow>=10,<13"
+      - name: Prepare safe order for one of four new, distinct original archives
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v217_four_pilot_source_review.py \
+            --manifest queue/storia_rivive_four_pilots_v217.json \
+            --episode "$EPISODE_ID" \
+            --out "output/v217/$EPISODE_ID"
+      - name: Download original Wikimedia film and generate 12 REAL contact-sheet frames
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_scout_v101.py \
+            --order "output/v217/$EPISODE_ID/WORK_ORDER.json" \
+            --out "output/v217/source/$EPISODE_ID"
+      - name: Rank native archival pixels and test five candidate distinct camera cuts
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPORT="output/v217/source/$EPISODE_ID/SCOUT_REPORT.json"
+          TARGET="output/v217/$EPISODE_ID"
+          SRC="output/v217/source/$EPISODE_ID"
+          if python - "$REPORT" <<'PY'
+          import json,sys
+          with open(sys.argv[1], encoding="utf-8") as file:
+              report = json.load(file)
+          if report.get("status") == "REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW":
+              raise SystemExit(0)
+          print("V217_SOURCE_SKIPPED", report.get("status"))
+          raise SystemExit(2)
+          PY
+          then
+            python src/storia_rivive_frame_rank_v101.py \
+              --frames "$SRC/original_frames" \
+              --out "$TARGET/V101_RANKING.json"
+            python src/storia_rivive_v210_shot_aware_selection.py \
+              --ranking "$TARGET/V101_RANKING.json" \
+              --scout "$REPORT" \
+              --cache "$SRC" \
+              --out "$TARGET/SHOT_AWARE_SELECTION_V210.json"
+          else
+            echo "Source not ready: no ranked scenes and no preview; free skip."
+          fi
+      - name: Render real five-shot grayscale MOTION review only when sourced, never I2I or Vidu fake
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v217_four_pilot_source_review.py \
+            --manifest queue/storia_rivive_four_pilots_v217.json \
+            --episode "$EPISODE_ID" \
+            --out "output/v217/$EPISODE_ID" \
+            --cache "output/v217/source/$EPISODE_ID" --finish
+      - name: Upload source footage evidence, contact sheet and any REAL preview for QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: v217-four-pilot-source-${{ matrix.episode }}
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            output/v217/${{ matrix.episode }}/
+            output/v217/source/${{ matrix.episode }}/SCOUT_REPORT.json
+            output/v217/source/${{ matrix.episode }}/ORIGINAL_FILM_CONTACT_SHEET.jpg
+            output/v217/source/${{ matrix.episode }}/original_frames/frame_*.png
+          # Exclude ORIGINAL_ARCHIVE.webm: do not re-distribute unapproved historic source.
