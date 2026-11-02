@@ -91,6 +91,40 @@ def likely_intertitle(path: Path) -> bool:
     return bright >= 0.02 and separated_text_lines >= 3
 
 
+def source_review_exclusions(review: dict | None, source_sha: str) -> tuple[set[str], str]:
+    """Only subtract frames explicitly rejected on this exact source SHA.
+
+    Human inspection can disqualify an uploader slate missed by pixel heuristics.
+    This never approves shots, rights, I2I or spending.
+    """
+    if review is None:
+        return set(), ""
+    if not isinstance(review, dict) or review.get("version") != "V221_SOURCE_LOCKED_EXCLUSIONS":
+        raise ValueError("INVALID_SOURCE_REVIEW_VERSION")
+    entries = review.get("sources")
+    if not isinstance(entries, list):
+        raise ValueError("INVALID_SOURCE_REVIEW_SOURCES")
+    seen = set()
+    selected = (set(), "")
+    for entry in entries:
+        if not isinstance(entry, dict):
+            raise ValueError("INVALID_SOURCE_REVIEW_ENTRY")
+        digest = entry.get("original_sha256")
+        frames = entry.get("excluded_frames")
+        reason = entry.get("reason")
+        if (not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest)
+                or digest in seen or not isinstance(frames, list)
+                or not frames or len(frames) > 12
+                or any(not isinstance(name, str) or not FRAME.fullmatch(name) for name in frames)
+                or len(set(frames)) != len(frames)
+                or not isinstance(reason, str) or not 10 <= len(reason) <= 500):
+            raise ValueError("INVALID_SOURCE_REVIEW_ENTRY")
+        seen.add(digest)
+        if digest == source_sha:
+            selected = (set(frames), reason)
+    return selected
+
+
 def sha256_stream(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -99,7 +133,7 @@ def sha256_stream(path: Path) -> str:
     return digest.hexdigest()
 
 
-def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) -> dict:
+def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries,\n           exclusions: dict | None = None) -> dict:
     result = {"version": "V210_SHOT_AWARE_PRESELECTION",
               "status": "SHOT_AWARE_SELECTION_BLOCKED", "reason": "UNKNOWN",
               "preselected": [], "approved_restored_photos": 0,
@@ -140,6 +174,12 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) 
         return block("INVALID_SOURCE_FILM")
     if sha256_stream(film) != expected:
         return block("SOURCE_HASH_CHANGED")
+    try:
+        excluded, exclusion_reason = source_review_exclusions(exclusions, expected)
+    except ValueError:
+        return block("INVALID_SOURCE_REVIEW_EXCLUSIONS")
+    result["source_review_excluded_frames"] = sorted(excluded)
+    result["source_review_exclusion_reason"] = exclusion_reason
     if len(frames) < 6:
         return block("TOO_FEW_SCOUT_FRAMES")
     # V212: reject weak native portrait detail BEFORE cut detection or I2I.
@@ -205,6 +245,8 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) 
         segment = bisect.bisect_right(boundaries, t)
         if segment != bisect.bisect_right(boundaries, t - LEAD_SECONDS):
             continue
+        if name in excluded:
+            continue  # SHA-bound human rejection, never override with pixel score
         source = cache / "original_frames" / name
         if source.is_symlink() or not source.is_file():
             return block("SOURCE_FRAME_MISSING_OR_UNSAFE")
@@ -264,10 +306,13 @@ def main():
     parser = argparse.ArgumentParser()
     for name in ("ranking", "scout", "cache", "out"):
         parser.add_argument("--" + name, required=True)
+    parser.add_argument("--exclusions")
     args = parser.parse_args()
     try:
+        review = json.loads(Path(args.exclusions).read_text()) if args.exclusions else None
         result = select(json.loads(Path(args.ranking).read_text()),
-                        json.loads(Path(args.scout).read_text()), Path(args.cache))
+                        json.loads(Path(args.scout).read_text()), Path(args.cache),
+                        exclusions=review)
     except (OSError, ValueError, TypeError):
         result = {"version": "V210_SHOT_AWARE_PRESELECTION",
                   "status": "SHOT_AWARE_SELECTION_BLOCKED",
