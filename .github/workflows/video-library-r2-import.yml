@@ -1,6 +1,7 @@
 name: Video Library Studio - Automatic Import
 on:
   push:
+    branches: [main]
     paths:
       - .github/workflows/video-library-r2-import.yml
   schedule:
@@ -31,7 +32,8 @@ permissions:
   actions: read
   id-token: write
 concurrency:
-  group: video-library-studio-import
+  # Separate from pre-November legacy importer already running a long backlog.
+  group: video-library-studio-direct-import-v2
   cancel-in-progress: false
 jobs:
   upload:
@@ -51,7 +53,7 @@ jobs:
         run: |
           python3 -m pip -q install requests
           python3 - <<'PY'
-          import os,re,sys,zipfile,tempfile,pathlib,time,json,hashlib,io
+          import os,re,sys,zipfile,tempfile,pathlib,time,json,hashlib,io,datetime
           import requests
           S=requests.Session()
           ROOT=os.environ['IMPORT_ENDPOINT'].rstrip('/')
@@ -209,7 +211,18 @@ jobs:
               with tempfile.TemporaryDirectory() as tmp:
                   wd=pathlib.Path(tmp);zpath=wd/'a.zip'
                   try:
-                      if cf('GET','/artifact-status',{'artifact':a['id']}).get('synced'):continue
+                      state=cf('GET','/artifact-status',{'artifact':a['id']})
+                      # A legacy worker run could have marked unreviewed NEW videos
+                      # as 'complete' without uploading their bytes. Recheck recent
+                      # artifacts until the old import run has fully retired.
+                      made=a.get('created_at') or ''
+                      recent=False
+                      if made>=fresh_since:
+                          created=datetime.datetime.fromisoformat(made.replace('Z','+00:00'))
+                          recent=created>=datetime.datetime.now(datetime.timezone.utc)-datetime.timedelta(hours=6)
+                      if state.get('synced') and not recent:continue
+                      if state.get('synced') and recent:
+                          print('REVERIFY RECENT ARTIFACT even if legacy marked complete:',a['name'],flush=True)
                       u='https://api.github.com/repos/'+REPO+'/actions/artifacts/'+str(a['id'])+'/zip'
                       with S.get(u,headers=HEAD,stream=True,timeout=240) as r:
                           r.raise_for_status()
