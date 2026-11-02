@@ -140,5 +140,104 @@
     "same_room_and_frame_on_exit": true,
     "intro_outro_real_mp4_review_required": true,
     "no_gold_without_human_review": true
+  },
+  "real_photograph_research_v120": {
+    "date": "2026-11-02",
+    "run_id": 41395451028,
+    "artifact_id": 13119426005,
+    "notes": "Five ACTUAL photographic sources downloaded with author and license, NOT five finished, matched, accepted gallery presets. Source photos may be aesthetically unsuitable and must not be used as an exhibit of a different artwork without disclosure.",
+    "status": "source_research_only",
+    "items": [
+      {
+        "photo_id": "PH01",
+        "room_candidate": "GAL01",
+        "title": "Corcoran gallery historical interior",
+        "author": "Daderot",
+        "license": "CC0 1.0",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Interior_-_Corcoran_Gallery_of_Art_-_DSC01195.JPG",
+        "source_local_jpg_sha256": "eaea76f5ff2c3162397b45cd18c751373d47e6cd5462fa3d72285338c4a2f926",
+        "limitations": "rich decorative room with pre-existing artworks, unsuitable for direct insertion without editing",
+        "visual_review": "source_photo_screened",
+        "approved_for_video_preset": false,
+        "does_not_document_historical_installation": true
+      },
+      {
+        "photo_id": "PH02",
+        "room_candidate": "GAL02",
+        "title": "Museum Barberini empty gallery Potsdam",
+        "author": "Daniel Naber",
+        "license": "CC BY 4.0",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Museum_Barberini_Innenraum_leer.jpg",
+        "source_local_jpg_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+        "limitations": "clear empty room but doorway blocks central wall; camera and compositing research needed",
+        "visual_review": "source_photo_screened",
+        "approved_for_video_preset": false,
+        "does_not_document_historical_installation": true
+      },
+      {
+        "photo_id": "PH03",
+        "room_candidate": "GAL03",
+        "title": "Museo delle Mura historical exhibition Rome",
+        "author": "Roundtheworld",
+        "license": "CC0 1.0",
+        "source_page": "https://commons.wikimedia.org/wiki/File:MuseumoftheWalls_exhibition.jpg",
+        "source_local_jpg_sha256": "cee7b171449cad4143ef2f0117e6ec90e12b3b46b265b123977c2bfd38932f9e",
+        "limitations": "vault is photoreal but information panels and physical exhibits obstruct clean mounting",
+        "visual_review": "source_photo_screened",
+        "approved_for_video_preset": false,
+        "does_not_document_historical_installation": true
+      },
+      {
+        "photo_id": "PH04",
+        "room_candidate": "GAL04",
+        "title": "Victoria and Albert Museum Room 70",
+        "author": "14GTR",
+        "license": "CC0 1.0",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Room_70_Begining_the_Collection.jpg",
+        "source_local_jpg_sha256": "3e035baac12291ce5e7cbed35525d6dae7fe0f75b58e5984f7b4530cf0110920",
+        "limitations": "real room, many objects and labels; cannot treat as blank gallery wall",
+        "visual_review": "source_photo_screened",
+        "approved_for_video_preset": false,
+        "does_not_document_historical_installation": true
+      },
+      {
+        "photo_id": "PH05",
+        "room_candidate": "GAL05",
+        "title": "Game Room gallery",
+        "author": "Loralielo",
+        "license": "CC0 1.0",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Game_Room_-_Interior_of_the_gallery.jpg",
+        "source_local_jpg_sha256": "97011035822dfb20889b93204df53a5851ef0379393917652ab4301ef1ef4f8a",
+        "limitations": "authentic contemporary exhibition but artworks and columns obstruct wall",
+        "visual_review": "source_photo_screened",
+        "approved_for_video_preset": false,
+        "does_not_document_historical_installation": true
+      }
+    ]
+  },
+  "experiment_v120_proven_reference_video_reuse": {
+    "date": "2026-11-02",
+    "status": "real_11_second_video_rendered_needs_review_not_preset_approval",
+    "artwork": "Carel Fabritius, The Goldfinch, Mauritshuis inv 605",
+    "artwork_height_cm": 33.5,
+    "artwork_width_cm": 22.8,
+    "reference": "V46 Hiroshige Museum Scale user-approved digital room",
+    "reference_video_sha256": "4c652f526b91bb22332055e0484f3a616d1168ae85599bb7e81da197ce29356c",
+    "reference_print_approx_height_cm": 35,
+    "reference_print_approx_width_cm": 24,
+    "preview_sha256": "2252efad7596314880670406ab65ea5cfa78de92a1bf919f7e7392b49dfb7a8c",
+    "preview_seconds": 11,
+    "preview_dimensions_px": [
+      720,
+      1280
+    ],
+    "gallery_actual_mauritshuis": false,
+    "frame_authentic_to_fabritius": false,
+    "museum_approved": false,
+    "V25_Gold": false,
+    "master_v117_unchanged": true,
+    "method": "SIFT+RANSAC tracked in-frame image plane composited over source clip, symmetric physical camera movement, no procedurally drawn scene",
+    "delivery_status": "sandbox_local_verified_Library_full_Drive_upload_forbidden",
+    "report": "docs/productions/2026-11-02-artvision-v120-museum-real-room-reuse-and-source-study.md"
   }
 }
