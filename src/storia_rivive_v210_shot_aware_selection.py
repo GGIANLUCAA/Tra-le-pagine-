@@ -237,7 +237,10 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries,
             return block("INVALID_OR_DUPLICATED_FRAME_NAME")
         seen_names.add(name)
         index = int(name[6:8])
-        t = (index - 1) * period
+        # V223: FFmpeg fps=1/period samples the MIDDLE of each bin, not
+        # its left edge. On Lusitania 1915 this error shifted the PNG source
+        # roughly 13 seconds ahead of the preview, changing the entire shot.
+        t = (index - 0.5) * period
         score = row.get("source_visual_quality_score")
         if isinstance(score, bool) or not isinstance(score, (int, float)) or not math.isfinite(score):
             return block("INVALID_SCORE")
@@ -265,7 +268,8 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries,
     result["likely_intertitle_count"] = len(intertitles)
     result["detected_cut_count"] = len(boundaries)
     result["portrait_candidates_checked"] = len(candidates)
-    result["unscanned_late_frames"] = sum(1 for row in frames if (int(row["filename"][6:8]) - 1) * period >= scan_seconds)
+    result["unscanned_late_frames"] = sum(1 for row in frames if (int(row["filename"][6:8]) - 0.5) * period >= scan_seconds)
+    result["source_frame_timestamp_model"] = "V223_FFMPEG_FPS_BIN_MIDPOINT_NOT_LEFT_EDGE"
     if len(segments) < 5:
         return block("FIVE_PHOTOGRAPHIC_CANDIDATE_SEGMENTS_UNAVAILABLE" if intertitles
                      else "FIVE_SHOT_SEGMENTS_WITH_VALID_LEADIN_UNAVAILABLE")
