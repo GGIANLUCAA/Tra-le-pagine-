@@ -46,6 +46,28 @@ class ShotAwareSelectionTests(unittest.TestCase):
             self.assertFalse(result["five_distinct_shots_approved"])
             self.assertFalse(result["provider_calls_permitted"])
 
+    def test_v216_real_pilot_style_intertitles_do_not_count_as_five_shots(self):
+        from PIL import ImageDraw
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            for i in range(1, 13):
+                if i in (6, 10):
+                    continue  # only two usable photographic/diagram frames
+                path = root / "original_frames" / f"frame_{i:02d}.png"
+                image = Image.new("RGB", (1280, 720), (5, 5, 5))
+                draw = ImageDraw.Draw(image)
+                for j in range(4):
+                    draw.rectangle((260, 110 + j * 120, 1020, 145 + j * 120),
+                                   fill=(220, 220, 220))
+                image.save(path)
+            result = v210.select(ranking, scout, root,
+                                 detector=lambda *_: [8, 18, 28, 38, 48])
+            self.assertEqual(result["reason"], "FIVE_PHOTOGRAPHIC_CANDIDATE_SEGMENTS_UNAVAILABLE")
+            self.assertGreaterEqual(result["likely_intertitle_count"], 8)
+            self.assertEqual(result["preselected"], [])
+            self.assertFalse(result["provider_calls_permitted"])
+
     def test_single_shot_does_not_produce_fake_five(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
