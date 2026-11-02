@@ -1,0 +1,137 @@
+name: "La Storia Rivive V236 · Lusitania 1915 face-first real source + one free I2I (NOT FINAL)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v236-lusitania-portrait-production.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v236-lusitania-one-source-and-photo-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  original_film_and_one_free_photo:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      EPISODE_ID: lusitania_departure_1915_v220
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: No replay of free provider calls on later PR pushes
+        id: gate
+        shell: bash
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$PR_HEAD_SHA"
+          SUBJECT="$(git log -1 --format=%s "$PR_HEAD_SHA")"
+          if [[ "$SUBJECT" == 'storia V236: one face-first Lusitania real I2I source test [V236-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V236_NO_REPEAT_PROVIDER_CALL'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install free real-media tools (no paid GPU)
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q 'pillow>=10,<13' 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5' 'onnxruntime>=1.17,<2' 'huggingface_hub>=0.26,<1' 'gradio_client>=1,<2'
+      - name: Run V236, V230, V77 offline regressions
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_storia_rivive_v236_lusitania_editorial_recut.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v230_curated_portrait.py' -q
+          python -m unittest discover -s tests -p 'test_storia_rivive_v77_identity_guard.py' -q
+      - name: Download REAL 1915 film via existing V101 and verify full SHA256
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          TARGET="output/v236/$EPISODE_ID"
+          SOURCE="output/v236/source/$EPISODE_ID"
+          python src/storia_rivive_v217_four_pilot_source_review.py \
+            --manifest queue/storia_rivive_four_pilots_v217.json \
+            --episode "$EPISODE_ID" --out "$TARGET"
+          python src/storia_rivive_scout_v101.py \
+            --order "$TARGET/WORK_ORDER.json" --out "$SOURCE"
+          python src/storia_rivive_v236_lusitania_editorial_recut.py \
+            --cache "$SOURCE" --out "$TARGET"
+      - name: Render FIVE genuine moments with manually reframed 9:16 original moving film
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          sys.path.insert(0,'src')
+          from storia_rivive_v230_curated_portrait import create
+          eid='lusitania_departure_1915_v220'
+          target=Path('output/v236')/eid
+          source=Path('output/v236/source')/eid
+          report=json.loads((target/'V236_CURATED_SOURCE_LOCK.json').read_text())
+          selection=json.loads((target/'SHOT_AWARE_SELECTION_V236.json').read_text())
+          entry={'episode_id':eid,'crop_width_px':608,'raster_px':[1920,1080],
+                 'frames':[{'filename':r['frame'],'source_frame_sha256':r['original_sha256'],
+                            'left_px':r['crop_left_px']} for r in report['shots']]}
+          preview=create(source,target/'REAL_PORTRAIT_MOTION',selection,entry)
+          if preview.get('five_source_reframed_clips')!=5 or preview.get('finished_mp4') is not False:
+              raise SystemExit('V236_REAL_SOURCE_PREVIEW_CONTRACT_FAILED')
+          (target/'V236_REAL_MOTION_PREVIEW_REPORT.json').write_text(json.dumps(preview,indent=2)+'\n')
+          print('V236_FIVE_REAL_MOTION_CLIPS_READY_FOR_ARTISTIC_REVIEW_NOT_FINAL')
+          PY
+      - name: One free REAL Finegrain I2I on newly curated close-up faces, no retry
+        if: steps.gate.outputs.allowed == 'true'
+        id: photo
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v77_safe_photo_generator.py \
+            --source "output/v236/$EPISODE_ID/FOUR_PHOTO_INPUTS_ONE_VIDU_ANCHOR/frame_04.png" \
+            --outdir "output/v236/$EPISODE_ID/FACE_FIRST_REAL_I2I_CANDIDATE" \
+            --verified-objects 'Two men wearing dark suits and brimmed hats face the camera near left side; another adult man in dark clothing is cropped in foreground at right; behind them is a dark canvas awning and partially obscured horses and dock crowd. Keep EXACT head count, hats, facial identities and positions. No invented faces or people.' \
+            --denoise-strength 0.20
+      - name: Write truthful real-byte result; no Vidu, rights or publication claims
+        if: always() && steps.gate.outputs.allowed == 'true'
+        env:
+          PHOTO_OUTCOME: ${{ steps.photo.outcome }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path('output/v236/lusitania_departure_1915_v220')
+          root.mkdir(parents=True,exist_ok=True)
+          photo=root/'FACE_FIRST_REAL_I2I_CANDIDATE'/'FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png'
+          qa=root/'FACE_FIRST_REAL_I2I_CANDIDATE'/'OBJECT_IDENTITY_QA_V77.json'
+          ok=os.environ.get('PHOTO_OUTCOME')=='success' and photo.is_file() and qa.is_file()
+          result={'version':'V236_LUSITANIA_FACE_FIRST_REAL_MEDIA_RESULT',
+                  'status':'ONE_REAL_I2I_NEEDS_ARTISTIC_REVIEW' if ok else 'FREE_PROVIDER_QUOTA_OR_ERROR',
+                  'real_i2i_photos':int(ok),'i2i_target':4,'real_vidu_clips':0,
+                  'new_final_episodes_delivered':0,'finished_mp4':False,'finished_zip':False,
+                  'paid_credits_spent':0,'italian_rights_verified':False,
+                  'human_artistic_approval':False,'publication_permitted':False,
+                  'source_preview_is_not_final':True}
+          if ok:
+              result['real_i2i_sha256']=hashlib.sha256(photo.read_bytes()).hexdigest()
+              result['input_crop_sha256']=json.loads(qa.read_text()).get('input_sha256')
+          (root/'V236_REAL_MEDIA_RESULT.json').write_text(json.dumps(result,indent=2)+'\n')
+          print('V236_REAL_RESULT',result['status'],'NEW_FINAL_0_OF_4')
+          PY
+      - name: Artifact with real motion clips and original source vs generated photo; never a final release
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: v236-lusitania-face-first-real-film-and-one-free-i2i-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v236/lusitania_departure_1915_v220/
+            output/v236/source/lusitania_departure_1915_v220/SCOUT_REPORT.json
+            output/v236/source/lusitania_departure_1915_v220/ORIGINAL_FILM_CONTACT_SHEET.jpg
+          # No original full film, no paid API, no Vidu, no social/site.
