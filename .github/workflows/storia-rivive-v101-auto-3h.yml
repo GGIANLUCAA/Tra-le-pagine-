@@ -12,8 +12,10 @@ on:
       - "src/storia_rivive_v205_visual_novelty.py"
       - "src/storia_rivive_v206_bw_motion_leadin.py"
       - "src/storia_rivive_v209_shot_boundary_review.py"
+      - "src/storia_rivive_v210_shot_aware_selection.py"
       - "tests/test_storia_rivive_v206_bw_motion_leadin.py"
       - "tests/test_storia_rivive_v209_shot_boundary_review.py"
+      - "tests/test_storia_rivive_v210_shot_aware_selection.py"
       - "tests/test_storia_rivive_v205_visual_novelty.py"
       - "tests/test_storia_rivive_v204_film_frame_provenance.py"
       - "tests/test_storia_rivive_v202_source_handoff.py"
@@ -32,7 +34,9 @@ on:
       - "src/storia_rivive_i2i_prepare_v102.py"
       - "src/storia_rivive_v196_scout_gate.py"
       - "src/storia_rivive_v209_shot_boundary_review.py"
+      - "src/storia_rivive_v210_shot_aware_selection.py"
       - "tests/test_storia_rivive_v209_shot_boundary_review.py"
+      - "tests/test_storia_rivive_v210_shot_aware_selection.py"
       - "config/storia_rivive_autopilot_v101.json"
       - "queue/storia_rivive_episode_history_v200.json"
       - "tests/test_storia_rivive_v101.py"
@@ -62,6 +66,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v205_visual_novelty.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v209_shot_boundary_review.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v210_shot_aware_selection.py" -v
   scheduled_preparation:
     if: github.event_name != 'pull_request' && github.run_attempt == 1
     runs-on: ubuntu-latest
@@ -83,13 +88,14 @@ jobs:
       - name: Run fail-closed safety and flag geometry tests before research
         run: |
           set -euo pipefail
-          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v196_scout_gate.py src/storia_rivive_v202_source_handoff.py src/storia_rivive_v204_film_frame_provenance.py src/storia_rivive_v205_visual_novelty.py src/storia_rivive_v206_bw_motion_leadin.py src/storia_rivive_v209_shot_boundary_review.py
+          python -m py_compile src/storia_rivive_autopilot_v101.py src/storia_rivive_scout_v101.py src/storia_rivive_flag_title_v101.py src/storia_rivive_frame_rank_v101.py src/storia_rivive_i2i_prepare_v102.py src/storia_rivive_v196_scout_gate.py src/storia_rivive_v202_source_handoff.py src/storia_rivive_v204_film_frame_provenance.py src/storia_rivive_v205_visual_novelty.py src/storia_rivive_v206_bw_motion_leadin.py src/storia_rivive_v209_shot_boundary_review.py src/storia_rivive_v210_shot_aware_selection.py
           python -m unittest discover -s tests -p "test_storia_rivive_v101.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v196_scout_gate.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v202_source_handoff.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v204_film_frame_provenance.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v205_visual_novelty.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v209_shot_boundary_review.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v210_shot_aware_selection.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v206_bw_motion_leadin.py" -v
       - name: Create deterministic research work order for current UTC 3-hour window
         shell: bash
@@ -142,19 +148,41 @@ jobs:
           python src/storia_rivive_frame_rank_v101.py \
             --frames "output/storia_v101/source-cache/$STORIA_EPISODE_ID/original_frames" \
             --out output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
-      - name: Prepare five source-SHA-locked I2I requests without invoking any paid or free provider
+      - name: V210 choose source frames from different detected camera-shot candidates
+        id: shot_rank
         if: steps.scout_status.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v210_shot_aware_selection.py \
+            --ranking output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json \
+            --scout "output/storia_v101/source-cache/$STORIA_EPISODE_ID/SCOUT_REPORT.json" \
+            --cache "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
+            --out output/storia_v101/SHOT_AWARE_SELECTION_V210.json
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          data=json.loads(Path("output/storia_v101/SHOT_AWARE_SELECTION_V210.json").read_text())
+          ready=data.get("status")=="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW"
+          assert data.get("provider_calls_permitted") is False
+          assert data.get("publish_permitted") is False
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("ready="+str(ready).lower()+"\n")
+          print("V210_SHOT_AWARE",data["status"],data["reason"])
+          PY
+      - name: Prepare five source-SHA-locked I2I requests without invoking any paid or free provider
+        if: steps.shot_rank.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
           python src/storia_rivive_i2i_prepare_v102.py \
             --order output/storia_v101/WORK_ORDER.json \
-            --selection output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json \
+            --selection output/storia_v101/SHOT_AWARE_SELECTION_V210.json \
             --source-dir "output/storia_v101/source-cache/$STORIA_EPISODE_ID" \
             --out output/storia_v101/I2I_INPUT_MANIFEST_V102.json
       - name: V202 attest four photo source frames and the fifth Vidu anchor against actual scout bytes
         id: source_handoff
-        if: steps.scout_status.outputs.ready == 'true'
+        if: steps.shot_rank.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -345,6 +373,8 @@ jobs:
               novelty=json.loads(novelty_path.read_text()) if novelty_path.is_file() else {}
               motion_path=root/"BW_MOTION_V206.json"
               motion=json.loads(motion_path.read_text()) if motion_path.is_file() else {}
+              selection_path=root/"SHOT_AWARE_SELECTION_V210.json"
+              selection=json.loads(selection_path.read_text()) if selection_path.is_file() else {}
               cuts_path=root/"SHOT_CANDIDATES_V209.json"
               cuts=json.loads(cuts_path.read_text()) if cuts_path.is_file() else {}
               ready=(gate["ready"] and handoff.get("status")=="SOURCE_HANDOFF_BYTES_VERIFIED_REVIEW_PENDING"
@@ -353,6 +383,7 @@ jobs:
                      and motion.get("status")=="FIVE_BW_MOTION_LEADINS_SHOT_REVIEW_PENDING"
                      and cuts.get("status")=="FIVE_SHOT_BOUNDARY_CANDIDATES_REVIEW_PENDING")
               reason=(None if ready else gate["reason"] if not gate["ready"]
+                      else selection.get("reason","V210_SELECTION_MISSING") if selection.get("status")!="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW"
                       else handoff.get("reason") if handoff.get("status")!="SOURCE_HANDOFF_BYTES_VERIFIED_REVIEW_PENDING"
                       else provenance.get("reason","V204_PROVENANCE_MISSING") if provenance.get("status")!="FIVE_FRAMES_REEXTRACTED_FROM_FILM_REVIEW_PENDING"
                       else novelty.get("reason","V205_NOVELTY_MISSING") if novelty.get("status")!="FIVE_VISUALLY_NONREDUNDANT_FRAMES_SHOT_REVIEW_PENDING"
@@ -380,6 +411,7 @@ jobs:
             output/storia_v101/SCOUT_GATE_V196.json
             output/storia_v101/CYCLE_STATUS.json
             output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
+            output/storia_v101/SHOT_AWARE_SELECTION_V210.json
             output/storia_v101/I2I_INPUT_MANIFEST_V102.json
             output/storia_v101/SOURCE_HANDOFF_V202.json
             output/storia_v101/FILM_FRAME_PROVENANCE_V204.json
