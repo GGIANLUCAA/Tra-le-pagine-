@@ -1,0 +1,220 @@
+name: "La Storia Rivive V232 · four real free Early Cinema I2I candidates (NO VIDU)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v232-early-cinema-four-free-i2i.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v232-early-cinema-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  free_photo_candidates:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      EPISODE_ID: early_cinema_sorrows_1910_v225
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: One-shot commit marker gate
+        id: one_shot
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$PR_HEAD_SHA"
+          SUBJECT="$(git log -1 --format=%s "$PR_HEAD_SHA")"
+          if [[ "$SUBJECT" == 'storia V232: four free Early Cinema I2I source-locked [V232-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V232_NO_REPEAT_PROVIDER_CALL'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.one_shot.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install original film and free I2I dependencies
+        if: steps.one_shot.outputs.allowed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5" "onnxruntime>=1.17,<2" "huggingface_hub>=0.26,<1" "gradio_client>=1,<2"
+      - name: Source lock and image identity regressions before provider
+        if: steps.one_shot.outputs.allowed == 'true'
+        run: |
+          python -m unittest discover -s tests -p 'test_storia_rivive_v230_curated_portrait.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v77_identity_guard.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v217_four_pilot_source_review.py' -v
+      - name: Acquire authentic 1910 film and verify five frame source endpoints
+        if: steps.one_shot.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$EPISODE_ID"; TARGET="output/v232/$E"; SOURCE="output/v232/source/$E"
+          python src/storia_rivive_v217_four_pilot_source_review.py --manifest queue/storia_rivive_four_pilots_v217.json --episode "$E" --out "$TARGET"
+          python src/storia_rivive_scout_v101.py --order "$TARGET/WORK_ORDER.json" --out "$SOURCE"
+          python src/storia_rivive_frame_rank_v101.py --frames "$SOURCE/original_frames" --out "$TARGET/V101_RANKING.json"
+          python src/storia_rivive_v210_shot_aware_selection.py --ranking "$TARGET/V101_RANKING.json" --scout "$SOURCE/SCOUT_REPORT.json" --cache "$SOURCE" --exclusions config/storia_rivive_v221_source_frame_exclusions.json --out "$TARGET/SHOT_AWARE_SELECTION_V210.json"
+          python src/storia_rivive_v217_four_pilot_source_review.py --manifest queue/storia_rivive_four_pilots_v217.json --episode "$E" --out "$TARGET" --cache "$SOURCE" --finish
+      - name: Verify SHA of film and all four V102 jobs; crop from exact original pixels
+        if: steps.one_shot.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,sys
+          from pathlib import Path
+          from PIL import Image
+          sys.path.insert(0,'src')
+          from storia_rivive_v230_curated_portrait import validate,digest
+          from storia_rivive_i2i_prepare_v102 import build
+          from storia_rivive_v217_four_pilot_source_review import selected_i2i_source_lock
+          eid='early_cinema_sorrows_1910_v225'
+          base=Path('output/v232');target=base/eid;source=base/'source'/eid
+          read=lambda p:json.loads(p.read_text())
+          selection=read(target/'SHOT_AWARE_SELECTION_V210.json')
+          scout=read(source/'SCOUT_REPORT.json')
+          config=read(Path('config/storia_rivive_v230_source_crops.json'))
+          report=read(target/'V217_RESEARCH_REPORT.json')
+          alignment=read(target/'SOURCE_ENDPOINT_ALIGNMENT_V223.json')
+          order=read(target/'WORK_ORDER.json')
+          if report.get('status')!='FIVE_SOURCE_SHOTS_REVIEW_PENDING':
+              raise SystemExit('V232_SOURCE_SHOT_REVIEW_NOT_READY')
+          entry=validate(config,selection,scout,source,eid)
+          jobs=build(order,selection,source)
+          if (jobs['source_video_sha256']!=entry['original_sha256'] or jobs['photos_requested']!=4
+              or jobs['photos_generated']!=0 or jobs['vidu_calls']!=0
+              or jobs['publication_permitted'] is not False):
+              raise SystemExit('V232_SOURCE_OR_JOB_CONTRACT_MISMATCH')
+          dest=target/'FOUR_SOURCE_LOCKED_INPUTS';dest.mkdir(exist_ok=True)
+          locks=[]
+          for i,row in enumerate(entry['frames'][:4]):
+              name=row['filename']
+              proof=selected_i2i_source_lock(selection,alignment,name)
+              job=jobs['original_frame_jobs'][i]
+              original=source/'original_frames'/name
+              if (proof['selected_index']!=i or proof['source_frame_sha256']!=row['source_frame_sha256']
+                  or job['source_sha256']!=row['source_frame_sha256']
+                  or job['source_file']!=str(original)
+                  or job['target_kind']!='REAL_SOURCE_LOCKED_I2I_PHOTOGRAPH'
+                  or digest(original)!=row['source_frame_sha256']):
+                  raise SystemExit('V232_SOURCE_FRAME_OR_TIMECODE_CHANGED')
+              with Image.open(original) as im:
+                  im.convert('RGB').crop((row['left_px'],0,row['left_px']+entry['crop_width_px'],
+                                         entry['raster_px'][1])).save(dest/name)
+              locks.append({'frame':name,'job_index':i,'source_timecode_s':proof['source_timecode_s'],
+                            'original_frame_sha256':row['source_frame_sha256'],
+                            'crop_sha256':digest(dest/name),'crop_left_px':row['left_px']})
+          if jobs['original_frame_jobs'][4]['target_kind']!='VIDU_SOURCE_ANCHOR_NO_I2I':
+              raise SystemExit('V232_FIFTH_FRAME_MUST_NOT_GENERATE_I2I')
+          (target/'V232_FOUR_INPUT_SOURCE_LOCK.json').write_text(json.dumps({
+              'version':'V232_FOUR_FREE_I2I_SOURCE_LOCK','episode_id':eid,
+              'film_sha256':entry['original_sha256'],'frames':locks,
+              'fifth_frame_vidu_pending':entry['frames'][4]['filename'],
+              'italian_rights_approved':False,'publication_permitted':False,
+              'paid_credits_authorized':False,'human_artistic_approval':False},indent=2)+'\n')
+          print('V232_FOUR_REAL_SOURCE_CROPS_LOCKED',[(x['frame'],x['source_timecode_s']) for x in locks])
+          PY
+      - name: Try four true Finegrain I2I photos, free only, one call each, stop at first failure
+        if: steps.one_shot.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          eid='early_cinema_sorrows_1910_v225'
+          target=Path('output/v232')/eid
+          root=target/'FOUR_SOURCE_LOCKED_INPUTS'
+          lock=json.loads((target/'V232_FOUR_INPUT_SOURCE_LOCK.json').read_text())
+          inventory={
+            'frame_08.png':'One woman with long dark hair in a light long-sleeved period dress, standing near a large dark cylindrical masonry structure and timber beams; no other confirmed people',
+            'frame_09.png':'One adult man in a dark early twentieth-century suit standing in side profile before pale wooden paneling and a circular ring fixture; no other confirmed people',
+            'frame_10.png':'One woman in dark coat with short light hair in foreground of wooden exterior doorway and timber structure; preserve face and posture, no new people',
+            'frame_11.png':'One woman with long dark hair wearing a light long-sleeved dress seen from rear/side facing cluttered wooden railing and machinery; preserve hands and all woodwork'}
+          order=['frame_10.png','frame_09.png','frame_11.png','frame_08.png']
+          rows={x['frame']:x for x in lock['frames']}
+          outcomes=[]
+          for name in order:
+              row=rows[name];source=root/name
+              if hashlib.sha256(source.read_bytes()).hexdigest()!=row['crop_sha256']:
+                  raise SystemExit('V232_CROP_BYTES_CHANGED_BEFORE_PROVIDER')
+              out=target/'I2I_CANDIDATES'/name.removesuffix('.png')
+              cmd=[sys.executable,'src/storia_rivive_v77_safe_photo_generator.py',
+                   '--source',str(source),'--outdir',str(out),
+                   '--verified-objects',inventory[name],'--denoise-strength','0.19']
+              try:
+                  subprocess.run(cmd,check=True,timeout=420)
+              except (subprocess.CalledProcessError,subprocess.TimeoutExpired,OSError) as e:
+                  outcomes.append({'frame':name,'status':'FREE_PROVIDER_ERROR_STOP_NO_RETRY',
+                                   'error_type':type(e).__name__,'source_crop_sha256':row['crop_sha256']})
+                  print('V232_FREE_PROVIDER_STOP_NO_RETRY',name,type(e).__name__)
+                  break
+              photo=out/'FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png'
+              qa=out/'OBJECT_IDENTITY_QA_V77.json'
+              raw=out/'FOTO_GENERATIVA_CANDIDATA.png'
+              if not photo.is_file() or not qa.is_file() or not raw.is_file():
+                  outcomes.append({'frame':name,'status':'MISSING_REAL_GENERATIVE_OUTPUT_STOP'})
+                  break
+              review=json.loads(qa.read_text())
+              if review.get('input_sha256')!=row['crop_sha256']:
+                  raise SystemExit('V232_PROVIDER_INPUT_SHA_MISMATCH')
+              outcomes.append({'frame':name,'status':'REAL_I2I_CANDIDATE_PENDING_ARTISTIC_QA',
+                               'source_crop_sha256':row['crop_sha256'],
+                               'photo_sha256':hashlib.sha256(photo.read_bytes()).hexdigest(),
+                               'raw_model_sha256':hashlib.sha256(raw.read_bytes()).hexdigest(),
+                               'photo_bytes':photo.stat().st_size,
+                               'identity_automatic_risk':review.get('inspection',{}).get('automatic_risk')})
+              print('V232_REAL_I2I_PHOTO_CREATED',name,outcomes[-1]['photo_sha256'][:16])
+          count=sum(x['status']=='REAL_I2I_CANDIDATE_PENDING_ARTISTIC_QA' for x in outcomes)
+          result={'version':'V232_FOUR_REAL_I2I_ATTEMPTS','episode_id':eid,
+                  'real_i2i_candidates':count,'target_photos':4,
+                  'attempted_frames':[x['frame'] for x in outcomes],
+                  'outcomes':outcomes,'vidu_clips':0,
+                  'paid_credits_spent':0,'italian_rights_verified':False,
+                  'human_artistic_approval':False,'publish_permitted':False,
+                  'final_4_plus_1_mp4':False,'new_final_episodes_delivered':0,
+                  'status':'I2I_CANDIDATES_NEED_ARTISTIC_QA' if count==4 else 'I2I_PARTIAL_OR_PROVIDER_BLOCKED'}
+          (target/'V232_REAL_I2I_RESULTS.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+          print('V232_RESULT_REAL_PHOTOS',count,'OF_4; NO_VIDU; NO_FINAL')
+          PY
+      - name: Produce real source-vs-I2I contact sheet for human QA
+        if: always() && steps.one_shot.outputs.allowed == 'true'
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image,ImageDraw,ImageOps
+          root=Path('output/v232/early_cinema_sorrows_1910_v225')
+          source=root/'FOUR_SOURCE_LOCKED_INPUTS'
+          out=Image.new('RGB',(1360,1080),'#e9e9e9')
+          d=ImageDraw.Draw(out)
+          for i,name in enumerate(['frame_08','frame_09','frame_10','frame_11']):
+              for j,p in enumerate([source/(name+'.png'),root/'I2I_CANDIDATES'/name/'FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png']):
+                  x=i*340;y=j*540
+                  d.text((x+8,y+6),name+' '+('ARCHIVE' if j==0 else 'I2I REVIEW / MISSING'),fill='black')
+                  if p.is_file():
+                      with Image.open(p) as im:
+                          tile=ImageOps.contain(im.convert('RGB'),(328,490))
+                          out.paste(tile,(x+(340-tile.width)//2,y+32))
+          out.save(root/'V232_ACTUAL_SOURCE_VS_I2I_REVIEW.jpg',quality=90)
+          PY
+      - name: Upload real source photos and I2I candidates (NOT final, no public release)
+        if: always() && steps.one_shot.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: v232-early-cinema-four-real-i2i-candidates-not-final
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v232/${{ env.EPISODE_ID }}/FOUR_SOURCE_LOCKED_INPUTS/
+            output/v232/${{ env.EPISODE_ID }}/I2I_CANDIDATES/
+            output/v232/${{ env.EPISODE_ID }}/V232_FOUR_INPUT_SOURCE_LOCK.json
+            output/v232/${{ env.EPISODE_ID }}/V232_REAL_I2I_RESULTS.json
+            output/v232/${{ env.EPISODE_ID }}/V232_ACTUAL_SOURCE_VS_I2I_REVIEW.jpg
+            output/v232/${{ env.EPISODE_ID }}/SOURCE_ENDPOINT_ALIGNMENT_V223.json
+            output/v232/${{ env.EPISODE_ID }}/SHOT_AWARE_SELECTION_V210.json
+            output/v232/source/${{ env.EPISODE_ID }}/SCOUT_REPORT.json
