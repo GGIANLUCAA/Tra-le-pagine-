@@ -44,6 +44,32 @@ class FourPilotSourceReviewTest(unittest.TestCase):
         other, _ = v210.source_review_exclusions(config, "0" * 64)
         self.assertEqual(other, set())
 
+    def test_v228_source_locked_timecode_uses_same_index_as_real_photo_job(self):
+        # Regression: Delhi V227 photo job index 1 was paired with index 2
+        # timecode (104.345s instead of frame_04's 66.401s).
+        selection = {"status": v217.SELECTION_READY,
+                     "preselected": [{"filename": f"frame_{i:02d}.png"}
+                                     for i in (1, 4, 6, 11, 12)],
+                     "candidate_segment_times_s": [9.486, 66.401, 104.345,
+                                                    199.204, 218.176]}
+        alignment = {"checks": [
+            {"source_frame": row["filename"],
+             "source_frame_sha256": ("%064x" % (i + 1)),
+             "selected_timecode_s": selection["candidate_segment_times_s"][i],
+             "endpoint_visually_aligned": True}
+            for i, row in enumerate(selection["preselected"])]}
+        lock = v217.selected_i2i_source_lock(selection, alignment, "frame_04.png")
+        self.assertEqual(lock["selected_index"], 1)
+        self.assertEqual(lock["source_timecode_s"], 66.401)
+        self.assertNotEqual(lock["source_timecode_s"], 104.345)
+        self.assertEqual(lock["source_frame_sha256"], alignment["checks"][1]["source_frame_sha256"])
+        broken = copy.deepcopy(alignment)
+        broken["checks"][1]["selected_timecode_s"] = 104.345
+        with self.assertRaisesRegex(ValueError, "TIMECODE_MISMATCH"):
+            v217.selected_i2i_source_lock(selection, broken, "frame_04.png")
+        with self.assertRaisesRegex(ValueError, "NOT_A_UNIQUE_I2I_FRAME"):
+            v217.selected_i2i_source_lock(selection, alignment, "frame_12.png")
+
     def test_duplicate_sources_blocked(self):
         with tempfile.TemporaryDirectory() as tmp:
             manifest = copy.deepcopy(self.source)

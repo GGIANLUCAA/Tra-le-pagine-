@@ -63,6 +63,7 @@ jobs:
           from PIL import Image
           sys.path.insert(0,"src")
           from storia_rivive_i2i_prepare_v102 import build
+          from storia_rivive_v217_four_pilot_source_review import selected_i2i_source_lock
           eid="delhi_ruins_1910_v217"
           base=Path("output/v227")
           source=base/"source"/eid
@@ -81,10 +82,12 @@ jobs:
               any(x.get("endpoint_visually_aligned") is not True for x in align["checks"])):
               raise SystemExit("V227_REAL_SOURCE_OR_ENDPOINT_NOT_VERIFIED")
           jobs=build(order,selection,source)
-          job=jobs["original_frame_jobs"][1]
+          frame_lock=selected_i2i_source_lock(selection,align,"frame_04.png")
+          job=jobs["original_frame_jobs"][frame_lock["selected_index"]]
           full=source/"original_frames"/"frame_04.png"
           sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
           if (job["source_sha256"]!=frame_sha or
+              job["source_sha256"]!=frame_lock["source_frame_sha256"] or
               job["source_file"]!=str(full) or
               sha(full)!=frame_sha or
               job["target_kind"]!="REAL_SOURCE_LOCKED_I2I_PHOTOGRAPH" or
@@ -103,7 +106,7 @@ jobs:
           lock={"version":"V227_ONE_FREE_REAL_I2I_ATTEMPT",
                 "episode_id":eid,"source_film_sha256":film_sha,
                 "original_frame_sha256":frame_sha,
-                "source_timecode_s":selection["candidate_segment_times_s"][2],
+                "source_timecode_s":frame_lock["source_timecode_s"],
                 "portrait_crop_left_px":left,"portrait_crop_width_px":cropw,
                 "portrait_source_sha256":sha(dest),
                 "research_only":True,"italian_rights_verified":False,

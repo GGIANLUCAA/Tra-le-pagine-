@@ -113,6 +113,47 @@ def endpoint_alignment(clip: Path, reference: Path) -> dict:
             "endpoint_visually_aligned": raw <= 24 and normalized <= 38}
 
 
+
+def selected_i2i_source_lock(selection: dict, alignment: dict, frame_name: str) -> dict:
+    """V228: derive job index AND timecode from the SAME real selected frame.
+
+    V227 initially copied job index 1 but timecode index 2; this fail-closed
+    check prevents a valid PNG from being paired with a different film moment.
+    It never grants rights, artistic approval or provider permissions.
+    """
+    rows = selection.get("preselected") if isinstance(selection, dict) else None
+    times = selection.get("candidate_segment_times_s") if isinstance(selection, dict) else None
+    checks = alignment.get("checks") if isinstance(alignment, dict) else None
+    if (selection.get("status") != SELECTION_READY or
+            not isinstance(rows, list) or len(rows) != 5 or
+            not isinstance(times, list) or len(times) != 5 or
+            not isinstance(checks, list) or len(checks) != 5 or
+            not isinstance(frame_name, str) or
+            not re.fullmatch(r"frame_(0[1-9]|1[0-2])\.png", frame_name)):
+        raise ValueError("V228_INVALID_SELECTED_SOURCE")
+    indexes = [i for i, row in enumerate(rows)
+               if isinstance(row, dict) and row.get("filename") == frame_name]
+    if len(indexes) != 1 or indexes[0] >= 4:
+        raise ValueError("V228_NOT_A_UNIQUE_I2I_FRAME")
+    i = indexes[0]
+    t = times[i]
+    check = checks[i]
+    if (isinstance(t, bool) or not isinstance(t, (int, float)) or
+            not math.isfinite(t) or t <= 0 or not isinstance(check, dict) or
+            check.get("source_frame") != frame_name or
+            check.get("endpoint_visually_aligned") is not True or
+            not isinstance(check.get("selected_timecode_s"), (int, float)) or
+            isinstance(check["selected_timecode_s"], bool) or
+            not math.isfinite(check["selected_timecode_s"]) or
+            abs(float(check["selected_timecode_s"]) - float(t)) > 0.002 or
+            not isinstance(check.get("source_frame_sha256"), str) or
+            not re.fullmatch(r"[0-9a-f]{64}", check["source_frame_sha256"])):
+        raise ValueError("V228_SOURCE_FRAME_OR_TIMECODE_MISMATCH")
+    return {"selected_index": i, "source_frame": frame_name,
+            "source_timecode_s": float(t),
+            "source_frame_sha256": check["source_frame_sha256"]}
+
+
 def render_source_only_preview(
         film: Path, timestamps: list[float], out: Path,
         reference_frames: list[Path]) -> dict:
