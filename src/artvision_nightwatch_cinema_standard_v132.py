@@ -141,7 +141,7 @@ def main():
     checkrun(["ffmpeg","-hide_banner","-loglevel","error","-y","-f","concat","-safe","0","-i",lst,"-c","copy",silent])
     wav=ROOT/"original_score.wav";original_music(wav,total)
     result=ROOT/"THE_NIGHT_WATCH_CINEMA_STANDARD_V132_REVIEW.mp4"
-    checkrun(["ffmpeg","-hide_banner","-loglevel","error","-y","-i",silent,"-i",wav,"-map","0:v:0","-map","1:a:0","-c:v","copy","-c:a","aac","-b:a","160k","-shortest","-movflags","+faststart","-metadata","comment","ArtVision Cinema Standard review, Rembrandt Rijksmuseum SK-C-5, public-domain painting, original music, no paid APIs",result])
+    checkrun(["ffmpeg","-hide_banner","-loglevel","error","-y","-i",silent,"-i",wav,"-map","0:v:0","-map","1:a:0","-c:v","copy","-c:a","aac","-b:a","160k","-shortest","-movflags","+faststart","-metadata","comment=ArtVision Cinema Standard review, Rembrandt Rijksmuseum SK-C-5, public-domain painting, original music, no paid APIs",result])
     checkrun(["ffmpeg","-hide_banner","-loglevel","error","-xerror","-i",result,"-f","null","-"])
     summary=json.loads(checkrun(["ffprobe","-v","error","-show_entries","format=duration,size:stream=codec_name,width,height","-of","json",result]))
     assert len(summary["streams"])>=2
