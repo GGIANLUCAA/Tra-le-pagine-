@@ -166,15 +166,15 @@
       "art_image_source_page": "https://www.rijksmuseum.nl/en/collection/object/The-Night-Watch-Militia-Company-of-District-II-under-the-Command-of-Captain-Frans-Banninck-Cocq--3137deb45cd7765f9a76084a16c99544",
       "art_rights_preflight": "Rijksmuseum object marked Public domain; data.rijksmuseum.nl/policy permits commercial reuse of public-domain/CC0 images; verify exact image downloaded",
       "preexisting_cinema_candidate": null,
-      "editorial_note": "Current painting only, NOT 2021 AI reconstruction. Rijksmuseum lists 379.5x453.5 overall and elsewhere 363x438 remaining original painted surface; resolve scale against actual asset before render",
-      "preflight_status": "research_incomplete_not_render_authorized",
+      "editorial_note": "Current painting only, NOT 2021 AI reconstruction. Rijksmuseum lists 379.5x453.5 overall and elsewhere 363x438 remaining original painted surface; resolve scale against actual asset before render V132 physically rendered one original Cinema Standard review on 2026-11-02; old masters untouched. Library backup blocked by quota.",
+      "preflight_status": "one_cinema_standard_review_mp4_rendered;_three_slots_pending_Museum_and_voice_gates",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 0,
+      "slots_delivered_this_selection": 1,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
@@ -231,7 +231,38 @@
           "status": "historical_room_1984_not_current_not_downloaded",
           "copyright_compatibility_reviewed": false
         }
-      ]
+      ],
+      "new_cinema_standard_v132": {
+        "status": "rendered_needs_review_one_real_MP4_not_4x1",
+        "filename": "THE_NIGHT_WATCH_CINEMA_STANDARD_V132_REVIEW.mp4",
+        "sha256": "66d53c4353c79c5c99e9eea4dd77d9e080ed3ad9d1b3ee33d612fa9cbf486768",
+        "bytes": 8572321,
+        "duration_seconds": 50.208333,
+        "codec": "H264/AAC 720x1280 24fps",
+        "source_sha1": "53db595a5a1bca243b152b175d65f0f2f1ab1ff8",
+        "source_sha256": "2b82fc052b702baebd4f5476c29e7639b34c8dbfac2ba96ed8ecdb9d8d369c86",
+        "source_dimensions": [
+          14168,
+          11528
+        ],
+        "source_page": "https://commons.wikimedia.org/wiki/File:The_Nightwatch_by_Rembrandt_-_Rijksmuseum.jpg",
+        "source_rights": "Wikimedia Commons PD-Art/PDM faithful 2D reproduction, publication restrictions pending",
+        "music": "Original locally synthesized score, no paid API",
+        "github_actions_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41503916968",
+        "artifact_id": 13170262186,
+        "artifact_download": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41503916968/artifacts/13170262186",
+        "full_decode_pass_ci": true,
+        "full_decode_pass_local": true,
+        "zip_crc_pass": true,
+        "zip_sha256": "2a6126c9f335413750bcf1a6b6ecef397e637359357314bce2f3660b8e6da2e8",
+        "storage": "GitHub Actions artifact (30-day retention); session MP4+ZIP; Library upload failed quota",
+        "museum_approved": false,
+        "gold_v25": false,
+        "site_playback_verified": false,
+        "other_3_variants_done": false,
+        "published": false,
+        "spent_api_credits": 0
+      }
     },
     {
       "id": "bruegel_tower_babel_1563_khm_gg1026",
