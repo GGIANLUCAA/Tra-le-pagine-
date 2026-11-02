@@ -22,6 +22,7 @@ on:
       - "tests/test_storia_rivive_v204_film_frame_provenance.py"
       - "tests/test_storia_rivive_v202_source_handoff.py"
       - "src/storia_rivive_autopilot_v101.py"
+      - "src/storia_rivive_scout_v101.py"
       - "queue/storia_rivive_episode_history_v200.json"
       - "tests/test_storia_rivive_v101.py"
       - "tests/test_storia_rivive_v196_scout_gate.py"
@@ -123,7 +124,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v3-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v4-${{ env.STORIA_EPISODE_ID }}
       - name: Fetch bounded original film and make genuine B/W contact sheet
         if: env.STORIA_SOURCE_READY == 'true' && steps.film_cache.outputs.cache-hit != 'true'
         shell: bash
@@ -145,7 +146,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: output/storia_v101/source-cache/${{ env.STORIA_EPISODE_ID }}
-          key: storia-v101-archival-scout-v3-${{ env.STORIA_EPISODE_ID }}
+          key: storia-v101-archival-scout-v4-${{ env.STORIA_EPISODE_ID }}
       - name: V213 verify current Commons license label matches candidate claim (not Italian rights)
         id: license_gate
         if: steps.scout_status.outputs.ready == 'true'
