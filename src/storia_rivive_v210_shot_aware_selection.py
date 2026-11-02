@@ -15,7 +15,7 @@ import math
 import re
 from pathlib import Path
 
-from PIL import ImageChops, ImageStat
+from PIL import Image, ImageChops, ImageStat
 from storia_rivive_v205_visual_novelty import fingerprint
 
 from storia_rivive_v209_shot_boundary_review import detect_boundaries, MAX_BYTES, MAX_SECONDS, LEAD_SECONDS
@@ -76,6 +76,42 @@ def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries) 
         return block("SOURCE_HASH_CHANGED")
     if len(frames) < 6:
         return block("TOO_FEW_SCOUT_FRAMES")
+    # V212: reject weak native portrait detail BEFORE cut detection or I2I.
+    # 720p landscape and 720p 4:3 leave ~405px of real source in 9:16;
+    # 480p archives leave ~270px and cannot support V98-like facial detail.
+    # These are SOURCE pixels, never AI-upscaled output dimensions.
+    min_crop_width, min_native_height = 400, 720
+    dimensions = set()
+    for row in frames:
+        if not isinstance(row, dict):
+            return block("INVALID_FRAME_ROW")
+        name = row.get("filename")
+        if not isinstance(name, str) or not FRAME.fullmatch(name):
+            return block("INVALID_FRAME_NAME")
+        source = cache / "original_frames" / name
+        if source.is_symlink() or not source.is_file():
+            return block("SOURCE_FRAME_MISSING_OR_UNSAFE")
+        try:
+            with Image.open(source) as image:
+                if image.format != "PNG":
+                    return block("INVALID_SOURCE_FRAME_FORMAT")
+                width, height = image.size
+                image.verify()
+        except (OSError, ValueError):
+            return block("SOURCE_FRAME_DECODE_FAILED")
+        crop_width = min(width, round(height * 9 / 16))
+        if row.get("raster_px") != [width, height] or row.get("native_portrait_crop_px") != [crop_width, height]:
+            return block("RANKING_NATIVE_GEOMETRY_MISMATCH")
+        dimensions.add((width, height))
+        if crop_width < min_crop_width or height < min_native_height:
+            result["native_portrait_crop_px"] = [crop_width, height]
+            result["minimum_native_portrait_crop_px"] = [min_crop_width, min_native_height]
+            return block("INSUFFICIENT_NATIVE_PORTRAIT_DETAIL")
+    if len(dimensions) != 1:
+        return block("MIXED_NATIVE_SOURCE_GEOMETRY")
+    result["native_portrait_crop_px"] = [crop_width, height]
+    result["minimum_native_portrait_crop_px"] = [min_crop_width, min_native_height]
+    result["native_detail_preflight"] = "V212_ACTUAL_DECODED_SOURCE_PIXELS"
     try:
         boundaries = detector(film, float(duration))
     except Exception:
