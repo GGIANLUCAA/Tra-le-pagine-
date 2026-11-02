@@ -1,7 +1,7 @@
 {
   "version": "V217_FOUR_PILOTS_SOURCE_SHORTLIST",
   "purpose": "Research four NEW episodes; every film stays unreleased until four real photo I2I and one source-locked animated Vidu clip pass V91/V94/V96/V99 and rights Italy review",
-  "source_quality_claim": "V220_COMMONS_METADATA_CHECKED_NATIVE_FILM_SHOTS_NOT_YET_VERIFIED",
+  "source_quality_claim": "V225_REAL_FRENCH_V224_TITLE_DETECTED_NEW_FILM_PENDING_ACTUAL_BYTES",
   "credit_spend_allowed": false,
   "publish_allowed": false,
   "italian_rights_approved": false,
@@ -35,17 +35,17 @@
       ]
     },
     {
-      "id": "french_fashion_birds_1922_v220",
-      "title_en": "FRENCH FASHION · 1922",
-      "subject": "French documentary on making artificial birds for fashion accessories",
-      "source_page": "https://commons.wikimedia.org/wiki/File:Les_Oiseaux_artificiels_pour_la_mode_(1922).webm",
-      "editorial_reason": "Unusual early fashion craftsmanship; 123.84s documentary, 18,692,309 bytes, possible distinct making steps",
-      "rights_status": "COMMONS_PD_MARKED_ITALIAN_RIGHTS_NOT_REVIEWED",
+      "id": "early_cinema_sorrows_1910_v225",
+      "title_en": "EARLY CINEMA · 1910",
+      "subject": "1910 American staged silent melodrama with Mary Pickford, directed by D. W. Griffith; cinema history rather than actual 1910 events",
+      "source_page": "https://commons.wikimedia.org/wiki/File:The_Sorrows_Of_The_Unfaithful_(1910).webm",
+      "editorial_reason": "Replace French Fashion V224 actual frames: selected frame_01 is an opening title and repeated tabletop hand shots do not establish 5 distinct camera scenes. New film has multiple dramatic settings and actions to test; 665s, 1280x720, 107.29 MB original per Commons; FIVE REAL SHOTS AND IMAGE QUALITY STILL UNVERIFIED.",
+      "rights_status": "COMMONS_PD_US_AND_PD_OLD_MARKED_ITALIAN_RIGHTS_NOT_REVIEWED",
       "visual_risks": [
-        "Only 1.21 Mbps across 1080p raster, optical detail not verified",
-        "Five different camera shots NOT yet proven on bytes",
-        "Do not misrepresent artificial fashion birds as live animals",
-        "Author unknown; Italian territorial rights pending"
+        "Fictional staged scenes, not authentic documentary events: never imply the plot really occurred",
+        "Commons says original upload license review needed; Italian rights, new transfer, visual quality NOT approved",
+        "720p raster / ~405px portrait crop, borderline V212 optical detail",
+        "AV1 decoder availability and narrative diversity to be checked on real source bytes"
       ]
     },
     {
@@ -75,6 +75,10 @@
     {
       "id": "paramount_studios_1922_v217",
       "reason": "V219 actual media: 3 eligible photographic segments"
+    },
+    {
+      "id": "french_fashion_birds_1922_v220",
+      "reason": "V225 inspected actual V224 original contact sheet: selected frame_01 is opening title, other selected frames are near-repeated tabletop hand actions, not 5 confirmed distinct camera shots. Reject prior shortlist; no credit spent."
     }
   ]
 }
