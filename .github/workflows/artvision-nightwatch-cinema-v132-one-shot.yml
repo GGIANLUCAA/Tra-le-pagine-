@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - requests/artvision/nightwatch-cinema-v132-one-shot.json
+      - .github/workflows/artvision-nightwatch-cinema-v132-one-shot.yml
 permissions:
   contents: read
 concurrency:
@@ -31,8 +32,11 @@ jobs:
           PY
       - name: Local open-source renderer
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
           python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'numpy>=1.26,<3'
           ffmpeg -version | head -1
+          ffprobe -version | head -1
           python -m py_compile src/artvision_nightwatch_cinema_standard_v132.py
       - name: Download exact public-domain original and render actual film
         run: |
