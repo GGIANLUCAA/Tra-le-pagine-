@@ -41,7 +41,7 @@ jobs:
           Path("/tmp/artvision-bin/ffmpeg").symlink_to(src)
           PY
           echo "/tmp/artvision-bin" >> "$GITHUB_PATH"
-          ffprobe -version | head -1
+          /tmp/artvision-bin/ffmpeg -version | head -1
       - name: Render only one MP4 candidate
         run: python src/artvision_garden_v134.py --output /tmp/simberg_v134
       - name: Validate physical MP4 and SHA
