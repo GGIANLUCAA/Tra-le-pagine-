@@ -121,6 +121,58 @@ class ShotAwareSelectionTests(unittest.TestCase):
             self.assertEqual(result["preselected"], [])
             self.assertFalse(result["provider_calls_permitted"])
 
+    def test_v221_sha_bound_human_rejected_uploader_end_card_is_never_selected(self):
+        # Actual Fiesole 1912 V220 frame_12 at t=106.004s is a modern
+        # YouTube promotional end slate, not a historical photographic shot.
+        # Synthetic fixture tests the fail-closed exclusion mechanism.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            review = {
+                "version": "V221_SOURCE_LOCKED_EXCLUSIONS",
+                "sources": [{
+                    "original_sha256": scout["original_sha256"],
+                    "excluded_frames": ["frame_12.png"],
+                    "reason": "Uploader end card, not historical film footage",
+                }],
+            }
+            result = v210.select(ranking, scout, root,
+                                 detector=lambda *_: [8, 18, 28, 38, 48],
+                                 exclusions=review)
+            self.assertEqual(result["status"], v210.READY, result)
+            self.assertEqual(result["source_review_excluded_frames"], ["frame_12.png"])
+            self.assertNotIn("frame_12.png",
+                             [x["filename"] for x in result["preselected"]])
+            self.assertFalse(result["provider_calls_permitted"])
+
+    def test_v221_review_for_different_source_sha_does_not_apply(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            review = {"version": "V221_SOURCE_LOCKED_EXCLUSIONS",
+                      "sources": [{"original_sha256": "a" * 64,
+                                   "excluded_frames": ["frame_12.png"],
+                                   "reason": "Different source; no exclusion here"}]}
+            result = v210.select(ranking, scout, root,
+                                 detector=lambda *_: [8, 18, 28, 38, 48],
+                                 exclusions=review)
+            self.assertEqual(result["status"], v210.READY, result)
+            self.assertEqual(result["source_review_excluded_frames"], [])
+
+    def test_v221_malformed_exclusion_blocks_selection(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            _, ranking, scout = fixture(root)
+            review = {"version": "V221_SOURCE_LOCKED_EXCLUSIONS",
+                      "sources": [{"original_sha256": scout["original_sha256"],
+                                   "excluded_frames": ["../frame_12.png"],
+                                   "reason": "Unsafe source review frame path"}]}
+            result = v210.select(ranking, scout, root,
+                                 detector=lambda *_: [8, 18, 28, 38, 48],
+                                 exclusions=review)
+            self.assertEqual(result["reason"], "INVALID_SOURCE_REVIEW_EXCLUSIONS")
+            self.assertFalse(result["provider_calls_permitted"])
+
     def test_single_shot_does_not_produce_fake_five(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
