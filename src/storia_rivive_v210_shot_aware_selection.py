@@ -133,7 +133,8 @@ def sha256_stream(path: Path) -> str:
     return digest.hexdigest()
 
 
-def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries,\n           exclusions: dict | None = None) -> dict:
+def select(ranking: dict, scout: dict, cache: Path, detector=detect_boundaries,
+           exclusions: dict | None = None) -> dict:
     result = {"version": "V210_SHOT_AWARE_PRESELECTION",
               "status": "SHOT_AWARE_SELECTION_BLOCKED", "reason": "UNKNOWN",
               "preselected": [], "approved_restored_photos": 0,
