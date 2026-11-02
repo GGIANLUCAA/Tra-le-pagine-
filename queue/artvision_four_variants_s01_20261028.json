@@ -776,7 +776,7 @@
       },
       "dossier_4x1_source": "GitHub Actions run 40848647492 / artifact 12885564867 / ARTVISION_4X1_PLAN.json; generated reproducibly via scripts/artvision_homer_four_v55.py",
       "render_script": "scripts/artvision_homer_four_v55.py",
-      "status": "two_cinema_rendered_needs_review_two_critico_blocked",
+      "status": "four_slots_rendered_review_museum_quality_blocked",
       "variants": {
         "critico_standard": {
           "status": "rendered_needs_review",
@@ -787,7 +787,22 @@
           "runner_technical_validation": "success_2_MP4_full_ffmpeg_decode_identical_AAC_ZIP_uploaded",
           "local_file_readback_this_turn": false,
           "human_artistic_review": "pending",
-          "V25_approved": false
+          "V25_approved": false,
+          "v127_nondestructive_revision": {
+            "version": "V127",
+            "status": "rendered_needs_review",
+            "filename": "HOMER_THE_GULF_STREAM_CRITICO_STANDARD_V127_ENGLISH_TITLE_REVIEW.mp4",
+            "bytes": 19657041,
+            "sha256": "6517b328245f84e72f67433aaa66a3197aae2035dc926132ecf84006a04b4409",
+            "seconds": 92.35,
+            "full_ffmpeg_video_audio_decode": "PASS",
+            "AAC_identical_to_V117_SHA256": "4ab51bf54b7e74778512099c319e5d131b35baa676a8acb6fdd724e14b791eeb",
+            "visual_change": "English title only at beginning; repeated Italian title masked without changing artwork scenes",
+            "original_V117_preserved": true,
+            "artistic_approval": false,
+            "Gold_V25": false,
+            "site_playback_verified": false
+          }
         },
         "critico_museum": {
           "status": "rendered_needs_review",
@@ -846,7 +861,24 @@
           "technical_status_preserved": "rendered_needs_review"
         }
       },
-      "notes": "Exactly two different authentic MP4 Cinema variants for this new four-variant artwork group. Corrective trials V55 superseded and not counted. Critico variants require exact Google Gacrux cache, no false release or paid substitution."
+      "notes": "Exactly two different authentic MP4 Cinema variants for this new four-variant artwork group. Corrective trials V55 superseded and not counted. Critico variants require exact Google Gacrux cache, no false release or paid substitution.",
+      "v127_two_standard_local_review": {
+        "slots": 2,
+        "critico_standard_sha256": "6517b328245f84e72f67433aaa66a3197aae2035dc926132ecf84006a04b4409",
+        "cinema_standard_original_sha256": "b28da50e0dac449ef9eca2edffe5ee6ee692702f95ab094d1fadff892d28eb52",
+        "zip_filename": "ARTVISION_HOMER_2_STANDARD_REVIEW_V127_ANDROID.zip",
+        "zip_bytes": 23751540,
+        "zip_sha256": "7700075800995d91fb8b98f6ee5cdd6b5a494d992518939511f4f1a8e99b973a",
+        "zip_crc_and_mp4_sha_readback": "PASS",
+        "english_cover": true,
+        "social_drafts_unpublished": 8,
+        "museum_slots_quality_blocked": true,
+        "alignment_estimated_not_forced": true,
+        "Gold_V25": 0,
+        "permanent_archive_verified": false,
+        "Android_R2_playback_verified": false,
+        "report": "docs/productions/2026-11-02-artvision-homer-v127-two-standard-verified-review.md"
+      }
     },
     {
       "group_id": "david_death_of_socrates_met436105_1787",
