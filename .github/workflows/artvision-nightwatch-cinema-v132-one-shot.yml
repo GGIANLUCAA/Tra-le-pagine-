@@ -5,6 +5,7 @@ on:
     paths:
       - requests/artvision/nightwatch-cinema-v132-one-shot.json
       - .github/workflows/artvision-nightwatch-cinema-v132-one-shot.yml
+      - src/artvision_nightwatch_cinema_standard_v132.py
 permissions:
   contents: read
 concurrency:
