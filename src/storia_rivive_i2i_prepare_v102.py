@@ -36,8 +36,12 @@ def build(order,selection,source_dir):
     if selection.get("status")!="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW":
         raise ValueError("No five candidate source frames")
     chosen=selection.get("preselected",[])
+    if not isinstance(chosen,list) or any(not isinstance(row,dict) for row in chosen):
+        raise ValueError("Invalid frame selection structure")
     if len(chosen)!=5:raise ValueError("Need five genuine distinct frame positions")
-    names=[r["filename"] for r in chosen]
+    names=[r.get("filename") for r in chosen]
+    if any(not isinstance(name,str) for name in names):
+        raise ValueError("Invalid source frame filename")
     if len(set(names))!=5:raise ValueError("Duplicate frames")
     jobs=[]
     pixel_hashes=set()
@@ -46,6 +50,7 @@ def build(order,selection,source_dir):
         name=row["filename"]
         if not re.fullmatch(r"frame_\d{2}\.png",name):raise ValueError("Unsafe source filename")
         path=source_dir/"original_frames"/name
+        if path.is_symlink():raise ValueError("Symlink source frame forbidden")
         if not path.is_file():raise ValueError("Missing original source frame")
         with Image.open(path) as image:
             image.verify()
@@ -76,6 +81,9 @@ def build(order,selection,source_dir):
           "human_face_fidelity":"PENDING","source_geometry_gate":"PENDING",
           "scene_distinctness_gate":"PENDING","rights_gate":"PENDING"
         })
+    archive=source_dir/"ORIGINAL_ARCHIVE.webm"
+    if archive.is_symlink() or not archive.is_file():
+        raise ValueError("Missing or symlinked original archive")
     return {"version":"V102_SOURCE_LOCKED_I2I_JOBS",
       "cycle_id":order["cycle_id"],"episode_id":order["episode_id"],
       "source_video_sha256":sha(source_dir/"ORIGINAL_ARCHIVE.webm"),
