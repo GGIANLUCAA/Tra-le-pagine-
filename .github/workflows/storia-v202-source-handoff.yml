@@ -26,7 +26,7 @@ jobs:
       - run: python -m pip install -q "pillow>=10,<13"
       - name: Compile V202 source handoff and offline tests
         run: python -m py_compile src/storia_rivive_v202_source_handoff.py tests/test_storia_rivive_v202_source_handoff.py
-      - name: Twelve V202 source integrity tests (no provider calls)
+      - name: Thirteen V202 source integrity tests (no provider calls)
         run: python -m unittest discover -s tests -p 'test_storia_rivive_v202_source_handoff.py' -v
       - name: Existing V101/V102 regression tests
         run: python -m unittest discover -s tests -p 'test_storia_rivive_v101.py' -v
