@@ -3,7 +3,7 @@
 No facial identification, generation, source-frame timecode assertion or artistic approval.
 """
 from __future__ import annotations
-import argparse,json
+import argparse,json,re
 from pathlib import Path
 from PIL import Image,ImageOps,ImageFilter,ImageStat
 
@@ -30,7 +30,11 @@ def rank(folder):
     if not imgs:raise ValueError("No native archival source PNG frames to evaluate")
     scored=[measure(p) for p in imgs]
     # Reserve different time positions; scores do not prove distinct camera shots.
-    ranked=sorted(range(len(scored)),key=lambda n:(-scored[n]["source_visual_quality_score"],n))
+    # V206 requires 1.2 seconds of genuine film BEFORE each selected freeze.
+    # The first scout sample has no preceding footage and cannot be a valid shot.
+    eligible=[n for n,row in enumerate(scored)
+              if re.fullmatch(r"frame_(?:0[2-9]|1[0-2])\\.png",row["filename"])]
+    ranked=sorted(eligible,key=lambda n:(-scored[n]["source_visual_quality_score"],n))
     chosen=[]
     separation=max(1,len(scored)//6)
     for idx in ranked:
