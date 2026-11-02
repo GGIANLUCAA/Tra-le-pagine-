@@ -21,6 +21,11 @@ on:
         description: 'Maximum GitHub artifacts to process (0 = all)'
         required: false
         default: '0'
+      include_legacy:
+        description: 'Backfill pre-2-Nov artifacts (default is fresh videos only)'
+        required: false
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
@@ -40,6 +45,7 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           EVENT: ${{ github.event_name }}
           REQUESTED_LIMIT: ${{ inputs.max_artifacts || '0' }}
+          INCLUDE_LEGACY: ${{ inputs.include_legacy || 'false' }}
           IMPORT_ENDPOINT: https://video-library-import.600led.workers.dev
         shell: bash
         run: |
@@ -54,6 +60,9 @@ jobs:
           AUD='vls-gh-import-2026'
           limit=int(os.getenv('REQUESTED_LIMIT','0') or '0')
           if os.environ['EVENT']=='push': limit=0
+          include_legacy=os.getenv('INCLUDE_LEGACY','false').lower()=='true'
+          fresh_since='2026-11-02T09:00:00Z'
+          assert '2026-11-02T09:01:00Z'>=fresh_since and not ('2026-11-01T23:59:59Z'>=fresh_since)
           cache_token='',0
           def token():
               global cache_token
@@ -186,9 +195,14 @@ jobs:
               r.raise_for_status();chunk=r.json().get('artifacts',[])
               artifacts.extend(a for a in chunk if not a.get('expired') and a.get('name')!='github-pages')
               if len(chunk)<100:break
-          # Recent productions first: prioritize new videos in the next direct import cycle.
+          # The automatic channel is ONLY for new videos; the historic archive remains
+          # untouched. Older artifacts can be backfilled through manual dispatch.
+          found=len(artifacts)
+          if not include_legacy:
+              artifacts=[a for a in artifacts if (a.get('created_at') or '')>=fresh_since]
+          # Newest first, so a fresh MP4 is never stuck behind old backlog.
           artifacts.sort(key=lambda a:(a.get('created_at') or '',a.get('id') or 0),reverse=True)
-          print('Nonexpired candidate artifacts:',len(artifacts),flush=True)
+          print('Import queue:',{'all':found,'selected':len(artifacts),'backfill':include_legacy},flush=True)
           downloaded=published=errors=0
           for a in artifacts:
               if limit>0 and downloaded>=limit:break
@@ -209,7 +223,7 @@ jobs:
                           # 2026-11-02 owner request: automatically archive NEW finished video files
                           # on the website even if artistic V25 approval is pending.
                           # This is site ingestion only, never social publishing or Gold approval.
-                          is_auto_archive=(a.get('created_at') or '')>='2026-11-02T09:00:00Z'
+                          is_auto_archive=(a.get('created_at') or '')>=fresh_since
                           if is_auto_archive:
                               print('DIRECT SITE IMPORT (ART REVIEW NOT REQUIRED):',a['name'],flush=True)
                           else:
@@ -234,9 +248,17 @@ jobs:
                               clean=re.sub(r'[^A-Za-z0-9_(). -]','_',pathlib.PurePosixPath(n).name)[:180]
                               src_fp=wd/clean
                               key=clean
-                              if status(key).get('size')!=src_fp.stat().st_size:
+                              current=status(key)
+                              if current.get('deleted'):
+                                  print('OWNER DELETED - excluded from catalog:',key,flush=True)
+                                  continue
+                              if current.get('size')!=src_fp.stat().st_size:
                                   key=src_fp.stem+'__'+str(src_fp.stat().st_size)+src_fp.suffix
-                              if not status(key).get('exists'):
+                              current=status(key)
+                              if current.get('deleted'):
+                                  print('OWNER DELETED - excluded from catalog:',key,flush=True)
+                                  continue
+                              if not current.get('exists'):
                                   raise ValueError('Video missing after direct website upload: '+key)
                               saved_keys.append(key)
                           if saved_keys:
