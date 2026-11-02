@@ -119,9 +119,45 @@ class DeliveryV55Tests(unittest.TestCase):
             "review_video_sha256": sha,
             "reviews": checks,
         }), encoding="utf-8")
+        # V122: older V25 checkboxes alone must no longer allow final handoff.
+        with self.assertRaisesRegex(ValueError, "V122"):
+            pack(self.video, self.cover, self.posts, self.rights,
+                 self.recipe, self.root / "identity_missing", release_contract=contract_file)
+        self.recipe.write_text(json.dumps({
+            "schema": "test-recipe", "variant": "cinema_standard",
+            "title": "The Goldfinch", "artist": "Carel Fabritius",
+        }), encoding="utf-8")
+        from src.artvision_identity_delivery_v122_guard import TEMPLATES, ROOT, sha256
+        template = TEMPLATES["cinema_standard"]
+        identity = {
+            "video_sha256": sha,
+            "cover_sha256": sha256(self.cover),
+            "social_sha256": {key: sha256(path) for key, path in self.posts.items()},
+            "template_path": template,
+            "template_sha256": sha256(ROOT / template),
+            "artwork_title_en": "The Goldfinch",
+            "title_language": "en",
+            "reviewer": "human",
+            "specific_visual_observation":
+                "Revisione sintetica di prova: verificati titolo, prima scena e confini del dipinto nel vero video.",
+            "specific_social_observation":
+                "Test sintetico dei quattro post social distinti e riferiti all'opera.",
+            "reviewed_video_timecodes_seconds": [0.1, 3.0, 7.0],
+            "english_title_readable_in_actual_video": True,
+            "cover_matches_frozen_series_reference": True,
+            "title_typography_matches_frozen_series_reference": True,
+            "four_social_captions_checked_for_this_artwork": True,
+        }
+        contract_file.write_text(json.dumps({
+            "schema": "artvision-release-contract-v25",
+            "review_video_sha256": sha, "reviews": checks,
+            "identity_v122": identity,
+        }), encoding="utf-8")
         output = self.root / "valid_contract"
         result = pack(self.video, self.cover, self.posts, self.rights, self.recipe,
                       output, release_contract=contract_file)
+        self.assertEqual(result["release_gate"]["identity_v122_status"],
+                         "hash_bound_review_attested")
         self.assertEqual(result["delivery"]["site_import_V25_contract"],
                          "exact_sha_review_verified")
         full_zip = next(output.glob("*_COMPLETO.zip"))
