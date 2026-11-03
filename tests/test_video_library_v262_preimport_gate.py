@@ -83,6 +83,13 @@ class V262Tests(unittest.TestCase):
         self.pack()
         self.assertEqual(inspect(self.archive)["reason"], "EXACTLY_ONE_OUTER_MP4_REQUIRED")
 
+    def test_contact_sheet_does_not_substitute_cover(self):
+        self.files.pop("COPERTINA.jpg")
+        self.files["SAMPLE_CONTACT_SHEET.jpg"] = b"\\xff\\xd8\\xff" + b"sample" * 400
+        self.pack()
+        self.assertIn("REAL_JPEG_COVER_MISSING",
+                      str(inspect(self.archive).get("delivery_errors", [])))
+
     def test_missing_cover_is_blocked(self):
         self.files.pop("COPERTINA.jpg")
         self.pack()
