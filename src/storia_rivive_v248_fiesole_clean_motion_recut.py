@@ -140,7 +140,7 @@ def run(film: Path, scout: Path, frames: Path, folder: Path) -> dict:
         alignment_path.write_text(json.dumps(alignment, indent=2) + "\n", encoding="utf-8")
         plan = load_plan(selection_path, alignment_path, frames)
         video_path = folder / "FIESOLE_V248_CLEAN_MOTION_SOURCE_ONLY_NOT_FINAL.mp4"
-        build(film, plan, video_path)
+        rendered = build(film, plan, video_path)
         endpoint_qa = inspect(video_path, video_path.with_suffix(".json"), frames,
                               folder / "V248_ENDPOINT_QA.json")
         motion_qa = check(video_path, video_path.with_suffix(".json"),
@@ -148,7 +148,7 @@ def run(film: Path, scout: Path, frames: Path, folder: Path) -> dict:
         report["selected_five"] = [r["frame"] for r in chosen]
         report["endpoint_result"] = endpoint_qa["status"]
         report["motion_result"] = motion_qa["status"]
-        report["duration_s"] = 23.958
+        report["duration_s"] = rendered["duration_s"]
         if (endpoint_qa["status"] != "REVIEW_ENDPOINTS_PASS"
                 or motion_qa["flagged_shots"]):
             raise ValueError("V248_REAL_MP4_QA_REJECTED")
