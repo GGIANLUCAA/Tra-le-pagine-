@@ -5,6 +5,7 @@ Checks posts, JPEG, source dossier and exact final MP4; not artistic/legal appro
 from __future__ import annotations
 import hashlib
 import json
+import re
 from difflib import SequenceMatcher
 from pathlib import Path, PurePosixPath
 import zipfile
@@ -84,7 +85,7 @@ def inspect(video_path: Path, delivery_zip: Path | None = None) -> dict:
                     errors.append("POST_INVALID_TEXT:" + post)
                     continue
                 if (len(content) < 100 or len(content.split()) < 16
-                        or any(bad in content.lower() for bad in REJECT_TEXT)):
+                        or any(re.search(r"(?<!\\w)" + re.escape(bad) + r"(?!\\w)", content.casefold()) for bad in REJECT_TEXT)):
                     errors.append("POST_EMPTY_OR_PLACEHOLDER:" + post)
                 else:
                     # A different filename alone does not make four platform
@@ -105,7 +106,7 @@ def inspect(video_path: Path, delivery_zip: Path | None = None) -> dict:
                 try:
                     rights_text = _read_text(archive, dossier[0])
                     if (len(rights_text) < 60 or "http" not in rights_text.lower()
-                            or any(t in rights_text.lower() for t in REJECT_TEXT)):
+                            or any(re.search(r"(?<!\\w)" + re.escape(t) + r"(?!\\w)", rights_text.casefold()) for t in REJECT_TEXT)):
                         errors.append("SOURCE_RIGHTS_DOSSIER_INCOMPLETE")
                 except (UnicodeError, ValueError):
                     errors.append("SOURCE_RIGHTS_DOSSIER_INVALID_TEXT")
