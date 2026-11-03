@@ -18,6 +18,9 @@ class SourceTests(unittest.TestCase):
         self.image=self.root/"original_shot_02_frame_04.png"
         Image.new("RGB",(1920,1080),"grey").save(self.image)
         self.digest=hashlib.sha256(self.image.read_bytes()).hexdigest()
+        self.source_lock_patch=patch.object(v,"SOURCE_SHA",self.digest)
+        self.source_lock_patch.start()
+        self.addCleanup(self.source_lock_patch.stop)
         self.rows=[dict(shot=i,original_sha256=(self.digest if i==2 else f"{i:064x}"),
             role="I2I_PHOTO_SOURCE" if i<5 else "VIDU_SOURCE",
             archive_filename=self.image.name if i==2 else f"frame_{i}.png",
@@ -32,6 +35,17 @@ class SourceTests(unittest.TestCase):
         source,row=v.verify(self.manifest,self.root)
         self.assertEqual(source,self.image)
         self.assertEqual(row["shot"],2)
+    def test_reject_forged_original_frame_name(self):
+        self.rows[1]["original_frame"]="invented_frame.png"
+        self.write()
+        with self.assertRaisesRegex(ValueError,"SHOT_TWO_INVALID"):
+            v.verify(self.manifest,self.root)
+    def test_reject_forged_sha_even_with_matching_replacement_png(self):
+        Image.new("RGB",(1920,1080),"white").save(self.image)
+        self.rows[1]["original_sha256"]=hashlib.sha256(self.image.read_bytes()).hexdigest()
+        self.write()
+        with self.assertRaisesRegex(ValueError,"SHOT_TWO_INVALID"):
+            v.verify(self.manifest,self.root)
     def test_reject_duplicate_shot(self):
         self.rows[2]["original_sha256"]=self.digest
         self.write()
