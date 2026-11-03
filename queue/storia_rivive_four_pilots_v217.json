@@ -45,14 +45,30 @@
         "vidu_clip_approved": false,
         "italian_rights_approved": false,
         "i2i_distinct_shot_status_v261": {
-          "shot_1": "V261_GENERATION_REQUESTED_RESULT_NOT_VERIFIED",
+          "shot_1": "V262_REAL_DIFFUSION_PNG_SHA_VERIFIED_ARTISTIC_QA_PENDING",
           "shot_2": "V254_CANDIDATE_ARTISTICALLY_REJECTED_MACHINE_BECAME_PERSON",
           "shot_3": "V258_CANDIDATE_ARTISTIC_REVIEW_PENDING",
           "shot_4": "V255_AND_V259_SAME_ORIGINAL_SHA_NOT_TWO_DISTINCT_SHOTS",
           "shot_5": "VIDU_ANCHOR_NOT_GENERATED"
         },
         "duplicate_original_sha256": "1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0",
-        "production_blocked_reason": "No four distinct artistically accepted I2I images; never count V255 and V259 as separate scenes"
+        "production_blocked_reason": "V262 shot 1 generated actual source-locked diffusion PNG, awaiting visual comparison and approval; shot 2 rejected; shot 3 review pending; shot 4 must be distinct; Vidu and Italy rights pending",
+        "v262_first_source_real_i2i": {
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41727145859",
+          "artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41727145859/artifacts/13273823949",
+          "source_frame_sha256": "3ebabe8a57ce3cf386681255ad4d896ab540d31005bfbfd1087474f62af714cb",
+          "generated_png_sha256": "7227ebc467b86d2f620afc50f0216323fd34a48c62c326400c571961c33c787c",
+          "generated_dimensions_px": [
+            448,
+            800
+          ],
+          "verified_generation": true,
+          "artistic_approval": false,
+          "rights_italy_verified": false,
+          "counts_toward_approved_i2i": 0,
+          "credits_spent": 0,
+          "final_video": false
+        }
       }
     },
     {
