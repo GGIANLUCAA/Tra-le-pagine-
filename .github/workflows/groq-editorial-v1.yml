@@ -34,11 +34,11 @@ jobs:
     steps:
       - name: Check whether the Groq secret exists (no inference request)
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY || secrets.GROQ }}
         shell: bash
         run: |
           if [ -z "$GROQ_API_KEY" ]; then
-            echo "::error::Missing GROQ_API_KEY. Add it in Settings > Secrets and variables > Actions."
+            echo "::error::Missing secret: neither GROQ_API_KEY nor GROQ is available to this workflow."
             exit 1
           fi
           echo "GROQ_API_KEY_PRESENT (content not shown, no API call, no credits used)"
