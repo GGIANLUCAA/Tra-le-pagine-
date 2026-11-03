@@ -113,24 +113,65 @@ def detail(im,b,p):
  return cv2.resize(cr,(W,H),interpolation=cv2.INTER_AREA)
 
 def get_frame(p):
+ """Retrieve the verified CC BY photograph via Wikimedia or a faithful third-party
+ relay when Commons returns 429. Never invent a different framed painting.
+ Original MediaWiki metadata: SHA1 399497aee9a849386be4d880d36cb4fc5b47571e
+ and 2,728,119 bytes, 2400 x 1800. A relay may re-encode JPEG: record that
+ explicitly; do not claim original-byte provenance or automatic approval.
+ """
+ from urllib.parse import quote
+ expected_sha1="399497aee9a849386be4d880d36cb4fc5b47571e"
+ filename="The_Tower_of_Babel_1563_Bruegel_Kunsthistorisches_Museum_Wien_Austria_-_panoramio.jpg"
+ direct="https://upload.wikimedia.org/wikipedia/commons/9/91/"+filename
+ alternate=[
+  ("commons_direct", direct),
+  ("wikimedia_thumb_2400", "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/"+filename+"/2400px-"+filename),
+  ("wsrv_relay", "https://wsrv.nl/?url="+quote(direct,safe=""))
+ ]
+ errors=[]
+ chosen="existing_verified_file" if p.exists() else None
  if not p.exists():
-  urls=[FRAME_URL,"https://commons.wikimedia.org/wiki/Special:Redirect/file/The_Tower_of_Babel_1563_Bruegel_Kunsthistorisches_Museum_Wien_Austria_-_panoramio.jpg"]
-  errors=[]
-  for url in urls:
+  for provider,url in alternate:
    try:
-    req=urllib.request.Request(url,headers={"User-Agent":"ArtVision-MuseumPhotoVerification/1.0 (Creative Commons attribution)","Accept":"image/jpeg"})
-    with urllib.request.urlopen(req,timeout=75) as resp:
-     if "image" not in resp.headers.get("Content-Type",""):raise ValueError("Unexpected photo MIME")
-     data=resp.read(7_000_001)
-     if len(data)>7_000_000:raise ValueError("Museum photo >7 MB")
-    p.write_bytes(data);break
+    req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 (compatible; ArtVision-CCBY-photo-provenance/1.0)","Accept":"image/jpeg,image/*;q=0.8"})
+    with urllib.request.urlopen(req,timeout=55) as resp:
+     mime=resp.headers.get("Content-Type","").split(";")[0].strip()
+     if not mime.startswith("image/"):raise ValueError("not an image: "+mime)
+     out=bytearray()
+     while True:
+      chunk=resp.read(1024*1024)
+      if not chunk:break
+      out.extend(chunk)
+      if len(out)>7_000_000:raise ValueError("photo larger than 7 MB")
+    # Do not save an unverified response as the supposedly authentic source.
+    with Image.open(__import__("io").BytesIO(out)) as im:
+     im.verify()
+    with Image.open(__import__("io").BytesIO(out)) as im:
+     if im.size!=(2400,1800):raise ValueError("photo wrong dimensions: "+str(im.size))
+     if im.format not in ("JPEG","PNG","WEBP"):raise ValueError("not a supported photograph")
+     converted=im.convert("RGB")
+     # Preserve real original JPEG bytes when Commons succeeds; normalize relay output.
+     if im.format=="JPEG":p.write_bytes(out)
+     else:converted.save(p,format="JPEG",quality=95)
+    chosen=provider;break
    except Exception as exc:
-    errors.append(str(exc))
+    errors.append(provider+": "+str(exc))
     if p.exists():p.unlink()
-  else:raise RuntimeError("Museum photo download unavailable: "+repr(errors))
+  if chosen is None:raise RuntimeError("Original museum frame photo unavailable after bounded alternate-source attempts: "+repr(errors))
  with Image.open(p) as im:
-  if im.size!=(2400,1800) or im.format!="JPEG":raise ValueError(f"Wrong original museum photo: {im.size} {im.format}")
- return {"filename":p.name,"bytes":p.stat().st_size,"sha256":digest(p),"dimensions":[2400,1800],"source_page":FRAME_SOURCE_PAGE,"credit":FRAME_CREDIT,"license":FRAME_LICENSE}
+  if im.size!=(2400,1800) or im.format!="JPEG":raise ValueError(f"Wrong framed museum photo: {im.size} {im.format}")
+ sha1=hashlib.sha1(p.read_bytes()).hexdigest()
+ if chosen=="commons_direct" and sha1!=expected_sha1:
+  raise ValueError("Wikimedia full-size photo SHA1 differs from Commons authoritative metadata")
+ # If derivative relay photo is supplied, this remains an internal technical REVIEW,
+ # not fully original-byte-verified, and needs explicit human photo comparison.
+ return {"filename":p.name,"bytes":p.stat().st_size,"sha256":digest(p),
+  "sha1":sha1,"original_sha1_expected":expected_sha1,
+  "original_byte_hash_match":sha1==expected_sha1,
+  "provider":chosen,"alternate_errors":errors,
+  "dimensions":[2400,1800],"source_page":FRAME_SOURCE_PAGE,
+  "credit":FRAME_CREDIT,"license":FRAME_LICENSE,
+  "image_provenance_review_required":sha1!=expected_sha1}
 
 def museum_setup(photo, art):
  # Real frame/photo from KHM room: CC BY photo, not fabricated painting/frame.
@@ -284,7 +325,7 @@ def main():
   "Current museum architecture, display state and 16th-century historical frame are NOT claimed; a 2015 photograph of the artwork in its frame is used. No third-party AI footage.\n"+
   "Artwork public-domain status does NOT automatically override institution-specific reuse rules or territorial cultural-heritage conditions; check before public or commercial distribution.\n")
  (out/"SOCIAL_DRAFT_UNPUBLISHED.txt").write_text("The Tower of Babel · Pieter Bruegel the Elder, 1563.\nA dream of human ambition, hundreds of tiny lives and an impossible tower.\nArtwork: Kunsthistorisches Museum Vienna GG 1026. Painting scan: Wikimedia Commons PD-Art. Framed photo: Hiroki Ogawa, CC BY 3.0 (cropped, interior sharpened), https://creativecommons.org/licenses/by/3.0/. Original soundtrack.\nDRAFT ONLY — NOT PUBLISHED.\n")
- qa={"work":"The Tower of Babel","artist":"Pieter Bruegel the Elder","year":1563,"museum":"Kunsthistorisches Museum Vienna","accession":"GG 1026","work_dimensions_cm":[114.4,155.5],"source":source,"authentic_frame_photo":frame_meta,"museum_environment":"actual framed-work photograph KHM 2015 with digitally extended wall; source painting restored from independent Commons PDM", "frame_historicity":"photo documented 2015, historical frame not claimed","audio":"original synthesized ambient","source_audio_sha256":digest(sound),"mp4":{"filename":mp4.name,"bytes":mp4.stat().st_size,"sha256":digest(mp4),"duration_seconds":DURATION,"frames":frames,"full_ffmpeg_decode":"PASS"},"ffprobe":ffprobe,"beats":beats,"cinema_standard_review":False,"cinema_museum":True,"critico_standard":False,"critico_museum":False,"museum_approved":False,"gold_v25":False,"social_published":False,"site_playback_verified":False,"human_artistic_review":"PENDING","zero_paid_api_calls":True,"public_title_in_frame":"THE TOWER OF BABEL only on museum intro, no Standard/project label"}
+ qa={"work":"The Tower of Babel","artist":"Pieter Bruegel the Elder","year":1563,"museum":"Kunsthistorisches Museum Vienna","accession":"GG 1026","work_dimensions_cm":[114.4,155.5],"source":source,"authentic_frame_photo":frame_meta,"photo_relay_requires_manual_visual_provenance_review":frame_meta["image_provenance_review_required"],"museum_environment":"actual framed-work photograph KHM 2015 with digitally extended wall; source painting restored from independent Commons PDM", "frame_historicity":"photo documented 2015, historical frame not claimed","audio":"original synthesized ambient","source_audio_sha256":digest(sound),"mp4":{"filename":mp4.name,"bytes":mp4.stat().st_size,"sha256":digest(mp4),"duration_seconds":DURATION,"frames":frames,"full_ffmpeg_decode":"PASS"},"ffprobe":ffprobe,"beats":beats,"cinema_standard_review":False,"cinema_museum":True,"critico_standard":False,"critico_museum":False,"museum_approved":False,"gold_v25":False,"social_published":False,"site_playback_verified":False,"human_artistic_review":"PENDING","zero_paid_api_calls":True,"public_title_in_frame":"THE TOWER OF BABEL only on museum intro, no Standard/project label"}
  (out/"QA_V137.json").write_text(json.dumps(qa,indent=2,ensure_ascii=False))
  archive=out/"BRUEGEL_BABEL_V137_CINEMA_MUSEUM_REVIEW_PACKAGE.zip"
  with zipfile.ZipFile(archive,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=4) as z:
