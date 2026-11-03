@@ -410,6 +410,27 @@
         "social_published": false,
         "paid_api_calls": 0,
         "remaining_variants": 3
+      },
+      "v137_cinema_candidate": {
+        "status": "single_owner_request_created_execution_and_mp4_readback_pending",
+        "request": "requests/artvision/bruegel-babel-museum-v137.json",
+        "request_commit": "b410dd836b777b4219138330e53e029053e9bc18",
+        "workflow": ".github/workflows/artvision-bruegel-babel-museum-v137.yml",
+        "renderer": "src/artvision_babel_museum_v137.py",
+        "exact_work": "The Tower of Babel Vienna GG 1026 (1563)",
+        "photographed_actual_frame_2015_source": "https://commons.wikimedia.org/wiki/File:The_Tower_of_Babel_1563_Bruegel_Kunsthistorisches_Museum_Wien_Austria_-_panoramio.jpg",
+        "photo_license": "Hiroki Ogawa CC BY 3.0, attribution in review package",
+        "photo_actual_bytes_downloaded": false,
+        "source_artwork_reused_from_v136_PD": true,
+        "target_duration_s": 62.4,
+        "mp4_download_readback_verified": false,
+        "museum_human_artistic_approval": false,
+        "publication_authorized": false,
+        "count_as_new_delivered_slot": false,
+        "gold_v25": false,
+        "api_spend": 0,
+        "no_duplicate_request": true,
+        "note": "Owner shall not treat a GitHub request or scheduled workflow as an MP4. First find run + real artifact and validate SHA/decode/CRC/visual; complete Museum human quality gate before release."
       }
     },
     {
