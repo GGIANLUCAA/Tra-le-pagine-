@@ -28,8 +28,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Check local no-charge ffmpeg and install JPEG validation dependency
+      - name: Install local no-charge ffmpeg and JPEG validation dependency
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
           command -v ffmpeg
           command -v ffprobe
           python -m pip install -q pillow
