@@ -412,7 +412,7 @@
         "remaining_variants": 3
       },
       "v137_cinema_candidate": {
-        "status": "single_owner_request_created_execution_and_mp4_readback_pending",
+        "status": "source_http429_confirmed_fixed_code_retry_requested_new_run_unverified",
         "request": "requests/artvision/bruegel-babel-museum-v137.json",
         "request_commit": "b410dd836b777b4219138330e53e029053e9bc18",
         "workflow": ".github/workflows/artvision-bruegel-babel-museum-v137.yml",
@@ -430,7 +430,19 @@
         "gold_v25": false,
         "api_spend": 0,
         "no_duplicate_request": true,
-        "note": "Owner shall not treat a GitHub request or scheduled workflow as an MP4. First find run + real artifact and validate SHA/decode/CRC/visual; complete Museum human quality gate before release."
+        "note": "No duplicate request file created. GitHub push was updated on existing V137 request to allow one bounded retry; never claim MP4/ZIP/2-of-4 until artifact, full FFmpeg decode, SHA, CRC, photo provenance, and visual museum QA independently checked.",
+        "failed_run_id": 41576739362,
+        "failed_job_id": 125721878687,
+        "failed_at_step": "Render one real Museum review from authentic photo and independent PD artwork",
+        "first_attempt_result": "FAIL: Wikimedia 429 for exact framed-photo 2400x1800, before MP4 render; no artifact",
+        "recovery_renderer_commit": "c5e79345a4a59e53aed5f7b8f89ade314818f95c",
+        "corrective_request_commit": "f84a505268f76f783a415b76fb73eb77d36280d1",
+        "corrective_request_same_path": "requests/artvision/bruegel-babel-museum-v137.json",
+        "corrective_retry_attempt": 2,
+        "authoritative_photo_sha1": "399497aee9a849386be4d880d36cb4fc5b47571e",
+        "photo_original_provenance_verified": false,
+        "new_run_status": "NOT_RETRIEVED_AS_OF_CURRENT_CHECK",
+        "new_paid_costs": 0
       }
     },
     {
