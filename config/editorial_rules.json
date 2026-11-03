@@ -1049,6 +1049,21 @@
     "side_effects_without_approval": false,
     "uploader": "github_workflow_run_and_periodic_or_chatgpt_library_importer_as_applicable",
     "quality_gate_script": "src/artvision_delivery_v55.py",
+    "shared_actual_bytes_delivery_gate": "src/storia_rivive_v260_delivery_bundle_gate.py",
+    "shared_delivery_contract_version": "V261",
+    "shared_gate_required_entrypoints": [
+      "src/artvision_delivery_v55.py",
+      "src/artvision_contract_gate_v25.py",
+      "src/storia_rivive_final_gate_v91.py"
+    ],
+    "accepted_rights_dossier_names": [
+      "SOURCES_AND_RIGHTS.md",
+      "FONTI_E_DIRITTI.md",
+      "FONTI_E_DIRITTI.txt"
+    ],
+    "reject_missing_or_nearly_identical_four_platform_posts": true,
+    "require_identical_mp4_bytes_in_crc_verified_delivery_zip": true,
+    "technical_package_is_not_artistic_or_legal_approval": true,
     "docs": "docs/REGOLE_ATTIVE.md"
   },
   "artvision_paired_series": {
