@@ -174,8 +174,25 @@ def museum_zoom(base, phase):
  M=np.float32([[z,0,cx*(1-z)],[0,z,cy*(1-z)]])
  return cv2.warpAffine(base,M,(720,1280),flags=cv2.INTER_CUBIC,borderMode=cv2.BORDER_REFLECT_101)
 
+def museum_public_title(frame,progress):
+ # Authentic image and frame remain visible from the first frame;
+ # clean English title only in free wall area, not over the painting.
+ if progress>.72:return frame
+ ff=Image.fromarray(cv2.cvtColor(frame,cv2.COLOR_BGR2RGB))
+ draw=ImageDraw.Draw(ff)
+ serif="/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
+ sans="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+ font=ImageFont.truetype(serif,28)
+ sub=ImageFont.truetype(sans,15)
+ title="THE TOWER OF BABEL"
+ credit="PIETER BRUEGEL THE ELDER · 1563"
+ for t,y,f in [(title,119,font),(credit,165,sub)]:
+  bb=draw.textbbox((0,0),t,font=f)
+  draw.text(((720-(bb[2]-bb[0]))//2,y),t,font=f,fill=(232,224,209),stroke_width=1,stroke_fill=(18,20,22))
+ return cv2.cvtColor(np.asarray(ff),cv2.COLOR_RGB2BGR)
+
 def museum_frame(base,sid,progress):
- if sid=="museum_entry":return museum_zoom(base,progress*.16)
+ if sid=="museum_entry":return museum_public_title(museum_zoom(base,progress*.16),progress)
  if sid=="museum_enter":return museum_zoom(base,.16+progress*.84)
  if sid=="museum_return":return museum_zoom(base,1-progress*.50)
  if sid=="museum_exit":return museum_zoom(base,.50*(1-progress))
@@ -261,9 +278,13 @@ def main():
   "Public-domain faithful reproduction: "+SOURCE_PAGE+"\n"+
   "KHM museum identification (not image downloaded): "+RIGHTS_PAGE+"\n"+
   "Source Wikimedia URL: "+URL+"\nOriginal soundtrack: generated procedurally for this video without third-party samples.\n"+
-  "No invented museum/frame; no voice or generated painting content. Image is Commons public domain scan not the restricted KHM site download. Rights for public/commercial distribution must be reviewed by territory.\n")
- (out/"SOCIAL_DRAFT_UNPUBLISHED.txt").write_text("The Tower of Babel · Pieter Bruegel the Elder, 1563.\nA dream of human ambition, hundreds of tiny lives and an impossible tower.\nArtwork: Kunsthistorisches Museum Vienna GG 1026. Scan: Wikimedia Commons PD-Art. Original soundtrack.\nDRAFT ONLY — NOT PUBLISHED.\n")
- qa={"work":"The Tower of Babel","artist":"Pieter Bruegel the Elder","year":1563,"museum":"Kunsthistorisches Museum Vienna","accession":"GG 1026","work_dimensions_cm":[114.4,155.5],"source":source,"authentic_frame_photo":frame_meta,"museum_environment":"actual framed-work photograph KHM 2015 with digitally extended wall; source painting restored from independent Commons PDM", "frame_historicity":"photo documented 2015, historical frame not claimed","audio":"original synthesized ambient","source_audio_sha256":digest(sound),"mp4":{"filename":mp4.name,"bytes":mp4.stat().st_size,"sha256":digest(mp4),"duration_seconds":DURATION,"frames":frames,"full_ffmpeg_decode":"PASS"},"ffprobe":ffprobe,"beats":beats,"cinema_standard_review":False,"cinema_museum":True,"critico_standard":False,"critico_museum":False,"museum_approved":False,"gold_v25":False,"social_published":False,"site_playback_verified":False,"human_artistic_review":"PENDING","zero_paid_api_calls":True,"public_title_in_frame":"NONE_ON_MUSEUM_SEGMENTS"}
+  "Authentic museum-framed photo: "+FRAME_SOURCE_PAGE+"\n"+
+  "Photographer: Hiroki Ogawa. License CC BY 3.0 Unported: "+FRAME_LICENSE+"\n"+
+  "Adaptations: original photograph colour/geometry preserved, blurred painting interior replaced with licensed PD faithful reproduction; photo extended over neutral wall outside photographed area.\n"+
+  "Current museum architecture, display state and 16th-century historical frame are NOT claimed; a 2015 photograph of the artwork in its frame is used. No third-party AI footage.\n"+
+  "Artwork public-domain status does NOT automatically override institution-specific reuse rules or territorial cultural-heritage conditions; check before public or commercial distribution.\n")
+ (out/"SOCIAL_DRAFT_UNPUBLISHED.txt").write_text("The Tower of Babel · Pieter Bruegel the Elder, 1563.\nA dream of human ambition, hundreds of tiny lives and an impossible tower.\nArtwork: Kunsthistorisches Museum Vienna GG 1026. Painting scan: Wikimedia Commons PD-Art. Framed photo: Hiroki Ogawa, CC BY 3.0 (cropped, interior sharpened), https://creativecommons.org/licenses/by/3.0/. Original soundtrack.\nDRAFT ONLY — NOT PUBLISHED.\n")
+ qa={"work":"The Tower of Babel","artist":"Pieter Bruegel the Elder","year":1563,"museum":"Kunsthistorisches Museum Vienna","accession":"GG 1026","work_dimensions_cm":[114.4,155.5],"source":source,"authentic_frame_photo":frame_meta,"museum_environment":"actual framed-work photograph KHM 2015 with digitally extended wall; source painting restored from independent Commons PDM", "frame_historicity":"photo documented 2015, historical frame not claimed","audio":"original synthesized ambient","source_audio_sha256":digest(sound),"mp4":{"filename":mp4.name,"bytes":mp4.stat().st_size,"sha256":digest(mp4),"duration_seconds":DURATION,"frames":frames,"full_ffmpeg_decode":"PASS"},"ffprobe":ffprobe,"beats":beats,"cinema_standard_review":False,"cinema_museum":True,"critico_standard":False,"critico_museum":False,"museum_approved":False,"gold_v25":False,"social_published":False,"site_playback_verified":False,"human_artistic_review":"PENDING","zero_paid_api_calls":True,"public_title_in_frame":"THE TOWER OF BABEL only on museum intro, no Standard/project label"}
  (out/"QA_V137.json").write_text(json.dumps(qa,indent=2,ensure_ascii=False))
  archive=out/"BRUEGEL_BABEL_V137_CINEMA_MUSEUM_REVIEW_PACKAGE.zip"
  with zipfile.ZipFile(archive,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=4) as z:
