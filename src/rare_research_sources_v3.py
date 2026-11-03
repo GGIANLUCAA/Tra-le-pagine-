@@ -49,7 +49,7 @@ def trusted(url, hosts):
     return url[:1100]
 
 def url(base,**fields):
-    return base+"?"+urllib.parse.urlencode(fields)
+    return base+"?"+urllib.parse.urlencode(fields,doseq=True)
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self,*args,**kwargs):
