@@ -110,8 +110,17 @@ def inspect(video_path: Path, delivery_zip: Path | None = None) -> dict:
                         errors.append("SOURCE_RIGHTS_DOSSIER_INCOMPLETE")
                 except (UnicodeError, ValueError):
                     errors.append("SOURCE_RIGHTS_DOSSIER_INVALID_TEXT")
-            covers = [n for n in names if PurePosixPath(n).suffix.lower()
-                      in (".jpg", ".jpeg")]
+            # Actual cover naming convention: a review contact sheet or a
+            # sampled first-second JPEG must NEVER count as the cover.
+            def actual_cover_member(name: str) -> bool:
+                stem = PurePosixPath(name).stem.casefold()
+                return (PurePosixPath(name).suffix.lower() in (".jpg", ".jpeg")
+                        and (stem in ("cover", "copertina")
+                             or stem.startswith("cover_")
+                             or stem.startswith("copertina_")
+                             or stem.endswith("_cover")
+                             or stem.endswith("_copertina")))
+            covers = [n for n in names if actual_cover_member(n)]
             valid_covers = [n for n in covers if archive.getinfo(n).file_size > 1024
                             and archive.open(n).read(3) == b"\xff\xd8\xff"]
             if not valid_covers:
