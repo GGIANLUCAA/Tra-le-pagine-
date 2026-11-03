@@ -5,6 +5,8 @@ on:
       - ".github/workflows/storia-rivive-v217-four-film-pilots.yml"
       - "queue/storia_rivive_four_pilots_v217.json"
       - "src/storia_rivive_v217_four_pilot_source_review.py"
+      - "src/storia_rivive_v241_full_length_source_roughcut.py"
+      - "tests/test_storia_rivive_v241_full_length_source_roughcut.py"
       - "src/storia_v240_portrait_contact_sheet.py"
       - "tests/test_storia_v240_portrait_contact_sheet.py"
       - "src/storia_rivive_i2i_prepare_v102.py"
@@ -42,6 +44,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v210_shot_aware_selection.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v217_four_pilot_source_review.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v218_global_temporal_selection.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v241_full_length_source_roughcut.py" -v
           python -m unittest discover -s tests -p "test_storia_v240_portrait_contact_sheet.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v236_reject_bad_source.py" -v
 
@@ -120,6 +123,25 @@ jobs:
             --episode "$EPISODE_ID" \
             --out "output/v217/$EPISODE_ID" \
             --cache "output/v217/source/$EPISODE_ID" --finish
+      - name: Render 24-second authentic archival-motion pacing review, NOT final
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET="output/v217/$EPISODE_ID"
+          SOURCE="output/v217/source/$EPISODE_ID"
+          if python - "$TARGET/V217_RESEARCH_REPORT.json" <<'PY'
+          import json,sys
+          data=json.load(open(sys.argv[1]))
+          raise SystemExit(0 if data.get("status")=="FIVE_SOURCE_SHOTS_REVIEW_PENDING" else 1)
+          PY
+          then
+            python src/storia_rivive_v241_full_length_source_roughcut.py \
+              --source "$SOURCE/ORIGINAL_ARCHIVE.webm" \
+              --selection "$TARGET/SHOT_AWARE_SELECTION_V210.json" \
+              --out "$TARGET/SOURCE_24S_ROUGHCUT_NOT_FINAL.mp4"
+          else
+            echo "V241_SKIP_SOURCE_NOT_READY"
+          fi
       - name: V224 prepare actual source-locked I2I requests and Vidu anchor, zero provider calls
         shell: bash
         run: |
