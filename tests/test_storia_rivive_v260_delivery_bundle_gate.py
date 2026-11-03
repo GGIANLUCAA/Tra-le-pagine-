@@ -99,6 +99,13 @@ class TestV260(unittest.TestCase):
         self.assertIn("FINAL_MP4_ZIP_BYTES_MISMATCH",
                       gate.inspect(self.movie)["errors"])
 
+    def test_preview_jpeg_is_not_actual_cover(self):
+        self.files.pop("COVER.jpg")
+        self.files["CONTACT_SHEET.jpg"] = b"\\xff\\xd8\\xff" + b"sample" * 400
+        self.pack()
+        self.assertIn("REAL_JPEG_COVER_MISSING",
+                      gate.inspect(self.movie)["errors"])
+
     def test_cover_required(self):
         self.files.pop("COVER.jpg")
         self.pack()
