@@ -1,0 +1,76 @@
+name: "La Storia Rivive V255 · validate true I2I color without paid calls"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v255-true-i2i-byte-qa.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v255-byte-qa-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  validate_candidate:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gate exactly one V255 validation (never trigger V254 inference)
+        id: gate
+        env:
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$PR_HEAD"
+          if [[ "$(git log -1 --format=%s "$PR_HEAD")" == 'storia V255: run one free byte QA against existing V254 result [V255-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Test byte-level image integrity and color guard
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m pip install -q 'pillow>=10,<12'
+          python -m py_compile src/storia_rivive_v255_real_i2i_byte_qa.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v255_real_i2i_byte_qa.py' -v
+      - name: Download original V254 candidate if available (NO inference)
+        if: steps.gate.outputs.allowed == 'true'
+        continue-on-error: true
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          name: storia-v254-fiesole-CPU-real-I2I-CANDIDATE-NOT-FINAL
+          run-id: 41663121230
+          github-token: ${{ github.token }}
+          path: output/v255/v254
+      - name: Validate actual photo bytes or mark blocked, never approve artistic quality
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/v255/qa
+          if [[ -f output/v255/v254/V254_FIESOLE_ONE_LOCALLY_GENERATED_I2I_CANDIDATE.png ]]; then
+            python src/storia_rivive_v255_real_i2i_byte_qa.py \
+              --source output/v255/v254/V254_FIESOLE_ORIGINAL_PORTRAIT_CROP.png \
+              --candidate output/v255/v254/V254_FIESOLE_ONE_LOCALLY_GENERATED_I2I_CANDIDATE.png \
+              --report output/v255/v254/V254_REAL_PHOTO_CANDIDATE_STATUS.json \
+              --out output/v255/qa/V255_REAL_I2I_BYTE_QA.json
+          else
+            echo '{"version":"V255","status":"V254_REAL_GENERATED_CANDIDATE_NOT_YET_AVAILABLE","new_final_episodes_delivered":0,"publish_allowed":false}' > output/v255/qa/V255_REAL_I2I_BYTE_QA.json
+            echo 'V255_BLOCKED_V254_NO_GENERATED_IMAGE'
+            exit 1
+          fi
+      - name: Archive byte-level QA, not a finished video
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v255-fiesole-real-i2i-byte-qa-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v255/qa/
