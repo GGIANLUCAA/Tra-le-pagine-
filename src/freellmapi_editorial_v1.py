@@ -11,6 +11,7 @@ import json
 import os
 from pathlib import Path
 from urllib import error, parse, request
+from free_llm_zero_cost_v1 import (ZeroCostPolicyError, admit, load_policy, route_matches_actual)
 
 MAX_PROMPT_CHARS = 12000
 MAX_RESPONSE_BYTES = 524288
@@ -84,6 +85,15 @@ def generate_draft(
     if not model or len(model) > 100 or any(c in model for c in "\r\n"):
         raise FreeLLMAPIError("Invalid model identifier")
 
+    # Intentional fail-closed admission: free pricing, provider terms, no billing,
+    # no auto/fusion routing and no paid fallback must be reviewed first.
+    policy_file = env.get("FREELLMAPI_ZERO_COST_POLICY", "")
+    try:
+        policy = load_policy(policy_file) if policy_file else load_policy()
+        admitted = admit(model, policy)
+    except (ZeroCostPolicyError, OSError, ValueError) as exc:
+        raise FreeLLMAPIError("Zero-cost admission denied: " + str(exc)) from exc
+
     payload = {
         "model": model,
         "stream": False,
@@ -112,6 +122,11 @@ def generate_draft(
             if len(raw) > MAX_RESPONSE_BYTES:
                 raise FreeLLMAPIError("Router response exceeded size limit")
             routed_via = response.headers.get("X-Routed-Via", "unknown")
+            fallback_attempts = response.headers.get("X-Fallback-Attempts", "0")
+            if not route_matches_actual(admitted, routed_via, fallback_attempts):
+                raise FreeLLMAPIError(
+                    "Unexpected router/fallback route: do not accept result as free-only"
+                )
     except error.HTTPError as exc:
         raise FreeLLMAPIError("Router returned HTTP " + str(exc.code)) from exc
     except (error.URLError, TimeoutError, OSError) as exc:
