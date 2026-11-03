@@ -2,7 +2,7 @@ name: "La Storia Rivive V249 · Fiesole short original film entrances (NO PAID A
 on:
   pull_request:
     paths:
-      - ".github/workflows/storia-rivive-v249-fiesole-clean-motion.yml"
+      - ".github/workflows/storia-rivive-v249-fiesole-short-motion.yml"
 permissions:
   contents: read
 concurrency:
@@ -24,7 +24,7 @@ jobs:
           set -euo pipefail
           git fetch --no-tags --depth=1 origin "$HEAD"
           subject="$(git log -1 --format=%s "$HEAD")"
-          if [[ "$subject" == 'storia V249: test five short Fiesole entrances on original film [V249-ONCE]' ]]; then
+          if [[ "$subject" == 'storia V249: fix source review workflow path and launch [V249-ONCE]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
@@ -65,7 +65,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python src/storia_rivive_v249_fiesole_clean_motion_recut.py \
+          python src/storia_rivive_v249_fiesole_short_motion_selection.py \
             --film output/v249/real_archive/ORIGINAL_ARCHIVE.webm \
             --scout output/v249/real_archive/SCOUT_REPORT.json \
             --frames output/v249/real_archive/original_frames \
