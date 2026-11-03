@@ -75,6 +75,16 @@ class RareV3Tests(unittest.TestCase):
         r=src.search("librivox","Jules Verne",2,fake)
         self.assertEqual(r["items"][0]["media_kind"],"audio_reference")
         self.assertIn("Jules Verne",r["items"][0]["author"])
+    def test_librivox_author_prefix_routes_author_param(self):
+        def fake(u):
+            p=parse_qs(urlsplit(u).query)
+            self.assertEqual(p["author"],["Verne"])
+            self.assertNotIn("title",p)
+            return {"books":[]}
+        result=src.search("librivox","author:Verne",1,fake)
+        self.assertEqual(result["items"],[])
+        self.assertEqual(result["api_requests"],1)
+
     def test_openlibrary_key_validated(self):
         r=src.search("openlibrary","Alice Wonderland",1,lambda u:{"docs":[{
             "key":"/works/OL12345W","title":"Alice","first_publish_year":1865,
