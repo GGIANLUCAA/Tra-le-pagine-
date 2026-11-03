@@ -3,7 +3,7 @@
 No facial identification, generation, source-frame timecode assertion or artistic approval.
 """
 from __future__ import annotations
-import argparse,json
+import argparse,json,re
 from pathlib import Path
 from PIL import Image,ImageOps,ImageFilter,ImageStat
 
@@ -30,15 +30,25 @@ def rank(folder):
     if not imgs:raise ValueError("No native archival source PNG frames to evaluate")
     scored=[measure(p) for p in imgs]
     # Reserve different time positions; scores do not prove distinct camera shots.
-    ranked=sorted(range(len(scored)),key=lambda n:(-scored[n]["source_visual_quality_score"],n))
-    chosen=[]
+    # V206 requires 1.2 seconds of genuine film BEFORE each selected freeze.
+    # The first scout sample has no preceding footage and cannot be a valid shot.
+    eligible=[n for n,row in enumerate(scored)
+              if re.fullmatch(r"frame_(?:0[2-9]|1[0-2])\.png",row["filename"])]
+    # V218: greedy scoring could pick only four points in a 12-frame film,
+    # even when five well-spaced source frames existed. Enumerate all valid
+    # groups (<= 462 combinations) and maximize the same quality score.
+    # This is temporal sampling, NOT proof of distinct camera shots (V210).
+    from itertools import combinations
     separation=max(1,len(scored)//6)
-    for idx in ranked:
-        if all(abs(idx-v)>=separation for v in chosen):chosen.append(idx)
-        if len(chosen)>=5:break
-    if len(chosen)<5:
+    groups=(group for group in combinations(eligible,5)
+            if all(b-a>=separation for a,b in zip(group,group[1:])))
+    chosen=max(groups,
+               key=lambda group:(round(sum(scored[n]["source_visual_quality_score"]
+                                          for n in group),6),tuple(-n for n in group)),
+               default=None)
+    if chosen is None:
         return {"status":"SOURCE_TOO_FEW_DISTINCT_CANDIDATE_FRAMES","candidates":scored,"preselected":[]}
-    selected=[scored[n] for n in sorted(chosen)]
+    selected=[scored[n] for n in chosen]
     return {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
             "original_source_frames":len(scored),"preselected":selected,
             "all_candidates":scored,"approved_restored_photos":0,

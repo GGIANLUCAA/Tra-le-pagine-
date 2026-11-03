@@ -1,0 +1,66 @@
+name: "La Storia Rivive V235 · original 1926 color motion source QA (NOT FINAL)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v235-authentic-color-reference.yml"
+      - "src/storia_rivive_v235_kodachrome_reference.py"
+      - "tests/test_storia_rivive_v235_kodachrome_reference.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v235-real-reference-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  authentic_color_source_review:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - name: "One-shot gate: only first intentional source download"
+        id: gate
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$HEAD_SHA"
+          SUBJECT="$(git log -1 --format=%s "$HEAD_SHA")"
+          if [[ "$SUBJECT" == 'storia V235: inspect authentic 1926 Kodachrome as color reference [V235-ONCE]' ]]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: "3.11"
+      - name: Free CPU tools only, no AI credits
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13" "requests>=2.31,<3"
+      - name: FFmpeg source and non-final regressions
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile src/storia_rivive_v235_kodachrome_reference.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v235_kodachrome_reference.py" -v
+      - name: REAL original Kodachrome frames + 25s moving color reference
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python src/storia_rivive_v235_kodachrome_reference.py \
+            --download-to output/v235/original_for_temporary_private_QA.webm \
+            --out output/v235/source_reference
+      - name: Upload real-byte QA evidence only; never publish or claim final
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: v235-authentic-color-1926-source-QA-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v235/source_reference/V235_REAL_1926_COLOR_CONTACT.jpg
+            output/v235/source_reference/V235_REFERENCE_QA.json
+            output/v235/source_reference/V235_25S_AUTHENTIC_COLOR_MOTION_REFERENCE_NOT_FINAL.mp4
+          # No full archival film, no source re-release, no Vidu or paid calls.

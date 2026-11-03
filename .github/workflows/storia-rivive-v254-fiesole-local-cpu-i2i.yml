@@ -1,0 +1,120 @@
+name: "La Storia Rivive V254 · one local CPU photoreal I2I (ZERO API credits)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v254-fiesole-local-cpu-i2i.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v254-fiesole-cpu-one-shot-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  single_actual_local_image_to_image:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_ETAG_TIMEOUT: "20"
+      TOKENIZERS_PARALLELISM: "false"
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+      HF_TOKEN: ""
+      HUGGING_FACE_HUB_TOKEN: ""
+    steps:
+      - uses: actions/checkout@v4
+      - name: Permit exactly one V254 CPU-only job at this commit (no replay)
+        id: gate
+        shell: bash
+        env:
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$PR_HEAD"
+          subject="$(git log -1 --format=%s "$PR_HEAD")"
+          if [[ "$subject" == 'storia V254: run one free LOCAL CPU photoreal Fiesole I2I [V254-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V254_ALREADY_REQUESTED_OR_UNRELATED_PR_CHANGE'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Test real source manifest checks before downloading any model
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'pillow>=10,<12'
+          python -m py_compile src/storia_rivive_v254_fiesole_local_cpu_photo.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v254_fiesole_local_cpu_photo.py' -v
+      - name: Download V251 authentic film photo inputs, never regenerate or fake frames
+        if: steps.gate.outputs.allowed == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: storia-v251-fiesole-real-I2I-photo-inputs-NOT-FINAL
+          run-id: 41635322340
+          github-token: ${{ github.token }}
+          path: output/v254/v251_real_input
+      - name: Verify real V251 source film/frame SHA, preview no provider call
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -t output/v254/v251_real_input/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip
+          python src/storia_rivive_v254_fiesole_local_cpu_photo.py \
+            --source-zip output/v254/v251_real_input/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip \
+            --out output/v254/photo --offline
+      - name: Install CPU-only diffusion runtime, no Vidu or paid inference service
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'torch==2.5.1' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q 'diffusers==0.33.1' 'transformers==4.49.0' 'accelerate>=0.33,<1.10' 'huggingface_hub>=0.30,<1.0' 'safetensors>=0.4' 'sentencepiece'
+      - name: ONE actual local CPU image-to-image restoration on Fiesole, not approval
+        id: inference
+        if: steps.gate.outputs.allowed == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 1500s python src/storia_rivive_v254_fiesole_local_cpu_photo.py \
+            --source-zip output/v254/v251_real_input/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip \
+            --out output/v254/photo
+      - name: Byte-verify candidate or correctly FAIL, never certify final media
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        env:
+          INFERENCE_OUTCOME: ${{ steps.inference.outcome }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os
+          from PIL import Image
+          d=Path('output/v254/photo')
+          report_path=d/'V254_REAL_PHOTO_CANDIDATE_STATUS.json'
+          report=json.loads(report_path.read_text()) if report_path.exists() else {}
+          candidate=d/'V254_FIESOLE_ONE_LOCALLY_GENERATED_I2I_CANDIDATE.png'
+          okay=(os.environ.get('INFERENCE_OUTCOME')=='success'
+                and candidate.is_file() and report.get('new_generated_i2i')==1
+                and report.get('candidate_sha256')==hashlib.sha256(candidate.read_bytes()).hexdigest()
+                and report.get('status')=='ONE_TRUE_LOCAL_I2I_PHOTO_NEEDS_ARTISTIC_REVIEW_NOT_FINAL'
+                and report.get('provider_requests')==0 and report.get('vidu_credit_spend')==0
+                and not report.get('final_mp4') and not report.get('publish_allowed'))
+          if okay:
+            with Image.open(candidate) as img:
+              okay=img.format=='PNG' and img.size==(512,896)
+          print('V254_VERIFIED_REAL_LOCAL_I2I',okay,'NEW_FINAL_0_OF_4')
+          if not okay:raise SystemExit('V254_NO_VALID_GENERATIVE_IMAGE_AFTER_CPU_JOB')
+          PY
+      - name: Save photo candidate and original comparison for ARTISTIC REVIEW ONLY
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v254-fiesole-CPU-real-I2I-CANDIDATE-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v254/photo/

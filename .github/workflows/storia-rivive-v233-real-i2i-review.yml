@@ -1,0 +1,85 @@
+name: "La Storia Rivive V233 · 3 real I2I cinematic 28s QA cut (NOT FINAL)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v233-real-i2i-review.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v233-real-i2i-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source_locked_visual_qa:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run exactly once; no generative provider calls
+        id: gate
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$HEAD_SHA"
+          SUBJECT="$(git log -1 --format=%s "$HEAD_SHA")"
+          if [[ "$SUBJECT" == 'storia V233: combine 3 real I2I with source motion [V233-ONCE]' ]]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install free video dependencies, no paid or model APIs
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "pillow>=10,<13"
+      - name: Source-lock and no-fake-final unit tests
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m unittest discover -s tests -p 'test_storia_rivive_v233_three_real_i2i_visual_review.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v230_curated_portrait.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: v231-early-cinema-28s-source-only-review-not-final
+          run-id: 41508073276
+          github-token: ${{ github.token }}
+          path: output/v233/v231
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: v232-early-cinema-four-real-i2i-candidates-not-final
+          run-id: 41509592850
+          github-token: ${{ github.token }}
+          path: output/v233/v232
+      - name: Real source B/N -> exact archived crop -> genuine I2I candidate, 28.5s
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="early_cinema_sorrows_1910_v225"
+          python src/storia_rivive_v233_three_real_i2i_visual_review.py \
+            --source-mp4 output/v233/v231/EARLY_CINEMA_1910_V231_28S_REVIEW_NOT_FINAL.mp4 \
+            --source-report output/v233/v231/V231_QA_RESEARCH_ONLY.json \
+            --lock "output/v233/v232/$E/V232_FOUR_INPUT_SOURCE_LOCK.json" \
+            --results "output/v233/v232/$E/V232_REAL_I2I_RESULTS.json" \
+            --i2i-root "output/v233/v232/$E" \
+            --out output/v233/real_three_i2i_review
+      - name: Archive new real partial montage, never mark final or publish
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: v233-real-three-i2i-28s-source-locked-not-final
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v233/real_three_i2i_review/V233_THREE_REAL_I2I_28S_REVIEW_NOT_FINAL.mp4
+            output/v233/real_three_i2i_review/V233_ANDROID_VISUAL_REVIEW_ONLY.zip
+            output/v233/real_three_i2i_review/V233_QA_NOT_FINAL.json

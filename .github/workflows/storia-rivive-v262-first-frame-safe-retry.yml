@@ -1,0 +1,118 @@
+name: "La Storia Rivive V262 · safe first source CPU retry (NO CREDITS)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v262-first-frame-safe-retry.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v262-first-source-once-${{ github.event.pull_request.head.sha }}
+  cancel-in-progress: false
+jobs:
+  first_real_photo_safe_retry:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gate one explicitly approved free CPU retry only
+        id: gate
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin "$HEAD"
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V262: one-shot safe first Fiesole CPU I2I [V262-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install free CPU runtime, no tokens
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m pip install -q --index-url https://download.pytorch.org/whl/cpu 'torch==2.5.1+cpu'
+          python -m pip install -q 'diffusers==0.32.2' 'transformers==4.44.2' 'accelerate==1.2.1' 'huggingface_hub>=0.23,<1' 'safetensors>=0.4' 'Pillow>=10,<13' 'numpy>=1.26,<2'
+      - name: Validate V261 source lock and V262 offline safety rules
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_v262_fiesole_first_retry.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v262_fiesole_first_retry.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v261_fiesole_first_source_i2i.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v251-fiesole-real-I2I-photo-inputs-NOT-FINAL
+          run-id: 41635322340
+          github-token: ${{ github.token }}
+          path: output/v262/v251
+      - name: Extract authentic Fiesole first source, verify SHA and manifest
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p output/v262/original
+          unzip -oq output/v262/v251/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip -d output/v262/original
+          echo '3ebabe8a57ce3cf386681255ad4d896ab540d31005bfbfd1087474f62af714cb  output/v262/original/original_shot_01_frame_03.png' | sha256sum -c -
+          python src/storia_rivive_v262_fiesole_first_retry.py --source output/v262/original/original_shot_01_frame_03.png --manifest output/v262/original/V251_SOURCE_MANIFEST_NOT_FINAL.json --out output/v262/photo --offline
+      - name: Run one free CPU diffusion retry with safety checker unchanged
+        id: generation
+        if: steps.gate.outputs.allowed == 'true'
+        continue-on-error: true
+        env:
+          HF_TOKEN: ''
+          HUGGING_FACE_HUB_TOKEN: ''
+          HF_HUB_DISABLE_TELEMETRY: '1'
+          HF_HUB_DISABLE_XET: '1'
+          TOKENIZERS_PARALLELISM: 'false'
+          OMP_NUM_THREADS: '4'
+          MKL_NUM_THREADS: '4'
+        run: |
+          set -euo pipefail
+          timeout 2100s python -u src/storia_rivive_v262_fiesole_first_retry.py --source output/v262/original/original_shot_01_frame_03.png --manifest output/v262/original/V251_SOURCE_MANIFEST_NOT_FINAL.json --out output/v262/photo
+      - name: Validate PNG and report against actual media bytes or fail
+        if: always() && steps.gate.outputs.allowed == 'true'
+        env:
+          OUTCOME: ${{ steps.generation.outcome }}
+        run: |
+          python - <<'PY'
+          import os, json, hashlib
+          from pathlib import Path
+          from PIL import Image, ImageStat
+          root=Path("output/v262/photo")
+          rp=root/"V257_SOURCE_LOCKED_I2I_QA.json"
+          q=json.loads(rp.read_text()) if rp.is_file() else {}
+          png=root/"V257_ONE_TRUE_DIFFUSION_I2I_NOT_APPROVED.png"
+          good=(os.getenv("OUTCOME")=="success"
+             and q.get("version")=="V262_FIRST_SOURCE_SAFETY_RESPECTING_RETRY_NOT_FINAL"
+             and q.get("safety_checker_disabled") is False
+             and q.get("actual_generated_photos")==1
+             and q.get("original_source_sha256")=="3ebabe8a57ce3cf386681255ad4d896ab540d31005bfbfd1087474f62af714cb"
+             and png.is_file() and not png.is_symlink() and png.stat().st_size>10000
+             and q.get("generated_sha256")==hashlib.sha256(png.read_bytes()).hexdigest() if png.is_file() else False)
+          if good:
+            with Image.open(png) as im:
+              good=(im.format=="PNG" and im.size==(448,800)
+                    and ImageStat.Stat(im.convert("L")).mean[0]>10)
+          q.update(artistic_approval=False,italian_rights_verified=False,
+                   publish_allowed=False,new_final_episodes_delivered=0,paid_credits_spent=0)
+          if not good:q.update(actual_generated_photos=0,status="V262_NO_VERIFIED_PHOTO")
+          root.mkdir(parents=True,exist_ok=True)
+          rp.write_text(json.dumps(q,indent=2)+"\n")
+          print("V262_VERIFIED_FIRST_SOURCE_PHOTO",good,"NEW_FINAL_0_OF_4")
+          if not good:raise SystemExit("V262_NOT_A_VERIFIED_PHOTO")
+          PY
+      - name: Preserve candidate or failed-run diagnosis, never a final video
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v262-Fiesole-first-source-CPU-retry-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v262/photo/

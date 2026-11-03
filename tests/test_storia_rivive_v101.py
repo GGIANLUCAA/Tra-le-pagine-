@@ -2,6 +2,8 @@
 """Offline V101 tests; no remote network or secrets."""
 import importlib.util
 import json
+import subprocess
+import sys
 from pathlib import Path
 import tempfile
 import unittest
@@ -65,6 +67,7 @@ class V101Tests(unittest.TestCase):
             result=frame_rank.rank(temp)
             self.assertEqual(len(result["preselected"]),5)
             self.assertEqual(result["approved_restored_photos"],0)
+            self.assertNotIn("frame_01.png",[x["filename"] for x in result["preselected"]])
             self.assertTrue(all(x["approved_for_i2i"] is False for x in result["preselected"]))
     def test_i2i_manifest_locks_five_real_source_frames(self):
         from PIL import Image
@@ -80,9 +83,72 @@ class V101Tests(unittest.TestCase):
                        "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
             result=i2i.build(order,selection,d)
             self.assertEqual(len(result["original_frame_jobs"]),5)
+            self.assertEqual(result["photos_requested"],4)
+            self.assertEqual(result["photo_jobs_prepared"],4)
+            self.assertEqual(result["source_frames_prepared"],5)
+            self.assertEqual(sum(x["target_kind"]=="REAL_SOURCE_LOCKED_I2I_PHOTOGRAPH" for x in result["original_frame_jobs"]),4)
+            self.assertEqual(result["original_frame_jobs"][4]["target_kind"],"VIDU_SOURCE_ANCHOR_NO_I2I")
+            self.assertIsNone(result["original_frame_jobs"][4]["prompt"])
+            self.assertIsNone(result["original_frame_jobs"][4]["target_raster_px"])
+            self.assertEqual(result["vidu_source_anchor"]["source_sha256"],result["original_frame_jobs"][4]["source_sha256"])
+            self.assertFalse(result["vidu_source_anchor"]["vidu_request_sent"])
             self.assertEqual(result["photos_generated"],0)
             self.assertEqual(result["provider_requests_sent"],0)
             self.assertTrue(all(x["source_sha256"] and x["request_sent"] is False for x in result["original_frame_jobs"]))
+    def test_v201_rejects_same_pixels_even_if_png_compression_differs(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test only")
+            for i in range(1,6):
+                color=(20 if i<=2 else i*30,40,70)
+                Image.new("RGB",(640,480),color).save(
+                    d/"original_frames"/("frame_%02d.png"%i),
+                    compress_level=0 if i==1 else 9)
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
+                   "paid_api_call_permitted":False,"publish_permitted":False}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            with self.assertRaisesRegex(ValueError,"Duplicate decoded source pixels"):
+                i2i.build(order,selection,d)
+    def test_v201_rejects_mixed_original_frame_geometry(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic test only")
+            for i in range(1,6):
+                Image.new("RGB",(800,480) if i==5 else (640,480),
+                          (20*i,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                   "cycle_id":"storia-20261030-1200","episode_id":"beirut_1919_street",
+                   "paid_api_call_permitted":False,"publish_permitted":False}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            with self.assertRaisesRegex(ValueError,"Mixed original frame geometry"):
+                i2i.build(order,selection,d)
+    def test_i2i_rejects_symlink_frame(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp);(d/"original_frames").mkdir()
+            (d/"ORIGINAL_ARCHIVE.webm").write_bytes(b"synthetic")
+            for i in range(1,6):
+                Image.new("RGB",(640,480),(i*30,40,70)).save(d/"original_frames"/("frame_%02d.png"%i))
+            (d/"original_frames"/"frame_05.png").unlink()
+            (d/"original_frames"/"frame_05.png").symlink_to(d/"original_frames"/"frame_04.png")
+            order={"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT","cycle_id":"storia-test",
+                   "episode_id":"test_episode","paid_api_call_permitted":False,"publish_permitted":False}
+            selection={"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                       "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]}
+            with self.assertRaisesRegex(ValueError,"Symlink"):
+                i2i.build(order,selection,d)
+    def test_i2i_rejects_malformed_selection(self):
+        with tempfile.TemporaryDirectory() as temp:
+            with self.assertRaises(ValueError):
+                i2i.build({"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                           "paid_api_call_permitted":False,"publish_permitted":False},
+                          {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
+                           "preselected":[None]*5},Path(temp))
     def test_i2i_manifest_blocks_missing_source_frame(self):
         with tempfile.TemporaryDirectory() as temp:
             with self.assertRaises(ValueError):
@@ -90,6 +156,83 @@ class V101Tests(unittest.TestCase):
                     "paid_api_call_permitted":False,"publish_permitted":False},
                     {"status":"FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
                      "preselected":[{"filename":"frame_%02d.png"%i} for i in range(1,6)]},Path(temp))
+    def test_used_candidate_is_not_reselected(self):
+        a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",{**PROFILE,"used_episode_ids":["paris_swim_1918"]})
+        self.assertEqual(a["episode_id"],"paris_train_1918")
+    def test_exhausted_queue_skips_without_spend(self):
+        a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",{**PROFILE,"used_episode_ids":["paris_swim_1918","paris_train_1918"]})
+        self.assertEqual(a["status"],"SOURCE_REJECTED_QUEUE_EXHAUSTED")
+        self.assertFalse(a["paid_api_call_permitted"])
+        self.assertFalse(a["video_completed"])
+    def test_malformed_used_ledger_rejected(self):
+        with self.assertRaises(ValueError):
+            auto.build_work_order(BANK,"2026-10-30T15:00:00Z",{**PROFILE,"used_episode_ids":"paris_swim_1918"})
+    def test_v200_history_holds_incomplete_existing_episode(self):
+        bank={"candidates":[*BANK["candidates"],{
+            "id":"china_daily_life_1928",
+            "source_page":"https://commons.wikimedia.org/wiki/File:China.webm",
+            "license":"PUBLIC_DOMAIN","year":1928}]}
+        history={"entries":[{"episode_id":"china_daily_life_1928",
+                            "status":"rendered_needs_review",
+                            "evidence":"docs/LA_STORIA_RIVIVE_CHINA_1928_V107_ESITO_E_GUARDRAIL.md"}]}
+        for hour in range(0,24,3):
+            result=auto.build_work_order(bank,f"2026-10-30T{hour:02d}:00:00Z",PROFILE,history)
+            self.assertNotEqual(result["episode_id"],"china_daily_life_1928")
+            self.assertFalse(result["paid_api_call_permitted"])
+    def test_v200_history_exhausted_is_safe_for_workflow(self):
+        history={"entries":[{"episode_id":x["id"],"status":"assets_pending",
+                             "evidence":"docs/LA_STORIA_RIVIVE_V108_MANDATO_AUTOMAZIONE_CREDITI_20261030.md"}
+                            for x in BANK["candidates"]]}
+        result=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE,history)
+        self.assertIsNone(result["episode_id"])
+        self.assertIsNone(result["title"])
+        self.assertEqual(result["status"],"SOURCE_REJECTED_QUEUE_EXHAUSTED")
+        self.assertFalse(result["publish_permitted"])
+        self.assertFalse(result["paid_api_call_permitted"])
+    def test_v200_history_rejects_missing_evidence_and_duplicate(self):
+        valid={"episode_id":"paris_swim_1918","status":"rendered_needs_review",
+               "evidence":"docs/LA_STORIA_RIVIVE_CHINA_1928_V107_ESITO_E_GUARDRAIL.md"}
+        for bad in ({"entries":[{**valid,"evidence":"https://example.invalid/false"}]},
+                    {"entries":[valid,valid]},
+                    {"entries":[{**valid,"status":"approved_without_review"}]},
+                    {"entries":"not_a_list"}):
+            with self.subTest(bad=bad),self.assertRaises(ValueError):
+                auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE,bad)
+    def test_v200_repository_history_file_is_valid(self):
+        history=json.loads((ROOT/"queue"/"storia_rivive_episode_history_v200.json").read_text(encoding="utf-8"))
+        self.assertIn("china_daily_life_1928",auto.history_exclusions(history))
+        self.assertFalse(any(x.get("status")=="final_approved" for x in history["entries"]))
+    def test_v200_cli_exhausted_history_writes_skip_without_media(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp)
+            bank=d/"bank.json";profile=d/"profile.json";history=d/"history.json";out=d/"order.json"
+            bank.write_text(json.dumps(BANK),encoding="utf-8")
+            profile.write_text(json.dumps(PROFILE),encoding="utf-8")
+            history.write_text(json.dumps({"entries":[
+                {"episode_id":x["id"],"status":"assets_pending",
+                 "evidence":"docs/LA_STORIA_RIVIVE_V108_MANDATO_AUTOMAZIONE_CREDITI_20261030.md"}
+                for x in BANK["candidates"]]}),encoding="utf-8")
+            p=subprocess.run([sys.executable,str(ROOT/"src"/"storia_rivive_autopilot_v101.py"),
+                              "--bank",str(bank),"--profile",str(profile),"--history",str(history),
+                              "--now","2026-10-30T15:00:00Z","--out",str(out)],
+                             capture_output=True,text=True,check=True)
+            data=json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(data["status"],"SOURCE_REJECTED_QUEUE_EXHAUSTED")
+            self.assertIsNone(data["episode_id"])
+            self.assertEqual(json.loads(p.stdout)["paid_calls"],0)
+    def test_v200_cli_missing_history_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            d=Path(temp)
+            bank=d/"bank.json";profile=d/"profile.json";out=d/"order.json"
+            bank.write_text(json.dumps(BANK),encoding="utf-8")
+            profile.write_text(json.dumps(PROFILE),encoding="utf-8")
+            p=subprocess.run([sys.executable,str(ROOT/"src"/"storia_rivive_autopilot_v101.py"),
+                              "--bank",str(bank),"--profile",str(profile),
+                              "--history",str(d/"missing.json"),
+                              "--now","2026-10-30T15:00:00Z","--out",str(out)],
+                             capture_output=True,text=True)
+            self.assertNotEqual(p.returncode,0)
+            self.assertFalse(out.exists())
     def test_source_rights_not_self_approved(self):
         a=auto.build_work_order(BANK,"2026-10-30T15:00:00Z",PROFILE)
         self.assertIn("ITALY_AND_RESIDUAL_RIGHTS_NEED_REVIEW",a["blocking_issues"])

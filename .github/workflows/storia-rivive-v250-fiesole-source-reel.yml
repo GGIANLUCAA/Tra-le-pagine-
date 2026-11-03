@@ -1,0 +1,70 @@
+name: "La Storia Rivive V250 · five authentic Fiesole short motion scenes (NOT FINAL)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v250-fiesole-source-reel.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-fiesole-v250-source-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  render_source_only:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gate exact single review commit; prevent replay
+        id: gate
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$HEAD"
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V250: one-time real Fiesole source reel [V250-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install free offline video tools
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q 'pillow>=10,<13'
+      - name: Check actual code and existing source gate
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile src/storia_rivive_v250_fiesole_source_only_reel.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v249_fiesole_short_motion_selection.py' -v
+      - name: Acquire genuine source with original SHA checks
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v217_four_pilot_source_review.py --manifest queue/storia_rivive_four_pilots_v217.json --episode fiesole_straw_hats_1912_v220 --out output/v250/order
+          python src/storia_rivive_scout_v101.py --order output/v250/order/WORK_ORDER.json --out output/v250/archive
+      - name: Verify five clean original 1.4s entrances on actual film
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python src/storia_rivive_v249_fiesole_short_motion_selection.py --film output/v250/archive/ORIGINAL_ARCHIVE.webm --scout output/v250/archive/SCOUT_REPORT.json --frames output/v250/archive/original_frames --out output/v250/selection
+      - name: Render and decode real original B/W film only
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python src/storia_rivive_v250_fiesole_source_only_reel.py --film output/v250/archive/ORIGINAL_ARCHIVE.webm --selection output/v250/selection/SHOT_AWARE_SELECTION_V249_NOT_APPROVED.json --alignment output/v250/selection/SOURCE_ENDPOINT_ALIGNMENT_V249.json --frames output/v250/archive/original_frames --out output/v250/result/FIESOLE_1912_V250_FIVE_SOURCE_ENTRANCES_NOT_FINAL.mp4
+          ffmpeg -v error -i output/v250/result/FIESOLE_1912_V250_FIVE_SOURCE_ENTRANCES_NOT_FINAL.mp4 -f null -
+      - name: Upload only source-only review evidence (no release or publication)
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v250-fiesole-five-authentic-motion-scenes-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v250/result/
+            output/v250/selection/

@@ -1,0 +1,112 @@
+name: "La Storia Rivive V259 · fourth genuine Fiesole I2I CPU (NO CREDITS)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v259-fiesole-fourth-frame-i2i.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v259-fourth-source-once-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  fourth_real_photo:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gate exactly one explicit fourth-frame CPU attempt
+        id: gate
+        shell: bash
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin "$HEAD"
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V259: one authentic fourth Fiesole CPU I2I [V259-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install local free CPU model runtime
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m pip install -q --index-url https://download.pytorch.org/whl/cpu 'torch==2.5.1+cpu'
+          python -m pip install -q 'diffusers==0.32.2' 'transformers==4.44.2' 'accelerate==1.2.1' 'huggingface_hub>=0.23,<1' 'safetensors>=0.4' 'Pillow>=10,<13' 'numpy>=1.26,<2'
+      - name: Verify SHA and fail-closed tests on actual code
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile src/storia_rivive_v259_fiesole_fourth_source_i2i.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v259_fiesole_fourth_source_i2i.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v257_fiesole_third_source_i2i.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v251-fiesole-real-I2I-photo-inputs-NOT-FINAL
+          run-id: 41635322340
+          github-token: ${{ github.token }}
+          path: output/v259/v251
+      - name: Unpack exact source shot 04, require V251 manifest and SHA
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p output/v259/original
+          unzip -oq output/v259/v251/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip -d output/v259/original
+          echo '1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0  output/v259/original/original_shot_04_frame_07.png' | sha256sum -c -
+          python src/storia_rivive_v259_fiesole_fourth_source_i2i.py --source output/v259/original/original_shot_04_frame_07.png --manifest output/v259/original/V251_SOURCE_MANIFEST_NOT_FINAL.json --out output/v259/photo --offline
+      - name: Generate one real local diffusion image on fourth authentic shot
+        id: generation
+        if: steps.gate.outputs.allowed == 'true'
+        continue-on-error: true
+        env:
+          HF_TOKEN: ''
+          HUGGING_FACE_HUB_TOKEN: ''
+          HF_HUB_DISABLE_TELEMETRY: '1'
+          HF_HUB_DISABLE_XET: '1'
+          TOKENIZERS_PARALLELISM: 'false'
+          OMP_NUM_THREADS: '4'
+          MKL_NUM_THREADS: '4'
+        run: |
+          set -euo pipefail
+          timeout 2100s python -u src/storia_rivive_v259_fiesole_fourth_source_i2i.py --source output/v259/original/original_shot_04_frame_07.png --manifest output/v259/original/V251_SOURCE_MANIFEST_NOT_FINAL.json --out output/v259/photo
+      - name: Verify generated PNG bytes or fail; never mark video finished
+        if: always() && steps.gate.outputs.allowed == 'true'
+        env:
+          OUTCOME: ${{ steps.generation.outcome }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          from PIL import Image
+          p=Path('output/v259/photo')
+          r=p/'V257_SOURCE_LOCKED_I2I_QA.json'
+          q=json.loads(r.read_text()) if r.is_file() else {}
+          image=p/'V257_ONE_TRUE_DIFFUSION_I2I_NOT_APPROVED.png'
+          good=(os.environ.get('OUTCOME')=='success' and image.is_file()
+             and q.get('actual_generated_photos')==1
+             and q.get('generated_sha256')==hashlib.sha256(image.read_bytes()).hexdigest()
+             and q.get('original_source_sha256')=='1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0')
+          if good:
+            with Image.open(image) as im:good=im.format=='PNG' and im.size==(448,800)
+          q.update(new_final_episodes_delivered=0,italian_rights_verified=False,
+                   artistic_approval=False,publish_allowed=False,paid_credits_spent=0)
+          if not good:q.update(status='V259_NO_VERIFIED_GENERATIVE_PHOTO',actual_generated_photos=0)
+          p.mkdir(parents=True,exist_ok=True)
+          r.write_text(json.dumps(q,indent=2)+'\n')
+          print('V259_VERIFIED_FOURTH_SOURCE_I2I',good,'NEW_FINAL_0_OF_4')
+          if not good:raise SystemExit('V259_NOT_A_VERIFIED_I2I_PHOTO')
+          PY
+      - name: Upload actual photo and A/B for visual review, never final video
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v259-fourth-source-Fiesole-real-CPU-I2I-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v259/photo/

@@ -1,0 +1,61 @@
+{
+  "schema": "storia_rivive_v251_real_playable_longcut",
+  "episode": "SAN FRANCISCO · 1906",
+  "kind": "extended_revision_of_existing_benchmark_NOT_NEW_EPISODE",
+  "source_archive": "https://www.loc.gov/item/00694408/",
+  "source_film_sha256": "c8b30802c0fbeb5f9ec3dc9af3e4f71ef627a863d4abba5550b63998cb46725a",
+  "baseline_v98_sha256": "b20726893e067bbae493859ae1c51379c4abab8c2c8768d5c6f2d4ab324b47a8",
+  "editing": {
+    "baseline_four_real_finegrain_i2i_preserved": true,
+    "baseline_real_vidu_animation_preserved": true,
+    "vidu_original_source_second": 43,
+    "additional_distinct_historical_motion_segments_s": [
+      141,
+      192,
+      260,
+      447
+    ],
+    "additional_segment_duration_s": 1.6,
+    "title": "SAN FRANCISCO · 1906",
+    "music": "new original continuous synthesized score",
+    "music_mean_db": -19.9,
+    "music_peak_db": -7.7,
+    "storyboard": "Four original V98 B/W→real I2I chapters, each followed by one fresh 1.6s real moving archival insert, closing with the original exact-frame 5s genuine Vidu animation.",
+    "video_fps": 30
+  },
+  "result": {
+    "mp4": "LA_STORIA_RIVIVE_SAN_FRANCISCO_1906_EDIZIONE_26S.mp4",
+    "mp4_duration_s": 25.9,
+    "mp4_bytes": 8935104,
+    "mp4_sha256": "a5928ee41d6326b7af3168ead46c8f21e7a001d3a4705f7423c526e9f9b52f97",
+    "zip": "LA_STORIA_RIVIVE_SAN_FRANCISCO_1906_EDIZIONE_26S_KIT.zip",
+    "zip_sha256": "c7ccd704c5a23272dd4db963db94f6518317b5fdde73ba43815eada13b222870",
+    "zip_entries": [
+      "MP4",
+      "cover",
+      "QA report",
+      "four social captions"
+    ],
+    "ffmpeg_full_decode_pass": true,
+    "zip_crc_pass": true,
+    "h264_aac": true,
+    "source_pixel_movement_median": [
+      9.93,
+      5.87,
+      5.22,
+      10.51
+    ],
+    "reviewed_contact_frames": true,
+    "ready_for_user_viewing": true,
+    "master_user_approved": false,
+    "italian_rights_for_distribution_approved": false,
+    "social_website_publication_allowed": false
+  },
+  "credits": {
+    "new_vidu_posts": 0,
+    "new_vidu_spend": 0,
+    "new_photo_i2i_calls": 0
+  },
+  "four_new_episodes_delivered": 0,
+  "caveat": "This is the same San Francisco subject from the previously accepted V98 re-edited into 25.9 s; NOT a new episode nor a human-publishable master. Output MP4 and ZIP were created and verified in the ChatGPT working container, not uploaded to GitHub release."
+}

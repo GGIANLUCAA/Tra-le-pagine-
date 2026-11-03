@@ -28,7 +28,31 @@ def candidate_issues(c):
         issues.append("NATIVE_VIDEO_FACE_AND_CROP_REVIEW_PENDING")
     return issues
 
-def build_work_order(bank,now,profile):
+def history_exclusions(history):
+    """Only explicit, evidenced editorial holds exclude a candidate; no approval is inferred."""
+    if not isinstance(history,dict) or not isinstance(history.get("entries"),list):
+        raise ValueError("Invalid V200 history ledger")
+    blocked=set()
+    allowed={"source_rejected","assets_pending","vidu_pending",
+             "rendered_needs_review","technical_pass_review_pending",
+             "final_approved","published"}
+    for entry in history["entries"]:
+        if not isinstance(entry,dict):
+            raise ValueError("Invalid history entry")
+        episode=entry.get("episode_id")
+        status=entry.get("status")
+        evidence=entry.get("evidence")
+        if (not isinstance(episode,str) or not re.fullmatch("[a-z0-9_]{6,64}",episode)
+                or not isinstance(status,str) or status not in allowed or not isinstance(evidence,str)
+                or not evidence.startswith("docs/") or not evidence.endswith(".md")
+                or ".." in evidence):
+            raise ValueError("Invalid history evidence, status or episode")
+        if episode in blocked:
+            raise ValueError("Duplicate history episode")
+        blocked.add(episode)
+    return blocked
+
+def build_work_order(bank,now,profile,history=None):
     slot=slot_at(now)
     entries=bank.get("candidates",[])
     if not isinstance(entries,list) or not entries: raise ValueError("No candidates")
@@ -39,7 +63,21 @@ def build_work_order(bank,now,profile):
     if any(not isinstance(i,str) or not re.fullmatch("[a-z0-9_]{6,64}",i) for i in ids):
         raise ValueError("Invalid candidates")
     if len(set(ids))!=len(ids): raise ValueError("Duplicate candidate")
-    c=entries[(int(slot.timestamp())//10800)%len(entries)]
+    used=profile.get("used_episode_ids",[])
+    if not isinstance(used,list) or any(not isinstance(x,str) for x in used):
+        raise ValueError("Invalid used_episode_ids ledger")
+    excluded=history_exclusions(history if history is not None else {"entries":[]})
+    excluded.update(used)
+    available=[c for c in entries if c["id"] not in excluded]
+    if not available:
+        return {"contract":"LA_STORIA_RIVIVE_V101_SAFE_AUTOPILOT",
+                "cycle_utc":slot.isoformat(),"cycle_id":"storia-"+slot.strftime("%Y%m%d-%H%M"),
+                "episode_id":None,"subject":None,"source_page":None,"title":None,
+                "status":"SOURCE_REJECTED_QUEUE_EXHAUSTED","blocking_issues":["NO_UNUSED_CANDIDATES"],
+                "paid_api_call_permitted":False,"credits_spent":0,"publish_permitted":False,
+                "video_completed":False,"human_approved":False,
+                "note":"Editorial history exhausted: skip source acquisition, I2I and Vidu."}
+    c=available[(int(slot.timestamp())//10800)%len(available)]
     issues=candidate_issues(c)
     flag=profile.get("historical_flags",{}).get(c["id"])
     title={"place":None,"year":c.get("year"),"flag":None,"flag_status":"OMITTED_UNTIL_VERIFIED"}
@@ -63,11 +101,13 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument("--bank",default="queue/storia_rivive_candidates_v58.json")
     p.add_argument("--profile",default="config/storia_rivive_autopilot_v101.json")
+    p.add_argument("--history",default="queue/storia_rivive_episode_history_v200.json")
     p.add_argument("--now",required=True)
     p.add_argument("--out",required=True)
     a=p.parse_args()
     data=build_work_order(json.loads(Path(a.bank).read_text(encoding="utf-8")),a.now,
-                          json.loads(Path(a.profile).read_text(encoding="utf-8")))
+                          json.loads(Path(a.profile).read_text(encoding="utf-8")),
+                          json.loads(Path(a.history).read_text(encoding="utf-8")))
     out=Path(a.out);out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"cycle":data["cycle_id"],"candidate":data["episode_id"],

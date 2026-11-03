@@ -1,0 +1,122 @@
+{
+  "version": "V217_FOUR_PILOTS_SOURCE_SHORTLIST",
+  "purpose": "Research four NEW episodes; every film stays unreleased until four real photo I2I and one source-locked animated Vidu clip pass V91/V94/V96/V99 and rights Italy review",
+  "source_quality_claim": "V225_REAL_FRENCH_V224_TITLE_DETECTED_NEW_FILM_PENDING_ACTUAL_BYTES",
+  "credit_spend_allowed": false,
+  "publish_allowed": false,
+  "italian_rights_approved": false,
+  "episodes": [
+    {
+      "id": "delhi_ruins_1910_v217",
+      "title_en": "DELHI · 1910",
+      "subject": "Architecture, crowds and everyday life around Delhi Qutb complex",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ruins_of_Delhi_(1910).webm",
+      "editorial_reason": "Multiple scales from monuments to human activity; less familiar than standard SF 1906 footage",
+      "rights_status": "COMMONS_PD_MARKED_ITALIAN_RIGHTS_NOT_REVIEWED",
+      "visual_risks": [
+        "intertitles",
+        "static views",
+        "1080 digital file is not optical native 1080",
+        "vertical portrait crop"
+      ]
+    },
+    {
+      "id": "fiesole_straw_hats_1912_v220",
+      "title_en": "FIESOLE · 1912",
+      "subject": "Documentary of straw-hat manufacturing in Fiesole, Italy",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Manufacture_de_chapeaux_de_paille_%C3%A0_Fiesole_(1912).webm",
+      "editorial_reason": "Rare Italian craft documentary; successive handwork stages may yield five visually different human-action shots; 115.64s source, 21,903,861 bytes",
+      "rights_status": "COMMONS_PD_MARKED_ITALIAN_RIGHTS_NOT_REVIEWED",
+      "visual_risks": [
+        "Five 1.4s windows technically verified on film bytes; artistic distinct-shot review still pending",
+        "1080p digital raster does not prove native optical resolution",
+        "French documentary of Italian craft, no invented identities or colours",
+        "Author unknown; Italian territorial and restoration rights pending"
+      ],
+      "source_stage": "V251_FIVE_SHORT_ORIGINAL_WINDOWS_AND_SOURCE_LOCKED_FRAMES_ARTIFACT_VERIFIED_NOT_FINAL",
+      "source_evidence": {
+        "v249_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41618613091",
+        "v250_original_motion_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41626863232",
+        "v251_frame_artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41635322340/artifacts/13229718890",
+        "frame_artifact_digest_sha256": "6eb2538c6a27f347308c66b3db4492219f798ac98d3c71472fc7342cd5cea28e",
+        "five_short_windows_seconds": 1.4,
+        "artistic_distinct_shots_approved": false,
+        "real_i2i_photos_approved": 0,
+        "vidu_clip_approved": false,
+        "italian_rights_approved": false,
+        "i2i_distinct_shot_status_v261": {
+          "shot_1": "V261_GENERATION_REQUESTED_RESULT_NOT_VERIFIED",
+          "shot_2": "V254_CANDIDATE_ARTISTICALLY_REJECTED_MACHINE_BECAME_PERSON",
+          "shot_3": "V258_CANDIDATE_ARTISTIC_REVIEW_PENDING",
+          "shot_4": "V255_AND_V259_SAME_ORIGINAL_SHA_NOT_TWO_DISTINCT_SHOTS",
+          "shot_5": "VIDU_ANCHOR_NOT_GENERATED"
+        },
+        "duplicate_original_sha256": "1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0",
+        "production_blocked_reason": "No four distinct artistically accepted I2I images; never count V255 and V259 as separate scenes"
+      }
+    },
+    {
+      "id": "early_cinema_sorrows_1910_v225",
+      "title_en": "EARLY CINEMA · 1910",
+      "subject": "1910 American staged silent melodrama with Mary Pickford, directed by D. W. Griffith; cinema history rather than actual 1910 events",
+      "source_page": "https://commons.wikimedia.org/wiki/File:The_Sorrows_Of_The_Unfaithful_(1910).webm",
+      "editorial_reason": "Replace French Fashion V224 actual frames: selected frame_01 is an opening title and repeated tabletop hand shots do not establish 5 distinct camera scenes. New film has multiple dramatic settings and actions to test; 665s, 1280x720, 107.29 MB original per Commons; FIVE REAL SHOTS AND IMAGE QUALITY STILL UNVERIFIED.",
+      "rights_status": "COMMONS_PD_US_AND_PD_OLD_MARKED_ITALIAN_RIGHTS_NOT_REVIEWED",
+      "visual_risks": [
+        "Fictional staged scenes, not authentic documentary events: never imply the plot really occurred",
+        "Commons says original upload license review needed; Italian rights, new transfer, visual quality NOT approved",
+        "720p raster / ~405px portrait crop, borderline V212 optical detail",
+        "AV1 decoder availability and narrative diversity to be checked on real source bytes"
+      ]
+    },
+    {
+      "id": "lusitania_departure_1915_v220",
+      "title_en": "LUSITANIA · 1915",
+      "subject": "Passengers arriving at Pier 54 for RMS Lusitania departure, 1 May 1915",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Passengers_arriving_for_the_RMS_Lusitania,_NYC,_May_1,_1915.webm",
+      "editorial_reason": "Documented historical crowds and embarkation, 316.874s source, 88,781,328 bytes, potential varied portraits and ship scenes",
+      "rights_status": "COMMONS_US_PD_MARKED_ITALIAN_RIGHTS_NOT_REVIEWED",
+      "visual_risks": [
+        "Do not present footage as ship sinking or falsely identify passengers",
+        "Source video has already been speed-corrected; authentic frame integrity to verify",
+        "Five camera shots NOT yet confirmed on actual original bytes",
+        "Source creator unknown, archival transfer/reuse and Italian rights pending"
+      ]
+    }
+  ],
+  "rejected_v217_sources": [
+    {
+      "id": "granada_alhambra_1914_v217",
+      "reason": "V219 actual media: 3 eligible photographic segments"
+    },
+    {
+      "id": "silent_cinema_1909_v217",
+      "reason": "V219 actual media: 1 eligible photographic segment"
+    },
+    {
+      "id": "paramount_studios_1922_v217",
+      "reason": "V219 actual media: 3 eligible photographic segments"
+    },
+    {
+      "id": "french_fashion_birds_1922_v220",
+      "reason": "V225 inspected actual V224 original contact sheet: selected frame_01 is opening title, other selected frames are near-repeated tabletop hand actions, not 5 confirmed distinct camera shots. Reject prior shortlist; no credit spent."
+    }
+  ],
+  "artistic_i2i_policy_v253": {
+    "user_feedback_date": "2026-11-03",
+    "priority": "Visually beautiful, cinematic and plausible restoration comparable to supplied examples and V98",
+    "minor_face_variation_acceptable": true,
+    "unacceptable": [
+      "Unnatural or inconsistent faces",
+      "Broken hands and objects",
+      "Implausible scene geometry",
+      "Abrupt identity change within a shot",
+      "Incoherent color grading"
+    ],
+    "source_lock_still_required": true,
+    "photographic_i2i_required": true,
+    "provider_fallback": "Try available no-cost image-to-image providers only after confirming quota, output terms and real frame match; ZeroGPU may reset; do not assert a model produced an image until verified bytes exist",
+    "credit_spend_allowed": false,
+    "final_gate_unchanged": true
+  }
+}

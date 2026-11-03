@@ -1,0 +1,92 @@
+name: "La Storia Rivive V231 · 28.5s source edit with proper ending (NOT FINAL)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v231-29second-source-roughcut.yml"
+      - "src/storia_rivive_v231_longform_source_assembly.py"
+      - "tests/test_storia_rivive_v231_longform_source_assembly.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v231-editorial-source-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  archival_longform_review:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    env:
+      EPISODE_ID: early_cinema_sorrows_1910_v225
+    steps:
+      - uses: actions/checkout@v4
+      - name: One-run SHA gate; never duplicate source download on unrelated PR changes
+        id: one_shot
+        shell: bash
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$PR_HEAD_SHA"
+          MSG="$(git log -1 --format=%s "$PR_HEAD_SHA")"
+          if [[ "$MSG" == 'storia V231: one genuine 28.5s source review [V231-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+            echo "V231_SINGLE_RUN_ALLOWED"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo "V231_ALREADY_HANDLED_NO_REPLAY"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.one_shot.outputs.allowed == 'true'
+        with:
+          python-version: "3.11"
+      - name: Install free local FFmpeg video and original-score dependencies
+        if: steps.one_shot.outputs.allowed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "pillow>=10,<13" "numpy>=1.26,<3"
+      - name: Verify 28.5-second contract and prevent short repeated footage
+        if: steps.one_shot.outputs.allowed == 'true'
+        run: |
+          python -m py_compile src/storia_rivive_v231_longform_source_assembly.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v231_longform_source_assembly.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v230_curated_portrait.py" -v
+      - name: Acquire authentic 1910 film and verify source-sha/timecodes, no creative provider
+        if: steps.one_shot.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$EPISODE_ID"
+          TARGET="output/v231/$E"
+          SOURCE="output/v231/source/$E"
+          python src/storia_rivive_v217_four_pilot_source_review.py --manifest queue/storia_rivive_four_pilots_v217.json --episode "$E" --out "$TARGET"
+          python src/storia_rivive_scout_v101.py --order "$TARGET/WORK_ORDER.json" --out "$SOURCE"
+          python src/storia_rivive_frame_rank_v101.py --frames "$SOURCE/original_frames" --out "$TARGET/V101_RANKING.json"
+          python src/storia_rivive_v210_shot_aware_selection.py --ranking "$TARGET/V101_RANKING.json" --scout "$SOURCE/SCOUT_REPORT.json" --cache "$SOURCE" --exclusions config/storia_rivive_v221_source_frame_exclusions.json --out "$TARGET/SHOT_AWARE_SELECTION_V210.json"
+          python src/storia_rivive_v217_four_pilot_source_review.py --manifest queue/storia_rivive_four_pilots_v217.json --episode "$E" --out "$TARGET" --cache "$SOURCE" --finish
+      - name: Render real 28.5s source-only cinematic cut and Android ZIP, no I2I or Vidu
+        if: steps.one_shot.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          E="$EPISODE_ID"
+          python src/storia_rivive_v231_longform_source_assembly.py \
+            --config config/storia_rivive_v230_source_crops.json \
+            --selection "output/v231/$E/SHOT_AWARE_SELECTION_V210.json" \
+            --scout "output/v231/source/$E/SCOUT_REPORT.json" \
+            --cache "output/v231/source/$E" \
+            --episode "$E" \
+            --out "output/v231/$E/SOURCE_LONGFORM_NOT_FINAL"
+      - name: Upload source-only longer MP4 and ZIP as NON FINAL editorial review
+        if: always() && steps.one_shot.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: v231-early-cinema-28s-source-only-review-not-final
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v231/${{ env.EPISODE_ID }}/SOURCE_LONGFORM_NOT_FINAL/EARLY_CINEMA_1910_V231_28S_REVIEW_NOT_FINAL.mp4
+            output/v231/${{ env.EPISODE_ID }}/SOURCE_LONGFORM_NOT_FINAL/V231_ANDROID_SOURCE_REVIEW_ONLY.zip
+            output/v231/${{ env.EPISODE_ID }}/SOURCE_LONGFORM_NOT_FINAL/V231_QA_RESEARCH_ONLY.json
+            output/v231/${{ env.EPISODE_ID }}/SOURCE_LONGFORM_NOT_FINAL/COVER_REVIEW.jpg
+          # No publishing; no full historic film; this is not a final 4I2I+1Vidu.

@@ -297,6 +297,20 @@ def pack(video, cover, posts, rights, recipe, out, opening_review=None, release_
         for key in SOCIAL:
             if "03_POST_SOCIAL/" + CAPTION_OUTPUTS[key] not in archive.namelist():
                 raise ValueError("ZIP privo del post " + key)
+    # V261: both ArtVision V55 and Storia Rivive V91 use the same real-byte
+    # archive contract. No boolean flags or successful rendering can bypass
+    # checks for four actually distinct posts, documented source, cover and
+    # exact original MP4 inside a healthy ZIP.
+    import importlib.util
+    common_gate_path = Path(__file__).with_name("storia_rivive_v260_delivery_bundle_gate.py")
+    if not common_gate_path.is_file():
+        raise ValueError("V261: controllo consegna comune non installato")
+    spec = importlib.util.spec_from_file_location("shared_delivery_bytes_gate", common_gate_path)
+    common_gate = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(common_gate)
+    actual_bundle = common_gate.inspect(video, zip_path)
+    if actual_bundle["errors"]:
+        raise ValueError("V261: pacchetto incompleto: " + ", ".join(actual_bundle["errors"]))
     # Portable standalone files for ChatGPT handoff; platform links remain unverified.
     shutil.copy2(video, out / (stem + ".mp4"))
     shutil.copy2(cover, out / (stem + "_COPERTINA.jpg"))

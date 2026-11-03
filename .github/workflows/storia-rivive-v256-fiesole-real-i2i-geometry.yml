@@ -1,0 +1,75 @@
+name: "La Storia Rivive V256 · verify actual V255 I2I source geometry (NO GENERATION)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v256-fiesole-real-i2i-geometry.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v256-one-time-geometry-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify_real_v255_image_geometry:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Permit this exact one-time byte review only
+        id: gate
+        shell: bash
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$HEAD"
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V256: review real V255 candidate geometry once [V256-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Run offline SHA, 16-region and invented-scene regression tests
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m pip install -q 'Pillow>=10,<13'
+          python -m py_compile src/storia_rivive_v256_fiesole_actual_i2i_geometry_qa.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v256_fiesole_actual_i2i_geometry_qa.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v255-source-bound-fiesole-hands-cpu-I2I-NOT-FINAL
+          run-id: 41664976399
+          github-token: ${{ github.token }}
+          path: output/v256/v255
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v251-fiesole-real-I2I-photo-inputs-NOT-FINAL
+          run-id: 41635322340
+          github-token: ${{ github.token }}
+          path: output/v256/v251
+      - name: Review actual V255 photo against SHA-locked V251 film frame
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/v256/original output/v256/review
+          unzip -oq output/v256/v251/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip -d output/v256/original
+          python src/storia_rivive_v256_fiesole_actual_i2i_geometry_qa.py \
+            --original output/v256/original/original_shot_04_frame_07.png \
+            --candidate output/v256/v255/V254_ONE_TRUE_DIFFUSION_I2I_NOT_APPROVED.png \
+            --report output/v256/v255/V254_SOURCE_LOCKED_I2I_QA.json \
+            --out output/v256/review
+      - name: Save real before/after and geometry evidence, never finished MP4
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v256-fiesole-V255-actual-photo-16-region-QA-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v256/review/

@@ -29,16 +29,18 @@ class DeliveryV55Tests(unittest.TestCase):
         self.cover = self.root / "ArtVision_Test_COVER.jpg"
         Image.new("RGB", (720, 1280), color=(30, 40, 60)).save(self.cover)
         self.posts = {}
-        for key in ("facebook", "instagram", "tiktok", "youtube"):
+        social_examples = {
+            "facebook": "Vi presentiamo la storia dell'opera con il contesto del museo, una curiosità storica documentata e il collegamento agli approfondimenti.",
+            "instagram": "Osservate il gioco di luce sul dettaglio principale: la pennellata, la materia cromatica e il taglio di questa inquadratura raccontano la tecnica.",
+            "tiktok": "Un particolare sorprendente cambia il modo di guardare questo dipinto: partiamo dall'angolo meno noto e scopriamo il simbolo nascosto.",
+            "youtube": "Nel video analizziamo composizione, restauro, firma e cronologia: il percorso completo collega le scelte dell'artista alle fonti storiche.",
+        }
+        for key, body in social_examples.items():
             dest = self.root / ("POST_" + key + ".txt")
-            dest.write_text(
-                "Una breve storia documentata sul dipinto, con un dettaglio vero "
-                f"scelto per il pubblico di {key}. Questa descrizione è distinta e pertinente.",
-                encoding="utf-8",
-            )
+            dest.write_text(body, encoding="utf-8")
             self.posts[key] = dest
         self.rights = self.root / "SOURCES_AND_RIGHTS.md"
-        self.rights.write_text("Fonti e diritti per il test tecnico, da verificare prima della pubblicazione.")
+        self.rights.write_text("Fonte inventario museale di prova: https://example.org/archive/test; diritti da verificare prima della pubblicazione.")
         self.recipe = self.root / "RECIPE.json"
         self.recipe.write_text('{"schema":"test-recipe"}', encoding="utf-8")
 
@@ -196,6 +198,27 @@ class DeliveryV55Tests(unittest.TestCase):
         self.assertFalse(report["playback_range_verified"])
         self.assertFalse(report["post_social_saved_verified"])
         self.assertFalse(report["zip_site_verified"])
+
+    def test_common_gate_rejects_four_near_duplicate_posts(self):
+        common = (
+            "Questa guida racconta l'opera attraverso la stessa inquadratura, "
+            "la medesima narrazione e identici dettagli ripetuti senza "
+            "adattamento al pubblico e al linguaggio di ogni piattaforma. " * 3
+        )
+        for key in self.posts:
+            self.posts[key].write_text(common + " Post per " + key, encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "POST_DUPLICATED_OR_NEAR_DUPLICATE"):
+            pack(self.video, self.cover, self.posts, self.rights,
+                 self.recipe, self.root / "near_duplicates")
+
+    def test_common_gate_rejects_missing_source_url(self):
+        self.rights.write_text(
+            "Documento non specifico, nessun URL della fonte presente per questa opera.",
+            encoding="utf-8",
+        )
+        with self.assertRaisesRegex(ValueError, "SOURCE_RIGHTS_DOSSIER_INCOMPLETE"):
+            pack(self.video, self.cover, self.posts, self.rights,
+                 self.recipe, self.root / "incomplete_rights")
 
     def test_site_key_cannot_escape_media_path(self):
         with self.assertRaises(ValueError):

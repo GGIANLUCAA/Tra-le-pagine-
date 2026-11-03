@@ -1,0 +1,192 @@
+name: "La Storia Rivive V229 · Lusitania real film ONE free I2I source comparison (NO VIDU)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v229-lusitania-free-real-i2i.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v229-lusitania-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  free_photo:
+    # pull_request.paths matches the entire PR diff; only the one approved pilot head may run.
+    # Subsequent PR commits MUST NOT repeat the free-provider request.
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    env:
+      EPISODE_ID: lusitania_departure_1915_v220
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: One-time commit marker gate; future PR commits cannot repeat free provider call
+        id: one_shot
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$PR_HEAD_SHA"
+          SUBJECT="$(git log -1 --format=%s "$PR_HEAD_SHA")"
+          if [[ "$SUBJECT" == 'storia V229: one free Lusitania frame08 I2I [V229-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+            echo 'V229_ONE_TIME_COMMIT_CONFIRMED'
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V229_NO_REPEAT_PROVIDER_CALL'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.one_shot.outputs.allowed == 'true'
+        with:
+          python-version: "3.11"
+      - name: Install free CPU restoration and actual video decoder
+        if: steps.one_shot.outputs.allowed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5" "onnxruntime>=1.17,<2" "huggingface_hub>=0.26,<1" "gradio_client>=1,<2"
+      - name: Offline regressions before any free provider attempt
+        if: steps.one_shot.outputs.allowed == 'true'
+        run: |
+          python -m unittest discover -s tests -p 'test_storia_rivive_v210_shot_aware_selection.py' -q
+          python -m unittest discover -s tests -p 'test_storia_rivive_v217_four_pilot_source_review.py' -q
+          python -m unittest discover -s tests -p 'test_storia_rivive_v77_identity_guard.py' -q
+      - name: Download real Lusitania 1915 film, inspect five source shots, verify preview endpoints
+        if: steps.one_shot.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          TARGET="output/v229/$EPISODE_ID"
+          SOURCE="output/v229/source/$EPISODE_ID"
+          mkdir -p "$TARGET"
+          python src/storia_rivive_v217_four_pilot_source_review.py \
+            --manifest queue/storia_rivive_four_pilots_v217.json \
+            --episode "$EPISODE_ID" --out "$TARGET"
+          python src/storia_rivive_scout_v101.py \
+            --order "$TARGET/WORK_ORDER.json" --out "$SOURCE"
+          python src/storia_rivive_frame_rank_v101.py \
+            --frames "$SOURCE/original_frames" --out "$TARGET/V101_RANKING.json"
+          python src/storia_rivive_v210_shot_aware_selection.py \
+            --ranking "$TARGET/V101_RANKING.json" \
+            --scout "$SOURCE/SCOUT_REPORT.json" --cache "$SOURCE" \
+            --exclusions config/storia_rivive_v221_source_frame_exclusions.json \
+            --out "$TARGET/SHOT_AWARE_SELECTION_V210.json"
+          python src/storia_rivive_v217_four_pilot_source_review.py \
+            --manifest queue/storia_rivive_four_pilots_v217.json \
+            --episode "$EPISODE_ID" --out "$TARGET" --cache "$SOURCE" --finish
+      - name: V102 source-lock exact frame_08 and prepare original portrait crop
+        if: steps.one_shot.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,sys
+          from pathlib import Path
+          from PIL import Image
+          sys.path.insert(0,"src")
+          from storia_rivive_i2i_prepare_v102 import build
+          from storia_rivive_v217_four_pilot_source_review import selected_i2i_source_lock
+          eid="lusitania_departure_1915_v220"
+          base=Path("output/v229")
+          source=base/"source"/eid
+          out=base/eid
+          scout=json.loads((source/"SCOUT_REPORT.json").read_text())
+          selection=json.loads((out/"SHOT_AWARE_SELECTION_V210.json").read_text())
+          report=json.loads((out/"V217_RESEARCH_REPORT.json").read_text())
+          align=json.loads((out/"SOURCE_ENDPOINT_ALIGNMENT_V223.json").read_text())
+          order=json.loads((out/"WORK_ORDER.json").read_text())
+          film_sha="6b73739ef20bcacd2f43c11ab0970204a8e920b8048c16c251fef319539f5d14"
+          frame_sha="12b5b7de381f25a2113c0ab1e2741d964d83c1a6f50a93f7486603adfbd8f80d"
+          if (scout.get("original_sha256")!=film_sha or
+              report.get("status")!="FIVE_SOURCE_SHOTS_REVIEW_PENDING" or
+              selection.get("status")!="FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW" or
+              len(align.get("checks",[]))!=5 or
+              any(x.get("endpoint_visually_aligned") is not True for x in align["checks"])):
+              raise SystemExit("V229_REAL_SOURCE_OR_ENDPOINT_NOT_VERIFIED")
+          jobs=build(order,selection,source)
+          frame_lock=selected_i2i_source_lock(selection,align,"frame_08.png")
+          job=jobs["original_frame_jobs"][frame_lock["selected_index"]]
+          if frame_lock["selected_index"]!=1 or abs(frame_lock["source_timecode_s"]-198.046)>0.003:
+              raise SystemExit("V229_UNEXPECTED_FRAME08_TIMECODE")
+          full=source/"original_frames"/"frame_08.png"
+          sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+          if (job["source_sha256"]!=frame_sha or
+              job["source_sha256"]!=frame_lock["source_frame_sha256"] or
+              job["source_file"]!=str(full) or
+              sha(full)!=frame_sha or
+              job["target_kind"]!="REAL_SOURCE_LOCKED_I2I_PHOTOGRAPH" or
+              jobs["source_video_sha256"]!=film_sha or
+              jobs["provider_requests_sent"]!=0 or
+              jobs["photos_generated"]!=0 or
+              jobs["publication_permitted"] is not False):
+              raise SystemExit("V229_EXACT_SOURCE_JOB_HASH_OR_SAFETY_MISMATCH")
+          with Image.open(full) as im:
+              rgb=im.convert("RGB")
+              w,h=rgb.size
+              cropw=round(h*9/16)
+              left=(w-cropw)//2
+              dest=out/"SOURCE_FRAME_08_PORTRAIT.png"
+              rgb.crop((left,0,left+cropw,h)).save(dest)
+          lock={"version":"V229_ONE_FREE_REAL_I2I_ATTEMPT",
+                "episode_id":eid,"source_film_sha256":film_sha,
+                "original_frame_sha256":frame_sha,
+                "source_timecode_s":frame_lock["source_timecode_s"],
+                "portrait_crop_left_px":left,"portrait_crop_width_px":cropw,
+                "portrait_source_sha256":sha(dest),
+                "research_only":True,"italian_rights_verified":False,
+                "credit_spend_allowed":False,"vidu_calls_allowed":False,
+                "publication_permitted":False,"human_artistic_approval":False}
+          (out/"V229_SOURCE_LOCK.json").write_text(json.dumps(lock,indent=2)+"\n")
+          (out/"I2I_INPUT_MANIFEST_V102.json").write_text(json.dumps(jobs,indent=2)+"\n")
+          print("V229_SOURCE_LOCKED",frame_sha[:12],left,cropw)
+          PY
+      - name: ONE free Finegrain I2I on authentic 1915 ship film, no retry
+        if: steps.one_shot.outputs.allowed == 'true'
+        id: i2i
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v77_safe_photo_generator.py \
+            --source "output/v229/$EPISODE_ID/SOURCE_FRAME_08_PORTRAIT.png" \
+            --outdir "output/v229/$EPISODE_ID/ONE_REAL_I2I_CANDIDATE" \
+            --verified-objects "1915 ship boarding deck with diagonal metal gangway railings; one dark-clothed man walking at center-right, four dark-coated adults by upper rail, several small passengers below at left, life ring at right, dock wall behind; no new people or faces" \
+            --denoise-strength 0.20
+      - name: Record real bytes or provider failure, never claim final
+        if: always() && steps.one_shot.outputs.allowed == 'true'
+        env:
+          PROVIDER_OUTCOME: ${{ steps.i2i.outcome }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path("output/v229/lusitania_departure_1915_v220")
+          out.mkdir(parents=True,exist_ok=True)
+          photo=out/"ONE_REAL_I2I_CANDIDATE"/"FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png"
+          qa=out/"ONE_REAL_I2I_CANDIDATE"/"OBJECT_IDENTITY_QA_V77.json"
+          ok=os.getenv("PROVIDER_OUTCOME")=="success" and photo.is_file() and qa.is_file()
+          result={"version":"V229_REAL_FREE_I2I_BYTE_RESULT",
+                  "status":"REAL_I2I_CANDIDATE_NEEDS_ARTISTIC_QA" if ok else "FREE_PROVIDER_FAILED_OR_QUOTA",
+                  "real_i2i_photos":1 if ok else 0,
+                  "vidu_clips":0,"finished_mp4":False,"finished_zip":False,
+                  "new_final_episodes_delivered":0,
+                  "paid_credits_spent":0,"publish_permitted":False,
+                  "italian_rights_verified":False,"human_artistic_approval":False,
+                  "no_ddcolor_only_as_final":True}
+          if ok:
+              result["photo_sha256"]=hashlib.sha256(photo.read_bytes()).hexdigest()
+              result["photo_bytes"]=photo.stat().st_size
+              result["source_crop_sha256"]=json.loads(qa.read_text()).get("input_sha256")
+          (out/"V229_REAL_I2I_RESULT.json").write_text(json.dumps(result,indent=2)+"\n")
+          print("V229_I2I_REAL_MEDIA_STATUS",result["status"],"NO_FINAL")
+          PY
+      - name: Upload source and real I2I evidence only, no public release
+        if: always() && steps.one_shot.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v229-lusitania-one-free-i2i-review-only
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v229/lusitania_departure_1915_v220/
+            output/v229/source/lusitania_departure_1915_v220/SCOUT_REPORT.json
+            output/v229/source/lusitania_departure_1915_v220/ORIGINAL_FILM_CONTACT_SHEET.jpg
+          # Never upload the full film or publish to the site/social.

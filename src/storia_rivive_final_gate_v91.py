@@ -158,6 +158,32 @@ def main():
                 data["v99_benchmark_evidence"]={"version":"V99_GOLDEN_V98_REGRESSION_GATE",
                     "passed":False,"error":"V99_REAL_EVIDENCE_ERROR "+type(exc).__name__+": "+str(exc)[:250]}
     fails=validate(data,info)
+    # V260: a manifest boolean is not evidence that Facebook posts, cover,
+    # rights dossier and the exact MP4 are present in a CRC-valid delivery ZIP.
+    # The new 4+1 format must verify the actual package bytes before FINAL.
+    if new_storia:
+        bundle_gate_path=Path(__file__).with_name("storia_rivive_v260_delivery_bundle_gate.py")
+        if not bundle_gate_path.is_file():
+            fails.append("V260_DELIVERY_ARCHIVE_GATE_NOT_INSTALLED")
+        else:
+            try:
+                bspec=importlib.util.spec_from_file_location("storia_bundle_v260",bundle_gate_path)
+                bundle_gate=importlib.util.module_from_spec(bspec)
+                bspec.loader.exec_module(bundle_gate)
+                delivery_name=data.get("delivery_zip_filename")
+                if delivery_name is not None:
+                    if (not isinstance(delivery_name,str) or
+                            Path(delivery_name).name != delivery_name or
+                            not delivery_name.endswith(".zip")):
+                        fails.append("V260_INVALID_DELIVERY_ZIP_FILENAME")
+                        delivery_report={"errors":[]}
+                    else:
+                        delivery_report=bundle_gate.inspect(p,p.parent/delivery_name)
+                else:
+                    delivery_report=bundle_gate.inspect(p)
+                fails.extend("V260: " + e for e in delivery_report["errors"])
+            except Exception as exc:
+                fails.append("V260_DELIVERY_BYTE_CHECK_FAILED: "+type(exc).__name__)
     print(json.dumps({"approved":not fails,"duration_s":info["duration_s"],
                       "failures":fails},ensure_ascii=False,indent=2))
     return 2 if fails else 0

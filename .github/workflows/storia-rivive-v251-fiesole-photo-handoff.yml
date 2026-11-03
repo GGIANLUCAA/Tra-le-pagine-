@@ -1,0 +1,68 @@
+name: "La Storia Rivive V251 · five source-locked photo inputs (NO PAID API)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v251-fiesole-photo-handoff.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v251-source-photo-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  export_photo_inputs:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Permit one explicit V251 commit, never retry source processing blindly
+        id: gate
+        shell: bash
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$HEAD"
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V251: export five Fiesole I2I input frames once [V251-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install only free local dependencies
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q 'pillow>=10,<13'
+      - name: Test photo input source-lock and ZIP guard
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile src/storia_rivive_v251_fiesole_photo_source_handoff.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v251_fiesole_photo_source_handoff.py' -v
+      - name: Fetch verified original archival film and 12 genuine frames
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v217_four_pilot_source_review.py --manifest queue/storia_rivive_four_pilots_v217.json --episode fiesole_straw_hats_1912_v220 --out output/v251/order
+          python src/storia_rivive_scout_v101.py --order output/v251/order/WORK_ORDER.json --out output/v251/archive
+      - name: Select clean authentic frame endpoints on real source bytes
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python src/storia_rivive_v249_fiesole_short_motion_selection.py --film output/v251/archive/ORIGINAL_ARCHIVE.webm --scout output/v251/archive/SCOUT_REPORT.json --frames output/v251/archive/original_frames --out output/v251/selection
+      - name: Package four genuine I2I inputs and fifth Vidu source reference (no generation)
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python src/storia_rivive_v251_fiesole_photo_source_handoff.py --selection output/v251/selection/SHOT_AWARE_SELECTION_V249_NOT_APPROVED.json --alignment output/v251/selection/SOURCE_ENDPOINT_ALIGNMENT_V249.json --frames output/v251/archive/original_frames --out output/v251/result
+          unzip -t output/v251/result/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip
+      - name: Archive real source frames, storyboard and source manifest, NOT final
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v251-fiesole-real-I2I-photo-inputs-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v251/result/

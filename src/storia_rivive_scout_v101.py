@@ -53,7 +53,14 @@ def inspect(page,outdir):
     if not 1<=duration<=10000:raise ValueError("Source duration suspicious")
     m["duration_s"]=duration
     frames=outdir/"original_frames";frames.mkdir(exist_ok=True)
-    period=max(1.0,duration/12)
+    # V215: sample all twelve candidate frames INSIDE the bounded 420s cut scan.
+    # Long archival reels otherwise supply too few frames before V210 stops scanning.
+    sample_window=min(duration,420.0)
+    period=max(1.0,sample_window/12)
+    m["sampling_window_s"]=round(sample_window,4)
+    m["sampling_period_s"]=round(period,4)
+    m["sampling_scope"]="FIRST_BOUNDED_420_SECONDS"
+    m["frame_sampling_time_model"]="FFMPEG_FPS_BIN_MIDPOINT_V223"
     subprocess.run(["ffmpeg","-nostdin","-y","-v","error","-i",str(film),
                     "-vf","fps=1/"+str(round(period,4)),
                     "-frames:v","12",str(frames/"frame_%02d.png")],timeout=150,check=True)
@@ -65,7 +72,7 @@ def inspect(page,outdir):
         im=Image.open(p).convert("RGB");im.thumbnail((350,236))
         x=(k%4)*360+4;y=(k//4)*264+4
         board.paste(im,(x,y+23))
-        draw.text((x,y+3),"ORIGINAL t~"+str(round(k*period,1))+"s",fill=(240,240,240))
+        draw.text((x,y+3),"ORIGINAL t~"+str(round((k+0.5)*period,1))+"s",fill=(240,240,240))
     board.save(outdir/"ORIGINAL_FILM_CONTACT_SHEET.jpg",quality=90)
     m["source_frames_extracted"]=len(files)
     m["status"]="REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW"

@@ -1,0 +1,103 @@
+name: "La Storia Rivive V248 · Fiesole five clean authentic motions (NO AI COST)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v248-fiesole-clean-motion.yml"
+      - "tests/test_storia_rivive_v248_fiesole_clean_motion_recut.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-fiesole-v248-one-recut-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  fiesole_source_window_repair:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Only run once on exact V248 request; never replay after another PR commit
+        id: gate
+        shell: bash
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$HEAD"
+          subject="$(git log -1 --format=%s "$HEAD")"
+          if [[ "$subject" == 'storia V248: retry clean Fiesole source after fixed test [V248-RETRY-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V248_REPLAY_BLOCKED'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install free offline FFmpeg and image dependencies
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q 'pillow>=10,<13'
+      - name: Test real source selection gates without API credits
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile src/storia_rivive_v248_fiesole_clean_motion_recut.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v248_fiesole_clean_motion_recut.py' -v
+      - name: Download the genuine 1912 source and 12 original PNG frames, only from Commons
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v217_four_pilot_source_review.py \
+            --manifest queue/storia_rivive_four_pilots_v217.json \
+            --episode fiesole_straw_hats_1912_v220 --out output/v248/source_order
+          python src/storia_rivive_scout_v101.py \
+            --order output/v248/source_order/WORK_ORDER.json \
+            --out output/v248/real_archive
+      - name: Create five-shot 24-second authentic source-only review after real motion checks
+        id: editorial
+        if: steps.gate.outputs.allowed == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v248_fiesole_clean_motion_recut.py \
+            --film output/v248/real_archive/ORIGINAL_ARCHIVE.webm \
+            --scout output/v248/real_archive/SCOUT_REPORT.json \
+            --frames output/v248/real_archive/original_frames \
+            --out output/v248/result
+      - name: Verify true report status or fail, never call roughcut a finished episode
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        env:
+          EDITORIAL_RESULT: ${{ steps.editorial.outcome }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          report_path=Path('output/v248/result/V248_FIESOLE_EDITORIAL_WINDOWS.json')
+          if not report_path.is_file(): raise SystemExit('V248_NO_REAL_SOURCE_EVIDENCE')
+          report=json.loads(report_path.read_text())
+          status=report.get('status')
+          print('V248_REAL_FILM_RESULT',status,'NEW_FINAL_0_OF_4')
+          good=(os.getenv('EDITORIAL_RESULT')=='success'
+                and status=='FIVE_CLEAN_MOTION_WINDOWS_SOURCE_ROUGHCUT_NOT_FINAL'
+                and len(report.get('selected_five',[]))==5
+                and report.get('final_mp4') is False
+                and report.get('final_zip') is False
+                and report.get('publish_allowed') is False)
+          if not good: raise SystemExit('V248_REAL_FIESOLE_MOTION_NOT_ARTISTICALLY_QUALIFIED')
+          PY
+      - name: Save decoded source-only MP4, reports and source hashes for review, no original redistribution
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v248-fiesole-clean-source-motions-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v248/result/

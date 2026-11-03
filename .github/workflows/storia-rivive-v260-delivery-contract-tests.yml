@@ -1,0 +1,70 @@
+name: "Tra le Pagine V261 · mandatory shared real-byte delivery contract"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_v260_delivery_bundle_gate.py"
+      - "config/editorial_rules.json"
+      - "src/storia_rivive_final_gate_v91.py"
+      - "src/artvision_delivery_v55.py"
+      - "src/artvision_contract_gate_v25.py"
+      - "tests/test_storia_rivive_v260_delivery_bundle_gate.py"
+      - "tests/test_artvision_delivery_v55.py"
+      - "tests/test_artvision_contract_gate_v25.py"
+      - ".github/workflows/storia-rivive-v260-delivery-contract-tests.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/storia_rivive_v260_delivery_bundle_gate.py"
+      - "config/editorial_rules.json"
+      - "src/storia_rivive_final_gate_v91.py"
+      - "src/artvision_delivery_v55.py"
+      - "src/artvision_contract_gate_v25.py"
+      - "tests/test_storia_rivive_v260_delivery_bundle_gate.py"
+      - "tests/test_artvision_delivery_v55.py"
+      - "tests/test_artvision_contract_gate_v25.py"
+      - ".github/workflows/storia-rivive-v260-delivery-contract-tests.yml"
+permissions:
+  contents: read
+jobs:
+  verify_real_deliverables:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install local no-charge ffmpeg and JPEG validation dependency
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          command -v ffmpeg
+          command -v ffprobe
+          python -m pip install -q pillow
+      - name: Byte-level regression, no credentials, credits or media generation
+        run: |
+          python -m py_compile src/storia_rivive_v260_delivery_bundle_gate.py src/storia_rivive_final_gate_v91.py
+          python -m unittest discover -s tests -p "test_storia_rivive_v260_delivery_bundle_gate.py" -v
+          python -m unittest discover -s tests -p "test_artvision_delivery_v55.py" -v
+          python -m unittest discover -s tests -p "test_artvision_contract_gate_v25.py" -v
+      - name: Ensure final gate actually invokes V260, rather than relying on booleans
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source=Path("src/storia_rivive_final_gate_v91.py").read_text()
+          assert 'storia_rivive_v260_delivery_bundle_gate.py' in source
+          assert 'bundle_gate.inspect(p' in source
+          artvision=Path("src/artvision_delivery_v55.py").read_text()
+          assert 'common_gate.inspect(video, zip_path)' in artvision
+          v25=Path("src/artvision_contract_gate_v25.py").read_text()
+          assert 'module.inspect(manifest.parent / FIELDS["video"],bundle)' in v25
+          import json
+          contract=json.loads(Path("config/editorial_rules.json").read_text())["delivery_v55"]
+          assert contract["shared_actual_bytes_delivery_gate"] == "src/storia_rivive_v260_delivery_bundle_gate.py"
+          assert set(contract["shared_gate_required_entrypoints"]) == {
+              "src/artvision_delivery_v55.py", "src/artvision_contract_gate_v25.py",
+              "src/storia_rivive_final_gate_v91.py"
+          }
+          assert contract["reject_missing_or_nearly_identical_four_platform_posts"] is True
+          print("V261_REQUIRED_BY_ALL_THREE_REAL_V91_V55_V25_DELIVERY_GATES")
+          PY

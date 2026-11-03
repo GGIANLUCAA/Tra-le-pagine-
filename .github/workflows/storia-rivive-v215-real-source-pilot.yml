@@ -1,0 +1,56 @@
+name: "La Storia Rivive V215 — vera pellicola HD: scout pilota gratuito"
+# First real source trial completed in run 41421362529. Future reruns are
+# manual only: do not redownload the same 63MB reel on every PR revision.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-v215-cotton-real-source-trial
+  cancel-in-progress: false
+jobs:
+  real_hd_source_scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg and Pillow (no generative APIs)
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13"
+      - name: Download genuine Commons 1080p film, inspect real frames and candidate shots
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v215_real_source_trial.py --out output/storia_v215_cotton
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("output/storia_v215_cotton/REAL_SOURCE_TRIAL_V215.json")
+          r=json.loads(p.read_text())
+          assert r["provider_calls_permitted"] is False
+          assert r["credits_spent"] == 0
+          assert r["finished_mp4"] is False
+          assert r["published"] is False
+          assert r["italian_rights_approved"] is False
+          assert r["five_distinct_shots_approved"] is False
+          print("RESEARCH_RESULT",r["status"],r.get("reason",""))
+          PY
+      - name: Upload real archival contact sheet and report only, never publish a master
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V215_REAL_COTTON_HD_RESEARCH_${{ github.run_id }}
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_v215_cotton/REAL_SOURCE_TRIAL_V215.json
+            output/storia_v215_cotton/SCOUT_REPORT.json
+            output/storia_v215_cotton/FRAME_RANKING.json
+            output/storia_v215_cotton/SHOT_AWARE_SELECTION_V210.json
+            output/storia_v215_cotton/source-cache/ORIGINAL_FILM_CONTACT_SHEET.jpg
+            output/storia_v215_cotton/source-cache/original_frames/*.png
