@@ -6,6 +6,7 @@ on:
       - "queue/storia_rivive_four_pilots_v217.json"
       - "src/storia_rivive_v217_four_pilot_source_review.py"
       - "src/storia_v240_portrait_contact_sheet.py"
+      - "tests/test_storia_v240_portrait_contact_sheet.py"
       - "src/storia_rivive_i2i_prepare_v102.py"
       - "src/storia_rivive_frame_rank_v101.py"
       - "src/storia_rivive_v210_shot_aware_selection.py"
@@ -41,6 +42,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v210_shot_aware_selection.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v217_four_pilot_source_review.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v218_global_temporal_selection.py" -v
+          python -m unittest discover -s tests -p "test_storia_v240_portrait_contact_sheet.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v236_reject_bad_source.py" -v
 
   source_scout:
