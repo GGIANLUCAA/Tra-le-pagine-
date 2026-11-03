@@ -1,0 +1,29 @@
+name: FreeLLMAPI V1 - editorial adapter offline tests
+on:
+  pull_request:
+    paths:
+      - src/freellmapi_editorial_v1.py
+      - tests/test_freellmapi_editorial_v1.py
+      - docs/FREELLMAPI_INTEGRAZIONE_V1_20261103.md
+      - .github/workflows/freellmapi-v1-offline.yml
+  push:
+    paths:
+      - src/freellmapi_editorial_v1.py
+      - tests/test_freellmapi_editorial_v1.py
+      - .github/workflows/freellmapi-v1-offline.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax and offline regression tests (no API keys)
+        run: |
+          python -m py_compile src/freellmapi_editorial_v1.py
+          python -m unittest discover -s tests -p 'test_freellmapi_editorial_v1.py' -v
