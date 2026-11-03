@@ -1,0 +1,86 @@
+name: "La Storia Rivive V260 · verify fourth actual photo against original"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v260-fiesole-fourth-photo-real-ab.yml"
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compare_real_bytes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -q 'Pillow>=10,<13' 'numpy>=1.26,<2'
+      - uses: actions/download-artifact@v4
+        with:
+          name: storia-v259-fourth-source-Fiesole-real-CPU-I2I-NOT-FINAL
+          run-id: 41702371962
+          github-token: ${{ github.token }}
+          path: output/v260/photo
+      - uses: actions/download-artifact@v4
+        with:
+          name: storia-v251-fiesole-real-I2I-photo-inputs-NOT-FINAL
+          run-id: 41635322340
+          github-token: ${{ github.token }}
+          path: output/v260/source
+      - name: Compare actual fourth PNG with SHA-locked original (not artistic approval)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/v260/unpacked output/v260/report
+          unzip -oq output/v260/source/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip -d output/v260/unpacked
+          echo '1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0  output/v260/unpacked/original_shot_04_frame_07.png' | sha256sum -c -
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          import numpy as np
+          from PIL import Image,ImageOps
+          source=Path('output/v260/unpacked/original_shot_04_frame_07.png')
+          root=Path('output/v260/photo')
+          png=root/'V257_ONE_TRUE_DIFFUSION_I2I_NOT_APPROVED.png'
+          report=root/'V257_SOURCE_LOCKED_I2I_QA.json'
+          assert png.is_file() and report.is_file(), 'actual generated PNG and QA missing'
+          meta=json.loads(report.read_text())
+          sha=hashlib.sha256(png.read_bytes()).hexdigest()
+          assert meta.get('generated_sha256')==sha, 'generated SHA mismatch'
+          assert meta.get('original_source_sha256')=='1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0'
+          with Image.open(png) as im:
+              assert im.format=='PNG' and im.size==(448,800)
+              generated=np.asarray(im.convert('RGB'),dtype=np.float32)
+          with Image.open(source) as im:
+              original=np.asarray(ImageOps.fit(im.convert('RGB'),(448,800)),dtype=np.float32)
+          gray=lambda a: a[:,:,0]*.299+a[:,:,1]*.587+a[:,:,2]*.114
+          a,b=gray(original),gray(generated)
+          correlation=float(np.corrcoef(a.flatten(),b.flatten())[0,1])
+          cell_corr=[]
+          for y in range(0,800,200):
+              for x in range(0,448,112):
+                  u,v=a[y:y+200,x:x+112].flatten(),b[y:y+200,x:x+112].flatten()
+                  cell_corr.append(float(np.corrcoef(u,v)[0,1]) if u.std()>1 and v.std()>1 else 0.0)
+          saturation=(generated.max(2)-generated.min(2))
+          result={'status':'REAL_BYTES_TECHNICAL_REVIEW_ONLY','generated_sha256':sha,
+                  'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
+                  'global_luma_correlation':round(correlation,4),
+                  'regional_luma_correlations':[round(x,4) for x in cell_corr],
+                  'weak_regions_below_0_4':sum(x<0.4 for x in cell_corr),
+                  'mean_rgb_channel_spread':round(float(saturation.mean()),3),
+                  'actual_generated_photos':1,'artistic_approval':False,
+                  'italian_rights_verified':False,'vidu_present':False,
+                  'new_final_videos_delivered':0,'publish_allowed':False}
+          out=Path('output/v260/report/V260_REAL_FOURTH_PHOTO_AB_NOT_FINAL.json')
+          out.write_text(json.dumps(result,indent=2)+'\n')
+          print(json.dumps(result))
+          assert np.isfinite(correlation) and all(np.isfinite(cell_corr)), 'invalid comparisons'
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: storia-v260-fiesole-fourth-real-AB-NOT-FINAL
+          path: output/v260/report/
+          retention-days: 14
+          if-no-files-found: warn
