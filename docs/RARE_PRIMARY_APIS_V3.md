@@ -29,6 +29,7 @@ Esempi:
 - finna / Hugo Simberg
 - openverse_audio / train station
 - crossref / Rembrandt art history
+- librivox / author:Verne (oppure ricerca per titolo come Alice)
 - getty_museum / c88b3df0-de91-4f5b-a9ef-7b2b9a6d8abb
 
 ## Policy vincolante
