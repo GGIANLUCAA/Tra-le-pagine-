@@ -70,24 +70,23 @@ def one_call(source:Path,output:Path)->dict:
     if not isinstance(schema,dict):
         raise ValueError("V242_PROVIDER_SCHEMA_UNAVAILABLE")
     endpoints=schema.get("named_endpoints",{})
-    key="/predict" if "/predict" in endpoints else next(iter(endpoints),"")
-    if not key:raise ValueError("V242_NO_PUBLIC_PREDICT_API")
-    params=endpoints[key].get("parameters",[])
-    if not params or len(params)>5:
-        raise ValueError("V242_UNSUPPORTED_PROVIDER_PARAMETERS")
-    values=[];has_image=False
-    for p in params:
-        desc=(str(p.get("component",""))+" "+str(p.get("label",""))+" "+
-              str(p.get("parameter_name",""))+" "+str(p.get("type",""))).lower()
-        if not has_image and ("image" in desc or "input" in desc or "photo" in desc):
-            values.append(handle_file(str(source)));has_image=True
-        elif "default" in p and p["default"] is not None:
-            values.append(p["default"])
-        else:
-            raise ValueError("V242_REQUIRED_PROVIDER_PARAMETER_NOT_IDENTIFIED")
-    if not has_image:raise ValueError("V242_NO_IMAGE_INPUT")
-    result=c.predict(*values,api_name=key)   # exactly ONE external generative request
-    actual=unwrap_result(result)
+    # Verified actual public CPU Space endpoint 03/11/2026:
+    # /restore(image, upscale=2, only_center_face=False)
+    # -> (restored_face, original_face, restored_full_image, explanation).
+    # Refuse any provider interface change before issuing a POST.
+    ep=endpoints.get("/restore")
+    if not isinstance(ep,dict) or len(ep.get("parameters",[]))!=3:
+        raise ValueError("V242_PROVIDER_API_SCHEMA_CHANGED_NO_CALL")
+    names=[str(p.get("parameter_name",p.get("label",""))).lower()
+           for p in ep["parameters"]]
+    if not ("image" in names[0] and "upscale" in names[1] and
+            "only_center_face" in names[2]):
+        raise ValueError("V242_PROVIDER_API_PARAMETERS_CHANGED_NO_CALL")
+    result=c.predict(handle_file(str(source)),2,False,api_name="/restore")
+    # Output index 0 is ONE face, and MUST NOT be mistaken for restored full image.
+    if not isinstance(result,(list,tuple)) or len(result)!=4:
+        raise ValueError("V242_FULL_IMAGE_OUTPUT_SCHEMA_CHANGED")
+    actual=unwrap_result(result[2])
     if not actual.is_file():raise ValueError("V242_PROVIDER_RESULT_NOT_LOCAL")
     shutil.copy2(actual,output)
     return verify_result(source,output)
