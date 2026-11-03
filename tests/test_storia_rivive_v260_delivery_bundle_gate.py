@@ -80,6 +80,14 @@ class TestV260(unittest.TestCase):
         self.pack()
         self.assertTrue(any("POST_FACEBOOK" in e for e in gate.inspect(self.movie)["errors"]))
 
+    def test_legitimate_italian_metodo_not_todo_placeholder(self):
+        self.files["POST_FACEBOOK.txt"] = (
+            DESCRIPTION + " Un metodo storico documentato che aiuta a capire "
+            "la lavorazione artigianale e le procedure di un tempo."
+        ).encode()
+        self.pack()
+        self.assertFalse(gate.inspect(self.movie)["errors"])
+
     def test_placeholder_post_rejected(self):
         self.files["POST_INSTAGRAM.txt"] = b"TODO"
         self.pack()
