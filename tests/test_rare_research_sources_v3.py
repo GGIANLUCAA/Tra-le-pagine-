@@ -7,6 +7,7 @@ from urllib.parse import urlsplit,parse_qs
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"src"))
 import rare_research_sources_v3 as src
+import source_selector_v34 as selector
 
 UUID_M="c88b3df0-de91-4f5b-a9ef-7b2b9a6d8abb"
 UUID_P="09539ab1-416d-3870-810b-8a6b3b604368"
@@ -104,6 +105,24 @@ class RareV3Tests(unittest.TestCase):
             self.assertFalse(r["automatic_selection"])
             self.assertEqual(r["downloaded_files"],0)
             self.assertFalse(r["paid_calls"])
+
+    def test_v34_rijks_finna_scene_integration_stays_pending(self):
+        for provider,need,fmt in [
+            ("rijks","authentic_artwork","artvision_critico"),
+            ("finna","authentic_artwork","artvision_critico"),
+            ("finna","documentary_evidence","controluce")]:
+            brief={"format":fmt,"title":"Source research","scenes":[{
+                "id":"s1","need":need,"description":"Authentic original historical object with documentation",
+                "narration_anchor":"Historical explanation"}]}
+            payload={"items":[{"provider":provider,"id":provider+":sample",
+                 "source_url":"https://example.org/record",
+                 "media_kind":"image_candidate"}],"api_requests":1}
+            with self.subTest(provider=provider,need=need),patch.object(src,"search",return_value=payload):
+                report,detail=selector.discover_single(brief,[],"s1",provider,"The Night Watch",1)
+                self.assertEqual(report["counts"]["need_sources"],1)
+                self.assertEqual(detail["results"][0]["rights_review"],"pending")
+                self.assertEqual(detail["downloaded_files"],0)
+                self.assertFalse(detail["automatic_selection"])
 
 if __name__=="__main__":
     unittest.main()
