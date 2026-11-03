@@ -1,0 +1,140 @@
+name: "Ricerca fonti ufficiali V1 - Musei e archivi"
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "Progetto da ricercare"
+        type: choice
+        options: [artvision, storia]
+        default: artvision
+        required: true
+      provider:
+        description: "Una fonte: ArtVision met/artic/cleveland/commons; Storia loc/archive/commons"
+        type: choice
+        options: [met, artic, cleveland, loc, archive, commons]
+        default: met
+        required: true
+      query:
+        description: "Artista, titolo del quadro, citta e anno"
+        type: string
+        required: true
+      limit:
+        description: "Massimo candidati"
+        type: choice
+        options: ["1", "2", "3", "4", "5"]
+        default: "3"
+        required: true
+  push:
+    branches: [main]
+    paths:
+      - "src/public_archive_sources_v1.py"
+      - "src/source_selector_v34.py"
+      - "tests/test_public_archive_sources_v1.py"
+      - ".github/workflows/public-archive-sources-v1.yml"
+  pull_request:
+    paths:
+      - "src/public_archive_sources_v1.py"
+      - "src/source_selector_v34.py"
+      - "tests/test_public_archive_sources_v1.py"
+      - ".github/workflows/public-archive-sources-v1.yml"
+permissions:
+  contents: read
+jobs:
+  contract_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Safety tests (offline, no cost)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/public_archive_sources_v1.py src/source_selector_v34.py
+          python -m unittest discover -s tests -p 'test_public_archive_sources_v1.py' -v
+          python -m unittest discover -s tests -p 'test_source_selector_v34.py' -v
+          python -m json.tool config/public_api_artvision_v1.json >/dev/null
+          python -m json.tool config/public_api_storia_v1.json >/dev/null
+  live_provider_probe:
+    needs: contract_tests
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Bounded one-candidate live probe, zero media downloads
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,sys
+          sys.path.insert(0,"src")
+          from public_archive_sources_v1 import search
+          examples={"met":"Socrates","artic":"Seurat","cleveland":"landscape",
+                    "loc":"Market Street 1906","archive":"historic film","commons":"Venice 1896"}
+          report={}
+          for provider,query in examples.items():
+              try:
+                  result=search(provider,query,1)
+                  report[provider]={"status":"api_responded",
+                      "results":len(result["items"]),"requests":result["api_requests"]}
+              except Exception as exc:
+                  report[provider]={"status":"failed","reason":str(exc)[:120]}
+          print(json.dumps(report,indent=2))
+          with open("PROBE_REPORT.json","w") as f:json.dump(report,f,indent=2)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PUBLIC_ARCHIVE_PROVIDER_PROBE_V1
+          path: PROBE_REPORT.json
+          retention-days: 14
+          if-no-files-found: warn
+  research_one_query:
+    needs: contract_tests
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      RESEARCH_PROJECT: ${{ inputs.project }}
+      RESEARCH_PROVIDER: ${{ inputs.provider }}
+      RESEARCH_QUERY: ${{ inputs.query }}
+      RESEARCH_LIMIT: ${{ inputs.limit }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: One source search only, fail closed on rights
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$RESEARCH_PROJECT:$RESEARCH_PROVIDER" in
+            artvision:met|artvision:artic|artvision:cleveland|artvision:commons)
+              brief="config/public_api_artvision_v1.json"; scene="opera" ;;
+            storia:loc|storia:archive|storia:commons)
+              brief="config/public_api_storia_v1.json"; scene="archivio" ;;
+            *) echo "Provider incompatible with project" >&2; exit 1 ;;
+          esac
+          python src/source_selector_v34.py --mode discover \
+            --brief "$brief" --scene "$scene" --provider "$RESEARCH_PROVIDER" \
+            --query "$RESEARCH_QUERY" --limit "$RESEARCH_LIMIT" \
+            --out output/public_archive_v1
+          python - <<'PY'
+          import json
+          x=json.load(open("output/public_archive_v1/CANDIDATI_DA_APPROVARE_V34.json"))
+          assert x["automatic_selection"] is False
+          assert all(i["rights_review"]=="pending" and i["visual_review"]=="pending"
+                     and i["authenticity_review"]=="pending" for i in x["results"])
+          print("Research completed; candidate review required:",len(x["results"]))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CANDIDATI_FONTI_UFFICIALI_V1
+          path: output/public_archive_v1/
+          retention-days: 14
+          if-no-files-found: error
