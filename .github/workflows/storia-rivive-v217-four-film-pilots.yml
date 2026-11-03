@@ -9,6 +9,8 @@ on:
       - "src/storia_rivive_v243_freeze_endpoint_roughcut.py"
       - "tests/test_storia_rivive_v243_freeze_endpoint_roughcut.py"
       - "src/storia_rivive_v244_real_endpoint_pixel_qa.py"
+      - "src/storia_rivive_v247_motion_intertitle_qa.py"
+      - "tests/test_storia_rivive_v247_motion_intertitle_qa.py"
       - "tests/test_storia_rivive_v244_real_endpoint_pixel_qa.py"
       - "tests/test_storia_rivive_v245_real_five_shot_framecount.py"
       - "tests/test_storia_rivive_v241_full_length_source_roughcut.py"
@@ -53,6 +55,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v243_freeze_endpoint_roughcut.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v244_real_endpoint_pixel_qa.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v245_real_five_shot_framecount.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v247_motion_intertitle_qa.py" -v
           python -m unittest discover -s tests -p "test_storia_v240_portrait_contact_sheet.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v236_reject_bad_source.py" -v
 
@@ -155,6 +158,11 @@ jobs:
                 --frames "$SOURCE/original_frames" \
                 --out "$TARGET/V244_REAL_DECODED_ENDPOINT_QA.json" || \
                 echo "V244_DECODED_ENDPOINT_REJECTED_NOT_FINAL"
+              python src/storia_rivive_v247_motion_intertitle_qa.py \
+                --video "$TARGET/SOURCE_24S_FREEZE_ENDPOINT_REVIEW_NOT_FINAL.mp4" \
+                --manifest "$TARGET/SOURCE_24S_FREEZE_ENDPOINT_REVIEW_NOT_FINAL.json" \
+                --out "$TARGET/V247_REAL_MOTION_INTERTITLE_QA.json" || \
+                echo "V247_DECODED_MOTION_QA_UNAVAILABLE_NOT_FINAL"
               echo "V243_SOURCE_LOCKED_FREEZE_ENDPOINT_REVIEW_READY_NOT_FINAL"
             else
               echo "V243_REJECTED_MOTION_WINDOW_OR_SOURCE_ALIGNMENT_NOT_FINAL"
