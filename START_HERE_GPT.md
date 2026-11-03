@@ -1,5 +1,8 @@
 # Inizia da qui — studio video di Gianluca
 
+**Ricerca automatica fonti V4 (04/11/2026):** prima della ricerca di nuove fonti per un'opera/episodio, consultare `docs/AUTOMATIC_SOURCE_RESEARCH_V4.md` e l'ultimo report GitHub Actions `ARTVISION_OWNER_SOURCE_RESEARCH_V4_...` oppure `SOURCE_RESEARCH_COMPANION_V4.json` nel ciclo storico V101. Usare il report solo se **ID opera/episodio e fonte corrispondono esattamente** al lavoro corrente: risultati sempre candidati con diritti e revisione artistica `pending`. Non sostituire l'originale, non renderizzare/pubblicare su questa base e non lanciare una seconda produzione ArtVision: resta un solo owner della coda. La ricerca V4 non completa automaticamente MP4/ZIP.
+
+
 ## V99 · Come non peggiorare «La Storia Rivive» rispetto al video V98
 Il benchmark minimo **accettato dall'utente** è San Francisco 1906 V98. Per ogni NUOVO 4+1 usare `docs/LA_STORIA_RIVIVE_V99_ANTI_REGRESSIONE.md`, il codice `src/storia_rivive_v99_golden_benchmark.py` e il gate finale V91/V94/V96/V99. Comparare video reale e asset originali al riferimento SHA verificato: 4 fotografie reali image-to-image da frame B/N, 1 sola vera Vidu che prosegue dalla propria ripresa storica, ritmo e palette coerenti, MP4+audio, ZIP Android. Un controllo tecnico passato non equivale a giudizio artistico: guardare e confrontare scene/volti/oggetti. Fermare regressioni, non consegnare come finale un MP4 bocciato. Non generare Vidu a pagamento per errori di montaggio; non cambiare ArtVision 4×1.
 
