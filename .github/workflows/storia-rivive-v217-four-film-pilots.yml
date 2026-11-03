@@ -6,6 +6,8 @@ on:
       - "queue/storia_rivive_four_pilots_v217.json"
       - "src/storia_rivive_v217_four_pilot_source_review.py"
       - "src/storia_rivive_v241_full_length_source_roughcut.py"
+      - "src/storia_rivive_v243_freeze_endpoint_roughcut.py"
+      - "tests/test_storia_rivive_v243_freeze_endpoint_roughcut.py"
       - "tests/test_storia_rivive_v241_full_length_source_roughcut.py"
       - "src/storia_v240_portrait_contact_sheet.py"
       - "tests/test_storia_v240_portrait_contact_sheet.py"
@@ -45,6 +47,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v217_four_pilot_source_review.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v218_global_temporal_selection.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v241_full_length_source_roughcut.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v243_freeze_endpoint_roughcut.py" -v
           python -m unittest discover -s tests -p "test_storia_v240_portrait_contact_sheet.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v236_reject_bad_source.py" -v
 
@@ -135,10 +138,16 @@ jobs:
           raise SystemExit(0 if data.get("status")=="FIVE_SOURCE_SHOTS_REVIEW_PENDING" else 1)
           PY
           then
-            python src/storia_rivive_v241_full_length_source_roughcut.py \
-              --source "$SOURCE/ORIGINAL_ARCHIVE.webm" \
+            if python src/storia_rivive_v243_freeze_endpoint_roughcut.py \
+              --film "$SOURCE/ORIGINAL_ARCHIVE.webm" \
               --selection "$TARGET/SHOT_AWARE_SELECTION_V210.json" \
-              --out "$TARGET/SOURCE_24S_ROUGHCUT_NOT_FINAL.mp4"
+              --alignment "$TARGET/SOURCE_ENDPOINT_ALIGNMENT_V223.json" \
+              --frames "$SOURCE/original_frames" \
+              --out "$TARGET/SOURCE_24S_FREEZE_ENDPOINT_REVIEW_NOT_FINAL.mp4"; then
+              echo "V243_SOURCE_LOCKED_FREEZE_ENDPOINT_REVIEW_READY_NOT_FINAL"
+            else
+              echo "V243_REJECTED_MOTION_WINDOW_OR_SOURCE_ALIGNMENT_NOT_FINAL"
+            fi
           else
             echo "V241_SKIP_SOURCE_NOT_READY"
           fi
