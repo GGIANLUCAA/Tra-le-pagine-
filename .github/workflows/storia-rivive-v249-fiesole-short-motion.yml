@@ -24,7 +24,7 @@ jobs:
           set -euo pipefail
           git fetch --no-tags --depth=1 origin "$HEAD"
           subject="$(git log -1 --format=%s "$HEAD")"
-          if [[ "$subject" == 'storia V249: fix source review workflow path and launch [V249-ONCE]' ]]; then
+          if [[ "$subject" == 'storia V249: repair report contract and verify authentic five frames [V249-RETRY-ONCE]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
@@ -47,6 +47,7 @@ jobs:
         run: |
           python -m py_compile src/storia_rivive_v249_fiesole_short_motion_selection.py
           python -m unittest discover -s tests -p 'test_storia_rivive_v248_fiesole_clean_motion_recut.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v249_fiesole_short_motion_selection.py' -v
       - name: Download the genuine 1912 source and 12 original PNG frames, only from Commons
         if: steps.gate.outputs.allowed == 'true'
         shell: bash
