@@ -409,7 +409,18 @@
         "gold_v25": false,
         "social_published": false,
         "paid_api_calls": 0,
-        "remaining_variants": 2
+        "remaining_variants": 2,
+        "backup_cloudflare_r2": {
+          "status": "object_exists_same_filename_and_byte_count_content_sha256_not_readback",
+          "source": "Cloudflare R2 bucket video-library-studio, read-only object listing, 2026-11-03",
+          "key": "BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_V136_REVIEW.mp4",
+          "bytes": 18165533,
+          "r2_etag": "779b71c64937b98b7b3f1bd9bb0c6dc2",
+          "r2_last_modified": "2026-11-03T07:05:44.920Z",
+          "video_sha256_source_verified": "ad401e87ac181d6627bed80b5072a466fa2cc930143857838896b4d1bfe7a6a4",
+          "r2_sha256_verified": false,
+          "site_playback_verified": false
+        }
       },
       "v137_cinema_candidate": {
         "status": "github_actions_success_artifact_MP4_ZIP_physical_readback_verified_review_not_gold",
@@ -474,7 +485,17 @@
           "critico_standard",
           "critico_museum"
         ],
-        "backup_cloudflare_r2": "NOT_YET_VERIFIED"
+        "backup_cloudflare_r2": {
+          "status": "object_exists_source_sha256_and_site_playback_not_readback",
+          "source": "Cloudflare R2 bucket video-library-studio, read-only object listing, 2026-11-03",
+          "key": "BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_MUSEUM_V137_REVIEW.mp4",
+          "bytes": 15646921,
+          "r2_etag": "c5465390d479090fd08e8d03703ce2f9",
+          "r2_last_modified": "2026-11-03T15:31:39.027Z",
+          "video_sha256_source_verified": "4a9639be84ecf912ae0a82e8078dcacc1a93ac6bf82433a95d927b98746e5d7f",
+          "r2_sha256_verified": false,
+          "site_playback_verified": false
+        }
       }
     },
     {
