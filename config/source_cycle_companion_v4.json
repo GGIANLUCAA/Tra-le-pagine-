@@ -1,0 +1,76 @@
+{
+  "schema": "source-cycle-companion-v4",
+  "purpose": "One safe archival search per existing cycle; source review only",
+  "paid_calls_allowed": false,
+  "auto_publish": false,
+  "max_results_per_cycle": 1,
+  "max_api_calls_per_cycle": 2,
+  "artvision": {
+    "bruegel_fall_rebel_angels_1562_rmfb_584": {
+      "provider": "commons",
+      "query": "Pieter Bruegel Fall of the Rebel Angels 1562"
+    },
+    "waterhouse_lady_shalott_1888_tate_n01543": {
+      "provider": "commons",
+      "query": "John William Waterhouse Lady of Shalott 1888"
+    },
+    "rembrandt_night_watch_1642_rijks_sk_c_5": {
+      "provider": "rijks",
+      "query": "Night Watch Rembrandt"
+    },
+    "bruegel_tower_babel_1563_khm_gg1026": {
+      "provider": "commons",
+      "query": "Pieter Bruegel Tower of Babel Vienna 1563"
+    },
+    "simberg_garden_death_1896_fng_a_ii_968_16": {
+      "provider": "finna",
+      "query": "Hugo Simberg Garden of Death"
+    },
+    "bruegel_triumph_death_1562_prado_p001393": {
+      "provider": "commons",
+      "query": "Pieter Bruegel Triumph of Death Prado"
+    },
+    "waterhouse_magic_circle_1886_tate_n01572": {
+      "provider": "commons",
+      "query": "John William Waterhouse Magic Circle 1886"
+    },
+    "blake_ghost_flea_1819_tate_n05889": {
+      "provider": "commons",
+      "query": "William Blake Ghost of a Flea"
+    },
+    "delacroix_death_sardanapalus_1827_louvre_rf2346": {
+      "provider": "commons",
+      "query": "Delacroix Death of Sardanapalus Louvre"
+    }
+  },
+  "storia": {
+    "paris_swim_1918": {
+      "provider": "commons",
+      "query": "Paris swimming competition 1918"
+    },
+    "paris_train_1918": {
+      "provider": "archive",
+      "query": "Paris Gare de Lyon train 1918"
+    },
+    "beirut_1919_street": {
+      "provider": "commons",
+      "query": "Beirut street scenes 1919"
+    },
+    "paris_cafe_strike_1919": {
+      "provider": "commons",
+      "query": "Paris waiter strike 1919"
+    },
+    "paris_champs_1918": {
+      "provider": "commons",
+      "query": "Paris Champs Elysees 1918"
+    },
+    "market_rural_1920": {
+      "provider": "finna",
+      "query": "covered market rural life 1920"
+    },
+    "china_daily_life_1928": {
+      "provider": "archive",
+      "query": "China daily life 1928"
+    }
+  }
+}
