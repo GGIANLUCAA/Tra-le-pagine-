@@ -13,6 +13,9 @@ import storia_rivive_v257_fiesole_third_source_i2i as engine
 
 FILM_SHA="f87ca5d51a1ba4b60ffb0e5db6162f3b0afadcd3bf3b94393dcf66337a7af7fe"
 EPISODE="fiesole_straw_hats_1912_v220"
+SOURCE_NAME="frame_04.png"
+SOURCE_ARCHIVE_NAME="original_shot_02_frame_04.png"
+SOURCE_SHA="f8e5cdfcf9047fb69e0ae95587752202267c14926885729346ccd281d1085088"
 PROMPT=("Conservatively colorize this exact archival 1912 documentary frame. "
         "Preserve every original contour, object and machine silhouette without "
         "changing the subject. Natural photographic color, faithful geometry, "
@@ -34,6 +37,9 @@ def verify(manifest_path:Path, original_dir:Path)->tuple[Path,dict]:
     row=shots[1]
     name=row.get("archive_filename")
     if (row.get("role")!="I2I_PHOTO_SOURCE" or row.get("source_frame_locked") is not True
+        or row.get("original_frame")!=SOURCE_NAME
+        or row.get("original_sha256")!=SOURCE_SHA
+        or name!=SOURCE_ARCHIVE_NAME
         or not isinstance(name,str) or Path(name).name!=name or name.startswith(".")):
         raise ValueError("V263_SHOT_TWO_INVALID")
     source=original_dir/name
