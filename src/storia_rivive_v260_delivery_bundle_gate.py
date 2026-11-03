@@ -5,12 +5,13 @@ Checks posts, JPEG, source dossier and exact final MP4; not artistic/legal appro
 from __future__ import annotations
 import hashlib
 import json
+from difflib import SequenceMatcher
 from pathlib import Path, PurePosixPath
 import zipfile
 
 REQUIRED_POSTS = ("POST_FACEBOOK.txt", "POST_INSTAGRAM.txt",
                   "POST_TIKTOK.txt", "POST_YOUTUBE.txt")
-SOURCE_DOSSIER = "SOURCES_AND_RIGHTS.md"
+SOURCE_DOSSIERS = ("SOURCES_AND_RIGHTS.md", "FONTI_E_DIRITTI.md", "FONTI_E_DIRITTI.txt")
 REJECT_TEXT = ("todo", "lorem ipsum", "placeholder", "inserire qui",
                "da completare", "testo esempio")
 
@@ -71,6 +72,7 @@ def inspect(video_path: Path, delivery_zip: Path | None = None) -> dict:
             by_base: dict[str, list[str]] = {}
             for name in names:
                 by_base.setdefault(PurePosixPath(name).name.upper(), []).append(name)
+            unique_post_texts: dict[str, str] = {}
             for post in REQUIRED_POSTS:
                 matches = by_base.get(post.upper(), [])
                 if len(matches) != 1:
@@ -85,8 +87,18 @@ def inspect(video_path: Path, delivery_zip: Path | None = None) -> dict:
                         or any(bad in content.lower() for bad in REJECT_TEXT)):
                     errors.append("POST_EMPTY_OR_PLACEHOLDER:" + post)
                 else:
-                    result["checks"][post] = "VALID_CONTENT_PRESENT"
-            dossier = by_base.get(SOURCE_DOSSIER.upper(), [])
+                    # A different filename alone does not make four platform
+                    # posts different. Detect exact and near-copied captions.
+                    normalized = " ".join(content.casefold().split())
+                    if any(normalized == prior or
+                           SequenceMatcher(None, normalized, prior).ratio() >= 0.92
+                           for prior in unique_post_texts.values()):
+                        errors.append("POST_DUPLICATED_OR_NEAR_DUPLICATE:" + post)
+                    else:
+                        unique_post_texts[post] = normalized
+                        result["checks"][post] = "DISTINCT_CONTENT_PRESENT"
+            dossier = [n for key in SOURCE_DOSSIERS
+                       for n in by_base.get(key.upper(), [])]
             if len(dossier) != 1:
                 errors.append("SOURCE_RIGHTS_DOSSIER_MISSING_OR_DUPLICATED")
             else:
