@@ -1,8 +1,9 @@
-name: "La Storia Rivive V260 · verify complete delivery contract without API"
+name: "Tra le Pagine V261 · mandatory shared real-byte delivery contract"
 on:
   pull_request:
     paths:
       - "src/storia_rivive_v260_delivery_bundle_gate.py"
+      - "config/editorial_rules.json"
       - "src/storia_rivive_final_gate_v91.py"
       - "src/artvision_delivery_v55.py"
       - "src/artvision_contract_gate_v25.py"
@@ -14,6 +15,7 @@ on:
     branches: [main]
     paths:
       - "src/storia_rivive_v260_delivery_bundle_gate.py"
+      - "config/editorial_rules.json"
       - "src/storia_rivive_final_gate_v91.py"
       - "src/artvision_delivery_v55.py"
       - "src/artvision_contract_gate_v25.py"
@@ -56,5 +58,13 @@ jobs:
           assert 'common_gate.inspect(video, zip_path)' in artvision
           v25=Path("src/artvision_contract_gate_v25.py").read_text()
           assert 'module.inspect(manifest.parent / FIELDS["video"],bundle)' in v25
+          import json
+          contract=json.loads(Path("config/editorial_rules.json").read_text())["delivery_v55"]
+          assert contract["shared_actual_bytes_delivery_gate"] == "src/storia_rivive_v260_delivery_bundle_gate.py"
+          assert set(contract["shared_gate_required_entrypoints"]) == {
+              "src/artvision_delivery_v55.py", "src/artvision_contract_gate_v25.py",
+              "src/storia_rivive_final_gate_v91.py"
+          }
+          assert contract["reject_missing_or_nearly_identical_four_platform_posts"] is True
           print("V261_REQUIRED_BY_ALL_THREE_REAL_V91_V55_V25_DELIVERY_GATES")
           PY
