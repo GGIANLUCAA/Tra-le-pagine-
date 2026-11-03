@@ -18,9 +18,10 @@ e non c'è un computer Docker acceso 24 ore al giorno.
 1. Aprire:
    https://github.com/GGIANLUCAA/Tra-le-pagine-/settings/secrets/actions
 2. Selezionare **New repository secret**.
-3. Nome preciso: **GROQ_API_KEY**.
-4. Incollare la chiave Groq SOLO nel campo Secret di GitHub.
-5. Selezionare **Add secret**.
+3. Se il repository contiene già il secret **GROQ**, non serve crearne un altro.
+   Il workflow verifica **GROQ_API_KEY** e, se assente, usa **GROQ**.
+4. Per un nuovo secret è comunque preferibile **GROQ_API_KEY**; incollare
+   la chiave SOLO nel campo Secret di GitHub, poi selezionare **Add secret**.
 
 Non incollare il token in chat, README, codice, workflow, file JSON
 o messaggi GitHub. Il connettore corrente non dispone di permessi
@@ -31,9 +32,11 @@ completare questo passaggio nel proprio account.
 
 Aprire Actions > "Groq API - optional secret presence and offline adapter tests"
 > Run workflow, sul ramo main. Il controllo stampa soltanto
-GROQ_API_KEY_PRESENT se esiste una variabile segreta non vuota.
+GROQ_API_KEY_PRESENT se almeno uno dei secrets GROQ_API_KEY o GROQ
+è presente e non vuoto.
 Non stampa la chiave, non effettua richieste Groq e non usa token.
 
+La verifica non rivela da quale secret provenga il valore, per sicurezza.
 Questo test NON verifica che la chiave sia corretta, la quota residua
 o il tipo di piano attivo.
 
@@ -82,3 +85,10 @@ mantenere i controlli e i limiti di spesa/costo zero.
 - Segreti GitHub: https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets
 
 No second router, no paid activation, no changes to video owners.
+
+## Compatibilità con la chiave già caricata (04/11/2026)
+
+La schermata Repository secrets mostra un secret chiamato GROQ.
+Il workflow ora fa una selezione sicura in memoria, non una copia:
+GROQ_API_KEY se presente, altrimenti GROQ. Il segreto resta cifrato
+nelle impostazioni GitHub; la sua presenza non autorizza chiamate API.
