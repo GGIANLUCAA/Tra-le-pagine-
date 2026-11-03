@@ -1,0 +1,72 @@
+name: "ArtVision V4 - Ricerca fonti automatica per le dieci opere"
+on:
+  schedule:
+    - cron: "41 */3 * * *"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/artvision-owner-source-research-v4.yml"
+      - "src/production_source_research_v4.py"
+      - "tests/test_production_source_research_v4.py"
+      - "config/source_cycle_companion_v4.json"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-owner-source-research-v4.yml"
+      - "src/production_source_research_v4.py"
+      - "config/source_cycle_companion_v4.json"
+      - "tests/test_production_source_research_v4.py"
+      - "queue/artvision_owner_selected_ten_20261102.json"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-source-research-v4
+  cancel-in-progress: false
+jobs:
+  one_unapproved_archival_research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test guards against spending, rights bypass and duplicate ArtVision work
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/production_source_research_v4.py src/public_archive_sources_v1.py src/public_archive_sources_v2.py src/rare_research_sources_v3.py
+          python -m unittest discover -s tests -p 'test_production_source_research_v4.py' -v
+      - name: Search for one owner-selected work this UTC 3-hour cycle
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          python src/production_source_research_v4.py \
+            --project artvision --now "$now" \
+            --out output/artvision_source_v4/RESEARCH_REPORT.json
+      - name: Verify discovery has not been turned into an approved asset or render
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          r=json.load(open("output/artvision_source_v4/RESEARCH_REPORT.json"))
+          assert r["owner"]=="ARTVISION_OWNER_SELECTED_TEN_V128"
+          assert r["auto_download"] is False and r["auto_render"] is False
+          assert r["auto_publish"] is False and r["paid_api_calls"]==0
+          assert r["approved_assets"]==0 and len(r["candidates"])<=1
+          assert "dali_temptation" not in r["item_id"]
+          assert all(c["rights_review"]=="pending" for c in r["candidates"])
+          print("V4: candidate source research only",r["item_id"],r["status"])
+          PY
+      - name: Archive owner work-id, source URL and pending-review report
+        if: always() && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_OWNER_SOURCE_RESEARCH_V4_${{ github.run_id }}
+          path: output/artvision_source_v4/RESEARCH_REPORT.json
+          if-no-files-found: warn
+          retention-days: 14
