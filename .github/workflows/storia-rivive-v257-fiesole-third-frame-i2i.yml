@@ -2,7 +2,7 @@ name: "La Storia Rivive V257 · one TRUE I2I from THIRD Fiesole archival frame (
 on:
   pull_request:
     paths:
-      - ".github/workflows/storia-rivive-v257-fiesole-original-hands-cpu-i2i.yml"
+      - ".github/workflows/storia-rivive-v257-fiesole-third-frame-i2i.yml"
 permissions:
   contents: read
   actions: read
@@ -24,7 +24,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --depth=1 --no-tags origin "$HEAD"
-          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V257: run third real Fiesole frame I2I once [V257-ONCE]' ]]; then
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V257: fix workflow trigger and run third real frame once [V257-ONCE]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
