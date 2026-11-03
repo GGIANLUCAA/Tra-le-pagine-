@@ -113,76 +113,84 @@ def detail(im,b,p):
  return cv2.resize(cr,(W,H),interpolation=cv2.INTER_AREA)
 
 def get_frame(p):
- """Retrieve the verified CC BY photograph via Wikimedia or a faithful third-party
- relay when Commons returns 429. Never invent a different framed painting.
- Original MediaWiki metadata: SHA1 399497aee9a849386be4d880d36cb4fc5b47571e
- and 2,728,119 bytes, 2400 x 1800. A relay may re-encode JPEG: record that
- explicitly; do not claim original-byte provenance or automatic approval.
+ """Use a bounded, licensed, factual image source; do not forge original-byte provenance.
+ The photo's Commons ORIGINAL is 2400x1800, 2,728,119 bytes,
+ SHA1 399497aee9a849386be4d880d36cb4fc5b47571e.
+ Wikimedia also serves authorized 1280x960 / 960x720 thumbnails,
+ which are marked as DERIVATIVES, and require artistic review.
  """
  from urllib.parse import quote
+ import io
  expected_sha1="399497aee9a849386be4d880d36cb4fc5b47571e"
  filename="The_Tower_of_Babel_1563_Bruegel_Kunsthistorisches_Museum_Wien_Austria_-_panoramio.jpg"
- direct="https://upload.wikimedia.org/wikipedia/commons/9/91/"+filename
- alternate=[
-  ("commons_direct", direct),
-  ("wikimedia_thumb_2400", "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/"+filename+"/2400px-"+filename),
-  ("wsrv_relay", "https://wsrv.nl/?url="+quote(direct,safe=""))
+ directory="9/91/"
+ root="https://upload.wikimedia.org/wikipedia/commons/"
+ thumb="https://thumb.wikimedia.org/wikipedia/commons/thumb/"
+ original=root+directory+filename
+ # Exact official 1280 thumbnail URL checked against the Wikimedia Commons page.
+ # 2400px-... is NOT an available thumbnail (the original already is 2400).
+ sources=[
+  ("wikimedia_1280_thumbnail",thumb+directory+filename+"/1280px-"+filename),
+  ("wikimedia_original_2400",original),
+  ("wikimedia_960_thumbnail",thumb+directory+filename+"/960px-"+filename),
+  ("commons_special_file_path", "https://commons.wikimedia.org/wiki/Special:Redirect/file/"+filename+"?width=1280")
  ]
  errors=[]
- chosen="existing_verified_file" if p.exists() else None
- if not p.exists():
-  for provider,url in alternate:
+ selected="preexisting" if p.exists() else ""
+ if not selected:
+  for provider,url in sources:
    try:
-    req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 (compatible; ArtVision-CCBY-photo-provenance/1.0)","Accept":"image/jpeg,image/*;q=0.8"})
-    with urllib.request.urlopen(req,timeout=55) as resp:
-     mime=resp.headers.get("Content-Type","").split(";")[0].strip()
-     if not mime.startswith("image/"):raise ValueError("not an image: "+mime)
-     out=bytearray()
-     while True:
-      chunk=resp.read(1024*1024)
-      if not chunk:break
-      out.extend(chunk)
-      if len(out)>7_000_000:raise ValueError("photo larger than 7 MB")
-    # Do not save an unverified response as the supposedly authentic source.
-    with Image.open(__import__("io").BytesIO(out)) as im:
-     im.verify()
-    with Image.open(__import__("io").BytesIO(out)) as im:
-     if im.size!=(2400,1800):raise ValueError("photo wrong dimensions: "+str(im.size))
-     if im.format not in ("JPEG","PNG","WEBP"):raise ValueError("not a supported photograph")
-     converted=im.convert("RGB")
-     # Preserve real original JPEG bytes when Commons succeeds; normalize relay output.
-     if im.format=="JPEG":p.write_bytes(out)
-     else:converted.save(p,format="JPEG",quality=95)
-    chosen=provider;break
+    req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 (ArtVision framed-work visual preflight, CC BY attribution)","Accept":"image/jpeg,image/*;q=0.8"})
+    with urllib.request.urlopen(req,timeout=60) as resp:
+     mime=resp.headers.get("Content-Type","").split(";")[0]
+     if not mime.startswith("image/"):raise ValueError("MIME "+mime)
+     data=resp.read(7_000_001)
+     if len(data)>7_000_000:raise ValueError("source over 7MB")
+    with Image.open(io.BytesIO(data)) as image:
+     image.verify()
+    with Image.open(io.BytesIO(data)) as image:
+     dims=image.size
+     if dims not in ((2400,1800),(1280,960),(960,720)):
+      raise ValueError("unexpected source size "+str(dims))
+     if image.format not in ("JPEG","PNG","WEBP"):raise ValueError("unexpected format "+str(image.format))
+     if image.format=="JPEG":p.write_bytes(data)
+     else:image.convert("RGB").save(p,"JPEG",quality=96)
+    selected=provider
+    break
    except Exception as exc:
     errors.append(provider+": "+str(exc))
     if p.exists():p.unlink()
-  if chosen is None:raise RuntimeError("Original museum frame photo unavailable after bounded alternate-source attempts: "+repr(errors))
- with Image.open(p) as im:
-  if im.size!=(2400,1800) or im.format!="JPEG":raise ValueError(f"Wrong framed museum photo: {im.size} {im.format}")
+  if not selected:raise RuntimeError("V137 photograph unavailable, no render allowed: "+repr(errors))
+ with Image.open(p) as photo:
+  dims=list(photo.size)
+  if dims not in ([2400,1800],[1280,960],[960,720]) or photo.format!="JPEG":
+   raise ValueError("wrong photo readback: "+str(dims))
  sha1=hashlib.sha1(p.read_bytes()).hexdigest()
- if chosen=="commons_direct" and sha1!=expected_sha1:
-  raise ValueError("Wikimedia full-size photo SHA1 differs from Commons authoritative metadata")
- # If derivative relay photo is supplied, this remains an internal technical REVIEW,
- # not fully original-byte-verified, and needs explicit human photo comparison.
- return {"filename":p.name,"bytes":p.stat().st_size,"sha256":digest(p),
-  "sha1":sha1,"original_sha1_expected":expected_sha1,
+ if selected=="wikimedia_original_2400" and sha1!=expected_sha1:
+  raise ValueError("FULL SIZE ORIGINAL checksum mismatch: abort")
+ return {
+  "filename":p.name,"bytes":p.stat().st_size,"sha256":digest(p),"sha1":sha1,
+  "original_sha1_expected":expected_sha1,"original_dimensions":[2400,1800],
+  "dimensions":dims,"provider":selected,"attempt_errors":errors,
   "original_byte_hash_match":sha1==expected_sha1,
-  "provider":chosen,"alternate_errors":errors,
-  "dimensions":[2400,1800],"source_page":FRAME_SOURCE_PAGE,
-  "credit":FRAME_CREDIT,"license":FRAME_LICENSE,
-  "image_provenance_review_required":sha1!=expected_sha1}
+  "is_authorized_wikimedia_derivative":dims!=[2400,1800],
+  "image_provenance_review_required":sha1!=expected_sha1,
+  "source_page":FRAME_SOURCE_PAGE,"credit":FRAME_CREDIT,"license":FRAME_LICENSE
+ }
+
 
 def museum_setup(photo, art):
  # Real frame/photo from KHM room: CC BY photo, not fabricated painting/frame.
  # Replace only the blurred picture INSIDE the captured wooden frame with verified
  # original PD artwork. Never touch the authentic wood frame or its corner joins.
- quadrilateral=np.float32([[464,300],[2034,298],[2050,1422],[469,1443]])
+ ref_quad=np.float32([[464,300],[2034,298],[2050,1422],[469,1443]])
+ ph,pw=photo.shape[:2]
+ quadrilateral=ref_quad*np.array([[pw/2400.0,ph/1800.0]],dtype=np.float32)
  ah,aw=art.shape[:2]
  src=np.float32([[0,0],[aw-1,0],[aw-1,ah-1],[0,ah-1]])
  M=cv2.getPerspectiveTransform(src,quadrilateral)
- art_warp=cv2.warpPerspective(art,M,(2400,1800),flags=cv2.INTER_LANCZOS4)
- mask=np.zeros((1800,2400),dtype=np.uint8)
+ art_warp=cv2.warpPerspective(art,M,(pw,ph),flags=cv2.INTER_LANCZOS4)
+ mask=np.zeros((ph,pw),dtype=np.uint8)
  cv2.fillConvexPoly(mask,quadrilateral.astype(np.int32),255)
  mask=cv2.GaussianBlur(mask,(9,9),2.0)
  mask3=(mask[...,None]/255.0).astype(np.float32)
