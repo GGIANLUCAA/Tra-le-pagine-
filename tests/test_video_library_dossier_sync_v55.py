@@ -82,5 +82,30 @@ class SyncValidation(unittest.TestCase):
         data=valid();data["posts"]["facebook"]="art "*75000
         with self.assertRaises(ValueError):v55.prepare(data)
 
+
+    def test_invalid_manifest_is_quarantined_without_blocking_valid_one(self):
+        import contextlib
+        import io
+        import json
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            root=pathlib.Path(tmp)
+            good=root/"valid.json"
+            bad=root/"invalid.json"
+            good.write_text(json.dumps(valid()),encoding="utf8")
+            broken=valid()
+            broken["recipe"]["video"]["sha256"]="b"*64
+            bad.write_text(json.dumps(broken),encoding="utf8")
+            with contextlib.redirect_stdout(io.StringIO()) as output:
+                v55.run([bad,good],dry_run=True,isolate_invalid=True)
+            log=output.getvalue()
+            self.assertIn("BLOCKED_INVALID_MANIFEST_NO_UPLOAD",log)
+            self.assertIn("Recipe missing, wrong video hash",log)
+            self.assertIn("DRY_RUN_NO_UPLOAD",log)
+            self.assertIn('"valid": 1',log)
+            self.assertIn('"blocked": 1',log)
+            with self.assertRaisesRegex(ValueError,"Recipe missing"):
+                v55.run([bad,good],dry_run=True)
+
 if __name__=="__main__":
     unittest.main()
