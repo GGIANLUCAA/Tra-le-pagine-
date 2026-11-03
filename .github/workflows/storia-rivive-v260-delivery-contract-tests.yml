@@ -32,6 +32,28 @@ on:
 permissions:
   contents: read
 jobs:
+  verify_preimport_without_api_or_ffmpeg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: V262 actual ZIP source/posts/cover/MP4 preupload regression
+        run: |
+          python -m py_compile src/video_library_v262_preimport_gate.py src/storia_rivive_v260_delivery_bundle_gate.py
+          python -m unittest discover -s tests -p "test_video_library_v262_preimport_gate.py" -v
+      - name: No VLS upload may start before V262 source-byte audit
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          script=Path(".github/workflows/video-library-r2-import.yml").read_text()
+          assert "from video_library_v262_preimport_gate import inspect" in script
+          assert "v262_byte_preimport(zpath)" in script
+          assert script.index("v262_byte_preimport(zpath)") < script.index("for n in files:")
+          print("V262_NO_R2_UPLOAD_BEFORE_SOURCE_AND_SOCIAL_BYTE_VERIFICATION")
+          PY
   verify_real_deliverables:
     runs-on: ubuntu-latest
     timeout-minutes: 10
