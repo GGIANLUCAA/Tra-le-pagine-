@@ -10,7 +10,13 @@ Data: 4 novembre 2026. Estensione non distruttiva del selettore V34.
 - nasa — NASA Image and Video Library, foto e video; loghi, persone, terze parti e termini da verificare.
 - gallica — Biblioteca nazionale di Francia, documenti storici tramite XML SRU.
 
-Totale 11 provider di ricerca (6 V1 + 5 V2); Pixabay, Openverse e Pexels sono altre integrazioni preesistenti.
+Totale 11 provider di ricerca configurati (6 V1 + 5 V2); Pixabay, Openverse e Pexels sono altre integrazioni preesistenti.
+
+## Verifica reale GitHub Actions 04/11/2026
+
+Tra i cinque nuovi provider: V&A, SMK, Wellcome e NASA hanno risposto con almeno un candidato; Gallica ha restituito HTTP 403 dal runner GitHub. Gallica rimane sperimentale/non utilizzabile in automazione finche l'accesso non sara verificato. Le risposte e i risultati di ricerca non autorizzano il riutilizzo dei media.
+
+I test di contratto e integrazione V34 sono passati. Un test offline-quality di un modulo ArtVision preesistente e fallito indipendentemente dalle nuove API (ModuleNotFoundError artvision_museum_v119_guard), da correggere separatamente.
 
 ## Uso
 
