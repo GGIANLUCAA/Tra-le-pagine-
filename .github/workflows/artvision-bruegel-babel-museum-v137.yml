@@ -1,0 +1,91 @@
+name: ArtVision · Bruegel Vienna authentic-frame Museum V137
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/bruegel-babel-museum-v137.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-single-render-babel-museum-v137
+  cancel-in-progress: false
+jobs:
+  cinema_museum_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Checkout exact owner request
+        uses: actions/checkout@v4
+      - name: Verify scoped owner request, source identity and anti-duplication
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("requests/artvision/bruegel-babel-museum-v137.json").read_text())
+          q=json.loads(Path("queue/artvision_owner_selected_ten_20261102.json").read_text())
+          assert r["owner_automation_id"]=="6adca191603c8191a90d5190901cd034"
+          assert r["work_id"]=="bruegel_tower_babel_1563_khm_gg1026"
+          assert r["variant"]=="cinema_museum" and r["public_title"]=="The Tower of Babel"
+          assert r["accession"]=="GG 1026" and r["year"]==1563
+          assert not r["allow_paid_calls"] and not r["social_publish"] and not r["gold_v25"]
+          assert not any(k in r["public_title"].lower() for k in ("standard","artvision","tra le pagine"))
+          matches=[w for w in q["works"] if w["id"]==r["work_id"]]
+          assert len(matches)==1
+          assert matches[0]["slots_delivered_this_selection"]==1
+          assert "cinema_museum_v137" not in matches[0]
+          assert matches[0]["cinema_standard_v136"]["full_ffmpeg_decode"].startswith("PASS")
+          PY
+      - name: Install offline video runtime only
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check pillow numpy opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin
+          python - <<'PY'
+          from pathlib import Path
+          from imageio_ffmpeg import get_ffmpeg_exe
+          e=Path(get_ffmpeg_exe())
+          assert e.is_file()
+          Path("/tmp/artvision-bin/ffmpeg").symlink_to(e)
+          PY
+          echo "/tmp/artvision-bin" >> "$GITHUB_PATH"
+          /tmp/artvision-bin/ffmpeg -version | head -1
+      - name: Render one real Museum review from authentic photo and independent PD artwork
+        run: python src/artvision_babel_museum_v137.py --output /tmp/babel_museum_v137
+      - name: Verify independent physical output and licenses
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,zipfile,subprocess
+          d=Path("/tmp/babel_museum_v137")
+          q=json.loads((d/"QA_V137.json").read_text())
+          f=d/q["mp4"]["filename"]
+          assert f.is_file() and f.stat().st_size>1_000_000
+          assert hashlib.sha256(f.read_bytes()).hexdigest()==q["mp4"]["sha256"]
+          assert q["mp4"]["frames"]==1248 and abs(q["mp4"]["duration_seconds"]-62.4)<0.01
+          assert q["mp4"]["full_ffmpeg_decode"]=="PASS"
+          assert q["cinema_museum"] is True and q["cinema_standard_review"] is False
+          assert q["museum_approved"] is False and q["gold_v25"] is False
+          assert q["social_published"] is False and q["zero_paid_api_calls"] is True
+          assert "CC BY 3.0" in q["authentic_frame_photo"]["credit"]
+          assert q["authentic_frame_photo"]["dimensions"]==[2400,1800]
+          z=d/"BRUEGEL_BABEL_V137_CINEMA_MUSEUM_REVIEW_PACKAGE.zip"
+          with zipfile.ZipFile(z) as archive:
+           assert archive.testzip() is None
+           assert any(n.endswith(".mp4") for n in archive.namelist())
+           assert any("AUTHENTIC_KHM_FRAME_PHOTO" in n for n in archive.namelist())
+          subprocess.run(["ffmpeg","-v","error","-i",str(f),"-f","null","-"],check=True)
+          print("PHYSICAL_MP4_VERIFIED",f.stat().st_size,q["mp4"]["sha256"])
+          PY
+      - name: Save actual Museum MP4, cover, credits and video evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_BABEL_V137_MUSEUM_REVIEW_REAL_MP4
+          path: |
+            /tmp/babel_museum_v137/BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_MUSEUM_V137_REVIEW.mp4
+            /tmp/babel_museum_v137/BRUEGEL_BABEL_V137_CINEMA_MUSEUM_REVIEW_PACKAGE.zip
+            /tmp/babel_museum_v137/QA_V137.json
+            /tmp/babel_museum_v137/COVER.jpg
+            /tmp/babel_museum_v137/CONTACT_SHEET_V137.jpg
+            /tmp/babel_museum_v137/RIGHTS_AND_CREDITS.txt
+          if-no-files-found: error
+          retention-days: 30
