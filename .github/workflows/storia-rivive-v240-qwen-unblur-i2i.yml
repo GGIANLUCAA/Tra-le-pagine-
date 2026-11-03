@@ -42,8 +42,8 @@ jobs:
       - name: Offline V240 real-output/source-lock regressions
         if: steps.gate.outputs.allowed == 'true'
         run: |
-          python -m py_compile src/storia_rivive_v240_qwen_fast_real_i2i.py
-          python -m unittest discover -s tests -p 'test_storia_rivive_v240_qwen_fast_real_i2i.py' -v
+          python -m py_compile src/storia_rivive_v240_qwen_unblur_real_i2i.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v240_qwen_unblur_real_i2i.py' -v
           python -m unittest discover -s tests -p 'test_storia_rivive_v237_qwen_photo_ab.py' -v
       - uses: actions/download-artifact@v4
         if: steps.gate.outputs.allowed == 'true'
@@ -62,7 +62,7 @@ jobs:
           PRIOR="$ROOT/FACE_FIRST_REAL_I2I_CANDIDATE/FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png"
           echo "716a886ab8583f87d2f9c28e7cb7a236f4243f029e95f29e2cfed85ddf029f10  $SOURCE" | sha256sum --check --status
           echo "21544bcbf9acb39577141ad9a4ac1c8f7c4da183acc74932dcffd76ff20733a4  $PRIOR" | sha256sum --check --status
-          python src/storia_rivive_v240_qwen_fast_real_i2i.py --source "$SOURCE" --prior "$PRIOR" --out output/v240/photo_ab --offline
+          python src/storia_rivive_v240_qwen_unblur_real_i2i.py --source "$SOURCE" --prior "$PRIOR" --out output/v240/photo_ab --offline
       - name: ONE anonymous ZeroGPU Qwen 2511 Unblur-Anything image edit (never retry)
         id: generate
         if: steps.gate.outputs.allowed == 'true'
@@ -74,7 +74,7 @@ jobs:
         run: |
           set -euo pipefail
           ROOT='output/v240/v236_original_media/lusitania_departure_1915_v220'
-          timeout 700s python src/storia_rivive_v240_qwen_fast_real_i2i.py \
+          timeout 700s python src/storia_rivive_v240_qwen_unblur_real_i2i.py \
             --source "$ROOT/FOUR_PHOTO_INPUTS_ONE_VIDU_ANCHOR/frame_04.png" \
             --prior "$ROOT/FACE_FIRST_REAL_I2I_CANDIDATE/FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png" \
             --out output/v240/photo_ab
