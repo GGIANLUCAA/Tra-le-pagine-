@@ -11,7 +11,7 @@ class V261FirstSource(unittest.TestCase):
         self.tmp=tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root=Path(self.tmp.name)
-        self.src=self.root/"original_shot_04_frame_03.png"
+        self.src=self.root/"original_shot_01_frame_03.png"
         Image.new("RGB",(1920,1080),"gray").save(self.src)
         self.sha=m.engine.sha(self.src)
         self.manifest=self.root/"manifest.json"
@@ -27,9 +27,9 @@ class V261FirstSource(unittest.TestCase):
         self.manifest.write_text(json.dumps(self.data))
     def test_real_sha_and_manifest_required(self):
         with patch.object(m,"SOURCE_SHA",self.sha):
-            self.assertEqual(m.verify_manifest(self.manifest,self.src)["shot"],4)
+            self.assertEqual(m.verify_manifest(self.manifest,self.src)["shot"],1)
     def test_reject_wrong_frame_sha(self):
-        with self.assertRaisesRegex(ValueError,"SHOT_FOUR_NOT_AUTHENTIC"):
+        with self.assertRaisesRegex(ValueError,"SHOT_ONE_NOT_AUTHENTIC"):
             m.verify_manifest(self.manifest,self.src)
     def test_reject_wrong_film(self):
         self.data["source_film_sha256"]="0"*64
@@ -37,11 +37,17 @@ class V261FirstSource(unittest.TestCase):
         with patch.object(m,"SOURCE_SHA",self.sha):
             with self.assertRaisesRegex(ValueError,"WRONG_FILM_OR_EPISODE"):
                 m.verify_manifest(self.manifest,self.src)
+    def test_reject_duplicate_source_hash_in_manifest(self):
+        self.data["shots"][2]["original_sha256"]=self.data["shots"][0]["original_sha256"]
+        self.manifest.write_text(json.dumps(self.data))
+        with patch.object(m,"SOURCE_SHA",self.sha):
+            with self.assertRaisesRegex(ValueError,"DUPLICATED_SOURCE_SHA_IN_MANIFEST"):
+                m.verify_manifest(self.manifest,self.src)
     def test_reject_different_shot(self):
         self.data["shots"][0]["shot"]=5
         self.manifest.write_text(json.dumps(self.data))
         with patch.object(m,"SOURCE_SHA",self.sha):
-            with self.assertRaisesRegex(ValueError,"SHOT_FOUR_NOT_AUTHENTIC"):
+            with self.assertRaisesRegex(ValueError,"SHOT_ONE_NOT_AUTHENTIC"):
                 m.verify_manifest(self.manifest,self.src)
 
 if __name__=="__main__":unittest.main()
