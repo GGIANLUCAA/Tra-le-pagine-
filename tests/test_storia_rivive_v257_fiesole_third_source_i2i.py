@@ -4,7 +4,7 @@ from pathlib import Path
 from unittest.mock import patch
 from PIL import Image,ImageDraw
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"src"))
-import storia_rivive_v257_fiesole_local_cpu_diffusion_i2i as m
+import storia_rivive_v257_fiesole_third_source_i2i as m
 
 class V257LocalDiffusion(unittest.TestCase):
     def make_original(self,p):
