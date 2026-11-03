@@ -251,9 +251,9 @@ def discover_single(brief, catalog, scene_id, provider, query, limit, environ=No
         search = produce(provider, query, "image", limit, environ)
     else:
         try:
-            from . import public_archive_sources_v1 as archive_sources
+            from . import public_archive_sources_v2 as archive_sources
         except ImportError:
-            import public_archive_sources_v1 as archive_sources
+            import public_archive_sources_v2 as archive_sources
         require(provider in archive_sources.PROVIDERS, "Provider archivistico sconosciuto")
         if scene["need"] == "authentic_artwork":
             allowed = archive_sources.ART | {"commons"}
@@ -324,7 +324,9 @@ def main():
     p.add_argument("--mode", choices=("plan", "discover"), default="plan")
     p.add_argument("--scene", default="")
     p.add_argument("--provider", choices=("pixabay", "openverse", "met", "artic",
-                                           "cleveland", "loc", "archive", "commons"), default="openverse")
+                                           "cleveland", "loc", "archive", "commons",
+                                           "vam", "smk", "wellcome", "nasa", "gallica"),
+                   default="openverse")
     p.add_argument("--query", default="")
     p.add_argument("--limit", type=int, default=3)
     p.add_argument("--out", default="output/media_v34")

@@ -1,4 +1,4 @@
-name: "Ricerca fonti ufficiali V1 - Musei e archivi"
+name: "Ricerca fonti ufficiali V2 - Musei e archivi"
 on:
   workflow_dispatch:
     inputs:
@@ -9,9 +9,9 @@ on:
         default: artvision
         required: true
       provider:
-        description: "Una fonte: ArtVision met/artic/cleveland/commons; Storia loc/archive/commons"
+        description: "Una fonte: ArtVision: musei; Storia: archivi"
         type: choice
-        options: [met, artic, cleveland, loc, archive, commons]
+        options: [met, artic, cleveland, loc, archive, commons, vam, smk, wellcome, nasa, gallica]
         default: met
         required: true
       query:
@@ -28,14 +28,18 @@ on:
     branches: [main]
     paths:
       - "src/public_archive_sources_v1.py"
+      - "src/public_archive_sources_v2.py"
       - "src/source_selector_v34.py"
       - "tests/test_public_archive_sources_v1.py"
+      - "tests/test_public_archive_sources_v2.py"
       - ".github/workflows/public-archive-sources-v1.yml"
   pull_request:
     paths:
       - "src/public_archive_sources_v1.py"
+      - "src/public_archive_sources_v2.py"
       - "src/source_selector_v34.py"
       - "tests/test_public_archive_sources_v1.py"
+      - "tests/test_public_archive_sources_v2.py"
       - ".github/workflows/public-archive-sources-v1.yml"
 permissions:
   contents: read
@@ -52,8 +56,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m py_compile src/public_archive_sources_v1.py src/source_selector_v34.py
+          python -m py_compile src/public_archive_sources_v1.py src/public_archive_sources_v2.py src/source_selector_v34.py
           python -m unittest discover -s tests -p 'test_public_archive_sources_v1.py' -v
+          python -m unittest discover -s tests -p 'test_public_archive_sources_v2.py' -v
           python -m unittest discover -s tests -p 'test_source_selector_v34.py' -v
           python -m json.tool config/public_api_artvision_v1.json >/dev/null
           python -m json.tool config/public_api_storia_v1.json >/dev/null
@@ -74,9 +79,11 @@ jobs:
           python - <<'PY'
           import json,sys
           sys.path.insert(0,"src")
-          from public_archive_sources_v1 import search
+          from public_archive_sources_v2 import search
           examples={"met":"Socrates","artic":"Seurat","cleveland":"landscape",
-                    "loc":"Market Street 1906","archive":"historic film","commons":"Venice 1896"}
+                    "loc":"Market Street 1906","archive":"historic film","commons":"Venice 1896",
+                    "vam":"Turner","smk":"Eckersberg","wellcome":"Victorian portrait",
+                    "nasa":"Apollo 11","gallica":"Paris 1900"}
           report={}
           for provider,query in examples.items():
               try:
@@ -90,7 +97,7 @@ jobs:
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: PUBLIC_ARCHIVE_PROVIDER_PROBE_V1
+          name: PUBLIC_ARCHIVE_PROVIDER_PROBE_V2
           path: PROBE_REPORT.json
           retention-days: 14
           if-no-files-found: warn
@@ -114,9 +121,9 @@ jobs:
         run: |
           set -euo pipefail
           case "$RESEARCH_PROJECT:$RESEARCH_PROVIDER" in
-            artvision:met|artvision:artic|artvision:cleveland|artvision:commons)
+            artvision:met|artvision:artic|artvision:cleveland|artvision:commons|artvision:vam|artvision:smk|artvision:wellcome)
               brief="config/public_api_artvision_v1.json"; scene="opera" ;;
-            storia:loc|storia:archive|storia:commons)
+            storia:loc|storia:archive|storia:commons|storia:nasa|storia:gallica|storia:wellcome)
               brief="config/public_api_storia_v1.json"; scene="archivio" ;;
             *) echo "Provider incompatible with project" >&2; exit 1 ;;
           esac
@@ -134,7 +141,7 @@ jobs:
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: CANDIDATI_FONTI_UFFICIALI_V1
+          name: CANDIDATI_FONTI_UFFICIALI_V2
           path: output/public_archive_v1/
           retention-days: 14
           if-no-files-found: error
