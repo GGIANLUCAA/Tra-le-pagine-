@@ -11,6 +11,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from free_llm_zero_cost_v1 import ZeroCostPolicyError, admit, route_matches_actual  # noqa: E402
+from ecc_public_editorial_guard_v1 import public_copy_violations  # noqa: E402
 from freellmapi_editorial_v1 import (  # noqa: E402
     FreeLLMAPIError, generate_draft, validate_local_url,
 )
@@ -140,6 +141,21 @@ class FreeLLMAPIEditorialTests(unittest.TestCase):
             return StubResponse(b"X" * (524288 + 1))
         with self.assertRaisesRegex(FreeLLMAPIError, "size limit"):
             generate_draft("social", "Artwork", environ=self.active_env(), opener=huge)
+
+    def test_v134_public_copy_guard(self):
+        self.assertEqual(public_copy_violations("The Night Watch — Rembrandt"), [])
+        for text in ("Watch ArtVision", "Tra le Pagine movie", "Cinema Standard",
+                     "Critico Standard", "This Standard version"):
+            with self.subTest(text=text):
+                self.assertIn("forbidden_public_label", public_copy_violations(text))
+
+    def test_social_rejects_forbidden_project_label_from_ai(self):
+        def unsafe(_req, timeout):
+            return StubResponse(json.dumps({
+                "choices": [{"message": {"content": "ArtVision presents an artwork"}}],
+            }).encode("utf-8"))
+        with self.assertRaisesRegex(FreeLLMAPIError, "V134"):
+            generate_draft("social", "Artwork", environ=self.active_env(), opener=unsafe)
 
     def test_zero_cost_rejects_auto_or_fusion(self):
         for alias in ("auto", "auto:smart", "fusion"):
