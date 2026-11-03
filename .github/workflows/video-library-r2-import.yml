@@ -31,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
+      - uses: actions/checkout@v4
       - name: Transfer video artifacts to Cloudflare R2
         env:
           GH_TOKEN: ${{ github.token }}
@@ -43,6 +44,8 @@ jobs:
           python3 -m pip -q install requests
           python3 - <<'PY'
           import os,re,sys,zipfile,tempfile,pathlib,time,json,hashlib,io
+          sys.path.insert(0,str(pathlib.Path.cwd()/'src'))
+          from video_library_v262_preimport_gate import inspect as v262_byte_preimport
           import requests
           S=requests.Session()
           ROOT=os.environ['IMPORT_ENDPOINT'].rstrip('/')
@@ -203,6 +206,15 @@ jobs:
                           if not videos:
                               cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']});continue
                           allowed,reason=publication_gate(z,videos)
+                          # V262: before ANY R2 POST, audit the exact top-level
+                          # artifact bytes the importer will actually upload.
+                          # V25 approval alone cannot stand in for Facebook
+                          # copy, three other posts, cover, rights and ZIP CRC.
+                          if allowed:
+                              audit=v262_byte_preimport(zpath)
+                              if not audit['passed']:
+                                  allowed=False
+                                  reason='V262_REAL_BYTES_BLOCKED: '+str(audit['reason'])+' '+repr(audit.get('delivery_errors',[]))[:240]
                           if not allowed:
                               print('SKIPPED UNREVIEWED:',a['name'],reason,flush=True)
                               cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']})
