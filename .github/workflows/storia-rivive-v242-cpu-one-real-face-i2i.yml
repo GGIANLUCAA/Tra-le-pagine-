@@ -24,7 +24,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --no-tags --depth=1 origin "$PR_HEAD_SHA"
-          if [[ "$(git log -1 --format=%s "$PR_HEAD_SHA")" == 'storia V242: one real CPU face restoration request [V242-ONCE]' ]]; then
+          if [[ "$(git log -1 --format=%s "$PR_HEAD_SHA")" == 'storia V242: one CPU photo after offline test fix [V242-REPAIR-ONCE]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
