@@ -169,8 +169,12 @@ def search(provider,query,limit=3,fetcher=None):
                 media_kind="audio"))
 
     elif provider=="librivox":
-        data=get(url("https://librivox.org/api/feed/audiobooks/",title=query,
-                     format="json",limit=limit))
+        search_field="author" if query.lower().startswith("author:") else "title"
+        term=query.split(":",1)[1].strip() if query.lower().startswith(("author:","title:")) else query
+        if len(term)<3:
+            raise ResearchError("LibriVox requires a title or author of at least 3 characters")
+        data=get(url("https://librivox.org/api/feed/audiobooks/",format="json",
+                     limit=limit,**{search_field:term}))
         for obj in (data.get("books") or [])[:limit]:
             ident=str(obj.get("id") or "")
             if not re.fullmatch(r"[0-9]{1,16}",ident):continue
@@ -197,7 +201,7 @@ def search(provider,query,limit=3,fetcher=None):
                 note="Do not bulk-crawl or use as commercial backend"))
 
     elif provider=="gutendex":
-        data=get(url("https://gutendex.com/books",search=query))
+        data=get(url("https://gutendex.com/books/",search=query))
         for obj in (data.get("results") or [])[:limit]:
             ident=obj.get("id")
             if not isinstance(ident,int) or ident<=0:continue
