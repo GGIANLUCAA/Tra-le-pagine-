@@ -16,7 +16,7 @@ class V242FreeCpuI2I(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/"s.png";r=Path(d)/"out.png"
             Image.new("L",(608,1080),130).save(p)
-            Image.new("RGB",(608,1080),(70,100,130)).save(r)
+            Image.effect_noise((608,1080),100).convert("RGB").save(r)
             with patch.object(m,"SOURCE_SHA",m.digest(p)):
                 data=m.verify_result(p,r)
             self.assertEqual(data["real_cpu_model_candidate"],1)
