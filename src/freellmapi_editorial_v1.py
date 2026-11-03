@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 from urllib import error, parse, request
 from free_llm_zero_cost_v1 import (ZeroCostPolicyError, admit, load_policy, route_matches_actual)
+from ecc_public_editorial_guard_v1 import public_copy_violations
 
 MAX_PROMPT_CHARS = 12000
 MAX_RESPONSE_BYTES = 524288
@@ -139,6 +140,8 @@ def generate_draft(
             raise ValueError("empty content")
     except (ValueError, KeyError, IndexError, TypeError) as exc:
         raise FreeLLMAPIError("Router response has no usable text") from exc
+    if task == "social" and public_copy_violations(message):
+        raise FreeLLMAPIError("AI social draft violates public-facing naming rule V134")
     return {
         "status": "draft_unreviewed",
         "task": task,
