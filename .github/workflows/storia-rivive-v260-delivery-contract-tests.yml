@@ -5,8 +5,10 @@ on:
       - "src/storia_rivive_v260_delivery_bundle_gate.py"
       - "src/storia_rivive_final_gate_v91.py"
       - "src/artvision_delivery_v55.py"
+      - "src/artvision_contract_gate_v25.py"
       - "tests/test_storia_rivive_v260_delivery_bundle_gate.py"
       - "tests/test_artvision_delivery_v55.py"
+      - "tests/test_artvision_contract_gate_v25.py"
       - ".github/workflows/storia-rivive-v260-delivery-contract-tests.yml"
   push:
     branches: [main]
@@ -14,8 +16,10 @@ on:
       - "src/storia_rivive_v260_delivery_bundle_gate.py"
       - "src/storia_rivive_final_gate_v91.py"
       - "src/artvision_delivery_v55.py"
+      - "src/artvision_contract_gate_v25.py"
       - "tests/test_storia_rivive_v260_delivery_bundle_gate.py"
       - "tests/test_artvision_delivery_v55.py"
+      - "tests/test_artvision_contract_gate_v25.py"
       - ".github/workflows/storia-rivive-v260-delivery-contract-tests.yml"
 permissions:
   contents: read
@@ -40,6 +44,7 @@ jobs:
           python -m py_compile src/storia_rivive_v260_delivery_bundle_gate.py src/storia_rivive_final_gate_v91.py
           python -m unittest discover -s tests -p "test_storia_rivive_v260_delivery_bundle_gate.py" -v
           python -m unittest discover -s tests -p "test_artvision_delivery_v55.py" -v
+          python -m unittest discover -s tests -p "test_artvision_contract_gate_v25.py" -v
       - name: Ensure final gate actually invokes V260, rather than relying on booleans
         run: |
           python - <<'PY'
@@ -49,5 +54,7 @@ jobs:
           assert 'bundle_gate.inspect(p' in source
           artvision=Path("src/artvision_delivery_v55.py").read_text()
           assert 'common_gate.inspect(video, zip_path)' in artvision
-          print("V261_REQUIRED_BY_BOTH_REAL_V91_AND_V55_DELIVERY_GATES")
+          v25=Path("src/artvision_contract_gate_v25.py").read_text()
+          assert 'module.inspect(manifest.parent / FIELDS["video"],bundle)' in v25
+          print("V261_REQUIRED_BY_ALL_THREE_REAL_V91_V55_V25_DELIVERY_GATES")
           PY
