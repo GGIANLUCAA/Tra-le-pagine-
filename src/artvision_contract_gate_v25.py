@@ -377,7 +377,21 @@ def main(argv=None):
                 errors.append("Il pacchetto di consegna si crea soltanto con --stage final.")
             elif not errors:
                 try:
-                    info["delivery_bundle"] = str(pack_delivery(manifest,data,info))
+                    bundle = pack_delivery(manifest,data,info)
+                    # V261: the legacy V25 final CLI must not bypass the same
+                    # real ZIP/MP4/social/cover/source-byte checks as V55/V91.
+                    # This does not replace the V25 artistic/rights reviews.
+                    import importlib.util
+                    shared = Path(__file__).with_name("storia_rivive_v260_delivery_bundle_gate.py")
+                    if not shared.is_file():
+                        raise ValueError("V261 shared delivery contract missing")
+                    spec = importlib.util.spec_from_file_location("shared_artvision_v25_byte_gate",shared)
+                    module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(module)
+                    checked = module.inspect(manifest.parent / FIELDS["video"],bundle)
+                    if checked["errors"]:
+                        raise ValueError("V261 final ZIP rejected: " + ", ".join(checked["errors"]))
+                    info["delivery_bundle"] = str(bundle)
                 except (OSError,ValueError,zipfile.BadZipFile) as exc:
                     errors.append("Creazione ZIP di consegna fallita: " + str(exc))
         report={"schema":"artvision-v25-gate-report","stage":args.stage,
