@@ -2,7 +2,7 @@ import base64,hashlib,io,random,sys,tempfile,unittest
 from pathlib import Path
 from PIL import Image
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"src"))
-import storia_rivive_v240_qwen_fast_real_i2i as mod
+import storia_rivive_v240_qwen_unblur_real_i2i as mod
 
 class V240Test(unittest.TestCase):
     def setUp(self):
