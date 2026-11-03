@@ -412,7 +412,7 @@
         "remaining_variants": 3
       },
       "v137_cinema_candidate": {
-        "status": "source_http429_confirmed_fixed_code_retry_requested_new_run_unverified",
+        "status": "last_single_request_push_1280_derivative_render_not_yet_verified",
         "request": "requests/artvision/bruegel-babel-museum-v137.json",
         "request_commit": "b410dd836b777b4219138330e53e029053e9bc18",
         "workflow": ".github/workflows/artvision-bruegel-babel-museum-v137.yml",
@@ -442,7 +442,17 @@
         "authoritative_photo_sha1": "399497aee9a849386be4d880d36cb4fc5b47571e",
         "photo_original_provenance_verified": false,
         "new_run_status": "NOT_RETRIEVED_AS_OF_CURRENT_CHECK",
-        "new_paid_costs": 0
+        "new_paid_costs": 0,
+        "last_failed_run_id": 41608231024,
+        "last_failed_run_reason": "original full-image HTTP429, invalid full-size thumb 2400 HTTP400, relay HTTP404",
+        "same_request_third_attempt_commit": "0fd3dce695f7cf37be0318718e6a160cd250b2b4",
+        "third_attempt_renderer_commit": "2a0935788db2e2f94701910cae20b1cf3074c727",
+        "third_attempt_workflow_commit": "0037f0dcd64e6460091c417bd9f529178ec25a9b",
+        "new_source": "official Commons 1280px thumbnail of same Hiroki Ogawa original",
+        "underlying_original_2400x1800_metadata_verified": true,
+        "original_byte_sha1_match_possible_only_if_full_source": true,
+        "exact_derivative_byte_provenance_pending": true,
+        "one_shot_final_recovery_attempt": true
       }
     },
     {
