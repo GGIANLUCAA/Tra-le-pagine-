@@ -241,22 +241,39 @@ def discover_single(brief, catalog, scene_id, provider, query, limit, environ=No
     fmt, scenes = get_scenes(brief)
     scene = next((s for s in scenes if s["id"] == scene_id), None)
     require(scene is not None, "Scena richiesta inesistente")
-    require(provider in ("pixabay", "openverse"), "Solo provider effettivamente integrati")
-    require(scene["need"] in ("establishing", "documentary_broll"),
-            "Ricerca stock non adatta a scene letterarie precise o opere autentiche")
-    require(provider != "openverse" or scene["need"] != "music_visual", "Non compatibile")
-    # Uses only ONE existing adapter call, never both APIs or loops over all scenes.
-    try:
-        from .free_sources_bridge_v1 import produce
-    except ImportError:
-        from free_sources_bridge_v1 import produce
-    search = produce(provider, query, "image", limit, environ)
+    if provider in ("pixabay", "openverse"):
+        require(scene["need"] in ("establishing", "documentary_broll"),
+                "Ricerca stock non adatta a scene letterarie precise o opere autentiche")
+        try:
+            from .free_sources_bridge_v1 import produce
+        except ImportError:
+            from free_sources_bridge_v1 import produce
+        search = produce(provider, query, "image", limit, environ)
+    else:
+        try:
+            from . import public_archive_sources_v1 as archive_sources
+        except ImportError:
+            import public_archive_sources_v1 as archive_sources
+        require(provider in archive_sources.PROVIDERS, "Provider archivistico sconosciuto")
+        if scene["need"] == "authentic_artwork":
+            allowed = archive_sources.ART | {"commons"}
+        elif scene["need"] == "documentary_evidence":
+            allowed = archive_sources.ARCHIVE
+        elif scene["need"] == "documentary_broll":
+            allowed = archive_sources.PROVIDERS
+        else:
+            allowed = set()
+        require(provider in allowed, "Fonte incompatibile con il tipo di scena")
+        search = archive_sources.search(provider, query, limit)
     candidates = catalog_assets(catalog or [])
     added = []
     for item in search["items"]:
         row = dict(item)
         row["scene_id"] = scene["id"]
-        row["media_kind"] = "image"
+        row["media_kind"] = item.get("media_kind", "image")
+        if provider not in ("pixabay", "openverse"):
+            row["source_kind"] = ("authentic_artwork" if scene["need"] == "authentic_artwork"
+                                  else "verified_archive")
         row["rights_review"] = "pending"
         row["visual_review"] = "pending"
         row["scene_relevance"] = "pending"
@@ -266,7 +283,7 @@ def discover_single(brief, catalog, scene_id, provider, query, limit, environ=No
     return report, {"schema": "source-discovery-v34",
                     "scene_id": scene["id"], "provider": provider, "query": query,
                     "results": added, "rights_revised": False, "automatic_selection": False,
-                    "new_api_calls": 1, "downloaded_files": 0}
+                    "new_api_calls": search.get("api_requests", 1), "downloaded_files": 0}
 
 
 
@@ -306,7 +323,8 @@ def main():
     p.add_argument("--catalog", default="")
     p.add_argument("--mode", choices=("plan", "discover"), default="plan")
     p.add_argument("--scene", default="")
-    p.add_argument("--provider", choices=("pixabay", "openverse"), default="openverse")
+    p.add_argument("--provider", choices=("pixabay", "openverse", "met", "artic",
+                                           "cleveland", "loc", "archive", "commons"), default="openverse")
     p.add_argument("--query", default="")
     p.add_argument("--limit", type=int, default=3)
     p.add_argument("--out", default="output/media_v34")
