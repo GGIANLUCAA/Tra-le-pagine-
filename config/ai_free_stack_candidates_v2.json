@@ -1,0 +1,161 @@
+{
+  "schema": "studio-ai-free-stack-candidates-v2",
+  "default_deny": true,
+  "provider_key_storage": "GitHub Secrets or locally in FreeLLMAPI; never stored in repository",
+  "router": "FreeLLMAPI",
+  "automatic_paid_fallback": false,
+  "public_or_commercial_use_requires_provider_verification": true,
+  "note": "Candidates only; none are configured or active. Do not treat official free quotas as guaranteed unlimited service.",
+  "providers": [
+    {
+      "id": "groq",
+      "enabled": false,
+      "origin": "https://console.groq.com/docs/rate-limits",
+      "api_key_env": "GROQ_API_KEY",
+      "example_model": "openai/gpt-oss-120b",
+      "use_case": [
+        "script_first_draft",
+        "technical_review",
+        "speech_transcription_optional"
+      ],
+      "needs": [
+        "create_free_account_and_verify_phone",
+        "check_free_model_limits",
+        "verify_TOS",
+        "add_key_to_router"
+      ],
+      "terms_approved": false,
+      "billing_verified": false
+    },
+    {
+      "id": "openrouter",
+      "enabled": false,
+      "origin": "https://openrouter.ai/collections/free-models",
+      "api_key_env": "OPENROUTER_API_KEY",
+      "example_model": "dynamic model ending :free (select and verify exact ID)",
+      "use_case": [
+        "editorial_drafts",
+        "multi_model_comparison"
+      ],
+      "needs": [
+        "create_free_account",
+        "choose_specific_free_model",
+        "verify_free_rate_limits",
+        "disable_paid_models_and_fallback",
+        "add_key_to_router"
+      ],
+      "terms_approved": false,
+      "billing_verified": false
+    },
+    {
+      "id": "cloudflare-workers-ai",
+      "enabled": false,
+      "origin": "https://developers.cloudflare.com/workers-ai/platform/pricing/",
+      "api_key_env": "CLOUDFLARE_API_TOKEN",
+      "example_model": "eligible Workers AI free-plan model (exact model check required)",
+      "use_case": [
+        "text_analysis",
+        "image_analysis",
+        "embeddings"
+      ],
+      "needs": [
+        "confirm_account_plan_and_billing",
+        "select_eligible_model",
+        "verify_neuron_usage_limits",
+        "create_scoped_api_token",
+        "add_key_to_router"
+      ],
+      "terms_approved": false,
+      "billing_verified": false
+    },
+    {
+      "id": "z-ai",
+      "enabled": false,
+      "origin": "https://docs.z.ai/guides/overview/pricing",
+      "api_key_env": "ZAI_API_KEY",
+      "example_model": "glm-4.7-flash (confirm current pricing and commercial terms)",
+      "use_case": [
+        "script_drafts",
+        "vision_notes"
+      ],
+      "needs": [
+        "verify_region_TOS_and_proxy_permission",
+        "verify_current_zero_price",
+        "create_account",
+        "add_key_to_router"
+      ],
+      "terms_approved": false,
+      "billing_verified": false
+    },
+    {
+      "id": "google-gemini",
+      "enabled": false,
+      "origin": "https://ai.google.dev/gemini-api/docs/rate-limits",
+      "api_key_env": "GEMINI_API_KEY",
+      "example_model": "model available on approved free plan (verify EEA terms)",
+      "use_case": [
+        "reference_consistency_check",
+        "text_summarization"
+      ],
+      "needs": [
+        "review_EEA_Italy_API_terms",
+        "confirm_no_billing",
+        "create_key",
+        "configure_router"
+      ],
+      "terms_approved": false,
+      "billing_verified": false
+    }
+  ],
+  "local_engines": [
+    {
+      "id": "ollama",
+      "enabled": false,
+      "origin": "https://github.com/ollama/ollama",
+      "requires": "persistent local machine and model/license review",
+      "billing_model": "local compute only"
+    },
+    {
+      "id": "llama.cpp",
+      "enabled": false,
+      "origin": "https://github.com/ggml-org/llama.cpp",
+      "requires": "persistent local machine and model/license review",
+      "billing_model": "local compute only"
+    },
+    {
+      "id": "localai",
+      "enabled": false,
+      "origin": "https://github.com/mudler/LocalAI",
+      "requires": "persistent local machine and model/license review",
+      "billing_model": "local compute only"
+    }
+  ],
+  "alternatives_not_installed": [
+    {
+      "id": "litellm",
+      "reason": "duplicate gateway capabilities"
+    },
+    {
+      "id": "portkey",
+      "reason": "duplicate gateway capabilities"
+    },
+    {
+      "id": "zerospend",
+      "reason": "implemented deny-unknown-cost philosophy instead of second router"
+    }
+  ],
+  "external_curation": {
+    "project": "pacocartones/free-llm-api-hub",
+    "repository": "https://github.com/pacocartones/free-llm-api-hub",
+    "enabled_readonly_audit": true
+  },
+  "ecc": {
+    "project": "affaan-m/ECC",
+    "adopted": [
+      "verification_loop",
+      "ai_regression_testing",
+      "deterministic_public_copy_guard"
+    ],
+    "full_installation": false
+  }
+}
