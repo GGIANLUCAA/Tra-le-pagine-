@@ -329,14 +329,14 @@
       "art_rights_preflight": "KHM object page official download PRIVATE USE ONLY; do NOT reuse official KHM download commercially. Independent Commons PDM file has to be assessed for legal provenance/territory",
       "preexisting_cinema_candidate": null,
       "editorial_note": "Specific LARGE Vienna version (not Rotterdam small). KHM documents framed 135x176x6.5 cm, object 114.4x155.5x3.8 cm",
-      "preflight_status": "one_cinema_review_rendered_ci_verified_artifact_downloaded_local_sha_pending",
+      "preflight_status": "two_cinema_real_MP4_and_ZIP_technically_verified_2_critico_slots_pending_visual_rights_TTS_gates",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 1,
+      "slots_delivered_this_selection": 2,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
@@ -409,10 +409,10 @@
         "gold_v25": false,
         "social_published": false,
         "paid_api_calls": 0,
-        "remaining_variants": 3
+        "remaining_variants": 2
       },
       "v137_cinema_candidate": {
-        "status": "last_single_request_push_1280_derivative_render_not_yet_verified",
+        "status": "github_actions_success_artifact_MP4_ZIP_physical_readback_verified_review_not_gold",
         "request": "requests/artvision/bruegel-babel-museum-v137.json",
         "request_commit": "b410dd836b777b4219138330e53e029053e9bc18",
         "workflow": ".github/workflows/artvision-bruegel-babel-museum-v137.yml",
@@ -423,10 +423,10 @@
         "photo_actual_bytes_downloaded": false,
         "source_artwork_reused_from_v136_PD": true,
         "target_duration_s": 62.4,
-        "mp4_download_readback_verified": false,
+        "mp4_download_readback_verified": true,
         "museum_human_artistic_approval": false,
         "publication_authorized": false,
-        "count_as_new_delivered_slot": false,
+        "count_as_new_delivered_slot": true,
         "gold_v25": false,
         "api_spend": 0,
         "no_duplicate_request": true,
@@ -441,7 +441,7 @@
         "corrective_retry_attempt": 2,
         "authoritative_photo_sha1": "399497aee9a849386be4d880d36cb4fc5b47571e",
         "photo_original_provenance_verified": false,
-        "new_run_status": "NOT_RETRIEVED_AS_OF_CURRENT_CHECK",
+        "new_run_status": "SUCCESS_41663098584_ARTIFACT_13242672720",
         "new_paid_costs": 0,
         "last_failed_run_id": 41608231024,
         "last_failed_run_reason": "original full-image HTTP429, invalid full-size thumb 2400 HTTP400, relay HTTP404",
@@ -451,8 +451,30 @@
         "new_source": "official Commons 1280px thumbnail of same Hiroki Ogawa original",
         "underlying_original_2400x1800_metadata_verified": true,
         "original_byte_sha1_match_possible_only_if_full_source": true,
-        "exact_derivative_byte_provenance_pending": true,
+        "exact_derivative_byte_provenance_pending": false,
         "one_shot_final_recovery_attempt": true
+      },
+      "cinema_museum_v137": {
+        "status": "technical_readback_pass_artistic_full_watch_pending",
+        "run_id": 41663098584,
+        "artifact_id": 13242672720,
+        "mp4_sha256": "4a9639be84ecf912ae0a82e8078dcacc1a93ac6bf82433a95d927b98746e5d7f",
+        "zip_sha256": "3737d08f1b099383a4e4196f96609ffed8912f66db68a961df5f0c7fcfc61c53",
+        "frames": 1248,
+        "duration_s": 62.4,
+        "mp4_resolution": "720x1280",
+        "ffmpeg_full_decode": "PASS",
+        "zip_crc": "PASS",
+        "photo_credit": "Hiroki Ogawa CC BY 3.0; Commons 1280x960 derivative; full artistic review still pending",
+        "museum_approved": false,
+        "gold_v25": false,
+        "social_published": false,
+        "artifact_expires_at": "2026-12-03T15:22:30Z",
+        "remaining_variants": [
+          "critico_standard",
+          "critico_museum"
+        ],
+        "backup_cloudflare_r2": "NOT_YET_VERIFIED"
       }
     },
     {
