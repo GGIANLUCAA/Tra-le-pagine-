@@ -35,7 +35,15 @@ class TestV260(unittest.TestCase):
             "COVER.jpg": b"\xff\xd8\xff" + b"photo" * 350,
             "SOURCES_AND_RIGHTS.md": RIGHTS.encode(),
         }
-        self.files.update({name: DESCRIPTION.encode() for name in gate.REQUIRED_POSTS})
+        self.files.update({
+            name: (DESCRIPTION + " " + detail).encode()
+            for name, detail in {
+                "POST_FACEBOOK.txt": "Approfondimento sui gesti artigianali tramandati e sulla lavorazione collettiva della paglia.",
+                "POST_INSTAGRAM.txt": "Inquadrature ravvicinate, gesti minuziosi e texture di un mestiere quasi scomparso.",
+                "POST_TIKTOK.txt": "Un colpo d'occhio su come ogni cappello nasceva da un intreccio paziente e sorprendente.",
+                "POST_YOUTUBE.txt": "Dalla pellicola d'archivio alla sequenza restaurata con la spiegazione storica delle tecniche.",
+            }.items()
+        })
 
     def pack(self):
         with zipfile.ZipFile(self.archive, "w", zipfile.ZIP_DEFLATED) as z:
@@ -47,6 +55,25 @@ class TestV260(unittest.TestCase):
         report = gate.inspect(self.movie)
         self.assertFalse(report["errors"], report)
         self.assertTrue(report["checks"]["identical_final_mp4_inside_zip"])
+
+    def test_identical_social_posts_blocked(self):
+        self.files["POST_INSTAGRAM.txt"] = self.files["POST_FACEBOOK.txt"]
+        self.pack()
+        self.assertIn("POST_DUPLICATED_OR_NEAR_DUPLICATE:POST_INSTAGRAM.txt",
+                      gate.inspect(self.movie)["errors"])
+
+    def test_nearly_identical_social_posts_blocked(self):
+        text = DESCRIPTION + (" Stesso testo ripetuto in modo improprio." * 6)
+        self.files["POST_FACEBOOK.txt"] = (text + " Facebook").encode()
+        self.files["POST_INSTAGRAM.txt"] = (text + " Instagram").encode()
+        self.pack()
+        self.assertIn("POST_DUPLICATED_OR_NEAR_DUPLICATE:POST_INSTAGRAM.txt",
+                      gate.inspect(self.movie)["errors"])
+
+    def test_artvision_v55_source_document_name_supported(self):
+        self.files["FONTI_E_DIRITTI.md"] = self.files.pop("SOURCES_AND_RIGHTS.md")
+        self.pack()
+        self.assertFalse(gate.inspect(self.movie)["errors"])
 
     def test_missing_facebook_post_blocks_even_with_manifest_flag(self):
         self.files.pop("POST_FACEBOOK.txt")
