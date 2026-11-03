@@ -1,0 +1,70 @@
+name: AI free stack V2 - safe catalog and ECC regression checks
+on:
+  pull_request:
+    paths:
+      - src/ai_free_catalog_audit_v2.py
+      - tests/test_ai_free_catalog_audit_v2.py
+      - docs/AI_FREE_STACK_V2_20261104.md
+      - config/ai_free_stack_candidates_v2.json
+      - .github/workflows/ai-free-stack-v2.yml
+  push:
+    paths:
+      - src/ai_free_catalog_audit_v2.py
+      - tests/test_ai_free_catalog_audit_v2.py
+      - docs/AI_FREE_STACK_V2_20261104.md
+      - config/ai_free_stack_candidates_v2.json
+      - .github/workflows/ai-free-stack-v2.yml
+  workflow_dispatch:
+  schedule:
+    - cron: '43 5 * * 1'
+permissions:
+  contents: read
+concurrency:
+  group: ai-free-catalog-readonly-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  offline-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile and execute fail-closed offline regression tests
+        run: |
+          python -m py_compile src/ai_free_catalog_audit_v2.py
+          python -m unittest discover -s tests -p 'test_ai_free_catalog_audit_v2.py' -v
+          python -m unittest discover -s tests -p 'test_freellmapi_editorial_v1.py' -v
+      - name: Verify forbidden actions are still disabled
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          policy=json.loads(Path('config/free_llm_zero_cost_v1.json').read_text())
+          assert policy['default_deny'] is True
+          assert policy['routes'] == []
+          candidates=json.loads(Path('config/ai_free_stack_candidates_v2.json').read_text())
+          assert candidates['automatic_paid_fallback'] is False
+          assert all(not x['enabled'] for x in candidates['providers'])
+          print('PASS: no provider inference, payments, video generation or publishing enabled')
+          PY
+  read-only-directory-audit:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    needs: offline-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read public provider directory ONLY (zero provider API requests)
+        run: |
+          python src/ai_free_catalog_audit_v2.py --refresh --report reports/ai_free_candidates_v2.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ai-free-candidates-advisory
+          path: reports/ai_free_candidates_v2.json
+          retention-days: 7
+          if-no-files-found: error
