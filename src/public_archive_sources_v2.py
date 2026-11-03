@@ -16,7 +16,7 @@ from urllib.error import HTTPError, URLError
 import public_archive_sources_v1 as old
 
 ART = old.ART | {"vam", "smk", "wellcome"}
-ARCHIVE = old.ARCHIVE | {"nasa", "gallica"}
+ARCHIVE = old.ARCHIVE | {"nasa", "gallica", "wellcome"}
 PROVIDERS = ART | ARCHIVE
 EXTRA_HOSTS = {"api.vam.ac.uk", "api.smk.dk",
                "api.wellcomecollection.org", "images-api.nasa.gov",
