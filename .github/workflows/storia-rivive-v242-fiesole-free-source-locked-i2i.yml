@@ -1,0 +1,110 @@
+name: "La Storia Rivive V242 · Fiesole one real free source-locked I2I, no Vidu"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v242-fiesole-free-source-locked-i2i.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v242-fiesole-one-shot-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  one_real_free_photo_candidate:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - name: Allow this unique V242 free trial only; skip all future PR pushes
+        id: gate
+        shell: bash
+        env:
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$PR_HEAD"
+          subject="$(git log -1 --format=%s "$PR_HEAD")"
+          if [[ "$subject" == 'storia V242: one free original-frame Fiesole I2I [V242-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V242_ALREADY_REQUESTED_OR_DIFFERENT_COMMIT'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install no-cost image client and execute offline tests
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m pip install -q 'pillow>=10,<13' 'gradio_client>=1,<2'
+          python -m py_compile src/storia_rivive_v242_fiesole_real_i2i.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v242_fiesole_real_i2i.py' -v
+      - name: Retrieve actual Fiesole original film frames from completed V217 run
+        if: steps.gate.outputs.allowed == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: v217-four-pilot-source-fiesole_straw_hats_1912_v220
+          run-id: 41571908305
+          github-token: ${{ github.token }}
+          path: output/v242/v217_original
+      - name: Verify exact original film frame SHA and deterministic native portrait crop
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ORIGINAL='output/v242/v217_original/source/fiesole_straw_hats_1912_v220/original_frames/frame_05.png'
+          echo "6ff2b0dde222cd85f97873271488ee0aabd79a2cb340f8f8e37ba016f8190d20  $ORIGINAL" | sha256sum --check
+          python src/storia_rivive_v242_fiesole_real_i2i.py --source "$ORIGINAL" --out output/v242/photo --offline
+          echo '6f1f06b7cb9c5f91757e972fd213818d132e965382a9955cf1a743bd80c01435  output/v242/photo/FIESOLE_1912_FRAME_05_EXACT_CROP.png' | sha256sum --check
+      - name: ONE anonymous free image-to-image model call; no token, no retry
+        id: generation
+        if: steps.gate.outputs.allowed == 'true'
+        continue-on-error: true
+        shell: bash
+        env:
+          HF_TOKEN: ''
+          HUGGING_FACE_HUB_TOKEN: ''
+        run: |
+          set -euo pipefail
+          timeout 700s python src/storia_rivive_v242_fiesole_real_i2i.py \
+            --source output/v242/v217_original/source/fiesole_straw_hats_1912_v220/original_frames/frame_05.png \
+            --out output/v242/photo
+      - name: Fail closed if no verifiable image; do not claim finished episode
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        env:
+          GENERATION_OUTCOME: ${{ steps.generation.outcome }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          folder=Path('output/v242/photo')
+          report_path=folder/'V242_REAL_MEDIA_STATUS.json'
+          report=json.loads(report_path.read_text()) if report_path.is_file() else {}
+          candidate=folder/'FIESOLE_1912_ONE_REAL_I2I_CANDIDATE.png'
+          success=(os.environ.get('GENERATION_OUTCOME')=='success'
+                   and candidate.is_file()
+                   and report.get('candidate_sha256')==hashlib.sha256(candidate.read_bytes()).hexdigest()
+                   and report.get('real_i2i_candidates')==1)
+          if not success:
+              report['status']='FREE_PROVIDER_FAILED_NO_NEW_PHOTO'
+              report['real_i2i_candidates']=0
+          report.update(paid_credits_spent=0,vidu_generated=False,
+                        human_artistic_approved=False,italian_rights_verified=False,
+                        final_mp4=False,final_zip=False,new_final_episodes_delivered=0,
+                        publish_allowed=False)
+          folder.mkdir(parents=True,exist_ok=True)
+          report_path.write_text(json.dumps(report,indent=2)+'\n')
+          print('V242',report['status'],'NEW_FINAL_0_OF_4')
+          if not success: raise SystemExit('V242_NO_VERIFIED_GENERATIVE_PHOTO')
+          PY
+      - name: Preserve actual source, candidate and contact-sheet privately for artistic QA
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v242-fiesole-one-real-free-i2i-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v242/photo/
