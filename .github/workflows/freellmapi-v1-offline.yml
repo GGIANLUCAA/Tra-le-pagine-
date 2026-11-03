@@ -4,6 +4,7 @@ on:
     paths:
       - src/freellmapi_editorial_v1.py
       - src/free_llm_zero_cost_v1.py
+      - src/ecc_public_editorial_guard_v1.py
       - config/free_llm_zero_cost_v1.json
       - docs/AI_ROUTER_ECC_ZERO_COST_V1_20261103.md
       - tests/test_freellmapi_editorial_v1.py
@@ -28,7 +29,7 @@ jobs:
           python-version: '3.11'
       - name: Syntax and offline regression tests (no API keys)
         run: |
-          python -m py_compile src/freellmapi_editorial_v1.py src/free_llm_zero_cost_v1.py
+          python -m py_compile src/freellmapi_editorial_v1.py src/free_llm_zero_cost_v1.py src/ecc_public_editorial_guard_v1.py
           python - <<'PY'
           import json
           from pathlib import Path
