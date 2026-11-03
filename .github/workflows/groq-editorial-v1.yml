@@ -28,7 +28,8 @@ jobs:
           python -m py_compile src/groq_editorial_v1.py
           python -m unittest discover -s tests -p 'test_groq_editorial_v1.py' -v
   check-secret-only:
-    if: github.event_name == 'workflow_dispatch'
+    # Temporary one-off branch trigger to check saved secret without inference.
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/integrations/groq-secret-verification-v1-20261104')
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
