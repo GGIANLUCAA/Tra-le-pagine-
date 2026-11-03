@@ -88,7 +88,7 @@ jobs:
           from pathlib import Path
           root=Path('output/v240/photo_ab')
           report_path=root/'V240_REAL_MEDIA_STATUS.json'
-          report=json.loads(report_path.read_text())
+          report=json.loads(report_path.read_text()) if report_path.is_file() else {'status':'V240_PRE_PROVIDER_BLOCKED_NO_SOURCE','new_real_i2i_candidates':0}
           photo=root/'V240_REAL_QWEN_FAST_I2I_CANDIDATE.png'
           ok=(os.environ.get('ACTUAL_OUTCOME')=='success' and photo.is_file()
               and report.get('generated_sha256')==hashlib.sha256(photo.read_bytes()).hexdigest()
