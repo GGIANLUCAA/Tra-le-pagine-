@@ -84,8 +84,8 @@ def run(film: Path, scout: Path, frames: Path, folder: Path) -> dict:
     period = verified_input(film, scout, frames)
     folder.mkdir(parents=True, exist_ok=True)
     rows = []
-    report_path = folder / "V248_FIESOLE_SHORT_WINDOWS.json"
-    report = {"version": "V248_FIESOLE_CLEAN_MOTION_REVIEW",
+    report_path = folder / "V249_FIESOLE_SHORT_WINDOWS.json"
+    report = {"version": "V249_FIESOLE_SHORT_MOTION_REVIEW",
               "episode": EPISODE, "source_sha256": FILM_SHA,
               "status": "EVALUATING_REAL_SOURCE", "candidate_count": len(CANDIDATES),
               "selected_five": [], "candidate_evidence": rows,
@@ -119,7 +119,7 @@ def run(film: Path, scout: Path, frames: Path, folder: Path) -> dict:
         chosen = choose(rows)
         selection = {"version": "V210_SHOT_AWARE_PRESELECTION",
                      "status": "FIVE_BW_FRAME_CANDIDATES_FOR_REAL_ARTISTIC_SOURCE_REVIEW",
-                     "reason": "V248_SHA_LOCKED_EDITORIAL_RESELECT_MOTION_CHECKED_NOT_APPROVED",
+                     "reason": "V249_SHA_LOCKED_SHORT_MOTION_CHECKED_NOT_APPROVED",
                      "preselected": [{"filename": r["frame"]} for r in chosen],
                      "candidate_segment_times_s": [r["timestamp_s"] for r in chosen],
                      "five_distinct_shots_approved": False, "provider_calls_permitted": False,
@@ -129,8 +129,8 @@ def run(film: Path, scout: Path, frames: Path, folder: Path) -> dict:
              "selected_timecode_s": r["timestamp_s"],
              "endpoint_visually_aligned": True, "endpoint_mae": r["endpoint_mae"]}
             for r in chosen]}
-        selection_path = folder / "SHOT_AWARE_SELECTION_V248_NOT_APPROVED.json"
-        alignment_path = folder / "SOURCE_ENDPOINT_ALIGNMENT_V248.json"
+        selection_path = folder / "SHOT_AWARE_SELECTION_V249_NOT_APPROVED.json"
+        alignment_path = folder / "SOURCE_ENDPOINT_ALIGNMENT_V249.json"
         selection_path.write_text(json.dumps(selection, indent=2) + "\n", encoding="utf-8")
         alignment_path.write_text(json.dumps(alignment, indent=2) + "\n", encoding="utf-8")
         # Five real clean motion entrances are candidates for future I2I+Vidu,
@@ -153,7 +153,7 @@ def main() -> None:
     for arg in ("film", "scout", "frames", "out"):
         parser.add_argument("--" + arg, required=True, type=Path)
     args = parser.parse_args()
-    print("V248", run(args.film, args.scout, args.frames, args.out)["status"])
+    print("V249", run(args.film, args.scout, args.frames, args.out)["status"])
 
 if __name__ == "__main__":
     main()
