@@ -126,7 +126,7 @@ class CatalogTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             p = Path(root) / "hub.json"
             q = Path(root) / "report.json"
-            p.write_text(json.dumps(snapshot()), encoding="utf-8")
+            p.write_text(json.dumps(snapshot(generated=dt.datetime.now(dt.timezone.utc).date().isoformat())), encoding="utf-8")
             old = sys.argv
             try:
                 sys.argv = ["catalog", "--snapshot", str(p), "--report", str(q)]
