@@ -21,9 +21,14 @@ jobs:
       - name: No provider calls when token or pending receipts absent
         id: pending
         run: |
-          if [ -z "${VIDU_TOKEN:-}" ] || [ ! -d queue/vidu_consumer_attempts ]; then
+          if [ -z "${VIDU_TOKEN:-}" ]; then
             echo "found=false" >> "$GITHUB_OUTPUT"
-            echo "No consumer token or pending task receipts; zero spending"
+            echo "::warning::Vidu consumer token missing; no account access or clips collected"
+            echo "Vidu consumer token missing. No generation or collection was attempted. This does not test the separate VIDUOK developer API." >> "$GITHUB_STEP_SUMMARY"
+          elif [ ! -d queue/vidu_consumer_attempts ]; then
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No pending consumer task receipts; no clips to collect"
+            echo "Vidu consumer collection idle: no pending task receipts. No provider calls or spending." >> "$GITHUB_STEP_SUMMARY"
           else
             echo "found=true" >> "$GITHUB_OUTPUT"
           fi
