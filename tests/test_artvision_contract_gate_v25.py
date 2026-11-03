@@ -2,6 +2,9 @@
 """Off-line tests: no online assets, no false aesthetic / rights certification."""
 import importlib.util
 import json
+import io
+from contextlib import redirect_stdout
+from unittest.mock import patch
 from pathlib import Path
 import sys
 import tempfile
@@ -191,6 +194,29 @@ class ContractTests(unittest.TestCase):
             again=gate.pack_delivery(manifest,data,data_info)
             self.assertEqual(archive,again)
             self.assertEqual(before,archive.stat().st_mtime_ns)
+
+    def test_v25_final_cli_blocks_missing_facebook_file_even_with_claimed_review(self):
+        import zipfile
+        data = sample()
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            manifest = root / "ARTVISION_CONTRACT_V25.json"
+            manifest.write_text(json.dumps(data), encoding="utf-8")
+            # The V25 manifest alone must never imply that social copy exists.
+            movie = root / "VIDEO_MASTER.mp4"
+            movie.write_bytes(b"fictional-movie-for-byte-gate-unit-test" * 90)
+            bundle = root / "ARTVISION_FAKE_UNAPPROVED.zip"
+            with zipfile.ZipFile(bundle, "w") as z:
+                z.writestr("VIDEO_MASTER.mp4", movie.read_bytes())
+            report_output = io.StringIO()
+            with patch.object(gate, "check_final", return_value=([], {"video_sha256": gate.sha256(movie)})), (
+                 patch.object(gate, "pack_delivery", return_value=bundle)):
+                with redirect_stdout(report_output):
+                    code = gate.main(["--manifest", str(manifest), "--stage", "final", "--bundle"])
+            report = json.loads(report_output.getvalue())
+            self.assertEqual(code, 1)
+            self.assertEqual(report["status"], "BLOCKED")
+            self.assertIn("POST_FACEBOOK.txt", " ".join(report["errors"]))
 
     def test_final_rejects_missing_media_and_posts(self):
         obj=sample()
