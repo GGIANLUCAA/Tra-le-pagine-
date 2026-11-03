@@ -16,9 +16,13 @@ class V248FiesoleTests(unittest.TestCase):
                    row("frame_06.png", 53.0, True),
                    row("frame_07.png", 62.64), row("frame_10.png", 91.55),
                    row("frame_11.png", 101.18)]
-        # Four clean windows are NOT enough. No imaginary fifth photo.
+        # One flagged among six leaves five clean: this must pass.
+        self.assertEqual(len(choose(windows)), 5)
+        # Two flagged leave only four: fail closed, never invent a fifth.
+        windows[0]["title_flags"] = [True]
         with self.assertRaisesRegex(ValueError,"FEWER_THAN_FIVE"):
             choose(windows)
+        windows[0]["title_flags"] = [False] * 4
         windows[2]["title_flags"] = [False] * 4
         chosen = choose(windows)
         self.assertEqual(len(chosen), 5)
