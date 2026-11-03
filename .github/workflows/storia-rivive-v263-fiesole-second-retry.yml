@@ -38,7 +38,7 @@ jobs:
           set -euo pipefail
           python -m pip install -q --index-url https://download.pytorch.org/whl/cpu 'torch==2.5.1+cpu'
           python -m pip install -q 'diffusers==0.32.2' 'transformers==4.44.2' 'accelerate==1.2.1' 'huggingface_hub>=0.23,<1' 'safetensors>=0.4' 'Pillow>=10,<13' 'numpy>=1.26,<2'
-      - name: Test exact source gate and source-locked engine
+      - name: Test exact source gate, forged SHA regressions and source-locked engine
         if: steps.gate.outputs.allowed == 'true'
         run: |
           set -euo pipefail
@@ -58,6 +58,7 @@ jobs:
           set -euo pipefail
           mkdir -p output/v263/original
           unzip -oq output/v263/v251/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip -d output/v263/original
+          echo 'f8e5cdfcf9047fb69e0ae95587752202267c14926885729346ccd281d1085088  output/v263/original/original_shot_02_frame_04.png' | sha256sum -c -
           python src/storia_rivive_v263_fiesole_second_retry.py --manifest output/v263/original/V251_SOURCE_MANIFEST_NOT_FINAL.json --original-dir output/v263/original --out output/v263/photo --offline
       - name: One local CPU I2I for rejected shot 2 (no Vidu)
         id: generation
@@ -89,6 +90,7 @@ jobs:
           ok=(os.getenv('OUTCOME')=='success'
               and data.get('version')=='V263_SECOND_SHOT_RETRY_ARTISTIC_QA_PENDING_NOT_FINAL'
               and data.get('source_shot')==2
+              and data.get('original_source_sha256')=='f8e5cdfcf9047fb69e0ae95587752202267c14926885729346ccd281d1085088'
               and data.get('actual_generated_photos')==1
               and png.is_file() and not png.is_symlink()
               and png.stat().st_size>10000
