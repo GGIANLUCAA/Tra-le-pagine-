@@ -25,7 +25,11 @@ def verify_source(path:Path)->None:
 
 def verify_result(source:Path,result:Path)->dict:
     verify_source(source)
-    if not result.is_file() or result.is_symlink() or result.stat().st_size<20000:
+    if not result.is_file() or result.is_symlink():
+        raise ValueError("V242_NO_REAL_GENERATIVE_OUTPUT")
+    if digest(source)==digest(result):
+        raise ValueError("V242_PROVIDER_RETURNED_ORIGINAL_NOT_I2I")
+    if result.stat().st_size<20000:
         raise ValueError("V242_NO_REAL_GENERATIVE_OUTPUT")
     with Image.open(result) as im:
         im.load()
