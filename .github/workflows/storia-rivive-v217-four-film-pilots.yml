@@ -12,6 +12,8 @@ on:
       - "tests/test_storia_rivive_v210_shot_aware_selection.py"
       - "tests/test_storia_rivive_v217_four_pilot_source_review.py"
       - "tests/test_storia_rivive_v218_global_temporal_selection.py"
+      - "src/storia_rivive_v236_reject_bad_source.py"
+      - "tests/test_storia_rivive_v236_reject_bad_source.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -38,6 +40,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v210_shot_aware_selection.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v217_four_pilot_source_review.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v218_global_temporal_selection.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v236_reject_bad_source.py" -v
 
   source_scout:
     needs: offline_v217_tests
