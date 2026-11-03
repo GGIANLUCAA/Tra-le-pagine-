@@ -4,6 +4,9 @@ on:
     paths:
       - "src/storia_rivive_v260_delivery_bundle_gate.py"
       - "config/editorial_rules.json"
+      - "src/video_library_v262_preimport_gate.py"
+      - "tests/test_video_library_v262_preimport_gate.py"
+      - ".github/workflows/video-library-r2-import.yml"
       - "src/storia_rivive_final_gate_v91.py"
       - "src/artvision_delivery_v55.py"
       - "src/artvision_contract_gate_v25.py"
@@ -16,6 +19,9 @@ on:
     paths:
       - "src/storia_rivive_v260_delivery_bundle_gate.py"
       - "config/editorial_rules.json"
+      - "src/video_library_v262_preimport_gate.py"
+      - "tests/test_video_library_v262_preimport_gate.py"
+      - ".github/workflows/video-library-r2-import.yml"
       - "src/storia_rivive_final_gate_v91.py"
       - "src/artvision_delivery_v55.py"
       - "src/artvision_contract_gate_v25.py"
@@ -47,6 +53,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v260_delivery_bundle_gate.py" -v
           python -m unittest discover -s tests -p "test_artvision_delivery_v55.py" -v
           python -m unittest discover -s tests -p "test_artvision_contract_gate_v25.py" -v
+          python -m unittest discover -s tests -p "test_video_library_v262_preimport_gate.py" -v
       - name: Ensure final gate actually invokes V260, rather than relying on booleans
         run: |
           python - <<'PY'
@@ -66,5 +73,10 @@ jobs:
               "src/storia_rivive_final_gate_v91.py"
           }
           assert contract["reject_missing_or_nearly_identical_four_platform_posts"] is True
+          importer=Path(".github/workflows/video-library-r2-import.yml").read_text()
+          assert "from video_library_v262_preimport_gate import inspect" in importer
+          assert "v262_byte_preimport(zpath)" in importer
+          assert importer.index("v262_byte_preimport(zpath)") < importer.index("for n in files:")
+          print("V262_REQUIRED_BEFORE_EVERY_R2_MEDIA_UPLOAD")
           print("V261_REQUIRED_BY_ALL_THREE_REAL_V91_V55_V25_DELIVERY_GATES")
           PY
