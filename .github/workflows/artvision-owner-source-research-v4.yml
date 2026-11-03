@@ -3,6 +3,12 @@ on:
   schedule:
     - cron: "41 */3 * * *"
   workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/artvision-owner-source-research-v4.yml"
+      - "src/production_source_research_v4.py"
+      - "tests/test_production_source_research_v4.py"
+      - "config/source_cycle_companion_v4.json"
   push:
     branches: [main]
     paths:
@@ -32,6 +38,7 @@ jobs:
           python -m py_compile src/production_source_research_v4.py src/public_archive_sources_v1.py src/public_archive_sources_v2.py src/rare_research_sources_v3.py
           python -m unittest discover -s tests -p 'test_production_source_research_v4.py' -v
       - name: Search for one owner-selected work this UTC 3-hour cycle
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           set -euo pipefail
@@ -40,6 +47,7 @@ jobs:
             --project artvision --now "$now" \
             --out output/artvision_source_v4/RESEARCH_REPORT.json
       - name: Verify discovery has not been turned into an approved asset or render
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           set -euo pipefail
@@ -55,7 +63,7 @@ jobs:
           print("V4: candidate source research only",r["item_id"],r["status"])
           PY
       - name: Archive owner work-id, source URL and pending-review report
-        if: always()
+        if: always() && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: ARTVISION_OWNER_SOURCE_RESEARCH_V4_${{ github.run_id }}
