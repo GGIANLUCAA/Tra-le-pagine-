@@ -56,6 +56,21 @@ def build(film:Path,plan:list[dict],out:Path,seconds:float=4.8)->dict:
                 "-c:v","libx264","-preset","veryfast","-crf","24",str(segment)],
                 check=True,timeout=120)
             if segment.stat().st_size<1000:raise ValueError("EMPTY_SOURCE_SHOT")
+            # V245: 4.8s at 24fps may yield 115 or 116 decoded frames.
+            # Normalize without duplicating/holding any source frames.
+            count=json.loads(subprocess.run(["ffprobe","-v","error","-select_streams","v:0",
+                "-count_frames","-show_entries","stream=nb_read_frames","-of","json",
+                str(segment)],capture_output=True,text=True,check=True,timeout=30).stdout)
+            n=int(count["streams"][0].get("nb_read_frames") or 0)
+            if n < 115 or n > 116:
+                raise ValueError("V245_UNEXPECTED_ARCHIVAL_SHOT_FRAME_COUNT")
+            if n == 116:
+                fixed=folder/f"shot_fixed_{i:02d}.mp4"
+                subprocess.run(["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y",
+                    "-i",str(segment),"-an","-frames:v","115","-c:v","libx264",
+                    "-preset","veryfast","-crf","24",str(fixed)],
+                    check=True,timeout=120)
+                segment=fixed
             segments.append(segment)
         concat=folder/"concat.txt"
         concat.write_text("".join(f"file '{s.name}'\n" for s in segments))
