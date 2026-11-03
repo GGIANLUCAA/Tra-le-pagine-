@@ -4,30 +4,40 @@ on:
     paths:
       - "src/storia_rivive_v260_delivery_bundle_gate.py"
       - "src/storia_rivive_final_gate_v91.py"
+      - "src/artvision_delivery_v55.py"
       - "tests/test_storia_rivive_v260_delivery_bundle_gate.py"
+      - "tests/test_artvision_delivery_v55.py"
       - ".github/workflows/storia-rivive-v260-delivery-contract-tests.yml"
   push:
     branches: [main]
     paths:
       - "src/storia_rivive_v260_delivery_bundle_gate.py"
       - "src/storia_rivive_final_gate_v91.py"
+      - "src/artvision_delivery_v55.py"
       - "tests/test_storia_rivive_v260_delivery_bundle_gate.py"
+      - "tests/test_artvision_delivery_v55.py"
       - ".github/workflows/storia-rivive-v260-delivery-contract-tests.yml"
 permissions:
   contents: read
 jobs:
   verify_real_deliverables:
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Check local no-charge ffmpeg and install JPEG validation dependency
+        run: |
+          command -v ffmpeg
+          command -v ffprobe
+          python -m pip install -q pillow
       - name: Byte-level regression, no credentials, credits or media generation
         run: |
           python -m py_compile src/storia_rivive_v260_delivery_bundle_gate.py src/storia_rivive_final_gate_v91.py
           python -m unittest discover -s tests -p "test_storia_rivive_v260_delivery_bundle_gate.py" -v
+          python -m unittest discover -s tests -p "test_artvision_delivery_v55.py" -v
       - name: Ensure final gate actually invokes V260, rather than relying on booleans
         run: |
           python - <<'PY'
@@ -35,5 +45,7 @@ jobs:
           source=Path("src/storia_rivive_final_gate_v91.py").read_text()
           assert 'storia_rivive_v260_delivery_bundle_gate.py' in source
           assert 'bundle_gate.inspect(p' in source
-          print("V260_REQUIRED_BY_REAL_V91_FINAL_GATE")
+          artvision=Path("src/artvision_delivery_v55.py").read_text()
+          assert 'common_gate.inspect(video, zip_path)' in artvision
+          print("V261_REQUIRED_BY_BOTH_REAL_V91_AND_V55_DELIVERY_GATES")
           PY
