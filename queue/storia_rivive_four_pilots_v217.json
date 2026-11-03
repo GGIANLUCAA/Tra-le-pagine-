@@ -45,14 +45,14 @@
         "vidu_clip_approved": false,
         "italian_rights_approved": false,
         "i2i_distinct_shot_status_v261": {
-          "shot_1": "V262_REAL_DIFFUSION_PNG_SHA_VERIFIED_ARTISTIC_QA_PENDING",
+          "shot_1": "V262_TRUE_I2I_REJECTED_BY_ACTUAL_VISUAL_REVIEW_ALMOST_MONOCHROME_NOT_V98_QUALITY",
           "shot_2": "V254_CANDIDATE_ARTISTICALLY_REJECTED_MACHINE_BECAME_PERSON",
           "shot_3": "V258_CANDIDATE_ARTISTIC_REVIEW_PENDING",
           "shot_4": "V255_AND_V259_SAME_ORIGINAL_SHA_NOT_TWO_DISTINCT_SHOTS",
           "shot_5": "VIDU_ANCHOR_NOT_GENERATED"
         },
         "duplicate_original_sha256": "1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0",
-        "production_blocked_reason": "V262 shot 1 generated actual source-locked diffusion PNG, awaiting visual comparison and approval; shot 2 rejected; shot 3 review pending; shot 4 must be distinct; Vidu and Italy rights pending",
+        "production_blocked_reason": "Shot 1 V262 verified genuine 448x800 diffusion but visibly near monochrome, rejected for V98 quality; shot 2 V263 bounded CPU retry pending; shot 3 review pending; shot 4 generated from source once but artistic review pending; shot 5 Vidu authorization and Italy rights missing",
         "v262_first_source_real_i2i": {
           "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41727145859",
           "artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41727145859/artifacts/13273823949",
@@ -67,7 +67,19 @@
           "rights_italy_verified": false,
           "counts_toward_approved_i2i": 0,
           "credits_spent": 0,
-          "final_video": false
+          "final_video": false,
+          "assistant_visual_qa": "REJECTED_ALMOST_MONOCHROME_INSUFFICIENT_MODERN_PHOTOGRAPHIC_COLOR",
+          "assistant_visual_qa_date": "2026-11-04",
+          "assistant_visual_qa_evidence": {
+            "actual_artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41727145859/artifacts/13273823949",
+            "source_mean_hsv_saturation_0_255": 53.12,
+            "generated_mean_hsv_saturation_0_255": 22.17,
+            "candidate_pixel_ratio_rgb_channel_spread_ge_30": 0.001,
+            "source_pixel_ratio_rgb_channel_spread_ge_30": 0.17,
+            "source_geometry_preserved_approximately": true,
+            "human_user_artistic_approval": false,
+            "not_counted_as_approved_i2i": true
+          }
         }
       }
     },
