@@ -43,7 +43,16 @@
         "artistic_distinct_shots_approved": false,
         "real_i2i_photos_approved": 0,
         "vidu_clip_approved": false,
-        "italian_rights_approved": false
+        "italian_rights_approved": false,
+        "i2i_distinct_shot_status_v261": {
+          "shot_1": "V261_GENERATION_REQUESTED_RESULT_NOT_VERIFIED",
+          "shot_2": "V254_CANDIDATE_ARTISTICALLY_REJECTED_MACHINE_BECAME_PERSON",
+          "shot_3": "V258_CANDIDATE_ARTISTIC_REVIEW_PENDING",
+          "shot_4": "V255_AND_V259_SAME_ORIGINAL_SHA_NOT_TWO_DISTINCT_SHOTS",
+          "shot_5": "VIDU_ANCHOR_NOT_GENERATED"
+        },
+        "duplicate_original_sha256": "1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0",
+        "production_blocked_reason": "No four distinct artistically accepted I2I images; never count V255 and V259 as separate scenes"
       }
     },
     {
