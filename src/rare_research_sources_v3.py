@@ -230,6 +230,29 @@ def search(provider,query,limit=3,fetcher=None):
             "auto_approved":False,"automatic_publish":False,"paid_calls":False,
             "human_review_required":True}
 
+def render_html(report):
+    """Offline mobile view: HTML escaping, no external JavaScript or network."""
+    pieces=[]
+    for item in report["items"]:
+        name=html.escape(item["title"] or item["id"],quote=True)
+        page=html.escape(item["source_url"],quote=True)
+        who=html.escape(item["author"],quote=True)
+        rights=html.escape(item["license_claim"],quote=True)
+        pieces.append('<article><h2>'+name+'</h2><p>'+who+'</p><p>'+rights+
+                      '</p><p><a href="'+page+'">Consulta la fonte originale</a></p>'+
+                      '<small>Da verificare: diritti, autenticita e qualita</small></article>')
+    return ('<!doctype html><html lang="it"><head><meta charset="utf-8">'+
+            '<meta name="viewport" content="width=device-width,initial-scale=1">'+
+            '<title>Ricerca fonti storiche V3</title><style>'+
+            'body{font:16px system-ui;margin:auto;padding:18px;max-width:780px;'+
+            'line-height:1.5;background:#172232;color:#eee}article{padding:18px;'+
+            'margin:14px 0;border:1px solid #65718b;border-radius:14px}'+
+            'a{color:#bedaf9}small{color:#d9c9a7}</style></head><body><h1>Fonti da verificare</h1>'+
+            '<p>Ricerca: '+html.escape(report["query"],quote=True)+
+            ' · '+html.escape(report["provider"],quote=True)+'</p>'+
+            ''.join(pieces)+'<p>Nessun media approvato o scaricato.</p></body></html>')
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--provider",choices=sorted(PROVIDERS),required=True)
@@ -241,6 +264,7 @@ def main():
     dst=Path(args.out)
     dst.parent.mkdir(parents=True,exist_ok=True)
     dst.write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    dst.with_suffix(".html").write_text(render_html(result),encoding="utf-8")
     print(json.dumps({"provider":args.provider,"results":len(result["items"]),
                       "api_requests":result["api_requests"],"approved":False}))
 
