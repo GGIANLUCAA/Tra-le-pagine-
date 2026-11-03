@@ -67,7 +67,12 @@ jobs:
           assert q["museum_approved"] is False and q["gold_v25"] is False
           assert q["social_published"] is False and q["zero_paid_api_calls"] is True
           assert "CC BY 3.0" in q["authentic_frame_photo"]["credit"]
-          assert q["authentic_frame_photo"]["dimensions"]==[2400,1800]
+          assert q["authentic_frame_photo"]["original_dimensions"]==[2400,1800]
+          assert q["authentic_frame_photo"]["dimensions"] in ([2400,1800],[1280,960],[960,720])
+          assert q["authentic_frame_photo"]["source_page"].startswith("https://commons.wikimedia.org/wiki/File:")
+          if q["authentic_frame_photo"]["dimensions"] != [2400,1800]:
+           assert q["authentic_frame_photo"]["image_provenance_review_required"] is True
+           assert q["human_artistic_review"]=="PENDING" and q["museum_approved"] is False
           z=d/"BRUEGEL_BABEL_V137_CINEMA_MUSEUM_REVIEW_PACKAGE.zip"
           with zipfile.ZipFile(z) as archive:
            assert archive.testzip() is None
