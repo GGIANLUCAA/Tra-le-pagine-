@@ -1,0 +1,120 @@
+name: "La Storia Rivive V254 · one real local CPU diffusion I2I Fiesole (zero paid)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v254-fiesole-cpu-real-diffusion-i2i.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v254-one-local-cpu-photo-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  genuine_free_local_diffusion:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ONE unbilled CPU inference only for the approved V254 one-shot commit
+        id: gate
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$HEAD_SHA"
+          SUBJECT="$(git log -1 --format=%s "$HEAD_SHA")"
+          if [[ "$SUBJECT" == 'storia V254: one real Fiesole CPU diffusion I2I [V254-ONCE]' ]]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+            echo "V254_NO_REPLAY_OR_DUPLICATE_COMPUTE"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install CPU-only open weights diffusion (no provider API, no paid credits)
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q --index-url https://download.pytorch.org/whl/cpu 'torch==2.5.1+cpu'
+          python -m pip install -q 'diffusers==0.32.2' 'transformers==4.44.2' 'accelerate==1.2.1' 'huggingface_hub>=0.23,<1' 'safetensors>=0.4' 'Pillow>=10,<13' 'numpy>=1.26,<2'
+      - name: Offline V254 tests: source SHA lock, authentic crop and no false final
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile src/storia_rivive_v254_fiesole_local_cpu_diffusion_i2i.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v254_fiesole_local_cpu_diffusion_i2i.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v251-fiesole-real-I2I-photo-inputs-NOT-FINAL
+          run-id: 41635322340
+          github-token: ${{ github.token }}
+          path: output/v254/V251_ORIGINAL
+      - name: Unpack V251 original frame and check SHA from actual archival film
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/v254/ORIGINAL
+          unzip -oq output/v254/V251_ORIGINAL/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip -d output/v254/ORIGINAL
+          SOURCE='output/v254/ORIGINAL/original_shot_04_frame_07.png'
+          echo "1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0  $SOURCE" | sha256sum -c -
+          python src/storia_rivive_v254_fiesole_local_cpu_diffusion_i2i.py --source "$SOURCE" --out output/v254/I2I --offline
+      - name: One genuine MIT instruct-pix2pix CPU image-to-image rendering, no API credits
+        if: steps.gate.outputs.allowed == 'true'
+        id: diffusion
+        continue-on-error: true
+        shell: bash
+        env:
+          HF_TOKEN: ''
+          HUGGING_FACE_HUB_TOKEN: ''
+          HF_HUB_DISABLE_TELEMETRY: '1'
+          HF_HUB_DISABLE_XET: '1'
+          TOKENIZERS_PARALLELISM: 'false'
+        run: |
+          set -euo pipefail
+          timeout 2100s python -u src/storia_rivive_v254_fiesole_local_cpu_diffusion_i2i.py \
+            --source output/v254/ORIGINAL/original_shot_04_frame_07.png \
+            --out output/v254/I2I
+      - name: Verify actual output file, byte SHA and no claims of completed episode
+        if: always() && steps.gate.outputs.allowed == 'true'
+        env:
+          MODEL_STEP_OUTCOME: ${{ steps.diffusion.outcome }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os,hashlib
+          from pathlib import Path
+          root=Path('output/v254/I2I');qa=root/'V254_SOURCE_LOCKED_I2I_QA.json'
+          status=json.loads(qa.read_text()) if qa.is_file() else {'status':'NO_INPUT'}
+          candidate=root/'V254_ONE_TRUE_DIFFUSION_I2I_NOT_APPROVED.png'
+          ok=(os.environ.get('MODEL_STEP_OUTCOME')=='success'
+              and candidate.is_file()
+              and status.get('generated_sha256')==hashlib.sha256(candidate.read_bytes()).hexdigest()
+              and status.get('actual_generated_photos')==1)
+          if not ok:
+              status.update(status='V254_CPU_MODEL_UNAVAILABLE_NO_NEW_GENERATIVE_IMAGE',actual_generated_photos=0)
+          status.update(paid_credits_spent=0,new_final_episodes_delivered=0,
+                        artistic_approval=False,publish_allowed=False)
+          root.mkdir(parents=True,exist_ok=True)
+          qa.write_text(json.dumps(status,indent=2)+'\n')
+          print('V254_REAL_SOURCE',status.get('source_crop_sha256'),
+                'I2I_GENERATED',ok,'FINAL_EPISODES_0_OF_4')
+          if not ok:raise SystemExit('V254_NO_VERIFIED_REAL_DIFFUSION_PHOTO')
+          PY
+      - name: Save real generated I2I PNG and visual QA or exact failure report
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v254-one-actual-source-locked-cpu-diffusion-photo-NOT-FINAL
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            output/v254/I2I/V254_GENUINE_1912_SOURCE_CROP.png
+            output/v254/I2I/V254_ONE_TRUE_DIFFUSION_I2I_NOT_APPROVED.png
+            output/v254/I2I/V254_BEFORE_AFTER_ACTUAL_I2I.jpg
+            output/v254/I2I/V254_SOURCE_LOCKED_I2I_QA.json
