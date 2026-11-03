@@ -38,7 +38,7 @@ def verify_manifest(path:Path,source:Path)->dict:
         or shot.get("original_sha256")!=SOURCE_SHA
         or shot.get("archive_filename")!=source.name
         or shot.get("source_frame_locked") is not True):
-        raise ValueError("V261_SHOT_FOUR_NOT_AUTHENTIC")
+        raise ValueError("V261_SHOT_ONE_NOT_AUTHENTIC")
     if engine.sha(source)!=SOURCE_SHA:
         raise ValueError("V261_ORIGINAL_BYTES_CHANGED")
     return shot
