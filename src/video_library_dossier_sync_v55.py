@@ -88,10 +88,31 @@ def remote_video_state(remote, expected_bytes):
         return "size_conflict"
     return "present_size_matched_hash_unverified"
 
-def run(paths,dry_run):
-    prepared=[(*prepare(json.loads(p.read_text(encoding="utf8"))),str(p)) for p in paths]
-    if len({r[0] for r in prepared})!=len(prepared):
-        raise ValueError("Duplicate video keys")
+def run(paths,dry_run,isolate_invalid=False):
+    # A malformed manifest must not prevent other verified dossiers from syncing.
+    # Never weaken prepare(): invalid files are quarantined, never uploaded.
+    prepared=[]
+    seen=set()
+    rejected=0
+    for p in paths:
+        try:
+            video,size,docs=prepare(json.loads(p.read_text(encoding="utf8")))
+            if video in seen:
+                raise ValueError("Duplicate video key: "+video)
+            seen.add(video)
+            prepared.append((video,size,docs,str(p)))
+        except (ValueError,OSError,UnicodeError) as exc:
+            if not isolate_invalid:
+                raise
+            rejected+=1
+            print(json.dumps({"status":"BLOCKED_INVALID_MANIFEST_NO_UPLOAD",
+                              "source":str(p),"reason":str(exc)},
+                             ensure_ascii=False),flush=True)
+    print(json.dumps({"status":"MANIFEST_PREFLIGHT_SUMMARY",
+                      "total":len(paths),"valid":len(prepared),
+                      "blocked":rejected,"invalid_uploaded":0}),flush=True)
+    if not prepared:
+        return
     if dry_run:
         for video,size,docs,origin in prepared:
             print(json.dumps({"status":"DRY_RUN_NO_UPLOAD","video":video,"source":origin,
@@ -156,5 +177,7 @@ if __name__=="__main__":
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("manifests",type=Path,nargs="+")
     p.add_argument("--dry-run",action="store_true")
+    p.add_argument("--isolate-invalid",action="store_true",
+                   help="Report and skip bad manifests without weakening validation of valid ones")
     args=p.parse_args()
-    run(args.manifests,args.dry_run)
+    run(args.manifests,args.dry_run,args.isolate_invalid)
