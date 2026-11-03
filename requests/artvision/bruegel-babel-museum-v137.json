@@ -40,5 +40,11 @@
   "validate_zip_crc": true,
   "require_actual_artifact_sha_readback": true,
   "human_museum_visual_qa_required": true,
-  "status": "authorized_one_museum_review_not_gold"
+  "status": "authorized_one_museum_review_not_gold",
+  "corrective_retry_attempt": 2,
+  "correction_reason": "Previous single attempt run 41576739362 failed before render on Wikimedia HTTP429 for 2400x1800 Hiroki Ogawa framed-photo source. This updates the SAME original request file, not a duplicate request, after a bounded alternative-source retrieval fix.",
+  "correction_renderer_commit": "c5e79345a4a59e53aed5f7b8f89ade314818f95c",
+  "required_original_sha1": "399497aee9a849386be4d880d36cb4fc5b47571e",
+  "fallback_policy": "First source original photo 2400x1800 and SHA1; if Wikimedia 429, one thumbnail or relay 2400x1800 attempt; record derivative hash mismatch and require human provenance/visual review. No automated Gold/publication.",
+  "corrective_retry_unique": true
 }
