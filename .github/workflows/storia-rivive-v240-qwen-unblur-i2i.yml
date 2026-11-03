@@ -1,0 +1,113 @@
+name: "La Storia Rivive V240 · one free real Qwen 2511 Unblur-Anything I2I (NO PAID API)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v240-qwen-fast-i2i.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v240-qwen-unblur-one-shot-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  one_free_real_i2i:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Allow only this one explicit V240 commit (never replay on future PR changes)
+        id: gate
+        shell: bash
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$HEAD"
+          SUBJECT="$(git log -1 --format=%s "$HEAD")"
+          if [[ "$SUBJECT" == 'storia V240: one free source-locked Qwen 2511 Unblur-Anything edit [V240-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V240_REPLAY_PREVENTED'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install CPU client, no paid provider or billing credentials
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m pip install -q 'pillow>=10,<13' 'gradio_client>=1,<2'
+      - name: Offline V240 real-output/source-lock regressions
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile src/storia_rivive_v240_qwen_fast_real_i2i.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v240_qwen_fast_real_i2i.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v237_qwen_photo_ab.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: v236-lusitania-face-first-real-film-and-one-free-i2i-NOT-FINAL
+          run-id: 41536737929
+          github-token: ${{ github.token }}
+          path: output/v240/v236_original_media
+      - name: Verify original source and rejected photo, no generated output claims
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT='output/v240/v236_original_media/lusitania_departure_1915_v220'
+          SOURCE="$ROOT/FOUR_PHOTO_INPUTS_ONE_VIDU_ANCHOR/frame_04.png"
+          PRIOR="$ROOT/FACE_FIRST_REAL_I2I_CANDIDATE/FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png"
+          echo "716a886ab8583f87d2f9c28e7cb7a236f4243f029e95f29e2cfed85ddf029f10  $SOURCE" | sha256sum --check --status
+          echo "21544bcbf9acb39577141ad9a4ac1c8f7c4da183acc74932dcffd76ff20733a4  $PRIOR" | sha256sum --check --status
+          python src/storia_rivive_v240_qwen_fast_real_i2i.py --source "$SOURCE" --prior "$PRIOR" --out output/v240/photo_ab --offline
+      - name: ONE anonymous ZeroGPU Qwen 2511 Unblur-Anything image edit (never retry)
+        id: generate
+        if: steps.gate.outputs.allowed == 'true'
+        continue-on-error: true
+        env:
+          HF_TOKEN: ''
+          HUGGING_FACE_HUB_TOKEN: ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT='output/v240/v236_original_media/lusitania_departure_1915_v220'
+          timeout 700s python src/storia_rivive_v240_qwen_fast_real_i2i.py \
+            --source "$ROOT/FOUR_PHOTO_INPUTS_ONE_VIDU_ANCHOR/frame_04.png" \
+            --prior "$ROOT/FACE_FIRST_REAL_I2I_CANDIDATE/FOTO_RICOSTRUITA_V77_DA_VERIFICARE.png" \
+            --out output/v240/photo_ab
+      - name: Fail closed when no new real photo, never call this a final episode
+        if: always() && steps.gate.outputs.allowed == 'true'
+        env:
+          ACTUAL_OUTCOME: ${{ steps.generate.outcome }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path('output/v240/photo_ab')
+          report_path=root/'V240_REAL_MEDIA_STATUS.json'
+          report=json.loads(report_path.read_text())
+          photo=root/'V240_REAL_QWEN_FAST_I2I_CANDIDATE.png'
+          ok=(os.environ.get('ACTUAL_OUTCOME')=='success' and photo.is_file()
+              and report.get('generated_sha256')==hashlib.sha256(photo.read_bytes()).hexdigest()
+              and report.get('new_real_i2i_candidates')==1)
+          if not ok:
+              report['status']='FREE_PROVIDER_FAILED_NO_NEW_PHOTO'
+              report['new_real_i2i_candidates']=0
+          report.update(human_artistic_approved=False,final_mp4=False,final_zip=False,
+                        new_final_episodes_delivered=0,publish_allowed=False,
+                        paid_credits_spent=0)
+          report_path.write_text(json.dumps(report,indent=2)+'\n')
+          print('V240_RESULT',report['status'],'NEW_FINAL_0_OF_4')
+          if not ok:raise SystemExit('V240_PROVIDER_DID_NOT_RETURN_A_VERIFIED_REAL_PHOTO')
+          PY
+      - name: Preserve actual generated photo and A/B report for private QA (no release)
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v240-qwen2511-real-i2i-ab-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v240/photo_ab/
