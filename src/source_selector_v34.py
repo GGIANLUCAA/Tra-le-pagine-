@@ -241,7 +241,17 @@ def discover_single(brief, catalog, scene_id, provider, query, limit, environ=No
     fmt, scenes = get_scenes(brief)
     scene = next((s for s in scenes if s["id"] == scene_id), None)
     require(scene is not None, "Scena richiesta inesistente")
-    if provider in ("pixabay", "openverse"):
+    if provider in ("rijks", "finna"):
+        try:
+            from . import rare_research_sources_v3 as rare_sources
+        except ImportError:
+            import rare_research_sources_v3 as rare_sources
+        allowed = (scene["need"] == "authentic_artwork"
+                   or provider == "finna" and scene["need"] in
+                   ("documentary_evidence", "documentary_broll"))
+        require(allowed, "Rijks/Finna: ricerca incompatibile con la scena")
+        search = rare_sources.search(provider, query, limit)
+    elif provider in ("pixabay", "openverse"):
         require(scene["need"] in ("establishing", "documentary_broll"),
                 "Ricerca stock non adatta a scene letterarie precise o opere autentiche")
         try:
@@ -325,7 +335,8 @@ def main():
     p.add_argument("--scene", default="")
     p.add_argument("--provider", choices=("pixabay", "openverse", "met", "artic",
                                            "cleveland", "loc", "archive", "commons",
-                                           "vam", "smk", "wellcome", "nasa", "gallica"),
+                                           "vam", "smk", "wellcome", "nasa", "gallica",
+                                           "rijks", "finna"),
                    default="openverse")
     p.add_argument("--query", default="")
     p.add_argument("--limit", type=int, default=3)
