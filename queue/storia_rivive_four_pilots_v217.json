@@ -92,5 +92,22 @@
       "id": "french_fashion_birds_1922_v220",
       "reason": "V225 inspected actual V224 original contact sheet: selected frame_01 is opening title, other selected frames are near-repeated tabletop hand actions, not 5 confirmed distinct camera shots. Reject prior shortlist; no credit spent."
     }
-  ]
+  ],
+  "artistic_i2i_policy_v253": {
+    "user_feedback_date": "2026-11-03",
+    "priority": "Visually beautiful, cinematic and plausible restoration comparable to supplied examples and V98",
+    "minor_face_variation_acceptable": true,
+    "unacceptable": [
+      "Unnatural or inconsistent faces",
+      "Broken hands and objects",
+      "Implausible scene geometry",
+      "Abrupt identity change within a shot",
+      "Incoherent color grading"
+    ],
+    "source_lock_still_required": true,
+    "photographic_i2i_required": true,
+    "provider_fallback": "Try available no-cost image-to-image providers only after confirming quota, output terms and real frame match; ZeroGPU may reset; do not assert a model produced an image until verified bytes exist",
+    "credit_spend_allowed": false,
+    "final_gate_unchanged": true
+  }
 }
