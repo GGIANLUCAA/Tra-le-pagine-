@@ -1,0 +1,116 @@
+name: "La Storia Rivive V263 · Fiesole second real I2I retry (NO CREDITS)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-rivive-v263-fiesole-second-retry.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v263-second-source-once-${{ github.event.pull_request.head.sha }}
+  cancel-in-progress: false
+jobs:
+  second_real_photo:
+    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    steps:
+      - uses: actions/checkout@v4
+      - name: One explicitly gated free retry
+        id: gate
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin "$HEAD"
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V263: one free second Fiesole I2I retry [V263-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install local CPU diffusion only
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m pip install -q --index-url https://download.pytorch.org/whl/cpu 'torch==2.5.1+cpu'
+          python -m pip install -q 'diffusers==0.32.2' 'transformers==4.44.2' 'accelerate==1.2.1' 'huggingface_hub>=0.23,<1' 'safetensors>=0.4' 'Pillow>=10,<13' 'numpy>=1.26,<2'
+      - name: Test exact source gate and source-locked engine
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_v263_fiesole_second_retry.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v263_fiesole_second_retry.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v257_fiesole_third_source_i2i.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v251-fiesole-real-I2I-photo-inputs-NOT-FINAL
+          run-id: 41635322340
+          github-token: ${{ github.token }}
+          path: output/v263/v251
+      - name: Extract exact authentic five-frame archive
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p output/v263/original
+          unzip -oq output/v263/v251/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip -d output/v263/original
+          python src/storia_rivive_v263_fiesole_second_retry.py --manifest output/v263/original/V251_SOURCE_MANIFEST_NOT_FINAL.json --original-dir output/v263/original --out output/v263/photo --offline
+      - name: One local CPU I2I for rejected shot 2 (no Vidu)
+        id: generation
+        if: steps.gate.outputs.allowed == 'true'
+        continue-on-error: true
+        env:
+          HF_TOKEN: ''
+          HUGGING_FACE_HUB_TOKEN: ''
+          HF_HUB_DISABLE_TELEMETRY: '1'
+          HF_HUB_DISABLE_XET: '1'
+          OMP_NUM_THREADS: '4'
+          MKL_NUM_THREADS: '4'
+        run: |
+          set -euo pipefail
+          timeout 2100s python -u src/storia_rivive_v263_fiesole_second_retry.py --manifest output/v263/original/V251_SOURCE_MANIFEST_NOT_FINAL.json --original-dir output/v263/original --out output/v263/photo
+      - name: Verify real candidate bytes and fail closed
+        if: always() && steps.gate.outputs.allowed == 'true'
+        env:
+          OUTCOME: ${{ steps.generation.outcome }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image,ImageStat
+          import hashlib,json,os
+          root=Path('output/v263/photo')
+          rp=root/'V257_SOURCE_LOCKED_I2I_QA.json'
+          data=json.loads(rp.read_text()) if rp.is_file() else {}
+          png=root/'V257_ONE_TRUE_DIFFUSION_I2I_NOT_APPROVED.png'
+          ok=(os.getenv('OUTCOME')=='success'
+              and data.get('version')=='V263_SECOND_SHOT_RETRY_ARTISTIC_QA_PENDING_NOT_FINAL'
+              and data.get('source_shot')==2
+              and data.get('actual_generated_photos')==1
+              and png.is_file() and not png.is_symlink()
+              and png.stat().st_size>10000
+              and data.get('generated_sha256')==hashlib.sha256(png.read_bytes()).hexdigest())
+          if ok:
+            with Image.open(png) as im:
+              ok=(im.format=='PNG' and im.size==(448,800)
+                  and ImageStat.Stat(im.convert('L')).mean[0]>10)
+          data.update(new_final_episodes_delivered=0,artistic_approval=False,
+                      italian_rights_verified=False,publish_allowed=False,
+                      paid_credits_spent=0)
+          if not ok:data.update(status='V263_NO_VERIFIED_I2I_PHOTO',actual_generated_photos=0)
+          root.mkdir(parents=True,exist_ok=True)
+          rp.write_text(json.dumps(data,indent=2)+'\n')
+          print('V263_SECOND_SHOT_REAL_PHOTO',ok,'NEW_FINAL_0_OF_4')
+          if not ok:raise SystemExit('V263_NO_VALID_GENERATED_PHOTO')
+          PY
+      - name: Retain actual photo or failure diagnosis (NOT FINAL)
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v263-Fiesole-second-shot-real-I2I-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v263/photo/
