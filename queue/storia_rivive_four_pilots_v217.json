@@ -28,11 +28,23 @@
       "editorial_reason": "Rare Italian craft documentary; successive handwork stages may yield five visually different human-action shots; 115.64s source, 21,903,861 bytes",
       "rights_status": "COMMONS_PD_MARKED_ITALIAN_RIGHTS_NOT_REVIEWED",
       "visual_risks": [
-        "Five genuinely different camera shots NOT yet verified on original bytes",
+        "Five 1.4s windows technically verified on film bytes; artistic distinct-shot review still pending",
         "1080p digital raster does not prove native optical resolution",
         "French documentary of Italian craft, no invented identities or colours",
         "Author unknown; Italian territorial and restoration rights pending"
-      ]
+      ],
+      "source_stage": "V251_FIVE_SHORT_ORIGINAL_WINDOWS_AND_SOURCE_LOCKED_FRAMES_ARTIFACT_VERIFIED_NOT_FINAL",
+      "source_evidence": {
+        "v249_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41618613091",
+        "v250_original_motion_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41626863232",
+        "v251_frame_artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41635322340/artifacts/13229718890",
+        "frame_artifact_digest_sha256": "6eb2538c6a27f347308c66b3db4492219f798ac98d3c71472fc7342cd5cea28e",
+        "five_short_windows_seconds": 1.4,
+        "artistic_distinct_shots_approved": false,
+        "real_i2i_photos_approved": 0,
+        "vidu_clip_approved": false,
+        "italian_rights_approved": false
+      }
     },
     {
       "id": "early_cinema_sorrows_1910_v225",
