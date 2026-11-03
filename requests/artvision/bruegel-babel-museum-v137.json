@@ -41,10 +41,14 @@
   "require_actual_artifact_sha_readback": true,
   "human_museum_visual_qa_required": true,
   "status": "authorized_one_museum_review_not_gold",
-  "corrective_retry_attempt": 2,
+  "corrective_retry_attempt": 3,
   "correction_reason": "Previous single attempt run 41576739362 failed before render on Wikimedia HTTP429 for 2400x1800 Hiroki Ogawa framed-photo source. This updates the SAME original request file, not a duplicate request, after a bounded alternative-source retrieval fix.",
-  "correction_renderer_commit": "c5e79345a4a59e53aed5f7b8f89ade314818f95c",
+  "correction_renderer_commit": "2a0935788db2e2f94701910cae20b1cf3074c727",
   "required_original_sha1": "399497aee9a849386be4d880d36cb4fc5b47571e",
   "fallback_policy": "First source original photo 2400x1800 and SHA1; if Wikimedia 429, one thumbnail or relay 2400x1800 attempt; record derivative hash mismatch and require human provenance/visual review. No automated Gold/publication.",
-  "corrective_retry_unique": true
+  "corrective_retry_unique": true,
+  "third_attempt_reason": "Run 41608231024 independently confirmed: 429 original, 400 invalid 2400 thumbnail, 404 relay. Same photo valid official Commons 1280x960 thumbnail located; new runner uses actual 1280px URL and geometrically scales coordinates, records original 2400x1800 metadata but derivative bytes are NOT original SHA1, demands human visual approval.",
+  "third_attempt_source_thumbnail": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/The_Tower_of_Babel_1563_Bruegel_Kunsthistorisches_Museum_Wien_Austria_-_panoramio.jpg/1280px-The_Tower_of_Babel_1563_Bruegel_Kunsthistorisches_Museum_Wien_Austria_-_panoramio.jpg",
+  "third_attempt_workflow_commit": "0037f0dcd64e6460091c417bd9f529178ec25a9b",
+  "third_attempt_policy": "Last one-shot attempt via same request file; no more reruns until successful byte readback or genuinely different, legally sourced photo. No Gold, publish, or fees."
 }
