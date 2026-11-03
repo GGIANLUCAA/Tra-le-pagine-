@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - ".github/workflows/storia-rivive-v248-fiesole-clean-motion.yml"
+      - "tests/test_storia_rivive_v248_fiesole_clean_motion_recut.py"
 permissions:
   contents: read
 concurrency:
@@ -24,7 +25,7 @@ jobs:
           set -euo pipefail
           git fetch --no-tags --depth=1 origin "$HEAD"
           subject="$(git log -1 --format=%s "$HEAD")"
-          if [[ "$subject" == 'storia V248: verify clean Fiesole motion on source film [V248-ONCE]' ]]; then
+          if [[ "$subject" == 'storia V248: retry clean Fiesole source after fixed test [V248-RETRY-ONCE]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
