@@ -1,0 +1,137 @@
+name: "Ricerca rara V3 - Musei, Provenienza, Audio e Libri"
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: "Seleziona una fonte: Getty richiede UUID del record"
+        type: choice
+        options: [rijks, finna, getty_museum, getty_provenance, wikidata, openverse_audio, librivox, openlibrary, gutendex, crossref]
+        default: finna
+        required: true
+      query:
+        description: "Ricerca testuale oppure UUID esatto per Getty"
+        type: string
+        required: true
+      limit:
+        description: "Numero candidati (1-5)"
+        type: choice
+        options: ["1", "2", "3", "4", "5"]
+        default: "3"
+        required: true
+  pull_request:
+    paths:
+      - "src/rare_research_sources_v3.py"
+      - "src/source_selector_v34.py"
+      - "tests/test_rare_research_sources_v3.py"
+      - ".github/workflows/rare-research-sources-v3.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/rare_research_sources_v3.py"
+      - "src/source_selector_v34.py"
+      - "tests/test_rare_research_sources_v3.py"
+      - ".github/workflows/rare-research-sources-v3.yml"
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Ten provider contracts, zero network, V34 regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/rare_research_sources_v3.py src/source_selector_v34.py
+          python -m unittest discover -s tests -p 'test_rare_research_sources_v3.py' -v
+          python -m unittest discover -s tests -p 'test_public_archive_sources_v1.py' -v
+          python -m unittest discover -s tests -p 'test_public_archive_sources_v2.py' -v
+          python -m unittest discover -s tests -p 'test_source_selector_v34.py' -v
+  probe:
+    needs: tests
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Ten independent single-query API probes (read-only)
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,sys
+          sys.path.insert(0,"src")
+          from rare_research_sources_v3 import search
+          probes={
+            "rijks":"Night Watch",
+            "finna":"Hugo Simberg",
+            "getty_museum":"c88b3df0-de91-4f5b-a9ef-7b2b9a6d8abb",
+            "getty_provenance":"09539ab1-416d-3870-810b-8a6b3b604368",
+            "wikidata":"Rembrandt",
+            "openverse_audio":"train station",
+            "librivox":"Jules Verne",
+            "openlibrary":"The Lady of Shalott",
+            "gutendex":"Verne",
+            "crossref":"Rembrandt art history"
+          }
+          results={}
+          for name,query in probes.items():
+              try:
+                  data=search(name,query,1)
+                  results[name]={"status":"api_responded","candidates":len(data["items"]),
+                                 "calls":data["api_requests"]}
+              except Exception as exc:
+                  results[name]={"status":"failed","reason":str(exc)[:140]}
+          print(json.dumps(results,indent=2,ensure_ascii=False))
+          with open("RARE_RESEARCH_V3_PROBE.json","w") as f:
+              json.dump(results,f,ensure_ascii=False,indent=2)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RARE_RESEARCH_V3_LIVE_PROBE
+          path: RARE_RESEARCH_V3_PROBE.json
+          retention-days: 14
+          if-no-files-found: error
+  research:
+    needs: tests
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      RESEARCH_PROVIDER: ${{ inputs.provider }}
+      RESEARCH_QUERY: ${{ inputs.query }}
+      RESEARCH_LIMIT: ${{ inputs.limit }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: One bounded source query, fail closed on rights
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/rare_research_sources_v3.py \
+            --provider "$RESEARCH_PROVIDER" --query "$RESEARCH_QUERY" \
+            --limit "$RESEARCH_LIMIT" --out output/rare_sources_v3/REPORT.json
+          python - <<'PY'
+          import json
+          x=json.load(open("output/rare_sources_v3/REPORT.json"))
+          assert x["automatic_publish"] is False and x["auto_approved"] is False
+          assert x["downloaded_files"] == 0 and x["paid_calls"] is False
+          assert all(i["rights_review"]=="pending" and i["visual_review"]=="pending"
+                     and i["authenticity_review"]=="pending" for i in x["items"])
+          print("Candidati da verificare",len(x["items"]))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RARE_SOURCES_V3_ANDROID_JSON_HTML
+          path: output/rare_sources_v3/
+          retention-days: 14
+          if-no-files-found: error
