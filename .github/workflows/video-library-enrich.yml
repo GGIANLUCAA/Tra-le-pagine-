@@ -189,7 +189,10 @@ jobs:
           python3 -m unittest discover -s tests -p test_video_library_dossier_sync_v55.py -v
           mapfile -t manifests < <(find docs/productions -type f -name ARCHIVE_STAGING_V55.json | sort)
           if [ ${#manifests[@]} -eq 0 ]; then echo 'No V55 dossiers ready'; exit 0; fi
-          python3 src/video_library_dossier_sync_v55.py --dry-run "${manifests[@]}"
+          python3 src/video_library_dossier_sync_v55.py --dry-run --isolate-invalid "${manifests[@]}" | tee /tmp/v55-preflight.jsonl
+          if grep -q BLOCKED_INVALID_MANIFEST_NO_UPLOAD /tmp/v55-preflight.jsonl; then
+            echo 'WARNING: one or more V55 dossiers were rejected individually; see the job log. No invalid documents were uploaded.' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Upload genuine documents to existing private MP4 only
         id: archive_documents
         continue-on-error: true
@@ -200,7 +203,10 @@ jobs:
           python3 -m pip -q install requests
           mapfile -t manifests < <(find docs/productions -type f -name ARCHIVE_STAGING_V55.json | sort)
           if [ ${#manifests[@]} -eq 0 ]; then echo 'No dossiers to synchronize'; exit 0; fi
-          python3 src/video_library_dossier_sync_v55.py "${manifests[@]}"
+          python3 src/video_library_dossier_sync_v55.py --isolate-invalid "${manifests[@]}" | tee /tmp/v55-upload.jsonl
+          if grep -q BLOCKED_INVALID_MANIFEST_NO_UPLOAD /tmp/v55-upload.jsonl; then
+            echo 'WARNING: rejected V55 manifests remain blocked until repaired; valid dossiers were processed independently.' >> "$GITHUB_STEP_SUMMARY"
+          fi
           echo 'Private V55 text dossier sync attempted; V25 approval, dedicated JPEG and site ZIP still require separate verification.' >> "$GITHUB_STEP_SUMMARY"
       - name: Preserve upload blocker visibly without stopping website enrichment
         if: steps.archive_documents.outcome == 'failure'
