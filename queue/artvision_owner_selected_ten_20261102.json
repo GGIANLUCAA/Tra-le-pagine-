@@ -336,7 +336,7 @@
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 0,
+      "slots_delivered_this_selection": 1,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
@@ -383,6 +383,33 @@
         "other_three_variants_done": false,
         "site_playback_verified": false,
         "report": "docs/productions/2026-11-03-artvision-v136-babel-ci-artifact-local-readback-pending.md"
+      },
+      "cinema_standard_v136": {
+        "status": "physical_artifact_download_readback_verified_review_not_gold",
+        "run_id": 41549505091,
+        "artifact_id": 13190316891,
+        "filename": "BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_V136_REVIEW.mp4",
+        "bytes": 18165533,
+        "sha256": "ad401e87ac181d6627bed80b5072a466fa2cc930143857838896b4d1bfe7a6a4",
+        "duration_seconds": 59.4,
+        "frames": 1188,
+        "full_ffmpeg_decode": "PASS independent readback 2026-11-03",
+        "package_zip_bytes": 25313745,
+        "package_zip_sha256": "f1db3a60e17766c6988383f75bf9460d978787f5d10eac73f40441c5b1c4c416",
+        "zip_crc": "PASS independent readback",
+        "source_pixels": [
+          3840,
+          2866
+        ],
+        "source_sha256": "d8d43ac82b04db798b36d9c7f0ab99dba5fb537fa4d8589674d8cd3d1a78f4cd",
+        "source_rights": "Commons PD-Art/PDM as declared in QA; territory-specific reuse review remains",
+        "music": "original synthesized ambient",
+        "human_artistic_review": "PENDING",
+        "site_playback_verified": false,
+        "gold_v25": false,
+        "social_published": false,
+        "paid_api_calls": 0,
+        "remaining_variants": 3
       }
     },
     {
