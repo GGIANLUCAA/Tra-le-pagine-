@@ -1,0 +1,126 @@
+name: ArtVision V159 Waterhouse Magic Circle one real natural Critico from locked source
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/waterhouse-magic-circle-critico-v159.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-owner-waterhouse-magic-circle-critico-v159-once
+  cancel-in-progress: false
+jobs:
+  one_missing_critico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile renderer and verify recipe before any TTS call
+        run: |
+          python -m py_compile src/artvision_waterhouse_magic_circle_critico_v159.py
+          python -m json.tool modules/artvision_critico/production_series/waterhouse_magic_circle_v159.json > /dev/null
+      - name: Guard one approved work and forbid duplicates and paid calls
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open("requests/artvision/waterhouse-magic-circle-critico-v159.json"))
+          q=json.load(open("queue/artvision_owner_selected_ten_20261102.json"))
+          assert r["owner_automation_id"]=="6adca191603c8191a90d5190901cd034"
+          assert r["work_id"]=="waterhouse_magic_circle_1886_tate_n01572"
+          assert r["variant"]=="critico_standard"
+          assert r["public_title"]=="The Magic Circle"
+          assert r["run_once_only"] and r["one_tts_call_at_most"]
+          assert not r["allow_paid_calls"] and not r["social_publish"] and not r["gold_v25"]
+          w=[x for x in q["works"] if x["id"]==r["work_id"]]
+          assert len(w)==1 and w[0]["slots_delivered_this_selection"]==1
+          assert "critico_standard_v159" not in w[0]
+          assert w[0]["cinema_standard_v158"]["sha256"]=="57ec493478c5f4a0c1a35cd336df7b157bf557a17efb1eca4fdeba49def95660"
+          assert w[0]["cinema_standard_v158"]["zip_crc"].startswith("PASS")
+          assert w[0]["museum_approved"] is False
+          PY
+      - name: Recover and SHA-verify exact ORIGINAL Waterhouse image from V158 artifact, no Commons network
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/magic_v158 /tmp/waterhouse_magic_circle_critico_v159
+          gh run download 41873893341 --repo "$GITHUB_REPOSITORY" --name WATERHOUSE_MAGIC_CIRCLE_V158_CINEMA_REVIEW_MP4 --dir /tmp/magic_v158
+          unzip -p /tmp/magic_v158/WATERHOUSE_MAGIC_CIRCLE_CINEMA_V158_REVIEW_PACKAGE.zip ORIGINAL_ARTWORK.jpg > /tmp/waterhouse_magic_circle_critico_v159/ORIGINAL_ARTWORK.jpg
+          python - <<'PY'
+          import hashlib,zipfile
+          from pathlib import Path
+          f=Path('/tmp/waterhouse_magic_circle_critico_v159/ORIGINAL_ARTWORK.jpg')
+          assert f.stat().st_size==3941283
+          assert hashlib.sha256(f.read_bytes()).hexdigest()=='b846a11f640378fa0839e3a31583a128db1db2e91e2938f6fd23a75499c77451'
+          with zipfile.ZipFile('/tmp/magic_v158/WATERHOUSE_MAGIC_CIRCLE_CINEMA_V158_REVIEW_PACKAGE.zip') as z: assert z.testzip() is None
+          print('MAGIC_V158_IMAGE_REUSED_EXACT_SHA256_ZIP_CRC_PASS')
+          PY
+      - name: Gate ONLY already owner-attested no-billing second Free Google key
+        env:
+          SECOND_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+        run: |
+          test -n "$SECOND_KEY" || { echo "BLOCKED_SECOND_FREE_ACCOUNT_NOT_PRESENT: NO TTS"; exit 2; }
+      - name: Install offline runtime with KNOWN compatible PyAV17 ASR
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" numpy pillow soundfile scipy "faster-whisper==1.2.1" "av==17.1.0" "huggingface-hub==0.34.4" "fsspec==2025.7.0" opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          e=Path(get_ffmpeg_exe())
+          assert e.is_file()
+          Path('/tmp/artvision-bin/ffmpeg').symlink_to(e)
+          PY
+          echo /tmp/artvision-bin >> "$GITHUB_PATH"
+          /tmp/artvision-bin/ffmpeg -version | head -1
+      - name: Generate ONE genuine natural Gacrux WAV and ASR-small timing (NO retry)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          ARTVISION_GEMINI_PROJECT_BILLING_TIER: Free
+          ARTVISION_ASR_MODEL: small
+          HF_HUB_DISABLE_XET: "1"
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python src/artvision_waterhouse_magic_circle_critico_v159.py --phase voice
+      - name: Render EXACTLY one real Critico Standard with original soundtrack and QA
+        run: python src/artvision_waterhouse_magic_circle_critico_v159.py --phase render
+      - name: Independently verify actual physical file and CRC, do not auto Gold
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,zipfile
+          out=Path('/tmp/waterhouse_magic_circle_critico_v159')
+          q=json.loads((out/'QA_V159.json').read_text())
+          assert q['work']=="The Magic Circle"
+          assert q['variant']=='critico_standard' and q['museum_variant_rendered'] is False
+          assert not q['Gold_V25'] and not q['social_published'] and not q['museum_approved']
+          m=q['file']; p=out/m['name']
+          assert p.is_file() and p.stat().st_size==m['bytes'] and m['frames']>1000
+          assert hashlib.sha256(p.read_bytes()).hexdigest()==m['sha256']
+          assert m['full_ffmpeg_decode']=='PASS'
+          subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(p),"-f","null","-"],check=True)
+          with zipfile.ZipFile(out/"WATERHOUSE_MAGIC_CIRCLE_CRITICO_STANDARD_V159_REVIEW_PACKAGE.zip") as z:
+            assert z.testzip() is None and sum(n.endswith('.mp4') for n in z.namelist())==1
+          print('ONE_GENUINE_MP4_SHA_FFMPEG_ZIP_CRC_PASS_ARTISTIC_REVIEW_PENDING')
+          PY
+      - name: Preserve WAV even on failed render — never regenerate TTS for recovery
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V159_MAGIC_CIRCLE_REAL_CRITICO_OR_PRESERVED_WAV
+          path: |
+            /tmp/waterhouse_magic_circle_critico_v159/VOCE.wav
+            /tmp/waterhouse_magic_circle_critico_v159/VOICE_CACHE_V13.json
+            /tmp/waterhouse_magic_circle_critico_v159/ALLINEAMENTO_VOCE.json
+            /tmp/waterhouse_magic_circle_critico_v159/VOICE_RESULT_V159.json
+            /tmp/waterhouse_magic_circle_critico_v159/COPIONE_ESATTO_V159.txt
+            /tmp/waterhouse_magic_circle_critico_v159/WATERHOUSE_THE_MAGIC_CIRCLE_CRITICO_STANDARD_V159_REVIEW.mp4
+            /tmp/waterhouse_magic_circle_critico_v159/WATERHOUSE_MAGIC_CIRCLE_CRITICO_STANDARD_V159_REVIEW_PACKAGE.zip
+            /tmp/waterhouse_magic_circle_critico_v159/QA_V159.json
+            /tmp/waterhouse_magic_circle_critico_v159/COVER.jpg
+            /tmp/waterhouse_magic_circle_critico_v159/CONTACT_SHEET_V159.jpg
+            /tmp/waterhouse_magic_circle_critico_v159/RIGHTS_AND_CREDITS.txt
+            /tmp/waterhouse_magic_circle_critico_v159/SOCIAL_DRAFT_UNPUBLISHED.txt
+          retention-days: 30
+          if-no-files-found: warn
