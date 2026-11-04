@@ -1,0 +1,126 @@
+name: ArtVision V164 Lady of Shalott real-frame Critico Museum
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/waterhouse-lady-critico-museum-v164.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-owner-lady-shalott-critico-museum-v164
+  cancel-in-progress: false
+jobs:
+  one_museum_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preflight one owner work and no duplicate, TTS, payments or publication
+        run: |
+          python -m py_compile src/artvision_lady_shalott_critico_museum_v164.py
+          python - <<'PY'
+          import json
+          r=json.load(open('requests/artvision/waterhouse-lady-critico-museum-v164.json'))
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          assert r['owner_automation_id']=='6adca191603c8191a90d5190901cd034'
+          assert r['work_id']=='waterhouse_lady_shalott_1888_tate_n01543'
+          assert r['variant']=='critico_museum' and r['public_title']=='The Lady of Shalott'
+          assert r['run_once_only'] and r['no_new_TTS'] and r['one_render_at_a_time']
+          assert not r['allow_paid_calls'] and not r['social_publish'] and not r['gold_v25']
+          w=[x for x in q['works'] if x['id']==r['work_id']]
+          assert len(w)==1 and w[0]['slots_delivered_this_selection']==2
+          assert 'critico_museum_v164' not in w[0]
+          assert w[0]['critico_standard_v156']['sha256']=='dae1b49fe4b5db9fa831a158335030744d0bcc88930ce96ede2f97785318b028'
+          print('NO_DUPLICATE_NO_TTS_NO_PAID_PASS')
+          PY
+      - name: Install free runtime and known FFmpeg
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check numpy pillow opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin /tmp/shalott_v164/source /tmp/shalott_v164/out
+          python - <<'PY'
+          from pathlib import Path
+          from imageio_ffmpeg import get_ffmpeg_exe
+          Path('/tmp/artvision-bin/ffmpeg').symlink_to(Path(get_ffmpeg_exe()))
+          PY
+          echo "/tmp/artvision-bin" >> "$GITHUB_PATH"
+      - name: Recover exact verified V156 MP4 and existing natural WAV
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/shalott_v156
+          gh run download 41872003752 --repo "$GITHUB_REPOSITORY" --name ART_V156_WATERHOUSE_REAL_CRITICO_OR_PRESERVED_WAV --dir /tmp/shalott_v156
+          cp /tmp/shalott_v156/WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_STANDARD_V156_REVIEW.mp4 /tmp/shalott_v164/source/
+          cp /tmp/shalott_v156/VOCE.wav /tmp/shalott_v164/source/
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p=Path('/tmp/shalott_v164/source')
+          src=p/'WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_STANDARD_V156_REVIEW.mp4'
+          wav=p/'VOCE.wav'
+          assert src.stat().st_size==8592255 and hashlib.sha256(src.read_bytes()).hexdigest()=='dae1b49fe4b5db9fa831a158335030744d0bcc88930ce96ede2f97785318b028'
+          assert wav.stat().st_size==4984364 and hashlib.sha256(wav.read_bytes()).hexdigest()=='f5343459e33ba3be911c659bf7d678a6fecf1ffbdd0f11aa2bb538fa7bb1178c'
+          print('V156_MP4_AND_ORIGINAL_WAV_SHA256_VERIFIED')
+          PY
+      - name: Recover authentic Sailko framed painting photo, fail closed on Commons errors
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import urllib.request,hashlib
+          from PIL import Image
+          p=Path('/tmp/shalott_v164/source/SAILKO_REAL_FRAMED_TATE_PHOTO.jpg')
+          base='John_william_waterhouse%2C_the_lady_of_shalott%2C_1888%2C_01.jpg'
+          root='https://upload.wikimedia.org/wikipedia/commons/'
+          options=[(root+'thumb/e/ed/'+base+'/1255px-'+base,(1255,1024)),(root+'thumb/e/ed/'+base+'/941px-'+base,(941,768)),(root+'e/ed/'+base,(4236,3456))]
+          for url,expected in options:
+            try:
+              req=urllib.request.Request(url,headers={'User-Agent':'ArtVisionSourceReview/1.0 (noncommercial research)'} )
+              with urllib.request.urlopen(req,timeout=25) as r:data=r.read(12_000_000)
+              if len(data)<100000:raise ValueError('undersized photo')
+              p.write_bytes(data)
+              with Image.open(p) as im:
+                assert im.format=='JPEG' and im.size==expected,(im.size,expected)
+                im.verify()
+              print('REAL_FRAMED_PHOTO',expected,hashlib.sha256(data).hexdigest(),'Sailko CC BY 3.0','https://commons.wikimedia.org/wiki/File:John_william_waterhouse,_the_lady_of_shalott,_1888,_01.jpg')
+              break
+            except Exception as e:
+              print('SOURCE_UNAVAILABLE',url,str(e)[:150])
+              p.unlink(missing_ok=True)
+          else:raise RuntimeError('NO_GENUINE_PHOTO_AVAILABLE. HALT BEFORE RENDER. NO FAKE MUSEUM.')
+          PY
+      - name: Render one authentic-frame Museum variant with bit-identical critic AAC
+        run: python src/artvision_lady_shalott_critico_museum_v164.py --base /tmp/shalott_v164/source --out /tmp/shalott_v164/out
+      - name: Independent MP4 full decode SHA and ZIP CRC
+        run: |
+          python - <<'PY'
+          import json,hashlib,zipfile,subprocess
+          from pathlib import Path
+          o=Path('/tmp/shalott_v164/out');q=json.loads((o/'QA_V164.json').read_text())
+          v=o/q['file']['name']
+          assert q['file']['frames']==2267 and q['file']['duration_s']==113.35
+          assert q['same_aac_bit_identical'] and q['new_paid_calls']==0 and q['new_TTS_calls']==0
+          assert not q['Gold_V25'] and not q['social_published'] and not q['museum_approved']
+          assert v.is_file() and hashlib.sha256(v.read_bytes()).hexdigest()==q['file']['sha256']
+          subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(v),'-map','0','-f','null','-'],check=True)
+          z=o/'WATERHOUSE_LADY_SHALOTT_CRITICO_MUSEUM_V164_REVIEW_PACKAGE.zip'
+          with zipfile.ZipFile(z) as a:assert a.testzip() is None and sum(n.endswith('.mp4') for n in a.namelist())==1
+          print('REAL_MP4_FFMPEG_SHA256_AAC_IDENTICAL_ZIP_CRC_PASS_ARTISTIC_APPROVAL_PENDING')
+          PY
+      - name: Keep genuinely fetched photo plus MP4 and QA for independent download
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_LADY_SHALOTT_MUSEUM_V164_REVIEW_OR_SOURCE_ERROR
+          path: |
+            /tmp/shalott_v164/source/SAILKO_REAL_FRAMED_TATE_PHOTO.jpg
+            /tmp/shalott_v164/out/WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_MUSEUM_V164_REVIEW.mp4
+            /tmp/shalott_v164/out/WATERHOUSE_LADY_SHALOTT_CRITICO_MUSEUM_V164_REVIEW_PACKAGE.zip
+            /tmp/shalott_v164/out/QA_V164.json
+            /tmp/shalott_v164/out/COVER.jpg
+            /tmp/shalott_v164/out/CONTACT_SHEET_V164.jpg
+            /tmp/shalott_v164/out/RIGHTS_AND_CREDITS.txt
+            /tmp/shalott_v164/out/SOCIAL_DRAFT_UNPUBLISHED.txt
+          retention-days: 30
+          if-no-files-found: warn
