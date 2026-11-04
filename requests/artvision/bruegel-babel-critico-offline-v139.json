@@ -1,0 +1,29 @@
+{
+  "directive_date": "2026-11-04",
+  "priority": "OFFLINE_RECOVERY_REUSE_REAL_WAV_NO_TTS_CALL",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "work_id": "bruegel_tower_babel_1563_khm_gg1026",
+  "public_title": "The Tower of Babel",
+  "variants": [
+    "critico_standard",
+    "critico_museum"
+  ],
+  "one_WAV_for_both": true,
+  "run_once_only": true,
+  "allow_paid_calls": false,
+  "social_publish": false,
+  "gold_v25": false,
+  "previous_voice_workflow_run": 41796182097,
+  "previous_voice_artifact_id": 13305781355,
+  "recorded_voice_seconds": 103.68,
+  "previous_issue": "V138 Gacrux WAV generated successfully and preserved; faster-whisper ASR fallback estimated due huggingface_hub incompatibility: open() unexpected metadata_errors; no second TTS permitted.",
+  "this_workflow": "Only download V136/V137 source artifacts and existing V138 WAV/cache, pin huggingface_hub 0.34.4, realign via ASR offline, render two MP4 sequentially with identical AAC, ZIP CRC/SHA/FFmpeg. No GEMINI_API_KEY secret at all.",
+  "workflow": ".github/workflows/artvision-bruegel-babel-critico-offline-v139.yml",
+  "renderer": "src/artvision_babel_critico_v138.py --phase align then --phase render",
+  "free_pinned_asr": true,
+  "no_api_tts_calls": true,
+  "no_rerun_of_v138": true,
+  "status": "AUTHORIZED_OFFLINE_RECOVERY_ONE_REQUEST_NO_VIDEO_CLAIM",
+  "museum_approved": false,
+  "public_titles_without_variant": true
+}
