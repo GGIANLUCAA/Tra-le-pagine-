@@ -1,0 +1,130 @@
+name: ArtVision V144 Rebel Angels one real Critico Standard (single Free Gacrux)
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/rebel-angels-critico-standard-v144.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-owner-rebel-critico-standard-v144-once
+  cancel-in-progress: false
+jobs:
+  one_missing_critico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guard one approved work and forbid duplicates and paid calls
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open("requests/artvision/rebel-angels-critico-standard-v144.json"))
+          q=json.load(open("queue/artvision_owner_selected_ten_20261102.json"))
+          assert r["owner_automation_id"]=="6adca191603c8191a90d5190901cd034"
+          assert r["work_id"]=="bruegel_fall_rebel_angels_1562_rmfb_584"
+          assert r["variant"]=="critico_standard"
+          assert r["public_title"]=="The Fall of the Rebel Angels"
+          assert r["run_once_only"] and r["one_tts_call_at_most"]
+          assert not r["allow_paid_calls"] and not r["social_publish"] and not r["gold_v25"]
+          w=[x for x in q["works"] if x["id"]==r["work_id"]]
+          assert len(w)==1 and w[0]["slots_delivered_this_selection"]==1
+          assert "critico_standard_v144" not in w[0]
+          assert w[0]["new_cinema_standard_v135"]["full_ffmpeg_decode"]=="PASS"
+          assert w[0]["museum_approved"] is False
+          PY
+      - name: Fetch PREVIOUSLY VERIFIED art bytes from existing Actions artifact (no Commons requests)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/rebel_art_v131 /tmp/rebel_angels_critico_v144
+          META="$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/12775741359")"
+          printf '%s' "$META" > /tmp/artifact_meta.json
+          python - <<'PY'
+          import json
+          j=json.load(open('/tmp/artifact_meta.json'))
+          assert j['id']==12775741359 and not j['expired']
+          assert j['workflow_run']['id']>0 and j['name']
+          open('/tmp/rebel_v131_artifact_name','w').write(j['name'])
+          open('/tmp/rebel_v131_run_id','w').write(str(j['workflow_run']['id']))
+          print("Existing licensed source artifact",j['name'],j['size_in_bytes'])
+          PY
+          gh run download "$(cat /tmp/rebel_v131_run_id)" --repo "$GITHUB_REPOSITORY" --name "$(cat /tmp/rebel_v131_artifact_name)" --dir /tmp/rebel_art_v131
+          cp /tmp/rebel_art_v131/ORIGINAL_ARTWORK.jpg /tmp/rebel_angels_critico_v144/
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p=Path('/tmp/rebel_angels_critico_v144/ORIGINAL_ARTWORK.jpg')
+          assert p.is_file() and hashlib.sha256(p.read_bytes()).hexdigest()=="09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5"
+          print("SOURCE_BYTES_IDENTICAL_TO_V131; no new Commons download")
+          PY
+      - name: Gate ONLY already owner-attested no-billing second Free Google key
+        env:
+          SECOND_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+        run: |
+          test -n "$SECOND_KEY" || { echo "BLOCKED_SECOND_FREE_ACCOUNT_NOT_PRESENT: NO TTS"; exit 2; }
+      - name: Install offline runtime with KNOWN compatible PyAV17 ASR
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" numpy pillow soundfile scipy "faster-whisper==1.2.1" "av==17.1.0" "huggingface-hub==0.34.4" "fsspec==2025.7.0" opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          e=Path(get_ffmpeg_exe())
+          assert e.is_file()
+          Path('/tmp/artvision-bin/ffmpeg').symlink_to(e)
+          PY
+          echo /tmp/artvision-bin >> "$GITHUB_PATH"
+          /tmp/artvision-bin/ffmpeg -version | head -1
+      - name: Generate ONE genuine natural Gacrux WAV and ASR-small timing (NO retry)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          ARTVISION_GEMINI_PROJECT_BILLING_TIER: Free
+          ARTVISION_ASR_MODEL: small
+          HF_HUB_DISABLE_XET: "1"
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python src/artvision_rebel_critico_standard_v144.py --phase voice
+      - name: Render EXACTLY one real Critico Standard with original soundtrack and QA
+        run: python src/artvision_rebel_critico_standard_v144.py --phase render
+      - name: Independently verify actual physical file and CRC, do not auto Gold
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,zipfile
+          out=Path('/tmp/rebel_angels_critico_v144')
+          q=json.loads((out/'QA_V144.json').read_text())
+          assert q['work']=="The Fall of the Rebel Angels"
+          assert q['variant']=='critico_standard' and q['museum_variant_rendered'] is False
+          assert not q['Gold_V25'] and not q['social_published'] and not q['museum_approved']
+          m=q['file']; p=out/m['name']
+          assert p.is_file() and p.stat().st_size==m['bytes'] and m['frames']>1000
+          assert hashlib.sha256(p.read_bytes()).hexdigest()==m['sha256']
+          assert m['full_ffmpeg_decode']=='PASS'
+          subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(p),"-f","null","-"],check=True)
+          with zipfile.ZipFile(out/"REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW_PACKAGE.zip") as z:
+            assert z.testzip() is None and sum(n.endswith('.mp4') for n in z.namelist())==1
+          print('ONE_GENUINE_MP4_SHA_FFMPEG_ZIP_CRC_PASS_ARTISTIC_REVIEW_PENDING')
+          PY
+      - name: Preserve WAV even on failed render — never regenerate TTS for recovery
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V144_REBEL_ANGELS_REAL_CRITICO_OR_PRESERVED_WAV
+          path: |
+            /tmp/rebel_angels_critico_v144/VOCE.wav
+            /tmp/rebel_angels_critico_v144/VOICE_CACHE_V13.json
+            /tmp/rebel_angels_critico_v144/ALLINEAMENTO_VOCE.json
+            /tmp/rebel_angels_critico_v144/VOICE_RESULT_V144.json
+            /tmp/rebel_angels_critico_v144/COPIONE_ESATTO_V144.txt
+            /tmp/rebel_angels_critico_v144/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4
+            /tmp/rebel_angels_critico_v144/REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW_PACKAGE.zip
+            /tmp/rebel_angels_critico_v144/QA_V144.json
+            /tmp/rebel_angels_critico_v144/COVER.jpg
+            /tmp/rebel_angels_critico_v144/CONTACT_SHEET_V144.jpg
+            /tmp/rebel_angels_critico_v144/RIGHTS_AND_CREDITS.txt
+            /tmp/rebel_angels_critico_v144/SOCIAL_DRAFT_UNPUBLISHED.txt
+          retention-days: 30
+          if-no-files-found: warn
