@@ -47,12 +47,12 @@
         "i2i_distinct_shot_status_v261": {
           "shot_1": "V262_TRUE_I2I_REJECTED_BY_ACTUAL_VISUAL_REVIEW_ALMOST_MONOCHROME_NOT_V98_QUALITY",
           "shot_2": "V254_CANDIDATE_ARTISTICALLY_REJECTED_MACHINE_BECAME_PERSON",
-          "shot_3": "V258_CANDIDATE_ARTISTIC_REVIEW_PENDING",
-          "shot_4": "V255_AND_V259_SAME_ORIGINAL_SHA_NOT_TWO_DISTINCT_SHOTS",
+          "shot_3": "V258_ACTUAL_PNG_VISUALLY_REJECTED_DARK_SEPIA_OVER_SHARPENING_AND_MACHINE_DETAIL_DISTORTION",
+          "shot_4": "V255_AND_V259_SAME_ORIGINAL_FRAME_BOTH_VISUALLY_REJECTED_HAND_ANATOMY_DISTORTION_COLOR_INCOHERENCE",
           "shot_5": "VIDU_ANCHOR_NOT_GENERATED"
         },
         "duplicate_original_sha256": "1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0",
-        "production_blocked_reason": "Shot 1 V262 verified genuine 448x800 diffusion but visibly near monochrome, rejected for V98 quality; shot 2 V263 bounded CPU retry pending; shot 3 review pending; shot 4 generated from source once but artistic review pending; shot 5 Vidu authorization and Italy rights missing",
+        "production_blocked_reason": "Actual image review 04/11: shots 1 (V262 low-color), 3 (V258 too dark and artificial), 4 (V255/V259 deformed hands) rejected; shot 2 V263 in active CPU trial; shot 1 alternate V265 in active trial. True Vidu scene 5 and Italy rights remain blocked pending scene authorization and legal verification.",
         "v262_first_source_real_i2i": {
           "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41727145859",
           "artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41727145859/artifacts/13273823949",
@@ -103,6 +103,25 @@
           "vidu_api_plan_issued": false,
           "credit_spending_allowed": false,
           "vidu_clip_generated": false
+        },
+        "photo_artistic_review_20261104": {
+          "method": "Actual original V251 pixel-bound images compared to actual unzipped I2I PNG bytes from GitHub Actions in 448x800 side-by-side contact sheet",
+          "source_archive": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41635322340/artifacts/13229718890",
+          "shot_3": {
+            "generation_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41693665785",
+            "artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41693665785/artifacts/13261475013",
+            "artistically_approved": false,
+            "reason": "Very dark sepia and crunchy artificial sharpening/metal machinery detail; fails natural modern photography benchmark V98"
+          },
+          "shot_4": {
+            "v259_artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41702371962/artifacts/13264278087",
+            "v255_artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41664976399/artifacts/13246007353",
+            "v259_artistic_approval": false,
+            "v255_artistic_approval": false,
+            "reason": "Both distort genuine hands/fingers and the woven straw object, with unnatural textures; V255 also overly sepia. Same source shot, not two episodes or two scenes."
+          },
+          "approved_photos": 0,
+          "human_user_approval": false
         }
       }
     },
