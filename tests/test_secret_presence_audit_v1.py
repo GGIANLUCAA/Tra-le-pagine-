@@ -50,6 +50,18 @@ class SecretAuditTests(unittest.TestCase):
         self.assertEqual(states["Vidu other"]["integration_stage"],
                          "not_auto_selected_for_api")
 
+    def test_nvidia_detected_but_never_enabled(self):
+        report = make_report({"AUDIT_NVIDIA_API_KEY": "test-only-nvapi"})
+        by_name = {x["service"]: x for x in report["providers"]}
+        nvidia = by_name["NVIDIA NIM"]
+        self.assertTrue(nvidia["secret_present"])
+        self.assertEqual(nvidia["matching_secret_names"], ["NVIDIA_API_KEY"])
+        self.assertFalse(nvidia["api_validated"])
+        self.assertFalse(nvidia["billing_verified"])
+        self.assertFalse(nvidia["live_api_called"])
+        self.assertEqual(report["provider_calls"], 0)
+        self.assertNotIn("test-only-nvapi", json.dumps(report))
+
     def test_empty_blank_not_a_valid_secret(self):
         report = make_report({"AUDIT_GROQ": " ", "AUDIT_GEMINI_API_KEY": ""})
         by_name = {x["service"]: x for x in report["providers"]}
