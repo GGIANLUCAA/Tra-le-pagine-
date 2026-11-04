@@ -56,7 +56,7 @@ def verified_sources(source:Path,base:Path,manifest:Path)->dict:
         or m.get("source_crop_sha256")!=SOURCE_CROP_SHA
         or m.get("generated_sha256")!=V273_BASE_SHA
         or m.get("generated_photos")!=1
-        or m.get("artistic_approval") is not False
+        or m.get("artistically_approved") is not False
         or m.get("publish_allowed") is not False):
         raise ValueError("V277_UNVERIFIED_PRIOR_GENERATION")
     for f,expected in ((source,SOURCE_CROP_SHA),(base,V273_BASE_SHA)):
