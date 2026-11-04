@@ -1072,18 +1072,53 @@
         }
       },
       "editorial_note": "Existing Cinema V25 cover lacks English artwork title; painting asset 2000x2942 needs resolution review V129 revised cover title visibly correct; original master preserved. Library storage quota full; backup pending.",
-      "preflight_status": "research_incomplete_not_render_authorized",
+      "preflight_status": "1/4 real 1080p Cinema V158 sourced Tate N01572 exact image SHA, FFmpeg ZIP CRC PASS; Critico and two Museum variants pending; owner Gold pending",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 0,
+      "slots_delivered_this_selection": 1,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
-      "Gold_V25": false
+      "Gold_V25": false,
+      "cinema_standard_v158": {
+        "status": "REAL_1080p_CINEMA_MP4_GITHUB_ARTIFACT_FULL_FFMPEG_SHA256_AND_ZIP_CRC_INDEPENDENTLY_VERIFIED",
+        "variant": "cinema_standard",
+        "run_id": 41873893341,
+        "artifact_id": 13344664433,
+        "filename": "WATERHOUSE_THE_MAGIC_CIRCLE_CINEMA_V158_REVIEW.mp4",
+        "bytes": 13715050,
+        "sha256": "57ec493478c5f4a0c1a35cd336df7b157bf557a17efb1eca4fdeba49def95660",
+        "duration_s": 48,
+        "frames": 960,
+        "fps": 20,
+        "resolution": [
+          1080,
+          1920
+        ],
+        "full_ffmpeg_decode": "PASS independent local physical",
+        "zip_filename": "WATERHOUSE_MAGIC_CIRCLE_CINEMA_V158_REVIEW_PACKAGE.zip",
+        "zip_bytes": 20903972,
+        "zip_sha256": "27d18ef9e067dfff8e0e6d9b4fd627439258fc64a3c374084cab75cfee544d59",
+        "zip_crc": "PASS outer and inner independent",
+        "source_jpeg_sha256": "b846a11f640378fa0839e3a31583a128db1db2e91e2938f6fd23a75499c77451",
+        "source_jpeg_bytes": 3941283,
+        "source_jpeg_pixels": [
+          2000,
+          2942
+        ],
+        "source_page": "https://commons.wikimedia.org/wiki/File:The_Magic_Circle_-_John_William_Waterhouse.jpg",
+        "source_rights": "Commons PD-Art/PDM Tate N01572 full original painting not private study; UK and territorial release review pending",
+        "no_paid_calls": true,
+        "gold_v25": false,
+        "social_published": false,
+        "site_full_download_sha256": "PENDING IMPORT SITE R2",
+        "human_artistic_review": "PENDING",
+        "museum_approved": false
+      }
     },
     {
       "id": "blake_ghost_flea_1819_tate_n05889",
