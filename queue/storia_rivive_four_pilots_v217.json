@@ -45,14 +45,14 @@
         "vidu_clip_approved": false,
         "italian_rights_approved": false,
         "i2i_distinct_shot_status_v261": {
-          "shot_1": "V262_TRUE_I2I_REJECTED_BY_ACTUAL_VISUAL_REVIEW_ALMOST_MONOCHROME_NOT_V98_QUALITY",
-          "shot_2": "V254_CANDIDATE_ARTISTICALLY_REJECTED_MACHINE_BECAME_PERSON",
+          "shot_1": "V265_ACTUAL_PNG_REJECTED_ARTISTIC_QA_UNIFORM_ORANGE_BROWN_SEPIA_CAST_NOT_REALISTIC_MULTICOLOR",
+          "shot_2": "V263_ACTUAL_PNG_REJECTED_ARTISTIC_QA_LOW_COLOR_OLD_PHOTO_LOOK_MACHINE_PRESERVED_NEEDS_PHOTOREAL_COLOR",
           "shot_3": "V258_ACTUAL_PNG_VISUALLY_REJECTED_DARK_SEPIA_OVER_SHARPENING_AND_MACHINE_DETAIL_DISTORTION",
           "shot_4": "V255_AND_V259_SAME_ORIGINAL_FRAME_BOTH_VISUALLY_REJECTED_HAND_ANATOMY_DISTORTION_COLOR_INCOHERENCE",
           "shot_5": "VIDU_ANCHOR_NOT_GENERATED"
         },
         "duplicate_original_sha256": "1d77c757e3193bc9c046f2ae10baebb49a3b71fe379ed359b18e761956f4afb0",
-        "production_blocked_reason": "Actual image review 04/11: shots 1 (V262 low-color), 3 (V258 too dark and artificial), 4 (V255/V259 deformed hands) rejected; shot 2 V263 in active CPU trial; shot 1 alternate V265 in active trial. True Vidu scene 5 and Italy rights remain blocked pending scene authorization and legal verification.",
+        "production_blocked_reason": "Actual source-vs-I2I review V273 04/11: V263 shot02 verified source machine geometry but mostly gray/sepia, V265 shot01 saturated almost only brown/orange like sepia tint, both below V98 visually; shot03/04 earlier rejected; 0 accepted I2I, 0 Vidu, Italy rights not verified. Delhi V272 free original scouting running.",
         "v262_first_source_real_i2i": {
           "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41727145859",
           "artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41727145859/artifacts/13273823949",
@@ -122,6 +122,37 @@
           },
           "approved_photos": 0,
           "human_user_approval": false
+        },
+        "v273_actual_png_visual_review": {
+          "version": "V273_REAL_ARTIFACT_COLOR_GEOMETRY_REVIEW_20261104",
+          "shot_1_v265": {
+            "run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41744234818",
+            "artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41744234818/artifacts/13281614447",
+            "actual_png_sha256": "df1b4916f4bbe2f5bc757a4fcae6e6b58ced557f571120dd42d630dcf39c05c7",
+            "mean_hsv_saturation_0_255": 158.59,
+            "rgb_channel_spread_ge30_ratio": 0.751,
+            "human_artistic_approved": false,
+            "assessor_result": "REJECTED_FLAT_ORANGE_BROWN_SEPIA_COLOR_WITHOUT_NATURAL_MULTICOLOR"
+          },
+          "shot_2_v263": {
+            "run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41743816090",
+            "artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41743816090/artifacts/13282139600",
+            "actual_png_sha256": "7e8cf080e2a6493986cdb88b8afe4a4a50128235d815c7174ca86126819ffb79",
+            "mean_hsv_saturation_0_255": 45.01,
+            "rgb_channel_spread_ge30_ratio": 0.1,
+            "human_artistic_approved": false,
+            "assessor_result": "REJECTED_LOW_COLOR_SEPIA_NO_BENCHMARK_PHOTOREAL_REVEAL",
+            "geometry_observation": "machinery silhouettes substantially retained, unlike discarded V254 hallucination"
+          },
+          "extra_v265b_failed": {
+            "run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41744477085",
+            "report": "LOCAL_CPU_I2I_FAILED_NOT_FINAL",
+            "actual_generated_photos": 0,
+            "counted_as_i2i": false
+          },
+          "source_rights_italy_verified": false,
+          "approved_i2i_photos": 0,
+          "next_film_scout": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41789453410"
         }
       }
     },
