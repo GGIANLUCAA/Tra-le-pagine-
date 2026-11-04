@@ -1,0 +1,92 @@
+name: "La Storia Rivive V280 · Delhi real four-I2I comparison MP4 QA (not final)"
+on:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
+    paths:
+      - ".github/workflows/storia-rivive-v280-delhi-i2i-review-mp4.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v280-delhi-four-photo-review
+  cancel-in-progress: false
+jobs:
+  real_four_photo_video_qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install offline decoder and image library
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q 'Pillow>=10,<13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: storia-v272-delhi-real-archival-review-NOT-FINAL
+          run-id: 41789453410
+          github-token: ${{ github.token }}
+          path: output/v280/source
+      - uses: actions/download-artifact@v4
+        with:
+          name: storia-v278-delhi-four-V98-DDColor-Finegrain-real-photo-CANDIDATES-NOT-FINAL
+          run-id: 41806029514
+          github-token: ${{ github.token }}
+          path: output/v280/restored
+      - name: Verify actual original and actual Finegrain bytes; prepare 4 paired review panels
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image,ImageOps,ImageDraw
+          import json,hashlib
+          src=Path('output/v280/source/source/delhi_ruins_1910_v217/original_frames')
+          out=Path('output/v280/restored')
+          report=json.loads((out/'V278_DELHI_FOUR_REAL_I2I_QA_NOT_FINAL.json').read_text())
+          assert report['source_identity']['verified_unique_frames']==5
+          assert report['artistic_approval'] is False and report['vidu_scene5_generated'] is False
+          assert report['new_final_episodes_delivered']==0 and len(report['real_photo_files'])==4
+          dest=Path('output/v280/video');dest.mkdir(parents=True,exist_ok=True)
+          for i,row in enumerate(report['real_photo_files'],1):
+              original=src/row['original']
+              restored=out/row['actual_finegrain_photo_filename']
+              for p,key in ((original,'source_frame_sha256'),(restored,'real_i2i_sha256')):
+                  assert p.is_file() and hashlib.sha256(p.read_bytes()).hexdigest()==row[key],str(p)
+              panel=Image.new('RGB',(720,1280),'#141414')
+              with Image.open(original) as a,Image.open(restored) as b:
+                  # Side by side, preserve the full width of the source, do not silently crop subjects.
+                  panel.paste(ImageOps.contain(a.convert('RGB'),(708,570)),(6,55))
+                  panel.paste(ImageOps.contain(b.convert('RGB'),(708,570)),(6,685))
+              d=ImageDraw.Draw(panel)
+              d.text((14,15),f'DELHI 1910  SHOT {i}/4  ORIGINAL SOURCE',fill='white')
+              d.text((14,650),'ACTUAL FINEGRAIN I2I  NOT ARTISTICALLY APPROVED',fill='white')
+              panel.save(dest/f'shot_{i:02d}.png')
+          (dest/'STATUS.json').write_text(json.dumps({
+            'kind':'REAL_SOURCE_VS_I2I_VISUAL_QA_ONLY','shots':4,'source_sha_locked':True,
+            'still_image_comparison_not_historical_motion':True,'contains_vidu':False,
+            'rights_italy_approved':False,'human_approved':False,'final_mp4':False,
+            'new_final_episodes_delivered':0,'published':False},indent=2))
+          print('V280_FOUR_AUTHENTIC_SOURCE_I2I_PANELS_SHA_VERIFIED')
+          PY
+      - name: Render and decode REAL MP4 visual review; no fake historical motion
+        run: |
+          set -euo pipefail
+          mkdir -p output/v280/video/parts
+          for n in 01 02 03 04; do
+            ffmpeg -nostdin -v error -y -loop 1 -framerate 25 -i "output/v280/video/shot_${n}.png" -f lavfi -i anullsrc=r=48000:cl=stereo -t 3 -c:v libx264 -pix_fmt yuv420p -r 25 -c:a aac -b:a 96k -shortest "output/v280/video/parts/${n}.mp4"
+          done
+          printf "file '01.mp4'\nfile '02.mp4'\nfile '03.mp4'\nfile '04.mp4'\n" > output/v280/video/parts/concat.txt
+          ffmpeg -nostdin -v error -y -f concat -safe 0 -i output/v280/video/parts/concat.txt -c copy output/v280/video/DELHI_V280_REAL_I2I_COMPARISON_QA_NOT_FINAL.mp4
+          ffmpeg -nostdin -v error -xerror -i output/v280/video/DELHI_V280_REAL_I2I_COMPARISON_QA_NOT_FINAL.mp4 -f null -
+          ffprobe -v error -show_entries format=duration,size -of json output/v280/video/DELHI_V280_REAL_I2I_COMPARISON_QA_NOT_FINAL.mp4
+      - name: Keep real MP4 and four verified original/I2I panels for visual review
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v280-delhi-real-four-photo-comparison-MP4-QA-NOT-FINAL
+          retention-days: 14
+          path: |
+            output/v280/video/DELHI_V280_REAL_I2I_COMPARISON_QA_NOT_FINAL.mp4
+            output/v280/video/shot_*.png
+            output/v280/video/STATUS.json
