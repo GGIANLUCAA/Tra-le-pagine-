@@ -11,7 +11,7 @@ on:
       model:
         description: "Modello ufficiale NIM per il testo (non per Cosmos)"
         type: string
-        default: "nvidia/llama-3.3-nemotron-super-49b-v1.5"
+        default: "nvidia/nemotron-3-super-120b-a12b"
         required: true
       confirm_developer_terms:
         description: "Confermo che la prova e solo ricerca e sviluppo secondo i termini NVIDIA"
@@ -76,50 +76,6 @@ jobs:
             exit 1
           fi
           echo "NVIDIA_KEY_PRESENT_IN_ACTIONS; only presence checked, no API calls."
-  one-time-nemotron-free-developer-test:
-    # Exactly one development test, guarded by the explicit one-time commit.
-    if: github.event_name == 'push' && github.event.head_commit.message == 'NVIDIA_NEMOTRON_ONE_TIME_TRIAL_20261104'
-    needs: offline-tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 4
-    concurrency:
-      group: nvidia-nemotron-one-time-development-test
-      cancel-in-progress: false
-    env:
-      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY || secrets.NVIDIA || secrets.NVIDIA_NIM_API_KEY || secrets.NVIDIA_KEY }}
-      NVIDIA_NIM_DEV_ENABLED: "1"
-      NVIDIA_NIM_NONCOMMERCIAL_ACK: "1"
-      NVIDIA_NIM_ZERO_SPEND_CONFIRMED: "1"
-      NVIDIA_NIM_MODEL: "nvidia/nemotron-3-super-120b-a12b"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Send one minimal, opt-in official free NIM chat request
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -n "$NVIDIA_API_KEY" || { echo "::error::Missing NVIDIA API key"; exit 1; }
-          mkdir -p output/nvidia_dev_v1
-          printf '%s\n' 'Developer connectivity check only. Respond very briefly with one sentence in Italian explaining that this is a test. Do not invent sources or generate media.' > output/nvidia_dev_v1/prompt_nim.txt
-          python src/nvidia_nim_dev_v1.py --task source_notes \
-            --prompt-file output/nvidia_dev_v1/prompt_nim.txt \
-            --output output/nvidia_dev_v1/NEMOTRON_REAL_DRAFT.json --execute
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          p=Path("output/nvidia_dev_v1/NEMOTRON_REAL_DRAFT.json")
-          x=json.loads(p.read_text())
-          assert x.get("status")=="draft_unreviewed" and x.get("text")
-          print("NVIDIA_NEMOTRON_REAL_INFERENCE_OK; model:",x["model"],"; response_characters:",len(x["text"]))
-          PY
-      - uses: actions/upload-artifact@v4
-        with:
-          name: NVIDIA_NEMOTRON_ONE_TIME_TEST_${{ github.run_id }}
-          path: output/nvidia_dev_v1/NEMOTRON_REAL_DRAFT.json
-          if-no-files-found: error
-          retention-days: 7
   manual-dev-test:
     if: github.event_name == 'workflow_dispatch'
     needs: offline-tests
