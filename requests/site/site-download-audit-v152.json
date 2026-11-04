@@ -1,0 +1,20 @@
+{
+  "directive_date": "2026-11-04",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "request": "Verify ALL ArtVision 12/40 already-rendered MP4s actually on site, playable and downloadable; also audit every real MP4 download across Video Library Studio",
+  "site": "https://video-library-studio.600led.workers.dev",
+  "expected_new_works_mp4": 12,
+  "read_only": true,
+  "full_download_sha256": true,
+  "verify_download_ranges": true,
+  "verify_catalog": true,
+  "verify_all_site_mp4_ranges": true,
+  "verify_content_disposition": true,
+  "report_missing_separately": true,
+  "publish_socials": false,
+  "modify_site": false,
+  "use_paid_api": false,
+  "source_queue": "queue/artvision_owner_selected_ten_20261102.json",
+  "note": "Do not infer site-download readiness from GitHub artifacts or R2 object presence; test real site HTTP /api/files /api/catalog /media /download; never claim Android-device validation",
+  "status": "ONE_SHOT_AUDIT_REQUESTED_NOT_YET_VERIFIED"
+}
