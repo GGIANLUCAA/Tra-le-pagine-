@@ -1,0 +1,58 @@
+{
+  "directive_date": "2026-11-04",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "work_id": "waterhouse_magic_circle_1886_tate_n01572",
+  "public_title": "The Magic Circle",
+  "artist": "John William Waterhouse",
+  "year": 1886,
+  "accession": "N01572",
+  "painting_cm": {
+    "height": 182.9,
+    "width": 127
+  },
+  "variant": "cinema_standard",
+  "run_once_only": true,
+  "source_url": "https://upload.wikimedia.org/wikipedia/commons/3/33/The_Magic_Circle_-_John_William_Waterhouse.jpg",
+  "source_page": "https://commons.wikimedia.org/wiki/File:The_Magic_Circle_-_John_William_Waterhouse.jpg",
+  "official_object": "https://www.tate.org.uk/art/artworks/waterhouse-the-magic-circle-n01572",
+  "source_expected_pixels": [
+    2000,
+    2942
+  ],
+  "source_expected_format": "JPEG",
+  "source_expected_size_range_bytes": [
+    3200000,
+    4500000
+  ],
+  "source_fail_closed_on_429": true,
+  "license_status": "Commons_PD_Art_PDM_Tate_UK_claim_noted_and_full_N01572_not_private_study",
+  "no_commercial_publication_or_Gold": true,
+  "territorial_rights_not_released": true,
+  "creator_died_1917": true,
+  "museum_approved": false,
+  "frame_not_verified": true,
+  "source_precise_sha_verified_at_actual_download_not_invented": true,
+  "allow_paid_calls": false,
+  "social_publish": false,
+  "gold_v25": false,
+  "private_review_only": true,
+  "resolution_target": [
+    1080,
+    1920
+  ],
+  "duration_target_seconds": 48,
+  "fps": 20,
+  "original_procedural_score": true,
+  "no_Vidu_no_new_TTS": true,
+  "quality_gates": [
+    "source 2000x2942 Tate N01572 not study",
+    "MP4 H264 AAC 48s 960 frames 1080x1920 decoded fully FFmpeg",
+    "SHA256 original measured, no invented source SHA",
+    "ZIP CRC",
+    "site import then independent full-download SHA256",
+    "human visual/territorial rights review still PENDING"
+  ],
+  "workflow": ".github/workflows/artvision-waterhouse-magic-circle-cinema-v158.yml",
+  "renderer": "src/artvision_waterhouse_magic_circle_cinema_v158.py",
+  "status": "ONE_SHOT_REQUESTED_NO_MP4_CLAIM"
+}
