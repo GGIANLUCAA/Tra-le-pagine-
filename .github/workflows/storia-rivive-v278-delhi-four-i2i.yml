@@ -31,7 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --depth=1 --no-tags origin "$HEAD"
-          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V278: generate four real Delhi DDColor+Finegrain photos once [V278-ONCE]' ]]; then
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V278: four real Delhi Finegrain photos after isolated unit-test fix [V278-ONCE-2]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
