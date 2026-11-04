@@ -235,14 +235,14 @@
       "art_rights_preflight": "Work public domain; file-by-file Commons PD-Art and Tate image credit/conditions require validation",
       "preexisting_cinema_candidate": null,
       "editorial_note": "Frame dimensions 200x246x23 cm reported in third-party Tate-derived listing; primary verification pending Found independent 4236x3456 photo of actual framed work by Sailko CC BY 3.0; no claim historical frame and actual local media download pending.",
-      "preflight_status": "research_incomplete_not_render_authorized",
+      "preflight_status": "one_real_Cinema_Standard_V155_MP4_source_and_ZIP_SHA_FFmpeg_CRC_PASS_remaining_Critico_Standard_and_two_Museum_pending",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 0,
+      "slots_delivered_this_selection": 1,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
@@ -279,6 +279,41 @@
         "tate_uk_copyright_claim_on_specific_reproduction": true,
         "multi_territory_commercial_clearance_verified": false,
         "do_not_render_until_resolved": true
+      },
+      "cinema_standard_v155": {
+        "status": "REAL_CINEMA_48S_SOURCE_JPG_ZIP_FFMPEG_SHA256_INDEPENDENTLY_VERIFIED",
+        "variant": "cinema_standard",
+        "run_id": 41871206356,
+        "artifact_id": 13343568636,
+        "filename": "WATERHOUSE_THE_LADY_OF_SHALOTT_CINEMA_V155_REVIEW.mp4",
+        "bytes": 5326814,
+        "sha256": "977b8c54d466026564f1bd92216c6829d818656d069d9c5f8ea664e77f30a56c",
+        "frames": 960,
+        "duration_s": 48,
+        "fps": 20,
+        "resolution": [
+          720,
+          1280
+        ],
+        "full_ffmpeg_decode": "PASS independently downloaded artifact and local FFmpeg 2026-11-04",
+        "zip_filename": "WATERHOUSE_LADY_SHALOTT_CINEMA_V155_REVIEW_PACKAGE.zip",
+        "zip_bytes": 15315789,
+        "zip_sha256": "46ce5f5525185d52decd33017045bc27c5e56217eb126ca10679ad03ba6b8603",
+        "zip_crc": "PASS independently downloaded",
+        "original_image_sha256": "85285c9ec190a51331d88367f68867611aaabd65dcd7f6ca45aca119511be3a9",
+        "original_image_bytes": 6941271,
+        "original_image_pixels": [
+          4180,
+          3208
+        ],
+        "source_page": "https://commons.wikimedia.org/wiki/File:John_William_Waterhouse_-_The_Lady_of_Shalott_-_Google_Art_Project.jpg",
+        "source_rights": "Commons PD-Art/PDM Tate Britain UK claims noted, territorial rights review required before commercial publishing",
+        "museum_approved": false,
+        "Gold_V25": false,
+        "social_published": false,
+        "human_artistic_review": "PENDING",
+        "site_full_download_sha256": "PENDING live site import and readback",
+        "no_paid_api": true
       }
     },
     {
