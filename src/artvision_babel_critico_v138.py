@@ -107,6 +107,36 @@ def narration(out):
     print(json.dumps(report, indent=2))
 
 
+
+def offline_realign(out):
+    """Recover a real previously generated WAV without calling any voice provider."""
+    d, script = load()
+    assets(out)
+    wav = out / "VOCE.wav"
+    cachepath = out / "VOICE_CACHE_V13.json"
+    assert wav.is_file() and cachepath.is_file(), "Original V138 WAV and cache MUST be present"
+    cached = json.loads(cachepath.read_text())
+    assert cached["wav_sha256"] == sha(wav)
+    assert cached["cache_key"] == gemini_voice.cache_key(script)
+    assert cached["profile"]["voice"] == "Gacrux"
+    assert cached["profile"]["model"] == "gemini-3.8-flash-tts"
+    pcm, sr = sf.read(wav, dtype="float32")
+    assert sr == 24000 and pcm.ndim == 1 and np.isfinite(pcm).all()
+    duration = len(pcm) / sr
+    assert 65 <= duration <= 160
+    timed = gemini_voice.align(gemini_voice.sentences(script), wav, duration)
+    align = json.loads((out / "ALLINEAMENTO_VOCE.json").read_text())
+    if align.get("method") != "asr_with_interpolation" or (align.get("matched_fraction") or 0) < .85:
+        raise RuntimeError("ASR still below 85% or unavailable: no render/release")
+    gemini_voice._save_voice_cache(script, out, timed)
+    result = {"status": "RECOVERED_WAV_REALIGNED_OFFLINE_NO_TTS", "wav_sha256": sha(wav),
+              "duration_s": duration, "matched_fraction": align["matched_fraction"],
+              "source_run": 41796182097, "new_tts_calls": 0,
+              "V25_Gold": False, "museum_approved": False}
+    (out / "VOICE_RESULT_V138.json").write_text(json.dumps(result, indent=2))
+    print(json.dumps(result, indent=2))
+
+
 def verify_voice(out, script, chapters):
     wav = out / "VOCE.wav"
     cache = json.loads((out / "VOICE_CACHE_V13.json").read_text())
@@ -289,12 +319,14 @@ def render(out):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--phase", choices=("voice", "render"), required=True)
+    p.add_argument("--phase", choices=("voice", "align", "render"), required=True)
     p.add_argument("--out", type=Path, required=True)
     a = p.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     if a.phase == "voice":
         narration(a.out)
+    elif a.phase == "align":
+        offline_realign(a.out)
     else:
         render(a.out)
 
