@@ -312,8 +312,11 @@
         "Gold_V25": false,
         "social_published": false,
         "human_artistic_review": "PENDING",
-        "site_full_download_sha256": "PENDING live site import and readback",
-        "no_paid_api": true
+        "site_full_download_sha256": "PASS real HTTP200 entire video byte-by-byte SHA256 same as independently verified artifact in run 41872941990",
+        "no_paid_api": true,
+        "site_playback_verified": true,
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41872941990
       },
       "critico_standard_v156": {
         "status": "REAL_MP4_SHA256_FULL_FFMPEG_DECODE_AND_ZIP_CRC_INDEPENDENTLY_VERIFIED_NO_GOLD",
@@ -341,13 +344,18 @@
         "voice_aac_sha256": "bcbe4c0beae897083d460d637891ad764d1973e981089aff856b2560cf615a6a",
         "ASR_matched_fraction": 0.9338842975206612,
         "one_voice_reuse_for_future_museum": true,
-        "site_full_download_sha256": "PENDING",
+        "site_full_download_sha256": "PASS real HTTP200 entire video byte-by-byte SHA256 same as independently verified artifact in run 41872941990",
         "human_artistic_review": "PENDING",
         "museum_approved": false,
         "Gold_V25": false,
         "social_published": false,
-        "licensing_review": "PENDING source has Tate UK rights claim; no social/commercial publication approved"
-      }
+        "licensing_review": "PENDING source has Tate UK rights claim; no social/commercial publication approved",
+        "site_playback_verified": true,
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41872941990
+      },
+      "site_archive_verified_slots": 2,
+      "site_archive_verification": "PASS Cinema V155 and Critico V156 actual downloaded bytes exact SHA256 and Range 206"
     },
     {
       "id": "rembrandt_night_watch_1642_rijks_sk_c_5",
@@ -1197,15 +1205,14 @@
   "last_verified_review": "2026-11-04",
   "total_selected_new_cinema_review_slots_verified": 3,
   "current_site_download_audit": {
-    "run_id": 41870128447,
+    "run_id": 41872941990,
     "date": "2026-11-04",
     "status": "FULL_PASS",
     "site": "https://video-library-studio.600led.workers.dev",
-    "active_ArtVision_12_of_12_full_download_and_sha256_pass": 12,
-    "mp4_visible_sitewide_range_pass": 558,
-    "mp4_visible_sitewide_range_tested": 558,
+    "active_ArtVision_14_of_14_full_download_and_sha256_pass": 14,
+    "mp4_visible_sitewide_range_pass": 560,
+    "mp4_visible_sitewide_range_tested": 560,
     "known_hidden_mp4_preserved": 5,
-    "previous_v135_exact_master_missing_replaced_by_distinct_v153": true,
     "Android_device_interactive_playback_not_tested": true,
     "public_social_publishing_not_approved": true,
     "Gold_V25": false
