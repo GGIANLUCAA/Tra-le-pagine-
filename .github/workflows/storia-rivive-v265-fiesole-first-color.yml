@@ -32,7 +32,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --depth=1 --no-tags origin "$HEAD"
-          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V265: one colorful authentic Fiesole first-shot CPU photo [V265-ONCE]' ]]; then
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V265: retry after offline fixture fix; first-shot CPU photo [V265-ONCE-2]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
@@ -115,7 +115,7 @@ jobs:
         if: always() && steps.gate.outputs.allowed == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: storia-v265-fiesole-first-real-COLOR-I2I-NOT-FINAL
+          name: storia-v265b-fiesole-first-real-COLOR-I2I-NOT-FINAL
           retention-days: 14
           if-no-files-found: warn
           path: output/v265/photo/
