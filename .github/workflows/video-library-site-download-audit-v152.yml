@@ -1,4 +1,4 @@
-name: Video Library Studio V154 · Real-site playback + complete download audit
+name: Video Library Studio V157 · Real-site playback + complete download audit
 on:
   push:
     branches: [main]
@@ -18,28 +18,28 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate precise read-only audit request and source code
         run: |
-          python -m py_compile src/video_library_site_download_audit_v154.py
+          python -m py_compile src/video_library_site_download_audit_v157.py
           python - <<'PY'
           import json
           r=json.load(open('requests/site/site-download-audit-v152.json'))
           assert r['owner_automation_id']=='6adca191603c8191a90d5190901cd034'
           assert r['site']=='https://video-library-studio.600led.workers.dev'
-          assert r['expected_new_works_mp4']==12
+          assert r['expected_new_works_mp4']==14
           assert r['read_only'] and r['full_download_sha256'] and r['verify_download_ranges']
           assert not r['publish_socials'] and not r['modify_site'] and not r['use_paid_api']
           PY
-      - name: Inspect live website catalog and download ALL 12 exact masters by SHA + site-wide byte ranges
+      - name: Inspect live website catalog and download ALL 14 exact active masters by SHA + site-wide byte ranges
         run: |
           python3 -m pip -q install 'requests>=2.32,<3'
-          python3 src/video_library_site_download_audit_v154.py
+          python3 src/video_library_site_download_audit_v157.py
       - name: Save actual audit report even when site is partially offline
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: VLS_SITE_DOWNLOAD_AUDIT_V154_REAL_HTTP_REPORT
+          name: VLS_SITE_DOWNLOAD_AUDIT_V157_REAL_HTTP_REPORT
           path: |
-            output/site_download_audit_v152/expected.json
-            output/site_download_audit_v152/site_download_report_v152.json
-            output/site_download_audit_v152/site_master_status_v152.csv
+            output/site_download_audit_v157/expected.json
+            output/site_download_audit_v157/site_download_report_v157.json
+            output/site_download_audit_v157/site_master_status_v157.csv
           retention-days: 30
           if-no-files-found: warn
