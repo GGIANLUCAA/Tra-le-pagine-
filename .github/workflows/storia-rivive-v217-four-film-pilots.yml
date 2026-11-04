@@ -237,11 +237,14 @@ jobs:
             echo "V240_SOURCE_NOT_READY_NO_CROPS"
           fi
       - name: Upload source footage evidence, contact sheet and any REAL preview for QA
+        # Preserve actual source/scout diagnostics even when a downstream ranking or render step fails.
+        # An incomplete artifact is evidence for diagnosis, NEVER a final video or source approval.
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: v217-four-pilot-source-${{ matrix.episode }}
           retention-days: 14
-          if-no-files-found: error
+          if-no-files-found: warn
           path: |
             output/v217/${{ matrix.episode }}/
             output/v217/source/${{ matrix.episode }}/SCOUT_REPORT.json
