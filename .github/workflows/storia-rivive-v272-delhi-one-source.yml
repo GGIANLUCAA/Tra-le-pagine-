@@ -20,7 +20,7 @@ jobs:
       PUBLISH_ALLOWED: "false"
     steps:
       - uses: actions/checkout@v4
-      - name: Strict one-shot authorization: inspect Delhi only, no API credits
+      - name: "Strict one-shot authorization: inspect Delhi only, no API credits"
         id: gate
         shell: bash
         env:
@@ -28,7 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --depth=1 --no-tags origin "$SHA"
-          if [[ "$(git log -1 --format=%s "$SHA")" == 'storia V272: scout Delhi 1910 real archival source [V272-ONCE]' ]]; then
+          if [[ "$(git log -1 --format=%s "$SHA")" == 'storia V272: fix scout workflow YAML and run Delhi original [V272-ONCE-2]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
