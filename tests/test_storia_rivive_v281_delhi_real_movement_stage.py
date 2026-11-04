@@ -32,9 +32,10 @@ class V281(unittest.TestCase):
         # V281 runner after all source segments were rendered.
         import inspect
         source=inspect.getsource(subject.main)
-        target='+'"'+"'"+'\\'+'n'+'" for f in parts'
-        self.assertIn(target, source)
-        self.assertNotIn('+'"'+"'"+'\\'+'\\'+'n'+'" for f in parts', source)
+        one_backslash = "'" + chr(92) + 'n" for f in parts'
+        two_backslashes = "'" + chr(92) * 2 + 'n" for f in parts'
+        self.assertIn(one_backslash, source)
+        self.assertNotIn(two_backslashes, source)
 
     def test_untrusted_hash_fails_closed_before_any_render(self):
         with tempfile.TemporaryDirectory() as t:
