@@ -35,7 +35,8 @@ jobs:
           w=[x for x in q["works"] if x["id"]==r["work_id"]]
           assert len(w)==1 and w[0]["slots_delivered_this_selection"]==1
           assert "critico_standard_v151" not in w[0]
-          assert w[0]["cinema_standard_v150"]["full_ffmpeg_decode"].startswith("PASS")
+          assert w[0]["cinema_standard_v150"]["sha256"]=="c460fe7fa72ac29425de67eec40f986add502c42ec9e4166050c7ce107804138"
+          assert w[0]["cinema_standard_v150"]["zip_crc"].startswith("PASS")
           assert w[0]["museum_approved"] is False
           PY
       - name: Reuse and SHA-verify the already produced V150 licensed original source before voice
