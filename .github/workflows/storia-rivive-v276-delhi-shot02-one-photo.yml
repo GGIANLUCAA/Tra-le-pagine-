@@ -1,4 +1,4 @@
-name: "La Storia Rivive V276 · Delhi elephant bridge true I2I CPU shot02"
+name: "La Storia Rivive V277 · Delhi true bovine bridge shot02 corrected crop"
 on:
   push:
     branches: [storia-v196-v101-cache-fail-closed-20261101]
@@ -8,7 +8,7 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: storia-v276-delhi-shot02-${{ github.sha }}
+  group: storia-v277-delhi-shot02-corrected
   cancel-in-progress: false
 jobs:
   one_source_locked_delhi_shot02:
@@ -32,7 +32,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --depth=1 --no-tags origin "$HEAD"
-          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V276: render Delhi elephant shot02 source-locked image [V276-ONCE]' ]]; then
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V277: corrected Delhi bovine shot02 source-locked [V277-ONCE]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
@@ -70,7 +70,7 @@ jobs:
             --selection output/v276/v272/delhi_ruins_1910_v217/SHOT_AWARE_SELECTION_V210.json \
             --original output/v276/v272/source/delhi_ruins_1910_v217/original_frames/frame_04.png \
             --out output/v276/photo --offline
-      - name: One actual locally-generated Delhi elephant/rider photo candidate
+      - name: One genuine Delhi bovine-rider photograph candidate with correct crop
         if: steps.gate.outputs.allowed == 'true'
         id: i2i
         continue-on-error: true
@@ -116,7 +116,7 @@ jobs:
         if: always() && steps.gate.outputs.allowed == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: storia-v276-delhi-shot02-real-I2I-ARTISTIC-QA-NOT-FINAL
+          name: storia-v277-delhi-shot02-bovine-crop-corrected-ARTISTIC-QA-NOT-FINAL
           retention-days: 14
           if-no-files-found: warn
           path: output/v276/photo/
