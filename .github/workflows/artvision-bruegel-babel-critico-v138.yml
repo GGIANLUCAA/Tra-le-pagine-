@@ -1,0 +1,134 @@
+name: ArtVision Babel two Critico V138 (one shared Free Gacrux)
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/bruegel-babel-critico-v138.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-owner-one-Babel-critico-v138-no-repeat
+  cancel-in-progress: false
+jobs:
+  two_critico_once:
+    runs-on: ubuntu-latest
+    timeout-minutes: 95
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate one-shot owner authorization and prevent duplicates
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('requests/artvision/bruegel-babel-critico-v138.json'))
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          assert r['owner_automation_id']=='6adca191603c8191a90d5190901cd034'
+          assert r['work_id']=='bruegel_tower_babel_1563_khm_gg1026'
+          assert r['public_title']=='The Tower of Babel'
+          assert r['variants']==['critico_standard','critico_museum']
+          assert r['one_WAV_for_both'] and r['run_once_only']
+          assert not r['allow_paid_calls'] and not r['social_publish'] and not r['gold_v25']
+          w=[x for x in q['works'] if x['id']==r['work_id']]
+          assert len(w)==1 and w[0]['slots_delivered_this_selection']==2
+          assert w[0]['cinema_standard_v136']['full_ffmpeg_decode'].startswith('PASS')
+          assert w[0]['cinema_museum_v137']['ffmpeg_full_decode']=='PASS'
+          assert w[0]['museum_approved'] is False
+          assert 'critico_standard_v138' not in w[0] and 'critico_museum_v138' not in w[0]
+          print('Authorized only remaining two Critico; Cinema masters untouched')
+          PY
+      - name: Reuse actual V136 and V137 artifacts instead of re-downloading Commons
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v136 /tmp/v137 /tmp/artvision_babel_critico_v138
+          gh run download 41549505091 --repo "$GITHUB_REPOSITORY" --name BRUEGEL_BABEL_1563_V136_CINEMA_REVIEW_MP4 --dir /tmp/v136
+          gh run download 41663098584 --repo "$GITHUB_REPOSITORY" --name BRUEGEL_BABEL_V137_MUSEUM_REVIEW_REAL_MP4 --dir /tmp/v137
+          unzip -p /tmp/v136/BRUEGEL_BABEL_V136_CINEMA_REVIEW_PACKAGE.zip ORIGINAL_ARTWORK.jpg > /tmp/artvision_babel_critico_v138/ORIGINAL_ARTWORK.jpg
+          unzip -p /tmp/v137/BRUEGEL_BABEL_V137_CINEMA_MUSEUM_REVIEW_PACKAGE.zip AUTHENTIC_KHM_FRAME_PHOTO_CC_BY3.jpg > /tmp/artvision_babel_critico_v138/AUTHENTIC_KHM_FRAME_PHOTO_CC_BY3.jpg
+          cp /tmp/v137/QA_V137.json /tmp/artvision_babel_critico_v138/
+          python - <<'PY'
+          import hashlib,json,zipfile
+          from pathlib import Path
+          o=Path('/tmp/artvision_babel_critico_v138')
+          sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+          a=o/'ORIGINAL_ARTWORK.jpg'
+          p=o/'AUTHENTIC_KHM_FRAME_PHOTO_CC_BY3.jpg'
+          j=json.loads((o/'QA_V137.json').read_text())
+          photo=j['authentic_frame_photo']
+          assert sha(a)=='d8d43ac82b04db798b36d9c7f0ab99dba5fb537fa4d8589674d8cd3d1a78f4cd'
+          assert sha(p)==photo['sha256'] and photo['dimensions'] in ([1280,960],[2400,1800],[960,720])
+          assert 'CC BY 3.0' in photo['credit'] and j['museum_approved'] is False
+          for z in ('/tmp/v136/BRUEGEL_BABEL_V136_CINEMA_REVIEW_PACKAGE.zip','/tmp/v137/BRUEGEL_BABEL_V137_CINEMA_MUSEUM_REVIEW_PACKAGE.zip'):
+            with zipfile.ZipFile(z) as archive:
+              assert archive.testzip() is None
+          print('Real reusable licensed source bytes SHA256 and ZIP CRC PASS')
+          PY
+      - name: Gate voice to previously owner-confirmed Free no-billing second account ONLY
+        env:
+          SECOND_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+        run: |
+          test -n "$SECOND_KEY" || { echo "BLOCKED: second account absent, no TTS requested"; exit 2; }
+      - name: Install free public runner dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" numpy pillow soundfile scipy faster-whisper opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          e=Path(get_ffmpeg_exe())
+          assert e.exists()
+          Path('/tmp/artvision-bin/ffmpeg').symlink_to(e)
+          PY
+          echo "/tmp/artvision-bin" >> "$GITHUB_PATH"
+          /tmp/artvision-bin/ffmpeg -version | head -1
+      - name: One and only one authentic Gacrux narration
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          ARTVISION_GEMINI_PROJECT_BILLING_TIER: Free
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python src/artvision_babel_critico_v138.py --phase voice --out /tmp/artvision_babel_critico_v138
+      - name: Render 2 genuine MP4 sequentially and verify audio/frames/SHA/ZIP
+        run: python src/artvision_babel_critico_v138.py --phase render --out /tmp/artvision_babel_critico_v138
+      - name: Independent physical verification of both MP4 and ZIP
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,zipfile
+          from pathlib import Path
+          o=Path('/tmp/artvision_babel_critico_v138')
+          j=json.loads((o/'BABEL_CRITICO_V138_QA.json').read_text())
+          assert j['status']=='TWO_REAL_MP4_REVIEW_NOT_GOLD'
+          assert len(j['files'])==2 and j['museum_approved'] is False
+          assert j['Gold_V25'] is False and j['social_published'] is False
+          for slot,info in j['files'].items():
+            p=o/info['filename']
+            assert p.stat().st_size>1000000
+            assert hashlib.sha256(p.read_bytes()).hexdigest()==info['sha256']
+            assert info['FFmpeg_full_decode']=='PASS'
+            subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(p),'-f','null','-'],check=True)
+          with zipfile.ZipFile(o/'BRUEGEL_BABEL_CRITICO_V138_REVIEW_PACKAGE.zip') as z:
+            assert z.testzip() is None
+            assert sum(n.endswith('.mp4') for n in z.namelist())==2
+          print('EXACT TWO PHYSICAL MP4; museum approval pending; no Gold')
+          PY
+      - name: Preserve real outputs and any generated WAV on failure without rebilling
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_BABEL_V138_TWO_CRITICO_REAL_REVIEW_OR_DIAGNOSTIC
+          path: |
+            /tmp/artvision_babel_critico_v138/VOCE.wav
+            /tmp/artvision_babel_critico_v138/VOICE_CACHE_V13.json
+            /tmp/artvision_babel_critico_v138/ALLINEAMENTO_VOCE.json
+            /tmp/artvision_babel_critico_v138/VOICE_RESULT_V138.json
+            /tmp/artvision_babel_critico_v138/COPIONE_ESATTO_V138.txt
+            /tmp/artvision_babel_critico_v138/BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_STANDARD_V138_REVIEW.mp4
+            /tmp/artvision_babel_critico_v138/BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_MUSEUM_V138_REVIEW.mp4
+            /tmp/artvision_babel_critico_v138/BABEL_CRITICO_V138_QA.json
+            /tmp/artvision_babel_critico_v138/BRUEGEL_BABEL_CRITICO_V138_REVIEW_PACKAGE.zip
+            /tmp/artvision_babel_critico_v138/*_COVER.jpg
+            /tmp/artvision_babel_critico_v138/*_SOCIAL_DRAFT.txt
+            /tmp/artvision_babel_critico_v138/RIGHTS_AND_CREDITS.txt
+          if-no-files-found: warn
+          retention-days: 30
