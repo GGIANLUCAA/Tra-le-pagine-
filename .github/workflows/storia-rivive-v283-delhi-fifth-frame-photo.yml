@@ -1,0 +1,106 @@
+name: "La Storia Rivive V283 · Delhi fifth shot real photo for Vidu source (NOT VIDEO)"
+on:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
+    paths:
+      - ".github/workflows/storia-rivive-v283-delhi-fifth-frame-photo.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v283-delhi-one-off-source5-image
+  cancel-in-progress: false
+jobs:
+  prepare_real_fifth_photo:
+    if: github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 42
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - name: One-shot gate no duplicate provider calls on any subsequent commit
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$(git log -1 --format=%s)" == 'storia V283: attempt real Delhi fifth photo once, no Vidu charge [V283-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install local color model and pre-existing public free Finegrain client
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m pip install -q 'numpy>=1.26,<2' 'opencv-python-headless>=4.9,<5' 'onnxruntime>=1.17,<2' 'Pillow>=10,<13' 'huggingface_hub>=0.25,<1' 'gradio_client>=1.3,<2'
+      - name: Test exact original source lock and no false approval (no API calls)
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          python -m py_compile src/storia_rivive_v283_delhi_shot5_photo_anchor.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v283_delhi_shot5_photo_anchor.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v272-delhi-real-archival-review-NOT-FINAL
+          run-id: 41789453410
+          github-token: ${{ github.token }}
+          path: output/v283/v272
+      - name: Verify actual source SHA and prepare true fifth motion anchor (no billing)
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          echo '28a71dff0d65a4529a946fbe1d531626c70dca389d344e4d17f7646022fc8ca2  output/v283/v272/source/delhi_ruins_1910_v217/original_frames/frame_12.png' | sha256sum -c -
+          python src/storia_rivive_v283_delhi_shot5_photo_anchor.py \
+            --source output/v283/v272/source/delhi_ruins_1910_v217/original_frames/frame_12.png \
+            --out output/v283/fifth --offline
+      - name: Real fifth image I2I one attempt via pre-existing free provider, no Vidu
+        if: steps.gate.outputs.allowed == 'true'
+        id: fifth
+        continue-on-error: true
+        run: |
+          timeout 1500s python -u src/storia_rivive_v283_delhi_shot5_photo_anchor.py \
+            --source output/v283/v272/source/delhi_ruins_1910_v217/original_frames/frame_12.png \
+            --out output/v283/fifth
+      - name: SHA verify the actual candidate without claiming human approval
+        if: always() && steps.gate.outputs.allowed == 'true'
+        env:
+          OUTCOME: ${{ steps.fifth.outcome }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          from PIL import Image
+          d=Path('output/v283/fifth')
+          doc=json.loads((d/'DELHI_V283_SHOT05_SOURCE_LOCKED_QA_NOT_FINAL.json').read_text())
+          assert doc['original_source_frame_sha256']=='28a71dff0d65a4529a946fbe1d531626c70dca389d344e4d17f7646022fc8ca2'
+          assert doc['original_crop_bbox_px']==[750,0,1358,1080]
+          assert doc['five_second_vidu_clip_generated'] is False
+          assert doc['vidu_credits_spent']==0
+          assert doc['master_videos_finished']==0
+          assert doc['scene5_photo_artistically_approved'] is False
+          assert doc['subject_reviewed_by_user'] is False
+          assert doc['publication_allowed'] is False
+          if os.getenv('OUTCOME')=='success':
+              p=d/doc['generated_photo_filename']
+              assert p.is_file() and p.stat().st_size>18000
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==doc['generated_photo_sha256']
+              with Image.open(p) as im:assert im.size==(720,1280)
+              print('V283_TRUE_FIFTH_I2I_PHOTO_CREATED_REVIEW_ONLY; ZERO_VIDU; ZERO_MASTER')
+          else:
+              print('V283_REAL_FIFTH_I2I_NOT_PRODUCED; SOURCE_ANCHOR_ONLY')
+          PY
+      - name: Preserve actual fifth-source anchor, possible I2I image, and original-vs-color QA
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v283-delhi-fifth-shot-real-photo-AND-BW-source-NO-VIDU-NO-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v283/fifth/
