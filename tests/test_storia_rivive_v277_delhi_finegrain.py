@@ -30,7 +30,7 @@ class V277(unittest.TestCase):
             "source_crop_sha256":self.shas[0],
             "generated_sha256":self.shas[1],
             "generated_photos":1,
-            "artistic_approval":False,"publish_allowed":False}
+            "artistically_approved":False,"publish_allowed":False}
         self.manifest.write_text(json.dumps(self.m))
     def source_patch(self):
         from contextlib import ExitStack
