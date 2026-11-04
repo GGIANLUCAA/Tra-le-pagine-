@@ -1,0 +1,44 @@
+{
+  "directive_date": "2026-11-04",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "work_id": "bruegel_tower_babel_1563_khm_gg1026",
+  "public_title": "The Tower of Babel",
+  "year": 1563,
+  "accession": "GG 1026",
+  "variants": [
+    "critico_standard",
+    "critico_museum"
+  ],
+  "existing_completed_slots": [
+    "cinema_standard_v136",
+    "cinema_museum_v137"
+  ],
+  "one_WAV_for_both": true,
+  "one_render_at_a_time": true,
+  "run_once_only": true,
+  "one_tts_call_at_most": true,
+  "approved_tts_scope": "Gemini Gacrux only second account GEMINI_API_KEY2, previously owner-attested Free with no billing linked; no fallback primary key, no repeat if fails",
+  "max_paid_api_calls": 0,
+  "allow_paid_calls": false,
+  "social_publish": false,
+  "gold_v25": false,
+  "museum_approved": false,
+  "source_artifact_v136_run_id": 41549505091,
+  "source_frame_artifact_v137_run_id": 41663098584,
+  "reference_art_source_sha256": "d8d43ac82b04db798b36d9c7f0ab99dba5fb537fa4d8589674d8cd3d1a78f4cd",
+  "frame_license": "Hiroki Ogawa 2015, Commons 1280x960 derivative, CC BY 3.0; attribution and manual artistic review required",
+  "music": "procedurally synthesized original",
+  "public_titles_never_include": [
+    "Standard",
+    "ArtVision",
+    "Tra le Pagine"
+  ],
+  "human_artistic_review": "PENDING",
+  "v25_gold": false,
+  "no_rerun_on_failed_voice": true,
+  "request_status": "ONE_SHOT_AUTHORIZED_NOT_PRODUCED",
+  "workflow": ".github/workflows/artvision-bruegel-babel-critico-v138.yml",
+  "renderer": "src/artvision_babel_critico_v138.py",
+  "recipe": "modules/artvision_critico/production_series/bruegel_babel_v138.json",
+  "expected_artifacts": "real two H264/AAC MP4 with same WAV and AAC, SHA256, full FFmpeg decode, ZIP CRC, 2 covers, social drafts only, source/licensing credits. Count 4/4 only after actual byte/readback."
+}
