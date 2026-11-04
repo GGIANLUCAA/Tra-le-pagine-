@@ -198,6 +198,36 @@
           "public_posting_authorized": false,
           "credits_spent": 0,
           "note": "User explicitly caught black-and-white unreconstructed fifth and missing Vidu in V282; V285 now restores it with true source-locked photo still only, not an animated Vidu video. Visual QA on animals/people still required."
+        },
+        "v287_motion_and_gradual_reveal_fix": {
+          "date": "2026-11-04",
+          "source_workflow": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41867434756",
+          "source_workflow_artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41867434756/artifacts/13343690310",
+          "true_original_film_verified_sha256": "0a0de7b032cdb19e34d4dac5a6efca02dfa4b00260411aa82290c54b2899f278",
+          "user_reported_regressions": [
+            "Last BW scene frozen",
+            "Color reveal immediate rather than gradual"
+          ],
+          "corrected_fifth_moving_source_start_s": 216.863,
+          "corrected_fifth_moving_source_end_s": 218.133,
+          "fifth_anchor_original_time_s": 218.176,
+          "fifth_endpoint_to_anchor_luma_correlation": 0.9815,
+          "fifth_real_movement_score": 3.89,
+          "scenes_original_bw_motion_verified": 5,
+          "color_reveal_type": "GRADUAL_PIXELWISE_DISSOLVE_FROM_EXACT_ORIGINAL_FRAME_TO_REAL_FINEGRAIN_PHOTO",
+          "color_reveal_duration_s": 0.8,
+          "corrected_review_video_duration_s": 21.566984,
+          "corrected_review_video_sha256": "0c245845619d173203ccdee6c3e136ebcc58d9d46378fc18efa1fd3f1aafbcd1",
+          "corrected_review_video_bytes": 10323153,
+          "corrected_review_video_codec": "H264/AAC 720x1280 30fps",
+          "ffmpeg_full_media_decode_pass": true,
+          "zip_crc_and_mp4_sha_pass": true,
+          "vidu_real_animated_clip_count": 0,
+          "cinematic_readiness": "CORRECTED_PREVIEW_NOT_MASTER",
+          "artistic_human_approval": false,
+          "italian_rights_cleared": false,
+          "publish_permission": false,
+          "approved_new_episodes_delivered": 0
         }
       }
     },
