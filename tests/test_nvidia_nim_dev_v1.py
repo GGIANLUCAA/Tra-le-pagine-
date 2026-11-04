@@ -84,12 +84,12 @@ class NvidiaNimDevTests(unittest.TestCase):
     def test_public_branding_guard(self):
         with self.assertRaisesRegex(NvidiaNimError,"V134"):
             generate_dev_draft("social","Museum source",environ=env(),
-                               opener=lambda *_:Reply(content="ArtVision presents the film"))
+                               opener=lambda *args, **kwargs:Reply(content="ArtVision presents the film"))
 
     def test_provider_mismatch_rejected(self):
         with self.assertRaisesRegex(NvidiaNimError,"Unexpected returned model"):
             generate_dev_draft("social","Museum note",environ=env(),
-                               opener=lambda *_:Reply(model="other/model"))
+                               opener=lambda *args, **kwargs:Reply(model="other/model"))
 
     def test_dry_run_no_api_key_and_no_file_created(self):
         with tempfile.TemporaryDirectory() as d:
