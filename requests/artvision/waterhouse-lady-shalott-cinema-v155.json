@@ -1,0 +1,50 @@
+{
+  "directive_date": "2026-11-04",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "work_id": "waterhouse_lady_shalott_1888_tate_n01543",
+  "public_title": "The Lady of Shalott",
+  "artist": "John William Waterhouse",
+  "year": 1888,
+  "accession": "N01543",
+  "painting_cm": {
+    "height": 153,
+    "width": 200
+  },
+  "variant": "cinema_standard",
+  "run_once_only": true,
+  "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/John_William_Waterhouse_-_The_Lady_of_Shalott_-_Google_Art_Project.jpg",
+  "source_page": "https://commons.wikimedia.org/wiki/File:John_William_Waterhouse_-_The_Lady_of_Shalott_-_Google_Art_Project.jpg",
+  "official_object": "https://www.tate.org.uk/art/artworks/waterhouse-the-lady-of-shalott-n01543",
+  "source_expected_pixels": [
+    4180,
+    3208
+  ],
+  "source_expected_format": "JPEG",
+  "source_expected_size_range_bytes": [
+    4000000,
+    10000000
+  ],
+  "source_fail_closed_on_429": true,
+  "license_status": "Commons_PD_Art_PDM_Tate_UK_claim_noted",
+  "no_commercial_publication_or_Gold": true,
+  "territorial_rights_not_released": true,
+  "creator_died_1917": true,
+  "museum_approved": false,
+  "frame_not_verified": true,
+  "source_precise_sha_verified_at_actual_download_not_invented": true,
+  "allow_paid_calls": false,
+  "social_publish": false,
+  "gold_v25": false,
+  "video_review_only": true,
+  "original_procedural_score": true,
+  "no_Vidu_no_new_TTS": true,
+  "quality_gates": [
+    "actual JPG dims/format/source match",
+    "H264 AAC 48s 960 frames full ffmpeg decode",
+    "SHA256 and zip CRC",
+    "site importer R2 content bytes and full-site sha HTTP readback before count"
+  ],
+  "workflow": ".github/workflows/artvision-waterhouse-lady-shalott-cinema-v155.yml",
+  "renderer": "src/artvision_waterhouse_lady_shalott_cinema_v155.py",
+  "status": "ONE_SHOT_REQUESTED_NO_MP4_CLAIM"
+}
