@@ -14,7 +14,7 @@ sys.path.insert(0,str(ROOT/"src"))
 import gemini_voice
 
 OUT=Path("/tmp/blake_ghost_critico_v159")
-RECIPE=ROOT/"modules/artvision_critico/production_series/blake_ghost_v159.json"
+RECIPE=ROOT/"modules/artvision_critico/production_series/blake_ghost_flea_v159.json"
 ART_SHA="7aaa5adfd14561ad510937a36350d3f8308cc23b85fe337c9eb690c45746a6c5"
 W,H,FPS=720,1280,20
 DELAY,TAIL=3.5,6.0
