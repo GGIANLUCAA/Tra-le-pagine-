@@ -1,0 +1,122 @@
+{
+  "schema_version": "artvision-critico-babel-v138",
+  "work_id": "bruegel_tower_babel_1563_khm_gg1026",
+  "english_title": "The Tower of Babel",
+  "artist": "Pieter Bruegel the Elder",
+  "year": 1563,
+  "accession": "GG 1026",
+  "museum": {
+    "room": "reuse authentic 2015 photographed frame/wall, digitally extended wall, not actual 16th-century frame",
+    "frame_only": "intro/outro",
+    "full_motion_visual_review": "PENDING"
+  },
+  "dimensions_cm": {
+    "height": 114.4,
+    "width": 155.5
+  },
+  "source_video_artifact_run_v136": 41549505091,
+  "source_frame_artifact_run_v137": 41663098584,
+  "art_sha256": "d8d43ac82b04db798b36d9c7f0ab99dba5fb537fa4d8589674d8cd3d1a78f4cd",
+  "frame_photo": "Hiroki Ogawa 2015 CC BY 3.0, Wikimedia Commons official 1280px derivative, historical frame not attested",
+  "voice": {
+    "model": "gemini-3.8-flash-tts",
+    "profile": "Gacrux",
+    "source_secret": "GEMINI_API_KEY2",
+    "required_free_no_billing": true,
+    "one_WAV_two_Mp4": true,
+    "one_call_only": true
+  },
+  "critico": {
+    "language": "it",
+    "chapters": [
+      {
+        "beat": 1,
+        "title": "La torre che non finisce",
+        "focus": "intero dipinto",
+        "cx": 0.5,
+        "cy": 0.5,
+        "crop_height_px": 2750,
+        "text": "Da lontano sembra una montagna impossibile. Poi si vedono archi, impalcature e persone minuscole: è la Torre di Babele dipinta da Pieter Bruegel il Vecchio."
+      },
+      {
+        "beat": 2,
+        "title": "Quale Babele?",
+        "focus": "visione globale della versione di Vienna",
+        "cx": 0.51,
+        "cy": 0.5,
+        "crop_height_px": 2500,
+        "text": "Siamo nel 1563. Questa è la grande versione conservata al Kunsthistorisches Museum di Vienna, non il dipinto più piccolo oggi a Rotterdam."
+      },
+      {
+        "beat": 3,
+        "title": "La spirale",
+        "focus": "sommità della torre",
+        "cx": 0.51,
+        "cy": 0.22,
+        "crop_height_px": 1400,
+        "text": "La costruzione sale a spirale, ma nessun piano sembra allinearsi davvero con quello precedente. L'ambizione umana diventa un edificio magnifico e instabile."
+      },
+      {
+        "beat": 4,
+        "title": "La memoria di Roma",
+        "focus": "arcate in pietra al centro",
+        "cx": 0.48,
+        "cy": 0.43,
+        "crop_height_px": 1550,
+        "text": "Le grandi arcate ricordano il Colosseo romano. Bruegel trasforma un'antica architettura in una macchina gigantesca, dove ogni livello promette di salire ancora."
+      },
+      {
+        "beat": 5,
+        "title": "La fatica degli uomini",
+        "focus": "operai e gru in basso",
+        "cx": 0.4,
+        "cy": 0.78,
+        "crop_height_px": 1180,
+        "text": "Eppure il quadro non parla soltanto di un re o di una leggenda. Osserviamo le gru, i muratori, il trasporto delle pietre: ogni piccolo gesto conta."
+      },
+      {
+        "beat": 6,
+        "title": "Il re e gli architetti",
+        "focus": "Nimrod e il seguito a sinistra in basso",
+        "cx": 0.17,
+        "cy": 0.83,
+        "crop_height_px": 930,
+        "text": "In primo piano, a sinistra, un sovrano con il suo seguito incontra i lavoratori. È tradizionalmente identificato con Nimrod, simbolo del potere che pretende troppo."
+      },
+      {
+        "beat": 7,
+        "title": "Il porto",
+        "focus": "porto e navi a destra",
+        "cx": 0.86,
+        "cy": 0.68,
+        "crop_height_px": 1320,
+        "text": "Alla base della torre si apre un porto affollato. Le navi portano materiali e merci: per costruire un sogno smisurato serve un'intera città."
+      },
+      {
+        "beat": 8,
+        "title": "Un'impresa incompiuta",
+        "focus": "fasce di mattoni rossi e murature incomplete",
+        "cx": 0.66,
+        "cy": 0.35,
+        "crop_height_px": 1320,
+        "text": "Ma il cantiere resta incompiuto. Mattoni rossi e pietre chiare convivono senza ordine apparente. La ricchezza del dettaglio non nasconde la fragilità del progetto."
+      },
+      {
+        "beat": 9,
+        "title": "Il significato",
+        "focus": "quadro intero",
+        "cx": 0.5,
+        "cy": 0.5,
+        "crop_height_px": 2850,
+        "text": "Nella Genesi, lingue differenti interrompono la costruzione di Babele. Bruegel non illustra soltanto una punizione: ci chiede quanto lontano possa arrivare l'orgoglio umano."
+      }
+    ],
+    "alignment": "ASR verified, no proportional fallback at release",
+    "render": "sequential, same AAC, meaningful semantic chapters"
+  },
+  "public_title": "The Tower of Babel",
+  "gold_v25": false,
+  "social_publish": false,
+  "no_paid_calls": true,
+  "status": "prepared_not_rendered"
+}
