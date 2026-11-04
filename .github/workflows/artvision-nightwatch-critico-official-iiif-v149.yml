@@ -1,0 +1,150 @@
+name: ArtVision V149 Night Watch official Rijksmuseum IIIF Critico one-shot
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/nightwatch-critico-official-iiif-v149.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-owner-nightwatch-critico-v149-official-iiif-once
+  cancel-in-progress: false
+jobs:
+  one_missing_critico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile renderer and verify recipe before any TTS call
+        run: |
+          python -m py_compile src/artvision_nightwatch_critico_standard_v149.py
+          python -m json.tool modules/artvision_critico/production_series/night_watch_v148.json > /dev/null
+      - name: Guard one approved work and forbid duplicates and paid calls
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open("requests/artvision/nightwatch-critico-official-iiif-v149.json"))
+          q=json.load(open("queue/artvision_owner_selected_ten_20261102.json"))
+          assert r["owner_automation_id"]=="6adca191603c8191a90d5190901cd034"
+          assert r["work_id"]=="rembrandt_night_watch_1642_rijks_sk_c_5"
+          assert r["variant"]=="critico_standard"
+          assert r["public_title"]=="The Night Watch"
+          assert r["run_once_only"] and r["one_tts_call_at_most"]
+          assert not r["allow_paid_calls"] and not r["social_publish"] and not r["gold_v25"]
+          w=[x for x in q["works"] if x["id"]==r["work_id"]]
+          assert len(w)==1 and w[0]["slots_delivered_this_selection"]==1
+          assert "critico_standard_v149" not in w[0]
+          assert w[0]["new_cinema_standard_v132"]["full_decode_pass_ci"] is True
+          assert w[0]["museum_approved"] is False
+          PY
+      - name: Download authenticated official SK-C-5 photo from Rijksmuseum IIIF PJEZO before voice
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/nightwatch_critico_v149
+          python -m pip install --disable-pip-version-check pillow
+          python - <<'PY'
+          from pathlib import Path
+          import urllib.request,json,hashlib,io
+          from PIL import Image
+          out=Path("/tmp/nightwatch_critico_v149")
+          url="https://iiif.micr.io/PJEZO/full/5200,/0/default.jpg"
+          # PJEZO identified as The Night Watch SK-C-5 by official Rijksmuseum IIIF tutorial.
+          req=urllib.request.Request(url,headers={"User-Agent":"ArtVision-Rijksmuseum-SKC5-IIIF-production-review/1.0","Accept":"image/jpeg,image/*"})
+          with urllib.request.urlopen(req,timeout=120) as resp:
+            assert resp.headers.get("Content-Type","").split(";")[0].startswith("image/"),"Not an image"
+            data=resp.read(40_000_001)
+          assert 300_000<len(data)<40_000_000,("Unexpected official IIIF payload size",len(data))
+          with Image.open(io.BytesIO(data)) as im:
+            im.verify()
+          with Image.open(io.BytesIO(data)) as im:
+            w,h=im.size
+            assert im.format=="JPEG" and w==5200 and 3900<h<4600,("Unexpected official IIIF dimensions",w,h,im.format)
+          f=out/"ORIGINAL_ARTWORK.jpg"
+          f.write_bytes(data)
+          hsh=hashlib.sha256(data).hexdigest()
+          manifest={
+            "museum":"Rijksmuseum",
+            "museum_object_number":"SK-C-5",
+            "museum_object_record":"https://data.rijksmuseum.nl/200107928",
+            "official_iiif_docs":"https://data.rijksmuseum.nl/tutorials/iiif/",
+            "iiif_id":"PJEZO",
+            "image_url":url,
+            "source_type":"OFFICIAL_RIJKSMUSEUM_IIIF_RESIZED_DERIVATIVE_NOT_OLD_WIKIMEDIA_14K",
+            "sha256":hsh,"bytes":len(data),"width":w,"height":h,
+            "note":"Official source SHA pinned at actual download; not claimed to match 2013 Commons 14168x11528 JPEG. No digital border reconstruction claimed.",
+            "human_artistic_review":"PENDING", "commercial_rights_review":"PENDING"
+          }
+          (out/"OFFICIAL_IIIF_SOURCE_V149.json").write_text(json.dumps(manifest,indent=2)+"\n")
+          print("OFFICIAL_RIJKSMUSEUM_IIIF_SOURCE_VERIFIED",w,h,len(data),hsh)
+          PY
+      - name: Gate ONLY already owner-attested no-billing second Free Google key
+        env:
+          SECOND_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+        run: |
+          test -n "$SECOND_KEY" || { echo "BLOCKED_SECOND_FREE_ACCOUNT_NOT_PRESENT: NO TTS"; exit 2; }
+      - name: Install offline runtime with KNOWN compatible PyAV17 ASR
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" numpy pillow soundfile scipy "faster-whisper==1.2.1" "av==17.1.0" "huggingface-hub==0.34.4" "fsspec==2025.7.0" opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          e=Path(get_ffmpeg_exe())
+          assert e.is_file()
+          Path('/tmp/artvision-bin/ffmpeg').symlink_to(e)
+          PY
+          echo /tmp/artvision-bin >> "$GITHUB_PATH"
+          /tmp/artvision-bin/ffmpeg -version | head -1
+      - name: Generate ONE genuine natural Gacrux WAV and ASR-small timing (NO retry)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          ARTVISION_GEMINI_PROJECT_BILLING_TIER: Free
+          ARTVISION_ASR_MODEL: small
+          HF_HUB_DISABLE_XET: "1"
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python src/artvision_nightwatch_critico_standard_v149.py --phase voice
+      - name: Render EXACTLY one real Critico Standard with original soundtrack and QA
+        run: python src/artvision_nightwatch_critico_standard_v149.py --phase render
+      - name: Independently verify actual physical file and CRC, do not auto Gold
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,zipfile
+          out=Path('/tmp/nightwatch_critico_v149')
+          q=json.loads((out/'QA_V149.json').read_text())
+          assert q['work']=="The Night Watch"
+          assert q['variant']=='critico_standard' and q['museum_variant_rendered'] is False
+          assert not q['Gold_V25'] and not q['social_published'] and not q['museum_approved']
+          m=q['file']; p=out/m['name']
+          assert p.is_file() and p.stat().st_size==m['bytes'] and m['frames']>1000
+          assert hashlib.sha256(p.read_bytes()).hexdigest()==m['sha256']
+          assert m['full_ffmpeg_decode']=='PASS'
+          subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(p),"-f","null","-"],check=True)
+          with zipfile.ZipFile(out/"NIGHT_WATCH_CRITICO_STANDARD_V149_REVIEW_PACKAGE.zip") as z:
+            assert z.testzip() is None and sum(n.endswith('.mp4') for n in z.namelist())==1
+          print('ONE_GENUINE_MP4_SHA_FFMPEG_ZIP_CRC_PASS_ARTISTIC_REVIEW_PENDING')
+          PY
+      - name: Preserve WAV even on failed render — never regenerate TTS for recovery
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V149_NIGHTWATCH_OFFICIAL_IIIF_REAL_CRITICO_OR_PRESERVED_WAV
+          path: |
+            /tmp/nightwatch_critico_v149/VOCE.wav
+            /tmp/nightwatch_critico_v149/VOICE_CACHE_V13.json
+            /tmp/nightwatch_critico_v149/ALLINEAMENTO_VOCE.json
+            /tmp/nightwatch_critico_v149/VOICE_RESULT_V149.json
+            /tmp/nightwatch_critico_v149/COPIONE_ESATTO_V149.txt
+            /tmp/nightwatch_critico_v149/REMBRANDT_THE_NIGHT_WATCH_CRITICO_STANDARD_V149_REVIEW.mp4
+            /tmp/nightwatch_critico_v149/NIGHT_WATCH_CRITICO_STANDARD_V149_REVIEW_PACKAGE.zip
+            /tmp/nightwatch_critico_v149/QA_V149.json
+            /tmp/nightwatch_critico_v149/COVER.jpg
+            /tmp/nightwatch_critico_v149/CONTACT_SHEET_V149.jpg
+            /tmp/nightwatch_critico_v149/RIGHTS_AND_CREDITS.txt
+            /tmp/nightwatch_critico_v149/OFFICIAL_IIIF_SOURCE_V149.json
+            /tmp/nightwatch_critico_v149/ORIGINAL_ARTWORK.jpg
+            /tmp/nightwatch_critico_v149/SOCIAL_DRAFT_UNPUBLISHED.txt
+          retention-days: 30
+          if-no-files-found: warn
