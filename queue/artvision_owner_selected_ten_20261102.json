@@ -38,7 +38,7 @@
         "reuse_only_after_quality_review": true
       },
       "editorial_note": "User first choice; existing Cinema V6 is not a new 4x1 slot; frame not yet documented",
-      "preflight_status": "two_distinct_review_MP4_cinema_standard_v135_plus_critico_standard_v144_real_SHA_FFmpeg_CRC_readback_pass_two_museum_slots_pending_frame_QA",
+      "preflight_status": "2/4 slots: Critico V144 plus active Cinema V153 replacement; original V135 unavailable, no extra slot; Museum pending",
       "four_slots": [
         "critico_standard",
         "critico_museum",
@@ -135,7 +135,8 @@
         "gold_v25": false,
         "paid_api_calls": 0,
         "additional_slots": 0,
-        "report": "docs/productions/2026-11-02-artvision-v135-two-verified-cinema-reviews.md"
+        "report": "docs/productions/2026-11-02-artvision-v135-two-verified-cinema-reviews.md",
+        "retired_archival_delivery_status": "UNAVAILABLE_ORIGINAL_BYTES_ON_SITE_GITHUB_AND_LIBRARY; DO NOT ASSERT_RECOVERED; V153 is a separate verified replacement with different SHA"
       },
       "critico_standard_v144": {
         "status": "physical_MP4_artifact_download_independently_verified_review_not_gold",
@@ -172,7 +173,42 @@
         "site_playback_verified": false,
         "gold_v25": false,
         "social_published": false
-      }
+      },
+      "new_cinema_standard_v153": {
+        "status": "ONE_REAL_MP4_REPLACEMENT_OF_UNDELIVERED_V135_IN_SAME_CINEMA_SLOT_NOT_ADDITIONAL_VARIANT",
+        "old_v135_remains_missing_exact_bytes": true,
+        "variant": "cinema_standard",
+        "run_id": 41869229388,
+        "artifact_id": 13343701748,
+        "filename": "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CINEMA_V153_REPLACEMENT_REVIEW.mp4",
+        "bytes": 13079183,
+        "sha256": "dd12618fff53b63c97cff8d1096efa221f8b15d089c4a9a1f2db0e1cba6d8662",
+        "frames": 960,
+        "duration_s": 48,
+        "fps": 20,
+        "resolution": [
+          720,
+          1280
+        ],
+        "ffmpeg_full_decode": "PASS GitHub CI and independent local physical artifact decode 2026-11-04",
+        "zip_filename": "BRUEGEL_REBEL_ANGELS_CINEMA_V153_REPLACEMENT_PACKAGE.zip",
+        "zip_bytes": 22847572,
+        "zip_sha256": "115ad41252a784d3a08e3e4f6f4af2f5839c18d207b57b7f40c2f3d0761f6db8",
+        "zip_crc": "PASS both local and CI",
+        "source_artifact_id": 12775741359,
+        "source_art_sha256": "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5",
+        "source_art_bytes": 6748186,
+        "site_r2_object": "video-library-studio/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CINEMA_V153_REPLACEMENT_REVIEW.mp4",
+        "site_R2_size_match": true,
+        "site_R2_last_modified": "2026-11-04T16:40:04.670Z",
+        "site_catalog_and_full_download_sha256": "PENDING_HTTP_PROBE",
+        "museum_approved": false,
+        "gold_v25": false,
+        "human_artistic_review": "PENDING",
+        "social_published": false,
+        "number_of_slots_added": 0
+      },
+      "active_cinema_standard": "new_cinema_standard_v153"
     },
     {
       "id": "waterhouse_lady_shalott_1888_tate_n01543",
