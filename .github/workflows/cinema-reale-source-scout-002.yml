@@ -1,0 +1,38 @@
+name: "Cinema Reale - rare NOAA source scout 002 (no AI, no spend)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/cinema-reale-source-scout-002.yml"
+      - "projects/cinema_reale/tools/source_scout.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect_authentic_sources:
+    name: "Inspect genuine source frames; independent Cinema Reale"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install freeware analysis dependencies"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check "pillow>=10,<13"
+      - name: "Read two NOAA originals and generate internal timecoded contact sheets"
+        run: python projects/cinema_reale/tools/source_scout.py
+      - name: "Save internal source-only inspection, not an MP4 master"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CINEMA_REALE_002_NOAA_SOURCE_CONTACT_SHEETS_ONLY
+          path: |
+            output/cinema_reale/source_scout_002/**/timecode_contact_sheet.jpg
+            output/cinema_reale/source_scout_002/**/source_report.json
+            output/cinema_reale/source_scout_002/summary.json
+          retention-days: 14
+          if-no-files-found: warn
