@@ -173,9 +173,10 @@
         "site_playback_verified": true,
         "gold_v25": false,
         "social_published": false,
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "new_cinema_standard_v153": {
         "status": "ONE_REAL_MP4_REPLACEMENT_OF_UNDELIVERED_V135_IN_SAME_CINEMA_SLOT_NOT_ADDITIONAL_VARIANT",
@@ -211,13 +212,14 @@
         "social_published": false,
         "number_of_slots_added": 0,
         "site_playback_verified": true,
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "active_cinema_standard": "new_cinema_standard_v153",
       "site_archive_verified_slots": 2,
-      "site_archive_verification": "PASS active slots SHA256 full HTTP download 2026-11-04 run 41870128447"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
     },
     {
       "id": "waterhouse_lady_shalott_1888_tate_n01543",
@@ -312,11 +314,12 @@
         "Gold_V25": false,
         "social_published": false,
         "human_artistic_review": "PENDING",
-        "site_full_download_sha256": "PASS real HTTP200 entire video byte-by-byte SHA256 same as independently verified artifact in run 41872941990",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "no_paid_api": true,
         "site_playback_verified": true,
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41872941990
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "critico_standard_v156": {
         "status": "REAL_MP4_SHA256_FULL_FFMPEG_DECODE_AND_ZIP_CRC_INDEPENDENTLY_VERIFIED_NO_GOLD",
@@ -344,7 +347,7 @@
         "voice_aac_sha256": "bcbe4c0beae897083d460d637891ad764d1973e981089aff856b2560cf615a6a",
         "ASR_matched_fraction": 0.9338842975206612,
         "one_voice_reuse_for_future_museum": true,
-        "site_full_download_sha256": "PASS real HTTP200 entire video byte-by-byte SHA256 same as independently verified artifact in run 41872941990",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "human_artistic_review": "PENDING",
         "museum_approved": false,
         "Gold_V25": false,
@@ -352,10 +355,11 @@
         "licensing_review": "PENDING source has Tate UK rights claim; no social/commercial publication approved",
         "site_playback_verified": true,
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41872941990
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "site_archive_verified_slots": 2,
-      "site_archive_verification": "PASS Cinema V155 and Critico V156 actual downloaded bytes exact SHA256 and Range 206"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
     },
     {
       "id": "rembrandt_night_watch_1642_rijks_sk_c_5",
@@ -468,9 +472,10 @@
         "other_3_variants_done": false,
         "published": false,
         "spent_api_credits": 0,
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "critico_standard_v149": {
         "status": "REAL_MP4_SOURCE_OFFICIAL_RIJKSMUSEUM_IIIF_PJEZO_SHA_ZIP_CRC_FULL_DECODE_PASS",
@@ -511,12 +516,13 @@
         "gold_v25": false,
         "site_playback_verified": true,
         "social_published": false,
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "site_archive_verified_slots": 2,
-      "site_archive_verification": "PASS active slots SHA256 full HTTP download 2026-11-04 run 41870128447"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
     },
     {
       "id": "bruegel_tower_babel_1563_khm_gg1026",
@@ -626,9 +632,10 @@
           "r2_sha256_verified": false,
           "site_playback_verified": false
         },
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "v137_cinema_candidate": {
         "status": "github_actions_success_artifact_MP4_ZIP_physical_readback_verified_review_not_gold",
@@ -705,9 +712,10 @@
           "site_playback_verified": false
         },
         "site_playback_verified": true,
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "critico_standard_v141": {
         "run_id": 41797029785,
@@ -737,9 +745,10 @@
         "filename": "BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_STANDARD_V138_REVIEW.mp4",
         "bytes": 24606149,
         "sha256": "125ce39ad907b51e1d07f8d9b78e3871b27c02d92969771f0ae41819016b08a0",
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "critico_museum_v141": {
         "run_id": 41797029785,
@@ -769,9 +778,10 @@
         "filename": "BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_MUSEUM_V138_REVIEW.mp4",
         "bytes": 31574592,
         "sha256": "c870811ef0b6d6fdcb9d64738172bdd43554b4e3fa3eb3738f9bed7363466a7d",
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "critico_v141_package": {
         "filename": "BRUEGEL_BABEL_CRITICO_V138_REVIEW_PACKAGE.zip",
@@ -784,7 +794,7 @@
         "artistic_approved": false
       },
       "site_archive_verified_slots": 4,
-      "site_archive_verification": "PASS active slots SHA256 full HTTP download 2026-11-04 run 41870128447"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
     },
     {
       "id": "simberg_garden_death_1896_fng_a_ii_968_16",
@@ -849,9 +859,10 @@
         "paid_api_calls": 0,
         "slots_delivered_increment": 1,
         "report": "docs/productions/2026-11-02-artvision-v135-two-verified-cinema-reviews.md",
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "critico_standard_v146": {
         "status": "REAL_MP4_GitHub_ARTIFACT_DOWNLOADED_INDEPENDENT_SHA_ZIP_CRC_FULL_DECODE_PASS",
@@ -888,12 +899,13 @@
         "site_playback_verified": true,
         "gold_v25": false,
         "social_published": false,
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "site_archive_verified_slots": 2,
-      "site_archive_verification": "PASS active slots SHA256 full HTTP download 2026-11-04 run 41870128447"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
     },
     {
       "id": "bruegel_triumph_death_1562_prado_p001393",
@@ -980,9 +992,10 @@
         "gold_v25": false,
         "social_published": false,
         "site_playback_verified": true,
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "critico_standard_v151": {
         "status": "REAL_MP4_SOURCE_PD_ART_SHA_ZIP_CRC_AND_FULL_FFMPEG_DECODE_INDEPENDENTLY_VERIFIED",
@@ -1024,12 +1037,13 @@
         "gold_v25": false,
         "social_published": false,
         "site_playback_verified": true,
-        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
-        "site_audit_run_id": 41870128447
+        "site_audit_run_id": 41876068253,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "site_archive_verified_slots": 2,
-      "site_archive_verification": "PASS active slots SHA256 full HTTP download 2026-11-04 run 41870128447"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
     },
     {
       "id": "waterhouse_magic_circle_1886_tate_n01572",
@@ -1115,10 +1129,15 @@
         "no_paid_calls": true,
         "gold_v25": false,
         "social_published": false,
-        "site_full_download_sha256": "PENDING IMPORT SITE R2",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "human_artistic_review": "PENDING",
-        "museum_approved": false
-      }
+        "museum_approved": false,
+        "site_playback_verified": true,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS",
+        "site_audit_run_id": 41876068253
+      },
+      "site_archive_verified_slots": 1,
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
     },
     {
       "id": "blake_ghost_flea_1819_tate_n05889",
@@ -1177,12 +1196,15 @@
         "source_jpeg_sha1_commons": "51da1f35117b912466e4f7c330389fed546831fe",
         "source_page": "https://commons.wikimedia.org/wiki/File:William_Blake_-_The_Ghost_of_a_Flea_-_Google_Art_Project.jpg",
         "source_rights": "PD-Art faithful public domain original; Tate claims photo UK rights, territorial licensing for release pending",
-        "site_full_download_sha256": "PENDING import",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "Gold_V25": false,
         "museum_approved": false,
         "human_artistic_review": "PENDING",
         "paid_API": 0,
-        "social_published": false
+        "social_published": false,
+        "site_playback_verified": true,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS",
+        "site_audit_run_id": 41876068253
       },
       "critico_standard_v159": {
         "status": "REAL_NATURAL_CRITICO_MP4_SHA_FFMPEG_ALL_STREAMS_AND_ZIP_CRC_INDEPENDENTLY_PASS",
@@ -1211,12 +1233,17 @@
         "ASR_matched_fraction": 0.9469964664310954,
         "voice_reuse_for_critic_museum": true,
         "paid_API_calls": 0,
-        "site_full_download_sha256": "PENDING site import",
+        "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "artistic_review": "PENDING",
         "museum_approved": false,
         "Gold_V25": false,
-        "social_published": false
-      }
+        "social_published": false,
+        "site_playback_verified": true,
+        "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS",
+        "site_audit_run_id": 41876068253
+      },
+      "site_archive_verified_slots": 2,
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
     },
     {
       "id": "delacroix_death_sardanapalus_1827_louvre_rf2346",
@@ -1309,13 +1336,13 @@
   "last_verified_review": "2026-11-04",
   "total_selected_new_cinema_review_slots_verified": 3,
   "current_site_download_audit": {
-    "run_id": 41872941990,
+    "run_id": 41876068253,
     "date": "2026-11-04",
     "status": "FULL_PASS",
     "site": "https://video-library-studio.600led.workers.dev",
-    "active_ArtVision_14_of_14_full_download_and_sha256_pass": 14,
-    "mp4_visible_sitewide_range_pass": 560,
-    "mp4_visible_sitewide_range_tested": 560,
+    "active_ArtVision_17_of_17_full_download_and_sha256_pass": 17,
+    "mp4_visible_sitewide_range_pass": 563,
+    "mp4_visible_sitewide_range_tested": 563,
     "known_hidden_mp4_preserved": 5,
     "Android_device_interactive_playback_not_tested": true,
     "public_social_publishing_not_approved": true,
