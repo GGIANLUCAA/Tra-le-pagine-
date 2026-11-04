@@ -236,7 +236,7 @@
       "art_image_source_page": "https://commons.wikimedia.org/wiki/File:John_William_Waterhouse_-_The_Lady_of_Shalott_-_Google_Art_Project_edit.jpg",
       "art_rights_preflight": "Work public domain; file-by-file Commons PD-Art and Tate image credit/conditions require validation",
       "preexisting_cinema_candidate": null,
-      "editorial_note": "Frame dimensions 200x246x23 cm reported in third-party Tate-derived listing; primary verification pending Found independent 4236x3456 photo of actual framed work by Sailko CC BY 3.0; no claim historical frame and actual local media download pending.",
+      "editorial_note": "Frame dimensions 200x246x23 cm reported in third-party Tate-derived listing; primary verification pending Found independent 4236x3456 photo of actual framed work by Sailko CC BY 3.0; no claim historical frame and actual local media download pending. V164R1 non-destructive Museum Critico review locally FFmpeg/SHA verified 2026-11-04, improved entry; no new fourth slot counted; archival upload pending.",
       "preflight_status": "3_of_4_real_MP4_original_Cinema_V155_and_Critico_V156_and_Critico_Museum_V164_verified; Cinema Museum pending; aesthetic V164 7sec hard cut needs polish, not Gold",
       "four_slots": [
         "critico_standard",
@@ -407,7 +407,40 @@
         "R2_backup_sha256_verified": false,
         "paid_API_calls": 0,
         "new_TTS_calls": 0,
-        "other_variant_cinema_museum_pending": true
+        "other_variant_cinema_museum_pending": true,
+        "non_destructive_revision_v164r1": {
+          "status": "REAL_LOCAL_SESSION_REVISION_INDEPENDENT_SHA_FULL_FFMPEG_ZIP_CRC_PASS_ARTISTIC_REVIEW_PENDING",
+          "original_v164_preserved_sha256": "2af1d47544edf5cbdb07f2daa3926930508aebe94ecc15db032572aa5ee12918",
+          "filename": "WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_MUSEUM_V164R1_REVIEW.mp4",
+          "bytes": 13976882,
+          "sha256": "1397958a5c62da723a2ade1f578d7f3e8d338cd2fc93579da590ee06e2b70bf8",
+          "duration_s": 113.35,
+          "frames": 2267,
+          "resolution": [
+            720,
+            1280
+          ],
+          "zip_filename": "WATERHOUSE_LADY_SHALOTT_CRITICO_MUSEUM_V164R1_REVIEW_PACKAGE.zip",
+          "zip_bytes": 14414868,
+          "zip_sha256": "23c68bbbbd369758fd50bb0c579a51ba417975f27933a6da54db2f9f398461f0",
+          "zip_crc": "PASS local independent",
+          "full_ffmpeg_decode": "PASS independent local all audio and video",
+          "audio_AAC_ADTS_sha256": "1af5b28d958b395bd5c1781d96e46972788ec46f15ff03baf7428aac82a00749",
+          "audio_bit_identical_with_v156": true,
+          "frame_photo_source_sha256": "252d902543c094515cb337875eeaf973f4c7ae361d52cbf2bdf66312bd4557a2",
+          "photo_original_4236x3456_cc_by_3": "Sailko photo of 2017 actual frame",
+          "correction": "Camera enters framed painting via smooth continuous zoom toward original painted woman's face; frame fully outside view by t=7 s; no 2D crossfade and no fabricated objects. Closing uses real photographed frame.",
+          "contact_sheet_QA": "Samples first 7 sec and final original: smoother opening match; other inherited holds from V156 still pending human critique.",
+          "file_location": "current conversation local sandbox only; NO durable R2/GitHub artifact upload or site playback verification for this revision",
+          "permanent_backup_verified": false,
+          "human_artistic_review": "PENDING",
+          "museum_approved": false,
+          "gold_v25": false,
+          "published": false,
+          "new_paid_calls": 0,
+          "new_TTS_calls": 0,
+          "count_as_additional_slot": false
+        }
       }
     },
     {
