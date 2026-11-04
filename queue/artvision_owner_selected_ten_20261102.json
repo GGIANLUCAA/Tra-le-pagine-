@@ -784,14 +784,14 @@
         }
       },
       "editorial_note": "Existing Cinema V25 cover lacks English artwork title; source 2126x1517 needs higher-res alternative; no automatic re-render V129 revised cover title visibly correct; original master preserved. Library storage quota full; backup pending.",
-      "preflight_status": "Cinema Standard V150 real verified MP4 and source PDM SHA; Critico Standard + both Museum pending",
+      "preflight_status": "2/4 real Cinema V150 and Critico V151, both full MP4 SHA FFmpeg CRC PASS, two Museum slots pending source/frame authentic verification",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 1,
+      "slots_delivered_this_selection": 2,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
@@ -825,6 +825,47 @@
         "source_bytes": 9520461,
         "human_artistic_review": "PENDING",
         "museum_approved": false,
+        "gold_v25": false,
+        "social_published": false,
+        "site_playback_verified": false
+      },
+      "critico_standard_v151": {
+        "status": "REAL_MP4_SOURCE_PD_ART_SHA_ZIP_CRC_AND_FULL_FFMPEG_DECODE_INDEPENDENTLY_VERIFIED",
+        "variant": "critico_standard",
+        "run_id": 41841362725,
+        "artifact_id": 13328563107,
+        "filename": "BRUEGEL_THE_TRIUMPH_OF_DEATH_CRITICO_STANDARD_V151_REVIEW.mp4",
+        "bytes": 28604720,
+        "mp4_sha256": "a02248ce3744c6b0c392f9093360a86c55e74abcb641f51ee935915bbdb1f397",
+        "frames": 2583,
+        "duration_s": 129.15,
+        "codec": "H264/AAC",
+        "fps": 20,
+        "resolution": [
+          720,
+          1280
+        ],
+        "full_ffmpeg_decode": "PASS GitHub and independent downloaded bytes",
+        "zip_filename": "BRUEGEL_TRIUMPH_CRITICO_STANDARD_V151_REVIEW_PACKAGE.zip",
+        "zip_bytes": 29317090,
+        "zip_crc": "PASS independent local",
+        "source_image_sha256": "2cbaefc3961b999fc5a916db06dd96b3b95789789a795da83cc1d7947f3e1fbb",
+        "source_image_pixels": [
+          5200,
+          3697
+        ],
+        "source_artifact_id": 13329385552,
+        "voice_wav_sha256": "ccb4a6872375237fb8b32e7df2b6e6869a4fb4696313e94b85cdda58e2d80c76",
+        "voice_AAC_sha256": "67b0e2fad9f4f7055e854261323dfdc14ce07166f2b32d0fbf172ffdc57b79ec",
+        "ASR_matched_fraction": 0.9554655870445344,
+        "one_voice_for_future_critic_museum": true,
+        "remaining_variants": [
+          "cinema_museum",
+          "critico_museum"
+        ],
+        "museum_photo_frame_status": "no authenticated frame photograph; do not fabricate",
+        "museum_approved": false,
+        "human_artistic_review": "PENDING",
         "gold_v25": false,
         "social_published": false,
         "site_playback_verified": false
