@@ -1,4 +1,5 @@
 name: "Ricerca fonti ufficiali V2 - Musei e archivi"
+# Read-only API audit explicitly requested by owner, no generative POST
 on:
   workflow_dispatch:
     inputs:
