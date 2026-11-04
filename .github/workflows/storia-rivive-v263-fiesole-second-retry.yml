@@ -1,17 +1,18 @@
 name: "La Storia Rivive V263 · Fiesole second real I2I retry (NO CREDITS)"
 on:
-  pull_request:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
     paths:
       - ".github/workflows/storia-rivive-v263-fiesole-second-retry.yml"
 permissions:
   contents: read
   actions: read
 concurrency:
-  group: storia-v263-second-source-once-${{ github.event.pull_request.head.sha }}
+  group: storia-v263-second-source-push-once-${{ github.sha }}
   cancel-in-progress: false
 jobs:
   second_real_photo:
-    if: github.event_name == 'pull_request' && github.run_attempt == 1
+    if: github.event_name == 'push' && github.run_attempt == 1
     runs-on: ubuntu-latest
     timeout-minutes: 48
     steps:
@@ -19,11 +20,11 @@ jobs:
       - name: One explicitly gated free retry
         id: gate
         env:
-          HEAD: ${{ github.event.pull_request.head.sha }}
+          HEAD: ${{ github.sha }}
         run: |
           set -euo pipefail
           git fetch --depth=1 --no-tags origin "$HEAD"
-          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V263: one free second Fiesole I2I retry [V263-ONCE]' ]]; then
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V263: single SHA-bound second photo on PR branch [V263-PUSH-ONCE]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
