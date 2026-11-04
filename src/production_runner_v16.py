@@ -60,8 +60,11 @@ def inputs(job):
         if adapter=='cinema_v55_prepared':files.append(inside(job['cinema_plan_file']))
     if adapter not in ('cinema_v6_vangogh_prepared','cinema_v55_prepared'):
         folder=inside(job['voice_cache_dir'],True)
-        files += [folder/name for name in ('VOCE.wav','VOICE_CACHE_V13.json','VOICE_PROFILE_V13.json','ALLINEAMENTO_VOCE.json') if (folder/name).is_file()]
-        if not (folder/'VOCE.wav').is_file() or not (folder/'VOICE_CACHE_V13.json').is_file():raise ValueError('WAV e manifest Google richiesti')
+        required=('VOCE.wav','VOICE_CACHE_V13.json','VOICE_PROFILE_V13.json','ALLINEAMENTO_VOCE.json')
+        missing=[name for name in required if not (folder/name).is_file()]
+        if missing:
+            raise ValueError('Cache voce Google incompleta: '+', '.join(missing))
+        files += [folder/name for name in required]
     for p in files:
         if not p.resolve().is_relative_to(ROOT.resolve()) or p.is_symlink() or not p.is_file():raise ValueError('Input non locale o non valido')
     return sorted(set(files))
