@@ -1,0 +1,39 @@
+{
+  "directive_date": "2026-11-04",
+  "priority": "REAL_OFFLINE_ASR_IMPROVEMENT_NO_GOOGLE_TTS",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "work_id": "bruegel_tower_babel_1563_khm_gg1026",
+  "public_title": "The Tower of Babel",
+  "variants": [
+    "critico_standard",
+    "critico_museum"
+  ],
+  "one_WAV_for_both": true,
+  "run_once_only": true,
+  "allow_paid_calls": false,
+  "social_publish": false,
+  "gold_v25": false,
+  "original_genuine_voice_run": 41796182097,
+  "original_genuine_voice_artifact": 13305781355,
+  "voice_duration_s": 103.68,
+  "previous_offline_runs": [
+    41796561929,
+    41796771376
+  ],
+  "diagnosed_v140": "PyAV 17 fixed audio decoding; base Whisper ASR saw 214 words, 216 expected, 181 exact matches ~83.8%; strict release threshold >=85%, so no MP4 was rendered. New variant small Whisper increases recognition accuracy without altering WAV or using billable APIs.",
+  "asset_sources": [
+    41549505091,
+    41663098584
+  ],
+  "faster_whisper": "1.2.1",
+  "pinned_pyav": "17.1.0",
+  "ASR_model": "small",
+  "ASR_threshold": 0.85,
+  "no_new_TTS": true,
+  "workflow": ".github/workflows/artvision-bruegel-babel-critico-offline-v141.yml",
+  "renderer": "src/artvision_babel_critico_v138.py --phase align --phase render",
+  "status": "ONE_SHOT_OFFLINE_RECOVERY_NOT_RENDERED",
+  "museum_approved": false,
+  "human_artistic_review": "PENDING",
+  "public_title_no_technical_labels": true
+}
