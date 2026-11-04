@@ -1,0 +1,99 @@
+{
+  "version": "V281_DELHI_REAL_MOVING_FILM_PLUS_4_FINEGRAIN_I2I_PRIVATE_REVIEW",
+  "episode": "delhi_ruins_1910_v217",
+  "new_finished_episodes_count": 0,
+  "local_review_media": {
+    "filename": "La_Storia_Rivive_Delhi_1910_PREVIEW_26s.mp4",
+    "sha256": "6dbec005a93a22590bc62052ae3362dbce92ec3071e8b0e7f93a03fc86b137ab",
+    "size_bytes": 17316767,
+    "duration_seconds": 25.042,
+    "video": "H264 720x1280 24fps",
+    "audio": "AAC",
+    "fully_decoded_ffmpeg": true,
+    "private_chat_delivery_only": true,
+    "file_upload_to_github": false,
+    "package": "La_Storia_Rivive_Delhi_1910_PREVIEW_Pacchetto.zip",
+    "package_size_bytes": 17707247,
+    "zip_crc_verified": true,
+    "package_mp4_byte_equal": true,
+    "includes": [
+      "MP4",
+      "COVER.jpg",
+      "four_different_social_posts",
+      "source_rights_dossier",
+      "QA_STATUS_NOT_FINAL.json",
+      "original_vs_photo_contact_sheet"
+    ]
+  },
+  "source_bytes": {
+    "genuine_film_page": "https://commons.wikimedia.org/wiki/File:Ruins_of_Delhi_(1910).webm",
+    "five_true_source_moving_shots": "github-actions-artifact-13215886879",
+    "five_original_frames_artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41789453410/artifacts/13302956451",
+    "four_actual_finegrain_photos_artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41806029514/artifacts/13309233226",
+    "original_film_sha256": "0a0de7b032cdb19e34d4dac5a6efca02dfa4b00260411aa82290c54b2899f278"
+  },
+  "actual_render_scene_motion": [
+    {
+      "shot": 1,
+      "original_frame": "frame_01.png",
+      "genuine_motion": true,
+      "original_freeze": true,
+      "true_i2i": true
+    },
+    {
+      "shot": 2,
+      "original_frame": "frame_04.png",
+      "genuine_motion": true,
+      "original_freeze": true,
+      "true_i2i": true
+    },
+    {
+      "shot": 3,
+      "original_frame": "frame_06.png",
+      "genuine_motion": true,
+      "original_freeze": true,
+      "true_i2i": true
+    },
+    {
+      "shot": 4,
+      "original_frame": "frame_11.png",
+      "genuine_motion": true,
+      "original_freeze": true,
+      "true_i2i": true
+    },
+    {
+      "shot": 5,
+      "original_frame": "frame_12.png",
+      "genuine_motion": true,
+      "real_source_locked_vidu": false
+    }
+  ],
+  "fifth_vidu_scene_plan": {
+    "source_frame_sha256": "28a71dff0d65a4529a946fbe1d531626c70dca389d344e4d17f7646022fc8ca2",
+    "source_image_dimensions": [
+      720,
+      1280
+    ],
+    "source_description": "Two men in traditional clothing and turbans stand beside several goats or small cattle on a rocky path, with scrub vegetation and ruined walls in Delhi 1910. Preserve exact visual identities and anatomy.",
+    "prompt": "Use exactly the original black-and-white archival 1910 Delhi frame as reference. A small group of goats or cattle naturally shifts and walks slowly along the rocky path; the two men wearing period turbans make minimal believable steps and head movements. Keep the actual number and positions of people and animals, their clothing, all legs and hooves, stone ruins, shrubs and overhanging branches consistent with the original. The camera remains stable, with natural daylight color gradually appearing as the same scene comes alive. Photoreal historical documentary, source-locked composition, continuous shot, no new figures, no new animals, no morphing, no text, no cuts.",
+    "model": "viduq2-pro-fast",
+    "resolution": "720p",
+    "duration_seconds": 5,
+    "conservative_credit_quote": 16,
+    "api_access_confirmed_by_balance_request": true,
+    "exact_remaining_balance_known": false,
+    "user_approved_this_exact_scene": false,
+    "scene_specific_16_credit_authorization": false,
+    "paid_post_permitted": false,
+    "do_not_publish_source_frame_publicly_without_rights_review": true
+  },
+  "blockers": [
+    "Missing fifth genuine Vidu motion clip from same original archival frame",
+    "Missing individual Vidu scene approval and exact quote confirmation under existing gateway",
+    "Copyright/territorial rights for film in Italy and possible BFI transfer still unverified",
+    "Final artistic QC and benchmark V91/V94/V96/V99 not passed"
+  ],
+  "no_social_or_site_publication": true,
+  "credits_spent_new": 0,
+  "note": "Private review MP4 physically produced and shared with user in this chat only; do not call it final 4+1 or assume sandbox links remain accessible outside this conversation."
+}
