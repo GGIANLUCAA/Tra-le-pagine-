@@ -172,7 +172,33 @@
           "new_final_episode_delivered": false
         },
         "v278_photo_status": "FOUR_REAL_SOURCE_LOCKED_PHOTOS_TECHNICALLY_VALID_HUMAN_ARTISTIC_QA_PENDING",
-        "v278_fifth_vidu_status": "ORIGINAL_FRAME_PRESENT_NO_VIDU_CLIP_NO_SCENE_SPECIFIC_USER_APPROVAL_OR_PLAN"
+        "v278_fifth_vidu_status": "ORIGINAL_FRAME_PRESENT_NO_VIDU_CLIP_NO_SCENE_SPECIFIC_USER_APPROVAL_OR_PLAN",
+        "v285_last_scene_photo_fix": {
+          "run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41834440904",
+          "artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41834440904/artifacts/13324167787",
+          "source_original_frame_sha256": "28a71dff0d65a4529a946fbe1d531626c70dca389d344e4d17f7646022fc8ca2",
+          "source_time_s": 218.176,
+          "source_crop": [
+            750,
+            0,
+            1358,
+            1080
+          ],
+          "source_locked_true_finegrain_photo_sha256": "556c432960bea3fd58663ac85ad77e792463fbcca1a92f3bb1b0616195a10264",
+          "new_preview_real_mp4": true,
+          "new_preview_real_zip": true,
+          "duration_seconds": 20.1,
+          "mp4_sha256": "c467c3ef3b6d1eeb66380d9f1e864e2841fbdccc16bf87d707805ae6e7358625",
+          "five_bnw_archive_motion": true,
+          "five_color_photos_present": true,
+          "fifth_scene_animated_vidu_present": false,
+          "visually_approved": false,
+          "rights_italy_verified": false,
+          "finished_master": false,
+          "public_posting_authorized": false,
+          "credits_spent": 0,
+          "note": "User explicitly caught black-and-white unreconstructed fifth and missing Vidu in V282; V285 now restores it with true source-locked photo still only, not an animated Vidu video. Visual QA on animals/people still required."
+        }
       }
     },
     {
