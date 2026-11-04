@@ -44,7 +44,9 @@ class RunnerTests(unittest.TestCase):
             'reviews':{n:{'status':'passed','notes':'Test fixture'} for n in ('story','visuals','rights')}}
         write_json(self.root/'prepared/project.json',project)
         ep=self.root/'episodes/test';ep.mkdir(parents=True);(ep/'testo.txt').write_text('Una storia originale.')
-        cache=self.root/'voice';cache.mkdir();(cache/'VOCE.wav').write_bytes(b'fixture validated separately');(cache/'VOICE_CACHE_V13.json').write_text('{}')
+        cache=self.root/'voice';cache.mkdir();(cache/'VOCE.wav').write_bytes(b'fixture validated separately')
+        for name in ('VOICE_CACHE_V13.json','VOICE_PROFILE_V13.json','ALLINEAMENTO_VOCE.json'):
+            (cache/name).write_text('{}')
         self.job={'id':'test-one','content_key':'test-original','project_file':'prepared/project.json','status':'prepared','attempts':0,'new_paid_calls_required':False,'adapter':'books_gemini_cache','episode':'test','voice_cache_dir':'voice'}
         self.queue=self.root/'queue.json';self.write_queue([self.job]);self.workspace=self.root/'output/work'
         self.tracked=[self.root/'src/production_adapter_v16.py']
@@ -125,3 +127,8 @@ class RunnerTests(unittest.TestCase):
     def test_unknown_adapter_and_escape_rejected(self):
         with self.assertRaises(ValueError):r.inputs({**self.job,'adapter':'arbitrary_shell'})
         with self.assertRaises(ValueError):r.inside('../outside')
+
+    def test_incomplete_voice_cache_is_blocked_before_spawn(self):
+        (self.root/'voice/ALLINEAMENTO_VOCE.json').unlink()
+        with self.assertRaisesRegex(ValueError,'Cache voce Google incompleta'):
+            r.inputs(self.job)
