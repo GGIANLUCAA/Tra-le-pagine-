@@ -1,4 +1,4 @@
-name: "La Storia Rivive V281 · Delhi real archival motion + 4 photo MP4 staging (NOT FINAL)"
+name: "La Storia Rivive V282 · Delhi real motion MP4 concat fix and ZIP (NOT FINAL)"
 on:
   push:
     branches: [storia-v196-v101-cache-fail-closed-20261101]
@@ -8,7 +8,7 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: storia-v281-delhi-real-motion-assembly
+  group: storia-v282-delhi-real-motion-assembly
   cancel-in-progress: false
 jobs:
   make_real_moving_review:
@@ -24,7 +24,7 @@ jobs:
           HEAD: ${{ github.sha }}
         run: |
           set -euo pipefail
-          if [[ "$(git log -1 --format=%s)" == 'storia V281: render true Delhi historical motion four-photo MP4 [V281-ONCE]' ]]; then
+          if [[ "$(git log -1 --format=%s)" == 'storia V282: retry actual Delhi motion MP4 after concat newline fix [V282-ONCE]' ]]; then
             echo "allowed=true" >> "$GITHUB_OUTPUT"
           else
             echo "allowed=false" >> "$GITHUB_OUTPUT"
