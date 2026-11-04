@@ -1,0 +1,71 @@
+name: "La Storia Rivive V288 · deny repeated human-animal fusion on REAL Delhi photograph"
+on:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
+    paths:
+      - ".github/workflows/storia-rivive-v288-visual-reject-actual-bytes.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v288-editorial-real-photo-rejection
+  cancel-in-progress: false
+jobs:
+  fail_closed_real_media:
+    if: github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run only this free one-shot audit commit
+        id: gate
+        run: |
+          set -euo pipefail
+          if [[ "$(git log -1 --format=%s)" == 'storia V288: verify real rejected human-cattle photo against fail-closed ledger [V288-ONCE]' ]]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: "3.11"
+      - name: Execute seven automated visual-rejection policy regression tests (offline)
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_visual_reject_v288.py src/storia_rivive_v285_delhi_fifth_color_review.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_visual_reject_v288.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v284-delhi-fifth-shot-real-photo-AND-BW-source-NO-VIDU-NO-FINAL
+          run-id: 41833893883
+          github-token: ${{ github.token }}
+          path: output/v288/actual_photo
+      - name: Verify real photograph bytes and reject this exact known fused-human-animal photo
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,sys
+          from pathlib import Path
+          sys.path.insert(0,"src")
+          import storia_rivive_visual_reject_v288 as gate
+          photo=Path("output/v288/actual_photo/DELHI_1910_SHOT05_FINEGRAIN_PHOTO_REVIEW_NOT_APPROVED.jpg")
+          assert photo.is_file() and photo.stat().st_size>18000
+          source_sha="28a71dff0d65a4529a946fbe1d531626c70dca389d344e4d17f7646022fc8ca2"
+          photo_sha=gate.file_sha(photo)
+          assert photo_sha=="556c432960bea3fd58663ac85ad77e792463fbcca1a92f3bb1b0616195a10264"
+          verdict=gate.inspect("delhi_ruins_1910_v217",source_sha,photo_sha)
+          assert verdict["status"]=="REJECT_REPLACE_FRAME",verdict
+          try:
+            gate.require_safe_for_photo("delhi_ruins_1910_v217",source_sha,photo_sha)
+          except ValueError as exc:
+            assert "V288_REJECTED_VISIBLE_HUMAN_ANIMAL_FUSION" in str(exc)
+          else:
+            raise AssertionError("VISUALLY_REJECTED_PHOTO_WRONGLY_APPROVED")
+          assert gate.inspect("delhi_ruins_1910_v217",source_sha,role="original_bw_motion")["status"]=="ORIGINAL_BW_MOTION_ONLY_WITHOUT_COLOR_APPROVAL"
+          assert gate.inspect("delhi_ruins_1910_v217",source_sha,role="vidu_source")["status"]=="REJECT_REPLACE_FRAME"
+          print("V288_REAL_USER_REJECTED_FUSED_HEAD_IMAGE_BYTES_REJECTED; NO_VIDU; NO_PUBLICATION; FINISHED_0_OF_4")
+          PY
