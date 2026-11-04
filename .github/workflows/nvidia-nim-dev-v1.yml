@@ -76,57 +76,50 @@ jobs:
             exit 1
           fi
           echo "NVIDIA_KEY_PRESENT_IN_ACTIONS; only presence checked, no API calls."
-  one-time-cosmos-free-developer-test:
-    # This must only run on this exact Git commit message. No future pushes
-    # trigger inference, and no automatic retry/fallback can spend credits.
-    if: github.event_name == 'push' && github.event.head_commit.message == 'NVIDIA_COSMOS_ONE_TIME_TRIAL_20261104'
+  one-time-nemotron-free-developer-test:
+    # Exactly one development test, guarded by the explicit one-time commit.
+    if: github.event_name == 'push' && github.event.head_commit.message == 'NVIDIA_NEMOTRON_ONE_TIME_TRIAL_20261104'
     needs: offline-tests
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 4
     concurrency:
-      group: nvidia-cosmos-one-time-development-test
+      group: nvidia-nemotron-one-time-development-test
       cancel-in-progress: false
     env:
       NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY || secrets.NVIDIA || secrets.NVIDIA_NIM_API_KEY || secrets.NVIDIA_KEY }}
-      NVIDIA_COSMOS_DEV_ENABLED: "1"
+      NVIDIA_NIM_DEV_ENABLED: "1"
       NVIDIA_NIM_NONCOMMERCIAL_ACK: "1"
       NVIDIA_NIM_ZERO_SPEND_CONFIRMED: "1"
+      NVIDIA_NIM_MODEL: "nvidia/nemotron-3-super-120b-a12b"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Check required key without leaking its value
+      - name: Send one minimal, opt-in official free NIM chat request
         shell: bash
         run: |
           set -euo pipefail
           test -n "$NVIDIA_API_KEY" || { echo "::error::Missing NVIDIA API key"; exit 1; }
-          echo "NVIDIA_COSMOS_FREE_DEVELOPER_TRIAL: one explicit request, no paid fallback."
-      - name: Generate exactly one 25-frame 480p Cosmos preview
-        shell: bash
-        run: |
-          set -euo pipefail
           mkdir -p output/nvidia_dev_v1
-          printf '%s\n' 'A photorealistic fictional early twentieth-century city street. One electric tram slowly passes the fixed camera. Natural pedestrian movement, consistent anatomy, realistic natural daylight, coherent architecture. No added captions or subtitles. Synthetic development test, not authentic footage.' > output/nvidia_dev_v1/prompt.txt
-          python src/nvidia_cosmos3_video_dev_v1.py --prompt-file output/nvidia_dev_v1/prompt.txt \
-            --output output/nvidia_dev_v1/COSMOS_25FR_DEV_TEST.mp4 --execute
-          ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_name,width,height \
-            -of json output/nvidia_dev_v1/COSMOS_25FR_DEV_TEST.mp4
-          ffmpeg -hide_banner -loglevel error -y -i output/nvidia_dev_v1/COSMOS_25FR_DEV_TEST.mp4 \
-            -an -c:v libx264 -crf 21 -preset fast -pix_fmt yuv420p -movflags +faststart \
-            output/nvidia_dev_v1/COSMOS_ANDROID_25FR_H264.mp4
-          ffprobe -v error -show_entries stream=codec_name,width,height \
-            -of json output/nvidia_dev_v1/COSMOS_ANDROID_25FR_H264.mp4
-      - name: Save private experimental MP4 and metadata (never publish)
-        uses: actions/upload-artifact@v4
+          printf '%s\n' 'Developer connectivity check only. Respond very briefly with one sentence in Italian explaining that this is a test. Do not invent sources or generate media.' > output/nvidia_dev_v1/prompt_nim.txt
+          python src/nvidia_nim_dev_v1.py --task source_notes \
+            --prompt-file output/nvidia_dev_v1/prompt_nim.txt \
+            --output output/nvidia_dev_v1/NEMOTRON_REAL_DRAFT.json --execute
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("output/nvidia_dev_v1/NEMOTRON_REAL_DRAFT.json")
+          x=json.loads(p.read_text())
+          assert x.get("status")=="draft_unreviewed" and x.get("text")
+          print("NVIDIA_NEMOTRON_REAL_INFERENCE_OK; model:",x["model"],"; response_characters:",len(x["text"]))
+          PY
+      - uses: actions/upload-artifact@v4
         with:
-          name: NVIDIA_COSMOS_ONE_TIME_TEST_${{ github.run_id }}
-          path: |
-            output/nvidia_dev_v1/COSMOS_25FR_DEV_TEST.mp4
-            output/nvidia_dev_v1/COSMOS_ANDROID_25FR_H264.mp4
-            output/nvidia_dev_v1/COSMOS_25FR_DEV_TEST.json
-          retention-days: 7
+          name: NVIDIA_NEMOTRON_ONE_TIME_TEST_${{ github.run_id }}
+          path: output/nvidia_dev_v1/NEMOTRON_REAL_DRAFT.json
           if-no-files-found: error
+          retention-days: 7
   manual-dev-test:
     if: github.event_name == 'workflow_dispatch'
     needs: offline-tests
