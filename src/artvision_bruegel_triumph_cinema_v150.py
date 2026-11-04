@@ -173,6 +173,6 @@ def main():
   if z.testzip() is not None:raise ValueError("Bad ZIP CRC")
  qa["package"]={"filename":archive.name,"bytes":archive.stat().st_size,"sha256":digest(archive),"crc":"PASS"}
  (out/"QA_V150.json").write_text(json.dumps(qa,indent=2,ensure_ascii=False))
- print(json.dumps({"render":"SUCCESS","mp4":qa["mp4"],"package":qa["package"],"public_title":"The Garden of Death"},indent=2))
+ print(json.dumps({"render":"SUCCESS","mp4":qa["mp4"],"package":qa["package"],"public_title":"The Triumph of Death"},indent=2))
 
 if __name__=="__main__":main()
