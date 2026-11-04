@@ -17,10 +17,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: "Install FFmpeg CPU"
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg
+      - name: "Verify runner FFmpeg (no apt downloads)"
+        run: ffmpeg -version
       - name: "Render genuine source edit with original nonverbal soundtrack"
         run: python projects/cinema_reale/tools/render_pilot_002.py
       - name: "Save review-only MP4 and ZIP, not publish"
