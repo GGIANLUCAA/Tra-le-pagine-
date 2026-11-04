@@ -16,6 +16,10 @@ jobs:
     timeout-minutes: 95
     steps:
       - uses: actions/checkout@v4
+      - name: Compile renderer and parse recipe before any API call
+        run: |
+          python -m py_compile src/artvision_babel_critico_v138.py
+          python -m json.tool modules/artvision_critico/production_series/bruegel_babel_v138.json > /dev/null
       - name: Validate one-shot owner authorization and prevent duplicates
         run: |
           python - <<'PY'
