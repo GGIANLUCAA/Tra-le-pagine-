@@ -80,7 +80,9 @@ jobs:
     timeout-minutes: 25
     strategy:
       fail-fast: false
-      max-parallel: 2
+      # Four independent source-only research jobs; no paid I2I/Vidu calls.
+      # Run in parallel to shorten the wall-clock wait for candidate review.
+      max-parallel: 4
       matrix:
         episode: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.episode != 'all' && format('["{0}"]', inputs.episode) || '["delhi_ruins_1910_v217","early_cinema_sorrows_1910_v225","lusitania_departure_1915_v220","fiesole_straw_hats_1912_v220"]') }}
     env:
