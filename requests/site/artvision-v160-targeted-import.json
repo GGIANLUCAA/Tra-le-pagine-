@@ -1,0 +1,30 @@
+{
+  "directive_date": "2026-11-04",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "site": "https://video-library-studio.600led.workers.dev",
+  "target": "private owner archive with publicly available download links, not social publication",
+  "purpose": "Archive three specific already rendered MP4 masters without copying any other artifacts; verify exact whole HTTP bytes and Range",
+  "artifact_ids": [
+    13346500729,
+    13344664433,
+    13346346760
+  ],
+  "mp4_filenames": [
+    "BLAKE_THE_GHOST_OF_A_FLEA_CINEMA_V158_REVIEW.mp4",
+    "WATERHOUSE_THE_MAGIC_CIRCLE_CINEMA_V158_REVIEW.mp4",
+    "BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4"
+  ],
+  "import_idempotent_if_same_size": true,
+  "require_artifact_digest_verified": true,
+  "require_exact_mp4_sha_verified": true,
+  "require_full_site_download_sha256": true,
+  "verify_range_http206": true,
+  "skip_owner_deleted": true,
+  "do_not_overwrite_conflict": true,
+  "do_not_publish_socials": true,
+  "do_not_change_Gold_or_artistic_review": true,
+  "allow_paid_api": false,
+  "run_once_only": true,
+  "workflow": ".github/workflows/video-library-artvision-targeted-download-v160.yml",
+  "status": "ONE_TIME_RECOVERY_REQUESTED_NOT_YET_CONFIRMED"
+}
