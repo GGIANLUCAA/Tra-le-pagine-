@@ -1,0 +1,58 @@
+{
+  "directive_date": "2026-11-04",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "work_id": "waterhouse_lady_shalott_1888_tate_n01543",
+  "variant": "critico_museum",
+  "public_title": "The Lady of Shalott",
+  "artist": "John William Waterhouse",
+  "year": 1888,
+  "accession": "Tate N01543",
+  "original_real_cm": [
+    153,
+    200
+  ],
+  "existing_critico_standard_v156_sha256": "dae1b49fe4b5db9fa831a158335030744d0bcc88930ce96ede2f97785318b028",
+  "existing_voice_wav_sha256": "f5343459e33ba3be911c659bf7d678a6fecf1ffbdd0f11aa2bb538fa7bb1178c",
+  "source_critico_run_id": 41872003752,
+  "source_critico_artifact_id": 13344289054,
+  "actual_framed_photo": "https://commons.wikimedia.org/wiki/File:John_william_waterhouse,_the_lady_of_shalott,_1888,_01.jpg",
+  "photo_author": "Sailko",
+  "photo_license": "CC BY 3.0",
+  "photo_date": "2017-02-28",
+  "photo_license_attribution_required": true,
+  "photo_thumbnail_derivative_sizes": [
+    [
+      1255,
+      1024
+    ],
+    [
+      941,
+      768
+    ]
+  ],
+  "real_frame_2017_not_historical_original": true,
+  "fictional_museum_claim_prohibited": true,
+  "private_review_only": true,
+  "rights_clearance_for_publication_pending": true,
+  "run_once_only": true,
+  "one_render_at_a_time": true,
+  "no_new_TTS": true,
+  "allow_paid_calls": false,
+  "social_publish": false,
+  "gold_v25": false,
+  "retain_critico_standard_master": true,
+  "retain_original_voice": true,
+  "public_title_no_project_or_variant": true,
+  "status": "ONE_SHOT_REQUESTED_NOT_PRODUCED",
+  "workflow": ".github/workflows/artvision-waterhouse-lady-museum-v164.yml",
+  "renderer": "src/artvision_lady_shalott_critico_museum_v164.py",
+  "quality_gates": [
+    "original MP4 and WAV exact SHA",
+    "Sailko authentic photo license+pixels+SHA verified",
+    "same original AAC bit identical",
+    "FFmpeg full audio-video decode",
+    "ZIP CRC",
+    "final human visual review pending",
+    "actual R2 readback if backed up"
+  ]
+}
