@@ -1,0 +1,9 @@
+# ArtVision V152 — Blake source and rights preflight (2026-11-04)
+
+Selected owner work: William Blake, **The Ghost of a Flea**, c.1819–20, Tate N05889. Physical painting: 214 × 162 mm, tempera and gold on mahogany. A Tate-derived listing reports frame 382 × 324 × 50 mm, but this does **not** authenticate an original nineteenth-century frame; Museum approval remains false.
+
+Source candidate: https://commons.wikimedia.org/wiki/File:William_Blake_-_The_Ghost_of_a_Flea_-_Google_Art_Project.jpg (1609 × 2196 JPEG; Commons reported SHA1 51da1f35117b912466e4f7c330389fed546831fe; reported size 2,223,999 bytes). These are **remote metadata**, not downloaded bytes, SHA256 or a local readback. The Commons file labels the underlying artwork public domain / PD-Art, **but explicitly warns that Tate claims UK copyright in this specific digital reproduction**. Commercial multi-territory clearance remains unresolved; do not silently treat Commons PDM as universal rights clearance. Alternative Commons images at 1162 × 1536 and 500 × 693 have provenance/licensing caveats, including Tate metadata in some files. Exact image and commercial rights must be reviewed before render.
+
+Primary institution: https://www.tate.org.uk/art/artworks/blake-the-ghost-of-a-flea-n05889 . Tate-derived physical frame dimensions appear on https://commons.wikimedia.org/wiki/File:William_Blake_The_Ghost_of_Flea_1819-20_Tempera_%26_gold_on_mahogany.jpg .
+
+**Gate**: 0/4 MP4 for this selection. No request, no TTS, no render, no spending, no publication, no Gold. Next action is to obtain verified SHA256 bytes of an appropriately licensed clean image and check jurisdictional use. Museum requires independently verified actual framed-work photo and correct scale; V119 preset is not approved. Avoid duplicating any of the 12 already-verified slots. Dali remains rights-blocked.
