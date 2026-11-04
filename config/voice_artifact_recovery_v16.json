@@ -1,11 +1,11 @@
 {
   "schema": "voice-artifact-recovery-v16",
-  "updated_utc": "2026-10-22T17:05:00Z",
+  "updated_utc": "2026-11-04T18:10:00Z",
   "repository": "GGIANLUCAA/Tra-le-pagine-",
   "entries": [
     {
       "episode": "03_siddharta",
-      "status": "recoverable_verified_voice_and_timing",
+      "status": "expired_bytes_missing",
       "workflow_run_id": 39153143646,
       "workflow_commit": "917ce810178588fb9797b69c11ffa68c1c23f010",
       "artifact_id": 12146196388,
@@ -22,11 +22,15 @@
       "voice_provider": "Google Gemini",
       "voice_model": "gemini-3.8-flash-tts",
       "voice_profile": "Gacrux",
-      "target_cache_dir": "cache/voice/03_siddharta"
+      "target_cache_dir": "cache/voice/03_siddharta",
+      "availability_checked_utc": "2026-11-04T18:10:00Z",
+      "github_artifacts_found": 0,
+      "library_exact_audio_found": false,
+      "blocker": "La run storica non espone più artefatti e nel runtime non esiste il WAV con questo SHA256. I metadati conservano provenienza e hash ma non autorizzano accodamento o rigenerazione."
     },
     {
       "episode": "09_dersu_uzala",
-      "status": "verified_audio_only_alignment_missing",
+      "status": "expired_bytes_missing_alignment_missing",
       "workflow_run_id": 39627957410,
       "workflow_commit": "f73a76c860bd803e7c2eebb1a2132f52ef26e3eb",
       "artifact_id": 12358361535,
@@ -44,7 +48,10 @@
       "voice_model": "gemini-3.8-flash-tts",
       "voice_profile": "Gacrux",
       "target_cache_dir": "cache/voice/09_dersu_uzala",
-      "blocker": "L'artefatto non contiene tempi frase o ALLINEAMENTO_VOCE.json: non creare una cache renderizzabile finché l'audio non viene allineato e ascoltato."
+      "availability_checked_utc": "2026-11-04T18:10:00Z",
+      "github_artifacts_found": 0,
+      "library_exact_audio_found": false,
+      "blocker": "La run storica non espone più artefatti; il WAV esatto non è disponibile localmente e inoltre mancano tempi frase/ALLINEAMENTO_VOCE.json. Non creare una cache renderizzabile né rigenerare senza autorizzazione."
     }
   ]
 }
