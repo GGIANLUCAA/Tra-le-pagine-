@@ -41,6 +41,11 @@ def assert_fifth(photos,manifest,original_frame):
         raise ValueError("V285_FIFTH_REAL_IMAGE_HASH_MISMATCH")
     with Image.open(pic) as im:
         if im.size!=(720,1280) or im.format!="JPEG":raise ValueError("V285_FIFTH_PHOTO_DIMENSIONS")
+    # V288: actual human review identified a human-cattle head fusion in this
+    # exact source/restoration. Technical SHA and geometry PASS cannot waive it.
+    # Original B/W movement can still be used; color reveal/VIDU needs new frame.
+    from storia_rivive_visual_reject_v288 import require_safe_for_photo
+    require_safe_for_photo("delhi_ruins_1910_v217",FIFTH_FRAME_SHA,sha(pic))
     return pic
 
 def render_fifth_real_motion(film,out,original,photo):
