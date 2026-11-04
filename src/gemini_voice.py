@@ -126,7 +126,10 @@ def align(phrases, audio_path, duration):
     report_path = Path(audio_path).parent / "ALLINEAMENTO_VOCE.json"
     try:
         from faster_whisper import WhisperModel
-        model=WhisperModel("base",device="cpu",compute_type="int8",cpu_threads=4)
+        model_name=os.environ.get("ARTVISION_ASR_MODEL","base")
+        if model_name not in ("base","small"):
+            raise ValueError("Only local base/small Whisper ASR permitted")
+        model=WhisperModel(model_name,device="cpu",compute_type="int8",cpu_threads=4)
         segments,_=model.transcribe(str(audio_path),language="it",
                                     beam_size=2,word_timestamps=True,
                                     vad_filter=False)
