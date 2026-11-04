@@ -1,0 +1,93 @@
+name: "La Storia Rivive V281 · Delhi real film motion + four real I2I review MP4 (NOT FINAL)"
+on:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
+    paths: [".github/workflows/storia-rivive-v281-delhi-motion-four-i2i.yml"]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v281-delhi-motion-review
+  cancel-in-progress: false
+jobs:
+  real_motion_four_photo_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q 'Pillow>=10,<13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: storia-v278-delhi-four-V98-DDColor-Finegrain-real-photo-CANDIDATES-NOT-FINAL
+          run-id: 41806029514
+          github-token: ${{ github.token }}
+          path: input/photos
+      - name: Download exact archival source; no paid API
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/v281
+          curl --fail --location --retry 2 --max-time 420 -A 'LaStoriaRivive/1.0 (historical source review)' \
+            'https://commons.wikimedia.org/wiki/Special:Redirect/file/Ruins_of_Delhi_(1910).webm' -o output/v281/original.webm
+          test "$(stat -c %s output/v281/original.webm)" -gt 50000000
+          echo '0a0de7b032cdb19e34d4dac5a6efca02dfa4b00260411aa82290c54b2899f278  output/v281/original.webm' | sha256sum -c -
+      - name: Real motion before each source-locked photo; fifth scene archival only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,subprocess
+          root=Path('output/v281'); photos=Path('input/photos')
+          report=json.loads((photos/'V278_DELHI_FOUR_REAL_I2I_QA_NOT_FINAL.json').read_text())
+          rows=report['real_photo_files']
+          assert len(rows)==4 and not report['artistic_approval'] and not report['vidu_scene5_generated']
+          # Exact original-frame timecodes, not arbitrary zooms or synthetic film.
+          times=[9.486,66.401,104.345,199.204,218.176]
+          segments=[]
+          for i,t in enumerate(times):
+              start=max(0,t-1.20)
+              clip=root/f'motion_{i+1:02}.mp4'
+              cmd=['ffmpeg','-hide_banner','-loglevel','error','-y','-ss',str(start),'-i',str(root/'original.webm'),'-t','1.20','-an','-vf','crop=608:1080:(iw-608)/2:0,scale=720:1280,fps=30,format=yuv420p','-c:v','libx264','-preset','veryfast','-crf','19',str(clip)]
+              subprocess.run(cmd,check=True)
+              segments.append(clip)
+              if i<4:
+                  row=rows[i]; pic=photos/row['actual_finegrain_photo_filename']
+                  assert pic.is_file() and hashlib.sha256(pic.read_bytes()).hexdigest()==row['real_i2i_sha256']
+                  hold=root/f'photo_{i+1:02}.mp4'
+                  subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-loop','1','-i',str(pic),'-t','1.65','-vf','scale=720:1280,setsar=1,fps=30,format=yuv420p','-c:v','libx264','-preset','veryfast','-crf','19',str(hold)],check=True)
+                  segments.append(hold)
+          # This is a review film only; do not label the unanimated fifth shot Vidu.
+          manifest=root/'segments.txt'
+          manifest.write_text(''.join("file '"+p.name+"'\n" for p in segments))
+          silent=root/'review_silent.mp4'
+          subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-f','concat','-safe','0','-i',str(manifest),'-c','copy',str(silent)],check=True,cwd=None)
+          # source-locked fifth original clip is not a Vidu replacement
+          subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(silent),'-f','lavfi','-i','anullsrc=channel_layout=stereo:sample_rate=48000','-shortest','-c:v','copy','-c:a','aac','-b:a','128k',str(root/'DELHI_1910_V281_MOTION_I2I_REVIEW_NOT_FINAL.mp4')],check=True)
+          (root/'V281_STATUS_NOT_FINAL.json').write_text(json.dumps({'status':'rendered_needs_review','original_film_sha256':'0a0de7b032cdb19e34d4dac5a6efca02dfa4b00260411aa82290c54b2899f278','real_motion_segments':5,'real_i2i_photos':4,'vidu_clips':0,'italian_rights_approved':False,'artistic_approval':False,'new_final_episodes_delivered':0,'publishing_allowed':False},indent=2))
+          PY
+      - name: Decode actual review bytes and enforce NOT FINAL
+        run: |
+          set -euo pipefail
+          ffmpeg -v error -i output/v281/DELHI_1910_V281_MOTION_I2I_REVIEW_NOT_FINAL.mp4 -f null -
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 output/v281/DELHI_1910_V281_MOTION_I2I_REVIEW_NOT_FINAL.mp4
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('output/v281/V281_STATUS_NOT_FINAL.json').read_text())
+          assert x['real_motion_segments']==5 and x['real_i2i_photos']==4
+          assert x['vidu_clips']==0 and x['new_final_episodes_delivered']==0
+          assert not x['artistic_approval'] and not x['publishing_allowed']
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: storia-v281-delhi-real-motion-four-i2i-REVIEW-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v281/DELHI_1910_V281_MOTION_I2I_REVIEW_NOT_FINAL.mp4
+            output/v281/V281_STATUS_NOT_FINAL.json
