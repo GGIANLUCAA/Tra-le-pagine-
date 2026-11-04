@@ -1,0 +1,62 @@
+name: "API V1 - Test LIVE sola lettura (21 fonti + chiavi)"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/api-live-readonly-test-v1.yml"
+      - "src/api_live_readonly_diagnostic_v1.py"
+      - "tests/test_api_live_readonly_diagnostic_v1.py"
+  pull_request:
+    paths:
+      - ".github/workflows/api-live-readonly-test-v1.yml"
+      - "src/api_live_readonly_diagnostic_v1.py"
+      - "tests/test_api_live_readonly_diagnostic_v1.py"
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify audit safety and report contracts (mock only)
+        run: |
+          set -euo pipefail
+          python -m py_compile src/api_live_readonly_diagnostic_v1.py
+          python -m unittest discover -s tests -p 'test_api_live_readonly_diagnostic_v1.py' -v
+  live-readonly:
+    needs: offline
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    env:
+      PROBE_NVIDIA: ${{ secrets.NVIDIA_API_KEY || secrets.NVIDIA || secrets.NVIDIA_NIM_API_KEY || secrets.NVIDIA_KEY || secrets.NVIDIA_NIM || secrets.NGC_API_KEY || secrets.INVIDIA || secrets.INVIDIA_API_KEY }}
+      PROBE_GROQ: ${{ secrets.GROQ_API_KEY || secrets.GROQ }}
+      PROBE_GEMINI: ${{ secrets.GEMINI_API_KEY }}
+      PROBE_HF: ${{ secrets.HF_TOKEN || secrets.HUGGINGFACE_TOKEN }}
+      PROBE_OPENROUTER: ${{ secrets.OPENROUTER_API_KEY || secrets.OPENROUTER2 }}
+      PROBE_PIXABAY: ${{ secrets.PIXABAY || secrets.PIXABAY_API_KEY }}
+      PROBE_AIHORDE: ${{ secrets.AIHORDE_API_KEY }}
+      PROBE_VIDU: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      API_LIVE_REPORT: output/api_live_check_v1/RESULTS.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run bounded live GET tests; never send POST or infer video/text
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/api_live_readonly_diagnostic_v1.py
+      - name: Save sanitized result as a downloadable JSON report
+        uses: actions/upload-artifact@v4
+        with:
+          name: API_LIVE_READONLY_TEST_V1_${{ github.run_id }}
+          path: output/api_live_check_v1/RESULTS.json
+          if-no-files-found: error
+          retention-days: 14
