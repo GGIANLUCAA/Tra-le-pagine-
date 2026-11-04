@@ -622,15 +622,18 @@
         "paid_api_calls": 0,
         "remaining_variants": 2,
         "backup_cloudflare_r2": {
-          "status": "object_exists_same_filename_and_byte_count_content_sha256_not_readback",
+          "status": "verified_R2_GET_full_byte_readback_SHA256_matches_source",
           "source": "Cloudflare R2 bucket video-library-studio, read-only object listing, 2026-11-03",
           "key": "BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_V136_REVIEW.mp4",
           "bytes": 18165533,
           "r2_etag": "779b71c64937b98b7b3f1bd9bb0c6dc2",
           "r2_last_modified": "2026-11-03T07:05:44.920Z",
           "video_sha256_source_verified": "ad401e87ac181d6627bed80b5072a466fa2cc930143857838896b4d1bfe7a6a4",
-          "r2_sha256_verified": false,
-          "site_playback_verified": false
+          "r2_sha256_verified": true,
+          "site_playback_verified": false,
+          "sha256_readback": "ad401e87ac181d6627bed80b5072a466fa2cc930143857838896b4d1bfe7a6a4",
+          "readback_on": "2026-11-04",
+          "verified_method": "Cloudflare R2 GET Object whole body, SHA-256 crypto.subtle digest, exact bytes match originally decoded GitHub Actions artifact"
         },
         "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
         "site_http_206_stream_download": "PASS",
@@ -701,15 +704,18 @@
           "critico_museum"
         ],
         "backup_cloudflare_r2": {
-          "status": "object_exists_source_sha256_and_site_playback_not_readback",
+          "status": "verified_R2_GET_full_byte_readback_SHA256_matches_source",
           "source": "Cloudflare R2 bucket video-library-studio, read-only object listing, 2026-11-03",
           "key": "BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_MUSEUM_V137_REVIEW.mp4",
           "bytes": 15646921,
           "r2_etag": "c5465390d479090fd08e8d03703ce2f9",
           "r2_last_modified": "2026-11-03T15:31:39.027Z",
           "video_sha256_source_verified": "4a9639be84ecf912ae0a82e8078dcacc1a93ac6bf82433a95d927b98746e5d7f",
-          "r2_sha256_verified": false,
-          "site_playback_verified": false
+          "r2_sha256_verified": true,
+          "site_playback_verified": false,
+          "sha256_readback": "4a9639be84ecf912ae0a82e8078dcacc1a93ac6bf82433a95d927b98746e5d7f",
+          "readback_on": "2026-11-04",
+          "verified_method": "Cloudflare R2 GET Object whole body, SHA-256 crypto.subtle digest, exact bytes match originally decoded GitHub Actions artifact"
         },
         "site_playback_verified": true,
         "site_full_download_sha256": "PASS exact SHA256 complete HTTP GET /download against original GitHub master 2026-11-04 run 41876068253",
@@ -794,7 +800,16 @@
         "artistic_approved": false
       },
       "site_archive_verified_slots": 4,
-      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04",
+      "r2_backup_verified_for_cinema_mp4_count": 2,
+      "r2_readback_20261104": {
+        "status": "PASS both V136 and V137 exact MP4 bytes + SHA256",
+        "checksum_source": "GitHub Actions independently FFmpeg decoded source artifacts",
+        "site_player_qa": "NOT VERIFIED",
+        "museum_artistic_full_watch": "PENDING",
+        "new_render_count": 0,
+        "new_paid_calls": 0
+      }
     },
     {
       "id": "simberg_garden_death_1896_fng_a_ii_968_16",
