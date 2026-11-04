@@ -1,0 +1,135 @@
+name: ArtVision V148 Night Watch one genuine Critico with Free Gacrux
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/nightwatch-critico-standard-v148.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-owner-nightwatch-critico-v148-once
+  cancel-in-progress: false
+jobs:
+  one_missing_critico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile renderer and verify recipe before any TTS call
+        run: |
+          python -m py_compile src/artvision_nightwatch_critico_standard_v148.py
+          python -m json.tool modules/artvision_critico/production_series/night_watch_v148.json > /dev/null
+      - name: Guard one approved work and forbid duplicates and paid calls
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open("requests/artvision/nightwatch-critico-standard-v148.json"))
+          q=json.load(open("queue/artvision_owner_selected_ten_20261102.json"))
+          assert r["owner_automation_id"]=="6adca191603c8191a90d5190901cd034"
+          assert r["work_id"]=="rembrandt_night_watch_1642_rijks_sk_c_5"
+          assert r["variant"]=="critico_standard"
+          assert r["public_title"]=="The Night Watch"
+          assert r["run_once_only"] and r["one_tts_call_at_most"]
+          assert not r["allow_paid_calls"] and not r["social_publish"] and not r["gold_v25"]
+          w=[x for x in q["works"] if x["id"]==r["work_id"]]
+          assert len(w)==1 and w[0]["slots_delivered_this_selection"]==1
+          assert "critico_standard_v148" not in w[0]
+          assert w[0]["new_cinema_standard_v132"]["full_decode_pass_ci"] is True
+          assert w[0]["museum_approved"] is False
+          PY
+      - name: Download ONLY exact verified 14K original public-domain Rijksmuseum painting (fail before any TTS if unavailable)
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/nightwatch_critico_v148
+          python - <<'PY'
+          from pathlib import Path
+          import urllib.request,hashlib,time
+          p=Path("/tmp/nightwatch_critico_v148/ORIGINAL_ARTWORK.jpg")
+          u="https://upload.wikimedia.org/wikipedia/commons/9/94/The_Nightwatch_by_Rembrandt_-_Rijksmuseum.jpg"
+          req=urllib.request.Request(u,headers={"User-Agent":"ArtVision-NightWatch-open-source-review/1.0 (Rijksmuseum PD-Art attribution; original licensed bytes)","Accept":"image/jpeg,image/*"})
+          with urllib.request.urlopen(req,timeout=120) as resp:
+            assert resp.headers.get("Content-Type","").split(";")[0].startswith("image/")
+            with p.open("wb") as dst:
+              while True:
+                data=resp.read(1024*1024)
+                if not data: break
+                dst.write(data)
+                assert dst.tell()<50_000_000, "unexpected source larger than verified original"
+          h=hashlib.sha256(p.read_bytes()).hexdigest()
+          h1=hashlib.sha1(p.read_bytes()).hexdigest()
+          assert p.stat().st_size==36661073,("Source byte count mismatch",p.stat().st_size)
+          assert h=="2b82fc052b702baebd4f5476c29e7639b34c8dbfac2ba96ed8ecdb9d8d369c86",(h,"SHA256")
+          assert h1=="53db595a5a1bca243b152b175d65f0f2f1ab1ff8",(h1,"SHA1")
+          print("GENUINE_14K_NIGHTWATCH_ART_BYTES_PASS_SHA1_SHA256",p.stat().st_size)
+          PY
+      - name: Gate ONLY already owner-attested no-billing second Free Google key
+        env:
+          SECOND_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+        run: |
+          test -n "$SECOND_KEY" || { echo "BLOCKED_SECOND_FREE_ACCOUNT_NOT_PRESENT: NO TTS"; exit 2; }
+      - name: Install offline runtime with KNOWN compatible PyAV17 ASR
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" numpy pillow soundfile scipy "faster-whisper==1.2.1" "av==17.1.0" "huggingface-hub==0.34.4" "fsspec==2025.7.0" opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          e=Path(get_ffmpeg_exe())
+          assert e.is_file()
+          Path('/tmp/artvision-bin/ffmpeg').symlink_to(e)
+          PY
+          echo /tmp/artvision-bin >> "$GITHUB_PATH"
+          /tmp/artvision-bin/ffmpeg -version | head -1
+      - name: Generate ONE genuine natural Gacrux WAV and ASR-small timing (NO retry)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          ARTVISION_GEMINI_PROJECT_BILLING_TIER: Free
+          ARTVISION_ASR_MODEL: small
+          HF_HUB_DISABLE_XET: "1"
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python src/artvision_nightwatch_critico_standard_v148.py --phase voice
+      - name: Render EXACTLY one real Critico Standard with original soundtrack and QA
+        run: python src/artvision_nightwatch_critico_standard_v148.py --phase render
+      - name: Independently verify actual physical file and CRC, do not auto Gold
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,zipfile
+          out=Path('/tmp/nightwatch_critico_v148')
+          q=json.loads((out/'QA_V148.json').read_text())
+          assert q['work']=="The Night Watch"
+          assert q['variant']=='critico_standard' and q['museum_variant_rendered'] is False
+          assert not q['Gold_V25'] and not q['social_published'] and not q['museum_approved']
+          m=q['file']; p=out/m['name']
+          assert p.is_file() and p.stat().st_size==m['bytes'] and m['frames']>1000
+          assert hashlib.sha256(p.read_bytes()).hexdigest()==m['sha256']
+          assert m['full_ffmpeg_decode']=='PASS'
+          subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(p),"-f","null","-"],check=True)
+          with zipfile.ZipFile(out/"NIGHT_WATCH_CRITICO_STANDARD_V148_REVIEW_PACKAGE.zip") as z:
+            assert z.testzip() is None and sum(n.endswith('.mp4') for n in z.namelist())==1
+          print('ONE_GENUINE_MP4_SHA_FFMPEG_ZIP_CRC_PASS_ARTISTIC_REVIEW_PENDING')
+          PY
+      - name: Preserve WAV even on failed render — never regenerate TTS for recovery
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V148_NIGHTWATCH_REAL_CRITICO_OR_PRESERVED_WAV
+          path: |
+            /tmp/nightwatch_critico_v148/VOCE.wav
+            /tmp/nightwatch_critico_v148/VOICE_CACHE_V13.json
+            /tmp/nightwatch_critico_v148/ALLINEAMENTO_VOCE.json
+            /tmp/nightwatch_critico_v148/VOICE_RESULT_V148.json
+            /tmp/nightwatch_critico_v148/COPIONE_ESATTO_V148.txt
+            /tmp/nightwatch_critico_v148/REMBRANDT_THE_NIGHT_WATCH_CRITICO_STANDARD_V148_REVIEW.mp4
+            /tmp/nightwatch_critico_v148/NIGHT_WATCH_CRITICO_STANDARD_V148_REVIEW_PACKAGE.zip
+            /tmp/nightwatch_critico_v148/QA_V148.json
+            /tmp/nightwatch_critico_v148/COVER.jpg
+            /tmp/nightwatch_critico_v148/CONTACT_SHEET_V148.jpg
+            /tmp/nightwatch_critico_v148/RIGHTS_AND_CREDITS.txt
+            /tmp/nightwatch_critico_v148/WORKING_FROM_VALIDATED_ORIGINAL_5200.jpg
+            /tmp/nightwatch_critico_v148/ORIGINAL_ARTWORK.jpg
+            /tmp/nightwatch_critico_v148/SOCIAL_DRAFT_UNPUBLISHED.txt
+          retention-days: 30
+          if-no-files-found: warn
