@@ -69,7 +69,16 @@ class V278(unittest.TestCase):
             with Image.open(base) as im:
                 ImageEnhance.Color(im).enhance(1.15).save(target)
             return target
-        with self.patch_source():
+        # Unit test tests delivery accounting only. Finegrain's actual source
+        # geometry / chroma metric is independently verified on real bytes.
+        # Random-noise synthetic image geometries are not visually meaningful.
+        def fake_qa(src,pic):
+            return {"real_i2i_sha256":v.digest(pic),
+                    "real_i2i_pixel_size":[720,1280],
+                    "source_geometry_corr":0.96,
+                    "saturation_mean":62.0,
+                    "auto_preflight_passed":True}
+        with self.patch_source(),patch.object(v,"photo_stats",side_effect=fake_qa):
             r=v.run(self.frames,self.scout,self.selection,self.root/"out",
                     make_base=fake_dd,model_predict=fake_finegrain)
         self.assertEqual(len(r["real_photo_files"]),4)
