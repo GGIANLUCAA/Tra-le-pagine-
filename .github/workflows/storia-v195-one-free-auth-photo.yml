@@ -1,0 +1,106 @@
+name: La Storia Rivive V195 one authenticated FREE-tier I2I for remaining fourth photo
+on:
+  push:
+    branches: [storia-v183-production-candidate-20261101]
+    paths:
+      - '.github/workflows/storia-v195-one-free-auth-photo.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  one-free-tier-image-edit:
+    if: contains(github.event.head_commit.message, 'RUN_V195_ONE_AUTH_FREE_I2I_ONCE') && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Gradio and image tools, no paid endpoint
+        run: python -m pip install -q 'gradio_client>=1.0,<3' 'huggingface_hub>=0.25,<1' 'pillow>=10,<13' 'numpy>=1.26,<3'
+      - name: Fetch exact source frame from V191 artifact
+        shell: bash
+        run: |
+          mkdir -p /tmp/v195_original
+          gh run download 41342120383 --repo GGIANLUCAA/Tra-le-pagine- --name storia-v191-real-i2i-production-inputs-4plus1-review-only --dir /tmp/v195_original
+      - name: Check Free HF plan before one request, NEVER use a paid quota
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v195_result
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          from huggingface_hub import HfApi
+          o=Path('/tmp/v195_result/FREE_TIER_GATE.json')
+          r={'status':'BLOCKED','free_plan_confirmed':False,'provider_requests_sent':0,'paid_spend':0}
+          token=os.getenv('HF_TOKEN','')
+          if not token:
+            r['status']='HF_TOKEN_NOT_PRESENT';o.write_text(json.dumps(r));raise SystemExit(0)
+          try:
+            w=HfApi(token=token).whoami()
+            if w.get('isPro') is not False:
+              r['status']='NOT_VERIFIED_FREE_TIER_NO_PROVIDER_REQUEST'
+            else:
+              r['status']='VERIFIED_FREE_TIER';r['free_plan_confirmed']=True
+          except Exception as e:
+            r['status']='FREE_PLAN_VERIFICATION_FAILED';r['error_type']=type(e).__name__
+          o.write_text(json.dumps(r))
+          print('HF_FREE_TIER_OK_FOR_NO_BILLING',r['free_plan_confirmed'])
+          PY
+      - name: ONE I2I request from authentic scene 04 if and ONLY if free account, no retry
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os,hashlib,json
+          from pathlib import Path
+          from PIL import Image
+          out=Path('/tmp/v195_result')
+          gate=json.loads((out/'FREE_TIER_GATE.json').read_text())
+          result={'version':'V195','source_sha256':'e927b600e47965c255ed13edf3994a505af29837ba2794d61e9af78c82c0a25b','status':'BLOCKED','free_provider_requests':0,'paid_calls':0,'credits_spent':0,'real_i2i_generated':False,'artistic_qa_approved':False,'publish_permitted':False}
+          def save(): (out/'V195_REAL_I2I_RESULT.json').write_text(json.dumps(result,indent=2)+'\n')
+          save()
+          if not gate['free_plan_confirmed']:
+            result['status']=gate['status'];save();raise SystemExit(0)
+          from src.storia_rivive_v194_three_free_real_i2i import verify_handoff, PROMPTS
+          d=Path('/tmp/v195_original')
+          job=verify_handoff(d)[4]
+          src=d/job['source_file']
+          if hashlib.sha256(src.read_bytes()).hexdigest()!=result['source_sha256']:
+            raise SystemExit('SOURCE_SHA_MISMATCH_BEFORE_PROVIDER')
+          result['free_provider_requests']=1;result['status']='ONE_FREE_CALL_IN_PROGRESS';save()
+          try:
+            from gradio_client import Client,handle_file
+            client=Client('JEYASEKHAR/QWEN_EDIT_IMAGE',token=os.environ['HF_TOKEN'],verbose=False)
+            r=client.predict(image=handle_file(str(src)),prompt=PROMPTS[4],
+                   lora_adapter='',image2=None,seed=195,randomize_seed=False,
+                   guidance_scale=1.0,steps=4,preserve_identity=True,
+                   identity_strength=90,output_size=1024,fix_hands=False,api_name='/edit')
+            raw=r[0] if isinstance(r,(tuple,list)) else r
+            if isinstance(raw,dict):raw=raw.get('path')
+            photo=Path(raw)
+            with Image.open(photo) as im:
+              if max(im.size)<900 or min(im.size)<512:raise ValueError('IMAGE_SIZE_INVALID')
+              im.convert('RGB').save(out/'SCENE04_REAL_GENERATIVE_I2I_CANDIDATE.png')
+            pic=out/'SCENE04_REAL_GENERATIVE_I2I_CANDIDATE.png'
+            result['photo_sha256']=hashlib.sha256(pic.read_bytes()).hexdigest()
+            result['real_i2i_generated']=True;result['status']='FREE_I2I_CANDIDATE_NEEDS_ARTISTIC_REVIEW'
+          except Exception as exc:
+            result['status']='FREE_TIER_QUOTA_OR_GENERATION_BLOCKED_NO_RETRY'
+            result['error_type']=type(exc).__name__
+            result['error_summary']=str(exc)[:150]
+          save()
+          print('V195_IMAGE_GENERATED',result['real_i2i_generated'],'PAID',0)
+          PY
+      - name: Store private preview only (no Release, no site/social)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v195-scene04-one-authenticated-free-i2i-only
+          path: |
+            /tmp/v195_result/FREE_TIER_GATE.json
+            /tmp/v195_result/V195_REAL_I2I_RESULT.json
+            /tmp/v195_result/SCENE04_REAL_GENERATIVE_I2I_CANDIDATE.png
+          if-no-files-found: warn
+          retention-days: 3

@@ -1,0 +1,104 @@
+name: La Storia Rivive V189 five real BW clips and exact-frame freeze proof
+on:
+  push:
+    branches: [storia-v183-production-candidate-20261101]
+    paths:
+      - 'src/storia_rivive_v189_real_motion_proof.py'
+      - 'tests/test_storia_rivive_v189_real_motion_proof.py'
+      - '.github/workflows/storia-v189-real-motion-proof.yml'
+  pull_request:
+    paths:
+      - 'src/storia_rivive_v189_real_motion_proof.py'
+      - 'tests/test_storia_rivive_v189_real_motion_proof.py'
+      - '.github/workflows/storia-v189-real-motion-proof.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v189-real-motion-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg for actual encoded synthetic motion tests
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Compile real V189 and run seven regressions
+        run: |
+          python -m py_compile src/storia_rivive_v189_real_motion_proof.py tests/test_storia_rivive_v189_real_motion_proof.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v189_real_motion_proof.py' -v
+  one-authentic-film-motion-proof:
+    # One artifact attempt on this PR synchronization; no cron, release or paid API.
+    if: github.event_name == 'pull_request' && github.head_ref == 'storia-v183-production-candidate-20261101' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg for real film extraction
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Retrieve existing V187 source frames and provenance (9MB, no external film request)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v189_v187
+          gh run download 41331040749 --repo GGIANLUCAA/Tra-le-pagine- \
+            --name v187-real-cut-candidates-review-only --dir /tmp/v189_v187
+          cd /tmp/v189_v187
+          zip -q -r -D /tmp/v189_v187_catalog.zip SOURCE_PROVENANCE.json V187_CONTACT_SHEET.jpg shot_catalog
+      - name: One bounded Commons source acquisition (318MB derivative SHA-locked)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v189_source
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          from storia_rivive_v186_commons_preview import discover_derivative, bounded_download
+          path=Path('/tmp/v189_source/source.webm')
+          media=discover_derivative()
+          r=bounded_download(media['url'],path)
+          expected='eacbb947105f9143632e3d4e933ee5e200ba98f5d588c11c552dfb94787de1d9'
+          if r['sha256'] != expected:
+              path.unlink(missing_ok=True)
+              raise SystemExit('ARCHIVE_DERIVATIVE_SHA_CHANGED: fail closed')
+          print('ORIGINAL_FILM_DERIVATIVE_SHA_VERIFIED:',r['sha256'])
+          print('DERIVATIVE_BYTES_VERIFIED:',r['bytes'])
+          PY
+      - name: Render five TRUE original-film moving clips + last-frame freeze into review-only MP4
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v189_real_motion_proof.py \
+            --file /tmp/v189_source/source.webm \
+            --expected-sha256 eacbb947105f9143632e3d4e933ee5e200ba98f5d588c11c552dfb94787de1d9 \
+            --catalog-zip /tmp/v189_v187_catalog.zip \
+            --out-dir /tmp/v189_proof
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/v189_proof/V189_REAL_MOTION_PROOF_REPORT.json'))
+          assert r['status']=='REAL_BW_MOTION_PROOF_REVIEW_ONLY'
+          assert len(r['scenes'])==5 and all(s['motion']['mean_luma_delta']>0.08 for s in r['scenes'])
+          assert 14<=r['proof']['duration']<=35
+          assert r['four_real_i2i']==0 and r['real_vidu_clips']==0 and not r['publish_permitted']
+          print('V189_ACTUAL_BW_FILM_CLIPS',len(r['scenes']))
+          print('V189_REAL_MOTION_AND_LAST_FRAME_SHA_PASS')
+          print('V189_REVIEW_MP4_DURATION_SECONDS',r['proof']['duration'])
+          print('V189_NOT_FINAL_NO_AI_PROVIDER_NO_PUBLICATION')
+          PY
+      - name: Erase 318MB derivative after complete analysis
+        if: always()
+        run: rm -f /tmp/v189_source/source.webm
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v189-five-real-film-moving-scenes-bw-proof-not-final
+          path: |
+            /tmp/v189_proof/V189_REAL_MOTION_PROOF_REPORT.json
+            /tmp/v189_proof/V189_TRUE_BW_MOTION_FIVE_SCENES_PROOF_NOT_FINAL.mp4
+            /tmp/v189_proof/*_real_film_bw.mp4
+            /tmp/v189_proof/*_last_real_film_frame.png
+          if-no-files-found: warn
+          retention-days: 3

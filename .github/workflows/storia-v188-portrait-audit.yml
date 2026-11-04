@@ -1,0 +1,94 @@
+name: La Storia Rivive V188 real portrait crop QA from V187 artifact
+on:
+  push:
+    branches: [storia-v183-production-candidate-20261101]
+    paths:
+      - 'src/storia_rivive_v188_portrait_audit.py'
+      - 'tests/test_storia_rivive_v188_portrait_audit.py'
+      - 'docs/productions/2026-11-01-storia-v183-production-candidate.md'
+      - '.github/workflows/storia-v188-portrait-audit.yml'
+  pull_request:
+    paths:
+      - 'src/storia_rivive_v188_portrait_audit.py'
+      - 'tests/test_storia_rivive_v188_portrait_audit.py'
+      - '.github/workflows/storia-v188-portrait-audit.yml'
+  workflow_dispatch:
+    inputs:
+      run_real_archive:
+        description: 'Re-run real V187 artifact crop audit only while artifact exists'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v188-portrait-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg and FFprobe
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Compile and run 8 source-locked ZIP/PNG regression tests
+        run: |
+          python -m py_compile src/storia_rivive_v188_portrait_audit.py tests/test_storia_rivive_v188_portrait_audit.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v188_portrait_audit.py' -v
+  one-real-archive-artifact:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_real_archive == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg and FFprobe
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Fetch previously generated 9MB V187 authentic PNG artifact (NO 318MB download)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v187_real
+          gh run download 41331040749 --repo GGIANLUCAA/Tra-le-pagine- \
+            --name v187-real-cut-candidates-review-only --dir /tmp/v187_real
+          cd /tmp/v187_real
+          zip -q -r -D /tmp/v187_real_source.zip SOURCE_PROVENANCE.json V187_CONTACT_SHEET.jpg shot_catalog
+      - name: Verify source SHA and render exact pixel crops
+        run: |
+          python src/storia_rivive_v188_portrait_audit.py \
+            --artifact-zip /tmp/v187_real_source.zip --out-dir /tmp/v188_review
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/v188_review/V188_PORTRAIT_AUDIT.json'))
+          assert x['status']=='PORTRAIT_CROPS_NEED_VISUAL_REVIEW'
+          assert len(x['candidates'])==10
+          assert sum(len(c['crops']) for c in x['candidates'])==27
+          assert sum(c['dark_or_intertitle_like'] for c in x['candidates'])==1
+          assert all(c['source_crop_pixels']==[603,1072] for c in x['candidates'])
+          assert not x['provider_jobs_may_start'] and not x['publish_permitted']
+          print('REAL_V188_SOURCE_LOCK_AND_CROPS_PASS: 10 frames, 27 crops, 1 intertitle rejected')
+          PY
+      - name: Visual contact sheet for five editorial candidates (not approval)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v188_shortlist
+          for id in 01 03 04 06 08; do
+            cp /tmp/v188_review/shot_${id}_*_9x16.png /tmp/v188_shortlist/
+          done
+          ffmpeg -hide_banner -loglevel error -framerate 1 -pattern_type glob \
+            -i '/tmp/v188_shortlist/*.png' \
+            -vf 'scale=240:-2,tile=3x5:padding=4:margin=4' -frames:v 1 -y \
+            /tmp/v188_review/V188_SHORTLIST_PORTRAIT_SHEET.jpg
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v188-real-source-portrait-crops-review-only
+          path: |
+            /tmp/v188_review/V188_PORTRAIT_AUDIT.json
+            /tmp/v188_review/V188_SHORTLIST_PORTRAIT_SHEET.jpg
+            /tmp/v188_review/shot_*_9x16.png
+          if-no-files-found: warn
+          retention-days: 3

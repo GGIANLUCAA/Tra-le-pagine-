@@ -1,0 +1,61 @@
+name: La Storia Rivive V197 read-only Vidu gateway balance check (no numeric balance)
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/storia-v197-check-prior-vidu-balance.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect-prior-free-balance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read ONLY previous free Vidu balance request; exclude numerical credits and credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v197_vidu_status /tmp/v197_private_result
+          gh api 'repos/GGIANLUCAA/Tra-le-pagine-/actions/runs?head_sha=21a25f1500afb9e0124a98e090c1513ed494915d&per_page=100' > /tmp/v197_private_result/RUNS.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path('/tmp/v197_private_result/RUNS.json').read_text())
+          runs=[r for r in data.get('workflow_runs',[]) if r.get('event')=='push' and 'VIDU' in r.get('name','').upper()]
+          out={'schema':'V197_VIDU_PREVIOUS_BALANCE_STATUS','prior_request':'storia-v191-balance-20261101','prior_gateway_run_id':runs[0]['id'] if runs else None,'prior_run_conclusion':runs[0].get('conclusion') if runs else None,'api_access_ok':False,'numeric_balance_disclosed':False,'no_paid_generation_sent_by_this_job':True}
+          Path('/tmp/v197_vidu_status/SAFE_VIDU_BALANCE_STATUS.json').write_text(json.dumps(out,indent=2)+'\n')
+          print('VIDU_PRIOR_RUN_EXISTS',bool(runs),'PRIOR_RUN_STATUS',out['prior_run_conclusion'])
+          PY
+          RUN=$(python - <<'PY'
+          import json
+          x=json.load(open('/tmp/v197_vidu_status/SAFE_VIDU_BALANCE_STATUS.json'))
+          print(x['prior_gateway_run_id'] or '')
+          PY
+          )
+          if [ -n "$RUN" ]; then
+            gh run download "$RUN" --repo GGIANLUCAA/Tra-le-pagine- --name "VIDU_CHATGPT_PROJECT_GATEWAY_RESULT_${RUN}" --dir /tmp/v197_private_result/artifact || true
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          safe=Path('/tmp/v197_vidu_status/SAFE_VIDU_BALANCE_STATUS.json')
+          d=json.loads(safe.read_text())
+          hits=list(Path('/tmp/v197_private_result/artifact').rglob('PUBLIC_STATUS.json'))
+          for p in hits:
+            obj=json.loads(p.read_text())
+            if obj.get('mode')=='balance' and obj.get('new_credits_spent')==0:
+              d['api_access_ok']=bool(obj.get('api_access_ok'))
+          safe.write_text(json.dumps(d,indent=2)+'\n')
+          print('VIDU_API_ACCESS_VERIFIED',d['api_access_ok'])
+          PY
+          fi
+          rm -rf /tmp/v197_private_result
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: storia-v197-vidu-prior-get-connection-status-no-balance
+          path: /tmp/v197_vidu_status/SAFE_VIDU_BALANCE_STATUS.json
+          if-no-files-found: warn
+          retention-days: 3

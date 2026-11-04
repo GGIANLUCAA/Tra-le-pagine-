@@ -1,0 +1,40 @@
+name: La Storia Rivive V184 source intake offline QA
+on:
+  push:
+    branches: [storia-v183-production-candidate-20261101]
+    paths:
+      - 'src/storia_rivive_v184_source_intake.py'
+      - 'tests/test_storia_rivive_v184_source_intake.py'
+      - '.github/workflows/storia-v184-source-intake.yml'
+  pull_request:
+    paths:
+      - 'src/storia_rivive_v184_source_intake.py'
+      - 'tests/test_storia_rivive_v184_source_intake.py'
+      - '.github/workflows/storia-v184-source-intake.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Six offline regression tests
+        run: python -m unittest discover -s tests -p 'test_storia_rivive_v184_source_intake.py' -v
+      - name: Install FFmpeg for real-byte probes
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Real FFmpeg 720p and SD reject probes (synthetic, not historical film)
+        shell: bash
+        run: |
+          set -euo pipefail
+          ffmpeg -hide_banner -loglevel error -f lavfi -i 'testsrc=size=1280x720:rate=1' -t 31 -c:v libx264 -preset ultrafast -pix_fmt yuv420p /tmp/v184_hd.mp4
+          sha="$(sha256sum /tmp/v184_hd.mp4 | cut -d' ' -f1)"
+          python src/storia_rivive_v184_source_intake.py --file /tmp/v184_hd.mp4 --expected-sha256 "$sha" --out /tmp/v184_hd.json
+          python -c 'import json;d=json.load(open("/tmp/v184_hd.json"));assert d["status"]=="ASSETS_PENDING" and not d["provider_jobs_may_start"] and not d["rights_italy_verified"]'
+          ffmpeg -hide_banner -loglevel error -f lavfi -i 'testsrc=size=480x360:rate=1' -t 31 -c:v libx264 -preset ultrafast -pix_fmt yuv420p /tmp/v184_sd.mp4
+          sha="$(sha256sum /tmp/v184_sd.mp4 | cut -d' ' -f1)"
+          if python src/storia_rivive_v184_source_intake.py --file /tmp/v184_sd.mp4 --expected-sha256 "$sha" --out /tmp/v184_sd.json; then
+            echo 'ERROR: SD source accepted'; exit 1
+          fi
+          python -c 'import json;d=json.load(open("/tmp/v184_sd.json"));assert d["status"]=="SOURCE_REJECTED" and "INSUFFICIENT_VIDEO_RESOLUTION" in d["blocking_issues"]'

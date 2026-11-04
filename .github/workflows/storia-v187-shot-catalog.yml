@@ -1,0 +1,98 @@
+name: La Storia Rivive V187 authentic camera-cut catalog review
+on:
+  push:
+    branches: [storia-v183-production-candidate-20261101]
+    paths:
+      - 'src/storia_rivive_v187_shot_catalog.py'
+      - 'tests/test_storia_rivive_v187_shot_catalog.py'
+      - '.github/workflows/storia-v187-shot-catalog.yml'
+  pull_request:
+    paths:
+      - 'src/storia_rivive_v187_shot_catalog.py'
+      - 'tests/test_storia_rivive_v187_shot_catalog.py'
+      - '.github/workflows/storia-v187-shot-catalog.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-v187-shot-catalog-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg and FFprobe
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Compile V187 and run seven tests including real encoded 720p frames
+        run: |
+          python -m py_compile src/storia_rivive_v187_shot_catalog.py tests/test_storia_rivive_v187_shot_catalog.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v187_shot_catalog.py' -v
+  one-real-archive-scout:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && contains(github.event.head_commit.message, 'RUN_REAL_SCOUT_V187_ONCE'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg and FFprobe
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: One bounded official Commons derivative download, SHA lock, real cut scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v187_review
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from storia_rivive_v186_commons_preview import discover_derivative, bounded_download
+          from storia_rivive_v187_shot_catalog import catalog
+          root = Path('/tmp/v187_review')
+          film = root / 'source.webm'
+          expected = 'eacbb947105f9143632e3d4e933ee5e200ba98f5d588c11c552dfb94787de1d9'
+          try:
+              media = discover_derivative()
+              result = bounded_download(media['url'], film)
+              if result['sha256'] != expected:
+                  raise ValueError('V186_DERIVATIVE_SHA_CHANGED_FAIL_CLOSED')
+              r = catalog(film, expected, root / 'shot_catalog', count=12)
+              (root / 'SOURCE_PROVENANCE.json').write_text(json.dumps({
+                  'derivative': media['kind'], 'sha256': expected,
+                  'size_bytes': result['bytes'], 'source_page':
+                  'https://commons.wikimedia.org/wiki/File:A_Corner_in_Wheat_(1909).webm',
+                  'native_scan': False, 'rights_italy_verified': False,
+                  'human_visual_qa_approved': False,
+                  'provider_jobs_may_start': False,
+                  'publish_permitted': False
+              }, indent=2) + '\n')
+              print('REAL_SOURCE_CATALOG_STATUS:', r['status'])
+              print('REAL_SOURCE_CANDIDATES:', len(r['candidates']))
+              print('REAL_SOURCE_ALGORITHMIC_CUTS:', len(r.get('algorithmic_cut_seconds', [])))
+              if r['status'] != 'DIVERSE_CUT_CANDIDATES_NEED_VISUAL_REVIEW':
+                  raise ValueError('REAL_SOURCE_SHOT_CATALOG_BLOCKED')
+          except Exception as e:
+              (root / 'V187_BLOCKED.json').write_text(json.dumps({
+                  'status': 'CATALOG_BLOCKED', 'reason': type(e).__name__ + ':' + str(e)[:150],
+                  'provider_jobs_may_start': False, 'publish_permitted': False
+              }, indent=2) + '\n')
+              raise
+          finally:
+              film.unlink(missing_ok=True)
+          PY
+      - name: Contact sheet for visual QA, not approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          ffmpeg -hide_banner -loglevel error -framerate 1 -pattern_type glob -i '/tmp/v187_review/shot_catalog/shot_*.png' -vf 'scale=320:-2,tile=3x4:padding=6:margin=6' -frames:v 1 -y /tmp/v187_review/V187_CONTACT_SHEET.jpg
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v187-real-cut-candidates-review-only
+          path: |
+            /tmp/v187_review/V187_BLOCKED.json
+            /tmp/v187_review/SOURCE_PROVENANCE.json
+            /tmp/v187_review/V187_CONTACT_SHEET.jpg
+            /tmp/v187_review/shot_catalog/V187_SHOT_CATALOG.json
+            /tmp/v187_review/shot_catalog/shot_*.png
+          if-no-files-found: warn
+          retention-days: 3

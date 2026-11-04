@@ -1,0 +1,30 @@
+name: La Storia Rivive V185 native storyboard scout QA
+on:
+  push:
+    branches: [storia-v183-production-candidate-20261101]
+    paths:
+      - 'src/storia_rivive_v185_storyboard_scout.py'
+      - 'src/storia_rivive_v184_source_intake.py'
+      - 'tests/test_storia_rivive_v185_storyboard_scout.py'
+      - '.github/workflows/storia-v185-storyboard-scout.yml'
+  pull_request:
+    paths:
+      - 'src/storia_rivive_v185_storyboard_scout.py'
+      - 'src/storia_rivive_v184_source_intake.py'
+      - 'tests/test_storia_rivive_v185_storyboard_scout.py'
+      - '.github/workflows/storia-v185-storyboard-scout.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-storyboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile real code
+        run: python -m py_compile src/storia_rivive_v185_storyboard_scout.py tests/test_storia_rivive_v185_storyboard_scout.py
+      - name: Install FFmpeg and FFprobe on runner
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg && ffmpeg -version && ffprobe -version
+      - name: Eight tests including actual synthetic MP4 frame extraction
+        run: python -m unittest discover -s tests -p 'test_storia_rivive_v185_storyboard_scout.py' -v
