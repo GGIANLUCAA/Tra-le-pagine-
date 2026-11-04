@@ -1,0 +1,129 @@
+{
+  "schema_version": "artvision-nightwatch-critico-one-shot-v148",
+  "work_id": "rembrandt_night_watch_1642_rijks_sk_c_5",
+  "public_title": "The Night Watch",
+  "artist": "Rembrandt van Rijn",
+  "year": 1642,
+  "museum": "Rijksmuseum, Amsterdam",
+  "accession": "SK-C-5",
+  "painting_dimensions_cm": {
+    "height": 379.5,
+    "width": 453.5
+  },
+  "original_medium": "oil on canvas; present Rijksmuseum painting, NOT digitally added 2021 reconstruction strips",
+  "source_art_sha256": "2b82fc052b702baebd4f5476c29e7639b34c8dbfac2ba96ed8ecdb9d8d369c86",
+  "source_art_sha1": "53db595a5a1bca243b152b175d65f0f2f1ab1ff8",
+  "source_art_dimensions": [
+    14168,
+    11528
+  ],
+  "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/94/The_Nightwatch_by_Rembrandt_-_Rijksmuseum.jpg",
+  "source_page": "https://commons.wikimedia.org/wiki/File:The_Nightwatch_by_Rembrandt_-_Rijksmuseum.jpg",
+  "source_prior_verified_run_id": 41503916968,
+  "source_derivative_work_size": [
+    5200,
+    4231
+  ],
+  "image_retrieval_rule": "download original exact source SHA1+SHA256 and dimensions, otherwise fail BEFORE any voice API, no fallback to AI/upscaled 720p prior film",
+  "variant": "critico_standard",
+  "chapters": [
+    {
+      "beat": 1,
+      "title": "A sudden command",
+      "focus": "the captain and lieutenant central pair",
+      "cx": 0.49,
+      "cy": 0.57,
+      "crop_height_px": 2350,
+      "text": "Un gesto improvviso attraversa il buio. Un capitano vestito di nero avanza, mentre accanto a lui una figura luminosa indossa il giallo. In questo istante, un'intera compagnia sembra prendere vita."
+    },
+    {
+      "beat": 2,
+      "title": "The Night Watch",
+      "focus": "full original Rijksmuseum composition",
+      "cx": 0.5,
+      "cy": 0.5,
+      "crop_height_px": 3900,
+      "text": "È La ronda di notte, dipinta da Rembrandt nel 1642. Il titolo è diventato celebre, ma non mostra una pattuglia notturna: è il ritratto di gruppo di una compagnia di guardie civiche di Amsterdam."
+    },
+    {
+      "beat": 3,
+      "title": "The captain's order",
+      "focus": "Captain Frans Banninck Cocq extended arm",
+      "cx": 0.46,
+      "cy": 0.64,
+      "crop_height_px": 1800,
+      "text": "Al centro si riconosce il capitano Frans Banninck Cocq. Tende la mano in avanti, come per dare il segnale. La sua ombra cade sulla veste dorata del luogotenente."
+    },
+    {
+      "beat": 4,
+      "title": "The golden lieutenant",
+      "focus": "Willem van Ruytenburch light dress",
+      "cx": 0.61,
+      "cy": 0.64,
+      "crop_height_px": 1800,
+      "text": "Il luogotenente Willem van Ruytenburch sembra raccogliere la luce. Rembrandt non distribuisce l'attenzione in modo uniforme: la dirige attraverso i contrasti e le diagonali."
+    },
+    {
+      "beat": 5,
+      "title": "The girl in light",
+      "focus": "illuminated young girl with chicken",
+      "cx": 0.3,
+      "cy": 0.62,
+      "crop_height_px": 1550,
+      "text": "Poco più indietro appare una ragazza illuminata. Porta un pollo appeso alla cintura: gli artigli rimandano al simbolo degli archibugieri. Un dettaglio minuscolo diventa fondamentale."
+    },
+    {
+      "beat": 6,
+      "title": "The musketeers",
+      "focus": "musketeer carrying and handling arquebus",
+      "cx": 0.69,
+      "cy": 0.45,
+      "crop_height_px": 2000,
+      "text": "Intorno si muovono soldati con archibugi, aste e bandiere. Le figure non posano semplicemente una accanto all'altra; ognuna partecipa a un'azione diversa."
+    },
+    {
+      "beat": 7,
+      "title": "The drummer",
+      "focus": "drummer toward lower right side",
+      "cx": 0.88,
+      "cy": 0.68,
+      "crop_height_px": 1750,
+      "text": "Sulla destra, il tamburino prepara il ritmo della marcia. La profondità della scena nasce proprio da questi gesti: qualcuno avanza, altri si voltano o spariscono nell'ombra."
+    },
+    {
+      "beat": 8,
+      "title": "A living group portrait",
+      "focus": "faces in shadows and two central officers",
+      "cx": 0.53,
+      "cy": 0.49,
+      "crop_height_px": 2900,
+      "text": "Per un ritratto collettivo del Seicento, la scelta è straordinaria. Rembrandt trasforma una disposizione ufficiale in una scena teatrale: luce, folla e movimento diventano un unico racconto."
+    },
+    {
+      "beat": 9,
+      "title": "The question remains",
+      "focus": "full current painting no AI reconstructed strips",
+      "cx": 0.5,
+      "cy": 0.5,
+      "crop_height_px": 3950,
+      "text": "Non osserviamo una fotografia della realtà, ma un momento costruito con precisione. Guardando ancora il dipinto, possiamo quasi sentire il rumore dei passi, prima che tutto torni immobile."
+    }
+  ],
+  "voice": {
+    "provider": "Google Gemini",
+    "model": "gemini-3.8-flash-tts",
+    "style": "Gacrux",
+    "secret": "GEMINI_API_KEY2 only on owner-attested Free/no-billing tier",
+    "single_call_max": true,
+    "no_automatic_repeat": true,
+    "reuse_WAV_for_future_museum": true
+  },
+  "music": {
+    "source": "original procedurally generated ambient",
+    "copyright": "original"
+  },
+  "museum_status": "blocked until exact real museum frame/gallery photo with permitted rights and visual review verified",
+  "social_publish": false,
+  "gold_v25": false,
+  "status": "script_locked_no_voice_or_video_yet"
+}
