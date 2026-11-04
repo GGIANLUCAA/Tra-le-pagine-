@@ -231,7 +231,7 @@ def render(out):
         target = out / f"BRUEGEL_THE_TOWER_OF_BABEL_{kind.upper()}_V138_REVIEW.mp4"
         ff(["ffmpeg", "-v", "error", "-y", "-i", silent, "-i", shared,
             "-map", "0:v:0", "-map", "1:a:0",
-            "-c:v", "copy", "-c:a", "copy", "-shortest", "-movflags", "+faststart", target])
+            "-c:v", "copy", "-c:a", "copy", "-movflags", "+faststart", target])
         ff(["ffmpeg", "-v", "error", "-xerror", "-i", target, "-f", "null", "-"])
         cap = cv2.VideoCapture(str(target))
         assert cap.isOpened()
