@@ -88,10 +88,12 @@ def main() -> None:
     p.add_argument("--offline", action="store_true")
     a = p.parse_args()
     # The first-frame SHA gate already asserts manifest unique five originals.
+    old_prompt, old_seed = first.PROMPT, first.SEED
+    old_run = engine.run_one_real_i2i
+    old_argv = sys.argv
     first.PROMPT = PROMPT
     first.SEED = SEED
     engine.run_one_real_i2i = full_color_inference
-    old_argv = sys.argv
     try:
         sys.argv = [old_argv[0], "--source", str(a.source),
                     "--manifest", str(a.manifest), "--out", str(a.out)]
@@ -100,6 +102,8 @@ def main() -> None:
         first.main()
     finally:
         sys.argv = old_argv
+        first.PROMPT, first.SEED = old_prompt, old_seed
+        engine.run_one_real_i2i = old_run
         stamp_report(a.out)
 
 
