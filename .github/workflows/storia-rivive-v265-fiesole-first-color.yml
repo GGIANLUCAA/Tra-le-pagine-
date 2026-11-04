@@ -1,0 +1,121 @@
+name: "La Storia Rivive V265 · Fiesole shot 1 colorful TRUE I2I CPU (NO CREDITS)"
+on:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
+    paths:
+      - ".github/workflows/storia-rivive-v265-fiesole-first-color.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v265-color-first-shot-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  one_color_forward_shot:
+    if: github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    env:
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+      HF_TOKEN: ""
+      HUGGING_FACE_HUB_TOKEN: ""
+      OMP_NUM_THREADS: "4"
+      MKL_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Limit strictly to ONE user-directed CPU color retry on this SHA
+        id: gate
+        shell: bash
+        env:
+          HEAD: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin "$HEAD"
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V265: one colorful authentic Fiesole first-shot CPU photo [V265-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'NO_MATCHING_V265_ONE_SHOT_REQUEST'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: "3.11"
+      - name: Install no-cost local CPU diffusion and Pillow
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m pip install -q --index-url https://download.pytorch.org/whl/cpu 'torch==2.5.1+cpu'
+          python -m pip install -q 'diffusers==0.32.2' 'transformers==4.44.2' 'accelerate==1.2.1' 'huggingface_hub>=0.23,<1' 'safetensors>=0.4' 'Pillow>=10,<13' 'numpy>=1.26,<2'
+      - name: Test color evidence and exact SHA/source guards locally
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_v265_fiesole_first_true_color_i2i.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v265_first_true_color_i2i.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v261_fiesole_first_source_i2i.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v251-fiesole-real-I2I-photo-inputs-NOT-FINAL
+          run-id: 41635322340
+          github-token: ${{ github.token }}
+          path: output/v265/v251
+      - name: Extract actual original source and confirm immutable SHA
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p output/v265/original
+          unzip -oq output/v265/v251/FIESOLE_V251_FIVE_AUTHENTIC_SOURCE_FRAMES_NOT_FINAL.zip -d output/v265/original
+          echo '3ebabe8a57ce3cf386681255ad4d896ab540d31005bfbfd1087474f62af714cb  output/v265/original/original_shot_01_frame_03.png' | sha256sum -c -
+          python src/storia_rivive_v265_fiesole_first_true_color_i2i.py \
+            --source output/v265/original/original_shot_01_frame_03.png \
+            --manifest output/v265/original/V251_SOURCE_MANIFEST_NOT_FINAL.json \
+            --out output/v265/photo --offline
+      - name: Exactly ONE source-locked true local CPU I2I — color-forward variation
+        if: steps.gate.outputs.allowed == 'true'
+        id: generation
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          timeout 2100s python -u src/storia_rivive_v265_fiesole_first_true_color_i2i.py \
+            --source output/v265/original/original_shot_01_frame_03.png \
+            --manifest output/v265/original/V251_SOURCE_MANIFEST_NOT_FINAL.json \
+            --out output/v265/photo
+      - name: Verify photo SHA, meaningful color, no false final claim
+        if: always() && steps.gate.outputs.allowed == 'true'
+        shell: bash
+        env:
+          INFERENCE: ${{ steps.generation.outcome }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          import os,json,hashlib
+          root=Path("output/v265/photo")
+          rp=root/"V265_FIRST_SHOT_COLOR_I2I_QA.json"
+          report=json.loads(rp.read_text()) if rp.is_file() else {}
+          photo=root/"V265_SHOT_01_REAL_COLOR_I2I_CANDIDATE_NOT_APPROVED.png"
+          okay=(os.getenv("INFERENCE")=="success" and photo.is_file()
+                and report.get("actual_generated_photos")==1
+                and report.get("minimal_natural_color_evidence") is True
+                and report.get("actual_png_sha256")==hashlib.sha256(photo.read_bytes()).hexdigest()
+                and report.get("original_source_sha256")=="3ebabe8a57ce3cf386681255ad4d896ab540d31005bfbfd1087474f62af714cb"
+                and report.get("artistic_approval") is False
+                and report.get("publish_allowed") is False
+                and report.get("vidu_credit_spent")==0)
+          if okay:
+            with Image.open(photo) as img:
+              okay=img.format=="PNG" and img.size==(448,800)
+          print("V265_REAL_COLOR_I2I_CANDIDATE_NEEDS_VISUAL_QA",okay,"FINAL_0_OF_4")
+          if not okay:raise SystemExit("V265_NO_APPROVABLE_COLOR_OR_GENERATION_FAILED")
+          PY
+      - name: Preserve image and original comparison ONLY for visual QA
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v265-fiesole-first-real-COLOR-I2I-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v265/photo/
