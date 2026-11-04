@@ -1,4 +1,4 @@
-name: "La Storia Rivive V283 · Delhi fifth shot real photo for Vidu source (NOT VIDEO)"
+name: "La Storia Rivive V284 · Delhi shot5 true I2I corrected free model seed (NOT VIDEO)"
 on:
   push:
     branches: [storia-v196-v101-cache-fail-closed-20261101]
@@ -8,7 +8,7 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: storia-v283-delhi-one-off-source5-image
+  group: storia-v284-delhi-one-off-source5-image
   cancel-in-progress: false
 jobs:
   prepare_real_fifth_photo:
@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "$(git log -1 --format=%s)" == 'storia V283: attempt real Delhi fifth photo once, no Vidu charge [V283-ONCE]' ]]; then
+          if [[ "$(git log -1 --format=%s)" == 'storia V284: retry Delhi fifth true Finegrain photo after invalid-seed error [V284-ONCE]' ]]; then
             echo 'allowed=true' >> "$GITHUB_OUTPUT"
           else
             echo 'allowed=false' >> "$GITHUB_OUTPUT"
@@ -100,7 +100,7 @@ jobs:
         if: always() && steps.gate.outputs.allowed == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: storia-v283-delhi-fifth-shot-real-photo-AND-BW-source-NO-VIDU-NO-FINAL
+          name: storia-v284-delhi-fifth-shot-real-photo-AND-BW-source-NO-VIDU-NO-FINAL
           retention-days: 14
           if-no-files-found: warn
           path: output/v283/fifth/
