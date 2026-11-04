@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/storia-single-cinema-source-v292.yml"
       - "src/storia_rivive_cinema_v292_source_scout.py"
+      - "requests/storia/single-cinema-source-v292.json"
 permissions:
   contents: read
 concurrency:
