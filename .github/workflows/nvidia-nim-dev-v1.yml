@@ -61,14 +61,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     env:
-      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY || secrets.NVIDIA || secrets.NVIDIA_NIM_API_KEY || secrets.NVIDIA_KEY }}
     steps:
       - name: Validate secret is available to a trusted main-branch workflow (no inference)
         shell: bash
         run: |
           set -euo pipefail
           if [ -z "$NVIDIA_API_KEY" ]; then
-            echo "::error::NVIDIA_API_KEY is not available to GitHub Actions on main."
+            echo "::error::NVIDIA secret not found: use NVIDIA_API_KEY (or NVIDIA / NVIDIA_NIM_API_KEY / NVIDIA_KEY) in repository Actions secrets."
             exit 1
           fi
           if [ "${#NVIDIA_API_KEY}" -lt 8 ]; then
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 7
     env:
-      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY || secrets.NVIDIA || secrets.NVIDIA_NIM_API_KEY || secrets.NVIDIA_KEY }}
       NVIDIA_NIM_MODEL: ${{ inputs.model }}
       NVIDIA_NIM_DEV_ENABLED: ${{ inputs.action == 'nim_text' && '1' || '0' }}
       NVIDIA_COSMOS_DEV_ENABLED: ${{ inputs.action == 'cosmos_video' && '1' || '0' }}
@@ -98,7 +98,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "$NVIDIA_API_KEY" ]; then
-            echo "::error::NVIDIA_API_KEY secret missing in GitHub Actions"
+            echo "::error::NVIDIA secret not available: verify Actions repository secret name and access"
             exit 1
           fi
           echo "NVIDIA_KEY_PRESENT; no inference request yet."
