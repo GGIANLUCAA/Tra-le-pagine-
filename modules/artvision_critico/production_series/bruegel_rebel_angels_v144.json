@@ -1,0 +1,111 @@
+{
+  "schema_version": "artvision-critic-one-shot-v144",
+  "work_id": "bruegel_fall_rebel_angels_1562_rmfb_584",
+  "public_title": "The Fall of the Rebel Angels",
+  "artist": "Pieter Bruegel the Elder",
+  "year": 1562,
+  "museum": "Royal Museums of Fine Arts of Belgium, Brussels",
+  "accession": "584",
+  "painting_dimensions_cm": {
+    "height": 117,
+    "width": 162
+  },
+  "source_art_sha256": "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5",
+  "source_art_dimensions": [
+    3840,
+    2772
+  ],
+  "source_artifact_id": 12775741359,
+  "source_page": "https://commons.wikimedia.org/wiki/File:Pieter_Bruegel_the_Elder_-_The_Fall_of_the_Rebel_Angels_-_Google_Art_Project.jpg",
+  "variant": "critico_standard",
+  "chapters": [
+    {
+      "title": "Una battaglia impossibile",
+      "focus": "intero dipinto e centro della mischia",
+      "cx": 0.5,
+      "cy": 0.49,
+      "crop_height_px": 2300,
+      "text": "A prima vista è un vortice senza fine. Angeli, creature mostruose, ali e armature si scontrano in un dipinto che sembra esplodere davanti ai nostri occhi."
+    },
+    {
+      "title": "La vera opera",
+      "focus": "dipinto nella sua interezza",
+      "cx": 0.5,
+      "cy": 0.5,
+      "crop_height_px": 2650,
+      "text": "È La caduta degli angeli ribelli, realizzata nel 1562 da Pieter Bruegel il Vecchio. Oggi si conserva nei Musei Reali di Belle Arti del Belgio, a Bruxelles."
+    },
+    {
+      "title": "Il capo degli angeli",
+      "focus": "arcangelo Michele vicino al centro",
+      "cx": 0.53,
+      "cy": 0.49,
+      "crop_height_px": 1180,
+      "text": "Vicino al centro compare l'arcangelo Michele, con la spada sguainata. Il suo gesto guida una schiera luminosa contro un esercito che precipita verso il basso."
+    },
+    {
+      "title": "Il cielo chiaro",
+      "focus": "schiera angelica nello sfondo blu",
+      "cx": 0.47,
+      "cy": 0.13,
+      "crop_height_px": 1100,
+      "text": "Guardiamo in alto: il cielo resta chiaro, attraversato da figure leggere. Più in basso, invece, tutto si addensa e il colore diventa sempre più scuro."
+    },
+    {
+      "title": "Un bestiario senza regole",
+      "focus": "creature ibride al centro e destra",
+      "cx": 0.72,
+      "cy": 0.58,
+      "crop_height_px": 1200,
+      "text": "I ribelli assumono forme impossibili. Bruegel unisce corpi umani, pesci, insetti e animali in mostri minuziosi, tanto strani quanto incredibilmente concreti."
+    },
+    {
+      "title": "Il volto del caos",
+      "focus": "pesce dalle fauci aperte in basso sinistra",
+      "cx": 0.21,
+      "cy": 0.79,
+      "crop_height_px": 950,
+      "text": "A sinistra, tra artigli e frammenti di corazza, appare una creatura dalle fauci spalancate. Ogni dettaglio merita uno sguardo: nessuna figura è un semplice riempitivo."
+    },
+    {
+      "title": "La farfalla",
+      "focus": "mostro alato a farfalla in basso al centro",
+      "cx": 0.47,
+      "cy": 0.74,
+      "crop_height_px": 900,
+      "text": "Una figura dalle ali simili a quelle di una farfalla emerge dalla folla di corpi. Persino la bellezza della natura, qui, si trasforma in qualcosa di ambiguo."
+    },
+    {
+      "title": "Bosch e Bruegel",
+      "focus": "dialogo tra folla centrale e visione globale",
+      "cx": 0.53,
+      "cy": 0.56,
+      "crop_height_px": 1700,
+      "text": "Questa fantasia richiama il mondo di Hieronymus Bosch, ma Bruegel organizza il disordine con precisione. Luce e ombra danno una direzione alla caduta."
+    },
+    {
+      "title": "La domanda finale",
+      "focus": "intero dipinto",
+      "cx": 0.5,
+      "cy": 0.5,
+      "crop_height_px": 2700,
+      "text": "La lotta tra bene e male sembra infinita. E il quadro ci lascia una domanda: il mostruoso appartiene davvero a un altro mondo, oppure nasce già dentro il nostro?"
+    }
+  ],
+  "voice": {
+    "provider": "Google Gemini",
+    "model": "gemini-3.8-flash-tts",
+    "style": "Gacrux",
+    "secret": "GEMINI_API_KEY2 only, owner-confirmed Free/no-billing",
+    "same_voice_reusable_for_future_museum": true,
+    "no_automatic_repeat": true
+  },
+  "music": {
+    "source": "original programmatic ambient",
+    "copyright": "original"
+  },
+  "museum_status": "unapproved: Sailko photos source preflight 41803177434 was HTTP429, so NO Museum render until genuine framed photo readback",
+  "social_publish": false,
+  "gold_v25": false,
+  "status": "script_and_renderer_ready_not_rendered"
+}
