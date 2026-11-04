@@ -1,0 +1,43 @@
+name: ArtVision Rebel Angels V143 licensed-frame source visual check ONLY
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/rebel-angels-frame-source-v143.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-rebel-frame-preflight-v143
+  cancel-in-progress: false
+jobs:
+  licensed_photo_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate existing-owner exact source-check (zero render and zero spend)
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('requests/artvision/rebel-angels-frame-source-v143.json'))
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          assert r['owner_automation_id']=='6adca191603c8191a90d5190901cd034'
+          assert r['work_id']=='bruegel_fall_rebel_angels_1562_rmfb_584'
+          assert r['only_source_preflight'] is True and not r['allow_paid_calls']
+          assert not r['social_publish'] and not r['gold_v25']
+          w=[x for x in q['works'] if x['id']==r['work_id']]
+          assert len(w)==1 and w[0]['slots_delivered_this_selection']==1
+          assert w[0]['museum_approved'] is False
+          PY
+      - name: Install local image tools only
+        run: python -m pip install --disable-pip-version-check pillow
+      - name: Fetch and verify two genuine CC BY Sailko photos of exact work
+        run: python src/artvision_rebel_source_preflight_v143.py
+      - name: Persist photographic evidence for source/frame visual review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V143_REBEL_ANGELS_SAILKO_PHOTOS_REVIEW
+          path: /tmp/artvision_rebel_source_v143/
+          retention-days: 30
+          if-no-files-found: warn
