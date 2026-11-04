@@ -124,6 +124,9 @@ def offline_realign(out):
     assert sr == 24000 and pcm.ndim == 1 and np.isfinite(pcm).all()
     duration = len(pcm) / sr
     assert 65 <= duration <= 160
+    # A true 83.8% base-model transcript was measured in V140; use larger LOCAL
+    # Italian ASR model without repeating narration or any billable API call.
+    os.environ["ARTVISION_ASR_MODEL"] = "small"
     timed = gemini_voice.align(gemini_voice.sentences(script), wav, duration)
     align = json.loads((out / "ALLINEAMENTO_VOCE.json").read_text())
     if align.get("method") != "asr_with_interpolation" or (align.get("matched_fraction") or 0) < .85:
