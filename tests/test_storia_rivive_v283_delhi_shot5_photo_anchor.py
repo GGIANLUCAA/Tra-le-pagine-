@@ -31,6 +31,7 @@ class FifthPhoto(unittest.TestCase):
         def base(inp,out):
             Image.new("RGB",(540,960),(128,131,136)).save(out)
         def fake_predict(img,prompt,seed):
+            self.assertLessEqual(seed,10000)
             result=self.d/"result.jpg"
             Image.effect_noise((720,1280),30).convert("RGB").save(result,quality=95)
             return result
