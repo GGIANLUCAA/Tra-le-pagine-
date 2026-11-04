@@ -76,6 +76,70 @@ jobs:
             exit 1
           fi
           echo "NVIDIA_KEY_PRESENT_IN_ACTIONS; only presence checked, no API calls."
+  one-time-nvidia-function-permissions-check:
+    # One-time nonbillable GET only; no inference, no retries, no videos.
+    if: github.event_name == 'push' && github.event.head_commit.message == 'NVIDIA_NVCF_READ_ONLY_ACCOUNT_CHECK_20261104'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY || secrets.NVIDIA || secrets.NVIDIA_NIM_API_KEY || secrets.NVIDIA_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compare catalog and NVCF function access via GET only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, urllib.request, urllib.error
+          key=os.environ.get("NVIDIA_API_KEY","").strip()
+          if len(key)<8: raise SystemExit("NVIDIA_SECRET_NOT_AVAILABLE")
+          urls={
+            "model_catalog":"https://integrate.api.nvidia.com/v1/models",
+            "cloud_functions":"https://api.nvcf.nvidia.com/v2/nvcf/functions",
+          }
+          results={}
+          for name,url in urls.items():
+            req=urllib.request.Request(url,method="GET",headers={
+              "Authorization":"Bearer "+key,"Accept":"application/json",
+              "User-Agent":"StudioNvidiaReadOnlyDiagnostics/1.0"})
+            try:
+              with urllib.request.urlopen(req,timeout=20) as resp:
+                raw=resp.read(2_000_001)
+              if len(raw)>2_000_000: raise ValueError("response too large")
+              data=json.loads(raw)
+              if name=="model_catalog":
+                models=data.get("data",[]) if isinstance(data,dict) else []
+                ids=[str(x.get("id","")).lower() for x in models if isinstance(x,dict)]
+                results[name]={"status":"HTTP_200","count":len(ids),
+                  "nemotron_super_listed":"nvidia/nemotron-3-super-120b-a12b" in ids,
+                  "nemotron_nano_listed":any("nemotron-3-nano" in i for i in ids)}
+              else:
+                entries=[]
+                if isinstance(data,dict):
+                  for field in ("functions","data","items"):
+                    if isinstance(data.get(field),list):
+                      entries=data[field]
+                      break
+                elif isinstance(data,list): entries=data
+                names=[" ".join(str(x.get(k,"")) for k in ("name","description","model","displayName")).lower()
+                    for x in entries if isinstance(x,dict)]
+                results[name]={"status":"HTTP_200","functions_seen":len(entries),
+                  "cosmos3_named":any("cosmos" in n for n in names),
+                  "nemotron_named":any("nemotron" in n for n in names),
+                  "listing_complete_not_guaranteed":True}
+            except urllib.error.HTTPError as e:
+              results[name]={"status":"HTTP_"+str(e.code),
+                "not_inference_permission_proof":True}
+            except Exception:
+              results[name]={"status":"NETWORK_OR_SCHEMA_ERROR"}
+          print("NVIDIA_READ_ONLY_DIAG",json.dumps(results,sort_keys=True))
+          assert all("status" in x for x in results.values())
+          # Deliberately do not output keys, responses, tokens, account IDs, or model metadata.
+          print("NO_INFERENCE_REQUESTS_NO_GENERATION_NO_RETRIES")
+          PY
   manual-dev-test:
     if: github.event_name == 'workflow_dispatch'
     needs: offline-tests
