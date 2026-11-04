@@ -8,7 +8,7 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: storia-v276-delhi-shot02-\${{ github.sha }}
+  group: storia-v276-delhi-shot02-${{ github.sha }}
   cancel-in-progress: false
 jobs:
   one_source_locked_delhi_shot02:
@@ -28,7 +28,7 @@ jobs:
         id: gate
         shell: bash
         env:
-          HEAD: \${{ github.sha }}
+          HEAD: ${{ github.sha }}
         run: |
           set -euo pipefail
           git fetch --depth=1 --no-tags origin "$HEAD"
@@ -58,7 +58,7 @@ jobs:
         with:
           name: storia-v272-delhi-real-archival-review-NOT-FINAL
           run-id: 41789453410
-          github-token: \${{ github.token }}
+          github-token: ${{ github.token }}
           path: output/v276/v272
       - name: Verify genuine 1910 film frame and create exact source crop
         if: steps.gate.outputs.allowed == 'true'
@@ -84,7 +84,7 @@ jobs:
       - name: Validate actual candidate PNG; never certify artistic quality or final
         if: always() && steps.gate.outputs.allowed == 'true'
         env:
-          INFERENCE_OUTCOME: \${{ steps.i2i.outcome }}
+          INFERENCE_OUTCOME: ${{ steps.i2i.outcome }}
         run: |
           python - <<'PY'
           import hashlib, json, os
