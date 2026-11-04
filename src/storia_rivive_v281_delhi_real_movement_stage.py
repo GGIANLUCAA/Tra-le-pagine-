@@ -127,7 +127,7 @@ def main():
             render_segment(motion,video=a.film,seconds=RUNTIME[3],start=t-RUNTIME[3])
             parts.append(motion);durations.append(RUNTIME[3])
     listing=a.out/"inputs.txt"
-    listing.write_text("".join("file '"+str(f.resolve()).replace("'","'\\''")+"'\\n" for f in parts))
+    listing.write_text("".join("file '"+str(f.resolve()).replace("'","'\\''")+"'\n" for f in parts))
     noaudio=a.out/"video_assembled_no_audio.mp4"
     command("ffmpeg","-hide_banner","-loglevel","error","-y","-f","concat","-safe","0","-i",str(listing),
             "-an","-c:v","libx264","-preset","veryfast","-crf","19","-pix_fmt","yuv420p",str(noaudio))
