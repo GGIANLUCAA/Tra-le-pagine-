@@ -1,0 +1,109 @@
+name: "La Storia Rivive V272 · Delhi source film real frames (free one shot)"
+on:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
+    paths:
+      - ".github/workflows/storia-rivive-v272-delhi-one-source.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v272-delhi-one-source-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  inspect_authentic_delhi_1910:
+    if: github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      EPISODE_ID: delhi_ruins_1910_v217
+      PAID_CREDITS_PERMITTED: "false"
+      PUBLISH_ALLOWED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Strict one-shot authorization: inspect Delhi only, no API credits
+        id: gate
+        shell: bash
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin "$SHA"
+          if [[ "$(git log -1 --format=%s "$SHA")" == 'storia V272: scout Delhi 1910 real archival source [V272-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V272_NOT_AUTHORIZED_FOR_THIS_PUSH'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install open-source decoding tools and image library
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install -q 'pillow>=10,<13'
+      - name: Validate V217 research contract and zero-credit scouting logic
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_v217_four_pilot_source_review.py src/storia_rivive_scout_v101.py src/storia_rivive_v210_shot_aware_selection.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v217_four_pilot_source_review.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v210_shot_aware_selection.py' -v
+      - name: Verify this specific film's research order and acquire genuine Wikimedia bytes
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p "output/v272/$EPISODE_ID" "output/v272/source/$EPISODE_ID"
+          python src/storia_rivive_v217_four_pilot_source_review.py \
+            --manifest queue/storia_rivive_four_pilots_v217.json \
+            --episode "$EPISODE_ID" \
+            --out "output/v272/$EPISODE_ID"
+          python src/storia_rivive_scout_v101.py \
+            --order "output/v272/$EPISODE_ID/WORK_ORDER.json" \
+            --out "output/v272/source/$EPISODE_ID"
+      - name: Rank FIVE authentic candidate camera cuts, never certify them as final
+        if: steps.gate.outputs.allowed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET="output/v272/$EPISODE_ID"
+          SRC="output/v272/source/$EPISODE_ID"
+          if python - "$SRC/SCOUT_REPORT.json" <<'PY'
+          import json,sys
+          report=json.load(open(sys.argv[1]))
+          print("V272_REAL_SOURCE_STATUS",report.get("status"),"NEW_FINAL_0_OF_4")
+          raise SystemExit(0 if report.get("status")=="REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW" else 1)
+          PY
+          then
+            python src/storia_rivive_frame_rank_v101.py \
+              --frames "$SRC/original_frames" \
+              --out "$TARGET/V101_RANKING.json"
+            python src/storia_rivive_v210_shot_aware_selection.py \
+              --ranking "$TARGET/V101_RANKING.json" \
+              --scout "$SRC/SCOUT_REPORT.json" \
+              --cache "$SRC" \
+              --exclusions config/storia_rivive_v221_source_frame_exclusions.json \
+              --out "$TARGET/SHOT_AWARE_SELECTION_V210.json"
+            python src/storia_v240_portrait_contact_sheet.py \
+              --selection "$TARGET/SHOT_AWARE_SELECTION_V210.json" \
+              --frames "$SRC/original_frames" --out "$TARGET" || \
+              echo 'V272_PORTRAIT_REVIEW_NOT_YET_AVAILABLE'
+          else
+            echo 'V272_SOURCE_FAILED_OR_UNREADABLE_NOT_FINAL'
+          fi
+      - name: Save original-source contact sheet, five-cut analysis, actual PNG frames for visual QA
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v272-delhi-real-archival-review-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v272/delhi_ruins_1910_v217/
+            output/v272/source/delhi_ruins_1910_v217/SCOUT_REPORT.json
+            output/v272/source/delhi_ruins_1910_v217/ORIGINAL_FILM_CONTACT_SHEET.jpg
+            output/v272/source/delhi_ruins_1910_v217/original_frames/frame_*.png
+          # Never upload ORIGINAL_ARCHIVE.webm until license rights/Italy are verified.
