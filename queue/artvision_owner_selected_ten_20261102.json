@@ -431,15 +431,23 @@
           "photo_original_4236x3456_cc_by_3": "Sailko photo of 2017 actual frame",
           "correction": "Camera enters framed painting via smooth continuous zoom toward original painted woman's face; frame fully outside view by t=7 s; no 2D crossfade and no fabricated objects. Closing uses real photographed frame.",
           "contact_sheet_QA": "Samples first 7 sec and final original: smoother opening match; other inherited holds from V156 still pending human critique.",
-          "file_location": "current conversation local sandbox only; NO durable R2/GitHub artifact upload or site playback verification for this revision",
-          "permanent_backup_verified": false,
+          "file_location": "Persistent private ChatGPT Library /ArtVision/WATERHOUSE_LADY_SHALOTT_CRITICO_MUSEUM_V164R1_REVIEW_PACKAGE.zip",
+          "permanent_backup_verified": true,
           "human_artistic_review": "PENDING",
           "museum_approved": false,
           "gold_v25": false,
           "published": false,
           "new_paid_calls": 0,
           "new_TTS_calls": 0,
-          "count_as_additional_slot": false
+          "count_as_additional_slot": false,
+          "library_file_id": "libfile_00322a1ca49c8191937db673155099f6",
+          "library_backing_file_id": "file_0000000000f88243a0300116545d58fc",
+          "library_download_back_sha256": "23c68bbbbd369758fd50bb0c579a51ba417975f27933a6da54db2f9f398461f0",
+          "library_readback_ffmpeg_full_decode": "PASS",
+          "library_readback_zip_crc": "PASS",
+          "library_readback_embedded_mp4_sha256": "1397958a5c62da723a2ade1f578d7f3e8d338cd2fc93579da590ee06e2b70bf8",
+          "archive_status": "VERIFIED_PRIVATE_LIBRARY_PERSISTENT_PACKAGE_READBACK",
+          "site_playback_verified": false
         }
       }
     },
@@ -1497,6 +1505,12 @@
     "artistic_review_pending": true,
     "permanent_R2_backup_pending": true,
     "paid_calls": 0,
-    "published": false
+    "published": false,
+    "latest_nondestructive_revision": "waterhouse_lady_shalott_critico_museum_v164r1",
+    "revision_private_library_sha_verified": true,
+    "revision_library_crc_verified": true,
+    "revision_mp4_full_ffmpeg_decode_verified": true,
+    "revision_gold": false,
+    "new_paid_calls": 0
   }
 }
