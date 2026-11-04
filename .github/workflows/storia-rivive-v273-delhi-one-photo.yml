@@ -1,0 +1,118 @@
+name: "La Storia Rivive V273 · Delhi shot03 one authentic I2I CPU"
+on:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
+    paths:
+      - ".github/workflows/storia-rivive-v273-delhi-one-photo.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v273-delhi-image-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  one_real_source_locked_photo:
+    if: github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+      HF_TOKEN: ""
+      HUGGING_FACE_HUB_TOKEN: ""
+      OMP_NUM_THREADS: "4"
+      MKL_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restrict free I2I to explicit one-shot commit
+        id: gate
+        shell: bash
+        env:
+          HEAD: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin "$HEAD"
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V273: run one Delhi stone ruins source-locked I2I [V273-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install LOCAL CPU-only open model, no inference API billing
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m pip install -q --index-url https://download.pytorch.org/whl/cpu 'torch==2.5.1+cpu'
+          python -m pip install -q 'diffusers==0.32.2' 'transformers==4.44.2' 'accelerate==1.2.1' 'huggingface_hub>=0.23,<1' 'safetensors>=0.4' 'Pillow>=10,<13' 'numpy>=1.26,<2'
+      - name: Test exact film/frame SHA and fail-closed source rule
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_v273_delhi_one_true_i2i.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v273_delhi_one_true_i2i.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v272-delhi-real-archival-review-NOT-FINAL
+          run-id: 41789453410
+          github-token: ${{ github.token }}
+          path: output/v273/v272
+      - name: Verify original film metadata, 5 different frames and real frame06 SHA
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          echo 'd6a6f21789093f971cff0adfa4259511a24875eb73753b8c7f177b882762f16e  output/v273/v272/source/delhi_ruins_1910_v217/original_frames/frame_06.png' | sha256sum -c -
+          python src/storia_rivive_v273_delhi_one_true_i2i.py \
+            --scout output/v273/v272/source/delhi_ruins_1910_v217/SCOUT_REPORT.json \
+            --selection output/v273/v272/delhi_ruins_1910_v217/SHOT_AWARE_SELECTION_V210.json \
+            --original output/v273/v272/source/delhi_ruins_1910_v217/original_frames/frame_06.png \
+            --out output/v273/photo --offline
+      - name: Run ONE authentic I2I photographic candidate on Delhi stone ruins
+        if: steps.gate.outputs.allowed == 'true'
+        id: inference
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          timeout 1800s python -u src/storia_rivive_v273_delhi_one_true_i2i.py \
+            --scout output/v273/v272/source/delhi_ruins_1910_v217/SCOUT_REPORT.json \
+            --selection output/v273/v272/delhi_ruins_1910_v217/SHOT_AWARE_SELECTION_V210.json \
+            --original output/v273/v272/source/delhi_ruins_1910_v217/original_frames/frame_06.png \
+            --out output/v273/photo
+      - name: Verify actual file SHA and model output without granting artistic approval
+        if: always() && steps.gate.outputs.allowed == 'true'
+        env:
+          OUTCOME: ${{ steps.inference.outcome }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          import hashlib,json,os
+          d=Path("output/v273/photo")
+          rp=d/"DELHI_V273_REAL_I2I_TRIAL_NOT_FINAL.json"
+          r=json.loads(rp.read_text()) if rp.is_file() else {}
+          f=d/"DELHI_1910_SHOT03_ONE_TRUE_I2I_CANDIDATE_NOT_FINAL.png"
+          okay=(os.getenv("OUTCOME")=="success"
+                and r.get("generated_photos")==1
+                and f.is_file() and f.stat().st_size>10000
+                and hashlib.sha256(f.read_bytes()).hexdigest()==r.get("generated_sha256")
+                and r.get("source_metadata",{}).get("original_frame_sha256")=="d6a6f21789093f971cff0adfa4259511a24875eb73753b8c7f177b882762f16e"
+                and r.get("artistically_approved") is False
+                and r.get("italian_rights_verified") is False
+                and r.get("vidu_clips")==0
+                and r.get("publish_allowed") is False)
+          if okay:
+            with Image.open(f) as im:okay=im.format=="PNG" and im.size==(448,800)
+          print("V273_ONE_REAL_SOURCE_LOCKED_I2I_NOT_FINAL",okay,"FINISHED_0_OF_4")
+          if not okay:raise SystemExit("V273_NO_VALID_PHOTO_OUTPUT")
+          PY
+      - name: Preserve actual original vs I2I comparison and report as review only
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v273-delhi-one-real-I2I-ARTISTIC-QA-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v273/photo/
