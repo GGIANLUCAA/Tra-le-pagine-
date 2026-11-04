@@ -352,3 +352,172 @@ jobs:
           print('TOTAL:',{'artifacts':downloaded,'new_files':published,'errors':errors},flush=True)
           if errors:sys.exit(1)
           PY
+  targeted_owner_backfill_20261104:
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[targeted-backfill-20261104]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Import exact owner-produced masters
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          IMPORT_ENDPOINT: https://video-library-import.600led.workers.dev
+        shell: bash
+        run: |
+          python3 -m pip -q install requests
+          python3 - <<'PY'
+          import hashlib, io, os, pathlib, tempfile, time, zipfile
+          import requests
+
+          session = requests.Session()
+          root = os.environ["IMPORT_ENDPOINT"].rstrip("/")
+          repo = os.environ["REPOSITORY"]
+          github_headers = {
+              "Authorization": "Bearer " + os.environ["GH_TOKEN"],
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+          }
+          audience = "vls-gh-import-2026"
+          token_cache = ["", 0.0]
+
+          artifacts = {
+              13065162413: {
+                  "created_at": "2026-11-01T01:18:50Z",
+                  "digest": "sha256:d937e307b8baac8bb4cf5635d3f68399bf2f5523d8a360811050bf4e80c633c1",
+                  "files": {
+                      "MALCZEWSKI_CRITICO_STANDARD_V111_ANDROID_REVIEW.mp4": "be5fca2d01fdb7e8584ebf1319a16f35b04420412d0ea9de6a38114bc997412b",
+                      "MALCZEWSKI_CRITICO_MUSEUM_V111_ANDROID_REVIEW.mp4": "53350cef4614ab5a30f9db0dc796fcda0a3825e30cc612b235a3ed52eee5c7b2",
+                      "MALCZEWSKI_CINEMA_STANDARD_V111_ANDROID_REVIEW.mp4": "c7543e9515b4c60c21a484232a571476fed265cd9e5c735b70d0b66ce034107a",
+                      "MALCZEWSKI_CINEMA_MUSEUM_V111_ANDROID_REVIEW.mp4": "87dbe26bb8a7a1b9fc89719a540240835715ed54bccf239636f25655ba3002b9",
+                  },
+              },
+              13049466256: {
+                  "created_at": "2026-10-31T16:19:43Z",
+                  "digest": "sha256:3bdd3e39318f291402c98ca3a764d1a4d7b8a6ee66348dc3d046921fe38d456c",
+                  "files": {
+                      "Boecklin_1883_cinema_standard_V100_REVIEW.mp4": "b176560a2d58e4aba6b782d2f02e3b5d22674fc7e16ea520620c83134bf90f26",
+                  },
+              },
+              13049107776: {
+                  "created_at": "2026-10-31T16:22:35Z",
+                  "digest": "sha256:2eea821650f33d7fc48c50996c42d667b4b931d4281ab5096f68935ca4abe1b8",
+                  "files": {
+                      "Boecklin_1883_cinema_museum_V101_CONTINUOUS_ENTRY_REVIEW.mp4": "c9f40502b5efdf216ebfe322344aed21f19913a2b869d144b2519bd2b3bd7132",
+                  },
+              },
+              13053703331: {
+                  "created_at": "2026-10-31T18:53:54Z",
+                  "digest": "sha256:889edf7db9decd2a9a25dbbb06939fc75fb15177b6acf1bc227242a0fe595223",
+                  "files": {
+                      "Boecklin_1883_critico_standard_V102_GACRUX_REVIEW.mp4": "096926e6ffb0de921fca72726deb4a136227150d1d1a224ccd42e329ee903777",
+                      "Boecklin_1883_critico_museum_V102_GACRUX_REVIEW.mp4": "03eb6c8a77c4572b7ca83c81088c4b3d499b06802dd996a97a505b6fe768a6ed",
+                  },
+              },
+          }
+
+          assert all("2026-10-26T00:00:00Z" <= a["created_at"] < "2026-11-02T09:00:00Z" for a in artifacts.values())
+          assert sum(len(a["files"]) for a in artifacts.values()) == 8
+
+          def oidc_token():
+              if token_cache[0] and time.time() - token_cache[1] < 180:
+                  return token_cache[0]
+              response = session.get(
+                  os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"],
+                  headers={"Authorization": "Bearer " + os.environ["ACTIONS_ID_TOKEN_REQUEST_TOKEN"]},
+                  params={"audience": audience},
+                  timeout=30,
+              )
+              response.raise_for_status()
+              token_cache[:] = [response.json()["value"], time.time()]
+              return token_cache[0]
+
+          def worker(method, route, params=None, **kwargs):
+              for attempt in range(3):
+                  response = session.request(
+                      method,
+                      root + route,
+                      params=params,
+                      headers={"Authorization": "Bearer " + oidc_token()},
+                      timeout=180,
+                      **kwargs,
+                  )
+                  if response.status_code not in (429, 502, 503, 504):
+                      response.raise_for_status()
+                      return response.json()
+                  if attempt == 2:
+                      response.raise_for_status()
+                  time.sleep(2 ** attempt)
+
+          def status(key):
+              return worker("GET", "/status", {"key": key})
+
+          def upload_exact(path, key):
+              size = path.stat().st_size
+              before = status(key)
+              if before.get("deleted"):
+                  raise RuntimeError("Owner deletion protected: " + key)
+              if before.get("exists"):
+                  if before.get("size") == size:
+                      print("ALREADY PRESENT:", key, size, flush=True)
+                      return
+                  raise RuntimeError("Existing object has different bytes/size: " + key)
+              if size <= 32 * 1024 * 1024:
+                  with path.open("rb") as stream:
+                      worker("POST", "/single", {"key": key}, data=stream)
+              else:
+                  init = worker("POST", "/init", {"key": key})
+                  upload_id = init["uploadId"]
+                  parts = []
+                  try:
+                      with path.open("rb") as stream:
+                          number = 0
+                          while chunk := stream.read(8 * 1024 * 1024):
+                              number += 1
+                              part = worker("PUT", "/part", {"key": key, "uploadId": upload_id, "number": number}, data=chunk)
+                              parts.append({"partNumber": part["partNumber"], "etag": part["etag"]})
+                      worker("POST", "/complete", {"key": key, "uploadId": upload_id}, json=parts)
+                  except Exception:
+                      try:
+                          worker("POST", "/abort", {"key": key, "uploadId": upload_id})
+                      except Exception:
+                          pass
+                      raise
+              after = status(key)
+              if not after.get("exists") or after.get("size") != size:
+                  raise RuntimeError("R2 byte verification failed: " + key)
+              print("IMPORTED:", key, size, flush=True)
+
+          for artifact_id, policy in artifacts.items():
+              metadata_url = f"https://api.github.com/repos/{repo}/actions/artifacts/{artifact_id}"
+              metadata = session.get(metadata_url, headers=github_headers, timeout=60)
+              metadata.raise_for_status()
+              info = metadata.json()
+              if info.get("expired"):
+                  raise RuntimeError(f"Artifact expired: {artifact_id}")
+              if info.get("created_at") != policy["created_at"] or info.get("digest") != policy["digest"]:
+                  raise RuntimeError(f"Artifact identity mismatch: {artifact_id}")
+              archive_url = metadata_url + "/zip"
+              archive = session.get(archive_url, headers=github_headers, timeout=240)
+              archive.raise_for_status()
+              archive_bytes = archive.content
+              if "sha256:" + hashlib.sha256(archive_bytes).hexdigest() != policy["digest"]:
+                  raise RuntimeError(f"Artifact digest mismatch: {artifact_id}")
+              with zipfile.ZipFile(io.BytesIO(archive_bytes)) as bundle, tempfile.TemporaryDirectory() as temp:
+                  names = {pathlib.PurePosixPath(name).name: name for name in bundle.namelist() if not name.endswith("/")}
+                  for filename, expected_hash in policy["files"].items():
+                      if filename not in names:
+                          raise RuntimeError(f"Missing allowlisted file: {filename}")
+                      target = pathlib.Path(temp) / filename
+                      target.write_bytes(bundle.read(names[filename]))
+                      actual_hash = hashlib.sha256(target.read_bytes()).hexdigest()
+                      if actual_hash != expected_hash:
+                          raise RuntimeError(f"Master hash mismatch: {filename}")
+                      upload_exact(target, filename)
+                      seeded = worker("POST", "/editorial-seed", json={"items": [filename]})
+                      if not seeded.get("ok"):
+                          raise RuntimeError(f"Catalog registration failed: {filename}")
+                      verified = status(filename)
+                      if not verified.get("exists") or verified.get("size") != target.stat().st_size:
+                          raise RuntimeError(f"Final R2 verification failed: {filename}")
+          print("TARGETED BACKFILL COMPLETE: 8 exact owner masters", flush=True)
+          PY
