@@ -3,12 +3,12 @@ on:
   push:
     branches: [main]
     paths:
-      - requests/artvision/waterhouse-lady-shalott-critico-v159.json
+      - requests/artvision/blake-ghost-flea-critico-v159.json
 permissions:
   contents: read
   actions: read
 concurrency:
-  group: artvision-owner-waterhouse-shalott-critico-v159-once
+  group: artvision-owner-blake-ghost-flea-critico-v159-once
   cancel-in-progress: false
 jobs:
   one_missing_critico:
@@ -24,7 +24,7 @@ jobs:
         run: |
           python - <<'PY'
           import json
-          r=json.load(open("requests/artvision/waterhouse-lady-shalott-critico-v159.json"))
+          r=json.load(open("requests/artvision/blake-ghost-flea-critico-v159.json"))
           q=json.load(open("queue/artvision_owner_selected_ten_20261102.json"))
           assert r["owner_automation_id"]=="6adca191603c8191a90d5190901cd034"
           assert r["work_id"]=="blake_ghost_flea_1819_tate_n05889"
@@ -90,7 +90,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import hashlib,json,subprocess,zipfile
-          out=Path('/tmp/blake_ghost_flea_critico_v159')
+          out=Path('/tmp/blake_ghost_critico_v159')
           q=json.loads((out/'QA_V159.json').read_text())
           assert q['work']=="The Ghost of a Flea"
           assert q['variant']=='critico_standard' and q['museum_variant_rendered'] is False
@@ -108,19 +108,19 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ART_V159_WATERHOUSE_REAL_CRITICO_OR_PRESERVED_WAV
+          name: ART_V159_BLAKE_REAL_CRITICO_OR_PRESERVED_WAV
           path: |
-            /tmp/blake_ghost_flea_critico_v159/VOCE.wav
-            /tmp/blake_ghost_flea_critico_v159/VOICE_CACHE_V13.json
-            /tmp/blake_ghost_flea_critico_v159/ALLINEAMENTO_VOCE.json
-            /tmp/blake_ghost_flea_critico_v159/VOICE_RESULT_V159.json
-            /tmp/blake_ghost_flea_critico_v159/COPIONE_ESATTO_V159.txt
-            /tmp/blake_ghost_flea_critico_v159/BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4
-            /tmp/blake_ghost_flea_critico_v159/BLAKE_GHOST_FLEA_CRITICO_STANDARD_V159_REVIEW_PACKAGE.zip
-            /tmp/blake_ghost_flea_critico_v159/QA_V159.json
-            /tmp/blake_ghost_flea_critico_v159/COVER.jpg
-            /tmp/blake_ghost_flea_critico_v159/CONTACT_SHEET_V159.jpg
-            /tmp/blake_ghost_flea_critico_v159/RIGHTS_AND_CREDITS.txt
-            /tmp/blake_ghost_flea_critico_v159/SOCIAL_DRAFT_UNPUBLISHED.txt
+            /tmp/blake_ghost_critico_v159/VOCE.wav
+            /tmp/blake_ghost_critico_v159/VOICE_CACHE_V13.json
+            /tmp/blake_ghost_critico_v159/ALLINEAMENTO_VOCE.json
+            /tmp/blake_ghost_critico_v159/VOICE_RESULT_V159.json
+            /tmp/blake_ghost_critico_v159/COPIONE_ESATTO_V159.txt
+            /tmp/blake_ghost_critico_v159/BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4
+            /tmp/blake_ghost_critico_v159/BLAKE_GHOST_FLEA_CRITICO_STANDARD_V159_REVIEW_PACKAGE.zip
+            /tmp/blake_ghost_critico_v159/QA_V159.json
+            /tmp/blake_ghost_critico_v159/COVER.jpg
+            /tmp/blake_ghost_critico_v159/CONTACT_SHEET_V159.jpg
+            /tmp/blake_ghost_critico_v159/RIGHTS_AND_CREDITS.txt
+            /tmp/blake_ghost_critico_v159/SOCIAL_DRAFT_UNPUBLISHED.txt
           retention-days: 30
           if-no-files-found: warn
