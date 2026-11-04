@@ -150,7 +150,16 @@ jobs:
           SOURCE="output/v217/source/$EPISODE_ID"
           if python - "$TARGET/V217_RESEARCH_REPORT.json" <<'PY'
           import json,sys
-          data=json.load(open(sys.argv[1]))
+          from pathlib import Path
+          report_path = Path(sys.argv[1])
+          if not report_path.is_file():
+              print("V289_SOURCE_REPORT_MISSING_SKIP_ROUGHCUT_NOT_FINAL")
+              raise SystemExit(1)
+          try:
+              data = json.loads(report_path.read_text(encoding="utf-8"))
+          except (OSError, ValueError) as exc:
+              print("V289_SOURCE_REPORT_UNREADABLE_SKIP_ROUGHCUT_NOT_FINAL", type(exc).__name__)
+              raise SystemExit(1)
           raise SystemExit(0 if data.get("status")=="FIVE_SOURCE_SHOTS_REVIEW_PENDING" else 1)
           PY
           then
