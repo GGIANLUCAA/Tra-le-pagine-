@@ -100,6 +100,34 @@
           "approved": false,
           "real_vidu": false,
           "finished_mp4_zip": false
+        },
+        "v276_visual_precheck": {
+          "status": "REJECT_ON_ORIGINAL_FRAME_PORTRAIT_COMPOSITION_AND_WRONG_PROMPT_IDENTITY",
+          "source_original_frame": "frame_04.png",
+          "source_frame_sha256": "8771b50f5a26b3e27eadf00ad085f998bfe2d552daa7f8492027a4c40c6c2a71",
+          "observations": "Actual grayscale source contains horned bovine animal with rider, NOT an elephant; original center crop 656:1264 truncates animal's head/body right. I2I from V276 cannot count as approved photograph; if inference completes, review-only.",
+          "human_artistic_approved": false,
+          "finished_video": false
+        },
+        "v277_corrected_source_locked_attempt": {
+          "run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41804372936",
+          "commit": "9595f1bcf147485bfd837db8b4dd38580b0155d0",
+          "source_frame": "frame_04.png",
+          "source_time_s": 66.401,
+          "source_sha256": "8771b50f5a26b3e27eadf00ad085f998bfe2d552daa7f8492027a4c40c6c2a71",
+          "source_crop_bbox_px": [
+            930,
+            0,
+            1538,
+            1080
+          ],
+          "prompt_species": "HORNED_BOVINE_NOT_ELEPHANT",
+          "mode": "FREE_CPU_TRUE_DIFFUSION_I2I_ONE_SHOT",
+          "status": "IN_PROGRESS_ARTISTIC_QA_NOT_YET_REVIEWED",
+          "artistically_approved": false,
+          "italian_rights_verified": false,
+          "real_vidu_clip": false,
+          "new_finished_mp4_zip": 0
         }
       }
     },
