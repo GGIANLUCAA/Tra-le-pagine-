@@ -28,9 +28,9 @@ PROMPT = (
     "Turn this exact grayscale 1910 Delhi archival film frame into a realistic "
     "FULL-COLOR contemporary-looking documentary photograph, while keeping the "
     "original historic view. Preserve the exact camera perspective, repeating "
-    "steel bridge lattice, walkway planks, one real elephant, one real rider, "
+    "steel bridge lattice, walkway planks, one existing horned bovine animal, one real rider, "
     "their position, proportions, limbs, clothing, and every visible object. "
-    "Lifelike detailed dark gray elephant skin, natural warm human skin tones, "
+    "Lifelike detailed dark gray bovine hide and horns, natural warm human skin tones, "
     "muted authentic cotton clothing colors, distinct neutral gray metallic "
     "bridge structure and earthy walkway, realistic daylight and physically "
     "plausible subtle color differences. Sharp yet natural photograph, "
@@ -73,7 +73,7 @@ def verify(scout: Path, selection: Path, original: Path) -> None:
 
 def exact_crop(original: Path, target: Path) -> None:
     with Image.open(original) as im:
-        im.convert("RGB").crop((656, 0, 1264, 1080)).save(target)
+        im.convert("RGB").crop((930, 0, 1538, 1080)).save(target)
     with Image.open(target) as im:
         if im.size != (608, 1080):
             raise ValueError("V276_CROP_CHANGED")
@@ -122,7 +122,7 @@ def run(scout: Path, selection: Path, original: Path, destination: Path,
         "episode": EPISODE, "source_page": SOURCE_PAGE,
         "film_sha256": FILM_SHA, "source_frame": FRAMES[SHOT_INDEX],
         "source_frame_sha256": FRAME_SHA, "source_time_s": SHOT_TIME,
-        "source_crop_sha256": sha(crop),
+        "source_crop_sha256": sha(crop), "source_crop_bbox": [930, 0, 1538, 1080],
         "model": MODEL, "seed": SEED,
         "prompt_sha256": hashlib.sha256(PROMPT.encode()).hexdigest(),
         "inference_steps": 23, "image_guidance_scale": 1.8,
