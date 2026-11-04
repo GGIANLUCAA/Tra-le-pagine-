@@ -19,17 +19,18 @@ jobs:
       - name: Restrict to a single authorized free research run
         id: gate
         run: |
-          if [[ "$(git log -1 --format=%s)" == 'storia V286: inspect true archival motion before fixing Delhi finale [V286-ONCE]' ]]; then
+          if [[ "$(git log -1 --format=%s)" == 'storia V286: rerun genuine Delhi motion source with ffmpeg install [V286-ONCE-2]' ]]; then
             echo "allowed=true" >> "$GITHUB_OUTPUT"
           else
             echo "allowed=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Check available local decoder
+      - name: Install free local video decoder
         if: steps.gate.outputs.allowed == 'true'
         run: |
           set -euo pipefail
-          command -v ffmpeg
-          command -v ffprobe
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          ffmpeg -version | head -1
       - name: Download exact 1910 source, verify fixed historical SHA
         if: steps.gate.outputs.allowed == 'true'
         run: |
