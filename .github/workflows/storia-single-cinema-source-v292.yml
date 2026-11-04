@@ -1,0 +1,44 @@
+name: "Storia V292 · One genuine cinematic film source preflight (FREE)"
+on:
+  push:
+    branches:
+      - storia-single-cinema-melies-v292-20261104
+    paths:
+      - ".github/workflows/storia-single-cinema-source-v292.yml"
+      - "src/storia_rivive_cinema_v292_source_scout.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-single-cinema-source-v292-no-provider
+  cancel-in-progress: false
+jobs:
+  original_film_source_scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check required local tools
+        run: |
+          set -euo pipefail
+          python -m pip install -q "pillow>=10,<13"
+          ffmpeg -version | head -1
+          ffprobe -version | head -1
+          python -m py_compile src/storia_rivive_cinema_v292_source_scout.py
+      - name: Download and verify genuine 1904 Méliès film and actual 9:16 decoded frames
+        run: |
+          set -euo pipefail
+          python -u src/storia_rivive_cinema_v292_source_scout.py
+      - name: Preserve actual source-frame contact sheets and QA (NOT final video)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: V292_SINGLE_CINEMA_MELIES_REAL_FRAMES_NOT_FINAL
+          path: |
+            output/storia_single_cinema_v292/CINEMA_ORIGINAL_SOURCE_PREFLIGHT.json
+            output/storia_single_cinema_v292/ACTUAL_FILM_FRAMES_ORIGINAL_ASPECT.jpg
+            output/storia_single_cinema_v292/ACTUAL_FILM_FRAMES_VERTICAL_CROP.jpg
+          if-no-files-found: warn
+          retention-days: 14
