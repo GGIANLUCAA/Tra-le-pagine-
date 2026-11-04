@@ -16,6 +16,10 @@ jobs:
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
+      - name: Compile renderer and verify recipe before any TTS call
+        run: |
+          python -m py_compile src/artvision_simberg_garden_critico_v146.py
+          python -m json.tool modules/artvision_critico/production_series/simberg_garden_v146.json > /dev/null
       - name: Guard one approved work and forbid duplicates and paid calls
         run: |
           python - <<'PY'
