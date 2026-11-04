@@ -1,0 +1,60 @@
+{
+  "schema": "production-audit-v16",
+  "checked_utc": "2026-11-04T18:10:00Z",
+  "scope": "books_and_non_artvision_daily_production",
+  "artvision": {
+    "owner": "automation 6adca191603c8191a90d5190901cd034",
+    "queue_written": false,
+    "render_started": false,
+    "note": "Passive boundary respected; no competing 4x1 work."
+  },
+  "production_counts": {
+    "new_rendered": 0,
+    "new_exact_hash_reviews_passed": 0,
+    "new_complete_v55_deliveries": 0,
+    "new_private_archive_imports_verified": 0
+  },
+  "queue": {
+    "file": "queue/production_v15.json",
+    "prepared_items_added": 0,
+    "reason": "No book package has both locally available exact Google Gacrux bytes and the complete adapter cache/alignment required for a safe render."
+  },
+  "checks": [
+    {
+      "episode": "03_siddharta",
+      "historical_run": 39153143646,
+      "historical_artifact_id": 12146196388,
+      "expected_wav_sha256": "7886e3781f86a40384a3f1c0be64fc6a35047e19b202f0bebd2b26e422ab0a8c",
+      "github_artifacts_found": 0,
+      "library_exact_audio_found": false,
+      "status": "blocked_exact_voice_bytes_missing"
+    },
+    {
+      "episode": "09_dersu_uzala",
+      "historical_run": 39627957410,
+      "historical_artifact_id": 12358361535,
+      "expected_wav_sha256": "6c18a9a69e5b8630c58113eeba45d6065b6fd361e5edbc2827db7f3cf273d0f0",
+      "github_artifacts_found": 0,
+      "library_exact_audio_found": false,
+      "status": "blocked_exact_voice_bytes_and_alignment_missing"
+    },
+    {
+      "episode": "01_scacchi",
+      "historical_run": 39171898138,
+      "github_artifacts_found": 0,
+      "library_exact_master_found": false,
+      "status": "blocked_historical_master_bytes_missing"
+    }
+  ],
+  "safety": {
+    "paid_video_api_calls": 0,
+    "new_tts_calls": 0,
+    "social_posts_published": 0,
+    "public_releases_created": 0,
+    "false_gacrux_from_undocumented_wav": false
+  },
+  "remediation": {
+    "gate": "src/voice_recovery_gate_v16.py",
+    "behavior": "Historical metadata alone is never render-ready; the exact local WAV, hash, audio properties, and all adapter manifests/alignment files must exist."
+  }
+}
