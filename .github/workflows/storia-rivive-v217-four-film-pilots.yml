@@ -26,6 +26,18 @@ on:
       - "src/storia_rivive_v236_reject_bad_source.py"
       - "tests/test_storia_rivive_v236_reject_bad_source.py"
   workflow_dispatch:
+    inputs:
+      episode:
+        description: "One archive to inspect (all = full four-film research); no paid generation"
+        required: false
+        default: all
+        type: choice
+        options:
+          - all
+          - delhi_ruins_1910_v217
+          - early_cinema_sorrows_1910_v225
+          - lusitania_departure_1915_v220
+          - fiesole_straw_hats_1912_v220
 permissions:
   contents: read
 concurrency:
@@ -60,6 +72,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v236_reject_bad_source.py" -v
 
   source_scout:
+    if: github.event_name != 'workflow_dispatch' || inputs.episode == 'all' || inputs.episode == matrix.episode
     needs: offline_v217_tests
     runs-on: ubuntu-latest
     timeout-minutes: 25
