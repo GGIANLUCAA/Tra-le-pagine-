@@ -10,6 +10,8 @@ on:
       - "tests/test_storia_rivive_v243_freeze_endpoint_roughcut.py"
       - "src/storia_rivive_v244_real_endpoint_pixel_qa.py"
       - "src/storia_rivive_v247_motion_intertitle_qa.py"
+      - "src/storia_rivive_v291_final_motion_window_qa.py"
+      - "tests/test_storia_rivive_v291_final_motion_window_qa.py"
       - "tests/test_storia_rivive_v247_motion_intertitle_qa.py"
       - "tests/test_storia_rivive_v244_real_endpoint_pixel_qa.py"
       - "tests/test_storia_rivive_v245_real_five_shot_framecount.py"
@@ -68,6 +70,7 @@ jobs:
           python -m unittest discover -s tests -p "test_storia_rivive_v244_real_endpoint_pixel_qa.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v245_real_five_shot_framecount.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v247_motion_intertitle_qa.py" -v
+          python -m unittest discover -s tests -p "test_storia_rivive_v291_final_motion_window_qa.py" -v
           python -m unittest discover -s tests -p "test_storia_v240_portrait_contact_sheet.py" -v
           python -m unittest discover -s tests -p "test_storia_rivive_v236_reject_bad_source.py" -v
 
@@ -188,6 +191,15 @@ jobs:
                 --manifest "$TARGET/SOURCE_24S_FREEZE_ENDPOINT_REVIEW_NOT_FINAL.json" \
                 --out "$TARGET/V247_REAL_MOTION_INTERTITLE_QA.json" || \
                 echo "V247_DECODED_MOTION_QA_UNAVAILABLE_NOT_FINAL"
+              # V291 checks the REAL 1.25-1.50s motion windows actually intended
+              # for each final 4+1 B/W lead-in, even when a 4.8s research
+              # roughcut crosses a historical intertitle. Never a final video.
+              python src/storia_rivive_v291_final_motion_window_qa.py \
+                --video "$TARGET/SOURCE_24S_FREEZE_ENDPOINT_REVIEW_NOT_FINAL.mp4" \
+                --manifest "$TARGET/SOURCE_24S_FREEZE_ENDPOINT_REVIEW_NOT_FINAL.json" \
+                --out "$TARGET/V291_REAL_LAST_MOTION_EDIT_WINDOW_QA.json" \
+                --preview "$TARGET/SOURCE_7S_REAL_MOTION_EDIT_REVIEW_NOT_FINAL.mp4" || \
+                echo "V291_ACTUAL_SHORT_MOTION_DECODE_FAILED_NOT_FINAL"
               echo "V243_SOURCE_LOCKED_FREEZE_ENDPOINT_REVIEW_READY_NOT_FINAL"
             else
               echo "V243_REJECTED_MOTION_WINDOW_OR_SOURCE_ALIGNMENT_NOT_FINAL"
@@ -222,19 +234,43 @@ jobs:
           # These reports are only preliminary source evidence, never artistic approval.
           endpoint_path = target / "V244_REAL_DECODED_ENDPOINT_QA.json"
           motion_path = target / "V247_REAL_MOTION_INTERTITLE_QA.json"
-          if not endpoint_path.is_file() or not motion_path.is_file():
-              print("V288_SOURCE_DECODED_QA_MISSING_NO_I2I_HANDOFF", episode)
+          edit_path = target / "V291_REAL_LAST_MOTION_EDIT_WINDOW_QA.json"
+          roughcut_path = target / "SOURCE_24S_FREEZE_ENDPOINT_REVIEW_NOT_FINAL.mp4"
+          if not all(p.is_file() for p in (endpoint_path, motion_path, edit_path, roughcut_path)):
+              print("V291_SOURCE_DECODED_QA_MISSING_NO_I2I_HANDOFF", episode)
               raise SystemExit(0)
           endpoint = json.loads(endpoint_path.read_text(encoding="utf-8"))
           motion = json.loads(motion_path.read_text(encoding="utf-8"))
+          short = json.loads(edit_path.read_text(encoding="utf-8"))
+          short_video = target / "SOURCE_7S_REAL_MOTION_EDIT_REVIEW_NOT_FINAL.mp4"
           if (endpoint.get("status") != "REVIEW_ENDPOINTS_PASS"
                   or len(endpoint.get("checks", [])) != 5
                   or not all(row.get("pass_candidate") is True for row in endpoint["checks"])
-                  or motion.get("status") != "NO_INTERTITLE_HEURISTIC_FLAGS_NOT_ARTISTIC_APPROVAL"
-                  or motion.get("flagged_shots") != []
-                  or motion.get("sampled_decoded_frames") != 15):
-              print("V288_SOURCE_DECODED_QA_REJECTED_NO_I2I_HANDOFF", episode)
+                  or motion.get("status") not in (
+                      "NO_INTERTITLE_HEURISTIC_FLAGS_NOT_ARTISTIC_APPROVAL",
+                      "REJECT_MOTION_WINDOW_FOR_EDITORIAL_REVIEW")
+                  or motion.get("sampled_decoded_frames") != 15
+                  or not isinstance(motion.get("flagged_shots"), list)
+                  or short.get("version") != "V291_REAL_LAST_MOTION_EDIT_WINDOW_PREFLIGHT"
+                  or short.get("status") != "FIVE_REAL_1P5S_EDIT_WINDOWS_PASS_NOT_ARTISTIC_APPROVAL"
+                  or short.get("must_use_these_exact_short_windows_in_final_render") is not True
+                  or short.get("source_roughcut_sha256") != hashlib.sha256(roughcut_path.read_bytes()).hexdigest()
+                  or motion.get("source_video_sha256") != short.get("source_roughcut_sha256")
+                  or not short_video.is_file()
+                  or short.get("edited_motion_preview_sha256") != hashlib.sha256(short_video.read_bytes()).hexdigest()
+                  or len(short.get("shots", [])) != 5
+                  or not all(row.get("motion_candidate") is True
+                      and row.get("decoded_final_frames_inspected", 0) >= 30
+                      and row.get("remaining_title_frames") == []
+                      and row.get("motion_seconds", 0) >= 1.25
+                      for row in short["shots"])):
+              print("V291_SOURCE_SHORT_MOTION_REJECTED_NO_I2I_HANDOFF", episode)
               raise SystemExit(0)
+          # Long 4.8s archival research windows can contain real intertitles.
+          # Hand off ONLY the source-verified short-motion frames; any later
+          # renderer must use their exact ranges and re-run the final QA.
+          if motion.get("flagged_shots"):
+              print("V291_LONG_RESEARCH_WINDOW_HAS_INTERTITLES_SHORT_EDIT_SOURCE_ONLY", episode)
           alignment = json.loads((target / "SOURCE_ENDPOINT_ALIGNMENT_V223.json").read_text())
           selection = json.loads((target / "SHOT_AWARE_SELECTION_V210.json").read_text())
           checks = alignment.get("checks", [])
@@ -257,6 +293,16 @@ jobs:
               raise SystemExit("V224_UNSAFE_I2I_HANDOFF")
           jobs["v224_handoff"] = "FIVE_SOURCE_CANDIDATES_SOURCE_LOCKED_NOT_ARTISTICALLY_APPROVED"
           jobs["endpoint_alignment_is_not_exact_frame_certification"] = True
+          jobs["v291_source_only_edit"] = {
+              "status": short["status"],
+              "source_roughcut_sha256": short["source_roughcut_sha256"],
+              "motion_preview_file": short_video.name,
+              "motion_preview_sha256": short["edited_motion_preview_sha256"],
+              "original_decoded_frame_ranges": [shot["original_decoded_frame_range"] for shot in short["shots"]],
+              "exact_short_motion_windows_required_in_final_renderer": True,
+              "long_roughcut_intertitle_flags": motion["flagged_shots"],
+              "not_final_or_artistic_approval": True,
+          }
           (target / "I2I_INPUT_MANIFEST_V102.json").write_text(
               json.dumps(jobs, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           print("V224_FOUR_REAL_FRAME_I2I_INPUTS_PREPARED_ONE_VIDU_ANCHOR_NO_GENERATION", episode)
