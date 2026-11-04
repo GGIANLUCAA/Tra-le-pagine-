@@ -114,8 +114,16 @@ jobs:
           SRC="output/v217/source/$EPISODE_ID"
           if python - "$REPORT" <<'PY'
           import json,sys
-          with open(sys.argv[1], encoding="utf-8") as file:
-              report = json.load(file)
+          from pathlib import Path
+          report_path = Path(sys.argv[1])
+          if not report_path.is_file():
+              print("V290_SCOUT_REPORT_MISSING_SKIP_RANKING_NO_I2I")
+              raise SystemExit(2)
+          try:
+              report = json.loads(report_path.read_text(encoding="utf-8"))
+          except (OSError, ValueError) as exc:
+              print("V290_SCOUT_REPORT_UNREADABLE_SKIP_RANKING_NO_I2I", type(exc).__name__)
+              raise SystemExit(2)
           if report.get("status") == "REAL_BW_FILM_FRAMES_READY_FOR_PHOTO_SOURCE_REVIEW":
               raise SystemExit(0)
           print("V217_SOURCE_SKIPPED", report.get("status"))
