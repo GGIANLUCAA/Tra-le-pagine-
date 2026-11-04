@@ -94,9 +94,6 @@ jobs:
           # artifact that explicitly says publication is not authorized must never
           # be auto-imported. This is a rights/source boundary, not an art gate.
           def explicit_archive_block_reason(archive,artifact_name):
-              upper_name=(artifact_name or '').upper()
-              if 'REVIEW_ONLY' in upper_name:
-                  return 'artifact name is REVIEW_ONLY'
               documents=[]
               def collect(zf,label=''):
                   for member in zf.namelist():
@@ -139,9 +136,11 @@ jobs:
               denied=bundle({'PILOT.mp4':b'pilot','qa_report.json':json.dumps({'publication':'NOT AUTHORIZED'})})
               with zipfile.ZipFile(denied) as test:
                   assert explicit_archive_block_reason(test,'PILOT_PACKAGE')
-              review_only=bundle({'PILOT.mp4':b'pilot'})
+              # A review-oriented name alone is not a blocker: owner originals may
+              # be archived before artistic QA. Only explicit publication/rights denial blocks.
+              review_only=bundle({'OWNER_REVIEW.mp4':b'owner'})
               with zipfile.ZipFile(review_only) as test:
-                  assert explicit_archive_block_reason(test,'PILOT_REVIEW_ONLY')
+                  assert explicit_archive_block_reason(test,'OWNER_REVIEW_ONLY') is None
               print('Explicit authorization gate self-test: PASS',flush=True)
           self_test_explicit_archive_block()
           cache_token='',0
