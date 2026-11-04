@@ -56,6 +56,26 @@ jobs:
           python -m py_compile src/nvidia_nim_dev_v1.py src/nvidia_cosmos3_video_dev_v1.py
           python -m unittest discover -s tests -p 'test_nvidia_nim_dev_v1.py' -v
           python -m unittest discover -s tests -p 'test_nvidia_cosmos3_video_dev_v1.py' -v
+  check-github-secret-on-main:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+    steps:
+      - name: Validate secret is available to a trusted main-branch workflow (no inference)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$NVIDIA_API_KEY" ]; then
+            echo "::error::NVIDIA_API_KEY is not available to GitHub Actions on main."
+            exit 1
+          fi
+          if [ "${#NVIDIA_API_KEY}" -lt 8 ]; then
+            echo "::error::NVIDIA_API_KEY is unexpectedly short."
+            exit 1
+          fi
+          echo "NVIDIA_KEY_PRESENT_IN_ACTIONS; only presence checked, no API calls."
   manual-dev-test:
     if: github.event_name == 'workflow_dispatch'
     needs: offline-tests
