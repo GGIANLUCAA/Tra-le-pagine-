@@ -110,7 +110,7 @@ def run(source:Path,out:Path,offline=False,predict=None,make_base=None)->dict:
         else:make_base(source,base)
         with Image.open(base) as im:
             if im.size!=(540,960):raise ValueError("V283_DDCOLOR_RASTER_CHANGED")
-        generated=(predict or v278.genuine_finegrain)(base,PROMPT,218176)
+        generated=(predict or v278.genuine_finegrain)(base,PROMPT,2181)
         with Image.open(generated) as im:
             image=ImageOps.fit(im.convert("RGB"),(720,1280),Image.Resampling.LANCZOS)
             image.save(color,quality=95,subsampling=0)
