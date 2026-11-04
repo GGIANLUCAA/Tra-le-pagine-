@@ -34,13 +34,25 @@ def inspect(root: Path, ids: list[str]) -> dict:
                 errors.append("zip_invalid")
             try:
                 proc = subprocess.run(
-                    ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                    ["ffprobe", "-v", "error", "-show_entries", "format=duration:stream=codec_type,codec_name",
                      "-of", "json", str(mp4)],
                     capture_output=True, text=True, check=True, timeout=20,
                 )
                 duration = float(json.loads(proc.stdout)["format"]["duration"])
                 if not 14 <= duration <= 35:
                     errors.append("duration_out_of_range")
+                streams = json.loads(proc.stdout).get("streams", [])
+                if not any(s.get("codec_type") == "video" and s.get("codec_name") == "h264" for s in streams):
+                    errors.append("missing_h264_video")
+                if not any(s.get("codec_type") == "audio" and s.get("codec_name") == "aac" for s in streams):
+                    errors.append("missing_aac_audio")
+                decoded = subprocess.run(
+                    ["ffmpeg", "-v", "error", "-xerror", "-i", str(mp4),
+                     "-map", "0:v:0", "-map", "0:a:0", "-f", "null", "-"],
+                    capture_output=True, timeout=120, check=False,
+                )
+                if decoded.returncode != 0:
+                    errors.append("mp4_full_decode_failed")
             except (OSError, ValueError, KeyError, subprocess.SubprocessError):
                 errors.append("mp4_probe_failed")
         results.append({
