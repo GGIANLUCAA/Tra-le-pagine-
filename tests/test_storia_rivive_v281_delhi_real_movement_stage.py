@@ -27,6 +27,15 @@ class V281(unittest.TestCase):
             with Image.open(dest) as im:
                 self.assertEqual(im.size,(720,1280))
                 self.assertEqual(im.format,"JPEG")
+    def test_ffmpeg_concat_list_uses_linebreak_separator(self):
+        # A double-escaped backslash-n produced mp4nfile and broke the real
+        # V281 runner after all source segments were rendered.
+        import inspect
+        source=inspect.getsource(subject.main)
+        target='+'"'+"'"+'\\'+'n'+'" for f in parts'
+        self.assertIn(target, source)
+        self.assertNotIn('+'"'+"'"+'\\'+'\\'+'n'+'" for f in parts', source)
+
     def test_untrusted_hash_fails_closed_before_any_render(self):
         with tempfile.TemporaryDirectory() as t:
             r=Path(t)
