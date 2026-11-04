@@ -145,3 +145,36 @@ jobs:
           path: output/public_archive_v1/
           retention-days: 14
           if-no-files-found: error
+
+  live-once-21-archives-8-credentials:
+    needs: contract_tests
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    permissions:
+      contents: read
+    env:
+      PROBE_NVIDIA: ${{ secrets.NVIDIA_API_KEY || secrets.NVIDIA || secrets.NVIDIA_NIM_API_KEY || secrets.NVIDIA_KEY || secrets.NVIDIA_NIM || secrets.NGC_API_KEY || secrets.INVIDIA || secrets.INVIDIA_API_KEY }}
+      PROBE_GROQ: ${{ secrets.GROQ_API_KEY || secrets.GROQ }}
+      PROBE_GEMINI: ${{ secrets.GEMINI_API_KEY }}
+      PROBE_HF: ${{ secrets.HF_TOKEN || secrets.HUGGINGFACE_TOKEN }}
+      PROBE_OPENROUTER: ${{ secrets.OPENROUTER_API_KEY || secrets.OPENROUTER2 }}
+      PROBE_PIXABAY: ${{ secrets.PIXABAY || secrets.PIXABAY_API_KEY }}
+      PROBE_AIHORDE: ${{ secrets.AIHORDE_API_KEY }}
+      PROBE_VIDU: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Actual 21 public catalog requests plus 8 read-only credential probes
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_api_live_readonly_diagnostic_v1.py' -v
+          python src/api_live_readonly_diagnostic_v1.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: API_LIVE_REAL_RESPONSES_${{ github.run_id }}
+          path: output/api_live_check_v1/RESULTS.json
+          retention-days: 14
+          if-no-files-found: error
