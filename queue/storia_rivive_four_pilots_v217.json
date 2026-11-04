@@ -1,7 +1,7 @@
 {
   "version": "V217_FOUR_PILOTS_SOURCE_SHORTLIST",
   "purpose": "Research four NEW episodes; every film stays unreleased until four real photo I2I and one source-locked animated Vidu clip pass V91/V94/V96/V99 and rights Italy review",
-  "source_quality_claim": "V225_REAL_FRENCH_V224_TITLE_DETECTED_NEW_FILM_PENDING_ACTUAL_BYTES",
+  "source_quality_claim": "V269_20261104_NO_FOUR_SOURCE_FILMS_FINAL_QUALIFIED_SOURCE_REVIEW_ONLY",
   "credit_spend_allowed": false,
   "publish_allowed": false,
   "italian_rights_approved": false,
@@ -188,5 +188,15 @@
     "provider_fallback": "Try available no-cost image-to-image providers only after confirming quota, output terms and real frame match; ZeroGPU may reset; do not assert a model produced an image until verified bytes exist",
     "credit_spend_allowed": false,
     "final_gate_unchanged": true
+  },
+  "production_readiness_20261104": {
+    "new_final_episodes_delivered": 0,
+    "target": 4,
+    "source_scout_only": true,
+    "approved_i2i_per_episode": 0,
+    "approved_vidu_per_episode": 0,
+    "italy_rights_cleared_per_episode": false,
+    "reason": "V217 review workflow produces authentic archival source previews, not finished 4+1 videos; Fiesole I2I artistic rejects and scene-5 Vidu authorization remain unresolved. Other three film candidates still need actual five-shot qualification. Do not count 6-second BW samples as final.",
+    "next_free_action": "Re-run V217 original-film source review on PR branch; inspect resulting original bytes and distinct shots, prioritize an alternative candidate if Fiesole I2I remains rejected."
   }
 }
