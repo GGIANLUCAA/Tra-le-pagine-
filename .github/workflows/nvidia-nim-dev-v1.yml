@@ -109,6 +109,24 @@ jobs:
           python src/nvidia_cosmos3_video_dev_v1.py \
             --prompt-file output/nvidia_dev_v1/prompt.txt \
             --output output/nvidia_dev_v1/COSMOS_SYNTHETIC_PREVIEW.mp4 --execute
+      - name: Convert Cosmos VP9 preview to Android-friendly H264 without removing watermark
+        if: inputs.action == 'cosmos_video'
+        shell: bash
+        run: |
+          set -euo pipefail
+          original="output/nvidia_dev_v1/COSMOS_SYNTHETIC_PREVIEW.mp4"
+          test -s "$original"
+          if command -v ffmpeg >/dev/null 2>&1 && command -v ffprobe >/dev/null 2>&1; then
+            ffmpeg -hide_banner -loglevel error -y -i "$original" -an \
+              -c:v libx264 -preset fast -crf 21 -pix_fmt yuv420p \
+              -movflags +faststart \
+              "output/nvidia_dev_v1/COSMOS_ANDROID_PREVIEW_H264.mp4"
+            test -s output/nvidia_dev_v1/COSMOS_ANDROID_PREVIEW_H264.mp4
+            ffprobe -v error -show_entries stream=codec_name,width,height \
+              -of json output/nvidia_dev_v1/COSMOS_ANDROID_PREVIEW_H264.mp4
+          else
+            echo "No ffmpeg on runner; original test MP4 remains available."
+          fi
       - name: Save unapproved developer result, never publish
         if: inputs.action != 'check_secret'
         uses: actions/upload-artifact@v4
@@ -117,6 +135,7 @@ jobs:
           path: |
             output/nvidia_dev_v1/NIM_DRAFT.json
             output/nvidia_dev_v1/COSMOS_SYNTHETIC_PREVIEW.mp4
+            output/nvidia_dev_v1/COSMOS_ANDROID_PREVIEW_H264.mp4
             output/nvidia_dev_v1/COSMOS_SYNTHETIC_PREVIEW.json
           retention-days: 7
           if-no-files-found: error
