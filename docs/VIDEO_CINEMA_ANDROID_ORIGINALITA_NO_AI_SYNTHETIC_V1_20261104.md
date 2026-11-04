@@ -17,12 +17,19 @@ Il progetto non si limita ai restauri storici o ai quadri: produrre contenuti ci
 - Valutare a posteriori retention 3s, completamento, replay, condivisioni e salvataggi; nessuna promessa di viralità.
 - Per social: creatività e veridicità prima degli hashtag. Verificare policy e licenze per ogni piattaforma, non assumere che l'assenza di label equivalga a conformità.
 
-## Pilot approvato come tema: tempeste oceaniche
-- Formato di prova: MP4 9:16 da 20–30 s, **riprese reali** e audio/sound design con licenza, senza voce per questo pilota; intro cinematicamente forte, escalation visiva e un finale memorabile. No scene AI realistiche.
-- Angolo editoriale candidato: **«The Wave You Never See Coming»**; mostrare una singola evoluzione autentica o più scene chiaramente indipendenti, preferendo POV raro da nave, faro o telecamera costiera. Titolo pubblico breve in inglese, non presentare riprese di eventi diversi come una stessa tempesta.
-- Preflight: cercare la fonte meno usata e verificare utilizzo commerciale; se non esistono scene sufficientemente originali ed evidenziabili, non forzare un render di stock banale: cercare altra fonte/soggetto.
-- Pipeline prima prova: GitHub Actions + FFmpeg già presenti; browser Android come pannello. Remotion/AI cloud solo se giustificati. Non impegnare spese non verificate. Non pubblicare su social o sito senza specifica autorizzazione.
-- La consegna richiede MP4 vero scaricabile con link verificato, copertina, post social, fonti/licenze, ZIP, controllo visivo e audio del video intero. Non chiamare «finito» uno storyboard, un log di CI o un rendering incompleto.
+## Regola aggiornata nella conversazione 04/11/2026: niente voce, niente scene AI
+- Proprietario esclude **ogni voce fuori campo**, incluse voci umane registrate, per la nuova linea di short cinematografici silenziosi; sono ammessi musica ed effetti sonori da fonti con licenza verificata.
+- Escludere **video generati o alterati sostanzialmente da AI** (Vidu, LTX, Wan, image-to-video, face restoration generativa, outpaint, interpolazione che inventa oggetti). Non tentare tecniche per eludere rilevamento o etichette: realizzare video con immagini autentiche e rispettare le disclosure quando dovute. Non è possibile garantire etichetta social o reach.
+- No tempeste oceaniche come prima prova, no San Francisco / New York 1906 già troppo usati.
+- Una semplice compilation di clip stock con musica è insufficiente a garantire originalità/recommendability: privilegiare eventi rari, fonti primarie e **contributo editoriale sostanziale**, dati verificati, costruzione narrativa originale. Non promettere unicità assoluta o viralità.
+
+## Nuovo candidato test cinematografico, non ancora montato
+**La macchina impossibile — 5 km sott'acqua**. Nell'aprile 2025 NOAA Ocean Exploration ha documentato nell'hangar del relitto USS Yorktown una vettura ipotizzata come Ford Super Deluxe Woody del 1940-41. Fonte primaria con video highlight MP4 scaricabile: https://oceanexplorer.noaa.gov/expedition-feature/ex2503-yorktown-mission/ . La vettura è identificata provvisoriamente, e non è stata scoperta nel 2026: evitare sensazionalismo cronologico.
+- Titolo provvisorio pubblico: `NO ROAD LEADS HERE`. Hook visivo: suono metallico discreto e sagoma reale nel buio, testo corto `A CAR. FIVE KILOMETERS DOWN.`; progressione rivelazione, contesto reale `USS YORKTOWN · 1942`; finale lascia una domanda legittima `WHY WAS IT STILL ON BOARD?`. Tre atti, 18–25 secondi indicativi. Non presentare clip diverse come unico piano sequenza.
+- Nessuna voce, musica e sound design originali/licenziati, niente AI visual generativa, niente movimenti finti 3D. Colore/suono/montaggio tradizionali.
+- Il video NOAA ufficiale è un **candidato** da controllare per presenza effettiva dei secondi in movimento della macchina, qualità e licenza dell'asset specifico, timecode, rapporto 9:16 (ritaglio non deve nascondere l'auto), derivazione del montaggio. Se non si riesce a fare un montaggio originale di qualità, non forzare il soggetto: considerare la fonte primaria NOAA con due polpi che cambiano colore, con HD disponibile https://oceanexplorer.noaa.gov/multimedia/okeanos-explorations-seascape-alaska-ex2306-gallery-media-dive08-changingcolors/ .
+- Prima di segnare `ready`: aprire vero video, verificare diritti specifici e crediti NOAA, creare storyboard, fare QA e consegnare MP4+ZIP Android da link verificato. Non è stato ancora prodotto né pubblicato nessun MP4 da questo aggiornamento.
+- Verificare diffusione di precedenti versioni e scegliere un taglio narrativo sostanzialmente nuovo; nessuna promessa di viralità o esclusività globale.
 
 ## Fonti policy verificate in data 04/11/2026
 - Meta original content, 2026-03-13: https://about.fb.com/news/2026/03/rewarding-original-creators-on-facebook/
