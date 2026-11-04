@@ -1,0 +1,118 @@
+name: "La Storia Rivive V278 · Delhi 4 real DDColor->Finegrain images (V98 method)"
+on:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
+    paths:
+      - ".github/workflows/storia-rivive-v278-delhi-four-i2i.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v278-delhi-one-original-four-real-i2i-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  four_actual_delhi_restorations_not_final:
+    if: github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    env:
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_XET: "1"
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - name: "One-shot verification: never repeat Finegrain quota requests on retries"
+        id: gate
+        shell: bash
+        env:
+          HEAD: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin "$HEAD"
+          if [[ "$(git log -1 --format=%s "$HEAD")" == 'storia V278: generate four real Delhi DDColor+Finegrain photos once [V278-ONCE]' ]]; then
+            echo 'allowed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'allowed=false' >> "$GITHUB_OUTPUT"
+            echo 'V278_NOT_THIS_EXACT_ONE_SHOT_SHA'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Install free reference V98 models and real photo QA tools
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'numpy>=1.26,<2' 'opencv-python-headless>=4.9,<5' 'onnxruntime>=1.17,<2' 'Pillow>=10,<13' 'huggingface_hub>=0.25,<1' 'gradio_client>=1.3,<2'
+      - name: Test source locks, five real frame names and no false human approval
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_v278_delhi_four_ddcolor_finegrain.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v278_delhi_four_ddcolor_finegrain.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v272-delhi-real-archival-review-NOT-FINAL
+          run-id: 41789453410
+          github-token: ${{ github.token }}
+          path: output/v278/original
+      - name: Verify all FIVE exact Delhi film frames before any provider call
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v278_delhi_four_ddcolor_finegrain.py \
+            --original-frames output/v278/original/source/delhi_ruins_1910_v217/original_frames \
+            --scout output/v278/original/source/delhi_ruins_1910_v217/SCOUT_REPORT.json \
+            --selection output/v278/original/delhi_ruins_1910_v217/SHOT_AWARE_SELECTION_V210.json \
+            --out output/v278/photos --offline
+      - name: Use V98 recipe — DDColor ONNX real semantic base + four TRUE Finegrain I2I calls
+        id: generation
+        if: steps.gate.outputs.allowed == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 1800s python -u src/storia_rivive_v278_delhi_four_ddcolor_finegrain.py \
+            --original-frames output/v278/original/source/delhi_ruins_1910_v217/original_frames \
+            --scout output/v278/original/source/delhi_ruins_1910_v217/SCOUT_REPORT.json \
+            --selection output/v278/original/delhi_ruins_1910_v217/SHOT_AWARE_SELECTION_V210.json \
+            --out output/v278/photos
+      - name: Inspect real SHA and count of completed Finegrain photos, never fake final videos
+        if: always() && steps.gate.outputs.allowed == 'true'
+        env:
+          OUTCOME: ${{ steps.generation.outcome }}
+        run: |
+          python - <<'PY'
+          import json,hashlib,os
+          from pathlib import Path
+          from PIL import Image
+          d=Path('output/v278/photos')
+          f=d/'V278_DELHI_FOUR_REAL_I2I_QA_NOT_FINAL.json'
+          r=json.loads(f.read_text()) if f.is_file() else {}
+          rows=r.get('real_photo_files',[])
+          good=(os.getenv('OUTCOME')=='success' and len(rows)==4
+                and r.get('finegrain_provider_attempts')==4
+                and r.get('source_identity',{}).get('verified_unique_frames')==5
+                and not r.get('artistic_approval') and not r.get('italian_rights_verified')
+                and not r.get('vidu_scene5_generated') and r.get('vidu_credits_used')==0
+                and r.get('new_final_episodes_delivered')==0
+                and r.get('publish_allowed') is False)
+          for x in rows:
+            pic=d/x['actual_finegrain_photo_filename']
+            good=good and pic.is_file() and hashlib.sha256(pic.read_bytes()).hexdigest()==x['real_i2i_sha256'] and x['auto_preflight_passed']
+            if pic.is_file():
+              with Image.open(pic) as im:good=good and im.format=='JPEG' and im.size==(720,1280)
+          print('V278_REAL_FINEGRAIN_PHOTOS_CREATED',len(rows),'FOUR_PASS',good,'NEW_FINAL_0_OF_4')
+          if not good:raise SystemExit('V278_NOT_FOUR_SOURCE_LOCKED_NEW_PHOTOS')
+          PY
+      - name: Keep actual candidates plus 3-way contact sheet for artistic QA, NOT FINAL
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v278-delhi-four-V98-DDColor-Finegrain-real-photo-CANDIDATES-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/v278/photos/
