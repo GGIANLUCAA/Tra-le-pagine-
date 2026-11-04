@@ -1,0 +1,28 @@
+{
+  "version": "V288_EDITORIAL_REJECTION_LEDGER",
+  "project": "La Storia Rivive",
+  "purpose": "Prevent a known human-animal head fusion from being recycled as a successful final restoration. Exact SHA-based veto; not an AI semantic-quality certification.",
+  "rejections": [
+    {
+      "episode_id": "delhi_ruins_1910_v217",
+      "scene_number": 5,
+      "original_frame": "frame_12.png",
+      "original_frame_sha256": "28a71dff0d65a4529a946fbe1d531626c70dca389d344e4d17f7646022fc8ca2",
+      "rejected_restored_photo_sha256": "556c432960bea3fd58663ac85ad77e792463fbcca1a92f3bb1b0616195a10264",
+      "source_time_s": 218.176,
+      "decision": "REPLACE_FRAME_FOR_COLOR_PHOTO_OR_VIDU_ANCHOR",
+      "block_photo_reveal": true,
+      "block_vidu_source_for_paid_generation": true,
+      "allow_original_black_and_white_motion_only": true,
+      "review_date": "2026-11-04",
+      "review_basis": "User inspected real generated screenshot and identified a visually obvious blend of the man's shoulder/head region with a horned animal's head. Additional risk of merged animal horns/heads in crowded herd.",
+      "severity": "MAJOR_VISIBLE_ANATOMY_DEFECT",
+      "what_to_do": "Select and VISUALLY REVIEW a different less cluttered real frame with separated head and shoulders, verify true movement before freeze, regenerate with source-locked model and compare image at 100% and 200%, including human and animal segmentation; discard if contact fused. If no good frame in this sequence, keep brief original moving film but choose a different fifth shot/film for photo or Vidu.",
+      "human_artistic_approved": false,
+      "publication_approved": false,
+      "credit_spend_allowed_for_this_frame": false,
+      "previous_review_artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41833893883/artifacts/13323897175",
+      "notes": "Automatic geometry/saturation scores passed this photo but failed visible identity separation. High structural similarity does NOT certify natural anatomy."
+    }
+  ]
+}
