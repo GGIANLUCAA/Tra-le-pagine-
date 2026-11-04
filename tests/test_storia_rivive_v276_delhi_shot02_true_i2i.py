@@ -37,6 +37,12 @@ class DelhiV276(unittest.TestCase):
             r=v276.run(self.scout,self.selection,self.original,self.directory/"out",offline=True)
         self.assertEqual(r["source_frame"],"frame_04.png")
         self.assertEqual(r["generated_photos"],0)
+        self.assertEqual(r["source_crop_bbox"], [930,0,1538,1080])
+        self.assertNotIn("one real elephant", v276.PROMPT.lower())
+        self.assertIn("bovine", v276.PROMPT.lower())
+        with Image.open(self.original) as full, Image.open(self.directory/"out"/"V276_DELHI_REAL_FRAME04_EXACT_CROP.png") as cropped:
+            self.assertEqual(list(cropped.getpixel((0,0))), list(full.convert("RGB").getpixel((930,0))))
+            self.assertEqual(list(cropped.getpixel((607,1079))), list(full.convert("RGB").getpixel((1537,1079))))
         self.assertEqual(r["new_finished_mp4_zip"],0)
         self.assertFalse(r["publication_allowed"])
 
