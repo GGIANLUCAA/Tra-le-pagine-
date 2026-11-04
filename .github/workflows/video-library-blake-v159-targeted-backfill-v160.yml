@@ -1,0 +1,82 @@
+name: Video Library Studio V160 · Targeted owner Blake Critico archive and exact download proof
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/site/blake-v159-targeted-backfill.json
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+concurrency:
+  group: vls-owner-blake-v159-exact-idempotent-archive
+  cancel-in-progress: false
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify only exact owner MP4 and archive to R2 then full HTTP SHA check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python -m pip -q install 'requests>=2.32,<3'
+          python - <<'PY'
+          import os,hashlib,zipfile,io,json,urllib.parse,requests
+          name='BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4'
+          expected='579217cee4eb80d43296e7ac52f62c6ed355c5b479bfea89fe4cb37edd222bcb'
+          total=12044640
+          artifact_id=13346346760
+          req=json.load(open('requests/site/blake-v159-targeted-backfill.json'))
+          assert req['artifact_id']==artifact_id and req['expected_sha256']==expected and req['private_archive_only'] is True
+          assert not req['allow_public_social_publish'] and not req['allow_overwrite'] and not req['allow_paid_api']
+          api='https://api.github.com/repos/'+os.environ['GITHUB_REPOSITORY']+'/actions/artifacts/'+str(artifact_id)
+          h={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'}
+          session=requests.Session()
+          meta=session.get(api,headers=h,timeout=45);meta.raise_for_status();v=meta.json()
+          assert not v['expired'] and v['id']==artifact_id and v['name']=='ART_V159_BLAKE_REAL_CRITICO_OR_PRESERVED_WAV'
+          archive=session.get(api+'/zip',headers=h,timeout=240);archive.raise_for_status()
+          if v.get('digest'):
+            assert v['digest']=='sha256:'+hashlib.sha256(archive.content).hexdigest()
+          with zipfile.ZipFile(io.BytesIO(archive.content)) as z:
+            assert z.testzip() is None
+            assert name in z.namelist()
+            raw=z.read(name)
+          assert len(raw)==total and hashlib.sha256(raw).hexdigest()==expected
+          audience='vls-gh-import-2026'
+          tok=session.get(os.environ['ACTIONS_ID_TOKEN_REQUEST_URL'],
+            headers={'Authorization':'Bearer '+os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']},
+            params={'audience':audience},timeout=25)
+          tok.raise_for_status()
+          auth={'Authorization':'Bearer '+tok.json()['value']}
+          import_root='https://video-library-import.600led.workers.dev'
+          def get_status():
+            r=session.get(import_root+'/status',params={'key':name},headers=auth,timeout=40);r.raise_for_status();return r.json()
+          s=get_status()
+          if s.get('deleted'): raise RuntimeError('Owner-deleted video: never restore')
+          if s.get('exists'):
+            assert s.get('size')==total,('R2 existing byte-size mismatch, no overwrite',s)
+            print('R2 EXACT SIZE ALREADY PRESENT; NO OVERWRITE',flush=True)
+          else:
+            r=session.post(import_root+'/single',params={'key':name},headers=auth,data=raw,timeout=180)
+            r.raise_for_status()
+            print('R2 NEW OWNER MASTER UPLOAD:',r.status_code,flush=True)
+          s=get_status()
+          assert s.get('exists') and s.get('size')==total
+          c=session.post(import_root+'/editorial-seed',headers=auth,json={'items':[name]},timeout=45);c.raise_for_status()
+          assert c.json().get('ok'),c.text[:400]
+          website='https://video-library-studio.600led.workers.dev'
+          part=session.get(website+'/download/'+urllib.parse.quote(name,safe=''),headers={'Range':'bytes=0-1023'},timeout=40)
+          assert part.status_code==206 and len(part.content)==1024
+          assert part.headers.get('Content-Range')=='bytes 0-1023/'+str(total)
+          assert 'attachment' in part.headers.get('Content-Disposition','').lower()
+          req=session.get(website+'/download/'+urllib.parse.quote(name,safe=''),stream=True,timeout=120)
+          req.raise_for_status()
+          assert req.status_code==200
+          sha=hashlib.sha256();count=0
+          for chunk in req.iter_content(1048576):
+            if chunk:sha.update(chunk);count+=len(chunk)
+          assert count==total and sha.hexdigest()==expected,(count,sha.hexdigest())
+          print('OWNER_BLAKE_V159_FULL_SITE_DOWNLOAD_SHA256_PASS',name,total,expected,flush=True)
+          PY
