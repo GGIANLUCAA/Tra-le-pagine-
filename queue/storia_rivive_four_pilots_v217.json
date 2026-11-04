@@ -19,7 +19,7 @@
         "1080 digital file is not optical native 1080",
         "vertical portrait crop"
       ],
-      "source_stage": "V272_AUTHENTIC_1910_DELHI_FILM_AND_FIVE_FRAMES_VERIFIED_NOT_ARTISTICALLY_APPROVED",
+      "source_stage": "V278_FOUR_REAL_FINEGRAIN_I2I_GENERATED_TECH_PASS_ARTISTIC_REVIEW_PENDING_NOT_FINAL",
       "source_evidence": {
         "original_archive_film_sha256": "0a0de7b032cdb19e34d4dac5a6efca02dfa4b00260411aa82290c54b2899f278",
         "original_film_bytes": 70448577,
@@ -138,7 +138,41 @@
           "real_vidu_clip": false,
           "new_finished_mp4_zip": 0,
           "last_verified_stage": "4 offline tests PASS; original film SHA/crop PASS; CPU I2I inference running"
-        }
+        },
+        "v278_actual_four_photo_artifact": {
+          "run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41806029514",
+          "artifact": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41806029514/artifacts/13309233226",
+          "version": "V278_FOUR_AUTHENTIC_DELHI_FINEGRAIN_PHOTOS_NOT_FINAL",
+          "method": "DDColor ONNX 2653da00dc15e54a45e5200b61dbf82ee9ceaf56b02bb9b9657569ac775e82e6 BASE then REAL Finegrain I2I",
+          "source_original_frames": [
+            "frame_01.png",
+            "frame_04.png",
+            "frame_06.png",
+            "frame_11.png"
+          ],
+          "real_new_i2i_files": 4,
+          "technical_qa_pass": true,
+          "assessor_visual_observation": "All four show more natural plausible color and more readable detail than V276/V277 single-model trials. Three-way original/DDColor/Finegrain contact image checked; people, animals, bridge and columns remain in the same broad positions. Final human/artistic approval and scene-by-scene anatomy review still required.",
+          "photo_sha256": [
+            "1c9302fa8637d2557f0711e1f32d795f92ca763029fa1415c85975b8eef6085b",
+            "524b8a46aa6e2221baee8a0091256c1563ed34097c77da6762a8b7163c87294f",
+            "5dfc716766bc33851eb9e42e9f4944572b1c43b9dbf3b69194466563e0a49444",
+            "1104d1c36e1142dff8e747809603afc460f7ded4387a4f92eccb4f8c98f94ddd"
+          ],
+          "real_i2i_images_approved_by_human": 0,
+          "real_i2i_images_generated": 4,
+          "four_true_i2i_photos_source_locked": true,
+          "raw_reconstruction_not_historical_color": true,
+          "original_fifth_vidu_frame": "frame_12.png",
+          "original_fifth_vidu_frame_sha256": "28a71dff0d65a4529a946fbe1d531626c70dca389d344e4d17f7646022fc8ca2",
+          "fifth_vidu_animation_generated": false,
+          "vidu_credit_spend": 0,
+          "italian_rights_verified": false,
+          "final_master_generated": false,
+          "new_final_episode_delivered": false
+        },
+        "v278_photo_status": "FOUR_REAL_SOURCE_LOCKED_PHOTOS_TECHNICALLY_VALID_HUMAN_ARTISTIC_QA_PENDING",
+        "v278_fifth_vidu_status": "ORIGINAL_FRAME_PRESENT_NO_VIDU_CLIP_NO_SCENE_SPECIFIC_USER_APPROVAL_OR_PLAN"
       }
     },
     {
