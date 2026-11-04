@@ -170,9 +170,12 @@
         "frame_photo_preflight_v143": "BLOCKED HTTP429, no genuine photo bytes",
         "museum_approved": false,
         "human_artistic_review": "PENDING",
-        "site_playback_verified": false,
+        "site_playback_verified": true,
         "gold_v25": false,
-        "social_published": false
+        "social_published": false,
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
       },
       "new_cinema_standard_v153": {
         "status": "ONE_REAL_MP4_REPLACEMENT_OF_UNDELIVERED_V135_IN_SAME_CINEMA_SLOT_NOT_ADDITIONAL_VARIANT",
@@ -206,9 +209,15 @@
         "gold_v25": false,
         "human_artistic_review": "PENDING",
         "social_published": false,
-        "number_of_slots_added": 0
+        "number_of_slots_added": 0,
+        "site_playback_verified": true,
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
       },
-      "active_cinema_standard": "new_cinema_standard_v153"
+      "active_cinema_standard": "new_cinema_standard_v153",
+      "site_archive_verified_slots": 2,
+      "site_archive_verification": "PASS active slots SHA256 full HTTP download 2026-11-04 run 41870128447"
     },
     {
       "id": "waterhouse_lady_shalott_1888_tate_n01543",
@@ -379,10 +388,13 @@
         "storage": "GitHub Actions artifact (30-day retention); session MP4+ZIP; Library upload failed quota",
         "museum_approved": false,
         "gold_v25": false,
-        "site_playback_verified": false,
+        "site_playback_verified": true,
         "other_3_variants_done": false,
         "published": false,
-        "spent_api_credits": 0
+        "spent_api_credits": 0,
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
       },
       "critico_standard_v149": {
         "status": "REAL_MP4_SOURCE_OFFICIAL_RIJKSMUSEUM_IIIF_PJEZO_SHA_ZIP_CRC_FULL_DECODE_PASS",
@@ -421,9 +433,14 @@
         "museum_approved": false,
         "artistic_review": "PENDING",
         "gold_v25": false,
-        "site_playback_verified": false,
-        "social_published": false
-      }
+        "site_playback_verified": true,
+        "social_published": false,
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
+      },
+      "site_archive_verified_slots": 2,
+      "site_archive_verification": "PASS active slots SHA256 full HTTP download 2026-11-04 run 41870128447"
     },
     {
       "id": "bruegel_tower_babel_1563_khm_gg1026",
@@ -517,7 +534,7 @@
         "source_rights": "Commons PD-Art/PDM as declared in QA; territory-specific reuse review remains",
         "music": "original synthesized ambient",
         "human_artistic_review": "PENDING",
-        "site_playback_verified": false,
+        "site_playback_verified": true,
         "gold_v25": false,
         "social_published": false,
         "paid_api_calls": 0,
@@ -532,7 +549,10 @@
           "video_sha256_source_verified": "ad401e87ac181d6627bed80b5072a466fa2cc930143857838896b4d1bfe7a6a4",
           "r2_sha256_verified": false,
           "site_playback_verified": false
-        }
+        },
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
       },
       "v137_cinema_candidate": {
         "status": "github_actions_success_artifact_MP4_ZIP_physical_readback_verified_review_not_gold",
@@ -607,7 +627,11 @@
           "video_sha256_source_verified": "4a9639be84ecf912ae0a82e8078dcacc1a93ac6bf82433a95d927b98746e5d7f",
           "r2_sha256_verified": false,
           "site_playback_verified": false
-        }
+        },
+        "site_playback_verified": true,
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
       },
       "critico_standard_v141": {
         "run_id": 41797029785,
@@ -632,11 +656,14 @@
         "museum_approved": false,
         "gold_v25": false,
         "social_published": false,
-        "site_playback_verified": false,
+        "site_playback_verified": true,
         "variant": "critico_standard",
         "filename": "BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_STANDARD_V138_REVIEW.mp4",
         "bytes": 24606149,
-        "sha256": "125ce39ad907b51e1d07f8d9b78e3871b27c02d92969771f0ae41819016b08a0"
+        "sha256": "125ce39ad907b51e1d07f8d9b78e3871b27c02d92969771f0ae41819016b08a0",
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
       },
       "critico_museum_v141": {
         "run_id": 41797029785,
@@ -661,11 +688,14 @@
         "museum_approved": false,
         "gold_v25": false,
         "social_published": false,
-        "site_playback_verified": false,
+        "site_playback_verified": true,
         "variant": "critico_museum",
         "filename": "BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_MUSEUM_V138_REVIEW.mp4",
         "bytes": 31574592,
-        "sha256": "c870811ef0b6d6fdcb9d64738172bdd43554b4e3fa3eb3738f9bed7363466a7d"
+        "sha256": "c870811ef0b6d6fdcb9d64738172bdd43554b4e3fa3eb3738f9bed7363466a7d",
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
       },
       "critico_v141_package": {
         "filename": "BRUEGEL_BABEL_CRITICO_V138_REVIEW_PACKAGE.zip",
@@ -676,7 +706,9 @@
         "artifact_id": 13305872383,
         "full_motion_human_QA": "PENDING",
         "artistic_approved": false
-      }
+      },
+      "site_archive_verified_slots": 4,
+      "site_archive_verification": "PASS active slots SHA256 full HTTP download 2026-11-04 run 41870128447"
     },
     {
       "id": "simberg_garden_death_1896_fng_a_ii_968_16",
@@ -735,12 +767,15 @@
         "artistic_review": "PENDING",
         "museum_approved": false,
         "critico_voice_verified": false,
-        "site_playback_verified": false,
+        "site_playback_verified": true,
         "gold_v25": false,
         "social_published": false,
         "paid_api_calls": 0,
         "slots_delivered_increment": 1,
-        "report": "docs/productions/2026-11-02-artvision-v135-two-verified-cinema-reviews.md"
+        "report": "docs/productions/2026-11-02-artvision-v135-two-verified-cinema-reviews.md",
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
       },
       "critico_standard_v146": {
         "status": "REAL_MP4_GitHub_ARTIFACT_DOWNLOADED_INDEPENDENT_SHA_ZIP_CRC_FULL_DECODE_PASS",
@@ -774,10 +809,15 @@
         "museum_approved": false,
         "human_artistic_review": "PENDING",
         "commercial_rights_final_review": "PENDING",
-        "site_playback_verified": false,
+        "site_playback_verified": true,
         "gold_v25": false,
-        "social_published": false
-      }
+        "social_published": false,
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
+      },
+      "site_archive_verified_slots": 2,
+      "site_archive_verification": "PASS active slots SHA256 full HTTP download 2026-11-04 run 41870128447"
     },
     {
       "id": "bruegel_triumph_death_1562_prado_p001393",
@@ -863,7 +903,10 @@
         "museum_approved": false,
         "gold_v25": false,
         "social_published": false,
-        "site_playback_verified": false
+        "site_playback_verified": true,
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
       },
       "critico_standard_v151": {
         "status": "REAL_MP4_SOURCE_PD_ART_SHA_ZIP_CRC_AND_FULL_FFMPEG_DECODE_INDEPENDENTLY_VERIFIED",
@@ -904,8 +947,13 @@
         "human_artistic_review": "PENDING",
         "gold_v25": false,
         "social_published": false,
-        "site_playback_verified": false
-      }
+        "site_playback_verified": true,
+        "site_full_download_sha256": "PASS exact SHA256 of downloaded original from live site 2026-11-04 GitHub run 41870128447",
+        "site_http_206_stream_download": "PASS",
+        "site_audit_run_id": 41870128447
+      },
+      "site_archive_verified_slots": 2,
+      "site_archive_verification": "PASS active slots SHA256 full HTTP download 2026-11-04 run 41870128447"
     },
     {
       "id": "waterhouse_magic_circle_1886_tate_n01572",
@@ -1079,5 +1127,19 @@
   "last_v131_source_readback_20261102": "Bruegel #1 source+music artifact CRC/SHA readback and legacy MP4 FFmpeg/11-frame QA; 0 new 4x1 slots, Museum/voice/delivery still blocked",
   "last_selected_ten_update_20261102": "V133 one new Bruegel Cinema Standard review real MP4 23,398,879 B SHA 744ba3e924df222cde88558d42a1c454e743f3b9f673c6addb7213f497653078; 3/4 Bruegel pending; Library quota exceeded; no publication/Gold",
   "last_verified_review": "2026-11-04",
-  "total_selected_new_cinema_review_slots_verified": 3
+  "total_selected_new_cinema_review_slots_verified": 3,
+  "current_site_download_audit": {
+    "run_id": 41870128447,
+    "date": "2026-11-04",
+    "status": "FULL_PASS",
+    "site": "https://video-library-studio.600led.workers.dev",
+    "active_ArtVision_12_of_12_full_download_and_sha256_pass": 12,
+    "mp4_visible_sitewide_range_pass": 558,
+    "mp4_visible_sitewide_range_tested": 558,
+    "known_hidden_mp4_preserved": 5,
+    "previous_v135_exact_master_missing_replaced_by_distinct_v153": true,
+    "Android_device_interactive_playback_not_tested": true,
+    "public_social_publishing_not_approved": true,
+    "Gold_V25": false
+  }
 }
