@@ -1,0 +1,187 @@
+name: Video Library Studio V160 · Blake and Magic Circle exact three video site archive and HTTP SHA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/site/artvision-v160-targeted-import.json
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+concurrency:
+  group: video-library-artvision-3-exact-master-recovery-v160
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Import exact owner-produced masters
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          IMPORT_ENDPOINT: https://video-library-import.600led.workers.dev
+        shell: bash
+        run: |
+          python3 -m pip -q install requests
+          python3 - <<'PY'
+          import hashlib, io, os, pathlib, tempfile, time, zipfile, urllib.parse
+          import requests
+
+          session = requests.Session()
+          root = os.environ["IMPORT_ENDPOINT"].rstrip("/")
+          repo = os.environ["REPOSITORY"]
+          github_headers = {
+              "Authorization": "Bearer " + os.environ["GH_TOKEN"],
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+          }
+          audience = "vls-gh-import-2026"
+          token_cache = ["", 0.0]
+
+          artifacts = {
+              13346500729: {
+                  "created_at":"2026-11-04T17:03:08Z",
+                  "digest":"sha256:5feb1951ebb52aaaaddd5f7777fd0b0b42e46f393af4ad48c1ae4cf45ca5170f",
+                  "files":{"BLAKE_THE_GHOST_OF_A_FLEA_CINEMA_V158_REVIEW.mp4":"3a4697083c55f67818990370b6c4f34ca2383f6a876fc21ca118481ab6f910fe"}
+              },
+              13344664433: {
+                  "created_at":"2026-11-04T17:05:02Z",
+                  "digest":"sha256:08db50c309f8c81f88de7f7477c30eb89b2b4ce573e0d9452726725cde3c7daa",
+                  "files":{"WATERHOUSE_THE_MAGIC_CIRCLE_CINEMA_V158_REVIEW.mp4":"57ec493478c5f4a0c1a35cd336df7b157bf557a17efb1eca4fdeba49def95660"}
+              },
+              13346346760: {
+                  "created_at":"2026-11-04T17:11:07Z",
+                  "digest":"sha256:318faf44391687421d7563c1fa1297a5dbc3a244025c52b331bbfad1a6bb9a0b",
+                  "files":{"BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4":"579217cee4eb80d43296e7ac52f62c6ed355c5b479bfea89fe4cb37edd222bcb"}
+              },
+          }
+          assert all("2026-11-04T17:00:00Z" <= a["created_at"] < "2026-11-05T00:00:00Z" for a in artifacts.values())
+          assert sum(len(a["files"]) for a in artifacts.values()) == 3
+
+          def oidc_token():
+              if token_cache[0] and time.time() - token_cache[1] < 180:
+                  return token_cache[0]
+              response = session.get(
+                  os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"],
+                  headers={"Authorization": "Bearer " + os.environ["ACTIONS_ID_TOKEN_REQUEST_TOKEN"]},
+                  params={"audience": audience},
+                  timeout=30,
+              )
+              response.raise_for_status()
+              token_cache[:] = [response.json()["value"], time.time()]
+              return token_cache[0]
+
+          def worker(method, route, params=None, **kwargs):
+              for attempt in range(3):
+                  response = session.request(
+                      method,
+                      root + route,
+                      params=params,
+                      headers={"Authorization": "Bearer " + oidc_token()},
+                      timeout=180,
+                      **kwargs,
+                  )
+                  if response.status_code not in (429, 502, 503, 504):
+                      response.raise_for_status()
+                      return response.json()
+                  if attempt == 2:
+                      response.raise_for_status()
+                  time.sleep(2 ** attempt)
+
+          def status(key):
+              return worker("GET", "/status", {"key": key})
+
+          def upload_exact(path, key):
+              size = path.stat().st_size
+              before = status(key)
+              if before.get("deleted"):
+                  raise RuntimeError("Owner deletion protected: " + key)
+              if before.get("exists"):
+                  if before.get("size") == size:
+                      print("ALREADY PRESENT:", key, size, flush=True)
+                      return
+                  raise RuntimeError("Existing object has different bytes/size: " + key)
+              if size <= 32 * 1024 * 1024:
+                  with path.open("rb") as stream:
+                      worker("POST", "/single", {"key": key}, data=stream)
+              else:
+                  init = worker("POST", "/init", {"key": key})
+                  upload_id = init["uploadId"]
+                  parts = []
+                  try:
+                      with path.open("rb") as stream:
+                          number = 0
+                          while chunk := stream.read(8 * 1024 * 1024):
+                              number += 1
+                              part = worker("PUT", "/part", {"key": key, "uploadId": upload_id, "number": number}, data=chunk)
+                              parts.append({"partNumber": part["partNumber"], "etag": part["etag"]})
+                      worker("POST", "/complete", {"key": key, "uploadId": upload_id}, json=parts)
+                  except Exception:
+                      try:
+                          worker("POST", "/abort", {"key": key, "uploadId": upload_id})
+                      except Exception:
+                          pass
+                      raise
+              after = status(key)
+              if not after.get("exists") or after.get("size") != size:
+                  raise RuntimeError("R2 byte verification failed: " + key)
+              print("IMPORTED:", key, size, flush=True)
+
+          for artifact_id, policy in artifacts.items():
+              metadata_url = f"https://api.github.com/repos/{repo}/actions/artifacts/{artifact_id}"
+              metadata = session.get(metadata_url, headers=github_headers, timeout=60)
+              metadata.raise_for_status()
+              info = metadata.json()
+              if info.get("expired"):
+                  raise RuntimeError(f"Artifact expired: {artifact_id}")
+              if info.get("created_at") != policy["created_at"] or info.get("digest") != policy["digest"]:
+                  raise RuntimeError(f"Artifact identity mismatch: {artifact_id}")
+              archive_url = metadata_url + "/zip"
+              archive = session.get(archive_url, headers=github_headers, timeout=240)
+              archive.raise_for_status()
+              archive_bytes = archive.content
+              if "sha256:" + hashlib.sha256(archive_bytes).hexdigest() != policy["digest"]:
+                  raise RuntimeError(f"Artifact digest mismatch: {artifact_id}")
+              with zipfile.ZipFile(io.BytesIO(archive_bytes)) as bundle, tempfile.TemporaryDirectory() as temp:
+                  names = {pathlib.PurePosixPath(name).name: name for name in bundle.namelist() if not name.endswith("/")}
+                  for filename, expected_hash in policy["files"].items():
+                      if filename not in names:
+                          raise RuntimeError(f"Missing allowlisted file: {filename}")
+                      target = pathlib.Path(temp) / filename
+                      target.write_bytes(bundle.read(names[filename]))
+                      actual_hash = hashlib.sha256(target.read_bytes()).hexdigest()
+                      if actual_hash != expected_hash:
+                          raise RuntimeError(f"Master hash mismatch: {filename}")
+                      upload_exact(target, filename)
+                      seeded = worker("POST", "/editorial-seed", json={"items": [filename]})
+                      if not seeded.get("ok"):
+                          raise RuntimeError(f"Catalog registration failed: {filename}")
+                      verified = status(filename)
+                      if not verified.get("exists") or verified.get("size") != target.stat().st_size:
+                          raise RuntimeError(f"Final R2 verification failed: {filename}")
+                      # Verify the actual owner-facing site returns exact master bytes, not just R2 metadata.
+                      url="https://video-library-studio.600led.workers.dev/download/"+urllib.parse.quote(filename,safe="")
+                      with session.get(url,stream=True,timeout=120,allow_redirects=False) as response:
+                          if response.status_code!=200 or "attachment" not in response.headers.get("Content-Disposition","").lower():
+                              raise RuntimeError(f"Owner download HTTP or disposition failed for {filename}: {response.status_code}")
+                          site_hash=hashlib.sha256()
+                          downloaded=0
+                          for chunk in response.iter_content(1048576):
+                              if not chunk: continue
+                              downloaded+=len(chunk)
+                              if downloaded>target.stat().st_size: raise RuntimeError("Site byte overflow "+filename)
+                              site_hash.update(chunk)
+                          if downloaded!=target.stat().st_size or site_hash.hexdigest()!=expected_hash:
+                              raise RuntimeError(f"SITE FULL SHA256 OR SIZE MISMATCH: {filename}")
+                      range_url="https://video-library-studio.600led.workers.dev/media/"+urllib.parse.quote(filename,safe="")
+                      rr=session.get(range_url,headers={"Range":"bytes=0-511"},timeout=25,allow_redirects=False)
+                      if rr.status_code!=206 or len(rr.content)!=512 or rr.headers.get("Content-Range")!=f"bytes 0-511/{target.stat().st_size}":
+                          raise RuntimeError(f"Owner streaming HTTP range failed {filename}")
+                      print("SITE FULL SHA256 AND SEEK RANGE PASS:",filename,downloaded,flush=True)
+          print("TARGETED BACKFILL COMPLETE: 3 verified owner masters all HTTP SHA", flush=True)
+          PY
