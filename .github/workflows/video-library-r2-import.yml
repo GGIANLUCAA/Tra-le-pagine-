@@ -66,6 +66,21 @@ jobs:
           include_legacy=os.getenv('INCLUDE_LEGACY','false').lower()=='true'
           fresh_since='2026-11-02T09:00:00Z'
           assert '2026-11-02T09:01:00Z'>=fresh_since and not ('2026-11-01T23:59:59Z'>=fresh_since)
+          # Private archive receives finished production MP4s, not source footage or test cuts.
+          # This protects the owner without reintroducing an artistic-review gate.
+          def archive_candidate(member):
+              base=pathlib.PurePosixPath(member).name.upper()
+              if base.startswith(('SOURCE_SHOT_', 'SOURCE_REVIEW_ONLY_', 'SOURCE_24S_', 'SCENE02_BW_FREEZE_')):
+                  return False
+              if 'NOT_FINAL' in base or 'NON_FINALE' in base:
+                  return False
+              return True
+          assert archive_candidate('BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_STANDARD_V138_REVIEW.mp4')
+          assert archive_candidate('ArtVision_Malczewski_Cinema_Museum_V112.mp4')
+          assert not archive_candidate('SOURCE_SHOT_01__158381.mp4')
+          assert not archive_candidate('SOURCE_REVIEW_ONLY_NOT_FINAL__478918.mp4')
+          assert not archive_candidate('SOURCE_24S_ROUGHCUT_NOT_FINAL__4374707.mp4')
+          assert not archive_candidate('LA_STORIA_RIVIVE_PARIGI_1918_V162_NEURAL_REVIEW_NON_FINALE.mp4')
           cache_token='',0
           def token():
               global cache_token
@@ -231,7 +246,7 @@ jobs:
                               for chunk in r.iter_content(1048576):f.write(chunk)
                       with zipfile.ZipFile(zpath) as z:
                           files=[n for n in z.namelist() if n.lower().endswith(('.mp4','.m4v','.mov','.jpg','.jpeg','.png','.webp')) and not n.endswith('/')]
-                          videos=[n for n in files if n.lower().endswith(('.mp4','.m4v','.mov'))]
+                          videos=[n for n in files if n.lower().endswith(('.mp4','.m4v','.mov')) and archive_candidate(n)]
                           if not videos:
                               cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']});continue
                           # 2026-11-02 owner request: automatically archive NEW finished video files
@@ -337,8 +352,7 @@ jobs:
                                   print('V55 EDITORIAL ATTACHMENTS:',video_key,len(unique),flush=True)
                           covers=[n for n in files if pathlib.PurePosixPath(n).name.lower().startswith(('copertina','cover')) and n.lower().endswith(('.jpg','.jpeg'))]
                           if covers:
-                              for n in files:
-                                  if not n.lower().endswith(('.mp4','.m4v','.mov')):continue
+                              for n in videos:
                                   base=pathlib.PurePosixPath(n).stem
                                   coverkey=re.sub(r'[^A-Za-z0-9_(). -]','_',base)[:175]+'.jpg'
                                   fp=wd/coverkey
