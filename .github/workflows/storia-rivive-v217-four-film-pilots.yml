@@ -201,6 +201,23 @@ jobs:
           if report.get("status") != "FIVE_SOURCE_SHOTS_REVIEW_PENDING":
               print("V224_SOURCE_NOT_QUALIFIED_NO_I2I_HANDOFF", report.get("reason"))
               raise SystemExit(0)
+          # Fail closed on decoded source-motion defects before preparing costly I2I/Vidu work.
+          # These reports are only preliminary source evidence, never artistic approval.
+          endpoint_path = target / "V244_REAL_DECODED_ENDPOINT_QA.json"
+          motion_path = target / "V247_REAL_MOTION_INTERTITLE_QA.json"
+          if not endpoint_path.is_file() or not motion_path.is_file():
+              print("V288_SOURCE_DECODED_QA_MISSING_NO_I2I_HANDOFF", episode)
+              raise SystemExit(0)
+          endpoint = json.loads(endpoint_path.read_text(encoding="utf-8"))
+          motion = json.loads(motion_path.read_text(encoding="utf-8"))
+          if (endpoint.get("status") != "REVIEW_ENDPOINTS_PASS"
+                  or len(endpoint.get("checks", [])) != 5
+                  or not all(row.get("pass_candidate") is True for row in endpoint["checks"])
+                  or motion.get("status") != "NO_INTERTITLE_HEURISTIC_FLAGS_NOT_ARTISTIC_APPROVAL"
+                  or motion.get("flagged_shots") != []
+                  or motion.get("sampled_decoded_frames") != 15):
+              print("V288_SOURCE_DECODED_QA_REJECTED_NO_I2I_HANDOFF", episode)
+              raise SystemExit(0)
           alignment = json.loads((target / "SOURCE_ENDPOINT_ALIGNMENT_V223.json").read_text())
           selection = json.loads((target / "SHOT_AWARE_SELECTION_V210.json").read_text())
           checks = alignment.get("checks", [])
