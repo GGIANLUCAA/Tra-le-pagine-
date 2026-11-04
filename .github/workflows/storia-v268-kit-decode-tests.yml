@@ -1,0 +1,22 @@
+name: "Storia V268 · four-kit real decoder regression"
+on:
+  pull_request:
+    paths:
+      - "tools/storia_v267_four_kit_byte_inventory.py"
+      - "tests/test_storia_v268_four_kit_decode.py"
+      - ".github/workflows/storia-v268-kit-decode-tests.yml"
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile and test decoder guards without external API
+        run: |
+          python -m py_compile tools/storia_v267_four_kit_byte_inventory.py tests/test_storia_v268_four_kit_decode.py
+          python -m unittest discover -s tests -p "test_storia_v268_four_kit_decode.py" -v
