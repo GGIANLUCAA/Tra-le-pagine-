@@ -1,0 +1,131 @@
+name: "La Storia Rivive V285 · Delhi corrected last color photo MP4+ZIP, no Vidu (NOT FINAL)"
+on:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
+    paths:
+      - ".github/workflows/storia-rivive-v285-delhi-last-photo-stage.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v285-delhi-real-motion-assembly
+  cancel-in-progress: false
+jobs:
+  make_real_moving_review:
+    if: github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: One-shot gate, do not run for branch edits or reruns
+        id: gate
+        shell: bash
+        env:
+          HEAD: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$(git log -1 --format=%s)" == 'storia V285: render Delhi five genuine color-photo scenes as review [V285-ONCE]' ]]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          python-version: '3.11'
+      - name: Local free FFmpeg/Pillow; no cloud image generation / no Vidu POST
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q 'Pillow>=10,<13'
+      - name: Four local tests before reading archives
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_rivive_v281_delhi_real_movement_stage.py src/storia_rivive_v285_delhi_fifth_color_review.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v281_delhi_real_movement_stage.py' -v
+          python -m unittest discover -s tests -p 'test_storia_rivive_v285_delhi_fifth_color_review.py' -v
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v272-delhi-real-archival-review-NOT-FINAL
+          run-id: 41789453410
+          github-token: ${{ github.token }}
+          path: output/v285/source
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v278-delhi-four-V98-DDColor-Finegrain-real-photo-CANDIDATES-NOT-FINAL
+          run-id: 41806029514
+          github-token: ${{ github.token }}
+          path: output/v285/photos
+      - uses: actions/download-artifact@v4
+        if: steps.gate.outputs.allowed == 'true'
+        with:
+          name: storia-v284-delhi-fifth-shot-real-photo-AND-BW-source-NO-VIDU-NO-FINAL
+          run-id: 41833893883
+          github-token: ${{ github.token }}
+          path: output/v285/fifth
+      - name: Fetch the real 1910 historical motion from Wikimedia and fail on SHA mismatch
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p output/v285/archival
+          curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 20 --max-time 250 \
+            --user-agent "LaStoriaRiviveResearch/1.0 (GitHub Actions; historical archival restoration)" \
+            "https://upload.wikimedia.org/wikipedia/commons/3/30/Ruins_of_Delhi_%281910%29.webm" \
+            --output output/v285/archival/ORIGINAL_ARCHIVE.webm
+          echo '0a0de7b032cdb19e34d4dac5a6efca02dfa4b00260411aa82290c54b2899f278  output/v285/archival/ORIGINAL_ARCHIVE.webm' | sha256sum -c -
+      - name: Render 5 real original film moving scenes plus 5 genuine I2I freeze photos, fifth is NOT Vidu
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v285_delhi_fifth_color_review.py \
+            --film output/v285/archival/ORIGINAL_ARCHIVE.webm \
+            --frames output/v285/source/source/delhi_ruins_1910_v217/original_frames \
+            --photos output/v285/photos \
+            --qa output/v285/photos/V278_DELHI_FOUR_REAL_I2I_QA_NOT_FINAL.json \
+            --fifth-photos output/v285/fifth \
+            --fifth-report output/v285/fifth/DELHI_V283_SHOT05_SOURCE_LOCKED_QA_NOT_FINAL.json \
+            --out output/v285/review
+      - name: Decoding, SHA and Android preview ZIP integrity, NO Vidu approval
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,subprocess,zipfile
+          d=Path("output/v285/review")
+          report=json.loads((d/"V285_MEDIA_QA_NOT_FINAL.json").read_text())
+          matches=list(d.glob("DELHI_1910_V285_FIVE_SOURCE_LOCKED_PHOTOS_NO_VIDU_PREVIEW_NOT_FINAL.mp4"))
+          assert len(matches)==1
+          movie=matches[0]
+          assert report["video_sha256"]==hashlib.sha256(movie.read_bytes()).hexdigest()
+          assert 14<=report["duration_s"]<=35
+          assert report["vidu_animated_clips"]==0 and report["approved_finished_episodes"]==0
+          assert report["artistically_approved"] is False and report["italian_rights_cleared"] is False
+          assert report["publication_allowed"] is False
+          assert report["real_photo_i2i_images"]==5 and report["original_real_bw_moving_shots"]==5
+          subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(movie),"-f","null","-"],check=True)
+          z=list(d.glob("*_ANDROID_REVIEW_ONLY.zip"))
+          assert len(z)==1
+          with zipfile.ZipFile(z[0]) as archive:
+              assert archive.testzip() is None
+              assert movie.name in archive.namelist()
+          print("V285_TRUE_LAST_SCENE_PHOTO_NOW_RESTORED_BUT_NO_VIDU; FINAL_MASTER_0_OF_4")
+          PY
+      - name: Keep the actual moving MP4, cover, social drafts, QA, ZIP (not publishable)
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v285-delhi-five-true-I2I-and-real-archive-motion-NO-VIDU-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v285/review/DELHI_1910_V285_*.mp4
+            output/v285/review/DELHI_1910_V285_*COVER.jpg
+            output/v285/review/DELHI_1910_V285_*ANDROID_REVIEW_ONLY.zip
+            output/v285/review/FOUR_SOCIAL_CAPTIONS_DRAFT_ONLY.txt
+            output/v285/review/V285_MEDIA_QA_NOT_FINAL.json
