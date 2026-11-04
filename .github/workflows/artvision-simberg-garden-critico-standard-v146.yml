@@ -1,0 +1,122 @@
+name: ArtVision V146 Garden of Death one genuine Critico with Free Gacrux
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/simberg-garden-critico-standard-v146.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-owner-simberg-garden-critico-v146-once
+  cancel-in-progress: false
+jobs:
+  one_missing_critico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guard one approved work and forbid duplicates and paid calls
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open("requests/artvision/simberg-garden-critico-standard-v146.json"))
+          q=json.load(open("queue/artvision_owner_selected_ten_20261102.json"))
+          assert r["owner_automation_id"]=="6adca191603c8191a90d5190901cd034"
+          assert r["work_id"]=="simberg_garden_death_1896_fng_a_ii_968_16"
+          assert r["variant"]=="critico_standard"
+          assert r["public_title"]=="The Garden of Death"
+          assert r["run_once_only"] and r["one_tts_call_at_most"]
+          assert not r["allow_paid_calls"] and not r["social_publish"] and not r["gold_v25"]
+          w=[x for x in q["works"] if x["id"]==r["work_id"]]
+          assert len(w)==1 and w[0]["slots_delivered_this_selection"]==1
+          assert "critico_standard_v146" not in w[0]
+          assert w[0]["v134_cinema_candidate"]["full_ffmpeg_decode"].startswith("PASS")
+          assert w[0]["museum_approved"] is False
+          PY
+      - name: Recover licensed Simberg V134 art from immutable GitHub artifact, no Commons retries
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/simberg_v134 /tmp/simberg_garden_critico_v146
+          gh run download 41535956792 --repo "$GITHUB_REPOSITORY" --name SIMBERG_GARDEN_OF_DEATH_V134_CINEMA_REVIEW_MP4 --dir /tmp/simberg_v134
+          test -s /tmp/simberg_v134/ARTVISION_SIMBERG_GARDEN_V134_REVIEW_PACKAGE.zip
+          unzip -p /tmp/simberg_v134/ARTVISION_SIMBERG_GARDEN_V134_REVIEW_PACKAGE.zip ORIGINAL_ARTWORK.jpg > /tmp/simberg_garden_critico_v146/ORIGINAL_ARTWORK.jpg
+          python - <<'PY'
+          import hashlib,zipfile
+          from pathlib import Path
+          p=Path('/tmp/simberg_garden_critico_v146/ORIGINAL_ARTWORK.jpg')
+          assert hashlib.sha256(p.read_bytes()).hexdigest()=='514bf455d7cdc3543e3ee8ff49f206370ef34121c72e49e04353e3e902f530a5'
+          with zipfile.ZipFile('/tmp/simberg_v134/ARTVISION_SIMBERG_GARDEN_V134_REVIEW_PACKAGE.zip') as z:
+            assert z.testzip() is None
+          print('Simberg original A II 968:16 SHA & ZIP CRC PASS')
+          PY
+      - name: Gate ONLY already owner-attested no-billing second Free Google key
+        env:
+          SECOND_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+        run: |
+          test -n "$SECOND_KEY" || { echo "BLOCKED_SECOND_FREE_ACCOUNT_NOT_PRESENT: NO TTS"; exit 2; }
+      - name: Install offline runtime with KNOWN compatible PyAV17 ASR
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "google-genai>=2.25.0" numpy pillow soundfile scipy "faster-whisper==1.2.1" "av==17.1.0" "huggingface-hub==0.34.4" "fsspec==2025.7.0" opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          e=Path(get_ffmpeg_exe())
+          assert e.is_file()
+          Path('/tmp/artvision-bin/ffmpeg').symlink_to(e)
+          PY
+          echo /tmp/artvision-bin >> "$GITHUB_PATH"
+          /tmp/artvision-bin/ffmpeg -version | head -1
+      - name: Generate ONE genuine natural Gacrux WAV and ASR-small timing (NO retry)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          ARTVISION_GEMINI_PROJECT_BILLING_TIER: Free
+          ARTVISION_ASR_MODEL: small
+          HF_HUB_DISABLE_XET: "1"
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: python src/artvision_simberg_garden_critico_v146.py --phase voice
+      - name: Render EXACTLY one real Critico Standard with original soundtrack and QA
+        run: python src/artvision_simberg_garden_critico_v146.py --phase render
+      - name: Independently verify actual physical file and CRC, do not auto Gold
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,zipfile
+          out=Path('/tmp/simberg_garden_critico_v146')
+          q=json.loads((out/'QA_V146.json').read_text())
+          assert q['work']=="The Garden of Death"
+          assert q['variant']=='critico_standard' and q['museum_variant_rendered'] is False
+          assert not q['Gold_V25'] and not q['social_published'] and not q['museum_approved']
+          m=q['file']; p=out/m['name']
+          assert p.is_file() and p.stat().st_size==m['bytes'] and m['frames']>1000
+          assert hashlib.sha256(p.read_bytes()).hexdigest()==m['sha256']
+          assert m['full_ffmpeg_decode']=='PASS'
+          subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(p),"-f","null","-"],check=True)
+          with zipfile.ZipFile(out/"SIMBERG_GARDEN_CRITICO_STANDARD_V146_REVIEW_PACKAGE.zip") as z:
+            assert z.testzip() is None and sum(n.endswith('.mp4') for n in z.namelist())==1
+          print('ONE_GENUINE_MP4_SHA_FFMPEG_ZIP_CRC_PASS_ARTISTIC_REVIEW_PENDING')
+          PY
+      - name: Preserve WAV even on failed render — never regenerate TTS for recovery
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V146_SIMBERG_REAL_CRITICO_OR_PRESERVED_WAV
+          path: |
+            /tmp/simberg_garden_critico_v146/VOCE.wav
+            /tmp/simberg_garden_critico_v146/VOICE_CACHE_V13.json
+            /tmp/simberg_garden_critico_v146/ALLINEAMENTO_VOCE.json
+            /tmp/simberg_garden_critico_v146/VOICE_RESULT_V146.json
+            /tmp/simberg_garden_critico_v146/COPIONE_ESATTO_V146.txt
+            /tmp/simberg_garden_critico_v146/SIMBERG_THE_GARDEN_OF_DEATH_CRITICO_STANDARD_V146_REVIEW.mp4
+            /tmp/simberg_garden_critico_v146/SIMBERG_GARDEN_CRITICO_STANDARD_V146_REVIEW_PACKAGE.zip
+            /tmp/simberg_garden_critico_v146/QA_V146.json
+            /tmp/simberg_garden_critico_v146/COVER.jpg
+            /tmp/simberg_garden_critico_v146/CONTACT_SHEET_V146.jpg
+            /tmp/simberg_garden_critico_v146/RIGHTS_AND_CREDITS.txt
+            /tmp/simberg_garden_critico_v146/SOCIAL_DRAFT_UNPUBLISHED.txt
+          retention-days: 30
+          if-no-files-found: warn
