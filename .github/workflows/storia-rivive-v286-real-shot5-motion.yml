@@ -1,0 +1,70 @@
+name: "La Storia Rivive V286 · investigate actual Delhi shot5 historical movement"
+on:
+  push:
+    branches: [storia-v196-v101-cache-fail-closed-20261101]
+    paths:
+      - ".github/workflows/storia-rivive-v286-real-shot5-motion.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v286-real-delhi-motion-context
+  cancel-in-progress: false
+jobs:
+  real_film_motion_qa:
+    if: github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restrict to a single authorized free research run
+        id: gate
+        run: |
+          if [[ "$(git log -1 --format=%s)" == 'storia V286: inspect true archival motion before fixing Delhi finale [V286-ONCE]' ]]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check available local decoder
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          command -v ffmpeg
+          command -v ffprobe
+      - name: Download exact 1910 source, verify fixed historical SHA
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p output/v286
+          curl --fail --location --retry 2 --retry-delay 3 --connect-timeout 20 --max-time 250 \
+            --user-agent "LaStoriaRiviveResearch/1.0" \
+            "https://upload.wikimedia.org/wikipedia/commons/3/30/Ruins_of_Delhi_%281910%29.webm" \
+            --output output/v286/ORIGINAL_1910.webm
+          echo '0a0de7b032cdb19e34d4dac5a6efca02dfa4b00260411aa82290c54b2899f278  output/v286/ORIGINAL_1910.webm' | sha256sum -c -
+      - name: Extract TRUE final moving window before the reference at 218.176s
+        if: steps.gate.outputs.allowed == 'true'
+        run: |
+          set -euo pipefail
+          ffmpeg -y -hide_banner -loglevel error -ss 204 -i output/v286/ORIGINAL_1910.webm \
+            -t 23 -vf "crop=608:1080:750:0,scale=450:800:flags=lanczos,fps=30,format=yuv420p" \
+            -c:v libx264 -preset veryfast -crf 22 -an -movflags +faststart \
+            output/v286/DELHI_1910_REAL_ORIGINAL_SHOT5_CONTEXT_204_TO_227_BW_NOT_FINAL.mp4
+          ffmpeg -y -hide_banner -loglevel error -ss 214 -i output/v286/ORIGINAL_1910.webm \
+            -t 10 -vf "scale=960:540:flags=lanczos,fps=24,format=yuv420p" \
+            -c:v libx264 -preset veryfast -crf 23 -an -movflags +faststart \
+            output/v286/DELHI_1910_FULL_WIDTH_SHOT5_214_TO_224_ARCHIVE_NOT_FINAL.mp4
+          ffmpeg -v error -xerror -i output/v286/DELHI_1910_REAL_ORIGINAL_SHOT5_CONTEXT_204_TO_227_BW_NOT_FINAL.mp4 -f null -
+          ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json output/v286/DELHI_1910_REAL_ORIGINAL_SHOT5_CONTEXT_204_TO_227_BW_NOT_FINAL.mp4 \
+            > output/v286/VERIFIED_SOURCE_MOTION_PROBE.json
+          sha256sum output/v286/DELHI_1910_REAL_ORIGINAL_SHOT5_CONTEXT_204_TO_227_BW_NOT_FINAL.mp4 > output/v286/REAL_MOTION_SHA256.txt
+      - name: Keep original motion clips for scene QA only; no master/paid API
+        if: always() && steps.gate.outputs.allowed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v286-delhi-real-final-original-movement-review-NOT-FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/v286/*BW_NOT_FINAL.mp4
+            output/v286/*ARCHIVE_NOT_FINAL.mp4
+            output/v286/*MOTION*json
+            output/v286/REAL_MOTION_SHA256.txt
