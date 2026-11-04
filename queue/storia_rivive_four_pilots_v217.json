@@ -107,7 +107,16 @@
           "source_frame_sha256": "8771b50f5a26b3e27eadf00ad085f998bfe2d552daa7f8492027a4c40c6c2a71",
           "observations": "Actual grayscale source contains horned bovine animal with rider, NOT an elephant; original center crop 656:1264 truncates animal's head/body right. I2I from V276 cannot count as approved photograph; if inference completes, review-only.",
           "human_artistic_approved": false,
-          "finished_video": false
+          "finished_video": false,
+          "completed_workflow": {
+            "run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41803182506",
+            "conclusion": "success",
+            "artifact_id": 13308614183,
+            "artifact_name": "storia-v276-delhi-shot02-real-I2I-ARTISTIC-QA-NOT-FINAL",
+            "artifact_zip_bytes": 1185881,
+            "meaning": "ONE real generated photo candidate exists but was prompted with wrong animal species and incomplete crop; REJECT for final use; keep artifact for QA only",
+            "artistic_approval": false
+          }
         },
         "v277_corrected_source_locked_attempt": {
           "run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41804372936",
@@ -127,7 +136,8 @@
           "artistically_approved": false,
           "italian_rights_verified": false,
           "real_vidu_clip": false,
-          "new_finished_mp4_zip": 0
+          "new_finished_mp4_zip": 0,
+          "last_verified_stage": "4 offline tests PASS; original film SHA/crop PASS; CPU I2I inference running"
         }
       }
     },
