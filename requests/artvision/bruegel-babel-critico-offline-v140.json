@@ -1,0 +1,35 @@
+{
+  "directive_date": "2026-11-04",
+  "priority": "RECOVER_EXISTING_GACRUX_WAV_NO_TTS",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "work_id": "bruegel_tower_babel_1563_khm_gg1026",
+  "public_title": "The Tower of Babel",
+  "variants": [
+    "critico_standard",
+    "critico_museum"
+  ],
+  "one_WAV_for_both": true,
+  "run_once_only": true,
+  "allow_paid_calls": false,
+  "social_publish": false,
+  "gold_v25": false,
+  "reused_source_runs": [
+    41549505091,
+    41663098584
+  ],
+  "original_voice_run": 41796182097,
+  "original_voice_artifact_id": 13305781355,
+  "original_voice_duration_s": 103.68,
+  "previous_offline_v139_run": 41796561929,
+  "verified_root_cause": "faster-whisper 1.2.1 calls av.open(...metadata_errors='ignore') but PyAV 19 removed parameter; upstream SYSTRAN/faster-whisper issue #1589; fixed by pin av==17.1.0, which previously worked for Böcklin offline recovery.",
+  "offline_fix": "Install PyAV 17.1.0 with faster-whisper 1.2.1, reuse identical existing recorded WAV and V136/V137 image bytes, run Whisper ASR, only then render sequential two MP4. NO new voice/API calls.",
+  "workflow": ".github/workflows/artvision-bruegel-babel-critico-offline-v140.yml",
+  "renderer": "src/artvision_babel_critico_v138.py --phase align then render",
+  "no_api_tts_calls": true,
+  "disable_google_secret": true,
+  "readback_required": true,
+  "museum_approved": false,
+  "human_artistic_review": "PENDING",
+  "public_title_has_technical_names": false,
+  "status": "one_shot_offline_recovery_authorized_not_yet_rendered"
+}
