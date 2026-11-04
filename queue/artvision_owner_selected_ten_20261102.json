@@ -38,14 +38,14 @@
         "reuse_only_after_quality_review": true
       },
       "editorial_note": "User first choice; existing Cinema V6 is not a new 4x1 slot; frame not yet documented",
-      "preflight_status": "one_cinema_standard_review_mp4_rendered;_three_slots_pending_Museum_and_voice_gates",
+      "preflight_status": "two_distinct_review_MP4_cinema_standard_v135_plus_critico_standard_v144_real_SHA_FFmpeg_CRC_readback_pass_two_museum_slots_pending_frame_QA",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 1,
+      "slots_delivered_this_selection": 2,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
@@ -136,6 +136,42 @@
         "paid_api_calls": 0,
         "additional_slots": 0,
         "report": "docs/productions/2026-11-02-artvision-v135-two-verified-cinema-reviews.md"
+      },
+      "critico_standard_v144": {
+        "status": "physical_MP4_artifact_download_independently_verified_review_not_gold",
+        "variant": "critico_standard",
+        "run_id": 41803668367,
+        "artifact_id": 13309290632,
+        "filename": "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4",
+        "bytes": 15150574,
+        "mp4_sha256": "83aad1da82a091de42aa19ca6bd532a0e2a2b21c27f4c4c34eac5e53c8799f39",
+        "frames": 2316,
+        "duration_s": 115.8,
+        "codec": "H264/AAC 720x1280 20fps",
+        "full_ffmpeg_decode": "PASS independent artifact download 2026-11-04",
+        "artifact_readback": "SHA256 MATCH independent",
+        "zip_filename": "REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW_PACKAGE.zip",
+        "zip_bytes": 15708004,
+        "zip_sha256": "64268eb4281f2dde90b147ecd5f70380c216f2f8aaf54b5730d42f7eeacaf00a",
+        "zip_crc": "PASS independent readback",
+        "source_art_sha256": "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5",
+        "source_artifact_id": 12775741359,
+        "voice_type": "natural Gacrux from owner-attested second Free/no-billing account",
+        "shared_voice_wav_sha256": "e50f97bf6bf272bdda3a1b8577acf492f974d5c88d2b336d35cf976c5a814ade",
+        "voice_reuse_for_museum_required": true,
+        "asr_matched_fraction": 0.9737991266375546,
+        "same_voice_for_future_critic_museum": true,
+        "new_tts_calls_after_initial": 0,
+        "remaining_variants": [
+          "critico_museum",
+          "cinema_museum"
+        ],
+        "frame_photo_preflight_v143": "BLOCKED HTTP429, no genuine photo bytes",
+        "museum_approved": false,
+        "human_artistic_review": "PENDING",
+        "site_playback_verified": false,
+        "gold_v25": false,
+        "social_published": false
       }
     },
     {
