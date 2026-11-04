@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from PIL import Image
+from PIL import Image, ImageOps
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"src"))
@@ -26,7 +26,12 @@ class V265Tests(unittest.TestCase):
 
     def run_trial(self,photo_color,offline=False):
         def fake_cpu_model(crop,target):
-            Image.new("RGB",v265.engine.MODEL_DIMS,photo_color).save(target)
+            # High-detail synthetic photograph-sized PNG, not a compressed
+            # flat RGB tile rejected by V257's >10KB byte integrity threshold.
+            noise = Image.effect_noise(v265.engine.MODEL_DIMS, 35)
+            dark = tuple(max(0, c-35) for c in photo_color)
+            light = tuple(min(255, c+35) for c in photo_color)
+            ImageOps.colorize(noise.convert("L"), black=dark, white=light).save(target)
         with patch.object(v265.first,"verify_manifest",return_value={"source_time_s":24.092}),(
              patch.object(v265.engine,"crop_source",side_effect=self.local_crop)):
             return v265.run(self.manifest,self.source,self.root/"out",
@@ -64,7 +69,9 @@ class V265Tests(unittest.TestCase):
         self.assertFalse((self.root/"out"/v265.NAME).exists())
 
     def test_generated_file_wrong_dimensions_rejected(self):
-        def fake_bad(crop,target):Image.new("RGB",(64,64),(160,50,40)).save(target)
+        def fake_bad(crop,target):
+            noise = Image.effect_noise((128,128), 35)
+            ImageOps.colorize(noise.convert("L"), black=(90,30,30), white=(210,90,70)).save(target)
         with patch.object(v265.first,"verify_manifest",return_value={"source_time_s":24.092}),(
              patch.object(v265.engine,"crop_source",side_effect=self.local_crop)):
             with self.assertRaisesRegex(ValueError,"WRONG_DIMENSIONS"):
