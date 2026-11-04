@@ -14,7 +14,7 @@ sys.path.insert(0,str(ROOT/"src"))
 import gemini_voice
 
 OUT=Path("/tmp/nightwatch_critico_v149")
-RECIPE=ROOT/"modules/artvision_critico/production_series/night_watch_v149.json"
+RECIPE=ROOT/"modules/artvision_critico/production_series/night_watch_v148.json"
 ART_SHA="RUNTIME_VERIFIED_RIJKSMUSEUM_IIIF_PJEZO"
 W,H,FPS=720,1280,20
 DELAY,TAIL=3.5,6.0
