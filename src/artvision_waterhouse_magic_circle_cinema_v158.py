@@ -119,7 +119,7 @@ def main():
  orig=Image.open(art).convert("RGB");cv= cv2.imread(str(art))
  assert cv is not None
  plate=title_plate(orig);whole=full_plate(orig)
- mp4=out/"WATERHOUSE_THE_LADY_OF_SHALOTT_CINEMA_V155_REVIEW.mp4"
+ mp4=out/"WATERHOUSE_THE_MAGIC_CIRCLE_CINEMA_V158_REVIEW.mp4"
  sound=out/"ORIGINAL_AMBIENT_SCORE_V158.wav";original_score(sound)
  cmd=["ffmpeg","-hide_banner","-loglevel","error","-y","-f","rawvideo","-vcodec","rawvideo","-s",f"{W}x{H}","-pix_fmt","bgr24","-r",str(FPS),"-i","pipe:0",
       "-i",str(sound),"-map","0:v","-map","1:a","-c:v","libx264","-preset","veryfast","-crf","20","-pix_fmt","yuv420p","-c:a","aac","-b:a","160k","-movflags","+faststart","-shortest",str(mp4)]
@@ -164,7 +164,7 @@ def main():
   "Tate Britain N01572, source Commons PD-Art/PDM faithful photograph. Music original. Rights review pending. NOT PUBLISHED.\n",encoding="utf8")
  qa={"work":"The Magic Circle","artist":"John William Waterhouse","year":1886,"museum":"Tate Britain","accession":"N01572","work_dimensions_cm":[182.9,127],"source":source,"audio":"original synthesized ambient","source_audio_sha256":digest(sound),"mp4":{"filename":mp4.name,"bytes":mp4.stat().st_size,"sha256":digest(mp4),"duration_seconds":48,"frames":frames,"full_ffmpeg_decode":"PASS"},"ffprobe":ffprobe,"beats":beats,"cinema_standard_review":True,"cinema_museum":False,"critico_standard":False,"critico_museum":False,"museum_approved":False,"gold_v25":False,"social_published":False,"site_playback_verified":False,"human_artistic_review":"PENDING","zero_paid_api_calls":True,"public_title_in_frame":"THE MAGIC CIRCLE"}
  (out/"QA_V158.json").write_text(json.dumps(qa,indent=2,ensure_ascii=False))
- archive=out/"WATERHOUSE_LADY_SHALOTT_CINEMA_V155_REVIEW_PACKAGE.zip"
+ archive=out/"WATERHOUSE_MAGIC_CIRCLE_CINEMA_V158_REVIEW_PACKAGE.zip"
  with zipfile.ZipFile(archive,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=4) as z:
   for fn in [mp4,"COVER.jpg","CONTACT_SHEET_V158.jpg","QA_V158.json","RIGHTS_AND_CREDITS.txt","SOCIAL_DRAFT_UNPUBLISHED.txt","ORIGINAL_ARTWORK.jpg","ORIGINAL_AMBIENT_SCORE_V158.wav"]:
    f=fn if isinstance(fn,Path) else out/fn
