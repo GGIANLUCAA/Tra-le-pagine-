@@ -26,5 +26,15 @@
   "require_artifact_readback": true,
   "require_site_download_sha256": true,
   "archival_approval": "QA technical only, human artistic review PENDING",
-  "status": "one_shot_replacement_requested_not_produced"
+  "status": "one_retry_after_pre_render_syntax_fix_not_yet_rendered",
+  "safe_pre_render_retry": {
+    "old_workflow_run_id": 41869048622,
+    "failed_step": "Compile exact-sourced renderer before starting",
+    "error": "SyntaxError BEATS list closing bracket missing",
+    "new_renderer_commit": "1081584a5a72a7ab257b4fc2eae1beffbbdcdb53",
+    "voice_or_API_calls": 0,
+    "render_started": false,
+    "artifacts_created": 0,
+    "safe_to_retry_same_slot": true
+  }
 }
