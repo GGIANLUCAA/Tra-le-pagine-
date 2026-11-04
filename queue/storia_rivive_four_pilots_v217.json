@@ -228,6 +228,32 @@
           "italian_rights_cleared": false,
           "publish_permission": false,
           "approved_new_episodes_delivered": 0
+        },
+        "v288_user_rejection_and_safer_next_candidate": {
+          "visual_review_date": "2026-11-04",
+          "user_feedback": "Overall realism acceptable but man/head of nearby animal visibly merged, and other minor anatomical errors must not be publishable.",
+          "rejected_fifth_original_frame": "frame_12.png",
+          "rejected_original_sha256": "28a71dff0d65a4529a946fbe1d531626c70dca389d344e4d17f7646022fc8ca2",
+          "rejected_photo_sha256": "556c432960bea3fd58663ac85ad77e792463fbcca1a92f3bb1b0616195a10264",
+          "failure": "MAJOR_VISIBLE_HUMAN_ANIMAL_HEAD_FUSION",
+          "decision": "REJECT_PHOTOGRAPH_AND_PAID_VIDU_SOURCE",
+          "allow_original_bw_moving_sequence": true,
+          "recommended_new_fifth_anchor": "frame_07.png",
+          "recommended_new_fifth_original_sha256": "0eb391cd2a0be80f407a2e83b00656c36e76c828a41dccb2c0d1ccc8733e7d7b",
+          "new_source_time_approx_s": 123.3,
+          "proposed_portrait_crop_bbox_px": [
+            900,
+            0,
+            1508,
+            1080
+          ],
+          "candidate_scene_description": "A stone arch and separate, walking people in the courtyard. Lower overlap risk than the crowded cattle herd; needs full-motion review and I2I test.",
+          "proposed_frame_visual_review": "FAVORED_FOR_TEST_NOT_ARTISTIC_APPROVAL",
+          "new_I2I_generated": false,
+          "new_vidu_generated": false,
+          "Italian_rights_approved": false,
+          "no_new_credit_spent": true,
+          "completion_status": "REPLACEMENT_SOURCE_CANDIDATE_REVIEW_PENDING"
         }
       }
     },
