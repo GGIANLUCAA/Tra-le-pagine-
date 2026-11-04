@@ -21,6 +21,7 @@ BEATS=[
  ("chaotic_battle",4.6,(.56,.47,2100,.06,.01,-.006)),
  ("whole_image_return",4.6,None),
  ("cover",3.8,None)
+]
 assert abs(sum(x[1] for x in BEATS)-48)<1e-5
 
 def digest(p):
