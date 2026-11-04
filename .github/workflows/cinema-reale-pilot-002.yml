@@ -1,0 +1,39 @@
+name: "Cinema Reale - Pilot 002 authentic edit (no AI, no spend)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/cinema-reale-pilot-002.yml"
+      - "projects/cinema_reale/tools/render_pilot_002.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render_isolated_pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install FFmpeg CPU"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: "Render genuine source edit with original nonverbal soundtrack"
+        run: python projects/cinema_reale/tools/render_pilot_002.py
+      - name: "Save review-only MP4 and ZIP, not publish"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CINEMA_REALE_002_MP4_ZIP_REVIEW_ONLY
+          path: |
+            output/cinema_reale/pilot_002/CINEMA_REALE_002_FUGA_DAL_FONDALE_PILOT.mp4
+            output/cinema_reale/pilot_002/CINEMA_REALE_002_PILOT_PACKAGE.zip
+            output/cinema_reale/pilot_002/cover_no_text.jpg
+            output/cinema_reale/pilot_002/qa_report.json
+            output/cinema_reale/pilot_002/SOCIAL_DESCRIPTION_DRAFT.txt
+            output/cinema_reale/pilot_002/SOURCES_AND_RIGHTS.txt
+          retention-days: 14
+          if-no-files-found: error
