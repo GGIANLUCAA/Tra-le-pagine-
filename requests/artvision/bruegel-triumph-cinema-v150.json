@@ -1,0 +1,42 @@
+{
+  "directive_date": "2026-11-04",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "work_id": "bruegel_triumph_death_1562_prado_p001393",
+  "public_title": "The Triumph of Death",
+  "artist": "Pieter Bruegel the Elder",
+  "year": "1562–1563",
+  "museum": "Museo Nacional del Prado",
+  "accession": "P001393",
+  "painting_cm": {
+    "height": 117,
+    "width": 162
+  },
+  "variant": "cinema_standard",
+  "run_once_only": true,
+  "no_duplicate": true,
+  "source_page": "https://commons.wikimedia.org/wiki/File:Thetriumphofdeath.jpg",
+  "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/10/Thetriumphofdeath.jpg",
+  "source_file_evidence": {
+    "pixels": [
+      5200,
+      3697
+    ],
+    "bytes": 9520461,
+    "sha1": "d37571ce0b9cf472265bc8519d8c0c7fadc78567",
+    "source_license": "Commons PD-Art Public Domain Mark faithful reproduction, painting original 1562–1563",
+    "original_prado_accession": "P001393",
+    "rights_review_for_publication": "PENDING"
+  },
+  "source_fail_policy": "If Commons HTTP 429, no fake image, do not repeat, no render",
+  "format": "Cinema Standard one genuine MP4 48 seconds H264/AAC, original procedural score",
+  "public_title_rule": "English painting name only, no project/variant labels",
+  "allow_paid_calls": false,
+  "social_publish": false,
+  "gold_v25": false,
+  "museum_approved": false,
+  "human_artistic_review": "PENDING",
+  "workflow": ".github/workflows/artvision-bruegel-triumph-cinema-v150.yml",
+  "renderer": "src/artvision_bruegel_triumph_cinema_v150.py",
+  "quality_gates": "source SHA1, artwork size, ffmpeg full decode, ZIP CRC, SHA256 actual MP4; no count unless physical archive verified",
+  "status": "ONE_SHOT_REQUESTED_NOT_RENDERED"
+}
