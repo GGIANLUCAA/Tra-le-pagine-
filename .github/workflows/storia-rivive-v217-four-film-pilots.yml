@@ -193,7 +193,11 @@ jobs:
           episode = sys.argv[1]
           target = Path("output/v217") / episode
           source = Path("output/v217/source") / episode
-          report = json.loads((target / "V217_RESEARCH_REPORT.json").read_text())
+          report_path = target / "V217_RESEARCH_REPORT.json"
+          if not report_path.is_file():
+              print("V224_SOURCE_REPORT_MISSING_SKIP_NO_I2I_HANDOFF", episode)
+              raise SystemExit(0)
+          report = json.loads(report_path.read_text(encoding="utf-8"))
           if report.get("status") != "FIVE_SOURCE_SHOTS_REVIEW_PENDING":
               print("V224_SOURCE_NOT_QUALIFIED_NO_I2I_HANDOFF", report.get("reason"))
               raise SystemExit(0)
