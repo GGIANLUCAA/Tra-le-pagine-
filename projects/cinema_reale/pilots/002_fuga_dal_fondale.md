@@ -34,3 +34,10 @@ Il montaggio NON deve spacciare riprese separate come un unico evento. Se ci son
 
 ## Stato vero
 Ricerca delle fonti e asset URL verificati come pubblicati dalla NOAA. L'esistenza del file online non certifica frame utilizzabili, originalità artistica né un MP4 finito. Preparato scout remoto GitHub Actions, risultato da controllare prima del montaggio.
+
+## Verifica tecnica reale del 04/11/2026 (GitHub Actions)
+- Source scout completato **SUCCESS**: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41887770143
+- Artifact di report e contact sheet: ID 13350904039, creato il 04/11, scadenza prevista 18/11. Entrambi i file SD scaricati e decodificati: cetriolo di mare 84.284 s 640×360, isopode 53.787 s 640×360, entrambi H.264 ~29.97 fps. SHA e timecode registrati nell'artifact.
+- **Revisione umana dei 12 frame/candidato:** il cetriolo di mare è ben visibile e scenografico da circa 25 a 77 secondi, ma i primi frame contengono scritte NOAA; l'isopode è minuscolo per buona parte del video, inadatto a un crop verticale leggibile senza compromessi. Scelto cetriolo di mare per il test.
+- NOAA Media Kit: https://oceanexplorer.noaa.gov/about/media-kit/ richiede il credito della didascalia e avverte che alcune immagini sono soggette a copyright; la pagina specifica https://oceanexplorer.noaa.gov/multimedia/sea-cucumber-swimming/ mostra credito NOAA senza indicazione di copyright. Mettere credito nella descrizione separata, non nel video.
+- Avviato render remoto separato, solo FFmpeg CPU, video NOAA HD autentico e colonna sonora atmosferica procedurale originale senza campioni di terzi. Workflow: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/cinema-reale-pilot-002.yml . Output **solo provino da rivedere**, non contenuto social approvato, non pubblicato; la sola riuscita CI non certifica la qualità artistica o l'originalità riconosciuta da Meta.
