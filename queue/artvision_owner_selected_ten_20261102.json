@@ -784,18 +784,51 @@
         }
       },
       "editorial_note": "Existing Cinema V25 cover lacks English artwork title; source 2126x1517 needs higher-res alternative; no automatic re-render V129 revised cover title visibly correct; original master preserved. Library storage quota full; backup pending.",
-      "preflight_status": "research_incomplete_not_render_authorized",
+      "preflight_status": "Cinema Standard V150 real verified MP4 and source PDM SHA; Critico Standard + both Museum pending",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 0,
+      "slots_delivered_this_selection": 1,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
-      "Gold_V25": false
+      "Gold_V25": false,
+      "cinema_standard_v150": {
+        "status": "REAL_H264_AAC_48S_MP4_ZIP_SHA_FFMPEG_CRC_INDEPENDENT_DOWNLOAD_PASS",
+        "variant": "cinema_standard",
+        "run_id": 41840684749,
+        "artifact_id": 13329385552,
+        "filename": "BRUEGEL_THE_TRIUMPH_OF_DEATH_CINEMA_V150_REVIEW.mp4",
+        "bytes": 20786590,
+        "sha256": "c460fe7fa72ac29425de67eec40f986add502c42ec9e4166050c7ce107804138",
+        "frames": 960,
+        "duration_s": 48,
+        "fps": 20,
+        "resolution": [
+          720,
+          1280
+        ],
+        "zip_filename": "BRUEGEL_TRIUMPH_DEATH_CINEMA_V150_REVIEW_PACKAGE.zip",
+        "zip_bytes": 33597189,
+        "zip_sha256": "9bde4c43048eadef6d7095d9bf6631584b3f36b8d98ab41bed720236be283e15",
+        "zip_crc": "PASS independent local",
+        "source_artwork": "Commons Thetriumphofdeath.jpg PD-Art, Prado P001393",
+        "source_pixels": [
+          5200,
+          3697
+        ],
+        "source_sha1": "d37571ce0b9cf472265bc8519d8c0c7fadc78567",
+        "source_sha256": "2cbaefc3961b999fc5a916db06dd96b3b95789789a795da83cc1d7947f3e1fbb",
+        "source_bytes": 9520461,
+        "human_artistic_review": "PENDING",
+        "museum_approved": false,
+        "gold_v25": false,
+        "social_published": false,
+        "site_playback_verified": false
+      }
     },
     {
       "id": "waterhouse_magic_circle_1886_tate_n01572",
