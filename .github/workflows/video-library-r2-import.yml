@@ -90,6 +90,59 @@ jobs:
           assert not archive_candidate('SOURCE_REVIEW_ONLY_NOT_FINAL__478918.mp4')
           assert not archive_candidate('SOURCE_24S_ROUGHCUT_NOT_FINAL__4374707.mp4')
           assert not archive_candidate('LA_STORIA_RIVIVE_PARIGI_1918_V162_NEURAL_REVIEW_NON_FINALE.mp4')
+          # Artistic review is not required for the private owner archive, but an
+          # artifact that explicitly says publication is not authorized must never
+          # be auto-imported. This is a rights/source boundary, not an art gate.
+          def explicit_archive_block_reason(archive,artifact_name):
+              documents=[]
+              def collect(zf,label=''):
+                  for member in zf.namelist():
+                      if member.endswith('/'):continue
+                      base=pathlib.PurePosixPath(member).name.upper()
+                      if base in ('QA_REPORT.JSON','DELIVERY_MANIFEST_V55.JSON','ARTVISION_DELIVERY_V55.JSON'):
+                          try:
+                              documents.append((label+member,zf.read(member)[:250000].decode('utf-8','replace').upper()))
+                          except Exception as exc:
+                              return label+member+' unreadable authorization metadata: '+str(exc)
+                      if base in ('SOURCES_AND_RIGHTS.TXT','SOURCES_AND_RIGHTS.MD','FONTI_E_DIRITTI.TXT','FONTI_E_DIRITTI.MD'):
+                          documents.append((label+member,zf.read(member)[:250000].decode('utf-8','replace').upper()))
+                      if base.endswith('.ZIP'):
+                          try:
+                              with zipfile.ZipFile(io.BytesIO(zf.read(member))) as nested:
+                                  reason=collect(nested,label+member+'::')
+                                  if reason:return reason
+                          except zipfile.BadZipFile:
+                              pass
+                  return None
+              problem=collect(archive)
+              if problem:return problem
+              blocked_tokens=('"PUBLICATION": "NOT AUTHORIZED"','"PUBLICATION":"NOT AUTHORIZED"',
+                              'PUBLICATION: NOT AUTHORIZED','PUBLICATION NOT AUTHORIZED',
+                              'NOT YET CLEARED FOR PUBLICATION','DO NOT PUBLISH','NON PUBBLICARE',
+                              'NOT_PUBLISHED','NOT PUBLISHED')
+              for label,text in documents:
+                  hit=next((token for token in blocked_tokens if token in text),None)
+                  if hit:return label+' explicitly blocks archive publication: '+hit
+              return None
+          def self_test_explicit_archive_block():
+              def bundle(files):
+                  buf=io.BytesIO()
+                  with zipfile.ZipFile(buf,'w') as test:
+                      for name,value in files.items():test.writestr(name,value)
+                  buf.seek(0);return buf
+              allowed=bundle({'OWNER_MASTER.mp4':b'owner'})
+              with zipfile.ZipFile(allowed) as test:
+                  assert explicit_archive_block_reason(test,'OWNER_MASTER_PACKAGE') is None
+              denied=bundle({'PILOT.mp4':b'pilot','qa_report.json':json.dumps({'publication':'NOT AUTHORIZED'})})
+              with zipfile.ZipFile(denied) as test:
+                  assert explicit_archive_block_reason(test,'PILOT_PACKAGE')
+              # A review-oriented name alone is not a blocker: owner originals may
+              # be archived before artistic QA. Only explicit publication/rights denial blocks.
+              review_only=bundle({'OWNER_REVIEW.mp4':b'owner'})
+              with zipfile.ZipFile(review_only) as test:
+                  assert explicit_archive_block_reason(test,'OWNER_REVIEW_ONLY') is None
+              print('Explicit authorization gate self-test: PASS',flush=True)
+          self_test_explicit_archive_block()
           cache_token='',0
           def token():
               global cache_token
@@ -258,6 +311,11 @@ jobs:
                           videos=[n for n in files if n.lower().endswith(('.mp4','.m4v','.mov')) and archive_candidate(n)]
                           if not videos:
                               cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']});continue
+                          blocked=explicit_archive_block_reason(z,a['name'])
+                          if blocked:
+                              print('EXPLICITLY NOT AUTHORIZED - excluded from private archive:',a['name'],blocked,flush=True)
+                              cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']})
+                              continue
                           # 2026-11-02 owner request: automatically archive NEW finished video files
                           # on the website even if artistic V25 approval is pending.
                           # This is site ingestion only, never social publishing or Gold approval.
