@@ -1,0 +1,141 @@
+name: "NVIDIA NIM e Cosmos3 - prove sviluppo"
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Controlla la chiave o esegui una singola prova esplicita"
+        type: choice
+        options: [check_secret, nim_text, cosmos_video]
+        default: check_secret
+        required: true
+      model:
+        description: "Modello ufficiale NIM per il testo (non per Cosmos)"
+        type: string
+        default: "nvidia/llama-3.3-nemotron-super-49b-v1.5"
+        required: true
+      confirm_developer_terms:
+        description: "Confermo che la prova e solo ricerca e sviluppo secondo i termini NVIDIA"
+        type: boolean
+        default: false
+        required: true
+      confirm_zero_spend:
+        description: "Confermo che il mio account consente questa prova senza addebiti"
+        type: boolean
+        default: false
+        required: true
+  pull_request:
+    paths:
+      - "src/nvidia_nim_dev_v1.py"
+      - "src/nvidia_cosmos3_video_dev_v1.py"
+      - "tests/test_nvidia_nim_dev_v1.py"
+      - "tests/test_nvidia_cosmos3_video_dev_v1.py"
+      - ".github/workflows/nvidia-nim-dev-v1.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/nvidia_nim_dev_v1.py"
+      - "src/nvidia_cosmos3_video_dev_v1.py"
+      - "tests/test_nvidia_nim_dev_v1.py"
+      - "tests/test_nvidia_cosmos3_video_dev_v1.py"
+      - ".github/workflows/nvidia-nim-dev-v1.yml"
+permissions:
+  contents: read
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify NVIDIA integrations, no inference
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/nvidia_nim_dev_v1.py src/nvidia_cosmos3_video_dev_v1.py
+          python -m unittest discover -s tests -p 'test_nvidia_nim_dev_v1.py' -v
+          python -m unittest discover -s tests -p 'test_nvidia_cosmos3_video_dev_v1.py' -v
+  manual-dev-test:
+    if: github.event_name == 'workflow_dispatch'
+    needs: offline-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      NVIDIA_NIM_MODEL: ${{ inputs.model }}
+      NVIDIA_NIM_DEV_ENABLED: ${{ inputs.action == 'nim_text' && '1' || '0' }}
+      NVIDIA_COSMOS_DEV_ENABLED: ${{ inputs.action == 'cosmos_video' && '1' || '0' }}
+      NVIDIA_NIM_NONCOMMERCIAL_ACK: ${{ inputs.confirm_developer_terms && '1' || '0' }}
+      NVIDIA_NIM_ZERO_SPEND_CONFIRMED: ${{ inputs.confirm_zero_spend && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check secret only, never reveal content
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$NVIDIA_API_KEY" ]; then
+            echo "::error::NVIDIA_API_KEY secret missing in GitHub Actions"
+            exit 1
+          fi
+          echo "NVIDIA_KEY_PRESENT; no inference request yet."
+      - name: Require explicit R&D terms and zero-spend confirmation
+        if: inputs.action != 'check_secret'
+        shell: bash
+        run: |
+          set -euo pipefail
+          [ "$NVIDIA_NIM_NONCOMMERCIAL_ACK" = "1" ] || { echo "::error::Terms confirmation missing"; exit 1; }
+          [ "$NVIDIA_NIM_ZERO_SPEND_CONFIRMED" = "1" ] || { echo "::error::No-charge confirmation missing"; exit 1; }
+      - name: One NVIDIA Nemotron text draft
+        if: inputs.action == 'nim_text'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/nvidia_dev_v1
+          printf '%s\n' 'DRAFT ONLY: describe a fictional 1906 tram scene. Do not invent provenance or claim to have watched any video.' > output/nvidia_dev_v1/prompt.txt
+          python src/nvidia_nim_dev_v1.py --task narration \
+            --prompt-file output/nvidia_dev_v1/prompt.txt \
+            --output output/nvidia_dev_v1/NIM_DRAFT.json --execute
+      - name: One NVIDIA Cosmos3 artificial video preview
+        if: inputs.action == 'cosmos_video'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/nvidia_dev_v1
+          printf '%s\n' 'Fictional 1906-style city street, electric tram moving slowly past camera, coherent perspective, realistic daylight, no subtitles, AI generated reconstruction for private testing.' > output/nvidia_dev_v1/prompt.txt
+          python src/nvidia_cosmos3_video_dev_v1.py \
+            --prompt-file output/nvidia_dev_v1/prompt.txt \
+            --output output/nvidia_dev_v1/COSMOS_SYNTHETIC_PREVIEW.mp4 --execute
+      - name: Convert Cosmos VP9 preview to Android-friendly H264 without removing watermark
+        if: inputs.action == 'cosmos_video'
+        shell: bash
+        run: |
+          set -euo pipefail
+          original="output/nvidia_dev_v1/COSMOS_SYNTHETIC_PREVIEW.mp4"
+          test -s "$original"
+          if command -v ffmpeg >/dev/null 2>&1 && command -v ffprobe >/dev/null 2>&1; then
+            ffmpeg -hide_banner -loglevel error -y -i "$original" -an \
+              -c:v libx264 -preset fast -crf 21 -pix_fmt yuv420p \
+              -movflags +faststart \
+              "output/nvidia_dev_v1/COSMOS_ANDROID_PREVIEW_H264.mp4"
+            test -s output/nvidia_dev_v1/COSMOS_ANDROID_PREVIEW_H264.mp4
+            ffprobe -v error -show_entries stream=codec_name,width,height \
+              -of json output/nvidia_dev_v1/COSMOS_ANDROID_PREVIEW_H264.mp4
+          else
+            echo "No ffmpeg on runner; original test MP4 remains available."
+          fi
+      - name: Save unapproved developer result, never publish
+        if: inputs.action != 'check_secret'
+        uses: actions/upload-artifact@v4
+        with:
+          name: NVIDIA_DEV_TEST_UNREVIEWED_${{ github.run_id }}
+          path: |
+            output/nvidia_dev_v1/NIM_DRAFT.json
+            output/nvidia_dev_v1/COSMOS_SYNTHETIC_PREVIEW.mp4
+            output/nvidia_dev_v1/COSMOS_ANDROID_PREVIEW_H264.mp4
+            output/nvidia_dev_v1/COSMOS_SYNTHETIC_PREVIEW.json
+          retention-days: 7
+          if-no-files-found: error

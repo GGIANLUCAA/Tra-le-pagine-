@@ -1,5 +1,8 @@
 # Inizia da qui — studio video di Gianluca
 
+## V145 · 04/11/2026 · Stato prove video e servizi NVIDIA (indicazione del proprietario)
+Tutti i video attualmente in lavorazione sono **prove e valutazioni tecniche**, **non destinati alla pubblicazione** fino a nuova indicazione esplicita. E consentito **sperimentare** anche servizi NVIDIA NIM/Nemotron, Cosmos3 e altri provider solo quando termini e accesso R&D lo consentono. L'account o la presenza di una chiave non autorizzano spese non verificate: **nessun costo API automatico**, nessuna conversione di materiale sintetico in filmato storico autentico, nessuna pubblicazione sito/social. Le prove NVIDIA restano manuali e isolate finche credenziale e limiti non sono verificati. Riferimento tecnico: `docs/NVIDIA_NIM_COSMOS_DEV_V1_20261104.md`. Le regole editoriali e di qualita precedenti rimangono attive per valutare le prove.
+
 **Ricerca automatica fonti V4 (04/11/2026):** prima della ricerca di nuove fonti per un'opera/episodio, consultare `docs/AUTOMATIC_SOURCE_RESEARCH_V4.md` e l'ultimo report GitHub Actions `ARTVISION_OWNER_SOURCE_RESEARCH_V4_...` oppure `SOURCE_RESEARCH_COMPANION_V4.json` nel ciclo storico V101. Usare il report solo se **ID opera/episodio e fonte corrispondono esattamente** al lavoro corrente: risultati sempre candidati con diritti e revisione artistica `pending`. Non sostituire l'originale, non renderizzare/pubblicare su questa base e non lanciare una seconda produzione ArtVision: resta un solo owner della coda. La ricerca V4 non completa automaticamente MP4/ZIP.
 
 
