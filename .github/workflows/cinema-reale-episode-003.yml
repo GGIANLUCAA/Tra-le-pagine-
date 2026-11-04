@@ -18,7 +18,9 @@ jobs:
         with:
           python-version: "3.11"
       - name: Ensure FFmpeg
-        run: ffmpeg -version
+        run: |
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version
       - name: Render real-footage video
         run: python projects/cinema_reale/tools/render_episode_003.py
       - name: Deliver Android review MP4 and ZIP
