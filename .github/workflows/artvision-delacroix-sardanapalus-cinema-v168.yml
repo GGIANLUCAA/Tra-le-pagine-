@@ -1,0 +1,87 @@
+name: ArtVision V168 Delacroix Sardanapalus exact Louvre CC0 Cinema review
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/delacroix-sardanapalus-cinema-v168.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-delacroix-sardanapalus-cinema-v168-once
+  cancel-in-progress: false
+jobs:
+  only_one_missing_cinema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile renderer and guard owner-selection duplicate/cost/publication
+        run: |
+          python -m py_compile src/artvision_delacroix_sardanapalus_cinema_v168.py
+          python - <<'PY'
+          import json
+          r=json.load(open('requests/artvision/delacroix-sardanapalus-cinema-v168.json'))
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          assert r['owner_automation_id']=='6adca191603c8191a90d5190901cd034'
+          assert r['work_id']=='delacroix_death_sardanapalus_1827_louvre_rf2346'
+          assert r['variant']=='cinema_standard' and r['public_title']=='The Death of Sardanapalus'
+          assert r['run_once_only'] and not r['allow_paid_calls'] and not r['social_publish'] and not r['gold_v25']
+          work=[w for w in q['works'] if w['id']==r['work_id']]
+          assert len(work)==1 and work[0]['slots_delivered_this_selection']==0
+          assert not work[0].get('cinema_standard_v168')
+          assert work[0]['accession']=='RF 2346'
+          print('ONE_AUTHORIZED_MISSING_SLOT_NO_DUPLICATES_NO_COST')
+          PY
+      - name: Install no-paid local rendering dependencies and FFmpeg
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check numpy pillow opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          p=Path('/tmp/artvision-bin/ffmpeg')
+          p.symlink_to(Path(get_ffmpeg_exe()))
+          PY
+          echo /tmp/artvision-bin >> "$GITHUB_PATH"
+          /tmp/artvision-bin/ffmpeg -version | head -1
+      - name: Download exact Wilfredor CC0 photograph and render ONE complete 48s MP4
+        run: python src/artvision_delacroix_sardanapalus_cinema_v168.py --output /tmp/delacroix_v168
+      - name: Independent readback of physical bytes and full FFmpeg video plus audio
+        run: |
+          python - <<'PY'
+          import hashlib,json,zipfile,subprocess
+          from pathlib import Path
+          out=Path('/tmp/delacroix_v168')
+          qa=json.loads((out/'QA_V168.json').read_text())
+          m=qa['mp4']; f=out/m['filename']
+          assert qa['accession']=='RF 2346' and qa['work']=='The Death of Sardanapalus'
+          assert qa['source']['bytes']==25369869
+          assert qa['source']['pixels']==[6875,5358]
+          assert qa['cinema_standard_review'] and not qa['cinema_museum']
+          assert qa['gold_v25'] is False and qa['social_published'] is False
+          assert f.stat().st_size==m['bytes'] and hashlib.sha256(f.read_bytes()).hexdigest()==m['sha256']
+          assert m['frames']==960 and m['duration_seconds']==48 and m['full_ffmpeg_decode']=='PASS'
+          subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(f),'-f','null','-'],check=True)
+          z=out/'DELACROIX_SARDANAPALUS_CINEMA_V168_REVIEW_PACKAGE.zip'
+          with zipfile.ZipFile(z) as a:
+            assert a.testzip() is None
+            assert f.name in a.namelist()
+            assert hashlib.sha256(a.read(f.name)).hexdigest()==m['sha256']
+          print('V168_ONE_REAL_MP4_SHA256_FFMPEG_FULL_DECODE_ZIP_CRC_PASS')
+          PY
+      - name: Preserve physical MP4, photo, contact sheet, QA and ZIP if they exist
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V168_DELACROIX_SARDANAPALUS_CINEMA_REVIEW
+          path: |
+            /tmp/delacroix_v168/DELACROIX_THE_DEATH_OF_SARDANAPALUS_CINEMA_V168_REVIEW.mp4
+            /tmp/delacroix_v168/DELACROIX_SARDANAPALUS_CINEMA_V168_REVIEW_PACKAGE.zip
+            /tmp/delacroix_v168/QA_V168.json
+            /tmp/delacroix_v168/ORIGINAL_ARTWORK.jpg
+            /tmp/delacroix_v168/COVER.jpg
+            /tmp/delacroix_v168/CONTACT_SHEET_V168.jpg
+            /tmp/delacroix_v168/RIGHTS_AND_CREDITS.txt
+          retention-days: 30
+          if-no-files-found: warn
