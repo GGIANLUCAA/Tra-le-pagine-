@@ -68,12 +68,12 @@ def main():
     info = probe(src)
     dur = float(info["format"]["duration"])
     vid = next((s for s in info["streams"] if s["codec_type"]=="video"),None)
-    if vid is None or vid["width"] < 1280 or vid["height"] < 720 or dur < 15:
+    if vid is None or vid["width"] < 960 or vid["height"] < 540 or dur < 10:
         raise RuntimeError("Unexpected NASA source properties; fail closed")
     start, length = 0., min(24.,dur-.5)
     if length < 10: raise RuntimeError("Source too short")
     assert start+length <= dur-.5
-    vf = f"crop=w=405:h=720:x=(in_w-out_w)/2:y=0,scale=1080:1920:flags=lanczos,eq=contrast=1.04:saturation=1.06,format=yuv420p,fps=25,fade=t=in:st=0:d=0.25,fade=t=out:st={max(0.,length-.9):.2f}:d=0.9"
+    vf = f"crop=w=trunc(ih*9/16/2)*2:h=ih:x=(iw-ow)/2:y=0,scale=1080:1920:flags=lanczos,eq=contrast=1.04:saturation=1.06,format=yuv420p,fps=25,fade=t=in:st=0:d=0.25,fade=t=out:st={max(0.,length-.9):.2f}:d=0.9"
     visual = OUT/"video_no_audio.mp4"
     run(["ffmpeg","-hide_banner","-loglevel","error","-ss",str(start),"-i",str(src),"-t",str(length),"-an","-vf",vf,"-c:v","libx264","-preset","veryfast","-crf","18","-pix_fmt","yuv420p","-movflags","+faststart","-y",str(visual)])
     audio = OUT/"original_score.wav"
