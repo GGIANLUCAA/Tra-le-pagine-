@@ -35,15 +35,28 @@ Misure sull'output esatto:
 - esito V295: `REJECTED_IDENTITY_GATE` (`real_colour_present`)
 - crediti pagati: 0
 
+## Secondo controllo: falso positivo sulla sorgente
+
+Il tentativo a 3.05 s ha superato la prima versione del gate ma l'ispezione visiva ha mostrato che la sorgente era già colorizzata. Non può quindi provare una restaurazione da B/N ed è stato respinto:
+
+- sorgente SHA256: `c14d487c29ecefe251db086e17a9d5962d924c79eae7158e43b5a9e04df8190c`
+- candidato SHA256: `dc18a339c4910f7168bce68d034708e4002dc5bec05058bf487bfb140dc95444`
+- saturazione media sorgente: 52.595 / 255
+- quota cromatica sorgente: 0.853523
+- esito corretto V295.1: `REJECTED_IDENTITY_GATE` (`source_is_monochrome`)
+- crediti pagati: 0
+
 ## Correzione applicata
 
 È stato aggiunto `src/storia_rivive_v295_photo_identity_gate.py`, con test automatici, e il workflow V294 è stato reso fail-closed:
 
-1. usa un fotogramma B/N senza titolo a 3.05 s;
-2. conserva gli hash di sorgente e candidato;
-3. blocca rapporti d'aspetto alterati, colorizzazioni solo nominali e perdita strutturale;
+1. usa un fotogramma realmente B/N e senza titolo a 3.70 s;
+2. verifica anche che la sorgente sia monocromatica, oltre a rapporto d'aspetto, colore materiale e struttura;
+3. conserva gli hash di sorgente e candidato;
 4. un passaggio autorizza soltanto la review artistica, mai la release;
 5. conserva `PHOTO_IDENTITY_GATE_V295.json` nell'artefatto.
+
+Il run corretto è in collaudo: finché non termina e l'immagine non viene vista, il test resta `rendered_needs_review`.
 
 ## Blocker aperti
 
