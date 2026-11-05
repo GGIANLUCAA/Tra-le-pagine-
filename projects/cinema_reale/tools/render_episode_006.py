@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cinema Reale 005: NASA ISS Aurora Australis time-lapse, genuine images, no AI footage."""
+"""Cinema Reale 006: NASA Dallas total solar eclipse, genuine video, no AI footage."""
 import hashlib, json, math, struct, subprocess, time, urllib.request, wave, zipfile
 from pathlib import Path
 
@@ -78,7 +78,7 @@ def main():
     audio = OUT/"original_score.wav"
     make_score(audio,length)
     final = OUT/NAME
-    run(["ffmpeg","-hide_banner","-loglevel","error","-i",str(visual),"-i",str(audio),"-map","0:v:0","-map","1:a:0","-c:v","copy","-c:a","aac","-b:a","192k","-t",str(length),"-af",f"afade=t=out:st={max(0.,length-.8):.2f}:d=.8","-movflags","+faststart","-y",str(final)])
+    run(["ffmpeg","-hide_banner","-loglevel","error","-i",str(visual),"-i",str(audio),"-map","0:v:0","-map","1:a:0","-c:v","copy","-c:a","aac","-b:a","192k","-t",str(length),"-af",f"afade=t=out:st={max(0.,length-.8):.2f}:d=0.8","-movflags","+faststart","-y",str(final)])
     meta = probe(final)
     duration = float(meta["format"]["duration"])
     assert abs(duration-length) < .2
@@ -90,7 +90,7 @@ def main():
     qa = {"project_id":"cinema_reale","episode":"006","status":"RENDERED_REVIEW_NOT_PUBLISHED","source_page":PAGE,"source":SOURCE,"source_bytes":src.stat().st_size,"source_sha256":sha(src),"output_sha256":sha(final),"output_bytes":final.stat().st_size,"duration_seconds":duration,"resolution":[1080,1920],"full_ffmpeg_decode":"PASS","zip_crc":"PASS","original_music":True,"added_voice":False,"added_onscreen_text":False,"video_ai":False,"provenance":"Genuine NASA/Vanessa Thomas eclipse footage","rights":"NASA-hosted footage; check individual rights and overlays. Credit: "+CREDIT+"; no NASA endorsement implied."}
     (OUT/"qa_report.json").write_text(json.dumps(qa,indent=2),encoding="utf-8")
     (OUT/"SOURCES_AND_RIGHTS.txt").write_text("NASA source: "+PAGE+"\nOriginal file: "+SOURCE+"\nCredit: "+CREDIT+"\nPolicy: https://svs.gsfc.nasa.gov/help/\nNo NASA endorsement implied. Source audio not used.\n",encoding="utf-8")
-    (OUT/"SOCIAL_DESCRIPTION_DRAFT.txt").write_text("Aurora Australis seen from the International Space Station. Genuine NASA photographic footage, cinematic original sound design.\nCredit: "+CREDIT+"\n#Aurora #ISS #CinemaReale\n",encoding="utf-8")
+    (OUT/"SOCIAL_DESCRIPTION_DRAFT.txt").write_text("Totality over Dallas, 8 April 2024. Genuine eclipse footage hosted by NASA, with original cinematic sound design.\nCredit: "+CREDIT+"\n#SolarEclipse #Dallas #CinemaReale\n",encoding="utf-8")
     pack = OUT/"CINEMA_REALE_006_COMPLETE_REVIEW.zip"
     with zipfile.ZipFile(pack,"w",zipfile.ZIP_DEFLATED) as z:
         for p in (final,cover,OUT/"qa_report.json",OUT/"SOURCES_AND_RIGHTS.txt",OUT/"SOCIAL_DESCRIPTION_DRAFT.txt"):
