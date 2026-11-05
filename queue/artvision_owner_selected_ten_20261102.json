@@ -1466,14 +1466,14 @@
       "art_rights_preflight": "1827 painting public domain; exact 2024 Wilfredor original photograph CC0 1.0 source 6875x5358 SHA256 9aee50cf6ecb8b266d64d0ab0e4fa09bf7fc6f80dcae9059906fc555233021e6 independently recovered and verified; Louvre/French cultural heritage territorial commercial reuse pending; PRIVATE REVIEW only",
       "preexisting_cinema_candidate": null,
       "editorial_note": "Large painting; violence and nudity require careful editorial/age/platform suitability review; no misleading historical museum",
-      "preflight_status": "1_of_4_REAL_MP4_CINEMA_STANDARD_V168_INDEPENDENT_SHA_FFMPEG_AUDIO_VIDEO_ZIP_CRC_AND_PRIVATE_LIBRARY_READBACK_PASS_CRITICO_V169_RUNNING_ARTISTIC_RIGHTS_PENDING",
+      "preflight_status": "2_of_4_REAL_MP4_CINEMA_V168_AND_CRITICO_STANDARD_V169_FULL_FFMPEG_SHA_ZIP_CRC_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_RIGHTS_PENDING_2_MUSEUM_BLOCKED_NO_FRAME",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 1,
+      "slots_delivered_this_selection": 2,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
@@ -1519,6 +1519,53 @@
         "social_published": false,
         "additional_paid_calls": 0,
         "critico_standard_v169_action_run_id": 42125709649
+      },
+      "critico_standard_v169": {
+        "status": "ONE_REAL_MP4_FROM_SUCCESS_GITHUB_ACTIONS_INDEPENDENT_FFMPEG_SHA_ZIP_CRC_AND_PERMANENT_LIBRARY_READBACK_NOT_GOLD",
+        "variant": "critico_standard",
+        "source_run_id": 42125709649,
+        "source_artifact_id": 13459719782,
+        "file": "DELACROIX_THE_DEATH_OF_SARDANAPALUS_CRITICO_STANDARD_V169_REVIEW.mp4",
+        "bytes": 21250039,
+        "sha256": "c7d3a2e231b384fb6a082cb61158d3133d3f309c05e0247b228a1ab6ea7a77dc",
+        "duration_s": 123.7,
+        "frames": 2474,
+        "frame_rate": 20,
+        "resolution": [
+          1080,
+          1920
+        ],
+        "video_codec": "H264",
+        "audio_codec": "AAC",
+        "independent_mp4_sha256": "PASS",
+        "independent_ffmpeg_video_audio_full_decode": "PASS 2026-11-05",
+        "voice_wav_sha256": "d75d87b7afe6cbed9ad946e2be2461ea88469b03827555d3b227c41c840bef5b",
+        "voice_duration_s": 114.2,
+        "voice_reuse_for_future_critico_museum": true,
+        "asr_matched_fraction": 0.9615384615384616,
+        "source_art_sha256": "9aee50cf6ecb8b266d64d0ab0e4fa09bf7fc6f80dcae9059906fc555233021e6",
+        "original_artifact_zip_sha256": "4a6b25d42ae125b844f5d149e43af2eebbe7612e36f42033b5ac9bc3f6188597",
+        "original_artifact_zip_crc": "PASS",
+        "private_full_review_zip_sha256": "e88c5788ef857da66c048597138016c01e0a3dd7a37063435837c59c27660ddc",
+        "private_full_review_zip_bytes": 51686555,
+        "private_library_path": "/ArtVision/ARTVISION_DELACROIX_V169_CRITICO_FULL_REVIEW.zip",
+        "private_library_id": "libfile_c1ef28caa6f08191a45ed677874a0ff0",
+        "private_library_readback_sha256": "PASS MATCH",
+        "private_library_readback_zip_crc": "PASS",
+        "four_social_drafts_in_zip": true,
+        "cover_in_zip": true,
+        "owner_attested_free_second_google_key_used": true,
+        "independent_billing_verification": false,
+        "no_paid_video_calls": 0,
+        "human_artistic_review": "PENDING, contact sheet reveals repeated close crops and some partial body frames; evaluate at normal speed",
+        "source_rights": "Wilfredor CC0 photo, French heritage and territorial commercial review pending",
+        "museum_approved": false,
+        "Gold_V25": false,
+        "site_published": false,
+        "social_published": false,
+        "first_prevoice_guard_run_id": 42125222458,
+        "first_prevoice_guard_failure": "GitHub repository billing variable missing, ZERO TTS attempted",
+        "successful_recovery_run_id": 42125709649
       }
     },
     {
@@ -1615,10 +1662,10 @@
     "new_paid_calls": 0
   },
   "latest_owner_progress_20261105": {
-    "verified_slots": 21,
+    "verified_slots": 22,
     "total_slots": 40,
-    "pending_slots": 19,
-    "latest_real_slot": "delacroix_sardanapalus_cinema_standard_v168",
+    "pending_slots": 18,
+    "latest_real_slot": "delacroix_sardanapalus_critico_standard_v169",
     "full_four_versions_lady_of_shalott": true,
     "private_library_full_package_sha_verified": true,
     "full_ffmpeg_decode": true,
@@ -1627,7 +1674,10 @@
     "new_paid_calls": 0,
     "social_published": false,
     "critico_v169_action_run_id": 42125709649,
-    "critico_v169_not_counted_until_verified": true
+    "critico_v169_not_counted_until_verified": true,
+    "delacroix_cinema_v168_verified": true,
+    "delacroix_critico_v169_verified": true,
+    "delacroix_two_museum_variants_pending": true
   },
   "last_v168_20261105": "Delacroix Cinema V168 48s verified with real downloaded MP4 SHA/full FFmpeg/ZIP CRC and persistent private Library backup/readback; distinct from V169 Critico in_progress. No publish/Gold."
 }
