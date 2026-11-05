@@ -56,9 +56,13 @@ def evaluate(source_path: Path, candidate_path: Path) -> dict:
         saturation = hsv[..., 1]
         mean_saturation = float(saturation.mean())
         coloured_fraction = float(np.mean(saturation >= 18))
+        source_saturation = np.asarray(source.convert("HSV"), dtype=np.uint8)[..., 1]
+        source_mean_saturation = float(source_saturation.mean())
+        source_coloured_fraction = float(np.mean(source_saturation >= 18))
         structure = _structure_correlation(source, candidate)
 
     checks = {
+        "source_is_monochrome": source_mean_saturation <= 20.0 and source_coloured_fraction <= 0.40,
         "same_aspect_ratio": aspect_delta <= 0.015,
         # A faint sepia cast is not a colour restoration.  The thresholds are
         # intentionally conservative and only admit candidates with material
@@ -78,6 +82,8 @@ def evaluate(source_path: Path, candidate_path: Path) -> dict:
             "source_size": [src_w, src_h],
             "candidate_size": [out_w, out_h],
             "relative_aspect_delta": round(aspect_delta, 6),
+            "source_mean_saturation_0_255": round(source_mean_saturation, 3),
+            "source_coloured_fraction": round(source_coloured_fraction, 6),
             "mean_saturation_0_255": round(mean_saturation, 3),
             "coloured_fraction": round(coloured_fraction, 6),
             "structure_correlation": round(structure, 6),
