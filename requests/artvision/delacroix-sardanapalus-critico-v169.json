@@ -35,6 +35,9 @@
   "renderer": "src/artvision_delacroix_sardanapalus_critico_v169.py",
   "recipe": "modules/artvision_critico/production_series/delacroix_sardanapalus_critico_v169.json",
   "expected_output": "ONE genuine narrated ~2-minute MP4 with cover, voice WAV, exact original CC0 JPEG, contact sheet, QA, full decoded MP4 and ZIP CRC; no Cinema remake",
-  "status": "ONE_SHOT_REQUESTED_AWAITING_REAL_GITHUB_ACTIONS_RENDER",
-  "failure_policy": "If TTS attempted and fails preserve all WAV/cache and NEVER retry; if Free gate missing do not call TTS; no MP4 counted without actual bytes and full readback."
+  "status": "SAME_ONE_SHOT_RETRY_AFTER_VERIFIED_PRE_TTS_GUARD_ONLY_FAILURE_NO_VOICE_OR_MP4_ON_RUN_42125222458",
+  "failure_policy": "If TTS attempted and fails preserve all WAV/cache and NEVER retry; if Free gate missing do not call TTS; no MP4 counted without actual bytes and full readback.",
+  "pre_tts_failed_run_id": 42125222458,
+  "pre_tts_failure": "GitHub repo variable ARTVISION_GEMINI_PROJECT_BILLING_TIER unset, secret present; test/locked source passed; zero voice calls and zero MP4, log verified",
+  "recovery_policy": "Owner already attested GEMINI_API_KEY2 second Free no-billing account in past instructions. Strict same account no fallback; do not retry if new run reaches TTS even if fails."
 }
