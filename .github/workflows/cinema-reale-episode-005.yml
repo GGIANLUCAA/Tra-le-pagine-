@@ -1,0 +1,39 @@
+name: Cinema Reale 005 - Genuine NASA ISS Aurora Film
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cinema-reale-episode-005.yml'
+      - 'projects/cinema_reale/tools/render_episode_005.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg using runner system packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Render NASA photographic time lapse with original stereo score
+        run: python projects/cinema_reale/tools/render_episode_005.py
+      - name: Upload review MP4, cover, dossier and ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CINEMA_REALE_005_NASA_AURORA_MP4_ZIP_REVIEW
+          path: |
+            output/cinema_reale/episode_005/CINEMA_REALE_005_AURORA_AUSTRALIS_ISS_REVIEW.mp4
+            output/cinema_reale/episode_005/CINEMA_REALE_005_COMPLETE_REVIEW.zip
+            output/cinema_reale/episode_005/cover_no_text.jpg
+            output/cinema_reale/episode_005/qa_report.json
+            output/cinema_reale/episode_005/SOURCES_AND_RIGHTS.txt
+            output/cinema_reale/episode_005/SOCIAL_DESCRIPTION_DRAFT.txt
+          retention-days: 14
+          if-no-files-found: error
