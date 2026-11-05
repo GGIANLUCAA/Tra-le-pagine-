@@ -104,7 +104,7 @@ jobs:
           mkdir -p output/v294/photo
           cd output/v294/photo
           gh release download storia-rivive-bombay-1929-v981-natural-color-real-vidu --repo "$GITHUB_REPOSITORY" --pattern BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4
-          ffmpeg -nostdin -y -v error -ss 3.05 -i BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4 -frames:v 1 SOURCE_BW_FRAME.png
+          ffmpeg -nostdin -y -v error -ss 3.70 -i BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4 -frames:v 1 SOURCE_BW_FRAME.png
           timeout 240 python - <<'PY' || true
           import json,pathlib
           from PIL import Image
