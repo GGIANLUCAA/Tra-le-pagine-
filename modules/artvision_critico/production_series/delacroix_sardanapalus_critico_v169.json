@@ -1,0 +1,113 @@
+{
+  "schema_version": "artvision-delacroix-critico-preproduction-v169",
+  "work_id": "delacroix_death_sardanapalus_1827_louvre_rf2346",
+  "public_title": "The Death of Sardanapalus",
+  "artist": "Eugène Delacroix",
+  "year": 1827,
+  "accession": "RF 2346",
+  "museum": "Musée du Louvre",
+  "painting_dimensions_cm": {
+    "height": 392,
+    "width": 496
+  },
+  "variant": "critico_standard",
+  "status": "SCRIPT_PREPARED_NOT_RENDERED_NO_VOICE_GENERATED",
+  "source_reference": "requests/artvision/delacroix-sardanapalus-cinema-v168.json",
+  "source_image_expected_pixels": [
+    6875,
+    5358
+  ],
+  "source_image_expected_bytes": 25369869,
+  "source_license": "Wilfredor CC0 photograph; Louvre French heritage/commercial territorial review pending",
+  "chapters": [
+    {
+      "beat": 1,
+      "focus": "intero dipinto",
+      "cx": 0.5,
+      "cy": 0.5,
+      "crop_height_px": 4600,
+      "text": "Una stanza regale diventa teatro di una catastrofe. Corpi, tessuti e oggetti preziosi si intrecciano in una diagonale violenta. Al centro di tutto, un uomo osserva, immobile."
+    },
+    {
+      "beat": 2,
+      "focus": "intero dipinto",
+      "cx": 0.5,
+      "cy": 0.5,
+      "crop_height_px": 5200,
+      "text": "Eugène Delacroix presenta La morte di Sardanapalo nel 1827. La grande tela, oggi al Louvre, trasforma un racconto antico in un'immagine di tensione estrema."
+    },
+    {
+      "beat": 3,
+      "focus": "figura distesa sul letto nella parte alta",
+      "cx": 0.53,
+      "cy": 0.25,
+      "crop_height_px": 2000,
+      "text": "Sardanapalo giace sul letto rialzato, avvolto in stoffe chiare. Non interviene. La sua immobilità contrasta con il movimento disperato che attraversa il resto della composizione."
+    },
+    {
+      "beat": 4,
+      "focus": "linea del letto e composizione centrale",
+      "cx": 0.52,
+      "cy": 0.51,
+      "crop_height_px": 3500,
+      "text": "Lo sguardo scende lungo la diagonale del letto, dalla figura del sovrano verso il primo piano. È questa struttura obliqua a guidare il ritmo dell'intera scena."
+    },
+    {
+      "beat": 5,
+      "focus": "stoffe rosse e drappeggi",
+      "cx": 0.46,
+      "cy": 0.48,
+      "crop_height_px": 2600,
+      "text": "Il rosso domina la tela: ricopre il letto, attraversa i drappeggi e amplifica il senso di pericolo. Le zone chiare dei corpi emergono per contrasto, illuminate nel caos."
+    },
+    {
+      "beat": 6,
+      "focus": "figure e oggetti in basso",
+      "cx": 0.48,
+      "cy": 0.78,
+      "crop_height_px": 2200,
+      "text": "In basso, le figure si accalcano tra armi e oggetti preziosi. Delacroix non costruisce una scena ordinata: sovrappone gesti e materiali, costringendoci a osservare più volte."
+    },
+    {
+      "beat": 7,
+      "focus": "cavallo sul lato sinistro",
+      "cx": 0.2,
+      "cy": 0.58,
+      "crop_height_px": 1900,
+      "text": "Sul lato sinistro compare anche un cavallo, trascinato nel disordine. La sua presenza allarga la tragedia oltre i personaggi e rende ancora più instabile l'insieme."
+    },
+    {
+      "beat": 8,
+      "focus": "intera composizione con movimento",
+      "cx": 0.5,
+      "cy": 0.52,
+      "crop_height_px": 4600,
+      "text": "Qui il Romanticismo non cerca equilibrio classico. Cerca energia, colore, emozione. La pittura sembra muoversi in tutte le direzioni, mentre il sovrano rimane distante."
+    },
+    {
+      "beat": 9,
+      "focus": "intero dipinto",
+      "cx": 0.5,
+      "cy": 0.5,
+      "crop_height_px": 5350,
+      "text": "Torniamo all'immagine completa. Il contrasto fra la calma del protagonista e la violenza della scena è ciò che rende questa tela così difficile da dimenticare."
+    }
+  ],
+  "voice": {
+    "profile": "Gacrux",
+    "one_call_only": true,
+    "no_paid_api": true,
+    "require_verified_free_tier_before_call": true,
+    "reuse_exact_WAV_for_future_critico_museum": true
+  },
+  "production_gates": [
+    "Check main queue and active GitHub runs immediately before dispatch",
+    "Verify exact JPEG bytes and SHA before voice generation",
+    "Verify crop focus on source image and adjust before rendering",
+    "Full FFmpeg video and audio decode; SHA256; ZIP CRC; durable readback",
+    "Human visual and spoken-word synchronization QA pending; no Gold"
+  ],
+  "museum_variant_blocked_without_verified_frame": true,
+  "existing_cinema_v168_must_not_be_rerendered": true,
+  "publication_authorized": false
+}
