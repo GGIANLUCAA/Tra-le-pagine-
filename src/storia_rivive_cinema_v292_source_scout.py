@@ -11,6 +11,8 @@ import hashlib
 import json
 import subprocess
 import tempfile
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -25,10 +27,26 @@ FILENAME_PARAM = "File:" + FILENAME
 
 
 def _request(url: str, timeout: int = 60):
-    return urllib.request.urlopen(urllib.request.Request(url, headers={
+    req = urllib.request.Request(url, headers={
         "User-Agent": "StoriaRiviveResearch/1.0 (public-domain-film-audit; no-billing)",
         "Accept": "*/*",
-    }), timeout=timeout)
+    })
+    for attempt in range(3):
+        try:
+            return urllib.request.urlopen(req, timeout=timeout)
+        except urllib.error.HTTPError as error:
+            if error.code not in (429, 503) or attempt == 2:
+                raise
+            try:
+                retry_after = int(error.headers.get("Retry-After", "0"))
+            except (ValueError, TypeError):
+                retry_after = 0
+            # Respect long backoffs by stopping, rather than hammering Wikimedia.
+            if retry_after > 120:
+                raise RuntimeError("UPSTREAM_RATE_LIMIT_RETRY_LATER") from error
+            delay = max(retry_after, 25 * (attempt + 1))
+            print(f"UPSTREAM_HTTP_{error.code}_WAIT_{delay}_SECONDS_NO_DUPLICATE_DOWNLOAD", flush=True)
+            time.sleep(delay)
 
 
 def _run(args: list[str], timeout: int = 120) -> str:
@@ -180,4 +198,23 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as error:
+        # A failed source download is never silently treated as a finished video.
+        root = Path("output/storia_single_cinema_v292")
+        root.mkdir(parents=True, exist_ok=True)
+        report = {
+            "version": "V292_NEW_SINGLE_CINEMATIC_FILM_SOURCE_SCOUT",
+            "status": "SOURCE_PREFLIGHT_BLOCKED_NO_FINAL",
+            "failure_type": type(error).__name__,
+            "failure_summary": str(error)[:400],
+            "source_page": FILE_PAGE,
+            "real_frames_ready": False,
+            "final_mp4": False,
+            "final_kit_zip": False,
+            "published": False,
+        }
+        (root / "CINEMA_ORIGINAL_SOURCE_PREFLIGHT.json").write_text(
+            json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf8")
+        raise
