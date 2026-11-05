@@ -1,0 +1,78 @@
+name: ArtVision V170 Delacroix genuine framed Louvre photo preflight
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/delacroix-sardanapalus-frame-v170.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-delacroix-source-preflight-v170
+  cancel-in-progress: false
+jobs:
+  source_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify one-shot existing queue and owner consent (NO render, TTS, publish)
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('requests/artvision/delacroix-sardanapalus-frame-v170.json'))
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          w=next(x for x in q['works'] if x['id']=='delacroix_death_sardanapalus_1827_louvre_rf2346')
+          assert w['slots_delivered_this_selection']==2
+          assert r['owner_automation_id']==q['owner_automation_id']
+          assert r['source_only'] and r['one_shot'] and not r['render'] and not r['allow_paid_calls']
+          assert not r['publish'] and not r['gold_v25'] and not r['new_TTS']
+          print('GATE PASS: SOURCE_ONLY, 2/4, NO NEW TTS, NO MASTER MODIFICATION')
+          PY
+      - name: Download original real-frame CC0 photograph from Commons and verify SHA-1 plus size
+        run: |
+          python - <<'PY'
+          import hashlib,urllib.request,json,pathlib,time
+          p=pathlib.Path('/tmp/artvision_v170');p.mkdir(exist_ok=True)
+          filename='Mort_de_Sardanapale_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_2346_-_avec_cadre_-_apr%C3%A8s_restauration_octobre_2023.jpg'
+          url='https://upload.wikimedia.org/wikipedia/commons/d/d1/'+filename
+          page='https://commons.wikimedia.org/wiki/File:'+filename
+          expected_sha1='1a1d7e125a15799d2b2631203ee791936906062d'
+          expected_bytes=3376252
+          manifest={'source_page':page,'url':url,'photographer':'Shonagon','date':'2023-10-03','license':'CC0 1.0','artwork':'Delacroix Louvre RF 2346','dimensions_px_expected':[3520,2936],'sha1_expected':expected_sha1,'image_is_real_framed_work':True,'frame_is_historical_original':False,'commercial_clearance_for_publication':'PENDING','museum_approved':False,'gold_v25':False,'published':False,'new_paid_calls':0,'new_tts_calls':0}
+          try:
+            headers={'User-Agent':'ArtVisionSourcePreflight/1.0 (CC0 research; no publication)'}
+            with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=35) as response:
+              data=response.read(5_000_000)
+            assert len(data)==expected_bytes,(len(data),expected_bytes)
+            assert hashlib.sha1(data).hexdigest()==expected_sha1,'SOURCE_SHA1_MISMATCH'
+            # JPEG SOF dimension parser: this checks the true image pixels without resizing or third-party dependencies.
+            def dims(b):
+              i=2
+              assert b[:2]==b'\xff\xd8'
+              while i<len(b):
+                while i<len(b) and b[i]==255:i+=1
+                marker=b[i];i+=1
+                if marker in (0xd8,0xd9):continue
+                n=(b[i]<<8)+b[i+1]
+                if marker in (0xc0,0xc1,0xc2,0xc3):
+                  return [(b[i+5]<<8)+b[i+6],(b[i+3]<<8)+b[i+4]]
+                i+=n
+              raise AssertionError('JPEG_SOF_MISSING')
+            assert dims(data)==[3520,2936],dims(data)
+            (p/'DELACROIX_LOUVRE_REAL_FRAME_SHONAGON_CC0_V170.jpg').write_bytes(data)
+            manifest.update(status='SOURCE_BYTES_VERIFIED_SHA1_SIZE_DIMENSIONS',source_sha256=hashlib.sha256(data).hexdigest(),source_bytes=len(data))
+          except Exception as e:
+            manifest.update(status='SOURCE_FETCH_FAILED_NO_RENDER',error=repr(e)[:600])
+            (p/'SOURCE_PREFLIGHT_V170.json').write_text(json.dumps(manifest,indent=2))
+            raise
+          (p/'SOURCE_PREFLIGHT_V170.json').write_text(json.dumps(manifest,indent=2))
+          print(json.dumps(manifest,indent=2))
+          PY
+      - name: Save source for owner-only Museum production, even if download blocked
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V170_DELACROIX_GENUINE_FRAME_CC0_PREFLIGHT
+          path: /tmp/artvision_v170/
+          retention-days: 30
+          if-no-files-found: warn
