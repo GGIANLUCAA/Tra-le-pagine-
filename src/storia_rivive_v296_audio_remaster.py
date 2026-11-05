@@ -85,6 +85,20 @@ def main() -> int:
          "-i", str(args.output), "-f", "null", "-"])
     dest_probe = probe(args.output)
     dest_audio = measure(args.output)
+    # One isolated fallback for excessive true peaks. No repeated API calls;
+    # do not silently weaken the QA gate to count a bad file as finished.
+    if float(dest_audio["input_tp"]) > -1.0:
+        run([
+            "ffmpeg", "-nostdin", "-y", "-hide_banner", "-loglevel", "error",
+            "-i", str(args.source), "-map", "0:v:0", "-map", "0:a:0",
+            "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+            "-af", filt + ",alimiter=limit=0.80:level=0:attack=5:release=50",
+            "-movflags", "+faststart", str(args.output)
+        ])
+        run(["ffmpeg", "-nostdin", "-v", "error", "-xerror",
+             "-i", str(args.output), "-f", "null", "-"])
+        dest_probe = probe(args.output)
+        dest_audio = measure(args.output)
     duration_delta = abs(float(src_probe["format"]["duration"]) -
                          float(dest_probe["format"]["duration"]))
     loudness = float(dest_audio["input_i"])
