@@ -119,7 +119,7 @@ def _archive_fallback(folder: Path) -> tuple[Path, str, str, int]:
     _, size, filename, sha1 = choices[0]
     url = (base + "/download/" + ARCHIVE_IDENTIFIER + "/" +
            urllib.parse.quote(filename, safe="/"))
-    target = folder / "ARCHIVE_ALTERNATE_FILM" + Path(filename).suffix.lower()
+    target = folder / ("ARCHIVE_ALTERNATE_FILM" + Path(filename).suffix.lower())
     target.parent.mkdir(parents=True, exist_ok=True)
     with _request(url, 120) as response, target.open("wb") as out:
         for block in iter(lambda: response.read(1024 * 1024), b""):
