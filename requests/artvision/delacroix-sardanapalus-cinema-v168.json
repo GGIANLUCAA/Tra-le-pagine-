@@ -1,0 +1,47 @@
+{
+  "directive_date": "2026-11-05",
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "work_id": "delacroix_death_sardanapalus_1827_louvre_rf2346",
+  "public_title": "The Death of Sardanapalus",
+  "artist": "Eugène Delacroix",
+  "year": 1827,
+  "accession": "RF 2346",
+  "museum": "Musée du Louvre",
+  "work_dimensions_cm": [
+    392,
+    496
+  ],
+  "variant": "cinema_standard",
+  "run_once_only": true,
+  "no_duplicate": true,
+  "source_page": "https://commons.wikimedia.org/wiki/File:The_Death_of_Sardanapalus_by_Eugene_Delacroix,_Louvre.jpg",
+  "source_url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/The_Death_of_Sardanapalus_by_Eugene_Delacroix%2C_Louvre.jpg",
+  "source_expected_pixels": [
+    6875,
+    5358
+  ],
+  "source_expected_bytes": 25369869,
+  "source_photographer": "Wilfredor",
+  "source_license": "CC0 1.0 (2024 photograph), 1827 painting public domain; commercial/territorial French heritage review pending",
+  "source_verified_on_public_metadata": true,
+  "source_bytes_downloaded_preflight": false,
+  "zero_paid_api_calls": true,
+  "allow_paid_calls": false,
+  "social_publish": false,
+  "gold_v25": false,
+  "human_artistic_review": "PENDING",
+  "private_review_only": true,
+  "workflow": ".github/workflows/artvision-delacroix-sardanapalus-cinema-v168.yml",
+  "renderer": "src/artvision_delacroix_sardanapalus_cinema_v168.py",
+  "expected_output": "one 48s H264 AAC MP4 with original procedural music and full JPG+QA ZIP, no Museum",
+  "qa_required": [
+    "physical JPEG original metadata and SHA256",
+    "one video only, 960 frames, 48s",
+    "FFmpeg full video+audio decode",
+    "MP4 SHA256 readback",
+    "ZIP CRC and same MP4 member SHA",
+    "human art review pending; no Gold, no publication"
+  ],
+  "failure_policy": "Any HTTP429, wrong JPEG dimensions/bytes, source rights concern, or ffmpeg error -> stop without claiming a slot; no automatic reruns or alternate paid API",
+  "status": "ONE_SHOT_REQUESTED_UNVERIFIED"
+}
