@@ -1,0 +1,195 @@
+name: "La Storia Rivive V297 - real free photo I2I and moving-source AB test"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v297-visual-first.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v297-visual-first
+  cancel-in-progress: false
+jobs:
+  single_free_photo_and_ab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install no-cost video/image processing tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg zip
+          python -m pip install -q "pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5" "gradio_client>=1.0,<3"
+      - name: Download real prior master and select a genuine monochrome MOVING segment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_v297
+          cd output/storia_v297
+          gh release download storia-rivive-bombay-1929-v981-natural-color-real-vidu --repo "$GITHUB_REPOSITORY" --pattern BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4
+          test -s BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4
+          python - <<'PY'
+          import cv2, numpy as np, json, pathlib, hashlib
+          p=pathlib.Path('BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4')
+          cap=cv2.VideoCapture(str(p))
+          fps=cap.get(cv2.CAP_PROP_FPS); frames=cap.get(cv2.CAP_PROP_FRAME_COUNT)
+          assert 20<=fps<=61 and frames/fps>12, 'SOURCE_VIDEO_INVALID'
+          def fetch(t):
+              cap.set(cv2.CAP_PROP_POS_MSEC,t*1000)
+              ok,frame=cap.read()
+              return frame if ok else None
+          attempts=[]
+          for t in [3.70,6.70,9.90,12.8]+list(np.arange(1.4, min(14.0,frames/fps-1.0), .3)):
+              count=round(fps*.52)
+              seq=[fetch(t+i/fps) for i in range(count)]
+              if any(f is None for f in seq): continue
+              chroma=[cv2.cvtColor(f,cv2.COLOR_BGR2HSV)[:,:,1] for f in seq]
+              avg=float(np.mean([a.mean() for a in chroma]))
+              color_frac=float(np.mean([np.mean(a>=18) for a in chroma]))
+              diff=float(np.mean(cv2.absdiff(cv2.cvtColor(seq[0],cv2.COLOR_BGR2GRAY),cv2.cvtColor(seq[-1],cv2.COLOR_BGR2GRAY))))
+              sharp=float(cv2.Laplacian(cv2.cvtColor(seq[-1],cv2.COLOR_BGR2GRAY),cv2.CV_32F).var())
+              record={'t':round(float(t),3),'saturation':round(avg,2),'colored_fraction':round(color_frac,3),'motion_delta':round(diff,3),'sharpness':round(sharp,1)}
+              attempts.append(record)
+              if avg<=12 and color_frac<=.25 and diff>=1.15 and sharp>=8:
+                  capout=cv2.VideoWriter('BW_TRUE_MOTION_RAW.mp4',cv2.VideoWriter_fourcc(*'mp4v'),30,(720,1280))
+                  assert capout.isOpened()
+                  for frame in seq:
+                      frame=cv2.resize(frame,(720,1280))
+                      capout.write(frame)
+                  capout.release()
+                  cv2.imwrite('SOURCE_BW_FRAME.png',cv2.resize(seq[-1],(720,1280)))
+                  record['accepted']=True
+                  break
+          cap.release()
+          data={'stage':'REAL_ARCHIVAL_BW_SHOT_SELECTION','selected':next((x for x in attempts if x.get('accepted')),None),
+              'tested':attempts,'original_master_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'source_reconstructed_not_original_camera_negative':True,
+              'visual_approval':False,'new_final_episode_created':False,'new_paid_calls':0}
+          pathlib.Path('SOURCE_QA.json').write_text(json.dumps(data,indent=2)+'\n')
+          assert data['selected'], 'NO_CLEAN_MOVING_BW_SHOT_STOP_NO_FAKE_SOURCE'
+          PY
+          ffmpeg -nostdin -y -v error -i BW_TRUE_MOTION_RAW.mp4 -c:v libx264 -crf 18 -pix_fmt yuv420p BW_TRUE_MOTION.mp4
+          test -s SOURCE_BW_FRAME.png
+      - name: Attempt one REAL free image-to-image restoration - never use paid service
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_v297
+          timeout 270 python - <<'PY' || true
+          import json,pathlib
+          from PIL import Image
+          report={'service':'finegrain/finegrain-image-enhancer','free_single_attempt':True,'paid_calls':0,
+                  'status':'FREE_MODEL_UNAVAILABLE','actual_i2i_created':False,'human_review':'PENDING'}
+          try:
+              from gradio_client import Client, handle_file
+              c=Client('finegrain/finegrain-image-enhancer',verbose=False)
+              prompt=('Make a modern 4K-perceived documentary PHOTOGRAPH from this exact monochrome historic Bombay 1929 film frame. '
+                      'Preserve every person, count of people, hats, arms, hands, animals, buildings, geometry and camera. '
+                      'Natural photographic skin, cotton fabric, wood, sunlight, fine textures, realistic muted distinct colors. '
+                      'Mild speculative restoration of indistinct faces is acceptable if believable and anatomically normal.')
+              neg=('extra limbs, antlers, horns, merged faces, stretched hands, added people, new animals, altered objects, '
+                   'fake writing, cartoon, illustration, anime, waxy faces, sepia, monochrome, blurred painted look')
+              raw=c.predict(handle_file('SOURCE_BW_FRAME.png'),prompt,neg,
+                  1929,2,1.14,.97,6,112,144,.45,18,'DDIM',api_name='/process')
+              obj=raw[1] if isinstance(raw,(tuple,list)) and len(raw)>1 else raw
+              if isinstance(obj,dict): obj=obj.get('path')
+              with Image.open(str(obj)) as im:
+                  im.convert('RGB').save('PHOTO_I2I_CANDIDATE.png')
+              report['status']='REAL_FREE_I2I_CREATED_GATE_PENDING'
+              report['actual_i2i_created']=True
+          except Exception as e:
+              report['error_type']=type(e).__name__
+              report['error_summary']=str(e)[:230]
+          finally:
+              pathlib.Path('I2I_TRIAL.json').write_text(json.dumps(report,indent=2)+'\n')
+              print(report['status'])
+          PY
+          if test ! -f I2I_TRIAL.json; then
+            echo '{"status":"FREE_PROVIDER_TIMEOUT","paid_calls":0,"actual_i2i_created":false}' > I2I_TRIAL.json
+          fi
+      - name: Visual identity gate and genuine AB preview only if photo really passes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_v297
+          if test -s PHOTO_I2I_CANDIDATE.png; then
+            python ../../src/storia_rivive_v295_photo_identity_gate.py --source SOURCE_BW_FRAME.png --candidate PHOTO_I2I_CANDIDATE.png --out PHOTO_IDENTITY_GATE.json
+          fi
+          python - <<'PY'
+          import cv2,numpy as np,json,pathlib,zipfile,hashlib,subprocess
+          root=pathlib.Path('.')
+          trial=json.loads((root/'I2I_TRIAL.json').read_text())
+          gate=json.loads((root/'PHOTO_IDENTITY_GATE.json').read_text()) if (root/'PHOTO_IDENTITY_GATE.json').exists() else None
+          status={'project':'LA_STORIA_RIVIVE','stage':'ONE_REAL_IMAGE_TO_IMAGE_VISUAL_AB',
+                  'source_monochrome_motion_confirmed':True,
+                  'generated_real_photo':bool(trial.get('actual_i2i_created')),
+                  'color_and_structure_gate_passed':bool(gate and gate.get('ready_for_artistic_review')),
+                  'visible_human_anatomy_qc':'PENDING_HUMAN_VISUAL_REVIEW',
+                  'benchmark_43054_43055_43056_44359_comparison':'PENDING',
+                  'new_finished_video_count':0,'release_approved':False,'site_published':False,
+                  'social_published':False,'vidu_new_clips':0,'paid_ai_calls':0}
+          if status['color_and_structure_gate_passed']:
+              src=cv2.imread('SOURCE_BW_FRAME.png')
+              photo=cv2.imread('PHOTO_I2I_CANDIDATE.png')
+              photo=cv2.resize(photo,(720,1280))
+              video=cv2.VideoCapture('BW_TRUE_MOTION.mp4')
+              orig_frames=[]
+              while True:
+                  ok,f=video.read()
+                  if not ok:break
+                  orig_frames.append(f)
+              video.release()
+              if len(orig_frames)>=10:
+                  raw=cv2.VideoWriter('AB_REVIEW_RAW.mp4',cv2.VideoWriter_fourcc(*'mp4v'),30,(720,1280))
+                  if not raw.isOpened(): raise RuntimeError('ENCODER_NOT_READY')
+                  for f in orig_frames:
+                      raw.write(cv2.resize(f,(720,1280)))
+                  for j in range(15):
+                      a=(j+1)/15
+                      a=a*a*(3-2*a)
+                      raw.write(cv2.addWeighted(src,1-a,photo,a,0))
+                  for j in range(75): raw.write(photo)
+                  raw.release()
+                  subprocess.run(['ffmpeg','-nostdin','-y','-v','error','-i','AB_REVIEW_RAW.mp4',
+                                  '-c:v','libx264','-crf','18','-pix_fmt','yuv420p','-movflags','+faststart',
+                                  'AB_VISUAL_REVIEW.mp4'],check=True)
+                  subprocess.run(['ffmpeg','-nostdin','-v','error','-xerror','-i','AB_VISUAL_REVIEW.mp4','-f','null','-'],check=True)
+                  status['ab_preview_mp4_real']=True
+                  status['ab_sha256']=hashlib.sha256((root/'AB_VISUAL_REVIEW.mp4').read_bytes()).hexdigest()
+                  from PIL import Image,ImageDraw
+                  pic=Image.new('RGB',(720,640),(16,18,21))
+                  pic.paste(Image.fromarray(cv2.cvtColor(cv2.resize(src,(360,640)),cv2.COLOR_BGR2RGB)),(0,0))
+                  pic.paste(Image.fromarray(cv2.cvtColor(cv2.resize(photo,(360,640)),cv2.COLOR_BGR2RGB)),(360,0))
+                  pic.save('BEFORE_AFTER_PHOTOGRAPHIC.jpg',quality=94)
+                  with zipfile.ZipFile('REAL_VISUAL_AB_REVIEW.zip','w',zipfile.ZIP_DEFLATED) as z:
+                      for item in ['AB_VISUAL_REVIEW.mp4','BEFORE_AFTER_PHOTOGRAPHIC.jpg',
+                                   'SOURCE_QA.json','I2I_TRIAL.json','PHOTO_IDENTITY_GATE.json']:
+                          z.write(item)
+                  with zipfile.ZipFile('REAL_VISUAL_AB_REVIEW.zip') as z:
+                      assert z.testzip() is None
+          status['status']='REAL_AB_PREVIEW_NEEDS_ARTISTIC_QA' if status.get('ab_preview_mp4_real') else 'NO_VALID_RESTORATION_BLOCKED_NOT_APPROVED'
+          status['notice']='This is a real single-frame color reconstruction and moving-archive AB preview, NOT a completed episode, NOT Vidu and NOT 4K-native.'
+          (root/'VISUAL_REPORT.json').write_text(json.dumps(status,indent=2)+'\n')
+          print(json.dumps(status))
+          PY
+      - name: Preserve actual BW, actual I2I photo if generated, AB preview if valid, and failure reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V297_REAL_VISUAL_AB
+          path: |
+            output/storia_v297/SOURCE_QA.json
+            output/storia_v297/I2I_TRIAL.json
+            output/storia_v297/PHOTO_IDENTITY_GATE.json
+            output/storia_v297/VISUAL_REPORT.json
+            output/storia_v297/SOURCE_BW_FRAME.png
+            output/storia_v297/PHOTO_I2I_CANDIDATE.png
+            output/storia_v297/BW_TRUE_MOTION.mp4
+            output/storia_v297/BEFORE_AFTER_PHOTOGRAPHIC.jpg
+            output/storia_v297/AB_VISUAL_REVIEW.mp4
+            output/storia_v297/REAL_VISUAL_AB_REVIEW.zip
+          if-no-files-found: warn
+          retention-days: 14
