@@ -3,9 +3,9 @@
 import json,hashlib,math,random,struct,subprocess,urllib.request,wave,zipfile
 from pathlib import Path
 O=Path("output/cinema_reale/episode_004");O.mkdir(parents=True,exist_ok=True)
-SRC="https://oceanexplorer.noaa.gov/okeanos/explorations/ex1907/dailyupdates/nov4/media/dive04-dragonfish-1280x720.mp4"
+SRC="https://oceanexplorer.noaa.gov/wp-content/uploads/2019/11/dive04-dragonfish-1280x720-1.mp4"
 PAGE="https://oceanexplorer.noaa.gov/multimedia/unknown-dragonfish/"
-CREDIT="NOAA Ocean Exploration, EX1907 2019 deep-sea dragonfish"
+CREDIT="NOAA Ocean Exploration, 2019 Southeastern U.S. Deep-sea Exploration"
 def cmd(a):
  p=subprocess.run(a,text=True,capture_output=True)
  if p.returncode:raise RuntimeError(str(a[:2])+": "+p.stderr[-1800:])
