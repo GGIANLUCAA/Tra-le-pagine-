@@ -100,12 +100,13 @@ jobs:
                   for member in zf.namelist():
                       if member.endswith('/'):continue
                       base=pathlib.PurePosixPath(member).name.upper()
-                      if base in ('QA_REPORT.JSON','DELIVERY_MANIFEST_V55.JSON','ARTVISION_DELIVERY_V55.JSON'):
+                      if base in ('QA_REPORT.JSON','DELIVERY_MANIFEST_V55.JSON','ARTVISION_DELIVERY_V55.JSON') or (base.startswith('QA_') and base.endswith('.JSON')):
                           try:
                               documents.append((label+member,zf.read(member)[:250000].decode('utf-8','replace').upper()))
                           except Exception as exc:
                               return label+member+' unreadable authorization metadata: '+str(exc)
-                      if base in ('SOURCES_AND_RIGHTS.TXT','SOURCES_AND_RIGHTS.MD','FONTI_E_DIRITTI.TXT','FONTI_E_DIRITTI.MD'):
+                      if base in ('SOURCES_AND_RIGHTS.TXT','SOURCES_AND_RIGHTS.MD','FONTI_E_DIRITTI.TXT','FONTI_E_DIRITTI.MD',
+                                  'RIGHTS_AND_CREDITS.TXT','RIGHTS_AND_CREDITS.MD'):
                           documents.append((label+member,zf.read(member)[:250000].decode('utf-8','replace').upper()))
                       if base.endswith('.ZIP'):
                           try:
@@ -120,7 +121,9 @@ jobs:
               blocked_tokens=('"PUBLICATION": "NOT AUTHORIZED"','"PUBLICATION":"NOT AUTHORIZED"',
                               'PUBLICATION: NOT AUTHORIZED','PUBLICATION NOT AUTHORIZED',
                               'NOT YET CLEARED FOR PUBLICATION','DO NOT PUBLISH','NON PUBBLICARE',
-                              'NOT_PUBLISHED','NOT PUBLISHED')
+                              '"PUBLICATION_AUTHORIZED": FALSE','"PUBLICATION_AUTHORIZED":FALSE',
+                              'PUBLICATION_AUTHORIZED: FALSE','PRIVATE REVIEW ONLY',
+                              'NOT AUTHORIZED TO PUBLISH','NOT_PUBLISHED','NOT PUBLISHED')
               for label,text in documents:
                   hit=next((token for token in blocked_tokens if token in text),None)
                   if hit:return label+' explicitly blocks archive publication: '+hit
@@ -142,6 +145,13 @@ jobs:
               review_only=bundle({'OWNER_REVIEW.mp4':b'owner'})
               with zipfile.ZipFile(review_only) as test:
                   assert explicit_archive_block_reason(test,'OWNER_REVIEW_ONLY') is None
+              rights_pending=bundle({
+                  'OWNER_REVIEW.mp4':b'owner',
+                  'QA_V166.json':json.dumps({'publication_authorized':False}),
+                  'RIGHTS_AND_CREDITS.txt':'Commercial reuse clearance PENDING: private review only.'
+              })
+              with zipfile.ZipFile(rights_pending) as test:
+                  assert explicit_archive_block_reason(test,'OWNER_RIGHTS_PENDING')
               print('Explicit authorization gate self-test: PASS',flush=True)
           self_test_explicit_archive_block()
           cache_token='',0
