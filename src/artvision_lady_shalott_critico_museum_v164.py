@@ -3,6 +3,7 @@
 NO extra TTS, paid APIs, fabricated museum room, Gold or publication.
 """
 import argparse, hashlib, json, subprocess, zipfile, math
+from functools import lru_cache
 from pathlib import Path
 import cv2, numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -24,16 +25,28 @@ def run(args):
  r=subprocess.run(list(map(str,args)),capture_output=True)
  if r.returncode:raise RuntimeError(r.stderr.decode(errors='replace')[-1900:])
  return r.stdout
-def staged(photo,t):
- mat=cv2.imread(str(photo))
+@lru_cache(maxsize=2)
+def _museum_static_assets(photo_filename):
+ # Preprocess and validate the REAL source image only once per render.
+ # Every returned object is immutable by convention; staged() copies the
+ # background before drawing, preserving byte-identical frames.
+ mat=cv2.imread(photo_filename)
+ if mat is None:raise ValueError("Authentic frame photo unreadable")
  ph,pw=mat.shape[:2]
  scale=min(670/pw,895/ph)
  sw,sh=int(scale*pw),int(scale*ph)
  img=cv2.resize(mat,(sw,sh),interpolation=cv2.INTER_AREA)
- im=np.full((H,W,3),(24,24,25),np.uint8)
+ background=np.full((H,W,3),(24,24,25),np.uint8)
  for y in range(H):
   v=int(16+13*(1-abs(y-H/2)/(H/2)))
-  im[y,:]=(v+7,v+6,v+4)
+  background[y,:]=(v+7,v+6,v+4)
+ serif=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf',30)
+ sans=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',15)
+ return img,sw,sh,background,serif,sans
+
+def staged(photo,t):
+ img,sw,sh,background,serif,sans=_museum_static_assets(str(photo))
+ im=background.copy()
  zoom=.93+.085*max(0,min(1,t))
  iw,ih=int(sw*zoom),int(sh*zoom)
  sub=cv2.resize(img,(iw,ih),interpolation=cv2.INTER_CUBIC)
@@ -42,8 +55,6 @@ def staged(photo,t):
  if x1<x2 and y1<y2:im[y1:y2,x1:x2]=sub[y1-py:y2-py,x1-px:x2-px]
  pil=Image.fromarray(cv2.cvtColor(im,cv2.COLOR_BGR2RGB))
  d=ImageDraw.Draw(pil)
- serif=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf',30)
- sans=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',15)
  for title,y,font,col in [(TITLE,85,serif,(235,225,207)),('JOHN WILLIAM WATERHOUSE · 1888',143,sans,(194,185,165))]:
   b=d.textbbox((0,0),title,font=font)
   d.text(((W-b[2]+b[0])/2,y),title,font=font,fill=col)
