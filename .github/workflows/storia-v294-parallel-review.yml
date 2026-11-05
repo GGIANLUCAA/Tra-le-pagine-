@@ -1,0 +1,140 @@
+name: "La Storia Rivive V294 - parallel legacy media and free photo trial"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-v294-parallel-review.yml"]
+permissions:
+  contents: read
+concurrency:
+  group: storia-v294-parallel-review
+  cancel-in-progress: false
+jobs:
+  existing_episodes:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {id: bombay, tag: storia-rivive-bombay-1929-v981-natural-color-real-vidu, video: BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4, cover: COVER_V98.jpg, title: "BOMBAY - 1929"}
+          - {id: paris, tag: storia-rivive-paris-1900-1918-v85-4plus1-vidu-moving-finale, video: LA_STORIA_RIVIVE_PARIS_V85_4PLUS1_FINALE_VIDU.mp4, cover: COPERTINA.jpg, title: "PARIS - 1900-1918"}
+          - {id: coney, tag: storia-rivive-coney-island-1903-v73, video: CONEY_ISLAND_1903_LA_STORIA_RIVIVE_V73.mp4, cover: COPERTINA.jpg, title: "CONEY ISLAND - 1903"}
+          - {id: venice, tag: storia-rivive-venice-1896-original-color-film-v81, video: LA_STORIA_RIVIVE_VENICE_1896_V80.mp4, cover: COVER.jpg, title: "VENICE - 1896"}
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CANDIDATE: ${{ matrix.id }}
+      TAG: ${{ matrix.tag }}
+      MOVIE: ${{ matrix.video }}
+      COVER: ${{ matrix.cover }}
+      TITLE_TEXT: ${{ matrix.title }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install video tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg zip
+      - name: Retrieve actual existing media and verify decode; no paid API
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "output/v294/$CANDIDATE"
+          cd "output/v294/$CANDIDATE"
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "$MOVIE" --pattern "$COVER"
+          test -s "$MOVIE"
+          test -s "$COVER"
+          ffprobe -v error -show_entries format=duration,size:stream=codec_name,width,height -of json "$MOVIE" > ORIGINAL_MEDIA_PROBE.json
+          ffmpeg -nostdin -v error -xerror -i "$MOVIE" -f null -
+          ffmpeg -nostdin -y -v error -i "$MOVIE" -vf "fps=1/3,scale=220:-2,tile=5x1" -frames:v 1 ORIGINAL_FRAMES_CONTACT.jpg
+          test -s ORIGINAL_FRAMES_CONTACT.jpg
+          python - <<'PY'
+          import json,os,hashlib,pathlib,zipfile
+          p=pathlib.Path('.')
+          movie=p/os.environ['MOVIE']
+          title=os.environ['TITLE_TEXT']
+          name=os.environ['CANDIDATE']
+          captions={
+            'FACEBOOK':f'{title}\nHistorical footage restored with AI. Source frames and reconstructed details are interpretive, not original period color.',
+            'INSTAGRAM':f'{title} | From genuine archival motion to modern-color interpretation. #HistoryReels #LaStoriaRivive',
+            'TIKTOK':f'{title} | The past in motion. AI reconstruction from historical footage. #HistoryTok',
+            'YOUTUBE':f'{title} | Historical footage reimagined.\nAI-generated color and details are interpretive. Source rights and artistic review pending.'
+          }
+          for platform,body in captions.items(): (p/f'POST_{platform}.txt').write_text(body+'\n')
+          info={
+            'project':'LA_STORIA_RIVIVE','candidate':name,'original_release_tag':os.environ['TAG'],
+            'original_video_sha256':hashlib.sha256(movie.read_bytes()).hexdigest(),
+            'source_media_exists_and_decodes':True,
+            'new_video_created':False,'new_video_count':0,
+            'status':'LEGACY_VIDEO_REVIEW_PACK_NOT_NEW_MASTER',
+            'source_rights_italy':'PENDING','artistic_review':'PENDING',
+            'new_paid_api_calls':0,'social_published':False
+          }
+          (p/'QA_STATUS.json').write_text(json.dumps(info,indent=2)+'\n')
+          with zipfile.ZipFile(p/'REVIEW_KIT.zip','w',zipfile.ZIP_DEFLATED) as z:
+            for x in [movie,p/os.environ['COVER'],p/'ORIGINAL_MEDIA_PROBE.json',p/'ORIGINAL_FRAMES_CONTACT.jpg',p/'QA_STATUS.json']+list(p.glob('POST_*.txt')):
+              z.write(x,x.name)
+          with zipfile.ZipFile(p/'REVIEW_KIT.zip') as z: assert z.testzip() is None
+          print(json.dumps({'candidate':name,'status':info['status'],'archive_verified':True}))
+          PY
+      - name: Preserve genuine existing video and review kit without publishing
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V294_${{ matrix.id }}_REVIEW
+          path: output/v294/${{ matrix.id }}/
+          retention-days: 14
+          if-no-files-found: warn
+  single_free_photo_trial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Prepare real Bombay image and attempt one free public Finegrain restoration
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "pillow>=10,<13" "gradio_client>=1.0,<3"
+          mkdir -p output/v294/photo
+          cd output/v294/photo
+          gh release download storia-rivive-bombay-1929-v981-natural-color-real-vidu --repo "$GITHUB_REPOSITORY" --pattern BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4
+          ffmpeg -nostdin -y -v error -ss 0.65 -i BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4 -frames:v 1 SOURCE_BW_FRAME.png
+          timeout 240 python - <<'PY' || true
+          import json,pathlib
+          from PIL import Image
+          status={'provider':'finegrain/finegrain-image-enhancer','paid_calls':0,'max_calls':1,'status':'FREE_MODEL_UNAVAILABLE','artistic_review':'PENDING','published':False}
+          try:
+            from gradio_client import Client,handle_file
+            c=Client('finegrain/finegrain-image-enhancer',verbose=False)
+            prompt='Faithful photorealistic modern color restoration of this exact authentic 1929 film frame. Retain people, camera perspective, buildings, clothing and objects. Natural skin and fabric, accurate geometry, sharp but not artificial.'
+            neg='new faces, new people, changed objects, plastic skin, invented details, cartoon, painted texture, wrong architecture'
+            value=c.predict(handle_file('SOURCE_BW_FRAME.png'),prompt,neg,1929,2,1.14,.97,6,112,144,.45,18,'DDIM',api_name='/process')
+            result=value[1] if isinstance(value,(tuple,list)) and len(value)>1 else value
+            if isinstance(result,dict):result=result.get('path')
+            with Image.open(str(result)) as im:im.convert('RGB').save('FINEGRAIN_REVIEW.png')
+            status['status']='REAL_FREE_PHOTO_READY_FOR_VISUAL_REVIEW'
+          except Exception as e:
+            status['error_type']=type(e).__name__
+            status['error_summary']=str(e)[:180]
+          finally:
+            pathlib.Path('PHOTO_TRIAL.json').write_text(json.dumps(status,indent=2))
+            print(status['status'])
+          PY
+          if test ! -f PHOTO_TRIAL.json; then echo '{"status":"TIMEOUT_OR_INTERRUPTED","paid_calls":0}' > PHOTO_TRIAL.json; fi
+      - name: Preserve source, actual output if available, and honest failure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V294_FREE_PHOTO_TRIAL
+          path: |
+            output/v294/photo/SOURCE_BW_FRAME.png
+            output/v294/photo/FINEGRAIN_REVIEW.png
+            output/v294/photo/PHOTO_TRIAL.json
+          retention-days: 14
+          if-no-files-found: warn
