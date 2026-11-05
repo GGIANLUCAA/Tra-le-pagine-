@@ -1,7 +1,7 @@
 {
   "schema": "artvision-owner-selected-ten-v128",
   "directive_date": "2026-11-02",
-  "verified_on": "2026-11-04",
+  "verified_on": "2026-11-05",
   "owner_automation_id": "6adca191603c8191a90d5190901cd034",
   "status": "owner_confirmed_preflight_not_4x1_produced",
   "editorial_order_basis": "alternate intense/delicate, famous/rare, small/monumental; user first choice first; Dali last as rights-blocked",
@@ -1463,21 +1463,63 @@
       },
       "official_object_url": "https://collections.louvre.fr/ark:/53355/cl010065757",
       "art_image_source_page": "https://commons.wikimedia.org/wiki/Category:The_Death_of_Sardanapalus",
-      "art_rights_preflight": "Work public domain; specific image rights and Louvre download terms still unverified",
+      "art_rights_preflight": "1827 painting public domain; exact 2024 Wilfredor original photograph CC0 1.0 source 6875x5358 SHA256 9aee50cf6ecb8b266d64d0ab0e4fa09bf7fc6f80dcae9059906fc555233021e6 independently recovered and verified; Louvre/French cultural heritage territorial commercial reuse pending; PRIVATE REVIEW only",
       "preexisting_cinema_candidate": null,
       "editorial_note": "Large painting; violence and nudity require careful editorial/age/platform suitability review; no misleading historical museum",
-      "preflight_status": "research_incomplete_not_render_authorized",
+      "preflight_status": "1_of_4_REAL_MP4_CINEMA_STANDARD_V168_INDEPENDENT_SHA_FFMPEG_AUDIO_VIDEO_ZIP_CRC_AND_PRIVATE_LIBRARY_READBACK_PASS_CRITICO_V169_RUNNING_ARTISTIC_RIGHTS_PENDING",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 0,
+      "slots_delivered_this_selection": 1,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
-      "Gold_V25": false
+      "Gold_V25": false,
+      "cinema_standard_v168": {
+        "status": "INDEPENDENT_REAL_MP4_FROM_GITHUB_ARTIFACT_AND_PRIVATE_LIBRARY_ZIP_READBACK_PASS_NOT_GOLD",
+        "variant": "cinema_standard",
+        "run_id": 41969938939,
+        "artifact_id": 13389332497,
+        "filename": "DELACROIX_THE_DEATH_OF_SARDANAPALUS_CINEMA_V168_REVIEW.mp4",
+        "bytes": 6198464,
+        "sha256": "7b34dcd5bc7619e630d3d315ab31fd1d1d5735dd1bffa6d52b6e1f948b5e24d3",
+        "duration_s": 48,
+        "frames": 960,
+        "fps": 20,
+        "resolution": [
+          720,
+          1280
+        ],
+        "video_codec": "H264",
+        "audio_codec": "AAC",
+        "full_ffmpeg_video_audio_decode": "PASS independent actual downloaded file 2026-11-05",
+        "original_art_sha256": "9aee50cf6ecb8b266d64d0ab0e4fa09bf7fc6f80dcae9059906fc555233021e6",
+        "original_art_pixels": [
+          6875,
+          5358
+        ],
+        "original_art_bytes": 25369869,
+        "original_art_rights": "Wilfredor 2024 Wikimedia Commons CC0 1.0, publication and French heritage reuse review pending",
+        "original_zip_crc": "PASS",
+        "original_zip_sha256": "b8c227b82e2e1b8cfc949d2cb0303ef044ba02369c91c3fc30fdfc5718670047",
+        "private_repackaged_zip_sha256": "3a86e617d2cba556e32900e828c0e5e15ec3f2f8e21c81a8bf301ae3ce2ace08",
+        "private_repackaged_zip_bytes": 32043802,
+        "private_library_path": "/ArtVision/ARTVISION_DELACROIX_V168_VERIFIED_FULL_REVIEW.zip",
+        "private_library_id": "libfile_545be66cc54c8191a3169665ff3fd9db",
+        "private_library_download_sha256": "PASS identical to original 2026-11-05",
+        "private_library_download_zip_crc": "PASS",
+        "four_social_drafts_saved": true,
+        "user_feedback": "Cinema film previously viewed and positively reviewed by owner; no Gold claim",
+        "human_artistic_review": "owner positive Cinema, independent full-speed professional review still pending",
+        "Gold_V25": false,
+        "site_published": false,
+        "social_published": false,
+        "additional_paid_calls": 0,
+        "critico_standard_v169_action_run_id": 42125709649
+      }
     },
     {
       "id": "dali_temptation_st_anthony_1946_fg_dali_p625",
@@ -1538,7 +1580,7 @@
   },
   "last_v131_source_readback_20261102": "Bruegel #1 source+music artifact CRC/SHA readback and legacy MP4 FFmpeg/11-frame QA; 0 new 4x1 slots, Museum/voice/delivery still blocked",
   "last_selected_ten_update_20261102": "V133 one new Bruegel Cinema Standard review real MP4 23,398,879 B SHA 744ba3e924df222cde88558d42a1c454e743f3b9f673c6addb7213f497653078; 3/4 Bruegel pending; Library quota exceeded; no publication/Gold",
-  "last_verified_review": "2026-11-04",
+  "last_verified_review": "2026-11-05",
   "total_selected_new_cinema_review_slots_verified": 3,
   "current_site_download_audit": {
     "run_id": 41876068253,
@@ -1573,16 +1615,19 @@
     "new_paid_calls": 0
   },
   "latest_owner_progress_20261105": {
-    "verified_slots": 20,
+    "verified_slots": 21,
     "total_slots": 40,
-    "pending_slots": 20,
-    "latest_real_slot": "waterhouse_lady_shalott_cinema_museum_v166",
+    "pending_slots": 19,
+    "latest_real_slot": "delacroix_sardanapalus_cinema_standard_v168",
     "full_four_versions_lady_of_shalott": true,
     "private_library_full_package_sha_verified": true,
     "full_ffmpeg_decode": true,
     "publication_rights_pending": true,
     "artistic_review_pending": true,
     "new_paid_calls": 0,
-    "social_published": false
-  }
+    "social_published": false,
+    "critico_v169_action_run_id": 42125709649,
+    "critico_v169_not_counted_until_verified": true
+  },
+  "last_v168_20261105": "Delacroix Cinema V168 48s verified with real downloaded MP4 SHA/full FFmpeg/ZIP CRC and persistent private Library backup/readback; distinct from V169 Critico in_progress. No publish/Gold."
 }
