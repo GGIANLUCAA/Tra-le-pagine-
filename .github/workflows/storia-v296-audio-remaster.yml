@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/storia-v296-audio-remaster.yml"
+      - "src/storia_rivive_v296_audio_remaster.py"
 permissions:
   contents: read
 concurrency:
