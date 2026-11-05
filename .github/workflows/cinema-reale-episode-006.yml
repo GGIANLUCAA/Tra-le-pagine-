@@ -1,4 +1,4 @@
-name: Cinema Reale 006 - Genuine NASA ISS Eclipse Film
+name: Cinema Reale 006 - Genuine NASA Dallas Eclipse Film
 on:
   push:
     branches: [main]
@@ -19,7 +19,6 @@ jobs:
           python-version: '3.11'
       - name: Install FFmpeg using runner system packages
         run: |
-          sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg
       - name: Render NASA photographic time lapse with original stereo score
         run: python projects/cinema_reale/tools/render_episode_006.py
@@ -29,7 +28,7 @@ jobs:
         with:
           name: CINEMA_REALE_006_NASA_ECLIPSE_MP4_ZIP_REVIEW
           path: |
-            output/cinema_reale/episode_006/CINEMA_REALE_006_ECLIPSE_AUSTRALIS_ISS_REVIEW.mp4
+            output/cinema_reale/episode_006/CINEMA_REALE_006_ECLIPSE_DALLAS_REVIEW.mp4
             output/cinema_reale/episode_006/CINEMA_REALE_006_COMPLETE_REVIEW.zip
             output/cinema_reale/episode_006/cover_no_text.jpg
             output/cinema_reale/episode_006/qa_report.json
