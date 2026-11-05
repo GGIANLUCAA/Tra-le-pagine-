@@ -1566,6 +1566,34 @@
         "first_prevoice_guard_run_id": 42125222458,
         "first_prevoice_guard_failure": "GitHub repository billing variable missing, ZERO TTS attempted",
         "successful_recovery_run_id": 42125709649
+      },
+      "frame_source_candidate_v170": {
+        "status": "SOURCE_PAGE_AUTHOR_LICENSE_AND_VISUAL_MATCH_VERIFIED; ORIGINAL_BYTES_SHA1_READBACK_PENDING",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Mort_de_Sardanapale_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_2346_-_avec_cadre_-_apr%C3%A8s_restauration_octobre_2023.jpg",
+        "photographed_work": "Eugène Delacroix The Death of Sardanapalus, Louvre RF 2346",
+        "real_painting_dimensions_cm": [
+          392,
+          496
+        ],
+        "source_photographer": "Shonagon",
+        "photo_date": "2023-10-03",
+        "license": "CC0 1.0 stated on source page",
+        "original_photo_size_px": [
+          3520,
+          2936
+        ],
+        "original_bytes_expected": 3376252,
+        "original_sha1_expected": "1a1d7e125a15799d2b2631203ee791936906062d",
+        "actual_photo_reality": "Real 2023 photographed gilded museum frame, red Louvre wall and floor. This is not evidence that the frame was the 1827 original.",
+        "technical_preflight_workflow": ".github/workflows/artvision-delacroix-genuine-frame-preflight-v170.yml",
+        "one_shot_request": "requests/artvision/delacroix-sardanapalus-frame-v170.json",
+        "owner_approved_museum": false,
+        "museum_rendered": false,
+        "next_action": "VERIFY recovered source bytes and real frame geometries, reuse existing V169 Critico WAV and AAC, no new TTS, one render at a time. Preserve V168 and V169. Human artistic QA before any release.",
+        "public_rights_review": "PENDING",
+        "paid_api_calls": 0,
+        "published": false,
+        "Gold_V25": false
       }
     },
     {
