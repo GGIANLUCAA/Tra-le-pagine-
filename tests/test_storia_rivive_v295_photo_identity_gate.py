@@ -40,3 +40,12 @@ def test_rejects_reframed_square_candidate(tmp_path: Path) -> None:
     _scene(candidate, colour=True, size=(1024, 1024))
     result = evaluate(source, candidate)
     assert "same_aspect_ratio" in result["blockers"]
+
+
+def test_rejects_source_that_is_already_colourised(tmp_path: Path) -> None:
+    source = tmp_path / "source.png"
+    candidate = tmp_path / "candidate.png"
+    _scene(source, colour=True)
+    _scene(candidate, colour=True)
+    result = evaluate(source, candidate)
+    assert "source_is_monochrome" in result["blockers"]
