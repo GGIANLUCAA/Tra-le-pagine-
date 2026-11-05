@@ -1,0 +1,39 @@
+name: Cinema Reale 004 - Real Dragonfish Short
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/cinema-reale-episode-004.yml"
+      - "projects/cinema_reale/tools/render_episode_004.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Ensure FFmpeg
+        run: |
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version
+      - name: Render real-footage video
+        run: python projects/cinema_reale/tools/render_episode_004.py
+      - name: Deliver Android review MP4 and ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CINEMA_REALE_004_DRAGONFISH_MP4_ZIP_REVIEW
+          path: |
+            output/cinema_reale/episode_004/CINEMA_REALE_004_DRAGONFISH_REAL_FOOTAGE_REVIEW.mp4
+            output/cinema_reale/episode_004/CINEMA_REALE_004_PACKAGE.zip
+            output/cinema_reale/episode_004/cover_no_text.jpg
+            output/cinema_reale/episode_004/qa_report.json
+            output/cinema_reale/episode_004/SOCIAL_DESCRIPTION_DRAFT.txt
+            output/cinema_reale/episode_004/SOURCES_AND_RIGHTS.txt
+          retention-days: 14
+          if-no-files-found: error
