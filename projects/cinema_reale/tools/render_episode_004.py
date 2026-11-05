@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cinema Reale episode 003: real NOAA dragonfish, isolated CPU render, no generative video."""
+"""Cinema Reale episode 004: real NOAA dragonfish, isolated CPU render, no generative video."""
 import json,hashlib,math,random,struct,subprocess,urllib.request,wave,zipfile
 from pathlib import Path
 O=Path("output/cinema_reale/episode_004");O.mkdir(parents=True,exist_ok=True)
@@ -52,7 +52,7 @@ def main():
      if 0<z<1.5:v0+=.09*math.exp(-3*z)*math.sin(2*math.pi*62*z)
     out+=struct.pack("<h",int(max(-1,min(1,v0))*22000))
    f.writeframesraw(out)
- final=O/"CINEMA_REALE_004_ISOPOD_REAL_FOOTAGE_REVIEW.mp4"
+ final=O/"CINEMA_REALE_004_DRAGONFISH_REAL_FOOTAGE_REVIEW.mp4"
  cmd(["ffmpeg","-hide_banner","-loglevel","error","-i",str(silent),"-i",str(audio),"-map","0:v:0","-map","1:a:0","-c:v","copy","-c:a","aac","-b:a","160k","-shortest","-movflags","+faststart","-y",str(final)])
  outp=probe(final);streams=outp["streams"]
  assert any(x["codec_type"]=="video" and x["width"]==720 and x["height"]==1280 for x in streams)
