@@ -100,11 +100,11 @@ jobs:
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -qq -y ffmpeg
-          python -m pip install -q "pillow>=10,<13" "gradio_client>=1.0,<3"
+          python -m pip install -q "pillow>=10,<13" "numpy>=1.26,<3" "gradio_client>=1.0,<3"
           mkdir -p output/v294/photo
           cd output/v294/photo
           gh release download storia-rivive-bombay-1929-v981-natural-color-real-vidu --repo "$GITHUB_REPOSITORY" --pattern BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4
-          ffmpeg -nostdin -y -v error -ss 0.65 -i BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4 -frames:v 1 SOURCE_BW_FRAME.png
+          ffmpeg -nostdin -y -v error -ss 3.05 -i BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4 -frames:v 1 SOURCE_BW_FRAME.png
           timeout 240 python - <<'PY' || true
           import json,pathlib
           from PIL import Image
@@ -127,6 +127,24 @@ jobs:
             print(status['status'])
           PY
           if test ! -f PHOTO_TRIAL.json; then echo '{"status":"TIMEOUT_OR_INTERRUPTED","paid_calls":0}' > PHOTO_TRIAL.json; fi
+          if test -s FINEGRAIN_REVIEW.png; then
+            python ../../../src/storia_rivive_v295_photo_identity_gate.py \
+              --source SOURCE_BW_FRAME.png \
+              --candidate FINEGRAIN_REVIEW.png \
+              --out PHOTO_IDENTITY_GATE_V295.json
+            python - <<'PY'
+          import json,pathlib
+          trial_path=pathlib.Path('PHOTO_TRIAL.json')
+          gate=json.loads(pathlib.Path('PHOTO_IDENTITY_GATE_V295.json').read_text())
+          trial=json.loads(trial_path.read_text())
+          trial['model_output_status']=trial.get('status')
+          trial['status']=gate['status']
+          trial['ready_for_artistic_review']=gate['ready_for_artistic_review']
+          trial['release_approved']=False
+          trial['identity_gate_blockers']=gate['blockers']
+          trial_path.write_text(json.dumps(trial,indent=2)+'\n')
+          PY
+          fi
       - name: Preserve source, actual output if available, and honest failure report
         if: always()
         uses: actions/upload-artifact@v4
@@ -136,5 +154,6 @@ jobs:
             output/v294/photo/SOURCE_BW_FRAME.png
             output/v294/photo/FINEGRAIN_REVIEW.png
             output/v294/photo/PHOTO_TRIAL.json
+            output/v294/photo/PHOTO_IDENTITY_GATE_V295.json
           retention-days: 14
           if-no-files-found: warn
