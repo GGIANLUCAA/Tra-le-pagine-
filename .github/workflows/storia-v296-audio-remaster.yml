@@ -1,0 +1,98 @@
+name: "La Storia Rivive V296 - four independent zero-cost audio remasters"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-v296-audio-remaster.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v296-audio-remaster
+  cancel-in-progress: false
+jobs:
+  remaster_audio_existing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {id: bombay, tag: storia-rivive-bombay-1929-v981-natural-color-real-vidu, movie: BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4, cover: COVER_V98.jpg, title: "BOMBAY - 1929"}
+          - {id: paris, tag: storia-rivive-paris-1900-1918-v85-4plus1-vidu-moving-finale, movie: LA_STORIA_RIVIVE_PARIS_V85_4PLUS1_FINALE_VIDU.mp4, cover: COPERTINA.jpg, title: "PARIS - PERIOD TO VERIFY"}
+          - {id: coney, tag: storia-rivive-coney-island-1903-v73, movie: CONEY_ISLAND_1903_LA_STORIA_RIVIVE_V73.mp4, cover: COPERTINA.jpg, title: "CONEY ISLAND - 1903"}
+          - {id: venice, tag: storia-rivive-venice-1896-original-color-film-v81, movie: LA_STORIA_RIVIVE_VENICE_1896_V80.mp4, cover: COVER.jpg, title: "VENICE - 1896"}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CANDIDATE: ${{ matrix.id }}
+      RELEASE_TAG: ${{ matrix.tag }}
+      MOVIE: ${{ matrix.movie }}
+      COVER: ${{ matrix.cover }}
+      TITLE_TEXT: ${{ matrix.title }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg and zip (no AI APIs)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg zip
+      - name: Retrieve authentic previous master and preserve source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "output/v296/$CANDIDATE"
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern "$MOVIE" --pattern "$COVER" --dir "output/v296/$CANDIDATE"
+          test -s "output/v296/$CANDIDATE/$MOVIE"
+          test -s "output/v296/$CANDIDATE/$COVER"
+      - name: Render REAL audio-normalized review MP4 and test complete decode, volume and hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v296_audio_remaster.py \
+            --source "output/v296/$CANDIDATE/$MOVIE" \
+            --output "output/v296/$CANDIDATE/AUDIO_POLISHED_REVIEW.mp4" \
+            --report "output/v296/$CANDIDATE/AUDIO_QA.json" \
+            --candidate "$CANDIDATE"
+      - name: Create cover, draft social copy, provenance and verified ZIPs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, pathlib, zipfile
+          p = pathlib.Path("output/v296") / os.environ["CANDIDATE"]
+          title = os.environ["TITLE_TEXT"]
+          movie = p / "AUDIO_POLISHED_REVIEW.mp4"
+          cover = p / os.environ["COVER"]
+          qa = json.loads((p / "AUDIO_QA.json").read_text())
+          assert qa["status"] == "RENDERED_AUDIO_POLISHED_REVIEW_REQUIRED"
+          (p / "RIGHTS_AND_REVIEW_PENDING.txt").write_text(
+              "Existing legacy remaster only. Original footage provenance and rights in Italy remain pending.\n"
+              "Visual and listening review pending; not approved for public release.\n"
+              "Paris scenes from distinct periods must not be presented as a single historic moment.\n"
+              "No generative AI was invoked. No social posts were published.\n", encoding="utf-8")
+          captions = {
+              "FACEBOOK": f"{title}\nA restored historical scene in motion. Archival source and AI-generated details should be disclosed and verified before publishing.",
+              "INSTAGRAM": f"{title} | A look at the past in motion. Historical footage, interpretive restoration. #HistoryReels",
+              "TIKTOK": f"{title} | Real archival motion, carefully reworked audio. #HistoryTok",
+              "YOUTUBE": f"{title}\nRestored historical moving images. This audio-polished review candidate is not approved for publication."
+          }
+          for network, caption in captions.items():
+              (p / f"POST_{network}_DRAFT.txt").write_text(caption + "\n", encoding="utf-8")
+          included = [movie, cover, p / "AUDIO_QA.json", p / "RIGHTS_AND_REVIEW_PENDING.txt"] + sorted(p.glob("POST_*_DRAFT.txt"))
+          with zipfile.ZipFile(p / "FULL_REVIEW_KIT.zip", "w", zipfile.ZIP_DEFLATED) as z:
+              for item in included: z.write(item, item.name)
+          with zipfile.ZipFile(p / "VIDEO_ONLY.zip", "w", zipfile.ZIP_DEFLATED) as z:
+              z.write(movie, movie.name)
+          for archive in [p / "FULL_REVIEW_KIT.zip", p / "VIDEO_ONLY.zip"]:
+              with zipfile.ZipFile(archive) as z: assert z.testzip() is None
+          print(json.dumps({"candidate": os.environ["CANDIDATE"], "review_mp4_bytes": movie.stat().st_size,
+                            "review_sha256": qa["review_video_sha256"], "full_zip_verified": True,
+                            "final_episode_approved": False}, ensure_ascii=False))
+          PY
+      - name: Preserve real media and honest QA results even when some candidates fail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V296_${{ matrix.id }}_AUDIO_REVIEW
+          path: output/v296/${{ matrix.id }}/
+          retention-days: 14
+          if-no-files-found: warn
