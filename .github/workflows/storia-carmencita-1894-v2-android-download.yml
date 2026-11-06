@@ -31,9 +31,9 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p output
-          ffmpeg -y -hide_banner -loglevel error -ss 2 -i source/CARMENCITA_1894_CINEMA_RESTORED.mp4 -t 16.1667 -vf "hue=s=\x27if(lt(t,0.86),0,if(lt(t,1.42),(t-0.86)/0.56,1))\x27" -c:v libx264 -preset medium -crf 19 -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart output/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4
+          ffmpeg -y -hide_banner -loglevel error -ss 2 -i source/CARMENCITA_1894_CINEMA_RESTORED.mp4 -t 16.1667 -vf "hue=s='if(lt(t,0.86),0,if(lt(t,1.42),(t-0.86)/0.56,1))'" -c:v libx264 -preset medium -crf 19 -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart output/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4
           ffmpeg -v error -i output/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4 -f null -
-          python3 - <<\x27PY\x27
+          python3 - <<'PY'
           import json, subprocess
           p="output/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4"
           d=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_format","-show_streams","-of","json",p]))
