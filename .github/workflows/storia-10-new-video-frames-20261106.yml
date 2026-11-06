@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 19
     steps:
       - name: Install image and HTTP dependencies
-        run: pip install --quiet requests pillow numpy opencv-python-headless
+        run: |\n          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null\n          pip install --quiet requests pillow numpy opencv-python-headless
       - name: Fetch ten DIFFERENT real historic films and extract frames
         shell: bash
         run: |
@@ -56,22 +56,21 @@ jobs:
                     f.write(ch)
               return total if total>25000 else 0
             except Exception as ex:
+              print('DOWNLOAD_FAIL',url[:125],type(ex).__name__,str(ex)[:150],flush=True)
               if os.path.exists(path):os.remove(path)
               return 0
           for name,year,fn,desired in candidates:
             if len(records)>=10:break
             try:
-              par={'action':'query','format':'json','prop':'imageinfo','iiprop':'url|size','titles':'File:'+fn}
-              resp=sess.get('https://commons.wikimedia.org/w/api.php',params=par,timeout=22)
-              resp.raise_for_status()
-              pg=next(iter(resp.json()['query']['pages'].values()))
-              info=pg['imageinfo'][0]
-              original=info['url']
-              rel=original.split('/commons/',1)[1]
+              import unicodedata
+              canonical=unicodedata.normalize('NFC',fn.replace(' ','_'))
+              md5=hashlib.md5(canonical.encode('utf-8')).hexdigest()
+              rel=f'{md5[0]}/{md5[:2]}/'+urllib.parse.quote(canonical,safe="()!,'")
+              original='https://upload.wikimedia.org/wikipedia/commons/'+rel
               suffixes=['720p.vp9.webm','480p.vp9.webm','360p.vp9.webm']
               if fn.endswith('.ogv'):suffixes=['480p.vp9.webm','360p.vp9.webm','240p.vp9.webm']
               urls=[f'https://upload.wikimedia.org/wikipedia/commons/transcoded/{rel}/{urllib.parse.quote(fn)}.{s}' for s in suffixes]
-              if info['size'] < 65000000:urls.append(original)
+              urls.insert(0,original)
               vid='/tmp/current_video.bin'; nbytes=0
               for u in urls:
                 nbytes=download(u,vid,65000000)
