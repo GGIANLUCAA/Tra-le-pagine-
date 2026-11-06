@@ -31,6 +31,12 @@ jobs:
       - name: Install free CPU image libraries
         run: |
           python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5"
+      - name: Install ffmpeg and ffprobe for complete audio/video regression checks
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
       - name: Compile and execute ALL isolated WOW LAB tests
         run: |
           python -m compileall -q wow_lab
