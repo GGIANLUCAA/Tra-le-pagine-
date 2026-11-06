@@ -1,0 +1,73 @@
+name: ArtVision Rebel Angels V195 authentic room photograph recovery (source only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/artvision-rebel-angels-authentic-photo-v195.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-rebel-angels-v195-photo-recovery
+  cancel-in-progress: false
+jobs:
+  verify_genuine_photo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read canonical work and ensure missing Museum slots, no Dalí and no publications
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          a=[w for w in q['works'] if w['id']=='bruegel_fall_rebel_angels_1562_rmfb_584']
+          assert len(a)==1 and a[0]['slots_delivered_this_selection']==2
+          assert not a[0].get('museum_approved',False)
+          assert 'dali' not in a[0]['id']
+          print('SOURCE ONLY / NO MUSEUM APPROVAL / NO PAID API / NO PUBLISH')
+          PY
+      - name: Download actual photographed framed painting from Commons with SHA1 rights metadata
+        run: |
+          python - <<'PY'
+          import json,hashlib,urllib.request,urllib.parse,time,pathlib
+          names=[
+            ('01','Pieter_bruegel_il_vecchio,_Caduta_degli_angeli_ribelli,_1562,_01.JPG','a01ed115f1e064d7c7c92da6d5540ec02694b299'),
+            ('37','Pieter_bruegel_il_vecchio,_Caduta_degli_angeli_ribelli,_1562,_37.JPG','da49389d98e10b95adc0735ad845dd31f010d02e'),
+          ]
+          out=pathlib.Path('/tmp/artvision_rebel_v195');out.mkdir(exist_ok=True)
+          manifest={'status':'PHOTOGRAPHIC_SOURCE_EVIDENCE_ONLY_NO_AUTOMATIC_GALLERY_APPROVAL','files':[],'errors':[]}
+          headers={'User-Agent':'ArtVisionAuthenticSourceQA/1.0 (research; no publication)'}
+          for code,name,expected_sha1 in names:
+            try:
+              api='https://commons.wikimedia.org/w/api.php?'+urllib.parse.urlencode({'action':'query','format':'json','titles':'File:'+name,'prop':'imageinfo','iiprop':'url|sha1|size|mime|extmetadata'})
+              info=next(iter(json.load(urllib.request.urlopen(urllib.request.Request(api,headers=headers),timeout=35))['query']['pages'].values()))['imageinfo'][0]
+              license=info['extmetadata']['LicenseShortName']['value']
+              assert 'CC BY 3.0' in license,license
+              assert info['sha1'].lower()==expected_sha1
+              url=info['url'];assert url.startswith('https://upload.wikimedia.org/')
+              blob=None
+              for attempt in range(2):
+                try:
+                  blob=urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=90).read();break
+                except Exception:
+                  if attempt: raise
+                  time.sleep(4)
+              assert len(blob)==info['size']
+              assert hashlib.sha1(blob).hexdigest()==expected_sha1
+              assert info['mime']=='image/jpeg'
+              p=out/('REBEL_ANGELS_AUTHENTIC_FRAME_SAILKO_2016_'+code+'.jpg')
+              p.write_bytes(blob)
+              manifest['files'].append({'original_page':info.get('descriptionurl'),'original_url':url,'author':'Sailko','date':'2016-03-09','license':'CC BY 3.0','license_url':'https://creativecommons.org/licenses/by/3.0/','sha1':expected_sha1,'sha256':hashlib.sha256(blob).hexdigest(),'bytes':len(blob),'width':info['width'],'height':info['height'],'local':p.name,'actual_room_visual_review':'PENDING','exact_frame_visual_review':'PENDING','render_approval':False,'published':False})
+            except Exception as e:
+              manifest['errors'].append({'candidate':code,'reason':str(e)})
+          (out/'SOURCE_V195_MANIFEST.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
+          print(json.dumps(manifest,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARTVISION_V195_REBEL_ANGELS_GENUINE_PHOTOS_CC_BY_SOURCE_ONLY
+          path: /tmp/artvision_rebel_v195/
+          if-no-files-found: warn
+          retention-days: 30
