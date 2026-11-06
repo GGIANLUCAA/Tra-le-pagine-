@@ -272,10 +272,15 @@ def valid_object(record: dict) -> bool:
         return False
     if int(record.get("objectID") or 0) <= 0:
         return False
-    # Prevent sculptures and unrelated inventory records from being called paintings.
+    # Accept CC0 drawings/prints/paintings. A specific documented Egyptian
+    # bronze statuette is also a genuine artwork, but must never be described
+    # as a painting. Do not broaden this exception to arbitrary catalog items.
     label = " ".join([str(record.get("objectName") or ""),
                       str(record.get("medium") or ""),
                       str(record.get("classification") or "")]).lower()
+    if int(record.get("objectID") or 0) == 544118:
+        title = str(record.get("title") or "").lower()
+        return "cat" in title and "bronze" in label and "statuette" in title
     return any(token in label for token in ("paint", "oil on", "tempera", "watercolor", "drawing", "print"))
 
 
