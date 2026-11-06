@@ -22,7 +22,7 @@ jobs:
       SOURCE_ARTIFACT: STORIA_ARROSEUR_1895_V4_TRUE_FACES_NO_FREEZE_FILES
       TAG: storia-cinema-arroseur-1895-v4-volti-autentici-android
     steps:
-      - name: Retrieve ALREADY CREATED version V4: never substitute rejected V3
+      - name: "Retrieve ALREADY CREATED version V4 — never substitute rejected V3"
         run: |
           set -euo pipefail
           mkdir -p from_action publish
