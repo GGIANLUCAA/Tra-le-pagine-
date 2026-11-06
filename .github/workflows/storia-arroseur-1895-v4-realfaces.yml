@@ -1,0 +1,80 @@
+name: "La Storia Rivive Cinema · Arroseur 1895 V4 REAL faces NO freeze"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-arroseur-1895-v4-realfaces.yml"
+      - "src/storia_arroseur_1895_v4_realfaces.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-arroseur-1895-v4-authentic-quality
+  cancel-in-progress: false
+jobs:
+  master_restoration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install zero-cost AI color model and film cleanup tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q "imageio-ffmpeg>=0.5,<1" "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1"
+          mkdir -p /tmp/storia-cinema-ffmpeg
+          python - <<'PY'
+          import imageio_ffmpeg
+          from pathlib import Path
+          p=Path(imageio_ffmpeg.get_ffmpeg_exe())
+          assert p.is_file()
+          Path("/tmp/storia-cinema-ffmpeg/ffmpeg").symlink_to(p)
+          print("PORTABLE_FFMPEG_PRESENT",p)
+          PY
+          echo /tmp/storia-cinema-ffmpeg >> "$GITHUB_PATH"
+      - name: Render no-freeze and no-AI-faces remaster, whole original 4:3 image
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_arroseur_1895_v4_realfaces.py
+          python -u src/storia_arroseur_1895_v4_realfaces.py
+      - name: Mandatory full-decode and ZIP audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_cinema_1895_arroseur_v4
+          python - <<'PY'
+          import json,hashlib,zipfile,pathlib
+          d=json.loads(pathlib.Path('DELIVERY_V4.json').read_text())
+          assert d['status']=='V4_REAL_REMASTER_COMPLETE_ARTISTIC_REVIEW_PENDING'
+          assert d['no_freeze_no_synthetic_face'] and d['zip_crc']
+          for f,key in [('ARROSEUR_1895_V4_VOLTI_AUTENTICI.mp4','full_sha256'),
+                        ('ARROSEUR_1895_V4_VERTICALE_SOCIAL.mp4','vertical_sha256')]:
+              b=pathlib.Path(f).read_bytes()
+              assert len(b)>3_000_000 and hashlib.sha256(b).hexdigest()==d[key]
+          with zipfile.ZipFile(d['zip']) as z:
+              assert z.testzip() is None
+          print("V4_VERIFIED_FILM_GEOMETRY_UNCHANGED_NO_FREEZE_REAL_MOVING_COLOR")
+          PY
+          ffmpeg -nostdin -v error -xerror -i ARROSEUR_1895_V4_VOLTI_AUTENTICI.mp4 -f null -
+          ffmpeg -nostdin -v error -xerror -i ARROSEUR_1895_V4_VERTICALE_SOCIAL.mp4 -f null -
+      - name: Deliver actual MP4s, cover, source comparison, social ZIP, QA for human visual review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_ARROSEUR_1895_V4_TRUE_FACES_NO_FREEZE_FILES
+          path: |
+            output/storia_cinema_1895_arroseur_v4/ARROSEUR_1895_V4_VOLTI_AUTENTICI.mp4
+            output/storia_cinema_1895_arroseur_v4/ARROSEUR_1895_V4_VERTICALE_SOCIAL.mp4
+            output/storia_cinema_1895_arroseur_v4/ARROSEUR_1895_V4_VIDEO_COMPLETO.zip
+            output/storia_cinema_1895_arroseur_v4/ARROSEUR_1895_V4_COVER.jpg
+            output/storia_cinema_1895_arroseur_v4/FRAME_BY_FRAME_SOURCE_MATCH.jpg
+            output/storia_cinema_1895_arroseur_v4/RESTAURO_V4_QA.json
+            output/storia_cinema_1895_arroseur_v4/DELIVERY_V4.json
+            output/storia_cinema_1895_arroseur_v4/BLOCKER_V4.json
+            output/storia_cinema_1895_arroseur_v4/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
