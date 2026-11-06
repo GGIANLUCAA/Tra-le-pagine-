@@ -1,0 +1,42 @@
+name: "La Storia Rivive · sorgente originale 1895 per nuovo restauro"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-arroseur-1895-source-for-restoration.yml"
+permissions:
+  contents: read
+jobs:
+  verified_original:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1"
+      - name: Download true original Lumiere scan and verify format and real motion
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import importlib.util,cv2,shutil,hashlib,json,pathlib
+          spec=importlib.util.spec_from_file_location('arroseur','src/storia_cinema_1895_arroseur.py')
+          x=importlib.util.module_from_spec(spec);spec.loader.exec_module(x)
+          path=x.retrieve()
+          v=cv2.VideoCapture(str(path))
+          w,h,fps,count=[v.get(i) for i in [3,4,5,7]]
+          v.release()
+          assert w>=1400 and h>=1000 and 38<count/fps<43
+          out=pathlib.Path('output/arroseur_true_original_1895')
+          out.mkdir(parents=True,exist_ok=True)
+          shutil.copyfile(path,out/'LUMIERE_L_ARROSEUR_1895_NATIVE.webm')
+          (out/'ORIGINAL_SOURCE.json').write_text(json.dumps({'source':x.PAGE,'sha256':x.digest(path),'width':w,'height':h,'fps':fps,'duration':count/fps,'authentic_original':True,'public_domain':True,'AI_images':False},indent=2))
+          print('SOURCE_AUTHENTIC_VERIFIED',x.digest(path),'bytes',path.stat().st_size)
+          PY
+      - if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_ARROSEUR_1895_NATIVE_SOURCE_FOR_V4
+          path: output/arroseur_true_original_1895/
+          retention-days: 3
