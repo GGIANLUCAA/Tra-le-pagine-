@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+"""Night Watch V177: search Wikimedia Commons for genuine COLOR room/frame photography.
+Research only. Metadata is not visual verification; never approve a Museum render automatically.
+"""
+import json,urllib.parse,urllib.request,re,html,hashlib,datetime,pathlib,time
+OUT=pathlib.Path('/tmp/artvision_nightwatch_v177');OUT.mkdir(parents=True,exist_ok=True)
+API='https://commons.wikimedia.org/w/api.php'
+TERMS=['Nachtwacht','The Night Watch','Rembrandt Rijksmuseum','Nachtwacht zaal','Nachtwacht lijst','Rijksmuseum Gallery of Honour']
+def get(q):
+ url=API+'?'+urllib.parse.urlencode(q)
+ req=urllib.request.Request(url,headers={'User-Agent':'ArtVisionMuseumSourceResearch/1.0 (noncommercial metadata audit; no automated reuse)'})
+ with urllib.request.urlopen(req,timeout=25) as r:return json.load(r)
+results=[];errors=[]
+for term in TERMS:
+ try:
+  j=get({'action':'query','generator':'search','gsrsearch':term,'gsrnamespace':6,'gsrlimit':50,'prop':'imageinfo','iiprop':'url|size|mime|sha1|extmetadata','iiurlwidth':700,'format':'json'})
+  for p in j.get('query',{}).get('pages',{}).values():
+   ii=(p.get('imageinfo') or [{}])[0];m=ii.get('extmetadata') or {}
+   def clean(k):return re.sub('<[^>]+>',' ',html.unescape(m.get(k,{}).get('value',''))).strip()[:400]
+   item={'title':p['title'],'source_page':'https://commons.wikimedia.org/wiki/'+urllib.parse.quote(p['title'].replace(' ','_'),safe=':/_()'),'width':ii.get('width'),'height':ii.get('height'),'sha1':ii.get('sha1'),'size':ii.get('size'),'mime':ii.get('mime'),'license':clean('LicenseShortName'),'artist':clean('Artist'),'date':clean('DateTimeOriginal') or clean('DateTime'),'description':clean('ImageDescription'),'thumburl':ii.get('thumburl'),'original_url':ii.get('url'),'matched_term':term,'real_room_photo_verified':False,'frame_specific_verified':False,'museum_approved':False}
+   if item['width'] and item['height'] and item['width']>=900 and item['height']>=650 and (item['mime'] in ('image/jpeg','image/png') or (not item['mime'] and item['title'].lower().endswith(('.jpg','.jpeg','.png')))):results.append(item)
+ except Exception as e:errors.append({'term':term,'error':str(e)[:300]})
+ time.sleep(0.25)
+uniq={x['title']:x for x in results}
+candidates=list(uniq.values())
+# Reject unrelated paintings and give room context priority, but never assert pixel authenticity.
+candidates=[x for x in candidates if any(k in (x['title']+' '+x['description']).lower() for k in ('nachtwacht','night watch','nightwatch'))]
+def rank(x):
+ t=(x['title']+' '+x['description']).lower()
+ return 4*('night watch' in t or 'nachtwacht' in t)+3*('room' in t or 'zaal' in t or 'gallery' in t or 'eregalerij' in t)+2*('frame' in t or 'lijst' in t)+min(x['width']/1500,3)
+candidates.sort(key=rank,reverse=True)
+manifest={'schema':'artvision-nightwatch-v177-color-frame-research','date':'2026-11-06','work':'The Night Watch','accession':'Rijksmuseum SK-C-5','queries':TERMS,'candidate_count':len(candidates),'errors':errors,'candidates':candidates[:60],'bug_fixed':'V176 omitted mime from iiprop while filtering mime; V177 explicitly requests mime and adds extension fallback','status':'METADATA_CANDIDATES_ONLY_HUMAN_VISUAL_AND_RIGHTS_REVIEW_REQUIRED' if candidates else 'NO_VALID_METADATA_CANDIDATES','museum_approved':False,'slots_added':0,'new_tts':0,'paid_calls':0,'published':False,'gold':False,'note':'Do not assume candidates depict the original painting, correct frame, color photograph, or real present-day room until image pixels and license are individually verified.'}
+(OUT/'NIGHT_WATCH_V177_COLOR_FRAME_CANDIDATES.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False))
+(OUT/'NIGHT_WATCH_V177_COLOR_FRAME_REVIEW.md').write_text('# Night Watch V177 — Color real-frame candidate research\\n\\n'+f"Found {len(candidates)} unique sufficiently large image metadata records. No photo approved.\\n\\n"+'\\n'.join(f"- [{x['title']}]({x['source_page']}) — {x['width']}×{x['height']}, {x['license'] or 'license unverified'}, SHA1 {x['sha1']}" for x in candidates[:25])+'\\n\\nNo TTS, render, Gold or publication. Only documentary source metadata.\\n')
+print(json.dumps({'candidates':len(candidates),'errors':errors,'top':[{k:x[k] for k in ('title','width','height','license')} for x in candidates[:8]]},ensure_ascii=False))
