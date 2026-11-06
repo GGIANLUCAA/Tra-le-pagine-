@@ -1,0 +1,60 @@
+name: "La Storia Rivive · Carmencita 1894 V2 · Android download"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-carmencita-1894-v2-android-download.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-carmencita-v2-download
+  cancel-in-progress: false
+jobs:
+  deliver:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -qq -y ffmpeg
+      - name: Download exact owner master from trusted finished GitHub run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh run download 42225529562 --repo "$GITHUB_REPOSITORY" --name STORIA_CINEMA_CARMENCITA_1894_NEW_VIDEO --dir source
+          test "$(stat -c%s source/CARMENCITA_1894_CINEMA_RESTORED.mp4)" -eq 12565545
+          echo "eab17a3b3c8a14eb54afd0f5710208aaa140de03f85be98445e490b997da287e  source/CARMENCITA_1894_CINEMA_RESTORED.mp4" | sha256sum -c -
+      - name: Render 16-second centered reveal; preserve authentic motion and audio
+        run: |
+          set -euo pipefail
+          mkdir -p output
+          ffmpeg -y -hide_banner -loglevel error -ss 2 -i source/CARMENCITA_1894_CINEMA_RESTORED.mp4 -t 16.1667 -vf "hue=s='if(lt(t,0.86),0,if(lt(t,1.42),(t-0.86)/0.56,1))'" -c:v libx264 -preset medium -crf 19 -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart output/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4
+          ffmpeg -v error -i output/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4 -f null -
+          python3 - <<'PY'
+          import json, subprocess
+          p="output/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4"
+          d=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_format","-show_streams","-of","json",p]))
+          assert 15.8 < float(d["format"]["duration"]) < 16.4
+          assert any(s["codec_type"]=="video" and s["width"]==720 and s["height"]==1280 for s in d["streams"])
+          assert any(s["codec_type"]=="audio" for s in d["streams"])
+          print("RENDER PASS",d["format"]["duration"])
+          PY
+          sha256sum output/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4 > output/sha256.txt
+      - name: Create one no-overwrite prerelease download, no socials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="storia-carmencita-1894-v2-reveal-centrato-android"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "RELEASE EXISTS: preserving without overwriting"
+          else
+            gh release create "$TAG" output/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4 --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title "Carmencita 1894 V2 - reveal centrato - download Android" --notes "Scaricamento diretto MP4. Ricostruzione tecnica dal master originale SHA verificato; avvio spostato 2 secondi, reveal B/N-colore intorno a 1 secondo con ballerina centrata. Non pubblicato sui social e nessuna modifica ai video esistenti."
+          fi
+          mkdir -p downloaded
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4 --dir downloaded
+          cmp output/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4 downloaded/CARMENCITA_1894_REVEAL_CENTRATO_V2_ANDROID.mp4
+          echo "FULL DOWNLOAD BYTES IDENTICAL"
