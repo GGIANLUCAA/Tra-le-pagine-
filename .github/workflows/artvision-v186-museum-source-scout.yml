@@ -30,8 +30,12 @@ jobs:
               print(work,len(items),"CANDIDATES ONLY")
           for error in p.get("errors",[]): print("SCOUT_ERROR",error)
           PY
+      - name: Evaluate candidates with fail-closed V187 source gate
+        run: python src/artvision_museum_source_gate_v187.py --input "$RUNNER_TEMP/artvision_room_candidates.json" --out "$RUNNER_TEMP/artvision_room_gate.json"
       - uses: actions/upload-artifact@v4
         with:
           name: artvision-v186-museum-room-candidates-not-approved
-          path: ${{ runner.temp }}/artvision_room_candidates.json
+          path: |
+            ${{ runner.temp }}/artvision_room_candidates.json
+            ${{ runner.temp }}/artvision_room_gate.json
           retention-days: 30
