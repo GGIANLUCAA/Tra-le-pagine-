@@ -211,7 +211,7 @@ def export(picture,session):
         tiles.paste(item,(i*238+3,30));d.text((i*238+4,5),name,fill="white")
     tiles.save(OUT/"ORIGINAL_VS_PHOTO_VISUAL_QA.jpg",quality=93)
     report={"status":"REAL_VERTICAL_MP4_RENDERED_REVIEW_PENDING","filename":MOVIE.name,
-       "sha256":sha(MOVIE),"bytes":MOVIE.stat().st_size,"resolution":[ww,hh],"fps":round(f,3),
+       "sha256":sha(MOVIE),"bytes":MOVIE.stat().st_size,"resolution":[ww,hh],"fps":round(float(FPS),3),
        "duration_s":round(n,3),"source_motion":"REAL archive video before and after freeze",
        "freeze_s":9/FPS,"photographic_i2i_hold_s":round((HOLD+7)/FPS,3),
        "moving_color":"Original footage with DDColor neural chroma; NOT fully generative I2V",
