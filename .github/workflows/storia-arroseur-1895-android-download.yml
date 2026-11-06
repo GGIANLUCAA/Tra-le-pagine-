@@ -1,0 +1,94 @@
+name: "La Storia Rivive · Download Android diretto (Arroseur 1895 V3)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-arroseur-1895-android-download.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-arroseur-1895-android-download-v3
+  cancel-in-progress: false
+jobs:
+  deliver_verified_video_and_zip:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: storia-cinema-1895-arroseur-v3-android
+      SOURCE_RUN_ID: "42271253812"
+      SOURCE_ARTIFACT: STORIA_CINEMA_ARROSEUR_1895_NEW_VIDEO
+      EXPECTED_SHA256: 1d5c73dd657ecbc1062e904384603fe330a7dc196ce1c329fab2c449c8967fbc
+    steps:
+      - name: Fetch previously generated files - no rerender, no Vidu credits
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p downloaded publish
+          gh run download "$SOURCE_RUN_ID" --repo "$GITHUB_REPOSITORY" -n "$SOURCE_ARTIFACT" -D downloaded
+          find downloaded -type f -printf "%p %s bytes\n" | head -30
+          python - <<'PY'
+          import os,zipfile,pathlib,hashlib,shutil
+          r=pathlib.Path('downloaded')
+          out=pathlib.Path('publish')
+          names={
+            'ARROSEUR_1895_CINEMA_RESTORED.mp4':'ARROSEUR_1895_VIDEO_COMPLETO.mp4',
+            'ARROSEUR_1895_VIDEO_COVER_SOCIAL.zip':'ARROSEUR_1895_VIDEO_E_SOCIAL.zip'
+          }
+          for src,dst in names.items():
+            found=list(r.rglob(src))
+            assert len(found)==1, f'{src} expected once, got {len(found)}'
+            assert found[0].stat().st_size>5_000_000, f'{src} missing content'
+            shutil.copyfile(found[0],out/dst)
+          movie=out/'ARROSEUR_1895_VIDEO_COMPLETO.mp4'
+          actual=hashlib.sha256(movie.read_bytes()).hexdigest()
+          assert actual==os.environ['EXPECTED_SHA256'], f'Wrong version: {actual}'
+          with zipfile.ZipFile(out/'ARROSEUR_1895_VIDEO_E_SOCIAL.zip') as z:
+            assert z.testzip() is None
+            assert any(x.endswith('.mp4') for x in z.namelist())
+            assert any('POST_FACEBOOK' in x for x in z.namelist())
+          assert movie.stat().st_size==11635233
+          assert (out/'ARROSEUR_1895_VIDEO_E_SOCIAL.zip').stat().st_size==12522860
+          print('VERIFIED_ORIGINAL_MP4',actual)
+          print('VERIFIED_ZIP_CRC_PASS')
+          PY
+      - name: Create stable external download prerelease, not on website or social
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists; do not overwrite or duplicate."
+          else
+            gh release create "$RELEASE_TAG" \
+              "publish/ARROSEUR_1895_VIDEO_COMPLETO.mp4" \
+              "publish/ARROSEUR_1895_VIDEO_E_SOCIAL.zip" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "La Storia Rivive · L'Arroseur arrosé (1895) · Download" \
+              --notes "Anteprima tecnica scaricabile su Android. Film 1895 Louis Lumière, Wikimedia Commons pubblico dominio. Colore e fotografia ricostruiti con AI; revisione artistica e pubblicazione su sito/social non approvate. H264/AAC, 23.208 s, 720x1280. Nessun nuovo credito o produzione." \
+              --prerelease --latest=false
+          fi
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            --json url,assets \
+            --jq '{url:.url,files:(.assets|map({name:.name,size:.size,url:.url}))}'
+          names="$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          grep -Fqx "ARROSEUR_1895_VIDEO_COMPLETO.mp4" <<< "$names"
+          grep -Fqx "ARROSEUR_1895_VIDEO_E_SOCIAL.zip" <<< "$names"
+      - name: Check real public Android download (SHA-256 and ZIP CRC)
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://github.com/$GITHUB_REPOSITORY/releases/download/$RELEASE_TAG/ARROSEUR_1895_VIDEO_COMPLETO.mp4"
+          curl --fail --location --retry 3 --max-time 100 --output /tmp/arroseur_verified_android.mp4 "$url"
+          test -s /tmp/arroseur_verified_android.mp4
+          actual="$(sha256sum /tmp/arroseur_verified_android.mp4 | cut -d ' ' -f1)"
+          test "$actual" = "$EXPECTED_SHA256"
+          echo "PUBLIC_DIRECT_MP4_DOWNLOAD_SHA256_PASS $actual"
+          curl --fail --location --retry 3 --max-time 100 --output /tmp/arroseur_verified_android.zip \
+            "https://github.com/$GITHUB_REPOSITORY/releases/download/$RELEASE_TAG/ARROSEUR_1895_VIDEO_E_SOCIAL.zip"
+          python - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('/tmp/arroseur_verified_android.zip') as z: assert z.testzip() is None
+          print("PUBLIC_DIRECT_ZIP_DOWNLOAD_CRC_PASS")
+          PY
