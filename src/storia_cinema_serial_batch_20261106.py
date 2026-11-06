@@ -49,6 +49,7 @@ def save(out,name,obj):
  (out/name).write_text(json.dumps(obj,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 def main():
  ap=argparse.ArgumentParser()
+ ap.add_argument("--reuse-artifact-dir",default="",help="Reuse exact earlier free I2I result after source lock SHA+frame match; never duplicate paid calls")
  ap.add_argument("--episode",required=True,choices=sorted(PROFILES))
  args=ap.parse_args()
  profile=PROFILES[args.episode]
@@ -108,6 +109,10 @@ def main():
   count=int(c.get(cv2.CAP_PROP_FRAME_COUNT));rate=float(c.get(cv2.CAP_PROP_FPS))
   c.release()
   assert abs(rate-24)<.1 and count>=int(m.DURATION*24)-5,("EXCERPT_NOT_DECODED",count,rate)
+  # Real archival files may deliver one fewer CFR frame than requested, do not request a nonexistent last frame.
+  if count<int(m.DURATION*m.FPS):
+   m.DURATION=(count-1)/m.FPS
+   print("TRUE_FILM_TRUNCATE_TO_LAST_DECODED_FRAME",count,m.DURATION,flush=True)
   # Real motion must be visible, not a static intertitle or zoom-only still.
   cap=cv2.VideoCapture(str(m.CLIP))
   samples=[]
@@ -134,6 +139,30 @@ def main():
   trial={"source":m.PAGE,"service":"finegrain/finegrain-image-enhancer","real_free_I2I_created":False,
          "status":"NOT_ATTEMPTED","paid_calls":0,"artistic_review":"PENDING","source_frame_idx":m.ANCHOR}
   try:
+   if args.reuse_artifact_dir:
+    folder=pathlib.Path(args.reuse_artifact_dir)
+    oldrights=json.loads((folder/"RIGHTS.json").read_text())
+    currentrights=json.loads((output/"RIGHTS.json").read_text())
+    if oldrights["source_sha256"]!=currentrights["source_sha256"]:
+     raise RuntimeError("REUSING_PHOTO_FROM_DIFFERENT_ARCHIVAL_FILE_FORBIDDEN")
+    prior=cv2.imread(str(folder/"ANCHOR_REAL_ORIGINAL_BW.png"))
+    if prior is None or prior.shape!=original.shape:
+     raise RuntimeError("PHOTO_REUSE_SOURCE_ANCHOR_MISSING")
+    delta=float(np.mean(np.abs(prior.astype(np.int16)-original.astype(np.int16))))
+    if delta>1.0:raise RuntimeError("PHOTO_REUSE_FRAME_MISMATCH "+str(delta))
+    previous=json.loads((folder/"PHOTO_QA.json").read_text())
+    if previous.get("status")!="REAL_PHOTO_TECHNICAL_GATE_PASS_ARTISTIC_QA_PENDING":
+     raise RuntimeError("PHOTO_REUSE_PRIOR_GATE_NOT_PASS")
+    pic=cv2.imread(str(folder/"GENERATIVE_PHOTO_REAL_CANDIDATE.png"))
+    if pic is None or pic.shape!=original.shape:raise RuntimeError("PHOTO_REUSE_PRIOR_PIXELS_MISSING")
+    cv2.imwrite(str(output/"GENERATIVE_PHOTO_REAL_CANDIDATE.png"),pic)
+    trial.update({"real_free_I2I_created":True,"status":"PHOTO_REUSED_FROM_PRIOR_REAL_FREE_I2I_NO_NEW_CALL",
+       "old_photo_sha256":digest(folder/"GENERATIVE_PHOTO_REAL_CANDIDATE.png"),
+       "source_frame_pixel_abs_delta":round(delta,5),"new_provider_calls":0,
+       "source_corr":m.corr(original,pic)})
+    save(output,"PHOTO_QA.json",trial)
+    print("REUSED_EXACT_PREVIOUS_FINEGRAIN_PHOTO_NO_NEW_API_POST",flush=True)
+    return pic
    client=m.Client("finegrain/finegrain-image-enhancer",verbose=False)
    raw=client.predict(m.handle_file(str(output/"ANCHOR_AI_NEURAL_COLOR_BASE.png")),
        profile["prompt"],profile["neg"],profile["year"],2,1.14,.97,6,112,144,.45,18,"DDIM",api_name="/process")
