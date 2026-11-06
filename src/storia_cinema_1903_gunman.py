@@ -179,7 +179,7 @@ def photo_finegrain(base,orig):
                   "modern outfit, contemporary vehicles, cloned gun, bad anatomy")
         c=Client("finegrain/finegrain-image-enhancer",verbose=False)
         result=c.predict(handle_file(str(OUT/"DDCOLOR_AI_COLOR_BASE.png")),prompt,negative,
-                         190307,2,1.14,.97,6,112,144,.45,18,"DDIM",api_name="/process")
+                         1903,2,1.14,.97,6,112,144,.45,18,"DDIM",api_name="/process")
         p=result[1] if isinstance(result,(tuple,list)) and len(result)>1 else result
         if isinstance(p,dict):p=p.get("path")
         photo=cv2.imread(str(p))
