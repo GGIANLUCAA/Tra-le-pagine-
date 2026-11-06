@@ -1,0 +1,80 @@
+name: "La Storia Rivive ONLY - NEW Enchanted Drawing 1900 original film and frame QA"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-enchanted-1900-source-qa-20261106.yml"
+permissions:
+  contents: read
+jobs:
+  actual_1900_moving_source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - name: Install FFmpeg/Pillow
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
+          python -m pip install -q Pillow
+      - name: Download actual unique 1900 film and sample in-motion frames
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/frames
+          python - <<'PY'
+          from urllib.request import urlopen,Request
+          import json,hashlib,pathlib,subprocess
+          urls=[
+          'https://archive.org/download/TheEnchantedDrawing1900/the-enchanted-drawing.mp4',
+          'https://archive.org/download/TheEnchantedDrawing1900/TheEnchantedDrawing1900.mp4',
+          'https://commons.wikimedia.org/wiki/Special:Redirect/file/The%20Enchanted%20Drawing.ogv'
+          ]
+          errors=[]; target=pathlib.Path('out/ENCHANTED_DRAWING_1900_ORIGINAL_SOURCE.mp4')
+          for url in urls:
+            try:
+              print('FETCH_ATTEMPT',url,flush=True)
+              req=Request(url,headers={'User-Agent':'Mozilla/5.0 (LaStoriaRivive original moving film check)','Accept':'video/*,*/*'})
+              with urlopen(req,timeout=70) as stream,target.open('wb') as f:
+                while True:
+                  d=stream.read(1048576)
+                  if not d:break
+                  f.write(d)
+                  if f.tell()>75000000:raise RuntimeError('Source too large for preview')
+              raw=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(target)]))
+              sec=float(raw['format']['duration'])
+              video=next(s for s in raw['streams'] if s['codec_type']=='video')
+              if not 60<sec<120:raise RuntimeError('wrong duration '+str(sec))
+              report={'status':'AUTHENTIC_MOVING_FILM_SOURCE_PASS','source_page':'https://www.loc.gov/item/2024600560/','original_url':url,'sha256':hashlib.sha256(target.read_bytes()).hexdigest(),'duration_s':sec,'size_bytes':target.stat().st_size,'resolution':[video['width'],video['height']],'video_codec':video['codec_name'],'copyright_note':'Source motion picture identified public domain; any accompanying modern soundtrack must NOT be reused; video will be muted.'}
+              pathlib.Path('out/SOURCE_QA.json').write_text(json.dumps(report,indent=2))
+              print('REAL_ORIGINAL_PASS',report,flush=True)
+              break
+            except Exception as ex:
+              errors.append(type(ex).__name__+' '+str(ex)[:200]);print('DOWNLOAD_REJECTED',errors[-1],flush=True)
+              if target.exists():target.unlink()
+          else:
+            pathlib.Path('out/SOURCE_QA.json').write_text(json.dumps({'status':'FAILED_NO_ORIGINAL_SOURCE','errors':errors},indent=2))
+            raise RuntimeError('No actual historical source')
+          PY
+          for t in 10 15 20 25 30 35 40 45 50 55 60 65 70 75; do
+            ffmpeg -hide_banner -loglevel error -y -ss "$t" -i out/ENCHANTED_DRAWING_1900_ORIGINAL_SOURCE.mp4 -frames:v 1 -q:v 3 "out/frames/source_${t}s.jpg"
+          done
+          python - <<'PY'
+          from PIL import Image,ImageDraw,ImageOps
+          from pathlib import Path
+          names=sorted(Path('out/frames').glob('*.jpg'),key=lambda x:int(x.stem.split('_')[-1][:-1]))
+          W=1300;cw=325;rh=280;out=Image.new('RGB',(W,4*rh+48),(15,17,20))
+          d=ImageDraw.Draw(out);d.text((15,14),'LA STORIA RIVIVE | THE ENCHANTED DRAWING 1900 | 14 AUTHENTIC MOVING VIDEO FRAMES',fill='white')
+          for i,n in enumerate(names):
+            im=Image.open(n).convert('RGB');im=ImageOps.contain(im,(310,235))
+            x=(i%4)*cw+5;y=(i//4)*rh+50
+            out.paste(im,(x+(cw-im.width)//2,y+(235-im.height)//2))
+            d.text((x+7,y+240),n.stem,fill='#efefef')
+          out.save('out/SOURCE_CONTACT_SHEET.jpg',quality=87)
+          PY
+      - name: Preserve ORIGINAL film + frame QA for next separate episode
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_ENCHANTED_1900_REAL_SOURCE_AND_FRAMES
+          path: out/
+          retention-days: 7
