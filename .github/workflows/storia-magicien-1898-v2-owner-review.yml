@@ -1,0 +1,89 @@
+name: "La Storia Rivive ONLY - Magicien 1898 V2 cut real footage and owner preview downloads"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-magicien-1898-v2-owner-review.yml"
+      - "src/storia_magicien_1898_v2_remaster.py"
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: storia-magicien-1898-v2-owner-review
+  cancel-in-progress: false
+jobs:
+  owner_real_mp4_v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg and OpenCV
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "opencv-python-headless>=4.8,<5" "numpy>=1.26,<2.3"
+      - name: Download exact PREVIOUS genuine generated Magicien 1898 MP4 with photo
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/storia_magicien_original
+          gh run download 42305183349 --repo "$GITHUB_REPOSITORY" --name STORIA_MAGICIEN_1898_TRUE_SOCIAL_I2I_REVIEW --dir /tmp/storia_magicien_original
+          test -s /tmp/storia_magicien_original/MAGICIEN_1898_SOCIAL_VISUAL_REVIEW.mp4
+          test -s /tmp/storia_magicien_original/MAGICIEN_1898_VIDEO_COVER_SOCIAL.zip
+      - name: Real MP4 video remaster V2 from same verified archival source
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_magicien_1898_v2_remaster.py
+          python -u src/storia_magicien_1898_v2_remaster.py --source /tmp/storia_magicien_original/MAGICIEN_1898_SOCIAL_VISUAL_REVIEW.mp4 --source-zip /tmp/storia_magicien_original/MAGICIEN_1898_VIDEO_COVER_SOCIAL.zip --out output/storia_cinema_magicien_1898_v2
+          test -s output/storia_cinema_magicien_1898_v2/MAGICIEN_1898_V2_SOCIAL_REVIEW.mp4
+          test -s output/storia_cinema_magicien_1898_v2/MAGICIEN_1898_V2_SOCIAL_REVIEW_AND_COPY.zip
+      - name: Real MP4 H264 AAC full decode and ZIP CRC
+        run: |
+          set -euo pipefail
+          cd output/storia_cinema_magicien_1898_v2
+          ffmpeg -nostdin -v error -xerror -i MAGICIEN_1898_V2_SOCIAL_REVIEW.mp4 -f null -
+          python - <<'PY'
+          import zipfile,json,hashlib,pathlib
+          r=pathlib.Path(".");meta=json.loads((r/"V2_VISUAL_REPORT.json").read_text())
+          movie=r/"MAGICIEN_1898_V2_SOCIAL_REVIEW.mp4"
+          z=r/"MAGICIEN_1898_V2_SOCIAL_REVIEW_AND_COPY.zip"
+          assert hashlib.sha256(movie.read_bytes()).hexdigest()==meta["video_sha256"]
+          assert meta["resolution"]==[1080,1920] and meta["duration_s"]>15
+          assert meta["human_visual_approval"] is False
+          assert meta["site_social_published"] is False and meta["paid_calls"]==0 and meta["vidu_new_post"] is False
+          with zipfile.ZipFile(z) as f: assert f.testzip() is None
+          print("REAL_VIDEO_AND_ZIP_TECH_PASS_ART_QA_PENDING")
+          PY
+      - name: Keep actual MP4 ZIP photo before download
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_MAGICIEN_1898_V2_REMASTER_REAL_ARTISTIC_REVIEW_PENDING
+          retention-days: 14
+          path: |
+            output/storia_cinema_magicien_1898_v2/MAGICIEN_1898_V2_SOCIAL_REVIEW.mp4
+            output/storia_cinema_magicien_1898_v2/MAGICIEN_1898_V2_SOCIAL_REVIEW_AND_COPY.zip
+            output/storia_cinema_magicien_1898_v2/V2_VISUAL_REPORT.json
+            output/storia_cinema_magicien_1898_v2/SOCIAL_COVER.jpg
+            output/storia_cinema_magicien_1898_v2/ORIGINAL_VS_PHOTO_VISUAL_QA.jpg
+      - name: GitHub public prerelease transport solely to owner Android - NOT artistic approval
+        run: |
+          set -euo pipefail
+          cd output/storia_cinema_magicien_1898_v2
+          tag=storia-cinema-magicien-1898-v2-artistic-review-android
+          gh release create "$tag" MAGICIEN_1898_V2_SOCIAL_REVIEW.mp4 MAGICIEN_1898_V2_SOCIAL_REVIEW_AND_COPY.zip SOCIAL_COVER.jpg ORIGINAL_VS_PHOTO_VISUAL_QA.jpg --repo "$GITHUB_REPOSITORY" --prerelease --title "LE MAGICIEN 1898 - V2 owner visual preview, NOT final" --notes "PUBLIC owner-download transport only; no site/social publication or editorial approval. Authentic film now starts with actor, no original title; same-frame color I2I photo; controlled unnatural red stage artefacts. Still source-moving neural color, NOT true photoreal I2V, faces and props not art-approved. No Vidu, no paid calls."
+          for f in MAGICIEN_1898_V2_SOCIAL_REVIEW.mp4 MAGICIEN_1898_V2_SOCIAL_REVIEW_AND_COPY.zip; do
+            curl --fail --location --retry 3 --silent --show-error "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$f" -o "/tmp/$f"
+            cmp "$f" "/tmp/$f"
+          done
+          python - <<'PY'
+          import zipfile
+          with zipfile.ZipFile("/tmp/MAGICIEN_1898_V2_SOCIAL_REVIEW_AND_COPY.zip") as z: assert z.testzip() is None
+          print("PUBLIC_EXTERNAL_DOWNLOAD_BYTES_IDENTICAL_AND_ZIP_CRC_PASS")
+          PY
+      - name: Fact-only progress on La Storia Rivive issue 144
+        if: success()
+        run: |
+          gh issue comment 144 --repo "$GITHUB_REPOSITORY" --body "06/11 · REAL Magicien 1898 V2 REVIEW remaster of one source (NOT a new film). Rendered 1080x1920 H264/AAC MP4 ~16s from source-verified previous genuine Magicien V1; eliminated source intertitle before scene start, suppressed red/magenta chroma bleed in real historical moving segment; preserved genuinely generated matched Finegrain photo, explicit source BW freeze, and source motion. ZIP contains cover and 4 social drafts; full decode+SHA+ZIP CRC PASS, external GitHub prerelease byte-identity verified for Android owner. ARTISTIC QA PENDING/NOT APPROVED (photographic video motion is NOT true I2V and AI still has interpretive eye details). No Vidu, new credits or site/social posts. Review link: https://github.com/GGIANLUCAA/Tra-le-pagine-/releases/tag/storia-cinema-magicien-1898-v2-artistic-review-android. Next: improve temporal photorealism or reject."
