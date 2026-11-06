@@ -1,0 +1,88 @@
+name: "La Storia Rivive Cinema · Arroseur 1895 NEW REAL MP4 + social ZIP"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-cinema-1895-arroseur.yml"
+      - "src/storia_cinema_1895_arroseur.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-cinema-1895-arroseur-real-one
+  cancel-in-progress: false
+jobs:
+  new_real_cinema_short:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install no-charge color/restoration providers and portable FFmpeg
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -q "imageio-ffmpeg>=0.5,<1" "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+          mkdir -p /tmp/storia-cinema-ffmpeg
+          python - <<'PY'
+          from pathlib import Path
+          import imageio_ffmpeg
+          src=Path(imageio_ffmpeg.get_ffmpeg_exe())
+          assert src.is_file() and src.stat().st_size>1000000
+          Path('/tmp/storia-cinema-ffmpeg/ffmpeg').symlink_to(src)
+          print("REAL_FFMPEG_READY",src)
+          PY
+          echo /tmp/storia-cinema-ffmpeg >> "$GITHUB_PATH"
+      - name: Render entirely new historical 1895 Arroseur moving cinema film
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_cinema_1895_arroseur.py
+          python -u src/storia_cinema_1895_arroseur.py
+          test -s output/storia_cinema_1895_arroseur/ARROSEUR_1895_CINEMA_RESTORED.mp4
+          test -s output/storia_cinema_1895_arroseur/ARROSEUR_1895_VIDEO_COVER_SOCIAL.zip
+      - name: Verify complete MP4 decode and ZIP CRC, do NOT mark artistic approval
+        run: |
+          set -euo pipefail
+          cd output/storia_cinema_1895_arroseur
+          ffmpeg -nostdin -v error -xerror -i ARROSEUR_1895_CINEMA_RESTORED.mp4 -f null -
+          python - <<'PY'
+          import zipfile,hashlib,json,pathlib,cv2
+          p=pathlib.Path('.')
+          status=json.loads((p/'DELIVERY.json').read_text())
+          movie=p/'ARROSEUR_1895_CINEMA_RESTORED.mp4'
+          zpath=p/'ARROSEUR_1895_VIDEO_COVER_SOCIAL.zip'
+          assert status['state']=='REAL_MP4_ZIP_RENDERED_ARTISTIC_REVIEW_PENDING'
+          assert hashlib.sha256(movie.read_bytes()).hexdigest()==status['mp4_sha256']
+          c=cv2.VideoCapture(str(movie))
+          fps=float(c.get(cv2.CAP_PROP_FPS));n=c.get(cv2.CAP_PROP_FRAME_COUNT)
+          assert fps>0 and 15<n/fps<28
+          c.release()
+          with zipfile.ZipFile(zpath) as z:assert z.testzip() is None
+          assert not status['paid_calls'] and not status['vidu_generated'] and not status['published']
+          print("COMPLETE_REAL_MP4_SOCIAL_ZIP",json.dumps(status))
+          PY
+      - name: Keep the REAL deliverables OR exact failure reason (never fake an output)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_CINEMA_ARROSEUR_1895_NEW_VIDEO
+          path: |
+            output/storia_cinema_1895_arroseur/ARROSEUR_1895_CINEMA_RESTORED.mp4
+            output/storia_cinema_1895_arroseur/ARROSEUR_1895_VIDEO_COVER_SOCIAL.zip
+            output/storia_cinema_1895_arroseur/ARROSEUR_1895_COVER.jpg
+            output/storia_cinema_1895_arroseur/TRUE_ORIGINAL_CONTACT.jpg
+            output/storia_cinema_1895_arroseur/FILM_AND_AI_SCENE_REVIEW.jpg
+            output/storia_cinema_1895_arroseur/PHOTO_I2I_QA.json
+            output/storia_cinema_1895_arroseur/RIGHTS_AND_PROVENANCE.json
+            output/storia_cinema_1895_arroseur/COLOR_MODEL.json
+            output/storia_cinema_1895_arroseur/FINAL_QA.json
+            output/storia_cinema_1895_arroseur/DELIVERY.json
+            output/storia_cinema_1895_arroseur/FAILURE.json
+            output/storia_cinema_1895_arroseur/FETCH_FAILURE.json
+            output/storia_cinema_1895_arroseur/NEW_PHOTOGRAPHIC_RESTORATION.png
+            output/storia_cinema_1895_arroseur/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
