@@ -56,7 +56,7 @@ def source():
      "source":PAGE,"source_url":URL,"source_sha256":sha(SOURCE),"source_bytes":SOURCE.stat().st_size,
      "source_original_resolution":[1364,1024],"dating_note":"Commons file labelled 1897; other archives may catalogue 1896","excerpt_start_s":START,"excerpt_duration_s":DURATION,
      "copyright":{"Italy":"Life+70; creator died 1948, term ended 2018","USA":"Pre-1931 published film, Public Domain Mark on Commons"},
-     "colors":"Modern interpretation; not actual 1895 recorded colors",
+     "colors":"Modern interpretation; not actual 1897 recorded colors",
      "release_policy":"Review-only PUBLIC GitHub prerelease for owner download; NEVER site/social publishing",
      "publication":False,"vidu_post_count":0,"paid_calls":0})
 def readframe(idx):
@@ -85,7 +85,7 @@ def photo(base,original):
         neg="extra person, duplicate worker, missing worker, distorted face, extra limbs, fused arms, added pickaxe, added tool, weird rubble person, floating bricks, extra fingers, horns, cartoon, illustration, watercolor, plastic 3D, artificial intense red or violet, fantasy architecture"
         client=Client("finegrain/finegrain-image-enhancer",verbose=False)
         raw=client.predict(handle_file(str(OUT/"ANCHOR_AI_NEURAL_COLOR_BASE.png")),prompt,neg,
-                          1895,2,1.14,.97,6,112,144,.45,18,"DDIM",api_name="/process")
+                          1897,2,1.14,.97,6,112,144,.45,18,"DDIM",api_name="/process")
         obj=raw[1] if isinstance(raw,(list,tuple)) and len(raw)>1 else raw
         if isinstance(obj,dict):obj=obj.get("path")
         pic=cv2.imread(str(obj))
@@ -171,7 +171,7 @@ def export(picture,session):
                 for j in range(7):
                     writer.stdin.write(frame_canvas(picture).tobytes())
                 visual.append(("REAL SAME-SHOT AI PHOTO",picture.copy()))
-            title="DÉMOLITION D’UN MUR  ·  1895" if i<round(2*FPS) else ""
+            title="DÉMOLITION  ·  1897" if i<round(2*FPS) else ""
             small="LOUIS LUMIÈRE  ·  ORIGINAL MOVING FILM" if i<round(2*FPS) else ""
             writer.stdin.write(frame_canvas(result,title,small).tobytes())
             if i in [0,ANCHOR-15,ANCHOR+int(FPS*.6),ANCHOR+int(FPS*3),count-1]:
@@ -193,7 +193,7 @@ def export(picture,session):
     ww=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH));hh=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT));cap.release()
     if ww!=1080 or hh!=1920 or abs(real_n/f-n)>.25 or not 15<n<25:raise RuntimeError("VERTICAL_VIDEO_QA_FAILED")
     pic=cv2.resize(picture,(W,AH))
-    cv2.imwrite(str(OUT/"SOCIAL_COVER.jpg"),frame_canvas(pic,"DÉMOLITION D’UN MUR  ·  1895","HISTORICAL CINEMA   ·   VISUAL REVIEW"),[cv2.IMWRITE_JPEG_QUALITY,95])
+    cv2.imwrite(str(OUT/"SOCIAL_COVER.jpg"),frame_canvas(pic,"DÉMOLITION  ·  1897","HISTORICAL CINEMA   ·   VISUAL REVIEW"),[cv2.IMWRITE_JPEG_QUALITY,95])
     tiles=Image.new("RGB",(5*238,2*184),(18,18,20));d=ImageDraw.Draw(tiles)
     pairs=[("HISTORIC FILM",readframe(ANCHOR)),("DDCOLOR BASE",colorize(readframe(ANCHOR),colors[ANCHOR])),
            ("TRUE FREE I2I",picture),("REAL MOVEMENT",readframe(ANCHOR+24)),("MOVEMENT LATER",readframe(ANCHOR+96))]
