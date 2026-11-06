@@ -1,0 +1,40 @@
+name: "La Storia Rivive — Blacksmith V3 Android permanent direct download"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-blacksmith-v3-download-release-20261106.yml"
+permissions:
+  contents: write
+concurrency:
+  group: storia-blacksmith-v3-android-download
+  cancel-in-progress: false
+jobs:
+  delivery_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      TAG: storia-blacksmith-1893-v3-prova-non-approvata
+      DOWNLOAD_URL: "https://eu-central.storage.cloudconvert.com/tasks/18073ccb-55da-45c7-aade-19faeccfdb9f/STORIA_BLACKSMITH_1893_MOVIMENTO_REALE_V3_MOBILE.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20261106%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20261106T222029Z&X-Amz-Expires=86400&X-Amz-Signature=edf7ebe0d0ac6434447c0f475c8e29a031966dd928b3ad3f4940f711bccd4905&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22STORIA_BLACKSMITH_1893_MOVIMENTO_REALE_V3_MOBILE.mp4%22&response-content-type=video%2Fmp4&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+    steps:
+      - name: Retrieve exact finished V3 MP4 from preexisting authorized export
+        run: |
+          set -euo pipefail
+          curl --retry 3 --retry-all-errors --connect-timeout 15 --max-time 75 -fLsS "$DOWNLOAD_URL" -o BLACKSMITH_1893_V3_MOVIMENTO_REALE_ANDROID.mp4
+          test "$(stat -c%s BLACKSMITH_1893_V3_MOVIMENTO_REALE_ANDROID.mp4)" -gt 3000000
+          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height,duration -of json BLACKSMITH_1893_V3_MOVIMENTO_REALE_ANDROID.mp4
+          ffmpeg -v error -xerror -i BLACKSMITH_1893_V3_MOVIMENTO_REALE_ANDROID.mp4 -f null -
+          sha256sum BLACKSMITH_1893_V3_MOVIMENTO_REALE_ANDROID.mp4 | tee CHECKSUM_SHA256.txt
+      - name: Publish download-only GitHub prerelease (NOT video editorial approval / site publication)
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            echo "Existing delivery prerelease found; will replace only if same prerelease tag"
+            gh release upload "$TAG" BLACKSMITH_1893_V3_MOVIMENTO_REALE_ANDROID.mp4 CHECKSUM_SHA256.txt --clobber --repo "$REPO"
+          else
+            gh release create "$TAG" BLACKSMITH_1893_V3_MOVIMENTO_REALE_ANDROID.mp4 CHECKSUM_SHA256.txt --repo "$REPO" --target "$GITHUB_SHA" --prerelease --title "La Storia Rivive - Blacksmith 1893 V3 - PROVA NON APPROVATA" --notes "Solo download esterno per Android, senza approvazione artistica e senza pubblicazione sul sito o social. Prova: film storico in movimento → fermo su fotogramma → ricostruzione a colori → moto storico a colori; il colore in movimento NON è ancora fotorealistico quanto il fermo. MP4 tecnico FFmpeg passato."
+          fi
+          gh release view "$TAG" --repo "$REPO" --json url,assets,isPrerelease
