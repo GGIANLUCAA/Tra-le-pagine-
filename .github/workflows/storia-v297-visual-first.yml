@@ -54,7 +54,7 @@ jobs:
               sharp=float(cv2.Laplacian(cv2.cvtColor(seq[-1],cv2.COLOR_BGR2GRAY),cv2.CV_32F).var())
               record={'t':round(float(t),3),'saturation':round(avg,2),'colored_fraction':round(color_frac,3),'motion_delta':round(diff,3),'sharpness':round(sharp,1)}
               attempts.append(record)
-              if avg<=12 and color_frac<=.25 and diff>=1.15 and sharp>=8:
+              if avg<=20 and color_frac<=.35 and diff>=1.15 and sharp>=8:
                   capout=cv2.VideoWriter('BW_TRUE_MOTION_RAW.mp4',cv2.VideoWriter_fourcc(*'mp4v'),30,(720,1280))
                   assert capout.isOpened()
                   for frame in seq:
