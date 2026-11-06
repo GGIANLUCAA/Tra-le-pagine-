@@ -1,0 +1,37 @@
+name: ArtVision V186 Museum source scout (read-only)
+on:
+  push:
+    paths:
+      - '.github/workflows/artvision-v186-museum-source-scout.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-v186-museum-source-scout
+  cancel-in-progress: false
+jobs:
+  source_scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Collect original Commons candidate metadata for five incomplete Museum works
+        run: python src/artvision_museum_room_source_scout_v185.py --out "$RUNNER_TEMP/artvision_room_candidates.json"
+      - name: Validate scout output and report candidate counts
+        run: |
+          python - "$RUNNER_TEMP/artvision_room_candidates.json" <<'PY'
+          import json,sys
+          p=json.load(open(sys.argv[1],encoding="utf-8"))
+          assert len(p["works"])==5
+          for work,items in p["works"].items():
+              print(work,len(items),"CANDIDATES ONLY")
+          for error in p.get("errors",[]): print("SCOUT_ERROR",error)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artvision-v186-museum-room-candidates-not-approved
+          path: ${{ runner.temp }}/artvision_room_candidates.json
+          retention-days: 30
