@@ -9,7 +9,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: storia-cinema-1903-gunman-one
+  group: storia-cinema-1903-gunman-fast-dependency-setup
   cancel-in-progress: false
 jobs:
   real_historical_cinema_short:
@@ -24,8 +24,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg zip fonts-dejavu-core
+          command -v ffmpeg
+          command -v ffprobe
           python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
       - name: REAL historical moving film, neural color and free I2I, source locked
         shell: bash
