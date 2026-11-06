@@ -1,0 +1,233 @@
+{
+  "schema_version": "artvision-delacroix-critico-museum-shot-plan-v172",
+  "status": "PREPARED_NOT_RENDERED",
+  "work_id": "delacroix_death_sardanapalus_1827_louvre_rf2346",
+  "variant": "critico_museum",
+  "public_title": "The Death of Sardanapalus",
+  "painting_cm": {
+    "height": 392,
+    "width": 496
+  },
+  "source_art_pixels": [
+    6875,
+    5358
+  ],
+  "original_critico_mp4_sha256": "c7d3a2e231b384fb6a082cb61158d3133d3f309c05e0247b228a1ab6ea7a77dc",
+  "original_critico_wav_sha256": "d75d87b7afe6cbed9ad946e2be2461ea88469b03827555d3b227c41c840bef5b",
+  "source_photo_preflight_request": "requests/artvision/delacroix-sardanapalus-frame-v170.json",
+  "museum_frame_photo_status": "ORIGINAL_BYTES_AND_SHA_PENDING; DO_NOT_RENDER_UNTIL_VERIFIED",
+  "museum_geometry": {
+    "painting_width_m": 4.96,
+    "painting_height_m": 3.92,
+    "photo_is_real_louvre_display_2023": true,
+    "frame_historically_original": false,
+    "scene": "authentic source photo only, no synthetic gallery",
+    "frame_visible": "intro/outro only",
+    "camera": "physical perspective no painting scaling relative to wall"
+  },
+  "audio": {
+    "reuse_exact_wav": true,
+    "new_tts_calls_allowed": 0,
+    "asr_sentence_timing": "PENDING_ACTUAL_V169_WAV",
+    "narration_sha256_required": "d75d87b7afe6cbed9ad946e2be2461ea88469b03827555d3b227c41c840bef5b"
+  },
+  "shots": [
+    {
+      "beat": 1,
+      "spoken_text": "Una stanza regale diventa teatro di una catastrofe. Corpi, tessuti e oggetti preziosi si intrecciano in una diagonale violenta. Al centro di tutto, un uomo osserva, immobile.",
+      "focus": "intero dipinto",
+      "render_mode": "full_plate_uncropped",
+      "source_center_candidate": [
+        0.5,
+        0.5
+      ],
+      "crop_height_candidate_px": null,
+      "subject_polygon_verified": false,
+      "spoken_start_s": null,
+      "spoken_end_s": null,
+      "shot_start_s": null,
+      "shot_end_s": null,
+      "subject_visible_from_s": null,
+      "legibility_hold_s": null,
+      "qa_status": "PENDING_REAL_SOURCE_AND_AUDIO",
+      "require_subject_visible_by_spoken_start": true
+    },
+    {
+      "beat": 2,
+      "spoken_text": "Eugène Delacroix presenta La morte di Sardanapalo nel 1827. La grande tela, oggi al Louvre, trasforma un racconto antico in un'immagine di tensione estrema.",
+      "focus": "intero dipinto",
+      "render_mode": "full_plate_uncropped",
+      "source_center_candidate": [
+        0.5,
+        0.5
+      ],
+      "crop_height_candidate_px": null,
+      "subject_polygon_verified": false,
+      "spoken_start_s": null,
+      "spoken_end_s": null,
+      "shot_start_s": null,
+      "shot_end_s": null,
+      "subject_visible_from_s": null,
+      "legibility_hold_s": null,
+      "qa_status": "PENDING_REAL_SOURCE_AND_AUDIO",
+      "require_subject_visible_by_spoken_start": true
+    },
+    {
+      "beat": 3,
+      "spoken_text": "Sardanapalo giace sul letto rialzato, avvolto in stoffe chiare. Non interviene. La sua immobilità contrasta con il movimento disperato che attraversa il resto della composizione.",
+      "focus": "figura distesa sul letto nella parte alta",
+      "render_mode": "detail_subject_verified_before_render",
+      "source_center_candidate": [
+        0.53,
+        0.25
+      ],
+      "crop_height_candidate_px": 2000,
+      "subject_polygon_verified": false,
+      "spoken_start_s": null,
+      "spoken_end_s": null,
+      "shot_start_s": null,
+      "shot_end_s": null,
+      "subject_visible_from_s": null,
+      "legibility_hold_s": null,
+      "qa_status": "PENDING_REAL_SOURCE_AND_AUDIO",
+      "require_subject_visible_by_spoken_start": true
+    },
+    {
+      "beat": 4,
+      "spoken_text": "Lo sguardo scende lungo la diagonale del letto, dalla figura del sovrano verso il primo piano. È questa struttura obliqua a guidare il ritmo dell'intera scena.",
+      "focus": "linea del letto e composizione centrale",
+      "render_mode": "detail_diagonal_verified_before_render",
+      "source_center_candidate": [
+        0.52,
+        0.51
+      ],
+      "crop_height_candidate_px": 3500,
+      "subject_polygon_verified": false,
+      "spoken_start_s": null,
+      "spoken_end_s": null,
+      "shot_start_s": null,
+      "shot_end_s": null,
+      "subject_visible_from_s": null,
+      "legibility_hold_s": null,
+      "qa_status": "PENDING_REAL_SOURCE_AND_AUDIO",
+      "require_subject_visible_by_spoken_start": true
+    },
+    {
+      "beat": 5,
+      "spoken_text": "Il rosso domina la tela: ricopre il letto, attraversa i drappeggi e amplifica il senso di pericolo. Le zone chiare dei corpi emergono per contrasto, illuminate nel caos.",
+      "focus": "stoffe rosse e drappeggi",
+      "render_mode": "detail_drapery_verified_before_render",
+      "source_center_candidate": [
+        0.46,
+        0.48
+      ],
+      "crop_height_candidate_px": 2600,
+      "subject_polygon_verified": false,
+      "spoken_start_s": null,
+      "spoken_end_s": null,
+      "shot_start_s": null,
+      "shot_end_s": null,
+      "subject_visible_from_s": null,
+      "legibility_hold_s": null,
+      "qa_status": "PENDING_REAL_SOURCE_AND_AUDIO",
+      "require_subject_visible_by_spoken_start": true
+    },
+    {
+      "beat": 6,
+      "spoken_text": "In basso, le figure si accalcano tra armi e oggetti preziosi. Delacroix non costruisce una scena ordinata: sovrappone gesti e materiali, costringendoci a osservare più volte.",
+      "focus": "figure e oggetti in basso",
+      "render_mode": "detail_lower_figures_verified_before_render",
+      "source_center_candidate": [
+        0.48,
+        0.78
+      ],
+      "crop_height_candidate_px": 2200,
+      "subject_polygon_verified": false,
+      "spoken_start_s": null,
+      "spoken_end_s": null,
+      "shot_start_s": null,
+      "shot_end_s": null,
+      "subject_visible_from_s": null,
+      "legibility_hold_s": null,
+      "qa_status": "PENDING_REAL_SOURCE_AND_AUDIO",
+      "require_subject_visible_by_spoken_start": true
+    },
+    {
+      "beat": 7,
+      "spoken_text": "Sul lato sinistro compare anche un cavallo, trascinato nel disordine. La sua presenza allarga la tragedia oltre i personaggi e rende ancora più instabile l'insieme.",
+      "focus": "cavallo sul lato sinistro",
+      "render_mode": "detail_horse_verified_before_render",
+      "source_center_candidate": [
+        0.2,
+        0.58
+      ],
+      "crop_height_candidate_px": 1900,
+      "subject_polygon_verified": false,
+      "spoken_start_s": null,
+      "spoken_end_s": null,
+      "shot_start_s": null,
+      "shot_end_s": null,
+      "subject_visible_from_s": null,
+      "legibility_hold_s": null,
+      "qa_status": "PENDING_REAL_SOURCE_AND_AUDIO",
+      "require_subject_visible_by_spoken_start": true
+    },
+    {
+      "beat": 8,
+      "spoken_text": "Qui il Romanticismo non cerca equilibrio classico. Cerca energia, colore, emozione. La pittura sembra muoversi in tutte le direzioni, mentre il sovrano rimane distante.",
+      "focus": "intera composizione con movimento",
+      "render_mode": "full_plate_uncropped",
+      "source_center_candidate": [
+        0.5,
+        0.52
+      ],
+      "crop_height_candidate_px": null,
+      "subject_polygon_verified": false,
+      "spoken_start_s": null,
+      "spoken_end_s": null,
+      "shot_start_s": null,
+      "shot_end_s": null,
+      "subject_visible_from_s": null,
+      "legibility_hold_s": null,
+      "qa_status": "PENDING_REAL_SOURCE_AND_AUDIO",
+      "require_subject_visible_by_spoken_start": true
+    },
+    {
+      "beat": 9,
+      "spoken_text": "Torniamo all'immagine completa. Il contrasto fra la calma del protagonista e la violenza della scena è ciò che rende questa tela così difficile da dimenticare.",
+      "focus": "intero dipinto",
+      "render_mode": "full_plate_uncropped",
+      "source_center_candidate": [
+        0.5,
+        0.5
+      ],
+      "crop_height_candidate_px": null,
+      "subject_polygon_verified": false,
+      "spoken_start_s": null,
+      "spoken_end_s": null,
+      "shot_start_s": null,
+      "shot_end_s": null,
+      "subject_visible_from_s": null,
+      "legibility_hold_s": null,
+      "qa_status": "PENDING_REAL_SOURCE_AND_AUDIO",
+      "require_subject_visible_by_spoken_start": true
+    }
+  ],
+  "gates": {
+    "photo_sha1_verified": false,
+    "source_photo_pixel_verified": false,
+    "full_frame_subject_geometry_verified": false,
+    "actual_wav_asr_aligned": false,
+    "frame_visual_human_qa": false,
+    "full_mp4_ffmpeg_decode": false,
+    "zip_crc": false,
+    "sha256_readback": false,
+    "artistic_review": false,
+    "rights_for_distribution": false
+  },
+  "no_paid_calls": true,
+  "no_publish": true,
+  "gold_v25": false,
+  "queue_slots_added": 0,
+  "original_masters_unchanged": true
+}
