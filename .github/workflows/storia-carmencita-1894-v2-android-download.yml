@@ -9,7 +9,7 @@ permissions:
   contents: write
   actions: read
 concurrency:
-  group: storia-carmencita-v2-download
+  group: storia-carmencita-v2-download-fast
   cancel-in-progress: false
 jobs:
   deliver:
@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Ensure FFmpeg
-        run: sudo apt-get update -qq && sudo apt-get install -qq -y ffmpeg
+        run: command -v ffmpeg && ffmpeg -version || (sudo apt-get install -y -qq ffmpeg && ffmpeg -version)
       - name: Download exact owner master from trusted finished GitHub run
         env:
           GH_TOKEN: ${{ github.token }}
