@@ -90,9 +90,14 @@ def crop_portrait(frame):
     return cv2.resize(frame[:,x:x+cw],(W,H),interpolation=cv2.INTER_CUBIC)
 
 def frames_of_original():
-    probe=json.loads(run(["ffprobe","-v","error","-show_entries","format=duration,size:stream=codec_name,width,height,avg_frame_rate","-of","json",str(SRC)]))
-    dur=float(probe["format"]["duration"])
-    v=next(x for x in probe["streams"] if x.get("codec_name"))
+    scan=cv2.VideoCapture(str(SRC))
+    scanfps=float(scan.get(cv2.CAP_PROP_FPS))
+    scann=int(scan.get(cv2.CAP_PROP_FRAME_COUNT))
+    v={"width":int(scan.get(cv2.CAP_PROP_FRAME_WIDTH)),
+       "height":int(scan.get(cv2.CAP_PROP_FRAME_HEIGHT)),"codec_name":"vp9"}
+    scan.release()
+    if scanfps<=0:raise RuntimeError("SOURCE_FPS_MISSING")
+    dur=scann/scanfps
     if not(11.3<=dur<=13.5 and int(v["width"])>=1200 and int(v["height"])>=700):
         raise RuntimeError("WRONG_HISTORIC_SOURCE "+str(probe)[:220])
     cap=cv2.VideoCapture(str(SRC))
@@ -291,9 +296,17 @@ def export(images,photo,session):
          "-map","0:v","-map","1:a","-c:v","copy","-c:a","aac","-b:a","160k",
          "-movflags","+faststart","-shortest",str(final)],120)
     run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(final),"-f","null","-"],160)
-    meta=json.loads(run(["ffprobe","-v","error","-show_entries","format=duration,size:stream=codec_name,width,height",
-                         "-of","json",str(final)],45))
-    assert set(x["codec_name"] for x in meta["streams"])>={"h264","aac"}
+    probe=cv2.VideoCapture(str(final))
+    checkfps=float(probe.get(cv2.CAP_PROP_FPS))
+    checkn=int(probe.get(cv2.CAP_PROP_FRAME_COUNT))
+    probe.release()
+    if checkfps<=0 or checkn<300:raise RuntimeError("FINAL_VIDEO_NOT_DECODABLE")
+    actual_dur=checkn/checkfps
+    metadata=subprocess.run(["ffmpeg","-hide_banner","-i",str(final),
+                            "-f","null","-"],capture_output=True,text=True,timeout=140)
+    if metadata.returncode or "Video: h264" not in metadata.stderr or "Audio: aac" not in metadata.stderr:
+        raise RuntimeError("H264_AAC_CODEC_NOT_CONFIRMED "+metadata.stderr[-300:])
+    meta={"format":{"duration":str(actual_dur)}} 
     assert 15<float(meta["format"]["duration"])<28
     assert final.stat().st_size>2_500_000
     cover=photo.copy()
