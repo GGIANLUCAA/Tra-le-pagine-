@@ -1,0 +1,95 @@
+name: "La Storia Rivive · Arroseur V4 DOWNLOAD REALI Android"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-arroseur-1895-v4-android-direct.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-arroseur-1895-v4-direct-android-download
+  cancel-in-progress: false
+jobs:
+  publish_download_only_prerelease:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: GGIANLUCAA/Tra-le-pagine-
+      SOURCE_RUN: "42279540072"
+      SOURCE_ARTIFACT: STORIA_ARROSEUR_1895_V4_TRUE_FACES_NO_FREEZE_FILES
+      TAG: storia-cinema-arroseur-1895-v4-volti-autentici-android
+    steps:
+      - name: Retrieve ALREADY CREATED version V4: never substitute rejected V3
+        run: |
+          set -euo pipefail
+          mkdir -p from_action publish
+          gh run download "$SOURCE_RUN" --repo "$REPO" -n "$SOURCE_ARTIFACT" -D from_action
+          find from_action -type f -maxdepth 4 -printf '%p %s bytes\n'
+          python - <<'PY'
+          import json,hashlib,zipfile,pathlib,shutil
+          from pathlib import Path
+          src=Path("from_action")
+          out=Path("publish")
+          dlist=list(src.rglob("DELIVERY_V4.json"))
+          assert len(dlist)==1, "NO_V4_DELIVERY_MANIFEST"
+          d=json.loads(dlist[0].read_text())
+          assert d["status"]=="V4_REAL_REMASTER_COMPLETE_ARTISTIC_REVIEW_PENDING"
+          assert d["no_freeze_no_synthetic_face"] is True
+          required={
+            "ARROSEUR_1895_V4_VOLTI_AUTENTICI.mp4":("bf391493d515701c4513328683c5b1d1067e7ed6b5664044eee756cf711abd1e",21709965),
+            "ARROSEUR_1895_V4_VERTICALE_SOCIAL.mp4":("e2bb66f74ed15152b662cd6e6400d521d37c1db441b7e71a9ef751afabd85d3d",9527803),
+            "ARROSEUR_1895_V4_VIDEO_COMPLETO.zip":("476cc0b444690ca4de6e74e2837aef2865d57d026e7c24aaea559f1506636f6c",32440159)
+          }
+          for name,(digest,count) in required.items():
+              found=list(src.rglob(name))
+              assert len(found)==1, "SOURCE_FILE_NOT_FOUND_OR_DUPLICATE "+name
+              path=found[0]
+              assert path.stat().st_size==count, "FILE_TRUNCATION "+name
+              got=hashlib.sha256(path.read_bytes()).hexdigest()
+              assert got==digest, "WRONG_OLD_FILM_VERSION "+name
+              shutil.copyfile(path,out/name)
+          with zipfile.ZipFile(out/"ARROSEUR_1895_V4_VIDEO_COMPLETO.zip") as z:
+              assert z.testzip() is None
+              assert any("VOLTI_AUTENTICI.mp4" in f for f in z.namelist())
+              assert any("VERTICALE_SOCIAL.mp4" in f for f in z.namelist())
+          print("THREE_V4_MASTERS_FROM_CORRECT_ARTIFACT_VERIFIED_SHA_CRC_PASS")
+          PY
+      - name: Create direct downloadable TECHNICAL prerelease, no site or social publication
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            echo "Existing V4 release: do not overwrite/duplicate."
+          else
+            gh release create "$TAG" \
+              publish/ARROSEUR_1895_V4_VOLTI_AUTENTICI.mp4 \
+              publish/ARROSEUR_1895_V4_VERTICALE_SOCIAL.mp4 \
+              publish/ARROSEUR_1895_V4_VIDEO_COMPLETO.zip \
+              --repo "$REPO" --title "Arroseur 1895 · V4 volti autentici, no fermo immagine · download" \
+              --notes "Video di revisione V4. Pellicola originale 1895 (Lumière) in movimento senza foto fisse, volti non generati artificialmente, colorizzazione DDColor NEUTRA, pulizia pellicola. Master 4:3 1440x1080 e versione smartphone 9:16 con tutta la ripresa visibile. NO 4K nativo e colori originali del 1895 ignoti. NON è approvazione artistica o pubblicazione sul sito/social. Bypass del problema di download della libreria ChatGPT. Nessun credito a pagamento." \
+              --prerelease --latest=false
+          fi
+          gh release view "$TAG" --repo "$REPO" --json url,assets \
+            --jq '{url:.url,assets:(.assets|map({name:.name,size:.size,url:.url}))}'
+          assets="$(gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets[].name')"
+          for name in ARROSEUR_1895_V4_VOLTI_AUTENTICI.mp4 ARROSEUR_1895_V4_VERTICALE_SOCIAL.mp4 ARROSEUR_1895_V4_VIDEO_COMPLETO.zip; do
+            grep -Fqx "$name" <<< "$assets"
+          done
+      - name: Independent EXTERNAL GET of MP4 and ZIP (not only release upload)
+        run: |
+          set -euo pipefail
+          for name in ARROSEUR_1895_V4_VOLTI_AUTENTICI.mp4 ARROSEUR_1895_V4_VERTICALE_SOCIAL.mp4 ARROSEUR_1895_V4_VIDEO_COMPLETO.zip; do
+            curl --fail --location --retry 3 --max-time 150 --output "/tmp/$name" \
+              "https://github.com/$REPO/releases/download/$TAG/$name"
+            test -s "/tmp/$name"
+          done
+          echo "bf391493d515701c4513328683c5b1d1067e7ed6b5664044eee756cf711abd1e  /tmp/ARROSEUR_1895_V4_VOLTI_AUTENTICI.mp4" | sha256sum --check
+          echo "e2bb66f74ed15152b662cd6e6400d521d37c1db441b7e71a9ef751afabd85d3d  /tmp/ARROSEUR_1895_V4_VERTICALE_SOCIAL.mp4" | sha256sum --check
+          echo "476cc0b444690ca4de6e74e2837aef2865d57d026e7c24aaea559f1506636f6c  /tmp/ARROSEUR_1895_V4_VIDEO_COMPLETO.zip" | sha256sum --check
+          python - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('/tmp/ARROSEUR_1895_V4_VIDEO_COMPLETO.zip') as z:assert z.testzip() is None
+          print("ALL_THREE_PUBLIC_ANDROID_DOWNLOADS_VERIFIED_SHA256_AND_ZIP_CRC_PASS")
+          PY
