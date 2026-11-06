@@ -105,18 +105,18 @@ def main():
  (out/'RIGHTS_AND_CREDITS.txt').write_text(
   'The Triumph of Death (1562–1563), Pieter Bruegel the Elder, Prado P001393, 117 x 162 cm.\\n'
   'Real Prado framed painting photographed by Priscila Costa / Ministério da Cultura 30 June 2013, CC BY 2.0: '+PHOTO_PAGE+'\\n'
-  'Original 3520x2936 JPEG 6770130 bytes SHA256 '+PHOTO_SHA+'. Prado 2013 frame is NOT asserted historic-original from 1562–1563.\\n'
+  'Original 4368x2912 JPEG 6770130 bytes SHA256 '+PHOTO_SHA+'. Prado 2013 frame is NOT asserted historic-original from 1562–1563.\\n'
   'Only actual framed photograph in intro and outro; neutral editorial background is NOT a claim of actual Prado architecture.\\n'
   'Cinema Standard V150 48s source preserved; original AAC copied with bit-identical ADTS, ZERO new voice/video API.\\n'
   'French heritage territorial/commercial permission, human artistic review and safe historical content review PENDING. Not Gold, not published.\\n',encoding='utf8')
  (out/'SOCIAL_DRAFT_UNPUBLISHED.txt').write_text(
   'THE TRIUMPH OF DEATH · Pieter Bruegel the Elder · 1562–1563.\\n'
   'A journey from the artwork as photographed in its real Prado frame to the color and drama of Bruegel’s 1562–1563 composition.\\n'
-  'Museum photograph: Priscila Costa / Ministério da Cultura CC BY 2.0, October 2013. DRAFT ONLY; NO PUBLISHING.\\n',encoding='utf8')
+  'Museum photograph: Priscila Costa / Ministério da Cultura CC BY 2.0, June 2013. DRAFT ONLY; NO PUBLISHING.\\n',encoding='utf8')
  report={'work':'The Triumph of Death','variant':'cinema_museum','original_cinema_mp4_sha256':MP4_SHA,
  'original_aac_adts_sha256':a1,'new_aac_adts_sha256':a2,'same_aac_bit_identical':True,
- 'authentic_photo_page':PHOTO_PAGE,'photo_license':'Priscila Costa / Ministério da Cultura CC BY 2.0, photo 30 June 2013','photo_sha256':sha(photo),
- 'photo_dimensions':size,'photo_bytes':photo.stat().st_size,'real_frame_only_intro_outro_seconds':7.0,
+ 'authentic_photo_page':PHOTO_PAGE,'photo_license':'Priscila Costa / Ministério da Cultura CC BY 2.0, photo 30 June 2013', 'photo_license_url':'https://creativecommons.org/licenses/by/2.0/','photo_sha256':sha(photo),
+ 'photo_dimensions':size,'photo_bytes':photo.stat().st_size,'real_frame_only_intro_outro_seconds':2*BOOK/FPS,
  'frame_historical_originality_asserted':False,'actual_louvre_room_recreated':False,
  'file':{'name':target.name,'bytes':target.stat().st_size,'sha256':sha(target),'duration_s':N/FPS,'frames':cnt,'resolution':[W,H],'full_ffmpeg_decode':'PASS'},
  'human_artistic_review':'PENDING','museum_approved':False,'Gold_V25':False,'social_published':False,'new_paid_calls':0,'new_TTS_calls':0}
