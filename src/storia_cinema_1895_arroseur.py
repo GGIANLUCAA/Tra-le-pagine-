@@ -20,7 +20,7 @@ LOC="https://catalogue-lumiere.com/arroseur-et-arrose-i/"
 UA="LaStoriaRiviveCinema/2.0 (+https://github.com/GGIANLUCAA/Tra-le-pagine-)"
 FPS=24;W=720;H=1280
 p.OUT=OUT;p.SRC=SRC;p.FPS=FPS;p.W=W;p.H=H;p.SLOW=1.06
-p.ANCHOR_S=9.1;p.REVEAL_START=0.95;p.REVEAL_END=2.15
+p.ANCHOR_S=7.7;p.REVEAL_START=0.95;p.REVEAL_END=2.15
 def write(name,data):
     (OUT/name).write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 def digest(path):
@@ -62,8 +62,10 @@ def retrieve():
 def center_crop(frame):
     h,w=frame.shape[:2]
     cw=int(h*W/H)
-    # Frame is theatre-studio, with one central dancer. Do not use synthetic camera motion.
-    x=max(0,min(w-cw,(w-cw)//2))
+    # Actual full-frame review proved BOTH subjects are on the LEFT of 1895
+    # original for the selected comedic segment. A center crop made a fake
+    # 'photograph of an empty garden' (REJECTED). Keep the true actors in frame.
+    x=0
     return cv2.resize(frame[:,x:x+cw],(W,H),interpolation=cv2.INTER_CUBIC)
 def film_frames():
     cap=cv2.VideoCapture(str(SRC))
@@ -74,8 +76,19 @@ def film_frames():
         raise RuntimeError(f"SOURCE_META_NOT_EXPECTED {duration=}, {width=}, {height=}, {nativefps=}")
     frames=[]
     # Decode original to real frames, never still image pan/zoom. Preserve true camera motion.
+    # Choose the true 1895 comic payoff: water sprays the gardener, the actors
+    # move together, and the prank ends. Real frame content, not AI animation.
+    # Decode just this sequence once to reduce expensive repeated VP9 seeking.
+    excerpt=OUT/"ORIGINAL_1895_17_TO_37.mp4"
+    process=subprocess.run(["ffmpeg","-nostdin","-y","-v","error","-ss","17",
+             "-i",str(SRC),"-t","20","-vf",f"fps={FPS}","-an",
+             "-c:v","libx264","-crf","17","-preset","veryfast",
+             "-pix_fmt","yuv420p",str(excerpt)],capture_output=True,text=True,timeout=140)
+    cap.release()
+    if process.returncode or not excerpt.is_file():
+        raise RuntimeError("AUTHENTIC_EXCERPT_DECODE_FAILED "+process.stderr[-300:])
+    cap=cv2.VideoCapture(str(excerpt))
     for i in range(int(20.0*FPS)-2):
-        cap.set(cv2.CAP_PROP_POS_MSEC,(9.0+i/FPS)*1000)
         ok,frame=cap.read()
         if not ok:raise RuntimeError("SOURCE_FRAME_READ_FAILED "+str(i))
         frames.append(center_crop(frame))
@@ -109,7 +122,7 @@ def film_frames():
     board.save(OUT/"TRUE_ORIGINAL_CONTACT.jpg",quality=92)
     write("RIGHTS_AND_PROVENANCE.json",{
       "title":"L'Arroseur arrosé","year":1895,"director":"Louis Lumière",
-      "director_died":1948,"camera":"Louis Lumière","archive":"Wikimedia Commons / Lumière catalog","excerpt_start_s":9.0,"excerpt_duration_s":20.0,
+      "director_died":1948,"camera":"Louis Lumière","archive":"Wikimedia Commons / Lumière catalog","excerpt_start_s":17.0,"excerpt_duration_s":20.0,
       "archive_link":LOC,"film_source":PAGE,"source_sha256":digest(SRC),
       "source_resolution":[width,height],"source_fps":nativefps,"source_duration_s":duration,
       "original_median_real_motion_delta":round(float(np.median(motions)),3),
