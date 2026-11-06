@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - requests/artvision/delacroix-sardanapalus-critico-museum-v172.json
+      - requests/artvision/delacroix-sardanapalus-cinema-museum-v172.json
 permissions:
   contents: read
   actions: read
@@ -22,7 +22,7 @@ jobs:
           python - <<'PY'
           import json
           q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
-          r=json.load(open('requests/artvision/delacroix-sardanapalus-critico-museum-v172.json'))
+          r=json.load(open('requests/artvision/delacroix-sardanapalus-cinema-museum-v172.json'))
           w=[z for z in q['works'] if z['id']=='delacroix_death_sardanapalus_1827_louvre_rf2346']
           assert len(w)==1 and w[0]['slots_delivered_this_selection']==3
           assert w[0]['critico_museum_v171']['sha256']=='ec5b2c9139f6e05f43c2ba489349dab6660933407388c8cd5f6c7a14a660e693'
