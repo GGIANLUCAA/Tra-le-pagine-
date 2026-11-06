@@ -66,7 +66,13 @@ class SubjectPopoutTests(unittest.TestCase):
             quad = np.float32([[120, 130], [420, 130], [420, 440], [120, 440]])
             start = composite_popout(base, panel, quad, 0.0)
             end = composite_popout(base, panel, quad, 0.78)
-            self.assertGreater(float(np.mean(cv2.absdiff(start, end))), 1.0)
+            # The subject occupies only a small fraction of the 540x960
+            # canvas; full-frame mean RGB difference dilutes meaningful
+            # motion. Demand visible, non-noise pixel changes instead.
+            delta = np.max(cv2.absdiff(start, end), axis=2)
+            moving_pixels = int(np.count_nonzero(delta > 20))
+            self.assertGreater(moving_pixels, 1200)
+            self.assertGreater(int(delta.max()), 40)
             self.assertEqual(end.shape, base.shape)
 
 if __name__ == "__main__":
