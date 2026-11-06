@@ -1,0 +1,60 @@
+name: "La Storia Rivive - Blacksmith authentic movement source test"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-blacksmith-1893-original-motion-source.yml"
+permissions:
+  contents: read
+jobs:
+  original_source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Download real original 1893 moving source from Internet Archive
+        shell: bash
+        run: |
+          mkdir -p source
+          python3 - <<'PY'
+          import urllib.request,urllib.error,subprocess,hashlib,json,os,time
+          urls=[
+            "https://archive.org/download/blacksmith-scene-1893_202602/Blacksmith%20Scene%20%281893%29.mp4",
+            "https://archive.org/download/blacksmith-scene-1893_202602/Blacksmith%20Scene%20%281893%29.m4v",
+            "https://ia800805.us.archive.org/28/items/blacksmith-scene-1893_202602/Blacksmith%20Scene%20%281893%29.mp4",
+            "https://commons.wikimedia.org/wiki/Special:Redirect/file/Blacksmith%20Scene%20%281893%29.webm"
+          ]
+          errors=[]
+          for u in urls:
+            try:
+              print("TRY",u,flush=True)
+              request=urllib.request.Request(u,headers={"User-Agent":"Mozilla/5.0 (compatible; LaStoriaRiviveFilmSource/1.0)","Accept":"*/*"})
+              with urllib.request.urlopen(request,timeout=65) as r,open('source/BLACKSMITH_1893_original_download.mp4','wb') as f:
+                while True:
+                  b=r.read(65536)
+                  if not b:break
+                  f.write(b)
+                  if f.tell()>60000000:raise RuntimeError("size over limit")
+              p='source/BLACKSMITH_1893_original_download.mp4'
+              info=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',p],timeout=15))
+              video=next(x for x in info['streams'] if x['codec_type']=='video')
+              secs=float(info['format']['duration'])
+              if secs < 12 or os.stat(p).st_size<100000:raise RuntimeError('bad video or static short')
+              data={'filename':os.path.basename(p),'url':u,'sha256':hashlib.sha256(open(p,'rb').read()).hexdigest(),'duration':secs,'width':video['width'],'height':video['height'],'codec':video['codec_name'],'size':os.stat(p).st_size,'status':'AUTHENTIC_MOVING_SOURCE_DOWNLOADED'}
+              json.dump(data,open('source/SOURCE_CHECK.json','w'),indent=2)
+              print('PASS REAL MOVING FILM',data,flush=True)
+              break
+            except Exception as e:
+              print('FAIL',type(e).__name__,str(e)[:170],flush=True);errors.append(type(e).__name__+':'+str(e)[:170])
+              if os.path.exists('source/BLACKSMITH_1893_original_download.mp4'):os.remove('source/BLACKSMITH_1893_original_download.mp4')
+          else:
+            json.dump({'status':'FAILED_NO_SOURCE','errors':errors},open('source/SOURCE_CHECK.json','w'),indent=2)
+            raise RuntimeError("No authentic video downloadable; don't claim moving output")
+          PY
+      - name: Store authentic moving source for local matched-frame tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_BLACKSMITH_1893_REAL_MOVING_SOURCE
+          path: source/
+          retention-days: 7
