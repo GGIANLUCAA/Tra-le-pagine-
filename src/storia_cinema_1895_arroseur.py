@@ -20,7 +20,7 @@ LOC="https://catalogue-lumiere.com/arroseur-et-arrose-i/"
 UA="LaStoriaRiviveCinema/2.0 (+https://github.com/GGIANLUCAA/Tra-le-pagine-)"
 FPS=24;W=720;H=1280
 p.OUT=OUT;p.SRC=SRC;p.FPS=FPS;p.W=W;p.H=H;p.SLOW=1.06
-p.ANCHOR_S=7.7;p.REVEAL_START=0.95;p.REVEAL_END=2.15
+p.ANCHOR_S=2.0;p.REVEAL_START=0.95;p.REVEAL_END=2.15
 def write(name,data):
     (OUT/name).write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 def digest(path):
@@ -164,17 +164,22 @@ def photograph(base,mono):
     manifest={"service":"Finegrain image enhancer, Gradio free tier","paid_api_calls":0,
               "authentic_source_frame":True,"attempt_count":1,"editorial_approval":False}
     from gradio_client import Client,handle_file
-    prompt=("Ultra photorealistic modern 2026 documentary COLOR photo faithfully reconstructing "
-            "one exact film frame from Louis Lumiere 1895 comedy L'Arroseur arrose. "
-            "One real adult GARDENER with hose and one younger prankster on outdoor garden path, "
-            "as pictured in the original source: keep the EXACT NUMBER of people visible, their age, "
-            "hairstyle, faces, pose, hands, shoes, the original rubber hose, garden trees and foliage. "
-            "Visible period cotton shirt, trousers, natural daylight, natural realistic human skin pores, "
-            "fabrics and real green vegetation. Preserve the camera geometry and positions of every "
-            "person/prop; restore a sharp modern photographic look without changing historical action.")
-    negative=("extra people, extra faces, missing people, horns, fused limbs, deformity, extra fingers, "
-              "twisted garden hose, weird water, cartoon, painting, plasticky faces, fake text, "
-              "altered trees, strangely saturated colors, supernatural costume, new tools, blurry AI art")
+    # One-person action anchor (source ~19s), not the prior bad two-person
+    # anchor that invented pistol-shaped props and failed actual image review.
+    prompt=("Hyperphotorealistic modern documentary COLOR photograph restoring THIS EXACT "
+            "1895 Louis Lumiere original frame: ONE adult male GARDENER wearing 19th-century "
+            "work clothes, apron and brimmed work hat, outdoors in a real 1895 vegetable garden, "
+            "caught by water splashing from a flexible GARDEN HOSE and trying to look down "
+            "at its nozzle. Keep the EXACT SOURCE PERSON, ONE complete human body, real hat, "
+            "hands and boots, natural realistic wet shirt and apron fabric folds, "
+            "subtle splashes/droplets, unchanged pose, trees, garden, background wall "
+            "and original field of view. Modern 2026 optical photographic realism "
+            "with accurate natural skin detail and neutral authentic greens; "
+            "do not invent anything not present in the source.")
+    negative=("pistol, gun, firearm, revolver, rifle, weapon, gun barrel, added tool, "
+              "extra person, child, alien, horns, fused limbs, deformed face, extra fingers, "
+              "missing hands, fake extra hoses, strange water, surreal, plastic toy, "
+              "illustration, cartoon, painting, fantasy outfit, strange bright saturation")
     try:
         c=Client("finegrain/finegrain-image-enhancer",verbose=False)
         raw=c.predict(handle_file(str(OUT/"NEURAL_COLOR_BASE.png")),prompt,negative,
