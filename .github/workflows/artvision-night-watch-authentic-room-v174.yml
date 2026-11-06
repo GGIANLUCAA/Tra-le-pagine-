@@ -1,0 +1,73 @@
+name: ArtVision V174 Night Watch authentic framed room photo source-only
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/night-watch-genuine-room-source-v174.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-nightwatch-frame-source-v174
+  cancel-in-progress: false
+jobs:
+  verify_real_photo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guard distinct 2/4 Night Watch and source-only no render
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          r=json.load(open('requests/artvision/night-watch-genuine-room-source-v174.json'))
+          w=next(x for x in q['works'] if x['id']==r['work_id'])
+          assert w['slots_delivered_this_selection']==2 and not w['museum_approved']
+          assert r['owner_automation_id']==q['owner_automation_id']
+          assert r['source_only'] and r['one_shot'] and not r['render'] and not r['new_tts']
+          assert not r['allow_paid_calls'] and not r['publish'] and not r['gold']
+          print('SOURCE ONLY, 2/4, no render, no TTS, no cost, no publishing')
+          PY
+      - name: Wikimedia Commons exact real Night Watch room photo with CC0 and full SHA1
+        run: |
+          python - <<'PY'
+          import json,urllib.request,urllib.parse,hashlib,pathlib,time,re
+          out=pathlib.Path('v174_photo');out.mkdir(exist_ok=True)
+          name='File:Rijksmuseum Amsterdam, Nightwatch room after restoration, 1984.jpg'
+          endpoint='https://commons.wikimedia.org/w/api.php'
+          params={'action':'query','titles':name,'prop':'imageinfo','iiprop':'url|size|sha1|extmetadata','format':'json'}
+          url=endpoint+'?'+urllib.parse.urlencode(params)
+          headers={'User-Agent':'ArtVisionResearch/1.0 (educational source verification; Wikimedia Commons API)'}
+          result={'requested_title':name,'source_api':url,'source_only':True,'museum_approved':False,'gold':False,'publish':False,'paid_calls':0,'tts_calls':0,'status':'PENDING','historical_room_date':'1984; NOT current museum'}
+          try:
+            data=json.load(urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=40))
+            page=next(iter(data['query']['pages'].values()))
+            info=page['imageinfo'][0];meta=info.get('extmetadata',{})
+            license_short=meta.get('LicenseShortName',{}).get('value','')
+            license_url=meta.get('LicenseUrl',{}).get('value','')
+            result.update({'commons_page':info['descriptionurl'],'license_short':license_short,'license_url':license_url,'reported_bytes':info['size'],'reported_sha1':info['sha1'],'width':info['width'],'height':info['height'],'image_url':info['url']})
+            if not ('CC0' in license_short or 'publicdomain/zero' in license_url.lower()):
+              result['status']='BLOCKED_LICENSE_NOT_CC0';raise RuntimeError('Commons file not CC0; no download permitted')
+            if info['size']>60000000:result['status']='BLOCKED_TOO_LARGE';raise RuntimeError('Oversized image')
+            with urllib.request.urlopen(urllib.request.Request(info['url'],headers=headers),timeout=75) as stream:
+              content=stream.read(info['size']+1)
+            assert len(content)==info['size'],'size mismatch'
+            assert hashlib.sha1(content).hexdigest()==info['sha1'],'SHA1 mismatch'
+            assert content[:3]==bytes.fromhex('ffd8ff'),'not JPEG'
+            (out/'NIGHT_WATCH_1984_REAL_ROOM_CC0_V174.jpg').write_bytes(content)
+            result['sha256']=hashlib.sha256(content).hexdigest()
+            result['status']='SOURCE_BYTES_LICENSE_SIZE_SHA1_SHA256_VERIFIED_REFERENCE_ONLY'
+          except Exception as e:
+            result['error']=str(e)[:800]
+            if result['status']=='PENDING':result['status']='BLOCKED_DOWNLOAD_OR_API'
+          (out/'SOURCE_PREFLIGHT_V174.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result,indent=2))
+          PY
+      - name: Preserve actual evidence even if source download blocked
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V174_NIGHT_WATCH_HISTORICAL_ROOM_CC0_SOURCE_PREFLIGHT
+          path: v174_photo/
+          retention-days: 30
+          if-no-files-found: warn
