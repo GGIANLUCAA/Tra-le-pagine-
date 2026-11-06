@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """V183 Bruegel, The Triumph of Death, Prado P001393 Critico Museum.
-Authentic 2013 Priscila Costa / Ministério da Cultura CC0 photo of the framed picture in intro/outro; V151
+Authentic 2013 Priscila Costa / Ministério da Cultura CC BY 2.0 photo of the framed picture in intro/outro; V151
 original for middle; exact original WAV and bit-identical AAC, no TTS or costs.
 No invented Prado room, no historic-frame claim, no publishing or Gold.
 """
