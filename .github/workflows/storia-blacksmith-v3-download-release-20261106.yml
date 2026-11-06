@@ -20,6 +20,8 @@ jobs:
       TAG: storia-blacksmith-1893-v3-prova-non-approvata
       DOWNLOAD_URL: "https://eu-central.storage.cloudconvert.com/tasks/18073ccb-55da-45c7-aade-19faeccfdb9f/STORIA_BLACKSMITH_1893_MOVIMENTO_REALE_V3_MOBILE.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20261106%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20261106T222029Z&X-Amz-Expires=86400&X-Amz-Signature=edf7ebe0d0ac6434447c0f475c8e29a031966dd928b3ad3f4940f711bccd4905&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22STORIA_BLACKSMITH_1893_MOVIMENTO_REALE_V3_MOBILE.mp4%22&response-content-type=video%2Fmp4&x-amz-checksum-mode=ENABLED&x-id=GetObject"
     steps:
+      - name: Install FFmpeg for validation
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
       - name: Retrieve exact finished V3 MP4 from preexisting authorized export
         run: |
           set -euo pipefail
