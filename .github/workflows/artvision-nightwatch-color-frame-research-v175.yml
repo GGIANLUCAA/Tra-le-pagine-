@@ -1,0 +1,40 @@
+name: ArtVision V175 Night Watch real color frame source research
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/nightwatch-color-frame-research-v175.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-nightwatch-color-source-v175
+  cancel-in-progress: false
+jobs:
+  source_research_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check queue and prohibit rendering, TTS, paid calls and publishing
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          r=json.load(open('requests/artvision/nightwatch-color-frame-research-v175.json'))
+          w=next(x for x in q['works'] if x['id']=='rembrandt_night_watch_1642_rijks_sk_c_5')
+          assert w['slots_delivered_this_selection']==2
+          assert r['owner_automation_id']==q['owner_automation_id']
+          assert r['source_only'] and r['one_shot']
+          assert not r['render'] and not r['new_tts'] and not r['paid_calls'] and not r['publish'] and not r['museum_approved']
+          print('SOURCE_ONLY_NIGHTWATCH_2_OF_4_NO_RENDER_NO_DUPLICATE')
+          PY
+      - name: Discover Wikimedia Commons color framed-room photo candidates
+        run: python src/artvision_nightwatch_color_frame_research_v175.py
+      - name: Upload research evidence only (no new MP4 slot)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V175_NIGHT_WATCH_COLOR_FRAME_RESEARCH_ONLY
+          path: /tmp/artvision_nightwatch_v175/
+          retention-days: 30
+          if-no-files-found: warn
