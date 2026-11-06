@@ -47,7 +47,21 @@ class SubjectPopoutTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             clean, original, mask = preflight_source(sample_image(), Path(folder))
             panel = make_subject_panel(original, mask, (310, 310, 4), (260, 260))
-            self.assertGreater(np.count_nonzero(panel[:, :, 3]), 10000)
+            # The original 400x400 synthetic ellipse is deliberately scaled
+            # to 230x230 inside the 260x260 art area. Requiring >10,000 alpha
+            # pixels is physically inconsistent with this scale. Instead,
+            # verify the complete *rescaled* silhouette survives compositing.
+            expected_mask = np.asarray(mask.resize((230, 230),
+                                        Image.Resampling.NEAREST)) >= 128
+            composed_mask = panel[22:252, 22:252, 3] >= 32
+            expected_area = int(np.count_nonzero(expected_mask))
+            actual_area = int(np.count_nonzero(composed_mask))
+            self.assertGreater(expected_area, 5000)
+            self.assertGreater(actual_area, expected_area * .90)
+            self.assertLess(actual_area, expected_area * 1.15)
+            self.assertGreater(
+                np.count_nonzero(composed_mask & expected_mask),
+                expected_area * .97)
             base = np.full((960, 540, 3), 75, np.uint8)
             quad = np.float32([[120, 130], [420, 130], [420, 440], [120, 440]])
             start = composite_popout(base, panel, quad, 0.0)
