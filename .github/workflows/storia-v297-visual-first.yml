@@ -268,11 +268,11 @@ jobs:
                   }.items():
                       pathlib.Path('POST_'+platform+'_DRAFT.txt').write_text(copy+'\n',encoding='utf-8')
                   with zipfile.ZipFile('BOMBAY_V298_REVIEW_KIT.zip','w',zipfile.ZIP_DEFLATED) as z:
-                      for filename in ['BOMBAY_V298_VISUAL_REMASTER_REVIEW.mp4',
+                      for filename in (['BOMBAY_V298_VISUAL_REMASTER_REVIEW.mp4',
                                        'BEFORE_AFTER_PHOTOGRAPHIC.jpg','SOURCE_QA.json',
                                        'COLOR_BASE_QA.json','I2I_TRIAL.json','PHOTO_IDENTITY_GATE.json',
-                                       'BASE_COLOR_REFERENCE.png','PHOTO_I2I_CANDIDATE.png']+
-                                       [f'POST_{p}_DRAFT.txt' for p in ['FACEBOOK','INSTAGRAM','TIKTOK','YOUTUBE']]:
+                                       'BASE_COLOR_REFERENCE.png','PHOTO_I2I_CANDIDATE.png'] +
+                                       [f'POST_{p}_DRAFT.txt' for p in ['FACEBOOK','INSTAGRAM','TIKTOK','YOUTUBE']]):
                           z.write(filename)
                   with zipfile.ZipFile('BOMBAY_V298_REVIEW_KIT.zip') as z:
                       assert z.testzip() is None
