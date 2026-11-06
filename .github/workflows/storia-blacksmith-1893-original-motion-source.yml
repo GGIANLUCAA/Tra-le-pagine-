@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
+      - name: Install FFmpeg and FFprobe for genuine video verification
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
       - name: Download real original 1893 moving source from Internet Archive
         shell: bash
         run: |
