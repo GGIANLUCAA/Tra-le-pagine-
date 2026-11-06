@@ -25,6 +25,10 @@
   "workflow": ".github/workflows/artvision-delacroix-cinema-museum-v172.yml",
   "renderer": "src/artvision_delacroix_cinema_museum_v172.py",
   "release_gate": "new physically different Museum variant; source V168 AAC bit-identical; full FFmpeg audio/video + ZIP CRC+SHA + Library readback; no Gold or social",
-  "status": "RELEASED_ONE_SHOT_AFTER_WORKFLOW_PATH_CORRECTION_NO_PREVIOUS_GITHUB_RENDER",
-  "previous_dispatch_note": "Initial request did not match workflow file path: zero V172 runs. Corrected path at fc6f793d48bb9f6c9d8c2e27462ec69a6cdbb1b9. Same single slot, no double rendering."
+  "status": "ONE_SAME_SLOT_OFFLINE_RECOVERY_AFTER_V172_QA_MISNAMED_UPLOAD_NO_TTS_NO_PAYMENTS",
+  "previous_dispatch_note": "Initial request did not match workflow file path: zero V172 runs. Corrected path at fc6f793d48bb9f6c9d8c2e27462ec69a6cdbb1b9. Same single slot, no double rendering.",
+  "first_run_id": 42144469396,
+  "first_run_existing_render_sha256": "a023436e8e68635e134ca3faeb83e2bffbc78a53d7bbb29afaf33d57851ab9ed",
+  "recovery_reason": "Initial run rendered valid 48s MP4 and ZIP but QA/upload steps sought CRITICO filenames not CINEMA. Runner's MP4 not uploaded. Re-render same exact slot from fixed deterministic sources, no API, no extra variant.",
+  "recovery_only": true
 }
