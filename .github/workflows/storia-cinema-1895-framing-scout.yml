@@ -1,0 +1,55 @@
+name: "La Storia Rivive · 1895 Lumiere full-frame geometry scout (free)"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-cinema-1895-framing-scout.yml"
+permissions:
+  contents: read
+jobs:
+  check_true_framing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -q "numpy<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1"
+      - name: Acquire original film (NO AI provider called), create full-frame contact
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import importlib.util,cv2,numpy as np,json
+          from PIL import Image,ImageDraw
+          from pathlib import Path
+          spec=importlib.util.spec_from_file_location('s','src/storia_cinema_1895_arroseur.py')
+          s=importlib.util.module_from_spec(spec);spec.loader.exec_module(s)
+          source=s.retrieve(); d=Path('output/storia_cinema_1895_source_audit');d.mkdir(parents=True,exist_ok=True)
+          cap=cv2.VideoCapture(str(source))
+          times=[9,11,13,15,17,19,21,23,25,27,29,31]
+          board=Image.new('RGB',(4*390,3*315),(17,18,22));label=ImageDraw.Draw(board)
+          for i,t in enumerate(times):
+              cap.set(cv2.CAP_PROP_POS_MSEC,t*1000)
+              ok,frame=cap.read()
+              assert ok, 'FILM_FRAME_MISSING_'+str(t)
+              img=Image.fromarray(cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)).resize((384,288))
+              x=(i%4)*390+3;y=(i//4)*315+24
+              board.paste(img,(x,y));label.text((x,y-20),'SOURCE '+str(t)+'s',fill='white')
+              if t in (9,18,23,28):
+                  cv2.imwrite(str(d/f'FULL_SOURCE_{t}s.jpg'),frame,[cv2.IMWRITE_JPEG_QUALITY,95])
+          cap.release()
+          board.save(d/'FULL_FRAME_SCENE_GEOMETRY.jpg',quality=95)
+          (d/'SCOUT.json').write_text(json.dumps({'film':'Arroseur 1895','original_sha256':s.digest(source),
+               'sample_times':times,'status':'FREE_ORIGINAL_FILM_FRAMING','no_I2I_or_Vidu_spend':True},indent=2))
+          print('ORIGINAL_FULL_FRAME_CONTACT_READY')
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_ARROSEUR_1895_ORIGINAL_FRAMING_AUDIT
+          path: |
+            output/storia_cinema_1895_source_audit/*
+          retention-days: 10
+          if-no-files-found: warn
