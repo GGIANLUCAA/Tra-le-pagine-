@@ -1,0 +1,77 @@
+name: "La Storia Rivive CINEMA 1903 · one complete cinematic short with real AI restoration"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-cinema-1903-gunman.yml"
+      - "src/storia_cinema_1903_gunman.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-cinema-1903-gunman-one
+  cancel-in-progress: false
+jobs:
+  real_historical_cinema_short:
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install no-cost neural color, image-to-image clients and FFmpeg
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg zip fonts-dejavu-core
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: REAL historical moving film, neural color and free I2I, source locked
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_cinema_1903_gunman.py
+          python -u src/storia_cinema_1903_gunman.py
+          test -s output/storia_cinema_1903_gunman/CINEMA_1903_THE_GREAT_TRAIN_ROBBERY.mp4
+          test -s output/storia_cinema_1903_gunman/CINEMA_1903_COMPLETE_PACKAGE.zip
+      - name: Verify exact movie decode and ZIP CRC, report genuine results
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_cinema_1903_gunman
+          ffprobe -v error -show_entries format=duration,size:stream=codec_name,width,height -of json CINEMA_1903_THE_GREAT_TRAIN_ROBBERY.mp4
+          ffmpeg -nostdin -v error -xerror -i CINEMA_1903_THE_GREAT_TRAIN_ROBBERY.mp4 -f null -
+          python - <<'PY'
+          import json,zipfile,hashlib,pathlib
+          p=pathlib.Path('.')
+          qa=json.loads((p/'DELIVERY_STATUS.json').read_text())
+          assert qa['status']=='COMPLETE_REAL_MP4_ZIP_ARTISTIC_REVIEW_PENDING'
+          assert (p/qa['mp4']).is_file() and (p/qa['package']).is_file()
+          for field,key in [('mp4','mp4_sha256'),('package','package_sha256')]:
+              assert hashlib.sha256((p/qa[field]).read_bytes()).hexdigest()==qa[key]
+          with zipfile.ZipFile(qa['package']) as z: assert z.testzip() is None
+          print(json.dumps(qa))
+          PY
+      - name: Keep real MP4, full ZIP, cover, social drafts, authentic source evidence or honest fail report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_CINEMA_1903_REAL_SHORT_FILES
+          path: |
+            output/storia_cinema_1903_gunman/CINEMA_1903_THE_GREAT_TRAIN_ROBBERY.mp4
+            output/storia_cinema_1903_gunman/CINEMA_1903_COMPLETE_PACKAGE.zip
+            output/storia_cinema_1903_gunman/COVER_CINEMA_1903.jpg
+            output/storia_cinema_1903_gunman/ORIGINAL_CONTACT.jpg
+            output/storia_cinema_1903_gunman/FILM_AND_AI_SCENE_REVIEW.jpg
+            output/storia_cinema_1903_gunman/PHOTO_QA.json
+            output/storia_cinema_1903_gunman/SOURCE_AND_RIGHTS.json
+            output/storia_cinema_1903_gunman/NEURAL_COLOR_MODEL.json
+            output/storia_cinema_1903_gunman/TECHNICAL_QA.json
+            output/storia_cinema_1903_gunman/DELIVERY_STATUS.json
+            output/storia_cinema_1903_gunman/FAILURE.json
+            output/storia_cinema_1903_gunman/SOURCE_FETCH_FAILURE.json
+            output/storia_cinema_1903_gunman/REAL_PHOTOGRAPHIC_I2I_1903.png
+            output/storia_cinema_1903_gunman/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
