@@ -1,0 +1,25 @@
+name: "La Storia Rivive ONLY - emergency visual QA veto for Repas 1895"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-repas-1895-qa-veto.yml"
+permissions:
+  actions: write
+  contents: write
+jobs:
+  stop_anatomically_false_preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Cancel the active fail-closed Repas 1895 candidate
+        run: |
+          set -euo pipefail
+          echo "FAIL: infant turned into elderly face, mother turned into masculine face, reject Finegrain photo despite corr=.9924"
+          gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/42303776054/cancel" || true
+          if gh release view storia-cinema-repas-1895-v1-social-photo-review-android --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release delete storia-cinema-repas-1895-v1-social-photo-review-android --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes
+          fi
+          echo "AI PHOTO ANATOMY VETO: do not distribute this preview"
