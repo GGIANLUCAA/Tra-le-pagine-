@@ -1,0 +1,91 @@
+name: "La Storia Rivive ONLY - Repas de bebe 1895 vertical video real visual I2I"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-cinema-repas-1895-social-i2i.yml"
+      - "src/storia_cinema_repas_1895_visual_social_v1.py"
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: storia-repas-1895-single-free-review
+  cancel-in-progress: false
+jobs:
+  make_visual_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 39
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install real FFmpeg and no-cost AI prerequisites
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: Fetch original film and render ONLY if real free I2I qualifies
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_cinema_repas_1895_visual_social_v1.py
+          python -u src/storia_cinema_repas_1895_visual_social_v1.py
+      - name: Check MP4 AAC H264, vertical, source and ZIP CRC
+        run: |
+          set -euo pipefail
+          cd output/storia_cinema_repas_1895_v1
+          ffmpeg -nostdin -v error -xerror -i REPAS_1895_SOCIAL_VISUAL_REVIEW.mp4 -f null -
+          python - <<'PY'
+          import zipfile,json,hashlib,pathlib,subprocess
+          p=pathlib.Path("."); v=p/"REPAS_1895_SOCIAL_VISUAL_REVIEW.mp4"; z=p/"REPAS_1895_VIDEO_COVER_SOCIAL.zip"
+          d=json.loads((p/"DELIVERY.json").read_text()); r=json.loads((p/"VISUAL_REPORT.json").read_text()); q=json.loads((p/"PHOTO_QA.json").read_text())
+          assert r["status"]=="REAL_VERTICAL_MP4_RENDERED_REVIEW_PENDING" and r["resolution"]==[1080,1920]
+          assert q["status"]=="REAL_PHOTO_TECHNICAL_GATE_PASS_ARTISTIC_REVIEW_PENDING"
+          assert not r["artistic_approval"] and not r["published"] and not r["paid_calls"] and not r["vidu_new_clip"]
+          assert hashlib.sha256(v.read_bytes()).hexdigest()==d["video_sha"]
+          assert hashlib.sha256(z.read_bytes()).hexdigest()==d["zip_sha"]
+          with zipfile.ZipFile(z) as f: assert f.testzip() is None
+          for typ,expect in [("v","h264"),("a","aac")]:
+              x=subprocess.run(["ffprobe","-v","error","-select_streams",typ,"-show_entries","stream=codec_name","-of","default=nw=1:nk=1",str(v)],capture_output=True,text=True,check=True)
+              assert x.stdout.strip()==expect,(typ,x.stdout)
+          print("TRUE_REAL_VIDEO_AND_ZIP_CRC_PASS_ARTISTIC_REVIEW_PENDING",d)
+          PY
+      - name: Always preserve REAL files or exact failure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_REPAS_1895_TRUE_SOCIAL_I2I_REVIEW
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_cinema_repas_1895_v1/REPAS_1895_SOCIAL_VISUAL_REVIEW.mp4
+            output/storia_cinema_repas_1895_v1/REPAS_1895_VIDEO_COVER_SOCIAL.zip
+            output/storia_cinema_repas_1895_v1/SOCIAL_COVER.jpg
+            output/storia_cinema_repas_1895_v1/ORIGINAL_VS_PHOTO_VISUAL_QA.jpg
+            output/storia_cinema_repas_1895_v1/GENERATIVE_PHOTO_REAL_CANDIDATE.png
+            output/storia_cinema_repas_1895_v1/ANCHOR_REAL_ORIGINAL_BW.png
+            output/storia_cinema_repas_1895_v1/PHOTO_QA.json
+            output/storia_cinema_repas_1895_v1/VISUAL_REPORT.json
+            output/storia_cinema_repas_1895_v1/RIGHTS.json
+            output/storia_cinema_repas_1895_v1/DELIVERY.json
+            output/storia_cinema_repas_1895_v1/FAILURE.json
+      - name: External Android downloads for owner visual review ONLY
+        run: |
+          set -euo pipefail
+          cd output/storia_cinema_repas_1895_v1
+          tag=storia-cinema-repas-1895-v1-social-photo-review-android
+          gh release create "$tag" REPAS_1895_SOCIAL_VISUAL_REVIEW.mp4 REPAS_1895_VIDEO_COVER_SOCIAL.zip SOCIAL_COVER.jpg ORIGINAL_VS_PHOTO_VISUAL_QA.jpg --repo "$GITHUB_REPOSITORY" --prerelease --title "REPAS 1895 - VISUAL REVIEW, NOT APPROVED" --notes "Public files for owner Android download only; not an editorial approval nor site/social publication. True film motion + matching free AI photograph, moving post-photo color is neural colorization (not photoreal I2V). Zero paid calls, no Vidu."
+          for f in REPAS_1895_SOCIAL_VISUAL_REVIEW.mp4 REPAS_1895_VIDEO_COVER_SOCIAL.zip; do
+            curl --fail --location --retry 3 --silent --show-error "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$f" -o "/tmp/$f"
+            cmp "$f" "/tmp/$f"
+          done
+          python -c "import zipfile; assert zipfile.ZipFile('/tmp/REPAS_1895_VIDEO_COVER_SOCIAL.zip').testzip() is None"
+          echo PUBLIC_EXTERNAL_DOWNLOAD_AND_BYTES_VERIFIED
+      - name: Only factual issue 144 update
+        if: success()
+        run: |
+          gh issue comment 144 --repo "$GITHUB_REPOSITORY" --body "REAL NEW TEST: Repas de bébé (1895), NOT Blacksmith / Arroseur. Authentic Commons film, 1080x1920 real social MP4 H264/AAC, SAME-FRAME free Finegrain I2I, true moving B/W -> visible freeze -> AI photo -> real source colorized motion, and ZIP+cover+4 social drafts. MP4 decode/ZIP CRC and PUBLIC external Android downloads confirmed. Artistic QA PENDING, not a final approved episode: moving color is not full photorealistic I2V. No Vidu or cost; no site/social post. Owner review download: https://github.com/GGIANLUCAA/Tra-le-pagine-/releases/tag/storia-cinema-repas-1895-v1-social-photo-review-android. NEXT: visually check face/hands/photo vs original, discard if anatomy inconsistent."
