@@ -1,0 +1,29 @@
+{
+  "owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "work_id": "delacroix_death_sardanapalus_1827_louvre_rf2346",
+  "variant": "cinema_museum",
+  "public_title": "The Death of Sardanapalus",
+  "accession": "Louvre RF 2346",
+  "one_shot": true,
+  "one_render_at_a_time": true,
+  "new_tts": false,
+  "allow_paid_calls": false,
+  "publication_authorized": false,
+  "gold_v25": false,
+  "artist_review_required": true,
+  "reuse_cinema_v168_run_id": 41969938939,
+  "reuse_cinema_v168_sha256": "7b34dcd5bc7619e630d3d315ab31fd1d1d5735dd1bffa6d52b6e1f948b5e24d3",
+  "reuse_real_frame_v170_run_id": 42129239503,
+  "reuse_real_frame_photo_sha256": "4c438606a04dba040674be7cabc14d8dc3dd94c10f1740f0ab1f6e5a4dd5a942",
+  "framed_photo_license": "Shonagon Wikimedia Commons CC0 1.0 2023",
+  "photographed_real_frame_is_historical_original": false,
+  "artwork_real_size_cm": [
+    392,
+    496
+  ],
+  "original_V168_master_unchanged": true,
+  "workflow": ".github/workflows/artvision-delacroix-cinema-museum-v172.yml",
+  "renderer": "src/artvision_delacroix_cinema_museum_v172.py",
+  "release_gate": "new physically different Museum variant; source V168 AAC bit-identical; full FFmpeg audio/video + ZIP CRC+SHA + Library readback; no Gold or social",
+  "status": "ONE_SHOT_REQUESTED_PENDING_GITHUB_RUN"
+}
