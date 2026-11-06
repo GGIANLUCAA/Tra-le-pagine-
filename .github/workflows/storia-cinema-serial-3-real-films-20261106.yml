@@ -1,0 +1,82 @@
+name: "LA STORIA RIVIVE ONLY - 3 NEW serial silent cinema restorations + QC"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-cinema-serial-3-real-films-20261106.yml"
+      - "src/storia_cinema_serial_batch_20261106.py"
+permissions:
+  contents: read
+  issues: read
+concurrency:
+  group: storia-cinema-new-serial-20261106
+  cancel-in-progress: false
+jobs:
+  new_real_film:
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        episode: [vanishing_1896, boxing_cats_1894, rubber_head_1901]
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install lawful free source and neural processing tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: Render real original moving film with one FREE genuine I2I still
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_cinema_serial_batch_20261106.py
+          python -u src/storia_cinema_serial_batch_20261106.py --episode "${{ matrix.episode }}"
+      - name: MP4 AAC H264, photo, source SHA and ZIP CRC gate
+        run: |
+          set -euo pipefail
+          cd "output/storia_serial_${{ matrix.episode }}"
+          python - <<'PY'
+          import hashlib,json,zipfile,pathlib,subprocess
+          root=pathlib.Path(".")
+          qa=json.loads((root/"SERIAL_QA.json").read_text())
+          movie=root/qa["filename"]
+          packs=list(root.glob("*_SOCIAL_REVIEW_WITH_SOCIAL.zip"))
+          assert len(packs)==1,packs
+          pack=packs[0]
+          assert movie.is_file() and movie.stat().st_size>1000000
+          assert hashlib.sha256(movie.read_bytes()).hexdigest()==qa["movie_sha256"]
+          assert hashlib.sha256(pack.read_bytes()).hexdigest()==qa["zip_sha256"]
+          assert qa["resolution"]==[1080,1920] and qa["duration_s"]>15
+          assert qa["artistic_approval"] is False and qa["site_social_published"] is False
+          with zipfile.ZipFile(pack) as z: assert z.testzip() is None
+          assert (root/"GENERATIVE_PHOTO_REAL_CANDIDATE.png").is_file()
+          for stream,code in [("v","h264"),("a","aac")]:
+            result=subprocess.run(["ffprobe","-v","error","-select_streams",stream,"-show_entries","stream=codec_name","-of","default=nw=1:nk=1",str(movie)],capture_output=True,text=True,check=True)
+            assert result.stdout.strip()==code,(stream,result.stdout)
+          subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(movie),"-f","null","-"],check=True,timeout=140)
+          print("REAL_SERIAL_MP4_ZIP_QA_PASS_ARTISTIC_PENDING",qa["title"],qa["movie_sha256"])
+          PY
+      - name: Upload actual output and QC, even if candidate fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_SERIAL_${{ matrix.episode }}_REAL_TEST_NO_PUBLISH
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_serial_${{ matrix.episode }}/*_SOCIAL_REVIEW.mp4
+            output/storia_serial_${{ matrix.episode }}/*_SOCIAL_REVIEW_WITH_SOCIAL.zip
+            output/storia_serial_${{ matrix.episode }}/ORIGINAL_VS_PHOTO_VISUAL_QA.jpg
+            output/storia_serial_${{ matrix.episode }}/ANCHOR_REAL_ORIGINAL_BW.png
+            output/storia_serial_${{ matrix.episode }}/GENERATIVE_PHOTO_REAL_CANDIDATE.png
+            output/storia_serial_${{ matrix.episode }}/SOCIAL_COVER.jpg
+            output/storia_serial_${{ matrix.episode }}/PHOTO_QA.json
+            output/storia_serial_${{ matrix.episode }}/SERIAL_QA.json
+            output/storia_serial_${{ matrix.episode }}/RIGHTS.json
+            output/storia_serial_${{ matrix.episode }}/FAILURE.json
