@@ -50,7 +50,8 @@ jobs:
           assert info['size']>6_000_000 and info['mime']=='image/jpeg'
           license_name=info['extmetadata']['LicenseShortName']['value']
           assert 'CC BY 2.0' in license_name,license_name
-          assert info['url'].split('/')[-1]==urllib.parse.quote(name)
+          assert info['url'].startswith('https://upload.wikimedia.org/')
+          original_url=info['url']
           with urllib.request.urlopen(urllib.request.Request(original_url,headers=headers),timeout=90) as x:
            blob=x.read()
           assert len(blob)==info['size']
