@@ -1,0 +1,121 @@
+name: ArtVision V172 Delacroix genuine framed Louvre Cinema Museum review
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/delacroix-sardanapalus-critico-museum-v172.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-owner-delacroix-museum-cinema-v172-single
+  cancel-in-progress: false
+jobs:
+  real_framed_cinema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preflight original Critico/Cinema preservation, one Museum slot, and zero TTS
+        run: |
+          python -m py_compile src/artvision_delacroix_cinema_museum_v172.py
+          python - <<'PY'
+          import json
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          r=json.load(open('requests/artvision/delacroix-sardanapalus-critico-museum-v172.json'))
+          w=[z for z in q['works'] if z['id']=='delacroix_death_sardanapalus_1827_louvre_rf2346']
+          assert len(w)==1 and w[0]['slots_delivered_this_selection']==3
+          assert w[0]['critico_museum_v171']['sha256']=='ec5b2c9139f6e05f43c2ba489349dab6660933407388c8cd5f6c7a14a660e693'
+          assert w[0]['cinema_standard_v168']['sha256']=='7b34dcd5bc7619e630d3d315ab31fd1d1d5735dd1bffa6d52b6e1f948b5e24d3'
+          assert 'cinema_museum_v172' not in w[0]
+          assert r['owner_automation_id']==q['owner_automation_id']=='6adca191603c8191a90d5190901cd034'
+          assert r['work_id']==w[0]['id'] and r['variant']=='cinema_museum'
+          assert r['one_shot'] and r['one_render_at_a_time'] and not r['new_tts'] and not r['allow_paid_calls']
+          assert not r['publication_authorized'] and not r['gold_v25']
+          print('PREVIEW_ONLY_ONE_MISSING_MUSEUM_NO_TTS_NO_PAYMENTS')
+          PY
+      - name: Install local free render libraries and FFmpeg
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check numpy pillow opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin /tmp/delacroix_v172/source /tmp/delacroix_v172/out
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          Path('/tmp/artvision-bin/ffmpeg').symlink_to(Path(get_ffmpeg_exe()))
+          PY
+          echo /tmp/artvision-bin >> "$GITHUB_PATH"
+      - name: Recover REAL V168 film already approved by owner and preserve original AAC
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v168
+          gh run download 41969938939 --repo "$GITHUB_REPOSITORY" --name ART_V168_DELACROIX_SARDANAPALUS_CINEMA_REVIEW --dir /tmp/v168
+          cp /tmp/v168/DELACROIX_THE_DEATH_OF_SARDANAPALUS_CINEMA_V168_REVIEW.mp4 /tmp/delacroix_v172/source/
+          python - <<'PY'
+          import hashlib,pathlib
+          p=pathlib.Path('/tmp/delacroix_v172/source/DELACROIX_THE_DEATH_OF_SARDANAPALUS_CINEMA_V168_REVIEW.mp4')
+          assert p.stat().st_size==6198464
+          assert hashlib.sha256(p.read_bytes()).hexdigest()=='7b34dcd5bc7619e630d3d315ab31fd1d1d5735dd1bffa6d52b6e1f948b5e24d3'
+          print('V168_CINEMA_REAL_MP4_SOURCE_SHA_PASS_ZERO_NEW_TTS')
+          PY
+      - name: Recover REAL photographed museum frame V170, verified source SHA256 and dimensions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v170
+          gh run download 42129239503 --repo "$GITHUB_REPOSITORY" --name ARTVISION_V170_DELACROIX_GENUINE_FRAME_CC0_PREFLIGHT --dir /tmp/v170
+          cp /tmp/v170/DELACROIX_LOUVRE_REAL_FRAME_SHONAGON_CC0_V170.jpg /tmp/delacroix_v172/source/
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          p=Path('/tmp/delacroix_v172/source/DELACROIX_LOUVRE_REAL_FRAME_SHONAGON_CC0_V170.jpg')
+          q=json.loads(Path('/tmp/v170/SOURCE_PREFLIGHT_V170.json').read_text())
+          assert q['status']=='SOURCE_BYTES_VERIFIED_SHA1_SIZE_DIMENSIONS'
+          assert q['dimensions_px_expected']==[3520,2936] and q['license']=='CC0 1.0'
+          assert p.stat().st_size==3376252
+          assert hashlib.sha1(p.read_bytes()).hexdigest()=='1a1d7e125a15799d2b2631203ee791936906062d'
+          assert hashlib.sha256(p.read_bytes()).hexdigest()=='4c438606a04dba040674be7cabc14d8dc3dd94c10f1740f0ab1f6e5a4dd5a942'
+          print('GENUINE_LOUVRE_PHOTO_SHA1_SHA256_CC0_PASS_NO_FAKE_FRAME')
+          PY
+      - name: Run only the missing Cinema Museum film using bit-identical original AAC
+        run: python src/artvision_delacroix_cinema_museum_v172.py --base /tmp/delacroix_v172/source --out /tmp/delacroix_v172/out
+      - name: Independent FULL FFmpeg decode of video plus audio and CRC, no Gold
+        run: |
+          python - <<'PY'
+          import json,hashlib,zipfile,subprocess
+          from pathlib import Path
+          o=Path('/tmp/delacroix_v172/out');q=json.loads((o/'QA_V172.json').read_text())
+          f=o/q['file']['name']
+          assert q['work']=='The Death of Sardanapalus' and q['variant']=='cinema_museum'
+          assert q['same_aac_bit_identical'] and q['new_TTS_calls']==0 and q['new_paid_calls']==0
+          assert q['file']['frames']==960 and q['file']['duration_s']==48
+          assert not q['Gold_V25'] and not q['social_published'] and not q['museum_approved']
+          assert f.stat().st_size==q['file']['bytes']
+          assert hashlib.sha256(f.read_bytes()).hexdigest()==q['file']['sha256']
+          subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(f),'-map','0','-f','null','-'],check=True)
+          pkg=o/'DELACROIX_SARDANAPALUS_CRITICO_MUSEUM_V172_REVIEW_PACKAGE.zip'
+          with zipfile.ZipFile(pkg) as a:
+            assert a.testzip() is None
+            assert hashlib.sha256(a.read(f.name)).hexdigest()==q['file']['sha256']
+            assert 'DELACROIX_LOUVRE_REAL_FRAME_SHONAGON_CC0_V170.jpg' in a.namelist()
+          print('V172_REAL_MP4_SOURCE_AUDIO_BIT_IDENTICAL_SHA_FFMPEG_FULL_ZIP_CRC_PASS_REVIEW_ONLY')
+          PY
+      - name: Preserve real review files for user-download and independent readback
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V172_DELACROIX_GENUINE_FRAME_CRITICO_MUSEUM_REVIEW
+          path: |
+            /tmp/delacroix_v172/source/DELACROIX_LOUVRE_REAL_FRAME_SHONAGON_CC0_V170.jpg
+            /tmp/delacroix_v172/out/DELACROIX_THE_DEATH_OF_SARDANAPALUS_CRITICO_MUSEUM_V172_REVIEW.mp4
+            /tmp/delacroix_v172/out/DELACROIX_SARDANAPALUS_CRITICO_MUSEUM_V172_REVIEW_PACKAGE.zip
+            /tmp/delacroix_v172/out/QA_V172.json
+            /tmp/delacroix_v172/out/COVER.jpg
+            /tmp/delacroix_v172/out/CONTACT_SHEET_V172.jpg
+            /tmp/delacroix_v172/out/RIGHTS_AND_CREDITS.txt
+            /tmp/delacroix_v172/out/SOCIAL_DRAFT_UNPUBLISHED.txt
+          retention-days: 30
+          if-no-files-found: warn
