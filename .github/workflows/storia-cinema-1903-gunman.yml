@@ -24,9 +24,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          command -v ffmpeg
-          command -v ffprobe
-          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+          python -m pip install -q "imageio-ffmpeg>=0.5,<1" "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+          mkdir -p /tmp/storia-cinema-ffmpeg
+          python - <<'PY'
+          from pathlib import Path
+          import os,imageio_ffmpeg
+          src=Path(imageio_ffmpeg.get_ffmpeg_exe())
+          assert src.is_file() and src.stat().st_size>1000000
+          dst=Path('/tmp/storia-cinema-ffmpeg/ffmpeg')
+          dst.symlink_to(src)
+          print('STATIC_FFMPEG_READY',str(src))
+          PY
+          echo /tmp/storia-cinema-ffmpeg >> "$GITHUB_PATH"
       - name: REAL historical moving film, neural color and free I2I, source locked
         shell: bash
         run: |
@@ -40,8 +49,15 @@ jobs:
         run: |
           set -euo pipefail
           cd output/storia_cinema_1903_gunman
-          ffprobe -v error -show_entries format=duration,size:stream=codec_name,width,height -of json CINEMA_1903_THE_GREAT_TRAIN_ROBBERY.mp4
           ffmpeg -nostdin -v error -xerror -i CINEMA_1903_THE_GREAT_TRAIN_ROBBERY.mp4 -f null -
+          python - <<'PY'
+          import cv2
+          cap=cv2.VideoCapture('CINEMA_1903_THE_GREAT_TRAIN_ROBBERY.mp4')
+          fps=cap.get(cv2.CAP_PROP_FPS); n=cap.get(cv2.CAP_PROP_FRAME_COUNT)
+          print('MOVIE_DURATION',round(n/fps,3) if fps else None)
+          assert 15<n/fps<28
+          cap.release()
+          PY
           python - <<'PY'
           import json,zipfile,hashlib,pathlib
           p=pathlib.Path('.')
