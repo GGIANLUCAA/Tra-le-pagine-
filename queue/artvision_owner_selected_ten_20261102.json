@@ -219,7 +219,48 @@
       },
       "active_cinema_standard": "new_cinema_standard_v153",
       "site_archive_verified_slots": 2,
-      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04",
+      "museum_private_review_v196_v197": {
+        "date": "2026-11-06",
+        "status": "TWO_DISTINCT_NEW_REVIEW_MP4_PHYSICALLY_RENDERED_AND_LIBRARY_SHA_FFMPEG_ZIP_READBACK_PASS_NO_MUSEUM_GOLD_OR_PUBLISH",
+        "completed_approved_slots_added": 0,
+        "cinema_museum_v196": {
+          "sha256": "5267ec6401bbd49fe58cd95a4d736769b514420a4cfd0f1772d07aeed12b17a0",
+          "bytes": 11122587,
+          "duration_s": 48,
+          "private_library_id": "libfile_be3958178888819193c393eaca57fc6b",
+          "zip_sha256": "df48fa3541fb6aef659541df7acd82d5fdebe284b4ee2dd1dbb53708d3617308",
+          "private_zip_id": "libfile_69509497dc18819181c2dd05e2a0dc18",
+          "report": "docs/productions/2026-11-06-artvision-rebel-v196-real-frame-video-review.md",
+          "human_review": "PENDING"
+        },
+        "critico_museum_v197": {
+          "sha256": "30fdc475fc78d970d5c256963a3b24265559c83af132518a017ab3104c1b879a",
+          "bytes": 22490656,
+          "duration_s": 115.8,
+          "private_library_id": "libfile_005da66d79d88191a8a13044eaa41510",
+          "zip_sha256": "d974ec998f878e6c02f57fef4b6fcc669a945c9459fdb459e62328f642c96ad1",
+          "private_zip_id": "libfile_2439d5ede3e88191a5bd13eabed50699",
+          "report": "docs/productions/2026-11-06-artvision-rebel-critico-v197-real-mp4.md",
+          "v82_sentence_timing": "18_SENTENCES_PLUS_3_505S_VOICE_OFFSET_SHOT_MAPPING_AVAILABLE_IN_LIBRARY_ZIP",
+          "human_review": "PENDING"
+        },
+        "photo_source": {
+          "source": "https://commons.wikimedia.org/wiki/File:Pieter_bruegel_il_vecchio,_Caduta_degli_angeli_ribelli,_1562,_01.JPG",
+          "author": "Sailko",
+          "license": "CC BY 3.0",
+          "source_sha256": "91ffd2af2609ff700ff6d2af159d36e5634607c7e08eca6e968d895f8cf4338d",
+          "genuine_frame_verified": true,
+          "full_actual_gallery_verified": false,
+          "source_run_id": 42303324746,
+          "source_artifact_id": 13544993444
+        },
+        "reason_no_slot_count": "V119 full authentic room not visually proven; release territorial rights and full-speed artistic review pending",
+        "gold": false,
+        "site_published": false,
+        "social_published": false,
+        "new_paid_calls": 0
+      }
     },
     {
       "id": "waterhouse_lady_shalott_1888_tate_n01543",
