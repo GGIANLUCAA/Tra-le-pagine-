@@ -1,0 +1,65 @@
+name: "WOW LAB · isolated CC0 mask review · 2026-11-06"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-release-queue-hardening-20261030
+    paths:
+      - ".github/workflows/wow-lab-mask-review-20261106.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: wow-lab-autonomous-v1-only
+  cancel-in-progress: false
+jobs:
+  mask_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
+      GITHUB_RUN_ID: ${{ github.run_id }}
+    steps:
+      - name: Checkout exact experimental branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free CPU image libraries
+        run: |
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5"
+      - name: Compile and execute ALL isolated WOW LAB tests
+        run: |
+          python -m compileall -q wow_lab
+          python -m unittest discover -s wow_lab/tests -v
+      - name: Verify live releases, candidate uniqueness and all running WOW jobs
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "wow_lab")
+          import engine
+          engine.require_live_preflight_context()
+          engine.ensure_no_parallel_wow_render()
+          history = engine.recent_history()
+          slot = engine.slot_id(None)
+          engine.ensure_slot_available(slot, history)
+          last_six = [int(entry["object_id"]) for entry in history[:6]]
+          if 400112 in last_six:
+              raise SystemExit("MOTH_ALREADY_USED_IN_LAST_SIX: " + str(last_six))
+          print("LIVE_GITHUB_PREFLIGHT_PASS slot=" + slot +
+                " distinct_previous=" + str(last_six))
+          PY
+      - name: Acquire genuine Met CC0 original and extract MASK ONLY (NO VIDEO)
+        run: |
+          python wow_lab/experiments/preflight_single_met.py --object-id 400112 --out "wow_lab/runs/met-400112-mask-${{ github.run_id }}"
+      - name: Preserve real source and mask for ARTISTIC review even on rejection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_MOTH_MASK_REVIEW_${{ github.run_id }}
+          path: wow_lab/runs/met-400112-mask-${{ github.run_id }}/*
+          if-no-files-found: warn
+          retention-days: 14
