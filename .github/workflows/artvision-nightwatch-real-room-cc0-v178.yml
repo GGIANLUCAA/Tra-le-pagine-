@@ -1,0 +1,41 @@
+name: ArtVision V178 Night Watch authentic 2013 CC0 framed room photo recovery
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/nightwatch-real-room-cc0-v178.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-nightwatch-real-room-source-v178
+  cancel-in-progress: false
+jobs:
+  source_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm source-only request and official missing Museum slots
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          r=json.load(open('requests/artvision/nightwatch-real-room-cc0-v178.json'))
+          w=next(w for w in q['works'] if w['id']=='rembrandt_night_watch_1642_rijks_sk_c_5')
+          assert w['slots_delivered_this_selection']==2 and r['owner_automation_id']==q['owner_automation_id']
+          assert r['source_only'] and r['one_shot'] and not r['render'] and not r['new_tts'] and not r['paid_calls']
+          assert not r['publish'] and not r['gold'] and not r['museum_approved']
+          print('GATE PASS: TWO MUSEUM SLOTS MISSING; SOURCE ONLY; NO PAID CALLS')
+          PY
+      - name: Install image verification library
+        run: python -m pip install --disable-pip-version-check Pillow
+      - name: Download original real 2013 Rijksmuseum installation photograph and verify bytes
+        run: python src/artvision_nightwatch_cc0_photo_preflight_v178.py
+      - name: Preserve source and verification manifest, no video production
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V178_NIGHTWATCH_REAL_RIJKSMUSEUM_2013_CC0_PHOTO_PREFLIGHT
+          path: /tmp/artvision_nightwatch_v178/*
+          retention-days: 30
+          if-no-files-found: warn
