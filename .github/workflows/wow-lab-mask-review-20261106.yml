@@ -1,5 +1,5 @@
 name: "WOW LAB · isolated CC0 mask review · 2026-11-06"
-run-name: "WOW LAB mask gate · run ${{ github.run_id }}"
+run-name: "WOW LAB mask gate · balloon run ${{ github.run_id }}"
 on:
   push:
     branches:
@@ -54,19 +54,19 @@ jobs:
           slot = engine.slot_id(None)
           engine.ensure_slot_available(slot, history)
           last_six = [int(entry["object_id"]) for entry in history[:6]]
-          if 400112 in last_six:
-              raise SystemExit("MOTH_ALREADY_USED_IN_LAST_SIX: " + str(last_six))
+          if 55534 in last_six:
+              raise SystemExit("BALLOON_ALREADY_USED_IN_LAST_SIX: " + str(last_six))
           print("LIVE_GITHUB_PREFLIGHT_PASS slot=" + slot +
                 " distinct_previous=" + str(last_six))
           PY
       - name: Acquire genuine Met CC0 original and extract MASK ONLY (NO VIDEO)
         run: |
-          python wow_lab/experiments/preflight_single_met.py --object-id 400112 --out "wow_lab/runs/met-400112-mask-${{ github.run_id }}"
+          python wow_lab/experiments/preflight_single_met.py --object-id 55534 --out "wow_lab/runs/met-55534-mask-${{ github.run_id }}"
       - name: Preserve real source and mask for ARTISTIC review even on rejection
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: WOW_LAB_MOTH_MASK_REVIEW_${{ github.run_id }}
-          path: wow_lab/runs/met-400112-mask-${{ github.run_id }}/*
+          name: WOW_LAB_BALLOON_MASK_REVIEW_${{ github.run_id }}
+          path: wow_lab/runs/met-55534-mask-${{ github.run_id }}/*
           if-no-files-found: warn
           retention-days: 14
