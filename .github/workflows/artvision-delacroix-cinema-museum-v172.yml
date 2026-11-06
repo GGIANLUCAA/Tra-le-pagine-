@@ -96,7 +96,7 @@ jobs:
           assert f.stat().st_size==q['file']['bytes']
           assert hashlib.sha256(f.read_bytes()).hexdigest()==q['file']['sha256']
           subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(f),'-map','0','-f','null','-'],check=True)
-          pkg=o/'DELACROIX_SARDANAPALUS_CRITICO_MUSEUM_V172_REVIEW_PACKAGE.zip'
+          pkg=o/'DELACROIX_SARDANAPALUS_CINEMA_MUSEUM_V172_REVIEW_PACKAGE.zip'
           with zipfile.ZipFile(pkg) as a:
             assert a.testzip() is None
             assert hashlib.sha256(a.read(f.name)).hexdigest()==q['file']['sha256']
@@ -107,11 +107,11 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ART_V172_DELACROIX_GENUINE_FRAME_CRITICO_MUSEUM_REVIEW
+          name: ART_V172_DELACROIX_GENUINE_FRAME_CINEMA_MUSEUM_REVIEW
           path: |
             /tmp/delacroix_v172/source/DELACROIX_LOUVRE_REAL_FRAME_SHONAGON_CC0_V170.jpg
-            /tmp/delacroix_v172/out/DELACROIX_THE_DEATH_OF_SARDANAPALUS_CRITICO_MUSEUM_V172_REVIEW.mp4
-            /tmp/delacroix_v172/out/DELACROIX_SARDANAPALUS_CRITICO_MUSEUM_V172_REVIEW_PACKAGE.zip
+            /tmp/delacroix_v172/out/DELACROIX_THE_DEATH_OF_SARDANAPALUS_CINEMA_MUSEUM_V172_REVIEW.mp4
+            /tmp/delacroix_v172/out/DELACROIX_SARDANAPALUS_CINEMA_MUSEUM_V172_REVIEW_PACKAGE.zip
             /tmp/delacroix_v172/out/QA_V172.json
             /tmp/delacroix_v172/out/COVER.jpg
             /tmp/delacroix_v172/out/CONTACT_SHEET_V172.jpg
