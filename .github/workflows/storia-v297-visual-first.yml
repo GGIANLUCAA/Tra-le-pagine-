@@ -70,6 +70,31 @@ jobs:
               'visual_approval':False,'new_final_episode_created':False,'new_paid_calls':0}
           pathlib.Path('SOURCE_QA.json').write_text(json.dumps(data,indent=2)+'\n')
           assert data['selected'], 'NO_CLEAN_MOVING_BW_SHOT_STOP_NO_FAKE_SOURCE'
+          # Finegrain enhances a photograph; prompt-only I2I on B/W preserves
+          # greyscale and does not create the user's desired color restoration.
+          # Color conditioning MUST belong to the very same historical shot.
+          assert abs(data['selected']['t']-3.7)<0.04, 'SOURCE_SCENE_CHANGED_NO_LINKED_COLOR_PHOTO'
+          basecap=cv2.VideoCapture(str(p))
+          basecap.set(cv2.CAP_PROP_POS_MSEC,4800)
+          ok,base=basecap.read()
+          basecap.release()
+          assert ok and base is not None, 'COLOR_ANCHOR_MISSING'
+          base=cv2.resize(base,(720,1280))
+          orig=cv2.imread('SOURCE_BW_FRAME.png')
+          def structure(z):
+              g=cv2.cvtColor(z,cv2.COLOR_BGR2GRAY)
+              return cv2.GaussianBlur(cv2.resize(g,(96,96)),(5,5),0).astype('float32').ravel()
+          sim=float(np.corrcoef(structure(orig),structure(base))[0,1])
+          hue=cv2.cvtColor(base,cv2.COLOR_BGR2HSV)[:,:,1]
+          sat=float(hue.mean())
+          frac=float(np.mean(hue>=18))
+          color_qa={'photo_is_from_same_scene_t4_8':True,'source_time_s':data['selected']['t'],
+                    'base_time_s':4.8,'source_to_old_color_structure_correlation':round(sim,5),
+                    'base_mean_saturation':round(sat,2),'base_color_fraction':round(frac,4),
+                    'existing_photo_is_legacy_interpretive_i2i':True}
+          pathlib.Path('COLOR_BASE_QA.json').write_text(json.dumps(color_qa,indent=2)+'\n')
+          assert sim>=.75 and sat>=28 and frac>=.45, 'COLOR_ANCHOR_WRONG_SCENE_OR_NOT_COLOR'
+          cv2.imwrite('BASE_COLOR_REFERENCE.png',base)
           PY
           ffmpeg -nostdin -y -v error -i BW_TRUE_MOTION_RAW.mp4 -c:v libx264 -crf 18 -pix_fmt yuv420p BW_TRUE_MOTION.mp4
           test -s SOURCE_BW_FRAME.png
@@ -86,13 +111,13 @@ jobs:
           try:
               from gradio_client import Client, handle_file
               c=Client('finegrain/finegrain-image-enhancer',verbose=False)
-              prompt=('Make a modern 4K-perceived documentary PHOTOGRAPH from this exact monochrome historic Bombay 1929 film frame. '
-                      'Preserve every person, count of people, hats, arms, hands, animals, buildings, geometry and camera. '
-                      'Natural photographic skin, cotton fabric, wood, sunlight, fine textures, realistic muted distinct colors. '
-                      'Mild speculative restoration of indistinct faces is acceptable if believable and anatomically normal.')
+              prompt=('Improve the existing 1929 Bombay COLOR restoration into a truly crisp natural modern documentary photograph, '
+                      'retaining the SAME people, body counts, eyes, turbans, hands, products, architecture and exact camera geometry. '
+                      'Maintain existing distinct realistic colors, skin tones, weathered cloth, tree leaves, natural sunlight; '
+                      'new plausible detail is allowed on blurry faces but no deformities or extra objects.')
               neg=('extra limbs, antlers, horns, merged faces, stretched hands, added people, new animals, altered objects, '
                    'fake writing, cartoon, illustration, anime, waxy faces, sepia, monochrome, blurred painted look')
-              raw=c.predict(handle_file('SOURCE_BW_FRAME.png'),prompt,neg,
+              raw=c.predict(handle_file('BASE_COLOR_REFERENCE.png'),prompt,neg,
                   1929,2,1.14,.97,6,112,144,.45,18,'DDIM',api_name='/process')
               obj=raw[1] if isinstance(raw,(tuple,list)) and len(raw)>1 else raw
               if isinstance(obj,dict): obj=obj.get('path')
@@ -132,6 +157,24 @@ jobs:
                   'new_finished_video_count':0,'release_approved':False,'site_published':False,
                   'social_published':False,'vidu_new_clips':0,'paid_ai_calls':0}
           if status['color_and_structure_gate_passed']:
+              prior=cv2.imread('BASE_COLOR_REFERENCE.png')
+              candidate=cv2.imread('PHOTO_I2I_CANDIDATE.png')
+              candidate=cv2.resize(candidate,(720,1280))
+              def detail_score(z):
+                  gray=cv2.cvtColor(cv2.resize(z,(240,427)),cv2.COLOR_BGR2GRAY)
+                  return float(cv2.Laplacian(gray,cv2.CV_32F).var())
+              def normalized_structure(z):
+                  return cv2.GaussianBlur(cv2.resize(cv2.cvtColor(z,cv2.COLOR_BGR2GRAY),(96,96)),(5,5),0).astype('float32').ravel()
+              corr=float(np.corrcoef(normalized_structure(prior),normalized_structure(candidate))[0,1])
+              oldsharp=detail_score(prior)
+              newsharp=detail_score(candidate)
+              mean_delta=float(np.mean(cv2.absdiff(cv2.resize(prior,(360,640)),cv2.resize(candidate,(360,640)))))
+              status['source_locked_color_enhancement']={'corr_against_same_shot_old_color':round(corr,5),
+                  'prior_detail_score':round(oldsharp,3),'new_detail_score':round(newsharp,3),
+                  'mean_visual_pixel_delta':round(mean_delta,3)}
+              # Insist this is a distinct result, not the exact old still or unrelated hallucination.
+              status['color_and_structure_gate_passed']=(corr>=.84 and mean_delta>=1.0)
+          if status['color_and_structure_gate_passed']:
               src=cv2.imread('SOURCE_BW_FRAME.png')
               photo=cv2.imread('PHOTO_I2I_CANDIDATE.png')
               photo=cv2.resize(photo,(720,1280))
@@ -170,8 +213,71 @@ jobs:
                           z.write(item)
                   with zipfile.ZipFile('REAL_VISUAL_AB_REVIEW.zip') as z:
                       assert z.testzip() is None
-          status['status']='REAL_AB_PREVIEW_NEEDS_ARTISTIC_QA' if status.get('ab_preview_mp4_real') else 'NO_VALID_RESTORATION_BLOCKED_NOT_APPROVED'
-          status['notice']='This is a real single-frame color reconstruction and moving-archive AB preview, NOT a completed episode, NOT Vidu and NOT 4K-native.'
+                  # Produce a real full-duration, visually changed Bombay review master:
+                  # preserve 1929 original motion, ALL other scenes, existing genuine
+                  # Vidu clip and original soundtrack. Only replace the one existing
+                  # color PHOTO HOLD for the same scene after its original reveal.
+                  original_path='BOMBAY_1929_V981_NATURAL_COLOR_4PLUS1.mp4'
+                  old=cv2.VideoCapture(original_path)
+                  srcfps=float(old.get(cv2.CAP_PROP_FPS))
+                  src_count=int(old.get(cv2.CAP_PROP_FRAME_COUNT))
+                  assert 20<=srcfps<=61 and src_count>300
+                  new=cv2.VideoWriter('BOMBAY_V298_VISUAL_RAW.mp4',
+                                      cv2.VideoWriter_fourcc(*'mp4v'),srcfps,(720,1280))
+                  assert new.isOpened()
+                  changed=0
+                  for ix in range(src_count):
+                      ok,frame=old.read()
+                      if not ok: break
+                      if frame.shape[1]!=720 or frame.shape[0]!=1280:
+                          frame=cv2.resize(frame,(720,1280))
+                      sec=ix/srcfps
+                      if 4.58<=sec<=6.42:
+                          alpha=min(1.,(sec-4.58)/.24,(6.42-sec)/.24)
+                          alpha=max(0.,alpha); alpha=alpha*alpha*(3-2*alpha)
+                          frame=cv2.addWeighted(frame,1-alpha,photo,alpha,0)
+                          changed+=1
+                      new.write(frame)
+                  old.release()
+                  new.release()
+                  assert changed>=30, 'REAL_PHOTO_REMASTER_MISSING_SCENE'
+                  subprocess.run(['ffmpeg','-nostdin','-y','-v','error',
+                      '-i','BOMBAY_V298_VISUAL_RAW.mp4','-i',original_path,
+                      '-map','0:v:0','-map','1:a:0','-c:v','libx264','-crf','18',
+                      '-pix_fmt','yuv420p','-c:a','copy','-movflags','+faststart',
+                      'BOMBAY_V298_VISUAL_REMASTER_REVIEW.mp4'],check=True)
+                  subprocess.run(['ffmpeg','-nostdin','-v','error','-xerror',
+                      '-i','BOMBAY_V298_VISUAL_REMASTER_REVIEW.mp4',
+                      '-f','null','-'],check=True)
+                  full=pathlib.Path('BOMBAY_V298_VISUAL_REMASTER_REVIEW.mp4')
+                  originalhash=hashlib.sha256(pathlib.Path(original_path).read_bytes()).hexdigest()
+                  newhash=hashlib.sha256(full.read_bytes()).hexdigest()
+                  assert originalhash!=newhash, 'DUPLICATE_LEGACY_MP4'
+                  status['full_review_mp4_created']=True
+                  status['full_review_mp4_sha256']=newhash
+                  status['original_master_sha256']=originalhash
+                  status['changed_photo_hold_frames']=changed
+                  status['existing_Vidu_clip_preserved_not_newly_generated']=True
+                  status['full_video_artistic_review']='PENDING'
+                  status['historic_rights_italy']='PENDING'
+                  for platform,copy in {
+                    'FACEBOOK':'BOMBAY · 1929. La vita quotidiana nei mercati indiani di un secolo fa. I fotogrammi sono storici; la ricostruzione fotografica a colori è interpretativa.',
+                    'INSTAGRAM':'BOMBAY · 1929 | Una città che torna a vivere. Filmati d’archivio con ricostruzioni cromatiche interpretative. #HistoryReels',
+                    'TIKTOK':'Bombay, 1929: la pellicola originale si trasforma in una fotografia moderna. Colori ricostruiti, non originali.',
+                    'YOUTUBE':'BOMBAY · 1929 | Scorci dai mercati e dalle strade. Filmati storici autentici con una ricostruzione moderna e interpretativa a colori.'
+                  }.items():
+                      pathlib.Path('POST_'+platform+'_DRAFT.txt').write_text(copy+'\n',encoding='utf-8')
+                  with zipfile.ZipFile('BOMBAY_V298_REVIEW_KIT.zip','w',zipfile.ZIP_DEFLATED) as z:
+                      for filename in ['BOMBAY_V298_VISUAL_REMASTER_REVIEW.mp4',
+                                       'BEFORE_AFTER_PHOTOGRAPHIC.jpg','SOURCE_QA.json',
+                                       'COLOR_BASE_QA.json','I2I_TRIAL.json','PHOTO_IDENTITY_GATE.json',
+                                       'BASE_COLOR_REFERENCE.png','PHOTO_I2I_CANDIDATE.png']+
+                                       [f'POST_{p}_DRAFT.txt' for p in ['FACEBOOK','INSTAGRAM','TIKTOK','YOUTUBE']]:
+                          z.write(filename)
+                  with zipfile.ZipFile('BOMBAY_V298_REVIEW_KIT.zip') as z:
+                      assert z.testzip() is None
+          status['status']='REAL_VISUAL_REMASTER_NEEDS_ARTISTIC_QA' if status.get('full_review_mp4_created') else ('REAL_AB_PREVIEW_NEEDS_ARTISTIC_QA' if status.get('ab_preview_mp4_real') else 'NO_VALID_RESTORATION_BLOCKED_NOT_APPROVED')
+          status['notice']='Real same-scene color-photo I2I improvement and (if gated) full-duration review master with unchanged existing genuine Vidu. Neither visual approval nor rights, source identity or publication is granted. NOT native 4K.'
           (root/'VISUAL_REPORT.json').write_text(json.dumps(status,indent=2)+'\n')
           print(json.dumps(status))
           PY
@@ -186,10 +292,15 @@ jobs:
             output/storia_v297/PHOTO_IDENTITY_GATE.json
             output/storia_v297/VISUAL_REPORT.json
             output/storia_v297/SOURCE_BW_FRAME.png
+            output/storia_v297/BASE_COLOR_REFERENCE.png
+            output/storia_v297/COLOR_BASE_QA.json
             output/storia_v297/PHOTO_I2I_CANDIDATE.png
             output/storia_v297/BW_TRUE_MOTION.mp4
             output/storia_v297/BEFORE_AFTER_PHOTOGRAPHIC.jpg
             output/storia_v297/AB_VISUAL_REVIEW.mp4
             output/storia_v297/REAL_VISUAL_AB_REVIEW.zip
+            output/storia_v297/BOMBAY_V298_VISUAL_REMASTER_REVIEW.mp4
+            output/storia_v297/BOMBAY_V298_REVIEW_KIT.zip
+            output/storia_v297/POST_*_DRAFT.txt
           if-no-files-found: warn
           retention-days: 14
