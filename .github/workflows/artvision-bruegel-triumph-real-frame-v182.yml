@@ -1,0 +1,78 @@
+name: ArtVision V182 Prado authenticated real-frame photo preflight
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/bruegel-triumph-real-frame-v182.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-triumph-frame-v182-single
+  cancel-in-progress: false
+jobs:
+  verify_real_photo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact owner-selected work, no duplicates, and source license
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          r=json.load(open('requests/artvision/bruegel-triumph-real-frame-v182.json'))
+          w=[x for x in q['works'] if x['id']==r['work_id']]
+          assert len(w)==1 and w[0]['slots_delivered_this_selection']==2
+          assert not w[0].get('museum_approved',False)
+          assert 'cinema_museum_v182' not in w[0] and 'critico_museum_v183' not in w[0]
+          assert r['owner_automation_id']==q['owner_automation_id']
+          assert not r['allow_paid_calls'] and not r['social_publish'] and not r['gold']
+          print('MUSEUM_SOURCE_PREFLIGHT_ONLY_NO_RENDER_NO_SPENDING')
+          PY
+      - name: Recover original photograph and verify Commons SHA1, size, dimensions and explicit CC BY
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/real_prado_v182
+          python - <<'PY'
+          import json,hashlib,urllib.request,urllib.parse
+          from pathlib import Path
+          name='Pieter_Bruegel_der_Aeltere_-_Der_Triumph_des_Todes_-_mit_Rahmen.jpg'
+          original_url='https://upload.wikimedia.org/wikipedia/commons/c/cd/'+urllib.parse.quote(name)
+          api='https://commons.wikimedia.org/w/api.php?action=query&titles='+urllib.parse.quote('File:'+name)+'&prop=imageinfo&iiprop=url%7Csha1%7Csize%7Cmime%7Cextmetadata&format=json'
+          headers={'User-Agent':'ArtVisionSourceVerify/1.0 (source verification; artvision project)'}
+          with urllib.request.urlopen(urllib.request.Request(api,headers=headers),timeout=45) as x:
+           data=json.load(x)
+          page=next(iter(data['query']['pages'].values()))
+          info=page['imageinfo'][0]
+          assert info['width']==4368 and info['height']==2912
+          assert info['size']>6_000_000 and info['mime']=='image/jpeg'
+          license_name=info['extmetadata']['LicenseShortName']['value']
+          assert 'CC BY 2.0' in license_name,license_name
+          assert info['url'].split('/')[-1]==urllib.parse.quote(name)
+          with urllib.request.urlopen(urllib.request.Request(original_url,headers=headers),timeout=90) as x:
+           blob=x.read()
+          assert len(blob)==info['size']
+          assert hashlib.sha1(blob).hexdigest()==info['sha1'].lower()
+          p=Path('/tmp/real_prado_v182/TRIUMPH_OF_DEATH_PRADO_REAL_FRAME_PRISCILA_COSTA_2013.jpg')
+          p.write_bytes(blob)
+          meta={'status':'SOURCE_BYTES_VERIFIED_FROM_COMMONS_API_SHA1_SIZE_LICENSE','file':p.name,
+           'source_page':'https://commons.wikimedia.org/wiki/File:'+name,'file_url':original_url,
+           'license':'CC BY 2.0','attribution':'Priscila Costa / Ministério da Cultura',
+           'license_url':'https://creativecommons.org/licenses/by/2.0/',
+           'taken':'2013-06-30','width':info['width'],'height':info['height'],
+           'bytes':len(blob),'sha1':hashlib.sha1(blob).hexdigest(),'sha256':hashlib.sha256(blob).hexdigest(),
+           'current_gallery_claimed':False,'original_1562_frame_claimed':False,'human_visual_review':'PENDING',
+           'new_paid_calls':0,'auto_render':False,'social_published':False}
+          Path('/tmp/real_prado_v182/SOURCE_V182.json').write_text(json.dumps(meta,indent=2))
+          print(json.dumps(meta,indent=2))
+          PY
+      - name: Preserve verified authentic photo for sequential zero-TTS Museum renders
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V182_PRADO_TRIUMPH_AUTHENTIC_FRAME_CC_BY_PREFLIGHT
+          path: /tmp/real_prado_v182/
+          if-no-files-found: warn
+          retention-days: 30
