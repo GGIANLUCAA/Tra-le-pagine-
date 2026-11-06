@@ -1,0 +1,39 @@
+name: ArtVision V176 Night Watch broad genuine frame source research
+on:
+  push:
+    branches: [main]
+    paths:
+      - requests/artvision/nightwatch-color-frame-v176.json
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-nightwatch-color-frame-v176
+  cancel-in-progress: false
+jobs:
+  source_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify no paid work or Museum render authorized
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          r=json.load(open('requests/artvision/nightwatch-color-frame-v176.json'))
+          w=next(w for w in q['works'] if w['id']=='rembrandt_night_watch_1642_rijks_sk_c_5')
+          assert w['slots_delivered_this_selection']==2
+          assert r['owner_automation_id']==q['owner_automation_id']
+          assert r['source_only'] and r['one_shot']
+          assert not r['render'] and not r['new_tts'] and not r['paid_calls'] and not r['publish'] and not r['gold']
+          PY
+      - name: Broader public Commons discovery, metadata only
+        run: python src/artvision_nightwatch_color_frame_research_v176.py
+      - name: Archive evidence for human image verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V176_NIGHTWATCH_COLOR_REAL_FRAME_CANDIDATES_ONLY
+          path: /tmp/artvision_nightwatch_v176/*
+          retention-days: 30
+          if-no-files-found: warn
