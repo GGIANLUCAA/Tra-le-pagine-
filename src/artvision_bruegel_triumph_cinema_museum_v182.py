@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """V182 The Triumph of Death Cinema Museum. Authentic Prado 2013
-Priscila Costa / Ministério da Cultura CC0 frame photo at entry/exit; source Cinema V150 unchanged between.
+Priscila Costa / Ministério da Cultura CC BY 2.0 frame photo at entry/exit; source Cinema V150 unchanged between.
 Exactly its own original AAC; no TTS, no external paid services, no Gold.
 """
 import argparse, hashlib, json, subprocess, zipfile, math
@@ -126,5 +126,5 @@ def main():
   for item in [target,photo,out/'COVER.jpg',out/'CONTACT_SHEET_V182.jpg',out/'QA_V182.json',out/'RIGHTS_AND_CREDITS.txt',out/'SOCIAL_DRAFT_UNPUBLISHED.txt']:
    z.write(item,arcname=item.name)
  with zipfile.ZipFile(archive) as z:assert z.testzip() is None
- print(json.dumps({'status':'REAL_CRITICO_MUSEUM_REVIEW','file':report['file'],'zip':{'name':PKG,'size':archive.stat().st_size,'sha256':sha(archive),'crc':'PASS'},'photo':report['photo_sha256'],'AAC_IDENTICAL':True,'Gold_V25':False}))
+ print(json.dumps({'status':'REAL_CINEMA_MUSEUM_REVIEW','file':report['file'],'zip':{'name':PKG,'size':archive.stat().st_size,'sha256':sha(archive),'crc':'PASS'},'photo':report['photo_sha256'],'AAC_IDENTICAL':True,'Gold_V25':False}))
 if __name__=='__main__':main()
