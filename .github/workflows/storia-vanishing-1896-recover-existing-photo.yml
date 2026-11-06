@@ -1,0 +1,87 @@
+name: "La Storia Rivive - recover Vanishing 1896 using existing true Finegrain photo, zero new AI calls"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-vanishing-1896-recover-existing-photo.yml"
+permissions:
+  actions: write
+  contents: read
+jobs:
+  cancel_unwanted_duplicate_batch:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Do not duplicate the three old I2I requests
+        run: |
+          gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/42308821846/cancel" || true
+  recover_vanishing_without_duplicate_I2I:
+    needs: cancel_unwanted_duplicate_batch
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install all no-charge video dependencies
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: Retrieve first genuinely generated image I2I instead of spending again
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/oldphoto
+          gh run download 42308037083 --repo "$GITHUB_REPOSITORY" --name STORIA_SERIAL_vanishing_1896_REAL_TEST_NO_PUBLISH --dir /tmp/oldphoto
+          test -s /tmp/oldphoto/GENERATIVE_PHOTO_REAL_CANDIDATE.png
+          test -s /tmp/oldphoto/ANCHOR_REAL_ORIGINAL_BW.png
+          test -s /tmp/oldphoto/RIGHTS.json
+          test -s /tmp/oldphoto/PHOTO_QA.json
+      - name: Actual new complete MP4 using same I2I frame/source SHA (zero new image requests)
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_cinema_serial_batch_20261106.py
+          python -u src/storia_cinema_serial_batch_20261106.py --episode vanishing_1896 --reuse-artifact-dir /tmp/oldphoto
+      - name: Full H264 AAC ZIP CRC and source-lock check
+        run: |
+          set -euo pipefail
+          cd output/storia_serial_vanishing_1896
+          python - <<'PY'
+          import json,hashlib,zipfile,pathlib,subprocess
+          p=pathlib.Path(".");q=json.loads((p/"SERIAL_QA.json").read_text());x=json.loads((p/"PHOTO_QA.json").read_text())
+          assert x["status"]=="PHOTO_REUSED_FROM_PRIOR_REAL_FREE_I2I_NO_NEW_CALL"
+          assert x["new_provider_calls"]==0 and x["source_frame_pixel_abs_delta"]<=1
+          film=p/q["filename"];package=next(p.glob("*_SOCIAL_REVIEW_WITH_SOCIAL.zip"))
+          assert q["duration_s"]>15 and q["resolution"]==[1080,1920]
+          assert hashlib.sha256(film.read_bytes()).hexdigest()==q["movie_sha256"]
+          assert hashlib.sha256(package.read_bytes()).hexdigest()==q["zip_sha256"]
+          with zipfile.ZipFile(package) as z: assert z.testzip() is None
+          for typ,codec in [("v","h264"),("a","aac")]:
+             s=subprocess.run(["ffprobe","-v","error","-select_streams",typ,"-show_entries","stream=codec_name","-of","default=nw=1:nk=1",str(film)],capture_output=True,text=True,check=True)
+             assert s.stdout.strip()==codec
+          subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(film),"-f","null","-"],check=True)
+          print("VANISHING_RECOVERED_REAL_MP4_ZIP_PASS_WITH_PRIOR_FREE_PHOTO",q["movie_sha256"])
+          PY
+      - name: Keep physical MP4 ZIP and source photos for real artistic QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_VANISHING_1896_REUSED_REAL_I2I_MP4_ZIP_FOR_REVIEW
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_serial_vanishing_1896/*_SOCIAL_REVIEW.mp4
+            output/storia_serial_vanishing_1896/*_SOCIAL_REVIEW_WITH_SOCIAL.zip
+            output/storia_serial_vanishing_1896/ORIGINAL_VS_PHOTO_VISUAL_QA.jpg
+            output/storia_serial_vanishing_1896/GENERATIVE_PHOTO_REAL_CANDIDATE.png
+            output/storia_serial_vanishing_1896/ANCHOR_REAL_ORIGINAL_BW.png
+            output/storia_serial_vanishing_1896/PHOTO_QA.json
+            output/storia_serial_vanishing_1896/SERIAL_QA.json
+            output/storia_serial_vanishing_1896/RIGHTS.json
+            output/storia_serial_vanishing_1896/FAILURE.json
