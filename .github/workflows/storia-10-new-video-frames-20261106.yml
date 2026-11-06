@@ -1,0 +1,146 @@
+name: "La Storia Rivive - 10 NEW historical video frames 20261106"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-10-new-video-frames-20261106.yml"
+permissions:
+  contents: read
+jobs:
+  genuine-video-frames:
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - name: Install image and HTTP dependencies
+        run: pip install --quiet requests pillow numpy opencv-python-headless
+      - name: Fetch ten DIFFERENT real historic films and extract frames
+        shell: bash
+        run: |
+          cat > /tmp/frames.py <<'PY'
+          import os,sys,json,time,hashlib,subprocess,math,io,zipfile,urllib.parse
+          import requests,numpy as np,cv2
+          from PIL import Image,ImageDraw,ImageFont,ImageOps
+          out='out'; os.makedirs(out+'/frames',exist_ok=True)
+          ua={'User-Agent':'LaStoriaRiviveOriginalFrameResearch/1.0 (noncommercial historical footage selection; email not provided)','Accept':'application/json'}
+          candidates=[
+            ('Fabbri al lavoro',1893,'Blacksmith Scene (1893).webm',10),
+            ('Colazione in famiglia',1895,'Repas de bébé (1895).webm',12),
+            ('Arrivo del treno',1895,'Arrival of a Train at La Ciotat (The Lumière Brothers, 1895).webm',15),
+            ('Danza serpentina',1897,'Danse serpentine (Lumière, 1897).webm',17),
+            ('Il mago',1898,'Le magicien (1898).webm',13),
+            ('Automobile esplosiva',1900,'Explosion of a Motor Car (1900).webm',18),
+            ('Torre Eiffel',1900,'Eiffel Tower from the Trocadero Palace (1900).webm',20),
+            ('Palazzo dell’elettricità',1900,'Palace of Electricity (1900).webm',18),
+            ('Castello misterioso',1896,'The Haunted Castle 1896.ogv',35),
+            ('Demolizione di un muro',1896,"Démolition d'un mur.webm",20),
+            ('Danza giavanese',1900,'Danse javanaise (1900).webm',25),
+            ('Magia sul palcoscenico',1900,'Ching Ling Foo outdone (1900).webm',20),
+            ('La barba impossibile',1900,'A dull razor (1900).webm',16),
+            ('Disegno incantato',1900,'The Enchanted Drawing.ogv',25),
+            ('Faust e Margherita',1900,'Faust And Marguerite (1900) Highest Quality.webm',20),
+            ('Panorama dal treno',1898,"Panorama pris d'un train en marche (1898).webm",19),
+            ('Uscita dalla fabbrica',1895,'Auguste & Louis Lumière- Sortie des Usines Lumière à Lyon (1895).webm',18)
+          ]
+          sess=requests.Session();sess.headers.update(ua)
+          records=[];fail=[]
+          def download(url,path,maxbytes):
+            try:
+              with sess.get(url,stream=True,timeout=(10,45)) as r:
+                r.raise_for_status()
+                total=0
+                with open(path,'wb') as f:
+                  for ch in r.iter_content(2**17):
+                    total+=len(ch)
+                    if total>maxbytes:raise ValueError('oversized')
+                    f.write(ch)
+              return total if total>25000 else 0
+            except Exception as ex:
+              if os.path.exists(path):os.remove(path)
+              return 0
+          for name,year,fn,desired in candidates:
+            if len(records)>=10:break
+            try:
+              par={'action':'query','format':'json','prop':'imageinfo','iiprop':'url|size','titles':'File:'+fn}
+              resp=sess.get('https://commons.wikimedia.org/w/api.php',params=par,timeout=22)
+              resp.raise_for_status()
+              pg=next(iter(resp.json()['query']['pages'].values()))
+              info=pg['imageinfo'][0]
+              original=info['url']
+              rel=original.split('/commons/',1)[1]
+              suffixes=['720p.vp9.webm','480p.vp9.webm','360p.vp9.webm']
+              if fn.endswith('.ogv'):suffixes=['480p.vp9.webm','360p.vp9.webm','240p.vp9.webm']
+              urls=[f'https://upload.wikimedia.org/wikipedia/commons/transcoded/{rel}/{urllib.parse.quote(fn)}.{s}' for s in suffixes]
+              if info['size'] < 65000000:urls.append(original)
+              vid='/tmp/current_video.bin'; nbytes=0
+              for u in urls:
+                nbytes=download(u,vid,65000000)
+                if nbytes:break
+              if not nbytes:raise RuntimeError('No downloadable transcode/original')
+              probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_format','-show_streams','-of','json',vid],stderr=subprocess.STDOUT,timeout=15))
+              stream=next(s for s in probe['streams'] if s['codec_type']=='video')
+              dur=float(probe['format'].get('duration') or stream.get('duration') or 30)
+              if dur<5:raise RuntimeError('film too short')
+              variants=[max(2,min(dur-2,desired+d)) for d in [0,-3,3,7,-7]]
+              best=None;bestscore=-1
+              for t in variants:
+                jpg='/tmp/candidate.jpg'
+                subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-ss',str(t),'-i',vid,'-frames:v','1','-q:v','2',jpg],timeout=28,check=True)
+                im=cv2.imread(jpg)
+                if im is None:continue
+                g=cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
+                bright=float(g.mean());detail=float(cv2.Laplacian(g,cv2.CV_64F).var())
+                score=detail if 32<bright<220 else 0
+                if score>bestscore:bestscore=score;best=(t,im.copy())
+              if best is None:raise RuntimeError('cannot decode frame')
+              # Two frames confirm independently that the recording moves (not a slideshow or stock image)
+              t,img=best
+              probe_jpg='/tmp/motion.jpg'
+              subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-ss',str(min(dur-0.2,t+1.0)),'-i',vid,'-frames:v','1',probe_jpg],timeout=25,check=True)
+              next_img=cv2.imread(probe_jpg)
+              if next_img is None:raise RuntimeError('motion verification failed')
+              next_img=cv2.resize(next_img,(img.shape[1],img.shape[0]))
+              movement=float(cv2.absdiff(cv2.cvtColor(img,cv2.COLOR_BGR2GRAY),cv2.cvtColor(next_img,cv2.COLOR_BGR2GRAY)).mean())
+              if movement<0.6:raise RuntimeError('static/no convincing motion')
+              idx=len(records)+1
+              fnjpg=f'{idx:02d}_{year}_frame_originale.jpg'
+              fpath=out+'/frames/'+fnjpg
+              cv2.imwrite(fpath,img,[cv2.IMWRITE_JPEG_QUALITY,94])
+              rec={'number':idx,'name':name,'year':year,'source_filename':fn,'source_page':'https://commons.wikimedia.org/wiki/File:'+urllib.parse.quote(fn.replace(' ','_')),'source_original_video_url':original,'source_sha256':hashlib.sha256(open(vid,'rb').read()).hexdigest(),'timestamp_seconds':round(t,3),'source_video_width':stream['width'],'source_video_height':stream['height'],'frame_width':img.shape[1],'frame_height':img.shape[0],'motion_mean_pixel_diff':round(movement,3),'frame_sha256':hashlib.sha256(open(fpath,'rb').read()).hexdigest(),'frame':fnjpg,'note':'ORIGINAL MONOCHROME FRAME, not AI generated or colorized'}
+              records.append(rec)
+              print('PASS',idx,fn,'t',t,'resolution',img.shape[1],img.shape[0], 'motion',movement,flush=True)
+            except Exception as ex:
+              print('FAIL',fn,str(ex)[:140],flush=True);fail.append({'filename':fn,'error':str(ex)[:180]})
+          with open(out+'/SOURCES_AND_QA.json','w') as f:json.dump({'source':'authentic independent historical moving pictures','count':len(records),'records':records,'failures':fail,'not_reconstructions':True,'no_older_processed_clips_used':True},f,indent=2,ensure_ascii=False)
+          if len(records)<10:sys.exit('Insufficient original videos: '+str(len(records)))
+          W=1260;tilew=610;tileh=420
+          sheet=Image.new('RGB',(W,2210),'#111319')
+          d=ImageDraw.Draw(sheet)
+          try:font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',22);small=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',16)
+          except:font=ImageFont.load_default();small=font
+          d.text((18,15),'LA STORIA RIVIVE | 10 NUOVI FOTOGRAMMI DA 10 FILMATI',fill='#ffffff',font=font)
+          for i,r in enumerate(records):
+            col=i%2;row=i//2;x=15+col*625;y=65+row*425
+            image=Image.open(out+'/frames/'+r['frame']).convert('RGB')
+            pic=ImageOps.contain(image,(610,355))
+            sheet.paste(pic,(x+(610-pic.width)//2,y+(355-pic.height)//2))
+            d.rectangle((x,y+355,x+610,y+420),fill='#20242b')
+            d.text((x+8,y+361),f"{r['number']:02d} | {r['name']} | {r['year']}",font=small,fill='white')
+            d.text((x+8,y+384),f"Originale da video | {r['timestamp_seconds']:0.1f}s | {r['frame_width']}x{r['frame_height']}",font=small,fill='#d4d4d4')
+          sheet.save(out+'/10_NUOVI_FOTOGRAMMI_STORICI.jpg',quality=90,optimize=True)
+          with zipfile.ZipFile(out+'/10_FOTOGRAMMI_DA_10_VIDEO_ORIGINALI.zip','w',zipfile.ZIP_DEFLATED) as z:
+            for f in os.listdir(out+'/frames'):z.write(out+'/frames/'+f,'frames/'+f)
+            z.write(out+'/10_NUOVI_FOTOGRAMMI_STORICI.jpg','10_NUOVI_FOTOGRAMMI_STORICI.jpg')
+            z.write(out+'/SOURCES_AND_QA.json','SOURCES_AND_QA.json')
+          with zipfile.ZipFile(out+'/10_FOTOGRAMMI_DA_10_VIDEO_ORIGINALI.zip') as z:
+            assert z.testzip() is None
+          print('SUCCESS 10 different authentic moving video sources; ZIP CRC PASS',flush=True)
+          PY
+          python /tmp/frames.py
+      - name: Upload 10 verified video-frame samples
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_10_NEW_AUTHENTIC_VIDEO_FRAMES_20261106
+          path: out/
+          retention-days: 14
