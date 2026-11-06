@@ -1,0 +1,90 @@
+name: "WOW LAB · genuine CC0 Egyptian cat · mask-first pop-out"
+run-name: "WOW LAB Bastet test · ${{ github.run_id }}"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-release-queue-hardening-20261030
+    paths:
+      - ".github/workflows/wow-lab-bastet-cc0-20261106.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: wow-lab-autonomous-v1-only
+  cancel-in-progress: false
+jobs:
+  build_visual_candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
+      GITHUB_RUN_ID: ${{ github.run_id }}
+    steps:
+      - name: Checkout isolated experimental code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python CPU-only runtime
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free rendering tools
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Entire isolated regression suite
+        run: |
+          set -euo pipefail
+          python -m compileall -q wow_lab
+          python -m unittest discover -s wow_lab/tests -v
+      - name: Check actual WOW LAB history and queue before generating
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "wow_lab")
+          import engine
+          engine.require_live_preflight_context()
+          engine.ensure_no_parallel_wow_render()
+          history = engine.recent_history()
+          engine.ensure_slot_available(engine.slot_id(None), history)
+          last_six = [int(row["object_id"]) for row in history[:6]]
+          if 544118 in last_six:
+              raise SystemExit("BASTET_DUPLICATE_IN_LAST_SIX: " + repr(last_six))
+          print("HISTORY_AND_QUEUE_SAFE_FOR_NEW_SCULPTURE", last_six)
+          PY
+      - name: Check real museum CC0 record and full-size mask BEFORE rendering
+        run: |
+          python wow_lab/experiments/preflight_single_met.py --object-id 544118 --out "wow_lab/runs/bastet-mask-${{ github.run_id }}"
+      - name: Generate real vertical MP4 with original soundtrack only if mask passed
+        run: |
+          python wow_lab/engine.py --out "wow_lab/runs/bastet-render-${{ github.run_id }}" --test-source-id 544118
+      - name: Independently confirm technical candidate, never claim artistic approval
+        run: |
+          python - <<'PY'
+          import json, pathlib, subprocess, glob
+          p=pathlib.Path("wow_lab/runs/bastet-render-${{ github.run_id }}")
+          m=json.loads((p/"MANIFEST.json").read_text())
+          assert m["object_id"]==544118
+          assert m["is_public_domain"] and m["qa"]["technical_pass"]
+          assert not m["artistic_approval"] and not m["social_publication"]
+          assert (p/"WOW_LAB_PREVIEW.mp4").stat().st_size>50000
+          assert len(list(p.glob("WOW_LAB_ANDROID_*.zip")))==1
+          subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(p/"WOW_LAB_PREVIEW.mp4"),"-f","null","-"],
+                         check=True,timeout=180)
+          print("RENDERED_CC0_PREVIEW_READY_FOR_ARTISTIC_REVIEW_NOT_A_MASTER")
+          PY
+      - name: Preserve real source, mask and optional MP4 for manual inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_BASTET_REVIEW_${{ github.run_id }}
+          path: |
+            wow_lab/runs/bastet-mask-${{ github.run_id }}/*
+            wow_lab/runs/bastet-render-${{ github.run_id }}/*
+          if-no-files-found: warn
+          retention-days: 14
