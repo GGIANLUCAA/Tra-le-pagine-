@@ -526,14 +526,14 @@
       "art_rights_preflight": "Rijksmuseum object marked Public domain; data.rijksmuseum.nl/policy permits commercial reuse of public-domain/CC0 images; verify exact image downloaded",
       "preexisting_cinema_candidate": null,
       "editorial_note": "Current painting only, NOT 2021 AI reconstruction. Rijksmuseum lists 379.5x453.5 overall and elsewhere 363x438 remaining original painted surface; resolve scale against actual asset before render V132 physically rendered one original Cinema Standard review on 2026-11-02; old masters untouched. Library backup blocked by quota.",
-      "preflight_status": "2/4 real distinct MP4 Cinema V132 and Critico V149 SHA FFmpeg CRC PASS, 2 Museum slots pending valid frame/photo",
+      "preflight_status": "4/4_REAL_MP4_CRITICO_V149_CRITICO_MUSEUM_V179_CINEMA_V132_CINEMA_MUSEUM_V180_FULL_DECODE_SHA_CRC_LIBRARY_READBACK_PASS_HISTORIC_1984_ROOM_CC0_ARTISTIC_REVIEW_PENDING",
       "four_slots": [
         "critico_standard",
         "critico_museum",
         "cinema_standard",
         "cinema_museum"
       ],
-      "slots_delivered_this_selection": 2,
+      "slots_delivered_this_selection": 4,
       "museum_approved": false,
       "voice_cost_verified": false,
       "publication_authorized": false,
@@ -587,8 +587,10 @@
             4062
           ],
           "license_claim": "CC0 1.0 on Commons",
-          "status": "historical_room_1984_not_current_not_downloaded",
-          "copyright_compatibility_reviewed": false
+          "status": "EXACT_SOURCE_VERIFIED_SHA256_4c513a5e_REAL_PHOTO_1984_USED_V179_V180_NO_CURRENT_ROOM_CLAIM",
+          "copyright_compatibility_reviewed": false,
+          "local_download_sha256_verified": true,
+          "visual_review": true
         }
       ],
       "new_cinema_standard_v132": {
@@ -671,7 +673,103 @@
         "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "site_archive_verified_slots": 2,
-      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04",
+      "critico_museum_v179": {
+        "photo_source": "https://commons.wikimedia.org/wiki/File:Rijksmuseum_Amsterdam,_Nightwatch_room_after_restoration,_1984.jpg",
+        "photo_sha256": "4c513a5e3902f3262b768af21cc0f3911c1980241b245ae4581128f5f4c251e0",
+        "source_license": "CC0 (historical room photo)",
+        "museum_is_actual_1984_room": true,
+        "room_is_current_2026": false,
+        "frame_original_1642_claim": false,
+        "full_ffmpeg_video_audio_decode": "PASS before and after Library readback",
+        "zip_crc": "PASS before and after Library readback",
+        "site_published": false,
+        "social_published": false,
+        "Gold_V25": false,
+        "museum_approved": false,
+        "human_artistic_review": "PENDING",
+        "new_tts_calls": 0,
+        "new_paid_api_calls": 0,
+        "variant": "critico_museum",
+        "filename": "REMBRANDT_THE_NIGHT_WATCH_CRITICO_MUSEUM_V179_REVIEW.mp4",
+        "bytes": 12204185,
+        "sha256": "45ddd04834593165fde1da908eb6d431c62f176437a75718fc861e14999e8475",
+        "duration_s": 125.05,
+        "fps": 20,
+        "frames": 2501,
+        "resolution": [
+          720,
+          1280
+        ],
+        "source_critico_standard_v149_sha256": "2448e5ba7bf4db51fd8efad07546522468ffd2c85d6eb023a55256e359b9cf07",
+        "shared_gacrux_WAV_sha256": "e19c3a91b7d385fcf088a57296966aa2a9e8c369a75aa7378cbd08a6e105e880",
+        "voice_AAC_bit_identical_to_V149": true,
+        "source_photo_year": 1984,
+        "photo_intro_seconds": 3.5,
+        "photo_outro_seconds": 6,
+        "spoken_middle_unchanged_scene_order": true,
+        "package_sha256": "7be66469e7c4e6f6e025ef971fa1072706be595a59d82d1be85a98e66841cd6b",
+        "package_bytes": 22138267,
+        "private_library_path": "/ArtVision/ARTVISION_NIGHT_WATCH_V179_CRITICO_MUSEUM.zip",
+        "private_library_id": "libfile_3b8643909400819195293f8ab3d1124c",
+        "private_library_zip_sha_readback": "PASS"
+      },
+      "cinema_museum_v180": {
+        "photo_source": "https://commons.wikimedia.org/wiki/File:Rijksmuseum_Amsterdam,_Nightwatch_room_after_restoration,_1984.jpg",
+        "photo_sha256": "4c513a5e3902f3262b768af21cc0f3911c1980241b245ae4581128f5f4c251e0",
+        "source_license": "CC0 (historical room photo)",
+        "museum_is_actual_1984_room": true,
+        "room_is_current_2026": false,
+        "frame_original_1642_claim": false,
+        "full_ffmpeg_video_audio_decode": "PASS before and after Library readback",
+        "zip_crc": "PASS before and after Library readback",
+        "site_published": false,
+        "social_published": false,
+        "Gold_V25": false,
+        "museum_approved": false,
+        "human_artistic_review": "PENDING",
+        "new_tts_calls": 0,
+        "new_paid_api_calls": 0,
+        "variant": "cinema_museum",
+        "filename": "REMBRANDT_THE_NIGHT_WATCH_CINEMA_MUSEUM_V180_REVIEW.mp4",
+        "bytes": 7540691,
+        "sha256": "1695464e74fd77a027d739704d28efbb7975f6396f5e5e5f9807c32e75f4b97b",
+        "duration_s": 50.208333333333336,
+        "fps": 24,
+        "frames": 1205,
+        "resolution": [
+          720,
+          1280
+        ],
+        "source_cinema_standard_v132_sha256": "66d53c4353c79c5c99e9eea4dd77d9e080ed3ad9d1b3ee33d612fa9cbf486768",
+        "original_music_AAC_bit_identical_to_V132": true,
+        "source_photo_year": 1984,
+        "photo_intro_seconds": 3,
+        "photo_outro_seconds": 5,
+        "cinema_middle_unchanged_shot_timing": true,
+        "package_sha256": "b3ada1f2b4e39f6300ad5c4f66007a85bb64d35764fb63ee0ba278d03228db7f",
+        "package_bytes": 13284580,
+        "private_library_path": "/ArtVision/ARTVISION_NIGHT_WATCH_V180_CINEMA_MUSEUM.zip",
+        "private_library_id": "libfile_76ba6e91ca548191969bc4066fee0bee",
+        "private_library_zip_sha_readback": "PASS"
+      },
+      "four_slot_package_v181": {
+        "status": "FOUR_REAL_DISTINCT_MP4_VERIFIED_FROM_PHYSICAL_SOURCE_AND_PRIVATE_LIBRARY_READBACK",
+        "path": "/ArtVision/ARTVISION_NIGHT_WATCH_4X1_COMPLETO_V181_REVIEW.zip",
+        "library_id": "libfile_8f63cbadb2248191bb71dea3b9c2abf9",
+        "bytes": 49800290,
+        "sha256": "1657b2ce669ad42ed2da290e1c770447c1af52f3572fcc3685400f2e16c49bf5",
+        "four_mp4_in_package": 4,
+        "cover_count": 4,
+        "social_drafts_unpublished_count": 16,
+        "full_decode_after_library_download": "PASS 4/4",
+        "zip_crc": "PASS",
+        "frame_authentic_1984": true,
+        "published": false,
+        "Gold_V25": false,
+        "human_artistic_review": "PENDING",
+        "commercial_rights_review": "PENDING"
+      }
     },
     {
       "id": "bruegel_tower_babel_1563_khm_gg1026",
@@ -1806,5 +1904,18 @@
     "delacroix_two_museum_variants_pending": true,
     "full_delacroix_four_mp4": true
   },
-  "last_v168_20261105": "Delacroix Cinema V168 48s verified with real downloaded MP4 SHA/full FFmpeg/ZIP CRC and persistent private Library backup/readback; distinct from V169 Critico in_progress. No publish/Gold."
+  "last_v168_20261105": "Delacroix Cinema V168 48s verified with real downloaded MP4 SHA/full FFmpeg/ZIP CRC and persistent private Library backup/readback; distinct from V169 Critico in_progress. No publish/Gold.",
+  "latest_owner_progress_20261106": {
+    "verified_slots": 26,
+    "total_slots": 40,
+    "pending_slots": 14,
+    "one_work_finished": "rembrandt_night_watch_1642_rijks_sk_c_5",
+    "four_variants_verified_readback": true,
+    "library_package_id": "libfile_8f63cbadb2248191bb71dea3b9c2abf9",
+    "human_artistic_review": "PENDING",
+    "right_to_publish": "PENDING",
+    "Gold_V25": false,
+    "additional_paid_api_calls": 0,
+    "additional_google_tts_calls": 0
+  }
 }
