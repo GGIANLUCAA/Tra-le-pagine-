@@ -81,15 +81,8 @@ def photo(base,original):
     report={"provider":"finegrain/finegrain-image-enhancer","real_free_I2I_created":False,"status":"NOT_TESTED","paid_calls":0,
             "artistic_review":"PENDING","source_frame_index":ANCHOR,"source_frame_local_seconds":ANCHOR/FPS}
     try:
-        prompt=("An extremely realistic modern photographic reconstruction of THIS EXACT historic film frame. 
-                "Workers demolishing a wall outdoors with shovels and pickaxes, masonry, rubble and dusty clothes. 
-                "KEEP exactly the same number of people, positions, limbs, tools, hats, clothing, wall structure, 
-                "the exact camera angle and background as the archival frame. Natural skin and cloth detail, 
-                "photographic optical detail, authentic foliage, earth tones, no stylization. 
-                "If a face is too blurry, reconstruct it plausibly, never adding people or objects.")
-        neg=("extra person, added worker, missing worker, duplicate arm, extra fingers, missing hand, 
-             "tool not in source, floating pickaxe, melted masonry, distorted face, person fused to wall, 
-             "horns, cartoon, anime, illustrative, painting, fake 3d, wax skin, violet haze, red glow")
+        prompt="An extremely realistic modern PHOTOGRAPHIC reconstruction of this EXACT 1897 Lumiere film frame. Workers demolishing a masonry wall in a real French worksite. Keep exactly the same original workers, count of people, poses, arms, hands, tools, hats, clothes, wall details, rubble, camera perspective, plants and buildings as actually visible in this specific source image. Photorealistic skin and dusty cotton fabric, physical masonry, natural daylight, realistic earth and moss tones, fine optical details. When a distant face is indistinct, interpret it plausibly, but never add or remove any person or object."
+        neg="extra person, duplicate worker, missing worker, distorted face, extra limbs, fused arms, added pickaxe, added tool, weird rubble person, floating bricks, extra fingers, horns, cartoon, illustration, watercolor, plastic 3D, artificial intense red or violet, fantasy architecture"
         client=Client("finegrain/finegrain-image-enhancer",verbose=False)
         raw=client.predict(handle_file(str(OUT/"ANCHOR_AI_NEURAL_COLOR_BASE.png")),prompt,neg,
                           1895,2,1.14,.97,6,112,144,.45,18,"DDIM",api_name="/process")
