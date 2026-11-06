@@ -1,0 +1,66 @@
+name: "WOW LAB · audit existing API connections · zero-cost read-only"
+run-name: "WOW LAB API audit ${{ github.run_id }}"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-release-queue-hardening-20261030
+    paths:
+      - ".github/workflows/wow-lab-api-readonly-20261106.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wow-lab-api-audit-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  read_only_api_audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      PROBE_NVIDIA: ${{ secrets.NVIDIA_API_KEY || secrets.NVIDIA || secrets.NVIDIA_NIM_API_KEY || secrets.NVIDIA_KEY || secrets.NVIDIA_NIM || secrets.NGC_API_KEY || secrets.INVIDIA || secrets.INVIDIA_API_KEY }}
+      PROBE_GROQ: ${{ secrets.GROQ_API_KEY || secrets.GROQ }}
+      PROBE_GEMINI: ${{ secrets.GEMINI_API_KEY }}
+      PROBE_HF: ${{ secrets.HF_TOKEN || secrets.HUGGINGFACE_TOKEN }}
+      PROBE_OPENROUTER: ${{ secrets.OPENROUTER_API_KEY || secrets.OPENROUTER2 }}
+      PROBE_PIXABAY: ${{ secrets.PIXABAY || secrets.PIXABAY_API_KEY }}
+      PROBE_AIHORDE: ${{ secrets.AIHORDE_API_KEY }}
+      PROBE_VIDU: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      API_LIVE_REPORT: output/wow_lab_api_readonly/RESULTS.json
+    steps:
+      - name: Checkout trusted existing diagnostic from main without edits
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: readonly-source
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate read-only audit contract and run offline tests
+        run: |
+          set -euo pipefail
+          python -m py_compile readonly-source/src/api_live_readonly_diagnostic_v1.py
+          cd readonly-source
+          python -m unittest discover -s tests -p 'test_api_live_readonly_diagnostic_v1.py' -v
+      - name: Check existing public APIs and credential health without generation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python readonly-source/src/api_live_readonly_diagnostic_v1.py
+          python - <<'PY'
+          import json, pathlib
+          p=pathlib.Path("output/wow_lab_api_readonly/RESULTS.json")
+          r=json.loads(p.read_text())
+          assert r["zero_generations"] and r["zero_paid_inference"]
+          assert r["credentials_disclosed"] is False
+          print("SAFE_API_AUDIT_READY", r["summary"])
+          PY
+      - name: Preserve sanitized results for owner
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_API_READONLY_${{ github.run_id }}
+          path: output/wow_lab_api_readonly/RESULTS.json
+          if-no-files-found: warn
+          retention-days: 7
