@@ -1,4 +1,5 @@
 name: "WOW LAB · isolated CC0 mask review · 2026-11-06"
+run-name: "WOW LAB mask gate · run ${{ github.run_id }}"
 on:
   push:
     branches:
