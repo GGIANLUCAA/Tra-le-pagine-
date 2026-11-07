@@ -11,3 +11,19 @@
 - No social publication, no Vidu or paid third-party API, no credits spent, no changes outside WOW LAB.
 - Local pilot video and ZIP are **not accessible via an externally validated GitHub raw/release URL**. Real Android playback remains unverified. Do not label the candidate approved or claim the download is universally working.
 - Next cycle: choose a subject with strong camera-oriented movement and reliable matte; aim for one convincing event with motion/occlusion, not large flat cutout. Do not reuse rejected moth/balloon or bad flower multilayer extraction.
+
+## Feedback proprietario — 7 novembre 2026
+
+Valutazione reale: **"Bello ma siamo lontani anni luce con effetti wow da social"**.
+Il giudizio non è un'approvazione parziale del master: la qualità cinematografica/social è **RESPINTA**.
+
+### Diagnosi creativa vincolante per i prossimi esperimenti WOW LAB
+
+- Il video usa ancora una sagoma planare e un movimento di camera: manca **movimento interno del soggetto**. Zoom, rotazione di una carta, ombre dietro un cartoncino e transizioni teatrali non costituiscono un evento WOW.
+- Nessun altro tentativo basato solo sulla medesima formula deve essere presentato come video social finale. Fermarsi al preflight se la regia dipende da un mero ritaglio 2D.
+- Nuova soglia editoriale: un unico momento sorpresa *visibile senza spiegazioni* e distinto da zoom/parallasse; movimento plausibile del soggetto e variazioni coerenti di occlusione/prospettiva, sincronia sonora, impatto immediato entro i primi secondi.
+- Per qualsiasi animazione generativa video: verifica prima saldo reale, prezzo modello, credenziali funzionanti, licenza, assenza di costi extra; se indimostrabile, nessun invio. Rispettare no_vidu/no_paid_services attuali.
+- Evitare doppioni di soggetti. Conservare mask gate ad alta risoluzione, CC0 verificata e full-decode MP4. Ogni esperimento che non supera una revisione visiva resta TEST NON APPROVATO, senza release finale/social.
+- Obiettivo del prossimo esperimento: cercare prima **una prova credibile di movimento interno reale**, non produrre altri video che contengono solo traslazioni di silhouette.
+
+Feedback registrato esclusivamente su branch WOW LAB; nessuna modifica al ramo main o ad altri progetti.
