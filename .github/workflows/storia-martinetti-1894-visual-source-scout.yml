@@ -1,0 +1,75 @@
+name: "La Storia Rivive ONLY - new 1894 Martinetti genuine film visual source scout"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-martinetti-1894-visual-source-scout.yml"
+permissions:
+  contents: read
+jobs:
+  verified_real_source_frames:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Download exactly one real archival moving film
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_martinetti_1894_scout
+          cd output/storia_martinetti_1894_scout
+          curl -fL --retry 2 --connect-timeout 20 --max-time 180
+            "https://upload.wikimedia.org/wikipedia/commons/d/d9/Luis_Martinetti%2C_Contortionist_%281894%29.webm" -o ORIGINAL_ARCHIVAL_1894.webm
+          test $(wc -c < ORIGINAL_ARCHIVAL_1894.webm) -gt 27000000
+          test $(wc -c < ORIGINAL_ARCHIVAL_1894.webm) -lt 33000000
+          ffprobe -v error -show_entries stream=codec_type,width,height,r_frame_rate -show_entries format=duration -of json ORIGINAL_ARCHIVAL_1894.webm > SOURCE_PROBE.json
+          sha256sum ORIGINAL_ARCHIVAL_1894.webm > SOURCE_SHA256.txt
+          python - <<'PY'
+          import json,pathlib
+          x=json.loads(pathlib.Path("SOURCE_PROBE.json").read_text());v=next(s for s in x["streams"] if s["codec_type"]=="video")
+          assert v["width"]==1426 and v["height"]==1026,(v["width"],v["height"])
+          assert 14.0<float(x["format"]["duration"])<17.0,x["format"]
+          print("GENUINE_1894_SOURCE_CHECKED",x)
+          PY
+      - name: Produce real multiple candidate frames and short moving excerpt
+        run: |
+          set -euo pipefail
+          cd output/storia_martinetti_1894_scout
+          python -m pip install -q "Pillow>=10,<13"
+          for t in 1 2.5 4 5.5 7 8.5 10 11.5 13 14; do
+             ffmpeg -nostdin -y -v error -ss "$t" -i ORIGINAL_ARCHIVAL_1894.webm -frames:v 1 -q:v 2 "FRAME_${t}.jpg"
+             test -s "FRAME_${t}.jpg"
+          done
+          ffmpeg -nostdin -y -v error -ss 3.0 -i ORIGINAL_ARCHIVAL_1894.webm -t 9 -vf "fps=24,scale=720:520" -an -c:v libx264 -preset veryfast -crf 19 -pix_fmt yuv420p "TRUE_BW_MOTION_9S.mp4"
+          ffmpeg -nostdin -v error -xerror -i TRUE_BW_MOTION_9S.mp4 -f null -
+          python - <<'PY'
+          import glob,hashlib,json,math,pathlib
+          from PIL import Image,ImageDraw
+          root=pathlib.Path(".");paths=[root/f"FRAME_{t}.jpg" for t in [1,2.5,4,5.5,7,8.5,10,11.5,13,14]]
+          sheet=Image.new("RGB",(4*330,3*267),(20,21,24));draw=ImageDraw.Draw(sheet)
+          for k,p in enumerate(paths):
+              im=Image.open(p).convert("RGB");im.thumbnail((322,226))
+              x=k%4*330+4;y=k//4*267+32
+              sheet.paste(im,(x,y));draw.text((x,y-24),p.name,fill="white")
+          sheet.save("REAL_MARTINETTI_1894_CONTACT.jpg",quality=92)
+          obj={"title":"Luis Martinetti, Contortionist","date":"1894","source":"https://commons.wikimedia.org/wiki/File:Luis_Martinetti,_Contortionist_(1894).webm",
+              "source_sha256":hashlib.sha256((root/"ORIGINAL_ARCHIVAL_1894.webm").read_bytes()).hexdigest(),
+              "source_size":(root/"ORIGINAL_ARCHIVAL_1894.webm").stat().st_size,
+              "source_actual_motion_verified_by_decodable_excerpt":True,"frames":[{"time_s":float(p.name.replace("FRAME_","").replace(".jpg","")),"sha256":hashlib.sha256(p.read_bytes()).hexdigest()} for p in paths],
+              "artistic_review":"NOT_STARTED","photo_i2i_generated":False,"final_mp4":False,"costs":0,"site_social_published":False}
+          (root/"SOURCE_SCOUT_REPORT.json").write_text(json.dumps(obj,indent=2)+"\n")
+          print("GENUINE_SOURCE_AND_TEN_REAL_FRAMES",obj["source_sha256"])
+          PY
+      - name: Upload verified original source photos and true motion for artistic selection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_MARTINETTI_1894_SOURCE_CONTACT_REAL_MOTION
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_martinetti_1894_scout/FRAME_*.jpg
+            output/storia_martinetti_1894_scout/REAL_MARTINETTI_1894_CONTACT.jpg
+            output/storia_martinetti_1894_scout/TRUE_BW_MOTION_9S.mp4
+            output/storia_martinetti_1894_scout/SOURCE_PROBE.json
+            output/storia_martinetti_1894_scout/SOURCE_SHA256.txt
+            output/storia_martinetti_1894_scout/SOURCE_SCOUT_REPORT.json
