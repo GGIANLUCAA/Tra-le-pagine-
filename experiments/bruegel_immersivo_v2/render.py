@@ -282,6 +282,7 @@ def main():
  script="\n\n".join(x["spoken"] for x in BEATS)
  (DEST/"COPIONE_ITALIANO.txt").write_text(script,encoding="utf-8")
  # Natural single-take mature Italian documentary narrator; zero comedy / fake interpretation.
+ gemini_voice.MODEL="gemini-3.1-flash-tts-preview"  # available on Gemini API, unlike unavailable 3.8 for this account
  gemini_voice.STYLE=("Perform in standard Italian as a superb human documentary actor, intimate but magnetic, "
  "warm low-mid male voice, luminous clarity, genuine fascination, expressive dynamics and intentional silences. "
  "Sound as though walking slowly through an extraordinary painting, discovering real visual details for the first time. "
