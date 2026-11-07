@@ -1,6 +1,9 @@
 """Regression tests for Museum trial gating (no automatic approval)."""
 import unittest
 import json
+import subprocess
+import sys
+import tempfile
 from pathlib import Path
 from src.artvision_queue_next_v190 import plan
 
@@ -68,6 +71,30 @@ class MuseumTrialTests(unittest.TestCase):
             changed = dict(valid[wid], **override)
             self.assertEqual(plan(q, s, {wid: changed})["render_candidates"], [],
                              msg=str(override))
+
+
+    def test_actual_cli_reads_persisted_manifest_and_plans_one_independent_slot(self):
+        wid = "waterhouse_magic_circle_1886_tate_n01572"
+        q = {"works": [{"id": wid, "slots_delivered_this_selection": 2,
+                         "museum_approved": False}]}
+        s = {"verified_slots": {wid: ["critico_standard", "cinema_standard"]},
+             "blocked": {}}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            q_path, s_path, out_path = (root / "queue.json", root / "state.json",
+                                         root / "plan.json")
+            q_path.write_text(json.dumps(q), encoding="utf8")
+            s_path.write_text(json.dumps(s), encoding="utf8")
+            run = subprocess.run([sys.executable, "src/artvision_queue_next_v190.py",
+                                  "--queue", str(q_path), "--state", str(s_path),
+                                  "--out", str(out_path)],
+                                 check=True, capture_output=True, text=True)
+            plan_data = json.loads(out_path.read_text(encoding="utf8"))
+            self.assertEqual(plan_data["next"]["work_id"], wid)
+            self.assertEqual(plan_data["next"]["kind"],
+                             "museum_trial_render_candidate_needs_preflight")
+            self.assertEqual(plan_data["new_mp4_verified_by_planner"], 0)
+            self.assertFalse(plan_data["next"]["publication_authorized"])
 
 if __name__ == "__main__":
     unittest.main()
