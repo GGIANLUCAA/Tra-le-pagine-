@@ -1,0 +1,219 @@
+name: ArtVision V198 Triumph framed-photo Cinema Museum reproducible REVIEW only
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/artvision-triumph-museum-review-v198.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-owner-single-heavy-render
+  cancel-in-progress: false
+jobs:
+  render_one_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Queue-verified slot, no concurrent render, no financial or publication actions
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          w=next(x for x in q['works'] if x['id']=='bruegel_triumph_death_1562_prado_p001393')
+          assert q['owner_automation_id']=='6adca191603c8191a90d5190901cd034'
+          assert w['slots_delivered_this_selection']==2
+          assert not w.get('museum_approved',False)
+          assert q['global_render_gate']['no_social_publish']
+          assert q['global_render_gate']['no_paid_calls']
+          assert q['global_render_gate']['no_v25_auto_gold']
+          assert not any(x['id'].startswith('dali_') and x.get('slots_delivered_this_selection') for x in q['works'])
+          print('ONE CINEMA MUSEUM FRAMED-PHOTO TECHNICAL REVIEW ONLY; NO CLAIM OF APPROVED ROOM')
+          PY
+      - name: Fetch exact original Cinema Standard V150 and genuine source photograph V182
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/triumph_v198/base /tmp/triumph_v198/out /tmp/triumph_v198/v150 /tmp/triumph_v198/v182
+          gh run download 41840684749 --repo "$GITHUB_REPOSITORY" --name BRUEGEL_TRIUMPH_DEATH_V150_CINEMA_REVIEW_MP4 --dir /tmp/triumph_v198/v150
+          gh run download 42200406226 --repo "$GITHUB_REPOSITORY" --name ARTVISION_V182_PRADO_TRIUMPH_AUTHENTIC_FRAME_CC_BY_PREFLIGHT --dir /tmp/triumph_v198/v182
+          cp /tmp/triumph_v198/v150/BRUEGEL_THE_TRIUMPH_OF_DEATH_CINEMA_V150_REVIEW.mp4 /tmp/triumph_v198/base/CINEMA_STANDARD.mp4
+          cp /tmp/triumph_v198/v182/TRIUMPH_OF_DEATH_PRADO_REAL_FRAME_PRISCILA_COSTA_2013.jpg /tmp/triumph_v198/base/ACTUAL_FRAMED_PHOTO.jpg
+          python - <<'PY'
+          import hashlib, pathlib, json
+          p=pathlib.Path('/tmp/triumph_v198/base')
+          expected={'CINEMA_STANDARD.mp4':'c460fe7fa72ac29425de67eec40f986add502c42ec9e4166050c7ce107804138',
+                    'ACTUAL_FRAMED_PHOTO.jpg':'c7b99abad654ca86c1df05f51b14013cd877eb11b079fde71799636987a73517'}
+          for name,h in expected.items():
+           f=p/name
+           assert f.is_file() and hashlib.sha256(f.read_bytes()).hexdigest()==h,name
+          q=json.loads(pathlib.Path('/tmp/triumph_v198/v182/SOURCE_V182.json').read_text())
+          assert q['license']=='CC BY 2.0' and q['width']==4368 and q['height']==2912
+          assert q['sha256']==expected['ACTUAL_FRAMED_PHOTO.jpg']
+          assert q['current_gallery_claimed'] is False and q['original_1562_frame_claimed'] is False
+          print('SOURCE_PHOTO_SHA_AND_CC_BY_AND_MASTER_SHA_PASS')
+          PY
+      - name: Free local dependencies for original-photo-only review render
+        shell: bash
+        run: |
+          python -m pip install --disable-pip-version-check numpy pillow opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/artvision-bin
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          Path('/tmp/artvision-bin/ffmpeg').symlink_to(Path(get_ffmpeg_exe()))
+          PY
+          echo /tmp/artvision-bin >> "$GITHUB_PATH"
+      - name: Physically render new one-slot REVIEW MP4, keep original Standard and AAC intact
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,zipfile
+          from pathlib import Path
+          import cv2,numpy as np
+          from PIL import Image
+          root=Path('/tmp/triumph_v198')
+          out=root/'out'
+          original=root/'base/CINEMA_STANDARD.mp4'
+          photo=root/'base/ACTUAL_FRAMED_PHOTO.jpg'
+          output=out/'BRUEGEL_TRIUMPH_CINEMA_MUSEUM_V198_FRAMED_PHOTO_REVIEW.mp4'
+          archive=out/'TRIUMPH_CINEMA_MUSEUM_V198_REVIEW_PACKAGE.zip'
+          sh=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          ph=cv2.imread(str(photo))
+          assert ph is not None and ph.shape[:2]==(2912,4368)
+          cap=cv2.VideoCapture(str(original))
+          assert cap.isOpened() and int(cap.get(cv2.CAP_PROP_FRAME_COUNT))==960
+          assert int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))==720 and int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))==1280
+          width,height,fps,frames=720,1280,20,960
+          # The photograph is shown intact: its actual frame and wall, not an invented room.
+          # The neutral black matte is expressly graphic layout, NOT photographed gallery.
+          stage=np.full((height,width,3),15,np.uint8)
+          bright=ph
+          def actual_photo_frame(k):
+           a=max(0.0,min(1.0,k))
+           scale=.91+.085*a
+           iw=int(680*scale);ih=int(iw*bright.shape[0]/bright.shape[1])
+           sub=cv2.resize(bright,(iw,ih),interpolation=cv2.INTER_AREA)
+           image=stage.copy();x=(width-iw)//2;y=(height-ih)//2
+           image[y:y+ih,x:x+iw]=sub
+           cv2.putText(image,'THE TRIUMPH OF DEATH',(86,235),cv2.FONT_HERSHEY_SIMPLEX,.70,(220,222,228),2,cv2.LINE_AA)
+           cv2.putText(image,'PIETER BRUEGEL THE ELDER  |  1562-63',(106,265),cv2.FONT_HERSHEY_SIMPLEX,.34,(180,180,180),1,cv2.LINE_AA)
+           return image
+          ff=subprocess.Popen(['ffmpeg','-hide_banner','-loglevel','error','-y','-f','rawvideo','-pix_fmt','bgr24','-s','720x1280','-r','20','-i','pipe:0','-an','-c:v','libx264','-preset','veryfast','-crf','21','-pix_fmt','yuv420p',str(out/'SILENT_V198.mp4')],stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+          samples=[]
+          try:
+           for i in range(frames):
+            ok,frame=cap.read()
+            assert ok and frame is not None, 'unexpected source EOF'
+            if i<68:frame=actual_photo_frame(i/67)
+            elif i>=frames-68:frame=actual_photo_frame((frames-1-i)/67)
+            if i in (0,30,65,68,95,240,480,700,895,930,959):
+             samples.append((i,cv2.resize(frame,(180,320))))
+            ff.stdin.write(np.ascontiguousarray(frame).tobytes())
+           ff.stdin.close()
+           stderr=ff.stderr.read()
+           assert ff.wait()==0,stderr.decode(errors='replace')[-1200:]
+          except BaseException:
+           ff.kill()
+           raise
+          finally:
+           cap.release()
+          silent=out/'SILENT_V198.mp4'
+          subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(silent),'-i',str(original),
+                          '-map','0:v:0','-map','1:a:0','-c:v','copy','-c:a','copy','-movflags','+faststart',str(output)],check=True)
+          silent.unlink()
+          subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(output),'-map','0','-f','null','-'],check=True)
+          def audiosha(p):
+           r=subprocess.run(['ffmpeg','-v','error','-i',str(p),'-map','0:a:0','-c:a','copy','-f','adts','pipe:1'],check=True,capture_output=True)
+           return hashlib.sha256(r.stdout).hexdigest()
+          assert audiosha(original)==audiosha(output)
+          pcap=cv2.VideoCapture(str(output))
+          assert pcap.isOpened() and int(pcap.get(cv2.CAP_PROP_FRAME_COUNT))==960
+          pcap.release()
+          board=np.full((3*340,4*190,3),24,np.uint8)
+          for a,(idx,pic) in enumerate(samples):
+           x=(a%4)*190+5;y=(a//4)*340+5
+           board[y:y+320,x:x+180]=pic
+           cv2.putText(board,f'{idx/20:.1f}s',(x,y+331),cv2.FONT_HERSHEY_SIMPLEX,.34,(210,210,210),1)
+          cv2.imwrite(str(out/'CONTACT_SHEET_V198.jpg'),board)
+          cv2.imwrite(str(out/'COVER_V198.jpg'),actual_photo_frame(.25))
+          rights=('The Triumph of Death (1562-63) Pieter Bruegel the Elder, Prado P001393, 117 x 162 cm.\n'
+           'Documentary photograph of the exact framed picture: Priscila Costa / Ministerio da Cultura (2013); CC BY 2.0; '
+           'https://commons.wikimedia.org/wiki/File:Pieter_Bruegel_der_Aeltere_-_Der_Triumph_des_Todes_-_mit_Rahmen.jpg\n'
+           'https://creativecommons.org/licenses/by/2.0/\n'
+           '2013 photograph does not certify historical frame or 2026 Prado room. The matte background is editorial, NOT a museum room.\n'
+           'Cinema Standard V150 and its AAC are preserved. Artist review, full gallery and territorial rights: PENDING. '
+           'Prototype REVIEW only, NOT finished Museum, not Gold, not published.\n')
+          (out/'RIGHTS_AND_CREDITS_V198.txt').write_text(rights,encoding='utf-8')
+          meta={'schema':'artvision-triumph-museum-prototype-v198','work_id':'bruegel_triumph_death_1562_prado_p001393',
+                'variant':'cinema_museum','status':'rendered_needs_review_NOT_APPROVED_ROOM',
+                'source_original_cinema_sha256':sh(original),'source_photo_sha256':sh(photo),
+                'source_photo_license':'CC BY 2.0 Priscila Costa / Ministerio da Cultura 2013',
+                'source_photo_dimensions':[4368,2912],'same_original_aac_bit_identical':True,
+                'original_aac_sha256':audiosha(original),'review_mp4_sha256':sh(output),
+                'review_mp4_bytes':output.stat().st_size,'duration_s':48,'frames':960,
+                'resolution':[width,height],'ffmpeg_full_decode':'PASS',
+                'documented_complete_gallery':False,'museum_approved':False,
+                'frame_is_historical_original_verified':False,'human_artistic_review':'PENDING',
+                'v82_shot_narration_review':'NOT_APPLICABLE_CINEMA',
+                'new_tts_calls':0,'paid_api_calls':0,'social_published':False,'Gold_V25':False,
+                'count_as_completed_slot':False,'notes':'Not a substitute for V119 approved physical museum scene'}
+          (out/'QA_V198.json').write_text(json.dumps(meta,indent=2),encoding='utf-8')
+          with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=3) as z:
+           for f in (output,photo,out/'QA_V198.json',out/'COVER_V198.jpg',out/'CONTACT_SHEET_V198.jpg',out/'RIGHTS_AND_CREDITS_V198.txt'):
+            z.write(f,f.name)
+          with zipfile.ZipFile(archive) as z:assert z.testzip() is None
+          meta['zip_sha256']=sh(archive)
+          (out/'QA_V198.json').write_text(json.dumps(meta,indent=2),encoding='utf-8')
+          with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=3) as z:
+           for f in (output,photo,out/'QA_V198.json',out/'COVER_V198.jpg',out/'CONTACT_SHEET_V198.jpg',out/'RIGHTS_AND_CREDITS_V198.txt'):
+            z.write(f,f.name)
+          with zipfile.ZipFile(archive) as z:assert z.testzip() is None
+          print(json.dumps({'status':meta['status'],'mp4_sha256':meta['review_mp4_sha256'],'mp4_bytes':meta['review_mp4_bytes'],'zip_sha256':sh(archive),'CRC':'PASS','audio':'MATCH','new_completed_slots':0}))
+          PY
+      - name: Upload actual source, MP4 and ZIP - review only, no website
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_V198_TRIUMPH_MUSEUM_FRAMED_PHOTO_REVIEW_NOT_GOLD
+          path: |
+            /tmp/triumph_v198/out/BRUEGEL_TRIUMPH_CINEMA_MUSEUM_V198_FRAMED_PHOTO_REVIEW.mp4
+            /tmp/triumph_v198/out/TRIUMPH_CINEMA_MUSEUM_V198_REVIEW_PACKAGE.zip
+            /tmp/triumph_v198/out/QA_V198.json
+            /tmp/triumph_v198/out/COVER_V198.jpg
+            /tmp/triumph_v198/out/CONTACT_SHEET_V198.jpg
+            /tmp/triumph_v198/out/RIGHTS_AND_CREDITS_V198.txt
+          if-no-files-found: error
+          retention-days: 30
+  independent_artifact_readback:
+    needs: render_one_review
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ART_V198_TRIUMPH_MUSEUM_FRAMED_PHOTO_REVIEW_NOT_GOLD
+          path: /tmp/artvision-v198-readback
+      - name: Check independently fetched MP4 SHA256, full FFmpeg decode, AAC and ZIP CRC
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,zipfile,subprocess
+          from pathlib import Path
+          d=Path('/tmp/artvision-v198-readback')
+          m=json.loads((d/'QA_V198.json').read_text())
+          v=d/'BRUEGEL_TRIUMPH_CINEMA_MUSEUM_V198_FRAMED_PHOTO_REVIEW.mp4'
+          z=d/'TRIUMPH_CINEMA_MUSEUM_V198_REVIEW_PACKAGE.zip'
+          sha=lambda x:hashlib.sha256(x.read_bytes()).hexdigest()
+          assert m['status']=='rendered_needs_review_NOT_APPROVED_ROOM'
+          assert m['museum_approved'] is False and m['count_as_completed_slot'] is False
+          assert v.stat().st_size==m['review_mp4_bytes'] and sha(v)==m['review_mp4_sha256']
+          with zipfile.ZipFile(z) as arc:
+           assert arc.testzip() is None
+           assert hashlib.sha256(arc.read(v.name)).hexdigest()==m['review_mp4_sha256']
+          subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(v),'-map','0','-f','null','-'],check=True)
+          print('INDEPENDENT_DOWNLOAD_SHA_ZIP_CRC_FULL_DECODE_PASS; ARTISTIC_QA_PENDING; NEW_COMPLETED_SLOTS_0')
+          PY
