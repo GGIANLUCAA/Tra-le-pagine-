@@ -46,7 +46,50 @@
         "No verified finished reusable geometry/lighting/texture/MP4 presets",
         "No approved artwork-specific frame associations"
       ],
-      "next_action": "Audit historical assets and proofs; for each preset obtain actual source bytes, license, dimensions, camera QA, original-or-reconstructed disclosure and pilot review; do not change global rules based on descriptions."
+      "next_action": "From five now permanently saved actual photo sources, build one isolated, dimensionally calibrated Museum camera/frame test with rights/attribution and full-speed review; each GAL/FRA remains unbuilt/unapproved until actual scene/video gates pass. Do not count recovered photos as presets.",
+      "photo_archival_state": {
+        "stored_date": "2026-11-07",
+        "type": "5 licensed actual photo source files, not camera-ready 3D scenes",
+        "verified_photo_sources": 5,
+        "verified_reusable_room_assets": 0,
+        "verified_reusable_frame_assets": 0,
+        "persistent_library_folder": "/ArtVision/Museum_Lab/V120_RESEARCH_SOURCES/",
+        "five_images_all_sha256_readback_pass": true,
+        "rights_and_provenance_file": "/ArtVision/Museum_Lab/V120_RESEARCH_SOURCES/PROVENIENZA_LICENZE_SHA256.md",
+        "detailed_report": "research/artvision_lab_v120_five_photos_persistent_archive_20261107.md",
+        "images": [
+          {
+            "id": "PH01",
+            "file": "GAL01_PHOTOGRAPH.jpg",
+            "library_file_id": "libfile_02f565b0c09081918e62594abb6125ab",
+            "sha256": "eaea76f5ff2c3162397b45cd18c751373d47e6cd5462fa3d72285338c4a2f926"
+          },
+          {
+            "id": "PH02",
+            "file": "GAL02_PHOTOGRAPH.jpg",
+            "library_file_id": "libfile_cd78fc56a4cc81918007e7e04eaa8cbe",
+            "sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2"
+          },
+          {
+            "id": "PH03",
+            "file": "GAL03_PHOTOGRAPH.jpg",
+            "library_file_id": "libfile_2fac46f72da08191a8da430ca8e37814",
+            "sha256": "cee7b171449cad4143ef2f0117e6ec90e12b3b46b265b123977c2bfd38932f9e"
+          },
+          {
+            "id": "PH04",
+            "file": "GAL04_PHOTOGRAPH.jpg",
+            "library_file_id": "libfile_91a90cdae4d881919220d5179effb387",
+            "sha256": "3e035baac12291ce5e7cbed35525d6dae7fe0f75b58e5984f7b4530cf0110920"
+          },
+          {
+            "id": "PH05",
+            "file": "GAL05_PHOTOGRAPH.jpg",
+            "library_file_id": "libfile_1218fd70e6d08191a356433215943d9d",
+            "sha256": "97011035822dfb20889b93204df53a5851ef0379393917652ab4301ef1ef4f8a"
+          }
+        ]
+      }
     },
     {
       "id": "LAB-MAGIC-CIRCLE-PH02-V208",
@@ -83,7 +126,7 @@
         "No continuous-perspective entrance/exit preview or visual QA",
         "V209 original Commons download SHA256 differs from V120/V208 expected SHA; file lineage must be reconciled before use"
       ],
-      "next_action": "Compare true V120 artifact 13119426005 and currently downloaded Commons original by SHA256/SHA1/pixels; label original vs transformed derivative, test only through isolated approved preflight; independently address central doorway and artwork-specific frame. Do not modify active production until verified.",
+      "next_action": "Use verified historical PH02 photo bytes from private Library for a deterministic trial (do not change old SHA to the current different Commons file silently); review discrepancy and ensure CC BY 4.0 attribution. Independently solve central doorway and artwork-specific frame geometry; no MP4, Gold or production adoption yet.",
       "last_real_preflight": {
         "run_id": 42400165677,
         "job_id": 128486005444,
@@ -95,6 +138,23 @@
         "render_mp4_count": 0,
         "artifact_written": false,
         "evidence": "research/artvision_lab_v209_ph02_sha_mismatch_20261107.md"
+      },
+      "historical_V120_source_bytes_recovered": {
+        "sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+        "file_name": "GAL02_PHOTOGRAPH.jpg",
+        "bytes": 1431648,
+        "pixels": [
+          3648,
+          2736
+        ],
+        "artifact_id": 13119426005,
+        "persistent_library_path": "/ArtVision/Museum_Lab/V120_RESEARCH_SOURCES/GAL02_PHOTOGRAPH.jpg",
+        "persistent_library_file_id": "libfile_cd78fc56a4cc81918007e7e04eaa8cbe",
+        "artifact_copy_sha256_match": true,
+        "private_library_download_readback_sha256_match": true,
+        "separate_current_Wikimedia_download_sha256": "4eccd18f1fc714305902369d8c2b118f763fc6dec129b89820a3d20242c40e64",
+        "bytes_comparison": "not_identical; reason not yet established",
+        "evidence": "research/artvision_lab_v120_five_photos_persistent_archive_20261107.md"
       }
     },
     {
@@ -125,6 +185,11 @@
       "date": "2026-11-07",
       "action": "Lab records direct V209 job failure: observed original SHA256 4ecc... vs expected historical ea95...; no scene or MP4, pending source reconciliation.",
       "source": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42400165677"
+    },
+    {
+      "date": "2026-11-07",
+      "action": "Retrieved V120 artifact and saved all five authentic photographic sources plus attribution in private Library; real upload+download SHA256 readback passed for 5/5, no scene/renderer/master touched.",
+      "source": "research/artvision_lab_v120_five_photos_persistent_archive_20261107.md"
     }
   ]
 }
