@@ -260,6 +260,59 @@
         "site_published": false,
         "social_published": false,
         "new_paid_calls": 0
+      },
+      "museum_private_review_v200": {
+        "date": "2026-11-07",
+        "status": "TWO_NEW_MUSEUM_REAL_ROOM_VIDEO_FILES_LOCALLY_RENDERED_AND_QA_VERIFIED_NOT_APPROVED_NOT_STORED_DURABLY",
+        "technical_slots_new": 2,
+        "canonical_completed_slots_added": 0,
+        "existing_standard_masters_untouched": true,
+        "original_real_room_photo": {
+          "institution": "Royal Museums of Fine Arts of Belgium - Room 68",
+          "source": "https://commons.wikimedia.org/wiki/File:Koninklijke_Musea_voor_Schone_Kunsten_van_Belgi%C3%AB_44.jpg",
+          "author": "FrDr",
+          "license": "CC BY 4.0",
+          "size_pixels": [
+            5472,
+            3648
+          ],
+          "sha256": "9992ac6ee8121af95c785fbdb1450dddbf56fbc24bef7eebef61c4440e51cfce",
+          "actual_room_visible": true,
+          "current_2026_exhibition_verified": false
+        },
+        "critico_museum": {
+          "variant": "critico_museum",
+          "duration_seconds": 115.8,
+          "bytes": 45581716,
+          "sha256": "214be6294e8e48df9814253ddd17bc58226ab61c69d10b930d1596f47e4559ac",
+          "original_Gacrux_AAC_sha_match": true,
+          "full_ffmpeg_decode": "PASS"
+        },
+        "cinema_museum": {
+          "variant": "cinema_museum",
+          "duration_seconds": 48,
+          "bytes": 20771089,
+          "sha256": "708076b42b7a135e5fc49ea16412e686324f809867f1ef125913e71dfc7afe19",
+          "original_music_AAC_sha_match": true,
+          "full_ffmpeg_decode": "PASS"
+        },
+        "four_video_zip": {
+          "bytes": 115137278,
+          "sha256": "158712f2945b27754c82cf2ef2753a6bf4b83e4708369807bcc428f93357264a",
+          "crc": "PASS",
+          "internal_four_mp4_SHA": "PASS",
+          "storage": "conversation_sandbox_only"
+        },
+        "rights_credit": "Real room photo FrDr CC BY 4.0; faithful source PD painting; social unpublished",
+        "archive_status": "LIBRARY_UPLOAD_FAILED_container_session_expired_NO_READBACK",
+        "owner_full_speed_review": "PENDING",
+        "museum_approved": false,
+        "Gold_V25": false,
+        "social_published": false,
+        "report": "docs/productions/2026-11-07-artvision-rebel-room-v200-four-real-mp4-review.md",
+        "source_scout_run_id": 42318836628,
+        "source_scout_artifact_id": 13551542958,
+        "spent_API_credits": 0
       }
     },
     {
