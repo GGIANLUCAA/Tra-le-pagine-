@@ -7,6 +7,9 @@ on:
       - src/artvision_museum_v119_guard.py
       - tests/test_artvision_museum_v119_guard.py
       - config/artvision_museum_library_v119.json
+      - config/artvision_museum_trial_sources_v208.json
+      - src/artvision_queue_next_v190.py
+      - tests/test_artvision_museum_trial_gate_20261107.py
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,3 +29,5 @@ jobs:
       - name: Reject legacy bitmap fallback, fake preset approvals, bad physical scale
         run: |
           python -m unittest discover -s tests -p 'test_artvision_museum_v119_guard.py' -v
+      - name: Check persistent licensed Museum trial source and anti-Gold/anti-bypass regression
+        run: python -m unittest discover -s tests -p 'test_artvision_museum_trial_gate_20261107.py' -v
