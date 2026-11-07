@@ -37,9 +37,27 @@ def plan(queue, state):
                                 "kind": "blocked", "reason": blocked[key]})
                 continue
             if slot in MUSEUM and not work.get("museum_approved", False):
-                # Do not silently discard the remaining Museum slots.
-                pending.append({"work_id": wid, "slot": slot,
-                                "kind": "source_gate_required"})
+                # Owner-approved neutral scenography may be trial-rendered, never
+                # treated as artistically approved or as a verified delivery.
+                evidence = state.get("museum_trial_evidence", {}).get(wid, {})
+                required = ("source_url", "source_sha256", "source_license",
+                            "painting_dimensions_verified", "scene_kind",
+                            "rights_reviewed", "asset_readback_verified")
+                valid = (isinstance(evidence, dict)
+                         and all(evidence.get(k) for k in required)
+                         and evidence.get("scene_kind") in
+                         ("authentic_documented", "neutral_scenography")
+                         and len(str(evidence.get("source_sha256", ""))) == 64)
+                if not valid:
+                    pending.append({"work_id": wid, "slot": slot,
+                                    "kind": "source_gate_required",
+                                    "reason": "Missing licensed asset, dimensions, SHA or verified readback"})
+                    continue
+                actions.append({"work_id": wid, "slot": slot,
+                                "kind": "museum_trial_render_candidate_needs_preflight",
+                                "artistic_review": "PENDING",
+                                "gold": False, "publication_authorized": False,
+                                "scene_kind": evidence["scene_kind"]})
                 continue
             actions.append({"work_id": wid, "slot": slot,
                             "kind": "render_candidate_needs_preflight"})
