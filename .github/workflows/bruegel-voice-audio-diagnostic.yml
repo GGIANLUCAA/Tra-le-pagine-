@@ -26,6 +26,14 @@ jobs:
           try:
             r=requests.get(url,timeout=20,headers={"User-Agent":"Mozilla/5.0"},allow_redirects=True)
             print("AI_DOC_AUDIO",r.status_code,r.url,r.headers.get("content-type"),len(r.content),r.content[:100],flush=True)
+            if "text/html" in r.headers.get("content-type",""):
+              import re
+              os.makedirs("output/voice_proven",exist_ok=True)
+              open("output/voice_proven/SOURCE_PAGE.html","w",encoding="utf-8").write(r.text)
+              for word in ("mp3","wav","download","audio_url","audioUrl","g0/audio","cloudfront","cdn"):
+                matches=list(re.finditer(re.escape(word),r.text,re.I))
+                print("HTML_TOKEN",word,len(matches),[r.text[max(0,m.start()-120):m.end()+160] for m in matches[:3]])
+
             if r.ok and (r.content.startswith(b'ID3') or r.content.startswith(b'RIFF') or (r.content[:2]==bytes([255,251])) or "audio/" in r.headers.get("content-type","")):
               os.makedirs("output/voice_proven",exist_ok=True)
               open("output/voice_proven/VOCE_ORIGINALE.mpeg","wb").write(r.content)
