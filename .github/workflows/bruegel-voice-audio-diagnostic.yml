@@ -1,0 +1,50 @@
+name: Bruegel V2 | Voice provider and generated audio fetch diagnostic
+on:
+  push:
+    branches: [experiment/critico-immersivo-bruegel-wow-20261107]
+    paths: [.github/workflows/bruegel-voice-audio-diagnostic.yml]
+permissions:
+  contents: read
+jobs:
+  inspect_voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Inspect generated voice download and available Google models without generating speech
+        env:
+          TEST_GOOGLE_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+        run: |
+          python -m pip -q install "google-genai>=2.25.0,<4" requests
+          python - <<'PY'
+          import requests,os
+          from google import genai
+          url="https://www.aidocmaker.com/g0/audio?name=d6c6f749eb144a74ae4f5775558909dd"
+          try:
+            r=requests.get(url,timeout=20,headers={"User-Agent":"Mozilla/5.0"},allow_redirects=True)
+            print("AI_DOC_AUDIO",r.status_code,r.url,r.headers.get("content-type"),len(r.content),r.content[:100],flush=True)
+            if r.ok and (r.content.startswith(b'ID3') or r.content.startswith(b'RIFF') or (r.content[:2]==bytes([255,251])) or "audio/" in r.headers.get("content-type","")):
+              os.makedirs("output/voice_proven",exist_ok=True)
+              open("output/voice_proven/VOCE_ORIGINALE.mpeg","wb").write(r.content)
+              print("REAL_AUDIO_READY",len(r.content))
+          except Exception as e: print("AI_DOC_FETCH_ERROR",type(e).__name__,str(e)[:300])
+          try:
+            client=genai.Client(api_key=os.environ["TEST_GOOGLE_KEY"])
+            models=list(client.models.list())
+            for m in models:
+              if "tts" in m.name.lower() or "audio" in m.name.lower():
+                print("MODEL",m.name,"METHODS",getattr(m,"supported_generation_methods",None))
+            print("TOTAL_MODELS",len(models))
+          except Exception as e: print("MODELS_LIST_ERROR",type(e).__name__,str(e)[:450])
+          PY
+      - name: Preserve exact generated-audio bytes if available
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_V2_REAL_VOICE_ALTERNATIVE_IF_AVAILABLE
+          path: output/voice_proven/*
+          if-no-files-found: warn
+          retention-days: 7
