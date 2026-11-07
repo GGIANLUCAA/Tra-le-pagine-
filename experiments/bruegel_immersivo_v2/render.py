@@ -36,7 +36,7 @@ BEATS=[
  {"spoken":"Guarda in basso a sinistra. Il Carnevale avanza a cavallo di una botte. La sua lancia è uno spiedo carico di carne. È l'eccesso che si presenta come un principe.",
   "frames":[("carnival_wide",.32,.76,.28,"right"),("carnival_close",.34,.80,.17,"in"),("carnival_context",.20,.75,.27,"up")]},
  {"spoken":"Dall'altra parte lo aspetta la Quaresima. È magra, seduta su un carretto, e brandisce una pala da forno con due aringhe. Un duello impossibile, che mette di fronte il banchetto e il digiuno.",
-  "frames":[("lent_wide",.79,.79,.28,"left"),("lent_close",.80,.82,.18,"in"),("opposing_sides",0,0,0,"in")]},
+  "frames":[("lent_wide",.65,.79,.28,"left"),("lent_close",.65,.82,.18,"in"),("opposing_sides",0,0,0,"in")]},
  {"spoken":"Ma la scena più tagliente è quasi nascosta. Spostati verso la chiesa. I poveri escono da una porta laterale, mentre i benestanti usano quella principale. C'è chi chiede l'elemosina e chi la distribuisce. Bruegel osserva la pietà, e anche la sua messa in scena.",
   "frames":[("church_wide",.84,.33,.37,"up"),("church_gate",.89,.46,.26,"left"),("alms",.91,.56,.22,"in")]},
  {"spoken":"Adesso cerca il buffone, al centro. Porta una torcia accesa, in pieno giorno. Come se servisse una luce speciale per vedere quello che abbiamo sotto gli occhi.",
@@ -276,6 +276,79 @@ def finish(segments,voice_dur):
  assert 70<=dur<=160 and OUTPUT.stat().st_size>2500000,(dur,OUTPUT.stat().st_size)
  return dur
 
+def synthesize_supported_gemini(script):
+ """Google Gemini standard generateContent TTS; not the separate unsupported Interactions gateway."""
+ import io
+ import re
+ from google import genai
+ from google.genai import types
+ client=genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+ prompt=("Read the following Italian text EXACTLY, with no added or omitted words. "
+         "Perform it as a beautiful, credible Italian documentary narration by a mature man, rich warm timbre, "
+         "magnetic but unforced, real breath and varied emotional weight, unhurried consonants, "
+         "gentle suspense at the church, compassionate not saccharine, a thoughtful closing. "
+         "No comedy, no booming trailer announcer, no robot rhythm, no extra introductions. "
+         "Speak Italian with clear natural pronunciation of Bruegel. Read only this text:\n\n"+script)
+ model="gemini-2.5-flash-preview-tts"
+ print("REAL GOOGLE GEMINI TTS generateContent model",model,flush=True)
+ try:
+  response=client.models.generate_content(
+   model=model,
+   contents=prompt,
+   config=types.GenerateContentConfig(
+    response_modalities=["AUDIO"],
+    speech_config=types.SpeechConfig(
+     voice_config=types.VoiceConfig(
+      prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name="Gacrux")
+     )
+    )
+   )
+  )
+ except Exception as exc:
+  raise RuntimeError("TTS unavailable on current Free API key; not substituting old rejected Edge voice: "+str(exc)[:500])
+ parts=[]
+ for cand in response.candidates or []:
+  if cand.content:
+   for part in cand.content.parts or []:
+    if part.inline_data and part.inline_data.data:
+     parts.append(part.inline_data)
+ assert parts,"No real Gemini audio bytes returned"
+ blob=parts[0].data
+ if isinstance(blob,str):
+  import base64
+  blob=base64.b64decode(blob)
+ raw=bytes(blob)
+ if raw[:4]==b"RIFF":
+  audio,sr=sf.read(io.BytesIO(raw),dtype="float32")
+ else:
+  mime=(parts[0].mime_type or "").lower()
+  m=re.search(r"rate[=; ]+(\d+)",mime)
+  sr=int(m.group(1)) if m else 24000
+  assert len(raw)%2==0,"Unexpected speech encoding "+mime
+  audio=np.frombuffer(raw,dtype="<i2").astype(np.float32)/32768
+ if audio.ndim==2:
+  audio=audio.mean(axis=1)
+ assert sr>=16000 and len(audio)>sr*60,"Generated speech empty, too short or corrupt"
+ if sr!=24000:
+  from scipy.signal import resample_poly
+  div=math.gcd(sr,24000)
+  audio=resample_poly(audio,24000//div,sr//div).astype(np.float32)
+  sr=24000
+ audio=np.asarray(audio,dtype=np.float32)
+ assert np.isfinite(audio).all()
+ peak=float(np.max(np.abs(audio)))
+ if peak>.94:
+  audio*=.94/peak
+ wav=BUILD/"VOCE.wav"
+ sf.write(wav,audio,24000)
+ duration=len(audio)/24000
+ print("REAL GACRUX VOICE generated",round(duration,2),"seconds",flush=True)
+ timed=gemini_voice.align(gemini_voice.sentences(script),wav,duration)
+ (BUILD/"VOICE_CACHE_V13.json").write_text(json.dumps(
+  {"provider":"Google Gemini TTS","model":model,"voice":"Gacrux",
+   "sha256":sha(wav),"duration_seconds":duration,"reusable_audio":True},indent=2),encoding="utf-8")
+ return audio,timed
+
 def main():
  if os.getenv("ARTVISION_GEMINI_PROJECT_BILLING_TIER")!="Free":
   raise RuntimeError("Free/no-billing Gemini account not verified; refuse API call")
@@ -302,7 +375,7 @@ def main():
  print("GACRUX MODEL",g.MODEL,"VOICE",g.VOICE,flush=True)
  old=BUILD/"VOCE.wav"
  # generate voice at BUILD and retain a real WAV backup at DEST for future no-rebill edits
- data,timed=g.synthesize(script,BUILD)
+ data,timed=synthesize_supported_gemini(script)
  shutil.copy2(old,DEST/"VOCE_GACRUX.wav")
  duration=len(data)/g.SAMPLE_RATE
  print("VOICE_SECONDS",round(duration,3),"ALIGN",json.loads((BUILD/"ALLINEAMENTO_VOCE.json").read_text()),flush=True)
