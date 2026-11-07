@@ -17,7 +17,7 @@ jobs:
           set -euo pipefail
           mkdir -p output/storia_martinetti_1894_scout
           cd output/storia_martinetti_1894_scout
-          curl -fL --retry 2 --connect-timeout 20 --max-time 180
+          curl -fL --retry 2 --connect-timeout 20 --max-time 180 \
             "https://upload.wikimedia.org/wikipedia/commons/d/d9/Luis_Martinetti%2C_Contortionist_%281894%29.webm" -o ORIGINAL_ARCHIVAL_1894.webm
           test $(wc -c < ORIGINAL_ARCHIVAL_1894.webm) -gt 27000000
           test $(wc -c < ORIGINAL_ARCHIVAL_1894.webm) -lt 33000000
