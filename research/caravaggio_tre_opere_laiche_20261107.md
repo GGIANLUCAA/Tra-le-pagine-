@@ -25,3 +25,14 @@
 - Proporre le tre opere come nuovi episodi singoli dopo la coda già autorizzata. **Non assegnare 12 slot** senza decisione del proprietario.
 - Ricerca cornici/sale separata in chat dedicata; inviare lì dati inventario, oggetto e misure, senza duplicare il loro lavoro.
 - Lavoro aggiuntivo da svolgere: download asset legittimo, sha256, pixel/crop verticali, fonti originali per narrazione, note su diritti territoriali, verifica produzioni già archiviate.
+
+
+## Aggiornamento ricerca immagini — 7 novembre 2026, seconda verifica
+Verifiche su pagine Commons pubbliche (metadati e dichiarazioni visibili, non ancora download dei byte):
+- **I bari:** https://commons.wikimedia.org/wiki/File:Caravaggio_-_The_Cardsharps_(1596-97)_Kimbell_Art_Museum.jpg — originale **10.113 × 7.269 px**, **13,93 MB**, stato dichiarato **PD-Art/PDM**, versione caricata il 28 maggio 2026. **Passo mancante:** scaricare il file, hash, QA ritagli e verificare la disciplina di riuso prevista.
+- **Bacco:** https://commons.wikimedia.org/wiki/File:Bacchus_(by_Michelangelo_Merisi_da_Caravaggio)_%E2%80%93_Galleria_degli_Uffizi,_Florence.jpg — originale **2.628 × 2.989 px**, **932 KB**, contrassegnata **PD-Art/PDM** (pagina descrive derivazione da immagine uffizi.it); qualità e diritti territoriali ancora da revisionare. **Alternative più grandi:** https://commons.wikimedia.org/wiki/File:Bacchus_by_Caravaggio,_ca._1595,_Galleria_degli_Uffizi_(21850101241).jpg — fotografia autonoma **3.264 × 4.928 px**, 12,14 MB; verificare licenza esatta, attribuzione e resa cromatica prima della scelta.
+- **Medusa — NOVITÀ:** https://commons.wikimedia.org/wiki/File:Caravaggio_-_Medusa_Uffizi_-_High_quality.jpg — originale **3.600 × 3.605 px**, **1,71 MB**, con etichetta **CC0 1.0** sulla pagina Commons. Non assumere che l'autore dell'upload sia titolare di tutti i possibili diritti sulla riproduzione; verificare provenienza, fedeltà e disciplina applicabile ai beni culturali italiani.
+- **Medusa — fotografia reale alternativa:** https://commons.wikimedia.org/wiki/File:Medusa_by_Caravaggio,_1597,_Galleria_degli_Uffizi_(21810229096).jpg — immagine fotografica **4.823 × 3.264 px**, **14,25 MB**, scattata da **Carole Raddato** e documentata da Commons/Flickr con **CC BY-SA 2.0**. Può essere utile per studiare l'oggetto tridimensionale ma richiede attribuzione, indicazione modifiche e verifica dell'effetto ShareAlike se incorporata/adattata.
+- **Medusa — fonte troppo piccola:** https://commons.wikimedia.org/wiki/File:Medusa_by_Carvaggio.jpg è solo **935 × 955 px**; non usarla come master se disponibili sorgenti migliori.
+
+**Stato dopo verifica:** sono ora identificati *almeno due candidati* di immagine per ciascuna delle opere, ma le dimensioni e le etichette Commons non dimostrano né download integro né libertà di pubblicare. Nessun `asset_verified` o `ready_for_production` assegnato. Questa chat cura esclusivamente fonti/opere: cornici e musei restano alla chat separata.
