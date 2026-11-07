@@ -557,6 +557,62 @@
         "gold": false,
         "published": false,
         "documentation": "docs/productions/2026-11-07-artvision-bruegel-v212-v213-artistic-pre-review.md"
+      },
+      "museum_private_review_v214": {
+        "date": "2026-11-07",
+        "status": "REAL_NEW_V214_CORRECTIVE_REVIEW_MP4_INDEPENDENT_LIBRARY_READBACK_AND_FFMPEG_PASS_NO_APPROVAL",
+        "supersedes_artistic_reject": "V213 Critico Museum (not deleted, original V144 untouched)",
+        "variant": "critico_museum",
+        "file": "BRUEGEL_REBEL_ANGELS_CRITICO_MUSEUM_V214_REVIEW.mp4",
+        "mp4_bytes": 39741023,
+        "mp4_sha256": "ae43dd4d34b1d38e3f7de6d97d734a2523d0b5c7237a50a8b4c12a2ff8da5e57",
+        "zip_file": "BRUEGEL_REBEL_CRITICO_MUSEUM_V214_PACKAGE.zip",
+        "zip_bytes": 45529608,
+        "zip_sha256": "9368d6122badbbeb3f2211fa9531a6c697df8ef333b8261fc90d67f8dfc7fbbe",
+        "library_mp4_id": "libfile_89ccb27485408191878788b69df8db69",
+        "library_zip_id": "libfile_0a568ca4803481918468365c9ae024cd",
+        "library_QA_id": "libfile_cdb1ccabdcd4819198017baf657045e4",
+        "library_contact_id": "libfile_29974ebe0b8c8191b70db8b88a3307ac",
+        "independent_library_materialized_hash_readback": "PASS_MP4_AND_ZIP_SHA256_FFMPEG_FULL_VIDEO_AUDIO_DECODE_CRC",
+        "original_std_v144_voice_aac_unchanged": true,
+        "original_voice_wav_sha256": "e50f97bf6bf272bdda3a1b8577acf492f974d5c88d2b336d35cf976c5a814ade",
+        "source_art_sha256": "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5",
+        "real_room68_photo_sha256": "9992ac6ee8121af95c785fbdb1450dddbf56fbc24bef7eebef61c4440e51cfce",
+        "room_photo_license": "FrDr CC BY 4.0",
+        "painting_dimensions_cm": [
+          162,
+          117
+        ],
+        "shot_narration_fixed_chapters": [
+          {
+            "chapter_index": 1,
+            "seconds": [
+              16.26,
+              29.06
+            ],
+            "entire_artwork_visible_verified": true
+          },
+          {
+            "chapter_index": 8,
+            "seconds": [
+              98.04,
+              109.4
+            ],
+            "entire_artwork_visible_verified": true
+          }
+        ],
+        "visual_matte_disclosure": "Artwork-derived blurred neutral backdrop while the entire landscape work is shown in portrait; NOT room/photo/frame.",
+        "max_frame_jump_raw": 31.583,
+        "max_frame_jump_decode": 33.312,
+        "sampled_artistic_pre_review": "PASS_FIX_IN_CHAPTER_1_AND_8; FULL_SPEED_ARTISTIC_REVIEW_PENDING; RECHECK_FAST_ZOOM_AROUND_29_9S",
+        "human_full_speed_artistic_review": "PENDING",
+        "commercial_territorial_rights": "PENDING",
+        "approved_new_slots": 0,
+        "Gold": false,
+        "published": false,
+        "paid_api_calls": 0,
+        "documentation": "docs/productions/2026-11-07-artvision-bruegel-critico-museum-v214-artistic-fix.md",
+        "no_duplicate_recount": true
       }
     },
     {
@@ -2754,5 +2810,17 @@
       "blake_ghost_flea_1819_tate_n05889"
     ],
     "instruction": "Do not rerun V212/V213 as new output. Advance independent Museum slot in current queue after source rights and geometry preflight. Dalí remains suspended."
+  },
+  "latest_owner_bruegel_v214_revision_20261107": {
+    "date": "2026-11-07",
+    "event": "V213_ARTISTIC_FAIL_CORRECTED_AS_V214",
+    "new_revision_MP4": 1,
+    "new_independent_approved_slots": 0,
+    "unchanged_verified_slots": 26,
+    "total_slots": 40,
+    "mp4_sha256": "ae43dd4d34b1d38e3f7de6d97d734a2523d0b5c7237a50a8b4c12a2ff8da5e57",
+    "archive_mp4_id": "libfile_89ccb27485408191878788b69df8db69",
+    "archive_zip_id": "libfile_0a568ca4803481918468365c9ae024cd",
+    "next_action": "Full-speed artistic review V212/V214 and commercial rights independently; proceed with independent Museum slot Simberg/Magic Circle/Blake. Never count V214 as new approved slot or re-render it as fresh slot."
   }
 }
