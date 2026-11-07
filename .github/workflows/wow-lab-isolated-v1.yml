@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build_candidate:
-    if: github.event.repository.private == false
+    if: github.event.repository.private == false && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -115,3 +115,29 @@ jobs:
             --title "WOW LAB · $tag · needs human review" \
             --notes-file "$folder/RELEASE_NOTES.md" --prerelease --target main
           echo "PUBLIC_GITHUB_PRERELEASE_ONLY: no social publication, no studio import."
+
+  crow_mask_preflight:
+    if: github.event.repository.private == false && github.ref == 'refs/heads/experiment/wow-lab-isolated-v1-20261029'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install only free CPU tools for mask inspection
+        run: |
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+      - name: Download authentic Met source and prepare HIGH RES MASK candidate only
+        run: |
+          python wow_lab/crow_mask_preflight_v1.py --out "wow_lab/runs/${{ github.run_id }}"
+      - name: Preserve original and mask for human visual inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: WOW_LAB_CROW_MASK_AUDIT_${{ github.run_id }}
+          path: wow_lab/runs/${{ github.run_id }}/*
+          if-no-files-found: warn
+          retention-days: 30
