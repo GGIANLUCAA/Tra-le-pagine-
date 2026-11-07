@@ -1,0 +1,74 @@
+name: "La Storia Rivive ONLY - Venice Grand Canal 1896 high-res genuine historical source"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-venice-1896-new-source-select.yml"
+permissions:
+  contents: read
+jobs:
+  original_high_res_film:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - name: Install FFmpeg and preview libraries
+        run: |
+          sudo apt-get install -y -qq ffmpeg >/dev/null
+          python -m pip install -q pillow
+      - name: Download real source from Commons or legitimate mirror; no generated frames
+        shell: bash
+        run: |
+          mkdir -p out
+          cat > /tmp/get.py <<'PY'
+          import pathlib,hashlib,json,subprocess,urllib.parse,urllib.request,unicodedata
+          from PIL import Image,ImageOps,ImageDraw
+          fn="Venise Panorama du Grand Canal 1896.webm"
+          f=unicodedata.normalize("NFC",fn.replace(" ","_"))
+          d=hashlib.md5(f.encode("utf-8")).hexdigest()
+          url="https://upload.wikimedia.org/wikipedia/commons/"+d[0]+"/"+d[:2]+"/"+urllib.parse.quote(f,safe="().,_")
+          urls=[
+            url,
+            "https://commons.wikimedia.org/wiki/Special:Redirect/file/"+urllib.parse.quote(fn),
+            "https://upload.wikimedia.org/wikipedia/commons/transcoded/"+d[0]+"/"+d[:2]+"/"+urllib.parse.quote(f,safe="().,_")+"/"+urllib.parse.quote(fn)+".720p.vp9.webm"
+          ]
+          # Alternative smaller version of same underlying Alexandre Promio film.
+          fn2="Venise, Panorama du Grand Canal, 1896.webm"
+          f2=fn2.replace(" ","_");d2=hashlib.md5(f2.encode()).hexdigest()
+          urls.append("https://upload.wikimedia.org/wikipedia/commons/"+d2[0]+"/"+d2[:2]+"/"+urllib.parse.quote(f2,safe="().,_"))
+          output=pathlib.Path("out/VENICE_1896_REAL_MOVING_SOURCE.webm")
+          errors=[]
+          for u in urls:
+            try:
+              print("SOURCE_TRY",u,flush=True)
+              with urllib.request.urlopen(urllib.request.Request(u,headers={"User-Agent":"LaStoriaRiviveOriginalSource/1.0 (archival video research)","Accept":"video/*,*/*"}),timeout=45) as inp,output.open("wb") as out:
+                while True:
+                  p=inp.read(1048576)
+                  if not p:break
+                  out.write(p)
+                  if out.tell()>90000000:raise RuntimeError("Too large")
+              data=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_streams","-show_format","-of","json",str(output)],timeout=15))
+              v=next(x for x in data["streams"] if x["codec_type"]=="video")
+              duration=float(data["format"]["duration"])
+              if not(40<duration<57 and v["width"]>=460 and v["height"]>=340):
+                raise RuntimeError("WRONG_VIDEO "+str((duration,v["width"],v["height"])))
+              info={"source":u,"film":"Venice Grand Canal Panorama by Alexandre Promio, 1896","duration":duration,"width":v["width"],"height":v["height"],"size":output.stat().st_size,"sha256":hashlib.sha256(output.read_bytes()).hexdigest(),"source_rights":"Alexandre Promio died 1926, Commons marks film public domain in Italy/US"}
+              pathlib.Path("out/SOURCE_QA.json").write_text(json.dumps(info,indent=2))
+              print("AUTHENTIC_SOURCE_PASS",info,flush=True)
+              break
+            except Exception as e:
+              errors.append(type(e).__name__+": "+str(e)[:150]);print("SOURCE_FAIL",errors[-1],flush=True)
+              if output.exists():output.unlink()
+          else:
+            pathlib.Path("out/FAILURE.json").write_text(json.dumps({"status":"NO_AUTHENTIC_SOURCE","errors":errors},indent=2))
+            raise RuntimeError("No Venice archival video after source alternatives")
+          subprocess.run(["ffmpeg","-nostdin","-y","-v","error","-i",str(output),"-vf","fps=1/4,scale=320:240,tile=4x3","-frames:v","1","out/VENICE_1896_AUTHENTIC_FRAMES.jpg"],check=True,timeout=50)
+          PY
+          python /tmp/get.py
+      - name: Preserve exact original film or blockage for further AI reconstruction
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_VENICE_1896_NEW_ORIGINAL_MOVING_SOURCE
+          path: out/
+          retention-days: 8
