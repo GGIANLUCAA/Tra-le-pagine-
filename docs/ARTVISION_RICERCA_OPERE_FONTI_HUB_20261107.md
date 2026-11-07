@@ -40,3 +40,9 @@ Le cornici e le sale restano al **gruppo dedicato**, non qui. L'attuale propriet
 - Recuperato e conservato senza modifiche: catalogo di 100 opere, coda attuale di 10 opere, regole e workflow fonti V4.
 - **Tre verifiche pubbliche iniziali**: Monet/NGA CC0 dichiarato, Vermeer/Mauritshuis diritti specifici da chiarire, Van Gogh/MoMA riproduzione specifica da licenziare.
 - **Nessuna licenza completa per pubblicazione certificata da questo file, nessun master prodotto.**
+
+
+## Tre nuovi Caravaggio non religiosi (richiesta del proprietario, 7/11/2026)
+Scheda condivisa aggiornata: [I bari, Bacco e Medusa — immagini, fonti, regia e riuso](../research/caravaggio_tre_opere_laiche_20261107.md). Fonti primarie Kimbell/Uffizi; nuove candidate PDM, CC BY e CC BY-SA; avviso ufficiale Uffizi sugli usi promozionali/commerciali (artt. 107–108 Codice dei beni culturali). I file originali **non sono ancora stati scaricati/verificati tramite hash**; nessuna autorizzazione museale ottenuta e nessuna nuova produzione avviata. Prima di trasformare la scheda in `ready_for_production` serve QA dei byte originali e verifica dei diritti dell'esatto utilizzo.
+
+Una ricerca indipendente ricorrente **ArtVision · Ricerca opere e fonti** è stata attivata per continuare a lavorare sui dossier e sugli altri candidati, senza toccare le chat/automazioni di produzione o cornici.
