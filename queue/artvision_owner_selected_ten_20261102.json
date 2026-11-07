@@ -2376,5 +2376,59 @@
     "no_publication": true,
     "master_intact": true,
     "dali_untouched": true
+  },
+  "owner_cycle_20261107_1120_source_gate": {
+    "date": "2026-11-07T11:20:09+01:00",
+    "checked_main_commit_queue_sha": "7db509dc90b1f547f403f8d09c8c7f833dd7e42e",
+    "technical_slots_count": 26,
+    "new_rendered_mp4": 0,
+    "new_verified_zip": 0,
+    "new_approved_slots": 0,
+    "workflow_active_same_slot": false,
+    "prior_existing_reviews_not_recounted": [
+      "Bruegel Rebel V204",
+      "Triumph Death V204",
+      "Blake V202/V203"
+    ],
+    "source_gate_attempts": [
+      {
+        "work": "simberg_garden_death_1896_fng_a_ii_968_16",
+        "first": "https://commons.wikimedia.org/wiki/Category:Garden_of_Death_(Ateneum)",
+        "alternative": "https://commons.wikimedia.org/wiki/File:Hugo_Simberg_-_Kuoleman_puutarha_(1896).jpg",
+        "outcome": "BLOCKED: originals/reproductions only; no verified real frame AND actual room photograph of A II 968:16; must not use Tampere Cathedral fresco",
+        "dimensions_cm": [
+          15.8,
+          17.5
+        ],
+        "medium": "watercolor and gouache",
+        "rights": "public-domain faithful image reproduction only; room photo unavailable"
+      },
+      {
+        "work": "waterhouse_magic_circle_1886_tate_n01572",
+        "first": "https://commons.wikimedia.org/wiki/File:The_Magic_Circle_-_John_William_Waterhouse.jpg",
+        "alternative": "https://commons.wikimedia.org/wiki/File:John_William_Waterhouse_-_Magic_Circle.JPG",
+        "outcome": "BLOCKED: both reproduction-only, no authentic frame/room; second Tate-sourced photo has UK rights claim; do not confuse study or other version",
+        "dimensions_cm": [
+          182.9,
+          127
+        ]
+      },
+      {
+        "work": "bruegel_triumph_death_1562_prado_p001393",
+        "first": "https://commons.wikimedia.org/wiki/File:The_Triumph_of_Death_by_Pieter_Bruegel_the_Elder.jpg",
+        "alternative": "https://commons.wikimedia.org/wiki/File:The_Triumph_of_Death_P001393.jpg",
+        "outcome": "BLOCKED: faithful reproductions only; real frame photo previously verified for V204 but full authentic room and territorial rights not verified; do not rerender V204",
+        "dimensions_cm": [
+          117,
+          162
+        ],
+        "museum_room_reported": "Prado ground floor room 56A"
+      }
+    ],
+    "next_action": "Prioritize a licensed authentic installation photograph of Simberg A II 968:16, Waterhouse N01572, or Triumph P001393 including real frame and room. For Rebel V204 use geometric matched art-plane camera move rather than full-frame crossfade. Reuse existing Standard and voice, one render only after gate; verify full decode SHA ZIP and human shot narration before count.",
+    "dali_suspended": true,
+    "no_paid_calls": true,
+    "no_publication": true,
+    "master_untouched": true
   }
 }
