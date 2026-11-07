@@ -1,0 +1,306 @@
+name: ArtVision V212 Rebel Angels continuous real Room68 Cinema Museum 48s new review
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-rebel-room-v212-continuous.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-owner-single-heavy-render
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guard queue, one incomplete slot and no paid or published actions
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          w=next(w for w in q['works'] if w['id']=='bruegel_fall_rebel_angels_1562_rmfb_584')
+          assert w['slots_delivered_this_selection']==2 and not w.get('museum_approved',False)
+          assert q['owner_automation_id']=='6adca191603c8191a90d5190901cd034'
+          assert q['global_render_gate']['no_paid_calls'] and q['global_render_gate']['no_social_publish']
+          print('ONE UNCOUNTED MUSEUM REVIEW REVISION, NOT A SECOND SLOT AND NOT GOLD')
+          PY
+      - name: Obtain immutable original Standard V153 and art; verify SHA before any render
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/rebel212/in /tmp/rebel212/out /tmp/rebel212/download
+          gh run download 41869229388 --repo "$GITHUB_REPOSITORY" --name BRUEGEL_REBEL_ANGELS_V153_CINEMA_REPLACEMENT_MP4 --dir /tmp/rebel212/download
+          cp /tmp/rebel212/download/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CINEMA_V153_REPLACEMENT_REVIEW.mp4 /tmp/rebel212/in/STANDARD.mp4
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile,hashlib
+          d=Path('/tmp/rebel212')
+          with zipfile.ZipFile(d/'download/BRUEGEL_REBEL_ANGELS_CINEMA_V153_REPLACEMENT_PACKAGE.zip') as z:
+           assert z.testzip() is None
+           (d/'in/ART.jpg').write_bytes(z.read('ORIGINAL_ARTWORK.jpg'))
+          sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+          assert sha(d/'in/STANDARD.mp4')=='dd12618fff53b63c97cff8d1096efa221f8b15d089c4a9a1f2db0e1cba6d8662'
+          assert sha(d/'in/ART.jpg')=='09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5'
+          print('ORIGINAL STANDARD/PAINTING HASH PASS')
+          PY
+      - name: Fetch authentic actual Brussels room photo from Commons and verify CC BY 4.0 bytes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,time,urllib.parse,urllib.request
+          f='Koninklijke Musea voor Schone Kunsten van België 44.jpg'
+          api='https://commons.wikimedia.org/w/api.php?'+urllib.parse.urlencode({'action':'query','format':'json','titles':'File:'+f,'prop':'imageinfo','iiprop':'url|sha1|size|mime|extmetadata'})
+          h={'User-Agent':'ArtVisionMuseum/1.0 (licensed media verification)'}
+          for i in range(2):
+           try:
+            with urllib.request.urlopen(urllib.request.Request(api,headers=h),timeout=45) as r:x=json.load(r)
+            q=next(iter(x['query']['pages'].values()))['imageinfo'][0]
+            assert (q['width'],q['height'])==(5472,3648) and q['size']==7757151
+            assert q['sha1'].lower()=='41635134f1d5544dfe6396e4013c47ff6db5701e'
+            assert 'CC BY 4.0' in q['extmetadata']['LicenseShortName']['value']
+            with urllib.request.urlopen(urllib.request.Request(q['url'],headers=h),timeout=110) as r:blob=r.read()
+            assert len(blob)==q['size'] and hashlib.sha1(blob).hexdigest()==q['sha1'].lower()
+            assert hashlib.sha256(blob).hexdigest()=='9992ac6ee8121af95c785fbdb1450dddbf56fbc24bef7eebef61c4440e51cfce'
+            Path('/tmp/rebel212/in/ROOM68.jpg').write_bytes(blob)
+            print('REAL_BRUSSELS_ROOM68_LICENSE_AND_SHA_PASS')
+            break
+           except Exception:
+            if i:raise
+            time.sleep(5)
+          PY
+      - name: Free renderer (no API costs)
+        run: |
+          python -m pip install --disable-pip-version-check pillow numpy opencv-python-headless imageio-ffmpeg
+          mkdir -p /tmp/rebel212/bin
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          Path('/tmp/rebel212/bin/ffmpeg').symlink_to(Path(get_ffmpeg_exe()))
+          PY
+          echo /tmp/rebel212/bin >> "$GITHUB_PATH"
+      - name: Render single real-room continuous-camera Cinema Museum (new slot trial, not Gold)
+        run: |
+          python - <<'PY'
+          import cv2,numpy as np,json,hashlib,subprocess,zipfile,math
+          from pathlib import Path
+          b=Path('/tmp/rebel212/in');o=Path('/tmp/rebel212/out');o.mkdir(parents=True,exist_ok=True)
+          room=cv2.imread(str(b/'ROOM68.jpg')); art=cv2.imread(str(b/'ART.jpg'))
+          assert room is not None and room.shape[:2]==(3648,5472)
+          assert art is not None and art.shape[:2]==(2772,3840)
+          W,H,FPS,N=720,1280,20,960
+          std=b/'STANDARD.mp4'
+          ca=cv2.VideoCapture(str(std))
+          assert ca.isOpened() and int(ca.get(cv2.CAP_PROP_FRAME_COUNT))==N
+          assert int(ca.get(cv2.CAP_PROP_FRAME_WIDTH))==W and int(ca.get(cv2.CAP_PROP_FRAME_HEIGHT))==H
+          ca.release()
+          sha=lambda path:hashlib.sha256(Path(path).read_bytes()).hexdigest()
+          def run(cmd):
+           r=subprocess.run(list(map(str,cmd)),capture_output=True)
+           if r.returncode:raise RuntimeError(r.stderr.decode(errors='replace')[-2500:])
+           return r.stdout
+          # Register exact painted pixels to the *real* photographed canvas
+          # using SIFT+RANSAC. No guessed corner coordinates or forged frame.
+          s=cv2.SIFT_create(nfeatures=4500,contrastThreshold=0.02)
+          pa,da=s.detectAndCompute(cv2.cvtColor(art,cv2.COLOR_BGR2GRAY),None)
+          pr,dr=s.detectAndCompute(cv2.cvtColor(room,cv2.COLOR_BGR2GRAY),None)
+          assert da is not None and dr is not None,'SIFT photo/art registration missing'
+          match=cv2.BFMatcher().knnMatch(da,dr,k=2)
+          good=[x for x,y in match if x.distance<0.71*y.distance]
+          assert len(good)>=30,('insufficient photographic inlier candidates',len(good))
+          a=np.float32([pa[m.queryIdx].pt for m in good]).reshape(-1,1,2)
+          r=np.float32([pr[m.trainIdx].pt for m in good]).reshape(-1,1,2)
+          M,inlier=cv2.findHomography(a,r,cv2.RANSAC,3.5)
+          assert M is not None and int(inlier.sum())>=22,('homography weak',int(inlier.sum()) if inlier is not None else 0)
+          src_corners=np.float32([[[0,0]],[[3840,0]],[[3840,2772]],[[0,2772]]])
+          actual_corners=cv2.perspectiveTransform(src_corners,M).reshape(4,2)
+          x,y=actual_corners[:,0],actual_corners[:,1]
+          assert 300<x.min()<1400 and 1050<x.max()<2300
+          assert 450<y.min()<1600 and 1100<y.max()<2700,('wrong photographed painting',actual_corners.tolist())
+          approximate=np.float32([[84,138],[272,146],[272,298],[85,294]])*5.7
+          assert float(np.mean(np.linalg.norm(actual_corners-approximate,axis=1)))<300,('not same real framed painting',actual_corners.tolist())
+          projected=cv2.perspectiveTransform(a,M).reshape(-1,2)
+          residual=np.linalg.norm(projected-r.reshape(-1,2),axis=1)[inlier.reshape(-1).astype(bool)]
+          assert float(np.median(residual))<3.5
+          # Pixel plane is tied to the historical dimensions 162 x 117 cm.
+          assert abs(3840/2772-162/117)<.008
+          center=actual_corners.mean(axis=0)
+          def uv(u,v):
+           p=np.array([[[3840*u,2772*v]]],dtype=np.float32)
+           return cv2.perspectiveTransform(p,M).reshape(2)
+          def k(t,u=None,v=None,view=500,world=None):
+           point=uv(u,v) if world is None else world
+           return (float(t),float(point[0]),float(point[1]),float(view))
+          keys=[
+           k(0,view=3648,world=(1110,1824)),
+           k(2.8,view=2850,world=(1050,1530)),
+           k(5.6,view=1150,world=center),
+           k(8.0,.50,.49,680),
+           k(11.0,.37,.31,390),
+           k(14.4,.63,.26,360),
+           k(17.5,.70,.48,380),
+           k(21.0,.53,.64,350),
+           k(24.5,.29,.65,400),
+           k(28.0,.27,.44,365),
+           k(31.0,.52,.35,395),
+           k(34.4,.72,.69,410),
+           k(37.0,.49,.53,620),
+           k(40.0,view=1150,world=center),
+           k(44.0,view=2850,world=(1050,1530)),
+           k(48.0,view=3648,world=(1110,1824))
+          ]
+          def smooth(v):
+           v=max(0,min(1,v))
+           return v*v*(3-2*v)
+          def camera(t):
+           for i in range(len(keys)-1):
+            a,b=keys[i],keys[i+1]
+            if t<=b[0]:
+             z=smooth((t-a[0])/(b[0]-a[0]))
+             return (a[1]+(b[1]-a[1])*z,a[2]+(b[2]-a[2])*z,
+                     math.exp(math.log(a[3])*(1-z)+math.log(b[3])*z))
+           return keys[-1][1:]
+          # Artwork is always the same physically registered 162x117cm plane;
+          # the camera moves, not the painting. No mid-video cuts or crossfades.
+          yy=np.float32(src_corners.reshape(4,2))
+          proc=subprocess.Popen(['ffmpeg','-v','error','-y','-f','rawvideo','-pix_fmt','bgr24','-s','720x1280','-r','20',
+                                  '-i','pipe:0','-c:v','libx264','-preset','veryfast','-crf','20',
+                                  '-pix_fmt','yuv420p',str(o/'SILENT.mp4')],
+                                 stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+          contact=[];contact_at={0,35,88,130,163,220,280,348,420,490,560,630,710,780,840,915,959}
+          oldsmall=None;max_jump=0;max_at=None;detail_masks=[]
+          try:
+           for i in range(N):
+            t=i/FPS
+            cx,cy,view_h=camera(t)
+            view_w=view_h*W/H
+            scale=H/view_h
+            A=np.float64([[scale,0,(view_w/2-cx)*scale],
+                          [0,scale,(view_h/2-cy)*scale],[0,0,1]])
+            whole=cv2.warpPerspective(room,A,(W,H),flags=cv2.INTER_LINEAR,
+                                       borderMode=cv2.BORDER_REFLECT_101)
+            artwork=cv2.warpPerspective(art,A@M,(W,H),flags=cv2.INTER_LINEAR)
+            corners=cv2.perspectiveTransform(src_corners,(A@M).astype(np.float64)).reshape(4,2)
+            mask=np.zeros((H,W),np.uint8)
+            cv2.fillConvexPoly(mask,np.int32(np.round(corners)),255)
+            mask=cv2.GaussianBlur(mask,(0,0),1.3).astype(np.float32)/255.0
+            if 9<=t<=36:detail_masks.append(float(np.mean(mask>.99)))
+            frame=np.uint8(np.clip(whole.astype(np.float32)*(1-mask[:,:,None])+
+                                      artwork.astype(np.float32)*mask[:,:,None],0,255))
+            if i<86:
+             alpha=min(1.,i/10.,(86-i)/18.)*.85
+             if alpha>0:
+              overlay=frame.copy()
+              cv2.putText(overlay,'THE FALL OF THE REBEL ANGELS',(34,93),
+                          cv2.FONT_HERSHEY_SIMPLEX,.67,(235,230,216),2,cv2.LINE_AA)
+              cv2.putText(overlay,'PIETER BRUEGEL  |  1562',(37,126),
+                          cv2.FONT_HERSHEY_SIMPLEX,.36,(210,201,183),1,cv2.LINE_AA)
+              frame=cv2.addWeighted(frame,1-alpha,overlay,alpha,0)
+            small=cv2.resize(frame,(180,320),interpolation=cv2.INTER_AREA)
+            if oldsmall is not None:
+             diff=float(np.mean(np.abs(small.astype(np.float32)-oldsmall.astype(np.float32))))
+             if diff>max_jump:max_jump,max_at=diff,i
+            oldsmall=small
+            if i in contact_at:contact.append((i,small.copy()))
+            proc.stdin.write(np.ascontiguousarray(frame).tobytes())
+           proc.stdin.close();err=proc.stderr.read()
+           assert proc.wait()==0,err.decode(errors='replace')[-1500:]
+          except Exception:
+           proc.kill();raise
+          assert min(detail_masks)>.98,('frame/gallery visible during painting closeups',min(detail_masks))
+          assert max_jump<=32,('possible hard camera cut',max_jump,max_at)
+          mp4=o/'BRUEGEL_REBEL_ANGELS_CINEMA_MUSEUM_V212_REVIEW.mp4'
+          run(['ffmpeg','-v','error','-y','-i',o/'SILENT.mp4','-i',std,
+               '-map','0:v:0','-map','1:a:0','-c:v','copy','-c:a','copy',
+               '-movflags','+faststart',mp4])
+          (o/'SILENT.mp4').unlink()
+          run(['ffmpeg','-v','error','-xerror','-i',mp4,'-map','0','-f','null','-'])
+          aud=lambda p:hashlib.sha256(run(['ffmpeg','-v','error','-i',p,'-map','0:a:0','-c:a','copy','-f','adts','pipe:1'])).hexdigest()
+          assert aud(mp4)==aud(std)
+          sheet=np.full((5*330,4*190,3),22,np.uint8)
+          for n,(i,f) in enumerate(contact):
+           x=(n%4)*190+5;y=(n//4)*330+5
+           sheet[y:y+320,x:x+180]=f
+          cv2.imwrite(str(o/'CONTACT.jpg'),sheet)
+          (o/'COVER.jpg').write_bytes(cv2.imencode('.jpg',contact[1][1],[cv2.IMWRITE_JPEG_QUALITY,94])[1].tobytes())
+          rights=('Pieter Bruegel the Elder, The Fall of the Rebel Angels, 1562, inventory 584; actual painting 162x117cm.\n'
+           'Real Royal Museums of Fine Arts of Belgium Room68 with the exact painting framed, photographed by FrDr; CC BY 4.0.\n'
+           'https://commons.wikimedia.org/wiki/File:Koninklijke_Musea_voor_Schone_Kunsten_van_Belgi%C3%AB_44.jpg\n'
+           'https://creativecommons.org/licenses/by/4.0/\n'
+           'No claim this room is unchanged in 2026 or the frame dates from 1562. Original painting public domain; music copied from V153.\n'
+           'New continuous camera from real room into exact homography-registered painting and back; no photo swaps, frame is only at entry and exit.\n'
+           'Private artistic review only; human full-speed and territorial rights pending; NO GOLD OR SITE/SOCIAL PUBLICATION.\n')
+          (o/'SOURCE_AND_RIGHTS.txt').write_text(rights,encoding='utf8')
+          qa={'schema':'artvision-rebel-room-v212-continuous',
+           'work_id':'bruegel_fall_rebel_angels_1562_rmfb_584','variant':'cinema_museum',
+           'status':'RENDERED_NEEDS_FULL_SPEED_HUMAN_REVIEW',
+           'mp4_sha256':sha(mp4),'mp4_bytes':mp4.stat().st_size,
+           'room_original_sha256':sha(b/'ROOM68.jpg'),'painting_original_sha256':sha(b/'ART.jpg'),
+           'cinema_standard_original_sha256':sha(std),'original_aac_sha256':aud(std),'aac_bit_identical':True,
+           'duration_s':48,'fps':20,'frame_count':960,'resolution':[720,1280],
+           'full_ffmpeg_decode':'PASS','room_is_real_with_exact_painting':True,
+           'room_current_2026_claim':False,'historic_frame_1562_claim':False,
+           'painting_dimensions_cm':[162,117],'painting_scale_is_fixed':True,
+           'sift_matches':len(good),'sift_inliers':int(inlier.sum()),
+           'sift_median_error_photo_px':round(float(np.median(residual)),3),
+           'source_painting_corners_photo_px':actual_corners.tolist(),
+           'all_details_inside_artwork_plane':min(detail_masks)>.98,
+           'max_adjacent_frame_change':round(max_jump,3),'at_frame':max_at,
+           'automatic_camera_qa':'PASS',
+           'human_artistic_review':'PENDING','territorial_rights':'PENDING',
+           'new_completed_approved_slots':0,'museum_approved':False,
+           'gold':False,'published':False,'paid_calls':0}
+          (o/'QA_V212.json').write_text(json.dumps(qa,indent=2),encoding='utf8')
+          zp=o/'BRUEGEL_REBEL_V212_PACKAGE.zip'
+          with zipfile.ZipFile(zp,'w',zipfile.ZIP_DEFLATED,compresslevel=3) as z:
+           for p in (mp4,o/'QA_V212.json',o/'CONTACT.jpg',o/'COVER.jpg',o/'SOURCE_AND_RIGHTS.txt',b/'ROOM68.jpg'):
+            z.write(p,p.name)
+          with zipfile.ZipFile(zp) as z:
+           assert z.testzip() is None
+           assert hashlib.sha256(z.read(mp4.name)).hexdigest()==qa['mp4_sha256']
+          print(json.dumps({'new_review_mp4':1,'mp4_sha256':sha(mp4),'package_sha256':sha(zp),
+                            'full_decode':'PASS','CRC':'PASS','camera_QA':'PASS',
+                            'approved_new_slots':0,'human_review':'PENDING'}))
+          PY
+      - name: Archive actual MP4 and ZIP before artist approval (no site/social)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_REBEL_ROOM68_V212_REAL_REVIEW
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            /tmp/rebel212/out/BRUEGEL_REBEL_ANGELS_CINEMA_MUSEUM_V212_REVIEW.mp4
+            /tmp/rebel212/out/BRUEGEL_REBEL_V212_PACKAGE.zip
+            /tmp/rebel212/out/QA_V212.json
+            /tmp/rebel212/out/CONTACT.jpg
+            /tmp/rebel212/out/COVER.jpg
+            /tmp/rebel212/out/SOURCE_AND_RIGHTS.txt
+  independent_readback:
+    needs: render
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_REBEL_ROOM68_V212_REAL_REVIEW
+          path: /tmp/rebel212_readback
+      - name: Full download SHA-256 MP4, FFmpeg video/audio decode and ZIP CRC
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null 2>&1; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python - <<'PY'
+          import hashlib,json,zipfile,subprocess
+          from pathlib import Path
+          d=Path('/tmp/rebel212_readback');q=json.loads((d/'QA_V212.json').read_text())
+          m=d/'BRUEGEL_REBEL_ANGELS_CINEMA_MUSEUM_V212_REVIEW.mp4'
+          assert m.stat().st_size==q['mp4_bytes']
+          assert hashlib.sha256(m.read_bytes()).hexdigest()==q['mp4_sha256']
+          with zipfile.ZipFile(d/'BRUEGEL_REBEL_V212_PACKAGE.zip') as z:
+           assert z.testzip() is None
+           assert hashlib.sha256(z.read(m.name)).hexdigest()==q['mp4_sha256']
+          subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(m),'-map','0','-f','null','-'],check=True)
+          assert not q['museum_approved'] and not q['published'] and q['new_slots_counted']==0
+          print('REAL NEW MP4 PHYSICAL ARTIFACT READBACK SHA FFMPEG AUDIO ZIP CRC PASS / ARTIST REVIEW PENDING')
+          PY
