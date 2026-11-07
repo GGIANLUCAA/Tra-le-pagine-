@@ -1,0 +1,37 @@
+{
+  "schema": "artvision-museum-trial-source-v208",
+  "date": "2026-11-07",
+  "purpose": "Trial preflight for one still-empty museum slot. Licensed source only; no scene asset or render authorized by this JSON.",
+  "status": "candidate_source_verified_prior_readback__new_trial_needs_geometric_preflight",
+  "museum_trial_evidence": {
+    "waterhouse_magic_circle_1886_tate_n01572": {
+      "source_url": "https://commons.wikimedia.org/wiki/File:Museum_Barberini_Innenraum_leer.jpg",
+      "source_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+      "source_license": "CC BY 4.0 (Daniel Naber, Museum Barberini, 28 Nov 2016; attribution required)",
+      "painting_dimensions_verified": true,
+      "painting_width_cm": 127,
+      "painting_height_cm": 182.9,
+      "painting_accession": "Tate Britain N01572",
+      "painting_dimensions_source": "https://www.tate.org.uk/art/artworks/waterhouse-the-magic-circle-n01572",
+      "scene_kind": "neutral_scenography",
+      "rights_reviewed": true,
+      "asset_readback_verified": true,
+      "asset_readback_evidence": "config/artvision_museum_library_v119.json > real_photograph_research_v120 > PH02; source JPEG SHA verified in Nov 2 archived asset research",
+      "room_is_original_installation": false,
+      "room_source_is_not_scene_asset": true,
+      "frame_is_original": false,
+      "owner_neutral_scenography_exception": "Owner explicitly permitted neutral scenic gallery fallback on 2026-11-07, with disclosure and artistic review",
+      "scenography_disclosure": "Reconstructed scenographic staging from a CC BY 4.0 photograph; not a real Tate installation",
+      "known_risks": [
+        "PH02 doorway interrupts central wall; compositing/camera calibration not yet tested",
+        "No frame asset constructed or verified",
+        "Separate Tate photograph territorial rights review and full speed visual QA required",
+        "No renderer may claim ready or Gold based solely on this manifest"
+      ],
+      "trial_render_only": true,
+      "gold": false,
+      "publication_authorized": false
+    }
+  },
+  "safety": "At rendering, redownload and verify exact original SHA256, media license and image physical size; build camera/frame, inspect seam before full render. Fail closed on mismatch. This manifest alone counts zero new MP4."
+}
