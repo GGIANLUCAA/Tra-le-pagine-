@@ -10,6 +10,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: bruegel1559-immersive-critic-v2-isolated
   cancel-in-progress: false
@@ -48,6 +49,15 @@ jobs:
           print("bundled authentic ffmpeg",exe)
           PY
           echo "/tmp/bruegel-v2-bin" >> "$GITHUB_PATH"
+      - name: Recover the already verified genuine artwork from prior run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/bruegel-source-v2 output/bruegel_1559_critico_immersivo_v2/build
+          gh run download 42417285289 --repo "$GITHUB_REPOSITORY" --name BRUEGEL_V2_RECOVERY_SOURCE_VOICE_NO_REBILL --dir /tmp/bruegel-source-v2
+          cp /tmp/bruegel-source-v2/build/ORIGINAL_ARTWORK_AUTHENTIC.jpg output/bruegel_1559_critico_immersivo_v2/build/ORIGINAL_ARTWORK_AUTHENTIC.jpg
+          echo "Authentic source reused from prior artifact; script will verify SHA256"
       - name: Download genuine full-res painting, generate ONE Gacrux narration and render real MP4
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
