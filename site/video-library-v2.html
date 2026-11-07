@@ -1064,7 +1064,7 @@ async function swPublish(x){
 }
 
 const frag=location.hash.slice(1);if(frag.startsWith('manage=')){g.token=decodeURIComponent(frag.slice(7));localStorage.setItem('vlsAdmin',g.token);history.replaceState(null,'',location.pathname+location.search)}else{g.token=localStorage.getItem('vlsAdmin')||''}
-load(true);setInterval(()=>{if(!document.hidden)load(true)},180000);
+load(true);setInterval(()=>{if(!document.hidden)load(true)},60000);
 })();
 </script>
 </body></html>
