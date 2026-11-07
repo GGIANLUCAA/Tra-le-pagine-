@@ -1,0 +1,27 @@
+{
+  "schema": "artvision-owner-checkpoint-v210",
+  "date": "2026-11-07",
+  "queue_path": "queue/artvision_owner_selected_ten_20261102.json",
+  "verified_count_from_queue": 26,
+  "new_verified_mp4_this_run": 0,
+  "trial": "waterhouse_magic_circle_1886_tate_n01572",
+  "slots": [
+    "critico_museum",
+    "cinema_museum"
+  ],
+  "status": "BLOCKED_PENDING_WALL_GEOMETRY_AND_FRAME",
+  "source_gate": "V209_PASS",
+  "source_sha256": "4eccd18f1fc714305902369d8c2b118f763fc6dec129b89820a3d20242c40e64",
+  "source_url": "https://commons.wikimedia.org/wiki/File:Museum_Barberini_Innenraum_leer.jpg",
+  "source_license": "CC BY 4.0 Daniel Naber",
+  "blocker": "Central doorway; unmeasured clear wall and no calibrated camera/frame mesh. Cannot insert 1.27 x 1.829m artwork credibly. Not a Tate installation.",
+  "attempts": [
+    "V209 live-source SHA+license verification passed",
+    "V210 geometry feasibility diagnostic queued; no painting overlay or MP4; see run 42410504976"
+  ],
+  "next_independent_work": "blake_ghost_flea_1819_tate_n05889",
+  "next_action": "Try exact Tate N05889 authentic frame photo with reusable commercial license; if absent test alternate licensed neutral cabinet photo and physical dimensions; two attempts max; then move to Bruegel Fall of Rebel Angels.",
+  "no_gold": true,
+  "no_publish": true,
+  "dali_suspended": true
+}
