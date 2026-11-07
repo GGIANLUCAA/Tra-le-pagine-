@@ -1,5 +1,9 @@
 name: "Storia V292 · One genuine cinematic film source preflight (FREE)"
 on:
+  pull_request:
+    paths:
+      - ".github/workflows/storia-single-cinema-source-v292.yml"
+      - "src/storia_rivive_cinema_v292_source_scout.py"
   push:
     branches:
       - main
@@ -25,6 +29,8 @@ jobs:
       - name: Check required local tools
         run: |
           set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
           python -m pip install -q "pillow>=10,<13"
           if ! command -v ffmpeg >/dev/null 2>&1 || ! command -v ffprobe >/dev/null 2>&1; then
             sudo apt-get update -qq
