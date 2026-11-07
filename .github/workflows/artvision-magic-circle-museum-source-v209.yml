@@ -2,7 +2,9 @@ name: ArtVision V209 Magic Circle Museum source preflight (no render)
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/artvision-magic-circle-museum-source-v209.yml']
+    paths:
+      - '.github/workflows/artvision-magic-circle-museum-source-v209.yml'
+      - 'config/artvision_museum_trial_sources_v208.json'
 permissions:
   contents: read
 concurrency:
