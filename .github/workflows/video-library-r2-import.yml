@@ -78,9 +78,15 @@ jobs:
           assert '2026-11-02T09:01:00Z'>=fresh_since and not ('2026-11-01T23:59:59Z'>=fresh_since)
           # Private archive receives finished production MP4s, not source footage or test cuts.
           # This protects the owner without reintroducing an artistic-review gate.
-          def archive_candidate(member):
+          def archive_candidate(member, artifact_name=''):
               base=pathlib.PurePosixPath(member).name.upper()
-              if base.startswith(('SOURCE_SHOT_', 'SOURCE_REVIEW_ONLY_', 'SOURCE_24S_', 'SCENE02_BW_FREEZE_')):
+              artifact=(artifact_name or '').upper()
+              # Owner site: production masters/reviews only, never scout or raw source artifacts.
+              # Keep legitimate *_REVIEW.mp4 videos eligible for the private owner catalog.
+              if re.search(r'(^|[_-])(SOURCE|SCOUT|CONTACT|FRAMES|ASSETS|PROBE)([_-]|$)', artifact):
+                  return False
+              if base.startswith(('SOURCE_SHOT_', 'SOURCE_REVIEW_ONLY_', 'SOURCE_24S_',
+                                  'SCENE02_BW_FREEZE_', 'TRUE_BW_MOTION_', 'RAW_', 'FRAME_')):
                   return False
               if 'NOT_FINAL' in base or 'NON_FINALE' in base:
                   return False
@@ -91,6 +97,13 @@ jobs:
           assert not archive_candidate('SOURCE_REVIEW_ONLY_NOT_FINAL__478918.mp4')
           assert not archive_candidate('SOURCE_24S_ROUGHCUT_NOT_FINAL__4374707.mp4')
           assert not archive_candidate('LA_STORIA_RIVIVE_PARIGI_1918_V162_NEURAL_REVIEW_NON_FINALE.mp4')
+          assert archive_candidate('BRUEGEL_REBEL_ANGELS_CINEMA_MUSEUM_V212_REVIEW.mp4',
+                                   'ARTVISION_REBEL_ROOM68_V212_REAL_REVIEW')
+          assert not archive_candidate('TRUE_BW_MOTION_9S.mp4',
+                                       'STORIA_MARTINETTI_1894_SOURCE_CONTACT_REAL_MOTION')
+          assert not archive_candidate('SAMPLE.mp4', 'MELIES_SCOUT_CONTACT_SHEET')
+          assert not archive_candidate('RAW_SCAN_01.mp4', 'SOURCE_ASSETS_ONLY')
+          assert not archive_candidate('TRUE_BW_MOTION_9S.mp4', 'STORIA_FINISHED_FILM')
           # Artistic review is not required for the private owner archive, but an
           # artifact that explicitly says publication is not authorized must never
           # be auto-imported. This is a rights/source boundary, not an art gate.
@@ -319,7 +332,7 @@ jobs:
                               for chunk in r.iter_content(1048576):f.write(chunk)
                       with zipfile.ZipFile(zpath) as z:
                           files=[n for n in z.namelist() if n.lower().endswith(('.mp4','.m4v','.mov','.jpg','.jpeg','.png','.webp')) and not n.endswith('/')]
-                          videos=[n for n in files if n.lower().endswith(('.mp4','.m4v','.mov')) and archive_candidate(n)]
+                          videos=[n for n in files if n.lower().endswith(('.mp4','.m4v','.mov')) and archive_candidate(n,a['name'])]
                           if not videos:
                               cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']});continue
                           blocked=explicit_archive_block_reason(z,a['name'])
