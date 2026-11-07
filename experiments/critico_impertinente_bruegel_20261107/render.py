@@ -7,7 +7,6 @@ from pathlib import Path
 import numpy as np
 import requests
 from PIL import Image, ImageDraw, ImageFilter, ImageEnhance, ImageFont
-from pydub import AudioSegment
 import soundfile as sf
 import edge_tts
 
@@ -111,7 +110,9 @@ def scene_image(src, beat, idx):
     bg=ImageEnhance.Brightness(bg).enhance(1.07)
     return matte(bg,beat["label"],idx)
 async def speech_all():
-    full=AudioSegment.silent(duration=250)
+    # Decode the MP3 with the bundled FFmpeg; never depend on unavailable ffprobe.
+    sr=24000
+    chunks=[np.zeros(int(sr*.25),dtype=np.float32)]
     spans=[]
     for i,beat in enumerate(BEATS):
         mp3=TMP/f"voice_{i:02d}.mp3"
@@ -123,14 +124,17 @@ async def speech_all():
                 last=None;break
             except Exception as e:last=str(e);time.sleep(1)
         if last:raise RuntimeError(f"Natural Italian voice not available on beat {i}: "+last)
-        part=AudioSegment.from_file(mp3)
-        # Each scene lasts as long as the actual voice plus a small comic pause
-        gap=AudioSegment.silent(duration=350 if i in (1,2,5,7) else 230)
-        dur=(len(part)+len(gap))/1000
-        spans.append(dur)
-        full += part + gap
-    full.export(TMP/"voice.wav",format="wav")
-    return spans, len(full)/1000
+        wav=TMP/f"voice_{i:02d}.wav"
+        cmd(["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y","-i",str(mp3),"-ac","1","-ar",str(sr),str(wav)])
+        part,read_sr=sf.read(wav,dtype="float32")
+        assert read_sr==sr and part.ndim==1 and len(part)>sr
+        gap=np.zeros(int(sr*(.35 if i in (1,2,5,7) else .23)),dtype=np.float32)
+        chunks.extend([part,gap])
+        spans.append((len(part)+len(gap))/sr)
+        print("VOICE",i,round(spans[-1],2),flush=True)
+    full=np.concatenate(chunks)
+    sf.write(TMP/"voice.wav",full,sr)
+    return spans,len(full)/sr
 def soundtrack(seconds):
     # Fresh, original unobtrusive chamber pizzicato — never a licensed track.
     sr=22050
