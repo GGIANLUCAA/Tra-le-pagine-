@@ -1958,5 +1958,44 @@
     "Gold_V25": false,
     "additional_paid_api_calls": 0,
     "additional_google_tts_calls": 0
+  },
+  "latest_owner_progress_20261107": {
+    "date": "2026-11-07",
+    "run_id": 42318297574,
+    "workflow": ".github/workflows/artvision-triumph-museum-review-v198.yml",
+    "work_id": "bruegel_triumph_death_1562_prado_p001393",
+    "variant": "cinema_museum",
+    "rendered_new_preview_mp4_count": 1,
+    "new_completed_verified_slots": 0,
+    "queue_total_verified_slots": 26,
+    "queue_total_slots": 40,
+    "artifact_id": 13552340308,
+    "source_frame_photo_sha256": "c7b99abad654ca86c1df05f51b14013cd877eb11b079fde71799636987a73517",
+    "source_frame_photo_license": "Priscila Costa / Ministerio da Cultura, CC BY 2.0 2013",
+    "source_existing_standard_v150_sha256": "c460fe7fa72ac29425de67eec40f986add502c42ec9e4166050c7ce107804138",
+    "output_mp4_sha256": "bba9085f896188f79e86fb10ffe80c6c1f559ccb06d9419324f3c5ff638912d8",
+    "output_mp4_bytes": 15568735,
+    "output_mp4_seconds": 48,
+    "output_package_zip_sha256": "7a301373ae545fd87ad0284ead25c44e924d4986145716376ccf578ce1b5be52",
+    "zip_manifest_embedded_sha_note": "Embedded QA_V198.json zip_sha256 is stale due to self-referential recompression; authoritative final ZIP SHA is output_package_zip_sha256 here. Fix generator for subsequent runs.",
+    "qa_technical": "PASS independent local extracted-artifact SHA MP4, full FFmpeg video+audio decode, ZIP CRC, inner MP4 SHA; source and original AAC match from CI",
+    "qa_github_readback_failure": "Second CI job failed only because ffmpeg executable absent on fresh runner; original artifact download and SHA passed. Local environment used /usr/bin/ffmpeg for successful independent full decode.",
+    "qa_artistico": "REJECTED_REFERENCE_ONLY_NO_APPROVED_ROOM",
+    "rejection_reasons": [
+      "No genuine entire Prado gallery is shown, only an authentic framed photo placed on editorial black matte",
+      "At approx 3.4 seconds a hard transition to the original artwork crop; no continuous 3D camera entry",
+      "V118/V119 real-scale room and full-speed artistic review NOT passed"
+    ],
+    "blocked_shared_gate_for_work": "Museum variants for this work require independently licensed genuine room view plus validated continuous camera, frame size and V119 approval; do not rerender V198 as final",
+    "next_independent_work": "simberg_garden_death_1896_fng_a_ii_968_16",
+    "next_step": "Find a commercially reusable dated photograph showing the EXACT 1896 Ateneum 15.8x17.5 cm watercolor in its true frame and actual gallery; verify full file SHA/license. If unavailable within 2 attempts move to Magic Circle, Ghost of Flea, or Rebel Angels without synthesizing a false gallery.",
+    "never_repeat": [
+      "Do not rerun V198 or old local Triumph V188 as new slot",
+      "Do not count pack/backup/recovery/revisions as new production",
+      "Do not touch completed masters or Dali",
+      "Do not publish or mark Gold"
+    ],
+    "no_paid_calls": true,
+    "no_website_or_social_publish": true
   }
 }
