@@ -1,0 +1,67 @@
+name: CRITICO IMPERTINENTE | Bruegel 1559 | Real Italian MP4
+run-name: "Commedia d'arte · Bruegel · one real narrated MP4"
+on:
+  push:
+    branches:
+      - experiment/critico-impertinente-bruegel-20261107
+    paths:
+      - .github/workflows/critico-impertinente-bruegel-20261107.yml
+      - experiments/critico_impertinente_bruegel_20261107/render.py
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: critico-impertinente-bruegel-20261107-isolated
+  cancel-in-progress: false
+jobs:
+  render_and_qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check genuine media encoding tools
+        run: |
+          set -euo pipefail
+          command -v ffmpeg
+          command -v ffprobe
+          ffmpeg -version | head -1
+          python -m py_compile experiments/critico_impertinente_bruegel_20261107/render.py
+      - name: Install free video and natural Italian voice dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --quiet "edge-tts>=7.0,<9" "pydub>=0.25,<1" "numpy>=1.26,<3" "Pillow>=10,<13" "requests>=2.31,<3" "soundfile>=0.12,<1"
+      - name: Download authentic Bruegel scan and render with neural speech
+        run: |
+          set -euo pipefail
+          python -u experiments/critico_impertinente_bruegel_20261107/render.py
+      - name: Independent second-pass full decode, metadata and integrity checks
+        run: |
+          set -euo pipefail
+          f="output/critico_impertinente_bruegel/BRUEGEL_THE_FIGHT_BETWEEN_CARNIVAL_AND_LENT_CRITICO_COMICO.mp4"
+          test -s "$f"
+          ffmpeg -hide_banner -loglevel error -xerror -i "$f" -f null -
+          python - <<'PY'
+          import pathlib,json,hashlib,subprocess
+          r=pathlib.Path("output/critico_impertinente_bruegel")
+          m=json.loads((r/"QA.json").read_text())
+          b=(r/m["video"]).read_bytes()
+          assert m["full_decode"]=="PASS"
+          assert m["status"]=="FINISHED_MP4_TECHNICAL_QA_PASS_REVIEW_NOT_SOCIAL_PUBLISHED"
+          assert m["bytes"]==len(b) and m["sha256"]==hashlib.sha256(b).hexdigest()
+          assert m["scene_count"]==9 and m["social_published"] is False
+          assert (r/"COPERTINA.jpg").stat().st_size>30000
+          print("FINAL VERIFIED",m["video"],len(b),m["duration_seconds"],m["sha256"])
+          PY
+      - name: Deliver a REAL MP4 and complete Android-download package
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_CRITICO_IMPERTINENTE_MP4_COPERTINA_E_FONTI
+          path: |
+            output/critico_impertinente_bruegel/*.mp4
+            output/critico_impertinente_bruegel/*.jpg
+            output/critico_impertinente_bruegel/*.txt
+            output/critico_impertinente_bruegel/QA.json
+          if-no-files-found: error
+          retention-days: 30
