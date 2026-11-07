@@ -1,0 +1,55 @@
+name: "La Storia Rivive ONLY - Enchanted original source and 3 real videos visual QA"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-enchanted-and-serial-visual-audit-20261107.yml"
+permissions:
+  contents: read
+jobs:
+  moving_source_and_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Install FFmpeg
+        run: sudo apt-get install -y -qq ffmpeg >/dev/null
+      - name: Retrieve genuine new historical film source from LOC
+        shell: bash
+        run: |
+          mkdir -p out/source out/review
+          if curl --retry 2 --connect-timeout 20 --max-time 95 -fLsS 'https://tile.loc.gov/storage-services/media/ammem/AmericanAnimation/1592.mp4' -o out/source/ENCHANTED_DRAWING_1900_ORIGINAL.mp4; then
+            ffprobe -v error -show_format -show_streams -of json out/source/ENCHANTED_DRAWING_1900_ORIGINAL.mp4 > out/source/SOURCE_FFPROBE.json
+            sha256sum out/source/ENCHANTED_DRAWING_1900_ORIGINAL.mp4 > out/source/SOURCE_SHA256.txt
+            ffmpeg -nostdin -v error -xerror -i out/source/ENCHANTED_DRAWING_1900_ORIGINAL.mp4 -f null -
+            ffmpeg -nostdin -y -v error -i out/source/ENCHANTED_DRAWING_1900_ORIGINAL.mp4 -vf 'fps=1/6,scale=320:240,tile=4x4' -frames:v 1 out/source/ENCHANTED_FRAME_SHEET.jpg
+            echo "SOURCE_REAL_MOVING_FILM_PASS" > out/source/STATUS.txt
+          else
+            rm -f out/source/ENCHANTED_DRAWING_1900_ORIGINAL.mp4
+            echo "SOURCE_BLOCKED" > out/source/STATUS.txt
+          fi
+      - name: Audit 3 distinct existing serial V2 MP4 frame timelines
+        shell: bash
+        run: |
+          mkdir -p out/review
+          for item in 'storia-cinema-rubber-head-1901-v2-android-review RUBBER_HEAD_1901_V2_SOCIAL_REVIEW.mp4 RUBBER_HEAD' 'storia-cinema-vanishing-lady-1896-v2-android-review VANISHING_1896_V2_SOCIAL_REVIEW.mp4 VANISHING' 'storia-cinema-boxing-cats-1894-v2-android-review BOXING_CATS_1894_V2_SOCIAL_REVIEW.mp4 BOXING_CATS'; do
+            set -- $item
+            tag="$1"; file="$2"; name="$3"
+            if gh release download "$tag" -p "$file" -D out/review --repo "$GITHUB_REPOSITORY"; then
+              ffprobe -v error -show_format -show_streams -of json "out/review/$file" > "out/review/$name-ffprobe.json" || true
+              ffmpeg -nostdin -y -v error -i "out/review/$file" -vf 'fps=1/1.7,crop=iw:ih*0.55:0:ih*0.24,scale=320:280,tile=4x4' -frames:v 1 "out/review/$name-12frames.jpg" || true
+              sha256sum "out/review/$file" > "out/review/$name-SHA256.txt"
+              rm "out/review/$file"
+            else
+              echo "FAILED to get $tag/$file" >> out/review/VIDEO_RETRIEVAL_FAILED.txt
+            fi
+          done
+      - name: Upload source (if available) and frame contact QA - no publication
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_ENCHANTED_NEW_SOURCE_PLUS_THREE_V2_VISUAL_AUDIT
+          path: out/
+          retention-days: 7
