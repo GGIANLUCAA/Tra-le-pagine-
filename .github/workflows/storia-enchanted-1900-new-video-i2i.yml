@@ -1,0 +1,94 @@
+name: "La Storia Rivive ONLY - NEW The Enchanted Drawing 1900 true motion AI visual episode"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-enchanted-1900-new-video-i2i.yml"
+      - "src/storia_cinema_enchanted_1900_visual_social_v1.py"
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: storia-enchanted-1900-genuine-new-episode
+  cancel-in-progress: false
+jobs:
+  new_original_motion_video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install no-cost source + true free I2I prerequisites
+        run: |
+          sudo apt-get install -y -qq ffmpeg >/dev/null
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: Render entirely NEW genuine historical motion + ONE free source-locked I2I photo
+        run: |
+          python -m py_compile src/storia_cinema_enchanted_1900_visual_social_v1.py
+          python -u src/storia_cinema_enchanted_1900_visual_social_v1.py
+      - name: Full H264 AAC decode, source fingerprint, source lock, ZIP CRC
+        run: |
+          set -euo pipefail
+          cd output/storia_cinema_enchanted_1900_v1
+          ffmpeg -nostdin -v error -xerror -i ENCHANTED_DRAWING_1900_SOCIAL_VISUAL_REVIEW.mp4 -f null -
+          python - <<'PY'
+          import json,hashlib,zipfile,pathlib,subprocess
+          p=pathlib.Path(".")
+          r=json.loads((p/"VISUAL_REPORT.json").read_text())
+          q=json.loads((p/"PHOTO_QA.json").read_text())
+          d=json.loads((p/"DELIVERY.json").read_text())
+          v=p/"ENCHANTED_DRAWING_1900_SOCIAL_VISUAL_REVIEW.mp4"
+          z=p/"ENCHANTED_DRAWING_1900_VIDEO_COVER_SOCIAL.zip"
+          assert r["resolution"]==[1080,1920] and 16<r["duration_s"]<28
+          assert not r["artistic_approval"] and not r["published"] and not r["paid_calls"] and not r["vidu_new_clip"]
+          assert q["real_free_I2I_created"] and q["status"]=="REAL_PHOTO_TECHNICAL_GATE_PASS_ARTISTIC_REVIEW_PENDING"
+          assert hashlib.sha256(v.read_bytes()).hexdigest()==d["video_sha"]
+          with zipfile.ZipFile(z) as f: assert f.testzip() is None
+          for typ,expect in [("v","h264"),("a","aac")]:
+            codec=subprocess.check_output(["ffprobe","-v","error","-select_streams",typ,"-show_entries","stream=codec_name","-of","default=nw=1:nk=1",str(v)]).decode().strip()
+            assert codec==expect
+          print("REAL_SOURCE_MOVEMENT_TRUE_FREE_I2I_VIDEO_ZIP_TECH_PASS_ARTISTIC_REVIEW_PENDING")
+          PY
+      - name: Preserve files or exact failure reason (not only ZIP repackaging)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_ENCHANTED_DRAWING_1900_NEW_FILM_MOTION_TRUE_I2I_REVIEW
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_cinema_enchanted_1900_v1/ENCHANTED_DRAWING_1900_SOCIAL_VISUAL_REVIEW.mp4
+            output/storia_cinema_enchanted_1900_v1/ENCHANTED_DRAWING_1900_VIDEO_COVER_SOCIAL.zip
+            output/storia_cinema_enchanted_1900_v1/SOCIAL_COVER.jpg
+            output/storia_cinema_enchanted_1900_v1/ORIGINAL_VS_PHOTO_VISUAL_QA.jpg
+            output/storia_cinema_enchanted_1900_v1/GENERATIVE_PHOTO_REAL_CANDIDATE.png
+            output/storia_cinema_enchanted_1900_v1/ANCHOR_REAL_ORIGINAL_BW.png
+            output/storia_cinema_enchanted_1900_v1/PHOTO_QA.json
+            output/storia_cinema_enchanted_1900_v1/VISUAL_REPORT.json
+            output/storia_cinema_enchanted_1900_v1/RIGHTS.json
+            output/storia_cinema_enchanted_1900_v1/FAILURE.json
+      - name: GitHub prerelease for owner Android REVIEW, NOT site/social
+        if: success()
+        run: |
+          set -euo pipefail
+          cd output/storia_cinema_enchanted_1900_v1
+          tag=storia-cinema-enchanted-drawing-1900-v1-review-android
+          gh release create "$tag" ENCHANTED_DRAWING_1900_SOCIAL_VISUAL_REVIEW.mp4 ENCHANTED_DRAWING_1900_VIDEO_COVER_SOCIAL.zip SOCIAL_COVER.jpg ORIGINAL_VS_PHOTO_VISUAL_QA.jpg --repo "$GITHUB_REPOSITORY" --prerelease --title "The Enchanted Drawing 1900 - NEW genuine I2I motion review, NOT final" --notes "Entirely different historical motion picture from LOC. Original black-white film actually moves, freezes on real source frame and shows a REAL FREE Finegrain I2I photo, then genuine source motion with neural chroma. Art review pending; no Vidu, no site/social publication. Musical/audio file from original source is NOT reused."
+          for f in ENCHANTED_DRAWING_1900_SOCIAL_VISUAL_REVIEW.mp4 ENCHANTED_DRAWING_1900_VIDEO_COVER_SOCIAL.zip; do
+            curl --fail --location --retry 3 --silent --show-error "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$f" -o "/tmp/$f"
+            cmp "$f" "/tmp/$f"
+          done
+          python - <<'PY'
+          import zipfile
+          assert zipfile.ZipFile("/tmp/ENCHANTED_DRAWING_1900_VIDEO_COVER_SOCIAL.zip").testzip() is None
+          print("EXTERNAL_GITHUB_ANDROID_DOWNLOAD_PASS")
+          PY
+      - name: Fact-only issue #144 progress, never claim artistic approval
+        if: success()
+        run: |
+          gh issue comment 144 --repo "$GITHUB_REPOSITORY" --body "NEW REAL distinct episode CANDIDATE: The Enchanted Drawing (1900) from LOC original MP4, 22-second genuine moving source excerpt, FREE Finegrain source-matched AI still, original moving BW -> real freeze -> photo -> actual movement with neural color, H264/AAC and ZIP+cover+4 social texts, full decode/hash/ZIP CRC and external GitHub download PASS. Artifact and preview on https://github.com/GGIANLUCAA/Tra-le-pagine-/releases/tag/storia-cinema-enchanted-drawing-1900-v1-review-android. IMPORTANT ARTISTIC QA PENDING: moving segment is colored REAL original source, not photoreal I2V; no new Vidu or paid calls, no site/social publication. Do not count as approved until real visual anatomy/color/fidelity inspection."
