@@ -263,56 +263,83 @@
       },
       "museum_private_review_v200": {
         "date": "2026-11-07",
-        "status": "TWO_NEW_MUSEUM_REAL_ROOM_VIDEO_FILES_LOCALLY_RENDERED_AND_QA_VERIFIED_NOT_APPROVED_NOT_STORED_DURABLY",
-        "technical_slots_new": 2,
-        "canonical_completed_slots_added": 0,
-        "existing_standard_masters_untouched": true,
-        "original_real_room_photo": {
-          "institution": "Royal Museums of Fine Arts of Belgium - Room 68",
+        "status": "FOUR_MP4_TECHNICALLY_VERIFIED_TWO_NEW_MUSEUM_WITH_REAL_ROOM68_ARTISTIC_REVIEW_PENDING_NO_GOLD",
+        "source_room": {
+          "photo_name": "Koninklijke Musea voor Schone Kunsten van België 44.jpg",
           "source": "https://commons.wikimedia.org/wiki/File:Koninklijke_Musea_voor_Schone_Kunsten_van_Belgi%C3%AB_44.jpg",
-          "author": "FrDr",
-          "license": "CC BY 4.0",
-          "size_pixels": [
+          "original_pixels": [
             5472,
             3648
           ],
           "sha256": "9992ac6ee8121af95c785fbdb1450dddbf56fbc24bef7eebef61c4440e51cfce",
-          "actual_room_visible": true,
-          "current_2026_exhibition_verified": false
+          "license": "CC BY 4.0",
+          "author": "FrDr",
+          "authentic_old_masters_room_photo": true,
+          "same_specific_painting_in_photo": true,
+          "frame_in_original_photo": true,
+          "year_of_capture_currently_verified": false,
+          "frame_artist_original_1562_verified": false,
+          "gallery_2026_current_identical": false,
+          "license_attribution_required": true,
+          "visual_human_approval_pending": true
         },
-        "critico_museum": {
-          "variant": "critico_museum",
-          "duration_seconds": 115.8,
-          "bytes": 45581716,
-          "sha256": "214be6294e8e48df9814253ddd17bc58226ab61c69d10b930d1596f47e4559ac",
-          "original_Gacrux_AAC_sha_match": true,
-          "full_ffmpeg_decode": "PASS"
-        },
-        "cinema_museum": {
-          "variant": "cinema_museum",
-          "duration_seconds": 48,
-          "bytes": 20771089,
+        "new_cinema_museum": {
+          "file": "CINEMA_MUSEUM_V200_REAL_ROOM.mp4",
           "sha256": "708076b42b7a135e5fc49ea16412e686324f809867f1ef125913e71dfc7afe19",
-          "original_music_AAC_sha_match": true,
-          "full_ffmpeg_decode": "PASS"
+          "bytes": 20771089,
+          "duration_s": 48,
+          "original_music_bitidentical_sha256": "ee095d8747f3e9aba2769817ec2abedb94f9748427ae96a9c334f58ddc23b2d5",
+          "library_path": "/ArtVision/Rebel_Angels_V200/CINEMA_MUSEUM_V200_REAL_ROOM.mp4",
+          "library_file_id": "libfile_045638ae9e548191b0db0f52add927d6",
+          "technical_video_decode": "PASS",
+          "artistic_review": "PENDING",
+          "count_as_approved_slot": false
         },
-        "four_video_zip": {
-          "bytes": 115137278,
-          "sha256": "158712f2945b27754c82cf2ef2753a6bf4b83e4708369807bcc428f93357264a",
-          "crc": "PASS",
-          "internal_four_mp4_SHA": "PASS",
-          "storage": "conversation_sandbox_only"
+        "new_critico_museum": {
+          "file": "CRITICO_MUSEUM_V200_REAL_ROOM.mp4",
+          "sha256": "214be6294e8e48df9814253ddd17bc58226ab61c69d10b930d1596f47e4559ac",
+          "bytes": 45581716,
+          "duration_s": 115.8,
+          "original_Gacrux_AAC_bitidentical_sha256": "5675b8de172887d3c451819b91d5ce7116da46b86af985de4325e5a2ad84bb49",
+          "library_path": "/ArtVision/Rebel_Angels_V200/CRITICO_MUSEUM_V200_REAL_ROOM.mp4",
+          "library_file_id": "libfile_7d8f128511b081918a57f3040a1033ce",
+          "technical_video_decode": "PASS",
+          "artistic_review": "PENDING",
+          "count_as_approved_slot": false
         },
-        "rights_credit": "Real room photo FrDr CC BY 4.0; faithful source PD painting; social unpublished",
-        "archive_status": "LIBRARY_UPLOAD_FAILED_container_session_expired_NO_READBACK",
-        "owner_full_speed_review": "PENDING",
-        "museum_approved": false,
-        "Gold_V25": false,
-        "social_published": false,
-        "report": "docs/productions/2026-11-07-artvision-rebel-room-v200-four-real-mp4-review.md",
-        "source_scout_run_id": 42318836628,
-        "source_scout_artifact_id": 13551542958,
-        "spent_API_credits": 0
+        "permanent_library": {
+          "status": "SUCCESS_UPLOAD_AND_LIST_CONFIRM_2026_11_07",
+          "folder": "/ArtVision/Rebel_Angels_V200",
+          "original_critico_standard": {
+            "filename": "CRITICO_STANDARD_V144.mp4",
+            "size": 15150574,
+            "library_file_id": "libfile_0addaabb14948191ae462b3366a39559"
+          },
+          "original_cinema_standard": {
+            "filename": "CINEMA_STANDARD_V153.mp4",
+            "size": 13079183,
+            "library_file_id": "libfile_89a0ce97ab2c8191a219a80ad1e83abe"
+          },
+          "new_critico_museum": {
+            "filename": "CRITICO_MUSEUM_V200_REAL_ROOM.mp4",
+            "size": 45581716,
+            "library_file_id": "libfile_7d8f128511b081918a57f3040a1033ce"
+          },
+          "new_cinema_museum": {
+            "filename": "CINEMA_MUSEUM_V200_REAL_ROOM.mp4",
+            "size": 20771089,
+            "library_file_id": "libfile_045638ae9e548191b0db0f52add927d6"
+          },
+          "all_4_zip": {
+            "filename": "REBEL_ANGELS_4X1_V200_COMPLETO.zip",
+            "size": 115137278,
+            "library_file_id": "libfile_9fca1d5643e48191a7e5e8aabe940b0e"
+          },
+          "readback_level": "listed_size_and_metadata_verified_not_independent_full_sha_download",
+          "downloadable_android_playback": "NOT_VERIFIED_IN_CLIENT"
+        },
+        "next_action": "DO NOT duplicate V196/V197/V200 or source Room68 photo. Owner should review 2 V200 museum real-room MP4s and V82 critic shot quality (115.8s), then check rights and approve. Meanwhile rotate to another missing 2/4 Museum candidate; do not count review as Gold.",
+        "output_report": "docs/productions/2026-11-07-artvision-rebel-room-v200-four-real-mp4-review.md"
       }
     },
     {
