@@ -531,6 +531,32 @@
         "paid_api_calls": 0,
         "documentation": "docs/productions/2026-11-07-artvision-bruegel-rebel-room68-v212-v213.md",
         "avoid_duplicates": true
+      },
+      "museum_artistic_pre_review_20261107": {
+        "review_kind": "AI_VISUAL_SAMPLED_FRAMES_NOT_FULL_SPEED_NOT_HUMAN_APPROVAL",
+        "cinema_museum_v212": "PRELIMINARY_VISUAL_PASS__FULL_SPEED_AND_RIGHTS_PENDING",
+        "critico_museum_v213": "ARTISTIC_REJECT__CHAPTER_1_AND_8_ENTIRE_PAINTING_NOT_VISIBLE_DURING_NARRATION",
+        "v213_defects": [
+          {
+            "voice_interval_s": [
+              16.26,
+              29.06
+            ],
+            "issue": "Chapter La vera opera requires whole painting; crop remains central"
+          },
+          {
+            "voice_interval_s": [
+              98.04,
+              109.4
+            ],
+            "issue": "Final chapter requires whole painting; crop remains central and gallery appears after narration"
+          }
+        ],
+        "next_action": "Produce a reversible V214 Critico Museum camera-only fix using original Gacrux AAC, original room/painting and identical masters; sample frames and review full-speed before candidate approval. Avoid rerender of V212.",
+        "artistic_approved": false,
+        "gold": false,
+        "published": false,
+        "documentation": "docs/productions/2026-11-07-artvision-bruegel-v212-v213-artistic-pre-review.md"
       }
     },
     {
