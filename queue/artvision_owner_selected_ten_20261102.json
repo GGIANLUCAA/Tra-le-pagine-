@@ -1667,7 +1667,53 @@
         "site_audit_run_id": 41876068253
       },
       "site_archive_verified_slots": 2,
-      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04",
+      "museum_private_review_v202_v203": {
+        "date": "2026-11-07",
+        "status": "TWO_DISTINCT_NEW_PRIVATE_REVIEW_MP4S_RENDERED_AND_INDEPENDENT_LIBRARY_READBACK_VERIFIED_NO_NEW_APPROVED_MUSEUM_SLOT",
+        "approved_slot_increment": 0,
+        "cinema_museum_v202": {
+          "mp4_sha256": "c4a8b72b2303aca247f9ea600830bbad35f83143aab993ae6f3aab2e4a2867ec",
+          "size_bytes": 7237296,
+          "duration_s": 48,
+          "private_mp4_library_id": "libfile_4e972380094c8191b7c60278e06dcd5c",
+          "zip_sha256": "ef562fbb078cebf5c33972d845fe6a3b51f7165930aca7d418a24f4649c5a79a",
+          "private_zip_library_id": "libfile_7dfd94393d088191a474ac5addc7e7b6",
+          "ffmpeg_audio_video_full_decode": "PASS",
+          "zip_crc": "PASS",
+          "human_artistic_review": "PENDING"
+        },
+        "critico_museum_v203": {
+          "mp4_sha256": "c4ea744874dca2660bfde4d1de4501844f7ba34660cbd9cf73b64eac6c1da010",
+          "size_bytes": 31102628,
+          "duration_s": 135.45,
+          "private_mp4_library_id": "libfile_6722461e4e948191925b9f21091ca730",
+          "zip_sha256": "6c6605db4278ace27b8f1ed8cbb2cc144efc1327508d164efd151a4a466464c9",
+          "private_zip_library_id": "libfile_58fea674087481918da7ae9706a0dda0",
+          "sentence_map_count": 22,
+          "speech_offset_s": 3.505,
+          "reused_original_WAV_sha256": "e67051d538581f080ecef94938f189903d93042199a5581c3970e1601b23eb60",
+          "aac_bit_identical_to_standard": true,
+          "ffmpeg_audio_video_full_decode": "PASS",
+          "zip_crc": "PASS",
+          "human_artistic_review": "PENDING"
+        },
+        "genuine_frame_photo": {
+          "source": "https://commons.wikimedia.org/wiki/File:William_blake,_il_fantasma_di_una_pulce,_1819-20_ca.jpg",
+          "author": "Sailko",
+          "license": "CC BY 3.0",
+          "original_sha256": "e4f263b70c9022036718cbd3068c4f24044d468da2d10cda805c6298a2bfe2d0",
+          "source_run_id": 42323358490,
+          "source_artifact_id": 13554560021,
+          "authentic_exact_work_and_frame": true,
+          "actual_room_verified": false
+        },
+        "reason_no_slot_count": "Authentic frame photo does not show actual museum room, full-speed human artistic QA and commercial rights clearance PENDING; V80 V118 V119 not met",
+        "new_paid_calls": 0,
+        "published": false,
+        "gold": false,
+        "documentation": "docs/productions/2026-11-07-artvision-blake-v202-v203-real-new-review-mp4s.md"
+      }
     },
     {
       "id": "delacroix_death_sardanapalus_1827_louvre_rf2346",
