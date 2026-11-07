@@ -30,6 +30,7 @@ Correggere V213, che era stato **respinto artisticamente** dopo la revisione cam
 - MP4 Library: `/ArtVision/BRUEGEL_REBEL_ANGELS_CRITICO_MUSEUM_V214_REVIEW.mp4`; `libfile_89ccb27485408191878788b69df8db69`.
 - ZIP Library: `/ArtVision/BRUEGEL_REBEL_CRITICO_MUSEUM_V214_PACKAGE.zip`; `libfile_0a568ca4803481918468365c9ae024cd`.
 - Report QA Library: `libfile_cdb1ccabdcd4819198017baf657045e4`. Contact sheet Library: `libfile_29974ebe0b8c8191b70db8b88a3307ac`.
+- Script V214 riproducibile nella Libreria privata: `/ArtVision/artvision_v214_renderer.py`, id `libfile_b6e3a9dc9a7481918695e85e90ea9f52`, SHA256 `cc491a48512ee06a17c58ac7935ff5bb96955b279bdc39b3777cb8921d9af39f`; richiede gli artifact originali, SHA locked e percorso di lavoro locale; **non** è un renderer pronto all'uso su qualsiasi runner senza ripristinare quelle sorgenti.
 - **Readback indipendente:** materializzati MP4 e ZIP dalla Libreria nel container, entrambi SHA-256 coincidevano; ZIP CRC e FFmpeg full decode nuovamente PASS. I link `sandbox:/mnt/data` sono limitati a questa conversazione e non vanno documentati come URL pubblici permanenti.
 
 ## Coda e prossimi passi
