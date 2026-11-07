@@ -1,0 +1,112 @@
+{
+  "schema": "artvision-museum-frame-lab-handoff-v1",
+  "created_at": "2026-11-07",
+  "maintainer_role": "museum_and_frame_technical_lab_not_production_owner",
+  "protocol": "docs/ARTVISION_LAB_PRODUZIONE_PONTE_V1_20261107.md",
+  "priority_order": [
+    "AGENTS.md",
+    "docs/REGOLE_ATTIVE.md",
+    "docs/ARTVISION_MUSEUM_CORNICI_V80_REGOLA_GLOBALE.md",
+    "docs/ARTVISION_MUSEUM_V118_QUALITA_OBBLIGATORIA_20261101.md",
+    "docs/ARTVISION_V119_LIBRERIA_MUSEI_CORNICI_ANTI_REGRESSIONE.md"
+  ],
+  "production_owner_automation_id": "6adca191603c8191a90d5190901cd034",
+  "production_queue": "queue/artvision_owner_selected_ten_20261102.json",
+  "separate_future_works_hub": "research/artvision_future_works_index_v1_20261107.json",
+  "allowed_research_status": [
+    "candidate",
+    "source_checked",
+    "trial_qa_passed",
+    "production_approved"
+  ],
+  "allowed_handoff_status": [
+    "research_only",
+    "proposed_for_trial",
+    "approved_for_adoption"
+  ],
+  "approval_policy": "No user-approved rule/preset without a specific approval record. Research reports and SHA checks do not automatically change AGENTS, active queue, owners, Gold V25 or publication.",
+  "current_items": [
+    {
+      "id": "LAB-MUSEUM-PRESET-V119-FOUNDATION",
+      "category": "reusable_room_and_frame_library",
+      "subject": "Five galleries GAL01-GAL05 and five frame families FRA01-FRA05",
+      "research_status": "candidate",
+      "production_handoff": "research_only",
+      "dossier_path": "docs/ARTVISION_V119_LIBRERIA_MUSEI_CORNICI_ANTI_REGRESSIONE.md",
+      "manifest_path": "config/artvision_museum_library_v119.json",
+      "rooms_catalogued": 5,
+      "frame_families_catalogued": 5,
+      "verified_reusable_room_assets": 0,
+      "verified_reusable_frame_assets": 0,
+      "asset_sha256": null,
+      "prototype_mp4_sha256": null,
+      "owner_approval": false,
+      "evidence": "V119 manifests mark all ten as candidate_unbuilt. Cyclops and Hiroshige remain reference models, not ready-to-install scene assets.",
+      "blockers": [
+        "No verified finished reusable geometry/lighting/texture/MP4 presets",
+        "No approved artwork-specific frame associations"
+      ],
+      "next_action": "Audit historical assets and proofs; for each preset obtain actual source bytes, license, dimensions, camera QA, original-or-reconstructed disclosure and pilot review; do not change global rules based on descriptions."
+    },
+    {
+      "id": "LAB-MAGIC-CIRCLE-PH02-V208",
+      "category": "photographic_room_trial",
+      "artwork": {
+        "title": "The Magic Circle",
+        "artist": "John William Waterhouse",
+        "year": 1886,
+        "holding": "Tate Britain",
+        "accession": "N01572",
+        "height_cm": 182.9,
+        "width_cm": 127,
+        "official_source_url": "https://www.tate.org.uk/art/artworks/waterhouse-the-magic-circle-n01572"
+      },
+      "museum_photo_candidate": {
+        "source_url": "https://commons.wikimedia.org/wiki/File:Museum_Barberini_Innenraum_leer.jpg",
+        "claimed_license": "CC BY 4.0",
+        "attribution": "Daniel Naber, Museum Barberini, 28 Nov 2016",
+        "prior_verified_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+        "licensing_evidence_path": "config/artvision_museum_trial_sources_v208.json",
+        "is_current_holding_gallery": false
+      },
+      "research_status": "source_checked",
+      "production_handoff": "research_only",
+      "dossier_path": "config/artvision_museum_trial_sources_v208.json",
+      "related_preflight": "ArtVision V209 workflow run https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42400165677 ; result must be checked, not assumed",
+      "asset_sha256": null,
+      "prototype_mp4_sha256": null,
+      "owner_approval": false,
+      "evidence": "The photo and its SHA/license are previously documented; this record has not verified the current trial source redownload, framed scene geometry or an actual MP4. Not a Tate installation.",
+      "blockers": [
+        "Doorway interrupts middle of source wall",
+        "No verified frame asset for this exact work",
+        "No continuous-perspective entrance/exit preview or visual QA"
+      ],
+      "next_action": "Check V209 actual run outcome; if source passes, trial physically possible wall placement with correct cm and photograph attribution, otherwise stop after two reasonable tries and pass to next independent Museum slot."
+    },
+    {
+      "id": "LAB-MUSEUM-APPROVED-BENCHMARKS",
+      "category": "quality_references_only",
+      "subject": "Odilon Redon Cyclops and Hiroshige Sudden Shower Museum Immersion",
+      "research_status": "source_checked",
+      "production_handoff": "research_only",
+      "dossier_path": "docs/ARTVISION_MUSEUM_IMMERSION_MODELLO_APPROVATO_V46.md",
+      "asset_sha256": null,
+      "prototype_mp4_sha256": null,
+      "owner_approval": false,
+      "evidence": "Historical owner-approved *reference style*, not permission to treat any other frame, gallery or painting dimension as approved.",
+      "blockers": [
+        "Need independently verifiable reusable room/frame asset bytes and appropriate rights per target work"
+      ],
+      "next_action": "Use as visual QA comparisons for transitions, realistic room and painting scale; do not copy a mismatched artwork-specific frame."
+    }
+  ],
+  "approved_for_adoption": [],
+  "history": [
+    {
+      "date": "2026-11-07",
+      "action": "Initialize read-only lab-to-production handoff linked to V80/V118/V119 and current Magic Circle source trial; no production queue or automation modifications.",
+      "source": "owner approval to establish parallel chats with a stable repository bridge"
+    }
+  ]
+}
