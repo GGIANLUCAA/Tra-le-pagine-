@@ -53,6 +53,15 @@ for key,name in NAMES.items():
             "license_notes":"needs per-photo CC attribution and rights QA"})
         if not any(v in lic for v in ["CC BY","CC0"]):
             entry["status"]="UNSUPPORTED_LICENSE";rows.append(entry);continue
+        if key=="ROOM68_KONINKLIJKE_44":
+            blob_original=load(info["url"],retries=3)
+            if len(blob_original)!=info["size"] or hashlib.sha1(blob_original).hexdigest()!=info["sha1"].lower():
+                raise ValueError("Original museum-room source hash/size mismatch")
+            original_path=OUT/"ROOM68_KONINKLIJKE_44_ORIGINAL.jpg"
+            original_path.write_bytes(blob_original)
+            entry["original_download_sha256"]=hashlib.sha256(blob_original).hexdigest()
+            entry["original_download_verified"]=True
+            entry["full_resolution_local"]=original_path.name
         url=info.get("thumburl")
         if not url:raise ValueError("Commons thumbnail link unavailable")
         blob=load(url)
