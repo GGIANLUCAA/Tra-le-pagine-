@@ -259,13 +259,14 @@ def finish(segments,voice_dur):
       "-map","0:v:0","-map","[a]","-c:v","copy","-c:a","aac","-b:a","192k",
       "-ar","44100","-ac","2","-movflags","+faststart","-shortest",OUTPUT])
  run(["ffmpeg","-hide_banner","-loglevel","error","-xerror","-i",OUTPUT,"-f","null","-"])
- info=json.loads(run(["ffprobe","-v","error","-show_entries","format=duration,size:stream=codec_type,codec_name,width,height","-of","json",OUTPUT]))
- vids=[s for s in info["streams"] if s.get("codec_type")=="video"]
- auds=[s for s in info["streams"] if s.get("codec_type")=="audio"]
- assert len(vids)==1 and vids[0]["width"]==W and vids[0]["height"]==H
- assert vids[0]["codec_name"]=="h264" and len(auds)==1 and auds[0]["codec_name"]=="aac"
- dur=float(info["format"]["duration"])
- assert 70<=dur<=160 and OUTPUT.stat().st_size>2500000,info
+ import av
+ with av.open(str(OUTPUT)) as container:
+  vids=[s for s in container.streams if s.type=="video"]
+  auds=[s for s in container.streams if s.type=="audio"]
+  assert len(vids)==1 and vids[0].codec_context.width==W and vids[0].codec_context.height==H
+  assert vids[0].codec_context.name=="h264" and len(auds)==1 and auds[0].codec_context.name=="aac"
+  dur=container.duration/av.time_base
+ assert 70<=dur<=160 and OUTPUT.stat().st_size>2500000,(dur,OUTPUT.stat().st_size)
  return dur
 
 def main():
