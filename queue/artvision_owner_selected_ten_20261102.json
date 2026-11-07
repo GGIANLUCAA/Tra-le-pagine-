@@ -2174,5 +2174,33 @@
     "published": false,
     "paid_calls": 0,
     "dali_untouched": true
+  },
+  "owner_cycle_20261107_0912_transition_gate": {
+    "date": "2026-11-07",
+    "status": "ARTISTIC_BLOCK_ON_EXISTING_REVIEW_AND_PIVOT_TO_INDEPENDENT_SOURCE_GATE",
+    "new_verified_mp4_in_this_cycle": 0,
+    "new_completed_slots": 0,
+    "queue_count": 26,
+    "queue_total": 40,
+    "work_id": "bruegel_fall_rebel_angels_1562_rmfb_584",
+    "source_video": "V202 previously rendered, NOT a new output in this cycle",
+    "gate_script": "src/artvision_museum_transition_gate_v203.py",
+    "gate_tested_against": "/ArtVision/Rebel_Angels_V202/ARTVISION_REBEL_ANGELS_V202_GITHUB_ARTIFACT.zip",
+    "entry_cut_at_frame": 140,
+    "entry_mean_rgb_jump": 27.236,
+    "exit_cut_at_frame": 800,
+    "exit_mean_rgb_jump": 67.886,
+    "max_allowed_mean_rgb_jump": 18,
+    "gate_result": "FAIL",
+    "cause": "The Standard uses dark graphic matte behind the full artwork; the Museum shot contains the true red gallery wall and real frame. A straight edit cannot be continuous. Reject the V202 as artistically approved. Do not use ghosted crossfades, invented walls, or arbitrary frame replacement.",
+    "source_gate_independent_work": "bruegel_triumph_death_1562_prado_p001393",
+    "source_gate_result": "ROOM_NOT_FOUND",
+    "source_gate_evidence": "https://commons.wikimedia.org/wiki/File:The_Triumph_of_Death_P001393.jpg",
+    "verified_gallery_metadata": "Prado room 56A; painting 117 x 162 cm; P001393",
+    "source_gate_cause": "Painting reproduction available, but it does not show a licensed photograph of the same framed work in room 56A. Previously verified 2013 photo documents frame only, not the whole room.",
+    "next_action": "Find exact commercial-use photograph of P001393 in Prado room 56A, or independently sourced full installation image of another incomplete Museum. No fake gallery. V202 needs physical continuous approach shot, not crossfade. Keep V200 and masters unchanged.",
+    "no_paid_calls": true,
+    "no_publish": true,
+    "dali_suspended": true
   }
 }
