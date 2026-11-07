@@ -162,7 +162,14 @@ def make_clip(imgpath,idx,seconds):
     cmd(["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y","-loop","1","-framerate",str(FPS),"-i",str(imgpath),"-vf",vf,"-frames:v",str(frames),"-c:v","libx264","-threads","2","-preset","veryfast","-crf","20","-pix_fmt","yuv420p","-r",str(FPS),"-movflags","+faststart",str(outfile)])
     return outfile,frames
 def probe(p):
-    return json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration,size:stream=codec_name,codec_type,width,height","-of","json",str(p)]))
+    import av
+    with av.open(str(p)) as c:
+        streams=[]
+        for s in c.streams:
+            z={"codec_type":s.type,"codec_name":s.codec_context.name}
+            if s.type=="video":z.update(width=s.codec_context.width,height=s.codec_context.height)
+            streams.append(z)
+        return {"streams":streams,"format":{"duration":str(c.duration/av.time_base),"size":str(p.stat().st_size)}}
 def main():
     original,url,source_sha=get_img()
     print("SOURCE",original.size,url,source_sha,flush=True)
