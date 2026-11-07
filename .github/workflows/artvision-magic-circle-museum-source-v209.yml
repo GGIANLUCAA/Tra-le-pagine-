@@ -1,0 +1,66 @@
+name: ArtVision V209 Magic Circle Museum source preflight (no render)
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-magic-circle-museum-source-v209.yml']
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-magic-circle-source-v209
+  cancel-in-progress: false
+jobs:
+  source_preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check selected slot, license, source bytes, and physical size
+        run: |
+          python - <<'PY'
+          import hashlib,json,urllib.request,urllib.parse,pathlib
+          root=pathlib.Path('/tmp/magic209');root.mkdir(exist_ok=True)
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          m=json.load(open('config/artvision_museum_trial_sources_v208.json'))
+          wid='waterhouse_magic_circle_1886_tate_n01572'
+          w=next(x for x in q['works'] if x['id']==wid)
+          e=m['museum_trial_evidence'][wid]
+          assert w['slots_delivered_this_selection']==2 and not w['museum_approved']
+          assert w['painting_cm']['height']==e['painting_height_cm']==182.9
+          assert w['painting_cm']['width']==e['painting_width_cm']==127
+          assert e['scene_kind']=='neutral_scenography' and e['trial_render_only']
+          assert not e['gold'] and not e['publication_authorized']
+          filename='Museum_Barberini_Innenraum_leer.jpg'
+          url='https://commons.wikimedia.org/w/api.php?'+urllib.parse.urlencode({
+            'action':'query','format':'json','titles':'File:'+filename,'prop':'imageinfo',
+            'iiprop':'url|sha1|size|mime|extmetadata'})
+          h={'User-Agent':'ArtVisionMuseumSourcePreflight/1.0 (source rights and integrity check)'}
+          with urllib.request.urlopen(urllib.request.Request(url,headers=h),timeout=40) as response:
+            data=json.load(response)
+          info=next(iter(data['query']['pages'].values()))['imageinfo'][0]
+          license=info['extmetadata']['LicenseShortName']['value']
+          assert 'CC BY 4.0' in license,license
+          assert info['mime']=='image/jpeg'
+          assert info['url'].startswith('https://upload.wikimedia.org/')
+          with urllib.request.urlopen(urllib.request.Request(info['url'],headers=h),timeout=100) as response:
+            blob=response.read(info['size']+1)
+          assert len(blob)==info['size'] and hashlib.sha1(blob).hexdigest()==info['sha1'].lower()
+          sha=hashlib.sha256(blob).hexdigest()
+          assert sha==e['source_sha256'],(sha,e['source_sha256'])
+          (root/'ROOM_PH02_ORIGINAL.jpg').write_bytes(blob)
+          result={'work_id':wid,'status':'SOURCE_READBACK_PASS_NEEDS_ARTISTIC_GEOMETRY',
+            'source_sha256':sha,'source_sha1':info['sha1'],'bytes':len(blob),
+            'pixels':[info['width'],info['height']],'license':license,
+            'painting_dimensions_cm':[127,182.9],
+            'obstruction':'Central doorway: no wall-placement geometry has been approved',
+            'render_authorized':False,'new_mp4':0,'gold':False,'published':False}
+          (root/'SOURCE_PREFLIGHT_V209.json').write_text(json.dumps(result,indent=2)+'\n')
+          print(json.dumps(result))
+          PY
+      - name: Save source evidence only, not a video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_MAGIC_CIRCLE_V209_SOURCE_ONLY_NOT_MP4
+          path: /tmp/magic209/
+          if-no-files-found: warn
+          retention-days: 30
