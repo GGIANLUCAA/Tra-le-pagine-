@@ -1736,6 +1736,95 @@
         "allow_paid_api_calls": false,
         "social_published": false,
         "gold_v25": false
+      },
+      "museum_private_review_v210_v211": {
+        "date": "2026-11-07",
+        "kind": "TWO_DISTINCT_NEW_PRIVATE_SCENOGRAPHIC_REVIEW_MP4S_NOT_AUTHENTIC_TATE_ROOM_OR_FRAME",
+        "artistic_work": "The Magic Circle (1886) - Tate N01572",
+        "owner_4x1_approved_slots_added": 0,
+        "scene": {
+          "source": "https://commons.wikimedia.org/wiki/File:Museum_Barberini_Innenraum_leer.jpg",
+          "photographer": "Daniel Naber",
+          "license": "CC BY 4.0",
+          "original_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+          "original_source_pixels": [
+            3648,
+            2736
+          ],
+          "photograph_is_real_empty_barberini_gallery": true,
+          "scene_is_digital_composite": true,
+          "painting_is_at_tate_not_in_this_room": true,
+          "frame_is_editorial_nonhistoric": true,
+          "frame_originality_approved": false,
+          "real_tate_museum_installation_approved": false
+        },
+        "original_painting": {
+          "source": "https://commons.wikimedia.org/wiki/File:The_Magic_Circle_-_John_William_Waterhouse.jpg",
+          "original_photo_sha256": "b846a11f640378fa0839e3a31583a128db1db2e91e2938f6fd23a75499c77451",
+          "actual_painting_height_cm": 182.9,
+          "actual_painting_width_cm": 127,
+          "commercial_territorial_rights_review": "PENDING"
+        },
+        "cinema_museum_v210": {
+          "filename": "THE_MAGIC_CIRCLE_V210_SCENOGRAPHIC_CINEMA_REVIEW.mp4",
+          "bytes": 14799976,
+          "sha256": "41eae79cfdeb7f2cc779f93e8d5beb2064e534c478d195f0510e392bd3eb43c2",
+          "duration_s": 48,
+          "video_frames": 960,
+          "fps": 20,
+          "resolution": [
+            720,
+            1280
+          ],
+          "original_cinema_v158_AAC_preserved_bitidentical": true,
+          "full_ffmpeg_all_stream_decode": "PASS",
+          "private_library_mp4_id": "libfile_fd194946f5408191ae6e1c6959fc50fe",
+          "private_library_android_zip_id": "libfile_2fe75d9ac43c8191aa03286bf90c8ea6",
+          "android_zip_sha256": "3e51fcd3e3e487c77df338f4e2f32cc955c1329a1c9fd97c0727483584c6615e",
+          "source_zip_sha256": "7dcc38afad2e9d24441ff6afe28f66680d7a9e21d5e414c214ea66b3af2c2eca",
+          "private_library_source_zip_id": "libfile_5c008e55e90c81919d91c0ebe42cba81",
+          "library_readback_SHA_FFmpeg_zip_CRC": "PASS",
+          "human_full_speed_artistic_review": "PENDING"
+        },
+        "critico_museum_v211": {
+          "filename": "THE_MAGIC_CIRCLE_V211_SCENOGRAPHIC_CRITICO_MOBILE.mp4",
+          "bytes": 16019664,
+          "sha256": "af5b6a88f8de1a6530aac25c974fc7f313ca817be7e9aa432232dc176be20712",
+          "duration_s": 127.65,
+          "video_frames": 2553,
+          "fps": 20,
+          "resolution": [
+            720,
+            1280
+          ],
+          "full_high_quality_sha256": "3c4bbbad723df66f26a7d6eda27dfc96ba1aac79a40e6b48d6887b1d795e5ef9",
+          "full_high_quality_bytes": 28410775,
+          "voice_original_V159_wav_sha256": "c943c91e4dbee1156b00ed3d5e4b287259de1f52663ea6a0972aae94469659c7",
+          "voice_original_AAC_preserved_bitidentical": true,
+          "voice_original_ADTS_sha256": "c93a28fb45bb64dfa8678e4dddb3b932d17b5ba30dc183309e1d887942053812",
+          "measured_voice_offset_seconds": 3.505,
+          "narrated_shots_aligned_count": 22,
+          "full_ffmpeg_all_stream_decode": "PASS",
+          "private_library_mobile_mp4_id": "libfile_36c3fbaad8748191b6b2ee5f5ce66242",
+          "private_library_high_quality_mp4_id": "libfile_8666f8ee31f48191b8e0ed4243fad73c",
+          "private_library_android_zip_id": "libfile_ebec6ab752ec8191bedddf93ae2a5c33",
+          "android_zip_sha256": "58e322f04329c64ec305bf5c15d1c82ae726ff14c8684f43af757dfc5c3d1870",
+          "source_zip_sha256": "354cfdfe649a9d989e5681a22787d8a6ec53373a1dc084407ebf6dd4dafaa675",
+          "private_library_source_zip_id": "libfile_78f845e92d5c8191b27ea448dc636779",
+          "library_readback_SHA_FFmpeg_zip_CRC": "PASS",
+          "human_full_speed_artistic_review": "PENDING"
+        },
+        "safety": {
+          "gold": false,
+          "museum_approved": false,
+          "site_published": false,
+          "social_published": false,
+          "no_new_paid_api_calls": true,
+          "no_original_master_modified": true,
+          "new_approved_slots": 0
+        },
+        "report": "docs/productions/2026-11-07-artvision-magic-circle-v210-v211-two-new-scenographic-mp4s.md",
+        "next_action": "Find frame/room authentic to exact Tate N01572 and settle territorial rights; these private trials cannot be counted as final Museum. If no genuine source, move to next selected independently producible work; don't repeat V210/V211 as new slots."
       }
     },
     {
