@@ -67,6 +67,13 @@ def font(size,bold=False):
 
 def download_original():
  target=BUILD/"ORIGINAL_ARTWORK_AUTHENTIC.jpg"
+ if target.is_file():
+  with Image.open(target) as restored:
+   restored.load()
+   pixels=restored.size
+  if pixels==(3840,2798) and sha(target)=="27dfcb114dd8ff6d45e1661c96f8f9e2489df993eb877bd1592406d64fd9ffce":
+   return target,SOURCE_URLS[-1],pixels
+  raise RuntimeError("Invalid stored image bytes")
  errors=[]
  for url in SOURCE_URLS:
   try:
