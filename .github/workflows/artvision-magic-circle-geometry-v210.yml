@@ -1,0 +1,68 @@
+name: ArtVision V210 Magic Circle real-room geometry feasibility (NO RENDER)
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/artvision-magic-circle-geometry-v210.yml']
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-magic-circle-geometry-v210
+  cancel-in-progress: false
+jobs:
+  measure_wall:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify licensed room and test safe picture placement without compositing
+        run: |
+          python -m pip install --disable-pip-version-check pillow
+          python - <<'PY'
+          import hashlib,json,urllib.request,urllib.parse,pathlib,io
+          from PIL import Image,ImageDraw
+          out=pathlib.Path('/tmp/artvision_v210');out.mkdir(exist_ok=True)
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          e=json.load(open('config/artvision_museum_trial_sources_v208.json'))['museum_trial_evidence']['waterhouse_magic_circle_1886_tate_n01572']
+          w=next(x for x in q['works'] if x['id']=='waterhouse_magic_circle_1886_tate_n01572')
+          assert w['slots_delivered_this_selection']==2 and not w['museum_approved']
+          assert e['scene_kind']=='neutral_scenography' and e['trial_render_only']
+          assert e['painting_width_cm']==127 and e['painting_height_cm']==182.9
+          filename='Museum_Barberini_Innenraum_leer.jpg'
+          url='https://commons.wikimedia.org/w/api.php?'+urllib.parse.urlencode({'action':'query','format':'json','titles':'File:'+filename,'prop':'imageinfo','iiprop':'url|sha1|size|mime|extmetadata'})
+          headers={'User-Agent':'ArtVisionGeometryV210/1.0 (source and license check)'}
+          with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=40) as r:data=json.load(r)
+          info=next(iter(data['query']['pages'].values()))['imageinfo'][0]
+          assert 'CC BY 4.0' in info['extmetadata']['LicenseShortName']['value']
+          assert info['mime']=='image/jpeg'
+          with urllib.request.urlopen(urllib.request.Request(info['url'],headers=headers),timeout=100) as r:blob=r.read(info['size']+1)
+          assert len(blob)==info['size'] and hashlib.sha1(blob).hexdigest()==info['sha1'].lower()
+          sha=hashlib.sha256(blob).hexdigest()
+          assert sha==e['source_sha256'],(sha,e['source_sha256'])
+          im=Image.open(io.BytesIO(blob)).convert('RGB')
+          # This diagnostic intentionally does not insert a painting or assert that a wall is free.
+          # A single uncalibrated photograph cannot prove real-world wall width, depth or occlusion.
+          im.thumbnail((1280,900))
+          d=ImageDraw.Draw(im)
+          d.rectangle((8,8,im.width-8,72),fill=(20,20,20))
+          d.text((22,20),'V210 SOURCE ONLY - NO PAINTING INSERTED / NO WALL APPROVAL',fill='white')
+          im.save(out/'ROOM_SOURCE_GEOMETRY_REVIEW.jpg',quality=90)
+          report={'status':'BLOCKED_GEOMETRY_NEEDS_CALIBRATED_WALL_AND_FRAME',
+            'new_mp4':0,'count_as_completed_slot':False,'scene_kind':'neutral_scenography',
+            'painting_width_m':1.27,'painting_height_m':1.829,
+            'room_source_sha256':sha,'room_license':'CC BY 4.0 - Daniel Naber, attribution required',
+            'wall_dimensions_m':None,'camera_calibration':None,'frame_model_sha256':None,
+            'source_url':e['source_url'],
+            'reason':'Central doorway obstructs mounting surface. No measured free wall, camera calibration, 3D frame or perspective match. A 2D overlay would fail V118/V119.',
+            'next_independent_work':'blake_ghost_flea_1819_tate_n05889',
+            'artistic_review':'NOT_POSSIBLE_NO_MP4','gold':False,'published':False}
+          (out/'GEOMETRY_GATE_V210.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report))
+          PY
+      - name: Persist diagnostic evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V210_GEOMETRY_BLOCK_EVIDENCE_NOT_VIDEO
+          path: /tmp/artvision_v210/
+          retention-days: 30
+          if-no-files-found: warn
