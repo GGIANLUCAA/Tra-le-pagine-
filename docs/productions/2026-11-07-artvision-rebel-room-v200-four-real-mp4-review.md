@@ -38,3 +38,15 @@ La nuova regia usa corrispondenze SIFT/RANSAC fra sala vera, vera cornice e font
 3. Eventuale autorizzazione editoriale e verifica licenze territoriali; solo allora incrementare due Museum slot come pronti, senza Gold automatico.
 
 **Nessuna spesa API, nessuna pubblicazione, nessun Gold / autoriparazione inventata.**
+
+
+## CORREZIONE DEL 7 NOVEMBRE 2026 — BACKUP LIBRERIA RISOLTO
+Il precedente fallimento di caricamento da `container_path` è stato **risolto** caricando gli stessi file della conversazione attraverso gli identificativi esatti `source_file_ref.file_id`. Il repository non conserva ancora i byte del V200, ma ora la **Libreria ChatGPT contiene tutti e quattro i MP4 distinti e lo ZIP** e una lettura `files.list` ha confermato le dimensioni dopo il salvataggio:
+
+- `/ArtVision/Rebel_Angels_V200/CRITICO_STANDARD_V144.mp4`: 15.150.574 B, `libfile_0addaabb14948191ae462b3366a39559`.
+- `/ArtVision/Rebel_Angels_V200/CRITICO_MUSEUM_V200_REAL_ROOM.mp4`: 45.581.716 B, `libfile_7d8f128511b081918a57f3040a1033ce`.
+- `/ArtVision/Rebel_Angels_V200/CINEMA_STANDARD_V153.mp4`: 13.079.183 B, `libfile_89a0ce97ab2c8191a219a80ad1e83abe`.
+- `/ArtVision/Rebel_Angels_V200/CINEMA_MUSEUM_V200_REAL_ROOM.mp4`: 20.771.089 B, `libfile_045638ae9e548191b0db0f52add927d6`.
+- `/ArtVision/Rebel_Angels_V200/REBEL_ANGELS_4X1_V200_COMPLETO.zip`: 115.137.278 B, `libfile_9fca1d5643e48191a7e5e8aabe940b0e`.
+
+**Limite QA:** confermati esistenza, persistenza, nome e dimensioni tramite Libreria dopo la copia; non ancora effettuato un secondo download della Libreria con SHA byte-per-byte, né aperti i video su Android in app. `Gold=false`, `museum_approved=false`, `site_published=false`, `slots_delivered_this_selection=2` restano invariati; il problema iniziale `container_session_expired` va trattato come **storico risolto** per questo pacchetto e non più come blocco attuale. Non duplicare V200 né ricerche della foto di Room 68: continuare con altre opere senza fonte verificata o review.
