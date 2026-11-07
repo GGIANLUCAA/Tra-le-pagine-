@@ -1,0 +1,111 @@
+name: Bruegel 1559 | Immersive Italian Art Critic V2
+run-name: "The Fight Between Carnival and Lent | narrated immersive pilot 1080x1920"
+on:
+  push:
+    branches:
+      - experiment/critico-immersivo-bruegel-wow-20261107
+    paths:
+      - .github/workflows/bruegel-1559-immersive-critic-v2.yml
+      - experiments/bruegel_immersivo_v2/render.py
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bruegel1559-immersive-critic-v2-isolated
+  cancel-in-progress: false
+jobs:
+  render_real_film:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify syntax and isolated experiment scope
+        run: |
+          set -euo pipefail
+          python -m py_compile experiments/bruegel_immersivo_v2/render.py
+          test "$(git branch --show-current)" = "experiment/critico-immersivo-bruegel-wow-20261107"
+      - name: Validate free-only voice credentials available; prohibit spending without consent
+        env:
+          FREE_VOICE_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+        run: |
+          test -n "$FREE_VOICE_KEY" || { echo "No verified owner free-tier TTS account; stop without generating or fallback Edge voice"; exit 2; }
+      - name: Install authorized open source video and alignment tools
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check --quiet \
+            "google-genai>=2.25.0,<4" "numpy>=1.26,<3" "Pillow>=10,<13" "requests>=2.31,<3" \
+            "soundfile>=0.12,<1" "scipy>=1.11,<2" "faster-whisper==1.2.1" \
+            "av==17.1.0" "imageio-ffmpeg>=0.6,<1" "huggingface-hub==0.34.4" "fsspec==2025.7.0"
+          mkdir -p /tmp/bruegel-v2-bin
+          python - <<'PY'
+          import os
+          from imageio_ffmpeg import get_ffmpeg_exe
+          exe=get_ffmpeg_exe()
+          os.symlink(exe,"/tmp/bruegel-v2-bin/ffmpeg")
+          print("bundled authentic ffmpeg",exe)
+          PY
+          echo "/tmp/bruegel-v2-bin" >> "$GITHUB_PATH"
+      - name: Download genuine full-res painting, generate ONE Gacrux narration and render real MP4
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+          ARTVISION_GEMINI_PROJECT_BILLING_TIER: "Free"
+          ARTVISION_ASR_MODEL: "small"
+          HF_HUB_DISABLE_XET: "1"
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: |
+          set -euo pipefail
+          python -u experiments/bruegel_immersivo_v2/render.py
+      - name: Verify real source, 1080x1920 MP4 with audio, full decode and ZIP CRC
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,subprocess,zipfile
+          from pathlib import Path
+          p=Path("output/bruegel_1559_critico_immersivo_v2")
+          d=json.loads((p/"VERIFICA_QA.json").read_text(encoding="utf8"))
+          assert d["status"]=="RENDERED_MP4_REAL_TECH_QA_PASS_ARTISTIC_REVIEW_PENDING"
+          assert d["full_ffmpeg_decode"]=="PASS" and d["resolution"]==[1080,1920]
+          assert d["narrator"]=="Google Gemini Gacrux" and d["frames"]>=14
+          assert d["human_artistic_approval"] is False and d["published"] is False
+          f=p/d["video"]
+          assert f.stat().st_size==d["bytes"]
+          assert hashlib.sha256(f.read_bytes()).hexdigest()==d["sha256"]
+          subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(f),"-f","null","-"],check=True)
+          z=p/"BRUEGEL_1559_CRITICO_IMMERSIVO_V2_CONSEGNA.zip"
+          with zipfile.ZipFile(z) as a:
+            assert a.testzip() is None
+            assert d["video"] in a.namelist()
+          print("TRUE FINISHED MP4",f,d["duration_seconds"],d["bytes"],d["sha256"])
+          PY
+      - name: Deliver real MP4 / voice / cover / transcript / QA for Android
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_1559_V2_CRITICO_IMMERSIVO_VERIFICATO
+          path: |
+            output/bruegel_1559_critico_immersivo_v2/*.mp4
+            output/bruegel_1559_critico_immersivo_v2/*.zip
+            output/bruegel_1559_critico_immersivo_v2/*.jpg
+            output/bruegel_1559_critico_immersivo_v2/*.wav
+            output/bruegel_1559_critico_immersivo_v2/*.srt
+            output/bruegel_1559_critico_immersivo_v2/*.txt
+            output/bruegel_1559_critico_immersivo_v2/VERIFICA_QA.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Preserve already generated voice and source on failure without new TTS charge
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_V2_RECOVERY_SOURCE_VOICE_NO_REBILL
+          path: |
+            output/bruegel_1559_critico_immersivo_v2/build/ORIGINAL_ARTWORK_AUTHENTIC.jpg
+            output/bruegel_1559_critico_immersivo_v2/build/VOCE.wav
+            output/bruegel_1559_critico_immersivo_v2/build/VOICE_CACHE_V13.json
+            output/bruegel_1559_critico_immersivo_v2/build/ALLINEAMENTO_VOCE.json
+            output/bruegel_1559_critico_immersivo_v2/COPIONE_ITALIANO.txt
+            output/bruegel_1559_critico_immersivo_v2/VOCE_GACRUX.wav
+          if-no-files-found: warn
+          retention-days: 10
