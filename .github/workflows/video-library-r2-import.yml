@@ -82,6 +82,10 @@ jobs:
               base=pathlib.PurePosixPath(member).name.upper()
               if base.startswith(('SOURCE_SHOT_', 'SOURCE_REVIEW_ONLY_', 'SOURCE_24S_', 'SCENE02_BW_FREEZE_')):
                   return False
+              # Audio-polish renders are intermediate review exports bundled beside the
+              # named final master. They are never independent catalog titles.
+              if base.startswith('AUDIO_POLISHED_REVIEW'):
+                  return False
               if 'NOT_FINAL' in base or 'NON_FINALE' in base:
                   return False
               return True
@@ -90,6 +94,8 @@ jobs:
           assert not archive_candidate('SOURCE_SHOT_01__158381.mp4')
           assert not archive_candidate('SOURCE_REVIEW_ONLY_NOT_FINAL__478918.mp4')
           assert not archive_candidate('SOURCE_24S_ROUGHCUT_NOT_FINAL__4374707.mp4')
+          assert not archive_candidate('AUDIO_POLISHED_REVIEW.mp4')
+          assert not archive_candidate('AUDIO_POLISHED_REVIEW__9666695.mp4')
           assert not archive_candidate('LA_STORIA_RIVIVE_PARIGI_1918_V162_NEURAL_REVIEW_NON_FINALE.mp4')
           # Artistic review is not required for the private owner archive, but an
           # artifact that explicitly says publication is not authorized must never
