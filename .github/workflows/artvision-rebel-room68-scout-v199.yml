@@ -1,0 +1,37 @@
+name: ArtVision V199 — authentic Room 68 photo scout (research only)
+on:
+  push:
+    branches: [research/artvision-bruegel-room68-v199]
+    paths:
+      - 'src/artvision_bruegel_room68_sources_v199.py'
+      - '.github/workflows/artvision-rebel-room68-scout-v199.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  photo_gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Load only original Commons metadata, not generated artwork
+        run: |
+          python -m pip -q install pillow
+          python src/artvision_bruegel_room68_sources_v199.py
+      - name: Gate no false Museum approval
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          p=json.loads(pathlib.Path('/tmp/artvision_bruegel_room68_v199/SOURCE_AND_GATE_V199.json').read_text())
+          assert p["schema"]=="artvision-room68-photo-study-v199"
+          assert p["no_paid_calls"] and p["no_video_render"] and p["no_gold_approval"]
+          assert all(not x["museum_gold_master"] and not x["full_room_approved"] for x in p["photo_candidates"])
+          print('V199 researched',len(p["photo_candidates"]),'photos and found',len(p["errors"]),'source errors; ALL remain nonapproved')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARTVISION_V199_ROOM68_REAL_PHOTOS_SOURCE_QA_ONLY
+          path: /tmp/artvision_bruegel_room68_v199/
+          retention-days: 30
+          if-no-files-found: warn
