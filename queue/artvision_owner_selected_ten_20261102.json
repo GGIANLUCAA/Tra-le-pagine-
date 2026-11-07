@@ -340,6 +340,77 @@
         },
         "next_action": "DO NOT duplicate V196/V197/V200 or source Room68 photo. Owner should review 2 V200 museum real-room MP4s and V82 critic shot quality (115.8s), then check rights and approve. Meanwhile rotate to another missing 2/4 Museum candidate; do not count review as Gold.",
         "output_report": "docs/productions/2026-11-07-artvision-rebel-room-v200-four-real-mp4-review.md"
+      },
+      "museum_private_review_v206": {
+        "date": "2026-11-07",
+        "status": "ONE_NEW_GENUINE_ROOM68_CRITICO_REVIEW_MP4_TWO_BITRATE_ENCODINGS_TECHNICALLY_VERIFIED_INDEPENDENT_LIBRARY_READBACK_NOT_GOLD_NOT_APPROVED_MUSEUM",
+        "variant": "critico_museum",
+        "new_4x1_approved_slots": 0,
+        "room_photo": {
+          "source": "https://commons.wikimedia.org/wiki/File:Koninklijke_Musea_voor_Schone_Kunsten_van_Belgi%C3%AB_44.jpg",
+          "author": "FrDr",
+          "license": "CC BY 4.0",
+          "verified_real_photographed_gallery": true,
+          "current_2026_gallery_claim": false,
+          "sha256": "9992ac6ee8121af95c785fbdb1450dddbf56fbc24bef7eebef61c4440e51cfce",
+          "github_source_run": 42353848332,
+          "github_source_artifact": 13566627609,
+          "full_room_source_original_pixels": [
+            5472,
+            3648
+          ]
+        },
+        "source_clean_art_sha256": "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5",
+        "painting_real_cm": [
+          117,
+          162
+        ],
+        "original_soundtrack_reused_without_changes": true,
+        "original_aac_sha256": "5675b8de172887d3c451819b91d5ce7116da46b86af985de4325e5a2ad84bb49",
+        "narration_aligned_sentences": 18,
+        "new_video": {
+          "high_mp4_name": "REBEL_ANGELS_V206_CRITICO_REAL_ROOM68_ANDROID_REVIEW.mp4",
+          "high_mp4_bytes": 29229808,
+          "high_sha256": "a1b6655b2424afe3476acf0c5bd6c256ce43d07f6a27409568adf6b6b9df00e0",
+          "high_private_library_id": "libfile_ee5be6154bdc8191a2d9a7ea012d3109",
+          "mobile_mp4_name": "REBEL_ANGELS_V206_CRITICO_REAL_ROOM68_MOBILE.mp4",
+          "mobile_mp4_bytes": 15735573,
+          "mobile_sha256": "62517a160a79bf8fedd77e23f87bf58b1bcf80509d11d0b878cbf9bda2e90f73",
+          "mobile_private_library_id": "libfile_9ff19857b06c819193f3400c01023e13",
+          "duration_seconds": 115.8,
+          "frames": 2316,
+          "format": "720x1280 20fps H264 AAC",
+          "all_stream_ffmpeg_full_decode": "PASS",
+          "library_readback_sha256": "PASS"
+        },
+        "android_zip": {
+          "filename": "REBEL_ANGELS_V206_ANDROID_PACK.zip",
+          "sha256": "7504a2be4f0df02bb706a2dc8f0c1c35817decbafbbacadd568d9382e3c04d19",
+          "bytes": 16596052,
+          "private_library_id": "libfile_27c3912e61c481919f2f356f6ae194b8",
+          "library_zip_crc": "PASS",
+          "embedded_mp4_hash": "PASS"
+        },
+        "source_zip": {
+          "filename": "REBEL_ANGELS_V206_SOURCE_COMPLETE.zip",
+          "sha256": "9745e80dc8fada0649f3c70ade9e7152c953480a848b38a0ce4781aa213a75ca",
+          "bytes": 64202326,
+          "zip_crc": "PASS",
+          "private_library_backed": false
+        },
+        "qa": {
+          "photo_to_painting_registration_SIFT_inliers": 827,
+          "intro_to_middle_adjacent_pixel_MAD": 3.42,
+          "middle_to_outro_adjacent_pixel_MAD": 0.02,
+          "full_speed_artist_human_review": "PENDING",
+          "commercial_territorial_rights_review": "PENDING",
+          "historical_frame_original_claim": false,
+          "published": false,
+          "gold": false,
+          "new_paid_calls": 0
+        },
+        "report": "docs/productions/2026-11-07-artvision-rebel-v206-genuine-room-critico-review-qa.md",
+        "next_work": "Validate authentic reusable commercial rights cleared actual framed room for Simberg original small Ateneum 1896 or Waterhouse Magic Circle current Ipswich loan; do not retry prior bad sources or duplicate V206."
       }
     },
     {
