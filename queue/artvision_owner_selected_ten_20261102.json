@@ -2293,5 +2293,49 @@
     "dali_untouched": true,
     "next_step": "After V203 full-speed artist review, either approve authentic-room Cinema Museum with territorial rights checks and queue slot recount, or BLOCK artistic issue after max two attempts and pivot to Blake/Simberg independent missing Museum. Do not rerender V202/V203 repeatedly.",
     "render_script_status": "Local 6.9KB repair_v203.py in creating ChatGPT session, not yet committed GitHub; new MP4/ZIP backed up in Library."
+  },
+  "owner_cycle_v204_critico_museum_20261107": {
+    "date": "2026-11-07",
+    "work_id": "bruegel_fall_rebel_angels_1562_rmfb_584",
+    "variant": "critico_museum",
+    "rendered_new_distinct_mp4": 1,
+    "new_completed_artistic_approved_slots": 0,
+    "verified_queue_slots_before_after": 26,
+    "original_critico_standard_v144_sha256": "83aad1da82a091de42aa19ca6bd532a0e2a2b21c27f4c4c34eac5e53c8799f39",
+    "original_voice_wav_sha256": "e50f97bf6bf272bdda3a1b8577acf492f974d5c88d2b336d35cf976c5a814ade",
+    "source_authentic_museum_room": "https://commons.wikimedia.org/wiki/File:Koninklijke_Musea_voor_Schone_Kunsten_van_Belgi%C3%AB_44.jpg",
+    "source_room_photo_sha256": "9992ac6ee8121af95c785fbdb1450dddbf56fbc24bef7eebef61c4440e51cfce",
+    "source_art_sha256": "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5",
+    "source_rights": "FrDr CC BY 4.0; real room at capture date, not 2026 nor verified original 1562 frame",
+    "reviewed_technically_new_mp4": {
+      "file": "BRUEGEL_REBEL_ANGELS_CRITICO_MUSEUM_V204_REVIEW.mp4",
+      "sha256": "7c597ec63c24ef659a0a7a7c9b51fcb3be185d9c4808df5d2ea3414d7740c98f",
+      "bytes": 19358208,
+      "seconds": 115.8,
+      "FFmpeg_full_decode": "PASS",
+      "original_aac_bit_identical": true
+    },
+    "technical_zip": {
+      "file": "BRUEGEL_REBEL_ANGELS_CRITICO_MUSEUM_V204_COMPLETE_REVIEW.zip",
+      "sha256": "d808f2b53f291190f8e87e670261d3d1197f0b2048643f64371d0929ef05a3d3",
+      "bytes": 38252830,
+      "CRC": "PASS",
+      "inner_MP4_SHA": "PASS"
+    },
+    "other_test_V205": {
+      "sha256": "a50108017001c3f90a81baec2ee1b58c0e1a7a8b981f64ab8dfa5a0e15390cbf",
+      "status": "REJECTED_ARTISTIC_HARD_SEAM_67_CHANNEL_DIFF; DO_NOT_COUNT_OR_RETRY"
+    },
+    "first_test_V204_artistic_status": "REJECTED_FOR_VISIBLE_GHOSTING_AT_8_5_SEC; technically verified but NOT approved",
+    "root_cause": "The Standard V144 shows an artwork centered with soft studio backdrop at 8.85s and 106.0s; museum image uses a real frame and room. A full-frame crossfade ghosts figures; direct cut causes large seam (~67 mean channel delta). Both fail V118 despite hashes passing.",
+    "max_two_approaches_exhausted": true,
+    "blocked_until": "Use art-plane camera continuity: enter until the photographic frame is completely out of view, then follow geometrically registered public-domain painting pixels to a detailed Standard V144 shot. Match first detailed scene at ~30s and re-enter same room after detailed core; do not create a 3rd rushed revision. Human full-speed shot↔narration QA mandatory.",
+    "next_independent_work_id": "blake_ghost_flea_1819_tate_n05889",
+    "next_action": "Investigate actual Tate room/photographic installation with commercially reusable rights; if not available check Simberg, Magic Circle and Triumph then checkpoint. No invented frames, no paid APIs, no Gold.",
+    "archive_state": "Local current-conversation sandbox MP4 and ZIP verified, Library upload by container_path failed container_session_expired; DO NOT CLAIM PERSISTENT BACKUP",
+    "no_paid_calls": true,
+    "no_publication": true,
+    "master_intact": true,
+    "dali_untouched": true
   }
 }
