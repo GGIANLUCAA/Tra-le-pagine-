@@ -71,7 +71,7 @@
       },
       "research_status": "source_checked",
       "production_handoff": "research_only",
-      "dossier_path": "config/artvision_museum_trial_sources_v208.json",
+      "dossier_path": "research/artvision_lab_v209_ph02_sha_mismatch_20261107.md",
       "related_preflight": "ArtVision V209 workflow run https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42400165677 ; result must be checked, not assumed",
       "asset_sha256": null,
       "prototype_mp4_sha256": null,
@@ -80,9 +80,22 @@
       "blockers": [
         "Doorway interrupts middle of source wall",
         "No verified frame asset for this exact work",
-        "No continuous-perspective entrance/exit preview or visual QA"
+        "No continuous-perspective entrance/exit preview or visual QA",
+        "V209 original Commons download SHA256 differs from V120/V208 expected SHA; file lineage must be reconciled before use"
       ],
-      "next_action": "Check V209 actual run outcome; if source passes, trial physically possible wall placement with correct cm and photograph attribution, otherwise stop after two reasonable tries and pass to next independent Museum slot."
+      "next_action": "Compare true V120 artifact 13119426005 and currently downloaded Commons original by SHA256/SHA1/pixels; label original vs transformed derivative, test only through isolated approved preflight; independently address central doorway and artwork-specific frame. Do not modify active production until verified.",
+      "last_real_preflight": {
+        "run_id": 42400165677,
+        "job_id": 128486005444,
+        "conclusion": "failure",
+        "cause": "SOURCE_SHA256_MISMATCH",
+        "observed_raw_download_sha256": "4eccd18f1fc714305902369d8c2b118f763fc6dec129b89820a3d20242c40e64",
+        "expected_v120_v208_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+        "commons_sha1_and_size_assertions_passed": true,
+        "render_mp4_count": 0,
+        "artifact_written": false,
+        "evidence": "research/artvision_lab_v209_ph02_sha_mismatch_20261107.md"
+      }
     },
     {
       "id": "LAB-MUSEUM-APPROVED-BENCHMARKS",
@@ -107,6 +120,11 @@
       "date": "2026-11-07",
       "action": "Initialize read-only lab-to-production handoff linked to V80/V118/V119 and current Magic Circle source trial; no production queue or automation modifications.",
       "source": "owner approval to establish parallel chats with a stable repository bridge"
+    },
+    {
+      "date": "2026-11-07",
+      "action": "Lab records direct V209 job failure: observed original SHA256 4ecc... vs expected historical ea95...; no scene or MP4, pending source reconciliation.",
+      "source": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42400165677"
     }
   ]
 }
