@@ -12,6 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Ensure genuine MP4 decoder and ffprobe are available
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y -qq ffmpeg || { sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; }
+          command -v ffmpeg
+          command -v ffprobe
       - name: Download exactly one real archival moving film
         run: |
           set -euo pipefail
