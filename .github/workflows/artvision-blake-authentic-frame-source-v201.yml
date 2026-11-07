@@ -1,0 +1,74 @@
+name: ArtVision V201 Blake exact framed Tate photograph original-byte preflight
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/artvision-blake-authentic-frame-source-v201.yml'
+permissions:
+  contents: read
+concurrency:
+  group: artvision-blake-frame-v201-source-only
+  cancel-in-progress: false
+jobs:
+  verify_photo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guard current owner queue and one missing Museum work
+        run: |
+          python - <<'PY'
+          import json
+          q=json.load(open('queue/artvision_owner_selected_ten_20261102.json'))
+          w=next(x for x in q['works'] if x['id']=='blake_ghost_flea_1819_tate_n05889')
+          assert w['slots_delivered_this_selection']==2 and not w.get('museum_approved',False)
+          assert q['global_render_gate']['no_paid_calls'] and q['global_render_gate']['no_social_publish']
+          print('SOURCE ONLY: V201 does not render, approve, count a slot, or publish')
+          PY
+      - name: Retrieve actual 2017 Tate photograph with exact Commons SHA1 and CC BY 3.0
+        shell: bash
+        run: |
+          python - <<'PY'
+          import urllib.request,urllib.parse,json,hashlib,pathlib
+          name='William blake, il fantasma di una pulce, 1819-20 ca.jpg'
+          api='https://commons.wikimedia.org/w/api.php?'+urllib.parse.urlencode({'action':'query','format':'json','titles':'File:'+name,'prop':'imageinfo','iiprop':'url|sha1|size|mime|extmetadata'})
+          hdr={'User-Agent':'ArtVisionMuseumSourceQA/1.0 (CC BY metadata verification)'}
+          out=pathlib.Path('/tmp/artvision_blake_v201');out.mkdir(exist_ok=True)
+          manifest={'schema':'artvision-blake-real-tate-photo-v201','work_id':'blake_ghost_flea_1819_tate_n05889','status':'PENDING'}
+          try:
+           req=urllib.request.Request(api,headers=hdr)
+           with urllib.request.urlopen(req,timeout=35) as r: data=json.load(r)
+           page=next(iter(data['query']['pages'].values()))
+           i=page['imageinfo'][0]
+           lic=i['extmetadata']['LicenseShortName']['value']
+           assert 'CC BY 3.0' in lic,lic
+           assert i['mime']=='image/jpeg' and i['width']==2628 and i['height']==3006
+           assert i['size']>4_000_000
+           assert i['url'].startswith('https://upload.wikimedia.org/')
+           with urllib.request.urlopen(urllib.request.Request(i['url'],headers=hdr),timeout=90) as r: blob=r.read()
+           assert len(blob)==i['size']
+           assert hashlib.sha1(blob).hexdigest()==i['sha1'].lower()
+           p=out/'BLAKE_GHOST_OF_FLEA_REAL_FRAMED_TATE_SAILKO_2017.jpg'
+           p.write_bytes(blob)
+           manifest.update({'status':'SOURCE_BYTES_SHA1_LICENSE_VERIFIED_NEEDS_VISUAL_REVIEW','source_page':'https://commons.wikimedia.org/wiki/File:'+urllib.parse.quote(name.replace(' ','_')),
+            'source_original_url':i['url'],'license':'CC BY 3.0','license_url':'https://creativecommons.org/licenses/by/3.0/',
+            'photographer':'Sailko','date_photographed':'2017-02-28','width_px':i['width'],'height_px':i['height'],
+            'bytes':len(blob),'sha1':i['sha1'],'sha256':hashlib.sha256(blob).hexdigest(),
+            'original_filename':p.name,'exact_frame_visual_review':'PENDING','room_geometry_review':'PENDING',
+            'frame_historic_originality_claimed':False,'current_gallery_claimed':False,
+            'commercial_territorial_rights_review':'PENDING','museum_approved':False,'new_mp4':0,'paid_calls':0,'published':False})
+           print(json.dumps(manifest,indent=2))
+          except Exception as e:
+           manifest.update({'status':'BLOCKED_SOURCE_FETCH','error':str(e),'museum_approved':False,'new_mp4':0})
+           print(json.dumps(manifest,indent=2))
+          (out/'SOURCE_V201.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
+          assert manifest['status']=='SOURCE_BYTES_SHA1_LICENSE_VERIFIED_NEEDS_VISUAL_REVIEW'
+          PY
+      - name: Archive exact bytes and provenance for next render gate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V201_BLAKE_AUTHENTIC_TATE_FRAME_CC_BY3_SOURCE_ONLY
+          path: /tmp/artvision_blake_v201/
+          if-no-files-found: warn
+          retention-days: 30
