@@ -476,6 +476,61 @@
         "paid_calls": 0,
         "report": "docs/productions/2026-11-07-artvision-rebel-v208-real-room-cinema-museum-review.md",
         "next": "Continue independent 1896 Simberg/1886 Waterhouse source frame/room license recovery, not extra V208 revisions."
+      },
+      "museum_private_review_v212_v213": {
+        "date": "2026-11-07",
+        "status": "TWO_REAL_NEW_MUSEUM_MP4S_RENDERED_FULL_DECODE_SHA_ZIP_CRC_LIBRARY_INDEPENDENT_READBACK_PASS_ARTISTIC_REVIEW_PENDING",
+        "variants": {
+          "cinema_museum": {
+            "version": "V212",
+            "filename": "BRUEGEL_REBEL_ANGELS_CINEMA_MUSEUM_V212_REVIEW.mp4",
+            "sha256": "14a75721e28183745b5d4bd93d048d89d3dbd7bbb9d5c55a7ef2d1e98045795d",
+            "bytes": 34356196,
+            "duration_s": 48,
+            "zip_sha256": "2b1fc7704ed92e883ac130f54a157a2544c9d0a2186125a52042a6a3707e3422",
+            "file_library_id": "libfile_0dfe661d9de48191aefd65e37cfaba6f",
+            "zip_library_id": "libfile_ee1a86cefc088191a75d85e4ca099dee",
+            "github_render_run": 42412660940,
+            "github_artifact_id": 13589966914,
+            "independent_git_readback_run": 42412831862,
+            "auto_camera_qa": "PASS",
+            "artistic": "PENDING"
+          },
+          "critico_museum": {
+            "version": "V213",
+            "filename": "BRUEGEL_REBEL_ANGELS_CRITICO_MUSEUM_V213_REVIEW.mp4",
+            "sha256": "05c1e0a15f7207a881b625230047e934e4e4261693189fc6b96c3aa240e6e23c",
+            "bytes": 53458838,
+            "duration_s": 115.8,
+            "zip_sha256": "a0d2a48568f764c4f5432aae0a46631a5aaeee5e96deb8479ea4e3683078e3a1",
+            "file_library_id": "libfile_320b7d93592481918a644cf02e246231",
+            "zip_library_id": "libfile_a320f56247e48191b4d3779b5fb9363a",
+            "same_original_voice_wav_sha256": "e50f97bf6bf272bdda3a1b8577acf492f974d5c88d2b336d35cf976c5a814ade",
+            "bit_identical_to_standard_aac": true,
+            "source_voice_sentence_count": 18,
+            "auto_camera_qa": "PASS_after_one_correction",
+            "artistic": "PENDING",
+            "archive": "PRIVATE_LIBRARY",
+            "github_artifact_id": null
+          }
+        },
+        "room_photo_sha256": "9992ac6ee8121af95c785fbdb1450dddbf56fbc24bef7eebef61c4440e51cfce",
+        "room_photo_url": "https://commons.wikimedia.org/wiki/File:Koninklijke_Musea_voor_Schone_Kunsten_van_Belgi%C3%AB_44.jpg",
+        "photo_rights": "FrDr, CC BY 4.0",
+        "actual_painting_cm": [
+          162,
+          117
+        ],
+        "qa": "MP4 video/audio full decode, FFmpeg, SHA256, ZIP CRC, independent physical Library materialized readback PASS each of 4 files",
+        "human_full_speed_artistic_review": "PENDING",
+        "territorial_release_licences": "PENDING",
+        "android_user_download_playback": "PENDING",
+        "approved_slot_increment": 0,
+        "publish": false,
+        "gold": false,
+        "paid_api_calls": 0,
+        "documentation": "docs/productions/2026-11-07-artvision-bruegel-rebel-room68-v212-v213.md",
+        "avoid_duplicates": true
       }
     },
     {
@@ -2655,5 +2710,23 @@
     "no_paid_calls": true,
     "no_publication": true,
     "master_untouched": true
+  },
+  "latest_owner_museum_review_v212_v213_20261107": {
+    "date": "2026-11-07",
+    "new_physical_review_MP4": 2,
+    "new_approved_queue_slots": 0,
+    "verified_slots_unchanged": 26,
+    "total_slots": 40,
+    "work_id": "bruegel_fall_rebel_angels_1562_rmfb_584",
+    "review_status": "PENDING",
+    "private_library_readback_pass": true,
+    "not_published": true,
+    "not_gold": true,
+    "next_independent_work_ids": [
+      "simberg_garden_death_1896_fng_a_ii_968_16",
+      "waterhouse_magic_circle_1886_tate_n01572",
+      "blake_ghost_flea_1819_tate_n05889"
+    ],
+    "instruction": "Do not rerun V212/V213 as new output. Advance independent Museum slot in current queue after source rights and geometry preflight. Dalí remains suspended."
   }
 }
