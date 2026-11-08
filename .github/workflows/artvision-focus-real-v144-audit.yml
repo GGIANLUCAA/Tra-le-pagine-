@@ -1,0 +1,97 @@
+name: ArtVision real archived Critico V144 - narrative QA evidence
+on:
+  push:
+    branches: [feature/artvision-focus-integration-20261108]
+    paths:
+      - 'src/artvision_critico_review_capture_v1.py'
+      - '.github/workflows/artvision-focus-real-v144-audit.yml'
+  pull_request:
+    paths:
+      - 'src/artvision_critico_review_capture_v1.py'
+      - '.github/workflows/artvision-focus-real-v144-audit.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-focus-realaudit-v144
+  cancel-in-progress: false
+jobs:
+  read_existing_mp4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm genuine previous Artifact without paid calls
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/$GITHUB_REPOSITORY/actions/artifacts/13309290632 > /tmp/old_artifact.json
+          python - <<'PY'
+          import json
+          a=json.load(open('/tmp/old_artifact.json'))
+          assert a['id']==13309290632 and not a['expired']
+          assert a['workflow_run']['id']==41803668367
+          assert a['name']=='ART_V144_REBEL_ANGELS_REAL_CRITICO_OR_PRESERVED_WAV'
+          print('PREVIOUS_SOURCE_ARTIFACT_CONFIRMED_NO_NEW_RENDER')
+          PY
+      - name: Download PREVIOUS verified MP4 and the exact voice cache
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/artvision-focus-input
+          gh run download 41803668367 --repo "$GITHUB_REPOSITORY" \
+            --name ART_V144_REBEL_ANGELS_REAL_CRITICO_OR_PRESERVED_WAV \
+            --dir /tmp/artvision-focus-input
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p=Path('/tmp/artvision-focus-input')
+          def sha(x):return hashlib.sha256((p/x).read_bytes()).hexdigest()
+          assert sha('VOCE.wav')=='e50f97bf6bf272bdda3a1b8577acf492f974d5c88d2b336d35cf976c5a814ade'
+          assert sha('BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4')=='83aad1da82a091de42aa19ca6bd532a0e2a2b21c27f4c4c34eac5e53c8799f39'
+          assert (p/'VOICE_CACHE_V13.json').is_file()
+          print('ORIGINAL_WAV_AND_MP4_SHA_MATCH')
+          PY
+      - name: Install offline FFmpeg runtime (no apt update, no generation)
+        run: |
+          python -m pip install --disable-pip-version-check "imageio-ffmpeg>=0.6.0,<1"
+          mkdir -p "$RUNNER_TEMP/ffmpeg-bin"
+          python - <<'PY'
+          from pathlib import Path
+          from imageio_ffmpeg import get_ffmpeg_exe
+          import os
+          target=Path(os.environ["RUNNER_TEMP"])/"ffmpeg-bin"/"ffmpeg"
+          target.symlink_to(get_ffmpeg_exe())
+          PY
+          echo "$RUNNER_TEMP/ffmpeg-bin" >> "$GITHUB_PATH"
+      - name: QA original real MP4 and real WAV sentence frames
+        run: |
+          set -euo pipefail
+          ffmpeg -v error -xerror -i /tmp/artvision-focus-input/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4 -f null -
+          python src/artvision_critico_review_capture_v1.py \
+            --video /tmp/artvision-focus-input/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4 \
+            --wav /tmp/artvision-focus-input/VOCE.wav \
+            --voice-cache /tmp/artvision-focus-input/VOICE_CACHE_V13.json \
+            --variant critico_standard --voice-offset-s 3.5 --video-duration-s 115.8 \
+            --expected-video-sha256 83aad1da82a091de42aa19ca6bd532a0e2a2b21c27f4c4c34eac5e53c8799f39 \
+            --output-dir /tmp/artvision-focus-review
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/tmp/artvision-focus-review')
+          d=json.loads((p/'ARTVISION_CRITICO_REAL_MP4_FOCUS_QA.json').read_text())
+          assert 10 <= d['sentence_count'] <= 50
+          assert d['real_frames_extracted']==3*d['sentence_count']
+          assert d['status']=='needs_camera_trace_and_semantic_review'
+          assert not d['v25_gold'] and not d['reviewer_approval'] and not d['website_published']
+          assert all((p/f['actual_mp4_frame']).is_file() for s in d['sentences'] for f in s['samples'])
+          print('REAL_MP4_REVIEW_FRAMES_EXTRACTED; HUMAN_SEMANTIC_CHECK_STILL_PENDING')
+          PY
+      - name: Preserve review evidence, not a claimed new master
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V144_REAL_FOCUS_REVIEW_ONLY
+          path: /tmp/artvision-focus-review/
+          retention-days: 14
+          if-no-files-found: warn
