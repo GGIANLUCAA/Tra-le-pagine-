@@ -1789,8 +1789,8 @@
         "ffmpeg_full_decode": "PASS",
         "aac_bit_identical_to_original_v150": true,
         "zip_crc": "PASS",
-        "local_verified_container_file_only": true,
-        "permanent_archive_backup": "FAILED_CONTAINER_SESSION_UNAVAILABLE_NOT_CLAIMED",
+        "local_verified_container_file_only": false,
+        "permanent_archive_backup": "PASS_PRIVATE_LIBRARY_MATERIALIZED_INDEPENDENT_MP4_SHA_FFMPEG_AND_ZIP_CRC_INNER_MP4_SHA",
         "artistic_full_speed_review": "PENDING",
         "territorial_rights": "PENDING",
         "museum_approved": false,
@@ -1800,7 +1800,11 @@
         "published": false,
         "paid_calls": 0,
         "report": "docs/productions/2026-11-08-artvision-triumph-v217-private-cinema-museum-review.md",
-        "next_action": "Review actual V217 39.6-48s full speed and photo-wall realism, obtain rights clearance; independently archive actual MP4 bytes; do not duplicate V198/V215/V216/V217."
+        "next_action": "V217 physical Library backup verified; artistic full-speed QA and territorial/commercial rights remain pending. Do not count this Museum slot as approved. Rotate to next independent Museum after review.",
+        "private_library_mp4_id": "libfile_125521293edc8191951b714231d5bb50",
+        "private_library_zip_id": "libfile_238380fc17d0819193847986c5969ba9",
+        "private_library_folder": "/ArtVision/Triumph_Death_V217",
+        "download_android_device_test": "NOT_VERIFIED"
       }
     },
     {
