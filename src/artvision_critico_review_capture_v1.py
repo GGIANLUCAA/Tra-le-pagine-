@@ -181,7 +181,8 @@ def capture(*, video, wav, voice_cache, output_dir, variant,
         "real_frames_extracted": len(sentences) * 3,
         "camera_measurements_from_renderer": bool(trace),
         "semantic_subject_bboxes_verified": False,
-        "status": "needs_visual_and_semantic_review",
+        "status": ("needs_visual_and_semantic_review" if trace
+                   else "needs_camera_trace_and_semantic_review"),
         "reviewer_approval": False,
         "v25_gold": False, "website_published": False,
         "new_audio_video_api_calls": 0,
@@ -191,3 +192,33 @@ def capture(*, video, wav, voice_cache, output_dir, variant,
     target = output / "ARTVISION_CRITICO_REAL_MP4_FOCUS_QA.json"
     target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return report
+
+
+def main():
+    import argparse
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--video", type=Path, required=True)
+    p.add_argument("--wav", type=Path, required=True)
+    p.add_argument("--voice-cache", type=Path, required=True)
+    p.add_argument("--output-dir", type=Path, required=True)
+    p.add_argument("--variant", choices=sorted(VALID_VARIANTS), required=True)
+    p.add_argument("--voice-offset-s", type=float, required=True)
+    p.add_argument("--video-duration-s", type=float, required=True)
+    p.add_argument("--expected-video-sha256", required=True)
+    p.add_argument("--camera-trace", type=Path,
+                   help="Actual renderer-emitted camera trace JSON; if absent, track remains PENDING")
+    args = p.parse_args()
+    trace = json.loads(args.camera_trace.read_text(encoding="utf-8")) if args.camera_trace else []
+    result = capture(video=args.video, wav=args.wav, voice_cache=args.voice_cache,
+                     output_dir=args.output_dir, variant=args.variant,
+                     voice_offset_s=args.voice_offset_s,
+                     video_duration_s=args.video_duration_s, camera_trace=trace,
+                     expected_video_sha256=args.expected_video_sha256)
+    print(json.dumps({"status": result["status"], "sentences": result["sentence_count"],
+                      "real_mp4_frames": result["real_frames_extracted"],
+                      "gold": result["v25_gold"]}, ensure_ascii=False))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
