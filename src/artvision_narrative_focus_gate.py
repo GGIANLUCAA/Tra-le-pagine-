@@ -71,6 +71,56 @@ def _frame_from_video(video, t, target):
     return _sha_file(target)
 
 
+
+def _camera_samples(shot, first, last):
+    """Sample a declared camera trajectory across the WHOLE spoken phrase.
+
+    Crop metadata must be emitted by the real renderer. This checks geometry,
+    not image content, and cannot certify that the declared trajectory matches
+    the physical MP4. A moving shot without a track must fail closed.
+    """
+    keyframes = shot.get("camera_keyframes_xyxy")
+    if keyframes is None:
+        if shot.get("camera_motion") is True:
+            return None, "MISSING_CAMERA_MOTION_TRACK"
+        crop = shot.get("camera_crop_xyxy")
+        if not _box(crop):
+            return None, "INVALID_OR_MISSING_CAMERA_CROP"
+        return [(first, crop)], None
+    if not isinstance(keyframes, list) or len(keyframes) < 2:
+        return None, "INVALID_CAMERA_KEYFRAMES"
+    points = []
+    for key in keyframes:
+        if not isinstance(key, dict):
+            return None, "INVALID_CAMERA_KEYFRAMES"
+        t, crop = key.get("time_s"), key.get("camera_crop_xyxy")
+        if not _number(t) or not _box(crop) or (points and t <= points[-1][0]):
+            return None, "INVALID_CAMERA_KEYFRAMES"
+        points.append((t, crop))
+    if points[0][0] > first + 0.001 or points[-1][0] < last - 0.001:
+        return None, "CAMERA_TRACK_DOES_NOT_COVER_SPEECH"
+    times = {first, last, (first + last) / 2}
+    times.update(t for t, _ in points if first < t < last)
+    # Also inspect between keyframes: a transient pan can hide a face even
+    # if the starting and ending camera crops both look correct.
+    t = first + 0.5
+    while t < last:
+        times.add(t)
+        t += 0.5
+    samples = []
+    for t in sorted(times):
+        for i in range(1, len(points)):
+            a, crop_a = points[i - 1]
+            b, crop_b = points[i]
+            if t <= b + 0.001:
+                u = max(0.0, min(1.0, (t - a) / (b - a)))
+                crop = [x + (y - x) * u for x, y in zip(crop_a, crop_b)]
+                samples.append((round(t, 4), crop))
+                break
+        else:
+            return None, "INVALID_CAMERA_KEYFRAMES"
+    return samples, None
+
 def analyze(data, *, phase="plan", manifest_dir=None, frames_dir=None, reviews=None):
     """Produce a report and suggestions; do not mutate the input or masters."""
     if phase not in ("plan", "final"):
@@ -197,17 +247,39 @@ def analyze(data, *, phase="plan", manifest_dir=None, frames_dir=None, reviews=N
                     suggestion={"start_s": round(max(0, speech_start - .2), 3),
                                 "end_s": round(min(length, speech_end + .2), 3),
                                 "note": "Proposal only; check neighboring shots and continuous Museum camera"}))
-            crop, subject = shot.get("camera_crop_xyxy"), seg.get("subject_bbox_xyxy")
-            if not (_box(crop) and _box(subject)):
-                errors.append(_issue("INVALID_OR_MISSING_CAMERA_CROP", slot=slot, segment=ident))
+            subject = seg.get("subject_bbox_xyxy")
+            if not _box(subject):
+                errors.append(_issue("MISSING_SOURCE_SUBJECT_BOX", slot=slot, segment=ident))
                 continue
-            ratio, x, y = _coverage(crop, subject)
-            if ratio < .90:
-                errors.append(_issue("SPOKEN_SUBJECT_CROPPED", slot=slot, segment=ident,
-                                     suggestion="Reframe within the REAL painting; preserve all relevant limbs and objects"))
-            if not (.22 <= x <= .78 and .22 <= y <= .78):
-                errors.append(_issue("SPOKEN_SUBJECT_OFF_CENTER", slot=slot, segment=ident,
-                                     suggestion="Move camera toward subject with smooth timing; no fake pixels"))
+            if phase == "final" and slot == "critico_museum" and not isinstance(
+                    shot.get("camera_keyframes_xyxy"), list):
+                errors.append(_issue("MISSING_FINAL_MUSEUM_CAMERA_TRACK", slot=slot, segment=ident,
+                                     suggestion="Export actual camera keyframes from the Museum renderer"))
+            camera_samples, camera_error = _camera_samples(shot, speech_start, speech_end)
+            if camera_error:
+                errors.append(_issue(camera_error, slot=slot, segment=ident,
+                                     suggestion="Export the actual camera crop at speech start/end and intermediate times"))
+                continue
+            moving = "camera_keyframes_xyxy" in shot
+            cropped = off_center = None
+            for sample_time, camera_crop in camera_samples:
+                ratio, x, y = _coverage(camera_crop, subject)
+                if ratio < .90 and cropped is None:
+                    cropped = sample_time
+                if not (.22 <= x <= .78 and .22 <= y <= .78) and off_center is None:
+                    off_center = sample_time
+            if cropped is not None:
+                errors.append(_issue(
+                    "SPOKEN_SUBJECT_CROPPED_DURING_CAMERA_MOVE" if moving else "SPOKEN_SUBJECT_CROPPED",
+                    slot=slot, segment=ident,
+                    suggestion={"offending_time_s": cropped,
+                                "action": "Reframe the REAL painting; preserve described limbs/objects"}))
+            if off_center is not None:
+                errors.append(_issue(
+                    "SPOKEN_SUBJECT_OFF_CENTER_DURING_CAMERA_MOVE" if moving else "SPOKEN_SUBJECT_OFF_CENTER",
+                    slot=slot, segment=ident,
+                    suggestion={"offending_time_s": off_center,
+                                "action": "Recenter subject smoothly during the actual spoken phrase"}))
             if phase == "final" and video is not None:
                 t = min(length - .1, max(.0, (max(start, speech_start) + min(end, speech_end)) / 2))
                 target = frames_dir / f"{slot}__{re.sub(r'[^a-zA-Z0-9_-]', '_', ident)}.jpg"
