@@ -72,7 +72,7 @@ export default{async fetch(request,env){
    return resp({success:true,count:Object.keys(data).length});
  }
  if(route==='/publish-html'&&method==='POST'){
-   const t=await request.text();if(t.length>140000||!/^<!doctype html>/i.test(t.trim()))return resp({error:'Invalid HTML'},400);
+   const t=await request.text();if(t.length>220000||!/^<!doctype html>/i.test(t.trim()))return resp({error:'Invalid HTML'},400);
    await env.VIDEOS.put('site/index.html',t,{httpMetadata:{contentType:'text/html; charset=utf-8'}});
    return resp({success:true,bytes:t.length});
  }
