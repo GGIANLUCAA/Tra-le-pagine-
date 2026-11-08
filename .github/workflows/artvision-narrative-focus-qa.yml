@@ -1,0 +1,26 @@
+name: ArtVision narrative focus - moving camera regression tests
+on:
+  pull_request:
+    paths:
+      - 'src/artvision_narrative_focus_gate.py'
+      - 'tests/test_artvision_narrative_focus_gate.py'
+      - '.github/workflows/artvision-narrative-focus-qa.yml'
+  push:
+    branches:
+      - feature/artvision-narration-focus-qa-20261030
+    paths:
+      - 'src/artvision_narrative_focus_gate.py'
+      - 'tests/test_artvision_narrative_focus_gate.py'
+      - '.github/workflows/artvision-narrative-focus-qa.yml'
+permissions:
+  contents: read
+jobs:
+  moving_camera_regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Python syntax
+        run: python -m py_compile src/artvision_narrative_focus_gate.py tests/test_artvision_narrative_focus_gate.py
+      - name: Test phrase-to-camera tracking with no media downloads or API calls
+        run: python -m unittest discover -s tests -p 'test_artvision_narrative_focus_gate.py' -v
