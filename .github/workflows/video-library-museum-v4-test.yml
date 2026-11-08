@@ -1,4 +1,4 @@
-name: Video Library Studio · Museum V4 interactive checks
+name: Video Library Studio · Museum V5 guided tour checks
 on:
   push:
     paths:
@@ -24,7 +24,7 @@ jobs:
           html=Path('site/video-library-v2.html').read_text()
           scripts=re.findall(r'<script[^>]*>([\s\S]*?)</script>',html)
           assert len(scripts)==1
-          for el in ('museumMainFrame','museumPicks','museumWatch','museumDetails','museumLeftImage','museumRightImage','latestRail','socialOpen','playerDownload'):
+          for el in ('museumMainFrame','museumPicks','museumWatch','museumDetails','museumLeftImage','museumRightImage','museumPrevious','museumNext','museumPosition','museumStage','latestRail','socialOpen','playerDownload'):
               assert 'id="'+el+'"' in html,el
           p=subprocess.run(['node','--check'],input=scripts[0],capture_output=True,text=True)
           assert p.returncode==0,p.stderr
@@ -52,6 +52,7 @@ jobs:
           const html=fs.readFileSync('site/video-library-v2.html','utf8');
           const model={admin:false,items:[
             {key:'ARTVISION_BRUEGEL_MUSEUM.mp4',name:'ARTVISION_BRUEGEL_MUSEUM.mp4',size:1200000,available:true,cover:'/cover/ARTVISION_BRUEGEL_MUSEUM',category:'Arte',uploaded:'2026-11-08T09:00:00Z'},
+            {key:'ARTVISION_SIMBERG_MUSEUM.mp4',name:'ARTVISION_SIMBERG_MUSEUM.mp4',size:1000000,available:true,cover:'/cover/ARTVISION_SIMBERG_MUSEUM',category:'Arte',uploaded:'2026-11-08T08:30:00Z'},
             {key:'STORIA_CARMENCITA_1894.mp4',name:'STORIA_CARMENCITA_1894.mp4',size:700000,available:true,cover:'/cover/STORIA_CARMENCITA_1894',category:'Storia',uploaded:'2026-11-08T08:00:00Z'},
             {key:'WOW_LAB_FANTASIA.mp4',name:'WOW_LAB_FANTASIA.mp4',size:600000,available:true,cover:'/cover/WOW_LAB_FANTASIA',category:'Video-creativi',uploaded:'2026-11-08T07:00:00Z'},
             {key:'ARTVISION_GPT_UNAVAILABLE.mp4',name:'ARTVISION_GPT_UNAVAILABLE.mp4',size:620000,available:false,cover:null,category:'Arte'}
@@ -68,9 +69,20 @@ jobs:
           (async()=>{
             await new Promise(r=>setTimeout(r,1100));
             const d=dom.window.document;
-            assert.equal(d.querySelector('#museumPicks').children.length,1,'ArtVision must show only its playable item');
+            assert.equal(d.querySelector('#museumPicks').children.length,2,'ArtVision must show only its 2 playable items');
             assert.match(d.querySelector('#museumFilmTitle').textContent,/BRUEGEL/i);
             assert.equal(d.querySelector('#museumMainImage').getAttribute('src'),'/cover/ARTVISION_BRUEGEL_MUSEUM');
+            assert.equal(d.querySelector('#museumPosition').textContent,'Opera 1 di 2');
+            assert.equal(d.querySelector('#museumLeftImage').getAttribute('src'),'/cover/ARTVISION_SIMBERG_MUSEUM');
+            d.querySelector('#museumNext').click();
+            assert.match(d.querySelector('#museumFilmTitle').textContent,/SIMBERG/i,'Next must select the next real artwork');
+            assert.equal(d.querySelector('#museumPosition').textContent,'Opera 2 di 2');
+            d.querySelector('#museumPrevious').click();
+            assert.match(d.querySelector('#museumFilmTitle').textContent,/BRUEGEL/i);
+            d.querySelector('#museumMainFrame').dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));
+            assert.match(d.querySelector('#museumFilmTitle').textContent,/SIMBERG/i,'Keyboard navigation must work');
+            d.querySelector('#museumPrevious').click();
+            assert.equal(d.querySelector('.bottom-nav [data-section="museum"]')!==null,true,'Mobile museum tab missing');
             d.querySelector('#museumWatch').click();
             assert(d.querySelector('#player').open,'Museum play must open original player');
             assert.match(d.querySelector('#video').src,/ARTVISION_BRUEGEL_MUSEUM/);
@@ -80,9 +92,11 @@ jobs:
             d.querySelector('[data-museum-room="wow"]').click();
             assert.match(d.querySelector('#museumFilmTitle').textContent,/WOW LAB/i);
             assert.equal(d.querySelectorAll('#museumPicks .museum-pick').length,1);
+            assert.equal(d.querySelector('#museumStage').dataset.room,'wow');
+            assert.equal(d.querySelector('#museumNext').disabled,true,'Single-item room must disable navigation');
             assert.equal(d.querySelector('#playerDownload')!==null,true,'Original download must remain present');
             assert.equal(errs.length,0,errs.join('\n'));
-            console.log('PASS: 3 rooms, real covers, playable only, existing player and download controls preserved');
+            console.log('PASS: 3 themed rooms, prev/next, keyboard, 2 covers, mobile tab, real player and download preserved');
             dom.window.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           JS
