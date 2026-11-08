@@ -11,7 +11,7 @@ BEATS=[
  {"spoken":"Guarda in basso. Carnevale cavalca una botte. Al posto della lancia, uno spiedo carico di carne. Non difende un regno. Difende il piacere di mangiare.",
   "frames":[("carnival_duel",.40,.76,.34,"in"),("carnival_close",.41,.80,.22,"right")]},
  {"spoken":"Di fronte avanza la Quaresima: magra, su un carretto. La sua arma è una pala da forno con due aringhe. Il digiuno sfida l'abbondanza. Sembra una burla. Ma Bruegel non si ferma lì.",
-  "frames":[("lent",.62,.79,.30,"in"),("lent_details",.62,.80,.22,"left"),("duel_paired",0,0,0,"in")]},
+  "frames":[("lent",.62,.79,.30,"in"),("lent_details",.62,.80,.22,"left"),("full",0,0,0,"in")]},
  {"spoken":"Davanti alla chiesa, una pellegrina indica un mendicante, riceve l'elemosina e già si rivolge a qualcun altro. È un gesto minuscolo. E cambia il senso della scena: anche la carità può diventare una rappresentazione.",
   "frames":[("church_beggars",.83,.58,.33,"in"),("pilgrim_detail",.79,.70,.25,"right")]},
  {"spoken":"Ora cerca il buffone, quasi al centro. Cammina con una torcia accesa in pieno giorno. Una fiamma inutile, sotto il sole. O forse no. In questa piazza ogni cosa è visibile. Tranne le intenzioni di chi la attraversa.",
