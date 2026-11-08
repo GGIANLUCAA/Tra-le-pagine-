@@ -29,3 +29,9 @@ Owner task: 6adca191603c8191a90d5190901cd034. Branch `main`. This checkpoint doe
 - Human full-speed artistic sign-off: **PENDING**; commercial/territorial rights and frame/museum final clearance: **PENDING**; Gold `false`, published `false`.
 - No website/social publishing, no GitHub Release, no paid API, no modification of any old master, no concurrent render dispatch, no new automation.
 - Next executable step: full-speed review of V217 39.55s–48s and artistic suitability of the photographed/extended wall; if rejected, mark this candidate and move to another incomplete Museum slot without duplicating V217. For final slot count, first clear V118/V119 plus territorial rights. Separate backup of exact bytes is still needed.
+
+## 2026-11-08 — Addendum: private Library backup RESOLVED
+The initial container-path upload failed because the connector could not access the container session. A retry using the immutable exported-file references **succeeded**. Permanent private Library paths:
+- MP4 `/ArtVision/Triumph_Death_V217/THE_TRIUMPH_OF_DEATH_CINEMA_MUSEUM_V217_ANDROID_REVIEW.mp4` — ID `libfile_125521293edc8191951b714231d5bb50`.
+- ZIP `/ArtVision/Triumph_Death_V217/THE_TRIUMPH_OF_DEATH_V217_ANDROID_REVIEW_PACKAGE.zip` — ID `libfile_238380fc17d0819193847986c5969ba9`.
+The **independently re-materialized private Library bytes** were verified again: MP4 SHA256 `edc724783729262ded63e8c1a6ea55f97d0d01665bb025f19f5a9dcd3bc373cf`, ZIP SHA256 `31599af6b25b07ad33b4a4aa39ac563f4f4f0394db6d4476db9b9fd579f0b5b9`; all-stream FFmpeg full decode, ZIP CRC and embedded MP4 SHA PASS. The storage issue is resolved; **Android playback in the user's own device is not independently tested**. This is still a private *review*, not an artistic/museum approved Gold or published film, and no slot increment has been recorded.
