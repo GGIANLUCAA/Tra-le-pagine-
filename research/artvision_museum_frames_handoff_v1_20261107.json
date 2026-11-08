@@ -46,7 +46,7 @@
         "No verified finished reusable geometry/lighting/texture/MP4 presets",
         "No approved artwork-specific frame associations"
       ],
-      "next_action": "From five now permanently saved actual photo sources, build one isolated, dimensionally calibrated Museum camera/frame test with rights/attribution and full-speed review; each GAL/FRA remains unbuilt/unapproved until actual scene/video gates pass. Do not count recovered photos as presets.",
+      "next_action": "V120 source photos persist in Library; first PH02 back-wall 2.5D 12s technical video trial exists but is NOT a reusable 3D preset or owner-approved. Develop real calibrated room/camera after exact artwork source and frame verification; compare against Cyclops/Hiroshige, record full-speed review, avoid altering production.",
       "photo_archival_state": {
         "stored_date": "2026-11-07",
         "type": "5 licensed actual photo source files, not camera-ready 3D scenes",
@@ -114,7 +114,7 @@
       },
       "research_status": "source_checked",
       "production_handoff": "research_only",
-      "dossier_path": "research/artvision_lab_v209_ph02_sha_mismatch_20261107.md",
+      "dossier_path": "research/artvision_lab_ph02_back_wall_video_trial_20261108.md",
       "related_preflight": "ArtVision V209 workflow run https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42400165677 ; result must be checked, not assumed",
       "asset_sha256": null,
       "prototype_mp4_sha256": null,
@@ -126,7 +126,7 @@
         "No continuous-perspective entrance/exit preview or visual QA",
         "V209 original Commons download SHA256 differs from V120/V208 expected SHA; file lineage must be reconciled before use"
       ],
-      "next_action": "Use verified historical PH02 photo bytes from private Library for a deterministic trial (do not change old SHA to the current different Commons file silently); review discrepancy and ensure CC BY 4.0 attribution. Independently solve central doorway and artwork-specific frame geometry; no MP4, Gold or production adoption yet.",
+      "next_action": "Back-wall placement optical mock exists and passed technical integrity. Next obtain original art pixels/rights, authentic or owner-approved neutral frame, calibrated true 3D room/camera and complete human art review. Do not count this 12s lab MP4 as a production slot or approved V119 preset.",
       "last_real_preflight": {
         "run_id": 42400165677,
         "job_id": 128486005444,
@@ -155,6 +155,55 @@
         "separate_current_Wikimedia_download_sha256": "4eccd18f1fc714305902369d8c2b118f763fc6dec129b89820a3d20242c40e64",
         "bytes_comparison": "not_identical; reason not yet established",
         "evidence": "research/artvision_lab_v120_five_photos_persistent_archive_20261107.md"
+      },
+      "experiment_2026_11_08": {
+        "state": "2.5d_photo_trial_technically_verified_not_museum_approved",
+        "room_photo_source": "V120 verified historical PH02 photograph; NOT current Commons different SHA",
+        "room_photo_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+        "scene": "back wall RIGHT OF doorway, not side-wall squashed perspective",
+        "canvas_cm": {
+          "height": 182.9,
+          "width": 127
+        },
+        "outer_frame_trial_cm": {
+          "height": 196.9,
+          "width": 141
+        },
+        "door_overlap_px2": 0,
+        "canvas_aspect_expected": 0.6944,
+        "canvas_aspect_rendered": 0.6939,
+        "reference_door_size_measured": false,
+        "camera_real_3d": false,
+        "frame_authentic": false,
+        "painting_source_authenticated": false,
+        "video": {
+          "name": "PH02_MAGIC_CIRCLE_BACK_WALL_V1_2P5D_LAB_ONLY.mp4",
+          "bytes": 2372509,
+          "duration_sec": 12,
+          "fps": 20,
+          "dimensions_px": [
+            720,
+            1280
+          ],
+          "sha256": "3159967f77d2e3f9e5c98512c9dfc6fca50583f856a1798e7dfda37b2c87ed01",
+          "full_ffmpeg_decode_pass": true,
+          "library_file_id": "libfile_242b854b99fc8191ae5f1b4666781a2b",
+          "sha_readback_verified": true
+        },
+        "package": {
+          "name": "ARTVISION_PH02_MAGIC_CIRCLE_LAB_REVIEW_V1.zip",
+          "bytes": 4422398,
+          "sha256": "d604f793fb8faa1e9e28dc23654659e62817699b68b88d5bb28cfc4a10e5b757",
+          "library_file_id": "libfile_f28f99c03d7c81919733c6ef68c9e174",
+          "sha_readback_verified": true,
+          "crc_pass": true,
+          "items": 8
+        },
+        "report": "research/artvision_lab_ph02_back_wall_video_trial_20261108.md",
+        "gate": "LAB_PREVIEW_ONLY_NOT_PRODUCTION_ADOPTION",
+        "owner_approval": false,
+        "publication_authorized": false,
+        "Gold_V25": false
       }
     },
     {
@@ -190,6 +239,11 @@
       "date": "2026-11-07",
       "action": "Retrieved V120 artifact and saved all five authentic photographic sources plus attribution in private Library; real upload+download SHA256 readback passed for 5/5, no scene/renderer/master touched.",
       "source": "research/artvision_lab_v120_five_photos_persistent_archive_20261107.md"
+    },
+    {
+      "date": "2026-11-08",
+      "action": "PH02 first real 12s offline 2.5D back-wall test video + 8-frame QA, exact historical room SHA, inferred painting-scale doorway clearance, FFmpeg decode, ZIP and Library MP4/ZIP SHA256 readback; not 3D, not approved, no owner mutation.",
+      "source": "research/artvision_lab_ph02_back_wall_video_trial_20261108.md"
     }
   ]
 }
