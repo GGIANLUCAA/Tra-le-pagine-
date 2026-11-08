@@ -1,0 +1,73 @@
+name: "La Storia Rivive V303 · Venezia 1896 · real 4-I2I preview + Android ZIP"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-venice-v303-finalize.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-venice-v303-source-locked-finalize
+  cancel-in-progress: false
+jobs:
+  finalize_existing_four_photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: "1"
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install film and sound processing only, NO generative provider
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg zip fonts-dejavu-core
+          python -m pip install -q "numpy>=1.26,<2" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+          python -m py_compile src/storia_venice_1896_v303_finalize.py
+      - name: Recover exactly four source-locked successful images and QA from previous V302 job
+        shell: bash
+        run: |
+          set -euo pipefail
+          D=output/storia_v80_new_cities/VENICE_1896
+          mkdir -p "$D"
+          gh run download 42464890766 --repo "$GITHUB_REPOSITORY" --name STORIA_VENICE_V302_SOURCE_LOCKED_PHOTO_I2I_REVIEW --dir "$D"
+          test -s "$D/V302_PHOTO_TRIAL.json"
+          for n in 01 02 03 04; do test -s "$D/V302_TRUE_I2I_PHOTO_$n.png"; done
+      - name: Download original high-resolution 1896 film and render actual video, cover and ZIP
+        timeout-minutes: 22
+        run: |
+          set -euo pipefail
+          python -u src/storia_venice_1896_v303_finalize.py
+          python - <<'PY'
+          import json,pathlib
+          d=pathlib.Path("output/storia_v80_new_cities/VENICE_1896")
+          qa=json.loads((d/"V303_DELIVERY_QA.json").read_text())
+          print("V303_PRODUCTION_STATUS",qa["status"],"TRUE_MP4",qa.get("new_real_video_file_created",False),
+                "FOUR_RESTORATIONS",qa.get("source_b_w_to_real_I2I_freeze_scenes",0),
+                "VIDU",qa["new_Vidu_clip"],"CREDITS",0)
+          if qa["status"]!="REAL_MP4_FOUR_PHOTOS_CREATED_NO_VIDU_NOT_FINAL": raise SystemExit(1)
+          assert (d/qa["mp4"]).stat().st_size==qa["mp4_bytes"]
+          assert (d/qa["package"]).stat().st_size==qa["package_bytes"]
+          PY
+      - name: Retain genuine new MP4/ZIP, no site or social publication
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: VENICE_1896_V303_REAL_FOUR_PHOTO_HISTORICAL_VIDEO_PREVIEW
+          path: |
+            output/storia_v80_new_cities/VENICE_1896/V303_DELIVERY_QA.json
+            output/storia_v80_new_cities/VENICE_1896/VENICE_1896_V303_FOUR_TRUE_I2I_NO_VIDU_REVIEW.mp4
+            output/storia_v80_new_cities/VENICE_1896/VENICE_1896_V303_FOUR_REAL_PHOTOS_VIDEO_COVER_QA.zip
+            output/storia_v80_new_cities/VENICE_1896/COVER.jpg
+            output/storia_v80_new_cities/VENICE_1896/BEFORE_AFTER_ACTUAL_GENERATED.jpg
+            output/storia_v80_new_cities/VENICE_1896/PHOTO_QA.json
+            output/storia_v80_new_cities/VENICE_1896/SOURCE_QA.json
+            output/storia_v80_new_cities/VENICE_1896/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
