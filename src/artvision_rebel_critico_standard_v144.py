@@ -12,6 +12,7 @@ import soundfile as sf
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"src"))
 import gemini_voice
+from artvision_critico_review_capture_v1 import capture as capture_artvision_focus
 
 OUT=Path("/tmp/rebel_angels_critico_v144")
 RECIPE=ROOT/"modules/artvision_critico/production_series/bruegel_rebel_angels_v144.json"
@@ -124,7 +125,7 @@ def full_plate(paint):
  back.paste(im,((W-im.width)//2,(H-im.height)//2))
  return cv2.cvtColor(np.asarray(back),cv2.COLOR_RGB2BGR)
 
-def shot(paint,chapter,u):
+def shot(paint,chapter,u,audit=None):
  # Portrait camera uses source-pixel coordinates; hold 3D bodies intact.
  x,y,ch=chapter["cx"],chapter["cy"],chapter["crop_height_px"]
  ih,iw=paint.shape[:2]
@@ -135,6 +136,8 @@ def shot(paint,chapter,u):
  x0=max(0,min(iw-cropw,cx-cropw//2))
  y0=max(0,min(ih-ch,cy-ch//2))
  region=paint[y0:y0+ch,x0:x0+cropw]
+ if audit is not None:
+  audit["camera_crop_xyxy"]=[x0/iw,y0/ih,(x0+cropw)/iw,(y0+ch)/ih]
  if region.size==0:raise RuntimeError("Out-of-bounds crop")
  return cv2.resize(region,(W,H),interpolation=cv2.INTER_AREA)
 
@@ -184,6 +187,7 @@ def render():
       "-c:v","libx264","-preset","veryfast","-crf","21","-pix_fmt","yuv420p",str(raw)]
  proc=subprocess.Popen(cmd,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
  contact=[]
+ camera_trace=[]
  from bisect import bisect_right
  try:
   for n in range(total_frames):
@@ -198,7 +202,15 @@ def render():
     beg=0 if ix==0 else ends[ix-1]
     end=ends[ix]
     u=max(0,min(1,(spoken-beg)/max(.1,end-beg)))
-    frame=whole if ix in (0,1,8) else shot(artwork,chapters[ix],u)
+    audit={}
+    if ix in (0,1,8):
+     frame=whole
+    else:
+     frame=shot(artwork,chapters[ix],u,audit)
+    if n%10==0:
+     camera_trace.append({"time_s":round(sec,4),"chapter_index":ix,
+       "kind":"detail" if audit else "whole_plate",
+       "camera_crop_xyxy":audit.get("camera_crop_xyxy")})
     if n%160==0:contact.append((sec,cv2.resize(frame,(180,320))))
    proc.stdin.write(np.ascontiguousarray(frame).tobytes())
   proc.stdin.close()
@@ -245,6 +257,16 @@ def render():
       "duration_s":total,"frames":total_frames,"fps":FPS,"resolution":[W,H],"full_ffmpeg_decode":"PASS"},
     "variant":"critico_standard","museum_variant_rendered":False,"museum_approved":False,
     "Gold_V25":False,"social_published":False,"site_player_verified":False,"new_paid_video_calls":0}
+ focus=capture_artvision_focus(
+  video=target, wav=wav, voice_cache=OUT/"VOICE_CACHE_V13.json",
+  output_dir=OUT/"FOCUS_REVIEW_V1", variant="critico_standard",
+  voice_offset_s=DELAY, video_duration_s=total,
+  camera_trace=camera_trace, expected_video_sha256=sha(target))
+ qa["narrative_focus_review"]={
+  "status":focus["status"],
+  "report":"FOCUS_REVIEW_V1/ARTVISION_CRITICO_REAL_MP4_FOCUS_QA.json",
+  "real_mp4_frames":focus["real_frames_extracted"],
+  "semantic_review_pending":True, "Gold_V25":False}
  report=OUT/"QA_V144.json"
  report.write_text(json.dumps(qa,indent=2,ensure_ascii=False)+"\n")
  package=OUT/"REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW_PACKAGE.zip"
@@ -252,6 +274,8 @@ def render():
   for f in [target,OUT/"COVER.jpg",OUT/"CONTACT_SHEET_V144.jpg",report,
             OUT/"RIGHTS_AND_CREDITS.txt",OUT/"SOCIAL_DRAFT_UNPUBLISHED.txt",OUT/"COPIONE_ESATTO_V144.txt"]:
    z.write(f,arcname=f.name)
+  for f in sorted((OUT/"FOCUS_REVIEW_V1").rglob("*")):
+   if f.is_file():z.write(f,arcname=str(f.relative_to(OUT)))
  with zipfile.ZipFile(package) as z: assert z.testzip() is None
  print(json.dumps({"status":"ONE_REAL_CRITICO_REVIEW_MP4","mp4":qa["file"],"package":{"name":package.name,"bytes":package.stat().st_size,"sha256":sha(package),"crc":"PASS"},"voice_wav_sha256":sha(wav),"human_qa":"PENDING","museum_approved":False,"Gold_V25":False},indent=2))
 
