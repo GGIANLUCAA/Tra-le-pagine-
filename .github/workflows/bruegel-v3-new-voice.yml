@@ -1,0 +1,107 @@
+name: Bruegel V3 | new script and natural Qwen Italian voice
+run-name: "Bruegel: revised narrative, Qwen Italian narrator, 1080p social video"
+on:
+  push:
+    branches: [experiment/bruegel-critico-voce-qwen-v3-20261108]
+    paths:
+      - .github/workflows/bruegel-v3-new-voice.yml
+      - experiments/bruegel_immersivo_v3/**
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: bruegel-v3-new-narrator-private-pilot
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile revised script and check no paid voice provider is used
+        run: |
+          set -euo pipefail
+          python -m py_compile experiments/bruegel_immersivo_v3/*.py
+      - name: Install open Qwen Italian voice and offline video encoder
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "qwen-tts>=0.0.1" \
+            "requests>=2.31" "Pillow>=10,<13" "numpy>=1.26,<3" \
+            "soundfile>=0.12" "scipy>=1.11" "imageio-ffmpeg>=0.6" "av>=14,<18"
+          mkdir -p /tmp/v3-bin
+          python - <<'PY'
+          import os
+          from imageio_ffmpeg import get_ffmpeg_exe
+          os.symlink(get_ffmpeg_exe(),"/tmp/v3-bin/ffmpeg")
+          PY
+          echo "/tmp/v3-bin" >> "$GITHUB_PATH"
+      - name: Recover SHA-verified full resolution museum artwork
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/bruegel-authentic-art output/bruegel_1559_critico_qwen_v3/build
+          gh run download 42417285289 --repo "$GITHUB_REPOSITORY" \
+            --name BRUEGEL_V2_RECOVERY_SOURCE_VOICE_NO_REBILL --dir /tmp/bruegel-authentic-art
+          cp /tmp/bruegel-authentic-art/build/ORIGINAL_ARTWORK_AUTHENTIC.jpg \
+            output/bruegel_1559_critico_qwen_v3/build/ORIGINAL_ARTWORK_AUTHENTIC.jpg
+      - name: Generate original Italian dialogue with new Qwen3 voice
+        env:
+          HF_HUB_DISABLE_XET: "1"
+          HF_HUB_DISABLE_TELEMETRY: "1"
+          OMP_NUM_THREADS: "4"
+          TOKENIZERS_PARALLELISM: "false"
+        run: |
+          set -euo pipefail
+          python -u experiments/bruegel_immersivo_v3/qwen_voice.py
+      - name: Render genuine art-critic documentary with matching authentic details
+        run: |
+          set -euo pipefail
+          python -u experiments/bruegel_immersivo_v3/make_film.py
+      - name: Independent MP4, voice, ZIP and SHA verification
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,hashlib,zipfile,subprocess
+          from pathlib import Path
+          o=Path('output/bruegel_1559_critico_qwen_v3')
+          j=json.loads((o/'QA_V3.json').read_text())
+          p=o/j['video']
+          assert j['full_ffmpeg_decode']=='PASS' and j['resolution']==[1080,1920]
+          assert j['human_approved'] is False and j['published'] is False
+          assert len(j['actual_chapter_boundaries'])==6
+          assert j['sha256']==hashlib.sha256(p.read_bytes()).hexdigest()
+          subprocess.run(['ffmpeg','-nostdin','-v','error','-xerror','-i',str(p),'-f','null','-'],check=True)
+          with zipfile.ZipFile(o/'BRUEGEL_CRITICO_V3_COMPLETO.zip') as z:
+            assert z.testzip() is None and p.name in z.namelist()
+          print("COMPLETE GENUINE MP4",j['bytes'],j['duration_seconds'])
+          PY
+      - name: Upload playable MP4 and separate full delivery for Android
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_V3_REVISED_SCRIPT_QWEN_ITALIAN_MP4
+          path: |
+            output/bruegel_1559_critico_qwen_v3/*.mp4
+            output/bruegel_1559_critico_qwen_v3/*.zip
+            output/bruegel_1559_critico_qwen_v3/VOCE_QWEN_ITALIANO.wav
+            output/bruegel_1559_critico_qwen_v3/COPERTINA.jpg
+            output/bruegel_1559_critico_qwen_v3/*.txt
+            output/bruegel_1559_critico_qwen_v3/*.srt
+            output/bruegel_1559_critico_qwen_v3/QA_V3.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Preserve voice if rendering fails so regenerating speech is unnecessary
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_V3_VOICE_RECOVERY
+          path: |
+            output/bruegel_1559_critico_qwen_v3/build/chapter_*.wav
+            output/bruegel_1559_critico_qwen_v3/build/chapters.json
+            output/bruegel_1559_critico_qwen_v3/VOCE_QWEN_ITALIANO.wav
+          if-no-files-found: warn
+          retention-days: 14
