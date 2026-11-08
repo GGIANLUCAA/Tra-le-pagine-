@@ -1593,6 +1593,57 @@
         "next_action": "Full-speed artistic review of actual V212/V213; specifically phrase-level sync V213 and apparent physical scale; verify commercial territorial reuse before any Gold or publication. Do not rerender or recount as new slot.",
         "new_mp4_this_cycle": 0,
         "approved_slot_increment": 0
+      },
+      "museum_private_review_v218_20261108": {
+        "date": "2026-11-08",
+        "status": "ONE_NEW_REAL_20_SENTENCE_ASR_SYNC_REVIEW_MP4_AND_ZIP_LIBRARY_INDEPENDENT_READBACK_PASS_NO_GOLD",
+        "variant": "critico_museum",
+        "supersedes_revision": "V213 approximate paragraph timing",
+        "title": "The Garden of Death",
+        "filename": "SIMBERG_THE_GARDEN_OF_DEATH_CRITICO_MUSEUM_V218_REVIEW.mp4",
+        "bytes": 20998049,
+        "sha256": "7fe48f41f5da136fdfead63a0067bddc21863121eec25551fbe795443e2313aa",
+        "duration_seconds": 118.85,
+        "frames": 2377,
+        "fps": 20,
+        "resolution": [
+          720,
+          1280
+        ],
+        "package": "SIMBERG_GARDEN_CRITICO_MUSEUM_V218_REVIEW_PACKAGE.zip",
+        "zip_bytes": 26366560,
+        "zip_sha256": "7b1a184b9591f8571880d4112a35fa767397a8f70ca8bbbfd0b6d65810080650",
+        "library_mp4_id": "libfile_62449b428af48191b7be5d464c59cbf6",
+        "library_zip_id": "libfile_2e87d7b0f9488191bdf11327974b2bba",
+        "source_painting_sha256": "514bf455d7cdc3543e3ee8ff49f206370ef34121c72e49e04353e3e902f530a5",
+        "source_photo_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+        "source_photo_license": "Daniel Naber CC BY 4.0",
+        "scene_type": "NEUTRAL_EDITORIAL_SCENOGRAPHY_NOT_REAL_ATENEUM_DISPLAY",
+        "physical_painting_cm": [
+          17.5,
+          15.8
+        ],
+        "voice_wav_sha256": "70b5918ddf7e2a7edb6b80da140e14d834b1f6ec9b003247697876e5c4219d13f6",
+        "original_aac_bit_identical": true,
+        "ASR_phrase_count": 20,
+        "ASR_matched_fraction": 0.9698275862068966,
+        "automatic_camera_max_adjacent_delta": 28.465,
+        "join_deltas": [
+          2.256,
+          1.352
+        ],
+        "full_ffmpeg_decode": "PASS",
+        "zip_crc": "PASS",
+        "independent_private_library_readback_sha256": "PASS_MP4_AND_ZIP",
+        "full_speed_artistic_review": "PENDING",
+        "rights_commercial_territorial": "PENDING",
+        "actual_frame_authenticity": "NOT_DOCUMENTED",
+        "gold": false,
+        "published": false,
+        "new_paid_calls": 0,
+        "approved_new_slots": 0,
+        "doc": "docs/productions/2026-11-08-artvision-simberg-garden-v218-critico-phrase-sync.md",
+        "next_action": "Do not rerender V218 as new slot. Artistic full-speed and tiny 17.5cm painting real-scale room QA, commercial rights. Rotate to independent Museum works, Dalí suspended."
       }
     },
     {
@@ -2889,5 +2940,16 @@
     "archive_mp4_id": "libfile_89ccb27485408191878788b69df8db69",
     "archive_zip_id": "libfile_0a568ca4803481918468365c9ae024cd",
     "next_action": "Full-speed artistic review V212/V214 and commercial rights independently; proceed with independent Museum slot Simberg/Magic Circle/Blake. Never count V214 as new approved slot or re-render it as fresh slot."
+  },
+  "latest_owner_simberg_v218_20261108": {
+    "date": "2026-11-08",
+    "new_real_review_mp4": 1,
+    "new_approved_slots": 0,
+    "verified_slots": 26,
+    "total_slots": 40,
+    "work_id": "simberg_garden_death_1896_fng_a_ii_968_16",
+    "mp4_sha256": "7fe48f41f5da136fdfead63a0067bddc21863121eec25551fbe795443e2313aa",
+    "private_library_readback": "PASS",
+    "next_action": "Choose next independent Museum and do not repeat V218; retain V80/V118/V119 and owner final review"
   }
 }
