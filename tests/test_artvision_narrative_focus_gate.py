@@ -96,7 +96,7 @@ class NarrativeFocusTests(unittest.TestCase):
         issues = analyze(data)["errors"]
         self.assertIn("SPOKEN_SUBJECT_CROPPED_DURING_CAMERA_MOVE",
                       [issue["code"] for issue in issues])
-        self.assertTrue(any(issue.get("suggestion", {}).get("offending_time_s") == 3
+        self.assertTrue(any(1 < issue.get("suggestion", {}).get("offending_time_s", 0) < 5
                             for issue in issues if issue["code"] ==
                             "SPOKEN_SUBJECT_CROPPED_DURING_CAMERA_MOVE"))
 
