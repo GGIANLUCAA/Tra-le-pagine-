@@ -281,23 +281,42 @@ def analyze(data, *, phase="plan", manifest_dir=None, frames_dir=None, reviews=N
                     suggestion={"offending_time_s": off_center,
                                 "action": "Recenter subject smoothly during the actual spoken phrase"}))
             if phase == "final" and video is not None:
-                t = min(length - .1, max(.0, (max(start, speech_start) + min(end, speech_end)) / 2))
-                target = frames_dir / f"{slot}__{re.sub(r'[^a-zA-Z0-9_-]', '_', ident)}.jpg"
-                try:
-                    fingerprint = _frame_from_video(video, t, target)
-                    frames.append({"slot": slot, "segment": ident, "time_s": round(t, 3),
-                                   "file": str(target), "sha256": fingerprint})
-                    review = (reviews.get(slot) or {}).get(ident) or {}
-                    if (review.get("frame_sha256") != fingerprint
-                            or review.get("status") != "pass"
-                            or not review.get("subject_matches_speech")
-                            or not isinstance(review.get("reviewer"), str)
-                            or not review["reviewer"].strip()):
-                        pending.append(_issue("REAL_FRAME_SEMANTIC_REVIEW_REQUIRED",
-                                              slot=slot, segment=ident))
-                except (OSError, RuntimeError, subprocess.CalledProcessError,
-                        subprocess.TimeoutExpired):
-                    errors.append(_issue("REAL_FRAME_EXTRACTION_FAILED", slot=slot, segment=ident))
+                visible_start = max(start, speech_start)
+                visible_end = min(end, speech_end)
+                if visible_start >= visible_end:
+                    errors.append(_issue("NO_RENDERED_FRAME_OVERLAPS_SPEECH",
+                                         slot=slot, segment=ident))
+                    continue
+                midpoint = (visible_start + visible_end) / 2
+                sample_times = {"start": min(midpoint, visible_start + .12),
+                                "middle": midpoint,
+                                "end": max(midpoint, visible_end - .12)}
+                all_reviews = (reviews.get(slot) or {}).get(ident) or {}
+                sample_reviews = all_reviews.get("samples", {}) if isinstance(all_reviews, dict) else {}
+                for sample_name, t in sample_times.items():
+                    t = min(length - .05, max(0, t))
+                    target = frames_dir / (f"{slot}__"
+                        f"{re.sub(r'[^a-zA-Z0-9_-]', '_', ident)}__{sample_name}.jpg")
+                    try:
+                        fingerprint = _frame_from_video(video, t, target)
+                        frames.append({"slot": slot, "segment": ident, "sample": sample_name,
+                                       "time_s": round(t, 3),
+                                       "file": str(target), "sha256": fingerprint})
+                        review = sample_reviews.get(sample_name, {}) if isinstance(sample_reviews, dict) else {}
+                        if (review.get("frame_sha256") != fingerprint
+                                or review.get("status") != "pass"
+                                or not review.get("subject_matches_speech")
+                                or not isinstance(review.get("reviewer"), str)
+                                or not review["reviewer"].strip()):
+                            pending.append(_issue("REAL_FRAME_SEMANTIC_REVIEW_REQUIRED",
+                                                  slot=slot, segment=ident,
+                                                  suggestion={"sample": sample_name,
+                                                              "time_s": round(t, 3)}))
+                    except (OSError, RuntimeError, subprocess.CalledProcessError,
+                            subprocess.TimeoutExpired):
+                        errors.append(_issue("REAL_FRAME_EXTRACTION_FAILED",
+                                             slot=slot, segment=ident,
+                                             suggestion={"sample": sample_name}))
 
     status = ("blocked" if errors else
               "needs_visual_review" if phase == "final" and pending else
