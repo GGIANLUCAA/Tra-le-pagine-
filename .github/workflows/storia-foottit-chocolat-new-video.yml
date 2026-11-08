@@ -1,0 +1,90 @@
+name: "La Storia Rivive ONLY - New Foottit Chocolat 1897-1900 authentic acrobat cinematic video"
+on:
+  push:
+    branches: [storia-foottit-chocolat-chair-visual-20261108]
+    paths:
+      - ".github/workflows/storia-foottit-chocolat-new-video.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-foottit-chocolat-v1-real-new-film
+  cancel-in-progress: false
+jobs:
+  real_photo_plus_real_acrobat_motion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install video and photographic processing tools without commercial API calls
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get install -qq -y ffmpeg || { sudo apt-get update -qq && sudo apt-get install -qq -y ffmpeg; }
+          fi
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5" "pillow>=10,<13" "gradio_client>=1.0,<3"
+      - name: Download already verified original moving film and source-locked real 30-second monochrome frame
+        timeout-minutes: 6
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_foottit_chocolat_v1
+          curl -fLsS --retry 3 --connect-timeout 20 --max-time 190 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Chocolat_et_Foottit_-_Chaise_en_bascule.webm" -o output/storia_foottit_chocolat_v1/ORIGINAL_FOOTTIT_CHOCOLAT.webm
+          echo 'f3c54778123a4a44a9fecab3ade09ed27e3350a8  output/storia_foottit_chocolat_v1/ORIGINAL_FOOTTIT_CHOCOLAT.webm' | sha1sum -c
+          python src/storia_foottit_chocolat_stage_v1.py prepare
+      - name: Attempt exactly one legitimate zero-cost new real Finegrain I2I photo of the same stage frame
+        timeout-minutes: 7
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,pathlib
+          from PIL import Image
+          root=pathlib.Path("output/storia_foottit_chocolat_v1")
+          data={"provider":"finegrain/finegrain-image-enhancer","calls":1,"real_new_i2i_photo":False,"paid_calls":0,"new_vidu_calls":0,"human_visual_review":"PENDING","source_frame_time_s":30.0}
+          try:
+              from gradio_client import Client,handle_file
+              client=Client("finegrain/finegrain-image-enhancer",verbose=False)
+              pos=("Reconstruct the IDENTICAL authentic 1897-1900 Paris music-hall acrobat film frame as a very high quality natural modern photograph. This is exactly ONE living acrobat performer in profile, in dark sleeves and a pale cream historical clown romper with dark low boots, against the SAME plain grey-warm theatre canvas. Maintain the EXACT positions of his arms, head, legs, torso, count of human subjects and every historical prop without change. Keep the camera fixed. Natural real skin pores, tactile wool fabric and linen folds, historically plausible neutral amber stage lighting, realistic subtle film lighting and skin tones, genuinely photographic deep detail and microtexture not mere colorization; true colors, precise form.")
+              neg=("additional performer, duplicate people, multiple heads, extra arms or legs, distorted body, dislocated foot, fused fingers, horse, animal, horns, fantasy clothing, added props, altered gesture, new furniture, newly invented scenery, painting, cartoon, illustration, sepia, monochrome, fake intense purple, unrealistic bright red, plastic skin, glowing outlines, text, watermark")
+              result=client.predict(handle_file(str(root/"NEUTRAL_COLOR_GUIDE_30S.png")),pos,neg,1900,2,1.14,.97,6,112,144,.45,18,"DDIM",api_name="/process")
+              p=result[1] if isinstance(result,(tuple,list)) and len(result)>1 else result
+              if isinstance(p,dict): p=p.get("path")
+              with Image.open(str(p)) as im:
+                  im.convert("RGB").save(root/"NEW_PHOTO_I2I.png")
+              data["status"]="FREE_REAL_I2I_CREATED"
+              data["real_new_i2i_photo"]=True
+          except Exception as exc:
+              data["status"]="FREE_PROVIDER_UNAVAILABLE"
+              data["error_type"]=type(exc).__name__
+              data["error_summary"]=str(exc)[:240]
+          finally:
+              (root/"I2I_TRIAL.json").write_text(json.dumps(data,indent=2)+"\n")
+              print(data,flush=True)
+          PY
+      - name: Produce genuine vertical historical moving footage with one source-locked new photo only if technical test passes
+        timeout-minutes: 12
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_foottit_chocolat_stage_v1.py finalize
+      - name: Upload new actual master candidate and visual proof for independent critical QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_FOOTTIT_CHOCOLAT_1897_1900_NEW_REAL_VIDEO_FREE_I2I_REVIEW
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_foottit_chocolat_v1/AUTHENTIC_FRAME_30S_BW.png
+            output/storia_foottit_chocolat_v1/NEUTRAL_COLOR_GUIDE_30S.png
+            output/storia_foottit_chocolat_v1/NEW_PHOTO_I2I.png
+            output/storia_foottit_chocolat_v1/I2I_TRIAL.json
+            output/storia_foottit_chocolat_v1/SOURCE_REPORT.json
+            output/storia_foottit_chocolat_v1/VISUAL_REPORT.json
+            output/storia_foottit_chocolat_v1/REAL_SOURCE_I2I_COMPARISON.jpg
+            output/storia_foottit_chocolat_v1/REAL_MOTION_TIMELINE.jpg
+            output/storia_foottit_chocolat_v1/FOOTTIT_CHOCOLAT_COVER.jpg
+            output/storia_foottit_chocolat_v1/SOCIAL_DRAFTS.json
+            output/storia_foottit_chocolat_v1/FOOTTIT_CHOCOLAT_1897_1900_REAL_MOTION_V1_REVIEW.mp4
+            output/storia_foottit_chocolat_v1/FOOTTIT_CHOCOLAT_V1_VIDEO_COVER_SOCIAL_REVIEW.zip
