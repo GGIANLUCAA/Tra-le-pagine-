@@ -1,0 +1,42 @@
+name: ArtVision narrative focus - moving camera regression tests
+on:
+  pull_request:
+    paths:
+      - 'src/artvision_narrative_focus_gate.py'
+      - 'tests/test_artvision_narrative_focus_gate.py'
+      - '.github/workflows/artvision-narrative-focus-qa.yml'
+  push:
+    branches:
+      - feature/artvision-narration-focus-qa-20261030
+    paths:
+      - 'src/artvision_narrative_focus_gate.py'
+      - 'tests/test_artvision_narrative_focus_gate.py'
+      - '.github/workflows/artvision-narrative-focus-qa.yml'
+permissions:
+  contents: read
+jobs:
+  moving_camera_regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare local FFmpeg for real-MP4 smoke test (no apt-update)
+        run: |
+          python -m pip install --disable-pip-version-check "imageio-ffmpeg>=0.6.0,<1"
+          mkdir -p "$RUNNER_TEMP/ffmpeg-bin"
+          python - <<'PY'
+          from imageio_ffmpeg import get_ffmpeg_exe
+          from pathlib import Path
+          import os
+          target=Path(os.environ["RUNNER_TEMP"])/"ffmpeg-bin"/"ffmpeg"
+          target.symlink_to(get_ffmpeg_exe())
+          assert target.is_file()
+          PY
+          echo "$RUNNER_TEMP/ffmpeg-bin" >> "$GITHUB_PATH"
+      - name: Verify Python syntax and real FFmpeg availability
+        run: |
+          command -v ffmpeg
+          ffmpeg -version | head -1
+          python -m py_compile src/artvision_narrative_focus_gate.py tests/test_artvision_narrative_focus_gate.py
+      - name: Test phrase-to-camera tracking with no media downloads or API calls
+        run: python -m unittest discover -s tests -p 'test_artvision_narrative_focus_gate.py' -v
