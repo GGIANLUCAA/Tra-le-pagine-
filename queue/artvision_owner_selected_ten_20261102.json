@@ -2373,6 +2373,61 @@
         "android_phone_playback": "NOT_TESTED",
         "doc": "docs/productions/2026-11-08-artvision-blake-v220-private-museum-continuous-review.md",
         "next_action": "Do not duplicate V220 or V202/V203. Artistic full-speed V220 review plus original artwork territorial rights still missing. Try independent Magic Circle with measured free side wall; if fails after two attempts mark BLOCKED and rotate."
+      },
+      "museum_private_review_v221_20261108": {
+        "date": "2026-11-08",
+        "version": "V221",
+        "variant": "critico_museum",
+        "status": "NEW_REAL_SAMPLED_ARTISTIC_REVIEW_MP4_TECH_QA_PRIVATE_LIBRARY_INDEPENDENT_READBACK_PASS__NO_GOLD",
+        "filename": "BLAKE_GHOST_OF_A_FLEA_CRITICO_MUSEUM_V221_REVIEW.mp4",
+        "bytes": 19510537,
+        "sha256": "511ee72a1bfcb89fa70a9eb7eecf8b2eced1327be12237af790141b7df03adaa",
+        "duration_seconds": 135.45,
+        "frames": 2709,
+        "fps": 20,
+        "resolution": [
+          720,
+          1280
+        ],
+        "package": "BLAKE_GHOST_CRITICO_MUSEUM_V221_PACKAGE.zip",
+        "zip_bytes": 28754097,
+        "zip_sha256": "cc1f838e6c35c118a4c4cd228a82257de680dc1679ed315ee42d9aed1e1a541f",
+        "private_library_mp4_id": "libfile_5e2426c8d42c81918bc31634cfc4c45b",
+        "private_library_zip_id": "libfile_f4bd1621641481918cfb4059acdb65a8",
+        "private_library_path": "/ArtVision/Blake_Ghost_Flea_V221",
+        "source_art_sha256": "7aaa5adfd14561ad510937a36350d3f8308cc23b85fe337c9eb690c45746a6c5",
+        "source_frame_photo_sha256": "e4f263b70c9022036718cbd3068c4f24044d468da2d10cda805c6298a2bfe2d0",
+        "source_gallery_photo_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+        "frame_photo_license": "Sailko CC BY 3.0",
+        "gallery_license": "Daniel Naber CC BY 4.0",
+        "scene_kind": "NEUTRAL_EDITORIAL_SCENOGRAPHY_NOT_REAL_TATE_INSTALLATION",
+        "actual_painting_cm": [
+          16.2,
+          21.4
+        ],
+        "actual_frame_historic_status": "UNVERIFIED",
+        "metric_scale_3d_status": "APPROXIMATE_NOT_VALIDATED",
+        "source_critic_V203_sha256": "c4ea744874dca2660bfde4d1de4501844f7ba34660cbd9cf73b64eac6c1da010",
+        "original_voice_aac_adts_sha256": "825001670690e66b2f26a555ffd1a21b87138fde1dbd70d82965efac750bfaf8",
+        "aac_bitidentical": true,
+        "ASR_sentence_timings": 22,
+        "full_ffmpeg_decode": "PASS",
+        "continuity_max_adjacent_mean_delta": 31.615,
+        "quality_selected_samples": "PASS_ROOM_FRAME_ENTRY_EXIT; SOME_REPETITIVE_BODY_CLOSEUPS_PENDING_ARTIST_REVIEW",
+        "zip_crc": "PASS",
+        "zip_embedded_mp4_sha": "MATCH",
+        "library_readback": "PASS_MP4_ZIP_INDEPENDENT_MATERIALIZATION_AND_DECODE",
+        "artistic_full_speed_review": "PENDING",
+        "commercial_rights": "PENDING",
+        "android_user_playback": "NOT_VERIFIED",
+        "new_paid_calls": 0,
+        "published": false,
+        "gold": false,
+        "museum_approved": false,
+        "new_approved_slots": 0,
+        "source_script_preserved_in_zip": true,
+        "documentation": "docs/productions/2026-11-08-artvision-blake-ghost-flea-v221-critico-museum.md",
+        "next_action": "Do not re-render V221 as fresh slot; full-speed artistic review and rights/geometry. Advance independent remaining Museum work. V220 existed before this run."
       }
     },
     {
@@ -3092,5 +3147,18 @@
     "mp4_sha256": "7fe48f41f5da136fdfead63a0067bddc21863121eec25551fbe795443e2313aa",
     "private_library_readback": "PASS",
     "next_action": "Choose next independent Museum and do not repeat V218; retain V80/V118/V119 and owner final review"
+  },
+  "latest_owner_blake_v221_20261108": {
+    "date": "2026-11-08",
+    "new_real_review_mp4": 1,
+    "new_approved_slots": 0,
+    "verified_slots": 26,
+    "total_slots": 40,
+    "work_id": "blake_ghost_flea_1819_tate_n05889",
+    "mp4_sha256": "511ee72a1bfcb89fa70a9eb7eecf8b2eced1327be12237af790141b7df03adaa",
+    "private_library_readback": "PASS",
+    "artistic_review": "PENDING",
+    "new_paid_calls": 0,
+    "next_action": "Advance independent incomplete Museum slots without duplicating Blake V220/V221, Gold or publication."
   }
 }
