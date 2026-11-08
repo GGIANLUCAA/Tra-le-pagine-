@@ -92,13 +92,71 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
 
 
 #swDialog,#swPub{width:min(94vw,650px)}#swDialog .modalbody,#swPub .modalbody{display:grid;gap:12px}#swPubLinks{display:flex;gap:8px;flex-wrap:wrap}#swControls[hidden]{display:none!important}#socialViewer:not(.social-clean) #socialFeed{height:calc(100dvh - 185px)}#socialViewer:not(.social-clean){padding-bottom:57px}#socialViewer.social-clean{padding-bottom:0}#swControls button{min-height:44px;background:#172135dd}#swDialog textarea,#swPub textarea{width:100%}
+
+/* Museum Edition V4 — additive UI design: existing video, download, admin and API remain intact. */
+:root{--bg:#100c0a;--panel:#211911;--muted:#c2ae92;--line:#635036;--purple:#dfbb83;--ink:#f9f0e3;--gold:#ddba80;--soft:#f5e6ce}
+body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),radial-gradient(ellipse at 4% 52%,#48301922,transparent 35%),#100c0a;color:var(--ink)}
+.hero{background:radial-gradient(ellipse at 84% 13%,#9b6c384b,transparent 48%),linear-gradient(115deg,#261b14,#110d0a);border-bottom-color:#7a5f3c}
+.hero h1,.section-heading h2{font-family:Georgia,"Times New Roman",serif;letter-spacing:-.023em}
+.hero h1 em{color:#e7c28c}.brand-wordmark strong{color:#edc998}
+.brand-icon{border-color:#b28b54;background:#392515;color:#f3d5a2}
+.spotlight{border:8px ridge #9e7941;outline:1px solid #efd19f73;outline-offset:-14px;border-radius:6px;box-shadow:0 16px 45px #0009}
+.collection-card{border:4px ridge #95713e;border-radius:7px;box-shadow:0 17px 36px #0009}
+.film-tile{border:4px ridge #95713f;border-radius:8px;box-shadow:0 10px 24px #0009}
+.card{border-color:#735633;box-shadow:0 12px 28px #0008}.card .poster{border-bottom:4px ridge #95713f}
+.btn.primary,.chip.active,.actions button.primary{background:linear-gradient(#eecf9b,#c69a60);border-color:#e2bd88;color:#26170c}
+.bottom-nav{background:#1b140fef}
+.museum-section{position:relative;margin:50px 0 14px;scroll-margin-top:20px}
+.museum-section .section-heading h2{font-size:clamp(29px,4vw,49px)}
+.museum-section .section-eyebrow{color:#dcb780;letter-spacing:.20em}
+.museum-intro{color:#cbb79a;font-size:13px;max-width:780px;margin:0 0 18px}
+.museum-room-tabs{display:flex;gap:9px;overflow-x:auto;margin-bottom:13px;padding-bottom:4px}
+.museum-room-tabs button{min-height:44px;white-space:nowrap;color:#ebd7b7;background:#271b13;border:1px solid #7f603a;padding:9px 17px;border-radius:99px;cursor:pointer;font-weight:650}
+.museum-room-tabs button[aria-pressed=true]{background:linear-gradient(#f1d2a1,#c99f63);border-color:#e0ba87;color:#24170e}
+.museum-stage{position:relative;isolation:isolate;min-height:550px;overflow:hidden;border-radius:9px;border:1px solid #a07c4c;background:radial-gradient(ellipse at 50% 6%,#d0a16559,transparent 38%),repeating-linear-gradient(90deg,#281b12 0 15%,#44301f 15.2% 16.5%,#24180f 17% 33%),linear-gradient(#4e3424,#19110d);box-shadow:0 20px 60px #000b}
+.museum-stage:before{content:"";position:absolute;top:-26%;left:1%;right:1%;height:67%;border:22px solid #bd985b33;border-radius:50% 50% 0 0;box-shadow:inset 0 0 80px #e3b77223;pointer-events:none}
+.museum-pillar{position:absolute;top:0;bottom:0;width:34px;background:repeating-linear-gradient(90deg,#a7834f76 0 6px,#291b12 6px 12px);box-shadow:0 0 16px #0008}
+.museum-pillar.left{left:3%}.museum-pillar.right{right:3%}
+.museum-pillar:before{content:"";position:absolute;top:16%;left:-13px;right:-13px;height:22px;background:linear-gradient(#b68d57,#39271a);box-shadow:0 0 8px #000a}
+.museum-floor{position:absolute;left:-20%;right:-20%;bottom:-31%;height:46%;transform:perspective(360px) rotateX(64deg);transform-origin:center top;background:repeating-linear-gradient(90deg,transparent 0 12.3%,#e9c79747 12.4% 12.5%),repeating-linear-gradient(0deg,#5f432a 0 70px,#b393654c 71px,#281c13 74px)}
+.museum-gallery{position:absolute;top:9%;left:11%;right:11%;height:65%;display:flex;align-items:center;justify-content:center;gap:3%;perspective:900px}
+.museum-art-frame{position:relative;display:block;background:#1e1510;border:8px ridge #a77d43;padding:7px;box-shadow:0 13px 32px #000d,inset 0 0 0 2px #f4d7a34d;overflow:hidden;border-radius:2px}
+.museum-art-frame.side{width:24%;height:61%;opacity:.88}
+.museum-art-frame.center{width:43%;height:98%;border-width:11px;cursor:pointer}
+.museum-art-frame.center:focus-visible{outline:2px solid #f7dca9;outline-offset:4px}
+.museum-art-frame img{display:block;width:100%;height:100%;object-fit:contain;background:radial-gradient(circle at 50% 28%,#60452d,#1b1510)}
+.museum-art-frame img[hidden]{display:none}
+.museum-art-frame:after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 36px #0007;border:1px solid #edc89269;pointer-events:none}
+.museum-plaque{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);min-width:35%;max-width:88%;padding:9px 13px;text-align:center;background:#24160de9;border:1px solid #ae8752;box-shadow:0 6px 21px #000b;color:#f8e9d0}
+.museum-plaque b{display:block;font:600 14px/1.2 Georgia,serif}
+.museum-plaque small{display:block;margin-top:3px;font:500 10px/1.3 system-ui,sans-serif;color:#d7bc93}
+.museum-action-bar{position:absolute;left:17px;right:17px;bottom:15px;display:flex;justify-content:space-between;align-items:end;gap:12px;z-index:2}
+.museum-label{max-width:58%;padding:13px 17px;border:1px solid #9c7749;background:#140e0bed;box-shadow:0 12px 33px #000a}
+.museum-label .museum-kicker{display:block;font:700 10px/1.4 system-ui,sans-serif;letter-spacing:.17em;color:#dbb578}
+.museum-label h3{font:500 clamp(21px,2.8vw,33px)/1.07 Georgia,serif;margin:5px 0;overflow-wrap:anywhere}
+.museum-label p{font-size:12px;color:#d3bfa2;margin:4px 0}
+.museum-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.museum-actions button{min-height:44px;padding:10px 15px;color:#f9e8ce;background:#24160edb;border:1px solid #b58d5a;border-radius:7px;cursor:pointer;font-weight:700}
+.museum-actions button.watch{background:linear-gradient(#f1d19f,#bc9055);color:#26170b}
+.museum-actions button:disabled,.museum-art-frame.center:disabled{opacity:.45;cursor:not-allowed}
+.museum-picks{display:flex;gap:10px;padding:13px 1px 4px;overflow-x:auto;scrollbar-width:thin}
+.museum-pick{flex:0 0 182px;display:flex;align-items:center;gap:10px;min-height:79px;text-align:left;background:#231a12;border:1px solid #735435;border-radius:7px;padding:8px;color:#f7e9d1;cursor:pointer}
+.museum-pick[aria-pressed=true]{border-color:#efc98a;background:#46301e}
+.museum-pick img{width:48px;height:62px;border:4px ridge #9d713b;background:#1a120d;object-fit:contain}
+.museum-pick img[hidden]{display:none}
+.museum-pick b{display:block;font:600 13px/1.2 Georgia,serif}
+.museum-pick small{display:block;font:500 10px/1.3 system-ui,sans-serif;color:#cfb38e;margin-top:5px}
+.museum-note{font-size:11px;color:#baa588;margin:9px 0 0}
+@media(max-width:900px){.museum-art-frame.side{width:22%}.museum-art-frame.center{width:48%}}
+@media(max-width:720px){.museum-section{margin-top:30px}.museum-stage{min-height:555px}.museum-stage:before{top:-5%;height:48%;border-width:11px}.museum-pillar{width:16px}.museum-gallery{top:8%;left:8%;right:8%;height:53%}.museum-art-frame.side{display:none}.museum-art-frame.center{width:100%;height:100%;border-width:8px}.museum-plaque{max-width:95%;padding:6px 10px}.museum-plaque b{font-size:12px}.museum-plaque small{font-size:9px}.museum-action-bar{left:11px;right:11px;bottom:13px;display:block}.museum-label{max-width:none;padding:10px 12px;margin-bottom:9px}.museum-label h3{font-size:23px}.museum-actions{justify-content:stretch}.museum-actions button{flex:1;padding:10px 6px;font-size:12px}.museum-pick{flex-basis:157px}.museum-section .section-heading h2{font-size:30px}}
+
 </style>
 </head>
 <body>
 <header class="hero" id="home">
  <div class="top">
   <a href="#home" class="brand" aria-label="Video Library Studio, torna all'inizio">
-   <span class="brand-icon">✦</span><span class="brand-wordmark">VIDEO LIBRARY <strong>STUDIO</strong><small>CREATIVE CINEMA ARCHIVE</small></span>
+   <span class="brand-icon">✦</span><span class="brand-wordmark">VIDEO LIBRARY <strong>STUDIO</strong><small>MUSEO DIGITALE DELLE IMMAGINI</small></span>
   </a>
   <div class="top-actions">
    <button class="ghost top-search" id="topSearch" aria-label="Vai alla ricerca">⌕ <span>Cerca</span></button>
@@ -124,6 +182,25 @@ dialog{width:min(94vw,980px);background:#111720;border-color:#4e5159;border-radi
  <div class="section-heading"><div><div class="section-eyebrow">ESPLORA PER MONDO</div><h2 id="collectionsTitle">Le tue collezioni</h2><p>Ogni genere ha un'atmosfera. Scegli dove entrare.</p></div></div>
  <div class="collection-grid" id="collectionGrid"></div>
 </section>
+
+<section class="museum-section" id="museum" aria-labelledby="museumTitle">
+ <div class="section-heading"><div><div class="section-eyebrow">✦ MUSEO DIGITALE DELLE IMMAGINI</div><h2 id="museumTitle">Entra nelle sale</h2><p>Le tue produzioni, esposte come opere in una galleria.</p></div></div>
+ <p class="museum-intro">Tre sale collegate ai video realmente disponibili nel sito: scegli un'opera e guardala o apri la scheda. Le sale e le cornici sono un allestimento grafico, non un'esposizione storica documentata.</p>
+ <div class="museum-room-tabs" role="group" aria-label="Sala del museo"><button type="button" data-museum-room="art" aria-pressed="true">🏛 ArtVision</button><button type="button" data-museum-room="history" aria-pressed="false">🎞 La Storia Rivive</button><button type="button" data-museum-room="wow" aria-pressed="false">✧ WOW LAB</button></div>
+ <div class="museum-stage" aria-label="Galleria video">
+  <span class="museum-pillar left" aria-hidden="true"></span><span class="museum-pillar right" aria-hidden="true"></span>
+  <div class="museum-gallery">
+   <div class="museum-art-frame side" aria-hidden="true"><img id="museumLeftImage" alt="" hidden></div>
+   <button class="museum-art-frame center" id="museumMainFrame" type="button" aria-label="Guarda il video selezionato"><img id="museumMainImage" alt="" hidden><span class="museum-plaque"><b id="museumPlaque">Sala del museo</b><small id="museumPlaqueSmall">Scegli un'opera</small></span></button>
+   <div class="museum-art-frame side" aria-hidden="true"><img id="museumRightImage" alt="" hidden></div>
+  </div>
+  <span class="museum-floor" aria-hidden="true"></span>
+  <div class="museum-action-bar"><div class="museum-label"><span class="museum-kicker" id="museumKicker">ARTVISION · COLLEZIONE</span><h3 id="museumFilmTitle">Caricamento opere…</h3><p id="museumFilmInfo">Seleziona una sala per iniziare.</p></div><div class="museum-actions"><button class="watch" type="button" id="museumWatch">▶ Guarda il video</button><button type="button" id="museumDetails">▤ Scheda opera</button></div></div>
+ </div>
+ <div class="museum-picks" id="museumPicks" aria-label="Scegli un'altra opera"></div>
+ <p class="museum-note" id="museumCount">Le opere arrivano direttamente dal catalogo reale. Nessun MP4 viene spostato o modificato.</p>
+</section>
+
 <section class="showcase-section" id="recent" aria-labelledby="recentTitle">
  <div class="section-heading"><div><div class="section-eyebrow">FRESCHI DI PRODUZIONE</div><h2 id="recentTitle">Appena arrivati</h2><p>Gli ultimi filmati già disponibili per la visione.</p></div><button class="quiet-action" id="browseRecent">Esplora archivio ↗</button></div>
  <div class="film-rail" id="latestRail"></div>
@@ -434,8 +511,63 @@ async function batchPatch(patch,label){
  }
 }
 
+
+/* Museum Edition V4: read-only UI using the already loaded, real catalog. */
+let museumRoom='art',museumSelectedKey='';
+const museumRoomName={art:'ArtVision',history:'La Storia Rivive',wow:'WOW LAB'};
+function museumBelongs(x,room){
+ const t=[x.name,x.key,x.viewTitle,x.viewCategory,x.viewProject].filter(Boolean).join(' ').toLowerCase();
+ if(room==='art')return /artvision|critico|museum|bruegel|simberg|waterhouse|rembrandt|blake|vermeer|botticelli|caravaggio|quadro|dipinto|arte/.test(t);
+ if(room==='history')return /storia.?rivive|storia|restaur|histor|archivio.?storico|sf1906|carmencita|martinetti|lumi[eè]re|m[eé]li[eè]s|venezia.?1896|parigi.?19|san.?francisco.?1906/.test(t);
+ return /wow.?lab|wowlab|wow[-_ ]|esperiment|hyperlumen/.test(t);
+}
+function museumImage(el,x){
+ el.removeAttribute('src');el.hidden=true;
+ if(x&&typeof x.cover==='string'&&(x.cover.startsWith('/')||x.cover.startsWith('https://'))){
+  el.src=x.cover;el.hidden=false;
+ }
+}
+function renderMuseum(){
+ const catalog=(g.items||[]).filter(x=>x.available!==false&&!x.hidden&&museumBelongs(x,museumRoom));
+ catalog.sort((a,b)=>(Date.parse(b.uploaded||b.gptCreatedAt)||0)-(Date.parse(a.uploaded||a.gptCreatedAt)||0));
+ const x=catalog.find(v=>v.key===museumSelectedKey)||catalog[0]||null;
+ museumSelectedKey=x?x.key:'';
+ document.querySelectorAll('[data-museum-room]').forEach(b=>{
+   const active=b.dataset.museumRoom===museumRoom;
+   b.setAttribute('aria-pressed',String(active));
+   b.onclick=()=>{museumRoom=b.dataset.museumRoom;museumSelectedKey='';renderMuseum()};
+ });
+ const $m=id=>document.getElementById(id);
+ $m('museumKicker').textContent='SALA · '+museumRoomName[museumRoom].toUpperCase();
+ $m('museumCount').textContent=catalog.length+' video riproducibili in questa sala · selezione dal catalogo reale';
+ $m('museumFilmTitle').textContent=x?(x.viewTitle||x.name):'Nessun filmato disponibile in questa sala';
+ $m('museumFilmInfo').textContent=x?(x.viewCategory||x.viewProject||'Video disponibile'):'I nuovi filmati compariranno dopo la sincronizzazione.';
+ $m('museumPlaque').textContent=x?(x.viewTitle||x.name):museumRoomName[museumRoom];
+ $m('museumPlaqueSmall').textContent=x?(x.viewProject||x.viewCategory||'Collezione'):'In attesa di opere';
+ museumImage($m('museumMainImage'),x);
+ museumImage($m('museumLeftImage'),catalog[1]||null);
+ museumImage($m('museumRightImage'),catalog[2]||null);
+ const frame=$m('museumMainFrame'),watch=$m('museumWatch'),info=$m('museumDetails');
+ watch.disabled=info.disabled=frame.disabled=!x;
+ watch.onclick=frame.onclick=()=>{if(x)play(x)};
+ info.onclick=()=>{if(x)details(x)};
+ frame.setAttribute('aria-label',x?'Guarda '+(x.viewTitle||x.name):'Nessun video disponibile');
+ const picks=$m('museumPicks');picks.replaceChildren();
+ for(const item of catalog.slice(0,7)){
+  const b=document.createElement('button');b.type='button';b.className='museum-pick';
+  b.setAttribute('aria-pressed',String(item.key===museumSelectedKey));
+  b.setAttribute('aria-label','Seleziona '+(item.viewTitle||item.name));
+  const thumb=document.createElement('img');thumb.alt='';thumb.loading='lazy';museumImage(thumb,item);
+  const label=document.createElement('span'),strong=document.createElement('b'),small=document.createElement('small');
+  strong.textContent=item.viewTitle||item.name;small.textContent=item.viewCategory||item.viewProject||'Video';
+  label.append(strong,small);b.append(thumb,label);
+  b.onclick=()=>{museumSelectedKey=item.key;renderMuseum()};
+  picks.append(b);
+ }
+}
+
 let last=0;
-async function load(force){if(!force&&Date.now()-last<9000)return;last=Date.now();$('#counter').textContent='Aggiornamento archivio…';try{const res=await fetch('/api/catalog',{cache:'no-store',headers:g.token?{'Authorization':'Bearer '+g.token}:{}});if(!res.ok)throw Error('Impossibile leggere il catalogo ('+res.status+')');const data=await res.json();g.admin=!!data.admin;g.items=decorate(data.items||[]);g.override=data.overrides||{};$('#adminBanner').classList.toggle('show',g.admin);$('#archivedToggle').style.display=g.admin?'flex':'none';const projects=[...new Set(g.items.map(x=>x.viewProject))].sort();const selected=$('#project').value;$('#project').replaceChildren(new Option('Tutti i progetti',''));projects.forEach(p=>$('#project').add(new Option(p,p)));$('#project').value=projects.includes(selected)?selected:'';let total=g.items.filter(x=>!x.hidden);const online=total.filter(x=>x.available!==false);$('#nVideos').textContent=online.length;$('#nGpt').textContent=total.length-online.length;$('#nPosters').textContent=online.filter(x=>x.cover).length;$('#nProjects').textContent=new Set(total.map(x=>x.viewCategory)).size;const hours=total.reduce((s,x)=>s+(Number(x.duration)||0),0)/3600;$('#nHours').textContent=hours?hours.toFixed(1).replace('.',','):'—';categories();renderHome();applyStudioVisibility();draw();}catch(e){log(e.message);$('#counter').textContent='Errore durante il caricamento. Riprova con Aggiorna.'}}
+async function load(force){if(!force&&Date.now()-last<9000)return;last=Date.now();$('#counter').textContent='Aggiornamento archivio…';try{const res=await fetch('/api/catalog',{cache:'no-store',headers:g.token?{'Authorization':'Bearer '+g.token}:{}});if(!res.ok)throw Error('Impossibile leggere il catalogo ('+res.status+')');const data=await res.json();g.admin=!!data.admin;g.items=decorate(data.items||[]);g.override=data.overrides||{};$('#adminBanner').classList.toggle('show',g.admin);$('#archivedToggle').style.display=g.admin?'flex':'none';const projects=[...new Set(g.items.map(x=>x.viewProject))].sort();const selected=$('#project').value;$('#project').replaceChildren(new Option('Tutti i progetti',''));projects.forEach(p=>$('#project').add(new Option(p,p)));$('#project').value=projects.includes(selected)?selected:'';let total=g.items.filter(x=>!x.hidden);const online=total.filter(x=>x.available!==false);$('#nVideos').textContent=online.length;$('#nGpt').textContent=total.length-online.length;$('#nPosters').textContent=online.filter(x=>x.cover).length;$('#nProjects').textContent=new Set(total.map(x=>x.viewCategory)).size;const hours=total.reduce((s,x)=>s+(Number(x.duration)||0),0)/3600;$('#nHours').textContent=hours?hours.toFixed(1).replace('.',','):'—';categories();renderHome();renderMuseum();applyStudioVisibility();draw();}catch(e){log(e.message);$('#counter').textContent='Errore durante il caricamento. Riprova con Aggiorna.'}}
 function categories(){const cats=['Tutti',...new Set(g.items.map(x=>x.viewCategory))];const nav=$('#filters');nav.replaceChildren();cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(g.category===c?' active':'');b.textContent=c;b.onclick=()=>{g.category=c;g.showLimit=36;categories();draw()};nav.append(b)});}
 function filtered(){const q=norm($('#query').value),p=$('#project').value,sort=$('#sort').value,ver=$('#versions').value,arc=$('#includeArchived').checked,where=$('#availability').value;let arr=g.items.filter(x=>(!x.hidden||(g.admin&&arc))&&(!where||(where==='online'?x.available!==false:x.available===false))&&(g.category==='Tutti'||x.viewCategory===g.category)&&(!p||x.viewProject===p)&&(!ver||(ver==='final'&&x.viewVersion==='final')||(ver==='draft'&&x.viewVersion==='draft')||(ver==='variants'&&x.variants>0))&&norm([x.viewTitle,x.key,x.viewDescription,x.viewProject,x.guess.artist].join(' ')).includes(q));arr.sort((a,b)=>sort==='title'?a.viewTitle.localeCompare(b.viewTitle,'it'):sort==='duration'?(b.duration||0)-(a.duration||0):sort==='size'?b.size-a.size:sort==='favorites'?Number(!!b.favorite)-Number(!!a.favorite):Date.parse(b.gptCreatedAt||b.uploaded||0)-Date.parse(a.gptCreatedAt||a.uploaded||0));if($('#groupVariants').checked){const seen=new Set();arr=arr.filter(x=>{const key=base(x.key);if(/^(artvisionvideo|basevideo|tralepagineep01)/.test(key)||!x.variants)return true;if(seen.has(key))return false;seen.add(key);return true})}return arr}
 function draw(){
