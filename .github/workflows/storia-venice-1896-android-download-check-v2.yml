@@ -1,0 +1,36 @@
+name: "La Storia Rivive ONLY - Venice V2 Android anonymous release download check"
+on:
+  push:
+    branches: [storia-venice-1896-color-guided-v2]
+    paths: [".github/workflows/storia-venice-1896-android-download-check-v2.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify_no_rerender:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check public GH release assets with no token, never rerender or spend credits
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG=storia-venice-1896-v2-new-photo-owner-review-android
+          REPO=GGIANLUCAA/Tra-le-pagine-
+          mkdir -p /tmp/storia_venice_verified
+          cd /tmp/storia_venice_verified
+          echo '20800661b8ee2b8d82976ee1266b53c9175a5bcaf36b8ca184c5d4872efa4964  VENICE_1896_V2_REAL_MOVEMENT_REVIEW.mp4' > expected.sha256
+          echo '8c71b80df4bc26bca0ad0a1dd1925bba38069e71e57144b6b2a798c8e0fde685  VENICE_1896_V2_REVIEW_VIDEO_COVER_SOCIAL.zip' >> expected.sha256
+          for NAME in VENICE_1896_V2_REAL_MOVEMENT_REVIEW.mp4 VENICE_1896_V2_REVIEW_VIDEO_COVER_SOCIAL.zip; do
+            URL="https://github.com/$REPO/releases/download/$TAG/$NAME"
+            curl --location --fail --show-error --silent --retry 8 --retry-all-errors --retry-delay 3 --connect-timeout 15 --max-time 180 --user-agent "Mozilla/5.0 (Android Download Integrity QA)" "$URL" -o "$NAME"
+            test -s "$NAME"
+            echo "PUBLIC_ANONYMOUS_DOWNLOAD_SUCCEEDED_$NAME"
+          done
+          sha256sum -c expected.sha256
+          python - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('VENICE_1896_V2_REVIEW_VIDEO_COVER_SOCIAL.zip') as f:
+              assert f.testzip() is None
+          print('VENICE_V2_OWNER_DOWNLOAD_VERIFIED_PUBLIC_SHA256_CRC_PASS')
+          PY
