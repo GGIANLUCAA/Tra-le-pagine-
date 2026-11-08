@@ -6,6 +6,8 @@ import json,hashlib,zipfile,shutil
 from pathlib import Path
 import numpy as np,soundfile as sf
 from scipy.signal import resample_poly
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parent.parent/"bruegel_immersivo_v2"))
 import render as r
 from storyboard import BEATS,SOURCES
 
