@@ -1,0 +1,110 @@
+name: "La Storia Rivive ONLY - Venice 1896 new photo I2I true moving visual review"
+on:
+  workflow_dispatch:
+  push:
+    branches: [storia-venice-1896-color-guided-v2]
+    paths:
+      - ".github/workflows/storia-venice-1896-color-guided-v2.yml"
+permissions:
+  contents: write
+concurrency:
+  group: storia-venice-1896-color-guided-v2
+  cancel-in-progress: false
+jobs:
+  true_venice_film_new_visual_candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install strictly no-cost local media tools
+        run: |
+          set -euo pipefail
+          command -v ffmpeg
+          command -v ffprobe
+          python -m pip install -q "pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5" "gradio_client>=1.0,<3"
+      - name: Download only original 1896 film, verify original source SHA and original 22s anchor
+        timeout-minutes: 6
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_venice_1896_v2
+          curl -fsSL --retry 3 --retry-delay 5 --connect-timeout 25 --max-time 240 "https://upload.wikimedia.org/wikipedia/commons/e/e8/Venise_Panorama_du_Grand_Canal_1896.webm" -o output/storia_venice_1896_v2/SOURCE_1896.webm
+          echo "002b6bb6120cdd53f8a943e9ccb9af0195de883658b22de9a4628cec5cee70f2  output/storia_venice_1896_v2/SOURCE_1896.webm" | sha256sum --check --status
+          python src/storia_venice_1896_color_guided_v2.py prepare
+      - name: One NEW actual free photo I2I - Venice 22s with colored source-locked guidance
+        timeout-minutes: 7
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,pathlib
+          from PIL import Image
+          root=pathlib.Path('output/storia_venice_1896_v2')
+          status={'service':'finegrain/finegrain-image-enhancer','free_real_i2i_attempts':1,'paid_calls':0,'real_photo_generated':False,'artistic_review':'PENDING','new_vidu_calls':0}
+          try:
+              from gradio_client import Client, handle_file
+              client=Client('finegrain/finegrain-image-enhancer',verbose=False)
+              pos=('Professional contemporary photorealistic documentary reconstruction of exactly this authentic 1896 Venice Grand Canal view, retaining every original architectural window, cornice, stone post, foliage shape, mooring posts, single exact gondola, waterline, silhouette and camera projection. Natural subdued warm stucco, pale limestone, dark olive trees, slate-green canal water. Crisp believable real surface textures like a high-end modern photograph. No new objects, no people, no invented boats, and no changed architecture.')
+              neg=('invented windows, added arches, new balconies, changed buildings, extra gondolas, extra poles, human figures, fantasy Venice, illustration, oil painting, cartoon, over-saturated colors, fake sharp edges, surreal water, teal-orange grading')
+              res=client.predict(handle_file(str(root/'COLORMAPPED_GUIDANCE_SAME_FRAME.png')),pos,neg,1896,2,1.14,.97,6,112,144,.45,18,'DDIM',api_name='/process')
+              obj=res[1] if isinstance(res,(tuple,list)) and len(res)>1 else res
+              if isinstance(obj,dict):obj=obj.get('path')
+              with Image.open(str(obj)) as im:
+                  im.convert('RGB').save(root/'PHOTO_I2I_NEW.png')
+              status['real_photo_generated']=True
+              status['status']='REAL_NEW_FREE_I2I_CREATED'
+          except Exception as err:
+              status['status']='FREE_PROVIDER_UNAVAILABLE'
+              status['error_type']=type(err).__name__
+              status['error_summary']=str(err)[:280]
+          finally:
+              (root/'I2I_TRIAL.json').write_text(json.dumps(status,indent=2)+'\n')
+              print(status,flush=True)
+          PY
+      - name: Real source BW motion - new photo freeze - REAL source motion color preview, fail-closed
+        timeout-minutes: 12
+        run: |
+          set -euo pipefail
+          python src/storia_venice_1896_color_guided_v2.py finalize
+      - name: Save actual photo, source, report and preview if any for human visual QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_VENICE_1896_V2_NEW_COLOR_GUIDED_FREE_I2I_REAL_MOTION_QA
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_venice_1896_v2/ORIGINAL_BW_22S.png
+            output/storia_venice_1896_v2/COLORMAPPED_GUIDANCE_SAME_FRAME.png
+            output/storia_venice_1896_v2/PHOTO_I2I_NEW.png
+            output/storia_venice_1896_v2/I2I_TRIAL.json
+            output/storia_venice_1896_v2/SOURCE_REPORT.json
+            output/storia_venice_1896_v2/VISUAL_REPORT.json
+            output/storia_venice_1896_v2/VISUAL_CLOSE_QA.jpg
+            output/storia_venice_1896_v2/VENICE_1896_V2_COVER.jpg
+            output/storia_venice_1896_v2/VENICE_1896_V2_REAL_MOVEMENT_REVIEW.mp4
+            output/storia_venice_1896_v2/VENICE_1896_V2_REVIEW_VIDEO_COVER_SOCIAL.zip
+      - name: Public owner-download preview ONLY if real I2I and genuine moving H264 AAC MP4 passed technical gates
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd output/storia_venice_1896_v2
+          if ! test -s VENICE_1896_V2_REAL_MOVEMENT_REVIEW.mp4 || ! test -s VENICE_1896_V2_REVIEW_VIDEO_COVER_SOCIAL.zip; then
+            echo "NO_REAL_PHOTO_PASS_NO_PUBLIC_REVIEW_RELEASE"
+            exit 0
+          fi
+          TAG=storia-venice-1896-v2-new-photo-owner-review-android
+          gh release create "$TAG" VENICE_1896_V2_REAL_MOVEMENT_REVIEW.mp4 VENICE_1896_V2_REVIEW_VIDEO_COVER_SOCIAL.zip VENICE_1896_V2_COVER.jpg --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title "Venice 1896 V2 - visual review only / NOT approved" --notes "REAL authentic 1896 moving-source plus experimental photo I2I, technic QA only. Artistic fidelity and Italian rights PENDING. This public prerelease is solely a transport method for owner review, NOT permission to publish on website or social."
+          for NAME in VENICE_1896_V2_REAL_MOVEMENT_REVIEW.mp4 VENICE_1896_V2_REVIEW_VIDEO_COVER_SOCIAL.zip; do
+            curl -fLsS --retry 3 --connect-timeout 15 --max-time 120 "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$NAME" -o "/tmp/verified_$NAME"
+            test "$(sha256sum "$NAME" | cut -d' ' -f1)" = "$(sha256sum "/tmp/verified_$NAME" | cut -d' ' -f1)"
+            echo "ANONYMOUS_HTTP_DOWNLOAD_SHA256_PASS_$NAME"
+          done
+          python - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('/tmp/verified_VENICE_1896_V2_REVIEW_VIDEO_COVER_SOCIAL.zip') as z:
+              assert z.testzip() is None
+          print('PUBLIC_OWNER_PREVIEW_ZIP_CRC_PASS_NOT_A_FINAL_RELEASE')
+          PY
