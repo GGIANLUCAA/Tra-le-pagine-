@@ -1530,7 +1530,9 @@
         "source_image_download_sha256": null,
         "source_image_width_px": null,
         "source_image_height_px": null,
-        "contains_authentic_photographed_frame": null,
+        "contains_authentic_photographed_frame": false,
+        "image_preview_url": "https://www.finna.fi/Cover/Show?id=kansallisgalleria.0A48459FA177256B62CC6FD2D340317E&index=0&size=large&source=Solr",
+        "image_preview_inspected": "2026-11-08: web-viewed Finna image visibly shows artwork only, not an external museum frame",
         "room_context": null,
         "is_the_tampere_fresco": false,
         "next_action": "Retrieve exact Finna CC0 image bytes via authorized runner; full readback SHA/pixels; verify whether the photo actually contains the 1896 artwork's physical frame. Do not treat it as Museum room/frame or count a new slot. Preserve 15.8x17.5 cm physical scale."
