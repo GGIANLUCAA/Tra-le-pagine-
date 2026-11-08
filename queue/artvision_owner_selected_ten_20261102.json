@@ -1526,7 +1526,7 @@
         "record_license": "CC0 as explicitly shown by the original Finna record checked 2026-11-08",
         "exact_work_id": "A II 968:16",
         "exact_painting_cm": {"height": 15.8, "width": 17.5},
-        "status": "OFFICIAL_CC0_SOURCE_PAGE_VERIFIED_BYTES_SHA_AND_FRAME_NOT_VERIFIED",
+        "status": "OFFICIAL_CC0_SOURCE_AND_IMAGE_PREVIEW_VERIFIED_NO_EXTERNAL_FRAME_BYTES_SHA_PENDING",
         "source_image_download_sha256": null,
         "source_image_width_px": null,
         "source_image_height_px": null,
@@ -1535,7 +1535,7 @@
         "image_preview_inspected": "2026-11-08: web-viewed Finna image visibly shows artwork only, not an external museum frame",
         "room_context": null,
         "is_the_tampere_fresco": false,
-        "next_action": "Retrieve exact Finna CC0 image bytes via authorized runner; full readback SHA/pixels; verify whether the photo actually contains the 1896 artwork's physical frame. Do not treat it as Museum room/frame or count a new slot. Preserve 15.8x17.5 cm physical scale."
+        "next_action": "Retrieve actual Finna CC0 bytes via authorized runner and verify SHA/pixels; the inspected preview shows only the artwork without museum frame. Continue documented specific frame or permitted neutral scenographic small cabinet at authentic 15.8x17.5 cm scale, with full video QA; no new slot based on this image alone."
       },
       "preexisting_cinema_candidate": null,
       "editorial_note": "Tiny original watercolor/gouache, NOT the 1906 Tampere Cathedral fresco; avoid wrong oil/canvas description on some metadata pages",
