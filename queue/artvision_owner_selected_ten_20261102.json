@@ -1563,7 +1563,37 @@
         "site_download_HTTP_206": "PASS public /download with expected Range+Content-Disposition, /media streaming range PASS"
       },
       "site_archive_verified_slots": 2,
-      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04"
+      "site_archive_verification": "PASS V161 exact 17 original full HTTP SHA+Range 2026-11-04",
+      "museum_existing_private_candidates_v212_v213_20261108": {
+        "status": "EXISTING_LIBRARY_REVIEW_ASSETS_NOT_NEW_OUTPUT_THIS_RUN",
+        "cinema": {
+          "file": "SIMBERG_THE_GARDEN_OF_DEATH_V212_CINEMA_ANDROID.mp4",
+          "sha256": "6ad1f472f1bc5c0be9ac5b5aaec998312dd628dd6be732dfe9a6bcaf83722f51",
+          "source_zip": "SIMBERG_V212_CINEMA_FULL_SOURCE.zip",
+          "full_decode_from_archived_QA": "PASS",
+          "artistic_review": "PENDING"
+        },
+        "critico": {
+          "file": "SIMBERG_THE_GARDEN_OF_DEATH_V213_CRITICO_ANDROID_FINAL.mp4",
+          "sha256": "e1e3041e80d3d53e664a0310a7f266bd9393539a88bc27de0d64c84f7b5149d9",
+          "source_zip": "SIMBERG_V213_CRITICO_FULL_SOURCE.zip",
+          "full_decode_from_archived_QA": "PASS",
+          "shot_narration": "PARAGRAPH_LEVEL_APPROXIMATE_NOT_PHRASE_LEVEL_VERIFIED",
+          "artistic_review": "PENDING"
+        },
+        "art_sha256": "514bf455d7cdc3543e3ee8ff49f206370ef34121c72e49e04353e3e902f530a5",
+        "gallery_photo_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+        "gallery_photo_url": "https://commons.wikimedia.org/wiki/File:Museum_Barberini_Innenraum_leer.jpg",
+        "gallery_license": "CC BY 4.0 Daniel Naber",
+        "museum_scene_disclosure": "NEUTRAL_EDITORIAL_SCENOGRAPHY_NOT_REAL_ATENEUM_DISPLAY",
+        "physical_cm": [
+          17.5,
+          15.8
+        ],
+        "next_action": "Full-speed artistic review of actual V212/V213; specifically phrase-level sync V213 and apparent physical scale; verify commercial territorial reuse before any Gold or publication. Do not rerender or recount as new slot.",
+        "new_mp4_this_cycle": 0,
+        "approved_slot_increment": 0
+      }
     },
     {
       "id": "bruegel_triumph_death_1562_prado_p001393",
