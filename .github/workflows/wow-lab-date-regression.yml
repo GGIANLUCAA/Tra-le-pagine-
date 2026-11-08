@@ -1,0 +1,23 @@
+name: "WOW LAB isolated date regression — no rendering"
+on:
+  push:
+    branches:
+      - experiment/wow-lab-tiger-burst-20261107
+    paths:
+      - "wow_lab/tests/test_date_regression.py"
+      - ".github/workflows/wow-lab-date-regression.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  date_regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install "numpy>=1.26,<3" "Pillow>=10,<12" "opencv-python-headless>=4.8,<5"
+      - name: Verify the date fix without any API calls or rendering
+        run: python -m unittest discover -s wow_lab/tests -p 'test_date_regression.py' -v
