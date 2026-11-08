@@ -21,6 +21,9 @@ jobs:
       - name: Install strictly no-cost local media tools
         run: |
           set -euo pipefail
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get install -qq -y ffmpeg || { sudo apt-get update -qq && sudo apt-get install -qq -y ffmpeg; }
+          fi
           command -v ffmpeg
           command -v ffprobe
           python -m pip install -q "pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5" "gradio_client>=1.0,<3"
