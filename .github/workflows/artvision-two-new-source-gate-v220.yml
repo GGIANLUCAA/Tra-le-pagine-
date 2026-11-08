@@ -1,0 +1,68 @@
+name: ArtVision V220 · Two truly new originals — source gate
+on:
+  push:
+    branches: [pilot/artvision-two-new-paintings-v220]
+    paths: [.github/workflows/artvision-two-new-source-gate-v220.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get verified, correctly licensed original art ONLY
+        run: |
+          python -m pip install -q Pillow
+          python - <<'PY'
+          import urllib.request,urllib.parse,json,hashlib,os,time,pathlib,io
+          from PIL import Image,ImageOps,ImageDraw
+          out=pathlib.Path('artvision_v220_original_sources');out.mkdir(exist_ok=True)
+          choices={
+           'schwabe_death_gravedigger':{'file':'Der Tod des Totengrabers.jpg','license':'CC BY-SA 4.0','pixels':(1524,2131),'year':'1895–1900','artist':'Carlos Schwabe','title':'Death and the Gravedigger','source':'https://commons.wikimedia.org/wiki/File:Der_Tod_des_Totengrabers.jpg'},
+           'vasnetsov_knight_crossroads':{'file':'Victor Vasnetsov - Knight at the Crossroads - Google Art Project.jpg','license':'Public domain','pixels':(5527,3065),'year':'1882','artist':'Viktor Vasnetsov','title':'Knight at the Crossroads','source':'https://commons.wikimedia.org/wiki/File:Victor_Vasnetsov_-_Knight_at_the_Crossroads_-_Google_Art_Project.jpg'}
+          }
+          headers={'User-Agent':'ArtVisionSourceQA/1.0 (art attribution source review; no paid API)', 'Accept':'application/json'}
+          def fetch(url,timeout=70):
+           err=None
+           for n in range(3):
+            try:
+             with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=timeout) as response:
+              return response.read()
+            except Exception as e:
+             err=e;print('RETRY',str(e)[:120],flush=True);time.sleep(n+2)
+           raise err
+          results={}
+          for key,c in choices.items():
+           param=urllib.parse.urlencode({'action':'query','format':'json','titles':'File:'+c['file'],
+                    'prop':'imageinfo','iiprop':'url|sha1|size|mime|extmetadata'})
+           q=json.loads(fetch('https://commons.wikimedia.org/w/api.php?'+param))
+           p=next(iter(q['query']['pages'].values()))
+           if 'imageinfo' not in p:raise RuntimeError('No Commons exact file metadata: '+key)
+           i=p['imageinfo'][0]
+           license=i.get('extmetadata',{}).get('LicenseShortName',{}).get('value','')
+           print('SOURCE_METADATA',key,license,i.get('size'),i.get('sha1'),flush=True)
+           if key.startswith('schwabe') and not ('CC BY-SA 4.0' in license):raise RuntimeError('Schwabe license changed: '+license)
+           if key.startswith('vasnetsov') and not ('Public domain' in license or 'PD' in license):raise RuntimeError('Vasnetsov license not safely verified: '+license)
+           raw=fetch(i['url'])
+           if len(raw)!=i['size'] or hashlib.sha1(raw).hexdigest()!=i['sha1'].lower():
+            raise RuntimeError('Original image length/SHA1 mismatch: '+key)
+           im=Image.open(io.BytesIO(raw));im.verify()
+           im=Image.open(io.BytesIO(raw)).convert('RGB')
+           if im.size!=c['pixels']:raise RuntimeError('Image size mismatch: '+str(im.size))
+           name=key+'.jpg'
+           (out/name).write_bytes(raw)
+           rec={**c,'filename':name,'original_url':i['url'],'license_verified':license,
+                 'sha1':i['sha1'],'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw)}
+           results[key]=rec
+           print('ORIGINAL_VERIFIED',key,im.size,rec['sha256'],flush=True)
+          (out/'SOURCE_MANIFEST_V220.json').write_text(json.dumps({'status':'TWO_AUTHENTIC_PD_ART_SOURCE_IMAGES_NOT_MOVIES','entries':results,'museum_frame_verified':False,'approved_final_movie':False},ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARTVISION_V220_TWO_NEW_ARTWORK_SOURCE_VERIFIED
+          path: artvision_v220_original_sources/
+          retention-days: 14
+          if-no-files-found: warn
