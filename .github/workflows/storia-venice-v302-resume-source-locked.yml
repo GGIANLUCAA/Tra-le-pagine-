@@ -1,0 +1,81 @@
+name: "La Storia Rivive V302 · Venezia 1896 nuova scelta scene · 4 genuine I2I (test qualità)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-venice-v302-resume-source-locked.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-venice-1896-v302-photo-preflight
+  cancel-in-progress: false
+jobs:
+  real_storia_photo_candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    env:
+      PYTHONUNBUFFERED: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: "4"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FREE historical source and photo tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "numpy>=1.26,<2" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "huggingface_hub>=0.25,<2" "gradio_client>=1.0,<3" "onnxruntime>=1.18,<2"
+          python -m py_compile src/storia_venice_1896_v302_resume_new_scenes.py
+      - name: Restore exact two successful I2I photos from V301, no duplicate provider requests
+        shell: bash
+        run: |
+          set -euo pipefail
+          D=output/storia_v80_new_cities/VENICE_1896
+          mkdir -p "$D"
+          gh run download 42464555336 --repo "$GITHUB_REPOSITORY" --name STORIA_VENICE_V301_SOURCE_LOCKED_PHOTO_I2I_REVIEW --dir "$D"
+          test -s "$D/V301_TRUE_I2I_PHOTO_01.png"
+          test -s "$D/V301_TRUE_I2I_PHOTO_02.png"
+          test -s "$D/V301_PHOTO_QA_01.json"
+          test -s "$D/V301_PHOTO_QA_02.json"
+      - name: One-shot source lock and photorealistic generative I2I, STOP at first poor photo
+        timeout-minutes: 29
+        run: |
+          set -euo pipefail
+          python -u src/storia_venice_1896_v302_resume_new_scenes.py
+          test -s output/storia_v80_new_cities/VENICE_1896/V302_STATUS.json
+          python - <<'PY'
+          import json,pathlib
+          r=json.loads(pathlib.Path('output/storia_v80_new_cities/VENICE_1896/V302_STATUS.json').read_text())
+          print("V302_STATUS",r['status'],"REAL_PHOTOS",r['new_generative_photo_count'],
+                "REAL_VIDU",r['real_Vidu_clip_count'],"REAL_NEW_MP4",r['real_new_video_count'],
+                "PAID_CREDITS",r['paid_spend'])
+          assert r['site_published'] is False and r['paid_spend']==0
+          PY
+      - name: Preserve authentic photo candidates and real MP4 only if generated
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_VENICE_V302_SOURCE_LOCKED_PHOTO_I2I_REVIEW
+          path: |
+            output/storia_v80_new_cities/VENICE_1896/V302_STATUS.json
+            output/storia_v80_new_cities/VENICE_1896/V302_PHOTO_TRIAL.json
+            output/storia_v80_new_cities/VENICE_1896/FRAME_QA.json
+            output/storia_v80_new_cities/VENICE_1896/PHOTO_QA.json
+            output/storia_v80_new_cities/VENICE_1896/SOURCE_QA.json
+            output/storia_v80_new_cities/VENICE_1896/REAL_FILM_SCENES.jpg
+            output/storia_v80_new_cities/VENICE_1896/BEFORE_AFTER_ACTUAL_GENERATED.jpg
+            output/storia_v80_new_cities/VENICE_1896/COVER.jpg
+            output/storia_v80_new_cities/VENICE_1896/V302_PHOTO_QA_*.json
+            output/storia_v80_new_cities/VENICE_1896/V302_TRUE_I2I_PHOTO_*.png
+            output/storia_v80_new_cities/VENICE_1896/V301_PHOTO_QA_*.json
+            output/storia_v80_new_cities/VENICE_1896/V302_SOURCE_COLOR_GUIDE_*.png
+            output/storia_v80_new_cities/VENICE_1896/VENICE_1896_V302_FOUR_TRUE_I2I_NO_VIDU_PREVIEW.mp4
+            output/storia_v80_new_cities/VENICE_1896/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
