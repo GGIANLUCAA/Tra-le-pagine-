@@ -1,6 +1,10 @@
 """Offline regression tests for ArtVision speech/visible-subject QA."""
 import copy
+import hashlib
+import shutil
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -132,6 +136,46 @@ class NarrativeFocusTests(unittest.TestCase):
         ]
         self.assertIn("INVALID_CAMERA_KEYFRAMES",
                       [issue["code"] for issue in analyze(data)["errors"]])
+
+
+    @unittest.skipUnless(shutil.which("ffmpeg"), "ffmpeg required for actual MP4 QA")
+    def test_real_mp4_start_middle_end_frames_require_semantic_review(self):
+        with tempfile.TemporaryDirectory() as td:
+            folder = Path(td)
+            mp4 = folder / "synthetic.mp4"
+            subprocess.run([
+                "ffmpeg", "-hide_banner", "-loglevel", "error", "-nostdin", "-y",
+                "-f", "lavfi", "-i", "color=c=blue:s=96x128:r=5:d=10",
+                "-an", "-c:v", "mpeg4", "-q:v", "5", str(mp4),
+            ], check=True, timeout=35)
+            actual_sha = hashlib.sha256(mp4.read_bytes()).hexdigest()
+            data = fixture()
+            for slot, variant in data["variants"].items():
+                variant["video_path"] = mp4.name
+                variant["video_sha256"] = actual_sha
+                if slot == "critico_museum":
+                    for shot in variant["shots"]:
+                        if shot["segment_id"] == "face":
+                            t0, t1 = 1, 5
+                        else:
+                            t0, t1 = 5, 9
+                        shot["camera_keyframes_xyxy"] = [
+                            {"time_s": t0,
+                             "camera_crop_xyxy": shot["camera_crop_xyxy"]},
+                            {"time_s": t1,
+                             "camera_crop_xyxy": shot["camera_crop_xyxy"]},
+                        ]
+            report = analyze(data, phase="final", manifest_dir=folder,
+                             frames_dir=folder / "review")
+            self.assertEqual(report["status"], "needs_visual_review", report["errors"])
+            self.assertEqual(len(report["frames"]), 12)
+            self.assertEqual(len(report["pending"]), 12)
+            self.assertTrue(all(Path(frame["file"]).is_file()
+                                for frame in report["frames"]))
+            self.assertEqual({frame["sample"] for frame in report["frames"]},
+                             {"start", "middle", "end"})
+            self.assertFalse(report["v25_approved"])
+
 
 
 if __name__ == "__main__":
