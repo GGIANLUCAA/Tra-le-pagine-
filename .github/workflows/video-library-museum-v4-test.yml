@@ -78,7 +78,7 @@ jobs:
             d.querySelector('[data-museum-room="history"]').click();
             assert.match(d.querySelector('#museumFilmTitle').textContent,/CARMENCITA/i);
             d.querySelector('[data-museum-room="wow"]').click();
-            assert.match(d.querySelector('#museumFilmTitle').textContent,/WOW_LAB/i);
+            assert.match(d.querySelector('#museumFilmTitle').textContent,/WOW LAB/i);
             assert.equal(d.querySelectorAll('#museumPicks .museum-pick').length,1);
             assert.equal(d.querySelector('#playerDownload')!==null,true,'Original download must remain present');
             assert.equal(errs.length,0,errs.join('\n'));
