@@ -1,0 +1,112 @@
+name: Bruegel V4 | real Google Italian TTS video
+run-name: "Bruegel · Google Italian voice only · authentic painting · downloadable MP4"
+on:
+  push:
+    branches:
+      - experiment/bruegel-google-italian-voice-v4-20261108
+    paths:
+      - .github/workflows/bruegel-v4-google-italian.yml
+      - experiments/bruegel_google_v4/**
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: bruegel-1559-google-italian-voice-v4-no-overlap
+  cancel-in-progress: false
+jobs:
+  google_voice_render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Preflight exact isolated script and no non-Google fallback
+        run: |
+          set -euo pipefail
+          python -m py_compile experiments/bruegel_google_v4/render_google_it.py
+          test "$(git branch --show-current)" = "experiment/bruegel-google-italian-voice-v4-20261108"
+      - name: Install original-image renderer, FFmpeg, Google Translate TTS
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check --quiet \
+            "gTTS>=2.5.4,<3" "numpy>=1.26,<3" "Pillow>=10,<13" \
+            "requests>=2.31,<3" "soundfile>=0.12,<1" "scipy>=1.11,<2" \
+            "av>=14,<18" "imageio-ffmpeg>=0.6,<1"
+          mkdir -p /tmp/ffmpeg-google
+          python - <<'PY'
+          import os
+          from imageio_ffmpeg import get_ffmpeg_exe
+          os.symlink(get_ffmpeg_exe(),"/tmp/ffmpeg-google/ffmpeg")
+          PY
+          echo "/tmp/ffmpeg-google" >> "$GITHUB_PATH"
+      - name: Reuse original authenticated Bruegel source with exact checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/old-original output/bruegel_google_it_v4/build
+          gh run download 42417285289 --repo "$GITHUB_REPOSITORY" \
+            --name BRUEGEL_V2_RECOVERY_SOURCE_VOICE_NO_REBILL --dir /tmp/old-original
+          cp /tmp/old-original/build/ORIGINAL_ARTWORK_AUTHENTIC.jpg \
+            output/bruegel_google_it_v4/build/ORIGINAL_ARTWORK_AUTHENTIC.jpg
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p=Path("output/bruegel_google_it_v4/build/ORIGINAL_ARTWORK_AUTHENTIC.jpg")
+          digest=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert digest=="27dfcb114dd8ff6d45e1661c96f8f9e2489df993eb877bd1592406d64fd9ffce"
+          print("Original authentic source reused",digest)
+          PY
+      - name: Narrate in Italian using Google Translate TTS; no substitutes
+        run: |
+          set -euo pipefail
+          python -u experiments/bruegel_google_v4/render_google_it.py
+      - name: Independently verify complete Google-voice MP4 and ZIP integrity
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,subprocess,zipfile
+          from pathlib import Path
+          d=Path("output/bruegel_google_it_v4")
+          m=json.loads((d/"QA_GOOGLE_V4.json").read_text(encoding="utf-8"))
+          f=d/m["video_file"]
+          assert m["voice_provider"]=="Google Translate TTS via gTTS"
+          assert m["full_ffmpeg_decode"]=="PASS"
+          assert m["resolution"]==[1080,1920]
+          assert m["artistic_approved"] is False and m["social_published"] is False
+          assert f.stat().st_size==m["bytes"]
+          assert hashlib.sha256(f.read_bytes()).hexdigest()==m["sha256"]
+          subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(f),"-f","null","-"],check=True)
+          with zipfile.ZipFile(d/"BRUEGEL_GOOGLE_ITALIANO_VIDEO_E_FONTI.zip") as archive:
+            assert archive.testzip() is None and m["video_file"] in archive.namelist()
+          print("REAL_GOOGLE_ITALIAN_MP4_DECODE_PASS",m["video_file"],m["bytes"],m["duration_seconds"])
+          PY
+      - name: Save downloadable MP4, ZIP, voice and sources
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_GOOGLE_ITALIANO_V4_MP4_E_FONTI
+          path: |
+            output/bruegel_google_it_v4/*.mp4
+            output/bruegel_google_it_v4/*.zip
+            output/bruegel_google_it_v4/VOCE_GOOGLE_ITALIANO.wav
+            output/bruegel_google_it_v4/COPERTINA_BRUEGEL.jpg
+            output/bruegel_google_it_v4/*.txt
+            output/bruegel_google_it_v4/*.srt
+            output/bruegel_google_it_v4/*.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Preserve authentic Google voice if later rendering fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BRUEGEL_V4_RECOVERY_GOOGLE_AUDIO
+          path: |
+            output/bruegel_google_it_v4/build/GOOGLE_CHAPTER_*.mp3
+            output/bruegel_google_it_v4/VOCE_GOOGLE_ITALIANO.wav
+            output/bruegel_google_it_v4/COPIONE_ITALIANO.txt
+          if-no-files-found: warn
+          retention-days: 10
