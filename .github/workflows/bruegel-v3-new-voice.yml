@@ -48,6 +48,17 @@ jobs:
             --name BRUEGEL_V2_RECOVERY_SOURCE_VOICE_NO_REBILL --dir /tmp/bruegel-authentic-art
           cp /tmp/bruegel-authentic-art/build/ORIGINAL_ARTWORK_AUTHENTIC.jpg \
             output/bruegel_1559_critico_qwen_v3/build/ORIGINAL_ARTWORK_AUTHENTIC.jpg
+      - name: Recover previous voice bytes if first rendering failed after speech generation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/bruegel-v3-recovery output/bruegel_1559_critico_qwen_v3/build
+          if gh run download 42438352823 --repo "$GITHUB_REPOSITORY" --name BRUEGEL_V3_VOICE_RECOVERY --dir /tmp/bruegel-v3-recovery; then
+            find /tmp/bruegel-v3-recovery -type f \( -name 'chapter_*.wav' -o -name 'chapters.json' \) -exec cp {} output/bruegel_1559_critico_qwen_v3/build/ \;
+            echo "Real voice chapters recovered, no repeat synthesis"
+          else
+            echo "No previous audio artifact; generate once using Qwen"
+          fi
       - name: Generate original Italian dialogue with new Qwen3 voice
         env:
           HF_HUB_DISABLE_XET: "1"
@@ -56,7 +67,11 @@ jobs:
           TOKENIZERS_PARALLELISM: "false"
         run: |
           set -euo pipefail
-          python -u experiments/bruegel_immersivo_v3/qwen_voice.py
+          if test -s output/bruegel_1559_critico_qwen_v3/build/chapters.json; then
+            echo "Reusing previously generated voice — no new model call"
+          else
+            python -u experiments/bruegel_immersivo_v3/qwen_voice.py
+          fi
       - name: Render genuine art-critic documentary with matching authentic details
         run: |
           set -euo pipefail
