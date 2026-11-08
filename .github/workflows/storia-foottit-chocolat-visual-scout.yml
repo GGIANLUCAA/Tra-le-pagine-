@@ -1,0 +1,89 @@
+name: "La Storia Rivive - Foottit Chocolat historic acrobatic stage source scout"
+on:
+  push:
+    branches: [storia-foottit-chocolat-chair-visual-20261108]
+    paths: [".github/workflows/storia-foottit-chocolat-visual-scout.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  select_real_source_scene:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Preflight local no-cost media programs
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get install -qq -y ffmpeg || { sudo apt-get update -qq && sudo apt-get install -qq -y ffmpeg; }
+          fi
+          python -m pip install -q "pillow>=10,<13" "opencv-python-headless>=4.8,<5"
+      - name: Fetch and validate original film from Commons
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_foottit_chocolat_scout
+          cd output/storia_foottit_chocolat_scout
+          curl -fLsS --retry 3 --connect-timeout 20 --max-time 180 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Chocolat_et_Foottit_-_Chaise_en_bascule.webm" -o ORIGINAL_CHOCOLAT_FOOTTIT.webm
+          echo 'f3c54778123a4a44a9fecab3ade09ed27e3350a8  ORIGINAL_CHOCOLAT_FOOTTIT.webm' | sha1sum -c
+          ffprobe -v error -show_entries stream=codec_type,width,height,avg_frame_rate -show_entries format=duration,size -of json ORIGINAL_CHOCOLAT_FOOTTIT.webm > SOURCE_PROBE.json
+          python - <<'PY'
+          import json
+          p=json.load(open('SOURCE_PROBE.json'))
+          v=next(s for s in p['streams'] if s['codec_type']=='video')
+          assert (v['width'],v['height']) == (1280,720),v
+          assert 45<float(p['format']['duration'])<47,p
+          print('REAL_SOURCE_LOCATED_1280_720_CHECKSUM_VERIFIED')
+          PY
+      - name: Produce genuine contact sheet, motion and scene metadata
+        run: |
+          set -euo pipefail
+          cd output/storia_foottit_chocolat_scout
+          python - <<'PY'
+          import cv2,hashlib,json
+          from PIL import Image,ImageDraw
+          path='ORIGINAL_CHOCOLAT_FOOTTIT.webm'
+          cap=cv2.VideoCapture(path)
+          assert cap.isOpened()
+          timestamps=[2,5,8,11,14,17,20,23,26,29,32,35,38,41,44]
+          sheet=Image.new('RGB',(4*440,4*290),(22,22,24))
+          dr=ImageDraw.Draw(sheet)
+          entries=[]
+          for k,t in enumerate(timestamps):
+              cap.set(cv2.CAP_PROP_POS_MSEC,t*1000)
+              ok,f=cap.read();assert ok,('frame',t)
+              name=f'FRAME_REAL_{t:02d}.png'
+              cv2.imwrite(name,f)
+              im=Image.fromarray(cv2.cvtColor(f,cv2.COLOR_BGR2RGB))
+              im.thumbnail((432,243))
+              x=k%4*440+4;y=k//4*290+30
+              sheet.paste(im,(x,y))
+              dr.text((x,y-24),f'SOURCE at {t}s',fill='white')
+              entries.append({'t':t,'frame':name,'sha256':hashlib.sha256(open(name,'rb').read()).hexdigest()})
+          cap.release()
+          sheet.save('AUTHENTIC_SCENE_CONTACT.jpg',quality=93)
+          sha=hashlib.sha256(open(path,'rb').read()).hexdigest()
+          data={'title':'Foottit et Chocolat, III. Chaise en bascule','date_range':'1897-1900-09-30',
+              'source':'https://commons.wikimedia.org/wiki/File:Chocolat_et_Foottit_-_Chaise_en_bascule.webm',
+              'original_sha1':'f3c54778123a4a44a9fecab3ade09ed27e3350a8','original_sha256':sha,
+              'historical_people':'Chocolat (left), Foottit (right), two actors',
+              'source_verified':True,'visual_review':'PENDING','new_I2I':False,'new_master':False,
+              'paid_calls':0,'uploaded_to_social_or_website':False,'frames':entries}
+          open('SOURCE_SCOUT_REPORT.json','w').write(json.dumps(data,indent=2)+'\n')
+          print('REAL_FILM_SHA256',sha)
+          PY
+          ffmpeg -nostdin -y -v error -ss 11 -i ORIGINAL_CHOCOLAT_FOOTTIT.webm -t 18 -an -vf "fps=24,scale=960:540" -c:v libx264 -preset fast -crf 18 -pix_fmt yuv420p TRUE_18S_SOURCE_MOTION.mp4
+          ffmpeg -nostdin -v error -xerror -i TRUE_18S_SOURCE_MOTION.mp4 -f null -
+      - name: Save authentic film and contact sheet
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_FOOTTIT_CHOCOLAT_AUTHENTIC_SOURCE_SCOUT_20261108
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_foottit_chocolat_scout/ORIGINAL_CHOCOLAT_FOOTTIT.webm
+            output/storia_foottit_chocolat_scout/AUTHENTIC_SCENE_CONTACT.jpg
+            output/storia_foottit_chocolat_scout/FRAME_REAL_*.png
+            output/storia_foottit_chocolat_scout/SOURCE_SCOUT_REPORT.json
+            output/storia_foottit_chocolat_scout/SOURCE_PROBE.json
+            output/storia_foottit_chocolat_scout/TRUE_18S_SOURCE_MOTION.mp4
