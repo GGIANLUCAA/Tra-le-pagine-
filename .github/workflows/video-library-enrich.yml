@@ -71,7 +71,7 @@ jobs:
           checked=subprocess.run(['node','--check'],input=scripts[0],text=True,capture_output=True)
           if checked.returncode:raise RuntimeError('Frontend syntax validation failed: '+checked.stderr[:300])
           assert 'function swPostUpdate' in page.text and 'function openEditorial' in page.text
-          # The importer limits HTML to 140k bytes. Preserve HTML/JS behavior
+          # The importer limits HTML to 220k characters; keep the site a single HTML file. Preserve HTML/JS behavior
           # while stripping only verified block comments and blank markup spaces.
           # Main source stays untouched; this is a transport representation.
           parts=re.split(r'(<script[^>]*>[\s\S]*?</script>)',page.text,flags=re.I)
@@ -84,7 +84,7 @@ jobs:
                   chunk=re.sub(r'>\s+<','><',chunk)
               compact.append(chunk)
           html=''.join(compact)
-          assert html.lstrip().lower().startswith('<!doctype html>') and len(html.encode('utf-8'))<140000, \
+          assert html.lstrip().lower().startswith('<!doctype html>') and len(html.encode('utf-8'))<220000, \
               'Site HTML cannot be safely transported within the current worker limit'
           final_scripts=re.findall(r'<script[^>]*>([\s\S]*?)</script>',html)
           assert len(final_scripts)==1
