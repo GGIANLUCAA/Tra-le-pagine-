@@ -1752,6 +1752,46 @@
         "paid_api_calls": 0,
         "report": "docs/productions/2026-11-08-artvision-simberg-v225-cinema-scale-corrected.md",
         "next_action": "Do not rerender V225 as new slot. Full-speed artistic check 0-12s hook and physical miniature; rights, scene authenticity; select next independent slot. Dali suspended."
+      },
+      "museum_private_review_v226_20261108": {
+        "date": "2026-11-08",
+        "version": "V226",
+        "variant": "cinema_museum",
+        "status": "ONE_NEW_ACTUAL_MP4_V225_SCOPED_HOOK_REVISION_FULL_DECODE_AAC_ZIP_SHA_PASS_REVIEW_NOT_GOLD",
+        "replaces_preview": "V225 opening too distant (painting 22.7–47.1px wide during 0–5s at 720px portrait width)",
+        "filename": "SIMBERG_THE_GARDEN_OF_DEATH_CINEMA_MUSEUM_V226_REVIEW.mp4",
+        "mp4_bytes": 11573244,
+        "mp4_sha256": "8a95482610e2209d01651df3c921bedf0f120de06f79818b599bbbf21a82f3cd",
+        "zip_filename": "SIMBERG_THE_GARDEN_OF_DEATH_V226_REVIEW_PACKAGE.zip",
+        "zip_bytes": 18226666,
+        "zip_sha256": "bcfc22fdf9f7aa754e1f2464001db7f47bb1551de8e2ec6b339dfd00a678f979",
+        "codec": "H264/AAC 720x1280 20fps 48s 960 frames",
+        "source_v225_sha256": "6e8a5bbf0e1a37bfa1b5352c3c7da5e317f8f5068412448f7646115094c2eb26",
+        "exact_original_audio_unchanged": true,
+        "aac_adts_sha256": "ee095d8747f3e9aba2769817ec6abedb94f9748427ae96a9c334f58ddc23b2d5",
+        "painting_physical_cm": [
+          17.5,
+          15.8
+        ],
+        "real_museum_installation": false,
+        "scene_kind": "NEUTRAL_EDITORIAL_RECONSTRUCTION_NOT_HISTORIC_ORIGINAL_FRAME",
+        "artwork_source_sha256": "514bf455d7cdc3543e3ee8ff49f206370ef34121c72e49e04353e3e902f530a5",
+        "photo_source_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+        "full_ffmpeg_decode": "PASS",
+        "zip_crc_and_embedded_sha": "PASS",
+        "max_adjacent_frame_delta": 28.286,
+        "measured_intro_improvement": "real framed art now visible at t0; enters original artwork around 2.5–3sec; opening first 0–4sec preview inspected",
+        "artistic_full_speed_review": "PENDING",
+        "commercial_territorial_rights": "PENDING",
+        "permanent_library_backup": "BLOCKED_LIBRARY_STORAGE_LIMIT_EXCEEDED; ORIGINAL_V225_PRESERVED",
+        "conversation_files_physically_verified": true,
+        "no_new_approved_slot": true,
+        "approved_slot_increment": 0,
+        "gold": false,
+        "published": false,
+        "paid_api_calls": 0,
+        "report": "docs/productions/2026-11-08-artvision-simberg-v226-real-hook-correction-qa.md",
+        "next_action": "Review 1.5–2.5s edge passage and scale at full speed. Seek documented exact frame or explicit approved neutral mount; do not count this revision as a 27th slot. Save durable MP4/ZIP only via authorized non-destructive storage."
       }
     },
     {
@@ -2014,6 +2054,20 @@
         "paid_api_calls": 0,
         "report": "docs/productions/2026-11-08-artvision-triumph-v224-private-review.md",
         "next_action": "Do not rerender V224 third time this cycle. Assess full-speed camera movement at ~94s, rights and actual room authenticity. Rotate to independent incomplete Museum from current queue (Simberg Cinema candidate). Dalí suspended."
+      },
+      "museum_private_review_v224_contact_qa_20261108": {
+        "date": "2026-11-08",
+        "source_sha256": "18d5a87d01c8a4521037cd1a7b6d3f54e3fe3ba18df865d62fce05bbbd8b73a5",
+        "evidence": "actual V224 Library MP4 and original ZIP extracted and SHA/CRC verified",
+        "status": "VISUAL_CONTACT_PREVIEW_ARTISTIC_WARNING_NO_APPROVAL",
+        "observed_at_seconds": [
+          "18–43: blurred/dark horizontal bands around painting",
+          "115–124: visible gallery bands",
+          "94.2: existing camera movement warning"
+        ],
+        "full_speed_review": "NOT_DONE",
+        "new_approved_slot": false,
+        "report": "docs/productions/2026-11-08-artvision-simberg-v226-real-hook-correction-qa.md"
       }
     },
     {
