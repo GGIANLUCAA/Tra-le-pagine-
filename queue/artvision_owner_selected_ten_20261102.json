@@ -1525,7 +1525,10 @@
         "record_file_id": "3037881",
         "record_license": "CC0 as explicitly shown by the original Finna record checked 2026-11-08",
         "exact_work_id": "A II 968:16",
-        "exact_painting_cm": {"height": 15.8, "width": 17.5},
+        "exact_painting_cm": {
+          "height": 15.8,
+          "width": 17.5
+        },
         "status": "OFFICIAL_CC0_SOURCE_AND_IMAGE_PREVIEW_VERIFIED_NO_EXTERNAL_FRAME_BYTES_SHA_PENDING",
         "source_image_download_sha256": null,
         "source_image_width_px": null,
@@ -2192,6 +2195,65 @@
         "next_action": "Only resume when real photo frame or approved licensed photorealistic neutral mount and measured perspective are available. Rotate to other independent Museum slots; no false room, no Gold or publication.",
         "no_paid_calls": true,
         "dali_suspended": true
+      },
+      "museum_private_review_v222_v223_20261108": {
+        "date": "2026-11-08",
+        "status": "TWO_DISTINCT_NEW_REAL_MUSEUM_REVIEW_MP4S_PRIVATE_LIBRARY_BYTE_SHA_FFMPEG_CRC_VERIFIED_ARTISTIC_APPROVAL_PENDING",
+        "cinema_museum_v222": {
+          "filename": "WATERHOUSE_THE_MAGIC_CIRCLE_CINEMA_MUSEUM_V222_REVIEW.mp4",
+          "mp4_sha256": "d38b992015bd026ea2ece3267cd5ee72f96accc7c67f90180b869f53e977c60f",
+          "mp4_bytes": 17970744,
+          "duration_s": 48,
+          "zip_sha256": "0a65997ebe41cc9d92d529e48a28bf8964fe50ed2838810161dabec3f363efe9",
+          "zip_bytes": 24016586,
+          "private_library_mp4_id": "libfile_a02f89070e5881918590e151d2d3659a",
+          "private_library_zip_id": "libfile_8780862e91c88191b86e0aeae624dc3b",
+          "ffmpeg_all_streams_full_decode": "PASS",
+          "zip_crc": "PASS",
+          "independent_library_readback_sha": "PASS",
+          "camera_auto_delta_max": 18.192,
+          "original_cinema_standard_AAC_unchanged": true,
+          "human_full_speed_artistic_review": "PENDING"
+        },
+        "critico_museum_v223": {
+          "filename": "WATERHOUSE_THE_MAGIC_CIRCLE_CRITICO_MUSEUM_V223_REVIEW.mp4",
+          "mp4_sha256": "5843aa37be07ecd9cd2ae7d0c98f7f10dfc3fa8488a84a3e7c4487744c7dcee4",
+          "mp4_bytes": 27249724,
+          "duration_s": 127.65,
+          "voice_sentence_map_count": 22,
+          "zip_sha256": "0f20290f1ffeb42732302bb11fef2b05b5bc236183ab44b17379614e9b7036a6",
+          "zip_bytes": 33622502,
+          "private_library_mp4_id": "libfile_0a474c853bf881918ec482ed9c1e7d41",
+          "private_library_zip_id": "libfile_59d96f6495288191bae9c892197d201f",
+          "ffmpeg_all_streams_full_decode": "PASS",
+          "zip_crc": "PASS",
+          "independent_library_readback_sha": "PASS",
+          "original_v159_Gacrux_AAC_unchanged": true,
+          "original_voice_WAV_sha256": "c943c91e4dbee1156b00ed3d5e4b287259de1f52663ea6a0972aae94469659c7",
+          "first_trial_camera_rejected_at_second": 96.25,
+          "first_trial_max_delta": 48.292,
+          "second_render_max_delta": 20.788,
+          "human_full_speed_artistic_review": "PENDING"
+        },
+        "source_painting_sha256": "b846a11f640378fa0839e3a31583a128db1db2e91e2938f6fd23a75499c77451",
+        "room_photo_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+        "room_photo_rights": "Daniel Naber CC BY 4.0",
+        "original_painting_dimensions_cm": [
+          127,
+          182.9
+        ],
+        "scene_is_actual_tate_museum": false,
+        "scene_kind": "NEUTRAL_EDITORIAL_RECONSTRUCTION_NOT_REAL_INSTALLATION_OR_FRAME",
+        "commercial_rights": "PENDING",
+        "actual_android_user_playback": "PENDING",
+        "no_new_paid_calls": true,
+        "gold": false,
+        "published": false,
+        "museum_approved": false,
+        "approved_slot_increment": 0,
+        "revision_mp4_created_this_cycle": 2,
+        "documentation": "docs/productions/2026-11-08-artvision-waterhouse-magic-circle-v222-v223-real-museum-reviews.md",
+        "next_action": "Do not rerender V222/V223 as new slots. Realistic room scale, authentic frame and territorial commercial rights require independent validation; full-speed artistic review pending. Rotate to independent missing Museum (Simberg/Triumph/Blake/Rebel Angels), Dalí suspended."
       }
     },
     {
@@ -3179,5 +3241,18 @@
     "artistic_review": "PENDING",
     "new_paid_calls": 0,
     "next_action": "Advance independent incomplete Museum slots without duplicating Blake V220/V221, Gold or publication."
+  },
+  "latest_owner_waterhouse_v222_v223_20261108": {
+    "date": "2026-11-08",
+    "two_new_review_MP4s": true,
+    "approved_slots_added": 0,
+    "queue_verified_total": 26,
+    "queue_total_slots": 40,
+    "mp4_sha256": [
+      "d38b992015bd026ea2ece3267cd5ee72f96accc7c67f90180b869f53e977c60f",
+      "5843aa37be07ecd9cd2ae7d0c98f7f10dfc3fa8488a84a3e7c4487744c7dcee4"
+    ],
+    "private_library_byte_readback_pass": true,
+    "next_action": "Next independent Museum; no re-render V222/V223, no publishing or Gold."
   }
 }
