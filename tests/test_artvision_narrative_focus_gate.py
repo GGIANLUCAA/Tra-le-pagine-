@@ -83,5 +83,56 @@ class NarrativeFocusTests(unittest.TestCase):
         self.assertFalse(report["v25_approved"])
 
 
+    def test_moving_camera_cannot_hide_subject_mid_phrase(self):
+        data = fixture()
+        shot = data["variants"]["critico_museum"]["shots"][0]
+        # Both ends frame the face, but the camera pans away in between.
+        shot["camera_motion"] = True
+        shot["camera_keyframes_xyxy"] = [
+            {"time_s": 1, "camera_crop_xyxy": [.05, .05, .45, .45]},
+            {"time_s": 3, "camera_crop_xyxy": [.50, .05, .90, .45]},
+            {"time_s": 5, "camera_crop_xyxy": [.05, .05, .45, .45]},
+        ]
+        issues = analyze(data)["errors"]
+        self.assertIn("SPOKEN_SUBJECT_CROPPED_DURING_CAMERA_MOVE",
+                      [issue["code"] for issue in issues])
+        self.assertTrue(any(issue.get("suggestion", {}).get("offending_time_s") == 3
+                            for issue in issues if issue["code"] ==
+                            "SPOKEN_SUBJECT_CROPPED_DURING_CAMERA_MOVE"))
+
+    def test_moving_camera_without_real_track_fails_closed(self):
+        data = fixture()
+        data["variants"]["critico_standard"]["shots"][0]["camera_motion"] = True
+        codes = [issue["code"] for issue in analyze(data)["errors"]]
+        self.assertIn("MISSING_CAMERA_MOTION_TRACK", codes)
+
+    def test_camera_keyframes_must_cover_full_narration(self):
+        data = fixture()
+        data["variants"]["critico_standard"]["shots"][0]["camera_keyframes_xyxy"] = [
+            {"time_s": 2, "camera_crop_xyxy": [.05, .05, .45, .45]},
+            {"time_s": 4, "camera_crop_xyxy": [.05, .05, .45, .45]},
+        ]
+        self.assertIn("CAMERA_TRACK_DOES_NOT_COVER_SPEECH",
+                      [issue["code"] for issue in analyze(data)["errors"]])
+
+    def test_safe_moving_camera_track_remains_valid(self):
+        data = fixture()
+        data["variants"]["critico_museum"]["shots"][0]["camera_keyframes_xyxy"] = [
+            {"time_s": 1, "camera_crop_xyxy": [.05, .05, .45, .45]},
+            {"time_s": 3, "camera_crop_xyxy": [.045, .045, .445, .445]},
+            {"time_s": 5, "camera_crop_xyxy": [.05, .05, .45, .45]},
+        ]
+        self.assertEqual(analyze(data)["status"], "plan_checks_passed")
+
+    def test_unsorted_camera_keyframes_fail(self):
+        data = fixture()
+        data["variants"]["critico_museum"]["shots"][0]["camera_keyframes_xyxy"] = [
+            {"time_s": 5, "camera_crop_xyxy": [.05, .05, .45, .45]},
+            {"time_s": 1, "camera_crop_xyxy": [.05, .05, .45, .45]},
+        ]
+        self.assertIn("INVALID_CAMERA_KEYFRAMES",
+                      [issue["code"] for issue in analyze(data)["errors"]])
+
+
 if __name__ == "__main__":
     unittest.main()
