@@ -50,7 +50,19 @@ jobs:
            # resize proxy only as a TRANSPARENT fallback (no original SHA claim).
            raw=None;used_url=None;byte_exact=False
            original=i['url'].split('?')[0]
-           fallback=[
+           alternates={
+              'schwabe_death_gravedigger':[
+               'https://uploads1.wikiart.org/00186/images/carlos-schwabe/1895-symbolism-carlos-schwabe-death-and-the-grave-digger.jpg!Large.jpg',
+               'https://eclecticlight.co/wp-content/uploads/2020/01/schwabedeathgravedigger.jpg',
+               'https://uploads1.wikiart.org/images/carlos-schwabe/death-and-the-grave-digger.jpg'
+              ],
+              'vasnetsov_knight_crossroads':[
+               'https://lh3.googleusercontent.com/ci/AL18g_SQDp56d7D1Ct8SRNIWAW-y1f1R8v11tZmlFWfTjw8jdmuDhM7_cKJ8jTclZTju-LQA4NPcjBw=s3000',
+               'https://lh3.googleusercontent.com/ci/AL18g_SQDp56d7D1Ct8SRNIWAW-y1f1R8v11tZmlFWfTjw8jdmuDhM7_cKJ8jTclZTju-LQA4NPcjBw=w2400',
+               'https://uploads1.wikiart.org/images/viktor-vasnetsov/a-knight-at-the-crossroads-1878.jpg!Large.jpg'
+              ]
+           }
+           fallback=alternates[key]+[
               original,
               original+'?width=original&download=1',
               'https://wsrv.nl/?url='+urllib.parse.quote(original,safe='')+'&w=1600&output=jpg&q=92',
