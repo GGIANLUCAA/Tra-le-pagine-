@@ -3,6 +3,24 @@ const REPO="GGIANLUCAA/Tra-le-pagine-";
 const LIB="https://video-library-studio.600led.workers.dev";
 const UI="https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/preview/artvision-control-center-v1/site/control-center-preview.html";
 let snapshot=null,snapshotAt=0,pending=null,page=null,pageAt=0;
+
+const APP_ICON='<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">'+
+'<rect width="512" height="512" rx="90" fill="#0d1219"/>'+
+'<rect x="40" y="40" width="432" height="432" rx="84" fill="#1f242b" stroke="#d3b17c" stroke-width="14"/>'+
+'<circle cx="256" cy="262" r="150" fill="none" stroke="#866f4f" stroke-width="4"/>'+
+'<path d="M155 357L256 148L357 357M198 283H315" fill="none" stroke="#e9cb99" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>'+
+'</svg>';
+const APP_MANIFEST={
+  name:"ArtVision Control Center",short_name:"ArtVision",id:"/",start_url:"/",scope:"/",
+  display:"standalone",background_color:"#0c1118",theme_color:"#0d1217",
+  description:"Il centro di controllo in sola lettura per le produzioni ArtVision.",
+  icons:[
+    {src:"/icon.svg",type:"image/svg+xml",sizes:"any",purpose:"any maskable"},
+    {src:"/icon.svg",type:"image/svg+xml",sizes:"192x192",purpose:"any"},
+    {src:"/icon.svg",type:"image/svg+xml",sizes:"512x512",purpose:"any"}
+  ]
+};
+
 async function json(url,github=false){
   const response=await fetch(url,{headers:github?{"Accept":"application/vnd.github+json","User-Agent":"ArtVision-ControlCenter-Readonly"}:{"Accept":"application/json"},cf:{cacheTtl:75,cacheEverything:true}});
   if(!response.ok)throw new Error("HTTP "+response.status);
@@ -257,6 +275,14 @@ async function getPage(){
 export default {async fetch(request){
   const path=new URL(request.url).pathname;
   if(request.method!=="GET")return new Response("Method not allowed",{status:405,headers:{"Allow":"GET"}});
+  if(path==="/manifest.webmanifest"){
+    return new Response(JSON.stringify(APP_MANIFEST),{headers:{"content-type":"application/manifest+json;charset=utf-8",
+      "cache-control":"public,max-age=3600","x-content-type-options":"nosniff"}});
+  }
+  if(path==="/icon.svg"){
+    return new Response(APP_ICON,{headers:{"content-type":"image/svg+xml;charset=utf-8",
+      "cache-control":"public,max-age=86400","x-content-type-options":"nosniff"}});
+  }
   if(path==="/api/check"){
     const key=new URL(request.url).searchParams.get("key")||"";
     if(!/^[\w ().-]{1,190}\.mp4$/i.test(key))return Response.json({ok:false,reason:"Nome file non valido"},{status:400,headers:{"cache-control":"no-store"}});
@@ -285,7 +311,7 @@ export default {async fetch(request){
   if(path==="/"||path==="/index.html"){
     try{return new Response(await getPage(),{headers:{
       "Content-Type":"text/html;charset=UTF-8","Cache-Control":"no-cache","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer",
-      "Content-Security-Policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src https://video-library-studio.600led.workers.dev data:; media-src https://video-library-studio.600led.workers.dev; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors https://video-library-studio.600led.workers.dev"
+      "Content-Security-Policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; manifest-src 'self'; img-src 'self' https://video-library-studio.600led.workers.dev data:; media-src https://video-library-studio.600led.workers.dev; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors https://video-library-studio.600led.workers.dev"
     }})}catch(e){return new Response("Anteprima temporaneamente non disponibile",{status:503})}
   }
   return new Response("Not found",{status:404});
