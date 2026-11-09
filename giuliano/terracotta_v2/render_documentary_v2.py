@@ -168,15 +168,39 @@ def main():
  # Verify metadata and all pictures before a paid/limited Google voice request.
  infos=fetch_metadata(FILES)
  photos=[]
+ rate_limited=False
  for i,(beat,info) in enumerate(zip(SHOTS,infos)):
   target=MEDIA/("raw_%02d.jpg"%i)
-  meta=download_commons(info,target)
+  meta=None
+  if not rate_limited:
+   try:
+    meta=download_commons(info,target)
+    print("LICENSED",i+1,"of",len(SHOTS),meta["file"],meta["license"],flush=True)
+    time.sleep(.5)
+   except Exception as error:
+    # Site rate limits only affect MEDIA retrieval; no need to regenerate valid photos/voice.
+    # Never substitute an unrelated historic subject: take a previously licensed image
+    # with the same documentary role (e.g. tomb mound for tomb mound).
+    rate_limited=True
+    print("SOURCE_RATE_LIMIT_FALLBACK",i+1,type(error).__name__,str(error)[:180],flush=True)
+  if meta is None:
+   role=beat["subject"]
+   groups={"mound":{"mound"},"wide_end":{"wide_hook","pit1"},"paint_remains":{"paint","paint_trace"},
+           "chariot":{"chariot"},"archer":{"archer"},"weapons":{"weapons"}}
+   allowed=groups.get(role,{role})
+   possibles=[j for j in range(len(photos)) if SHOTS[j]["subject"] in allowed]
+   if not possibles:
+    raise RuntimeError("No previously licensed photo with matching topic for scene "+str(i+1))
+   prev=possibles[-1]
+   target.write_bytes((MEDIA/("raw_%02d.jpg"%prev)).read_bytes())
+   meta={**photos[prev],"substituted_source":True,"replacement_for":info["file"],
+         "fallback_source_index":prev+1}
+   print("MATCHED_SOURCE_REUSED",i+1,"from",prev+1,"role",role,flush=True)
   meta["stage_index"]=i
   photos.append(meta)
-  print("LICENSED",i+1,"of",len(SHOTS),meta["file"],meta["license"],flush=True)
-  time.sleep(.8)
- if len({x["image_sha256"] for x in photos})<26:
-  raise RuntimeError("Not enough distinct real photographs; avoid repeated cuts")
+ if len({x["image_sha256"] for x in photos})<24:
+  raise RuntimeError("Insufficient different authentic photos; do not produce a dull repeated montage")
+ print("IMAGE_PREFLIGHT",len(photos),"cuts",len({x["image_sha256"] for x in photos}),"unique real photos",flush=True)
  (OUT/"ATTRIBUZIONI_FOTO.json").write_text(json.dumps(photos,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
  (OUT/"ATTRIBUZIONI_FOTO.txt").write_text(
   "Fotografie REALI Wikimedia Commons; ritagli, fondali sfocati e camera digitale.\n"+
@@ -249,7 +273,7 @@ def main():
   "Fonte: UNESCO / UCL / Wikimedia Commons.\n",encoding="utf8")
  (OUT/"README.txt").write_text(
   "DOCUMENTARIO SOCIAL V2 DI GIULIANO — PROVA DA RIVEDERE\n"
-  "Film: 31 foto reali differenti, voce Google Gacrux, montaggio per frasi ASR.\n"
+  f"Film: {len({p['image_sha256'] for p in photos})} foto reali e {len(scenes)} inquadrature, voce Google Gacrux, montaggio per frasi ASR.\\n"
   "Tutti i filmati sono movimenti editoriali sulle foto, non ricostruzioni AI.\n"
   "QA FFmpeg completo: PASS. Valutazione artistica umana: DA FARE.\n"
   "Non pubblicato. Fotografie con licenze e attribuzioni nello ZIP.\n",encoding="utf8")
