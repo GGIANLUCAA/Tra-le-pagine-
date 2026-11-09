@@ -174,7 +174,7 @@ def main():
    "audio_end_seconds":round(b,3),"visual_start_seconds":round(start,3),
    "visual_end_seconds":round(end,3),"media_filename":FILES[i]})
  concat=OUT/"concat.txt"
-  concat.write_text("".join("file '"+str(f.absolute())+"'\n" for f in segs))
+ concat.write_text("".join("file '"+str(f.absolute())+"'\n" for f in segs))
  base=OUT/"silent.mp4"
  shell(["ffmpeg","-hide_banner","-loglevel","error","-y","-f","concat","-safe","0",
         "-i",concat,"-c","copy",base])
