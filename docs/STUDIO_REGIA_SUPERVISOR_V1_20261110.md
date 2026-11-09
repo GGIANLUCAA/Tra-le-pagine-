@@ -90,3 +90,13 @@ Ricerca di supporto:
 - REGen (NeurIPS 2025): narrazione e selezione di inserti documentaristici sono due passaggi collegati da una ricerca semantica di video pertinenti.
 
 Questo codice e una prima riparazione verificabile del processo di regia, non un'affermazione che i video finali siano diventati migliori prima del confronto reale.
+
+## Rafforzamento preflight (10/11/2026, continuazione)
+
+- **Format esplicito**: solo i dieci format configurati in Quality Director V17. Un refuso non deve far trattare un video narrato come un video musicale senza controlli voce.
+- **Attestazioni rigorose**: `source_verified` e `rights_verified` devono essere booleani JSON `true`; stringhe come `"false"` o `"yes"` non sono prove.
+- **Confini delle frasi**: la presenza del soggetto dichiarato deve coprire almeno il 95% di ogni segmento; anche con copertura elevata, ingresso oltre 0,2 s o uscita oltre 0,2 s prima della fine producono segnalazioni da revisionare. Sono soglie prudenziali di **preflight dichiarativo**, non una misura della percezione umana o della reale presenza del soggetto nell'MP4.
+- **Robustezza metadati**: la rilevazione di scene ripetute non si interrompe su array/dizionari dichiarati per errore negli identificatori del materiale.
+- Sei test di regressione addizionali coprono questi casi. I test devono passare su GitHub CI prima di integrare la PR.
+
+**Limite invariato:** il supervisore non può certificare autonomamente che il vero video mostri il soggetto. Il renderer deve fornire shotlist basata su scene esportate e voice alignment effettivo; poi servono frame dal MP4 e ascolto completo. Nessuna promozione Gold, import o pubblicazione viene attivata da questi controlli.
