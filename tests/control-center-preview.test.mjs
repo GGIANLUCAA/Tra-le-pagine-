@@ -60,7 +60,7 @@ function fixture(options={}){
       headers:{"content-type":"application/json"}});
   }
   const code=backend.replace("export default","const WORKER = ")+"\nWORKER;";
-  return runInNewContext(code,{fetch:fetchStub,URL,Response,Date,console});
+  return runInNewContext(code,{fetch:fetchStub,URL,Request,Response,Date,console});
 }
 test("Status shows explicit evidence, excludes Dalí and returns four variants",async()=>{
   const worker=fixture();
