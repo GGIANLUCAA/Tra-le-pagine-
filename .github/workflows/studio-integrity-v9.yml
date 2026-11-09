@@ -1,5 +1,9 @@
 name: Studio Integrity V9 · one real MP4 or offline tests
 on:
+  push:
+    branches: [main]
+    paths:
+      - requests/site/studio_integrity_v9_request.json
   pull_request:
     branches: [main]
     paths:
@@ -49,7 +53,7 @@ jobs:
       - name: Test integrity and ZIP rules without downloads
         run: python -m unittest discover -s tests -p "test_studio_integrity_v9.py" -v
   one-existing-master:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     needs: [offline-unit-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 12
@@ -64,9 +68,26 @@ jobs:
         run: python -m pip install "requests>=2.32,<3"
       - name: Verify exactly one pinned MP4 download, byte count and SHA256
         env:
-          SLOT_INDEX: ${{ inputs.slot_index }}
+          SLOT_INDEX_INPUT: ${{ inputs.slot_index }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           set -eu
+          if [ "$EVENT_NAME" = "push" ]; then
+            SLOT_INDEX=$(python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path("requests/site/studio_integrity_v9_request.json")
+          r=json.loads(path.read_text(encoding="utf-8"))
+          assert r.get("schema")=="studio-integrity-request-v9"
+          assert r.get("read_only") is True and r.get("one_file_only") is True
+          assert r.get("no_publication") is True and r.get("use_paid_api") is False
+          assert type(r.get("slot_index")) is int and 1<=r["slot_index"]<=17
+          print(r["slot_index"])
+          PY
+            )
+          else
+            SLOT_INDEX="$SLOT_INDEX_INPUT"
+          fi
           case "$SLOT_INDEX" in 1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17) ;; *) exit 2;; esac
           python src/studio_integrity_v9.py --slot-index "$SLOT_INDEX" \
             --out "output/studio-integrity-v9/INTEGRITY_REPORT_V9.json"
