@@ -36,6 +36,8 @@ FIXES = {
     "SPEECH_TIMECODES_UNVERIFIED": "Allineare la voce WAV reale con ASR/ascolto prima di progettare le scene.",
     "MISSING_SUBJECT_EVIDENCE": "Associare a ogni frase soggetti/aree realmente verificati sull'immagine.",
     "LARGE_EYE_JUMP": "Usare una ripresa di relazione o un raccordo che guidi lo sguardo.",
+    "UNIFORM_TIMING": "Variare solo dove il contenuto chiede un respiro diverso; non montare con uno stampino.",
+    "VISUAL_STALL": "Verificare sul vero MP4 se la tenuta lunga aggiunge scoperta, altrimenti anticipare il raccordo.",
 }
 
 
@@ -108,6 +110,8 @@ def inspect(data):
             flag("review", "MISSING_SUBJECT_EVIDENCE", label, a)
         if b - a < 1.3 and s.get("visual_complexity") in (4, 5):
             flag("review", "SHOT_TOO_BRIEF", label, a)
+        if b - a > 10 and s.get("shot_type") in ("detail", "closeup") and s.get("visual_change_verified") is not True:
+            flag("review", "VISUAL_STALL", label, a)
         transition = str(s.get("transition_in") or "cut").lower()
         if transition not in TRANSITIONS:
             flag("block", "BAD_TRANSITION", label, a)
@@ -158,6 +162,13 @@ def inspect(data):
 
     if previous and length - previous["end_s"] > .4:
         flag("review", "IMAGE_GAP", len(shots), previous["end_s"])
+
+    # Diagnose a mechanical editing template, never mandate an arbitrary cut count.
+    shot_lengths = [s["end_s"] - s["start_s"] for s in shots
+                    if isinstance(s, dict) and num(s.get("start_s"))
+                    and num(s.get("end_s")) and s["end_s"] > s["start_s"]]
+    if len(shot_lengths) >= 4 and max(shot_lengths) - min(shot_lengths) < .15:
+        flag("review", "UNIFORM_TIMING", detail="Quattro o piu scene hanno durate quasi identiche.")
 
     narration = data.get("narration", {})
     if not isinstance(narration, dict):
