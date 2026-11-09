@@ -25,7 +25,7 @@ class WowLabSlotSelectorRegression(unittest.TestCase):
         with patch.object(engine, "discovery_ids", return_value=[]), patch.object(
             engine, "get_json", return_value=record
         ):
-            for stamp in ("20261107T08", "20261107T16", "20261231T22", "20270101T00"):
+            for stamp in ("20261107T08", "20261107T16", "20261109T08", "20261109T10", "20261231T22", "20270101T00"):
                 with self.subTest(stamp=stamp):
                     selected = engine.select_artwork(conf, stamp, history=[])
                     self.assertEqual(selected["objectID"], 436535)
