@@ -169,3 +169,10 @@ Dopo test Android della V2 e controllo dei dati, integrare soltanto il link nell
 - Test di diagnosi GET-only, run ammesse solo nel campione, recupero nomi job e step, link chat sicuri e rifiuto link /share/, prompt con istruzioni conservative.
 - Non sostituisce l'automazione di produzione, non esegue autoriparazione, non aggiorna i video.
 - Collaudo Chrome Android, copia appunti in iframe e navigazione alla chat privata da confermare dopo la distribuzione.
+
+### Importazione personale delle chat dalla conversazione ChatGPT
+- Se l'utente ha autorizzato il collegamento e sono disponibili ID reali delle conversazioni sorgenti delle automazioni, la chat può fornire un collegamento personale con frammento #linkchats= seguito da JSON codificato.
+- I frammenti # dell'URL non vengono inviati via HTTP al Worker. Il browser importa soltanto URL privati con host chatgpt.com o chat.openai.com e percorso /c/<id>, solo per le quattro categorie ammesse.
+- Dopo l'importazione, la pagina prova a eliminare subito il frammento dall'indirizzo e memorizza i link nella localStorage locale. Il messaggio "chat collegate" appare solo quando l'importazione è riuscita.
+- Nessun conversation_id, thread_id o URL privato viene salvato nel repository pubblico, nella funzione Cloudflare o nel catalogo. La sincronizzazione tra browser/iframe e modalità standalone non è garantita.
+- L'utente può continuare a collegare manualmente una chat differente per progetto o per singolo workflow. I collegamenti importati sono un'impostazione iniziale, non una prova che quella conversazione contenga già il dettaglio della run corrente.
