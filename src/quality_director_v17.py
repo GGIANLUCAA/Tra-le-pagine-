@@ -174,7 +174,7 @@ def render_html(report, folder):
     return f'''<!doctype html><html lang="it"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revisione V17</title><style>body{{font:16px system-ui;background:#111827;color:#f8fafc;max-width:820px;margin:auto;padding:20px;line-height:1.5}}section{{background:#1e293b;border-radius:14px;padding:16px;margin:14px 0}}h2{{font-size:1.15rem}}li{{margin:8px 0}}.frames{{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}}img{{width:100%;border-radius:7px}}@media(max-width:560px){{.frames{{grid-template-columns:repeat(2,1fr)}}}}</style><h1>Regia e qualità V17</h1><p>{html.escape(report['format'])} · {html.escape(report['status'])}</p><p>Questo controllo non certifica bellezza, accuratezza storica o pertinenza visiva. Revisione artistica ancora obbligatoria.</p>{''.join(blocks)}<section><h2>Domande per il regista</h2><ul>{questions}</ul></section><section><h2>Anteprime reali</h2><div class="frames">{previews}</div></section></html>'''
 
 
-def inspect(video=None, project=None, out='output/quality-v17', format_name=None, policy_path=POLICY):
+def inspect(video=None, project=None, out='output/quality-v17', format_name=None, policy_path=POLICY, regia_plan=None):
     folder = Path(out)
     folder.mkdir(parents=True, exist_ok=True)
     policy = json.loads(Path(policy_path).read_text(encoding='utf-8'))
@@ -185,6 +185,24 @@ def inspect(video=None, project=None, out='output/quality-v17', format_name=None
     if video:
         w,b,f = inspect_video(Path(video),profile,folder)
         warnings.extend(w); blocking.extend(b); facts.extend(f)
+    if regia_plan:
+        try:
+            from src.studio_regia_supervisor_v1 import inspect as inspect_regia
+        except ModuleNotFoundError:
+            from studio_regia_supervisor_v1 import inspect as inspect_regia
+        shotlist = json.loads(Path(regia_plan).read_text(encoding='utf-8'))
+        regia_report = inspect_regia(shotlist)
+        (folder/'STUDIO_REGIA_SUPERVISOR_V1.json').write_text(
+            json.dumps(regia_report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+        for finding in regia_report['blocking']:
+            blocking.append(notice('REGIA_'+finding['code'], finding.get('fix','Controllare regia'),
+                                   finding.get('shot')))
+        for finding in regia_report['warnings']:
+            warnings.append(notice('REGIA_'+finding['code'], finding.get('fix','Controllare regia'),
+                                   finding.get('shot')))
+        facts.append({'regia_preflight':regia_report['status'],
+                      'shots_checked':regia_report.get('summary',{}).get('shots_checked'),
+                      'actual_scene_semantics_verified':False})
     report = {'schema':'quality-director-v17','format':name,
               'status':'technical_blocked' if blocking else ('needs_review_with_warnings' if warnings else 'needs_artistic_review'),
               'video':str(video) if video else None,'blocking':blocking,'warnings':warnings,
@@ -201,9 +219,10 @@ def main():
     ap.add_argument('--video',type=Path)
     ap.add_argument('--project',type=Path)
     ap.add_argument('--format',dest='format_name')
+    ap.add_argument('--regia-plan', type=Path, help='Shotlist con timecode per preflight di regia')
     ap.add_argument('--out',type=Path,default=Path('output/quality-v17'))
     args = ap.parse_args()
-    report = inspect(video=args.video,project=args.project,out=args.out,format_name=args.format_name)
+    report = inspect(video=args.video,project=args.project,out=args.out,format_name=args.format_name,regia_plan=args.regia_plan)
     print(json.dumps({'status':report['status'],'blocking':len(report['blocking']),'warnings':len(report['warnings'])},ensure_ascii=False))
     return 2 if report['blocking'] else 0
 
