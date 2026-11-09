@@ -103,3 +103,33 @@ Dopo test Android della V2 e controllo dei dati, integrare soltanto il link nell
 ### Verifiche
 - Test in tests/control-center-preview.test.mjs per varianti disponibili, offline, non catalogate, senza nome, SHA, PASS/PENDING/FAIL, Gold e scelta di sostituzione cinema corrente.
 - QA di codice ed endpoint effettuato in sessione con dati di prova; la riproduzione completa di MP4 reali su Android rimane una prova distinta da eseguire nel browser del proprietario.
+
+## V5 — statistiche, ricerca e accesso Android (9 novembre 2026)
+
+### Statistiche rigorose
+- Nuova pagina Statistiche accessibile dalla Home o dalle schede desktop: filtri "ultime 24 ore" e "ultimi 7 giorni".
+- Conteggi di workflow GitHub osservati, successi tecnici, ultime run fallite/annullate e workflow ancora in esecuzione. Campione limitato alle ultime 100 run pubbliche e al ramo main. NON sono conteggi di video prodotti o approvati.
+- Distribuzione delle esecuzioni fra ArtVision, La Storia Rivive, WOW LAB, sito e workflow non classificati. La classificazione per progetto deriva dai nomi esistenti dei workflow e può non coprire tutti i job.
+- Riepilogo ArtVision: opere, slot previsti, consegne registrate, varianti con file identificabile, esistenza nel catalogo, disponibilità dichiarata, SHA storico, Gold attestato.
+- Riepilogo archivio: voci totali, disponibili TRUE, offline FALSE, disponibilità non dichiarata, importazioni datate in 7 giorni. L'ultimo contatore usa soltanto il campo uploaded, quando presente, e non mostra come vere date inferite.
+- Quando GitHub, registro o catalogo non rispondono, la relativa statistica resta non disponibile: niente zeri inventati.
+- Il KPI degli errori in Home mostra soltanto ultime esecuzioni dei workflow pertinenti, non errori vecchi già risolti.
+
+### Ricerca veloce dei quadri
+- In ArtVision 4×1 si può cercare per titolo o artista, da Android, con filtri tutte, con anteprime, anteprime mancanti e da revisionare.
+- La ricerca agisce sui dati già recuperati, senza richieste a servizi esterni o nuovi consumi API.
+- Il filtro "da revisionare" significa che il registro conta delle consegne ma non attesta ancora Gold: non è una nuova diagnosi artistica.
+- Le schede vengono filtrate senza alterare la coda owner o il catalogo.
+
+### Scorciatoia Android
+- Worker /manifest.webmanifest con display standalone e icona scalabile; Worker /icon.svg.
+- La pagina include il manifest e il favicon. Aprire direttamente https://artvision-control-preview.600led.workers.dev/ in Chrome Android e usare menu browser > Aggiungi a schermata Home o Installa app, quando disponibile.
+- A seconda del browser, la creazione dell'app installabile può richiedere icone raster aggiuntive o essere proposta soltanto come collegamento; non dichiarare installazione garantita senza un test reale sul dispositivo.
+- Il link dello Studio privato continua ad aprire il pannello incorporato. La scorciatoia standalone apre solo i dati pubblici del Centro di controllo.
+- Nessun service worker offline: senza Internet, i dati non si aggiornano e non vanno presentati come correnti.
+- Nessuna notifica push o permesso aggiuntivo attivati.
+
+### Sicurezza e prove
+- Test unitari di statistiche, filtri, manifest, controllo GET-only e nessuna falsa produzione.
+- Il nuovo Worker rimane separato dal sito, senza binding di scrittura R2, credenziali private o azioni su GitHub.
+- Verificare dal telefono l'eventuale installazione dell'icona e le statistiche su dati reali dopo il rilascio.
