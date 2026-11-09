@@ -47,6 +47,7 @@ function catalogueWorld(row){
   const s=(String(row.key||row.name||"")+" "+String(row.project||"")).toLowerCase();
   if(/wow[_ -]?lab|wow_lab/.test(s))return "WOW LAB";
   if(/la[_ -]?storia[_ -]?rivive|storia[_ -]?rivive/.test(s))return "La Storia Rivive";
+  if(/nils|pifferaio|principe[_ -]?felice|sleepy[_ -]?hollow|fantasma[_ -]?di[_ -]?canterville|alice[_ -]?cartone|ultima[_ -]?foglia/.test(s))return "Racconti e fiabe";
   if(/tra[_ -]?le[_ -]?pagine|ventimila|nautilus|dersu[_ -]?uzala|giardino[_ -]?segreto|la[_ -]?collana|siddharta|delitto[_ -]?e[_ -]?castigo|libro|libri|narrat|racconto|raccont|pifferaio|principe[_ -]?felice|sleepy[_ -]?hollow|ultima[_ -]?foglia|alice[_ -]?cartone/i.test(s)){
     if(/nils|pifferaio|principe[_ -]?felice|sleepy[_ -]?hollow|fantasma[_ -]?di[_ -]?canterville|alice[_ -]?cartone|ultima[_ -]?foglia/.test(s))return "Racconti e fiabe";
     return "Libri narrati";
