@@ -46,3 +46,38 @@ jobs:
           invalid_status=$(curl --silent --output /dev/null --write-out "%{http_code}" --max-time 20 "$BASE/api/check?key=..%2Funsafe.txt")
           test "$invalid_status" = "400"
           echo "Mutation rejected (405), unsafe media key rejected (400)."
+
+      - name: Read-only sample MP4 range probe (max 3 × 1024 bytes)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, re, urllib.request, urllib.parse
+          base="https://video-library-studio.600led.workers.dev"
+          preview="https://artvision-control-preview.600led.workers.dev"
+          try:
+              with urllib.request.urlopen(base+"/api/catalog", timeout=20) as r:
+                  catalog=json.load(r)
+          except Exception as e:
+              print("Catalog not reachable; no false MP4 status:",type(e).__name__)
+              raise SystemExit(0)
+          rows=catalog.get("items",[]) if isinstance(catalog,dict) else []
+          safe=lambda x:isinstance(x,str) and bool(re.fullmatch(r"[\w ().-]{1,190}\.mp4",x,re.I))
+          candidates=[]
+          for row in rows if isinstance(rows,list) else []:
+              if not isinstance(row,dict) or row.get("hidden") is True or row.get("available") is not True:
+                  continue
+              key=row.get("key") or row.get("name")
+              if safe(key) and key not in candidates:candidates.append(key)
+              if len(candidates)>=3:break
+          print("Available-in-catalog MP4 candidates:",len(candidates))
+          for key in candidates:
+              url=preview+"/api/check?"+urllib.parse.urlencode({"key":key})
+              try:
+                  with urllib.request.urlopen(url,timeout=25) as r: check=json.load(r)
+                  print("Range probe:",key,"ok=",check.get("ok"),"HTTP=",check.get("http_status"),
+                        "read=",check.get("bytes_read"),"scope=",check.get("scope"))
+              except Exception as e:
+                  print("Range probe could not confirm:",key,type(e).__name__)
+          print("No full-file SHA, ZIP or Gold checks were performed.")
+          PY
