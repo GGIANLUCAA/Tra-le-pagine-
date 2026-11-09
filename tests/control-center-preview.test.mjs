@@ -336,6 +336,37 @@ test("V6 imports original automation chat URLs from fragment without sending the
   assert.equal(saved,1);
   assert.match(notice.textContent,/2 chat/);
 });
+test("Android GPT intent targets the original conversation and includes an HTTPS fallback",()=>{
+  const begin=html.indexOf('var ANDROID_APP_PACKAGE=');
+  const end=html.indexOf('function loadChats(){',begin);
+  assert.ok(begin>=0&&end>begin);
+  const result=runInNewContext(html.slice(begin,end)+"\n({androidChatGPTIntent,isAndroidDevice});",{
+    URL,
+    navigator:{userAgent:"Mozilla/5.0 (Linux; Android 16; Mobile) Chrome/141"}
+  });
+  const chat="https://chatgpt.com/c/12345678-1234-1234-1234-123456789abc";
+  const intent=result.androidChatGPTIntent(chat,false);
+  assert.equal(result.isAndroidDevice(),true);
+  assert.ok(intent.startsWith("intent://chatgpt.com/c/12345678-1234-1234-1234-123456789abc#Intent;"));
+  assert.match(intent,/scheme=https;package=com\.openai\.chatgpt;/);
+  assert.match(intent,/S\.browser_fallback_url=https%3A%2F%2Fchatgpt\.com%2Fc%2F12345678-1234-1234-1234-123456789abc;end$/);
+  assert.equal(result.androidChatGPTIntent("https://chatgpt.com/share/12345678-1234-1234-1234-123456789abc",false),null);
+  assert.equal(result.androidChatGPTIntent("https://evil.example/c/12345678-1234-1234-1234-123456789abc",false),null);
+  const home=result.androidChatGPTIntent("https://chatgpt.com/",true);
+  assert.match(home,/^intent:\/\/chatgpt\.com\/#Intent;scheme=https;package=com\.openai\.chatgpt;/);
+  assert.match(home,/S\.browser_fallback_url=https%3A%2F%2Fchatgpt\.com%2F;end$/);
+});
+test("Android app and browser choices are both present in repair dialog and project directory",()=>{
+  assert.match(html,/id="openRelatedChatApp"/);
+  assert.match(html,/id="openNewGPTApp"/);
+  assert.match(html,/id="openRelatedChat"/);
+  assert.match(html,/id="openNewGPT"/);
+  assert.match(html,/Apri nell.app ChatGPT/);
+  assert.match(html,/androidChatGPTIntent\(preferred,false\)/);
+  assert.match(html,/androidChatGPTIntent\(state\.chatLinks\[key\],false\)/);
+  assert.match(html,/id="androidAppHint"/);
+  assert.match(html,/isAndroidDevice\(\)/);
+});
 test("V6 repair centre has GPT links, original-chat mapping and clipboard fallback",()=>{
   assert.match(html,/id="repairDialog"/);
   assert.match(html,/data-page="issues"/);
