@@ -132,6 +132,9 @@ def make_canvas(path,out,beat,i):
  crop_width,crop_height=1200,2134
  focusx=.48 if i%5==0 else (.53 if i%5==3 else .50)
  focusy=.47 if beat["semantic"] in ("portrait","armour","officer","archer_standing") else .52
+ if beat["semantic"]=="chariot_detail":
+  w,h=im.size
+  im=im.crop((int(w*.19),int(h*.08),int(w*.82),int(h*.92)))
  framed=ImageOps.fit(im,(crop_width,crop_height),Image.Resampling.LANCZOS,centering=(focusx,focusy))
  framed=framed.resize((1200,2134),Image.Resampling.LANCZOS)
  # Short evidence chips are placed in the safe lower area, never presented as dialogue subtitles.
