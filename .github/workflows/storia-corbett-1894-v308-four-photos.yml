@@ -74,6 +74,7 @@ jobs:
           model,meta=dd.download_model()
           client=Client("finegrain/finegrain-image-enhancer",verbose=False)
           for i,(t,length) in enumerate(zip(times,lengths),1):
+              left=[0,600,300,0][i-1]
               row={"scene":i,"film_timestamp_s":t,"segment_length_s":length,"source_fixed_crop_left":left,"photo_generated":False,
                    "artistic_approval":False,"paid_api_calls":0}
               try:
