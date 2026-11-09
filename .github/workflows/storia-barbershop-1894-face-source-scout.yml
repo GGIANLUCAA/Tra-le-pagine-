@@ -1,0 +1,89 @@
+name: "La Storia Rivive - Barbershop 1894 multiface source scout"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-barbershop-1894-face-source-scout.yml"]
+permissions:
+  contents: read
+jobs:
+  barbershop_faces:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install zero-cost image QA"
+        run: python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+      - name: "Recover archival source and lock hash"
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_barbershop_1894_scout
+          curl -fL --retry 2 --retry-delay 3 --connect-timeout 20 --max-time 120 -A 'LaStoriaRiviveHistoricalScout/1.0' 'https://upload.wikimedia.org/wikipedia/commons/4/4b/The_Barbershop_%281894%29.webm' -o output/storia_barbershop_1894_scout/SOURCE.webm
+          test "$(wc -c <output/storia_barbershop_1894_scout/SOURCE.webm)" -gt 500000
+          sha256sum output/storia_barbershop_1894_scout/SOURCE.webm > output/storia_barbershop_1894_scout/SOURCE_SHA256.txt
+          ffprobe -v error -show_entries format=duration,size:stream=codec_name,width,height,r_frame_rate -of json output/storia_barbershop_1894_scout/SOURCE.webm > output/storia_barbershop_1894_scout/SOURCE_PROBE.json
+      - name: "Extract actual faces and diagnose sharpness and stability"
+        run: |
+          python - <<'PY'
+          import cv2, numpy as np, json
+          from pathlib import Path
+          from PIL import Image,ImageDraw
+          d=Path("output/storia_barbershop_1894_scout")
+          c=cv2.VideoCapture(str(d/"SOURCE.webm"))
+          assert c.isOpened()
+          fps=c.get(cv2.CAP_PROP_FPS)
+          dur=c.get(cv2.CAP_PROP_FRAME_COUNT)/fps
+          w=int(c.get(cv2.CAP_PROP_FRAME_WIDTH));h=int(c.get(cv2.CAP_PROP_FRAME_HEIGHT))
+          assert 15<dur<70 and w>=400 and h>=300
+          haar=cv2.CascadeClassifier(cv2.data.haarcascades+"haarcascade_frontalface_default.xml")
+          board=Image.new("RGB",(4*360,3*290),(15,17,23));draw=ImageDraw.Draw(board)
+          reports=[]
+          for i,t in enumerate([4,7,10,13,16,19,22,25,28,31,34,37]):
+              if t>=dur:break
+              c.set(cv2.CAP_PROP_POS_MSEC,t*1000)
+              ok,frame=c.read()
+              if not ok:continue
+              gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+              faces=haar.detectMultiScale(cv2.equalizeHist(gray),1.08,3,minSize=(24,24))
+              boxes=[list(map(int,f)) for f in faces]
+              sharp=float(cv2.Laplacian(gray,cv2.CV_32F).var())
+              cv2.imwrite(str(d/f"ORIGINAL_FRAME_{i+1:02d}.jpg"),frame)
+              annotated=frame.copy()
+              for x,y,fw,fh in boxes:cv2.rectangle(annotated,(x,y),(x+fw,y+fh),(0,225,255),2)
+              xy=((i%4)*360+4,(i//4)*290+22)
+              board.paste(Image.fromarray(cv2.cvtColor(cv2.resize(annotated,(352,264)),cv2.COLOR_BGR2RGB)),xy)
+              draw.text((xy[0],xy[1]-18),f"{t}s | auto faces: {len(boxes)} | sharp: {sharp:.0f}",fill="white")
+              reports.append({"second":t,"frontal_face_boxes":boxes,"sharpness":round(sharp,2)})
+          c.release()
+          assert len(reports)>=6
+          board.save(d/"FACE_SOURCE_CONTACT_SHEET.jpg",quality=92)
+          report={
+           "work":"The Barbershop, 1894, Edison / Dickson and Heise",
+           "source":"https://commons.wikimedia.org/wiki/File:The_Barbershop_(1894).webm",
+           "source_file_came_from":"YouTube repost on Commons; obtain higher-quality archival scan if possible",
+           "rights":"Commons Public Domain Mark; final Italy and derivative assessment pending",
+           "source_resolution":[w,h],"source_duration_s":round(dur,3),
+           "source_fps":round(fps,3),"samples":reports,
+           "face_count_warning":"Haar frontal detector unreliable on vintage, tiny or profile faces; visually inspect contact sheet",
+           "creative_direction":"Multiple modern-plausible reconstructed faces allowed; no exact historic identity claims; preserve same number of people and stable faces while moving",
+           "state":"REAL_SOURCE_SCOUT_ONLY_NOT_RESTORED_VIDEO",
+           "final_video_approved":False,"paid_ai_calls":0,"social_published":False}
+          (d/"FACE_SOURCE_QA.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print("BARBERSHOP_FACE_SOURCE_VERIFIED",w,h,dur,"SAMPLES",len(reports))
+          PY
+          test -s output/storia_barbershop_1894_scout/FACE_SOURCE_CONTACT_SHEET.jpg
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: BARBERSHOP_1894_FACE_SCOUT_FRAMES_AND_QA_NOT_FINAL
+          path: |
+            output/storia_barbershop_1894_scout/FACE_SOURCE_CONTACT_SHEET.jpg
+            output/storia_barbershop_1894_scout/ORIGINAL_FRAME_*.jpg
+            output/storia_barbershop_1894_scout/FACE_SOURCE_QA.json
+            output/storia_barbershop_1894_scout/SOURCE_PROBE.json
+            output/storia_barbershop_1894_scout/SOURCE_SHA256.txt
+          if-no-files-found: warn
+          retention-days: 14
