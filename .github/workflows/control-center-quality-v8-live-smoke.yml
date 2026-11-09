@@ -1,8 +1,8 @@
-name: Control Center V8 · real public endpoint smoke (read only)
+name: Control Center V9 · real public endpoint and SHA report smoke (read only)
 on:
   push:
     branches:
-      - preview/control-center-quality-v8-20261109
+      - preview/control-center-v9-live-smoke-20261109
     paths:
       - .github/workflows/control-center-quality-v8-live-smoke.yml
       - site/control-center-preview.worker.js
@@ -23,14 +23,17 @@ jobs:
           curl --fail --silent --show-error --location --max-time 30 --retry 2 "$BASE/" -o /tmp/control.html
           curl --fail --silent --show-error --location --max-time 30 --retry 2 "$BASE/api/status" -o /tmp/status.json
           curl --fail --silent --show-error --location --max-time 30 --retry 2 "$BASE/api/quality" -o /tmp/quality.json
+          curl --fail --silent --show-error --location --max-time 30 --retry 2 "$BASE/api/integrity" -o /tmp/integrity.json
           python3 - <<'PY'
           import json
           from pathlib import Path
           html=Path("/tmp/control.html").read_text(encoding="utf-8")
           status=json.loads(Path("/tmp/status.json").read_text(encoding="utf-8"))
           qa=json.loads(Path("/tmp/quality.json").read_text(encoding="utf-8"))
+          integrity=json.loads(Path("/tmp/integrity.json").read_text(encoding="utf-8"))
           assert 'data-page="quality"' in html
           assert "function qualityPage()" in html
+          assert "function integritySection()" in html
           assert isinstance(status.get("runs"),list)
           assert isinstance(status.get("works"),list)
           assert status.get("sources",{}).get("catalog",{}).get("ok") is True, "Internal video catalog must be reachable through service binding"
@@ -39,12 +42,21 @@ jobs:
           for k in ("report_contents_read","qa_pass_verified","mp4_bytes_verified",
                     "sha256_verified","owner_approved","publish_authorized"):
               assert qa.get(k) is False,k
-          print("HTTPS OK: UI V8, status, QA metadata. No MP4 or Gold attestation.")
+          assert integrity.get("schema")=="studio-integrity-metadata-v9"
+          assert integrity.get("source_ok") is True,"GitHub SHA audit listing must be reachable"
+          assert isinstance(integrity.get("runs"),list)
+          assert integrity.get("report_contents_read") is False
+          assert integrity.get("full_sha256_verified_by_dashboard") is False
+          assert integrity.get("owner_approved") is False
+          assert any(x.get("id")==42717357437 and x.get("artifact_present") is True for x in integrity["runs"]), "Expected GPT-requested SHA audit metadata"
+          print("HTTPS OK: UI V9, catalog, QA, requested SHA audit metadata. No false Gold.")
           print("QA source scope:",qa.get("scope"),"; manual run count:",len(qa["runs"]))
           print("Control Center source availability:",{k:bool(v.get("ok")) for k,v in status.get("sources",{}).items()})
           PY
           post_status=$(curl --silent --output /dev/null --write-out "%{http_code}" --max-time 20 -X POST "$BASE/api/quality")
           test "$post_status" = "405"
+          audit_post=$(curl --silent --output /dev/null --write-out "%{http_code}" --max-time 20 -X POST "$BASE/api/integrity")
+          test "$audit_post" = "405"
           invalid_status=$(curl --silent --output /dev/null --write-out "%{http_code}" --max-time 20 "$BASE/api/check?key=..%2Funsafe.txt")
           test "$invalid_status" = "400"
           echo "Mutation rejected (405), unsafe media key rejected (400)."
