@@ -9,6 +9,87 @@ async function json(url,github=false){
   return response.json();
 }
 function clip(s,n=250){return typeof s==="string"?s.slice(0,n):""}
+
+function projectForRun(name){
+  const s=String(name||"").toLowerCase();
+  // Infrastructure and dashboard jobs must never masquerade as video production.
+  if(/control.center|video.library|library.studio|site.smoke|site.download|import|enrich|editorial.dossier|catalog/.test(s))return "site";
+  if(/wow[\s_-]*lab/.test(s))return "wow";
+  if(/storia[\s_-]*rivive|restauro.storic|restoration|storico/.test(s))return "storia";
+  if(/artvision|art.vision|critico|museum|bruegel|rembrandt|waterhouse|simberg|delacroix|blake/.test(s))return "artvision";
+  return "other";
+}
+const BAD_CONCLUSIONS=new Set(["failure","timed_out","action_required","cancelled"]);
+function validDate(x){
+  const n=Date.parse(x||"");
+  return Number.isFinite(n)&&n>0&&n<=Date.now()+86400000;
+}
+function latestByWorkflow(runs){
+  const seen=new Set(),latest=[];
+  for(const r of runs){
+    const key=String(r.workflow_id||r.name||"")+"@"+(r.head_branch||"main");
+    if(!seen.has(key)){seen.add(key);latest.push(r)}
+  }
+  return latest;
+}
+function deriveOverview(runs,works,rows,sources){
+  const projects=[["artvision","ArtVision 4×1"],["storia","La Storia Rivive"],["wow","WOW LAB"]];
+  const main=runs.filter(r=>!r.head_branch||r.head_branch==="main");
+  const latest=latestByWorkflow(main);
+  const health=projects.map(([id,label])=>{
+    const r=main.filter(x=>x.project===id),current=latest.filter(x=>x.project===id);
+    const running=current.filter(x=>x.status!=="completed");
+    const failures=current.filter(x=>x.status==="completed"&&BAD_CONCLUSIONS.has(x.conclusion));
+    const success=r.find(x=>x.status==="completed"&&x.conclusion==="success");
+    const newest=r[0]||null;
+    const state=!sources.github?.ok?"unknown":running.length?"running":failures.length?"attention":newest?.conclusion==="success"?"observed_success":"unobserved";
+    return {id,label,state,observed_count:r.length,active_count:running.length,
+      latest_at:newest?.updated_at||null,latest_name:newest?.name||null,
+      last_success_at:success?.updated_at||null,last_success_url:success?.html_url||null,
+      issues:failures.length};
+  });
+  const priority=[
+    ...latest.filter(x=>x.project!=="other"&&x.status==="completed"&&BAD_CONCLUSIONS.has(x.conclusion))
+      .slice(0,6).map(x=>({kind:"workflow",priority:"check",title:clip(x.name,170),
+        detail:x.conclusion==="failure"?"Ultima esecuzione del workflow fallita":x.conclusion==="timed_out"?"Tempo massimo del workflow superato":x.conclusion==="cancelled"?"Ultima esecuzione annullata":"GitHub richiede un intervento",
+        time:x.updated_at,link:x.html_url,project:x.project})),
+    ...["github","queue","catalog"].filter(k=>!sources[k]?.ok)
+      .map(k=>({kind:"source",priority:"unknown",title:"Fonte non disponibile: "+({github:"GitHub Actions",queue:"Coda ArtVision",catalog:"Catalogo video"}[k]),
+        detail:"Stato non verificabile ora; non significa che la produzione sia ferma.",time:null,link:null,project:"site"}))
+  ];
+  const pending=works.filter(x=>x.delivered>0&&!x.gold_approved);
+  const review=pending.length?{kind:"artistic",priority:"review",count:pending.length,
+    title:"Opere con revisione finale ancora non attestata",
+    detail:"Il registro non certifica il Gold artistico. Questa voce non blocca automaticamente la produzione."}:null;
+  const diary=[];
+  for(const r of runs){
+    if(!validDate(r.updated_at))continue;
+    const verb=r.status!=="completed"?"Workflow avviato o in corso":r.conclusion==="success"?"Workflow riuscito":BAD_CONCLUSIONS.has(r.conclusion)?"Workflow concluso da verificare":"Workflow terminato";
+    diary.push({type:"workflow",project:r.project,kind:r.status!=="completed"?"running":r.conclusion==="success"?"success":"attention",
+      title:verb+" · "+clip(r.name,140),time:r.updated_at,link:r.html_url,
+      note:"Esito GitHub, non certifica un nuovo MP4"});
+  }
+  // Only genuine catalog upload timestamps are recorded as events.
+  if(sources.catalog?.ok){
+    for(const row of rows){
+      if(!validDate(row.uploaded))continue;
+      const filename=String(row.key||row.name||"");
+      const link=/^[\w ().-]{1,190}\.mp4$/i.test(filename)?
+        LIB+"/watch/"+encodeURIComponent(filename):LIB;
+      diary.push({type:"catalog",project:"site",kind:"catalog",
+        title:"Registrato nel catalogo · "+clip(row.title||row.name||row.key,130),
+        time:row.uploaded,link,note:"Data di importazione dichiarata dal catalogo"});
+    }
+  }
+  diary.sort((a,b)=>Date.parse(b.time)-Date.parse(a.time));
+  return {health,attention:priority,review,diary:diary.slice(0,35),scope:{
+    github_sample:runs.length,github_main_sample:main.length,
+    latest_workflows_in_sample:latest.length,
+    caveat:"Ultime 100 esecuzioni al massimo; non è uno storico completo né una verifica artistica.",
+    refreshed_at:new Date().toISOString()
+  }};
+}
+
 async function gather(){
   const results=await Promise.allSettled([
     json("https://api.github.com/repos/"+REPO+"/actions/runs?per_page=100",true),
@@ -22,8 +103,10 @@ async function gather(){
   const cat=results[2].status==="fulfilled"?results[2].value:{};
   const runs=(Array.isArray(gh.workflow_runs)?gh.workflow_runs:[]).map(r=>({
     name:clip(r.name,180),status:clip(r.status,32),conclusion:clip(r.conclusion,32),
-    html_url:clip(r.html_url,280),updated_at:clip(r.updated_at,40),event:clip(r.event,40)
-  }));
+    html_url:clip(r.html_url,280),updated_at:clip(r.updated_at,40),event:clip(r.event,40),
+    head_branch:clip(r.head_branch,100),workflow_id:Number(r.workflow_id)||null,
+    project:projectForRun(r.name)
+  })).sort((a,b)=>Date.parse(b.updated_at||0)-Date.parse(a.updated_at||0));
   const rows=Array.isArray(cat.items)?cat.items.filter(x=>x&&typeof x==="object"&&x.hidden!==true):[];
   const catalogNames=new Set(rows.map(x=>String(x.key||x.name||"")));
   const catalogAvailability=new Map(rows.map(x=>[String(x.key||x.name||""),x.available===false?false:true]));
@@ -58,13 +141,15 @@ async function gather(){
     .filter(w=>!/dal[ií]|temptation of st\.?\s*anthony/i.test(String(w.artist||"")+" "+String(w.title_en||"")))
     .map(w=>({id:clip(w.id),title:clip(w.title_en),artist:clip(w.artist),
       delivered:Number(w.slots_delivered_this_selection)||0,museum_approved:w.museum_approved===true,
+      gold_approved:w.Gold_V25===true,publication_authorized:w.publication_authorized===true,
       note:clip(w.preflight_status,340),site_archive_verified_slots:
         Number.isFinite(Number(w.site_archive_verified_slots))?Number(w.site_archive_verified_slots):null,
       variants:slotDefs.map(s=>pickSlot(w,s))}));
   const media=rows.slice().sort((a,b)=>Date.parse(b.uploaded||b.gptCreatedAt||0)-Date.parse(a.uploaded||a.gptCreatedAt||0)).slice(0,24).map(x=>({
     key:clip(x.key||x.name,190),title:clip(x.title||x.name||x.key,180),available:x.available===false?false:true
   }));
-  return {asof:new Date().toISOString(),sources,runs,works,media,catalog_count:rows.length};
+  const overview=deriveOverview(runs,works,rows,sources);
+  return {asof:new Date().toISOString(),sources,runs,works,media,catalog_count:rows.length,...overview};
 }
 async function getStatus(){
   if(snapshot&&Date.now()-snapshotAt<75000)return snapshot;
