@@ -1,0 +1,390 @@
+{
+  "schema": "Giuliano Terracotta V4 · Evidence-first Social Documentary",
+  "revision": 4,
+  "brand": "GIULIANO · DOCUMENTARI",
+  "title": "THE TERRACOTTA ARMY",
+  "subtitle": "2,000 YEARS UNDERGROUND",
+  "language": "Italian",
+  "style": "historical documentary reportage, broadcast cadence, not art criticism",
+  "production_status": "planned_until_QA",
+  "master": "1080x1920 H264 AAC",
+  "target_runtime_seconds": [
+    118,
+    158
+  ],
+  "title_strategy": "first two seconds over REAL moving archaeological pit footage, not a stationary cover",
+  "semantic_contract": "each image must depict the spoken subject; forbid ungrounded historical visualization; any modern repainted replica must be labeled",
+  "rights": "Commons metadata per original asset, license and author logged",
+  "archival_motion": "Terracotta Army Pit 1 2014.webmhd.webm; genuine 2014 CC BY-SA 4.0 footage, not AI",
+  "sound": "original cinematic underscore + subtle original sound design, narration intelligibility first",
+  "factual_references": [
+    "https://whc.unesco.org/en/list/441/",
+    "https://www.ucl.ac.uk/news/2019/apr/scientists-shed-light-preservation-mystery-terracotta-army-weapons",
+    "https://www.tum.de/en/news-and-events/all-news/press-releases/details/32291",
+    "https://commons.wikimedia.org/wiki/Category:Terracotta_Army"
+  ],
+  "beats": [
+    {
+      "id": 1,
+      "narration": "Più di duemila anni sotto terra. Migliaia di guerrieri, e un segreto ancora intatto.",
+      "sources": [
+        "Terracotta Army - Pit 1 in 2026.jpg",
+        "Terracotta Army - Pit 1 20240806 08.jpg"
+      ],
+      "overlay": "IL SEGRETO DEI GUERRIERI",
+      "semantic": "formation",
+      "footage": "Terracotta Army Pit 1 2014.webmhd.webm",
+      "scene_role": "cold_open"
+    },
+    {
+      "id": 2,
+      "narration": "Le loro armi erano vere. E la tomba centrale che accompagnavano non è stata ancora scavata.",
+      "sources": [
+        "Qin Dynasty Bronze Arrows (9930330423).jpg",
+        "秦始皇帝陵.JPG"
+      ],
+      "overlay": "",
+      "semantic": "mystery",
+      "footage": null,
+      "scene_role": "discovery"
+    },
+    {
+      "id": 3,
+      "narration": "Nel millenovecentosettantaquattro, vicino a Xi'an, alcuni contadini scavano un pozzo.",
+      "sources": [
+        "Just unearthed- repairs will take some time yet! (35519038512).jpg",
+        "Terracotta Army - Pit 1, Archaeological site 20140501.jpg"
+      ],
+      "overlay": "CINA · 1974",
+      "semantic": "excavation",
+      "footage": null,
+      "scene_role": "discovery"
+    },
+    {
+      "id": 4,
+      "narration": "I frammenti di argilla conducono gli archeologi a una scoperta straordinaria.",
+      "sources": [
+        "2015-09-22-080636 - Terrakotta-Armee, Grosse Halle.jpg",
+        "Terracotta Warriors Restoration Area 01.jpg"
+      ],
+      "overlay": "",
+      "semantic": "excavation",
+      "footage": null,
+      "scene_role": "discovery"
+    },
+    {
+      "id": 5,
+      "narration": "Dal terreno emergono schiere di soldati disposti in formazione militare.",
+      "sources": [
+        "Terracotta Army Pit 1 - 12.jpg",
+        "Terracotta Army Pit 1 - 9.jpg"
+      ],
+      "overlay": "",
+      "semantic": "formation",
+      "footage": null,
+      "scene_role": "discovery"
+    },
+    {
+      "id": 6,
+      "narration": "La fossa principale è lunga circa duecentotrenta metri.",
+      "sources": [
+        "Terracotta Army Pit 1 1.jpg",
+        "Terracotta Army, View of Pit 1.jpg"
+      ],
+      "overlay": "230 METRI",
+      "semantic": "formation",
+      "footage": null,
+      "scene_role": "discovery"
+    },
+    {
+      "id": 7,
+      "narration": "Le stime arrivano a circa ottomila figure, ma il numero definitivo resta sconosciuto.",
+      "sources": [
+        "Terracotta Army - Pit 1.jpg",
+        "2023-10-08 Terracotta Army - Pit 1 秦兵馬俑一號坑 02.jpg"
+      ],
+      "overlay": "CIRCA 8.000 GUERRIERI",
+      "semantic": "formation",
+      "footage": null,
+      "scene_role": "discovery"
+    },
+    {
+      "id": 8,
+      "narration": "Non sono statue tutte uguali: armature e copricapi permettono di distinguere i ranghi.",
+      "sources": [
+        "2014 Qin Terracotta Officer 01.jpg",
+        "2016 Qin Shihuang Terracotta Warrior, Pit 1.jpg"
+      ],
+      "overlay": "",
+      "semantic": "officer",
+      "footage": null,
+      "scene_role": "discovery"
+    },
+    {
+      "id": 9,
+      "narration": "I volti cambiano nei baffi, nelle sopracciglia, nelle espressioni e nelle acconciature.",
+      "sources": [
+        "2011 Qin Terracotta Warrior 01.jpg",
+        "2011 Qin Terracotta Warrior 02.jpg",
+        "Terracota warrior close-up.jpg"
+      ],
+      "overlay": "",
+      "semantic": "portraits",
+      "footage": null,
+      "scene_role": "artifacts"
+    },
+    {
+      "id": 10,
+      "narration": "Ogni figura unisce tecniche di produzione ripetibili a rifiniture eseguite a mano.",
+      "sources": [
+        "2019 Qin Terracotta Warrior 01.jpg",
+        "2011 Qin Terracotta Warrior 03.jpg"
+      ],
+      "overlay": "",
+      "semantic": "portraits",
+      "footage": null,
+      "scene_role": "artifacts"
+    },
+    {
+      "id": 11,
+      "narration": "Ci sono arcieri in piedi e arcieri inginocchiati, modellati con pose molto diverse.",
+      "sources": [
+        "Terracotta Warrior- Standing Archer.jpg",
+        "2011 Qin Terracotta Kneeling Archer.jpg"
+      ],
+      "overlay": "",
+      "semantic": "archers",
+      "footage": null,
+      "scene_role": "artifacts"
+    },
+    {
+      "id": 12,
+      "narration": "Accanto ai soldati, i cavalli di terracotta completavano le formazioni.",
+      "sources": [
+        "Qin Terracotta Army Horses, Pit 1.jpg",
+        "Terracotta horse and two soldiers.jpg"
+      ],
+      "overlay": "",
+      "semantic": "horses",
+      "footage": null,
+      "scene_role": "artifacts"
+    },
+    {
+      "id": 13,
+      "narration": "La sorpresa più incredibile è che questi guerrieri, in origine, non erano grigi.",
+      "sources": [
+        "Qin Terracotta Warrior Original Color (9893792705).jpg",
+        "2009 Qin State- Terracotta Kneeling Archer, Painted.jpg"
+      ],
+      "overlay": "",
+      "semantic": "pigment",
+      "footage": null,
+      "scene_role": "artifacts"
+    },
+    {
+      "id": 14,
+      "narration": "Erano dipinti con pigmenti vivaci. Una ricostruzione moderna mostra parte di quei colori.",
+      "sources": [
+        "Qin Shihuang Colored Terracotta Warrior Replica (32529743527).jpg",
+        "Qin Shihuang Colored Terracotta Warrior Replica (40505444133).jpg"
+      ],
+      "overlay": "RICOSTRUZIONE MODERNA",
+      "semantic": "replica",
+      "footage": null,
+      "scene_role": "artifacts"
+    },
+    {
+      "id": 15,
+      "narration": "La pittura poggiava su uno strato di lacca e poteva deteriorarsi dopo l'esposizione all'aria.",
+      "sources": [
+        "Qin Shihuang Terracotta Kneeling Archer, Painted (32529437777).jpg",
+        "2011 Qin Terracotta Warrior 04.jpg"
+      ],
+      "overlay": "",
+      "semantic": "pigment",
+      "footage": null,
+      "scene_role": "artifacts"
+    },
+    {
+      "id": 16,
+      "narration": "Proteggere le minuscole tracce originali è ancora oggi una sfida per i restauratori.",
+      "sources": [
+        "Terracotta Warriors Restoration Area.jpg",
+        "Terracotta Horse of Qin Shihuang Under Restoration, Pit 1.jpg"
+      ],
+      "overlay": "",
+      "semantic": "conservation",
+      "footage": null,
+      "scene_role": "artifacts"
+    },
+    {
+      "id": 17,
+      "narration": "Le armi non erano simboliche: nell'esercito furono sepolte vere armi di bronzo.",
+      "sources": [
+        "Qin Dynasty Bronze Arrows (9930330423).jpg",
+        "Qin State Qin Dynasty Bronze Arrowheads (9930742944).jpg"
+      ],
+      "overlay": "ARMI AUTENTICHE",
+      "semantic": "weapons",
+      "footage": null,
+      "scene_role": "science"
+    },
+    {
+      "id": 18,
+      "narration": "Sono state recuperate fino a quarantamila punte di freccia.",
+      "sources": [
+        "Qin State Qin Dynasty Bronze Arrowheads (9930861133).jpg",
+        "Qin Dynasty Bronze Arrows (9930330423).jpg"
+      ],
+      "overlay": "FINO A 40.000 PUNTE",
+      "semantic": "weapons",
+      "footage": null,
+      "scene_role": "science"
+    },
+    {
+      "id": 19,
+      "narration": "Per anni si pensò che le armi fossero protette da un'antica cromatura.",
+      "sources": [
+        "Qin State Qin Dynasty Bronze Arrowheads (9930742944).jpg",
+        "Qin State Qin Dynasty Bronze Arrowheads (9930861133).jpg"
+      ],
+      "overlay": "UN MITO DA SFATARE",
+      "semantic": "weapons",
+      "footage": null,
+      "scene_role": "science"
+    },
+    {
+      "id": 20,
+      "narration": "Uno studio del duemiladiciannove ha smentito questa teoria: il cromo proveniva dalla lacca, non da un trattamento sulle armi.",
+      "sources": [
+        "2011 Qin Terracotta Warrior 04.jpg",
+        "Qin Dynasty Bronze Arrows (9930330423).jpg"
+      ],
+      "overlay": "SCOPERTA SCIENTIFICA · 2019",
+      "semantic": "science",
+      "footage": null,
+      "scene_role": "science"
+    },
+    {
+      "id": 21,
+      "narration": "Le condizioni del terreno hanno contribuito alla conservazione del bronzo.",
+      "sources": [
+        "Qin State Qin Dynasty Bronze Arrowheads (9930742944).jpg",
+        "Qin State Qin Dynasty Bronze Arrowheads (9930861133).jpg"
+      ],
+      "overlay": "",
+      "semantic": "science",
+      "footage": null,
+      "scene_role": "science"
+    },
+    {
+      "id": 22,
+      "narration": "Il committente era Qin Shi Huang: nel duecentoventuno avanti Cristo unificò la Cina.",
+      "sources": [
+        "Tomb of Emperor Qin Shi Huang.jpg",
+        "秦始皇帝陵.JPG"
+      ],
+      "overlay": "221 A.C. · CINA UNIFICATA",
+      "semantic": "mausoleum",
+      "footage": null,
+      "scene_role": "historical_context"
+    },
+    {
+      "id": 23,
+      "narration": "Il suo grande mausoleo era in costruzione già dal duecentoquarantasei avanti Cristo.",
+      "sources": [
+        "Qin Shihuang's Mausoleum (9897299296).jpg",
+        "Terracotta Army Pit 1.JPG"
+      ],
+      "overlay": "246 A.C. · INIZIO LAVORI",
+      "semantic": "mausoleum",
+      "footage": null,
+      "scene_role": "historical_context"
+    },
+    {
+      "id": 24,
+      "narration": "Il complesso comprendeva molto più di un esercito: anche acrobati e altre figure di corte.",
+      "sources": [
+        "Qin Terracotta Acrobat (9897907493).jpg",
+        "Qin acrobat.jpg"
+      ],
+      "overlay": "",
+      "semantic": "acrobat",
+      "footage": null,
+      "scene_role": "historical_context"
+    },
+    {
+      "id": 25,
+      "narration": "Due carri di bronzo in scala ridotta testimoniano la precisione degli artigiani.",
+      "sources": [
+        "Qin Shihuang Bronze Chariot Horse Team.jpg",
+        "Qin bronze chariot two.jpg",
+        "Qin Shihuang Bronze Chariot Driver.jpg"
+      ],
+      "overlay": "CARRO IN BRONZO · IN SCALA",
+      "semantic": "chariot",
+      "footage": null,
+      "scene_role": "historical_context"
+    },
+    {
+      "id": 26,
+      "narration": "Le fosse funerarie e le strutture sotterranee occupano una vasta area intorno al tumulo.",
+      "sources": [
+        "2023-10-08 Terracotta Army Pit 2 秦兵馬俑二號坑 01.jpg",
+        "2023-10-08 Terracotta Army Pit 3 秦兵馬俑三號坑 01.jpg"
+      ],
+      "overlay": "",
+      "semantic": "excavations",
+      "footage": null,
+      "scene_role": "historical_context"
+    },
+    {
+      "id": 27,
+      "narration": "Ma la camera sepolcrale centrale non è stata ancora scavata dagli archeologi.",
+      "sources": [
+        "秦始皇帝陵·秦始皇陵·西安臨潼·（封土正北側）.jpg",
+        "秦始皇帝陵.JPG"
+      ],
+      "overlay": "CAMERA CENTRALE · NON SCAVATA",
+      "semantic": "mystery",
+      "footage": null,
+      "scene_role": "climax"
+    },
+    {
+      "id": 28,
+      "narration": "Le cronache antiche descrivono fiumi di mercurio: un racconto non ancora verificato dall'interno.",
+      "sources": [
+        "Tomb of Emperor Qin Shi Huang.jpg",
+        "Qin Shihuang's Mausoleum (9897299296).jpg"
+      ],
+      "overlay": "TESTIMONIANZA ANTICA",
+      "semantic": "mystery",
+      "footage": null,
+      "scene_role": "climax"
+    },
+    {
+      "id": 29,
+      "narration": "Perché scavare troppo presto potrebbe distruggere proprio le tracce che vogliamo studiare.",
+      "sources": [
+        "Terracotta Warriors Restoration Area 01.jpg",
+        "Terracotta Army - Pit 1 in 2026.jpg"
+      ],
+      "overlay": "",
+      "semantic": "conservation",
+      "footage": null,
+      "scene_role": "climax"
+    },
+    {
+      "id": 30,
+      "narration": "Dopo oltre duemila anni, il cuore di questo straordinario complesso resta inesplorato.",
+      "sources": [
+        "Terracotta Army - Pit 1 20240806 08.jpg",
+        "Terracotta Army - Pit 1 in 2026.jpg"
+      ],
+      "overlay": "IL SEGRETO RESTA SOTTO TERRA",
+      "semantic": "final",
+      "footage": null,
+      "scene_role": "climax"
+    }
+  ]
+}
