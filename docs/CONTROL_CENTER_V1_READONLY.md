@@ -195,3 +195,16 @@ Dopo test Android della V2 e controllo dei dati, integrare soltanto il link nell
 - Test della forma del deep link, del package corretto, dell'ID conversazione e del fallback al medesimo indirizzo.
 - Rifiutati link /share/, domini esterni e URL non HTTPS.
 - Verifica manuale necessaria su Chrome Android per il lancio effettivo della app e l'apertura della conversazione, specialmente se il pannello è incorporato in Video Library Studio.
+
+## V7 — tutte le categorie e produzioni, inclusi Libri narrati (9 novembre 2026)
+
+- La pagina Categorie raccoglie 13 mondi editoriali: Libri narrati, Racconti e fiabe, Artisti e pittura, Critica d’arte, La Storia Rivive, Restauri storici, Musica e visual, WOW LAB, Cinema e cortometraggi, Documentari e curiosità, Cronaca e attualità, Provini e backstage, Altri progetti.
+- Tutte le categorie sono sempre visibili. Quando il catalogo non contiene una corrispondenza, sono etichettate "In preparazione" senza fingere video esistenti.
+- Il numero di schede, di file con disponibilità dichiarata, offline e con stato sconosciuto proviene soltanto da /api/catalog. La categorizzazione dei file è una classificazione editoriale: non prova la presenza di una voce narrante, la qualità Gold, il diritto di riuso o la disponibilità effettiva del download integrale.
+- L'etichetta storica "Libri raccontati" viene presentata come "Libri narrati" senza modificare automaticamente i dati originali su R2. Fiabe e racconti riconoscibili hanno una categoria distinta.
+- La pagina mostra fino a 18 schede recenti per categoria e un link diretto al filtro del Video Library Studio con ?category=..., supportato dalla nuova interfaccia del sito. Nell'archivio ufficiale rimangono tutti i video.
+- Anche la Home include la griglia categorie; su Android la barra inferiore apre la pagina Categorie.
+- La sezione "Salute delle produzioni" passa da 3 a 7 programmi osservabili: ArtVision, Storia Rivive, WOW LAB, Libri narrati, Musica e visual, Documentari e curiosità, Cinema e cortometraggi.
+- Un genere senza workflow GitHub riconosciuto mostra "Non rilevato": non equivale a fermo, errore o produzione autonoma attiva. Le automazioni native ChatGPT non sono monitorate da questa rilevazione GitHub.
+- Le nuove tipologie dispongono di filtri GitHub e collegamenti di chat personali nel pannello Ripara GPT, ma nessun URL privato è codificato nel Worker o pubblicato su GitHub.
+- Il monitoraggio rimane GET-only e senza crediti o servizi a pagamento. Nessuna modifica ai master, ai workflow GitHub produttivi o ai metadati del catalogo.
