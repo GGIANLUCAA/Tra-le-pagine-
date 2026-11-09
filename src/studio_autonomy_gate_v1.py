@@ -107,8 +107,8 @@ def evaluate(job: dict) -> dict:
                       ["SOURCE_OR_RIGHTS_NOT_PROVEN"])
 
     if stage == "preflight":
-        return result(job, "prepared_for_owner_pipeline", "continue_existing_owner_pipeline",
-                      ["PREFLIGHT_ONLY_NOT_A_RENDER"], can_auto_continue=True)
+        return result(job, "prepared_for_owner_pipeline", "validate_existing_owner_gates",
+                      ["PREFLIGHT_ONLY_NOT_A_RENDER", "OWNER_PIPELINE_RULES_STILL_REQUIRED"])
 
     # No guessed formats: a nonstandard format must receive the owner-specific QA.
     format_name = job["format"]
