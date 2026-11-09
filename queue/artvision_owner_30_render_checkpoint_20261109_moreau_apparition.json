@@ -1,0 +1,60 @@
+{
+  "schema": "artvision-owner-secondary-30-cinema-new-v1",
+  "utc_date": "2026-11-09",
+  "source_queue": "research/artvision_owner_selected_30_future_20261109.json",
+  "primary_queue": "queue/artvision_owner_selected_ten_20261102.json",
+  "primary_queue_counter_after": "26/36 unchanged, Dali permanently excluded",
+  "secondary_work": {
+    "selected_title": "The Apparition",
+    "artist": "Gustave Moreau",
+    "selection_order": 16,
+    "variant": "cinema_standard",
+    "slot_state": "rendered_needs_visual_and_semantic_review",
+    "count_new_physical_mp4_candidate": 1
+  },
+  "official_object": {
+    "museum": "Musée d'Orsay / Louvre",
+    "inventory": "RF 2130, Recto",
+    "year": 1876,
+    "medium": "watercolour",
+    "height_cm": 106,
+    "width_cm": 72.2,
+    "record_url": "https://www.musee-orsay.fr/en/artworks/lapparition-203510",
+    "no_museum_scene": true
+  },
+  "github_workflow_run_id": 42623380697,
+  "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42623380697",
+  "workflow_artifact_id": 13677970192,
+  "workflow_artifact_name": "ARTVISION_OWNER_MOREAU_APPARITION_NEW_CINEMA_REVIEW",
+  "mp4": {
+    "sha256": "faa111e2794b73ddf42858e6083b88495089fac8ace3ef1904b0505209be36c3",
+    "bytes": 109686664,
+    "duration_seconds": 64,
+    "video": "H264 1080x1920 20fps",
+    "audio": "AAC",
+    "ffmpeg_full_video_decode": "PASS GitHub + independent local",
+    "ffmpeg_full_audio_decode": "PASS GitHub + independent local"
+  },
+  "zip": {
+    "sha256": "9b6d0164cd39523181a769a5ccf5d272cb77ba06de215938bf25cf0e128705d2",
+    "zip_crc": "PASS GitHub + local",
+    "file_readback": "PASS GitHub"
+  },
+  "source_artwork": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:The_Apparition,_Gustave_Moreau_1876.jpg",
+    "sha256": "9e2e2d5dad772e396754f5bf9bec95ba8d08b4629f6ff783592cc2cff2ad8daf",
+    "pixels": [
+      1684,
+      2500
+    ],
+    "license_claim": "PD-Art/PDM Commons, territorial commercial reuse pending"
+  },
+  "technical_review": "PASS",
+  "artistic_review": "contact sheet visually examined (selected key details aligned); fullspeed QA PENDING, possible repeated shots to refine. NOT Gold.",
+  "title_cover_social": "English cover/public title; four platform-specific Italian social copies + provenance and credits in ZIP",
+  "published": false,
+  "paid_calls": 0,
+  "old_master_modifications": 0,
+  "same_cycle_other_new_render": "The Alchemist Cinema Standard, Actions #42622451654; separate checkpoint queue/artvision_owner_30_render_checkpoint_20261109_alchemist.json",
+  "next_step": "Owner next run must first check duplicate slots/artifacts. This is a new physically verified SECONDARY-lane candidate, but NOT a Museum 26/36 completion and NOT artistic Gold. Move to an independent eligible selected work or real Museum slot after rights/source checks. No concurrent heavy renders."
+}
