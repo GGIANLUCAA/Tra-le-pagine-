@@ -174,6 +174,29 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
 @media(max-width:380px){.museum-tour-controls span{flex-basis:63px;font-size:10px}}
 @media(prefers-reduced-motion:reduce){.museum-art-frame.center{transition:none}}
 
+
+/* Control Center integrated only into the existing authenticated Studio UI. */
+.control-center-banner-button{margin:6px 8px;padding:9px 13px;min-height:40px;background:#423629!important;border-color:#b49362!important;color:#f3d8b2!important;font-weight:750}
+.control-center-launcher{display:flex;align-items:center;gap:17px;flex-wrap:wrap;margin:12px 0 20px;padding:19px;border:1px solid #9b7c52;background:linear-gradient(115deg,#2d2926,#212a33 72%);border-radius:17px}
+.control-center-launcher-icon{width:55px;height:55px;border:1px solid #ad885c;background:#483b2d;border-radius:14px;color:#e9c896;display:grid;place-items:center;font:33px Georgia,serif}
+.control-center-launcher-copy{flex:1;min-width:210px}.control-center-launcher-copy strong{display:block;color:#f9ead2;font:normal 23px Georgia,serif;line-height:1.15}
+.control-center-launcher-copy span,.control-center-launcher-copy small{display:block;color:#bdc7d1;font-size:12px;margin-top:5px}
+.control-center-launcher-copy small{color:#d7bd97;font-size:10px}
+.control-center-launcher .btn{flex-shrink:0;padding:12px 16px;min-height:48px;background:#d7b687;border-color:#d7b687;color:#1c1b1b}
+#controlCenterDialog{position:fixed;inset:0;margin:auto;width:min(98vw,1480px);max-width:none;height:min(96dvh,1000px);max-height:none;padding:0;background:#10151b;border:1px solid #826a48;border-radius:18px;overflow:hidden}
+#controlCenterDialog::backdrop{background:#04070cea;backdrop-filter:blur(7px)}
+.control-center-shell{display:flex;flex-direction:column;height:100%;min-height:0}
+.control-center-head{flex-shrink:0;background:#161c24;border-bottom:1px solid #6d5b40;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.control-center-heading{display:flex;align-items:center;gap:11px;min-width:0}.control-center-headmark{font:27px Georgia,serif;color:#e8c491}.control-center-heading strong{font-size:13px;letter-spacing:.065em;color:#f3dfbf}
+.control-center-heading small{display:block;color:#abb9c5;font-size:10px;margin-top:3px}
+.control-center-buttons{display:flex;align-items:center;gap:7px}.control-center-buttons .ghost{min-height:38px;padding:8px 11px;font-size:12px;white-space:nowrap}
+.control-center-loading{padding:8px 12px;background:#30291d;color:#e3c89d;font-size:11px;text-align:center}
+#controlCenterFrame{flex:1;min-height:0;width:100%;border:0;background:#0c1118;display:block}
+@media(max-width:700px){#controlCenterDialog{inset:0;margin:0;width:100vw;height:100dvh;border:0;border-radius:0}
+.control-center-head{padding:10px 13px}.control-center-heading strong{font-size:11px}.control-center-heading small{font-size:9px}
+.control-center-newtab{display:none!important}.control-center-launcher{gap:12px;padding:15px}.control-center-launcher-icon{width:44px;height:44px;font-size:25px}
+.control-center-launcher-copy{min-width:200px}.control-center-launcher-copy strong{font-size:21px}
+.control-center-launcher .btn{width:100%}.control-center-buttons .ghost{padding:8px 9px}}
 </style>
 </head>
 <body>
@@ -201,7 +224,7 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
  <div class="stats"><div class="stat"><b id="nVideos">—</b><span>Riproducibili</span></div><div class="stat"><b id="nPosters">—</b><span>Copertine</span></div><div class="stat"><b id="nGpt">—</b><span>In attesa da ChatGPT</span></div><div class="stat"><b id="nProjects">—</b><span>Generi</span></div><div class="stat"><b id="nHours">—</b><span>Ore di cinema</span></div></div>
 </header>
 <main>
-<div class="admin-banner" id="adminBanner">🔒 <strong>Gestione privata attiva.</strong> Le modifiche sono salvate nel catalogo online. Nascondere un video non elimina il file originale. <button class="ghost" id="adminLogout" style="margin-left:8px;padding:5px 10px;min-height:30px">Esci</button></div>
+<div class="admin-banner" id="adminBanner">🔒 <strong>Gestione privata attiva.</strong> Le modifiche sono salvate nel catalogo online. Nascondere un video non elimina il file originale. <button class="ghost control-center-banner-button" id="openControlCenterBanner" type="button">◈ Centro di controllo</button> <button class="ghost" id="adminLogout" style="margin-left:8px;padding:5px 10px;min-height:30px">Esci</button></div>
 <section class="showcase-section" id="collections" aria-labelledby="collectionsTitle">
  <div class="section-heading"><div><div class="section-eyebrow">ESPLORA PER MONDO</div><h2 id="collectionsTitle">Le tue collezioni</h2><p>Ogni genere ha un'atmosfera. Scegli dove entrare.</p></div></div>
  <div class="collection-grid" id="collectionGrid"></div>
@@ -232,7 +255,12 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
 </section>
 <section class="showcase-section ready-section" id="ready" aria-labelledby="readyTitle" hidden>
  <div class="section-heading"><div><div class="section-eyebrow">AREA EDITORIALE PRIVATA</div><h2 id="readyTitle">Pronti da pubblicare</h2><p>Video marcati come finali, pronti per la revisione.</p></div></div>
- <div class="studio-metrics" id="studioMetrics"></div><div class="film-rail" id="readyRail"></div>
+ <div class="control-center-launcher">
+ <div class="control-center-launcher-icon" aria-hidden="true">◈</div>
+ <div class="control-center-launcher-copy"><strong>Il tuo Centro di controllo</strong><span>Produzioni, workflow GitHub, varianti, problemi e download: tutto in un'unica schermata.</span><small>Monitoraggio in sola lettura · nessun video viene modificato</small></div>
+ <button class="btn primary" id="openControlCenterStudio" type="button" aria-haspopup="dialog" aria-controls="controlCenterDialog">Apri il Centro di controllo</button>
+</div>
+<div class="studio-metrics" id="studioMetrics"></div><div class="film-rail" id="readyRail"></div>
 </section>
 <section class="library-section" id="library" aria-labelledby="libraryTitle">
  <div class="section-heading library-heading"><div><div class="section-eyebrow">TUTTO L'ARCHIVIO</div><h2 id="libraryTitle">La videoteca completa</h2><p>Cerca, filtra e organizza senza perdere nessun file.</p></div></div>
@@ -391,6 +419,16 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
  </form>
 </dialog>
 <dialog id="adminDialog"><div class="modalhead"><h2>Accesso gestione privata</h2><button class="ghost" data-close="adminDialog">✕ Chiudi</button></div><div class="modalbody"><p class="modalinfo">Per modificare titoli, versioni, preferiti o nascondere video usa il tuo collegamento amministratore privato oppure inserisci la chiave di gestione.</p><form id="adminForm"><label class="field">Chiave di gestione<input id="adminKey" type="password" autocomplete="off" placeholder="Incolla la chiave privata"></label><button class="btn primary" style="margin-top:14px" type="submit">Accedi</button></form></div></dialog>
+<dialog id="controlCenterDialog" aria-labelledby="controlCenterTitle" aria-modal="true">
+ <div class="control-center-shell">
+  <div class="control-center-head">
+   <div class="control-center-heading"><span class="control-center-headmark" aria-hidden="true">◈</span><div><strong id="controlCenterTitle">ARTVISION · Centro di controllo</strong><small>Stato reale delle produzioni · sola lettura</small></div></div>
+   <div class="control-center-buttons"><a href="https://artvision-control-preview.600led.workers.dev/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" class="ghost control-center-newtab">Apri separatamente ↗</a><button id="closeControlCenter" class="ghost" type="button" aria-label="Chiudi Centro di controllo">✕ Chiudi</button></div>
+  </div>
+  <div id="controlCenterLoading" class="control-center-loading" role="status">Collegamento al monitoraggio in corso…</div>
+  <iframe id="controlCenterFrame" title="ArtVision Control Center, monitoraggio in sola lettura" referrerpolicy="no-referrer" loading="lazy" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads" allow="fullscreen"></iframe>
+ </div>
+</dialog>
 <div id="toast"></div>
 <script>
 (function(){
@@ -490,6 +528,7 @@ function renderHome(){
 }
 function applyStudioVisibility(){
  const active=!!(g.admin&&g.studio);
+ if(!g.admin&&$('#controlCenterDialog').open)closeControlCenter();
  $('#ready').hidden=!active;
  $('#selectionToggle').hidden=!active;
  if(!active){g.selectionMode=false;g.selectedKeys.clear()}
@@ -499,6 +538,24 @@ function applyStudioVisibility(){
  document.body.classList.toggle('studio-on',active);
  updateSelectionPanel();
 }
+
+function closeControlCenter(){
+ const dialog=$('#controlCenterDialog'),frame=$('#controlCenterFrame');
+ if(dialog.open)dialog.close();
+ // Unload the cross-origin preview when closing or losing admin authorization.
+ frame.removeAttribute('src');
+ $('#controlCenterLoading').hidden=false;
+}
+function openControlCenter(){
+ // Auth is confirmed by the existing /api/catalog admin response, not localStorage alone.
+ if(!g.admin){$('#adminDialog').showModal();return}
+ const dialog=$('#controlCenterDialog');
+ if(dialog.open)return;
+ $('#controlCenterLoading').hidden=false;
+ dialog.showModal();
+ $('#controlCenterFrame').src='https://artvision-control-preview.600led.workers.dev/';
+}
+
 function enterStudio(){
  if(!g.admin){$('#adminDialog').showModal();return}
  g.studio=true;
@@ -721,9 +778,14 @@ $('#editForm').onsubmit=async e=>{e.preventDefault();const f=e.target,x=g.select
 $('#archiveToggle').onclick=async()=>{const x=g.selected;$('#edit').close();await hide(x)};
 $('#deleteForever').onclick=()=>deleteForever(g.selected);
 $('#favoriteToggle').onclick=async()=>{const x=g.selected;if(await manage(x,{favorite:!x.favorite}))$('#edit').close()};
+$('#openControlCenterBanner').onclick=openControlCenter;
+$('#openControlCenterStudio').onclick=openControlCenter;
+$('#closeControlCenter').onclick=closeControlCenter;
+$('#controlCenterFrame').addEventListener('load',()=>{$('#controlCenterLoading').hidden=true});
+$('#controlCenterDialog').addEventListener('close',()=>{$('#controlCenterFrame').removeAttribute('src');$('#controlCenterLoading').hidden=false});
 $('#adminOpen').onclick=()=>enterStudio();
 $('#adminForm').onsubmit=async e=>{e.preventDefault();const token=$('#adminKey').value.trim();if(token.length<20){log('Chiave non valida');return}g.token=token;localStorage.setItem('vlsAdmin',token);await load(true);if(g.admin){$('#adminDialog').close();enterStudio();log('Gestione privata attivata')}else{g.token='';localStorage.removeItem('vlsAdmin');log('Accesso negato')}};
-$('#adminLogout').onclick=()=>{g.token='';g.admin=false;g.studio=false;g.selectionMode=false;g.selectedKeys.clear();localStorage.removeItem('vlsAdmin');$('#includeArchived').checked=false;applyStudioVisibility();load(true)};
+$('#adminLogout').onclick=()=>{closeControlCenter();g.token='';g.admin=false;g.studio=false;g.selectionMode=false;g.selectedKeys.clear();localStorage.removeItem('vlsAdmin');$('#includeArchived').checked=false;applyStudioVisibility();load(true)};
 $('#exportCSV').onclick=()=>{
  const shown=g.items.filter(x=>!x.hidden||g.admin);
  const columns=['Titolo','Categoria','Progetto','Descrizione','Durata_secondi','Larghezza_px','Altezza_px','Dimensione_byte','Fonte','Riproducibile','Versione','Copie_uguali','Varianti','Data_creazione_ChatGPT','Data_importazione_Cloudflare','Preferito','Nascosto','Nome_originale','Collegamento'];
