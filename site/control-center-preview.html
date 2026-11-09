@@ -276,6 +276,50 @@ function slotCard(w,v,index){
     '<span class="slotStatus '+(playable?'playable':offline?'unavailable':'')+'">'+escapeText(label)+'</span>'+
     file+'<div class="slotActions">'+play+'</div>'+panel+'</div></article>';
 }
+function stats(){
+  var data=state.data||{},bundle=data.statistics||{};
+  var span=state.statsWindow==="24h"?"activity_24h":"activity_7d";
+  var act=bundle[span],catalogue=bundle.catalogue,art=bundle.artvision;
+  var out=sec("Statistiche verificabili","Un riepilogo delle esecuzioni GitHub, delle schede ArtVision e del catalogo: non una stima dei video finiti.");
+  out+='<div class="tools"><div class="filters">'+
+    '<button data-stats-window="24h" class="'+(state.statsWindow==="24h"?"on":"")+'">Ultime 24 ore</button>'+
+    '<button data-stats-window="7d" class="'+(state.statsWindow==="7d"?"on":"")+'">Ultimi 7 giorni</button>'+
+    '</div><span class="scopeLabel">Solo il campione GitHub disponibile</span></div>';
+  if(!act)out+='<div class="empty">Statistiche temporali non disponibili: GitHub non raggiungibile.</div>';
+  else {
+    var items=[{value:act.observed,name:"Workflow osservati",tip:"Esecuzioni, non video"},{value:act.successful,name:"Esecuzioni riuscite",tip:"Successo tecnico"},{value:act.failed,name:"Esiti da controllare",tip:"Falliti, annullati o timeout"},{value:act.running,name:"In esecuzione",tip:"Non ancora completati"}];
+    out+='<div class="statLayout">'+items.map(function(x){return '<div class="statDetail"><big>'+escapeText(x.value)+'</big><strong>'+escapeText(x.name)+'</strong><p>'+escapeText(x.tip)+'</p></div>'}).join("")+'</div>';
+    var projectList=[["ArtVision 4×1","artvision"],["La Storia Rivive","storia"],["WOW LAB","wow"],["Sito / Archivio","site"],["Altri workflow","other"]];
+    var max=Math.max(1,...projectList.map(function(x){return Number(act.by_project?.[x[1]])||0}));
+    out+='<div class="panel"><h3>Attività per programma</h3><p class="sub">Workflow del ramo principale, nel periodo selezionato.</p>'+
+      projectList.map(function(p){var n=Number(act.by_project?.[p[1]])||0;return '<div class="metricRow"><span>'+escapeText(p[0])+'</span><div class="metricStrip"><i style="width:'+(n/max*100)+'%"></i></div><strong>'+n+'</strong></div>'}).join("")+
+      '</div>';
+  }
+  out+='<div class="columns"><div class="panel"><h3>ArtVision · Quattro varianti</h3>';
+  if(!art)out+='<div class="empty">Registro ArtVision non disponibile.</div>';
+  else{
+    var pairs=[["Opere operative",art.works],["Varianti previste",art.expected_slots],
+      ["Consegne registrate",art.registered_deliveries],["Schede di variante individuate",art.variants_with_record],
+      ["Varianti nel catalogo",art.variants_exactly_catalogued],["Varianti disponibili secondo il catalogo",art.variants_with_available_flag],
+      ["Hash MP4 registrato",art.variants_with_sha],["SHA integrale storicamente attestato",art.variants_with_full_download_attestation],
+      ["Varianti con Gold attestato",art.variants_gold_attested]];
+    out+=pairs.map(function(x){return '<div class="kv"><span>'+escapeText(x[0])+'</span><b>'+escapeText(x[1])+'</b></div>'}).join("");
+    out+='<div class="progress" style="margin-top:15px"><i style="width:'+(art.expected_slots?Math.min(100,art.registered_deliveries/art.expected_slots*100):0)+'%"></i></div>'+
+      '<p class="metricFoot">Le consegne conteggiate non rappresentano il numero di master approvati. Dalí è escluso.</p>';
+  }
+  out+='</div><aside><div class="panel"><h3>Videoteca pubblica</h3>';
+  if(!catalogue)out+='<div class="empty">Catalogo non disponibile.</div>';
+  else {
+    var values=[["Voci catalogate",catalogue.entries],["Disponibilità dichiarata: sì",catalogue.explicitly_available],
+      ["Segnalate non disponibili",catalogue.explicitly_offline],["Disponibilità non dichiarata",catalogue.availability_unknown],
+      ["Voci con data di importazione",catalogue.dated_entries],["Importazioni datate negli ultimi 7 giorni",catalogue.dated_imports_7d]];
+    out+=values.map(function(x){return '<div class="kv"><span>'+escapeText(x[0])+'</span><b>'+escapeText(x[1])+'</b></div>'}).join("");
+    out+='<p class="metricFoot">Un video catalogato non è automaticamente verificato con download e checksum completi.</p>';
+  }
+  out+='</div></aside></div><p class="note">'+escapeText(bundle.scope?.github_window||"Dati parziali")+
+    ' '+escapeText(bundle.scope?.imported_dates||"")+' '+escapeText(bundle.scope?.product_quality||"")+'</p>';
+  return out;
+}
 function works(){
   var d=state.data||{},items=d.works||[];
   var out=sec("Museo delle quattro versioni","Confronta Critico Classico, Critico Museum, Cinema Classico e Cinema Museum per ogni opera.");
@@ -325,7 +369,7 @@ function issues(){
   out+=incomplete.length?incomplete.map(function(w){return '<div class="row"><div class="grow"><span class="rowname">'+escapeText(w.title)+'</span><span class="sub">'+(4-Number(w.delivered||0))+' slot non conteggiati, da verificare in produzione</span></div>'+badge(Number(w.delivered||0)+'/4',"wait")+'</div>'}).join(""):'<div class="empty">Nessuno slot non conteggiato.</div>';
   return out+'</div>';
 }
-function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
+function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,stats:stats,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
 async function refresh(){var b=document.getElementById("refresh");b.disabled=true;b.textContent="Caricamento…";try{var r=await fetch("/api/status",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var d=await r.json();if(!Array.isArray(d.runs)||!Array.isArray(d.works))throw Error("Risposta non valida");state.data=d;state.stamp=Date.now();state.loadError=null;render()}catch(e){state.loadError=e.message;if(state.data){document.getElementById("synctext").textContent="Aggiornamento non riuscito · ultimo dato "+date(state.data.asof);document.getElementById("pulse").className="pulse";}if(!state.data)document.getElementById("content").innerHTML='<div class="empty">Collegamento temporaneamente non disponibile: '+escapeText(e.message)+'</div>'}finally{b.disabled=false;b.textContent="↻ Aggiorna"}}
 function closeReviewPlayer(){
   var dialog=document.getElementById("reviewPlayer"),video=document.getElementById("reviewVideo");
@@ -368,6 +412,10 @@ document.addEventListener("click",function(e){
       el.open=opening;state.workOpened[el.dataset.work]=opening;
     });
   }
+});
+document.addEventListener("click",function(e){
+ var period=e.target.closest("button[data-stats-window]");
+ if(period){state.statsWindow=period.dataset.statsWindow;render()}
 });
 document.addEventListener("click",async function(e){
   var btn=e.target.closest("button[data-check]");
