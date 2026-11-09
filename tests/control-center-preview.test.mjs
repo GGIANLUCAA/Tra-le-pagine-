@@ -380,6 +380,44 @@ test("V6 repair centre has GPT links, original-chat mapping and clipboard fallba
   assert.match(html,/href="https:\/\/chatgpt\.com\/"/);
   assert.match(html,/saveRepairChat/);
 });
+test("V7 all categories preserve actual catalog counts and narrated book aliases",async()=>{
+  const catalog={items:[
+    {key:"TRA_LE_PAGINE_EP03_SIDDHARTA.mp4",category:"Libri raccontati",available:true},
+    {key:"LA_COLLANA_VIDEO_FINALE.mp4",category:"Libri raccontati",available:true},
+    {key:"NILS_CLIP_01_IL_PRIMO_VOLO.mp4",available:false},
+    {key:"ARROSEUR_1895_CINEMA_RESTORED.mp4",available:true},
+    {key:"WOW_LAB_TEST.mp4",available:null},
+    {key:"ARTVISION_BOSCH_CINEMA_V6.mp4",category:"Artisti e pittura",available:true},
+    {key:"SOURCE_SHOT_05__8973.mp4",available:true}
+  ]};
+  const data=await (await fixture({catalog}).fetch(new Request("https://preview.example/api/status"))).json();
+  assert.equal(data.collections.length,13);
+  const m=new Map(data.collections.map(x=>[x.name,x]));
+  assert.equal(m.get("Libri narrati").count,2);
+  assert.equal(m.get("Libri narrati").available,2);
+  assert.equal(m.get("Racconti e fiabe").count,1);
+  assert.equal(m.get("Racconti e fiabe").unavailable,1);
+  assert.equal(m.get("Restauri storici").count,1);
+  assert.equal(m.get("WOW LAB").count,1);
+  assert.equal(m.get("WOW LAB").unknown,1);
+  assert.equal(m.get("Artisti e pittura").count,1);
+  assert.equal(m.get("Provini e backstage").count,1);
+  assert.equal(m.get("Documentari e curiosità").count,0);
+  assert.ok(m.get("Libri narrati").items[0].key.endsWith(".mp4"));
+  assert.equal(data.catalog_count,7);
+});
+test("V7 categories remain unknown if public catalog fails and UI has no eight-card limit",()=>{
+  assert.match(backend,/function summarizeCollections/);
+  assert.match(backend,/if\(!available\)return null/);
+  assert.match(backend,/COLLECTION_NAMES/);
+  assert.match(html,/data-page="genres"/);
+  assert.match(html,/function genreSection\(\)/);
+  assert.match(html,/function genres\(\)/);
+  assert.match(html,/selectedGenre:"Libri narrati"/);
+  assert.match(html,/data-genre/);
+  assert.match(html,/In preparazione/);
+  assert.match(html,/\/\?category=/);
+});
 test("On-demand range probe does not claim full SHA",async()=>{
   const worker=fixture();
   const res=await worker.fetch(new Request("https://preview.example/api/check?key=SIMBERG_CINEMA.mp4"));
