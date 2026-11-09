@@ -76,7 +76,7 @@ jobs:
               runs=[a for a in r.json().get("workflow_runs",[])
                     if a.get("name")=="Giuliano - Terracotta Army Critico"]
               print("FOUND_PUSH_RUNS:",[(a.get("id"),a.get("head_sha"),a.get("status"),a.get("conclusion")) for a in runs[:10]],flush=True)
-              runs=[a for a in runs if a.get("head_sha")=="475b9b8e1d80e145636d3644049c558b00b2fa29"]
+              runs=[a for a in runs if a.get("head_sha")=="3e17a8f11868a39af9494a3203a9c7a3b01c66f3"]
               if runs:
                   found=runs[0]
                   print("RENDER_RUN_ID:",found["id"],"STATUS:",found["status"],
