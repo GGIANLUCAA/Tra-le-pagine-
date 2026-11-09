@@ -91,5 +91,15 @@ jobs:
                         "read=",check.get("bytes_read"),"scope=",check.get("scope"))
               except Exception as e:
                   print("Range probe could not confirm:",key,type(e).__name__)
+              direct_url=base+"/download/"+urllib.parse.quote(key,safe="")
+              req=urllib.request.Request(direct_url,headers={
+                  "User-Agent":"Mozilla/5.0","Range":"bytes=0-1023","Accept":"video/mp4"})
+              try:
+                  with urllib.request.urlopen(req,timeout=25) as res:
+                      chunk=res.read(1024)
+                      print("Direct site range:",key,"HTTP=",res.status,
+                            "bytes=",len(chunk),"content-range=",res.headers.get("Content-Range"))
+              except Exception as e:
+                  print("Direct site range failed:",key,"HTTP=",getattr(e,"code",None),type(e).__name__)
           print("No full-file SHA, ZIP or Gold checks were performed.")
           PY
