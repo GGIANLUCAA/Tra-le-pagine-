@@ -5,7 +5,8 @@ on:
     branches: [main]
     paths: [".github/workflows/storia-barbershop-1894-face-source-scout.yml"]
 permissions:
-  contents: read
+  contents: write
+  issues: write
 jobs:
   barbershop_faces:
     runs-on: ubuntu-latest
@@ -75,6 +76,69 @@ jobs:
           print("BARBERSHOP_FACE_SOURCE_VERIFIED",w,h,dur,"SAMPLES",len(reports))
           PY
           test -s output/storia_barbershop_1894_scout/FACE_SOURCE_CONTACT_SHEET.jpg
+      - name: "Choose source-locked anchor for reconstructable facial moment"
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,cv2,hashlib,math,subprocess
+          from pathlib import Path
+          from PIL import Image,ImageDraw
+          p=Path("output/storia_barbershop_1894_scout")
+          qa=json.loads((p/"FACE_SOURCE_QA.json").read_text())
+          candidates=qa["samples"]
+          def score(q):
+              # Only a preliminary scout rank. Face detection on degraded archive is unreliable.
+              boxes=q["frontal_face_boxes"]
+              area=sum(w*h for x,y,w,h in boxes)
+              return 70*min(len(boxes),4)+3*math.sqrt(area)+min(q["sharpness"],500)/14
+          chosen=max(candidates,key=score)
+          t=float(chosen["second"])
+          cap=cv2.VideoCapture(str(p/"SOURCE.webm"))
+          fps=cap.get(cv2.CAP_PROP_FPS)
+          index=round(t*fps)
+          cap.set(cv2.CAP_PROP_POS_FRAMES,index)
+          ok,anchor=cap.read()
+          if not ok:raise RuntimeError("Could not read exact frame from original source")
+          enc=cv2.imencode(".png",anchor)[1].tobytes()
+          (p/"SOURCE_LOCKED_ANCHOR.png").write_bytes(enc)
+          w=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH));h=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+          tests=[]
+          for offset in (-0.3,-0.1,0,0.1,0.3,1.0):
+              idx=max(0,index+round(offset*fps))
+              cap.set(cv2.CAP_PROP_POS_FRAMES,idx)
+              good,frame=cap.read()
+              if not good:continue
+              f=p/f"ANCHOR_NEIGHBOR_{offset:+.1f}.jpg"
+              cv2.imwrite(str(f),frame)
+              tests.append((offset,f))
+          cap.release()
+          canvas=Image.new("RGB",(3*400,2*350),(14,18,22))
+          d=ImageDraw.Draw(canvas)
+          for i,(off,f) in enumerate(tests):
+              im=Image.open(f).convert("RGB")
+              im.thumbnail((395,315))
+              x=(i%3)*400; y=(i//3)*350
+              canvas.paste(im,(x+(400-im.width)//2,y+26))
+              d.text((x+10,y+6),f"ORIGINAL  {off:+.1f}s  index:{index+round(off*fps)}",fill="white")
+          canvas.save(p/"EXACT_FRAME_CONTINUITY_CONTACT_SHEET.jpg",quality=94)
+          srcsha=hashlib.sha256((p/"SOURCE.webm").read_bytes()).hexdigest()
+          metadata={
+            "source_sha256":srcsha,"source_fps":fps,"exact_source_frame_index":index,
+            "nominal_timecode_seconds":t,"actual_index_time_s":index/fps,
+            "anchor_png_sha256":hashlib.sha256(enc).hexdigest(),
+            "source_full_size":[w,h],"chosen_face_boxes_auto_unreliable":chosen["frontal_face_boxes"],
+            "candidate_score":score(chosen),"neighbor_offsets_seconds":[o for o,_ in tests],
+            "art_director_review":"PENDING","identity_exactness":"Interpretative AI faces allowed",
+            "stage":"SOURCE_FRAME_SCOUT_ONLY_NO_I2I_OR_FINISHED_VIDEO",
+            "gate":"must manually inspect face count and natural pose before any paid or generative video",
+            "no_publishing_social":True}
+          (p/"EXACT_FRAME_LOCK.json").write_text(json.dumps(metadata,indent=2))
+          start=max(0,t-5)
+          subprocess.run(["ffmpeg","-nostdin","-y","-loglevel","error","-ss",str(start),"-i",str(p/"SOURCE.webm"),
+            "-t","12","-an","-c:v","libx264","-preset","veryfast","-crf","19","-pix_fmt","yuv420p",str(p/"ARCHIVAL_MOVING_SCOUT_NOT_RESTORED.mp4")],check=True,timeout=200)
+          subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(p/"ARCHIVAL_MOVING_SCOUT_NOT_RESTORED.mp4"),"-f","null","-"],check=True,timeout=100)
+          print("SOURCE_LOCK_FRAME_SCOUT_PASS",json.dumps({k:metadata[k] for k in ["source_sha256","source_fps","exact_source_frame_index","anchor_png_sha256","stage"]}))
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -85,5 +149,35 @@ jobs:
             output/storia_barbershop_1894_scout/FACE_SOURCE_QA.json
             output/storia_barbershop_1894_scout/SOURCE_PROBE.json
             output/storia_barbershop_1894_scout/SOURCE_SHA256.txt
+            output/storia_barbershop_1894_scout/SOURCE_LOCKED_ANCHOR.png
+            output/storia_barbershop_1894_scout/EXACT_FRAME_LOCK.json
+            output/storia_barbershop_1894_scout/EXACT_FRAME_CONTINUITY_CONTACT_SHEET.jpg
+            output/storia_barbershop_1894_scout/ANCHOR_NEIGHBOR_*.jpg
+            output/storia_barbershop_1894_scout/ARCHIVAL_MOVING_SCOUT_NOT_RESTORED.mp4
           if-no-files-found: warn
           retention-days: 14
+      - name: "Owner preview release of GENUINE source comparison only, not a finished episode"
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          D=output/storia_barbershop_1894_scout
+          TAG="storia-barbershop-1894-source-scout-${GITHUB_RUN_ID}"
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --latest=false \
+            --title "The Barbershop 1894 - original-frame face scout (NOT MASTER)" \
+            --notes "Only authentic original moving source extract and frame-exact candidate comparison. No I2I generated; no editorial approval. Rights: verify Italian territory and scan derivative. NOT published on site/social." \
+            "$D/ARCHIVAL_MOVING_SCOUT_NOT_RESTORED.mp4" "$D/EXACT_FRAME_CONTINUITY_CONTACT_SHEET.jpg" "$D/SOURCE_LOCKED_ANCHOR.png" "$D/EXACT_FRAME_LOCK.json" "$D/FACE_SOURCE_CONTACT_SHEET.jpg"
+          for file in EXACT_FRAME_CONTINUITY_CONTACT_SHEET.jpg SOURCE_LOCKED_ANCHOR.png; do
+            curl -fLsS --retry 1 --max-time 70 "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$file" -o "/tmp/$file"
+            test "$(sha256sum "$D/$file"|cut -d' ' -f1)" = "$(sha256sum "/tmp/$file"|cut -d' ' -f1)"
+          done
+          echo "SOURCE_SCOUT_PREVIEW_EXTERNAL_SHA_PASS"
+      - name: "Record only achieved source-scout evidence in the production issue"
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="storia-barbershop-1894-source-scout-${GITHUB_RUN_ID}"
+          gh issue comment 144 --repo "$GITHUB_REPOSITORY" --body "THE BARBERSHOP 1894: nuovo source-scout frame-exact REALMENTE completato, run https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID. Anchor e fotogrammi ±0.1/0.3/1s, film originale in moto e SHA sorgente sono nell'artefatto e nella prerelease di sola revisione https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG. Download anonimo dei frame principali SHA PASS. Questo NON è ancora un I2I, NON è un MP4 restaurato e NON è un video finale approvato. QA visiva dei volti ancora da fare. Nessuna spesa né pubblicazione sito/social."
