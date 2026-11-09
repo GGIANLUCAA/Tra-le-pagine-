@@ -58,7 +58,7 @@ class OwnerNonstopPreflight(unittest.TestCase):
         p = mod.plan(q, r, [cp])
         self.assertIsNone(p["first_preflight_candidate"])
         self.assertIn("existing_verified_mp4_cinema_standard",
-                      p["checks"][15]["reasons"])
+                      next(x for x in p["checks"] if x["selection_order"] == 16)["reasons"])
 
     def test_unmatched_register_fails_closed(self):
         q, r = fixture()
