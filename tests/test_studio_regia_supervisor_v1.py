@@ -135,5 +135,58 @@ class StudioRegiaTests(unittest.TestCase):
                              msg=fmt)
 
 
+    def test_unrecognized_format_cannot_bypass_narration_checks(self):
+        data = example("artvision_crtico")  # Common typo; not a silent non-narrated format.
+        data["narration"] = {}
+        report = regia.inspect(data)
+        self.assertIn("UNSUPPORTED_FORMAT", self.codes(report))
+        self.assertEqual(report["status"], "blocked_plan")
+
+    def test_string_flags_never_count_as_verified_source_or_rights(self):
+        data = example()
+        data["shots"][0]["source_verified"] = "false"
+        data["shots"][1]["rights_verified"] = "yes"
+        report = regia.inspect(data)
+        self.assertEqual(self.codes(report).count("SOURCE_NOT_VERIFIED"), 2)
+
+    def test_non_hashable_visual_metadata_does_not_crash_audit(self):
+        data = example("artvision_cinema")
+        data["narration"] = {}
+        data["video_duration_s"] = 9
+        data["shots"] = [dict(data["shots"][0], id=str(i), start_s=i*3,
+                              end_s=(i+1)*3, asset_id=["incorrect", "list"])
+                         for i in range(3)]
+        report = regia.inspect(data)
+        self.assertIn("REUSED_VISUAL", self.codes(report, "warnings"))
+
+    def test_late_entry_is_reported_even_with_high_aggregate_coverage(self):
+        data = example()
+        data["narration"]["segments"] = [dict(start_s=0, end_s=6, subject_id="central")]
+        first = dict(data["shots"][0], end_s=.25, visible_subject_ids=["other"])
+        second = dict(data["shots"][0], id="central", start_s=.25, end_s=6)
+        data["shots"] = [first, second]
+        report = regia.inspect(data)
+        self.assertNotIn("SUBJECT_MISMATCH", self.codes(report))
+        self.assertIn("SUBJECT_LATE", self.codes(report, "warnings"))
+
+    def test_premature_exit_is_reported_even_with_high_aggregate_coverage(self):
+        data = example()
+        data["narration"]["segments"] = [dict(start_s=0, end_s=6, subject_id="central")]
+        first = dict(data["shots"][0], end_s=5.75)
+        second = dict(data["shots"][1], start_s=5.75, end_s=6)
+        data["shots"] = [first, second]
+        report = regia.inspect(data)
+        self.assertNotIn("SUBJECT_MISMATCH", self.codes(report))
+        self.assertIn("SUBJECT_EARLY_EXIT", self.codes(report, "warnings"))
+
+    def test_less_than_95_percent_subject_coverage_blocks(self):
+        data = example()
+        data["shots"][0]["end_s"] = 2.8
+        filler = dict(data["shots"][0], id="wrong_subject", start_s=2.8,
+                      end_s=3, visible_subject_ids=["other"])
+        data["shots"].insert(1, filler)
+        self.assertIn("SUBJECT_MISMATCH", self.codes(regia.inspect(data)))
+
+
 if __name__ == "__main__":
     unittest.main()
