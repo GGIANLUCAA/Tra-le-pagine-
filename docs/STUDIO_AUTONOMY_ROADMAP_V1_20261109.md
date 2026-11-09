@@ -32,3 +32,13 @@ Realizzare le sei migliorie accettate dall'utente senza alterare i workflow di p
 
 ## Regole da preservare obbligatoriamente
 Leggere \`AGENTS.md\`, \`START_HERE_GPT.md\`, \`docs/REGOLE_ATTIVE.md\`, \`config/editorial_rules.json\` **prima** dei componenti di produzione. Tra le precedenze: V145 (prove non pubbliche), V134 (titoli pubblici puliti), V58/V80/V118/V119 (4×1, scale e cornici autentiche), V82 (sincronia Critico), V91/V94/V96/V99 (Storia fedele), V55 (consegna vera). Non confondere esperimento, master tecnico, Gold, approvazione dell'owner o rilascio.
+
+## Prima integrazione qualità/diagnosi
+La PR aggiunge anche `src/studio_autonomy_report_v1.py`, richiamato a valle del workflow manuale `quality-director-v17.yml` quando esiste davvero `QUALITY_REPORT_V17.json`. Produce due file nello **stesso artifact**: `STUDIO_AUTONOMY_STATUS_V1.json` (stato machine-readable) e `RIPARA_CON_GPT.txt` (diagnosi copiabile con URL run ammesso e soli codici di QA, senza log grezzi). Se il report non c'è, non inventa una validazione.
+
+### Limiti di questa integrazione
+- Solo `workflow_dispatch` dell'esistente QA V17, mai un nuovo cron e mai una generazione video.
+- Il QA V17 senza file video conserva lo stato `needs_real_mp4_evidence`, non "master completato".
+- Le proprietà `mp4_bytes_verified_by_bridge`, `video_sha256_verified_by_bridge`, `owner_approved`, `publish_authorized` rimangono `false`, anche con report V17 senza blocchi.
+- Il file JSON è un **contratto d'ingresso** per la futura UI Android; non è ancora collegato al Worker del Centro di controllo.
+- I file di GitHub Actions in un repository pubblico possono essere visibili a terzi: niente prompt con dati sensibili, URL privati, token o log grezzi.
