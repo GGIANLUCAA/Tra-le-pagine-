@@ -91,7 +91,9 @@ jobs:
                   anchor=frames[-1]
                   bw=p/("ORIGINAL_BW_%02d.png"%i)
                   cv2.imwrite(str(bw),anchor)
-                  base=dd.image_at(anchor,dd.infer_ab(model,anchor))
+                  ab=dd.infer_ab(model,anchor)
+                  ab=cv2.resize(ab,(anchor.shape[1],anchor.shape[0]),interpolation=cv2.INTER_LINEAR)
+                  base=dd.image_at(anchor,ab)
                   basefile=p/("COLOR_GUIDE_%02d.png"%i)
                   cv2.imwrite(str(basefile),base)
                   row.update({"original_clip_sha256":sha(clip),"real_frame_sha256":sha(bw),
