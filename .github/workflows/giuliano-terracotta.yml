@@ -1,0 +1,46 @@
+name: "Giuliano - Terracotta Army Critico"
+on:
+  push:
+    branches: ["feature/giuliano-terracotta-20261109"]
+    paths:
+      - "giuliano/terracotta/**"
+      - ".github/workflows/giuliano-terracotta.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ARTVISION_ASR_MODEL: base
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout branch (isolated from ArtVision)
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate TTS secret configured
+        run: test -n "$GEMINI_API_KEY" || (echo "GEMINI_API_KEY absent; do not substitute an unapproved robotic voice" && exit 2)
+      - name: Dependencies - no paid generative video
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Render real video with license manifest
+        run: python giuliano/terracotta/render_terracotta.py
+      - name: Upload review MP4 and Android ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_TERRACOTTA_CRITICO_REVIEW
+          path: |
+            output/giuliano_terracotta/GIULIANO_TERRACOTTA_CRITICO_REVIEW.mp4
+            output/giuliano_terracotta/GIULIANO_TERRACOTTA_VIDEO_COVER_TESTI.zip
+            output/giuliano_terracotta/COVER.jpg
+            output/giuliano_terracotta/QA.json
+          if-no-files-found: error
+          retention-days: 14
