@@ -133,3 +133,39 @@ Dopo test Android della V2 e controllo dei dati, integrare soltanto il link nell
 - Test unitari di statistiche, filtri, manifest, controllo GET-only e nessuna falsa produzione.
 - Il nuovo Worker rimane separato dal sito, senza binding di scrittura R2, credenziali private o azioni su GitHub.
 - Verificare dal telefono l'eventuale installazione dell'icona e le statistiche su dati reali dopo il rilascio.
+
+## V6 — riparazione assistita con ChatGPT e collegamenti alle conversazioni (9 novembre 2026)
+
+### Nuovo Centro riparazioni
+- La pagina Problemi è stata promossa anche alla barra inferiore su Android con nome «Ripara GPT».
+- Mostra gli **ultimi** errori tecnici per workflow GitHub del ramo principale come «da controllare», non gli errori storici già superati.
+- I guasti non recuperati sono separati dai dati temporaneamente irraggiungibili e dagli slot ArtVision mancanti (che NON sono automaticamente guasti).
+- Gli errori storici del campione sono consultabili in un elenco secondario, segnalati come potenzialmente già recuperati.
+- Ogni errore/elemento può aprire un fascicolo «Ripara con GPT», con pulsanti per GitHub, copia del contesto, ChatGPT nuovo e chat principale associata.
+
+### Diagnosi GitHub verificabile
+- Nuovo endpoint SOLO GET: /api/diagnose?run=123.
+- Accetta soltanto ID numerici di run già contenute nel campione pubblico GitHub del monitoraggio.
+- Recupera su richiesta fino a 100 job GitHub della run e riporta solo fino a 8 job in stato critico e 10 step critici per job, con nomi e conclusioni. I log completi vanno aperti su GitHub: il pannello non li interpreta automaticamente come cause certe.
+- Se i job non sono raggiungibili, usa i riferimenti reali disponibili (run ID, ramo, evento, stato, URL) e dichiara che la diagnosi è incompleta.
+- Non esistono endpoint di avvio workflow, correzione, GitHub write o generazione AI.
+- La chiamata a GitHub è on-demand alla pressione del pulsante, con cache di breve durata. Non è un polling aggiuntivo continuo.
+
+### Richiesta preparata per ChatGPT
+- Il pulsante «Ripara con GPT» prepara un messaggio in italiano con programma, repository, riferimento alla run, eventuali job/step critici, prova del registro o titolo della sorgente e link verificabili.
+- La richiesta dice a GPT di rileggere GitHub e i log prima di stabilire la causa, preservare owner/master approvati, usare modifiche minime in ramo/PR e non spendere crediti o riavviare produzioni concorrenti.
+- Il messaggio viene mostrato in una textarea selezionabile e copiato negli appunti solo mediante un clic esplicito dell'utente; il pannello non invia conversazioni/diagnosi ad API AI.
+- L'apertura del sito https://chatgpt.com/ NON inserisce automaticamente il messaggio nella chat: l'utente lo incolla e invia.
+
+### Riapertura chat esistente
+- Per sicurezza non è disponibile una API affidabile del pannello per cercare la cronologia ChatGPT privata e associare automaticamente i vecchi thread alle run.
+- In assenza di un link diretto, **nessun link a conversazioni viene inventato**.
+- L'utente può incollare l'URL privato della chat aperta nel browser, normalmente https://chatgpt.com/c/<id>, collegandolo per progetto o per singolo workflow. La UI accetta soltanto domini ChatGPT e URL della forma /c/.... e rifiuta link condivisi /share/, che non sono chat private continuabili.
+- I link sono conservati esclusivamente nella localStorage del browser di quel contesto (con fallback temporaneo se lo storage è bloccato), NON nel repository, nel backend, in R2 o in GitHub. Non è garantita la sincronizzazione tra browser, modalità standalone e iframe con storage partizionato.
+- Se la chat è collegata, «Apri chat principale» apre il collegamento in una nuova scheda. È necessario copiare/incollare la richiesta, non viene immessa nella chat in automatico.
+- Non utilizzare link di condivisione ChatGPT per una conversazione privata: i link condivisi possono esporre contenuti a persone che li possiedono.
+
+### Test e limiti
+- Test di diagnosi GET-only, run ammesse solo nel campione, recupero nomi job e step, link chat sicuri e rifiuto link /share/, prompt con istruzioni conservative.
+- Non sostituisce l'automazione di produzione, non esegue autoriparazione, non aggiorna i video.
+- Collaudo Chrome Android, copia appunti in iframe e navigazione alla chat privata da confermare dopo la distribuzione.
