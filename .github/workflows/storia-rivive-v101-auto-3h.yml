@@ -8,6 +8,8 @@ on:
     paths:
       - ".github/workflows/storia-rivive-v101-auto-3h.yml"
       - "src/storia_rivive_autopilot_v101.py"
+      - "src/studio_cycle_handoff_v1.py"
+      - "tests/test_studio_cycle_handoff_v1.py"
       - "src/storia_rivive_scout_v101.py"
       - "src/storia_rivive_flag_title_v101.py"
       - "src/storia_rivive_frame_rank_v101.py"
@@ -165,6 +167,19 @@ jobs:
           (root/"CYCLE_STATUS.json").write_text(json.dumps(status,ensure_ascii=False,indent=2)+"\n")
           print("V101_CYCLE_STATUS",json.dumps(status))
           PY
+      - name: Write resumable owner handoff (no I2I or MP4 claim)
+        if: always()
+        continue-on-error: true
+        env:
+          STUDIO_RUN_ID: ${{ github.run_id }}
+        run: |
+          python src/studio_cycle_handoff_v1.py \
+            --project storia \
+            --research output/storia_v101/SOURCE_RESEARCH_COMPANION_V4.json \
+            --work-order output/storia_v101/WORK_ORDER.json \
+            --cycle-status output/storia_v101/CYCLE_STATUS.json \
+            --run-id "$STUDIO_RUN_ID" \
+            --out output/storia_v101/OWNER_HANDOFF_V1.json
       - name: Preserve work order and genuine archival previews as private Actions artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -174,6 +189,7 @@ jobs:
             output/storia_v101/WORK_ORDER.json
             output/storia_v101/SOURCE_RESEARCH_COMPANION_V4.json
             output/storia_v101/CYCLE_STATUS.json
+            output/storia_v101/OWNER_HANDOFF_V1.json
             output/storia_v101/FIVE_BW_FRAME_CANDIDATES.json
             output/storia_v101/I2I_INPUT_MANIFEST_V102.json
             output/storia_v101/TITLE_FLAG_DRAFT.png
