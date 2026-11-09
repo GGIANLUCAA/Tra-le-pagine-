@@ -1,0 +1,48 @@
+name: Control Center V8 · real public endpoint smoke (read only)
+on:
+  push:
+    branches:
+      - preview/control-center-quality-v8-20261109
+    paths:
+      - .github/workflows/control-center-quality-v8-live-smoke.yml
+      - site/control-center-preview.worker.js
+      - site/control-center-preview.html
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-readonly-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Validate deployed UI and API over real HTTPS
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://artvision-control-preview.600led.workers.dev"
+          curl --fail --silent --show-error --location --max-time 30 --retry 2 "$BASE/" -o /tmp/control.html
+          curl --fail --silent --show-error --location --max-time 30 --retry 2 "$BASE/api/status" -o /tmp/status.json
+          curl --fail --silent --show-error --location --max-time 30 --retry 2 "$BASE/api/quality" -o /tmp/quality.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          html=Path("/tmp/control.html").read_text(encoding="utf-8")
+          status=json.loads(Path("/tmp/status.json").read_text(encoding="utf-8"))
+          qa=json.loads(Path("/tmp/quality.json").read_text(encoding="utf-8"))
+          assert 'data-page="quality"' in html
+          assert "function qualityPage()" in html
+          assert isinstance(status.get("runs"),list)
+          assert isinstance(status.get("works"),list)
+          assert qa.get("schema")=="artvision-quality-metadata-v8"
+          assert isinstance(qa.get("runs"),list)
+          for k in ("report_contents_read","qa_pass_verified","mp4_bytes_verified",
+                    "sha256_verified","owner_approved","publish_authorized"):
+              assert qa.get(k) is False,k
+          print("HTTPS OK: UI V8, status, QA metadata. No MP4 or Gold attestation.")
+          print("QA source scope:",qa.get("scope"),"; manual run count:",len(qa["runs"]))
+          PY
+          post_status=$(curl --silent --output /dev/null --write-out "%{http_code}" --max-time 20 -X POST "$BASE/api/quality")
+          test "$post_status" = "405"
+          invalid_status=$(curl --silent --output /dev/null --write-out "%{http_code}" --max-time 20 "$BASE/api/check?key=..%2Funsafe.txt")
+          test "$invalid_status" = "400"
+          echo "Mutation rejected (405), unsafe media key rejected (400)."
