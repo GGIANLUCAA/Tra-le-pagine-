@@ -176,3 +176,22 @@ Dopo test Android della V2 e controllo dei dati, integrare soltanto il link nell
 - Dopo l'importazione, la pagina prova a eliminare subito il frammento dall'indirizzo e memorizza i link nella localStorage locale. Il messaggio "chat collegate" appare solo quando l'importazione è riuscita.
 - Nessun conversation_id, thread_id o URL privato viene salvato nel repository pubblico, nella funzione Cloudflare o nel catalogo. La sincronizzazione tra browser/iframe e modalità standalone non è garantita.
 - L'utente può continuare a collegare manualmente una chat differente per progetto o per singolo workflow. I collegamenti importati sono un'impostazione iniziale, non una prova che quella conversazione contenga già il dettaglio della run corrente.
+
+## V6.1 — apri la chat nell'app Android (9 novembre 2026)
+
+### Funzionalità
+- Nel dialogo "Ripara con GPT", quando il browser è Android e la chat originale è associata, mostra **Apri chat nell'app ChatGPT** come scelta primaria, mantenendo il pulsante separato **Apri chat nel browser**.
+- Quando la chat non è associata, mostra **Apri app ChatGPT** verso la home (con fallback https://chatgpt.com/) e il normale link browser.
+- Nella lista delle quattro chat principali, su Android compaiono un'azione dedicata "Apri nell'app ChatGPT" e l'alternativa "Apri nel browser".
+- Utilizza l'Android Intent standard di Chrome (intent://chatgpt.com/c/...#Intent;scheme=https;package=com.openai.chatgpt;S.browser_fallback_url=...;end), generato esclusivamente dopo aver validato il dominio della conversazione. Il package com.openai.chatgpt è quello dell'app ufficiale sul Play Store.
+- Il collegamento prova ad aprire la conversazione privata originaria, non una copia o una nuova conversazione, se l'app installata gestisce quel percorso. Lo stesso link HTTPS viene fornito come fallback in caso di mancato riconoscimento.
+- L'attivazione avviene soltanto da tocco dell'utente, in un'ancora, non con redirect o timer. Chrome Android richiede un gesto diretto; a seconda del browser e delle protezioni iframe possono essere bloccati.
+- Non garantisce l'apertura nella chat specifica su ogni versione Android: servono test su dispositivo, app ChatGPT installata, accesso allo stesso account e autorizzazione ai link supportati nelle impostazioni dell'app Android.
+- Per problemi da iframe, aprire direttamente il Centro di controllo da Chrome Android, toccare "Apri nell'app ChatGPT" oppure abilitare la gestione di chatgpt.com in Impostazioni → App → ChatGPT → Apri per impostazione predefinita.
+- La diagnosi è sempre da copiare e incollare nella chat; il link non invia un messaggio in automatico.
+- Nessuna modifica a master, flussi di produzione o credenziali. I link privati alle chat restano in localStorage e non sono committati nel repository.
+
+### QA
+- Test della forma del deep link, del package corretto, dell'ID conversazione e del fallback al medesimo indirizzo.
+- Rifiutati link /share/, domini esterni e URL non HTTPS.
+- Verifica manuale necessaria su Chrome Android per il lancio effettivo della app e l'apertura della conversazione, specialmente se il pannello è incorporato in Video Library Studio.
