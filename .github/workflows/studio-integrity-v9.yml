@@ -1,0 +1,80 @@
+name: Studio Integrity V9 · one real MP4 or offline tests
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - src/studio_integrity_v9.py
+      - tests/test_studio_integrity_v9.py
+      - .github/workflows/studio-integrity-v9.yml
+  workflow_dispatch:
+    inputs:
+      slot_index:
+        description: "One of the 17 existing V161 pinned ArtVision master slots"
+        required: true
+        type: choice
+        options:
+          - "1"
+          - "2"
+          - "3"
+          - "4"
+          - "5"
+          - "6"
+          - "7"
+          - "8"
+          - "9"
+          - "10"
+          - "11"
+          - "12"
+          - "13"
+          - "14"
+          - "15"
+          - "16"
+          - "17"
+permissions:
+  contents: read
+concurrency:
+  group: studio-integrity-v9-manual-single-slot
+  cancel-in-progress: false
+jobs:
+  offline-unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test integrity and ZIP rules without downloads
+        run: python -m unittest discover -s tests -p "test_studio_integrity_v9.py" -v
+  one-existing-master:
+    if: github.event_name == 'workflow_dispatch'
+    needs: [offline-unit-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install existing V161 manifest reader dependency
+        run: python -m pip install "requests>=2.32,<3"
+      - name: Verify exactly one pinned MP4 download, byte count and SHA256
+        env:
+          SLOT_INDEX: ${{ inputs.slot_index }}
+        run: |
+          set -eu
+          case "$SLOT_INDEX" in 1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17) ;; *) exit 2;; esac
+          python src/studio_integrity_v9.py --slot-index "$SLOT_INDEX" \
+            --out "output/studio-integrity-v9/INTEGRITY_REPORT_V9.json"
+      - name: Keep machine-readable exact-hash audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STUDIO_INTEGRITY_V9_ONE_MASTER
+          path: output/studio-integrity-v9/INTEGRITY_REPORT_V9.json
+          if-no-files-found: warn
+          retention-days: 14
