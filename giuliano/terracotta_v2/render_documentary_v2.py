@@ -177,40 +177,39 @@ def main():
  print("BEATS:",len(SHOTS),"UNIQUE SOURCES:",len(set(FILES)),flush=True)
  # Verify metadata and all pictures before a paid/limited Google voice request.
  infos=fetch_metadata(FILES)
- photos=[]
- rate_limited=False
+ photos=[None]*len(SHOTS)
  for i,(beat,info) in enumerate(zip(SHOTS,infos)):
   target=MEDIA/("raw_%02d.jpg"%i)
-  meta=None
-  if not rate_limited:
-   try:
-    meta=download_commons(info,target)
-    print("LICENSED",i+1,"of",len(SHOTS),meta["file"],meta["license"],flush=True)
-    time.sleep(.5)
-   except Exception as error:
-    # Site rate limits only affect MEDIA retrieval; no need to regenerate valid photos/voice.
-    # Never substitute an unrelated historic subject: take a previously licensed image
-    # with the same documentary role (e.g. tomb mound for tomb mound).
-    rate_limited=True
-    print("SOURCE_RATE_LIMIT_FALLBACK",i+1,type(error).__name__,str(error)[:180],flush=True)
-  if meta is None:
-   role=beat["subject"]
-   groups={"mound":{"mound"},"wide_end":{"wide_hook","pit1"},"paint_remains":{"paint","paint_trace"},
-           "chariot":{"chariot"},"archer":{"archer"},"weapons":{"weapons"}}
-   allowed=groups.get(role,{role})
-   possibles=[j for j in range(len(photos)) if SHOTS[j]["subject"] in allowed]
-   if not possibles:
-    raise RuntimeError("No previously licensed photo with matching topic for scene "+str(i+1))
-   prev=possibles[-1]
-   target.write_bytes((MEDIA/("raw_%02d.jpg"%prev)).read_bytes())
-   meta={**photos[prev],"substituted_source":True,"replacement_for":info["file"],
-         "fallback_source_index":prev+1}
-   print("MATCHED_SOURCE_REUSED",i+1,"from",prev+1,"role",role,flush=True)
-  meta["stage_index"]=i
-  photos.append(meta)
- if len({x["image_sha256"] for x in photos})<24:
-  raise RuntimeError("Insufficient different authentic photos; do not produce a dull repeated montage")
- print("IMAGE_PREFLIGHT",len(photos),"cuts",len({x["image_sha256"] for x in photos}),"unique real photos",flush=True)
+  try:
+   meta=download_commons(info,target)
+   meta["stage_index"]=i
+   photos[i]=meta
+   print("LICENSED",i+1,"of",len(SHOTS),meta["file"],meta["license"],flush=True)
+   time.sleep(.5)
+  except Exception as error:
+   # Do not abandon other Commons photographs because one image is unavailable.
+   print("SOURCE_UNAVAILABLE",i+1,beat["subject"],type(error).__name__,str(error)[:180],flush=True)
+ # Only after ALL sources have been attempted do safe subject-specific substitutions.
+ groups={"wide_end":{"wide_hook","pit1"},"mound":{"mound"},"archer":{"archer"},
+   "officer":{"officer","armour","portrait"},"paint_remains":{"paint","paint_trace"},
+   "paint":{"paint","paint_trace"},"chariot":{"chariot"},"weapons":{"weapons"},
+   "detail":{"detail","armour","single"}}
+ for i,photo in enumerate(photos):
+  if photo is not None:continue
+  role=SHOTS[i]["subject"]
+  allowed=groups.get(role,{role})
+  possibles=[j for j,p in enumerate(photos) if p is not None and SHOTS[j]["subject"] in allowed]
+  if not possibles:raise RuntimeError("No licensed and semantically relevant replacement for "+role)
+  prev=min(possibles,key=lambda j:abs(j-i))
+  target=MEDIA/("raw_%02d.jpg"%i)
+  target.write_bytes((MEDIA/("raw_%02d.jpg"%prev)).read_bytes())
+  photos[i]={**photos[prev],"stage_index":i,"substituted_source":True,
+       "replacement_for":infos[i]["file"],"fallback_source_index":prev+1}
+  print("SAFE_REUSE",i+1,"from",prev+1,"topic",role,flush=True)
+ unique=len({x["image_sha256"] for x in photos})
+ if unique<24:
+  raise RuntimeError(f"Only {unique} distinct authentic photos; cannot produce improved version")
+ print("IMAGE_PREFLIGHT",len(photos),"cuts",unique,"unique real photos",flush=True)
  (OUT/"ATTRIBUZIONI_FOTO.json").write_text(json.dumps(photos,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
  (OUT/"ATTRIBUZIONI_FOTO.txt").write_text(
   "Fotografie REALI Wikimedia Commons; ritagli, fondali sfocati e camera digitale.\n"+
