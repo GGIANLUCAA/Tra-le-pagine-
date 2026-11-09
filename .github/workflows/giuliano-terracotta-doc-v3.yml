@@ -88,7 +88,7 @@ jobs:
           python - <<'PY'
           import os,json,time,urllib.parse,urllib.request
           base=f"https://api.github.com/repos/{os.environ['GH_REPO']}"
-          expected="7fa23eea5f51aad3e3141618d45dfefe53fd00f9"
+          expected="e3e10230f309a57df24e951902c7c33babe34f8d"
           params=urllib.parse.urlencode({
              "branch":"feature/giuliano-terracotta-v3-documentario-20261109",
              "event":"push","per_page":50})
