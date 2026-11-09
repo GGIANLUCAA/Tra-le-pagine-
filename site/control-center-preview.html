@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="/icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ArtVision Control Center V8 — Qualità e prove</title>
+<title>ArtVision Control Center V9 — Qualità, SHA e ZIP</title>
 <style>
 :root{color-scheme:dark;--bg:#0c1118;--card:#181f27;--inner:#222a33;--edge:#38414a;--text:#f7f1e6;--sub:#afb7c0;--gold:#dfbe88;--green:#80cba9;--red:#e8a49d}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 65% 25% at 85% 0%,#634d2a26,transparent),var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.wrap{max-width:1320px;margin:0 auto;padding:0 23px 100px}
@@ -198,7 +198,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <script>
 (function(){
 "use strict";
-var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",selectedGenre:"Libri narrati",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project",quality:null,qualityAt:0,qualityError:null,qualityLoading:false};
+var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",selectedGenre:"Libri narrati",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project",quality:null,qualityAt:0,qualityError:null,qualityLoading:false,integrity:null,integrityAt:0,integrityError:null,integrityLoading:false};
 var site="https://video-library-studio.600led.workers.dev";
 function escapeText(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function date(x){if(!x)return "non disponibile";var d=new Date(x);return isNaN(+d)?"non disponibile":d.toLocaleString("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
@@ -723,6 +723,35 @@ function works(){
 function runs(){var d=state.data;var out=sec("Attività GitHub","Esecuzioni reali. Tocca una riga per leggere il workflow originale.");out+='<div class="tools"><div class="filters">'+["all","artvision","storia","wow","books","music","documentary","cinema","site"].map(function(k){return '<button data-filter="'+k+'" class="'+(state.filter===k?"on":"")+'">'+({all:"Tutte",artvision:"ArtVision",storia:"Storia Rivive",wow:"WOW LAB",books:"Libri",music:"Musica",documentary:"Documentari",cinema:"Cinema",site:"Sito"}[k])+'</button>'}).join("")+'</div><a class="link" target="_blank" rel="noopener" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions">Apri GitHub ↗</a></div>';if(!source("github"))return out+'<div class="empty">Non disponibile in questo momento.</div>';var list=(d.runs||[]).filter(function(r){return state.filter==="all"||(r.project||project(r.name))===state.filter});return out+'<div class="panel">'+(list.length?list.slice(0,40).map(rowRun).join(""):'<div class="empty">Nessuna esecuzione recente trovata.</div>')+'</div>'}
 function media(){var d=state.data;var out=sec("Videoteca","Anteprime pubbliche dal tuo archivio. La riproduzione e i download restano sul sito originale.");out+='<div class="tools"><input id="search" class="search" placeholder="Cerca le anteprime…" aria-label="Cerca video" value="'+escapeText(state.q)+'"><a class="link" href="'+site+'" target="_blank" rel="noopener">Apri catalogo ↗</a></div>';if(!source("catalog"))return out+'<div class="empty">Catalogo non raggiungibile.</div>';var items=(d.media||[]).filter(function(x){return String(x.title||x.key).toLowerCase().includes(state.q.toLowerCase())});out+='<p class="sub">Anteprime recenti: '+items.length+' visibili su '+d.catalog_count+' voci catalogate. Stato di download non certificato qui.</p><div class="gridmedia">';items.forEach(function(x){var src=site+'/cover/'+encodeURIComponent(String(x.key||"").replace(/\.(mp4|m4v|mov)$/i,""));out+='<article class="video"><div class="cover"><span>◈</span><img loading="lazy" alt="" onerror="this.remove()" src="'+escapeText(src)+'"></div><div class="videotxt"><span class="rowname">'+escapeText(x.title||x.key)+'</span><span class="sub">'+(x.available===false?"Segnalato non disponibile":"Nel catalogo · download da verificare")+'</span><a class="buttonlink" target="_blank" rel="noopener" href="'+site+'">Apri archivio ↗</a></div></article>'});return out+'</div>'}
 
+
+function integritySection(){
+  var data=state.integrity,rows=Array.isArray(data?.runs)?data.runs:[];
+  var h='<div class="panel"><h3>Audit integrale MP4 · SHA-256 V9</h3>'+
+    '<p class="sub">Controllo gratuito e su richiesta di un singolo master già registrato: legge davvero l’intero download e confronta byte e SHA-256 con il registro V161. Il pannello qui vede solo i metadati GitHub: per sapere l’esito esatto apri il rapporto allegato alla run.</p>'+
+    '<div class="repairGrid"><button type="button" class="miniBtn secondary" data-integrity-refresh>↻ Aggiorna audit</button>'+
+    '<a class="repairButton secondary" rel="noopener noreferrer" target="_blank" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/studio-integrity-v9.yml">Seleziona MP4 e avvia su GitHub ↗</a></div>'+
+    '<p class="note">L’audit dei pacchetti ZIP V55 (SHA + CRC + video/copertina/post/fonti) è disponibile per ZIP locali tramite lo stesso verificatore. Non è attivo su file ZIP non accessibili.</p>';
+  if(state.integrityLoading&&!data)return h+'<div class="empty">Consulto gli ultimi audit GitHub…</div></div>';
+  if(!data)return h+'<div class="empty">'+escapeText(state.integrityError||"Nessun dato di audit caricato.")+'</div></div>';
+  if(!data.source_ok)h+='<p class="note">GitHub non fornisce l’elenco degli audit in questo momento. Non significa che i video siano mancanti.</p>';
+  h+=rows.length?rows.map(function(run){
+    var status=runStatus(run),url=String(run.run_url||"");
+    var proof=run.artifact_metadata_checked?
+      (run.artifact_present?
+        (run.artifact_expired?"Rapporto registrato ma scaduto":"Rapporto registrato: aprire JSON nella run"):
+        "Nessun rapporto allegato secondo GitHub"):
+      "Presenza del rapporto non verificabile";
+    return '<div class="repairCard"><div class="row"><div class="grow"><strong>Audit MP4 · run #'+escapeText(run.id||"—")+'</strong>'+
+      '<span class="sub">'+escapeText(date(run.updated_at))+' · '+escapeText(proof)+'</span>'+
+      '<span class="sub">SHA non letto dal pannello · approvazione artistica non attestata</span></div>'+
+      badge(status[0],status[1])+'</div><div class="repairGrid">'+
+      (url.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/")?
+        '<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" href="'+escapeText(url)+'">Vedi il rapporto GitHub ↗</a>':'')+
+      '<button type="button" class="repairButton" data-integrity-repair="'+escapeText(run.id)+'">◈ Analizza con GPT</button></div></div>';
+  }).join(""):'<div class="empty">Nessuna verifica integrale manuale V9 ancora osservata.</div>';
+  return h+'</div>';
+}
+
 function qualityPage(){
   var data=state.quality;
   var h=sec("Qualità e prove","Le esecuzioni GitHub, gli artifact dei rapporti e la verifica reale dei video sono tre cose distinte.");
@@ -730,8 +759,8 @@ function qualityPage(){
     '<h3>La qualità si dimostra sul file.</h3><p>La regia V17 crea rapporti soltanto quando viene avviata manualmente. Qui si consultano gli esiti GitHub e, se disponibili, i metadati degli artifact. Non leggiamo automaticamente il contenuto del rapporto, non ascoltiamo il video e non controlliamo lo SHA completo.</p>'+
     '<div class="repairGrid"><button class="miniBtn secondary" data-qa-refresh type="button">↻ Verifica GitHub</button>'+
     '<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/quality-director-v17.yml">Workflow qualità V17 ↗</a></div></section>';
-  if(state.qualityLoading&&!data)return h+'<div class="panel"><div class="empty">Consulto le esecuzioni GitHub e gli artifact registrati…</div></div>';
-  if(!data)return h+'<div class="panel"><div class="empty">'+escapeText(state.qualityError||"Rapporti non ancora caricati.")+'</div></div>';
+  if(state.qualityLoading&&!data)return h+'<div class="panel"><div class="empty">Consulto le esecuzioni GitHub e gli artifact registrati…</div></div>'+integritySection();
+  if(!data)return h+'<div class="panel"><div class="empty">'+escapeText(state.qualityError||"Rapporti non ancora caricati.")+'</div></div>'+integritySection();
   if(!data.source_ok)h+='<div class="panel"><p class="note">Fonte QA specifica non raggiungibile: vedo soltanto le ultime 100 esecuzioni GitHub, quando disponibili. Nessuna assenza nel campione dimostra che il controllo non sia stato fatto.</p></div>';
   h+='<div class="panel"><h3>Verifiche indipendenti</h3>'+
     qaRow("Contenuto dei rapporti JSON letto dal pannello",false,"Sì","Non letto")+
@@ -756,7 +785,7 @@ function qualityPage(){
         '<button class="repairButton" type="button" data-qa-repair="'+escapeText(run.id)+'">◈ Analizza con GPT</button></div></div>';
   }).join("");
   h+='</div><div class="note">L’analisi non avvia nuovi render, verifiche a pagamento, autorizzazioni o pubblicazioni. Per dimostrare qualità reale servono rapporto V17 sul MP4, decoding/diritti e revisione artistica del file identificato da SHA.</div>';
-  return h;
+  return h+integritySection();
 }
 async function loadQuality(force){
   if(state.qualityLoading||(!force&&state.quality&&Date.now()-state.qualityAt<90000))return;
@@ -773,6 +802,27 @@ async function loadQuality(force){
     state.quality=null;
   }finally{state.qualityLoading=false;if(state.page==="quality")render();}
 }
+
+async function loadIntegrity(force){
+  if(state.integrityLoading||(!force&&state.integrity&&Date.now()-state.integrityAt<90000))return;
+  state.integrityLoading=true;state.integrityError=null;
+  if(state.page==="quality")render();
+  try{
+    var response=await fetch("/api/integrity",{cache:"no-store"});
+    if(!response.ok)throw new Error("HTTP "+response.status);
+    var data=await response.json();
+    if(data.schema!=="studio-integrity-metadata-v9"||!Array.isArray(data.runs)||
+       data.report_contents_read!==false)throw new Error("Schema audit non valido");
+    state.integrity=data;state.integrityAt=Date.now();
+  }catch(e){
+    state.integrity=null;
+    state.integrityError="Audit GitHub non consultabile: "+String(e.message||"errore");
+  }finally{state.integrityLoading=false;if(state.page==="quality")render();}
+}
+function loadEvidence(force){
+  loadQuality(force);loadIntegrity(force);
+}
+
 
 function issues(){
   var d=state.data||{},attention=d.attention||[];
@@ -909,11 +959,21 @@ document.addEventListener("click",async function(e){
     holder.textContent="Verifica non disponibile in questo momento.";
   }finally{btn.disabled=false;btn.textContent="Verifica streaming e download"}
 });
-document.addEventListener("click",function(e){var p=e.target.closest("[data-page]");if(p){state.page=p.dataset.page;render();if(state.page==="quality")loadQuality(false);window.scrollTo(0,0);return}var f=e.target.closest("[data-filter]");if(f){state.filter=f.dataset.filter;render();return}var sw=e.target.closest("[data-switch]");if(sw){e.preventDefault();state.page=sw.dataset.switch;if(sw.dataset.runFilter)state.filter=sw.dataset.runFilter;render();if(state.page==="quality")loadQuality(false);window.scrollTo(0,0);return}var diaryFilter=e.target.closest("[data-diary-filter]");if(diaryFilter){state.diaryFilter=diaryFilter.dataset.diaryFilter;render()}});
+document.addEventListener("click",function(e){var p=e.target.closest("[data-page]");if(p){state.page=p.dataset.page;render();if(state.page==="quality")loadEvidence(false);window.scrollTo(0,0);return}var f=e.target.closest("[data-filter]");if(f){state.filter=f.dataset.filter;render();return}var sw=e.target.closest("[data-switch]");if(sw){e.preventDefault();state.page=sw.dataset.switch;if(sw.dataset.runFilter)state.filter=sw.dataset.runFilter;render();if(state.page==="quality")loadQuality(false);window.scrollTo(0,0);return}var diaryFilter=e.target.closest("[data-diary-filter]");if(diaryFilter){state.diaryFilter=diaryFilter.dataset.diaryFilter;render()}});
 // All chat URL management remains on this device: never sent to backend.
 document.addEventListener("click",function(ev){
   var qaRefresh=ev.target.closest("button[data-qa-refresh]");
-  if(qaRefresh){loadQuality(true);return;}
+  if(qaRefresh){loadEvidence(true);return;}
+  var integrityRefresh=ev.target.closest("button[data-integrity-refresh]");
+  if(integrityRefresh){loadIntegrity(true);return;}
+  var integrityRepair=ev.target.closest("button[data-integrity-repair]");
+  if(integrityRepair){var ir=(state.integrity?.runs||[]).find(function(x){return x.id===Number(integrityRepair.dataset.integrityRepair)});
+    if(ir)openRepairDialog({type:"run",project:"site",title:"Audit integrità MP4 V9",
+      detail:"Controllo GitHub singolo video. Rapporto: "+(ir.artifact_present===true?"presente secondo GitHub":"non confermato")+
+        "; dati SHA/byte del JSON non letti dal pannello; verifica il rapporto prima di decidere.",
+      run:{...ir,html_url:ir.run_url,head_branch:"main",event:"workflow_dispatch"},runId:ir.id});
+    return;
+  }
   var qaRepair=ev.target.closest("button[data-qa-repair]");
   if(qaRepair){var qr=(state.quality?.runs||[]).find(function(x){return x.id===Number(qaRepair.dataset.qaRepair)});
     if(qr)openRepairDialog({type:"run",project:"site",title:"Controllo manuale Regia qualità V17",
