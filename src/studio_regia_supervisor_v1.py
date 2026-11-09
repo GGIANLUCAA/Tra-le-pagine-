@@ -16,6 +16,7 @@ from pathlib import Path
 
 SCHEMA = "studio-regia-shotlist-v1"
 NARRATED = {"libri", "artvision_critico", "controluce", "documentario", "giuliano"}
+SUPPORTED_FORMATS = NARRATED | {"artvision_cinema", "visual_music", "hyperlumen", "storia_rivive", "wow_lab"}
 CAMERAS = {"locked", "slow_push", "slow_pull", "slow_pan_x", "slow_pan_y"}
 TRANSITIONS = {"cut", "match_cut", "fade_to_black", "none"}
 HASH = re.compile(r"^[a-f0-9]{64}$")
@@ -26,6 +27,8 @@ FIXES = {
     "REUSED_VISUAL": "Sostituire con una scoperta visiva realmente diversa oppure motivare l'inquadratura ferma.",
     "SUBJECT_MISMATCH": "Riposizionare/tagliare il piano sul soggetto citato senza alterare il WAV.",
     "SUBJECT_LATE": "Anticipare il soggetto visibile rispetto alla frase, dopo riscontro sui veri frame.",
+    "SUBJECT_EARLY_EXIT": "Mantenere il soggetto in campo fino alle ultime parole della frase, verificando il MP4.",
+    "UNSUPPORTED_FORMAT": "Selezionare un formato noto, senza aggirare per errore il controllo della voce.",
     "LOW_EFFECTIVE_PIXELS": "Aprire l'inquadratura o scegliere una scansione migliore; non inventare nitidezza.",
     "CAMERA_NOT_DIRECTED": "Camera ferma oppure movimento lento unidirezionale con motivo semantico.",
     "REPEATED_CAMERA_MOVE": "Alternare movimento e tenuta solo quando la storia lo richiede.",
@@ -70,6 +73,8 @@ def inspect(data):
     fmt = str(data.get("format") or "").lower().strip()
     if not fmt:
         flag("block", "MISSING_FORMAT")
+    elif fmt not in SUPPORTED_FORMATS:
+        flag("block", "UNSUPPORTED_FORMAT", detail=fmt)
     length = data.get("video_duration_s")
     if not num(length) or length <= 0:
         flag("block", "INVALID_TIMELINE")
@@ -104,7 +109,7 @@ def inspect(data):
                 flag("review", "IMAGE_GAP", label, a)
         elif a > .35:
             flag("review", "NO_HOOK", label, a, "Il primo piano non inizia subito.")
-        if not s.get("source_verified") or not s.get("rights_verified"):
+        if s.get("source_verified") is not True or s.get("rights_verified") is not True:
             flag("block", "SOURCE_NOT_VERIFIED", label, a)
         if not str(s.get("reason") or "").strip() or not str(s.get("visual_subject") or "").strip():
             flag("review", "MISSING_SUBJECT_EVIDENCE", label, a)
@@ -154,7 +159,9 @@ def inspect(data):
                 and s.get("shot_type") not in ("wide", "establishing")
                 and previous.get("shot_type") not in ("wide", "establishing")):
             flag("review", "LARGE_EYE_JUMP", label, a)
-        ident = (s.get("asset_id"), s.get("composition_group"), s.get("visual_subject"))
+        # JSON values may be arrays/dicts in a malformed shotlist: never crash preflight.
+        ident = tuple(json.dumps(s.get(key), sort_keys=True, ensure_ascii=False)
+                      for key in ("asset_id", "composition_group", "visual_subject"))
         serial.append(ident)
         if len(serial) >= 3 and len(set(serial[-3:])) == 1:
             flag("review", "REUSED_VISUAL", label, a)
@@ -195,6 +202,7 @@ def inspect(data):
                     continue
                 relevant = []
                 first = None
+                last_visible = None
                 for shot in shots:
                     if not isinstance(shot, dict) or not num(shot.get("start_s")) or not num(shot.get("end_s")):
                         continue
@@ -205,6 +213,7 @@ def inspect(data):
                     if hi > lo:
                         relevant.append((lo, hi))
                         first = lo if first is None else min(first, lo)
+                        last_visible = hi if last_visible is None else max(last_visible, hi)
                 # Timeline can contain overlapping invalid shots: use union, not sum.
                 relevant.sort()
                 covered = 0
@@ -212,10 +221,13 @@ def inspect(data):
                 for lo, hi in relevant:
                     covered += max(0, hi - max(lo, last))
                     last = max(last, hi)
-                if covered / (b - a) < .8:
+                if covered / (b - a) < .95:
                     flag("block", "SUBJECT_MISMATCH", second=a, detail=subject)
-                if first is not None and first > a + .35:
+                # Even a high aggregate coverage can hide the opening/closing words.
+                if first is not None and first > a + .2:
                     flag("review", "SUBJECT_LATE", second=a, detail=subject)
+                if last_visible is not None and last_visible < b - .2:
+                    flag("review", "SUBJECT_EARLY_EXIT", second=last_visible, detail=subject)
 
     by_code = Counter(x["code"] for x in issues)
     blocking = [x for x in issues if x["level"] == "block"]
