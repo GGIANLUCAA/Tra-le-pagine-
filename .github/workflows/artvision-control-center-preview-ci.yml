@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - preview/artvision-control-center-v1
+      - preview/control-center-quality-v8-20261109
     paths:
       - site/control-center-preview.html
       - site/control-center-preview.worker.js
