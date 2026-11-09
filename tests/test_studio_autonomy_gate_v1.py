@@ -114,6 +114,8 @@ class AutonomyGateTests(unittest.TestCase):
         x = evaluate(checkpoint(stage="preflight"))
         self.assertEqual(x["status"], "prepared_for_owner_pipeline")
         self.assertFalse(x["video_created_by_gate"])
+        self.assertFalse(x["can_auto_continue"])
+        self.assertEqual(x["suggested_action"], "validate_existing_owner_gates")
 
     def test_diagnostic_only_verified_run_url_no_raw_logs(self):
         j = checkpoint(stage="failed", error={"code": "render_failed",
