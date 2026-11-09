@@ -26,9 +26,9 @@ FILES=[
  "Terracotta_Army_Pit_1_-_5.jpg",
  "China.Terracotta_statues026.jpg",
  "20230924_Pit_1_of_Terracotta_Army_01.jpg",
- "Terracotta_Army_Pit_1_-_11.jpg",
- "Terracotta_horse_and_warrior,_side_rear.JPG",
- "Terracotta_Army_Pit_1.JPG",
+ "China.Terracotta_statues026.jpg",
+ "Terracotta_horse_and_two_soldiers.jpg",
+ "Terracotta_Army,_View_of_Pit_1.jpg",
  "Terracotta_Army_Pit_1_front_rank_detail.JPG",
 ]
 UA="GiulianoTerracottaFilm/1.0 (editorial Wikimedia Commons image attribution)"
@@ -127,12 +127,8 @@ def original_music(duration,out):
 def main():
  OUT.mkdir(parents=True,exist_ok=True);MEDIA.mkdir(exist_ok=True)
  script=(ROOT/"giuliano"/"terracotta"/"VOCE_GACRUX_IT.txt").read_text(encoding="utf-8").strip()
- # The audio call is made ONCE, with the existing Gacrux voice and repository secret.
- audio,timed=synthesize(script,OUT/"audio")
- duration=len(audio)/24000
- print("Gacrux audio:",duration,"seconds; sentences:",len(timed),flush=True)
- if not 65 <= duration <= 150: raise RuntimeError("Narrazione durata non conforme")
- if len(timed)!=len(FILES):raise RuntimeError("Scene e frasi non corrispondono: "+str(len(timed)))
+ # Validate and preserve historic picture sources BEFORE spending any TTS request.
+ # The opening and closing use the same photograph by design.
  credits=[]
  imagefiles=[]
  for i,name in enumerate(FILES):
@@ -149,6 +145,18 @@ def main():
   canvas=MEDIA/("canvas_%02d.jpg"%i)
   make_canvas(target,canvas)
   imagefiles.append(canvas)
+  # A small pause avoids Wikimedia Commons throttling after successive API hits.
+  if prev is None:time.sleep(2)
+ if len({c["image_sha256"] for c in credits})<7:
+  raise RuntimeError("Preflight: fewer than seven real distinct historical pictures")
+ print("IMAGE_PREFLIGHT_OK:",len(credits),"scenes",
+       len({c["image_sha256"] for c in credits}),"verified photographs",flush=True)
+ # Only after imagery is secured, make the single requested Gacrux call.
+ audio,timed=synthesize(script,OUT/"audio")
+ duration=len(audio)/24000
+ print("Gacrux audio:",duration,"seconds; sentences:",len(timed),flush=True)
+ if not 65 <= duration <= 150: raise RuntimeError("Narrazione durata non conforme")
+ if len(timed)!=len(FILES):raise RuntimeError("Scene e frasi non corrispondono: "+str(len(timed)))
  (OUT/"ATTRIBUZIONI_FOTO.json").write_text(json.dumps(credits,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
  (OUT/"ATTRIBUZIONI_FOTO.txt").write_text(
     "Fotografie autentiche / Wikimedia Commons. Adattamenti: ritaglio, fondale sfocato e lento movimento digitale.\n"+
@@ -172,7 +180,7 @@ def main():
   segs.append(output)
   scenes.append({"scene":i+1,"script":text,"audio_start_seconds":round(a,3),
    "audio_end_seconds":round(b,3),"visual_start_seconds":round(start,3),
-   "visual_end_seconds":round(end,3),"media_filename":FILES[i]})
+   "visual_end_seconds":round(end,3),"media_filename":credits[i]["file"]})
  concat=OUT/"concat.txt"
  concat.write_text("".join("file '"+str(f.absolute())+"'\n" for f in segs))
  base=OUT/"silent.mp4"
@@ -191,7 +199,7 @@ def main():
    "format=duration,size:stream=codec_name,width,height","-of","json",str(movie)],text=True)
  qa={"status":"RENDERED_NEEDS_ARTISTIC_REVIEW","audio_voice":"Google Gemini Gacrux",
   "visuals":"Authentic photographs with digital camera motion, NOT real moving historical footage",
-  "video_sha256":sha(movie),"probe":json.loads(probe),"source_count":len(set(FILES)),
+  "video_sha256":sha(movie),"probe":json.loads(probe),"source_count":len({c["image_sha256"] for c in credits}),
   "scenes":scenes,"publication_authorized":False,"paid_video_calls":0,
   "source_constraints":"CC BY/CC BY-SA/CC0, attribution in ZIP. Verify all links before sharing."}
  (OUT/"QA.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n")
