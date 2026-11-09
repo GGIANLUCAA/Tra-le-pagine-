@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build_candidate:
-    if: github.event.repository.private == false && github.ref == 'refs/heads/main'
+    if: github.event.repository.private == false && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/experiment/wow-lab-isolated-v1-20261029')
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -51,7 +51,7 @@ jobs:
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
             python wow_lab/engine.py --out "wow_lab/runs/${{ github.run_id }}"
           else
-            python wow_lab/engine.py --out "wow_lab/runs/${{ github.run_id }}" --test-source-id 436535
+            python wow_lab/engine.py --out "wow_lab/runs/${{ github.run_id }}" --test-source-id 388482
           fi
       - name: Verify integrity, rights, artifact size and no publishing
         run: |
