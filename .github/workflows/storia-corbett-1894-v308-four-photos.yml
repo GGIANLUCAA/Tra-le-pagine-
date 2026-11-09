@@ -1,0 +1,155 @@
+name: "La Storia Rivive V308 · CORBETT 1894 · four distinct source-locked real I2I photos"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-corbett-1894-v308-four-photos.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-corbett-v308-one-source-lock
+  cancel-in-progress: false
+jobs:
+  four_real_photos_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    env:
+      PYTHONUNBUFFERED: "1"
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free film decoding + generative model client
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: Acquire authentic 1440x1080 film from verified prior source WITHOUT redownloading unrelated new footage
+        run: |
+          set -euo pipefail
+          mkdir -p output/corbett_v308
+          gh run download 42584828936 --repo "$GITHUB_REPOSITORY" --name STORIA_CORBETT_1894_V305_REAL_VISUAL_REVIEW_OR_FAIL_REPORT --dir output/corbett_v308
+          test -s output/corbett_v308/CORBETT_1894_GENUINE_ORIGINAL.webm
+      - name: Generate max four original-frame-locked true photographic I2I restorations, free quota only
+        timeout-minutes: 19
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import sys,cv2,numpy as np,subprocess,hashlib,json,pathlib,os
+          from gradio_client import Client,handle_file
+          p=pathlib.Path("output/corbett_v308")
+          sys.path.insert(0,str(pathlib.Path("src").resolve()))
+          import storia_rivive_real_ai_v60 as dd
+          def sha(f):
+              h=hashlib.sha256()
+              with open(f,"rb") as r:
+                  for b in iter(lambda:r.read(1<<20),b""):h.update(b)
+              return h.hexdigest()
+          def run(a):
+              v=subprocess.run(a,capture_output=True,text=True,timeout=130)
+              if v.returncode:raise RuntimeError(v.stderr[-350:])
+          def structure(a,b):
+              def norm(x):
+                  z=cv2.cvtColor(cv2.resize(x,(96,128)),cv2.COLOR_BGR2GRAY)
+                  return cv2.GaussianBlur(z,(5,5),0).astype(np.float32).ravel()
+              x,y=norm(a),norm(b)
+              return float(np.corrcoef(x,y)[0,1]) if x.std()>1 and y.std()>1 else 0.0
+          def sharp(x):
+              g=cv2.cvtColor(cv2.resize(x,(240,427)),cv2.COLOR_BGR2GRAY)
+              return float(cv2.Laplacian(g,cv2.CV_32F).var())
+          film=p/"CORBETT_1894_GENUINE_ORIGINAL.webm"
+          report={"version":"V308_REAL_FOUR_PHOTOGRAPH_PREP",
+                  "source_page":"https://commons.wikimedia.org/wiki/File:Corbett_and_Courtney_Before_the_Kinetograph_(1894),_Best_Quality,_HD.webm",
+                  "film_native_pixels":[1440,1080],"original_source_sha256":sha(film),
+                  "source_rights_italy_verified":False,"human_photo_approval":False,
+                  "real_vidu_clips":0,"paid_api_calls":0,"social_published":False,"photos":[]}
+          times=[5.0,15.0,25.0,35.0]
+          lengths=[1.35,1.28,1.45,1.32]
+          model,meta=dd.download_model()
+          client=Client("finegrain/finegrain-image-enhancer",verbose=False)
+          for i,(t,length) in enumerate(zip(times,lengths),1):
+              row={"scene":i,"film_timestamp_s":t,"segment_length_s":length,"photo_generated":False,
+                   "artistic_approval":False,"paid_api_calls":0}
+              try:
+                  clip=p/("ORIGINAL_MOVEMENT_%02d.mp4"%i)
+                  run(["ffmpeg","-nostdin","-y","-v","error","-ss",str(t-length),"-i",str(film),
+                       "-t",str(length),"-vf","crop=608:1080:416:0,scale=720:1280:flags=lanczos,fps=24",
+                       "-an","-c:v","libx264","-crf","18","-preset","veryfast","-pix_fmt","yuv420p",str(clip)])
+                  cap=cv2.VideoCapture(str(clip));frames=[]
+                  while True:
+                      ok,f=cap.read()
+                      if not ok:break
+                      frames.append(f)
+                  cap.release()
+                  if len(frames)<18:raise RuntimeError("MISSING_GENUINE_HISTORICAL_MOTION")
+                  anchor=frames[-1]
+                  bw=p/("ORIGINAL_BW_%02d.png"%i)
+                  cv2.imwrite(str(bw),anchor)
+                  base=dd.image_at(anchor,dd.infer_ab(model,anchor))
+                  basefile=p/("COLOR_GUIDE_%02d.png"%i)
+                  cv2.imwrite(str(basefile),base)
+                  row.update({"original_clip_sha256":sha(clip),"real_frame_sha256":sha(bw),
+                             "guide_sha256":sha(basefile)})
+                  prompt=("Make an astonishingly lifelike modern photographic image-to-image restoration of THIS EXACT "
+                    "1894 original Edison boxing film still, two adult male bare-chested boxers inside a boxing ring "
+                    "with the same gloves, outfits, posture, arm and leg positions and crowd behind. High resolution "
+                    "real skin and original face contours only, historically plausible color, exact geometry. "
+                    "Preserve every existing limb, rope, person, object and camera angle, no new features or artifacts.")
+                  negative=("extra arms, deformed legs, merged hands, unrealistic faces, "
+                    "extra boxers, horns, altered ring, fake sign, unrelated scenery, painting, sepia, skin plastic")
+                  result=client.predict(handle_file(str(basefile)),prompt,negative,
+                     1894+i,2,1.1,.96,6,112,144,.42,18,"DDIM",api_name="/process")
+                  raw=result[1] if isinstance(result,(list,tuple)) and len(result)>1 else result
+                  if isinstance(raw,dict):raw=raw.get("path")
+                  photo=cv2.imread(str(raw)) if raw else None
+                  if photo is None:raise RuntimeError("NO_REAL_I2I_RESULT")
+                  photo=cv2.resize(photo,(720,1280),interpolation=cv2.INTER_LANCZOS4)
+                  raw_sat=float(cv2.cvtColor(photo,cv2.COLOR_BGR2HSV)[:,:,1].mean())
+                  if raw_sat<25:
+                      lab=cv2.cvtColor(photo,cv2.COLOR_BGR2LAB)
+                      lab_base=cv2.cvtColor(base,cv2.COLOR_BGR2LAB)
+                      lab[:,:,1:]=lab_base[:,:,1:]
+                      photo=cv2.cvtColor(lab,cv2.COLOR_LAB2BGR)
+                  corr=structure(anchor,photo)
+                  sat=float(cv2.cvtColor(photo,cv2.COLOR_BGR2HSV)[:,:,1].mean())
+                  ratio=sharp(photo)/max(sharp(base),1)
+                  difference=float(np.mean(cv2.absdiff(photo,base)))
+                  good=(corr>=.82 and 15<=sat<=150 and ratio>=1.05 and difference>=3.0)
+                  target=p/("PHOTO_I2I_%02d.png"%i)
+                  cv2.imwrite(str(target),photo,[cv2.IMWRITE_PNG_COMPRESSION,3])
+                  row.update({"photo_generated":True,"photo_sha256":sha(target),
+                      "structure_correlation":round(corr,4),"mean_saturation":round(sat,2),
+                      "detail_ratio_vs_color_guide":round(ratio,3),"difference_vs_color_guide":round(difference,2),
+                      "technical_photo_gate":bool(good),"identity_review":"PENDING"})
+                  if not good:row["status"]="REJECTED_VISUAL_GATE"
+                  else:row["status"]="FOUR_SHOT_CANDIDATE_SOURCE_LOCKED"
+              except Exception as exc:
+                  row.update({"status":"FREE_I2I_OR_SOURCE_BLOCKED","error_type":type(exc).__name__,
+                              "error_summary":str(exc)[:240]})
+              report["photos"].append(row)
+              (p/"V308_PHOTO_REPORT.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n")
+              print("V308_REAL_GENERATIVE_PHOTO",i,row["status"],flush=True)
+              if row["status"]!="FOUR_SHOT_CANDIDATE_SOURCE_LOCKED":break
+          report["status"]="ALL_FOUR_SOURCE_LOCKED_PHOTOS_TECH_READY" if len(report["photos"])==4 and all(x.get("technical_photo_gate") for x in report["photos"]) else "PHOTO_QUALITY_OR_QUOTA_BLOCKED_NO_FAKE_VIDEO"
+          (p/"V308_PHOTO_REPORT.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n")
+          print("V308_CONCLUSION",report["status"],"PHOTOS",len(report["photos"]),flush=True)
+          PY
+      - name: Preserve real source frames, genuine I2I images and test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CORBETT_1894_V308_FOUR_SOURCE_LOCKED_PHOTOS_REVIEW
+          path: |
+            output/corbett_v308/V308_PHOTO_REPORT.json
+            output/corbett_v308/ORIGINAL_MOVEMENT_*.mp4
+            output/corbett_v308/ORIGINAL_BW_*.png
+            output/corbett_v308/COLOR_GUIDE_*.png
+            output/corbett_v308/PHOTO_I2I_*.png
+          retention-days: 14
+          if-no-files-found: warn
