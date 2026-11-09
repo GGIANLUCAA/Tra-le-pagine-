@@ -52,6 +52,9 @@ def research_summary(data: dict | None, project: str) -> dict:
         return result
     if data.get("project") != project:
         return result
+    if data.get("owner") != ({"artvision": "ARTVISION_OWNER_SELECTED_TEN_V128",
+                                 "storia": "STORIA_RIVIVE_V101_SOURCE_ORDER"}[project]):
+        return result
     if (data.get("auto_render") is not False
             or data.get("auto_publish") is not False
             or data.get("auto_download") is not False
@@ -117,12 +120,14 @@ def handoff(project: str, research: dict | None,
                 and cycle.get("candidate") == item_id
                 and cycle.get("finished_mp4") is False
                 and cycle.get("published") is False
-                and cycle.get("charged_api_requests") == 0):
+                and cycle.get("charged_api_requests") == 0
+                and cycle.get("status") == "RESEARCH_PREPARATION_ONLY"):
             proof["cycle_status"] = True
 
         if (proof["research_report"] and proof["work_order"]
                 and source["item_id"] == item_id
                 and source["cycle_utc"] == order.get("cycle_utc")
+                and cycle.get("source_research_v4_status") == source["state"]
                 and proof["cycle_status"]):
             if source["state"] == "RESEARCH_CANDIDATES_PENDING_REVIEW":
                 state, action = ("SOURCE_CANDIDATE_NEEDS_REVIEW",
