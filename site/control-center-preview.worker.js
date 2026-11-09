@@ -70,7 +70,7 @@ function deriveOverview(runs,works,rows,sources){
     ...latest.filter(x=>x.project!=="other"&&x.status==="completed"&&BAD_CONCLUSIONS.has(x.conclusion))
       .slice(0,6).map(x=>({kind:"workflow",priority:"check",title:clip(x.name,170),
         detail:x.conclusion==="failure"?"Ultima esecuzione del workflow fallita":x.conclusion==="timed_out"?"Tempo massimo del workflow superato":x.conclusion==="cancelled"?"Ultima esecuzione annullata":"GitHub richiede un intervento",
-        time:x.updated_at,link:x.html_url,project:x.project})),
+        time:x.updated_at,link:x.html_url,project:x.project,run_id:x.id,branch:x.head_branch,event:x.event,conclusion:x.conclusion})),
     ...["github","queue","catalog"].filter(k=>!sources[k]?.ok)
       .map(k=>({kind:"source",priority:"unknown",title:"Fonte non disponibile: "+({github:"GitHub Actions",queue:"Coda ArtVision",catalog:"Catalogo video"}[k]),
         detail:"Stato non verificabile ora; non significa che la produzione sia ferma.",time:null,link:null,project:"site"}))
@@ -168,10 +168,10 @@ async function gather(){
   const queue=results[1].status==="fulfilled"?results[1].value:{};
   const cat=results[2].status==="fulfilled"?results[2].value:{};
   const runs=(Array.isArray(gh.workflow_runs)?gh.workflow_runs:[]).map(r=>({
-    name:clip(r.name,180),status:clip(r.status,32),conclusion:clip(r.conclusion,32),
+    id:Number(r.id)||null,name:clip(r.name,180),status:clip(r.status,32),conclusion:clip(r.conclusion,32),
     html_url:clip(r.html_url,280),updated_at:clip(r.updated_at,40),event:clip(r.event,40),
     head_branch:clip(r.head_branch,100),workflow_id:Number(r.workflow_id)||null,
-    project:projectForRun(r.name)
+    head_sha:clip(r.head_sha,48),project:projectForRun(r.name)
   })).sort((a,b)=>Date.parse(b.updated_at||0)-Date.parse(a.updated_at||0));
   const rows=Array.isArray(cat.items)?cat.items.filter(x=>x&&typeof x==="object"&&x.hidden!==true):[];
   const catalogNames=new Set(rows.map(x=>String(x.key||x.name||"")));
@@ -266,6 +266,41 @@ async function getStatus(){
   if(!pending)pending=gather().then(x=>{snapshot=x;snapshotAt=Date.now();return x}).finally(()=>{pending=null});
   return pending;
 }
+// Read-only diagnostic context. A run must belong to the currently observed public
+// GitHub sample; it cannot target arbitrary GitHub repositories or private APIs.
+const diagnosisCache=new Map();
+async function getDiagnosis(runId){
+  const id=Number(runId);
+  if(!Number.isSafeInteger(id)||id<1)return {ok:false,reason:"ID esecuzione non valido"};
+  const status=await getStatus();
+  const run=(status.runs||[]).find(r=>r.id===id);
+  if(!run||!status.sources.github?.ok)return {ok:false,reason:"Run non presente nel campione pubblico consultato"};
+  const url="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/"+id;
+  const base={ok:true,run_id:id,run_url:url,workflow:run.name,project:run.project,
+    conclusion:run.conclusion,status:run.status,branch:run.head_branch,head_sha:run.head_sha,
+    updated_at:run.updated_at,event:run.event,
+    jobs_available:false,jobs:[],notes:"I passaggi GitHub sono evidenza tecnica, non diagnosi certa. Aprire i log per la causa."};
+  const current=diagnosisCache.get(id);
+  if(current&&Date.now()-current.at<90000)return {...base,...current.jobs};
+  try{
+    const data=await json("https://api.github.com/repos/"+REPO+"/actions/runs/"+id+"/jobs?per_page=100",true);
+    if(!Array.isArray(data.jobs))return {...base,notes:"GitHub non ha fornito l'elenco dei job; consulta il link."};
+    const jobs=data.jobs.filter(j=>["failure","cancelled","timed_out","action_required"].includes(j.conclusion))
+      .slice(0,8).map(j=>({
+        name:clip(j.name,160),conclusion:clip(j.conclusion,40),html_url:clip(j.html_url,350),
+        failed_steps:(Array.isArray(j.steps)?j.steps:[]).filter(st=>
+          ["failure","cancelled","timed_out","action_required"].includes(st.conclusion)).slice(0,10)
+          .map(st=>({name:clip(st.name,160),conclusion:clip(st.conclusion,40),number:Number(st.number)||null}))
+      }));
+    const response={jobs_available:true,jobs,notes:"Job e step ottenuti da GitHub. I log completi non vengono importati né attribuiti automaticamente."};
+    diagnosisCache.set(id,{at:Date.now(),jobs:response});
+    if(diagnosisCache.size>70)diagnosisCache.clear();
+    return {...base,...response};
+  }catch(e){
+    return {...base,notes:"GitHub non ha fornito il dettaglio dei job: controlla il log tramite il link ufficiale."};
+  }
+}
+
 async function getPage(){
   if(page&&Date.now()-pageAt<3600000)return page;
   const r=await fetch(UI,{headers:{"Accept":"text/html"},cf:{cacheTtl:3600,cacheEverything:true}});
@@ -303,6 +338,21 @@ export default {async fetch(request){
         download_url:ok?LIB+"/download/"+encodeURIComponent(key):null},
         {headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
     }catch(e){return Response.json({ok:false,error:"Verifica temporaneamente non disponibile"},{status:503,headers:{"cache-control":"no-store"}})}
+  }
+  if(path==="/api/diagnose"){
+    const run=new URL(request.url).searchParams.get("run")||"";
+    if(!/^[1-9]\d{0,17}$/.test(run)){
+      return Response.json({ok:false,error:"ID run non valido"},{status:400,
+        headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
+    }
+    try{
+      const result=await getDiagnosis(run);
+      return Response.json(result,{status:result.ok?200:404,
+        headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
+    }catch(e){
+      return Response.json({ok:false,error:"Dettagli GitHub non raggiungibili"},{status:503,
+        headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
+    }
   }
   if(path==="/api/status"){
     try{return Response.json(await getStatus(),{headers:{"Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}})}
