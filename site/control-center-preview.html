@@ -748,7 +748,7 @@ function integritySection(){
       (url.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/")?
         '<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" href="'+escapeText(url)+'">Vedi il rapporto GitHub ↗</a>':'')+
       '<button type="button" class="repairButton" data-integrity-repair="'+escapeText(run.id)+'">◈ Analizza con GPT</button></div></div>';
-  }).join(""):'<div class="empty">Nessuna verifica integrale manuale V9 ancora osservata.</div>';
+  }).join(""):'<div class="empty">Nessun audit integrale V9 ancora osservato, né manuale né tramite richiesta GitHub.</div>';
   return h+'</div>';
 }
 

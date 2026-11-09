@@ -563,7 +563,7 @@ test("V8 service binding bypasses cross-worker 404 and makes catalog and Range p
   assert.ok(seen.every(x=>x.method==="GET"));
 });
 
-test("V9 integrity API only exposes manual GitHub artifact metadata, not actual SHA evidence",async()=>{
+test("V9 integrity lists both explicit request-file and manual runs, not PR CI",async()=>{
   const timestamp="2026-11-09T22:00:00Z";
   const worker=fixture({
     integrityRuns:[
@@ -574,18 +574,22 @@ test("V9 integrity API only exposes manual GitHub artifact metadata, not actual 
       {id:912,name:"Studio Integrity V9",event:"workflow_dispatch",head_branch:"feature",
        status:"completed",conclusion:"success",created_at:timestamp},
       {id:913,name:"Studio Integrity V9",event:"workflow_dispatch",head_branch:"main",
-       status:"in_progress",conclusion:null,created_at:timestamp,updated_at:timestamp}
+       status:"in_progress",conclusion:null,created_at:timestamp,updated_at:timestamp},
+      {id:914,name:"Studio Integrity V9",event:"push",head_branch:"main",
+       status:"completed",conclusion:"success",created_at:timestamp,updated_at:timestamp}
     ],
-    qaArtifacts:{910:[{name:"STUDIO_INTEGRITY_V9_ONE_MASTER",expired:false}]}
+    qaArtifacts:{910:[{name:"STUDIO_INTEGRITY_V9_ONE_MASTER",expired:false}],
+                 914:[{name:"STUDIO_INTEGRITY_V9_ONE_MASTER",expired:false}]}
   });
   const r=await worker.fetch(new Request("https://preview.example/api/integrity"));
   assert.equal(r.status,200);
   const body=await r.json();
   assert.equal(body.schema,"studio-integrity-metadata-v9");
   assert.equal(body.source_ok,true);
-  assert.equal(body.runs.length,2);
+  assert.equal(body.runs.length,3);
   assert.ok(body.runs.some(x=>x.id===910&&x.artifact_present===true));
   assert.ok(body.runs.some(x=>x.id===913&&x.artifact_present===null));
+  assert.ok(body.runs.some(x=>x.id===914&&x.event==="push"&&x.artifact_present===true));
   for(const x of ["report_contents_read","full_sha256_verified_by_dashboard",
                   "zip_crc_verified_by_dashboard","owner_approved","publish_authorized"])
     assert.equal(body[x],false,x);
