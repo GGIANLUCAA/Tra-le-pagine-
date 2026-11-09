@@ -208,32 +208,82 @@ function diary(){
   h+='<div class="panel">'+(filtered.length?filtered.map(diaryEntry).join(""):'<div class="empty">Nessun evento di questo tipo nel campione.</div>')+'</div>';
   return h;
 }
+function qaRow(label,ok,yes,no){
+  return '<div class="qaLine"><span>'+escapeText(label)+'</span><b class="'+(ok?'yes':'pending')+'">'+escapeText(ok?yes:no)+'</b></div>';
+}
+function sizeMB(n){
+  return Number(n)>0?(Number(n)/1048576).toLocaleString("it-IT",{maximumFractionDigits:1})+" MB":"Non dichiarata";
+}
+function slotCard(w,v,index){
+  var qa=v.qa||{};
+  var playable=!!(v.preview_ready&&v.media_url&&source("catalog"));
+  var found=!!(v.site_catalog&&source("catalog"));
+  var offline=found&&v.site_available===false;
+  var label=playable?"Visionabile nel catalogo":offline?"Catalogato ma offline":
+    !source("catalog")?"Catalogo non verificabile":v.recorded?"Scheda tecnica presente":"Variante non individuata";
+  var poster=playable?String(v.poster_url||""):"";
+  var src=playable?String(v.media_url||""):"";
+  var image=poster?'<img src="'+escapeText(poster)+'" loading="lazy" alt="" onerror="this.remove()">':'';
+  var file=v.filename?'<span class="slotFile">'+escapeText(v.filename)+'</span>':
+    '<span class="slotFile">MP4 non identificato nella scheda del registro</span>';
+  var play=playable?'<button type="button" class="slotPlay" data-play="'+escapeText(src)+
+    '" data-poster="'+escapeText(poster)+'" data-title="'+escapeText(w.title)+
+    '" data-version="'+escapeText(v.label)+'">▶ Guarda il video</button>':
+    '<button type="button" class="slotPlay" disabled>Anteprima non disponibile</button>';
+  var catalogStatus=!source("catalog")?"Fonte non disponibile":found?(offline?"Segnalato non disponibile":"Presente nel catalogo"):"Non individuato";
+  var panel='<details class="slotqa"><summary>Prove e qualità · dettagli</summary><div class="qaList">'+
+    '<div class="qaLine"><span>Catalogo pubblico</span><b class="'+(playable?'yes':offline?'no':'pending')+'">'+escapeText(catalogStatus)+'</b></div>'+
+    qaRow("SHA-256 MP4",qa.sha_recorded,"Registrato","Non documentato")+
+    qaRow("Decodifica FFmpeg",qa.decode_documented,"PASS nel registro","Non attestata")+
+    qaRow("Controllo ZIP",qa.zip_documented,"PASS nel registro","Non attestato")+
+    qaRow("Download SHA integrale",qa.site_full_sha_documented,"PASS storico","Non attestato")+
+    qaRow("Streaming parziale",qa.site_range_documented,"PASS storico","Non attestato")+
+    qaRow("Gold artistico V25",qa.gold_approved,"Approvato nel registro","Non attestato")+
+    '<div class="qaLine"><span>Dimensione dichiarata</span><b>'+escapeText(sizeMB(v.details?.bytes))+'</b></div>'+
+    (Number(v.details?.duration_s)>0?'<div class="qaLine"><span>Durata dichiarata</span><b>'+
+      escapeText(Number(v.details.duration_s).toLocaleString("it-IT"))+' secondi</b></div>':'')+
+    '</div>';
+  if(qa.human_review)panel+='<p class="note">Revisione riportata: '+escapeText(qa.human_review)+'</p>';
+  if(qa.rights_review)panel+='<p class="note">Diritti: '+escapeText(qa.rights_review)+'</p>';
+  if(v.technical_status)panel+='<p class="slotFile">Nota tecnica: '+escapeText(v.technical_status)+'</p>';
+  panel+='<div class="vtools">';
+  if(v.filename)panel+='<button type="button" class="probe" data-check="'+escapeText(v.filename)+'">Controlla adesso il download</button>';
+  if(v.run_id)panel+='<a href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/'+Number(v.run_id)+
+    '" target="_blank" rel="noopener noreferrer" class="link">Apri run GitHub ↗</a>';
+  panel+='<span class="probeResult" role="status" aria-live="polite"></span></div>'+
+    '<p class="slotFile">Le prove registrate sono storiche. La verifica attuale controlla soltanto 1.024 byte, non tutto il file.</p></details>';
+  return '<article class="slotCard"><div class="slotPoster"><span class="slotIndex">'+
+    String(index).padStart(2,"0")+'</span><span class="place">◈</span>'+image+'</div>'+
+    '<div class="slotBody"><span class="slotName">'+escapeText(v.label)+'</span>'+
+    '<span class="slotStatus '+(playable?'playable':offline?'unavailable':'')+'">'+escapeText(label)+'</span>'+
+    file+'<div class="slotActions">'+play+'</div>'+panel+'</div></article>';
+}
 function works(){
-  var d=state.data;
-  var out=sec("ArtVision 4×1","Quattro varianti per quadro, con schede tecniche e riscontri nell'archivio.");
-  if(!source("queue"))return out+'<div class="empty">La coda non è disponibile: nessun risultato stimato.</div>';
-  out+='<p class="note">Il contatore riporta le consegne registrate, NON master approvati. Le schede qui sotto indicano soltanto ciò che è documentato. Dalí escluso dalla produzione.</p><div class="workgrid">';
-  (d.works||[]).forEach(function(w){
+  var d=state.data||{},items=d.works||[];
+  var out=sec("Museo delle quattro versioni","Confronta Critico Classico, Critico Museum, Cinema Classico e Cinema Museum per ogni opera.");
+  if(!source("queue"))return out+'<div class="empty">Registro ArtVision momentaneamente non disponibile. Non mostro stati stimati.</div>';
+  out+='<div class="galleryGuide"><span>◈ Verde: MP4 presente nel catalogo</span>'+
+    '<span>◈ Oro: scheda tecnica o verifiche mancanti</span><span>◈ Rosso: file dichiarato offline</span></div>'+
+    '<div class="workControls"><div class="sub">'+items.length+' opere operative · nessun Gold dedotto</div>'+
+    '<div class="filters"><button type="button" data-gallery="open">Espandi tutte</button>'+
+    '<button type="button" data-gallery="close">Comprimi tutte</button></div></div>';
+  items.forEach(function(w,i){
     var n=Math.min(4,Math.max(0,Number(w.delivered)||0));
-    out+='<div class="panel"><div class="overline">'+escapeText(w.artist)+'</div><h3 style="font:normal 23px Georgia,serif;margin:10px 0">'+escapeText(w.title)+'</h3>'+badge(n+'/4 consegne nel registro',"neutral")+
+    var shown=Object.prototype.hasOwnProperty.call(state.workOpened,w.id)?state.workOpened[w.id]:i===0;
+    var online=(w.variants||[]).filter(function(v){return v.preview_ready}).length;
+    out+='<details class="workbook" data-work="'+escapeText(w.id)+'" '+(shown?'open':'')+'>'+
+      '<summary><span class="workEmblem">◈</span><span class="workHead"><strong>'+escapeText(w.title)+'</strong>'+
+      '<span>'+escapeText(w.artist)+' · '+n+'/4 consegne registrate · '+online+
+      ' anteprime individuate nel catalogo</span></span><span class="workChevron" aria-hidden="true">›</span></summary>'+
+      '<div class="workInner"><div class="workMeter"><span class="tag">4 versioni previste</span>'+
       '<div class="progress"><i style="width:'+(n*25)+'%"></i></div>'+
-      '<div class="kv"><span>Slot non ancora registrati nel conteggio</span><b>'+(4-n)+'</b></div>'+
-      '<div class="kv"><span>Museum approvato artisticamente</span><b>'+(w.museum_approved?"Sì, nel registro":"No, da verificare")+'</b></div>'+
-      '<div class="kv"><span>Slot con archivio verificato nel registro</span><b>'+(w.site_archive_verified_slots===null?"Non disponibile":escapeText(w.site_archive_verified_slots))+'</b></div>';
-    (w.variants||[]).forEach(function(v){
-      var st=v.recorded?badge("Scheda presente","neutral"):badge("Non individuata","wait");
-      var catalog=v.site_catalog?(v.site_available===false?"Catalogato ma segnalato non disponibile":"Presente nel catalogo pubblico"):"Non individuato nel catalogo pubblico";
-      var file=v.filename?'<span class="vline">'+escapeText(v.filename)+'</span>':'<span class="vline">MP4 non localizzato nella scheda selezionata</span>';
-      var tools=v.filename?'<div class="vtools"><button class="probe" data-check="'+escapeText(v.filename)+'" type="button">Verifica streaming e download</button>'+
-        (v.site_catalog?'<a class="link" href="'+site+'/media/'+encodeURIComponent(v.filename)+'" target="_blank" rel="noopener">Guarda MP4 ↗</a>':'')+
-        (v.run_id?'<a class="link" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/'+Number(v.run_id)+'" target="_blank" rel="noopener">Run GitHub ↗</a>':'')+
-        '<span class="probeResult" role="status" aria-live="polite"></span></div>':'';
-      out+='<div class="variant"><div class="vtop"><span class="vname">'+escapeText(v.label)+'</span>'+st+'</div>'+file+
-        '<div class="vline">'+escapeText(catalog)+(v.has_sha?" · Hash SHA presente nel registro":" · Hash MP4 non identificato")+'</div>'+tools+'</div>';
-    });
-    out+='<p class="sub">'+escapeText(w.note||"Nessuna nota tecnica sintetica")+'</p></div>';
+      '<span class="tag">'+n+'/4 nel registro</span></div>'+
+      '<div class="slotGrid">'+(w.variants||[]).map(function(v,j){return slotCard(w,v,j+1)}).join("")+'</div>'+
+      '<p class="workFoot">Museum approvato: <strong>'+(w.museum_approved?'sì nel registro':'non attestato')+
+      '</strong>. Gold finale: <strong>'+(w.gold_approved?'attestato':'non attestato')+
+      '</strong>. '+escapeText(w.note||"")+'</p></div></details>';
   });
-  return out+'</div>';
+  return out+'<p class="note">Un video può essere visibile ma non ancora approvato. Il pannello non sostituisce una visione completa, un audit SHA integrale o la revisione dei diritti.</p>';
 }
 function runs(){var d=state.data;var out=sec("Attività GitHub","Esecuzioni reali. Tocca una riga per leggere il workflow originale.");out+='<div class="tools"><div class="filters">'+["all","artvision","storia","wow","site"].map(function(k){return '<button data-filter="'+k+'" class="'+(state.filter===k?"on":"")+'">'+({all:"Tutte",artvision:"ArtVision",storia:"Storia Rivive",wow:"WOW LAB",site:"Sito"}[k])+'</button>'}).join("")+'</div><a class="link" target="_blank" rel="noopener" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions">Apri GitHub ↗</a></div>';if(!source("github"))return out+'<div class="empty">Non disponibile in questo momento.</div>';var list=(d.runs||[]).filter(function(r){return state.filter==="all"||(r.project||project(r.name))===state.filter});return out+'<div class="panel">'+(list.length?list.slice(0,40).map(rowRun).join(""):'<div class="empty">Nessuna esecuzione recente trovata.</div>')+'</div>'}
 function media(){var d=state.data;var out=sec("Videoteca","Anteprime pubbliche dal tuo archivio. La riproduzione e i download restano sul sito originale.");out+='<div class="tools"><input id="search" class="search" placeholder="Cerca le anteprime…" aria-label="Cerca video" value="'+escapeText(state.q)+'"><a class="link" href="'+site+'" target="_blank" rel="noopener">Apri catalogo ↗</a></div>';if(!source("catalog"))return out+'<div class="empty">Catalogo non raggiungibile.</div>';var items=(d.media||[]).filter(function(x){return String(x.title||x.key).toLowerCase().includes(state.q.toLowerCase())});out+='<p class="sub">Anteprime recenti: '+items.length+' visibili su '+d.catalog_count+' voci catalogate. Stato di download non certificato qui.</p><div class="gridmedia">';items.forEach(function(x){var src=site+'/cover/'+encodeURIComponent(String(x.key||"").replace(/\.(mp4|m4v|mov)$/i,""));out+='<article class="video"><div class="cover"><span>◈</span><img loading="lazy" alt="" onerror="this.remove()" src="'+escapeText(src)+'"></div><div class="videotxt"><span class="rowname">'+escapeText(x.title||x.key)+'</span><span class="sub">'+(x.available===false?"Segnalato non disponibile":"Nel catalogo · download da verificare")+'</span><a class="buttonlink" target="_blank" rel="noopener" href="'+site+'">Apri archivio ↗</a></div></article>'});return out+'</div>'}
