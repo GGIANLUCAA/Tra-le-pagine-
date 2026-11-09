@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="/icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ArtVision Control Center V5 — Studio operativo</title>
+<title>ArtVision Control Center V6 — Ripara con GPT</title>
 <style>
 :root{color-scheme:dark;--bg:#0c1118;--card:#181f27;--inner:#222a33;--edge:#38414a;--text:#f7f1e6;--sub:#afb7c0;--gold:#dfbe88;--green:#80cba9;--red:#e8a49d}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 65% 25% at 85% 0%,#634d2a26,transparent),var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.wrap{max-width:1320px;margin:0 auto;padding:0 23px 100px}
@@ -104,11 +104,36 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 .workFilterBar button.on{background:#493b29;border-color:#bb955b;color:#f3d5a4}
 @media(max-width:850px){.statLayout{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.statDetail{padding:12px}.statDetail big{font-size:25px}.metricRow{grid-template-columns:minmax(85px,1fr) minmax(70px,1fr) 30px;gap:7px;font-size:11px}.workSearch{width:100%}}
+
+/* V6 owner-friendly GPT repair handoff; no chat URL is sent to GitHub or Cloudflare */
+.repairHeader{padding:20px;background:linear-gradient(120deg,#463623,#212b34);border:1px solid #aa8758;border-radius:15px;margin:0 0 15px}
+.repairHeader h3{font:normal 27px Georgia,serif;color:#f5d7a7;margin:0 0 6px}.repairHeader p{color:#d3c9bb;font-size:12px;margin:0 0 12px}
+.repairGrid{display:flex;gap:10px;flex-wrap:wrap}.repairButton{min-height:40px;border:1px solid #d3b07c;background:#d3b07c;color:#221a14;border-radius:10px;font-size:12px;font-weight:750;padding:9px 12px}
+.repairButton.secondary{background:#27303a;border-color:#847256;color:#ead1aa}
+.repairButton:disabled{opacity:.52;cursor:default}
+.repairCard{border:1px solid #51525a;background:#1b222b;border-radius:14px;padding:15px;margin:11px 0}
+.repairCard .repairGrid{margin-top:12px}.repairMeta{font-size:11px;color:#b3bdc7;overflow-wrap:anywhere;margin:5px 0}
+.repairHint{font-size:11px;color:#dec59c;margin:9px 0}
+.chatDirectory{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.chatDirectory .repairCard{margin:0}.chatDirectory strong{font-size:13px;color:#f6ead8}.chatDirectory .repairMeta{margin-bottom:9px}
+#repairDialog{width:min(96vw,880px);max-height:96dvh;max-width:none;padding:0;border:1px solid #99805d;background:#111821;color:#f6efe3;border-radius:17px;overflow:auto}
+#repairDialog::backdrop{background:#02060be8;backdrop-filter:blur(7px)}
+.repairDialogHead{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;gap:12px;align-items:center;background:#222a34;border-bottom:1px solid #716047;padding:14px 16px}
+.repairDialogHead strong{font:normal 23px Georgia,serif;color:#efcc95}.repairDialogHead small{display:block;color:#bdc7cf;font-size:10px;margin-top:4px}
+.repairDialogBody{padding:15px}.repairSection{border:1px solid #414b54;border-radius:12px;padding:13px;margin:12px 0;background:#182129}
+.repairSection h3{font-size:13px;color:#edd6b5;margin:0 0 8px}.repairSection p{font-size:11px;color:#b7c3cc;margin:5px 0}
+.repairSection textarea{width:100%;min-height:225px;resize:vertical;background:#111720;border:1px solid #586270;color:#f5eadc;border-radius:10px;padding:12px;font-size:12px;line-height:1.55}
+.chatInput{width:100%;min-height:42px;border:1px solid #777774;background:#202a32;color:#fff;border-radius:9px;padding:10px 12px;margin:6px 0}
+.repairError{color:#f0aba1;font-size:11px}.repairPositive{color:#9adeb6;font-size:11px}
+.repairExplain{font-size:11px;color:#c4bdae;line-height:1.65}
+.repairStatus{display:block;font-size:11px;margin:9px 0;color:#e1c898}
+.repairCode{overflow-wrap:anywhere;color:#dac59e;font-size:11px}
+@media(max-width:630px){.chatDirectory{grid-template-columns:1fr}.repairHeader h3{font-size:23px}#repairDialog{width:100vw;height:100dvh;max-height:none;border:0;border-radius:0;margin:0}.repairDialogHead strong{font-size:20px}.repairDialogBody{padding:11px}.repairButton{min-height:44px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V5</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
+<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V6</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
 <section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Da fare per me · ◉ Salute produzioni · ▷ Diario verificabile</span></section>
 <div class="sync"><span class="pulse" id="pulse"></span><span id="synctext">Collegamento alle fonti reali…</span><span id="sources"></span></div>
 <div class="stats" id="stats"><div class="stat"><b>—</b><span>Workflow recenti</span></div><div class="stat"><b>—</b><span>In esecuzione</span></div><div class="stat"><b>—</b><span>Errori recenti</span></div><div class="stat"><b>—</b><span>Opere ArtVision</span></div></div>
@@ -116,17 +141,41 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <main id="content"><div class="empty">Lettura dei dati…</div></main>
 <footer>Anteprima indipendente. Nessuna operazione di scrittura. Dati pubblici del repository e del catalogo; le automazioni ChatGPT non sono monitorate direttamente. Workflow riuscito ≠ video finito o approvato.</footer>
 </div>
-<nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="todo"><span>⚑</span>Da fare</button><button data-page="works"><span>▣</span>Opere</button><button data-page="diary"><span>◷</span>Diario</button><button data-page="media"><span>▷</span>Video</button></nav>
+<nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="todo"><span>⚑</span>Da fare</button><button data-page="works"><span>▣</span>Opere</button><button data-page="issues"><span>⚑</span>Ripara GPT</button><button data-page="media"><span>▷</span>Video</button></nav>
 <dialog id="reviewPlayer" aria-labelledby="reviewPlayerTitle" aria-modal="true">
 <div class="playerHead"><div><strong id="reviewPlayerTitle">Anteprima del video</strong><small id="reviewPlayerSubtitle">Riproduzione dall'archivio originale</small></div>
 <button class="playerClose" type="button" id="reviewPlayerClose">✕ Chiudi</button></div>
 <div class="playerContent"><video id="reviewVideo" controls playsinline preload="metadata"></video>
 <p id="reviewPlayerError" class="playerError" role="status" hidden>Riproduzione non disponibile. Controlla il file nel catalogo.</p>
 <p class="playerNote">Il filmato arriva dal tuo Video Library Studio. La visione non dimostra approvazione artistica o integrità completa.</p></div></dialog>
+<dialog id="repairDialog" aria-modal="true" aria-labelledby="repairTitle">
+<div class="repairDialogHead"><div><strong id="repairTitle">Ripara con GPT</strong><small>Contesto verificabile pronto da usare in ChatGPT</small></div>
+<button type="button" class="playerClose" id="closeRepairDialog">✕ Chiudi</button></div>
+<div class="repairDialogBody">
+ <div class="repairSection"><h3>1 · Il problema individuato</h3><p id="repairSummary">Caricamento dei dettagli…</p>
+ <div id="repairJobs" class="repairExplain" role="status" aria-live="polite">Recupero dei job GitHub quando disponibili.</div></div>
+ <div class="repairSection"><h3>2 · Messaggio per GPT già preparato</h3>
+ <p>Include repository, run GitHub, eventuali step falliti e vincoli di sicurezza. Copialo prima di aprire la chat.</p>
+ <textarea id="repairPrompt" readonly aria-label="Contesto pronto per ChatGPT"></textarea>
+ <div class="repairGrid"><button type="button" class="repairButton" id="copyRepairPrompt">Copia diagnosi</button>
+ <button type="button" class="repairButton secondary" id="openNewGPT">Apri ChatGPT</button>
+ <button type="button" class="repairButton secondary" id="openRelatedChat" disabled>Apri chat principale</button></div>
+ <p id="repairCopyStatus" class="repairStatus" role="status" aria-live="polite"></p></div>
+ <div class="repairSection"><h3>3 · Collega la chat principale di questo progetto</h3>
+ <p id="repairChatLabel"></p>
+ <p>Incolla l'indirizzo privato della conversazione aperta nel browser, normalmente <code>chatgpt.com/c/…</code>.
+ Non incollare un link di condivisione <code>/share/</code>: è un'istantanea, non la tua chat modificabile.</p>
+ <input id="repairChatInput" class="chatInput" type="url" inputmode="url" autocomplete="off" spellcheck="false"
+ placeholder="https://chatgpt.com/c/…" aria-label="Indirizzo privato della chat principale">
+ <div class="repairGrid"><button type="button" class="repairButton secondary" id="saveRepairChat">Salva chat sul telefono</button>
+ <button type="button" class="repairButton secondary" id="forgetRepairChat">Scollega chat</button></div>
+ <p id="repairChatStatus" class="repairStatus" role="status" aria-live="polite"></p></div>
+ <p class="repairExplain">Il pannello non accede alle tue conversazioni private e non invia automaticamente richieste a GPT. Non modifica workflow o video. La riparazione parte soltanto quando incolli la diagnosi nella chat e la autorizzi.</p>
+</div></dialog>
 <script>
 (function(){
 "use strict";
-var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",statsWindow:"7d",q:"",stamp:0,loadError:null};
+var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null};
 var site="https://video-library-studio.600led.workers.dev";
 function escapeText(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function date(x){if(!x)return "non disponibile";var d=new Date(x);return isNaN(+d)?"non disponibile":d.toLocaleString("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
