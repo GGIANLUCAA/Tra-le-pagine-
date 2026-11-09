@@ -216,7 +216,7 @@ function overviewState(k){
 }
 function healthCard(x){
   var st=overviewState(x.state);
-  var ico={artvision:"◈",storia:"◉",wow:"✦"}[x.id]||"⌁";
+  var ico={artvision:"◈",storia:"◉",wow:"✦",books:"▤",music:"♫",documentary:"✺",cinema:"▷"}[x.id]||"⌁";
   return '<article class="healthCard"><div class="symbol">'+ico+'</div><h3>'+escapeText(x.label)+'</h3>'+
     '<span class="statusBadge '+st[1]+'">'+escapeText(st[0])+'</span>'+
     '<p>'+ (x.state==="unobserved"?"Nessuna esecuzione pertinente nel campione GitHub. Non significa produzione ferma.":x.state==="unknown"?"Informazioni GitHub temporaneamente non disponibili.":x.state==="attention"?"Almeno un workflow ha una ultima esecuzione non riuscita: apri i log per la causa.":x.state==="running"?"Almeno un workflow pertinente risulta in corso nel campione.":"Nel campione, l’ultimo workflow pertinente è riuscito.")+'</p>'+
@@ -259,6 +259,7 @@ function androidChatGPTIntent(value,allowHome){
 
 var PROJECT_LABELS={artvision:"ArtVision 4×1 · Produzione seriale",
   storia:"La Storia Rivive · Produzione 4–5",wow:"WOW LAB · Produzione autonoma",
+  books:"Libri narrati · Tra le Pagine",music:"Musica e visual",documentary:"Documentari e curiosità",cinema:"Cinema e cortometraggi",
   site:"Video Library Studio · Pubblicazione",other:"Altri workflow GitHub"};
 function allowedChatUrl(value){
   try{
@@ -646,7 +647,7 @@ function statisticsPage(){
   else {
     var items=[{value:act.observed,name:"Workflow osservati",tip:"Esecuzioni, non video"},{value:act.successful,name:"Esecuzioni riuscite",tip:"Successo tecnico"},{value:act.failed,name:"Esiti da controllare",tip:"Falliti, annullati o timeout"},{value:act.running,name:"In esecuzione",tip:"Non ancora completati"}];
     out+='<div class="statLayout">'+items.map(function(x){return '<div class="statDetail"><big>'+escapeText(x.value)+'</big><strong>'+escapeText(x.name)+'</strong><p>'+escapeText(x.tip)+'</p></div>'}).join("")+'</div>';
-    var projectList=[["ArtVision 4×1","artvision"],["La Storia Rivive","storia"],["WOW LAB","wow"],["Sito / Archivio","site"],["Altri workflow","other"]];
+    var projectList=[["ArtVision 4×1","artvision"],["La Storia Rivive","storia"],["WOW LAB","wow"],["Libri narrati","books"],["Musica e visual","music"],["Documentari","documentary"],["Cinema","cinema"],["Sito / Archivio","site"],["Altri workflow","other"]];
     var max=Math.max(1,...projectList.map(function(x){return Number(act.by_project?.[x[1]])||0}));
     out+='<div class="panel"><h3>Attività per programma</h3><p class="sub">Workflow del ramo principale, nel periodo selezionato.</p>'+
       projectList.map(function(p){var n=Number(act.by_project?.[p[1]])||0;return '<div class="metricRow"><span>'+escapeText(p[0])+'</span><div class="metricStrip"><i style="width:'+(n/max*100)+'%"></i></div><strong>'+n+'</strong></div>'}).join("")+
@@ -719,7 +720,7 @@ function works(){
   });
   return out+'<p class="note">Un video può essere visibile ma non ancora approvato. Il pannello non sostituisce una visione completa, un audit SHA integrale o la revisione dei diritti.</p>';
 }
-function runs(){var d=state.data;var out=sec("Attività GitHub","Esecuzioni reali. Tocca una riga per leggere il workflow originale.");out+='<div class="tools"><div class="filters">'+["all","artvision","storia","wow","site"].map(function(k){return '<button data-filter="'+k+'" class="'+(state.filter===k?"on":"")+'">'+({all:"Tutte",artvision:"ArtVision",storia:"Storia Rivive",wow:"WOW LAB",site:"Sito"}[k])+'</button>'}).join("")+'</div><a class="link" target="_blank" rel="noopener" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions">Apri GitHub ↗</a></div>';if(!source("github"))return out+'<div class="empty">Non disponibile in questo momento.</div>';var list=(d.runs||[]).filter(function(r){return state.filter==="all"||(r.project||project(r.name))===state.filter});return out+'<div class="panel">'+(list.length?list.slice(0,40).map(rowRun).join(""):'<div class="empty">Nessuna esecuzione recente trovata.</div>')+'</div>'}
+function runs(){var d=state.data;var out=sec("Attività GitHub","Esecuzioni reali. Tocca una riga per leggere il workflow originale.");out+='<div class="tools"><div class="filters">'+["all","artvision","storia","wow","books","music","documentary","cinema","site"].map(function(k){return '<button data-filter="'+k+'" class="'+(state.filter===k?"on":"")+'">'+({all:"Tutte",artvision:"ArtVision",storia:"Storia Rivive",wow:"WOW LAB",books:"Libri",music:"Musica",documentary:"Documentari",cinema:"Cinema",site:"Sito"}[k])+'</button>'}).join("")+'</div><a class="link" target="_blank" rel="noopener" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions">Apri GitHub ↗</a></div>';if(!source("github"))return out+'<div class="empty">Non disponibile in questo momento.</div>';var list=(d.runs||[]).filter(function(r){return state.filter==="all"||(r.project||project(r.name))===state.filter});return out+'<div class="panel">'+(list.length?list.slice(0,40).map(rowRun).join(""):'<div class="empty">Nessuna esecuzione recente trovata.</div>')+'</div>'}
 function media(){var d=state.data;var out=sec("Videoteca","Anteprime pubbliche dal tuo archivio. La riproduzione e i download restano sul sito originale.");out+='<div class="tools"><input id="search" class="search" placeholder="Cerca le anteprime…" aria-label="Cerca video" value="'+escapeText(state.q)+'"><a class="link" href="'+site+'" target="_blank" rel="noopener">Apri catalogo ↗</a></div>';if(!source("catalog"))return out+'<div class="empty">Catalogo non raggiungibile.</div>';var items=(d.media||[]).filter(function(x){return String(x.title||x.key).toLowerCase().includes(state.q.toLowerCase())});out+='<p class="sub">Anteprime recenti: '+items.length+' visibili su '+d.catalog_count+' voci catalogate. Stato di download non certificato qui.</p><div class="gridmedia">';items.forEach(function(x){var src=site+'/cover/'+encodeURIComponent(String(x.key||"").replace(/\.(mp4|m4v|mov)$/i,""));out+='<article class="video"><div class="cover"><span>◈</span><img loading="lazy" alt="" onerror="this.remove()" src="'+escapeText(src)+'"></div><div class="videotxt"><span class="rowname">'+escapeText(x.title||x.key)+'</span><span class="sub">'+(x.available===false?"Segnalato non disponibile":"Nel catalogo · download da verificare")+'</span><a class="buttonlink" target="_blank" rel="noopener" href="'+site+'">Apri archivio ↗</a></div></article>'});return out+'</div>'}
 function issues(){
   var d=state.data||{},attention=d.attention||[];
