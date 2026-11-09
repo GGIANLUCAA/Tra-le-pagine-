@@ -163,6 +163,64 @@ test("V4 mobile player markup is present and CSP permits only original video hos
   assert.match(backend,/frame-ancestors https:\/\/video-library-studio\.600led\.workers\.dev/);
   assert.match(backend,/if\(request.method!=="GET"\)/);
 });
+test("V5 statistics use actual dated sample, not inferred video output",async()=>{
+  const stamp=hours=>new Date(Date.now()-hours*3600000).toISOString();
+  const runs=[
+    {name:"ArtVision 4×1 · Produzione",workflow_id:11,head_branch:"main",status:"completed",conclusion:"success",updated_at:stamp(3)},
+    {name:"WOW LAB · Produzione",workflow_id:22,head_branch:"main",status:"completed",conclusion:"failure",updated_at:stamp(8)},
+    {name:"La Storia Rivive · Produzione",workflow_id:33,head_branch:"main",status:"completed",conclusion:"success",updated_at:stamp(48)},
+    {name:"Control Center tests",workflow_id:44,head_branch:"preview/test",status:"completed",conclusion:"failure",updated_at:stamp(4)},
+    {name:"Old archive run",workflow_id:55,head_branch:"main",status:"completed",conclusion:"success",updated_at:stamp(250)}
+  ];
+  const catalog={items:[
+    {key:"ONE.mp4",uploaded:stamp(27),available:true},
+    {key:"TWO.mp4",uploaded:stamp(9*24),available:false},
+    {key:"THREE.mp4",available:null}
+  ]};
+  const worker=fixture({runs,catalog});
+  const data=await (await worker.fetch(new Request("https://preview.example/api/status"))).json();
+  assert.equal(data.statistics.activity_24h.observed,2);
+  assert.equal(data.statistics.activity_24h.successful,1);
+  assert.equal(data.statistics.activity_24h.failed,1);
+  assert.equal(data.statistics.activity_7d.observed,3);
+  assert.equal(data.statistics.activity_7d.by_project.artvision,1);
+  assert.equal(data.statistics.activity_7d.by_project.storia,1);
+  assert.equal(data.statistics.activity_7d.by_project.wow,1);
+  assert.equal(data.statistics.catalogue.entries,3);
+  assert.equal(data.statistics.catalogue.explicitly_available,1);
+  assert.equal(data.statistics.catalogue.explicitly_offline,1);
+  assert.equal(data.statistics.catalogue.availability_unknown,1);
+  assert.equal(data.statistics.catalogue.dated_imports_7d,1);
+  assert.equal(data.statistics.artvision.expected_slots,4);
+  assert.equal(data.statistics.artvision.registered_deliveries,2);
+  assert.match(data.statistics.scope.github_window,/100/);
+});
+test("V5 has both top metrics and analytics page, plus gallery filters",()=>{
+  assert.equal((html.match(/function stats\(\)/g)||[]).length,1);
+  assert.equal((html.match(/function statisticsPage\(\)/g)||[]).length,1);
+  assert.match(html,/data-page="stats"/);
+  assert.match(html,/data-stats-window="24h"/);
+  assert.match(html,/data-work-filter="playable"/);
+  assert.match(html,/data-work-filter="missing"/);
+  assert.match(html,/id="workSearch"/);
+});
+test("V5 Android manifest provides a standalone icon and never writes video data",async()=>{
+  const worker=fixture();
+  const manifest=await worker.fetch(new Request("https://preview.example/manifest.webmanifest"));
+  assert.equal(manifest.status,200);
+  const app=await manifest.json();
+  assert.equal(app.name,"ArtVision Control Center");
+  assert.equal(app.display,"standalone");
+  assert.ok(app.icons.some(x=>x.sizes==="192x192"));
+  assert.ok(app.icons.some(x=>x.sizes==="512x512"));
+  const icon=await worker.fetch(new Request("https://preview.example/icon.svg"));
+  assert.equal(icon.status,200);
+  assert.match(await icon.text(),/<svg/);
+  assert.match(backend,/manifest-src 'self'/);
+  assert.match(html,/rel="manifest"/);
+  const deny=await worker.fetch(new Request("https://preview.example/api/status",{method:"POST"}));
+  assert.equal(deny.status,405);
+});
 test("On-demand range probe does not claim full SHA",async()=>{
   const worker=fixture();
   const res=await worker.fetch(new Request("https://preview.example/api/check?key=SIMBERG_CINEMA.mp4"));
