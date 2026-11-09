@@ -47,6 +47,17 @@ jobs:
           test "$invalid_status" = "400"
           echo "Mutation rejected (405), unsafe media key rejected (400)."
 
+      - name: Check public site versus automated-client restrictions (no private data)
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://video-library-studio.600led.workers.dev"
+          for path in "/" "/api/catalog"; do
+            for agent in "curl/8.0" "Mozilla/5.0"; do
+              code=$(curl -sS --location --max-time 20 -A "$agent" -o /dev/null -w '%{http_code}' "$BASE$path" || true)
+              printf 'Site status path=%s agent=%s code=%s\n' "$path" "$agent" "$code"
+            done
+          done
       - name: Read-only sample MP4 range probe (max 3 × 1024 bytes)
         shell: bash
         run: |
