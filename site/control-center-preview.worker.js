@@ -1,7 +1,7 @@
 /* ArtVision Control Center V1 — separate read-only preview. No account secrets, no writes. */
 const REPO="GGIANLUCAA/Tra-le-pagine-";
 const LIB="https://video-library-studio.600led.workers.dev";
-const UI="https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/e7b4b9f4b97e51426be7f0fcb32b635020f5d669/site/control-center-preview.html";
+const UI="https://raw.githubusercontent.com/GGIANLUCAA/Tra-le-pagine-/preview/artvision-control-center-v1/site/control-center-preview.html";
 let snapshot=null,snapshotAt=0,pending=null,page=null,pageAt=0;
 async function json(url,github=false){
   const response=await fetch(url,{headers:github?{"Accept":"application/vnd.github+json","User-Agent":"ArtVision-ControlCenter-Readonly"}:{"Accept":"application/json"},cf:{cacheTtl:75,cacheEverything:true}});
