@@ -31,7 +31,7 @@ def key(record):
 
 def plan(queue, sources, checkpoints):
     priority = queue["selected_works"]
-    registry = sources["selected_works"]
+    registry = sources["works"]
     if len(priority) != 30 or len(registry) != 30:
         raise ValueError("Expected exactly the 30 owner-selected works")
     qm, sm = {key(w): w for w in priority}, {key(w): w for w in registry}
