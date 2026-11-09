@@ -86,6 +86,10 @@ function projectForRun(name){
   if(/control.center|video.library|library.studio|site.smoke|site.download|import|enrich|editorial.dossier|catalog/.test(s))return "site";
   if(/wow[\s_-]*lab/.test(s))return "wow";
   if(/storia[\s_-]*rivive|restauro.storic|restoration|storico/.test(s))return "storia";
+  if(/libri|audiolibri|libro|narrat|tra[\s_-]*le[\s_-]*pagine|siddharta|ventimila[\s_-]*leghe/.test(s))return "books";
+  if(/documentar|terracotta|curiosit|national.geographic/.test(s))return "documentary";
+  if(/musica|music[\s_-]*motion|hyperlumen|visual[\s_-]*music|mozart/.test(s))return "music";
+  if(/cinema[\s_-]*reale|cortometragg|short[\s_-]*film/.test(s))return "cinema";
   if(/artvision|art.vision|critico|museum|bruegel|rembrandt|waterhouse|simberg|delacroix|blake/.test(s))return "artvision";
   return "other";
 }
@@ -103,7 +107,7 @@ function latestByWorkflow(runs){
   return latest;
 }
 function deriveOverview(runs,works,rows,sources){
-  const projects=[["artvision","ArtVision 4×1"],["storia","La Storia Rivive"],["wow","WOW LAB"]];
+  const projects=[["artvision","ArtVision 4×1"],["storia","La Storia Rivive"],["wow","WOW LAB"],["books","Libri narrati"],["music","Musica e visual"],["documentary","Documentari e curiosità"],["cinema","Cinema e cortometraggi"]];
   const main=runs.filter(r=>!r.head_branch||r.head_branch==="main");
   const latest=latestByWorkflow(main);
   const health=projects.map(([id,label])=>{
@@ -171,7 +175,7 @@ function buildStatistics(runs,works,rows,sources){
       const timestamp=realDate(r.updated_at);
       return timestamp!==null&&now-timestamp>=0&&now-timestamp<=days*86400000;
     });
-    const byProject={artvision:0,storia:0,wow:0,site:0,other:0};
+    const byProject={artvision:0,storia:0,wow:0,books:0,music:0,documentary:0,cinema:0,site:0,other:0};
     for(const r of recent)byProject[r.project] =(byProject[r.project]||0)+1;
     return {observed:recent.length,successful:recent.filter(r=>r.status==="completed"&&r.conclusion==="success").length,
       failed:recent.filter(r=>r.status==="completed"&&BAD_CONCLUSIONS.has(r.conclusion)).length,
