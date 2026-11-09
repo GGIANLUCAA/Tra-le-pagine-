@@ -229,3 +229,12 @@ Dopo test Android della V2 e controllo dei dati, integrare soltanto il link nell
 **Conferma**: i test online su GitHub Actions [run #42699342427](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42699342427) passano; `sources.catalog.ok=true`, i primi 1024 byte di tre MP4 sono stati letti via pannello e confrontati con HTTP 206 del sito originale. **Non equivalgono** a una verifica dell'intero MP4, dello ZIP, dell'hash SHA-256 o del Gold artistico.
 
 **Manutenzione**: qualsiasi nuovo deployment deve includere il binding `VIDEO_LIBRARY`; il solo output di `scripts/build-control-center-preview.mjs` non configura automaticamente i binding Cloudflare. Nel sito principale il Centro di controllo è già raggiungibile tramite l'area amministratore incorporata. Il Worker dell'anteprima mostra esclusivamente metadati pubblici anche se il link è nella sezione privata.
+
+## V9 · Audit integrale dei master e pacchetti ZIP, senza falsi Gold
+- L'API `GET /api/integrity` interroga gli ultimi audit manuali `studio-integrity-v9.yml` e i soli metadati degli artifact, tutti di sola lettura. Una run `success` non dimostra automaticamente che il video sia Gold: il JSON interno non viene scaricato dal pannello.
+- In **Qualità e prove** compare una sezione con storico, link per avvio manuale GitHub, link al rapporto e pulsante diagnostico GPT. Nessun comando del pannello avvia automaticamente il controllo.
+- `src/studio_integrity_v9.py` effettua HTTP 206 sui primi 1024 byte, poi scarica **un solo MP4 esistente** verificando dimensione reale e SHA256 atteso dalla lista V161. Controlla i limiti di download, rifiuta redirect e URL esterni.
+- Per gli ZIP locali V55, calcola hash e CRC degli elementi, verifica video, cover, quattro post e fonti; niente lettura di ZIP da ChatGPT se non realmente accessibili.
+- Corretto il tristato `available` nel feed `media`: `null` resta **sconosciuto**, mai 'disponibile'.
+- Richiesta GitHub opzionale e limitata a un solo file `requests/site/studio_integrity_v9_request.json`; il suo commit avvia la prova, senza scheduler/autoriparazione del renderer. Prima prova con un master pinnato.
+- Anche con hash MP4 e ZIP validi restano necessari licenza, QA effettiva, esame artistico e consenso esplicito per la pubblicazione. Il Worker principale del sito e i video rimangono invariati.

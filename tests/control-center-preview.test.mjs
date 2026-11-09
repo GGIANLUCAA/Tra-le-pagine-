@@ -36,6 +36,10 @@ function fixture(options={}){
   const responses=[runs,options.queue||queue,catalog];
   async function fetchStub(url){
     const href=String(url);
+    if(href.includes("/actions/workflows/studio-integrity-v9.yml/runs?")){
+      return new Response(JSON.stringify({workflow_runs:options.integrityRuns||[]}),{
+        status:options.failIntegrity?503:200,headers:{"content-type":"application/json"}});
+    }
     if(href.includes("/actions/workflows/quality-director-v17.yml/runs?")){
       return new Response(JSON.stringify({workflow_runs:options.qaRuns||[]}),{
         status:options.failQa?503:200,headers:{"content-type":"application/json"}});
@@ -557,4 +561,62 @@ test("V8 service binding bypasses cross-worker 404 and makes catalog and Range p
   assert.ok(seen.some(x=>x.url.endsWith("/api/catalog")));
   assert.ok(seen.some(x=>x.range==="bytes=0-1023"));
   assert.ok(seen.every(x=>x.method==="GET"));
+});
+
+test("V9 integrity API only exposes manual GitHub artifact metadata, not actual SHA evidence",async()=>{
+  const timestamp="2026-11-09T22:00:00Z";
+  const worker=fixture({
+    integrityRuns:[
+      {id:910,name:"Studio Integrity V9",event:"workflow_dispatch",head_branch:"main",
+       status:"completed",conclusion:"success",created_at:timestamp,updated_at:timestamp},
+      {id:911,name:"Studio Integrity V9",event:"pull_request",head_branch:"main",
+       status:"completed",conclusion:"success",created_at:timestamp},
+      {id:912,name:"Studio Integrity V9",event:"workflow_dispatch",head_branch:"feature",
+       status:"completed",conclusion:"success",created_at:timestamp},
+      {id:913,name:"Studio Integrity V9",event:"workflow_dispatch",head_branch:"main",
+       status:"in_progress",conclusion:null,created_at:timestamp,updated_at:timestamp}
+    ],
+    qaArtifacts:{910:[{name:"STUDIO_INTEGRITY_V9_ONE_MASTER",expired:false}]}
+  });
+  const r=await worker.fetch(new Request("https://preview.example/api/integrity"));
+  assert.equal(r.status,200);
+  const body=await r.json();
+  assert.equal(body.schema,"studio-integrity-metadata-v9");
+  assert.equal(body.source_ok,true);
+  assert.equal(body.runs.length,2);
+  assert.ok(body.runs.some(x=>x.id===910&&x.artifact_present===true));
+  assert.ok(body.runs.some(x=>x.id===913&&x.artifact_present===null));
+  for(const x of ["report_contents_read","full_sha256_verified_by_dashboard",
+                  "zip_crc_verified_by_dashboard","owner_approved","publish_authorized"])
+    assert.equal(body[x],false,x);
+});
+test("V9 fails closed when exact-audit GitHub endpoint cannot be read",async()=>{
+  const r=await fixture({failIntegrity:true}).fetch(new Request("https://preview.example/api/integrity"));
+  assert.equal(r.status,200);
+  const body=await r.json();
+  assert.equal(body.source_ok,false);
+  assert.deepEqual(Array.from(body.runs),[]);
+  assert.equal(body.full_sha256_verified_by_dashboard,false);
+});
+test("V9 integrity UI, manual workflow link and strict read-only endpoint",async()=>{
+  assert.match(html,/function integritySection\(\)/);
+  assert.match(html,/function loadIntegrity\(force\)/);
+  assert.match(html,/function loadEvidence\(force\)/);
+  assert.match(html,/data-integrity-refresh/);
+  assert.match(html,/data-integrity-repair/);
+  assert.match(html,/studio-integrity-v9\.yml/);
+  assert.match(html,/SHA non letto dal pannello/);
+  assert.match(backend,/\/api\/integrity/);
+  const worker=fixture();
+  const post=await worker.fetch(new Request("https://preview.example/api/integrity",{method:"POST"}));
+  assert.equal(post.status,405);
+});
+test("V9 unknown catalog media flags remain unknown rather than falsely available",async()=>{
+  const data=await (await fixture({catalog:{items:[
+    {key:"KNOWN.mp4",available:true},{key:"UNCERTAIN.mp4",available:null},
+    {key:"OFFLINE.mp4",available:false}
+  ]}}).fetch(new Request("https://preview.example/api/status"))).json();
+  assert.equal(data.media.find(x=>x.key==="KNOWN.mp4").available,true);
+  assert.equal(data.media.find(x=>x.key==="UNCERTAIN.mp4").available,null);
+  assert.equal(data.media.find(x=>x.key==="OFFLINE.mp4").available,false);
 });

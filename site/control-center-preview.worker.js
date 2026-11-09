@@ -316,7 +316,7 @@ async function gather(videoService){
         Number.isFinite(Number(w.site_archive_verified_slots))?Number(w.site_archive_verified_slots):null,
       variants:slotDefs.map(s=>pickSlot(w,s))}));
   const media=rows.slice().sort((a,b)=>Date.parse(b.uploaded||b.gptCreatedAt||0)-Date.parse(a.uploaded||a.gptCreatedAt||0)).slice(0,24).map(x=>({
-    key:clip(x.key||x.name,190),title:clip(x.title||x.name||x.key,180),available:x.available===false?false:true
+    key:clip(x.key||x.name,190),title:clip(x.title||x.name||x.key,180),available:x.available===true?true:x.available===false?false:null
   }));
   const overview=deriveOverview(runs,works,rows,sources);
   const statistics=buildStatistics(runs,works,rows,sources);
@@ -382,6 +382,56 @@ async function getQuality(videoService){
     qualitySnapshot=r;qualityAt=Date.now();return r
   }).finally(()=>{qualityPending=null});
   return qualityPending;
+}
+
+// Manual exact-SHA audit runs are evidence that GitHub executed a check,
+// NOT proof of a matching master until the report artifact is actually read.
+let integritySnapshot=null,integrityAt=0,integrityPending=null;
+async function gatherIntegrity(){
+  let feed;
+  try{
+    feed=await json("https://api.github.com/repos/"+REPO+
+      "/actions/workflows/studio-integrity-v9.yml/runs?per_page=20",true);
+    if(!Array.isArray(feed.workflow_runs))throw new Error("Unexpected workflow list");
+  }catch(e){
+    return {schema:"studio-integrity-metadata-v9",asof:new Date().toISOString(),
+      source_ok:false,runs:[],error:"Elenco degli audit GitHub non accessibile.",
+      report_contents_read:false,full_sha256_verified_by_dashboard:false,
+      zip_crc_verified_by_dashboard:false,owner_approved:false,publish_authorized:false};
+  }
+  const selected=feed.workflow_runs.filter(r=>r.event==="workflow_dispatch"&&
+    r.head_branch==="main").sort((a,b)=>Date.parse(b.created_at||0)-Date.parse(a.created_at||0)).slice(0,5);
+  const runs=await Promise.all(selected.map(async r=>{
+    const id=Number(r.id);
+    const out={id:Number.isSafeInteger(id)&&id>0?id:null,
+      name:clip(r.name,140),status:clip(r.status,35),conclusion:clip(r.conclusion,35),
+      updated_at:clip(r.updated_at,40),event:"workflow_dispatch",
+      run_url:Number.isSafeInteger(id)&&id>0?"https://github.com/"+REPO+"/actions/runs/"+id:null,
+      artifact_metadata_checked:false,artifact_present:null,artifact_expired:null};
+    if(out.id&&out.status==="completed"){
+      try{
+        const response=await json("https://api.github.com/repos/"+REPO+
+          "/actions/runs/"+id+"/artifacts?per_page=30",true);
+        if(!Array.isArray(response.artifacts))throw new Error("Bad artifact list");
+        const a=response.artifacts.find(x=>x.name==="STUDIO_INTEGRITY_V9_ONE_MASTER");
+        out.artifact_metadata_checked=true;out.artifact_present=!!a;
+        if(a)out.artifact_expired=a.expired===true;
+      }catch(e){out.artifact_metadata_checked=false;}
+    }
+    return out;
+  }));
+  return {schema:"studio-integrity-metadata-v9",asof:new Date().toISOString(),
+    source_ok:true,runs,report_contents_read:false,
+    full_sha256_verified_by_dashboard:false,zip_crc_verified_by_dashboard:false,
+    owner_approved:false,publish_authorized:false,
+    info:"The downloadable report may contain exact SHA proof, but this dashboard only reads artifact metadata."};
+}
+async function getIntegrity(){
+  if(integritySnapshot&&Date.now()-integrityAt<90000)return integritySnapshot;
+  if(!integrityPending)integrityPending=gatherIntegrity().then(v=>{
+    integritySnapshot=v;integrityAt=Date.now();return v
+  }).finally(()=>{integrityPending=null});
+  return integrityPending;
 }
 
 async function getStatus(videoService){
@@ -465,6 +515,15 @@ export default {async fetch(request,env){
         download_url:ok?LIB+"/download/"+encodeURIComponent(key):null},
         {headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
     }catch(e){return Response.json({ok:false,error:"Verifica temporaneamente non disponibile"},{status:503,headers:{"cache-control":"no-store"}})}
+  }
+  if(path==="/api/integrity"){
+    try{return Response.json(await getIntegrity(),{headers:{
+      "cache-control":"no-store","x-content-type-options":"nosniff"}})}
+    catch(e){return Response.json({schema:"studio-integrity-metadata-v9",source_ok:false,
+      runs:[],report_contents_read:false,full_sha256_verified_by_dashboard:false,
+      zip_crc_verified_by_dashboard:false,owner_approved:false,publish_authorized:false,
+      error:"Audit GitHub temporaneamente non disponibile."},
+      {status:503,headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}})}
   }
   if(path==="/api/quality"){
     try{return Response.json(await getQuality(env?.VIDEO_LIBRARY),{headers:{
