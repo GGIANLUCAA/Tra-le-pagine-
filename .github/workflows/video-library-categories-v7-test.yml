@@ -1,0 +1,39 @@
+name: Video Library Studio · categorie editoriali V7
+on:
+  push:
+    branches: [feature/video-library-all-categories-v7]
+    paths:
+      - 'site/video-library-v2.html'
+      - 'tests/video_library_categories_v7.test.cjs'
+      - '.github/workflows/video-library-categories-v7-test.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'site/video-library-v2.html'
+      - 'tests/video_library_categories_v7.test.cjs'
+      - '.github/workflows/video-library-categories-v7-test.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate categories and original Studio integration
+        run: node --test tests/video_library_categories_v7.test.cjs tests/control_center_private_integration.test.cjs
+      - name: Check no video/upload workflow was added
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("site/video-library-v2.html").read_text()
+          assert "CATEGORY_WORLDS" in s
+          assert s.count('id="collectionGrid"')==1
+          assert s.count('id="controlCenterFrame"')==1
+          assert s.count('id="readyRail"')==1
+          assert len(s)<220000
+          print("PASS: category navigation only, archive preserved")
+          PY
