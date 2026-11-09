@@ -4,12 +4,18 @@ on:
     branches: ["feature/giuliano-terracotta-20261109"]
     paths:
       - "giuliano/terracotta/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "giuliano/terracotta/**"
       - ".github/workflows/giuliano-terracotta.yml"
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   render:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 65
     env:
@@ -44,3 +50,49 @@ jobs:
             output/giuliano_terracotta/QA.json
           if-no-files-found: error
           retention-days: 14
+
+  report-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - name: Monitor isolated push render without generating again
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import os,requests,time
+          repo=os.environ["GH_REPO"]
+          uri=f"https://api.github.com/repos/{repo}/actions/runs"
+          headers={"Authorization":f"Bearer {os.environ['GH_TOKEN']}",
+                   "Accept":"application/vnd.github+json"}
+          found=None
+          for _ in range(40):
+              r=requests.get(uri,headers=headers,params={
+                  "branch":"feature/giuliano-terracotta-20261109",
+                  "event":"push","per_page":40},timeout=20)
+              r.raise_for_status()
+              runs=[a for a in r.json().get("workflow_runs",[])
+                    if a.get("name")=="Giuliano - Terracotta Army Critico"]
+              if runs:
+                  found=runs[0]
+                  print("RENDER_RUN_ID:",found["id"],"STATUS:",found["status"],
+                        "CONCLUSION:",found.get("conclusion"),
+                        "URL:",found.get("html_url"),flush=True)
+                  if found["status"]=="completed":break
+              else:
+                  print("No push render workflow run found yet",flush=True)
+              time.sleep(18)
+          if not found:raise RuntimeError("Render push not observed")
+          if found["status"]!="completed":raise RuntimeError("Render not yet complete")
+          r=requests.get(found["artifacts_url"],headers=headers,timeout=25)
+          r.raise_for_status()
+          print("ARTIFACTS:",[(a.get("id"),a.get("name"),a.get("expired"))
+                              for a in r.json().get("artifacts",[])],flush=True)
+          if found.get("conclusion")!="success":
+              raise RuntimeError("Render failed; do not claim downloadable MP4")
+          if not any(a.get("name")=="GIULIANO_TERRACOTTA_CRITICO_REVIEW"
+              for a in r.json().get("artifacts",[])):
+              raise RuntimeError("Render success but no video artifact")
+          PY
