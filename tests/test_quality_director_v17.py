@@ -91,7 +91,7 @@ class QualityDirectorTests(unittest.TestCase):
 
     def test_all_six_format_profiles(self):
         policy=json.loads((ROOT/'config'/'quality_director_v17.json').read_text(encoding='utf-8'))
-        self.assertEqual(set(policy['formats']),{'libri','artvision_cinema','artvision_critico','controluce','visual_music','hyperlumen'})
+        self.assertEqual(set(policy['formats']),{'libri','artvision_cinema','artvision_critico','controluce','visual_music','hyperlumen','documentario','giuliano','storia_rivive','wow_lab'})
 
     @unittest.skipUnless(shutil.which('ffmpeg') and shutil.which('ffprobe'),'ffmpeg/ffprobe missing')
     def test_real_video_and_black_preview(self):
