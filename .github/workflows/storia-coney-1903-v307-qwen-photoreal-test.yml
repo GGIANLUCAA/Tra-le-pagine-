@@ -1,0 +1,241 @@
+name: "La Storia Rivive · CONEY 1903 V307 · new free Qwen I2I remaster test"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-coney-1903-v307-qwen-photoreal-test.yml"
+permissions:
+  actions: read
+  contents: write
+  issues: write
+concurrency:
+  group: storia-coney-1903-v307-free-photo-once
+  cancel-in-progress: false
+jobs:
+  alternate_provider_real_photo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Get identical source frames and verified movement from failed V306, no 303MB duplicate
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_coney_1903_v307
+          gh run download 42585256703 --repo "$GITHUB_REPOSITORY" \
+            --name STORIA_CONEY_1903_V305_REAL_VISUAL_REVIEW_OR_FAIL_REPORT \
+            --dir output/storia_coney_1903_v307
+          cd output/storia_coney_1903_v307
+          echo "20d7fbfc74e7394655fd1a7cb1c0dc508365722f4bbf683e0c4b7c13012ed2aa  CONEY_1903_GENUINE_MOVEMENT.mp4" | sha256sum --check --status
+          echo "eef250bf45095efc4c7b673ff51bf137d286b18a720e001bb258552eb6354ce2  ORIGINAL_BW_ANCHOR.png" | sha256sum --check --status
+          python - <<'PY'
+          import json
+          p=json.load(open('SOURCE_SHOT_SELECTION.json'))
+          assert p['source_sha256']=='f3458277cb1bb86964fd5effa1f621dfa2c3676fd489939017ccbee190a18408'
+          assert p['real_movement_scene_break_candidates']==[]
+          print('REUSED_AUTHENTIC_FILM_SOURCE_SHA_1903_CONFIRMED')
+          PY
+      - name: Install only free video and public Gradio dependencies
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "pillow>=10,<13" "gradio_client>=1.0,<3" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1"
+      - name: One truly different free public image edit provider and real moving-video result
+        run: |
+          set -euo pipefail
+          timeout 570 python -u - <<'PY'
+          import cv2,numpy as np,sys,pathlib,os,hashlib,json,subprocess,zipfile
+          from PIL import Image,ImageDraw,ImageFont
+          from gradio_client import Client,handle_file
+          root=pathlib.Path("output/storia_coney_1903_v307")
+          sys.path.insert(0,str(pathlib.Path("src").resolve()))
+          def sha(p):
+              h=hashlib.sha256()
+              with open(p,"rb") as f:
+                  for ch in iter(lambda:f.read(1048576),b""):h.update(ch)
+              return h.hexdigest()
+          def save(name,obj):
+              (root/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n")
+          def cmd(args,timeout=320):
+              res=subprocess.run(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,timeout=timeout)
+              if res.returncode:raise RuntimeError(res.stderr[-600:])
+          report={"title":"CONEY ISLAND 1903 · remaster V307 (existing genuine LOC film)",
+             "source_url":"https://www.loc.gov/item/00563608/",
+             "original_archive_sha256":"f3458277cb1bb86964fd5effa1f621dfa2c3676fd489939017ccbee190a18408",
+             "clip_sha256":"20d7fbfc74e7394655fd1a7cb1c0dc508365722f4bbf683e0c4b7c13012ed2aa",
+             "source_filmed":"July 3, 1903","artist":"G. W. Bitzer (died 1944)",
+             "rights_italy_and_US_independent_review":"PENDING",
+             "provider":"Qwen/Qwen-Image-Edit-2509 public Space (Apache-2.0 model)",
+             "previous_provider_finegrain_photo_gate":"FAIL almost monochrome; NOT repeated",
+             "provider_attempts_this_run":0,"paid_calls":0,"vidu_calls":0,
+             "output_to_site_or_social":False,"editorial_approval":False}
+          try:
+              original=cv2.imread(str(root/"ORIGINAL_BW_ANCHOR.png"))
+              base=cv2.imread(str(root/"COLOR_CONDITIONING_ANCHOR.png"))
+              assert original is not None and base is not None and original.shape==(576,720,3)
+              prompt=("Restore and colorize the old photo. Make a highly photorealistic modern optical color photograph "
+                     "of EXACTLY the same 1903 Coney Island wooden Shoot-the-Chutes water-slide in the input frame. "
+                     "Maintain the identical bridge arches, tower, flags, chute rails, boat, water surface, splash, "
+                     "person count, positions and clothing. Real old timber, deep dark pond water, stone, daylight, "
+                     "natural shadows and lifelike subtle period clothing hues. Crisp coherent photography instead "
+                     "of flat recolorization. Absolutely no added people, eyes, limbs, boats, railings, buildings or signs.")
+              save("QWEN_FREE_TRIAL.json",{"status":"SINGLE_ATTEMPT_STARTED","provider":report["provider"],"paid_calls":0})
+              c=Client("Qwen/Qwen-Image-Edit-2509",verbose=False)
+              report["provider_attempts_this_run"]=1
+              # Gallery expects a pair [file,caption]; optional prompt rewrite disabled to avoid requiring Dashscope API.
+              output=c.predict([[handle_file(str(root/"COLOR_CONDITIONING_ANCHOR.png")),None]],
+                      prompt,42,False,4.0,24,576,720,False,api_name="/infer")
+              gallery=output[0] if isinstance(output,(list,tuple)) else output
+              if isinstance(gallery,list):gallery=gallery[0]
+              if isinstance(gallery,(tuple,list)):gallery=gallery[0]
+              if isinstance(gallery,dict):
+                  gallery=gallery.get("image",gallery)
+                  if isinstance(gallery,dict):gallery=gallery.get("path",gallery.get("name"))
+              photo=cv2.imread(str(gallery))
+              assert photo is not None and photo.size>100000,"QWEN_PROVIDER_RETURNED_NO_IMAGE"
+              photo=cv2.resize(photo,(720,576))
+              photo_path=root/"TRUE_QWEN_I2I_PHOTO.png"
+              cv2.imwrite(str(photo_path),photo)
+              save("QWEN_FREE_TRIAL.json",{"status":"ACTUAL_FREE_GENERATIVE_I2I_RETURNED",
+                   "provider":report["provider"],"paid_calls":0,"photo_sha256":sha(photo_path)})
+              def similarity(a,b):
+                  def g(z):
+                      f=cv2.cvtColor(cv2.resize(z,(96,96)),cv2.COLOR_BGR2GRAY)
+                      return cv2.GaussianBlur(f,(5,5),0).astype(np.float32).ravel()
+                  return float(np.corrcoef(g(a),g(b))[0,1])
+              corr=similarity(original,photo)
+              sat=float(cv2.cvtColor(photo,cv2.COLOR_BGR2HSV)[:,:,1].mean())
+              delta=float(np.mean(cv2.absdiff(photo,base)))
+              report["photo_technical_gate"]={"structure_corr":round(corr,4),"saturation":round(sat,2),"delta_vs_base":round(delta,2)}
+              save("PHOTO_GATE.json",report)
+              assert corr>=.78 and 22<=sat<=135 and delta>=6.0,"NEW_PROVIDER_PHOTO_FAIL_NO_MP4"
+              # Genuine 1903 continuous moving film; no new generated motion or false Vidu.
+              import storia_rivive_real_ai_v60 as dd
+              session,info=dd.download_model()
+              report["motion_color_model"]=info
+              clip=root/"CONEY_1903_GENUINE_MOVEMENT.mp4"
+              cap=cv2.VideoCapture(str(clip))
+              frames=[]
+              while True:
+                  ok,f=cap.read()
+                  if not ok:break
+                  frames.append(f)
+              cap.release()
+              assert 405<=len(frames)<=440 and len(frames[0].shape)==3
+              i=120
+              assert float(np.mean(cv2.absdiff(frames[i],original)))<2.5,"SOURCE_ANCHOR_MISMATCH"
+              keys=[120,168,216,264,312,360,408]
+              ab={k:dd.infer_ab(session,frames[k]) for k in keys}
+              def canvas(f):
+                  pic=cv2.resize(f[18:558,:],(720,540))
+                  bg=cv2.resize(cv2.GaussianBlur(cv2.resize(pic,(95,72)),(0,0),13),(720,1280))
+                  out=np.clip(bg*.31,0,255).astype(np.uint8);out[370:910]=pic
+                  return out
+              silent=root/"VIDEO_SILENT.mp4"
+              proc=subprocess.Popen(["ffmpeg","-nostdin","-y","-v","error","-f","rawvideo",
+                "-pix_fmt","bgr24","-s","720x1280","-r","24","-i","-","-an",
+                "-c:v","libx264","-preset","veryfast","-crf","18","-pix_fmt","yuv420p",str(silent)],
+                stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+              assert proc.stdin is not None
+              frames_out=0; samples=[]
+              def emit(f):
+                  global frames_out
+                  proc.stdin.write(canvas(f).tobytes());frames_out+=1
+              try:
+                  for k in range(i):emit(frames[k])
+                  for k in range(10):
+                      a=(k+1)/10;a=a*a*(3-2*a)
+                      emit(cv2.addWeighted(original,1-a,photo,a,0))
+                  for _ in range(30):emit(photo)
+                  for k in range(i,len(frames)):
+                      f=frames[k]
+                      nearest=min(keys,key=lambda v:abs(k-v))
+                      chrom=dd.warp_ab(f,frames[nearest],ab[nearest])
+                      col=dd.image_at(f,chrom)
+                      # Natural measured chroma, no vivid red/purple synthetic flashes.
+                      lab=cv2.cvtColor(col,cv2.COLOR_BGR2LAB)
+                      l,a,b=cv2.split(lab)
+                      a=cv2.addWeighted(a,.78,np.full_like(a,128),.22,0)
+                      b=cv2.addWeighted(b,.78,np.full_like(b,128),.22,0)
+                      col=cv2.cvtColor(cv2.merge((l,a,b)),cv2.COLOR_LAB2BGR)
+                      emit(col)
+                      if k in (145,195,270,360):samples.append((k,col.copy()))
+              finally:
+                  proc.stdin.close();err=proc.stderr.read().decode(errors="ignore")
+                  if proc.wait():raise RuntimeError("FFMPEG_FAILED "+err[-500:])
+              duration=frames_out/24
+              assert 18<=duration<=21
+              sats=[round(float(cv2.cvtColor(x,cv2.COLOR_BGR2HSV)[:,:,1].mean()),2) for _,x in samples]
+              report["color_moving_frame_saturations"]=sats
+              assert min(sats)>=10,"MOTION_MONOCHROME_FAIL"
+              movie=root/"CONEY_1903_V307_REMASTER_REVIEW.mp4"
+              cmd(["ffmpeg","-nostdin","-y","-v","error","-i",str(silent),
+                 "-f","lavfi","-i","anullsrc=channel_layout=stereo:sample_rate=44100",
+                 "-vf","scale=1080:1920:flags=lanczos","-c:v","libx264","-preset","veryfast",
+                 "-crf","20","-pix_fmt","yuv420p","-c:a","aac","-b:a","96k","-shortest",str(movie)],460)
+              cmd(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(movie),"-f","null","-"])
+              report["runtime_s"]=duration
+              report["mp4_sha256"]=sha(movie)
+              report["video_status"]="REAL_MP4_TECH_PASS_ARTISTIC_QA_PENDING"
+              report["native_4k"]=False
+              report["new_video_title"]=False
+              report["real_movement"]=True
+              cover=Image.fromarray(cv2.cvtColor(canvas(photo),cv2.COLOR_BGR2RGB))
+              d=ImageDraw.Draw(cover)
+              try:font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",36)
+              except:font=ImageFont.load_default()
+              d.text((25,112),"CONEY ISLAND · 1903",font=font,fill="white",stroke_width=3,stroke_fill="black")
+              cover.save(root/"COPERTINA.jpg",quality=94)
+              pictures=[("ORIGINALE",original),("BASE NEURALE",base),("QWEN FOTO I2I",photo)]+[("MOVIMENTO A COLORI",x) for _,x in samples]
+              overview=Image.new("RGB",(3*480,3*390),(20,20,25));draw=ImageDraw.Draw(overview)
+              for n,(label,frame) in enumerate(pictures):
+                  x=n%3*480;y=n//3*390
+                  img=Image.fromarray(cv2.cvtColor(cv2.resize(frame,(480,365)),cv2.COLOR_BGR2RGB))
+                  overview.paste(img,(x,y))
+                  draw.text((x+9,y+369),label,fill="white")
+              overview.save(root/"QA_VISIVO_CONFRONTO.jpg",quality=94)
+              posts={
+               "FACEBOOK":"Coney Island, 1903. Il tuffo fu filmato davvero! Questo remaster usa un fotogramma storico e una fotografia IA ricostruita, poi lascia ripartire il movimento reale a colori. Colori interpretativi; fonte LOC. #LaStoriaRivive",
+               "INSTAGRAM":"CONEY ISLAND · 1903. Movimento d'epoca autentico, foto AI e ritorno all'azione. Colori interpretativi, fonte Library of Congress. #HistoryReels",
+               "TIKTOK":"Più di 120 anni fa facevano già questo tuffo! Film vero, foto ricostruita, poi torna il movimento. #storia",
+               "YOUTUBE":"CONEY ISLAND 1903 | La Storia Rivive. Shooting the Chutes, film originale Library of Congress. Foto I2I generativa e colore video ricostruiti digitalmente, non registrazioni cromatiche d'epoca."
+              }
+              for n,txt in posts.items():(root/("POST_"+n+".txt")).write_text(txt+"\n")
+              report["state"]="REAL_REMASTER_REVIEW_CREATED_NOT_APPROVED"
+              save("VISUAL_REPORT.json",report)
+              zpath=root/"CONEY_1903_V307_VIDEO_E_QA.zip"
+              with zipfile.ZipFile(zpath,"w",compression=zipfile.ZIP_DEFLATED) as z:
+                  for p in [movie,root/"COPERTINA.jpg",root/"QA_VISIVO_CONFRONTO.jpg",photo_path,root/"ORIGINAL_BW_ANCHOR.png",root/"VISUAL_REPORT.json",*[root/("POST_"+n+".txt") for n in posts]]:z.write(p,p.name)
+              with zipfile.ZipFile(zpath) as z:assert z.testzip() is None
+              print("CONEY_V307_FREE_QWEN_REAL_MP4_CREATED",duration,sha(movie),flush=True)
+          except Exception as e:
+              report["state"]="FAIL_CLOSED_NO_APPROVED_VIDEO"
+              report["error"]=type(e).__name__+": "+str(e)[:350]
+              save("PRODUCTION_BLOCKER.json",report)
+              print("V307_NEW_PROVIDER_BLOCKER",report["error"],flush=True)
+              raise
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: STORIA_CONEY_1903_V307_QWEN_REAL_REVIEW_OR_BLOCKER
+          path: output/storia_coney_1903_v307/
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Create public GitHub prerelease for owner REVIEW ONLY if real MP4 exists
+        if: success()
+        run: |
+          set -euo pipefail
+          cd output/storia_coney_1903_v307
+          test -s CONEY_1903_V307_REMASTER_REVIEW.mp4
+          test -s CONEY_1903_V307_VIDEO_E_QA.zip
+          gh release create storia-coney-1903-v307-qwen-review-20261109 \
+            CONEY_1903_V307_REMASTER_REVIEW.mp4 CONEY_1903_V307_VIDEO_E_QA.zip QA_VISIVO_CONFRONTO.jpg \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "CONEY 1903 V307 - QWEN I2I SOLO REVISIONE" \
+            --notes "REMATER VISIVO sperimentale: vero I2I gratuito Qwen e filmato autentico LOC 1903 in moto, mai approvazione automatica. QA fotorealismo e anatomia umana PENDING, diritti Italia review pending. GitHub prerelease pubblica soltanto per prova Android. Zero Vidu, zero costi, no sito/social."
+          echo "REVIEW_RELEASE_CREATED_EXTERNAL_SHA_DOWNLOAD_NOT_YET_VERIFIED"
