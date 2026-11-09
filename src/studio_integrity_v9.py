@@ -71,6 +71,26 @@ def known_master(slot_index: int) -> dict:
     return valid_master(masters[slot_index - 1])
 
 
+def read_request(path: Path) -> int:
+    """A GitHub commit may trigger one pinned check; no arbitrary URL or cost."""
+    body = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(body, dict) or set(body) != {
+            "schema", "slot_index", "read_only", "one_file_only",
+            "no_publication", "use_paid_api", "reason"}:
+        raise ValueError("Unexpected integrity request fields")
+    if (body.get("schema") != "studio-integrity-request-v9"
+            or body.get("read_only") is not True
+            or body.get("one_file_only") is not True
+            or body.get("no_publication") is not True
+            or body.get("use_paid_api") is not False
+            or type(body.get("slot_index")) is not int
+            or not 1 <= body["slot_index"] <= 17
+            or not isinstance(body.get("reason"), str)
+            or not 12 <= len(body["reason"]) <= 220):
+        raise ValueError("Unsafe or incomplete one-file integrity request")
+    return body["slot_index"]
+
+
 def request_for(name: str, range_header: str | None = None):
     url = SITE + "/download/" + urllib.parse.quote(name, safe="")
     headers = {"User-Agent": USER_AGENT, "Accept": "video/mp4",
@@ -207,14 +227,16 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--slot-index", type=int, help="1..17, from V161 pinned master list")
+    mode.add_argument("--request", type=Path, help="Versioned single-file read-only request JSON")
     mode.add_argument("--zip-path", type=Path, help="Existing local V55 ZIP; no download")
     parser.add_argument("--expected-zip-sha256", help="Required for --zip-path")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-    if args.slot_index is not None:
+    if args.slot_index is not None or args.request is not None:
         if args.expected_zip_sha256:
-            parser.error("ZIP SHA cannot be supplied with --slot-index")
-        result = audit_master(known_master(args.slot_index))
+            parser.error("ZIP SHA cannot be supplied with MP4 selection")
+        index = args.slot_index if args.slot_index is not None else read_request(args.request)
+        result = audit_master(known_master(index))
     else:
         if not args.expected_zip_sha256:
             parser.error("--expected-zip-sha256 required with --zip-path")
