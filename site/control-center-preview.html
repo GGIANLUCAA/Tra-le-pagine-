@@ -129,20 +129,35 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 .repairStatus{display:block;font-size:11px;margin:9px 0;color:#e1c898}
 .repairCode{overflow-wrap:anywhere;color:#dac59e;font-size:11px}
 @media(max-width:630px){.chatDirectory{grid-template-columns:1fr}.repairHeader h3{font-size:23px}#repairDialog{width:100vw;height:100dvh;max-height:none;border:0;border-radius:0;margin:0}.repairDialogHead strong{font-size:20px}.repairDialogBody{padding:11px}.repairButton{min-height:44px}}
+
+/* V7 editorial catalogue categories: visible even when no registered media exists */
+.genreGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:15px 0}
+.genreCard{cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;text-align:left;border:1px solid #665945;border-radius:15px;padding:16px;background:linear-gradient(145deg,#32302e,#19242d);min-height:130px;color:#f2e8d8}
+.genreCard:hover{border-color:#c4a777}.genreCard.active{border-color:#dec28c;box-shadow:0 0 0 2px #d5b27e4d}
+.genreCard .genreSymbol{color:#e5c999;font-size:28px;font-family:Georgia,serif;margin-bottom:7px}
+.genreCard .genreTitle{font-size:14px;font-weight:750;line-height:1.35}.genreCard .genreCount{margin-top:7px;font-size:11px;color:#bfc8d0}
+.genreCard.emptyGenre{background:#202731;border-color:#424c56}.genreCard.emptyGenre .genreSymbol{color:#939da7}
+.genreItems{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.genreItem{padding:12px 14px;border:1px solid #384954;border-radius:11px;background:#19232b}
+.genreItem strong{font-size:12px;color:#f2e8dd;display:block;overflow-wrap:anywhere}
+.genreItem small{font-size:10px;color:#bac5cd;display:block;margin-top:5px}
+.genreHelp{color:#c7b9a2;font-size:11px;line-height:1.6}
+@media(max-width:900px){.genreGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.genreGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.genreCard{padding:13px;min-height:116px}.genreItem{padding:10px}.genreItems{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V6.1</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
+<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V7</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
 <section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Da fare per me · ◉ Salute produzioni · ▷ Diario verificabile</span></section>
 <div class="sync"><span class="pulse" id="pulse"></span><span id="synctext">Collegamento alle fonti reali…</span><span id="sources"></span></div>
 <div id="chatImportNotice" class="note" hidden role="status" aria-live="polite"></div>
 <div class="stats" id="stats"><div class="stat"><b>—</b><span>Workflow recenti</span></div><div class="stat"><b>—</b><span>In esecuzione</span></div><div class="stat"><b>—</b><span>Errori recenti</span></div><div class="stat"><b>—</b><span>Opere ArtVision</span></div></div>
-<nav class="tabs" aria-label="Sezioni"><button data-page="home" class="active">Panoramica</button><button data-page="todo">Da fare per me</button><button data-page="health">Salute produzioni</button><button data-page="works">ArtVision 4×1</button><button data-page="diary">Diario</button><button data-page="runs">Attività GitHub</button><button data-page="media">Video</button><button data-page="stats">Statistiche</button><button data-page="issues">Problemi</button></nav>
+<nav class="tabs" aria-label="Sezioni"><button data-page="home" class="active">Panoramica</button><button data-page="todo">Da fare per me</button><button data-page="health">Salute produzioni</button><button data-page="works">ArtVision 4×1</button><button data-page="genres">Tutte le categorie</button><button data-page="diary">Diario</button><button data-page="runs">Attività GitHub</button><button data-page="media">Video</button><button data-page="stats">Statistiche</button><button data-page="issues">Problemi</button></nav>
 <main id="content"><div class="empty">Lettura dei dati…</div></main>
 <footer>Anteprima indipendente. Nessuna operazione di scrittura. Dati pubblici del repository e del catalogo; le automazioni ChatGPT non sono monitorate direttamente. Workflow riuscito ≠ video finito o approvato.</footer>
 </div>
-<nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="todo"><span>⚑</span>Da fare</button><button data-page="works"><span>▣</span>Opere</button><button data-page="issues"><span>⚑</span>Ripara GPT</button><button data-page="media"><span>▷</span>Video</button></nav>
+<nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="todo"><span>⚑</span>Da fare</button><button data-page="works"><span>▣</span>Opere</button><button data-page="issues"><span>⚑</span>Ripara GPT</button><button data-page="genres"><span>▦</span>Categorie</button></nav>
 <dialog id="reviewPlayer" aria-labelledby="reviewPlayerTitle" aria-modal="true">
 <div class="playerHead"><div><strong id="reviewPlayerTitle">Anteprima del video</strong><small id="reviewPlayerSubtitle">Riproduzione dall'archivio originale</small></div>
 <button class="playerClose" type="button" id="reviewPlayerClose">✕ Chiudi</button></div>
@@ -183,7 +198,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <script>
 (function(){
 "use strict";
-var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project"};
+var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",selectedGenre:"Libri narrati",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project"};
 var site="https://video-library-studio.600led.workers.dev";
 function escapeText(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function date(x){if(!x)return "non disponibile";var d=new Date(x);return isNaN(+d)?"non disponibile":d.toLocaleString("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
@@ -463,6 +478,50 @@ function attentionItem(x){
     (link?'<a class="repairButton secondary" href="'+escapeText(link)+'" target="_blank" rel="noopener noreferrer">GitHub ↗</a>':'')+
     '</div></div></div>';
 }
+var GENRE_SYMBOLS={"Libri narrati":"▤","Racconti e fiabe":"✧","Artisti e pittura":"✦",
+ "Critica d’arte":"◈","La Storia Rivive":"◉","Restauri storici":"◴","Musica e visual":"♫",
+ "WOW LAB":"✹","Cinema e cortometraggi":"▷","Documentari e curiosità":"✺",
+ "Cronaca e attualità":"◎","Provini e backstage":"⚙","Altri progetti":"◫"};
+function genreCard(x){
+  return '<button type="button" class="genreCard '+(x.count===0?"emptyGenre ":"")+
+    (state.selectedGenre===x.name?"active":"")+'" data-genre="'+escapeText(x.name)+'">'+
+    '<span class="genreSymbol">'+escapeText(GENRE_SYMBOLS[x.name]||"✧")+'</span>'+
+    '<span class="genreTitle">'+escapeText(x.name)+'</span>'+
+    '<span class="genreCount">'+(x.count?escapeText(x.count)+" schede nel catalogo":"In preparazione")+'</span></button>';
+}
+function genreSection(){
+  var cats=state.data?.collections;
+  if(!Array.isArray(cats))return '<div class="empty">Catalogo momentaneamente non raggiungibile. Nessun conteggio presunto.</div>';
+  var sum=cats.reduce(function(t,x){return t+Number(x.count||0)},0);
+  return '<div class="genreGrid">'+cats.map(genreCard).join("")+'</div>'+
+    '<p class="genreHelp">Categorie editoriali, non attestazioni di qualità o di voce narrante. '+
+    escapeText(sum)+' schede classificate dal catalogo pubblico; le categorie senza video sono indicate come in preparazione.</p>';
+}
+function genres(){
+  var out=sec("Tutti i mondi del tuo Studio","Libri narrati, racconti, arte, restauri, musica, WOW LAB, documentari e altre categorie. Nessun genere viene nascosto dopo i primi otto.");
+  if(!source("catalog"))return out+'<div class="empty">Catalogo non disponibile: non mostro statistiche inventate.</div>';
+  var cats=state.data.collections||[];
+  out+=genreSection();
+  var chosen=cats.find(function(x){return x.name===state.selectedGenre})||cats[0];
+  if(!chosen)return out;
+  var browseUrl=site+"/?category="+encodeURIComponent(chosen.name);
+  out+='<div class="panel"><div class="tools"><h3>'+escapeText(chosen.name)+'</h3>'+
+    '<a class="link" href="'+escapeText(browseUrl)+'" target="_blank" rel="noopener noreferrer">Apri categoria nel Video Library Studio ↗</a></div>'+
+    '<div class="kv"><span>Voci nel catalogo</span><b>'+escapeText(chosen.count)+'</b></div>'+
+    '<div class="kv"><span>Disponibilità confermata nel catalogo</span><b>'+escapeText(chosen.available)+'</b></div>'+
+    '<div class="kv"><span>Disponibilità sconosciuta</span><b>'+escapeText(chosen.unknown)+'</b></div>'+
+    (chosen.count?'<div class="genreItems">'+(chosen.items||[]).map(function(v){
+      var good=v.available===true,url=site+"/watch/"+encodeURIComponent(v.key||"");
+      return '<div class="genreItem"><strong>'+escapeText(v.title||v.key)+'</strong>'+
+        '<small>'+(good?"Disponibilità dichiarata: sì":v.available===false?"Segnalato non disponibile":"Disponibilità non certificata")+'</small>'+
+        (good?'<a class="link" href="'+escapeText(url)+'" target="_blank" rel="noopener noreferrer">Apri scheda video ↗</a>':'')+
+        '</div>';
+    }).join("")+'</div><p class="note">Qui mostriamo fino a 18 schede per categoria; nel sito originale puoi vedere tutte le voci.</p>':
+    '<div class="empty">Questa categoria è prevista, ma non contiene ancora video riconosciuti nel catalogo attuale.</div>')+
+    '</div>';
+  return out;
+}
+
 function home(){
   var d=state.data||{},hs=d.health||[],tasks=d.attention||[],review=d.review,entries=d.diary||[];
   var actionable=tasks.filter(function(x){return x.kind==="workflow"}).length;
@@ -476,6 +535,8 @@ function home(){
     '<p class="sub">'+(source("github")?'I workflow già recuperati non sono segnalati come nuovi problemi.':'GitHub non è disponibile: i dati potrebbero essere incompleti.')+'</p></section>';
   h+='<div class="title"><h2>Salute delle produzioni</h2><p>Ultime attività osservate, senza dichiarare fermo un progetto soltanto perché non compare nel campione.</p></div>';
   h+='<div class="healthGrid">'+hs.map(healthCard).join("")+'</div>';
+  h+='<div class="title"><h2>Le categorie dello Studio</h2><p>Libri narrati e tutti gli altri generi dell’archivio, anche quelli in preparazione.</p></div>'+genreSection()+
+    '<button type="button" class="miniBtn secondary" data-switch="genres">Esplora tutte le categorie →</button>';
   h+='<div class="columns"><div><div class="panel"><div class="tools"><h3>Diario dello Studio</h3><a href="#" data-switch="diary" class="link">Tutti gli eventi →</a></div>'+
     (entries.length?entries.slice(0,5).map(diaryEntry).join(""):'<div class="empty">Nessun evento datato nelle fonti disponibili.</div>')+
     '</div></div><aside><div class="panel"><h3>ArtVision e archivio</h3><div class="kv"><span>Opere operative</span><b>'+(source("queue")?escapeText((d.works||[]).length):"—")+'</b></div>'+
@@ -722,7 +783,7 @@ function issues(){
   h+='<p class="note">Per continuare in una chat già esistente serve il suo indirizzo privato (chatgpt.com/c/…). I link condivisi /share/ non consentono di continuare quella conversazione. Il pannello non può leggere automaticamente la tua cronologia privata ChatGPT.</p>';
   return h;
 }
-function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,stats:statisticsPage,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}});var ws=document.getElementById("workSearch");if(ws)ws.addEventListener("input",function(e){state.workSearch=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("workSearch");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
+function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,genres:genres,stats:statisticsPage,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}});var ws=document.getElementById("workSearch");if(ws)ws.addEventListener("input",function(e){state.workSearch=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("workSearch");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
 async function refresh(){var b=document.getElementById("refresh");b.disabled=true;b.textContent="Caricamento…";try{var r=await fetch("/api/status",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var d=await r.json();if(!Array.isArray(d.runs)||!Array.isArray(d.works))throw Error("Risposta non valida");state.data=d;state.stamp=Date.now();state.loadError=null;render()}catch(e){state.loadError=e.message;if(state.data){document.getElementById("synctext").textContent="Aggiornamento non riuscito · ultimo dato "+date(state.data.asof);document.getElementById("pulse").className="pulse";}if(!state.data)document.getElementById("content").innerHTML='<div class="empty">Collegamento temporaneamente non disponibile: '+escapeText(e.message)+'</div>'}finally{b.disabled=false;b.textContent="↻ Aggiorna"}}
 function closeReviewPlayer(){
   var dialog=document.getElementById("reviewPlayer"),video=document.getElementById("reviewVideo");
@@ -890,6 +951,7 @@ document.getElementById("copyRepairPrompt").addEventListener("click",async funct
 });
 loadChats();
 importChatLinksFromFragment();
+document.addEventListener("click",function(e){var g=e.target.closest("button[data-genre]");if(!g)return;state.selectedGenre=g.dataset.genre;state.page="genres";render();window.scrollTo(0,0)});
 document.getElementById("refresh").addEventListener("click",refresh);
 setInterval(function(){if(!document.hidden)refresh()},180000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden&&Date.now()-state.stamp>120000)refresh()});
