@@ -32,6 +32,7 @@ test('Embedded frame is isolated, never receives admin token or credentials',()=
  assert.ok(match,'Expected iframe');
  assert.match(match[0],/sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads"/);
  assert.match(match[0],/referrerpolicy="no-referrer"/);
+ assert.match(match[0],/allow="fullscreen; clipboard-write"/);
  assert.doesNotMatch(match[0],/\bsrc=/);
  assert.match(html,/\$\('#controlCenterFrame'\)\.src='https:\/\/artvision-control-preview\.600led\.workers\.dev\/'/);
  assert.doesNotMatch(html,/controlCenterFrame'\)\.src=.*g\.token/);
