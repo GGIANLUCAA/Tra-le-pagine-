@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1117">
-<title>ArtVision Control Center — Anteprima</title>
+<title>ArtVision Control Center V3 — Studio operativo</title>
 <style>
 :root{color-scheme:dark;--bg:#0c1118;--card:#181f27;--inner:#222a33;--edge:#38414a;--text:#f7f1e6;--sub:#afb7c0;--gold:#dfbe88;--green:#80cba9;--red:#e8a49d}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 65% 25% at 85% 0%,#634d2a26,transparent),var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.wrap{max-width:1320px;margin:0 auto;padding:0 23px 100px}
@@ -14,23 +14,47 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 .title{margin:13px 0 18px}.title h2{font:normal 27px Georgia,serif;margin:0}.title p{color:var(--sub);margin:4px 0;font-size:12px}.columns{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:14px}.panel{border:1px solid #39434d;background:linear-gradient(145deg,#1c232b,#151c23);padding:17px;border-radius:15px;margin-bottom:14px;min-width:0}.panel h3{margin:0 0 12px;font-size:14px}.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #ffffff16}.row:first-of-type{border-top:0}.symbol{width:43px;height:43px;border-radius:11px;background:#36312a;color:#e7c68f;display:grid;place-items:center;font-size:23px;flex-shrink:0}.grow{flex:1;min-width:0}.rowname{display:block;font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis}.sub{display:block;font-size:11px;color:var(--sub);margin-top:3px}.tag{font-size:10px;border-radius:50px;border:1px solid #73827a;padding:5px 8px;color:#c4d7c9;background:#2a3b3444;white-space:nowrap}.tag.ok{color:#98ddbf;border-color:#588e75}.tag.fail{color:#edb2ac;border-color:#ad7770}.tag.wait{color:#e4cfaa;border-color:#96805c}.note{background:#44362666;border:1px solid #716044;border-radius:12px;padding:12px;font-size:12px;color:#d9ccb6;margin:12px 0}.kv{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #ffffff14;padding:10px 0;font-size:12px}.kv b{color:#e5c897}.link{font-size:12px;color:#e4c391;text-decoration:underline;text-underline-offset:3px}.empty{padding:25px;border:1px dashed #53606c;border-radius:14px;text-align:center;color:var(--sub)}.workgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.workgrid .panel{margin:0}.progress{height:6px;border-radius:20px;background:#434c52;overflow:hidden;margin:10px 0}.progress i{height:100%;display:block;background:linear-gradient(90deg,#a88959,#f1d29c)}.tools{display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:15px}.filters{display:flex;gap:7px;flex-wrap:wrap}.filters button{font-size:11px;padding:7px 12px;border:1px solid #626972;border-radius:22px;background:#252c34;color:#d9dadd}.filters button.on{background:#4a3828;border-color:#bd9461;color:#ffe0b3}.search{border:1px solid #58636c;background:#262e37;border-radius:11px;color:white;padding:11px 13px;min-height:43px;width:min(100%,360px)}.gridmedia{display:grid;grid-template-columns:repeat(auto-fill,minmax(174px,1fr));gap:13px}.video{border:1px solid #3b454d;border-radius:14px;overflow:hidden;background:#1b232b}.cover{aspect-ratio:16/10;background:linear-gradient(130deg,#50402f,#243540,#33333a);display:grid;place-items:center;color:#dfbd87;font:38px Georgia,serif;position:relative}.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.videotxt{padding:12px}.videotxt .rowname{min-height:37px;line-height:1.4}.buttonlink{display:inline-block;font-size:11px;background:#38362f;border:1px solid #816c4c;border-radius:9px;color:#f0d29d;margin-top:11px;padding:8px 11px;font-weight:700}footer{font-size:11px;color:#8796a2;border-top:1px solid #ffffff21;margin-top:25px;padding-top:17px}.bottom{display:none}
 @media(max-width:790px){.wrap{padding:0 16px 100px}.columns{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.stat{min-height:102px;padding:14px}.readonly,.tabs{display:none}.hero{padding:25px 20px}.workgrid{grid-template-columns:1fr}.bottom{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:7px 5px calc(7px + env(safe-area-inset-bottom));border-top:1px solid #806e4e;background:#121921f7;backdrop-filter:blur(12px);z-index:10}.bottom button{border:0;background:none;color:#aeb8c0;display:flex;flex-direction:column;gap:1px;font-size:10px;align-items:center;padding:4px 7px;border-radius:9px}.bottom button span{font-size:21px}.bottom button.active{color:#f2d098;background:#4a3c2e55}}
 .variant{border-top:1px solid #ffffff16;padding:11px 0}.variant:first-of-type{border-top:0}.vtop{display:flex;gap:10px;align-items:center;justify-content:space-between}.vname{font-size:12px;font-weight:650}.vline{font-size:11px;color:#b6bec6;margin-top:4px;overflow-wrap:anywhere}.vtools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}.probe{background:#44382c;color:#f2d5a9;border:1px solid #93754e;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:700;min-height:35px}.probe:disabled{opacity:.65}.probeResult{display:block;color:#ced5db;font-size:11px;margin-top:6px}.verified{color:#91d7b4}.concern{color:#efb2a9}
+
+/* ArtVision V3 — concise owner-first control room */
+.focus{border:1px solid #9f8055;background:linear-gradient(110deg,#2f2d29,#222a32);border-radius:17px;padding:18px;margin-bottom:15px}
+.focusHeader{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.focus h3{font:normal 24px Georgia,serif;margin:0 0 6px;color:#f3d7ac}.focus p{color:#bfc8cf;font-size:12px;margin:0}
+.focusStats{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0 12px}.focusStats span{padding:7px 10px;border:1px solid #897351;background:#362f27;border-radius:10px;font-size:11px}
+.focusStats strong{color:#f7d7a2}.focusActions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.miniBtn{background:#dabb8c;border:1px solid #dabb8c;color:#201d18;border-radius:10px;min-height:40px;padding:8px 13px;font-weight:750;font-size:12px}
+.miniBtn.secondary{background:#323941;border-color:#747c82;color:#e9dec9}
+.healthGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.healthCard{background:linear-gradient(145deg,#24292e,#18212a);border:1px solid #4a4c49;padding:17px;border-radius:15px;min-width:0}
+.healthCard .symbol{height:38px;width:38px;font-size:19px}.healthCard h3{font:normal 21px Georgia,serif;margin:10px 0 7px}
+.healthCard p{font-size:11px;color:#b8c2cb;min-height:45px;margin:9px 0}.healthCard .kv{font-size:11px}
+.statusBadge{display:inline-flex;border:1px solid #6f777e;background:#273036;color:#e4ded0;border-radius:30px;padding:5px 9px;font-size:10px;font-weight:700}
+.statusBadge.running{color:#f1d099;border-color:#ab8b56}.statusBadge.attention{color:#f1afa5;border-color:#ae7971}
+.statusBadge.observed_success{color:#a2d6b9;border-color:#638c74}.statusBadge.unobserved{color:#adb8c2}
+.attentionItem{display:flex;gap:11px;align-items:flex-start;padding:14px 0;border-top:1px solid #ffffff1a}
+.attentionItem:first-child{border-top:0}.attentionIcon{border:1px solid #8b785e;border-radius:10px;min-width:34px;height:34px;display:grid;place-items:center;color:#e4c195;background:#393227}
+.attentionItem .rowname{line-height:1.4}.attentionItem .sub{line-height:1.55}
+.logEntry{display:grid;grid-template-columns:14px minmax(0,1fr);gap:10px;padding:13px 0;border-bottom:1px solid #ffffff16}
+.logEntry:last-child{border-bottom:0}.logDot{height:9px;width:9px;border-radius:50%;background:#d1b181;box-shadow:0 0 0 4px #d1b1811d;margin-top:6px}.logDot.success{background:#88c8ab}.logDot.attention{background:#ecae9e}.logDot.catalog{background:#8ebddd}
+.logTitle{font-weight:650;font-size:12px;color:#f4ebdf;line-height:1.4}.logSub{font-size:10px;color:#abb6c0;margin-top:5px;line-height:1.5}
+.sourceWarning{font-size:11px;color:#dfc18e;margin-top:12px}
+@media(max-width:920px){.healthGrid{grid-template-columns:1fr}.healthCard p{min-height:0}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V1</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
-<section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Tre linee di produzione · ◉ Monitoraggio automatico · ▷ Archivio video</span></section>
+<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V3</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
+<section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Da fare per me · ◉ Salute produzioni · ▷ Diario verificabile</span></section>
 <div class="sync"><span class="pulse" id="pulse"></span><span id="synctext">Collegamento alle fonti reali…</span><span id="sources"></span></div>
 <div class="stats" id="stats"><div class="stat"><b>—</b><span>Workflow recenti</span></div><div class="stat"><b>—</b><span>In esecuzione</span></div><div class="stat"><b>—</b><span>Errori recenti</span></div><div class="stat"><b>—</b><span>Opere ArtVision</span></div></div>
-<nav class="tabs" aria-label="Sezioni"><button data-page="home" class="active">Panoramica</button><button data-page="works">ArtVision 4×1</button><button data-page="runs">Attività GitHub</button><button data-page="media">Video</button><button data-page="issues">Problemi</button></nav>
+<nav class="tabs" aria-label="Sezioni"><button data-page="home" class="active">Panoramica</button><button data-page="todo">Da fare per me</button><button data-page="health">Salute produzioni</button><button data-page="works">ArtVision 4×1</button><button data-page="diary">Diario</button><button data-page="runs">Attività GitHub</button><button data-page="media">Video</button><button data-page="issues">Problemi</button></nav>
 <main id="content"><div class="empty">Lettura dei dati…</div></main>
 <footer>Anteprima indipendente. Nessuna operazione di scrittura. Dati pubblici del repository e del catalogo; le automazioni ChatGPT non sono monitorate direttamente. Workflow riuscito ≠ video finito o approvato.</footer>
 </div>
-<nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="works"><span>▣</span>Opere</button><button data-page="runs"><span>↻</span>Attività</button><button data-page="media"><span>▷</span>Video</button><button data-page="issues"><span>⚑</span>Problemi</button></nav>
+<nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="todo"><span>⚑</span>Da fare</button><button data-page="works"><span>▣</span>Opere</button><button data-page="diary"><span>◷</span>Diario</button><button data-page="media"><span>▷</span>Video</button></nav>
 <script>
 (function(){
 "use strict";
-var state={page:"home",data:null,filter:"all",q:"",stamp:0};
+var state={page:"home",data:null,filter:"all",diaryFilter:"all",q:"",stamp:0,loadError:null};
 var site="https://video-library-studio.600led.workers.dev";
 function escapeText(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function date(x){if(!x)return "non disponibile";var d=new Date(x);return isNaN(+d)?"non disponibile":d.toLocaleString("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
@@ -42,7 +66,98 @@ function source(k){return !!(state.data&&state.data.sources&&state.data.sources[
 function rowRun(r){var s=runStatus(r);var url=String(r.html_url||"");if(!url.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/"))url="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions";return '<div class="row"><div class="symbol" style="width:38px;height:38px;font-size:19px">'+(s[1]==="ok"?"✓":s[1]==="fail"?"!":"↻")+'</div><div class="grow"><a href="'+escapeText(url)+'" target="_blank" rel="noopener noreferrer" class="rowname">'+escapeText(r.name)+' ↗</a><span class="sub">'+escapeText(date(r.updated_at))+' · '+escapeText(r.event)+'</span></div>'+badge(s[0],s[1])+'</div>'}
 function projectRow(id,label,icon,description){var runs=(state.data.runs||[]).filter(function(r){return project(r.name)===id});var latest=runs[0],s=runStatus(latest);return '<div class="row"><div class="symbol">'+icon+'</div><div class="grow"><span class="rowname">'+escapeText(label)+'</span><span class="sub">'+escapeText(description)+'</span><span class="sub">'+(latest?"Ultimo workflow: "+date(latest.updated_at):"Non identificato nel campione")+'</span></div>'+badge(s[0],s[1])+'</div>'}
 function stats(){var d=state.data;if(!d)return;var runs=d.runs||[];var s=[{v:source("github")?runs.length:"—",n:"Workflow osservati",t:"Ultimi 100 al massimo"},{v:source("github")?runs.filter(function(r){return r.status!=="completed"}).length:"—",n:"In esecuzione",t:"Nel campione"},{v:source("github")?runs.filter(function(r){return ["failure","cancelled","timed_out","action_required"].includes(r.conclusion)}).length:"—",n:"Da controllare",t:"Nel campione"},{v:source("queue")?d.works.length:"—",n:"Opere ArtVision",t:"Dal registro main"}];document.getElementById("stats").innerHTML=s.map(function(k){return '<div class="stat"><b>'+escapeText(k.v)+'</b><span>'+escapeText(k.n)+'</span><small>'+escapeText(k.t)+'</small></div>'}).join("")}
-function home(){var d=state.data,r=d.runs||[];var delivered=(d.works||[]).reduce(function(n,x){return n+Number(x.delivered||0)},0);return sec("Panoramica","Capisci cosa succede senza aprire cinque chat.")+'<div class="columns"><div><div class="panel"><h3>Le tue produzioni</h3>'+projectRow("artvision","ArtVision 4×1","◈","Critico · Cinema · Museum")+projectRow("storia","La Storia Rivive","◉","Restauro storico")+projectRow("wow","WOW LAB","✦","Esperimenti visivi")+'</div><div class="panel"><h3>Ultime esecuzioni</h3>'+(source("github")?r.slice(0,6).map(rowRun).join(""):'<div class="empty">GitHub temporaneamente non disponibile.</div>')+'<a href="#" class="link" data-switch="runs">Vedi tutte le attività →</a></div></div><aside><div class="panel"><h3>Avanzamento ArtVision</h3><div class="kv"><span>Opere attive</span><b>'+(source("queue")?d.works.length:"—")+'</b></div><div class="kv"><span>Slot registrati</span><b>'+(source("queue")?delivered:"—")+'</b></div><div class="kv"><span>Versioni per opera</span><b>4</b></div><p class="note">Registrato non significa approvato o scaricabile. Dalí escluso dalla coda operativa.</p><a href="#" data-switch="works" class="link">Apri le opere →</a></div><div class="panel"><h3>La tua videoteca</h3><div class="kv"><span>Voci nel catalogo pubblico</span><b>'+(source("catalog")?d.catalog_count:"—")+'</b></div><div class="kv"><span>Anteprime recuperate</span><b>'+(source("catalog")?d.media.length:"—")+'</b></div><p class="sub">Lo stato del catalogo non sostituisce la verifica del download Android.</p><a class="link" target="_blank" rel="noopener" href="'+site+'">Apri Video Library Studio ↗</a></div></aside></div>'}
+function overviewState(k){
+  return {running:["In corso","running"],attention:["Da controllare","attention"],observed_success:["Ultimo esito OK","observed_success"],
+    unobserved:["Non rilevato","unobserved"],unknown:["Stato non verificabile","unobserved"]}[k]||["Da verificare","unobserved"];
+}
+function healthCard(x){
+  var st=overviewState(x.state);
+  var ico={artvision:"◈",storia:"◉",wow:"✦"}[x.id]||"⌁";
+  return '<article class="healthCard"><div class="symbol">'+ico+'</div><h3>'+escapeText(x.label)+'</h3>'+
+    '<span class="statusBadge '+st[1]+'">'+escapeText(st[0])+'</span>'+
+    '<p>'+ (x.state==="unobserved"?"Nessuna esecuzione pertinente nel campione GitHub. Non significa produzione ferma.":x.state==="unknown"?"Informazioni GitHub temporaneamente non disponibili.":x.state==="attention"?"Almeno un workflow ha una ultima esecuzione non riuscita: apri i log per la causa.":x.state==="running"?"Almeno un workflow pertinente risulta in corso nel campione.":"Nel campione, l’ultimo workflow pertinente è riuscito.")+'</p>'+
+    '<div class="kv"><span>Ultima attività osservata</span><b>'+escapeText(date(x.latest_at))+'</b></div>'+
+    '<div class="kv"><span>Ultima esecuzione riuscita</span><b>'+escapeText(date(x.last_success_at))+'</b></div>'+
+    '<div class="kv"><span>Esecuzioni rilevate</span><b>'+escapeText(x.observed_count)+'</b></div>'+
+    '<div class="kv"><span>Ultimi esiti da controllare</span><b>'+escapeText(x.issues)+'</b></div>'+
+    '<a href="#" data-switch="runs" data-run-filter="'+escapeText(x.id)+'" class="link">Vedi attività GitHub →</a></article>';
+}
+function diaryEntry(x){
+  var type=x.kind==="success"?"success":x.kind==="attention"?"attention":x.kind==="catalog"?"catalog":"running";
+  var link=String(x.link||"");
+  if(!(link.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/")||link.startsWith(site+"/")))link="";
+  return '<div class="logEntry"><span class="logDot '+type+'"></span><div><div class="logTitle">'+escapeText(x.title)+'</div>'+
+    '<div class="logSub">'+escapeText(date(x.time))+' · '+escapeText(x.note||"Evento documentato")+
+    (link?' · <a class="link" href="'+escapeText(link)+'" target="_blank" rel="noopener noreferrer">Fonte ↗</a>':'')+'</div></div></div>';
+}
+function attentionItem(x){
+  var link=String(x.link||"");
+  if(!(link.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/")))link="";
+  return '<div class="attentionItem"><div class="attentionIcon">'+(x.kind==="source"?"?":"!")+'</div><div class="grow">'+
+    '<span class="rowname">'+escapeText(x.title)+'</span><span class="sub">'+escapeText(x.detail)+'</span><span class="sub">'+
+    (x.time?escapeText(date(x.time))+' · ':'')+'Fonte: '+(x.kind==="source"?"stato sorgenti":"GitHub Actions")+'</span>'+
+    (link?'<a class="link" href="'+escapeText(link)+'" target="_blank" rel="noopener noreferrer">Controlla su GitHub ↗</a>':'')+
+    '</div></div>';
+}
+function home(){
+  var d=state.data||{},hs=d.health||[],tasks=d.attention||[],review=d.review,entries=d.diary||[];
+  var actionable=tasks.filter(function(x){return x.kind==="workflow"}).length;
+  var unavailable=tasks.filter(function(x){return x.kind==="source"}).length;
+  var h=sec("Buongiorno, Studio","La situazione più utile da conoscere: nessuno stato viene considerato certo senza una fonte.");
+  h+='<section class="focus"><div class="focusHeader"><div><div class="overline">IL TUO CRUSCOTTO PRIORITARIO</div><h3>Da fare per me</h3><p>Soltanto le verifiche emerse dai dati; le approvazioni artistiche non bloccano il lavoro in automatico.</p></div>'+
+    '<button class="miniBtn" data-switch="todo" type="button">Apri le attenzioni →</button></div>'+
+    '<div class="focusStats"><span><strong>'+escapeText(actionable)+'</strong> workflow da controllare</span>'+
+    '<span><strong>'+escapeText(unavailable)+'</strong> fonti da recuperare</span>'+
+    '<span><strong>'+(review?escapeText(review.count):"0")+'</strong> opere senza Gold attestato</span></div>'+
+    '<p class="sub">'+(source("github")?'I workflow già recuperati non sono segnalati come nuovi problemi.':'GitHub non è disponibile: i dati potrebbero essere incompleti.')+'</p></section>';
+  h+='<div class="title"><h2>Salute delle produzioni</h2><p>Ultime attività osservate, senza dichiarare fermo un progetto soltanto perché non compare nel campione.</p></div>';
+  h+='<div class="healthGrid">'+hs.map(healthCard).join("")+'</div>';
+  h+='<div class="columns"><div><div class="panel"><div class="tools"><h3>Diario dello Studio</h3><a href="#" data-switch="diary" class="link">Tutti gli eventi →</a></div>'+
+    (entries.length?entries.slice(0,5).map(diaryEntry).join(""):'<div class="empty">Nessun evento datato nelle fonti disponibili.</div>')+
+    '</div></div><aside><div class="panel"><h3>ArtVision e archivio</h3><div class="kv"><span>Opere operative</span><b>'+(source("queue")?escapeText((d.works||[]).length):"—")+'</b></div>'+
+    '<div class="kv"><span>Varianti conteggiate nel registro</span><b>'+(source("queue")?escapeText((d.works||[]).reduce(function(n,x){return n+(Number(x.delivered)||0)},0)):"—")+'</b></div>'+
+    '<div class="kv"><span>Voci nel catalogo</span><b>'+(source("catalog")?escapeText(d.catalog_count):"—")+'</b></div>'+
+    '<p class="note">Consegne e schede archiviate non equivalgono a video approvati né a download integrali verificati.</p>'+
+    '<div class="focusActions"><button class="miniBtn secondary" type="button" data-switch="works">Opere 4×1</button><button class="miniBtn secondary" type="button" data-switch="media">Videoteca</button></div></div>'+
+    '<div class="panel"><h3>Informazioni del monitoraggio</h3><p class="sub">'+escapeText(d.scope?.caveat||"Dati pubblici e campione limitato.")+'</p>'+
+    '<a class="link" href="#" data-switch="health">Dettaglio della salute →</a></div></aside></div>';
+  return h;
+}
+function todo(){
+  var d=state.data||{},tasks=d.attention||[],review=d.review;
+  var tech=tasks.filter(function(x){return x.kind==="workflow"}),missing=tasks.filter(function(x){return x.kind==="source"});
+  var h=sec("Da fare per me","Priorità reali. Gli errori vecchi risolti da una nuova esecuzione non vengono trattati come problemi ancora aperti.");
+  h+='<div class="panel"><h3>Controlli tecnici suggeriti · '+tech.length+'</h3>'+
+    (tech.length?tech.map(attentionItem).join(""):'<div class="empty">'+(source("github")?"Nessun ultimo esito fallito tra i workflow osservati dei progetti.":"Impossibile controllare GitHub in questo momento.")+'</div>')+'</div>';
+  if(missing.length)h+='<div class="panel"><h3>Fonti non disponibili</h3>'+missing.map(attentionItem).join("")+'</div>';
+  h+='<div class="panel"><h3>Revisione artistica · non urgente</h3>';
+  h+=review?'<div class="attentionItem"><div class="attentionIcon">◈</div><div class="grow"><span class="rowname">'+escapeText(review.title)+'</span>'+
+    '<span class="sub">'+escapeText(review.count)+' opere · '+escapeText(review.detail)+'</span><a href="#" data-switch="works" class="link">Vedi varianti e prove →</a></div></div>':
+    '<div class="empty">Nessuna revisione da dedurre dal registro disponibile.</div>';
+  return h+'</div><div class="note">Il pannello non avvia o corregge automaticamente le produzioni e non decide quali video pubblicare.</div>';
+}
+function health(){
+  var d=state.data||{};
+  return sec("Salute delle produzioni","Distinzione rigorosa fra un lavoro recente, un blocco GitHub e l'assenza di dati.")+
+    '<div class="healthGrid">'+(d.health||[]).map(healthCard).join("")+'</div>'+
+    '<div class="panel"><h3>Come leggere gli stati</h3>'+
+    '<div class="kv"><span>In corso</span><b>Almeno una run non completata</b></div>'+
+    '<div class="kv"><span>Da controllare</span><b>Ultima run di un workflow non riuscita</b></div>'+
+    '<div class="kv"><span>Ultimo esito OK</span><b>Ultima run pertinente riuscita</b></div>'+
+    '<div class="kv"><span>Non rilevato</span><b>Nessuna run pertinente nel campione</b></div>'+
+    '<p class="note">'+escapeText(d.scope?.caveat||"Ultimo campione GitHub.")+' Lo stato di salute non verifica bellezza, licenze, render o download dei master.</p>'+
+    '<a href="#" data-switch="runs" class="link">Vai agli ultimi workflow →</a></div>';
+}
+function diary(){
+  var d=state.data||{},list=d.diary||[];
+  var labels={all:"Tutti",workflow:"GitHub",catalog:"Archivio",attention:"Da verificare"};
+  var h=sec("Diario dello Studio","Cronologia delle esecuzioni GitHub e dei caricamenti con data dichiarata dal catalogo. Nessun evento inventato.");
+  h+='<div class="tools"><div class="filters">'+Object.keys(labels).map(function(k){return '<button data-diary-filter="'+k+'" class="'+(state.diaryFilter===k?"on":"")+'">'+labels[k]+'</button>'}).join("")+'</div>'+
+    '<span class="sub">Eventi verificabili nel campione</span></div>';
+  var filtered=list.filter(function(x){return state.diaryFilter==="all"||state.diaryFilter==="attention"?state.diaryFilter==="all"||x.kind==="attention":x.type===state.diaryFilter});
+  h+='<div class="panel">'+(filtered.length?filtered.map(diaryEntry).join(""):'<div class="empty">Nessun evento di questo tipo nel campione.</div>')+'</div>';
+  return h;
+}
 function works(){
   var d=state.data;
   var out=sec("ArtVision 4×1","Quattro varianti per quadro, con schede tecniche e riscontri nell'archivio.");
@@ -92,8 +207,8 @@ function issues(){
   out+=incomplete.length?incomplete.map(function(w){return '<div class="row"><div class="grow"><span class="rowname">'+escapeText(w.title)+'</span><span class="sub">'+(4-Number(w.delivered||0))+' slot non conteggiati, da verificare in produzione</span></div>'+badge(Number(w.delivered||0)+'/4',"wait")+'</div>'}).join(""):'<div class="empty">Nessuno slot non conteggiato.</div>';
   return out+'</div>';
 }
-function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,works:works,runs:runs,media:media,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
-async function refresh(){var b=document.getElementById("refresh");b.disabled=true;b.textContent="Caricamento…";try{var r=await fetch("/api/status",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var d=await r.json();if(!Array.isArray(d.runs)||!Array.isArray(d.works))throw Error("Risposta non valida");state.data=d;state.stamp=Date.now();render()}catch(e){if(!state.data)document.getElementById("content").innerHTML='<div class="empty">Collegamento temporaneamente non disponibile: '+escapeText(e.message)+'</div>'}finally{b.disabled=false;b.textContent="↻ Aggiorna"}}
+function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
+async function refresh(){var b=document.getElementById("refresh");b.disabled=true;b.textContent="Caricamento…";try{var r=await fetch("/api/status",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var d=await r.json();if(!Array.isArray(d.runs)||!Array.isArray(d.works))throw Error("Risposta non valida");state.data=d;state.stamp=Date.now();state.loadError=null;render()}catch(e){state.loadError=e.message;if(state.data){document.getElementById("synctext").textContent="Aggiornamento non riuscito · ultimo dato "+date(state.data.asof);document.getElementById("pulse").className="pulse";}if(!state.data)document.getElementById("content").innerHTML='<div class="empty">Collegamento temporaneamente non disponibile: '+escapeText(e.message)+'</div>'}finally{b.disabled=false;b.textContent="↻ Aggiorna"}}
 document.addEventListener("click",async function(e){
   var btn=e.target.closest("button[data-check]");
   if(!btn)return;
@@ -117,7 +232,7 @@ document.addEventListener("click",async function(e){
     holder.textContent="Verifica non disponibile in questo momento.";
   }finally{btn.disabled=false;btn.textContent="Verifica streaming e download"}
 });
-document.addEventListener("click",function(e){var p=e.target.closest("[data-page]");if(p){state.page=p.dataset.page;render();window.scrollTo(0,0);return}var f=e.target.closest("[data-filter]");if(f){state.filter=f.dataset.filter;render();return}var sw=e.target.closest("[data-switch]");if(sw){e.preventDefault();state.page=sw.dataset.switch;render();window.scrollTo(0,0)}});
+document.addEventListener("click",function(e){var p=e.target.closest("[data-page]");if(p){state.page=p.dataset.page;render();window.scrollTo(0,0);return}var f=e.target.closest("[data-filter]");if(f){state.filter=f.dataset.filter;render();return}var sw=e.target.closest("[data-switch]");if(sw){e.preventDefault();state.page=sw.dataset.switch;if(sw.dataset.runFilter)state.filter=sw.dataset.runFilter;render();window.scrollTo(0,0);return}var diaryFilter=e.target.closest("[data-diary-filter]");if(diaryFilter){state.diaryFilter=diaryFilter.dataset.diaryFilter;render()}});
 document.getElementById("refresh").addEventListener("click",refresh);
 setInterval(function(){if(!document.hidden)refresh()},180000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden&&Date.now()-state.stamp>120000)refresh()});
