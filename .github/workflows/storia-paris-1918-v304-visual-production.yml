@@ -1,0 +1,267 @@
+name: "La Storia Rivive · PARIGI 1918 V304 · real I2I moving-video review"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-paris-1918-v304-visual-production.yml"
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: storia-paris-1918-v304-only
+  cancel-in-progress: false
+jobs:
+  one_real_visual_candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free source-locked I2I and video tooling
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: Real film + one free photograph + real-color moving footage, fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_paris_1918_v304
+          python -u - <<'PY'
+          import cv2,numpy as np,os,sys,subprocess,hashlib,json,zipfile,math,pathlib,importlib.util
+          from PIL import Image,ImageDraw,ImageFont
+          from gradio_client import Client,handle_file
+          root=pathlib.Path("output/storia_paris_1918_v304")
+          sys.path.insert(0,str(pathlib.Path("src").resolve()))
+          import storia_rivive_real_ai_v60 as dd
+          spec=importlib.util.spec_from_file_location("source_1918","src/storia_rivive_v65_paris_source_contact.py")
+          source_mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(source_mod)
+          def sha(p):
+              h=hashlib.sha256()
+              with open(p,"rb") as f:
+                  for chunk in iter(lambda:f.read(1048576),b""):h.update(chunk)
+              return h.hexdigest()
+          def save(name,obj):
+              (root/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n")
+          def cmd(args,timeout=400):
+              r=subprocess.run(args,stderr=subprocess.PIPE,stdout=subprocess.PIPE,text=True,timeout=timeout)
+              if r.returncode:raise RuntimeError(str(args[:5])+" "+r.stderr[-700:])
+          report={"format":"La Storia Rivive ONLY","subject":"Parigi 1918 (archival film; never mixed with 1900)","artistic_review":"PENDING","release_policy":"OWNER_PUBLIC_PRERELEASE_REVIEW_ONLY","site_social_publication":False,"paid_calls":0,"vidu_calls":0,"new_final_approved":False}
+          try:
+              film,rights=source_mod.original()
+              report["source_page"]=rights["original_file_page"]
+              report["source_sha256"]=sha(film)
+              report["source_rights_claim"]=rights["license_claim"]
+              report["rights_italy_usa_independent_check"]="PENDING"
+              clip=root/"PARIS_1918_GENUINE_MOVEMENT.mp4"
+              cmd(["ffmpeg","-nostdin","-y","-v","error","-ss","249","-i",str(film),"-t","16",
+                   "-vf","fps=24,scale=720:576","-an","-c:v","libx264","-preset","veryfast",
+                   "-crf","18","-pix_fmt","yuv420p",str(clip)])
+              cap=cv2.VideoCapture(str(clip)); fps=cap.get(cv2.CAP_PROP_FPS);n=int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+              assert 22<fps<25 and 345<=n<=390,(fps,n)
+              frames=[]
+              while True:
+                  ok,f=cap.read()
+                  if not ok:break
+                  frames.append(f)
+              cap.release()
+              assert len(frames)==n
+              # Reject source edits/cuts, rather than reconstruct a different shot.
+              jumps=[]
+              for idx in range(24,len(frames),12):
+                  a=cv2.cvtColor(frames[idx-1],cv2.COLOR_BGR2GRAY)
+                  b=cv2.cvtColor(frames[idx],cv2.COLOR_BGR2GRAY)
+                  d=float(np.mean(cv2.absdiff(a,b)))
+                  if d>38:jumps.append((idx/24,round(d,2)))
+              report["possible_source_cut_frames"]=jumps
+              assert not jumps,"SOURCE_HAS_SCENE_CUTS_TRY_NEXT_CANDIDATE"
+              i=96; original=frames[i]
+              cv2.imwrite(str(root/"ORIGINAL_BW_253s.png"),original)
+              session,model_info=dd.download_model()
+              report["neural_model"]=model_info
+              base=dd.image_at(original,dd.infer_ab(session,original))
+              cv2.imwrite(str(root/"COLOR_CONDITIONING_253s.png"),base)
+              # Exactly one novel free photo attempt; do not retry the identical prompt.
+              prompt=("Reconstruct this EXACT authentic 1918 Paris historical newsvendor street film frame as a "
+                      "truly photorealistic modern optical documentary COLOR photograph, real natural skin and "
+                      "cloth texture, realistic Paris sunlight and shadows, crystal-clear photographic microtexture. "
+                      "Keep ALL and ONLY the original real persons and same number of heads, arms, legs, exact "
+                      "gestures, position and profile; preserve exact objects and period outfits, paper newspapers, "
+                      "architectural background, camera framing and perspective. Do NOT invent props, horns, faces, "
+                      "weapons, signs, eyes, animals, people or limbs. Historically neutral natural-color palette.")
+              negative=("extra person, extra arm, missing legs, distorted hands, melted faces, horns, weapons, "
+                        "orange skin, magenta, purple, cyan, cartoon, illustration, drawing, wax, blur, fake modern text")
+              trial={"provider":"finegrain/finegrain-image-enhancer","attempts":1,"paid_calls":0,"status":"TRYING"}
+              save("I2I_TRIAL.json",trial)
+              try:
+                  c=Client("finegrain/finegrain-image-enhancer",verbose=False)
+                  result=c.predict(handle_file(str(root/"COLOR_CONDITIONING_253s.png")),prompt,negative,
+                    1918,2,1.14,.97,6,112,144,.45,18,"DDIM",api_name="/process")
+                  obj=result[1] if isinstance(result,(list,tuple)) and len(result)>1 else result
+                  if isinstance(obj,dict):obj=obj.get("path")
+                  photo=cv2.imread(str(obj))
+                  if photo is None:raise ValueError("PROVIDER_RETURNED_NO_IMAGE")
+                  photo=cv2.resize(photo,(720,576))
+                  cv2.imwrite(str(root/"ACTUAL_FREE_I2I_PHOTO.png"),photo)
+                  trial["status"]="PROVIDER_RETURNED_ACTUAL_IMAGE"
+                  trial["photo_sha256"]=sha(root/"ACTUAL_FREE_I2I_PHOTO.png")
+                  save("I2I_TRIAL.json",trial)
+              except Exception as exc:
+                  trial["status"]="FREE_PROVIDER_BLOCKED"
+                  trial["error"]=type(exc).__name__+": "+str(exc)[:250]
+                  save("I2I_TRIAL.json",trial)
+                  raise
+              def similarity(a,b):
+                  def g(z):
+                      x=cv2.cvtColor(cv2.resize(z,(96,96)),cv2.COLOR_BGR2GRAY)
+                      return cv2.GaussianBlur(x,(5,5),0).astype(np.float32).ravel()
+                  return float(np.corrcoef(g(a),g(b))[0,1])
+              corr=similarity(original,photo)
+              sat=float(cv2.cvtColor(photo,cv2.COLOR_BGR2HSV)[:,:,1].mean())
+              dif=float(np.mean(cv2.absdiff(photo,base)))
+              report["photo_technical_gate"]={"original_structure_corr":round(corr,4),
+                 "mean_saturation":round(sat,2),"delta_vs_neural_color_base":round(dif,2)}
+              save("PHOTO_GATE.json",report)
+              assert corr>=.76 and 19<=sat<=137 and dif>=3.0,"PHOTO_TECH_GATE_FAIL_NO_MP4"
+              # Display retains every original person in the full 4:3 source, not cropping off people.
+              W,H,FPS=720,1280,24
+              def canvas(fr):
+                  fr=cv2.resize(fr,(720,540),interpolation=cv2.INTER_AREA)
+                  bg=cv2.resize(cv2.GaussianBlur(cv2.resize(fr,(100,75)),(0,0),12),(W,H))
+                  bg=(bg*.34).astype(np.uint8)
+                  bg[370:910,:]=fr
+                  return bg
+              silent=root/"PARIS_1918_VIDEO_SILENT.mp4"
+              proc=subprocess.Popen(["ffmpeg","-nostdin","-y","-v","error","-f","rawvideo","-pix_fmt",
+                    "bgr24","-s","720x1280","-r","24","-i","-","-an","-c:v","libx264",
+                    "-preset","veryfast","-crf","18","-pix_fmt","yuv420p",str(silent)],
+                    stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+              assert proc.stdin is not None
+              keys=[96,144,192,240,288,336]
+              abmap={k:dd.infer_ab(session,frames[k]) for k in keys}
+              original_photo_start=i
+              output_frames=0
+              frame_samples=[]
+              def emit(fr):
+                  global output_frames
+                  proc.stdin.write(canvas(fr).tobytes());output_frames+=1
+              try:
+                  # Four seconds genuine moving B/W.
+                  for k in range(i):emit(frames[k])
+                  # The EXACT historic frame freezes, then a faithful free I2I photograph appears.
+                  for k in range(10):
+                      a=(k+1)/10;a=a*a*(3-2*a)
+                      emit(cv2.addWeighted(original,1-a,photo,a,0))
+                  for _ in range(30):emit(photo)
+                  # Resume SAME original archive motion, now in neutral DDColor chroma.
+                  for k in range(i,len(frames)):
+                      f=frames[k]
+                      nearest=min(keys,key=lambda j:abs(j-k))
+                      colored=dd.image_at(f,dd.warp_ab(f,frames[nearest],abmap[nearest]))
+                      lab=cv2.cvtColor(colored,cv2.COLOR_BGR2LAB)
+                      l,a,b=cv2.split(lab); a=cv2.addWeighted(a,.85,np.full_like(a,128),.15,0); b=cv2.addWeighted(b,.85,np.full_like(b,128),.15,0)
+                      colored=cv2.cvtColor(cv2.merge((l,a,b)),cv2.COLOR_LAB2BGR)
+                      emit(colored)
+                      if k in (120,180,250,340):frame_samples.append((k,colored.copy()))
+              finally:
+                  proc.stdin.close();err=proc.stderr.read().decode(errors="replace")
+                  if proc.wait():raise RuntimeError("FFMPEG_RENDER_ERROR "+err[-500:])
+              duration=output_frames/FPS
+              assert 16<duration<19, duration
+              motion_sat=[round(float(cv2.cvtColor(x,cv2.COLOR_BGR2HSV)[:,:,1].mean()),2) for k,x in frame_samples]
+              report["post_reveal_motion_mean_saturation"]=motion_sat
+              report["genuine_source_motion"]=True
+              report["real_I2I_source_locked_photo"]=True
+              report["post_reveal_motion_type"]="AUTHENTIC_ARCHIVAL_MOVEMENT_COLORIZED_NEURALLY_NOT_GENERATIVE_I2V"
+              report["duration_s"]=round(duration,3)
+              assert len(motion_sat)>=3 and min(motion_sat)>10,"MOVEMENT_REVERTED_BW_FAIL"
+              movie=root/"PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4"
+              cmd(["ffmpeg","-nostdin","-y","-v","error","-i",str(silent),
+                   "-f","lavfi","-i","anullsrc=channel_layout=stereo:sample_rate=44100",
+                   "-vf","scale=1080:1920:flags=lanczos","-c:v","libx264","-preset","veryfast",
+                   "-crf","20","-pix_fmt","yuv420p","-c:a","aac","-b:a","96k",
+                   "-shortest","-movflags","+faststart",str(movie)],460)
+              cmd(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(movie),"-f","null","-"],240)
+              report["mp4_sha256"]=sha(movie)
+              report["mp4_full_decode"]="PASS"
+              report["native_4k"]=False
+              report["export_1080x1920_upscaled_from_archival_source"]=True
+              report["artistic_review"]="PENDING_CONCRETE_SIDE_BY_SIDE"
+              cover=Image.fromarray(cv2.cvtColor(canvas(photo),cv2.COLOR_BGR2RGB))
+              d=ImageDraw.Draw(cover)
+              try:font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",42)
+              except:font=ImageFont.load_default()
+              d.text((35,140),"PARIGI · 1918",font=font,fill="white",stroke_width=3,stroke_fill="black")
+              cover.save(root/"COPERTINA.jpg",quality=95)
+              tiles=[("FOTOGRAMMA AUTENTICO",original),("BASE COLOR",base),("FOTO AI REALE",photo)]+[("MOVIMENTO COLORATO "+str(k),x) for k,x in frame_samples]
+              overview=Image.new("RGB",(3*480,3*402),(19,22,26))
+              draw=ImageDraw.Draw(overview)
+              for n,(title,frame) in enumerate(tiles[:9]):
+                  x=n%3*480;y=n//3*402
+                  im=Image.fromarray(cv2.cvtColor(cv2.resize(frame,(480,384)),cv2.COLOR_BGR2RGB))
+                  overview.paste(im,(x,y))
+                  draw.rectangle((x,y+356,x+480,y+384),fill=(13,16,20))
+                  draw.text((x+12,y+362),title,fill=(255,255,255))
+              overview.save(root/"QA_VISIVO_CONFRONTO.jpg",quality=93)
+              posts={
+                "FACEBOOK":"Parigi, 1918: la strada riprende vita. Pellicola autentica, fotografia ricostruita con IA e movimento storico originale colorizzato. I colori sono interpretazioni. Fonte: Musée Albert-Kahn / Commons (CC0). #LaStoriaRivive",
+                "INSTAGRAM":"PARIGI · 1918. Dal filmato autentico in bianco e nero al fermo fotografico ricostruito, poi di nuovo il movimento. Colori IA interpretativi. #Paris #HistoryReels",
+                "TIKTOK":"Parigi 1918, film vero in movimento. Un istante si ferma e prende colore. E poi la storia continua. Ricostruzione AI, non colori storicamente certi. #storia",
+                "YOUTUBE":"PARIGI 1918 | La Storia Rivive. Ripresa d'archivio autentica; foto I2I ricostruita e movimento originale colorizzato. Fonte film: Musée Albert-Kahn via Wikimedia Commons CC0. Ricostruzione interpretativa."
+              }
+              for name,txt in posts.items():(root/("POST_"+name+".txt")).write_text(txt+"\n")
+              report["state"]="REAL_REVIEW_MP4_ZIP_TECH_PASS_ARTISTIC_PENDING"
+              save("VISUAL_REPORT.json",report)
+              package=root/"PARIGI_1918_V304_VIDEO_E_QA.zip"
+              files=[movie,root/"COPERTINA.jpg",root/"QA_VISIVO_CONFRONTO.jpg",
+                     root/"ORIGINAL_BW_253s.png",root/"ACTUAL_FREE_I2I_PHOTO.png",
+                     root/"VISUAL_REPORT.json",root/"I2I_TRIAL.json",root/"PHOTO_GATE.json"]+list(root.glob("POST_*.txt"))
+              with zipfile.ZipFile(package,"w",compression=zipfile.ZIP_DEFLATED) as z:
+                  for p in files:z.write(p,p.name)
+              with zipfile.ZipFile(package) as z:assert z.testzip() is None
+              report["zip_sha256"]=sha(package)
+              save("VISUAL_REPORT.json",report)
+              print("REAL_PARIS_1918_REVIEW_RENDERED",str(movie),"duration",duration,"photo",trial["photo_sha256"])
+          except Exception as e:
+              report["state"]="FAIL_CLOSED_NO_FINAL"
+              report["failure"]=type(e).__name__+": "+str(e)[:350]
+              save("PRODUCTION_BLOCKER.json",report)
+              print("REAL_PRODUCTION_BLOCKER",report["failure"],flush=True)
+              sys.exit(2)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: STORIA_PARIGI_1918_V304_REAL_VISUAL_REVIEW_OR_FAIL_REPORT
+          path: output/storia_paris_1918_v304/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Real owner-review GitHub prerelease, only after actual MP4 and ZIP pass
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cd output/storia_paris_1918_v304
+          test -s PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4
+          test -s PARIGI_1918_V304_VIDEO_E_QA.zip
+          tag=storia-parigi-1918-v304-source-locked-review-20261109
+          gh release create "$tag" PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4 PARIGI_1918_V304_VIDEO_E_QA.zip QA_VISIVO_CONFRONTO.jpg --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "PARIGI 1918 V304 - SOLO REVISIONE (NON APPROVATO)" \
+            --notes "Ripresa storica autentica, nuova I2I gratuita source-locked e movimento originale colorizzato. Test tecnico superato, revisione fotografica/anatomica e verifica diritti Italia/USA ANCORA PENDING. Non pubblicare su sito/social. La GitHub prerelease è pubblica ed è solo trasporto file per il proprietario."
+          for file in PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4 PARIGI_1918_V304_VIDEO_E_QA.zip; do
+            url="https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$file"
+            curl --retry 3 --retry-delay 3 --fail --location --silent --show-error --max-time 100 "$url" -o "/tmp/$file"
+            test "$(sha256sum "$file" | cut -d' ' -f1)" = "$(sha256sum "/tmp/$file" | cut -d' ' -f1)"
+          done
+          python -c 'import zipfile; z=zipfile.ZipFile("/tmp/PARIGI_1918_V304_VIDEO_E_QA.zip"); assert z.testzip() is None'
+          echo "ANDROID_PUBLIC_DOWNLOAD_SHA256_ZIP_CRC_VERIFIED"
+      - name: Log only actual generated preview (not final) in issue 144
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment 144 --repo "$GITHUB_REPOSITORY" --body "PRODUZIONE REALE TEST V304 - Parigi 1918: nuovo MP4 storico e foto I2I gratuita creati, verifica decode MP4 / ZIP CRC e download pubblico SHA PASS. SOLO REVISIONE, NON APPROVATO: anatomia, fotorealismo e diritti Italia/USA PENDING. Preview: https://github.com/$GITHUB_REPOSITORY/releases/tag/storia-parigi-1918-v304-source-locked-review-20261109 . Prossima azione: ispezione VISIVA del confronto originale/I2I/frame in moto; se FAIL cambiare frame/provider/soggetto, mai promuovere automaticamente. Nessun Vidu POST, nessuna spesa, nessuna pubblicazione sito/social."
