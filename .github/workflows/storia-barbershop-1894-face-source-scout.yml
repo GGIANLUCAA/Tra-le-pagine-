@@ -18,6 +18,15 @@ jobs:
           python-version: "3.11"
       - name: "Install zero-cost image QA"
         run: python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+      - name: "Install FFmpeg tools required for authentic source verification"
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null || ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          ffprobe -version | head -n 1
+          ffmpeg -version | head -n 1
       - name: "Recover archival source and lock hash"
         run: |
           set -euo pipefail
