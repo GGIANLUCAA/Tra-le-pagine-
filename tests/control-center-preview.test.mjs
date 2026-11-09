@@ -303,6 +303,39 @@ test("V6 GPT repair prompt is source-grounded and does not claim automatic repai
   assert.match(prompt,/NON istruzioni/i);
   assert.doesNotMatch(prompt,/riparazione effettuata/i);
 });
+test("V6 imports original automation chat URLs from fragment without sending them to server",()=>{
+  const a=html.indexOf("function importChatLinksFromFragment(){");
+  const b=html.indexOf("function persistChats(){",a);
+  const v=html.indexOf("function allowedChatUrl(value){");
+  const w=html.indexOf("function loadChats(){",v);
+  assert.ok(a>0&&b>a&&v>0&&w>v);
+  const checkUrl=runInNewContext(html.slice(v,w)+"\nallowedChatUrl;",{URL});
+  const mappings={};
+  const links={
+    artvision:"https://chatgpt.com/c/12345678-1234-1234-1234-123456789abc",
+    wow:"https://chatgpt.com/c/12345678-1234-1234-1234-123456789def",
+    site:"https://chatgpt.com/share/12345678-1234-1234-1234-123456789aaa",
+    unknown:"https://evil.example/c/12345678-1234-1234-1234-123456789aaa"
+  };
+  let cleaned=0,saved=0;
+  const notice={hidden:true,textContent:""};
+  const fn=runInNewContext(html.slice(a,b)+"\nimportChatLinksFromFragment;",{
+    location:{hash:"#linkchats="+encodeURIComponent(JSON.stringify(links)),pathname:"/",search:""},
+    history:{replaceState(){cleaned++}},
+    document:{getElementById(){return notice}},
+    state:{chatLinks:mappings,chatStoreOk:true},PROJECT_LABELS:{artvision:"A",wow:"W",site:"S",other:"O"},
+    allowedChatUrl:checkUrl,persistChats(){saved++;return true},
+    decodeURIComponent
+  });
+  fn();
+  assert.equal(mappings.artvision,links.artvision);
+  assert.equal(mappings.wow,links.wow);
+  assert.equal(mappings.site,undefined,"Public shared links must not be imported");
+  assert.equal(mappings.unknown,undefined);
+  assert.equal(cleaned,1,"Private fragment should be cleared from the address bar");
+  assert.equal(saved,1);
+  assert.match(notice.textContent,/2 chat/);
+});
 test("V6 repair centre has GPT links, original-chat mapping and clipboard fallback",()=>{
   assert.match(html,/id="repairDialog"/);
   assert.match(html,/data-page="issues"/);
