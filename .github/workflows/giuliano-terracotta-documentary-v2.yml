@@ -4,11 +4,17 @@ on:
     branches: ["feature/giuliano-terracotta-social-v2-20261109"]
     paths:
       - "giuliano/terracotta_v2/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "giuliano/terracotta_v2/**"
+      - ".github/workflows/giuliano-terracotta-documentary-v2.yml"
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   documentary-v2:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 75
     env:
