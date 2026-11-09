@@ -16,7 +16,7 @@ def research(project="artvision", state="RESEARCH_CANDIDATES_PENDING_REVIEW"):
         "cycle_utc": "2026-11-10T03:00:00+00:00",
         "cycle_id": "20261110T0300Z",
         "item_id": "the_magic_circle" if project == "artvision" else "historic_venice",
-        "owner": "ARTVISION_OWNER_SELECTED_TEN_V128" if project == "artvision" else "STORIA_V101",
+        "owner": "ARTVISION_OWNER_SELECTED_TEN_V128" if project == "artvision" else "STORIA_RIVIVE_V101_SOURCE_ORDER",
         "rights_checked": False, "auto_download": False,
         "auto_render": False, "auto_publish": False,
         "paid_api_calls": 0, "approved_assets": 0,
@@ -46,6 +46,7 @@ def cycle():
         "cycle_id": "storia-20261110-0300",
         "candidate": "historic_venice",
         "source_research_v4_status": "RESEARCH_CANDIDATES_PENDING_REVIEW",
+        "status": "RESEARCH_PREPARATION_ONLY",
         "finished_mp4": False, "published": False,
         "charged_api_requests": 0,
     }
