@@ -1,0 +1,42 @@
+name: Control Center · integrazione privata (test)
+on:
+  push:
+    branches:
+      - feature/control-center-private-embed-v1
+    paths:
+      - 'site/video-library-v2.html'
+      - 'tests/control_center_private_integration.test.cjs'
+      - '.github/workflows/control-center-private-integration-test.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'site/video-library-v2.html'
+      - 'tests/control_center_private_integration.test.cjs'
+      - '.github/workflows/control-center-private-integration-test.yml'
+permissions:
+  contents: read
+jobs:
+  static-and-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax, authentication boundary, iframe sandbox and site regression
+        run: node --test tests/control_center_private_integration.test.cjs
+      - name: Ensure no new production workflow or API billing was introduced
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          x=Path("site/video-library-v2.html").read_text()
+          assert x.count('id="controlCenterDialog"')==1
+          assert x.count('id="controlCenterFrame"')==1
+          assert '<iframe id="controlCenterFrame"' in x
+          assert "frame.removeAttribute('src')" in x
+          assert 'ACTIONS_ID_TOKEN_REQUEST_TOKEN' not in x
+          assert len(x)<215000
+          print('PASS: frontend-only integration; existing streaming and archive code preserved')
+          PY
