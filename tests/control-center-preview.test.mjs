@@ -29,11 +29,11 @@ function fixture(options={}){
       v134_cinema_candidate:{mp4_filename:"SIMBERG_CINEMA.mp4",mp4_sha256:"test"}},
     {artist:"Salvador Dalí",title_en:"The Temptation of St. Anthony",slots_delivered_this_selection:0}
   ]};
-  const catalog={items:[{key:"SIMBERG_CRITICO.mp4",title:"Simberg Critico",uploaded:"2026-11-08T20:00:00Z"},
+  const catalog=options.catalog||{items:[{key:"SIMBERG_CRITICO.mp4",title:"Simberg Critico",uploaded:"2026-11-08T20:00:00Z"},
     {key:"SIMBERG_CINEMA.mp4",title:"Simberg Cinema",available:true}]};
   const runs={workflow_runs:options.runs||[{name:"ArtVision test",status:"completed",conclusion:"success",
     html_url:"https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/1",event:"push",updated_at:"2026-11-09T03:00:00Z"}]};
-  const responses=[runs,queue,catalog];
+  const responses=[runs,options.queue||queue,catalog];
   async function fetchStub(url){
     const href=String(url);
     if(href.includes("/download/SIMBERG_CINEMA.mp4"))
@@ -91,6 +91,77 @@ test("V3 never reports an unobserved production as stopped",async()=>{
   assert.ok(data.health.every(x=>x.state==="unobserved"));
   assert.equal(data.attention.filter(x=>x.kind==="workflow").length,0);
   assert.equal(data.diary.filter(x=>x.type==="workflow").length,0);
+});
+test("V4 exposes only catalogued and available real MP4 URLs for playback",async()=>{
+  const queue={works:[
+    {id:"test_artwork",artist:"Hugo Simberg",title_en:"The Garden of Death",slots_delivered_this_selection:3,
+      museum_approved:false,Gold_V25:false,
+      critico_standard_v146:{filename:"SIMBERG_CRITICO.mp4",sha256:"a".repeat(64),
+        ffmpeg_full_decode:"PASS independent test",zip_crc:"PASS",
+        site_full_download_sha256:"PASS exact sha256",site_download_HTTP_206:"PASS",
+        human_artistic_review:"PENDING",gold_v25:false,bytes:5242880,run_id:1001},
+      critico_museum_v150:{filename:"SIMBERG_MUSEUM.mp4",sha256:"b".repeat(64)},
+      v134_cinema_candidate:{mp4_filename:"SIMBERG_CINEMA.mp4",mp4_sha256:"c".repeat(64),
+        site_full_download_sha256:"PENDING_HTTP_PROBE",zip_crc:"FAIL"},
+      cinema_museum_v190:{mp4_sha256:"d".repeat(64),status:"rendered but no public filename"}
+    },
+    {artist:"Salvador Dalí",title_en:"The Temptation of St. Anthony",slots_delivered_this_selection:0}
+  ]};
+  const catalog={items:[
+    {key:"SIMBERG_CRITICO.mp4",available:true},
+    {key:"SIMBERG_CINEMA.mp4",available:false},
+    {key:"HIDDEN.mp4",hidden:true,available:true}
+  ]};
+  const worker=fixture({queue,catalog});
+  const data=await (await worker.fetch(new Request("https://preview.example/api/status"))).json();
+  assert.equal(data.works.length,1,"Dalí remains out of operating queue");
+  const v=data.works[0].variants;
+  assert.equal(v.length,4);
+  const standard=v.find(x=>x.id==="critico_standard");
+  assert.equal(standard.preview_ready,true);
+  assert.equal(standard.media_url,"https://video-library-studio.600led.workers.dev/media/SIMBERG_CRITICO.mp4");
+  assert.equal(standard.qa.sha_recorded,true);
+  assert.equal(standard.qa.decode_documented,true);
+  assert.equal(standard.qa.zip_documented,true);
+  assert.equal(standard.qa.site_full_sha_documented,true);
+  assert.equal(standard.qa.gold_approved,false);
+  assert.equal(standard.details.bytes,5242880);
+  const offline=v.find(x=>x.id==="cinema_standard");
+  assert.equal(offline.site_catalog,true);
+  assert.equal(offline.preview_ready,false);
+  assert.equal(offline.media_url,null);
+  assert.equal(offline.qa.zip_documented,false,"FAIL is not a pass");
+  assert.equal(offline.qa.site_full_sha_documented,false,"PENDING is not a pass");
+  const missing=v.find(x=>x.id==="critico_museum");
+  assert.equal(missing.site_catalog,false);
+  assert.equal(missing.media_url,null);
+  const unidentified=v.find(x=>x.id==="cinema_museum");
+  assert.equal(unidentified.recorded,true);
+  assert.equal(unidentified.filename,"");
+  assert.equal(unidentified.preview_ready,false);
+});
+test("V4 prefers explicitly active newer cinema replacement over outdated variants",async()=>{
+  const queue={works:[{id:"bruegel",title_en:"The Fall of the Rebel Angels",artist:"Pieter Bruegel",
+    slots_delivered_this_selection:2,active_cinema_standard:"new_cinema_standard_v153",
+    new_cinema_standard_v135:{filename:"OLD_V135.mp4",sha256:"a".repeat(64)},
+    new_cinema_standard_v153:{filename:"REPLACEMENT_V153.mp4",sha256:"b".repeat(64)},
+    critico_standard_v144:{filename:"CRITICO.mp4",sha256:"c".repeat(64)}}]};
+  const catalog={items:[{key:"REPLACEMENT_V153.mp4",available:true}]};
+  const data=await (await fixture({queue,catalog}).fetch(new Request("https://preview.example/api/status"))).json();
+  const cinema=data.works[0].variants.find(x=>x.id==="cinema_standard");
+  assert.equal(cinema.source,"new_cinema_standard_v153");
+  assert.equal(cinema.filename,"REPLACEMENT_V153.mp4");
+  assert.equal(cinema.preview_ready,true);
+});
+test("V4 mobile player markup is present and CSP permits only original video host",()=>{
+  assert.match(html,/id="reviewPlayer"/);
+  assert.match(html,/id="reviewVideo"/);
+  assert.match(html,/class="slotGrid"/);
+  assert.match(html,/data-play=/);
+  assert.match(html,/function closeReviewPlayer/);
+  assert.match(backend,/media-src https:\/\/video-library-studio\.600led\.workers\.dev/);
+  assert.match(backend,/frame-ancestors https:\/\/video-library-studio\.600led\.workers\.dev/);
+  assert.match(backend,/if\(request.method!=="GET"\)/);
 });
 test("On-demand range probe does not claim full SHA",async()=>{
   const worker=fixture();
