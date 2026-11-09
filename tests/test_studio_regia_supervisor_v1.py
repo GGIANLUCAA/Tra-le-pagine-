@@ -101,6 +101,26 @@ class StudioRegiaTests(unittest.TestCase):
         result = regia.inspect(data)
         self.assertIn("REPEATED_CAMERA_MOVE", self.codes(result, "warnings"))
 
+    def test_uniform_timing_is_a_review_not_a_hard_rule(self):
+        data = example("artvision_cinema")
+        data["video_duration_s"] = 12
+        data["shots"] = [
+            dict(data["shots"][0], id=str(i), start_s=i*3, end_s=(i+1)*3,
+                 composition_group=str(i)) for i in range(4)
+        ]
+        result = regia.inspect(data)
+        self.assertIn("UNIFORM_TIMING", self.codes(result, "warnings"))
+        self.assertEqual(result["blocking"], [])
+
+    def test_long_static_detail_requests_real_review(self):
+        data = example("artvision_cinema")
+        data["video_duration_s"] = 15
+        data["shots"] = [dict(data["shots"][1], start_s=0, end_s=15,
+                             camera={"move":"locked"})]
+        result = regia.inspect(data)
+        self.assertIn("VISUAL_STALL", self.codes(result, "warnings"))
+        self.assertEqual(result["blocking"], [])
+
     def test_invalid_schema_and_boolean_numbers(self):
         self.assertEqual(regia.inspect({})["status"], "blocked_plan")
         data = example()
