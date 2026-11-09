@@ -74,12 +74,14 @@ jobs:
           model,meta=dd.download_model()
           client=Client("finegrain/finegrain-image-enhancer",verbose=False)
           for i,(t,length) in enumerate(zip(times,lengths),1):
-              row={"scene":i,"film_timestamp_s":t,"segment_length_s":length,"photo_generated":False,
+              row={"scene":i,"film_timestamp_s":t,"segment_length_s":length,"source_fixed_crop_left":left,"photo_generated":False,
                    "artistic_approval":False,"paid_api_calls":0}
               try:
                   clip=p/("ORIGINAL_MOVEMENT_%02d.mp4"%i)
+                  left_offsets=[0,600,300,0]
+                  left=left_offsets[i-1]
                   run(["ffmpeg","-nostdin","-y","-v","error","-ss",str(t-length),"-i",str(film),
-                       "-t",str(length),"-vf","crop=608:1080:416:0,scale=720:1280:flags=lanczos,fps=24",
+                       "-t",str(length),"-vf",f"crop=608:1080:{left}:0,scale=720:1280:flags=lanczos,fps=24",
                        "-an","-c:v","libx264","-crf","18","-preset","veryfast","-pix_fmt","yuv420p",str(clip)])
                   cap=cv2.VideoCapture(str(clip));frames=[]
                   while True:
@@ -93,7 +95,9 @@ jobs:
                   cv2.imwrite(str(bw),anchor)
                   ab=dd.infer_ab(model,anchor)
                   ab=cv2.resize(ab,(anchor.shape[1],anchor.shape[0]),interpolation=cv2.INTER_LINEAR)
-                  base=dd.image_at(anchor,ab)
+                  luminance=dd.l_channel(anchor)
+                  rgb=np.clip(cv2.cvtColor(np.dstack((luminance,np.clip(ab*1.13,-112,112))).astype(np.float32),cv2.COLOR_LAB2RGB)*255,0,255).astype(np.uint8)
+                  base=cv2.cvtColor(rgb,cv2.COLOR_RGB2BGR)
                   basefile=p/("COLOR_GUIDE_%02d.png"%i)
                   cv2.imwrite(str(basefile),base)
                   row.update({"original_clip_sha256":sha(clip),"real_frame_sha256":sha(bw),
