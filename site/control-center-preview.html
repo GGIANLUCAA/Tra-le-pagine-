@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1117">
-<title>ArtVision Control Center V4 — Studio cinematografico</title>
+<title>ArtVision Control Center V5 — Studio operativo</title>
 <style>
 :root{color-scheme:dark;--bg:#0c1118;--card:#181f27;--inner:#222a33;--edge:#38414a;--text:#f7f1e6;--sub:#afb7c0;--gold:#dfbe88;--green:#80cba9;--red:#e8a49d}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 65% 25% at 85% 0%,#634d2a26,transparent),var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.wrap{max-width:1320px;margin:0 auto;padding:0 23px 100px}
@@ -82,15 +82,33 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 .playerNote{text-align:left;font-size:11px;color:#b3bec8;margin:13px 0 0}.playerError{font-size:12px;color:#f5b3a5}
 @media(max-width:1050px){.slotGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.workInner{padding:10px}.workbook>summary{padding:13px 10px}.workHead strong{font-size:19px}.workEmblem{width:40px;height:45px}.slotGrid{gap:7px}.slotBody{padding:8px}.slotName{font-size:11px}.slotPoster{aspect-ratio:9/10}.slotPoster .place{font-size:34px}.qaLine{flex-wrap:wrap}.qaLine b{text-align:left}#reviewPlayer{width:100vw;height:100dvh;max-height:none;border-radius:0;border:0;margin:0}#reviewVideo{max-height:73dvh}}
+
+/* Control Center V5: documented trends and gallery filters */
+.statLayout{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}
+.statDetail{border:1px solid #454c51;border-radius:13px;background:linear-gradient(140deg,#282d33,#18212a);padding:15px}
+.statDetail big{display:block;font-size:30px;font-weight:750;color:#edcd99;line-height:1.1}
+.statDetail strong{font-size:12px}.statDetail p{margin:5px 0 0;font-size:11px;color:#b4bec8}
+.metricStrip{height:8px;background:#3d454c;border-radius:8px;overflow:hidden}
+.metricStrip i{display:block;height:100%;background:linear-gradient(90deg,#ab855a,#ebcc92)}
+.metricRow{display:grid;grid-template-columns:minmax(125px,1fr) minmax(90px,2fr) 40px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #ffffff15;font-size:12px}
+.metricRow strong{font-size:13px;text-align:right;color:#f6ddb0}
+.metricFoot{font-size:11px;color:#b4bfc9;line-height:1.65}
+.scopeLabel{padding:7px 9px;border:1px solid #796340;background:#332b22;color:#e6c697;border-radius:9px;font-size:11px}
+.workSearch{width:min(100%,410px);background:#202b34;border:1px solid #6d7580;color:#f5efe5;padding:12px 14px;min-height:44px;border-radius:11px}
+.workFilterBar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:13px 0}
+.workFilterBar button{background:#242d36;border:1px solid #53616b;color:#cbd2d9;border-radius:23px;padding:8px 12px;min-height:36px;font-size:11px}
+.workFilterBar button.on{background:#493b29;border-color:#bb955b;color:#f3d5a4}
+@media(max-width:850px){.statLayout{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.statDetail{padding:12px}.statDetail big{font-size:25px}.metricRow{grid-template-columns:minmax(85px,1fr) minmax(70px,1fr) 30px;gap:7px;font-size:11px}.workSearch{width:100%}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V4</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
+<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V5</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
 <section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Da fare per me · ◉ Salute produzioni · ▷ Diario verificabile</span></section>
 <div class="sync"><span class="pulse" id="pulse"></span><span id="synctext">Collegamento alle fonti reali…</span><span id="sources"></span></div>
 <div class="stats" id="stats"><div class="stat"><b>—</b><span>Workflow recenti</span></div><div class="stat"><b>—</b><span>In esecuzione</span></div><div class="stat"><b>—</b><span>Errori recenti</span></div><div class="stat"><b>—</b><span>Opere ArtVision</span></div></div>
-<nav class="tabs" aria-label="Sezioni"><button data-page="home" class="active">Panoramica</button><button data-page="todo">Da fare per me</button><button data-page="health">Salute produzioni</button><button data-page="works">ArtVision 4×1</button><button data-page="diary">Diario</button><button data-page="runs">Attività GitHub</button><button data-page="media">Video</button><button data-page="issues">Problemi</button></nav>
+<nav class="tabs" aria-label="Sezioni"><button data-page="home" class="active">Panoramica</button><button data-page="todo">Da fare per me</button><button data-page="health">Salute produzioni</button><button data-page="works">ArtVision 4×1</button><button data-page="diary">Diario</button><button data-page="runs">Attività GitHub</button><button data-page="media">Video</button><button data-page="stats">Statistiche</button><button data-page="issues">Problemi</button></nav>
 <main id="content"><div class="empty">Lettura dei dati…</div></main>
 <footer>Anteprima indipendente. Nessuna operazione di scrittura. Dati pubblici del repository e del catalogo; le automazioni ChatGPT non sono monitorate direttamente. Workflow riuscito ≠ video finito o approvato.</footer>
 </div>
@@ -104,7 +122,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <script>
 (function(){
 "use strict";
-var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},q:"",stamp:0,loadError:null};
+var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",statsWindow:"7d",q:"",stamp:0,loadError:null};
 var site="https://video-library-studio.600led.workers.dev";
 function escapeText(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function date(x){if(!x)return "non disponibile";var d=new Date(x);return isNaN(+d)?"non disponibile":d.toLocaleString("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
@@ -170,7 +188,7 @@ function home(){
     '<p class="note">Consegne e schede archiviate non equivalgono a video approvati né a download integrali verificati.</p>'+
     '<div class="focusActions"><button class="miniBtn secondary" type="button" data-switch="works">Opere 4×1</button><button class="miniBtn secondary" type="button" data-switch="media">Videoteca</button></div></div>'+
     '<div class="panel"><h3>Informazioni del monitoraggio</h3><p class="sub">'+escapeText(d.scope?.caveat||"Dati pubblici e campione limitato.")+'</p>'+
-    '<a class="link" href="#" data-switch="health">Dettaglio della salute →</a></div></aside></div>';
+    '<a class="link" href="#" data-switch="health">Dettaglio della salute →</a><div class="kv"><span>Analisi recenti</span><button class="miniBtn secondary" type="button" data-switch="stats">Statistiche ↗</button></div></div></aside></div>';
   return h;
 }
 function todo(){
