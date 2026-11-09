@@ -1,0 +1,70 @@
+name: "ArtVision OWNER · Alchemist new Cinema Standard"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-owner-alchemist-cinema-v1.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-single-heavy-render
+  cancel-in-progress: false
+jobs:
+  cinema_standard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free renderer and FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: Produce genuine new Alchemist Cinema Standard with original audio
+        run: python scripts/artvision_owner_alchemist_cinema_v1.py
+      - name: Full video and audio decode, SHA256, ZIP CRC, immutable sources
+        run: |
+          set -euo pipefail
+          d=output/artvision-owner-alchemist-cinema-v1
+          ffprobe -v error -show_entries stream=codec_type,codec_name,width,height -show_entries format=duration,size -of json "$d/VIDEO_REVIEW.mp4" | tee "$d/FFPROBE.json"
+          ffmpeg -v error -xerror -i "$d/VIDEO_REVIEW.mp4" -map 0:v:0 -f null -
+          ffmpeg -v error -xerror -i "$d/VIDEO_REVIEW.mp4" -map 0:a:0 -f null -
+          python - <<'PY'
+          import json,hashlib,zipfile,pathlib,subprocess
+          d=pathlib.Path('output/artvision-owner-alchemist-cinema-v1')
+          p=d/'VIDEO_REVIEW.mp4'
+          assert p.is_file() and p.stat().st_size>1000000
+          x=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_format','-show_streams','-of','json',str(p)]))
+          assert float(x['format']['duration'])>=60
+          assert any(s['codec_type']=='video' and s['codec_name']=='h264' for s in x['streams'])
+          assert any(s['codec_type']=='audio' and s['codec_name']=='aac' for s in x['streams'])
+          sha=lambda z:hashlib.sha256(z.read_bytes()).hexdigest()
+          report={'status':'rendered_needs_visual_and_semantic_review','video_sha256':sha(p),'bytes':p.stat().st_size,'source_sha256':sha(d/'ORIGINAL_ARTWORK.jpg'),'ffmpeg_video_audio_full_decode':'PASS','human_artistic_review':'PENDING','gold':False,'published':False,'primary_queue_slot_change':0}
+          (d/'QA_TECHNICAL.json').write_text(json.dumps(report,indent=2),encoding='utf8')
+          files=['VIDEO_REVIEW.mp4','COPERTINA.jpg','ORIGINAL_ARTWORK.jpg','FONTI_E_DIRITTI.json','SOCIAL_POSTS.json','STORYBOARD_REGIA.json','ISTRUZIONI.md','QA_TECHNICAL.json','SCORE_ORIGINALE.wav','CONTATTO_REGIA.jpg','FFPROBE.json']
+          with zipfile.ZipFile(d/'CONSEGNA_DA_REVISIONARE.zip','w',compression=zipfile.ZIP_DEFLATED,compresslevel=3) as z:
+            for name in files:z.write(d/name,arcname=name)
+          with zipfile.ZipFile(d/'CONSEGNA_DA_REVISIONARE.zip') as z:
+            assert z.testzip() is None
+            for name in files:assert z.read(name)==(d/name).read_bytes()
+          print('NEW_REAL_MP4_SHA256=',sha(p))
+          print('NEW_ZIP_SHA256=',sha(d/'CONSEGNA_DA_REVISIONARE.zip'))
+          print('TECHNICAL_PASS; ARTISTIC_REVIEW_PENDING; NO_GOLD; NO_PUBLICATION')
+          PY
+      - name: Upload candidate MP4 and review pack (not published)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_OWNER_ALCHEMIST_NEW_CINEMA_REVIEW
+          path: |
+            output/artvision-owner-alchemist-cinema-v1/VIDEO_REVIEW.mp4
+            output/artvision-owner-alchemist-cinema-v1/CONSEGNA_DA_REVISIONARE.zip
+            output/artvision-owner-alchemist-cinema-v1/QA_TECHNICAL.json
+            output/artvision-owner-alchemist-cinema-v1/COPERTINA.jpg
+            output/artvision-owner-alchemist-cinema-v1/CONTATTO_REGIA.jpg
+          if-no-files-found: error
+          retention-days: 14
