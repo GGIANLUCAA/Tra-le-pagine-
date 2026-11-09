@@ -736,6 +736,99 @@ document.addEventListener("click",async function(e){
   }finally{btn.disabled=false;btn.textContent="Verifica streaming e download"}
 });
 document.addEventListener("click",function(e){var p=e.target.closest("[data-page]");if(p){state.page=p.dataset.page;render();window.scrollTo(0,0);return}var f=e.target.closest("[data-filter]");if(f){state.filter=f.dataset.filter;render();return}var sw=e.target.closest("[data-switch]");if(sw){e.preventDefault();state.page=sw.dataset.switch;if(sw.dataset.runFilter)state.filter=sw.dataset.runFilter;render();window.scrollTo(0,0);return}var diaryFilter=e.target.closest("[data-diary-filter]");if(diaryFilter){state.diaryFilter=diaryFilter.dataset.diaryFilter;render()}});
+// All chat URL management remains on this device: never sent to backend.
+document.addEventListener("click",function(ev){
+  var issueButton=ev.target.closest("button[data-repair-issue]");
+  if(issueButton){
+    var item=(state.data?.attention||[])[Number(issueButton.dataset.repairIssue)];
+    if(item)openRepairDialog(contextForIssue(item));
+    return;
+  }
+  var runButton=ev.target.closest("button[data-repair-run]");
+  if(runButton){
+    var run=(state.data?.runs||[]).find(function(x){return x.id===Number(runButton.dataset.repairRun)});
+    if(run)openRepairDialog({type:"run",project:run.project||"other",title:run.name,
+      detail:"Esecuzione storica del workflow da rivalutare",run:run,runId:run.id});
+    return;
+  }
+  var workButton=ev.target.closest("button[data-repair-work]");
+  if(workButton){
+    var work=(state.data?.works||[]).find(function(x){
+      return (x.id||x.title)===workButton.dataset.repairWork;
+    });
+    if(work)openRepairDialog(contextForWork(work));
+    return;
+  }
+  var projectButton=ev.target.closest("button[data-repair-project]");
+  if(projectButton&&PROJECT_LABELS[projectButton.dataset.repairProject]){
+    openRepairDialog(diagnosticForProject(projectButton.dataset.repairProject));
+  }
+});
+document.getElementById("closeRepairDialog").addEventListener("click",function(){
+  document.getElementById("repairDialog").close();
+  state.repair=null;state.repairDetails=null;
+});
+document.getElementById("repairDialog").addEventListener("close",function(){
+  state.repair=null;state.repairDetails=null;
+});
+document.getElementById("repairChatScope").addEventListener("change",function(){
+  if(!state.repair)return;
+  state.chatScope=this.value==="workflow"&&workflowChatKey(state.repair)?"workflow":"project";
+  renderRepairDialog();
+});
+document.getElementById("saveRepairChat").addEventListener("click",function(){
+  var ctx=state.repair;if(!ctx)return;
+  var info=document.getElementById("repairChatStatus");
+  var entered=document.getElementById("repairChatInput").value.trim();
+  var url=allowedChatUrl(entered);
+  if(!url){
+    info.className="repairStatus repairError";
+    info.textContent="Indirizzo non valido. Usa l’URL privato della chat (chatgpt.com/c/…), NON un link /share/.";
+    return;
+  }
+  state.chatLinks[chatScopeKey(ctx)]=url;
+  var stored=persistChats();
+  renderRepairDialog();
+  info.className="repairStatus "+(stored?"repairPositive":"repairError");
+  info.textContent=stored?
+    "Chat associata. Rimane soltanto nel browser di questo dispositivo; non compare nel repository.":
+    "Chat collegata soltanto per questa sessione: il browser impedisce di salvarla. Apri direttamente il pannello in Chrome.";
+  if(state.page==="issues")render();
+});
+document.getElementById("forgetRepairChat").addEventListener("click",function(){
+  var ctx=state.repair;if(!ctx)return;
+  delete state.chatLinks[chatScopeKey(ctx)];
+  var stored=persistChats();
+  renderRepairDialog();
+  var info=document.getElementById("repairChatStatus");
+  info.className="repairStatus";
+  info.textContent=stored?"Collegamento eliminato da questo browser.":"Collegamento non più attivo in questa sessione.";
+  if(state.page==="issues")render();
+});
+document.getElementById("copyRepairPrompt").addEventListener("click",async function(){
+  var input=document.getElementById("repairPrompt");
+  var status=document.getElementById("repairCopyStatus");
+  var content=input.value;
+  if(!content){status.textContent="Nessuna diagnosi disponibile.";return}
+  var copied=false;
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(content);copied=true;
+    }
+  }catch(err){}
+  if(!copied){
+    try{
+      input.focus();input.select();
+      copied=!!document.execCommand("copy");
+      input.setSelectionRange(0,0);
+    }catch(err){}
+  }
+  status.className="repairStatus "+(copied?"repairPositive":"repairError");
+  status.textContent=copied?
+    "Diagnosi copiata! Apri la chat principale collegata oppure ChatGPT e incolla il testo.":
+    "La copia automatica è bloccata dal browser: tieni premuto sul testo della diagnosi, seleziona e copia manualmente.";
+});
+loadChats();
 document.getElementById("refresh").addEventListener("click",refresh);
 setInterval(function(){if(!document.hidden)refresh()},180000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden&&Date.now()-state.stamp>120000)refresh()});
