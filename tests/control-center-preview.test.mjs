@@ -526,3 +526,35 @@ test("V8 QA endpoint rejects writes, and mobile page doesn't equate CI with vide
   assert.match(html,/Rapporto JSON non letto/);
   assert.match(backend,/report_contents_read:false/);
 });
+
+test("V8 service binding bypasses cross-worker 404 and makes catalog and Range probe available",async()=>{
+  const worker=fixture();
+  let seen=[];
+  const service={fetch:async req=>{
+    seen.push({url:req.url,method:req.method,range:req.headers.get("Range")});
+    if(req.url.endsWith("/api/catalog")){
+      return new Response(JSON.stringify({items:[
+        {key:"SIMBERG_CINEMA.mp4",available:true}
+      ]}),{status:200,headers:{"content-type":"application/json"}});
+    }
+    if(req.url.includes("/download/SIMBERG_CINEMA.mp4")){
+      return new Response(new Uint8Array(1024),{status:206,headers:{
+        "content-range":"bytes 0-1023/4096","content-length":"1024",
+        "content-type":"video/mp4","content-disposition":'attachment; filename="SIMBERG_CINEMA.mp4"'
+      }});
+    }
+    return new Response("not found",{status:404});
+  }};
+  const env={VIDEO_LIBRARY:service};
+  const status=await (await worker.fetch(new Request("https://preview.example/api/status"),env)).json();
+  assert.equal(status.sources.catalog.ok,true);
+  const variant=status.works[0].variants.find(v=>v.id==="cinema_standard");
+  assert.equal(variant.preview_ready,true);
+  const probe=await (await worker.fetch(new Request("https://preview.example/api/check?key=SIMBERG_CINEMA.mp4"),env)).json();
+  assert.equal(probe.ok,true);
+  assert.equal(probe.bytes_read,1024);
+  assert.equal(probe.download_url,"https://video-library-studio.600led.workers.dev/download/SIMBERG_CINEMA.mp4");
+  assert.ok(seen.some(x=>x.url.endsWith("/api/catalog")));
+  assert.ok(seen.some(x=>x.range==="bytes=0-1023"));
+  assert.ok(seen.every(x=>x.method==="GET"));
+});
