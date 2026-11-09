@@ -318,6 +318,67 @@ async function gather(){
   const collections=summarizeCollections(rows,sources.catalog?.ok);
   return {asof:new Date().toISOString(),sources,runs,works,media,collections,catalog_count:rows.length,statistics,...overview};
 }
+// QA is an on-demand public metadata lookup, never a review of an MP4.
+// Artifacts are listed by GitHub but their contents are NOT read here.
+let qualitySnapshot=null,qualityAt=0,qualityPending=null;
+async function gatherQuality(){
+  let feed=null,scope="workflow_specific",lookupError=null;
+  try{
+    feed=await json("https://api.github.com/repos/"+REPO+
+      "/actions/workflows/quality-director-v17.yml/runs?per_page=25",true);
+    if(!Array.isArray(feed.workflow_runs))throw new Error("Unexpected workflow payload");
+  }catch(e){
+    lookupError=clip(e&&e.message||"Non raggiungibile",80);
+    const recent=await getStatus();
+    scope="fallback_last_100_actions";
+    feed={workflow_runs:(recent.runs||[]).filter(r=>
+      Number(r.workflow_id)===392238876||/regia qualita|regia qualità v17/i.test(r.name))};
+  }
+  // Only manual dispatches create the QA report artifact; pull-request CI
+  // passing is explicitly NOT a video check.
+  const selected=feed.workflow_runs.filter(r=>r.event==="workflow_dispatch"&&
+    (!r.head_branch||r.head_branch==="main")).sort((a,b)=>
+      Date.parse(b.created_at||b.updated_at||0)-Date.parse(a.created_at||a.updated_at||0)).slice(0,6);
+  const rows=await Promise.all(selected.map(async run=>{
+    const id=Number(run.id);
+    const item={id:Number.isSafeInteger(id)&&id>0?id:null,
+      name:clip(run.name,130),status:clip(run.status,40),
+      conclusion:clip(run.conclusion,40),updated_at:clip(run.updated_at,40),
+      run_url:Number.isSafeInteger(id)&&id>0?
+        "https://github.com/"+REPO+"/actions/runs/"+id:null,
+      artifact_present:null,artifact_expired:null,artifact_size_bytes:null,
+      artifact_metadata_checked:false};
+    if(item.id&&run.status==="completed"){
+      try{
+        const data=await json("https://api.github.com/repos/"+REPO+
+          "/actions/runs/"+id+"/artifacts?per_page=30",true);
+        if(!Array.isArray(data.artifacts))throw new Error("Artifact list malformed");
+        const found=data.artifacts.find(a=>a.name==="quality-v17-report");
+        item.artifact_present=!!found;
+        item.artifact_metadata_checked=true;
+        if(found){
+          item.artifact_expired=found.expired===true;
+          item.artifact_size_bytes=Number(found.size_in_bytes)||null;
+        }
+      }catch(e){item.artifact_metadata_checked=false;}
+    }
+    return item;
+  }));
+  return {schema:"artvision-quality-metadata-v8",asof:new Date().toISOString(),
+    scope,lookup_error:lookupError,source_ok:scope==="workflow_specific",
+    runs:rows,manual_runs_observed:rows.length,
+    report_contents_read:false,qa_pass_verified:false,mp4_bytes_verified:false,
+    sha256_verified:false,owner_approved:false,publish_authorized:false,
+    info:"Artifact metadata only. No JSON/MP4 or approval inspected; a successful CI run does not certify a video."};
+}
+async function getQuality(){
+  if(qualitySnapshot&&Date.now()-qualityAt<90000)return qualitySnapshot;
+  if(!qualityPending)qualityPending=gatherQuality().then(r=>{
+    qualitySnapshot=r;qualityAt=Date.now();return r
+  }).finally(()=>{qualityPending=null});
+  return qualityPending;
+}
+
 async function getStatus(){
   if(snapshot&&Date.now()-snapshotAt<75000)return snapshot;
   if(!pending)pending=gather().then(x=>{snapshot=x;snapshotAt=Date.now();return x}).finally(()=>{pending=null});
@@ -395,6 +456,15 @@ export default {async fetch(request){
         download_url:ok?LIB+"/download/"+encodeURIComponent(key):null},
         {headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
     }catch(e){return Response.json({ok:false,error:"Verifica temporaneamente non disponibile"},{status:503,headers:{"cache-control":"no-store"}})}
+  }
+  if(path==="/api/quality"){
+    try{return Response.json(await getQuality(),{headers:{
+      "cache-control":"no-store","x-content-type-options":"nosniff"}})}
+    catch(e){return Response.json({schema:"artvision-quality-metadata-v8",source_ok:false,
+      runs:[],report_contents_read:false,qa_pass_verified:false,mp4_bytes_verified:false,
+      sha256_verified:false,owner_approved:false,publish_authorized:false,
+      error:"GitHub QA metadata non disponibile; non equivale a test fallito."},
+      {status:503,headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}})}
   }
   if(path==="/api/diagnose"){
     const run=new URL(request.url).searchParams.get("run")||"";
