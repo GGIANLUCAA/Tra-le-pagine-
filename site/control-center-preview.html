@@ -580,24 +580,65 @@ function works(){
 function runs(){var d=state.data;var out=sec("Attività GitHub","Esecuzioni reali. Tocca una riga per leggere il workflow originale.");out+='<div class="tools"><div class="filters">'+["all","artvision","storia","wow","site"].map(function(k){return '<button data-filter="'+k+'" class="'+(state.filter===k?"on":"")+'">'+({all:"Tutte",artvision:"ArtVision",storia:"Storia Rivive",wow:"WOW LAB",site:"Sito"}[k])+'</button>'}).join("")+'</div><a class="link" target="_blank" rel="noopener" href="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions">Apri GitHub ↗</a></div>';if(!source("github"))return out+'<div class="empty">Non disponibile in questo momento.</div>';var list=(d.runs||[]).filter(function(r){return state.filter==="all"||(r.project||project(r.name))===state.filter});return out+'<div class="panel">'+(list.length?list.slice(0,40).map(rowRun).join(""):'<div class="empty">Nessuna esecuzione recente trovata.</div>')+'</div>'}
 function media(){var d=state.data;var out=sec("Videoteca","Anteprime pubbliche dal tuo archivio. La riproduzione e i download restano sul sito originale.");out+='<div class="tools"><input id="search" class="search" placeholder="Cerca le anteprime…" aria-label="Cerca video" value="'+escapeText(state.q)+'"><a class="link" href="'+site+'" target="_blank" rel="noopener">Apri catalogo ↗</a></div>';if(!source("catalog"))return out+'<div class="empty">Catalogo non raggiungibile.</div>';var items=(d.media||[]).filter(function(x){return String(x.title||x.key).toLowerCase().includes(state.q.toLowerCase())});out+='<p class="sub">Anteprime recenti: '+items.length+' visibili su '+d.catalog_count+' voci catalogate. Stato di download non certificato qui.</p><div class="gridmedia">';items.forEach(function(x){var src=site+'/cover/'+encodeURIComponent(String(x.key||"").replace(/\.(mp4|m4v|mov)$/i,""));out+='<article class="video"><div class="cover"><span>◈</span><img loading="lazy" alt="" onerror="this.remove()" src="'+escapeText(src)+'"></div><div class="videotxt"><span class="rowname">'+escapeText(x.title||x.key)+'</span><span class="sub">'+(x.available===false?"Segnalato non disponibile":"Nel catalogo · download da verificare")+'</span><a class="buttonlink" target="_blank" rel="noopener" href="'+site+'">Apri archivio ↗</a></div></article>'});return out+'</div>'}
 function issues(){
-  var d=state.data;
-  var out=sec("Problemi e attenzioni","Errori GitHub nel campione recente e fasi ancora aperte: nessuna diagnosi inventata.");
-  out+='<div class="note">Non confondiamo il risultato del workflow, la disponibilità del file e il giudizio artistico. La diagnosi dettagliata richiede i log del relativo job.</div>';
-  if(!source("github"))out+='<div class="empty">GitHub non disponibile: esiti delle esecuzioni sconosciuti.</div>';
-  else{
-    var failures=(d.runs||[]).filter(function(r){return ["failure","cancelled","timed_out","action_required"].includes(r.conclusion)});
-    out+='<div class="panel"><h3>Esecuzioni da verificare ('+failures.length+' nel campione)</h3>';
-    out+=failures.length?failures.map(function(r){
-      var explain={"failure":"Esecuzione fallita: controllare job e log","cancelled":"Esecuzione annullata: controllare il motivo","timed_out":"Tempo massimo superato: controllare la fase interrotta","action_required":"Serve un'azione GitHub" }[r.conclusion]||"Verifica necessaria";
-      var url=String(r.html_url||"");if(!url.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/"))url="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions";
-      return '<div class="row"><div class="symbol">!</div><div class="grow"><a href="'+escapeText(url)+'" class="rowname" target="_blank" rel="noopener">'+escapeText(r.name)+' ↗</a><span class="sub">'+escapeText(date(r.updated_at))+' · '+escapeText(explain)+'</span></div>'+badge("Da controllare","fail")+'</div>';
-    }).join(""):'<div class="empty">Nessuna esecuzione fallita nelle ultime '+(d.runs||[]).length+' osservate. Non significa assenza totale di problemi.</div>';
-    out+='</div>';
-  }
+  var d=state.data||{},attention=d.attention||[];
+  var failures=attention.filter(function(x){return x.kind==="workflow"});
+  var unavailable=attention.filter(function(x){return x.kind==="source"});
+  var h=sec("Problemi · Ripara con GPT","Una centrale unica: errori tecnici recenti, prove GitHub, chat originali e messaggi pronti per GPT.");
+  h+='<section class="repairHeader"><div class="overline">ASSISTENZA INTELLIGENTE ALLE PRODUZIONI</div>'+
+    '<h3>Dal problema alla correzione, senza rispiegare tutto.</h3>'+
+    '<p>Quando individui un errore, premi «Ripara con GPT»: il pannello inserisce run, progetto, eventuali step falliti e link GitHub in un messaggio già preparato. Tu scegli se continuare nella chat collegata oppure in una nuova.</p>'+
+    '<div class="repairGrid"><span class="scopeLabel">'+failures.length+' ultimi workflow da controllare</span>'+
+    '<span class="scopeLabel">'+unavailable.length+' fonti non raggiungibili</span>'+
+    '<span class="scopeLabel">Nessuna correzione avviata senza il tuo intervento</span></div></section>';
+  h+='<div class="panel"><h3>Errori tecnici correnti · '+failures.length+'</h3>'+
+    '<p class="sub">Soltanto le ultime esecuzioni non riuscite di ciascun workflow del ramo principale. Gli errori già superati non rimangono qui come blocchi aperti.</p>';
+  h+=failures.length?failures.map(attentionItem).join(""):
+    '<div class="empty">'+(source("github")?"Nessun ultimo esito critico nei workflow pertinenti osservati. Non prova che ogni problema sia risolto.":"GitHub non raggiungibile: impossibile verificare gli errori.")+'</div>';
+  h+='</div>';
+  if(unavailable.length)h+='<div class="panel"><h3>Fonti non verificabili</h3>'+
+    unavailable.map(attentionItem).join("")+'</div>';
+  h+='<div class="panel"><h3>Chat principali dei progetti</h3>'+
+    '<p class="sub">Collega una volta l’URL privato della conversazione per ritrovarla dal telefono. L’associazione rimane in questo browser, non viene inviata al repository.</p>'+
+    '<div class="chatDirectory">'+Object.keys(PROJECT_LABELS).filter(function(x){return x!=="other"}).map(function(key){
+      var linked=!!state.chatLinks[key];
+      return '<div class="repairCard"><strong>'+escapeText(PROJECT_LABELS[key])+'</strong>'+
+      '<p class="repairMeta">'+(linked?"Chat originale collegata sul dispositivo":"Chat originale non ancora associata")+'</p>'+
+      '<div class="repairGrid"><button type="button" class="repairButton secondary" data-repair-project="'+escapeText(key)+'">'+
+      (linked?"Gestisci collegamento":"Collega chat")+'</button>'+
+      (linked?'<a class="repairButton" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(state.chatLinks[key])+'">Apri chat ↗</a>':'')+
+      '</div></div>';
+    }).join("")+'</div></div>';
   var incomplete=(d.works||[]).filter(function(w){return Number(w.delivered||0)<4});
-  out+='<div class="panel"><h3>Opere con varianti ancora da registrare ('+incomplete.length+')</h3>';
-  out+=incomplete.length?incomplete.map(function(w){return '<div class="row"><div class="grow"><span class="rowname">'+escapeText(w.title)+'</span><span class="sub">'+(4-Number(w.delivered||0))+' slot non conteggiati, da verificare in produzione</span></div>'+badge(Number(w.delivered||0)+'/4',"wait")+'</div>'}).join(""):'<div class="empty">Nessuno slot non conteggiato.</div>';
-  return out+'</div>';
+  h+='<div class="panel"><h3>Varianti mancanti o non ancora conteggiate · '+incomplete.length+' opere</h3>'+
+    '<p class="sub">Questo NON è automaticamente un errore: puoi comunque chiedere a GPT una verifica mirata della coda.</p>';
+  h+=incomplete.length?incomplete.map(function(w){
+    return '<div class="repairCard"><strong>'+escapeText(w.title)+'</strong>'+
+      '<p class="repairMeta">'+(4-Number(w.delivered||0))+' varianti non conteggiate · '+
+      escapeText(w.artist||"")+'</p><div class="repairGrid">'+
+      '<button class="repairButton secondary" type="button" data-repair-work="'+escapeText(w.id||w.title)+'">Analizza con GPT</button>'+
+      '<button class="repairButton secondary" data-switch="works" type="button">Vedi le quattro varianti</button>'+
+      '</div></div>';
+  }).join(""):'<div class="empty">Nessuna variante mancante nel conteggio delle opere operative.</div>';
+  h+='</div>';
+  var latestIds=new Set(failures.map(function(x){return Number(x.run_id)||0}));
+  var past=(d.runs||[]).filter(function(r){
+    return ["failure","cancelled","timed_out","action_required"].includes(r.conclusion)&&
+      !latestIds.has(Number(r.id)||0);
+  });
+  if(past.length){
+    h+='<details class="panel"><summary>Archivio storico · '+past.length+' esiti critici nel campione</summary>'+
+      '<p class="sub">Potrebbero essere già stati recuperati da una run successiva. Non sono indicati come incidenti attivi.</p>'+
+      past.slice(0,25).map(function(r){
+        var url=String(r.html_url||"");
+        if(!url.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/"))url="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions";
+        return '<div class="repairCard"><strong>'+escapeText(r.name)+'</strong>'+
+          '<p class="repairMeta">'+escapeText(date(r.updated_at))+' · '+escapeText(r.conclusion)+' · '+escapeText(r.head_branch||"branch non disponibile")+'</p>'+
+          '<div class="repairGrid"><button type="button" class="repairButton secondary" data-repair-run="'+Number(r.id||0)+'">Analizza con GPT</button>'+
+          '<a class="repairButton secondary" href="'+escapeText(url)+'" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div>';
+      }).join("")+'</details>';
+  }
+  h+='<p class="note">Per continuare in una chat già esistente serve il suo indirizzo privato (chatgpt.com/c/…). I link condivisi /share/ non consentono di continuare quella conversazione. Il pannello non può leggere automaticamente la tua cronologia privata ChatGPT.</p>';
+  return h;
 }
 function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,stats:statisticsPage,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}});var ws=document.getElementById("workSearch");if(ws)ws.addEventListener("input",function(e){state.workSearch=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("workSearch");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
 async function refresh(){var b=document.getElementById("refresh");b.disabled=true;b.textContent="Caricamento…";try{var r=await fetch("/api/status",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var d=await r.json();if(!Array.isArray(d.runs)||!Array.isArray(d.works))throw Error("Risposta non valida");state.data=d;state.stamp=Date.now();state.loadError=null;render()}catch(e){state.loadError=e.message;if(state.data){document.getElementById("synctext").textContent="Aggiornamento non riuscito · ultimo dato "+date(state.data.asof);document.getElementById("pulse").className="pulse";}if(!state.data)document.getElementById("content").innerHTML='<div class="empty">Collegamento temporaneamente non disponibile: '+escapeText(e.message)+'</div>'}finally{b.disabled=false;b.textContent="↻ Aggiorna"}}
