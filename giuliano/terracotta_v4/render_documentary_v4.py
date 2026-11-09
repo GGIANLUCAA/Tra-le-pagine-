@@ -259,7 +259,23 @@ def main():
  print("VISUAL_PREFLIGHT_COMPLETE",len(contact_imgs),
        "photo slots",len(credit),"distinct photo sources",flush=True)
  # Voice generated once only after verified rights + sources + actual moving film.
- waveform,aligned=base.synthesize(script,DIR/"audio")
+ voicelocation=DIR/"audio"/"VOCE.wav"
+ if voicelocation.exists():
+  # The previous attempt produced a valid 125-second Google voice and then failed because
+  # sentence splitting (34) differed from editorial beats (30). Never spend voice again.
+  import soundfile as sf
+  waveform,read_sr=sf.read(voicelocation,dtype="float32")
+  if read_sr!=24000 or waveform.ndim!=1 or waveform.size<500000:
+   raise RuntimeError("Recovered voice failed 24k mono file checks")
+  length=len(waveform)/24000
+  aligned=base.gemini_voice.align([b["narration"] for b in BEATS],
+                                 voicelocation,length)
+  print("GOOGLE_VOICE_RECOVERED_NO_API_SPEND",round(length,2),
+        "real documentary beats",len(aligned),flush=True)
+ else:
+  # New project renders still split editorial beats by newline, not internal punctuation.
+  base.gemini_voice.sentences=lambda text:[x.strip() for x in text.splitlines() if x.strip()]
+  waveform,aligned=base.synthesize(script,DIR/"audio")
  length=len(waveform)/24000
  aligninfo=json.loads((DIR/"audio"/"ALLINEAMENTO_VOCE.json").read_text())
  fraction=float(aligninfo.get("matched_fraction") or 0)
