@@ -399,13 +399,13 @@ async function gatherIntegrity(){
       report_contents_read:false,full_sha256_verified_by_dashboard:false,
       zip_crc_verified_by_dashboard:false,owner_approved:false,publish_authorized:false};
   }
-  const selected=feed.workflow_runs.filter(r=>r.event==="workflow_dispatch"&&
+  const selected=feed.workflow_runs.filter(r=>["workflow_dispatch","push"].includes(r.event)&&
     r.head_branch==="main").sort((a,b)=>Date.parse(b.created_at||0)-Date.parse(a.created_at||0)).slice(0,5);
   const runs=await Promise.all(selected.map(async r=>{
     const id=Number(r.id);
     const out={id:Number.isSafeInteger(id)&&id>0?id:null,
       name:clip(r.name,140),status:clip(r.status,35),conclusion:clip(r.conclusion,35),
-      updated_at:clip(r.updated_at,40),event:"workflow_dispatch",
+      updated_at:clip(r.updated_at,40),event:clip(r.event,35),
       run_url:Number.isSafeInteger(id)&&id>0?"https://github.com/"+REPO+"/actions/runs/"+id:null,
       artifact_metadata_checked:false,artifact_present:null,artifact_expired:null};
     if(out.id&&out.status==="completed"){
