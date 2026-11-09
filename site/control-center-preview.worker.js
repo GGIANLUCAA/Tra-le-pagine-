@@ -108,7 +108,7 @@ export default {async fetch(request){
   if(path==="/"||path==="/index.html"){
     try{return new Response(await getPage(),{headers:{
       "Content-Type":"text/html;charset=UTF-8","Cache-Control":"no-cache","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer",
-      "Content-Security-Policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src https://video-library-studio.600led.workers.dev data:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+      "Content-Security-Policy":"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src https://video-library-studio.600led.workers.dev data:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors https://video-library-studio.600led.workers.dev"
     }})}catch(e){return new Response("Anteprima temporaneamente non disponibile",{status:503})}
   }
   return new Response("Not found",{status:404});
