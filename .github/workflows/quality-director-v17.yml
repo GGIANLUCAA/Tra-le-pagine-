@@ -53,6 +53,19 @@ jobs:
           else
             python src/quality_director_v17.py --format "$QUALITY_FORMAT" --out output/quality-v17
           fi
+      - name: Crea stato leggibile da Studio e diagnosi Ripara GPT (sola lettura)
+        if: always() && github.event_name == 'workflow_dispatch'
+        env:
+          STUDIO_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -f output/quality-v17/QUALITY_REPORT_V17.json ]; then
+            python src/studio_autonomy_report_v1.py \
+              --quality-report output/quality-v17/QUALITY_REPORT_V17.json \
+              --out output/quality-v17 \
+              --run-url "$STUDIO_RUN_URL"
+          else
+            echo "No quality report was generated; no false status will be emitted."
+          fi
       - name: Scarica la pagina HTML e il JSON di revisione
         if: always() && github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4

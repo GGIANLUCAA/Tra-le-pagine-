@@ -1,0 +1,27 @@
+name: Studio autonomy V1 offline safety gates
+on:
+  pull_request:
+    paths:
+      - "src/studio_autonomy_gate_v1.py"
+      - "tests/test_studio_autonomy_gate_v1.py"
+      - "src/studio_autonomy_report_v1.py"
+      - "tests/test_studio_autonomy_report_v1.py"
+      - ".github/workflows/quality-director-v17.yml"
+      - ".github/workflows/studio-autonomy-gates-v1.yml"
+      - "docs/STUDIO_AUTONOMY_ROADMAP_V1_20261109.md"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-gate-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test policy and fail-closed decisions (no API, renders or cost)
+        run: |
+          python -m unittest discover -s tests -p "test_studio_autonomy_gate_v1.py" -v
+          python -m unittest discover -s tests -p "test_studio_autonomy_report_v1.py" -v
