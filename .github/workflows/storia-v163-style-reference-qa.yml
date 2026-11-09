@@ -1,0 +1,43 @@
+name: "La Storia Rivive V163 | reference-style B/W-to-color cadence QA"
+on:
+  pull_request:
+    paths:
+      - "src/storia_rivive_v163_rapid_reveal_qa.py"
+      - "tests/test_storia_rivive_v163_rapid_reveal_qa.py"
+      - "docs/LA_STORIA_RIVIVE_V163_RIFERIMENTI_RITMO.md"
+      - ".github/workflows/storia-v163-style-reference-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: storia-v163-reference-qa-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify_reference_style_without_publishing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Only free local video libraries, no provider or Vidu credentials
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "opencv-python-headless>=4.8,<5" "numpy>=1.26,<3"
+      - name: Run 8 tests including a REAL decoded synthetic H264 MP4
+        run: |
+          python -m unittest discover -s tests -p "test_storia_rivive_v163_rapid_reveal_qa.py" -v
+      - name: Confirm no reference user videos have been committed to this PR
+        run: |
+          set -euo pipefail
+          git ls-files > /tmp/changed_paths.txt
+          if grep -Ei '(^|/)(43055|43056|.*reference.*)\.(mp4|webm|mov)$' /tmp/changed_paths.txt; then
+            echo 'User reference footage MUST NOT be uploaded to the public repository'
+            exit 1
+          fi
+          echo 'V163_TESTS_PASS_NO_USER_REFERENCE_VIDEO_BYTES_NO_PROVIDER_SPEND'
