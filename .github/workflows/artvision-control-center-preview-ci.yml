@@ -1,0 +1,43 @@
+name: ArtVision Control Center · test anteprima sola lettura
+on:
+  push:
+    branches:
+      - preview/artvision-control-center-v1
+      - preview/control-center-quality-v8-20261109
+    paths:
+      - site/control-center-preview.html
+      - site/control-center-preview.worker.js
+      - scripts/build-control-center-preview.mjs
+      - tests/control-center-preview.test.mjs
+      - .github/workflows/artvision-control-center-preview-ci.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - site/control-center-preview.html
+      - site/control-center-preview.worker.js
+      - scripts/build-control-center-preview.mjs
+      - tests/control-center-preview.test.mjs
+      - .github/workflows/artvision-control-center-preview-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: control-center-preview-tests
+  cancel-in-progress: true
+jobs:
+  readonly-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test UI, status and file probe without network/API credits
+        run: node --test tests/control-center-preview.test.mjs
+      - name: Build isolated preview bundle, no deployment
+        run: |
+          node scripts/build-control-center-preview.mjs
+          test -s output/control-center-preview/worker.js
+          sha256sum output/control-center-preview/worker.js

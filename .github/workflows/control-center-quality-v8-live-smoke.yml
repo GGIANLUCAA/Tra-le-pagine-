@@ -1,0 +1,111 @@
+name: Control Center V8 · real public endpoint smoke (read only)
+on:
+  push:
+    branches:
+      - preview/control-center-quality-v8-20261109
+    paths:
+      - .github/workflows/control-center-quality-v8-live-smoke.yml
+      - site/control-center-preview.worker.js
+      - site/control-center-preview.html
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-readonly-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Validate deployed UI and API over real HTTPS
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://artvision-control-preview.600led.workers.dev"
+          curl --fail --silent --show-error --location --max-time 30 --retry 2 "$BASE/" -o /tmp/control.html
+          curl --fail --silent --show-error --location --max-time 30 --retry 2 "$BASE/api/status" -o /tmp/status.json
+          curl --fail --silent --show-error --location --max-time 30 --retry 2 "$BASE/api/quality" -o /tmp/quality.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          html=Path("/tmp/control.html").read_text(encoding="utf-8")
+          status=json.loads(Path("/tmp/status.json").read_text(encoding="utf-8"))
+          qa=json.loads(Path("/tmp/quality.json").read_text(encoding="utf-8"))
+          assert 'data-page="quality"' in html
+          assert "function qualityPage()" in html
+          assert isinstance(status.get("runs"),list)
+          assert isinstance(status.get("works"),list)
+          assert status.get("sources",{}).get("catalog",{}).get("ok") is True, "Internal video catalog must be reachable through service binding"
+          assert qa.get("schema")=="artvision-quality-metadata-v8"
+          assert isinstance(qa.get("runs"),list)
+          for k in ("report_contents_read","qa_pass_verified","mp4_bytes_verified",
+                    "sha256_verified","owner_approved","publish_authorized"):
+              assert qa.get(k) is False,k
+          print("HTTPS OK: UI V8, status, QA metadata. No MP4 or Gold attestation.")
+          print("QA source scope:",qa.get("scope"),"; manual run count:",len(qa["runs"]))
+          print("Control Center source availability:",{k:bool(v.get("ok")) for k,v in status.get("sources",{}).items()})
+          PY
+          post_status=$(curl --silent --output /dev/null --write-out "%{http_code}" --max-time 20 -X POST "$BASE/api/quality")
+          test "$post_status" = "405"
+          invalid_status=$(curl --silent --output /dev/null --write-out "%{http_code}" --max-time 20 "$BASE/api/check?key=..%2Funsafe.txt")
+          test "$invalid_status" = "400"
+          echo "Mutation rejected (405), unsafe media key rejected (400)."
+
+      - name: Check public site versus automated-client restrictions (no private data)
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://video-library-studio.600led.workers.dev"
+          for path in "/" "/api/catalog"; do
+            for agent in "curl/8.0" "Mozilla/5.0"; do
+              code=$(curl -sS --location --max-time 20 -A "$agent" -o /dev/null -w '%{http_code}' "$BASE$path" || true)
+              printf 'Site status path=%s agent=%s code=%s\n' "$path" "$agent" "$code"
+            done
+          done
+      - name: Read-only sample MP4 range probe (max 3 × 1024 bytes)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, re, urllib.request, urllib.parse
+          base="https://video-library-studio.600led.workers.dev"
+          preview="https://artvision-control-preview.600led.workers.dev"
+          try:
+              with urllib.request.urlopen(urllib.request.Request(base+"/api/catalog",headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"}), timeout=20) as r:
+                  catalog=json.load(r)
+          except Exception as e:
+              print("Catalog not reachable; no false MP4 status:",type(e).__name__,"HTTP=",getattr(e,"code",None),"reason=",str(getattr(e,"reason",""))[:120])
+              raise SystemExit(0)
+          rows=catalog.get("items",[]) if isinstance(catalog,dict) else []
+          safe=lambda x:isinstance(x,str) and bool(re.fullmatch(r"[\w ().-]{1,190}\.mp4",x,re.I))
+          candidates=[]
+          for row in rows if isinstance(rows,list) else []:
+              if not isinstance(row,dict) or row.get("hidden") is True or row.get("available") is not True:
+                  continue
+              key=row.get("key") or row.get("name")
+              if safe(key) and key not in candidates:candidates.append(key)
+              if len(candidates)>=3:break
+          print("Available-in-catalog MP4 candidates:",len(candidates))
+          failed_checks=[]
+          for key in candidates:
+              url=preview+"/api/check?"+urllib.parse.urlencode({"key":key})
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"}),timeout=25) as r: check=json.load(r)
+                  if not check.get("ok"):failed_checks.append(key)
+                  print("Range probe:",key,"ok=",check.get("ok"),"HTTP=",check.get("http_status"),
+                        "read=",check.get("bytes_read"),"scope=",check.get("scope"))
+              except Exception as e:
+                  print("Range probe could not confirm:",key,type(e).__name__)
+                  failed_checks.append(key)
+              direct_url=base+"/download/"+urllib.parse.quote(key,safe="")
+              req=urllib.request.Request(direct_url,headers={
+                  "User-Agent":"Mozilla/5.0","Range":"bytes=0-1023","Accept":"video/mp4"})
+              try:
+                  with urllib.request.urlopen(req,timeout=25) as res:
+                      chunk=res.read(1024)
+                      print("Direct site range:",key,"HTTP=",res.status,
+                            "bytes=",len(chunk),"content-range=",res.headers.get("Content-Range"))
+              except Exception as e:
+                  print("Direct site range failed:",key,"HTTP=",getattr(e,"code",None),type(e).__name__)
+          assert candidates, "No playable catalog entries to verify with ranges"
+          assert not failed_checks, "Internal Worker service-binding MP4 range probe failed"
+          print("No full-file SHA, ZIP or Gold checks were performed.")
+          PY
