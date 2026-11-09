@@ -35,7 +35,7 @@ function fixture(){
   async function fetchStub(url){
     const href=String(url);
     if(href.includes("/download/SIMBERG_CINEMA.mp4"))
-      return new Response(new Uint8Array(1024),{status:206,headers:{"content-range":"bytes 0-1023/4096",
+      return new Response(new Uint8Array(1024),{status:206,headers:{"content-range":"bytes 0-1023/4096","content-length":"1024",
         "content-type":"video/mp4","content-disposition":'attachment; filename="SIMBERG_CINEMA.mp4"'}});
     const i=href.includes("/actions/runs?")?0:href.includes("/queue/artvision")?1:href.includes("/api/catalog")?2:-1;
     return new Response(JSON.stringify(responses[i]||{error:"not found"}),{status:i>=0?200:404,
