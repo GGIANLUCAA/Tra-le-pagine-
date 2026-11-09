@@ -75,6 +75,8 @@ jobs:
               r.raise_for_status()
               runs=[a for a in r.json().get("workflow_runs",[])
                     if a.get("name")=="Giuliano - Terracotta Army Critico"]
+              print("FOUND_PUSH_RUNS:",[(a.get("id"),a.get("head_sha"),a.get("status"),a.get("conclusion")) for a in runs[:10]],flush=True)
+              runs=[a for a in runs if a.get("head_sha")=="dcc022fc1b494316cb32e11b07ccb259a3638a6f"]
               if runs:
                   found=runs[0]
                   print("RENDER_RUN_ID:",found["id"],"STATUS:",found["status"],
