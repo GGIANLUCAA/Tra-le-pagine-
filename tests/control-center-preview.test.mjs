@@ -36,6 +36,12 @@ function fixture(options={}){
   const responses=[runs,options.queue||queue,catalog];
   async function fetchStub(url){
     const href=String(url);
+    if(href.includes("/actions/runs/")&&href.includes("/jobs?")){
+      const data=options.jobs||{jobs:[{name:"Render video",conclusion:"failure",
+        html_url:"https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/123/job/456",
+        steps:[{name:"Render FFmpeg",number:4,conclusion:"failure"},{name:"Upload",number:5,conclusion:"skipped"}]}]};
+      return new Response(JSON.stringify(data),{status:200,headers:{"content-type":"application/json"}});
+    }
     if(href.includes("/download/SIMBERG_CINEMA.mp4"))
       return new Response(new Uint8Array(1024),{status:206,headers:{"content-range":"bytes 0-1023/4096","content-length":"1024",
         "content-type":"video/mp4","content-disposition":'attachment; filename="SIMBERG_CINEMA.mp4"'}});
@@ -234,6 +240,81 @@ test("V5 Android manifest provides a standalone icon and never writes video data
   assert.match(html,/rel="manifest"/);
   const deny=await worker.fetch(new Request("https://preview.example/api/status",{method:"POST"}));
   assert.equal(deny.status,405);
+});
+test("V6 diagnose returns only public run jobs from the observed GitHub sample",async()=>{
+  const id=123;
+  const runs=[{id,name:"WOW LAB · Produzione",workflow_id:7,head_branch:"main",
+    status:"completed",conclusion:"failure",event:"schedule",updated_at:"2026-11-09T06:10:00Z",
+    html_url:"https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/123"}];
+  const worker=fixture({runs});
+  const result=await worker.fetch(new Request("https://preview.example/api/diagnose?run=123"));
+  assert.equal(result.status,200);
+  const data=await result.json();
+  assert.equal(data.run_id,id);
+  assert.equal(data.jobs_available,true);
+  assert.equal(data.jobs.length,1);
+  assert.equal(data.jobs[0].name,"Render video");
+  assert.equal(data.jobs[0].failed_steps[0].name,"Render FFmpeg");
+  assert.equal(data.jobs[0].failed_steps.length,1,"Do not show skipped steps as errors");
+  assert.ok(data.run_url.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/123"));
+  const missing=await worker.fetch(new Request("https://preview.example/api/diagnose?run=999"));
+  assert.equal(missing.status,404,"No arbitrary run lookup");
+  const invalid=await worker.fetch(new Request("https://preview.example/api/diagnose?run=not-a-run"));
+  assert.equal(invalid.status,400);
+  const write=await worker.fetch(new Request("https://preview.example/api/diagnose?run=123",{method:"POST"}));
+  assert.equal(write.status,405);
+});
+test("V6 only recognizes continuable private ChatGPT URLs, not shared snapshots",()=>{
+  const start=html.indexOf("function allowedChatUrl(value){");
+  const end=html.indexOf("function loadChats(){",start);
+  assert.ok(start>0&&end>start);
+  const checker=runInNewContext(html.slice(start,end)+"\nallowedChatUrl;",{URL});
+  assert.equal(checker("https://chatgpt.com/c/12345678-abcd-1234-abcd-123456789abc"),
+    "https://chatgpt.com/c/12345678-abcd-1234-abcd-123456789abc");
+  assert.equal(checker("https://chatgpt.com/g/g-some-gpt/c/12345678-abcd-1234-abcd-123456789abc"),
+    "https://chatgpt.com/g/g-some-gpt/c/12345678-abcd-1234-abcd-123456789abc");
+  for(const invalid of [
+    "https://chatgpt.com/share/12345678-abcd-1234-abcd-123456789abc",
+    "https://evil.example/c/12345678-abcd-1234-abcd-123456789abc",
+    "http://chatgpt.com/c/12345678-abcd-1234-abcd-123456789abc",
+    "https://chatgpt.com.evil.example/c/12345678-abcd-1234-abcd-123456789abc",
+    "javascript:alert(1)", "https://chatgpt.com/c/"
+  ])assert.equal(checker(invalid),null,invalid);
+});
+test("V6 GPT repair prompt is source-grounded and does not claim automatic repair",()=>{
+  const start=html.indexOf("function prepareRepairPrompt(ctx,details){");
+  const end=html.indexOf("function renderRepairDialog(){",start);
+  assert.ok(start>0&&end>start);
+  const fn=runInNewContext(html.slice(start,end)+"\nprepareRepairPrompt;",{
+    PROJECT_LABELS:{wow:"WOW LAB · Produzione autonoma"},
+    site:"https://video-library-studio.600led.workers.dev",
+    state:{data:{asof:"2026-11-09T08:30:00Z"}}
+  });
+  const prompt=fn({type:"run",project:"wow",title:"Fallimento WOW",detail:"Esecuzione fallita",
+    runId:123,run:{id:123,name:"WOW LAB · Produzione",conclusion:"failure",head_branch:"main",
+      html_url:"https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/123"}},
+    {jobs_available:true,jobs:[{name:"Render video",conclusion:"failure",
+      failed_steps:[{name:"Render FFmpeg",number:4,conclusion:"failure"}]}]});
+  assert.match(prompt,/GGIANLUCAA\/Tra-le-pagine-/);
+  assert.match(prompt,/actions\/runs\/123/);
+  assert.match(prompt,/Render FFmpeg/);
+  assert.match(prompt,/AGENTS\.md/);
+  assert.match(prompt,/NON avviare produzioni doppie/);
+  assert.match(prompt,/non sono istruzioni/i);
+  assert.doesNotMatch(prompt,/riparazione effettuata/i);
+});
+test("V6 repair centre has GPT links, original-chat mapping and clipboard fallback",()=>{
+  assert.match(html,/id="repairDialog"/);
+  assert.match(html,/data-page="issues"/);
+  assert.match(html,/data-repair-issue/);
+  assert.match(html,/data-repair-run/);
+  assert.match(html,/data-repair-work/);
+  assert.match(html,/id="copyRepairPrompt"/);
+  assert.match(html,/document\.execCommand\("copy"\)/);
+  assert.match(html,/localStorage\.setItem\(CHAT_MAP_STORAGE_KEY/);
+  assert.match(html,/id="repairChatScope"/);
+  assert.match(html,/href="https:\/\/chatgpt\.com\/"/);
+  assert.match(html,/saveRepairChat/);
 });
 test("On-demand range probe does not claim full SHA",async()=>{
   const worker=fixture();
