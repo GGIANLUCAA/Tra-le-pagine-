@@ -116,26 +116,69 @@ async function gather(){
     {id:"cinema_standard",label:"Cinema · Classico",patterns:[/^(?:new_)?cinema_standard_v\d+$/,/^v\d+_cinema_candidate$/]},
     {id:"cinema_museum",label:"Cinema · Museum",patterns:[/^cinema_museum_v\d+$/]}
   ];
+  const verified=(x)=>{
+    if(x===true)return true;
+    if(typeof x!=="string")return false;
+    const t=x.trim();
+    // A named verification with a positive result, never a PENDING/FAILED field.
+    return /^(PASS|MATCH|VERIFIED)(\b|[_ :.-])/i.test(t)&&!/PENDING|FAILED|FAIL\b/i.test(t);
+  };
+  const evidence=(rec,fields)=>fields.some(k=>verified(rec[k]));
   const pickSlot=(w,definition)=>{
     const found=Object.entries(w).filter(([key,val])=>
       definition.patterns.some(re=>re.test(key))&&val&&typeof val==="object"&&
       (val.filename||val.mp4_filename||val.file||val.sha256||val.mp4_sha256));
-    // Prefer a specifically marked active slot when present; otherwise highest version.
+    // Explicitly selected active replacement wins, then newest version.
+    // Within the same version prefer its canonical "cinema_standard" record over
+    // older duplicate "vNN_cinema_candidate" bookkeeping.
     found.sort((a,b)=>{
       const active=w.active_cinema_standard;
       if(a[0]===active)return -1;if(b[0]===active)return 1;
-      return (Number((b[0].match(/v(\d+)/)||[])[1])||0)-(Number((a[0].match(/v(\d+)/)||[])[1])||0);
+      const v=(k)=>Number((k.match(/v(\d+)/)||[])[1])||0;
+      const diff=v(b[0])-v(a[0]);
+      if(diff)return diff;
+      const rank=(k)=>/^(critico|cinema|new_cinema)/.test(k)?0:1;
+      return rank(a[0])-rank(b[0]);
     });
     const [source,record]=found[0]||["",{}];
     const filename=clip(record.filename||record.mp4_filename||record.file,190);
     const validFile=/^[\w ().-]{1,190}\.mp4$/i.test(filename)?filename:"";
-    const siteFound=!!validFile&&catalogNames.has(validFile);
-    const qa=!!(record.sha256||record.mp4_sha256)&&!!validFile;
-    const recorded=!!source;
-    const onSite=siteFound?catalogAvailability.get(validFile):null;
-    return {id:definition.id,label:definition.label,recorded,source,filename:validFile,
-      has_sha:qa,site_catalog:siteFound,site_available:onSite,
-      technical_status:clip(record.status||"",120),run_id:Number(record.run_id||record.github_run_id||record.source_run_id)||null};
+    const present=!!validFile&&catalogNames.has(validFile);
+    const availability=present?catalogAvailability.get(validFile):null;
+    const canPreview=present&&availability===true;
+    const fields={
+      video_sha:record.sha256||record.mp4_sha256||record.mp4_sha256_ci||"",
+      bytes:Number(record.bytes||record.mp4_bytes)||null,
+      duration_s:Number(record.duration_s||record.duration_seconds)||null,
+      codec:clip(record.codec||record.video_codec,90),
+      status:clip(record.status||"",190)
+    };
+    const qa={
+      sha_recorded:/^[a-f0-9]{64}$/i.test(String(fields.video_sha)),
+      decode_documented:evidence(record,["ffmpeg_full_decode","full_ffmpeg_decode","full_ffmpeg_video_audio_decode",
+        "independent_ffmpeg_video_audio_full_decode","ffmpeg_all_streams_full_decode",
+        "full_decode_pass_ci","full_decode_pass_local","full_ffmpeg_decode"]),
+      zip_documented:evidence(record,["zip_crc","zip_crc_readback","original_zip_crc","original_artifact_zip_crc",
+        "private_library_download_zip_crc","zip_local_readback_sha_pass","private_library_readback_zip_crc"]),
+      site_full_sha_documented:evidence(record,["site_full_download_sha256","site_catalog_and_full_download_sha256"]),
+      site_range_documented:evidence(record,["site_http_206_stream_download","site_download_HTTP_206"]),
+      site_playback_historic:record.site_playback_verified===true,
+      gold_approved:record.gold_v25===true||record.Gold_V25===true,
+      human_review:clip(record.human_artistic_review||record.artistic_human_review||record.artistic_review||"",160),
+      rights_review:clip(record.commercial_rights_review||record.licensing_review||"",120)
+    };
+    const runId=Number(record.run_id||record.github_run_id||record.source_run_id||record.github_actions_run)||null;
+    return {
+      id:definition.id,label:definition.label,recorded:!!source,source,filename:validFile,
+      has_sha:qa.sha_recorded,site_catalog:present,site_available:availability,
+      preview_ready:canPreview,
+      media_url:canPreview?LIB+"/media/"+encodeURIComponent(validFile):null,
+      poster_url:canPreview?LIB+"/cover/"+encodeURIComponent(validFile.replace(/\.mp4$/i,"")):null,
+      download_url:canPreview?LIB+"/download/"+encodeURIComponent(validFile):null,
+      technical_status:fields.status,run_id:runId,
+      details:{bytes:fields.bytes,duration_s:fields.duration_s,codec:fields.codec},
+      qa
+    };
   };
   const works=(Array.isArray(queue.works)?queue.works:[])
     .filter(w=>!/dal[ií]|temptation of st\.?\s*anthony/i.test(String(w.artist||"")+" "+String(w.title_en||"")))
