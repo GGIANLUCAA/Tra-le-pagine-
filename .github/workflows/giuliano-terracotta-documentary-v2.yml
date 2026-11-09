@@ -1,0 +1,59 @@
+name: "Giuliano - Terracotta Documentary V2"
+on:
+  push:
+    branches: ["feature/giuliano-terracotta-social-v2-20261109"]
+    paths:
+      - "giuliano/terracotta_v2/**"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  documentary-v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ARTVISION_ASR_MODEL: base
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Source checkout
+        uses: actions/checkout@v4
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Early source syntax and secret checks
+        run: |
+          python -m py_compile giuliano/terracotta_v2/render_documentary_v2.py
+          test -n "$GEMINI_API_KEY" || (echo "GEMINI_API_KEY missing; no substitute voice" && exit 2)
+      - name: FFmpeg and audio dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Batch-license verified images first, Google Gacrux then, render and QA
+        run: python giuliano/terracotta_v2/render_documentary_v2.py
+      - name: Preserve voice and preflight if rendering fails (never label this a video)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_V2_DIAGNOSTICS_ONLY_NOT_FINISHED
+          path: |
+            output/giuliano_terracotta_v2/audio/VOCE.wav
+            output/giuliano_terracotta_v2/audio/VOICE_CACHE_V13.json
+            output/giuliano_terracotta_v2/ATTRIBUZIONI_FOTO.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Downloadable Android MP4, cover, full pack
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_TERRACOTTA_V2_VIDEO_COVER_ZIP
+          path: |
+            output/giuliano_terracotta_v2/GIULIANO_TERRACOTTA_DOCUMENTARIO_V2_REVIEW.mp4
+            output/giuliano_terracotta_v2/GIULIANO_TERRACOTTA_DOCUMENTARIO_V2_PACCHETTO.zip
+            output/giuliano_terracotta_v2/COVER_V2.jpg
+            output/giuliano_terracotta_v2/QA_V2.json
+            output/giuliano_terracotta_v2/ATTRIBUZIONI_FOTO.txt
+          if-no-files-found: error
+          retention-days: 14
