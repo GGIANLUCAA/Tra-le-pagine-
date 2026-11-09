@@ -123,6 +123,10 @@ def make_canvas(path,out,shot_type):
   fg=ImageOps.contain(im,(900,1420),method=Image.Resampling.LANCZOS)
   left=(900-fg.width)//2; top=(1600-fg.height)//2
   bg.paste(fg,(left,top))
+ if shot_type=="modern_reconstruction_of_colors":
+  d=ImageDraw.Draw(bg)
+  d.rounded_rectangle((22,1480,540,1555),radius=10,fill=(7,13,20))
+  d.text((42,1497),"COLOR RECONSTRUCTION",font=font(30),fill="#e7ddc5")
  bg.save(out,quality=94,subsampling=0)
 def cover_from(canvas,path):
  im=Image.open(canvas).convert("RGB").resize((720,1280))
