@@ -42,3 +42,5 @@ La PR aggiunge anche `src/studio_autonomy_report_v1.py`, richiamato a valle del 
 - Le proprietà `mp4_bytes_verified_by_bridge`, `video_sha256_verified_by_bridge`, `owner_approved`, `publish_authorized` rimangono `false`, anche con report V17 senza blocchi.
 - Il file JSON è un **contratto d'ingresso** per la futura UI Android; non è ancora collegato al Worker del Centro di controllo.
 - I file di GitHub Actions in un repository pubblico possono essere visibili a terzi: niente prompt con dati sensibili, URL privati, token o log grezzi.
+
+Preflight V1 conserva `can_auto_continue=false`: anche con sorgente/diritti indicati come verificati, soltanto il workflow owner con i gate completi decide se è lecito proseguire. Non è un'autorizzazione autonoma al render.
