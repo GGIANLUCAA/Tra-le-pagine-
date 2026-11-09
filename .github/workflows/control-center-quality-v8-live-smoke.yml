@@ -59,7 +59,7 @@ jobs:
               with urllib.request.urlopen(base+"/api/catalog", timeout=20) as r:
                   catalog=json.load(r)
           except Exception as e:
-              print("Catalog not reachable; no false MP4 status:",type(e).__name__)
+              print("Catalog not reachable; no false MP4 status:",type(e).__name__,"HTTP=",getattr(e,"code",None),"reason=",str(getattr(e,"reason",""))[:120])
               raise SystemExit(0)
           rows=catalog.get("items",[]) if isinstance(catalog,dict) else []
           safe=lambda x:isinstance(x,str) and bool(re.fullmatch(r"[\w ().-]{1,190}\.mp4",x,re.I))
