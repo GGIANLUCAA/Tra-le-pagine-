@@ -61,6 +61,19 @@ jobs:
           done
           sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
           python -m pip install -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Recover the already paid and verified Google Gacrux WAV and real-film/photo sources
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_V4_DIAGNOSTICS_NOT_A_FINISHED_FILM
+          run-id: 42700167225
+          github-token: ${{ github.token }}
+          path: output/giuliano_terracotta_v4
+      - name: Require real recovered 125-second narration, no second TTS expense
+        shell: bash
+        run: |
+          test -s output/giuliano_terracotta_v4/audio/VOCE.wav
+          ffprobe -v error -show_entries format=duration -of default=nw=1 output/giuliano_terracotta_v4/audio/VOCE.wav
+          echo "RECOVERED_VERIFIED_GOOGLE_VOICE=true"
       - name: Verified video and photo preflight, fresh Gacrux documentary, frame-matched production
         run: python giuliano/terracotta_v4/render_documentary_v4.py
       - name: Preserve real verified source files and voice if there is a technical failure
