@@ -21,8 +21,13 @@ const APP_MANIFEST={
   ]
 };
 
-async function json(url,github=false){
-  const response=await fetch(url,{headers:github?{"Accept":"application/vnd.github+json","User-Agent":"ArtVision-ControlCenter-Readonly"}:{"Accept":"application/json"},cf:{cacheTtl:75,cacheEverything:true}});
+async function json(url,github=false,videoService=null){
+  // Workers within the same Cloudflare account call one another through a
+  // service binding; outbound fetch to the public workers.dev URL can return
+  // a synthetic 404 even when the actual video host is healthy.
+  const response=videoService&&!github&&url.startsWith(LIB+"/")
+    ? await videoService.fetch(new Request(url,{method:"GET",headers:{"Accept":"application/json"}}))
+    : await fetch(url,{headers:github?{"Accept":"application/vnd.github+json","User-Agent":"ArtVision-ControlCenter-Readonly"}:{"Accept":"application/json"},cf:{cacheTtl:75,cacheEverything:true}});
   if(!response.ok)throw new Error("HTTP "+response.status);
   return response.json();
 }
@@ -212,11 +217,11 @@ function buildStatistics(runs,works,rows,sources){
   }};
 }
 
-async function gather(){
+async function gather(videoService){
   const results=await Promise.allSettled([
     json("https://api.github.com/repos/"+REPO+"/actions/runs?per_page=100",true),
     json("https://raw.githubusercontent.com/"+REPO+"/main/queue/artvision_owner_selected_ten_20261102.json"),
-    json(LIB+"/api/catalog")
+    json(LIB+"/api/catalog",false,videoService)
   ]);
   const keys=["github","queue","catalog"],sources={};
   results.forEach((r,i)=>{sources[keys[i]]=r.status==="fulfilled"?{ok:true}:{ok:false,error:clip(r.reason&&r.reason.message||"Non disponibile",80)}});
@@ -321,7 +326,7 @@ async function gather(){
 // QA is an on-demand public metadata lookup, never a review of an MP4.
 // Artifacts are listed by GitHub but their contents are NOT read here.
 let qualitySnapshot=null,qualityAt=0,qualityPending=null;
-async function gatherQuality(){
+async function gatherQuality(videoService){
   let feed=null,scope="workflow_specific",lookupError=null;
   try{
     feed=await json("https://api.github.com/repos/"+REPO+
@@ -329,7 +334,7 @@ async function gatherQuality(){
     if(!Array.isArray(feed.workflow_runs))throw new Error("Unexpected workflow payload");
   }catch(e){
     lookupError=clip(e&&e.message||"Non raggiungibile",80);
-    const recent=await getStatus();
+    const recent=await getStatus(videoService);
     scope="fallback_last_100_actions";
     feed={workflow_runs:(recent.runs||[]).filter(r=>
       Number(r.workflow_id)===392238876||/regia qualita|regia qualità v17/i.test(r.name))};
@@ -371,26 +376,26 @@ async function gatherQuality(){
     sha256_verified:false,owner_approved:false,publish_authorized:false,
     info:"Artifact metadata only. No JSON/MP4 or approval inspected; a successful CI run does not certify a video."};
 }
-async function getQuality(){
+async function getQuality(videoService){
   if(qualitySnapshot&&Date.now()-qualityAt<90000)return qualitySnapshot;
-  if(!qualityPending)qualityPending=gatherQuality().then(r=>{
+  if(!qualityPending)qualityPending=gatherQuality(videoService).then(r=>{
     qualitySnapshot=r;qualityAt=Date.now();return r
   }).finally(()=>{qualityPending=null});
   return qualityPending;
 }
 
-async function getStatus(){
+async function getStatus(videoService){
   if(snapshot&&Date.now()-snapshotAt<75000)return snapshot;
-  if(!pending)pending=gather().then(x=>{snapshot=x;snapshotAt=Date.now();return x}).finally(()=>{pending=null});
+  if(!pending)pending=gather(videoService).then(x=>{snapshot=x;snapshotAt=Date.now();return x}).finally(()=>{pending=null});
   return pending;
 }
 // Read-only diagnostic context. A run must belong to the currently observed public
 // GitHub sample; it cannot target arbitrary GitHub repositories or private APIs.
 const diagnosisCache=new Map();
-async function getDiagnosis(runId){
+async function getDiagnosis(runId,videoService){
   const id=Number(runId);
   if(!Number.isSafeInteger(id)||id<1)return {ok:false,reason:"ID esecuzione non valido"};
-  const status=await getStatus();
+  const status=await getStatus(videoService);
   const run=(status.runs||[]).find(r=>r.id===id);
   if(!run||!status.sources.github?.ok)return {ok:false,reason:"Run non presente nel campione pubblico consultato"};
   const url="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/"+id;
@@ -425,7 +430,7 @@ async function getPage(){
   if(!r.ok)throw new Error("Preview HTML HTTP "+r.status);
   page=await r.text();pageAt=Date.now();return page;
 }
-export default {async fetch(request){
+export default {async fetch(request,env){
   const path=new URL(request.url).pathname;
   if(request.method!=="GET")return new Response("Method not allowed",{status:405,headers:{"Allow":"GET"}});
   if(path==="/manifest.webmanifest"){
@@ -440,7 +445,11 @@ export default {async fetch(request){
     const key=new URL(request.url).searchParams.get("key")||"";
     if(!/^[\w ().-]{1,190}\.mp4$/i.test(key))return Response.json({ok:false,reason:"Nome file non valido"},{status:400,headers:{"cache-control":"no-store"}});
     try{
-      const res=await fetch(LIB+"/download/"+encodeURIComponent(key),{headers:{"Range":"bytes=0-1023","Accept":"video/mp4"}});
+      const probeUrl=LIB+"/download/"+encodeURIComponent(key);
+      const opts={method:"GET",headers:{"Range":"bytes=0-1023","Accept":"video/mp4"}};
+      const res=env?.VIDEO_LIBRARY
+        ? await env.VIDEO_LIBRARY.fetch(new Request(probeUrl,opts))
+        : await fetch(probeUrl,opts);
       const contentType=res.headers.get("content-type")||"";
       const contentRange=res.headers.get("content-range")||"";
       const attachment=res.headers.get("content-disposition")||"";
@@ -458,7 +467,7 @@ export default {async fetch(request){
     }catch(e){return Response.json({ok:false,error:"Verifica temporaneamente non disponibile"},{status:503,headers:{"cache-control":"no-store"}})}
   }
   if(path==="/api/quality"){
-    try{return Response.json(await getQuality(),{headers:{
+    try{return Response.json(await getQuality(env?.VIDEO_LIBRARY),{headers:{
       "cache-control":"no-store","x-content-type-options":"nosniff"}})}
     catch(e){return Response.json({schema:"artvision-quality-metadata-v8",source_ok:false,
       runs:[],report_contents_read:false,qa_pass_verified:false,mp4_bytes_verified:false,
@@ -473,7 +482,7 @@ export default {async fetch(request){
         headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
     }
     try{
-      const result=await getDiagnosis(run);
+      const result=await getDiagnosis(run,env?.VIDEO_LIBRARY);
       return Response.json(result,{status:result.ok?200:404,
         headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
     }catch(e){
@@ -482,7 +491,7 @@ export default {async fetch(request){
     }
   }
   if(path==="/api/status"){
-    try{return Response.json(await getStatus(),{headers:{"Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}})}
+    try{return Response.json(await getStatus(env?.VIDEO_LIBRARY),{headers:{"Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}})}
     catch(e){return Response.json({error:"Fonti temporaneamente non disponibili"},{status:503,headers:{"Cache-Control":"no-store"}})}
   }
   if(path==="/"||path==="/index.html"){
