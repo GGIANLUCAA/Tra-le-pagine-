@@ -13,6 +13,8 @@ test("HTML and inline UI parse correctly",()=>{
   new Script(match[1]);
   assert.match(html,/data-page="works"/);
   assert.match(html,/data-page="issues"/);
+  for(const page of ["todo","health","diary"])assert.ok(html.includes(`data-page="${page}"`));
+  for(const fn of ["function todo()","function health()","function diary()"])assert.ok(html.includes(fn));
 });
 test("Backend only exposes GET and expected read-only endpoints",()=>{
   assert.match(backend,/if\(request.method!=="GET"\)/);
@@ -20,16 +22,16 @@ test("Backend only exposes GET and expected read-only endpoints",()=>{
   assert.match(backend,/\/api\/check/);
   new Script(backend.replace("export default","const WORKER = "));
 });
-function fixture(){
+function fixture(options={}){
   const queue={works:[
     {artist:"Hugo Simberg",title_en:"The Garden of Death",slots_delivered_this_selection:2,
       museum_approved:false,critico_standard_v146:{filename:"SIMBERG_CRITICO.mp4",sha256:"test"},
       v134_cinema_candidate:{mp4_filename:"SIMBERG_CINEMA.mp4",mp4_sha256:"test"}},
     {artist:"Salvador Dalí",title_en:"The Temptation of St. Anthony",slots_delivered_this_selection:0}
   ]};
-  const catalog={items:[{key:"SIMBERG_CRITICO.mp4",title:"Simberg Critico"},
+  const catalog={items:[{key:"SIMBERG_CRITICO.mp4",title:"Simberg Critico",uploaded:"2026-11-08T20:00:00Z"},
     {key:"SIMBERG_CINEMA.mp4",title:"Simberg Cinema",available:true}]};
-  const runs={workflow_runs:[{name:"ArtVision test",status:"completed",conclusion:"success",
+  const runs={workflow_runs:options.runs||[{name:"ArtVision test",status:"completed",conclusion:"success",
     html_url:"https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/1",event:"push",updated_at:"2026-11-09T03:00:00Z"}]};
   const responses=[runs,queue,catalog];
   async function fetchStub(url){
@@ -55,6 +57,40 @@ test("Status shows explicit evidence, excludes Dalí and returns four variants",
   assert.equal(data.works[0].variants.filter(x=>x.recorded).length,2);
   assert.equal(data.works[0].variants.find(x=>x.id==="cinema_standard").site_catalog,true);
   assert.equal(data.runs.length,1);
+});
+test("V3 computes health and owner attention only from the latest main-branch workflow evidence",async()=>{
+  const base="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/";
+  const runs=[
+    {name:"La Storia Rivive · Produzione",workflow_id:22,head_branch:"main",status:"completed",conclusion:"success",updated_at:"2026-11-09T03:30:00Z",html_url:base+"101"},
+    {name:"WOW LAB · Produzione",workflow_id:33,head_branch:"main",status:"completed",conclusion:"failure",updated_at:"2026-11-09T03:28:00Z",html_url:base+"102"},
+    {name:"ArtVision 4×1 · Produzione",workflow_id:11,head_branch:"main",status:"completed",conclusion:"success",updated_at:"2026-11-09T03:25:00Z",html_url:base+"103"},
+    {name:"ArtVision 4×1 · Produzione",workflow_id:11,head_branch:"main",status:"completed",conclusion:"failure",updated_at:"2026-11-09T03:10:00Z",html_url:base+"104"},
+    {name:"Control Center · integrazione",workflow_id:99,head_branch:"preview",status:"completed",conclusion:"failure",updated_at:"2026-11-09T03:05:00Z",html_url:base+"105"}
+  ];
+  const worker=fixture({runs});
+  const res=await worker.fetch(new Request("https://preview.example/api/status"));
+  const data=await res.json();
+  const artvision=data.health.find(x=>x.id==="artvision");
+  const wow=data.health.find(x=>x.id==="wow");
+  const story=data.health.find(x=>x.id==="storia");
+  assert.equal(artvision.state,"observed_success","Recovered ArtVision failure is not an open issue");
+  assert.equal(wow.state,"attention");
+  assert.equal(wow.issues,1);
+  assert.equal(story.state,"observed_success");
+  assert.equal(data.attention.filter(x=>x.kind==="workflow").length,1);
+  assert.ok(data.attention[0].title.includes("WOW LAB"));
+  assert.equal(data.review.count,1,"Artistic review stays separate and nonurgent");
+  assert.ok(data.diary.some(x=>x.type==="catalog"),"Only dated catalog events appear");
+  assert.ok(data.diary.every(x=>Boolean(x.time)));
+  assert.equal(data.scope.github_main_sample,4);
+  assert.match(data.scope.caveat,/100/);
+});
+test("V3 never reports an unobserved production as stopped",async()=>{
+  const worker=fixture({runs:[]});
+  const data=await (await worker.fetch(new Request("https://preview.example/api/status"))).json();
+  assert.ok(data.health.every(x=>x.state==="unobserved"));
+  assert.equal(data.attention.filter(x=>x.kind==="workflow").length,0);
+  assert.equal(data.diary.filter(x=>x.type==="workflow").length,0);
 });
 test("On-demand range probe does not claim full SHA",async()=>{
   const worker=fixture();
