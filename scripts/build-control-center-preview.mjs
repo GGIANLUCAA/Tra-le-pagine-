@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Build a single Cloudflare Worker bundle from the two reviewed V2 source files.
+// Build a single Cloudflare Worker bundle from the two reviewed V3 source files.
 // Intentionally does NOT deploy, mutate main, trigger videos, or use secrets.
 import assert from "node:assert/strict";
 import {readFileSync,mkdirSync,writeFileSync} from "node:fs";
