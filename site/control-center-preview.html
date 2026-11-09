@@ -242,7 +242,7 @@ function slotCard(w,v,index){
   var found=!!(v.site_catalog&&source("catalog"));
   var offline=found&&v.site_available===false;
   var label=playable?"Visionabile nel catalogo":offline?"Catalogato ma offline":
-    !source("catalog")?"Catalogo non verificabile":v.recorded?"Scheda tecnica presente":"Variante non individuata";
+    !source("catalog")?"Catalogo non verificabile":found?"Disponibilità non dichiarata":v.recorded?"Scheda tecnica presente":"Variante non individuata";
   var poster=playable?String(v.poster_url||""):"";
   var src=playable?String(v.media_url||""):"";
   var image=poster?'<img src="'+escapeText(poster)+'" loading="lazy" alt="" onerror="this.remove()">':'';
@@ -252,7 +252,7 @@ function slotCard(w,v,index){
     '" data-poster="'+escapeText(poster)+'" data-title="'+escapeText(w.title)+
     '" data-version="'+escapeText(v.label)+'">▶ Guarda il video</button>':
     '<button type="button" class="slotPlay" disabled>Anteprima non disponibile</button>';
-  var catalogStatus=!source("catalog")?"Fonte non disponibile":found?(offline?"Segnalato non disponibile":"Presente nel catalogo"):"Non individuato";
+  var catalogStatus=!source("catalog")?"Fonte non disponibile":found?(offline?"Segnalato non disponibile":v.site_available===true?"Presente, disponibile":"Presente, disponibilità non dichiarata"):"Non individuato";
   var panel='<details class="slotqa"><summary>Prove e qualità · dettagli</summary><div class="qaList">'+
     '<div class="qaLine"><span>Catalogo pubblico</span><b class="'+(playable?'yes':offline?'no':'pending')+'">'+escapeText(catalogStatus)+'</b></div>'+
     qaRow("SHA-256 MP4",qa.sha_recorded,"Registrato","Non documentato")+
