@@ -36,6 +36,16 @@ function fixture(options={}){
   const responses=[runs,options.queue||queue,catalog];
   async function fetchStub(url){
     const href=String(url);
+    if(href.includes("/actions/workflows/quality-director-v17.yml/runs?")){
+      return new Response(JSON.stringify({workflow_runs:options.qaRuns||[]}),{
+        status:options.failQa?503:200,headers:{"content-type":"application/json"}});
+    }
+    if(/\/actions\/runs\/\d+\/artifacts\?/.test(href)){
+      const id=Number((href.match(/\/actions\/runs\/(\d+)\/artifacts\?/)||[])[1]);
+      const results=(options.qaArtifacts||{})[id]||[];
+      return new Response(JSON.stringify({artifacts:results}),{
+        status:options.failArtifact?403:200,headers:{"content-type":"application/json"}});
+    }
     if(href.includes("/actions/runs/")&&href.includes("/jobs?")){
       const data=options.jobs||{jobs:[{name:"Render video",conclusion:"failure",
         html_url:"https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/123/job/456",
@@ -462,4 +472,57 @@ test("Reject writes and invalid file keys",async()=>{
   assert.equal(put.status,405);
   const bad=await worker.fetch(new Request("https://preview.example/api/check?key=..%2Fsecret.txt"));
   assert.equal(bad.status,400);
+});
+
+test("V8 QA endpoint distinguishes a manual workflow, artifact metadata and actual proof",async()=>{
+  const stamp="2026-11-09T19:01:00Z";
+  const worker=fixture({
+    qaRuns:[
+      {id:8001,name:"Regia qualità V17",event:"pull_request",head_branch:"main",
+       status:"completed",conclusion:"success",created_at:stamp},
+      {id:8002,name:"Regia qualità V17",event:"workflow_dispatch",head_branch:"main",
+       status:"completed",conclusion:"success",created_at:stamp,updated_at:stamp},
+      {id:8003,name:"Regia qualità V17",event:"workflow_dispatch",head_branch:"feature",
+       status:"completed",conclusion:"success",created_at:stamp},
+      {id:8004,name:"Regia qualità V17",event:"workflow_dispatch",head_branch:"main",
+       status:"in_progress",conclusion:null,created_at:stamp,updated_at:stamp}
+    ],
+    qaArtifacts:{8002:[{name:"quality-v17-report",size_in_bytes:24000,expired:false}]}
+  });
+  const r=await worker.fetch(new Request("https://preview.example/api/quality"));
+  assert.equal(r.status,200);
+  const data=await r.json();
+  assert.equal(data.schema,"artvision-quality-metadata-v8");
+  assert.equal(data.scope,"workflow_specific");
+  assert.equal(data.runs.length,2,"Only manually launched main runs should appear");
+  assert.ok(data.runs.some(x=>x.id===8002&&x.artifact_present===true));
+  assert.ok(data.runs.some(x=>x.id===8004&&x.artifact_present===null));
+  for(const field of ["report_contents_read","qa_pass_verified","mp4_bytes_verified",
+                      "sha256_verified","owner_approved","publish_authorized"])
+    assert.equal(data[field],false,field);
+});
+test("V8 failures to read QA-specific feed are explicitly labelled as a limited sample",async()=>{
+  const worker=fixture({failQa:true,runs:[{
+    id:7300,workflow_id:392238876,name:"Regia qualità V17",head_branch:"main",
+    event:"workflow_dispatch",status:"completed",conclusion:"failure",
+    updated_at:"2026-11-09T18:05:00Z"}],failArtifact:true});
+  const data=await (await worker.fetch(new Request("https://preview.example/api/quality"))).json();
+  assert.equal(data.source_ok,false);
+  assert.equal(data.scope,"fallback_last_100_actions");
+  assert.equal(data.runs.length,1);
+  assert.equal(data.runs[0].artifact_metadata_checked,false);
+  assert.equal(data.runs[0].artifact_present,null);
+  assert.equal(data.qa_pass_verified,false);
+});
+test("V8 QA endpoint rejects writes, and mobile page doesn't equate CI with video Gold",async()=>{
+  const worker=fixture();
+  assert.equal((await worker.fetch(new Request("https://preview.example/api/quality",
+    {method:"POST"}))).status,405);
+  assert.match(html,/data-page="quality"/);
+  assert.match(html,/function qualityPage\(\)/);
+  assert.match(html,/function loadQuality\(force\)/);
+  assert.match(html,/data-qa-refresh/);
+  assert.match(html,/data-qa-repair/);
+  assert.match(html,/Rapporto JSON non letto/);
+  assert.match(backend,/report_contents_read:false/);
 });
