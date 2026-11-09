@@ -241,10 +241,14 @@ def validate(plan):
                 need(bool(variant.get("reviewed_mp4_sha256"))
                      and variant.get("human_artistic_approval") is True,
                      f"{name}: nessuna approvazione finale senza revisione umana del file")
-                if mode == "museum":
-                    # V119: do NOT accept a generic gallery or unauthenticated
-                    # frame as final merely because the MP4 and QA fields exist.
-                    from artvision_museum_v119_guard import check_work
+                if variant.get("mode") == "museum":
+                    # Only Museum variants enter V119. The enclosing planning loop
+                    # has a different `mode` and must not decide final approval.
+                    # Support both package import (tests) and direct CLI execution.
+                    try:
+                        from .artvision_museum_v119_guard import check_work
+                    except ImportError:
+                        from artvision_museum_v119_guard import check_work
                     catalog_path = Path(__file__).resolve().parents[1] / (
                         "config/artvision_museum_library_v119.json")
                     catalog = json.loads(catalog_path.read_text(encoding="utf8"))
