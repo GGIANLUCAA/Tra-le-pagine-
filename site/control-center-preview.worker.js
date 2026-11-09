@@ -90,6 +90,54 @@ function deriveOverview(runs,works,rows,sources){
   }};
 }
 
+
+function buildStatistics(runs,works,rows,sources){
+  const now=Date.now();
+  const realDate=x=>validDate(x)?Date.parse(x):null;
+  const main=runs.filter(r=>!r.head_branch||r.head_branch==="main");
+  function period(days){
+    if(!sources.github?.ok)return null;
+    const recent=main.filter(r=>{
+      const timestamp=realDate(r.updated_at);
+      return timestamp!==null&&now-timestamp>=0&&now-timestamp<=days*86400000;
+    });
+    const byProject={artvision:0,storia:0,wow:0,site:0,other:0};
+    for(const r of recent)byProject[r.project] =(byProject[r.project]||0)+1;
+    return {observed:recent.length,successful:recent.filter(r=>r.status==="completed"&&r.conclusion==="success").length,
+      failed:recent.filter(r=>r.status==="completed"&&BAD_CONCLUSIONS.has(r.conclusion)).length,
+      running:recent.filter(r=>r.status!=="completed").length,
+      by_project:byProject};
+  }
+  const catalogue=sources.catalog?.ok?{
+    entries:rows.length,
+    explicitly_available:rows.filter(r=>r.available===true).length,
+    explicitly_offline:rows.filter(r=>r.available===false).length,
+    availability_unknown:rows.filter(r=>typeof r.available!=="boolean").length,
+    dated_entries:rows.filter(r=>realDate(r.uploaded)!==null).length,
+    dated_imports_7d:rows.filter(r=>{
+      const ts=realDate(r.uploaded);
+      return ts!==null&&now-ts>=0&&now-ts<=7*86400000;
+    }).length
+  }:null;
+  const variants=works.flatMap(w=>w.variants||[]);
+  const artvision=sources.queue?.ok?{
+    works:works.length,expected_slots:works.length*4,
+    registered_deliveries:works.reduce((sum,w)=>sum+Math.max(0,Math.min(4,Number(w.delivered)||0)),0),
+    variants_with_record:variants.filter(v=>v.recorded).length,
+    variants_exactly_catalogued:variants.filter(v=>v.site_catalog).length,
+    variants_with_available_flag:variants.filter(v=>v.preview_ready).length,
+    variants_with_sha:variants.filter(v=>v.qa?.sha_recorded).length,
+    variants_with_full_download_attestation:variants.filter(v=>v.qa?.site_full_sha_documented).length,
+    variants_gold_attested:variants.filter(v=>v.qa?.gold_approved).length
+  }:null;
+  return {activity_24h:period(1),activity_7d:period(7),catalogue,artvision,scope:{
+    github_window:"Ultime 100 run GitHub pubbliche al massimo: non è uno storico completo.",
+    imported_dates:"Le importazioni sono conteggiate soltanto quando il catalogo dichiara il campo uploaded.",
+    product_quality:"Workflow, scheda tecnica e anteprima non equivalgono a MP4 Gold approvato.",
+    updated_at:new Date().toISOString()
+  }};
+}
+
 async function gather(){
   const results=await Promise.allSettled([
     json("https://api.github.com/repos/"+REPO+"/actions/runs?per_page=100",true),
@@ -192,7 +240,8 @@ async function gather(){
     key:clip(x.key||x.name,190),title:clip(x.title||x.name||x.key,180),available:x.available===false?false:true
   }));
   const overview=deriveOverview(runs,works,rows,sources);
-  return {asof:new Date().toISOString(),sources,runs,works,media,catalog_count:rows.length,...overview};
+  const statistics=buildStatistics(runs,works,rows,sources);
+  return {asof:new Date().toISOString(),sources,runs,works,media,catalog_count:rows.length,statistics,...overview};
 }
 async function getStatus(){
   if(snapshot&&Date.now()-snapshotAt<75000)return snapshot;
