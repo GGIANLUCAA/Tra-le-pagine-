@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 
 SCHEMA = "studio-cycle-handoff-v1"
-ID = re.compile(r"^[a-z0-9_:-]{3,120}$")
+ID = re.compile(r"^[A-Za-z0-9_:-]{3,120}$")
 CODE = re.compile(r"^[A-Z0-9_]{2,90}$")
 GITHUB_RUN = re.compile(r"^[0-9]{1,20}$")
 RESEARCH_STATES = {
@@ -46,7 +46,8 @@ def safe_code(value: object) -> str:
 
 def research_summary(data: dict | None, project: str) -> dict:
     result = {"state": "MISSING_OR_INVALID", "candidate_count": 0,
-              "rights_verified": False, "item_id": None, "cycle_id": None}
+              "rights_verified": False, "item_id": None, "cycle_id": None,
+              "cycle_utc": None}
     if not isinstance(data, dict) or data.get("schema") != "source-cycle-companion-v4":
         return result
     if data.get("project") != project:
@@ -62,9 +63,11 @@ def research_summary(data: dict | None, project: str) -> dict:
     candidates = data.get("candidates")
     item = safe_id(data.get("item_id"))
     cycle = safe_id(data.get("cycle_id"))
+    cycle_utc = data.get("cycle_utc")
     if state not in RESEARCH_STATES or not isinstance(candidates, list) or len(candidates) > 1:
         return result
-    if not item or not cycle:
+    if (not item or not cycle or not isinstance(cycle_utc, str)
+            or not 10 <= len(cycle_utc) <= 40):
         return result
     for candidate in candidates:
         if (not isinstance(candidate, dict)
@@ -77,7 +80,8 @@ def research_summary(data: dict | None, project: str) -> dict:
     if state != "RESEARCH_CANDIDATES_PENDING_REVIEW" and candidates:
         return result
     return {"state": state, "candidate_count": len(candidates),
-            "rights_verified": False, "item_id": item, "cycle_id": cycle}
+            "rights_verified": False, "item_id": item, "cycle_id": cycle,
+            "cycle_utc": cycle_utc}
 
 
 def handoff(project: str, research: dict | None,
@@ -117,7 +121,9 @@ def handoff(project: str, research: dict | None,
             proof["cycle_status"] = True
 
         if (proof["research_report"] and proof["work_order"]
-                and source["item_id"] == item_id and proof["cycle_status"]):
+                and source["item_id"] == item_id
+                and source["cycle_utc"] == order.get("cycle_utc")
+                and proof["cycle_status"]):
             if source["state"] == "RESEARCH_CANDIDATES_PENDING_REVIEW":
                 state, action = ("SOURCE_CANDIDATE_NEEDS_REVIEW",
                                  "verify_file_rights_and_native_frames")
