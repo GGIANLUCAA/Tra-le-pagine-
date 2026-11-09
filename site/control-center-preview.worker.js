@@ -89,9 +89,13 @@ export default {async fetch(request){
       const contentRange=res.headers.get("content-range")||"";
       const attachment=res.headers.get("content-disposition")||"";
       const rangeValid=/^bytes 0-1023\/\d+$/.test(contentRange);
-      const ok=res.status===206&&rangeValid&&contentType.toLowerCase().startsWith("video/mp4")&&/attachment/i.test(attachment);
-      if(res.body)await res.body.cancel();
-      return Response.json({ok,http_status:res.status,range_ok:rangeValid,mime_ok:contentType.toLowerCase().startsWith("video/mp4"),
+      const declaredLength=Number(res.headers.get("content-length"));
+      const validHeaders=res.status===206&&rangeValid&&declaredLength===1024&&
+        contentType.toLowerCase().startsWith("video/mp4")&&/attachment/i.test(attachment);
+      const bytesRead=validHeaders?(await res.arrayBuffer()).byteLength:0;
+      const ok=validHeaders&&bytesRead===1024;
+      if(!ok&&res.body)await res.body.cancel();
+      return Response.json({ok,http_status:res.status,range_ok:rangeValid,bytes_read:bytesRead,mime_ok:contentType.toLowerCase().startsWith("video/mp4"),
         tested_at:new Date().toISOString(),scope:"PRIMI 1024 BYTE; HASH E DOWNLOAD INTEGRALE NON VERIFICATI",
         download_url:ok?LIB+"/download/"+encodeURIComponent(key):null},
         {headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
