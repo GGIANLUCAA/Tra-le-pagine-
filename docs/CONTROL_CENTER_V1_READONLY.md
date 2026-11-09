@@ -48,3 +48,26 @@ Data: 9 novembre 2026.
 
 ## Prossimo punto di integrazione
 Dopo test Android della V2 e controllo dei dati, integrare soltanto il link nella gestione privata Video Library Studio. Nessuna sostituzione dei renderer, dei master o delle automazioni esistenti.
+
+## V3 — priorità, salute delle produzioni e diario (9 novembre 2026)
+
+### Nuove viste
+- **Da fare per me**: soltanto gli ultimi fallimenti/cancellazioni/timeout per ciascun workflow osservato sul ramo main. Un errore storico seguito da una run riuscita dello stesso workflow non rimane segnalato come incidente corrente. Fallimenti tecnici sono inviti a consultare i log, NON richieste certe di intervento umano e NON autorizzazioni a riavviare o spendere.
+- **Revisione artistica non urgente**: conteggio delle opere con slot consegnati nel registro e senza Gold_V25 === true. Non blocca la produzione, non sostituisce la valutazione del proprietario e non certifica la pubblicabilità. Esclude Dalí.
+- **Salute delle produzioni**: tre schede ArtVision, La Storia Rivive, WOW LAB. Stato fra running, attention, observed_success, unobserved, unknown, definito solo dalle ultime 100 esecuzioni pubbliche GitHub e limitato alle run sul ramo main o senza ramo dichiarato. unobserved NON significa "fermo"; observed_success riguarda GitHub, NON un MP4 verificato.
+- **Diario**: gli eventi GitHub si basano sul campo updated_at dei workflow osservati; gli eventi del catalogo si basano SOLO sul campo uploaded delle schede pubbliche quando contiene una data valida. Non viene generato uno storico permanente e non si inventano video o importazioni.
+- La Home V3 mette prima le attenzioni, poi la salute delle produzioni e infine gli ultimi eventi.
+- Navigazione mobile a cinque pulsanti: Home, Da fare, Opere, Diario, Video. Le viste tecniche/Salute rimangono accessibili dalla Home.
+
+### Limiti di precisione
+- Gli ultimi errori per workflow sono dedotti da workflow_id e head_branch; se il campo manca, si applica un raggruppamento per nome. Il campione può perdere attività meno recenti o attività fuori da GitHub.
+- La classificazione dei progetti usa il nome dei workflow GitHub; un nome non riconosciuto rimane other invece di essere assegnato in modo fittizio a un progetto.
+- Nessuno stato del pannello certifica gli stati delle automazioni native ChatGPT.
+- Nessun dato "verde" implica Gold artistico, integrità completa MP4, diritti di pubblicazione o disponibilità di un download integrale.
+- I timestamp del diario sono quelli dichiarati dalla fonte, non eventi push registrati autonomamente.
+- La V3 non installa Workflows, D1, cron aggiuntivi, agenti AI o strumenti a pagamento: continua a rileggere le tre fonti V2.
+
+### Test
+- tests/control-center-preview.test.mjs: verifica che un fallimento poi recuperato non appaia nelle attenzioni correnti, che una produzione non osservata sia unobserved, che il diario mostri eventi con date e che il monitoraggio non diventi un endpoint di scrittura.
+- La UI e il backend vengono incorporati nel Worker separato artvision-control-preview, già richiamato dall'area amministrativa di Video Library Studio.
+- Il collaudo visivo su Android deve ancora confermare usabilità e rendering reali dopo la distribuzione; la verifica del Worker distribuito non equivale al test su telefono.
