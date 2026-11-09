@@ -418,6 +418,35 @@ test("V7 categories remain unknown if public catalog fails and UI has no eight-c
   assert.match(html,/In preparazione/);
   assert.match(html,/\/\?category=/);
 });
+test("V7 expanded production health does not falsely claim books or documentaries are stopped",async()=>{
+ const runs=[
+   {id:91,name:"ArtVision 4×1 · Produzione",workflow_id:91,head_branch:"main",
+     status:"completed",conclusion:"success",updated_at:"2026-11-09T14:00:00Z"},
+   {id:92,name:"Libri narrati · Ricerca fonti",workflow_id:92,head_branch:"main",
+     status:"completed",conclusion:"success",updated_at:"2026-11-09T13:30:00Z"},
+   {id:93,name:"Video Library Studio · categorie V7",workflow_id:93,head_branch:"main",
+     status:"completed",conclusion:"failure",updated_at:"2026-11-09T13:00:00Z"}
+ ];
+ const data=await (await fixture({runs}).fetch(new Request("https://preview.example/api/status"))).json();
+ const h=new Map(data.health.map(x=>[x.id,x]));
+ assert.equal(data.health.length,7);
+ assert.equal(h.get("books").state,"observed_success");
+ assert.equal(h.get("books").observed_count,1);
+ assert.equal(h.get("music").state,"unobserved","No workflow observed is not a failure");
+ assert.equal(h.get("documentary").state,"unobserved");
+ assert.equal(h.get("cinema").state,"unobserved");
+ assert.equal(data.statistics.activity_7d.by_project.books>=0,true);
+ assert.equal(data.attention.filter(x=>x.project==="books").length,0);
+});
+test("V7 books category is separate from ArtVision and missing workflow remains unobserved",()=>{
+ assert.match(backend,/books:"?/, "Books project key must exist");
+ assert.match(backend,/documentar/);
+ assert.match(backend,/const projects=\[\["artvision"/);
+ assert.match(html,/books:"Libri narrati/);
+ assert.match(html,/documentary:"Documentari e curiosità"/);
+ assert.match(html,/genres:genres/);
+ assert.match(html,/PROJECT_LABELS/);
+});
 test("On-demand range probe does not claim full SHA",async()=>{
   const worker=fixture();
   const res=await worker.fetch(new Request("https://preview.example/api/check?key=SIMBERG_CINEMA.mp4"));
