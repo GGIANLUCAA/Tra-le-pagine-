@@ -1,4 +1,5 @@
 import hashlib
+import json
 import io
 import sys
 import tempfile
@@ -7,7 +8,7 @@ import zipfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from studio_integrity_v9 import (audit_master, sha_file, valid_master, verify_zip,
+from studio_integrity_v9 import (audit_master, read_request, sha_file, valid_master, verify_zip,
                                  MAX_MEDIA_BYTES)
 
 BODY = b"mocked-real-video-bytes" * 100
@@ -111,6 +112,27 @@ class IntegrityTests(unittest.TestCase):
             y.update(changes)
             with self.assertRaises(ValueError):
                 valid_master(y)
+
+    def test_push_request_is_single_file_and_read_only(self):
+        req = {"schema":"studio-integrity-request-v9","slot_index":1,
+               "read_only":True,"one_file_only":True,"no_publication":True,
+               "use_paid_api":False,
+               "reason":"Convalida reale del master V161 già registrato"}
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/"request.json"
+            path.write_text(json.dumps(req),encoding="utf-8")
+            self.assertEqual(read_request(path),1)
+            for field,bad in (("slot_index",True),("slot_index",18),
+                              ("read_only",False),("use_paid_api",True),
+                              ("no_publication",False)):
+                altered={**req,field:bad}
+                path.write_text(json.dumps(altered),encoding="utf-8")
+                with self.assertRaises(ValueError):
+                    read_request(path)
+            path.write_text(json.dumps({**req,"unapproved_url":"https://evil.example"}),
+                            encoding="utf-8")
+            with self.assertRaises(ValueError):
+                read_request(path)
 
     def make_zip(self, path, *, include_social=True, traversal=False):
         with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as z:
