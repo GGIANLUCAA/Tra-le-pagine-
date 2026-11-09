@@ -90,6 +90,56 @@
         "Il movimento è motivato dal suono?",
         "Le inquadrature lasciano respirare l'immagine?"
       ]
+    },
+    "documentario": {
+      "narrated": true,
+      "minimum_asset_short_side": 1080,
+      "minimum_video_short_side": 1080,
+      "questions": [
+        "La voce spiega con precisione e senza enfasi ripetitiva?",
+        "Ogni oggetto/personaggio menzionato compare esattamente nella ripresa relativa?",
+        "Il materiale e autentico, leggibile e contestualizzato senza ricostruzioni presentate come originali?",
+        "I tagli seguono la scoperta e le pause necessarie alla comprensione?",
+        "Il ritmo evita tante inquadrature quasi uguali e zoom su pixel insufficienti?",
+        "Musica, parlato e prime 7 secondi funzionano sul vero MP4?"
+      ]
+    },
+    "giuliano": {
+      "narrated": true,
+      "minimum_asset_short_side": 1080,
+      "minimum_video_short_side": 1080,
+      "questions": [
+        "La voce spiega con precisione e senza enfasi ripetitiva?",
+        "Ogni oggetto/personaggio menzionato compare esattamente nella ripresa relativa?",
+        "Il materiale e autentico, leggibile e contestualizzato senza ricostruzioni presentate come originali?",
+        "I tagli seguono la scoperta e le pause necessarie alla comprensione?",
+        "Il ritmo evita tante inquadrature quasi uguali e zoom su pixel insufficienti?",
+        "Musica, parlato e prime 7 secondi funzionano sul vero MP4?"
+      ]
+    },
+    "storia_rivive": {
+      "narrated": false,
+      "minimum_asset_short_side": 720,
+      "minimum_video_short_side": 720,
+      "questions": [
+        "Il film in movimento B/N e il fotogramma restaurato provengono esattamente dallo stesso punto?",
+        "I volti sono fedeli alla fonte e privi di anomalie?",
+        "Il passaggio al colore lascia davvero tempo di apprezzare il risultato?",
+        "La clip Vidu contiene movimento effettivo e nessuna discontinuita di soggetto?",
+        "Titolo, durata, sorgenti e musica passano i gate V70/V91/V94/V96/V99 sul MP4 reale?"
+      ]
+    },
+    "wow_lab": {
+      "narrated": false,
+      "minimum_asset_short_side": 720,
+      "minimum_video_short_side": 720,
+      "questions": [
+        "Nei primi secondi esiste un vero evento visuale forte e non solo una dissolvenza?",
+        "Il movimento e originale, non un falso zoom presentato come animazione?",
+        "Cosa cambia nella scena, e quale elemento visuale rende interessante ogni secondo?",
+        "I materiali sono leggibili su Android, senza glitch o ripetizioni di effetti?",
+        "Il film e realmente migliore del benchmark precedente e supera un controllo artistico?"
+      ]
     }
   }
 }
