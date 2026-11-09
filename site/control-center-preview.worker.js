@@ -175,7 +175,7 @@ async function gather(){
   })).sort((a,b)=>Date.parse(b.updated_at||0)-Date.parse(a.updated_at||0));
   const rows=Array.isArray(cat.items)?cat.items.filter(x=>x&&typeof x==="object"&&x.hidden!==true):[];
   const catalogNames=new Set(rows.map(x=>String(x.key||x.name||"")));
-  const catalogAvailability=new Map(rows.map(x=>[String(x.key||x.name||""),x.available===false?false:true]));
+  const catalogAvailability=new Map(rows.map(x=>[String(x.key||x.name||""),x.available===true?true:x.available===false?false:null]));
   const slotDefs=[
     {id:"critico_standard",label:"Critico · Classico",patterns:[/^critico_standard_v\d+$/]},
     {id:"critico_museum",label:"Critico · Museum",patterns:[/^critico_museum_v\d+$/]},
