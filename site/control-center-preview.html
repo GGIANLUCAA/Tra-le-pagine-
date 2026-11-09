@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1117">
-<title>ArtVision Control Center V3 — Studio operativo</title>
+<title>ArtVision Control Center V4 — Studio cinematografico</title>
 <style>
 :root{color-scheme:dark;--bg:#0c1118;--card:#181f27;--inner:#222a33;--edge:#38414a;--text:#f7f1e6;--sub:#afb7c0;--gold:#dfbe88;--green:#80cba9;--red:#e8a49d}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 65% 25% at 85% 0%,#634d2a26,transparent),var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.wrap{max-width:1320px;margin:0 auto;padding:0 23px 100px}
@@ -38,11 +38,55 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 .logTitle{font-weight:650;font-size:12px;color:#f4ebdf;line-height:1.4}.logSub{font-size:10px;color:#abb6c0;margin-top:5px;line-height:1.5}
 .sourceWarning{font-size:11px;color:#dfc18e;margin-top:12px}
 @media(max-width:920px){.healthGrid{grid-template-columns:1fr}.healthCard p{min-height:0}}
+
+/* ArtVision V4 museum gallery, four variants, embedded QA and player */
+.galleryGuide,.workControls,.workMeter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:13px 0}
+.galleryGuide span{border:1px solid #555d5e;background:#242b32;color:#c6cbd0;border-radius:30px;padding:5px 9px;font-size:10px}
+.workControls,.workMeter{justify-content:space-between}.workMeter .progress{flex:1;min-width:95px;max-width:250px;margin:0}
+.workbook{background:linear-gradient(145deg,#20252c,#151d25);border:1px solid #524c45;border-radius:17px;margin:13px 0;overflow:hidden}
+.workbook>summary{cursor:pointer;display:flex;gap:12px;align-items:center;padding:16px;list-style:none}
+.workbook>summary::-webkit-details-marker{display:none}.workbook>summary:focus-visible{outline:2px solid #dabb88}
+.workEmblem{width:45px;height:49px;flex-shrink:0;display:grid;place-items:center;border:1px solid #967b55;border-radius:12px;background:#3f3328;color:#edd2a5;font:27px Georgia,serif}
+.workHead{min-width:0;flex:1}.workHead strong{display:block;font:normal 22px/1.2 Georgia,serif;color:#f5ead8}.workHead span{display:block;font-size:11px;color:#b6bdc4;margin-top:4px}
+.workChevron{font:24px Georgia,serif;color:#d6b47d}.workbook[open] .workChevron{transform:rotate(90deg)}
+.workInner{border-top:1px solid #5c554d;padding:15px}
+.slotGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.slotCard{background:#151c24;border:1px solid #414a52;border-radius:13px;min-width:0;overflow:hidden;display:flex;flex-direction:column}
+.slotPoster{position:relative;aspect-ratio:9/11;overflow:hidden;display:grid;place-items:center;background:radial-gradient(ellipse at 60% 10%,#80603a4d,transparent 65%),#26313c}
+.slotPoster .place{font:46px Georgia,serif;color:#b99b71aa}
+.slotPoster img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.slotIndex{position:absolute;top:8px;left:8px;z-index:1;background:#131b25e6;border:1px solid #8d785d;color:#f3d5a7;padding:4px 7px;border-radius:8px;font-size:10px;font-weight:750}
+.slotBody{padding:11px;display:flex;flex-direction:column;gap:8px;flex:1}
+.slotName{font-size:12px;font-weight:750;color:#f7eee0;line-height:1.4}
+.slotStatus{font-size:10px;align-self:flex-start;border:1px solid #777057;background:#393128;color:#e4cda8;border-radius:20px;padding:4px 8px}
+.slotStatus.playable{border-color:#659982;background:#254033;color:#a6e0bf}
+.slotStatus.unavailable{border-color:#a57473;background:#4a2a2b;color:#f3b0a7}
+.slotFile{font-size:10px;color:#b1bac3;line-height:1.45;overflow-wrap:anywhere}
+.slotActions{margin-top:auto;display:grid;gap:6px}
+.slotPlay{border:1px solid #d9b882;border-radius:9px;background:#d9b882;color:#221d16;padding:10px 7px;font-size:11px;font-weight:800;min-height:41px}
+.slotPlay:disabled{border-color:#58616b;background:#29313b;color:#a8b3bd;cursor:default}
+.slotqa{border-top:1px solid #ffffff19;padding-top:6px}.slotqa summary{cursor:pointer;font-size:11px;font-weight:700;color:#e2c293;padding:6px 0}
+.slotqa summary:focus-visible{outline:2px solid #dabb88}
+.qaList{display:grid;gap:6px;margin:8px 0}
+.qaLine{display:flex;justify-content:space-between;align-items:start;gap:9px;font-size:10px}
+.qaLine span{color:#a9b5bf}.qaLine b{font-size:10px;overflow-wrap:anywhere;text-align:right;font-weight:700;color:#d8d3c9}
+.qaLine b.yes{color:#a1d8b8}.qaLine b.pending{color:#e3c898}.qaLine b.no{color:#efa99d}
+.slotqa .note{font-size:10px;padding:8px;margin:5px 0}.slotqa .probe{display:block;width:100%;font-size:10px;line-height:1.35}
+.slotqa .probeResult{overflow-wrap:anywhere}.workFoot{font-size:11px;color:#b0bcc6;margin-top:13px;line-height:1.5}
+#reviewPlayer{width:min(96vw,780px);max-width:none;max-height:95dvh;background:#121921;border:1px solid #9c7d4d;border-radius:17px;color:#f7eee0;padding:0;overflow:auto}
+#reviewPlayer::backdrop{background:#02060bdf;backdrop-filter:blur(7px)}
+.playerHead{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#222b36;padding:13px 16px;border-bottom:1px solid #675742}
+.playerHead strong{font:normal 20px Georgia,serif}.playerHead small{display:block;font-size:10px;color:#b3bdc5;margin-top:3px}
+.playerClose{border:1px solid #7e7e7e;background:#373d44;color:#f5f0e5;border-radius:10px;min-height:40px;padding:8px 13px}
+.playerContent{padding:14px;text-align:center}#reviewVideo{display:block;margin:auto;width:auto;height:auto;max-width:100%;max-height:67dvh;aspect-ratio:9/16;background:#06090e;border-radius:10px}
+.playerNote{text-align:left;font-size:11px;color:#b3bec8;margin:13px 0 0}.playerError{font-size:12px;color:#f5b3a5}
+@media(max-width:1050px){.slotGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.workInner{padding:10px}.workbook>summary{padding:13px 10px}.workHead strong{font-size:19px}.workEmblem{width:40px;height:45px}.slotGrid{gap:7px}.slotBody{padding:8px}.slotName{font-size:11px}.slotPoster{aspect-ratio:9/10}.slotPoster .place{font-size:34px}.qaLine{flex-wrap:wrap}.qaLine b{text-align:left}#reviewPlayer{width:100vw;height:100dvh;max-height:none;border-radius:0;border:0;margin:0}#reviewVideo{max-height:73dvh}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V3</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
+<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V4</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
 <section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Da fare per me · ◉ Salute produzioni · ▷ Diario verificabile</span></section>
 <div class="sync"><span class="pulse" id="pulse"></span><span id="synctext">Collegamento alle fonti reali…</span><span id="sources"></span></div>
 <div class="stats" id="stats"><div class="stat"><b>—</b><span>Workflow recenti</span></div><div class="stat"><b>—</b><span>In esecuzione</span></div><div class="stat"><b>—</b><span>Errori recenti</span></div><div class="stat"><b>—</b><span>Opere ArtVision</span></div></div>
@@ -51,10 +95,16 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <footer>Anteprima indipendente. Nessuna operazione di scrittura. Dati pubblici del repository e del catalogo; le automazioni ChatGPT non sono monitorate direttamente. Workflow riuscito ≠ video finito o approvato.</footer>
 </div>
 <nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="todo"><span>⚑</span>Da fare</button><button data-page="works"><span>▣</span>Opere</button><button data-page="diary"><span>◷</span>Diario</button><button data-page="media"><span>▷</span>Video</button></nav>
+<dialog id="reviewPlayer" aria-labelledby="reviewPlayerTitle" aria-modal="true">
+<div class="playerHead"><div><strong id="reviewPlayerTitle">Anteprima del video</strong><small id="reviewPlayerSubtitle">Riproduzione dall'archivio originale</small></div>
+<button class="playerClose" type="button" id="reviewPlayerClose">✕ Chiudi</button></div>
+<div class="playerContent"><video id="reviewVideo" controls playsinline preload="metadata"></video>
+<p id="reviewPlayerError" class="playerError" role="status" hidden>Riproduzione non disponibile. Controlla il file nel catalogo.</p>
+<p class="playerNote">Il filmato arriva dal tuo Video Library Studio. La visione non dimostra approvazione artistica o integrità completa.</p></div></dialog>
 <script>
 (function(){
 "use strict";
-var state={page:"home",data:null,filter:"all",diaryFilter:"all",q:"",stamp:0,loadError:null};
+var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},q:"",stamp:0,loadError:null};
 var site="https://video-library-studio.600led.workers.dev";
 function escapeText(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function date(x){if(!x)return "non disponibile";var d=new Date(x);return isNaN(+d)?"non disponibile":d.toLocaleString("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
