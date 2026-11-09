@@ -133,7 +133,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 </head>
 <body>
 <div class="wrap">
-<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V6</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
+<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V6.1</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
 <section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Da fare per me · ◉ Salute produzioni · ▷ Diario verificabile</span></section>
 <div class="sync"><span class="pulse" id="pulse"></span><span id="synctext">Collegamento alle fonti reali…</span><span id="sources"></span></div>
 <div id="chatImportNotice" class="note" hidden role="status" aria-live="polite"></div>
@@ -159,8 +159,11 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
  <p>Include repository, run GitHub, eventuali step falliti e vincoli di sicurezza. Copialo prima di aprire la chat.</p>
  <textarea id="repairPrompt" readonly aria-label="Contesto pronto per ChatGPT"></textarea>
  <div class="repairGrid"><button type="button" class="repairButton" id="copyRepairPrompt">Copia diagnosi</button>
- <a class="repairButton secondary" id="openNewGPT" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Apri ChatGPT</a>
- <a class="repairButton secondary" id="openRelatedChat" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" hidden>Apri chat principale</a></div>
+ <a class="repairButton secondary" id="openRelatedChatApp" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" hidden>◈ Apri chat nell'app ChatGPT</a>
+ <a class="repairButton secondary" id="openNewGPTApp" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" hidden>◈ Apri app ChatGPT</a>
+ <a class="repairButton secondary" id="openRelatedChat" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" hidden>Apri chat nel browser ↗</a>
+ <a class="repairButton secondary" id="openNewGPT" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Apri ChatGPT nel browser ↗</a></div>
+ <p id="androidAppHint" class="repairExplain" hidden>Se il pulsante apre ancora il browser: Android → Impostazioni → App → ChatGPT → Apri per impostazione predefinita → abilita i link supportati (chatgpt.com). In alcuni browser è necessario aprire prima il Centro di controllo direttamente in Chrome.</p>
  <p id="repairCopyStatus" class="repairStatus" role="status" aria-live="polite"></p></div>
  <div class="repairSection"><h3>3 · Collega la chat principale di questo progetto</h3>
  <p id="repairChatLabel"></p>
@@ -219,6 +222,26 @@ function diaryEntry(x){
 // Private ChatGPT conversation pointers are only stored in this browser.
 // The server and public GitHub repository never receive the saved URLs.
 var CHAT_MAP_STORAGE_KEY="artvision.controlCenter.chatPointers.v1";
+var ANDROID_APP_PACKAGE="com.openai.chatgpt";
+function isAndroidDevice(){return /Android/i.test(String(navigator.userAgent||""))}
+function androidChatGPTIntent(value,allowHome){
+  var canonical="";
+  if(allowHome&&value==="https://chatgpt.com/")canonical="https://chatgpt.com/";
+  else {
+    var checked=allowedChatUrl(value);
+    if(!checked)return null;
+    var u=new URL(checked);
+    // Drop query/fragment; never send incidental tokens in a deep link.
+    canonical="https://chatgpt.com"+u.pathname;
+  }
+  var u=new URL(canonical);
+  // Chrome handles intents on a direct user tap. Browser fallback is the same
+  // verified HTTPS conversation, not an unrelated website or new chat.
+  return "intent://chatgpt.com"+u.pathname+
+    "#Intent;scheme=https;package="+ANDROID_APP_PACKAGE+
+    ";S.browser_fallback_url="+encodeURIComponent(canonical)+";end";
+}
+
 var PROJECT_LABELS={artvision:"ArtVision 4×1 · Produzione seriale",
   storia:"La Storia Rivive · Produzione 4–5",wow:"WOW LAB · Produzione autonoma",
   site:"Video Library Studio · Pubblicazione",other:"Altri workflow GitHub"};
@@ -384,8 +407,15 @@ function renderRepairDialog(){
   var saved=state.chatLinks[chatScopeKey(ctx)]||"";
   document.getElementById("repairChatInput").value=saved;
   var preferred=linkedChat(ctx),link=document.getElementById("openRelatedChat");
+  var android=isAndroidDevice(),appLink=document.getElementById("openRelatedChatApp");
+  var appHome=document.getElementById("openNewGPTApp");
   link.hidden=!preferred;
   if(preferred)link.href=preferred;
+  appLink.hidden=!(preferred&&android);
+  if(preferred&&android)appLink.href=androidChatGPTIntent(preferred,false);
+  appHome.hidden=!android;
+  if(android)appHome.href=androidChatGPTIntent("https://chatgpt.com/",true);
+  document.getElementById("androidAppHint").hidden=!android;
   document.getElementById("repairChatStatus").textContent=preferred?
     "Chat privata collegata nel browser. La diagnosi va comunque incollata manualmente.":"Nessun collegamento: puoi salvare la chat principale o aprire ChatGPT.";
 }
@@ -656,7 +686,8 @@ function issues(){
       '<p class="repairMeta">'+(linked?"Chat originale collegata sul dispositivo":"Chat originale non ancora associata")+'</p>'+
       '<div class="repairGrid"><button type="button" class="repairButton secondary" data-repair-project="'+escapeText(key)+'">'+
       (linked?"Gestisci collegamento":"Collega chat")+'</button>'+
-      (linked?'<a class="repairButton" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(state.chatLinks[key])+'">Apri chat ↗</a>':'')+
+      (linked&&isAndroidDevice()?'<a class="repairButton" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(androidChatGPTIntent(state.chatLinks[key],false))+'">◈ Apri nell’app ChatGPT</a>':'')+
+      (linked?'<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(state.chatLinks[key])+'">Apri nel browser ↗</a>':'')+
       '</div></div>';
     }).join("")+'</div></div>';
   var incomplete=(d.works||[]).filter(function(w){return Number(w.delivered||0)<4});
