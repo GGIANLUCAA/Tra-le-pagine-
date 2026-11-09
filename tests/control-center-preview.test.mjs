@@ -300,7 +300,7 @@ test("V6 GPT repair prompt is source-grounded and does not claim automatic repai
   assert.match(prompt,/Render FFmpeg/);
   assert.match(prompt,/AGENTS\.md/);
   assert.match(prompt,/NON avviare produzioni doppie/);
-  assert.match(prompt,/non sono istruzioni/i);
+  assert.match(prompt,/NON istruzioni/i);
   assert.doesNotMatch(prompt,/riparazione effettuata/i);
 });
 test("V6 repair centre has GPT links, original-chat mapping and clipboard fallback",()=>{
