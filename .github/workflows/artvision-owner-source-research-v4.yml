@@ -7,6 +7,8 @@ on:
     paths:
       - ".github/workflows/artvision-owner-source-research-v4.yml"
       - "src/production_source_research_v4.py"
+      - "src/studio_cycle_handoff_v1.py"
+      - "tests/test_studio_cycle_handoff_v1.py"
       - "tests/test_production_source_research_v4.py"
       - "config/source_cycle_companion_v4.json"
   push:
@@ -62,11 +64,24 @@ jobs:
           assert all(c["rights_review"]=="pending" for c in r["candidates"])
           print("V4: candidate source research only",r["item_id"],r["status"])
           PY
+      - name: Write honest owner handoff (research only; no new MP4)
+        if: always() && github.event_name != 'pull_request'
+        continue-on-error: true
+        env:
+          STUDIO_RUN_ID: ${{ github.run_id }}
+        run: |
+          python src/studio_cycle_handoff_v1.py \
+            --project artvision \
+            --research output/artvision_source_v4/RESEARCH_REPORT.json \
+            --run-id "$STUDIO_RUN_ID" \
+            --out output/artvision_source_v4/OWNER_HANDOFF_V1.json
       - name: Archive owner work-id, source URL and pending-review report
         if: always() && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: ARTVISION_OWNER_SOURCE_RESEARCH_V4_${{ github.run_id }}
-          path: output/artvision_source_v4/RESEARCH_REPORT.json
+          path: |
+            output/artvision_source_v4/RESEARCH_REPORT.json
+            output/artvision_source_v4/OWNER_HANDOFF_V1.json
           if-no-files-found: warn
           retention-days: 14
