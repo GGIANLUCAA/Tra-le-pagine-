@@ -505,7 +505,7 @@ function genres(){
   out+=genreSection();
   var chosen=cats.find(function(x){return x.name===state.selectedGenre})||cats[0];
   if(!chosen)return out;
-  var browseUrl=site+"/?category="+encodeURIComponent(chosen.name);
+  var browseUrl=site+"/?category="+encodeURIComponent(chosen.name)+"#library";
   out+='<div class="panel"><div class="tools"><h3>'+escapeText(chosen.name)+'</h3>'+
     '<a class="link" href="'+escapeText(browseUrl)+'" target="_blank" rel="noopener noreferrer">Apri categoria nel Video Library Studio ↗</a></div>'+
     '<div class="kv"><span>Voci nel catalogo</span><b>'+escapeText(chosen.count)+'</b></div>'+
