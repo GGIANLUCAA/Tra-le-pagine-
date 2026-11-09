@@ -1,0 +1,47 @@
+{
+  "schema": "artvision_owner_source_candidate_v1",
+  "date": "2026-11-09",
+  "queue": "research/artvision_owner_selected_30_future_20261109.json",
+  "selection_order": 9,
+  "title": "The Course of Empire: Destruction",
+  "artist": "Thomas Cole",
+  "year": 1836,
+  "object": {
+    "collection": "New-York Historical",
+    "accession": "1858.4",
+    "height_cm": 100.3,
+    "width_cm": 161.2,
+    "official_object": "https://emuseum.nyhistory.org/objects/41597/the-course-of-empire-destruction"
+  },
+  "candidate_file": {
+    "page": "https://commons.wikimedia.org/wiki/File:Cole_Thomas_The_Course_of_Empire_Destruction_1836.jpg",
+    "reported_pixels": [
+      8917,
+      5532
+    ],
+    "reported_bytes": 17561412,
+    "reported_sha1": "b2af9bc527fd6a671ae2e307f8ec8a0a2b4e993a",
+    "commons_mark": "PDM/PD-Art",
+    "sha256": null,
+    "original_downloaded": false
+  },
+  "rights": {
+    "status": "pending_territorial_and_exact_file_review",
+    "reason": "Commons describes faithful 2D reproduction as public domain in US, explicitly warns other jurisdictions may restrict reuse. Do not assume Italy/commercial clearance from page alone."
+  },
+  "production": {
+    "ready": false,
+    "variant_priority": "cinema_standard",
+    "existing_slot_duplicate_check": "pending_cross_repo_and_archive",
+    "renderer_recipe": "pending",
+    "voice": "not_required_for_cinema_standard",
+    "qa": "not_started",
+    "new_mp4": 0
+  },
+  "next_steps": [
+    "Download exact original bytes and compute SHA256, compare with Commons reported SHA1 and image dimensions",
+    "Verify institution reproduction terms and Italian/EU commercial reuse before declaring gate PASS",
+    "Check historical outputs for same artwork/variant and implement work-specific cinema recipe with high-quality scene variety",
+    "Render only after gates pass; FFmpeg full decode, ZIP CRC, SHA256, visual QA, no publication"
+  ]
+}
