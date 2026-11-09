@@ -165,6 +165,10 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
  <p id="repairChatLabel"></p>
  <p>Incolla l'indirizzo privato della conversazione aperta nel browser, normalmente <code>chatgpt.com/c/…</code>.
  Non incollare un link di condivisione <code>/share/</code>: è un'istantanea, non la tua chat modificabile.</p>
+ <select id="repairChatScope" class="chatInput" aria-label="Ambito del collegamento ChatGPT">
+<option value="project">Chat principale dell'intero progetto</option>
+<option value="workflow">Chat specifica di questo workflow</option>
+</select>
  <input id="repairChatInput" class="chatInput" type="url" inputmode="url" autocomplete="off" spellcheck="false"
  placeholder="https://chatgpt.com/c/…" aria-label="Indirizzo privato della chat principale">
  <div class="repairGrid"><button type="button" class="repairButton secondary" id="saveRepairChat">Salva chat sul telefono</button>
@@ -175,7 +179,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <script>
 (function(){
 "use strict";
-var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null};
+var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project"};
 var site="https://video-library-studio.600led.workers.dev";
 function escapeText(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function date(x){if(!x)return "non disponibile";var d=new Date(x);return isNaN(+d)?"non disponibile":d.toLocaleString("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
@@ -236,7 +240,9 @@ function loadChats(){
     state.chatStoreOk=true;
     var json=JSON.parse(localStorage.getItem(CHAT_MAP_STORAGE_KEY)||"{}");
     if(!json||typeof json!=="object"||Array.isArray(json))return;
-    Object.keys(PROJECT_LABELS).forEach(function(key){
+    Object.keys(json).filter(function(k){
+      return Object.prototype.hasOwnProperty.call(PROJECT_LABELS,k)||/^workflow:[1-9]\d{0,17}$/.test(k);
+    }).forEach(function(key){
       var url=allowedChatUrl(json[key]);
       if(url)state.chatLinks[key]=url;
     });
@@ -248,6 +254,18 @@ function persistChats(){
     localStorage.setItem(CHAT_MAP_STORAGE_KEY,JSON.stringify(state.chatLinks));
     return true;
   }catch(e){state.chatStoreOk=false;return false}
+}
+function workflowChatKey(ctx){
+  var id=Number(ctx?.run?.workflow_id)||0;
+  return Number.isSafeInteger(id)&&id>0?"workflow:"+id:null;
+}
+function chatScopeKey(ctx){
+  var workflow=workflowChatKey(ctx);
+  return state.chatScope==="workflow"&&workflow?workflow:ctx?.project||"other";
+}
+function linkedChat(ctx){
+  var workflow=workflowChatKey(ctx);
+  return (workflow&&state.chatLinks[workflow])||state.chatLinks[ctx?.project||"other"]||"";
 }
 function contextForIssue(issue){
   var id=Number(issue.run_id)||0;
@@ -330,17 +348,21 @@ function renderRepairDialog(){
     " · "+ctx.detail+(ctx.run?" · GitHub run #"+ctx.runId:"");
   document.getElementById("repairChatLabel").textContent="Chat principale: "+label;
   document.getElementById("repairPrompt").value=prepareRepairPrompt(ctx,state.repairDetails);
-  var saved=state.chatLinks[ctx.project]||"";
+  var scope=document.getElementById("repairChatScope"),workflow=workflowChatKey(ctx);
+  scope.style.display=workflow?"block":"none";
+  if(!workflow)state.chatScope="project";
+  scope.value=state.chatScope;
+  var saved=state.chatLinks[chatScopeKey(ctx)]||"";
   document.getElementById("repairChatInput").value=saved;
-  var link=document.getElementById("openRelatedChat");
-  link.hidden=!saved;
-  if(saved)link.href=saved;
-  document.getElementById("repairChatStatus").textContent=saved?
-    "Chat associata soltanto a questo dispositivo. Il messaggio va incollato manualmente.":"Nessuna chat privata associata a questo progetto.";
+  var preferred=linkedChat(ctx),link=document.getElementById("openRelatedChat");
+  link.hidden=!preferred;
+  if(preferred)link.href=preferred;
+  document.getElementById("repairChatStatus").textContent=preferred?
+    "Chat privata collegata nel browser. La diagnosi va comunque incollata manualmente.":"Nessun collegamento: puoi salvare la chat principale o aprire ChatGPT.";
 }
 async function openRepairDialog(ctx){
   if(!ctx)return;
-  state.repair=ctx;state.repairDetails=null;
+  state.repair=ctx;state.repairDetails=null;state.chatScope="project";
   document.getElementById("repairJobs").textContent=ctx.type==="run"&&ctx.runId?
     "Cerco i job e gli step falliti su GitHub…":"Sono disponibili i dati riportati nel registro. Nessuna diagnosi automatica è stata eseguita.";
   document.getElementById("repairCopyStatus").textContent="";
