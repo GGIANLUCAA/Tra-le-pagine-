@@ -108,7 +108,7 @@ def parse_wow_release_history(releases: list[dict]) -> list[dict]:
         ident = (meta or {}).get("object_id")
         if not ident:
             # Legacy experiments disclose their Met object/print ID in notes.
-            found = re.search(r"\b(?:object(?:\s+id)?|print|met)\s*(?:#|:)?\s*(\d{4,8})\b",
+            found = re.search(r"\b(?:object(?:\s+id)?|print|metropolitan museum of art|met)\s*(?:#|:)?\s*(\d{4,8})\b",
                               body, flags=re.IGNORECASE)
             if not found:
                 found = re.search(r"hokusai-(\d{4,8})", tag)

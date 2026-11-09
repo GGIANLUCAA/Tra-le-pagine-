@@ -58,6 +58,13 @@ class WowLabContractTests(unittest.TestCase):
                 {"tag_name": "wow-lab-unknown-missing-id", "body": "Met CC0, unidentified subject"}
             ])
 
+    def test_legacy_hiroshige_full_museum_name_is_verified(self):
+        history = engine.parse_wow_release_history([
+            {"tag_name": "wow-lab-hiroshige-bluebird-36725-v1-20261030",
+             "body": "Weeping Cherry and Bluebird, The Metropolitan Museum of Art 36725 Open Access CC0."}
+        ])
+        self.assertEqual([item["object_id"] for item in history], [36725])
+
     def test_slot_collision_detected_before_render(self):
         releases = [{"tag_name": "wow-lab-v1-20261030T08"},
                     {"tag_name": "wow-lab-madame-x-silhouette-v2-20261030"}]
