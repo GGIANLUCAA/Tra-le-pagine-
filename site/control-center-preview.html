@@ -136,6 +136,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V6</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
 <section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Da fare per me · ◉ Salute produzioni · ▷ Diario verificabile</span></section>
 <div class="sync"><span class="pulse" id="pulse"></span><span id="synctext">Collegamento alle fonti reali…</span><span id="sources"></span></div>
+<div id="chatImportNotice" class="note" hidden role="status" aria-live="polite"></div>
 <div class="stats" id="stats"><div class="stat"><b>—</b><span>Workflow recenti</span></div><div class="stat"><b>—</b><span>In esecuzione</span></div><div class="stat"><b>—</b><span>Errori recenti</span></div><div class="stat"><b>—</b><span>Opere ArtVision</span></div></div>
 <nav class="tabs" aria-label="Sezioni"><button data-page="home" class="active">Panoramica</button><button data-page="todo">Da fare per me</button><button data-page="health">Salute produzioni</button><button data-page="works">ArtVision 4×1</button><button data-page="diary">Diario</button><button data-page="runs">Attività GitHub</button><button data-page="media">Video</button><button data-page="stats">Statistiche</button><button data-page="issues">Problemi</button></nav>
 <main id="content"><div class="empty">Lettura dei dati…</div></main>
@@ -247,6 +248,34 @@ function loadChats(){
       if(url)state.chatLinks[key]=url;
     });
   }catch(e){state.chatStoreOk=false}
+}
+function importChatLinksFromFragment(){
+  var prefix="#linkchats=",fragment=String(location.hash||"");
+  if(!fragment.startsWith(prefix))return;
+  var imported=0,valid=false;
+  try{
+    if(fragment.length>6000)throw Error("Fragment too long");
+    var mapping=JSON.parse(decodeURIComponent(fragment.slice(prefix.length)));
+    if(!mapping||typeof mapping!=="object"||Array.isArray(mapping))throw Error("Bad mapping");
+    Object.keys(PROJECT_LABELS).filter(function(k){return k!=="other"}).forEach(function(key){
+      var url=allowedChatUrl(mapping[key]);
+      if(url){state.chatLinks[key]=url;imported++}
+    });
+    valid=imported>0;
+  }catch(e){}
+  // Fragments are client-side only; promptly hide the private chat pointers from
+  // the address bar, browser history entry and accidental sharing.
+  try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+  var notice=document.getElementById("chatImportNotice");
+  if(!notice)return;
+  notice.hidden=false;
+  if(valid){
+    var saved=persistChats();
+    notice.textContent=imported+" chat principali associate al Centro di controllo. "+
+      (saved?"I link restano soltanto nel browser di questo dispositivo.":"La memorizzazione è limitata a questa sessione: apri il pannello in Chrome direttamente.");
+  }else{
+    notice.textContent="Il collegamento delle chat non è riuscito: nessun indirizzo valido ricevuto.";
+  }
 }
 function persistChats(){
   if(!state.chatStoreOk)return false;
@@ -829,6 +858,7 @@ document.getElementById("copyRepairPrompt").addEventListener("click",async funct
     "La copia automatica è bloccata dal browser: tieni premuto sul testo della diagnosi, seleziona e copia manualmente.";
 });
 loadChats();
+importChatLinksFromFragment();
 document.getElementById("refresh").addEventListener("click",refresh);
 setInterval(function(){if(!document.hidden)refresh()},180000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden&&Date.now()-state.stamp>120000)refresh()});
