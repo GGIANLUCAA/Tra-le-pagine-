@@ -40,6 +40,7 @@ jobs:
               assert qa.get(k) is False,k
           print("HTTPS OK: UI V8, status, QA metadata. No MP4 or Gold attestation.")
           print("QA source scope:",qa.get("scope"),"; manual run count:",len(qa["runs"]))
+          print("Control Center source availability:",{k:bool(v.get("ok")) for k,v in status.get("sources",{}).items()})
           PY
           post_status=$(curl --silent --output /dev/null --write-out "%{http_code}" --max-time 20 -X POST "$BASE/api/quality")
           test "$post_status" = "405"
@@ -67,7 +68,7 @@ jobs:
           base="https://video-library-studio.600led.workers.dev"
           preview="https://artvision-control-preview.600led.workers.dev"
           try:
-              with urllib.request.urlopen(base+"/api/catalog", timeout=20) as r:
+              with urllib.request.urlopen(urllib.request.Request(base+"/api/catalog",headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"}), timeout=20) as r:
                   catalog=json.load(r)
           except Exception as e:
               print("Catalog not reachable; no false MP4 status:",type(e).__name__,"HTTP=",getattr(e,"code",None),"reason=",str(getattr(e,"reason",""))[:120])
@@ -85,7 +86,7 @@ jobs:
           for key in candidates:
               url=preview+"/api/check?"+urllib.parse.urlencode({"key":key})
               try:
-                  with urllib.request.urlopen(url,timeout=25) as r: check=json.load(r)
+                  with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"}),timeout=25) as r: check=json.load(r)
                   print("Range probe:",key,"ok=",check.get("ok"),"HTTP=",check.get("http_status"),
                         "read=",check.get("bytes_read"),"scope=",check.get("scope"))
               except Exception as e:
