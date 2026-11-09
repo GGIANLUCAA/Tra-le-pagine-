@@ -373,12 +373,14 @@ async function openRepairDialog(ctx){
 
 function attentionItem(x){
   var link=String(x.link||"");
-  if(!(link.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/")))link="";
+  if(!link.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/"))link="";
+  var index=(state.data?.attention||[]).indexOf(x);
   return '<div class="attentionItem"><div class="attentionIcon">'+(x.kind==="source"?"?":"!")+'</div><div class="grow">'+
     '<span class="rowname">'+escapeText(x.title)+'</span><span class="sub">'+escapeText(x.detail)+'</span><span class="sub">'+
     (x.time?escapeText(date(x.time))+' · ':'')+'Fonte: '+(x.kind==="source"?"stato sorgenti":"GitHub Actions")+'</span>'+
-    (link?'<a class="link" href="'+escapeText(link)+'" target="_blank" rel="noopener noreferrer">Controlla su GitHub ↗</a>':'')+
-    '</div></div>';
+    '<div class="repairGrid">'+(index>=0?'<button type="button" class="repairButton" data-repair-issue="'+index+'">◈ Ripara con GPT</button>':'')+
+    (link?'<a class="repairButton secondary" href="'+escapeText(link)+'" target="_blank" rel="noopener noreferrer">GitHub ↗</a>':'')+
+    '</div></div></div>';
 }
 function home(){
   var d=state.data||{},hs=d.health||[],tasks=d.attention||[],review=d.review,entries=d.diary||[];
@@ -386,7 +388,7 @@ function home(){
   var unavailable=tasks.filter(function(x){return x.kind==="source"}).length;
   var h=sec("Buongiorno, Studio","La situazione più utile da conoscere: nessuno stato viene considerato certo senza una fonte.");
   h+='<section class="focus"><div class="focusHeader"><div><div class="overline">IL TUO CRUSCOTTO PRIORITARIO</div><h3>Da fare per me</h3><p>Soltanto le verifiche emerse dai dati; le approvazioni artistiche non bloccano il lavoro in automatico.</p></div>'+
-    '<button class="miniBtn" data-switch="todo" type="button">Apri le attenzioni →</button></div>'+
+    '<div class="repairGrid"><button class="miniBtn" data-switch="todo" type="button">Da fare per me</button><button class="miniBtn secondary" data-switch="issues" type="button">◈ Ripara con GPT</button></div></div>'+
     '<div class="focusStats"><span><strong>'+escapeText(actionable)+'</strong> workflow da controllare</span>'+
     '<span><strong>'+escapeText(unavailable)+'</strong> fonti da recuperare</span>'+
     '<span><strong>'+(review?escapeText(review.count):"0")+'</strong> opere senza Gold attestato</span></div>'+
