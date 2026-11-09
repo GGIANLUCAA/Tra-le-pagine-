@@ -309,6 +309,48 @@ function issues(){
 }
 function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
 async function refresh(){var b=document.getElementById("refresh");b.disabled=true;b.textContent="Caricamento…";try{var r=await fetch("/api/status",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var d=await r.json();if(!Array.isArray(d.runs)||!Array.isArray(d.works))throw Error("Risposta non valida");state.data=d;state.stamp=Date.now();state.loadError=null;render()}catch(e){state.loadError=e.message;if(state.data){document.getElementById("synctext").textContent="Aggiornamento non riuscito · ultimo dato "+date(state.data.asof);document.getElementById("pulse").className="pulse";}if(!state.data)document.getElementById("content").innerHTML='<div class="empty">Collegamento temporaneamente non disponibile: '+escapeText(e.message)+'</div>'}finally{b.disabled=false;b.textContent="↻ Aggiorna"}}
+function closeReviewPlayer(){
+  var dialog=document.getElementById("reviewPlayer"),video=document.getElementById("reviewVideo");
+  if(dialog.open)dialog.close();
+  video.pause();video.removeAttribute("src");video.removeAttribute("poster");video.load();
+}
+document.getElementById("reviewPlayerClose").addEventListener("click",closeReviewPlayer);
+document.getElementById("reviewPlayer").addEventListener("close",function(){
+  var video=document.getElementById("reviewVideo");
+  video.pause();video.removeAttribute("src");video.removeAttribute("poster");video.load();
+});
+document.getElementById("reviewVideo").addEventListener("error",function(){
+  document.getElementById("reviewPlayerError").hidden=false;
+});
+document.addEventListener("toggle",function(e){
+  if(e.target.matches&&e.target.matches("details.workbook")){
+    state.workOpened[e.target.dataset.work]=e.target.open;
+  }
+},true);
+document.addEventListener("click",function(e){
+  var play=e.target.closest("button[data-play]");
+  if(play){
+    var media=play.dataset.play||"",poster=play.dataset.poster||"";
+    if(!media.startsWith(site+"/media/"))return;
+    var dialog=document.getElementById("reviewPlayer");
+    var video=document.getElementById("reviewVideo");
+    document.getElementById("reviewPlayerTitle").textContent=play.dataset.title||"Opera";
+    document.getElementById("reviewPlayerSubtitle").textContent=play.dataset.version||"Versione video";
+    document.getElementById("reviewPlayerError").hidden=true;
+    if(poster.startsWith(site+"/cover/"))video.setAttribute("poster",poster);
+    video.src=media;
+    dialog.showModal();
+    video.play().catch(function(){});
+    return;
+  }
+  var gallery=e.target.closest("button[data-gallery]");
+  if(gallery){
+    var opening=gallery.dataset.gallery==="open";
+    document.querySelectorAll("details.workbook").forEach(function(el){
+      el.open=opening;state.workOpened[el.dataset.work]=opening;
+    });
+  }
+});
 document.addEventListener("click",async function(e){
   var btn=e.target.closest("button[data-check]");
   if(!btn)return;
