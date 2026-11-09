@@ -219,3 +219,13 @@ Dopo test Android della V2 e controllo dei dati, integrare soltanto il link nell
 - Quando l'owner sceglie **Analizza con GPT**, la UI prepara un contesto con la run GitHub e l'incertezza esplicitata, senza intervenire autonomamente sul video.
 - L'integrazione con un rapporto JSON verificabile per singolo file e i controlli integrali MP4/ZIP richiede ancora un successivo passaggio con prova reale. Nessuna falsa promessa di sincronizzazione o Gold.
 - Implementazione inizialmente su `preview/control-center-quality-v8-20261109`, con unit-test e build offline in GitHub Actions.
+
+## V8.1 · Cloudflare service binding e prova HTTPS
+
+**Problema confermato dal test esterno**: il sito originale `video-library-studio.600led.workers.dev` ha restituito HTTP 200 per `/api/catalog` e HTTP 206 per tre MP4 serviti con Range `bytes=0-1023`, mentre le chiamate da un Worker Cloudflare verso il dominio pubblico dell'altro Worker restituivano catalogo indisponibile e 404 nei download.
+
+**Correzione**: l'anteprima `artvision-control-preview` richiede il binding Cloudflare di tipo `service` con `name=VIDEO_LIBRARY` e `service=video-library-studio`, aggiunto alla configurazione di caricamento del Worker. Il codice passa esplicitamente il binding all'accesso al catalogo e ai controlli Range (GET soltanto). Le chiamate GitHub rimangono indipendenti. Non è cambiato il Worker principale e non è stato assegnato alcun token di amministrazione al pannello.
+
+**Conferma**: i test online su GitHub Actions [run #42699342427](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42699342427) passano; `sources.catalog.ok=true`, i primi 1024 byte di tre MP4 sono stati letti via pannello e confrontati con HTTP 206 del sito originale. **Non equivalgono** a una verifica dell'intero MP4, dello ZIP, dell'hash SHA-256 o del Gold artistico.
+
+**Manutenzione**: qualsiasi nuovo deployment deve includere il binding `VIDEO_LIBRARY`; il solo output di `scripts/build-control-center-preview.mjs` non configura automaticamente i binding Cloudflare. Nel sito principale il Centro di controllo è già raggiungibile tramite l'area amministratore incorporata. Il Worker dell'anteprima mostra esclusivamente metadati pubblici anche se il link è nella sezione privata.
