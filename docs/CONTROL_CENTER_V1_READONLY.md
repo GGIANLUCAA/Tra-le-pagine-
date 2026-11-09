@@ -208,3 +208,14 @@ Dopo test Android della V2 e controllo dei dati, integrare soltanto il link nell
 - Un genere senza workflow GitHub riconosciuto mostra "Non rilevato": non equivale a fermo, errore o produzione autonoma attiva. Le automazioni native ChatGPT non sono monitorate da questa rilevazione GitHub.
 - Le nuove tipologie dispongono di filtri GitHub e collegamenti di chat personali nel pannello Ripara GPT, ma nessun URL privato è codificato nel Worker o pubblicato su GitHub.
 - Il monitoraggio rimane GET-only e senza crediti o servizi a pagamento. Nessuna modifica ai master, ai workflow GitHub produttivi o ai metadati del catalogo.
+
+
+## V8 · Qualità e prove: metadati verificabili
+- Pagina Android **Qualità e prove** e API `GET /api/quality` del Worker separato.
+- Ricerca su richiesta le esecuzioni `workflow_dispatch` della regia `quality-director-v17.yml` e, per le esecuzioni completate, l'eventuale artifact GitHub `quality-v17-report`.
+- Controlli senza crediti API di generazione; `POST`/scritture respinte. Il sito principale e gli automatismi video non vengono modificati.
+- Se il workflow specifico non è raggiungibile, fallback dichiarato alle ultime **100** run pubbliche generali, non scambiato per storico completo.
+- `artifact_present` indica **solo un record nell'indice degli artifact**. Il JSON interno, i byte del MP4, gli SHA-256, le licenze e l'approvazione artistica non vengono letti né attestati da questa funzione. I campi di verifica e pubblicazione restano `false`.
+- Quando l'owner sceglie **Analizza con GPT**, la UI prepara un contesto con la run GitHub e l'incertezza esplicitata, senza intervenire autonomamente sul video.
+- L'integrazione con un rapporto JSON verificabile per singolo file e i controlli integrali MP4/ZIP richiede ancora un successivo passaggio con prova reale. Nessuna falsa promessa di sincronizzazione o Gold.
+- Implementazione inizialmente su `preview/control-center-quality-v8-20261109`, con unit-test e build offline in GitHub Actions.
