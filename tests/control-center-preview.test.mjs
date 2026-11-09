@@ -204,6 +204,20 @@ test("V5 has both top metrics and analytics page, plus gallery filters",()=>{
   assert.match(html,/data-work-filter="missing"/);
   assert.match(html,/id="workSearch"/);
 });
+test("V5 never enables player when catalog availability is not declared",async()=>{
+  const queue={works:[{id:"mystery",artist:"Painter",title_en:"Unknown",
+    slots_delivered_this_selection:1,critico_standard_v111:{filename:"KNOWN.mp4",sha256:"a".repeat(64)}}]};
+  const catalog={items:[{key:"KNOWN.mp4",title:"Known, but availability not confirmed"}]};
+  const worker=fixture({queue,catalog});
+  const response=await worker.fetch(new Request("https://preview.example/api/status"));
+  const data=await response.json();
+  const v=data.works[0].variants.find(x=>x.id==="critico_standard");
+  assert.equal(v.site_catalog,true);
+  assert.equal(v.site_available,null);
+  assert.equal(v.preview_ready,false);
+  assert.equal(v.media_url,null);
+  assert.equal(data.statistics.catalogue.availability_unknown,1);
+});
 test("V5 Android manifest provides a standalone icon and never writes video data",async()=>{
   const worker=fixture();
   const manifest=await worker.fetch(new Request("https://preview.example/manifest.webmanifest"));
