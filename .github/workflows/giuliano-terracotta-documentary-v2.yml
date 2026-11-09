@@ -78,7 +78,7 @@ jobs:
           python - <<'PY'
           import os,urllib.request,urllib.parse,json,time
           base=f"https://api.github.com/repos/{os.environ['GH_REPO']}"
-          head="eb4ae1f475386304817e58a392a69b037fc2a507"
+          head="44e4363e5380668ceb8454ef379fdc553efdd165"
           params=urllib.parse.urlencode({"branch":"feature/giuliano-terracotta-social-v2-20261109","event":"push","per_page":40})
           headers={"Authorization":f"Bearer {os.environ['GH_TOKEN']}","Accept":"application/vnd.github+json","User-Agent":"Gianluca-Giuliano-Documentary-QA"}
           def read(url):
