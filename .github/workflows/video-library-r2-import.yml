@@ -88,11 +88,17 @@ jobs:
               if base.startswith(('SOURCE_SHOT_', 'SOURCE_REVIEW_ONLY_', 'SOURCE_24S_',
                                   'SCENE02_BW_FREEZE_', 'TRUE_BW_MOTION_', 'RAW_', 'FRAME_')):
                   return False
+              # Audio-polish exports are intermediate cuts, not independent owner videos.
+              if base.startswith('AUDIO_POLISHED_REVIEW'):
+                  return False
               if 'NOT_FINAL' in base or 'NON_FINALE' in base:
                   return False
               return True
           assert archive_candidate('BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_STANDARD_V138_REVIEW.mp4')
           assert archive_candidate('ArtVision_Malczewski_Cinema_Museum_V112.mp4')
+          assert not archive_candidate('AUDIO_POLISHED_REVIEW.mp4')
+          assert not archive_candidate('AUDIO_POLISHED_REVIEW__9666695.mp4')
+          assert archive_candidate('BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_STANDARD_V138_REVIEW.mp4')
           assert not archive_candidate('SOURCE_SHOT_01__158381.mp4')
           assert not archive_candidate('SOURCE_REVIEW_ONLY_NOT_FINAL__478918.mp4')
           assert not archive_candidate('SOURCE_24S_ROUGHCUT_NOT_FINAL__4374707.mp4')
