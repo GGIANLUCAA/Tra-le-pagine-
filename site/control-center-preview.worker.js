@@ -28,6 +28,57 @@ async function json(url,github=false){
 }
 function clip(s,n=250){return typeof s==="string"?s.slice(0,n):""}
 
+// Editorial catalogue worlds, not autonomous production agents.
+// Counts are based only on catalog objects currently returned by Video Library Studio.
+const COLLECTION_NAMES=[
+ "Libri narrati","Racconti e fiabe","Artisti e pittura","Critica d’arte",
+ "La Storia Rivive","Restauri storici","Musica e visual","WOW LAB",
+ "Cinema e cortometraggi","Documentari e curiosità","Cronaca e attualità",
+ "Provini e backstage","Altri progetti"
+];
+function catalogueWorld(row){
+  const declared=String(row.category||"").trim();
+  if(declared&&declared!=="Altri progetti"){
+    if(/^(libri raccontati|libri narrati|audiolibri)$/i.test(declared))return "Libri narrati";
+    if(/^(fiabe e racconti|racconti e fiabe)$/i.test(declared))return "Racconti e fiabe";
+    return declared.slice(0,80);
+  }
+  if(declared==="Altri progetti")return declared;
+  const s=(String(row.key||row.name||"")+" "+String(row.project||"")).toLowerCase();
+  if(/wow[_ -]?lab|wow_lab/.test(s))return "WOW LAB";
+  if(/la[_ -]?storia[_ -]?rivive|storia[_ -]?rivive/.test(s))return "La Storia Rivive";
+  if(/tra[_ -]?le[_ -]?pagine|ventimila|nautilus|dersu[_ -]?uzala|giardino[_ -]?segreto|la[_ -]?collana|siddharta|delitto[_ -]?e[_ -]?castigo|libro|libri|narrat|racconto|raccont|pifferaio|principe[_ -]?felice|sleepy[_ -]?hollow|ultima[_ -]?foglia|alice[_ -]?cartone/i.test(s)){
+    if(/nils|pifferaio|principe[_ -]?felice|sleepy[_ -]?hollow|fantasma[_ -]?di[_ -]?canterville|alice[_ -]?cartone|ultima[_ -]?foglia/.test(s))return "Racconti e fiabe";
+    return "Libri narrati";
+  }
+  if(/(?:artvision|critico|museum|bruegel|simberg|waterhouse|rembrandt|botticelli|caravaggio)/.test(s))
+    return /critico|critica/.test(s)?"Critica d’arte":"Artisti e pittura";
+  if(/controluce|cronaca|inchiesta/.test(s))return "Cronaca e attualità";
+  if(/(?:arroseur|carmencita|lumiere|lumi[eè]re|m[eé]li[eè]s|restaur|edison|ellis[_ -]?island|venezia[_ -]?1896|new[_ -]?york[_ -]?19\d\d)/.test(s))return "Restauri storici";
+  if(/terracotta|documentario|national[_ -]?geographic|curiosit/.test(s))return "Documentari e curiosità";
+  if(/^(?:source[_ -]?|scene[_ -]?\d+|audio[_ -]?polished|provino|test[_ -]?|base[_ -]?video|review[_ -]?)/.test(s))return "Provini e backstage";
+  if(/^(?:cinema[_ -]?reale|short[_ -]?film|cortometraggio)/.test(s))return "Cinema e cortometraggi";
+  if(/music|motion|hyperlumen|mozart|beethoven|clair[_ -]?de[_ -]?lune|gymnopedie|symphony|visual|luce[_ -]?respira|scintille/.test(s))
+    return "Musica e visual";
+  return "Altri progetti";
+}
+function summarizeCollections(rows,available){
+  if(!available)return null;
+  const buckets=new Map(COLLECTION_NAMES.map(name=>[name,{name,count:0,available:0,unavailable:0,unknown:0,items:[]}]));
+  const sorted=rows.slice().sort((a,b)=>Date.parse(b.uploaded||b.gptCreatedAt||0)-Date.parse(a.uploaded||a.gptCreatedAt||0));
+  for(const r of sorted){
+    const name=catalogueWorld(r);
+    if(!buckets.has(name))buckets.set(name,{name,count:0,available:0,unavailable:0,unknown:0,items:[]});
+    const b=buckets.get(name);b.count++;
+    if(r.available===true)b.available++;
+    else if(r.available===false)b.unavailable++;
+    else b.unknown++;
+    if(b.items.length<18)b.items.push({key:clip(r.key||r.name,190),
+      title:clip(r.title||r.name||r.key,180),
+      available:r.available===true?true:r.available===false?false:null});
+  }
+  return [...buckets.values()];
+}
 function projectForRun(name){
   const s=String(name||"").toLowerCase();
   // Infrastructure and dashboard jobs must never masquerade as video production.
@@ -259,7 +310,8 @@ async function gather(){
   }));
   const overview=deriveOverview(runs,works,rows,sources);
   const statistics=buildStatistics(runs,works,rows,sources);
-  return {asof:new Date().toISOString(),sources,runs,works,media,catalog_count:rows.length,statistics,...overview};
+  const collections=summarizeCollections(rows,sources.catalog?.ok);
+  return {asof:new Date().toISOString(),sources,runs,works,media,collections,catalog_count:rows.length,statistics,...overview};
 }
 async function getStatus(){
   if(snapshot&&Date.now()-snapshotAt<75000)return snapshot;
