@@ -321,9 +321,24 @@ function statisticsPage(){
   return out;
 }
 function works(){
-  var d=state.data||{},items=d.works||[];
+  var d=state.data||{},allWorks=d.works||[];
+  var items=allWorks.filter(function(w){
+    var haystack=(String(w.title||"")+" "+String(w.artist||"")).toLowerCase();
+    if(state.workSearch&&!haystack.includes(state.workSearch.toLowerCase()))return false;
+    if(state.workFilter==="playable")return (w.variants||[]).some(function(v){return v.preview_ready});
+    if(state.workFilter==="missing")return (w.variants||[]).some(function(v){return !v.preview_ready});
+    if(state.workFilter==="review")return Number(w.delivered)>0&&!w.gold_approved;
+    return true;
+  });
   var out=sec("Museo delle quattro versioni","Confronta Critico Classico, Critico Museum, Cinema Classico e Cinema Museum per ogni opera.");
   if(!source("queue"))return out+'<div class="empty">Registro ArtVision momentaneamente non disponibile. Non mostro stati stimati.</div>';
+  out+='<div class="workFilterBar"><input id="workSearch" class="workSearch" type="search" aria-label="Cerca quadro o artista" placeholder="Cerca quadro o artista…" value="'+escapeText(state.workSearch)+'"></div>'+
+    '<div class="workFilterBar"><button type="button" data-work-filter="all" class="'+(state.workFilter==="all"?"on":"")+'">Tutte</button>'+
+    '<button type="button" data-work-filter="playable" class="'+(state.workFilter==="playable"?"on":"")+'">Con anteprime</button>'+
+    '<button type="button" data-work-filter="missing" class="'+(state.workFilter==="missing"?"on":"")+'">Anteprime mancanti</button>'+
+    '<button type="button" data-work-filter="review" class="'+(state.workFilter==="review"?"on":"")+'">Da revisionare</button></div>'+
+    '<p class="sub">Mostro '+items.length+' opere su '+allWorks.length+' del registro.</p>';
+  if(!items.length)return out+'<div class="empty">Nessun quadro corrisponde ai filtri selezionati.</div>';
   out+='<div class="galleryGuide"><span>◈ Verde: MP4 presente nel catalogo</span>'+
     '<span>◈ Oro: scheda tecnica o verifiche mancanti</span><span>◈ Rosso: file dichiarato offline</span></div>'+
     '<div class="workControls"><div class="sub">'+items.length+' opere operative · nessun Gold dedotto</div>'+
@@ -369,7 +384,7 @@ function issues(){
   out+=incomplete.length?incomplete.map(function(w){return '<div class="row"><div class="grow"><span class="rowname">'+escapeText(w.title)+'</span><span class="sub">'+(4-Number(w.delivered||0))+' slot non conteggiati, da verificare in produzione</span></div>'+badge(Number(w.delivered||0)+'/4',"wait")+'</div>'}).join(""):'<div class="empty">Nessuno slot non conteggiato.</div>';
   return out+'</div>';
 }
-function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,stats:statisticsPage,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
+function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,stats:statisticsPage,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}});var ws=document.getElementById("workSearch");if(ws)ws.addEventListener("input",function(e){state.workSearch=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("workSearch");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
 async function refresh(){var b=document.getElementById("refresh");b.disabled=true;b.textContent="Caricamento…";try{var r=await fetch("/api/status",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var d=await r.json();if(!Array.isArray(d.runs)||!Array.isArray(d.works))throw Error("Risposta non valida");state.data=d;state.stamp=Date.now();state.loadError=null;render()}catch(e){state.loadError=e.message;if(state.data){document.getElementById("synctext").textContent="Aggiornamento non riuscito · ultimo dato "+date(state.data.asof);document.getElementById("pulse").className="pulse";}if(!state.data)document.getElementById("content").innerHTML='<div class="empty">Collegamento temporaneamente non disponibile: '+escapeText(e.message)+'</div>'}finally{b.disabled=false;b.textContent="↻ Aggiorna"}}
 function closeReviewPlayer(){
   var dialog=document.getElementById("reviewPlayer"),video=document.getElementById("reviewVideo");
@@ -415,7 +430,9 @@ document.addEventListener("click",function(e){
 });
 document.addEventListener("click",function(e){
  var period=e.target.closest("button[data-stats-window]");
- if(period){state.statsWindow=period.dataset.statsWindow;render()}
+ if(period){state.statsWindow=period.dataset.statsWindow;render();return}
+ var filter=e.target.closest("button[data-work-filter]");
+ if(filter){state.workFilter=filter.dataset.workFilter;render()}
 });
 document.addEventListener("click",async function(e){
   var btn=e.target.closest("button[data-check]");
