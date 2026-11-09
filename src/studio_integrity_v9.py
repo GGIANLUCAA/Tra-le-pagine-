@@ -133,7 +133,7 @@ def audit_master(row: dict, opener=None) -> dict:
                 report["failure"] = "INCOMPLETE_OR_DIFFERENT_MASTER"
     except (urllib.error.URLError, OSError, ValueError) as exc:
         # Never copy origin errors, arbitrary response bodies or credentials.
-        if isinstance(exc, ValueError) and re.fullmatch(r"[A-Z_]+", str(exc)):
+        if isinstance(exc, ValueError) and re.fullmatch(r"[A-Z0-9_]+", str(exc)):
             report["failure"] = str(exc)
         else:
             report["failure"] = "NETWORK_OR_IO_ERROR"
@@ -196,7 +196,7 @@ def verify_zip(path: Path, expected_sha: str) -> dict:
             report["zip_crc_verified"] = True
             report["zip_full_read_verified"] = True
     except (ValueError, OSError, zipfile.BadZipFile, zipfile.LargeZipFile) as exc:
-        if isinstance(exc, ValueError) and re.fullmatch(r"[A-Z_]+", str(exc)):
+        if isinstance(exc, ValueError) and re.fullmatch(r"[A-Z0-9_]+", str(exc)):
             report["failure"] = str(exc)
         else:
             report["failure"] = "ZIP_READ_ERROR"
