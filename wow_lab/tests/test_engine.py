@@ -47,6 +47,17 @@ class WowLabContractTests(unittest.TestCase):
         history = engine.parse_wow_release_history(releases)
         self.assertEqual([x["object_id"] for x in history], [12127, 45434])
 
+    def test_legacy_sharaku_met_id_is_verified_without_weakening_gate(self):
+        history = engine.parse_wow_release_history([
+            {"tag_name": "wow-lab-sharaku-kabuki-hand-v4-20261030",
+             "body": "11.5s 720x1280, H264/AAC, authentic CC0 Met 37358. Technical QA pass."}
+        ])
+        self.assertEqual([item["object_id"] for item in history], [37358])
+        with self.assertRaisesRegex(RuntimeError, "WOW_LAB_HISTORY_UNVERIFIED"):
+            engine.parse_wow_release_history([
+                {"tag_name": "wow-lab-unknown-missing-id", "body": "Met CC0, unidentified subject"}
+            ])
+
     def test_slot_collision_detected_before_render(self):
         releases = [{"tag_name": "wow-lab-v1-20261030T08"},
                     {"tag_name": "wow-lab-madame-x-silhouette-v2-20261030"}]
