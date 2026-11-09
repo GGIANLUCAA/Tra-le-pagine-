@@ -47,7 +47,7 @@ def summarize(report: dict, run_url: str | None = None) -> dict:
     elif not video_declared:
         state, action = "needs_real_mp4_evidence", "run_quality_review_on_actual_mp4"
     else:
-        state, action = "pending_artistic_review", "inspect_actual_mp4_and_owner_approve"
+        state, action = "qa_report_for_video_needs_verification", "independently_verify_mp4_then_owner_review"
     normalized_url = safe_run_url(run_url)
     output = {
         "schema": SCHEMA,
