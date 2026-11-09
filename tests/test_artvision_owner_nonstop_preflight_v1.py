@@ -19,11 +19,11 @@ def fixture():
                   "production_ready": False, "rights_and_source_gate": "pending_review",
                   "render_status": "not_started"})
         r.append({**base, **{gate: False for gate in mod.GATES}})
-    return {"selected_works": q}, {"selected_works": r}
+    return {"selected_works": q}, {"works": r}
 
 
 def clear(q, r, idx):
-    a, b = q["selected_works"][idx], r["selected_works"][idx]
+    a, b = q["selected_works"][idx], r["works"][idx]
     a["production_ready"] = True
     a["rights_and_source_gate"] = "cleared"
     b.update({gate: True for gate in mod.GATES})
@@ -62,14 +62,14 @@ class OwnerNonstopPreflight(unittest.TestCase):
 
     def test_unmatched_register_fails_closed(self):
         q, r = fixture()
-        r["selected_works"][0]["artist_as_chosen"] = "Wrong"
+        r["works"][0]["artist_as_chosen"] = "Wrong"
         with self.assertRaises(ValueError):
             mod.plan(q, r, [])
 
     def test_source_hash_missing_is_blocker(self):
         q, r = fixture()
         clear(q, r, 0)
-        del r["selected_works"][0]["source_sha256"]
+        del r["works"][0]["source_sha256"]
         p = mod.plan(q, r, [])
         self.assertIn("original_image_sha256_missing", p["checks"][0]["reasons"])
 
