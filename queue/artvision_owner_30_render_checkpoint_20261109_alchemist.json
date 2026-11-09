@@ -1,0 +1,54 @@
+{
+  "schema": "artvision-owner-secondary-30-cinema-new-v1",
+  "utc_date": "2026-11-09",
+  "source_queue": "research/artvision_owner_selected_30_future_20261109.json",
+  "primary_queue": "queue/artvision_owner_selected_ten_20261102.json",
+  "primary_queue_counter_after": "26/36 unchanged, Dali permanently excluded",
+  "secondary_work": {
+    "selected_title": "The Alchemist",
+    "artist": "Joseph Wright of Derby",
+    "selection_order": 26,
+    "variant": "cinema_standard",
+    "slot_state": "rendered_needs_visual_and_semantic_review",
+    "count_new_physical_mp4_candidate": 1
+  },
+  "github_workflow_run_id": 42622451654,
+  "workflow_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42622451654",
+  "workflow_artifact_id": 13675939181,
+  "workflow_artifact_name": "ARTVISION_OWNER_ALCHEMIST_NEW_CINEMA_REVIEW",
+  "mp4": {
+    "sha256": "734e81a54cb773f4d8b1f424aeb9872051c6de1e7fa00411b752ebbd3349a14e",
+    "bytes": 7471061,
+    "duration_seconds": 65,
+    "video": "H264 720x1280 20fps",
+    "audio": "AAC",
+    "ffmpeg_full_video_decode": "PASS",
+    "ffmpeg_full_audio_decode": "PASS"
+  },
+  "zip": {
+    "sha256": "3cd96a8b1868c6a6a0705c37526c8da026bf83fa6e4a7bfd260e62fd7e0cb4bd",
+    "zip_crc": "PASS",
+    "file_readback": "PASS"
+  },
+  "source_artwork": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:Joseph_Wright_of_Derby_The_Alchemist.jpg",
+    "sha256": "89c65fd865de689f11d2d1ebe8770909b9dcc9c11746ebb578bcb0d5134c6019",
+    "pixels": [
+      4724,
+      6126
+    ],
+    "license_claim": "PD-Art/PDM Commons, territorial commercial reuse pending"
+  },
+  "technical_review": "PASS",
+  "actual_visual_review": "contact sheet inspected in this conversation; fullspeed artistic review PENDING; not Gold",
+  "problems_or_artistic_flags": [
+    "Review 720p output, dark source painting and some repeated crops before acceptance",
+    "No human full-speed approval documented",
+    "Commercial/territorial rights final review pending"
+  ],
+  "title_cover_social": "packaged in GitHub artifact ZIP (English public title and cover; 4 Italian-specific social descriptions)",
+  "already_published": false,
+  "paid_calls": 0,
+  "old_master_modifications": 0,
+  "next_step": "Before rendering another work, check active workflows. Do NOT rerender Alchemist as a new slot; artistic review or visual improvements are revision only. Move to an independent shortlisted work after rights/source verification. Primary Museum queue remains 26/36."
+}
