@@ -4,6 +4,9 @@ on:
     paths:
       - "src/studio_autonomy_gate_v1.py"
       - "tests/test_studio_autonomy_gate_v1.py"
+      - "src/studio_autonomy_report_v1.py"
+      - "tests/test_studio_autonomy_report_v1.py"
+      - ".github/workflows/quality-director-v17.yml"
       - ".github/workflows/studio-autonomy-gates-v1.yml"
       - "docs/STUDIO_AUTONOMY_ROADMAP_V1_20261109.md"
   workflow_dispatch:
@@ -19,4 +22,6 @@ jobs:
         with:
           python-version: "3.11"
       - name: Test policy and fail-closed decisions (no API, renders or cost)
-        run: python -m unittest discover -s tests -p "test_studio_autonomy_gate_v1.py" -v
+        run: |
+          python -m unittest discover -s tests -p "test_studio_autonomy_gate_v1.py" -v
+          python -m unittest discover -s tests -p "test_studio_autonomy_report_v1.py" -v
