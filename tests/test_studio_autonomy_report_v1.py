@@ -32,7 +32,7 @@ class QualityBridgeTests(unittest.TestCase):
 
     def test_report_with_video_reference_still_needs_real_review(self):
         x = summarize(qa(video="output/example.mp4"))
-        self.assertEqual(x["state"], "pending_artistic_review")
+        self.assertEqual(x["state"], "qa_report_for_video_needs_verification")
         self.assertFalse(x["video_sha256_verified_by_bridge"])
         self.assertFalse(x["publish_authorized"])
 
