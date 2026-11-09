@@ -86,24 +86,34 @@ def fetch_metadata(filenames):
  return [result[name.replace("_"," ").casefold()] for name in filenames]
 
 def download_commons(metadata,dest):
+ # Licensed original remains linked to Wikimedia. Alternate delivery endpoints
+ # only resize/copy the SAME identified original to avoid GitHub runner 429.
+ original=metadata["url"]
+ delivery=[
+  ("weserv","https://images.weserv.nl/?"+urllib.parse.urlencode({"url":original,"w":"1280","output":"jpg","q":"91"})),
+  ("wsrv","https://wsrv.nl/?"+urllib.parse.urlencode({"url":original,"w":"1280","output":"jpg","q":"91"})),
+  ("direct",original),
+ ]
  session=requests.Session()
  session.headers.update({"User-Agent":UA})
  last=None
- for attempt in range(5):
-  try:
-   r=session.get(metadata["url"],timeout=95)
-   r.raise_for_status()
-   dest.write_bytes(r.content)
-   with Image.open(dest) as im:
-    im.verify()
-   if dest.stat().st_size<14000:
-    raise RuntimeError("Image file suspiciously small")
-   return {**metadata,"image_sha256":sha(dest),"bytes":dest.stat().st_size}
-  except (requests.RequestException,OSError,ValueError,RuntimeError) as e:
-   last=e
-   print("PHOTO_RETRY",metadata["file"],attempt,type(e).__name__,str(e)[:120],flush=True)
-   if attempt<4:time.sleep([4,9,18,28][attempt])
- raise RuntimeError("Cannot fetch verified source "+metadata["file"]) from last
+ for mode,link in delivery:
+  for attempt in range(2):
+   try:
+    r=session.get(link,timeout=75)
+    r.raise_for_status()
+    dest.write_bytes(r.content)
+    with Image.open(dest) as im:
+     im.verify()
+    if dest.stat().st_size<14000:raise RuntimeError("Photo below minimum integrity size")
+    print("IMAGE_DELIVERY",mode,metadata["file"],dest.stat().st_size,flush=True)
+    return {**metadata,"delivery_method":mode,
+         "image_sha256":sha(dest),"bytes":dest.stat().st_size}
+   except (requests.RequestException,OSError,ValueError,RuntimeError) as err:
+    last=err
+    print("DELIVERY_FAIL",mode,attempt,metadata["file"],type(err).__name__,str(err)[:150],flush=True)
+    if attempt==0:time.sleep(3)
+ raise RuntimeError("No original-preserving image delivery for "+metadata["file"]) from last
 
 def font(sz):
  for p in ["/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf",
