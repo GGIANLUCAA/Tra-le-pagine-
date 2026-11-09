@@ -1,0 +1,277 @@
+name: "La Storia Rivive · Venezia 1896 V310 · true post-photo archival motion + QA"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-venice-v310-real-motion-android-preview.yml"]
+permissions:
+  actions: read
+  contents: write
+  issues: write
+concurrency:
+  group: storia-venice-1896-v310-real-motion-review
+  cancel-in-progress: false
+jobs:
+  real_film_after_photo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free codec and image processing only - NO Vidu or generative requests
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -qq -y ffmpeg fonts-dejavu-core
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+      - name: Reuse REAL original 1896 archive and FOUR successful source-locked AI stills
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_venice_1896_v310/source output/storia_venice_1896_v310/photos
+          gh run download 42319540040 --repo "$GITHUB_REPOSITORY" \
+             --name STORIA_VENICE_1896_NEW_ORIGINAL_MOVING_SOURCE --dir output/storia_venice_1896_v310/source
+          gh run download 42464890766 --repo "$GITHUB_REPOSITORY" \
+             --name STORIA_VENICE_V302_SOURCE_LOCKED_PHOTO_I2I_REVIEW --dir output/storia_venice_1896_v310/photos
+          cd output/storia_venice_1896_v310
+          echo "002b6bb6120cdd53f8a943e9ccb9af0195de883658b22de9a4628cec5cee70f2  source/VENICE_1896_REAL_MOVING_SOURCE.webm" | sha256sum -c
+          python - <<'PY'
+          import pathlib,json,hashlib
+          d=pathlib.Path('photos');t=json.loads((d/'V302_PHOTO_TRIAL.json').read_text())
+          assert len(t['photos'])==4
+          for i,p in enumerate(t['photos'],1):
+              f=d/f'V302_TRUE_I2I_PHOTO_{i:02d}.png'
+              assert hashlib.sha256(f.read_bytes()).hexdigest()==p['photo_sha256']
+          print("REUSED_ORIGINAL_FILM_SHA_AND_FOUR_REAL_I2I_SHA_VERIFIED")
+          PY
+      - name: Real 4-scene 1896 B/W motion -> I2I -> SAME authentic motion in guided color
+        timeout-minutes: 18
+        run: |
+          set -euo pipefail
+          python -u - <<'PY'
+          import cv2,numpy as np,json,hashlib,zipfile,subprocess,pathlib,wave
+          from PIL import Image,ImageDraw,ImageFont
+          D=pathlib.Path("output/storia_venice_1896_v310")
+          src=D/"source/VENICE_1896_REAL_MOVING_SOURCE.webm"
+          P=D/"photos";times=[6.3,14.1,32.6,44.3];centers=[632,678,670,725]
+          ref=json.loads((P/"V302_PHOTO_TRIAL.json").read_text())["photos"]
+          photos=[cv2.imread(str(P/f"V302_TRUE_I2I_PHOTO_{i:02d}.png")) for i in range(1,5)]
+          assert all(p is not None and p.shape==(1280,720,3) for p in photos)
+          def sha(p):
+              h=hashlib.sha256()
+              with open(p,"rb") as f:
+                  for b in iter(lambda:f.read(1048576),b""):h.update(b)
+              return h.hexdigest()
+          def proc(cmd,timeout=260):
+              r=subprocess.run(cmd,capture_output=True,text=True,timeout=timeout)
+              if r.returncode:raise RuntimeError(str(cmd[:5])+" "+r.stderr[-600:])
+              return r.stdout
+          def crop(f,c):
+              h,w=f.shape[:2]; cw=int(h*9/16)
+              x=max(0,min(w-cw,int(c-cw/2)))
+              return cv2.resize(f[:,x:x+cw],(720,1280),interpolation=cv2.INTER_CUBIC)
+          def natural_bw(f):
+              y=cv2.cvtColor(f,cv2.COLOR_BGR2GRAY)
+              z=cv2.createCLAHE(clipLimit=1.48,tileGridSize=(8,8)).apply(y)
+              z=cv2.addWeighted(z,.57,y,.43,0)
+              z=cv2.GaussianBlur(z,(3,3),.5)
+              z=cv2.addWeighted(z,1.16,cv2.GaussianBlur(z,(0,0),1.25),-.16,0)
+              return cv2.cvtColor(z,cv2.COLOR_GRAY2BGR)
+          def structure(a,b):
+              def down(f):
+                  g=cv2.cvtColor(f,cv2.COLOR_BGR2GRAY)
+                  return cv2.GaussianBlur(cv2.resize(g,(100,178)),(5,5),0).astype(np.float32).ravel()
+              return float(np.corrcoef(down(a),down(b))[0,1])
+          def move_color(f,a,ph,prep):
+              gray=cv2.cvtColor(f,cv2.COLOR_BGR2GRAY)
+              small=cv2.resize(gray,(180,320)).astype(np.float32)
+              shift,response=cv2.phaseCorrelate(prep["anchor_phase"],small)
+              dx=float(np.clip(shift[0]*720/180,-125,125));dy=float(np.clip(shift[1]*1280/320,-120,120))
+              mat=np.float32([[1,0,dx],[0,1,dy]])
+              photolab=cv2.warpAffine(prep["photo_lab"],mat,(720,1280),
+                flags=cv2.INTER_LINEAR,borderMode=cv2.BORDER_REPLICATE)
+              anchored=cv2.warpAffine(prep["anchor_gray"],mat,(720,1280),
+                flags=cv2.INTER_LINEAR,borderMode=cv2.BORDER_REPLICATE)
+              source_lab=cv2.cvtColor(natural_bw(f),cv2.COLOR_BGR2LAB).astype(np.float32)
+              mask=np.clip(1-cv2.absdiff(gray,anchored).astype(np.float32)/75.0,.48,1.0)
+              source_lab[:,:,1]=128+(photolab[:,:,1].astype(np.float32)-128)*(.88*mask)
+              source_lab[:,:,2]=128+(photolab[:,:,2].astype(np.float32)-128)*(.88*mask)
+              return cv2.cvtColor(np.clip(source_lab,0,255).astype(np.uint8),cv2.COLOR_LAB2BGR)
+          cap=cv2.VideoCapture(str(src))
+          assert int(cap.get(cv2.CAP_PROP_FPS))==24 and int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))==1364
+          quiet=D/"V310_SILENT_H264.mp4"
+          encoder=subprocess.Popen(["ffmpeg","-nostdin","-y","-v","error","-f","rawvideo",
+            "-pix_fmt","bgr24","-s","720x1280","-r","24","-i","-","-an","-c:v","libx264",
+            "-threads","2","-preset","ultrafast","-crf","18","-pix_fmt","yuv420p",str(quiet)],
+            stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+          count=0;scenes=[]
+          def emit(im):
+              global count
+              encoder.stdin.write(im.tobytes());count+=1
+          try:
+              for n,(t,c) in enumerate(zip(times,centers),1):
+                  before,after=48,65
+                  cap.set(cv2.CAP_PROP_POS_MSEC,(t-before/24)*1000)
+                  seq=[]
+                  for _ in range(before+after+1):
+                      ok,f=cap.read()
+                      if not ok:raise RuntimeError("AUTHENTIC_SOURCE_TRUNCATED")
+                      seq.append(crop(f,c))
+                  anchor=seq[before];photo=photos[n-1]
+                  corr=structure(anchor,photo)
+                  assert corr>=.97,("WRONG_PHOTO_FOR_REAL_FILM_FRAME",n,corr)
+                  a_gray=cv2.cvtColor(anchor,cv2.COLOR_BGR2GRAY)
+                  prep={"anchor_phase":cv2.resize(a_gray,(180,320)).astype(np.float32),
+                     "anchor_gray":a_gray,"photo_lab":cv2.cvtColor(photo,cv2.COLOR_BGR2LAB)}
+                  start=count/24;sample=[]
+                  for k in range(before):
+                      out=natural_bw(seq[k])
+                      if n==1 and k<43:
+                          cv2.rectangle(out,(0,40),(720,157),(9,13,19),-1)
+                          cv2.putText(out,"VENEZIA · 1896",(36,112),cv2.FONT_HERSHEY_DUPLEX,
+                             1.2,(245,244,237),2,cv2.LINE_AA)
+                      emit(out)
+                  for _ in range(4):emit(natural_bw(anchor))
+                  for k in range(10):
+                      alpha=(k+1)/10;alpha=alpha*alpha*(3-2*alpha)
+                      emit(cv2.addWeighted(natural_bw(anchor),1-alpha,photo,alpha,0))
+                  for _ in range(8):emit(photo)
+                  for k in range(1,after+1):
+                      color=move_color(seq[before+k],anchor,photo,prep)
+                      emit(color)
+                      if k in [2,24,63]:
+                          cv2.imwrite(str(D/f"V310_S{n}_MOTION_{k}.jpg"),color)
+                          sample.append(round(float(cv2.cvtColor(color,cv2.COLOR_BGR2HSV)[:,:,1].mean()),2))
+                  cv2.imwrite(str(D/f"V310_S{n}_ORIGINAL.png"),anchor)
+                  cv2.imwrite(str(D/f"V310_S{n}_PHOTO.png"),photo)
+                  scenes.append({"scene":n,"source_time":t,"start_sec":start,"anchor_corr":corr,
+                   "source_photo_sha256":ref[n-1]["photo_sha256"],"after_photo_moving_frames":after,
+                   "post_reveal_saturations":sample})
+                  print("REAL_AUTHENTIC_MOTION_AFTER_AI_PHOTO",n,"corr",round(corr,4),flush=True)
+          finally:
+              cap.release();encoder.stdin.close()
+              error=encoder.stderr.read().decode(errors="ignore")
+              if encoder.wait():raise RuntimeError("ENCODE_BROKEN "+error[-500:])
+          duration=count/24
+          assert 22.0<=duration<=23.0
+          # Self-created music texture. Not a copyrighted soundtrack.
+          sr=32000;tt=np.arange(int(sr*duration),dtype=np.float32)/sr
+          a=np.zeros_like(tt)
+          for hz in (174.61,220.0,261.63):a+=.011*np.sin(2*np.pi*hz*tt+0.2)*(.6+.4*np.sin(.3*tt))
+          a+=.004*np.sin(2*np.pi*53*tt)*(.55+.45*np.sin(2*np.pi*.09*tt))
+          a*=np.clip(tt/.9,0,1)*np.clip((duration-tt)/.9,0,1)
+          wav=D/"V310_FREE_ORIGINAL_MUSIC.wav"
+          with wave.open(str(wav),"wb") as wf:
+              wf.setnchannels(2);wf.setsampwidth(2);wf.setframerate(sr)
+              wf.writeframes((np.column_stack([a,a*.97])*28000).astype("<i2").tobytes())
+          movie=D/"VENICE_1896_V310_REAL_ARCHIVAL_COLOR_MOVEMENT_REVIEW.mp4"
+          proc(["ffmpeg","-nostdin","-y","-v","error","-i",str(quiet),"-i",str(wav),
+           "-map","0:v","-map","1:a","-c:v","copy","-c:a","aac","-b:a","96k",
+           "-movflags","+faststart","-shortest",str(movie)])
+          proc(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(movie),"-f","null","-"])
+          # Native archival raster was 1364x1022, 720x1280 cropped real image;
+          # 1080 display export is upscale, NOT native 4K.
+          display=D/"VENICE_1896_V310_1080_DISPLAY_REVIEW.mp4"
+          proc(["ffmpeg","-nostdin","-y","-v","error","-i",str(movie),
+           "-vf","scale=1080:1920:flags=bicubic","-c:v","libx264","-threads","2",
+           "-preset","ultrafast","-crf","23","-pix_fmt","yuv420p","-c:a","copy",
+           "-movflags","+faststart",str(display)],timeout=600)
+          proc(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(display),"-f","null","-"])
+          probe=json.loads(proc(["ffprobe","-v","error","-show_entries",
+              "format=duration,size:stream=codec_name,width,height","-of","json",str(display)]))
+          assert {"h264","aac"} <= {x["codec_name"] for x in probe["streams"]}
+          board=Image.new("RGB",(5*230,4*440),(14,17,20));dr=ImageDraw.Draw(board)
+          for n in range(1,5):
+              paths=[D/f"V310_S{n}_ORIGINAL.png",D/f"V310_S{n}_PHOTO.png"]+[
+                D/f"V310_S{n}_MOTION_{t}.jpg" for t in (2,24,63)]
+              for k,p in enumerate(paths):
+                  image=Image.open(p).convert("RGB").resize((224,408))
+                  x=k*230;y=(n-1)*440;board.paste(image,(x+3,y+24))
+                  dr.text((x+4,y+5),f"SCENE {n} "+["SOURCE","TRUE AI I2I","MOTION 0.08","MOTION 1.0","MOTION 2.6"][k],fill="white")
+          board.save(D/"V310_ACTUAL_FOUR_SCENE_QA.jpg",quality=92)
+          cover=Image.fromarray(cv2.cvtColor(photos[0],cv2.COLOR_BGR2RGB))
+          dr=ImageDraw.Draw(cover)
+          try:font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",44)
+          except:font=ImageFont.load_default()
+          dr.rectangle([20,104,688,222],fill=(12,17,24))
+          dr.text((45,141),"VENICE · 1896",fill=(255,252,244),font=font)
+          cover.save(D/"V310_COVER.jpg",quality=94)
+          posts={
+           "FACEBOOK":"Venezia 1896: la vera pellicola di Alexandre Promio riprende a muoversi a colori dopo quattro fotografie IA source-locked. Ricostruzione interpretativa, non registrazione cromatica d'epoca. #LaStoriaRivive",
+           "INSTAGRAM":"VENICE · 1896. Fotografia I2I da autentici fotogrammi storici e ritorno al vero movimento della pellicola. Colorazione interpretativa. #HistoryReels",
+           "TIKTOK":"Nel 1896 una cinepresa navigava sul Canal Grande. Un istante diventa una fotografia e poi la stessa scena torna in movimento! #Storia",
+           "YOUTUBE":"Venice 1896: film originale di Alexandre Promio, quattro restauri I2I e autentico movimento successivo guidato nel colore dalle fotografie. Preview tecnica, non 4K nativo."}
+          for k,v in posts.items():(D/f"POST_{k}.txt").write_text(v+"\n")
+          report={"project":"LA_STORIA_RIVIVE_ONLY",
+           "status":"REAL_NEW_V310_MP4_ZIP_TECH_PASS_ARTISTIC_NOT_APPROVED",
+           "source_sha256":"002b6bb6120cdd53f8a943e9ccb9af0195de883658b22de9a4628cec5cee70f2",
+           "photo_original_SHA256_verified":True,"four_genuine_previous_I2I_sha256_verified":True,
+           "paid_calls":0,"vidu_calls":0,"new_I2I_calls":0,
+           "real_motion_after_each_freeze":True,"true_I2V_photoreal_video":False,
+           "display_resolution":[1080,1920],"native_4K":False,
+           "full_decode_PASS":True,"mp4_sha256":sha(display),
+           "duration_s":duration,"scene_records":scenes,
+           "rights_italy_final_check":"PENDING","human_artistic_approval":False,
+           "V91_V94_V96_V99_final_approval":"NOT_PASSED",
+           "site_social_publishing":False}
+          (D/"V310_VISUAL_REPORT.json").write_text(json.dumps(report,indent=2)+"\n")
+          kit=D/"VENICE_1896_V310_1080_VIDEO_COVER_4_SOCIAL_QA.zip"
+          with zipfile.ZipFile(kit,"w",zipfile.ZIP_DEFLATED) as z:
+              for p in [display,D/"V310_COVER.jpg",D/"V310_ACTUAL_FOUR_SCENE_QA.jpg",
+                  D/"V310_VISUAL_REPORT.json",*[D/f"POST_{k}.txt" for k in posts]]:
+                  z.write(p,p.name)
+          with zipfile.ZipFile(kit) as z:assert z.testzip() is None
+          (D/"V310_DELIVERY_SHA.txt").write_text(
+            f"MP4_SHA256 {sha(display)}\nZIP_SHA256 {sha(kit)}\nZIP_CRC PASS\n")
+          print("V310_NEW_REAL_MOTION_MP4",str(display),display.stat().st_size,
+            "SHA",sha(display),"ZIP",kit.stat().st_size,"TECH_PASS_ARTISTIC_PENDING",flush=True)
+          PY
+      - name: Preserve genuine V310 files (no site or social publication)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_VENICE_1896_V310_REAL_MOVING_PHOTO_GUIDED_VIDEO_REVIEW
+          path: |
+            output/storia_venice_1896_v310/VENICE_1896_V310_1080_DISPLAY_REVIEW.mp4
+            output/storia_venice_1896_v310/VENICE_1896_V310_1080_VIDEO_COVER_4_SOCIAL_QA.zip
+            output/storia_venice_1896_v310/V310_COVER.jpg
+            output/storia_venice_1896_v310/V310_ACTUAL_FOUR_SCENE_QA.jpg
+            output/storia_venice_1896_v310/V310_VISUAL_REPORT.json
+            output/storia_venice_1896_v310/V310_DELIVERY_SHA.txt
+            output/storia_venice_1896_v310/POST_*.txt
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Create GitHub public prerelease for Android OWNER REVIEW only
+        if: success()
+        run: |
+          set -euo pipefail
+          D=output/storia_venice_1896_v310
+          test -s "$D/VENICE_1896_V310_1080_DISPLAY_REVIEW.mp4"
+          test -s "$D/VENICE_1896_V310_1080_VIDEO_COVER_4_SOCIAL_QA.zip"
+          tag=storia-venice-1896-v310-moving-photo-review-android
+          gh release create "$tag" \
+            "$D/VENICE_1896_V310_1080_DISPLAY_REVIEW.mp4" \
+            "$D/VENICE_1896_V310_1080_VIDEO_COVER_4_SOCIAL_QA.zip" \
+            "$D/V310_ACTUAL_FOUR_SCENE_QA.jpg" \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "VENEZIA 1896 V310 - VIDEO IN MOVIMENTO (SOLO REVISIONE)" \
+            --notes "V310 ha vera ripresa BN seguita da foto I2I già autentiche e stessa ripresa storica in movimento colorato, quattro scene. NO nuova Vidu/I2V. QA tecnico H264/AAC+ZIP PASS; artistico fotografico e diritti ITALIA PENDING. GitHub prerelease PUBBLICA solo per consegna owner review, NON pubblicare sul sito o social."
+          for file in VENICE_1896_V310_1080_DISPLAY_REVIEW.mp4 VENICE_1896_V310_1080_VIDEO_COVER_4_SOCIAL_QA.zip; do
+            link="https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$file"
+            if curl --retry 2 --retry-delay 3 --fail --location --silent --show-error --max-time 85 "$link" -o "/tmp/$file"; then
+              test "$(sha256sum "$D/$file" | cut -d' ' -f1)" = "$(sha256sum "/tmp/$file" | cut -d' ' -f1)"
+              echo "EXTERNAL_ANDROID_HASH_PASS $file"
+            else
+              echo "EXTERNAL_CDN_504_OR_OTHER_DOWNLOAD_FAILURE $file"
+              touch /tmp/V310_CDN_BLOCK
+            fi
+          done
+          if test ! -e /tmp/V310_CDN_BLOCK; then
+            python -c 'import zipfile; assert zipfile.ZipFile("/tmp/VENICE_1896_V310_1080_VIDEO_COVER_4_SOCIAL_QA.zip").testzip() is None'
+            echo "EXTERNAL_ANDROID_MP4_ZIP_DOWNLOAD_HASH_CRC_PASS"
+          else
+            echo "EXTERNAL_ANDROID_DOWNLOAD_NOT_VERIFIED_RELEASE_ASSETS_EXIST"
+          fi
