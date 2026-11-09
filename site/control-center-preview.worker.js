@@ -24,11 +24,43 @@ async function gather(){
     name:clip(r.name,180),status:clip(r.status,32),conclusion:clip(r.conclusion,32),
     html_url:clip(r.html_url,280),updated_at:clip(r.updated_at,40),event:clip(r.event,40)
   }));
+  const rows=Array.isArray(cat.items)?cat.items.filter(x=>x&&typeof x==="object"&&x.hidden!==true):[];
+  const catalogNames=new Set(rows.map(x=>String(x.key||x.name||"")));
+  const catalogAvailability=new Map(rows.map(x=>[String(x.key||x.name||""),x.available===false?false:true]));
+  const slotDefs=[
+    {id:"critico_standard",label:"Critico · Classico",patterns:[/^critico_standard_v\d+$/]},
+    {id:"critico_museum",label:"Critico · Museum",patterns:[/^critico_museum_v\d+$/]},
+    {id:"cinema_standard",label:"Cinema · Classico",patterns:[/^(?:new_)?cinema_standard_v\d+$/,/^v\d+_cinema_candidate$/]},
+    {id:"cinema_museum",label:"Cinema · Museum",patterns:[/^cinema_museum_v\d+$/]}
+  ];
+  const pickSlot=(w,definition)=>{
+    const found=Object.entries(w).filter(([key,val])=>
+      definition.patterns.some(re=>re.test(key))&&val&&typeof val==="object"&&
+      (val.filename||val.mp4_filename||val.file||val.sha256||val.mp4_sha256));
+    // Prefer a specifically marked active slot when present; otherwise highest version.
+    found.sort((a,b)=>{
+      const active=w.active_cinema_standard;
+      if(a[0]===active)return -1;if(b[0]===active)return 1;
+      return (Number((b[0].match(/v(\d+)/)||[])[1])||0)-(Number((a[0].match(/v(\d+)/)||[])[1])||0);
+    });
+    const [source,record]=found[0]||["",{}];
+    const filename=clip(record.filename||record.mp4_filename||record.file,190);
+    const validFile=/^[\w ().-]{1,190}\.mp4$/i.test(filename)?filename:"";
+    const siteFound=!!validFile&&catalogNames.has(validFile);
+    const qa=!!(record.sha256||record.mp4_sha256)&&!!validFile;
+    const recorded=!!source;
+    const onSite=siteFound?catalogAvailability.get(validFile):null;
+    return {id:definition.id,label:definition.label,recorded,source,filename:validFile,
+      has_sha:qa,site_catalog:siteFound,site_available:onSite,
+      technical_status:clip(record.status||"",120),run_id:Number(record.run_id||record.github_run_id||record.source_run_id)||null};
+  };
   const works=(Array.isArray(queue.works)?queue.works:[])
     .filter(w=>!/dal[ií]|temptation of st\.?\s*anthony/i.test(String(w.artist||"")+" "+String(w.title_en||"")))
     .map(w=>({id:clip(w.id),title:clip(w.title_en),artist:clip(w.artist),
-      delivered:Number(w.slots_delivered_this_selection)||0,museum_approved:w.museum_approved===true,note:clip(w.preflight_status,340)}));
-  const rows=Array.isArray(cat.items)?cat.items.filter(x=>x&&typeof x==="object"&&x.hidden!==true):[];
+      delivered:Number(w.slots_delivered_this_selection)||0,museum_approved:w.museum_approved===true,
+      note:clip(w.preflight_status,340),site_archive_verified_slots:
+        Number.isFinite(Number(w.site_archive_verified_slots))?Number(w.site_archive_verified_slots):null,
+      variants:slotDefs.map(s=>pickSlot(w,s))}));
   const media=rows.slice().sort((a,b)=>Date.parse(b.uploaded||b.gptCreatedAt||0)-Date.parse(a.uploaded||a.gptCreatedAt||0)).slice(0,24).map(x=>({
     key:clip(x.key||x.name,190),title:clip(x.title||x.name||x.key,180),available:x.available===false?false:true
   }));
@@ -48,6 +80,23 @@ async function getPage(){
 export default {async fetch(request){
   const path=new URL(request.url).pathname;
   if(request.method!=="GET")return new Response("Method not allowed",{status:405,headers:{"Allow":"GET"}});
+  if(path==="/api/check"){
+    const key=new URL(request.url).searchParams.get("key")||"";
+    if(!/^[\w ().-]{1,190}\.mp4$/i.test(key))return Response.json({ok:false,reason:"Nome file non valido"},{status:400,headers:{"cache-control":"no-store"}});
+    try{
+      const res=await fetch(LIB+"/download/"+encodeURIComponent(key),{headers:{"Range":"bytes=0-1023","Accept":"video/mp4"}});
+      const contentType=res.headers.get("content-type")||"";
+      const contentRange=res.headers.get("content-range")||"";
+      const attachment=res.headers.get("content-disposition")||"";
+      const rangeValid=/^bytes 0-1023\/\d+$/.test(contentRange);
+      const ok=res.status===206&&rangeValid&&contentType.toLowerCase().startsWith("video/mp4")&&/attachment/i.test(attachment);
+      if(res.body)await res.body.cancel();
+      return Response.json({ok,http_status:res.status,range_ok:rangeValid,mime_ok:contentType.toLowerCase().startsWith("video/mp4"),
+        tested_at:new Date().toISOString(),scope:"PRIMI 1024 BYTE; HASH E DOWNLOAD INTEGRALE NON VERIFICATI",
+        download_url:ok?LIB+"/download/"+encodeURIComponent(key):null},
+        {headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
+    }catch(e){return Response.json({ok:false,error:"Verifica temporaneamente non disponibile"},{status:503,headers:{"cache-control":"no-store"}})}
+  }
   if(path==="/api/status"){
     try{return Response.json(await getStatus(),{headers:{"Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}})}
     catch(e){return Response.json({error:"Fonti temporaneamente non disponibili"},{status:503,headers:{"Cache-Control":"no-store"}})}
