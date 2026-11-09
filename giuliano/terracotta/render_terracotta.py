@@ -41,7 +41,7 @@ def sha(path):
   for chunk in iter(lambda:f.read(1024*1024),b""):h.update(chunk)
  return h.hexdigest()
 def strip_html(t):
- return re.sub(r"\\s+"," ",html.unescape(re.sub("<[^>]+>"," ",t or ""))).strip()
+ return re.sub(r"\s+"," ",html.unescape(re.sub("<[^>]+>"," ",t or ""))).strip()
 def download_commons(filename, dest):
  s=requests.Session();s.headers["User-Agent"]=UA
  url="https://commons.wikimedia.org/w/api.php"
@@ -149,10 +149,10 @@ def main():
   canvas=MEDIA/("canvas_%02d.jpg"%i)
   make_canvas(target,canvas)
   imagefiles.append(canvas)
- (OUT/"ATTRIBUZIONI_FOTO.json").write_text(json.dumps(credits,ensure_ascii=False,indent=2)+"\\n",encoding="utf8")
+ (OUT/"ATTRIBUZIONI_FOTO.json").write_text(json.dumps(credits,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
  (OUT/"ATTRIBUZIONI_FOTO.txt").write_text(
-    "Fotografie autentiche / Wikimedia Commons. Adattamenti: ritaglio, fondale sfocato e lento movimento digitale.\\n"+
-    "\\n".join(f'{c["stage_index"]+1:02d}. {c["file"]} / {c["photographer"]} / {c["license"]} / {c["commons_page"]} / {c["license_url"]}' for c in credits)+"\\n",encoding="utf8")
+    "Fotografie autentiche / Wikimedia Commons. Adattamenti: ritaglio, fondale sfocato e lento movimento digitale.\n"+
+    "\n".join(f'{c["stage_index"]+1:02d}. {c["file"]} / {c["photographer"]} / {c["license"]} / {c["commons_page"]} / {c["license_url"]}' for c in credits)+"\n",encoding="utf8")
  cover_from(imagefiles[0],OUT/"COVER.jpg")
  segs=[]; scenes=[]
  # The narrator's aligned sentence timecodes determine scene duration; no arbitrary sequence changes.
@@ -174,7 +174,7 @@ def main():
    "audio_end_seconds":round(b,3),"visual_start_seconds":round(start,3),
    "visual_end_seconds":round(end,3),"media_filename":FILES[i]})
  concat=OUT/"concat.txt"
- concat.write_text("".join("file '"+str(f.absolute()).replace("'","'\\''")+"'\\n" for f in segs))
+  concat.write_text("".join("file '"+str(f.absolute())+"'\n" for f in segs))
  base=OUT/"silent.mp4"
  shell(["ffmpeg","-hide_banner","-loglevel","error","-y","-f","concat","-safe","0",
         "-i",concat,"-c","copy",base])
@@ -194,13 +194,13 @@ def main():
   "video_sha256":sha(movie),"probe":json.loads(probe),"source_count":len(set(FILES)),
   "scenes":scenes,"publication_authorized":False,"paid_video_calls":0,
   "source_constraints":"CC BY/CC BY-SA/CC0, attribution in ZIP. Verify all links before sharing."}
- (OUT/"QA.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\\n")
+ (OUT/"QA.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n")
  (OUT/"README.txt").write_text(
-  "GIULIANO - TERRACOTTA ARMY / PROVA DI REGIA NON PUBBLICATA\\n"
-  "MP4: vera voce Gacrux e foto autentiche Commons; movimento di camera su foto.\\n"
-  "QA automatico di decodifica completa: PASS. Review artistica umana: DA FARE.\\n"
-  "Nessuna ricostruzione video AI e nessuna clip con persone realmente animate.\\n"
-  "Diritti e crediti: vedi ATTRIBUZIONI_FOTO.txt.\\n")
+  "GIULIANO - TERRACOTTA ARMY / PROVA DI REGIA NON PUBBLICATA\n"
+  "MP4: vera voce Gacrux e foto autentiche Commons; movimento di camera su foto.\n"
+  "QA automatico di decodifica completa: PASS. Review artistica umana: DA FARE.\n"
+  "Nessuna ricostruzione video AI e nessuna clip con persone realmente animate.\n"
+  "Diritti e crediti: vedi ATTRIBUZIONI_FOTO.txt.\n")
  zipout=OUT/"GIULIANO_TERRACOTTA_VIDEO_COVER_TESTI.zip"
  with zipfile.ZipFile(zipout,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=5) as z:
   for p in [movie,OUT/"COVER.jpg",OUT/"README.txt",
