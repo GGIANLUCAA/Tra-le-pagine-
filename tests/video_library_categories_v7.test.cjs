@@ -63,6 +63,8 @@ test('Inference recognizes narrated books, fairy tales, historical films and tes
 });
 test('Category link selects the same category from Center and does not change other operations',()=>{
   assert.match(app,/new URLSearchParams\(location\.search\)\.get\('category'\)/);
+  assert.match(app,/initialCategoryNavigate=true/);
+  assert.match(app,/requestAnimationFrame\(\(\)=>gotoSection\('library'\)\)/);
   assert.match(app,/if\(CATEGORY_WORLDS\.includes\(label\)\|\|g\.items\.some/);
   assert.match(app,/const cats=\['Tutti',\.\.\.CATEGORY_WORLDS/);
   assert.match(app,/g\.category===c/);
