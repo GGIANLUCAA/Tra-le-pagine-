@@ -5,11 +5,21 @@ on:
       - "src/quality_director_v17.py"
       - "config/quality_director_v17.json"
       - "tests/test_quality_director_v17.py"
+      - "src/studio_regia_supervisor_v1.py"
+      - "tests/test_studio_regia_supervisor_v1.py"
       - ".github/workflows/quality-director-v17.yml"
   workflow_dispatch:
     inputs:
       project_path:
         description: "PROJECT_V13.json già nel repository (facoltativo)"
+        required: false
+        type: string
+      regia_plan_path:
+        description: "Shotlist regia (JSON, facoltativo), nessuna approvazione automatica"
+        required: false
+        type: string
+      video_path:
+        description: "MP4 locale al checkout (facoltativo); non scarica artifact/remoti"
         required: false
         type: string
       format:
@@ -24,6 +34,10 @@ on:
           - controluce
           - visual_music
           - hyperlumen
+          - storia_rivive
+          - documentario
+          - giuliano
+          - wow_lab
 permissions:
   contents: read
 jobs:
@@ -41,18 +55,30 @@ jobs:
           sudo apt-get install -y -qq ffmpeg
           python -m pip install 'Pillow>=10,<13'
       - name: Test su storyboard e MP4 sintetico
-        run: python -m unittest discover -s tests -p "test_quality_director_v17.py" -v
+        run: |
+          python -m unittest discover -s tests -p "test_quality_director_v17.py" -v
+          python -m unittest discover -s tests -p "test_studio_regia_supervisor_v1.py" -v
       - name: Report della regia da Android
         if: github.event_name == 'workflow_dispatch'
         env:
           QUALITY_PROJECT: ${{ inputs.project_path }}
           QUALITY_FORMAT: ${{ inputs.format }}
+          REGIA_PLAN: ${{ inputs.regia_plan_path }}
+          QUALITY_VIDEO: ${{ inputs.video_path }}
         run: |
+          args=(--out output/quality-v17)
           if [ -n "$QUALITY_PROJECT" ]; then
-            python src/quality_director_v17.py --project "$QUALITY_PROJECT" --out output/quality-v17 || true
+            args+=(--project "$QUALITY_PROJECT")
           else
-            python src/quality_director_v17.py --format "$QUALITY_FORMAT" --out output/quality-v17
+            args+=(--format "$QUALITY_FORMAT")
           fi
+          if [ -n "$REGIA_PLAN" ]; then
+            args+=(--regia-plan "$REGIA_PLAN")
+          fi
+          if [ -n "$QUALITY_VIDEO" ]; then
+            args+=(--video "$QUALITY_VIDEO")
+          fi
+          python src/quality_director_v17.py "${args[@]}"
       - name: Crea stato leggibile da Studio e diagnosi Ripara GPT (sola lettura)
         if: always() && github.event_name == 'workflow_dispatch'
         env:
