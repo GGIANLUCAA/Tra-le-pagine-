@@ -71,3 +71,35 @@ Dopo test Android della V2 e controllo dei dati, integrare soltanto il link nell
 - tests/control-center-preview.test.mjs: verifica che un fallimento poi recuperato non appaia nelle attenzioni correnti, che una produzione non osservata sia unobserved, che il diario mostri eventi con date e che il monitoraggio non diventi un endpoint di scrittura.
 - La UI e il backend vengono incorporati nel Worker separato artvision-control-preview, già richiamato dall'area amministrativa di Video Library Studio.
 - Il collaudo visivo su Android deve ancora confermare usabilità e rendering reali dopo la distribuzione; la verifica del Worker distribuito non equivale al test su telefono.
+
+## V4 — quattro anteprime per quadro e scheda qualità (9 novembre 2026)
+
+### Galleria Museum
+- Vista ArtVision 4×1 con un fascicolo espandibile per ciascuna opera: quattro riquadri allineati su desktop e due colonne su Android.
+- Ogni riquadro è assegnato a una variante distinta: Critico Classico, Critico Museum, Cinema Classico, Cinema Museum.
+- L'etichetta di disponibilità dipende da un **nome MP4 esplicito nel registro** e da una **corrispondenza esatta del nome nel catalogo pubblico** con valore available diverso da false. Se manca il file, la variante, la fonte o una corrispondenza certa, il tasto di riproduzione rimane disabilitato.
+- Le anteprime sono ricavate soltanto dagli endpoint pubblici /cover e /media del Video Library Studio originale. Il video HTML5 carica il file solo su pressione del pulsante Guarda; chiudendo il lettore viene interrotta la riproduzione e liberato il collegamento.
+- Per alcune varianti il registro attesta una produzione ma non fornisce un nome MP4 esplicito. Queste vengono mostrate come schede tecniche e **non vengono abbinate arbitrariamente** a un nome simile del catalogo.
+- Dalí resta escluso dalla coda operativa come da indicazioni del proprietario.
+
+### Controlli documentati per singola variante
+- Presenza nel catalogo e indicazione disponibile/offline.
+- SHA-256 presente nella scheda, senza equipararlo alla verifica attuale del file.
+- Test di decodifica FFmpeg PASS registrato, se presente in un campo esplicito.
+- Test ZIP/CRC PASS registrato, se presente in un campo esplicito.
+- Verifica storica di download integrale con SHA PASS, solo se attestata testualmente.
+- Verifica storica di streaming a blocchi, solo se attestata testualmente.
+- Gold artistico V25 solo se esplicitamente true; tutti gli altri stati rimangono non attestati.
+- Dimensione e durata sono etichettate come dati dichiarati nel registro, non rimisurate nel browser.
+- Note di revisione artistica e diritti vengono mostrate come tali, senza dedurne approvazioni.
+- Pulsante di controllo live limitato a 1.024 byte con verifica HTTP 206 e intestazioni; il controllo **non** certifica checksum integrale o intero MP4.
+
+### Sicurezza e compatibilità
+- Per la riproduzione il Worker ha il CSP media-src ristretto a https://video-library-studio.600led.workers.dev, con frame-ancestors limitato al medesimo sito.
+- L'iframe dello Studio privato continua a caricare il pannello V4 senza una modifica ulteriore del sito principale.
+- Nessun upload R2, modifica master, approvazione, pubblicazione, rigenerazione, azione GitHub o chiamata video a pagamento.
+- Il sistema continua a leggere soltanto GitHub Actions, coda ArtVision main e catalogo esistente.
+
+### Verifiche
+- Test in tests/control-center-preview.test.mjs per varianti disponibili, offline, non catalogate, senza nome, SHA, PASS/PENDING/FAIL, Gold e scelta di sostituzione cinema corrente.
+- QA di codice ed endpoint effettuato in sessione con dati di prova; la riproduzione completa di MP4 reali su Android rimane una prova distinta da eseguire nel browser del proprietario.
