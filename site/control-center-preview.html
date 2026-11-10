@@ -832,7 +832,7 @@ function home(){
     '<span><strong>'+(review?escapeText(review.count):"0")+'</strong> opere senza Gold attestato</span></div>'+
     '<p class="sub">'+(source("github")?'I workflow già recuperati non sono segnalati come nuovi problemi.':'GitHub non è disponibile: i dati potrebbero essere incompleti.')+'</p></section>';
   h+=productionProgressPanel();
-  h+='<div class="title"><h2>Salute delle produzioni</h2>'<p>Ultime attività osservate, senza dichiarare fermo un progetto soltanto perché non compare nel campione.</p></div>';
+  h+='<div class="title"><h2>Salute delle produzioni</h2><p>Ultime attività osservate, senza dichiarare fermo un progetto soltanto perché non compare nel campione.</p></div>';
   h+='<div class="healthGrid">'+hs.map(healthCard).join("")+'</div>';
   h+='<div class="title"><h2>Le categorie dello Studio</h2><p>Libri narrati e tutti gli altri generi dell’archivio, anche quelli in preparazione.</p></div>'+genreSection()+
     '<button type="button" class="miniBtn secondary" data-switch="genres">Esplora tutte le categorie →</button>';
