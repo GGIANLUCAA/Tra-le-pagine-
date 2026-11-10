@@ -19,6 +19,18 @@ function progressV13NextAction(run,p){
   if(run.status==="completed")return "Controlla MP4, audio, download, QA e ZIP: il workflow terminato non prova la consegna.";
   return "Segui l'ultimo passaggio reale. Se non cambia, consulta i log prima di intervenire.";
 }
+function progressV13Window(eta,asof){
+  if(!eta?.available||!Number.isFinite(eta.min_seconds)||!Number.isFinite(eta.max_seconds))return "";
+  const timestamp=Date.parse(asof||"");
+  if(!Number.isFinite(timestamp)||timestamp>Date.now()+60000)return "";
+  const from=new Date(timestamp+Math.max(0,eta.min_seconds)*1000);
+  const until=new Date(timestamp+Math.max(0,eta.max_seconds)*1000);
+  const clock=new Intl.DateTimeFormat("it-IT",{hour:"2-digit",minute:"2-digit"});
+  const day=new Intl.DateTimeFormat("it-IT",{day:"2-digit",month:"2-digit"});
+  return (day.format(from)===day.format(until)?"Orario indicativo: "+clock.format(from)+"–"+clock.format(until):
+    "Orario indicativo: "+day.format(from)+" "+clock.format(from)+" – "+day.format(until)+" "+clock.format(until));
+}
+
 function progressV13Timeline(p){
   const list=Array.isArray(p?.timeline)?p.timeline.slice(0,4):[];
   if(!list.length)return '<p class="productionMeta">Nessun passaggio precedente disponibile in questo campione.</p>';
@@ -74,6 +86,11 @@ function progressCard(run){
     '<div class="progressEstimate"><span>FINE STIMATA DEL WORKFLOW</span><strong>'+
     escapeText(etaText)+'</strong><small>'+escapeText(confidence)+
     (etaValid&&Number.isFinite(sample)?' · '+sample+' casi comparabili':'')+'</small></div></div>';
+  if(etaValid){
+    const windowText=progressV13Window(eta,p.latest_observation_at);
+    if(windowText)html+='<p class="progressWindow">'+escapeText(windowText)+
+      ' · fascia storica, non appuntamento di consegna.</p>';
+  }
   html+='<div class="progressMetaRow"><span><b>Da avvio:</b> '+escapeText(elapsed)+'</span>'+
     '<span><b>Ultima transizione:</b> '+(last===null?'non disponibile':escapeText(last+' min fa'))+
     '</span><span><b>Controllo:</b> '+escapeText(p?.latest_observation_at?date(p.latest_observation_at):"in attesa")+'</span></div>';
