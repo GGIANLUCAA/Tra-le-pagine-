@@ -14,6 +14,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: giuliano-terracotta-v4-${{ github.ref }}
   cancel-in-progress: true
@@ -54,6 +55,24 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
           python -m pip install -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Restore prior verified V4 natural Google voice, no second TTS charge
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_V4_RECOVERY_NO_FINISHED_FILM
+          run-id: 42783208217
+          github-token: ${{ github.token }}
+          path: output/giuliano_terracotta_v4
+      - name: Rebuild exact validated voice cache manifest from preserved WAV
+        run: |
+          test -s output/giuliano_terracotta_v4/audio/VOCE.wav
+          python - <<'PY'
+          from pathlib import Path
+          import giuliano.terracotta_v4.render_documentary_v4 as render
+          speech=(Path("giuliano/terracotta_v4/VOCE_DOCUMENTARIO_V4.txt").read_text(encoding="utf8").strip())
+          render.gemini_voice._save_voice_cache(speech,render.OUT/"audio")
+          assert (render.OUT/"audio"/"VOICE_CACHE_V13.json").exists()
+          print("V4_VERIFIED_SAME_GOOGLE_VOICE_REUSED_NO_API_COST",flush=True)
+          PY
       - name: Shoot, compose, direct original voice and music, inspect and package
         run: python giuliano/terracotta_v4/render_documentary_v4.py
       - name: Preserve real photo and voice only in event of error
