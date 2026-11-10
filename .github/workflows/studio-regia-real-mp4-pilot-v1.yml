@@ -34,6 +34,7 @@ jobs:
             --output "input/PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4"
           # Expected public GitHub release asset size from the release API at pilot creation.
           test "$(stat -c%s input/PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4)" -eq 6234118
+          echo "6bdd6262c022d019a6aec403a09e23980f72b64397f3990764de313bb12aa60b  input/PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4" | sha256sum --check --status
           sha256sum input/PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4
       - name: "Diagnosi audiovisiva reale e contact sheet senza approvazione"
         run: |
