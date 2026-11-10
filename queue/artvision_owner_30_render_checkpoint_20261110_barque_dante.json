@@ -1,0 +1,52 @@
+{
+  "schema": "artvision-owner-secondary-30-render-checkpoint-v1",
+  "updated_at_utc": "2026-11-10",
+  "queues": {
+    "original": "queue/artvision_owner_selected_ten_20261102.json",
+    "future": "research/artvision_owner_selected_30_future_20261109.json"
+  },
+  "work": {
+    "title": "The Barque of Dante",
+    "artist": "Eugène Delacroix",
+    "year": 1822,
+    "selection_order": 27,
+    "variant": "cinema_standard",
+    "status": "RENDER_STARTED_UNVERIFIED"
+  },
+  "source": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:Dante_et_Virgile,_dit_aussi_La_barque_de_Dante_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_INV_3820_%3B_L_3837.jpg",
+    "author": "Shonagon",
+    "license": "Wikimedia Commons PD-Art / Public Domain Mark 1.0",
+    "expected_sha1": "f400b554befea0d06d8344a3c58c99b0c2e0718a",
+    "expected_bytes": 20968161,
+    "expected_pixels": [
+      9733,
+      7493
+    ],
+    "louvre_object": "INV 3820 ; L 3837",
+    "file_download_verified": false
+  },
+  "github": {
+    "run_id": 42878663658,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42878663658",
+    "workflow": ".github/workflows/artvision-owner-barque-dante-cinema-v1.yml",
+    "status_last_observed": "in_progress"
+  },
+  "counts": {
+    "new_verified_mp4_this_cycle": 0,
+    "original_queue_slots_increment": 0,
+    "secondary_new_variant_verified": 0
+  },
+  "qa": {
+    "ffmpeg_video_audio": "PENDING",
+    "sha256_mp4": "PENDING",
+    "zip_crc_full_readback": "PENDING",
+    "artistic_review": "PENDING",
+    "commercial_territorial_rights": "PENDING",
+    "gold": false,
+    "published": false
+  },
+  "next_step": "Check GH Actions run #42878663658 and SHA/ZIP log + artifact; if succeeded update verified status; do not rerender or count twice; if failure use existing two-attempt blocker rule and move to other independent artwork.",
+  "no_paid_api": true,
+  "duplicate_prevention": "Do not run again for the same work+variant+input even if original status is stale."
+}
