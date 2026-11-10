@@ -525,7 +525,7 @@ function prepareRepairPrompt(ctx,details){
   var feedback=typeof qualityNotesForPrompt==="function"?qualityNotesForPrompt(ctx):[];
   if(feedback.length){
     line.push("",
-      "CORREZIONI SALVATE NEL BROWSER DEL PROPRIETARIO, NON ANCORA REGISTRATE NEL REPOSITORY:",
+      "CORREZIONI SALVATE NEL BROWSER: VERIFICARE SE GIA REGISTRATE NEL REPOSITORY:",
       JSON.stringify(feedback,null,2),
       "Queste righe sono segnalazioni 'reported', NON correzioni applicate o approvate.",
       "Usa src/studio_quality_memory_v1.py e quality/STUDIO_VIDEO_LESSONS_V1.json: "+
@@ -1142,7 +1142,7 @@ function renderQualityNotes(ctx){
         (note.owner_requested_generalization?" · candidata per i futuri video":"");
       var body=document.createElement("p");body.textContent=note.note;
       var info=document.createElement("small");
-      info.textContent="Salvata su questo Android · da registrare nel repository tramite GPT · non verificata sul MP4";
+      info.textContent="Salvata su questo Android · verifica sul repository se già acquisita da GPT · non verificata sul MP4";
       item.append(heading,body,info);holder.append(item);
     });
   }
