@@ -113,9 +113,13 @@ ah,aw=arr.shape[:2]
 # Preserve the true entire painting: letterbox based on the file aspect ratio.
 bg=cv2.GaussianBlur(cv2.resize(arr,(W,H)),(0,0),34)
 whole=cv2.convertScaleAbs(bg,alpha=.31,beta=0)
-full_h=min(H,round(W*ah/aw))
-full_w=round(full_h*aw/ah)
-whole[(H-full_h)//2:(H+full_h)//2,(W-full_w)//2:(W+full_w)//2]=cv2.resize(arr,(full_w,full_h),interpolation=cv2.INTER_AREA)
+# Pixel-exact center placement: integer floor and clamping prevent 1081px into a 1080px canvas.
+full_h=max(1,min(H,int(W*ah/aw)))
+full_w=max(1,min(W,int(full_h*aw/ah)))
+y0=(H-full_h)//2
+x0=(W-full_w)//2
+assert 0<=x0 and 0<=y0 and x0+full_w<=W and y0+full_h<=H
+whole[y0:y0+full_h,x0:x0+full_w]=cv2.resize(arr,(full_w,full_h),interpolation=cv2.INTER_AREA)
 
 cmd=["ffmpeg","-y","-hide_banner","-loglevel","error","-f","rawvideo","-pix_fmt","bgr24",
      "-s",f"{W}x{H}","-r",str(FPS),"-i","pipe:0","-i",str(OUT/"ORIGINAL_SCORE.wav"),
