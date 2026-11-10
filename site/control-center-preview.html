@@ -179,6 +179,19 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 @media(max-width:900px){.actionProjects{grid-template-columns:1fr}.actionProject small{min-height:0}}
 @media(max-width:550px){.actionSlot{display:grid}.actionSlotButtons{justify-content:stretch}.actionSlotButtons button{flex:1}.actionWork>summary{align-items:flex-start;flex-direction:column}.actionCount{text-align:left}.repairInstant{padding:12px}.repairDoNow{font-size:13px}}
 
+
+/* V11 per-video lessons and unblocking Android UI. */
+.qualityNoteRow{padding:10px 0;border-top:1px solid #ffffff25;display:grid;gap:3px}
+.qualityNoteRow strong{color:#f2d4a7;font-size:11px}.qualityNoteRow p{color:#e7d8c2;font-size:12px;margin:3px 0}.qualityNoteRow small{color:#aab5c1;font-size:10px}
+.qualityLabel{font-size:11px;color:#edcda1;display:grid;gap:4px;margin:8px 0}
+.qualitySelect{min-height:43px;padding:7px 10px;border:1px solid #806e53;border-radius:9px;background:#19222c;color:#f7e8ce}
+.qualityGeneralize{display:flex!important;align-items:flex-start;gap:9px;font-weight:500!important;color:#e1cfad}
+.qualityGeneralize input{margin-top:4px;min-width:18px;min-height:18px}
+.qualitySave{background:#28382f;color:#b5ecd0;border:1px solid #598c74;border-radius:9px;padding:10px 12px;min-height:44px;font-weight:750}
+.qualityPrivacy{font-size:11px;color:#cab89d;margin:8px 0}
+.actionUnblock{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#24342d;border:1px solid #70957f;border-radius:14px;padding:14px;margin-bottom:14px}
+.actionUnblock strong{color:#bbead1;font-size:15px}.actionUnblock p{color:#ccd8cf;font-size:11px;margin:4px 0}.actionUnblock button:disabled{opacity:.48;cursor:not-allowed}
+@media(max-width:600px){.actionUnblock button{width:100%}}
 </style>
 </head>
 <body>
@@ -207,6 +220,19 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
  <p id="repairNextStep">Il prossimo passo apparirà qui.</p>
  <label>Vuoi aggiungere una precisazione? (facoltativo)
  <textarea id="repairOwnerNote" rows="2" maxlength="1800" placeholder="Es.: la ripresa al minuto 0:15 taglia il personaggio; voglio sistemarla senza rifare il resto."></textarea></label>
+ <div id="qualityJournal" class="repairAdvanced" hidden>
+ <label class="qualityLabel">Che tipo di correzione hai fatto o desideri salvare?
+ <select id="qualityCategory" class="qualitySelect">
+ <option value="direction">Regia e tagli</option><option value="pacing">Ritmo e tempi</option>
+ <option value="audio">Voce e audio</option><option value="visual">Immagini e fotografie</option>
+ <option value="authenticity">Fedeltà storica e museale</option><option value="editorial">Racconto e testo</option>
+ <option value="download">File e download</option><option value="other">Altro</option></select></label>
+ <label class="qualityGeneralize"><input id="qualitySuggestFuture" type="checkbox">Valuta questa correzione come regola da usare anche nei futuri video, ma solo dopo verifiche e mia approvazione.</label>
+ <button id="qualitySaveFeedback" class="qualitySave" type="button">＋ Salva questa correzione</button>
+ <p class="qualityPrivacy">Salvataggio immediato su questo Android. Per renderla permanente e disponibile a tutti i processi, premi poi «Copia e apri la chat»: GPT potrà registrarla nel repository con una PR dopo le verifiche.</p>
+ <p class="repairStatus" id="qualitySaveStatus" role="status" aria-live="polite"></p>
+ <details class="repairAdvanced" id="qualityHistory"><summary>Cronologia di questo video</summary><div id="qualityJournalRows" class="repairSection"></div></details>
+ </div>
  <a class="repairDoNow" id="repairCopyOpen" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="https://chatgpt.com/">1 · Copia e apri la chat corretta</a>
  <p class="repairExplain">2 · Incolla in ChatGPT. La chat verifica i dati e, se possibile e autorizzata, interviene. Questo pannello non avvia la produzione da solo.</p>
  <p id="repairInstantStatus" class="repairStatus" role="status" aria-live="polite"></p></div>
@@ -525,6 +551,7 @@ function renderRepairDialog(){
   fast.href=android?androidChatGPTIntent(preferred||"https://chatgpt.com/",true):(preferred||"https://chatgpt.com/");
   fast.textContent=preferred?"1 · Copia e apri la chat collegata":"1 · Copia e apri ChatGPT";
 
+  renderQualityNotes(ctx);
   document.getElementById("repairChatStatus").textContent=preferred?
     "Chat privata collegata nel browser. La diagnosi va comunque incollata manualmente.":"Nessun collegamento: puoi salvare la chat principale o aprire ChatGPT.";
 }
@@ -534,6 +561,8 @@ async function openRepairDialog(ctx){
   document.getElementById("repairJobs").textContent=ctx.type==="run"&&ctx.runId?
     "Cerco i job e gli step falliti su GitHub…":"Sono disponibili i dati riportati nel registro. Nessuna diagnosi automatica è stata eseguita.";
   document.getElementById("repairCopyStatus").textContent="";
+  document.getElementById("qualitySaveStatus").textContent="";
+  document.getElementById("qualityHistory").open=false;
   document.getElementById("repairAdvancedPrompt").open=false;
   document.getElementById("repairAdvancedChat").open=false;
   document.getElementById("repairInstantStatus").textContent="";
@@ -1025,6 +1054,130 @@ function actionInstruction(ctx){
   return "Apri la diagnosi nella chat collegata, controlla le prove e correggi soltanto la parte necessaria.";
 }
 
+/* V11 local correction diary and non-duplicating "unblock possible" GPT handoff.
+   All browser writes are localStorage; no public API or automatic dispatch. */
+var QUALITY_NOTE_STORAGE="artvision.controlCenter.videoCorrections.v1";
+var qualityNotes=[];
+function qualityKey(ctx){
+  var work=String(ctx?.work?.id||""),slot=String(ctx?.slot?.id||"");
+  return /^[a-z0-9_-]{3,120}$/i.test(work)?
+    "work:"+work+(slot?":"+slot:""):null;
+}
+function loadQualityNotes(){
+  try{
+    var raw=JSON.parse(localStorage.getItem(QUALITY_NOTE_STORAGE)||"[]");
+    if(!Array.isArray(raw))return [];
+    return raw.slice(-100).filter(function(x){
+      return x&&typeof x==="object"&&typeof x.id==="string"&&
+        /^[a-z0-9_-]{4,96}$/.test(x.id)&&
+        typeof x.key==="string"&&/^work:[a-z0-9_-]{3,120}(?::[a-z0-9_]+)?$/i.test(x.key)&&
+        typeof x.note==="string"&&x.note.length>=4&&x.note.length<=1800&&
+        ["direction","pacing","audio","visual","authenticity","editorial","download","other"].includes(x.category)&&
+        x.status==="reported";
+    });
+  }catch{return []}
+}
+function saveQualityNotes(){
+  try{
+    localStorage.setItem(QUALITY_NOTE_STORAGE,JSON.stringify(qualityNotes.slice(-100)));
+    return true;
+  }catch{return false}
+}
+function noteForContext(ctx){
+  var key=qualityKey(ctx);return key?qualityNotes.filter(function(x){return x.key===key}):[];
+}
+function formatQualityTimestamp(value){
+  var dateValue=new Date(value);
+  return Number.isFinite(+dateValue)?dateValue.toLocaleString("it-IT",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"Data sconosciuta";
+}
+function renderQualityNotes(ctx){
+  var supported=!!(ctx&&ctx.work&&qualityKey(ctx));
+  document.getElementById("qualityJournal").hidden=!supported;
+  if(!supported)return;
+  var rows=noteForContext(ctx).slice().reverse(),holder=document.getElementById("qualityJournalRows");
+  holder.replaceChildren();
+  if(!rows.length){
+    holder.textContent="Nessuna correzione annotata su questo dispositivo per questo video.";
+  }else{
+    rows.forEach(function(note){
+      var item=document.createElement("div");item.className="qualityNoteRow";
+      var heading=document.createElement("strong");
+      heading.textContent=formatQualityTimestamp(note.created_at)+" · "+note.category+
+        (note.owner_requested_generalization?" · candidata per i futuri video":"");
+      var body=document.createElement("p");body.textContent=note.note;
+      var info=document.createElement("small");
+      info.textContent="Salvata su questo Android · da registrare nel repository tramite GPT · non verificata sul MP4";
+      item.append(heading,body,info);holder.append(item);
+    });
+  }
+}
+function addQualityNote(ctx,sourceText,category,requestedGeneralization){
+  if(!ctx||!ctx.work||!qualityKey(ctx))return {ok:false,reason:"Apri la scheda del quadro o della sua variante."};
+  var text=String(sourceText||"").trim();
+  if(text.length<4||text.length>1800)return {ok:false,reason:"Scrivi cosa hai corretto (4–1800 caratteri)."};
+  if(!["direction","pacing","audio","visual","authenticity","editorial","download","other"].includes(category))
+    return {ok:false,reason:"Categoria non riconosciuta."};
+  var key=qualityKey(ctx);
+  var duplicate=qualityNotes.some(function(n){return n.key===key&&n.note===text});
+  if(duplicate)return {ok:false,reason:"Questa osservazione è già nella cronologia locale."};
+  var row={
+    id:"feedback_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,9),
+    key:key,work_id:String(ctx.work.id),slot_id:ctx.slot?.id||null,
+    filename:String(ctx.slot?.filename||"").slice(0,180),
+    project:ctx.project||"artvision",note:text,category:category,
+    status:"reported",owner_requested_generalization:requestedGeneralization===true,
+    created_at:new Date().toISOString()
+  };
+  qualityNotes.push(row);
+  if(qualityNotes.length>100)qualityNotes=qualityNotes.slice(-100);
+  var stored=saveQualityNotes();
+  return {ok:true,stored:stored,row:row};
+}
+function qualityNotesForPrompt(ctx){
+  return noteForContext(ctx).slice(-6).map(function(x){
+    return {id:x.id,work_id:x.work_id,slot_id:x.slot_id,
+      filename:x.filename,note:x.note,category:x.category,
+      status:"reported",created_at:x.created_at,
+      owner_requested_generalization:x.owner_requested_generalization};
+  });
+}
+function unblockCandidates(){
+  if(!source("queue")||!source("catalog"))return [];
+  var works=state.data?.works||[],found=[];
+  for(const w of works){
+    if(/dali|dal[iì]/i.test(String(w.id||"")+" "+String(w.title||"")))continue;
+    for(const v of w.variants||[]){
+      var current=actionSlotState(v),action=actionSlotMode(v);
+      if(current.kind==="ready"||current.kind==="unknown")continue;
+      if(!["recover","complete"].includes(action))continue;
+      found.push({work_id:w.id,title:w.title,slot_id:v.id,
+        label:v.label,status:current.kind,action:action,filename:v.filename||null});
+    }
+  }
+  // Favor rescue of existing produced bytes over new rendering.
+  return found.sort(function(a,b){
+    var weight={offline:0,registered:1,missing:2};
+    return (weight[a.status]??99)-(weight[b.status]??99);
+  }).slice(0,10);
+}
+function unblockContext(){
+  var candidates=unblockCandidates();
+  return {type:"bulk",project:"artvision",title:"Sblocca i video possibili",
+    detail:"Prima recupera i file già prodotti, poi verifica quali varianti mancano davvero.",
+    action:"unblock",items:candidates,run:null};
+}
+
+function actionUnblockBanner(){
+  var candidates=unblockCandidates();
+  var available=source("queue")&&source("catalog");
+  return '<section class="actionUnblock"><div><strong>↻ Sblocca ciò che è possibile</strong>'+
+    '<p>'+(available?
+      candidates.length+' varianti da verificare, partendo dal recupero degli MP4 già prodotti. Nessun nuovo render parte da qui.':
+      'Fonti non disponibili: non posso identificare quali video mancano davvero.')+
+    '</p></div><button type="button" class="actionPrimary" data-action-unblock '+
+    (available&&candidates.length?'':'disabled')+'>Prepara il recupero con GPT</button></section>';
+}
+
 function issues(){
   var d=state.data||{},attention=d.attention||[];
   var failures=attention.filter(function(x){return x.kind==="workflow"});
@@ -1037,6 +1190,7 @@ function issues(){
     '<span class="scopeLabel">'+unavailable.length+' fonti non raggiungibili</span>'+
     '<span class="scopeLabel">Nessuna correzione avviata senza il tuo intervento</span></div></section>';
   h+=actionProjectCards();
+  h+=actionUnblockBanner();
   h+='<div class="panel"><h3>Errori tecnici correnti · '+failures.length+'</h3>'+
     '<p class="sub">Soltanto le ultime esecuzioni non riuscite di ciascun workflow del ramo principale. Gli errori già superati non rimangono qui come blocchi aperti.</p>';
   h+=failures.length?failures.map(attentionItem).join(""):
@@ -1171,6 +1325,12 @@ document.addEventListener("click",function(ev){
       detail:"Artifact: "+(qr.artifact_present===true?"elencato nei metadati GitHub":"non confermato")+
         "; rapporto JSON non letto, MP4/SHA e approvazione non verificati nel pannello.",
       run:{...qr,html_url:qr.run_url,head_branch:"main",event:"workflow_dispatch"},runId:qr.id});
+    return;
+  }
+  var unblock=ev.target.closest("button[data-action-unblock]");
+  if(unblock){
+    var plan=unblockContext();
+    if(plan.items.length)openRepairDialog(plan);
     return;
   }
   var actionProject=ev.target.closest("button[data-action-project]");
@@ -1310,6 +1470,7 @@ document.getElementById("copyRepairPrompt").addEventListener("click",async funct
     "La copia automatica è bloccata dal browser: tieni premuto sul testo della diagnosi, seleziona e copia manualmente.";
 });
 loadChats();
+qualityNotes=loadQualityNotes();
 importChatLinksFromFragment();
 document.addEventListener("click",function(e){var g=e.target.closest("button[data-genre]");if(!g)return;state.selectedGenre=g.dataset.genre;state.page="genres";render();window.scrollTo(0,0)});
 document.getElementById("refresh").addEventListener("click",refresh);
