@@ -1,0 +1,38 @@
+{
+  "schema": "artvision-owner-secondary-30-oneoff-checkpoint-v1",
+  "utc_date": "2026-11-10",
+  "source_queue": "research/artvision_owner_selected_30_future_20261109.json",
+  "primary_queue": "queue/artvision_owner_selected_ten_20261102.json",
+  "secondary_work": {
+    "title": "The Course of Empire: Destruction",
+    "artist": "Thomas Cole",
+    "selection_order": 9,
+    "variant": "cinema_standard",
+    "slot_state": "render_running_unverified_do_not_duplicate"
+  },
+  "github_run_id": 42737588988,
+  "github_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42737588988",
+  "oneoff_workflow": ".github/workflows/artvision-owner-cole-destruction-cinema-v1.yml",
+  "input": {
+    "commons_source": "https://commons.wikimedia.org/wiki/File:Cole_Thomas_The_Course_of_Empire_Destruction_1836.jpg",
+    "original_expected_sha1": "b2af9bc527fd6a671ae2e307f8ec8a0a2b4e993a",
+    "original_expected_bytes": 17561412,
+    "original_pixels": [
+      8917,
+      5532
+    ],
+    "commons_pd_art_claim": "PDM/PD-Art; territorial commercial reuse pending"
+  },
+  "qa": {
+    "new_mp4_verified": false,
+    "sha256_mp4": null,
+    "zip_verified": false,
+    "artistic_review": "PENDING",
+    "commercial_rights": "PENDING",
+    "gold": false,
+    "published": false
+  },
+  "main_queue_slot_changes": 0,
+  "no_new_paid_apis": true,
+  "do_not_rerender_same_variant_until_run_terminal": true
+}
