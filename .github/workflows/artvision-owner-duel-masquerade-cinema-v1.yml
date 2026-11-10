@@ -73,7 +73,7 @@ jobs:
           assert rights['distribution_allowed'] is False
           story=json.loads((d/'STORYBOARD.json').read_text())
           assert len(story['shots'])==18
-          report={'work':'The Duel After the Masquerade','artist':'Edward Burne-Jones','variant':'cinema_standard',
+          report={'work':'The Duel After the Masquerade','artist':'Jean-Léon Gérôme','variant':'cinema_standard',
             'original_photo_sha1':'71995210db9c17889e156ce2870e3211974fa4f8',
             'original_photo_sha256':sha(src),'original_photo_bytes':src.stat().st_size,
             'mp4_sha256':sha(mp4),'mp4_bytes':mp4.stat().st_size,'ffmpeg_video_full_decode':'PASS',
