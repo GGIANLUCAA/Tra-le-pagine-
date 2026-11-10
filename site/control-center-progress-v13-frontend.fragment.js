@@ -67,6 +67,21 @@ function progressCard(run){
     '</span><h4>'+escapeText(run.name||"Attività GitHub")+'</h4>'+
     '<p class="productionStatus">'+escapeText(status)+'</p></div>'+
     '<span class="productionBadge">'+(isPreparation?'Attività preparatoria':'Workflow GitHub')+'</span></div>';
+  if(p?.match_status==="exact_queue_run_id"&&p.linked_video){
+    const v=p.linked_video;
+    html+='<div class="progressVideoLink"><span>VIDEO COLLEGATO CON ID RUN DELLA CODA</span>'+
+      '<strong>'+escapeText(v.work_title||"Opera")+' · '+escapeText(v.slot_label||"Variante")+'</strong>'+
+      '<small>'+(v.preview_ready?"Scheda dichiarata accessibile nel catalogo":"MP4 non confermato sul sito")+
+      ' · nessuna approvazione artistica implicita</small>';
+    if(v.preview_ready&&/^[\\w ().-]{1,190}\\.mp4$/i.test(v.filename||"")){
+      html+='<a href="https://video-library-studio.600led.workers.dev/media/'+
+        encodeURIComponent(v.filename)+'" target="_blank" rel="noopener noreferrer">Guarda il file ↗</a>';
+    }
+    html+='</div>';
+  }else if(p?.match_status==="ambiguous"){
+    html+='<p class="progressAlert">Questa run risulta associata a più varianti nel registro. '+
+      'Non posso assegnare la barra a un singolo video.</p>';
+  }
   if(stale)html+='<p class="progressAlert">Ultimo controllo non recente: percentuale e tempi potrebbero essere cambiati.</p>';
   if(known){
     html+='<div class="progressMeasure"><span>Passaggi GitHub conclusi</span><strong>'+
