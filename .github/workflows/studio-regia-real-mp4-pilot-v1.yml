@@ -4,6 +4,7 @@ on:
     paths:
       - "src/studio_regia_real_mp4_v1.py"
       - "src/quality_director_v17.py"
+      - "src/artvision_rebel_critico_standard_v144.py"
       - "tests/test_studio_regia_real_mp4_v1.py"
       - ".github/workflows/studio-regia-real-mp4-pilot-v1.yml"
   workflow_dispatch:
@@ -23,8 +24,10 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg
           python -m pip install 'Pillow>=10,<13'
-      - name: "Test su MP4 sintetici veri"
-        run: python -m unittest discover -s tests -p "test_studio_regia_real_mp4_v1.py" -v
+      - name: "Test su MP4 sintetici veri e compilazione renderer pilota"
+        run: |
+          python -m unittest discover -s tests -p "test_studio_regia_real_mp4_v1.py" -v
+          python -m py_compile src/artvision_rebel_critico_standard_v144.py
       - name: "Leggi MP4 pubblico storico di revisione senza modificarlo"
         run: |
           mkdir -p output/regia-real-pilot input
