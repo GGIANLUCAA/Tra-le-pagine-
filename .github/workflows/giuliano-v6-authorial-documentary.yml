@@ -46,7 +46,7 @@ jobs:
           assert d["revision"]==6 and len(d["shots"])>=20
           assert text=="\n".join(x["text"] for x in d["shots"])
           assert not any(k in text.lower() for k in ("avviciniamoci","guardiamo il","osserviamo questo"))
-          assert len({s["source_file"] for s in d["shots"]})>=16
+          assert len({f for s in d["shots"] for f in [s["source_file"],s.get("second_file")] if f})>=20
           print("V6_AUTHORIAL_STORY_AND_EVIDENCE_PASS",len(d["shots"]),flush=True)
           PY
           test -n "$GEMINI_API_KEY" || (echo "Google voice key unavailable" && exit 2)
