@@ -304,8 +304,30 @@ def main():
  # Google Gemini must be generated after genuine photo rights / QA preflight.
  audio,timed=synthesize(script,OUT/"audio")
  duration=len(audio)/24000
- if not 112<=duration<=190 or len(timed)!=len(SHOTS):
-  raise RuntimeError(f"Voice duration / sentence count invalid: {duration}, {len(timed)}")
+ if not 112<=duration<=190:
+  raise RuntimeError(f"Voice duration invalid: {duration}")
+ # Gemini voice alignment is sentence-level; some editorial beats contain two
+ # or three written sentences. Group them by exact spoken text without
+ # re-synthesizing or changing a single recorded sample.
+ sentence_segments=len(timed)
+ grouped=[];pos=0
+ for beat in SHOTS:
+  wanted=re.sub(r"\\s+"," ",beat["text"]).strip()
+  collected=[]
+  while pos<len(timed):
+   collected.append(timed[pos]);pos+=1
+   joined=" ".join(x[0] for x in collected).strip()
+   if joined==wanted:
+    grouped.append((wanted,collected[0][1],collected[-1][2]))
+    break
+   if len(joined)>len(wanted)+12:
+    raise RuntimeError("Google voice segment differs from storyboard: "+joined[:90])
+  else:
+   raise RuntimeError("Ran out of timed segments before beat "+str(len(grouped)+1))
+ if pos!=len(timed) or len(grouped)!=len(SHOTS):
+  raise RuntimeError(f"Extra audio segments {len(timed)}; grouped only {len(grouped)} beats")
+ print("VOICE_SENTENCES_GROUPED",sentence_segments,"->",len(grouped),"beats",flush=True)
+ timed=grouped
  alignment=json.loads((OUT/"audio"/"ALLINEAMENTO_VOCE.json").read_text(encoding="utf8"))
  fraction=alignment.get("matched_fraction") or 0
  if alignment.get("method")!="asr_with_interpolation" or fraction<.65:
