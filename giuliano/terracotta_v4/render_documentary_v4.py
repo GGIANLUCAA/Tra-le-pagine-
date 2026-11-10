@@ -312,7 +312,7 @@ def main():
  sentence_segments=len(timed)
  grouped=[];pos=0
  for beat in SHOTS:
-  wanted=re.sub(r"\\s+"," ",beat["text"]).strip()
+  wanted=re.sub(r"\s+"," ",beat["text"]).strip()
   collected=[]
   while pos<len(timed):
    collected.append(timed[pos]);pos+=1
