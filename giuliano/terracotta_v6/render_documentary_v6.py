@@ -136,6 +136,10 @@ def make_canvas(path,out,beat,i,is_title=False,is_insert=False):
  source=ImageOps.exif_transpose(Image.open(path)).convert("RGB")
  source=ImageEnhance.Contrast(source).enhance(1.07)
  source=ImageEnhance.Color(source).enhance(1.035)
+ if beat.get("semantic")=="mound":
+  # Desaturated archival-documentary treatment: the genuine tomb is visible without repetitive bright-green tourism footage.
+  source=ImageEnhance.Color(source).enhance(.18)
+  source=ImageEnhance.Contrast(source).enhance(1.12)
  rw,rh=1200,2134
  if beat.get("presentation") in ("wide","hero") and i%3==2 and not is_title and not(is_insert and beat.get("semantic") in ("portrait","acrobat")):
   bg=ImageOps.fit(source,(rw,rh),Image.Resampling.LANCZOS)
