@@ -507,7 +507,7 @@ function renderRepairDialog(){
   scope.querySelector('option[value="workflow"]').hidden=!workflow;
   scope.querySelector('option[value="work"]').hidden=!work;
   scope.querySelector('option[value="slot"]').hidden=!slot;
-  if(!workflow)state.chatScope="project";
+  if((state.chatScope==="workflow"&&!workflow)||(state.chatScope==="work"&&!work)||(state.chatScope==="slot"&&!slot))state.chatScope="project";
   scope.value=state.chatScope;
   var saved=state.chatLinks[chatScopeKey(ctx)]||"";
   document.getElementById("repairChatInput").value=saved;
