@@ -50,7 +50,7 @@ function renderQualityNotes(ctx){
         (note.owner_requested_generalization?" · candidata per i futuri video":"");
       var body=document.createElement("p");body.textContent=note.note;
       var info=document.createElement("small");
-      info.textContent="Salvata su questo Android · da registrare nel repository tramite GPT · non verificata sul MP4";
+      info.textContent="Salvata su questo Android · verifica sul repository se già acquisita da GPT · non verificata sul MP4";
       item.append(heading,body,info);holder.append(item);
     });
   }
