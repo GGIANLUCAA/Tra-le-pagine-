@@ -19,7 +19,7 @@ const data={asof:'2026-11-10T18:00:00Z',sources:{github:{ok:true},queue:{ok:true
   {id:'artvision',state:'unobserved',observed_count:0,active_count:0,issues:0},
   {id:'storia',state:'observed_success',observed_count:1,active_count:0,issues:0},
   {id:'wow',state:'unknown',observed_count:0,active_count:0,issues:0}
- ],attention:[],review:{count:1,detail:'Da revisionare'},diary:[],media:[],catalog_count:0};
+ ],attention:[],review:{count:1,detail:'Da revisionare'},diary:[],media:[{key:'STORIA_CARMENCITA_1894.mp4',title:'Carmencita 1894',available:true}],catalog_count:1};
 const errors=[],calls=[],vc=new VirtualConsole();
 vc.on('jsdomError',e=>errors.push(String(e.stack||e.message)));
 let copied='';
@@ -95,10 +95,24 @@ const tick=()=>new Promise(r=>setTimeout(r,50));
  assert.match(proposed,/Recupera prima video esistenti/);
  assert.doesNotMatch(proposed,/nuovo render avviato con successo/i);
  d.querySelector('#closeRepairDialog').click();
+ const recent=d.querySelector('[data-action-video="STORIA_CARMENCITA_1894.mp4"]');
+ assert(recent,'Storia catalogue MP4 has its own improvement shortcut');
+ recent.click();await tick();
+ assert(d.querySelector('#repairDialog').open);
+ assert.match(d.querySelector('#repairPrompt').value,/STORIA_CARMENCITA_1894.mp4/);
+ assert.equal(d.querySelector('#repairChatScope').value,'work');
+ d.querySelector('#repairOwnerNote').value='Ridurre stacchi fra le fotografie storiche.';
+ d.querySelector('#qualitySaveFeedback').click();await tick();
+ const records=JSON.parse(dom.window.localStorage.getItem('artvision.controlCenter.videoCorrections.v1'));
+ assert.equal(records.length,2,'Storia video note stored independently from ArtVision');
+ assert.equal(records[1].slot_id,null);
+ assert.equal(records[1].filename,'STORIA_CARMENCITA_1894.mp4');
+ assert.equal(records[1].project,'storia');
+ d.querySelector('#closeRepairDialog').click();
  d.querySelector('[data-action-project="artvision"]').click();await tick();
  assert.match(d.querySelector('#repairPrompt').value,/nuova produzione REALE/i);
  assert.match(d.querySelector('#repairNextStep').textContent,/produzione reale/i);
  assert.equal(errors.length,0,errors.join('\n'));
- console.log('PASS V11 DOM: per-video feedback saved, repo handoff prepared, recovery candidates, chat routing, no writes');
+ console.log('PASS V11 DOM: ArtVision/Storia notes saved separately, correct GPT handoff, recovery candidates, no writes');
  dom.window.close();
 })().catch(e=>{console.error(e);dom.window.close();process.exit(1)});
