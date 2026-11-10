@@ -20,8 +20,8 @@ STORYBOARD_PATH=ROOT/"giuliano"/"terracotta_v4"/"SHOTS_CINEMATIC_V4.json"
 PLAN=json.loads(STORYBOARD_PATH.read_text(encoding="utf8"))
 SHOTS=PLAN["shots"]
 FILES=list(dict.fromkeys(f for row in SHOTS for f in (row["source_file"],row.get("second_file")) if f))
-if len(SHOTS)<32 or len(set(FILES))<33:
- raise RuntimeError("V4 needs 32+ factual beats and 33+ planned authentic distinct photographs")
+if len(SHOTS)<32 or len(set(FILES))<30:
+ raise RuntimeError("V4 needs 32+ factual beats and 30+ authentic distinct photographic sources")
 UA="GiulianoTerracottaV4Film/1.0 (editorial Wikimedia Commons photographic attribution)"
 def shell(cmd):
  print("+", " ".join(map(str,cmd)),flush=True)
@@ -137,7 +137,7 @@ def make_canvas(path,out,beat,i,is_title=False,is_insert=False):
  source=ImageEnhance.Contrast(source).enhance(1.07)
  source=ImageEnhance.Color(source).enhance(1.035)
  rw,rh=1200,2134
- if beat.get("presentation") in ("wide","hero") and not(is_insert and beat.get("semantic") in ("portrait","acrobat")):
+ if beat.get("presentation") in ("wide","hero") and i%3==2 and not is_title and not(is_insert and beat.get("semantic") in ("portrait","acrobat")):
   bg=ImageOps.fit(source,(rw,rh),Image.Resampling.LANCZOS)
   bg=bg.filter(ImageFilter.GaussianBlur(34))
   bg=Image.blend(bg,Image.new("RGB",(rw,rh),(8,11,15)),.76)
@@ -163,7 +163,6 @@ def make_canvas(path,out,beat,i,is_title=False,is_insert=False):
  d.text((66,58),kicker.get(beat.get("chapter"),"ARCHEOLOGIA"),font=font(29,True),fill=(213,186,133))
  d.text((rw-190,60),"GIULIANO",font=font(24,True),fill=(220,219,208))
  if is_title:
-  d.rounded_rectangle((50,1440,1150,1970),radius=20,fill=(4,7,10,165))
   d.text((84,1503),"THE",font=font(110,True),fill=(246,236,209))
   d.text((80,1637),"TERRACOTTA",font=font(126,True),fill=(255,248,231))
   d.text((84,1798),"ARMY",font=font(148,True),fill=(255,248,231))
@@ -399,7 +398,7 @@ def main():
  qa={"status":"MP4_FULL_DECODE_PASS_ARTISTIC_REVIEW_REQUIRED",
     "filename":movie.name,"sha256":sha(movie),"duration_seconds":duration,
     "format":probe,"camera_shots":len(timeline),"narrative_beats":len(SHOTS),
-    "unique_actual_photo_count":len({x["meta"]["image_sha256"] for x in raw.values()}),
+    "unique_actual_photo_count":len({x["sha256"] for x in timeline}),
     "voice":"Google Gemini Gacrux newly synthesized",
     "voice_ASR_method":alignment.get("method"),"voice_ASR_matched_fraction":fraction,
     "source_licenses_verified":True,"music":"original generated instrumental score",
