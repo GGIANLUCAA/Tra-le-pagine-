@@ -499,6 +499,29 @@ function prepareRepairPrompt(ctx,details){
   if(ctx.action==="recover")line.push("AZIONE VOLUTA: trova il video o il pacchetto già prodotti nelle run, release, archivi e catalogo. Correggi eventuali link/sincronizzazioni solo dopo prove. NON ricreare il video se esiste il master originale recuperabile.");
   if(ctx.action==="improve")line.push("AZIONE VOLUTA: ispeziona il vero MP4, identifica errori di regia/voce/immagini e migliora SOLO quanto necessario con una versione N+1, confronto A/B e QA reale. Non cancellare o sovrascrivere l'originale.");
   if(state.repairNote&&state.repairNote.trim())line.push("OSSERVAZIONE AGGIUNTIVA DEL PROPRIETARIO: "+state.repairNote.trim().slice(0,1800));
+  if(ctx.action==="unblock"){
+    line.push("AZIONE VOLUTA DAL PROPRIETARIO: SBLOCCA CIO CHE E POSSIBILE SENZA DUPLICATI.",
+      "Verifica prima le run, i job, le code owner e i file completi di ciascuno dei seguenti candidati. "+
+      "Recupera prima video esistenti; completa solo varianti davvero mancanti e indipendenti, rispettando i limiti "+
+      "e fermandoti davanti a lavori in corso o rischi di addebiti. Non dichiarare consegne senza MP4, ZIP e QA.");
+    (ctx.items||[]).forEach(function(it,index){
+      line.push("  "+(index+1)+". "+it.title+" · "+it.slot_id+
+        " · azione proposta "+it.action+" · stato "+it.status+
+        " · file "+(it.filename||"non identificato"));
+    });
+    if(!(ctx.items||[]).length)line.push("Nessun candidato certo disponibile: non avviare nulla sulla base di dati assenti.");
+  }
+  var feedback=qualityNotesForPrompt(ctx);
+  if(feedback.length){
+    line.push("",
+      "CORREZIONI SALVATE NEL BROWSER DEL PROPRIETARIO, NON ANCORA REGISTRATE NEL REPOSITORY:",
+      JSON.stringify(feedback,null,2),
+      "Queste righe sono segnalazioni 'reported', NON correzioni applicate o approvate.",
+      "Usa src/studio_quality_memory_v1.py e quality/STUDIO_VIDEO_LESSONS_V1.json: "+
+      "se hai accesso GitHub, registra in history i feedback ancora assenti tramite PR, senza duplicati. "+
+      "Valuta una regola generale solo se richiesta, corretta per il format, verificata sul vero MP4 e approvata; "+
+      "mai segnare effectiveness_proven_by_new_video senza prove. Riporta il commit o spiega cosa manca.");
+  }
   line.push("",
     "COMPITO PER GPT:",
     "1. Usa la connessione GitHub disponibile per controllare prima lo stato ATTUALE del repository, della run e dei relativi job e log. Non basarti soltanto sul riepilogo del pannello.",
@@ -516,12 +539,14 @@ function renderRepairDialog(){
   var ctx=state.repair;
   if(!ctx)return;
   var label=PROJECT_LABELS[ctx.project]||PROJECT_LABELS.other;
-  document.getElementById("repairTitle").textContent=ctx.action==="produce"?"Richiedi produzione con GPT":ctx.type==="slot"?"Intervieni sul video con GPT":ctx.type==="work"?"Analizza le varianti con GPT":"Ripara con GPT";
+  document.getElementById("repairTitle").textContent=ctx.action==="produce"?"Richiedi produzione con GPT":ctx.action==="unblock"?"Sblocca ciò che è possibile":ctx.type==="slot"?"Intervieni sul video con GPT":ctx.type==="work"?"Analizza le varianti con GPT":"Ripara con GPT";
   document.getElementById("repairSummary").textContent=ctx.title+
     " · "+ctx.detail+(ctx.run?" · GitHub run #"+ctx.runId:"");
   document.getElementById("repairActionTitle").textContent=ctx.action==="produce"?
     "Nuovo video · "+label:ctx.type==="slot"?"Intervento su "+String(ctx.slot?.label||"video"):ctx.title;
-  document.getElementById("repairNextStep").textContent=actionInstruction(ctx);
+  document.getElementById("repairNextStep").textContent=ctx.action==="unblock"?
+    "Verifica gli slot recuperabili, poi fai avanzare soltanto i lavori indipendenti e non già in corso.":
+    actionInstruction(ctx);
   document.getElementById("repairOwnerNote").value=state.repairNote||"";
   document.getElementById("repairChatLabel").textContent="Chat: "+label+
     (ctx.work?" · "+String(ctx.work.title||"opera"):"")+
@@ -1425,6 +1450,21 @@ document.getElementById("forgetRepairChat").addEventListener("click",function(){
   info.className="repairStatus";
   info.textContent=stored?"Collegamento eliminato da questo browser.":"Collegamento non più attivo in questa sessione.";
   if(state.page==="issues")render();
+});
+document.getElementById("qualitySaveFeedback").addEventListener("click",function(){
+  if(!state.repair)return;
+  var result=addQualityNote(state.repair,document.getElementById("repairOwnerNote").value,
+      document.getElementById("qualityCategory").value,
+      document.getElementById("qualitySuggestFuture").checked);
+  var status=document.getElementById("qualitySaveStatus");
+  if(!result.ok){status.className="repairStatus repairError";status.textContent=result.reason;return;}
+  status.className="repairStatus "+(result.stored?"repairPositive":"repairError");
+  status.textContent=result.stored?
+    "Correzione annotata qui. Copia e invia il messaggio a GPT per inserirla nel registro permanente.":
+    "Nota disponibile solo finché questa pagina resta aperta: salvataggio del browser bloccato.";
+  document.getElementById("repairPrompt").value=prepareRepairPrompt(state.repair,state.repairDetails);
+  renderQualityNotes(state.repair);
+  document.getElementById("qualityHistory").open=true;
 });
 document.getElementById("repairOwnerNote").addEventListener("input",function(){
   state.repairNote=this.value.slice(0,1800);
