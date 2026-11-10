@@ -52,9 +52,14 @@ jobs:
           test -n "$GEMINI_API_KEY" || (echo "NO GOOGLE TTS SECRET: no robotic voice fallback" && exit 2)
       - name: Runtime & source-verified image dependencies
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
-          python -m pip install -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+          if command -v ffmpeg >/dev/null 2>&1; then
+            echo "FFMPEG_PREINSTALLED_SKIP_APT_NETWORK"
+            ffmpeg -version | head -1
+          else
+            timeout 150 sudo apt-get update -qq
+            timeout 150 sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          fi
+          python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
       - name: Restore prior verified V4 natural Google voice, no second TTS charge
         uses: actions/download-artifact@v4
         with:
