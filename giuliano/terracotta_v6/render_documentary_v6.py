@@ -239,7 +239,7 @@ def zoom_filter(frames,index,motion):
   x="'(iw-iw/zoom)*(on/%s)'"%n
  else:x="'iw/2-iw/zoom/2'"
  y="'ih/2-ih/zoom/2'"
- return f"zoompan=z='min(1.015+on*{inc:.6f},1.095)':x={x}:y={y}:d={frames}:s={s}:fps={FPS},format=yuv620p"
+ return f"zoompan=z='min(1.015+on*{inc:.6f},1.095)':x={x}:y={y}:d={frames}:s={s}:fps={FPS},format=yuv420p"
 
 def main():
  OUT.mkdir(parents=True,exist_ok=True);MEDIA.mkdir(parents=True,exist_ok=True)
@@ -357,7 +357,7 @@ def main():
    vf=zoom_filter(frames,len(clips),move)
    shell(["ffmpeg","-hide_banner","-loglevel","error","-y",
      "-loop","1","-framerate",fps,"-i",canvas,"-vf",vf,
-     "-frames:v",frames,"-an","-c:v","libx264","-pix_fmt","yuv620p",
+     "-frames:v",frames,"-an","-c:v","libx264","-pix_fmt","yuv420p",
      "-preset","veryfast","-crf","21","-r",fps,clip])
    clips.append(clip)
    timeline.append({"beat":i+1,"shot":len(clips),"spoken":spoken,
