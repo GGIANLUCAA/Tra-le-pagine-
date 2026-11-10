@@ -13,6 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"src"))
 import gemini_voice
 from artvision_critico_review_capture_v1 import capture as capture_artvision_focus
+from studio_regia_real_mp4_v1 import analyze as real_mp4_regia_audit
 
 OUT=Path("/tmp/rebel_angels_critico_v144")
 RECIPE=ROOT/"modules/artvision_critico/production_series/bruegel_rebel_angels_v144.json"
@@ -267,6 +268,23 @@ def render():
   "report":"FOCUS_REVIEW_V1/ARTVISION_CRITICO_REAL_MP4_FOCUS_QA.json",
   "real_mp4_frames":focus["real_frames_extracted"],
   "semantic_review_pending":True, "Gold_V25":False}
+ # Regia proof from the EXACT finished MP4, never a synthetic preview or approval.
+ # This is evidence-only and must not destroy an already valid render if QA sampling fails.
+ try:
+  regia=real_mp4_regia_audit(target,OUT/"REGIA_REAL_MP4_V1")
+  assert regia["source"]["sha256"]==qa["file"]["sha256"]
+  qa["regia_real_mp4_review"]={
+   "status":regia["status"],
+   "report":"REGIA_REAL_MP4_V1/REGIA_REAL_MP4_V1.json",
+   "contact_sheet":"REGIA_REAL_MP4_V1/REGIA_REAL_MP4_CONTACT_SHEET.jpg",
+   "samples":regia["sampling"]["frames_checked"],
+   "possible_directorial_issues":len(regia["warnings"]),
+   "artistic_approval":False,"Gold_V25":False}
+ except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+  qa["regia_real_mp4_review"]={
+   "status":"UNAVAILABLE_NEEDS_REVIEW",
+   "error_type":type(exc).__name__,
+   "artistic_approval":False,"Gold_V25":False}
  report=OUT/"QA_V144.json"
  report.write_text(json.dumps(qa,indent=2,ensure_ascii=False)+"\n")
  package=OUT/"REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW_PACKAGE.zip"
@@ -276,6 +294,9 @@ def render():
    z.write(f,arcname=f.name)
   for f in sorted((OUT/"FOCUS_REVIEW_V1").rglob("*")):
    if f.is_file():z.write(f,arcname=str(f.relative_to(OUT)))
+  if (OUT/"REGIA_REAL_MP4_V1").is_dir():
+   for f in sorted((OUT/"REGIA_REAL_MP4_V1").rglob("*")):
+    if f.is_file():z.write(f,arcname=str(f.relative_to(OUT)))
  with zipfile.ZipFile(package) as z: assert z.testzip() is None
  print(json.dumps({"status":"ONE_REAL_CRITICO_REVIEW_MP4","mp4":qa["file"],"package":{"name":package.name,"bytes":package.stat().st_size,"sha256":sha(package),"crc":"PASS"},"voice_wav_sha256":sha(wav),"human_qa":"PENDING","museum_approved":False,"Gold_V25":False},indent=2))
 
