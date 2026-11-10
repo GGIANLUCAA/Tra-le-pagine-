@@ -128,7 +128,13 @@ class ExistingRendererHookTests(unittest.TestCase):
                 self.assertIn("capture_artvision_focus(", content)
                 self.assertIn("camera_trace.append(", content)
                 self.assertIn('focus["real_frames_extracted"]', content)
-                self.assertIn('if f.is_file():z.write(f,arcname=str(f.relative_to(OUT)))', content)
+                # V144 now has a separated trial destination; original renderer uses OUT.
+                if name == "artvision_rebel_critico_standard_v144.py":
+                    self.assertIn("render_dir=OUT if not directed else OUT/'REGIA_V2_TRIAL'", content)
+                    self.assertIn('if f.is_file():z.write(f,arcname=str(f.relative_to(render_dir)))', content)
+                    self.assertIn('voice_cache=OUT/"VOICE_CACHE_V13.json"', content)
+                else:
+                    self.assertIn('if f.is_file():z.write(f,arcname=str(f.relative_to(OUT)))', content)
                 self.assertIn('"Gold_V25":False', content)
 
 
