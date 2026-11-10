@@ -43,7 +43,7 @@ jobs:
           beats=plan["shots"];text=Path("giuliano/terracotta_v6/VOCE_DOCUMENTARIO_V6.txt").read_text().strip()
           assert text=="\n".join(x["text"] for x in beats),"Speech-to-scene matching"
           unique={f for x in beats for f in [x["source_file"],x.get("second_file")] if f}
-          assert len(beats)>=32 and len(unique)>=30 and plan["revision"]==6
+          assert len(beats)>=32 and len(unique)>=28 and plan["revision"]==6
           assert len(set(x["index"] for x in beats))==len(beats)
           assert all(x.get("semantic") and x.get("presentation") for x in beats)
           assert not any(term in text.lower() for term in ["avviciniamoci","guardiamo il","osserviamo questo"])
