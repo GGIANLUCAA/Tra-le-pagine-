@@ -1,0 +1,82 @@
+name: "Vidu API - verifica scadenza crediti (sola lettura)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/vidu-api-expiry-readonly.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: vidu-api-expiry-check
+  cancel-in-progress: false
+jobs:
+  check-expiry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+    steps:
+      - name: "GET only /ent/v2/credits?show_detail=true; no paid Vidu POST"
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import urllib.error
+          import urllib.request
+
+          def report(line):
+              print(line, flush=True)
+              summary = os.environ.get("GITHUB_STEP_SUMMARY")
+              if summary:
+                  with open(summary, "a", encoding="utf-8") as f:
+                      f.write(line + "\n\n")
+
+          report("### Vidu API - controllo scadenze pacchetti (GET, zero crediti spesi)")
+          key = os.environ.get("VIDU_API_KEY", "").strip()
+          if not key:
+              report("VIDU_EXPIRY_ERROR: GitHub Secret VIDUOK / VIDU_API_KEY non configurato.")
+              raise SystemExit(2)
+          req = urllib.request.Request(
+              "https://api.vidu.com/ent/v2/credits?show_detail=true",
+              headers={
+                  "Authorization": "Token " + key,
+                  "Accept": "application/json",
+                  "Content-Type": "application/json",
+              },
+              method="GET",
+          )
+          try:
+              with urllib.request.urlopen(req, timeout=25) as response:
+                  payload = json.loads(response.read(250000))
+          except urllib.error.HTTPError as e:
+              report("VIDU_EXPIRY_ERROR: risposta HTTP " + str(e.code) + " (nessun credito speso).")
+              raise SystemExit(3)
+          except (urllib.error.URLError, ValueError, TimeoutError):
+              report("VIDU_EXPIRY_ERROR: rete o JSON non disponibile (nessun credito speso).")
+              raise SystemExit(4)
+          if not isinstance(payload, dict):
+              report("VIDU_EXPIRY_ERROR: formato risposta non valido.")
+              raise SystemExit(5)
+          packages = payload.get("packages")
+          if not isinstance(packages, list):
+              report("VIDU_EXPIRY_ERROR: Vidu non ha restituito l'elenco packages.")
+              raise SystemExit(6)
+          active = [p for p in packages if isinstance(p, dict) and isinstance(p.get("credit_remain"), (int, float)) and not isinstance(p.get("credit_remain"), bool) and p.get("credit_remain", 0) > 0]
+          if not active:
+              report("VIDU_EXPIRY: nessun pacchetto attivo con credito residuo nei dettagli restituiti.")
+              raise SystemExit(7)
+          report("PACCHETTI_ATTIVI_VISIBILI: " + str(len(active)) + " (importi e ID non pubblicati)")
+          shown = 0
+          for item in active:
+              expires = str(item.get("valid_to") or "").strip()
+              # Only publish literal date/time, never arbitrary account data.
+              if not re.fullmatch(r"[0-9TZ:+.\- ]{10,40}", expires):
+                  report("PACCHETTO " + str(shown + 1) + ": scadenza non fornita in formato data.")
+              else:
+                  report("PACCHETTO " + str(shown + 1) + " - SCADENZA_VIDU: " + expires)
+              shown += 1
+          report("VERIFICA_COMPLETATA: sola lettura, nessun video generato, nessun pagamento.")
+          PY
