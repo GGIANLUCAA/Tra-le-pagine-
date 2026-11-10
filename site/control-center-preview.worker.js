@@ -637,7 +637,7 @@ export default {async fetch(request,env){
   }
   if(path==="/api/progress"){
     const id=new URL(request.url).searchParams.get("run")||"";
-    if(!/^[1-9]\\d{0,17}$/.test(id)){
+    if(!/^[1-9]\d{0,17}$/.test(id)){
       return Response.json({ok:false,reason:"ID run non valido"},
         {status:400,headers:{"cache-control":"no-store","x-content-type-options":"nosniff"}});
     }
