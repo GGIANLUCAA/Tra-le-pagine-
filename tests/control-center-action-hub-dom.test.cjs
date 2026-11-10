@@ -32,8 +32,13 @@ const dom=new JSDOM(html,{url:'https://artvision-control-preview.600led.workers.
    calls.push({url:String(url),method:init.method||'GET'});
    if(String(url).startsWith('/api/progress?run=880'))
       return {ok:true,json:async()=>({schema:'studio-github-progress-v12',ok:true,run_id:880,
-      step_fraction_percent:50,step_count:4,steps_completed:2,phase:'Render reale',
-      asof:'2026-11-10T18:05:30Z',eta:{available:false,reason:'Storico insufficiente'},
+      telemetry_version:'v13',step_fraction_percent:50,step_count:4,steps_completed:2,
+      phase:'Render reale',current_phase_group:'Elaborazione video',
+      current_phase_elapsed_seconds:380,elapsed_seconds:940,
+      latest_observation_at:new Date().toISOString(),last_step_at:new Date(Date.now()-2*60000).toISOString(),
+      timeline:[{name:'Preparazione materiale',status:'completed_success',conclusion:'success',
+        completed_at:'2026-11-10T18:04:30Z'}],
+      eta:{available:false,reason:'Storico insufficiente',sample_count:2},
       percent_is_video_completion:false,mp4_complete_verified:false,video_progress_known:false})};
    if(String(url).startsWith('/api/status'))return {ok:true,json:async()=>data};
    return {ok:false,status:404,json:async()=>({ok:false})};
@@ -54,9 +59,14 @@ const tick=()=>new Promise(r=>setTimeout(r,50));
  const bar=d.querySelector('.productionTrack[role="progressbar"]');
  assert(bar,'Home must show a real GitHub steps bar');
  assert.equal(bar.getAttribute('aria-valuenow'),'50');
- assert.match(d.querySelector('.productionRun').textContent,/NON del video/);
+ assert.match(d.querySelector('.productionRun').textContent,/non del video/i);
  assert.match(d.querySelector('.productionRun').textContent,/Storico insufficiente/);
  assert.match(d.querySelector('.productionRun').textContent,/Render reale/);
+ assert.match(d.querySelector('.productionRun').textContent,/Elaborazione video/);
+ assert.match(d.querySelector('.productionRun').textContent,/FINE STIMATA DEL WORKFLOW/);
+ assert(d.querySelector('.progressExtra'),'Recent phase timeline is expandable');
+ d.querySelector('.progressExtra').open=true;
+ assert.match(d.querySelector('.progressExtra').textContent,/Preparazione materiale/);
  d.querySelector('.bottom [data-page="issues"]').click();
  await tick();
  assert(d.querySelector('.actionTop'),'Immediate action panel exists');
