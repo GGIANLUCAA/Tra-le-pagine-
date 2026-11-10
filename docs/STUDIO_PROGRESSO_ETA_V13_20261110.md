@@ -15,6 +15,9 @@ Migliorare la barra di avanzamento reale, affidabilità delle stime, leggibilit�
 - **Freschezza della scheda:** se l’ultima prova di stato risale a più di 5 minuti fa, avvisa e nasconde la finestra ETA. Aggiorna in automatico quando il Centro è aperto, circa ogni 105 secondi.
 - **Schermata Android:** gerarchia chiara «adesso» e «fine stimata», barre discrete, spazio per orario/ultimo segnale, azione consigliata e pulsanti con altezza touch adeguata. Dettagli meno importanti chiusi per impostazione predefinita.
 
+## Video identificato dalla run, senza supposizioni
+Il Worker prova ora a collegare un'esecuzione GitHub a uno **specifico quadro e variante** quando esiste **un solo** `run_id` corrispondente nella coda ArtVision verificata. Mostra titolo, variante e, se il catalogo dichiara disponibile un MP4 con nome valido, il link alla riproduzione. Se più varianti condividono la stessa run, il pannello indica l'ambiguità e **non** attribuisce quel progresso a un singolo filmato. Le produzioni La Storia Rivive/WOW non vengono abbinate per somiglianza di nome. La corrispondenza con una run non prova che quel file sia già stato prodotto, revisionato o approvato.
+
 ## Limiti reali ancora presenti
 1. È una barra **della run GitHub**, non del singolo video ArtVision/Storia/WOW prodotto da ChatGPT. I dati pubblici GitHub non collegano automaticamente un job a un MP4 con chiave certa; per una vera ETA video occorrono checkpoint per ogni produttore e prove di file reali.
 2. La stima ha base statistica **campionaria**: non è affidabile se lo stesso workflow ha durate estremamente variabili, se l’evento è un altro tipo di lavoro o se la coda è incompleta.
