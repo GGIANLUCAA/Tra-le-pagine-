@@ -6,14 +6,22 @@ on:
     paths:
       - "giuliano/terracotta_v6/**"
       - ".github/workflows/giuliano-v6-authorial-documentary.yml"
+  pull_request:
+    branches:
+      - "feature/giuliano-terracotta-v4-cinema-20261110"
+    types: [opened, synchronize, reopened]
+    paths:
+      - "giuliano/terracotta_v6/**"
+      - ".github/workflows/giuliano-v6-authorial-documentary.yml"
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: giuliano-v6-documentary-${{ github.ref }}
+  group: giuliano-v6-documentary-one-build
   cancel-in-progress: true
 jobs:
   film:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 75
     env:
