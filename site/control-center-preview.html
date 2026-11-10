@@ -783,7 +783,7 @@ function progressCard(run){
   if(p?.older_than_30_minutes_without_step_change)
     out+='<p class="productionHint">Nessuna nuova fase osservata da oltre 30 minuti; può essere un normale render lungo. Verifica i log prima di considerarlo bloccato.</p>';
   out+='<div class="productionButtons"><a class="miniBtn secondary" href="'+
-    escapeText(run.html_url||"https://github.com/GGIANLUCAA/Tra-le-pagine-/actions")+
+    escapeText("https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/"+run.id)+
     '" target="_blank" rel="noopener noreferrer">Apri fasi GitHub ↗</a>'+
     '<button type="button" class="miniBtn" data-repair-run="'+run.id+'">Ripara / verifica GPT</button></div>'+
     '<p class="productionDisclaimer">Consegna video: <b>non confermata</b>. Le automazioni ChatGPT non sono tracciabili da questi dati.</p></article>';
