@@ -9,7 +9,7 @@
     "year": 1880,
     "selection_order": 12,
     "variant": "cinema_standard",
-    "state": "RUN_QUEUED_OR_IN_PROGRESS_NOT_YET_VERIFIED"
+    "state": "RENDERED_TECHNICALLY_VERIFIED_ARTISTIC_PENDING"
   },
   "source": {
     "commons_file": "https://commons.wikimedia.org/wiki/File:Edward_coley_burne-jones,_the_golden_stairs,_1880.jpg",
@@ -22,28 +22,33 @@
       2658,
       4986
     ],
-    "download_sha256_verified": false
+    "download_sha256_verified": true,
+    "source_sha256": "1aae2c1476ecf08f0dbf53b3d97d176dca34f1005ec1b32189b61907e346a108"
   },
   "github": {
     "run_id": 42781549071,
     "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42781549071",
     "workflow": ".github/workflows/artvision-owner-golden-stairs-cinema-v1.yml",
-    "run_status_last_observed": "queued"
+    "run_status_last_observed": "completed_success",
+    "artifact_id": 13745888685,
+    "artifact_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42781549071/artifacts/13745888685"
   },
   "counts": {
-    "new_verified_mp4_this_cycle": 0,
+    "new_verified_mp4_this_cycle": 1,
     "primary_queue_slots_added": 0,
-    "secondary_queue_new_mp4_verified": false
+    "secondary_queue_new_mp4_verified": true
   },
   "qa": {
-    "ffmpeg_full_decode": "PENDING",
-    "zip_crc": "PENDING",
+    "ffmpeg_full_decode": "PASS_VIDEO_AUDIO",
+    "zip_crc": "PASS_FULL_READBACK",
     "human_visual_semantic_review": "PENDING",
     "commercial_rights_final": "PENDING",
     "gold": false,
-    "published": false
+    "published": false,
+    "mp4_sha256": "b04e3c82a9ef8ba5e9edb0de8e30a3d8230019f8ce72a27e8e963d1558f2a719",
+    "zip_sha256": "1efc79f4d1567d6b6e79453240a24323f1dac4900f8e05b2de4826a06094103c"
   },
-  "next_action": "Check GitHub Actions 42781549071 job and artifact; do not dispatch same work again; if success, verify SHA logs and delivery; if failure, record reason and move to next eligible work after up to 2 safe attempts",
+  "next_action": "Do NOT rerender Golden Stairs as new. Artistic and territorial commercial review pending; select next independent unfinished subject for production.",
   "no_new_paid_api": true,
   "do_not_duplicate": true
 }
