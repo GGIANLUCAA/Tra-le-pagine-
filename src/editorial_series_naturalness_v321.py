@@ -20,6 +20,15 @@ from editorial_human_naturalness_v1 import review as script_review
 SCHEMA = "editorial-series-naturalness-v321"
 MAX_FILES = 40
 
+# Suggestions, not prohibitions: a lyrical ending can be legitimate.
+# Only the LAST SPOKEN SENTENCE is checked, never earlier quotations or context.
+ABSTRACT_ENDING_PATTERNS = [
+    r"\b(?:ci|ti|vi)\s+invita\s+a\b",
+    r"\bquanto\s+sia\s+(?:fragile|importante|compless[oa])\b",
+    r"\b(?:la|il)\s+(?:sua\s+)?forza\s+nasce\b",
+    r"\bsta\s+(?:gran\s+parte\s+)?della\s+(?:sua|loro)\s+forza\b",
+]
+
 
 def _normalize(text):
     return " ".join(re.findall(r"[^\W_]+(?:['’][^\W_]+)?", text.lower(), re.UNICODE))
@@ -110,6 +119,12 @@ def inspect_paths(recipes, renderers=None):
             warnings.append(_issue("LEGACY_STOCK_ENDING","episode",
                 "Per eventuale NUOVO copione: finale specifico dell'opera; NON toccare il WAV attuale.",
                 f"{ep['title']}: {', '.join(ep['v320_blocking'])}",[ep["recipe_path"]]))
+        if any(re.search(pattern, ep["ending"], re.IGNORECASE | re.UNICODE)
+               for pattern in ABSTRACT_ENDING_PATTERNS):
+            warnings.append(_issue("ABSTRACT_STOCK_LIKE_ENDING","episode",
+                "Rileggere il finale: preferire gesto, immagine o fatto documentato. "
+                "Non cancellare automaticamente una chiusa intenzionalmente poetica.",
+                f"{ep['title']}: {ep['ending'][:160]}",[ep["recipe_path"]]))
 
     pairs=[]
     for i,a in enumerate(episodes):
