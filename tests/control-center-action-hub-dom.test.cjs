@@ -33,6 +33,10 @@ const dom=new JSDOM(html,{url:'https://artvision-control-preview.600led.workers.
    if(String(url).startsWith('/api/progress?run=880'))
       return {ok:true,json:async()=>({schema:'studio-github-progress-v12',ok:true,run_id:880,
       telemetry_version:'v13',step_fraction_percent:50,step_count:4,steps_completed:2,
+      match_status:'exact_queue_run_id',
+      linked_video:{work_id:'simberg_garden_1896',work_title:'The Garden of Death',artist:'Hugo Simberg',
+      slot_id:'critico_standard',slot_label:'Critico',filename:'SIMBERG_CRITICO.mp4',preview_ready:true,
+      gold_approved:false},
       phase:'Render reale',current_phase_group:'Elaborazione video',
       current_phase_elapsed_seconds:380,elapsed_seconds:940,
       latest_observation_at:new Date().toISOString(),last_step_at:new Date(Date.now()-2*60000).toISOString(),
@@ -63,6 +67,10 @@ const tick=()=>new Promise(r=>setTimeout(r,50));
  assert.match(d.querySelector('.productionRun').textContent,/Storico insufficiente/);
  assert.match(d.querySelector('.productionRun').textContent,/Render reale/);
  assert.match(d.querySelector('.productionRun').textContent,/Elaborazione video/);
+ assert.match(d.querySelector('.productionVideoLink')?.textContent||d.querySelector('.progressVideoLink').textContent,
+   /The Garden of Death/);
+ assert(d.querySelector('.progressVideoLink a').href.endsWith('/media/SIMBERG_CRITICO.mp4'));
+ assert.match(d.querySelector('.progressVideoLink').textContent,/nessuna approvazione artistica/i);
  assert.match(d.querySelector('.productionRun').textContent,/FINE STIMATA DEL WORKFLOW/);
  assert(d.querySelector('.progressExtra'),'Recent phase timeline is expandable');
  d.querySelector('.progressExtra').open=true;
