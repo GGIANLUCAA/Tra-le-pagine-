@@ -87,6 +87,17 @@ test("observed phase history and inactivity are diagnostic, not evidence of an M
  assert.match(failed.attention_reason,/fallito/);
 });
 const source=html.match(/<script>([\s\S]*?)<\/script>/)[1];
+test("V13 clock window appears only with a valid interval and honest wording",()=>{
+ const ui=runInNewContext(fe+"\n({progressV13Window,progressV13Age});",{
+  Date,Intl,Math,Number,PROJECT_LABELS:{},state:{productionProgress:{}}
+ });
+ const asof=new Date(Date.now()-30000).toISOString();
+ const label=ui.progressV13Window({available:true,min_seconds:600,max_seconds:1800},asof);
+ assert.match(label,/Orario indicativo:/);
+ assert.match(label,/–/);
+ assert.equal(ui.progressV13Window({available:false},asof),"");
+ assert(ui.progressV13Age(new Date(Date.now()-360000).toISOString())>=6);
+});
 test("V13 UI labels estimate scope and explains what to do",()=>{
  assert.match(fe,/FINE STIMATA DEL WORKFLOW/);
  assert.match(fe,/non del video/);
