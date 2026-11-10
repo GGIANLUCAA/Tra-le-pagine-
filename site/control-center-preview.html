@@ -225,6 +225,12 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 
 
 /* V13 · eleganza museale, accessibilità touch, dati di avanzamento verificabili. */
+.progressVideoLink{border:1px solid #756246;border-radius:10px;padding:11px 12px;background:#242722;margin:10px 0}
+.progressVideoLink span{display:block;font-size:9px;letter-spacing:.5px;color:#cfb584}
+.progressVideoLink strong{display:block;color:#f3ddbb;font-size:13px;margin:5px 0}
+.progressVideoLink small{display:block;color:#c7c6b8;font-size:10px}
+.progressVideoLink a{display:inline-block;padding:9px 0;color:#f3ce8d;font-weight:700;font-size:11px;min-height:36px}
+
 .progressWindow{padding:8px 10px;border-radius:8px;border:1px solid #6f654b;font-size:11px;line-height:1.5;color:#dfcfb3;background:#262b2f;margin:3px 0 8px}
 .progressV13Panel{background:linear-gradient(125deg,#191f26,#202a32);border-color:#827257}
 .progressV13Panel .productionHead{align-items:flex-start}
@@ -928,6 +934,21 @@ function progressCard(run){
     '</span><h4>'+escapeText(run.name||"Attività GitHub")+'</h4>'+
     '<p class="productionStatus">'+escapeText(status)+'</p></div>'+
     '<span class="productionBadge">'+(isPreparation?'Attività preparatoria':'Workflow GitHub')+'</span></div>';
+  if(p?.match_status==="exact_queue_run_id"&&p.linked_video){
+    const v=p.linked_video;
+    html+='<div class="progressVideoLink"><span>VIDEO COLLEGATO CON ID RUN DELLA CODA</span>'+
+      '<strong>'+escapeText(v.work_title||"Opera")+' · '+escapeText(v.slot_label||"Variante")+'</strong>'+
+      '<small>'+(v.preview_ready?"Scheda dichiarata accessibile nel catalogo":"MP4 non confermato sul sito")+
+      ' · nessuna approvazione artistica implicita</small>';
+    if(v.preview_ready&&/^[\\w ().-]{1,190}\\.mp4$/i.test(v.filename||"")){
+      html+='<a href="https://video-library-studio.600led.workers.dev/media/'+
+        encodeURIComponent(v.filename)+'" target="_blank" rel="noopener noreferrer">Guarda il file ↗</a>';
+    }
+    html+='</div>';
+  }else if(p?.match_status==="ambiguous"){
+    html+='<p class="progressAlert">Questa run risulta associata a più varianti nel registro. '+
+      'Non posso assegnare la barra a un singolo video.</p>';
+  }
   if(stale)html+='<p class="progressAlert">Ultimo controllo non recente: percentuale e tempi potrebbero essere cambiati.</p>';
   if(known){
     html+='<div class="progressMeasure"><span>Passaggi GitHub conclusi</span><strong>'+
