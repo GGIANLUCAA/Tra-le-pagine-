@@ -1,0 +1,40 @@
+{
+  "schema": "human-narrative-quality-v320",
+  "since": "2026-11-10",
+  "scope": [
+    "all_new_videos",
+    "artvision_critico",
+    "artvision_cinema",
+    "storia_rivive",
+    "wow_lab",
+    "libri",
+    "documentario",
+    "giuliano",
+    "social_copy",
+    "on_screen_text"
+  ],
+  "directive": "A narrative and its montage must be specific, grounded, naturally voiced, and free of repetitive AI-like templates.",
+  "editorial_priority": "mandatory_for_new_work",
+  "source": "docs/REGOLA_GLOBALE_V320_NATURALEZZA_AUTORIALE_20261110.md",
+  "pre_new_google_tts_gate": "src/editorial_human_naturalness_v1.py",
+  "stop_new_tts_if": [
+    "STOCK_FINAL_QUESTION",
+    "STOCK_FINAL_INVITATION",
+    "STOCK_UNIVERSAL_MORAL"
+  ],
+  "allow_meaningful_final_questions": true,
+  "manual_review": [
+    "real_audio_whole",
+    "real_video_whole",
+    "image_to_phrase_sync",
+    "episode_specific_closing",
+    "repeat_pattern_vs_last_3_5_episodes"
+  ],
+  "no_fake_human_identity_claim": true,
+  "no_fact_invention": true,
+  "preexisting_voice_cache_unchanged": true,
+  "do_not_edit_approved_masters": true,
+  "existing_editorial_rules_json_sha_unchanged": true,
+  "never_automatic_approval_or_publication": true,
+  "no_new_paid_calls": true
+}
