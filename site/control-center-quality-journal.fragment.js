@@ -110,3 +110,14 @@ function unblockContext(){
     detail:"Prima recupera i file già prodotti, poi verifica quali varianti mancano davvero.",
     action:"unblock",items:candidates,run:null};
 }
+
+function actionUnblockBanner(){
+  var candidates=unblockCandidates();
+  var available=source("queue")&&source("catalog");
+  return '<section class="actionUnblock"><div><strong>↻ Sblocca ciò che è possibile</strong>'+
+    '<p>'+(available?
+      candidates.length+' varianti da verificare, partendo dal recupero degli MP4 già prodotti. Nessun nuovo render parte da qui.':
+      'Fonti non disponibili: non posso identificare quali video mancano davvero.')+
+    '</p></div><button type="button" class="actionPrimary" data-action-unblock '+
+    (available&&candidates.length?'':'disabled')+'>Prepara il recupero con GPT</button></section>';
+}
