@@ -15,7 +15,10 @@ const work={id:'simberg_garden_1896',title:'The Garden of Death',artist:'Hugo Si
    filename:null,qa:{gold_approved:false}}
  ]};
 const data={asof:'2026-11-10T18:00:00Z',sources:{github:{ok:true},queue:{ok:true},catalog:{ok:true}},
- runs:[],works:[work],health:[
+ runs:[{id:880,name:'ArtVision 4×1 · Produzione',project:'artvision',head_branch:'main',
+  status:'in_progress',conclusion:null,event:'workflow_dispatch',workflow_id:70,
+  run_started_at:'2026-11-10T18:00:00Z',updated_at:'2026-11-10T18:05:00Z',
+  html_url:'https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/880'}],works:[work],health:[
   {id:'artvision',state:'unobserved',observed_count:0,active_count:0,issues:0},
   {id:'storia',state:'observed_success',observed_count:1,active_count:0,issues:0},
   {id:'wow',state:'unknown',observed_count:0,active_count:0,issues:0}
@@ -27,6 +30,11 @@ const dom=new JSDOM(html,{url:'https://artvision-control-preview.600led.workers.
  runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){
   w.fetch=async(url,init={})=>{
    calls.push({url:String(url),method:init.method||'GET'});
+   if(String(url).startsWith('/api/progress?run=880'))
+      return {ok:true,json:async()=>({schema:'studio-github-progress-v12',ok:true,run_id:880,
+      step_fraction_percent:50,step_count:4,steps_completed:2,phase:'Render reale',
+      asof:'2026-11-10T18:05:30Z',eta:{available:false,reason:'Storico insufficiente'},
+      percent_is_video_completion:false,mp4_complete_verified:false,video_progress_known:false})};
    if(String(url).startsWith('/api/status'))return {ok:true,json:async()=>data};
    return {ok:false,status:404,json:async()=>({ok:false})};
   };
@@ -43,6 +51,12 @@ const d=dom.window.document;
 const tick=()=>new Promise(r=>setTimeout(r,50));
 (async()=>{
  await tick();
+ const bar=d.querySelector('.productionTrack[role="progressbar"]');
+ assert(bar,'Home must show a real GitHub steps bar');
+ assert.equal(bar.getAttribute('aria-valuenow'),'50');
+ assert.match(d.querySelector('.productionRun').textContent,/NON del video/);
+ assert.match(d.querySelector('.productionRun').textContent,/Storico insufficiente/);
+ assert.match(d.querySelector('.productionRun').textContent,/Render reale/);
  d.querySelector('.bottom [data-page="issues"]').click();
  await tick();
  assert(d.querySelector('.actionTop'),'Immediate action panel exists');
