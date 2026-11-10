@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Preflight: only new standalone Destruction, no duplicates or prior slot rewrites
+      - name: "Preflight: only new standalone Destruction, no duplicates or prior slot rewrites"
         shell: bash
         run: |
           set -euo pipefail
