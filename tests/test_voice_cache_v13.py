@@ -71,6 +71,27 @@ class VoiceCacheTests(unittest.TestCase):
             self.assertTrue(report["requires_sync_review"])
             self.assertAlmostEqual(timed[-1][2], 1.0)
 
+    def test_new_voice_is_blocked_before_google_when_finale_is_a_template(self):
+        stock = ("Il dipinto mostra molti mostri e figure.\n\n"
+                 "E il quadro ci lascia una domanda: che cosa c'è dentro di noi?")
+        with tempfile.TemporaryDirectory() as d, patch.dict(os.environ, {"GEMINI_API_KEY": "DO_NOT_USE_REAL_KEY"}):
+            with self.assertRaisesRegex(RuntimeError, "EDITORIAL_V320_REVISION_REQUIRED"):
+                voice.synthesize(stock, d)
+            report = json.loads((Path(d) / "EDITORIAL_NATURALNESS_V320.json").read_text())
+            self.assertEqual(report["status"], "revision_required")
+            self.assertFalse((Path(d) / "VOCE.wav").exists())
+            self.assertEqual(report["new_tts_calls"], 0)
+
+    def test_legacy_verified_voice_cache_bypasses_new_preflight(self):
+        with tempfile.TemporaryDirectory() as d, patch.dict(os.environ, {}, clear=True):
+            self.seed(d)
+            with patch.object(voice, "_human_tone_pre_tts",
+                              side_effect=AssertionError("Do not recheck existing verified WAV")):
+                data, timing = voice.synthesize(self.text, d)
+            self.assertEqual(len(data), 24000)
+            self.assertTrue(timing)
+            self.assertFalse((Path(d) / "EDITORIAL_NATURALNESS_V320.json").exists())
+
     def test_invalid_or_missing_manifest_never_adopts_unknown_audio(self):
         with tempfile.TemporaryDirectory() as d:
             self.seed(d)
