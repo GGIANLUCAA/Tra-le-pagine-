@@ -1,0 +1,73 @@
+name: "GIULIANO V6 — documentary final render"
+on:
+  push:
+    branches:
+      - feature/giuliano-v6-full-film-20261110
+    paths:
+      - "giuliano/terracotta_v6/**"
+      - ".github/workflows/giuliano-v6-documentary.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: giuliano-v6-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ARTVISION_ASR_MODEL: base
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Preflight and no paid voice without assets
+        run: |
+          python -m py_compile giuliano/terracotta_v6/render_documentary_v6.py
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path("giuliano/terracotta_v6")
+          x=json.loads((p/"SHOTS_DOCUMENTARY_V6.json").read_text())
+          lines=(p/"VOCE_DOCUMENTARIO_V6.txt").read_text().strip().splitlines()
+          assert len(lines)==len(x["shots"])==34
+          assert all(a["text"]==b for a,b in zip(x["shots"],lines))
+          assert all("GIULIANO" not in x["shots"][i]["overlay"] for i in range(len(lines)))
+          print("V6_PRECHECK_OK",len(lines))
+          PY
+          test -n "$GEMINI_API_KEY" || (echo "No Google voice key. No fake replacement." && exit 2)
+      - name: Install cinematic renderer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Render full V6 documentary and verify master and mobile
+        run: python giuliano/terracotta_v6/render_documentary_v6.py
+      - name: Upload final real MP4 and ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TERRACOTTA_V6_DOCUMENTARY_FULL_MP4_ZIP
+          path: |
+            output/giuliano_terracotta_v6/GIULIANO_TERRACOTTA_V6_CINEMATIC.mp4
+            output/giuliano_terracotta_v6/GIULIANO_TERRACOTTA_V6_ANDROID.mp4
+            output/giuliano_terracotta_v6/GIULIANO_TERRACOTTA_V6_COMPLETO.zip
+            output/giuliano_terracotta_v6/COVER_V6.jpg
+            output/giuliano_terracotta_v6/QA_V6.json
+            output/giuliano_terracotta_v6/CONTACT_SHEET_V6.jpg
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sources on error for safe recovery
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TERRACOTTA_V6_RECOVERY_NOT_A_FINISHED_VIDEO
+          path: |
+            output/giuliano_terracotta_v6/audio/
+            output/giuliano_terracotta_v6/PHOTO_CREDITS_V6.json
+            output/giuliano_terracotta_v6/media/source_*.jpg
+          if-no-files-found: ignore
+          retention-days: 14
