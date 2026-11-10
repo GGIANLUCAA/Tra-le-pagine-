@@ -12,6 +12,9 @@ Trasformare il feedback del proprietario in una regola utile per i video futuri,
 5. La correzione viene prima **proposta / provata**, poi verificata con MP4 prima/dopo, SHA, QA e approvazione owner. Solo una regola esplicitamente `owner_approved` oppure `verified_effective` è propagata ai video futuri. L'approvazione owner di una regola generale esistente NON è prova empirica che sia già migliorata su un nuovo MP4.
 6. La cronologia locale è per dispositivo/browser; la memoria **condivisa tra produttori** è il file GitHub dopo l'intervento di GPT. Il semplice pulsante «Salva» non modifica il repository, e un link chat associato rimane solo sul browser.
 
+## Anche La Storia Rivive, WOW LAB e gli altri format
+Nella sezione «Ripara GPT» compare anche «Altri video recenti», alimentata **soltanto dai file identificabili nel campione del catalogo**. Il pulsante «Annota / migliora» genera un ID stabile dal file MP4, associa una chat dedicata e riutilizza la stessa cronologia e il processo di registrazione della correzione. I file che il catalogo segnala offline offrono invece «Recupera». Un episodio non elencato qui **non deve essere dichiarato mancante**: cercarlo nella coda/owner della serie. Anche questa funzione è sola lettura verso i server.
+
 ## Contratto del registro
 - **Fonte:** `quality/STUDIO_VIDEO_LESSONS_V1.json`.
 - **Lettore + validatore:** `src/studio_quality_memory_v1.py`.
