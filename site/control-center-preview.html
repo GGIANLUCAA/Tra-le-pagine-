@@ -524,7 +524,7 @@ function renderRepairDialog(){
   var fast=document.getElementById("repairCopyOpen");
   fast.href=android?androidChatGPTIntent(preferred||"https://chatgpt.com/",true):(preferred||"https://chatgpt.com/");
   fast.textContent=preferred?"1 · Copia e apri la chat collegata":"1 · Copia e apri ChatGPT";
-  document.getElementById("repairAdvancedChat").open=false;
+
   document.getElementById("repairChatStatus").textContent=preferred?
     "Chat privata collegata nel browser. La diagnosi va comunque incollata manualmente.":"Nessun collegamento: puoi salvare la chat principale o aprire ChatGPT.";
 }
@@ -534,6 +534,9 @@ async function openRepairDialog(ctx){
   document.getElementById("repairJobs").textContent=ctx.type==="run"&&ctx.runId?
     "Cerco i job e gli step falliti su GitHub…":"Sono disponibili i dati riportati nel registro. Nessuna diagnosi automatica è stata eseguita.";
   document.getElementById("repairCopyStatus").textContent="";
+  document.getElementById("repairAdvancedPrompt").open=false;
+  document.getElementById("repairAdvancedChat").open=false;
+  document.getElementById("repairInstantStatus").textContent="";
   renderRepairDialog();
   var dialog=document.getElementById("repairDialog");
   if(!dialog.open)dialog.showModal();
