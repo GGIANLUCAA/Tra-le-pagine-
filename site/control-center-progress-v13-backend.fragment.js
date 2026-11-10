@@ -99,3 +99,25 @@ function productionProgressUpgradeV13(old,run,jobs,runs,now=Date.now()){
     mp4_complete_verified:false,owner_approved:false,
     percent_is_video_completion:false};
 }
+
+function progressVideoLinkV13(status,run){
+  if(!status?.sources?.queue?.ok||!Array.isArray(status.works))return {match_status:"unavailable",linked_video:null};
+  const matches=[];
+  for(const w of status.works){
+    for(const v of w.variants||[]){
+      if(v&&Number.isSafeInteger(v.run_id)&&v.run_id===run.id){
+        matches.push({work_id:String(w.id||"").slice(0,120),
+          work_title:String(w.title||"").slice(0,180),
+          artist:String(w.artist||"").slice(0,100),
+          slot_id:String(v.id||"").slice(0,55),
+          slot_label:String(v.label||"").slice(0,100),
+          filename:String(v.filename||"").slice(0,190),
+          preview_ready:v.preview_ready===true,
+          gold_approved:v.qa?.gold_approved===true});
+      }
+    }
+  }
+  if(matches.length===1)return {match_status:"exact_queue_run_id",linked_video:matches[0]};
+  if(matches.length>1)return {match_status:"ambiguous",linked_video:null};
+  return {match_status:"no_exact_match",linked_video:null};
+}
