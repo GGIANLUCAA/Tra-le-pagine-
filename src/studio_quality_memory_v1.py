@@ -26,7 +26,7 @@ PROJECT_TO_FORMATS = {
     "storia": {"storia_rivive"},
     "wow": {"wow"},
 }
-ID = re.compile(r"^[a-z0-9][a-z0-9_-]{3,95}$")
+ID = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_-]{3,95}$")
 SHA = re.compile(r"^[0-9a-f]{64}$")
 SLOT = frozenset({"critico_standard", "critico_museum", "cinema_standard", "cinema_museum"})
 CATEGORIES = frozenset({"direction", "pacing", "audio", "visual", "authenticity",
