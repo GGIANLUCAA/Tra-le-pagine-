@@ -171,10 +171,12 @@ def render_html(report, folder):
         blocks.append('<section><h2>'+heading+'</h2><ul>'+(items or '<li>Nessuna segnalazione</li>')+'</ul></section>')
     questions = ''.join('<li>'+html.escape(q)+'</li>' for q in report['artistic_review_questions'])
     previews = ''.join('<img loading="lazy" alt="Campione reale" src="'+html.escape(f.name)+'">' for f in sorted(folder.glob('REVIEW_FRAME_*.jpg')))
+    if (folder/'REGIA_REAL_MP4_V1'/'REGIA_REAL_MP4_CONTACT_SHEET.jpg').is_file():
+        previews += '<img loading="lazy" alt="Campioni del vero MP4, non approvazione artistica" src="REGIA_REAL_MP4_V1/REGIA_REAL_MP4_CONTACT_SHEET.jpg">'
     return f'''<!doctype html><html lang="it"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revisione V17</title><style>body{{font:16px system-ui;background:#111827;color:#f8fafc;max-width:820px;margin:auto;padding:20px;line-height:1.5}}section{{background:#1e293b;border-radius:14px;padding:16px;margin:14px 0}}h2{{font-size:1.15rem}}li{{margin:8px 0}}.frames{{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}}img{{width:100%;border-radius:7px}}@media(max-width:560px){{.frames{{grid-template-columns:repeat(2,1fr)}}}}</style><h1>Regia e qualità V17</h1><p>{html.escape(report['format'])} · {html.escape(report['status'])}</p><p>Questo controllo non certifica bellezza, accuratezza storica o pertinenza visiva. Revisione artistica ancora obbligatoria.</p>{''.join(blocks)}<section><h2>Domande per il regista</h2><ul>{questions}</ul></section><section><h2>Anteprime reali</h2><div class="frames">{previews}</div></section></html>'''
 
 
-def inspect(video=None, project=None, out='output/quality-v17', format_name=None, policy_path=POLICY, regia_plan=None):
+def inspect(video=None, project=None, out='output/quality-v17', format_name=None, policy_path=POLICY, regia_plan=None, real_mp4_audit=False):
     folder = Path(out)
     folder.mkdir(parents=True, exist_ok=True)
     policy = json.loads(Path(policy_path).read_text(encoding='utf-8'))
@@ -203,6 +205,24 @@ def inspect(video=None, project=None, out='output/quality-v17', format_name=None
         facts.append({'regia_preflight':regia_report['status'],
                       'shots_checked':regia_report.get('summary',{}).get('shots_checked'),
                       'actual_scene_semantics_verified':False})
+    if real_mp4_audit:
+        if not video:
+            blocking.append(notice('REGIA_REAL_MP4_REQUIRED',
+                                   'Serve un vero MP4 locale: nessuna revisione dai soli metadati'))
+        else:
+            try:
+                from src.studio_regia_real_mp4_v1 import analyze as audit_real_mp4
+            except ModuleNotFoundError:
+                from studio_regia_real_mp4_v1 import analyze as audit_real_mp4
+            actual = audit_real_mp4(Path(video), folder/'REGIA_REAL_MP4_V1')
+            for issue in actual['warnings']:
+                warnings.append(notice('REGIA_REAL_'+issue['code'],
+                                      issue['detail']+' (t≈'+str(issue['at_s'])+'s)'))
+            facts.append({'regia_actual_mp4_sha256': actual['source']['sha256'],
+                          'regia_actual_mp4_duration_s': actual['source']['duration_s'],
+                          'regia_real_samples_checked': actual['sampling']['frames_checked'],
+                          'regia_actual_mp4_status': actual['status'],
+                          'regia_actual_artistic_approved': False})
     report = {'schema':'quality-director-v17','format':name,
               'status':'technical_blocked' if blocking else ('needs_review_with_warnings' if warnings else 'needs_artistic_review'),
               'video':str(video) if video else None,'blocking':blocking,'warnings':warnings,
@@ -220,9 +240,10 @@ def main():
     ap.add_argument('--project',type=Path)
     ap.add_argument('--format',dest='format_name')
     ap.add_argument('--regia-plan', type=Path, help='Shotlist con timecode per preflight di regia')
+    ap.add_argument('--real-mp4-audit', action='store_true', help='Campiona un vero MP4 senza modificarlo')
     ap.add_argument('--out',type=Path,default=Path('output/quality-v17'))
     args = ap.parse_args()
-    report = inspect(video=args.video,project=args.project,out=args.out,format_name=args.format_name,regia_plan=args.regia_plan)
+    report = inspect(video=args.video,project=args.project,out=args.out,format_name=args.format_name,regia_plan=args.regia_plan,real_mp4_audit=args.real_mp4_audit)
     print(json.dumps({'status':report['status'],'blocking':len(report['blocking']),'warnings':len(report['warnings'])},ensure_ascii=False))
     return 2 if report['blocking'] else 0
 
