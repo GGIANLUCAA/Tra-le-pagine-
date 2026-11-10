@@ -97,8 +97,8 @@ def sentence_index(timed, spoken_s):
     # exists, without cutting away while the previous sentence is being spoken.
     ends=[r[2] for r in timed]
     ix=min(len(timed)-1,bisect.bisect_right(ends,spoken_s))
-    if ix+1<len(timed) and ends[ix]<spoken_s:
-        next_start=timed[ix+1][1]
-        if next_start-spoken_s<=.15:
-            ix+=1
+    if ix>0 and spoken_s < timed[ix][1]-.15:
+        # During a real pause, retain the previous frame until just before
+        # the next phrase, rather than changing the picture too early.
+        return ix-1
     return ix
