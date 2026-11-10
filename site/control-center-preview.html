@@ -940,7 +940,7 @@ function progressCard(run){
       '<strong>'+escapeText(v.work_title||"Opera")+' · '+escapeText(v.slot_label||"Variante")+'</strong>'+
       '<small>'+(v.preview_ready?"Scheda dichiarata accessibile nel catalogo":"MP4 non confermato sul sito")+
       ' · nessuna approvazione artistica implicita</small>';
-    if(v.preview_ready&&/^[\\w ().-]{1,190}\\.mp4$/i.test(v.filename||"")){
+    if(v.preview_ready&&/^[\w ().-]{1,190}\.mp4$/i.test(v.filename||"")){
       html+='<a href="https://video-library-studio.600led.workers.dev/media/'+
         encodeURIComponent(v.filename)+'" target="_blank" rel="noopener noreferrer">Guarda il file ↗</a>';
     }
