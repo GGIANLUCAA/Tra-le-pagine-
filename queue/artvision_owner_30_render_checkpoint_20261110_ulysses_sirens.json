@@ -8,7 +8,7 @@
     "year": 1891,
     "selection_order": 7,
     "variant": "cinema_standard",
-    "state": "RUNNING_NOT_YET_VERIFIED"
+    "state": "RENDERED_TECHNICALLY_VERIFIED_ARTISTIC_PENDING"
   },
   "source": {
     "commons_page": "https://commons.wikimedia.org/wiki/File:WATERHOUSE_-_Ulises_y_las_Sirenas_%28National_Gallery_of_Victoria%2C_Melbourne%2C_1891._%C3%93leo_sobre_lienzo%2C_100.6_x_202_cm%29.jpg",
@@ -20,30 +20,35 @@
       11001,
       5386
     ],
-    "download_verified": false,
+    "download_verified": true,
     "license_claim": "Wikimedia Commons PD-Art / Public Domain Mark 1.0",
-    "ngv_terms": "Full artwork presented opening/ending; final commercial rights pending"
+    "ngv_terms": "Full artwork presented opening/ending; final commercial rights pending",
+    "sha256": "8483f88c3e840289d134b8330ef6f2fc6af3f3d427b39d9f9763d481759e28cd"
   },
   "github": {
     "run_id": 42880155469,
     "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42880155469",
     "workflow": ".github/workflows/artvision-owner-ulysses-sirens-cinema-v1.yml",
-    "last_status": "in_progress"
+    "last_status": "completed_success",
+    "artifact_id": 13793451629,
+    "artifact_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42880155469/artifacts/13793451629",
+    "artifact_size_bytes": 149030072
   },
   "counts": {
-    "new_verified_mp4_this_cycle": 0,
+    "new_verified_mp4_this_cycle": 1,
     "primary_queue_additions": 0,
-    "secondary_queue_new_variant_verified": false
+    "secondary_queue_new_variant_verified": true
   },
   "qa": {
-    "full_ffmpeg_audio_video": "PENDING",
-    "SHA256": "PENDING",
-    "ZIP_CRC_READBACK": "PENDING",
+    "full_ffmpeg_audio_video": "PASS",
+    "SHA256": "2403b1f1131396368fa9a0ed2b65f1193206b5016bdce720735f9fc7606c1d05",
+    "ZIP_CRC_READBACK": "PASS",
     "artistic_review": "PENDING",
     "commercial_rights": "PENDING",
     "published": false,
-    "gold": false
+    "gold": false,
+    "ZIP_SHA256": "54f978d175fc023681c4aee8c2cd2b8ddeedc2a2a78f29e8fd1cd66304bd5bd4"
   },
-  "next_action": "Inspect run 42880155469 and artifact; update only on actual FFmpeg/hash/CRC pass. No duplicate rerender; max two attempts if blocked.",
+  "next_action": "No more renders for Ulysses as new. Full-speed visual QA and territorial commercial rights pending. Select a different independent new work in next cycle.",
   "no_paid_api": true
 }
