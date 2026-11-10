@@ -77,7 +77,7 @@ const tick=()=>new Promise(r=>setTimeout(r,50));
  assert.equal(saved[0].status,'reported','Unverified note cannot be treated as a fix');
  assert.equal(saved[0].owner_requested_generalization,true);
  assert.match(d.querySelector('#repairPrompt').value,/feedback_/);
- assert.match(d.querySelector('#repairPrompt').value,/non ancora registrate nel repository/i);
+ assert.match(d.querySelector('#repairPrompt').value,/VERIFICARE SE GIA REGISTRATE NEL REPOSITORY/i);
  assert.match(d.querySelector('#qualityJournalRows').textContent,/Voglio completare senza creare duplicati/);
 
  const action=d.querySelector('#repairCopyOpen');
