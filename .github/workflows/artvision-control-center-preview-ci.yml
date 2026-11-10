@@ -11,6 +11,7 @@ on:
       - scripts/build-control-center-preview.mjs
       - tests/control-center-preview.test.mjs
       - tests/control-center-owner-action-hub.test.mjs
+      - tests/control-center-action-hub-dom.test.cjs
       - site/control-center-action-hub.fragment.js
       - .github/workflows/artvision-control-center-preview-ci.yml
   pull_request:
@@ -22,6 +23,7 @@ on:
       - scripts/build-control-center-preview.mjs
       - tests/control-center-preview.test.mjs
       - tests/control-center-owner-action-hub.test.mjs
+      - tests/control-center-action-hub-dom.test.cjs
       - site/control-center-action-hub.fragment.js
       - .github/workflows/artvision-control-center-preview-ci.yml
   workflow_dispatch:
@@ -41,6 +43,10 @@ jobs:
           node-version: '22'
       - name: Test UI, status and file probe without network/API credits
         run: node --test tests/control-center-preview.test.mjs tests/control-center-owner-action-hub.test.mjs
+      - name: Android-like UI interaction smoke without real API calls
+        run: |
+          npm install --prefix /tmp/control-v10 --silent --no-audit --no-fund jsdom@26
+          node tests/control-center-action-hub-dom.test.cjs
       - name: Build isolated preview bundle, no deployment
         run: |
           node scripts/build-control-center-preview.mjs
