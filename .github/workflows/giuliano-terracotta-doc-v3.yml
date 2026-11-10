@@ -5,6 +5,12 @@ on:
     paths:
       - "giuliano/terracotta_v4/**"
       - ".github/workflows/giuliano-terracotta-doc-v3.yml"
+  pull_request:
+    branches: ["feature/giuliano-terracotta-v3-documentario-20261109"]
+    types: [opened, synchronize, reopened]
+    paths:
+      - "giuliano/terracotta_v4/**"
+      - ".github/workflows/giuliano-terracotta-doc-v3.yml"
   workflow_dispatch:
 permissions:
   contents: read
