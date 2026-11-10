@@ -144,6 +144,41 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 .genreHelp{color:#c7b9a2;font-size:11px;line-height:1.6}
 @media(max-width:900px){.genreGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.genreGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.genreCard{padding:13px;min-height:116px}.genreItem{padding:10px}.genreItems{grid-template-columns:1fr}}
+
+/* V10: immediate, guided repair and production requests. Responsive and no API writes. */
+.actionTop{border:1px solid #967548;background:linear-gradient(125deg,#382c21,#161f2a);padding:17px;border-radius:17px;margin:0 0 16px}
+.actionTop h3{font:normal 26px Georgia,serif;margin:6px 0}.actionTop p{color:#d2c5b0;font-size:12px}
+.actionProjects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.actionProject{background:#131b25;border:1px solid #776347;border-radius:12px;padding:14px;display:grid;gap:8px;align-content:start}
+.actionProject strong{font-size:15px;color:#f7dec0}.actionProject span{color:#dbbd8e;font-size:12px}.actionProject small{color:#a7b3bd;font-size:11px;min-height:34px}
+.actionPrimary,.actionSecondary{border:1px solid #c8a673;border-radius:10px;padding:10px 12px;min-height:44px;font-weight:700;font-size:12px}
+.actionPrimary{background:#dbba88;color:#231a13}.actionSecondary{background:#2c333c;color:#ead4b2}
+.actionFine{margin:10px 0 0!important;font-size:11px!important}
+.actionHead{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.actionFilters{display:flex;gap:6px;flex-wrap:wrap}.actionFilters button{background:#252e36;color:#e3d1b5;border:1px solid #716350;border-radius:25px;padding:8px 10px;min-height:40px}
+.actionFilters button.on{background:#b99461;color:#201b16}
+.actionWork{border:1px solid #57606a;background:#171f28;border-radius:12px;margin:10px 0;overflow:hidden}
+.actionWork>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:13px;cursor:pointer;list-style:none;min-height:56px}
+.actionWork>summary::-webkit-details-marker{display:none}.actionWorkName{font-size:14px;font-weight:750;color:#f7e7cc}.actionWorkName small{display:block;color:#b9c6d0;font-weight:400;font-size:10px}
+.actionCount{font-size:11px;color:#d6be96;text-align:right}
+.actionSlots{display:grid;gap:0;border-top:1px solid #ffffff22}
+.actionSlot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-bottom:1px solid #ffffff14}
+.actionInfo{display:grid;gap:5px;min-width:0}.actionInfo strong{font-size:12px}.actionInfo small{color:#bcc7cb;font-size:11px}
+.actionFlag{display:inline-block;width:max-content;max-width:100%;font-size:10px;color:#e5cfad;border:1px solid #8b7658;border-radius:20px;padding:3px 7px}
+.actionFlag.ready{color:#a3e3ba;border-color:#578469}.actionFlag.offline{color:#efaaa3;border-color:#98595d}
+.actionSlotButtons{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.actionSlotButtons button{white-space:nowrap}.actionWorkFoot{padding:8px 12px}
+.repairInstant{border:1px solid #c19b64;border-radius:15px;padding:15px;background:linear-gradient(135deg,#382e22,#202a34)}
+.repairInstant h3{font:normal 23px Georgia,serif;margin:6px 0;color:#f3d7a6}.repairInstant p{font-size:12px;color:#d2c3aa;line-height:1.5}
+.repairInstant label{display:block;font-size:12px;font-weight:700;margin:11px 0}
+.repairInstant textarea{margin:7px 0;width:100%;resize:vertical;min-height:78px;background:#111822;border:1px solid #75664e;border-radius:10px;color:white;padding:11px;font:inherit}
+.repairDoNow{display:flex;justify-content:center;align-items:center;min-height:54px;background:#e0bb87;color:#22170d;border-radius:12px;font-size:14px;font-weight:800;text-align:center;padding:12px;text-decoration:none}
+.repairAdvanced{background:#19212b;border:1px solid #4e5962;border-radius:13px;margin:12px 0}
+.repairAdvanced>summary{cursor:pointer;padding:14px;color:#f2d7aa;font-size:12px;font-weight:750;min-height:45px}
+.repairAdvanced .repairSection{margin:0 10px 12px}
+@media(max-width:900px){.actionProjects{grid-template-columns:1fr}.actionProject small{min-height:0}}
+@media(max-width:550px){.actionSlot{display:grid}.actionSlotButtons{justify-content:stretch}.actionSlotButtons button{flex:1}.actionWork>summary{align-items:flex-start;flex-direction:column}.actionCount{text-align:left}.repairInstant{padding:12px}.repairDoNow{font-size:13px}}
+
 </style>
 </head>
 <body>
@@ -168,6 +203,14 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <div class="repairDialogHead"><div><strong id="repairTitle">Ripara con GPT</strong><small>Contesto verificabile pronto da usare in ChatGPT</small></div>
 <button type="button" class="playerClose" id="closeRepairDialog">✕ Chiudi</button></div>
 <div class="repairDialogBody">
+ <div class="repairInstant"><div class="overline">UNA COSA ALLA VOLTA</div><h3 id="repairActionTitle">Cosa fare adesso</h3>
+ <p id="repairNextStep">Il prossimo passo apparirà qui.</p>
+ <label>Vuoi aggiungere una precisazione? (facoltativo)
+ <textarea id="repairOwnerNote" rows="2" maxlength="1800" placeholder="Es.: la ripresa al minuto 0:15 taglia il personaggio; voglio sistemarla senza rifare il resto."></textarea></label>
+ <a class="repairDoNow" id="repairCopyOpen" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="https://chatgpt.com/">1 · Copia e apri la chat corretta</a>
+ <p class="repairExplain">2 · Incolla in ChatGPT. La chat verifica i dati e, se possibile e autorizzata, interviene. Questo pannello non avvia la produzione da solo.</p>
+ <p id="repairInstantStatus" class="repairStatus" role="status" aria-live="polite"></p></div>
+ <details class="repairAdvanced" id="repairAdvancedPrompt"><summary>Mostra diagnosi completa e prove GitHub (facoltativo)</summary>
  <div class="repairSection"><h3>1 · Il problema individuato</h3><p id="repairSummary">Caricamento dei dettagli…</p>
  <div id="repairJobs" class="repairExplain" role="status" aria-live="polite">Recupero dei job GitHub quando disponibili.</div></div>
  <div class="repairSection"><h3>2 · Messaggio per GPT già preparato</h3>
@@ -180,25 +223,28 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
  <a class="repairButton secondary" id="openNewGPT" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Apri ChatGPT nel browser ↗</a></div>
  <p id="androidAppHint" class="repairExplain" hidden>Se il pulsante apre ancora il browser: Android → Impostazioni → App → ChatGPT → Apri per impostazione predefinita → abilita i link supportati (chatgpt.com). In alcuni browser è necessario aprire prima il Centro di controllo direttamente in Chrome.</p>
  <p id="repairCopyStatus" class="repairStatus" role="status" aria-live="polite"></p></div>
- <div class="repairSection"><h3>3 · Collega la chat principale di questo progetto</h3>
+ </details><details class="repairAdvanced" id="repairAdvancedChat"><summary>Collega la chat giusta (solo la prima volta)</summary>
+ <div class="repairSection"><h3>3 · Associa una chat a questo video o progetto</h3>
  <p id="repairChatLabel"></p>
  <p>Incolla l'indirizzo privato della conversazione aperta nel browser, normalmente <code>chatgpt.com/c/…</code>.
  Non incollare un link di condivisione <code>/share/</code>: è un'istantanea, non la tua chat modificabile.</p>
  <select id="repairChatScope" class="chatInput" aria-label="Ambito del collegamento ChatGPT">
 <option value="project">Chat principale dell'intero progetto</option>
 <option value="workflow">Chat specifica di questo workflow</option>
+<option value="work">Chat di questo quadro</option>
+<option value="slot">Chat di questo video / variante</option>
 </select>
  <input id="repairChatInput" class="chatInput" type="url" inputmode="url" autocomplete="off" spellcheck="false"
  placeholder="https://chatgpt.com/c/…" aria-label="Indirizzo privato della chat principale">
  <div class="repairGrid"><button type="button" class="repairButton secondary" id="saveRepairChat">Salva chat sul telefono</button>
  <button type="button" class="repairButton secondary" id="forgetRepairChat">Scollega chat</button></div>
  <p id="repairChatStatus" class="repairStatus" role="status" aria-live="polite"></p></div>
- <p class="repairExplain">Il pannello non accede alle tue conversazioni private e non invia automaticamente richieste a GPT. Non modifica workflow o video. La riparazione parte soltanto quando incolli la diagnosi nella chat e la autorizzi.</p>
+ </details><p class="repairExplain">Il pannello non accede alle tue conversazioni private e non invia automaticamente richieste a GPT. Non modifica workflow o video. La riparazione parte soltanto quando incolli la diagnosi nella chat e la autorizzi.</p>
 </div></dialog>
 <script>
 (function(){
 "use strict";
-var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",selectedGenre:"Libri narrati",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project",quality:null,qualityAt:0,qualityError:null,qualityLoading:false,integrity:null,integrityAt:0,integrityError:null,integrityLoading:false};
+var state={page:"home",data:null,filter:"all",actionFilter:"needs",repairNote:"",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",selectedGenre:"Libri narrati",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project",quality:null,qualityAt:0,qualityError:null,qualityLoading:false,integrity:null,integrityAt:0,integrityError:null,integrityLoading:false};
 var site="https://video-library-studio.600led.workers.dev";
 function escapeText(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function date(x){if(!x)return "non disponibile";var d=new Date(x);return isNaN(+d)?"non disponibile":d.toLocaleString("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
@@ -281,7 +327,7 @@ function loadChats(){
     var json=JSON.parse(localStorage.getItem(CHAT_MAP_STORAGE_KEY)||"{}");
     if(!json||typeof json!=="object"||Array.isArray(json))return;
     Object.keys(json).filter(function(k){
-      return Object.prototype.hasOwnProperty.call(PROJECT_LABELS,k)||/^workflow:[1-9]\d{0,17}$/.test(k);
+      return Object.prototype.hasOwnProperty.call(PROJECT_LABELS,k)||/^workflow:[1-9]\d{0,17}$/.test(k)||/^work:[a-z0-9_-]{3,120}$/i.test(k)||/^slot:[a-z0-9_-]{3,120}:(?:critico_standard|critico_museum|cinema_standard|cinema_museum)$/i.test(k);
     }).forEach(function(key){
       var url=allowedChatUrl(json[key]);
       if(url)state.chatLinks[key]=url;
@@ -327,13 +373,28 @@ function workflowChatKey(ctx){
   var id=Number(ctx?.run?.workflow_id)||0;
   return Number.isSafeInteger(id)&&id>0?"workflow:"+id:null;
 }
+
+function workChatKey(ctx){
+  var id=String(ctx?.work?.id||"");
+  return /^[a-z0-9_-]{3,120}$/i.test(id)?"work:"+id:null;
+}
+function slotChatKey(ctx){
+  var work=workChatKey(ctx),slot=String(ctx?.slot?.id||"");
+  return work&&/^(?:critico_standard|critico_museum|cinema_standard|cinema_museum)$/.test(slot)?
+    "slot:"+work.slice(5)+":"+slot:null;
+}
 function chatScopeKey(ctx){
-  var workflow=workflowChatKey(ctx);
-  return state.chatScope==="workflow"&&workflow?workflow:ctx?.project||"other";
+  var kind=state.chatScope,workflow=workflowChatKey(ctx),
+      work=workChatKey(ctx),slot=slotChatKey(ctx);
+  if(kind==="slot"&&slot)return slot;
+  if(kind==="work"&&work)return work;
+  if(kind==="workflow"&&workflow)return workflow;
+  return ctx?.project||"other";
 }
 function linkedChat(ctx){
-  var workflow=workflowChatKey(ctx);
-  return (workflow&&state.chatLinks[workflow])||state.chatLinks[ctx?.project||"other"]||"";
+  var slot=slotChatKey(ctx),work=workChatKey(ctx),workflow=workflowChatKey(ctx);
+  return (slot&&state.chatLinks[slot])||(work&&state.chatLinks[work])||
+    (workflow&&state.chatLinks[workflow])||state.chatLinks[ctx?.project||"other"]||"";
 }
 function contextForIssue(issue){
   var id=Number(issue.run_id)||0;
@@ -394,6 +455,24 @@ function prepareRepairPrompt(ctx,details){
       "; catalogo="+(v.site_catalog?"presente":"non individuato")+
       "; disponibilità dichiarata="+(v.site_available===true?"sì":v.site_available===false?"no":"non nota"))});
   }
+  if(ctx.type==="slot"&&ctx.slot&&ctx.work){
+    var v=ctx.slot,w=ctx.work;
+    line.push("- ID opera: "+String(w.id||"non dichiarato"),
+      "- Variante specifica: "+String(v.id||"non dichiarata")+" · "+String(v.label||""),
+      "- MP4 indicato nel registro: "+String(v.filename||"non identificato"),
+      "- Scheda tecnica registrata: "+(v.recorded?"sì":"non trovata"),
+      "- Nel catalogo pubblico: "+(v.site_catalog?"presente":"non individuata"),
+      "- Accessibilità catalogo: "+(v.site_available===true?"indicata disponibile":v.site_available===false?"indicata offline":"non verificabile"),
+      "- Anteprima verificata dal pannello: "+(v.preview_ready?"riproducibile nel campione":"non confermata"),
+      "- Gold V25 attestato: "+(v.qa?.gold_approved===true?"sì":"NO, non attestato"),
+      "- Run del candidato: "+String(v.run_id||"non dichiarata"),
+      "- Slot atteso: queue/artvision_owner_selected_ten_20261102.json");
+  }
+  if(ctx.action==="produce")line.push("AZIONE VOLUTA DAL PROPRIETARIO: procedi verso UNA nuova produzione REALE e consegnabile del progetto indicato. Prima verifica gli owner/automazioni già attivi e le code, e se una produzione equivalente è in corso NON crearne una seconda. Se accesso e permessi lo consentono, attiva SOLO l'owner già esistente o completa la produzione in quella chat; se non puoi avviare, spiega esattamente dove fare il singolo passaggio mancante. Niente finti video completati.");
+  if(ctx.action==="complete")line.push("AZIONE VOLUTA: verifica se questo slot manca realmente, poi completa SOLO la variante individuata tramite il processo owner già esistente, conservando tutti i master precedenti e rispettando i gate QA. Evita nuove code e duplicazioni.");
+  if(ctx.action==="recover")line.push("AZIONE VOLUTA: trova il video o il pacchetto già prodotti nelle run, release, archivi e catalogo. Correggi eventuali link/sincronizzazioni solo dopo prove. NON ricreare il video se esiste il master originale recuperabile.");
+  if(ctx.action==="improve")line.push("AZIONE VOLUTA: ispeziona il vero MP4, identifica errori di regia/voce/immagini e migliora SOLO quanto necessario con una versione N+1, confronto A/B e QA reale. Non cancellare o sovrascrivere l'originale.");
+  if(state.repairNote&&state.repairNote.trim())line.push("OSSERVAZIONE AGGIUNTIVA DEL PROPRIETARIO: "+state.repairNote.trim().slice(0,1800));
   line.push("",
     "COMPITO PER GPT:",
     "1. Usa la connessione GitHub disponibile per controllare prima lo stato ATTUALE del repository, della run e dei relativi job e log. Non basarti soltanto sul riepilogo del pannello.",
@@ -411,13 +490,23 @@ function renderRepairDialog(){
   var ctx=state.repair;
   if(!ctx)return;
   var label=PROJECT_LABELS[ctx.project]||PROJECT_LABELS.other;
-  document.getElementById("repairTitle").textContent=ctx.type==="work"?"Analizza le varianti con GPT":"Ripara con GPT";
+  document.getElementById("repairTitle").textContent=ctx.action==="produce"?"Richiedi produzione con GPT":ctx.type==="slot"?"Intervieni sul video con GPT":ctx.type==="work"?"Analizza le varianti con GPT":"Ripara con GPT";
   document.getElementById("repairSummary").textContent=ctx.title+
     " · "+ctx.detail+(ctx.run?" · GitHub run #"+ctx.runId:"");
-  document.getElementById("repairChatLabel").textContent="Chat principale: "+label;
+  document.getElementById("repairActionTitle").textContent=ctx.action==="produce"?
+    "Nuovo video · "+label:ctx.type==="slot"?"Intervento su "+String(ctx.slot?.label||"video"):ctx.title;
+  document.getElementById("repairNextStep").textContent=actionInstruction(ctx);
+  document.getElementById("repairOwnerNote").value=state.repairNote||"";
+  document.getElementById("repairChatLabel").textContent="Chat: "+label+
+    (ctx.work?" · "+String(ctx.work.title||"opera"):"")+
+    (ctx.slot?" · "+String(ctx.slot.label||"variante"):"");
   document.getElementById("repairPrompt").value=prepareRepairPrompt(ctx,state.repairDetails);
   var scope=document.getElementById("repairChatScope"),workflow=workflowChatKey(ctx);
-  scope.style.display=workflow?"block":"none";
+  var work=workChatKey(ctx),slot=slotChatKey(ctx);
+  scope.style.display=(workflow||work||slot)?"block":"none";
+  scope.querySelector('option[value="workflow"]').hidden=!workflow;
+  scope.querySelector('option[value="work"]').hidden=!work;
+  scope.querySelector('option[value="slot"]').hidden=!slot;
   if(!workflow)state.chatScope="project";
   scope.value=state.chatScope;
   var saved=state.chatLinks[chatScopeKey(ctx)]||"";
@@ -432,12 +521,16 @@ function renderRepairDialog(){
   appHome.hidden=!android;
   if(android)appHome.href=androidChatGPTIntent("https://chatgpt.com/",true);
   document.getElementById("androidAppHint").hidden=!android;
+  var fast=document.getElementById("repairCopyOpen");
+  fast.href=android?androidChatGPTIntent(preferred||"https://chatgpt.com/",true):(preferred||"https://chatgpt.com/");
+  fast.textContent=preferred?"1 · Copia e apri la chat collegata":"1 · Copia e apri ChatGPT";
+  document.getElementById("repairAdvancedChat").open=false;
   document.getElementById("repairChatStatus").textContent=preferred?
     "Chat privata collegata nel browser. La diagnosi va comunque incollata manualmente.":"Nessun collegamento: puoi salvare la chat principale o aprire ChatGPT.";
 }
 async function openRepairDialog(ctx){
   if(!ctx)return;
-  state.repair=ctx;state.repairDetails=null;state.chatScope="project";
+  state.repair=ctx;state.repairDetails=null;state.repairNote="";state.chatScope=slotChatKey(ctx)?"slot":workChatKey(ctx)?"work":"project";
   document.getElementById("repairJobs").textContent=ctx.type==="run"&&ctx.runId?
     "Cerco i job e gli step falliti su GitHub…":"Sono disponibili i dati riportati nel registro. Nessuna diagnosi automatica è stata eseguita.";
   document.getElementById("repairCopyStatus").textContent="";
@@ -632,7 +725,11 @@ function slotCard(w,v,index){
     String(index).padStart(2,"0")+'</span><span class="place">◈</span>'+image+'</div>'+
     '<div class="slotBody"><span class="slotName">'+escapeText(v.label)+'</span>'+
     '<span class="slotStatus '+(playable?'playable':offline?'unavailable':'')+'">'+escapeText(label)+'</span>'+
-    file+'<div class="slotActions">'+play+'</div>'+panel+'</div></article>';
+    file+'<div class="slotActions">'+play+
+    '<button type="button" class="actionSecondary" data-action-work="'+escapeText(w.id||w.title)+
+    '" data-action-slot="'+escapeText(v.id||"")+'" data-action-mode="'+actionSlotMode(v)+'">'+
+    (actionSlotMode(v)==="improve"?"✦ Migliora con GPT":actionSlotMode(v)==="recover"?"↻ Recupera con GPT":"▶ Completa con GPT")+
+    '</button></div>'+panel+'</div></article>';
 }
 function statisticsPage(){
   var data=state.data||{},bundle=data.statistics||{};
@@ -824,6 +921,107 @@ function loadEvidence(force){
 }
 
 
+/* Control Center V10 — owner action hub. Pure UI over already fetched public evidence.
+   No API writes, no workflow dispatch, no cloud storage of private ChatGPT URLs. */
+var ACTION_SLOT_LABELS={critico_standard:"Critico",critico_museum:"Critico Museum",
+  cinema_standard:"Cinema",cinema_museum:"Cinema Museum"};
+function actionSlotState(v){
+  if(!v)return {kind:"unknown",text:"Dati mancanti",next:"Controllare il registro e le fonti."};
+  if(!source("queue"))return {kind:"unknown",text:"Registro non disponibile",next:"Ricarica le fonti prima di decidere."};
+  if(v.preview_ready&&source("catalog"))
+    return {kind:"ready",text:"Guardabile sul sito",next:"Guarda il MP4 e valuta la regia; lo stato Gold non è implicito."};
+  if(!source("catalog"))
+    return {kind:"unknown",text:"Archivio non verificabile",next:"Riprova il collegamento, non avviare duplicati."};
+  if(v.site_catalog&&v.site_available===false)
+    return {kind:"offline",text:"Nel catalogo, ma offline",next:"Controlla i byte MP4 e ripristina l'accesso senza un nuovo render."};
+  if(v.site_catalog&&v.site_available!==true)
+    return {kind:"unknown",text:"Catalogato, stato incerto",next:"Verifica lo streaming reale prima di pubblicare."};
+  if(v.recorded)
+    return {kind:"registered",text:"Scheda presente, file non accessibile",next:"Cerca MP4/ZIP nelle run e nelle Release; recupera, non duplicare."};
+  return {kind:"missing",text:"Variante non individuata",next:"Verifica la coda e le run; produci soltanto se manca davvero."};
+}
+function actionSlotMode(v){
+  var status=actionSlotState(v).kind;
+  return status==="ready"?"improve":status==="registered"||status==="offline"||status==="unknown"?"recover":"complete";
+}
+function contextForActionSlot(work,variant,requested){
+  var mode=["complete","recover","improve"].includes(requested)?requested:actionSlotMode(variant);
+  var label=variant?.label||ACTION_SLOT_LABELS[variant?.id]||"Variante";
+  return {type:"slot",project:"artvision",title:(work?.title||"Opera")+" · "+label,
+    detail:actionSlotState(variant).next,work:work,slot:variant,action:mode,run:null};
+}
+function projectStartContext(key){
+  var label=PROJECT_LABELS[key]||"Progetto";
+  var health=(state.data?.health||[]).find(function(h){return h.id===key});
+  return {type:"project",project:key,title:"Richiedi produzione · "+label,action:"produce",
+    detail:health?.state==="running"?
+      "È stata osservata una produzione in corso: prima controllare e non avviare duplicati.":
+      "Richiesta di una nuova produzione reale, soltanto se non esiste una lavorazione equivalente già attiva.",run:null};
+}
+function actionWorkflowHelp(key){
+  if(key==="artvision")return "queue/artvision_owner_selected_ten_20261102.json · 4×1";
+  if(key==="storia")return "La Storia Rivive · produzione e QA per episodi";
+  if(key==="wow")return "WOW LAB · produzione isolata";
+  return "workflow owner già esistente, se verificato";
+}
+function actionProjectCards(){
+  var health=state.data?.health||[],projects=[["artvision","ArtVision 4×1"],["storia","La Storia Rivive"],["wow","WOW LAB"]];
+  return '<section class="actionTop"><div class="overline">PRODUZIONE · ACCESSO RAPIDO</div>'+
+    '<h3>Vuoi nuovi video?</h3><p>Scegli un programma. Il pulsante prepara la richiesta per GPT, che deve verificare prima le lavorazioni già in corso. Il pannello pubblico non avvia da solo GitHub o le automazioni.</p>'+
+    '<div class="actionProjects">'+projects.map(function(entry){
+      var id=entry[0],name=entry[1],row=health.find(function(x){return x.id===id});
+      var status=!source("github")?"GitHub non verificabile":row?.state==="running"?"Produzione osservata in corso":
+        row?.state==="attention"?"Ultimo workflow da controllare":row?.state==="observed_success"?"Ultimo workflow riuscito":
+        row?.state==="unobserved"?"Nessuna run recente osservata":"Stato non noto";
+      return '<article class="actionProject"><strong>'+escapeText(name)+'</strong><span>'+escapeText(status)+'</span>'+
+        '<small>'+escapeText(actionWorkflowHelp(id))+'</small>'+
+        '<button type="button" class="actionPrimary" data-action-project="'+id+'">▶ Richiedi produzione ora</button></article>';
+    }).join("")+'</div>'+
+    '<p class="actionFine">Avvio effettivo consentito solo da ChatGPT/GitHub con autorizzazioni: nessuna chiamata a pagamento o cron duplicato dal pannello.</p></section>';
+}
+function actionWorksPanel(){
+  if(!source("queue"))return '<div class="panel"><h3>Quadri e video</h3><p class="note">La coda non è verificabile ora. Non classifico alcun video come mancante.</p></div>';
+  var works=state.data?.works||[],total=works.reduce(function(n,w){return n+(w.variants||[]).filter(function(v){return v.preview_ready===true}).length},0);
+  var count=works.reduce(function(n,w){return n+(w.variants||[]).filter(function(v){return actionSlotState(v).kind!=="ready"}).length},0);
+  var out='<section class="panel"><div class="actionHead"><div><h3>Ogni quadro, ogni video</h3><p class="sub">'+total+' anteprime accessibili nel campione · '+count+' slot senza anteprima confermata. Non sono conteggi Gold e non dimostrano mancanza fisica.</p></div>'+
+    '<div class="actionFilters"><button data-action-filter="needs" class="'+(state.actionFilter==="needs"?"on":"")+'">Da completare</button>'+
+    '<button data-action-filter="all" class="'+(state.actionFilter==="all"?"on":"")+'">Tutte</button>'+
+    '<button data-action-filter="ready" class="'+(state.actionFilter==="ready"?"on":"")+'">Guardabili</button></div></div>';
+  var filtered=works.filter(function(w){
+    var v=w.variants||[];
+    return state.actionFilter==="all"||
+      (state.actionFilter==="ready"?v.some(function(x){return actionSlotState(x).kind==="ready"}):
+       v.some(function(x){return actionSlotState(x).kind!=="ready"}));
+  });
+  if(!filtered.length)return out+'<div class="empty">Nessuna opera in questa vista, oppure dati incompleti.</div></section>';
+  for(const w of filtered){
+    var variants=w.variants||[],ready=variants.filter(function(x){return actionSlotState(x).kind==="ready"}).length;
+    out+='<details class="actionWork"><summary><span class="actionWorkName">'+escapeText(w.title||"Opera")+
+      '<small>'+escapeText(w.artist||"")+'</small></span><span class="actionCount">'+ready+'/4 guardabili sul sito · '+Number(w.delivered||0)+'/4 consegne dichiarate</span></summary>'+
+      '<div class="actionSlots">'+variants.map(function(v){
+        var status=actionSlotState(v),mode=actionSlotMode(v);
+        var action=mode==="improve"?"✦ Migliora con GPT":mode==="recover"?"↻ Recupera video":"▶ Completa video";
+        return '<div class="actionSlot"><div class="actionInfo"><strong>'+escapeText(v.label||ACTION_SLOT_LABELS[v.id]||"Variante")+'</strong>'+
+          '<span class="actionFlag '+status.kind+'">'+escapeText(status.text)+'</span>'+
+          '<small>'+escapeText(status.next)+'</small></div>'+
+          '<div class="actionSlotButtons"><button class="actionPrimary" type="button" data-action-work="'+escapeText(w.id||w.title)+
+          '" data-action-slot="'+escapeText(v.id||"")+'" data-action-mode="'+mode+'">'+action+'</button>'+
+          (v.preview_ready?'<button class="actionSecondary" type="button" data-action-view="'+escapeText(w.id||w.title)+'">▶ Guarda</button>':'')+
+          '</div></div>';
+      }).join("")+'</div><div class="actionWorkFoot"><button class="actionSecondary" type="button" data-action-open-work="'+escapeText(w.id||w.title)+'">Apri scheda completa e prove</button></div></details>';
+  }
+  return out+'</section>';
+}
+function actionInstruction(ctx){
+  if(ctx?.type==="slot"){
+    if(ctx.action==="improve")return "Guarda il MP4 reale, annota il difetto e chiedi una revisione N+1. Non sovrascrivere la versione originale.";
+    if(ctx.action==="recover")return "Cerca prima il file nelle run/Release/Libreria. Verifica download e SHA prima di pensare a un nuovo render.";
+    return "Verifica la variante nella coda e nelle run. Se manca davvero, completa questa sola variante senza duplicare l'owner.";
+  }
+  if(ctx?.action==="produce")return "Richiedi la prossima produzione reale dell'owner. Prima controlla che non sia già in lavorazione.";
+  return "Apri la diagnosi nella chat collegata, controlla le prove e correggi soltanto la parte necessaria.";
+}
+
 function issues(){
   var d=state.data||{},attention=d.attention||[];
   var failures=attention.filter(function(x){return x.kind==="workflow"});
@@ -835,6 +1033,7 @@ function issues(){
     '<div class="repairGrid"><span class="scopeLabel">'+failures.length+' ultimi workflow da controllare</span>'+
     '<span class="scopeLabel">'+unavailable.length+' fonti non raggiungibili</span>'+
     '<span class="scopeLabel">Nessuna correzione avviata senza il tuo intervento</span></div></section>';
+  h+=actionProjectCards();
   h+='<div class="panel"><h3>Errori tecnici correnti · '+failures.length+'</h3>'+
     '<p class="sub">Soltanto le ultime esecuzioni non riuscite di ciascun workflow del ramo principale. Gli errori già superati non rimangono qui come blocchi aperti.</p>';
   h+=failures.length?failures.map(attentionItem).join(""):
@@ -854,18 +1053,7 @@ function issues(){
       (linked?'<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(state.chatLinks[key])+'">Apri nel browser ↗</a>':'')+
       '</div></div>';
     }).join("")+'</div></div>';
-  var incomplete=(d.works||[]).filter(function(w){return Number(w.delivered||0)<4});
-  h+='<div class="panel"><h3>Varianti mancanti o non ancora conteggiate · '+incomplete.length+' opere</h3>'+
-    '<p class="sub">Questo NON è automaticamente un errore: puoi comunque chiedere a GPT una verifica mirata della coda.</p>';
-  h+=incomplete.length?incomplete.map(function(w){
-    return '<div class="repairCard"><strong>'+escapeText(w.title)+'</strong>'+
-      '<p class="repairMeta">'+(4-Number(w.delivered||0))+' varianti non conteggiate · '+
-      escapeText(w.artist||"")+'</p><div class="repairGrid">'+
-      '<button class="repairButton secondary" type="button" data-repair-work="'+escapeText(w.id||w.title)+'">Analizza con GPT</button>'+
-      '<button class="repairButton secondary" data-switch="works" type="button">Vedi le quattro varianti</button>'+
-      '</div></div>';
-  }).join(""):'<div class="empty">Nessuna variante mancante nel conteggio delle opere operative.</div>';
-  h+='</div>';
+  h+=actionWorksPanel();
   var latestIds=new Set(failures.map(function(x){return Number(x.run_id)||0}));
   var past=(d.runs||[]).filter(function(r){
     return ["failure","cancelled","timed_out","action_required"].includes(r.conclusion)&&
@@ -982,6 +1170,29 @@ document.addEventListener("click",function(ev){
       run:{...qr,html_url:qr.run_url,head_branch:"main",event:"workflow_dispatch"},runId:qr.id});
     return;
   }
+  var actionProject=ev.target.closest("button[data-action-project]");
+  if(actionProject&&["artvision","storia","wow"].includes(actionProject.dataset.actionProject)){
+    openRepairDialog(projectStartContext(actionProject.dataset.actionProject));return;
+  }
+  var filterAction=ev.target.closest("button[data-action-filter]");
+  if(filterAction&&["all","needs","ready"].includes(filterAction.dataset.actionFilter)){
+    state.actionFilter=filterAction.dataset.actionFilter;render();return;
+  }
+  var actionWork=ev.target.closest("button[data-action-work]");
+  if(actionWork){
+    var owner=(state.data?.works||[]).find(function(w){return (w.id||w.title)===actionWork.dataset.actionWork});
+    var video=owner?.variants?.find(function(v){return v.id===actionWork.dataset.actionSlot});
+    if(owner&&video)openRepairDialog(contextForActionSlot(owner,video,actionWork.dataset.actionMode));
+    return;
+  }
+  var actionOpenWork=ev.target.closest("button[data-action-open-work],button[data-action-view]");
+  if(actionOpenWork){
+    var key=actionOpenWork.dataset.actionOpenWork||actionOpenWork.dataset.actionView;
+    var row=(state.data?.works||[]).find(function(w){return (w.id||w.title)===key});
+    state.page="works";state.workFilter="all";state.workSearch=row?.title||"";
+    if(row)state.workOpened[row.id||row.title]=true;
+    render();window.scrollTo(0,0);return;
+  }
   var issueButton=ev.target.closest("button[data-repair-issue]");
   if(issueButton){
     var item=(state.data?.attention||[])[Number(issueButton.dataset.repairIssue)];
@@ -1017,7 +1228,10 @@ document.getElementById("repairDialog").addEventListener("close",function(){
 });
 document.getElementById("repairChatScope").addEventListener("change",function(){
   if(!state.repair)return;
-  state.chatScope=this.value==="workflow"&&workflowChatKey(state.repair)?"workflow":"project";
+  var key=this.value;
+  state.chatScope=key==="slot"&&slotChatKey(state.repair)?"slot":
+    key==="work"&&workChatKey(state.repair)?"work":
+    key==="workflow"&&workflowChatKey(state.repair)?"workflow":"project";
   renderRepairDialog();
 });
 document.getElementById("saveRepairChat").addEventListener("click",function(){
@@ -1048,6 +1262,26 @@ document.getElementById("forgetRepairChat").addEventListener("click",function(){
   info.className="repairStatus";
   info.textContent=stored?"Collegamento eliminato da questo browser.":"Collegamento non più attivo in questa sessione.";
   if(state.page==="issues")render();
+});
+document.getElementById("repairOwnerNote").addEventListener("input",function(){
+  state.repairNote=this.value.slice(0,1800);
+  if(state.repair)document.getElementById("repairPrompt").value=prepareRepairPrompt(state.repair,state.repairDetails);
+});
+document.getElementById("repairCopyOpen").addEventListener("click",function(){
+  var text=document.getElementById("repairPrompt").value;
+  var label=document.getElementById("repairInstantStatus");
+  label.textContent="Apro la chat. Incolla il testo copiato per iniziare: nessuna produzione è partita dal pannello.";
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      label.textContent="Messaggio copiato. Ora incollalo in ChatGPT per chiedere l'intervento.";
+    }).catch(function(){
+      label.textContent="Copia bloccata dal browser: torna qui, apri «diagnosi completa», seleziona e copia il testo.";
+      document.getElementById("repairAdvancedPrompt").open=true;
+    });
+  }else{
+    label.textContent="Copia non disponibile: usa «diagnosi completa» e copia il testo.";
+    document.getElementById("repairAdvancedPrompt").open=true;
+  }
 });
 document.getElementById("copyRepairPrompt").addEventListener("click",async function(){
   var input=document.getElementById("repairPrompt");
