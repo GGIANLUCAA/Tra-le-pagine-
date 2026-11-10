@@ -197,6 +197,30 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
 .control-center-newtab{display:none!important}.control-center-launcher{gap:12px;padding:15px}.control-center-launcher-icon{width:44px;height:44px;font-size:25px}
 .control-center-launcher-copy{min-width:200px}.control-center-launcher-copy strong{font-size:21px}
 .control-center-launcher .btn{width:100%}.control-center-buttons .ghost{padding:8px 9px}}
+
+/* Owner UX7 preview: museum aesthetic and Android-first; no backend changes. */
+.vls-seven-works{margin:14px 0 19px;padding:18px;border:1px solid #80694a;border-radius:16px;background:linear-gradient(125deg,#241e1a,#161d26);color:#f4ebdc}
+.vls-seven-works h3{font:normal 26px Georgia,serif;margin:0 0 5px}.vls-seven-works p{font-size:12px;color:#cabca7;margin:0 0 12px}
+.vls-works-list{display:grid;gap:10px}.vls-work{border:1px solid #6b5942;border-radius:11px;background:#131b26;padding:11px}
+.vls-work summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:42px;font-weight:700}
+.vls-work summary small{font-weight:500;color:#d0b890}.vls-work summary::marker{content:''}
+.vls-slot-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:11px 0 7px}
+.vls-slot{min-height:49px;text-align:left;padding:8px;border:1px solid #6b5740;background:#2b2927;color:#fae9cf;border-radius:9px;font-size:11px;cursor:pointer}
+.vls-slot small{display:block;margin-top:3px;opacity:.82}.vls-slot:disabled{cursor:not-allowed;opacity:.5;background:#191c21;border-style:dashed}
+.vls-work-actions{display:flex;gap:8px;flex-wrap:wrap}.vls-work-actions button{min-height:44px;border:1px solid #997a4f;background:#433521;color:#f8e7ce;border-radius:9px;padding:8px 13px}.vls-work-actions button:disabled{opacity:.45}
+.vls-seven-dialog{width:min(95vw,1050px);max-height:94dvh;overflow:auto;background:#141b25;border:1px solid #b49a6c;border-radius:16px;color:#f7ecda}
+.vls-seven-dialog .modalbody{display:grid;gap:11px}.vls-seven-dialog button,.vls-seven-dialog select,.vls-seven-dialog textarea{min-height:44px}
+.vls-seven-dialog .modalactions{align-items:center}.vls-seven-dialog .notice{margin:2px 0}
+.vls-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.vls-compare-pane{min-width:0;display:grid;gap:7px}
+.vls-compare-pane video{width:100%;height:min(55vh,510px);background:#050609;object-fit:contain}.vls-compare-pane select{width:100%;min-width:0}
+.vls-compare-switch{display:none;gap:8px}.vls-compare-switch button{flex:1}
+.vls-seven-works button:focus-visible,.vls-seven-dialog button:focus-visible,.vls-seven-dialog a:focus-visible{outline:3px solid #e9d1a0;outline-offset:2px}
+.vls-studio-quick{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:14px 0;padding:12px;border:1px solid #7b6443;background:#2d271d;border-radius:12px;color:#f0e2ce;font-size:12px}
+.vls-studio-quick strong{font-size:13px}.vls-studio-quick button{min-height:44px;padding:8px 12px;background:#d5b486;color:#231b13;border:0;border-radius:8px;font-weight:750}
+.poster[role="button"]{cursor:pointer}.poster[role="button"]:focus-visible{outline:3px solid #e8c991;outline-offset:-3px}
+@media(max-width:700px){.vls-slot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vls-seven-works{padding:12px}.vls-work summary{flex-direction:column;align-items:flex-start}.vls-two{display:block}.vls-compare-pane{display:none}.vls-compare-pane.active{display:grid}.vls-compare-switch{display:flex}.vls-compare-pane video{height:51dvh}.vls-seven-dialog{width:100vw;max-height:98dvh;border-radius:16px 16px 0 0;margin:auto 0 0}}
+@media(prefers-reduced-motion:reduce){.vls-seven-works *{scroll-behavior:auto}}
+
 </style>
 </head>
 <body>
@@ -260,7 +284,7 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
  <div class="control-center-launcher-copy"><strong>Il tuo Centro di controllo</strong><span>Produzioni, workflow GitHub, varianti, problemi e download: tutto in un'unica schermata.</span><small>Monitoraggio in sola lettura · nessun video viene modificato</small></div>
  <button class="btn primary" id="openControlCenterStudio" type="button" aria-haspopup="dialog" aria-controls="controlCenterDialog">Apri il Centro di controllo</button>
 </div>
-<div class="studio-metrics" id="studioMetrics"></div><div class="film-rail" id="readyRail"></div>
+<div class="studio-metrics" id="studioMetrics"></div><div id="vlsStudioQuick" class="vls-studio-quick" hidden></div><div class="film-rail" id="readyRail"></div>
 </section>
 <section class="library-section" id="library" aria-labelledby="libraryTitle">
  <div class="section-heading library-heading"><div><div class="section-eyebrow">TUTTO L'ARCHIVIO</div><h2 id="libraryTitle">La videoteca completa</h2><p>Cerca, filtra e organizza senza perdere nessun file.</p></div></div>
@@ -288,7 +312,7 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
   <button class="ghost danger-action" id="batchArchive" type="button">⊟ Archivia</button>
  <button class="ghost danger-action" id="batchDelete" type="button">🗑 Elimina selezionati</button></div><p class="selection-help" id="batchMessage">Scegli un’azione. Elimina selezionati mostra il riepilogo prima della conferma definitiva.</p>
 </div>
-<div class="grid" id="grid"><div class="loading">Sto leggendo i video dall'archivio…</div></div><div class="load-more" id="moreRow" hidden><button class="btn" type="button" id="moreVideos">Mostra altri video ↓</button></div>
+<section id="vlsWorks" class="vls-seven-works" hidden aria-label="Opere ArtVision e quattro versioni"></section><div class="grid" id="grid"><div class="loading">Sto leggendo i video dall'archivio…</div></div><div class="load-more" id="moreRow" hidden><button class="btn" type="button" id="moreVideos">Mostra altri video ↓</button></div>
 <div class="foot">Le anteprime sono immagini leggere e non scaricano l'intero MP4. La data ChatGPT compare soltanto quando ricavabile dal file originale; altrimenti è indicata la data di importazione. Il riconoscimento delle varianti è indicativo, non una verifica di identità dei contenuti.</div>
 </section>
 </main>
@@ -300,8 +324,23 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
  <button id="playerRewind" type="button" aria-label="Torna indietro 10 secondi">↶ 10s</button>
  <button id="playerForward" type="button" aria-label="Avanza di 10 secondi">10s ↷</button>
  <button id="playerNext" type="button" aria-label="Video successivo" title="Video successivo">⏭</button>
- <button id="playerSpeed" type="button" aria-label="Velocità di riproduzione">1×</button>
-</div><p class="modalinfo" id="playerInfo"></p><div class="modalactions"><button class="btn primary" id="playerDownload">↓ Scarica originale</button><button class="btn" id="playerShare">↗ Condividi</button><button class="ghost" id="playerDetails">ℹ Scheda</button></div></div></dialog>
+ <button id="playerSpeed" type="button" aria-label="Velocità di riproduzione">1×</button><button id="vlsFullscreen" type="button" aria-label="Schermo intero">⛶ Schermo intero</button>
+</div><p class="modalinfo" id="playerInfo"></p><div class="modalactions"><button class="btn primary" id="playerDownload">↓ Scarica originale</button><button class="btn" id="playerShare">↗ Condividi</button><button class="ghost" id="playerDetails">ℹ Scheda</button><button class="ghost" id="vlsRepairFromPlayer" type="button" hidden>✧ Correggi con GPT</button></div></div></dialog>
+
+<dialog id="vlsCompare" class="vls-seven-dialog" aria-labelledby="vlsCompareTitle"><div class="modalhead"><h2 id="vlsCompareTitle">Confronta due versioni</h2><button class="ghost" data-close="vlsCompare" type="button">✕ Chiudi</button></div>
+ <div class="modalbody"><p class="notice">Confronto di versioni riconosciute dal nome tecnico; non equivale a un'approvazione. Su Android puoi passare dalla A alla B.</p>
+ <div class="vls-compare-switch"><button class="btn primary" id="vlsSwitchA" type="button">Versione A</button><button class="ghost" id="vlsSwitchB" type="button">Versione B</button></div>
+ <div class="vls-two"><label class="vls-compare-pane active" id="vlsPaneA">Versione A<select id="vlsSelectA"></select><video id="vlsVideoA" controls playsinline preload="metadata"></video></label>
+ <label class="vls-compare-pane" id="vlsPaneB">Versione B<select id="vlsSelectB"></select><video id="vlsVideoB" controls playsinline preload="none" muted></video></label></div>
+ <div class="modalactions"><button class="btn" id="vlsAlign" type="button">↔ Allinea il tempo B alla A</button><span id="vlsCompareInfo" class="notice" role="status"></span></div></div></dialog>
+<dialog id="vlsRepair" class="vls-seven-dialog" aria-labelledby="vlsRepairTitle"><div class="modalhead"><h2 id="vlsRepairTitle">Segnala a GPT una correzione</h2><button class="ghost" data-close="vlsRepair" type="button">✕ Chiudi</button></div>
+ <div class="modalbody"><p id="vlsRepairVideo" class="notice"></p><label>Problema<select id="vlsIssue"><option value="regia">Regia / inquadrature</option><option value="sincronizzazione voce-immagini">Sincronizzazione voce–immagini</option><option value="zoom o movimenti">Zoom / movimenti</option><option value="ripetizioni">Immagini ripetitive</option><option value="audio">Voce / audio</option><option value="download">File non scaricabile</option><option value="altro">Altro</option></select></label>
+ <label>Dettagli<textarea id="vlsIssueNote" rows="4" maxlength="1500" placeholder="Cosa non funziona e cosa miglioreresti"></textarea></label>
+ <p class="notice">La richiesta include nome tecnico e secondo del video, non la chiave privata dello Studio. Non corregge nulla da sola: copia e incolla in ChatGPT.</p>
+ <div class="modalactions"><button class="btn primary" id="vlsCopyGPT" type="button">Copia richiesta</button><a class="btn" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">Apri ChatGPT ↗</a></div><p id="vlsRepairInfo" role="status"></p></div></dialog>
+<dialog id="vlsDownload" class="vls-seven-dialog" aria-labelledby="vlsDownloadTitle"><div class="modalhead"><h2 id="vlsDownloadTitle">Scarica il video</h2><button class="ghost" data-close="vlsDownload" type="button">✕ Chiudi</button></div>
+ <div class="modalbody"><p id="vlsDownloadInfo"></p><p class="notice">La verifica rapida controlla soltanto i primi byte. Non certifica l'integrità dell'intero MP4. Il dossier ZIP è accessibile dalla gestione privata se disponibile.</p>
+ <div class="modalactions"><a class="btn primary" id="vlsDownloadMP4">↓ Scarica MP4 originale</a><button class="btn" id="vlsDownloadZIP" type="button">📁 Dossier / ZIP</button><button class="ghost" id="vlsRetryDownload" type="button">↻ Ripeti verifica</button></div><p id="vlsDownloadStatus" role="status"></p></div></dialog>
 <dialog id="detail"><div class="modalhead"><h2 id="detailTitle">Scheda video</h2><button class="ghost" data-close="detail">✕ Chiudi</button></div><div class="modalbody" id="detailBody"></div></dialog>
 <dialog id="edit"><div class="modalhead"><h2>Modifica scheda</h2><button class="ghost" data-close="edit">✕ Chiudi</button></div><div class="modalbody"><form id="editForm" class="formgrid"><label class="field full">Titolo<input name="title" maxlength="160"></label><label class="field">Categoria<select name="category"><option>Libri narrati</option><option>Racconti e fiabe</option><option>Artisti e pittura</option><option>Critica d’arte</option><option>La Storia Rivive</option><option>Restauri storici</option><option>Musica e visual</option><option>WOW LAB</option><option>Cinema e cortometraggi</option><option>Documentari e curiosità</option><option>Cronaca e attualità</option><option>Provini e backstage</option><option>Altri progetti</option></select></label><label class="field">Stato della versione<select name="version"><option value="unknown">Da verificare</option><option value="final">Versione finale</option><option value="draft">Bozza / provino</option><option value="variant">Variante / seconda versione</option></select></label><label class="field full">Descrizione<textarea name="description" maxlength="1200"></textarea></label><label class="field full">Note editoriali (solo per la gestione)<textarea name="note" maxlength="1200"></textarea></label><div class="field full"><div class="modalactions"><button class="btn primary" type="submit">Salva scheda</button><button class="btn" type="button" id="archiveToggle">Nascondi dal catalogo</button><button class="ghost" type="button" id="favoriteToggle">☆ Preferito</button><button class="ghost" type="button" id="deleteForever" style="border-color:#9c5765;color:#f8b4bc">🗑 Elimina file definitivamente</button></div><div class="notice">Nascondere equivale ad archiviare: non cancella il file MP4. Puoi ripristinarlo quando vuoi.</div></div></form></div></dialog>
 <dialog id="editorial" class="editorial-dialog" aria-labelledby="editorialTitle">
@@ -733,7 +772,7 @@ function draw(){
  $('#counter').textContent=arr.length+' video trovati · '+variantCount+' possibili varianti';
  $('#moreRow').hidden=arr.length<=g.showLimit;
  $('#moreVideos').textContent='Mostra altri '+Math.min(36,Math.max(0,arr.length-g.showLimit))+' video ↓';
- if(!arr.length){node.innerHTML='<div class="empty">Nessun video corrisponde ai filtri. Prova una ricerca diversa.</div>';updateSelectionPanel();return}
+ if(!arr.length){node.innerHTML='<div class="empty">Nessun video corrisponde ai filtri. Prova una ricerca diversa.</div>';updateSelectionPanel();vlsRenderWorks();vlsRenderQuick();return}
  const frag=document.createDocumentFragment();
  for(const x of visible){
   const card=document.createElement('article');card.className='card'+(x.hidden?' archived':'')+(g.selectedKeys.has(x.key)?' selected':'');card.dataset.videoKey=x.key;
@@ -752,12 +791,13 @@ function draw(){
   card.innerHTML='<div class="poster"><span class="symbol">'+(x.viewCategory==='Libri raccontati'?'▤':x.viewCategory==='Musica e visual'?'♫':'✦')+'</span>'+cover+'<span class="badge">'+h(x.guess.kind)+'</span><span class="duration">'+(x.available===false&&!x.duration?'Solo GPT':h(dur(x.duration)))+'</span>'+upper+'</div>'+
     '<div class="cardbody"><div class="eyebrow">'+h(x.viewCategory)+'</div><h3>'+h(x.viewTitle)+'</h3><p>'+h(x.viewDescription)+'</p><div class="info">'+tags.join('')+'<span class="pill">'+h(size(x.size))+'</span><span class="pill">'+h(date)+'</span></div><div class="actions">'+cardActions+'</div>'+
     (g.admin&&g.studio&&!isSelecting?'<div class="modalactions" style="margin-top:9px"><button class="ghost" data-act="dossier">📁 Dossier / ZIP</button><button class="ghost" data-act="hide">'+(x.hidden?'↩ Ripristina':'⊟ Archivia')+'</button><button class="ghost" data-act="edit">✎ Modifica</button></div>':'')+'</div>';
-  card.addEventListener('click',e=>{
+  const poster=card.querySelector('.poster');if(x.available!==false&&!isSelecting){poster.tabIndex=0;poster.setAttribute('role','button');poster.setAttribute('aria-label','Guarda '+x.viewTitle);poster.addEventListener('click',e=>{if(!e.target.closest('[data-act]'))play(x)});poster.addEventListener('keydown',e=>{if(e.target===poster&&(e.key==='Enter'||e.key===' ')){e.preventDefault();play(x)}})}
+   card.addEventListener('click',e=>{
    const t=e.target.closest('[data-act]');if(!t)return;
    const a=t.dataset.act;
    if(a==='select'){if(!g.admin||!g.studio)return;if(g.selectedKeys.has(x.key))g.selectedKeys.delete(x.key);else if(g.selectedKeys.size<40)g.selectedKeys.add(x.key);else log('Massimo 40 video per operazione.');draw();}
    else if(a==='play')play(x);
-   else if(a==='download'&&x.available!==false)location.href=fullURL(x);
+   else if(a==='download'&&x.available!==false)vlsDownloadOpen(x);
    else if(a==='detail')details(x);
    else if(a==='dossier')openEditorial(x);
    else if(a==='fav')manage(x,{favorite:!x.favorite});
@@ -766,11 +806,11 @@ function draw(){
   });
   frag.append(card);
  }
- node.append(frag);updateSelectionPanel();
+ node.append(frag);updateSelectionPanel();vlsRenderWorks();vlsRenderQuick();
 }
-function play(x){if(x.available===false){log('Video presente solo in ChatGPT: trasferimento non ancora disponibile');return}g.selected=x;$('#playerTitle').textContent=x.viewTitle;$('#playerInfo').textContent=dur(x.duration)+' · '+size(x.size)+' · '+x.viewCategory;$('#video').src=mediaURL(x);if(x.cover)$('#video').poster=x.cover;else $('#video').removeAttribute('poster');if(!$('#player').open)$('#player').showModal();$('#video').play().catch(()=>{});}
+function play(x){$('#vlsRepairFromPlayer').hidden=!g.admin;if(x.available===false){log('Video presente solo in ChatGPT: trasferimento non ancora disponibile');return}g.selected=x;$('#playerTitle').textContent=x.viewTitle;$('#playerInfo').textContent=dur(x.duration)+' · '+size(x.size)+' · '+x.viewCategory;$('#video').src=mediaURL(x);if(x.cover)$('#video').poster=x.cover;else $('#video').removeAttribute('poster');if(!$('#player').open)$('#player').showModal();$('#video').play().catch(()=>{});}
 function details(x){g.selected=x;$('#detailTitle').textContent=x.viewTitle;const root=$('#detailBody');const rows=[['Titolo',x.viewTitle],['Categoria',x.viewCategory],['Progetto',x.viewProject],['Tipologia',x.guess.kind],['Durata',dur(x.duration)],['Risoluzione',x.width&&x.height?x.width+' × '+x.height:'Da rilevare'],['Dimensione',size(x.size)],['Creazione ChatGPT',x.gptCreatedAt?fmtDate(x.gptCreatedAt):'Data non disponibile'],['Importazione',fmtDate(x.uploaded)],['Versione',({final:'Versione finale',draft:'Bozza / provino',variant:'Seconda versione / variante',unknown:'Non verificata'})[x.viewVersion]||'Non verificata'],['Possibili varianti',String(x.variants)],['Copie con stessa impronta',x.sameContent?.length?x.sameContent.join(' · '):'Nessuna rilevata'],['File originale',x.name||x.key],['Disponibilità',x.available===false?'Solo ChatGPT — trasferimento mancante':'Riproducibile e scaricabile dal sito']];root.replaceChildren();const desc=document.createElement('p');desc.className='modalinfo';desc.textContent=x.viewDescription;root.append(desc);const table=document.createElement('div');table.style.cssText='display:grid;grid-template-columns:125px 1fr;gap:8px 12px;font-size:13px;word-break:break-word';for(const pair of rows){const k=document.createElement('span');k.style.color='#91a5c1';k.textContent=pair[0];const v=document.createElement('span');v.textContent=pair[1];table.append(k,v)}root.append(table);if(x.variants){const p=document.createElement('p');p.className='notice';p.textContent='Possibili altre versioni: '+x.variantGroup.filter(n=>n!==x.key).join(' · ')+'. Il sistema non può ancora confermare che siano identiche.';root.append(p)}
-const buttons=document.createElement('div');buttons.className='modalactions';buttons.innerHTML=(x.available===false?'<span class="pill alert">☁ Video da trasferire dalla libreria ChatGPT</span>':'<button class="btn primary" data-d="play">▶ Guarda</button><button class="btn" data-d="download">↓ Scarica</button><button class="btn" data-d="info">↓ Scheda TXT</button><button class="btn" data-d="share">↗ Condividi</button>')+(g.admin?'<button class="btn primary" data-d="dossier">📁 Dossier completo / ZIP social</button><button class="ghost" data-d="edit">✎ Modifica / archivia</button>':'');buttons.onclick=e=>{const a=e.target.closest('[data-d]')?.dataset.d;if(!a)return;if(a==='play'){$('#detail').close();play(x)}if(a==='download'&&x.available!==false)location.href=fullURL(x);if(a==='info'&&x.available!==false)location.href='/info/'+encodeURIComponent(x.key);if(a==='share'&&x.available!==false)share(x);if(a==='edit'){$('#detail').close();edit(x)}if(a==='dossier'){$('#detail').close();openEditorial(x)}};root.append(buttons);
+const buttons=document.createElement('div');buttons.className='modalactions';buttons.innerHTML=(x.available===false?'<span class="pill alert">☁ Video da trasferire dalla libreria ChatGPT</span>':'<button class="btn primary" data-d="play">▶ Guarda</button><button class="btn" data-d="download">↓ Scarica</button><button class="btn" data-d="info">↓ Scheda TXT</button><button class="btn" data-d="share">↗ Condividi</button>')+(g.admin?'<button class="btn primary" data-d="dossier">📁 Dossier completo / ZIP social</button><button class="ghost" data-d="repair">✧ Correggi con GPT</button><button class="ghost" data-d="edit">✎ Modifica / archivia</button>':'');buttons.onclick=e=>{const a=e.target.closest('[data-d]')?.dataset.d;if(!a)return;if(a==='play'){$('#detail').close();play(x)}if(a==='download'&&x.available!==false)vlsDownloadOpen(x);if(a==='info'&&x.available!==false)location.href='/info/'+encodeURIComponent(x.key);if(a==='share'&&x.available!==false)share(x);if(a==='edit'){$('#detail').close();edit(x)}if(a==='dossier'){$('#detail').close();openEditorial(x)}if(a==='repair'){$('#detail').close();vlsRepairOpen(x)}};root.append(buttons);
 if(x.available===false){const msg=document.createElement('p');msg.className='notice';msg.textContent='Questo video è individuato nella libreria ChatGPT, ma il suo MP4 non è ancora stato caricato su Cloudflare. Lo puoi cercare in ChatGPT con questo nome: '+x.name;root.append(msg);$('#detail').showModal();return}const url=encodeURIComponent(shareURL(x)),txt=encodeURIComponent(x.viewTitle+' — '+shareURL(x));const links=document.createElement('div');links.className='share-links';links.innerHTML='<a target="_blank" rel="noopener noreferrer" href="https://wa.me/?text='+txt+'">WhatsApp</a><a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/sharer/sharer.php?u='+url+'">Facebook</a><a target="_blank" rel="noopener noreferrer" href="https://t.me/share/url?url='+url+'&text='+encodeURIComponent(x.viewTitle)+'">Telegram</a><a target="_blank" rel="noopener noreferrer" href="https://twitter.com/intent/tweet?text='+encodeURIComponent(x.viewTitle)+'&url='+url+'">X</a>';root.append(links);$('#detail').showModal()}
 async function share(x){const link=shareURL(x);if(navigator.share){try{await navigator.share({title:x.viewTitle,text:x.viewDescription,url:link});log('Condiviso il link. Per il post completo usa Prepara pubblicazione.');return}catch(e){if(e.name==='AbortError')return}}try{await navigator.clipboard.writeText(link);log('Link del video copiato')}catch{prompt('Copia il collegamento',link)}}
 async function manage(x,patch){if(!g.admin){$('#adminDialog').showModal();return}try{const r=await fetch('/api/manage',{method:'POST',headers:{'content-type':'application/json','Authorization':'Bearer '+g.token},body:JSON.stringify({key:x.key,patch})});if(!r.ok)throw Error('Impossibile salvare ('+r.status+')');const d=await r.json();Object.assign(x,d.entry||patch);x.viewTitle=x.title||x.guess.title;x.viewCategory=categoryLabel(x.category||x.guess.category);x.viewDescription=x.description||x.guess.description;x.viewVersion=x.version||x.guess.version;log('Modifiche salvate online');renderHome();draw();return true}catch(e){log(e.message);return false}}
@@ -867,7 +907,7 @@ $('#playerSpeed').onclick=()=>{const v=$('#video'),speeds=[1,1.25,1.5,2];v.playb
 document.addEventListener('keydown',e=>{if(!$('#player').open||['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName))return;if(e.key==='ArrowLeft'){$('#playerRewind').click();e.preventDefault()}if(e.key==='ArrowRight'){$('#playerForward').click();e.preventDefault()}});
 
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{const dialog=$('#'+b.dataset.close);dialog.close();if(dialog.id==='player'){$('#video').pause();$('#video').removeAttribute('src');$('#video').load()}});
-$('#playerDownload').onclick=()=>{if(g.selected)location.href=fullURL(g.selected)};
+$('#playerDownload').onclick=()=>{if(g.selected)vlsDownloadOpen(g.selected)};
 $('#playerShare').onclick=()=>g.selected&&share(g.selected);
 $('#playerDetails').onclick=()=>{const x=g.selected;$('#player').close();$('#video').pause();$('#video').removeAttribute('src');if(x)details(x)};
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){d.close();if(d.id==='player'){$('#video').pause();$('#video').removeAttribute('src')}}}));
@@ -1259,7 +1299,7 @@ async function socialCopyText(value){try{await navigator.clipboard.writeText(val
 $('#socialCopy').onclick=()=>socialCopyText(shareURL(socialActionItem));
 $('#socialCopyTitle').onclick=()=>socialCopyText(socialActionItem.viewTitle);
 $('#socialShare').onclick=()=>share(socialActionItem);
-$('#socialDownload').onclick=()=>{location.href=fullURL(socialActionItem)};
+$('#socialDownload').onclick=()=>{vlsDownloadOpen(socialActionItem)};
 $('#socialDossier').onclick=()=>{const x=socialActionItem;options.close();details(x)};
 $('#socialFavAction').onclick=async()=>{
  const x=socialActionItem,value=!socialIsFavorite(x),b=$('#socialFavAction');b.disabled=true;
@@ -1353,6 +1393,183 @@ async function swPublish(x){
  swPostUpdate();swPub.showModal();if(!g.admin)return;
  $('#swPubInfo').textContent='Caricamento dossier…';
  try{const r=await fetch('/api/editorial?key='+encodeURIComponent(x.key),{headers:{Authorization:'Bearer '+g.token},cache:'no-store'});if(!r.ok)throw Error('Dossier non disponibile ('+r.status+')');const d=await r.json();if(request!==swRequest||!swPub.open)return;swPubRecord=d.record;swPubSources=d.socialSources||{};swPostUpdate();$('#swPubCredits').textContent='Musica: '+(d.record.musicAttribution||[d.record.musicTitle,d.record.musicAuthor].filter(Boolean).join(' · ')||'Da documentare')+' · Diritti: '+(d.record.rightsStatus||'Da verificare')+(d.missing?.length?' · Campi mancanti: '+d.missing.join(', '):'');}catch(e){if(request===swRequest)$('#swPubInfo').textContent=e.message}
+}
+
+/* Owner-selected Video Library UX: 5/6/12/13/15/16/18. Inline fragment inside existing IIFE.
+   Catalog-derived data are NOT verified artistic approvals; never modify originals. */
+const vlsSevenWorks=[
+ ['rebel','The Fall of the Rebel Angels',['fall_of_the_rebel_angels','fall_rebel_angels','rebel_angels']],
+ ['garden','The Garden of Death',['garden_of_death','simberg_garden']],
+ ['babel','The Tower of Babel',['tower_of_babel','bruegel_babel']],
+ ['shalott','The Lady of Shalott',['lady_of_shalott','lady_shalott']],
+ ['triumph','The Triumph of Death',['triumph_of_death','bruegel_triumph']],
+ ['circle','The Magic Circle',['magic_circle','waterhouse_circle']],
+ ['flea','The Ghost of a Flea',['ghost_of_a_flea','ghost_of_flea','blake_flea']],
+ ['watch','The Night Watch',['night_watch','nightwatch']],
+ ['sardanapalus','The Death of Sardanapalus',['death_of_sardanapalus','sardanapalus']]
+];
+const vlsSevenSlots=[['critico_standard','Critico'],['critico_museum','Critico Museum'],['cinema_standard','Cinema'],['cinema_museum','Cinema Museum']];
+const vlsNorm=s=>norm(String(s||'')).replace(/[^a-z0-9]+/g,'_');
+function vlsWorkFor(x){
+ const key=vlsNorm(x.key||x.name);
+ if(!/(artvision|critico|cinema|museum|rebel_angels|night_watch)/.test(key))return null;
+ return vlsSevenWorks.find(w=>w[2].some(alias=>key.includes(alias)))||null;
+}
+function vlsSlotFor(x){
+ const key=vlsNorm(x.key||x.name);
+ if(key.includes('critico'))return key.includes('museum')?'critico_museum':'critico_standard';
+ if(key.includes('cinema'))return key.includes('museum')?'cinema_museum':'cinema_standard';
+ return null;
+}
+function vlsGroups(){
+ const map=new Map();
+ for(const x of g.items){
+  if(x.hidden)continue;
+  const work=vlsWorkFor(x),slot=vlsSlotFor(x);if(!work||!slot)continue;
+  if(!map.has(work[0]))map.set(work[0],{work,slots:new Map(),all:[]});
+  const row=map.get(work[0]);row.all.push(x);
+  if(!row.slots.has(slot))row.slots.set(slot,[]);
+  row.slots.get(slot).push(x);
+ }
+ for(const row of map.values())for(const files of row.slots.values())
+  files.sort((a,b)=>(Date.parse(b.uploaded||b.gptCreatedAt)||0)-(Date.parse(a.uploaded||a.gptCreatedAt)||0));
+ return [...map.values()].sort((a,b)=>vlsSevenWorks.indexOf(a.work)-vlsSevenWorks.indexOf(b.work));
+}
+function vlsEl(tag,cls,label){
+ const e=document.createElement(tag);if(cls)e.className=cls;if(label!==undefined)e.textContent=label;return e;
+}
+function vlsRenderWorks(){
+ const root=$('#vlsWorks'),groups=vlsGroups();root.hidden=!groups.length;
+ if(!groups.length){root.replaceChildren();return}
+ root.replaceChildren(vlsEl('h3','','Opere e quattro versioni'),vlsEl('p','','Versioni riconosciute dai nomi nel catalogo, senza attestare approvazione artistica. I video non presenti qui possono esistere fuori dal sito.'));
+ const list=vlsEl('div','vls-works-list');
+ for(const group of groups){
+  const box=vlsEl('details','vls-work'),head=vlsEl('summary');
+  head.append(vlsEl('span','',group.work[1]),vlsEl('small','',group.slots.size+' tipologie su 4'));box.append(head);
+  const grid=vlsEl('div','vls-slot-grid');
+  for(const [slot,label] of vlsSevenSlots){
+   const files=group.slots.get(slot)||[],x=files.find(y=>y.available!==false)||files[0];
+   const btn=vlsEl('button','vls-slot',label);btn.type='button';btn.disabled=!x;
+   btn.append(vlsEl('small','',x?(x.available===false?'Solo ChatGPT':files.length+' file / revisioni'):'Non trovato sul sito'));
+   if(x)btn.onclick=()=>x.available===false?details(x):play(x);
+   grid.append(btn);
+  }
+  box.append(grid);
+  const actions=vlsEl('div','vls-work-actions'),compare=vlsEl('button','','↔ Confronta versioni');compare.type='button';
+  compare.disabled=group.all.filter(x=>x.available!==false).length<2;
+  compare.onclick=()=>vlsCompareOpen(group);actions.append(compare);box.append(actions);list.append(box);
+ }
+ root.append(list);
+}
+const vlsCompareState={group:null};
+function vlsCompareLoad(key){
+ const sel=$('#vlsSelect'+key),video=$('#vlsVideo'+key);
+ const x=vlsCompareState.group?.all.find(v=>v.key===sel.value&&v.available!==false);
+ video.pause();video.removeAttribute('src');video.removeAttribute('poster');
+ if(x){video.src=mediaURL(x);if(x.cover)video.poster=x.cover}video.load();
+}
+function vlsComparePane(key){
+ for(const which of ['A','B']){
+  $('#vlsPane'+which).classList.toggle('active',which===key);
+  $('#vlsSwitch'+which).className=which===key?'btn primary':'ghost';
+  if(which!==key&&window.matchMedia('(max-width:700px)').matches)$('#vlsVideo'+which).pause();
+ }
+}
+function vlsCompareOpen(group){
+ const videos=group.all.filter(x=>x.available!==false);if(videos.length<2)return;
+ vlsCompareState.group=group;$('#vlsCompareTitle').textContent='Confronta · '+group.work[1];
+ for(const key of ['A','B']){
+  const select=$('#vlsSelect'+key);select.replaceChildren();
+  for(const x of videos){const slot=vlsSevenSlots.find(z=>z[0]===vlsSlotFor(x));
+   select.add(new Option((slot?slot[1]:'Versione')+' · '+(x.name||x.key),x.key))}
+ }
+ $('#vlsSelectA').selectedIndex=0;$('#vlsSelectB').selectedIndex=1;
+ vlsCompareLoad('A');vlsCompareLoad('B');vlsComparePane('A');
+ $('#vlsCompareInfo').textContent='La seconda versione è inizialmente senza audio. Il confronto non certifica i contenuti.';
+ $('#vlsCompare').showModal();
+}
+for(const key of ['A','B']){
+ $('#vlsSelect'+key).onchange=()=>vlsCompareLoad(key);
+ $('#vlsSwitch'+key).onclick=()=>vlsComparePane(key);
+}
+$('#vlsAlign').onclick=()=>{
+ const a=$('#vlsVideoA'),b=$('#vlsVideoB');
+ try{b.currentTime=Math.min(Number.isFinite(b.duration)?b.duration:a.currentTime,a.currentTime||0);
+ $('#vlsCompareInfo').textContent='Seconda versione allineata al tempo della prima. Avvia la riproduzione quando vuoi.'}
+ catch{$('#vlsCompareInfo').textContent='Attendi il caricamento dei metadati prima di allineare.'}
+};
+$('#vlsCompare').addEventListener('close',()=>{
+ for(const key of ['A','B']){const video=$('#vlsVideo'+key);video.pause();video.removeAttribute('src');video.load()}
+ vlsCompareState.group=null;
+});
+$('#vlsFullscreen').onclick=async()=>{
+ const video=$('#video');
+ try{if(video.requestFullscreen)await video.requestFullscreen();
+ else if(video.webkitEnterFullscreen)video.webkitEnterFullscreen();else throw Error('unsupported')}
+ catch{log('Usa il tasto schermo intero del player Android.')}
+};
+let vlsRepairItem=null,vlsRepairSecond=null;
+function vlsRepairOpen(x){
+ if(!g.admin){$('#adminDialog').showModal();return}
+ vlsRepairItem=x;
+ vlsRepairSecond=$('#player').open&&g.selected?.key===x.key?Number($('#video').currentTime)||0:null;
+ $('#vlsRepairVideo').textContent=x.viewTitle+(vlsRepairSecond!==null?' · '+vlsRepairSecond.toFixed(1)+' s':'');
+ $('#vlsIssue').value='regia';$('#vlsIssueNote').value='';$('#vlsRepairInfo').textContent='';
+ $('#vlsRepair').showModal();
+}
+function vlsRepairPrompt(){
+ const x=vlsRepairItem;
+ return 'Controlla e, se possibile, correggi il problema nel progetto Tra le Pagine / ArtVision.\n'+
+ 'Repository: https://github.com/GGIANLUCAA/Tra-le-pagine-\nVideo: '+(x.name||x.key)+'\n'+
+ 'Chiave pubblica catalogo: '+x.key+'\n'+
+ (vlsRepairSecond===null?'':'Secondo osservato: '+vlsRepairSecond.toFixed(1)+'\n')+
+ 'Problema: '+$('#vlsIssue').value+'\n'+
+ 'Descrizione: '+($('#vlsIssueNote').value.trim()||'Da verificare sul video')+'\n'+
+ 'Prima verifica repository, workflow, file MP4 reale e regole attive. Non supporre che catalogato equivalga ad approvato, scaricabile per intero o pubblicabile. Se possibile proponi correzione minima e sicura in un ramo separato, con QA e senza toccare master approvati.';
+}
+$('#vlsRepairFromPlayer').onclick=()=>{if(g.selected&&g.admin)vlsRepairOpen(g.selected)};
+$('#vlsCopyGPT').onclick=async()=>{
+ if(!vlsRepairItem)return;
+ const message=vlsRepairPrompt();
+ try{await navigator.clipboard.writeText(message);$('#vlsRepairInfo').textContent='Copiato. Apri ChatGPT e incolla.'}
+ catch{$('#vlsRepairInfo').textContent='Copia manualmente il testo selezionato.';const input=$('#vlsIssueNote');input.value=message.slice(0,1500);input.focus();input.select()}
+};
+let vlsDownloadItem=null,vlsDownloadRequest=0;
+async function vlsVerifyDownload(x){
+ const request=++vlsDownloadRequest,controller=new AbortController();
+ $('#vlsDownloadStatus').textContent='Verifica dei primi byte in corso…';
+ const timer=setTimeout(()=>controller.abort(),12000);
+ try{
+  const r=await fetch(fullURL(x),{method:'GET',headers:{Range:'bytes=0-0'},cache:'no-store',signal:controller.signal});
+  if(request!==vlsDownloadRequest)return;
+  const range=r.headers.get('content-range')||'',mime=r.headers.get('content-type')||'';
+  $('#vlsDownloadStatus').textContent=r.status===206&&/^bytes\s+0-0\/\d+$/i.test(range)&&/(video\/mp4|application\/octet-stream)/i.test(mime)
+   ?'Accesso parziale OK (HTTP 206). Integrità dell’MP4 completo NON verificata.'
+   :'Verifica rapida non conclusiva (HTTP '+r.status+'). Il download resta possibile, ma non certificato.';
+ }catch(e){if(request===vlsDownloadRequest)$('#vlsDownloadStatus').textContent='Verifica non riuscita: '+(e.name==='AbortError'?'tempo scaduto':'rete/archivio non disponibile')+'. Download non certificato.'}
+ finally{clearTimeout(timer);controller.abort()}
+}
+function vlsDownloadOpen(x){
+ if(!x||x.available===false){log('Video presente solo in ChatGPT: MP4 non disponibile su questo sito.');return}
+ vlsDownloadItem=x;$('#vlsDownloadTitle').textContent='Scarica · '+x.viewTitle;
+ $('#vlsDownloadInfo').textContent='File originale · '+size(x.size)+' · '+dur(x.duration);
+ $('#vlsDownloadMP4').href=fullURL(x);$('#vlsDownloadZIP').hidden=!g.admin;
+ $('#vlsDownload').showModal();vlsVerifyDownload(x);
+}
+$('#vlsRetryDownload').onclick=()=>{if(vlsDownloadItem)vlsVerifyDownload(vlsDownloadItem)};
+$('#vlsDownloadZIP').onclick=async()=>{const x=vlsDownloadItem;if(!x||!g.admin)return;
+ $('#vlsDownload').close();await openEditorial(x);if($('#editorial').open)edActivateTab('package');
+};
+$('#vlsDownload').addEventListener('close',()=>{vlsDownloadRequest++;vlsDownloadItem=null});
+function vlsRenderQuick(){
+ const node=$('#vlsStudioQuick');node.hidden=!(g.admin&&g.studio);if(node.hidden)return;
+ const rows=g.items.filter(x=>!x.hidden);
+ const drafts=rows.filter(x=>x.viewVersion==='draft').length,unavailable=rows.filter(x=>x.available===false).length;
+ node.replaceChildren(vlsEl('strong','','Sala di regia rapida'),vlsEl('span','',drafts+' provini nel catalogo · '+unavailable+' schede senza MP4 sul sito'));
+ const review=vlsEl('button','','Esamina provini');review.type='button';
+ review.onclick=()=>{$('#versions').value='draft';$('#availability').value='online';g.category='Tutti';categories();refreshFilter();gotoSection('library')};
+ const center=vlsEl('button','','Centro di controllo');center.type='button';center.onclick=openControlCenter;
+ node.append(review,center);
 }
 
 const frag=location.hash.slice(1);if(frag.startsWith('manage=')){g.token=decodeURIComponent(frag.slice(7));localStorage.setItem('vlsAdmin',g.token);history.replaceState(null,'',location.pathname+location.search)}else{g.token=localStorage.getItem('vlsAdmin')||''}
