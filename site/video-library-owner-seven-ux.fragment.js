@@ -87,7 +87,7 @@ function vlsCompareOpen(group){
    select.add(new Option((slot?slot[1]:'Versione')+' · '+(x.name||x.key),x.key))}
  }
  $('#vlsSelectA').selectedIndex=0;$('#vlsSelectB').selectedIndex=1;
- vlsCompareLoad('A');vlsCompareLoad('B');vlsComparePane('A');
+ vlsCompareLoad('A');vlsCompareLoad('B');$('#vlsVideoB').muted=true;vlsComparePane('A');
  $('#vlsCompareInfo').textContent='La seconda versione è inizialmente senza audio. Il confronto non certifica i contenuti.';
  $('#vlsCompare').showModal();
 }
