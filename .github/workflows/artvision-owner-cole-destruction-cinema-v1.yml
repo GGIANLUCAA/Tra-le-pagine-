@@ -1,0 +1,106 @@
+name: "ArtVision OWNER · Cole Destruction · new Cinema review"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-owner-cole-destruction-cinema-v1.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-single-heavy-render
+  cancel-in-progress: false
+jobs:
+  private_cinema_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Preflight: only new standalone Destruction, no duplicates or prior slot rewrites
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_owner_cole_destruction_cinema_v1.py
+          python - <<'PY'
+          import json,pathlib
+          q=json.loads(pathlib.Path('research/artvision_owner_selected_30_future_20261109.json').read_text())
+          work=[w for w in q['works'] if w.get('title_as_chosen')=='The Course of Empire: Destruction']
+          assert len(work)==1 and work[0]['selection_order']==9
+          root=pathlib.Path('queue')
+          checkpoints=[str(p) for p in root.glob('*cole*destruction*checkpoint*.json')]
+          assert not checkpoints, f'Existing identical slot checkpoint; do not duplicate: {checkpoints}'
+          print('APPROVED_OWNER_SECONDARY_SLOT: Cole Destruction, cinema_standard; no automatic Gold or site publish')
+          PY
+      - name: Install locally available free tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: Verify exact 1836 original image and render brand-new private MP4
+        run: python scripts/artvision_owner_cole_destruction_cinema_v1.py
+      - name: Full FFmpeg decode, manifest, CRC and full byte readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/owner-cole-destruction-v1
+          ffprobe -v error -show_format -show_streams -of json "$d/VIDEO_REVIEW.mp4" > "$d/FFPROBE.json"
+          ffmpeg -v error -xerror -i "$d/VIDEO_REVIEW.mp4" -map 0:v:0 -f null -
+          ffmpeg -v error -xerror -i "$d/VIDEO_REVIEW.mp4" -map 0:a:0 -f null -
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,zipfile
+          d=Path('output/owner-cole-destruction-v1')
+          vid=d/'VIDEO_REVIEW.mp4'
+          source=d/'ORIGINAL_ARTWORK.jpg'
+          assert vid.is_file() and vid.stat().st_size>1_000_000
+          sha=lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+          assert source.stat().st_size==17561412
+          assert hashlib.sha1(source.read_bytes()).hexdigest()=='b2af9bc527fd6a671ae2e307f8ec8a0a2b4e993a'
+          spec=json.loads((d/'FFPROBE.json').read_text())
+          v=[s for s in spec['streams'] if s['codec_type']=='video']
+          a=[s for s in spec['streams'] if s['codec_type']=='audio']
+          assert len(v)==1 and v[0]['codec_name']=='h264'
+          assert (v[0]['width'],v[0]['height'])==(1080,1920)
+          assert len(a)==1 and a[0]['codec_name']=='aac'
+          assert 69<float(spec['format']['duration'])<71
+          assert len(json.loads((d/'STORYBOARD_REGIA.json').read_text())['shots'])==16
+          report={'work':'The Course of Empire: Destruction','variant':'cinema_standard',
+             'source_bytes':source.stat().st_size,'source_sha256':sha(source),
+             'mp4_sha256':sha(vid),'mp4_bytes':vid.stat().st_size,'ffmpeg_full_video_decode':'PASS',
+             'ffmpeg_full_audio_decode':'PASS','status':'rendered_needs_visual_and_semantic_review',
+             'human_full_speed_artistic_approval':'PENDING','territorial_commercial_rights':'PENDING',
+             'gold':False,'published':False,'main_26_of_36_slots_changed':0,'extra_paid_api_costs':0}
+          (d/'QA_TECHNICAL.json').write_text(json.dumps(report,indent=2),encoding='utf8')
+          included=['VIDEO_REVIEW.mp4','COPERTINA.jpg','ORIGINAL_ARTWORK.jpg',
+             'FONTI_E_DIRITTI.json','STORYBOARD_REGIA.json','SOCIAL_POSTS.json',
+             'ISTRUZIONI.md','SCORE_ORIGINALE.wav','CONTATTO_REGIA.jpg','QA_TECHNICAL.json','FFPROBE.json']
+          p=d/'CONSEGNA_DA_REVISIONARE.zip'
+          with zipfile.ZipFile(p,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=3) as z:
+              for name in included:z.write(d/name,arcname=name)
+          with zipfile.ZipFile(p) as z:
+              assert z.testzip() is None
+              for name in included:
+                  assert z.read(name)==(d/name).read_bytes()
+          print('NEW_COLE_MP4_SHA256',sha(vid))
+          print('NEW_COLE_ZIP_SHA256',sha(p))
+          print('SOURCE_IMAGE_SHA256',sha(source))
+          print('TECHNICAL_PASS_ARTISTIC_PENDING_NOT_PUBLISHED_NO_GOLD')
+          PY
+      - name: Upload private review deliverables, never publish
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_OWNER_COLE_DESTRUCTION_NEW_CINEMA_REVIEW
+          path: |
+            output/owner-cole-destruction-v1/VIDEO_REVIEW.mp4
+            output/owner-cole-destruction-v1/CONSEGNA_DA_REVISIONARE.zip
+            output/owner-cole-destruction-v1/QA_TECHNICAL.json
+            output/owner-cole-destruction-v1/COPERTINA.jpg
+            output/owner-cole-destruction-v1/CONTATTO_REGIA.jpg
+          if-no-files-found: error
+          retention-days: 14
