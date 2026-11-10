@@ -14,6 +14,8 @@ sys.path.insert(0,str(ROOT/"src"))
 import gemini_voice
 from artvision_critico_review_capture_v1 import capture as capture_artvision_focus
 from studio_regia_real_mp4_v1 import analyze as real_mp4_regia_audit
+from artvision_critico_directed_camera_v2 import (
+ crop_camera, chapter_plan, BRUEGEL_MODES)
 
 OUT=Path("/tmp/rebel_angels_critico_v144")
 RECIPE=ROOT/"modules/artvision_critico/production_series/bruegel_rebel_angels_v144.json"
@@ -142,7 +144,18 @@ def shot(paint,chapter,u,audit=None):
  if region.size==0:raise RuntimeError("Out-of-bounds crop")
  return cv2.resize(region,(W,H),interpolation=cv2.INTER_AREA)
 
-def original_music(total):
+def directed_shot(paint,chapter,u,mode,audit=None):
+ # V2 trial: no more continuous identical zoom on every chapter.
+ ih,iw=paint.shape[:2]
+ x0,y0,x1,y1=crop_camera(chapter,u,iw,ih,W,H,mode)
+ region=paint[y0:y1,x0:x1]
+ if region.size==0:raise RuntimeError("Invalid directed source crop")
+ if audit is not None:
+  audit["camera_crop_xyxy"]=[x0/iw,y0/ih,x1/iw,y1/ih]
+  audit["mode"]=mode
+ return cv2.resize(region,(W,H),interpolation=cv2.INTER_AREA)
+
+def original_music(total, output_dir=OUT):
  # Fully generated ambient sine textures, no external samples.
  sr=32000
  t=np.arange(round(sr*total),dtype=np.float64)/sr
@@ -158,31 +171,36 @@ def original_music(total):
    music+=(0.03/(1+j*.65))*a*np.sin(2*np.pi*f*t+(.1+j*.07)*np.sin(.35*t))
  fade=np.clip(t/2,0,1)*np.clip((total-t)/3,0,1)
  pcm=np.int16(np.clip(music*fade,-.8,.8)*28000)
- p=OUT/"MUSIC_ORIGINAL_V144.wav"
+ p=Path(output_dir)/"MUSIC_ORIGINAL_V144.wav"
  with wave.open(str(p),"wb") as f:
   f.setnchannels(1);f.setsampwidth(2);f.setframerate(sr);f.writeframes(pcm.tobytes())
  return p
 
-def render():
+def render(directed=False):
+ render_dir=OUT if not directed else render_dir/'REGIA_V2_TRIAL'
+ render_dir.mkdir(parents=True,exist_ok=True)
  q,script=load()
  artpath=art_check()
  chapters=q["chapters"]
  wav,voice_dur,ends,align=verified_voice(script,chapters)
  total_frames=round((DELAY+voice_dur+TAIL)*FPS)
  total=total_frames/FPS
+ if directed:
+  preview=chapter_plan(chapters,ends,voice_offset_s=DELAY,wav_sha256=sha(wav),source_sha256=ART_SHA)
+  (render_dir/"DIRECTED_CAMERA_PLAN_V2.json").write_text(json.dumps(preview,indent=2,ensure_ascii=False)+"\n",encoding="utf8")
  image=Image.open(artpath).convert("RGB")
  whole=full_plate(image)
  cover=title_card(image)
  artwork=cv2.imread(str(artpath),cv2.IMREAD_COLOR)
  assert artwork.shape[:2]==(2772,3840)
- music=original_music(total)
- shared=OUT/"BRUEGEL_REBEL_CRITICO_SHARED_AUDIO_V144.m4a"
+ music=original_music(total,render_dir)
+ shared=render_dir/"BRUEGEL_REBEL_CRITICO_SHARED_AUDIO_V144.m4a"
  ms=round(DELAY*1000)
  run(["ffmpeg","-v","error","-y","-i",wav,"-i",music,
    "-filter_complex",f"[0:a]adelay={ms}|{ms},volume=1[v];[1:a]volume=.22[m];[v][m]amix=inputs=2:duration=longest:dropout_transition=0,alimiter=limit=.95[a]",
    "-map","[a]","-c:a","aac","-b:a","160k",shared])
- raw=OUT/"SILENT_TEMP_V144.mp4"
- target=OUT/"BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4"
+ raw=render_dir/"SILENT_TEMP_V144.mp4"
+ target=render_dir/("BRUEGEL_REBEL_ANGELS_DIRECTED_V2_NOT_APPROVED.mp4" if directed else "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4")
  cmd=["ffmpeg","-hide_banner","-loglevel","error","-y",
       "-f","rawvideo","-pix_fmt","bgr24","-s",f"{W}x{H}","-r",str(FPS),"-i","pipe:0","-an",
       "-c:v","libx264","-preset","veryfast","-crf","21","-pix_fmt","yuv420p",str(raw)]
@@ -204,7 +222,16 @@ def render():
     end=ends[ix]
     u=max(0,min(1,(spoken-beg)/max(.1,end-beg)))
     audit={}
-    if ix in (0,1,8):
+    if directed:
+     if ix in (1,8):
+      frame=whole
+     elif ix==0 and u<.33:
+      frame=whole
+     elif ix==0:
+      frame=directed_shot(artwork,chapters[ix],(u-.33)/.67,BRUEGEL_MODES[ix],audit)
+     else:
+      frame=directed_shot(artwork,chapters[ix],u,BRUEGEL_MODES[ix],audit)
+    elif ix in (0,1,8):
      frame=whole
     else:
      frame=shot(artwork,chapters[ix],u,audit)
@@ -237,16 +264,16 @@ def render():
   xx=i%4*194+7; yy=i//4*340+7
   grid[yy:yy+320,xx:xx+180]=frame
   cv2.putText(grid,f"{sec:.1f}s",(xx,yy+331),cv2.FONT_HERSHEY_SIMPLEX,.34,(230,230,230),1)
- cv2.imwrite(str(OUT/"CONTACT_SHEET_V144.jpg"),grid)
- Image.fromarray(cv2.cvtColor(cover,cv2.COLOR_BGR2RGB)).save(OUT/"COVER.jpg",quality=93)
- (OUT/"RIGHTS_AND_CREDITS.txt").write_text(
+ cv2.imwrite(str(render_dir/"CONTACT_SHEET_V144.jpg"),grid)
+ Image.fromarray(cv2.cvtColor(cover,cv2.COLOR_BGR2RGB)).save(render_dir/"COVER.jpg",quality=93)
+ (render_dir/"RIGHTS_AND_CREDITS.txt").write_text(
    "Pieter Bruegel the Elder, The Fall of the Rebel Angels, 1562. Royal Museums of Fine Arts of Belgium, accession 584, 117x162 cm oil on oak panel.\n"
    "Painting: independent faithful PD-Art scan, Wikimedia Commons: "+q["source_page"]+"\n"
    "SHA256 original painting: "+ART_SHA+"\n"
    "Voice: ONE natural Google Gacrux recording from owner-attested second Free/no-billing project; future Museum MUST reuse exactly this WAV. Original synthesised music, no recordings used.\n"
    "Museum variant blocked: Sailko photo retrieval HTTP429; frame not yet verified. No fake museum, no automatic Gold or publication. Territorial rights check pending.\n",
    encoding="utf8")
- (OUT/"SOCIAL_DRAFT_UNPUBLISHED.txt").write_text(
+ (render_dir/"SOCIAL_DRAFT_UNPUBLISHED.txt").write_text(
    "The Fall of the Rebel Angels · Pieter Bruegel the Elder, 1562.\n\n"
    "Angelic light crashes into an army of impossible hybrid creatures in this astonishing vision of chaos and order.\n\n"
    "Royal Museums of Fine Arts of Belgium, Brussels, collection 584. Artwork reproduction: Wikimedia Commons PD-Art. Original narration and soundtrack.\n"
@@ -260,7 +287,7 @@ def render():
     "Gold_V25":False,"social_published":False,"site_player_verified":False,"new_paid_video_calls":0}
  focus=capture_artvision_focus(
   video=target, wav=wav, voice_cache=OUT/"VOICE_CACHE_V13.json",
-  output_dir=OUT/"FOCUS_REVIEW_V1", variant="critico_standard",
+  output_dir=render_dir/"FOCUS_REVIEW_V1", variant="critico_standard",
   voice_offset_s=DELAY, video_duration_s=total,
   camera_trace=camera_trace, expected_video_sha256=sha(target))
  qa["narrative_focus_review"]={
@@ -271,7 +298,7 @@ def render():
  # Regia proof from the EXACT finished MP4, never a synthetic preview or approval.
  # This is evidence-only and must not destroy an already valid render if QA sampling fails.
  try:
-  regia=real_mp4_regia_audit(target,OUT/"REGIA_REAL_MP4_V1")
+  regia=real_mp4_regia_audit(target,render_dir/"REGIA_REAL_MP4_V1")
   assert regia["source"]["sha256"]==qa["file"]["sha256"]
   qa["regia_real_mp4_review"]={
    "status":regia["status"],
@@ -285,26 +312,34 @@ def render():
    "status":"UNAVAILABLE_NEEDS_REVIEW",
    "error_type":type(exc).__name__,
    "artistic_approval":False,"Gold_V25":False}
- report=OUT/"QA_V144.json"
+ if directed:
+  qa["camera_revision"]="DIRECTED_V2_ISOLATED_TRIAL_NOT_ARTISTICALLY_APPROVED"
+  qa["camera_plan"]="DIRECTED_CAMERA_PLAN_V2.json"
+  qa["legacy_master_untouched"]=True
+  qa["Gold_V25"]=False
+  qa["social_published"]=False
+ report=render_dir/"QA_V144.json"
  report.write_text(json.dumps(qa,indent=2,ensure_ascii=False)+"\n")
- package=OUT/"REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW_PACKAGE.zip"
+ package=render_dir/("REBEL_ANGELS_DIRECTED_V2_NOT_APPROVED.zip" if directed else "REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW_PACKAGE.zip")
  with zipfile.ZipFile(package,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=3) as z:
-  for f in [target,OUT/"COVER.jpg",OUT/"CONTACT_SHEET_V144.jpg",report,
-            OUT/"RIGHTS_AND_CREDITS.txt",OUT/"SOCIAL_DRAFT_UNPUBLISHED.txt",OUT/"COPIONE_ESATTO_V144.txt"]:
+  for f in [target,render_dir/"COVER.jpg",render_dir/"CONTACT_SHEET_V144.jpg",report,
+            render_dir/"RIGHTS_AND_CREDITS.txt",render_dir/"SOCIAL_DRAFT_UNPUBLISHED.txt",OUT/"COPIONE_ESATTO_V144.txt"]:
    z.write(f,arcname=f.name)
-  for f in sorted((OUT/"FOCUS_REVIEW_V1").rglob("*")):
-   if f.is_file():z.write(f,arcname=str(f.relative_to(OUT)))
-  if (OUT/"REGIA_REAL_MP4_V1").is_dir():
-   for f in sorted((OUT/"REGIA_REAL_MP4_V1").rglob("*")):
-    if f.is_file():z.write(f,arcname=str(f.relative_to(OUT)))
+  for f in sorted((render_dir/"FOCUS_REVIEW_V1").rglob("*")):
+   if f.is_file():z.write(f,arcname=str(f.relative_to(render_dir)))
+  if (render_dir/"REGIA_REAL_MP4_V1").is_dir():
+   for f in sorted((render_dir/"REGIA_REAL_MP4_V1").rglob("*")):
+    if f.is_file():z.write(f,arcname=str(f.relative_to(render_dir)))
+  if directed:
+   z.write(render_dir/"DIRECTED_CAMERA_PLAN_V2.json",arcname="DIRECTED_CAMERA_PLAN_V2.json")
  with zipfile.ZipFile(package) as z: assert z.testzip() is None
  print(json.dumps({"status":"ONE_REAL_CRITICO_REVIEW_MP4","mp4":qa["file"],"package":{"name":package.name,"bytes":package.stat().st_size,"sha256":sha(package),"crc":"PASS"},"voice_wav_sha256":sha(wav),"human_qa":"PENDING","museum_approved":False,"Gold_V25":False},indent=2))
 
 def main():
  p=argparse.ArgumentParser()
- p.add_argument("--phase",required=True,choices=["voice","render"])
+ p.add_argument("--phase",required=True,choices=["voice","render","render-directed"])
  a=p.parse_args()
  OUT.mkdir(parents=True,exist_ok=True)
  if a.phase=="voice":voice()
- else:render()
+ else:render(directed=a.phase=="render-directed")
 if __name__=="__main__":main()
