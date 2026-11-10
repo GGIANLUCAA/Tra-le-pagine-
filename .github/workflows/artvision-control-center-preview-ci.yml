@@ -22,6 +22,9 @@ on:
       - site/control-center-progress-backend.fragment.js
       - site/control-center-progress-frontend.fragment.js
       - tests/control-center-production-progress.test.mjs
+      - tests/control-center-progress-v13.test.mjs
+      - site/control-center-progress-v13-backend.fragment.js
+      - site/control-center-progress-v13-frontend.fragment.js
       - .github/workflows/artvision-control-center-preview-ci.yml
   pull_request:
     branches:
@@ -43,6 +46,9 @@ on:
       - site/control-center-progress-backend.fragment.js
       - site/control-center-progress-frontend.fragment.js
       - tests/control-center-production-progress.test.mjs
+      - tests/control-center-progress-v13.test.mjs
+      - site/control-center-progress-v13-backend.fragment.js
+      - site/control-center-progress-v13-frontend.fragment.js
       - .github/workflows/artvision-control-center-preview-ci.yml
   workflow_dispatch:
 permissions:
@@ -60,7 +66,7 @@ jobs:
         with:
           node-version: '22'
       - name: Test UI, status and file probe without network/API credits
-        run: node --test tests/control-center-preview.test.mjs tests/control-center-owner-action-hub.test.mjs tests/control-center-production-progress.test.mjs
+        run: node --test tests/control-center-preview.test.mjs tests/control-center-owner-action-hub.test.mjs tests/control-center-production-progress.test.mjs tests/control-center-progress-v13.test.mjs
       - name: Verify quality memory, V13 briefs and cycle handoffs (offline)
         run: python3 -m unittest discover -s tests -p "test_studio_quality_memory_v1.py" -v
       - name: Android-like UI interaction smoke without real API calls
@@ -79,6 +85,8 @@ jobs:
           ui_frag=Path("site/control-center-progress-frontend.fragment.js").read_text()
           assert backend_frag.strip() in backend
           assert ui_frag.strip() in html
+          assert Path("site/control-center-progress-v13-backend.fragment.js").read_text().strip() in backend
+          assert Path("site/control-center-progress-v13-frontend.fragment.js").read_text().strip() in html
           assert 'if(path==="/api/progress")' in backend
           assert html.count("<script>")==1
           assert "qualitySaveFeedback" in html and "data-action-unblock" in html
