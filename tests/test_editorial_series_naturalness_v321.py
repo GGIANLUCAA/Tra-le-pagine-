@@ -37,6 +37,10 @@ class CrossEpisodeAuditTests(unittest.TestCase):
         self.assertIn("UNIFORM_CHAPTER_COUNT",code)
         self.assertIn("UNIFORM_RENDERER_PACING",code)
         self.assertIn("LEGACY_STOCK_ENDING",code)
+        # These are soft notes, not invented AI-authorship verdicts.
+        mild=[x for x in report["observations"] if x["code"]=="ABSTRACT_STOCK_LIKE_ENDING"]
+        self.assertGreaterEqual(len(mild),3)
+        self.assertTrue(all(x["severity"]=="editorial_review_only" for x in mild))
         self.assertFalse(report["human_approved"])
         self.assertFalse(report["changed_master"])
         self.assertEqual(report["paid_calls"],0)
