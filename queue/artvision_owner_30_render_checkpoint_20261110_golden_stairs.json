@@ -1,0 +1,49 @@
+{
+  "schema": "artvision-owner-secondary-30-render-checkpoint-v1",
+  "utc_date": "2026-11-10",
+  "source_queue": "research/artvision_owner_selected_30_future_20261109.json",
+  "primary_queue": "queue/artvision_owner_selected_ten_20261102.json",
+  "work": {
+    "title": "The Golden Stairs",
+    "artist": "Edward Burne-Jones",
+    "year": 1880,
+    "selection_order": 12,
+    "variant": "cinema_standard",
+    "state": "RUN_QUEUED_OR_IN_PROGRESS_NOT_YET_VERIFIED"
+  },
+  "source": {
+    "commons_file": "https://commons.wikimedia.org/wiki/File:Edward_coley_burne-jones,_the_golden_stairs,_1880.jpg",
+    "author": "Sailko",
+    "license": "CC BY 3.0",
+    "attribution_mandatory": true,
+    "expected_size_bytes": 8259955,
+    "expected_sha1": "228c89451aba3687e19e1fc87c22cb435cced2d1",
+    "expected_pixels": [
+      2658,
+      4986
+    ],
+    "download_sha256_verified": false
+  },
+  "github": {
+    "run_id": 42781549071,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42781549071",
+    "workflow": ".github/workflows/artvision-owner-golden-stairs-cinema-v1.yml",
+    "run_status_last_observed": "queued"
+  },
+  "counts": {
+    "new_verified_mp4_this_cycle": 0,
+    "primary_queue_slots_added": 0,
+    "secondary_queue_new_mp4_verified": false
+  },
+  "qa": {
+    "ffmpeg_full_decode": "PENDING",
+    "zip_crc": "PENDING",
+    "human_visual_semantic_review": "PENDING",
+    "commercial_rights_final": "PENDING",
+    "gold": false,
+    "published": false
+  },
+  "next_action": "Check GitHub Actions 42781549071 job and artifact; do not dispatch same work again; if success, verify SHA logs and delivery; if failure, record reason and move to next eligible work after up to 2 safe attempts",
+  "no_new_paid_api": true,
+  "do_not_duplicate": true
+}
