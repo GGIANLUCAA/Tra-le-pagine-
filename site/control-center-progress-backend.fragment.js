@@ -88,7 +88,7 @@ async function getProductionProgress(runId,videoService){
     const data=await json("https://api.github.com/repos/"+REPO+
       "/actions/runs/"+id+"/jobs?per_page=100",true);
     if(!Array.isArray(data.jobs))throw Error("Formato job inatteso");
-    const result={ok:true,...productionProgressFromJobs(run,data.jobs,status.runs)};
+    const result={ok:true,...productionProgressUpgradeV13(productionProgressFromJobs(run,data.jobs,status.runs),run,data.jobs,status.runs)};
     productionProgressCache.set(id,{at:Date.now(),result});
     if(productionProgressCache.size>30)productionProgressCache.clear();
     return result;
