@@ -60,6 +60,24 @@ jobs:
             timeout 150 sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
           fi
           python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Reuse exactly the previously generated V6 Google narration
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_V6_RECOVERY_NO_FINISHED_FILM
+          run-id: 42896920303
+          github-token: ${{ github.token }}
+          path: output/giuliano_terracotta_v6
+      - name: Restore validated voice cache without a second API request
+        run: |
+          test -s output/giuliano_terracotta_v6/audio/VOCE.wav
+          python - <<'PY'
+          from pathlib import Path
+          import giuliano.terracotta_v6.render_documentary_v6 as render
+          speech=Path("giuliano/terracotta_v6/VOCE_DOCUMENTARIO_V6.txt").read_text(encoding="utf8").strip()
+          render.gemini_voice._save_voice_cache(speech,render.OUT/"audio")
+          assert (render.OUT/"audio"/"VOICE_CACHE_V13.json").exists()
+          print("V6_GOOGLE_NARRATION_REUSED",flush=True)
+          PY
       - name: Shoot, compose, direct original voice and music, inspect and package
         run: python giuliano/terracotta_v6/render_documentary_v6.py
       - name: Preserve real photo and voice only in event of error
