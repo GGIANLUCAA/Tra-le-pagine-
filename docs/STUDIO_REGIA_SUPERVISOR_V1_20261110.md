@@ -100,3 +100,27 @@ Questo codice e una prima riparazione verificabile del processo di regia, non un
 - Sei test di regressione addizionali coprono questi casi. I test devono passare su GitHub CI prima di integrare la PR.
 
 **Limite invariato:** il supervisore non può certificare autonomamente che il vero video mostri il soggetto. Il renderer deve fornire shotlist basata su scene esportate e voice alignment effettivo; poi servono frame dal MP4 e ascolto completo. Nessuna promozione Gold, import o pubblicazione viene attivata da questi controlli.
+
+
+## Primo audit vero MP4 / Post-render (10 novembre, eseguito)
+
+Implementato modulo read-only src/studio_regia_real_mp4_v1.py, con campionamento FFmpeg su tutta la durata e analisi dei frame a risoluzione ridotta: hash SHA-256 del file originale, durata e codec, luminanza/saturazione, similarita tra campioni consecutivi, lunghe stasi visive e salti d'immagine probabilmente rilevanti. Genera REGIA_REAL_MP4_V1.json e REGIA_REAL_MP4_CONTACT_SHEET.jpg. Nessun rendering, rete nel modulo, Vidu, editing o approvazione artistica.
+
+Attivazione opzionale del modulo in src/quality_director_v17.py con:
+    python src/quality_director_v17.py --video MASTER_REALE.mp4 --format storia_rivive --real-mp4-audit --out output/quality-v17
+
+Se video manca, V17 segnala blocco anziche inventare un risultato. Formati senza voce non ricevono arbitrariamente narrazione. Se shotlist fornita, combinarla con --regia-plan; il report del piano resta distinto dalle prove MP4.
+
+Un workflow on-demand e PR-only, .github/workflows/studio-regia-real-mp4-pilot-v1.yml, scarica SOLO l'asset pubblico gia esistente Parigi 1918 V304, verifica numero byte e SHA256, analizza i bytes sul runner GitHub e conserva i report per 7 giorni. NON pubblica, non modifica video, non tocca code owner. Il video e una PROVA NON APPROVATA.
+
+Prova GitHub Actions completata con successo:
+- https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42729171447
+- MP4 pubblico: PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4, 6.234.118 byte.
+- SHA256 MP4: 6bdd6262c022d019a6aec403a09e23980f72b64397f3990764de313bb12aa60b.
+- Durata FFprobe: 17,667 secondi; 35 frame reali analizzati; un salto visivo candidato circa a 9,25s, nessun blocco di frame invariati prolungato secondo le soglie attuali.
+- Artifact: STUDIO_REGIA_REAL_PARIS_1918_NOT_APPROVED (contact sheet + report di verifica).
+
+Questi risultati NON dimostrano che il filmato sia bello, corretto, approvato o che il reveal rispetti un gate V70/V96. I tagli piu brevi dell'intervallo di campionamento possono non risultare rilevabili. Camera continua e dissolvenze possono produrre falsi negativi; luce/azione forte possono produrre falsi positivi. Nessuna previsione di successo social e nessuna revisione occhi/volti/identita dedotta da pixel.
+L'utente e la regia artistica devono ancora visionare il master completo, ascoltare l'audio, esaminare i frame reali e preparare l'eventuale A/B.
+
+I moduli nuovi non sono ancora agganciati in modo obbligatorio ai renderer owner: attivare in modo graduale solo dopo prove di regressione, senza imporre ritmi fissi e senza duplicare scheduler.
