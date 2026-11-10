@@ -19,7 +19,7 @@ const dom=new JSDOM(html,{url:'https://video-library-studio.600led.workers.dev/'
   runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){
    w.fetch=async(url,options={})=>{
     calls.push({url:String(url),method:options.method||'GET',range:options.headers?.Range});
-    if(String(url).startsWith('/download/'))return {
+    if(new URL(String(url),w.location.origin).pathname.startsWith('/download/'))return {
       status:206,headers:new Map([['content-range','bytes 0-0/1000000'],['content-type','video/mp4']]),
       body:{cancel:async()=>{}}
     };
@@ -63,7 +63,7 @@ const tick=async()=>new Promise(resolve=>setTimeout(resolve,35));
  assert(d.querySelector('#vlsDownload').open);
  assert.match(d.querySelector('#vlsDownloadStatus').textContent,/Accesso parziale OK/);
  assert.equal(d.querySelector('#vlsDownloadZIP').hidden,false);
- assert(calls.some(c=>String(c.url).startsWith('/download/')&&c.range==='bytes=0-0'),'Range preflight is required');
+ assert(calls.some(c=>new URL(String(c.url),dom.window.location.origin).pathname.startsWith('/download/')&&c.range==='bytes=0-0'),'Range preflight is required');
  d.querySelector('#vlsDownload').close();d.querySelector('#player').close();
  group.querySelector('.vls-work-actions button').click();
  assert(d.querySelector('#vlsCompare').open,'A/B dialog opens');
