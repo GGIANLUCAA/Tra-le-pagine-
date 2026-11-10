@@ -190,6 +190,18 @@ def align(phrases, audio_path, duration):
                     "reason": type(exc).__name__, "note": "Proportional timing, not exact speech alignment."})
         return _estimated_timing(phrases,duration)
 
+def _human_tone_pre_tts(text, outdir):
+    """New-audio-only preflight; cached, hash-verified voices remain untouched."""
+    from editorial_human_naturalness_v1 import review
+    report = review(text, format_name="narrated", context="narration")
+    _json_write(Path(outdir) / "EDITORIAL_NATURALNESS_V320.json", report)
+    if report["blocking"]:
+        codes = ",".join(x["code"] for x in report["blocking"])
+        raise RuntimeError("EDITORIAL_V320_REVISION_REQUIRED: " + codes +
+                           ". Riscrivere il finale prima di acquistare una nuova voce.")
+    return report
+
+
 def synthesize(text,outdir):
     outdir=Path(outdir)
     outdir.mkdir(parents=True,exist_ok=True)
@@ -212,6 +224,9 @@ def synthesize(text,outdir):
             "GEMINI_API_KEY non configurata: GitHub -> Settings -> "
             "Secrets and variables -> Actions -> New repository secret. "
             "Non inserirla mai nei file pubblici o nei messaggi.")
+    # V320: do not spend even a free quota call on a stock AI-like finale.
+    # Existing verified WAVs were returned above without touching their hash.
+    _human_tone_pre_tts(text, outdir)
     from google import genai
     spoken=speech_directed(text)
     print("Genero un'unica recitazione italiana completa con pause interpretative.",flush=True)
