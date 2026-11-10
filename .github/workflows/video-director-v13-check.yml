@@ -35,6 +35,10 @@ on:
       - "templates/CREATOR_*V14.json"
       - "tests/test_creator_metrics_v13.py"
       - "src/gemini_voice.py"
+      - "src/editorial_human_naturalness_v1.py"
+      - "tests/test_editorial_human_naturalness_v1.py"
+      - "config/human_naturalness_v320.json"
+      - "docs/REGOLA_GLOBALE_V320_NATURALEZZA_AUTORIALE_20261110.md"
       - "src/episode_v3.py"
       - "src/regia_narrativa_v12.py"
       - "src/studio_autopilot_v11.py"
@@ -83,6 +87,8 @@ jobs:
           python -m unittest discover -s tests -p "test_creator_growth_v14.py" -v
           python -m unittest discover -s tests -p "test_production_batch_v15.py" -v
           python -m unittest discover -s tests -p "test_production_*v16.py" -v
+      - name: V320 — testi naturali, finali concreti e nessuna TTS inutile
+        run: python -m unittest discover -s tests -p "test_editorial_human_naturalness_v1.py" -v
       - name: Riuso WAV e trasparenza dei tempi stimati
         run: python -m unittest discover -s tests -p "test_voice_cache_v13.py" -v
       - name: Scene, provenienza e nessun sottotitolo
@@ -94,4 +100,4 @@ jobs:
         run: |
           node integrations/video_library_laboratorio/workspace-api.test.mjs
           node tests/test_creator_business_metrics.mjs
-          python -m py_compile src/production_batch_v15.py src/creator_growth_v14.py src/creator_metrics_v13.py src/video_director_v13.py src/artvision_four_variants_gate.py src/artvision_learning_loop_v1.py src/artvision_delivery_v55.py src/gemini_voice.py src/episode_v3.py src/regia_narrativa_v12.py src/studio_autopilot_v11.py
+          python -m py_compile src/production_batch_v15.py src/creator_growth_v14.py src/creator_metrics_v13.py src/video_director_v13.py src/artvision_four_variants_gate.py src/artvision_learning_loop_v1.py src/artvision_delivery_v55.py src/gemini_voice.py src/editorial_human_naturalness_v1.py src/episode_v3.py src/regia_narrativa_v12.py src/studio_autopilot_v11.py
