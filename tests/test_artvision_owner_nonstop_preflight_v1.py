@@ -105,6 +105,22 @@ class OwnerNonstopPreflight(unittest.TestCase):
         self.assertEqual(p["sha_documented_checkpoints"], 5)
         self.assertIsNone(p["first_preflight_candidate"])
 
+    def test_ulysses_uppercase_sha_and_barque_field_are_verified(self):
+        q, s = fixture()
+        clear(q, s, 6)
+        clear(q, s, 26)
+        ulysses = {"work": identity(q, 6),
+                   "github": {"run_id": 42880155469},
+                   "qa": {"SHA256": "c" * 64}}
+        barque = {"work": identity(q, 26),
+                  "github": {"run_id": 42879186247},
+                  "qa": {"sha256_mp4": "d" * 64}}
+        p = mod.plan(q, s, [ulysses, barque])
+        self.assertEqual(p["existing_cinema_standard_checkpoints"], 2)
+        self.assertEqual(p["sha_documented_checkpoints"], 2)
+        self.assertEqual(p["runs_needing_checkpoint_reconciliation"], 0)
+        self.assertIsNone(p["first_preflight_candidate"])
+
     def test_unmatched_register_fails_closed(self):
         q, s = fixture()
         s["works"][0]["artist_as_chosen"] = "Wrong"
