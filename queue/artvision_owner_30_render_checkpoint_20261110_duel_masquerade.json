@@ -1,0 +1,39 @@
+{
+  "schema": "artvision-owner-secondary-30-render-checkpoint-v1",
+  "date": "2026-11-10",
+  "queue": "research/artvision_owner_selected_30_future_20261109.json",
+  "work": {
+    "title": "The Duel After the Masquerade",
+    "artist": "Jean-Léon Gérôme",
+    "inventory": "Walters 37.51",
+    "selection_order": 13,
+    "variant": "cinema_standard",
+    "status": "RENDER_IN_PROGRESS_NOT_YET_VERIFIED"
+  },
+  "run_id": 42782307048,
+  "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42782307048",
+  "workflow": ".github/workflows/artvision-owner-duel-masquerade-cinema-v1.yml",
+  "source": {
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Jean-L%C3%A9on_G%C3%A9r%C3%B4me_-_The_Duel_After_the_Masquerade_-_Google_Art_Project.jpg",
+    "bytes_expected": 11659708,
+    "sha1_expected": "71995210db9c17889e156ce2870e3211974fa4f8",
+    "resolution": [
+      8401,
+      5760
+    ],
+    "status": "PENDING_ACTUAL_BYTE_VERIFICATION",
+    "commons_rights": "PDM/PD-Art claim; Walters 2-D reproduction open release"
+  },
+  "qa": {
+    "new_verified_mp4": 0,
+    "ffmpeg": "PENDING",
+    "zip_crc": "PENDING",
+    "visual_artistic": "PENDING",
+    "commercial_rights": "PENDING",
+    "gold": false,
+    "published": false
+  },
+  "primary_queue_change": 0,
+  "anti_duplicate": "Do not relaunch while running or after success",
+  "next_step": "Verify Actions run and artifact, then update SHA and status; no additional heavy render until terminal"
+}
