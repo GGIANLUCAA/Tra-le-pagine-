@@ -1,0 +1,49 @@
+{
+  "schema": "artvision-owner-secondary-30-render-checkpoint-v1",
+  "utc_date": "2026-11-10",
+  "queue": "research/artvision_owner_selected_30_future_20261109.json",
+  "work": {
+    "title": "Ulysses and the Sirens",
+    "artist": "John William Waterhouse",
+    "year": 1891,
+    "selection_order": 7,
+    "variant": "cinema_standard",
+    "state": "RUNNING_NOT_YET_VERIFIED"
+  },
+  "source": {
+    "commons_page": "https://commons.wikimedia.org/wiki/File:WATERHOUSE_-_Ulises_y_las_Sirenas_%28National_Gallery_of_Victoria%2C_Melbourne%2C_1891._%C3%93leo_sobre_lienzo%2C_100.6_x_202_cm%29.jpg",
+    "museum": "National Gallery of Victoria, Melbourne",
+    "accession": "p.396.3-1",
+    "expected_original_bytes": 28945314,
+    "expected_sha1": "11c5f0c46db3ea0e5572c95f0b230b5395b7ed15",
+    "expected_pixels": [
+      11001,
+      5386
+    ],
+    "download_verified": false,
+    "license_claim": "Wikimedia Commons PD-Art / Public Domain Mark 1.0",
+    "ngv_terms": "Full artwork presented opening/ending; final commercial rights pending"
+  },
+  "github": {
+    "run_id": 42880155469,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42880155469",
+    "workflow": ".github/workflows/artvision-owner-ulysses-sirens-cinema-v1.yml",
+    "last_status": "in_progress"
+  },
+  "counts": {
+    "new_verified_mp4_this_cycle": 0,
+    "primary_queue_additions": 0,
+    "secondary_queue_new_variant_verified": false
+  },
+  "qa": {
+    "full_ffmpeg_audio_video": "PENDING",
+    "SHA256": "PENDING",
+    "ZIP_CRC_READBACK": "PENDING",
+    "artistic_review": "PENDING",
+    "commercial_rights": "PENDING",
+    "published": false,
+    "gold": false
+  },
+  "next_action": "Inspect run 42880155469 and artifact; update only on actual FFmpeg/hash/CRC pass. No duplicate rerender; max two attempts if blocked.",
+  "no_paid_api": true
+}
