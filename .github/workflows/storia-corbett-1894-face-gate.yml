@@ -1,0 +1,49 @@
+name: "Storia Rivive - Corbett Courtney 1894 source face gate"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-corbett-1894-face-gate.yml"]
+permissions:
+  contents: read
+jobs:
+  source_face_gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - name: Install FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -qq -y ffmpeg
+      - name: Fetch verified historical source and extract exact frames
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/corbett
+          cd output/corbett
+          python - <<'PY'
+          import urllib.request, urllib.parse, hashlib, pathlib, json
+          name="Corbett and Courtney Before the Kinetograph (1894), Best Quality, HD.webm"
+          url="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+urllib.parse.quote(name)
+          req=urllib.request.Request(url,headers={"User-Agent":"ArtVisionHistoricalSourceReview/1.0 (GitHub Actions; Wikimedia Commons)"})
+          with urllib.request.urlopen(req,timeout=80) as response, open("ORIGINAL.webm","wb") as out:
+              while True:
+                  chunk=response.read(1024*1024)
+                  if not chunk: break
+                  out.write(chunk)
+          data=pathlib.Path("ORIGINAL.webm").read_bytes()
+          assert len(data)>5000000, "SOURCE_TOO_SMALL"
+          report={"source_url":url,"source_sha256":hashlib.sha256(data).hexdigest(),"bytes":len(data),"license":"Commons PD mark; independently review source rights Italy/US","stage":"SOURCE_SCOUT_NOT_I2I_NOT_VIDEO"}
+          pathlib.Path("SOURCE_REPORT.json").write_text(json.dumps(report,indent=2))
+          print(report)
+          PY
+          ffprobe -v error -show_entries format=duration,size -show_entries stream=width,height,avg_frame_rate -of json ORIGINAL.webm > FFPROBE.json
+          for t in 6 10 14 18 22 26 30 34 38; do
+            ffmpeg -hide_banner -loglevel error -ss "$t" -i ORIGINAL.webm -frames:v 1 -y "FRAME_${t}s.png"
+          done
+          ffmpeg -hide_banner -loglevel error -i ORIGINAL.webm -ss 12 -t 8 -an -vf "scale=720:540" -c:v libx264 -preset fast -crf 24 -pix_fmt yuv420p -y SOURCE_MOTION_12_20s.mp4
+          ffmpeg -hide_banner -loglevel error -pattern_type glob -i 'FRAME_*s.png' -vf 'scale=480:360,tile=3x3' -frames:v 1 -y SOURCE_CONTACT_SHEET.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: CORBETT_1894_SOURCE_FACE_GATE_NOT_VIDEO
+          path: output/corbett/
+          retention-days: 14
