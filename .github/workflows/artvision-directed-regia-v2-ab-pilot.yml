@@ -16,7 +16,7 @@ jobs:
     env:
       # No GEMINI_API_KEY, no Vidu credentials, no TTS operations.
       ART_DIR: /tmp/rebel_angels_critico_v144
-      GH_TOKEN: \${{ github.token }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
