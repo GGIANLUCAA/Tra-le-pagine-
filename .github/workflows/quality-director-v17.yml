@@ -7,6 +7,8 @@ on:
       - "tests/test_quality_director_v17.py"
       - "src/studio_regia_supervisor_v1.py"
       - "tests/test_studio_regia_supervisor_v1.py"
+      - "src/studio_regia_real_mp4_v1.py"
+      - "tests/test_studio_regia_real_mp4_v1.py"
       - ".github/workflows/quality-director-v17.yml"
   workflow_dispatch:
     inputs:
@@ -58,6 +60,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p "test_quality_director_v17.py" -v
           python -m unittest discover -s tests -p "test_studio_regia_supervisor_v1.py" -v
+          python -m unittest discover -s tests -p "test_studio_regia_real_mp4_v1.py" -v
       - name: Report della regia da Android
         if: github.event_name == 'workflow_dispatch'
         env:
@@ -76,7 +79,7 @@ jobs:
             args+=(--regia-plan "$REGIA_PLAN")
           fi
           if [ -n "$QUALITY_VIDEO" ]; then
-            args+=(--video "$QUALITY_VIDEO")
+            args+=(--video "$QUALITY_VIDEO" --real-mp4-audit)
           fi
           python src/quality_director_v17.py "${args[@]}"
       - name: Crea stato leggibile da Studio e diagnosi Ripara GPT (sola lettura)
