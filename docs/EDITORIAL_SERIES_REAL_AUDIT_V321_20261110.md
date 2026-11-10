@@ -43,6 +43,39 @@ la bellezza, non legge l'audio né riconosce con certezza la scrittura AI.
 5. Rivedi a voce alta il copione, quindi ascolta il WAV e guarda il vero MP4.
    No dichiarazioni di qualità “umana” da solo linter.
 
+## Cinque proposte di chiusura più concrete (non approvate)
+
+Non sono trascrizioni o audio esistenti. Sono **proposte** ricavate dai
+particolari GIÀ riportati nei copioni, da verificare sui veri fotogrammi
+prima di adottarle. Non usarle tutte insieme come nuovo stampino.
+
+- **The Fall of the Rebel Angels (Bruegel):**
+  “Torniamo alla spada di Michele, proprio al centro. Da lì lo sguardo scende
+  e incontra creature sempre più strane: becchi, gusci, ali, zampe.
+  Anche dopo averlo osservato a lungo, in questo quadro rimane sempre qualche
+  dettaglio da scoprire.”
+- **The Garden of Death (Simberg):**
+  “Alla fine restano quelle tre figure vestite di nero e le piante di cui
+  si prendono cura. Un lavoro piccolo, quasi quotidiano, in un luogo
+  dove non ti aspetteresti di trovarlo.”
+- **The Triumph of Death (Bruegel):**
+  “E nell'angolo in basso a destra, fra tutta quella gente in fuga,
+  c'è ancora una coppia che fa musica. È un particolare minuscolo.
+  Una volta visto, però, è difficile dimenticarlo.”
+- **The Magic Circle (Waterhouse):**
+  “La donna è ancora lì, intenta a tracciare il cerchio. Il fuoco illumina
+  il terreno e gli uccelli si tengono vicino al fumo. Il quadro si ferma
+  su questo gesto; quello che viene dopo non lo vediamo.”
+- **The Ghost of a Flea (Blake):**
+  “La figura sembra occupare uno spazio enorme. Poi ricordi che il pannello
+  misura poco più di venti centimetri: il corpo, le mani e quella coppa
+  sono tutti racchiusi lì dentro.”
+
+Se una chiusa è simile alle precedenti o sposta la camera su qualcosa
+che non è nell'inquadratura, respingerla. Nessuna revisione valida senza
+coerenza immagine-parola (V82), controllo fonte e un nuovo WAV condiviso
+fra Standard e Museum solo se esplicitamente autorizzato.
+
 ## Strumenti e limiti
 
 Comando gratuito e locale:
