@@ -198,6 +198,7 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
 .control-center-launcher-copy{min-width:200px}.control-center-launcher-copy strong{font-size:21px}
 .control-center-launcher .btn{width:100%}.control-center-buttons .ghost{padding:8px 9px}}
 
+.vls-seven-works[hidden],.vls-studio-quick[hidden]{display:none!important}
 /* Owner UX7 preview: museum aesthetic and Android-first; no backend changes. */
 .vls-seven-works{margin:14px 0 19px;padding:18px;border:1px solid #80694a;border-radius:16px;background:linear-gradient(125deg,#241e1a,#161d26);color:#f4ebdc}
 .vls-seven-works h3{font:normal 26px Georgia,serif;margin:0 0 5px}.vls-seven-works p{font-size:12px;color:#cabca7;margin:0 0 12px}
@@ -1484,7 +1485,7 @@ function vlsCompareOpen(group){
    select.add(new Option((slot?slot[1]:'Versione')+' · '+(x.name||x.key),x.key))}
  }
  $('#vlsSelectA').selectedIndex=0;$('#vlsSelectB').selectedIndex=1;
- vlsCompareLoad('A');vlsCompareLoad('B');vlsComparePane('A');
+ vlsCompareLoad('A');vlsCompareLoad('B');$('#vlsVideoB').muted=true;vlsComparePane('A');
  $('#vlsCompareInfo').textContent='La seconda versione è inizialmente senza audio. Il confronto non certifica i contenuti.';
  $('#vlsCompare').showModal();
 }
