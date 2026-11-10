@@ -40,7 +40,8 @@ def checkpoint_record(cp):
         raise ValueError("Checkpoint missing GitHub run ID")
     mp4_sha = ((cp.get("mp4") or {}).get("sha256")
                or (cp.get("qa") or {}).get("mp4_sha256")
-               or (cp.get("qa") or {}).get("sha256_mp4"))
+               or (cp.get("qa") or {}).get("sha256_mp4")
+               or (cp.get("qa") or {}).get("SHA256"))
     if mp4_sha is not None and (not isinstance(mp4_sha, str)
                                 or SHA256.fullmatch(mp4_sha) is None):
         raise ValueError("Invalid checkpoint MP4 SHA256")
