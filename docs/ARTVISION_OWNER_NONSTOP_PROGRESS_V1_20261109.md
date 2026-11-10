@@ -1,27 +1,27 @@
-# ArtVision owner non-stop · primo blocco operativo (9 novembre 2026)
+# ArtVision owner · preflight non-stop — checkpoint dinamici
 
-## Situazione verificata
-- Due Cinema Standard completati tecnicamente: *The Alchemist* e *The Apparition*. Le schede `queue/artvision_owner_30_render_checkpoint_20261109_*.json` sono la prova di MP4 fisici. Restano entrambi da revisionare artisticamente e con diritti territoriali/commerciali finali pendenti.
-- `queue/artvision_owner_30_fast_quality_lane_20261109.json` indica ancora per entrambi `render_status=not_started`: il solo registro di priorità non basta per deduplicare.
-- Nessuna delle 30 opere è adesso contrassegnata come completamente pronta per produzione; il preflight deve fallire in sicurezza, senza creare finti MP4.
-- I due workflow funzionanti richiamano script individuali; `.github/workflows/artvision-render.yml` è un vecchio atelier universale, non il motore delle quattro varianti 4×1.
+## Rilievo reale del 10 novembre 2026
+La PR #234 era inizialmente limitata ai checkpoint di *The Alchemist* e *The Apparition*. In seguito GitHub Actions ha prodotto altri tre Cinema Standard della **seconda coda**: *The Course of Empire: Destruction* (run 42737588988), *The Golden Stairs* (run 42781549071), *The Duel After the Masquerade* (run 42782307048). Tutte e tre le run risultano `success` e hanno artifact non scaduti, FFmpeg video/audio e ZIP CRC PASS secondo i log. La loro revisione artistica e i diritti commerciali finali rimangono PENDING; non sono Gold e non modificano il 26/36 storico Museum.
 
-## Consegna di questa modifica
-`scripts/artvision_owner_nonstop_preflight_v1.py` legge la coda, il registro fonti e i due checkpoint. Produce soltanto un report JSON con il primo eventuale candidato realmente prevalidato, rispettando l'ordine di priorità, i diritti, l'hash sorgente e i render già verificati. **Non avvia rendering, non pubblica, non genera spese.** Se non trova fonti pronte, esplicita i blocchi invece di generare uno slideshow o rieseguire i due video.
+### Difetto dimostrato e intervento minimo
+Il selettore di preflight era vulnerabile a rilanci duplicati perché **caricava soltanto due checkpoint con nomi fissi**. La nuova versione carica automaticamente **tutti** i file `queue/artvision_owner_30_render_checkpoint_20*.json`, riconosce tre formati checkpoint già esistenti, confronta titolo esatto, artista, ordine e variante, e blocca il candidato anche quando un checkpoint contiene un ID run senza SHA finale. Non dichiara però che quella run abbia creato un MP4 verificato: la categoria è `run_exists_needs_reconciliation`.
 
-Esecuzione di prova:
+Sono presenti cinque checkpoint in `main`. Due dei tre nuovi checkpoint contengono ancora lo stato preliminare (Cole e Duel): **non aggiornarli o contarli come SHA-verificati soltanto sulla base del preflight**. La run verificata su GitHub fa fede per il controllo tecnico, mentre i relativi checkpoint devono ancora essere riconciliati in modo separato.
+
+Il programma è **sola lettura**, non effettua richieste GitHub, render, spese, deploy o pubblicazione. Qualsiasi candidato che superasse il preflight resterebbe `candidate_preflight_only`; servono comunque fonte/diritti, ricetta, QA artistica e verifica della run attiva prima di un nuovo render.
+
+## Comandi
 ```sh
-python -m unittest discover -s tests -p test_artvision_owner_nonstop_preflight_v1.py -v
+python -m unittest discover -s tests -p 'test_artvision_owner_nonstop_preflight_v1.py' -v
 python scripts/artvision_owner_nonstop_preflight_v1.py --out output/artvision_owner_nonstop/PREFLIGHT.json
 ```
 
-## Percorso per arrivare al non-stop effettivo
-1. **Riparare le prove di disponibilità**: dossier immagine ufficiale, oggetto esatto, dimensioni e SHA, licenza commerciale anche della foto, ricetta specifica e controllo duplicati multi-coda. Aggiornare lo stato soltanto dopo verifica, mai impostare `ready=true` per velocizzare.
-2. **Estrarre un renderer configurabile dalle due produzioni riuscite**: ricette per singola opera e variante, scene ritagliate da coordinate artisticamente verificate; non inserire immagini casuali. Costruire `cinema_standard` per primo soltanto se pronto, poi le altre tre; identico WAV e testo nei due Critico, museo con scala e cornice credibili.
-3. **Collegare all'unica automazione owner** (`6adca191603c8191a90d5190901cd034`), senza un secondo proprietario o nuovo cron. Utilizzare richiesta GitHub dedicata e idempotente; verificare prima che il trigger esegua il renderer corretto, non il vecchio universale o gli script rigidi.
-4. **Un solo render pesante** tramite gruppo di concorrenza `artvision-owner-single-heavy-render`. In parallelo solo ricerca e preparazione. Ogni slot conserva uno stato persistente e un ID univoco; nessun duplicato su ripetizione degli eventi.
-5. **Verificare risultati reali**: MP4 H264/AAC, decoding completo, source SHA, ZIP CRC, copertina e quattro testi social specifici, preview Android; QA a velocità normale e approvazione artistica separati da PASS tecnico. Non chiamare `Gold` un video che non lo è.
-6. **Prova di affidabilità prima del ritmo**: almeno tre opere/slot consecutivi senza duplicazioni, no spese non autorizzate e recupero automatico dal fallimento; solo dopo misurare la resa rispetto all'obiettivo di un video ogni tre ore.
+La suite verifica dieci scenari: selezione senza fonte, selezione positiva, vecchio checkpoint, nuovo checkpoint annidato, due stati in corso senza SHA, cinque lavori separati, registri incongruenti, checkpoint sconosciuti, sorgente senza hash, duplicati. Il workflow CI opera solo su `pull_request`, senza render pesanti e senza una nuova schedulazione.
 
-### Limiti espliciti
-Questo PR **non sblocca ancora un render**. Dimostra un selettore fail-closed, non una produzione 24/7. Nessuna modifica ai master approvati, agli status delle code, ai workflow live o alle regole permanentemente attive.
+## Cosa rimane per il non-stop effettivo
+1. Riconciliare su `main`, separatamente e solo con prove, i due checkpoint preliminari di Cole e Duel (GitHub run completata + artifact + SHA dai log).
+2. Sbloccare nel registro sorgenti un quadro futuro inedito soltanto quando hash originale, opera esatta e diritti di riuso applicabili sono documentati; evitare lavori che abbiano già un Cinema Standard prodotto.
+3. Collegare selettore, renderer configurabile e QA finale all'automazione owner **esistente**, con blocco un solo render pesante e senza creare automazioni concorrenti. Misurare tre produzioni consecutive senza duplicati prima di dichiarare il non-stop collaudato.
+4. Tenere distinti video tecnicamente renderizzati, QA artistico, Gold e pubblicazione. Nessun master già approvato va modificato.
+
+**Limite esplicito:** questa PR non produce nuovi MP4 e non modifica `main`. È una correzione isolata al controllo anti-duplicati, non una fabbrica automatica già operativa.
