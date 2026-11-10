@@ -113,6 +113,6 @@ jobs:
           html=Path("site/video-library-v2.html").read_text()
           frag=Path("site/video-library-owner-seven-ux.fragment.js").read_text()
           assert frag.strip() in html, "Fragment not in published inline script"
-          assert len(re.findall(r"<script[^>]*>[\\s\\S]*?</script>",html))==1
+          assert html.count("<script>")==1 and html.count("</script>")==1
           PY
           node tests/video-library-owner-seven-ux.test.cjs
