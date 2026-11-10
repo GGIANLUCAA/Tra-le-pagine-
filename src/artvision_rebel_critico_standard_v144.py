@@ -16,6 +16,8 @@ from artvision_critico_review_capture_v1 import capture as capture_artvision_foc
 from studio_regia_real_mp4_v1 import analyze as real_mp4_regia_audit
 from artvision_critico_directed_camera_v2 import (
  crop_camera, chapter_plan, BRUEGEL_MODES)
+from artvision_bruegel_sentence_montage_v3 import (
+ BEATS, sentence_plan, sentence_index)
 
 OUT=Path("/tmp/rebel_angels_critico_v144")
 RECIPE=ROOT/"modules/artvision_critico/production_series/bruegel_rebel_angels_v144.json"
@@ -176,18 +178,27 @@ def original_music(total, output_dir=OUT):
   f.setnchannels(1);f.setsampwidth(2);f.setframerate(sr);f.writeframes(pcm.tobytes())
  return p
 
-def render(directed=False):
- render_dir=OUT if not directed else OUT/'REGIA_V2_TRIAL'
+def render(directed=False, sentence_variant=False):
+ if directed and sentence_variant:raise ValueError("Two independent camera trials cannot be merged")
+ render_dir=(OUT/"REGIA_V3_TRIAL" if sentence_variant else
+             OUT/"REGIA_V2_TRIAL" if directed else OUT)
  render_dir.mkdir(parents=True,exist_ok=True)
  q,script=load()
  artpath=art_check()
  chapters=q["chapters"]
  wav,voice_dur,ends,align=verified_voice(script,chapters)
- total_frames=round((DELAY+voice_dur+TAIL)*FPS)
+ tail_s=2.2 if sentence_variant else TAIL
+ total_frames=round((DELAY+voice_dur+tail_s)*FPS)
  total=total_frames/FPS
  if directed:
   preview=chapter_plan(chapters,ends,voice_offset_s=DELAY,wav_sha256=sha(wav),source_sha256=ART_SHA)
   (render_dir/"DIRECTED_CAMERA_PLAN_V2.json").write_text(json.dumps(preview,indent=2,ensure_ascii=False)+"\n",encoding="utf8")
+ if sentence_variant:
+  voice_cache=json.loads((OUT/"VOICE_CACHE_V13.json").read_text(encoding="utf8"))
+  assert voice_cache["wav_sha256"]==sha(wav)
+  real_timed=voice_cache["timed"]
+  sentence_manifest=sentence_plan(real_timed,chapters,DELAY,sha(wav),ART_SHA)
+  (render_dir/"SENTENCE_MONTAGE_PLAN_V3.json").write_text(json.dumps(sentence_manifest,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
  image=Image.open(artpath).convert("RGB")
  whole=full_plate(image)
  cover=title_card(image)
@@ -200,7 +211,7 @@ def render(directed=False):
    "-filter_complex",f"[0:a]adelay={ms}|{ms},volume=1[v];[1:a]volume=.22[m];[v][m]amix=inputs=2:duration=longest:dropout_transition=0,alimiter=limit=.95[a]",
    "-map","[a]","-c:a","aac","-b:a","160k",shared])
  raw=render_dir/"SILENT_TEMP_V144.mp4"
- target=render_dir/("BRUEGEL_REBEL_ANGELS_DIRECTED_V2_NOT_APPROVED.mp4" if directed else "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4")
+ target=render_dir/("BRUEGEL_REBEL_ANGELS_SENTENCE_V3_NOT_APPROVED.mp4" if sentence_variant else "BRUEGEL_REBEL_ANGELS_DIRECTED_V2_NOT_APPROVED.mp4" if directed else "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4")
  cmd=["ffmpeg","-hide_banner","-loglevel","error","-y",
       "-f","rawvideo","-pix_fmt","bgr24","-s",f"{W}x{H}","-r",str(FPS),"-i","pipe:0","-an",
       "-c:v","libx264","-preset","veryfast","-crf","21","-pix_fmt","yuv420p",str(raw)]
@@ -212,9 +223,13 @@ def render(directed=False):
   for n in range(total_frames):
    sec=n/FPS
    if sec<DELAY:
-    frame=cover if sec<2 else whole
+    if sentence_variant:
+     frame=directed_shot(artwork,chapters[0],sec/DELAY,"hold_push")
+    else:
+     frame=cover if sec<2 else whole
    elif sec>=DELAY+voice_dur:
-    frame=whole if sec<DELAY+voice_dur+TAIL/2 else cover
+    if sentence_variant:frame=whole
+    else:frame=whole if sec<DELAY+voice_dur+TAIL/2 else cover
    else:
     spoken=sec-DELAY
     ix=min(len(chapters)-1,bisect_right(ends,spoken))
@@ -222,7 +237,16 @@ def render(directed=False):
     end=ends[ix]
     u=max(0,min(1,(spoken-beg)/max(.1,end-beg)))
     audit={}
-    if directed:
+    if sentence_variant:
+     sid=sentence_index(real_timed,spoken)
+     sent=sentence_manifest["shots"][sid]
+     if sent["camera_area"]=="wide":
+      frame=whole
+     else:
+      start,end=real_timed[sid][1:3]
+      su=max(0.,min(1.,(spoken-start)/max(.1,end-start)))
+      frame=directed_shot(artwork,chapters[sent["source_chapter"]],su,sent["camera_mode"],audit)
+    elif directed:
      if ix in (1,8):
       frame=whole
      elif ix==0 and u<.33:
@@ -318,9 +342,15 @@ def render(directed=False):
   qa["legacy_master_untouched"]=True
   qa["Gold_V25"]=False
   qa["social_published"]=False
+ if sentence_variant:
+  qa["camera_revision"]="SENTENCE_V3_ISOLATED_TRIAL_NOT_ARTISTICALLY_APPROVED"
+  qa["camera_plan"]="SENTENCE_MONTAGE_PLAN_V3.json"
+  qa["legacy_master_untouched"]=True
+  qa["Gold_V25"]=False
+  qa["social_published"]=False
  report=render_dir/"QA_V144.json"
  report.write_text(json.dumps(qa,indent=2,ensure_ascii=False)+"\n")
- package=render_dir/("REBEL_ANGELS_DIRECTED_V2_NOT_APPROVED.zip" if directed else "REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW_PACKAGE.zip")
+ package=render_dir/("REBEL_ANGELS_SENTENCE_V3_NOT_APPROVED.zip" if sentence_variant else "REBEL_ANGELS_DIRECTED_V2_NOT_APPROVED.zip" if directed else "REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW_PACKAGE.zip")
  with zipfile.ZipFile(package,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=3) as z:
   for f in [target,render_dir/"COVER.jpg",render_dir/"CONTACT_SHEET_V144.jpg",report,
             render_dir/"RIGHTS_AND_CREDITS.txt",render_dir/"SOCIAL_DRAFT_UNPUBLISHED.txt",OUT/"COPIONE_ESATTO_V144.txt"]:
@@ -332,14 +362,16 @@ def render(directed=False):
     if f.is_file():z.write(f,arcname=str(f.relative_to(render_dir)))
   if directed:
    z.write(render_dir/"DIRECTED_CAMERA_PLAN_V2.json",arcname="DIRECTED_CAMERA_PLAN_V2.json")
+  if sentence_variant:
+   z.write(render_dir/"SENTENCE_MONTAGE_PLAN_V3.json",arcname="SENTENCE_MONTAGE_PLAN_V3.json")
  with zipfile.ZipFile(package) as z: assert z.testzip() is None
  print(json.dumps({"status":"ONE_REAL_CRITICO_REVIEW_MP4","mp4":qa["file"],"package":{"name":package.name,"bytes":package.stat().st_size,"sha256":sha(package),"crc":"PASS"},"voice_wav_sha256":sha(wav),"human_qa":"PENDING","museum_approved":False,"Gold_V25":False},indent=2))
 
 def main():
  p=argparse.ArgumentParser()
- p.add_argument("--phase",required=True,choices=["voice","render","render-directed"])
+ p.add_argument("--phase",required=True,choices=["voice","render","render-directed","render-directed-v3"])
  a=p.parse_args()
  OUT.mkdir(parents=True,exist_ok=True)
  if a.phase=="voice":voice()
- else:render(directed=a.phase=="render-directed")
+ else:render(directed=a.phase=="render-directed",sentence_variant=a.phase=="render-directed-v3")
 if __name__=="__main__":main()
