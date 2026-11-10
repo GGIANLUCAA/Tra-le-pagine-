@@ -1,0 +1,88 @@
+name: "Giuliano documentary V6 — authored complete film"
+on:
+  push:
+    branches:
+      - "feature/giuliano-v6-full-documentary-20261110"
+    paths:
+      - "giuliano/terracotta_v6/**"
+      - ".github/workflows/giuliano-v6-authorial-documentary.yml"
+  pull_request:
+    branches:
+      - "feature/giuliano-terracotta-v4-cinema-20261110"
+    types: [opened, synchronize, reopened]
+    paths:
+      - "giuliano/terracotta_v6/**"
+      - ".github/workflows/giuliano-v6-authorial-documentary.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: giuliano-v6-documentary-one-build
+  cancel-in-progress: true
+jobs:
+  film:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ARTVISION_ASR_MODEL: base
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Check out documentary on isolated branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Preflight — do not synthesize if script and evidence mismatch
+        run: |
+          python -m py_compile giuliano/terracotta_v6/render_documentary_v6.py
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          d=json.loads(Path("giuliano/terracotta_v6/EDL_EDITORIALE_V6.json").read_text())
+          text=Path("giuliano/terracotta_v6/NARRAZIONE_DOCUMENTARIO_V6.txt").read_text().strip()
+          assert d["revision"]==6 and len(d["shots"])>=20
+          assert text=="\n".join(x["text"] for x in d["shots"])
+          assert not any(k in text.lower() for k in ("avviciniamoci","guardiamo il","osserviamo questo"))
+          assert len({f for s in d["shots"] for f in [s["source_file"],s.get("second_file")] if f})>=20
+          print("V6_AUTHORIAL_STORY_AND_EVIDENCE_PASS",len(d["shots"]),flush=True)
+          PY
+          test -n "$GEMINI_API_KEY" || (echo "Google voice key unavailable" && exit 2)
+      - name: Real camera footage + copyrighted evidence rendering dependencies
+        run: |
+          if ! command -v ffmpeg >/dev/null; then
+            timeout 120 sudo apt-get update -qq
+            timeout 120 sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          fi
+          python -m pip install --disable-pip-version-check --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Complete Italian documentary — genuine sources, exact audio cuts, 2 MP4, full decode and ZIP CRC
+        run: python giuliano/terracotta_v6/render_documentary_v6.py
+      - name: Preserve voice and licensed photo archive for safe retry after failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TERRACOTTA_V6_RECOVERY_NOT_FINISHED_FILM
+          path: |
+            output/giuliano_terracotta_v6/audio/VOCE.wav
+            output/giuliano_terracotta_v6/audio/VOICE_CACHE_V13.json
+            output/giuliano_terracotta_v6/audio/ALLINEAMENTO_VOCE.json
+            output/giuliano_terracotta_v6/media/source_*.jpg
+            output/giuliano_terracotta_v6/PHOTO_CREDITS_V6.json
+          if-no-files-found: ignore
+          retention-days: 12
+      - name: Upload complete verified film and Android pack
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TERRACOTTA_V6_FULL_MOVIE_AND_ANDROID
+          path: |
+            output/giuliano_terracotta_v6/GIULIANO_TERRACOTTA_V6_CINEMATIC.mp4
+            output/giuliano_terracotta_v6/GIULIANO_TERRACOTTA_V6_ANDROID.mp4
+            output/giuliano_terracotta_v6/GIULIANO_TERRACOTTA_V6_COMPLETO.zip
+            output/giuliano_terracotta_v6/COVER_V6.jpg
+            output/giuliano_terracotta_v6/CONTACT_SHEET_V6.jpg
+            output/giuliano_terracotta_v6/QA_V6.json
+          if-no-files-found: error
+          retention-days: 20
