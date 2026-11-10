@@ -103,11 +103,13 @@ class QualityDirectorTests(unittest.TestCase):
         out=self.base/'video_report'
         out.mkdir()
         Image.new('RGB',(270,480),(0,0,0)).save(out/'REVIEW_FRAME_00.jpg')
-        result=qa.inspect(video=v,project=self.file,out=out)
+        result=qa.inspect(video=v,project=self.file,out=out,real_mp4_audit=True)
         self.assertFalse(result['blocking'])
         self.assertIn('DARK_SAMPLES',[x['code'] for x in result['warnings']])
         self.assertTrue(any('long_silences_detected' in row for row in result['findings']))
         self.assertTrue((out/'QUALITY_REPORT_V17.json').is_file())
+        self.assertTrue((out/'REGIA_REAL_MP4_V1'/'REGIA_REAL_MP4_CONTACT_SHEET.jpg').is_file())
+        self.assertTrue(any('regia_real_samples_checked' in row for row in result['findings']))
 
 
 if __name__ == '__main__':
