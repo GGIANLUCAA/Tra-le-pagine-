@@ -124,3 +124,10 @@ Questi risultati NON dimostrano che il filmato sia bello, corretto, approvato o 
 L'utente e la regia artistica devono ancora visionare il master completo, ascoltare l'audio, esaminare i frame reali e preparare l'eventuale A/B.
 
 I moduli nuovi non sono ancora agganciati in modo obbligatorio ai renderer owner: attivare in modo graduale solo dopo prove di regressione, senza imporre ritmi fissi e senza duplicare scheduler.
+
+
+### Collegamento pilota a un renderer reale ArtVision (solo branch PR)
+
+Il generatore esistente src/artvision_rebel_critico_standard_v144.py (The Fall of the Rebel Angels, Critico Standard) ora invoca il modulo read-only sul MASTER MP4 gia renderizzato e verificato. Il report include hash del file esatto, i frame campionati e i segnali su ritmo/varieta; viene allegato al pacchetto di revisione ZIP. Esegue solo dopo la gia presente verifica di narrazione Gacrux e della traccia camera, quindi non cambia scelta immagini, timecode, durata, musica, voce e master. Non genera nuovi crediti/API. Se la scansione fallisce, registra UNAVAILABLE_NEEDS_REVIEW e conserva il render valido anziche dichiarare un'approvazione. La prova GitHub CI di compilazione/regressione non equivale a un nuovo video V144 renderizzato.
+
+Questo collegamento e una prova circoscritta: nessuna attivazione diretta dei flussi owner, nessuna modifica di main, nessun quarto video dichiarato finito. In seguito la stessa interfaccia potra essere riusata nei renderer rimanenti se la prova artistica A/B mostra un vantaggio.
