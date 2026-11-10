@@ -1,0 +1,82 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const {JSDOM,VirtualConsole}=require('/tmp/control-v10/node_modules/jsdom');
+const html=fs.readFileSync('site/control-center-preview.html','utf8');
+const work={id:'simberg_garden_1896',title:'The Garden of Death',artist:'Hugo Simberg',
+ delivered:2,variants:[
+  {id:'critico_standard',label:'Critico',recorded:true,preview_ready:true,site_catalog:true,site_available:true,
+   filename:'SIMBERG_CRITICO.mp4',media_url:'https://video-library-studio.600led.workers.dev/media/SIMBERG_CRITICO.mp4',qa:{gold_approved:false}},
+  {id:'critico_museum',label:'Critico Museum',recorded:true,preview_ready:false,site_catalog:false,site_available:null,
+   filename:'SIMBERG_CRITICO_MUSEUM.mp4',qa:{gold_approved:false}},
+  {id:'cinema_standard',label:'Cinema',recorded:false,preview_ready:false,site_catalog:false,site_available:null,
+   filename:null,qa:{gold_approved:false}},
+  {id:'cinema_museum',label:'Cinema Museum',recorded:false,preview_ready:false,site_catalog:false,site_available:null,
+   filename:null,qa:{gold_approved:false}}
+ ]};
+const data={asof:'2026-11-10T18:00:00Z',sources:{github:{ok:true},queue:{ok:true},catalog:{ok:true}},
+ runs:[],works:[work],health:[
+  {id:'artvision',state:'unobserved',observed_count:0,active_count:0,issues:0},
+  {id:'storia',state:'observed_success',observed_count:1,active_count:0,issues:0},
+  {id:'wow',state:'unknown',observed_count:0,active_count:0,issues:0}
+ ],attention:[],review:{count:1,detail:'Da revisionare'},diary:[],media:[],catalog_count:0};
+const errors=[],calls=[],vc=new VirtualConsole();
+vc.on('jsdomError',e=>errors.push(String(e.stack||e.message)));
+let copied='';
+const dom=new JSDOM(html,{url:'https://artvision-control-preview.600led.workers.dev/',
+ runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){
+  w.fetch=async(url,init={})=>{
+   calls.push({url:String(url),method:init.method||'GET'});
+   if(String(url).startsWith('/api/status'))return {ok:true,json:async()=>data};
+   return {ok:false,status:404,json:async()=>({ok:false})};
+  };
+  w.scrollTo=()=>{};
+  w.HTMLElement.prototype.scrollIntoView=()=>{};
+  w.HTMLDialogElement.prototype.showModal=function(){this.open=true};
+  w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'))};
+  w.HTMLMediaElement.prototype.play=()=>Promise.resolve();
+  w.HTMLMediaElement.prototype.pause=()=>{};
+  w.HTMLMediaElement.prototype.load=()=>{};
+  Object.defineProperty(w.navigator,'clipboard',{configurable:true,value:{writeText:async t=>{copied=t}}});
+ }});
+const d=dom.window.document;
+const tick=()=>new Promise(r=>setTimeout(r,50));
+(async()=>{
+ await tick();
+ d.querySelector('.bottom [data-page="issues"]').click();
+ await tick();
+ assert(d.querySelector('.actionTop'),'Immediate action panel exists');
+ assert.equal(d.querySelectorAll('[data-action-project]').length,3);
+ assert.match(d.querySelector('#content').textContent,/The Garden of Death/);
+ const row=d.querySelector('[data-action-work="simberg_garden_1896"][data-action-slot="cinema_standard"]');
+ assert(row,'Missing single video has button');
+ assert.equal(row.dataset.actionMode,'complete');
+ row.click();await tick();
+ assert(d.querySelector('#repairDialog').open,'Guided repair dialog opens');
+ assert.equal(d.querySelector('#repairChatScope').value,'slot','Per-video link is first choice');
+ assert.match(d.querySelector('#repairNextStep').textContent,/completa questa sola variante/i);
+ assert.match(d.querySelector('#repairPrompt').value,/cinema_standard/);
+ assert.match(d.querySelector('#repairPrompt').value,/non identificato/i);
+ d.querySelector('#repairAdvancedChat').open=true;
+ const chat='https://chatgpt.com/c/12345678-abcd-1234-abcd-123456789abc';
+ d.querySelector('#repairChatInput').value=chat;
+ d.querySelector('#saveRepairChat').click();await tick();
+ assert.equal(d.querySelector('#repairCopyOpen').href,chat,'The correct video chat is selected');
+ assert(d.querySelector('#repairAdvancedChat').open,'Chat settings stay visible after save');
+ const note=d.querySelector('#repairOwnerNote');
+ note.value='Voglio completare senza creare duplicati';
+ note.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
+ assert.match(d.querySelector('#repairPrompt').value,/Voglio completare senza creare duplicati/);
+ const action=d.querySelector('#repairCopyOpen');
+ action.addEventListener('click',ev=>ev.preventDefault(),true); // Prevent jsdom navigation; allow original copy handler.
+ action.click();await tick();
+ assert.match(copied,/Voglio completare senza creare duplicati/);
+ assert.equal(calls.every(x=>x.method==='GET'),true,'No production dispatch or mutation');
+ d.querySelector('#closeRepairDialog').click();
+ d.querySelector('[data-action-project="artvision"]').click();await tick();
+ assert.match(d.querySelector('#repairPrompt').value,/nuova produzione REALE/i);
+ assert.match(d.querySelector('#repairNextStep').textContent,/produzione reale/i);
+ assert.equal(errors.length,0,errors.join('\n'));
+ console.log('PASS V10 DOM: missing variant, dedicated private chat, note, copy+open, production handoff, read-only');
+ dom.window.close();
+})().catch(e=>{console.error(e);dom.window.close();process.exit(1)});
