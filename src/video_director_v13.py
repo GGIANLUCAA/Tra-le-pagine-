@@ -36,6 +36,11 @@ try:
 except ImportError:
     from artvision_four_variants_gate import (new_plan as new_four_plan, validate as validate_four_plan, VARIANTS as FOUR_VARIANTS)
 
+try:
+    from .studio_quality_memory_v1 import load as quality_memory_load, applicable as quality_memory_applicable
+except ImportError:
+    from studio_quality_memory_v1 import load as quality_memory_load, applicable as quality_memory_applicable
+
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "config/video_formats_v13.json"
 READY = {"ready_with_assets", "ready_with_curated_plan", "ready_with_episode_config"}
@@ -93,10 +98,22 @@ def brief(kind, topic, out, references=()):
     if out.exists() and any(out.iterdir()):
         raise ValueError("Cartella non vuota: scegli un nuovo progetto, senza sovrascrivere")
     out.mkdir(parents=True, exist_ok=True)
+    lessons_doc = quality_memory_load()
+    lessons = quality_memory_applicable(lessons_doc, kind)
+    checklist = {"schema": "studio-quality-checklist-v1", "format": kind,
+                 "ledger": "quality/STUDIO_VIDEO_LESSONS_V1.json",
+                 "ledger_state": "AVAILABLE" if lessons_doc else "MISSING_OR_INVALID",
+                 "active_lessons": lessons, "video_quality_verified": False,
+                 "requires_real_mp4_and_owner_review": True}
+    write_json(out / "STUDIO_QUALITY_CHECKLIST_V1.json", checklist)
     project = {"schema": "video-project-v13", "project_id": str(uuid.uuid4()),
                "editorial_contract": new_contract(kind), "editorial_plan": new_plan(),
                "format": kind, "topic": topic.strip(), "preset": fmt["preset"],
                "status": "planned", "script": "", "subtitles": False,
+               "studio_quality_memory": {
+                   "ledger": checklist["ledger"], "ledger_state": checklist["ledger_state"],
+                   "active_lesson_ids": [row["id"] for row in lessons],
+                   "improvement_verified": False},
                "bibliography": {"author": "", "publication_year": "", "edition_reference": "", "rights_notes": ""},
                "editorial_metadata": {"series": "", "themes": "", "genre": "", "narration_style": ""},
                "business": {"audience": "", "viewer_promise": "", "original_contribution": "",
@@ -135,6 +152,16 @@ def brief(kind, topic, out, references=()):
               "Prima del render: python src/creative_director_v21.py --brief PERCORSO/PROJECT_V13.json --out CARTELLA",
               "Dopo MP4 reale: aggiungere --video PERCORSO/FILE.mp4 per i fotogrammi e i testi social.",
               "Non presentare una bozza V21 come un video approvato o pubblicato."]
+    lines += ["", "## Memoria regia condivisa — prima del nuovo video",
+              "Consultare STUDIO_QUALITY_CHECKLIST_V1.json e il registro quality/STUDIO_VIDEO_LESSONS_V1.json.",
+              "Applicare soltanto lezioni owner_approved o verified_effective della categoria corretta.",
+              "Una nota su un errore NON vale come correzione riuscita. Verificare sul vero MP4, confrontare e non alterare master."]
+    if not lessons:
+        lines.append("Lezioni non disponibili o non applicabili: non inventare miglioramenti verificati.")
+    else:
+        for item in lessons:
+            lines.append("- "+item["id"]+" · "+item["title"]+": "+item["rule"]+
+                         " [Controllo: "+item["check"]+"]")
     (out / "BRIEF_GPT.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return project
 
