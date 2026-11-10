@@ -1,0 +1,111 @@
+name: "ArtVision OWNER · The Golden Stairs · new Cinema review"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-owner-golden-stairs-cinema-v1.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-single-heavy-render
+  cancel-in-progress: false
+jobs:
+  one_new_private_cinema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Preflight: exact owner-selected slot, prevent existing standalone duplicates"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_owner_golden_stairs_cinema_v1.py
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('research/artvision_owner_selected_30_future_20261109.json')
+          q=json.loads(p.read_text())
+          matches=[w for w in q['works'] if w.get('title_as_chosen')=='The Golden Stairs']
+          assert len(matches)==1
+          assert matches[0]['selection_order']==12
+          assert not list(pathlib.Path('queue').glob('artvision_owner_30_render_checkpoint_*golden_stairs*.json')), 'Existing exact-slot checkpoint: do not double-render'
+          print('UNIQUE_OWNER_AUTHORIZED_NEW_CINEMA_SLOT: Golden Stairs, review-only, no site or social publishing')
+          PY
+      - name: Install zero-charge local renderer
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: Download exact CC BY 3.0 original, verify bytes and render new MP4
+        run: python scripts/artvision_owner_golden_stairs_cinema_v1.py
+      - name: FFmpeg full decode and independent asset, SHA256, ZIP CRC and readback validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/artvision-owner-golden-stairs-cinema-v1
+          ffprobe -v error -show_format -show_streams -of json "$d/VIDEO_REVIEW.mp4" > "$d/FFPROBE.json"
+          ffmpeg -v error -xerror -i "$d/VIDEO_REVIEW.mp4" -map 0:v:0 -f null -
+          ffmpeg -v error -xerror -i "$d/VIDEO_REVIEW.mp4" -map 0:a:0 -f null -
+          python - <<'PY'
+          import hashlib,json,zipfile
+          from pathlib import Path
+          d=Path('output/artvision-owner-golden-stairs-cinema-v1')
+          src=d/'ORIGINAL_SAILKO_CC_BY3.jpg';mp4=d/'VIDEO_REVIEW.mp4'
+          sha=lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+          assert src.stat().st_size==8259955
+          assert hashlib.sha1(src.read_bytes()).hexdigest()=='228c89451aba3687e19e1fc87c22cb435cced2d1'
+          assert mp4.stat().st_size>1000000
+          spec=json.loads((d/'FFPROBE.json').read_text())
+          v=[s for s in spec['streams'] if s.get('codec_type')=='video']
+          a=[s for s in spec['streams'] if s.get('codec_type')=='audio']
+          assert len(v)==1 and v[0]['codec_name']=='h264'
+          assert (v[0]['width'],v[0]['height'])==(1080,1920)
+          assert len(a)==1 and a[0]['codec_name']=='aac'
+          assert 71<float(spec['format']['duration'])<74
+          rights=json.loads((d/'SOURCES_RIGHTS.json').read_text())
+          assert rights['photo_author']=='Sailko'
+          assert rights['photo_license']=='Creative Commons Attribution 3.0 Unported'
+          assert rights['source_sha256']==sha(src)
+          assert rights['distribution_allowed'] is False
+          story=json.loads((d/'STORYBOARD.json').read_text())
+          assert len(story['shots'])==17
+          report={'work':'The Golden Stairs','artist':'Edward Burne-Jones','variant':'cinema_standard',
+            'original_photo_sha1':'228c89451aba3687e19e1fc87c22cb435cced2d1',
+            'original_photo_sha256':sha(src),'original_photo_bytes':src.stat().st_size,
+            'mp4_sha256':sha(mp4),'mp4_bytes':mp4.stat().st_size,'ffmpeg_video_full_decode':'PASS',
+            'ffmpeg_audio_full_decode':'PASS','status':'rendered_needs_visual_and_semantic_review',
+            'commercial_rights_tate_territorial':'PENDING','human_artistic_review':'PENDING',
+            'published':False,'gold':False,'new_main_queue_slots':0,'new_paid_api_spend':0}
+          (d/'QA_TECHNICAL.json').write_text(json.dumps(report,indent=2),encoding='utf8')
+          names=['VIDEO_REVIEW.mp4','COVER.jpg','ORIGINAL_SAILKO_CC_BY3.jpg',
+            'ORIGINAL_SCORE.wav','SOURCES_RIGHTS.json','STORYBOARD.json',
+            'SOCIAL_DRAFTS.json','READ_ME_FIRST.md','CONTACT_SHEET.jpg','FFPROBE.json','QA_TECHNICAL.json']
+          zip_path=d/'REVIEW_PACKAGE.zip'
+          with zipfile.ZipFile(zip_path,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=3) as f:
+              for n in names:f.write(d/n,arcname=n)
+          with zipfile.ZipFile(zip_path) as f:
+              assert f.testzip() is None
+              for n in names:
+                  assert f.read(n)==(d/n).read_bytes()
+          print('NEW_GOLDEN_STAIRS_MP4_SHA256',sha(mp4))
+          print('NEW_GOLDEN_STAIRS_ZIP_SHA256',sha(zip_path))
+          print('ORIGINAL_SOURCE_SHA256',sha(src))
+          print('TECH_PASS_CRC_PASS_REVIEW_PENDING_NO_GOLD_NO_PUBLICATION')
+          PY
+      - name: Upload genuinely new MP4, cover and ZIP as private review artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_OWNER_GOLDEN_STAIRS_NEW_CINEMA_REVIEW
+          path: |
+            output/artvision-owner-golden-stairs-cinema-v1/VIDEO_REVIEW.mp4
+            output/artvision-owner-golden-stairs-cinema-v1/REVIEW_PACKAGE.zip
+            output/artvision-owner-golden-stairs-cinema-v1/COVER.jpg
+            output/artvision-owner-golden-stairs-cinema-v1/CONTACT_SHEET.jpg
+            output/artvision-owner-golden-stairs-cinema-v1/QA_TECHNICAL.json
+          if-no-files-found: error
+          retention-days: 14
