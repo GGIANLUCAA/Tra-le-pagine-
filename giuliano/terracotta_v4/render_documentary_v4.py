@@ -126,7 +126,8 @@ def font(sz,bold=False):
 def add_gradient(im,darkness=.82,start=.65):
  overlay=Image.new("RGBA",im.size,(0,0,0,0)); dr=ImageDraw.Draw(overlay)
  for y in range(int(im.height*start),im.height):
-  a=int(180*darkness*((y/im.height-start)/(1-start))**1.4)
+  rel=max(0.0,min(1.0,(y/im.height-start)/(1-start)))
+  a=int(180*darkness*rel**1.4)
   dr.line((0,y,im.width,y),fill=(5,8,12,min(230,a)))
  return Image.alpha_composite(im.convert("RGBA"),overlay).convert("RGB")
 
