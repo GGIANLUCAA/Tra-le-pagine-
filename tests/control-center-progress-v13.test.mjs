@@ -32,7 +32,7 @@ const context={Date,Math,Number,Set,Map,JSON,
  progressDate:x=>{const t=Date.parse(x||"");return Number.isFinite(t)&&t>0?t:null},
  progressElapsed:(a,b)=>{const s=Date.parse(a||""),e=Date.parse(b||"");return Number.isFinite(s)&&Number.isFinite(e)&&e>=s?Math.round((e-s)/1000):null}
 };
-const funcs=runInNewContext(be+"\n({progressQuantileV13,progressEtaV13,productionProgressUpgradeV13});",context);
+const funcs=runInNewContext(be+"\n({progressQuantileV13,progressEtaV13,productionProgressUpgradeV13,progressVideoLinkV13});",context);
 test("ETA uses recent same-workflow history with medium confidence, no MP4 claim",()=>{
  const eta=funcs.progressEtaV13(run,[run,...histories],now);
  assert.equal(eta.available,true);
@@ -87,6 +87,25 @@ test("observed phase history and inactivity are diagnostic, not evidence of an M
  assert.match(failed.attention_reason,/fallito/);
 });
 const source=html.match(/<script>([\s\S]*?)<\/script>/)[1];
+test("exact queue run matches one video; ambiguity or missing sources never guess",()=>{
+ const status={sources:{queue:{ok:true}},works:[{
+   id:"blake_ghost_flea_1819",title:"The Ghost of a Flea",artist:"William Blake",
+   variants:[{id:"cinema_museum",label:"Cinema Museum",run_id:904,
+     filename:"BLAKE_MUSEUM.mp4",preview_ready:true,qa:{gold_approved:false}}]
+ }]};
+ const linked=funcs.progressVideoLinkV13(status,run);
+ assert.equal(linked.match_status,"exact_queue_run_id");
+ assert.equal(linked.linked_video.work_title,"The Ghost of a Flea");
+ assert.equal(linked.linked_video.slot_id,"cinema_museum");
+ assert.equal(linked.linked_video.preview_ready,true);
+ assert.equal(linked.linked_video.gold_approved,false);
+ assert.equal(funcs.progressVideoLinkV13({sources:{queue:{ok:false}},works:status.works},run).linked_video,null);
+ const duplicated=JSON.parse(JSON.stringify(status));
+ duplicated.works[0].variants.push({...duplicated.works[0].variants[0],id:"cinema_standard"});
+ const ambiguous=funcs.progressVideoLinkV13(duplicated,run);
+ assert.equal(ambiguous.match_status,"ambiguous");
+ assert.equal(ambiguous.linked_video,null);
+});
 test("V13 clock window appears only with a valid interval and honest wording",()=>{
  const ui=runInNewContext(fe+"\n({progressV13Window,progressV13Age});",{
   Date,Intl,Math,Number,PROJECT_LABELS:{},state:{productionProgress:{}}
