@@ -1,0 +1,62 @@
+name: "V321 Regia umana — verifica ripetizioni tra episodi (gratis)"
+on:
+  pull_request:
+    paths:
+      - "src/editorial_series_naturalness_v321.py"
+      - "tests/test_editorial_series_naturalness_v321.py"
+      - "src/editorial_human_naturalness_v1.py"
+      - ".github/workflows/editorial-series-naturalness-v321.yml"
+      - "modules/artvision_critico/production_series/*.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare-actual-recipes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Prova sui cinque veri copioni ArtVision, mai MP4 sintetici"
+        run: |
+          python -m unittest discover -s tests -p "test_editorial_human_naturalness_v1.py" -v
+          python -m unittest discover -s tests -p "test_editorial_series_naturalness_v321.py" -v
+      - name: "Leggi copioni e costanti renderer attuali e produci diagnosi"
+        run: |
+          mkdir -p output/editorial-v321
+          python src/editorial_series_naturalness_v321.py \
+            --recipe modules/artvision_critico/production_series/bruegel_rebel_angels_v144.json \
+            --recipe modules/artvision_critico/production_series/simberg_garden_v146.json \
+            --recipe modules/artvision_critico/production_series/bruegel_triumph_v151.json \
+            --recipe modules/artvision_critico/production_series/waterhouse_magic_circle_v159.json \
+            --recipe modules/artvision_critico/production_series/blake_ghost_flea_v159.json \
+            --renderer src/artvision_rebel_critico_standard_v144.py \
+            --renderer src/artvision_simberg_garden_critico_v146.py \
+            --renderer src/artvision_bruegel_triumph_critico_v151.py \
+            --renderer src/artvision_waterhouse_magic_circle_critico_v159.py \
+            --renderer src/artvision_blake_ghost_flea_critico_v159.py \
+            --out output/editorial-v321/EDITORIAL_SERIES_REPORT_V321.json
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path("output/editorial-v321/EDITORIAL_SERIES_REPORT_V321.json")
+          r=json.loads(p.read_text())
+          assert r["schema"]=="editorial-series-naturalness-v321"
+          assert r["episode_count"]==5 and len(r["pairwise_literal_similarity"])==10
+          assert not r["changed_master"] and not r["human_approved"] and r["paid_calls"]==0
+          codes=[x["code"] for x in r["observations"]]
+          assert "LEGACY_STOCK_ENDING" in codes
+          assert "UNIFORM_CHAPTER_COUNT" in codes
+          assert "UNIFORM_RENDERER_PACING" in codes
+          print("REAL_STORYBOARD_SOURCE_REVIEW_PENDING", ",".join(codes))
+          PY
+      - name: "Conserva rapporto completo, nessun video modificato"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EDITORIAL_V321_REAL_FIVE_EPISODES_READONLY
+          path: output/editorial-v321/
+          if-no-files-found: warn
+          retention-days: 14
