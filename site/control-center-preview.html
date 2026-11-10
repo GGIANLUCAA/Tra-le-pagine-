@@ -181,6 +181,10 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 
 
 /* V11 per-video lessons and unblocking Android UI. */
+.actionRecentRow{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:11px 0;border-top:1px solid #ffffff22}
+.actionRecentRow strong{display:block;font-size:12px;color:#f0ddc2;overflow-wrap:anywhere}
+.actionRecentRow small{display:block;color:#aeb8c3;font-size:10px;margin-top:3px}
+@media(max-width:600px){.actionRecentRow{align-items:flex-start;flex-direction:column}.actionRecentRow button{width:100%}}
 .qualityNoteRow{padding:10px 0;border-top:1px solid #ffffff25;display:grid;gap:3px}
 .qualityNoteRow strong{color:#f2d4a7;font-size:11px}.qualityNoteRow p{color:#e7d8c2;font-size:12px;margin:3px 0}.qualityNoteRow small{color:#aab5c1;font-size:10px}
 .qualityLabel{font-size:11px;color:#edcda1;display:grid;gap:4px;margin:8px 0}
@@ -499,6 +503,13 @@ function prepareRepairPrompt(ctx,details){
   if(ctx.action==="recover")line.push("AZIONE VOLUTA: trova il video o il pacchetto già prodotti nelle run, release, archivi e catalogo. Correggi eventuali link/sincronizzazioni solo dopo prove. NON ricreare il video se esiste il master originale recuperabile.");
   if(ctx.action==="improve")line.push("AZIONE VOLUTA: ispeziona il vero MP4, identifica errori di regia/voce/immagini e migliora SOLO quanto necessario con una versione N+1, confronto A/B e QA reale. Non cancellare o sovrascrivere l'originale.");
   if(state.repairNote&&state.repairNote.trim())line.push("OSSERVAZIONE AGGIUNTIVA DEL PROPRIETARIO: "+state.repairNote.trim().slice(0,1800));
+  if(ctx.type==="video"&&ctx.video){
+    line.push("- MP4 catalogo: "+String(ctx.video.key||"non dichiarato"),
+      "- Titolo catalogo: "+String(ctx.video.title||"non dichiarato"),
+      "- Disponibilità dichiarata: "+(ctx.video.available===true?"sì":
+        ctx.video.available===false?"no":"non dichiarata"),
+      "- Correzione specifica per singolo video; non inventare il suo workflow/episodio di appartenenza.");
+  }
   if(ctx.action==="unblock"){
     line.push("AZIONE VOLUTA DAL PROPRIETARIO: SBLOCCA CIO CHE E POSSIBILE SENZA DUPLICATI.",
       "Verifica prima le run, i job, le code owner e i file completi di ciascuno dei seguenti candidati. "+
@@ -539,7 +550,7 @@ function renderRepairDialog(){
   var ctx=state.repair;
   if(!ctx)return;
   var label=PROJECT_LABELS[ctx.project]||PROJECT_LABELS.other;
-  document.getElementById("repairTitle").textContent=ctx.action==="produce"?"Richiedi produzione con GPT":ctx.action==="unblock"?"Sblocca ciò che è possibile":ctx.type==="slot"?"Intervieni sul video con GPT":ctx.type==="work"?"Analizza le varianti con GPT":"Ripara con GPT";
+  document.getElementById("repairTitle").textContent=ctx.action==="produce"?"Richiedi produzione con GPT":ctx.action==="unblock"?"Sblocca ciò che è possibile":ctx.type==="video"?"Migliora questo video":ctx.type==="slot"?"Intervieni sul video con GPT":ctx.type==="work"?"Analizza le varianti con GPT":"Ripara con GPT";
   document.getElementById("repairSummary").textContent=ctx.title+
     " · "+ctx.detail+(ctx.run?" · GitHub run #"+ctx.runId:"");
   document.getElementById("repairActionTitle").textContent=ctx.action==="produce"?
@@ -1148,7 +1159,7 @@ function addQualityNote(ctx,sourceText,category,requestedGeneralization){
   var row={
     id:"feedback_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,9),
     key:key,work_id:String(ctx.work.id),slot_id:ctx.slot?.id||null,
-    filename:String(ctx.slot?.filename||"").slice(0,180),
+    filename:String(ctx.slot?.filename||ctx.video?.key||"").slice(0,180),
     project:ctx.project||"artvision",note:text,category:category,
     status:"reported",owner_requested_generalization:requestedGeneralization===true,
     created_at:new Date().toISOString()
@@ -1203,6 +1214,42 @@ function actionUnblockBanner(){
     (available&&candidates.length?'':'disabled')+'>Prepara il recupero con GPT</button></section>';
 }
 
+function videoMemoryId(key){
+  var input=String(key||""),hash=2166136261;
+  for(var i=0;i<input.length;i++){
+    hash^=input.charCodeAt(i);
+    hash=Math.imul(hash,16777619)>>>0;
+  }
+  var slug=input.toLowerCase().replace(/[^a-z0-9_-]/g,"_").slice(0,30);
+  return "video_"+hash.toString(36)+"_"+slug;
+}
+function contextForStandaloneVideo(video){
+  var id=videoMemoryId(video.key||video.title),
+      label=String(video.title||video.key||"Video");
+  return {type:"video",project:project((video.key||"")+" "+label),
+    title:label,work:{id:id,title:label},slot:null,
+    detail:video.available===false?
+      "Il catalogo segnala non disponibile: recupera file e prova prima di rifare il video.":
+      "Verifica la qualità del MP4 originale e registra la correzione senza sovrascrivere.",
+    action:video.available===false?"recover":"improve",video:video,run:null};
+}
+function actionRecentVideos(){
+  if(!source("catalog"))return '<div class="panel"><h3>Altri video da migliorare</h3>'+
+    '<p class="note">Il catalogo non è raggiungibile: non posso associare con certezza un MP4.</p></div>';
+  var recent=(state.data?.media||[]).filter(function(x){return x&&typeof x.key==="string"}).slice(0,12);
+  var html='<section class="panel"><h3>Altri video recenti</h3><p class="sub">'+
+    'La Storia Rivive, WOW LAB e gli altri format: associa una chat e salva una correzione per il singolo file. '+
+    'Questo elenco mostra solo il campione del catalogo, non tutti gli episodi programmati.</p>';
+  if(!recent.length)return html+'<div class="empty">Nessun video identificabile nel campione.</div></section>';
+  return html+recent.map(function(x){
+    return '<div class="actionRecentRow"><div><strong>'+escapeText(x.title||x.key)+'</strong>'+
+      '<small>'+escapeText(x.available===false?"Catalogato offline · recupero da verificare":
+        x.available===true?"Nel catalogo · integrità non certificata":"Stato non dichiarato")+'</small></div>'+
+      '<button type="button" class="actionSecondary" data-action-video="'+escapeText(x.key)+'">'+
+      (x.available===false?"↻ Recupera":"✦ Annota / migliora")+'</button></div>';
+  }).join("")+'</section>';
+}
+
 function issues(){
   var d=state.data||{},attention=d.attention||[];
   var failures=attention.filter(function(x){return x.kind==="workflow"});
@@ -1236,6 +1283,7 @@ function issues(){
       '</div></div>';
     }).join("")+'</div></div>';
   h+=actionWorksPanel();
+  h+=actionRecentVideos();
   var latestIds=new Set(failures.map(function(x){return Number(x.run_id)||0}));
   var past=(d.runs||[]).filter(function(r){
     return ["failure","cancelled","timed_out","action_required"].includes(r.conclusion)&&
@@ -1365,6 +1413,12 @@ document.addEventListener("click",function(ev){
   var filterAction=ev.target.closest("button[data-action-filter]");
   if(filterAction&&["all","needs","ready"].includes(filterAction.dataset.actionFilter)){
     state.actionFilter=filterAction.dataset.actionFilter;render();return;
+  }
+  var actionVideo=ev.target.closest("button[data-action-video]");
+  if(actionVideo){
+    var picked=(state.data?.media||[]).find(function(x){return x.key===actionVideo.dataset.actionVideo});
+    if(picked)openRepairDialog(contextForStandaloneVideo(picked));
+    return;
   }
   var actionWork=ev.target.closest("button[data-action-work]");
   if(actionWork){
