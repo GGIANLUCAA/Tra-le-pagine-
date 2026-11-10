@@ -177,7 +177,7 @@ def original_music(total, output_dir=OUT):
  return p
 
 def render(directed=False):
- render_dir=OUT if not directed else render_dir/'REGIA_V2_TRIAL'
+ render_dir=OUT if not directed else OUT/'REGIA_V2_TRIAL'
  render_dir.mkdir(parents=True,exist_ok=True)
  q,script=load()
  artpath=art_check()
