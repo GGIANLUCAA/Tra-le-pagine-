@@ -15,6 +15,16 @@ on:
         required: true
         default: "examples/ai_director_v1_sample.json"
         type: string
+      variant:
+        description: "Existing 4x1 variant (used only if brief is a canonical ArtVision dossier)"
+        type: choice
+        required: true
+        default: critico_standard
+        options:
+          - critico_standard
+          - critico_museum
+          - cinema_standard
+          - cinema_museum
       enable_live:
         description: "Try exactly two explicitly verified zero-price LLMs (disabled by default)"
         required: true
@@ -45,6 +55,7 @@ jobs:
       BRIEF_FILE: ${{ inputs.brief_path || 'examples/ai_director_v1_sample.json' }}
       MODEL_1: ${{ inputs.model_1 }}
       MODEL_2: ${{ inputs.model_2 }}
+      FOUR_VARIANT: ${{ inputs.variant || 'critico_standard' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -62,7 +73,7 @@ jobs:
           python - <<'PY'
           import os, pathlib, re
           s=os.environ["BRIEF_FILE"]
-          if not re.fullmatch(r"(?:examples|queue|research)/[A-Za-z0-9_./-]{1,150}\.json",s) or ".." in s:
+          if not re.fullmatch(r"(?:examples|queue|research|docs/productions)/[A-Za-z0-9_./-]{1,150}\.json",s) or ".." in s:
               raise SystemExit("Unsafe brief path")
           root=pathlib.Path.cwd().resolve()
           p=(root/s).resolve()
@@ -76,18 +87,32 @@ jobs:
           OPENROUTER_API_KEY: ${{ github.event_name == 'workflow_dispatch' && inputs.enable_live == true && secrets.OPENROUTER_API_KEY || '' }}
         run: |
           set -euo pipefail
+          schema=$(python -c 'import json,os;print(json.load(open(os.environ["BRIEF_FILE"]))["schema"])')
+          if [ "$schema" = 'artvision-4x1-v1' ]; then
+            brief_args=(--four-plan "$BRIEF_FILE" --variant "$FOUR_VARIANT")
+          elif [ "$schema" = 'studio-ai-director-brief-v1' ]; then
+            brief_args=(--brief "$BRIEF_FILE")
+          else
+            echo "Unknown storyboard schema"; exit 1
+          fi
           if [ "$AI_DIRECTOR_LIVE" = '1' ]; then
             if [ -z "$MODEL_1" ] || [ -z "$MODEL_2" ]; then
               echo "Two approved free model IDs required"; exit 1
             fi
-            python src/ai_director_v1.py --brief "$BRIEF_FILE" \
-              --out output/ai_director_v1/report.json \
-              --dashboard output/ai_director_v1/report.html \
-              --live --models "$MODEL_1" "$MODEL_2"
+            live_args=(--live --models "$MODEL_1" "$MODEL_2")
           else
-            python src/ai_director_v1.py --brief "$BRIEF_FILE" \
-              --out output/ai_director_v1/report.json \
-              --dashboard output/ai_director_v1/report.html
+            live_args=()
+          fi
+          python src/ai_director_v1.py "${brief_args[@]}" \
+            --out output/ai_director_v1/report.json \
+            --dashboard output/ai_director_v1/report.html \
+            "${live_args[@]}"
+          if [ "$AI_DIRECTOR_LIVE" = '0' ] && [ "$BRIEF_FILE" = 'examples/ai_director_v1_sample.json' ]; then
+            python src/ai_director_v1.py \
+              --four-plan docs/productions/2026-10-28-goldfinch-cinema-standard-v55/ARTVISION_4X1_PLAN.json \
+              --variant critico_standard \
+              --out output/ai_director_v1/real_existing_four_plan.json \
+              --dashboard output/ai_director_v1/real_existing_four_plan.html
           fi
       - name: Upload factual report, not video or public publication
         if: always()
