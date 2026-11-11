@@ -20,7 +20,7 @@ La copia GGIANLUCAA/G0DM0D3 contiene una interfaccia di confronto multi-modello,
 
 1. Piano editoriale offline con due punti di vista: regista e critico scettico. Il risultato e una bozza, non un film approvato.
 2. Audit storyboard: tempi sotto 0,95 s, hold sotto 1,5 s, scene sovrapposte, gap, ripetizioni di asset, mancate prove museali e disallineamenti espliciti fra dettaglio citato e mostrato. Nessuna pretesa di avere visto filmato o ascoltato audio.
-3. Probe MP4 facoltativo: solo ffprobe e SHA-256. Resta necessario l'esame artistico del video reale.
+3. Probe MP4 con ffprobe e SHA-256 e, quando FFmpeg e disponibile, scansione dei frame reali: stacchi rilevati a distanza sotto 0,95 s e intervalli neri oltre 0,12 s. Sono indizi tecnici da verificare, non una revisione artistica. La scansione viene limitata ai primi 240 s e segnalata come parziale oltre tale durata.
 4. Confronto opzionale con due modelli gratuiti esplicitamente approvati e terzo giudice opzionale, massimo 2–3 richieste per avvio, senza retry. Disabilitato per impostazione predefinita.
 5. Memoria dei difetti tramite registro già esistente, con una proposta alla volta; nessuna autocorrezione distruttiva.
 6. Report HTML e JSON consultabili su Android tramite artifact GitHub Actions.
@@ -39,7 +39,9 @@ L'azione non chiama OpenRouter, non richiede credenziali, non avvia Vidu/TTS, no
 
     python src/ai_director_v1.py --mode plan --format documentario --subject "Vita nel 1900" --out-dir output/ai_director_v1
 
-    python src/ai_director_v1.py --mode audit --brief output/manifest_reale.json --out-dir output/audit_v1
+    python src/ai_director_v1.py --mode audit --brief output/manifest_reale.json --video output/video_reale.mp4 --out-dir output/audit_v1
+
+    python src/ai_director_visual_qa_v1.py --video output/video_reale.mp4 --output output/real_mp4_diagnostics.json
 
     python src/ai_director_bridge_v1.py --source output/ARTVISION_4X1_PLAN.json --out-dir output/review_4x1
 
@@ -67,8 +69,12 @@ Le verifiche di qualità A/B con MP4 reali, una connessione live al sito e l'att
 
 ### Test offline
 
-    python -m py_compile src/ai_director_v1.py src/ai_director_bridge_v1.py
+    python -m py_compile src/ai_director_v1.py src/ai_director_bridge_v1.py src/ai_director_visual_qa_v1.py
     python -m unittest discover -s tests -p 'test_ai_director_v1.py' -v
     python -m unittest discover -s tests -p 'test_ai_director_bridge_v1.py' -v
 
 Il workflow controlla anche che config/free_llm_zero_cost_v1.json rimanga default_deny=true, routes=[].
+
+    python -m unittest discover -s tests -p 'test_ai_director_visual_qa_v1.py' -v
+
+La rilevazione automatica di stacchi rapidi puo produrre falsi positivi su movimenti o cambi di luce. La nuova diagnostica non rileva tutti i flash e non sostituisce l'esame dei veri frame a velocita normale, la sincronizzazione voce/scene ne il QA umano.

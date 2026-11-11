@@ -395,7 +395,20 @@ def main(argv=None):
     brief = load_json(opts.brief) if opts.brief else make_brief(opts.format, opts.subject)
     findings = audit_scenes(brief)
     video = probe_video(opts.video) if opts.video else {"status": "not_checked"}
+    visual_review = None
+    if opts.video:
+        from ai_director_visual_qa_v1 import inspect as inspect_real_mp4
+        try:
+            visual_review = inspect_real_mp4(opts.video)
+            findings.extend(visual_review["issues"])
+        except (RuntimeError, ValueError, OSError) as exc:
+            visual_review = {"status": "unverified", "reason": str(exc),
+                             "human_artistic_approval": False, "issues": []}
+            findings.append(issue("REAL_MP4_SCAN_NOT_AVAILABLE", "warning",
+                                  "Actual frame-timing scan unavailable; no artistic conclusion"))
     report = base_report(brief, findings, video)
+    if visual_review is not None:
+        report["real_mp4_technical_diagnostics"] = visual_review
     prompts = editorial_prompts(brief)
     if opts.mode == "compare":
         if not opts.model:
