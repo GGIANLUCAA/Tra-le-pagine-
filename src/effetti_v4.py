@@ -208,10 +208,52 @@ def render_montage(images,duration,tmp,starts=None,config_path=None,
         images, temp/"v5_colori", config_path=config_path,
         report_path=quality_dir/"REGIA_ARMONICA_V5.json",
         contact_path=quality_dir/"CONTATTO_SCENE_V5.jpg")
+    # Opt-in factual motion. Existing episodes without real_action are
+    # unchanged and do not import the OpenCV video adapter.
+    action_cues={}
+    if config_path and Path(config_path).is_file():
+        plan=json.loads(Path(config_path).read_text(encoding="utf-8"))
+        for row in plan.get("scenes",[]):
+            if isinstance(row,dict) and "real_action" in row:
+                if row.get("cue") in action_cues:
+                    raise ValueError("Duplicated real_action cue")
+                action_cues[row.get("cue")]=row["real_action"]
     segments=[]
     manifest=[]
     for i,(picture,num) in enumerate(zip(images,counts)):
         effect,seconds,mood=pick_settings(config_path,i,"",len(images))
+        if i in action_cues:
+            from real_action_v40 import produce
+            spec=action_cues[i]
+            if not isinstance(spec,dict) or not isinstance(spec.get("file"),str):
+                raise ValueError(f"V40 scena {i}: file sorgente mancante")
+            if effect in STRONG or pick_postfx(config_path,i):
+                raise ValueError(f"V40 scena {i}: vietato combinare azione con reveal o postfx")
+            action_frames=spec.get("seconds",0)*fps
+            if type(spec.get("seconds")) is not int or num < action_frames:
+                raise ValueError(f"V40 scena {i}: clip piu lunga della finestra di voce")
+            root=Path(config_path).parent
+            source=root/spec["file"]
+            action=temp/f"v40_action_{i:02d}.mp4"
+            details=produce(source,action,spec,root,fps=fps,width=w,height=h)
+            segments.append(action)
+            remaining=num-action_frames
+            if remaining:
+                im=Image.open(picture).convert("RGB")
+                im=ImageOps.fit(im,(w,h),method=Image.Resampling.LANCZOS)
+                tail=temp/f"v40_after_action_{i:02d}.mp4"
+                make_camera_clip(im,tail,remaining,effect,mood,fps,w,h,i)
+                segments.append(tail)
+            manifest.append({"cue":i,"asset":str(picture),
+                             "effect":"real_action_v40",
+                             "action_duration_sec":spec["seconds"],
+                             "duration_sec":round(num/fps,3),
+                             "remainder_sec":round(remaining/fps,3),
+                             "action_review":"REQUIRED",
+                             "action":details})
+            print(f"V40 scena {i+1}/{len(images)}: vero movimento "
+                  f"({spec['seconds']}s), parlato invariato",flush=True)
+            continue
         im=Image.open(picture).convert("RGB")
         im=ImageOps.fit(im,(w,h),method=Image.Resampling.LANCZOS)
         introductory=0

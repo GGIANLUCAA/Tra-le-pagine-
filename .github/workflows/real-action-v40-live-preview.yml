@@ -1,0 +1,62 @@
+name: "V40 - real working gears footage TEST (not publication)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/real-action-v40-live-preview.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  genuine-motion-demo:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Install FFmpeg only if needed, using existing apt index"
+        run: |
+          if ! command -v ffmpeg >/dev/null; then
+            timeout 120s sudo apt-get install -y -qq ffmpeg
+          fi
+          command -v ffmpeg
+          command -v ffprobe
+      - name: "Fetch actual moving clock gears footage from verified source"
+        shell: bash
+        run: |
+          mkdir -p preview
+          curl --fail --show-error --silent --location \
+            --max-time 95 --retry 1 \
+            -A 'Mozilla/5.0 (compatible; TraLePagineStudio/1.0)' \
+            'https://www.pexels.com/download/video/9966041/' \
+            -o preview/source.mp4
+          test "$(stat -c%s preview/source.mp4)" -gt 200000
+          ffprobe -v error -show_entries stream=codec_type -of csv=p=0 preview/source.mp4 | grep -q '^video$'
+      - name: "Extract 6 seconds of REAL mechanical movement, no zoom"
+        shell: bash
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -ss 0.3 \
+            -i preview/source.mp4 -t 6 -an \
+            -vf 'fps=24,scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,format=yuv420p' \
+            -frames:v 144 -c:v libx264 -preset veryfast -crf 20 \
+            -pix_fmt yuv420p -movflags +faststart preview/REAL_MOVEMENT_6s.mp4
+          ffprobe -v error -show_entries format=duration -of csv=p=0 preview/REAL_MOVEMENT_6s.mp4
+          cat > preview/READ_ME.txt <<'EOF'
+          TRUE-ACTION STOCK FOOTAGE / experimental review clip only.
+          Motion shown: actual clockwork gears filmed in operation.
+          Source: https://www.pexels.com/video/close-up-on-working-gears-9966041/
+          Creator: Olena Ilinska (Pexels).
+          Pexels license: https://www.pexels.com/license/
+          This is NOT an approved Tra le Pagine artistic master.
+          No book character or masterpiece is represented or implied.
+          No AI video was generated. No camera zoom was applied.
+          Original clip and edited clip require viewing and license verification.
+          EOF
+      - name: "Attach original and genuine-motion preview to GitHub"
+        uses: actions/upload-artifact@v4
+        with:
+          name: V40_VERO_MOVIMENTO_DA_VALUTARE
+          path: |
+            preview/REAL_MOVEMENT_6s.mp4
+            preview/READ_ME.txt
+          if-no-files-found: error
+          retention-days: 14
