@@ -1,0 +1,125 @@
+{
+  "schema": "artvision-v121-photo-source-visual-audit",
+  "review_date": "2026-11-02",
+  "method": "Preliminary assistant visual review of the actual V120 contact sheet and ZIP photos; NOT artist/owner approval of video",
+  "evidence": {
+    "github_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/41395451028",
+    "artifact_id": 13119426005,
+    "artifact_name": "ARTVISION_V120_FIVE_REAL_GALLERY_SOURCES_REVIEW",
+    "artifact_zip_digest_sha256": "423698686c8f7fdd198b3984f45d60be51b2f53aefd9292d4c33cb98ab9a7eef",
+    "manifest": "PROVENANCE_AND_RIGHTS.json",
+    "source_file_hashes_recomputed_locally_and_matched": true
+  },
+  "photo_source_count": 5,
+  "accepted_room_preset_count": 0,
+  "approved_museum_video_count": 0,
+  "entries": [
+    {
+      "id": "GAL01",
+      "photo_jpg_sha256": "eaea76f5ff2c3162397b45cd18c751373d47e6cd5462fa3d72285338c4a2f926",
+      "dimensions_px": [
+        4320,
+        3240
+      ],
+      "license_declared_by_source_manifest": "CC0 1.0",
+      "photographer": "Daderot",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Interior_-_Corcoran_Gallery_of_Art_-_DSC01195.JPG",
+      "assistant_visual_triage": "reference_only",
+      "observation": "Historic ornate architecture and believable lighting; existing decoration, doorways, central plinth and objects obstruct a clean flat painting wall. Do not insert arbitrary painting in this photo.",
+      "metric_room_reconstruction_exists": false,
+      "tracked_camera_mp4_exists": false,
+      "artwork_specific_frame_verified": false,
+      "artistic_approval": false,
+      "owner_approval": false,
+      "eligible_for_museum_final": false
+    },
+    {
+      "id": "GAL02",
+      "photo_jpg_sha256": "ea95335ef66afa225351e1dd423c49d5e84aeb15574e97b965fa25c1d5b91db2",
+      "dimensions_px": [
+        3648,
+        2736
+      ],
+      "license_declared_by_source_manifest": "CC BY 4.0",
+      "photographer": "Daniel Naber",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Museum_Barberini_Innenraum_leer.jpg",
+      "assistant_visual_triage": "priority_for_3d_reconstruction_study",
+      "observation": "Wide unobstructed dark wall, visible floor perspective and ceiling; useful photographic reference for a neutral museum interior. Human figure in distant doorway; geometry/scale must be rebuilt, not inferred as factual from one picture. Attribution and indication of modifications required.",
+      "metric_room_reconstruction_exists": false,
+      "tracked_camera_mp4_exists": false,
+      "artwork_specific_frame_verified": false,
+      "artistic_approval": false,
+      "owner_approval": false,
+      "eligible_for_museum_final": false
+    },
+    {
+      "id": "GAL03",
+      "photo_jpg_sha256": "cee7b171449cad4143ef2f0117e6ec90e12b3b46b265b123977c2bfd38932f9e",
+      "dimensions_px": [
+        3216,
+        4288
+      ],
+      "license_declared_by_source_manifest": "CC0 1.0",
+      "photographer": "Roundtheworld",
+      "source_page": "https://commons.wikimedia.org/wiki/File:MuseumoftheWalls_exhibition.jpg",
+      "assistant_visual_triage": "reject_for_painting_wall",
+      "observation": "Narrow vaulted corridor with information panels and display cases, not a free painting wall; problematic scale, composition and camera path for the requested installation.",
+      "metric_room_reconstruction_exists": false,
+      "tracked_camera_mp4_exists": false,
+      "artwork_specific_frame_verified": false,
+      "artistic_approval": false,
+      "owner_approval": false,
+      "eligible_for_museum_final": false
+    },
+    {
+      "id": "GAL04",
+      "photo_jpg_sha256": "3e035baac12291ce5e7cbed35525d6dae7fe0f75b58e5984f7b4530cf0110920",
+      "dimensions_px": [
+        5019,
+        3456
+      ],
+      "license_declared_by_source_manifest": "CC0 1.0",
+      "photographer": "14GTR",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Room_70_Begining_the_Collection.jpg",
+      "assistant_visual_triage": "reference_only",
+      "observation": "Real display gallery with cabinets, tables, objects and wall text; the furniture obstructs a full-frame artwork reveal and cannot be removed without a true reconstruction.",
+      "metric_room_reconstruction_exists": false,
+      "tracked_camera_mp4_exists": false,
+      "artwork_specific_frame_verified": false,
+      "artistic_approval": false,
+      "owner_approval": false,
+      "eligible_for_museum_final": false
+    },
+    {
+      "id": "GAL05",
+      "photo_jpg_sha256": "97011035822dfb20889b93204df53a5851ef0379393917652ab4301ef1ef4f8a",
+      "dimensions_px": [
+        3024,
+        4032
+      ],
+      "license_declared_by_source_manifest": "CC0 1.0",
+      "photographer": "Loralielo",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Game_Room_-_Interior_of_the_gallery.jpg",
+      "assistant_visual_triage": "reject_for_painting_wall",
+      "observation": "Narrow view interrupted by dark freestanding panels and pink structural feature; some art is already visible; not a credible clean wall for varied painting sizes.",
+      "metric_room_reconstruction_exists": false,
+      "tracked_camera_mp4_exists": false,
+      "artwork_specific_frame_verified": false,
+      "artistic_approval": false,
+      "owner_approval": false,
+      "eligible_for_museum_final": false
+    }
+  ],
+  "selection_notes": {
+    "study_first": "GAL02",
+    "reference_only": [
+      "GAL01",
+      "GAL04"
+    ],
+    "replace_with_better_sources": [
+      "GAL03",
+      "GAL05"
+    ],
+    "critical_warning": "Photo downloaded does not equal room preset approved. GAL02 is a photographic reference, not a metrically reconstructed moving camera. The real artwork frame, rights, real-scale wall staging and V46/V57 real MP4 inspection remain mandatory."
+  }
+}
