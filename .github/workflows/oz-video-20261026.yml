@@ -1,0 +1,67 @@
+name: "Tra le Pagine — Oz libro narrato con Gacrux"
+on:
+  push:
+    branches:
+      - feature/video-wizard-oz-20261026
+    paths:
+      - voice_jobs/oz_20261026.run
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: oz-20261026-visual-remaster-fast
+  cancel-in-progress: false
+jobs:
+  book-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Minimal remaster dependencies, no provider calls
+        run: |
+          command -v ffmpeg
+          command -v ffprobe
+          python -m pip install --disable-pip-version-check "numpy>=1.25,<3" "pillow>=10,<13" "soundfile>=0.12"
+      - name: Recover original approved Gacrux take from successful first render
+        uses: actions/download-artifact@v4
+        with:
+          name: "TRA_LE_PAGINE_MAGO_DI_OZ_20261026"
+          run-id: 40345464507
+          github-token: ${{ github.token }}
+          path: output/oz
+      - name: Prevent new Gemini spending during image-only remaster
+        run: |
+          test -s output/oz/VOICE_CACHE_V13.json
+          test -s output/oz/VOCE.wav
+          echo "Original voice/cache recovered; any cache mismatch MUST fail without Google call."
+      - name: Produce corrected episode with 21 curated Denslow images, reuse voice
+        env:
+          GEMINI_API_KEY: ""
+        run: python scripts/oz_video_20261026.py --out output/oz
+      - name: Decode the actual video and inspect deliverables
+        run: |
+          ffmpeg -hide_banner -v error -i output/oz/TRA_LE_PAGINE_IL_MERAVIGLIOSO_MAGO_DI_OZ.mp4 -f null -
+          ffprobe -v error -show_entries format=duration -of default=nw=1 output/oz/TRA_LE_PAGINE_IL_MERAVIGLIOSO_MAGO_DI_OZ.mp4
+          test -s output/oz/COPERTINA.jpg
+          test -s output/oz/SCHEDA_PRESENTAZIONE.jpg
+          test -s output/oz/SCHEDA_TESTO.md
+          test -s output/oz/POST_FACEBOOK.txt
+          test -s output/oz/POST_INSTAGRAM.txt
+          test -s output/oz/POST_TIKTOK.txt
+          test -s output/oz/POST_YOUTUBE.txt
+          test -s output/oz/FONTI_ILLUSTRAZIONI.json
+          test -s output/oz/VIDEO_SOLO_MP4.zip
+      - name: Keep voice, video, cover, board and the full editorial dossier together
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "TRA_LE_PAGINE_MAGO_DI_OZ_V39_CURATO"
+          path: output/oz/
+          retention-days: 14
+          if-no-files-found: error
