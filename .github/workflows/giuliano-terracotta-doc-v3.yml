@@ -1,0 +1,121 @@
+name: "GIULIANO - Terracotta documentary V3 (cinematic)"
+on:
+  push:
+    branches: ["feature/giuliano-terracotta-v3-documentario-20261109"]
+    paths:
+      - "giuliano/terracotta_v3/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "giuliano/terracotta_v3/**"
+      - ".github/workflows/giuliano-terracotta-doc-v3.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: giuliano-terracotta-v3-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  render:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ARTVISION_ASR_MODEL: base
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout and isolate master
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate production sources before dependency setup
+        run: |
+          python -m py_compile giuliano/terracotta_v3/render_documentary_v3.py
+          python - <<'PY'
+          import json,pathlib
+          x=json.loads(pathlib.Path("giuliano/terracotta_v3/SHOTS_DOCUMENTARY.json").read_text())
+          lines=pathlib.Path("giuliano/terracotta_v3/SCENEGGIATURA_IT.txt").read_text().strip().splitlines()
+          assert len(x["shots"])==len(lines)>=38
+          assert all(a["narration"]==b for a,b in zip(x["shots"],lines))
+          assert not any(w.lower() in " ".join(lines).lower() for w in ["avviciniamoci","guardiamo questo","osserviamo questo","immaginate"])
+          print("DOCUMENTARY_SCRIPT_AND_SCENE_GATE_PASS",len(lines))
+          PY
+          test -n "$GEMINI_API_KEY" || (echo "GEMINI_API_KEY absent; no robotic substitute" && exit 2)
+      - name: Install FFmpeg and Google Gemini ASR prerequisites
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Factual documentary — copyright-verified photo bank, one Google narration, editing, QA
+        run: python giuliano/terracotta_v3/render_documentary_v3.py
+      - name: Preserve real audio and verified photos for safe non-paid recovery
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_TERRACOTTA_V3_RECOVERY_ONLY_NOT_MP4
+          path: |
+            output/giuliano_terracotta_v3/audio/VOCE.wav
+            output/giuliano_terracotta_v3/audio/VOICE_CACHE_V13.json
+            output/giuliano_terracotta_v3/PHOTO_CREDITS_V3.json
+            output/giuliano_terracotta_v3/media/raw_*.jpg
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Upload checked MP4, cover, social texts, QA and complete ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_TERRACOTTA_V3_FILM_AND_PACKAGE
+          path: |
+            output/giuliano_terracotta_v3/THE_TERRACOTTA_ARMY_GIULIANO_DOCUMENTARY_V3.mp4
+            output/giuliano_terracotta_v3/GIULIANO_TERRACOTTA_V3_VIDEO_COVER_SOCIAL.zip
+            output/giuliano_terracotta_v3/COVER_V3.jpg
+            output/giuliano_terracotta_v3/CONTACT_SHEET_V3.jpg
+            output/giuliano_terracotta_v3/QA_V3.json
+          if-no-files-found: error
+          retention-days: 14
+
+  verify-real-push-film:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - name: Observe exact V3 push render, never regenerate narrator
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import os,json,time,urllib.parse,urllib.request
+          base=f"https://api.github.com/repos/{os.environ['GH_REPO']}"
+          expected="4d518fa75b7b2c32d8f2df99c9c91a1b5e482c94"
+          params=urllib.parse.urlencode({
+             "branch":"feature/giuliano-terracotta-v3-documentario-20261109",
+             "event":"push","per_page":50})
+          headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],
+             "Accept":"application/vnd.github+json",
+             "User-Agent":"Giuliano-Terracotta-Documentary-V3-QA"}
+          def read(url):
+             req=urllib.request.Request(url,headers=headers)
+             with urllib.request.urlopen(req,timeout=45) as r:return json.load(r)
+          found=None
+          for trial in range(45):
+             rs=read(base+"/actions/runs?"+params).get("workflow_runs",[])
+             target=[x for x in rs if x.get("name")=="GIULIANO - Terracotta documentary V3 (cinematic)"]
+             print("V3_PUSH_CANDIDATES",[(x["id"],x.get("head_sha"),x["status"],x.get("conclusion")) for x in target[:6]],flush=True)
+             found=next((x for x in target if x.get("head_sha")==expected),None)
+             if found:
+                print("V3_RENDER_URL",found.get("html_url"),"STATE",found["status"],"RESULT",found.get("conclusion"),flush=True)
+                if found["status"]=="completed":break
+             time.sleep(15)
+          if not found:raise RuntimeError("No real V3 push render observed")
+          if found["status"]!="completed":raise RuntimeError("Render still not complete")
+          ars=read(found["artifacts_url"]).get("artifacts",[])
+          print("V3_RENDER_ARTIFACTS",[(a["id"],a["name"],a["size_in_bytes"]) for a in ars],flush=True)
+          if found["conclusion"]!="success":raise RuntimeError("V3 render failed; inspect push-run logs")
+          if not any(a["name"]=="GIULIANO_TERRACOTTA_V3_FILM_AND_PACKAGE" for a in ars):
+             raise RuntimeError("No downloadable verified film artifact")
+          PY
