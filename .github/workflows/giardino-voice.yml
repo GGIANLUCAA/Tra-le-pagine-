@@ -1,0 +1,33 @@
+name: Giardino Gacrux
+on:
+  pull_request:
+    paths:
+      - experiments/giardino_segreto_20261027/copione.txt
+      - .github/workflows/giardino-voice.yml
+permissions:
+  contents: read
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy soundfile scipy google-genai
+      - env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          mkdir -p output/giardino
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          from gemini_voice import synthesize
+          synthesize(Path("experiments/giardino_segreto_20261027/copione.txt").read_text(),Path("output/giardino"))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: GIARDINO_VOCE_GACRUX
+          path: output/giardino/
+          retention-days: 14
