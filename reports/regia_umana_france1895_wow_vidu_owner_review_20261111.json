@@ -1,0 +1,48 @@
+{
+  "schema": "artvision_owner_video_qa_v1",
+  "title": "France, 1895 — Human Eye Contact",
+  "date": "2026-11-11",
+  "status": "rendered_needs_owner_artistic_review",
+  "publication": "not_authorized",
+  "regia_reference": "docs/REGIA_UMANA_SGUARDI_V1_20261111.md",
+  "video": {
+    "file": "FRANCE_1895_WOW_VIDU_FINAL_1080.mp4",
+    "duration_seconds": 26.08,
+    "resolution": "1080x1920",
+    "fps": 25,
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "sha256": "2aa41e3c6821f52847024df5f88fecc108868461614a4a7b2ffb90367b3008bd",
+    "full_ffmpeg_decode": "pass",
+    "persisted_in_github_releases": false,
+    "download_location": "current ChatGPT conversation sandbox only; no durable release assumed"
+  },
+  "source": {
+    "genuine_films": 5,
+    "reference_run": 42950395995,
+    "archive": "Lumière moving pictures from 1895"
+  },
+  "vidu": {
+    "used": true,
+    "gateway_run": 42954387425,
+    "task_id": "1017945031794778112",
+    "source_image_sha256": "f12c91718f451d2830683f1e2a83b8092e78f415751899b90bae65d434752904",
+    "ledger": "queue/vidu_api_attempts/CHAT_GATEWAY_V1_regia-umana-france1895-baby-generate-20261111.json",
+    "provider_model": "viduq2-pro-fast",
+    "seconds": 5.083,
+    "provider_reported_credit_charge": 16,
+    "credits_type": "API; not verified consumer subscription",
+    "single_paid_post": true,
+    "charged_additional_money": false,
+    "color_reveal_actual": false,
+    "review": "baby eye contact at approx 24.5s, scene is AI-generated and visibly labelled, minor identity continuity still requires owner review"
+  },
+  "artistic_qa": {
+    "source_motion": "original 1895 archive before 21s",
+    "ai_interpretation": "after 21s, no claim of original footage or historical natural colors",
+    "fish_scene": "reframed using original archival video to restore suitable viewing area",
+    "audio": "fresh musical performance, not archival soundtrack",
+    "owner_review_required": true
+  },
+  "notes": "No Vidu paid retries. Do not auto-promote to Gold, publish, or import to public catalog without owner review and direct durable download verification."
+}
