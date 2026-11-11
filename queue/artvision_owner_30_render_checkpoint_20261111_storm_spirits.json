@@ -1,0 +1,80 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-11",
+  "selected_title": "The Storm Spirits",
+  "artist": "Evelyn De Morgan",
+  "year": 1900,
+  "variant": "cinema_standard",
+  "status": "ONE_NEW_REAL_MP4_2_BITRATES_SOURCE_PHYSICAL_SHA_FFMPEG_ZIP_INDEPENDENT_GITHUB_JOB_AND_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+  "original_image": {
+    "commons": "https://commons.wikimedia.org/wiki/File:The_Storm_Spirits,_by_Evelyn_De_Morgan.jpg",
+    "institution": "De Morgan Foundation",
+    "accession": "P_EDM_0034",
+    "object_url": "https://www.demorgan.org.uk/collection/the-storm-spirits/",
+    "source_from": "Watts Gallery via Wikimedia Commons",
+    "source_pixels": [
+      5290,
+      3600
+    ],
+    "bytes": 10487935,
+    "sha1": "1c833194a496ee4484331d63e6418a8e1ba13a16",
+    "sha256": "fac23c638ea59b14fda8ab954f7a85b51662b6e7554ca958c821009d044d65ab",
+    "commons_reuse": "Public Domain Mark 1.0; photo and territorially relevant commercial clearance pending",
+    "original_cm": [
+      122.5,
+      176.5
+    ]
+  },
+  "production": {
+    "github_run_id": 42957660771,
+    "github_artifact_id": 13828086132,
+    "source_script": "scripts/artvision_owner_storm_spirits_cinema_v1.py",
+    "workflow": ".github/workflows/artvision-owner-storm-spirits-cinema-v1.yml",
+    "duration_seconds": 51,
+    "scenes": 12,
+    "fps": 24,
+    "format_hq": [
+      1080,
+      1920
+    ],
+    "mp4_hd": "ARTVISION_STORM_SPIRITS_CINEMA_HD_1080P_REVIEW.mp4",
+    "mp4_hd_bytes": 15202186,
+    "mp4_hd_sha256": "2e95fc8dea4b3baaa1dbd0b4e699ca97d6c5906076e66d14ca5512a53bccfa83",
+    "mp4_android": "ARTVISION_STORM_SPIRITS_CINEMA_ANDROID_REVIEW.mp4",
+    "mp4_android_bytes": 5807600,
+    "mp4_android_sha256": "d862d7dd5948c7ebf50947fe1c618fbd9b263d4fdf68351fe1f91daee3e8b062",
+    "zip_android": "ARTVISION_STORM_SPIRITS_ANDROID_REVIEW_PACKAGE.zip",
+    "zip_android_bytes": 6648630,
+    "zip_android_sha256": "448563c5be6224121cfa1fa07353b839fb7a70e01c7211739adce7a533bbf604",
+    "original_music_synthesized": true,
+    "voice": false,
+    "cover_and_social_drafts": true
+  },
+  "QA": {
+    "render_job": "PASS",
+    "independent_artifact_readback": "PASS",
+    "full_ffmpeg_audio_video_decode_both": "PASS",
+    "source_sha_and_px": "PASS",
+    "zip_crc_and_mp4_sha": "PASS",
+    "contact_sheet_review": "INSPECTED",
+    "full_speed_human_artistic_review": "PENDING",
+    "commercial_rights": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_calls": 0,
+    "private_library_readback": "PASS_THREE_ITEMS"
+  },
+  "library": {
+    "hd_id": "libfile_58161c60db3481919fbe7d4c67208339",
+    "android_id": "libfile_5034a2709c948191947f85e08625a362",
+    "zip_android_id": "libfile_36a0538f148081918fcbcbe25a584827",
+    "source_package_id": "libfile_f855cd5297c481919999ed2364b98f6b"
+  },
+  "queue_effect": {
+    "first_ten_queue_slots": "26/36",
+    "new_second_queue_distinct_cinema": 1,
+    "second_queue_distinct_cinema_total": 9,
+    "not_four_variants_yet": true
+  },
+  "next_action": "No duplicate Storm Spirits cinema production. Review at full speed; next distinct work The Shipwreck by J. M. W. Turner if source and license verified; no false Gold; reserve two-stage approval."
+}
