@@ -231,7 +231,7 @@ def scientific_animation(qa):
  tri=raw[faces]
  nn=np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0])
  nn/=np.maximum(1e-6,np.linalg.norm(nn,axis=1))[:,None]
- places=[(13,0),(15,1),(19,2)]
+ places=[(13,0),(15,1)]
  edits=[]
  for beat,variation in places:
   slices=beat_spans(qa,beat)
@@ -256,6 +256,56 @@ def scientific_animation(qa):
      "credit":"Carl Lipo & Terry Hunt, MIT license","label":"SIMULAZIONE 3D, NON RIPRESA DEL TEST"})
   print("SCIENCE_MOVING_VIDEO",beat,frames,round(dur,2),out.stat().st_size,flush=True)
  return edits
+def genuine_field_experiment(qa):
+  """Insert actual field-test footage; no AI reenactment or unlicensed substitute.
+  Binghamton's official article embeds this recording. EurekAlert's same
+  research media ID 1095278 lists reuse restrictions: 'Credit Carl Lipo'.
+  """
+  source="https://www.youtube.com/watch?v=z6wvgrMn8Ow"
+  raw=OUT/"ORIGINAL_LIPO_TEST.mp4"
+  local=os.environ.get("MOAI_AUTHENTIC_TEST_FILE","").strip()
+  if local and Path(local).is_file():
+    shutil.copyfile(local,raw)
+  else:
+    run(sys.executable,"-m","yt_dlp","--no-playlist","--no-progress",
+        "--merge-output-format","mp4",
+        "-f","bv*[height<=720]+ba/b[height<=720]/best",
+        "-o",str(raw),source)
+  if not raw.exists() or raw.stat().st_size<250000:
+    raise RuntimeError("Genuine experiment footage could not be acquired: no fake recreation")
+  probe=json.loads(subprocess.check_output([
+    "ffprobe","-v","error","-show_entries",
+    "format=duration:stream=width,height,codec_type","-of","json",str(raw)],text=True))
+  if float(probe.get("format",{}).get("duration",0))<12:
+    raise RuntimeError("Real experiment recording is shorter than the intended sequence")
+  spans=beat_spans(qa,18)+beat_spans(qa,19)+beat_spans(qa,20)
+  start=min(float(x["visual_start"]) for x in spans)
+  finish=max(float(x["visual_end"]) for x in spans)
+  duration=finish-start
+  out=OUT/"VERO_TEST_LIPO_CON_CREDITI.mp4"
+  # Fit the entire horizontal frame to avoid cropping either rope team.
+  filt=("[0:v]split=2[a][b];"
+        "[a]scale=1080:1920:force_original_aspect_ratio=increase,"
+        "crop=1080:1920,boxblur=28:3[bg];"
+        "[b]scale=1080:1920:force_original_aspect_ratio=decrease[fg];"
+        "[bg][fg]overlay=(W-w)/2:(H-h)/2,"
+        "drawbox=x=0:y=0:w=iw:h=142:color=black@0.8:t=fill,"
+        "drawtext=text='FILMATO REALE DEL TEST':fontcolor=white:"
+        "fontsize=37:x=(w-text_w)/2:y=22,"
+        "drawtext=text='Riprese e credito: Carl Lipo':fontcolor=white:"
+        "fontsize=29:x=(w-text_w)/2:y=79,format=yuv420p[v]")
+  run("ffmpeg","-nostdin","-v","error","-y","-i",raw,
+      "-filter_complex",filt,"-map","[v]","-t",f"{duration:.4f}",
+      "-an","-r",FPS,"-c:v","libx264","-preset","veryfast",
+      "-crf","21","-pix_fmt","yuv420p",out)
+  run("ffmpeg","-nostdin","-v","error","-xerror","-i",out,"-f","null","-")
+  return {"type":"authentic_2025_field_trial",
+          "begin":round(start,4),"end":round(finish,4),
+          "clip":out,"beat":18,
+          "source":source,"credit":"Carl Lipo, Binghamton University",
+          "permission_record":"https://www.eurekalert.org/multimedia/1095278",
+          "source_sha256":sha(raw)}
+
 def compose(base,qa,edits):
  edits=sorted(edits,key=lambda x:x["begin"])
  prev=0
@@ -304,12 +354,14 @@ def main():
  contact.save(OUT/"NOVITA_FOTOGRAFICHE.jpg",quality=91)
  report={
   "status":"MASTER_AND_ANDROID_FULL_DECODE_PASS",
-  "edition":"Giuliano Episode 2 - Final editorial recut V2",
+  "edition":"Giuliano Episode 2 - Field Test Real Footage V3",
   "duration_seconds":qa["duration_seconds"],
   "old_unique_photographs":qa["unique_actual_photo_count"],
   "new_unique_licensed_photographs":len({x["photo_sha"] for x in photos}),
   "minimum_distinct_photos":qa["unique_actual_photo_count"]+len({x["photo_sha"] for x in photos}),
-  "genuine_new_experiment_clip_included":False,
+  "genuine_new_experiment_clip_included":True,
+  "genuine_field_test_duration_seconds":round(authentic["end"]-authentic["begin"],2),
+  "genuine_field_test_source_sha256":authentic["source_sha256"],
   "external_experiment_video":"https://www.binghamton.edu/news/story/5830/easter-islands-statues-actually-walked-and-physics-backs-it-up",
   "scientific_3d_animated_beats":[x["beat"] for x in science],
   "animated_video_seconds":round(sum(x["end"]-x["begin"] for x in science),2),
