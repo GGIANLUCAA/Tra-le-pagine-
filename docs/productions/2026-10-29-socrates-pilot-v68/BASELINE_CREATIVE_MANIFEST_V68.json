@@ -51,7 +51,17 @@
       "version": "V55",
       "approval_v25": false,
       "private_archive_verified": false,
-      "source_manifest_path": "docs/productions/2026-10-29-socrates-cinema-standard-v55/ARCHIVE_STAGING_V55.json"
+      "source_manifest_path": "docs/productions/2026-10-29-socrates-cinema-standard-v55/ARCHIVE_STAGING_V55.json",
+      "review_candidate": {
+        "version": "V59",
+        "status": "rendered_needs_review",
+        "sha256": "0f946f74397c780c9357f545d0a9712926bf02eb3f43ba4866eba7cda8828540",
+        "duration_seconds": 35.041667,
+        "video_bytes_verified_in_this_audit": false,
+        "same_slot_as": "V55",
+        "source_record": "docs/ARTVISION_SOCRATES_4X1_QUATTRO_MP4_REALI_V67_20261029.md",
+        "note": "V59 is the later comparative review candidate; V55 remains the historical original in this baseline. Neither version is V25 approved or archive-verified."
+      }
     },
     "cinema_museum": {
       "status": "rendered_needs_review",
@@ -94,7 +104,29 @@
       "Use one second deliberately different pilot before unlocking automated series",
       "Finish individual human V25 review and real private archive playback/download verification",
       "Validate new-artwork renderer/preflight for all four slots on that second pilot"
-    ]
+    ],
+    "artifact_retention_audit_2026_10_29": {
+      "voice_original_artifact": {
+        "run_id": 40901604669,
+        "artifact_id": 12908942939,
+        "expired": false,
+        "expires_at": "2026-11-28T15:27:50Z"
+      },
+      "voice_asr_artifact": {
+        "run_id": 40902193743,
+        "artifact_id": 12910460367,
+        "expired": false,
+        "expires_at": "2026-11-28T15:30:46Z"
+      },
+      "cinema_standard_v55_artifact": {
+        "run_id": 40872572384,
+        "artifact_id": 12896880789,
+        "expired": false,
+        "expires_at": "2026-11-28T12:22:14Z"
+      },
+      "scope": "Artifact metadata verified through GitHub Actions on 2026-10-29; original V67 Critico MP4 bytes and V59 review candidate were NOT reverified as durable backups. No private archive import/playback verified.",
+      "no_new_render_or_paid_api_calls": true
+    }
   },
   "change_policy": {
     "local_setting_change": "Create per-artwork recipe revision; global default unchanged",
