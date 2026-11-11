@@ -60,6 +60,17 @@ const d=dom.window.document;
 const tick=()=>new Promise(r=>setTimeout(r,50));
 (async()=>{
  await tick();
+ // V14: first useful card is progress; no large hero/stat/category wall before it.
+ const content=d.querySelector('#content');
+ assert(content.querySelector('.simpleWelcome'),'Compact V14 introduction visible');
+ assert(content.querySelector('.productionPanel'),'Workflow progress is on Home');
+ assert(content.querySelector('.simpleWelcome').compareDocumentPosition(content.querySelector('.productionPanel')) &
+   dom.window.Node.DOCUMENT_POSITION_FOLLOWING,'Progress follows compact heading');
+ assert(content.querySelector('.productionPanel').compareDocumentPosition(content.querySelector('.simpleAttention')) &
+   dom.window.Node.DOCUMENT_POSITION_FOLLOWING,'Progress comes before diagnostics');
+ assert.equal(content.querySelector('.simpleMore').open,false,'Advanced details collapsed by default');
+ assert.equal(d.querySelectorAll('.bottom [data-page]').length,4,'Four clear mobile navigation choices');
+ assert.match(html,/\.hero,\.stats\{display:none\}/,'Old large hero and KPI wall are hidden');
  const bar=d.querySelector('.productionTrack[role="progressbar"]');
  assert(bar,'Home must show a real GitHub steps bar');
  assert.equal(bar.getAttribute('aria-valuenow'),'50');
@@ -78,6 +89,9 @@ const tick=()=>new Promise(r=>setTimeout(r,50));
  d.querySelector('.bottom [data-page="issues"]').click();
  await tick();
  assert(d.querySelector('.actionTop'),'Immediate action panel exists');
+ assert(d.querySelector('details.simpleMore'),'Long repair options are collapsed but not removed');
+ assert.equal(d.querySelector('details.simpleMore').open,false);
+ assert.equal(d.querySelectorAll('details.simpleMore').length>=3,true);
  assert.equal(d.querySelectorAll('[data-action-project]').length,3);
  assert.match(d.querySelector('#content').textContent,/The Garden of Death/);
  const row=d.querySelector('[data-action-work="simberg_garden_1896"][data-action-slot="cinema_standard"]');
