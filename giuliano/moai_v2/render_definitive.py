@@ -338,7 +338,8 @@ def main():
  photos=add_new_photos(qa,verified)
  science=scientific_animation(qa)
  # Exclude photographic photos that overlap the animated scientific explanation.
- scenes=photos+science
+ authentic=genuine_field_experiment(qa)
+ scenes=photos+science+[authentic]
  movie,mobile=compose(base,qa,scenes)
  cover=BASE/"COVER_MOAI.jpg"
  shutil.copyfile(cover,OUT/"COVER_DEFINITIVA.jpg")
