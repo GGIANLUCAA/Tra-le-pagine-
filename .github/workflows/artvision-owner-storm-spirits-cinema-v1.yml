@@ -1,0 +1,130 @@
+name: "ArtVision OWNER | The Storm Spirits | New Cinema private review"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-owner-storm-spirits-cinema-v1.yml"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-single-heavy-render
+  cancel-in-progress: false
+jobs:
+  render_new_cinema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify exact user selection and avoid already produced De Morgan slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_owner_storm_spirits_cinema_v1.py
+          python - <<'PY'
+          import json,pathlib
+          q=json.loads(pathlib.Path('research/artvision_owner_selected_30_future_20261109.json').read_text())
+          matches=[w for w in q['works'] if w.get('title_as_chosen')=='The Storm Spirits' and w.get('artist_as_chosen')=='Evelyn De Morgan']
+          assert len(matches)==1, 'Storm Spirits not exactly present in owner selected 30'
+          assert not list(pathlib.Path('queue').glob('artvision_owner_30_render_checkpoint_*storm*spirits*.json')), 'already produced checkpoint'
+          print('VERIFIED one selected 1900 painting; new private Cinema only; 0 paid calls.')
+          PY
+      - name: Install local free rendering libraries
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5'
+      - name: Download verified exact high-resolution original and render two MP4 encodings
+        run: python scripts/artvision_owner_storm_spirits_cinema_v1.py
+      - name: Independently check media duration, rights metadata, source and Android ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/artvision-owner-storm-spirits-cinema-v1
+          ffprobe -v error -show_streams -show_format -of json "$d/VIDEO_REVIEW.mp4" > "$d/FFPROBE.json"
+          ffmpeg -v error -xerror -i "$d/VIDEO_REVIEW.mp4" -map 0 -f null -
+          ffmpeg -v error -xerror -i "$d/VIDEO_ANDROID_720_REVIEW.mp4" -map 0 -f null -
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,zipfile
+          p=Path('output/artvision-owner-storm-spirits-cinema-v1')
+          src=p/'ORIGINAL_ARTWORK.jpg';hq=p/'VIDEO_REVIEW.mp4';phone=p/'VIDEO_ANDROID_720_REVIEW.mp4';zp=p/'ANDROID_REVIEW_PACKAGE.zip'
+          sha=lambda x:hashlib.sha256(x.read_bytes()).hexdigest()
+          assert 5000000<=src.stat().st_size<=15000000, 'source bytes outside verified original file envelope'
+          qa=json.loads((p/'QA_TECHNICAL.json').read_text())
+          assert qa['source_sha256']==sha(src)
+          assert qa['source_sha1']==hashlib.sha1(src.read_bytes()).hexdigest()
+          assert qa['mp4_sha256']==sha(hq)
+          assert qa['android_mp4_sha256']==sha(phone)
+          assert qa['scene_count']==12 and 48<qa['duration_seconds']<57
+          assert not qa['gold'] and not qa['published'] and qa['paid_api_calls']==0
+          probe=json.loads((p/'FFPROBE.json').read_text())
+          v=[s for s in probe['streams'] if s.get('codec_type')=='video']
+          a=[s for s in probe['streams'] if s.get('codec_type')=='audio']
+          assert len(v)==1 and v[0]['codec_name']=='h264' and v[0]['width']==1080 and v[0]['height']==1920
+          assert len(a)==1 and a[0]['codec_name']=='aac'
+          with zipfile.ZipFile(zp) as z:
+            assert z.testzip() is None
+            assert hashlib.sha256(z.read(phone.name)).hexdigest()==qa['android_mp4_sha256']
+          print('SOURCE_SHA1_ACTUAL_VERIFIED',qa['source_sha1'])
+          print('MP4_1080_SHA256:',sha(hq))
+          print('MP4_ANDROID_SHA256:',sha(phone))
+          print('ANDROID_ZIP_SHA256:',sha(zp))
+          print('FFMPEG_DECODE_PASS ZIP_CRC_PASS HUMAN_REVIEW_PENDING NOT_GOLD NOT_PUBLISHED')
+          PY
+      - name: Save genuine new video, cover, sources and Android delivery package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_OWNER_STORM_SPIRITS_NEW_CINEMA_REVIEW
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            output/artvision-owner-storm-spirits-cinema-v1/ORIGINAL_ARTWORK.jpg
+            output/artvision-owner-storm-spirits-cinema-v1/VIDEO_REVIEW.mp4
+            output/artvision-owner-storm-spirits-cinema-v1/VIDEO_ANDROID_720_REVIEW.mp4
+            output/artvision-owner-storm-spirits-cinema-v1/ANDROID_REVIEW_PACKAGE.zip
+            output/artvision-owner-storm-spirits-cinema-v1/COVER.jpg
+            output/artvision-owner-storm-spirits-cinema-v1/CONTACT_SHEET.jpg
+            output/artvision-owner-storm-spirits-cinema-v1/SOURCES_RIGHTS.json
+            output/artvision-owner-storm-spirits-cinema-v1/STORYBOARD.json
+            output/artvision-owner-storm-spirits-cinema-v1/QA_TECHNICAL.json
+            output/artvision-owner-storm-spirits-cinema-v1/FFPROBE.json
+  independent_artifact_readback:
+    needs: render_new_cinema
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_OWNER_STORM_SPIRITS_NEW_CINEMA_REVIEW
+          path: /tmp/storm-readback
+      - name: Ensure ffmpeg on independent runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+      - name: Re-download, full-decode, compare SHA and ZIP CRC in separate job
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=/tmp/storm-readback
+          ffmpeg -v error -xerror -i "$d/VIDEO_REVIEW.mp4" -map 0 -f null -
+          ffmpeg -v error -xerror -i "$d/VIDEO_ANDROID_720_REVIEW.mp4" -map 0 -f null -
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,zipfile
+          p=Path('/tmp/storm-readback')
+          qa=json.loads((p/'QA_TECHNICAL.json').read_text())
+          h=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
+          assert h(p/'VIDEO_REVIEW.mp4')==qa['mp4_sha256']
+          assert h(p/'ORIGINAL_ARTWORK.jpg')==qa['source_sha256']
+          assert h(p/'VIDEO_ANDROID_720_REVIEW.mp4')==qa['android_mp4_sha256']
+          with zipfile.ZipFile(p/'ANDROID_REVIEW_PACKAGE.zip') as z:
+            assert z.testzip() is None
+            assert hashlib.sha256(z.read('VIDEO_ANDROID_720_REVIEW.mp4')).hexdigest()==qa['android_mp4_sha256']
+          print('SEPARATE_JOB_PHYSICAL_ARTIFACT_READBACK_PASS NO_GOLD NO_PUBLICATION')
+          PY
