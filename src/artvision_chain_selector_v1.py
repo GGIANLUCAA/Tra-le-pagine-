@@ -8,7 +8,8 @@ REQUIRED = ("source_verified", "rights_verified", "storyboard_ready", "qa_plan_r
 
 def select_next(manifest):
     if manifest.get("active_heavy_render", True):
-        return {"status": "blocked", "reason": "active render or unknown state"}
+        return {"status": "preparing", "reason": "heavy render busy or unverified",
+                "next_action": "prepare sources, rights and storyboards; retry live run check before dispatch"}
     completed = set(manifest.get("completed_ids", []))
     running = set(manifest.get("running_ids", []))
     seen = set()
@@ -27,7 +28,8 @@ def select_next(manifest):
             continue
         return {"status": "candidate", "id": key, "workflow_path": item["workflow_path"],
                 "note": "dry-run only; manual/authorized dispatch and independent checks required"}
-    return {"status": "blocked", "reason": "no eligible candidate"}
+    return {"status": "preparing", "reason": "no eligible render candidate",
+            "next_action": "research and validate the next independent candidate"}
 
 def main():
     parser = argparse.ArgumentParser()
