@@ -393,7 +393,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <script>
 (function(){
 "use strict";
-var state={page:"home",data:null,productionProgress:{},filter:"all",actionFilter:"needs",repairNote:"",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",selectedGenre:"Libri narrati",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project",quality:null,qualityAt:0,qualityError:null,qualityLoading:false,integrity:null,integrityAt:0,integrityError:null,integrityLoading:false};
+var state={page:"home",data:null,productionProgress:{},simpleOpen:{},filter:"all",actionFilter:"needs",repairNote:"",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",selectedGenre:"Libri narrati",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project",quality:null,qualityAt:0,qualityError:null,qualityLoading:false,integrity:null,integrityAt:0,integrityError:null,integrityLoading:false};
 var site="https://video-library-studio.600led.workers.dev";
 function escapeText(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function date(x){if(!x)return "non disponibile";var d=new Date(x);return isNaN(+d)?"non disponibile":d.toLocaleString("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
@@ -1081,7 +1081,7 @@ function home(){
     '<button type="button" data-switch="works"><span aria-hidden="true">▣</span><strong>Quadri ArtVision</strong><small>Le quattro varianti</small></button>'+
     '<button type="button" data-switch="media"><span aria-hidden="true">▷</span><strong>Video disponibili</strong><small>Anteprime e archivio</small></button>'+
     '<button type="button" data-switch="issues"><span aria-hidden="true">✦</span><strong>Ripara un problema</strong><small>Diagnosi con GPT</small></button></nav>';
-  h+='<details class="simpleMore"><summary>Altri programmi e informazioni</summary>'+
+  h+='<details class="simpleMore" data-ui-section="home-more"><summary>Altri programmi e informazioni</summary>'+
     '<p class="sub">Dettagli utili quando vuoi approfondire; non sono necessari per seguire la produzione.</p>'+
     '<div class="healthGrid">'+hs.map(healthCard).join("")+'</div>'+
     '<div class="simpleExtraLinks"><button class="miniBtn secondary" data-switch="genres">Categorie</button>'+
@@ -1645,12 +1645,12 @@ function issues(){
     '<p class="simpleGood">'+(source("github")?"Nessun errore critico recente osservato nei workflow pertinenti.":"GitHub non disponibile: controlli da ripetere.")+'</p>')+
     (unavailable.length?'<p class="simpleAlert">'+unavailable.length+' fonti non verificabili: aggiorna prima di intervenire.</p>':"")+
     '</section>';
-  h+='<details class="simpleMore"><summary>Seleziona un quadro e una variante</summary>'+
+  h+='<details class="simpleMore" data-ui-section="issues-works"><summary>Seleziona un quadro e una variante</summary>'+
     '<p class="sub">Apri solo se devi completare, recuperare o migliorare un video specifico.</p>'+
     actionWorksPanel()+'</details>';
-  h+='<details class="simpleMore"><summary>Altri video da migliorare</summary>'+
+  h+='<details class="simpleMore" data-ui-section="issues-videos"><summary>Altri video da migliorare</summary>'+
     actionRecentVideos()+'</details>';
-  h+='<details class="simpleMore"><summary>Collegamenti alle chat dei progetti</summary>'+
+  h+='<details class="simpleMore" data-ui-section="issues-chats"><summary>Collegamenti alle chat dei progetti</summary>'+
     '<p class="sub">I collegamenti privati rimangono soltanto nel browser del tuo telefono.</p>'+
     '<div class="chatDirectory">'+Object.keys(PROJECT_LABELS).filter(function(x){return x!=="other"}).map(function(key){
       var linked=!!state.chatLinks[key];
@@ -1664,14 +1664,20 @@ function issues(){
     }).join("")+'</div></details>';
   var ids=new Set(failures.map(function(x){return Number(x.run_id)||0}));
   var past=(d.runs||[]).filter(function(r){return ["failure","cancelled","timed_out","action_required"].includes(r.conclusion)&&!ids.has(Number(r.id)||0)});
-  if(past.length)h+='<details class="simpleMore"><summary>Storico degli errori precedenti · '+past.length+'</summary>'+
+  if(past.length)h+='<details class="simpleMore" data-ui-section="issues-past"><summary>Storico degli errori precedenti · '+past.length+'</summary>'+
     '<p class="sub">Errori storici: possono essere già stati corretti.</p>'+
     past.slice(0,15).map(function(r){return '<div class="repairCard"><strong>'+escapeText(r.name)+'</strong>'+
       '<p class="repairMeta">'+escapeText(date(r.updated_at))+' · '+escapeText(r.conclusion)+'</p>'+
       '<button class="repairButton secondary" type="button" data-repair-run="'+Number(r.id||0)+'">Esamina con GPT</button></div>';}).join("")+'</details>';
   return h;
 }
-function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,genres:genres,stats:statisticsPage,quality:qualityPage,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}});var ws=document.getElementById("workSearch");if(ws)ws.addEventListener("input",function(e){state.workSearch=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("workSearch");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
+function render(){if(!state.data)return;
+  document.querySelectorAll("#content details[data-ui-section]").forEach(function(el){state.simpleOpen[el.dataset.uiSection]=el.open});
+  document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,genres:genres,stats:statisticsPage,quality:qualityPage,issues:issues}[state.page]||home)();
+  document.querySelectorAll("#content details[data-ui-section]").forEach(function(el){
+    el.open=state.simpleOpen[el.dataset.uiSection]===true;
+  });
+  var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}});var ws=document.getElementById("workSearch");if(ws)ws.addEventListener("input",function(e){state.workSearch=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("workSearch");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
 async function refresh(){var b=document.getElementById("refresh");b.disabled=true;b.textContent="Caricamento…";try{var r=await fetch("/api/status",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var d=await r.json();if(!Array.isArray(d.runs)||!Array.isArray(d.works))throw Error("Risposta non valida");state.data=d;state.stamp=Date.now();state.loadError=null;render();refreshProductionProgress()}catch(e){state.loadError=e.message;if(state.data){document.getElementById("synctext").textContent="Aggiornamento non riuscito · ultimo dato "+date(state.data.asof);document.getElementById("pulse").className="pulse";}if(!state.data)document.getElementById("content").innerHTML='<div class="empty">Collegamento temporaneamente non disponibile: '+escapeText(e.message)+'</div>'}finally{b.disabled=false;b.textContent="↻ Aggiorna"}}
 function closeReviewPlayer(){
   var dialog=document.getElementById("reviewPlayer"),video=document.getElementById("reviewVideo");
