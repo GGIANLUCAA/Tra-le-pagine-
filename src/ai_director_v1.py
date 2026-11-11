@@ -162,10 +162,23 @@ def inspect_brief(brief):
         issues.append(note("FORMAT_DURATION", "review", "Historical short target is 14–35 seconds"))
     if fmt.startswith("artvision") and brief.get("variant", "").endswith("museum"):
         evidence = brief.get("museum_evidence", {})
-        if not isinstance(evidence, dict) or not all(evidence.get(field) for field in
-             ("painting_dimensions_cm", "frame_provenance_url", "room_source_url")):
-            issues.append(note("MUSEUM_PROVENANCE_MISSING", "blocking",
-                               "Verify real dimensions, frame and museum setting V80/V118/V119"))
+        if not isinstance(evidence, dict):
+            evidence = {}
+        dims = evidence.get("painting_dimensions_cm")
+        if (not isinstance(dims, list) or len(dims) != 2 or
+            any(type(v) not in (int, float) or not math.isfinite(v) or v <= 0 for v in dims) or
+            not evidence.get("dimensions_source")):
+            issues.append(note("MUSEUM_DIMENSIONS_UNVERIFIED", "blocking",
+                               "Painting dimensions and source required V80/V118/V119"))
+        if not evidence.get("gallery_id") or not evidence.get("frame_status"):
+            issues.append(note("MUSEUM_IDENTIFICATION_MISSING", "blocking",
+                               "Existing 4x1 museum/frame identifiers missing"))
+        if not evidence.get("frame_provenance_url"):
+            issues.append(note("MUSEUM_FRAME_SOURCE_REVIEW", "review",
+                               "Cross-check frame documentation in existing V80 evidence; no assumed authenticity"))
+        if not evidence.get("room_source_url"):
+            issues.append(note("MUSEUM_ROOM_SOURCE_REVIEW", "review",
+                               "Verify actual room/provenance and real spatial scale on MP4"))
     if brief.get("auto_publish") is True or brief.get("claims_gold") is True:
         issues.append(note("UNAUTHORIZED_APPROVAL", "blocking", "AI cannot grant Gold or publish"))
     if not issues:
@@ -233,6 +246,9 @@ def from_four_variant_plan(plan, variant_name):
              "museum_evidence": {"painting_dimensions_cm": (
                  [museum.get("width_cm"), museum.get("height_cm")]
                  if museum.get("width_cm") and museum.get("height_cm") else None),
+                 "dimensions_source": museum.get("dimensions_source"),
+                 "gallery_id": museum.get("gallery_id"),
+                 "frame_status": museum.get("frame_status"),
                  "frame_provenance_url": museum.get("frame_provenance_url"),
                  "room_source_url": museum.get("room_source_url")}}
     return brief, validate(plan)
