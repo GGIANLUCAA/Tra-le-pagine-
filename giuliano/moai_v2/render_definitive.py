@@ -131,9 +131,10 @@ def add_new_photos(qa,photos):
   if count>=len(slices):continue
   occurrence[beat]=count+1
   shot=slices[-(count+1)]
-  t0=float(shot["visual_start"])+.08
-  t1=float(shot["visual_end"])-.08
-  if t1-t0<1.7:continue
+  # Replace the complete shot: leaving 0.08s edges made visible photo flashes.
+  t0=float(shot["visual_start"])
+  t1=float(shot["visual_end"])
+  if t1-t0<2.25:continue
   canvas=OUT/(f"extra_canvas_{beat:02d}_{count}.jpg")
   canvas_extra(p["path"],canvas,info["kind"])
   clip=OUT/(f"extra_insert_{beat:02d}_{count}.mp4")
