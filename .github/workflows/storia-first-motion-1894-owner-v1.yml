@@ -1,0 +1,102 @@
+name: "La Storia Rivive - FIRST MOTION 1893-1894 - Vidu single-scene cinematic owner review"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-first-motion-1894-owner-v1.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: owner-first-motion-1894-single-post-v1
+  cancel-in-progress: false
+jobs:
+  real_film_video:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 43
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HUGGING_FACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Preflight: syntax, single paid POST design and dependencies"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/first_motion_1894_owner_v1.py
+          test -s src/storia_rivive_real_ai_v60.py
+          test -n "${VIDU_API_KEY:-}" || (echo "NO_VIDU_SECRET_NO_PAID_REQUEST" && exit 2)
+          command -v ffmpeg
+          command -v ffprobe
+      - name: "Install free original film and image-to-image dependencies"
+        run: |
+          set -euo pipefail
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "requests>=2.31,<3" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: "Produce five original real film shots + 5 source-lock I2I + only one approved capped Vidu clip"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u tools/first_motion_1894_owner_v1.py
+      - name: "Verify actual media, video integrity and ZIP"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/first_motion_1894_v1
+          test -s "$d/FIRST_MOTION_1893_1894_VIDU_REVIEW.mp4"
+          test -s "$d/FIRST_MOTION_1893_1894_ANDROID_KIT.zip"
+          ffmpeg -nostdin -v error -xerror -i "$d/FIRST_MOTION_1893_1894_VIDU_REVIEW.mp4" -f null -
+          python - <<'PY'
+          import json,zipfile
+          from pathlib import Path
+          d=Path('output/first_motion_1894_v1')
+          r=json.loads((d/'TECHNICAL_QA.json').read_text())
+          assert r['source_film_count']==5 and r['new_finegrain_restorations']==5
+          assert r['real_vidu_clip_produced'] and not r['artistic_approval'] and not r['social_published']
+          assert zipfile.ZipFile(d/'FIRST_MOTION_1893_1894_ANDROID_KIT.zip').testzip() is None
+          print('REAL_MP4_ZIP_TECH_CHECK_PASS_HUMAN_REVIEW_PENDING')
+          PY
+      - name: "Always preserve actual result or precise failure report"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: FIRST_MOTION_1893_1894_OWNER_REVIEW_OR_FAILURE
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/first_motion_1894_v1/*.json
+            output/first_motion_1894_v1/*.mp4
+            output/first_motion_1894_v1/SOCIAL_COVER.jpg
+            output/first_motion_1894_v1/FIRST_MOTION_1893_1894_ANDROID_KIT.zip
+            output/first_motion_1894_v1/POST_*.txt
+            output/first_motion_1894_v1/README.txt
+      - name: "Create GitHub prerelease for Android owner visual review, not social publishing"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/first_motion_1894_v1
+          tag=first-motion-1893-1894-v1-vidu-owner-review
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Owner preview already exists; not overwritten"
+            exit 0
+          fi
+          gh release create "$tag" "$d/FIRST_MOTION_1893_1894_VIDU_REVIEW.mp4" "$d/FIRST_MOTION_1893_1894_ANDROID_KIT.zip" "$d/SOCIAL_COVER.jpg" "$d/TECHNICAL_QA.json" \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --latest=false \
+            --title "FIRST MOTION 1893-1894 · New 5-film historical Vidu montage · Owner Review" \
+            --notes "Actual five authentic historical Edison-era motion films, five new real Finegrain I2I source-locked color reconstructions and one genuine newly generated Vidu video excerpt. Cinematic owner review only: AI interpretation, not historically recorded color or proof of exact facial details. QA technical only; artistic, source license for Italy and publish approval pending. Not on website or social."
+          for name in FIRST_MOTION_1893_1894_VIDU_REVIEW.mp4 FIRST_MOTION_1893_1894_ANDROID_KIT.zip; do
+            curl -fLsS --retry 2 --max-time 130 "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$name" -o "/tmp/$name"
+            cmp "$d/$name" "/tmp/$name"
+          done
+          echo "ANDROID_PUBLIC_DIRECT_DOWNLOAD_BYTES_PASS"
