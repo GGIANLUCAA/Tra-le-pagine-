@@ -118,7 +118,7 @@ jobs:
                   for member in zf.namelist():
                       if member.endswith('/'):continue
                       base=pathlib.PurePosixPath(member).name.upper()
-                      if base in ('QA_REPORT.JSON','DELIVERY_MANIFEST_V55.JSON','ARTVISION_DELIVERY_V55.JSON') or (base.startswith('QA_') and base.endswith('.JSON')):
+                      if base in ('QA_REPORT.JSON','DELIVERY_MANIFEST_V55.JSON','ARTVISION_DELIVERY_V55.JSON') or (base.startswith('QA_') and base.endswith('.JSON')) or base.endswith('_QA.JSON'):
                           try:
                               documents.append((label+member,zf.read(member)[:250000].decode('utf-8','replace').upper()))
                           except Exception as exc:
@@ -138,6 +138,7 @@ jobs:
               if problem:return problem
               blocked_tokens=('"PUBLICATION": "NOT AUTHORIZED"','"PUBLICATION":"NOT AUTHORIZED"',
                               'PUBLICATION: NOT AUTHORIZED','PUBLICATION NOT AUTHORIZED',
+                              '"PUBLICATION": FALSE','"PUBLICATION":FALSE',
                               'NOT YET CLEARED FOR PUBLICATION','DO NOT PUBLISH','NON PUBBLICARE',
                               '"PUBLICATION_AUTHORIZED": FALSE','"PUBLICATION_AUTHORIZED":FALSE',
                               'PUBLICATION_AUTHORIZED: FALSE','PRIVATE REVIEW ONLY',
@@ -158,6 +159,11 @@ jobs:
               denied=bundle({'PILOT.mp4':b'pilot','qa_report.json':json.dumps({'publication':'NOT AUTHORIZED'})})
               with zipfile.ZipFile(denied) as test:
                   assert explicit_archive_block_reason(test,'PILOT_PACKAGE')
+              colorization_denied=bundle({
+                  'PILOT.mp4':b'pilot',
+                  'COLORIZATION_QA.json':json.dumps({'publication':False,'master':False})})
+              with zipfile.ZipFile(colorization_denied) as test:
+                  assert explicit_archive_block_reason(test,'COLORIZATION_REVIEW')
               # A review-oriented name alone is not a blocker: owner originals may
               # be archived before artistic QA. Only explicit publication/rights denial blocks.
               review_only=bundle({'OWNER_REVIEW.mp4':b'owner'})
