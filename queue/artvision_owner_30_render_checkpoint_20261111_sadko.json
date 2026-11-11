@@ -76,5 +76,20 @@
     "second_owner_30_distinct_cinema_after": 14,
     "approved_4x1_slots_increment": 0
   },
-  "next_action": "Do not duplicate Cinema of Sadko. Continue owner-selected unproduced 30 works, or produce complementary Critico/Museum after source/voice QA. No Gold without human playback and territory rights."
+  "next_action": "Do not duplicate Cinema of Sadko. Continue owner-selected unproduced 30 works, or produce complementary Critico/Museum after source/voice QA. No Gold without human playback and territory rights.",
+  "owner_artistic_approval": {
+    "decision": "APPROVED_BY_OWNER",
+    "date": "2026-11-11",
+    "scope": "The existing Cinema Standard review MP4 of this painting, in both HD and Android encoding",
+    "owner_feedback": "All three films are beautiful and approved; music could be slightly improved, but is acceptable as-is for now.",
+    "existing_music": "ACCEPTED_NO_CHANGE",
+    "future_music": "SUBTLE_IMPROVEMENT_REQUESTED",
+    "instructions": "Preserve the video, soundtrack and original audio of the approved existing renders; refine soundtrack lightly only for future independent films; avoid rerendering this Cinema Standard merely to adjust music.",
+    "artistic_review_basis": "Explicit owner approval in conversation, not self-issued technical/Gold approval.",
+    "commercial_rights_clearance": "NOT_GRANTED_BY_THIS_APPROVAL",
+    "gold": false,
+    "publication_authorized": false,
+    "four_variant_pack_complete": false,
+    "variant_slots_added_from_approval": 0
+  }
 }
