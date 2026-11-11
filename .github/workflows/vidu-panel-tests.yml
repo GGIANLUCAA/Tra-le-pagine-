@@ -1,0 +1,18 @@
+name: Vidu mobile panel - offline safety checks
+on:
+  pull_request:
+    paths: ['integrations/vidu_panel/**', 'tests/test_vidu_panel.mjs', '.github/workflows/vidu-panel-tests.yml']
+  push:
+    paths: ['integrations/vidu_panel/**', 'tests/test_vidu_panel.mjs', '.github/workflows/vidu-panel-tests.yml']
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/test_vidu_panel.mjs
+      - run: node tests/test_studio_web_v9.mjs
