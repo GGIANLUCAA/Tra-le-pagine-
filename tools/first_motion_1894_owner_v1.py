@@ -61,6 +61,30 @@ def source_download(spec):
  sw=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH));sh=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
  if not (t>0.7 and t<duration-0.25):
   raise RuntimeError("TIMECODE_OUT_OF_RANGE "+id+" "+str(duration))
+ # Select only real nonblack source frames, not black leader, fade or blank gaps.
+ scene_times=ROOT/"SOURCE_VALID_SCENE_TIMES.json"
+ if scene_times.exists():
+  chosen=json.loads(scene_times.read_text())["times"]
+ else:
+  choices=[]
+  usable_duration=min(duration-0.35,11.5)
+  tt=1.55
+  while tt<usable_duration:
+   cap.set(cv2.CAP_PROP_POS_MSEC,tt*1000)
+   good,frame=cap.read()
+   if good:
+    g=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    mean=float(g.mean());std=float(g.std())
+    if 25<mean<226 and std>19:
+     choices.append((round(tt,3),round(mean,2),round(std,2)))
+   tt+=.2
+  if len(choices)<13:raise RuntimeError("TOO_FEW_NONBLACK_SOURCE_FRAMES_NO_SPEND")
+  chosen=[choices[round(i*(len(choices)-1)/4)][0] for i in range(5)]
+  if any(chosen[k+1]-chosen[k]<.55 for k in range(4)):
+   raise RuntimeError("SOURCE_NOT_ENOUGH_DISTINCT_MOTION_MOMENTS_NO_SPEND")
+  scene_times.write_text(json.dumps({"times":chosen,"usable_samples":len(choices),"analysis":"Real source luminance and contrast scan; black frames excluded"},indent=2))
+  say("SOURCE_SCENE_TIMECODES_VERIFIED",chosen)
+ t=chosen[[z[0] for z in SRC].index(id)]
  cap.set(cv2.CAP_PROP_POS_MSEC,t*1000);ok,img=cap.read();cap.release()
  if not ok:raise RuntimeError("NO_EXACT_FRAME "+id)
  img=cv2.resize(img,(960,720),interpolation=cv2.INTER_AREA)
@@ -256,6 +280,7 @@ def assemble(metas,photos,clip):
  for i,(spec,meta,photo) in enumerate(zip(SRC,metas,photos)):
   if i>=4:break
   id,_,year,t,bw,hold,_=spec
+  t=meta["second"]
   fcount=int(round(bw*FPS));start=t-bw
   for n in range(fcount):
    frame=canvas(video_frame(meta["path"],max(.05,start+n/FPS)),
