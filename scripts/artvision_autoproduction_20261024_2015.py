@@ -9,6 +9,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"src"))
 import artvision_editorial_post_v28 as editorial
 from artvision_contract_gate_v25 import check_preflight
+from artvision_image_acquisition import ImageStore
 spec=importlib.util.spec_from_file_location("artvision_v29",ROOT/"scripts/artvision_storm_rembrandt_v29.py")
 cinema=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(cinema)
@@ -141,18 +142,12 @@ def main():
     base.mkdir(parents=True,exist_ok=True)
     work=base/"_work";work.mkdir(exist_ok=True)
     assets={}
+    image_store=ImageStore()
     for a in cfg["artworks"]:
         dest=base/("ORIGINAL_"+a["id"].upper()+".jpg")
-        attempted=[]
-        for candidate in a.get("mirrors",[])+[a["url"]]:
-            try:
-                fetch(candidate,dest,"image",a["expected_min"])
-                a["download_used"]=candidate
-                break
-            except Exception as exc:
-                attempted.append(str(exc))
-        else:
-            raise RuntimeError("All authentic-image origins blocked for "+a["id"]+": "+" | ".join(attempted))
+        a["download_used"]=image_store.acquire(
+            a["commons"], [a["url"]]+a.get("mirrors",[]), dest,
+            minimum=tuple(a["expected_min"]), min_bytes=150000, ordered=True)
         assets[a["id"]]=dest
     music=cfg["music"];track=base/"ORIGINAL_LICENSED_MUSIC.mp3"
     fetch(music["url"],track,"audio",None)

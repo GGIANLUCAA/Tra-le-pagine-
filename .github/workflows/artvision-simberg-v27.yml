@@ -4,7 +4,6 @@ on:
     branches: [main]
     paths:
       - scripts/artvision_simberg_wounded_angel_v27.py
-      - config/artvision_editorial_v28.json
       - .github/workflows/artvision-simberg-v27.yml
   workflow_dispatch:
 permissions:

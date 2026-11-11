@@ -22,6 +22,13 @@ jobs:
         painting: [saturn, ambassadors]
     steps:
       - uses: actions/checkout@v4
+      - name: Restore verified image bytes and source cooldowns
+        uses: actions/cache/restore@v4
+        with:
+          path: .artvision-assets
+          key: artvision-images-v1-${{ github.workflow }}-${{ matrix.painting }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            artvision-images-v1-${{ github.workflow }}-${{ matrix.painting }}-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -125,3 +132,9 @@ jobs:
             const link=`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const body=`ArtVision V30 **${slug}** — **${ok?'MP4 + COMPLETE SOCIAL PACK VERIFIED':'NOT COMPLETE'}**\n\nMP4: ${exists?'present':'missing'}; bytes: ${bytes??'n/a'}; SHA256: ${hash??'n/a'}.\nSteps: preflight=${process.env.PREFLIGHT}, render=${process.env.RENDER}, verify=${process.env.VERIFY}, archive=${process.env.ARCHIVE}.\nWorkflow and downloadable artifact: ${link}.\nArtistic Gold Master approval and social publication are separate.`;
             await github.rest.issues.createComment({owner:context.repo.owner,repo:context.repo.repo,issue_number:31,body});
+      - name: Save verified images and cooldowns for the next attempt
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .artvision-assets
+          key: artvision-images-v1-${{ github.workflow }}-${{ matrix.painting }}-${{ github.run_id }}-${{ github.run_attempt }}
