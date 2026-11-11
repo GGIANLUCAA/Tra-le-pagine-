@@ -15,6 +15,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import urllib.error
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -24,6 +25,7 @@ FILE_PAGE = "https://commons.wikimedia.org/wiki/File:Les_Cartes_vivantes_(1904).
 SHA1 = "9b144141b51ef50bc74fe40a5fd3882cc312f81c"
 ORIGINAL_SIZE = 23831680
 FILENAME_PARAM = "File:" + FILENAME
+ARCHIVE_IDENTIFIER = "silent-les-cartes-vivantes-aka-the-living-playing-cards"
 
 
 def _request(url: str, timeout: int = 60):
@@ -104,17 +106,63 @@ def download_original(url: str, target: Path) -> None:
         raise RuntimeError("COMMONS_ORIGINAL_SHA1_MISMATCH")
 
 
+
+def _archive_fallback(folder: Path) -> tuple[Path, str, str, int]:
+    """One alternate PD film encode; verify its OWN Archive metadata SHA1.
+
+    This is NOT the Commons-verified SHA1 and must never be represented
+    as the same byte-identical source.
+    """
+    base = "https://archive.org"
+    meta_url = base + "/metadata/" + ARCHIVE_IDENTIFIER
+    with _request(meta_url, 40) as response:
+        metadata = json.load(response)
+    if metadata.get("is_dark") or not isinstance(metadata.get("files"), list):
+        raise RuntimeError("ARCHIVE_METADATA_UNAVAILABLE")
+    choices = []
+    for entry in metadata["files"]:
+        name = entry.get("name", "")
+        size = int(entry.get("size", "0") or 0)
+        sha1 = entry.get("sha1", "")
+        if (isinstance(name, str)
+                and name.lower().endswith((".mp4", ".mpeg", ".mpg", ".ogv", ".webm"))
+                and 1000000 <= size <= 130000000
+                and isinstance(sha1, str) and len(sha1) == 40
+                and all(c in "0123456789abcdef" for c in sha1.lower())):
+            choices.append((entry.get("source") == "original", size, name, sha1))
+    if not choices:
+        raise RuntimeError("ARCHIVE_NO_VETTED_FILM_ENCODE")
+    # Single retrieval: original film encode first, best byte-size next.
+    choices.sort(reverse=True)
+    _, size, filename, sha1 = choices[0]
+    url = (base + "/download/" + ARCHIVE_IDENTIFIER + "/" +
+           urllib.parse.quote(filename, safe="/"))
+    target = folder / ("ARCHIVE_ALTERNATE_FILM" + Path(filename).suffix.lower())
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with _request(url, 120) as response, target.open("wb") as out:
+        for block in iter(lambda: response.read(1024 * 1024), b""):
+            out.write(block)
+            if out.tell() > size:
+                raise RuntimeError("ARCHIVE_ORIGINAL_OVERSIZED")
+    if target.stat().st_size != size or _digest(target, "sha1") != sha1:
+        raise RuntimeError("ARCHIVE_ORIGINAL_METADATA_SHA1_OR_SIZE_MISMATCH")
+    return target, url, sha1, size
+
+
 def _probe(src: Path) -> dict:
     data = json.loads(_run(["ffprobe", "-v", "error", "-select_streams", "v:0",
                             "-show_entries", "stream=width,height,codec_name,r_frame_rate:format=duration",
                             "-of", "json", str(src)]))
     streams = data.get("streams", [])
-    if len(streams) != 1 or int(streams[0]["width"]) != 768 or int(streams[0]["height"]) != 576:
-        raise RuntimeError("WRONG_ARCHIVAL_RASTER")
+    if len(streams) != 1:
+        raise RuntimeError("MISSING_OR_MULTIPLE_ARCHIVAL_VIDEO_STREAMS")
+    width, height = int(streams[0]["width"]), int(streams[0]["height"])
+    if width < 640 or height < 420:
+        raise RuntimeError("ORIGINAL_RASTER_TOO_SMALL_FOR_PHOTOREALISM")
     duration = float(data["format"]["duration"])
-    if not 170 <= duration <= 175:
-        raise RuntimeError("WRONG_ARCHIVAL_DURATION")
-    return {"original_resolution": [768, 576], "duration": round(duration, 3),
+    if not 150 <= duration <= 190:
+        raise RuntimeError("ALTERNATE_ARCHIVE_DURATION_NOT_SAME_FILM_VERIFY")
+    return {"original_resolution": [width, height], "duration": round(duration, 3),
             "codec": streams[0].get("codec_name"), "frame_rate": streams[0].get("r_frame_rate")}
 
 
@@ -148,17 +196,27 @@ def main():
     preview_json = root / "CINEMA_ORIGINAL_SOURCE_PREFLIGHT.json"
     src = root / FILENAME.replace(" ", "_")
     url = source_url()
-    download_original(url, src)
+    origin = "COMMONS_ORIGINAL_SHA1_EXACT"
+    original_sha1, original_bytes = SHA1, ORIGINAL_SIZE
+    try:
+        download_original(url, src)
+    except urllib.error.HTTPError as e:
+        if e.code != 429:
+            raise
+        print("COMMONS_HTTP429_ON_FILE_BYTES_FETCH_ARCHIVE_ALTERNATIVE_ONCE")
+        src, url, original_sha1, original_bytes = _archive_fallback(root)
+        origin = "INTERNET_ARCHIVE_DIFFERENT_ENCODE_SHA1_VALIDATED_NEEDS_ARTISTIC_AND_SOURCE_REVIEW"
     tech = _probe(src)
     samples = []
     with tempfile.TemporaryDirectory(prefix="cinema-source-v292-") as d:
         tmp = Path(d)
-        for timestamp in range(3, 171, 6):
-            target = tmp / f"original_{timestamp:03d}.png"
+        for idx in range(28):
+            timestamp = 4.0 + (tech["duration"] - 8.0) * (idx + 0.5) / 28.0
+            target = tmp / f"original_{idx:03d}.png"
             _run(["ffmpeg", "-nostdin", "-v", "error", "-ss", str(timestamp),
                   "-i", str(src), "-frames:v", "1", "-y", str(target)], 45)
             with Image.open(target) as im:
-                if im.size != (768, 576):
+                if im.size != tuple(tech["original_resolution"]):
                     raise RuntimeError("SOURCE_DECODED_FRAME_BAD_GEOMETRY")
             samples.append((float(timestamp), target))
         if len(samples) != 28:
@@ -173,11 +231,13 @@ def main():
         "creator": "Georges Méliès (died 1938)",
         "source_page": FILE_PAGE,
         "actual_download_url": url,
-        "original_sha1": SHA1,
+        "source_material_provenance": origin,
+        "is_exact_commons_original_bytes": origin == "COMMONS_ORIGINAL_SHA1_EXACT",
+        "original_sha1": original_sha1,
         "original_sha256": _digest(src, "sha256"),
-        "original_bytes": ORIGINAL_SIZE,
+        "original_bytes": original_bytes,
         "native_geometry": tech,
-        "source_rights_claim": "Commons PD Mark; film author died 1938; Italy extra transfer rights still require final check",
+        "source_rights_claim": "Commons marks 1904 film PD; Internet Archive alternate copy not independently cleared; Italy extra transfer rights still require final check",
         "italian_release_rights_final_cleared": False,
         "frames_sampled_on_real_decoded_file": 28,
         "samples_seconds": [t for t, _ in samples],
@@ -192,7 +252,7 @@ def main():
         "negative_reference_video_files": ["44518.mp4"]
     }
     preview_json.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf8")
-    print("V292_ACTUAL_CINEMATIC_SOURCE_SHA1_VERIFIED",
+    print("V292_ACTUAL_CINEMATIC_SOURCE_BYTES_SHA1_VERIFIED",
           report["original_sha256"], "frames", len(samples))
     print("V292_NEEDS_SOURCE_CROP_AND_I2I_ARTISTIC_REVIEW_NO_VIDU_NO_FINAL")
 
