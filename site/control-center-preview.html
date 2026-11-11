@@ -1658,7 +1658,8 @@ function issues(){
       '<p class="repairMeta">'+(linked?"Chat originale collegata":"Chat da collegare")+'</p>'+
       '<div class="repairGrid"><button class="repairButton secondary" type="button" data-repair-project="'+escapeText(key)+'">'+
       (linked?"Gestisci chat":"Collega chat")+'</button>'+
-      (linked?'<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(state.chatLinks[key])+'">Apri chat ↗</a>':"")+
+      (linked&&isAndroidDevice()?'<a class="repairButton" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(androidChatGPTIntent(state.chatLinks[key],false))+'">◈ Apri nell’app ChatGPT</a>':"")+
+      (linked?'<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(state.chatLinks[key])+'">Apri nel browser ↗</a>':"")+
       '</div></div>';
     }).join("")+'</div></details>';
   var ids=new Set(failures.map(function(x){return Number(x.run_id)||0}));
