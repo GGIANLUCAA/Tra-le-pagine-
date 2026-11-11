@@ -1417,7 +1417,7 @@ function actionWorkflowHelp(key){
 function actionProjectCards(){
   var health=state.data?.health||[],projects=[["artvision","ArtVision 4×1"],["storia","La Storia Rivive"],["wow","WOW LAB"]];
   return '<section class="actionTop"><div class="overline">PRODUZIONE · ACCESSO RAPIDO</div>'+
-    '<h3>Vuoi nuovi video?</h3><p>Scegli un programma. Il pulsante prepara la richiesta per GPT, che deve verificare prima le lavorazioni già in corso. Il pannello pubblico non avvia da solo GitHub o le automazioni.</p>'+
+    '<h3>Scegli il programma</h3><p>Controlla lo stato o prepara una richiesta a GPT. Prima di produrre, GPT verifica che non ci siano lavori duplicati.</p>'+
     '<div class="actionProjects">'+projects.map(function(entry){
       var id=entry[0],name=entry[1],row=health.find(function(x){return x.id===id});
       var status=!source("github")?"GitHub non verificabile":row?.state==="running"?"Produzione osservata in corso":
