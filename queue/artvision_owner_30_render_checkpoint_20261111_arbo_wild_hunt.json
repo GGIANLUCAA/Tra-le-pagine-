@@ -1,0 +1,82 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-11",
+  "work_id": "arbo_wild_hunt_1872_ng_m_00258",
+  "selected_order": 1,
+  "title": "The Wild Hunt of Odin",
+  "artist": "Peter Nicolai Arbo",
+  "variant": "cinema_standard",
+  "status": "ONE_REAL_NEW_MP4_SOURCE_LOCKED_TECH_QA_AND_PRIVATE_LIBRARY_INDEPENDENT_READBACK_PASS_ARTISTIC_REVIEW_PENDING",
+  "github_run_id": 42952023909,
+  "github_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42952023909",
+  "artifact_id": 13825545922,
+  "artifact_name": "ARTVISION_OWNER_ARBO_WILD_HUNT_NEW_CINEMA_REVIEW",
+  "original_artwork": {
+    "object_url": "https://www.nasjonalmuseet.no/en/collection/object/NG.M.00258",
+    "image_page": "https://commons.wikimedia.org/wiki/File:Peter_Nicolai_Arbo_-_The_wild_Hunt_of_Odin_-_NG.M.00258_-_National_Museum_of_Art,_Architecture_and_Design.jpg",
+    "image_pixels": [
+      10291,
+      7074
+    ],
+    "image_bytes": 7151028,
+    "sha1": "ecb86ffd7042eaedaa334fedce39ff795029960f",
+    "sha256": "510a60bb9797eedefab0ed1ca393d6ff5013bf2f689704dbd394808b88532b44",
+    "author_died": 1892,
+    "image_license_from_commons": "CC BY 4.0 + PD-Art/PDM; attribution mandatory for licensed digital reproduction",
+    "territorial_reuse_review": "PENDING_NO_PUBLICATION"
+  },
+  "production": {
+    "duration_s": 49.791667,
+    "scenes": 12,
+    "fps": 24,
+    "hq_resolution": [
+      1080,
+      1920
+    ],
+    "video_1080_filename": "VIDEO_REVIEW.mp4",
+    "video_1080_bytes": 10287720,
+    "video_1080_sha256": "f3a67af32ca2cdeaa8e9b01e4888d0f0499036d44dfee4d6485a4768f75706bf",
+    "android_filename": "VIDEO_ANDROID_720_REVIEW.mp4",
+    "android_bytes": 2902263,
+    "android_sha256": "7d086f6e7c5a6180ef43ffd67bf4764ceb787dfceb09463b6c1d776a18680611",
+    "android_zip_filename": "ANDROID_REVIEW_PACKAGE.zip",
+    "android_zip_bytes": 3338689,
+    "android_zip_sha256": "c31e651ea78ca605a08b2ac0f9e516de58329eb91230562b62fa21812db30a63",
+    "original_synthesized_score": true,
+    "cover_and_4_social_post_drafts_in_zip": true,
+    "human_full_speed_review": "PENDING",
+    "no_tts": true,
+    "no_paid_video_ai": true,
+    "gold": false,
+    "social_published": false,
+    "site_publication_verified": false
+  },
+  "qa": {
+    "initial_render_job": "PASS original image SHA1/byte count/pixel size; full ffmpeg 2 MP4; ZIP CRC; source/license",
+    "github_second_job": "FAIL_TOOLING_ONLY_missing_ffmpeg_on_new_ubuntu_runner_at_2026_11_11; artifact download itself successful and SHA envelope verified",
+    "local_original_artifact_readback": "PASS real GitHub downloadable ZIP extracted and hashes cross-checked; both MP4 full FFmpeg all-stream decode; Android ZIP CRC/embedded MP4 hash",
+    "private_library_android_readback": "PASS separately re-materialized MP4 exact SHA/full FFmpeg decode and ZIP CRC/embedded MP4 SHA",
+    "physical_source_image_in_full_artifact": "not included in download; original source verification from render job SHA1 and byte/pixels",
+    "artistic_verdict": "PENDING; diagnostic contact sheet visibly dark and several crops similar, full-speed screening needed"
+  },
+  "persistent_private_library": {
+    "directory": "/ArtVision/Owner_30/Arbo_Wild_Hunt_20261111",
+    "mp4_hq_id": "libfile_ce8ce60a8dd081919130c29f95db6714",
+    "mp4_android_id": "libfile_47b33a6f28cc81918b97b9c114d3f912",
+    "zip_android_id": "libfile_a0a47c7bc9708191879068ae7d907955",
+    "hq_upload_succeeded": true,
+    "android_and_zip_independent_readback": true,
+    "device_android_playback_not_tested": true
+  },
+  "owner_queue_effect": {
+    "original_ten_queue_verified_technical_slots_before": 26,
+    "original_ten_queue_active_slots": 36,
+    "original_ten_queue_new_slots_added": 0,
+    "dali_all_four_excluded": true,
+    "future_30_queue_prior_distinct_cinema": 7,
+    "future_30_queue_after_distinct_cinema": 8,
+    "new_distinct_cinema_variants_this_cycle": 1,
+    "caution": "Arbo has only Cinema Standard, not complete 4x1; the additional three variants are not produced."
+  },
+  "future_work": "Do not rerender this Arbo Cinema as a new slot; continue original ten missing Museum only with valid room/frame/real-scale QA and owner-approved scenic exception, and other unproduced selected works after file/rights gates. Preserve prior videos; no auto Gold, no external/social publication, no paid API."
+}
