@@ -293,10 +293,9 @@ def main():
  shutil.copyfile(cover,OUT/"COVER_DEFINITIVA.jpg")
  contact=Image.new("RGB",(1400,630),(8,13,20));d=ImageDraw.Draw(contact)
  for i,x in enumerate(photos[:7]):
-  a=Image.open(x["clip"].parent/f"extra_canvas_{x['beat']:02d}_{0}.jpg") if False else Image.open(verified[FILES[0]["file"]]["path"])
-  # Use the actual credited source image for each beat.
   rec=next((x2 for x2 in FILES if x2["beat"]==x["beat"] and verified.get(x2["file"],{}).get("sha")==x["photo_sha"]),None)
-  if rec:a=Image.open(verified[rec["file"]]["path"])
+  if not rec:continue
+  a=Image.open(verified[rec["file"]]["path"])
   a=ImageOps.fit(a.convert("RGB"),(190,320),Image.Resampling.LANCZOS)
   col=i%7
   contact.paste(a,(5+col*199,52))
