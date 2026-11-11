@@ -1,0 +1,132 @@
+name: "ArtVision Arbo - independent readback recovery only (NO RENDER)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/artvision-owner-arbo-readback-recovery-v1.yml"
+
+# This checks the original immutable artifact. No workflow_dispatch, push or schedule
+# and no use of the Arbo renderer: merging this file cannot restart a production.
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  readback_original_artifact_only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - name: Download the EXISTING Arbo video artifact (run 42952023909)
+        uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_OWNER_ARBO_WILD_HUNT_NEW_CINEMA_REVIEW
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: "42952023909"
+          github-token: ${{ github.token }}
+          path: /tmp/arbo-original
+
+      - name: Provision FFmpeg on the independent runner (root cause of old exit 127)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          command -v ffmpeg
+          command -v ffprobe
+
+      - name: SHA-256 + audio/video full decode + ZIP CRC of existing artifact only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import json
+          import subprocess
+          import zipfile
+
+          root = Path('/tmp/arbo-original')
+          qa = json.loads((root / 'QA_TECHNICAL.json').read_text(encoding='utf-8'))
+          rights = json.loads((root / 'SOURCES_RIGHTS.json').read_text(encoding='utf-8'))
+          hq = root / 'VIDEO_REVIEW.mp4'
+          mobile = root / 'VIDEO_ANDROID_720_REVIEW.mp4'
+          archive = root / 'ANDROID_REVIEW_PACKAGE.zip'
+          sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+          expected = {
+              'hq_mp4': 'f3a67af32ca2cdeaa8e9b01e4888d0f0499036d44dfee4d6485a4768f75706bf',
+              'android_mp4': '7d086f6e7c5a6180ef43ffd67bf4764ceb787dfceb09463b6c1d776a18680611',
+              'android_zip': 'c31e651ea78ca605a08b2ac0f9e516de58329eb91230562b62fa21812db30a63',
+              'artwork': '510a60bb9797eedefab0ed1ca393d6ff5013bf2f689704dbd394808b88532b44',
+          }
+          for p, key, size in (
+              (hq, 'hq_mp4', 10287720),
+              (mobile, 'android_mp4', 2902263),
+              (archive, 'android_zip', 3338689),
+          ):
+              assert p.is_file(), f'Missing file: {p.name}'
+              assert p.stat().st_size == size, f'Wrong byte count: {p.name}'
+              assert sha(p) == expected[key], f'SHA mismatch: {p.name}'
+          assert qa['mp4_sha256'] == expected['hq_mp4']
+          assert qa['android_mp4_sha256'] == expected['android_mp4']
+          assert qa['source_sha256'] == expected['artwork']
+          assert rights['source_sha256'] == expected['artwork']
+          assert qa['scene_count'] == 12
+          assert not qa['gold'] and not qa['published'] and qa['paid_api_calls'] == 0
+          assert rights['commercial_distribution_authorized'] is False
+          assert rights['territorial_rights_review'] == 'PENDING'
+
+          for p, width, height in ((hq, 1080, 1920), (mobile, 720, 1280)):
+              probe = json.loads(subprocess.check_output(
+                  ['ffprobe', '-v', 'error', '-show_streams', '-show_format',
+                   '-of', 'json', str(p)], text=True))
+              streams = probe['streams']
+              videos = [s for s in streams if s.get('codec_type') == 'video']
+              audios = [s for s in streams if s.get('codec_type') == 'audio']
+              assert len(videos) == 1 and videos[0]['codec_name'] == 'h264'
+              assert (videos[0]['width'], videos[0]['height']) == (width, height)
+              assert len(audios) == 1 and audios[0]['codec_name'] == 'aac'
+              assert 48 < float(probe['format']['duration']) < 57
+              # Decode both video and audio, not just container/metadata.
+              subprocess.run(['ffmpeg', '-v', 'error', '-xerror',
+                              '-i', str(p), '-map', '0', '-f', 'null', '-'],
+                             check=True)
+
+          with zipfile.ZipFile(archive) as package:
+              assert package.testzip() is None, 'ZIP CRC failed'
+              assert hashlib.sha256(
+                  package.read('VIDEO_ANDROID_720_REVIEW.mp4')
+              ).hexdigest() == expected['android_mp4'], 'Embedded Android MP4 differs'
+
+          evidence = {
+              'original_run_id': 42952023909,
+              'original_artifact_id': 13825545922,
+              'recovery_scope': 'independent_readback_of_existing_artifact_only',
+              'new_mp4_generated': 0,
+              'hq_video_sha256': expected['hq_mp4'],
+              'android_video_sha256': expected['android_mp4'],
+              'android_zip_sha256': expected['android_zip'],
+              'sha_byte_readback': 'PASS',
+              'full_ffmpeg_video_and_audio_decode': 'PASS',
+              'embedded_android_video_sha': 'PASS',
+              'zip_crc': 'PASS',
+              'artistic_review': 'PENDING',
+              'territorial_commercial_rights': 'PENDING',
+              'gold': False,
+              'published': False,
+              'paid_api_calls': 0,
+          }
+          (root / 'READBACK_RECOVERY_ONLY.json').write_text(
+              json.dumps(evidence, indent=2) + '\n', encoding='utf-8')
+          print('ARBO_INDEPENDENT_READBACK_RECOVERED; existing artifact only')
+          print(json.dumps(evidence, indent=2))
+          PY
+
+      - name: Upload only independent readback evidence (no MP4 replication)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARBO_EXISTING_ARTIFACT_READBACK_RECOVERY_EVIDENCE
+          retention-days: 30
+          if-no-files-found: error
+          path: /tmp/arbo-original/READBACK_RECOVERY_ONLY.json
