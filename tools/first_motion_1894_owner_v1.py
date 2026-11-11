@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FIRST MOTION 1893-1894: one-off real 5-source archival short, source-locked I2I + single Vidu. Review only."""
+"""Barbershop 1894 compact genuine archival short: two source-locked I2I plus one Vidu motion continuation; owner review only."""
 import base64, hashlib, json, math, os, pathlib, random, subprocess, sys, time, urllib.parse, urllib.request, wave, zipfile
 import cv2
 import numpy as np
@@ -16,11 +16,8 @@ W,H,FPS=720,1280,24
 MAX_CREDITS=16
 LEDGER="queue/vidu_api_attempts/FIRST_MOTION_1894_V1_SINGLE_POST.json"
 SRC=[
- ("barber01","The Barbershop (1894).webm",1894,2.0,0.90,1.85,"A customer waits at a Victorian barber shop; preserve all visible customers, hats and furnishings."),
- ("barber02","The Barbershop (1894).webm",1894,4.3,1.50,2.05,"A barber handles a customer at an 1894 barbershop, preserve true head and hand positions, the mirror and counter."),
- ("barber03","The Barbershop (1894).webm",1894,6.6,1.30,1.90,"Men in 1894 barbershop react naturally; exact face and body counts, no invented expressions."),
- ("barber04","The Barbershop (1894).webm",1894,8.7,1.40,2.00,"The barber and customers seen from fixed original 1894 camera; accurate silhouettes, fabric and period interior."),
- ("barber05","The Barbershop (1894).webm",1894,10.5,1.30,5.00,"Barber and waiting customers in 1894 Edison barbershop; real person positions and authentic details.")
+ ("barber01","The Barbershop (1894).webm",1894,2.0,1.5,3.0,"1894 Edison barbershop customer, preserve face, hat, barber and all furnishings without invention."),
+ ("barber02","The Barbershop (1894).webm",1894,4.3,1.5,3.0,"1894 Edison barber and customer, authentic hand positions, shaving gesture, period environment and human faces.")
 ]
 PAGE="https://commons.wikimedia.org/wiki/File:"
 OUTVIDEO=ROOT/"FIRST_MOTION_1893_1894_VIDU_REVIEW.mp4"
@@ -46,55 +43,39 @@ def wiki_source(name):
  return row
 def source_download(spec):
  id,name,year,t,bw,hold,prompt=spec
- stored=ROOT/"BARBERSHOP_VERIFIED_ARCHIVAL_SOURCE.mp4"
- if not stored.exists():
-  # Existing verified genuine original moving B/W extract, copied from the Nov 9 scout.
+ p=ROOT/"BARBERSHOP_VERIFIED_ARCHIVAL_SOURCE.mp4"
+ if not p.exists():
   cmd(["gh","release","download","storia-barbershop-1894-source-scout-42649779508",
        "--repo",REPO,"-p","ARCHIVAL_MOVING_SCOUT_NOT_RESTORED.mp4","-D",str(ROOT)],timeout=100)
-  acquired=ROOT/"ARCHIVAL_MOVING_SCOUT_NOT_RESTORED.mp4"
-  if not acquired.exists():raise RuntimeError("VERIFIED_ARCHIVAL_SOURCE_UNAVAILABLE")
-  acquired.rename(stored)
- if stored.stat().st_size<500000:raise RuntimeError("ARCHIVAL_SOURCE_TOO_SMALL")
- cap=cv2.VideoCapture(str(stored))
+  orig=ROOT/"ARCHIVAL_MOVING_SCOUT_NOT_RESTORED.mp4"
+  if not orig.is_file():raise RuntimeError("REAL_SOURCE_UNAVAILABLE")
+  orig.rename(p)
+ if p.stat().st_size<500000:raise RuntimeError("ORIGINAL_FILM_FILE_TOO_SMALL")
+ cap=cv2.VideoCapture(str(p))
  fps=cap.get(cv2.CAP_PROP_FPS)
  duration=cap.get(cv2.CAP_PROP_FRAME_COUNT)/max(1,fps)
- sw=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH));sh=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
- if not (t>0.7 and t<duration-0.25):
-  raise RuntimeError("TIMECODE_OUT_OF_RANGE "+id+" "+str(duration))
- # Select only real nonblack source frames, not black leader, fade or blank gaps.
- scene_times=ROOT/"SOURCE_VALID_SCENE_TIMES.json"
- if scene_times.exists():
-  chosen=json.loads(scene_times.read_text())["times"]
- else:
-  choices=[]
-  usable_duration=min(duration-0.35,11.5)
-  tt=1.55
-  while tt<usable_duration:
-   cap.set(cv2.CAP_PROP_POS_MSEC,tt*1000)
-   good,frame=cap.read()
-   if good:
-    g=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-    mean=float(g.mean());std=float(g.std())
-    if 25<mean<226 and std>19:
-     choices.append((round(tt,3),round(mean,2),round(std,2)))
-   tt+=.2
-  if len(choices)<13:raise RuntimeError("TOO_FEW_NONBLACK_SOURCE_FRAMES_NO_SPEND")
-  chosen=[choices[round(i*(len(choices)-1)/4)][0] for i in range(5)]
-  if any(chosen[k+1]-chosen[k]<.55 for k in range(4)):
-   raise RuntimeError("SOURCE_NOT_ENOUGH_DISTINCT_MOTION_MOMENTS_NO_SPEND")
-  scene_times.write_text(json.dumps({"times":chosen,"usable_samples":len(choices),"analysis":"Real source luminance and contrast scan; black frames excluded"},indent=2))
-  say("SOURCE_SCENE_TIMECODES_VERIFIED",chosen)
- t=chosen[[z[0] for z in SRC].index(id)]
- cap.set(cv2.CAP_PROP_POS_MSEC,t*1000);ok,img=cap.read();cap.release()
- if not ok:raise RuntimeError("NO_EXACT_FRAME "+id)
- img=cv2.resize(img,(960,720),interpolation=cv2.INTER_AREA)
- cv2.imwrite(str(ROOT/(id+"_exact_bw.png")),img)
- return {"id":id,"name":name,"year":year,"second":t,"path":str(stored),
-         "sha256":sha(stored),
-         "source_page":"https://commons.wikimedia.org/wiki/File:The_Barbershop_(1894).webm",
-         "verified_release":"https://github.com/"+REPO+"/releases/tag/storia-barbershop-1894-source-scout-42649779508",
-         "image_sha256":sha(ROOT/(id+"_exact_bw.png")),"seconds":duration,
-         "native_width":sw,"native_height":sh}
+ if not (t>bw and t<duration-.4):raise RuntimeError("SOURCE_ANCHOR_OUTSIDE_FILM")
+ cap.set(cv2.CAP_PROP_POS_MSEC,t*1000);ok,frame=cap.read()
+ # Verify no black leader at source anchor and at the starting moving moment.
+ if not ok:raise RuntimeError("SOURCE_ANCHOR_NOT_READABLE")
+ g=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+ if g.mean()<23 or g.std()<13:raise RuntimeError("SOURCE_ANCHOR_BLACK_OR_LOW_DETAIL_NO_VIDU")
+ cap.set(cv2.CAP_PROP_POS_MSEC,(t-bw+.15)*1000)
+ ok,early=cap.read()
+ if not ok:raise RuntimeError("SOURCE_BW_MOTION_MISSING")
+ early_g=cv2.cvtColor(early,cv2.COLOR_BGR2GRAY)
+ # A dark early frame is a diagnostic, not permission to reconstruct nonexistent footage.
+ if early_g.mean()<12 or early_g.std()<8:raise RuntimeError("SOURCE_BW_OPENING_BLACK_NO_VIDU")
+ w=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH));h=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+ cap.release()
+ frame=cv2.resize(frame,(960,720),interpolation=cv2.INTER_AREA)
+ jpg=ROOT/(id+"_exact_bw.png")
+ cv2.imwrite(str(jpg),frame)
+ return {"id":id,"name":name,"year":year,"second":t,
+  "path":str(p),"sha256":sha(p),"image_sha256":sha(jpg),
+  "source_page":"https://commons.wikimedia.org/wiki/File:The_Barbershop_(1894).webm",
+  "verified_release":"https://github.com/"+REPO+"/releases/tag/storia-barbershop-1894-source-scout-42649779508",
+  "seconds":duration,"native_width":w,"native_height":h}
 
 def gray_corr(a,b):
  x=cv2.cvtColor(cv2.resize(a,(144,108)),cv2.COLOR_BGR2GRAY).astype(np.float32).ravel()
@@ -252,11 +233,9 @@ def create_original_sound(seconds):
    pad=sum(np.sin(2*np.pi*f*local) for f in c)/3
    audio[ind0:ind0+L]+=.018*pad*env
  audio+=.0025*rng.standard_normal(n)
- # Clear soft reveal emphasis on source photo transitions.
- for idx,s in enumerate([SRC[0][4],SRC[0][4]+SRC[0][5]+SRC[1][4],
- SRC[0][4]+SRC[0][5]+SRC[1][4]+SRC[1][5]+SRC[2][4],
- sum(z[4]+z[5] for z in SRC[:3])+SRC[3][4]]):
-  o=int(s*sr);L=min(n-o,int(.36*sr))
+ # Gentle emphasis at each exact frame-to-photo reveal.
+ for sec in [SRC[0][4],SRC[0][4]+SRC[0][5]+SRC[1][4]]:
+  o=int(sec*sr);L=min(n-o,int(.36*sr))
   if L>0:
    x=np.arange(L)/sr;audio[o:o+L]+=.025*np.sin(2*np.pi*390*x)*np.exp(-10*x)
  audio/=max(1,np.max(np.abs(audio))/.60)
@@ -278,76 +257,82 @@ def assemble(metas,photos,clip):
  if not writer.isOpened():raise RuntimeError("VIDEO_WRITER_NOT_OPEN")
  timeline=[]
  for i,(spec,meta,photo) in enumerate(zip(SRC,metas,photos)):
-  if i>=4:break
   id,_,year,t,bw,hold,_=spec
   t=meta["second"]
-  fcount=int(round(bw*FPS));start=t-bw
-  for n in range(fcount):
-   frame=canvas(video_frame(meta["path"],max(.05,start+n/FPS)),
-                "BARBERSHOP  ·  1894" if i==0 and n<19 else None)
-   writer.write(frame)
-  # Freeze on exact original frame, then reveal reconstructed color.
-  anchor=canvas(cv2.imread(str(ROOT/(id+"_exact_bw.png"))))
-  full=canvas(photo)
+  for n in range(round(bw*FPS)):
+   f=canvas(video_frame(meta["path"],max(.05,t-bw+n/FPS)),
+            "THE BARBERSHOP  ·  1894" if i==0 and n<20 else None)
+   writer.write(f)
+  bwframe=canvas(cv2.imread(str(ROOT/(id+"_exact_bw.png"))))
+  colorframe=canvas(photo)
   ramp=5
   for n in range(ramp):
-   a=((n+1)/ramp)
-   a=a*a*(3-2*a)
-   writer.write(cv2.addWeighted(anchor,1-a,full,a,0))
-  for _ in range(max(1,int(round(hold*FPS))-ramp)):writer.write(full)
-  timeline.append({"name":id,"bw_motion_s":bw,"color_photo_s":hold,"source_timecode":t,"source_original_sha256":meta["sha256"]})
- # final sequence: authentic Barbershop B/W leading into REAL moving Vidu.
- spec=SRC[4];meta=metas[4];id,_,year,t,bw,hold,_=spec
- t=meta["second"]
- for n in range(int(round(bw*FPS))):
-  writer.write(canvas(video_frame(meta["path"],max(.05,t-bw+n/FPS))))
- c=cv2.VideoCapture(str(clip))
- vidu_count=0;last=None
- while vidu_count<int(round(5.0*FPS)):
+   a=(n+1)/ramp;a=a*a*(3-2*a)
+   writer.write(cv2.addWeighted(bwframe,1-a,colorframe,a,0))
+  for _ in range(round(hold*FPS)-ramp):
+   writer.write(colorframe)
+  timeline.append({"name":id,"bw_motion_s":bw,"photo_color_hold_s":hold,
+   "source_timecode_s":t,"original_film_sha256":meta["sha256"],
+   "I2I_real_photo_sha256":sha(ROOT/(id+"_I2I_RESTORED.png"))})
+ # Continue directly from the second reconstructed historical frame into a 5s Vidu motion.
+ normalized=ROOT/"VIDU_FULL_FIVE_SECONDS_24FPS.mp4"
+ cmd(["ffmpeg","-nostdin","-y","-v","error","-i",str(clip),"-t","5","-vf","fps=24,scale=720:1280",
+      "-an","-c:v","libx264","-preset","fast","-crf","18","-pix_fmt","yuv420p",str(normalized)],timeout=200)
+ c=cv2.VideoCapture(str(normalized))
+ vidu_count=0
+ while vidu_count<int(5.0*FPS):
   ok,frame=c.read()
   if not ok:break
-  frame=cv2.resize(frame,(W,H))
-  tclip=vidu_count/FPS
-  if tclip<.95:
-   gray=cv2.cvtColor(cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY),cv2.COLOR_GRAY2BGR)
-   a=max(0,min(1,(tclip-.07)/.88));a=a*a*(3-2*a)
-   frame=cv2.addWeighted(gray,1-a,frame,a,0)
-  writer.write(frame);vidu_count+=1;last=frame
+  if frame.shape[:2]!=(H,W):frame=cv2.resize(frame,(W,H))
+  # Preserve the already displayed color; no reset to black-and-white at scene continuity.
+  writer.write(frame);vidu_count+=1
  c.release();writer.release()
- if vidu_count<96:raise RuntimeError("VIDU_TOO_SHORT_TO_VERIFY")
- timeline.append({"name":"barbershop","bw_motion_s":bw,"vidu_color_motion_s":vidu_count/FPS,"source_timecode":t,"source_original_sha256":meta["sha256"]})
- duration=sum(z["bw_motion_s"]+z.get("color_photo_s",z.get("vidu_color_motion_s",0)) for z in timeline)
- music=create_original_sound(duration)
+ if vidu_count<115:raise RuntimeError("VIDU_FULL_MOTION_5SEC_NOT_RECOVERED")
+ timeline.append({"name":"barber02_vidu_continuation","color_motion_s":vidu_count/FPS,
+                  "source_timecode_s":metas[1]["second"],
+                  "source_photo_sha256":sha(ROOT/"barber02_I2I_RESTORED.png")})
+ video_duration=sum(v.get("bw_motion_s",0)+v.get("photo_color_hold_s",0)+v.get("color_motion_s",0) for v in timeline)
+ if not 13.8<=video_duration<=25:raise RuntimeError("VIDEO_RHYTHM_OR_DURATION_UNEXPECTED")
+ music=create_original_sound(video_duration)
  cmd(["ffmpeg","-nostdin","-y","-v","error","-i",str(partial),"-i",str(music),"-shortest",
-     "-c:v","libx264","-preset","fast","-crf","19","-pix_fmt","yuv420p","-c:a","aac","-b:a","160k","-movflags","+faststart",str(OUTVIDEO)],timeout=360)
- cmd(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(OUTVIDEO),"-f","null","-"],timeout=240)
+     "-c:v","libx264","-preset","fast","-crf","19","-pix_fmt","yuv420p",
+     "-c:a","aac","-b:a","160k","-movflags","+faststart",str(OUTVIDEO)],timeout=320)
+ cmd(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(OUTVIDEO),"-f","null","-"],timeout=250)
  stats=json.loads(cmd(["ffprobe","-v","error","-show_entries","format=duration:stream=codec_name,width,height,r_frame_rate","-of","json",str(OUTVIDEO)]))
- out("TECHNICAL_QA.json",{"genuine_new_composition":True,"full_4plus1_distinct_films_gate":"NOT_APPLICABLE_REVIEW_ONLY","source_film_count":1,"different_moments_same_original_film":5,
-    "new_finegrain_restorations":5,"real_vidu_clip_produced":True,
-    "timeline":timeline,"video_sha256":sha(OUTVIDEO),"ffprobe":stats,
-    "source_locked_photo_qa":"AUTOMATED_ONLY","human_identity_review":"PENDING",
-    "artistic_approval":False,"social_published":False,
-    "disclosure":"AI color/photos and Vidu motion are interpretations, not documentary color"})
- make_cover(photos[4])
+ report={"genuine_new_composition":True,"new_historical_original_films":1,
+  "different_real_film_moments":2,"new_finegrain_restorations":2,
+  "real_vidu_clip_produced":True,"project_format":"ONE_SOURCE_TWO_I2I_ONE_VIDU_SHORT_PREVIEW_NOT_4PLUS1",
+  "timeline":timeline,"video_sha256":sha(OUTVIDEO),"ffprobe":stats,
+  "source_locked_photo_qa":"AUTOMATED_ONLY","human_identity_review":"PENDING",
+  "artistic_approval":False,"social_published":False,
+  "disclosure":"AI colors, photo detail and Vidu movement are modern interpretation; NOT original recorded color"}
+ out("TECHNICAL_QA.json",report)
+ make_cover(photos[1])
  for platform in ("FACEBOOK","INSTAGRAM","TIKTOK","YOUTUBE"):
-  (ROOT/("POST_"+platform+".txt")).write_text("THE BARBERSHOP · 1894\nFive distinct moments from the authentic Edison 1894 Barbershop film. Authentic archival B/W footage meets source-matched photographic AI reconstruction, ending with one openly AI-animated sequence. Historic sources from Wikimedia Commons. Technical preview — not a documentary color recording.\n",encoding="utf8")
- (ROOT/"README.txt").write_text("OWNER REVIEW ONLY - NOT APPROVED OR PUBLISHED. One authentic historical Barbershop film, five time-distinct original moving moments, 5 I2I source-locked photos and one single Vidu scene. Source scans and photo interpretations are not claims of exact historical skin/fabric colors. Inspect hand/face continuity before approving.\n")
- Z=ROOT/"FIRST_MOTION_1893_1894_ANDROID_KIT.zip"
- with zipfile.ZipFile(Z,"w",zipfile.ZIP_DEFLATED,compresslevel=3) as z:
-  for p in [OUTVIDEO,ROOT/"SOCIAL_COVER.jpg",ROOT/"TECHNICAL_QA.json",ROOT/"SOURCES_AND_RIGHTS.json",ROOT/"VIDU_STATUS.json",ROOT/"README.txt",*[ROOT/("POST_"+s+".txt") for s in ("FACEBOOK","INSTAGRAM","TIKTOK","YOUTUBE")]]:
+  (ROOT/("POST_"+platform+".txt")).write_text("THE BARBERSHOP · 1894\nA moment from the dawn of cinema. Original moving film by Edison and Dickson, restored through source-matched color photographs and a short AI-animated continuation. Experimental review, not original historical color footage.\n",encoding="utf8")
+ (ROOT/"README.txt").write_text("OWNER REVIEW ONLY; NOT APPROVED OR PUBLISHED. Two genuine source film moments, two new source-locked Finegrain photos and one Vidu animated continuation from EXACT PHOTO 2. Rights and artistic face fidelity review pending. No claim of five independent scenes.\n",encoding="utf8")
+ zfile=ROOT/"FIRST_MOTION_1893_1894_ANDROID_KIT.zip"
+ with zipfile.ZipFile(zfile,"w",zipfile.ZIP_DEFLATED,compresslevel=3) as z:
+  for p in [OUTVIDEO,ROOT/"SOCIAL_COVER.jpg",ROOT/"TECHNICAL_QA.json",
+            ROOT/"SOURCES_AND_RIGHTS.json",ROOT/"VIDU_STATUS.json",ROOT/"README.txt",
+            *[ROOT/("POST_"+k+".txt") for k in ("FACEBOOK","INSTAGRAM","TIKTOK","YOUTUBE")]]:
    z.write(p,arcname=p.name)
- with zipfile.ZipFile(Z) as z:assert z.testzip() is None
- say("REAL_NEW_MP4_ZIP_COMPLETED",sha(OUTVIDEO),stats.get("format",{}).get("duration"))
+ with zipfile.ZipFile(zfile) as z:assert z.testzip() is None
+ say("BARBERSHOP_NEW_REVIEW_MP4_ZIP_COMPLETED",sha(OUTVIDEO),stats.get("format",{}).get("duration"))
+
 def main():
- say("START_BARBERSHOP_1894_ONE_REAL_FILM_FIVE_SOURCE_LOCKED_MOMENTS")
+ say("START_THE_BARBERSHOP_1894_SOURCE_AUTHENTIC_COMPACT_REEL")
  metas=[source_download(spec) for spec in SRC]
- out("SOURCES_AND_RIGHTS.json",{"sources":metas,"licensing":"Wikimedia Commons public domain US; verify specific derivative and Italian reuse rights before publication","all_source_film_original_video":True,"unique_original_films":1,"not_5_independent_scenes":True})
+ out("SOURCES_AND_RIGHTS.json",{"sources":metas,
+  "licensing":"Wikimedia public-domain source; verify Italy and any derivative rights before publication",
+  "original_film_count":1,"new_moving_footage_preserved":True,"historical_identity_approval":False})
  model,_=dd.download_model()
  client=Client("finegrain/finegrain-image-enhancer",verbose=False)
  photos=[restore(meta,model,client) for meta in metas]
- say("FIVE_PHOTOS_READY_SAME_EXACT_SOURCE_FRAMES")
- vidu=vidu_clip(photos[4],metas[4])
- assemble(metas,photos,vidu)
+ say("TWO_FRESH_SOURCE_LOCKED_PHOTOS_READY_NO_SPENDING_YET")
+ # The second photo is used as the exact initial condition of the final moving Vidu scene.
+ clip=vidu_clip(photos[1],metas[1])
+ assemble(metas,photos,clip)
 if __name__=="__main__":
  try:main()
  except Exception as e:
