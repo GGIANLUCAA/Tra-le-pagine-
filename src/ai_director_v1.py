@@ -178,6 +178,66 @@ def inspect_brief(brief):
                    "rights_verified": False, "human_approved": False, "published": False}}
 
 
+def from_four_variant_plan(plan, variant_name):
+    """Reuse a genuine V68/4x1 plan; no invented media, narration or timings."""
+    try:
+        from artvision_four_variants_gate import VARIANTS, validate
+    except ImportError as exc:
+        raise DirectorError("Existing ArtVision four-variant gate unavailable") from exc
+    if not isinstance(plan, dict) or plan.get("schema") != "artvision-4x1-v1":
+        raise DirectorError("Expected an existing artvision-4x1-v1 dossier")
+    if variant_name not in VARIANTS:
+        raise DirectorError("Choose one of the four canonical 4x1 variants")
+    variants = plan.get("variants", {})
+    source = variants.get(variant_name) if isinstance(variants, dict) else None
+    if not isinstance(source, dict) or not isinstance(source.get("scenes"), list):
+        raise DirectorError("Selected variant has no scene dossier")
+    fmt = "artvision_critico" if variant_name.startswith("critico_") else "artvision_cinema"
+    d = plan.get("emotional_direction") or {}
+    detail_map = {str(x.get("id")): x for x in d.get("evidence_details", [])
+                  if isinstance(x, dict) and x.get("id")}
+    scenes = []
+    cursor = 0.0
+    lines = []
+    for n, raw in enumerate(source["scenes"], 1):
+        if not isinstance(raw, dict):
+            raise DirectorError("Invalid source scene")
+        duration = raw.get("duration_seconds")
+        if type(duration) not in (int, float) or not math.isfinite(duration) or duration <= 0:
+            raise DirectorError("Missing actual 4x1 scene duration, cannot assume timing")
+        detail = detail_map.get(str(raw.get("detail_id")), {})
+        is_gallery = raw.get("kind") in {"gallery_entry", "gallery_exit"}
+        asset = str(raw.get("detail_id") or (source.get("museum") or {}).get("gallery_id") or "")
+        source_url = (source.get("museum") or {}).get("room_source_url", "") if is_gallery else detail.get("image_source", "")
+        if not isinstance(source_url, str) or not source_url.startswith("https://"):
+            source_url = ""  # Must not misrepresent an archive citation as URL.
+        spoken = raw.get("spoken_line") or ""
+        if not isinstance(spoken, str):
+            raise DirectorError("Narration must be a source string")
+        if fmt == "artvision_critico" and spoken.strip():
+            lines.append(spoken.strip())
+        scenes.append({"id": "scene_" + str(n), "start_s": round(cursor, 3),
+                       "end_s": round(cursor + duration, 3),
+                       "asset_id": asset, "visual": str(raw.get("purpose") or "") +
+                       " | camera: " + str(raw.get("movement") or ""),
+                       "source_url": source_url, "license": detail.get("license"),
+                       "spoken_excerpt": spoken})
+        cursor += duration
+    if not scenes:
+        raise DirectorError("Four-variant dossier has no populated scenes")
+    museum = source.get("museum") or {}
+    brief = {"schema": SCHEMA, "format": fmt,
+             "title": str(plan.get("topic", "")) + " — " + str(plan.get("artist", "")),
+             "variant": variant_name, "duration_s": round(cursor, 3),
+             "narration": "\n".join(lines), "scenes": scenes,
+             "museum_evidence": {"painting_dimensions_cm": (
+                 [museum.get("width_cm"), museum.get("height_cm")]
+                 if museum.get("width_cm") and museum.get("height_cm") else None),
+                 "frame_provenance_url": museum.get("frame_provenance_url"),
+                 "room_source_url": museum.get("room_source_url")}}
+    return brief, validate(plan)
+
+
 def read_prior_lessons(ledger_path, fmt):
     """Read-only notes from actual MP4-linked reviews; never invent approvals."""
     p = Path(ledger_path)
@@ -336,7 +396,11 @@ def render_dashboard(report, path):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--brief", required=True)
+    source = ap.add_mutually_exclusive_group(required=True)
+    source.add_argument("--brief", help="Native AI Director JSON storyboard")
+    source.add_argument("--four-plan", help="Existing ArtVision 4x1 dossier (read only)")
+    ap.add_argument("--variant", choices=("critico_standard", "critico_museum",
+                                        "cinema_standard", "cinema_museum"))
     ap.add_argument("--out", default="output/ai_director_v1/report.json")
     ap.add_argument("--dashboard", default="output/ai_director_v1/report.html")
     ap.add_argument("--video", help="Optional real MP4 for metadata/sha technical check")
@@ -345,8 +409,18 @@ def main():
     ap.add_argument("--models", nargs=2, metavar=("FREE_MODEL_1", "FREE_MODEL_2"))
     ap.add_argument("--policy", default=str(PROJECT_ROOT / "config/free_llm_zero_cost_v1.json"))
     args = ap.parse_args()
-    brief = read_json(args.brief)
+    if args.four_plan:
+        if not args.variant:
+            raise DirectorError("--variant is required with --four-plan")
+        brief, four_gate_issues = from_four_variant_plan(read_json(args.four_plan), args.variant)
+    else:
+        brief, four_gate_issues = read_json(args.brief), []
     report = inspect_brief(brief)
+    if four_gate_issues:
+        report["source_four_variant_gate_errors"] = four_gate_issues[:80]
+        report["status"] = "needs_changes"
+        report["issues"].append(note("SOURCE_4X1_GATE_FAILED", "blocking",
+                                     "Canonical 4x1 gate found " + str(len(four_gate_issues)) + " errors"))
     if args.ledger:
         report["prior_observations"] = read_prior_lessons(args.ledger, report["format"])
     if args.video:
