@@ -12,7 +12,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from ai_director_v1 import (
-    DirectorError, inspect_brief, live_candidates, read_json, render_dashboard,
+    DirectorError, inspect_brief, live_candidates, read_json, render_dashboard, read_prior_lessons, from_four_variant_plan,
     write_json, MODEL_PATTERN, SCHEMA
 )
 
@@ -107,6 +107,36 @@ class DirectorTests(unittest.TestCase):
                                         "max_evidence_age_days": 7, "routes": []},
                                 key="test",
                                 transport=lambda *args, **kwargs: self.fail("Unexpected network"))
+
+    def test_existing_four_plan_bridge_is_conservative(self):
+        minimal = {"schema": "artvision-4x1-v1",
+                   "topic": "A test painting", "artist": "A test painter",
+                   "emotional_direction": {"evidence_details": []},
+                   "variants": {"critico_standard": {
+                       "format": "critico", "mode": "standard",
+                       "scenes": [{"duration_seconds": 2.3, "detail_id": "work_1",
+                                   "purpose": "An authentic painted architectural detail",
+                                   "movement": "still shot", "spoken_line": "Un dettaglio reale."}]}}}
+        brief, existing_gate_errors = from_four_variant_plan(minimal, "critico_standard")
+        self.assertEqual(brief["duration_s"], 2.3)
+        self.assertEqual(brief["format"], "artvision_critico")
+        self.assertEqual(brief["scenes"][0]["source_url"], "")
+        self.assertTrue(existing_gate_errors)  # Existing validator NOT bypassed
+
+    def test_prior_lessons_require_sha_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "reviews.jsonl"
+            good = {"video_sha256": "a" * 64, "variant": "critico_standard",
+                    "review_status": "observed_by_human",
+                    "findings": [{"problem": "A frame lasted just one tenth of a second",
+                                  "next_change": "Keep the source frame for longer."}]}
+            bad = dict(good, video_sha256="")
+            p.write_text(json.dumps(good) + "\n" + json.dumps(bad) + "\n")
+            prior = read_prior_lessons(p, "artvision_critico")
+            self.assertEqual(len(prior), 1)
+            self.assertEqual(prior[0]["video_sha256"], "a" * 64)
+            self.assertEqual(read_prior_lessons(p, "storia_rivive"), [])
+
 
     def test_reports_are_safe_for_android(self):
         with tempfile.TemporaryDirectory() as tmp:
