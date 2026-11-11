@@ -1,4 +1,4 @@
-name: "La Storia Rivive - The Barbershop 1894 source-verified Vidu owner review"
+name: "La Storia Rivive - The Barbershop 1894 compact photoreal Vidu owner review"
 on:
   push:
     branches: [main]
@@ -48,7 +48,7 @@ jobs:
           command -v ffmpeg
           command -v ffprobe
           python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "requests>=2.31,<3" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
-      - name: "Restore only nonblank 1894 archival frames, then submit a single capped Vidu clip"
+      - name: "Restore two verified 1894 authentic moments and single source-matched Vidu motion"
         shell: bash
         run: |
           set -euo pipefail
@@ -67,7 +67,7 @@ jobs:
           from pathlib import Path
           d=Path('output/first_motion_1894_v1')
           r=json.loads((d/'TECHNICAL_QA.json').read_text())
-          assert r['source_film_count']==1 and r['different_moments_same_original_film']==5 and r['new_finegrain_restorations']==5
+          assert r['new_historical_original_films']==1 and r['different_real_film_moments']==2 and r['new_finegrain_restorations']==2
           assert r['real_vidu_clip_produced'] and not r['artistic_approval'] and not r['social_published']
           assert zipfile.ZipFile(d/'FIRST_MOTION_1893_1894_ANDROID_KIT.zip').testzip() is None
           print('REAL_MP4_ZIP_TECH_CHECK_PASS_HUMAN_REVIEW_PENDING')
@@ -99,8 +99,8 @@ jobs:
           fi
           gh release create "$tag" "$d/FIRST_MOTION_1893_1894_VIDU_REVIEW.mp4" "$d/FIRST_MOTION_1893_1894_ANDROID_KIT.zip" "$d/SOCIAL_COVER.jpg" "$d/TECHNICAL_QA.json" \
             --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --latest=false \
-            --title "THE BARBERSHOP 1894 · Real archival B/W and Vidu motion · Owner Review" \
-            --notes "One authentic historical Edison 1894 Barbershop source film and five different original moments, five new Finegrain I2I restorations and one new source-locked Vidu motion scene. Cinematic owner review only: AI interpretation, not historically recorded color or proof of exact facial details. QA technical only; artistic, source license for Italy and publish approval pending. Not on website or social."
+            --title "THE BARBERSHOP 1894 · Two genuine historical reveals and Vidu animation · Owner Review" \
+            --notes "One authentic historical Edison Barbershop 1894 film, two source-locked Finegrain restored photos and one real new Vidu color motion scene. Short owner preview, NOT a full 4+1 master. Cinematic owner review only: AI interpretation, not historically recorded color or proof of exact facial details. QA technical only; artistic, source license for Italy and publish approval pending. Not on website or social."
           for name in FIRST_MOTION_1893_1894_VIDU_REVIEW.mp4 FIRST_MOTION_1893_1894_ANDROID_KIT.zip; do
             curl -fLsS --retry 2 --max-time 130 "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$name" -o "/tmp/$name"
             cmp "$d/$name" "/tmp/$name"
