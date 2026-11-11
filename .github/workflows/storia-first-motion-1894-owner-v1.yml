@@ -36,11 +36,17 @@ jobs:
           python -m py_compile tools/first_motion_1894_owner_v1.py
           test -s src/storia_rivive_real_ai_v60.py
           test -n "${VIDU_API_KEY:-}" || (echo "NO_VIDU_SECRET_NO_PAID_REQUEST" && exit 2)
-          command -v ffmpeg
-          command -v ffprobe
+          command -v ffmpeg || echo "FFMPEG_NOT_PREINSTALLED_WILL_INSTALL"
+          command -v ffprobe || echo "FFPROBE_NOT_PREINSTALLED_WILL_INSTALL"
       - name: "Install free original film and image-to-image dependencies"
         run: |
           set -euo pipefail
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            timeout 90 sudo apt-get update -qq || true
+            timeout 120 sudo apt-get install -y -qq ffmpeg
+          fi
+          command -v ffmpeg
+          command -v ffprobe
           python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "requests>=2.31,<3" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
       - name: "Produce five original real film shots + 5 source-lock I2I + only one approved capped Vidu clip"
         shell: bash
