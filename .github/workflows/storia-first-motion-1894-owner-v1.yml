@@ -48,7 +48,7 @@ jobs:
           command -v ffmpeg
           command -v ffprobe
           python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "requests>=2.31,<3" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
-      - name: "Produce verified Barbershop 1894 motion + 5 new I2I scenes + single capped Vidu clip"
+      - name: "Restore only nonblank 1894 archival frames, then submit a single capped Vidu clip"
         shell: bash
         run: |
           set -euo pipefail
