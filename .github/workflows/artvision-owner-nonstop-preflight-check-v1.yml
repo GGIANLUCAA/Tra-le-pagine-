@@ -1,0 +1,35 @@
+name: "ArtVision owner - non-stop preflight regression (no render)"
+on:
+  pull_request:
+    paths:
+      - "scripts/artvision_owner_nonstop_preflight_v1.py"
+      - "tests/test_artvision_owner_nonstop_preflight_v1.py"
+      - "docs/ARTVISION_OWNER_NONSTOP_PROGRESS_V1_20261109.md"
+      - ".github/workflows/artvision-owner-nonstop-preflight-check-v1.yml"
+permissions:
+  contents: read
+jobs:
+  preflight_readonly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile and test fail-closed selection
+        run: |
+          python -m py_compile scripts/artvision_owner_nonstop_preflight_v1.py
+          python -m unittest discover -s tests -p 'test_artvision_owner_nonstop_preflight_v1.py' -v
+      - name: Read actual owner 30 queue and confirm no render is requested
+        run: |
+          python scripts/artvision_owner_nonstop_preflight_v1.py --out output/artvision_owner_nonstop/PREFLIGHT.json
+          python - <<'PY'
+          import json
+          p=json.load(open('output/artvision_owner_nonstop/PREFLIGHT.json'))
+          assert p['selected_count']==30
+          assert p['auto_render'] is False and p['auto_publish'] is False
+          assert p['paid_api_calls']==0
+          assert all(not x['eligible_preflight'] for x in p['checks']) or p['status']=='candidate_preflight_only'
+          print('PREFLIGHT_STATUS:',p['status'], 'BLOCKED:',p['blocked_count'])
+          PY
