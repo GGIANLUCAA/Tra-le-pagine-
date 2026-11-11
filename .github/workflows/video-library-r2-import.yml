@@ -231,17 +231,32 @@ jobs:
               if unmatched:
                   return False,'master hash is not covered by an approved V25 review: '+repr(unmatched)
               return True,'exact-hash V25 reviews passed'
+          name_size_conflicts=set()
+          def existing_object_policy(current,size):
+              if current.get('deleted'):return 'deleted'
+              if not current.get('exists'):return 'new'
+              if current.get('size')==size:return 'same'
+              return 'name_size_conflict'
+          def self_test_existing_object_policy():
+              assert existing_object_policy({},10)=='new'
+              assert existing_object_policy({'exists':True,'size':10},10)=='same'
+              assert existing_object_policy({'exists':True,'size':11},10)=='name_size_conflict'
+              assert existing_object_policy({'exists':True,'deleted':True,'size':10},10)=='deleted'
+              print('Existing object name/size policy self-test: PASS',flush=True)
+          self_test_existing_object_policy()
           def upload(fp,key):
               size=fp.stat().st_size
               old=status(key)
-              if old.get('deleted'):
+              policy=existing_object_policy(old,size)
+              if policy=='deleted':
                   print('OWNER DELETED - do not restore:',key,flush=True);return False
-              if old.get('exists') and old.get('size')==size:
+              if policy=='same':
                   print('Already stored:',key,flush=True);return False
-              if old.get('exists'):
-                  key=fp.stem+'__'+str(size)+fp.suffix
-                  variant_status=status(key)
-                  if variant_status.get('deleted') or variant_status.get('exists'):return False
+              if policy=='name_size_conflict':
+                  name_size_conflicts.add(key)
+                  print('NAME/SIZE CONFLICT - ambiguous variant not imported:',key,
+                        'stored:',old.get('size'),'candidate:',size,flush=True)
+                  return False
               if size<=32*1024*1024:
                   with fp.open('rb') as fd:r=cf('POST','/single',{'key':key},data=fd)
               else:
@@ -377,8 +392,11 @@ jobs:
                               if current.get('deleted'):
                                   print('OWNER DELETED - excluded from catalog:',key,flush=True)
                                   continue
-                              if current.get('size')!=src_fp.stat().st_size:
-                                  key=src_fp.stem+'__'+str(src_fp.stat().st_size)+src_fp.suffix
+                              if current.get('exists') and current.get('size')!=src_fp.stat().st_size:
+                                  name_size_conflicts.add(key)
+                                  print('NAME/SIZE CONFLICT - excluded from catalog:',key,
+                                        'stored:',current.get('size'),'candidate:',src_fp.stat().st_size,flush=True)
+                                  continue
                               current=status(key)
                               if current.get('deleted'):
                                   print('OWNER DELETED - excluded from catalog:',key,flush=True)
@@ -409,6 +427,9 @@ jobs:
                               for social in ('POST_FACEBOOK.txt','POST_INSTAGRAM.txt','POST_TIKTOK.txt','POST_YOUTUBE.txt'):
                                   if not any(pathlib.PurePosixPath(m).name==social for m in text_items):
                                       raise ValueError('V55 missing required social attachment: '+social)
+                          if any(re.sub(r'[^A-Za-z0-9_(). -]','_',pathlib.PurePosixPath(member).name)[:180] in name_size_conflicts for member in videos):
+                              print('NAME/SIZE CONFLICT - editorial attachments skipped for ambiguous filename',flush=True)
+                              text_items=[]
                           if text_items:
                               hashes=set()
                               if len(videos)>1:
