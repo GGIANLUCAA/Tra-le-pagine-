@@ -1,0 +1,51 @@
+name: Canterville - original Gacrux narration and alignment
+on:
+  pull_request:
+    paths:
+      - experiments/canterville_20261027/copione.txt
+      - .github/workflows/canterville-gacrux.yml
+permissions:
+  contents: read
+jobs:
+  voice:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "google-genai>=2.25,<3"
+      - name: Existing approved Gacrux narration; no substitute
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          mkdir -p output/canterville-voice
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "UNAVAILABLE: GEMINI_API_KEY missing" > output/canterville-voice/VOICE_STATUS.txt
+            exit 0
+          fi
+          python - <<'PY'
+          from pathlib import Path
+          import json,sys,traceback
+          sys.path.insert(0,"src")
+          from gemini_voice import synthesize
+          out=Path("output/canterville-voice")
+          try:
+              voice,phrases=synthesize(Path("experiments/canterville_20261027/copione.txt").read_text(encoding="utf8"),out)
+              (out/"SCENE_TIMING.json").write_text(json.dumps({"phrases":phrases,"requires_sync_review":True},ensure_ascii=False,indent=2),encoding="utf8")
+              (out/"VOICE_STATUS.txt").write_text("Gacrux narration generated; manual sync check required")
+          except Exception as ex:
+              print("VOICE ERROR:",type(ex).__name__,str(ex)[:200])
+              (out/"VOICE_STATUS.txt").write_text("UNAVAILABLE: "+type(ex).__name__)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CANTERVILLE_GACRUX_AUDIO
+          path: output/canterville-voice/
+          retention-days: 14
+          if-no-files-found: error
