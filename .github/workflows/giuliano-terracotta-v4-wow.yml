@@ -1,0 +1,106 @@
+name: "Giuliano V4 - Cinematic Terracotta Documentary"
+on:
+  push:
+    branches: ["feature/giuliano-terracotta-v4-wow-20261109"]
+    paths:
+      - "giuliano/terracotta_v4/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "giuliano/terracotta_v4/**"
+      - ".github/workflows/giuliano-terracotta-v4-wow.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: giuliano-v4-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  real-documentary:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ARTVISION_ASR_MODEL: base
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout project, never edit ArtVision or Restauro
+        uses: actions/checkout@v4
+      - name: Use Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Syntax and full evidence-storyboard gate before any Google voice call
+        shell: bash
+        run: |
+          python -m py_compile giuliano/terracotta_v4/render_documentary_v4.py
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path("giuliano/terracotta_v4")
+          spec=json.loads((p/"REGIA_EVIDENZE.json").read_text())
+          lines=(p/"SCENEGGIATURA_GIORNALISTICA_IT.txt").read_text().strip().splitlines()
+          assert len(spec["beats"])==len(lines)>=28
+          assert all(b["narration"]==x for b,x in zip(spec["beats"],lines))
+          names={p for b in spec["beats"] for p in b["sources"]}
+          assert len(names)>=40, len(names)
+          assert all(b["sources"] for b in spec["beats"])
+          assert sum(len(b["sources"]) for b in spec["beats"])>=60
+          script=" ".join(lines).lower()
+          assert all(bad not in script for bad in ("avviciniamoci","osserviamo","guardiamo questo"))
+          assert spec["archival_motion"].startswith("Terracotta Army Pit 1 2014")
+          print("V4_EDITORIAL_GATE_PASS",len(lines),"beats",len(names),"real source photos")
+          PY
+          test -n "$GEMINI_API_KEY" || (echo "Google Gacrux key not configured; no robotic fallback" && exit 2)
+      - name: FFmpeg, licensed media handling, Google voice and word ASR prerequisites
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            timeout 90 sudo apt-get update -qq && break || sleep 8
+          done
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Recover the already paid and verified Google Gacrux WAV and real-film/photo sources
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_V4_DIAGNOSTICS_NOT_A_FINISHED_FILM
+          run-id: 42700167225
+          github-token: ${{ github.token }}
+          path: output/giuliano_terracotta_v4
+      - name: Require real recovered 125-second narration, no second TTS expense
+        shell: bash
+        run: |
+          test -s output/giuliano_terracotta_v4/audio/VOCE.wav
+          ffprobe -v error -show_entries format=duration -of default=nw=1 output/giuliano_terracotta_v4/audio/VOCE.wav
+          echo "RECOVERED_VERIFIED_GOOGLE_VOICE=true"
+      - name: Verified video and photo preflight, fresh Gacrux documentary, frame-matched production
+        run: python giuliano/terracotta_v4/render_documentary_v4.py
+      - name: Preserve real verified source files and voice if there is a technical failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_V4_DIAGNOSTICS_NOT_A_FINISHED_FILM
+          path: |
+            output/giuliano_terracotta_v4/audio/VOCE.wav
+            output/giuliano_terracotta_v4/audio/ALLINEAMENTO_VOCE.json
+            output/giuliano_terracotta_v4/media/TERRACOTTA_REAL_MOTION_2014.webm
+            output/giuliano_terracotta_v4/CONTACT_SHEET_V4.jpg
+            output/giuliano_terracotta_v4/media/source_*.jpg
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Archive completed Android MP4, full ZIP, cover, QA and storyboard review
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_TERRACOTTA_V4_CINEMA_MP4_COVER_ZIP
+          path: |
+            output/giuliano_terracotta_v4/THE_TERRACOTTA_ARMY_V4_WOW_DOCUMENTARY.mp4
+            output/giuliano_terracotta_v4/TERRACOTTA_V4_VIDEO_COVER_FONTI.zip
+            output/giuliano_terracotta_v4/COVER_V4.jpg
+            output/giuliano_terracotta_v4/CONTACT_SHEET_V4.jpg
+            output/giuliano_terracotta_v4/QA_V4.json
+            output/giuliano_terracotta_v4/PHOTO_AND_VIDEO_CREDITS_V4.txt
+          if-no-files-found: error
+          retention-days: 14
+
