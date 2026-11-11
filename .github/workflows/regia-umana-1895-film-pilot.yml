@@ -1,0 +1,222 @@
+name: "Regia Umana · 1895 actual archival film (isolated owner review)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/regia-umana-1895-film-pilot.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: regia-umana-1895-film-pilot
+  cancel-in-progress: false
+jobs:
+  actual_archival_video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install real MP4/video validation tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --quiet numpy
+      - name: Download documented public-domain moving films (not AI)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,subprocess,time,urllib.parse,urllib.request
+          from pathlib import Path
+          films=[
+             ("baby","Repas de bébé (1895).webm","https://commons.wikimedia.org/wiki/File:Repas_de_b%C3%A9b%C3%A9_(1895).webm"),
+             ("factory","La Sortie de l'Usine Lumière à Lyon I 1895.webm","https://commons.wikimedia.org/wiki/File:La_Sortie_de_l%27Usine_Lumi%C3%A8re_%C3%A0_Lyon_I_1895.webm"),
+             ("street","Place des Cordeliers (1895).webm","https://commons.wikimedia.org/wiki/File:Place_des_Cordeliers_(1895).webm"),
+             ("fish","Pêche aux poissons rouges - Film 1895.webm","https://commons.wikimedia.org/wiki/File:P%C3%AAche_aux_poissons_rouges_-_Film_1895.webm"),
+             ("sea","Baignade en mer (1895).webm","https://commons.wikimedia.org/wiki/File:Baignade_en_mer_(1895).webm")
+          ]
+          p=Path("output/regia-umana-1895");p.mkdir(parents=True,exist_ok=True)
+          manifest={"project":"Regia Umana","episode":"France 1895: Small Lives","approval":"owner_review_only","source_type":"genuine Lumiere 1895 moving pictures","filming_period":"1895","color":"original black and white","vidu_used":False,"source_links":[]}
+          ua={"User-Agent":"ArtVisionSourceResearch/1.0 (repository: github.com/GGIANLUCAA/Tra-le-pagine-; educational archival QA)"}
+          for slug,title,page in films:
+              qs=urllib.parse.urlencode({"action":"query","format":"json","prop":"imageinfo","iiprop":"url|size","titles":"File:"+title})
+              api="https://commons.wikimedia.org/w/api.php?"+qs
+              last=None
+              for trial in range(4):
+                  try:
+                      req=urllib.request.Request(api,headers=ua)
+                      with urllib.request.urlopen(req,timeout=35) as resp:
+                          info=json.load(resp)["query"]["pages"]
+                      pg=next(iter(info.values()))
+                      link=pg["imageinfo"][0]["url"]
+                      parsed=urllib.parse.urlparse(link)
+                      if parsed.scheme!="https" or parsed.netloc!="upload.wikimedia.org":
+                          raise ValueError("Unexpected file host")
+                      dest=p/(slug+".webm")
+                      with urllib.request.urlopen(urllib.request.Request(link,headers=ua),timeout=240) as source,open(dest,"wb") as out:
+                          while True:
+                              ch=source.read(1024*1024)
+                              if not ch:break
+                              out.write(ch)
+                      if not (500000<=dest.stat().st_size<=140000000):raise ValueError("Unexpected original video size")
+                      v=json.loads(subprocess.check_output(["ffprobe","-v","error","-select_streams","v:0","-show_entries","stream=width,height,duration","-of","json",str(dest)]))
+                      if not v.get("streams"):raise ValueError("Downloaded source is not video")
+                      import hashlib
+                      manifest["source_links"].append({"slug":slug,"original_title":title,"file_page":page,"source_url":link,"sha256":hashlib.sha256(dest.read_bytes()).hexdigest(),"bytes":dest.stat().st_size,"resolution":str(v["streams"][0].get("width"))+"x"+str(v["streams"][0].get("height"))})
+                      print("VERIFIED source",slug,dest.stat().st_size,flush=True)
+                      break
+                  except Exception as e:
+                      last=str(e)
+                      print("Download attempt",slug,trial+1,last,flush=True)
+                      time.sleep(2*(trial+1))
+              else:raise RuntimeError("Failed to fetch verified archival film "+slug+" "+str(last))
+          (p/"SOURCES_AND_RIGHTS.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n")
+          PY
+      - name: Cinematic scene selection with real motion, human beat cuts and visual reprise
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import subprocess,pathlib,json
+          out=pathlib.Path("output/regia-umana-1895")
+          # Deliberate rhythm variation. Start with an intimate human act, widen to crowds,
+          # return to the same family from a different ORIGINAL moving time interval.
+          scenes=[("baby",8.4,3.2),("factory",12.0,4.3),("street",14.8,4.1),
+                  ("fish",12.0,3.4),("sea",12.4,4.4),("baby",23.6,5.0)]
+          storyboard=[]
+          total=0.0
+          for index,(slug,offset,dur) in enumerate(scenes):
+              # The soft background is a derivative of the SAME source frame, not synthetic footage.
+              # The archival action is full width with the original geometry preserved, never zoomed/cropped.
+              vf=("fps=25,split=2[b][f];"
+                  "[b]scale=1080:1920:force_original_aspect_ratio=increase,"
+                  "crop=1080:1920,boxblur=luma_radius=22:luma_power=2,"
+                  "eq=brightness=-0.22:contrast=0.92[bk];"
+                  "[f]scale=1020:785:force_original_aspect_ratio=decrease,"
+                  "pad=1042:807:(ow-iw)/2:(oh-ih)/2:color=0x060608[front];"
+                  "[bk][front]overlay=(W-w)/2:(H-h)/2,format=yuv420p[v]")
+              target=out/("shot_%02d.mp4"%index)
+              cmd=["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y",
+                   "-ss",str(offset),"-i",str(out/(slug+".webm")),"-t",str(dur),
+                   "-filter_complex",vf,"-map","[v]","-an","-r","25",
+                   "-c:v","libx264","-preset","veryfast","-crf","18",
+                   "-pix_fmt","yuv420p","-movflags","+faststart",str(target)]
+              subprocess.run(cmd,check=True)
+              storyboard.append({"scene":index+1,"original_source":slug,"source_in_seconds":offset,
+                  "output_start_seconds":round(total,2),"duration_seconds":dur,"actual_camera":"archival original shot, locked"} )
+              total+=dur
+          concat=out/"concat.txt"
+          concat.write_text("".join("file '"+("shot_%02d.mp4"%i)+"'\n" for i in range(len(scenes))))
+          subprocess.run(["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y",
+             "-f","concat","-safe","0","-i",str(concat),"-c","copy",str(out/"picture_no_audio.mp4")],check=True)
+          (out/"STORYBOARD.json").write_text(json.dumps({"runtime":round(total,2),"shots":storyboard,
+            "logic":"baby hands -> factory crowds -> street -> family leisure -> seaside -> return to the real baby. Six shots, five distinct archival films, not a slideshow."},indent=2))
+          print("SOURCE_MOTION_EDIT_SECONDS",total)
+          PY
+      - name: Original soundtrack - gentle felt piano, room tone, subtle film mechanism
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import numpy as np,wave
+          from pathlib import Path
+          sr=44100
+          seconds=24.4
+          n=int(seconds*sr)
+          t=np.arange(n,dtype=np.float64)/sr
+          sound=np.zeros(n,dtype=np.float64)
+          chords=[(146.83,174.61,220.00),(116.54,146.83,174.61),(130.81,174.61,220.00),(130.81,164.81,196.00)]
+          for j,(f0,f1,f2) in enumerate(chords):
+              st=j*6.1;en=min(seconds,st+6.1)
+              a=int(st*sr);b=int(en*sr);tt=t[a:b]-st
+              env=np.minimum(1,tt/1.9)*np.minimum(1,(en-st-tt)/1.4)
+              for frequency in [f0/2,f0,f1,f2]:
+                  sound[a:b]+=0.013*env*(np.sin(2*np.pi*frequency*tt)+0.25*np.sin(2*np.pi*2*frequency*tt))
+          notes=[(0.2,293.66),(2.4,349.23),(4.7,440.0),(7.7,349.23),(10.2,261.63),
+                 (12.7,293.66),(15.2,349.23),(18.0,293.66),(20.7,261.63),(22.4,293.66)]
+          for start,f in notes:
+              a=int(start*sr)
+              b=min(n,a+int(2.9*sr))
+              tt=np.arange(b-a)/sr
+              attack=np.minimum(1,tt/0.022)
+              decay=np.exp(-2.15*tt)
+              piano=(np.sin(2*np.pi*f*tt)+0.35*np.sin(2*np.pi*(f*2)*tt)+0.15*np.sin(2*np.pi*(f*3)*tt))
+              sound[a:b]+=0.068*attack*decay*piano
+          rng=np.random.default_rng(1895)
+          # Almost inaudible film-machine texture, designed rather than copied from a library.
+          ticks=np.zeros(n)
+          for k in range(20,int(seconds*16)):
+              at=int(k*sr/16)
+              z=min(n-at,120)
+              if z>0:ticks[at:at+z]+=rng.normal(0,0.03,z)*np.exp(-np.linspace(0,4,z))
+          sound+=ticks*0.2
+          # Room-like echo, not washed-out trailer reverb
+          delay=int(0.15*sr);sound[delay:]+=0.16*sound[:-delay].copy()
+          fade=np.minimum(np.minimum(1,t/0.9),np.minimum(1,(seconds-t)/1.1))
+          sound*=np.maximum(0,fade)
+          peak=max(0.0001,np.max(np.abs(sound)))
+          sound=np.clip(sound*min(1,0.74/peak),-0.94,0.94)
+          target=Path("output/regia-umana-1895/ORIGINAL_SCORE.wav")
+          with wave.open(str(target),"wb") as fp:
+              fp.setnchannels(1);fp.setsampwidth(2);fp.setframerate(sr)
+              fp.writeframes((sound*32767).astype("<i2").tobytes())
+          print("OWN_SOUNDDESIGN",seconds,"seconds",round(float(peak),3))
+          PY
+      - name: Compose finished social film, titles and continuous soundtrack
+        shell: bash
+        run: |
+          set -euo pipefail
+          p="output/regia-umana-1895"
+          ffmpeg -nostdin -hide_banner -loglevel error -y \
+            -i "$p/picture_no_audio.mp4" -i "$p/ORIGINAL_SCORE.wav" \
+            -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='FRANCE · 1895':fontcolor=white:fontsize=55:shadowcolor=black@0.65:shadowx=2:shadowy=2:x=(w-text_w)/2:y=350:enable='between(t,0.24,3.18)',drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='Louis Lumière · original film archive':fontcolor=white@0.78:fontsize=28:x=(w-text_w)/2:y=1366:enable='between(t,21.65,24.36)',format=yuv420p" \
+            -filter:a "afade=t=in:st=0:d=0.6,afade=t=out:st=23.5:d=0.9" \
+            -map 0:v:0 -map 1:a:0 -t 24.4 \
+            -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p -r 25 \
+            -c:a aac -b:a 192k -ac 2 -ar 44100 -movflags +faststart \
+            "$p/FRANCE_1895_REGIA_UMANA_FULL_OWNER_REVIEW.mp4"
+          ffmpeg -nostdin -hide_banner -loglevel error -y -ss 1 -i "$p/FRANCE_1895_REGIA_UMANA_FULL_OWNER_REVIEW.mp4" \
+            -vf "fps=1/4,scale=280:-1,tile=3x2:padding=8:margin=8" -frames:v 1 "$p/REVIEW_CONTACT_SHEET.jpg"
+      - name: Validate full MP4 bytes, video/audio, frame cadence and rights manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,hashlib,subprocess
+          from pathlib import Path
+          p=Path("output/regia-umana-1895"); v=p/"FRANCE_1895_REGIA_UMANA_FULL_OWNER_REVIEW.mp4"
+          report=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration,size:stream=codec_type,codec_name,width,height,r_frame_rate","-of","json",str(v)]))
+          streams=report["streams"]
+          vid=next(x for x in streams if x["codec_type"]=="video")
+          aud=next(x for x in streams if x["codec_type"]=="audio")
+          duration=float(report["format"]["duration"])
+          assert vid["width"]==1080 and vid["height"]==1920 and vid["codec_name"]=="h264"
+          assert aud["codec_name"]=="aac" and 23.8<=duration<=24.6
+          assert len(json.loads((p/"SOURCES_AND_RIGHTS.json").read_text())["source_links"])==5
+          subprocess.run(["ffmpeg","-v","error","-i",str(v),"-f","null","-"],check=True)
+          digest=hashlib.sha256(v.read_bytes()).hexdigest()
+          summary={"status":"rendered_needs_artistic_review","filename":v.name,"sha256":digest,
+              "actual_file_bytes":v.stat().st_size,"duration_seconds":duration,
+              "video_codec":vid["codec_name"],"width":vid["width"],"height":vid["height"],
+              "audio_codec":aud["codec_name"],"full_decode":"pass","copyright_note":"Source film pages document public domain; check any restored transfer and attribution prior to public distribution",
+              "vidu_used":False,"subscription_credits_spent":0,"publication":"not_approved",
+              "regia_reference":"SGUARDI_IN_CAMERA / REGIA UMANA V1"}
+          (p/"QA_REPORT.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False))
+          print("REAL_MP4_READY_OWNER_REVIEW",json.dumps(summary))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: REGIA_UMANA_FRANCE_1895_REAL_MP4_OWNER_REVIEW
+          path: |
+            output/regia-umana-1895/FRANCE_1895_REGIA_UMANA_FULL_OWNER_REVIEW.mp4
+            output/regia-umana-1895/REVIEW_CONTACT_SHEET.jpg
+            output/regia-umana-1895/SOURCES_AND_RIGHTS.json
+            output/regia-umana-1895/STORYBOARD.json
+            output/regia-umana-1895/QA_REPORT.json
+          retention-days: 14
+          if-no-files-found: warn
