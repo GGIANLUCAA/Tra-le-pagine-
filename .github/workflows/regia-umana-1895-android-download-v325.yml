@@ -1,0 +1,149 @@
+name: "France 1895 · Android MP4 direct-download review release V325"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/regia-umana-1895-android-download-v325.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: france-1895-android-download-release-v325
+  cancel-in-progress: false
+jobs:
+  verified_download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: france-1895-truecolor-regia-v325-android-review
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Restore exact past source videos from completed GitHub Action artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/real-source output/truecolor output/android
+          gh run download 42950395995 --repo "$GITHUB_REPOSITORY" \
+            --name REGIA_UMANA_FRANCE_1895_REAL_MP4_OWNER_REVIEW \
+            --dir output/real-source
+          gh run download 43074039396 --repo "$GITHUB_REPOSITORY" \
+            --name REGIA_UMANA_1895_NEURAL_COLOR_VIDU_REAL_MP4_REVIEW \
+            --dir output/truecolor
+          python3 - <<'PY'
+          import hashlib, pathlib
+          pairs=[
+          ("output/real-source","FRANCE_1895_REGIA_UMANA_FULL_OWNER_REVIEW.mp4","35d6ad8ab6a6ba1c770ded4b0d79a4c20fd4111c7b07a254e52fb27072c76d42"),
+          ("output/truecolor","VIDU_FRANCE_1895_NEURAL_TRUE_COLOR_REVEAL_720.mp4","a7b24de5af0d313c4c66f8866f5fd1549196cb405530723bf39ce178931289f0")]
+          for parent,name,expect in pairs:
+              found=list(pathlib.Path(parent).rglob(name))
+              if len(found)!=1:raise SystemExit("SOURCE_MISSING_OR_DUPLICATE "+name)
+              actual=hashlib.sha256(found[0].read_bytes()).hexdigest()
+              if actual!=expect:raise SystemExit("SOURCE_HASH_MISMATCH "+name+" "+actual)
+              p=pathlib.Path("output/android")/("ORIGINAL_MASTER.mp4" if "real-source" in parent else "NEURAL_COLOR.mp4")
+              p.write_bytes(found[0].read_bytes())
+              print("VERIFIED_ASSET",name,found[0].stat().st_size,actual,flush=True)
+          PY
+      - name: Reassemble a coherent 26.08-second full movie using existing real color footage (NO new Vidu usage)
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=output/android
+          # Original historical montage + previously generated, genuinely neural-colorized Vidu clip.
+          # The original first 21 s are preserved, followed by the 5.08 s color-reveal segment.
+          # Original music is crossfaded from the existing master, not downloaded copyrighted music.
+          ffmpeg -nostdin -hide_banner -loglevel error -y \
+            -i "$root/ORIGINAL_MASTER.mp4" \
+            -i "$root/NEURAL_COLOR.mp4" \
+            -filter_complex "[0:v]trim=duration=21,setpts=PTS-STARTPTS,fps=25,scale=1080:1920:flags=lanczos,setsar=1,format=yuv420p[v0];[1:v]trim=duration=5.08,setpts=PTS-STARTPTS,fps=25,scale=1080:1920:flags=lanczos,setsar=1,format=yuv420p[v1];[v0][v1]concat=n=2:v=1:a=0,format=yuv420p[v];[0:a]atrim=start=0:end=21.8,asetpts=PTS-STARTPTS[a0];[0:a]atrim=start=10:end=15.08,asetpts=PTS-STARTPTS[a1];[a0][a1]acrossfade=d=0.8:c1=tri:c2=tri,afade=t=out:st=25.08:d=1.0[a]" \
+            -map "[v]" -map "[a]" -t 26.08 \
+            -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p \
+            -c:a aac -b:a 160k -ac 2 \
+            -movflags +faststart \
+            "$root/FRANCE_1895_COLORE_REALE_DA_SCARICARE_1080.mp4"
+          ffmpeg -nostdin -hide_banner -loglevel error -y \
+            -i "$root/FRANCE_1895_COLORE_REALE_DA_SCARICARE_1080.mp4" \
+            -vf "scale=720:1280:flags=lanczos" -c:v libx264 -preset veryfast -crf 25 \
+            -c:a copy -movflags +faststart \
+            "$root/FRANCE_1895_COLORE_ANDROID_720.mp4"
+          ffmpeg -nostdin -hide_banner -loglevel error -y \
+            -ss 24 -i "$root/FRANCE_1895_COLORE_REALE_DA_SCARICARE_1080.mp4" \
+            -frames:v 1 -q:v 3 "$root/COPERTINA_FRANCE_1895.jpg"
+          ffmpeg -nostdin -hide_banner -loglevel error -y \
+            -ss 20 -i "$root/FRANCE_1895_COLORE_REALE_DA_SCARICARE_1080.mp4" -t 6.08 \
+            -c:v libx264 -preset veryfast -crf 21 -pix_fmt yuv420p \
+            -c:a aac -b:a 128k -movflags +faststart \
+            "$root/ESTRATTO_BIANCO_NERO_COLORE.mp4"
+      - name: Validate actual MP4s and public-download deliverables
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,hashlib,subprocess,pathlib,zipfile
+          d=pathlib.Path("output/android")
+          items=[
+             ("FRANCE_1895_COLORE_REALE_DA_SCARICARE_1080.mp4",1080,1920),
+             ("FRANCE_1895_COLORE_ANDROID_720.mp4",720,1280),
+             ("ESTRATTO_BIANCO_NERO_COLORE.mp4",1080,1920)]
+          report={"date":"2026-11-11","status":"TECHNICALLY_VERIFIED_OWNER_REVIEW","publication":"NOT_POSTED_TO_SITE_OR_SOCIAL",
+            "source_job_id":42950395995,"colorization_job_id":43074039396,
+            "video_composition":"21s authentic archival film + 5.08s existing Vidu AI reconstructed chromatic moving clip",
+            "Vidu_new_credits_charged":0,"historical_color":"interpretative_neural_colorization_not_archival_fact","files":[]}
+          for name,w,h in items:
+              p=d/name
+              data=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","stream=codec_type,codec_name,width,height:format=duration,size","-of","json",str(p)]))
+              streams=data["streams"]
+              v=next(s for s in streams if s["codec_type"]=="video")
+              a=next(s for s in streams if s["codec_type"]=="audio")
+              duration=float(data["format"]["duration"])
+              assert(v["width"],v["height"],v["codec_name"],a["codec_name"])==(w,h,"h264","aac"),(name,v,a)
+              assert duration>5 and (abs(duration-26.08)<0.22 if "ESTRATTO" not in name else duration<6.5),duration
+              subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(p),"-f","null","-"],check=True,timeout=180)
+              record={"filename":name,"bytes":p.stat().st_size,"duration_s":round(duration,3),
+                 "sha256":hashlib.sha256(p.read_bytes()).hexdigest(),"full_decoding":"pass"}
+              report["files"].append(record)
+              print("VERIFIED_VIDEO_READY",json.dumps(record),flush=True)
+          (d/"QA_VIDEO.json").write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n")
+          pkg=d/"FRANCE_1895_VIDEO_ANDROID_COMPLETO.zip"
+          with zipfile.ZipFile(pkg,"w",compression=zipfile.ZIP_STORED) as out:
+              for p in ["FRANCE_1895_COLORE_REALE_DA_SCARICARE_1080.mp4",
+                   "FRANCE_1895_COLORE_ANDROID_720.mp4","COPERTINA_FRANCE_1895.jpg","QA_VIDEO.json"]:
+                  out.write(d/p,p)
+          with zipfile.ZipFile(pkg) as z: assert z.testzip() is None
+          PY
+      - name: Publish stable direct MP4 URLs in a GitHub prerelease, never user-facing broken sandbox paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="$TAG"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists; avoid overwrite or release duplicate"
+            exit 1
+          fi
+          gh release create "$tag" \
+            "output/android/FRANCE_1895_COLORE_REALE_DA_SCARICARE_1080.mp4" \
+            "output/android/FRANCE_1895_COLORE_ANDROID_720.mp4" \
+            "output/android/ESTRATTO_BIANCO_NERO_COLORE.mp4" \
+            "output/android/COPERTINA_FRANCE_1895.jpg" \
+            "output/android/QA_VIDEO.json" \
+            "output/android/FRANCE_1895_VIDEO_ANDROID_COMPLETO.zip" \
+            --title "France, 1895 | Correzione colori AI | Download diretto Android | Da revisionare" \
+            --notes "Scaricamento MP4 direttamente dal browser Android. Anteprima tecnica non approvata e non pubblicata automaticamente su sito/social. Riprese di archivio Lumière del 1895 + scena finale Vidu già generata, colorizzata con DDColor: i colori sono ricostruzioni artistiche, non registrazioni storiche a colori. Il video è stato ricomposto dalle due sorgenti già verificate: potrebbe differire nel mixaggio dal precedente file sandbox. Nessuna nuova spesa Vidu. Per Android usare l'asset 720p, oppure 1080p per massima qualità." \
+            --prerelease --repo "$GITHUB_REPOSITORY"
+          gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json url,assets \
+            --jq '{url:.url,assets:[.assets[]|{name,size,url}]}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: FRANCE_1895_ANDROID_RELEASE_QA_COPY_V325
+          path: |
+            output/android/QA_VIDEO.json
+            output/android/COPERTINA_FRANCE_1895.jpg
+          retention-days: 14
+          if-no-files-found: warn
