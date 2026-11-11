@@ -347,7 +347,7 @@ def produce(scenes,photos,real_vidu=None):
   if overlap<.78:
    vc.release()
    write("VIDU_MOTION_IDENTITY_GATE_REJECT.json",{"correlation":overlap,"threshold":.78,
-       "status":"VIDEO_WILL_NOT_BE_CALLED_FINAL","charged_video_not_reused"})
+       "status":"VIDEO_WILL_NOT_BE_CALLED_FINAL","charged_video_not_reused":True})
    raise RuntimeError("VIDU_FIRST_FRAME_DOES_NOT_MATCH_HISTORICAL_PHOTO")
   writer.write(vfirst);counted=1;elapsed+=1
   while counted<120:
