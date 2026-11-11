@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-11",
+  "decision": "The previously delivered France 1895 Vidu sequence remained monochrome. Corrective action: actual DDColor neural chroma reconstructed from the preexisting (paid-once) five-second Vidu clip, preserved in full 26.08s edit.",
+  "input": {
+    "source_final": "FRANCE_1895_WOW_VIDU_FINAL_1080.mp4",
+    "source_provider_task_id": "1017945031794778112",
+    "source_archival": "Lumiere 1895 public-domain film footage; colors are an artistic interpretation"
+  },
+  "process": {
+    "workflow": "regia-umana-1895-vidu-real-color-v2.yml",
+    "run_id": 43074039396,
+    "artifact_id": 13882345192,
+    "free_color_model": "edgetools/ddcolor / ddcolor-tiny-fp16.onnx",
+    "model_sha256": "2653da00dc15e54a45e5200b61dbf82ee9ceaf56b02bb9b9657569ac775e82e6",
+    "method": "source locked ONNX chroma, motion-guided interpolation, B&W→color 0.1–1.15 s of Vidu clip",
+    "new_vidu_credits": 0
+  },
+  "result": {
+    "owner_artistic_review": "pending",
+    "file": "FRANCE_1895_WOW_TRUE_COLOR_FINAL_1080.mp4",
+    "seconds": 26.08,
+    "format": "H264/AAC 1080x1920 25fps",
+    "sha256": "",
+    "location": "Only in the ChatGPT conversation, not automatically on GitHub release or website",
+    "full_decode": "pass",
+    "contact_sheet": "BEFORE_AFTER_REAL_VIDEO_CONTACT_SHEET.jpg",
+    "visible_color_from": "about 21.5s",
+    "full_color_from": "about 22.2s"
+  },
+  "quality": "Chromaticity confirmed on actual moving frames; image colors not historically certified. User approval of final artistic quality is pending.",
+  "prevention": "Never treat Vidu prompt color requests or color_reveal_first_second=true as evidence of actual chroma. Inspect final MP4 and collect colorfulness, hues, and frame timings in the moving scene. Reject monochrome or sepia-only."
+}
