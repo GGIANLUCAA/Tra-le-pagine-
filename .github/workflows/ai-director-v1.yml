@@ -1,0 +1,98 @@
+name: "AI Director V1 | isolated director preflight (zero-cost by default)"
+
+on:
+  pull_request:
+    paths:
+      - "src/ai_director_v1.py"
+      - "tests/test_ai_director_v1.py"
+      - "examples/ai_director_v1_sample.json"
+      - ".github/workflows/ai-director-v1.yml"
+      - "docs/AI_DIRECTOR_V1.md"
+  workflow_dispatch:
+    inputs:
+      brief_path:
+        description: "Repository-relative JSON brief (public, never include secrets)"
+        required: true
+        default: "examples/ai_director_v1_sample.json"
+        type: string
+      enable_live:
+        description: "Try exactly two explicitly verified zero-price LLMs (disabled by default)"
+        required: true
+        type: boolean
+        default: false
+      model_1:
+        description: "Explicit approved model ID ending :free (only when enable_live)"
+        required: false
+        type: string
+      model_2:
+        description: "Second approved model ID ending :free (only when enable_live)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-director-v1-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  director-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      AI_DIRECTOR_LIVE: ${{ inputs.enable_live == true && '1' || '0' }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      BRIEF_FILE: ${{ inputs.brief_path || 'examples/ai_director_v1_sample.json' }}
+      MODEL_1: ${{ inputs.model_1 }}
+      MODEL_2: ${{ inputs.model_2 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify only offline regression tests (no provider requests)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/ai_director_v1.py tests/test_ai_director_v1.py
+          python -m unittest discover -s tests -p 'test_ai_director_v1.py' -v
+      - name: Validate safe repository-relative brief path
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os, pathlib, re
+          s=os.environ["BRIEF_FILE"]
+          if not re.fullmatch(r"(?:examples|queue|research)/[A-Za-z0-9_./-]{1,150}\.json",s) or ".." in s:
+              raise SystemExit("Unsafe brief path")
+          root=pathlib.Path.cwd().resolve()
+          p=(root/s).resolve()
+          if not p.is_file() or root not in p.parents:
+              raise SystemExit("Brief path missing or outside checkout")
+          print("Validated brief path; no writes to production assets")
+          PY
+      - name: Generate standalone Android QA report
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$AI_DIRECTOR_LIVE" = '1' ]; then
+            if [ -z "$MODEL_1" ] || [ -z "$MODEL_2" ]; then
+              echo "Two approved free model IDs required"; exit 1
+            fi
+            python src/ai_director_v1.py --brief "$BRIEF_FILE" \
+              --out output/ai_director_v1/report.json \
+              --dashboard output/ai_director_v1/report.html \
+              --live --models "$MODEL_1" "$MODEL_2"
+          else
+            python src/ai_director_v1.py --brief "$BRIEF_FILE" \
+              --out output/ai_director_v1/report.json \
+              --dashboard output/ai_director_v1/report.html
+          fi
+      - name: Upload factual report, not video or public publication
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-director-v1-qa-${{ github.run_id }}
+          path: output/ai_director_v1/
+          retention-days: 7
+          if-no-files-found: warn
