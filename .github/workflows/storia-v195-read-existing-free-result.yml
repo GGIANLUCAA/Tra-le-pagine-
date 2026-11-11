@@ -1,0 +1,50 @@
+name: La Storia Rivive V195 read existing one authenticated FREE photo attempt no retries
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/storia-v195-read-existing-free-result.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  read-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait original V195 push, inspect outputs only
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v195_read
+          gh api -X GET 'repos/GGIANLUCAA/Tra-le-pagine-/actions/runs?head_sha=b7e95a6b8b61eae2f7aca9f3d4dcac2281b2a0f7&per_page=100' > /tmp/v195_read/RUNS.json
+          ID=$(python - <<'PY'
+          import json
+          xs=json.load(open('/tmp/v195_read/RUNS.json'))['workflow_runs']
+          ys=[x for x in xs if x['event']=='push' and 'V195' in x['name']]
+          print(ys[0]['id'] if ys else '')
+          PY
+          )
+          if [ -z "$ID" ]; then echo 'NO_V195_PUSH_FOUND' > /tmp/v195_read/NO_RUN.txt; exit 0; fi
+          gh run watch "$ID" --repo GGIANLUCAA/Tra-le-pagine- --exit-status --interval 10 || true
+          gh run view "$ID" --repo GGIANLUCAA/Tra-le-pagine- --json databaseId,status,conclusion,jobs > /tmp/v195_read/RUN_STATUS.json
+          gh run download "$ID" --repo GGIANLUCAA/Tra-le-pagine- --name storia-v195-scene04-one-authenticated-free-i2i-only --dir /tmp/v195_read/image || true
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('/tmp/v195_read/image/V195_REAL_I2I_RESULT.json')
+          if p.is_file():
+            r=json.loads(p.read_text())
+            print('V195_FREE_SCENE4_CREATED',r['real_i2i_generated'],'PAID',r['paid_calls'])
+            print('V195_STATUS',r['status'])
+          else:print('V195_REPORT_NOT_PRESENT')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: storia-v195-existing-free-photo-review-only
+          path: /tmp/v195_read/
+          if-no-files-found: warn
+          retention-days: 3

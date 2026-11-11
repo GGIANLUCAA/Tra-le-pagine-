@@ -1,0 +1,60 @@
+name: La Storia Rivive V193 verify single alternative free I2I result (no provider retry)
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/storia-v193-read-alt-i2i-result.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect-existing-public-space-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Identify and follow ONE previous V193 push attempt, do not call the model
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v193_inspect
+          gh api -X GET "repos/GGIANLUCAA/Tra-le-pagine-/actions/runs?head_sha=e180049fd84b49524b24cbaf5430b18c9e23b724&per_page=100" > /tmp/v193_inspect/RUN_LIST.json
+          RUN_ID=$(python - <<'PY'
+          import json
+          data=json.load(open('/tmp/v193_inspect/RUN_LIST.json'))
+          xs=[x for x in data['workflow_runs'] if x['event']=='push' and x['head_sha']=='e180049fd84b49524b24cbaf5430b18c9e23b724']
+          print(xs[0]['id'] if xs else '')
+          PY
+          )
+          if [ -z "$RUN_ID" ]; then
+            printf '{"status":"NO_ORIGINAL_PROVIDER_RUN_FOUND"}\n' > /tmp/v193_inspect/RESULT_CHECK.json
+            exit 0
+          fi
+          echo "SINGLE_ORIGINAL_RUN_ID=$RUN_ID"
+          gh run watch "$RUN_ID" --repo GGIANLUCAA/Tra-le-pagine- --interval 10 --exit-status || true
+          gh run view "$RUN_ID" --repo GGIANLUCAA/Tra-le-pagine- --json databaseId,status,conclusion,jobs > /tmp/v193_inspect/ORIGINAL_PUSH_RUN_STATUS.json
+          gh run download "$RUN_ID" --repo GGIANLUCAA/Tra-le-pagine- --name storia-v193-one-free-true-i2i-candidate-review-only --dir /tmp/v193_inspect/provider_output || true
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          r=Path('/tmp/v193_inspect/ORIGINAL_PUSH_RUN_STATUS.json')
+          d=json.loads(r.read_text())
+          out=Path('/tmp/v193_inspect/provider_output/V193_ONE_REAL_I2I_RESULT.json')
+          print('ORIGINAL_V193_PROVIDER_RUN_CONCLUSION',d.get('conclusion'))
+          if out.exists():
+            p=json.loads(out.read_text())
+            print('ACTUAL_GENERATIVE_PHOTO_EXISTS',p.get('real_generatively_restored_photo'))
+            print('PROVIDER_FREE_STATUS',p.get('status'))
+            print('NO_PAID_SPEND',p.get('paid_provider_calls')==0)
+          else:
+            print('NO_GENERATIVE_RESULT_REPORT_AT_RUN_END')
+          PY
+      - name: Preserve real result or honest failure evidence, no release
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storia-v193-existing-free-photo-result-read-only
+          path: /tmp/v193_inspect/
+          if-no-files-found: warn
+          retention-days: 4

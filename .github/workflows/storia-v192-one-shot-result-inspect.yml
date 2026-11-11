@@ -1,0 +1,51 @@
+name: La Storia Rivive V192 inspect existing one-shot free I2I push run (read-only)
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/storia-v192-one-shot-result-inspect.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  read-existing-run-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read existing V192 run metadata and artifact, NEVER call provider
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v192_inspect
+          gh run list --repo GGIANLUCAA/Tra-le-pagine- --workflow storia-v192-one-free-real-photo-trial.yml --branch storia-v183-production-candidate-20261101 --limit 30 --json databaseId,event,headSha,status,conclusion > /tmp/v192_inspect/RUN_LIST.json
+          python - <<'PY'
+          import json
+          data=json.load(open('/tmp/v192_inspect/RUN_LIST.json'))
+          sha='57437962008dd74481c4cf876fa9f720a984f3a5'
+          matched=[v for v in data if v['headSha']==sha]
+          print('V192_ORIGINAL_HEAD_RUNS',[(v['databaseId'],v['event'],v['status'],v['conclusion']) for v in matched])
+          with open('/tmp/v192_inspect/ORIGINAL_HEAD_RUNS.json','w') as f:json.dump(matched,f,indent=2)
+          PY
+          PUSH_RUN=$(python - <<'PY'
+          import json
+          xs=json.load(open('/tmp/v192_inspect/ORIGINAL_HEAD_RUNS.json'))
+          pushes=[x for x in xs if x['event']=='push']
+          print(pushes[0]['databaseId'] if pushes else '')
+          PY
+          )
+          if [ -n "$PUSH_RUN" ]; then
+            gh run view "$PUSH_RUN" --repo GGIANLUCAA/Tra-le-pagine- --json databaseId,status,conclusion,jobs > /tmp/v192_inspect/PUSH_RUN_STATUS.json
+            gh run download "$PUSH_RUN" --repo GGIANLUCAA/Tra-le-pagine- --name storia-v192-one-free-true-i2i-candidate-review-only --dir /tmp/v192_inspect/original_output || true
+          else
+            echo 'PUSH_RUN_NOT_FOUND_IN_PUBLIC_ACTIONS'
+          fi
+      - name: Upload READ ONLY investigation (never as generated success)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: storia-v192-read-existing-push-result-only
+          path: /tmp/v192_inspect/
+          if-no-files-found: warn
+          retention-days: 3

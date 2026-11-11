@@ -1,0 +1,70 @@
+name: La Storia Rivive V186 real HD archive preview (no paid APIs)
+on:
+  push:
+    branches: [storia-v183-production-candidate-20261101]
+    paths:
+      - 'src/storia_rivive_v186_commons_preview.py'
+      - 'tests/test_storia_rivive_v186_commons_preview.py'
+      - '.github/workflows/storia-v186-commons-hd-preview.yml'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'src/storia_rivive_v186_commons_preview.py'
+      - 'tests/test_storia_rivive_v186_commons_preview.py'
+      - '.github/workflows/storia-v186-commons-hd-preview.yml'
+permissions:
+  contents: read
+concurrency:
+  group: storia-v186-commons-preview-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test-code:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg and FFprobe
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Compile and run 8 free unit tests (one real synthetic 720p video)
+        run: |
+          python -m py_compile src/storia_rivive_v186_commons_preview.py tests/test_storia_rivive_v186_commons_preview.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v186_commons_preview.py' -v
+  source-sample:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install video tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: ONE Wikimedia 1080p compressed derivative attempt (420MiB max, no provider)
+        id: real_source
+        continue-on-error: true
+        run: |
+          python src/storia_rivive_v186_commons_preview.py --out /tmp/v186_real_preview
+      - name: Print status (not success if source blocked)
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/v186_real_preview/V186_SOURCE_PREVIEW_REPORT.json ]; then
+            python - <<'PY'
+          import json
+          p='/tmp/v186_real_preview/V186_SOURCE_PREVIEW_REPORT.json'
+          x=json.load(open(p))
+          print('REAL_ARCHIVAL_PREVIEW_STATUS:', x['status'])
+          print('ISSUES:', x['blocking_issues'])
+          print('FRAME_PREVIEWS:', len(x.get('previews', [])))
+          print('NO_PROVIDERS_OR_PUBLICATION:', not x['provider_jobs_may_start'] and not x['publish_permitted'])
+          PY
+          else
+            echo 'NO_ARCHIVAL_PREVIEW_REPORT: acquisition/preparation failed before report creation'
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v186-authentic-film-previews-review-only
+          path: |
+            /tmp/v186_real_preview/V186_SOURCE_PREVIEW_REPORT.json
+            /tmp/v186_real_preview/five_previews/*.png
+          if-no-files-found: warn
+          retention-days: 3

@@ -1,0 +1,90 @@
+name: La Storia Rivive V193 ONE free real generative I2I photo from historical source
+# Separate free alternative provider; first free provider rejected GPU duration before image generated.
+on:
+  push:
+    branches: [storia-v183-production-candidate-20261101]
+    paths:
+      - 'src/storia_rivive_v193_single_alt_free_i2i_trial.py'
+      - 'tests/test_storia_rivive_v193_single_alt_free_i2i_trial.py'
+      - '.github/workflows/storia-v193-one-free-alt-i2i.yml'
+  pull_request:
+    paths:
+      - 'src/storia_rivive_v193_single_alt_free_i2i_trial.py'
+      - 'tests/test_storia_rivive_v193_single_alt_free_i2i_trial.py'
+      - '.github/workflows/storia-v193-one-free-alt-i2i.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-v193-one-free-photo-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PIL and numpy, NO provider model in regression tests
+        run: python -m pip install -q 'pillow>=10,<13' 'numpy>=1.26,<3'
+      - name: Eight fail-closed tests on real PNG bytes
+        run: |
+          python -m py_compile src/storia_rivive_v193_single_alt_free_i2i_trial.py tests/test_storia_rivive_v193_single_alt_free_i2i_trial.py
+          python -m unittest discover -s tests -p 'test_storia_rivive_v193_single_alt_free_i2i_trial.py' -v
+  exactly-one-free-public-i2i:
+    needs: unit-tests
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, 'RUN_V193_ONE_FREE_I2I_ONCE') && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependencies for ONE anonymous ZeroGPU generation (no API token)
+        run: |
+          python -m pip install -q 'pillow>=10,<13' 'numpy>=1.26,<3' 'gradio_client>=1.0,<3'
+      - name: Download actual V191 source PNG from existing private Actions artifact (no source film download)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v193_authentic
+          gh run download 41342120383 --repo GGIANLUCAA/Tra-le-pagine- --name storia-v191-real-i2i-production-inputs-4plus1-review-only --dir /tmp/v193_authentic
+          test -s /tmp/v193_authentic/03_banquet_last_real_film_frame.png
+          test -s /tmp/v193_authentic/V191_PRODUCTION_HANDOFF.json
+      - name: Exactly one FREE, anonymous Qwen image-to-image photo generation or recorded quota rejection
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/storia_rivive_v193_single_alt_free_i2i_trial.py \
+            --source /tmp/v193_authentic/03_banquet_last_real_film_frame.png \
+            --handoff /tmp/v193_authentic/V191_PRODUCTION_HANDOFF.json \
+            --out /tmp/v193_photo
+      - name: Verify honest report, no Vidu/payments/publication
+        shell: bash
+        if: always()
+        run: |
+          if [ ! -f /tmp/v193_photo/V193_ONE_REAL_I2I_RESULT.json ]; then
+            echo 'V193_NO_REPORT_PRE_PROVIDER_FAILURE'
+          else
+            python - <<'PY'
+          import json
+          x=json.load(open('/tmp/v193_photo/V193_ONE_REAL_I2I_RESULT.json'))
+          assert x['paid_provider_calls']==0 and x['credits_spent']==0
+          assert not x['artistically_approved'] and not x['publish_permitted']
+          assert not x['final_video_created']
+          assert x['provider_calls'] <= 1
+          print('V193_REAL_I2I_STATUS',x['status'])
+          print('V193_GENERATIVE_IMAGE_BYTES_CREATED',x['real_generatively_restored_photo'])
+          print('V193_CANDIDATE_IS_NOT_AN_APPROVED_MASTER')
+          PY
+          fi
+      - name: Private review image and SHA report, no public release
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: storia-v193-one-free-true-i2i-candidate-review-only
+          path: |
+            /tmp/v193_photo/V193_ONE_REAL_I2I_RESULT.json
+            /tmp/v193_photo/SCENE03_REAL_GENERATIVE_I2I_CANDIDATE.png
+            /tmp/v193_photo/V193_BW_VS_TRUE_I2I_COMPARISON.jpg
+          if-no-files-found: warn
+          retention-days: 4
