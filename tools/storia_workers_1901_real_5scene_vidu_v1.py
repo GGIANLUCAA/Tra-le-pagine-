@@ -147,6 +147,40 @@ def photo_restore(s,ddmodel,client):
    "bw_sha256":s["bw_sha256"],"geometry_corr":round(geom,4),
    "color_saturation":round(sat,2),"photographic_I2I_real":True,
    "human_face_review":"PENDING","historic_person_exact_identity":"NOT_CLAIMED"}
+def photo_restore_local(s,ddmodel,esrgan_session):
+ """Fully local neural source-preserving restoration. NOT a generative Finegrain photo."""
+ import storia_rivive_real_photo_ai_v62 as sr
+ i=s["scene"]
+ orig=cv2.imread(str(R/s["original_exact_bw_file"]))
+ base=natural_base(orig,dd.infer_ab(ddmodel,orig))
+ cv2.imwrite(str(R/f"SHOT_{i:02d}_NEURAL_COLOR_BASE_NOT_FINAL.png"),base)
+ # Upscale from a physically honest 240x427 crop; no invented extra persons/faces.
+ small=cv2.resize(base,(240,427),interpolation=cv2.INTER_AREA)
+ upscale=sr.esrgan_4x(esrgan_session,small)
+ restored=cv2.resize(upscale,(W,H),interpolation=cv2.INTER_AREA)
+ lab=cv2.cvtColor(restored,cv2.COLOR_BGR2LAB)
+ l,a,b=cv2.split(lab)
+ l=cv2.createCLAHE(clipLimit=1.20,tileGridSize=(8,8)).apply(l)
+ restored=cv2.cvtColor(cv2.merge([l,a,b]),cv2.COLOR_LAB2BGR)
+ hsv=cv2.cvtColor(restored,cv2.COLOR_BGR2HSV)
+ sat=float(hsv[:,:,1].mean())
+ if sat>115:
+  hsv[:,:,1]=np.uint8(np.clip(hsv[:,:,1].astype(np.float32)*115/sat,0,220))
+  restored=cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
+ geom=corr(orig,restored)
+ sat=float(cv2.cvtColor(restored,cv2.COLOR_BGR2HSV)[:,:,1].mean())
+ if geom<.88 or sat<8:
+  write(f"SHOT_{i:02d}_NEURAL_GATE_FAIL.json",{"geometry_corr":geom,"saturation":sat})
+  raise RuntimeError("LOCAL_NEURAL_SOURCE_RESTORATION_QA_FAIL_"+str(i))
+ p=R/f"SHOT_{i:02d}_MODERN_PHOTO_I2I.jpg"
+ cv2.imwrite(str(p),restored,[cv2.IMWRITE_JPEG_QUALITY,97])
+ say("LOCAL_REAL_NEURAL_RESTORATION",i,"corr",round(geom,3),"sat",round(sat,1))
+ return {"scene":i,"restored_photo_file":p.name,"photo_sha256":sha(p),
+  "bw_sha256":s["bw_sha256"],"geometry_corr":round(geom,4),
+  "color_saturation":round(sat,2),"photographic_I2I_real":False,
+  "restoration_method":"DDColor + RealESRGAN4x ONNX local neural detail, NOT generative Finegrain photo",
+  "human_face_review":"PENDING","historic_person_exact_identity":"NOT_CLAIMED"}
+
 def make_contact(scenes,photos):
  contact=Image.new("RGB",(5*330,2*625),(15,18,25))
  d=ImageDraw.Draw(contact);font=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",20)
@@ -373,7 +407,9 @@ def produce(scenes,photos,real_vidu=None):
   raise RuntimeError("INVALID_SOCIAL_FORMAT")
  if not any(k.get("codec_name")=="aac" for k in p["streams"]):raise RuntimeError("MISSING_ORIGINAL_MUSIC")
  d={ "subject":"1901 northern English workers leaving factories","source_count":1,"distinct_historical_original_moving_shots":5,
-      "photographic_real_i2i_stills":5,"genuine_new_vidu_clip":bool(real_vidu),"vidu_model":MODEL if real_vidu is not None else None,
+      "photographic_real_i2i_stills":sum(bool(p.get("photographic_I2I_real")) for p in photos),
+      "neural_color_superresolution_stills":sum(not p.get("photographic_I2I_real") for p in photos),
+      "genuine_new_vidu_clip":bool(real_vidu),"vidu_model":MODEL if real_vidu is not None else None,
       "timeline":timeline,"duration_s":round(duration,3),"resolution":[720,1280],
       "format_note":"1080p Vidu scene downscaled to 720x1280 social master. Source film native 1280x720; no false 4K claim.",
       "video_sha256":sha(OUT),"artistic_approval":False,"manual_full_reel_review":"PENDING",
@@ -388,7 +424,7 @@ def produce(scenes,photos,real_vidu=None):
   (R/f"POST_{site}.txt").write_text(
    "ENGLAND · c.1901 | FACES OF THE PAST\nMen and women caught on original early cinema film outside northern English factories. Authentic historical black-and-white motion, source-locked photographic AI color reconstructions, and one interpretative AI-motion continuation. AI details and colors are interpretative, not a contemporary color recording. Owner review preview; not published.\nSource: "+SOURCE_PAGE+"\n",encoding="utf8")
  (R/"README_ARTISTIC_REVIEW_REQUIRED.txt").write_text(
-  "NEW FILM/NEW SUBJECT. Five distant source timecodes from the original verified moving 1901 factory-worker film, five newly generated I2I photos, and one Q3 Pro source-matched scene if permitted by the geometry gate. Technical decode success is NOT human artistic approval. Verify faces, anatomy, colors, content and rights in Italy before publishing. No re-use of owner rejected Barbershop 1894. No fake 4K.\n",encoding="utf8")
+  "NEW FILM/NEW SUBJECT. Five distant source timecodes from the original verified moving 1901 factory-worker film, five newly neural-restored source-locked color photos, and one Q3 Pro source-matched scene if permitted by the geometry gate. Technical decode success is NOT human artistic approval. Verify faces, anatomy, colors, content and rights in Italy before publishing. No re-use of owner rejected Barbershop 1894. No fake 4K.\n",encoding="utf8")
  Z=R/"ENGLAND_1901_FACES_OF_THE_PAST_ANDROID_KIT.zip"
  with zipfile.ZipFile(Z,"w",zipfile.ZIP_DEFLATED,compresslevel=3) as z:
   names=[OUT,R/"SOCIAL_COVER.jpg",R/"FINAL_TECH_QA.json",R/"SOURCE_VS_RESTORED_FIVE_SCENES_QA.jpg",
@@ -403,12 +439,21 @@ def produce(scenes,photos,real_vidu=None):
 def main():
  source,shots=inspect_source()
  model,_=dd.download_model()
- client=Client("finegrain/finegrain-image-enhancer",verbose=False)
- photos=[photo_restore(z,model,client) for z in shots]
+ photo_backend=os.environ.get("PHOTO_BACKEND","LOCAL_ESRGAN")
+ if photo_backend=="LOCAL_ESRGAN":
+  import storia_rivive_real_photo_ai_v62 as sr
+  sr_session,_=sr.setup_upscaler()
+  photos=[photo_restore_local(z,model,sr_session) for z in shots]
+ else:
+  client=Client("finegrain/finegrain-image-enhancer",verbose=False)
+  photos=[photo_restore(z,model,client) for z in shots]
+ full_i2i=sum(bool(z.get("photographic_I2I_real")) for z in photos)
  write("FIVE_AI_PHOTOS_QA.json",{"photos":photos,"source_only_original_frames":True,
-   "five_new_real_image2image":True,"automatic_gates_passed":True,"human_artistic_review":False})
+  "genuine_finegrain_i2i_photos":full_i2i,
+  "local_neural_restored_photos":len(photos)-full_i2i,
+  "automatic_gates_passed":True,"human_artistic_review":False})
  make_contact(shots,photos)
- say("FIVE_HIGH_FIDELITY_PHOTO_RESTORATIONS_COMPLETE_NO_VIDU_POST_YET")
+ say("FIVE_NEURAL_PHOTO_RESTORATIONS_COMPLETE_NO_VIDU_POST_YET",photo_backend)
  # Safety: paid post is submitted exactly once, only after every photo and source frame has passed.
  vidu=new_vidu_clip(shots[4],photos[4])
  produce(shots,photos,vidu)
