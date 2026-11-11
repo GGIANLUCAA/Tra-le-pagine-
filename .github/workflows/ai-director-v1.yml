@@ -2,6 +2,7 @@ name: "AI Director V1 | isolated director preflight (zero-cost by default)"
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - "src/ai_director_v1.py"
       - "tests/test_ai_director_v1.py"
