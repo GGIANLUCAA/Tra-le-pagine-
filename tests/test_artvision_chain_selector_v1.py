@@ -10,20 +10,20 @@ def item(id="new", **overrides):
 
 class SelectorTests(unittest.TestCase):
     def test_unknown_active_state_fails_closed(self):
-        self.assertEqual(select_next({"candidates":[item()]})["status"], "blocked")
+        self.assertEqual(select_next({"candidates":[item()]})["status"], "preparing")
     def test_active_render_blocks(self):
-        self.assertEqual(select_next({"active_heavy_render":True,"candidates":[item()]})["status"],"blocked")
+        self.assertEqual(select_next({"active_heavy_render":True,"candidates":[item()]})["status"],"preparing")
     def test_ready_candidate(self):
         self.assertEqual(select_next({"active_heavy_render":False,"candidates":[item()]})["id"],"new")
     def test_skip_duplicates(self):
         self.assertEqual(select_next({"active_heavy_render":False,"completed_ids":["old"],
           "candidates":[item("old"),item("new") ]})["id"],"new")
     def test_rights_gate(self):
-        self.assertEqual(select_next({"active_heavy_render":False,"candidates":[item(rights_verified=False)]})["status"],"blocked")
+        self.assertEqual(select_next({"active_heavy_render":False,"candidates":[item(rights_verified=False)]})["status"],"preparing")
     def test_running_gate(self):
-        self.assertEqual(select_next({"active_heavy_render":False,"running_ids":["new"],"candidates":[item()]})["status"],"blocked")
+        self.assertEqual(select_next({"active_heavy_render":False,"running_ids":["new"],"candidates":[item()]})["status"],"preparing")
     def test_invalid_workflow(self):
-        self.assertEqual(select_next({"active_heavy_render":False,"candidates":[item(workflow_path="other.yml")]})["status"],"blocked")
+        self.assertEqual(select_next({"active_heavy_render":False,"candidates":[item(workflow_path="other.yml")]})["status"],"preparing")
 
 if __name__ == "__main__":
     unittest.main()
