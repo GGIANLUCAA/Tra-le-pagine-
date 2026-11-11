@@ -178,6 +178,42 @@ def inspect_brief(brief):
                    "rights_verified": False, "human_approved": False, "published": False}}
 
 
+def read_prior_lessons(ledger_path, fmt):
+    """Read-only notes from actual MP4-linked reviews; never invent approvals."""
+    p = Path(ledger_path)
+    if not p.is_file() or p.stat().st_size > 2_000_000:
+        raise DirectorError("Missing or oversized existing learning ledger")
+    lessons = []
+    for raw in p.read_text(encoding="utf-8").splitlines()[-200:]:
+        if not raw.strip():
+            continue
+        try:
+            row = json.loads(raw)
+        except ValueError:
+            continue
+        if not isinstance(row, dict) or not re.fullmatch(r"[a-f0-9]{64}", str(row.get("video_sha256", ""))):
+            continue
+        variant = str(row.get("variant", ""))
+        if fmt == "artvision_critico" and not variant.startswith("critico_"):
+            continue
+        if fmt == "artvision_cinema" and not variant.startswith("cinema_"):
+            continue
+        if fmt not in {"artvision_critico", "artvision_cinema"}:
+            continue  # Existing ArtVision ledger does not verify another format
+        if row.get("review_status") not in {"observed_by_human", "observed_by_agent"}:
+            continue
+        for item in row.get("findings", []):
+            if not isinstance(item, dict):
+                continue
+            problem, fix = item.get("problem"), item.get("next_change")
+            if isinstance(problem, str) and len(problem) >= 15 and isinstance(fix, str) and len(fix) >= 15:
+                lessons.append({"video_sha256": row["video_sha256"],
+                                "variant": variant, "problem": problem[:240],
+                                "suggested_experiment": fix[:240],
+                                "evidence_type": "previous_review_not_an_objective_quality_measurement"})
+    return lessons[-6:]
+
+
 def probe_mp4(video_path):
     """Technical metadata and hash only. Does not attest visual rhythm or color."""
     p = Path(video_path)
@@ -222,7 +258,8 @@ def live_candidates(brief, report, *, models, policy, key, transport=None):
 
     brief_text = json.dumps({"title": brief["title"], "format": brief["format"],
                              "narration": brief.get("narration", ""),
-                             "scenes": brief["scenes"]}, ensure_ascii=False)
+                             "scenes": brief["scenes"],
+                             "prior_verified_review_notes": report.get("prior_observations", [])}, ensure_ascii=False)
     if len(brief_text) > 14000:
         raise DirectorError("Brief too large for limited free model context")
     answers = []
@@ -303,12 +340,15 @@ def main():
     ap.add_argument("--out", default="output/ai_director_v1/report.json")
     ap.add_argument("--dashboard", default="output/ai_director_v1/report.html")
     ap.add_argument("--video", help="Optional real MP4 for metadata/sha technical check")
+    ap.add_argument("--ledger", help="Read-only existing ArtVision JSONL feedback, if available")
     ap.add_argument("--live", action="store_true", help="Requires explicit env/verified policy/key")
     ap.add_argument("--models", nargs=2, metavar=("FREE_MODEL_1", "FREE_MODEL_2"))
     ap.add_argument("--policy", default=str(PROJECT_ROOT / "config/free_llm_zero_cost_v1.json"))
     args = ap.parse_args()
     brief = read_json(args.brief)
     report = inspect_brief(brief)
+    if args.ledger:
+        report["prior_observations"] = read_prior_lessons(args.ledger, report["format"])
     if args.video:
         report["technical_mp4_probe"] = probe_mp4(args.video)
     if args.live:
