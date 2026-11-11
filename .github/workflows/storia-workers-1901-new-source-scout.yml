@@ -1,0 +1,43 @@
+name: "La Storia Rivive · NEW SUBJECT 1901 Workers · source-first 720p scouting"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-workers-1901-new-source-scout.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-workers-1901-source-only-scout
+  cancel-in-progress: false
+jobs:
+  source_scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Source-only prereqs, zero Vidu credits"
+        run: |
+          set -euo pipefail
+          command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+          python -m pip install -q numpy 'opencv-python-headless<5' pillow requests yt-dlp
+      - name: "Find genuinely authentic new source and five visually distinct shots"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u tools/storia_workers_1901_source_scout.py
+      - name: "Preserve genuine source evidence and failure reason"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: WORKERS_1901_NEW_SUBJECT_SOURCE_AND_FIVE_REAL_FRAMES
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            output/storia_workers_1901_source/*.json
+            output/storia_workers_1901_source/*.jpg
+            output/storia_workers_1901_source/SCENE_*_BW_EXACT.png
+            output/storia_workers_1901_source/SOURCE_1901_REAL_MOVING.*
