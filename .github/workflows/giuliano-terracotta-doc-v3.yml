@@ -1,109 +1,79 @@
-name: "GIULIANO EPISODIO 2 - THE WALKING GIANTS"
+name: "GIULIANO EP2 — WALKING GIANTS FINAL DIRECTOR EDIT"
 on:
   push:
-    branches: ["feature/giuliano-moai-walking-20261111"]
+    branches: ["feature/giuliano-moai-definitive-v2-20261111"]
     paths:
-      - "giuliano/moai_v1/**"
+      - "giuliano/moai_v2/**"
       - ".github/workflows/giuliano-terracotta-doc-v3.yml"
   workflow_dispatch:
 permissions:
   contents: read
   actions: read
 concurrency:
-  group: giuliano-moai-episode2-${{ github.ref }}
+  group: giuliano-moai-final-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  produce:
+  definitive:
     runs-on: ubuntu-latest
     timeout-minutes: 95
-    env:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      ARTVISION_ASR_MODEL: base
-      PYTHONUNBUFFERED: "1"
     steps:
-      - name: Checkout dedicated episode-2 branch
-        uses: actions/checkout@v4
-      - name: Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Editorial evidence and syntax preflight
+      - name: Assert no second AI voice or unlicensed experiment video
         run: |
-          python -m py_compile giuliano/moai_v1/render_moai.py
+          python -m py_compile giuliano/moai_v2/render_definitive.py
+          test -s giuliano/moai_v2/assets/SimplifiedMoai.obj
+          test -s giuliano/moai_v2/assets/MIT_LICENSE_CARL_LIPO_TERRY_HUNT.txt
           python - <<'PY'
           from pathlib import Path
-          import json
-          path=Path("giuliano/moai_v1")
-          plan=json.loads((path/"SHOT_PLAN.json").read_text(encoding="utf8"))
-          beats=plan["shots"]
-          text=(path/"NARRAZIONE_IT.txt").read_text(encoding="utf8").strip()
-          assert text=="\n".join(x["text"] for x in beats),"Narration-scene mismatch"
-          names={x["source_file"] for x in beats}|{x.get("second_file") for x in beats}
-          assert len(beats)>=32 and len(names-{None})>=28 and plan["revision"]==2
-          assert all(x.get("semantic") and x.get("presentation") for x in beats)
-          assert sum("cammin" in x["text"].lower() for x in beats)>=1
-          assert all("GIULIANO" not in x.get("overlay","") for x in beats)
-          print("MOAI_EDITORIAL_PREFLIGHT_OK",len(beats),len(names-{None}),flush=True)
+          p=Path("giuliano/moai_v2/render_definitive.py").read_text()
+          assert "synthesize(" not in p
+          assert "SIMULAZIONE 3D" in p
+          assert "genuine_new_experiment_clip_included" in p
+          assert "original_Google_voice_and_score_pcm_unchanged" in p
+          print("NO_NEW_API_COST_LICENSING_PREFLIGHT_PASS",flush=True)
           PY
-          echo "Using verified original Google voice and soundtrack, no new TTS call"
-      - name: Install video dependencies without unmanaged credits
-        run: |
-          if command -v ffmpeg >/dev/null 2>&1; then
-            ffmpeg -version | head -1
-          else
-            timeout 150 sudo apt-get update -qq
-            timeout 150 sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
-          fi
-          python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
-      - name: Download original successful episode-2 soundtrack and QA
+      - name: Download approved original master, existing cover and QA (no TTS cost)
         uses: actions/download-artifact@v4
         with:
           name: GIULIANO_EP2_WALKING_GIANTS_MP4_ANDROID_ZIP
-          run-id: 43026493471
+          run-id: 43028415246
           github-token: ${{ github.token }}
-          path: output/giuliano_moai_v1
-      - name: Verify unaltered original voice and preserve QA markers
+          path: output/giuliano_moai_v2/base
+      - name: Video dependencies and scientific software rendering
         run: |
-          set -eu
-          cd output/giuliano_moai_v1
-          test -s GIULIANO_MOAI_V1_CINEMATIC.mp4
-          test -s QA_MOAI.json
-          cp GIULIANO_MOAI_V1_CINEMATIC.mp4 BASE_V1_WITH_VOICE.mp4
-          cp QA_MOAI.json BASE_V1_QA.json
-          python - <<'PY'
-          import json,hashlib
-          j=json.load(open("BASE_V1_QA.json"))
-          f=open("BASE_V1_WITH_VOICE.mp4","rb")
-          digest=hashlib.file_digest(f,"sha256").hexdigest()
-          assert digest==j["sha256"],"original MP4 differs from verified audio QA"
-          assert j["narrative_beats"]==34
-          print("ORIGINAL_GOOGLE_AUDIO_MASTER_VERIFIED",digest,flush=True)
-          PY
-      - name: Source-check 30+ photographs, render complete 1080p film, verify and package
-        run: python giuliano/moai_v1/render_moai.py
-      - name: Save verified source assets and Google voice for safe recovery on failure
+          ffmpeg -version | head -1
+          python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<13' 'requests>=2.31,<3' 'trimesh>=4,<5' 'opencv-python-headless>=4.9,<5'
+      - name: Produce finished film and Android exports, full quality validation
+        env:
+          OPENBLAS_NUM_THREADS: "1"
+          OMP_NUM_THREADS: "1"
+          PYTHONUNBUFFERED: "1"
+        run: python giuliano/moai_v2/render_definitive.py
+      - name: Save partial lawful photos / simulation QA on any failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: GIULIANO_MOAI_EP2_RECOVERY_NOT_A_FINISHED_FILM
+          name: MOAI_V2_RECOVERY_NOT_FINAL_VIDEO
           path: |
-            output/giuliano_moai_v1/audio/VOCE.wav
-            output/giuliano_moai_v1/audio/ALLINEAMENTO_VOCE.json
-            output/giuliano_moai_v1/media/source_*.jpg
-            output/giuliano_moai_v1/PHOTO_CREDITS_MOAI.json
+            output/giuliano_moai_v2/final/SCIENTIFIC_WALKING_*.mp4
+            output/giuliano_moai_v2/final/EXTRA_IMAGE_CREDITS.json
+            output/giuliano_moai_v2/final/extra_*.jpg
           if-no-files-found: ignore
           retention-days: 10
-      - name: Publish download-only artifacts — not public social posting
+      - name: Provide complete verified Android MP4, FullHD MP4, cover, ZIP and QA
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: GIULIANO_EP2_WALKING_GIANTS_MP4_ANDROID_ZIP
+          name: GIULIANO_WALKING_GIANTS_DEFINITIVO_ANDROID_FULLHD_ZIP
           path: |
-            output/giuliano_moai_v1/GIULIANO_MOAI_V1_CINEMATIC.mp4
-            output/giuliano_moai_v1/GIULIANO_MOAI_V1_ANDROID.mp4
-            output/giuliano_moai_v1/GIULIANO_MOAI_V1_COMPLETO.zip
-            output/giuliano_moai_v1/COVER_MOAI.jpg
-            output/giuliano_moai_v1/CONTACT_SHEET_MOAI.jpg
-            output/giuliano_moai_v1/QA_MOAI.json
+            output/giuliano_moai_v2/final/THE_WALKING_GIANTS_GIULIANO_DEFINITIVO_HD.mp4
+            output/giuliano_moai_v2/final/THE_WALKING_GIANTS_GIULIANO_ANDROID.mp4
+            output/giuliano_moai_v2/final/THE_WALKING_GIANTS_GIULIANO_COMPLETO.zip
+            output/giuliano_moai_v2/final/COVER_DEFINITIVA.jpg
+            output/giuliano_moai_v2/final/NOVITA_FOTOGRAFICHE.jpg
+            output/giuliano_moai_v2/final/QA_DEFINITIVO.json
           if-no-files-found: error
           retention-days: 20
