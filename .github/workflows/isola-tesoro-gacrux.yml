@@ -1,0 +1,54 @@
+name: Isola del tesoro - Gacrux voice experiment
+on:
+  pull_request:
+    paths:
+      - experiments/isola_tesoro_20261027/copione.txt
+      - .github/workflows/isola-tesoro-gacrux.yml
+permissions:
+  contents: read
+jobs:
+  voice:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install existing voice dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1
+          python -m pip install "numpy>=1.25,<3" "soundfile>=0.12" "scipy>=1.11" "google-genai>=2.25,<3"
+      - name: Synthesize with existing Gacrux voice only
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          mkdir -p output/isola-tesoro-voice
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo 'VOICE_UNAVAILABLE: secret missing' > output/isola-tesoro-voice/VOICE_STATUS.txt
+            exit 0
+          fi
+          python - <<'PY'
+          from pathlib import Path
+          import sys,json
+          sys.path.insert(0,"src")
+          from gemini_voice import synthesize
+          t=Path("experiments/isola_tesoro_20261027/copione.txt").read_text(encoding="utf8")
+          out=Path("output/isola-tesoro-voice")
+          try:
+              audio,phrases=synthesize(t,out)
+              (out/"SCENE_TIMING.json").write_text(json.dumps({"method":"Gacrux timing; estimated unless ASR installed","phrases":phrases,"needs_review":True},ensure_ascii=False,indent=2),encoding="utf8")
+              (out/"VOICE_STATUS.txt").write_text("Gacrux generated, requires editorial listening\n")
+          except Exception as e:
+              (out/"VOICE_STATUS.txt").write_text("VOICE_UNAVAILABLE: "+type(e).__name__+"\n")
+              print("Voice unavailable:",type(e).__name__)
+          PY
+      - name: Download voice asset, do not publish
+        uses: actions/upload-artifact@v4
+        with:
+          name: ISOLA_TESORO_GACRUX_VOICE
+          path: output/isola-tesoro-voice/
+          if-no-files-found: error
+          retention-days: 14
