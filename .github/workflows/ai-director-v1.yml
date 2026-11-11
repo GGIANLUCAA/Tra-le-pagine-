@@ -1,6 +1,16 @@
 name: "AI Director V1 | isolated director preflight (zero-cost by default)"
 
 on:
+  push:
+    branches:
+      - main
+      - feature/ai-director-zero-cost-v1-20261112
+    paths:
+      - "src/ai_director_v1.py"
+      - "tests/test_ai_director_v1.py"
+      - "examples/ai_director_v1_sample.json"
+      - ".github/workflows/ai-director-v1.yml"
+      - "docs/AI_DIRECTOR_V1.md"
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
