@@ -69,6 +69,11 @@ const tick=()=>new Promise(r=>setTimeout(r,50));
  assert(content.querySelector('.productionPanel').compareDocumentPosition(content.querySelector('.simpleAttention')) &
    dom.window.Node.DOCUMENT_POSITION_FOLLOWING,'Progress comes before diagnostics');
  assert.equal(content.querySelector('.simpleMore').open,false,'Advanced details collapsed by default');
+ const extraHome=d.querySelector('[data-ui-section="home-more"]');
+ extraHome.open=true;
+ d.querySelector('#refresh').click();await tick();
+ assert.equal(d.querySelector('[data-ui-section="home-more"]').open,true,
+   'Opening advanced information persists when new live status arrives');
  assert.equal(d.querySelectorAll('.bottom [data-page]').length,4,'Four clear mobile navigation choices');
  assert.match(html,/\.hero,\.stats\{display:none\}/,'Old large hero and KPI wall are hidden');
  const bar=d.querySelector('.productionTrack[role="progressbar"]');
