@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="/icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ArtVision Control Center V13 — Produzioni, regia, avanzamento e ETA</title>
+<title>ArtVision Control Center V14 — Home semplice e progressi reali</title>
 <style>
 :root{color-scheme:dark;--bg:#0c1118;--card:#181f27;--inner:#222a33;--edge:#38414a;--text:#f7f1e6;--sub:#afb7c0;--gold:#dfbe88;--green:#80cba9;--red:#e8a49d}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 65% 25% at 85% 0%,#634d2a26,transparent),var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.wrap{max-width:1320px;margin:0 auto;padding:0 23px 100px}
@@ -268,11 +268,58 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 .progressV13 button:focus-visible,.progressV13 a:focus-visible,.progressV13 summary:focus-visible{outline:3px solid #e9c88e;outline-offset:3px}
 @media(max-width:600px){.progressPrimaryData{grid-template-columns:1fr}.progressV13{padding:12px}.progressV13Panel .productionHead h3{font-size:23px}.progressMetaRow{gap:6px}.progressMetaRow span{width:100%}}
 
+
+/* V14 mobile: first show the actual video work, not a 600px marketing hero. */
+.hero,.stats{display:none}
+.simpleWelcome{padding:13px 1px 5px;margin:9px 0 4px}
+.simpleWelcome h1{font:normal clamp(25px,3.3vw,34px)/1.15 Georgia,serif;color:#f2e1c5;margin:6px 0}
+.simpleWelcome p{font-size:12px;color:#b7c4cb;line-height:1.45;margin:0 0 10px}
+.simpleAttention{border:1px solid #49535b;background:#19232d;padding:14px;border-radius:14px;margin:12px 0}
+.simpleAttentionHead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.simpleAttentionHead h2,.simpleAttentionHead h3{font:normal 19px Georgia,serif;color:#f0d6ae;margin:0}
+.simpleAttention .miniBtn,.simpleRepairIssues .miniBtn{min-height:40px}
+.simpleAlert{border-left:3px solid #c39c65;background:#3c33262c;color:#f3cfa9;padding:10px;font-size:12px;line-height:1.45}
+.simpleGood{color:#b7d8c3;background:#24362d55;border:1px solid #426653;border-radius:9px;padding:10px;font-size:12px;line-height:1.45}
+.simpleShortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 16px}
+.simpleShortcuts button{min-height:96px;text-align:left;border:1px solid #55616b;border-radius:13px;background:#1a2631;color:#f4e4c8;padding:11px}
+.simpleShortcuts button span{display:block;color:#caa572;font-size:19px;margin-bottom:3px}
+.simpleShortcuts strong{display:block;font-size:12px;line-height:1.3}
+.simpleShortcuts small{display:block;color:#abbcc6;font-size:10px;line-height:1.35;margin-top:3px}
+.simpleMore{border:1px solid #48535d;background:#1a222b;border-radius:13px;padding:0 12px;margin:12px 0}
+.simpleMore>summary{padding:13px 4px;min-height:47px;cursor:pointer;font-size:13px;font-weight:700;color:#e9d3ae}
+.simpleMore>summary:focus-visible{outline:2px solid #ecd29e;outline-offset:2px}
+.simpleMore[open]>summary{border-bottom:1px solid #43505a;margin-bottom:12px}
+.simpleMore .panel{margin-top:8px}.simpleMore .healthGrid{margin-top:10px}
+.simpleExtraLinks{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.simpleRepairIssues{margin:12px 0}
+.sync{margin:9px 0 8px;font-size:11px}
+.productionPanel.progressV13Panel{margin:7px 0 12px}
+.progressV13Panel .productionHead{margin-bottom:7px}
+.progressV13Panel .productionHead h3{font-size:21px}
+.progressV13Panel .productionHead .sub{font-size:11px;max-width:470px}
+.progressV13 .progressNext{margin-top:8px}
+.progressV13 .productionDisclaimer{font-size:10px;line-height:1.4}
+@media(max-width:790px){
+ .wrap{padding:0 15px 88px}
+ header{padding:11px 0}
+ .logo{width:37px;height:37px;font-size:25px}
+ .brand{gap:9px}.brand strong{font-size:12px}.brand small{font-size:9px}
+ .refresh{min-height:40px;padding:7px 9px;font-size:12px}
+ .bottom button{flex:1;min-height:46px;font-size:11px;gap:2px}
+ .bottom button span{font-size:20px}
+ .simpleWelcome{margin:7px 0 4px}
+ .simpleShortcuts{grid-template-columns:1fr 1fr;gap:8px}
+ .simpleShortcuts button{min-height:79px}
+ .simpleShortcuts button:last-child{grid-column:span 2;min-height:63px}
+ .simpleAttentionHead{align-items:flex-start}
+ .simpleAttentionHead .miniBtn{max-width:48%;font-size:11px}
+ .productionPanel.progressV13Panel{padding:12px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V13</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
+<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V14</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
 <section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Da fare per me · ◉ Salute produzioni · ▷ Diario verificabile</span></section>
 <div class="sync"><span class="pulse" id="pulse"></span><span id="synctext">Collegamento alle fonti reali…</span><span id="sources"></span></div>
 <div id="chatImportNotice" class="note" hidden role="status" aria-live="polite"></div>
@@ -281,7 +328,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <main id="content"><div class="empty">Lettura dei dati…</div></main>
 <footer>Anteprima indipendente. Nessuna operazione di scrittura. Dati pubblici del repository e del catalogo; le automazioni ChatGPT non sono monitorate direttamente. Workflow riuscito ≠ video finito o approvato.</footer>
 </div>
-<nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="todo"><span>⚑</span>Da fare</button><button data-page="works"><span>▣</span>Opere</button><button data-page="issues"><span>⚑</span>Ripara GPT</button><button data-page="genres"><span>▦</span>Categorie</button></nav>
+<nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="works"><span>▣</span>Quadri</button><button data-page="issues"><span>✦</span>Ripara GPT</button><button data-page="genres"><span>▦</span>Archivio</button></nav>
 <dialog id="reviewPlayer" aria-labelledby="reviewPlayerTitle" aria-modal="true">
 <div class="playerHead"><div><strong id="reviewPlayerTitle">Anteprima del video</strong><small id="reviewPlayerSubtitle">Riproduzione dall'archivio originale</small></div>
 <button class="playerClose" type="button" id="reviewPlayerClose">✕ Chiudi</button></div>
@@ -1013,30 +1060,36 @@ function productionProgressPanel(){
 }
 
 function home(){
-  var d=state.data||{},hs=d.health||[],tasks=d.attention||[],review=d.review,entries=d.diary||[];
-  var actionable=tasks.filter(function(x){return x.kind==="workflow"}).length;
-  var unavailable=tasks.filter(function(x){return x.kind==="source"}).length;
-  var h=sec("Buongiorno, Studio","La situazione più utile da conoscere: nessuno stato viene considerato certo senza una fonte.");
-  h+='<section class="focus"><div class="focusHeader"><div><div class="overline">IL TUO CRUSCOTTO PRIORITARIO</div><h3>Da fare per me</h3><p>Soltanto le verifiche emerse dai dati; le approvazioni artistiche non bloccano il lavoro in automatico.</p></div>'+
-    '<div class="repairGrid"><button class="miniBtn" data-switch="todo" type="button">Da fare per me</button><button class="miniBtn secondary" data-switch="issues" type="button">◈ Ripara con GPT</button><button class="miniBtn secondary" data-switch="quality" type="button">Qualità e prove</button></div></div>'+
-    '<div class="focusStats"><span><strong>'+escapeText(actionable)+'</strong> workflow da controllare</span>'+
-    '<span><strong>'+escapeText(unavailable)+'</strong> fonti da recuperare</span>'+
-    '<span><strong>'+(review?escapeText(review.count):"0")+'</strong> opere senza Gold attestato</span></div>'+
-    '<p class="sub">'+(source("github")?'I workflow già recuperati non sono segnalati come nuovi problemi.':'GitHub non è disponibile: i dati potrebbero essere incompleti.')+'</p></section>';
+  var d=state.data||{},tasks=d.attention||[],hs=d.health||[];
+  var failures=tasks.filter(function(x){return x.kind==="workflow"});
+  var missing=tasks.filter(function(x){return x.kind==="source"});
+  var h='<section class="simpleWelcome"><span class="overline">CENTRO DI CONTROLLO</span>'+
+    '<h1>Come stanno i tuoi video</h1>'+
+    '<p>Avanzamento reale dei lavori visibili su GitHub. Se manca una stima attendibile, te lo diciamo chiaramente.</p></section>';
+  // The progress panel is the first substantial content on mobile, not buried below a large hero.
   h+=productionProgressPanel();
-  h+='<div class="title"><h2>Salute delle produzioni</h2><p>Ultime attività osservate, senza dichiarare fermo un progetto soltanto perché non compare nel campione.</p></div>';
-  h+='<div class="healthGrid">'+hs.map(healthCard).join("")+'</div>';
-  h+='<div class="title"><h2>Le categorie dello Studio</h2><p>Libri narrati e tutti gli altri generi dell’archivio, anche quelli in preparazione.</p></div>'+genreSection()+
-    '<button type="button" class="miniBtn secondary" data-switch="genres">Esplora tutte le categorie →</button>';
-  h+='<div class="columns"><div><div class="panel"><div class="tools"><h3>Diario dello Studio</h3><a href="#" data-switch="diary" class="link">Tutti gli eventi →</a></div>'+
-    (entries.length?entries.slice(0,5).map(diaryEntry).join(""):'<div class="empty">Nessun evento datato nelle fonti disponibili.</div>')+
-    '</div></div><aside><div class="panel"><h3>ArtVision e archivio</h3><div class="kv"><span>Opere operative</span><b>'+(source("queue")?escapeText((d.works||[]).length):"—")+'</b></div>'+
-    '<div class="kv"><span>Varianti conteggiate nel registro</span><b>'+(source("queue")?escapeText((d.works||[]).reduce(function(n,x){return n+(Number(x.delivered)||0)},0)):"—")+'</b></div>'+
-    '<div class="kv"><span>Voci nel catalogo</span><b>'+(source("catalog")?escapeText(d.catalog_count):"—")+'</b></div>'+
-    '<p class="note">Consegne e schede archiviate non equivalgono a video approvati né a download integrali verificati.</p>'+
-    '<div class="focusActions"><button class="miniBtn secondary" type="button" data-switch="works">Opere 4×1</button><button class="miniBtn secondary" type="button" data-switch="media">Videoteca</button></div></div>'+
-    '<div class="panel"><h3>Informazioni del monitoraggio</h3><p class="sub">'+escapeText(d.scope?.caveat||"Dati pubblici e campione limitato.")+'</p>'+
-    '<a class="link" href="#" data-switch="health">Dettaglio della salute →</a><div class="kv"><span>Analisi recenti</span><button class="miniBtn secondary" type="button" data-switch="stats">Statistiche ↗</button></div></div></aside></div>';
+  h+='<section class="simpleAttention"><div class="simpleAttentionHead"><h2>Da controllare</h2>'+
+    '<button class="miniBtn secondary" data-switch="issues" type="button">Apri Ripara GPT</button></div>';
+  if(!source("github"))h+='<p class="simpleAlert">GitHub non raggiungibile: gli errori non sono verificabili adesso.</p>';
+  else if(failures.length)h+='<p class="simpleAlert">'+failures.length+
+    ' workflow da verificare nel campione più recente. Le esecuzioni già recuperate non vengono conteggiate come problemi attivi.</p>'+
+    failures.slice(0,2).map(attentionItem).join("");
+  else h+='<p class="simpleGood">Nessun ultimo esito critico tra i workflow pertinenti osservati.</p>';
+  if(missing.length)h+='<p class="simpleAlert">'+missing.length+' fonti temporaneamente non raggiungibili.</p>';
+  h+='</section>';
+  h+='<nav class="simpleShortcuts" aria-label="Scelte rapide">'+
+    '<button type="button" data-switch="works"><span aria-hidden="true">▣</span><strong>Quadri ArtVision</strong><small>Le quattro varianti</small></button>'+
+    '<button type="button" data-switch="media"><span aria-hidden="true">▷</span><strong>Video disponibili</strong><small>Anteprime e archivio</small></button>'+
+    '<button type="button" data-switch="issues"><span aria-hidden="true">✦</span><strong>Ripara un problema</strong><small>Diagnosi con GPT</small></button></nav>';
+  h+='<details class="simpleMore"><summary>Altri programmi e informazioni</summary>'+
+    '<p class="sub">Dettagli utili quando vuoi approfondire; non sono necessari per seguire la produzione.</p>'+
+    '<div class="healthGrid">'+hs.map(healthCard).join("")+'</div>'+
+    '<div class="simpleExtraLinks"><button class="miniBtn secondary" data-switch="genres">Categorie</button>'+
+    '<button class="miniBtn secondary" data-switch="diary">Diario</button>'+
+    '<button class="miniBtn secondary" data-switch="stats">Statistiche</button>'+
+    '<button class="miniBtn secondary" data-switch="quality">Qualità e prove</button>'+
+    '<button class="miniBtn secondary" data-switch="health">Salute tecnica</button></div>'+
+    '<p class="sub">Gli esiti GitHub non certificano il MP4, il download completo o la revisione artistica.</p></details>';
   return h;
 }
 function todo(){
@@ -1583,55 +1636,38 @@ function issues(){
   var d=state.data||{},attention=d.attention||[];
   var failures=attention.filter(function(x){return x.kind==="workflow"});
   var unavailable=attention.filter(function(x){return x.kind==="source"});
-  var h=sec("Problemi · Ripara con GPT","Una centrale unica: errori tecnici recenti, prove GitHub, chat originali e messaggi pronti per GPT.");
-  h+='<section class="repairHeader"><div class="overline">ASSISTENZA INTELLIGENTE ALLE PRODUZIONI</div>'+
-    '<h3>Dal problema alla correzione, senza rispiegare tutto.</h3>'+
-    '<p>Quando individui un errore, premi «Ripara con GPT»: il pannello inserisce run, progetto, eventuali step falliti e link GitHub in un messaggio già preparato. Tu scegli se continuare nella chat collegata oppure in una nuova.</p>'+
-    '<div class="repairGrid"><span class="scopeLabel">'+failures.length+' ultimi workflow da controllare</span>'+
-    '<span class="scopeLabel">'+unavailable.length+' fonti non raggiungibili</span>'+
-    '<span class="scopeLabel">Nessuna correzione avviata senza il tuo intervento</span></div></section>';
-  h+=productionProgressPanel();
+  var h=sec("Ripara con GPT","Scegli un programma o un video. GPT prepara la verifica senza avviare duplicati.");
   h+=actionProjectCards();
   h+=actionUnblockBanner();
-  h+='<div class="panel"><h3>Errori tecnici correnti · '+failures.length+'</h3>'+
-    '<p class="sub">Soltanto le ultime esecuzioni non riuscite di ciascun workflow del ramo principale. Gli errori già superati non rimangono qui come blocchi aperti.</p>';
-  h+=failures.length?failures.map(attentionItem).join(""):
-    '<div class="empty">'+(source("github")?"Nessun ultimo esito critico nei workflow pertinenti osservati. Non prova che ogni problema sia risolto.":"GitHub non raggiungibile: impossibile verificare gli errori.")+'</div>';
-  h+='</div>';
-  if(unavailable.length)h+='<div class="panel"><h3>Fonti non verificabili</h3>'+
-    unavailable.map(attentionItem).join("")+'</div>';
-  h+='<div class="panel"><h3>Chat principali dei progetti</h3>'+
-    '<p class="sub">Collega una volta l’URL privato della conversazione per ritrovarla dal telefono. L’associazione rimane in questo browser, non viene inviata al repository.</p>'+
+  h+='<section class="panel simpleRepairIssues"><div class="simpleAttentionHead"><h3>Errori da verificare · '+failures.length+'</h3>'+
+    '<button class="miniBtn secondary" type="button" data-switch="todo">Tutte le segnalazioni</button></div>'+
+    (failures.length?failures.slice(0,5).map(attentionItem).join(""):
+    '<p class="simpleGood">'+(source("github")?"Nessun errore critico recente osservato nei workflow pertinenti.":"GitHub non disponibile: controlli da ripetere.")+'</p>')+
+    (unavailable.length?'<p class="simpleAlert">'+unavailable.length+' fonti non verificabili: aggiorna prima di intervenire.</p>':"")+
+    '</section>';
+  h+='<details class="simpleMore"><summary>Seleziona un quadro e una variante</summary>'+
+    '<p class="sub">Apri solo se devi completare, recuperare o migliorare un video specifico.</p>'+
+    actionWorksPanel()+'</details>';
+  h+='<details class="simpleMore"><summary>Altri video da migliorare</summary>'+
+    actionRecentVideos()+'</details>';
+  h+='<details class="simpleMore"><summary>Collegamenti alle chat dei progetti</summary>'+
+    '<p class="sub">I collegamenti privati rimangono soltanto nel browser del tuo telefono.</p>'+
     '<div class="chatDirectory">'+Object.keys(PROJECT_LABELS).filter(function(x){return x!=="other"}).map(function(key){
       var linked=!!state.chatLinks[key];
       return '<div class="repairCard"><strong>'+escapeText(PROJECT_LABELS[key])+'</strong>'+
-      '<p class="repairMeta">'+(linked?"Chat originale collegata sul dispositivo":"Chat originale non ancora associata")+'</p>'+
-      '<div class="repairGrid"><button type="button" class="repairButton secondary" data-repair-project="'+escapeText(key)+'">'+
-      (linked?"Gestisci collegamento":"Collega chat")+'</button>'+
-      (linked&&isAndroidDevice()?'<a class="repairButton" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(androidChatGPTIntent(state.chatLinks[key],false))+'">◈ Apri nell’app ChatGPT</a>':'')+
-      (linked?'<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(state.chatLinks[key])+'">Apri nel browser ↗</a>':'')+
+      '<p class="repairMeta">'+(linked?"Chat originale collegata":"Chat da collegare")+'</p>'+
+      '<div class="repairGrid"><button class="repairButton secondary" type="button" data-repair-project="'+escapeText(key)+'">'+
+      (linked?"Gestisci chat":"Collega chat")+'</button>'+
+      (linked?'<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(state.chatLinks[key])+'">Apri chat ↗</a>':"")+
       '</div></div>';
-    }).join("")+'</div></div>';
-  h+=actionWorksPanel();
-  h+=actionRecentVideos();
-  var latestIds=new Set(failures.map(function(x){return Number(x.run_id)||0}));
-  var past=(d.runs||[]).filter(function(r){
-    return ["failure","cancelled","timed_out","action_required"].includes(r.conclusion)&&
-      !latestIds.has(Number(r.id)||0);
-  });
-  if(past.length){
-    h+='<details class="panel"><summary>Archivio storico · '+past.length+' esiti critici nel campione</summary>'+
-      '<p class="sub">Potrebbero essere già stati recuperati da una run successiva. Non sono indicati come incidenti attivi.</p>'+
-      past.slice(0,25).map(function(r){
-        var url=String(r.html_url||"");
-        if(!url.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/"))url="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions";
-        return '<div class="repairCard"><strong>'+escapeText(r.name)+'</strong>'+
-          '<p class="repairMeta">'+escapeText(date(r.updated_at))+' · '+escapeText(r.conclusion)+' · '+escapeText(r.head_branch||"branch non disponibile")+'</p>'+
-          '<div class="repairGrid"><button type="button" class="repairButton secondary" data-repair-run="'+Number(r.id||0)+'">Analizza con GPT</button>'+
-          '<a class="repairButton secondary" href="'+escapeText(url)+'" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div>';
-      }).join("")+'</details>';
-  }
-  h+='<p class="note">Per continuare in una chat già esistente serve il suo indirizzo privato (chatgpt.com/c/…). I link condivisi /share/ non consentono di continuare quella conversazione. Il pannello non può leggere automaticamente la tua cronologia privata ChatGPT.</p>';
+    }).join("")+'</div></details>';
+  var ids=new Set(failures.map(function(x){return Number(x.run_id)||0}));
+  var past=(d.runs||[]).filter(function(r){return ["failure","cancelled","timed_out","action_required"].includes(r.conclusion)&&!ids.has(Number(r.id)||0)});
+  if(past.length)h+='<details class="simpleMore"><summary>Storico degli errori precedenti · '+past.length+'</summary>'+
+    '<p class="sub">Errori storici: possono essere già stati corretti.</p>'+
+    past.slice(0,15).map(function(r){return '<div class="repairCard"><strong>'+escapeText(r.name)+'</strong>'+
+      '<p class="repairMeta">'+escapeText(date(r.updated_at))+' · '+escapeText(r.conclusion)+'</p>'+
+      '<button class="repairButton secondary" type="button" data-repair-run="'+Number(r.id||0)+'">Esamina con GPT</button></div>';}).join("")+'</details>';
   return h;
 }
 function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,genres:genres,stats:statisticsPage,quality:qualityPage,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}});var ws=document.getElementById("workSearch");if(ws)ws.addEventListener("input",function(e){state.workSearch=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("workSearch");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
