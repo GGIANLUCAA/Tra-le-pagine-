@@ -1,0 +1,84 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-11",
+  "selected_title": "The Shipwreck",
+  "artist": "J. M. W. Turner",
+  "year": 1805,
+  "variant": "cinema_standard",
+  "status": "ONE_NEW_REAL_49_875S_MP4_2_BITRATES_SOURCE_SHA1_LOCKED_FFMPEG_ZIP_GITHUB_INDEPENDENT_JOB_AND_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+  "original_image": {
+    "commons": "https://commons.wikimedia.org/wiki/File:Jmw_turner,_il_naufragio,_ante_1805,_02.jpg",
+    "institution": "Tate Britain",
+    "accession": "N00476",
+    "object_url": "https://www.tate.org.uk/art/artworks/turner-the-shipwreck-n00476",
+    "source_photo_author": "Sailko",
+    "source_photo_license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "source_pixels": [
+      5244,
+      3648
+    ],
+    "source_bytes": 12619796,
+    "sha1": "3dc999e9b8820db7092076f3384e2d162e2f9035",
+    "sha256": "8123b51407e0ff48ec40f87111bbf120d16e60d96e1c8fa3bc1923de0dc778a4",
+    "painting_cm": [
+      170.5,
+      241.6
+    ],
+    "territorial_use_pending": true
+  },
+  "production": {
+    "github_run_id": 42958461289,
+    "github_artifact_id": 13827189167,
+    "script": "scripts/artvision_owner_shipwreck_cinema_v1.py",
+    "workflow": ".github/workflows/artvision-owner-shipwreck-cinema-v1.yml",
+    "duration_seconds": 49.875,
+    "fps": 24,
+    "frames": 1197,
+    "scenes": 12,
+    "HD": [
+      1080,
+      1920
+    ],
+    "hd_filename": "ARTVISION_TURNER_SHIPWRECK_CINEMA_HD_1080P_REVIEW.mp4",
+    "hd_bytes": 15518838,
+    "hd_sha256": "4c12c9b6c1f07ef12e49b66da7a37ca7b0872b14e8efc6a44954760d8b8f9537",
+    "android_filename": "ARTVISION_TURNER_SHIPWRECK_CINEMA_ANDROID_REVIEW.mp4",
+    "android_bytes": 7224194,
+    "android_sha256": "e402f0c90672feade221181ff93c0492af039be1819ee4b9c750e77e68d4cc00",
+    "android_zip_filename": "ARTVISION_TURNER_SHIPWRECK_ANDROID_REVIEW_PACKAGE.zip",
+    "zip_bytes": 8111961,
+    "zip_sha256": "1f5f5d7d6eced219df245caa843d93be75a283a2c99098bccb020daed931e04e",
+    "music": "Original synthesized soundtrack, no third-party recording",
+    "voice": false,
+    "cover_and_social_drafts": true
+  },
+  "QA": {
+    "render": "PASS",
+    "github_independent_artifact_job": "PASS",
+    "source_sha1_fixed_match": "PASS",
+    "full_hd_ffmpeg": "PASS",
+    "full_android_ffmpeg": "PASS",
+    "zip_crc_and_source_mp4_sha": "PASS",
+    "contact_sheet_inspected": true,
+    "full_speed_human_artistic_review": "PENDING",
+    "rights_territorial": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_video_calls": 0,
+    "library_independent_materialized_readback": "PASS_HD_ANDROID_ZIP_SHA_FFMPEG_CRC"
+  },
+  "library": {
+    "hd_id": "libfile_b3f52a92f3788191925fafb7af84451a",
+    "android_id": "libfile_77ca3066b65c81919781ba9ed000d510",
+    "zip_id": "libfile_7901024781988191ae372fba987915e2",
+    "full_artifact_id": "libfile_ea341cb046d48191969f92a1e9cd9dee"
+  },
+  "queue_effect": {
+    "old_museum": "26/36",
+    "new_distinct_second_queue_cinema": 1,
+    "second_queue_distinct_cinema_total": 10,
+    "not_full_4x1": true
+  },
+  "next_action": "Do not duplicate this Cinema Standard as new. Full speed artistic/rights QA before release. Continue independent owner-selected paintings, especially The Forest Fire Piero di Cosimo (CC0 exact source); single heavy at a time."
+}
