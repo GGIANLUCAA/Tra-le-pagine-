@@ -1,0 +1,70 @@
+name: "Regia Umana · prepare authentic 1895 frame for FREE Vidu plan"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/regia-umana-1895-vidu-frame.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  source_frame:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Download original Lumiere from verified Wikimedia file URL and extract genuine frame
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/regia-umana-vidu-frame
+          python3 - <<'PY'
+          from urllib.request import Request,urlopen
+          from pathlib import Path
+          import hashlib
+          url="https://upload.wikimedia.org/wikipedia/commons/8/86/Repas_de_b%C3%A9b%C3%A9_%281895%29.webm"
+          p=Path("output/regia-umana-vidu-frame/baby.webm")
+          with urlopen(Request(url,headers={"User-Agent":"RegiaUmanaLumiereArchive/1.0 (Github source verification)"}),timeout=120) as r,open(p,"wb") as f:
+            while True:
+              v=r.read(1<<20)
+              if not v:break
+              f.write(v)
+          digest=hashlib.sha256(p.read_bytes()).hexdigest()
+          expected="ff18cc378aa5ffd1d9e02533fab03443d33a448c8e49479fcddb761934699275"
+          if digest!=expected:raise RuntimeError("Historical original SHA mismatch, abort Vidu frame creation")
+          print("SOURCE_VERIFIED",digest,p.stat().st_size)
+          PY
+          ffmpeg -nostdin -y -v error -ss 9.3 -i output/regia-umana-vidu-frame/baby.webm \
+            -frames:v 1 -vf "crop=580:1010:415:5,scale=720:1280:flags=lanczos,eq=contrast=1.045:brightness=0.01,unsharp=5:5:0.28" \
+            -q:v 2 output/regia-umana-vidu-frame/FRANCE_1895_BABY_AUTHENTIC_I2V_START.jpg
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p=Path("output/regia-umana-vidu-frame/FRANCE_1895_BABY_AUTHENTIC_I2V_START.jpg")
+          assert 10000<p.stat().st_size<9500000
+          print("VIDU_SOURCE_IMAGE_SHA256",hashlib.sha256(p.read_bytes()).hexdigest())
+          print("VIDU_SOURCE_IMAGE_BYTES",p.stat().st_size)
+          PY
+      - name: Store historically sourced still (not an approved AI result) in release
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag=regia-umana-france-1895-vidu-source-20261111
+          gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" \
+              --title "Regia Umana · France 1895 · authentic I2V source" \
+              --notes "Historical Lumiere footage, from Wikimedia Commons Repas de bebe (1895); SHA-256 source verified against Regia Umana 1895 pilot. One frame only, archival, not AI. Source URL: https://commons.wikimedia.org/wiki/File:Repas_de_b%C3%A9b%C3%A9_(1895).webm . Owner review preparation; do not infer that any AI reconstruction is authentic." \
+              --prerelease
+          gh release upload "$tag" output/regia-umana-vidu-frame/FRANCE_1895_BABY_AUTHENTIC_I2V_START.jpg --clobber
+          gh release view "$tag" --json assets --jq '.assets[]|{name,size,url}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: regia-umana-france-1895-vidu-source-image-only
+          path: output/regia-umana-vidu-frame/FRANCE_1895_BABY_AUTHENTIC_I2V_START.jpg
+          retention-days: 14
