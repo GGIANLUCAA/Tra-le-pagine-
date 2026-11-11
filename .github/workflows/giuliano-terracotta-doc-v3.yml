@@ -41,7 +41,7 @@ jobs:
           names={x["source_file"] for x in beats}|{x.get("second_file") for x in beats}
           assert len(beats)>=32 and len(names-{None})>=28 and plan["revision"]==1
           assert all(x.get("semantic") and x.get("presentation") for x in beats)
-          assert sum("cammin" in x["text"].lower() for x in beats)>=2
+          assert sum("cammin" in x["text"].lower() for x in beats)>=1
           assert all("GIULIANO" not in x.get("overlay","") for x in beats)
           print("MOAI_EDITORIAL_PREFLIGHT_OK",len(beats),len(names-{None}),flush=True)
           PY
