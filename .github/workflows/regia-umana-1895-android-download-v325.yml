@@ -61,7 +61,7 @@ jobs:
           ffmpeg -nostdin -hide_banner -loglevel error -y \
             -i "$root/ORIGINAL_MASTER.mp4" \
             -i "$root/NEURAL_COLOR.mp4" \
-            -filter_complex "[0:v]trim=duration=21,setpts=PTS-STARTPTS,fps=25,scale=1080:1920:flags=lanczos,setsar=1,format=yuv420p[v0];[1:v]trim=duration=5.08,setpts=PTS-STARTPTS,fps=25,scale=1080:1920:flags=lanczos,setsar=1,format=yuv420p[v1];[v0][v1]concat=n=2:v=1:a=0,format=yuv420p[v];[0:a]atrim=start=0:end=21.8,asetpts=PTS-STARTPTS[a0];[0:a]atrim=start=10:end=15.08,asetpts=PTS-STARTPTS[a1];[a0][a1]acrossfade=d=0.8:c1=tri:c2=tri,afade=t=out:st=25.08:d=1.0[a]" \
+            -filter_complex "[0:v]trim=duration=21,setpts=PTS-STARTPTS,fps=25,scale=1080:1920:flags=lanczos,setsar=1,format=yuv420p[v0];[1:v]trim=duration=5.08,setpts=PTS-STARTPTS,fps=25,scale=1080:1920:flags=lanczos,setsar=1,format=yuv420p[v1];[v0][v1]concat=n=2:v=1:a=0,format=yuv420p[v];[0:a]atrim=start=0:end=24.4,asetpts=PTS-STARTPTS,atempo=0.93558,afade=t=out:st=25.03:d=1.05[a]" \
             -map "[v]" -map "[a]" -t 26.08 \
             -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p \
             -c:a aac -b:a 160k -ac 2 \
@@ -97,12 +97,15 @@ jobs:
             "Vidu_new_credits_charged":0,"historical_color":"interpretative_neural_colorization_not_archival_fact","files":[]}
           for name,w,h in items:
               p=d/name
-              data=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","stream=codec_type,codec_name,width,height:format=duration,size","-of","json",str(p)]))
+              data=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","stream=codec_type,codec_name,width,height,duration:format=duration,size","-of","json",str(p)]))
               streams=data["streams"]
               v=next(s for s in streams if s["codec_type"]=="video")
               a=next(s for s in streams if s["codec_type"]=="audio")
               duration=float(data["format"]["duration"])
               assert(v["width"],v["height"],v["codec_name"],a["codec_name"])==(w,h,"h264","aac"),(name,v,a)
+              audio_duration=float(a.get("duration",duration))
+              if "ESTRATTO" not in name and audio_duration<25.5:
+                  raise AssertionError("FULL_MOVIE_AUDIO_TOO_SHORT: "+str(audio_duration))
               assert duration>5 and (abs(duration-26.08)<0.22 if "ESTRATTO" not in name else duration<6.5),duration
               subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(p),"-f","null","-"],check=True,timeout=180)
               record={"filename":name,"bytes":p.stat().st_size,"duration_s":round(duration,3),
