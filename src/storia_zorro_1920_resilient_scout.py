@@ -17,6 +17,7 @@ from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 
 import cv2
+import imageio_ffmpeg
 import requests
 from PIL import Image, ImageDraw
 
@@ -72,7 +73,7 @@ def source_metadata(title):
 def excerpt(url):
     dest = OUTPUT / "SOURCE.mp4"
     dest.unlink(missing_ok=True)
-    args = ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-y",
+    args = [imageio_ffmpeg.get_ffmpeg_exe(), "-nostdin", "-hide_banner", "-loglevel", "error", "-y",
             "-ss", str(OFFSET_SECONDS), "-user_agent", HEADERS["User-Agent"],
             "-rw_timeout", "20000000", "-i", url, "-t", str(SEGMENT_SECONDS),
             "-an", "-c:v", "libx264", "-preset", "ultrafast", "-crf", "22",
@@ -84,16 +85,20 @@ def excerpt(url):
                                ("HTTP_429" if "429" in proc.stderr else "NETWORK_OR_DECODE"))
         if not dest.exists() or not 100000 < dest.stat().st_size < MAX_SEGMENT_BYTES:
             raise RuntimeError("EXCERPT_MISSING_OR_TOO_LARGE")
-        report = json.loads(subprocess.run(
-            ["ffprobe", "-v", "error", "-show_entries",
-             "format=duration,size:stream=width,height,r_frame_rate,codec_name",
-             "-of", "json", str(dest)], capture_output=True, text=True,
-            check=True, timeout=20).stdout)
-        stream = next(s for s in report["streams"] if s.get("width"))
-        if int(stream["width"]) < 900 or int(stream["height"]) < 680:
+        cap = cv2.VideoCapture(str(dest))
+        if not cap.isOpened():
+            raise RuntimeError("EXCERPT_CANNOT_BE_DECODED")
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = float(cap.get(cv2.CAP_PROP_FPS))
+        frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        cap.release()
+        if width < 900 or height < 680:
             raise RuntimeError("NOT_HIGH_ENOUGH_NATIVE_GEOMETRY")
-        if float(report["format"]["duration"]) < 16:
-            raise RuntimeError("EXCERPT_TOO_SHORT")
+        if fps <= 0 or frames / fps < 16:
+            raise RuntimeError("EXCERPT_TOO_SHORT_OR_FPS_UNKNOWN")
+        report = {"format": {"duration": str(frames / fps), "size": dest.stat().st_size},
+                  "streams": [{"width": width, "height": height, "fps": fps}]}
         return report
     except Exception:
         dest.unlink(missing_ok=True)
