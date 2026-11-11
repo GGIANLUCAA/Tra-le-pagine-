@@ -298,6 +298,7 @@ def assemble(metas,photos,clip):
   timeline.append({"name":id,"bw_motion_s":bw,"color_photo_s":hold,"source_timecode":t,"source_original_sha256":meta["sha256"]})
  # final sequence: authentic Barbershop B/W leading into REAL moving Vidu.
  spec=SRC[4];meta=metas[4];id,_,year,t,bw,hold,_=spec
+ t=meta["second"]
  for n in range(int(round(bw*FPS))):
   writer.write(canvas(video_frame(meta["path"],max(.05,t-bw+n/FPS))))
  c=cv2.VideoCapture(str(clip))
@@ -329,7 +330,7 @@ def assemble(metas,photos,clip):
     "disclosure":"AI color/photos and Vidu motion are interpretations, not documentary color"})
  make_cover(photos[4])
  for platform in ("FACEBOOK","INSTAGRAM","TIKTOK","YOUTUBE"):
-  (ROOT/("POST_"+platform+".txt")).write_text("FIRST MOTION · 1893–1894\nFive distinct moments from the authentic Edison 1894 Barbershop film. Authentic archival B/W footage meets source-matched photographic AI reconstruction, ending with one openly AI-animated sequence. Historic sources from Wikimedia Commons. Technical preview — not a documentary color recording.\n",encoding="utf8")
+  (ROOT/("POST_"+platform+".txt")).write_text("THE BARBERSHOP · 1894\nFive distinct moments from the authentic Edison 1894 Barbershop film. Authentic archival B/W footage meets source-matched photographic AI reconstruction, ending with one openly AI-animated sequence. Historic sources from Wikimedia Commons. Technical preview — not a documentary color recording.\n",encoding="utf8")
  (ROOT/"README.txt").write_text("OWNER REVIEW ONLY - NOT APPROVED OR PUBLISHED. One authentic historical Barbershop film, five time-distinct original moving moments, 5 I2I source-locked photos and one single Vidu scene. Source scans and photo interpretations are not claims of exact historical skin/fabric colors. Inspect hand/face continuity before approving.\n")
  Z=ROOT/"FIRST_MOTION_1893_1894_ANDROID_KIT.zip"
  with zipfile.ZipFile(Z,"w",zipfile.ZIP_DEFLATED,compresslevel=3) as z:
@@ -338,7 +339,7 @@ def assemble(metas,photos,clip):
  with zipfile.ZipFile(Z) as z:assert z.testzip() is None
  say("REAL_NEW_MP4_ZIP_COMPLETED",sha(OUTVIDEO),stats.get("format",{}).get("duration"))
 def main():
- say("START_FIRST_MOTION_FIVE_AUTHENTIC_SOURCES")
+ say("START_BARBERSHOP_1894_ONE_REAL_FILM_FIVE_SOURCE_LOCKED_MOMENTS")
  metas=[source_download(spec) for spec in SRC]
  out("SOURCES_AND_RIGHTS.json",{"sources":metas,"licensing":"Wikimedia Commons public domain US; verify specific derivative and Italian reuse rights before publication","all_source_film_original_video":True,"unique_original_films":1,"not_5_independent_scenes":True})
  model,_=dd.download_model()
