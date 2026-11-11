@@ -1,5 +1,9 @@
 # Regole attive — 25 ottobre 2026 (revisione 3, Audience V32 + Fonti V33)
 
+## V322 · REGIA UMANA / SGUARDI V1 — riferimento concreto (11/11/2026)
+Il proprietario ha valutato il campione video «Sguardi in camera» come riferimento eccellente per il linguaggio visivo (**regia 9,2/10**) e autorizza ad applicarne le scelte riuscite a TUTTI i nuovi video: scene autentiche, gesti umani, montaggio semantico, durate non meccaniche, rima visiva specifica, narrazione concreta, musica subordinata all'emozione e QA artistico reale. **Non copiare contenuti o soundtrack**, non applicare 2,2 secondi come durata obbligatoria e non annullare V320/V321. Guida completa: `docs/REGIA_UMANA_SGUARDI_V1_20261111.md`.
+L'autorizzazione all'uso intelligente dei crediti Vidu **già disponibili** NON consente nuovi acquisti, confusione fra saldo consumer e API o generazione con spesa sconosciuta. Applicare il gateway esistente con controlli gratuiti, preventivo e autorizzazione della specifica clip/costo; una sola POST e deduplica. ArtVision 4×1 e La Storia Rivive V99 mantengono vincoli/owner/QA; i provini isolati non diventano Gold o pubblicati.
+
 ## REGOLA GLOBALE V320 · NATURALEZZA AUTORIALE E NO STAMPINO AI (10/11/2026)
 
 **V321 verifica tra episodi (10/11):** il modulo read-only `src/editorial_series_naturalness_v321.py` confronta copioni Critico davvero presenti nel repo, segnala finali astratti e ripetizioni di apertura/coda/beat, senza modificare WAV/master o cambiare owner. Primo audit reale: 5/5 copioni da 9 capitoli e 5/5 generatori con delay 3,5s + tail 6s; sono *valori del codice*, non un rilievo dai MP4. Leggi `docs/EDITORIAL_SERIES_REAL_AUDIT_V321_20261110.md`. Gli altri formati, soprattutto i mute, restano soggetti alla V320 ma richiedono un audit del montaggio reale, non un falso confronto testuale.
