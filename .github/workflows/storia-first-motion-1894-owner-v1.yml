@@ -48,7 +48,7 @@ jobs:
           command -v ffmpeg
           command -v ffprobe
           python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "requests>=2.31,<3" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
-      - name: "Restore two verified 1894 authentic moments and single source-matched Vidu motion"
+      - name: "Restore low-exposure authentic 1894 frames with Finegrain and one source-locked Vidu shot"
         shell: bash
         run: |
           set -euo pipefail
