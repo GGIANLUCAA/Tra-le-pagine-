@@ -306,6 +306,37 @@ def genuine_field_experiment(qa):
           "permission_record":"https://www.eurekalert.org/multimedia/1095278",
           "source_sha256":sha(raw)}
 
+def repair_short_photo_flashes(base,qa,chosen):
+  """Replace unintended isolated photo shots under 2 seconds with neighboring real frame."""
+  shots=sorted(qa["scene_timeline"],key=lambda x:float(x["visual_start"]))
+  repairs=[]
+  for i,shot in enumerate(shots):
+    begin=float(shot["visual_start"]);end=float(shot["visual_end"])
+    duration=end-begin
+    if not (0.09<duration<2.0):continue
+    if any(begin<float(x["end"]) and end>float(x["begin"]) for x in chosen):
+      continue
+    if i>0:
+      previous=shots[i-1]
+      ref=max(float(previous["visual_start"])+.12,float(previous["visual_end"])-.22)
+    elif i+1<len(shots):
+      following=shots[i+1]
+      ref=min(float(following["visual_end"])-.15,float(following["visual_start"])+.25)
+    else:
+      continue
+    still=OUT/f"FLASHFIX_{i:03d}.jpg"
+    run("ffmpeg","-nostdin","-v","error","-y","-ss",f"{ref:.3f}",
+        "-i",base,"-frames:v","1",still)
+    segment=OUT/f"FLASHFIX_{i:03d}.mp4"
+    run("ffmpeg","-nostdin","-v","error","-y","-loop","1",
+        "-framerate",FPS,"-i",still,"-t",f"{duration:.3f}",
+        "-r",FPS,"-c:v","libx264","-preset","veryfast",
+        "-crf","22","-pix_fmt","yuv420p","-an",segment)
+    repairs.append({"type":"unwanted_flash_removed","begin":round(begin,4),
+                    "end":round(end,4),"clip":segment,"beat":shot["beat"],
+                    "source_frame_time":round(ref,3)})
+  return repairs
+
 def compose(base,qa,edits):
  edits=sorted(edits,key=lambda x:x["begin"])
  prev=0
@@ -340,6 +371,8 @@ def main():
  # Exclude photographic photos that overlap the animated scientific explanation.
  authentic=genuine_field_experiment(qa)
  scenes=photos+science+[authentic]
+ repairs=repair_short_photo_flashes(base,qa,scenes)
+ scenes.extend(repairs)
  movie,mobile=compose(base,qa,scenes)
  cover=BASE/"COVER_MOAI.jpg"
  shutil.copyfile(cover,OUT/"COVER_DEFINITIVA.jpg")
@@ -363,6 +396,7 @@ def main():
   "genuine_new_experiment_clip_included":True,
   "genuine_field_test_duration_seconds":round(authentic["end"]-authentic["begin"],2),
   "genuine_field_test_source_sha256":authentic["source_sha256"],
+  "short_photo_flashes_removed":len(repairs),
   "external_experiment_video":"https://www.binghamton.edu/news/story/5830/easter-islands-statues-actually-walked-and-physics-backs-it-up",
   "scientific_3d_animated_beats":[x["beat"] for x in science],
   "animated_video_seconds":round(sum(x["end"]-x["begin"] for x in science),2),
