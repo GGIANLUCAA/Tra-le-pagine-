@@ -76,7 +76,7 @@ jobs:
             -ss 24 -i "$root/FRANCE_1895_COLORE_REALE_DA_SCARICARE_1080.mp4" \
             -frames:v 1 -q:v 3 "$root/COPERTINA_FRANCE_1895.jpg"
           ffmpeg -nostdin -hide_banner -loglevel error -y \
-            -ss 20 -i "$root/FRANCE_1895_COLORE_REALE_DA_SCARICARE_1080.mp4" -t 6.08 \
+            -i "$root/FRANCE_1895_COLORE_REALE_DA_SCARICARE_1080.mp4" -ss 20 -t 6.08 -map 0:v:0 -map 0:a:0 \
             -c:v libx264 -preset veryfast -crf 21 -pix_fmt yuv420p \
             -c:a aac -b:a 128k -movflags +faststart \
             "$root/ESTRATTO_BIANCO_NERO_COLORE.mp4"
