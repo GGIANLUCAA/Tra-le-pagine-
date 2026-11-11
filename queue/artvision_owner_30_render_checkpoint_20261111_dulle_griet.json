@@ -1,0 +1,84 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-11",
+  "work_id": "bruegel_dulle_griet_1563_mmb_0045",
+  "title": "Dulle Griet",
+  "artist": "Pieter Bruegel the Elder",
+  "year": 1563,
+  "selected_order": 10,
+  "variant": "cinema_standard",
+  "status": "NEW_REAL_RESTORED_SOURCE_2021_CINEMA_MP4_2_BITRATES_GITHUB_QA_AND_INDEPENDENT_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+  "source": {
+    "museum": "Museum Mayer van den Bergh, Antwerp",
+    "inventory": "MMB.0045",
+    "object_url": "https://search.museummayervandenbergh.be/details/collect/33",
+    "restoration_url": "https://museummayervandenbergh.be/en/page/restoration-dulle-griet-reveals-unseen-wealth-colour-and-fresh-discoveries",
+    "modern_source_file": "https://commons.wikimedia.org/wiki/File:Pieter_Brueghel_-_Dulle_Griet_-_Museum_Mayer_van_den_Bergh_-_MMB.0045.tif",
+    "actual_photo_variant": "RESTORED_2021_3840px_WUYTS_DERIVATIVE",
+    "photographer": "Michel Wuyts",
+    "source_pixels": [
+      3840,
+      2814
+    ],
+    "source_bytes": 2406324,
+    "source_sha1": "a8392a7e3261f5aaeb27a00bfb1d868f7921dbc5",
+    "source_sha256": "3eef2f5372d42fb5a7da62cfc33fdf1e06f357cdd617c0eace39b2f068ef294b",
+    "photo_rights": "Commons faithful PD-Art/PDM photographic derivative of public domain work, final territorial/commercial rights check PENDING",
+    "painting_dimensions_cm": [
+      117.4,
+      162.2
+    ]
+  },
+  "production": {
+    "github_run": 43068571365,
+    "artifact_id": 13875429614,
+    "script": "scripts/artvision_owner_dulle_griet_cinema_v1.py",
+    "workflow": ".github/workflows/artvision-owner-dulle-griet-cinema-v1.yml",
+    "duration_s": 51.1666666667,
+    "scenes": 12,
+    "framerate": 24,
+    "frames": 1228,
+    "resolution_HD": [
+      1080,
+      1920
+    ],
+    "hd_file": "ARTVISION_DULLE_GRIET_CINEMA_HD_1080P_REVIEW.mp4",
+    "hd_bytes": 17702361,
+    "hd_sha256": "2a31eb964a3e102e5205dba569e8186ee46fab49e9811e14c6825630a2e92279",
+    "android_file": "ARTVISION_DULLE_GRIET_CINEMA_ANDROID_REVIEW.mp4",
+    "android_bytes": 6321109,
+    "android_sha256": "9d4e7af08e0d6bc6b032ab96033cbc62edd48ea17ee5a9b1331155e075ac5100",
+    "android_zip": "ARTVISION_DULLE_GRIET_ANDROID_PACKAGE.zip",
+    "zip_bytes": 7112215,
+    "zip_sha256": "342fde1bf87e29cd13c4a28210ef9e62e7a09e38ba1d400aca47d322543a481c",
+    "soundtrack": "Original locally synthesized musical score",
+    "voice": false,
+    "cover_social_sources_qa": true
+  },
+  "qa": {
+    "github_render_job": "SUCCESS",
+    "github_independent_readback": "SUCCESS",
+    "source_image_dimensions_sha": "PASS",
+    "full_FFMPEG_HD_ANDROID_decode": "PASS",
+    "zip_crc_and_embedded_mp4": "PASS",
+    "contact_sheet": "INSPECTED_12_PHOTO_SAMPLES",
+    "private_library_materialized_sha_readback": "PASS_HD_ANDROID_ZIP",
+    "full_speed_human_artistic_review": "PENDING",
+    "final_commercial_territorial_clearance": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_api_calls": 0
+  },
+  "library": {
+    "hd": "libfile_70c9d506d6588191bb6501ebb5d0d2d3",
+    "android": "libfile_67cda6483f70819199d6940ad1de8d07",
+    "zip": "libfile_7d7fa6b8cda88191b02a0b278ed30a7b",
+    "full_artifact": "libfile_890913d597f081919830ff4c9a4a68ab"
+  },
+  "queue": {
+    "primary_10_verified_count": "26/36",
+    "owner_30_distinct_cinema_after": 12,
+    "new_approved_full_4x1_slots": 0
+  },
+  "next_action": "Do NOT duplicate this Cinema Standard as new. Prioritize The Intrigue by James Ensor as next new independent painting (CC0 photographer, 5000px and verified checksum), after rendering lock checks. Review main artistic pacing and territorial rights before Gold/publication."
+}
