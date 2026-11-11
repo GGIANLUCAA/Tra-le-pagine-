@@ -5,16 +5,20 @@ on:
     paths:
       - "src/ai_director_v1.py"
       - "src/ai_director_bridge_v1.py"
+      - "src/ai_director_visual_qa_v1.py"
       - "tests/test_ai_director_v1.py"
       - "tests/test_ai_director_bridge_v1.py"
+      - "tests/test_ai_director_visual_qa_v1.py"
       - "docs/AI_DIRECTOR_V1_INTEGRAZIONE_20261112.md"
       - ".github/workflows/ai-director-v1.yml"
   push:
     paths:
       - "src/ai_director_v1.py"
       - "src/ai_director_bridge_v1.py"
+      - "src/ai_director_visual_qa_v1.py"
       - "tests/test_ai_director_v1.py"
       - "tests/test_ai_director_bridge_v1.py"
+      - "tests/test_ai_director_visual_qa_v1.py"
       - ".github/workflows/ai-director-v1.yml"
   workflow_dispatch:
     inputs:
@@ -72,9 +76,10 @@ jobs:
       - name: "Compile and run isolated no-network tests"
         run: |
           set -euo pipefail
-          python -m py_compile src/ai_director_v1.py src/ai_director_bridge_v1.py
+          python -m py_compile src/ai_director_v1.py src/ai_director_bridge_v1.py src/ai_director_visual_qa_v1.py
           python -m unittest discover -s tests -p 'test_ai_director_v1.py' -v
           python -m unittest discover -s tests -p 'test_ai_director_bridge_v1.py' -v
+          python -m unittest discover -s tests -p 'test_ai_director_visual_qa_v1.py' -v
       - name: "Verify main zero-cost gate is still fail-closed"
         run: |
           set -euo pipefail
