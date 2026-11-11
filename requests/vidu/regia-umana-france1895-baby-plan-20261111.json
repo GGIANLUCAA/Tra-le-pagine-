@@ -1,0 +1,25 @@
+{
+  "schema": "vidu_project_gateway_v1",
+  "request_id": "regia-umana-france1895-baby-plan-20261111",
+  "mode": "plan",
+  "format": "storia_rivive",
+  "source": {
+    "release_tag": "regia-umana-france-1895-vidu-source-20261111",
+    "asset_name": "FRANCE_1895_BABY_AUTHENTIC_I2V_START.jpg",
+    "sha256": "f12c91718f451d2830683f1e2a83b8092e78f415751899b90bae65d434752904",
+    "subject_reviewed_by_user": true,
+    "provenance_url": "https://commons.wikimedia.org/wiki/File:Repas_de_b%C3%A9b%C3%A9_(1895).webm"
+  },
+  "clip": {
+    "model": "viduq2-pro-fast",
+    "resolution": "720p",
+    "seconds": 5,
+    "off_peak": false,
+    "audio": false,
+    "color_reveal_first_second": true,
+    "prompt": "SINGLE UNBROKEN 5 SECOND HISTORICAL DOCUMENTARY RECONSTRUCTION in vertical 9:16. Continue strictly from the attached authentic 1895 motion-picture frame of a real baby being fed at a table. A seated INFANT wearing a white lace smock sits in the center, head gently lowered toward the spoon. Only the already visible LEFT ADULT HAND moves the spoon gently toward the infant's mouth; baby's fingers twitch slightly and the baby naturally looks up for a moment, breathing subtly. At frame right the existing woman's black-and-white striped sleeve moves minimally while her body remains partly off-frame. The silver teapot, glassware and dishes on the dining table remain in exactly the same positions. The window wall and leafy garden in the background remain unchanged. NO new faces, NO new bodies, NO added utensils, NO changes to the baby's identity, hairstyle, clothing or age. Respect 1895-era fabric, daylight and period objects. Reconstruct as very subtle, plausible NATURAL COLOR (soft ivory fabric, warm natural skin tones, delicate green background, subdued wooden table, authentic metals), no modern saturated colors. Locked vintage cinematic camera, no cuts, no pan, no still-image zoom, no freeze, no warping, no face morphing, no time leap, no extra fingers, no artificial dolly. Keep realistic microexpressions, gentle motion, photoreal skin texture. The original first frame must match the input exactly; this is an interpretative COLOR RECONSTRUCTION from archival black-and-white footage, not genuine historic color film."
+  },
+  "distribution": {
+    "github_public_preview": false
+  }
+}
