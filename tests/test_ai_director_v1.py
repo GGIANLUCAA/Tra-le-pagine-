@@ -149,6 +149,61 @@ class DirectorTests(unittest.TestCase):
             self.assertIn("Report statico", h.read_text(encoding="utf-8"))
             self.assertNotIn("sk-or-", h.read_text(encoding="utf-8"))
 
+    def test_museum_uses_real_canonical_fields(self):
+        x = sample("artvision_cinema")
+        x["variant"] = "cinema_museum"
+        x["museum_evidence"] = {
+            "painting_dimensions_cm": [180.0, 120.0],
+            "dimensions_source": "Accession verified by collection documentation",
+            "gallery_id": "GAL01", "frame_status": "authentic_documented"}
+        out = inspect_brief(x)
+        codes = [a["code"] for a in out["issues"]]
+        self.assertNotIn("MUSEUM_DIMENSIONS_UNVERIFIED", codes)
+        self.assertIn("MUSEUM_FRAME_SOURCE_REVIEW", codes)
+        self.assertNotEqual(out["status"], "needs_changes")
+
+    def test_safe_html_escapes_injected_titles(self):
+        x = sample()
+        x["title"] = "Video <script>alert(1)</script>"
+        r = inspect_brief(x)
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "report.html"
+            render_dashboard(r, dest)
+            rendered = dest.read_text(encoding="utf-8")
+            self.assertNotIn("<script>", rendered)
+            self.assertIn("&lt;script&gt;", rendered)
+
+    def test_live_payload_hard_caps_price_and_stops_after_provider_failure(self):
+        from urllib.error import HTTPError
+        x = sample()
+        ids = ["google/gemma-3-27b-it:free", "meta-llama/llama-3.3-70b-instruct:free"]
+        sent = []
+        class FakeResponse:
+            def __init__(self, payload):
+                self.payload = payload
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self, max_bytes):
+                return json.dumps(self.payload).encode()
+        def fake_transport(req, timeout):
+            payload = json.loads(req.data)
+            sent.append(payload)
+            self.assertEqual(payload["provider"]["max_price"], {"prompt": 0, "completion": 0})
+            self.assertFalse(payload["provider"]["allow_fallbacks"])
+            if len(sent) == 2:
+                raise HTTPError("https://openrouter.ai", 429, "Rate limited", {}, None)
+            return FakeResponse({"model": ids[0], "choices": [{"message": {"content": "Una proposta da verificare."}}]})
+        with patch.dict(os.environ, {"AI_DIRECTOR_LIVE": "1"}), patch("ai_director_v1.admit", return_value={}):
+            result = live_candidates(x, inspect_brief(x), models=ids,
+                                     policy={}, key="dummy-not-real", transport=fake_transport)
+        self.assertEqual(len(sent), 2)
+        self.assertEqual(len(result), 2)
+        self.assertIn("error", result[-1])
+        self.assertFalse(result[0]["human_approved"])
+
+
     def test_existing_zero_cost_policy_still_default_deny(self):
         p = json.loads((ROOT / "config/free_llm_zero_cost_v1.json").read_text())
         self.assertTrue(p["default_deny"])
