@@ -178,17 +178,18 @@ def shaded_3d_frame(mesh, faces, normals, sec, nsecs, variation=0):
  depth=Z
  order=np.argsort(depth[faces].mean(axis=1))
  L=np.array([-.35,.45,.82]);L/=np.linalg.norm(L)
- # Keep the sculpture textured by varied scientific mesh surface orientations.
+ # Underpaint the complete projected sculpture to eliminate isolated background pinholes.
+ cv2.fillConvexPoly(img,cv2.convexHull(pix.astype(np.int32)),(160,171,191),lineType=cv2.LINE_AA)
+ # Keep the original research mesh intact; use restrained natural sandstone tones.
  for idx in order:
   f=faces[idx]
   pts=pix[f]
   if np.any(~np.isfinite(pts)):continue
   normal=normals[idx]
-  brightness=.33+max(0,float(normal@L))*.58
-  jitter=math.sin(idx*3.27)*.035
-  base=(min(235,int(92+91*brightness+jitter*90)),
-        min(236,int(105+103*brightness+jitter*75)),
-        min(241,int(112+117*brightness+jitter*80)))
+  brightness=.52+max(0,float(normal@L))*.31
+  base=(min(226,int(108+112*brightness)),
+        min(231,int(111+118*brightness)),
+        min(238,int(123+121*brightness)))
   cv2.fillConvexPoly(img,pts.astype(np.int32),base,lineType=cv2.LINE_AA)
  # Controlling ropes illustrated, not a photographed experiment.
  attach_y=int(1005-.83*620)
@@ -224,9 +225,8 @@ def scientific_animation(qa):
  raw[:,1]=(raw[:,1]-raw[:,1].min())/scale
  raw[:,2]=(raw[:,2]-(raw[:,2].min()+raw[:,2].max())/2)/scale
  original_faces=np.asarray(mesh.faces,dtype=np.int32)
- # 2,060 faces preserve landmark profile while making software render resource-bounded.
- subids=np.arange(0,len(original_faces),5)
- faces=original_faces[subids]
+ # Render all mesh faces: sub-sampling made artificial black gaps in the CGI moai.
+ faces=original_faces
  tri=raw[faces]
  nn=np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0])
  nn/=np.maximum(1e-6,np.linalg.norm(nn,axis=1))[:,None]
