@@ -163,7 +163,7 @@ def make_canvas(path,out,beat,i,is_title=False,is_insert=False):
   d.line((74,2034,1090,2034),fill=(210,170,101),width=4)
  else:
   label=(beat.get("overlay") or "").strip()
-  if label and i in (1,2,4,9,12,15,18,19,23,27,28,30):
+  if label and i in (1,2,4,9,12,15,18,19,23,27,28,30,32):
    d.rounded_rectangle((52,1778,1148,1906),radius=15,fill=(6,10,15))
    size=51 if len(label)<27 else 39
    d.text((85,1810),label,font=font(size,True),fill=(252,232,190))
@@ -183,7 +183,7 @@ def cover_from(path,out):
  image=add_gradient(image,.98,.44)
  d=ImageDraw.Draw(image)
  d.rectangle((0,0,W,120),fill=(4,9,17))
- d.text((64,53),"GIULIANO  /  DOCUMENTARI",font=font(31,True),fill=(226,193,137))
+ d.text((64,53),"STORIE DALL’ARCHEOLOGIA",font=font(29,True),fill=(226,193,137))
  d.text((58,1404),"THE",font=font(92,True),fill=(246,230,198))
  d.text((55,1534),"WALKING",font=font(104,True),fill=(255,254,246))
  d.text((58,1680),"GIANTS",font=font(145,True),fill=(255,254,246))
@@ -242,6 +242,37 @@ def zoom_filter(frames,index,motion):
  y="'ih/2-ih/zoom/2'"
  return f"zoompan=z='min(1.015+on*{inc:.6f},1.095)':x={x}:y={y}:d={frames}:s={s}:fps={FPS},format=yuv420p"
 
+def reuse_verified_google_narration(script,audio_dir):
+ """Reuse existing professionally narrated film soundtrack with no second TTS call."""
+ initial=OUT/"BASE_V1_QA.json"
+ master=OUT/"BASE_V1_WITH_VOICE.mp4"
+ if not(initial.exists() and master.exists()):
+  raise RuntimeError("Verified original master missing; do not regenerate voice without permission")
+ prev=json.loads(initial.read_text(encoding="utf8"))
+ assert prev["status"]=="MP4_FULL_DECODE_PASS_ARTISTIC_REVIEW_REQUIRED"
+ if len(SHOTS)!=prev["narrative_beats"]:
+  raise RuntimeError("Unexpected beat count for voice reuse")
+ if sha(master)!=prev["sha256"]:
+  raise RuntimeError("Original Google narration MP4 SHA does not match initial verified master")
+ rows=prev["scene_timeline"]
+ timed=[]
+ for beat in SHOTS:
+  scene=[row for row in rows if row["beat"]==beat["index"]]
+  if not scene or any(row["spoken"]!=beat["text"] for row in scene):
+   raise RuntimeError("Text changed from original voiced narrative at "+str(beat["index"]))
+  timed.append((beat["text"],min(x["voice_begin"] for x in scene),
+                max(x["voice_end"] for x in scene)))
+ audio_dir.mkdir(parents=True,exist_ok=True)
+ (audio_dir/"ALLINEAMENTO_VOCE.json").write_text(json.dumps({
+  "method":prev["voice_ASR_method"],"matched_fraction":prev["voice_ASR_matched_fraction"],
+  "reused_from_verified_sha256":prev["sha256"],
+  "reused_original_soundtrack_no_new_tts":True
+ },indent=2)+"\n",encoding="utf8")
+ duration=float(prev["duration_seconds"])
+ print("MOAI_ORIGINAL_GOOGLE_NARRATION_REUSED",duration,len(timed),
+       "source_sha256",prev["sha256"],flush=True)
+ return np.zeros(round(duration*24000),dtype=np.float32),timed
+
 def main():
  OUT.mkdir(parents=True,exist_ok=True);MEDIA.mkdir(parents=True,exist_ok=True)
  script=(ROOT/"giuliano"/"moai_v1"/"NARRAZIONE_IT.txt").read_text(encoding="utf8").strip()
@@ -278,6 +309,7 @@ def main():
   "platform":{"platform","monument"},
   "pukao":{"pukao"},
   "eye":{"eye"},
+  "culture":{"culture"},
  }
  def resolve(name,beat,optional=False):
   if name in raw:return raw[name],False
@@ -305,7 +337,7 @@ def main():
  (OUT/"PHOTO_CREDITS_MOAI.txt").write_text("REAL WIKIMEDIA COMMONS IMAGES — license and author credits.\n"+
   "\n".join(f'{x["beat"]:02d}{x["position"]}. {x["file"]} | {x["photographer"]} | {x["license"]} | {x["commons_page"]} | {x.get("license_url","")}' for x in all_credits)+"\n",encoding="utf8")
  # Google Gemini must be generated after genuine photo rights / QA preflight.
- audio,timed=synthesize(script,OUT/"audio")
+ audio,timed=reuse_verified_google_narration(script,OUT/"audio")
  duration=len(audio)/24000
  if not 105<=duration<=240:
   raise RuntimeError(f"Voice duration invalid: {duration}")
@@ -381,12 +413,12 @@ def main():
  silent=OUT/"silent_moai.mp4"
  shell(["ffmpeg","-hide_banner","-loglevel","error","-y","-f","concat","-safe","0",
     "-i",concat,"-c","copy",silent])
- original_music(duration,OUT/"score_original_moai.wav")
+ # Keep entire original Google voice+music soundtrack unchanged, avoiding re-synthesis.
  movie=OUT/"GIULIANO_MOAI_V1_CINEMATIC.mp4"
  shell(["ffmpeg","-hide_banner","-loglevel","error","-y","-i",silent,
-   "-i",OUT/"audio"/"VOCE.wav","-i",OUT/"score_original_moai.wav",
-   "-filter_complex","[1:a]acompressor=threshold=-22dB:ratio=2.3:attack=6:release=160,volume=1.17[voice];[2:a]volume=0.18[music];[voice][music]amix=inputs=2:duration=first:dropout_transition=0,alimiter=limit=0.95[a]",
-   "-map","0:v:0","-map","[a]","-c:v","copy","-c:a","aac","-b:a","192k","-ar","48000","-shortest","-movflags","+faststart",movie])
+   "-i",OUT/"BASE_V1_WITH_VOICE.mp4",
+   "-map","0:v:0","-map","1:a:0","-c:v","copy","-c:a","copy",
+   "-shortest","-movflags","+faststart",movie])
  shell(["ffmpeg","-hide_banner","-loglevel","error","-xerror","-i",movie,"-f","null","-"])
  mobile=OUT/"GIULIANO_MOAI_V1_ANDROID.mp4"
  shell(["ffmpeg","-hide_banner","-loglevel","error","-y","-i",movie,
@@ -402,10 +434,10 @@ def main():
     "filename":movie.name,"sha256":sha(movie),"duration_seconds":duration,
     "format":probe,"camera_shots":len(timeline),"narrative_beats":len(SHOTS),
     "unique_actual_photo_count":len({x["sha256"] for x in timeline}),
-    "voice":"Google Gemini Gacrux newly synthesized",
+    "voice":"Original Gemini Gacrux V1 speech and original soundtrack reused, zero new TTS",
     "voice_ASR_method":alignment.get("method"),"voice_ASR_matched_fraction":fraction,
     "source_licenses_verified":True,"music":"original generated instrumental score",
-    "historical_clips_ai_generated":0,"story":"walking moai experiment and living Rapa Nui heritage","needs_review":True,"published":False,
+    "historical_clips_ai_generated":0,"original_audio_reused_without_transcoding":True,"story":"walking moai experiment and living Rapa Nui heritage","needs_review":True,"published":False,
     "scene_timeline":timeline}
  (OUT/"QA_MOAI.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
  (OUT/"DESCRIZIONE_SOCIAL_IT.txt").write_text(
