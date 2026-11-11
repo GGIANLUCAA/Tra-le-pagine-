@@ -267,9 +267,12 @@ def genuine_field_experiment(qa):
   if local and Path(local).is_file():
     shutil.copyfile(local,raw)
   else:
+    # Node EJS deciphers official YouTube player formats; prefer a single muxed
+    # media stream to avoid 403 on separate signed audio/video URLs.
     run(sys.executable,"-m","yt_dlp","--no-playlist","--no-progress",
+        "--js-runtimes","node","--remote-components","ejs:github",
         "--merge-output-format","mp4",
-        "-f","bv*[height<=720]+ba/b[height<=720]/best",
+        "-f","b[ext=mp4][height<=720]/b[height<=720]/best",
         "-o",str(raw),source)
   if not raw.exists() or raw.stat().st_size<250000:
     raise RuntimeError("Genuine experiment footage could not be acquired: no fake recreation")
@@ -365,11 +368,12 @@ def compose(base,qa,edits):
  return final,mobile
 def main():
  base,qa=load_base()
+ # Acquire genuine footage first; do not render the expensive movie if inaccessible.
+ authentic=genuine_field_experiment(qa)
  verified=metadata_and_download()
  photos=add_new_photos(qa,verified)
  science=scientific_animation(qa)
- # Exclude photographic photos that overlap the animated scientific explanation.
- authentic=genuine_field_experiment(qa)
+ # Keep authentic test distinct from two explicitly labeled CGI explanations.
  scenes=photos+science+[authentic]
  repairs=repair_short_photo_flashes(base,qa,scenes)
  scenes.extend(repairs)
@@ -410,8 +414,8 @@ def main():
  (OUT/"QA_DEFINITIVO.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
  text="THE WALKING GIANTS — VERSIONE DEFINITIVA\n"
  text+="Durata originale, voce Gacrux e musica mantenute; nuove foto con licenze verificate e filmati 3D tecnici originali.\n"
- text+="ATTENZIONE: i tre segmenti del moai che oscilla sono ANIMAZIONI SCIENTIFICHE, non riprese dell'esperimento del 2025.\n"
- text+="Filmato autentico dell'esperimento di Carl Lipo: https://www.binghamton.edu/news/story/5830/easter-islands-statues-actually-walked-and-physics-backs-it-up\n"
+ text+="Contiene filmato REALE del test con credito Carl Lipo / Binghamton University; le altre due sequenze 3D sono esplicitamente simulazioni.\n"
+ text+="Fonte filmato originale Carl Lipo: https://www.binghamton.edu/news/story/5830/easter-islands-statues-actually-walked-and-physics-backs-it-up  | Scheda uso https://www.eurekalert.org/multimedia/1095278\n"
  text+="Pubblicazione: NON AUTORIZZATA IN AUTOMATICO. Controllo artistico da effettuare.\n"
  (OUT/"LEGGIMI_ANDROID.txt").write_text(text,encoding="utf8")
  zf=OUT/"THE_WALKING_GIANTS_GIULIANO_COMPLETO.zip"
