@@ -1,0 +1,39 @@
+{
+  "schema": "studio-ai-director-brief-v1",
+  "format": "documentary",
+  "title": "Montaggio documentario · prova di pianificazione offline",
+  "duration_s": 10,
+  "narration": "",
+  "scenes": [
+    {
+      "id": "opening",
+      "start_s": 0,
+      "end_s": 3.5,
+      "asset_id": "source_to_verify_01",
+      "visual": "Opening view of a documented archive sequence, no generic zoom",
+      "source_url": "",
+      "license": "unverified"
+    },
+    {
+      "id": "details",
+      "start_s": 3.5,
+      "end_s": 7,
+      "asset_id": "source_to_verify_02",
+      "visual": "Specific authentic gesture matching the chosen subject",
+      "source_url": "",
+      "license": "unverified"
+    },
+    {
+      "id": "closing",
+      "start_s": 7,
+      "end_s": 10,
+      "asset_id": "source_to_verify_03",
+      "visual": "Final shot relates directly to the opening's concrete detail",
+      "source_url": "",
+      "license": "unverified"
+    }
+  ],
+  "auto_publish": false,
+  "claims_gold": false,
+  "notes": "A synthetic test of the editorial preflight, not a real historical documentary or licensed footage."
+}
