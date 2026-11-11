@@ -39,13 +39,13 @@ jobs:
           text=(path/"NARRAZIONE_IT.txt").read_text(encoding="utf8").strip()
           assert text=="\n".join(x["text"] for x in beats),"Narration-scene mismatch"
           names={x["source_file"] for x in beats}|{x.get("second_file") for x in beats}
-          assert len(beats)>=32 and len(names-{None})>=28 and plan["revision"]==1
+          assert len(beats)>=32 and len(names-{None})>=28 and plan["revision"]==2
           assert all(x.get("semantic") and x.get("presentation") for x in beats)
           assert sum("cammin" in x["text"].lower() for x in beats)>=1
           assert all("GIULIANO" not in x.get("overlay","") for x in beats)
           print("MOAI_EDITORIAL_PREFLIGHT_OK",len(beats),len(names-{None}),flush=True)
           PY
-          test -n "$GEMINI_API_KEY" || (echo "GEMINI_API_KEY absent: no artificial robotic voice fallback" && exit 2)
+          echo "Using verified original Google voice and soundtrack, no new TTS call"
       - name: Install video dependencies without unmanaged credits
         run: |
           if command -v ffmpeg >/dev/null 2>&1; then
@@ -55,6 +55,30 @@ jobs:
             timeout 150 sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
           fi
           python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Download original successful episode-2 soundtrack and QA
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_EP2_WALKING_GIANTS_MP4_ANDROID_ZIP
+          run-id: 43026493471
+          github-token: ${{ github.token }}
+          path: output/giuliano_moai_v1
+      - name: Verify unaltered original voice and preserve QA markers
+        run: |
+          set -eu
+          cd output/giuliano_moai_v1
+          test -s GIULIANO_MOAI_V1_CINEMATIC.mp4
+          test -s QA_MOAI.json
+          cp GIULIANO_MOAI_V1_CINEMATIC.mp4 BASE_V1_WITH_VOICE.mp4
+          cp QA_MOAI.json BASE_V1_QA.json
+          python - <<'PY'
+          import json,hashlib
+          j=json.load(open("BASE_V1_QA.json"))
+          f=open("BASE_V1_WITH_VOICE.mp4","rb")
+          digest=hashlib.file_digest(f,"sha256").hexdigest()
+          assert digest==j["sha256"],"original MP4 differs from verified audio QA"
+          assert j["narrative_beats"]==34
+          print("ORIGINAL_GOOGLE_AUDIO_MASTER_VERIFIED",digest,flush=True)
+          PY
       - name: Source-check 30+ photographs, render complete 1080p film, verify and package
         run: python giuliano/moai_v1/render_moai.py
       - name: Save verified source assets and Google voice for safe recovery on failure
