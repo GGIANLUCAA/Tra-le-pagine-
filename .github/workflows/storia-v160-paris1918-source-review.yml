@@ -1,0 +1,110 @@
+name: "La Storia Rivive V160 · recupero pellicola autentica Parigi 1918 (solo prova)"
+on:
+  push:
+    branches: [storia-v160-paris1918-real-film-review]
+    paths:
+      - ".github/workflows/storia-v160-paris1918-source-review.yml"
+      - "src/storia_paris1918_v161_preview.py"
+  pull_request:
+    paths:
+      - ".github/workflows/storia-v160-paris1918-source-review.yml"
+permissions:
+  contents: read
+concurrency:
+  group: storia-v160-paris1918-source-review
+  cancel-in-progress: false
+jobs:
+  archive_read_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download ONE original CC0-declared archive film and check exact SHA1
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p v160_source
+          python - <<'PY'
+          import hashlib, json, pathlib, urllib.parse, urllib.request
+          from urllib.parse import urlparse
+          title="File:Arrivée d'un train de Marseille et voyageurs dans la cour de la gare de Lyon. La traversée de Paris à la nage - AI139599.webm"
+          expected_sha1="aa471da773d14f422d1387654601ca03b5224455"
+          agent="LaStoriaRiviveHistoricalResearch/1.0 (GitHub GGIANLUCAA/Tra-le-pagine-)"
+          query=urllib.parse.urlencode({"action":"query","format":"json","formatversion":"2","titles":title,"prop":"imageinfo","iiprop":"url|size|sha1|extmetadata"})
+          req=urllib.request.Request("https://commons.wikimedia.org/w/api.php?"+query,headers={"User-Agent":agent})
+          with urllib.request.urlopen(req,timeout=50) as fh: data=json.load(fh)
+          entry=data["query"]["pages"][0]["imageinfo"][0]
+          url=entry["url"]; size=entry["size"]; sha=entry.get("sha1")
+          license_name=entry.get("extmetadata",{}).get("LicenseShortName",{}).get("value","")
+          assert sha==expected_sha1, "Source modified: SHA1 does not match frozen 2026-10-31 archive value"
+          assert "CC0" in license_name, "Source license not declared CC0"
+          assert 0 < size <= 25000000, "Source exceeds media bound"
+          assert urlparse(url).scheme=="https" and urlparse(url).hostname=="upload.wikimedia.org", "Untrusted media host"
+          req=urllib.request.Request(url,headers={"User-Agent":agent})
+          out=pathlib.Path("v160_source/PARIS_1918_AI139599_ORIGINAL.webm")
+          n=0; digest=hashlib.sha1()
+          with urllib.request.urlopen(req,timeout=90) as fh, out.open("wb") as dst:
+              while True:
+                  block=fh.read(1024*1024)
+                  if not block: break
+                  n+=len(block)
+                  if n>25000000: raise ValueError("Exceeded safety cap")
+                  digest.update(block); dst.write(block)
+          assert n==size and digest.hexdigest()==expected_sha1, "Actual media byte hash/size mismatch"
+          report={"source_title":title,"source_page":"https://commons.wikimedia.org/wiki/"+urllib.parse.quote(title.replace(" ","_"),safe=":/"),"license_declared":"CC0","license_italy_independently_checked":False,"raw_bytes":n,"source_sha1":digest.hexdigest(),"ai_i2i_generated":False,"vidu_generated":False,"paid_calls":0,"publish_permitted":False,"status":"ORIGINAL_FILM_BYTES_VERIFIED_FOR_PRIVATE_REVIEW"}
+          pathlib.Path("v160_source/SOURCE_MANIFEST.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("V160_REAL_SOURCE_HASH_VERIFIED",n, "NO_AI_NO_CREDIT_NO_PUBLICATION")
+          PY
+      - name: Verify source decoder and duration
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json v160_source/PARIS_1918_AI139599_ORIGINAL.webm > v160_source/FFPROBE.json
+          python - <<'PY'
+          import json
+          p=json.load(open("v160_source/FFPROBE.json"))
+          assert 270<float(p["format"]["duration"])<300
+          assert any(s.get("width")==720 and s.get("height")==576 for s in p["streams"])
+          print("V160_SOURCE_REAL_VIDEO_DECODE_METADATA_OK")
+          PY
+      - name: V161 render PRIVATE MP4 and Android ZIP from verified archive bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import tempfile
+          from pathlib import Path
+          from src.storia_paris1918_v161_preview import render
+          with tempfile.TemporaryDirectory() as directory:
+              fake = Path(directory) / "fake.webm"
+              fake.write_bytes(b"not a verified archive film")
+              try:
+                  render(fake, Path(directory) / "output")
+              except ValueError as error:
+                  assert "SOURCE_SHA1_MISMATCH" in str(error)
+              else:
+                  raise AssertionError("Source hash guard failed")
+          print("V161_NEGATIVE_SOURCE_HASH_TEST_PASS")
+          PY
+          python src/storia_paris1918_v161_preview.py \
+            --source v160_source/PARIS_1918_AI139599_ORIGINAL.webm \
+            --out v161_preview
+          test -s v161_preview/LA_STORIA_RIVIVE_PARIGI_1918_V161_PROVINO_BN.mp4
+          test -s v161_preview/LA_STORIA_RIVIVE_PARIGI_1918_V161_PROVINO_BN_ANDROID_KIT.zip
+      - name: Upload V161 PRIVATE preview MP4 and ZIP for review (NOT a release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V161_PARIS1918_BW_MP4_ANDROID_REVIEW_NOT_FINAL
+          path: v161_preview/
+          retention-days: 7
+          if-no-files-found: error
+      - name: Preserve REAL original film and evidence as private artifact (no releases)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_V160_PARIS_1918_ORIGINAL_PRIVATE_REVIEW
+          path: v160_source/
+          retention-days: 7
+          if-no-files-found: warn
