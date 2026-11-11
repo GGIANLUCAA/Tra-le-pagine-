@@ -1,0 +1,123 @@
+name: "La Storia Rivive - NEW England 1901 faces - Five original shots plus one Q3 Vidu"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-workers-1901-real-video-vidu-v1.yml"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-workers-1901-original-5-scene-one-vidu-q3-pro
+  cancel-in-progress: false
+jobs:
+  new_source_locked_social_review:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HUGGING_FACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Preflight new subject, script and quote bound to only one capped paid Q3 request"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/storia_workers_1901_real_5scene_vidu_v1.py
+          python -m py_compile tools/storia_workers_1901_source_scout.py
+          test -s src/storia_rivive_real_ai_v60.py
+          test -n "${VIDU_API_KEY:-}" || (echo "NO_CREDIT_KEY" && exit 5)
+      - name: "Install free image-to-image and video dependencies"
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null; then
+            timeout 90 sudo apt-get update -qq || true
+            timeout 130 sudo apt-get install -y -qq ffmpeg
+          fi
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "requests>=2.31,<3" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: "Recover NEW 1901 source from the previously successful zero-cost verified scout"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_workers_1901_source
+          gh run download 42954852591 --repo "$GITHUB_REPOSITORY" --name WORKERS_1901_NEW_SUBJECT_SOURCE_AND_FIVE_REAL_FRAMES --dir output/storia_workers_1901_source
+          test -s output/storia_workers_1901_source/SCOUT_REPORT.json
+          test -s output/storia_workers_1901_source/SCOUT_CONTACT_FIVE_ACTUAL_ORIGINAL_FRAMES.jpg
+          ls -lah output/storia_workers_1901_source/SOURCE_1901_REAL_MOVING.* 
+      - name: "Create five actual historical BW-to-I2I photo scenes plus ONE source-matched Q3-Pro 1080p moving clip"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u tools/storia_workers_1901_real_5scene_vidu_v1.py
+      - name: "Validate genuine newly assembled MP4, historic source hash and Android ZIP"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_workers_1901_v1
+          test -s "$d/ENGLAND_1901_FACES_OF_THE_PAST_OWNER_REVIEW.mp4"
+          test -s "$d/ENGLAND_1901_FACES_OF_THE_PAST_ANDROID_KIT.zip"
+          ffmpeg -nostdin -v error -xerror -i "$d/ENGLAND_1901_FACES_OF_THE_PAST_OWNER_REVIEW.mp4" -f null -
+          python - <<'PY'
+          import json,zipfile,hashlib,pathlib
+          p=pathlib.Path('output/storia_workers_1901_v1')
+          q=json.loads((p/'FINAL_TECH_QA.json').read_text())
+          d=json.loads((p/'FIVE_ACTUAL_SOURCES.json').read_text())
+          assert len(d['distinct_scene_anchors'])==5
+          assert q['distinct_historical_original_moving_shots']==5
+          assert q['photographic_real_i2i_stills']==5 and q['genuine_new_vidu_clip']
+          assert not q['artistic_approval'] and not q['social_published']
+          assert 19 <= q['duration_s'] <= 26
+          assert hashlib.sha256((p/'ENGLAND_1901_FACES_OF_THE_PAST_OWNER_REVIEW.mp4').read_bytes()).hexdigest()==q['video_sha256']
+          with zipfile.ZipFile(p/'ENGLAND_1901_FACES_OF_THE_PAST_ANDROID_KIT.zip') as z:assert z.testzip() is None
+          print('NEW_DISTINCT_1901_ARCHIVAL_FIVE_SHOTS_PLUS_REAL_Q3_VIDU_VIDEO_TECH_PASS_ARTIST_REVIEW_PENDING')
+          PY
+      - name: "Keep downloadable evidence or exact failure, never publish social automatically"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ENGLAND_1901_NEW_FACES_REAL_I2I_VIDU_REVIEW_OR_FAILURE
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_workers_1901_v1/*.json
+            output/storia_workers_1901_v1/*_OWNER_REVIEW.mp4
+            output/storia_workers_1901_v1/ENGLAND_1901_FACES_OF_THE_PAST_ANDROID_KIT.zip
+            output/storia_workers_1901_v1/SOCIAL_COVER.jpg
+            output/storia_workers_1901_v1/SOURCE_VS_RESTORED_FIVE_SCENES_QA.jpg
+            output/storia_workers_1901_v1/POST_*.txt
+            output/storia_workers_1901_v1/README_ARTISTIC_REVIEW_REQUIRED.txt
+      - name: "Android owner-only GitHub prerelease, verified full download, NOT the live website or social"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_workers_1901_v1
+          tag=storia-england-workers-1901-five-scenes-q3-pro-owner-review
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "PRERELEASE_ALREADY_EXISTS_NO_REPLACE"
+            exit 4
+          fi
+          gh release create "$tag" \
+            "$d/ENGLAND_1901_FACES_OF_THE_PAST_OWNER_REVIEW.mp4" \
+            "$d/ENGLAND_1901_FACES_OF_THE_PAST_ANDROID_KIT.zip" \
+            "$d/SOCIAL_COVER.jpg" "$d/SOURCE_VS_RESTORED_FIVE_SCENES_QA.jpg" \
+            "$d/FINAL_TECH_QA.json" --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" --prerelease --latest=false \
+            --title "ENGLAND · c.1901 — Faces of the Past · 5 authentic scenes + Q3 Pro AI motion · OWNER REVIEW" \
+            --notes "Entirely NEW subject: Northern English factory workers, a genuine historic moving 1280x720 black-and-white film. Five DISTINCT timestamped original shots (not multiple crops of one still). Five newly generated source-matched photoreal I2I reconstructed color photos; one genuine newly paid Vidu Q3 Pro 1080p five-second scene at exact scene 5 first frame. Cinematic owner visual REVIEW only, source/facial/historical/Italy-rights artistic approval pending. No claim of authentic recorded color, no false 4K, no live site or social publication."
+          for name in ENGLAND_1901_FACES_OF_THE_PAST_OWNER_REVIEW.mp4 ENGLAND_1901_FACES_OF_THE_PAST_ANDROID_KIT.zip; do
+            curl -fsSL --retry 2 --connect-timeout 15 --max-time 140 "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$name" -o "/tmp/$name"
+            cmp "$d/$name" "/tmp/$name"
+          done
+          echo "NEW_1901_ANDROID_VIDEO_AND_ZIP_DOWNLOAD_BYTES_VERIFIED"
