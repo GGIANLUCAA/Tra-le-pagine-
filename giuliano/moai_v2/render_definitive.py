@@ -264,6 +264,8 @@ def genuine_field_experiment(qa):
   source="https://www.youtube.com/watch?v=z6wvgrMn8Ow"
   raw=OUT/"ORIGINAL_LIPO_TEST.mp4"
   local=os.environ.get("MOAI_AUTHENTIC_TEST_FILE","").strip()
+  if not local and (ASSETS/"ORIGINAL_LIPO_TEST.mp4").is_file():
+    local=str(ASSETS/"ORIGINAL_LIPO_TEST.mp4")
   if local and Path(local).is_file():
     shutil.copyfile(local,raw)
   else:
