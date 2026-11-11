@@ -155,7 +155,7 @@ class DirectorTests(unittest.TestCase):
 
     def test_prompts_no_fake_citations(self):
         p = d.editorial_prompts(self.brief)
-        self.assertIn("don't invent".lower(), p["director"].lower())
+        self.assertIn("do not invent", p["director"].lower())
         self.assertIn("unapproved", p["critic"].lower())
 
 
