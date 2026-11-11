@@ -1,4 +1,4 @@
-name: "La Storia Rivive - NEW England 1901 faces - Five original shots plus one Q3 Vidu"
+name: "La Storia Rivive - England 1901 · local neural restoration and one quality Q3 Vidu"
 on:
   push:
     branches: [main]
@@ -20,6 +20,7 @@ jobs:
       VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
       HUGGING_FACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
+      PHOTO_BACKEND: LOCAL_ESRGAN
     steps:
       - uses: actions/checkout@v4
         with:
@@ -75,7 +76,7 @@ jobs:
           d=json.loads((p/'FIVE_ACTUAL_SOURCES.json').read_text())
           assert len(d['distinct_scene_anchors'])==5
           assert q['distinct_historical_original_moving_shots']==5
-          assert q['photographic_real_i2i_stills']==5 and q['genuine_new_vidu_clip']
+          assert q['neural_color_superresolution_stills']==5 and q['genuine_new_vidu_clip']
           assert not q['artistic_approval'] and not q['social_published']
           assert 19 <= q['duration_s'] <= 26
           assert hashlib.sha256((p/'ENGLAND_1901_FACES_OF_THE_PAST_OWNER_REVIEW.mp4').read_bytes()).hexdigest()==q['video_sha256']
@@ -115,7 +116,7 @@ jobs:
             "$d/FINAL_TECH_QA.json" --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" --prerelease --latest=false \
             --title "ENGLAND · c.1901 — Faces of the Past · 5 authentic scenes + Q3 Pro AI motion · OWNER REVIEW" \
-            --notes "Entirely NEW subject: Northern English factory workers, a genuine historic moving 1280x720 black-and-white film. Five DISTINCT timestamped original shots (not multiple crops of one still). Five newly generated source-matched photoreal I2I reconstructed color photos; one genuine newly paid Vidu Q3 Pro 1080p five-second scene at exact scene 5 first frame. Cinematic owner visual REVIEW only, source/facial/historical/Italy-rights artistic approval pending. No claim of authentic recorded color, no false 4K, no live site or social publication."
+            --notes "Entirely NEW subject: Northern English factory workers, a genuine historic moving 1280x720 black-and-white film. Five DISTINCT timestamped original shots (not multiple crops of one still). Five new source-locked neural DDColor and RealESRGAN restored color photographs (not claiming photogenerative I2I); one new Vidu Q3 Pro 1080p five-second scene at exact scene 5 first frame. Cinematic owner visual REVIEW only, source/facial/historical/Italy-rights artistic approval pending. No claim of authentic recorded color, no false 4K, no live site or social publication."
           for name in ENGLAND_1901_FACES_OF_THE_PAST_OWNER_REVIEW.mp4 ENGLAND_1901_FACES_OF_THE_PAST_ANDROID_KIT.zip; do
             curl -fsSL --retry 2 --connect-timeout 15 --max-time 140 "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$name" -o "/tmp/$name"
             cmp "$d/$name" "/tmp/$name"
