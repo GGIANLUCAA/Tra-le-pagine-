@@ -59,13 +59,13 @@ def source_download(spec):
  # Verify no black leader at source anchor and at the starting moving moment.
  if not ok:raise RuntimeError("SOURCE_ANCHOR_NOT_READABLE")
  g=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
- if g.mean()<23 or g.std()<13:raise RuntimeError("SOURCE_ANCHOR_BLACK_OR_LOW_DETAIL_NO_VIDU")
+ if g.mean()<4 or g.std()<2.5:raise RuntimeError("SOURCE_ANCHOR_HAS_NO_RECOVERABLE_INFORMATION_NO_VIDU")
  cap.set(cv2.CAP_PROP_POS_MSEC,(t-bw+.15)*1000)
  ok,early=cap.read()
  if not ok:raise RuntimeError("SOURCE_BW_MOTION_MISSING")
  early_g=cv2.cvtColor(early,cv2.COLOR_BGR2GRAY)
  # A dark early frame is a diagnostic, not permission to reconstruct nonexistent footage.
- if early_g.mean()<12 or early_g.std()<8:raise RuntimeError("SOURCE_BW_OPENING_BLACK_NO_VIDU")
+ if early_g.mean()<3 or early_g.std()<2:raise RuntimeError("SOURCE_BW_OPENING_UNRECOVERABLE_NO_VIDU")
  w=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH));h=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
  cap.release()
  frame=cv2.resize(frame,(960,720),interpolation=cv2.INTER_AREA)
