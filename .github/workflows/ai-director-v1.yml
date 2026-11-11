@@ -42,7 +42,6 @@ jobs:
     timeout-minutes: 7
     env:
       AI_DIRECTOR_LIVE: ${{ inputs.enable_live == true && '1' || '0' }}
-      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       BRIEF_FILE: ${{ inputs.brief_path || 'examples/ai_director_v1_sample.json' }}
       MODEL_1: ${{ inputs.model_1 }}
       MODEL_2: ${{ inputs.model_2 }}
@@ -73,6 +72,8 @@ jobs:
           PY
       - name: Generate standalone Android QA report
         shell: bash
+        env:
+          OPENROUTER_API_KEY: ${{ github.event_name == 'workflow_dispatch' && inputs.enable_live == true && secrets.OPENROUTER_API_KEY || '' }}
         run: |
           set -euo pipefail
           if [ "$AI_DIRECTOR_LIVE" = '1' ]; then
