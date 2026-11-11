@@ -1,0 +1,119 @@
+name: "AI Director V1 · offline editorial quality & Android reports"
+
+on:
+  pull_request:
+    paths:
+      - "src/ai_director_v1.py"
+      - "src/ai_director_bridge_v1.py"
+      - "tests/test_ai_director_v1.py"
+      - "tests/test_ai_director_bridge_v1.py"
+      - "docs/AI_DIRECTOR_V1_INTEGRAZIONE_20261112.md"
+      - ".github/workflows/ai-director-v1.yml"
+  push:
+    paths:
+      - "src/ai_director_v1.py"
+      - "src/ai_director_bridge_v1.py"
+      - "tests/test_ai_director_v1.py"
+      - "tests/test_ai_director_bridge_v1.py"
+      - ".github/workflows/ai-director-v1.yml"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Safe run mode: plan or read-only bridge"
+        type: choice
+        required: true
+        default: plan
+        options:
+          - plan
+          - bridge
+      format:
+        description: "Only for plan mode"
+        type: choice
+        required: true
+        default: documentario
+        options:
+          - artvision_4x1
+          - storia_rivive
+          - wow_lab
+          - documentario
+          - giuliano
+      subject:
+        description: "Public subject (do NOT enter credentials or private data)"
+        required: false
+        default: "Prova editoriale senza spese"
+      source_path:
+        description: "For bridge mode: existing public repo JSON path (V13 or 4x1)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-director-v1-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-tests-and-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      PYTHONPATH: src
+      AI_DIRECTOR_ALLOW_FREE_CALLS: "0"
+      MODE: ${{ inputs.mode || 'plan' }}
+      FORMAT: ${{ inputs.format || 'documentario' }}
+      SUBJECT: ${{ inputs.subject || 'Prova editoriale senza spese' }}
+      SOURCE_PATH: ${{ inputs.source_path || '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Compile and run isolated no-network tests"
+        run: |
+          set -euo pipefail
+          python -m py_compile src/ai_director_v1.py src/ai_director_bridge_v1.py
+          python -m unittest discover -s tests -p 'test_ai_director_v1.py' -v
+          python -m unittest discover -s tests -p 'test_ai_director_bridge_v1.py' -v
+      - name: "Verify main zero-cost gate is still fail-closed"
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          d=json.load(open("config/free_llm_zero_cost_v1.json",encoding="utf-8"))
+          assert d["schema"] == "free-llm-zero-cost-v1"
+          assert d["default_deny"] is True
+          assert d["routes"] == []
+          print("ZERO_INFERENCE_AND_ZERO_BILLING_APPROVALS_BY_DEFAULT")
+          PY
+      - name: "Create optional Android editorial report; NO network inference"
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/ai_director_v1
+          if [[ "$MODE" == "plan" ]]; then
+            python src/ai_director_v1.py --mode plan \
+              --format "$FORMAT" --subject "$SUBJECT" \
+              --out-dir output/ai_director_v1
+          elif [[ "$MODE" == "bridge" ]]; then
+            if [[ -z "$SOURCE_PATH" || "$SOURCE_PATH" = /* || "$SOURCE_PATH" == *..* ]]; then
+              echo "SOURCE_PATH_MISSING_OR_UNSAFE"
+              exit 2
+            fi
+            python src/ai_director_bridge_v1.py \
+              --source "$SOURCE_PATH" \
+              --out-dir output/ai_director_v1
+          else
+            echo "UNKNOWN_MODE"
+            exit 2
+          fi
+          echo "ARTIFACT_READY_NO_API_NO_RENDER_NO_PUBLICATION"
+      - name: "Android report artifact · review-only"
+        if: github.event_name == 'workflow_dispatch' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI_DIRECTOR_V1_ANDROID_REPORT_${{ github.run_id }}
+          path: output/ai_director_v1/
+          if-no-files-found: error
+          retention-days: 14
