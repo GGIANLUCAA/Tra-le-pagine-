@@ -1,0 +1,93 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-11",
+  "title": "The Forest Fire",
+  "artist": "Piero di Cosimo",
+  "year": "ca. 1505",
+  "variant": "cinema_standard",
+  "status": "ONE_REAL_NEW_VIDEO_TWICE_ENCODED_HQ_AND_ANDROID_SOURCE_QA_FFMPEG_INDEPENDENT_ARTIFACT_AND_LIBRARY_READBACK_PASS__ARTISTIC_REVIEW_PENDING",
+  "github": {
+    "render_run_id": 42959292481,
+    "render_artifact_id": 13828258304,
+    "packaging_without_rerender_run_id": 42959784128,
+    "video_only_artifact_id": 13828980826,
+    "script": "scripts/artvision_owner_forest_fire_cinema_v1.py",
+    "workflow": ".github/workflows/artvision-owner-forest-fire-cinema-v1.yml",
+    "packaging_workflow": ".github/workflows/artvision-owner-forest-fire-android-extract-v1.yml"
+  },
+  "artwork": {
+    "collection": "Ashmolean Museum",
+    "accession": "WA1933.2",
+    "photo_author": "Gleb Simonov",
+    "photo_license": "CC0 1.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Piero_di_Cosimo_—_The_Forest_Fire.jpg",
+    "source_pixels": [
+      14882,
+      4828
+    ],
+    "original_source_sha1": "cf8588f273f0c9cde5614f8d00499d5967851dd8",
+    "original_source_sha256": "3f1ad684d3e0f4a115e4aa463d576b5496cde1ff90dca20fabc7614aaf36e751",
+    "dimensions_cm": [
+      71.2,
+      202
+    ],
+    "commercial_territorial_review": "PENDING"
+  },
+  "production": {
+    "duration_seconds": 50.6666666667,
+    "scenes": 12,
+    "fps": 24,
+    "frame_count": 1216,
+    "hq_resolution": [
+      1080,
+      1920
+    ],
+    "hq_filename": "ARTVISION_PIERO_FOREST_FIRE_CINEMA_HD_1080_REVIEW.mp4",
+    "hq_bytes": 39688413,
+    "hq_sha256": "8c5cb28c4b7b1a76381a2bd882acde8a54293f7f6c7db51a28224f27a3c183c5",
+    "android_filename": "ARTVISION_PIERO_FOREST_FIRE_CINEMA_ANDROID_REVIEW.mp4",
+    "android_bytes": 9799727,
+    "android_sha256": "42b35f80474c8889c1aed8de86ab2f66a9c8cdd086449f3b1c93011f3c1fa90f",
+    "android_zip_filename": "ARTVISION_PIERO_FOREST_FIRE_ANDROID_PACKAGE.zip",
+    "android_zip_bytes": 10567067,
+    "android_zip_sha256": "d958d46b8a4ea8d8ffa6d0e1d215eebca012044843ab505277fc4f406e0d359d",
+    "soundtrack": "original self-synthesized music",
+    "voice": false,
+    "cover_and_social_drafts": true
+  },
+  "QA": {
+    "github_render_job": "SUCCESS",
+    "github_independent_readback_job": "SUCCESS",
+    "github_separate_packaging_job": "SUCCESS",
+    "source_and_pixels": "PASS",
+    "full_ffmpeg_HD": "PASS",
+    "full_ffmpeg_android": "PASS",
+    "ZIP_CRC_and_embedded_mp4_SHA": "PASS",
+    "independent_private_Library_readback": "PASS_SHA_TWO_MP4_AND_ZIP",
+    "contact_sheet_visual": "INSPECTED_STATIC_ONLY",
+    "full_speed_artistic_review": "PENDING",
+    "rights_clearance": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_calls": 0
+  },
+  "library": {
+    "hq": "libfile_c2ec9a29f9fc8191ad81cc288f07e59e",
+    "android": "libfile_444b56407ac08191ae000205bbf57a39",
+    "android_zip": "libfile_c165ba49731c8191ab15a6b06b760f66"
+  },
+  "bundle": {
+    "all_four_new_android_name": "ARTVISION_4_NUOVI_CINEMA_ANDROID_20261111.zip",
+    "bytes": 25735307,
+    "sha256": "f8d2539a73d3461d14ec2fb24704355d3d3e5bb7fbad5a3dba1574bc79df4aab",
+    "MP4_count": 4
+  },
+  "queue": {
+    "primary_legacy_count": "26/36",
+    "owner_30_distinct_cinema_after": 11,
+    "new_distinct_cinema_in_this_forest_run": 1,
+    "other_three_new_or_retrieved_this_chat": "Arbo, Storm Spirits, Shipwreck",
+    "not_four_variants_approved": true
+  },
+  "next": "Do not count this as Gold or make duplicate. Continue with new selected painting only after rights and source validation. Artistic playback and territorial rights pending. No paid calls/publication."
+}
