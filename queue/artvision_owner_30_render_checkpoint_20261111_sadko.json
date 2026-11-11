@@ -1,0 +1,80 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-11",
+  "title": "Sadko",
+  "artist": "Ilya Repin",
+  "year": 1876,
+  "work_id": "repin_sadko_1876_russian_museum",
+  "variant": "cinema_standard",
+  "status": "ONE_REAL_NEW_MP4_TWO_BITRATES_ORIGINAL_SHA1_LOCKED_FFMPEG_GITHUB_INDEPENDENT_ARTIFACT_AND_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+  "source": {
+    "collection": "State Russian Museum, Saint Petersburg",
+    "object_url": "https://virtual.rusmuseumvrm.ru/mikh_palace/collection/russkoe_iskusstvo_vtoroy_polovini_xix_veka/sadko/index.php?lang=ru",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Ilya_Repin_-_Sadko_-_Google_Art_Project.jpg",
+    "source_pixels": [
+      5444,
+      7660
+    ],
+    "bytes": 7009147,
+    "sha1": "0ff86b2ec881974eb5474dafa2f4ee6842082a3f",
+    "sha256": "cd3ee1bfce75529fb211b563410a8c5aea96fa972458304e87b498333e2ac1d7",
+    "license": "Wikimedia Commons PD-Art/PDM faithful two-dimensional artwork reproduction",
+    "painting_dimensions_cm": [
+      322.5,
+      230
+    ],
+    "commercial_territorial_review": "PENDING"
+  },
+  "production": {
+    "github_run_id": 43070690606,
+    "github_artifact_id": 13877706907,
+    "script": "scripts/artvision_owner_sadko_cinema_v1.py",
+    "workflow": ".github/workflows/artvision-owner-sadko-cinema-v1.yml",
+    "duration_s": 50.208333333333336,
+    "scene_count": 12,
+    "fps": 24,
+    "frame_count": 1205,
+    "hd_resolution": [
+      1080,
+      1920
+    ],
+    "hd_file": "ARTVISION_REPIN_SADKO_CINEMA_HD_1080_REVIEW.mp4",
+    "hd_bytes": 16283103,
+    "hd_sha256": "60e4f64a34c665d20971868d8a570afb9d6b0777cb7c83e5f22360356bb106f8",
+    "android_file": "ARTVISION_REPIN_SADKO_CINEMA_ANDROID_REVIEW.mp4",
+    "android_bytes": 5453558,
+    "android_sha256": "a71b279b3049da03f8a1f2f5417996b7e2d17e8f075a833ae81c0bbb4486814a",
+    "android_zip_file": "ARTVISION_REPIN_SADKO_ANDROID_PACKAGE.zip",
+    "android_zip_bytes": 6393031,
+    "zip_sha256": "63107f6be817c6374e159b0ce99048e556b127f32c3399fe447fb9d62334bc07",
+    "music": "original self-synthesized",
+    "voice": false,
+    "cover_and_social_drafts": true
+  },
+  "qa": {
+    "github_render_job": "PASS",
+    "independent_artifact_readback_job": "PASS",
+    "source_sha1_bytes_pixels": "PASS",
+    "hd_android_full_ffmpeg_decode": "PASS",
+    "ZIP_CRC_and_embedded_mp4_SHA": "PASS",
+    "contact_sheet": "INSPECTED_12_SAMPLE_FRAMES",
+    "private_library_independent_readback": "PASS_HD_ANDROID_ZIP_SHA",
+    "full_speed_artistic_review": "PENDING",
+    "rights": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_api_calls": 0
+  },
+  "library": {
+    "hq": "libfile_485075c703948191a3988e71d4d57aa5",
+    "android": "libfile_d31b21cadc1c8191b3bf89704069ee84",
+    "android_zip": "libfile_0ac9a3cdf64081919843d87db37bb194",
+    "full_artifact": "libfile_aa7b657c26008191bf2f849730658452"
+  },
+  "queue_effect": {
+    "primary_owner_10_count": "26/36",
+    "second_owner_30_distinct_cinema_after": 14,
+    "approved_4x1_slots_increment": 0
+  },
+  "next_action": "Do not duplicate Cinema of Sadko. Continue owner-selected unproduced 30 works, or produce complementary Critico/Museum after source/voice QA. No Gold without human playback and territory rights."
+}
