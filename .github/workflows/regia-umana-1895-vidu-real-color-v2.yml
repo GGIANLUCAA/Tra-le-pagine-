@@ -1,0 +1,73 @@
+name: "Regia Umana 1895 — TRUE neural color on existing Vidu clip (FREE, private review)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/regia-umana-1895-vidu-real-color-v2.yml"
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: regia-umana-1895-video-neural-color-v2-isolated
+  cancel-in-progress: false
+jobs:
+  actual_neural_video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_HUB_DISABLE_TELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg and free neural color dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check -q \
+            "numpy==1.26.4" "opencv-python-headless==4.10.0.84" \
+            "onnxruntime==1.19.2" "Pillow>=10,<12" "huggingface_hub==0.35.3"
+      - name: Fetch previously billed EXACT Vidu video, never generate again
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/regia_umana_1895_truecolor/source
+          gh run download 42954387425 \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "VIDU_CHATGPT_PROJECT_GATEWAY_RESULT_42954387425" \
+            --dir output/regia_umana_1895_truecolor/source
+          python - <<'PY'
+          import hashlib,pathlib
+          root=pathlib.Path("output/regia_umana_1895_truecolor/source")
+          files=list(root.rglob("*_ORIGINAL.mp4"))
+          if len(files)!=1:raise SystemExit("EXACTLY_ONE_ORIGINAL_VIDU_CLIP_REQUIRED "+repr(files))
+          path=files[0]
+          hash=hashlib.sha256(path.read_bytes()).hexdigest()
+          assert hash=="b22a97baa0eac55c0ccda8d3ed7d278b01a593f961b695ef2d7db59b7da8b5ec",hash
+          (root/"source_path.txt").write_text(str(path))
+          print("EXACT_VIDU_VIDEO_SHA_VERIFIED",hash,flush=True)
+          PY
+      - name: Run proven genuine DDColor-tiny ONNX model on moving Vidu footage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u src/regia_umana_1895_vidu_true_color_v2.py \
+            --input "$(cat output/regia_umana_1895_truecolor/source/source_path.txt)" \
+            --outdir output/regia_umana_1895_truecolor/ready
+      - name: Preserve real MP4 and artistic color comparison for Android
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: REGIA_UMANA_1895_NEURAL_COLOR_VIDU_REAL_MP4_REVIEW
+          path: |
+            output/regia_umana_1895_truecolor/ready/VIDU_FRANCE_1895_NEURAL_TRUE_COLOR_REVEAL_720.mp4
+            output/regia_umana_1895_truecolor/ready/TRUE_COLOR_CONTACT_SHEET.jpg
+            output/regia_umana_1895_truecolor/ready/COLORIZED_HUMAN_REVIEW_FRAME.jpg
+            output/regia_umana_1895_truecolor/ready/COLORIZATION_QA.json
+          retention-days: 14
+          if-no-files-found: warn
