@@ -16,11 +16,11 @@ W,H,FPS=720,1280,24
 MAX_CREDITS=16
 LEDGER="queue/vidu_api_attempts/FIRST_MOTION_1894_V1_SINGLE_POST.json"
 SRC=[
- ("fred", "Fred Ott's Sneeze (1894).webm", 1894,1.4,0.80,1.80,"Fred Ott seen sneezing, tightly framed man; faithfully reproduce the real expression and his historical clothing."),
- ("sandow","Sandow (1894).webm",1894,13,1.45,2.05,"Eugen Sandow posing, authentic arms and muscular anatomy, historical skin and clothing, no invented person."),
- ("blacksmith","Blacksmith Scene (1893).webm",1893,9,1.25,1.95,"Three men in the actual 1893 Edison blacksmith studio, period work clothes, tools, industrial texture and realistic skin."),
- ("carmencita","Carmencita (1894).webm",1894,5.5,1.45,2.05,"Carmencita performing in period dress, authentic skirt folds and hands, expressive face, natural skin tone."),
- ("barbershop","The Barbershop (1894).webm",1894,19,1.30,5.00,"Barber and seated customers in an 1894 Edison barbershop, true face and body counts, dark suits and Victorian interior.")
+ ("barber01","The Barbershop (1894).webm",1894,2.0,0.90,1.85,"A customer waits at a Victorian barber shop; preserve all visible customers, hats and furnishings."),
+ ("barber02","The Barbershop (1894).webm",1894,4.3,1.50,2.05,"A barber handles a customer at an 1894 barbershop, preserve true head and hand positions, the mirror and counter."),
+ ("barber03","The Barbershop (1894).webm",1894,6.6,1.30,1.90,"Men in 1894 barbershop react naturally; exact face and body counts, no invented expressions."),
+ ("barber04","The Barbershop (1894).webm",1894,8.7,1.40,2.00,"The barber and customers seen from fixed original 1894 camera; accurate silhouettes, fabric and period interior."),
+ ("barber05","The Barbershop (1894).webm",1894,10.5,1.30,5.00,"Barber and waiting customers in 1894 Edison barbershop; real person positions and authentic details.")
 ]
 PAGE="https://commons.wikimedia.org/wiki/File:"
 OUTVIDEO=ROOT/"FIRST_MOTION_1893_1894_VIDU_REVIEW.mp4"
@@ -46,29 +46,32 @@ def wiki_source(name):
  return row
 def source_download(spec):
  id,name,year,t,bw,hold,prompt=spec
- meta=wiki_source(name)
- p=ROOT/(id+".webm")
- if not p.exists():
-  with requests.get(meta["url"],headers={"User-Agent":"LaStoriaRivive/1.0 research"},stream=True,timeout=(25,120)) as resp:
-   resp.raise_for_status()
-   with open(p,"wb") as f:
-    for chunk in resp.iter_content(chunk_size=524288):
-     f.write(chunk)
-     if f.tell()>110000000:raise RuntimeError("SOURCE_TOO_LARGE")
- if p.stat().st_size<100000:raise RuntimeError("SOURCE_TOO_SMALL")
- cap=cv2.VideoCapture(str(p))
- duration=cap.get(cv2.CAP_PROP_FRAME_COUNT)/max(1,cap.get(cv2.CAP_PROP_FPS))
- if not (t>0.7 and t<duration-0.3):
+ stored=ROOT/"BARBERSHOP_VERIFIED_ARCHIVAL_SOURCE.mp4"
+ if not stored.exists():
+  # Existing verified genuine original moving B/W extract, copied from the Nov 9 scout.
+  cmd(["gh","release","download","storia-barbershop-1894-source-scout-42649779508",
+       "--repo",REPO,"-p","ARCHIVAL_MOVING_SCOUT_NOT_RESTORED.mp4","-D",str(ROOT)],timeout=100)
+  acquired=ROOT/"ARCHIVAL_MOVING_SCOUT_NOT_RESTORED.mp4"
+  if not acquired.exists():raise RuntimeError("VERIFIED_ARCHIVAL_SOURCE_UNAVAILABLE")
+  acquired.rename(stored)
+ if stored.stat().st_size<500000:raise RuntimeError("ARCHIVAL_SOURCE_TOO_SMALL")
+ cap=cv2.VideoCapture(str(stored))
+ fps=cap.get(cv2.CAP_PROP_FPS)
+ duration=cap.get(cv2.CAP_PROP_FRAME_COUNT)/max(1,fps)
+ sw=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH));sh=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+ if not (t>0.7 and t<duration-0.25):
   raise RuntimeError("TIMECODE_OUT_OF_RANGE "+id+" "+str(duration))
  cap.set(cv2.CAP_PROP_POS_MSEC,t*1000);ok,img=cap.read();cap.release()
  if not ok:raise RuntimeError("NO_EXACT_FRAME "+id)
- # Preserve full archival frame before compositing to vertical.
  img=cv2.resize(img,(960,720),interpolation=cv2.INTER_AREA)
  cv2.imwrite(str(ROOT/(id+"_exact_bw.png")),img)
- return {"id":id,"name":name,"year":year,"second":t,"path":str(p),
-         "sha256":sha(p),"url":PAGE+urllib.parse.quote(name.replace(" ","_"),safe="(),'"),
+ return {"id":id,"name":name,"year":year,"second":t,"path":str(stored),
+         "sha256":sha(stored),
+         "source_page":"https://commons.wikimedia.org/wiki/File:The_Barbershop_(1894).webm",
+         "verified_release":"https://github.com/"+REPO+"/releases/tag/storia-barbershop-1894-source-scout-42649779508",
          "image_sha256":sha(ROOT/(id+"_exact_bw.png")),"seconds":duration,
-         "native_width":int(meta.get("width",0)),"native_height":int(meta.get("height",0))}
+         "native_width":sw,"native_height":sh}
+
 def gray_corr(a,b):
  x=cv2.cvtColor(cv2.resize(a,(144,108)),cv2.COLOR_BGR2GRAY).astype(np.float32).ravel()
  y=cv2.cvtColor(cv2.resize(b,(144,108)),cv2.COLOR_BGR2GRAY).astype(np.float32).ravel()
@@ -242,8 +245,8 @@ def make_cover(photo):
  d=ImageDraw.Draw(image)
  fpath="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
  titlef=ImageFont.truetype(fpath,34)
- d.text((36,130),"FIRST MOTION",font=titlef,fill=(245,231,206),stroke_width=1,stroke_fill=(5,5,5))
- d.text((40,184),"1893–1894",font=ImageFont.truetype(fpath,23),fill=(225,207,172))
+ d.text((36,130),"THE BARBERSHOP",font=titlef,fill=(245,231,206),stroke_width=1,stroke_fill=(5,5,5))
+ d.text((40,184),"1894",font=ImageFont.truetype(fpath,23),fill=(225,207,172))
  image.save(ROOT/"SOCIAL_COVER.jpg",quality=94)
 def assemble(metas,photos,clip):
  partial=ROOT/"TEMP_VISUAL.mp4"
@@ -256,7 +259,7 @@ def assemble(metas,photos,clip):
   fcount=int(round(bw*FPS));start=t-bw
   for n in range(fcount):
    frame=canvas(video_frame(meta["path"],max(.05,start+n/FPS)),
-                "FIRST MOTION  ·  1893–1894" if i==0 and n<19 else None)
+                "BARBERSHOP  ·  1894" if i==0 and n<19 else None)
    writer.write(frame)
   # Freeze on exact original frame, then reveal reconstructed color.
   anchor=canvas(cv2.imread(str(ROOT/(id+"_exact_bw.png"))))
@@ -293,7 +296,7 @@ def assemble(metas,photos,clip):
      "-c:v","libx264","-preset","fast","-crf","19","-pix_fmt","yuv420p","-c:a","aac","-b:a","160k","-movflags","+faststart",str(OUTVIDEO)],timeout=360)
  cmd(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(OUTVIDEO),"-f","null","-"],timeout=240)
  stats=json.loads(cmd(["ffprobe","-v","error","-show_entries","format=duration:stream=codec_name,width,height,r_frame_rate","-of","json",str(OUTVIDEO)]))
- out("TECHNICAL_QA.json",{"genuine_new_composition":True,"source_film_count":5,
+ out("TECHNICAL_QA.json",{"genuine_new_composition":True,"full_4plus1_distinct_films_gate":"NOT_APPLICABLE_REVIEW_ONLY","source_film_count":1,"different_moments_same_original_film":5,
     "new_finegrain_restorations":5,"real_vidu_clip_produced":True,
     "timeline":timeline,"video_sha256":sha(OUTVIDEO),"ffprobe":stats,
     "source_locked_photo_qa":"AUTOMATED_ONLY","human_identity_review":"PENDING",
@@ -301,8 +304,8 @@ def assemble(metas,photos,clip):
     "disclosure":"AI color/photos and Vidu motion are interpretations, not documentary color"})
  make_cover(photos[4])
  for platform in ("FACEBOOK","INSTAGRAM","TIKTOK","YOUTUBE"):
-  (ROOT/("POST_"+platform+".txt")).write_text("FIRST MOTION · 1893–1894\nFive real Edison-era moving films. Authentic archival B/W footage meets source-matched photographic AI reconstruction, ending with one openly AI-animated sequence. Historic sources from Wikimedia Commons. Technical preview — not a documentary color recording.\n",encoding="utf8")
- (ROOT/"README.txt").write_text("OWNER REVIEW ONLY - NOT APPROVED OR PUBLISHED. Five original public-domain historical films selected independently, 5 I2I source-locked photos and one single Vidu scene. Source scans and photo interpretations are not claims of exact historical skin/fabric colors. Inspect hand/face continuity before approving.\n")
+  (ROOT/("POST_"+platform+".txt")).write_text("FIRST MOTION · 1893–1894\nFive distinct moments from the authentic Edison 1894 Barbershop film. Authentic archival B/W footage meets source-matched photographic AI reconstruction, ending with one openly AI-animated sequence. Historic sources from Wikimedia Commons. Technical preview — not a documentary color recording.\n",encoding="utf8")
+ (ROOT/"README.txt").write_text("OWNER REVIEW ONLY - NOT APPROVED OR PUBLISHED. One authentic historical Barbershop film, five time-distinct original moving moments, 5 I2I source-locked photos and one single Vidu scene. Source scans and photo interpretations are not claims of exact historical skin/fabric colors. Inspect hand/face continuity before approving.\n")
  Z=ROOT/"FIRST_MOTION_1893_1894_ANDROID_KIT.zip"
  with zipfile.ZipFile(Z,"w",zipfile.ZIP_DEFLATED,compresslevel=3) as z:
   for p in [OUTVIDEO,ROOT/"SOCIAL_COVER.jpg",ROOT/"TECHNICAL_QA.json",ROOT/"SOURCES_AND_RIGHTS.json",ROOT/"VIDU_STATUS.json",ROOT/"README.txt",*[ROOT/("POST_"+s+".txt") for s in ("FACEBOOK","INSTAGRAM","TIKTOK","YOUTUBE")]]:
@@ -312,7 +315,7 @@ def assemble(metas,photos,clip):
 def main():
  say("START_FIRST_MOTION_FIVE_AUTHENTIC_SOURCES")
  metas=[source_download(spec) for spec in SRC]
- out("SOURCES_AND_RIGHTS.json",{"sources":metas,"licensing":"Wikimedia Commons public domain US; verify specific derivative and Italian reuse rights before publication","all_source_film_original_video":True})
+ out("SOURCES_AND_RIGHTS.json",{"sources":metas,"licensing":"Wikimedia Commons public domain US; verify specific derivative and Italian reuse rights before publication","all_source_film_original_video":True,"unique_original_films":1,"not_5_independent_scenes":True})
  model,_=dd.download_model()
  client=Client("finegrain/finegrain-image-enhancer",verbose=False)
  photos=[restore(meta,model,client) for meta in metas]
