@@ -1,0 +1,28 @@
+{
+  "version": "controluce.research.v1",
+  "event_date": "2026-10-18",
+  "topic": "Proteste autotrasportatori e rincari gasolio nel Mezzogiorno",
+  "angle": "Il costo del carburante e il conflitto tra chi blocca e chi dipende dalle consegne",
+  "approved_by_editor": false,
+  "sources": [
+    {"id":"ind_18","name":"L'Indipendente", "url":"https://www.lindipendente.online/2026/10/18/lo-sciopero-degli-autotrasportatori-sta-bloccando-il-sud-italia/","published":"2026-10-18","used_for_verification":true,"kind":"independent"},
+    {"id":"ansa_18","name":"ANSA", "url":"https://www.ansa.it/sito/notizie/economia/pmi/2026/10/18/salvini-confermato-incontro-20-con-autotrasporto-faremo-tutto-il-possibile_a0be01a9-5374-435d-946b-b8d044976a24.html","published":"2026-10-18","used_for_verification":true,"kind":"comparison_direct_quote"},
+    {"id":"rai_16","name":"RaiNews", "url":"https://www.rainews.it/tgr/sicilia/articoli/2026/10/caro-carburanti-scatta-lo-sciopero-degli-autotrasportatori-20f287ec-43f8-4d85-9bed-ee5f6e396d0a.html","published":"2026-10-16","used_for_verification":true,"kind":"comparison"},
+    {"id":"ind_14","name":"L'Indipendente", "url":"https://www.lindipendente.online/2026/10/14/autostrade-bloccate-e-presidi-al-sud-la-protesta-di-camion-e-trattori-si-allarga/","published":"2026-10-14","used_for_verification":true,"kind":"historical_context"}
+  ],
+  "claims": [
+    {"claim":"Il 18 ottobre la protesta degli autotrasportatori per il caro gasolio prosegue nel Mezzogiorno.","status":"confirmed","source_ids":["ind_18","rai_16"]},
+    {"claim":"Sono segnalati disagi nei rifornimenti e nel trasporto merci in diverse regioni.","status":"confirmed","source_ids":["ind_18","rai_16"]},
+    {"claim":"Salvini ha confermato l'incontro del 20 ottobre a Milano con gruppi e associazioni di autotrasportatori.","status":"attributed","source_ids":["ansa_18"]},
+    {"claim":"Salvini ha detto di voler sbloccare risorse gia' finanziate e aggiungerne di nuove, e ha chiesto rispetto per gli altri lavoratori.","status":"attributed","source_ids":["ansa_18"]},
+    {"claim":"Il blocco puo' danneggiare altre categorie; e' una riflessione sulle conseguenze, non una misura quantificata.","status":"analysis","source_ids":[]},
+    {"claim":"Gli esiti dell'incontro del 20 ottobre non sono ancora noti alla data del 19 ottobre.","status":"uncertain","source_ids":[]}
+  ],
+  "editorial_checks": {
+    "event_vs_publication_date":"La giornata centrale e' il 18 ottobre. Alcuni fatti della protesta iniziano il 16 ottobre, descritti come antefatti.",
+    "source_diversity":"Il nucleo proviene da L'Indipendente, il confronto da ANSA e RaiNews.",
+    "counterargument":"Le ragioni dei trasportatori non cancellano i danni potenziali ad altri lavoratori e cittadini.",
+    "pending":"Controllo finale su numeri e immagini, approvazione del testo e montaggio; non attribuire conseguenze specifiche non confermate.",
+    "avoid":"Non scrivere che il tavolo del 20 ottobre ha gia' avuto luogo. Non inventare immagini di blocchi reali."
+  }
+}

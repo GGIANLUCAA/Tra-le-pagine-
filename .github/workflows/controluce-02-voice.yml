@@ -1,0 +1,56 @@
+name: "Controluce 02 - voce naturale Gemini"
+on:
+  push:
+    branches: ["feature/controluce-v1"]
+    paths: ["voice_jobs/CONTROLUCE_02_resinovich.txt"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Preflight segreto
+        run: test -n "$GEMINI_API_KEY" || (echo 'Chiave non disponibile' && exit 2)
+      - name: Prepara dipendenze
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg libsndfile1
+          python -m pip install --quiet 'numpy>=1.25,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Registra voce naturale con stesso motore dei libri
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          import json
+          from gemini_voice import synthesize, sentences
+          source=Path("voice_jobs/CONTROLUCE_02_resinovich.txt").read_text(encoding="utf-8")
+          out=Path("output_controluce/voce02")
+          wave,aligned=synthesize(source,out)
+          def srt(t):
+              ms=round(float(t)*1000)
+              h,ms=divmod(ms,3600000);m,ms=divmod(ms,60000);s,ms=divmod(ms,1000)
+              return f"{h:02}:{m:02}:{s:02},{ms:03}"
+          (out/"VOCE_ALLINEATA.srt").write_text(
+              "".join(f"{i}\n{srt(a)} --> {srt(b)}\n{phrase}\n\n"
+                      for i,(phrase,a,b) in enumerate(aligned,1)),encoding="utf-8")
+          (out/"STATUS.json").write_text(json.dumps({
+              "engine":"Gemini TTS, Gacrux, same engine as Tra le Pagine",
+              "seconds":round(len(wave)/24000,3),
+              "sentences":len(aligned),
+              "published":False
+          },indent=2),encoding="utf-8")
+          PY
+      - name: Consegna audio non pubblicato
+        uses: actions/upload-artifact@v4
+        with:
+          name: controluce-02-voce-gacrux-${{ github.run_id }}
+          path: output_controluce/voce02/
+          if-no-files-found: error
+          retention-days: 14

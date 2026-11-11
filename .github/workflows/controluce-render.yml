@@ -1,0 +1,59 @@
+name: "Controluce - Render MANUALE dopo verifica"
+on:
+  workflow_dispatch:
+    inputs:
+      episodio:
+        description: "Nome cartella in formats/controluce/episodes"
+        type: string
+        required: true
+        default: '2026-10-18_trasporti_sud'
+      effetti:
+        description: "Effetti gratuiti V4/V5"
+        required: true
+        type: choice
+        options: [v4, 'off']
+        default: v4
+permissions:
+  contents: read
+concurrency:
+  group: controluce-render-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      EPISODIO: ${{ inputs.episodio }}
+      EFFETTI: ${{ inputs.effetti }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: "Controlla percorso senza traversal"
+        run: |
+          python - <<'PY'
+          import os,re
+          if not re.fullmatch(r'[a-zA-Z0-9][a-zA-Z0-9_-]{0,70}', os.environ['EPISODIO']):
+              raise SystemExit('Nome episodio non valido')
+          PY
+      - name: "Preflight: blocca fatti o immagini non approvati PRIMA dei crediti"
+        run: python src/controluce.py validate --episode "formats/controluce/episodes/$EPISODIO"
+      - name: "Installa dipendenze motore condiviso"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core frei0r-plugins
+          python -m pip install 'numpy>=1.25,<3' 'pillow>=10,<13' 'soundfile>=0.12' 'scipy>=1.11' 'opencv-python-headless>=4.8,<5' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: "Controlla segreto voce Gemini"
+        run: test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY mancante' && exit 2)
+      - name: "Crea video Controluce riusando motore originale"
+        run: python src/controluce_render.py --episode "formats/controluce/episodes/$EPISODIO" --engine gemini --effects "$EFFETTI" --out output_controluce/video
+      - name: "Consegna MP4 NON pubblicato + fonti + diritti"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: controluce-mp4-${{ github.run_id }}
+          path: output_controluce/video/
+          if-no-files-found: error
+          retention-days: 14

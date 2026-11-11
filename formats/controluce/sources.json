@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "notes": "Feed da verificare in esecuzione. Un feed non disponibile non invalida le altre ricerche. Nessuna fonte e' vera per definizione. I siti elencati sono punti di partenza, non certificazioni.",
+  "sources": [
+    {"id":"indipendente","name":"L'Indipendente","kind":"independent","home":"https://www.lindipendente.online/","rss":"https://www.lindipendente.online/feed/","priority":"alta"},
+    {"id":"casadelsole","name":"Casa del Sole TV","kind":"independent","home":"https://casadelsole.tv/","rss":"https://casadelsole.tv/feed/","priority":"alta"},
+    {"id":"ottolina","name":"OttolinaTV","kind":"independent","home":"https://www.ottolinatv.it/","rss":"https://www.ottolinatv.it/feed/","priority":"alta"},
+    {"id":"ilfatto","name":"Il Fatto Quotidiano","kind":"comparison","home":"https://www.ilfattoquotidiano.it/","rss":"https://www.ilfattoquotidiano.it/feed/","priority":"confronto"},
+    {"id":"ansa","name":"ANSA","kind":"comparison","home":"https://www.ansa.it/","rss":"https://www.ansa.it/sito/ansait_rss.xml","priority":"confronto"}
+  ]
+}
