@@ -116,6 +116,34 @@ class DirectorTests(unittest.TestCase):
             self.assertEqual(r["status"], "draft_unreviewed")
             self.assertFalse(r["publication_authorized"])
 
+    def test_openrouter_request_hard_zero_price_and_no_fallback(self):
+        import urllib.request
+        sent = []
+        model = "provider/model-one:free"
+        class Response:
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self, limit):
+                return json.dumps({
+                    "model": model,
+                    "choices": [{"message": {"content": "Proposta non approvata"}}],
+                }).encode()
+        def fake_urlopen(req, timeout):
+            body = json.loads(req.data.decode("utf-8"))
+            sent.append(body)
+            self.assertEqual(body["model"], model)
+            self.assertEqual(body["provider"]["max_price"],
+                             {"prompt": 0, "completion": 0})
+            self.assertIs(body["provider"]["allow_fallbacks"], False)
+            self.assertEqual(timeout, 35)
+            return Response()
+        with mock.patch.object(urllib.request, "urlopen", side_effect=fake_urlopen):
+            result = d._ask_openrouter(model, "Cerca coerenza narrativa.", "placeholder")
+        self.assertEqual(result, "Proposta non approvata")
+        self.assertEqual(len(sent), 1)
+
     def test_failure_never_retries(self):
         with tempfile.TemporaryDirectory() as tmp:
             p = Path(tmp) / "policy.json"
