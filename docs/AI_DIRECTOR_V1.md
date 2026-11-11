@@ -65,6 +65,12 @@ La policy repository config/free_llm_zero_cost_v1.json ha routes=[]: così ogni 
 
 Solo dopo audit si può usare workflow_dispatch con enable_live=true e due modelli :free già ammessi. Il workflow espone il secret solo nello step manuale di inferenza, non nei test PR. Non usare openrouter/free (scelta dinamica) né il profilo G0DM0D3 ULTRAPLINIAN 12–60 modelli: non rispettano il vincolo del modello esatto.
 
+## Privacy e risultati
+
+Quando enable_live=true, il dossier, la narrazione e le note dei lavori precedenti inserite esplicitamente vengono inviati ad OpenRouter e al fornitore del modello scelto; valgono le loro politiche di conservazione. Il browser G0DM0D3 e le sue opzioni No-Log sono indipendenti da questa Action. Non usare segreti, dati personali o archivi privati come brief nel repository pubblico.
+
+Al primo run offline, il workflow analizza anche il dossier **The Goldfinch** realmente versionato in docs/productions (variante critico_standard), rispettando gli eventuali stati blocked e le mancanze dichiarate. Nel report compaiono file separati real_existing_four_plan.json e .html, non un video nuovo. I file restano report diagnostici, non approvazioni.
+
 ## Dal telefono Android
 
 1. GitHub → repository Tra-le-pagine- → Actions → AI Director V1 | isolated director preflight.
