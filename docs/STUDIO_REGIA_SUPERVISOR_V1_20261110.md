@@ -1,0 +1,133 @@
+# Regia Supervisor V1 — piano di montaggio comune, senza regressioni (10/11/2026)
+
+## Problema diagnosticato nel repository
+
+Esistono gia:
+- V21 Creative Director e V23 Cinematic Director: consulenza tecnica e artistica, non correzione automatica dei veri render.
+- V17 Quality Director: metadata MP4, fotogrammi campionati, silenzi e progetto V13; non ha da solo una timeline visiva completa.
+- V70 La Storia Rivive: ritmi B/N, reveal e fermo, guardrail specializzati.
+- ArtVision Focus V1 / V82: verifiche parola-oggetto soltanto dove il renderer emette la traccia camera e la voce allineata.
+- ArtVision Learning Loop V1: archivio delle recensioni verificate, non una AI che vede i film da sola.
+
+La lacuna comune era una shotlist verificabile per anticipare errori di regia prima di sprecare render, senza pretendere che tutti i format condividano ritmo, effetti e numero di immagini.
+
+## Implementazione di questo intervento
+
+- src/studio_regia_supervisor_v1.py: preflight gratuito di una shotlist. Errori bloccanti (fonti/diritti dichiarati mancanti, timing sovrapposti, soggetto narrato assente dalla pianificazione, crossfade/ghosting, camera inappropriata) e problemi da revisionare (immagini ripetute, dettagli troppo brevi, enormi salti dello sguardo, scarsa risoluzione effettiva, stesso movimento ripetuto).
+- src/quality_director_v17.py --regia-plan: unisce i codici preflight ai vecchi report V17. Produce STUDIO_REGIA_SUPERVISOR_V1.json accanto al report JSON/HTML senza confondere le loro fonti di evidenza.
+- .github/workflows/quality-director-v17.yml: accetta opzionalmente shotlist e MP4 gia presenti nel checkout. Se il QA fallisce non usa piu la clausola || true per nascondere l'errore; mantiene gli artifact con if: always().
+- Test di regressione a costo zero. Non aggiunge automazioni, cron, chiamate IA, render, nuove spese o pubblicazioni.
+
+### Formato shotlist
+
+Esempio di struttura per un Critico con voce. I campi e i tempi di esempio NON descrivono un MP4 reale:
+
+    {
+      "schema": "studio-regia-shotlist-v1",
+      "format": "artvision_critico",
+      "video_duration_s": 6,
+      "delivery_resolution_px": [1080, 1920],
+      "narration": {
+        "wav_sha256": "SHA256_REALE_64_CARATTERI",
+        "timing_verified": true,
+        "segments": [
+          {"start_s": 0.0, "end_s": 3.0, "subject_id": "gruppo"},
+          {"start_s": 3.0, "end_s": 6.0, "subject_id": "volto"}
+        ]
+      },
+      "shots": [
+        {
+          "id": "shot_01", "start_s": 0, "end_s": 3,
+          "source_verified": true, "rights_verified": true,
+          "asset_id": "dipinto_originale", "composition_group": "wide",
+          "visual_subject": "Gruppo", "visible_subject_ids": ["gruppo"],
+          "reason": "Inquadrare il gruppo mentre viene descritto",
+          "shot_type": "wide", "focus_xy": [0.5, 0.5],
+          "camera": {"move": "locked"}
+        },
+        {
+          "id": "shot_02", "start_s": 3, "end_s": 6,
+          "source_verified": true, "rights_verified": true,
+          "asset_id": "dipinto_originale", "composition_group": "portrait",
+          "visual_subject": "Volto", "visible_subject_ids": ["volto"],
+          "reason": "Mostrare il volto senza tagliarlo",
+          "shot_type": "detail", "focus_xy": [0.6, 0.4],
+          "camera": {"move": "slow_push"}
+        }
+      ]
+    }
+
+FONDAMENTALE: i segmenti voce devono usare il tempo effettivo del VIDEO, con offset gia applicato, non il tempo fittizio del copione. visible_subject_ids e source_verified sono attestazioni dello storyboard: il software non identifica davvero soggetti o licenze. In Museum il movimento deve rispettare la continuita di ingresso/uscita e richiede i gate V80/V118/V119 separati. In Storia Rivive si applicano comunque V70/V91/V94/V96/V99: questo supervisore non sostituisce ne aggira i loro criteri.
+
+### Esecuzione (senza render)
+
+    python src/studio_regia_supervisor_v1.py --shotlist percorso/SHOTLIST.json --out output/REGIA_PREFLIGHT.json
+    python src/quality_director_v17.py --format artvision_critico --regia-plan percorso/SHOTLIST.json --out output/quality-v17
+
+Con MP4 locale realmente disponibile:
+
+    python src/quality_director_v17.py --video percorso/MASTER.mp4 --format artvision_critico --regia-plan percorso/SHOTLIST.json --out output/quality-v17
+
+## Cosa manca prima di chiamarlo regista autonomo
+
+1. Integrazione produttiva reale: ogni renderer deve esportare shotlist con valori misurati; V1 non riscrive da solo gli script indipendenti o gli MP4 preesistenti.
+2. Visione/audizione vera: analizzare i frame e le parole, verificare la visibilita di persone/oggetti, volti, tagli e movimento. Il report V1 non prova la semantica di un frame.
+3. A/B non distruttivo: correggere una sola variabile per volta (inquadratura, durata, timing o movimento), conservare master originale e tornare indietro se N+1 peggiora.
+4. Cicli seriali: inserire il preflight nel workflow owner gia esistente di ciascun format solo dopo prova su un episodio, con contratto di input specifico e senza creare scheduler concorrenti.
+5. Misurare i risultati: conservare gli hash dei video, note precise e feedback dell'owner. In seguito confrontare retention reale quando disponibile, senza inventare il tasso di successo e senza usare punteggi finti.
+
+## Approccio cinematografico (ipotesi di test, non regole universali)
+
+- Soggetto e promessa visiva leggibili nei primi secondi; non necessariamente una raffica di tagli.
+- Tagliare quando cambia informazione, rapporto fra soggetti o significato, non ogni X secondi. Le riprese complesse richiedono spesso piu tempo di lettura.
+- Con la voce: frase e soggetto si devono sovrapporre nel video reale. Camera ferma mentre si studia un dettaglio; eventuali panoramiche motivano una scoperta.
+- Con la musica: usare frasi e onset verificati della traccia, non un BPM inventato.
+- Per il restauro: il colore si deve poter ammirare e la ricostruzione deve provenire dallo stesso frame autentico; la durata del reveal rimane al gate V70/V96, non si deduce dalla shotlist generica.
+
+Ricerca di supporto:
+- Tim J. Smith (2012), The Attentional Theory of Cinematic Continuity: la continuita dipende anche da dove guarda lo spettatore.
+- Balzarotti et al. (2021), The Editing Density of Moving Images Influences Viewers' Time Perception: i tagli cambiano sguardo e percezione del tempo, non garantiscono di per se bellezza.
+- REGen (NeurIPS 2025): narrazione e selezione di inserti documentaristici sono due passaggi collegati da una ricerca semantica di video pertinenti.
+
+Questo codice e una prima riparazione verificabile del processo di regia, non un'affermazione che i video finali siano diventati migliori prima del confronto reale.
+
+## Rafforzamento preflight (10/11/2026, continuazione)
+
+- **Format esplicito**: solo i dieci format configurati in Quality Director V17. Un refuso non deve far trattare un video narrato come un video musicale senza controlli voce.
+- **Attestazioni rigorose**: `source_verified` e `rights_verified` devono essere booleani JSON `true`; stringhe come `"false"` o `"yes"` non sono prove.
+- **Confini delle frasi**: la presenza del soggetto dichiarato deve coprire almeno il 95% di ogni segmento; anche con copertura elevata, ingresso oltre 0,2 s o uscita oltre 0,2 s prima della fine producono segnalazioni da revisionare. Sono soglie prudenziali di **preflight dichiarativo**, non una misura della percezione umana o della reale presenza del soggetto nell'MP4.
+- **Robustezza metadati**: la rilevazione di scene ripetute non si interrompe su array/dizionari dichiarati per errore negli identificatori del materiale.
+- Sei test di regressione addizionali coprono questi casi. I test devono passare su GitHub CI prima di integrare la PR.
+
+**Limite invariato:** il supervisore non può certificare autonomamente che il vero video mostri il soggetto. Il renderer deve fornire shotlist basata su scene esportate e voice alignment effettivo; poi servono frame dal MP4 e ascolto completo. Nessuna promozione Gold, import o pubblicazione viene attivata da questi controlli.
+
+
+## Primo audit vero MP4 / Post-render (10 novembre, eseguito)
+
+Implementato modulo read-only src/studio_regia_real_mp4_v1.py, con campionamento FFmpeg su tutta la durata e analisi dei frame a risoluzione ridotta: hash SHA-256 del file originale, durata e codec, luminanza/saturazione, similarita tra campioni consecutivi, lunghe stasi visive e salti d'immagine probabilmente rilevanti. Genera REGIA_REAL_MP4_V1.json e REGIA_REAL_MP4_CONTACT_SHEET.jpg. Nessun rendering, rete nel modulo, Vidu, editing o approvazione artistica.
+
+Attivazione opzionale del modulo in src/quality_director_v17.py con:
+    python src/quality_director_v17.py --video MASTER_REALE.mp4 --format storia_rivive --real-mp4-audit --out output/quality-v17
+
+Se video manca, V17 segnala blocco anziche inventare un risultato. Formati senza voce non ricevono arbitrariamente narrazione. Se shotlist fornita, combinarla con --regia-plan; il report del piano resta distinto dalle prove MP4.
+
+Un workflow on-demand e PR-only, .github/workflows/studio-regia-real-mp4-pilot-v1.yml, scarica SOLO l'asset pubblico gia esistente Parigi 1918 V304, verifica numero byte e SHA256, analizza i bytes sul runner GitHub e conserva i report per 7 giorni. NON pubblica, non modifica video, non tocca code owner. Il video e una PROVA NON APPROVATA.
+
+Prova GitHub Actions completata con successo:
+- https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42729171447
+- MP4 pubblico: PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4, 6.234.118 byte.
+- SHA256 MP4: 6bdd6262c022d019a6aec403a09e23980f72b64397f3990764de313bb12aa60b.
+- Durata FFprobe: 17,667 secondi; 35 frame reali analizzati; un salto visivo candidato circa a 9,25s, nessun blocco di frame invariati prolungato secondo le soglie attuali.
+- Artifact: STUDIO_REGIA_REAL_PARIS_1918_NOT_APPROVED (contact sheet + report di verifica).
+
+Questi risultati NON dimostrano che il filmato sia bello, corretto, approvato o che il reveal rispetti un gate V70/V96. I tagli piu brevi dell'intervallo di campionamento possono non risultare rilevabili. Camera continua e dissolvenze possono produrre falsi negativi; luce/azione forte possono produrre falsi positivi. Nessuna previsione di successo social e nessuna revisione occhi/volti/identita dedotta da pixel.
+L'utente e la regia artistica devono ancora visionare il master completo, ascoltare l'audio, esaminare i frame reali e preparare l'eventuale A/B.
+
+I moduli nuovi non sono ancora agganciati in modo obbligatorio ai renderer owner: attivare in modo graduale solo dopo prove di regressione, senza imporre ritmi fissi e senza duplicare scheduler.
+
+
+### Collegamento pilota a un renderer reale ArtVision (solo branch PR)
+
+Il generatore esistente src/artvision_rebel_critico_standard_v144.py (The Fall of the Rebel Angels, Critico Standard) ora invoca il modulo read-only sul MASTER MP4 gia renderizzato e verificato. Il report include hash del file esatto, i frame campionati e i segnali su ritmo/varieta; viene allegato al pacchetto di revisione ZIP. Esegue solo dopo la gia presente verifica di narrazione Gacrux e della traccia camera, quindi non cambia scelta immagini, timecode, durata, musica, voce e master. Non genera nuovi crediti/API. Se la scansione fallisce, registra UNAVAILABLE_NEEDS_REVIEW e conserva il render valido anziche dichiarare un'approvazione. La prova GitHub CI di compilazione/regressione non equivale a un nuovo video V144 renderizzato.
+
+Questo collegamento e una prova circoscritta: nessuna attivazione diretta dei flussi owner, nessuna modifica di main, nessun quarto video dichiarato finito. In seguito la stessa interfaccia potra essere riusata nei renderer rimanenti se la prova artistica A/B mostra un vantaggio.

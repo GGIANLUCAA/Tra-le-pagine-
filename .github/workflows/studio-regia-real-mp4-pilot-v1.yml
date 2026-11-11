@@ -1,0 +1,69 @@
+name: "Studio Regia V1 — prova su MP4 reale (sola lettura)"
+on:
+  pull_request:
+    paths:
+      - "src/studio_regia_real_mp4_v1.py"
+      - "src/quality_director_v17.py"
+      - "src/artvision_rebel_critico_standard_v144.py"
+      - "tests/test_studio_regia_real_mp4_v1.py"
+      - ".github/workflows/studio-regia-real-mp4-pilot-v1.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-video-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Dipendenze locali, nessuna API AI"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'Pillow>=10,<13'
+      - name: "Test su MP4 sintetici veri e compilazione renderer pilota"
+        run: |
+          python -m unittest discover -s tests -p "test_studio_regia_real_mp4_v1.py" -v
+          python -m py_compile src/artvision_rebel_critico_standard_v144.py
+      - name: "Leggi MP4 pubblico storico di revisione senza modificarlo"
+        run: |
+          mkdir -p output/regia-real-pilot input
+          curl --fail --show-error --silent --location \
+            --retry 2 --connect-timeout 15 --max-time 120 \
+            "https://github.com/GGIANLUCAA/Tra-le-pagine-/releases/download/storia-parigi-1918-v304-source-locked-review-20261109/PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4" \
+            --output "input/PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4"
+          # Expected public GitHub release asset size from the release API at pilot creation.
+          test "$(stat -c%s input/PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4)" -eq 6234118
+          echo "6bdd6262c022d019a6aec403a09e23980f72b64397f3990764de313bb12aa60b  input/PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4" | sha256sum --check --status
+          sha256sum input/PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4
+      - name: "Diagnosi audiovisiva reale e contact sheet senza approvazione"
+        run: |
+          python src/quality_director_v17.py \
+            --video input/PARIGI_1918_V304_REVIEW_NOT_APPROVED.mp4 \
+            --format storia_rivive \
+            --real-mp4-audit \
+            --out output/regia-real-pilot
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("output/regia-real-pilot/REGIA_REAL_MP4_V1/REGIA_REAL_MP4_V1.json")
+          j=json.loads(p.read_text())
+          print(json.dumps({"source_sha": j["source"]["sha256"],
+                            "duration_s":j["source"]["duration_s"],
+                            "frames_checked":j["sampling"]["frames_checked"],
+                            "potential_still_intervals":j["potential_still_intervals"],
+                            "approx_cuts":j["potential_cuts_approx_s"],
+                            "warning_codes":[x["code"] for x in j["warnings"]],
+                            "artistic_approved":j["artistically_approved"]},ensure_ascii=False))
+          PY
+      - name: "Conserva report di vera regia, anche quando il test fallisce"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STUDIO_REGIA_REAL_PARIS_1918_NOT_APPROVED
+          path: output/regia-real-pilot/
+          if-no-files-found: warn
+          retention-days: 7

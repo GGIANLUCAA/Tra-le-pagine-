@@ -55,6 +55,31 @@ class QualityDirectorTests(unittest.TestCase):
         self.assertIn('UNSAFE_SCRIPT_PATH',[x['code'] for x in r['blocking']])
         self.assertIn('UNSAFE_ASSET_PATH',[x['code'] for x in r['warnings']])
 
+    def test_regia_plan_integrates_with_quality_report(self):
+        self.project()
+        regia_plan = self.base/'shotlist.json'
+        data = {'schema':'studio-regia-shotlist-v1','format':'artvision_critico',
+                'video_duration_s':4,
+                'narration':{'wav_sha256':'a'*64,'timing_verified':True,
+                             'segments':[{'start_s':0,'end_s':4,'subject_id':'person'}]},
+                'shots':[{'id':'intro','start_s':0,'end_s':4,'asset_id':'scene1',
+                          'source_verified':True,'rights_verified':True,
+                          'visual_subject':'Persona sul ponte',
+                          'reason':'Personaggio ascoltato e visibile',
+                          'visible_subject_ids':['person'],
+                          'camera':{'move':'locked'}}]}
+        regia_plan.write_text(json.dumps(data),encoding='utf-8')
+        out=self.base/'regia_ok'
+        report=qa.inspect(project=self.file,out=out,regia_plan=regia_plan)
+        self.assertEqual(report['status'],'needs_artistic_review')
+        self.assertTrue((out/'STUDIO_REGIA_SUPERVISOR_V1.json').is_file())
+        self.assertTrue(any('regia_preflight' in row for row in report['findings']))
+        data['shots'][0]['source_verified']=False
+        regia_plan.write_text(json.dumps(data),encoding='utf-8')
+        blocked=qa.inspect(project=self.file,out=self.base/'regia_blocked',regia_plan=regia_plan)
+        self.assertIn('REGIA_SOURCE_NOT_VERIFIED',[x['code'] for x in blocked['blocking']])
+        self.assertEqual(blocked['status'],'technical_blocked')
+
     def test_html_escapes_user_text(self):
         report={'format':'<script>alert(1)</script>','status':'needs_artistic_review','blocking':[],
                 'warnings':[{'code':'x','message':'<img onerror=alert(1)>'}],
@@ -66,7 +91,7 @@ class QualityDirectorTests(unittest.TestCase):
 
     def test_all_six_format_profiles(self):
         policy=json.loads((ROOT/'config'/'quality_director_v17.json').read_text(encoding='utf-8'))
-        self.assertEqual(set(policy['formats']),{'libri','artvision_cinema','artvision_critico','controluce','visual_music','hyperlumen'})
+        self.assertEqual(set(policy['formats']),{'libri','artvision_cinema','artvision_critico','controluce','visual_music','hyperlumen','documentario','giuliano','storia_rivive','wow_lab'})
 
     @unittest.skipUnless(shutil.which('ffmpeg') and shutil.which('ffprobe'),'ffmpeg/ffprobe missing')
     def test_real_video_and_black_preview(self):
@@ -78,11 +103,13 @@ class QualityDirectorTests(unittest.TestCase):
         out=self.base/'video_report'
         out.mkdir()
         Image.new('RGB',(270,480),(0,0,0)).save(out/'REVIEW_FRAME_00.jpg')
-        result=qa.inspect(video=v,project=self.file,out=out)
+        result=qa.inspect(video=v,project=self.file,out=out,real_mp4_audit=True)
         self.assertFalse(result['blocking'])
         self.assertIn('DARK_SAMPLES',[x['code'] for x in result['warnings']])
         self.assertTrue(any('long_silences_detected' in row for row in result['findings']))
         self.assertTrue((out/'QUALITY_REPORT_V17.json').is_file())
+        self.assertTrue((out/'REGIA_REAL_MP4_V1'/'REGIA_REAL_MP4_CONTACT_SHEET.jpg').is_file())
+        self.assertTrue(any('regia_real_samples_checked' in row for row in result['findings']))
 
 
 if __name__ == '__main__':

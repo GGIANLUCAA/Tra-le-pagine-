@@ -1,0 +1,185 @@
+name: "Regia Critico V2 — confronto A/B reale, voce riusata"
+on:
+  pull_request:
+    paths:
+      - "src/artvision_critico_directed_camera_v2.py"
+      - "tests/test_artvision_critico_directed_camera_v2.py"
+      - "src/artvision_bruegel_sentence_montage_v3.py"
+      - "tests/test_artvision_bruegel_sentence_montage_v3.py"
+      - "src/artvision_rebel_critico_standard_v144.py"
+      - ".github/workflows/artvision-directed-regia-v2-ab-pilot.yml"
+permissions:
+  contents: read
+  actions: read
+jobs:
+  no-paid-ab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      # No GEMINI_API_KEY, no Vidu credentials, no TTS operations.
+      ART_DIR: /tmp/rebel_angels_critico_v144
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Dipendenze per il vero render offline"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install --disable-pip-version-check numpy pillow soundfile opencv-python-headless
+      - name: "Test camera geometria, easing e compilazione senza servizio a pagamento"
+        run: |
+          python -m unittest discover -s tests -p "test_artvision_critico_directed_camera_v2.py" -v
+          python -m unittest discover -s tests -p "test_artvision_bruegel_sentence_montage_v3.py" -v
+          python -m py_compile src/artvision_rebel_critico_standard_v144.py
+          python -m py_compile src/artvision_critico_directed_camera_v2.py
+      - name: "Recupera solo i vecchi byte autenticati: dipinto e WAV"
+        run: |
+          set -euo pipefail
+          mkdir -p "$ART_DIR" /tmp/v131_source
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/12775741359" > /tmp/v131_meta.json
+          python - <<'PY'
+          import json
+          j=json.load(open("/tmp/v131_meta.json"))
+          assert j["id"]==12775741359 and not j["expired"]
+          assert j["workflow_run"]["id"]>0 and isinstance(j["name"],str)
+          open("/tmp/v131_run","w").write(str(j["workflow_run"]["id"]))
+          open("/tmp/v131_name","w").write(j["name"])
+          PY
+          gh run download "$(cat /tmp/v131_run)" --repo "$GITHUB_REPOSITORY" \
+             --name "$(cat /tmp/v131_name)" --dir /tmp/v131_source
+          cp /tmp/v131_source/ORIGINAL_ARTWORK.jpg "$ART_DIR/ORIGINAL_ARTWORK.jpg"
+          gh run download 41803668367 --repo "$GITHUB_REPOSITORY" \
+             --name ART_V144_REBEL_ANGELS_REAL_CRITICO_OR_PRESERVED_WAV --dir "$ART_DIR"
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("/tmp/rebel_angels_critico_v144")
+          def h(x):
+              d=hashlib.sha256()
+              with x.open("rb") as f:
+                  for ch in iter(lambda:f.read(1024*1024),b""):d.update(ch)
+              return d.hexdigest()
+          assert h(p/"ORIGINAL_ARTWORK.jpg")=="09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5"
+          cache=json.loads((p/"VOICE_CACHE_V13.json").read_text())
+          assert h(p/"VOCE.wav")==cache["wav_sha256"]
+          assert (p/"ALLINEAMENTO_VOCE.json").is_file()
+          assert (p/"COPIONE_ESATTO_V144.txt").is_file()
+          print("SOURCE_SHA_AND_VERIFIED_EXISTING_WAV_OK; NO_NEW_TTS")
+          PY
+      - name: "Genera UN candidato V2 in cartella separata, senza cambiare il master V144"
+        run: python src/artvision_rebel_critico_standard_v144.py --phase render-directed
+      - name: "Confronto reale A/B con hash dei master e durata, senza falsa approvazione"
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          a=Path("/tmp/rebel_angels_critico_v144")
+          t=a/"REGIA_V2_TRIAL"
+          qa=json.loads((t/"QA_V144.json").read_text())
+          assert qa["camera_revision"]=="DIRECTED_V2_ISOLATED_TRIAL_NOT_ARTISTICALLY_APPROVED"
+          assert not qa["Gold_V25"] and not qa["social_published"]
+          old=json.loads((a/"QA_V144.json").read_text())
+          old_path=a/old["file"]["name"]
+          assert old_path.exists()
+          assert old_path.name!=qa["file"]["name"]
+          def sha(p):
+              h=hashlib.sha256()
+              with p.open("rb") as f:
+                  for part in iter(lambda:f.read(1<<20),b""):h.update(part)
+              return h.hexdigest()
+          assert sha(old_path)==old["file"]["sha256"]
+          new_path=t/qa["file"]["name"]
+          assert sha(new_path)==qa["file"]["sha256"]
+          assert old["shared_voice_wav_sha256"]==qa["shared_voice_wav_sha256"]
+          assert old_path.stat().st_size==old["file"]["bytes"]
+          assert qa["file"]["duration_s"]==old["file"]["duration_s"]
+          assert qa["narrative_focus_review"]["real_mp4_frames"]>0
+          plan=json.loads((t/"DIRECTED_CAMERA_PLAN_V2.json").read_text())
+          assert plan["source_timing"]=="asr_aligned_existing_wav"
+          assert plan["voice_sha256"]==qa["shared_voice_wav_sha256"]
+          diff={
+            "schema":"artvision-director-ab-v2",
+            "source_master_sha256":old["file"]["sha256"],
+            "candidate_sha256":qa["file"]["sha256"],
+            "baseline_duration_s":old["file"]["duration_s"],
+            "candidate_duration_s":qa["file"]["duration_s"],
+            "same_real_cached_wav":True,
+            "source_artwork_sha256":qa["source_art_sha256"],
+            "scene_technique":"new bounded, eased holds vs previous mechanical per-shot zoom",
+            "source_mp4_remains_untouched":True,
+            "artistic_comparison":"PENDING_VIEWING_AT_NORMAL_SPEED",
+            "human_owner_approved":False,
+            "published":False,
+            "Gold_V25":False,
+            "new_paid_calls":0
+          }
+          (t/"REGIA_AB_V2_REPORT.json").write_text(json.dumps(diff,ensure_ascii=False,indent=2)+"\n")
+          print(json.dumps(diff,ensure_ascii=False))
+          PY
+      - name: "Genera V3 usando SOLO le 18 frasi del medesimo WAV gia verificato"
+        run: python src/artvision_rebel_critico_standard_v144.py --phase render-directed-v3
+      - name: "Confronta V3 contro la baseline conservando hash, audio e diritti"
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          parent=Path("/tmp/rebel_angels_critico_v144")
+          original=json.loads((parent/"QA_V144.json").read_text())
+          p=parent/"REGIA_V3_TRIAL"
+          qa=json.loads((p/"QA_V144.json").read_text())
+          plan=json.loads((p/"SENTENCE_MONTAGE_PLAN_V3.json").read_text())
+          def hash_file(path):
+              h=hashlib.sha256()
+              with path.open("rb") as f:
+                  for ch in iter(lambda:f.read(1024*1024),b""):h.update(ch)
+              return h.hexdigest()
+          assert len(plan["shots"])==18
+          assert plan["time_base"]=="real_ASR_cache_plus_measured_voice_offset"
+          assert qa["camera_revision"]=="SENTENCE_V3_ISOLATED_TRIAL_NOT_ARTISTICALLY_APPROVED"
+          assert qa["shared_voice_wav_sha256"]==original["shared_voice_wav_sha256"]==plan["source_wav_sha256"]
+          assert qa["source_art_sha256"]==original["source_art_sha256"]==plan["source_artwork_sha256"]
+          assert qa["file"]["duration_s"]<=original["file"]["duration_s"]
+          assert hash_file(p/qa["file"]["name"])==qa["file"]["sha256"]
+          assert not qa["Gold_V25"] and not qa["social_published"] and not plan["artistic_approved"]
+          report={
+              "schema":"artvision-regia-sentence-v3-ab-review",
+              "existing_master_sha256":original["file"]["sha256"],
+              "candidate_sha256":qa["file"]["sha256"],
+              "original_duration_s":original["file"]["duration_s"],
+              "candidate_duration_s":qa["file"]["duration_s"],
+              "actual_sentence_shots":18,
+              "uses_same_authenticated_painting_and_wav":True,
+              "source_master_untouched":True,
+              "visual_semantic_accuracy_verified":False,
+              "movie_watched_and_artistically_approved":False,
+              "can_publish":False,
+              "new_tts_or_vidu_calls":0
+          }
+          (p/"REGIA_V3_AB_REPORT.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
+          print(json.dumps(report,ensure_ascii=False))
+          PY
+      - name: "Conserva MP4 V2 e V3 separati per confronto Android"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: REGIA_V2_V3_BRUEGEL_AB_REVIEW_ONLY_NOT_PUBLISHED
+          path: |
+            /tmp/rebel_angels_critico_v144/REGIA_V2_TRIAL/*.mp4
+            /tmp/rebel_angels_critico_v144/REGIA_V2_TRIAL/REGIA_AB_V2_REPORT.json
+            /tmp/rebel_angels_critico_v144/REGIA_V2_TRIAL/DIRECTED_CAMERA_PLAN_V2.json
+            /tmp/rebel_angels_critico_v144/REGIA_V2_TRIAL/QA_V144.json
+            /tmp/rebel_angels_critico_v144/REGIA_V2_TRIAL/CONTACT_SHEET_V144.jpg
+            /tmp/rebel_angels_critico_v144/REGIA_V2_TRIAL/REGIA_REAL_MP4_V1/
+            /tmp/rebel_angels_critico_v144/REGIA_V2_TRIAL/FOCUS_REVIEW_V1/ARTVISION_CRITICO_REAL_MP4_FOCUS_QA.json
+            /tmp/rebel_angels_critico_v144/REGIA_V3_TRIAL/*.mp4
+            /tmp/rebel_angels_critico_v144/REGIA_V3_TRIAL/QA_V144.json
+            /tmp/rebel_angels_critico_v144/REGIA_V3_TRIAL/SENTENCE_MONTAGE_PLAN_V3.json
+            /tmp/rebel_angels_critico_v144/REGIA_V3_TRIAL/REGIA_V3_AB_REPORT.json
+            /tmp/rebel_angels_critico_v144/REGIA_V3_TRIAL/CONTACT_SHEET_V144.jpg
+            /tmp/rebel_angels_critico_v144/REGIA_V3_TRIAL/REGIA_REAL_MP4_V1/
+            /tmp/rebel_angels_critico_v144/REGIA_V3_TRIAL/FOCUS_REVIEW_V1/ARTVISION_CRITICO_REAL_MP4_FOCUS_QA.json
+          retention-days: 14
+          if-no-files-found: warn
