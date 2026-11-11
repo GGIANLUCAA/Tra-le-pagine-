@@ -389,6 +389,19 @@ def render_dashboard(report, path):
                  html.escape(x["detail"]) + "</li>" for x in report["issues"])
     safe_title = html.escape(report["title"])
     safe_status = html.escape(report["status"])
+    prior = report.get("prior_observations", [])
+    memories = "".join("<li>" + html.escape(x["problem"]) + "<p><small>Prova suggerita: " +
+                       html.escape(x["suggested_experiment"]) + "</small></p></li>"
+                       for x in prior if isinstance(x, dict))
+    memory_section = ("<section><h2>Lezioni documentate da MP4 precedenti</h2><ul>" +
+                      memories + "</ul></section>") if memories else ""
+    candidates = report.get("editorial_candidates", [])
+    candidate_items = "".join(
+        "<section><h2>" + html.escape(x.get("role", "")) + " · " +
+        html.escape(x.get("model", "")) + "</h2><p style='white-space:pre-wrap'>" +
+        html.escape(x.get("draft", x.get("error", ""))) +
+        "</p><small>Proposta non verificata / non approvata</small></section>"
+        for x in candidates if isinstance(x, dict))
     page = ("<!doctype html><html lang='it'><meta charset='utf-8'>"
             "<meta name='viewport' content='width=device-width,initial-scale=1'>"
             "<title>AI Director · Report</title><style>"
@@ -404,7 +417,7 @@ def render_dashboard(report, path):
             " s · " + str(counts.get("blocking", 0)) + " problemi bloccanti</p>"
             "<p>AI non autorizza pubblicazione o Gold; controllare il vero MP4.</p></section>"
             "<section><h2>Controlli e osservazioni</h2><ul>" + li +
-            "</ul></section></main></html>")
+            "</ul></section>" + memory_section + candidate_items + "</main></html>")
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(page, encoding="utf-8")
@@ -449,6 +462,10 @@ def main():
             key=os.environ.get("OPENROUTER_API_KEY", ""))
         report["model_calls_attempted"] = len(report["editorial_candidates"])
         report["api_cost_claim"] = "zero-price routing requested; upstream billing not independently audited"
+        if any("error" in x for x in report["editorial_candidates"]):
+            report["recovery"] = {"mode": "offline_fallback", "retry_count": 0,
+                                  "production_interference": False,
+                                  "note": "Keep existing preflight; no rerun or paid fallback"}
     report["report_generated_at_utc"] = dt.datetime.now(dt.timezone.utc).isoformat()
     write_json(args.out, report)
     render_dashboard(report, args.dashboard)
