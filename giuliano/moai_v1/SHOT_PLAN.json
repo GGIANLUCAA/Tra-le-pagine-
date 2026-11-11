@@ -2,7 +2,7 @@
   "series": "GIULIANO · DOCUMENTARI",
   "title": "THE WALKING GIANTS",
   "subtitle": "I GIGANTI CHE CAMMINAVANO",
-  "revision": 1,
+  "revision": 2,
   "aspect": "9:16",
   "audio": "Google Gemini Gacrux — natural Italian television documentary",
   "visual_provenance": "authentic CC-licensed Wikimedia Commons photos; mechanism overlay is schematic and explicitly labelled",
@@ -287,8 +287,8 @@
     {
       "index": 25,
       "text": "Per le comunità Rapa Nui, quelle figure erano legate alla memoria degli antenati.",
-      "source_file": "Anakena Moai - Rapa Nui - Easter Island - Isla de Pasqua.jpg",
-      "second_file": "Anakena Moai and More -- Rapa Nui - Easter Island - Isla de Pasqua.jpg",
+      "source_file": "Moai on Rapa Nui alone.jpg",
+      "second_file": "Moai on Rapa Nui in a field.jpg",
       "semantic": "platform",
       "presentation": "portrait",
       "overlay": "",
@@ -299,7 +299,7 @@
       "index": 26,
       "text": "Non erano progettate soltanto per essere viste da lontano. Erano parte della vita e dell'identità dei clan.",
       "source_file": "Moai on Rapa Nui after they were stood back up.jpg",
-      "second_file": "Ahu-Tongariki-and-Traveling-Moai.jpg",
+      "second_file": "Ahu-Tongariki-from-south-west-2013.jpg",
       "semantic": "platform",
       "presentation": "wide",
       "overlay": "",
@@ -320,8 +320,8 @@
     {
       "index": 28,
       "text": "Alcune portavano un pukao, un grande elemento di pietra rossastra sulla testa.",
-      "source_file": "Anakena Moai and More -- Rapa Nui - Easter Island - Isla de Pasqua.jpg",
-      "second_file": "Anakena Moai - Rapa Nui - Easter Island - Isla de Pasqua.jpg",
+      "source_file": "Moai with red cap.jpg",
+      "second_file": "Moai con pukao del Ahu Tongariki - panoramio.jpg",
       "semantic": "pukao",
       "presentation": "portrait",
       "overlay": "PUKAO · SCORIA ROSSA",
@@ -332,7 +332,7 @@
       "index": 29,
       "text": "In certi casi, dopo l'erezione, si inserivano occhi di corallo e pietra.",
       "source_file": "Chile-03460 - Moai Eye (49073104121).jpg",
-      "second_file": "Anakena Moai and More -- Rapa Nui - Easter Island - Isla de Pasqua.jpg",
+      "second_file": null,
       "semantic": "eye",
       "presentation": "detail",
       "overlay": "OCCHI DI CORALLO",
@@ -375,11 +375,11 @@
     {
       "index": 33,
       "text": "I Rapa Nui non sono un popolo scomparso. I loro discendenti vivono ancora sull'isola.",
-      "source_file": "Anakena Moai - Rapa Nui - Easter Island - Isla de Pasqua.jpg",
-      "second_file": "Moáis de Ahu Tongariki en Isla de Pascua (Chile).JPG",
-      "semantic": "platform",
+      "source_file": "Tapati Festival (16685154972).jpg",
+      "second_file": "Cultura Rapa Nui.jpg",
+      "semantic": "culture",
       "presentation": "wide",
-      "overlay": "",
+      "overlay": "TAPATI · CULTURA RAPA NUI",
       "chapter": "LEGACY",
       "motion": "pan_left"
     },
@@ -393,6 +393,12 @@
       "overlay": "",
       "chapter": "LEGACY",
       "motion": "pull"
+    }
+  ],
+  "quality_findings": [
+    {
+      "issue": "Sandy beach photos inadvertently shown for ancestors, pukao and people; semantically wrong",
+      "fix": "Replace only those five beats with archaeological platform moai, genuine red pukao detail, actual coral eye and contemporary Rapa Nui festival"
     }
   ]
 }
