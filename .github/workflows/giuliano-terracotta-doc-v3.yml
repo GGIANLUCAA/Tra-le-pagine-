@@ -52,7 +52,7 @@ jobs:
             timeout 150 sudo apt-get update -qq
             timeout 150 sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
           fi
-          python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<13' 'requests>=2.31,<3' 'trimesh>=4,<5' 'opencv-python-headless>=4.9,<5'
+          python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<13' 'requests>=2.31,<3' 'trimesh>=4,<5' 'opencv-python-headless>=4.9,<5' 'yt-dlp>=2025.10'
       - name: Produce finished film and Android exports, full quality validation
         env:
           OPENBLAS_NUM_THREADS: "1"
