@@ -20,7 +20,7 @@ jobs:
       - name: "Install image inspection (no paid APIs)"
         run: |
           set -euo pipefail
-          python -m pip install -q "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "requests>=2.31,<3"
+          python -m pip install -q "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "requests>=2.31,<3" "imageio-ffmpeg>=0.6,<1"
           python -m py_compile src/storia_zorro_1920_resilient_scout.py src/public_archive_sources_v1.py
       - name: "Scout a true short historical HD excerpt; alternate source on 429"
         run: |
