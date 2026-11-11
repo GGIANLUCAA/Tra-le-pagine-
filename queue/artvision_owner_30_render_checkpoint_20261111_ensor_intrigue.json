@@ -1,0 +1,81 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-11",
+  "work_id": "ensor_intrigue_1890_kmska_1856",
+  "title": "The Intrigue",
+  "artist": "James Ensor",
+  "year": 1890,
+  "variant": "cinema_standard",
+  "status": "ONE_GENUINE_NEW_50_83S_MP4_TWO_BITRATES_KMSKA_CC0_SOURCE_LOCKED_FFMPEG_GITHUB_INDEPENDENT_READBACK_AND_LIBRARY_PASS_ARTISTIC_PENDING",
+  "source": {
+    "institution": "Royal Museum of Fine Arts Antwerp / KMSKA",
+    "inventory": "1856",
+    "object_url": "https://kmska.be/en/masterpiece/the-intrigue",
+    "source_page": "https://commons.wikimedia.org/wiki/File:De_intrige,_James_Ensor,_1890,_Koninklijk_Museum_voor_Schone_Kunsten_Antwerpen,_1856.002.jpeg",
+    "photographer": "Hugo Maertens",
+    "photo_license": "CC0 1.0",
+    "original_image_pixels": [
+      5000,
+      2990
+    ],
+    "source_bytes": 6957677,
+    "source_sha1": "59d004e140487fcbdf868b1d5eba0683e13b0d40",
+    "artwork_dimensions_cm": [
+      89.5,
+      149
+    ],
+    "commercial_territorial_clearance": "PENDING"
+  },
+  "production": {
+    "github_run": 43069776844,
+    "github_artifact_id": 13877342168,
+    "script": "scripts/artvision_owner_ensor_intrigue_cinema_v1.py",
+    "workflow": ".github/workflows/artvision-owner-ensor-intrigue-cinema-v1.yml",
+    "duration_s": 50.833333333333336,
+    "scene_count": 12,
+    "frame_rate": 24,
+    "hd_resolution": [
+      1080,
+      1920
+    ],
+    "hd_name": "ARTVISION_ENSOR_THE_INTRIGUE_CINEMA_HD_1080P_REVIEW.mp4",
+    "hd_bytes": 38364522,
+    "hd_sha256": "8ed0fb016b147664bc91589a8f545f8d71a259b4697f98677a022e78d0184663",
+    "android_name": "ARTVISION_ENSOR_THE_INTRIGUE_CINEMA_ANDROID_REVIEW.mp4",
+    "android_bytes": 12570997,
+    "android_sha256": "38ea94375381a06a34f5896793396a2aae5765f8268be7cf0bc193832bcab4a9",
+    "zip_name": "ARTVISION_ENSOR_THE_INTRIGUE_ANDROID_PACKAGE.zip",
+    "zip_bytes": 13496250,
+    "zip_sha256": "cad411daf4d70274bfc1dbf5be1a5514b05e2c755bfbb48b9201edf6aa223937",
+    "original_music": true,
+    "voice": false,
+    "cover_social_drafts": true
+  },
+  "qa": {
+    "github_render_job": "PASS",
+    "independent_artifact_readback_job": "PASS",
+    "source_fixed_sha1_px_bytes": "PASS",
+    "full_ffmpeg_all_streams_two_files": "PASS",
+    "zip_crc_and_embedded_mp4_sha": "PASS",
+    "contact_sheet_review": "INSPECTED_SAMPLE_12_FRAMES",
+    "library_independent_materialization_sha": "PASS_3_FILES",
+    "full_speed_artistic_review": "PENDING",
+    "rights_release": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_api_calls": 0
+  },
+  "library": {
+    "hq": "libfile_dc9397b23bd48191a223415913d30610",
+    "android": "libfile_f19a7594e700819186d7c77f2c99d454",
+    "android_zip": "libfile_911f24a5b5e081919463172dcbde4cfb",
+    "full_artifact": "libfile_67bcd9239a2c8191b560c6507919521a"
+  },
+  "queue_effect": {
+    "original_owner_10": "26/36",
+    "owner_30_distinct_cinema_after": 13,
+    "new_cinema_distinct": 1,
+    "approved_4x1_slots_increment": 0
+  },
+  "next": "No duplicate of this Cinema. Next Sadko by Ilya Repin, 1876, source 5444x7660 with published Commons checksum; original score only, release subject to human artistic review and territorial rights."
+}
