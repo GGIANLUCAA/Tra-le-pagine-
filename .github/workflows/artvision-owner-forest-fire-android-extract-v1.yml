@@ -1,0 +1,65 @@
+name: "ArtVision OWNER | Forest Fire | light Android delivery from existing artifact"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-owner-forest-fire-android-extract-v1.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-forest-fire-existing-artifact-export
+  cancel-in-progress: false
+jobs:
+  extract_verified_media_no_rerender:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Retrieve completed Forest Fire source artifact from successful run
+        uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_OWNER_FOREST_FIRE_NEW_CINEMA_REVIEW
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 42959292481
+          github-token: ${{ github.token }}
+          path: /tmp/forest-completed
+      - name: Check original uploaded files, hashes, original source, ZIP and full MP4 decode
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,zipfile
+          p=Path('/tmp/forest-completed')
+          q=json.loads((p/'QA_TECHNICAL.json').read_text())
+          h=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
+          assert q['work_id']=='piero_di_cosimo_forest_fire_1505_ashmolean_wa1933_2'
+          assert not q['gold'] and not q['published'] and q['paid_api_calls']==0
+          assert h(p/'ORIGINAL_ARTWORK.jpg')==q['source_sha256']
+          assert h(p/'VIDEO_REVIEW.mp4')==q['mp4_sha256']
+          assert h(p/'VIDEO_ANDROID_720_REVIEW.mp4')==q['android_mp4_sha256']
+          with zipfile.ZipFile(p/'ANDROID_REVIEW_PACKAGE.zip') as z:
+              assert z.testzip() is None
+              assert hashlib.sha256(z.read('VIDEO_ANDROID_720_REVIEW.mp4')).hexdigest()==q['android_mp4_sha256']
+          print('PASS PHYSICAL READBACK SOURCE/HD/ANDROID AND ZIP, NO RE-RENDER')
+          print('HD_SHA256',q['mp4_sha256'])
+          print('ANDROID_SHA256',q['android_mp4_sha256'])
+          PY
+          ffmpeg -v error -xerror -i /tmp/forest-completed/VIDEO_REVIEW.mp4 -map 0 -f null -
+          ffmpeg -v error -xerror -i /tmp/forest-completed/VIDEO_ANDROID_720_REVIEW.mp4 -map 0 -f null -
+      - name: Upload just phone and HD media, QA, credits and cover (omit 54MB source image)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_OWNER_FOREST_FIRE_VIDEO_ONLY_DOWNLOADS
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            /tmp/forest-completed/VIDEO_REVIEW.mp4
+            /tmp/forest-completed/VIDEO_ANDROID_720_REVIEW.mp4
+            /tmp/forest-completed/ANDROID_REVIEW_PACKAGE.zip
+            /tmp/forest-completed/COVER.jpg
+            /tmp/forest-completed/CONTACT_SHEET.jpg
+            /tmp/forest-completed/SOURCES_RIGHTS.json
+            /tmp/forest-completed/STORYBOARD.json
+            /tmp/forest-completed/QA_TECHNICAL.json
