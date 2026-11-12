@@ -1,6 +1,6 @@
 # AI Director V2 · Collegamento reale alle consegne video (12 novembre 2026)
 
-**Stato prima dell'attivazione:** proposta isolata su ramo, test CI e prova su artifact da completare. Non confondere un modulo presente su GitHub con una produzione verificata.
+**Stato verificato (12/11/2026):** attivo su `main` dopo merge PR #281 (`eafe3f0`). CI V2 run `43216971559` PASS (offline + MP4 reale). Prova con run Rheam `43212883066`: `VIDEO_ANDROID.mp4` recuperato, 45,6 secondi, 10 scene storyboard, vera diagnostica tecnica eseguita, zero chiamate a modelli e nessuna pubblicazione. La prova NON costituisce approvazione artistica, prova dei diritti o sincronizzazione voce. Copertura automatica limitata ai cinque workflow espressamente elencati.
 
 ## Scopo
 Collegare l'idea G0DM0D3 (regista + critico indipendente) ai VERI file consegnati da GitHub Actions, con uno strato gratuito di diagnostica **read-only**. Non importiamo i prompt di jailbreak o il sistema multi-modello originale. I modelli remoti sono **disabilitati** di default; nessun nuovo cron, acquisto, Vidu, sintesi vocale, render o pubblicazione social.
@@ -46,4 +46,4 @@ Un MP4 enorme, zip annidato, artifact scaduto, mancante o non selezionabile vien
 PYTHONPATH=src python -m unittest discover -s tests -p 'test_ai_director_delivery_v2.py' -v
 python src/ai_director_delivery_v2.py --input-dir /tmp/preview --out /tmp/report --format giuliano --subject Antikythera
 ```
-Non compromettere gli archivi di produzione, non fare merge senza CI verde, usare un run reale per la prova finale. L'integrazione utile si misura con MP4 esaminati e correzioni registiche successive, non con il numero di script.
+Non compromettere gli archivi di produzione. La prima prova su MP4 reale e la CI sono concluse; prima di allargare i workflow monitorati verificare ulteriori format con artifact reali e confermare eventuali limiti di GitHub Actions. L'integrazione utile si misura con MP4 esaminati e correzioni registiche successive, non con il numero di script.
