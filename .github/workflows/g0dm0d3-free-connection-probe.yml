@@ -27,6 +27,11 @@ jobs:
               with urllib.request.urlopen(req,timeout=20) as resp:
                   result=json.load(resp)
               indexed={x.get('id'):x for x in result.get('data',[]) if isinstance(x,dict)}
+              candidates=[(id_, obj) for id_,obj in indexed.items() if isinstance(id_,str)
+                          and id_.endswith(':free') and (obj.get('architecture') or {}).get('output_modalities') in (['text'], ['text','image'])]
+              print('AVAILABLE_ZERO_COST_TEXT_MODEL_CANDIDATES',json.dumps(
+                  [id_ for id_,obj in candidates if str((obj.get('pricing') or {}).get('prompt')) in ('0','0.0','0.000000')
+                   and str((obj.get('pricing') or {}).get('completion')) in ('0','0.0','0.000000')][:40]))
               for name in models:
                   entry=indexed.get(name)
                   pricing=entry.get('pricing') if entry else None
