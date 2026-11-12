@@ -1,0 +1,59 @@
+{
+  "schema": "artvision-owner-30-cinema-private-review-v1",
+  "date": "2026-11-12",
+  "work": "Vampire",
+  "artist": "Edvard Munch",
+  "owner_selection_order": 17,
+  "owner_original_gallery_number": 33,
+  "object": "Gothenburg Museum of Art GKM 0640, Woll 334 (1893)",
+  "variant": "cinema_standard",
+  "status": "RENDERED_INDEPENDENT_BYTE_READBACK_PASS_ARTISTIC_AND_RIGHTS_REVIEW_PENDING",
+  "github_run_id": 43245885789,
+  "github_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43245885789",
+  "github_artifact_id": 13955269789,
+  "mp4": {
+    "name": "VIDEO_ANDROID.mp4",
+    "bytes": 4216177,
+    "sha256": "0ead556a3b0ce45b0b5fb92e3c25ae2ce61b886d367704c024fd5762bf371f52",
+    "duration_seconds": 44.5,
+    "resolution": [
+      1080,
+      1920
+    ],
+    "fps": 18,
+    "codec": "H264/AAC",
+    "shots": 10
+  },
+  "source": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:Edvard_Munch_Vampire.jpg",
+    "museum_record": "https://www.munch.no/en/object/PE.M.00332",
+    "filename": "Edvard Munch Vampire.jpg",
+    "sha1": "c58f63c1f88719f1cb64a7feb35f0cc272e8ec31",
+    "sha256": "68eec8146b35522236bf1b3ae070a211931b357aa7639bc8d484585e6b1f1450",
+    "bytes": 4236527,
+    "pixels": [
+      2865,
+      2308
+    ],
+    "license_claim": "PD-Art/PDM Commons faithful photo by Andrzej Otrębski; exact commercial territorial publication pending"
+  },
+  "qa": {
+    "render_job": "PASS",
+    "independent_downloaded_artifact_job": "PASS",
+    "local_ffmpeg_all_streams": "PASS",
+    "zip_crc": "PASS",
+    "sha256_against_manifest": "PASS",
+    "human_full_speed": "PENDING",
+    "artistic_contact_sheet": "NEEDS_REVISION_SIMILAR_AND_TOO_TIGHT_SHOTS",
+    "gold": false,
+    "published": false,
+    "paid_calls": 0
+  },
+  "owner_queue": {
+    "original_10_slots_added": 0,
+    "dali_excluded": true,
+    "secondary_lane_one_new_cinema_slot": 1,
+    "do_not_count_as_4x1_complete": true
+  },
+  "next_action": "Do not rerender as an independent new slot. Artistic correction only: wider semantic variety, reduce repeated zooms, remove black edge. Finish rights and real-time QA before Gold or public distribution."
+}
