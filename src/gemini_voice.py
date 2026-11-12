@@ -240,7 +240,12 @@ def synthesize(text,outdir):
     from google import genai
     spoken=speech_directed(text)
     print("Genero un'unica recitazione italiana completa con pause interpretative.",flush=True)
-    client=genai.Client(api_key=key)
+    if os.environ.get("GEMINI_TTS_USE_GENERATE_CONTENT") == "1":
+        from google.genai import types
+        # Gemini 3.1 preview TTS is exposed on v1beta, NOT the SDK's v1.
+        client=genai.Client(api_key=key, http_options=types.HttpOptions(api_version="v1beta"))
+    else:
+        client=genai.Client(api_key=key)
     if os.environ.get("GEMINI_TTS_USE_GENERATE_CONTENT") == "1":
         # This is the documented endpoint for Gemini 3.1 TTS:
         # https://ai.google.dev/gemini-api/docs/generate-content/speech-generation
