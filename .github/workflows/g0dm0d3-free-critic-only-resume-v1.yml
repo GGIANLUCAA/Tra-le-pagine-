@@ -1,0 +1,138 @@
+name: "G0DM0D3 FREE | Complete ONLY critic from existing 3 replies"
+on:
+  pull_request:
+    paths:
+      - "src/g0dm0d3_free_four_roles_v1.py"
+      - "src/g0dm0d3_critic_resume_v1.py"
+      - "tests/test_g0dm0d3_critic_resume_v1.py"
+      - ".github/workflows/g0dm0d3-free-critic-only-resume-v1.yml"
+  push:
+    branches: [main]
+    paths:
+      - "requests/g0dm0d3_free/giuliano_antikythera_critic_resume_once_20261112.json"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: g0dm0d3-critic-resume-20261112
+  cancel-in-progress: false
+jobs:
+  no-network-regression:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile and run existing and new mocked-provider no-billing tests
+        run: |
+          set -euo pipefail
+          python -m py_compile src/g0dm0d3_free_four_roles_v1.py src/g0dm0d3_critic_resume_v1.py
+          python -m unittest discover -s tests -p 'test_g0dm0d3_critic_resume_v1.py' -v
+          python -m unittest discover -s tests -p 'test_g0dm0d3_free_four_roles_v1.py' -v
+          python - <<'PY'
+          import json
+          p=json.load(open('config/free_llm_zero_cost_v1.json'))
+          assert p['default_deny'] is True and p['routes']==[]
+          print('GLOBAL_BILLING_POLICY_REMAINS_FAIL_CLOSED')
+          PY
+
+  one-genuine-critic-only:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENRUTER3 }}
+      G0DM0D3_CRITIC_ONE_SHOT: "1"
+      GH_TOKEN: ${{ github.token }}
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Require a new single explicit free-only authorized continuation
+        run: |
+          set -euo pipefail
+          test -n "$OPENROUTER_API_KEY" || { echo "OPENRUTER3_MISSING"; exit 2; }
+          python - <<'PY'
+          import json,subprocess
+          filename='requests/g0dm0d3_free/giuliano_antikythera_critic_resume_once_20261112.json'
+          added=subprocess.check_output(
+              ['git','diff','--name-only','--diff-filter=A','HEAD^','HEAD'],text=True).splitlines()
+          assert added==[filename], 'One-shot request not the only file added in this commit'
+          d=json.load(open(filename))
+          assert set(d)=={'schema','action','source_run_id','source_sha256',
+                          'max_new_calls','max_price_usd','allow_paid_fallback',
+                          'render_video','publish','secret_name','owner_authorized'}
+          assert d['schema']=='g0dm0d3-critic-resume-v1'
+          assert d['action']=='complete_critic_only'
+          assert d['source_run_id']==43275046749
+          assert d['source_sha256']=='1c634b10557a0c7485c3ffa7413d0d6641d4b0df0eec267ebda5ed0e17fd64a8'
+          assert type(d['max_new_calls']) is int and d['max_new_calls']==1
+          assert type(d['max_price_usd']) in (int,float) and d['max_price_usd']==0
+          assert d['allow_paid_fallback'] is False and d['render_video'] is False and d['publish'] is False
+          assert d['secret_name']=='OPENRUTER3' and d['owner_authorized'] is True
+          print('OWNER_APPROVED_CRITIC_ONLY_ONE_FREE_CALL_NO_RENDER')
+          PY
+      - name: Re-run offline fail-closed tests
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_g0dm0d3_critic_resume_v1.py' -q
+      - name: Recover existing 3 genuine replies, no repetition
+        uses: actions/download-artifact@v4
+        with:
+          name: G0DM0D3_FOUR_REAL_AI_43275046749
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 43275046749
+          github-token: ${{ github.token }}
+          path: input/previous-three
+      - name: Verify original REPORT.json SHA256 before any provider call
+        run: |
+          set -euo pipefail
+          echo '1c634b10557a0c7485c3ffa7413d0d6641d4b0df0eec267ebda5ed0e17fd64a8  input/previous-three/REPORT.json' | sha256sum -c -
+          python - <<'PY'
+          import sys
+          sys.path.insert(0,'src')
+          from pathlib import Path
+          import g0dm0d3_critic_resume_v1
+          prev=g0dm0d3_critic_resume_v1.original_report(Path('input/previous-three/REPORT.json'))
+          assert len(prev['responses'])==3
+          print('PREVIOUS_THREE_REAL_RESPONSES_SHA_LOCKED',len(prev['responses']))
+          PY
+      - name: Send only the missing critic request, pinned Liquid FREE 2500 tokens
+        run: |
+          set -euo pipefail
+          python src/g0dm0d3_critic_resume_v1.py \
+            --source-report input/previous-three/REPORT.json \
+            --out output/critic-only-resume
+      - name: Verify four genuine replies and zero reported model charge
+        if: success()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('output/critic-only-resume/REPORT.json').read_text())
+          assert report['status']=='four_roles_returned_unapproved'
+          assert report['resumed_attempts']==1 and report['model_calls']==5
+          assert len(report['responses'])==4
+          assert [r['role'] for r in report['responses']]==['sceneggiatore','storico','regista','critico']
+          assert report['responses'][3]['model']=='liquid/lfm-2.5-2.6b:free'
+          assert report['responses'][3]['reported_cost_usd']==0
+          assert report['video_rendered'] is False and report['publication_authorized'] is False
+          print('FOUR_INDEPENDENT_ROLE_REPORTS_CONFIRMED_NEW_CALLS_ONE')
+          PY
+      - name: Upload Android HTML and JSON regardless of free-model availability
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: G0DM0D3_CRITIC_COMPLETION_ANDROID_${{ github.run_id }}
+          path: output/critic-only-resume/
+          retention-days: 21
+          if-no-files-found: warn
