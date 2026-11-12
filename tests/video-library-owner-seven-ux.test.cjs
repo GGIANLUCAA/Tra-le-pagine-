@@ -40,6 +40,13 @@ const d=dom.window.document;
 const tick=async()=>new Promise(resolve=>setTimeout(resolve,35));
 (async()=>{
  await tick();
+ const switchLink=d.querySelector('header .top-actions a.site-switch');
+ assert(switchLink,'Cross-site switch must be visible in the public header, not only private Studio');
+ assert.equal(switchLink.href,'https://artvision-control-preview.600led.workers.dev/?v=14');
+ assert.match(switchLink.textContent,/Centro di controllo/);
+ assert.match(switchLink.getAttribute('aria-label'),/Centro di controllo/);
+ assert.equal(switchLink.hasAttribute('target'),false,'Keep native same-tab navigation for Android back button');
+ assert.match(html,/\.top-actions \.site-switch\{[^}]*min-height:44px/,'Android touch target should be at least 44px');
  const mainSections=[...d.querySelectorAll('main > section')].map(section=>section.id);
  assert.deepEqual(mainSections.slice(0,3),['recent','collections','museum'],'Video-first: latest available films precede categories and museum');
  assert.match(d.querySelector('#recent .section-eyebrow').textContent,/ULTIMI IN ARCHIVIO/,'Latest rail must not imply newly produced or artistically approved videos');

@@ -222,6 +222,11 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
 @media(max-width:700px){.vls-slot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vls-seven-works{padding:12px}.vls-work summary{flex-direction:column;align-items:flex-start}.vls-two{display:block}.vls-compare-pane{display:none}.vls-compare-pane.active{display:grid}.vls-compare-switch{display:flex}.vls-compare-pane video{height:51dvh}.vls-seven-dialog{width:100vw;max-height:98dvh;border-radius:16px 16px 0 0;margin:auto 0 0}}
 @media(prefers-reduced-motion:reduce){.vls-seven-works *{scroll-behavior:auto}}
 
+/* Cross-site switch: clear touch target, native link, Android-friendly. */
+.top-actions .site-switch{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;background:#342d23;border:1px solid #d5b489;color:#f5dfb7;border-radius:11px;font-weight:750;padding:10px 13px;white-space:nowrap}
+.top-actions .site-switch:hover{background:#45392a}
+@media(max-width:720px){.top-actions .site-switch{font-size:12px;min-height:44px;padding:8px 10px}}
+
 </style>
 </head>
 <body>
@@ -231,6 +236,7 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
    <span class="brand-icon">✦</span><span class="brand-wordmark">VIDEO LIBRARY <strong>STUDIO</strong><small>MUSEO DIGITALE DELLE IMMAGINI</small></span>
   </a>
   <div class="top-actions">
+   <a class="btn site-switch" href="https://artvision-control-preview.600led.workers.dev/?v=14" aria-label="Apri il Centro di controllo ArtVision">◈ <span>Centro di controllo</span></a>
    <button class="ghost top-search" id="topSearch" aria-label="Vai alla ricerca">⌕ <span>Cerca</span></button>
    <button class="ghost" id="exportCSV" title="Esporta catalogo CSV">⇩ <span class="desktop-label">Catalogo</span></button>
    <button class="ghost" id="refresh" title="Aggiorna il catalogo">↻ <span class="desktop-label">Aggiorna</span></button>
