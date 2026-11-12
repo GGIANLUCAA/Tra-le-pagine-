@@ -1,0 +1,98 @@
+name: "ONE-OFF | verify original Goldfinch source bytes"
+on:
+  pull_request:
+    paths: [".github/workflows/one-off-goldfinch-binary-20261112.yml"]
+permissions:
+  contents: read
+jobs:
+  verify-original:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download exact original from Commons, hash & decode, no AI spending
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/goldfinch_asset_original
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          import subprocess
+          from urllib import request
+          from urllib.parse import urlsplit
+          original="https://upload.wikimedia.org/wikipedia/commons/5/5b/Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg"
+          source_page="https://commons.wikimedia.org/wiki/File:Carel_Fabritius_-_The_Goldfinch_-_605_-_Mauritshuis.jpg"
+          expected_sha1="6ecbd41139fbffca3c2ab6708ac18bc2909d7632"
+          expected_bytes=8324284
+          target=Path("output/goldfinch_asset_original/GOLDFINCH_FABRITIUS_MAURITSHUIS_605_ORIGINAL.jpg")
+          req=request.Request(original,headers={"User-Agent":"TraLePagineSourceQA/1.0 (GitHub GGIANLUCAA/Tra-le-pagine-)",
+                                                "Accept":"image/jpeg"})
+          with request.urlopen(req,timeout=40) as resp:
+              p=urlsplit(resp.geturl())
+              if p.scheme!="https" or p.hostname!="upload.wikimedia.org" or resp.status!=200:
+                  raise SystemExit("Unexpected download redirect or HTTP status")
+              if not str(resp.headers.get("Content-Type","")).lower().startswith("image/jpeg"):
+                  raise SystemExit("Source is not a JPEG response")
+              sha1=hashlib.sha1()
+              sha256=hashlib.sha256()
+              size=0
+              with target.open("wb") as dst:
+                  while True:
+                      chunk=resp.read(1<<20)
+                      if not chunk: break
+                      size+=len(chunk)
+                      if size>10_000_000: raise SystemExit("Image exceeds 10MB hard cap")
+                      sha1.update(chunk);sha256.update(chunk);dst.write(chunk)
+          if size!=expected_bytes or sha1.hexdigest()!=expected_sha1:
+              raise SystemExit("Original does not match official Commons SHA1 / byte size")
+          with target.open("rb") as original_file:
+              if original_file.read(3)!=b"\xff\xd8\xff":
+                  raise SystemExit("Invalid JPEG magic")
+          decode=subprocess.run(["ffprobe","-v","error","-select_streams","v:0",
+                                 "-show_entries","stream=codec_name,width,height","-of","json",str(target)],
+                                capture_output=True,text=True,timeout=30,check=True)
+          streams=json.loads(decode.stdout)["streams"]
+          if not streams or streams[0].get("codec_name") not in ("mjpeg","jpeg") or (
+              streams[0].get("width"),streams[0].get("height"))!=(3930,6000):
+              raise SystemExit("Actual decoded image dimensions differ from claimed original")
+          report={
+              "schema":"ai-director-source-original-verified-v1",
+              "status":"original_bytes_hash_and_dimensions_verified_only",
+              "artist":"Carel Fabritius","title":"The Goldfinch","year":1654,
+              "museum":"Mauritshuis, The Hague","accession":"605",
+              "source_page":source_page,"source_download_url":original,
+              "sha1":sha1.hexdigest(),"sha256":sha256.hexdigest(),
+              "actual_bytes":size,"actual_pixels":{"width":3930,"height":6000},
+              "content_is_original_captured_from_commons":True,
+              "license_claim":"Commons PD-Art / Public Domain Mark; Mauritshuis says free download with credit",
+              "usage_terms":"https://www.mauritshuis.nl/en/contact/requesting-visual-material",
+              "credit_line_draft":"Carel Fabritius, The Goldfinch (1654). Mauritshuis, The Hague",
+              "rights_review":"pending","visual_review":"pending",
+              "museum_frame_verified":False,"museum_room_verified":False,
+              "v34_scene_assignment_approved":False,"render_authorized":False,
+              "published":False,"paid_ai_calls":0
+          }
+          Path("output/goldfinch_asset_original/SOURCE_ASSET_INTEGRITY.json").write_text(
+              json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+          Path("output/goldfinch_asset_original/SOURCE_AND_CREDITS.txt").write_text(
+              "Genuine Commons original binary, SHA1 checked against Commons file info\n"
+              "Carel Fabritius, The Goldfinch (1654). Mauritshuis, The Hague\n"
+              "Source: "+source_page+"\n"
+              "Museum image terms: "+report["usage_terms"]+"\n"
+              "Not approved for a museum-frame reconstruction or automatic publication.\n",
+              encoding="utf-8")
+          print("GOLDFINCH_ORIGINAL_VERIFIED",json.dumps(report,ensure_ascii=False))
+          PY
+      - name: Attach real source image + byte integrity report for Android
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GOLDFINCH_ORIGINAL_3930x6000_SHA_VERIFIED
+          path: output/goldfinch_asset_original/
+          retention-days: 7
+          if-no-files-found: error
