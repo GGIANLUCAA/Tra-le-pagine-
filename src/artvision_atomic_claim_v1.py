@@ -24,6 +24,7 @@ VALID_VARIANTS = frozenset({
 IDENTITY_RE = re.compile(r"[a-z0-9][a-z0-9_-]{2,95}\Z")
 REVISION_RE = re.compile(r"v[1-9][0-9]{0,4}\Z")
 SHA_RE = re.compile(r"[a-f0-9]{64}\Z")
+COMMIT_SHA_RE = re.compile(r"[a-f0-9]{40}\Z")
 GUARD_FIELDS = (
     "source_verified", "rights_verified", "storyboard_ready", "qa_plan_ready",
     "owner_selection_verified", "existing_slot_checked", "pilot_lock_checked",
