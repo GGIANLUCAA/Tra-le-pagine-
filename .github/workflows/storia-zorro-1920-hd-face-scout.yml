@@ -22,6 +22,14 @@ jobs:
           set -euo pipefail
           python -m pip install -q "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "requests>=2.31,<3" "imageio-ffmpeg>=0.6,<1"
           python -m py_compile src/storia_zorro_1920_resilient_scout.py src/public_archive_sources_v1.py
+          # Source retrieval must not spend Vidu credits or claim a finished master.
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("src/storia_zorro_1920_resilient_scout.py").read_text()
+          assert "MAX_SEGMENT_BYTES" in s and "new_final_mp4" in s
+          assert "rights_italy" in s and "discover_elsewhere" in s
+          print("SOURCE_ONLY_NO_PAID_RENDER_GUARDS_PRESENT")
+          PY
       - name: "Scout a true short historical HD excerpt; alternate source on 429"
         run: |
           set -euo pipefail
