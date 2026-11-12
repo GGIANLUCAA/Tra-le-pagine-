@@ -1,0 +1,84 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-12",
+  "work_id": "bryullov_last_day_pompeii_1833_russian_museum_zh5084",
+  "title": "The Last Day of Pompeii",
+  "artist": "Karl Bryullov",
+  "year": 1833,
+  "variant": "cinema_standard",
+  "status": "ONE_NEW_REAL_MP4_TWO_VISUAL_RENDER_ATTEMPTS_V2_APPROVED_FOR_TECHNICAL_PRIVATE_REVIEW_ONLY_ARTISTIC_PENDING",
+  "runs": {
+    "initial": 43176927383,
+    "final": 43177478398
+  },
+  "artifact_id": 13924364236,
+  "master_version": "V2_CORRECTED_HOOK",
+  "original": {
+    "institution": "State Russian Museum",
+    "accession": "Ж-5084",
+    "physical_cm": [
+      456.5,
+      651
+    ],
+    "source": "https://commons.wikimedia.org/wiki/File:Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project.jpg",
+    "original_pixels": [
+      30000,
+      21059
+    ],
+    "original_sha1": "1faef1dc25b305f065f912c5102a44dd1e97e6cc",
+    "downsample_pixels": [
+      3840,
+      2696
+    ],
+    "downsample_sha256": "85ad52a049af1f2b71c6cc98db6a8f97ccf637f16731445322732d2597dd3b84",
+    "copyright": "Commons PDM faithful 2D painting; commercial territorial reuse clearance pending"
+  },
+  "production": {
+    "mp4_hd": "ARTVISION_BRYULLOV_POMPEII_CINEMA_HD_V2_REVIEW.mp4",
+    "mp4_hd_bytes": 17825364,
+    "mp4_hd_sha256": "3d5e9f37be448dc6cbefe82898249de8123da94e2b8b62a8460667ea21e5fa8b",
+    "mp4_android": "ARTVISION_BRYULLOV_POMPEII_CINEMA_ANDROID_V2_REVIEW.mp4",
+    "android_bytes": 6049568,
+    "android_sha256": "e13376325398f04950db91ab2c1408ba4b120632eb892cf78a604ee0d986077c",
+    "zip_android": "ARTVISION_BRYULLOV_POMPEII_ANDROID_V2_PACKAGE.zip",
+    "zip_bytes": 6825645,
+    "zip_sha256": "e2c61fc86fb765b52b67b09024fd834199419ddc23092949bb26f76a725bc567",
+    "duration_s": 50.083333,
+    "scenes": 12,
+    "fps": 24,
+    "frame_count": 1202,
+    "resolution": [
+      1080,
+      1920
+    ],
+    "score": "locally synthesized original, slightly softer pulses and longer fades",
+    "voice": false,
+    "cover_and_social_drafts": true
+  },
+  "qa": {
+    "initial": "PASS technical but rejected for weak dark intro",
+    "revision": "revised only intro 2.6s to original painting people in foreground and 3.1sec wide shot",
+    "v2_visual_contact": "INSPECTED",
+    "both_github_render_and_independent_readback": "SUCCESS",
+    "source_px_sha": "PASS",
+    "both_mp4_full_ffmpeg_decode": "PASS",
+    "zip_crc_and_embedded_mp4_sha": "PASS",
+    "independent_private_library_readback": "PASS_3_FILE_SHA",
+    "artistic_full_speed": "PENDING",
+    "rights_final": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_api_calls": 0
+  },
+  "library": {
+    "hd_id": "libfile_b388b9b1393081919acfe59abb2fa8ad",
+    "android_id": "libfile_d467fbadd7e0819195950d5935efd37c",
+    "zip_id": "libfile_0eddf38bbe5c8191bb5499c68b1fe034"
+  },
+  "counting": {
+    "main_museum_queue": "26/36",
+    "secondary_owner_30_cinema_after": 15,
+    "only_one_new_slot_counted_despite_2_attempts": true
+  },
+  "next_action": "Do not duplicate Pompeii Cinema. Full-speed user artistic review before any Gold. Next independent selected work: Richard Dadd The Fairy Feller's Master-Stroke Cinema Standard, sourced Sailko CC BY3 2017 original photo with exact SHA1. No paid calls, no automatic publication."
+}
