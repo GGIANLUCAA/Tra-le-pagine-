@@ -241,6 +241,53 @@ class V2SafeLiveReplayTests(unittest.TestCase):
             self.assertEqual(len(found), 1)
             self.assertEqual(found[0]["sha256"], hashlib.sha256(data).hexdigest())
 
+    def test_sole_neutral_named_artifact_is_reviewed_not_silently_ignored(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            def fake_get(url, key):
+                if "/artifacts?" in url:
+                    return {"artifacts": [{
+                        "name": "AI_DIRECTOR_V2_EXISTING_RHEAM_REPLAY_FIXTURE",
+                        "size_in_bytes": 300, "expired": False,
+                        "archive_download_url": "https://api.github.com/artifacts/test"}]}
+                return {"repository": {"full_name": "GGIANLUCAA/Tra-le-pagine-"},
+                        "head_repository": {"full_name": "GGIANLUCAA/Tra-le-pagine-"},
+                        "status": "completed", "conclusion": "success"}
+            def fake_download(url, token, target):
+                with zipfile.ZipFile(target, "w") as z:
+                    z.writestr("VIDEO_ANDROID.mp4", b"real movie bytes" * 12)
+                return target.stat().st_size
+            found = a.acquire("GGIANLUCAA/Tra-le-pagine-", 43224042645, "",
+                              root / "media", "test-token", get=fake_get,
+                              download=fake_download)
+            self.assertEqual(found["status"], "extracted_for_readonly_review")
+            self.assertEqual(len(found["files"]), 1)
+            self.assertEqual(found["files"][0]["name"], "VIDEO_ANDROID.mp4")
+
+    def test_many_unrecognized_artifacts_must_not_choose_one(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            def fake_get(url, key):
+                if "/artifacts?" in url:
+                    return {"artifacts": [
+                        {"name": x, "size_in_bytes": 250, "expired": False,
+                         "archive_download_url": "https://api.github.com/a"}
+                        for x in ("REPORT_ALPHA", "REPORT_BETA")]}
+                return {"repository": {"full_name": "GGIANLUCAA/Tra-le-pagine-"},
+                        "head_repository": {"full_name": "GGIANLUCAA/Tra-le-pagine-"},
+                        "status": "completed", "conclusion": "success"}
+            found = a.acquire("GGIANLUCAA/Tra-le-pagine-", 43224042645, "",
+                              root / "media", "test-token", get=fake_get,
+                              download=lambda *x: self.fail("Must not download"))
+            self.assertEqual(found["status"], "no_eligible_artifact")
+
+    def test_workflow_fails_closed_when_producer_has_no_media(self):
+        workflow = (Path(__file__).resolve().parents[1] / ".github/workflows/"
+                    "ai-director-delivery-v2.yml").read_text(encoding="utf-8")
+        self.assertIn("REAL_MP4_REVIEW_REQUIRED", workflow)
+        self.assertIn("producer handoff contract fixture", workflow)
+        self.assertIn("GIULIANO EP2 — WALKING GIANTS FINAL DIRECTOR EDIT", workflow)
+
     def test_request_rejects_paid_generation_and_bad_artifact(self):
         import ai_director_request_v2 as rq
         obj = {"schema": "ai-director-review-request-v1",
