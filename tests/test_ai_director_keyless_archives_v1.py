@@ -184,6 +184,52 @@ class KeylessTests(unittest.TestCase):
         with self.assertRaises(r.KeylessResearchError):
             r.research("and the in for",category="art")
 
+    def test_curated_dutch_filename_rescues_exact_goldfinch_without_approval(self):
+        queries=[]
+        def fake(provider, query, limit, fetcher=None):
+            queries.append((provider, query, limit))
+            if provider == "commons" and query == "Fabritius-vink":
+                return {"provider":"commons","api_requests":1,"items":[
+                    {"id":"commons:match","title":"Fabritius-vink.jpg","author":"Carel Fabritius",
+                     "source_url":"https://commons.wikimedia.org/wiki/File:Fabritius-vink.jpg",
+                     "media_kind":"image","license_claim":"PD-Art: review Italy"},
+                    {"id":"commons:other","title":"Fabritius-vink replica.jpg","author":"Barent Fabritius",
+                     "source_url":"https://commons.wikimedia.org/wiki/File:replica.jpg",
+                     "media_kind":"image","license_claim":"unknown"}]}
+            return {"provider": provider, "api_requests": 1, "items":[]}
+        with mock.patch.object(r,"search_public",side_effect=fake):
+            result=r.research("The Goldfinch",category="art",
+                              artist="Carel Fabritius",per_provider=2)
+        self.assertEqual(len(queries),5)  # 4 ordinary providers + ONE curated alias
+        self.assertEqual(result["candidate_count"],1)
+        item=result["items"][0]
+        self.assertEqual(item["alias_used"],"Fabritius-vink")
+        self.assertEqual(item["curated_source_id"],"mauritshuis-inv-605")
+        self.assertFalse(item["approved"])
+        self.assertFalse(item["source_verified"])
+        self.assertEqual(item["rights_review"],"pending")
+        self.assertEqual(result["api_requests_upper_bound"],5)
+        self.assertFalse(result["publication_authorized"])
+
+    def test_curated_recovery_never_uses_wrong_artist_or_guessed_work(self):
+        def fake(provider, query, limit, fetcher=None):
+            return {"provider":provider,"api_requests":1,"items":[]}
+        for query,artist in [("The Goldfinch","Barent Fabritius"),
+                             ("An Unknown Painting","Carel Fabritius")]:
+            with mock.patch.object(r,"search_public",side_effect=fake) as send:
+                out=r.research(query,category="art",artist=artist)
+            self.assertEqual(send.call_count,4)
+            self.assertEqual(out["candidate_count"],0)
+            self.assertTrue(all(p["status"] != "curated_alias_response" for p in out["providers"]))
+
+    def test_manual_provider_selection_never_broadens_to_curated_alias(self):
+        with mock.patch.object(r,"search_public",return_value={
+            "provider":"artic","api_requests":1,"items":[]}) as send:
+            found=r.research("The Goldfinch",category="art",
+                             artist="Carel Fabritius",selected="artic")
+        self.assertEqual(send.call_count,1)
+        self.assertEqual(found["candidate_count"],0)
+
     def test_bridge_generates_report_without_video_or_ai(self):
         fake_result = {"schema": "ai-director-keyless-archives-v1", "key_required": False,
                        "europeana_used": False, "providers": [{"provider":"loc","status":"response_received"}],

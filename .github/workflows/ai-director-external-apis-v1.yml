@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "src/ai_director_keyless_archives_v1.py"
+      - "config/ai_director_curated_source_aliases_v1.json"
       - "src/ai_director_external_apis_v1.py"
       - "tests/test_ai_director_keyless_archives_v1.py"
       - "tests/test_ai_director_external_apis_v1.py"
@@ -13,6 +14,7 @@ on:
     branches: [main]
     paths:
       - "src/ai_director_keyless_archives_v1.py"
+      - "config/ai_director_curated_source_aliases_v1.json"
       - "src/ai_director_external_apis_v1.py"
       - "tests/test_ai_director_keyless_archives_v1.py"
       - "tests/test_ai_director_external_apis_v1.py"
@@ -79,6 +81,11 @@ jobs:
           import json
           assert json.load(open("config/ai_director_external_api_v1.json"))["routes"] == []
           assert json.load(open("config/free_llm_zero_cost_v1.json"))["routes"] == []
+          curated=json.load(open("config/ai_director_curated_source_aliases_v1.json"))
+          assert curated["schema"]=="ai-director-curated-source-aliases-v1"
+          assert all(e["publication_authorized"] is False and e["rights_review"]=="pending"
+                     for e in curated["entries"])
+
           print("PASS: no charged inference and no Europeana key used")
           PY
   research-and-android-report:
