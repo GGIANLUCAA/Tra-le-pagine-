@@ -73,6 +73,27 @@ class TestRoomV332(unittest.TestCase):
         image,meta=mount_on_wall(bg,frame,(160,120),(174,132),room)
         x1,y1,x2,y2=meta['frame_pixel_box'];self.assertTrue(x1>=0 and y1>=0 and x2<=941 and y2<=1672)
         self.assertLess(abs((x2-x1)/(y2-y1)-350/265),.01)
+    def test_creative_director_two_museum_variants_same_room(self):
+        from creative_director_v21 import museum_ai_room_v332_suggestion
+        brief={"format":"artvision_cinema","variant":"cinema_museum",
+               "width_cm":162,"height_cm":117,"gallery_moods":["epic","historic"]}
+        cinema=museum_ai_room_v332_suggestion(brief)
+        self.assertEqual(cinema["status"],"SCENOGRAPHIC_ROOM_CANDIDATE_NEEDS_RENDER_AND_REVIEW")
+        self.assertFalse(cinema["Gold_V25"])
+        second=dict(brief,variant="critico_museum",museum_room_locked=cinema["selected_room_id"])
+        critic=museum_ai_room_v332_suggestion(second)
+        self.assertEqual(critic["selected_room_id"],cinema["selected_room_id"])
+        self.assertTrue(critic["same_room_for_both_museum_versions"])
+        standard=museum_ai_room_v332_suggestion(dict(brief,variant="cinema_standard"))
+        self.assertEqual(standard["status"],"not_a_museum_variant")
+
+    def test_front_only_video_camera_never_rolls(self):
+        from artvision_ai_room_video_v332 import front_image,ease
+        source=Image.new('RGB',(280,490),(54,12,23))
+        a=front_image(source,1.0,(140,245));b=front_image(source,3.0,(140,245))
+        self.assertEqual(a.shape,(245,140,3));self.assertEqual(b.shape,(245,140,3))
+        self.assertEqual(ease(0),0);self.assertEqual(ease(1),1)
+
     def test_does_not_overwrite_existing_review(self):
         room=next(r for r in self.cat['scenes'] if r['room_id']=='G03')
         with tempfile.TemporaryDirectory() as tmp:
