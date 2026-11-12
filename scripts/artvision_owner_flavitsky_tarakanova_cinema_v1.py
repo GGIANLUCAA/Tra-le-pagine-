@@ -23,16 +23,14 @@ SOURCE_BYTES=463191
 # Deliberately gentle, distinguishable focuses. All subject locations refer to
 # the exact Tretyakov composition, not any study/earlier edition.
 SCENES=[
- ("The entire flooded cell",5.2,.50,.50,1.00),
- ("Princess face and expression",5.4,.32,.25,.72),
- ("The barred window and light",5.3,.84,.19,.75),
- ("Water entering at the window",4.5,.85,.46,.76),
- ("The bed and its soaked sheets",4.7,.71,.76,.75),
- ("The white and crimson clothing",5.0,.40,.62,.83),
- ("The low water and floor",4.8,.52,.91,.78),
- ("The small wooden table and jug",4.7,.88,.72,.77),
- ("The solitary figure in the cell",5.0,.41,.50,.93),
- ("The entire composition, final hold",6.4,.50,.50,1.00)
+ ("The entire flooded room — dramatic opening",6.0,.50,.50,1.00),
+ ("The prisoner's face and lost gaze",5.6,.29,.24,.63),
+ ("Light breaking through the barred window",5.5,.86,.21,.66),
+ ("The red and white gown",5.0,.32,.59,.70),
+ ("The table and humble possessions",4.8,.88,.75,.65),
+ ("The soaked bed beside the window",5.1,.72,.72,.75),
+ ("Rising water across the floor",5.0,.58,.90,.68),
+ ("The entire painting — final hold",6.5,.50,.50,1.00)
 ]
 def sha(x):return hashlib.sha256(Path(x).read_bytes()).hexdigest()
 def save(x,obj):Path(x).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
@@ -42,7 +40,7 @@ def short_preflight():
  assert len(m)==1 and m[0]["selection_order"]==4
  assert not list((ROOT/"queue").glob("artvision_owner_30_render_checkpoint_*tarakanova*.json")), "Duplicate owner slot"
  assert not list((ROOT/"queue").glob("artvision_owner_30_render_checkpoint_*flavitsky*.json")), "Duplicate owner slot"
- assert len(SCENES)==10 and 40<sum(x[1] for x in SCENES)<60
+ assert len(SCENES)==8 and 40<sum(x[1] for x in SCENES)<60
  # The known wrong high-resolution first version is explicitly excluded.
  assert "1862" not in ORIGINAL_URL and "Tarakanova.jpg" in ORIGINAL_URL
  return {"work":WORK_ID,"owner_order":4,"exact_artwork":"Tretyakov inventory 347, 245x187.5cm, 1863/64, NOT Yekaterinburg 1862","source_page":SOURCE_PAGE,"museum":MUSEUM_PAGE,"data_rights":"private source evaluation; commercial rights PENDING"}
@@ -122,8 +120,8 @@ def produce(source):
  finally:
   stream.stdin.close()
  if stream.wait()!=0:raise RuntimeError("FFMPEG_SILENT_RENDER_FAILED")
- contact_sheet=Image.new("RGB",(180*5,320*2))
- for i,a in enumerate(contact):contact_sheet.paste(Image.fromarray(a),((i%5)*180,(i//5)*320))
+ contact_sheet=Image.new("RGB",(180*4,320*2))
+ for i,a in enumerate(contact):contact_sheet.paste(Image.fromarray(a),((i%4)*180,(i//4)*320))
  contact_sheet.save(OUT/"CONTACT_SHEET.jpg",quality=83)
  cover=Image.fromarray(focus(rgb,.38,.39,.88,0))
  dr=ImageDraw.Draw(cover,"RGBA");dr.rectangle((0,82,WIDTH,300),fill=(0,0,0,175))
@@ -148,9 +146,9 @@ def main():
   return
  mp4,frames=produce(source)
  s=json.loads((OUT/"SOURCE_READBACK.json").read_text())
- qa={"work":"Princess Tarakanova","artist":"Konstantin Flavitsky","edition":"State Tretyakov Gallery, inventory 347, painted 1863/exhibited 1864","source_sha256":s["source_sha256"],"source_bytes":s["source_bytes"],"video_sha256":sha(mp4),"video_bytes":mp4.stat().st_size,"duration_s":frames/FPS,"frame_count":frames,"resolution":[WIDTH,HEIGHT],"fps":FPS,"scenes":len(SCENES),"audio":"AAC original synthesized score","ffmpeg_full_decode":"PASS","publication_rights_and_territory":"PENDING","human_full_speed_qa":"PENDING","gold":False,"published":False,"extra_paid_calls":0}
+ qa={"work":"Princess Tarakanova","artist":"Konstantin Flavitsky","edition":"State Tretyakov Gallery, inventory 347, painted 1863/exhibited 1864","source_sha256":s["source_sha256"],"source_bytes":s["source_bytes"],"video_sha256":sha(mp4),"video_bytes":mp4.stat().st_size,"duration_s":frames/FPS,"frame_count":frames,"resolution":[WIDTH,HEIGHT],"fps":FPS,"scenes":len(SCENES),"revision":2,"audio":"AAC original synthesized score","ffmpeg_full_decode":"PASS","publication_rights_and_territory":"PENDING","human_full_speed_qa":"PENDING","gold":False,"published":False,"extra_paid_calls":0}
  save(OUT/"QA_TECHNICAL.json",qa)
- save(OUT/"STORYBOARD.json",{"exact_object":"Tretyakov (not Ekaterinburg first version)","narrative_type":"visual-only no voice","shots":[{"detail":l,"seconds":sec,"x":x,"y":y,"fraction":f} for l,sec,x,y,f in SCENES],"editorial_check":"Human viewing required for framing, non-repetition, and false subject labels"})
+ save(OUT/"STORYBOARD.json",{"exact_object":"Tretyakov (not Ekaterinburg first version)","narrative_type":"visual-only no voice","shots":[{"detail":l,"seconds":sec,"x":x,"y":y,"fraction":f} for l,sec,x,y,f in SCENES],"editorial_check":"Director corrective V2: fewer repeated bed/dress closeups and shorter overall runtime; full-speed human QA still required"})
  save(OUT/"SOCIAL_DRAFTS.json",{"title":"Princess Tarakanova — Konstantin Flavitsky","facebook":"La prigioniera e l'acqua. Flavitsky dipinse nel 1863/64 una leggenda drammatica, non un fatto storico: la vera Tarakanova morì prima dell'alluvione del 1777.","instagram":"Un volto, una stanza, l'acqua che sale. Princess Tarakanova, Konstantin Flavitsky. #ArtHistory #Painting","tiktok":"Questa donna sembra destinata a morire nell'alluvione. Ma l'episodio è una leggenda. Princess Tarakanova.","youtube_shorts":"Princess Tarakanova — 19th-century Russian painting with a tragic historical myth. Original source, cinematic detail.","publication":"NOT APPROVED — RIGHTS AND ARTISTIC QA PENDING"})
  with zipfile.ZipFile(OUT/"ANDROID_REVIEW_PACKAGE.zip","w",compression=zipfile.ZIP_DEFLATED,compresslevel=2) as z:
   for name in ("VIDEO_ANDROID_REVIEW.mp4","COVER.jpg","CONTACT_SHEET.jpg","QA_TECHNICAL.json","STORYBOARD.json","SOCIAL_DRAFTS.json","SOURCE_READBACK.json"):

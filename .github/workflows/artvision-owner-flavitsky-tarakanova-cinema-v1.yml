@@ -1,4 +1,4 @@
-name: "ArtVision OWNER | Flavitsky Princess Tarakanova Tretyakov | new Cinema review"
+name: "ArtVision OWNER | Flavitsky Princess Tarakanova Tretyakov | Cinema V2 corrective private review"
 on:
   pull_request:
     paths:
@@ -40,7 +40,7 @@ jobs:
         if: github.event_name != 'pull_request' && success()
         uses: actions/upload-artifact@v4
         with:
-          name: ARTVISION_OWNER_TARAKANOVA_TRETYAKOV_NEW_CINEMA_REVIEW
+          name: ARTVISION_OWNER_TARAKANOVA_TRETYAKOV_CINEMA_V2_DIRECTOR_REVIEW
           retention-days: 30
           if-no-files-found: error
           path: |
