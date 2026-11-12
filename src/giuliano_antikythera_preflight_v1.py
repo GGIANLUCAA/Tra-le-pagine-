@@ -26,6 +26,22 @@ def problem(code, message, scene=None):
     return d
 
 
+def compact_for_director(brief):
+    """The existing AI Director 18k prompt envelope takes only relevant scene fields.
+
+    Full licensing/provenance/rights and all 25 scene records stay in the master file.
+    """
+    keys=("schema","format","subject","narration","human_artistic_approval","publication_authorized")
+    compact={k:brief[k] for k in keys if k in brief}
+    compact["source_notes"]=[{"url":x["url"],"observation":x["observation"][:240],
+                              "license":x.get("license","UNVERIFIED")}
+                            for x in brief["source_notes"][:10]]
+    fields=("start_s","end_s","asset_id","spoken_detail_id","visual_detail_id",
+            "narration_excerpt","rights_status")
+    compact["scenes"]=[{k:s[k] for k in fields if k in s} for s in brief["scenes"]]
+    return compact
+
+
 def inspect(brief, asset_dir=None, phase="plan"):
     if brief.get("schema") != "ai-director-v1" or brief.get("format") != "giuliano":
         raise ValueError("Expected existing AI Director V1 Giuliano brief")
@@ -93,7 +109,7 @@ def inspect(brief, asset_dir=None, phase="plan"):
     if brief.get("publication_authorized") or brief.get("human_artistic_approval"):
         issues.append(problem("FABRICATED_APPROVAL", "Research cannot assert human approval/publication"))
     try:
-        advisory = audit_scenes(brief)
+        advisory = audit_scenes(compact_for_director(brief))
     except ValueError as exc:
         # Reject malicious/accidental claimed approvals without crashing the safe review.
         advisory = []
@@ -124,7 +140,7 @@ def main(argv=None):
     opt=p.parse_args(argv)
     b=load_json(opt.brief)
     report=inspect(b, opt.asset_dir, opt.phase)
-    prompts=editorial_prompts(b)
+    prompts=editorial_prompts(compact_for_director(b))
     out=Path(opt.output_dir)
     out.mkdir(parents=True,exist_ok=True)
     (out/"G0DM0D3_DIRECTOR_REVIEW.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
