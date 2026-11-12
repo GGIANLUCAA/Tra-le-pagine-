@@ -212,26 +212,40 @@ def choose_visual(brief,archetypes,history):
     return arch,asset,warnings
 
 def licensed_music_suggestions(brief,history=None):
-    """Catalogo locale: ascolto finale umano, nessun download o musica imposta."""
-    library=ROOT/"modules"/"artvision"/"music_library.json"
-    if not library.is_file():return []
-    tracks=json.loads(library.read_text(encoding="utf8")).get("tracks",[])
-    mood=clean(brief.get("mood") or brief.get("music_mood")).casefold()
-    recent=[str(x.get("track_id") or x.get("track") or "").casefold()
-            for x in (history or [])[-6:] if isinstance(x,dict)]
-    scored=[]
-    for t in tracks:
-        if not isinstance(t,dict) or t.get("download_tested") is not True:continue
-        if not all(t.get(k) for k in ("id","title","composer","license","source")):continue
-        score=3 if mood and mood in clean(t.get("mood")).casefold() else 0
-        score-=recent.count(str(t["id"]).casefold())*2
-        scored.append((score,t))
-    scored.sort(key=lambda p:(-p[0],p[1]["id"]))
-    return [{"track_id":t["id"],"title":t["title"],"artist":t["composer"],
-             "source_url":t["source"],"license":t["license"],
-             "status":"candidate_listen_check_rights_first",
-             "note":"Brano catalogato e provato in passato: risentire estratto, diritti e uso per il nuovo video"}
-            for _,t in scored[:3]]
+    """V330: exact 20-track palette, emotional fit + no mechanical rotation.
+
+    Planning only: a track is not production-ready until its MP3 was actually
+    downloaded and verified by FFprobe/SHA and its CC BY attribution recorded.
+    Existing renderer and voice master remain untouched.
+    """
+    try:
+        from src.artvision_music_selector_v330 import select_music
+    except ImportError:
+        from artvision_music_selector_v330 import select_music
+    title=clean(brief.get("title") or brief.get("artwork") or brief.get("topic") or "")
+    artist=clean(brief.get("artist") or "")
+    if not title:return []
+    mood=clean(brief.get("music_mood") or brief.get("mood") or "").casefold()
+    # Generic prose such as "mysterious dark" is not falsely validated as a tag.
+    try:
+        from src.artvision_music_selector_v330 import MOODS
+    except ImportError:
+        from artvision_music_selector_v330 import MOODS
+    explicit=[m.strip() for m in mood.split(",") if m.strip() in MOODS]
+    s=clean(brief.get("synopsis") or brief.get("description") or brief.get("story") or "")
+    try:
+        report=select_music(title=title,artist=artist,moods=explicit or None,
+                            synopsis=s,history=history or [])
+    except (ValueError,OSError):
+        return []
+    songs=[report["selected"]]+report["alternates"]
+    return [{"track_id":song["track_id"],"title":song["title"],
+             "artist":song["composer"],"source_url":song["source_url"],
+             "isrc":song["isrc"],"license":song["license"],
+             "status":"candidate_verify_real_MP3_FFprobe_SHA256_and_human_listening",
+             "musical_reason":song["reasons"],
+             "note":"20 brani fissi; scelta per atmosfera/tema, poi antiripetizione. Da verificare la registrazione reale e i crediti prima di usarla."}
+            for song in songs]
 
 def mood_music(brief,targets):
     m=brief.get("music") or {}
