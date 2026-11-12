@@ -1,0 +1,43 @@
+name: "AI Director V2 | producer handoff contract fixture (NO render)"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/ai_director_v2_fixture/*.json"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  reuse-verified-existing-master:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Replay exact prior verified Rheam delivery, no renderer or AI APIs
+        uses: actions/download-artifact@v4
+        with:
+          name: ARTVISION_OWNER_RHEAM_SLEEPING_BEAUTY_NEW_CINEMA_REVIEW
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 43212883066
+          github-token: ${{ github.token }}
+          path: output/existing-master
+      - name: Refuse empty/wrong fixture, no claim of newly produced movie
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s output/existing-master/VIDEO_ANDROID.mp4
+          test -s output/existing-master/STORYBOARD.json
+          test ! -f output/existing-master/NOT_A_MASTER.mp4
+          echo "REPLAY_ONLY_FROM_EXISTING_SUCCESSFUL_RUN=43212883066"
+      - name: Re-upload identical bytes as producer-handoff test artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI_DIRECTOR_V2_EXISTING_RHEAM_REPLAY_FIXTURE
+          path: |
+            output/existing-master/VIDEO_ANDROID.mp4
+            output/existing-master/STORYBOARD.json
+            output/existing-master/QA_TECHNICAL.json
+          retention-days: 7
+          if-no-files-found: error
