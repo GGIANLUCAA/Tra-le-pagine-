@@ -24,16 +24,20 @@ W,H,FPS=720,1280,20
 # Drama is in the ACTUAL photographed source, not animated AI characters.
 # Three deliberate full-configuration views, one at start of the narrative and
 # one at ending, plus details that motivate camera movement in the painting.
+# V2 human-vision correction: coordinates measured from actual entire Munch
+# photograph/contact sheet. Child is CENTRAL-RIGHT foreground, NOT left.
+# Standing adults occupy the left side; the bed occupies the right side.
+# No invented gestures, figure substitutions, or false semantic shot labels.
 SHOTS=[
- ("HOOK / THE GIRL HEARS NOTHING",4.3,(.31,.38,.82),(.32,.39,.76),"child's face and hands to ears"),
- ("REVEAL THE WHOLE PAINTING",6.1,None,None,"child and prone woman in the same room"),
- ("THE HANDS AGAINST HER EARS",5.4,(.31,.38,.76),(.29,.35,.71),"both hands at sides of the child's head"),
- ("PALE FIGURE ON THE BED",5.1,(.77,.35,.84),(.75,.37,.78),"reclining figure with closed eyes on bed"),
- ("THE DISTANCE BETWEEN THE TWO",6.2,(.52,.50,.99),(.54,.49,.96),"child foreground, bed behind"),
- ("RED FLOOR BELOW HER FEET",4.9,(.28,.88,.77),(.31,.86,.72),"red floor and child's lower body"),
- ("GREEN WALL AND UNEASY ROOM",4.6,(.24,.30,.91),(.23,.28,.86),"green wall and upper body"),
- ("RETURN TO HER EXPRESSION",4.7,(.29,.35,.76),(.30,.36,.71),"child's face and cupped ears"),
- ("END: THE ROOM IN SILENCE",6.3,None,None,"complete painting, held long enough to read"),
+ ("HOOK: THE CHILD IN RED",4.3,(.61,.56,.68),(.61,.55,.62),"red-dressed girl in foreground with hands at her ears"),
+ ("REVEAL THE WHOLE ROOM",5.3,None,None,"entire painting: child foreground, mourners left, deathbed right"),
+ ("THE CHILD'S FACE AND HANDS",5.4,(.61,.47,.70),(.61,.46,.65),"hands raised to child's ears and anxious face"),
+ ("THE WOMAN ON THE BED",5.1,(.84,.54,.83),(.85,.52,.78),"covered figure at right on white bed"),
+ ("CHILD AND DEATHBED TOGETHER",6.2,(.72,.56,.99),(.71,.56,.96),"red child foreground and bed on right"),
+ ("THE RED FLOOR UNDER THE CHILD",4.9,(.62,.85,.78),(.62,.84,.72),"red floor and lower red dress of child"),
+ ("STANDING MOURNERS TO THE LEFT",4.6,(.33,.48,.88),(.34,.48,.83),"adult figures standing beside the bed and left wall"),
+ ("RETURN TO THE CHILD'S GESTURE",4.7,(.62,.53,.71),(.61,.50,.67),"foreground child with hands to ears"),
+ ("END: ORIGINAL ROOM IN SILENCE",5.1,None,None,"complete unchanged painting and all human figures"),
 ]
 FRAMES=[round(s[1]*FPS) for s in SHOTS]
 FRAME_COUNT=sum(FRAMES)
@@ -237,7 +241,7 @@ def main():
  "mp4_filename":video.name,"mp4_bytes":video.stat().st_size,"mp4_sha256":sha_file(video),
  "resolution":[W,H],"fps":FPS,"frames":FRAME_COUNT,"duration_s":DURATION,"shots":len(story),
  "ffmpeg_all_streams_full_decode":"PASS","v326_blocking_errors":len(blocks),"v326_warnings":warnings+tail_w,
- "artistic_full_speed_QA":"PENDING","territorial_commercial_rights":"PENDING",
+ "artistic_full_speed_QA":"PENDING","visual_semantic_position_audit":"V2_CORRECTED_CHILD_RIGHT_FOREGROUND_ADULTS_LEFT_BED_RIGHT","territorial_commercial_rights":"PENDING",
  "gold":False,"published":False,"paid_api_calls":0,"original_10_queue_slots_added":0,
  "new_secondary_30_cinema_candidates":1}
  save_json("QA_TECHNICAL.json",qa)
