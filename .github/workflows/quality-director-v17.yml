@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - "src/quality_director_v17.py"
+      - "src/director_reference_v326.py"
+      - "src/artvision_editor_v19.py"
+      - "tests/test_director_reference_v326.py"
+      - "docs/REGIA_REFERENZE_V326_20261112.md"
       - "config/quality_director_v17.json"
       - "tests/test_quality_director_v17.py"
       - ".github/workflows/quality-director-v17.yml"
@@ -42,6 +46,10 @@ jobs:
           python -m pip install 'Pillow>=10,<13'
       - name: Test su storyboard e MP4 sintetico
         run: python -m unittest discover -s tests -p "test_quality_director_v17.py" -v
+      - name: Test regressione V326 e editor V19
+        run: |
+          python -m unittest discover -s tests -p "test_director_reference_v326.py" -v
+          python -m unittest discover -s tests -p "test_artvision_editor_v19.py" -v
       - name: Report della regia da Android
         if: github.event_name == 'workflow_dispatch'
         env:
