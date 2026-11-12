@@ -10,13 +10,22 @@ I client di ricerca esistenti vengono riutilizzati anziche' duplicati.
 | --- | --- | --- |
 | historical_video | Library of Congress, Internet Archive, Wikimedia Commons | nessuna |
 | historical_photo | Library of Congress, Wikimedia Commons, Wellcome Collection | nessuna |
-| art | Art Institute of Chicago, The Met, Cleveland Museum | nessuna |
+| art | Art Institute of Chicago, The Met, Cleveland Museum, Wikimedia Commons (riserva) | nessuna |
 | general | Library of Congress, Art Institute of Chicago, Wikimedia Commons | nessuna |
 
-Ogni azione manuale cerca su massimo tre archivi, restituisce 1–3 candidati
+Ogni azione manuale cerca su massimo tre archivi (quattro per le opere d'arte), restituisce 1–3 candidati
 per provider, evita richieste di massa, non ritenta su errori e conserva
 indipendentemente i risultati di altri provider in caso di un guasto.
 La API The Met usa già il nuovo endpoint v1.1, non il vecchio v1 deprecato.
+
+**Pertinenza testuale:** il sistema confronta i termini effettivi della ricerca
+con titolo, autore e data del record. Per ArtVision il campo facoltativo
+`artist` richiede che il nome sia presente nei metadati del creatore,
+non soltanto nel titolo. Vengono registrati gli scarti `excluded_by_relevance`.
+Un esito positivo dimostra soltanto corrispondenza dei campi: non prova
+attribuzione storica, autenticità, provenienza delle immagini o licenza.
+Se la ricerca è troppo specifica e non trova nulla, il report deve dire
+che mancano candidati; non allargare automaticamente la query a caso.
 
 **Diritti e qualità:** anche se il catalogo riporta pubblico dominio o CC0,
 la pubblicabilità in Italia, la fonte originale e la pertinenza visiva
@@ -33,7 +42,9 @@ bozze di ricerca, NON sono prove di licenza o autenticità.
    - art per ArtVision 4x1;
    - general per ricerca mista.
 3. Inserisci il soggetto con parole chiave pubbliche, per esempio Venice 1896
-   oppure The Goldfinch Fabritius.
+   oppure The Goldfinch. Per ArtVision usa anche il nuovo campo **artist = Carel Fabritius**:
+   il filtro verifica la corrispondenza dei metadati dell'autore. Un nome
+   presente soltanto nel titolo della scheda non vale come prova di attribuzione.
 4. Mantieni provider=auto per controllare tre fonti;
    oppure seleziona un solo archivio. La casella execute=true autorizza
    le sole richieste HTTP di ricerca pubblica, senza crediti o API keys.

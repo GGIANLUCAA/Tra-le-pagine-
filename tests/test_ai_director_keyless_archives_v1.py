@@ -24,7 +24,7 @@ def catalogue(provider, *ids, calls=1):
 
 class KeylessTests(unittest.TestCase):
     def test_default_categories_stay_keyless(self):
-        self.assertEqual(r.select_providers("art"), ("artic", "met", "cleveland"))
+        self.assertEqual(r.select_providers("art"), ("artic", "met", "cleveland", "commons"))
         self.assertEqual(r.select_providers("historical_video"), ("loc", "archive", "commons"))
         self.assertNotIn("europeana", r.ALLOWED)
         self.assertEqual(len(r.select_providers("general")), 3)
@@ -37,6 +37,7 @@ class KeylessTests(unittest.TestCase):
             calls.append(provider)
             data = catalogue(provider, len(calls))
             data["items"][0]["media_kind"] = "video"
+            data["items"][0]["title"] = "Venice 1896 historic original movie"
             return data
         with mock.patch.object(r, "search_public", side_effect=fake):
             found = r.research("Venice 1896", category="historical_video", per_provider=2)
@@ -75,6 +76,7 @@ class KeylessTests(unittest.TestCase):
                 raise ValueError("upstream error")
             data = catalogue(provider, len(order))
             data["items"][0]["media_kind"] = "video"
+            data["items"][0]["title"] = "Venice 1896 historic original movie"
             return data
         with mock.patch.object(r, "search_public", side_effect=fake):
             data = r.research("Venice 1896", category="historical_video")
@@ -90,7 +92,7 @@ class KeylessTests(unittest.TestCase):
                     {"id": "commons:painting", "title": "A Venetian Museum Artwork",
                      "source_url": "https://commons.wikimedia.org/wiki/File:Painting.jpg",
                      "media_kind": "image", "license_claim": "unverified"},
-                    {"id": "commons:film", "title": "Panorama du Grand Canal 1896",
+                    {"id": "commons:film", "title": "Venice Panorama du Grand Canal 1896",
                      "source_url": "https://commons.wikimedia.org/wiki/File:Venise_1896.webm",
                      "media_kind": "video", "license_claim": "unverified"}]}
             return {"provider": provider, "api_requests": 1, "items": []}
@@ -120,10 +122,67 @@ class KeylessTests(unittest.TestCase):
 
     def test_duplicate_landing_pages_deduplicated(self):
         def fake(provider, query, limit, fetcher=None):
-            return catalogue(provider, 1)
+            data=catalogue(provider, 1)
+            data["items"][0]["title"]="A landscape painting"
+            return data
         with mock.patch.object(r, "search_public", side_effect=fake):
             data = r.research("A landscape painting", category="art")
         self.assertEqual(len(data["items"]), 1)
+
+    def test_real_fabritius_regression_rejects_unrelated_museum_paintings(self):
+        unrelated = [
+            ("artic", "Satyr Among the Peasants", "Jacob Jordaens"),
+            ("met", "Abraham Dismissing Hagar and Ishmael", "Rembrandt"),
+            ("cleveland", "Snuff Box with Portrait", "Unknown"),
+            ("commons", "View of a Venice Museum", "Unknown")
+        ]
+        def fake(provider, query, limit, fetcher=None):
+            row=next(x for x in unrelated if x[0]==provider)
+            return {"provider": provider, "api_requests": 1,
+                    "items":[{"id": provider+":1", "title":row[1], "author":row[2],
+                             "source_url":"https://example.org/"+provider,
+                             "media_kind":"image"}]}
+        with mock.patch.object(r,"search_public",side_effect=fake):
+            found=r.research("Fabritius", category="art", per_provider=2)
+        self.assertEqual(found["candidate_count"],0)
+        self.assertEqual(found["status"],"no_candidates_or_sources_unavailable")
+        self.assertEqual(sum(p.get("excluded_by_relevance", 0) for p in found["providers"]),4)
+        self.assertFalse(found["rights_verified"])
+
+    def test_exact_artist_and_title_match_are_metadata_only(self):
+        def fake(provider, query, limit, fetcher=None):
+            return {"provider":provider,"api_requests":1,"items":[
+                {"id":"a", "title":"The Goldfinch","author":"Carel Fabritius",
+                 "date":"1654","media_kind":"image","source_url":"https://example.org/actual"},
+                {"id":"b", "title":"The Goldfinch","author":"An unrelated painter",
+                 "date":"1654","media_kind":"image","source_url":"https://example.org/not-creator"}]}
+        with mock.patch.object(r,"search_public",side_effect=fake):
+            found=r.research("The Goldfinch",category="art",
+                             artist="Carel Fabritius", selected="commons",per_provider=2)
+        self.assertEqual(found["candidate_count"],1)
+        self.assertEqual(found["items"][0]["source_url"],"https://example.org/actual")
+        self.assertTrue(found["items"][0]["artist_filter_requested"])
+        self.assertEqual(found["providers"][0]["excluded_by_relevance"],1)
+        self.assertFalse(found["items"][0]["approved"])
+
+    def test_unicode_terms_and_date_must_match_metadata(self):
+        def fake(provider, query, limit, fetcher=None):
+            return {"provider":provider,"api_requests":1,"items":[
+                {"id":"correct","title":"Venezia 1896", "date":"1896",
+                 "media_kind":"video","source_url":"https://example.org/1896"},
+                {"id":"wrong","title":"Venezia 1901", "date":"1901",
+                 "media_kind":"video","source_url":"https://example.org/1901"}]}
+        with mock.patch.object(r,"search_public",side_effect=fake):
+            found=r.research("Venezìa 1896",category="historical_video",
+                             selected="loc",per_provider=2)
+        self.assertEqual(found["candidate_count"],1)
+        self.assertEqual(found["providers"][0]["excluded_by_relevance"],1)
+
+    def test_artist_flag_only_allowed_for_art(self):
+        with self.assertRaises(r.KeylessResearchError):
+            r.research("Venice 1896",category="historical_video",artist="Fabritius")
+        with self.assertRaises(r.KeylessResearchError):
+            r.research("and the in for",category="art")
 
     def test_bridge_generates_report_without_video_or_ai(self):
         fake_result = {"schema": "ai-director-keyless-archives-v1", "key_required": False,
