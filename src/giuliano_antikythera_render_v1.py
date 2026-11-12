@@ -152,7 +152,14 @@ def cycle_plate(cycle,caption):
 def plate_for(scene,assetdir,idx,outdir,variant=0):
     kind=scene["asset_id"]
     if idx==0:
-        im=map_plate()
+        # Begin on the real historical wreck photograph when licensed/available:
+        # avoid showing a schematic map while narration describes the divers.
+        wreck=assetdir/"wreck1900.jpg"
+        if wreck.exists():
+            im=composite(wreck,"THE ANCIENT COMPUTER",
+                         "ANTICITERA · 1900 · FOTOGRAFIA STORICA")
+        else:
+            im=map_plate()  # Explicitly schematic, never masquerade as a photo.
     elif idx==13:
         im=cycle_plate("19 ANNI","Ciclo metonico · 235 mesi lunari")
     elif idx==14:
@@ -165,7 +172,9 @@ def plate_for(scene,assetdir,idx,outdir,variant=0):
         if not src.exists():src=assetdir/"front.jpg"
         label=("FRAMMENTO "+kind.replace("frag","").upper() if kind.startswith("frag") else
                "FRAMMENTO A · REPERTO ORIGINALE" if kind in ("front","back") else "REPERTO AUTENTICO")
-        if idx in (8,9):label="INTERNO DEL BRONZO · SCHEMA ESPLICATIVO"
+        if idx in (8,9):
+            # A real fragment photo is not an X-ray/CT or scientific diagram.
+            label="REPERTO ORIGINALE · ANALISI MODERNE"
         im=composite(src,label,"Museo Archeologico Nazionale di Atene · fotografia documentale",variant)
     dst=outdir/f"plate_{idx:02}_{variant}.jpg"
     im.save(dst,quality=92)
@@ -186,7 +195,8 @@ def clip_video(src,frames,out,offset=1):
         f"[base][sharp]overlay=(W-w)/2:(H-h)/2:shortest=1,format=yuv420p,"
         "drawtext=fontfile="+FONT+":text='RICOSTRUZIONE SCIENTIFICA':"
         "fontcolor=white@0.9:fontsize=22:x=22:y=h-70:box=1:boxcolor=black@0.6:boxborderw=9")
-    call(["ffmpeg","-hide_banner","-y","-v","error","-ss",str(offset),"-i",src,
+    call(["ffmpeg","-hide_banner","-y","-v","error",
+          "-stream_loop","-1","-ss",str(offset),"-i",src,
           "-frames:v",frames,"-filter_complex",vf,"-an","-r",FPS,
           "-c:v","libx264","-preset","veryfast","-crf","22",
           "-pix_fmt","yuv420p",out],timeout=180)
@@ -262,8 +272,8 @@ def render():
           "-movflags","+faststart","-shortest",master],timeout=180)
     android=OUT/"GIULIANO_03_THE_ANCIENT_COMPUTER_ANDROID.mp4"
     call(["ffmpeg","-hide_banner","-y","-v","error","-i",master,
-          "-vf","scale=540:960:flags=lanczos","-c:v","libx264","-preset","veryfast",
-          "-crf","26","-c:a","aac","-b:a","112k","-movflags","+faststart",android],timeout=240)
+          "-vf","scale=720:1280:flags=lanczos","-c:v","libx264","-preset","veryfast",
+          "-crf","24","-c:a","aac","-b:a","144k","-movflags","+faststart",android],timeout=240)
     # Independently decode all video/audio, not just metadata.
     for p in (master,android):
         call(["ffmpeg","-v","error","-xerror","-i",p,"-f","null","-"],timeout=300)
