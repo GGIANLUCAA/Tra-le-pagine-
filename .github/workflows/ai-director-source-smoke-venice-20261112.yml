@@ -1,0 +1,57 @@
+name: "ONE-OFF · live keyless archive smoke · Venice 1896"
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ai-director-source-smoke-venice-20261112.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  real-archive-request:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run REAL public archive requests, no credentials, no spending
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/ai_director_keyless_archives_v1.py \
+            --execute --category historical_video \
+            --query "Venice 1896" --format storia_rivive \
+            --per-provider 2 \
+            --output output/ai_director_archives_live_venice_1896
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("output/ai_director_archives_live_venice_1896/CANDIDATES.json")
+          data=json.loads(p.read_text(encoding="utf-8"))
+          assert data["schema"]=="ai-director-keyless-archives-v1"
+          assert data["key_required"] is False and data["europeana_used"] is False
+          assert data["external_ai_calls"] == 0 and data["paid_calls"] is False
+          assert data["publication_authorized"] is False and data["rights_verified"] is False
+          print("LIVE_CATALOGUE_DIAGNOSTIC_START")
+          print(json.dumps({
+              "status": data["status"], "request_upper_bound": data["api_requests_upper_bound"],
+              "providers": data["providers"], "candidate_count": data["candidate_count"],
+              "candidates": [
+                  {"provider": x["provider"], "title": x["title"], "source_url": x["source_url"],
+                   "rights_review": x["rights_review"], "approved": x["approved"]}
+                  for x in data["items"]
+              ]
+          },ensure_ascii=False,indent=2))
+          print("LIVE_CATALOGUE_DIAGNOSTIC_END")
+          PY
+      - name: Archive authentic research report (no master or downloaded media)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI_DIRECTOR_LIVE_ARCHIVES_VENICE_1896
+          path: output/ai_director_archives_live_venice_1896/
+          retention-days: 7
+          if-no-files-found: warn
