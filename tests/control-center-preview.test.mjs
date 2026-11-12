@@ -18,13 +18,13 @@ test("HTML and inline UI parse correctly",()=>{
 });
 
 test("V14 has a prominent native return link to the Video Library on mobile and desktop",()=>{
-  const link=html.match(/<header>[\\s\\S]*?<a class="site-switch" href="([^"]+)" aria-label="([^"]+)"/);
+  const link=html.match(/<header>[\s\S]*?<a class="site-switch" href="([^"]+)" aria-label="([^"]+)"/);
   assert.ok(link,"Return link must be placed in top header");
   assert.equal(link[1],"https://video-library-studio.600led.workers.dev/");
   assert.match(link[2],/Video Library Studio/);
-  assert.match(html,/<a class="site-switch"[^>]*>▣ <span>Videoteca<\\/span><\\/a>/);
-  assert.match(html,/\\.buttons \\.site-switch\\{[^}]*min-height:44px/,"Link must have an accessible touch target");
-  assert.match(html,/@media\\(max-width:520px\\)\\{header\\{flex-wrap:wrap/,"Header must adapt to narrow Android screens");
+  assert.match(html,/<a class="site-switch"[^>]*>▣ <span>Videoteca<\/span><\/a>/);
+  assert.match(html,/\.buttons \.site-switch\{[^}]*min-height:44px/,"Link must have an accessible touch target");
+  assert.match(html,/@media\(max-width:520px\)\{header\{flex-wrap:wrap/,"Header must adapt to narrow Android screens");
   assert.doesNotMatch(link[0],/target="_blank"/,"Use native same-tab navigation and preserve Android back behavior");
 });
 test("Backend only exposes GET and expected read-only endpoints",()=>{
