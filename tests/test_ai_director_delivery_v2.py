@@ -136,6 +136,18 @@ class ArtifactV2Tests(unittest.TestCase):
                           Path(tmp), "fake", get=fake_get)
             self.assertEqual(r["status"], "producer_not_successful")
 
+    def test_signed_artifact_redirect_does_not_forward_github_token(self):
+        import urllib.request
+        original = urllib.request.Request(
+            "https://api.github.com/repos/owner/repo/actions/artifacts/42/zip",
+            headers={"Authorization": "Bearer private-token"})
+        next_req = a._SafeArtifactRedirect().redirect_request(
+            original, None, 302, "Found", {},
+            "https://productionresultssa1.blob.core.windows.net/download?sig=abc")
+        self.assertIsNotNone(next_req)
+        self.assertNotIn("Authorization", next_req.headers)
+        self.assertNotIn("Authorization", next_req.unredirected_hdrs)
+
     def test_zip_rejects_traversal_symlink_and_unrelated_code(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
