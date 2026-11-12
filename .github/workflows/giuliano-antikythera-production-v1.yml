@@ -59,6 +59,20 @@ jobs:
           command -v ffmpeg
           command -v ffprobe
           python -m pip install --disable-pip-version-check numpy pillow soundfile scipy google-genai faster-whisper
+      - name: Verify Google TTS model visibility before generation (read-only)
+        run: |
+          python - <<'PY'
+          import os
+          from google import genai
+          chosen=os.getenv("GEMINI_TTS_MODEL_OVERRIDE", "gemini-3.8-flash-tts")
+          key=os.environ.get("GEMINI_API_KEY", "")
+          if not key: raise SystemExit("TTS_ACCESS_BLOCKED: missing configured key")
+          visible={str(m.name).split("/")[-1] for m in genai.Client(api_key=key).models.list()}
+          print("READ_ONLY_GOOGLE_MODEL_COUNT", len(visible))
+          if chosen not in visible:
+              raise SystemExit("TTS_ACCESS_BLOCKED: "+chosen+" unavailable to the connected API key; no voice generation attempted")
+          print("TTS_MODEL_VISIBLE_AND_AUTHORIZED", chosen)
+          PY
       - name: Generate one verified human-paced Italian narration
         id: voice
         run: python src/giuliano_antikythera_render_v1.py --mode voice
