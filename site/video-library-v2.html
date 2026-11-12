@@ -250,6 +250,10 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
 </header>
 <main>
 <div class="admin-banner" id="adminBanner">🔒 <strong>Gestione privata attiva.</strong> Le modifiche sono salvate nel catalogo online. Nascondere un video non elimina il file originale. <button class="ghost control-center-banner-button" id="openControlCenterBanner" type="button">◈ Centro di controllo</button> <button class="ghost" id="adminLogout" style="margin-left:8px;padding:5px 10px;min-height:30px">Esci</button></div>
+<section class="showcase-section" id="recent" aria-labelledby="recentTitle">
+ <div class="section-heading"><div><div class="section-eyebrow">ULTIMI IN ARCHIVIO</div><h2 id="recentTitle">Appena arrivati</h2><p>Gli ultimi filmati già disponibili per la visione.</p></div><button class="quiet-action" id="browseRecent">Esplora archivio ↗</button></div>
+ <div class="film-rail" id="latestRail"></div>
+</section>
 <section class="showcase-section" id="collections" aria-labelledby="collectionsTitle">
  <div class="section-heading"><div><div class="section-eyebrow">ESPLORA PER MONDO</div><h2 id="collectionsTitle">Tutti i mondi dello Studio</h2><p>Libri narrati, fiabe, arte, restauri storici, musica, documentari e sperimentazioni. Le collezioni senza video sono indicate come in preparazione.</p></div></div>
  <div class="collection-grid" id="collectionGrid"></div>
@@ -274,10 +278,6 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
  <p class="museum-note" id="museumCount">Le opere arrivano direttamente dal catalogo reale. Nessun MP4 viene spostato o modificato.</p>
 </section>
 
-<section class="showcase-section" id="recent" aria-labelledby="recentTitle">
- <div class="section-heading"><div><div class="section-eyebrow">FRESCHI DI PRODUZIONE</div><h2 id="recentTitle">Appena arrivati</h2><p>Gli ultimi filmati già disponibili per la visione.</p></div><button class="quiet-action" id="browseRecent">Esplora archivio ↗</button></div>
- <div class="film-rail" id="latestRail"></div>
-</section>
 <section class="showcase-section ready-section" id="ready" aria-labelledby="readyTitle" hidden>
  <div class="section-heading"><div><div class="section-eyebrow">AREA EDITORIALE PRIVATA</div><h2 id="readyTitle">Pronti da pubblicare</h2><p>Video marcati come finali, pronti per la revisione.</p></div></div>
  <div class="control-center-launcher">

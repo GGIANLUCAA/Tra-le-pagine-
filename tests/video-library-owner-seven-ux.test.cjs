@@ -40,6 +40,10 @@ const d=dom.window.document;
 const tick=async()=>new Promise(resolve=>setTimeout(resolve,35));
 (async()=>{
  await tick();
+ const mainSections=[...d.querySelectorAll('main > section')].map(section=>section.id);
+ assert.deepEqual(mainSections.slice(0,3),['recent','collections','museum'],'Video-first: latest available films precede categories and museum');
+ assert.match(d.querySelector('#recent .section-eyebrow').textContent,/ULTIMI IN ARCHIVIO/,'Latest rail must not imply newly produced or artistically approved videos');
+ assert(d.querySelector('#latestRail'),'Latest film rail remains available');
  const root=d.querySelector('#vlsWorks');
  assert(root&&!root.hidden,'Group section must be displayed');
  const group=[...root.querySelectorAll('.vls-work')].find(w=>/Fall of the Rebel Angels/.test(w.textContent));
