@@ -1,0 +1,59 @@
+name: GIULIANO 03 | Antikythera real-source preflight and silent visual proof
+on:
+  push:
+    branches:
+      - feature/giuliano-antikythera-director-20261112
+    paths:
+      - giuliano/antikythera/**
+      - src/giuliano_antikythera_preflight_v1.py
+      - .github/workflows/giuliano-antikythera-preflight-v1.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: giuliano-03-source-review
+  cancel-in-progress: true
+jobs:
+  sources-and-review:
+    name: Licensed source acquisition + honest preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONPATH: src
+      AI_DIRECTOR_ALLOW_FREE_CALLS: "0"
+    steps:
+      - name: Checkout read-only
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify local tools and dependencies
+        run: |
+          ffmpeg -version | head -n 1
+          python -m pip install --disable-pip-version-check pillow
+          python -m py_compile src/giuliano_antikythera_preflight_v1.py
+      - name: Safe offline AI Director plan (no provider calls)
+        run: |
+          python src/ai_director_v1.py --mode plan --format giuliano --subject "The Ancient Computer: Antikythera, short Italian documentary with authentic sources and precise narration-image synchronization" --out-dir output/GIULIANO_03_AI_DIRECTOR
+      - name: Acquire real assets, validate licenses and make silent material MP4
+        id: source_gate
+        continue-on-error: true
+        run: python src/giuliano_antikythera_preflight_v1.py
+      - name: Upload research and QA including failure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_03_ANTIKYTHERA_REAL_SOURCE_REVIEW
+          path: |
+            output/GIULIANO_03_SOURCE_PREFLIGHT/
+            output/GIULIANO_03_AI_DIRECTOR/
+            giuliano/antikythera/EP03_SCRIPT_SHOTMAP_V1.json
+            giuliano/antikythera/REGIA_PREPRODUZIONE_G0DM0D3_V1.md
+          retention-days: 30
+          if-no-files-found: error
+      - name: Require real usable media for preview
+        if: steps.source_gate.outcome != 'success'
+        run: |
+          echo "Sources blocked or licenses unverified. Inspect artifact; DO NOT report a finished MP4."
+          exit 1
