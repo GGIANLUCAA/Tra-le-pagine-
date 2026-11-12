@@ -1,0 +1,152 @@
+name: ArtVision Rebel Angels V331 - no-TTS real Critico remaster
+on:
+  push:
+    branches: [feature/artvision-rebel-critico-regia-v330-20261112]
+    paths: ['.github/workflows/artvision-rebel-critico-regia-v331.yml', 'src/artvision_rebel_critico_regia_v331.py', 'tests/test_artvision_rebel_critico_regia_v331.py']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-rebel-critico-v331-single-review
+  cancel-in-progress: false
+jobs:
+  reuse_voice_remaster:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install only offline renderer libraries and FFmpeg, no API
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check numpy pillow soundfile scipy opencv-python-headless "imageio-ffmpeg>=0.6,<1"
+          mkdir -p "$RUNNER_TEMP/bin"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from imageio_ffmpeg import get_ffmpeg_exe
+          target=Path(os.environ["RUNNER_TEMP"])/"bin"/"ffmpeg"
+          target.symlink_to(get_ffmpeg_exe())
+          assert target.is_file()
+          PY
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Offline syntax and film direction tests
+        run: |
+          set -euo pipefail
+          python -m py_compile src/artvision_rebel_critico_regia_v331.py
+          python -m unittest discover -s tests -p 'test_artvision_rebel_critico_regia_v331.py' -v
+      - name: Check authentic old art and voice artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/12775741359" >/tmp/art.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/13309290632" >/tmp/voice.json
+          python - <<'PY'
+          import json
+          a=json.load(open("/tmp/art.json"))
+          b=json.load(open("/tmp/voice.json"))
+          assert a['id']==12775741359 and not a['expired'], 'original painting bytes missing'
+          assert b['id']==13309290632 and not b['expired'], 'original WAV/MP4 missing'
+          print('AUTHENTIC_SOURCE_AND_VOICE_ARTIFACTS_AVAILABLE')
+          PY
+      - name: Download exact original art, Gacrux WAV, ASR and baseline MP4
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v331art /tmp/v331voice /tmp/rebel_angels_critico_v331
+          SRC_RUN="$(python -c 'import json; print(json.load(open("/tmp/art.json"))["workflow_run"]["id"])')"
+          SRC_NAME="$(python -c 'import json; print(json.load(open("/tmp/art.json"))["name"])')"
+          gh run download "$SRC_RUN" --repo "$GITHUB_REPOSITORY" --name "$SRC_NAME" --dir /tmp/v331art
+          gh run download 41803668367 --repo "$GITHUB_REPOSITORY" \
+            --name ART_V144_REBEL_ANGELS_REAL_CRITICO_OR_PRESERVED_WAV --dir /tmp/v331voice
+          cp /tmp/v331art/ORIGINAL_ARTWORK.jpg /tmp/rebel_angels_critico_v331/
+          cp /tmp/v331voice/VOCE.wav /tmp/rebel_angels_critico_v331/
+          cp /tmp/v331voice/VOICE_CACHE_V13.json /tmp/rebel_angels_critico_v331/
+          cp /tmp/v331voice/ALLINEAMENTO_VOCE.json /tmp/rebel_angels_critico_v331/
+          cp /tmp/v331voice/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4 /tmp/rebel_angels_critico_v331/V144_ORIGINAL_BASELINE.mp4
+          mkdir -p /tmp/v331previous
+          gh run download 43271274513 --repo "$GITHUB_REPOSITORY" \
+            --name ART_REBEL_ANGELS_CRITICO_V330_REGIA_PRIVATE_REVIEW \
+            --dir /tmp/v331previous
+          cp /tmp/v331previous/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V330_REVIEW.mp4 \
+            /tmp/rebel_angels_critico_v331/V330_PREVIOUS_CANDIDATE.mp4
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('/tmp/rebel_angels_critico_v331')
+          def sha(name):return hashlib.sha256((p/name).read_bytes()).hexdigest()
+          assert sha('ORIGINAL_ARTWORK.jpg')=='09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5'
+          assert sha('VOCE.wav')=='e50f97bf6bf272bdda3a1b8577acf492f974d5c88d2b336d35cf976c5a814ade'
+          assert sha('V144_ORIGINAL_BASELINE.mp4')=='83aad1da82a091de42aa19ca6bd532a0e2a2b21c27f4c4c34eac5e53c8799f39'
+          assert sha('V330_PREVIOUS_CANDIDATE.mp4')=='3ab8240ab642133f60f6a27972290b58dd5de2a203a2a8ef60419e39b156d199'
+          print('THREE_SOURCE_HASHES_VERIFIED')
+          PY
+      - name: Render exactly one distinct private Critico regia revision
+        run: |
+          set -euo pipefail
+          python src/artvision_rebel_critico_regia_v331.py --phase render
+      - name: FFmpeg decode, A-B baseline comparison, independent ZIP QA
+        run: |
+          set -euo pipefail
+          root=/tmp/rebel_angels_critico_v331
+          ffmpeg -v error -xerror -i "$root/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V331_REVIEW.mp4" -f null -
+          python src/artvision_focus_regression_gate_v110.py \
+            --baseline "$root/V144_ORIGINAL_BASELINE.mp4" \
+            --candidate "$root/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V331_REVIEW.mp4" \
+            --start 4 --end 36 --output "$root/AB_V331_V144_VISUAL_FOCUS_REVIEW.json"
+          python src/artvision_focus_regression_gate_v110.py \
+            --baseline "$root/V330_PREVIOUS_CANDIDATE.mp4" \
+            --candidate "$root/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V331_REVIEW.mp4" \
+            --start 4 --end 36 --output "$root/AB_V331_V330_VISUAL_FOCUS_REVIEW.json"
+          python - <<'PY'
+          import hashlib,json,zipfile
+          from pathlib import Path
+          p=Path('/tmp/rebel_angels_critico_v331')
+          q=json.loads((p/'QA_V331.json').read_text())
+          assert q['shared_voice_wav_sha256']=='e50f97bf6bf272bdda3a1b8577acf492f974d5c88d2b336d35cf976c5a814ade'
+          assert q['variant']=='critico_standard' and not q['Gold_V25'] and not q['social_published']
+          assert q['narrative_focus_review']['real_mp4_frames']>=30
+          assert q['director_v331']['new_tts_calls']==0
+          mp4=p/q['file']['name']
+          assert hashlib.sha256(mp4.read_bytes()).hexdigest()==q['file']['sha256']
+          assert q['file']['full_ffmpeg_decode']=='PASS'
+          zip_path=p/'REBEL_ANGELS_CRITICO_STANDARD_V331_REVIEW_PACKAGE.zip'
+          with zipfile.ZipFile(zip_path) as z:
+            assert z.testzip() is None
+            assert q['file']['name'] in z.namelist()
+            assert any(x.startswith('FOCUS_REVIEW_V1/REAL_MP4_FRAMES/') for x in z.namelist())
+          ab=json.loads((p/'AB_V331_V144_VISUAL_FOCUS_REVIEW.json').read_text())
+          delta=json.loads((p/'AB_V331_V330_VISUAL_FOCUS_REVIEW.json').read_text())
+          assert ab['source_files_modified'] is False and delta['source_files_modified'] is False
+          before=sum(x['seconds'] for x in delta['baseline']['long_static_intervals'])
+          after=sum(x['seconds'] for x in delta['candidate']['long_static_intervals'])
+          improvement=round(before-after,2)
+          assert improvement >= 10, f"New direction has not eliminated enough static holds ({before=}, {after=})"
+          assert delta['focus_sharpness_loss_percent'] < 25, "Severe sharpness regression; preserve V330 instead"
+          out={'status':'PRIVATE_TECH_QA_PASS_STATIC_HOLDS_REDUCED_ARTISTIC_PENDING','mp4':q['file'],
+               'zip':zip_path.name,'zip_sha256':hashlib.sha256(zip_path.read_bytes()).hexdigest(),
+               'ab_review_flags':ab['flags'],'narrative_frames':q['narrative_focus_review']['real_mp4_frames'],
+               'v330_static_hold_seconds_before':before,'v331_static_hold_seconds_after':after,
+               'static_hold_seconds_reduced':improvement,
+               'v330_to_v331_sharpness_loss_percent':delta['focus_sharpness_loss_percent'],
+               'new_tts_calls':0,'v25_gold':False,'published':False}
+          (p/'V331_FINAL_EVIDENCE.json').write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n')
+          print(json.dumps(out,ensure_ascii=False))
+          PY
+      - name: Preserve MP4 and Android-downloadable private review artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_REBEL_ANGELS_CRITICO_V331_REGIA_PRIVATE_REVIEW
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            /tmp/rebel_angels_critico_v331/BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V331_REVIEW.mp4
+            /tmp/rebel_angels_critico_v331/REBEL_ANGELS_CRITICO_STANDARD_V331_REVIEW_PACKAGE.zip
+            /tmp/rebel_angels_critico_v331/QA_V331.json
+            /tmp/rebel_angels_critico_v331/AB_V331_V144_VISUAL_FOCUS_REVIEW.json
+            /tmp/rebel_angels_critico_v331/AB_V331_V330_VISUAL_FOCUS_REVIEW.json
+            /tmp/rebel_angels_critico_v331/V331_FINAL_EVIDENCE.json
+            /tmp/rebel_angels_critico_v331/CONTACT_SHEET_V331.jpg
+            /tmp/rebel_angels_critico_v331/FOCUS_REVIEW_V1/
