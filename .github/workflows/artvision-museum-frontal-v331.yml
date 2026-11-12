@@ -1,0 +1,46 @@
+name: ArtVision V331 frontal museum geometry regression gate
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/artvision_museum_frontal_gate_v331.py
+      - tests/test_artvision_museum_frontal_gate_v331.py
+      - src/artvision_museum_v119_guard.py
+      - tests/test_artvision_museum_v119_guard.py
+      - .github/workflows/artvision-museum-frontal-v331.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  frontal-gate-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install local QA image dependency
+        run: python -m pip -q install pillow
+      - name: Compile geometry and approval modules
+        run: python -m py_compile src/artvision_museum_frontal_gate_v331.py src/artvision_museum_v119_guard.py
+      - name: Test front-on camera and original V119 Museum gate
+        run: |
+          python -m unittest discover -s tests -p 'test_artvision_museum_frontal_gate_v331.py' -v
+          python -m unittest discover -s tests -p 'test_artvision_museum_v119_guard.py' -v
+      - name: Assert non-frontal work cannot pass high-level V119
+        run: |
+          python - <<'PY'
+          import sys,json
+          sys.path.insert(0,'src')
+          from artvision_museum_v119_guard import check_work
+          catalog=json.load(open('config/artvision_museum_library_v119.json'))
+          missing={'artwork_id':'test','width_cm':120,'height_cm':90,
+                   'frontal_geometry_v331_status':'REJECTED',
+                   'frontal_geometry_v331_report_sha256':'a'*64,
+                   'frontal_pose_fullspeed_review_passed':False}
+          result=check_work(catalog,missing)
+          assert 'museum_frontal_geometry_v331_not_passed' in result
+          assert 'museum_frontal_pose_human_review_missing' in result
+          print('V331_FRONTAL_HARD_BLOCK_PASS; no automatic artist approval')
+          PY
