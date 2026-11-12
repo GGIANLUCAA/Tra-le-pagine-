@@ -9,6 +9,11 @@ import subprocess
 from pathlib import Path
 from PIL import Image, ImageStat
 
+try:
+    from .director_reference_v326 import inspect_black_tail
+except ImportError:  # CLI mode
+    from director_reference_v326 import inspect_black_tail
+
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = ROOT / 'config' / 'quality_director_v17.json'
 
@@ -132,6 +137,10 @@ def inspect_video(video, profile, out):
             warnings.append(notice('ASPECT_RATIO', f'Master {w}x{h}: controllare verticale 9:16'))
         facts.append({'duration_seconds': round(length,2), 'resolution':[w,h],
                       'video_codec':visual.get('codec_name'), 'audio_codec':audio.get('codec_name') if audio else None})
+    if visual and length > 0:
+        tail_warnings, tail_facts = inspect_black_tail(video, length)
+        warnings.extend(tail_warnings)
+        facts.append(tail_facts)
     # Reuse V16 frames. Deliberately no extra video rendering or GPU calls.
     frames = sorted(out.glob('REVIEW_FRAME_*.jpg'))
     dark = []

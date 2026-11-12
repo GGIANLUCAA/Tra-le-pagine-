@@ -5,6 +5,11 @@ import json
 from collections import Counter
 from pathlib import Path
 
+try:
+    from .director_reference_v326 import analyze_scenes
+except ImportError:  # CLI: python src/artvision_editor_v19.py
+    from director_reference_v326 import analyze_scenes
+
 MOVES = {"static","push_in","pull_out","pan_left","pan_right","detail_reveal","match_cut"}
 FRAMES = {"detail","portrait","medium","full_artwork","architecture","landscape"}
 
@@ -15,6 +20,11 @@ def check(brief):
     if brief.get("format") not in {"artvision_cinema","artvision_meraviglia_breve","artvision_enigma"}:
         blockers.append("Formato non supportato")
     scenes = brief.get("scenes") or []
+    rhythm_block, rhythm_warning, _ = analyze_scenes(
+        scenes, short=brief.get("format") == "artvision_meraviglia_breve")
+    blockers.extend(x["message"] for x in rhythm_block)
+    warnings.extend((f"Scena {x['scene']}: " if 'scene' in x else "") + x["message"]
+                    for x in rhythm_warning)
     if len(scenes) < 3:
         warnings.append("Meno di tre inquadrature curate")
     prev, run = None, 0
@@ -75,7 +85,10 @@ def outputs(brief):
     for s in brief.get("sources") or []:
         rights.append(f"- **{s.get('artwork','?')}** — {s.get('url','?')} — {s.get('reuse_terms','?')} — {s.get('attribution','')}")
     rights += ["","Verificare le restrizioni sui beni culturali e l'uso commerciale PRIMA della pubblicazione."]
+    _, _, rhythm_facts = analyze_scenes(brief.get("scenes") or [],
+                                        short=brief.get("format") == "artvision_meraviglia_breve")
     report={
+      "director_reference_v326": rhythm_facts,
       "schema":"artvision-editor-v19","format":brief.get("format"),"artist":artist,
       "blocking_issues":blockers,"warnings":warnings,
       "scene_count":len(brief.get("scenes") or []),
