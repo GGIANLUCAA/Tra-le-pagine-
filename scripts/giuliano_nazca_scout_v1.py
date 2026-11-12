@@ -122,6 +122,9 @@ def main():
     candidates=[];excluded=[]
     for title,info in ordered:
         mime=info.get("mime","").lower(); lic=license_record(info)
+        if not lic["author"] or not lic["license_url"]:
+            excluded.append({"title":title,"reason":"attribution_metadata_missing","license":lic["license"]})
+            continue
         if not lic["allowed"] or mime not in ("image/jpeg","image/png","image/webp"):
             excluded.append({"title":title,"reason":"license_or_mime","license":lic["license"],"mime":mime})
             continue
