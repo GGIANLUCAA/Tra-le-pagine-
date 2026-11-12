@@ -10,6 +10,13 @@ CATALOG=Path(__file__).resolve().parents[1]/'config'/'artvision_ai_room_library_
 class TestRoomV332(unittest.TestCase):
     def setUp(self):
         self.cat=load_catalog(CATALOG)
+    def test_auto_editorial_frame_style_varies_with_subject(self):
+        from artvision_ai_room_integrator_v332 import recommend_editorial_frame_style
+        self.assertEqual(recommend_editorial_frame_style(['dark','gothic']),'dark_wood')
+        self.assertEqual(recommend_editorial_frame_style(['mythology','dream']),'bronze')
+        self.assertEqual(recommend_editorial_frame_style(['baroque','epic']),'gilt')
+        self.assertEqual(recommend_editorial_frame_style(['modern','minimal']),'minimal_black')
+
     def test_twelve_rooms_two_frame_cleanup(self):
         self.assertEqual(len(self.cat['scenes']),12)
         self.assertEqual(sum(x['frame_in_background'] for x in self.cat['scenes']),2)
