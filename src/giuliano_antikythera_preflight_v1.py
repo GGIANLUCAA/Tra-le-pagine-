@@ -92,6 +92,13 @@ def inspect(brief, asset_dir=None, phase="plan"):
         issues.append(problem("MUSEUM_EVIDENCE_INSUFFICIENT", "Need real photographed artifact repeated at key milestones"))
     if brief.get("publication_authorized") or brief.get("human_artistic_approval"):
         issues.append(problem("FABRICATED_APPROVAL", "Research cannot assert human approval/publication"))
+    try:
+        advisory = audit_scenes(brief)
+    except ValueError as exc:
+        # Reject malicious/accidental claimed approvals without crashing the safe review.
+        advisory = []
+        if not any(x["code"] == "FABRICATED_APPROVAL" for x in issues):
+            issues.append(problem("INVALID_DIRECTOR_BRIEF", str(exc)))
     report = {
         "schema": SCHEMA, "status": "blocked" if issues else ("ready_for_asset_acquisition" if phase=="plan" else "ready_for_render_preflight"),
         "phase":phase,"target_seconds":previous,"scene_count":len(shots),"spoken_word_count":len(brief.get("narration","").split()),
@@ -103,7 +110,7 @@ def inspect(brief, asset_dir=None, phase="plan"):
         "script_audio_alignment_measured":False,
         "real_video_frame_scan_performed":False,"human_approval":False,"published":False,
         "issues":issues,
-        "ai_director_advisory":audit_scenes(brief)
+        "ai_director_advisory":advisory
     }
     return report
 
