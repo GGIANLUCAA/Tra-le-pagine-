@@ -1,0 +1,50 @@
+name: ArtVision V332 - reusable AI museum scenes (offline QA only)
+on:
+  push:
+    branches: [main, feature/artvision-reusable-ai-galleries-v332-20261112]
+    paths:
+      - '.github/workflows/artvision-ai-room-v332-qa.yml'
+      - 'src/artvision_ai_room_integrator_v332.py'
+      - 'src/artvision_ai_room_video_v332.py'
+      - 'src/creative_director_v21.py'
+      - 'tests/test_artvision_ai_room_integrator_v332.py'
+      - 'config/artvision_ai_room_library_v332.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-assets-and-geometry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install only free offline video/photo analysis tools
+        run: python -m pip install --disable-pip-version-check -q pillow numpy opencv-python-headless
+      - name: Compile gallery integration and Creative Director
+        run: |
+          python -m py_compile src/artvision_ai_room_integrator_v332.py src/artvision_ai_room_video_v332.py src/creative_director_v21.py
+      - name: Run 10+ no-duplication, original-frame-first, room lock and geometry tests
+        run: python -m unittest discover -s tests -p 'test_artvision_ai_room_integrator_v332.py' -v
+      - name: Validate all 12 owner generated room descriptors and reject built-in false frames
+        run: |
+          python - <<'PY'
+          import json,re
+          from pathlib import Path
+          q=json.loads(Path("config/artvision_ai_room_library_v332.json").read_text())
+          assert q["schema"]=="artvision-reusable-ai-room-library-v332"
+          assert len(q["scenes"])==12 and q["museum_approved_room_count"]==0
+          assert q["gallery_selection_is_review_only"] is True
+          usable=[x for x in q["scenes"] if x["status"]=="candidate_ready_for_compositing_review"]
+          assert len(usable)==10
+          assert all(not x["frame_in_background"] for x in usable)
+          ids=[x["room_id"] for x in q["scenes"]];assert len(ids)==len(set(ids))
+          assert all(re.fullmatch("[0-9a-f]{64}",x["sha256"]) for x in q["scenes"])
+          assert all(x["source_kind"]=="ai_generated_scenographic_gallery_not_actual_museum" for x in q["scenes"])
+          assert all(x["library_path"].startswith("/ArtVision/Museum_AI_Rooms_V332/") for x in q["scenes"])
+          print("V332 12 metadata PASS; 10 useable candidates; G09/G10 blocked")
+          print("Asset JPEG/PNG bytes are held in owner ChatGPT Library, not in GitHub Actions checkout.")
+          print("No full-render, owner approval, true 3D, historical museum or publishing claims.")
+          PY
