@@ -10,43 +10,50 @@ from PIL import Image, ImageDraw, ImageFont
 
 OUT=Path('output/artvision-owner-demorgan-dryad-cinema-v1')
 OUT.mkdir(parents=True,exist_ok=True)
-# De Morgan Collection original; Wikimedia commons faithful PD-Art image.
-# Full original: Dryad11.jpg, 8726x21359, 82826574 bytes, sha1 a46fbc28e7b9ab21bc384b7b4f684cc3a0a3871a.
-# Use a Commons-generated faithful downsample so the GitHub runner/phone need not load 82.8 MB.
+# De Morgan Collection. Source: full-size Wikimedia Commons original Dryad11.jpg.
+# Verify EXACT original 82,826,574 bytes and SHA1, then resize LOCALLY.
+# Wikimedia dynamically rejects arbitrary thumbnail widths (HTTP 400/404).
 SOURCE='Dryad11.jpg'
 PAGE='https://commons.wikimedia.org/wiki/File:Dryad11.jpg'
 FULL_ORIGINAL_SOURCE_SHA1='a46fbc28e7b9ab21bc384b7b4f684cc3a0a3871a'
 FULL_ORIGINAL_SOURCE_PIXELS=(8726,21359)
 FULL_ORIGINAL_SOURCE_BYTES=82826574
-key=SOURCE
-md5=hashlib.md5(key.encode()).hexdigest()
-base='https://upload.wikimedia.org/wikipedia/commons/thumb/'+md5[0]+'/'+md5[:2]+'/'+urllib.parse.quote(key,safe='._-')
-urls=[
- ('FAITHFUL_COMMONS_2560PX_WIDE',base+'/2560px-'+key,2560),
- ('FAITHFUL_COMMONS_1920PX_WIDE',base+'/1920px-'+key,1920),
- ('FAITHFUL_COMMONS_1600PX_WIDE',base+'/1600px-'+key,1600),
-]
+md5=hashlib.md5(SOURCE.encode()).hexdigest()
+URL='https://upload.wikimedia.org/wikipedia/commons/'+md5[0]+'/'+md5[:2]+'/'+SOURCE
 original=OUT/'ORIGINAL_ARTWORK.jpg'
+full=OUT/'RAW_VERIFIED_FULL_ORIGINAL.jpg'
 actual_url=None
-selected_variant=None
-for tag,url,width in urls:
-    try:
-        req=urllib.request.Request(url,headers={'User-Agent':'ArtVisionOwnerPrivateReview/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)'})
-        with urllib.request.urlopen(req,timeout=105) as f:data=f.read(22_000_001)
-        if not (250_000<len(data)<=22_000_000):raise ValueError('bad derived JPEG byte count')
-        original.write_bytes(data)
-        with Image.open(original) as im:
-            if im.format!='JPEG' or im.size[0]!=width or abs(im.size[1]/width-21359/8726)>.002:
-                raise ValueError('bad file dimensions/aspect: expected original tall painting')
-            im.verify()
-        actual_url=url;selected_variant=tag
-        SOURCE_SIZE=len(data)
-        SOURCE_PIXELS=(width,round(width*21359/8726))
-        SOURCE_SHA1=hashlib.sha1(data).hexdigest()
-        break
-    except Exception as e:print('SOURCE_ATTEMPT_FAILED',tag,type(e).__name__,str(e)[:165],flush=True)
-if not actual_url:raise RuntimeError('DE_MORGAN_DRYAD_AUTHENTIC_COMMONS_DERIVATIVE_UNAVAILABLE')
-print('DRYAD_AUTHENTIC_SOURCE_DERIVATIVE_VERIFIED',selected_variant,SOURCE_SHA1,SOURCE_SIZE,SOURCE_PIXELS,flush=True)
+selected_variant='LOCAL_LANCZOS_1920PX_FROM_SHA1_VERIFIED_FULL_COMMONS'
+req=urllib.request.Request(URL,headers={'User-Agent':'ArtVisionOwnerPrivateReview/1.0 (https://github.com/GGIANLUCAA/Tra-le-pagine-)'})
+try:
+    h=hashlib.sha1();count=0
+    with urllib.request.urlopen(req,timeout=140) as response, full.open('wb') as dst:
+        for chunk in iter(lambda: response.read(1<<20),b''):
+            count+=len(chunk)
+            if count>FULL_ORIGINAL_SOURCE_BYTES:raise ValueError('full original larger than pinned Commons file')
+            h.update(chunk);dst.write(chunk)
+    if count!=FULL_ORIGINAL_SOURCE_BYTES or h.hexdigest()!=FULL_ORIGINAL_SOURCE_SHA1:
+        raise ValueError('FULL original bytes/SHA1 do not match Wikimedia original file')
+    Image.MAX_IMAGE_PIXELS=None  # verified specific source, 186 megapixels
+    with Image.open(full) as im:
+        if im.format!='JPEG' or im.size!=FULL_ORIGINAL_SOURCE_PIXELS:
+            raise ValueError('wrong original dryad painting dimensions')
+        im.draft('RGB',(1920,4700))
+        im.thumbnail((1920,5000),Image.Resampling.LANCZOS)
+        im.convert('RGB').save(original,format='JPEG',quality=93,subsampling=0,optimize=True)
+    full.unlink()  # keep only the smaller derived JPEG in normal artifact
+    with Image.open(original) as im:
+        if im.size[0]!=1920 or abs(im.size[1]/im.size[0]-21359/8726)>.002:
+            raise ValueError('local derived image has wrong aspect or dimensions')
+        SOURCE_PIXELS=im.size
+        im.verify()
+    SOURCE_SIZE=original.stat().st_size
+    SOURCE_SHA1=hashlib.sha1(original.read_bytes()).hexdigest()
+    actual_url=URL
+    print('DRYAD_EXACT_FULL_ORIGINAL_VERIFIED_AND_RESIZED',FULL_ORIGINAL_SOURCE_SHA1,FULL_ORIGINAL_SOURCE_BYTES,SOURCE_PIXELS,SOURCE_SHA1,flush=True)
+except Exception as e:
+    print('EXACT_FULL_ORIGINAL_SOURCE_OR_RESIZE_FAILED',type(e).__name__,str(e),flush=True)
+    raise RuntimeError('DRYAD_SOURCE_NOT_SAFE_TO_RENDER') from e
 
 def sha(p):
     h=hashlib.sha256()
@@ -211,6 +218,8 @@ rights={'title':'The Dryad','artist':'Evelyn De Morgan','year':'1884–1885',
  'object_page':'https://artsandculture.google.com/asset/the-dryad-0097/2wFzlXCcDrzUpA',
  'original_file_page':PAGE,'url_used':actual_url,
  'original_full_sha1_from_wikimedia_metadata':FULL_ORIGINAL_SOURCE_SHA1,
+ 'full_original_verified_locally_against_sha1_and_bytes':True,
+ 'full_original_bytes':FULL_ORIGINAL_SOURCE_BYTES,
  'original_full_pixels_from_wikimedia_metadata':FULL_ORIGINAL_SOURCE_PIXELS,
  'source_variant':selected_variant,
  'source_sha1':SOURCE_SHA1,'source_sha256':sha(original),
@@ -233,6 +242,7 @@ posts={'facebook':'At first glance she seems to be standing beside an old tree. 
 (OUT/'SOCIAL_DRAFTS.json').write_text(json.dumps(posts,ensure_ascii=False,indent=2)+'\n')
 (OUT/'README_FIRST.md').write_text('ONE NEW The Dryad Cinema Standard private review, two video bitrates of the SAME slot. No critic or Museum versions. Do not count as Gold. Wikimedia Commons faithful Dryad11.jpg downsample, full original dimensions and SHA1 documented, derivative exact proportions and SHA recorded. no paid APIs, no publication. Full-speed artistic and territory/license checks pending.\n')
 qa={'work_id':'demorgan_dryad_1885_demorgan_collection','variant':'cinema_standard','source_sha1':SOURCE_SHA1,'source_sha256':sha(original),
+ 'full_original_source_sha1_verified':True,'full_original_source_size_bytes':FULL_ORIGINAL_SOURCE_BYTES,
  'mp4_sha256':sha(mp4),'mp4_bytes':mp4.stat().st_size,'android_mp4_sha256':sha(mobile),'android_mp4_bytes':mobile.stat().st_size,
  'duration_seconds':DURATION,'fps':FPS,'frame_count':N,'resolution':[W,H],'scene_count':len(story),
  'all_streams_ffmpeg_full_decode':'PASS','artistic_qa':'PENDING','territorial_rights':'PENDING','gold':False,'published':False,'paid_api_calls':0,
