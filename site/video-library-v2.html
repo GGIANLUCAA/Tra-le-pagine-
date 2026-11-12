@@ -170,7 +170,7 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
 .museum-picks{scroll-snap-type:x proximity}.museum-pick{scroll-snap-align:center}
 .museum-stage{touch-action:pan-y}
 .museum-pick:focus-visible,.museum-tour-controls button:focus-visible,.museum-room-tabs button:focus-visible{outline:3px solid #f3d4a0;outline-offset:2px}
-@media(max-width:720px){.museum-tour-controls{gap:6px;padding:8px 7px}.museum-tour-controls button{flex:1 1 0;min-width:0;padding:8px 4px;font-size:12px}.museum-tour-controls span{flex:0 0 80px;font-size:11px}.museum-spotlight-beam.left,.museum-spotlight-beam.right{display:none}.museum-spotlight-beam.middle{left:14%;width:72%}.hero-cta .museum-visit{flex-basis:100%;min-height:44px}.bottom-nav button{min-width:45px;flex:1 1 0;padding:0 2px;font-size:9px}.bottom-nav .nav-glyph{font-size:19px}}
+@media(max-width:720px){.museum-tour-controls{gap:6px;padding:8px 7px}.museum-tour-controls button{flex:1 1 0;min-width:0;padding:8px 4px;font-size:12px}.museum-tour-controls span{flex:0 0 80px;font-size:11px}.museum-spotlight-beam.left,.museum-spotlight-beam.right{display:none}.museum-spotlight-beam.middle{left:14%;width:72%}.hero-cta .museum-visit{flex-basis:100%;min-height:44px}.bottom-nav button{min-width:45px;flex:1 1 0;padding:0 2px;font-size:11px;line-height:1.25}.bottom-nav button.active{background:#e8c29516;border-radius:10px}.bottom-nav .nav-glyph{font-size:19px}}
 @media(max-width:380px){.museum-tour-controls span{flex-basis:63px;font-size:10px}}
 @media(prefers-reduced-motion:reduce){.museum-art-frame.center{transition:none}}
 
@@ -317,7 +317,7 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
 <div class="foot">Le anteprime sono immagini leggere e non scaricano l'intero MP4. La data ChatGPT compare soltanto quando ricavabile dal file originale; altrimenti è indicata la data di importazione. Il riconoscimento delle varianti è indicativo, non una verifica di identità dei contenuti.</div>
 </section>
 </main>
-<nav class="bottom-nav" aria-label="Navigazione principale"><button type="button" data-section="home" class="active"><span class="nav-glyph">⌂</span><span>Home</span></button><button type="button" data-section="library"><span class="nav-glyph">▣</span><span>Video</span></button><button type="button" data-section="collections"><span class="nav-glyph">◫</span><span>Raccolte</span></button><button type="button" data-section="museum"><span class="nav-glyph">🏛</span><span>Museo</span></button><button type="button" data-section="studio"><span class="nav-glyph">⚙</span><span>Studio</span></button></nav>
+<nav class="bottom-nav" aria-label="Navigazione principale"><button type="button" data-section="home" class="active" aria-current="location"><span class="nav-glyph">⌂</span><span>Home</span></button><button type="button" data-section="library"><span class="nav-glyph">▣</span><span>Video</span></button><button type="button" data-section="collections"><span class="nav-glyph">◫</span><span>Raccolte</span></button><button type="button" data-section="museum"><span class="nav-glyph">🏛</span><span>Museo</span></button><button type="button" data-section="studio"><span class="nav-glyph">⚙</span><span>Studio</span></button></nav>
 <dialog id="socialViewer" aria-label="Scorri i video dell’archivio"><div class="social-top"><strong>Scorri video <span id="socialPosition"></span></strong><button class="ghost" id="socialClose" type="button">✕ Chiudi</button></div><div id="socialFeed" tabindex="0" aria-label="Scorri verso l’alto per il prossimo video"></div></dialog>
 <dialog id="player"><div class="modalhead"><h2 id="playerTitle">Video</h2><button class="ghost" data-close="player">✕ Chiudi</button></div><div class="modalbody"><video id="video" controls playsinline preload="metadata"></video>
 <div class="cinema-transport" aria-label="Controlli di riproduzione aggiuntivi">
@@ -546,7 +546,12 @@ function sortedFresh(a){return [...a].sort((x,y)=>Date.parse(y.gptCreatedAt||y.u
 const gotoSection=(name)=>{
  const el=document.getElementById(name);if(!el)return;
  el.scrollIntoView({behavior:'smooth',block:'start'});
- document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.section===name));
+ const activeSection=name==='ready'?'studio':name;
+ document.querySelectorAll('.bottom-nav button').forEach(b=>{
+  const isCurrent=b.dataset.section===activeSection;
+  b.classList.toggle('active',isCurrent);
+  if(isCurrent)b.setAttribute('aria-current','location');else b.removeAttribute('aria-current');
+ });
 };
 function safePublished(){return g.items.filter(x=>!x.hidden);}
 function makeFilmTile(x){
