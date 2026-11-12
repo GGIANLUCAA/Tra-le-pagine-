@@ -27,7 +27,7 @@ def load():
  doc=json.loads(SCRIPT.read_text())
  assert doc["schema"]=="giuliano-nazca-ep04-real-director-brief-v1"
  assert 25<=len(doc["beats"])<=32
- assert 260<=doc["word_count"]<=355
+ assert 230<=doc["word_count"]<=300
  assert doc["public_release_authorized"] is False
  text=" ".join(b["narration"] for b in doc["beats"])
  return doc,text
@@ -113,9 +113,27 @@ def main():
              "naturali, nessun tono enfatico da trailer. Non aggiungere "
              "parole o introduzioni. TESTO:\n"+spoken),
    config=types.GenerateContentConfig(response_modalities=["AUDIO"],
+      max_output_tokens=16384,
       speech_config=types.SpeechConfig(voice_config=types.VoiceConfig(
        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=VOICE)))))
-  raw=response.candidates[0].content.parts[0].inline_data.data
+  candidate=response.candidates[0] if response.candidates else None
+  parts=(candidate.content.parts if candidate and candidate.content else None) or []
+  audio_parts=[p.inline_data for p in parts if getattr(p,"inline_data",None) and
+               getattr(p.inline_data,"data",None)]
+  if not audio_parts:
+   usage=response.usage_metadata
+   diag={"schema":"nazca-google-tts-nonaudio-v1",
+         "status":"NO_AUDIO_RETURNED","model":MODEL,
+         "finish_reason":str(getattr(candidate,"finish_reason",None)),
+         "usage_prompt_tokens":getattr(usage,"prompt_token_count",None),
+         "usage_candidates_tokens":getattr(usage,"candidates_token_count",None),
+         "usage_thoughts_tokens":getattr(usage,"thoughts_token_count",None),
+         "code":"No data in candidate; never claim produced narration",
+         "automatic_retries":False}
+   write_json(OUT/"GOOGLE_TTS_NONAUDIO_DIAGNOSTIC.json",diag)
+   print("GOOGLE_TTS_REJECTED_OR_TRUNCATED",json.dumps(diag),flush=True)
+   raise RuntimeError("GOOGLE_TTS_NO_AUDIO; diagnostics saved, no automatic retries")
+  raw=audio_parts[0].data
   if isinstance(raw,str):
    import base64
    raw=base64.b64decode(raw)
