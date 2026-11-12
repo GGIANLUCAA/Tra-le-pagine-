@@ -1,0 +1,61 @@
+name: "Artist galleries | first five | authentic artwork and Android QA"
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "config/artist_gallery_first_five_20261113.json"
+      - "scripts/artist_gallery_first_five_v1.py"
+      - ".github/workflows/artist-gallery-first-five-v1.yml"
+permissions:
+  contents: read
+concurrency:
+  group: artist-gallery-first-five-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  gallery-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        artist: [waterhouse, redon, khnopff, moreau, stokes]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Python syntax before expensive rendering
+        run: python -m py_compile scripts/artist_gallery_first_five_v1.py
+      - name: Install free artwork render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "Pillow>=10,<13"
+      - name: Render one source-verified artist gallery with actual MP4 and ZIP CRC
+        env:
+          SERIES_ARTIST: ${{ matrix.artist }}
+        run: python -u scripts/artist_gallery_first_five_v1.py --artist "$SERIES_ARTIST"
+      - name: Upload real review video and root-level-MP4 ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTIST_GALLERY_${{ matrix.artist }}_OWNER_REVIEW
+          path: |
+            output/artist-gallery-first-five/${{ matrix.artist }}/*_GALLERY_REVIEW.mp4
+            output/artist-gallery-first-five/${{ matrix.artist }}/*_COMPLETE.zip
+            output/artist-gallery-first-five/${{ matrix.artist }}/COVER.jpg
+            output/artist-gallery-first-five/${{ matrix.artist }}/CONTACT_SHEET.jpg
+            output/artist-gallery-first-five/${{ matrix.artist }}/SOURCE_MANIFEST.json
+            output/artist-gallery-first-five/${{ matrix.artist }}/SOCIAL_CAPTION.txt
+            output/artist-gallery-first-five/SERIES_STATUS.json
+          if-no-files-found: error
+          retention-days: 21
+      - name: Upload real failure evidence if source or music is unavailable
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTIST_GALLERY_${{ matrix.artist }}_BLOCK_REASON
+          path: output/artist-gallery-first-five/SERIES_STATUS.json
+          if-no-files-found: warn
+          retention-days: 7
