@@ -216,7 +216,7 @@ def main():
     with zipfile.ZipFile(OUT/"VRUBEL_REVIEW_PACKAGE_V2.zip","w",zipfile.ZIP_DEFLATED,compresslevel=4) as z:
         for filename in [master,cover,OUT/"CONTACT_SHEET_V2.jpg",OUT/"SOURCE_MANIFEST.json",OUT/"SOCIAL_CAPTION.txt"]:
             z.write(filename,arcname=filename.name)
-    with zipfile.ZipFile(OUT/"VRUBEL_REVIEW_PACKAGE.zip") as z:
+    with zipfile.ZipFile(OUT/"VRUBEL_REVIEW_PACKAGE_V2.zip") as z:
         if z.testzip():raise RuntimeError("QA_FAIL_ZIP_CRC")
     print("VIDEO_DELIVERED",json.dumps(manifest["video"]),flush=True)
     print("CREATIVE_STATUS TECHNICAL_PASS_ARTISTIC_PENDING",flush=True)
