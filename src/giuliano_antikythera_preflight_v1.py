@@ -161,7 +161,8 @@ def main():
         "notes":["All verified material is independently attributed; this is a silent proof, not a finished GIULIANO episode.",
                  "The 2021 clips are research reconstructions, not footage of the original ancient mechanism."]}
     if len(images)>=2 and len(videos)>=2:
-        shots=[(images[0],4),(videos[0],6),(images[1],4),(videos[1],6)]
+        closeup=next((r for r in images if r["id"]=="front"),images[1])
+        shots=[(images[0],4),(videos[0],6),(closeup,4),(videos[1],6)]
         files=[]
         for i,(r,sec) in enumerate(shots):
             source=OUT/r["local_file"]
