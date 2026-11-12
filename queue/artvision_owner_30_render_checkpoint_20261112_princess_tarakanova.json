@@ -1,0 +1,63 @@
+{
+  "schema": "artvision-owner-30-private-cinema-checkpoint-v1",
+  "date": "2026-11-12",
+  "owner_order": 4,
+  "owner_title": "Princess Tarakanova",
+  "artist": "Konstantin Flavitsky",
+  "variant": "cinema_standard",
+  "specific_original": "State Tretyakov Gallery, Moscow, inventory 347, painted 1863/exhibited 1864, 245 x 187.5 cm",
+  "forbidden_confusions": [
+    "Yekaterinburg museum 1862 first version",
+    "Russian Museum 44.5 x 33.5 cm head study"
+  ],
+  "source": {
+    "page": "https://commons.wikimedia.org/wiki/File:Tarakanova.jpg",
+    "museum_record": "https://my.tretyakov.ru/app/masterpiece/8412",
+    "bytes": 463191,
+    "sha1": "4e96a98a1d6a4568119f54c348ca329ad6fc2521",
+    "sha256": "749e30f146b61886c5d342c7da8f204afdadc73e5a3fe953221ba4dbdbe5f948",
+    "pixels": [
+      1400,
+      1845
+    ],
+    "license_claim": "Wikimedia Commons faithful PD-Art/PDM reproduction; final commercial territory review pending"
+  },
+  "production": {
+    "best_review_revision": "V2",
+    "v1_run": 43266815311,
+    "v2_run": 43267711601,
+    "v2_artifact_id": 13967410907,
+    "v2_artifact_name": "ARTVISION_OWNER_TARAKANOVA_TRETYAKOV_CINEMA_V2_DIRECTOR_REVIEW",
+    "v2_mp4_name": "VIDEO_ANDROID_REVIEW.mp4",
+    "v2_sha256": "3dc80b148f4de5ae1f7a0827fbd53288e847b52021d8752b0bcf89e69977f9d2",
+    "v2_bytes": 2545253,
+    "seconds": 43.5,
+    "video": "H264 720x1280 20fps",
+    "audio": "AAC original synthesized score",
+    "shots": 8,
+    "paid_calls": 0
+  },
+  "qa": {
+    "producer_render_job": "PASS",
+    "producer_own_decode": "PASS",
+    "producer_second_runner_job": "FAIL_TOOLING_ONLY_WRONG_ARTIFACT_NAME_V1",
+    "separate_new_recovery_job": "PASS",
+    "separate_recovery_run_id": 43268362183,
+    "separate_recovery_pr": 290,
+    "local_full_decode_and_hash": "PASS",
+    "zip_crc": "PASS",
+    "human_full_speed_review": "PENDING",
+    "director_contact_sheet": "V2 less repetitive than V1; not Gold; further artistic refinement possible",
+    "rights_territorial": "PENDING",
+    "published": false,
+    "gold": false
+  },
+  "counting": {
+    "secondary_queue_prior_cinema_checkpoints": 24,
+    "secondary_queue_after_new_distinct_slot": 25,
+    "total_selected": 30,
+    "do_not_count_v1_v2_as_two_slots": true,
+    "original_10_queue_unmodified": true
+  },
+  "handoff": "Do not duplicate Princess Tarakanova in future Cinema Standard new work; source SHA locked, V2 preferred; preserve V1 and V2 originals; publication only after rights and artistic QA. Critico Arbo still pending verified no-billing Google TTS gate."
+}
