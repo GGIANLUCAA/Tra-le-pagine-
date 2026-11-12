@@ -30,8 +30,13 @@ on:
         required: true
         type: string
         default: "Venice 1896"
+      artist:
+        description: "Optional exact artist/creator name for art queries (e.g. Carel Fabritius)"
+        type: string
+        required: false
+        default: ""
       provider:
-        description: "Auto chooses up to three keyless museums/archives; otherwise one"
+        description: "Auto chooses up to four keyless museums/archives; otherwise one"
         type: choice
         default: auto
         required: true
@@ -84,6 +89,7 @@ jobs:
     env:
       CATEGORY: ${{ inputs.category }}
       QUERY: ${{ inputs.query }}
+      ARTIST: ${{ inputs.artist }}
       SELECTED_PROVIDER: ${{ inputs.provider }}
       PER_PROVIDER: ${{ inputs.per_provider }}
       EXECUTE: ${{ inputs.execute == true && '1' || '0' }}
@@ -97,6 +103,9 @@ jobs:
         run: |
           set -euo pipefail
           args=(--category "$CATEGORY" --query "$QUERY" --per-provider "$PER_PROVIDER")
+          if [ -n "$ARTIST" ]; then
+            args+=(--artist "$ARTIST")
+          fi
           if [ "$SELECTED_PROVIDER" != "auto" ]; then
             args+=(--provider "$SELECTED_PROVIDER")
           fi
