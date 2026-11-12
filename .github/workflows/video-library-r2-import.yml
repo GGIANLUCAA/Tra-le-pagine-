@@ -126,7 +126,8 @@ jobs:
                       base=pathlib.PurePosixPath(member).name.upper()
                       if base in ('QA_REPORT.JSON','DELIVERY_MANIFEST_V55.JSON','ARTVISION_DELIVERY_V55.JSON',
                                   'SOURCES_RIGHTS.JSON','SOURCE_RIGHTS.JSON','SOURCES_AND_RIGHTS.JSON',
-                                  'SOURCE_AND_RIGHTS.JSON','RIGHTS_AND_CREDITS.JSON','FONTI_E_DIRITTI.JSON') or (base.startswith('QA_') and base.endswith('.JSON')) or base.endswith('_QA.JSON'):
+                                  'SOURCE_AND_RIGHTS.JSON','SOURCE_MANIFEST.JSON','PUBLICATION_MANIFEST.JSON',
+                                  'RIGHTS_AND_CREDITS.JSON','FONTI_E_DIRITTI.JSON') or (base.startswith('QA_') and base.endswith('.JSON')) or base.endswith('_QA.JSON'):
                           try:
                               documents.append((label+member,zf.read(member)[:250000].decode('utf-8','replace').upper()))
                           except Exception as exc:
@@ -149,7 +150,11 @@ jobs:
                               '"PUBLICATION": FALSE','"PUBLICATION":FALSE',
                               'NOT YET CLEARED FOR PUBLICATION','DO NOT PUBLISH','NON PUBBLICARE',
                               '"PUBLICATION_AUTHORIZED": FALSE','"PUBLICATION_AUTHORIZED":FALSE',
-                              'PUBLICATION_AUTHORIZED: FALSE','PRIVATE REVIEW ONLY','PRIVATE ONLY',
+                              'PUBLICATION_AUTHORIZED: FALSE','"PUBLISHED": FALSE','"PUBLISHED":FALSE',
+                              '"COMMERCIAL_DISTRIBUTION_AUTHORIZED": FALSE',
+                              '"COMMERCIAL_DISTRIBUTION_AUTHORIZED":FALSE',
+                              'COMMERCIAL_DISTRIBUTION_AUTHORIZED: FALSE',
+                              'PRIVATE REVIEW ONLY','PRIVATE ONLY',
                               'NO SITE/SOCIAL PUBLICATION',
                               'NOT AUTHORIZED TO PUBLISH','NOT_PUBLISHED','NOT PUBLISHED')
               for label,text in documents:
@@ -183,8 +188,13 @@ jobs:
               for manifest,rights in (
                   ('COLORIZATION_QA.json',{'publication':False,'master':False}),
                   ('SOURCES_RIGHTS.json',{'publication_authorized':False,'rights_status':'PENDING'}),
+                  ('SOURCE_MANIFEST.json',{'status':'TECHNICAL_PASS_ARTISTIC_PENDING',
+                                           'rights':'individual image-page license checks before publication',
+                                           'published':False}),
                   ('SOURCE_AND_RIGHTS.json',{'commercial_use_review':'PENDING; no site/social publication'}),
                   ('SOURCES_RIGHTS.json',{'statement':'Photograph requires review; PRIVATE ONLY.'}),
+                  ('SOURCES_RIGHTS.json',{'rights_review':'PENDING_TERRITORIAL_AND_MUSEUM',
+                                          'commercial_distribution_authorized':False}),
               ):
                   denied=bundle({'VIDEO_ANDROID.mp4':b'owner',manifest:json.dumps(rights)})
                   with zipfile.ZipFile(denied) as test:
@@ -334,6 +344,21 @@ jobs:
               artifacts=[a for a in artifacts if (a.get('created_at') or '')>=fresh_since]
           # Newest first, so a fresh MP4 is never stuck behind old backlog.
           artifacts.sort(key=lambda a:(a.get('created_at') or '',a.get('id') or 0),reverse=True)
+          # Repeated workflow runs often publish the same artifact name. Process only
+          # the newest occurrence so stale retries cannot create size-suffixed clones.
+          def newest_artifact_per_name(rows):
+              selected=[];seen=set()
+              for artifact in rows:
+                  name=artifact.get('name') or ''
+                  if name in seen:
+                      print('DUPLICATE ARTIFACT NAME - newest retained:',name,artifact.get('id'),flush=True)
+                      continue
+                  seen.add(name);selected.append(artifact)
+              return selected
+          assert [a['id'] for a in newest_artifact_per_name([
+              {'id':3,'name':'SAME'},{'id':2,'name':'SAME'},{'id':1,'name':'OTHER'}
+          ])]==[3,1]
+          artifacts=newest_artifact_per_name(artifacts)
           print('Import queue:',{'all':found,'selected':len(artifacts),'backfill':include_legacy},flush=True)
           downloaded=published=errors=0
           for a in artifacts:
