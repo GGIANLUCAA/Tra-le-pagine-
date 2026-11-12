@@ -1,0 +1,124 @@
+name: "G0DM0D3 FREE | Four-role cinematic board (isolated trial)"
+on:
+  pull_request:
+    paths:
+      - "src/g0dm0d3_free_four_roles_v1.py"
+      - "tests/test_g0dm0d3_free_four_roles_v1.py"
+      - ".github/workflows/g0dm0d3-free-four-roles-v1.yml"
+      - "docs/G0DM0D3_FREE_MULTIAI_PILOT_20261112.md"
+  push:
+    branches: [feature/g0dm0d3-free-multiagent-pilot-20261112]
+    paths:
+      - "src/g0dm0d3_free_four_roles_v1.py"
+      - "tests/test_g0dm0d3_free_four_roles_v1.py"
+      - ".github/workflows/g0dm0d3-free-four-roles-v1.yml"
+      - "docs/G0DM0D3_FREE_MULTIAI_PILOT_20261112.md"
+  workflow_dispatch:
+    inputs:
+      execute_free_trial:
+        description: "Explicitly request up to 4 FREE ONLY OpenRouter AI calls; false = offline preview"
+        type: boolean
+        required: true
+        default: false
+      format:
+        description: "Video format for editorial board"
+        type: choice
+        required: true
+        default: giuliano
+        options: [giuliano, artvision_4x1, storia_rivive, documentario]
+      public_topic:
+        description: "PUBLIC topic only. Do not enter private sources or personal data."
+        type: string
+        required: true
+        default: "Anticitera: come migliorare la regia dei meccanismi e le immagini rispetto alla narrazione"
+permissions:
+  contents: read
+
+concurrency:
+  group: g0dm0d3-four-role-experiment
+  cancel-in-progress: false
+
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile and verify zero-cost guards, no-network mocks, Android HTML escaping
+        run: |
+          set -euo pipefail
+          python -m py_compile src/g0dm0d3_free_four_roles_v1.py
+          python -m unittest discover -s tests -p 'test_g0dm0d3_free_four_roles_v1.py' -v
+          python - <<'PY'
+          import json
+          x=json.load(open("config/free_llm_zero_cost_v1.json"))
+          assert x["default_deny"] is True and x["routes"] == []
+          print("GLOBAL_PRODUCTION_ROUTES_REMAIN_EMPTY_AND_DISABLED")
+          PY
+      - name: Offline dry-run in Italian, no provider key required
+        run: |
+          PYTHONPATH=src python src/g0dm0d3_free_four_roles_v1.py \
+            --format giuliano \
+            --topic "Anticitera: migliorare il racconto sul meccanismo greco" \
+            --out output/g0dm0d3-free-offline
+      - name: Keep offline Android diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: G0DM0D3_FREE_OFFLINE_${{ github.run_id }}
+          path: output/g0dm0d3-free-offline/
+          if-no-files-found: warn
+          retention-days: 14
+
+  explicit-free-live-pilot:
+    if: github.event_name == 'workflow_dispatch'
+    needs: offline-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      DO_LIVE: ${{ inputs.execute_free_trial }}
+      TOPIC_PUBLIC: ${{ inputs.public_topic }}
+      VIDEO_FORMAT: ${{ inputs.format }}
+      G0DM0D3_FREE_PILOT_ONE_SHOT: "1"
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate topic public and permitted format
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          topic=os.environ.get("TOPIC_PUBLIC","")
+          fmt=os.environ.get("VIDEO_FORMAT","")
+          assert 8<=len(topic)<=190, "Topic must be short and public"
+          assert fmt in ("giuliano","artvision_4x1","storia_rivive","documentario")
+          print("G0DM0D3_EXPLICIT_OWNER_TRIAL_MODE",os.environ.get("DO_LIVE","false"))
+          print("NO_AUTOMATED_RENDER_NO_GOOGLE_TTS_NO_VIDU_NO_SOCIAL_POST")
+          PY
+      - name: 4-role OpenRouter free-only test (fails closed if key absent or prices change)
+        shell: bash
+        run: |
+          set -euo pipefail
+          flags=()
+          if [ "$DO_LIVE" = "true" ]; then flags+=(--execute); fi
+          python src/g0dm0d3_free_four_roles_v1.py \
+            --format "$VIDEO_FORMAT" --topic "$TOPIC_PUBLIC" \
+            --out output/g0dm0d3-free-live "${flags[@]}"
+      - name: Android report even if provider rejects/secret missing
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: G0DM0D3_FREE_FOUR_ROLES_${{ github.run_id }}
+          path: output/g0dm0d3-free-live/
+          if-no-files-found: warn
+          retention-days: 14
