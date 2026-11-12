@@ -107,6 +107,18 @@ class FreeOnlyFourRoles(unittest.TestCase):
         self.assertEqual(body["reasoning"],{"enabled":False})
         self.assertNotIn("models",body)
 
+    def test_baidu_uses_native_reasoning_defaults_to_avoid_rejected_parameter(self):
+        seen=[]
+        def transport(req):
+            obj=json.loads(req.data);seen.append(obj)
+            return {"model":p.MODELS[1],
+                    "choices":[{"message":{"content":"Questa e una risposta specifica sul reperto e sulle ricostruzioni."}}],
+                    "usage":{"cost":0}}
+        result=p._request_free(p.MODELS[1],"Narrativa di Anticitera e ingranaggi "*4,
+                               "fake",transport=transport)
+        self.assertNotIn("reasoning",seen[0])
+        self.assertEqual(result["reported_cost_usd"],0)
+
     def test_escape_untrusted_model_text_in_android(self):
         with tempfile.TemporaryDirectory() as tmp:
             r={"status":"four_roles_returned_unapproved",
