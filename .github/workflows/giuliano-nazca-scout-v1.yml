@@ -23,6 +23,10 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install 'Pillow>=10,<13'
+          if ! command -v ffprobe >/dev/null 2>&1; then
+            timeout 120 sudo apt-get update -qq
+            timeout 120 sudo apt-get install -y -qq ffmpeg
+          fi
           ffprobe -version | head -n 1
           python -m py_compile scripts/giuliano_nazca_scout_v1.py
       - name: Verify Commons licenses, 18+ different photos and actual moving aerial footage
