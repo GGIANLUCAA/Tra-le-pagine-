@@ -14,6 +14,7 @@ on:
       - "tests/test_ai_director_external_apis_v1.py"
       - ".github/workflows/ai-director-external-apis-v1.yml"
       - "docs/AI_DIRECTOR_API_CONNECTORS_V1.md"
+      - "docs/AI_DIRECTOR_SOURCE_HANDOFF_V1.md"
   push:
     branches: [main]
     paths:
