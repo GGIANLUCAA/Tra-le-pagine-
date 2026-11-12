@@ -144,7 +144,7 @@ def main():
     run(["ffmpeg","-y","-hide_banner","-loglevel","error",
          "-safe","0","-f","concat","-i",cut,
          "-ss","11","-i",audio,
-         "-filter_complex",f"[0:v]fps={FPS},scale={W}:{H},format=yuv420p[v];[1:a]volume=0.65,afade=t=in:st=0:d=0.6,afade=t=out:st={max(0,total-1.3):.2f}:d=1.2[a]",
+         "-filter_complex",f"[0:v]fps={FPS},scale={W}:{H},format=yuv420p[v];[1:a]volume=0.65,afade=t=in:st=0:d=0.6,afade=t=out:st={max(0,total-1.3):.2f}:d=1.2,loudnorm=I=-18:TP=-2:LRA=8[a]",
          "-map","[v]","-map","[a]","-t",f"{total:.2f}",
          "-c:v","libx264","-preset","veryfast","-crf","19",
          "-c:a","aac","-b:a","160k","-movflags","+faststart",master],timeout=360)
