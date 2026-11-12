@@ -1,0 +1,93 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-12",
+  "work_title": "The Baleful Head",
+  "artist": "Edward Burne-Jones",
+  "year": "1885–1887",
+  "variant": "cinema_standard",
+  "status": "ONE_NEW_REAL_51_SEC_MP4_TWO_ENCODINGS_SOURCE_CHECK_FFMPEG_SHA_ZIP_GITHUB_INDEPENDENT_AND_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+  "github": {
+    "run_id": 43189034501,
+    "artifact_id": 13929173788,
+    "workflow": ".github/workflows/artvision-owner-baleful-head-cinema-v1.yml",
+    "renderer": "scripts/artvision_owner_baleful_head_cinema_v1.py",
+    "render_job": "SUCCESS",
+    "independent_artifact_readback_job": "SUCCESS"
+  },
+  "source": {
+    "museum": "Staatsgalerie Stuttgart",
+    "accession": "3110",
+    "painting_type": "Completed oil painting, not preparatory Southampton gouache",
+    "object_page": "https://mediaguide.staatsgalerie.de/en/sammlung/baleful-head/people_with_hearing_impairments/",
+    "commons": "https://commons.wikimedia.org/wiki/File:The_Baleful_Head_-_Edward_Burne-Jones.jpg",
+    "pixels": [
+      1410,
+      1800
+    ],
+    "bytes": 800534,
+    "sha1": "aa420467ce4a7254c744fc2725c7b27cd3c22537",
+    "sha256": "2ff494f37894976ef48dab91f3f2bf7b8ae08bee2a1ac1246517906652b68e1c",
+    "rights": "PD original and faithful PD-Art reproduction via Commons; final territory-specific commercial clearance pending"
+  },
+  "production": {
+    "duration_seconds": 51.083333333333336,
+    "frames": 1226,
+    "fps": 24,
+    "scene_count": 12,
+    "hq_resolution": [
+      1080,
+      1920
+    ],
+    "hd_filename": "ARTVISION_BURNE_JONES_BALEFUL_HEAD_CINEMA_HD_REVIEW.mp4",
+    "hd_bytes": 21231838,
+    "hd_sha256": "b3fe9f6f57fce2ec16ae3640d87c3109c5252acd0c1f514a1e0f1b4ac00dd0c8",
+    "android_filename": "ARTVISION_BURNE_JONES_BALEFUL_HEAD_CINEMA_ANDROID_REVIEW.mp4",
+    "android_bytes": 7311701,
+    "android_sha256": "60591a1d96ac8ed9403de298da0369bc263fd0785907d59c451818922660e04a",
+    "android_zip_filename": "ARTVISION_BURNE_JONES_BALEFUL_HEAD_ANDROID_PACKAGE.zip",
+    "android_zip_bytes": 8630037,
+    "android_zip_sha256": "bc876da26339926ca660ef4a5216cd8dd5bda81f5c6ba8d43abfcac0b99519a2",
+    "music": "locally composed original chamber-style cue, no paid APIs"
+  },
+  "qa": {
+    "original_source_pixels_sha": "PASS",
+    "source_and_video_ffmpeg_full_decode": "PASS",
+    "zip_crc_and_internal_android_sha": "PASS",
+    "independent_github_render_artifact_readback": "PASS",
+    "local_artifact_visual_contact_sheet": "INSPECTED_12_SAMPLES",
+    "private_library_independent_materialize": "PASS_HD_ANDROID_ZIP",
+    "full_speed_owner_artistic": "PENDING",
+    "territorial_commercial_rights": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_calls": 0
+  },
+  "library": {
+    "hd": "libfile_ef1bbafea0f88191b2b6ff8c911527a4",
+    "android": "libfile_c74ceddbd49481919aea66a4c12a99f3",
+    "zip": "libfile_a7b36c831acc8191b0b0cb4e143dee2a",
+    "full": "libfile_57a8c7019e1c8191bebfc4509fedba13"
+  },
+  "batch": {
+    "paired_with": "Rubens The Battle of the Amazons",
+    "filename": "ARTVISION_2_NUOVI_CINEMA_ANDROID_RUBENS_BURNE_JONES_20261112.zip",
+    "bytes": 15094280,
+    "sha256": "03061f90f4bf81a7b2ff442eb2239ccfb6fb2ec8c57575227d0805564665a4fe",
+    "library": "libfile_1f3b7f299f6481918087f635b290da0f",
+    "zip_crc_and_both_mp4_sha": "PASS"
+  },
+  "queue_effect": {
+    "second_30_distinct_cinema_total": 20,
+    "first_owner_4x1_queue_reference": "26/36",
+    "new_gold": 0
+  },
+  "blocked_this_session": {
+    "work": "The Dryad — Evelyn De Morgan",
+    "reason": "HTTP 400/404 on exact Commons source (2 attempts), not counted; paused without degrading artistic QA",
+    "runs": [
+      43186939715,
+      43187322222
+    ]
+  },
+  "next": "Keep The Baleful Head and Rubens as distinct preview Cinemas, no rerender as new slots; owner artistic review and commercial permissions pending. Continue remaining user-selected paintings after verifiable source rights, without unnecessary spend/publication."
+}
