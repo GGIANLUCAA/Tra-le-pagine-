@@ -69,8 +69,12 @@ jobs:
           key=os.environ.get("GEMINI_API_KEY", "")
           if not key or chosen!="gemini-3.1-flash-tts-preview":
               raise SystemExit("TTS_ACCESS_BLOCKED: key missing or nonapproved 3.1 model")
-          model=genai.Client(api_key=key).models.get(model=chosen)
-          print("READ_ONLY_TTS_MODEL_GET_OK",model.name)
+          client=genai.Client(api_key=key)
+          try:
+              model=client.models.get(model=chosen)
+              print("READ_ONLY_TTS_MODEL_GET_OK",model.name)
+          finally:
+              client.close()
           if not model.name.endswith(chosen):
               raise SystemExit("TTS_ACCESS_BLOCKED: unexpected model identity")
           PY
