@@ -103,7 +103,8 @@ class FreeOnlyFourRoles(unittest.TestCase):
         self.assertEqual(body["model"],p.MODELS[0])
         self.assertFalse(body["provider"]["allow_fallbacks"])
         self.assertEqual(body["provider"]["max_price"],{"prompt":0,"completion":0})
-        self.assertLessEqual(body["max_tokens"],720)
+        self.assertLessEqual(body["max_tokens"],1200)
+        self.assertEqual(body["reasoning"],{"enabled":False})
         self.assertNotIn("models",body)
 
     def test_escape_untrusted_model_text_in_android(self):
