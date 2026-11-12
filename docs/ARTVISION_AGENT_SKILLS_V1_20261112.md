@@ -35,3 +35,23 @@ Le skill sono materiale istruttivo: codice o comandi esterni vanno verificati pr
 - Nessuna regressione del sistema owner, nessuna pubblicazione o spesa non autorizzata.
 
 **Limite dichiarato:** questa fase prepara la disciplina e la disponibilità delle skill per Codex. Non aumenta automaticamente qualità, capacità di rendering o numero di video; l'effetto richiede un test su un video reale, poi confronto A/B.
+
+
+## Guida operativa SOLO ANDROID (senza computer)
+**Vincolo del proprietario:** operatività interamente da smartphone Android. Non chiedere PC, shell locale, Termux, Node.js o installazione con `npx` sul telefono. I comandi negli SKILL.md sono istruzioni per l'agente in un ambiente cloud, **non azioni da eseguire sullo smartphone**.
+
+### Come vedere la proposta
+1. Aprire dal telefono [PR #277](https://github.com/GGIANLUCAA/Tra-le-pagine-/pull/277) in GitHub Mobile o Chrome Android.
+2. Aprire **Files changed** per vedere le tre skill e questa guida; dalla pagina **Checks** si controllano le verifiche effettivamente eseguite, senza supporre successi.
+3. La PR è una bozza isolata: **non eseguire Merge** finché non è validata. Nessun test video è implicito nel suo stato.
+
+### Come usare le skill senza terminale locale
+- **Percorso A — ChatGPT Android + connettore GitHub:** chiedere in chat «Analizza la run X con la procedura `artvision-ci-triage`» oppure «Verifica il mio video Y applicando `artvision-video-evidence`». L'assistente deve prima leggere il relativo SKILL.md dal repository e, quando possibile, le prove reali. Questa è applicazione guidata delle istruzioni, **non installazione automatica delle skill nella normale chat**.
+- **Percorso B — Codex Cloud su Android:** aprire Codex nell'app ChatGPT o dal sito, usare un ambiente cloud che abbia accesso a `GGIANLUCAA/Tra-le-pagine-`, e selezionare il branch che contiene `.agents/skills`. L'agente Codex può allora rilevare le skill locali del repo; il rilevamento dipende dalla disponibilità e configurazione dell'ambiente. Gli ambienti si configurano tramite web, che può essere aperto da Chrome Android; non occorre un PC.
+- **Percorso C — GitHub Mobile:** le Actions con `workflow_dispatch` già presenti sul branch predefinito possono essere avviate dal menu **Actions > Workflows > Run workflow**, scegliendo gli input previsti; un workflow nuovo, invece, deve esistere in `main` per poter essere avviato manualmente tramite GitHub. **Questa PR non aggiunge nuovi workflow**.
+
+### Prompt da usare dalla chat Android
+> Nel repository GGIANLUCAA/Tra-le-pagine-, leggi prima AGENTS.md e docs/REGOLE_ATTIVE.md, poi la skill .agents/skills/artvision-ci-triage/SKILL.md nel branch feature/artvision-curated-agent-skills-20261112. Analizza lo stato attuale del workflow/run che ti indicherò e riportami prove, causa e intervento minimo. Non creare costi, non eseguire merge e non pubblicare video.
+
+### Limiti e prossima prova
+Senza un MP4 realmente accessibile, il controllo video si ferma a `UNVERIFIED_MEDIA`. Per testare la skill da Android usare un artifact o una Release esistente, controllando accessibilità dei byte, QA tecnico, valutazione artistica e diritti separatamente. Nessun avvio a tempo, costo API, nuova subscription o richiesta di credenziali.
