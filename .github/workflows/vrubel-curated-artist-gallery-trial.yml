@@ -33,12 +33,12 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: VRUBEL_AUTHENTIC_PAINTINGS_OWNER_REVIEW
+          name: VRUBEL_AUTHENTIC_ARTIST_GALLERY_V2
           path: |
-            output/vrubel-curated-gallery-20261112/VRUBEL_PAINTINGS_REAL_ARTWORK_REVIEW.mp4
-            output/vrubel-curated-gallery-20261112/VRUBEL_REVIEW_PACKAGE.zip
-            output/vrubel-curated-gallery-20261112/COVER.jpg
-            output/vrubel-curated-gallery-20261112/CONTACT_SHEET.jpg
+            output/vrubel-curated-gallery-20261112/VRUBEL_REAL_ARTIST_GALLERY_REVIEW_V2.mp4
+            output/vrubel-curated-gallery-20261112/VRUBEL_REVIEW_PACKAGE_V2.zip
+            output/vrubel-curated-gallery-20261112/COVER_V2.jpg
+            output/vrubel-curated-gallery-20261112/CONTACT_SHEET_V2.jpg
             output/vrubel-curated-gallery-20261112/SOURCE_MANIFEST.json
             output/vrubel-curated-gallery-20261112/SOCIAL_CAPTION.txt
           if-no-files-found: error
