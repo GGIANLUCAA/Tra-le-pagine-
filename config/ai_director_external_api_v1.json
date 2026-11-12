@@ -2,5 +2,5 @@
   "schema": "ai-director-external-api-policy-v1",
   "default_deny": true,
   "routes": [],
-  "notes": "Europeana metadata search is allowed only on explicit manual execution with EUROPEANA_API_KEY; it is not inference. Gemini image, Groq transcription and Cloudflare vision are NOT enabled by this policy. Do not add routes until exact account-specific zero-cost pricing, EEA/commercial rights, billing and provider terms have been checked. Any paid or unknown route is prohibited."
+  "notes": "Europeana is not used. Keyless museum/archive research lives in ai_director_keyless_archives_v1.py and requires no secrets; it is manually executed. Gemini frame, Groq transcription and all other paid or uncertain inference remain disabled by default. Zero-cost evidence and commercial terms are required before authorizing any external model."
 }
