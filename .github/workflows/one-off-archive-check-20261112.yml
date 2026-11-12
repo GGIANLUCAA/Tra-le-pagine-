@@ -1,0 +1,58 @@
+name: "ONE-OFF | real archive category & relevance smoke 20261112"
+on:
+  pull_request:
+    paths: [".github/workflows/one-off-archive-check-20261112.yml"]
+permissions:
+  contents: read
+jobs:
+  public-api-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Search two actual categories after media-kind correction
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/ai_director_keyless_archives_v1.py \
+            --execute --category historical_video --query "Venice 1896" \
+            --per-provider 2 --format storia_rivive \
+            --output output/live_archive_check/video
+          python src/ai_director_keyless_archives_v1.py \
+            --execute --category art --query "Fabritius" \
+            --per-provider 2 --format artvision_4x1 \
+            --output output/live_archive_check/art
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for kind in ("video","art"):
+              data=json.loads((Path("output/live_archive_check")/kind/"CANDIDATES.json").read_text())
+              assert data["paid_calls"] is False
+              assert data["key_required"] is False
+              assert data["europeana_used"] is False
+              assert data["publication_authorized"] is False
+              for item in data["items"]:
+                  assert item["media_kind"]==("video" if kind=="video" else "image"), item
+                  assert item["approved"] is False
+              print("RESULT_" + kind.upper() + "_START")
+              print(json.dumps({
+                  "status":data["status"],"category":data["category"],
+                  "candidate_count":data["candidate_count"],
+                  "providers":data["providers"],
+                  "items":[{"title":x["title"],"source_url":x["source_url"],
+                            "media_kind":x["media_kind"],"rights_review":x["rights_review"]}
+                           for x in data["items"]]
+              },ensure_ascii=False,indent=2))
+              print("RESULT_" + kind.upper() + "_END")
+          PY
+      - name: Retain diagnostic snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Keyless-archive-live-category-check
+          path: output/live_archive_check/
+          retention-days: 7
+          if-no-files-found: warn
