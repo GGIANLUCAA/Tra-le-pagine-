@@ -80,6 +80,19 @@ def crop_center_to_aspect(image,width,height):
     return ImageOps.fit(image.convert('RGB'),(width,height),Image.Resampling.LANCZOS,centering=(.5,.5))
 
 
+def recommend_editorial_frame_style(moods):
+    """Select a restrained frame family by subject mood when original is absent."""
+    moods={str(m).strip().lower() for m in moods}
+    if moods.intersection({'modern','minimal','abstract','contemporary'}):
+        return 'minimal_black'
+    if moods.intersection({'gothic','dark','somber','tragic','grief','horror'}):
+        return 'dark_wood'
+    if moods.intersection({'mythology','moonlight','dream','mystical','sea'}):
+        return 'bronze'
+    if moods.intersection({'classical','renaissance','baroque','historic','epic','monumental'}):
+        return 'gilt'
+    return 'dark_wood'
+
 def color(hexv):return tuple(bytes.fromhex(hexv[1:]))
 
 
@@ -152,7 +165,7 @@ def mount_on_wall(room_image,frame_image,art_cm,frame_cm,room):
 
 def assemble(catalog_path,assets_dir,painting_path,out_dir,art_width_cm,art_height_cm,moods,
              variant,room_id=None,prev_rooms=None,authentic_frame_photo=None,
-             frame_source_url=None,frame_license=None,frame_style='gilt',allow_editorial=False,
+             frame_source_url=None,frame_license=None,frame_style='auto',allow_editorial=False,
              frame_outer_cm=None,verified_frame_type='current_documented'):
     catalog=load_catalog(catalog_path)
     if variant not in ('cinema_museum','critico_museum'):
@@ -196,6 +209,7 @@ def assemble(catalog_path,assets_dir,painting_path,out_dir,art_width_cm,art_heig
     else:
         if not allow_editorial:
             raise ValueError('Authentic framed photo absent: explicit editorial fallback approval required')
+        frame_style=recommend_editorial_frame_style(moods) if frame_style=='auto' else frame_style
         patch=make_editorial_frame(painting,frame_style)
         frame_kind='editorial_scenographic_not_historical'
         frame_source_url=None;frame_license=None;source_frame_sha=None
@@ -216,7 +230,8 @@ def assemble(catalog_path,assets_dir,painting_path,out_dir,art_width_cm,art_heig
         'official_artwork_cm':[art_width_cm,art_height_cm],
         'frame_status':frame_kind,'frame_source_url':frame_source_url,'frame_source_license':frame_license,
         'frame_source_sha256':source_frame_sha,'frame_dimensions_status':frame_dimensions_status,
-        'frame_source_disclosure':frame_source_disclosure,'moods':list(moods),'matched_tags':matched,
+        'frame_source_disclosure':frame_source_disclosure,'editorial_frame_family':frame_style if frame_kind=='editorial_scenographic_not_historical' else None,
+        'moods':list(moods),'matched_tags':matched,
         'paired_variants_lock':'Use the same room_id, authentic frame/source, and art source in both Museum versions',
         'existing_standard_video_untouched':True,'same_original_narration_required':True,
         'same_original_cinema_music_required':True,'camera_motion':'STILL_SAMPLE_NOT_3D',
@@ -241,7 +256,7 @@ def main():
     p.add_argument('--authentic-frame-photo',type=Path)
     p.add_argument('--frame-source-url')
     p.add_argument('--frame-license')
-    p.add_argument('--frame-style',choices=tuple(PALETTE),default='gilt')
+    p.add_argument('--frame-style',choices=('auto',)+tuple(PALETTE),default='auto')
     p.add_argument('--allow-editorial',action='store_true')
     p.add_argument('--variant',choices=('cinema_museum','critico_museum'),required=True)
     p.add_argument('--out-dir',type=Path,required=True)
