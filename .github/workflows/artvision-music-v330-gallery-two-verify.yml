@@ -1,0 +1,75 @@
+name: "ArtVision MUSIC20 | verify two real gallery soundtracks"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-music-v330-gallery-two-verify.yml"
+permissions:
+  contents: read
+jobs:
+  verify_real_music:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - artist: "Evelyn De Morgan"
+            artwork: "The Storm Spirits"
+            moods: "mysterious,magical"
+            track: "myst_on_the_moor"
+          - artist: "Mikhail Vrubel"
+            artwork: "The Swan Princess"
+            moods: "eerie,mystical"
+            track: "ghost_processional"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Ensure FFprobe and FFmpeg to validate real audio bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python -m py_compile src/artvision_music_selector_v330.py
+      - name: Download from composer's official address, verify SHA and full audio
+        shell: bash
+        env:
+          ARTIST: ${{ matrix.artist }}
+          ARTWORK: ${{ matrix.artwork }}
+          MOODS: ${{ matrix.moods }}
+          TRACK: ${{ matrix.track }}
+        run: |
+          set -euo pipefail
+          p="output/music-v330-two/$TRACK"
+          mkdir -p "$p"
+          python src/artvision_music_selector_v330.py \
+            --title "$ARTWORK" --artist "$ARTIST" --moods "$MOODS" \
+            --pin "$TRACK" --duration 44 \
+            --prepare --cache "$p" \
+            --out-json "$p/SELECTION_AND_ACTUAL_SHA.json"
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          name=os.environ["TRACK"]
+          p=Path('output/music-v330-two')/name
+          d=json.loads((p/'SELECTION_AND_ACTUAL_SHA.json').read_text())
+          assert d["selected"]["track_id"]==name
+          assert d["license_status"]=="ACTUAL_BINARY_SHA256_FFPROBE_VERIFIED"
+          isrc=d["selected"]["isrc"]
+          recording=p/(isrc+".mp3")
+          proof=d["recording_proof"]
+          assert recording.exists() and hashlib.sha256(recording.read_bytes()).hexdigest()==proof["sha256"]
+          subprocess.run(['ffmpeg','-hide_banner','-v','error','-xerror','-i',str(recording),'-map','0:a:0','-f','null','-'],check=True)
+          assert not d["published"] and d["human_listening_review"]=="PENDING"
+          print("EXACT_LICENSED_REAL_MUSIC_AUDIO_VERIFIED",name,proof["sha256"])
+          PY
+      - name: Archive verified real MP3 and full credits for private review only
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_V330_REAL_MUSIC_${{ matrix.track }}_QA
+          retention-days: 21
+          if-no-files-found: error
+          path: output/music-v330-two/${{ matrix.track }}/
