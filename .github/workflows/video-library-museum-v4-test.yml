@@ -4,10 +4,14 @@ on:
     paths:
       - site/video-library-v2.html
       - .github/workflows/video-library-museum-v4-test.yml
+      - tests/video-library-owner-seven-ux.test.cjs
+      - site/video-library-owner-seven-ux.fragment.js
   pull_request:
     paths:
       - site/video-library-v2.html
       - .github/workflows/video-library-museum-v4-test.yml
+      - tests/video-library-owner-seven-ux.test.cjs
+      - site/video-library-owner-seven-ux.fragment.js
 permissions:
   contents: read
 jobs:
@@ -101,3 +105,14 @@ jobs:
           })().catch(e=>{console.error(e);process.exit(1)});
           JS
           node /tmp/museum-v4/check.cjs
+      - name: Validate selected seven UX features (safe preview)
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          html=Path("site/video-library-v2.html").read_text()
+          frag=Path("site/video-library-owner-seven-ux.fragment.js").read_text()
+          assert frag.strip() in html, "Fragment not in published inline script"
+          assert html.count("<script>")==1 and html.count("</script>")==1
+          PY
+          node tests/video-library-owner-seven-ux.test.cjs
