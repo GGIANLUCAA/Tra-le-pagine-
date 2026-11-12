@@ -134,6 +134,15 @@ class FreeOnlyFourRoles(unittest.TestCase):
         self.assertTrue(all("75,21-96 s" in text for text in saved))
         self.assertTrue(all(len(text) <= 6500 for text in saved))
 
+    def test_one_shot_workflow_targets_only_new_authorized_request(self):
+        file = Path(__file__).resolve().parents[1] / ".github/workflows/g0dm0d3-free-giuliano-one-shot-20261112.yml"
+        yml=file.read_text(encoding="utf-8")
+        target="requests/g0dm0d3_free/giuliano_antikythera_verified_shotmap_liquid_once_20261112.json"
+        self.assertEqual(yml.count(target),2)
+        self.assertIn("OPENRUTER3",yml)
+        self.assertIn("G0DM0D3_FREE_PILOT_ONE_SHOT",yml)
+        self.assertIn("ONE_SHOT_ALREADY_USED_OR_NOT_NEW",yml)
+
     def test_escape_untrusted_model_text_in_android(self):
         with tempfile.TemporaryDirectory() as tmp:
             r={"status":"four_roles_returned_unapproved",
