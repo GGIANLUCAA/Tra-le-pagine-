@@ -1,0 +1,86 @@
+name: "GIULIANO EP2 — WALKING GIANTS FINAL DIRECTOR EDIT"
+on:
+  push:
+    branches: ["feature/giuliano-moai-definitive-v2-20261111"]
+    paths:
+      - "giuliano/moai_v2/**"
+      - ".github/workflows/giuliano-terracotta-doc-v3.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: giuliano-moai-final-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  definitive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 95
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Assert no second AI voice or unlicensed experiment video
+        run: |
+          python -m py_compile giuliano/moai_v2/render_definitive.py
+          test -s giuliano/moai_v2/assets/SimplifiedMoai.obj
+          test -s giuliano/moai_v2/assets/MIT_LICENSE_CARL_LIPO_TERRY_HUNT.txt
+          python - <<'PY'
+          from pathlib import Path
+          p=Path("giuliano/moai_v2/render_definitive.py").read_text()
+          assert "synthesize(" not in p
+          assert "SIMULAZIONE 3D" in p
+          assert "genuine_new_experiment_clip_included" in p
+          assert "original_Google_voice_and_score_pcm_unchanged" in p
+          print("NO_NEW_API_COST_LICENSING_PREFLIGHT_PASS",flush=True)
+          PY
+      - name: Download approved original master, existing cover and QA (no TTS cost)
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_EP2_WALKING_GIANTS_MP4_ANDROID_ZIP
+          run-id: 43028415246
+          github-token: ${{ github.token }}
+          path: output/giuliano_moai_v2/base
+      - name: Video dependencies and scientific software rendering
+        run: |
+          if command -v ffmpeg >/dev/null 2>&1; then
+            echo "Using preinstalled FFmpeg"
+            ffmpeg -version | head -1
+          else
+            echo "Installing missing FFmpeg on GitHub runner"
+            timeout 150 sudo apt-get update -qq
+            timeout 150 sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          fi
+          python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<13' 'requests>=2.31,<3' 'trimesh>=4,<5' 'opencv-python-headless>=4.9,<5' 'yt-dlp>=2025.10'
+      - name: Produce finished film and Android exports, full quality validation
+        env:
+          OPENBLAS_NUM_THREADS: "1"
+          OMP_NUM_THREADS: "1"
+          PYTHONUNBUFFERED: "1"
+        run: python giuliano/moai_v2/render_definitive.py
+      - name: Save partial lawful photos / simulation QA on any failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MOAI_V2_RECOVERY_NOT_FINAL_VIDEO
+          path: |
+            output/giuliano_moai_v2/final/SCIENTIFIC_WALKING_*.mp4
+            output/giuliano_moai_v2/final/EXTRA_IMAGE_CREDITS.json
+            output/giuliano_moai_v2/final/extra_*.jpg
+          if-no-files-found: ignore
+          retention-days: 10
+      - name: Provide complete verified Android MP4, FullHD MP4, cover, ZIP and QA
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_WALKING_GIANTS_DEFINITIVO_ANDROID_FULLHD_ZIP
+          path: |
+            output/giuliano_moai_v2/final/THE_WALKING_GIANTS_GIULIANO_DEFINITIVO_HD.mp4
+            output/giuliano_moai_v2/final/THE_WALKING_GIANTS_GIULIANO_ANDROID.mp4
+            output/giuliano_moai_v2/final/THE_WALKING_GIANTS_GIULIANO_COMPLETO.zip
+            output/giuliano_moai_v2/final/COVER_DEFINITIVA.jpg
+            output/giuliano_moai_v2/final/NOVITA_FOTOGRAFICHE.jpg
+            output/giuliano_moai_v2/final/QA_DEFINITIVO.json
+          if-no-files-found: error
+          retention-days: 20
