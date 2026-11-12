@@ -94,6 +94,40 @@ def select_providers(category="general", selected=None):
     return POLICY[category]
 
 
+def _curated_alias(query, artist):
+    """Exact title+creator match only: no fuzzy guesses, no scraped claims."""
+    cfg = ROOT / "config/ai_director_curated_source_aliases_v1.json"
+    if not cfg.is_file() or cfg.stat().st_size > 20_000:
+        raise KeylessResearchError("Curated aliases config missing/oversized")
+    try:
+        data = json.loads(cfg.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        raise KeylessResearchError("Curated aliases invalid") from None
+    if data.get("schema") != "ai-director-curated-source-aliases-v1" or not isinstance(data.get("entries"), list):
+        raise KeylessResearchError("Curated aliases format invalid")
+    query_words = _keywords(query)
+    artist_words = _keywords(artist)
+    for entry in data["entries"][:30]:
+        if not isinstance(entry, dict) or not artist_words:
+            continue
+        if _keywords(entry.get("canonical_title")) != query_words:
+            continue
+        if _keywords(entry.get("artist")) != artist_words:
+            continue
+        # Only previously reviewed primary-museum provenance, no API keys.
+        if entry.get("fallback_provider") != "commons":
+            continue
+        if not str(entry.get("reference_url", "")).startswith("https://www.mauritshuis.nl/"):
+            continue
+        if entry.get("publication_authorized") is not False:
+            continue
+        alias = _valid_query(entry.get("fallback_search"))
+        if not _keywords(alias):
+            continue
+        return entry, alias
+    return None
+
+
 def research(query, *, category="general", selected=None, per_provider=2, artist="", fetcher=None):
     """User-initiated, up to four keyless sources. No media is retrieved."""
     query = _valid_query(query)
@@ -173,6 +207,63 @@ def research(query, *, category="general", selected=None, per_provider=2, artist
             # Never reflect source response, user credentials or URL into logs.
             provider_reports.append({"provider": provider, "status": "provider_unavailable_or_invalid"})
             total_calls += planned_max  # conservative estimate when an exception hides partial requests
+    # One documented translation/filename recovery, only if exact artwork AND
+    # creator were specified and the ordinary source scout has no candidates.
+    # Do not expand arbitrary historical queries or retry providers on HTTP errors.
+    if category == "art" and artist and not selected and not items and total_calls + 1 <= MAX_REQUESTS:
+        fallback = _curated_alias(query, artist)
+        if fallback:
+            entry, alias_query = fallback
+            provider = entry["fallback_provider"]
+            try:
+                response = search_public(provider, alias_query, limit=3, fetcher=fetcher)
+                calls = response.get("api_requests")
+                if type(calls) is not int or calls != 1:
+                    raise KeylessResearchError("Unexpected alias query request count")
+                total_calls += calls
+                candidates = response.get("items")
+                if not isinstance(candidates, list):
+                    raise KeylessResearchError("Invalid alias response")
+                chosen = 0
+                for candidate in candidates[:3]:
+                    if not isinstance(candidate, dict) or candidate.get("media_kind") != "image":
+                        continue
+                    passed, reason, words = _source_relevance(
+                        alias_query, candidate, category="art", artist=artist)
+                    url = candidate.get("source_url")
+                    if not passed or not isinstance(url, str) or not url.startswith("https://") or url in seen:
+                        continue
+                    seen.add(url)
+                    items.append({
+                        "provider": provider,
+                        "id": _safe_field(candidate.get("id")),
+                        "title": _safe_field(candidate.get("title")),
+                        "author": _safe_field(candidate.get("author")),
+                        "date": _safe_field(candidate.get("date"), 80),
+                        "media_kind": "image", "source_url": url[:1200],
+                        "preview": _safe_field(candidate.get("preview"), 1200),
+                        "license_claim": _safe_field(candidate.get("license_claim"), 320),
+                        "rights_review": "pending", "authenticity_review": "pending",
+                        "scene_relevance": "pending", "source_verified": False,
+                        "approved": False, "downloaded": False,
+                        "text_relevance": "curated_filename_alias_match_unverified",
+                        "matched_query_terms": words,
+                        "artist_filter_requested": True,
+                        "curated_work_reference": entry["reference_url"],
+                        "curated_source_id": entry["id"],
+                        "alias_used": alias_query,
+                        "canonical_title_requested": query
+                    })
+                    chosen += 1
+                provider_reports.append({"provider": provider,
+                                         "status": "curated_alias_response",
+                                         "added_candidates": chosen,
+                                         "api_requests": calls,
+                                         "alias_source_id": entry["id"]})
+            except (ValueError, TypeError, KeyError, OSError):
+                total_calls += 1  # pessimistic bound after a failed single request
+                provider_reports.append({"provider": provider, "status": "curated_alias_unavailable",
+                                         "alias_source_id": entry["id"]})
     status = "candidates_need_review" if items else "no_candidates_or_sources_unavailable"
     return {
         "schema": "ai-director-keyless-archives-v1", "category": category,
