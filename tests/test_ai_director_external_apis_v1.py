@@ -11,6 +11,7 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 import ai_director_external_apis_v1 as api
+import ai_director_europeana_bridge_v1 as bridge
 
 
 class FakeHTTP:
@@ -148,6 +149,37 @@ class AdapterTests(unittest.TestCase):
             self.assertEqual(len(received),1)
             self.assertEqual(result["segments"][0]["end_s"],2.1)
             self.assertFalse(result["visual_alignment_verified"])
+
+    def test_europeana_candidates_flow_into_existing_ai_director(self):
+        research = {
+            "schema": "ai-director-europeana-research-v1",
+            "provider": "europeana", "api_requests": 1,
+            "items": [
+                {"id": "europeana:1", "title": "Venezia nel 1896",
+                 "date": "1896", "source_url": "https://www.europeana.eu/en/item/1",
+                 "rights_claim": "CC0 candidate, not inspected", "approved": False}
+            ]}
+        result=bridge.prepare(research,"Venezia 1896")
+        self.assertEqual(result["schema"], "ai-director-v1")
+        self.assertFalse(result["publication_authorized"])
+        self.assertTrue(result["research_candidates_only"])
+        self.assertEqual(len(result["source_notes"]),1)
+        self.assertIn("UNVERIFIED",result["source_notes"][0]["license"])
+        import ai_director_v1 as director
+        prompts = director.editorial_prompts(result)
+        self.assertIn("Venezia nel 1896",prompts["director"])
+        with tempfile.TemporaryDirectory() as d:
+            inp=Path(d)/"europeana.json"
+            dest=Path(d)/"brief.json"
+            rep=Path(d)/"report"
+            inp.write_text(json.dumps(research))
+            self.assertEqual(bridge.main(["--input",str(inp),"--subject","Venezia 1896",
+                                          "--output",str(dest),"--report-dir",str(rep)]),0)
+            self.assertTrue((rep/"ANDROID_REPORT.html").exists())
+            r=json.loads((rep/"REPORT.json").read_text())
+            self.assertFalse(r["publication_authorized"])
+            self.assertFalse(r["sources_verified"])
+            self.assertEqual(r["europeana_candidate_count"],1)
 
     def test_europeana_cli_offline_never_calls_network(self):
         with tempfile.TemporaryDirectory() as d:
