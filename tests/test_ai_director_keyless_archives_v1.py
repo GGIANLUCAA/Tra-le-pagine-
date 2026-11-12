@@ -35,7 +35,9 @@ class KeylessTests(unittest.TestCase):
         calls = []
         def fake(provider, query, limit, fetcher=None):
             calls.append(provider)
-            return catalogue(provider, len(calls))
+            data = catalogue(provider, len(calls))
+            data["items"][0]["media_kind"] = "video"
+            return data
         with mock.patch.object(r, "search_public", side_effect=fake):
             found = r.research("Venice 1896", category="historical_video", per_provider=2)
         self.assertEqual(calls, ["loc", "archive", "commons"])
@@ -71,13 +73,43 @@ class KeylessTests(unittest.TestCase):
             order.append(provider)
             if provider == "loc":
                 raise ValueError("upstream error")
-            return catalogue(provider, len(order))
+            data = catalogue(provider, len(order))
+            data["items"][0]["media_kind"] = "video"
+            return data
         with mock.patch.object(r, "search_public", side_effect=fake):
             data = r.research("Venice 1896", category="historical_video")
         self.assertEqual(order, ["loc", "archive", "commons"])
         self.assertEqual(data["providers"][0]["status"], "provider_unavailable_or_invalid")
         self.assertEqual(data["candidate_count"], 2)
         self.assertLessEqual(data["api_requests_upper_bound"], r.MAX_REQUESTS)
+
+    def test_historical_video_does_not_admit_unrelated_museum_photos(self):
+        def fake(provider, query, limit, fetcher=None):
+            if provider == "commons":
+                return {"provider": provider, "api_requests": 1, "items": [
+                    {"id": "commons:painting", "title": "A Venetian Museum Artwork",
+                     "source_url": "https://commons.wikimedia.org/wiki/File:Painting.jpg",
+                     "media_kind": "image", "license_claim": "unverified"},
+                    {"id": "commons:film", "title": "Panorama du Grand Canal 1896",
+                     "source_url": "https://commons.wikimedia.org/wiki/File:Venise_1896.webm",
+                     "media_kind": "video", "license_claim": "unverified"}]}
+            return {"provider": provider, "api_requests": 1, "items": []}
+        with mock.patch.object(r, "search_public", side_effect=fake):
+            data = r.research("Venice 1896", category="historical_video", per_provider=2)
+        self.assertEqual(data["candidate_count"], 1)
+        self.assertEqual(data["items"][0]["media_kind"], "video")
+        self.assertEqual(data["providers"][2]["excluded_by_media_kind"], 1)
+        self.assertFalse(data["items"][0]["approved"])
+
+    def test_historical_photo_does_not_admit_video(self):
+        def fake(provider, query, limit, fetcher=None):
+            return {"provider": provider, "api_requests": 1, "items": [
+                {"id": "archive:film", "title": "Moving footage",
+                 "source_url": "https://example.org/movie", "media_kind": "video"}]}
+        with mock.patch.object(r, "search_public", side_effect=fake):
+            data = r.research("Historic Paris 1900", category="historical_photo")
+        self.assertEqual(data["candidate_count"], 0)
+        self.assertEqual(sum(p.get("excluded_by_media_kind", 0) for p in data["providers"]), 3)
 
     def test_all_upstream_failures_do_not_fake_results(self):
         with mock.patch.object(r, "search_public", side_effect=OSError("down")):
