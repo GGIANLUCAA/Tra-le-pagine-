@@ -10,11 +10,11 @@ from PIL import Image, ImageDraw, ImageFont
 
 OUT=Path('output/artvision-owner-demorgan-dryad-cinema-v1')
 OUT.mkdir(parents=True,exist_ok=True)
-# De Morgan Collection. Source: full-size Wikimedia Commons original Dryad11.jpg.
+# De Morgan Collection. Source: canonical Wikimedia Commons original Evelyn_De_Morgan_-_The_Dryad.jpg (former redirect Dryad11.jpg).
 # Verify EXACT original 82,826,574 bytes and SHA1, then resize LOCALLY.
 # Wikimedia dynamically rejects arbitrary thumbnail widths (HTTP 400/404).
-SOURCE='Dryad11.jpg'
-PAGE='https://commons.wikimedia.org/wiki/File:Dryad11.jpg'
+SOURCE='Evelyn_De_Morgan_-_The_Dryad.jpg'
+PAGE='https://commons.wikimedia.org/wiki/File:Evelyn_De_Morgan_-_The_Dryad.jpg'
 FULL_ORIGINAL_SOURCE_SHA1='a46fbc28e7b9ab21bc384b7b4f684cc3a0a3871a'
 FULL_ORIGINAL_SOURCE_PIXELS=(8726,21359)
 FULL_ORIGINAL_SOURCE_BYTES=82826574
