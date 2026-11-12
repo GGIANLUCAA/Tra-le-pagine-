@@ -158,9 +158,7 @@ class SourceHandoffTests(unittest.TestCase):
         result = bridge.build_handoff(no, aliases=self.aliases)
         with tempfile.TemporaryDirectory() as folder:
             bridge.write_output(result, folder)
-            self.assertIn("nessuna fonte", (Path(folder) / "SOURCE_REVIEW_ANDROID.html").read_text().lower()
-                          if "nessuna fonte" in (Path(folder) / "SOURCE_REVIEW_ANDROID.html").read_text().lower()
-                          else "nessuna fonte")
+            self.assertIn("nessuna fonte", (Path(folder) / "SOURCE_REVIEW_ANDROID.html").read_text().lower())
             self.assertEqual(json.loads((Path(folder) / "V34_PENDING_CATALOG.json").read_text())["assets"], [])
 
 
