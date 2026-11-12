@@ -1,4 +1,4 @@
-name: "ArtVision OWNER | Evelyn De Morgan The Dryad | New Cinema private review"
+name: "ArtVision OWNER | Evelyn De Morgan The Dryad | SHA-fixed Cinema private review"
 on:
   push:
     branches: [main]
@@ -57,6 +57,8 @@ jobs:
           meta=json.loads((p/'SOURCES_RIGHTS.json').read_text())
           assert meta['museum']=='De Morgan Collection'
           assert meta['original_full_sha1_from_wikimedia_metadata']=='a46fbc28e7b9ab21bc384b7b4f684cc3a0a3871a'
+          assert meta['full_original_verified_locally_against_sha1_and_bytes'] is True
+          assert meta['full_original_bytes']==82826574
           assert meta['original_full_pixels_from_wikimedia_metadata']==[8726,21359]
           with Image.open(src) as im:
             assert im.size[0] in (2560,1920,1600)
@@ -66,6 +68,8 @@ jobs:
           print('DRYAD_COMMONS_DERIVATIVE_IMAGE_SHA1_PIXELS_MATCH')
           qa=json.loads((p/'QA_TECHNICAL.json').read_text())
           assert qa['source_sha256']==sha(src)
+          assert qa['full_original_source_sha1_verified'] is True
+          assert qa['full_original_source_size_bytes']==82826574
           assert qa['source_sha1']==hashlib.sha1(src.read_bytes()).hexdigest()
           assert qa['mp4_sha256']==sha(hq)
           assert qa['android_mp4_sha256']==sha(phone)
