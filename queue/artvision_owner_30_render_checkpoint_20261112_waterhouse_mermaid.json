@@ -1,0 +1,93 @@
+{
+  "schema": "artvision-owner-30-render-checkpoint-v1",
+  "date": "2026-11-12",
+  "work_id": "waterhouse_a_mermaid_1900_ra_03_805",
+  "title_selected": "The Mermaid",
+  "title_official": "A Mermaid",
+  "artist": "John William Waterhouse",
+  "selected_order": 20,
+  "variant": "cinema_standard",
+  "status": "NEW_REAL_PRIVATE_REVIEW_MP4_SOURCE_SHA1_AND_FFMPEG_ZIP_CRC_INDEPENDENT_GITHUB_READBACK_PASS_ARTISTIC_RIGHTS_PENDING",
+  "source": {
+    "artwork_year": 1900,
+    "object_id": "Royal Academy 03/805",
+    "object_height_cm": 96.5,
+    "object_width_cm": 66.6,
+    "page": "https://commons.wikimedia.org/wiki/File:John_William_Waterhouse_-_Mermaid.JPG",
+    "source_image_sha1": "e288cc3ad87653593f4a634256bcd595495c08fe",
+    "original_image_sha256": "84d96ce40e8ed44e8b6f372758e5b8daed8dd7df69d4f65e8095c55a568bec65",
+    "original_image_bytes": 578091,
+    "original_image_pixels": [
+      1852,
+      2693
+    ],
+    "wikimedia_rights": "PD-Art/PDM indicated for this faithful photographic reproduction; other jurisdictions and UK RA photo rights must not be assumed",
+    "territorial_commercial_rights_final": "PENDING",
+    "painting_identification": "RA A Mermaid 1900, not Waterhouse 1892 oil sketch"
+  },
+  "important_frame_discovery": {
+    "institutional_url": "https://www.royalacademy.org.uk/art-artists/work-of-art/frame-for-john-william-waterhouse-ra-a-mermaid",
+    "frame_ra_id": "04/1571",
+    "size_cm": [
+      119.2,
+      89.6,
+      9
+    ],
+    "wood": "carved pine",
+    "style": "Louis XIII baroque",
+    "date": "late 17th century modified in 19th century",
+    "photo_rights": "RA copyright separate commercial licence required; frame image NOT used in Cinema Standard",
+    "museum_artistic_gate": "Frame documented, but no proof of permitted actual room footage, geometry or approved source image for Museum; DO NOT count any Museum."
+  },
+  "video": {
+    "filename": "VIDEO_ANDROID_REVIEW.mp4",
+    "duration_s": 51.8,
+    "fps": 20,
+    "frames": 1036,
+    "resolution": [
+      720,
+      1280
+    ],
+    "bytes": 6111317,
+    "sha256": "0fecef848ed7d1becfffd4a603ddf641192ab85fee0dfbc3df836a5996544c17",
+    "zip_filename": "ANDROID_REVIEW_PACKAGE.zip",
+    "zip_bytes": 6594737,
+    "zip_sha256": "bc87667f1e9349ff69d7f7e2f7176535828ac480fca3110280713fde0d0887d3",
+    "scenes": 12,
+    "original_score": true,
+    "final_black_tail_ffmpeg": "NONE detected in last 6 seconds",
+    "QA_static_contact": "Genuine original artwork. Two last shots both whole-artwork views (4.8s + 6s); extended similar final footage must be critically reviewed for pacing. Some pearls/shore crops recur, artistic QA pending."
+  },
+  "independent_qa": {
+    "run": 43245068240,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43245068240",
+    "artifact_id": 13955079256,
+    "render_job": "PASS",
+    "separate_readback_job": "PASS",
+    "local_artifact_zip_crc": "PASS",
+    "local_video_SHA256": "PASS",
+    "local_full_ffmpeg_all_streams_decode": "PASS",
+    "embedded_zip_crc_and_video_SHA256": "PASS"
+  },
+  "guardrails": {
+    "Gold_V25": false,
+    "human_full_speed_artistic_review": "PENDING",
+    "territorial_rights": "PENDING",
+    "social_posted": false,
+    "site_published": false,
+    "paid_API_calls": 0,
+    "no_real_museum_claim": true,
+    "master_others_unchanged": true
+  },
+  "queue_effect": {
+    "prior_distinct_second_30_cinema": 21,
+    "new_cinema_standard_candidate_slots": 1,
+    "after_distinct_second_30_cinema": 22,
+    "original_ten_technical_slots": 26,
+    "original_ten_active_slots_ex_dali": 36,
+    "original_ten_new_slots": 0,
+    "remaining_30_cinema": 8,
+    "note": "Historical Dadd and Avalon have earlier renders outside this new checkpoint series; do not mistake absence from new checkpoint names for permission to rerender."
+  },
+  "next_action": "Preserve MP4 and ZIP in private Library, verify their independent readback; no rerender of this exact video as a new slot; continue other selected works or actual existing Museum variants only with true physical scale and licence, avoid gold/publish until approved."
+}
