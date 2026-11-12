@@ -1,8 +1,8 @@
 name: "Curated artist-gallery trial | Mikhail Vrubel | source locked"
 on:
-  push:
+  pull_request:
     branches:
-      - feature/artvision-curated-agent-skills-20261112
+      - main
     paths:
       - scripts/vrubel_curated_artist_gallery_trial_20261112.py
       - .github/workflows/vrubel-curated-artist-gallery-trial.yml
