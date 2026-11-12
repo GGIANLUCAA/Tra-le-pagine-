@@ -22,6 +22,17 @@ Migliorare concretamente la regia del **Critico Standard** esistente di *The Fal
 - Il gate non accetta una riduzione trascurabile: richiede almeno **10 secondi in meno** di lunghe soste statiche rispetto a V330 e nessun calo medio di nitidezza superiore al 25% (se la composizione cambia, è un guard indicativo, non giudizio artistico).
 - Anche con gate tecnici verdi restano obbligatori ascolto e visione a velocità normale, soggetto realmente visibile, diritti territoriali, eventuale confronto umano e approvazione separata.
 
+## Secondo ciclo V331 — prova reale completata
+
+- Workflow: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43272380718 — **SUCCESS**, 6 test offline PASS, stesso dipinto e SHA WAV, nessuna TTS.
+- Artifact di revisione privata: `13967948513`, 30 giorni di conservazione, contiene MP4, ZIP, QA e 54 fotogrammi estratti.
+- Nuovo MP4 V331 SHA256: `8010e97455cd5adb693074e16db9b1aecd9c9d0096ea6d8f8b959ad3cede59f9`.
+- Durata 115,8s; 720×1280, 20fps, 2316 frame; byte MP4 22.763.516.
+- ZIP `REBEL_ANGELS_CRITICO_STANDARD_V331_REVIEW_PACKAGE.zip` SHA256 `3918b2ec801b15491b8c2dc4bbd2f379feb53bf59de3c8ca598fb9a789e292d2`. FFmpeg full decode, ZIP CRC, frame SHA e verifica WAV: PASS.
+- **Correzione misurata:** soglia V110 per intervalli di immobilità prolungata, V330 43,25s → V331 0s, miglioramento 43,25s. È un indice tecnico, non una garanzia di qualità per lo spettatore.
+- Nitidezza A/B nel tratto misurato: **+7,32% rispetto a V330** e **+15,14% rispetto a V144** secondo la varianza Laplacian; non equivale a vero aumento di risoluzione sorgente.
+- **Residuo:** `CAMERA_JUMP_REVIEW_REQUIRED`; i tagli semantici non vanno automaticamente nascosti con dissolvenze o ghosting. Richiede controllo umano del MP4 con voce. Il verdetto artistico e i diritti di pubblicazione sono PENDING; NON sostituire alcun master approvato.
+
 ## Regola di apprendimento anti-regressione
 1. Registrare un difetto CON prova MP4 e tempo: non criticare soltanto ricette.
 2. Modificare UNA classe di errori per volta; per V331: piani statici prolungati.
