@@ -180,7 +180,8 @@ def main():
     (OUT/"SOURCE_QA_REPORT.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     text="\n".join(r["id"]+": "+r["state"]+" ("+r.get("actual_license","?")+") - "+r["source_page"] for r in result)
     (OUT/"ATTRIBUTION_AND_SOURCE_STATUS.txt").write_text(text+"\n",encoding="utf-8")
-    print("PREFLIGHT:",len(images),"images",len(videos),"scientific clips; preview:",report.get("silent_materials_preview_mp4","blocked"))\n    for r in result: print("SOURCE",r["id"],r["state"],r.get("actual_license",""),r.get("error","")[:120])
+    print("PREFLIGHT:",len(images),"images",len(videos),"scientific clips; preview:",report.get("silent_materials_preview_mp4","blocked"))
+    for r in result: print("SOURCE",r["id"],r["state"],r.get("actual_license",""),r.get("error","")[:120])
     if len(images)<2 or len(videos)<2:sys.exit(2)
 
 if __name__=="__main__":
