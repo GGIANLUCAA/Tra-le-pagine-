@@ -17,6 +17,10 @@ PHOTOS = [
  "The Antikythera Mechanism (3471976134).jpg",
  "The Antikythera Mechanism (3471987204).jpg",
  "Antikythera Mechanism - National Archaeological Museum, Athens by Joy of Museum.jpg",
+ "Frammenti del meccanismo di antikythera, usato come calcolatore e calendatio astronomico, 150-100 ac ca. 01.jpg",
+ "Frammenti del meccanismo di antikythera, usato come calcolatore e calendatio astronomico, 150-100 ac ca. 02.jpg",
+ "Frammenti del meccanismo di antikythera, usato come calcolatore e calendatio astronomico, 150-100 ac ca. 06.jpg",
+ "Frammenti del meccanismo di antikythera, usato come calcolatore e calendatio astronomico, 150-100 ac ca. 08.jpg",
 ]
 MOTION = [
  ("antikythera_gears_20s.mp4",
@@ -108,7 +112,8 @@ def main(argv=None):
    fn.write_bytes(data)
    with Image.open(fn) as im:im.verify()
    if len(data)<10000:raise RuntimeError("image suspiciously small")
-   items.append({"type":"photo","name":name,"local_path":str(fn),"bytes":len(data),
+   authenticity=("modern_reconstruction" if i in (0,2) else "original_fragment_candidate")
+   items.append({"type":"photo","name":name,"depicts":authenticity,"local_path":str(fn),"bytes":len(data),
        "sha256":sha(data),"license":item["license"],"credit_url":item["credit_url"],
        "rights_url":item["rights_url"],"source_url":url,"source_status":"binary_downloaded_checksum_verified"})
    print("VERIFIED_MUSEUM_SOURCE",name,len(data),flush=True)
@@ -134,6 +139,8 @@ def main(argv=None):
  report={"schema":"giuliano-antikythera-media-scout-v1",
    "status":"candidate_sources_downloaded_preproduction" if sum(i["type"]=="photo" for i in items)>=3 and sum(i["type"]=="reconstruction_video" for i in items)==2 else "incomplete_do_not_render",
    "museum_photos_verified":sum(i["type"]=="photo" for i in items),
+   "modern_reconstruction_photos":sum(i.get("depicts")=="modern_reconstruction" for i in items),
+   "original_fragment_candidate_photos":sum(i.get("depicts")=="original_fragment_candidate" for i in items),
    "modern_motion_videos_verified":sum(i["type"]=="reconstruction_video" for i in items),
    "authentic_1900_diving_footage_found":False,
    "ready_for_film":False,"narration_synced":False,"artistic_approval":False,
