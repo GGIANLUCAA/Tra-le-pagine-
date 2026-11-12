@@ -1,0 +1,64 @@
+name: "GIULIANO Anticitera · G0DM0D3 director, research and editorial gates"
+on:
+  push:
+    branches: ["feature/giuliano-antikythera-g0dm0d3-director-20261112"]
+    paths:
+      - "research/giuliano_antikythera_v1/**"
+      - "src/giuliano_antikythera_preflight_v1.py"
+      - "tests/test_giuliano_antikythera_preflight_v1.py"
+      - ".github/workflows/giuliano-antikythera-g0dm0d3-director.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: giuliano-antikythera-director-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  director:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PYTHONPATH: src
+      AI_DIRECTOR_ALLOW_FREE_CALLS: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Confirm no OpenRouter inference route approved
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          p=json.load(open('config/free_llm_zero_cost_v1.json'))
+          assert p['schema']=='free-llm-zero-cost-v1'
+          assert p['default_deny'] is True and p['routes']==[]
+          print("G0DM0D3_COMPAT_ZERO_COST_DEFAULT_DENY_OK")
+          PY
+      - name: Tests — narrative alignment, rights, 4-second holds and publish safety
+        run: |
+          python -m py_compile src/giuliano_antikythera_preflight_v1.py
+          python -m unittest discover -s tests -p 'test_giuliano_antikythera_preflight_v1.py' -v
+      - name: AI Director V1 offline director/critic research prompts (no models)
+        run: |
+          python src/ai_director_v1.py --mode plan \
+            --brief research/giuliano_antikythera_v1/BRIEF_AI_DIRECTOR.json \
+            --out-dir output/giuliano_antikythera/director
+      - name: AI Director V1 scene, narration, rights and pacing audit
+        run: |
+          python src/ai_director_v1.py --mode audit \
+            --brief research/giuliano_antikythera_v1/BRIEF_AI_DIRECTOR.json \
+            --out-dir output/giuliano_antikythera/audit
+      - name: Independent pre-render scene/tempo QA and Android review pack
+        run: |
+          python src/giuliano_antikythera_preflight_v1.py \
+            --brief research/giuliano_antikythera_v1/BRIEF_AI_DIRECTOR.json \
+            --output-dir output/giuliano_antikythera/scene_contract
+          cp research/giuliano_antikythera_v1/BRIEF_AI_DIRECTOR.json output/giuliano_antikythera/BRIEF_AI_DIRECTOR.json
+      - name: Upload real editorial deliverables — not an MP4 and not publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_ANTIKYTHERA_G0DM0D3_DIRECTOR_ANDROID
+          path: output/giuliano_antikythera/
+          if-no-files-found: error
+          retention-days: 20
