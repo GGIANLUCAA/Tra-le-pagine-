@@ -1,0 +1,82 @@
+name: "G0DM0D3 FREE | Giuliano 4 real AI roles (one shot)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - "requests/g0dm0d3_free/giuliano_antikythera_once_20261112.json"
+permissions:
+  contents: read
+concurrency:
+  group: g0dm0d3-giuliano-once-20261112
+  cancel-in-progress: false
+jobs:
+  four_real_free_roles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PYTHONPATH: src
+      OPENROUTER_API_KEY: ${{ secrets.OPENRUTER3 }}
+      G0DM0D3_FREE_PILOT_ONE_SHOT: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify tests and available existing key without printing it
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_g0dm0d3_free_four_roles_v1.py' -q
+          test -n "$OPENROUTER_API_KEY" || { echo 'OPENRUTER3_MISSING'; exit 2; }
+      - name: Verify explicit approved one-time NEW request with price ceiling 0
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,subprocess
+          path="requests/g0dm0d3_free/giuliano_antikythera_once_20261112.json"
+          added=subprocess.check_output(["git","diff","--name-only","--diff-filter=A","HEAD^","HEAD"],text=True).splitlines()
+          if path not in added:raise SystemExit("ONE_SHOT_ALREADY_USED_OR_NOT_NEW")
+          x=json.load(open(path))
+          allowed={"schema","format","public_topic","explicit_user_authorization","max_requests",
+                   "max_allowed_price_usd","allow_paid_fallback","generate_video","publish","reuse_secret"}
+          assert set(x)==allowed and x["schema"]=="g0dm0d3-four-role-one-shot-v1"
+          assert x["format"]=="giuliano" and x["reuse_secret"]=="OPENRUTER3"
+          assert x["explicit_user_authorization"] is True
+          assert type(x["max_requests"]) is int and x["max_requests"]==4
+          assert type(x["max_allowed_price_usd"]) in (int,float) and x["max_allowed_price_usd"]==0
+          assert x["allow_paid_fallback"] is False and x["generate_video"] is False and x["publish"] is False
+          topic=x["public_topic"]
+          assert isinstance(topic,str) and 8<=len(topic)<=190 and "\n" not in topic
+          with open(os.environ["GITHUB_ENV"],"a") as env:env.write("PUBLIC_TOPIC="+topic+"\n")
+          print("G0DM0D3_ONE_SHOT_OWNER_AUTHORIZED_MAX_FOUR_FREE_CALLS")
+          PY
+      - name: Execute four roles with free price recheck and no retries
+        run: |
+          set -euo pipefail
+          python src/g0dm0d3_free_four_roles_v1.py \
+            --format giuliano --topic "$PUBLIC_TOPIC" \
+            --out output/four_real_roles --execute
+      - name: Verify genuinely received four real role drafts
+        if: success()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("output/four_real_roles/REPORT.json").read_text())
+          assert r["status"]=="four_roles_returned_unapproved"
+          assert r["model_calls"]==4 and len(r["responses"])==4
+          assert [x["role"] for x in r["responses"]]==["sceneggiatore","storico","regista","critico"]
+          assert not r["video_rendered"] and not r["publication_authorized"]
+          print("FOUR_GENUINE_FREE_AI_RESPONSES",r["status"])
+          for x in r["responses"]:
+              print("ROLE_PREVIEW",x["role"],x["model"]," ".join(x["text"].split())[:280])
+          PY
+      - name: Preserve Android report even if provider fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: G0DM0D3_FOUR_REAL_AI_${{ github.run_id }}
+          path: output/four_real_roles/
+          retention-days: 21
+          if-no-files-found: warn
