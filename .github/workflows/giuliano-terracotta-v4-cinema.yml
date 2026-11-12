@@ -1,0 +1,78 @@
+name: "GIULIANO - Terracotta V4 Cinematic Director Cut"
+on:
+  push:
+    branches: ["feature/giuliano-terracotta-v4-cinema-20261110"]
+    paths:
+      - "giuliano/terracotta_v4/**"
+      - ".github/workflows/giuliano-terracotta-v4-cinema.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: giuliano-terracotta-v4-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ARTVISION_ASR_MODEL: base
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout dedicated V4 branch
+        uses: actions/checkout@v4
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Director and copyright preflight
+        run: |
+          python -m py_compile giuliano/terracotta_v4/render_documentary_v4.py
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          plan=json.loads(Path("giuliano/terracotta_v4/SHOTS_CINEMATIC_V4.json").read_text())
+          beats=plan["shots"];text=Path("giuliano/terracotta_v4/VOCE_DOCUMENTARIO_V4.txt").read_text().strip()
+          assert text=="\n".join(x["text"] for x in beats),"Speech-to-scene matching"
+          unique={f for x in beats for f in [x["source_file"],x.get("second_file")] if f}
+          assert len(beats)>=32 and len(unique)>=33 and plan["revision"]==4
+          assert len(set(x["index"] for x in beats))==len(beats)
+          assert all(x.get("semantic") and x.get("presentation") for x in beats)
+          assert not any(term in text.lower() for term in ["avviciniamoci","guardiamo il","osserviamo questo"])
+          print("V4_EDITORIAL_PREFLIGHT_PASS",len(beats),len(unique),flush=True)
+          PY
+          test -n "$GEMINI_API_KEY" || (echo "NO GOOGLE TTS SECRET: no robotic voice fallback" && exit 2)
+      - name: Runtime & source-verified image dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          python -m pip install -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Shoot, compose, direct original voice and music, inspect and package
+        run: python giuliano/terracotta_v4/render_documentary_v4.py
+      - name: Preserve real photo and voice only in event of error
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_V4_RECOVERY_NO_FINISHED_FILM
+          path: |
+            output/giuliano_terracotta_v4/audio/VOCE.wav
+            output/giuliano_terracotta_v4/audio/ALLINEAMENTO_VOCE.json
+            output/giuliano_terracotta_v4/media/source_*.jpg
+            output/giuliano_terracotta_v4/PHOTO_CREDITS_V4.json
+          if-no-files-found: ignore
+          retention-days: 10
+      - name: Upload verified full-quality MP4, Android MP4, poster, full ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_V4_FINISHED_VIDEO_ANDROID_ZIP
+          path: |
+            output/giuliano_terracotta_v4/GIULIANO_TERRACOTTA_V4_CINEMATIC.mp4
+            output/giuliano_terracotta_v4/GIULIANO_TERRACOTTA_V4_ANDROID.mp4
+            output/giuliano_terracotta_v4/GIULIANO_TERRACOTTA_V4_COMPLETO.zip
+            output/giuliano_terracotta_v4/COVER_V4.jpg
+            output/giuliano_terracotta_v4/CONTACT_SHEET_V4.jpg
+            output/giuliano_terracotta_v4/QA_V4.json
+          if-no-files-found: error
+          retention-days: 20

@@ -1,0 +1,108 @@
+name: "GIULIANO - Terracotta V6 Cinematic Director Cut"
+on:
+  push:
+    branches: ["feature/giuliano-v6-full-film-20261110"]
+    paths:
+      - "giuliano/terracotta_v6/**"
+      - ".github/workflows/giuliano-terracotta-doc-v3.yml"
+  pull_request:
+    branches: ["main"]
+    types: [opened, synchronize, reopened]
+    paths:
+      - "giuliano/terracotta_v6/**"
+      - ".github/workflows/giuliano-terracotta-doc-v3.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: giuliano-terracotta-v4-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ARTVISION_ASR_MODEL: base
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout dedicated V6 branch
+        uses: actions/checkout@v4
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Director and copyright preflight
+        run: |
+          python -m py_compile giuliano/terracotta_v6/render_documentary_v6.py
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          plan=json.loads(Path("giuliano/terracotta_v6/SHOTS_DOCUMENTARY_V6.json").read_text())
+          beats=plan["shots"];text=Path("giuliano/terracotta_v6/VOCE_DOCUMENTARIO_V6.txt").read_text().strip()
+          assert text=="\n".join(x["text"] for x in beats),"Speech-to-scene matching"
+          unique={f for x in beats for f in [x["source_file"],x.get("second_file")] if f}
+          assert len(beats)>=32 and len(unique)>=28 and plan["revision"]==6
+          assert len(set(x["index"] for x in beats))==len(beats)
+          assert all(x.get("semantic") and x.get("presentation") for x in beats)
+          assert not any(term in text.lower() for term in ["avviciniamoci","guardiamo il","osserviamo questo"])
+          print("V6_EDITORIAL_PREFLIGHT_PASS",len(beats),len(unique),flush=True)
+          PY
+          test -n "$GEMINI_API_KEY" || (echo "NO GOOGLE TTS SECRET: no robotic voice fallback" && exit 2)
+      - name: Runtime & source-verified image dependencies
+        run: |
+          if command -v ffmpeg >/dev/null 2>&1; then
+            echo "FFMPEG_PREINSTALLED_SKIP_APT_NETWORK"
+            ffmpeg -version | head -1
+          else
+            timeout 150 sudo apt-get update -qq
+            timeout 150 sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          fi
+          python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<12' 'requests>=2.31,<3' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Reuse exactly the previously generated V6 Google narration
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_V6_RECOVERY_NO_FINISHED_FILM
+          run-id: 42896920303
+          github-token: ${{ github.token }}
+          path: output/giuliano_terracotta_v6
+      - name: Restore validated voice cache without a second API request
+        run: |
+          test -s output/giuliano_terracotta_v6/audio/VOCE.wav
+          python - <<'PY'
+          from pathlib import Path
+          import giuliano.terracotta_v6.render_documentary_v6 as render
+          speech=Path("giuliano/terracotta_v6/VOCE_DOCUMENTARIO_V6.txt").read_text(encoding="utf8").strip()
+          render.gemini_voice._save_voice_cache(speech,render.OUT/"audio")
+          assert (render.OUT/"audio"/"VOICE_CACHE_V13.json").exists()
+          print("V6_GOOGLE_NARRATION_REUSED",flush=True)
+          PY
+      - name: Shoot, compose, direct original voice and music, inspect and package
+        run: python giuliano/terracotta_v6/render_documentary_v6.py
+      - name: Preserve real photo and voice only in event of error
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_V6_RECOVERY_NO_FINISHED_FILM
+          path: |
+            output/giuliano_terracotta_v6/audio/VOCE.wav
+            output/giuliano_terracotta_v6/audio/ALLINEAMENTO_VOCE.json
+            output/giuliano_terracotta_v6/media/source_*.jpg
+            output/giuliano_terracotta_v6/PHOTO_CREDITS_V6.json
+          if-no-files-found: ignore
+          retention-days: 10
+      - name: Upload verified full-quality MP4, Android MP4, poster, full ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_V6_FINISHED_VIDEO_ANDROID_ZIP
+          path: |
+            output/giuliano_terracotta_v6/GIULIANO_TERRACOTTA_V6_CINEMATIC.mp4
+            output/giuliano_terracotta_v6/GIULIANO_TERRACOTTA_V6_ANDROID.mp4
+            output/giuliano_terracotta_v6/GIULIANO_TERRACOTTA_V6_COMPLETO.zip
+            output/giuliano_terracotta_v6/COVER_V6.jpg
+            output/giuliano_terracotta_v6/CONTACT_SHEET_V6.jpg
+            output/giuliano_terracotta_v6/QA_V6.json
+          if-no-files-found: error
+          retention-days: 20
