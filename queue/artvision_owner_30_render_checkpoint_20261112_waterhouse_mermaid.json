@@ -89,5 +89,16 @@
     "remaining_30_cinema": 8,
     "note": "Historical Dadd and Avalon have earlier renders outside this new checkpoint series; do not mistake absence from new checkpoint names for permission to rerender."
   },
-  "next_action": "Preserve MP4 and ZIP in private Library, verify their independent readback; no rerender of this exact video as a new slot; continue other selected works or actual existing Museum variants only with true physical scale and licence, avoid gold/publish until approved."
+  "next_action": "Preserve MP4 and ZIP in private Library, verify their independent readback; no rerender of this exact video as a new slot; continue other selected works or actual existing Museum variants only with true physical scale and licence, avoid gold/publish until approved.",
+  "private_library": {
+    "directory": "/ArtVision/Owner_30/Waterhouse_A_Mermaid_20261112",
+    "video_id": "libfile_b11123a1219881919f19207e79f37b29",
+    "zip_id": "libfile_4d1e2c86c62c8191bf0bace13fceae4c",
+    "cover_id": "libfile_50d74310b45481919788501e49349cb6",
+    "fresh_materialization_sha256_mp4": "PASS",
+    "fresh_materialization_sha256_zip": "PASS",
+    "fresh_ffmpeg_all_streams_decode": "PASS",
+    "fresh_zip_crc_and_embedded_video_sha256": "PASS",
+    "device_playback": "NOT_TESTED"
+  }
 }
