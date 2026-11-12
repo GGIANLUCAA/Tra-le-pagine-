@@ -9,6 +9,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -72,11 +73,11 @@ def collect_active_runs(fetch_page):
                 expected_total = total
             # If the server's total changes while paging, fail closed.
             if total != expected_total:
-                raise SnapshotError("live run inventory changed during pagination")
+                raise SnapshotError(f"live run inventory changed during pagination: status={requested_status} page={page}")
             if collected + len(runs) > expected_total:
                 raise SnapshotError("API returned more runs than total_count")
             if not runs and collected != expected_total:
-                raise SnapshotError("incomplete live run inventory")
+                raise SnapshotError(f"incomplete live run inventory: status={requested_status} page={page} collected={collected} expected={expected_total}")
             for run in runs:
                 if not isinstance(run, dict) or type(run.get("id")) is not int:
                     raise SnapshotError("malformed workflow run ID")
@@ -163,7 +164,16 @@ def main():
     try:
         if not token or observed_repo != REPO:
             raise SnapshotError("authenticated target repository not verified")
-        report = build_snapshot(lambda status, page: github_fetch_page(token, status, page))
+        # Running/pending statuses are moving targets: retry a transient snapshot
+        # inconsistency, but NEVER interpret a failed scan as idle.
+        for attempt in range(3):
+            try:
+                report = build_snapshot(lambda status, page: github_fetch_page(token, status, page))
+                break
+            except SnapshotError:
+                if attempt == 2:
+                    raise
+                time.sleep(0.7 * (attempt + 1))
     except (SnapshotError, ValueError, KeyError, TypeError) as exc:
         report = {
             "schema": "artvision-chain-live-snapshot-v1",
