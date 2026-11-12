@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="/icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ArtVision Control Center V9 — Qualità, SHA e ZIP</title>
+<title>ArtVision Control Center V14 — Home semplice e progressi reali</title>
 <style>
 :root{color-scheme:dark;--bg:#0c1118;--card:#181f27;--inner:#222a33;--edge:#38414a;--text:#f7f1e6;--sub:#afb7c0;--gold:#dfbe88;--green:#80cba9;--red:#e8a49d}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 65% 25% at 85% 0%,#634d2a26,transparent),var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.wrap{max-width:1320px;margin:0 auto;padding:0 23px 100px}
@@ -144,11 +144,187 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 .genreHelp{color:#c7b9a2;font-size:11px;line-height:1.6}
 @media(max-width:900px){.genreGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.genreGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.genreCard{padding:13px;min-height:116px}.genreItem{padding:10px}.genreItems{grid-template-columns:1fr}}
+
+/* V10: immediate, guided repair and production requests. Responsive and no API writes. */
+.actionTop{border:1px solid #967548;background:linear-gradient(125deg,#382c21,#161f2a);padding:17px;border-radius:17px;margin:0 0 16px}
+.actionTop h3{font:normal 26px Georgia,serif;margin:6px 0}.actionTop p{color:#d2c5b0;font-size:12px}
+.actionProjects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.actionProject{background:#131b25;border:1px solid #776347;border-radius:12px;padding:14px;display:grid;gap:8px;align-content:start}
+.actionProject strong{font-size:15px;color:#f7dec0}.actionProject span{color:#dbbd8e;font-size:12px}.actionProject small{color:#a7b3bd;font-size:11px;min-height:34px}
+.actionPrimary,.actionSecondary{border:1px solid #c8a673;border-radius:10px;padding:10px 12px;min-height:44px;font-weight:700;font-size:12px}
+.actionPrimary{background:#dbba88;color:#231a13}.actionSecondary{background:#2c333c;color:#ead4b2}
+.actionFine{margin:10px 0 0!important;font-size:11px!important}
+.actionHead{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.actionFilters{display:flex;gap:6px;flex-wrap:wrap}.actionFilters button{background:#252e36;color:#e3d1b5;border:1px solid #716350;border-radius:25px;padding:8px 10px;min-height:40px}
+.actionFilters button.on{background:#b99461;color:#201b16}
+.actionWork{border:1px solid #57606a;background:#171f28;border-radius:12px;margin:10px 0;overflow:hidden}
+.actionWork>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:13px;cursor:pointer;list-style:none;min-height:56px}
+.actionWork>summary::-webkit-details-marker{display:none}.actionWorkName{font-size:14px;font-weight:750;color:#f7e7cc}.actionWorkName small{display:block;color:#b9c6d0;font-weight:400;font-size:10px}
+.actionCount{font-size:11px;color:#d6be96;text-align:right}
+.actionSlots{display:grid;gap:0;border-top:1px solid #ffffff22}
+.actionSlot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-bottom:1px solid #ffffff14}
+.actionInfo{display:grid;gap:5px;min-width:0}.actionInfo strong{font-size:12px}.actionInfo small{color:#bcc7cb;font-size:11px}
+.actionFlag{display:inline-block;width:max-content;max-width:100%;font-size:10px;color:#e5cfad;border:1px solid #8b7658;border-radius:20px;padding:3px 7px}
+.actionFlag.ready{color:#a3e3ba;border-color:#578469}.actionFlag.offline{color:#efaaa3;border-color:#98595d}
+.actionSlotButtons{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.actionSlotButtons button{white-space:nowrap}.actionWorkFoot{padding:8px 12px}
+.repairInstant{border:1px solid #c19b64;border-radius:15px;padding:15px;background:linear-gradient(135deg,#382e22,#202a34)}
+.repairInstant h3{font:normal 23px Georgia,serif;margin:6px 0;color:#f3d7a6}.repairInstant p{font-size:12px;color:#d2c3aa;line-height:1.5}
+.repairInstant label{display:block;font-size:12px;font-weight:700;margin:11px 0}
+.repairInstant textarea{margin:7px 0;width:100%;resize:vertical;min-height:78px;background:#111822;border:1px solid #75664e;border-radius:10px;color:white;padding:11px;font:inherit}
+.repairDoNow{display:flex;justify-content:center;align-items:center;min-height:54px;background:#e0bb87;color:#22170d;border-radius:12px;font-size:14px;font-weight:800;text-align:center;padding:12px;text-decoration:none}
+.repairAdvanced{background:#19212b;border:1px solid #4e5962;border-radius:13px;margin:12px 0}
+.repairAdvanced>summary{cursor:pointer;padding:14px;color:#f2d7aa;font-size:12px;font-weight:750;min-height:45px}
+.repairAdvanced .repairSection{margin:0 10px 12px}
+@media(max-width:900px){.actionProjects{grid-template-columns:1fr}.actionProject small{min-height:0}}
+@media(max-width:550px){.actionSlot{display:grid}.actionSlotButtons{justify-content:stretch}.actionSlotButtons button{flex:1}.actionWork>summary{align-items:flex-start;flex-direction:column}.actionCount{text-align:left}.repairInstant{padding:12px}.repairDoNow{font-size:13px}}
+
+
+/* V11 per-video lessons and unblocking Android UI. */
+.actionRecentRow{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:11px 0;border-top:1px solid #ffffff22}
+.actionRecentRow strong{display:block;font-size:12px;color:#f0ddc2;overflow-wrap:anywhere}
+.actionRecentRow small{display:block;color:#aeb8c3;font-size:10px;margin-top:3px}
+@media(max-width:600px){.actionRecentRow{align-items:flex-start;flex-direction:column}.actionRecentRow button{width:100%}}
+.qualityNoteRow{padding:10px 0;border-top:1px solid #ffffff25;display:grid;gap:3px}
+.qualityNoteRow strong{color:#f2d4a7;font-size:11px}.qualityNoteRow p{color:#e7d8c2;font-size:12px;margin:3px 0}.qualityNoteRow small{color:#aab5c1;font-size:10px}
+.qualityLabel{font-size:11px;color:#edcda1;display:grid;gap:4px;margin:8px 0}
+.qualitySelect{min-height:43px;padding:7px 10px;border:1px solid #806e53;border-radius:9px;background:#19222c;color:#f7e8ce}
+.qualityGeneralize{display:flex!important;align-items:flex-start;gap:9px;font-weight:500!important;color:#e1cfad}
+.qualityGeneralize input{margin-top:4px;min-width:18px;min-height:18px}
+.qualitySave{background:#28382f;color:#b5ecd0;border:1px solid #598c74;border-radius:9px;padding:10px 12px;min-height:44px;font-weight:750}
+.qualityPrivacy{font-size:11px;color:#cab89d;margin:8px 0}
+.actionUnblock{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#24342d;border:1px solid #70957f;border-radius:14px;padding:14px;margin-bottom:14px}
+.actionUnblock strong{color:#bbead1;font-size:15px}.actionUnblock p{color:#ccd8cf;font-size:11px;margin:4px 0}.actionUnblock button:disabled{opacity:.48;cursor:not-allowed}
+@media(max-width:600px){.actionUnblock button{width:100%}}
+
+/* V12: time-aware, evidence-based GitHub workflow status, not video percentage. */
+.productionPanel{border:1px solid #9e8258;background:linear-gradient(150deg,#242c33,#151d27)}
+.productionHead{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:9px}
+.productionHead h3{font:normal 23px Georgia,serif;color:#f2d7ab;margin:0 0 4px}
+.productionHead .sub{max-width:640px;font-size:11px}
+.productionRun{border:1px solid #5c6470;background:#101925;border-radius:14px;padding:14px;margin:12px 0}
+.productionRow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.productionProgram{font-size:10px;color:#c7a879}.productionRow h4{font-size:14px;line-height:1.35;margin:4px 0;color:#f6eadb}
+.productionStatus{font-size:11px;color:#d6d3cd;margin:5px 0}
+.productionBadge{padding:5px 9px;font-size:10px;border:1px solid #806d51;border-radius:20px;color:#e4cdab;white-space:nowrap}
+.productionBadge.warning{border-color:#c47a71;color:#f1b4ac}
+.productionTrack{width:100%;height:13px;background:#37424a;border:1px solid #6a7480;overflow:hidden;border-radius:999px;margin:12px 0 7px}
+.productionTrack span{display:block;height:100%;background:linear-gradient(90deg,#95805e,#e8c893);border-radius:999px;transition:width .35s ease}
+.productionTrack.isUnknown{background:repeating-linear-gradient(125deg,#283441,#283441 13px,#364353 13px,#364353 26px)}
+.productionMeta{color:#b9c4cc;font-size:10px;margin:5px 0 11px;line-height:1.5}
+.productionDetails{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.productionDetails>div{border:1px solid #394a54;border-radius:10px;padding:10px;min-width:0}
+.productionDetails span{display:block;color:#b2bfc8;font-size:10px;margin-bottom:6px}
+.productionDetails strong{display:block;font-size:12px;color:#f4dec2;overflow-wrap:anywhere}
+.productionHint{font-size:11px;color:#edc896;background:#342b1f;border:1px solid #866a48;padding:9px;border-radius:9px}
+.productionButtons{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.productionButtons .miniBtn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.productionDisclaimer{margin:10px 0 0;font-size:10px;color:#d1c0a8}
+@media(max-width:640px){.productionDetails{grid-template-columns:1fr}.productionBadge{white-space:normal}.productionRun{padding:11px}.productionRow{flex-direction:column}.productionButtons>*{flex:1}}
+@media(prefers-reduced-motion:reduce){.productionTrack span{transition:none}}
+
+
+/* V13 · eleganza museale, accessibilità touch, dati di avanzamento verificabili. */
+.progressVideoLink{border:1px solid #756246;border-radius:10px;padding:11px 12px;background:#242722;margin:10px 0}
+.progressVideoLink span{display:block;font-size:9px;letter-spacing:.5px;color:#cfb584}
+.progressVideoLink strong{display:block;color:#f3ddbb;font-size:13px;margin:5px 0}
+.progressVideoLink small{display:block;color:#c7c6b8;font-size:10px}
+.progressVideoLink a{display:inline-block;padding:9px 0;color:#f3ce8d;font-weight:700;font-size:11px;min-height:36px}
+
+.progressWindow{padding:8px 10px;border-radius:8px;border:1px solid #6f654b;font-size:11px;line-height:1.5;color:#dfcfb3;background:#262b2f;margin:3px 0 8px}
+.progressV13Panel{background:linear-gradient(125deg,#191f26,#202a32);border-color:#827257}
+.progressV13Panel .productionHead{align-items:flex-start}
+.progressV13Panel .productionHead h3{font:400 27px Georgia,serif;color:#ecd8b6;letter-spacing:.1px}
+.progressV13{background:#151b24;border-color:#4c5863;padding:15px}
+.progressV13.normal{border-left:3px solid #8d795a}.progressV13.watch{border-left:3px solid #bb9158}.progressV13.error{border-left:3px solid #ae6966}
+.progressV13 .productionBadge{font-size:10px;background:transparent}
+.progressMeasure{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:14px;font-size:11px;color:#d7c3a6}
+.progressMeasure strong{font-variant-numeric:tabular-nums;color:#f7ead8;font-size:13px}
+.progressV13 .productionTrack{height:11px;margin:6px 0 8px;background:#38434e}
+.progressV13 .productionTrack span{background:linear-gradient(90deg,#957a5b,#ddbb86)}
+.progressV13 .productionTrack.isUnknown{height:11px}
+.progressV13 .productionMeta b{font-weight:700;color:#ecd5af}
+.progressPrimaryData{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 8px}
+.progressPrimaryData>div{padding:13px 12px;border:1px solid #52606a;border-radius:11px;background:#1e2833;min-width:0}
+.progressPrimaryData span{display:block;font-size:10px;letter-spacing:.4px;color:#b5bcbf;margin-bottom:7px}
+.progressPrimaryData strong{display:block;font-size:15px;line-height:1.3;color:#f3dbb4;overflow-wrap:anywhere}
+.progressPrimaryData small{display:block;margin-top:7px;font-size:11px;color:#bfcacf}
+.progressMetaRow{display:flex;flex-wrap:wrap;gap:9px;color:#b9c1c8;font-size:10px;margin:12px 0}
+.progressMetaRow span{padding:6px 8px;border:1px solid #3d4851;border-radius:7px;background:#19232d}
+.progressMetaRow b{color:#ead9bd}
+.progressNext{border-top:1px solid #40505e;margin-top:12px;padding-top:12px}
+.progressNext strong{font-size:12px;color:#eed6af}
+.progressNext p{font-size:12px;margin:5px 0;color:#cbd5d9;line-height:1.5}
+.progressAlert{font-size:11px;color:#e8c390;background:#332c23;border:1px solid #816d4e;padding:9px 10px;border-radius:9px;line-height:1.45}
+.progressV13.error .progressAlert{color:#f4c2b8;border-color:#8f6865;background:#39272b}
+.progressExtra{margin-top:9px;border:1px solid #43515c;border-radius:10px;overflow:hidden}
+.progressExtra summary{min-height:44px;padding:12px;cursor:pointer;font-size:11px;font-weight:700;color:#ebd3ab}
+.progressTimeline{list-style:none;padding:0 12px 12px;margin:0}
+.progressTimeline li{display:flex;gap:10px;padding:8px 0;border-top:1px solid #344450}
+.progressStepDot{height:8px;width:8px;flex:none;border-radius:50%;background:#b99b70;margin-top:4px}
+.progressTimeline strong{display:block;font-size:11px;color:#e7d2b4}
+.progressTimeline small{font-size:10px;color:#b5c2c8}
+.progressV13 .productionButtons{margin-bottom:8px}
+.progressV13 button:focus-visible,.progressV13 a:focus-visible,.progressV13 summary:focus-visible{outline:3px solid #e9c88e;outline-offset:3px}
+@media(max-width:600px){.progressPrimaryData{grid-template-columns:1fr}.progressV13{padding:12px}.progressV13Panel .productionHead h3{font-size:23px}.progressMetaRow{gap:6px}.progressMetaRow span{width:100%}}
+
+
+/* V14 mobile: first show the actual video work, not a 600px marketing hero. */
+.hero,.stats{display:none}
+.simpleWelcome{padding:13px 1px 5px;margin:9px 0 4px}
+.simpleWelcome h1{font:normal clamp(25px,3.3vw,34px)/1.15 Georgia,serif;color:#f2e1c5;margin:6px 0}
+.simpleWelcome p{font-size:12px;color:#b7c4cb;line-height:1.45;margin:0 0 10px}
+.simpleAttention{border:1px solid #49535b;background:#19232d;padding:14px;border-radius:14px;margin:12px 0}
+.simpleAttentionHead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.simpleAttentionHead h2,.simpleAttentionHead h3{font:normal 19px Georgia,serif;color:#f0d6ae;margin:0}
+.simpleAttention .miniBtn,.simpleRepairIssues .miniBtn{min-height:40px}
+.simpleAlert{border-left:3px solid #c39c65;background:#3c33262c;color:#f3cfa9;padding:10px;font-size:12px;line-height:1.45}
+.simpleGood{color:#b7d8c3;background:#24362d55;border:1px solid #426653;border-radius:9px;padding:10px;font-size:12px;line-height:1.45}
+.simpleShortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 16px}
+.simpleShortcuts button{min-height:96px;text-align:left;border:1px solid #55616b;border-radius:13px;background:#1a2631;color:#f4e4c8;padding:11px}
+.simpleShortcuts button span{display:block;color:#caa572;font-size:19px;margin-bottom:3px}
+.simpleShortcuts strong{display:block;font-size:12px;line-height:1.3}
+.simpleShortcuts small{display:block;color:#abbcc6;font-size:10px;line-height:1.35;margin-top:3px}
+.simpleMore{border:1px solid #48535d;background:#1a222b;border-radius:13px;padding:0 12px;margin:12px 0}
+.simpleMore>summary{padding:13px 4px;min-height:47px;cursor:pointer;font-size:13px;font-weight:700;color:#e9d3ae}
+.simpleMore>summary:focus-visible{outline:2px solid #ecd29e;outline-offset:2px}
+.simpleMore[open]>summary{border-bottom:1px solid #43505a;margin-bottom:12px}
+.simpleMore .panel{margin-top:8px}.simpleMore .healthGrid{margin-top:10px}
+.simpleExtraLinks{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.simpleRepairIssues{margin:12px 0}
+.sync{margin:9px 0 8px;font-size:11px}
+.productionPanel.progressV13Panel{margin:7px 0 12px}
+.progressV13Panel .productionHead{margin-bottom:7px}
+.progressV13Panel .productionHead h3{font-size:21px}
+.progressV13Panel .productionHead .sub{font-size:11px;max-width:470px}
+.progressV13 .progressNext{margin-top:8px}
+.progressV13 .productionDisclaimer{font-size:10px;line-height:1.4}
+@media(max-width:790px){
+ .wrap{padding:0 15px 88px}
+ header{padding:11px 0}
+ .logo{width:37px;height:37px;font-size:25px}
+ .brand{gap:9px}.brand strong{font-size:12px}.brand small{font-size:9px}
+ .refresh{min-height:40px;padding:7px 9px;font-size:12px}
+ .bottom button{flex:1;min-height:46px;font-size:11px;gap:2px}
+ .bottom button span{font-size:20px}
+ .simpleWelcome{margin:7px 0 4px}
+ .simpleShortcuts{grid-template-columns:1fr 1fr;gap:8px}
+ .simpleShortcuts button{min-height:79px}
+ .simpleShortcuts button:last-child{grid-column:span 2;min-height:63px}
+ .simpleAttentionHead{align-items:flex-start}
+ .simpleAttentionHead .miniBtn{max-width:48%;font-size:11px}
+ .productionPanel.progressV13Panel{padding:12px}
+}
+/* Native cross-site return link, touch accessible and visible in the page header. */
+.buttons .site-switch{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 13px;border-radius:11px;border:1px solid #d5b489;background:#302a22;color:#f6dfb9;font-weight:750;white-space:nowrap}
+.buttons .site-switch:hover{background:#42372a}
+@media(max-width:520px){header{flex-wrap:wrap;gap:9px}.buttons{width:100%;justify-content:space-between;gap:8px}.buttons .site-switch{flex:1;min-width:0;justify-content:center}}
+
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V7</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
+<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V14</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><a class="site-switch" href="https://video-library-studio.600led.workers.dev/" aria-label="Apri Video Library Studio, la videoteca">▣ <span>Videoteca</span></a><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
 <section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Da fare per me · ◉ Salute produzioni · ▷ Diario verificabile</span></section>
 <div class="sync"><span class="pulse" id="pulse"></span><span id="synctext">Collegamento alle fonti reali…</span><span id="sources"></span></div>
 <div id="chatImportNotice" class="note" hidden role="status" aria-live="polite"></div>
@@ -157,7 +333,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <main id="content"><div class="empty">Lettura dei dati…</div></main>
 <footer>Anteprima indipendente. Nessuna operazione di scrittura. Dati pubblici del repository e del catalogo; le automazioni ChatGPT non sono monitorate direttamente. Workflow riuscito ≠ video finito o approvato.</footer>
 </div>
-<nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="todo"><span>⚑</span>Da fare</button><button data-page="works"><span>▣</span>Opere</button><button data-page="issues"><span>⚑</span>Ripara GPT</button><button data-page="genres"><span>▦</span>Categorie</button></nav>
+<nav class="bottom" aria-label="Navigazione mobile"><button class="active" data-page="home"><span>⌂</span>Home</button><button data-page="works"><span>▣</span>Quadri</button><button data-page="issues"><span>✦</span>Ripara GPT</button><button data-page="genres"><span>▦</span>Archivio</button></nav>
 <dialog id="reviewPlayer" aria-labelledby="reviewPlayerTitle" aria-modal="true">
 <div class="playerHead"><div><strong id="reviewPlayerTitle">Anteprima del video</strong><small id="reviewPlayerSubtitle">Riproduzione dall'archivio originale</small></div>
 <button class="playerClose" type="button" id="reviewPlayerClose">✕ Chiudi</button></div>
@@ -168,6 +344,27 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
 <div class="repairDialogHead"><div><strong id="repairTitle">Ripara con GPT</strong><small>Contesto verificabile pronto da usare in ChatGPT</small></div>
 <button type="button" class="playerClose" id="closeRepairDialog">✕ Chiudi</button></div>
 <div class="repairDialogBody">
+ <div class="repairInstant"><div class="overline">UNA COSA ALLA VOLTA</div><h3 id="repairActionTitle">Cosa fare adesso</h3>
+ <p id="repairNextStep">Il prossimo passo apparirà qui.</p>
+ <label>Vuoi aggiungere una precisazione? (facoltativo)
+ <textarea id="repairOwnerNote" rows="2" maxlength="1800" placeholder="Es.: la ripresa al minuto 0:15 taglia il personaggio; voglio sistemarla senza rifare il resto."></textarea></label>
+ <div id="qualityJournal" class="repairAdvanced" hidden>
+ <label class="qualityLabel">Che tipo di correzione hai fatto o desideri salvare?
+ <select id="qualityCategory" class="qualitySelect">
+ <option value="direction">Regia e tagli</option><option value="pacing">Ritmo e tempi</option>
+ <option value="audio">Voce e audio</option><option value="visual">Immagini e fotografie</option>
+ <option value="authenticity">Fedeltà storica e museale</option><option value="editorial">Racconto e testo</option>
+ <option value="download">File e download</option><option value="other">Altro</option></select></label>
+ <label class="qualityGeneralize"><input id="qualitySuggestFuture" type="checkbox">Valuta questa correzione come regola da usare anche nei futuri video, ma solo dopo verifiche e mia approvazione.</label>
+ <button id="qualitySaveFeedback" class="qualitySave" type="button">＋ Salva questa correzione</button>
+ <p class="qualityPrivacy">Salvataggio immediato su questo Android. Per renderla permanente e disponibile a tutti i processi, premi poi «Copia e apri la chat»: GPT potrà registrarla nel repository con una PR dopo le verifiche.</p>
+ <p class="repairStatus" id="qualitySaveStatus" role="status" aria-live="polite"></p>
+ <details class="repairAdvanced" id="qualityHistory"><summary>Cronologia di questo video</summary><div id="qualityJournalRows" class="repairSection"></div></details>
+ </div>
+ <a class="repairDoNow" id="repairCopyOpen" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="https://chatgpt.com/">1 · Copia e apri la chat corretta</a>
+ <p class="repairExplain">2 · Incolla in ChatGPT. La chat verifica i dati e, se possibile e autorizzata, interviene. Questo pannello non avvia la produzione da solo.</p>
+ <p id="repairInstantStatus" class="repairStatus" role="status" aria-live="polite"></p></div>
+ <details class="repairAdvanced" id="repairAdvancedPrompt"><summary>Mostra diagnosi completa e prove GitHub (facoltativo)</summary>
  <div class="repairSection"><h3>1 · Il problema individuato</h3><p id="repairSummary">Caricamento dei dettagli…</p>
  <div id="repairJobs" class="repairExplain" role="status" aria-live="polite">Recupero dei job GitHub quando disponibili.</div></div>
  <div class="repairSection"><h3>2 · Messaggio per GPT già preparato</h3>
@@ -180,25 +377,28 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
  <a class="repairButton secondary" id="openNewGPT" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Apri ChatGPT nel browser ↗</a></div>
  <p id="androidAppHint" class="repairExplain" hidden>Se il pulsante apre ancora il browser: Android → Impostazioni → App → ChatGPT → Apri per impostazione predefinita → abilita i link supportati (chatgpt.com). In alcuni browser è necessario aprire prima il Centro di controllo direttamente in Chrome.</p>
  <p id="repairCopyStatus" class="repairStatus" role="status" aria-live="polite"></p></div>
- <div class="repairSection"><h3>3 · Collega la chat principale di questo progetto</h3>
+ </details><details class="repairAdvanced" id="repairAdvancedChat"><summary>Collega la chat giusta (solo la prima volta)</summary>
+ <div class="repairSection"><h3>3 · Associa una chat a questo video o progetto</h3>
  <p id="repairChatLabel"></p>
  <p>Incolla l'indirizzo privato della conversazione aperta nel browser, normalmente <code>chatgpt.com/c/…</code>.
  Non incollare un link di condivisione <code>/share/</code>: è un'istantanea, non la tua chat modificabile.</p>
  <select id="repairChatScope" class="chatInput" aria-label="Ambito del collegamento ChatGPT">
 <option value="project">Chat principale dell'intero progetto</option>
 <option value="workflow">Chat specifica di questo workflow</option>
+<option value="work">Chat di questo quadro</option>
+<option value="slot">Chat di questo video / variante</option>
 </select>
  <input id="repairChatInput" class="chatInput" type="url" inputmode="url" autocomplete="off" spellcheck="false"
  placeholder="https://chatgpt.com/c/…" aria-label="Indirizzo privato della chat principale">
  <div class="repairGrid"><button type="button" class="repairButton secondary" id="saveRepairChat">Salva chat sul telefono</button>
  <button type="button" class="repairButton secondary" id="forgetRepairChat">Scollega chat</button></div>
  <p id="repairChatStatus" class="repairStatus" role="status" aria-live="polite"></p></div>
- <p class="repairExplain">Il pannello non accede alle tue conversazioni private e non invia automaticamente richieste a GPT. Non modifica workflow o video. La riparazione parte soltanto quando incolli la diagnosi nella chat e la autorizzi.</p>
+ </details><p class="repairExplain">Il pannello non accede alle tue conversazioni private e non invia automaticamente richieste a GPT. Non modifica workflow o video. La riparazione parte soltanto quando incolli la diagnosi nella chat e la autorizzi.</p>
 </div></dialog>
 <script>
 (function(){
 "use strict";
-var state={page:"home",data:null,filter:"all",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",selectedGenre:"Libri narrati",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project",quality:null,qualityAt:0,qualityError:null,qualityLoading:false,integrity:null,integrityAt:0,integrityError:null,integrityLoading:false};
+var state={page:"home",data:null,productionProgress:{},simpleOpen:{},filter:"all",actionFilter:"needs",repairNote:"",diaryFilter:"all",workOpened:{},workSearch:"",workFilter:"all",selectedGenre:"Libri narrati",statsWindow:"7d",q:"",stamp:0,loadError:null,chatLinks:{},chatStoreOk:false,repair:null,repairDetails:null,chatScope:"project",quality:null,qualityAt:0,qualityError:null,qualityLoading:false,integrity:null,integrityAt:0,integrityError:null,integrityLoading:false};
 var site="https://video-library-studio.600led.workers.dev";
 function escapeText(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function date(x){if(!x)return "non disponibile";var d=new Date(x);return isNaN(+d)?"non disponibile":d.toLocaleString("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
@@ -281,7 +481,7 @@ function loadChats(){
     var json=JSON.parse(localStorage.getItem(CHAT_MAP_STORAGE_KEY)||"{}");
     if(!json||typeof json!=="object"||Array.isArray(json))return;
     Object.keys(json).filter(function(k){
-      return Object.prototype.hasOwnProperty.call(PROJECT_LABELS,k)||/^workflow:[1-9]\d{0,17}$/.test(k);
+      return Object.prototype.hasOwnProperty.call(PROJECT_LABELS,k)||/^workflow:[1-9]\d{0,17}$/.test(k)||/^work:[a-z0-9_-]{3,120}$/i.test(k)||/^slot:[a-z0-9_-]{3,120}:(?:critico_standard|critico_museum|cinema_standard|cinema_museum)$/i.test(k);
     }).forEach(function(key){
       var url=allowedChatUrl(json[key]);
       if(url)state.chatLinks[key]=url;
@@ -327,13 +527,28 @@ function workflowChatKey(ctx){
   var id=Number(ctx?.run?.workflow_id)||0;
   return Number.isSafeInteger(id)&&id>0?"workflow:"+id:null;
 }
+
+function workChatKey(ctx){
+  var id=String(ctx?.work?.id||"");
+  return /^[a-z0-9_-]{3,120}$/i.test(id)?"work:"+id:null;
+}
+function slotChatKey(ctx){
+  var work=workChatKey(ctx),slot=String(ctx?.slot?.id||"");
+  return work&&/^(?:critico_standard|critico_museum|cinema_standard|cinema_museum)$/.test(slot)?
+    "slot:"+work.slice(5)+":"+slot:null;
+}
 function chatScopeKey(ctx){
-  var workflow=workflowChatKey(ctx);
-  return state.chatScope==="workflow"&&workflow?workflow:ctx?.project||"other";
+  var kind=state.chatScope,workflow=workflowChatKey(ctx),
+      work=workChatKey(ctx),slot=slotChatKey(ctx);
+  if(kind==="slot"&&slot)return slot;
+  if(kind==="work"&&work)return work;
+  if(kind==="workflow"&&workflow)return workflow;
+  return ctx?.project||"other";
 }
 function linkedChat(ctx){
-  var workflow=workflowChatKey(ctx);
-  return (workflow&&state.chatLinks[workflow])||state.chatLinks[ctx?.project||"other"]||"";
+  var slot=slotChatKey(ctx),work=workChatKey(ctx),workflow=workflowChatKey(ctx);
+  return (slot&&state.chatLinks[slot])||(work&&state.chatLinks[work])||
+    (workflow&&state.chatLinks[workflow])||state.chatLinks[ctx?.project||"other"]||"";
 }
 function contextForIssue(issue){
   var id=Number(issue.run_id)||0;
@@ -394,6 +609,54 @@ function prepareRepairPrompt(ctx,details){
       "; catalogo="+(v.site_catalog?"presente":"non individuato")+
       "; disponibilità dichiarata="+(v.site_available===true?"sì":v.site_available===false?"no":"non nota"))});
   }
+  if(ctx.type==="slot"&&ctx.slot&&ctx.work){
+    var v=ctx.slot,w=ctx.work;
+    line.push("- ID opera: "+String(w.id||"non dichiarato"),
+      "- Variante specifica: "+String(v.id||"non dichiarata")+" · "+String(v.label||""),
+      "- MP4 indicato nel registro: "+String(v.filename||"non identificato"),
+      "- Scheda tecnica registrata: "+(v.recorded?"sì":"non trovata"),
+      "- Nel catalogo pubblico: "+(v.site_catalog?"presente":"non individuata"),
+      "- Accessibilità catalogo: "+(v.site_available===true?"indicata disponibile":v.site_available===false?"indicata offline":"non verificabile"),
+      "- Anteprima verificata dal pannello: "+(v.preview_ready?"riproducibile nel campione":"non confermata"),
+      "- Gold V25 attestato: "+(v.qa?.gold_approved===true?"sì":"NO, non attestato"),
+      "- Run del candidato: "+String(v.run_id||"non dichiarata"),
+      "- Slot atteso: queue/artvision_owner_selected_ten_20261102.json");
+  }
+  if(ctx.action==="produce")line.push("AZIONE VOLUTA DAL PROPRIETARIO: procedi verso UNA nuova produzione REALE e consegnabile del progetto indicato. Prima verifica gli owner/automazioni già attivi e le code, e se una produzione equivalente è in corso NON crearne una seconda. Se accesso e permessi lo consentono, attiva SOLO l'owner già esistente o completa la produzione in quella chat; se non puoi avviare, spiega esattamente dove fare il singolo passaggio mancante. Niente finti video completati.");
+  if(ctx.action==="complete")line.push("AZIONE VOLUTA: verifica se questo slot manca realmente, poi completa SOLO la variante individuata tramite il processo owner già esistente, conservando tutti i master precedenti e rispettando i gate QA. Evita nuove code e duplicazioni.");
+  if(ctx.action==="recover")line.push("AZIONE VOLUTA: trova il video o il pacchetto già prodotti nelle run, release, archivi e catalogo. Correggi eventuali link/sincronizzazioni solo dopo prove. NON ricreare il video se esiste il master originale recuperabile.");
+  if(ctx.action==="improve")line.push("AZIONE VOLUTA: ispeziona il vero MP4, identifica errori di regia/voce/immagini e migliora SOLO quanto necessario con una versione N+1, confronto A/B e QA reale. Non cancellare o sovrascrivere l'originale.");
+  if(state.repairNote&&state.repairNote.trim())line.push("OSSERVAZIONE AGGIUNTIVA DEL PROPRIETARIO: "+state.repairNote.trim().slice(0,1800));
+  if(ctx.type==="video"&&ctx.video){
+    line.push("- MP4 catalogo: "+String(ctx.video.key||"non dichiarato"),
+      "- Titolo catalogo: "+String(ctx.video.title||"non dichiarato"),
+      "- Disponibilità dichiarata: "+(ctx.video.available===true?"sì":
+        ctx.video.available===false?"no":"non dichiarata"),
+      "- Correzione specifica per singolo video; non inventare il suo workflow/episodio di appartenenza.");
+  }
+  if(ctx.action==="unblock"){
+    line.push("AZIONE VOLUTA DAL PROPRIETARIO: SBLOCCA CIO CHE E POSSIBILE SENZA DUPLICATI.",
+      "Verifica prima le run, i job, le code owner e i file completi di ciascuno dei seguenti candidati. "+
+      "Recupera prima video esistenti; completa solo varianti davvero mancanti e indipendenti, rispettando i limiti "+
+      "e fermandoti davanti a lavori in corso o rischi di addebiti. Non dichiarare consegne senza MP4, ZIP e QA.");
+    (ctx.items||[]).forEach(function(it,index){
+      line.push("  "+(index+1)+". "+it.title+" · "+it.slot_id+
+        " · azione proposta "+it.action+" · stato "+it.status+
+        " · file "+(it.filename||"non identificato"));
+    });
+    if(!(ctx.items||[]).length)line.push("Nessun candidato certo disponibile: non avviare nulla sulla base di dati assenti.");
+  }
+  var feedback=typeof qualityNotesForPrompt==="function"?qualityNotesForPrompt(ctx):[];
+  if(feedback.length){
+    line.push("",
+      "CORREZIONI SALVATE NEL BROWSER: VERIFICARE SE GIA REGISTRATE NEL REPOSITORY:",
+      JSON.stringify(feedback,null,2),
+      "Queste righe sono segnalazioni 'reported', NON correzioni applicate o approvate.",
+      "Usa src/studio_quality_memory_v1.py e quality/STUDIO_VIDEO_LESSONS_V1.json: "+
+      "se hai accesso GitHub, registra in history i feedback ancora assenti tramite PR, senza duplicati. "+
+      "Valuta una regola generale solo se richiesta, corretta per il format, verificata sul vero MP4 e approvata; "+
+      "mai segnare effectiveness_proven_by_new_video senza prove. Riporta il commit o spiega cosa manca.");
+  }
   line.push("",
     "COMPITO PER GPT:",
     "1. Usa la connessione GitHub disponibile per controllare prima lo stato ATTUALE del repository, della run e dei relativi job e log. Non basarti soltanto sul riepilogo del pannello.",
@@ -411,14 +674,26 @@ function renderRepairDialog(){
   var ctx=state.repair;
   if(!ctx)return;
   var label=PROJECT_LABELS[ctx.project]||PROJECT_LABELS.other;
-  document.getElementById("repairTitle").textContent=ctx.type==="work"?"Analizza le varianti con GPT":"Ripara con GPT";
+  document.getElementById("repairTitle").textContent=ctx.action==="produce"?"Richiedi produzione con GPT":ctx.action==="unblock"?"Sblocca ciò che è possibile":ctx.type==="video"?"Migliora questo video":ctx.type==="slot"?"Intervieni sul video con GPT":ctx.type==="work"?"Analizza le varianti con GPT":"Ripara con GPT";
   document.getElementById("repairSummary").textContent=ctx.title+
     " · "+ctx.detail+(ctx.run?" · GitHub run #"+ctx.runId:"");
-  document.getElementById("repairChatLabel").textContent="Chat principale: "+label;
+  document.getElementById("repairActionTitle").textContent=ctx.action==="produce"?
+    "Nuovo video · "+label:ctx.type==="slot"?"Intervento su "+String(ctx.slot?.label||"video"):ctx.title;
+  document.getElementById("repairNextStep").textContent=ctx.action==="unblock"?
+    "Verifica gli slot recuperabili, poi fai avanzare soltanto i lavori indipendenti e non già in corso.":
+    actionInstruction(ctx);
+  document.getElementById("repairOwnerNote").value=state.repairNote||"";
+  document.getElementById("repairChatLabel").textContent="Chat: "+label+
+    (ctx.work?" · "+String(ctx.work.title||"opera"):"")+
+    (ctx.slot?" · "+String(ctx.slot.label||"variante"):"");
   document.getElementById("repairPrompt").value=prepareRepairPrompt(ctx,state.repairDetails);
   var scope=document.getElementById("repairChatScope"),workflow=workflowChatKey(ctx);
-  scope.style.display=workflow?"block":"none";
-  if(!workflow)state.chatScope="project";
+  var work=workChatKey(ctx),slot=slotChatKey(ctx);
+  scope.style.display=(workflow||work||slot)?"block":"none";
+  scope.querySelector('option[value="workflow"]').hidden=!workflow;
+  scope.querySelector('option[value="work"]').hidden=!work;
+  scope.querySelector('option[value="slot"]').hidden=!slot;
+  if((state.chatScope==="workflow"&&!workflow)||(state.chatScope==="work"&&!work)||(state.chatScope==="slot"&&!slot))state.chatScope="project";
   scope.value=state.chatScope;
   var saved=state.chatLinks[chatScopeKey(ctx)]||"";
   document.getElementById("repairChatInput").value=saved;
@@ -432,15 +707,25 @@ function renderRepairDialog(){
   appHome.hidden=!android;
   if(android)appHome.href=androidChatGPTIntent("https://chatgpt.com/",true);
   document.getElementById("androidAppHint").hidden=!android;
+  var fast=document.getElementById("repairCopyOpen");
+  fast.href=android?androidChatGPTIntent(preferred||"https://chatgpt.com/",true):(preferred||"https://chatgpt.com/");
+  fast.textContent=preferred?"1 · Copia e apri la chat collegata":"1 · Copia e apri ChatGPT";
+
+  renderQualityNotes(ctx);
   document.getElementById("repairChatStatus").textContent=preferred?
     "Chat privata collegata nel browser. La diagnosi va comunque incollata manualmente.":"Nessun collegamento: puoi salvare la chat principale o aprire ChatGPT.";
 }
 async function openRepairDialog(ctx){
   if(!ctx)return;
-  state.repair=ctx;state.repairDetails=null;state.chatScope="project";
+  state.repair=ctx;state.repairDetails=null;state.repairNote="";state.chatScope=slotChatKey(ctx)?"slot":workChatKey(ctx)?"work":"project";
   document.getElementById("repairJobs").textContent=ctx.type==="run"&&ctx.runId?
     "Cerco i job e gli step falliti su GitHub…":"Sono disponibili i dati riportati nel registro. Nessuna diagnosi automatica è stata eseguita.";
   document.getElementById("repairCopyStatus").textContent="";
+  document.getElementById("qualitySaveStatus").textContent="";
+  document.getElementById("qualityHistory").open=false;
+  document.getElementById("repairAdvancedPrompt").open=false;
+  document.getElementById("repairAdvancedChat").open=false;
+  document.getElementById("repairInstantStatus").textContent="";
   renderRepairDialog();
   var dialog=document.getElementById("repairDialog");
   if(!dialog.open)dialog.showModal();
@@ -523,30 +808,293 @@ function genres(){
   return out;
 }
 
+/* V12 Android-first progress for observed public GitHub runs (not ChatGPT automations).
+   All status/steps are fetched, never animated into fictional completion. */
+function productionCandidates(){
+  if(!state.data?.sources?.github?.ok)return [];
+  const allowed=new Set(["artvision","storia","wow","books","music","documentary","cinema"]);
+  const all=(state.data.runs||[]).filter(r=>
+    r&&r.head_branch==="main"&&allowed.has(r.project)&&Number.isSafeInteger(r.id)&&r.id>0);
+  const running=all.filter(r=>r.status!=="completed").slice(0,3);
+  if(running.length)return running;
+  // Latest completed activity is useful context, but never called "render ready".
+  return all.filter(r=>r.status==="completed"&&
+    Number.isFinite(Date.parse(r.updated_at))&&Date.now()-Date.parse(r.updated_at)<90*60000).slice(0,1);
+}
+function progressClock(seconds){
+  const n=Math.max(0,Math.ceil(Number(seconds)||0));
+  if(!n)return "meno di 1 min";
+  if(n<3600)return Math.max(1,Math.ceil(n/60))+" min";
+  const hours=Math.floor(n/3600),mins=Math.ceil((n%3600)/60);
+  return hours+" h"+(mins?" "+mins+" min":"");
+}
+function progressStatus(run,details){
+  if(run.status==="completed"){
+    return ["failure","cancelled","timed_out","action_required"].includes(run.conclusion)?
+      "Ultima esecuzione fallita · da riparare":"Workflow terminato · MP4 da verificare";
+  }
+  if(details?.considered_blocked_only_if_failed)return "Step fallito · intervento richiesto";
+  if(run.status==="queued")return "In coda GitHub";
+  if(details?.older_than_30_minutes_without_step_change)
+    return "Fase lunga, nessun nuovo step osservato · controllare";
+  return "Esecuzione in corso su GitHub";
+}
+function progressEtaText(value){
+  if(!value?.available)return value?.reason||"Stima non disponibile";
+  const a=progressClock(value.min_seconds),b=progressClock(value.max_seconds);
+  return a===b?"Circa "+b:"Fra "+a+" e "+b;
+}
+function progressCard(run){
+  const row=state.productionProgress?.[run.id];
+  const p=row?.ok?row:null;
+  const label=PROJECT_LABELS[run.project]||run.project||"Produzione";
+  const isPreparation=/research|ricerc|prepar|scout|quality|qualità|qa|audit|preflight|source|fonte|test|check|gate|report/i.test(run.name);
+  const stage=p?.phase||"Recupero delle fasi GitHub…";
+  const status=progressStatus(run,p);
+  const progressKnown=!!(p&&Number.isFinite(p.step_fraction_percent)&&p.step_count>0);
+  const completion=progressKnown?Math.max(0,Math.min(100,Math.round(p.step_fraction_percent))):null;
+  const critical=run.status==="completed"&&["failure","timed_out","cancelled","action_required"].includes(run.conclusion);
+  let out='<article class="productionRun"><div class="productionRow"><div><span class="productionProgram">'+
+    escapeText(label)+'</span><h4>'+escapeText(run.name||"Attività GitHub")+'</h4>'+
+    '<p class="productionStatus">'+escapeText(status)+'</p></div>'+
+    '<span class="productionBadge'+(critical?' warning':'')+'">'+
+    (isPreparation?'Ricerca / preparazione':'Workflow GitHub')+'</span></div>';
+  if(progressKnown){
+    out+='<div class="productionTrack" role="progressbar" aria-valuenow="'+completion+
+      '" aria-valuemin="0" aria-valuemax="100" aria-label="Percentuale dei passaggi GitHub osservati, non del video">'+
+      '<span style="width:'+completion+'%"></span></div>'+
+      '<p class="productionMeta">'+p.steps_completed+'/'+p.step_count+
+      ' passaggi tecnici osservati · '+completion+'% dei passaggi GitHub; NON del video</p>';
+  }else{
+    out+='<div class="productionTrack isUnknown" aria-hidden="true"><span></span></div>'+
+      '<p class="productionMeta">Progressione non calcolabile: GitHub non espone ancora i passaggi verificabili.</p>';
+  }
+  out+='<div class="productionDetails"><div><span>Fase adesso</span><strong>'+
+    escapeText(stage)+'</strong></div><div><span>Tempo alla fine del workflow</span><strong>'+
+    escapeText(p?progressEtaText(p.eta):"In attesa di dati reali")+
+    '</strong></div><div><span>Ultima prova</span><strong>'+
+    escapeText(p?.asof?date(p.asof):date(run.updated_at))+
+    '</strong></div></div>';
+  if(p?.eta?.available)out+='<p class="productionMeta">Stima ricavata da '+p.eta.sample_count+
+    ' esecuzioni precedenti dello stesso workflow. Non è la data di consegna di un MP4.</p>';
+  if(p?.older_than_30_minutes_without_step_change)
+    out+='<p class="productionHint">Nessuna nuova fase osservata da oltre 30 minuti; può essere un normale render lungo. Verifica i log prima di considerarlo bloccato.</p>';
+  out+='<div class="productionButtons"><a class="miniBtn secondary" href="'+
+    escapeText("https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/"+run.id)+
+    '" target="_blank" rel="noopener noreferrer">Apri fasi GitHub ↗</a>'+
+    '<button type="button" class="miniBtn" data-repair-run="'+run.id+'">Ripara / verifica GPT</button></div>'+
+    '<p class="productionDisclaimer">Consegna video: <b>non confermata</b>. Le automazioni ChatGPT non sono tracciabili da questi dati.</p></article>';
+  return out;
+}
+function productionProgressPanel(){
+  const runs=productionCandidates();
+  let text='<section class="panel productionPanel"><div class="productionHead"><div>'+
+    '<h3>Avanzamento dei lavori</h3><p class="sub">Aggiornamento automatico circa ogni 2 minuti, usando fasi reali GitHub. '+
+    'Nessuna barra simulata e nessun tempo di consegna inventato.</p></div>'+
+    '<button type="button" class="miniBtn secondary" data-progress-refresh>↻ Aggiorna ora</button></div>';
+  if(!source("github"))return text+
+    '<div class="empty">GitHub non raggiungibile: non posso valutare avanzamento o tempi.</div></section>';
+  if(!runs.length)return text+'<div class="empty">Nessun workflow produttivo GitHub in corso nel campione pubblico. Le produzioni avviate dalle automazioni ChatGPT potrebbero essere attive ma qui non visibili.</div></section>';
+  return text+runs.map(progressCard).join("")+
+    '<p class="note">Per sapere il tempo rimanente del singolo video serviranno checkpoint inviati direttamente dal produttore e il file MP4 identificato. Le fasi GitHub e una percentuale di step non dimostrano la qualità o la conclusione del video.</p></section>';
+}
+var productionProgressBusy=false;
+async function refreshProductionProgress(){
+  if(productionProgressBusy||!state.data?.sources?.github?.ok)return;
+  const candidates=productionCandidates();
+  if(!candidates.length)return;
+  productionProgressBusy=true;
+  await Promise.all(candidates.map(async run=>{
+    try{
+      const response=await fetch("/api/progress?run="+encodeURIComponent(run.id),{cache:"no-store"});
+      if(!response.ok)throw Error("HTTP "+response.status);
+      const payload=await response.json();
+      if(payload?.ok===true&&payload.run_id===run.id&&payload.schema==="studio-github-progress-v12")
+        state.productionProgress[run.id]=payload;
+    }catch{delete state.productionProgress[run.id]}
+  }));
+  productionProgressBusy=false;
+  if(["home","health","issues"].includes(state.page)&&state.data)render();
+}
+
+/* V13 action-first Android cards. Source is GitHub steps, NOT film completion.
+   Static/dated evidence never progresses on its own. */
+function progressV13Age(iso,now=Date.now()){
+  const t=Date.parse(iso||"");
+  return Number.isFinite(t)&&t<=now?Math.max(0,Math.floor((now-t)/60000)):null;
+}
+function progressV13Severity(run,p){
+  if(run.status==="completed"&&["failure","cancelled","timed_out","action_required"].includes(run.conclusion))
+    return "error";
+  if(p?.attention_level==="confirmed_failure")return "error";
+  if(p?.attention_level==="needs_review")return "watch";
+  return "normal";
+}
+function progressV13NextAction(run,p){
+  const severity=progressV13Severity(run,p);
+  if(severity==="error")return "Apri il log e prepara una correzione con GPT. Non riavviare a caso.";
+  if(p?.attention_level==="needs_review")return "Controlla il passaggio in corso: potrebbe essere un'elaborazione lunga.";
+  if(run.status==="queued")return "In attesa di un runner GitHub: nessun avanzamento tecnico ancora misurabile.";
+  if(run.status==="completed")return "Controlla MP4, audio, download, QA e ZIP: il workflow terminato non prova la consegna.";
+  return "Segui l'ultimo passaggio reale. Se non cambia, consulta i log prima di intervenire.";
+}
+function progressV13Window(eta,asof){
+  if(!eta?.available||!Number.isFinite(eta.min_seconds)||!Number.isFinite(eta.max_seconds))return "";
+  const timestamp=Date.parse(asof||"");
+  if(!Number.isFinite(timestamp)||timestamp>Date.now()+60000)return "";
+  const from=new Date(timestamp+Math.max(0,eta.min_seconds)*1000);
+  const until=new Date(timestamp+Math.max(0,eta.max_seconds)*1000);
+  const clock=new Intl.DateTimeFormat("it-IT",{hour:"2-digit",minute:"2-digit"});
+  const day=new Intl.DateTimeFormat("it-IT",{day:"2-digit",month:"2-digit"});
+  return (day.format(from)===day.format(until)?"Orario indicativo: "+clock.format(from)+"–"+clock.format(until):
+    "Orario indicativo: "+day.format(from)+" "+clock.format(from)+" – "+day.format(until)+" "+clock.format(until));
+}
+
+function progressV13Timeline(p){
+  const list=Array.isArray(p?.timeline)?p.timeline.slice(0,4):[];
+  if(!list.length)return '<p class="productionMeta">Nessun passaggio precedente disponibile in questo campione.</p>';
+  return '<ol class="progressTimeline">'+list.map(step=>
+    '<li><span class="progressStepDot" aria-hidden="true"></span><div><strong>'+
+    escapeText(step.name||"Passaggio GitHub")+'</strong><small>'+
+    escapeText(step.completed_at?date(step.completed_at):"Ora non dichiarata")+
+    ' · '+escapeText(step.conclusion||"esito non dichiarato")+
+    '</small></div></li>').join('')+'</ol>';
+}
+function progressCard(run){
+  const row=state.productionProgress?.[run.id];
+  const p=row?.ok&&row.telemetry_version==="v13"?row:null;
+  const label=PROJECT_LABELS[run.project]||run.project||"Produzione";
+  const isPreparation=/research|ricerc|prepar|scout|quality|qualità|qa|audit|preflight|source|fonte|test|check|gate|report/i.test(run.name);
+  const severity=progressV13Severity(run,p),stale=p&&progressV13Age(p.latest_observation_at)>5;
+  const known=!!(p&&Number.isFinite(p.step_fraction_percent)&&p.step_count>0);
+  const completed=known?Math.max(0,Math.min(100,Math.round(p.step_fraction_percent))):null;
+  const eta=p?.eta;
+  const etaValid=!!(p&&eta?.available&&run.status==="in_progress"&&!stale);
+  const status=progressStatus(run,p);
+  const last=p?.last_step_at?progressV13Age(p.last_step_at):null;
+  const stage=p?.phase||"Fase GitHub non ancora acquisita";
+  const stageGroup=p?.current_phase_group||"Passaggio GitHub";
+  const elapsed=p?.elapsed_seconds!=null?progressClock(p.elapsed_seconds):"Non dichiarato";
+  const stageElapsed=p?.current_phase_elapsed_seconds!=null?progressClock(p.current_phase_elapsed_seconds):"Non dichiarato";
+  const confidence=etaValid?(eta.confidence==="media"?"Storico discreto":"Storico limitato"):"Stima sospesa";
+  const etaText=stale?"Dati non aggiornati; aggiorna il pannello":
+    etaValid?progressEtaText(eta):eta?.reason||"Non stimabile dai dati disponibili";
+  const sample=eta?.sample_count;
+  const runLink="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/"+Number(run.id);
+  let html='<article class="productionRun progressV13 '+severity+'" aria-label="'+escapeText(label+' · '+run.name)+'">'+
+    '<div class="productionRow"><div><span class="productionProgram">'+escapeText(label)+
+    '</span><h4>'+escapeText(run.name||"Attività GitHub")+'</h4>'+
+    '<p class="productionStatus">'+escapeText(status)+'</p></div>'+
+    '<span class="productionBadge">'+(isPreparation?'Attività preparatoria':'Workflow GitHub')+'</span></div>';
+  if(p?.match_status==="exact_queue_run_id"&&p.linked_video){
+    const v=p.linked_video;
+    html+='<div class="progressVideoLink"><span>VIDEO COLLEGATO CON ID RUN DELLA CODA</span>'+
+      '<strong>'+escapeText(v.work_title||"Opera")+' · '+escapeText(v.slot_label||"Variante")+'</strong>'+
+      '<small>'+(v.preview_ready?"Scheda dichiarata accessibile nel catalogo":"MP4 non confermato sul sito")+
+      ' · nessuna approvazione artistica implicita</small>';
+    if(v.preview_ready&&/^[\w ().-]{1,190}\.mp4$/i.test(v.filename||"")){
+      html+='<a href="https://video-library-studio.600led.workers.dev/media/'+
+        encodeURIComponent(v.filename)+'" target="_blank" rel="noopener noreferrer">Guarda il file ↗</a>';
+    }
+    html+='</div>';
+  }else if(p?.match_status==="ambiguous"){
+    html+='<p class="progressAlert">Questa run risulta associata a più varianti nel registro. '+
+      'Non posso assegnare la barra a un singolo video.</p>';
+  }
+  if(stale)html+='<p class="progressAlert">Ultimo controllo non recente: percentuale e tempi potrebbero essere cambiati.</p>';
+  if(known){
+    html+='<div class="progressMeasure"><span>Passaggi GitHub conclusi</span><strong>'+
+      p.steps_completed+'/'+p.step_count+'</strong></div>'+
+      '<div class="productionTrack" role="progressbar" aria-valuenow="'+completed+
+      '" aria-valuemin="0" aria-valuemax="100" aria-label="Passaggi GitHub osservati completati, NON percentuale video">'+
+      '<span style="width:'+completed+'%"></span></div>'+
+      '<p class="productionMeta">'+completed+'% dei passaggi tecnici <b>non del video</b>. '+
+      'Le nuove fasi aggiunte dal workflow possono modificare questa proporzione.</p>';
+  }else{
+    html+='<div class="productionTrack isUnknown" aria-hidden="true"><span></span></div>'+
+      '<p class="productionMeta">Passaggi non rilevati; barra indeterminata, nessun progresso presunto.</p>';
+  }
+  html+='<div class="progressPrimaryData"><div class="progressCurrent"><span>ADESSO · '+
+    escapeText(stageGroup)+'</span><strong>'+escapeText(stage)+'</strong>'+
+    '<small>In questa fase: '+escapeText(stageElapsed)+'</small></div>'+
+    '<div class="progressEstimate"><span>FINE STIMATA DEL WORKFLOW</span><strong>'+
+    escapeText(etaText)+'</strong><small>'+escapeText(confidence)+
+    (etaValid&&Number.isFinite(sample)?' · '+sample+' casi comparabili':'')+'</small></div></div>';
+  if(etaValid){
+    const windowText=progressV13Window(eta,p.latest_observation_at);
+    if(windowText)html+='<p class="progressWindow">'+escapeText(windowText)+
+      ' · fascia storica, non appuntamento di consegna.</p>';
+  }
+  html+='<div class="progressMetaRow"><span><b>Da avvio:</b> '+escapeText(elapsed)+'</span>'+
+    '<span><b>Ultima transizione:</b> '+(last===null?'non disponibile':escapeText(last+' min fa'))+
+    '</span><span><b>Controllo:</b> '+escapeText(p?.latest_observation_at?date(p.latest_observation_at):"in attesa")+'</span></div>';
+  if(severity!=="normal")
+    html+='<p class="progressAlert">'+escapeText(p?.attention_reason||"Controlla i log originali.")+'</p>';
+  if(eta?.over_historical_window&&!stale)
+    html+='<p class="progressAlert">Il tempo sta superando la fascia storica; non è una prova di blocco, ma la stima non è più attendibile.</p>';
+  html+='<div class="progressNext"><strong>Cosa fare adesso</strong><p>'+
+    escapeText(progressV13NextAction(run,p))+'</p></div>'+
+    '<div class="productionButtons"><a class="miniBtn secondary" href="'+escapeText(runLink)+
+    '" target="_blank" rel="noopener noreferrer">Fasi e log GitHub ↗</a>'+
+    '<button class="miniBtn" type="button" data-repair-run="'+Number(run.id)+'">'+
+    (severity==="error"?"Ripara con GPT":"Verifica con GPT")+'</button></div>'+
+    '<details class="progressExtra"><summary>Dettagli e ultime fasi osservate</summary>'+
+    progressV13Timeline(p)+'</details>'+
+    '<p class="productionDisclaimer">Il video è <strong>pronto solo dopo verifica del file reale</strong>. '+
+    'Questo cronometro segue GitHub, non le attività ChatGPT né la qualità artistica.</p></article>';
+  return html;
+}
+function productionProgressPanel(){
+  const runs=productionCandidates();
+  let head='<section class="panel productionPanel progressV13Panel"><div class="productionHead"><div>'+
+    '<h3>Avanzamento dei lavori</h3><p class="sub">Dati GitHub, aggiornati automaticamente quando il pannello è aperto. '+
+    'Fasi reali, nessuna percentuale inventata per gli MP4.</p></div>'+
+    '<button class="miniBtn secondary" type="button" data-progress-refresh>↻ Aggiorna</button></div>';
+  if(!source("github"))return head+
+    '<div class="empty">GitHub non è raggiungibile: non è possibile conoscere la fase o il tempo residuo.</div></section>';
+  if(!runs.length)return head+
+    '<div class="empty">Nessun workflow video GitHub in corso nel campione. '+
+    'Le produzioni ChatGPT possono essere attive ma non osservabili qui.</div></section>';
+  const all=(state.data.runs||[]).filter(r=>r?.head_branch==="main"&&
+    r.status!=="completed"&&["artvision","storia","wow","books","music","documentary","cinema"].includes(r.project)).length;
+  return head+runs.map(progressCard).join("")+
+    (all>runs.length?'<p class="productionMeta">'+(all-runs.length)+
+      ' altre attività in esecuzione nel campione: apri «Attività GitHub» per vederle.</p>':'')+
+    '<p class="note">Tempo stimato = <b>fine tecnica GitHub</b>, non data di consegna. '+
+    'Il produttore dovrà inviare checkpoint per ottenere il tempo del singolo video.</p></section>';
+}
+
 function home(){
-  var d=state.data||{},hs=d.health||[],tasks=d.attention||[],review=d.review,entries=d.diary||[];
-  var actionable=tasks.filter(function(x){return x.kind==="workflow"}).length;
-  var unavailable=tasks.filter(function(x){return x.kind==="source"}).length;
-  var h=sec("Buongiorno, Studio","La situazione più utile da conoscere: nessuno stato viene considerato certo senza una fonte.");
-  h+='<section class="focus"><div class="focusHeader"><div><div class="overline">IL TUO CRUSCOTTO PRIORITARIO</div><h3>Da fare per me</h3><p>Soltanto le verifiche emerse dai dati; le approvazioni artistiche non bloccano il lavoro in automatico.</p></div>'+
-    '<div class="repairGrid"><button class="miniBtn" data-switch="todo" type="button">Da fare per me</button><button class="miniBtn secondary" data-switch="issues" type="button">◈ Ripara con GPT</button><button class="miniBtn secondary" data-switch="quality" type="button">Qualità e prove</button></div></div>'+
-    '<div class="focusStats"><span><strong>'+escapeText(actionable)+'</strong> workflow da controllare</span>'+
-    '<span><strong>'+escapeText(unavailable)+'</strong> fonti da recuperare</span>'+
-    '<span><strong>'+(review?escapeText(review.count):"0")+'</strong> opere senza Gold attestato</span></div>'+
-    '<p class="sub">'+(source("github")?'I workflow già recuperati non sono segnalati come nuovi problemi.':'GitHub non è disponibile: i dati potrebbero essere incompleti.')+'</p></section>';
-  h+='<div class="title"><h2>Salute delle produzioni</h2><p>Ultime attività osservate, senza dichiarare fermo un progetto soltanto perché non compare nel campione.</p></div>';
-  h+='<div class="healthGrid">'+hs.map(healthCard).join("")+'</div>';
-  h+='<div class="title"><h2>Le categorie dello Studio</h2><p>Libri narrati e tutti gli altri generi dell’archivio, anche quelli in preparazione.</p></div>'+genreSection()+
-    '<button type="button" class="miniBtn secondary" data-switch="genres">Esplora tutte le categorie →</button>';
-  h+='<div class="columns"><div><div class="panel"><div class="tools"><h3>Diario dello Studio</h3><a href="#" data-switch="diary" class="link">Tutti gli eventi →</a></div>'+
-    (entries.length?entries.slice(0,5).map(diaryEntry).join(""):'<div class="empty">Nessun evento datato nelle fonti disponibili.</div>')+
-    '</div></div><aside><div class="panel"><h3>ArtVision e archivio</h3><div class="kv"><span>Opere operative</span><b>'+(source("queue")?escapeText((d.works||[]).length):"—")+'</b></div>'+
-    '<div class="kv"><span>Varianti conteggiate nel registro</span><b>'+(source("queue")?escapeText((d.works||[]).reduce(function(n,x){return n+(Number(x.delivered)||0)},0)):"—")+'</b></div>'+
-    '<div class="kv"><span>Voci nel catalogo</span><b>'+(source("catalog")?escapeText(d.catalog_count):"—")+'</b></div>'+
-    '<p class="note">Consegne e schede archiviate non equivalgono a video approvati né a download integrali verificati.</p>'+
-    '<div class="focusActions"><button class="miniBtn secondary" type="button" data-switch="works">Opere 4×1</button><button class="miniBtn secondary" type="button" data-switch="media">Videoteca</button></div></div>'+
-    '<div class="panel"><h3>Informazioni del monitoraggio</h3><p class="sub">'+escapeText(d.scope?.caveat||"Dati pubblici e campione limitato.")+'</p>'+
-    '<a class="link" href="#" data-switch="health">Dettaglio della salute →</a><div class="kv"><span>Analisi recenti</span><button class="miniBtn secondary" type="button" data-switch="stats">Statistiche ↗</button></div></div></aside></div>';
+  var d=state.data||{},tasks=d.attention||[],hs=d.health||[];
+  var failures=tasks.filter(function(x){return x.kind==="workflow"});
+  var missing=tasks.filter(function(x){return x.kind==="source"});
+  var h='<section class="simpleWelcome"><span class="overline">CENTRO DI CONTROLLO</span>'+
+    '<h1>Come stanno i tuoi video</h1>'+
+    '<p>Avanzamento reale dei lavori visibili su GitHub. Se manca una stima attendibile, te lo diciamo chiaramente.</p></section>';
+  // The progress panel is the first substantial content on mobile, not buried below a large hero.
+  h+=productionProgressPanel();
+  h+='<section class="simpleAttention"><div class="simpleAttentionHead"><h2>Da controllare</h2>'+
+    '<button class="miniBtn secondary" data-switch="issues" type="button">Apri Ripara GPT</button></div>';
+  if(!source("github"))h+='<p class="simpleAlert">GitHub non raggiungibile: gli errori non sono verificabili adesso.</p>';
+  else if(failures.length)h+='<p class="simpleAlert">'+failures.length+
+    ' workflow da verificare nel campione più recente. Le esecuzioni già recuperate non vengono conteggiate come problemi attivi.</p>'+
+    failures.slice(0,2).map(attentionItem).join("");
+  else h+='<p class="simpleGood">Nessun ultimo esito critico tra i workflow pertinenti osservati.</p>';
+  if(missing.length)h+='<p class="simpleAlert">'+missing.length+' fonti temporaneamente non raggiungibili.</p>';
+  h+='</section>';
+  h+='<nav class="simpleShortcuts" aria-label="Scelte rapide">'+
+    '<button type="button" data-switch="works"><span aria-hidden="true">▣</span><strong>Quadri ArtVision</strong><small>Le quattro varianti</small></button>'+
+    '<button type="button" data-switch="media"><span aria-hidden="true">▷</span><strong>Video disponibili</strong><small>Anteprime e archivio</small></button>'+
+    '<button type="button" data-switch="issues"><span aria-hidden="true">✦</span><strong>Ripara un problema</strong><small>Diagnosi con GPT</small></button></nav>';
+  h+='<details class="simpleMore" data-ui-section="home-more"><summary>Altri programmi e informazioni</summary>'+
+    '<p class="sub">Dettagli utili quando vuoi approfondire; non sono necessari per seguire la produzione.</p>'+
+    '<div class="healthGrid">'+hs.map(healthCard).join("")+'</div>'+
+    '<div class="simpleExtraLinks"><button class="miniBtn secondary" data-switch="genres">Categorie</button>'+
+    '<button class="miniBtn secondary" data-switch="diary">Diario</button>'+
+    '<button class="miniBtn secondary" data-switch="stats">Statistiche</button>'+
+    '<button class="miniBtn secondary" data-switch="quality">Qualità e prove</button>'+
+    '<button class="miniBtn secondary" data-switch="health">Salute tecnica</button></div>'+
+    '<p class="sub">Gli esiti GitHub non certificano il MP4, il download completo o la revisione artistica.</p></details>';
   return h;
 }
 function todo(){
@@ -564,7 +1112,7 @@ function todo(){
 }
 function health(){
   var d=state.data||{};
-  return sec("Salute delle produzioni","Distinzione rigorosa fra un lavoro recente, un blocco GitHub e l'assenza di dati.")+
+  return productionProgressPanel()+sec("Salute delle produzioni","Distinzione rigorosa fra un lavoro recente, un blocco GitHub e l'assenza di dati.")+
     '<div class="healthGrid">'+(d.health||[]).map(healthCard).join("")+'</div>'+
     '<div class="panel"><h3>Come leggere gli stati</h3>'+
     '<div class="kv"><span>In corso</span><b>Almeno una run non completata</b></div>'+
@@ -632,7 +1180,11 @@ function slotCard(w,v,index){
     String(index).padStart(2,"0")+'</span><span class="place">◈</span>'+image+'</div>'+
     '<div class="slotBody"><span class="slotName">'+escapeText(v.label)+'</span>'+
     '<span class="slotStatus '+(playable?'playable':offline?'unavailable':'')+'">'+escapeText(label)+'</span>'+
-    file+'<div class="slotActions">'+play+'</div>'+panel+'</div></article>';
+    file+'<div class="slotActions">'+play+
+    '<button type="button" class="actionSecondary" data-action-work="'+escapeText(w.id||w.title)+
+    '" data-action-slot="'+escapeText(v.id||"")+'" data-action-mode="'+actionSlotMode(v)+'">'+
+    (actionSlotMode(v)==="improve"?"✦ Migliora con GPT":actionSlotMode(v)==="recover"?"↻ Recupera con GPT":"▶ Completa con GPT")+
+    '</button></div>'+panel+'</div></article>';
 }
 function statisticsPage(){
   var data=state.data||{},bundle=data.statistics||{};
@@ -824,70 +1376,314 @@ function loadEvidence(force){
 }
 
 
+/* Control Center V10 — owner action hub. Pure UI over already fetched public evidence.
+   No API writes, no workflow dispatch, no cloud storage of private ChatGPT URLs. */
+var ACTION_SLOT_LABELS={critico_standard:"Critico",critico_museum:"Critico Museum",
+  cinema_standard:"Cinema",cinema_museum:"Cinema Museum"};
+function actionSlotState(v){
+  if(!v)return {kind:"unknown",text:"Dati mancanti",next:"Controllare il registro e le fonti."};
+  if(!source("queue"))return {kind:"unknown",text:"Registro non disponibile",next:"Ricarica le fonti prima di decidere."};
+  if(v.preview_ready&&source("catalog"))
+    return {kind:"ready",text:"Guardabile sul sito",next:"Guarda il MP4 e valuta la regia; lo stato Gold non è implicito."};
+  if(!source("catalog"))
+    return {kind:"unknown",text:"Archivio non verificabile",next:"Riprova il collegamento, non avviare duplicati."};
+  if(v.site_catalog&&v.site_available===false)
+    return {kind:"offline",text:"Nel catalogo, ma offline",next:"Controlla i byte MP4 e ripristina l'accesso senza un nuovo render."};
+  if(v.site_catalog&&v.site_available!==true)
+    return {kind:"unknown",text:"Catalogato, stato incerto",next:"Verifica lo streaming reale prima di pubblicare."};
+  if(v.recorded)
+    return {kind:"registered",text:"Scheda presente, file non accessibile",next:"Cerca MP4/ZIP nelle run e nelle Release; recupera, non duplicare."};
+  return {kind:"missing",text:"Variante non individuata",next:"Verifica la coda e le run; produci soltanto se manca davvero."};
+}
+function actionSlotMode(v){
+  var status=actionSlotState(v).kind;
+  return status==="ready"?"improve":status==="registered"||status==="offline"||status==="unknown"?"recover":"complete";
+}
+function contextForActionSlot(work,variant,requested){
+  var mode=["complete","recover","improve"].includes(requested)?requested:actionSlotMode(variant);
+  var label=variant?.label||ACTION_SLOT_LABELS[variant?.id]||"Variante";
+  return {type:"slot",project:"artvision",title:(work?.title||"Opera")+" · "+label,
+    detail:actionSlotState(variant).next,work:work,slot:variant,action:mode,run:null};
+}
+function projectStartContext(key){
+  var label=PROJECT_LABELS[key]||"Progetto";
+  var health=(state.data?.health||[]).find(function(h){return h.id===key});
+  return {type:"project",project:key,title:"Richiedi produzione · "+label,action:"produce",
+    detail:health?.state==="running"?
+      "È stata osservata una produzione in corso: prima controllare e non avviare duplicati.":
+      "Richiesta di una nuova produzione reale, soltanto se non esiste una lavorazione equivalente già attiva.",run:null};
+}
+function actionWorkflowHelp(key){
+  if(key==="artvision")return "queue/artvision_owner_selected_ten_20261102.json · 4×1";
+  if(key==="storia")return "La Storia Rivive · produzione e QA per episodi";
+  if(key==="wow")return "WOW LAB · produzione isolata";
+  return "workflow owner già esistente, se verificato";
+}
+function actionProjectCards(){
+  var health=state.data?.health||[],projects=[["artvision","ArtVision 4×1"],["storia","La Storia Rivive"],["wow","WOW LAB"]];
+  return '<section class="actionTop"><div class="overline">PRODUZIONE · ACCESSO RAPIDO</div>'+
+    '<h3>Scegli il programma</h3><p>Controlla lo stato o prepara una richiesta a GPT. Il pannello non avvia da solo i video: GPT verifica prima che non ci siano lavori duplicati.</p>'+
+    '<div class="actionProjects">'+projects.map(function(entry){
+      var id=entry[0],name=entry[1],row=health.find(function(x){return x.id===id});
+      var status=!source("github")?"GitHub non verificabile":row?.state==="running"?"Produzione osservata in corso":
+        row?.state==="attention"?"Ultimo workflow da controllare":row?.state==="observed_success"?"Ultimo workflow riuscito":
+        row?.state==="unobserved"?"Nessuna run recente osservata":"Stato non noto";
+      return '<article class="actionProject"><strong>'+escapeText(name)+'</strong><span>'+escapeText(status)+'</span>'+
+        '<small>'+escapeText(actionWorkflowHelp(id))+'</small>'+
+        '<button type="button" class="actionPrimary" data-action-project="'+id+'">▶ Richiedi produzione ora</button></article>';
+    }).join("")+'</div>'+
+    '<p class="actionFine">Avvio effettivo consentito solo da ChatGPT/GitHub con autorizzazioni: nessuna chiamata a pagamento o cron duplicato dal pannello.</p></section>';
+}
+function actionWorksPanel(){
+  if(!source("queue"))return '<div class="panel"><h3>Quadri e video</h3><p class="note">La coda non è verificabile ora. Non classifico alcun video come mancante.</p></div>';
+  var works=state.data?.works||[],total=works.reduce(function(n,w){return n+(w.variants||[]).filter(function(v){return v.preview_ready===true}).length},0);
+  var count=works.reduce(function(n,w){return n+(w.variants||[]).filter(function(v){return actionSlotState(v).kind!=="ready"}).length},0);
+  var out='<section class="panel"><div class="actionHead"><div><h3>Ogni quadro, ogni video</h3><p class="sub">'+total+' anteprime accessibili nel campione · '+count+' slot senza anteprima confermata. Non sono conteggi Gold e non dimostrano mancanza fisica.</p></div>'+
+    '<div class="actionFilters"><button data-action-filter="needs" class="'+(state.actionFilter==="needs"?"on":"")+'">Da completare</button>'+
+    '<button data-action-filter="all" class="'+(state.actionFilter==="all"?"on":"")+'">Tutte</button>'+
+    '<button data-action-filter="ready" class="'+(state.actionFilter==="ready"?"on":"")+'">Guardabili</button></div></div>';
+  var filtered=works.filter(function(w){
+    var v=w.variants||[];
+    return state.actionFilter==="all"||
+      (state.actionFilter==="ready"?v.some(function(x){return actionSlotState(x).kind==="ready"}):
+       v.some(function(x){return actionSlotState(x).kind!=="ready"}));
+  });
+  if(!filtered.length)return out+'<div class="empty">Nessuna opera in questa vista, oppure dati incompleti.</div></section>';
+  for(const w of filtered){
+    var variants=w.variants||[],ready=variants.filter(function(x){return actionSlotState(x).kind==="ready"}).length;
+    out+='<details class="actionWork"><summary><span class="actionWorkName">'+escapeText(w.title||"Opera")+
+      '<small>'+escapeText(w.artist||"")+'</small></span><span class="actionCount">'+ready+'/4 guardabili sul sito · '+Number(w.delivered||0)+'/4 consegne dichiarate</span></summary>'+
+      '<div class="actionSlots">'+variants.map(function(v){
+        var status=actionSlotState(v),mode=actionSlotMode(v);
+        var action=mode==="improve"?"✦ Migliora con GPT":mode==="recover"?"↻ Recupera video":"▶ Completa video";
+        return '<div class="actionSlot"><div class="actionInfo"><strong>'+escapeText(v.label||ACTION_SLOT_LABELS[v.id]||"Variante")+'</strong>'+
+          '<span class="actionFlag '+status.kind+'">'+escapeText(status.text)+'</span>'+
+          '<small>'+escapeText(status.next)+'</small></div>'+
+          '<div class="actionSlotButtons"><button class="actionPrimary" type="button" data-action-work="'+escapeText(w.id||w.title)+
+          '" data-action-slot="'+escapeText(v.id||"")+'" data-action-mode="'+mode+'">'+action+'</button>'+
+          (v.preview_ready?'<button class="actionSecondary" type="button" data-action-view="'+escapeText(w.id||w.title)+'">▶ Guarda</button>':'')+
+          '</div></div>';
+      }).join("")+'</div><div class="actionWorkFoot"><button class="actionSecondary" type="button" data-action-open-work="'+escapeText(w.id||w.title)+'">Apri scheda completa e prove</button></div></details>';
+  }
+  return out+'</section>';
+}
+function actionInstruction(ctx){
+  if(ctx?.type==="slot"){
+    if(ctx.action==="improve")return "Guarda il MP4 reale, annota il difetto e chiedi una revisione N+1. Non sovrascrivere la versione originale.";
+    if(ctx.action==="recover")return "Cerca prima il file nelle run/Release/Libreria. Verifica download e SHA prima di pensare a un nuovo render.";
+    return "Verifica la variante nella coda e nelle run. Se manca davvero, completa questa sola variante senza duplicare l'owner.";
+  }
+  if(ctx?.action==="produce")return "Richiedi la prossima produzione reale dell'owner. Prima controlla che non sia già in lavorazione.";
+  return "Apri la diagnosi nella chat collegata, controlla le prove e correggi soltanto la parte necessaria.";
+}
+
+/* V11 local correction diary and non-duplicating "unblock possible" GPT handoff.
+   All browser writes are localStorage; no public API or automatic dispatch. */
+var QUALITY_NOTE_STORAGE="artvision.controlCenter.videoCorrections.v1";
+var qualityNotes=[];
+function qualityKey(ctx){
+  var work=String(ctx?.work?.id||""),slot=String(ctx?.slot?.id||"");
+  return /^[a-z0-9_-]{3,120}$/i.test(work)?
+    "work:"+work+(slot?":"+slot:""):null;
+}
+function loadQualityNotes(){
+  try{
+    var raw=JSON.parse(localStorage.getItem(QUALITY_NOTE_STORAGE)||"[]");
+    if(!Array.isArray(raw))return [];
+    return raw.slice(-100).filter(function(x){
+      return x&&typeof x==="object"&&typeof x.id==="string"&&
+        /^[a-z0-9_-]{4,96}$/.test(x.id)&&
+        typeof x.key==="string"&&/^work:[a-z0-9_-]{3,120}(?::[a-z0-9_]+)?$/i.test(x.key)&&
+        typeof x.note==="string"&&x.note.length>=4&&x.note.length<=1800&&
+        ["direction","pacing","audio","visual","authenticity","editorial","download","other"].includes(x.category)&&
+        x.status==="reported";
+    });
+  }catch{return []}
+}
+function saveQualityNotes(){
+  try{
+    localStorage.setItem(QUALITY_NOTE_STORAGE,JSON.stringify(qualityNotes.slice(-100)));
+    return true;
+  }catch{return false}
+}
+function noteForContext(ctx){
+  var key=qualityKey(ctx);return key?qualityNotes.filter(function(x){return x.key===key}):[];
+}
+function formatQualityTimestamp(value){
+  var dateValue=new Date(value);
+  return Number.isFinite(+dateValue)?dateValue.toLocaleString("it-IT",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"Data sconosciuta";
+}
+function renderQualityNotes(ctx){
+  var supported=!!(ctx&&ctx.work&&qualityKey(ctx));
+  document.getElementById("qualityJournal").hidden=!supported;
+  if(!supported)return;
+  var rows=noteForContext(ctx).slice().reverse(),holder=document.getElementById("qualityJournalRows");
+  holder.replaceChildren();
+  if(!rows.length){
+    holder.textContent="Nessuna correzione annotata su questo dispositivo per questo video.";
+  }else{
+    rows.forEach(function(note){
+      var item=document.createElement("div");item.className="qualityNoteRow";
+      var heading=document.createElement("strong");
+      heading.textContent=formatQualityTimestamp(note.created_at)+" · "+note.category+
+        (note.owner_requested_generalization?" · candidata per i futuri video":"");
+      var body=document.createElement("p");body.textContent=note.note;
+      var info=document.createElement("small");
+      info.textContent="Salvata su questo Android · verifica sul repository se già acquisita da GPT · non verificata sul MP4";
+      item.append(heading,body,info);holder.append(item);
+    });
+  }
+}
+function addQualityNote(ctx,sourceText,category,requestedGeneralization){
+  if(!ctx||!ctx.work||!qualityKey(ctx))return {ok:false,reason:"Apri la scheda del quadro o della sua variante."};
+  var text=String(sourceText||"").trim();
+  if(text.length<4||text.length>1800)return {ok:false,reason:"Scrivi cosa hai corretto (4–1800 caratteri)."};
+  if(!["direction","pacing","audio","visual","authenticity","editorial","download","other"].includes(category))
+    return {ok:false,reason:"Categoria non riconosciuta."};
+  var key=qualityKey(ctx);
+  var duplicate=qualityNotes.some(function(n){return n.key===key&&n.note===text});
+  if(duplicate)return {ok:false,reason:"Questa osservazione è già nella cronologia locale."};
+  var row={
+    id:"feedback_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,9),
+    key:key,work_id:String(ctx.work.id),slot_id:ctx.slot?.id||null,
+    filename:String(ctx.slot?.filename||ctx.video?.key||"").slice(0,180),
+    project:ctx.project||"artvision",note:text,category:category,
+    status:"reported",owner_requested_generalization:requestedGeneralization===true,
+    created_at:new Date().toISOString()
+  };
+  qualityNotes.push(row);
+  if(qualityNotes.length>100)qualityNotes=qualityNotes.slice(-100);
+  var stored=saveQualityNotes();
+  return {ok:true,stored:stored,row:row};
+}
+function qualityNotesForPrompt(ctx){
+  return noteForContext(ctx).slice(-6).map(function(x){
+    return {id:x.id,work_id:x.work_id,slot_id:x.slot_id,
+      filename:x.filename,note:x.note,category:x.category,
+      status:"reported",created_at:x.created_at,
+      owner_requested_generalization:x.owner_requested_generalization};
+  });
+}
+function unblockCandidates(){
+  if(!source("queue")||!source("catalog"))return [];
+  var works=state.data?.works||[],found=[];
+  for(const w of works){
+    if(/dali|dal[iì]/i.test(String(w.id||"")+" "+String(w.title||"")))continue;
+    for(const v of w.variants||[]){
+      var current=actionSlotState(v),action=actionSlotMode(v);
+      if(current.kind==="ready"||current.kind==="unknown")continue;
+      if(!["recover","complete"].includes(action))continue;
+      found.push({work_id:w.id,title:w.title,slot_id:v.id,
+        label:v.label,status:current.kind,action:action,filename:v.filename||null});
+    }
+  }
+  // Favor rescue of existing produced bytes over new rendering.
+  return found.sort(function(a,b){
+    var weight={offline:0,registered:1,missing:2};
+    return (weight[a.status]??99)-(weight[b.status]??99);
+  }).slice(0,10);
+}
+function unblockContext(){
+  var candidates=unblockCandidates();
+  return {type:"bulk",project:"artvision",title:"Sblocca i video possibili",
+    detail:"Prima recupera i file già prodotti, poi verifica quali varianti mancano davvero.",
+    action:"unblock",items:candidates,run:null};
+}
+
+function actionUnblockBanner(){
+  var candidates=unblockCandidates();
+  var available=source("queue")&&source("catalog");
+  return '<section class="actionUnblock"><div><strong>↻ Sblocca ciò che è possibile</strong>'+
+    '<p>'+(available?
+      candidates.length+' varianti da verificare, partendo dal recupero degli MP4 già prodotti. Nessun nuovo render parte da qui.':
+      'Fonti non disponibili: non posso identificare quali video mancano davvero.')+
+    '</p></div><button type="button" class="actionPrimary" data-action-unblock '+
+    (available&&candidates.length?'':'disabled')+'>Prepara il recupero con GPT</button></section>';
+}
+
+function videoMemoryId(key){
+  var input=String(key||""),hash=2166136261;
+  for(var i=0;i<input.length;i++){
+    hash^=input.charCodeAt(i);
+    hash=Math.imul(hash,16777619)>>>0;
+  }
+  var slug=input.toLowerCase().replace(/[^a-z0-9_-]/g,"_").slice(0,30);
+  return "video_"+hash.toString(36)+"_"+slug;
+}
+function contextForStandaloneVideo(video){
+  var id=videoMemoryId(video.key||video.title),
+      label=String(video.title||video.key||"Video");
+  return {type:"video",project:project((video.key||"")+" "+label),
+    title:label,work:{id:id,title:label},slot:null,
+    detail:video.available===false?
+      "Il catalogo segnala non disponibile: recupera file e prova prima di rifare il video.":
+      "Verifica la qualità del MP4 originale e registra la correzione senza sovrascrivere.",
+    action:video.available===false?"recover":"improve",video:video,run:null};
+}
+function actionRecentVideos(){
+  if(!source("catalog"))return '<div class="panel"><h3>Altri video da migliorare</h3>'+
+    '<p class="note">Il catalogo non è raggiungibile: non posso associare con certezza un MP4.</p></div>';
+  var recent=(state.data?.media||[]).filter(function(x){return x&&typeof x.key==="string"}).slice(0,12);
+  var html='<section class="panel"><h3>Altri video recenti</h3><p class="sub">'+
+    'La Storia Rivive, WOW LAB e gli altri format: associa una chat e salva una correzione per il singolo file. '+
+    'Questo elenco mostra solo il campione del catalogo, non tutti gli episodi programmati.</p>';
+  if(!recent.length)return html+'<div class="empty">Nessun video identificabile nel campione.</div></section>';
+  return html+recent.map(function(x){
+    return '<div class="actionRecentRow"><div><strong>'+escapeText(x.title||x.key)+'</strong>'+
+      '<small>'+escapeText(x.available===false?"Catalogato offline · recupero da verificare":
+        x.available===true?"Nel catalogo · integrità non certificata":"Stato non dichiarato")+'</small></div>'+
+      '<button type="button" class="actionSecondary" data-action-video="'+escapeText(x.key)+'">'+
+      (x.available===false?"↻ Recupera":"✦ Annota / migliora")+'</button></div>';
+  }).join("")+'</section>';
+}
+
 function issues(){
   var d=state.data||{},attention=d.attention||[];
   var failures=attention.filter(function(x){return x.kind==="workflow"});
   var unavailable=attention.filter(function(x){return x.kind==="source"});
-  var h=sec("Problemi · Ripara con GPT","Una centrale unica: errori tecnici recenti, prove GitHub, chat originali e messaggi pronti per GPT.");
-  h+='<section class="repairHeader"><div class="overline">ASSISTENZA INTELLIGENTE ALLE PRODUZIONI</div>'+
-    '<h3>Dal problema alla correzione, senza rispiegare tutto.</h3>'+
-    '<p>Quando individui un errore, premi «Ripara con GPT»: il pannello inserisce run, progetto, eventuali step falliti e link GitHub in un messaggio già preparato. Tu scegli se continuare nella chat collegata oppure in una nuova.</p>'+
-    '<div class="repairGrid"><span class="scopeLabel">'+failures.length+' ultimi workflow da controllare</span>'+
-    '<span class="scopeLabel">'+unavailable.length+' fonti non raggiungibili</span>'+
-    '<span class="scopeLabel">Nessuna correzione avviata senza il tuo intervento</span></div></section>';
-  h+='<div class="panel"><h3>Errori tecnici correnti · '+failures.length+'</h3>'+
-    '<p class="sub">Soltanto le ultime esecuzioni non riuscite di ciascun workflow del ramo principale. Gli errori già superati non rimangono qui come blocchi aperti.</p>';
-  h+=failures.length?failures.map(attentionItem).join(""):
-    '<div class="empty">'+(source("github")?"Nessun ultimo esito critico nei workflow pertinenti osservati. Non prova che ogni problema sia risolto.":"GitHub non raggiungibile: impossibile verificare gli errori.")+'</div>';
-  h+='</div>';
-  if(unavailable.length)h+='<div class="panel"><h3>Fonti non verificabili</h3>'+
-    unavailable.map(attentionItem).join("")+'</div>';
-  h+='<div class="panel"><h3>Chat principali dei progetti</h3>'+
-    '<p class="sub">Collega una volta l’URL privato della conversazione per ritrovarla dal telefono. L’associazione rimane in questo browser, non viene inviata al repository.</p>'+
+  var h=sec("Ripara con GPT","Scegli un programma o un video. GPT prepara la verifica senza avviare duplicati.");
+  h+=actionProjectCards();
+  h+=actionUnblockBanner();
+  h+='<section class="panel simpleRepairIssues"><div class="simpleAttentionHead"><h3>Errori da verificare · '+failures.length+'</h3>'+
+    '<button class="miniBtn secondary" type="button" data-switch="todo">Tutte le segnalazioni</button></div>'+
+    (failures.length?failures.slice(0,5).map(attentionItem).join(""):
+    '<p class="simpleGood">'+(source("github")?"Nessun errore critico recente osservato nei workflow pertinenti.":"GitHub non disponibile: controlli da ripetere.")+'</p>')+
+    (unavailable.length?'<p class="simpleAlert">'+unavailable.length+' fonti non verificabili: aggiorna prima di intervenire.</p>':"")+
+    '</section>';
+  h+='<details class="simpleMore" data-ui-section="issues-works"><summary>Seleziona un quadro e una variante</summary>'+
+    '<p class="sub">Apri solo se devi completare, recuperare o migliorare un video specifico.</p>'+
+    actionWorksPanel()+'</details>';
+  h+='<details class="simpleMore" data-ui-section="issues-videos"><summary>Altri video da migliorare</summary>'+
+    actionRecentVideos()+'</details>';
+  h+='<details class="simpleMore" data-ui-section="issues-chats"><summary>Collegamenti alle chat dei progetti</summary>'+
+    '<p class="sub">I collegamenti privati rimangono soltanto nel browser del tuo telefono.</p>'+
     '<div class="chatDirectory">'+Object.keys(PROJECT_LABELS).filter(function(x){return x!=="other"}).map(function(key){
       var linked=!!state.chatLinks[key];
       return '<div class="repairCard"><strong>'+escapeText(PROJECT_LABELS[key])+'</strong>'+
-      '<p class="repairMeta">'+(linked?"Chat originale collegata sul dispositivo":"Chat originale non ancora associata")+'</p>'+
-      '<div class="repairGrid"><button type="button" class="repairButton secondary" data-repair-project="'+escapeText(key)+'">'+
-      (linked?"Gestisci collegamento":"Collega chat")+'</button>'+
-      (linked&&isAndroidDevice()?'<a class="repairButton" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(androidChatGPTIntent(state.chatLinks[key],false))+'">◈ Apri nell’app ChatGPT</a>':'')+
-      (linked?'<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(state.chatLinks[key])+'">Apri nel browser ↗</a>':'')+
+      '<p class="repairMeta">'+(linked?"Chat originale collegata":"Chat da collegare")+'</p>'+
+      '<div class="repairGrid"><button class="repairButton secondary" type="button" data-repair-project="'+escapeText(key)+'">'+
+      (linked?"Gestisci chat":"Collega chat")+'</button>'+
+      (linked&&isAndroidDevice()?'<a class="repairButton" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(androidChatGPTIntent(state.chatLinks[key],false))+'">◈ Apri nell’app ChatGPT</a>':"")+
+      (linked?'<a class="repairButton secondary" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" href="'+escapeText(state.chatLinks[key])+'">Apri nel browser ↗</a>':"")+
       '</div></div>';
-    }).join("")+'</div></div>';
-  var incomplete=(d.works||[]).filter(function(w){return Number(w.delivered||0)<4});
-  h+='<div class="panel"><h3>Varianti mancanti o non ancora conteggiate · '+incomplete.length+' opere</h3>'+
-    '<p class="sub">Questo NON è automaticamente un errore: puoi comunque chiedere a GPT una verifica mirata della coda.</p>';
-  h+=incomplete.length?incomplete.map(function(w){
-    return '<div class="repairCard"><strong>'+escapeText(w.title)+'</strong>'+
-      '<p class="repairMeta">'+(4-Number(w.delivered||0))+' varianti non conteggiate · '+
-      escapeText(w.artist||"")+'</p><div class="repairGrid">'+
-      '<button class="repairButton secondary" type="button" data-repair-work="'+escapeText(w.id||w.title)+'">Analizza con GPT</button>'+
-      '<button class="repairButton secondary" data-switch="works" type="button">Vedi le quattro varianti</button>'+
-      '</div></div>';
-  }).join(""):'<div class="empty">Nessuna variante mancante nel conteggio delle opere operative.</div>';
-  h+='</div>';
-  var latestIds=new Set(failures.map(function(x){return Number(x.run_id)||0}));
-  var past=(d.runs||[]).filter(function(r){
-    return ["failure","cancelled","timed_out","action_required"].includes(r.conclusion)&&
-      !latestIds.has(Number(r.id)||0);
-  });
-  if(past.length){
-    h+='<details class="panel"><summary>Archivio storico · '+past.length+' esiti critici nel campione</summary>'+
-      '<p class="sub">Potrebbero essere già stati recuperati da una run successiva. Non sono indicati come incidenti attivi.</p>'+
-      past.slice(0,25).map(function(r){
-        var url=String(r.html_url||"");
-        if(!url.startsWith("https://github.com/GGIANLUCAA/Tra-le-pagine-/"))url="https://github.com/GGIANLUCAA/Tra-le-pagine-/actions";
-        return '<div class="repairCard"><strong>'+escapeText(r.name)+'</strong>'+
-          '<p class="repairMeta">'+escapeText(date(r.updated_at))+' · '+escapeText(r.conclusion)+' · '+escapeText(r.head_branch||"branch non disponibile")+'</p>'+
-          '<div class="repairGrid"><button type="button" class="repairButton secondary" data-repair-run="'+Number(r.id||0)+'">Analizza con GPT</button>'+
-          '<a class="repairButton secondary" href="'+escapeText(url)+'" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div>';
-      }).join("")+'</details>';
-  }
-  h+='<p class="note">Per continuare in una chat già esistente serve il suo indirizzo privato (chatgpt.com/c/…). I link condivisi /share/ non consentono di continuare quella conversazione. Il pannello non può leggere automaticamente la tua cronologia privata ChatGPT.</p>';
+    }).join("")+'</div></details>';
+  var ids=new Set(failures.map(function(x){return Number(x.run_id)||0}));
+  var past=(d.runs||[]).filter(function(r){return ["failure","cancelled","timed_out","action_required"].includes(r.conclusion)&&!ids.has(Number(r.id)||0)});
+  if(past.length)h+='<details class="simpleMore" data-ui-section="issues-past"><summary>Storico degli errori precedenti · '+past.length+'</summary>'+
+    '<p class="sub">Errori storici: possono essere già stati corretti.</p>'+
+    past.slice(0,15).map(function(r){return '<div class="repairCard"><strong>'+escapeText(r.name)+'</strong>'+
+      '<p class="repairMeta">'+escapeText(date(r.updated_at))+' · '+escapeText(r.conclusion)+'</p>'+
+      '<button class="repairButton secondary" type="button" data-repair-run="'+Number(r.id||0)+'">Esamina con GPT</button></div>';}).join("")+'</details>';
   return h;
 }
-function render(){if(!state.data)return;document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,genres:genres,stats:statisticsPage,quality:qualityPage,issues:issues}[state.page]||home)();var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}});var ws=document.getElementById("workSearch");if(ws)ws.addEventListener("input",function(e){state.workSearch=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("workSearch");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
-async function refresh(){var b=document.getElementById("refresh");b.disabled=true;b.textContent="Caricamento…";try{var r=await fetch("/api/status",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var d=await r.json();if(!Array.isArray(d.runs)||!Array.isArray(d.works))throw Error("Risposta non valida");state.data=d;state.stamp=Date.now();state.loadError=null;render()}catch(e){state.loadError=e.message;if(state.data){document.getElementById("synctext").textContent="Aggiornamento non riuscito · ultimo dato "+date(state.data.asof);document.getElementById("pulse").className="pulse";}if(!state.data)document.getElementById("content").innerHTML='<div class="empty">Collegamento temporaneamente non disponibile: '+escapeText(e.message)+'</div>'}finally{b.disabled=false;b.textContent="↻ Aggiorna"}}
+function render(){if(!state.data)return;
+  document.querySelectorAll("#content details[data-ui-section]").forEach(function(el){state.simpleOpen[el.dataset.uiSection]=el.open});
+  document.querySelectorAll("[data-page]").forEach(function(b){b.classList.toggle("active",b.dataset.page===state.page)});stats();var d=state.data;var ok=["github","queue","catalog"].filter(source).length;document.getElementById("pulse").className="pulse"+(ok===3?" ok":"");document.getElementById("synctext").textContent="Aggiornato: "+date(d.asof);document.getElementById("sources").textContent="· "+ok+"/3 fonti raggiungibili";document.getElementById("content").innerHTML=({home:home,todo:todo,health:health,works:works,diary:diary,runs:runs,media:media,genres:genres,stats:statisticsPage,quality:qualityPage,issues:issues}[state.page]||home)();
+  document.querySelectorAll("#content details[data-ui-section]").forEach(function(el){
+    el.open=state.simpleOpen[el.dataset.uiSection]===true;
+  });
+  var search=document.getElementById("search");if(search)search.addEventListener("input",function(e){state.q=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("search");if(next){next.focus();next.setSelectionRange(caret,caret)}});var ws=document.getElementById("workSearch");if(ws)ws.addEventListener("input",function(e){state.workSearch=e.target.value;var caret=e.target.selectionStart;render();var next=document.getElementById("workSearch");if(next){next.focus();next.setSelectionRange(caret,caret)}})}
+async function refresh(){var b=document.getElementById("refresh");b.disabled=true;b.textContent="Caricamento…";try{var r=await fetch("/api/status",{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);var d=await r.json();if(!Array.isArray(d.runs)||!Array.isArray(d.works))throw Error("Risposta non valida");state.data=d;state.stamp=Date.now();state.loadError=null;render();refreshProductionProgress()}catch(e){state.loadError=e.message;if(state.data){document.getElementById("synctext").textContent="Aggiornamento non riuscito · ultimo dato "+date(state.data.asof);document.getElementById("pulse").className="pulse";}if(!state.data)document.getElementById("content").innerHTML='<div class="empty">Collegamento temporaneamente non disponibile: '+escapeText(e.message)+'</div>'}finally{b.disabled=false;b.textContent="↻ Aggiorna"}}
 function closeReviewPlayer(){
   var dialog=document.getElementById("reviewPlayer"),video=document.getElementById("reviewVideo");
   if(dialog.open)dialog.close();
@@ -982,6 +1778,43 @@ document.addEventListener("click",function(ev){
       run:{...qr,html_url:qr.run_url,head_branch:"main",event:"workflow_dispatch"},runId:qr.id});
     return;
   }
+  var progressRefresh=ev.target.closest("button[data-progress-refresh]");
+  if(progressRefresh){refresh();return}
+  var unblock=ev.target.closest("button[data-action-unblock]");
+  if(unblock){
+    var plan=unblockContext();
+    if(plan.items.length)openRepairDialog(plan);
+    return;
+  }
+  var actionProject=ev.target.closest("button[data-action-project]");
+  if(actionProject&&["artvision","storia","wow"].includes(actionProject.dataset.actionProject)){
+    openRepairDialog(projectStartContext(actionProject.dataset.actionProject));return;
+  }
+  var filterAction=ev.target.closest("button[data-action-filter]");
+  if(filterAction&&["all","needs","ready"].includes(filterAction.dataset.actionFilter)){
+    state.actionFilter=filterAction.dataset.actionFilter;render();return;
+  }
+  var actionVideo=ev.target.closest("button[data-action-video]");
+  if(actionVideo){
+    var picked=(state.data?.media||[]).find(function(x){return x.key===actionVideo.dataset.actionVideo});
+    if(picked)openRepairDialog(contextForStandaloneVideo(picked));
+    return;
+  }
+  var actionWork=ev.target.closest("button[data-action-work]");
+  if(actionWork){
+    var owner=(state.data?.works||[]).find(function(w){return (w.id||w.title)===actionWork.dataset.actionWork});
+    var video=owner?.variants?.find(function(v){return v.id===actionWork.dataset.actionSlot});
+    if(owner&&video)openRepairDialog(contextForActionSlot(owner,video,actionWork.dataset.actionMode));
+    return;
+  }
+  var actionOpenWork=ev.target.closest("button[data-action-open-work],button[data-action-view]");
+  if(actionOpenWork){
+    var key=actionOpenWork.dataset.actionOpenWork||actionOpenWork.dataset.actionView;
+    var row=(state.data?.works||[]).find(function(w){return (w.id||w.title)===key});
+    state.page="works";state.workFilter="all";state.workSearch=row?.title||"";
+    if(row)state.workOpened[row.id||row.title]=true;
+    render();window.scrollTo(0,0);return;
+  }
   var issueButton=ev.target.closest("button[data-repair-issue]");
   if(issueButton){
     var item=(state.data?.attention||[])[Number(issueButton.dataset.repairIssue)];
@@ -1017,7 +1850,10 @@ document.getElementById("repairDialog").addEventListener("close",function(){
 });
 document.getElementById("repairChatScope").addEventListener("change",function(){
   if(!state.repair)return;
-  state.chatScope=this.value==="workflow"&&workflowChatKey(state.repair)?"workflow":"project";
+  var key=this.value;
+  state.chatScope=key==="slot"&&slotChatKey(state.repair)?"slot":
+    key==="work"&&workChatKey(state.repair)?"work":
+    key==="workflow"&&workflowChatKey(state.repair)?"workflow":"project";
   renderRepairDialog();
 });
 document.getElementById("saveRepairChat").addEventListener("click",function(){
@@ -1049,6 +1885,41 @@ document.getElementById("forgetRepairChat").addEventListener("click",function(){
   info.textContent=stored?"Collegamento eliminato da questo browser.":"Collegamento non più attivo in questa sessione.";
   if(state.page==="issues")render();
 });
+document.getElementById("qualitySaveFeedback").addEventListener("click",function(){
+  if(!state.repair)return;
+  var result=addQualityNote(state.repair,document.getElementById("repairOwnerNote").value,
+      document.getElementById("qualityCategory").value,
+      document.getElementById("qualitySuggestFuture").checked);
+  var status=document.getElementById("qualitySaveStatus");
+  if(!result.ok){status.className="repairStatus repairError";status.textContent=result.reason;return;}
+  status.className="repairStatus "+(result.stored?"repairPositive":"repairError");
+  status.textContent=result.stored?
+    "Correzione annotata qui. Copia e invia il messaggio a GPT per inserirla nel registro permanente.":
+    "Nota disponibile solo finché questa pagina resta aperta: salvataggio del browser bloccato.";
+  document.getElementById("repairPrompt").value=prepareRepairPrompt(state.repair,state.repairDetails);
+  renderQualityNotes(state.repair);
+  document.getElementById("qualityHistory").open=true;
+});
+document.getElementById("repairOwnerNote").addEventListener("input",function(){
+  state.repairNote=this.value.slice(0,1800);
+  if(state.repair)document.getElementById("repairPrompt").value=prepareRepairPrompt(state.repair,state.repairDetails);
+});
+document.getElementById("repairCopyOpen").addEventListener("click",function(){
+  var text=document.getElementById("repairPrompt").value;
+  var label=document.getElementById("repairInstantStatus");
+  label.textContent="Apro la chat. Incolla il testo copiato per iniziare: nessuna produzione è partita dal pannello.";
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      label.textContent="Messaggio copiato. Ora incollalo in ChatGPT per chiedere l'intervento.";
+    }).catch(function(){
+      label.textContent="Copia bloccata dal browser: torna qui, apri «diagnosi completa», seleziona e copia il testo.";
+      document.getElementById("repairAdvancedPrompt").open=true;
+    });
+  }else{
+    label.textContent="Copia non disponibile: usa «diagnosi completa» e copia il testo.";
+    document.getElementById("repairAdvancedPrompt").open=true;
+  }
+});
 document.getElementById("copyRepairPrompt").addEventListener("click",async function(){
   var input=document.getElementById("repairPrompt");
   var status=document.getElementById("repairCopyStatus");
@@ -1073,10 +1944,11 @@ document.getElementById("copyRepairPrompt").addEventListener("click",async funct
     "La copia automatica è bloccata dal browser: tieni premuto sul testo della diagnosi, seleziona e copia manualmente.";
 });
 loadChats();
+qualityNotes=loadQualityNotes();
 importChatLinksFromFragment();
 document.addEventListener("click",function(e){var g=e.target.closest("button[data-genre]");if(!g)return;state.selectedGenre=g.dataset.genre;state.page="genres";render();window.scrollTo(0,0)});
 document.getElementById("refresh").addEventListener("click",refresh);
-setInterval(function(){if(!document.hidden)refresh()},180000);
+setInterval(function(){if(!document.hidden)refresh()},105000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden&&Date.now()-state.stamp>120000)refresh()});
 refresh();
 })();

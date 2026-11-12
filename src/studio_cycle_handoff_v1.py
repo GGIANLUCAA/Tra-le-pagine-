@@ -11,6 +11,10 @@ import argparse
 import json
 import re
 from pathlib import Path
+try:
+    from .studio_quality_memory_v1 import load as load_quality_memory, project_summary
+except ImportError:
+    from studio_quality_memory_v1 import load as load_quality_memory, project_summary
 
 SCHEMA = "studio-cycle-handoff-v1"
 ID = re.compile(r"^[A-Za-z0-9_:-]{3,120}$")
@@ -160,6 +164,8 @@ def handoff(project: str, research: dict | None,
         "candidate_count": source["candidate_count"],
         "reported_blocker_codes": [x for x in blockers if x != "UNKNOWN"],
         "evidence": proof, "run_url": url,
+        # Only a checklist inherited by the owner, never a completed edit or render.
+        "quality_memory": project_summary(load_quality_memory(), project),
         "source_rights_verified_by_handoff": False,
         "master_mp4_verified_by_handoff": False,
         "zip_verified_by_handoff": False,

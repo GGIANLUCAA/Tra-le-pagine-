@@ -1,0 +1,111 @@
+{
+  "schema": "studio-video-lessons-v1",
+  "purpose": "Fonte unica per feedback specifici e regole trasferibili ai video futuri. Solo la revisione verificata diventa nuova regola generale.",
+  "created_on": "2026-11-10",
+  "last_reviewed_on": "2026-11-10",
+  "lessons": [
+    {
+      "id": "L001_no_ai_stamp_endings",
+      "title": "Evita finali e domande intercambiabili",
+      "status": "owner_approved",
+      "applies_to": [
+        "all"
+      ],
+      "class": "editorial",
+      "rule": "Il finale nasce dai fatti e dalla specifica opera: osservazione concreta, gesto, silenzio o domanda realmente motivata. Evita domande filosofiche e morali generiche.",
+      "check": "Confronta ultime frasi con gli ultimi episodi e controlla tutto il WAV/MP4; segnala cliché prima della nuova TTS.",
+      "source": "docs/REGOLA_GLOBALE_V320_NATURALEZZA_AUTORIALE_20261110.md",
+      "effectiveness_proven_by_new_video": false
+    },
+    {
+      "id": "L002_subject_voice_sync",
+      "title": "La scena deve mostrare ciò che la voce descrive",
+      "status": "owner_approved",
+      "applies_to": [
+        "artvision_critico",
+        "libri",
+        "controluce"
+      ],
+      "class": "direction",
+      "rule": "Quando la narrazione nomina un particolare, il soggetto corrispondente deve essere realmente inquadrato con durata sufficiente: non mostrare scene scollegate.",
+      "check": "Controlla ogni frase con timeline e veri fotogrammi MP4; un metadato di shotlist non basta.",
+      "source": "docs/ARTVISION_REGIA_AUTOCRITICA_FOCUS_20261030.md",
+      "effectiveness_proven_by_new_video": false
+    },
+    {
+      "id": "L003_museum_authentic_scale",
+      "title": "Museo e cornici coerenti e in scala reale",
+      "status": "owner_approved",
+      "applies_to": [
+        "artvision_critico",
+        "artvision_cinema"
+      ],
+      "class": "visual",
+      "rule": "Nelle varianti Museum rispettare dimensioni fisiche del dipinto, cornice compatibile con l'esemplare, sala credibile e provenienza foto documentata. Riutilizzare ambienti collaudati se appropriati.",
+      "check": "Confrontare le misure dichiarate, la fotografia della cornice e frame di entrata e chiusura; niente sala finta promossa automaticamente.",
+      "source": "docs/ARTVISION_V119_LIBRERIA_MUSEI_CORNICI_ANTI_REGRESSIONE.md",
+      "effectiveness_proven_by_new_video": false
+    },
+    {
+      "id": "L004_storia_reveal_pacing",
+      "title": "Rivelazione B/N → colore godibile, senza prima/dopo",
+      "status": "owner_approved",
+      "applies_to": [
+        "storia_rivive"
+      ],
+      "class": "pacing",
+      "rule": "Negli short di restauro, mostra il colore in tempi rapidi quando la scena lo consente (riferimento 1–1,4 s) e lascia poi tempo per apprezzare l'immagine; evitare effetto split e immagini che durano senza ragione.",
+      "check": "Valuta nel vero MP4 colore, ritmo e durata percepita senza trasformare le soglie in uno stampino invariabile.",
+      "source": "docs/LA_STORIA_RIVIVE_V99_ANTI_REGRESSIONE.md",
+      "effectiveness_proven_by_new_video": false
+    },
+    {
+      "id": "L005_storia_vidu_source_lock",
+      "title": "Movimento Vidu dalla propria inquadratura",
+      "status": "owner_approved",
+      "applies_to": [
+        "storia_rivive"
+      ],
+      "class": "authenticity",
+      "rule": "Una clip Vidu deve continuare la fonte storica realmente selezionata; non un'altra ripresa. Volti, oggetti e abiti non devono essere inventati come autentici.",
+      "check": "Verifica corrispondenza frame iniziale e clip, eventuali differenze identitarie, fonte e diritti prima del render.",
+      "source": "docs/LA_STORIA_RIVIVE_V96_AUDIT_ERRORI_RIPETUTI_20261030.md",
+      "effectiveness_proven_by_new_video": false
+    },
+    {
+      "id": "L006_cuts_zoom_variety",
+      "title": "Montaggio non ripetitivo e coerente con la storia",
+      "status": "owner_approved",
+      "applies_to": [
+        "all"
+      ],
+      "class": "direction",
+      "rule": "Evitare zoom identici, tagli casuali, ripetizione foto e artifici da stampino: cambiare ritmo solo dove il racconto o l'azione lo richiede.",
+      "check": "Riguarda il video completo, segna riprese/foto ripetute e confronta con gli ultimi due video della serie.",
+      "source": "docs/REGOLA_GLOBALE_V320_NATURALEZZA_AUTORIALE_20261110.md",
+      "effectiveness_proven_by_new_video": false
+    }
+  ],
+  "history": [],
+  "history_note": "Le nuove note arrivano prima come reported nella chat/PR e non diventano lezioni trasferibili finché non sono approvate dal proprietario. Per attestare efficacia servono confronto e QA su un MP4 reale.",
+  "policy": {
+    "accepted_statuses": [
+      "reported",
+      "trial",
+      "owner_approved",
+      "verified_effective",
+      "rejected"
+    ],
+    "auto_apply_statuses": [
+      "owner_approved",
+      "verified_effective"
+    ],
+    "promotion_requires": "Evidenza specifica (run/MP4), verifica della correzione e conferma del proprietario; una richiesta non equivale a correzione applicata.",
+    "no_automatic_render": true,
+    "no_automatic_publish": true,
+    "no_paid_api_calls": true,
+    "excluded_artwork_ids": [
+      "dali_temptation_of_st_anthony"
+    ]
+  }
+}

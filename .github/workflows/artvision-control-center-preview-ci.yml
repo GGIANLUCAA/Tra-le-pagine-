@@ -4,11 +4,27 @@ on:
     branches:
       - preview/artvision-control-center-v1
       - preview/control-center-quality-v8-20261109
+      - preview/control-center-action-hub-v10-20261110
     paths:
       - site/control-center-preview.html
       - site/control-center-preview.worker.js
       - scripts/build-control-center-preview.mjs
       - tests/control-center-preview.test.mjs
+      - tests/control-center-owner-action-hub.test.mjs
+      - tests/control-center-action-hub-dom.test.cjs
+      - site/control-center-quality-journal.fragment.js
+      - quality/STUDIO_VIDEO_LESSONS_V1.json
+      - src/studio_quality_memory_v1.py
+      - tests/test_studio_quality_memory_v1.py
+      - src/video_director_v13.py
+      - src/studio_cycle_handoff_v1.py
+      - site/control-center-action-hub.fragment.js
+      - site/control-center-progress-backend.fragment.js
+      - site/control-center-progress-frontend.fragment.js
+      - tests/control-center-production-progress.test.mjs
+      - tests/control-center-progress-v13.test.mjs
+      - site/control-center-progress-v13-backend.fragment.js
+      - site/control-center-progress-v13-frontend.fragment.js
       - .github/workflows/artvision-control-center-preview-ci.yml
   pull_request:
     branches:
@@ -18,6 +34,21 @@ on:
       - site/control-center-preview.worker.js
       - scripts/build-control-center-preview.mjs
       - tests/control-center-preview.test.mjs
+      - tests/control-center-owner-action-hub.test.mjs
+      - tests/control-center-action-hub-dom.test.cjs
+      - site/control-center-quality-journal.fragment.js
+      - quality/STUDIO_VIDEO_LESSONS_V1.json
+      - src/studio_quality_memory_v1.py
+      - tests/test_studio_quality_memory_v1.py
+      - src/video_director_v13.py
+      - src/studio_cycle_handoff_v1.py
+      - site/control-center-action-hub.fragment.js
+      - site/control-center-progress-backend.fragment.js
+      - site/control-center-progress-frontend.fragment.js
+      - tests/control-center-production-progress.test.mjs
+      - tests/control-center-progress-v13.test.mjs
+      - site/control-center-progress-v13-backend.fragment.js
+      - site/control-center-progress-v13-frontend.fragment.js
       - .github/workflows/artvision-control-center-preview-ci.yml
   workflow_dispatch:
 permissions:
@@ -35,7 +66,31 @@ jobs:
         with:
           node-version: '22'
       - name: Test UI, status and file probe without network/API credits
-        run: node --test tests/control-center-preview.test.mjs
+        run: node --test tests/control-center-preview.test.mjs tests/control-center-owner-action-hub.test.mjs tests/control-center-production-progress.test.mjs tests/control-center-progress-v13.test.mjs
+      - name: Verify quality memory, V13 briefs and cycle handoffs (offline)
+        run: python3 -m unittest discover -s tests -p "test_studio_quality_memory_v1.py" -v
+      - name: Android-like UI interaction smoke without real API calls
+        run: |
+          npm install --prefix /tmp/control-v10 --silent --no-audit --no-fund jsdom@26
+          node tests/control-center-action-hub-dom.test.cjs
+      - name: Confirm journal implementation is in preview page
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path("site/control-center-preview.html").read_text()
+          fragment=Path("site/control-center-quality-journal.fragment.js").read_text()
+          assert fragment.strip() in html
+          backend=Path("site/control-center-preview.worker.js").read_text()
+          backend_frag=Path("site/control-center-progress-backend.fragment.js").read_text()
+          ui_frag=Path("site/control-center-progress-frontend.fragment.js").read_text()
+          assert backend_frag.strip() in backend
+          assert ui_frag.strip() in html
+          assert Path("site/control-center-progress-v13-backend.fragment.js").read_text().strip() in backend
+          assert Path("site/control-center-progress-v13-frontend.fragment.js").read_text().strip() in html
+          assert 'if(path==="/api/progress")' in backend
+          assert html.count("<script>")==1
+          assert "qualitySaveFeedback" in html and "data-action-unblock" in html
+          PY
       - name: Build isolated preview bundle, no deployment
         run: |
           node scripts/build-control-center-preview.mjs
