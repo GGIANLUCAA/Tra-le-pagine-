@@ -208,6 +208,7 @@ def render_review_html(result):
                      '</a></p>' + curator + credit +
                      '<p>Diritti, identificazione e file originale: NON VERIFICATI</p>'
                      '<ul>' + checks + '</ul></section>')
+    no_results = '<section><p>Nessuna fonte candidata da assegnare; continuare la ricerca senza inventare asset.</p></section>' if not parts else ""
     return ('<!doctype html><html lang="it"><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width,initial-scale=1">'
             '<title>AI Director · Fonti da verificare</title><style>'
@@ -217,7 +218,7 @@ def render_review_html(result):
             'overflow-wrap:anywhere}h2{font-size:18px}</style>'
             '<h1>Archivio → Regia: schede sorgenti</h1>'
             '<p>Solo ricerca: nessuna fonte è autorizzata al rendering o alla pubblicazione.</p>'
-            + "".join(parts) + '</html>')
+            + "".join(parts) + no_results + '</html>')
 
 
 def write_output(result, out, *, scene_brief=None):
