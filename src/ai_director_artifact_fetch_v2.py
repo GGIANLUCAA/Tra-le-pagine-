@@ -189,7 +189,15 @@ def acquire(repo, run_id, artifact_name, outdir, token, *, get=_get, download=_a
     if artifact_name:
         artifacts = [a for a in artifacts if a.get("name") == artifact_name]
     else:
-        artifacts = [a for a in artifacts if any(s in a.get("name", "").upper() for s in PREFER)]
+        # Known MP4/review names first. Some source-verified producer workflows
+        # publish ONE artifact under a neutral name: that unique candidate
+        # is unambiguous and may still contain a real MP4.
+        preferred = [a for a in artifacts if any(
+            tag in a.get("name", "").upper() for tag in PREFER)]
+        if preferred:
+            artifacts = preferred
+        elif len(artifacts) != 1:
+            artifacts = []  # Never choose randomly among ambiguous artifacts.
         artifacts.sort(key=lambda a: (
             min((i for i, mark in enumerate(PREFER) if mark in a.get("name", "").upper()), default=9),
             a.get("size_in_bytes", 0)))

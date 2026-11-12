@@ -133,7 +133,7 @@ jobs:
           allowed={'giuliano','artvision_4x1','storia_rivive','wow_lab','documentario'}
           name=os.environ.get('PRODUCER_WORKFLOW','').lower()
           fmt=os.environ.get('SELECTED_FORMAT') or (
-              'artvision_4x1' if 'artvision' in name else
+              'artvision_4x1' if ('artvision' in name or 'producer handoff contract fixture' in name) else
               'storia_rivive' if 'storia' in name else
               'giuliano' if 'giuliano' in name else 'documentario')
           if fmt not in allowed:raise SystemExit('Format not permitted')
@@ -163,6 +163,24 @@ jobs:
             --out output/ai-director-v2-report \
             --format "$DIRECTOR_FORMAT" \
             --subject "Revisione tecnica del lavoro GitHub $SAFE_RUN_ID"
+      - name: Fail closed if a requested producer run delivered no inspectable MP4
+        if: success()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          runid=int(os.environ.get('SAFE_RUN_ID') or 0)
+          origin=json.loads(Path('output/ai-director-v2-input/ARTIFACT_INPUT.json').read_text())
+          report=json.loads(Path('output/ai-director-v2-report/INDEX.json').read_text())
+          valid=any(v.get('video_checked') is True for v in report['variants'])
+          if runid > 0 and (origin.get('status') != 'extracted_for_readonly_review' or not valid):
+              raise SystemExit('REAL_MP4_REVIEW_REQUIRED: requested producer yielded no verified MP4; report remains downloadable')
+          if valid:
+              print('REAL_MP4_TECHNICAL_QA_EXECUTED; NO_ARTISTIC_APPROVAL')
+          else:
+              print('REPORT_ONLY_REQUEST_NO_PRODUCER; NOT_A_VIDEO_QA')
+          PY
       - name: Upload Android-readable evidence; never approve or publish
         if: always()
         uses: actions/upload-artifact@v4
