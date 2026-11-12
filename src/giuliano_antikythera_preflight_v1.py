@@ -54,7 +54,7 @@ def safe_license(actual, expected):
     if "nc" in a.split() or "nd" in a.split(): return False
     if e=="public domain": return "public domain" in a or a.startswith("pd ")
     if e=="cc0":return "cc0" in a
-    if "by sa" in e:return "by sa 4.0" in a
+    if "by sa" in e:return "by sa 4.0" in a or ("by 4.0" in a and "sa" not in a)
     if "by 4.0" in e:return "by 4.0" in a and "sa" not in a
     return False
 
@@ -109,13 +109,25 @@ def main():
     m=json.loads(MANIFEST.read_text("utf-8"))
     assert m["publication_allowed"] is False and m["external_paid_calls_allowed"] is False
     assets=m["assets"]
-    pages=api_titles([a["file"] for a in assets])
+    pages=api_titles([a["file"] for a in assets if not a.get("direct_url")])
     result=[]
     for a in assets:
-        row={"id":a["id"],"file":a["file"],"kind":a["kind"],"source_page":"https://commons.wikimedia.org/wiki/File:"+a["file"].replace(" ","_"),"expected_license":a["expect"]}
-        page=pages.get(a["file"],{})
-        info=(page.get("imageinfo") or [{}])[0]
-        actual=license_text(info)
+        row={"id":a["id"],"file":a["file"],"kind":a["kind"],"source_page":a.get("source_page") or "https://commons.wikimedia.org/wiki/File:"+a["file"].replace(" ","_"),"expected_license":a["expect"]}
+        if a.get("direct_url"):
+            try:
+                rights=get_bytes(a["license_page"],maxbytes=100_000).decode("utf-8")
+                if not ("renders, videos" in rights and "Creative Commons Attribution 4.0" in rights):
+                    raise ValueError("Independent media license cannot be verified")
+                actual="CC BY 4.0"
+                info={"url":a["direct_url"],"size":0}
+            except Exception as exc:
+                row.update({"state":"blocked_unverified_license","error":str(exc)[:160]})
+                result.append(row)
+                continue
+        else:
+            page=pages.get(a["file"],{})
+            info=(page.get("imageinfo") or [{}])[0]
+            actual=license_text(info)
         row["actual_license"]=actual
         if not info.get("url") or not safe_license(actual,a["expect"]):
             row["state"]="blocked_unverified_license";result.append(row);continue
@@ -124,7 +136,7 @@ def main():
         url=(info.get("thumburl") or info.get("url")) if a["kind"]=="image" else info.get("url")
         try:
             data=get_bytes(url,maxbytes=52_000_000)
-            ext=".jpg" if a["kind"]=="image" else ".ogv"
+            ext=".jpg" if a["kind"]=="image" else (".mp4" if a.get("direct_url") else ".ogv")
             name=a["id"]+ext
             path=OUT/name;path.write_bytes(data)
             if a["kind"]=="image":
@@ -148,8 +160,8 @@ def main():
         "cost_eur":0,"audio_generated":False,"finished_documentary":False,
         "notes":["All verified material is independently attributed; this is a silent proof, not a finished GIULIANO episode.",
                  "The 2021 clips are research reconstructions, not footage of the original ancient mechanism."]}
-    if len(images)>=3 and videos:
-        shots=[(images[0],4),(images[1],4),(videos[0],8),(images[2],4)]
+    if len(images)>=2 and len(videos)>=2:
+        shots=[(images[0],4),(videos[0],6),(images[1],4),(videos[1],6)]
         files=[]
         for i,(r,sec) in enumerate(shots):
             source=OUT/r["local_file"]
@@ -168,8 +180,8 @@ def main():
     (OUT/"SOURCE_QA_REPORT.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     text="\n".join(r["id"]+": "+r["state"]+" ("+r.get("actual_license","?")+") - "+r["source_page"] for r in result)
     (OUT/"ATTRIBUTION_AND_SOURCE_STATUS.txt").write_text(text+"\n",encoding="utf-8")
-    print("PREFLIGHT:",len(images),"images",len(videos),"scientific clips; preview:",report.get("silent_materials_preview_mp4","blocked"))
-    if len(images)<3 or not videos:sys.exit(2)
+    print("PREFLIGHT:",len(images),"images",len(videos),"scientific clips; preview:",report.get("silent_materials_preview_mp4","blocked"))\n    for r in result: print("SOURCE",r["id"],r["state"],r.get("actual_license",""),r.get("error","")[:120])
+    if len(images)<2 or len(videos)<2:sys.exit(2)
 
 if __name__=="__main__":
     main()
