@@ -1,0 +1,92 @@
+name: "ArtVision chain selector | safe read-only CI"
+on:
+  pull_request:
+    paths:
+      - "src/artvision_chain_selector_v1.py"
+      - "src/artvision_chain_live_snapshot_v1.py"
+      - "src/artvision_chain_live_preview_v1.py"
+      - "tests/test_artvision_chain_selector_v1.py"
+      - "tests/test_artvision_chain_live_snapshot_v1.py"
+      - "tests/test_artvision_chain_live_preview_v1.py"
+      - "docs/ARTVISION_CHAIN_SELECTOR_V1_20261111.md"
+      - ".github/workflows/artvision-chain-selector-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: artvision-chain-selector-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  selector-unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run both offline suites (no secrets, downloads or dispatch)
+        run: |
+          python3 -m unittest discover -s tests -p 'test_artvision_chain_selector_v1.py' -v
+          python3 -m unittest discover -s tests -p 'test_artvision_chain_live_snapshot_v1.py' -v
+          python3 -m unittest discover -s tests -p 'test_artvision_chain_live_preview_v1.py' -v
+      - name: Verify default fail-closed idle gate
+        run: |
+          python3 - <<'PY'
+          from src.artvision_chain_selector_v1 import select_next
+          sample = {'candidates':[{'id':'test-only', 'status':'ready', 'source_verified':True, 'rights_verified':True, 'storyboard_ready':True, 'qa_plan_ready':True, 'workflow_path':'.github/workflows/approved.yml'}]}
+          result = select_next(sample)
+          assert result['status'] == 'preparing', result
+          print(result)
+          PY
+
+  live-readonly-inventory:
+    needs: selector-unit-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Query all active GitHub Actions statuses (never dispatch)
+        id: live
+        continue-on-error: true # API state races are degraded evidence, not code-test failures
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 src/artvision_chain_live_snapshot_v1.py --out output/artvision-chain/LIVE_SNAPSHOT.json
+      - name: Verify read-only live-to-selector handoff
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from src.artvision_chain_live_preview_v1 import preview
+          source = Path('output/artvision-chain/LIVE_SNAPSHOT.json')
+          snapshot = json.loads(source.read_text())
+          # Synthetic NOT production-ready input; no real video or workflow can start.
+          candidate = {'id': 'CI_DEMO_DO_NOT_RENDER', 'status': 'preparing',
+                       'source_verified': False, 'rights_verified': False,
+                       'storyboard_ready': False, 'qa_plan_ready': False,
+                       'workflow_path': '.github/workflows/not-for-production.yml'}
+          manifest = {'schema': 'artvision-chain-candidates-v1',
+                      'reviewed_workflow_paths': ['.github/workflows/not-for-production.yml'],
+                      'completed_ids': [], 'running_ids': [],
+                      'quarantined_ids': [], 'candidates': [candidate]}
+          report = preview(snapshot, manifest)
+          expected = ('preparing' if snapshot.get('inventory_status') == 'complete_read_only_non_atomic'
+                      else 'blocked')
+          assert report['status'] == expected, report
+          assert report['dispatch_authorized'] is False and report['render_started'] is False
+          out = Path('output/artvision-chain/NEXT_ACTION_PREVIEW.json')
+          out.write_text(json.dumps(report, indent=2) + chr(10))
+          print("READ_ONLY_PREVIEW_PASS", snapshot.get("inventory_status"), "=>", expected, "(no dispatch)")
+          PY
+      - name: Preserve safety evidence without exposing token
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_CHAIN_READONLY_LIVE_SNAPSHOT_${{ github.run_id }}
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            output/artvision-chain/LIVE_SNAPSHOT.json
+            output/artvision-chain/NEXT_ACTION_PREVIEW.json
