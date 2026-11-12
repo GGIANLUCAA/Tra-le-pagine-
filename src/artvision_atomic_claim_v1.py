@@ -68,7 +68,7 @@ def plan_claim(manifest: dict) -> ClaimPlan:
         raise ClaimError("work explicitly excluded by owner")
     if not isinstance(revision, str) or not REVISION_RE.fullmatch(revision):
         raise ClaimError("invalid revision ID")
-    if variant not in VALID_VARIANTS:
+    if not isinstance(variant, str) or variant not in VALID_VARIANTS:
         raise ClaimError("unknown 4x1 variant")
     if not isinstance(source_sha256, str) or not SHA_RE.fullmatch(source_sha256):
         raise ClaimError("invalid source SHA256")
@@ -103,7 +103,7 @@ def claim_once(store: ClaimStore, manifest: dict, base_commit_sha: str) -> dict:
         plan = plan_claim(manifest)
     except ClaimError as exc:
         return dict(base, status="blocked_preflight", reason=str(exc))
-    if not isinstance(base_commit_sha, str) or not SHA_RE.fullmatch(base_commit_sha):
+    if not isinstance(base_commit_sha, str) or not COMMIT_SHA_RE.fullmatch(base_commit_sha):
         return dict(base, status="blocked_preflight", reason="unverified base commit SHA")
     try:
         store.create_if_absent(plan.ref, base_commit_sha)
