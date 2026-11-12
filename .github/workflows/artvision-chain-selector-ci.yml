@@ -4,8 +4,10 @@ on:
     paths:
       - "src/artvision_chain_selector_v1.py"
       - "src/artvision_chain_live_snapshot_v1.py"
+      - "src/artvision_chain_live_preview_v1.py"
       - "tests/test_artvision_chain_selector_v1.py"
       - "tests/test_artvision_chain_live_snapshot_v1.py"
+      - "tests/test_artvision_chain_live_preview_v1.py"
       - "docs/ARTVISION_CHAIN_SELECTOR_V1_20261111.md"
       - ".github/workflows/artvision-chain-selector-ci.yml"
   workflow_dispatch:
@@ -28,6 +30,7 @@ jobs:
         run: |
           python3 -m unittest discover -s tests -p 'test_artvision_chain_selector_v1.py' -v
           python3 -m unittest discover -s tests -p 'test_artvision_chain_live_snapshot_v1.py' -v
+          python3 -m unittest discover -s tests -p 'test_artvision_chain_live_preview_v1.py' -v
       - name: Verify default fail-closed idle gate
         run: |
           python3 - <<'PY'
@@ -48,6 +51,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 src/artvision_chain_live_snapshot_v1.py --out output/artvision-chain/LIVE_SNAPSHOT.json
+      - name: Verify read-only live-to-selector handoff
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from src.artvision_chain_live_preview_v1 import preview
+          source = Path('output/artvision-chain/LIVE_SNAPSHOT.json')
+          snapshot = json.loads(source.read_text())
+          # Synthetic NOT production-ready input; no real video or workflow can start.
+          candidate = {'id': 'CI_DEMO_DO_NOT_RENDER', 'status': 'preparing',
+                       'source_verified': False, 'rights_verified': False,
+                       'storyboard_ready': False, 'qa_plan_ready': False,
+                       'workflow_path': '.github/workflows/not-for-production.yml'}
+          manifest = {'schema': 'artvision-chain-candidates-v1',
+                      'reviewed_workflow_paths': ['.github/workflows/not-for-production.yml'],
+                      'completed_ids': [], 'running_ids': [],
+                      'quarantined_ids': [], 'candidates': [candidate]}
+          report = preview(snapshot, manifest)
+          assert report['status'] == 'preparing', report
+          assert report['dispatch_authorized'] is False and report['render_started'] is False
+          out = Path('output/artvision-chain/NEXT_ACTION_PREVIEW.json')
+          out.write_text(json.dumps(report, indent=2) + '\\n')
+          print("READ_ONLY_PREVIEW_PASS (real GitHub status; unverified candidate stays preparing)")
+          PY
       - name: Preserve safety evidence without exposing token
         if: always()
         uses: actions/upload-artifact@v4
@@ -55,4 +82,6 @@ jobs:
           name: ARTVISION_CHAIN_READONLY_LIVE_SNAPSHOT_${{ github.run_id }}
           retention-days: 7
           if-no-files-found: warn
-          path: output/artvision-chain/LIVE_SNAPSHOT.json
+          path: |
+            output/artvision-chain/LIVE_SNAPSHOT.json
+            output/artvision-chain/NEXT_ACTION_PREVIEW.json
