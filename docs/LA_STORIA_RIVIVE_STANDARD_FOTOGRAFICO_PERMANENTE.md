@@ -1,0 +1,19 @@
+# La Storia Rivive — standard fotografico permanente (owner, 12 novembre 2026)
+
+## Priorità editoriale NON derogabile
+Il proprietario ha chiarito ripetutamente che il momento del fermo immagine deve essere una **ricostruzione fotografica generativa** molto superiore al filmato originale, paragonabile per **impatto visivo percepito 4K** ai benchmark personali `44523.mp4`, `43055.mp4`, `43056.mp4` e altri esempi inviati. Il benchmark non è materiale da riutilizzare o pubblicare; è un riferimento visivo. Non confondere pixel di export, 4K scritto in sovrimpressione e qualità reale.
+
+## Regole per OGNI episodio, workflow, agente, automazione e chat
+1. Originale: vera pellicola storica B/N in movimento, provenienza e diritti verificati. Congelare il **medesimo frame** realmente estratto; conservare hash del sorgente, timecode e immagine originale.
+2. Il frame fermo deve diventare una **nuova ricostruzione fotografica generativa image-to-image** con volti, occhi, pelle, capelli, abiti, materiali, profondità e colore convincenti come fotografia contemporanea. La sola DDColor, RealESRGAN, sharpening, denoise, saturazione, LUT o upscale NON costituisce ricostruzione sufficiente.
+3. Preservare posizione, numero, silhouette e identità riconoscibile dei soggetti, oggetti e architettura; non sostituire liberamente persone, non aggiungere elementi arbitrari. Quando la fonte non consente di determinare un dettaglio, l'AI produce al più un'interpretazione plausibile, **non un fatto storico**.
+4. Se il volto è troppo piccolo, mosso, irriconoscibile o la ricostruzione cambia la scena, scartare il frame e selezionare una sorgente migliore. Non compensare con filtri o dichiarazioni di 4K.
+5. Regia: movimento autentico B/N -> freeze frame esatto -> breve reveal -> fotografia generativa a colori leggibile a lungo, ritmo naturale e variato, niente flash di un secondo, split-screen o transizioni vistosamente artificiali. Vidu, se impiegato, solo da immagini approvate, con crediti/prezzi controllati, nessuna spesa aggiuntiva automatica.
+6. Per ogni scena produrre evidenze: frame originale, foto I2I effettivamente generata, modello/provider e parametri non segreti, SHA o identificativo, confronto prima/dopo e annotazione di difetti su volti/mani/oggetti. Una foto semplicemente colorizzata NON può essere etichettata I2I generativa.
+7. **Doppio gate**: (a) QA tecnico per codec, decodifica, durata, geometria, fonte, hash e ZIP; (b) QA artistico mediante confronto visivo reale ai benchmark con controllo identità, dettaglio e naturalezza. Un QA tecnico PASS non implica qualità artistica PASS. Senza revisione visiva documentata lo stato è `ARTISTIC_REVIEW_PENDING`.
+8. Stato `FINAL_APPROVED` solo se tutte le scene chiave superano il gate fotografico e artistico. Se il modello non è disponibile, mancano crediti, fallisce la generazione o la sorgente è insufficiente: `TECHNICAL_PREVIEW_ONLY` oppure `BLOCKED_PHOTO_RECONSTRUCTION`; non pubblicare automaticamente, non definire il video finito. Passare ad altro candidato quando opportuno.
+9. Esportazione 1080x1920 H.264/AAC va bene quando l'impatto fotografico è elevato; 4K nativo non è obbligatorio. Consegnare MP4 verificato, cover, ZIP, testo social e link Android realmente scaricabile.
+10. Non modificare queste regole in modo da abbassare la soglia senza nuova decisione esplicita del proprietario. Non confondere la presenza del documento con l'effettiva integrazione di tutti i workflow: ciascuna pipeline deve applicare un gate eseguibile o segnalare la revisione pendente.
+
+## Criterio di accettazione
+**La trasformazione deve sembrare una fotografia moderna della stessa scena storica, non una vecchia fotografia semplicemente colorata.** Se questo non è dimostrato da confronto visuale, non promuovere a master approvato.
