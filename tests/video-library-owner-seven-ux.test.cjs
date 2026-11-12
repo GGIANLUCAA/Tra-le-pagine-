@@ -122,7 +122,7 @@ const tick=async()=>new Promise(resolve=>setTimeout(resolve,35));
  assert.equal(d.querySelector('.card').dataset.videoKey,items[2].key);
  d.querySelector('#uploadPeriod').value='all';d.querySelector('#uploadPeriod').dispatchEvent(new dom.window.Event('change'));
  d.querySelector('#genre').value='Artisti e pittura';d.querySelector('#genre').dispatchEvent(new dom.window.Event('change'));
- assert.equal(d.querySelectorAll('#grid .card').length,4,'Genre dropdown must filter to the selected real catalog category');
+ assert.equal(d.querySelectorAll('#grid .card').length,5,'Genre dropdown includes all five art records, including the unavailable catalog entry');
  d.querySelector('#genre').value='Tutti';d.querySelector('#genre').dispatchEvent(new dom.window.Event('change'));
  assert.equal(d.querySelectorAll('#grid .card').length,items.length,'Resetting filters must restore the catalog');
  assert.equal(d.querySelector('#vlsStudioQuick').hidden,false,'Private quick studio opens');
