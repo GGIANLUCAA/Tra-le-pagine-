@@ -1,0 +1,41 @@
+name: "GIULIANO 04 Nazca | Curate already-downloaded authentic media (no network)"
+on:
+  push:
+    branches: [feature/artvision-curated-agent-skills-20261112]
+    paths:
+      - ".github/workflows/giuliano-nazca-curate-existing-v1.yml"
+      - "scripts/giuliano_nazca_curate_v1.py"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: giuliano-nazca-curate-once
+  cancel-in-progress: false
+jobs:
+  reuse-audited-photos-and-film:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_NAZCA_REAL_MEDIA_SCOUT_43296332537
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 43296332537
+          github-token: ${{ github.token }}
+          path: input-nazca
+      - name: Verify every source original hash, author and license without re-downloading
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/giuliano_nazca_curate_v1.py
+          python scripts/giuliano_nazca_curate_v1.py
+      - name: Preserve reusable authentic media, license/attribution/sha and source video
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_04_NAZCA_CURATED_LICENSED_MEDIA
+          path: output/giuliano-nazca-licensed/
+          if-no-files-found: error
+          retention-days: 30
