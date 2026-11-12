@@ -1,0 +1,97 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-12",
+  "work_id": "richard_dadd_fairy_fellers_master_stroke_tate_t00598",
+  "title": "The Fairy Feller's Master-Stroke",
+  "artist": "Richard Dadd",
+  "year": "1855-1864",
+  "variant": "cinema_standard",
+  "status": "ONE_REAL_NEW_CINEMA_MP4_CORRECTED_V2_PRIVATE_REVIEW__SOURCE_SHA1_FFMPEG_ZIP_GITHUB_INDEPENDENT_AND_LIBRARY_READBACK_PASS__ARTISTIC_PENDING",
+  "attempts": {
+    "initial_run_43178151378": "FAILED_BEFORE_RENDER_PYTHON_QUOTING_ERROR",
+    "first_real_render_run": 43178310022,
+    "first_artistic_issue": "Wood/gold photographic frame visible during analytical details; reject first private preview",
+    "final_revised_run": 43179536522,
+    "final_v2_change": "Crop exact original canvas-only pixels [420,488,2610,3370] in video; preserve original credited photo as source evidence",
+    "only_one_new_distinct_cinema_slot": true
+  },
+  "artwork": {
+    "Tate_T00598": true,
+    "institution": "Tate Britain, London",
+    "physical_cm": [
+      54,
+      39.4
+    ],
+    "source_url": "https://commons.wikimedia.org/wiki/File:Richard_dadd,_il_colpo_da_maestro_del_cantastorie,_1855-64,_01.jpg",
+    "photo_author": "Sailko",
+    "photo_year": 2017,
+    "photo_license": "CC BY 3.0 Unported",
+    "pixels": [
+      3024,
+      3828
+    ],
+    "source_sha1": "0960e2d3a3d114c67c6455ce655f92f29f37413f",
+    "source_sha256": "6fcd75dcd552a6f6455e43c718f869b5fce63752a53fa54252b6e3742dd42889",
+    "editorial_canvas_only_crop": [
+      420,
+      488,
+      2610,
+      3370
+    ],
+    "painting_after_crop_pixels": [
+      2190,
+      2882
+    ],
+    "commercial_territorial_release": "PENDING"
+  },
+  "production": {
+    "github_final_run_id": 43179536522,
+    "github_final_artifact_id": 13925907421,
+    "script": "scripts/artvision_owner_fairy_feller_cinema_v2.py",
+    "workflow": ".github/workflows/artvision-owner-fairy-feller-cinema-v2.yml",
+    "duration_s": 49.291667,
+    "scenes": 12,
+    "fps": 24,
+    "frames": 1183,
+    "resolution_hd": [
+      1080,
+      1920
+    ],
+    "video_hd": "ARTVISION_DADD_FAIRY_FELLER_CINEMA_HD_V2_REVIEW.mp4",
+    "hd_bytes": 23509016,
+    "hd_sha256": "e4b3ac240cbb04f039f66b9d64f278890b2e28fb35102b4fdd337bc44dd966bb",
+    "video_android": "ARTVISION_DADD_FAIRY_FELLER_CINEMA_ANDROID_V2_REVIEW.mp4",
+    "android_bytes": 10763141,
+    "android_sha256": "ab968c7c6e6398129d367fec7701cd92a382f0a1cc3e97f0e1c8011a697f9a48",
+    "zip_android": "ARTVISION_DADD_FAIRY_FELLER_ANDROID_V2_PACKAGE.zip",
+    "zip_bytes": 12395134,
+    "zip_sha256": "1abf82744aad8ba1f20d9d3969e260d31d3ee148bfa879a897c9b15b7e6fd15b",
+    "music": "original locally synthesized, low-level rhythmic pulses, no paid API",
+    "voice": false,
+    "cover_and_drafts": true
+  },
+  "QA": {
+    "source_exact_sha1_bytes_pixels": "PASS",
+    "real_photo_painting_crop_visual_contact_inspected": "PASS_NO_FRAME_VISIBLE_IN_12_SAMPLE_FRAMES",
+    "both_github_render_and_independent_artifact_readback_jobs": "SUCCESS",
+    "ffmpeg_all_audio_video_full_decode_both": "PASS",
+    "zip_crc_embedded_mp4": "PASS",
+    "library_independent_rematerialization_sha3": "PASS",
+    "human_full_speed_artistic_review": "PENDING",
+    "territorial_rights": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_api_calls": 0
+  },
+  "library": {
+    "hd_id": "libfile_9a1fb86f6f448191b40db4de84bee66a",
+    "android_id": "libfile_41fa2f8e1c8c819188e7f49ca3775fd0",
+    "zip_id": "libfile_d0f6645caf388191a3db756537a0702f"
+  },
+  "queue": {
+    "original_4x1_active": "26/36",
+    "secondary_owner30_distinct_cinema_after": 16,
+    "only_one_slot_for_Dadd": true
+  },
+  "next_action": "Do not rerender the approved technical V2 as a new Cinema. Await owner visual playback/artistic approval; credit Sailko CC BY 3.0, clear territorial rules before publication. Continue other selected paintings/new variants; no paid API and no new automation."
+}
