@@ -58,7 +58,7 @@ jobs:
           python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<13' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
       - name: Build COMPLETE film; align real Google narration and frame boundaries
         run: python src/giuliano_antikythera_render_v1.py
-      - name: Recovery: original cached Google voice and source QA if film generation fails
+      - name: "Recovery: original cached Google voice and source QA if film generation fails"
         if: failure()
         uses: actions/upload-artifact@v4
         with:
