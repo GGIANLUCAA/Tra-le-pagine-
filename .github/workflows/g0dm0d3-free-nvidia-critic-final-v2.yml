@@ -1,0 +1,137 @@
+name: "G0DM0D3 FREE | One final NVIDIA critic (no rerun of good roles)"
+on:
+  pull_request:
+    paths:
+      - "src/g0dm0d3_final_nvidia_critic_v2.py"
+      - "tests/test_g0dm0d3_final_nvidia_critic_v2.py"
+      - ".github/workflows/g0dm0d3-free-nvidia-critic-final-v2.yml"
+  push:
+    branches: [main]
+    paths:
+      - "requests/g0dm0d3_free/giuliano_antikythera_final_nvidia_critic_once_20261112.json"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: g0dm0d3-final-nvidia-critic-20261112
+  cancel-in-progress: false
+jobs:
+  offline-tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test source proof, exactly one new call, zero-price safety
+        run: |
+          set -euo pipefail
+          python -m py_compile src/g0dm0d3_final_nvidia_critic_v2.py
+          python -m unittest discover -s tests -p 'test_g0dm0d3_final_nvidia_critic_v2.py' -v
+          python -m unittest discover -s tests -p 'test_g0dm0d3_free_four_roles_v1.py' -v
+          python - <<'PY'
+          import json
+          p=json.load(open('config/free_llm_zero_cost_v1.json'))
+          assert p["default_deny"] is True and p["routes"]==[]
+          print("GLOBAL_FREE_ONLY_NO_AUTOPUBLISH_UNCHANGED")
+          PY
+
+  one-remaining-critic:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PYTHONPATH: src
+      GH_TOKEN: ${{ github.token }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENRUTER3 }}
+      G0DM0D3_NVIDIA_CRITIC_FINAL_ONE_SHOT: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Require exactly one NEW owner-authorized zero-charge critic request
+        run: |
+          set -euo pipefail
+          test -n "$OPENROUTER_API_KEY" || { echo "OPENRUTER3_MISSING"; exit 2; }
+          python - <<'PY'
+          import json,subprocess
+          fname='requests/g0dm0d3_free/giuliano_antikythera_final_nvidia_critic_once_20261112.json'
+          files=subprocess.check_output(['git','diff','--name-only','--diff-filter=A','HEAD^','HEAD'],text=True).splitlines()
+          assert files==[fname], "One-shot request missing or already previously run"
+          a=json.load(open(fname))
+          assert set(a)=={'schema','action','source_run_id','source_sha256','source_original_run_id',
+                         'max_new_calls','max_price_usd','allow_paid_fallback',
+                         'render_video','publish','secret_name','owner_authorized'}
+          assert a['schema']=='g0dm0d3-last-free-critic-v2' and a['action']=='nvidia_critic_only'
+          assert a['source_run_id']==43276334272
+          assert a['source_sha256']=='28b118a9c42c947f9028f3f6dbcb0ffa5786c489ea7e96f6c55c73c3215e78f6'
+          assert a['source_original_run_id']==43275046749
+          assert type(a['max_new_calls']) is int and a['max_new_calls']==1
+          assert type(a['max_price_usd']) in (int,float) and a['max_price_usd']==0
+          assert a['allow_paid_fallback'] is False
+          assert a['render_video'] is False and a['publish'] is False
+          assert a['secret_name']=='OPENRUTER3' and a['owner_authorized'] is True
+          print('EXACTLY_ONE_FREE_NVIDIA_CRITIC_CALL_ALLOWED; NONE_OF_PRIOR_REPLAYED')
+          PY
+      - name: Confirm source and safety tests
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_g0dm0d3_final_nvidia_critic_v2.py' -q
+      - name: Fetch previous 3 existing replies and unsuccessful Liquid critic only
+        uses: actions/download-artifact@v4
+        with:
+          name: G0DM0D3_CRITIC_COMPLETION_ANDROID_43276334272
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 43276334272
+          github-token: ${{ github.token }}
+          path: input/previous-three
+      - name: Check real report SHA before any OpenRouter POST
+        run: |
+          set -euo pipefail
+          echo '28b118a9c42c947f9028f3f6dbcb0ffa5786c489ea7e96f6c55c73c3215e78f6  input/previous-three/REPORT.json' | sha256sum -c -
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0,'src')
+          import g0dm0d3_final_nvidia_critic_v2 as v
+          r=v.verify_prior(Path('input/previous-three/REPORT.json'))
+          assert len(r['responses'])==3 and r['model_calls']==5
+          print('THREE_PRIOR_AI_REPLIES_SHA_VERIFIED_AND_REUSED')
+          PY
+      - name: ONE free NVIDIA critic on real timecoded scene-plan
+        run: |
+          set -euo pipefail
+          python src/g0dm0d3_final_nvidia_critic_v2.py \
+            --source-report input/previous-three/REPORT.json \
+            --out output/g0dm0d3-four-actual-roles
+      - name: Verify 4 real replies, two free models, 1 additional call and zero charge
+        if: success()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          r=json.loads(Path('output/g0dm0d3-four-actual-roles/REPORT.json').read_text())
+          assert r['status']=='four_real_roles_two_free_models_unapproved'
+          assert r['new_actual_model_attempts']==1 and r['model_calls']==6
+          assert [s['role'] for s in r['responses']]==['sceneggiatore','storico','regista','critico']
+          assert len(set(x['model'] for x in r['responses']))==2
+          assert r['responses'][3]['model']=='nvidia/nemotron-3.5-lightning:free'
+          assert all(x.get('reported_cost_usd')==0 for x in r['responses'])
+          assert not r['video_rendered'] and not r['publication_authorized']
+          print('FOUR_REAL_ROLES_TWO_MODELS_ZERO_REPORTED_CHARGES_SUCCESS')
+          PY
+      - name: Preserve mobile HTML and JSON even if free model unavailable
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: G0DM0D3_ALL_FOUR_REAL_ROLES_ANDROID_${{ github.run_id }}
+          path: output/g0dm0d3-four-actual-roles/
+          retention-days: 21
+          if-no-files-found: warn
