@@ -17,8 +17,8 @@ import sys
 from urllib import error, request
 
 ROOT = Path(__file__).resolve().parents[1]
-MODELS = ("google/gemma-4-26b-a4b-it:free",
-          "google/gemma-4-31b-it:free")
+MODELS = ("nvidia/nemotron-3.5-lightning:free",
+          "baidu/ernie-5.5-flash-preview:free")
 ROLES = ("sceneggiatore", "storico", "regista", "critico")
 MODEL_FOR_ROLE = (MODELS[0], MODELS[1], MODELS[0], MODELS[1])
 ALLOWED_FORMATS = ("giuliano", "artvision_4x1", "storia_rivive", "documentario")
