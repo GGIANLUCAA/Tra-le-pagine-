@@ -1,0 +1,70 @@
+name: "ONE-OFF | source relevance live verification 20261112"
+on:
+  pull_request:
+    paths: [".github/workflows/one-off-source-relevance-live-20261112.yml"]
+permissions:
+  contents: read
+jobs:
+  live-relevance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Actual keyless catalogue requests after relevance filter
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/ai_director_keyless_archives_v1.py --execute \
+            --category historical_video --query "Venice 1896" \
+            --format storia_rivive --per-provider 2 \
+            --output output/live_source_relevance/venice
+          python src/ai_director_keyless_archives_v1.py --execute \
+            --category art --query "Fabritius" \
+            --format artvision_4x1 --per-provider 2 \
+            --output output/live_source_relevance/fabritius
+          python src/ai_director_keyless_archives_v1.py --execute \
+            --category art --query "The Goldfinch" --artist "Carel Fabritius" \
+            --format artvision_4x1 --per-provider 3 \
+            --output output/live_source_relevance/goldfinch
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,"src")
+          from ai_director_keyless_archives_v1 import _source_relevance
+          for label in ("venice","fabritius","goldfinch"):
+              d=json.loads((Path("output/live_source_relevance")/label/"CANDIDATES.json").read_text())
+              assert d["key_required"] is False
+              assert d["europeana_used"] is False
+              assert d["paid_calls"] is False and d["external_ai_calls"]==0
+              assert d["publication_authorized"] is False
+              expected="video" if label=="venice" else "image"
+              for x in d["items"]:
+                  assert x["media_kind"]==expected
+                  assert x["approved"] is False
+                  ok,_,_= _source_relevance(
+                      d["query"],x, category=d["category"],
+                      artist=d.get("artist_filter",""))
+                  assert ok
+              print("REAL_"+label.upper()+"_START")
+              print(json.dumps({
+                  "query":d["query"], "artist":d.get("artist_filter",""),
+                  "status":d["status"],"providers":d["providers"],
+                  "candidate_count":d["candidate_count"],
+                  "items":[{"title":x["title"],"author":x["author"],
+                             "source_url":x["source_url"],
+                             "matched_terms":x["matched_query_terms"]} for x in d["items"]]
+              },ensure_ascii=False,indent=2))
+              print("REAL_"+label.upper()+"_END")
+          PY
+      - name: Keep static reports for Android (no media download)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Keyless-Sources-Artist-Relevance-Real
+          path: output/live_source_relevance/
+          retention-days: 7
+          if-no-files-found: warn
