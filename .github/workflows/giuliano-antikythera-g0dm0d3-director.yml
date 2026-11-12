@@ -39,15 +39,29 @@ jobs:
         run: |
           python -m py_compile src/giuliano_antikythera_preflight_v1.py
           python -m unittest discover -s tests -p 'test_giuliano_antikythera_preflight_v1.py' -v
+      - name: Make compact G0DM0D3 editorial payload while preserving full source records
+        run: |
+          mkdir -p output/giuliano_antikythera
+          python - <<'PY'
+          import json,sys
+          sys.path.insert(0,"src")
+          from giuliano_antikythera_preflight_v1 import compact_for_director
+          path="research/giuliano_antikythera_v1/BRIEF_AI_DIRECTOR.json"
+          source=json.load(open(path,encoding="utf8"))
+          data=compact_for_director(source)
+          out="output/giuliano_antikythera/BRIEF_EDITORIAL_COMPACT.json"
+          json.dump(data,open(out,"w",encoding="utf8"),ensure_ascii=False,indent=2)
+          print("STORYBOARD_COMPACT",len(data["scenes"]),"all scenes maintained",flush=True)
+          PY
       - name: AI Director V1 offline director/critic research prompts (no models)
         run: |
           python src/ai_director_v1.py --mode plan \
-            --brief research/giuliano_antikythera_v1/BRIEF_AI_DIRECTOR.json \
+            --brief output/giuliano_antikythera/BRIEF_EDITORIAL_COMPACT.json \
             --out-dir output/giuliano_antikythera/director
       - name: AI Director V1 scene, narration, rights and pacing audit
         run: |
           python src/ai_director_v1.py --mode audit \
-            --brief research/giuliano_antikythera_v1/BRIEF_AI_DIRECTOR.json \
+            --brief output/giuliano_antikythera/BRIEF_EDITORIAL_COMPACT.json \
             --out-dir output/giuliano_antikythera/audit
       - name: Independent pre-render scene/tempo QA and Android review pack
         run: |
