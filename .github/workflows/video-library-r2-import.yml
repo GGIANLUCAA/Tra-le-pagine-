@@ -150,7 +150,8 @@ jobs:
                               '"PUBLICATION": FALSE','"PUBLICATION":FALSE',
                               'NOT YET CLEARED FOR PUBLICATION','DO NOT PUBLISH','NON PUBBLICARE',
                               '"PUBLICATION_AUTHORIZED": FALSE','"PUBLICATION_AUTHORIZED":FALSE',
-                              'PUBLICATION_AUTHORIZED: FALSE','PRIVATE REVIEW ONLY','PRIVATE ONLY',
+                              'PUBLICATION_AUTHORIZED: FALSE','"PUBLISHED": FALSE','"PUBLISHED":FALSE',
+                              'PRIVATE REVIEW ONLY','PRIVATE ONLY',
                               'NO SITE/SOCIAL PUBLICATION',
                               'NOT AUTHORIZED TO PUBLISH','NOT_PUBLISHED','NOT PUBLISHED')
               for label,text in documents:
@@ -184,7 +185,9 @@ jobs:
               for manifest,rights in (
                   ('COLORIZATION_QA.json',{'publication':False,'master':False}),
                   ('SOURCES_RIGHTS.json',{'publication_authorized':False,'rights_status':'PENDING'}),
-                  ('SOURCE_MANIFEST.json',{'publication_authorized':False,'status':'TECHNICAL_PASS_ARTISTIC_PENDING'}),
+                  ('SOURCE_MANIFEST.json',{'status':'TECHNICAL_PASS_ARTISTIC_PENDING',
+                                           'rights':'individual image-page license checks before publication',
+                                           'published':False}),
                   ('SOURCE_AND_RIGHTS.json',{'commercial_use_review':'PENDING; no site/social publication'}),
                   ('SOURCES_RIGHTS.json',{'statement':'Photograph requires review; PRIVATE ONLY.'}),
               ):
