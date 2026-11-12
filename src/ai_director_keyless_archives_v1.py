@@ -78,8 +78,19 @@ def research(query, *, category="general", selected=None, per_provider=2, fetche
             if not isinstance(source_items, list):
                 raise KeylessResearchError("Source adapter returned invalid candidates")
             inserted = 0
+            excluded_by_media_kind = 0
+            wanted_media = {
+                "historical_video": {"video"},
+                "historical_photo": {"image"},
+                "art": {"image"},
+            }.get(category)
             for candidate in source_items[:per_provider]:
                 if not isinstance(candidate, dict):
+                    continue
+                # A museum painting tagged with the searched city is not historic film.
+                # Filter *before* selection; never claim metadata proves visual relevance.
+                if wanted_media is not None and candidate.get("media_kind") not in wanted_media:
+                    excluded_by_media_kind += 1
                     continue
                 url = candidate.get("source_url")
                 if not isinstance(url, str) or not url.startswith("https://") or url in seen:
@@ -102,7 +113,9 @@ def research(query, *, category="general", selected=None, per_provider=2, fetche
                 if len(items) >= MAX_TOTAL_CANDIDATES:
                     break
             provider_reports.append({"provider": provider, "status": "response_received",
-                                     "added_candidates": inserted, "api_requests": calls})
+                                     "added_candidates": inserted,
+                                     "excluded_by_media_kind": excluded_by_media_kind,
+                                     "api_requests": calls})
         except (ValueError, TypeError, KeyError, OSError) as exc:
             # Never reflect source response, user credentials or URL into logs.
             provider_reports.append({"provider": provider, "status": "provider_unavailable_or_invalid"})
