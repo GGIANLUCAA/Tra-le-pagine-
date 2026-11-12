@@ -3,13 +3,16 @@ on:
   pull_request:
     paths:
       - "src/artvision_chain_selector_v1.py"
+      - "src/artvision_chain_live_snapshot_v1.py"
       - "tests/test_artvision_chain_selector_v1.py"
+      - "tests/test_artvision_chain_live_snapshot_v1.py"
       - "docs/ARTVISION_CHAIN_SELECTOR_V1_20261111.md"
       - ".github/workflows/artvision-chain-selector-ci.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: artvision-chain-selector-ci-${{ github.ref }}
@@ -21,8 +24,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Verify selector behavior (no secrets, downloads or dispatch)
-        run: python3 -m unittest discover -s tests -p 'test_artvision_chain_selector_v1.py' -v
+      - name: Run both offline suites (no secrets, downloads or dispatch)
+        run: |
+          python3 -m unittest discover -s tests -p 'test_artvision_chain_selector_v1.py' -v
+          python3 -m unittest discover -s tests -p 'test_artvision_chain_live_snapshot_v1.py' -v
       - name: Verify default fail-closed idle gate
         run: |
           python3 - <<'PY'
@@ -32,3 +37,22 @@ jobs:
           assert result['status'] == 'preparing', result
           print(result)
           PY
+
+  live-readonly-inventory:
+    needs: selector-unit-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Query all active GitHub Actions statuses (never dispatch)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 src/artvision_chain_live_snapshot_v1.py --out output/artvision-chain/LIVE_SNAPSHOT.json
+      - name: Preserve safety evidence without exposing token
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_CHAIN_READONLY_LIVE_SNAPSHOT_${{ github.run_id }}
+          retention-days: 7
+          if-no-files-found: warn
+          path: output/artvision-chain/LIVE_SNAPSHOT.json
