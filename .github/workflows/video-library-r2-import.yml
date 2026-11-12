@@ -88,6 +88,9 @@ jobs:
               if base.startswith(('SOURCE_SHOT_', 'SOURCE_REVIEW_ONLY_', 'SOURCE_24S_',
                                   'SCENE02_BW_FREEZE_', 'TRUE_BW_MOTION_', 'RAW_', 'FRAME_')):
                   return False
+              # Reject the two Antikythera source clips, preserving named finished films.
+              if re.fullmatch(r'ANTIKYTHERA_(GEARS|EXPLODED)_\d+S(?:__\d+)?\.MP4',base):
+                  return False
               # Audio-polish exports are intermediate cuts, not independent owner videos.
               if base.startswith('AUDIO_POLISHED_REVIEW'):
                   return False
@@ -109,6 +112,9 @@ jobs:
           assert not archive_candidate('SAMPLE.mp4', 'MELIES_SCOUT_CONTACT_SHEET')
           assert not archive_candidate('RAW_SCAN_01.mp4', 'SOURCE_ASSETS_ONLY')
           assert not archive_candidate('TRUE_BW_MOTION_9S.mp4', 'STORIA_FINISHED_FILM')
+          assert not archive_candidate('antikythera_gears_20s.mp4','GIULIANO_ANTIKYTHERA_G0DM0D3_DIRECTOR_ANDROID')
+          assert not archive_candidate('antikythera_exploded_15s.mp4','GIULIANO_ANTIKYTHERA_G0DM0D3_DIRECTOR_ANDROID')
+          assert archive_candidate('GIULIANO_ANTICITERA_CINEMA_HD.mp4','GIULIANO_ANTIKYTHERA_G0DM0D3_DIRECTOR_ANDROID')
           # Artistic review is not required for the private owner archive, but an
           # artifact that explicitly says publication is not authorized must never
           # be auto-imported. This is a rights/source boundary, not an art gate.
@@ -118,7 +124,9 @@ jobs:
                   for member in zf.namelist():
                       if member.endswith('/'):continue
                       base=pathlib.PurePosixPath(member).name.upper()
-                      if base in ('QA_REPORT.JSON','DELIVERY_MANIFEST_V55.JSON','ARTVISION_DELIVERY_V55.JSON') or (base.startswith('QA_') and base.endswith('.JSON')):
+                      if base in ('QA_REPORT.JSON','DELIVERY_MANIFEST_V55.JSON','ARTVISION_DELIVERY_V55.JSON',
+                                  'SOURCES_RIGHTS.JSON','SOURCE_RIGHTS.JSON','SOURCES_AND_RIGHTS.JSON',
+                                  'SOURCE_AND_RIGHTS.JSON','RIGHTS_AND_CREDITS.JSON','FONTI_E_DIRITTI.JSON') or (base.startswith('QA_') and base.endswith('.JSON')) or base.endswith('_QA.JSON'):
                           try:
                               documents.append((label+member,zf.read(member)[:250000].decode('utf-8','replace').upper()))
                           except Exception as exc:
@@ -138,9 +146,11 @@ jobs:
               if problem:return problem
               blocked_tokens=('"PUBLICATION": "NOT AUTHORIZED"','"PUBLICATION":"NOT AUTHORIZED"',
                               'PUBLICATION: NOT AUTHORIZED','PUBLICATION NOT AUTHORIZED',
+                              '"PUBLICATION": FALSE','"PUBLICATION":FALSE',
                               'NOT YET CLEARED FOR PUBLICATION','DO NOT PUBLISH','NON PUBBLICARE',
                               '"PUBLICATION_AUTHORIZED": FALSE','"PUBLICATION_AUTHORIZED":FALSE',
-                              'PUBLICATION_AUTHORIZED: FALSE','PRIVATE REVIEW ONLY',
+                              'PUBLICATION_AUTHORIZED: FALSE','PRIVATE REVIEW ONLY','PRIVATE ONLY',
+                              'NO SITE/SOCIAL PUBLICATION',
                               'NOT AUTHORIZED TO PUBLISH','NOT_PUBLISHED','NOT PUBLISHED')
               for label,text in documents:
                   hit=next((token for token in blocked_tokens if token in text),None)
@@ -170,6 +180,19 @@ jobs:
               })
               with zipfile.ZipFile(rights_pending) as test:
                   assert explicit_archive_block_reason(test,'OWNER_RIGHTS_PENDING')
+              for manifest,rights in (
+                  ('COLORIZATION_QA.json',{'publication':False,'master':False}),
+                  ('SOURCES_RIGHTS.json',{'publication_authorized':False,'rights_status':'PENDING'}),
+                  ('SOURCE_AND_RIGHTS.json',{'commercial_use_review':'PENDING; no site/social publication'}),
+                  ('SOURCES_RIGHTS.json',{'statement':'Photograph requires review; PRIVATE ONLY.'}),
+              ):
+                  denied=bundle({'VIDEO_ANDROID.mp4':b'owner',manifest:json.dumps(rights)})
+                  with zipfile.ZipFile(denied) as test:
+                      assert explicit_archive_block_reason(test,manifest),manifest
+              permitted=bundle({'OWNER_REVIEW.mp4':b'owner','SOURCE_AND_RIGHTS.json':
+                  json.dumps({'license':'PD-Art','commercial_use_authorized':True})})
+              with zipfile.ZipFile(permitted) as test:
+                  assert explicit_archive_block_reason(test,'ALLOWED_RIGHTS') is None
               print('Explicit authorization gate self-test: PASS',flush=True)
           self_test_explicit_archive_block()
           cache_token='',0
