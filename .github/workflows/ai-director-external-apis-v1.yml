@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "src/ai_director_external_apis_v1.py"
+      - "src/ai_director_europeana_bridge_v1.py"
       - "tests/test_ai_director_external_apis_v1.py"
       - "config/ai_director_external_api_v1.json"
       - ".github/workflows/ai-director-external-apis-v1.yml"
@@ -13,6 +14,7 @@ on:
       - main
     paths:
       - "src/ai_director_external_apis_v1.py"
+      - "src/ai_director_europeana_bridge_v1.py"
       - "tests/test_ai_director_external_apis_v1.py"
       - ".github/workflows/ai-director-external-apis-v1.yml"
   workflow_dispatch:
@@ -60,7 +62,7 @@ jobs:
       - name: Run no-network connector regression tests
         run: |
           set -euo pipefail
-          python -m py_compile src/ai_director_external_apis_v1.py tests/test_ai_director_external_apis_v1.py
+          python -m py_compile src/ai_director_external_apis_v1.py src/ai_director_europeana_bridge_v1.py tests/test_ai_director_external_apis_v1.py
           python -m unittest discover -s tests -p 'test_ai_director_external_apis_v1.py' -v
           python - <<'PY'
           import json
@@ -109,11 +111,18 @@ jobs:
           fi
           python src/ai_director_external_apis_v1.py \
             "${args[@]}" --output output/ai_director_apis/REPORT.json
+          if [ "$MODE" = "europeana" ] && [ "$EXECUTE" = "1" ]; then
+            python src/ai_director_europeana_bridge_v1.py \
+              --input output/ai_director_apis/REPORT.json \
+              --subject "$PUBLIC_QUERY" \
+              --output output/ai_director_apis/DIRECTOR_BRIEF.json \
+              --report-dir output/ai_director_apis/director
+          fi
       - name: Attach read-only candidates for Android
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: AI_DIRECTOR_API_RESEARCH_${{ github.run_id }}
-          path: output/ai_director_apis/REPORT.json
+          path: output/ai_director_apis/
           retention-days: 7
           if-no-files-found: error
