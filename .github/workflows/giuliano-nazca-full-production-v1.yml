@@ -1,0 +1,110 @@
+name: "GIULIANO 04 | NAZCA real 27-scene movie, Gacrux voice, Android package"
+on:
+  push:
+    branches: [feature/artvision-curated-agent-skills-20261112]
+    paths:
+      - "requests/giuliano/nazca-ep04-render-once-20261112.json"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: giuliano-04-nazca-master-render-20261112
+  cancel-in-progress: false
+jobs:
+  proof-before-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Validate only ONE new owner render request, cached voice and immutable sources
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/giuliano_nazca_render_v1.py
+          python - <<'PY'
+          import json,subprocess,os
+          f="requests/giuliano/nazca-ep04-render-once-20261112.json"
+          added=subprocess.check_output(["git","diff","--name-only","--diff-filter=A","HEAD^","HEAD"],text=True).splitlines()
+          assert added==[f], "RENDER_REQUEST_NOT_NEW"
+          j=json.load(open(f))
+          assert set(j)=={"schema","episode","owner_approved","source_run_id","voice_run_id",
+                          "regenerate_tts","generate_vidu","buy_credits","publish","release_type","quality_requirements"}
+          assert j["schema"]=="giuliano-nazca-source-locked-master-v1"
+          assert j["episode"]=="GIULIANO_04_NAZCA" and j["owner_approved"] is True
+          assert j["source_run_id"]==43297817150 and j["voice_run_id"]==43300438071
+          assert j["regenerate_tts"] is False and j["generate_vidu"] is False
+          assert j["buy_credits"] is False and j["publish"] is False
+          assert j["release_type"]=="private_actions_artifact_first"
+          assert j["quality_requirements"]==["real_sources","real_video","voice_asr",
+                                               "27_semantic_shots","full_decode","android_zip_crc"]
+          script=json.load(open("giuliano/nazca/EP04_BRIEF_SHOTMAP_V1.json"))
+          assert script["word_count"]==254 and len(script["beats"])==27
+          assert os.environ["GITHUB_RUN_ATTEMPT"]=="1", "Do not duplicate owner render job automatically"
+          print("NAZCA_OWNER_RENDER_APPROVED_NO_NEW_GOOGLE_OR_VIDU_CALLS")
+          PY
+  true-film-and-android:
+    needs: proof-before-render
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    env:
+      GIULIANO_NAZCA_RENDER_SOURCE_ONLY: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download already verified 30 authenticated Commons photos and real OGV
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_04_NAZCA_CURATED_LICENSED_MEDIA
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 43297817150
+          github-token: ${{ github.token }}
+          path: input/giuliano-nazca-licensed
+      - name: Download already made Google Gacrux WAV and word-aligned scene times
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_04_NAZCA_VERIFIED_GACRUX_VOICE_COMPLETE
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 43300438071
+          github-token: ${{ github.token }}
+          path: input/giuliano-nazca-voice
+      - name: Install FFmpeg and image tooling, NO video or voice APIs
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            timeout 150 sudo apt-get update -qq
+            timeout 150 sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          fi
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+          ffprobe -version | head -n 1
+      - name: Render full source-locked documentary with 27 exact speech scenes
+        run: |
+          set -euo pipefail
+          python -u scripts/giuliano_nazca_render_v1.py
+      - name: Real encoded MP4 black/cut diagnostics, separate from human artistry
+        if: success()
+        continue-on-error: true
+        run: |
+          python src/ai_director_visual_qa_v1.py \
+            --video output/GIULIANO_04_NAZCA_MASTER/GIULIANO_04_NAZCA_THE_DESERT_THAT_REMEMBERS_MASTER.mp4 \
+            --output output/GIULIANO_04_NAZCA_MASTER/AI_DIRECTOR_VISUAL_QA.json
+      - name: Preserve actual owner review videos/ZIP/cover/credits, not giant temp frames
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_04_NAZCA_COMPLETE_OWNER_REVIEW
+          path: |
+            output/GIULIANO_04_NAZCA_MASTER/GIULIANO_04_NAZCA_THE_DESERT_THAT_REMEMBERS_MASTER.mp4
+            output/GIULIANO_04_NAZCA_MASTER/GIULIANO_04_NAZCA_ANDROID.mp4
+            output/GIULIANO_04_NAZCA_MASTER/GIULIANO_04_NAZCA_COMPLETE_REVIEW.zip
+            output/GIULIANO_04_NAZCA_MASTER/GIULIANO_04_NAZCA_COVER.jpg
+            output/GIULIANO_04_NAZCA_MASTER/CONTACT_SHEET_TRUE_MP4.jpg
+            output/GIULIANO_04_NAZCA_MASTER/SHOTMAP_REAL_VOICE.json
+            output/GIULIANO_04_NAZCA_MASTER/QA_TECHNICAL.json
+            output/GIULIANO_04_NAZCA_MASTER/AI_DIRECTOR_VISUAL_QA.json
+            output/GIULIANO_04_NAZCA_MASTER/AUTHORS_CREDITS.txt
+            output/GIULIANO_04_NAZCA_MASTER/SOCIAL_DESCRIPTION_IT.txt
+          if-no-files-found: warn
+          retention-days: 30
