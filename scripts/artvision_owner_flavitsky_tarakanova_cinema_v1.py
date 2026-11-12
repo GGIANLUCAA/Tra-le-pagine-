@@ -17,6 +17,9 @@ MUSEUM_PAGE="https://my.tretyakov.ru/app/masterpiece/8412"
 WORK_ID="flavitsky_princess_tarakanova_tretyakov_inv347_1863_1864"
 WIDTH,HEIGHT,FPS=720,1280,20
 SOURCE_DIMS=(1400,1845)
+SOURCE_SHA256="749e30f146b61886c5d342c7da8f204afdadc73e5a3fe953221ba4dbdbe5f948"
+SOURCE_SHA1="4e96a98a1d6a4568119f54c348ca329ad6fc2521"
+SOURCE_BYTES=463191
 # Deliberately gentle, distinguishable focuses. All subject locations refer to
 # the exact Tretyakov composition, not any study/earlier edition.
 SCENES=[
@@ -50,7 +53,7 @@ def source_readback():
    request=urllib.request.Request(u,headers={"User-Agent":"ArtVision/1.0 (private art source verification; bot-compliant)"})
    with urllib.request.urlopen(request,timeout=65) as resp:
     b=resp.read(1000000)
-   assert b and 200000<=len(b)<=800000,"Source unexpectedly sized"
+   assert b and len(b)==SOURCE_BYTES and hashlib.sha1(b).hexdigest()==SOURCE_SHA1 and hashlib.sha256(b).hexdigest()==SOURCE_SHA256, "Commons source version bytes/SHA mismatch"
    with Image.open(io.BytesIO(b)) as im:
     assert im.format=="JPEG" and im.size==SOURCE_DIMS,("Wrong edition or image dimensions",im.format,im.size)
     im.verify()
