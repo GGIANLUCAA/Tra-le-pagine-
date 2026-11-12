@@ -12,13 +12,14 @@ import datetime as dt
 import json
 from pathlib import Path
 import re
+import unicodedata
 
 from ai_director_v1 import audit_scenes, base_report, editorial_prompts, make_brief, write_reports
 from public_archive_sources_v2 import search as search_public
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = {
-    "art": ("artic", "met", "cleveland"),
+    "art": ("artic", "met", "cleveland", "commons"),
     "historical_video": ("loc", "archive", "commons"),
     "historical_photo": ("loc", "commons", "wellcome"),
     "general": ("loc", "artic", "commons"),
@@ -26,6 +27,45 @@ POLICY = {
 ALLOWED = frozenset(p for group in POLICY.values() for p in group)
 MAX_TOTAL_CANDIDATES = 9
 MAX_REQUESTS = 12
+STOPWORDS = frozenset({
+    "the", "a", "an", "and", "or", "of", "in", "at", "for", "from", "by",
+    "with", "to", "on", "la", "il", "lo", "gli", "le", "di", "del",
+    "della", "da", "una", "un", "e", "artwork", "painting",
+    "historical", "historic", "movie", "film", "footage", "video",
+    "photograph", "photo", "image"
+})
+
+
+def _keywords(value):
+    if not isinstance(value, str):
+        return []
+    folded = "".join(c for c in unicodedata.normalize("NFKD", value.casefold())
+                     if not unicodedata.combining(c))
+    return [t for t in re.findall(r"[a-z0-9]+", folded)
+            if (len(t) >= 3 or t.isdecimal()) and t not in STOPWORDS]
+
+
+def _source_relevance(query, candidate, *, category, artist=""):
+    """Strict catalogue text match, not an authenticity or artistic judgement."""
+    words = list(dict.fromkeys(_keywords(query)))
+    if not words:
+        raise KeylessResearchError("No meaningful terms in the search query")
+    title = _keywords(candidate.get("title", ""))
+    author = _keywords(candidate.get("author", ""))
+    date = _keywords(candidate.get("date", ""))
+    artist_words = list(dict.fromkeys(_keywords(artist)))
+    if artist_words and category != "art":
+        raise KeylessResearchError("Artist filter is only supported for artwork")
+    if artist_words and not all(t in author for t in artist_words):
+        return False, "artist_name_not_matched", []
+    title_terms = [t for t in words if t not in artist_words]
+    actual = set(title + author + date)
+    found = [term for term in title_terms if term in actual]
+    if title_terms and len(found) != len(title_terms):
+        return False, "query_terms_not_matched", found
+    return True, "metadata_text_match_unverified", found
+
+
 
 
 class KeylessResearchError(ValueError):
@@ -54,11 +94,15 @@ def select_providers(category="general", selected=None):
     return POLICY[category]
 
 
-def research(query, *, category="general", selected=None, per_provider=2, fetcher=None):
-    """User-initiated, maximum three keyless sources. No media is retrieved."""
+def research(query, *, category="general", selected=None, per_provider=2, artist="", fetcher=None):
+    """User-initiated, up to four keyless sources. No media is retrieved."""
     query = _valid_query(query)
     if type(per_provider) is not int or not 1 <= per_provider <= 3:
         raise KeylessResearchError("Per-provider limit must be 1..3")
+    if artist and (category != "art" or not _keywords(artist)):
+        raise KeylessResearchError("Artist name filter applies only to art and needs real terms")
+    if not _keywords(query):
+        raise KeylessResearchError("Search query has no meaningful terms")
     chosen = select_providers(category, selected)
     items, provider_reports, seen = [], [], set()
     total_calls = 0
@@ -79,6 +123,7 @@ def research(query, *, category="general", selected=None, per_provider=2, fetche
                 raise KeylessResearchError("Source adapter returned invalid candidates")
             inserted = 0
             excluded_by_media_kind = 0
+            excluded_by_relevance = 0
             wanted_media = {
                 "historical_video": {"video"},
                 "historical_photo": {"image"},
@@ -91,6 +136,11 @@ def research(query, *, category="general", selected=None, per_provider=2, fetche
                 # Filter *before* selection; never claim metadata proves visual relevance.
                 if wanted_media is not None and candidate.get("media_kind") not in wanted_media:
                     excluded_by_media_kind += 1
+                    continue
+                matched, explanation, matched_terms = _source_relevance(
+                    query, candidate, category=category, artist=artist)
+                if not matched:
+                    excluded_by_relevance += 1
                     continue
                 url = candidate.get("source_url")
                 if not isinstance(url, str) or not url.startswith("https://") or url in seen:
@@ -107,7 +157,9 @@ def research(query, *, category="general", selected=None, per_provider=2, fetche
                     "license_claim": _safe_field(candidate.get("license_claim"), 320),
                     "rights_review": "pending", "authenticity_review": "pending",
                     "scene_relevance": "pending", "source_verified": False,
-                    "approved": False, "downloaded": False
+                    "approved": False, "downloaded": False,
+                    "text_relevance": explanation, "matched_query_terms": matched_terms,
+                    "artist_filter_requested": bool(artist)
                 })
                 inserted += 1
                 if len(items) >= MAX_TOTAL_CANDIDATES:
@@ -115,6 +167,7 @@ def research(query, *, category="general", selected=None, per_provider=2, fetche
             provider_reports.append({"provider": provider, "status": "response_received",
                                      "added_candidates": inserted,
                                      "excluded_by_media_kind": excluded_by_media_kind,
+                                     "excluded_by_relevance": excluded_by_relevance,
                                      "api_requests": calls})
         except (ValueError, TypeError, KeyError, OSError) as exc:
             # Never reflect source response, user credentials or URL into logs.
@@ -123,7 +176,7 @@ def research(query, *, category="general", selected=None, per_provider=2, fetche
     status = "candidates_need_review" if items else "no_candidates_or_sources_unavailable"
     return {
         "schema": "ai-director-keyless-archives-v1", "category": category,
-        "query": query, "status": status, "providers": provider_reports,
+        "query": query, "artist_filter": artist, "status": status, "providers": provider_reports,
         "api_requests_upper_bound": total_calls,
         "items": items, "candidate_count": len(items),
         "key_required": False, "europeana_used": False,
@@ -192,16 +245,20 @@ def main(argv=None):
     ap.add_argument("--query", default="Venice 1896")
     ap.add_argument("--format", choices=("documentario", "artvision_4x1", "storia_rivive", "giuliano", "wow_lab"), default="storia_rivive")
     ap.add_argument("--per-provider", type=int, choices=(1, 2, 3), default=2)
+    ap.add_argument("--artist", default="", help="Optional exact-creator metadata filter for art")
     ap.add_argument("--execute", action="store_true", help="Only explicit manual usage sends keyless GET requests")
     ap.add_argument("--output", default="output/ai_director_archives_v1")
     args = ap.parse_args(argv)
     if args.execute:
         result = research(args.query, category=args.category, selected=args.provider,
-                          per_provider=args.per_provider)
+                          per_provider=args.per_provider, artist=args.artist)
     else:
+        if args.artist and args.category != "art":
+            raise KeylessResearchError("Artist requires art category")
         result = {
             "schema": "ai-director-keyless-archives-v1", "category": args.category,
-            "query": _valid_query(args.query), "status": "dry_run_no_api_calls",
+            "query": _valid_query(args.query), "artist_filter": args.artist,
+            "status": "dry_run_no_api_calls",
             "providers": [], "api_requests_upper_bound": 0, "items": [],
             "candidate_count": 0, "key_required": False, "europeana_used": False,
             "external_ai_calls": 0, "paid_calls": False,
