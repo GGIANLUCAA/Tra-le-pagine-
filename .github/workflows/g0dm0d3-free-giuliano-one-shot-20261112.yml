@@ -1,9 +1,9 @@
-name: "G0DM0D3 FREE | Giuliano direct-text final model test"
+name: "G0DM0D3 FREE | Giuliano verified-shotmap 4-role pilot"
 on:
   push:
     branches: [main]
     paths:
-      - "requests/g0dm0d3_free/giuliano_antikythera_direct_response_final_20261112.json"
+      - "requests/g0dm0d3_free/giuliano_antikythera_verified_shotmap_liquid_once_20261112.json"
 permissions:
   contents: read
 concurrency:
@@ -34,7 +34,7 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           import json,os,subprocess
-          path="requests/g0dm0d3_free/giuliano_antikythera_direct_response_final_20261112.json"
+          path="requests/g0dm0d3_free/giuliano_antikythera_verified_shotmap_liquid_once_20261112.json"
           added=subprocess.check_output(["git","diff","--name-only","--diff-filter=A","HEAD^","HEAD"],text=True).splitlines()
           if path not in added:raise SystemExit("ONE_SHOT_ALREADY_USED_OR_NOT_NEW")
           x=json.load(open(path))
