@@ -46,6 +46,7 @@ jobs:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       GIULIANO_TTS_ONE_SHOT: "1"
       GEMINI_TTS_MODEL_OVERRIDE: "gemini-3.1-flash-tts-preview"
+      GEMINI_TTS_USE_GENERATE_CONTENT: "1"
       PYTHONPATH: src
     steps:
       - uses: actions/checkout@v4
@@ -59,19 +60,19 @@ jobs:
           command -v ffmpeg
           command -v ffprobe
           python -m pip install --disable-pip-version-check numpy pillow soundfile scipy google-genai faster-whisper
-      - name: Verify Google TTS model visibility before generation (read-only)
+      - name: Verify exact Google TTS model with documented models.get (read-only)
         run: |
           python - <<'PY'
           import os
           from google import genai
-          chosen=os.getenv("GEMINI_TTS_MODEL_OVERRIDE", "gemini-3.8-flash-tts")
+          chosen=os.environ.get("GEMINI_TTS_MODEL_OVERRIDE", "")
           key=os.environ.get("GEMINI_API_KEY", "")
-          if not key: raise SystemExit("TTS_ACCESS_BLOCKED: missing configured key")
-          visible={str(m.name).split("/")[-1] for m in genai.Client(api_key=key).models.list()}
-          print("READ_ONLY_GOOGLE_MODEL_COUNT", len(visible))
-          if chosen not in visible:
-              raise SystemExit("TTS_ACCESS_BLOCKED: "+chosen+" unavailable to the connected API key; no voice generation attempted")
-          print("TTS_MODEL_VISIBLE_AND_AUTHORIZED", chosen)
+          if not key or chosen!="gemini-3.1-flash-tts-preview":
+              raise SystemExit("TTS_ACCESS_BLOCKED: key missing or nonapproved 3.1 model")
+          model=genai.Client(api_key=key).models.get(model=chosen)
+          print("READ_ONLY_TTS_MODEL_GET_OK",model.name)
+          if not model.name.endswith(chosen):
+              raise SystemExit("TTS_ACCESS_BLOCKED: unexpected model identity")
           PY
       - name: Generate one verified human-paced Italian narration
         id: voice
@@ -110,7 +111,7 @@ jobs:
         with:
           name: GIULIANO_03_ANTIKYTHERA_REAL_SOURCE_REVIEW
           repository: GGIANLUCAA/Tra-le-pagine-
-          run-id: 43196764157
+          run-id: 43210478392
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: input-media
       - name: Restore already-synthesized narration, never call TTS from here
