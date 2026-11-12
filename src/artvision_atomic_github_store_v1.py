@@ -9,7 +9,7 @@ import json
 import urllib.error
 import urllib.request
 from src.artvision_atomic_claim_v1 import (
-    REPO, CLAIM_PREFIX, COMMIT_SHA_RE, ClaimConflict, ClaimUnknown,
+    REPO, CLAIM_PREFIX, COMMIT_SHA_RE, SHA_RE, ClaimConflict, ClaimUnknown,
 )
 
 GITHUB_API = "https://api.github.com/repos/" + REPO
@@ -42,7 +42,7 @@ class GithubClaimStore:
 
     def create_if_absent(self, ref: str, base_commit_sha: str) -> None:
         if not isinstance(ref, str) or not ref.startswith(CLAIM_PREFIX) or (
-            len(ref) != len(CLAIM_PREFIX) + 64
+            SHA_RE.fullmatch(ref[len(CLAIM_PREFIX):]) is None
         ):
             raise ClaimUnknown("invalid claim ref")
         if not isinstance(base_commit_sha, str) or not COMMIT_SHA_RE.fullmatch(base_commit_sha):
