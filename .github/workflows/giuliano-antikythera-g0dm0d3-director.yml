@@ -73,6 +73,10 @@ jobs:
       - name: Install image scout tools for real source quality control
         run: |
           python -m pip install --disable-pip-version-check -q 'Pillow>=10,<13'
+          if ! command -v ffprobe >/dev/null 2>&1; then
+            timeout 150 sudo apt-get update -qq
+            timeout 150 sudo apt-get install -y -qq ffmpeg
+          fi
           ffprobe -version | head -1
       - name: Acquire actual open licensed photos and silent 3D gear videos
         continue-on-error: true
