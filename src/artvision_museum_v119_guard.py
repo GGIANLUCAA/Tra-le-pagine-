@@ -133,6 +133,15 @@ def check_work(catalog, work, renderer_path=None):
         problems.append("museum_intro_outro_continuity_missing")
     if not sha256(work.get("intro_outro_mp4_sha256")):
         problems.append("real_video_preview_hash_missing")
+    # V331 (12/11/2026): no oblique/skewed painting on a museum wall.
+    # This is a necessary gate, never sufficient for Gold or room authenticity.
+    # A real V331 JSON geometry result is required in the production dossier.
+    if work.get("frontal_geometry_v331_status") != "READY_FOR_ARTISTIC_REVIEW":
+        problems.append("museum_frontal_geometry_v331_not_passed")
+    if not sha256(work.get("frontal_geometry_v331_report_sha256")):
+        problems.append("museum_frontal_gate_report_sha256_missing")
+    if work.get("frontal_pose_fullspeed_review_passed") is not True:
+        problems.append("museum_frontal_pose_human_review_missing")
     if work.get("visual_review_status") != "approved" or work.get("user_or_authorized_reviewer_approval") is not True:
         problems.append("human_visual_approval_missing")
     problems.extend(check_real_render(renderer_path))
