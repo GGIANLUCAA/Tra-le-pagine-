@@ -66,6 +66,14 @@ jobs:
             --format giuliano \
             --topic "Anticitera: migliorare il racconto sul meccanismo greco" \
             --out output/g0dm0d3-free-offline
+      - name: Recheck real free-model catalogue with GET only; no key and no prompts
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from g0dm0d3_free_four_roles_v1 import _get_json,attest_live_free_models
+          r=attest_live_free_models(_get_json("https://openrouter.ai/api/v1/models"))
+          print("PINNED_TWO_FREE_MODELS_LIVE_PRICE_ZERO",r["checked_models"])
+          print("NO_POSTS_NO_PAID_BILLING_NO_SECRET")
+          PY
       - name: Keep offline Android diagnostic
         if: always()
         uses: actions/upload-artifact@v4
