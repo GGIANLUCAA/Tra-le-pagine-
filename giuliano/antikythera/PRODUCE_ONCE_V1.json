@@ -13,7 +13,7 @@
   "save_wav_before_render": true,
   "repeat_voice_without_cache_forbidden": true,
   "controlled_retry": {
-    "reason": "New owner request 2026-11-12: finish GIULIANO 03. Read-only Google GET showed HTTP 200 for Gemini 3.1 TTS; earlier Interactions endpoint 404, so use documented generateContent API, with Gacrux and one synthetic request max.",
+    "reason": "Previous run 43246513570 failed in read-only models.get due transient Google client lifetime bug. No audio synthesis occurred, confirmed empty voice artifact. Client lifetime fixed; proceed with SAME previously authorized single generateContent Gacrux request.",
     "endpoint": "models.generate_content",
     "model": "gemini-3.1-flash-tts-preview",
     "voice": "Gacrux",
@@ -29,6 +29,9 @@
     "automatic_retries": false,
     "render_allowed_only_if_voice_sha_verified": true,
     "publication_allowed": false,
-    "review_required": true
+    "review_required": true,
+    "last_run_id": 43246513570,
+    "last_run_stopped_before_tts": true,
+    "model_get_client_lifetime_fixed_commit": "b82dea2bc6fbc96eaa3efc91d57f9566bdcdf392"
   }
 }
