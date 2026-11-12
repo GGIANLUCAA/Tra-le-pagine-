@@ -65,11 +65,12 @@ jobs:
           python - <<'PY'
           import os
           from google import genai
+          from google.genai import types
           chosen=os.environ.get("GEMINI_TTS_MODEL_OVERRIDE", "")
           key=os.environ.get("GEMINI_API_KEY", "")
           if not key or chosen!="gemini-3.1-flash-tts-preview":
               raise SystemExit("TTS_ACCESS_BLOCKED: key missing or nonapproved 3.1 model")
-          client=genai.Client(api_key=key)
+          client=genai.Client(api_key=key, http_options=types.HttpOptions(api_version="v1beta"))
           try:
               model=client.models.get(model=chosen)
               print("READ_ONLY_TTS_MODEL_GET_OK",model.name)
