@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Opt-in API adapters for ArtVision AI Director.
 
-Europeana: public catalogue metadata search, never download or approve assets.
+Public catalogue search lives in ai_director_keyless_archives_v1.py.
 Gemini: optional still-image editorial review (not full MP4 artistic QA).
 Groq: optional STT with segment timestamps (not voice-scene verification).
 
@@ -25,7 +25,6 @@ from urllib import error, parse, request
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = ROOT / "config/ai_director_external_api_v1.json"
-EUROPEANA_URL = "https://api.europeana.eu/record/v2/search.json"
 GROQ_URL = "https://api.groq.com/openai/v1/audio/transcriptions"
 GEMINI_API = "https://generativelanguage.googleapis.com/v1beta/models/"
 MAX_RESPONSE = 750_000
@@ -89,50 +88,6 @@ def _safe_link(value):
     if p.hostname in {"localhost", "127.0.0.1", "::1"}:
         return ""
     return value
-
-
-def europeana_search(query, *, key, limit=5, transport=None):
-    """One public search. API record => research candidate, never rights approval."""
-    if not isinstance(query, str) or not 3 <= len(query.strip()) <= 110 or re.search(r"[\x00-\x1f\x7f]", query):
-        raise ExternalAPIError("Query must be printable text 3..110 characters")
-    if type(limit) is not int or not 1 <= limit <= 8:
-        raise ExternalAPIError("One to eight results per manual request")
-    key = _credential(key)
-    params = parse.urlencode({
-        "query": query.strip(), "rows": limit, "profile": "minimal",
-        "reusability": "open", "media": "true"
-    })
-    req = request.Request(EUROPEANA_URL + "?" + params, method="GET",
-                          headers={"X-Api-Key": key, "Accept": "application/json",
-                                   "User-Agent": "TraLePagine-AIDirector-Europeana/1.0"})
-    data = _send(req, transport=transport)
-    if data.get("success") is not True or not isinstance(data.get("items"), list):
-        raise ExternalAPIError("Europeana did not provide a valid Search API response")
-    items = []
-    for obj in data["items"][:limit]:
-        if not isinstance(obj, dict):
-            continue
-        identifier = _display(obj.get("id"), 160)
-        if not identifier:
-            continue
-        # Official record URL can always be inspected; never trust unverified media urls.
-        page = _safe_link(obj.get("guid"))
-        if not page:
-            page = "https://www.europeana.eu/en/item/" + parse.quote(identifier.strip("/"), safe="/_:-")
-        items.append({
-            "id": "europeana:" + identifier, "title": _display(obj.get("title")),
-            "date": _display(obj.get("year")), "provider": _display(obj.get("dataProvider")),
-            "media_kind": _display(obj.get("type")) or "metadata",
-            "source_url": page,
-            "rights_claim": _display(obj.get("rights"), 320),
-            "preview_url_unverified": _safe_link(obj.get("edmPreview")),
-            "rights_review": "pending", "authenticity_review": "pending",
-            "media_downloaded": False, "selected": False, "approved": False
-        })
-    return {"schema": "ai-director-europeana-research-v1", "query": query.strip(),
-            "provider": "europeana", "api_requests": 1, "items": items,
-            "rights_verified": False, "downloaded": False,
-            "publication_authorized": False, "status": "catalogue_candidates_unreviewed"}
 
 
 def load_policy(path=POLICY):
@@ -268,10 +223,7 @@ def groq_transcription(audio, *, model, key, policy=None, transport=None):
 
 def main():
     parser = argparse.ArgumentParser(description="External APIs for AI Director, fail closed")
-    parser.add_argument("--mode", choices=("inventory", "europeana"), required=True)
-    parser.add_argument("--query", default="Venice 1896")
-    parser.add_argument("--limit", type=int, default=5)
-    parser.add_argument("--execute", action="store_true", help="One public Europeana metadata request only")
+    parser.add_argument("--mode", choices=("inventory",), required=True)
     parser.add_argument("--output", default="output/ai_director_apis/report.json")
     args = parser.parse_args()
     report = {
@@ -286,15 +238,9 @@ def main():
         report["status"] = "safe_offline_inventory"
         report["credentials_present"] = {
             k: bool(os.environ.get(k)) for k in (
-                "EUROPEANA_API_KEY", "GEMINI_API_KEY", "GROQ_API_KEY",
+                "GEMINI_API_KEY", "GROQ_API_KEY",
                 "OPENROUTER_API_KEY", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID")
         }
-    elif args.mode == "europeana":
-        if not args.execute:
-            report["status"] = "europeana_dry_run_no_request"
-        else:
-            report = europeana_search(args.query, limit=args.limit,
-                                      key=os.environ.get("EUROPEANA_API_KEY", ""))
     target = Path(args.output)
     target.parent.mkdir(parents=True, exist_ok=True)
     # Output path managed by workflow. No secret/key appears in the report.
