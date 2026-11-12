@@ -58,6 +58,36 @@ la mancanza di candidati, senza inventare materiale o bloccare la produzione
 seriale già attiva. Il workflow resta **manuale** finché la qualità dei
 candidati e i tempi non siano valutati su casi reali.
 
+## Titoli tradotti · fallback circoscritto
+
+La prova reale del 12/11/2026 (run 43191943624) ha trovato
+alcune opere di Barent, Frederik e Louis Fabritius per la ricerca generica
+"Fabritius", mentre "The Goldfinch" + artista "Carel Fabritius"
+ha restituito zero risultati iniziali. Il titolo olandese della
+medesima opera viene registrato nel file di Commons "Fabritius-vink.jpg".
+
+Il nuovo registro config/ai_director_curated_source_aliases_v1.json
+contiene SOLO un alias artistico documentato, fondato sulla
+scheda ufficiale Mauritshuis inventario 605:
+https://www.mauritshuis.nl/en/our-collection/artworks/605-the-goldfinch
+
+Se (e soltanto se) l'utente cerca "The Goldfinch", indica
+"Carel Fabritius", usa provider=auto e nessuna delle ricerche
+ordinarie ha trovato un candidato valido, AI Director puo' effettuare
+UNA ULTERIORE GET gratuita su Wikimedia Commons per "Fabritius-vink".
+La risposta viene filtrata anche sui metadati dell'autore; non sono
+accettate attribuzioni per semplice assonanza del cognome.
+Il report indica il record museale che ha motivato l'alias.
+
+Risultati: candidate only, rights_review=pending,
+source_verified=false, approved=false, nessun download,
+nessuna produzione e nessun costo API. La corrispondenza di
+alias NON costituisce verifica del file, della licenza o della cornice
+storica. Non aggiungere sinonimi generati automaticamente o traduzioni
+dedotte senza confronto con fonte museale. Nuovi alias richiedono
+verifica primaria e test di regressione. Ogni fallback resta limitato
+ad una chiamata, entro il tetto di 12 richieste complessive per azione.
+
 ## Architettura
 
 - src/public_archive_sources_v1.py / v2.py:
