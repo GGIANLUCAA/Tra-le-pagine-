@@ -16,6 +16,7 @@ import stat
 import tempfile
 import urllib.error
 import urllib.request
+import urllib.parse
 import zipfile
 from pathlib import Path
 
@@ -36,13 +37,30 @@ def _get(url, key):
         return json.load(res)
 
 
+class _SafeArtifactRedirect(urllib.request.HTTPRedirectHandler):
+    """Never leak GitHub Authorization to the signed artifact storage domain."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        redirect = super().redirect_request(req, fp, code, msg, headers, newurl)
+        if redirect is not None:
+            old_host = urllib.parse.urlsplit(req.full_url).hostname
+            new_host = urllib.parse.urlsplit(newurl).hostname
+            if new_host != old_host:
+                redirect.remove_header("Authorization")
+                redirect.remove_unredirected_header("Authorization")
+        return redirect
+
+
 def _archive(url, key, target):
     # GitHub artifact endpoint redirects to a short-lived signed ZIP URL.
+    # urllib ordinarily forwards Authorization on redirect: signed Azure
+    # storage rejects this with HTTP 401, so strip it across origins.
     req = urllib.request.Request(url, headers={
         "Authorization": "Bearer " + key, "Accept": "application/vnd.github+json",
         "User-Agent": "TraLePagine-OfflineDirectorV2"})
+    opener = urllib.request.build_opener(_SafeArtifactRedirect)
     count = 0
-    with urllib.request.urlopen(req, timeout=120) as res, target.open("wb") as out:
+    with opener.open(req, timeout=120) as res, target.open("wb") as out:
         while True:
             chunk = res.read(1024 * 1024)
             if not chunk:
