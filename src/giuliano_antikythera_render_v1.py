@@ -263,7 +263,7 @@ def main():
  "Testo, narrazione italiana e colonna sonora originali. Nessuna pubblicazione automatica.\n",encoding="utf-8")
  pack=OUT/"GIULIANO_ANTICITERA_COMPLETO.zip"
  with zipfile.ZipFile(pack,"w",zipfile.ZIP_DEFLATED,compresslevel=5) as z:
-  for p in [hd,android,cover,OUT/"QA_FILM.json",OUT/"ATTRIBUZIONI.txt"]:
+  for p in [hd,android,cover,OUT/"QA_FILM.json",OUT/"ATTRIBUZIONI.txt",MEDIA/"FONTI_VIDEO_QA.json"]:
    z.write(p,p.name)
  with zipfile.ZipFile(pack) as z:
   if z.testzip():raise RuntimeError("Corrupt ZIP")
