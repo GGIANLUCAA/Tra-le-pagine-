@@ -23,7 +23,7 @@ ROLES = ("sceneggiatore", "storico", "regista", "critico")
 MODEL_FOR_ROLE = (MODELS[0], MODELS[1], MODELS[0], MODELS[1])
 ALLOWED_FORMATS = ("giuliano", "artvision_4x1", "storia_rivive", "documentario")
 MAX_CALLS = 4
-MAX_OUTPUT_TOKENS = 720
+MAX_OUTPUT_TOKENS = 1200
 MAX_MODEL_JSON = 2_000_000
 SYSTEM = ("Sei parte di uno studio cinematografico storico. Scrivi SOLO proposte "
           "editoriali non approvate. Distingui fatti da ipotesi e dubbi; cita "
@@ -112,6 +112,7 @@ def _request_free(model, prompt, key, *, transport=None):
             "messages": [{"role": "system", "content": SYSTEM},
                          {"role": "user", "content": prompt}],
             "temperature": 0.45, "max_tokens": MAX_OUTPUT_TOKENS,
+            "reasoning": {"enabled": False},
             "stream": False,
             "usage": {"include": True},
             "provider": {"allow_fallbacks": False,
@@ -143,11 +144,21 @@ def _request_free(model, prompt, key, *, transport=None):
     if response.get("model") != model:
         raise FreeOnlyError("Model identity mismatch - do not trust result")
     try:
-        content = response["choices"][0]["message"]["content"]
+        choice=response["choices"][0]
+        content=choice["message"]["content"]
     except (IndexError, KeyError, TypeError):
         raise FreeOnlyError("No free model text returned") from None
-    if not isinstance(content, str) or not 40 <= len(content) <= 25000:
-        raise FreeOnlyError("Free model response empty or oversized")
+    if isinstance(content,list):
+        content="\n".join(x.get("text","") for x in content if isinstance(x,dict)
+                          and x.get("type")=="text" and isinstance(x.get("text"),str))
+    if not isinstance(content,str) or not 40 <= len(content) <= 25000:
+        usage=response.get("usage") or {}
+        detail=usage.get("completion_tokens_details") or {}
+        finish=choice.get("finish_reason")
+        raise FreeOnlyError(
+            "No displayable text: finish_reason="+str(finish)[:40]+
+            ", completion_tokens="+str(usage.get("completion_tokens"))[:12]+
+            ", reasoning_tokens="+str(detail.get("reasoning_tokens"))[:12])
     cost = (response.get("usage") or {}).get("cost")
     if cost is not None and not _zero(cost):
         raise FreeOnlyError("Reported cost nonzero; pilot stopped")
