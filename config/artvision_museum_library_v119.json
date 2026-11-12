@@ -239,5 +239,26 @@
     "method": "SIFT+RANSAC tracked in-frame image plane composited over source clip, symmetric physical camera movement, no procedurally drawn scene",
     "delivery_status": "sandbox_local_verified_Library_full_Drive_upload_forbidden",
     "report": "docs/productions/2026-11-02-artvision-v120-museum-real-room-reuse-and-source-study.md"
+  },
+  "ai_scenographic_rooms_v332": {
+    "owner_authorized_on": "2026-11-12",
+    "library_catalog": "config/artvision_ai_room_library_v332.json",
+    "library_folder": "/ArtVision/Museum_AI_Rooms_V332",
+    "declared_scene_type": "AI-generated reusable photorealistic scenery, not historical museum photograph",
+    "candidate_rooms": 10,
+    "existing_frame_cleanup_required": [
+      "G09",
+      "G10"
+    ],
+    "live_gallery_assets_in_github_checkout": false,
+    "source_sha256_verified_via_private_library_readback_12_of_12": true,
+    "approved_gallery_presets": 0,
+    "exact_documented_specimen_frame_priority": true,
+    "v331_frontal_geometry_gate_required": true,
+    "v118_human_visual_review_required": true,
+    "v119_gold_gate_still_required": true,
+    "may_bypass_original_frame_authenticity": false,
+    "same_room_locked_for_cinema_and_critico_museum": true,
+    "standardized_museum_assets_status": "REVIEW_CANDIDATES_NOT_GOLD"
   }
 }
