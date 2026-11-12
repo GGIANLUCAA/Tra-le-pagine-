@@ -1,0 +1,753 @@
+{
+  "schema": "artvision-fixed-20-music-library-v1",
+  "updated": "2026-11-12",
+  "purpose": "One constant pool of exactly twenty independently composed and recorded instrumental tracks, reusable across all ArtVision paintings, assigned by artwork and emotion rather than blind rotation.",
+  "source_catalog": "https://incompetech.com/music/royalty-free/music.html",
+  "source_manifest_reference": "https://github.com/digitalforgeca/incompetech-royalty-free/blob/main/pack.json",
+  "official_composer_license_faq": "https://incompetech.com/music/royalty-free/faq.html",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "important": "The metadata and composer license are documented; no MP3 is considered verified/approved merely because it appears in the catalog. Fetch and probe/hash actual recording once per first use; final suitability and destination rights remain review.",
+  "fixed_slots": 20,
+  "selection_mode": "ARTWORK_MOOD_FIRST_RECENCY_SECOND",
+  "same_artwork_rule": "One selected recording across all four Cinema/Critico Museum/Standard variants of the same painting; reused WAV/music cut aligned where duration permits",
+  "different_artwork_rule": "Avoid last 3 distinct-work tracks when suitable alternatives exist; do not rotate mechanically into incompatible moods",
+  "video_policy": "Cinema uses soundtrack as primary sound; Critico must duck under untouched approved voice, and must not overwrite existing Gold masters",
+  "output_policy": "Pack track title, ISRC, real recording SHA256, license/URL and exact credits in ZIP/social caption; no auto publication or extra spend",
+  "credit_template": "\"{title}\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License https://creativecommons.org/licenses/by/4.0/ — edited excerpt and fades.",
+  "tracks": [
+    {
+      "slot": 1,
+      "id": "calmant",
+      "title": "Calmant",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1100859",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100859",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Calmant.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 200,
+      "tempo_bpm": 58,
+      "feel_from_source": [
+        "Relaxed",
+        "Somber"
+      ],
+      "instruments": "Piano",
+      "editorial_moods": [
+        "melancholic",
+        "calm",
+        "reflective",
+        "tender"
+      ],
+      "visual_motifs": [
+        "piano",
+        "grief",
+        "portrait",
+        "quiet"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 2,
+      "id": "evening_fall_piano",
+      "title": "Evening Fall (Piano)",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1100235",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100235",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20-%20Piano.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 165,
+      "tempo_bpm": 0,
+      "feel_from_source": [
+        "Dark",
+        "Calming",
+        "Eerie"
+      ],
+      "instruments": "Piano",
+      "editorial_moods": [
+        "melancholic",
+        "mysterious",
+        "dreamlike",
+        "somber"
+      ],
+      "visual_motifs": [
+        "night",
+        "sleep",
+        "nostalgia"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 3,
+      "id": "night_on_the_docks_piano",
+      "title": "Night on the Docks - Piano",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1100135",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100135",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Night%20on%20the%20Docks.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 174,
+      "tempo_bpm": 0,
+      "feel_from_source": [
+        "Dark",
+        "Somber",
+        "Relaxed"
+      ],
+      "instruments": "EP",
+      "editorial_moods": [
+        "noir",
+        "mysterious",
+        "reflective",
+        "somber"
+      ],
+      "visual_motifs": [
+        "city",
+        "urban",
+        "solitary"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 4,
+      "id": "dreams_become_real",
+      "title": "Dreams Become Real",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1500027",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dreams%20Become%20Real.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 410,
+      "tempo_bpm": 60,
+      "feel_from_source": [
+        "Calming",
+        "Somber"
+      ],
+      "instruments": "Piano, Synths",
+      "editorial_moods": [
+        "dreamlike",
+        "tender",
+        "hopeful",
+        "magical"
+      ],
+      "visual_motifs": [
+        "fairytale",
+        "water",
+        "fantasy"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 5,
+      "id": "music_for_manatees",
+      "title": "Music for Manatees",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1400009",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400009",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Music%20for%20Manatees.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 1056,
+      "tempo_bpm": 0,
+      "feel_from_source": [
+        "Calming",
+        "Relaxed"
+      ],
+      "instruments": "Piano, Electric Piano, Strings, Synth",
+      "editorial_moods": [
+        "calm",
+        "reflective",
+        "contemplative",
+        "tender"
+      ],
+      "visual_motifs": [
+        "seascape",
+        "nature",
+        "sleep"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 6,
+      "id": "ever_mindful",
+      "title": "Ever Mindful",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1700033",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1700033",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Ever%20Mindful.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 1599,
+      "tempo_bpm": 40,
+      "feel_from_source": [
+        "Relaxed",
+        "Bright",
+        "Calming"
+      ],
+      "instruments": "Cellos, Basses, Violas, Violins, Choir, Flutes, Clarinets",
+      "editorial_moods": [
+        "hopeful",
+        "solemn",
+        "contemplative",
+        "tender"
+      ],
+      "visual_motifs": [
+        "portrait",
+        "sacred",
+        "memory"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 7,
+      "id": "darkest_child",
+      "title": "Darkest Child",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1100783",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100783",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Darkest%20Child.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 239,
+      "tempo_bpm": 128,
+      "feel_from_source": [
+        "Dark",
+        "Eerie",
+        "Unnerving"
+      ],
+      "instruments": "Harp, Celesta, Cellos, Basses",
+      "editorial_moods": [
+        "dark",
+        "eerie",
+        "grotesque",
+        "suspense"
+      ],
+      "visual_motifs": [
+        "death",
+        "witch",
+        "nightmare",
+        "monster"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 8,
+      "id": "at_rest",
+      "title": "At Rest",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1100748",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100748",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/At%20Rest.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 207,
+      "tempo_bpm": 57,
+      "feel_from_source": [
+        "Relaxed",
+        "Somber"
+      ],
+      "instruments": "Piano, Voice, Strings, Choir",
+      "editorial_moods": [
+        "grief",
+        "melancholic",
+        "tender",
+        "solemn"
+      ],
+      "visual_motifs": [
+        "mother",
+        "child",
+        "loss",
+        "mourning"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 9,
+      "id": "immersed",
+      "title": "Immersed",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1600010",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600010",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Immersed.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 249,
+      "tempo_bpm": 64,
+      "feel_from_source": [
+        "Calming",
+        "Mystical",
+        "Relaxed",
+        "Somber"
+      ],
+      "instruments": "Piano, Strings",
+      "editorial_moods": [
+        "romantic",
+        "dreamlike",
+        "magical",
+        "reflective"
+      ],
+      "visual_motifs": [
+        "mermaid",
+        "water",
+        "love",
+        "fantasy"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 10,
+      "id": "lightless_dawn",
+      "title": "Lightless Dawn",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1100655",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100655",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Lightless%20Dawn.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 380,
+      "tempo_bpm": 90,
+      "feel_from_source": [
+        "Dark",
+        "Eerie",
+        "Mysterious",
+        "Mystical",
+        "Somber",
+        "Unnerving"
+      ],
+      "instruments": "Synths, Percussion, Strings, Bells",
+      "editorial_moods": [
+        "dark",
+        "suspense",
+        "ominous",
+        "epic"
+      ],
+      "visual_motifs": [
+        "disaster",
+        "battle",
+        "infernal",
+        "death"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 11,
+      "id": "the_descent",
+      "title": "The Descent",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1200094",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 192,
+      "tempo_bpm": 103,
+      "feel_from_source": [
+        "Action",
+        "Dark",
+        "Driving",
+        "Epic",
+        "Intense"
+      ],
+      "instruments": "French Horns, Trombones, Tuba, Violins, Percussion, Trumpet",
+      "editorial_moods": [
+        "epic",
+        "battle",
+        "heroic",
+        "dramatic"
+      ],
+      "visual_motifs": [
+        "army",
+        "hunt",
+        "war",
+        "tempest"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 12,
+      "id": "magistar",
+      "title": "Magistar",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1900003",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1900003",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Magistar.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 192,
+      "tempo_bpm": 79,
+      "feel_from_source": [
+        "Driving",
+        "Epic",
+        "Mystical"
+      ],
+      "instruments": "Choir, Glockenspiel, Trumpets, Trombones, Tubas, Percussion",
+      "editorial_moods": [
+        "epic",
+        "heroic",
+        "mystical",
+        "solemn"
+      ],
+      "visual_motifs": [
+        "legend",
+        "odyssey",
+        "odin",
+        "myth"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 13,
+      "id": "ghost_processional",
+      "title": "Ghost Processional",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1100219",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100219",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Ghost%20Processional.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 105,
+      "tempo_bpm": 0,
+      "feel_from_source": [
+        "Somber",
+        "Unnerving",
+        "Eerie",
+        "Mystical"
+      ],
+      "instruments": "Orchestral - Bass, Cello, Violin, Celesta, Bells",
+      "editorial_moods": [
+        "eerie",
+        "mysterious",
+        "ghostly",
+        "somber"
+      ],
+      "visual_motifs": [
+        "spirit",
+        "apparition",
+        "supernatural"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 14,
+      "id": "unseen_horrors",
+      "title": "Unseen Horrors",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1400043",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400043",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Unseen%20Horrors.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 251,
+      "tempo_bpm": 0,
+      "feel_from_source": [
+        "Dark",
+        "Eerie",
+        "Unnerving"
+      ],
+      "instruments": "Strings, Basses, Cellos, Violins, Brass, Percussion",
+      "editorial_moods": [
+        "dark",
+        "grotesque",
+        "suspense",
+        "ominous"
+      ],
+      "visual_motifs": [
+        "demon",
+        "horror",
+        "infernal"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 15,
+      "id": "myst_on_the_moor",
+      "title": "Myst on the Moor",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1600007",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600007",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Myst%20on%20the%20Moor.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 229,
+      "tempo_bpm": 87,
+      "feel_from_source": [
+        "Dark",
+        "Eerie",
+        "Mystical"
+      ],
+      "instruments": "Percussion, Glass Marimba, Synths, Flutes",
+      "editorial_moods": [
+        "magical",
+        "mysterious",
+        "dreamlike",
+        "eerie"
+      ],
+      "visual_motifs": [
+        "forest",
+        "fairytale",
+        "sorcery"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 16,
+      "id": "aquarium",
+      "title": "Aquarium",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1900026",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1900026",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Aquarium.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 144,
+      "tempo_bpm": 130,
+      "feel_from_source": [
+        "Mysterious",
+        "Mystical",
+        "Bright"
+      ],
+      "instruments": "Flute, Pianos, Glockenspiel, Violins, Violas, Cellos",
+      "editorial_moods": [
+        "magical",
+        "bright",
+        "dreamlike",
+        "tender"
+      ],
+      "visual_motifs": [
+        "mermaid",
+        "water",
+        "fairytale"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 17,
+      "id": "morning",
+      "title": "Morning",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN2300003",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN2300003",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Morning.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 153,
+      "tempo_bpm": 60,
+      "feel_from_source": [
+        "Bright",
+        "Calm",
+        "Relaxed"
+      ],
+      "instruments": "Classical Guitar, Harp, Flutes",
+      "editorial_moods": [
+        "hopeful",
+        "bright",
+        "tender",
+        "calm"
+      ],
+      "visual_motifs": [
+        "sunrise",
+        "garden",
+        "spring"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 18,
+      "id": "inspired",
+      "title": "Inspired",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1600022",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600022",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Inspired.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 286,
+      "tempo_bpm": 120,
+      "feel_from_source": [
+        "Bright",
+        "Relaxed",
+        "Calming",
+        "Uplifting"
+      ],
+      "instruments": "Guitar, Synths, Percussion",
+      "editorial_moods": [
+        "hopeful",
+        "uplifting",
+        "bright",
+        "romantic"
+      ],
+      "visual_motifs": [
+        "triumph",
+        "light",
+        "love"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 19,
+      "id": "call_to_adventure",
+      "title": "Call to Adventure",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1300022",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300022",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Call%20to%20Adventure.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 247,
+      "tempo_bpm": 178,
+      "feel_from_source": [
+        "Action",
+        "Bright",
+        "Bouncy",
+        "Humorous",
+        "Epic"
+      ],
+      "instruments": "Bass, Cello, Viola, Violin, Tuba, Trombone, Horn, Trumpet, Bassoon, Clarinet, Oboe, Flute, Percussion, Xylophone, Marimba, Celesta",
+      "editorial_moods": [
+        "adventure",
+        "heroic",
+        "bright",
+        "whimsical"
+      ],
+      "visual_motifs": [
+        "voyage",
+        "journey",
+        "quest"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    },
+    {
+      "slot": 20,
+      "id": "magic_forest",
+      "title": "Magic Forest",
+      "composer": "Kevin MacLeod",
+      "isrc": "USUAN1600044",
+      "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600044",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Magic%20Forest.mp3",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_documented_by_composer": true,
+      "attribution_required": true,
+      "recording_sha256": null,
+      "recording_verified": false,
+      "asset_status": "OFFICIAL_METADATA_PRESENT_BINARY_NOT_YET_READ_BACK",
+      "duration_seconds": 260,
+      "tempo_bpm": 0,
+      "feel_from_source": [
+        "Mystical",
+        "Dark",
+        "Mysterious"
+      ],
+      "instruments": "Cello, Violin, Synths",
+      "editorial_moods": [
+        "magical",
+        "mysterious",
+        "dark",
+        "dreamlike"
+      ],
+      "visual_motifs": [
+        "forest",
+        "enchantment",
+        "witch"
+      ],
+      "notes": "Asset must be fetched once, checked by FFprobe/SHA-256 and credited. Musician listening review pending."
+    }
+  ]
+}
