@@ -1,9 +1,9 @@
-name: "G0DM0D3 FREE | Giuliano 4 real AI roles (one shot)"
+name: "G0DM0D3 FREE | Giuliano 4 real AI roles (alternative providers)"
 on:
   push:
     branches: [main]
     paths:
-      - "requests/g0dm0d3_free/giuliano_antikythera_once_20261112.json"
+      - "requests/g0dm0d3_free/giuliano_antikythera_alternative_once_20261112.json"
 permissions:
   contents: read
 concurrency:
@@ -34,7 +34,7 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           import json,os,subprocess
-          path="requests/g0dm0d3_free/giuliano_antikythera_once_20261112.json"
+          path="requests/g0dm0d3_free/giuliano_antikythera_alternative_once_20261112.json"
           added=subprocess.check_output(["git","diff","--name-only","--diff-filter=A","HEAD^","HEAD"],text=True).splitlines()
           if path not in added:raise SystemExit("ONE_SHOT_ALREADY_USED_OR_NOT_NEW")
           x=json.load(open(path))
