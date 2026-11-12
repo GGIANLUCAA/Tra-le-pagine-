@@ -1,0 +1,66 @@
+name: "ArtVision QA-only | Tarakanova V2 | independent artifact recovery"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/artvision-tarakanova-v2-artifact-readback-recovery.yml"
+permissions:
+  contents: read
+  actions: read
+jobs:
+  readback_existing_v2_without_render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Download existing V2 artifact from original producer run
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 43267711601
+          name: ARTVISION_OWNER_TARAKANOVA_TRETYAKOV_CINEMA_V2_DIRECTOR_REVIEW
+          path: /tmp/tarakanova-v2-original-readback
+      - name: Install FFmpeg if runner lacks it
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+      - name: Independent full-decode of original MP4 and exact byte/CRC readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=/tmp/tarakanova-v2-original-readback
+          ffmpeg -v error -xerror -i "$d/VIDEO_ANDROID_REVIEW.mp4" -map 0 -f null -
+          python - <<'PY'
+          import json, hashlib, zipfile, subprocess
+          from pathlib import Path
+          p=Path("/tmp/tarakanova-v2-original-readback")
+          qa=json.loads((p/"QA_TECHNICAL.json").read_text())
+          src=json.loads((p/"SOURCE_READBACK.json").read_text())
+          video=p/"VIDEO_ANDROID_REVIEW.mp4"
+          expected="3dc80b148f4de5ae1f7a0827fbd53288e847b52021d8752b0bcf89e69977f9d2"
+          assert qa["video_sha256"]==expected and hashlib.sha256(video.read_bytes()).hexdigest()==expected
+          assert qa["video_bytes"]==video.stat().st_size==2545253
+          assert qa["revision"]==2 and qa["scenes"]==8
+          assert src["source_sha256"]=="749e30f146b61886c5d342c7da8f204afdadc73e5a3fe953221ba4dbdbe5f948"
+          assert src["pixels"]==[1400,1845] and "Tretyakov" in src["original_exact_artwork"]
+          assert qa["gold"] is False and qa["published"] is False and qa["extra_paid_calls"]==0
+          with zipfile.ZipFile(p/"ANDROID_REVIEW_PACKAGE.zip") as z:
+             assert z.testzip() is None
+             assert hashlib.sha256(z.read("VIDEO_ANDROID_REVIEW.mp4")).hexdigest()==expected
+          meta=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_streams","-show_format","-of","json",str(video)]))
+          assert 43.4<float(meta["format"]["duration"])<43.6
+          assert any(s.get("codec_name")=="h264" and s.get("width")==720 and s.get("height")==1280 for s in meta["streams"])
+          assert any(s.get("codec_name")=="aac" for s in meta["streams"])
+          report={"schema":"artvision-tarakanova-v2-independent-no-rerender","source_run":43267711601,
+            "artifact_id":13967410907,"sha256":expected,"bytes":2545253,"mp4_audio_video_full_decode":"PASS",
+            "source_sha_locked":"PASS","zip_crc_and_inner_hash":"PASS","published":False,"gold":False,
+            "human_artistic_review":"PENDING","territorial_rights":"PENDING","new_video_rendered_by_recovery":False}
+          Path("/tmp/TARAKANOVA_V2_READBACK_PROOF.json").write_text(json.dumps(report,indent=2))
+          print("SEPARATE_RUN_TRUE_ARTIFACT_PASS_NO_RERENDER",expected)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: TARAKANOVA_V2_INDEPENDENT_READBACK_ONLY
+          path: /tmp/TARAKANOVA_V2_READBACK_PROOF.json
+          retention-days: 30
+          if-no-files-found: error
