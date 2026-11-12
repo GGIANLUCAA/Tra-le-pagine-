@@ -1,0 +1,71 @@
+{
+  "schema": "artvision-music20-two-real-gallery-audio-review-v1",
+  "date": "2026-11-13",
+  "type": "Two independently re-mixed existing authentic artist galleries; NOT two new artist or owner-30 Cinema work slots",
+  "artwork_sources": [
+    "EVELYN_DE_MORGAN_GALLERY_REVIEW.mp4 previous GitHub artifact 13988416864 (run 43316269568)",
+    "MIKHAIL_VRUBEL_GALLERY_REVIEW.mp4 previous GitHub artifact 13988366817 (run 43316269432)"
+  ],
+  "music_verification": {
+    "github_actions_run": 43327741995,
+    "url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43327741995",
+    "both_matrix_jobs": "SUCCESS",
+    "licence": "CC BY 4.0",
+    "composer": "Kevin MacLeod",
+    "official_source": "https://incompetech.com/music/royalty-free/music.html",
+    "real_MP3_SHA_FFprobe_full_decode": "PASS",
+    "paid_calls": 0
+  },
+  "videos": [
+    {
+      "artist": "Evelyn De Morgan",
+      "format": "artist_gallery",
+      "duration_seconds": 44.8,
+      "original_mp4_sha256": "12a29832b5326910b062a30559c6ea67e66d04d8049ae16c167fd11f2b828542",
+      "new_mp4_sha256": "fa79e6493fdec3540e62bf466a66bb324e4cfbaf1827686672db591931f55b5c",
+      "video_bytes": 3759180,
+      "new_zip_sha256": "b1eaf2565472fe02776b63b7715f5e625175f73da82579e81f827ea0905b6954",
+      "track": "Myst on the Moor",
+      "track_isrc": "USUAN1600007",
+      "github_original_artifact_id": 13988416864,
+      "library_file_id": "libfile_4be4943724088191b6283e80f663adc2"
+    },
+    {
+      "artist": "Mikhail Vrubel",
+      "format": "artist_gallery",
+      "duration_seconds": 26.32,
+      "original_mp4_sha256": "a80f63dddcfd6ab406b174b455d2f5de1f33671f5a6017f49bf9ddbb16f7aa3d",
+      "new_mp4_sha256": "032224317e7be2778ef517df05f126439bd4f2775aa2f25424b74fbbf4968fba",
+      "video_bytes": 3043441,
+      "new_zip_sha256": "a675ff0fd9397b35d5e16c8fd654bc1dc5ed0c49f632484a1ffcf04ccde5e403",
+      "track": "Ghost Processional",
+      "track_isrc": "USUAN1100219",
+      "github_original_artifact_id": 13988366817,
+      "library_file_id": "libfile_95072bf771488191afd0d09250cf7eea"
+    }
+  ],
+  "technical_QA": {
+    "licensed_audio_real_binary_SHA256": "PASS",
+    "full_MP4_all_streams_decode": "PASS",
+    "pixel_video_bitstream_unchanged_by_audio_only_remix": "PASS",
+    "ZIP_CRC": "PASS",
+    "source_footage_not_regenerated": true,
+    "paid_API_calls": 0
+  },
+  "three_video_android_bundle": {
+    "includes": "one new The Dryad Cinema Standard plus two genuine artist-gallery audio-remastered copies",
+    "zip_sha256": "413b13fd218fe8a9f03226a5e4e6314308eebf33b6de383ab84fef6fb5495c51",
+    "zip_bytes": 14014140,
+    "zip_crc": "PASS",
+    "private_library_path": "/ArtVision/Serie_20261113_Music20/ARTVISION_3_VIDEO_ANDROID.zip",
+    "private_library_file_id": "libfile_6ea8881e6fb88191ab943e4bf8f9cf61",
+    "re_downloaded_library_sha256": "PASS",
+    "delivered_as": "three MP4 Android files in a single 14MB ZIP"
+  },
+  "status": "PRIVATE_REVIEW_NOT_GOLD_NOT_POSTED",
+  "human_full_speed_artistic_review": "PENDING",
+  "copyright_territorial_destination_rights": "PENDING_FOR_ARTWORK_IMAGES",
+  "owner_30_new_painting_slots_added_by_these_gallery_remixes": 0,
+  "site_publication": false,
+  "next_step": "Do not treat these two audio remixes as newly created distinct paintings or 4x1 variants. Preserve original gallery videos. Choose 20-track-mood-per-artwork at next genuine production. Do not auto-publish before human rights review."
+}
