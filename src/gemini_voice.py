@@ -254,7 +254,7 @@ def synthesize(text,outdir):
             contents=("Leggi esattamente il testo seguente in italiano, con voce "
                       "maschile matura e naturale, tono di documentario, ritmo "
                       "variabile ma senza teatralità, niente parole aggiunte. "
-                      "TESTO DA LEGGERE:\\n"+spoken),
+                      "TESTO DA LEGGERE:\n"+spoken),
             config=types.GenerateContentConfig(
                 response_modalities=["AUDIO"],
                 speech_config=types.SpeechConfig(
@@ -322,7 +322,7 @@ def synthesize(text,outdir):
     timed=align(sentences(text),path,duration)
     _save_voice_cache(text, outdir, timed)
     (outdir/"INFO_VOCE_GEMINI.txt").write_text(
-        "Motore: Gemini 3.8 Flash TTS. Profilo narratore maturo Gacrux.\n"
+        f"Motore: {chosen_tts_model()} ({voice_profile()['transport']}). Profilo narratore maturo Gacrux.\n"
         "Testo recitato in unica sessione, pause naturali dirette.\n"
         "Allineamento parole con Whisper base, fallback proporzionale.\n"
         "L'utilizzo dell'API segue quote e condizioni Google AI Studio.\n",
