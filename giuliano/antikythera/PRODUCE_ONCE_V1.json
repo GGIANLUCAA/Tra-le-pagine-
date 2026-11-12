@@ -4,8 +4,8 @@
   "episode": 3,
   "title": "THE ANCIENT COMPUTER",
   "target_seconds": 140,
-  "user_request": "Ok prosegui: produce the shorter GIULIANO Antikythera documentary using G0DM0D3 AI Director offline and improve human directing",
-  "permission": "Use one existing project Google Gemini Gacrux TTS generation if key is available. Do not call any paid mult-model or video API, do not buy credits and do not publish.",
+  "user_request": "Ok se ti senti pronto creami il video finito",
+  "permission": "Owner asked to finish episode on 2026-11-12. One existing-key Google Gemini Gacrux speech synthesis using documented generateContent endpoint; no additional TTS retries, no credit purchase and no social publish. Render only on actual WAV and ASR.",
   "max_google_voice_requests": 1,
   "max_other_external_paid_requests": 0,
   "expected_source_artifact_run_id": 43196764157,
@@ -13,13 +13,22 @@
   "save_wav_before_render": true,
   "repeat_voice_without_cache_forbidden": true,
   "controlled_retry": {
-    "reason": "Previous one-shot failed before audio creation: Gemini 3.8 TTS API returned model_not_found 404",
-    "production_branch_only": true,
-    "fallback_tts_model": "gemini-3.1-flash-tts-preview",
-    "google_voice_requests_for_this_run": 1,
+    "reason": "New owner request 2026-11-12: finish GIULIANO 03. Read-only Google GET showed HTTP 200 for Gemini 3.1 TTS; earlier Interactions endpoint 404, so use documented generateContent API, with Gacrux and one synthetic request max.",
+    "endpoint": "models.generate_content",
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Gacrux",
+    "read_only_entitlement_run_id": 43245625777,
+    "previous_failed_interactions_runs": [
+      43198771700,
+      43209676379
+    ],
+    "previous_attempts_produced_audio": false,
+    "source_verified_run_id": 43210478392,
+    "google_voice_requests_this_new_attempt_max": 1,
+    "other_ai_provider_calls_max": 0,
     "automatic_retries": false,
+    "render_allowed_only_if_voice_sha_verified": true,
     "publication_allowed": false,
-    "source_preflight_success_run_id": 43198779307,
     "review_required": true
   }
 }
