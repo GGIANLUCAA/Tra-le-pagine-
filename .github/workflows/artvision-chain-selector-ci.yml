@@ -72,7 +72,7 @@ jobs:
           assert report['status'] == 'preparing', report
           assert report['dispatch_authorized'] is False and report['render_started'] is False
           out = Path('output/artvision-chain/NEXT_ACTION_PREVIEW.json')
-          out.write_text(json.dumps(report, indent=2) + '\\n')
+          out.write_text(json.dumps(report, indent=2) + chr(10))
           print("READ_ONLY_PREVIEW_PASS (real GitHub status; unverified candidate stays preparing)")
           PY
       - name: Preserve safety evidence without exposing token
