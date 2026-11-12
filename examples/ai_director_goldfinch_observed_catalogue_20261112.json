@@ -1,0 +1,40 @@
+{
+  "schema": "ai-director-keyless-archives-v1",
+  "category": "art",
+  "query": "The Goldfinch",
+  "artist_filter": "Carel Fabritius",
+  "status": "candidates_need_review",
+  "provider_reports": [],
+  "api_requests_upper_bound": 8,
+  "candidate_count": 1,
+  "key_required": false,
+  "europeana_used": false,
+  "paid_calls": false,
+  "external_ai_calls": 0,
+  "rights_verified": false,
+  "publication_authorized": false,
+  "human_approved": false,
+  "media_downloaded": false,
+  "observed_from": "GitHub Actions run 43193008930, 2026-11-12, source catalogue metadata; not verified media bytes",
+  "items": [
+    {
+      "provider": "commons",
+      "id": "commons:Fabritius-vink.jpg",
+      "title": "Fabritius-vink.jpg",
+      "author": "Carel Fabritius",
+      "date": "",
+      "media_kind": "image",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Fabritius-vink.jpg",
+      "license_claim": "PD-Art claim on Wikimedia Commons; independent reuse/credit check required",
+      "rights_review": "pending",
+      "authenticity_review": "pending",
+      "scene_relevance": "pending",
+      "approved": false,
+      "downloaded": false,
+      "curated_source_id": "mauritshuis-inv-605",
+      "curated_work_reference": "https://www.mauritshuis.nl/en/our-collection/artworks/605-the-goldfinch",
+      "alias_used": "Fabritius-vink",
+      "canonical_title_requested": "The Goldfinch"
+    }
+  ]
+}
