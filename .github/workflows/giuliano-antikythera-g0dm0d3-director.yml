@@ -5,6 +5,7 @@ on:
     paths:
       - "research/giuliano_antikythera_v1/**"
       - "src/giuliano_antikythera_preflight_v1.py"
+      - "src/giuliano_antikythera_sources_v1.py"
       - "tests/test_giuliano_antikythera_preflight_v1.py"
       - ".github/workflows/giuliano-antikythera-g0dm0d3-director.yml"
   workflow_dispatch:
@@ -69,6 +70,22 @@ jobs:
             --brief research/giuliano_antikythera_v1/BRIEF_AI_DIRECTOR.json \
             --output-dir output/giuliano_antikythera/scene_contract
           cp research/giuliano_antikythera_v1/BRIEF_AI_DIRECTOR.json output/giuliano_antikythera/BRIEF_AI_DIRECTOR.json
+      - name: Install image scout tools for real source quality control
+        run: |
+          python -m pip install --disable-pip-version-check -q 'Pillow>=10,<13'
+          ffprobe -version | head -1
+      - name: Acquire actual open licensed photos and silent 3D gear videos
+        continue-on-error: true
+        run: |
+          python src/giuliano_antikythera_sources_v1.py --out-dir output/giuliano_antikythera/real_media
+      - name: Upload licensed media source checks separately for Android review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_ANTIKYTHERA_MEDIA_SOURCE_SCOUT_REVIEW_ONLY
+          path: output/giuliano_antikythera/real_media/
+          if-no-files-found: ignore
+          retention-days: 12
       - name: Upload real editorial deliverables — not an MP4 and not publication
         uses: actions/upload-artifact@v4
         with:
