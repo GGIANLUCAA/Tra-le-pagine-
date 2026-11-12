@@ -1,0 +1,34 @@
+name: "ArtVision chain selector | safe read-only CI"
+on:
+  pull_request:
+    paths:
+      - "src/artvision_chain_selector_v1.py"
+      - "tests/test_artvision_chain_selector_v1.py"
+      - "docs/ARTVISION_CHAIN_SELECTOR_V1_20261111.md"
+      - ".github/workflows/artvision-chain-selector-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: artvision-chain-selector-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  selector-unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify selector behavior (no secrets, downloads or dispatch)
+        run: python3 -m unittest discover -s tests -p 'test_artvision_chain_selector_v1.py' -v
+      - name: Verify default fail-closed idle gate
+        run: |
+          python3 - <<'PY'
+          from src.artvision_chain_selector_v1 import select_next
+          sample = {'candidates':[{'id':'test-only', 'status':'ready', 'source_verified':True, 'rights_verified':True, 'storyboard_ready':True, 'qa_plan_ready':True, 'workflow_path':'.github/workflows/approved.yml'}]}
+          result = select_next(sample)
+          assert result['status'] == 'preparing', result
+          print(result)
+          PY
