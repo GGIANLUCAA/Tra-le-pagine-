@@ -12,7 +12,7 @@ import re
 import sys
 from pathlib import Path
 
-from ai_director_v1 import make_brief, audit_scenes, base_report, write_reports
+from ai_director_v1 import make_brief, audit_scenes, base_report, write_reports, editorial_prompts
 from ai_director_bridge_v1 import from_v13, from_four_variants
 from ai_director_visual_qa_v1 import inspect as inspect_mp4
 from director_reference_v326 import analyze_scenes, inspect_black_tail
@@ -41,21 +41,33 @@ def _timed_brief(data, fmt, subject):
     if not isinstance(shots, list):
         return b
     elapsed = 0.0
+    estimated = False
     for shot in shots[:120]:
         if not isinstance(shot, dict):
             continue
-        seconds = shot.get("duration_seconds", shot.get("estimated_seconds", shot.get("duration")))
-        if type(seconds) not in (float, int) or not 0 < seconds < 1800:
+        seconds = shot.get("duration_seconds", shot.get("duration_s",
+                  shot.get("estimated_seconds", shot.get("duration"))))
+        start = shot.get("start_s")
+        end = shot.get("end_s")
+        if type(start) in (float, int) and type(end) in (float, int) and 0 <= start < end:
+            actual_start, actual_end = float(start), float(end)
+        elif type(seconds) in (float, int) and 0 < seconds < 1800:
+            actual_start = float(start) if type(start) in (float, int) and start >= 0 else elapsed
+            actual_end = actual_start + float(seconds)
+        else:
             continue
-        asset = shot.get("asset_id") or shot.get("source_file") or ""
+        estimated = estimated or "estimated_seconds" in shot
+        asset = (shot.get("asset_id") or shot.get("source_file") or
+                 shot.get("description") or shot.get("shot_type") or "unspecified")
         narration = shot.get("narration") or shot.get("text") or shot.get("spoken_line") or ""
-        b["scenes"].append({"start_s": round(elapsed, 4),
-                            "end_s": round(elapsed + seconds, 4),
+        b["scenes"].append({"start_s": round(actual_start, 4),
+                            "end_s": round(actual_end, 4),
                             "asset_id": str(asset)[:120],
                             "narration_excerpt": str(narration)[:600],
                             "rights_status": "pending_independent_proof"})
-        elapsed += seconds
-    b["timecode_provenance"] = "estimated_from_source_manifest_not_recorded_voice"
+        elapsed = actual_end
+    b["timecode_provenance"] = ("estimated_from_source_manifest_not_recorded_voice" if estimated
+                               else "manifest_declared_times_not_independent_ASR")
     return b
 
 
@@ -134,8 +146,16 @@ def _one(brief, out, video, *, fmt, label):
                    "automatic_creative_correction": False, "finished_video_claim": False,
                    "human_artistic_approval": False, "publication_authorized": False,
                    "model_calls": 0, "billing_actions": 0})
+    # Produce the two G0DM0D3-inspired editorial perspectives as *prompts* only.
+    # No model was invoked; suggestions must not masquerade as independent answers.
+    try:
+        prompts = editorial_prompts(brief)
+    except ValueError:
+        prompts = None
+    report["director_and_critic_prompts_prepared"] = prompts is not None
+    report["independent_llm_reviews_executed"] = False
     # A technical check is never the same as human review, licensing, or ASR sync.
-    write_reports(out, report)
+    write_reports(out, report, prompts=prompts)
     html_path = out / "ANDROID_REPORT.html"
     content = html_path.read_text(encoding="utf-8")
     issues = movie.get("issues", [])
