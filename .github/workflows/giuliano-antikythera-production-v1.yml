@@ -1,0 +1,120 @@
+name: "GIULIANO 03 | One-shot narration and production (no auto-publish)"
+
+on:
+  pull_request:
+    paths:
+      - "src/giuliano_antikythera_render_v1.py"
+      - ".github/workflows/giuliano-antikythera-production-v1.yml"
+  push:
+    branches:
+      - "feature/giuliano-antikythera-director-20261112"
+    paths:
+      - "giuliano/antikythera/PRODUCE_ONCE_V1.json"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: giuliano-03-one-shot-production
+  cancel-in-progress: false
+
+jobs:
+  static-check:
+    name: Syntax and source safety checks, no API
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python -m py_compile src/giuliano_antikythera_render_v1.py
+          python -m json.tool giuliano/antikythera/EP03_SCRIPT_SHOTMAP_V1.json >/dev/null
+          python - <<'PY'
+          import json
+          x=json.load(open("giuliano/antikythera/EP03_SCRIPT_SHOTMAP_V1.json"))
+          assert len(x["scenes"])==20 and not x["publication_allowed"]
+          assert not x["external_paid_calls_allowed"]
+          PY
+
+  voice-once:
+    if: github.event_name == 'push'
+    needs: static-check
+    name: Single Google Gacrux TTS; cache WAV so rendering reruns never re-spend
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GIULIANO_TTS_ONE_SHOT: "1"
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Audio dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          command -v ffmpeg
+          command -v ffprobe
+          python -m pip install --disable-pip-version-check numpy pillow soundfile scipy google-genai faster-whisper
+      - name: Generate one verified human-paced Italian narration
+        id: voice
+        run: python src/giuliano_antikythera_render_v1.py --mode voice
+      - name: Preserve generated voice and real alignment, including if a later gate fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_03_GACRUX_VOICE_CACHE
+          path: output/GIULIANO_03_VOICE/
+          if-no-files-found: warn
+          retention-days: 30
+
+  finished-film:
+    if: github.event_name == 'push'
+    needs: [static-check, voice-once]
+    name: Source-verified picture edit, Android MP4, music and QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: FFmpeg and visual dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          command -v ffmpeg
+          command -v ffprobe
+          python -m pip install --disable-pip-version-check numpy pillow soundfile
+      - name: Restore exact authenticated Commons + CC BY scientific footage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_03_ANTIKYTHERA_REAL_SOURCE_REVIEW
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: 43196764157
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: input-media
+      - name: Restore already-synthesized narration, never call TTS from here
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_03_GACRUX_VOICE_CACHE
+          path: output/GIULIANO_03_VOICE
+      - name: Render complete narrated picture-locked master
+        run: python src/giuliano_antikythera_render_v1.py --mode render
+      - name: Independent actual encoded MP4 scene-cut and black-frame QA
+        id: qa
+        continue-on-error: true
+        run: |
+          python src/ai_director_visual_qa_v1.py --video output/GIULIANO_03_MASTER/GIULIANO_03_THE_ANCIENT_COMPUTER_MASTER.mp4 --output output/GIULIANO_03_MASTER/AI_DIRECTOR_VISUAL_QA.json
+      - name: Retain deliverable and technical reports, no publication
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_03_THE_ANCIENT_COMPUTER_PRIVATE_REVIEW
+          path: output/GIULIANO_03_MASTER/
+          if-no-files-found: warn
+          retention-days: 30
