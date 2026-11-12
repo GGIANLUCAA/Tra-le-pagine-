@@ -95,6 +95,10 @@ jobs:
           set -euo pipefail
           python -m py_compile src/ai_director_delivery_v2.py src/ai_director_artifact_fetch_v2.py
           python -m unittest discover -s tests -p 'test_ai_director_delivery_v2.py' -q
+          if ! command -v ffprobe >/dev/null 2>&1 || ! command -v ffmpeg >/dev/null 2>&1; then
+            timeout 150 sudo apt-get update -qq
+            timeout 120 sudo apt-get install -y -qq ffmpeg
+          fi
           command -v ffprobe
           command -v ffmpeg
           python - <<'PY'
@@ -167,6 +171,11 @@ jobs:
           python-version: "3.11"
       - name: Confirm free real-media tooling
         run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null 2>&1 || ! command -v ffmpeg >/dev/null 2>&1; then
+            timeout 150 sudo apt-get update -qq
+            timeout 120 sudo apt-get install -y -qq ffmpeg
+          fi
           command -v ffprobe
           command -v ffmpeg
           python -m py_compile src/ai_director_delivery_v2.py src/ai_director_artifact_fetch_v2.py
