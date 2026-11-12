@@ -1,0 +1,93 @@
+{
+  "schema": "artvision-owner-30-cinema-checkpoint-v1",
+  "date": "2026-11-12",
+  "owner_selection_order": 18,
+  "owner_title": "The Dead Mother and Child",
+  "official_museum_title": "Death and the Child",
+  "artist": "Edvard Munch",
+  "year": 1899,
+  "object": "MUNCH Oslo, MM.M.00420, oil on unprimed canvas, 104.5 x 179.0 cm; Woll M 446",
+  "variant": "cinema_standard",
+  "status": "GENUINE_NEW_CORRECTED_V2_MP4_AND_ZIP_PRIVATE_LIBRARY_FULL_READBACK_PASS_HUMAN_ARTISTIC_REVIEW_AND_COMMERCIAL_RIGHTS_PENDING",
+  "identity": {
+    "museum_url": "https://www.munch.no/en/object/MM.M.00420",
+    "original_file_page": "https://commons.wikimedia.org/wiki/File:Edvard_Munch_-_Death_and_the_Child_-_MM.M.00420_-_Munch_Museum.jpg",
+    "original_image_file_size_bytes": 297684,
+    "source_image_sha1": "49ef76c0108bdf4df4382c1567f65ddb45748ac3",
+    "source_image_sha256": "f55e83f29ba72b4746ef11a8377422248a8ef45c25239a3f9c2302bc3b9c37ac",
+    "image_pixels": [
+      2000,
+      1204
+    ],
+    "rights_claim": "Commons faithful PD-Art/PDM reproduction; commercial territorial rights and museum reuse restrictions require final review",
+    "exact_version": "1899 MUNCH MM.M.00420; do not substitute Bremen canvas or 1901 print",
+    "gallery_or_frame_claim": false
+  },
+  "video": {
+    "file": "VIDEO_ANDROID_REVIEW.mp4",
+    "seconds": 45.6,
+    "frames": 912,
+    "fps": 20,
+    "resolution": [
+      720,
+      1280
+    ],
+    "mp4_bytes": 4626630,
+    "sha256": "3f86aff803bbab5c4e7dad393cb113825eb9d47cc9ace919230308ee9e0a76d1",
+    "android_zip_name": "ANDROID_REVIEW_PACKAGE.zip",
+    "android_zip_bytes": 4943385,
+    "android_zip_sha256": "9dde9e19a427b89546e7abb7b280c74b51cbcc70bfccd614abea0aa1b2073c0b",
+    "original_self_composed_music": true,
+    "shots": 9,
+    "cover_social_drafts_and_rights_in_zip": true
+  },
+  "artistic_qa": {
+    "v1_original_run": 43252738862,
+    "v1_problem": "Technical PASS but static contact sheet showed wrong figures: source contains a red foreground child on the right, mourners left and bed right; several semantic camera focus points incorrectly framed the standing adults",
+    "v1_not_approved_not_counted_as_extra_video": true,
+    "corrected_v2_run": 43253455241,
+    "v2_source": "scripts/artvision_owner_munch_dead_mother_cinema_v1.py at commit 1c08e2aeae207334a24a32206e1e3238d089b13f",
+    "v2_static_contact": "Child and hands, mother in bed, group of mourners and whole painting now shown in shots indicated by storyboard; 4 child close-ups may require future variation; visual review is not a full-speed human approval",
+    "regia_v326_blocking": 0,
+    "regia_v326_warnings": 0,
+    "black_tail_detected": false,
+    "human_full_speed_playback": "PENDING",
+    "gold_approved": false,
+    "social_published": false,
+    "commercial_rights_final": "PENDING"
+  },
+  "technical_qa": {
+    "run_id": 43253455241,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43253455241",
+    "artifact_id": 13960746823,
+    "render_job": "PASS",
+    "independent_separate_runner_readback_job": "PASS",
+    "local_direct_artifact_mp4_sha256": "PASS",
+    "local_direct_artifact_zip_sha256": "PASS",
+    "local_direct_artifact_full_ffmpeg_decode_audio_video": "PASS",
+    "local_direct_artifact_zip_crc_embedded_mp4": "PASS",
+    "private_library_fresh_rematerialization_mp4_sha256": "PASS",
+    "private_library_fresh_rematerialization_zip_sha256": "PASS",
+    "private_library_fresh_rematerialization_ffmpeg_full_decode": "PASS",
+    "private_library_fresh_rematerialization_zip_crc_embedded_video": "PASS",
+    "paid_api_calls": 0
+  },
+  "private_library": {
+    "directory": "/ArtVision/Owner_30/Munch_Death_and_the_Child_20261112",
+    "video_id": "libfile_b5f71c0568488191aa042da9109a0c07",
+    "zip_id": "libfile_4a54bb3032848191a7cc8f46cce5d9cf",
+    "cover_id": "libfile_d74085db7dcc8191b814d3bb6a7e34d3"
+  },
+  "queue_progress": {
+    "prior_distinct_secondary_cinema_checkpoints": 23,
+    "added_in_current_cycle": 1,
+    "now_distinct_secondary_cinema_checkpoints": 24,
+    "secondary_selected_30_total": 30,
+    "original_ten_active_slots_excluding_dali": 36,
+    "original_ten_technical_slots": 26,
+    "original_ten_new_slots_added": 0,
+    "remaining_museum_on_original_queue": 10,
+    "do_not_confuse_secondary_24_cinema_with_24_completed_foursomes": true
+  },
+  "next_cycle": "Do not rerender MM.M.00420 Cinema as new slot. Continue first unproduced selected Cinema with exact source/rights or missing original 10 Museum when historic frame/room geometry and physical scale permit. Keep Critico Google voice cost gate and no auto publish."
+}
