@@ -94,11 +94,9 @@ for i,(freq,phase) in enumerate(chord):
     audio[:,1]+=np.roll(voice,round((3+i*2)*SR/1000))*.94
 # Gentle breath, not shrill wind: low-pass-smoothed deterministic noise.
 noise=np.random.standard_normal(n_audio).astype(np.float64)
-smooth=np.convolve(noise[:1],np.ones(1),'same')  # avoid long convolution on full stream
-moving=np.zeros(n_audio,np.float64)
-# inexpensive 1st-order smoothing with no heavy extra dependency
-import scipy.signal as sig
-moving=sig.lfilter([.005],[1,-.995],noise)
+# Interpolate soft noise knots to avoid any scipy or network library dependency.
+knots=np.random.standard_normal(round((DURATION+.1)*24)+2)
+moving=np.interp(t,np.arange(len(knots))/24,knots)*.38
 air=moving*(.011+.005*np.sin(2*np.pi*.029*t))
 audio[:,0]+=air
 audio[:,1]+=np.roll(air,round(.012*SR))*.85
