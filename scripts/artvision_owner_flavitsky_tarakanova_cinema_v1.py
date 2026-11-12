@@ -31,7 +31,7 @@ SCENES=[
  ("The soaked bed beside the window",5.1,.72,.72,.75),
  ("Rising water across the floor",5.0,.58,.90,.68),
  ("The entire painting — final hold",6.5,.50,.50,1.00)
-
+]
 def sha(x):return hashlib.sha256(Path(x).read_bytes()).hexdigest()
 def save(x,obj):Path(x).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 def short_preflight():
@@ -40,7 +40,7 @@ def short_preflight():
  assert len(m)==1 and m[0]["selection_order"]==4
  assert not list((ROOT/"queue").glob("artvision_owner_30_render_checkpoint_*tarakanova*.json")), "Duplicate owner slot"
  assert not list((ROOT/"queue").glob("artvision_owner_30_render_checkpoint_*flavitsky*.json")), "Duplicate owner slot"
- assert len(SCENES)==10 and 40<sum(x[1] for x in SCENES)<60
+ assert len(SCENES)==8 and 40<sum(x[1] for x in SCENES)<60
  # The known wrong high-resolution first version is explicitly excluded.
  assert "1862" not in ORIGINAL_URL and "Tarakanova.jpg" in ORIGINAL_URL
  return {"work":WORK_ID,"owner_order":4,"exact_artwork":"Tretyakov inventory 347, 245x187.5cm, 1863/64, NOT Yekaterinburg 1862","source_page":SOURCE_PAGE,"museum":MUSEUM_PAGE,"data_rights":"private source evaluation; commercial rights PENDING"}
