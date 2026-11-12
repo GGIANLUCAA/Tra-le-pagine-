@@ -63,5 +63,26 @@ jobs:
                   print('OPENROUTER_READ_ONLY_KEY_API_HTTP',exc.code)
               except Exception as exc:
                   print('OPENROUTER_READ_ONLY_KEY_API_UNAVAILABLE',type(exc).__name__)
+          identities=[]
+          for label,token in [('OPENRUTER3',primary),('OPENRUTER2',alt)]:
+              if not token:
+                  print('KEY_QUOTA_READONLY',label,'absent')
+                  continue
+              get=urllib.request.Request("https://openrouter.ai/api/v1/key",
+                  headers={'Authorization':'Bearer '+token,'Accept':'application/json',
+                           'User-Agent':'TraLePagine-ReadOnlyQuota'})
+              try:
+                  with urllib.request.urlopen(get,timeout=20) as res:
+                      info=json.load(res)['data']
+                  quota=info.get('free_model_daily_requests') or {}
+                  print('KEY_QUOTA_READONLY',label,'remaining=',quota.get('remaining'),
+                        'used=',quota.get('used'),'limit=',quota.get('limit'))
+                  identities.append(info.get('creator_user_id'))
+              except urllib.error.HTTPError as e:
+                  print('KEY_QUOTA_READONLY',label,'HTTP',e.code)
+              except Exception as e:
+                  print('KEY_QUOTA_READONLY',label,type(e).__name__)
+          if len(identities)==2:
+              print('TWO_EXISTING_KEYS_SAME_USER',bool(identities[0] and identities[0]==identities[1]))
           print('POST_REQUESTS=0 MODEL_CALLS=0 VIDEO_RENDER=0')
           PY
