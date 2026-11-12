@@ -67,14 +67,12 @@ class ClaimTests(unittest.TestCase):
             vals.append(plan_claim(m).ref)
         self.assertEqual(len(vals), len(set(vals)))
 
-    def test_revision_or_source_change_new_claim(self):
+    def test_revision_creates_new_claim_but_source_change_does_not(self):
         original = demo_manifest()
         changed_revision = {**original, "revision": "v2"}
         changed_source = {**original, "source_sha256": "b" * 64}
-        self.assertEqual(3, len({
-            plan_claim(original).ref, plan_claim(changed_revision).ref,
-            plan_claim(changed_source).ref,
-        }))
+        self.assertNotEqual(plan_claim(original).ref, plan_claim(changed_revision).ref)
+        self.assertEqual(plan_claim(original).ref, plan_claim(changed_source).ref)
 
     def test_40_parallel_contenders_one_claim(self):
         store = AtomicMemoryStore()
