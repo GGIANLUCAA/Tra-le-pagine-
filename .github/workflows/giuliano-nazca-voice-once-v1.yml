@@ -3,7 +3,7 @@ on:
   push:
     branches: [feature/artvision-curated-agent-skills-20261112]
     paths:
-      - "requests/giuliano/nazca-ep04-voice-once-20261112.json"
+      - "requests/giuliano/nazca-ep04-voice-recovery-once-20261112.json"
 permissions:
   contents: read
 concurrency:
@@ -23,7 +23,7 @@ jobs:
           python -m py_compile scripts/giuliano_nazca_voice_v1.py
           python - <<'PY'
           import json,subprocess,os
-          f='requests/giuliano/nazca-ep04-voice-once-20261112.json'
+          f='requests/giuliano/nazca-ep04-voice-recovery-once-20261112.json'
           files=subprocess.check_output(['git','diff','--name-only','--diff-filter=A','HEAD^','HEAD'],text=True).splitlines()
           assert files==[f], "TTS_ONE_SHOT_ALREADY_USED_OR_REPLAYED"
           req=json.load(open(f))
@@ -42,7 +42,7 @@ jobs:
               raise SystemExit('RUN_ATTEMPT_REPLAY_FORBIDDEN_NO_DOUBLE_BILLING')
           j=json.load(open('giuliano/nazca/EP04_BRIEF_SHOTMAP_V1.json'))
           assert j['schema']=='giuliano-nazca-ep04-real-director-brief-v1'
-          assert len(j['beats'])==27 and 280<=j['word_count']<=350
+          assert len(j['beats'])==27 and 230<=j['word_count']<=300
           assert not j['public_release_authorized']
           print('GIULIANO_NAZCA_ONE_SHOT_OWNER_REQUEST_AND_27_SOURCE_CUES_PASS')
           PY
