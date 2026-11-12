@@ -315,11 +315,16 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;pa
  .simpleAttentionHead .miniBtn{max-width:48%;font-size:11px}
  .productionPanel.progressV13Panel{padding:12px}
 }
+/* Native cross-site return link, touch accessible and visible in the page header. */
+.buttons .site-switch{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 13px;border-radius:11px;border:1px solid #d5b489;background:#302a22;color:#f6dfb9;font-weight:750;white-space:nowrap}
+.buttons .site-switch:hover{background:#42372a}
+@media(max-width:520px){header{flex-wrap:wrap;gap:9px}.buttons{width:100%;justify-content:space-between;gap:8px}.buttons .site-switch{flex:1;min-width:0;justify-content:center}}
+
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V14</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
+<header><div class="brand"><div class="logo">A</div><div><strong>ARTVISION</strong><small>CONTROL CENTER · V14</small></div></div><div class="buttons"><span class="readonly">ANTEPRIMA · SOLA LETTURA</span><a class="site-switch" href="https://video-library-studio.600led.workers.dev/" aria-label="Apri Video Library Studio, la videoteca">▣ <span>Videoteca</span></a><button class="refresh" id="refresh">↻ Aggiorna</button></div></header>
 <section class="hero"><div class="overline">IL TUO STUDIO, IN UNA SOLA VISTA</div><h1>La produzione è arte.<br><i>Il controllo deve essere semplice.</i></h1><p>Stato dei lavori, video, errori e consegne direttamente da GitHub e Video Library Studio, senza nuove chat.</p><span class="herofoot">◈ Da fare per me · ◉ Salute produzioni · ▷ Diario verificabile</span></section>
 <div class="sync"><span class="pulse" id="pulse"></span><span id="synctext">Collegamento alle fonti reali…</span><span id="sources"></span></div>
 <div id="chatImportNotice" class="note" hidden role="status" aria-live="polite"></div>
