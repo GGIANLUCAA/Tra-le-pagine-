@@ -462,6 +462,42 @@ def probe_preview(video,folder):
         "visual_semantics_automated":False,"cover_overwrites_existing":False,
         "contact_sheet":"APERTURA_0_7_V21.jpg","candidate":"COPERTINA_CANDIDATA_V21.jpg"}
 
+def museum_ai_room_v332_suggestion(brief):
+    """Owner-approved reusable AI room suggestion for Museum ONLY; not a render.
+
+    The same painting dimensions/moods and lock select the same room for both
+    Cinema Museum and Critico Museum. Existing Standard films are never changed.
+    """
+    variant=brief.get("variant") or brief.get("museum_variant")
+    if variant not in ("cinema_museum","critico_museum"):
+        return {"status":"not_a_museum_variant","selected_room_id":None}
+    try:
+        from src.artvision_ai_room_integrator_v332 import load_catalog,select_gallery
+    except ImportError:
+        from artvision_ai_room_integrator_v332 import load_catalog,select_gallery
+    try:
+        artwork=brief.get("artwork_dimensions_cm") or {}
+        width=float(artwork.get("width") or brief.get("width_cm") or 0)
+        height=float(artwork.get("height") or brief.get("height_cm") or 0)
+        if width<=0 or height<=0:raise ValueError("catalogue dimensions missing")
+        moods=brief.get("gallery_moods") or brief.get("moods") or []
+        if isinstance(moods,str):moods=[x.strip() for x in moods.split(",")]
+        previous=brief.get("previous_room_ids") or []
+        selected,matching=select_gallery(load_catalog(ROOT/"config"/"artvision_ai_room_library_v332.json"),
+            width,height,moods,brief.get("museum_room_locked"),previous)
+    except (ValueError,TypeError) as e:
+        return {"status":"blocked_pending_source_or_size","error":str(e),
+                "selected_room_id":None,"Gold_V25":False}
+    return {"status":"SCENOGRAPHIC_ROOM_CANDIDATE_NEEDS_RENDER_AND_REVIEW",
+            "selected_room_id":selected["room_id"],"library_path":selected["library_path"],
+            "library_file_id":selected["library_file_id"],"sha256":selected["sha256"],
+            "matched_mood_tags":matching,"same_room_for_both_museum_versions":True,
+            "room_is_a_reusable_AI_scenography_not_the_real_institution":True,
+            "frame_priority":"original_or_current_documented_exact_specimen_first",
+            "editorial_fallback_requires_disclosure_and_approval":True,
+            "automatic_movie_rendered":False,"Gold_V25":False,
+            "reference":"docs/ARTVISION_V332_SALE_AI_RIUTILIZZABILI.md"}
+
 def write_package(brief,output,*,video=None,history=None,targets=None,policy_path=POLICY):
     policy=read_policy(policy_path)
     if not isinstance(brief,dict):raise ValueError("Richiesta creativa JSON obbligatoria")
@@ -506,6 +542,8 @@ def write_package(brief,output,*,video=None,history=None,targets=None,policy_pat
                  "small_screen_review_required":True,"notes":"Una scultura, figura, volto, paesaggio o opera solo se PERTINENTE, originale e con diritti verificati"},
         "first_7_seconds":openings,"duration":duration,"music":music,
         "social":social,"technical_preview":preview,
+        "museum_ai_room_v332":museum_ai_room_v332_suggestion(brief)
+            if kind in ("artvision_cinema","artvision_critico") else {"status":"not_applicable"},
         "cinematography_v23":{"plan_file":"CINEMATOGRAPHY_PLAN_V23.json",
            "selected_ids":[t["id"] for t in cinema["selected"]],
            "camera_issues":cinema["camera_preflight"]["issues"],

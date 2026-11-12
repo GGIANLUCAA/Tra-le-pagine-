@@ -1,0 +1,433 @@
+{
+  "schema": "artvision-reusable-ai-room-library-v332",
+  "version_date": "2026-11-12",
+  "owner_directive": "Reusable 10-30 photorealistic AI rooms for Cinema Museum and Critico Museum; authentic frame priority, artwork always frontal",
+  "license_context": "Generated for project in ChatGPT, not a photo of an actual museum",
+  "library_folder": "/ArtVision/Museum_AI_Rooms_V332",
+  "default_candidate_count": 10,
+  "museum_approved_room_count": 0,
+  "gallery_selection_is_review_only": true,
+  "never_claim_historical_exhibition": true,
+  "artwork_dimension_cm_required": true,
+  "documented_original_frame_priority": true,
+  "unverified_frame_fallback": "editorial_framing_disclosed_and_owner_review",
+  "common_4x1_lock": true,
+  "scenes": [
+    {
+      "room_id": "G01",
+      "title": "G01 Bordeaux Classic",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "galleria_classica_con_parete_bordeaux.png",
+      "file_name": "G01_BORDEAUX_CLASSIC.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G01_BORDEAUX_CLASSIC.png",
+      "library_file_id": "libfile_ef7ccf7d09a88191966bf3c6aae62f4f",
+      "sha256": "98fba4131363e7d9c4fcd50a1ae44e62922a19cb22b971085de929bb49ee868e",
+      "pixels": [
+        941,
+        1672
+      ],
+      "safe_wall_box_norm": [
+        0.15,
+        0.27,
+        0.85,
+        0.64
+      ],
+      "design_camera_distance_cm": 500,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "dramatic",
+        "dark",
+        "baroque",
+        "tragic"
+      ],
+      "wall_color": "crimson",
+      "physical_size_fit": "small_medium",
+      "status": "candidate_ready_for_compositing_review",
+      "frame_in_background": false,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G02",
+      "title": "G02 Red Ornate",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "galleria_classica_con_parete_rossa_ornamentale.png",
+      "file_name": "G02_RED_ORNATE.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G02_RED_ORNATE.png",
+      "library_file_id": "libfile_4bdd2b5a8ad88191bca91fb8ba346ad1",
+      "sha256": "17114944dc54efbeb302a7dd983d2e6ce1ab893e087d846b2e4dc327b0431854",
+      "pixels": [
+        941,
+        1672
+      ],
+      "safe_wall_box_norm": [
+        0.17,
+        0.29,
+        0.83,
+        0.64
+      ],
+      "design_camera_distance_cm": 540,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "renaissance",
+        "historic",
+        "epic",
+        "baroque"
+      ],
+      "wall_color": "deep_red",
+      "physical_size_fit": "medium_large",
+      "status": "candidate_ready_for_compositing_review",
+      "frame_in_background": false,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G03",
+      "title": "G03 Pale Marble",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "galleria_museale_con_pannello_vuoto_illuminato.png",
+      "file_name": "G03_PALE_MARBLE.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G03_PALE_MARBLE.png",
+      "library_file_id": "libfile_103e078737f88191acfb2060f8227e3a",
+      "sha256": "f81e0287f7c0f783d8f66075251637f45d81fbf4f751cec2da3358e93d91e4b4",
+      "pixels": [
+        941,
+        1672
+      ],
+      "safe_wall_box_norm": [
+        0.19,
+        0.27,
+        0.82,
+        0.68
+      ],
+      "design_camera_distance_cm": 350,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "gentle",
+        "bright",
+        "symbolist",
+        "portrait"
+      ],
+      "wall_color": "ivory",
+      "physical_size_fit": "small_medium",
+      "status": "candidate_ready_for_compositing_review",
+      "frame_in_background": false,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G04",
+      "title": "G04 Crimson Classic",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "galleria_classica_con_parete_cremisi.png",
+      "file_name": "G04_CRIMSON_CLASSIC.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G04_CRIMSON_CLASSIC.png",
+      "library_file_id": "libfile_916617ec58588191b83d87a1e7144c89",
+      "sha256": "b23ad4c0667d86db5779633f6c71ecd4ba876f1d4ffc99a99eab2918c1147f51",
+      "pixels": [
+        941,
+        1672
+      ],
+      "safe_wall_box_norm": [
+        0.18,
+        0.28,
+        0.83,
+        0.68
+      ],
+      "design_camera_distance_cm": 600,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "gothic",
+        "dramatic",
+        "dark",
+        "epic"
+      ],
+      "wall_color": "red",
+      "physical_size_fit": "medium_large",
+      "status": "candidate_ready_for_compositing_review",
+      "frame_in_background": false,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G05",
+      "title": "G05 Green Gold",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "galleria_museo_verde_e_oro.png",
+      "file_name": "G05_GREEN_GOLD.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G05_GREEN_GOLD.png",
+      "library_file_id": "libfile_b5948bd9123c8191b8697a8145fb4176",
+      "sha256": "c9f7efb03d470989f373937619792c150ab76449260e5bd7002e6af6a8693458",
+      "pixels": [
+        941,
+        1672
+      ],
+      "safe_wall_box_norm": [
+        0.15,
+        0.27,
+        0.84,
+        0.65
+      ],
+      "design_camera_distance_cm": 560,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "mystical",
+        "landscape",
+        "fantasy",
+        "baroque"
+      ],
+      "wall_color": "dark_green",
+      "physical_size_fit": "medium_large",
+      "status": "candidate_ready_for_compositing_review",
+      "frame_in_background": false,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G06",
+      "title": "G06 Navy Gold",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "galleria_neoclassica_blu_e_oro.png",
+      "file_name": "G06_NAVY_GOLD.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G06_NAVY_GOLD.png",
+      "library_file_id": "libfile_c1f3ec72808c819194b9413f5fd45e28",
+      "sha256": "7146d21b3703e3e14174db995e92bfa3539db1b1a023ea356dfe1409efc5b201",
+      "pixels": [
+        941,
+        1672
+      ],
+      "safe_wall_box_norm": [
+        0.21,
+        0.29,
+        0.79,
+        0.64
+      ],
+      "design_camera_distance_cm": 530,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "mythology",
+        "dream",
+        "moonlight",
+        "sea"
+      ],
+      "wall_color": "navy",
+      "physical_size_fit": "medium_large",
+      "status": "candidate_ready_for_compositing_review",
+      "frame_in_background": false,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G07",
+      "title": "G07 Beige Marble",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "galleria_classica_in_marmo_e_oro.png",
+      "file_name": "G07_BEIGE_MARBLE.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G07_BEIGE_MARBLE.png",
+      "library_file_id": "libfile_16b579392d7c8191afb63833d6d9a4df",
+      "sha256": "ffa5f367a3228881e8e252a821f80929caaaddd37d45b39d6fcafdc3b397fc99",
+      "pixels": [
+        941,
+        1672
+      ],
+      "safe_wall_box_norm": [
+        0.17,
+        0.27,
+        0.83,
+        0.65
+      ],
+      "design_camera_distance_cm": 510,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "classical",
+        "portrait",
+        "bright",
+        "historic"
+      ],
+      "wall_color": "cream",
+      "physical_size_fit": "medium_large",
+      "status": "candidate_ready_for_compositing_review",
+      "frame_in_background": false,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G08",
+      "title": "G08 Crimson Marble",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "galleria_classica_con_pareti_cremisi.png",
+      "file_name": "G08_CRIMSON_MARBLE.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G08_CRIMSON_MARBLE.png",
+      "library_file_id": "libfile_cf2252d4930c8191944ceeed780fe8ef",
+      "sha256": "3a66434f0c1ca53d6c60d75d520fe75f311c363881948b04ae2318d8588c3d0f",
+      "pixels": [
+        941,
+        1672
+      ],
+      "safe_wall_box_norm": [
+        0.18,
+        0.29,
+        0.82,
+        0.63
+      ],
+      "design_camera_distance_cm": 850,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "epic",
+        "monumental",
+        "dramatic",
+        "war"
+      ],
+      "wall_color": "dark_red",
+      "physical_size_fit": "large",
+      "status": "candidate_ready_for_compositing_review",
+      "frame_in_background": false,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G09",
+      "title": "G09 Gray Framed Candidate",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "a_polished_realistic_museum_gallery_interior_scen.png",
+      "file_name": "G09_GRAY_FRAMED_CANDIDATE.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G09_GRAY_FRAMED_CANDIDATE.png",
+      "library_file_id": "libfile_6684e01bd1588191b636922cc47bafa4",
+      "sha256": "7b5eb6dd9f39ad66245f0a125af34819a650a4bfe21486455f876bf8cf6e07cd",
+      "pixels": [
+        1024,
+        1536
+      ],
+      "safe_wall_box_norm": [
+        0.28,
+        0.38,
+        0.75,
+        0.65
+      ],
+      "design_camera_distance_cm": 480,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "historic",
+        "somber"
+      ],
+      "wall_color": "gray",
+      "physical_size_fit": "medium",
+      "status": "requires_removing_existing_generated_frame",
+      "frame_in_background": true,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G10",
+      "title": "G10 Sand Framed Candidate",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "a_highly_realistic_cinematic_museum_gallery_inter.png",
+      "file_name": "G10_SAND_FRAMED_CANDIDATE.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G10_SAND_FRAMED_CANDIDATE.png",
+      "library_file_id": "libfile_6646cccf9b8c819196f41f522b36d9fb",
+      "sha256": "ccda604f80e9b32edeeaa436bdc0c1ab10372bddd160ed310a6f4e7d35bce7f9",
+      "pixels": [
+        1024,
+        1536
+      ],
+      "safe_wall_box_norm": [
+        0.34,
+        0.36,
+        0.7,
+        0.58
+      ],
+      "design_camera_distance_cm": 370,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "portrait",
+        "symbolist"
+      ],
+      "wall_color": "sand",
+      "physical_size_fit": "small_medium",
+      "status": "requires_removing_existing_generated_frame",
+      "frame_in_background": true,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G11",
+      "title": "G11 Burgundy Bench",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "a_highly_detailed_photorealistic_interior_museum.png",
+      "file_name": "G11_BURGUNDY_BENCH.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G11_BURGUNDY_BENCH.png",
+      "library_file_id": "libfile_6dd6e42f04148191af3fe047cfc957d8",
+      "sha256": "77dfbbb5a5410416102673a5b6753b4abfbba0a0e97aa03688a5fd1421ecb531",
+      "pixels": [
+        1024,
+        1536
+      ],
+      "safe_wall_box_norm": [
+        0.19,
+        0.33,
+        0.8,
+        0.64
+      ],
+      "design_camera_distance_cm": 920,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "grand",
+        "history",
+        "war",
+        "epic"
+      ],
+      "wall_color": "burgundy",
+      "physical_size_fit": "large",
+      "status": "candidate_ready_for_compositing_review",
+      "frame_in_background": false,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    },
+    {
+      "room_id": "G12",
+      "title": "G12 Dark Modern Bench",
+      "source_kind": "ai_generated_scenographic_gallery_not_actual_museum",
+      "original_generated_filename": "a_photorealistic_perfectly_centered_empty_museum.png",
+      "file_name": "G12_DARK_MODERN_BENCH.png",
+      "library_path": "/ArtVision/Museum_AI_Rooms_V332/G12_DARK_MODERN_BENCH.png",
+      "library_file_id": "libfile_8fd7dc7e77448191a82aaf1080d7e8bd",
+      "sha256": "55c1fcbdebfdd8f591e486a9a18502bd50f8b3cc17c07e1bdc6ceeda0c8f85d9",
+      "pixels": [
+        1086,
+        1448
+      ],
+      "safe_wall_box_norm": [
+        0.17,
+        0.28,
+        0.83,
+        0.62
+      ],
+      "design_camera_distance_cm": 460,
+      "projection_horizontal_fov_degrees": 38.0,
+      "mood_tags": [
+        "modern",
+        "somber",
+        "mystical",
+        "minimal"
+      ],
+      "wall_color": "charcoal",
+      "physical_size_fit": "small_medium",
+      "status": "candidate_ready_for_compositing_review",
+      "frame_in_background": false,
+      "artistic_approval": false,
+      "museum_historic_location_claim": false,
+      "notes": "Room-only AI design; requires full video QA + physical scaling. Never call it actual museum."
+    }
+  ]
+}
