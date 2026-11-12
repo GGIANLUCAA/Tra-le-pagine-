@@ -1,0 +1,128 @@
+name: "AI Director API V1 | Europeana search and connector safety"
+
+on:
+  pull_request:
+    paths:
+      - "src/ai_director_external_apis_v1.py"
+      - "src/ai_director_europeana_bridge_v1.py"
+      - "tests/test_ai_director_external_apis_v1.py"
+      - "config/ai_director_external_api_v1.json"
+      - ".github/workflows/ai-director-external-apis-v1.yml"
+      - "docs/AI_DIRECTOR_API_CONNECTORS_V1.md"
+  push:
+    branches:
+      - main
+    paths:
+      - "src/ai_director_external_apis_v1.py"
+      - "src/ai_director_europeana_bridge_v1.py"
+      - "tests/test_ai_director_external_apis_v1.py"
+      - ".github/workflows/ai-director-external-apis-v1.yml"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Safe mode"
+        type: choice
+        required: true
+        default: dry_run
+        options:
+          - dry_run
+          - europeana
+      query:
+        description: "Public historic artwork / archive query (no personal info)"
+        required: false
+        default: "Venice 1896"
+      limit:
+        description: "Maximum results"
+        type: choice
+        required: true
+        default: "5"
+        options: ["3", "5", "8"]
+      execute:
+        description: "Allow ONE read-only Europeana catalogue API request"
+        type: boolean
+        default: false
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-director-apis-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run no-network connector regression tests
+        run: |
+          set -euo pipefail
+          python -m py_compile src/ai_director_external_apis_v1.py src/ai_director_europeana_bridge_v1.py tests/test_ai_director_external_apis_v1.py
+          python -m unittest discover -s tests -p 'test_ai_director_external_apis_v1.py' -v
+          python - <<'PY'
+          import json
+          data=json.load(open('config/ai_director_external_api_v1.json'))
+          assert data['default_deny'] and data['routes']==[]
+          original=json.load(open('config/free_llm_zero_cost_v1.json'))
+          assert original['default_deny'] and original['routes']==[]
+          print('PASS: all live vision/transcription/model routes disabled')
+          PY
+  europeana-manual:
+    if: github.event_name == 'workflow_dispatch'
+    needs: offline-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      MODE: ${{ inputs.mode }}
+      PUBLIC_QUERY: ${{ inputs.query }}
+      MAX_ITEMS: ${{ inputs.limit }}
+      EXECUTE: ${{ inputs.execute == true && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Search Europeana with single opt-in request, or dry-run
+        env:
+          EUROPEANA_API_KEY: ${{ secrets.EUROPEANA_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/ai_director_apis
+          if [ "$MODE" = "europeana" ]; then
+            args=(--mode europeana --query "$PUBLIC_QUERY" --limit "$MAX_ITEMS")
+            if [ "$EXECUTE" = "1" ]; then
+              if [ -z "$EUROPEANA_API_KEY" ]; then
+                echo "EUROPEANA_API_KEY missing in repository secrets"
+                exit 2
+              fi
+              args+=(--execute)
+            fi
+          else
+            if [ "$EXECUTE" = "1" ]; then
+              echo "execute requires europeana mode"; exit 2
+            fi
+            args=(--mode inventory)
+          fi
+          python src/ai_director_external_apis_v1.py \
+            "${args[@]}" --output output/ai_director_apis/REPORT.json
+          if [ "$MODE" = "europeana" ] && [ "$EXECUTE" = "1" ]; then
+            python src/ai_director_europeana_bridge_v1.py \
+              --input output/ai_director_apis/REPORT.json \
+              --subject "$PUBLIC_QUERY" \
+              --output output/ai_director_apis/DIRECTOR_BRIEF.json \
+              --report-dir output/ai_director_apis/director
+          fi
+      - name: Attach read-only candidates for Android
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI_DIRECTOR_API_RESEARCH_${{ github.run_id }}
+          path: output/ai_director_apis/
+          retention-days: 7
+          if-no-files-found: error
