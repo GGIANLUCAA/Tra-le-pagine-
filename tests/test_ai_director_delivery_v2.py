@@ -25,6 +25,19 @@ class DeliveryV2Tests(unittest.TestCase):
         self.assertIn("estimated", brief["timecode_provenance"])
         self.assertEqual(brief["scenes"][0]["rights_status"], "pending_independent_proof")
 
+    def test_real_artvision_storyboard_duration_s_and_start_s(self):
+        payload = {"scenes": [
+            {"shot": 1, "description": "Original painting", "start_s": 0.0,
+             "duration_s": 4.8, "human_visual_review": "PENDING"},
+            {"shot": 2, "description": "Close-up", "start_s": 4.8,
+             "duration_s": 3.3, "human_visual_review": "PENDING"}]}
+        brief = d._timed_brief(payload, "artvision_4x1", "Sleeping Beauty")
+        self.assertEqual(len(brief["scenes"]), 2)
+        self.assertEqual(brief["scenes"][1]["start_s"], 4.8)
+        self.assertEqual(brief["scenes"][1]["end_s"], 8.1)
+        self.assertEqual(brief["timecode_provenance"],
+                         "manifest_declared_times_not_independent_ASR")
+
     def test_report_without_video_is_honest_and_android_readable(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -66,6 +79,11 @@ class DeliveryV2Tests(unittest.TestCase):
                              report["visual_diagnostics"].get("narration_alignment_verified", False))
             self.assertEqual(report["model_calls"], 0)
             self.assertFalse(report["publication_authorized"])
+            self.assertTrue(report["director_and_critic_prompts_prepared"])
+            self.assertFalse(report["independent_llm_reviews_executed"])
+            prompt = json.loads((root / "out" / "episode" / "EDITORIAL_PROMPTS.json").read_text())
+            self.assertIn("director", prompt)
+            self.assertIn("critic", prompt)
             self.assertIn("POSSIBLE_BLINK_FRAME",
                           (root / "out" / "episode" / "ANDROID_REPORT.html").read_text())
 
