@@ -1,0 +1,24 @@
+name: "La Storia Rivive | Photographic I2I evidence gate tests"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/storia_photo_quality_evidence_gate_v1.py"
+      - "tests/test_storia_photo_quality_evidence_gate_v1.py"
+      - ".github/workflows/storia-photo-quality-evidence-gate.yml"
+permissions:
+  contents: read
+jobs:
+  photo_evidence_guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate guard and rejection tests without paid APIs
+        run: |
+          python -m py_compile src/storia_photo_quality_evidence_gate_v1.py
+          python -m unittest discover -s tests -p "test_storia_photo_quality_evidence_gate_v1.py" -v
