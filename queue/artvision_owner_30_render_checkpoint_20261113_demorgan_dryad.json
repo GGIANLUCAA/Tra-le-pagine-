@@ -1,0 +1,81 @@
+{
+  "schema": "artvision-owner-30-cinema-private-checkpoint-v1",
+  "recorded_at": "2026-11-13",
+  "owner_selection_order": 22,
+  "owner_title": "The Dryad",
+  "artist": "Evelyn De Morgan",
+  "year": "1884–1885",
+  "object_museum": "De Morgan Collection",
+  "version": "exact authentic painted object, not a synthetic museum",
+  "variant": "cinema_standard",
+  "status": "ONE_NEW_PRIVATE_CINEMA_REAL_MP4_MP4_ANDROID_AND_REUSABLE_20_MUSIC_QA_PASS_ARTISTIC_AND_RIGHTS_REVIEW_PENDING",
+  "source": {
+    "file_page": "https://commons.wikimedia.org/wiki/File:Evelyn_De_Morgan_-_The_Dryad.jpg",
+    "formerly": "File:Dryad11.jpg renamed to canonical; initial GitHub Actions 404 fixed",
+    "commons_canonical_sha1": "a46fbc28e7b9ab21bc384b7b4f684cc3a0a3871a",
+    "commons_source_bytes": 82826574,
+    "commons_pixels": [
+      8726,
+      21359
+    ],
+    "derived_source_sha1": "39c6ddf8d38f326b8088d68fd4ab6a911f9fa024",
+    "derived_source_sha256": "f562842995eda856cd8e04b5da7409ffa1a0e7bb8f4ddc8c8486103ff63fac78",
+    "photo_licence": "Wikimedia Commons PDM/PD-Art for canonical file, UK De Morgan Foundation photographic rights and territorial commercial video distribution pending"
+  },
+  "github": {
+    "run_id": 43327558853,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43327558853",
+    "artifact_id": 13992583434,
+    "render_job": "SUCCESS",
+    "separate_artifact_readback_job": "SUCCESS",
+    "source_SHA1_bytes_pixels_check": "PASS",
+    "full_1080_MP4_SHA256": "5e680881bfbae7e60118f0a5ba8e1f1827472febb390accddee2c66c126634b8"
+  },
+  "music20": {
+    "track_id": "magic_forest",
+    "exact_title": "Magic Forest",
+    "composer": "Kevin MacLeod",
+    "isrc": "USUAN1600044",
+    "official_page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600044",
+    "licence": "CC BY 4.0",
+    "real_MP3_ffprobe_sha256_verified": true,
+    "selected_on_work_mood": [
+      "magical",
+      "mysterious"
+    ],
+    "original_video_untouched": true,
+    "music20_android_mp4_sha256": "ff14ba21936b9554736329c12db52e34098bebbd9196b00810d741dec1df7f7d",
+    "music20_android_mp4_bytes": 7209807,
+    "music20_android_zip_sha256": "90d95e326701dec0d3e575519042b9ed531165047bfba484808c6c4e6faa5b7d",
+    "music20_android_zip_bytes": 8180302
+  },
+  "other": {
+    "source_video_1080_bytes": 24937539,
+    "source_android_720_bytes": 7102192,
+    "video_duration_seconds": 50.9583333333,
+    "fps": 24,
+    "shot_count": 12,
+    "visual_contact_sheet_review": "Technically authentic painting, different details of body/trunk/flowers; repeated subject framing may warrant artistic refinement",
+    "full_ffmpeg_video_audio_decode": "PASS",
+    "zip_crc_and_embedded_MP4_hash": "PASS",
+    "private_library_dir": "/ArtVision/Serie_20261113_Music20",
+    "private_library_file_id": "libfile_05a8fc9910708191af6e15901d7e8237",
+    "aggregate_android_three_videos": "libfile_6ea8881e6fb88191ab943e4bf8f9cf61",
+    "human_audio_visual_review": "PENDING",
+    "publish_rights_and_social_suitability": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_api_calls": 0
+  },
+  "queue_effect": {
+    "previously_new_lane_cinema_checkpoints": 25,
+    "new_lane_cinema_checkpoints_after": 26,
+    "owner_selected_works": 30,
+    "historic_four_variant_avalon_video_exists_outside_current_checkpoints": true,
+    "original_ten_queue_technical_count": 26,
+    "original_ten_queue_active_variants_excluding_dali": 36,
+    "original_ten_queue_slots_added": 0,
+    "note": "Evelyn De Morgan and Vrubel gallery music20 remixes are two new audio versions of existing genuine galleries, NOT two additional new Cinema Standard owner work slots"
+  },
+  "next": "Do not rerender the same Dryad Cinema as a new artwork; remaining owner gallery items require exact source/licence checks (Bulls/Bears, Fish Magic, Strange Garden) and King Arthur in Avalon is historical 4×1. Museum pipelines still require V331 frontal and V332 seamless transitions. Same painting four variants share selected 20-track music after rights/recording verification."
+}
