@@ -90,7 +90,7 @@ jobs:
                   return False
               # Two Antikythera render inputs are technical source clips, not finished films.
               # Keep the named GIULIANO_ANTICITERA masters eligible.
-              if re.fullmatch(r'ANTIKYTHERA_(GEARS|EXPLODED)_\\d+S(?:__\\d+)?\\.MP4',base):
+              if re.fullmatch(r'ANTIKYTHERA_(GEARS|EXPLODED)_\d+S(?:__\d+)?\.MP4',base):
                   return False
               # Audio-polish exports are intermediate cuts, not independent owner videos.
               if base.startswith('AUDIO_POLISHED_REVIEW'):
