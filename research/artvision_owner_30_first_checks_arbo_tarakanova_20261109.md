@@ -32,3 +32,13 @@ Nella [lista selezionata](artvision_owner_selected_30_future_20261109.json) sono
 
 ## Prossimo passo
 Ricercare in profondità le successive 1–2 opere della selezione (#3 Dadd, #4 Repin); controllare identificazione e file digitali uno per uno, e completare audit su archivi storici prima di qualunque futura autorizzazione.
+
+## Addendum 12/11/2026 — falso esemplare ad alta risoluzione da ESCLUDERE
+
+**Rilievo nuovo, non è una nuova produzione.** L'immagine Commons `File:1862 Flavitsky Prinzessin Tarakanow anagoria.JPG` (3.367×4.897 px, SHA-1 `d8f640fb87979e07bdcc02c39480520f247431b2`, 1.962.518 byte) ritrae **la prima versione del 1862 conservata allo Yekaterinburg Museum of Fine Arts**, inventario **Ж-1267**, misura **214×147 cm**. La relativa pagina Commons documenta espressamente museo, anno e dimensioni. **NON è** il dipinto Tretyakov richiesto dall'owner (inventario **Инв.347**, **245×187,5 cm**, attribuzione della scheda primaria 1863/1864). Il nome simile e la qualità superiore non autorizzano la sostituzione.
+
+- Pagina e metadati originale errato: https://commons.wikimedia.org/wiki/File:1862_Flavitsky_Prinzessin_Tarakanow_anagoria.JPG
+- L'altra candidata Commons `File:Tarakanova.jpg`, 1.400×1.845, dichiara museo Tretyakov e dimensioni 245×187,5 cm, ma fotografo/file originale non documentato: verificare pixel/byte e identificazione prima di render; non proclamare riuso commerciale autorizzato per la sola dicitura PD-Art.
+- Scheda Tretyakov esemplare owner: https://my.tretyakov.ru/app/masterpiece/8412
+
+**Gate di sicurezza:** vietare uso del file Commons 1862/Ekaterinburg nel video #4 Princess Tarakanova; non generare nessuna variante se l'asset non supera identificazione exact-owner + diritti/QA. Nessun lavoro già prodotto va modificato sulla base di questo addendum.
