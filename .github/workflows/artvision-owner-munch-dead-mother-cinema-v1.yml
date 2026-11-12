@@ -1,9 +1,10 @@
-name: "ArtVision OWNER | Munch Death and the Child | new Cinema private review"
+name: "ArtVision OWNER | Munch Death and the Child | corrected Cinema V2 private review"
 on:
   push:
     branches: [main]
     paths:
       - ".github/workflows/artvision-owner-munch-dead-mother-cinema-v1.yml"
+      - "scripts/artvision_owner_munch_dead_mother_cinema_v1.py"
 permissions:
   contents: read
 concurrency:
@@ -30,7 +31,7 @@ jobs:
           assert len(a)==1 and a[0]['selection_order']==18
           assert not list(pathlib.Path('queue').glob('artvision_owner_30_render_checkpoint_*dead*mother*.json')), 'Already produced owner Munch Cinema'
           assert not list(pathlib.Path('queue').glob('artvision_owner_30_render_checkpoint_*death*child*.json')), 'Alias duplicate of same painting'
-          print('ONE UNPRODUCED OWNER-SELECTED MUNCH MM.M.00420 CINEMA — NO OTHER EDITION.')
+          print('ONE OWNER-SELECTED MM.M.00420 MUNCH CINEMA—V2 SEMANTIC CAMERA FIX, NO OTHER EDITION.')
           PY
       - name: Install free Linux media tools and libraries
         shell: bash
@@ -59,6 +60,7 @@ jobs:
           assert q['source_sha256']==sha(src)
           assert q['mp4_sha256']==sha(v) and q['mp4_bytes']>1_000_000
           assert q['fps']==20 and q['shots']==9
+          assert q['visual_semantic_position_audit']=='V2_CORRECTED_CHILD_RIGHT_FOREGROUND_ADULTS_LEFT_BED_RIGHT'
           assert q['v326_blocking_errors']==0 and 45<q['duration_s']<51
           assert not q['gold'] and not q['published'] and q['paid_api_calls']==0
           with zipfile.ZipFile(p/'ANDROID_REVIEW_PACKAGE.zip') as z:
