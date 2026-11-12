@@ -1,0 +1,74 @@
+name: "GIULIANO 04 Nazca | ONE Google Gacrux voice and real ASR"
+on:
+  push:
+    branches: [feature/artvision-curated-agent-skills-20261112]
+    paths:
+      - "requests/giuliano/nazca-ep04-voice-once-20261112.json"
+permissions:
+  contents: read
+concurrency:
+  group: giuliano-nazca-ep04-GOOGLE-VOICE-ONCE
+  cancel-in-progress: false
+jobs:
+  source-and-script-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Never generate TTS from a repeated or edited request
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/giuliano_nazca_voice_v1.py
+          python - <<'PY'
+          import json,subprocess,os
+          f='requests/giuliano/nazca-ep04-voice-once-20261112.json'
+          files=subprocess.check_output(['git','diff','--name-only','--diff-filter=A','HEAD^','HEAD'],text=True).splitlines()
+          assert files==[f], "TTS_ONE_SHOT_ALREADY_USED_OR_REPLAYED"
+          req=json.load(open(f))
+          assert set(req)=={'schema','owner_approval','action','episode','model','voice',
+                            'max_new_google_tts_calls','no_videos_to_publish',
+                            'buy_credits','regenerate_on_failure','script_sha_required'}
+          assert req['schema']=='giuliano-nazca-voice-one-shot-v1'
+          assert req['owner_approval'] is True and req['action']=='create_verified_gacrux_audio_once'
+          assert req['episode']=='GIULIANO_04_NAZCA'
+          assert req['model']=='gemini-3.1-flash-tts-preview' and req['voice']=='Gacrux'
+          assert type(req['max_new_google_tts_calls']) is int and req['max_new_google_tts_calls']==1
+          assert req['no_videos_to_publish'] is True
+          assert req['buy_credits'] is False and req['regenerate_on_failure'] is False
+          assert req['script_sha_required'] is True
+          if os.environ.get('GITHUB_RUN_ATTEMPT')!='1':
+              raise SystemExit('RUN_ATTEMPT_REPLAY_FORBIDDEN_NO_DOUBLE_BILLING')
+          j=json.load(open('giuliano/nazca/EP04_BRIEF_SHOTMAP_V1.json'))
+          assert j['schema']=='giuliano-nazca-ep04-real-director-brief-v1'
+          assert len(j['beats'])==27 and 280<=j['word_count']<=350
+          assert not j['public_release_authorized']
+          print('GIULIANO_NAZCA_ONE_SHOT_OWNER_REQUEST_AND_27_SOURCE_CUES_PASS')
+          PY
+  single-human-voice:
+    needs: source-and-script-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GIULIANO_NAZCA_GOOGLE_TTS_ONCE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install existing Google audio/ASR libraries, no renderer
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check numpy soundfile google-genai faster-whisper
+      - name: One documented v1beta Gemini 3.1 speech synthesis with Gacrux
+        run: python -u scripts/giuliano_nazca_voice_v1.py
+      - name: Keep genuine Gacrux WAV even if ASR alignment fails, never auto-redo TTS
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_04_NAZCA_GACRUX_VOICE_ONCE
+          path: output/GIULIANO_04_NAZCA_VOICE/
+          retention-days: 30
+          if-no-files-found: warn
