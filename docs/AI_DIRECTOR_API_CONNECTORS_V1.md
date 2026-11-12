@@ -1,69 +1,95 @@
-# AI Director · API esterne V1 (Europeana + Gemini + Groq)
+# AI Director · Fonti gratuite senza chiavi API
 
-12 novembre 2026 · Add-on isolato sul repository GGIANLUCAA/Tra-le-pagine-.
+**Decisione del proprietario (12/11/2026):** non utilizzare Europeana. 
+Il progetto non richiede alcuna chiave Europeana e non effettua richieste all'API.
+I client di ricerca esistenti vengono riutilizzati anziche' duplicati.
 
-## Stato concreto
+## Provider reali già implementati e usati
 
-| Provider | Codice | Condizione d'uso |
+| Categoria scelta su Android | Ordine delle fonti | Credenziali |
 | --- | --- | --- |
-| Europeana Search | Adapter reale + report + bridge al dossier | Solo richiamando esplicitamente una ricerca da GitHub Actions, con chiave Europeana. Nessun media scaricato |
-| Google Gemini | Adapter di revisione di UN fotogramma JPEG/PNG | Disabilitato (routes vuote); termini, regione Italia e costo zero da verificare |
-| Groq Whisper | Adapter trascrizione con timecode a segmenti | Disabilitato (routes vuote); tariffazione pubblicata dal provider, non trattare il Free plan come automaticamente gratuito |
-| OpenRouter | Gia presente in src/ai_director_v1.py | Il gate costo zero resta invariato, non abilitato |
-| Cloudflare Workers AI | NON implementato in V1 | La quota dipende da piano/account; il modello Vision richiede accettazione licenza Meta |
+| historical_video | Library of Congress, Internet Archive, Wikimedia Commons | nessuna |
+| historical_photo | Library of Congress, Wikimedia Commons, Wellcome Collection | nessuna |
+| art | Art Institute of Chicago, The Met, Cleveland Museum | nessuna |
+| general | Library of Congress, Art Institute of Chicago, Wikimedia Commons | nessuna |
 
-## Qualita e dati
+Ogni azione manuale cerca su massimo tre archivi, restituisce 1–3 candidati
+per provider, evita richieste di massa, non ritenta su errori e conserva
+indipendentemente i risultati di altri provider in caso di un guasto.
+La API The Met usa già il nuovo endpoint v1.1, non il vecchio v1 deprecato.
 
-- Europeana e un catalogo di ricerca, non una verifica dei diritti. I risultati hanno rights_review=pending, approved=false. Anche il filtro 'open' non assicura il diritto di pubblicare il materiale in Italia.
-- Solo i metadati del catalogo, non gli asset, possono confluire in ai_director_v1.py tramite src/ai_director_europeana_bridge_v1.py. Questo prepara un BRIEF e un report Android con sources_verified=false, senza creare scene o inventare citazioni.
-- Gemini analizza al massimo un fotogramma sorgente, non l'intero MP4. La revisione umana, il V323 colore reale e i test video esistenti restano necessari.
-- Groq riceverebbe l'audio originale e non deve essere attivato senza verificare privacy, condizioni e quote. Gli offset ASR non dimostrano coerenza tra immagini e voce.
-- Nessuna modifica a editor, Vidu, Gemini TTS, social, master, produzione ricorrente, autopubblicazione o diritti.
-- Nessuna chiave nel codice o in report pubblici.
+**Diritti e qualità:** anche se il catalogo riporta pubblico dominio o CC0,
+la pubblicabilità in Italia, la fonte originale e la pertinenza visiva
+richiedono una verifica sul singolo record. La fonte non viene selezionata,
+scaricata, restaurata o pubblicata in automatico. Tutti i risultati sono
+bozze di ricerca, NON sono prove di licenza o autenticità.
 
-## Uso Android · Europeana
+## Uso dal solo telefono Android
 
-1. Richiedere una chiave Europeana su https://www.europeana.eu/en/how-to-register-for-and-manage-an-api-key .
-2. Aprire https://github.com/GGIANLUCAA/Tra-le-pagine-/settings/secrets/actions e creare EUROPEANA_API_KEY. Inserire la chiave solo nel campo Secret, non in un messaggio.
-3. GitHub > Actions > AI Director API V1 | Europeana search and connector safety > Run workflow.
-4. Scegliere mode=europeana, una ricerca pubblica (es. Venice 1896), max 3–8 risultati e execute=true per una sola richiesta di lettura metadati. Di default execute=false, simulazione senza rete.
-5. In Artifacts scaricare AI_DIRECTOR_API_RESEARCH. All'interno: REPORT.json per candidati Europeana, DIRECTOR_BRIEF.json, director/ANDROID_REPORT.html, director/REPORT.json, director/EDITORIAL_PROMPTS.json.
+1. Apri GitHub: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/workflows/ai-director-external-apis-v1.yml
+2. **Run workflow** → scegli una categoria:
+   - historical_video per La Storia Rivive e filmati d'epoca;
+   - historical_photo per fotografie storiche;
+   - art per ArtVision 4x1;
+   - general per ricerca mista.
+3. Inserisci il soggetto con parole chiave pubbliche, per esempio Venice 1896
+   oppure The Goldfinch Fabritius.
+4. Mantieni provider=auto per controllare tre fonti;
+   oppure seleziona un solo archivio. La casella execute=true autorizza
+   le sole richieste HTTP di ricerca pubblica, senza crediti o API keys.
+5. A fine run → Artifacts → AI_DIRECTOR_KEYLESS_SOURCES → estrai lo ZIP
+   e apri director/ANDROID_REPORT.html su Android. CANDIDATES.json contiene
+   i record e i link alle fonti, DIRECTOR_BRIEF.json il dossier non approvato.
 
-Senza chiave il workflow non simula la ricerca: fallisce dichiarando chiave assente. Anche con chiave il filtro open media potrebbe restituire zero risultati.
+La fase ricerca non chiama modelli linguistici a pagamento, Vidu, TTS o altri
+servizi di produzione. Se gli archivi non rispondono, il report documenta
+la mancanza di candidati, senza inventare materiale o bloccare la produzione
+seriale già attiva. Il workflow resta **manuale** finché la qualità dei
+candidati e i tempi non siano valutati su casi reali.
 
-## CLI manuale (non necessaria su Android)
+## Architettura
 
-Offline senza rete:
+- src/public_archive_sources_v1.py / v2.py:
+  adapter delle fonti già presenti, non clonati.
+- src/ai_director_keyless_archives_v1.py:
+  selezione per formato, ricerca limitata, fallback, deduplicazione,
+  normalizzazione dei candidati e bridge verso AI Director.
+- src/ai_director_v1.py:
+  produce piano/report editoriali e controlli di regia esistenti;
+  queste fonti possono entrare in source_notes come **metadata non verificati**.
+- .github/workflows/ai-director-external-apis-v1.yml:
+  test offline in PR/push e ricerca **solo su Run workflow**.
+- tests/test_ai_director_keyless_archives_v1.py:
+  test offline con provider simulati e adapter reali senza Internet.
+- src/ai_director_external_apis_v1.py:
+  mantiene soltanto client sperimentali Gemini Frame/Groq Whisper,
+  disabilitati dal gate costo zero; non contiene più client Europeana.
 
-    python src/ai_director_external_apis_v1.py --mode europeana --query "Venice 1896" --output output/ai_director_apis/REPORT.json
+La policy config/ai_director_external_api_v1.json mantiene
+default_deny=true, routes=[] e non autorizza inferenze. In particolare,
+Groq Whisper ha prezzi pubblicati a consumo: non attivarlo sulla presunta
+gratuità della chiave. Cloudflare AI e Gemini Vision richiedono ulteriori
+verifiche, senza accesso a credenziali di produzione.
 
-Ricerca autorizzata dopo secret disponibile nell'ambiente:
+## Riproduzione offline
 
-    python src/ai_director_external_apis_v1.py --mode europeana --query "Venice 1896" --execute --output output/ai_director_apis/REPORT.json
-
-Bridge con ricerca vera:
-
-    python src/ai_director_europeana_bridge_v1.py --input output/ai_director_apis/REPORT.json --subject "Venice 1896" --output output/ai_director_apis/DIRECTOR_BRIEF.json --report-dir output/ai_director_apis/director
-
-## API AI ad alto rischio costo
-
-Il file config/ai_director_external_api_v1.json imposta default_deny=true e routes=[]; Gemini Vision e Groq Whisper sono quindi client disabilitati. Per ogni modello occorrono prove ufficiali di prezzo effettivamente zero sul piano specifico, termini Italia/commerciale, limiti e no fallback, fatturazione disabilitata, evidenza recente (massimo 7 giorni) e flag AI_DIRECTOR_EXTERNAL_LIVE=1. Le sole credenziali non bastano.
-
-Il workflow non espone GEMINI_API_KEY o GROQ_API_KEY a nessun job e non fornisce pulsanti di inferenza. Questi strumenti non saranno attivati senza gli attestati e un controllo anti-credito condiviso; la protezione per chiamata non equivale a limitazione globale di quota. Groq pubblica prezzi per i modelli Whisper (https://console.groq.com/docs/speech-to-text).
-
-## Test e manutenzione
-
-    python -m py_compile src/ai_director_external_apis_v1.py src/ai_director_europeana_bridge_v1.py
+    python -m unittest discover -s tests -p 'test_ai_director_keyless_archives_v1.py' -v
     python -m unittest discover -s tests -p 'test_ai_director_external_apis_v1.py' -v
+    python src/ai_director_keyless_archives_v1.py --category historical_video --query "Venice 1896" --output output/keyless
 
-La CI verifica anche che entrambe le policy config/ai_director_external_api_v1.json e config/free_llm_zero_cost_v1.json mantengano routes vuote. Nessuna richiesta web viene effettuata durante i test.
+Il comando senza --execute è dry-run, quindi non effettua chiamate API.
+La reale disponibilità delle fonti verrà attestata solo tramite una run
+manuale che esegua richieste e restituisca candidati verificabili.
 
-## Fonti ufficiali
+## Documentazione ufficiale delle fonti
 
-- Europeana Search API: https://europeana.atlassian.net/wiki/spaces/EF/pages/2385739812/
-- Europeana API key: https://europeana.atlassian.net/wiki/spaces/EF/pages/2462351393/
-- Groq Whisper: https://console.groq.com/docs/speech-to-text
-- Google Gemini generateContent: https://ai.google.dev/api/generate-content
-- Cloudflare Workers AI Vision: https://developers.cloudflare.com/workers-ai/models/llama-3.2-11b-vision-instruct/
+- Met: https://metmuseum.github.io/
+- Art Institute: https://api.artic.edu/docs/
+- Library of Congress: https://www.loc.gov/apis/json-and-yaml/
+- Wikimedia API: https://www.mediawiki.org/wiki/Wikimedia_APIs/Access_policy
+- Internet Archive: https://archive.org/developers/
+- Cleveland: https://openaccess-api.clevelandart.org/
+- Wellcome: https://developers.wellcomecollection.org/
 
-Il collegamento a un archivio non garantisce automaticamente un miglioramento del video. I risultati vanno confrontati con fonti e MP4 reali prima della produzione.
+Le API ufficiali possono cambiare endpoint e limiti. Nessuna
+garanzia di risultati o qualità artistica senza un test live.

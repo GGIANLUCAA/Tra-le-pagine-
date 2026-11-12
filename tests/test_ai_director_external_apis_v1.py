@@ -1,4 +1,4 @@
-"""Offline no-network tests for API adapters and their billing safeguards."""
+"""Gemini still-image and Groq ASR connectors: offline tests; no API keys charged."""
 import datetime as dt
 import json
 import os
@@ -11,193 +11,125 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 import ai_director_external_apis_v1 as api
-import ai_director_europeana_bridge_v1 as bridge
 
 
 class FakeHTTP:
-    def __init__(self, json_body, status=200):
-        self.payload = json.dumps(json_body).encode()
+    def __init__(self, body):
+        self.payload = json.dumps(body).encode()
         self.headers = {"Content-Length": str(len(self.payload))}
     def __enter__(self):
         return self
     def __exit__(self, *args):
         return False
-    def read(self, length):
-        return self.payload[:length]
+    def read(self, max_bytes):
+        return self.payload[:max_bytes]
 
 
-def approved(service, model):
-    return {"schema": "ai-director-external-api-policy-v1", "default_deny": True,
-            "routes": [{
-                "service": service, "model": model, "enabled": True,
-                "no_charge_verified": True, "commercial_terms_checked": True,
-                "commercial_use_permitted": True,
-                "billing_disabled_verified": True, "no_paid_fallback_verified": True,
-                "account_limit_checked": True, "input_usd_per_million": 0,
-                "output_usd_per_million": 0, "cost_per_audio_hour_usd": 0,
-                "official_evidence_url": "https://example.org/terms/model",
-                "verified_on": dt.datetime.now(dt.timezone.utc).date().isoformat()
-            }]}
+def approved(service, model, price=0):
+    return {
+        "schema": "ai-director-external-api-policy-v1", "default_deny": True,
+        "routes": [{
+            "service": service, "model": model, "enabled": True,
+            "no_charge_verified": True, "commercial_terms_checked": True,
+            "commercial_use_permitted": True,
+            "billing_disabled_verified": True, "no_paid_fallback_verified": True,
+            "account_limit_checked": True,
+            "input_usd_per_million": price, "output_usd_per_million": price,
+            "cost_per_audio_hour_usd": price,
+            "official_evidence_url": "https://example.org/model-terms",
+            "verified_on": dt.datetime.now(dt.timezone.utc).date().isoformat()
+        }]}
 
 
-class AdapterTests(unittest.TestCase):
-    def test_default_policy_denies_live_provider_calls(self):
-        policy = api.load_policy(ROOT / "config/ai_director_external_api_v1.json")
-        self.assertTrue(policy["default_deny"])
-        self.assertEqual(policy["routes"], [])
+class ExternalClientTests(unittest.TestCase):
+    def test_default_policy_blocks_all_live_inference(self):
+        p = api.load_policy()
+        self.assertTrue(p["default_deny"])
+        self.assertEqual(p["routes"], [])
         with mock.patch.dict(os.environ, {"AI_DIRECTOR_EXTERNAL_LIVE": "1"}):
-            with self.assertRaisesRegex(api.ExternalAPIError, "not explicitly approved"):
-                api._admit_live("gemini_image", "gemini-2.5-flash", policy)
+            for service, model in [("gemini_image","gemini-2.5-flash"),
+                                   ("groq_transcription","whisper-large-v3-turbo")]:
+                with self.assertRaises(api.ExternalAPIError):
+                    api._admit_live(service, model, p)
 
-    def test_europeana_uses_header_not_query_key(self):
-        captured = []
-        def fake(req, timeout):
-            captured.append(req)
-            return FakeHTTP({"success": True, "items": [
-                {"id": "/92005/BibliographicResource_300012", "title": ["Venezia 1896"],
-                 "type": "IMAGE", "guid": "https://www.europeana.eu/en/item/xx",
-                 "rights": ["http://creativecommons.org/publicdomain/mark/1.0/"]}]})
-        r = api.europeana_search("Venezia 1896", key="fake-key-do-not-share",
-                                 limit=3, transport=fake)
-        self.assertEqual(len(captured), 1)
-        req = captured[0]
-        self.assertEqual(req.get_method(), "GET")
-        self.assertIn("query=Venezia+1896", req.full_url)
-        self.assertNotIn("fake-key", req.full_url)
-        self.assertEqual(req.get_header("X-api-key"), "fake-key-do-not-share")
-        self.assertEqual(r["api_requests"], 1)
-        self.assertFalse(r["items"][0]["approved"])
-        self.assertEqual(r["items"][0]["rights_review"], "pending")
-        self.assertNotIn("fake-key", json.dumps(r))
+    def test_only_account_verified_zero_price_route_admitted(self):
+        with mock.patch.dict(os.environ, {"AI_DIRECTOR_EXTERNAL_LIVE": "1"}):
+            with self.assertRaisesRegex(api.ExternalAPIError, "exactly zero"):
+                api._admit_live("groq_transcription", "whisper-large-v3-turbo",
+                                approved("groq_transcription","whisper-large-v3-turbo",price=0.1))
 
-    def test_europeana_drops_unsafe_links_and_tags(self):
-        def fake(req, timeout):
-            return FakeHTTP({"success": True, "items": [{
-                "id": "1", "title": ["<b>Artwork</b>"],
-                "guid": "http://unsafe.example/x",
-                "rights": ["unknown"], "edmPreview": ["http://unsafe.example/y"]}]})
-        result=api.europeana_search("artwork",key="dummy",transport=fake)
-        item=result["items"][0]
-        self.assertEqual(item["title"], "Artwork")
-        self.assertTrue(item["source_url"].startswith("https://www.europeana.eu/"))
-        self.assertEqual(item["preview_url_unverified"], "")
-        self.assertFalse(item["media_downloaded"])
+    def test_live_flag_is_required_even_for_mocked_approved_route(self):
+        with mock.patch.dict(os.environ, {"AI_DIRECTOR_EXTERNAL_LIVE": "0"}):
+            with self.assertRaisesRegex(api.ExternalAPIError, "disabled"):
+                api._admit_live("gemini_image","gemini-2.5-flash",
+                                approved("gemini_image","gemini-2.5-flash"))
 
-    def test_europeana_fails_on_invalid_query_before_request(self):
-        with self.assertRaises(api.ExternalAPIError):
-            api.europeana_search("a",key="safe",transport=lambda *args, **kwargs: self.fail("network"))
-        with self.assertRaises(api.ExternalAPIError):
-            api.europeana_search("Long name",key="",transport=lambda *args, **kwargs: self.fail("network"))
-        with self.assertRaises(api.ExternalAPIError):
-            api.europeana_search("Long name",key="x",limit=100,transport=lambda *args, **kwargs: self.fail("network"))
-
-    def test_groq_whisper_cannot_be_called_unverified(self):
+    def test_no_gemini_network_without_plan_verification(self):
         with tempfile.TemporaryDirectory() as d:
-            f=Path(d)/"speech.wav"
-            f.write_bytes(b"RIFF"+b"\x00"*200)
+            image=Path(d)/"frame.png"
+            image.write_bytes(b"\x89PNG\r\n\x1a\n"+b"\x00"*128)
             with mock.patch.dict(os.environ, {"AI_DIRECTOR_EXTERNAL_LIVE": "1"}):
                 with self.assertRaises(api.ExternalAPIError):
-                    api.groq_transcription(f,model="whisper-large-v3-turbo",key="dummy",
-                        policy=api.load_policy(),transport=lambda *x, **kw: self.fail("network"))
-            self.assertTrue(f.exists())
+                    api.gemini_frame_review(image, model="gemini-2.5-flash",
+                        prompt="Describe scene details without claiming a full video review",
+                        key="test-only",
+                        policy=api.load_policy(),
+                        transport=lambda *args,**kw: self.fail("network request not permitted"))
 
-    def test_gemini_cannot_be_called_unverified(self):
+    def test_no_groq_network_without_plan_verification(self):
         with tempfile.TemporaryDirectory() as d:
-            f=Path(d)/"frame.jpg"
-            f.write_bytes(b"\xff\xd8\xff"+b"\x01"*200)
+            audio=Path(d)/"voice.wav";audio.write_bytes(b"RIFF"+b"\x00"*300)
             with mock.patch.dict(os.environ, {"AI_DIRECTOR_EXTERNAL_LIVE": "1"}):
                 with self.assertRaises(api.ExternalAPIError):
-                    api.gemini_frame_review(f,model="gemini-2.5-flash",key="dummy",
-                        prompt="Review the visual rhythm with care.",
-                        policy=api.load_policy(),transport=lambda *x, **kw: self.fail("network"))
+                    api.groq_transcription(audio, model="whisper-large-v3-turbo",
+                        key="test-only",policy=api.load_policy(),
+                        transport=lambda *args,**kw:self.fail("network not permitted"))
 
-    def test_manual_gemini_payload_single_frame(self):
+    def test_mock_gemini_single_frame_only(self):
         with tempfile.TemporaryDirectory() as d:
-            f=Path(d)/"frame.png"
-            f.write_bytes(b"\x89PNG\r\n\x1a\n"+b"\x01"*300)
-            received=[]
+            image=Path(d)/"frame.png";image.write_bytes(b"\x89PNG\r\n\x1a\n"+b"\x01"*300)
+            calls=[]
             def fake(req, timeout):
-                payload=json.loads(req.data)
-                self.assertIn("generateContent", req.full_url)
-                self.assertEqual(req.get_header("X-goog-api-key"),"dummy")
-                parts=payload["contents"][0]["parts"]
-                self.assertEqual(parts[1]["inline_data"]["mime_type"],"image/png")
-                received.append(payload)
-                return FakeHTTP({"candidates":[{"content":{"parts":[{"text":"Frame review only"}]}}]})
+                calls.append(req)
+                data=json.loads(req.data)
+                self.assertEqual(data["contents"][0]["parts"][1]["inline_data"]["mime_type"],"image/png")
+                return FakeHTTP({"candidates":[{"content":{"parts":[{"text":"Single frame only"}]}}]})
             with mock.patch.dict(os.environ, {"AI_DIRECTOR_EXTERNAL_LIVE": "1"}):
-                result=api.gemini_frame_review(f,model="gemini-2.5-flash",key="dummy",
-                    prompt="Assess the details visible in this frame.",
+                result=api.gemini_frame_review(image,model="gemini-2.5-flash",
+                    key="fixture",prompt="Review the one image and be precise",
                     policy=approved("gemini_image","gemini-2.5-flash"),transport=fake)
-            self.assertEqual(result["text"],"Frame review only")
+            self.assertEqual(result["text"], "Single frame only")
             self.assertFalse(result["full_video_watched"])
-            self.assertEqual(len(received),1)
+            self.assertFalse(result["auto_publish"])
+            self.assertEqual(len(calls),1)
 
-    def test_manual_groq_payload_segment_timestamps(self):
+    def test_mock_groq_segment_stamps_only(self):
         with tempfile.TemporaryDirectory() as d:
-            f=Path(d)/"speech.wav"; f.write_bytes(b"RIFF"+b"\x00"*300)
-            received=[]
+            audio=Path(d)/"voice.wav";audio.write_bytes(b"RIFF"+b"\x00"*300)
+            calls=[]
             def fake(req, timeout):
-                self.assertIn(b'verbose_json',req.data)
+                calls.append(req)
                 self.assertIn(b'name="timestamp_granularities[]"',req.data)
-                self.assertNotIn(b"dummy", req.data)
-                received.append(req)
-                return FakeHTTP({"text":"Ciao Venezia","segments":[{"start":0,"end":2.1,"text":"Ciao Venezia"}]})
+                self.assertNotIn(b"fixture",req.data)
+                return FakeHTTP({"text":"Buongiorno","segments":[{"start":0,"end":1.7,"text":"Buongiorno"}]})
             with mock.patch.dict(os.environ, {"AI_DIRECTOR_EXTERNAL_LIVE": "1"}):
-                result=api.groq_transcription(f,model="whisper-large-v3-turbo",
-                    key="dummy",policy=approved("groq_transcription","whisper-large-v3-turbo"),
+                result=api.groq_transcription(audio,model="whisper-large-v3-turbo",
+                    key="fixture",policy=approved("groq_transcription","whisper-large-v3-turbo"),
                     transport=fake)
-            self.assertEqual(len(received),1)
-            self.assertEqual(result["segments"][0]["end_s"],2.1)
+            self.assertEqual(result["segments"][0]["end_s"],1.7)
             self.assertFalse(result["visual_alignment_verified"])
+            self.assertEqual(len(calls),1)
 
-    def test_europeana_candidates_flow_into_existing_ai_director(self):
-        research = {
-            "schema": "ai-director-europeana-research-v1",
-            "provider": "europeana", "api_requests": 1,
-            "items": [
-                {"id": "europeana:1", "title": "Venezia nel 1896",
-                 "date": "1896", "source_url": "https://www.europeana.eu/en/item/1",
-                 "rights_claim": "CC0 candidate, not inspected", "approved": False}
-            ]}
-        result=bridge.prepare(research,"Venezia 1896")
-        self.assertEqual(result["schema"], "ai-director-v1")
-        self.assertFalse(result["publication_authorized"])
-        self.assertTrue(result["research_candidates_only"])
-        self.assertEqual(len(result["source_notes"]),1)
-        self.assertIn("UNVERIFIED",result["source_notes"][0]["license"])
-        import ai_director_v1 as director
-        prompts = director.editorial_prompts(result)
-        self.assertIn("Venezia nel 1896",prompts["director"])
+    def test_inventory_neither_exposes_key_nor_mentions_europeana(self):
         with tempfile.TemporaryDirectory() as d:
-            inp=Path(d)/"europeana.json"
-            dest=Path(d)/"brief.json"
-            rep=Path(d)/"report"
-            inp.write_text(json.dumps(research))
-            self.assertEqual(bridge.main(["--input",str(inp),"--subject","Venezia 1896",
-                                          "--output",str(dest),"--report-dir",str(rep)]),0)
-            self.assertTrue((rep/"ANDROID_REPORT.html").exists())
-            r=json.loads((rep/"REPORT.json").read_text())
-            self.assertFalse(r["publication_authorized"])
-            self.assertFalse(r["sources_verified"])
-            self.assertEqual(r["europeana_candidate_count"],1)
-
-    def test_europeana_cli_offline_never_calls_network(self):
-        with tempfile.TemporaryDirectory() as d:
-            output=Path(d)/"status.json"
-            with mock.patch("sys.argv",["api","--mode","europeana","--output",str(output)]), \
-                 mock.patch("ai_director_external_apis_v1.europeana_search",side_effect=AssertionError("Unexpected network")):
-                self.assertEqual(api.main(),0)
-            self.assertEqual(json.loads(output.read_text())["status"],"europeana_dry_run_no_request")
-
-    def test_inventory_does_not_expose_credential(self):
-        with tempfile.TemporaryDirectory() as d:
-            output=Path(d)/"status.json"
-            with mock.patch.dict(os.environ,{"EUROPEANA_API_KEY":"top-secret-not-for-output"}), \
-                 mock.patch("sys.argv",["api","--mode","inventory","--output",str(output)]):
+            output=Path(d)/"report.json"
+            with mock.patch.dict(os.environ, {"GEMINI_API_KEY":"opaque-example-not-real"}), \
+                 mock.patch("sys.argv", ["adapter","--mode","inventory","--output",str(output)]):
                 self.assertEqual(api.main(),0)
             report=output.read_text()
-            self.assertNotIn("top-secret",report)
-            self.assertTrue(json.loads(report)["credentials_present"]["EUROPEANA_API_KEY"])
+            self.assertNotIn("opaque-example-not-real",report)
+            self.assertNotIn("EUROPEANA",report)
+            self.assertTrue(json.loads(report)["credentials_present"]["GEMINI_API_KEY"])
 
 
 if __name__ == "__main__":
