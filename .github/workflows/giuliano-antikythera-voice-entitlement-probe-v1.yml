@@ -1,0 +1,40 @@
+name: "GIULIANO 03 | read-only Google TTS model entitlement diagnostic"
+on:
+  push:
+    branches: ["feature/giuliano-antikythera-director-20261112"]
+    paths:
+      - ".github/workflows/giuliano-antikythera-voice-entitlement-probe-v1.yml"
+permissions:
+  contents: read
+jobs:
+  inspect_models_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - name: Check exact officially listed TTS model access without synthesis
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from urllib import request, error
+          key=os.environ.get('GEMINI_API_KEY','')
+          if not key: raise SystemExit('GOOGLE_SECRET_UNAVAILABLE')
+          models=('gemini-3.8-flash-tts','gemini-3.8-flash-lite-tts',
+                  'gemini-3.1-flash-tts-preview','gemini-2.5-flash-preview-tts',
+                  'gemini-2.5-pro-preview-tts')
+          for model in models:
+              url='https://generativelanguage.googleapis.com/v1beta/models/'+model
+              q=request.Request(url,headers={'x-goog-api-key':key,'Accept':'application/json'})
+              try:
+                  with request.urlopen(q,timeout=18) as resp:
+                      info=json.load(resp)
+                      print('GOOGLE_MODEL_GET',model,resp.status,
+                            'supported_actions=',info.get('supportedGenerationMethods',[]))
+              except error.HTTPError as e:
+                  print('GOOGLE_MODEL_GET',model,e.code,'no request body exposed')
+              except (error.URLError,TimeoutError):
+                  print('GOOGLE_MODEL_GET',model,'network_unavailable')
+          print('NO_AUDIO_GENERATION_NO_PAID_MODEL_REQUESTS')
+          PY
