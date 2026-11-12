@@ -161,7 +161,7 @@ def main():
          "-safe","0","-f","concat","-i",script,
          "-ss","30","-i",audio,
          "-filter_complex",f"[0:v]fps={FPS},scale={W}:{H},format=yuv420p[v];"
-         f"[1:a]afade=t=in:st=0:d=.8,"
+         f"[1:a]afade=t=in:st=0:d=0.8,"
          f"afade=t=out:st={max(1,total-2.2):.2f}:d=2,"
          f"loudnorm=I=-17:TP=-2:LRA=8[a]",
          "-map","[v]","-map","[a]","-t",str(total),
