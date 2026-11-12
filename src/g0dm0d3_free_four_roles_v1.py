@@ -112,11 +112,15 @@ def _request_free(model, prompt, key, *, transport=None):
             "messages": [{"role": "system", "content": SYSTEM},
                          {"role": "user", "content": prompt}],
             "temperature": 0.45, "max_tokens": MAX_OUTPUT_TOKENS,
-            "reasoning": {"enabled": False},
             "stream": False,
             "usage": {"include": True},
             "provider": {"allow_fallbacks": False,
                          "max_price": {"prompt": 0, "completion": 0}}}
+    # NVIDIA free endpoint may spend the short output window on reasoning.
+    # Baidu's endpoint rejected a cross-provider reasoning override with HTTP 400
+    # during the first real board; keep its native defaults until separately tested.
+    if model == "nvidia/nemotron-3.5-lightning:free":
+        body["reasoning"] = {"enabled": False}
     req = request.Request(
         "https://openrouter.ai/api/v1/chat/completions",
         method="POST",
