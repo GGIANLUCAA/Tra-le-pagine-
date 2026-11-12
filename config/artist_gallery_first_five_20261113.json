@@ -1,0 +1,218 @@
+{
+  "schema": "artist-gallery-first-five-v1",
+  "owner_instruction": "Produce five separate private-revision artist gallery reels inspired by user-approved Evelyn De Morgan video; not ArtVision 4x1",
+  "benchmark": {
+    "artist": "Evelyn De Morgan",
+    "mp4_sha256": "12a29832b5326910b062a30559c6ea67e66d04d8049ae16c167fd11f2b828542",
+    "approved_for": "artistic direction and music only"
+  },
+  "production": {
+    "sequence": "one artist at a time to avoid provider rate limits and prevent duplicate billed work",
+    "minimum_distinct_works": 6,
+    "preferred_distinct_works": 9,
+    "full_artwork_fraction_min": 0.65,
+    "seconds_range": [
+      40,
+      57
+    ],
+    "fps": 25,
+    "resolution": [
+      720,
+      1280
+    ],
+    "budget_paid_api_calls": 0,
+    "publish": false,
+    "status": "CANDIDATE_PREPRODUCTION",
+    "critical": "Never claim an MP4 created unless the bytes exist and QA passes. All image rights require per-file evidence and commercial publication remains blocked."
+  },
+  "source_policy": "Only verified licensed/public-domain Commons files with readable original pixels and correct creator. No AI generated substitute or unverified cover.",
+  "music_policy": "Official Kevin MacLeod CC BY 4.0 catalogue; downloaded file must pass FFprobe and SHA256 at actual use. Credits in social text and ZIP. Tracks not yet listened or approved.",
+  "profiles": [
+    {
+      "slug": "waterhouse",
+      "artist": "John William Waterhouse",
+      "public_title": "Women of Myth",
+      "target_seconds": 50,
+      "visual_promise": "A journey between mythological women, water and the decisive gesture",
+      "moods": [
+        "dreamlike",
+        "romantic",
+        "mystical"
+      ],
+      "music": {
+        "title": "Dreams Become Real",
+        "id": "dreams_become_real",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dreams%20Become%20Real.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500027",
+        "isrc": "USUAN1500027"
+      },
+      "hero": "The Lady of Shalott",
+      "works": [
+        "The Lady of Shalott",
+        "Circe Invidiosa",
+        "Hylas and the Nymphs",
+        "The Soul of the Rose",
+        "A Mermaid",
+        "The Magic Circle",
+        "Boreas",
+        "Lamia",
+        "Ophelia",
+        "Ulysses and the Sirens"
+      ],
+      "search_queries": [
+        "John William Waterhouse paintings",
+        "John William Waterhouse Google Art Project"
+      ],
+      "direction": "Start with an expansive water tableau; alternate close expressive gestures with whole compositions; close on a solitary figure in water"
+    },
+    {
+      "slug": "redon",
+      "artist": "Odilon Redon",
+      "public_title": "The World of Dreams",
+      "target_seconds": 47,
+      "visual_promise": "Colors and dream imagery emerging from landscapes and closed eyes",
+      "moods": [
+        "dreamlike",
+        "melancholic",
+        "mysterious"
+      ],
+      "music": {
+        "title": "Evening Fall (Piano)",
+        "id": "evening_fall_piano",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20-%20Piano.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100235",
+        "isrc": "USUAN1100235"
+      },
+      "hero": "The Cyclops",
+      "works": [
+        "The Cyclops",
+        "Closed Eyes",
+        "Ophelia",
+        "The Eye, Like a Strange Balloon",
+        "The Buddha",
+        "The Birth of Venus",
+        "The Golden Cell",
+        "Butterflies",
+        "The Shell",
+        "The Green Death"
+      ],
+      "search_queries": [
+        "Odilon Redon painting",
+        "Odilon Redon art"
+      ],
+      "direction": "Move from luminous flowers to the eye and dream figure, pause fully on the Cyclops, then return to luminous color"
+    },
+    {
+      "slug": "khnopff",
+      "artist": "Fernand Khnopff",
+      "public_title": "The Beauty of Silence",
+      "target_seconds": 49,
+      "visual_promise": "The charged stillness of enigmatic gazes, memory and symbolic animals",
+      "moods": [
+        "mysterious",
+        "noir",
+        "reflective"
+      ],
+      "music": {
+        "title": "Night on the Docks - Piano",
+        "id": "night_on_the_docks_piano",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Night%20on%20the%20Docks.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100135",
+        "isrc": "USUAN1100135"
+      },
+      "hero": "Caresses",
+      "works": [
+        "Caresses",
+        "I lock my door upon myself",
+        "Portrait of Marguerite Khnopff",
+        "Memories",
+        "Hortensia",
+        "Jeanne Kéfer",
+        "Silence",
+        "The Abandoned Town",
+        "Listening to Music by Schumann",
+        "Incense"
+      ],
+      "search_queries": [
+        "Fernand Khnopff painting",
+        "Fernand Khnopff art"
+      ],
+      "direction": "Keep unhurried wide compositions; let the sphinx and portrait gaze become the narrative motif; almost no artificial zoom"
+    },
+    {
+      "slug": "moreau",
+      "artist": "Gustave Moreau",
+      "public_title": "Gods and Visions",
+      "target_seconds": 52,
+      "visual_promise": "A crescendo through myth, gold and intricate symbolism without artificial theatricality",
+      "moods": [
+        "mystical",
+        "dark",
+        "dramatic"
+      ],
+      "music": {
+        "title": "Darkest Child",
+        "id": "darkest_child",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Darkest%20Child.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100783",
+        "isrc": "USUAN1100783"
+      },
+      "hero": "The Apparition",
+      "works": [
+        "The Apparition",
+        "Jupiter and Semele",
+        "Oedipus and the Sphinx",
+        "Galatea",
+        "The Unicorns",
+        "Orpheus",
+        "Prometheus",
+        "Young Man and Death",
+        "Salome",
+        "Hercules and the Lernaean Hydra"
+      ],
+      "search_queries": [
+        "Gustave Moreau painting",
+        "Gustave Moreau art"
+      ],
+      "direction": "Introduce the apparition, pull back through complete detailed canvases, and end with a contemplative whole painting"
+    },
+    {
+      "slug": "stokes",
+      "artist": "Marianne Stokes",
+      "public_title": "Quiet Enchantment",
+      "target_seconds": 46,
+      "visual_promise": "Tender myth and quiet moments in the artist's precise, glowing figures",
+      "moods": [
+        "calm",
+        "tender",
+        "dreamlike"
+      ],
+      "music": {
+        "title": "Calmant",
+        "id": "calmant",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Calmant.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100859",
+        "isrc": "USUAN1100859"
+      },
+      "hero": "The Queen and the Page",
+      "works": [
+        "The Queen and the Page",
+        "On the Way to the Fields",
+        "Primavera",
+        "Madonna and Child",
+        "Sweet Dreams",
+        "Candlemas Day",
+        "An Angel",
+        "St Elizabeth of Hungary Spinning for the Poor",
+        "Schneewittchen",
+        "A Woman of Desze",
+        "Aucassin and Nicolette"
+      ],
+      "search_queries": [
+        "Marianne Stokes painting",
+        "Marianne Stokes art"
+      ],
+      "direction": "Prefer complete paintings and calm image-to-image transitions; no heavy trailer sound or artificial motion"
+    }
+  ]
+}
