@@ -7,7 +7,7 @@ on:
       - ".github/workflows/g0dm0d3-free-four-roles-v1.yml"
       - "docs/G0DM0D3_FREE_MULTIAI_PILOT_20261112.md"
   push:
-    branches: [feature/g0dm0d3-free-multiagent-pilot-20261112]
+    branches: [main]
     paths:
       - "src/g0dm0d3_free_four_roles_v1.py"
       - "tests/test_g0dm0d3_free_four_roles_v1.py"
@@ -89,7 +89,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
-      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENRUTER3 }}
       DO_LIVE: ${{ inputs.execute_free_trial }}
       TOPIC_PUBLIC: ${{ inputs.public_topic }}
       VIDEO_FORMAT: ${{ inputs.format }}
