@@ -1,0 +1,13 @@
+{
+  "schema": "nazca-owner-split-short-Gacrux-one-shot-v1",
+  "episode": "GIULIANO_04_NAZCA",
+  "owner_authorized": true,
+  "action": "recover_benign_archeology_narration",
+  "model": "gemini-3.1-flash-tts-preview",
+  "voice": "Gacrux",
+  "max_new_synthesis_calls": 2,
+  "buy_credits": false,
+  "automatic_retries": false,
+  "publish": false,
+  "reason": "Long-form Nazca archaeology voice responses were filtered SAFETY despite safe script, try two bounded <=150-word parts with no retry and preserve successful audio before the second part"
+}
