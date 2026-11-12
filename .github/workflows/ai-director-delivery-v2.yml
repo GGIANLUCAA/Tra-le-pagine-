@@ -7,13 +7,22 @@ on:
       - "src/ai_director_artifact_fetch_v2.py"
       - "tests/test_ai_director_delivery_v2.py"
       - ".github/workflows/ai-director-delivery-v2.yml"
+      - "src/ai_director_request_v2.py"
+      - ".github/workflows/ai-director-v2-producer-fixture.yml"
+  push:
+    branches: [main]
+    paths:
+      - "requests/ai_director_v2/*.json"
   workflow_run:
     workflows:
       - "ArtVision OWNER | Rheam Sleeping Beauty | new Cinema private review"
+      - "AI Director V2 | producer handoff contract fixture (NO render)"
       - "La Storia Rivive · Venezia 1896 V310 · true post-photo archival motion + QA"
       - "GIULIANO EPISODIO 2 - THE WALKING GIANTS"
+      - "GIULIANO EP2 — WALKING GIANTS FINAL DIRECTOR EDIT"
       - "Giuliano - Terracotta Documentary V2"
       - "GIULIANO 03 | One-shot narration and production (no auto-publish)"
+      - "Regia Umana 1895 — TRUE neural color on existing Vidu clip (FREE, private review)"
     types: [completed]
   workflow_dispatch:
     inputs:
@@ -56,7 +65,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          PYTHONPATH=src python -m py_compile src/ai_director_delivery_v2.py src/ai_director_artifact_fetch_v2.py
+          PYTHONPATH=src python -m py_compile src/ai_director_delivery_v2.py src/ai_director_artifact_fetch_v2.py src/ai_director_request_v2.py
           python -m unittest discover -s tests -p 'test_ai_director_delivery_v2.py' -v
           python -m unittest discover -s tests -p 'test_ai_director_v1.py' -v
           python -m unittest discover -s tests -p 'test_ai_director_bridge_v1.py' -v
@@ -72,6 +81,7 @@ jobs:
   review-real-producer-artifact:
     if: >-
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
       (github.event_name == 'workflow_run' &&
        github.event.workflow_run.conclusion == 'success' &&
        (github.event.workflow_run.event == 'push' ||
@@ -86,6 +96,8 @@ jobs:
       SELECTED_FORMAT: ${{ inputs.video_format || '' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -93,7 +105,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m py_compile src/ai_director_delivery_v2.py src/ai_director_artifact_fetch_v2.py
+          python -m py_compile src/ai_director_delivery_v2.py src/ai_director_artifact_fetch_v2.py src/ai_director_request_v2.py
           python -m unittest discover -s tests -p 'test_ai_director_delivery_v2.py' -q
           if ! command -v ffprobe >/dev/null 2>&1 || ! command -v ffmpeg >/dev/null 2>&1; then
             timeout 150 sudo apt-get update -qq
@@ -107,7 +119,12 @@ jobs:
           assert x['routes']==[] and x['default_deny']
           print('NO_AI_MODEL_CALLS_NO_VIDEO_RENDER')
           PY
+      - name: Validate explicit Android review request in this exact main-branch commit
+        if: github.event_name == 'push'
+        run: |
+          python src/ai_director_request_v2.py --env-output "$GITHUB_ENV"
       - name: Select explicit format and validate run ID without shell interpolation
+        if: github.event_name != 'push'
         shell: bash
         run: |
           set -euo pipefail
@@ -128,6 +145,7 @@ jobs:
           with open(os.environ['GITHUB_ENV'],'a') as f:
               f.write('DIRECTOR_FORMAT='+fmt+'\n')
               f.write('SAFE_RUN_ID='+runid+'\n')
+              f.write('SAFE_ARTIFACT_NAME='+artifact+'\n')
           print('REVIEW_TYPE',fmt,'PRODUCER_RUN',runid)
           PY
       - name: Download one size-capped, completed Actions artifact for read-only diagnostics
@@ -135,7 +153,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           python src/ai_director_artifact_fetch_v2.py \
-            --run-id "$SAFE_RUN_ID" --artifact "$ARTIFACT_NAME" \
+            --run-id "$SAFE_RUN_ID" --artifact "$SAFE_ARTIFACT_NAME" \
             --out output/ai-director-v2-input
       - name: Inspect actual H264/AAC, black intervals, quick cuts and optional source storyboard
         if: success()

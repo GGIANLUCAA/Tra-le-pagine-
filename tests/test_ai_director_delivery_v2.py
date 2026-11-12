@@ -209,5 +209,78 @@ class ArtifactV2Tests(unittest.TestCase):
             self.assertTrue((root / "input" / "VIDEO_ANDROID.mp4").exists())
 
 
+class V2SafeLiveReplayTests(unittest.TestCase):
+    def test_nested_android_package_with_only_valid_media(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            inner_stream = io.BytesIO()
+            data = b"valid-mp4-fixture" * 12
+            with zipfile.ZipFile(inner_stream, "w") as inner:
+                inner.writestr("VIDEO_ANDROID.mp4", data)
+                inner.writestr("COVER.jpg", b"image")
+                inner.writestr("../hijack.mp4", b"bad-media")
+            with zipfile.ZipFile(root / "art.zip", "w") as outer:
+                outer.writestr("ANDROID_PACKAGE.zip", inner_stream.getvalue())
+            out = root / "extract"
+            files = a._unpack(root / "art.zip", out)
+            self.assertEqual(len(files), 1)
+            self.assertEqual(files[0]["contained_in"], "nested_android_package")
+            self.assertEqual(files[0]["sha256"], hashlib.sha256(data).hexdigest())
+            self.assertEqual((out / "VIDEO_ANDROID.mp4").read_bytes(), data)
+            self.assertFalse((root / "hijack.mp4").exists())
+
+    def test_large_direct_file_hashes_streaming(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data = b"data-for-hash" * 430_000
+            with zipfile.ZipFile(root / "artifact.zip", "w") as z:
+                z.writestr("MY_MASTER.mp4", data)
+            found = a._unpack(root / "artifact.zip", root / "extract")
+            self.assertEqual(len(found), 1)
+            self.assertEqual(found[0]["sha256"], hashlib.sha256(data).hexdigest())
+
+    def test_request_rejects_paid_generation_and_bad_artifact(self):
+        import ai_director_request_v2 as rq
+        obj = {"schema": "ai-director-review-request-v1",
+               "producer_run_id": 43212883066,
+               "video_format": "artvision_4x1",
+               "artifact_name": "ARTVISION_OWNER_RHEAM_SLEEPING_BEAUTY_NEW_CINEMA_REVIEW",
+               "publish": False, "external_paid_calls": False}
+        self.assertEqual(rq.validate_request(obj), obj)
+        for change in (
+            {"publish": True}, {"external_paid_calls": True},
+            {"artifact_name": "../danger"}, {"producer_run_id": -1},
+            {"producer_run_id": "43212883066"}, {"video_format": "unauthorized"}):
+            with self.subTest(change=change):
+                with self.assertRaises(ValueError):
+                    rq.validate_request({**obj, **change})
+
+    def test_request_changed_file_stays_inside_expected_directory(self):
+        import ai_director_request_v2 as rq
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            request_path = root / "requests" / "ai_director_v2" / "rheam-review.json"
+            request_path.parent.mkdir(parents=True)
+            obj = {"schema": "ai-director-review-request-v1",
+                   "producer_run_id": 43212883066,
+                   "video_format": "artvision_4x1",
+                   "artifact_name": "ARTVISION_OWNER_RHEAM_SLEEPING_BEAUTY_NEW_CINEMA_REVIEW",
+                   "publish": False, "external_paid_calls": False}
+            request_path.write_text(json.dumps(obj))
+            def mocked_git(*args, **kwargs):
+                class Result:
+                    stdout = "requests/ai_director_v2/rheam-review.json\n"
+                return Result()
+            self.assertEqual(rq.changed_request(root, git=mocked_git), obj)
+            def malicious(*args, **kwargs):
+                class Result:
+                    stdout = "requests/ai_director_v2/../../private.json\n"
+                return Result()
+            with self.assertRaises(ValueError):
+                rq.changed_request(root, git=malicious)
+
+
 if __name__ == "__main__":
     unittest.main()
