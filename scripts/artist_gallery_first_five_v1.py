@@ -32,7 +32,14 @@ W,H,FPS=720,1280,25
 # when license + artist + painting key + pixels pass source validation.
 SEEDS = {
  "waterhouse":["John William Waterhouse The Lady of Shalott.jpg"],
- "redon":[],
+ "redon":["Odilon Redon - The Cyclops, c. 1914.jpg",
+          "Odilon Redon - Closed Eyes - Google Art Project.jpg",
+          "Odilon Redon - Ophelia.JPG",
+          "Redon - Green Death c. 1905.jpg",
+          "Redon - The Black Sun c. 1900.jpg",
+          "Redon - Temptation (c. 1912).jpg",
+          "Redon - Woman Sleeping under a Tree, between 1900 and 1901.jpg",
+          "Redon - Fantasia, ca. 1910.jpg"],
  "khnopff":["Fernand Khnopff - Caresses - Google Art Project.jpg",
             "I lock my door upon myself Fernand Khnopff 1891.jpg"],
  "moreau":["The Apparition, Gustave Moreau 1876.jpg"],
