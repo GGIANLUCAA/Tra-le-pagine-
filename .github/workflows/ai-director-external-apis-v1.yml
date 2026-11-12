@@ -1,128 +1,123 @@
-name: "AI Director API V1 | Europeana search and connector safety"
+name: "AI Director | Keyless archives & Android research reports"
 
 on:
   pull_request:
     paths:
+      - "src/ai_director_keyless_archives_v1.py"
       - "src/ai_director_external_apis_v1.py"
-      - "src/ai_director_europeana_bridge_v1.py"
+      - "tests/test_ai_director_keyless_archives_v1.py"
       - "tests/test_ai_director_external_apis_v1.py"
-      - "config/ai_director_external_api_v1.json"
       - ".github/workflows/ai-director-external-apis-v1.yml"
       - "docs/AI_DIRECTOR_API_CONNECTORS_V1.md"
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
+      - "src/ai_director_keyless_archives_v1.py"
       - "src/ai_director_external_apis_v1.py"
-      - "src/ai_director_europeana_bridge_v1.py"
+      - "tests/test_ai_director_keyless_archives_v1.py"
       - "tests/test_ai_director_external_apis_v1.py"
       - ".github/workflows/ai-director-external-apis-v1.yml"
   workflow_dispatch:
     inputs:
-      mode:
-        description: "Safe mode"
+      category:
+        description: "Subject category, or general research"
         type: choice
         required: true
-        default: dry_run
-        options:
-          - dry_run
-          - europeana
+        default: historical_video
+        options: [historical_video, historical_photo, art, general]
       query:
-        description: "Public historic artwork / archive query (no personal info)"
-        required: false
+        description: "Public research keywords; no private data"
+        required: true
+        type: string
         default: "Venice 1896"
-      limit:
-        description: "Maximum results"
+      provider:
+        description: "Auto chooses up to three keyless museums/archives; otherwise one"
+        type: choice
+        default: auto
+        required: true
+        options: [auto, loc, archive, commons, artic, met, cleveland, wellcome]
+      per_provider:
+        description: "Maximum candidate results per source (not bulk download)"
         type: choice
         required: true
-        default: "5"
-        options: ["3", "5", "8"]
+        default: "2"
+        options: ["1", "2", "3"]
       execute:
-        description: "Allow ONE read-only Europeana catalogue API request"
+        description: "Make public read-only API calls (NO keys, NO paid AI, NO downloads)"
         type: boolean
-        default: false
         required: true
+        default: true
 
 permissions:
   contents: read
 
 concurrency:
-  group: ai-director-apis-${{ github.ref }}
+  group: ai-director-keyless-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   offline-regression:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 7
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Run no-network connector regression tests
+          python-version: "3.11"
+      - name: Offline regressions, no API requests or secrets
         run: |
           set -euo pipefail
-          python -m py_compile src/ai_director_external_apis_v1.py src/ai_director_europeana_bridge_v1.py tests/test_ai_director_external_apis_v1.py
+          python -m py_compile src/ai_director_keyless_archives_v1.py src/ai_director_external_apis_v1.py
+          python -m unittest discover -s tests -p 'test_ai_director_keyless_archives_v1.py' -v
           python -m unittest discover -s tests -p 'test_ai_director_external_apis_v1.py' -v
           python - <<'PY'
           import json
-          data=json.load(open('config/ai_director_external_api_v1.json'))
-          assert data['default_deny'] and data['routes']==[]
-          original=json.load(open('config/free_llm_zero_cost_v1.json'))
-          assert original['default_deny'] and original['routes']==[]
-          print('PASS: all live vision/transcription/model routes disabled')
+          assert json.load(open("config/ai_director_external_api_v1.json"))["routes"] == []
+          assert json.load(open("config/free_llm_zero_cost_v1.json"))["routes"] == []
+          print("PASS: no charged inference and no Europeana key used")
           PY
-  europeana-manual:
+  research-and-android-report:
     if: github.event_name == 'workflow_dispatch'
     needs: offline-regression
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6
     env:
-      MODE: ${{ inputs.mode }}
-      PUBLIC_QUERY: ${{ inputs.query }}
-      MAX_ITEMS: ${{ inputs.limit }}
+      CATEGORY: ${{ inputs.category }}
+      QUERY: ${{ inputs.query }}
+      SELECTED_PROVIDER: ${{ inputs.provider }}
+      PER_PROVIDER: ${{ inputs.per_provider }}
       EXECUTE: ${{ inputs.execute == true && '1' || '0' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Search Europeana with single opt-in request, or dry-run
-        env:
-          EUROPEANA_API_KEY: ${{ secrets.EUROPEANA_API_KEY }}
+          python-version: "3.11"
+      - name: Keyless source scout, no media upload/download
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p output/ai_director_apis
-          if [ "$MODE" = "europeana" ]; then
-            args=(--mode europeana --query "$PUBLIC_QUERY" --limit "$MAX_ITEMS")
-            if [ "$EXECUTE" = "1" ]; then
-              if [ -z "$EUROPEANA_API_KEY" ]; then
-                echo "EUROPEANA_API_KEY missing in repository secrets"
-                exit 2
-              fi
-              args+=(--execute)
-            fi
+          args=(--category "$CATEGORY" --query "$QUERY" --per-provider "$PER_PROVIDER")
+          if [ "$SELECTED_PROVIDER" != "auto" ]; then
+            args+=(--provider "$SELECTED_PROVIDER")
+          fi
+          if [ "$EXECUTE" = "1" ]; then
+            args+=(--execute)
+          fi
+          if [ "$CATEGORY" = "art" ]; then
+            format="artvision_4x1"
+          elif [ "$CATEGORY" = "historical_video" ] || [ "$CATEGORY" = "historical_photo" ]; then
+            format="storia_rivive"
           else
-            if [ "$EXECUTE" = "1" ]; then
-              echo "execute requires europeana mode"; exit 2
-            fi
-            args=(--mode inventory)
+            format="documentario"
           fi
-          python src/ai_director_external_apis_v1.py \
-            "${args[@]}" --output output/ai_director_apis/REPORT.json
-          if [ "$MODE" = "europeana" ] && [ "$EXECUTE" = "1" ]; then
-            python src/ai_director_europeana_bridge_v1.py \
-              --input output/ai_director_apis/REPORT.json \
-              --subject "$PUBLIC_QUERY" \
-              --output output/ai_director_apis/DIRECTOR_BRIEF.json \
-              --report-dir output/ai_director_apis/director
-          fi
-      - name: Attach read-only candidates for Android
+          python src/ai_director_keyless_archives_v1.py \
+            "${args[@]}" --format "$format" \
+            --output output/ai_director_archives_v1
+      - name: Android research and AI Director report
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: AI_DIRECTOR_API_RESEARCH_${{ github.run_id }}
-          path: output/ai_director_apis/
-          retention-days: 7
+          name: AI_DIRECTOR_KEYLESS_SOURCES_${{ github.run_id }}
+          path: output/ai_director_archives_v1/
+          retention-days: 14
           if-no-files-found: error
