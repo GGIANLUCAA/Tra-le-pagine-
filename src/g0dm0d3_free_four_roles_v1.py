@@ -46,6 +46,10 @@ GUIDANCE = {
 # Scene cuts use ASR interpolation (matched words 261/283); they are NOT
 # frame-accurate visual content verification and do not certify rights.
 ANTIKYTHERA_VERIFIED_TIMING = (
+    "AUDIO ORIGINALE INALTERABILE: scena 1 0-7,61 s 'Nel 1900 alcuni pescatori "
+    "di spugne scoprono un relitto'; scena 2 7,61-14,16 s 'L'anno seguente, "
+    "dal fondo del mare emerge un blocco di bronzo'. Non mettere 1901 nella "
+    "scena di apertura e non attribuire nuove parole alla voce già registrata. "
     "CONTESTO DAL MASTER REALE: durata voce 126,12 s; 20 scene; allineamento ASR "
     "261/283 parole (92,2%), transizioni ancora da giudicare visivamente. "
     "0-7,61 s relitto foto; 7,61-19,26 s frammento A ripetuto in 2 scene; "
@@ -126,15 +130,19 @@ def attest_live_free_models(catalogue, names=MODELS):
             "billing_disabled_on_account_verified": False}
 
 
-def _request_free(model, prompt, key, *, transport=None):
+def _request_free(model, prompt, key, *, transport=None, max_output_tokens=None):
     if model not in MODELS or not model.endswith(":free"):
         raise FreeOnlyError("Only approved pinned free models")
     if not 40 < len(prompt) <= 6500:
         raise FreeOnlyError("Prompt length is outside safe pilot range")
+    if max_output_tokens is None:
+        max_output_tokens = MAX_OUTPUT_TOKENS
+    if type(max_output_tokens) is not int or not 100 <= max_output_tokens <= 2600:
+        raise FreeOnlyError("Output-token ceiling outside 100..2600")
     body = {"model": model,
             "messages": [{"role": "system", "content": SYSTEM},
                          {"role": "user", "content": prompt}],
-            "temperature": 0.45, "max_tokens": MAX_OUTPUT_TOKENS,
+            "temperature": 0.45, "max_tokens": max_output_tokens,
             "stream": False,
             "usage": {"include": True},
             "provider": {"allow_fallbacks": False,
