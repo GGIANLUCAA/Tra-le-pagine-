@@ -1,0 +1,76 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-12",
+  "title": "Cliff Dwellers",
+  "artist": "George Bellows",
+  "year": 1913,
+  "variant": "cinema_standard",
+  "status": "ONE_NEW_REAL_MP4_TWO_BITRATES_GITHUB_INDEPENDENT_QA_AND_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+  "run_id": 43183730167,
+  "artifact_id": 13926928051,
+  "original_artwork": {
+    "museum": "Los Angeles County Museum of Art",
+    "accession": "16.4",
+    "object": "https://collections.lacma.org/object/11398",
+    "commons": "https://commons.wikimedia.org/wiki/File:George_Bellows_-_Cliff_Dwellers_(1913).jpg",
+    "source_pixels": [
+      5588,
+      5316
+    ],
+    "source_bytes": 8298747,
+    "source_sha1": "10c589ab9539c0db891c9e3546d524464ea9d5fe",
+    "source_sha256": "3178d87cdc6ec02d8f7b61679043d9a71b0c396d3ab4ce94bdc913fb9f633ced",
+    "photo_reuse": "Faithful PD-Art original; territorial/museum commercial rights review pending"
+  },
+  "production": {
+    "duration_seconds": 51.2916666667,
+    "fps": 24,
+    "frames": 1231,
+    "scenes": 12,
+    "hd_name": "ARTVISION_BELLOWS_CLIFF_DWELLERS_CINEMA_HD_REVIEW.mp4",
+    "hd_bytes": 18980615,
+    "hd_sha256": "0143c5377c84d7fd77f85a4793cc84ccd7959c9a5ac0c8d4cec47e7adc64a32b",
+    "android_name": "ARTVISION_BELLOWS_CLIFF_DWELLERS_CINEMA_ANDROID_REVIEW.mp4",
+    "android_bytes": 5958394,
+    "android_sha256": "1ada38ff3e6b7a770e52c104b53b65f59ba529f1e2aa86827d8894c289f69e0c",
+    "zip_name": "ARTVISION_BELLOWS_CLIFF_DWELLERS_ANDROID_PACKAGE.zip",
+    "zip_sha256": "b791d13c4e195f93a4946a073886bb9e9547d49a951a8afacfd6424906a29b5b",
+    "music": "Original warm synthetic plucked notes, nonrepeating"
+  },
+  "qa": {
+    "github_render_job": "PASS",
+    "github_independent_job": "PASS",
+    "full_ffmpeg_both_mp4": "PASS",
+    "original_source_sha1": "PASS",
+    "zip_crc": "PASS",
+    "library_physical_readback": "PASS",
+    "contact_sheet": "INSPECTED",
+    "full_speed_owner_artistic_review": "PENDING",
+    "territorial_commercial_reuse": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_api_calls": 0
+  },
+  "library": {
+    "hd": "libfile_60892ebf7d688191a668a644ad4c055a",
+    "android": "libfile_c67138f4094c81919cb2dcb4502b0be7",
+    "zip": "libfile_96d34571026c819195149d35ecdea81d",
+    "full": "libfile_8297dd480cdc8191b40ace77f446fbfc",
+    "two_new_videos_batch": "libfile_4d1ec69976648191b108f17b93d98ec1"
+  },
+  "batch": {
+    "filename": "ARTVISION_2_NUOVI_CINEMA_ANDROID_20261112_GIOVEDI.zip",
+    "size_bytes": 13434589,
+    "sha256": "630a2c4fd5a2ea16f6132cae62e15eabbfb58f8419c3c7ad9f6b35fe9537d762",
+    "paintings": [
+      "The Witches' Flight",
+      "Cliff Dwellers"
+    ]
+  },
+  "queue_effect": {
+    "second_selection_distinct_cinema_total_at_checkpoint": 18,
+    "first_ten_queue_unchanged": "26/36",
+    "new_gold_count": 0
+  },
+  "next": "Preserve new Bellows and Goya cinema previews, do not rerender as new slots. Continue next independent selected painting when exact source and rights verified. No automatic publication."
+}
