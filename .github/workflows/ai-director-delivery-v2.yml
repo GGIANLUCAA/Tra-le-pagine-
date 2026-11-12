@@ -8,6 +8,7 @@ on:
       - "tests/test_ai_director_delivery_v2.py"
       - ".github/workflows/ai-director-delivery-v2.yml"
       - "src/ai_director_request_v2.py"
+      - ".github/workflows/ai-director-v2-producer-fixture.yml"
   push:
     branches: [main]
     paths:
@@ -15,6 +16,7 @@ on:
   workflow_run:
     workflows:
       - "ArtVision OWNER | Rheam Sleeping Beauty | new Cinema private review"
+      - "AI Director V2 | producer handoff contract fixture (NO render)"
       - "La Storia Rivive · Venezia 1896 V310 · true post-photo archival motion + QA"
       - "GIULIANO EPISODIO 2 - THE WALKING GIANTS"
       - "GIULIANO EP2 — WALKING GIANTS FINAL DIRECTOR EDIT"
