@@ -1,0 +1,316 @@
+{
+  "schema": "giuliano-antikythera-episode-v1",
+  "series": "GIULIANO",
+  "episode": 3,
+  "title": "THE ANCIENT COMPUTER",
+  "format": "documentario",
+  "target_duration_seconds": 140,
+  "estimated_visual_duration_seconds": 140.006,
+  "language": "it",
+  "status": "preproduction_source_validation_pending",
+  "publication_allowed": false,
+  "external_paid_calls_allowed": false,
+  "ai_director": "src/ai_director_v1.py (offline regista/critico/QA), non G0DM0D3 multi-provider billed",
+  "scientific_sources": [
+    {
+      "url": "https://www.antikythera-mechanism.gr/project/overview",
+      "claim": "incontro meccanismo relitto, funzioni astronomiche"
+    },
+    {
+      "url": "https://www.nature.com/articles/s41550-017-0347-2",
+      "claim": "discovery 1900, recovered 1901, calendar and astronomy"
+    },
+    {
+      "url": "https://www.nature.com/articles/s41598-021-84310-w",
+      "claim": "front planets conceptual model, research animation; reconstruction hypothesis"
+    },
+    {
+      "url": "https://isaw.nyu.edu/research/antikythera-mechanism",
+      "claim": "reperti conservati ad Atene; cosa sappiamo e cosa resta ipotetico"
+    },
+    {
+      "url": "https://antikythera-mechanism.namuseum.gr/en/what-is-the-mechanism-and-what-does-it-consist-of/",
+      "claim": "Metonic 19 years/235 lunar months and Saros 223 lunar months"
+    }
+  ],
+  "assets": [
+    {
+      "id": "wreck1900",
+      "file": "Antikes Wrack von Antikythera 02.jpg",
+      "kind": "image",
+      "expect": "Public domain",
+      "subject": "autentica fotografia della ricerca subacquea 1900-1901, non ricostruzione"
+    },
+    {
+      "id": "wreckmuseum",
+      "file": "Statue of a youth-Antikythera wreck-NAMA 5744.jpg",
+      "kind": "image",
+      "expect": "CC BY-SA 4.0",
+      "subject": "statua di marmo effettivamente recuperata nel relitto di Anticitera, fotografata nel museo (2024)"
+    },
+    {
+      "id": "front",
+      "file": "Antikythera Fragment A (Front).webp",
+      "kind": "image",
+      "expect": "CC BY-SA 4.0",
+      "subject": "frammento A autentico, lato anteriore"
+    },
+    {
+      "id": "back",
+      "file": "Antikythera Fragment A (Back).webp",
+      "kind": "image",
+      "expect": "CC BY-SA 4.0",
+      "subject": "frammento A autentico, lato posteriore"
+    },
+    {
+      "id": "fragb",
+      "file": "Antikythera Fragment B (Front).webp",
+      "kind": "image",
+      "expect": "CC BY-SA 4.0",
+      "subject": "frammento B autentico"
+    },
+    {
+      "id": "fragc",
+      "file": "Antikythera Fragment C (Front).webp",
+      "kind": "image",
+      "expect": "CC BY-SA 4.0",
+      "subject": "frammento C autentico"
+    },
+    {
+      "id": "fragd",
+      "file": "Antikythera Fragment D (Front).webp",
+      "kind": "image",
+      "expect": "CC BY-SA 4.0",
+      "subject": "frammento D autentico"
+    },
+    {
+      "id": "scientific-gears",
+      "file": "41598 2021 84310 MOESM2 ESM.ogv",
+      "kind": "video",
+      "expect": "CC BY 4.0",
+      "subject": "animazione scientifica Freeth et al. 2021, modello non reperto"
+    },
+    {
+      "id": "scientific-dials",
+      "file": "41598 2021 84310 MOESM3 ESM.ogv",
+      "kind": "video",
+      "expect": "CC BY 4.0",
+      "subject": "animazione scientifica Freeth et al. 2021, modello non reperto"
+    },
+    {
+      "id": "verified-2026-gears",
+      "file": "antikythera.mp4",
+      "kind": "video",
+      "expect": "CC BY 4.0",
+      "subject": "2026 3D research reconstruction; not actual ancient mechanism video",
+      "direct_url": "https://raw.githubusercontent.com/taciclei/antikythera-mechanism/main/build/out/renders/antikythera.mp4",
+      "license_page": "https://raw.githubusercontent.com/taciclei/antikythera-mechanism/main/LICENSE-MEDIA.md",
+      "source_page": "https://github.com/taciclei/antikythera-mechanism",
+      "fallback_only": true
+    },
+    {
+      "id": "verified-2026-exploded",
+      "file": "antikythera_eclate.mp4",
+      "kind": "video",
+      "expect": "CC BY 4.0",
+      "subject": "2026 3D exploded reconstruction; hypothetical parts explicit",
+      "direct_url": "https://raw.githubusercontent.com/taciclei/antikythera-mechanism/main/build/out/renders/antikythera_eclate.mp4",
+      "license_page": "https://raw.githubusercontent.com/taciclei/antikythera-mechanism/main/LICENSE-MEDIA.md",
+      "source_page": "https://github.com/taciclei/antikythera-mechanism",
+      "fallback_only": true
+    }
+  ],
+  "scenes": [
+    {
+      "scene": 1,
+      "narration": "Nel 1900, alcuni pescatori di spugne scoprono un relitto al largo dell'isola greca di Anticitera.",
+      "asset_id": "wreck1900",
+      "estimated_seconds": 6.203,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 2,
+      "narration": "L'anno seguente, dal fondo del mare emerge anche un blocco di bronzo, scuro e corroso.",
+      "asset_id": "front",
+      "estimated_seconds": 6.203,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 3,
+      "narration": "Nessuno, guardandolo, potrebbe immaginare che cosa nasconda al suo interno.",
+      "asset_id": "front",
+      "estimated_seconds": 5.316,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 4,
+      "narration": "Tra i tanti oggetti recuperati, un pezzo di metallo così scuro avrebbe potuto passare inosservato.",
+      "asset_id": "wreckmuseum",
+      "estimated_seconds": 6.203,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 5,
+      "narration": "Poi qualcuno nota un dettaglio minuscolo. Dentro il metallo ci sono denti di ingranaggi.",
+      "asset_id": "front",
+      "estimated_seconds": 7.089,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 6,
+      "narration": "Non si tratta di un orologio moderno: questa macchina fu costruita oltre duemila anni fa.",
+      "asset_id": "back",
+      "estimated_seconds": 6.203,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 7,
+      "narration": "Il frammento più grande conserva una parte della meccanica originale. Possiamo ancora osservarla.",
+      "asset_id": "front",
+      "estimated_seconds": 7.089,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 8,
+      "narration": "Le ruote superstiti non bastano, da sole, a ricostruire tutta la macchina.",
+      "asset_id": "fragb",
+      "estimated_seconds": 5.316,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 9,
+      "narration": "Per capirla, i ricercatori hanno studiato le iscrizioni e l'interno del bronzo con i raggi X.",
+      "asset_id": "fragd",
+      "estimated_seconds": 7.089,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 10,
+      "narration": "Le analisi moderne rivelano connessioni che nel bronzo corroso non si distinguono a occhio nudo.",
+      "asset_id": "fragc",
+      "estimated_seconds": 7.975,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 11,
+      "narration": "Il risultato è sorprendente: la macchina poteva rappresentare cicli del Sole e della Luna.",
+      "asset_id": "scientific-gears",
+      "estimated_seconds": 7.975,
+      "shot_type": "licensed_research_animation",
+      "visual_direction": "Far vedere le parti descritte; dicitura discreta 'RICOSTRUZIONE SCIENTIFICA'.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 12,
+      "narration": "Girando una manovella, si mettevano in movimento ruote dentate collegate tra loro.",
+      "asset_id": "scientific-gears",
+      "estimated_seconds": 7.089,
+      "shot_type": "licensed_research_animation",
+      "visual_direction": "Far vedere le parti descritte; dicitura discreta 'RICOSTRUZIONE SCIENTIFICA'.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 13,
+      "narration": "I quadranti permettevano di seguire il calendario. Sul retro c'erano scale disposte a spirale.",
+      "asset_id": "scientific-dials",
+      "estimated_seconds": 7.975,
+      "shot_type": "licensed_research_animation",
+      "visual_direction": "Far vedere le parti descritte; dicitura discreta 'RICOSTRUZIONE SCIENTIFICA'.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 14,
+      "narration": "Uno dei cicli copriva diciannove anni, utile a mettere in relazione mesi lunari e calendario solare.",
+      "asset_id": "scientific-dials",
+      "estimated_seconds": 7.975,
+      "shot_type": "licensed_research_animation",
+      "visual_direction": "Far vedere le parti descritte; dicitura discreta 'RICOSTRUZIONE SCIENTIFICA'.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 15,
+      "narration": "Un altro aiutava a prevedere le eclissi attraverso una ripetizione di duecentoventitré mesi lunari.",
+      "asset_id": "scientific-dials",
+      "estimated_seconds": 7.975,
+      "shot_type": "licensed_research_animation",
+      "visual_direction": "Far vedere le parti descritte; dicitura discreta 'RICOSTRUZIONE SCIENTIFICA'.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 16,
+      "narration": "Le ricerche moderne propongono anche un possibile sistema per mostrare il movimento dei pianeti.",
+      "asset_id": "scientific-gears",
+      "estimated_seconds": 7.975,
+      "shot_type": "licensed_research_animation",
+      "visual_direction": "Far vedere le parti descritte; dicitura discreta 'RICOSTRUZIONE SCIENTIFICA'.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 17,
+      "narration": "Ma questa parte non è una certezza: molti ingranaggi mancano, e le ricostruzioni restano ipotesi.",
+      "asset_id": "back",
+      "estimated_seconds": 7.089,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 18,
+      "narration": "Il meccanismo originale si trova oggi al Museo Archeologico Nazionale di Atene, diviso in frammenti.",
+      "asset_id": "fragc",
+      "estimated_seconds": 7.089,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 19,
+      "narration": "Guardandoli da vicino, si distinguono ancora piccoli denti nel bronzo consumato.",
+      "asset_id": "front",
+      "estimated_seconds": 6.203,
+      "shot_type": "authentic_source_image",
+      "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
+      "source_claim_verified": false
+    },
+    {
+      "scene": 20,
+      "narration": "Erano abbastanza precisi da trasformare un movimento della mano in un calendario del cielo.",
+      "asset_id": "scientific-gears",
+      "estimated_seconds": 7.975,
+      "shot_type": "licensed_research_animation",
+      "visual_direction": "Far vedere le parti descritte; dicitura discreta 'RICOSTRUZIONE SCIENTIFICA'.",
+      "source_claim_verified": false
+    }
+  ],
+  "notes": [
+    "Durate provvisorie. Il montaggio definitivo deve usare allineamento sulla voce reale, non ripartizione per caratteri.",
+    "Ogni asset va verificato mediante pagina Commons originale e metadati licenza reali prima dell'uso.",
+    "Niente musica non documentata. Nessun TTS a pagamento avviato automaticamente.",
+    "Il video di studio 2021 è un'animazione, NON un filmato del meccanismo antico in funzione.",
+    "Rieseguire QA sui fotogrammi del MP4 esportato e una vera revisione artistica.",
+    "The 140-second total is a duration TARGET, not validated TTS timing. Following narration recording, all scene boundaries must be measured and adjusted to audio.",
+    "GitHub taciclei model sources serve as fallback only; 2026 digital hypothetical reconstruction, not actual ancient machine or footage.",
+    "Wreckmuseum is a historic sculpture from wreck, not the mechanim; for narration about the bronze gear object use fragment photo instead. Full video must keep attribution CC BY-SA in credits.",
+    "Final voice script rephrases items without photographic proof of specific statues and CT frame. When narration mentions X-rays, use didactic illustration explicitly labelled as such if original CT photo isn't licensed."
+  ]
+}

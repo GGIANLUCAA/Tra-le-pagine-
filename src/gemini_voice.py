@@ -34,9 +34,19 @@ def _sha(path):
             h.update(block)
     return h.hexdigest()
 
+def chosen_tts_model():
+    override = os.environ.get("GEMINI_TTS_MODEL_OVERRIDE", "").strip()
+    if override not in ("", "gemini-3.1-flash-tts-preview"):
+        raise RuntimeError("Unapproved TTS model override")
+    return override or MODEL
+
+
 def voice_profile():
-    return {"provider": "Google Gemini", "model": MODEL, "voice": VOICE,
-            "style": STYLE, "sample_rate": SAMPLE_RATE, "cache_version": 1}
+    transport = ("generate_content_v1beta" if os.environ.get("GEMINI_TTS_USE_GENERATE_CONTENT") == "1"
+                 else "interactions")
+    return {"provider": "Google Gemini", "model": chosen_tts_model(), "voice": VOICE,
+            "style": STYLE, "sample_rate": SAMPLE_RATE, "transport": transport,
+            "cache_version": 1}
 
 def cache_key(text):
     value = {"spoken": speech_directed(text), "profile": voice_profile()}
@@ -230,31 +240,72 @@ def synthesize(text,outdir):
     from google import genai
     spoken=speech_directed(text)
     print("Genero un'unica recitazione italiana completa con pause interpretative.",flush=True)
-    client=genai.Client(api_key=key)
-    interaction=client.interactions.create(
-        model=MODEL,
-        input=[{
-            "type":"user_input",
-            "content":[{
-                "type":"text",
-                "text":spoken,
-                "annotations":[{
-                    "type":"speech_metadata",
-                    "style":STYLE
+    if os.environ.get("GEMINI_TTS_USE_GENERATE_CONTENT") == "1":
+        from google.genai import types
+        # Gemini 3.1 preview TTS is exposed on v1beta, NOT the SDK's v1.
+        client=genai.Client(api_key=key, http_options=types.HttpOptions(api_version="v1beta"))
+    else:
+        client=genai.Client(api_key=key)
+    if os.environ.get("GEMINI_TTS_USE_GENERATE_CONTENT") == "1":
+        # This is the documented endpoint for Gemini 3.1 TTS:
+        # https://ai.google.dev/gemini-api/docs/generate-content/speech-generation
+        # Never infer accessibility solely from models.list(), which omits
+        # audio models for some API keys: model GET was explicitly checked.
+        from google.genai import types
+        if chosen_tts_model() != "gemini-3.1-flash-tts-preview":
+            raise RuntimeError("Only documented 3.1 model may use legacy generate_content TTS")
+        response=client.models.generate_content(
+            model=chosen_tts_model(),
+            contents=("Leggi esattamente il testo seguente in italiano, con voce "
+                      "maschile matura e naturale, tono di documentario, ritmo "
+                      "variabile ma senza teatralità, niente parole aggiunte. "
+                      "TESTO DA LEGGERE:\n"+spoken),
+            config=types.GenerateContentConfig(
+                response_modalities=["AUDIO"],
+                speech_config=types.SpeechConfig(
+                    voice_config=types.VoiceConfig(
+                        prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                            voice_name=VOICE)))))
+        try:
+            b=response.candidates[0].content.parts[0].inline_data.data
+        except (AttributeError, IndexError, TypeError):
+            raise RuntimeError("Gemini generateContent did not return audio") from None
+        if not b:
+            raise RuntimeError("Gemini generateContent returned empty audio")
+        if isinstance(b,str):
+            b=base64.b64decode(b)
+        # Official TTS generateContent returns raw little-endian PCM 24kHz/16bit.
+        # This is NOT a WAV container: sf.read(io.BytesIO(b)) would fail.
+        if len(b)%2 or len(b)<SAMPLE_RATE*2:
+            raise RuntimeError("Returned raw PCM audio invalid or too short")
+        data=np.frombuffer(b,dtype="<i2").astype(np.float32)/32768.0
+        sr=SAMPLE_RATE
+        print("GOOGLE_GACRUX_GENERATE_CONTENT_PCM_RECEIVED",len(data)/sr,"seconds",flush=True)
+    else:
+        interaction=client.interactions.create(
+            model=chosen_tts_model(),
+            input=[{
+                "type":"user_input",
+                "content":[{
+                    "type":"text",
+                    "text":spoken,
+                    "annotations":[{
+                        "type":"speech_metadata",
+                        "style":STYLE
+                    }]
                 }]
-            }]
-        }],
-        response_format={"type":"audio"},
-        generation_config={"speech_config":[{"voice":VOICE}]},
-    )
-    if not interaction.output_audio or not interaction.output_audio.data:
-        raise RuntimeError("Gemini TTS non ha restituito audio")
-    b=interaction.output_audio.data
-    if isinstance(b,str):
-        b=base64.b64decode(b)
-    data,sr=sf.read(io.BytesIO(b),dtype="float32")
-    if data.ndim==2:
-        data=data.mean(axis=1)
+            }],
+            response_format={"type":"audio"},
+            generation_config={"speech_config":[{"voice":VOICE}]},
+        )
+        if not interaction.output_audio or not interaction.output_audio.data:
+            raise RuntimeError("Gemini TTS non ha restituito audio")
+        b=interaction.output_audio.data
+        if isinstance(b,str):
+            b=base64.b64decode(b)
+        data,sr=sf.read(io.BytesIO(b),dtype="float32")
+        if data.ndim==2:
+            data=data.mean(axis=1)
     if sr!=SAMPLE_RATE:
         from scipy.signal import resample_poly
         import math
@@ -276,7 +327,7 @@ def synthesize(text,outdir):
     timed=align(sentences(text),path,duration)
     _save_voice_cache(text, outdir, timed)
     (outdir/"INFO_VOCE_GEMINI.txt").write_text(
-        "Motore: Gemini 3.8 Flash TTS. Profilo narratore maturo Gacrux.\n"
+        f"Motore: {chosen_tts_model()} ({voice_profile()['transport']}). Profilo narratore maturo Gacrux.\n"
         "Testo recitato in unica sessione, pause naturali dirette.\n"
         "Allineamento parole con Whisper base, fallback proporzionale.\n"
         "L'utilizzo dell'API segue quote e condizioni Google AI Studio.\n",
