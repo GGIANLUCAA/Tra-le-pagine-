@@ -47,7 +47,9 @@ class _SafeArtifactRedirect(urllib.request.HTTPRedirectHandler):
             new_host = urllib.parse.urlsplit(newurl).hostname
             if new_host != old_host:
                 redirect.remove_header("Authorization")
-                redirect.remove_unredirected_header("Authorization")
+                for header in tuple(redirect.unredirected_hdrs):
+                    if header.casefold() == "authorization":
+                        redirect.unredirected_hdrs.pop(header, None)
         return redirect
 
 
