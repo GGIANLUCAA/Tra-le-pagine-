@@ -1,0 +1,53 @@
+name: "ONE-OFF | real curated Goldfinch alias recovery 20261112"
+on:
+  pull_request:
+    paths: [".github/workflows/one-off-goldfinch-curated-20261112.yml"]
+permissions:
+  contents: read
+jobs:
+  live-goldfinch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check The Goldfinch with exact artist and one curated keyless alias
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/ai_director_keyless_archives_v1.py --execute \
+            --category art --query "The Goldfinch" --artist "Carel Fabritius" \
+            --format artvision_4x1 --per-provider 3 \
+            --output output/goldfinch_curated_real
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("output/goldfinch_curated_real/CANDIDATES.json").read_text())
+          assert data["key_required"] is False
+          assert data["europeana_used"] is False
+          assert data["paid_calls"] is False and data["external_ai_calls"]==0
+          assert data["human_approved"] is False and data["publication_authorized"] is False
+          print("GOLDFINCH_CURATED_LIVE_START")
+          print(json.dumps({"count":data["candidate_count"],"status":data["status"],
+                            "calls_upper_bound":data["api_requests_upper_bound"],
+                            "providers":data["providers"],
+                            "items":[{"title":v["title"],"author":v["author"],
+                                      "url":v["source_url"],"alias":v.get("alias_used"),
+                                      "curated_ref":v.get("curated_work_reference"),
+                                      "rights":v["rights_review"],"approved":v["approved"]}
+                                     for v in data["items"]]},indent=2,ensure_ascii=False))
+          print("GOLDFINCH_CURATED_LIVE_END")
+          assert data["candidate_count"]>0,"Curated fallback still returns no relevant candidates"
+          assert any(x.get("alias_used")=="Fabritius-vink" and x["rights_review"]=="pending"
+                     for x in data["items"]),"Expected documented Dutch-name recovery"
+          PY
+      - name: Store evidence-only JSON and Android reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Goldfinch-Curated-Source-Live-Report
+          path: output/goldfinch_curated_real/
+          retention-days: 7
+          if-no-files-found: warn
