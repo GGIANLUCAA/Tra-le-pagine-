@@ -263,8 +263,7 @@ def main(argv=None):
     report=experiment(args.format,args.topic,key=os.environ.get("OPENROUTER_API_KEY",""),
                       execute=args.execute)
     save(report,args.out)
-    return 0 if report["status"] in ("dry_run_no_inference","four_roles_returned_unapproved",
-                                     "blocked_missing_openrouter_key") else 2
+    return 0 if report["status"] in ("dry_run_no_inference","four_roles_returned_unapproved") else 2
 
 
 if __name__=="__main__":
