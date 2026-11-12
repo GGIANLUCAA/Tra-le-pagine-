@@ -34,8 +34,15 @@ def _sha(path):
             h.update(block)
     return h.hexdigest()
 
+def chosen_tts_model():
+    override = os.environ.get("GEMINI_TTS_MODEL_OVERRIDE", "").strip()
+    if override not in ("", "gemini-3.1-flash-tts-preview"):
+        raise RuntimeError("Unapproved TTS model override")
+    return override or MODEL
+
+
 def voice_profile():
-    return {"provider": "Google Gemini", "model": MODEL, "voice": VOICE,
+    return {"provider": "Google Gemini", "model": chosen_tts_model(), "voice": VOICE,
             "style": STYLE, "sample_rate": SAMPLE_RATE, "cache_version": 1}
 
 def cache_key(text):
@@ -232,7 +239,7 @@ def synthesize(text,outdir):
     print("Genero un'unica recitazione italiana completa con pause interpretative.",flush=True)
     client=genai.Client(api_key=key)
     interaction=client.interactions.create(
-        model=MODEL,
+        model=chosen_tts_model(),
         input=[{
             "type":"user_input",
             "content":[{
