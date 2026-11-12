@@ -210,7 +210,7 @@ posts={'facebook':"There is an entire fairy world waiting for one swing of an ax
  'youtube':"The Fairy Feller's Master-Stroke (1855–64), Richard Dadd. A cinematic tour of the genuine Tate painting using credited Sailko CC BY 3.0 photograph.",
  'publication':'DRAFT_NOT_PUBLISHED'}
 (OUT/'SOCIAL_DRAFTS.json').write_text(json.dumps(posts,ensure_ascii=False,indent=2)+'\n')
-(OUT/'README_FIRST.md').write_text('ONE NEW Fairy Feller's Master-Stroke Cinema Standard private review, two video bitrates of the SAME slot. No critic or Museum versions. Do not count as Gold. Exact 2017 Sailko original Tate painting photographs CC BY 3.0; file SHA1/bytes/pixels hard-verified; source and alterations attributed. no paid APIs, no publication. Full-speed artistic and territory/license checks pending.\n')
+(OUT/'README_FIRST.md').write_text("ONE NEW Fairy Feller's Master-Stroke Cinema Standard private review, two video bitrates of the SAME slot. No critic or Museum versions. Do not count as Gold. Exact 2017 Sailko original Tate painting photographs CC BY 3.0; file SHA1/bytes/pixels hard-verified; source and alterations attributed. No paid APIs, no publication. Full-speed artistic and territory/license checks pending.\n")
 qa={'work_id':'richard_dadd_fairy_fellers_master_stroke_tate_t00598','variant':'cinema_standard','source_sha1':SOURCE_SHA1,'source_sha256':sha(original),
  'mp4_sha256':sha(mp4),'mp4_bytes':mp4.stat().st_size,'android_mp4_sha256':sha(mobile),'android_mp4_bytes':mobile.stat().st_size,
  'duration_seconds':DURATION,'fps':FPS,'frame_count':N,'resolution':[W,H],'scene_count':len(story),
