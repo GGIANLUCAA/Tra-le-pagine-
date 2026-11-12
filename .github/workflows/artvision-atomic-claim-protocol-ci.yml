@@ -33,9 +33,11 @@ jobs:
           claim = plan_claim(demo_manifest())
           assert claim.ref.startswith('refs/heads/artvision-idempotency/v1/')
           workflow = Path('.github/workflows/artvision-atomic-claim-protocol-ci.yml').read_text()
-          assert 'contents: read' in workflow
-          assert 'contents: write' not in workflow
-          assert 'workflow_dispatch:' not in workflow
-          assert 'schedule:' not in workflow
+          # Scan YAML control lines, not quoted strings inside this CI assertion.
+          lines = [line.strip() for line in workflow.splitlines()]
+          assert 'contents: read' in lines
+          assert 'contents: write' not in lines
+          assert 'workflow_dispatch:' not in lines
+          assert 'schedule:' not in lines
           print('NO_LIVE_REF_CREATED NO_RENDER_STARTED NO_CREDITS_USED')
           PY
