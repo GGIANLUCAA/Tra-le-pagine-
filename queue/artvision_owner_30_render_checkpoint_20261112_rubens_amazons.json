@@ -1,0 +1,86 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-12",
+  "selected_title": "The Battle of the Amazons",
+  "artist": "Peter Paul Rubens",
+  "year": "circa 1618",
+  "variant": "cinema_standard",
+  "status": "ONE_NEW_REAL_50_79SEC_MP4_TWO_ENCODINGS_SOURCE_FFMPEG_SHA_ZIP_GITHUB_INDEPENDENT_AND_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+  "github": {
+    "workflow": ".github/workflows/artvision-owner-rubens-amazons-cinema-v1.yml",
+    "script": "scripts/artvision_owner_rubens_amazons_cinema_v1.py",
+    "run_id": 43187986618,
+    "artifact_id": 13928723247
+  },
+  "source": {
+    "title": "The Battle of the Amazons",
+    "museum": "Alte Pinakothek Munich",
+    "inventory": "324",
+    "object_page": "https://www.sammlung.pinakothek.de/en/artwork/2mxqZgML8b/peter-paul-rubens/die-amazonenschlacht",
+    "commons": "https://commons.wikimedia.org/wiki/File:Peter_Paul_Rubens_-_The_Battle_of_the_Amazons.JPG",
+    "original_size_px": [
+      3000,
+      2195
+    ],
+    "source_bytes": 1064389,
+    "source_sha1": "daedf3ce70f57cae133b9a032df902b8233ef3cb",
+    "source_sha256": "f57383bd44c1a7686cae2ccb7d0e40ec6d35f070f1107516405150c1ef26da60",
+    "license": "Wikimedia Commons PD-Art faithful photo of public-domain painting; museum territorial commercial clearance pending"
+  },
+  "video": {
+    "duration_seconds": 50.791667,
+    "frame_count": 1219,
+    "scene_count": 12,
+    "fps": 24,
+    "resolution_hq": [
+      1080,
+      1920
+    ],
+    "hq_filename": "ARTVISION_RUBENS_BATTLE_AMAZONS_CINEMA_HD_REVIEW.mp4",
+    "hq_bytes": 19277631,
+    "hq_sha256": "500cb6ebee7c3366606b275836fab7eecbbeb02fdd6f460989317f7b9685661d",
+    "android_filename": "ARTVISION_RUBENS_BATTLE_AMAZONS_CINEMA_ANDROID_REVIEW.mp4",
+    "android_bytes": 6892594,
+    "android_sha256": "545d4b951c399f9b2e3d00f133ef99603f92895945a60f6bb59f5698f5027597",
+    "zip_filename": "ARTVISION_RUBENS_BATTLE_AMAZONS_ANDROID_PACKAGE.zip",
+    "zip_bytes": 7796810,
+    "zip_sha256": "6fab86d518219700d9d859fe187c8ba69668507d9be9a19f3df76cb895c0eafe",
+    "music": "Original locally synthesized score, restrained irregular swells, no paid APIs",
+    "voice": false
+  },
+  "qa": {
+    "github_render_job": "PASS",
+    "github_independent_artifact_readback": "PASS",
+    "full_ffmpeg_decode_hd_android": "PASS",
+    "source_hash_and_pixels": "PASS",
+    "zip_crc_embedded_mp4_sha": "PASS",
+    "contact_sheet": "INSPECTED_12_SAMPLES",
+    "private_library_readback": "PASS_PHYSICAL_RETRIEVAL_HD_ANDROID_ZIP",
+    "artistic_owner_review": "PENDING",
+    "territorial_rights": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_api_calls": 0
+  },
+  "library": {
+    "hd": "libfile_3e32dfd768c88191810f276a16bfc57e",
+    "android": "libfile_69108ee652f8819181189acfba5a3fdf",
+    "zip": "libfile_e00c11d80cb48191a3cbf6503f3952f4",
+    "full_artifact": "libfile_b5e28f49b89c8191bbd83811e18d5766"
+  },
+  "counts": {
+    "second_queue_distinct_cinema_after": 19,
+    "primary_queue_reference": "26/36",
+    "new_gold": 0
+  },
+  "blocked_other_work": {
+    "title": "The Dryad",
+    "reason": "Wikimedia 2560 derivative HTTP 400, full 82.8MB original direct HTTP 404 on GitHub runner",
+    "failed_runs": [
+      43186939715,
+      43187322222
+    ],
+    "policy": "Two attempts then skip; no new MP4 counted; revisit only after alternate verifiable source/transfer"
+  },
+  "next": "Do not repeat successful Rubens Cinema or count HD/Android separately; continue independent new selected artworks, other 3 4x1 versions only when sources/rights/QA ready."
+}
