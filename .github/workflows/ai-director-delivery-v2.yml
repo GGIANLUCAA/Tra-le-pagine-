@@ -1,0 +1,153 @@
+name: "AI Director V2 | real video delivery QA and Android review"
+
+on:
+  pull_request:
+    paths:
+      - "src/ai_director_delivery_v2.py"
+      - "src/ai_director_artifact_fetch_v2.py"
+      - "tests/test_ai_director_delivery_v2.py"
+      - ".github/workflows/ai-director-delivery-v2.yml"
+  workflow_run:
+    workflows:
+      - "ArtVision OWNER | Rheam Sleeping Beauty | new Cinema private review"
+      - "La Storia Rivive · Venezia 1896 V310 · true post-photo archival motion + QA"
+      - "GIULIANO EPISODIO 2 - THE WALKING GIANTS"
+      - "Giuliano - Terracotta Documentary V2"
+      - "GIULIANO 03 | One-shot narration and production (no auto-publish)"
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      producer_run_id:
+        description: "ID of completed successful video production run; leave blank for report-only test"
+        required: false
+        type: string
+        default: ""
+      artifact_name:
+        description: "Exact artifact name; blank auto-selects one bounded review artifact"
+        required: false
+        type: string
+        default: ""
+      video_format:
+        description: "Review format"
+        required: true
+        type: choice
+        default: giuliano
+        options: [giuliano, artvision_4x1, storia_rivive, wow_lab, documentario]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ai-director-v2-${{ github.event.workflow_run.id || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  no-network-regression:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify code, four format bridges, extraction and no paid inference
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python -m py_compile src/ai_director_delivery_v2.py src/ai_director_artifact_fetch_v2.py
+          python -m unittest discover -s tests -p 'test_ai_director_delivery_v2.py' -v
+          python -m unittest discover -s tests -p 'test_ai_director_v1.py' -v
+          python -m unittest discover -s tests -p 'test_ai_director_bridge_v1.py' -v
+          python -m unittest discover -s tests -p 'test_ai_director_visual_qa_v1.py' -v
+          python - <<'PY'
+          import json
+          for path in ['config/free_llm_zero_cost_v1.json','config/ai_director_external_api_v1.json']:
+              x=json.load(open(path))
+              assert x['default_deny'] is True and x['routes'] == []
+          print('ZERO_CHARGE_GATES_UNCHANGED')
+          PY
+
+  review-real-producer-artifact:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       (github.event.workflow_run.event == 'push' ||
+        github.event.workflow_run.event == 'workflow_dispatch') &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    env:
+      PRODUCER_RUN_ID: ${{ github.event.workflow_run.id || inputs.producer_run_id || '0' }}
+      PRODUCER_WORKFLOW: ${{ github.event.workflow_run.name || '' }}
+      ARTIFACT_NAME: ${{ inputs.artifact_name || '' }}
+      SELECTED_FORMAT: ${{ inputs.video_format || '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check local code; no model provider, no paid APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/ai_director_delivery_v2.py src/ai_director_artifact_fetch_v2.py
+          python -m unittest discover -s tests -p 'test_ai_director_delivery_v2.py' -q
+          command -v ffprobe
+          command -v ffmpeg
+          python - <<'PY'
+          import json
+          x=json.load(open('config/free_llm_zero_cost_v1.json'))
+          assert x['routes']==[] and x['default_deny']
+          print('NO_AI_MODEL_CALLS_NO_VIDEO_RENDER')
+          PY
+      - name: Select explicit format and validate run ID without shell interpolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os,re
+          allowed={'giuliano','artvision_4x1','storia_rivive','wow_lab','documentario'}
+          name=os.environ.get('PRODUCER_WORKFLOW','').lower()
+          fmt=os.environ.get('SELECTED_FORMAT') or (
+              'artvision_4x1' if 'artvision' in name else
+              'storia_rivive' if 'storia' in name else
+              'giuliano' if 'giuliano' in name else 'documentario')
+          if fmt not in allowed:raise SystemExit('Format not permitted')
+          runid=os.environ.get('PRODUCER_RUN_ID') or '0'
+          if not re.fullmatch(r'[0-9]{1,20}',runid):raise SystemExit('Invalid producer run id')
+          artifact=os.environ.get('ARTIFACT_NAME','')
+          if artifact and not re.fullmatch(r'[A-Za-z0-9_.-]{1,160}',artifact):
+              raise SystemExit('Invalid artifact name')
+          with open(os.environ['GITHUB_ENV'],'a') as f:
+              f.write('DIRECTOR_FORMAT='+fmt+'\n')
+              f.write('SAFE_RUN_ID='+runid+'\n')
+          print('REVIEW_TYPE',fmt,'PRODUCER_RUN',runid)
+          PY
+      - name: Download one size-capped, completed Actions artifact for read-only diagnostics
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python src/ai_director_artifact_fetch_v2.py \
+            --run-id "$SAFE_RUN_ID" --artifact "$ARTIFACT_NAME" \
+            --out output/ai-director-v2-input
+      - name: Inspect actual H264/AAC, black intervals, quick cuts and optional source storyboard
+        if: success()
+        run: |
+          PYTHONPATH=src python src/ai_director_delivery_v2.py \
+            --input-dir output/ai-director-v2-input \
+            --out output/ai-director-v2-report \
+            --format "$DIRECTOR_FORMAT" \
+            --subject "Revisione tecnica del lavoro GitHub $SAFE_RUN_ID"
+      - name: Upload Android-readable evidence; never approve or publish
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI_DIRECTOR_V2_ANDROID_QA_${{ github.run_id }}
+          path: |
+            output/ai-director-v2-input/ARTIFACT_INPUT.json
+            output/ai-director-v2-report/
+          retention-days: 21
+          if-no-files-found: warn
