@@ -1,0 +1,80 @@
+{
+  "schema": "artvision-owner-30-verified-cinema-checkpoint-v1",
+  "date": "2026-11-12",
+  "title": "The Witches' Flight",
+  "artist": "Francisco Goya",
+  "year": 1798,
+  "variant": "cinema_standard",
+  "status": "ONE_REAL_NEW_SOURCE_SHA1_LOCKED_52_46S_REVIEW_MP4_HQ_AND_ANDROID_FFMPEG_SHA_ZIP_GITHUB_INDEPENDENT_JOB_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+  "github": {
+    "render_run": 43182402610,
+    "artifact_id": 13926099472,
+    "script": "scripts/artvision_owner_goya_witches_flight_cinema_v1.py",
+    "workflow": ".github/workflows/artvision-owner-goya-witches-flight-cinema-v1.yml"
+  },
+  "source": {
+    "museum": "Museo Nacional del Prado",
+    "inventory": "P07748",
+    "official": "https://www.museodelprado.es/en/the-collection/art-work/witches-flight/5e44d19d-7cda-472b-b6d8-8868c599d252",
+    "commons": "https://commons.wikimedia.org/wiki/File:Francisco_de_Goya_-_Vuelo_de_brujas_(1798).jpg",
+    "original_image_pixels": [
+      2068,
+      2952
+    ],
+    "original_image_bytes": 5822775,
+    "original_image_sha1": "f2952f3d5cd6b6568c3106901713fa14fa7c9742",
+    "original_image_sha256": "ab502126677b42dddd873487d268e763b7f052c5bfe13deaab36d74d298bac76",
+    "dimensions_cm": [
+      43.5,
+      30.5
+    ],
+    "photo_rights": "Faithful PD-Art reproduction of PD painting via Prado/Wikimedia; commercial/territorial reuse pending"
+  },
+  "production": {
+    "duration_seconds": 52.458333333,
+    "frames": 1259,
+    "fps": 24,
+    "scenes": 12,
+    "hq_resolution": [
+      1080,
+      1920
+    ],
+    "hq_name": "ARTVISION_GOYA_WITCHES_FLIGHT_CINEMA_HD_REVIEW.mp4",
+    "hq_bytes": 15705621,
+    "hq_sha256": "82246bdc093321aa34a9070a5de5a623fd0d2e2a94dfa084d4bfa40503d8c26c",
+    "android_name": "ARTVISION_GOYA_WITCHES_FLIGHT_CINEMA_ANDROID_REVIEW.mp4",
+    "android_bytes": 5749976,
+    "android_sha256": "c192126cfc8d6eb57eb980d49816d389023fdbf1798e36ba0cfaea6bc8d59048",
+    "android_zip_name": "ARTVISION_GOYA_WITCHES_FLIGHT_ANDROID_PACKAGE.zip",
+    "android_zip_bytes": 6649979,
+    "android_zip_sha256": "e96550f47a952785baf137142ac4f99bec3392e4fe10a9725301b441c7bbb8e6",
+    "music": "Original locally synthesized atmospheric, less periodic",
+    "no_voice": true
+  },
+  "qa": {
+    "render_job": "PASS",
+    "github_independent_artifact_readback": "PASS",
+    "local_mp4_full_ffmpeg_both": "PASS",
+    "source_exact_sha1": "PASS",
+    "zip_crc_and_embedded_android_sha": "PASS",
+    "private_library_materialized_sha_readback": "PASS_ALL_THREE",
+    "contact_sheet_inspection": "PASS_WITH_ARTISTIC_DETAILS_PENDING",
+    "full_speed_artistic": "PENDING",
+    "territorial_commercial_rights": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_calls": 0
+  },
+  "library": {
+    "hd_id": "libfile_de6b099f8aa8819190a25bcf03525e36",
+    "android_id": "libfile_c673986f166c81919352822cbe68ab5c",
+    "zip_id": "libfile_847f03bb3de88191a45d9252cb3712b3",
+    "full_artifact_id": "libfile_0fb6075e10f88191aa6234ab1725d775"
+  },
+  "queue_effect": {
+    "first_ten_museum_historical": "26/36",
+    "second_30_distinct_cinema_after": 17,
+    "approved_4x1_new_slots": 0
+  },
+  "next": "Continue new unproduced Cinema Standard distinct from this Goya; full-speed owner quality review and territorial rights check before any Gold/publication."
+}
