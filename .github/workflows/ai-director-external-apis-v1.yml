@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - "src/ai_director_keyless_archives_v1.py"
+      - "src/ai_director_source_handoff_v1.py"
+      - "tests/test_ai_director_source_handoff_v1.py"
+      - "examples/ai_director_goldfinch_observed_catalogue_20261112.json"
+      - "examples/ai_director_goldfinch_v34_source_scene.json"
       - "config/ai_director_curated_source_aliases_v1.json"
       - "src/ai_director_external_apis_v1.py"
       - "tests/test_ai_director_keyless_archives_v1.py"
@@ -14,6 +18,10 @@ on:
     branches: [main]
     paths:
       - "src/ai_director_keyless_archives_v1.py"
+      - "src/ai_director_source_handoff_v1.py"
+      - "tests/test_ai_director_source_handoff_v1.py"
+      - "examples/ai_director_goldfinch_observed_catalogue_20261112.json"
+      - "examples/ai_director_goldfinch_v34_source_scene.json"
       - "config/ai_director_curated_source_aliases_v1.json"
       - "src/ai_director_external_apis_v1.py"
       - "tests/test_ai_director_keyless_archives_v1.py"
@@ -76,6 +84,7 @@ jobs:
           set -euo pipefail
           python -m py_compile src/ai_director_keyless_archives_v1.py src/ai_director_external_apis_v1.py
           python -m unittest discover -s tests -p 'test_ai_director_keyless_archives_v1.py' -v
+          python -m unittest discover -s tests -p 'test_ai_director_source_handoff_v1.py' -v
           python -m unittest discover -s tests -p 'test_ai_director_external_apis_v1.py' -v
           python - <<'PY'
           import json
@@ -88,6 +97,22 @@ jobs:
 
           print("PASS: no charged inference and no Europeana key used")
           PY
+      - name: Replay true observed Goldfinch catalogue metadata into unapproved V34 source packet
+        run: |
+          set -euo pipefail
+          python src/ai_director_source_handoff_v1.py \
+            --research examples/ai_director_goldfinch_observed_catalogue_20261112.json \
+            --scene-brief examples/ai_director_goldfinch_v34_source_scene.json \
+            --scene-id work_opening \
+            --out output/ai_director_demo_intake/
+      - name: Attach source-to-scene V34 Android diagnostic
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI_DIRECTOR_GOLDFINCH_SOURCE_INTAKE_${{ github.run_id }}
+          path: output/ai_director_demo_intake/
+          retention-days: 14
+          if-no-files-found: error
   research-and-android-report:
     if: github.event_name == 'workflow_dispatch'
     needs: offline-regression
@@ -129,6 +154,9 @@ jobs:
           python src/ai_director_keyless_archives_v1.py \
             "${args[@]}" --format "$format" \
             --output output/ai_director_archives_v1
+          python src/ai_director_source_handoff_v1.py \
+            --research output/ai_director_archives_v1/CANDIDATES.json \
+            --out output/ai_director_archives_v1/source_handoff
       - name: Android research and AI Director report
         if: success()
         uses: actions/upload-artifact@v4
