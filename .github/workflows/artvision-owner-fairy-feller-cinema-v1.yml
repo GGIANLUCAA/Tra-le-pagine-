@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/artvision-owner-fairy-feller-cinema-v1.yml"
+      - "scripts/artvision_owner_fairy_feller_cinema_v1.py"
 permissions:
   contents: read
 concurrency:
