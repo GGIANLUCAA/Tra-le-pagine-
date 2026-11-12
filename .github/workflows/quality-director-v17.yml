@@ -16,6 +16,10 @@ on:
         description: "PROJECT_V13.json già nel repository (facoltativo)"
         required: false
         type: string
+      brief_path:
+        description: "Brief ArtVision V19 con tempi V326 (facoltativo)"
+        required: false
+        type: string
       format:
         description: "Categoria in assenza del progetto"
         required: false
@@ -74,6 +78,16 @@ jobs:
           else
             echo "No quality report was generated; no false status will be emitted."
           fi
+      - name: Regia ArtVision V19 + ritmo V326 da Android
+        if: github.event_name == 'workflow_dispatch' && inputs.brief_path != ''
+        env:
+          ART_BRIEF: ${{ inputs.brief_path }}
+        run: |
+          case "$ART_BRIEF" in /*|*..*) echo "Unsafe brief path"; exit 2;; esac
+          test -f "$ART_BRIEF" || { echo "Brief not found"; exit 2; }
+          python src/artvision_editor_v19.py \
+            --brief "$ART_BRIEF" \
+            --out output/quality-v17/artvision-editor-v19
       - name: Scarica la pagina HTML e il JSON di revisione
         if: always() && github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
