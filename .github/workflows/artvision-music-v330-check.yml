@@ -1,0 +1,100 @@
+name: "ArtVision MUSIC V330 | 20-track source & selection gates"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-music-v330-check.yml"
+      - "config/artvision_music_20_v1.json"
+      - "src/artvision_music_selector_v330.py"
+      - "src/creative_director_v21.py"
+      - "tests/test_artvision_music_selector_v330.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  music_selection_unit_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile and test all 20 pieces, moods, duplicate gates and 4×1 locking
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile src/artvision_music_selector_v330.py src/creative_director_v21.py tests/test_artvision_music_selector_v330.py
+          python -m unittest discover -s tests -p 'test_artvision_music_selector_v330.py' -v
+          python src/artvision_music_selector_v330.py --catalog-only
+          python src/artvision_music_selector_v330.py --title "Death and the Child" --artist "Edvard Munch" --moods "grief,somber" --duration 60 --out-json /tmp/munch-music-selection.json
+          python src/artvision_music_selector_v330.py --title "The Wild Hunt of Odin" --artist "Peter Nicolai Arbo" --moods "epic,heroic" --duration 60 --out-json /tmp/arbo-music-selection.json
+          python src/artvision_music_selector_v330.py --title "A Mermaid" --artist "Waterhouse" --moods "magical,dreamlike" --duration 60 --out-json /tmp/mermaid-music-selection.json
+          python - <<'PY'
+          import json
+          tracks=[]
+          for p in ('/tmp/munch-music-selection.json','/tmp/arbo-music-selection.json','/tmp/mermaid-music-selection.json'):
+              d=json.load(open(p))
+              assert d['selected']['license']=='CC BY 4.0'
+              assert d['published'] is False
+              assert d['human_listening_review']=='PENDING'
+              tracks.append(d['selected']['track_id'])
+          print('MUSIC_PALETTE_20_SELECTION_PASS:', tracks)
+          PY
+      - name: Save offline selection examples without pretending MP3 are verified
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_MUSIC_V330_THREE_MOOD_SELECTIONS_NOT_AUDIO
+          retention-days: 14
+          path: |
+            /tmp/munch-music-selection.json
+            /tmp/arbo-music-selection.json
+            /tmp/mermaid-music-selection.json
+          if-no-files-found: error
+  official_audio_verification_pilot:
+    needs: music_selection_unit_tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Get actual recording from rightsholder and inspect it with FFprobe and SHA-256
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          mkdir -p output/artvision-music-v330/music
+          python src/artvision_music_selector_v330.py \
+            --title "Death and the Child" \
+            --artist "Edvard Munch" \
+            --moods "grief,somber" \
+            --pin "at_rest" \
+            --duration 49 \
+            --prepare \
+            --cache output/artvision-music-v330/music \
+            --out-json output/artvision-music-v330/MUNCH_AT_REST_REAL_AUDIO_PROOF.json
+          python - <<'PY'
+          import json,pathlib,hashlib,subprocess
+          base=pathlib.Path('output/artvision-music-v330')
+          proof=json.loads((base/'MUNCH_AT_REST_REAL_AUDIO_PROOF.json').read_text())
+          assert proof['selected']['track_id']=='at_rest'
+          assert proof['license_status']=='ACTUAL_BINARY_SHA256_FFPROBE_VERIFIED'
+          p=base/'music'/(proof['selected']['isrc']+'.mp3')
+          assert p.exists() and hashlib.sha256(p.read_bytes()).hexdigest()==proof['recording_proof']['sha256']
+          subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(p),'-map','0:a:0','-f','null','-'],check=True)
+          assert proof['published'] is False
+          print('ONE_REAL_OFFICIAL_SOUNDTRACK_MP3_AND_FULL_DECODE_PASS; NOT_FIVE_VIDEOS_NOT_AUTO_PUBLISHED')
+          PY
+      - name: Store actual composer music proof and private review-only MP3
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_MUSIC_V330_AT_REST_REAL_RECORDING_PRIVATE_QA
+          retention-days: 14
+          path: |
+            output/artvision-music-v330/MUNCH_AT_REST_REAL_AUDIO_PROOF.json
+            output/artvision-music-v330/music/*.mp3
+            output/artvision-music-v330/music/*_SHA256_RIGHTS.json
+          if-no-files-found: error
