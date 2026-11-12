@@ -19,7 +19,8 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        artist: [waterhouse, redon, khnopff, moreau, stokes]
+        # The other four variants have passed and were delivered; Redon needs recovery only.
+        artist: [redon]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
