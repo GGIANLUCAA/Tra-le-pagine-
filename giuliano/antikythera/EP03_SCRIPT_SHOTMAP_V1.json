@@ -36,17 +36,17 @@
   "assets": [
     {
       "id": "wreck1900",
-      "file": "Antikes Wrack von Antikythera 01.png",
+      "file": "Antikes Wrack von Antikythera 02.jpg",
       "kind": "image",
       "expect": "Public domain",
-      "subject": "immagine storica del recupero"
+      "subject": "autentica fotografia della ricerca subacquea 1900-1901, non ricostruzione"
     },
     {
       "id": "wreckmuseum",
-      "file": "The Antikythera Shipwreck (28426323431).jpg",
+      "file": "Statue of a youth-Antikythera wreck-NAMA 5744.jpg",
       "kind": "image",
-      "expect": "CC0",
-      "subject": "reperti del relitto esposti al museo"
+      "expect": "CC BY-SA 4.0",
+      "subject": "statua di marmo effettivamente recuperata nel relitto di Anticitera, fotografata nel museo (2024)"
     },
     {
       "id": "front",
@@ -133,7 +133,7 @@
     {
       "scene": 2,
       "narration": "L'anno seguente, dal fondo del mare emerge anche un blocco di bronzo, scuro e corroso.",
-      "asset_id": "wreckmuseum",
+      "asset_id": "front",
       "estimated_seconds": 6.203,
       "shot_type": "authentic_source_image",
       "visual_direction": "Ripresa ferma o micro-movimento SOLO se aiuta il dettaglio; mai transizione flash.",
@@ -309,6 +309,7 @@
     "Il video di studio 2021 è un'animazione, NON un filmato del meccanismo antico in funzione.",
     "Rieseguire QA sui fotogrammi del MP4 esportato e una vera revisione artistica.",
     "The 140-second total is a duration TARGET, not validated TTS timing. Following narration recording, all scene boundaries must be measured and adjusted to audio.",
-    "GitHub taciclei model sources serve as fallback only; 2026 digital hypothetical reconstruction, not actual ancient machine or footage."
+    "GitHub taciclei model sources serve as fallback only; 2026 digital hypothetical reconstruction, not actual ancient machine or footage.",
+    "Wreckmuseum is a historic sculpture from wreck, not the mechanim; for narration about the bronze gear object use fragment photo instead. Full video must keep attribution CC BY-SA in credits."
   ]
 }
