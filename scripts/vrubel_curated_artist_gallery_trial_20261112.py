@@ -9,14 +9,15 @@ OUT.mkdir(parents=True,exist_ok=True)
 # Exact Wikimedia Commons file titles: author Mikhail Vrubel (1856-1910).
 # The user-requested format is a SHORT artist gallery, not a 4x1 ArtVision master.
 ART=[
- ("The Swan Princess",1900,"Tsarevna-Lebed by Mikhail Vrubel.jpg",2.8,"portrait",.48),
- ("Pan",1899,"1899 Vrubel Pan anagoria.JPG",3.25,"portrait",.47),
- ("Lilacs",1901,"'Lilacs' by Mikhail Vrubel, unfinished, 1901, Tretyakov Gallery.jpg",2.75,"crop",.52),
- ("The Demon Seated",1890,"Vrubel Demon.jpg",3.9,"crop",.48),
- ("Bogatyr",1898,"Vrubel Bogatyr.jpg",3.1,"portrait",.50),
- ("The Flying Demon",1899,"1899-vrubel-flying-demon-big.jpg",3.35,"full",.50),
- ("Six-winged Seraph",1904,"Vrubel Azrail.jpg",3.35,"crop",.47),
- ("The Demon Downcast",1902,"Vrubel Fallen Demon.jpg",3.8,"full",.50),
+ ("Artist portrait",1900,"Vrubel 1900.jpg",2.5,"portrait",.52),
+ ("The Swan Princess",1900,"Tsarevna-Lebed by Mikhail Vrubel.jpg",2.9,"portrait",.48),
+ ("Pan",1899,"1899 Vrubel Pan anagoria.JPG",2.85,"portrait",.47),
+ ("Lilacs",1901,"'Lilacs' by Mikhail Vrubel, unfinished, 1901, Tretyakov Gallery.jpg",2.4,"crop",.52),
+ ("The Demon Seated",1890,"Vrubel Demon.jpg",3.5,"crop",.48),
+ ("Bogatyr",1898,"Vrubel Bogatyr.jpg",2.9,"portrait",.50),
+ ("A Lady in Lilac",1900,"Врубель - Дама в лиловом (1900).jpg",2.7,"portrait",.50),
+ ("Six-winged Seraph",1904,"Vrubel Azrail.jpg",3.3,"crop",.47),
+ ("The Demon Downcast",1902,"Vrubel Fallen Demon.jpg",3.25,"crop",.39),
 ]
 MUSIC_TITLE="Aftermath"
 MUSIC_AUTHOR="Kevin MacLeod"
@@ -58,7 +59,7 @@ def download_art(label,year,filename):
                 get(url,destination)
                 with Image.open(destination) as im:
                     im.load()
-                    if im.format not in ("JPEG","PNG") or min(im.size)<740:
+                    if im.format not in ("JPEG","PNG") or min(im.size)<(540 if label=="Artist portrait" else 740):
                         raise ValueError("image too small/invalid")
                     dims=im.size
                 return dict(title=label,year=year,commons_file=filename,
@@ -111,10 +112,10 @@ def main():
     for label,year,filename,duration,mode,focus in ART:
         info=download_art(label,year,filename)
         if info:
-            info.update(duration=duration,mode=mode,focus=focus)
+            info.update(duration=duration,mode=mode,focus=focus,role=("artist_portrait" if label=="Artist portrait" else "painting"))
             selected.append(info)
-    if len(selected)<5:
-        raise RuntimeError("BLOCKED_SOURCE: fewer than 5 verified real works. No fake reel rendered.")
+    if len(selected)<7:
+        raise RuntimeError("BLOCKED_SOURCE: fewer than 7 verified real sources. No fake reel rendered.")
     print("VERIFIED_DISTINCT_ARTWORKS",len(selected),flush=True)
 
     audio=OUT/"AFTERMATH_CC_BY_3.mp3"
@@ -137,7 +138,7 @@ def main():
                "duration "+str(item["duration"])]
     rows+=["file '"+images[-1].resolve().as_posix()+"'"]
     cut.write_text("\n".join(rows)+"\n",encoding="utf8")
-    master=OUT/"VRUBEL_PAINTINGS_REAL_ARTWORK_REVIEW.mp4"
+    master=OUT/"VRUBEL_REAL_ARTIST_GALLERY_REVIEW_V2.mp4"
     # Image slides on real paintings, 25fps, without artificial AI motion.
     # AA at low image dimensions is achieved by the Lanczos still render above.
     run(["ffmpeg","-y","-hide_banner","-loglevel","error",
@@ -165,7 +166,7 @@ def main():
         s=im.convert("L").resize((64,64))
         if sum(1 for x in s.getdata() if x<8)>3400:raise RuntimeError("QA_FAIL_BLACK_ENDING")
 
-    cover=OUT/"COVER.jpg"
+    cover=OUT/"COVER_V2.jpg"
     Image.open(images[0]).save(cover,quality=92)
     # Meaningfully inspect one true rendered frame per scene, not title placeholders.
     thumbs=[]
@@ -177,16 +178,16 @@ def main():
         thumbs.append(thumb)
         info["start_s"]=round(position,2)
         position+=info["duration"]
-    sheet=Image.new("RGB",(4*270,2*520),(13,15,20))
+    sheet=Image.new("RGB",(4*270,((len(thumbs)+3)//4)*520),(13,15,20))
     draw=ImageDraw.Draw(sheet)
     for i,p in enumerate(thumbs):
         x=(i%4)*270;y=(i//4)*520
         sheet.paste(Image.open(p),(x,y))
         draw.text((x+10,y+485),selected[i]["title"][:27],font=font(17),fill=(236,231,218))
-    sheet.save(OUT/"CONTACT_SHEET.jpg",quality=87)
+    sheet.save(OUT/"CONTACT_SHEET_V2.jpg",quality=87)
     social=(
       "MIKHAIL VRUBEL | A WORLD BETWEEN DREAMS\n\n"
-      "Eight paintings. No invented scenes, no artificial character animation. "
+      "A portrait of the artist and eight paintings. No invented scenes, no artificial character animation. "
       "A visual journey from The Swan Princess to The Demon Downcast.\n\n"
       "#MikhailVrubel #Symbolism #ArtHistory #Paintings\n\n"
       "Music: Aftermath — Kevin MacLeod (incompetech.com), CC BY 3.0 "
@@ -201,7 +202,7 @@ def main():
       "status":"TECHNICAL_PASS_ARTISTIC_PENDING",
       "format":"isolated_artist_gallery_trial_not_4x1",
       "branch":"feature/artvision-curated-agent-skills-20261112",
-      "artwork_count":len(selected),"works":selected,
+      "artwork_count":sum(x.get("role")=="painting" for x in selected),"portrait_count":sum(x.get("role")=="artist_portrait" for x in selected),"works":selected,
       "audio":{"title":MUSIC_TITLE,"author":MUSIC_AUTHOR,"page":MUSIC_PAGE,
                "license":MUSIC_LICENSE,"source":MUSIC_URL,"sha256":sha(audio)},
       "video":{"path":str(master),"sha256":sha(master),
@@ -212,8 +213,8 @@ def main():
       "publication_authorized":False,"paid_video_calls":0,
     }
     (OUT/"SOURCE_MANIFEST.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n",encoding="utf8")
-    with zipfile.ZipFile(OUT/"VRUBEL_REVIEW_PACKAGE.zip","w",zipfile.ZIP_DEFLATED,compresslevel=4) as z:
-        for filename in [master,cover,OUT/"CONTACT_SHEET.jpg",OUT/"SOURCE_MANIFEST.json",OUT/"SOCIAL_CAPTION.txt"]:
+    with zipfile.ZipFile(OUT/"VRUBEL_REVIEW_PACKAGE_V2.zip","w",zipfile.ZIP_DEFLATED,compresslevel=4) as z:
+        for filename in [master,cover,OUT/"CONTACT_SHEET_V2.jpg",OUT/"SOURCE_MANIFEST.json",OUT/"SOCIAL_CAPTION.txt"]:
             z.write(filename,arcname=filename.name)
     with zipfile.ZipFile(OUT/"VRUBEL_REVIEW_PACKAGE.zip") as z:
         if z.testzip():raise RuntimeError("QA_FAIL_ZIP_CRC")
