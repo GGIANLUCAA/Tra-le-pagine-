@@ -209,6 +209,7 @@ def original_music(total):
 
 def render():
  q,script=load()
+ (OUT/"COPIONE_ESATTO_V330.txt").write_text(script,encoding="utf8")
  artpath=art_check()
  chapters=q["chapters"]
  wav,voice_dur,ends,align=verified_voice(script,chapters)
