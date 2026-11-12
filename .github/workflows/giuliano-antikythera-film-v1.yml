@@ -1,0 +1,86 @@
+name: "GIULIANO Anticitera · film completo 2m34 · director-locked"
+on:
+  push:
+    branches: ["feature/giuliano-antikythera-g0dm0d3-director-20261112"]
+    paths:
+      - "src/giuliano_antikythera_render_v1.py"
+      - ".github/workflows/giuliano-antikythera-film-v1.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: giuliano-antikythera-film-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PYTHONPATH: src
+      PYTHONUNBUFFERED: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Prove that full G0DM0D3 director/source handoff is ready
+        run: |
+          python -m py_compile src/giuliano_antikythera_preflight_v1.py src/giuliano_antikythera_render_v1.py
+          python -m unittest discover -s tests -p 'test_giuliano_antikythera_preflight_v1.py' -v
+          python - <<'PY'
+          import json
+          p=json.load(open("config/free_llm_zero_cost_v1.json"))
+          assert p["default_deny"] and p["routes"]==[]
+          b=json.load(open("research/giuliano_antikythera_v1/BRIEF_AI_DIRECTOR.json"))
+          assert b["target_duration_seconds"]==154 and len(b["scenes"])==25
+          assert not b["publication_authorized"]
+          print("EDITORIAL_NO_BILLING_NO_PUBLICATION_PASS")
+          PY
+          test -n "$GEMINI_API_KEY" || (echo 'Gemini TTS secret absent; no robotic fallback permitted' && exit 2)
+      - name: Download exactly verified primary sources from successful scout
+        uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_ANTIKYTHERA_MEDIA_SOURCE_SCOUT_REVIEW_ONLY
+          run-id: 43180149839
+          github-token: ${{ github.token }}
+          path: output/giuliano_antikythera_film_v1/sources
+      - name: Install FFmpeg and natural narrated documentary dependencies
+        run: |
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            timeout 150 sudo apt-get update -qq
+            timeout 150 sudo apt-get install -y -qq ffmpeg libsndfile1 fonts-dejavu-core
+          fi
+          ffmpeg -version | head -1
+          python -m pip install --retries 2 --timeout 25 -q 'numpy>=1.25,<3' 'Pillow>=10,<13' 'soundfile>=0.12' 'scipy>=1.11' 'google-genai>=2.25,<3' 'faster-whisper>=1.1,<2'
+      - name: Build COMPLETE film; align real Google narration and frame boundaries
+        run: python src/giuliano_antikythera_render_v1.py
+      - name: Recovery: original cached Google voice and source QA if film generation fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_ANTICITERA_RECOVERY_NOT_A_FINISHED_FILM
+          path: |
+            output/giuliano_antikythera_film_v1/audio/VOCE.wav
+            output/giuliano_antikythera_film_v1/audio/VOICE_CACHE_V13.json
+            output/giuliano_antikythera_film_v1/audio/ALLINEAMENTO_VOCE.json
+            output/giuliano_antikythera_film_v1/RENDER_PREFLIGHT_QA.json
+          if-no-files-found: ignore
+          retention-days: 10
+      - name: Verified complete Android MP4, Full HD MP4, credits, cover and ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_THE_ANCIENT_COMPUTER_FILM_ANDROID_HD_ZIP
+          path: |
+            output/giuliano_antikythera_film_v1/GIULIANO_ANTICITERA_CINEMA_HD.mp4
+            output/giuliano_antikythera_film_v1/GIULIANO_ANTICITERA_ANDROID.mp4
+            output/giuliano_antikythera_film_v1/GIULIANO_ANTICITERA_COMPLETO.zip
+            output/giuliano_antikythera_film_v1/COVER_ANTICITERA.jpg
+            output/giuliano_antikythera_film_v1/QA_FILM.json
+            output/giuliano_antikythera_film_v1/ATTRIBUZIONI.txt
+          if-no-files-found: error
+          retention-days: 20
