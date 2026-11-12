@@ -151,3 +151,56 @@ jobs:
             output/ai-director-v2-report/
           retention-days: 21
           if-no-files-found: warn
+
+  verified-rheam-mp4-smoke:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.head_ref == 'feature/ai-director-v2-real-artifact-review-20261112'
+    needs: no-network-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Confirm free real-media tooling
+        run: |
+          command -v ffprobe
+          command -v ffmpeg
+          python -m py_compile src/ai_director_delivery_v2.py src/ai_director_artifact_fetch_v2.py
+      - name: Download one already-created and QA-verified real ArtVision master
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python src/ai_director_artifact_fetch_v2.py \
+            --run-id 43212883066 \
+            --artifact ARTVISION_OWNER_RHEAM_SLEEPING_BEAUTY_NEW_CINEMA_REVIEW \
+            --out output/ai-director-v2-input
+          test -s output/ai-director-v2-input/VIDEO_ANDROID.mp4
+      - name: Run real video scene-cut, black-frame, black-tail diagnostic
+        run: |
+          PYTHONPATH=src python src/ai_director_delivery_v2.py \
+            --input-dir output/ai-director-v2-input \
+            --out output/ai-director-v2-report \
+            --format artvision_4x1 --subject "Rheam Sleeping Beauty verified master smoke"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('output/ai-director-v2-report/episode/REPORT.json').read_text())
+          assert report['technical_video_checked']
+          assert report['visual_diagnostics']['status']=='technical_review_only'
+          assert not report['publication_authorized']
+          assert not report['human_artistic_approval']
+          assert report['model_calls']==0 and report['billing_actions']==0
+          print('REAL_RHEAM_MP4_PROBED_QA_UNAPPROVED',report['visual_diagnostics']['duration_s'])
+          PY
+      - name: Android proof of actual MP4 analysis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI_DIRECTOR_V2_RHEAM_REAL_MP4_SMOKE_${{ github.run_id }}
+          path: output/ai-director-v2-report/
+          retention-days: 14
+          if-no-files-found: warn
