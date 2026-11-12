@@ -1,0 +1,37 @@
+name: GIULIANO 03 | Google TTS model visibility (read-only)
+on:
+  push:
+    branches: ["feature/giuliano-antikythera-director-20261112"]
+    paths:
+      - ".github/workflows/giuliano-antikythera-google-model-list.yml"
+permissions:
+  contents: read
+jobs:
+  list-supported-models:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: List models without generating or spending tokens
+        run: |
+          python -m pip install --quiet --disable-pip-version-check google-genai
+          python - <<'PY'
+          import os
+          from google import genai
+          key = os.environ.get("GEMINI_API_KEY", "")
+          if not key:
+              raise SystemExit("GEMINI_API_KEY secret unavailable; no generation attempted")
+          client = genai.Client(api_key=key)
+          found = []
+          for item in client.models.list():
+              name = str(getattr(item, "name", ""))
+              found.append(name)
+          voices = [n for n in found if any(x in n.lower() for x in ("tts", "speech"))]
+          print("LIST_MODELS_OK", len(found), "models returned")
+          print("ACCESSIBLE_TTS_MODELS", voices)
+          print("NO_AUDIO_GENERATED_AND_NO_BILLABLE_CONTENT_GENERATION")
+          PY
