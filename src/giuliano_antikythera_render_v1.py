@@ -231,7 +231,7 @@ def render():
     for i,(scene,span) in enumerate(zip(m["scenes"],timeline)):
         segment_frames=max(1,round(span["duration"]*FPS))
         name=scene["asset_id"]
-        actual_video=name.startswith("scientific")
+        actual_video=name.startswith("scientific") and i not in (13,14)
         if actual_video:
             original=SRC/("verified-2026-gears.mp4" if name=="scientific-gears" else "verified-2026-exploded.mp4")
             # Avoid apparent static loops: alternate offsets and show different animation detail.
@@ -254,7 +254,7 @@ def render():
     audio=OUT/"GIULIANO_03_MIX.wav"
     call(["ffmpeg","-hide_banner","-y","-v","error","-i",voice_wav,"-i",pad,
           "-filter_complex","[0:a]volume=1.0[sp];[1:a]volume=0.21[bg];"
-          "[sp][bg]amix=inputs=2:duration=first:dropout_transition=0[out]",
+          "[sp][bg]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[out]",
           "-map","[out]","-c:a","pcm_s16le",audio],timeout=150)
     master=OUT/"GIULIANO_03_THE_ANCIENT_COMPUTER_MASTER.mp4"
     call(["ffmpeg","-hide_banner","-y","-v","error","-i",silent,"-i",audio,
