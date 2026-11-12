@@ -74,48 +74,95 @@ def _archive(url, key, target):
     return count
 
 
+def _safe_member(item):
+    """Ignore paths that escape the destination or are not regular files."""
+    name = item.filename.replace("\\", "/")
+    parts = name.split("/")
+    mode = item.external_attr >> 16
+    if (item.is_dir() or not name or name.startswith("/") or
+            any(p in ("", ".", "..") for p in parts) or
+            stat.S_IFMT(mode) == stat.S_IFLNK):
+        return False
+    # For Unix ZIPs reject anything other than a regular file or no type.
+    kind = stat.S_IFMT(mode)
+    return kind in (0, stat.S_IFREG)
+
+
+def _extract_media(archive, out, seen, budget, origin):
+    files = []
+    members = archive.infolist()
+    if len(members) > MAX_ENTRIES:
+        raise ValueError("Too many archive members")
+    for item in members:
+        if not _safe_member(item):
+            continue
+        name = Path(item.filename.replace("\\", "/")).name
+        if Path(name).suffix.lower() not in KEEP or name in seen:
+            continue
+        if item.file_size < 2:
+            continue
+        if item.file_size > budget[0]:
+            # Incomplete archive review must not be silently marked verified.
+            raise ValueError("Expanded media exceeds safety cap")
+        destination = out / name
+        digest = hashlib.sha256()
+        actual = 0
+        with archive.open(item) as src, destination.open("wb") as dst:
+            while True:
+                chunk = src.read(1024 * 1024)
+                if not chunk:
+                    break
+                actual += len(chunk)
+                if actual > item.file_size or actual > budget[0]:
+                    raise ValueError("Unbounded or inconsistent member expansion")
+                digest.update(chunk)
+                dst.write(chunk)
+        if actual != item.file_size:
+            raise ValueError("Archive member incomplete")
+        budget[0] -= actual
+        seen.add(name)
+        files.append({"name": name, "bytes": actual, "sha256": digest.hexdigest(),
+                      "contained_in": origin})
+    return files
+
+
 def _unpack(path, out):
-    extracted = []
-    total = 0
-    seen = set()
+    """Extract MP4/JSON with streaming SHA; try one safe nested Android ZIP.
+
+    GitHub Actions artifacts are ZIPs; an Android delivery often contains
+    *another* ZIP with the actual MP4. Never recurse beyond one level.
+    """
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    seen, budget = set(), [MAX_EXTRACTED_BYTES]
     with zipfile.ZipFile(path) as archive:
-        members = archive.infolist()
-        if len(members) > MAX_ENTRIES:
-            raise ValueError("Too many archive members")
-        for item in members:
-            src = item.filename.replace("\\", "/")
-            parts = src.split("/")
-            if (item.is_dir() or not src or src.startswith("/") or
-                any(x in ("", ".", "..") for x in parts) or
-                ((item.external_attr >> 16) & stat.S_IFMT(0o777777)) == stat.S_IFLNK):
-                continue
-            name = Path(src).name
-            if Path(name).suffix.lower() not in KEEP or name in seen:
-                continue
-            if item.file_size > MAX_EXTRACTED_BYTES or total + item.file_size > MAX_EXTRACTED_BYTES:
-                continue
-            if item.file_size < 2:
-                continue
-            target = out / name
-            with archive.open(item) as inf, target.open("wb") as outf:
-                copied = 0
-                while True:
-                    part = inf.read(1024 * 1024)
-                    if not part:
-                        break
-                    copied += len(part)
-                    if copied > item.file_size or copied > MAX_EXTRACTED_BYTES:
-                        raise ValueError("Invalid expanded member size")
-                    outf.write(part)
-            if copied != item.file_size:
-                target.unlink(missing_ok=True)
-                raise ValueError("Incomplete archive member")
-            total += copied
-            seen.add(name)
-            extracted.append({"name": name, "bytes": copied,
-                              "sha256": hashlib.sha256(target.read_bytes()).hexdigest()
-                              if copied < 5_000_000 else None})
-    return extracted
+        files = _extract_media(archive, out, seen, budget, "actions_artifact")
+        if not any(x["name"].lower().endswith(".mp4") for x in files):
+            nested = [i for i in archive.infolist() if _safe_member(i) and
+                      Path(i.filename).suffix.lower() == ".zip" and
+                      0 < i.file_size <= MAX_ARCHIVE_BYTES]
+            nested.sort(key=lambda i: (not any(t in i.filename.upper() for t in
+                                             ("ANDROID", "MP4", "VIDEO", "MASTER")),
+                                       i.file_size))
+            if nested:
+                with tempfile.TemporaryDirectory() as tmp:
+                    nested_path = Path(tmp) / "one-level.zip"
+                    copied = 0
+                    with archive.open(nested[0]) as src, nested_path.open("wb") as dst:
+                        while True:
+                            part = src.read(1024 * 1024)
+                            if not part:
+                                break
+                            copied += len(part)
+                            if copied > MAX_ARCHIVE_BYTES or copied > nested[0].file_size:
+                                raise ValueError("Nested Android archive exceeds cap")
+                            dst.write(part)
+                    if copied != nested[0].file_size:
+                        raise ValueError("Nested archive incomplete")
+                    with zipfile.ZipFile(nested_path) as inner:
+                        files.extend(_extract_media(
+                            inner, out, seen, budget, "nested_android_package"))
+    return files
 
 
 def acquire(repo, run_id, artifact_name, outdir, token, *, get=_get, download=_archive):
@@ -156,7 +203,9 @@ def acquire(repo, run_id, artifact_name, outdir, token, *, get=_get, download=_a
         zip_path = Path(tmp) / "delivery.zip"
         download(selected["archive_download_url"], token, zip_path)
         files = _unpack(zip_path, outdir)
-    return {"status": "extracted_for_readonly_review", "run_id": run_id,
+    status = ("extracted_for_readonly_review" if any(f["name"].lower().endswith(".mp4")
+                for f in files) else "artifact_without_readable_mp4")
+    return {"status": status, "run_id": run_id,
             "artifact": selected["name"], "files": files,
             "artistic_approval": False, "publication": False}
 
