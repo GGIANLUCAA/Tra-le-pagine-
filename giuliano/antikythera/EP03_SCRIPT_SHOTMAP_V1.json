@@ -96,6 +96,28 @@
       "kind": "video",
       "expect": "CC BY 4.0",
       "subject": "animazione scientifica Freeth et al. 2021, modello non reperto"
+    },
+    {
+      "id": "verified-2026-gears",
+      "file": "antikythera.mp4",
+      "kind": "video",
+      "expect": "CC BY 4.0",
+      "subject": "2026 3D research reconstruction; not actual ancient mechanism video",
+      "direct_url": "https://raw.githubusercontent.com/taciclei/antikythera-mechanism/main/antikythera.mp4",
+      "license_page": "https://raw.githubusercontent.com/taciclei/antikythera-mechanism/main/LICENSE-MEDIA.md",
+      "source_page": "https://github.com/taciclei/antikythera-mechanism",
+      "fallback_only": true
+    },
+    {
+      "id": "verified-2026-exploded",
+      "file": "antikythera_eclate.mp4",
+      "kind": "video",
+      "expect": "CC BY 4.0",
+      "subject": "2026 3D exploded reconstruction; hypothetical parts explicit",
+      "direct_url": "https://raw.githubusercontent.com/taciclei/antikythera-mechanism/main/antikythera_eclate.mp4",
+      "license_page": "https://raw.githubusercontent.com/taciclei/antikythera-mechanism/main/LICENSE-MEDIA.md",
+      "source_page": "https://github.com/taciclei/antikythera-mechanism",
+      "fallback_only": true
     }
   ],
   "scenes": [
@@ -286,6 +308,7 @@
     "Niente musica non documentata. Nessun TTS a pagamento avviato automaticamente.",
     "Il video di studio 2021 è un'animazione, NON un filmato del meccanismo antico in funzione.",
     "Rieseguire QA sui fotogrammi del MP4 esportato e una vera revisione artistica.",
-    "The 140-second total is a duration TARGET, not validated TTS timing. Following narration recording, all scene boundaries must be measured and adjusted to audio."
+    "The 140-second total is a duration TARGET, not validated TTS timing. Following narration recording, all scene boundaries must be measured and adjusted to audio.",
+    "GitHub taciclei model sources serve as fallback only; 2026 digital hypothetical reconstruction, not actual ancient machine or footage."
   ]
 }
