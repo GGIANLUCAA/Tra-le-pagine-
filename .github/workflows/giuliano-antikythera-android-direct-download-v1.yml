@@ -1,0 +1,138 @@
+name: "GIULIANO 03 | Antikythera direct Android MP4 download (verified)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/giuliano-antikythera-android-direct-download-v1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: giuliano-03-antikythera-android-download-v1
+  cancel-in-progress: false
+
+jobs:
+  publish_verified_download_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_RUN_ID: "43247270123"
+      SOURCE_ARTIFACT: "GIULIANO_03_THE_ANCIENT_COMPUTER_PRIVATE_REVIEW"
+      TAG: "giuliano-03-antikythera-android-review-download-20261112"
+      VIDEO_SHA: "659fc4847a36dab4d4dad26ebc5ee5c836483bb95807549b2f54631510d85342"
+      MASTER_SHA: "8d02eafb62c8ec4271ce0e19982035fd8d0f3e8cf13ae2c0e2653871b06ae64b"
+      ZIP_SHA: "0bb94a2282e56013170ac97045fad9c18727466476ed0be58332d257e8d46121"
+      COVER_SHA: "f24070cda6df56bd80ca42d4c7ef001a924f145429a6efc498f61f3e88603046"
+    steps:
+      - name: Download exact previous narrated film; NEVER render or call Google
+        run: |
+          set -euo pipefail
+          mkdir -p source release
+          gh run download "$SOURCE_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "$SOURCE_ARTIFACT" \
+            --dir source
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, os, shutil, zipfile
+          src=Path("source")
+          out=Path("release")
+          expected={
+            "GIULIANO_03_THE_ANCIENT_COMPUTER_ANDROID.mp4":("GIULIANO_ANTICITERA_ANDROID.mp4",os.environ["VIDEO_SHA"],5317366),
+            "GIULIANO_03_THE_ANCIENT_COMPUTER_MASTER.mp4":(None,os.environ["MASTER_SHA"],5789376),
+            "GIULIANO_03_COMPLETO.zip":("GIULIANO_ANTICITERA_VIDEO_E_COPERTINA.zip",os.environ["ZIP_SHA"],11006693),
+            "GIULIANO_03_COVER.jpg":("GIULIANO_ANTICITERA_COPERTINA.jpg",os.environ["COVER_SHA"],208772)
+          }
+          for old,(new,sha,size) in expected.items():
+            files=list(src.rglob(old))
+            assert len(files)==1, f"Missing or duplicate: {old}"
+            original=files[0]
+            assert original.stat().st_size==size, f"Unexpected size: {old}"
+            h=hashlib.sha256()
+            with original.open("rb") as inp:
+                for block in iter(lambda:inp.read(1024*1024),b""):h.update(block)
+            assert h.hexdigest()==sha, f"Wrong bytes for {old}"
+            if new:
+                shutil.copy2(original,out/new)
+                assert (out/new).stat().st_size==size
+            print("SHA_LOCKED_SOURCE_PASS",old,size,sha,flush=True)
+          with zipfile.ZipFile(out/"GIULIANO_ANTICITERA_VIDEO_E_COPERTINA.zip") as z:
+            assert z.testzip() is None
+            names=set(z.namelist())
+            assert "GIULIANO_03_THE_ANCIENT_COMPUTER_ANDROID.mp4" in names
+            assert "GIULIANO_03_THE_ANCIENT_COMPUTER_MASTER.mp4" in names
+            assert "GIULIANO_03_COVER.jpg" in names
+          print("ORIGINAL_ZIP_FULL_CRC_PASS",flush=True)
+          PY
+      - name: Verify existing video codecs and full decode, not just metadata
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null 2>&1 || ! command -v ffmpeg >/dev/null 2>&1; then
+            timeout 150 sudo apt-get update -qq
+            timeout 120 sudo apt-get install -y -qq ffmpeg
+          fi
+          python3 - <<'PY'
+          import json,subprocess
+          p="release/GIULIANO_ANTICITERA_ANDROID.mp4"
+          info=json.loads(subprocess.check_output(
+              ["ffprobe","-v","error","-show_entries",
+               "format=duration:stream=codec_type,codec_name,width,height",
+               "-of","json",p],text=True))
+          streams=info["streams"]
+          v=next(x for x in streams if x.get("codec_type")=="video")
+          a=next(x for x in streams if x.get("codec_type")=="audio")
+          assert (v["codec_name"],v["width"],v["height"],a["codec_name"])==("h264",720,1280,"aac")
+          assert 125.9<float(info["format"]["duration"])<126.5
+          subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",p,"-f","null","-"],
+                         check=True,timeout=200)
+          print("ANDROID_MP4_FULL_PLAYBACK_DECODE_PASS",info["format"]["duration"],flush=True)
+          PY
+      - name: Create one stable GitHub public prerelease for download, no site/social publication
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists: never overwrite. Check it below."
+          else
+            gh release create "$TAG" \
+              release/GIULIANO_ANTICITERA_ANDROID.mp4 \
+              release/GIULIANO_ANTICITERA_VIDEO_E_COPERTINA.zip \
+              release/GIULIANO_ANTICITERA_COPERTINA.jpg \
+              --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+              --title "GIULIANO 03 | THE ANCIENT COMPUTER | Android download - REVISIONE" \
+              --notes "File per la visione privata del proprietario ma scaricabili pubblicamente dal repository GitHub; prerelease di revisione artistica, NON video approvato. Nessun post sul sito o sui social. 2:06, vera voce italiana Google Gacrux, 20 scene, H.264/AAC. Master e fonti nel pacchetto ZIP. Copia byte-per-byte della run 43247270123, nessuna nuova sintesi Google, video AI, rendering o costo aggiuntivo." \
+              --prerelease --latest=false
+          fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json url,assets \
+            --jq '{release_url:.url,assets:[.assets[]|{name,size,url}]}'
+          for fname in GIULIANO_ANTICITERA_ANDROID.mp4 GIULIANO_ANTICITERA_VIDEO_E_COPERTINA.zip GIULIANO_ANTICITERA_COPERTINA.jpg; do
+            gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets \
+              --jq '.assets[].name' | grep -Fqx "$fname"
+          done
+      - name: Independent unauthenticated Android browser-style download and full SHA-256 readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG"
+          curl --fail --location --retry 3 --retry-all-errors \
+            --connect-timeout 15 --max-time 130 \
+            --output /tmp/giuliano_antikythera_downloaded.mp4 \
+            "$root/GIULIANO_ANTICITERA_ANDROID.mp4"
+          echo "$VIDEO_SHA  /tmp/giuliano_antikythera_downloaded.mp4" | sha256sum -c -
+          ffmpeg -nostdin -v error -xerror -i /tmp/giuliano_antikythera_downloaded.mp4 -f null -
+          echo "PUBLIC_DIRECT_MP4_DOWNLOAD_BYTES_AND_DECODE_PASS"
+          curl --fail --location --retry 3 --retry-all-errors \
+            --connect-timeout 15 --max-time 130 \
+            --output /tmp/giuliano_antikythera_downloaded.zip \
+            "$root/GIULIANO_ANTICITERA_VIDEO_E_COPERTINA.zip"
+          echo "$ZIP_SHA  /tmp/giuliano_antikythera_downloaded.zip" | sha256sum -c -
+          python3 - <<'PY'
+          import zipfile
+          with zipfile.ZipFile("/tmp/giuliano_antikythera_downloaded.zip") as z:
+              assert z.testzip() is None
+              assert "GIULIANO_03_THE_ANCIENT_COMPUTER_MASTER.mp4" in z.namelist()
+          print("PUBLIC_DIRECT_ZIP_DOWNLOAD_CRC_AND_SHA_PASS")
+          PY
