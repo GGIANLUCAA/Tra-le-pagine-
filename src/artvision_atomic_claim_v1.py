@@ -85,9 +85,9 @@ def plan_claim(manifest: dict) -> ClaimPlan:
         raise ClaimError("zero-budget guard missing")
     identity = {
         "repository": REPO, "work_id": work_id, "variant": variant,
-        "revision": revision, "source_sha256": source_sha256,
+        "revision": revision,
     }
-    canonical = json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()
+    # Source hash is evidence, not part of deduplication identity: changing\n    # the source must NOT create another claim for the same slot/revision.\n    canonical = json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()
     digest = hashlib.sha256(canonical).hexdigest()
     return ClaimPlan(CLAIM_PREFIX + digest, digest)
 
