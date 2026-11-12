@@ -18,7 +18,7 @@ from urllib import error, request
 
 ROOT = Path(__file__).resolve().parents[1]
 MODELS = ("nvidia/nemotron-3.5-lightning:free",
-          "baidu/ernie-5.5-flash-preview:free")
+          "liquid/lfm-2.5-2.6b:free")
 ROLES = ("sceneggiatore", "storico", "regista", "critico")
 MODEL_FOR_ROLE = (MODELS[0], MODELS[1], MODELS[0], MODELS[1])
 ALLOWED_FORMATS = ("giuliano", "artvision_4x1", "storia_rivive", "documentario")
@@ -40,6 +40,29 @@ GUIDANCE = {
  "documentario": "Documentario: concretezza, ritmo semantico, fonti prima delle affermazioni.",
 }
 
+
+# Factual read-only context transcribed from the ACTUAL FINAL EP03 
+# TIMING_REAL_VOICE.json produced on GitHub run 43247270123.
+# Scene cuts use ASR interpolation (matched words 261/283); they are NOT
+# frame-accurate visual content verification and do not certify rights.
+ANTIKYTHERA_VERIFIED_TIMING = (
+    "CONTESTO DAL MASTER REALE: durata voce 126,12 s; 20 scene; allineamento ASR "
+    "261/283 parole (92,2%), transizioni ancora da giudicare visivamente. "
+    "0-7,61 s relitto foto; 7,61-19,26 s frammento A ripetuto in 2 scene; "
+    "25,28-32,64 s frammento A quando si parla dei denti; "
+    "50,26-63,32 s fotografie frammenti D e C mentre la voce descrive raggi X "
+    "(le foto NON sono scansioni X); "
+    "63,32-75,21 s stessa animazione scientifica degli ingranaggi, 2 scene; "
+    "75,21-96 s stessa animazione quadranti, 3 scene; "
+    "96-101,4 s animazione ingranaggi per ipotesi sui pianeti; "
+    "101,4-108,97 s frammento originale e avvertenza che è ipotesi; "
+    "120,53-126,12 s ritorno alla CGI degli ingranaggi. "
+    "Fonti disponibili nel dossier: 6 foto di frammenti/reperti verificate, "
+    "2 video scientifici CGI dichiarati ricostruzioni; nessun video X-ray "
+    "autenticato e niente nuova ripresa già presente. "
+    "OBIETTIVO concreto: modifica di massimo 3 momenti con timecode, "
+    "senza sostituire fatti verificati con fantasie, mantenendo la voce."
+)
 
 class FreeOnlyError(ValueError):
     pass
@@ -116,9 +139,9 @@ def _request_free(model, prompt, key, *, transport=None):
             "usage": {"include": True},
             "provider": {"allow_fallbacks": False,
                          "max_price": {"prompt": 0, "completion": 0}}}
-    # NVIDIA free endpoint may spend the short output window on reasoning.
-    # Baidu's endpoint rejected a cross-provider reasoning override with HTTP 400
-    # during the first real board; keep its native defaults until separately tested.
+    # NVIDIA returned text after disabling excessive reasoning. The Baidu
+    # model returned HTTP 400 (not retried); this second pinned FREE model is
+    # Liquid instead. Never forward NVIDIA's reasoning option to Liquid.
     if model == "nvidia/nemotron-3.5-lightning:free":
         body["reasoning"] = {"enabled": False}
     req = request.Request(
@@ -175,6 +198,8 @@ def _prompt(role, fmt, topic, existing):
     base=(GUIDANCE[fmt]+"\nSOGGETTO PUBBLICO: "+topic+
           "\nNon affermare che esistono asset non presenti. "
           "Suggerisci solo la regia, NON un video già realizzato.\n")
+    if fmt=="giuliano" and ("anticitera" in topic.lower() or "antikythera" in topic.lower()):
+        base += "DATI REALI NON ASSOLUTI (NO VISIONE EFFETTIVA): "+ANTIKYTHERA_VERIFIED_TIMING+"\n"
     if role == "sceneggiatore":
         return base+("RUOLO SCENEGGIATORE: proponi un gancio concreto, sei beat diversi, "
                      "frasi narrabili, dettagli specifici, finale non standard. "

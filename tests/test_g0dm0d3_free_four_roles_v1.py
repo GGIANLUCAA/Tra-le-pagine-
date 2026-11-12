@@ -107,7 +107,7 @@ class FreeOnlyFourRoles(unittest.TestCase):
         self.assertEqual(body["reasoning"],{"enabled":False})
         self.assertNotIn("models",body)
 
-    def test_baidu_uses_native_reasoning_defaults_to_avoid_rejected_parameter(self):
+    def test_liquid_does_not_inherit_nvidia_reasoning_override(self):
         seen=[]
         def transport(req):
             obj=json.loads(req.data);seen.append(obj)
@@ -118,6 +118,30 @@ class FreeOnlyFourRoles(unittest.TestCase):
                                "fake",transport=transport)
         self.assertNotIn("reasoning",seen[0])
         self.assertEqual(result["reported_cost_usd"],0)
+
+    def test_real_antikythera_scene_map_is_shared_with_all_roles(self):
+        saved=[]
+        def responder(model,text,key):
+            saved.append(text)
+            return {"text":"Una proposta verificabile con tempi fotografici corretti "+str(len(saved)),
+                    "model":model,"reported_cost_usd":0,"human_approved":False}
+        result=p.experiment("giuliano","Anticitera: migliori movimenti e regia in 20 scene",
+                            key="fake",catalogue=CATALOGUE,execute=True,ask=responder)
+        self.assertEqual(result["status"],"four_roles_returned_unapproved")
+        self.assertEqual(len(saved),4)
+        self.assertTrue(all("126,12 s" in text for text in saved))
+        self.assertTrue(all("le foto NON sono scansioni X" in text for text in saved))
+        self.assertTrue(all("75,21-96 s" in text for text in saved))
+        self.assertTrue(all(len(text) <= 6500 for text in saved))
+
+    def test_one_shot_workflow_targets_only_new_authorized_request(self):
+        file = Path(__file__).resolve().parents[1] / ".github/workflows/g0dm0d3-free-giuliano-one-shot-20261112.yml"
+        yml=file.read_text(encoding="utf-8")
+        target="requests/g0dm0d3_free/giuliano_antikythera_verified_shotmap_liquid_once_20261112.json"
+        self.assertEqual(yml.count(target),2)
+        self.assertIn("OPENRUTER3",yml)
+        self.assertIn("G0DM0D3_FREE_PILOT_ONE_SHOT",yml)
+        self.assertIn("ONE_SHOT_ALREADY_USED_OR_NOT_NEW",yml)
 
     def test_escape_untrusted_model_text_in_android(self):
         with tempfile.TemporaryDirectory() as tmp:
