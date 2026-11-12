@@ -13,6 +13,10 @@ items.push({key:'STORIA_CARMENCITA_1894.mp4',name:'STORIA_CARMENCITA_1894.mp4',
  available:true,size:800000,cover:'/cover/carmencita.jpg',uploaded:'2026-11-08T09:00:00Z'});
 items.push({key:'ARTVISION_GPT_MISSING.mp4',name:'ARTVISION_GPT_MISSING.mp4',
  available:false,size:300000,uploaded:'2026-11-08T09:00:00Z'});
+items.forEach((row,i)=>{row.uploaded=new Date(Date.now()-(i+15)*86400000).toISOString()});
+items[0].uploaded=new Date().toISOString();
+items[2].uploaded=null;
+items[4].size=650000000;
 const calls=[],errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
 let copied='';
 const dom=new JSDOM(html,{url:'https://video-library-studio.600led.workers.dev/',
@@ -93,6 +97,34 @@ const tick=async()=>new Promise(resolve=>setTimeout(resolve,35));
  assert(tab('studio').classList.contains('active'));
  assert.equal(d.querySelectorAll('.bottom-nav [aria-current="location"]').length,1,'Only one active tab is announced');
  assert.match(html,/\.bottom-nav button\{min-width:45px;flex:1 1 0;padding:0 2px;font-size:11px/,'Android labels should remain readable');
+
+ const getCard=item=>d.querySelector('.card[data-video-key="'+item.key+'"]');
+ const time=getCard(items[0]).querySelector('.card-uploaded time');
+ assert(time,'Upload timestamp must be visible on a video card');
+ assert.equal(time.getAttribute('datetime'),new Date(items[0].uploaded).toISOString());
+ assert.match(time.textContent,/\\d{2}\\/\\d{2}\\/\\d{4}/,'Upload date and local time should be displayed');
+ assert.match(time.textContent,/\\d{2}:\\d{2}/,'Local upload time should be displayed');
+ assert.match(getCard(items[2]).querySelector('.date-missing').textContent,/Data non disponibile/,'Missing timestamps cannot be invented');
+ assert.match(getCard(items[4]).querySelector('.card-file-size').textContent,/650\\.0 MB/,'Size must be visible on mobile without hidden pills');
+ assert.equal(d.querySelector('#sort').value,'recent');
+ assert.equal(d.querySelector('.card').dataset.videoKey,items[0].key,'Default order must follow real upload timestamp');
+ d.querySelector('#sort').value='size';d.querySelector('#sort').dispatchEvent(new dom.window.Event('change'));
+ assert.equal(d.querySelector('.card').dataset.videoKey,items[4].key,'Sort by file size should work');
+ d.querySelector('#sizeBand').value='large';d.querySelector('#sizeBand').dispatchEvent(new dom.window.Event('change'));
+ assert.equal(d.querySelectorAll('#grid .card').length,1,'Size filter should isolate a 650 MB file');
+ assert.equal(d.querySelector('.card').dataset.videoKey,items[4].key);
+ d.querySelector('#sizeBand').value='all';d.querySelector('#sizeBand').dispatchEvent(new dom.window.Event('change'));
+ d.querySelector('#uploadPeriod').value='7';d.querySelector('#uploadPeriod').dispatchEvent(new dom.window.Event('change'));
+ assert.equal(d.querySelectorAll('#grid .card').length,1,'Last 7 days must use upload date, not ChatGPT creation');
+ assert.equal(d.querySelector('.card').dataset.videoKey,items[0].key);
+ d.querySelector('#uploadPeriod').value='undated';d.querySelector('#uploadPeriod').dispatchEvent(new dom.window.Event('change'));
+ assert.equal(d.querySelectorAll('#grid .card').length,1,'Undated records must be filterable');
+ assert.equal(d.querySelector('.card').dataset.videoKey,items[2].key);
+ d.querySelector('#uploadPeriod').value='all';d.querySelector('#uploadPeriod').dispatchEvent(new dom.window.Event('change'));
+ d.querySelector('#genre').value='Artisti e pittura';d.querySelector('#genre').dispatchEvent(new dom.window.Event('change'));
+ assert.equal(d.querySelectorAll('#grid .card').length,4,'Genre dropdown must filter to the selected real catalog category');
+ d.querySelector('#genre').value='Tutti';d.querySelector('#genre').dispatchEvent(new dom.window.Event('change'));
+ assert.equal(d.querySelectorAll('#grid .card').length,items.length,'Resetting filters must restore the catalog');
  assert.equal(d.querySelector('#vlsStudioQuick').hidden,false,'Private quick studio opens');
  assert(d.querySelector('#vlsStudioQuick').textContent.includes('Centro di controllo'));
  assert.equal(errors.length,0,errors.join('\n'));
