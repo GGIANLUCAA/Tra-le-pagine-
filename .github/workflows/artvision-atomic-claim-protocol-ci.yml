@@ -1,0 +1,43 @@
+name: "ArtVision | Atomic claim protocol simulated CI"
+on:
+  pull_request:
+    paths:
+      - "src/artvision_atomic_claim_v1.py"
+      - "src/artvision_atomic_github_store_v1.py"
+      - "tests/test_artvision_atomic_claim_v1.py"
+      - "docs/ARTVISION_ATOMIC_CLAIM_V1_20261112.md"
+      - ".github/workflows/artvision-atomic-claim-protocol-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: artvision-atomic-claim-sim-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  atomic-claim-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify code compiles without any provider credentials
+        run: python3 -m py_compile src/artvision_atomic_claim_v1.py src/artvision_atomic_github_store_v1.py
+      - name: Simulate concurrency, duplicate prevention, and ambiguous HTTP responses
+        run: python3 -m unittest discover -s tests -p 'test_artvision_atomic_claim_v1.py' -v
+      - name: Assert never enabled on pull request
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from src.artvision_atomic_claim_v1 import demo_manifest, plan_claim
+          claim = plan_claim(demo_manifest())
+          assert claim.ref.startswith('refs/heads/artvision-idempotency/v1/')
+          workflow = Path('.github/workflows/artvision-atomic-claim-protocol-ci.yml').read_text()
+          # Scan YAML control lines, not quoted strings inside this CI assertion.
+          lines = [line.strip() for line in workflow.splitlines()]
+          assert 'contents: read' in lines
+          assert 'contents: write' not in lines
+          assert 'workflow_dispatch:' not in lines
+          assert 'schedule:' not in lines
+          print('NO_LIVE_REF_CREATED NO_RENDER_STARTED NO_CREDITS_USED')
+          PY
