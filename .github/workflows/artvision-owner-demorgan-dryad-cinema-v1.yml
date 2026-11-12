@@ -89,6 +89,53 @@ jobs:
           print('ANDROID_ZIP_SHA256:',sha(zp))
           print('FFMPEG_DECODE_PASS ZIP_CRC_PASS HUMAN_REVIEW_PENDING NOT_GOLD NOT_PUBLISHED')
           PY
+      - name: V330 | select one of 20 fixed real tracks and produce music-matched Android copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/artvision-owner-demorgan-dryad-cinema-v1
+          python src/artvision_music_selector_v330.py \
+            --title "The Dryad" \
+            --artist "Evelyn De Morgan" \
+            --moods "magical,mysterious" \
+            --pin "magic_forest" \
+            --source-video "$d/VIDEO_ANDROID_720_REVIEW.mp4" \
+            --review-video "$d/VIDEO_ANDROID_MUSIC20_REVIEW.mp4" \
+            --cache "$d/verified_music" \
+            --prepare \
+            --out-json "$d/MUSIC_V330_PROOF.json"
+          python - <<'PY'
+          import hashlib,json,zipfile
+          from pathlib import Path
+          d=Path('output/artvision-owner-demorgan-dryad-cinema-v1')
+          qa=json.loads((d/'QA_TECHNICAL.json').read_text())
+          music=json.loads((d/'MUSIC_V330_PROOF.json').read_text())
+          src=d/'VIDEO_ANDROID_720_REVIEW.mp4'
+          review=d/'VIDEO_ANDROID_MUSIC20_REVIEW.mp4'
+          sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+          assert sha(src)==qa['android_mp4_sha256']
+          assert music['selected']['track_id']=='magic_forest'
+          assert music['license_status']=='ACTUAL_BINARY_SHA256_FFPROBE_VERIFIED'
+          assert music['review']['source_video_sha256']==sha(src)
+          assert music['review']['review_video_sha256']==sha(review)
+          assert music['review']['full_decode_video_audio']=='PASS'
+          assert music['published'] is False
+          p=d/'ANDROID_REVIEW_MUSIC20_PACKAGE.zip'
+          with zipfile.ZipFile(p,'w',zipfile.ZIP_DEFLATED,compresslevel=3) as z:
+            for x in [review,d/'COVER.jpg',d/'CONTACT_SHEET.jpg',
+                      d/'SOURCES_RIGHTS.json',d/'STORYBOARD.json',
+                      d/'QA_TECHNICAL.json',d/'SOCIAL_DRAFTS.json',
+                      d/'MUSIC_V330_PROOF.json']:
+              z.write(x,x.name)
+          with zipfile.ZipFile(p) as z:
+            assert z.testzip() is None
+            assert hashlib.sha256(z.read(review.name)).hexdigest()==sha(review)
+          print('DRYAD_MUSIC20_REAL_MP3_VERIFIED',json.dumps({
+            'song':'Magic Forest','isrc':music['selected']['isrc'],
+            'review_video_sha256':sha(review),'review_zip_sha256':sha(p),
+            'published':False,'human_review':'PENDING'}))
+          PY
+          ffmpeg -v error -xerror -i "$d/VIDEO_ANDROID_MUSIC20_REVIEW.mp4" -map 0 -f null -
       - name: Save genuine new video, cover, sources and Android delivery package
         if: success()
         uses: actions/upload-artifact@v4
@@ -101,6 +148,9 @@ jobs:
             output/artvision-owner-demorgan-dryad-cinema-v1/VIDEO_REVIEW.mp4
             output/artvision-owner-demorgan-dryad-cinema-v1/VIDEO_ANDROID_720_REVIEW.mp4
             output/artvision-owner-demorgan-dryad-cinema-v1/ANDROID_REVIEW_PACKAGE.zip
+            output/artvision-owner-demorgan-dryad-cinema-v1/VIDEO_ANDROID_MUSIC20_REVIEW.mp4
+            output/artvision-owner-demorgan-dryad-cinema-v1/ANDROID_REVIEW_MUSIC20_PACKAGE.zip
+            output/artvision-owner-demorgan-dryad-cinema-v1/MUSIC_V330_PROOF.json
             output/artvision-owner-demorgan-dryad-cinema-v1/COVER.jpg
             output/artvision-owner-demorgan-dryad-cinema-v1/CONTACT_SHEET.jpg
             output/artvision-owner-demorgan-dryad-cinema-v1/SOURCES_RIGHTS.json
@@ -126,6 +176,7 @@ jobs:
         run: |
           set -euo pipefail
           d=/tmp/dryad-readback
+          ffmpeg -v error -xerror -i "$d/VIDEO_ANDROID_MUSIC20_REVIEW.mp4" -map 0 -f null -
           ffmpeg -v error -xerror -i "$d/VIDEO_REVIEW.mp4" -map 0 -f null -
           ffmpeg -v error -xerror -i "$d/VIDEO_ANDROID_720_REVIEW.mp4" -map 0 -f null -
           python - <<'PY'
@@ -140,5 +191,12 @@ jobs:
           with zipfile.ZipFile(p/'ANDROID_REVIEW_PACKAGE.zip') as z:
             assert z.testzip() is None
             assert hashlib.sha256(z.read('VIDEO_ANDROID_720_REVIEW.mp4')).hexdigest()==qa['android_mp4_sha256']
+          music=json.loads((p/'MUSIC_V330_PROOF.json').read_text())
+          review=p/'VIDEO_ANDROID_MUSIC20_REVIEW.mp4'
+          assert h(review)==music['review']['review_video_sha256']
+          with zipfile.ZipFile(p/'ANDROID_REVIEW_MUSIC20_PACKAGE.zip') as z:
+            assert z.testzip() is None
+            assert hashlib.sha256(z.read('VIDEO_ANDROID_MUSIC20_REVIEW.mp4')).hexdigest()==h(review)
+          print('MUSIC20_REAL_FFMPEG_SHA_AND_ZIP_CRC_PASS')
           print('SEPARATE_JOB_PHYSICAL_ARTIFACT_READBACK_PASS NO_GOLD NO_PUBLICATION')
           PY
