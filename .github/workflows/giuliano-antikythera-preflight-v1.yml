@@ -1,8 +1,7 @@
 name: GIULIANO 03 | Antikythera real-source preflight and silent visual proof
 on:
-  push:
-    branches:
-      - feature/giuliano-antikythera-director-20261112
+  pull_request:
+    types: [opened, synchronize]
     paths:
       - giuliano/antikythera/**
       - src/giuliano_antikythera_preflight_v1.py
