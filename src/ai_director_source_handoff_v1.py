@@ -14,7 +14,7 @@ from pathlib import Path
 import re
 from urllib.parse import urlsplit
 
-from source_selector_v34 import build_report, get_scenes, render_html
+from source_selector_v34 import SelectionError, build_report, get_scenes, render_html
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "ai-director-keyless-archives-v1"
@@ -124,7 +124,10 @@ def build_handoff(research, *, aliases=None, scene_id="", scene_brief=None):
             raise HandoffError("Invalid scene ID")
         if not isinstance(scene_brief, dict):
             raise HandoffError("Real V34 scene brief required for scene routing")
-        fmt, scenes = get_scenes(scene_brief)
+        try:
+            fmt, scenes = get_scenes(scene_brief)
+        except SelectionError:
+            raise HandoffError("Invalid or incompatible V34 scene brief") from None
         shot = next((s for s in scenes if s["id"] == scene_id), None)
         if not shot or shot["need"] != SCENE_KIND[category]:
             raise HandoffError("Source category does not match this real storyboard scene")
