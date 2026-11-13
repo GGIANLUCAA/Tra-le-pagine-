@@ -1,4 +1,4 @@
-name: "La Storia Rivive · ONE real 1901 img2img portrait · no Vidu spend"
+name: "La Storia Rivive · DDColor-conditioned realistic 1901 photo · no Vidu spend"
 on:
   push:
     branches: [main]
@@ -27,7 +27,7 @@ jobs:
       - name: "Install minimal photo dependencies only"
         shell: bash
         run: |
-          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "pillow>=10,<13" "requests>=2.31,<3"
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "pillow>=10,<13" "requests>=2.31,<3" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1"
       - name: "Recover authentic original source frame produced by the prior photo-first test"
         env:
           GH_TOKEN: ${{ github.token }}
@@ -39,7 +39,7 @@ jobs:
             --name STORIA_1901_ONE_FACE_PHOTO_FIRST_NEW_REAL_IMAGE_OR_FAILURE \
             --dir output/storia_1901_photo_first_probe
           test -s output/storia_1901_photo_first_probe/ORIGINAL_REAL_1901_FRAME.png
-      - name: "Single volunteer-worker img2img trial on authentic 1901 frame, strict photo gate, NO VIDEO"
+      - name: "Real DDColor conditioning plus one genuinely photographic i2i, strict source quality gate NO VIDEO"
         shell: bash
         run: |
           set -euo pipefail
