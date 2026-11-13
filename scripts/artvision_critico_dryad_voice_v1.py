@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """ArtVision Critico Dryad: real Italian neural/Google voice asset, no paid API.
 
-Free Google Translate TTS through gTTS is attempted first. If Google is
-unavailable, Edge Neural Italian is a strictly private editorial fallback;
+THIS HISTORICAL gTTS/Edge EXPERIMENT WAS REJECTED BY THE OWNER 2026-11-13.
+The old generators are retained solely for audit and are BLOCKED by main();
 the fallback's commercial rights are unverified. Stop rather than output
 silence/robotic placeholder. Each BEAT is a complete thought with hard
 boundaries so video shots match EXACT spoken content. Do not claim Gacrux.
@@ -65,6 +65,18 @@ async def edge_voice(beats):
     await asyncio.sleep(2.0)
 
 def main():
+ # OWNER V333 2026-11-13: this experimental gTTS/Edge path was REJECTED.
+ # Never synthesize unapproved voices. Reuse same-script approved Gacrux
+ # recording or run Gemini Gacrux through separately verified free gate.
+ raise RuntimeError(
+  "ARTVISION_CRITICO_V333_GACRUX_ONLY: Owner rejected gTTS/Edge on The Dryad. "
+  "Do NOT generate another voice. Look up an authentic already-approved Google "
+  "Gemini Gacrux asset for this exact script, or verify FREE_QUOTA and "
+  "BILLING_DISABLED before any permitted Gacrux voice generation. "
+  "Until then Critico remains BLOCKED, not Gold or delivered."
+ )
+ 
+def legacy_rejected_main_DO_NOT_CALL():
  data=json.loads(PLAN.read_text("utf8"))
  beats=data["beats"]
  assert len(beats)==20 and [b["i"] for b in beats]==list(range(1,21))
