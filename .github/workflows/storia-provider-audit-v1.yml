@@ -1,0 +1,36 @@
+name: "La Storia Rivive | No-spend provider inventory"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/storia_provider_audit_v1.py"
+      - ".github/workflows/storia-provider-audit-v1.yml"
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Check configured credential presence only; never call APIs"
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          AIHORDE_API_KEY: ${{ secrets.AIHORDE_API_KEY }}
+          AIHORDE_API_KEY_2: ${{ secrets.AIHORDE_API_KEY_2 }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          VIDU: ${{ secrets.VIDU }}
+          VIDU2: ${{ secrets.VIDU2 }}
+          VIDUOK: ${{ secrets.VIDUOK }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY2: ${{ secrets.GEMINI_API_KEY2 }}
+          OPENRUTER2: ${{ secrets.OPENRUTER2 }}
+          OPENRUTER3: ${{ secrets.OPENRUTER3 }}
+        run: |
+          python src/storia_provider_audit_v1.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_PROVIDER_PRESENCE_ONLY_NO_COST
+          path: output/storia_provider_audit/PROVIDERS.json
+          retention-days: 7
