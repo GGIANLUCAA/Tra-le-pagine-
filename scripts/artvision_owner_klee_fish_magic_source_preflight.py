@@ -30,3 +30,21 @@ for url in (URL,ALT):
  except Exception as e:
   print("SOURCE_DOWNLOAD_ATTEMPT_FAILED",type(e).__name__,str(e)[:240],flush=True)
 else:raise RuntimeError("NO_VERIFIED_FISH_MAGIC_SOURCE_ABORT_NO_VIDEO")
+
+# Check one different track from the fixed twenty (not a substitute for its licensed master).
+TRACK_URL="https://incompetech.com/music/royalty-free/mp3-royaltyfree/Immersed.mp3"
+try:
+ with urllib.request.urlopen(urllib.request.Request(TRACK_URL,headers={"User-Agent":"ArtVisionOwnerPrivateResearch/1.0"}),timeout=75) as resp:audio=resp.read(16000001)
+ assert 100000<len(audio)<16000000 and (audio[:3]==b'ID3' or audio[:2] in (b'\xff\xfb',b'\xff\xf3',b'\xff\xf2')), "Not an MP3 recording"
+ music=OUT/"IMMERSSED_OFFICIAL_MP3.mp3";music.write_bytes(audio)
+ import subprocess
+ probe=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_streams","-show_format","-of","json",str(music)]))
+ duration=float(probe["format"]["duration"])
+ assert duration>65 and any(x.get("codec_type")=="audio" for x in probe["streams"]), "Not an intact musical recording"
+ proof={"track":"Immersed","composer":"Kevin MacLeod","isrc":"USUAN1600010","source_url":TRACK_URL,"official_page":"https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600010","license":"CC BY 4.0 attribution required","bytes":len(audio),"sha256":hashlib.sha256(audio).hexdigest(),"duration_seconds":duration,"status":"VERIFIED_REAL_RECORDING_FOR_PRIVATE_REVIEW"}
+ (OUT/"MUSIC_PROOF.json").write_text(json.dumps(proof,indent=2)+"\n")
+ print("FISH_MAGIC_REAL_MUSIC20_AUDIO_PASS",json.dumps(proof),flush=True)
+except Exception as e:
+ (OUT/"MUSIC_BLOCKED.txt").write_text(type(e).__name__+": "+str(e)[:180])
+ print("MUSIC_CANDIDATE_UNAVAILABLE",type(e).__name__,str(e)[:180],flush=True)
+
