@@ -6,7 +6,7 @@
   "title": "The Dryad",
   "year": "1884–1885",
   "variant": "critico_standard",
-  "status": "ONE_REAL_NEW_NARRATED_MP4_SOURCE_SHA_AND_VOICE_SYNC_VERIFIED_PRIVATE_ARTISTIC_RIGHTS_PENDING",
+  "status": "OWNER_REJECTED_WRONG_NARRATION_VOICE__TECHNICAL_ARTIFACT_ONLY__CRITICO_NOT_COMPLETED",
   "production": {
     "source_image": "Exact Dryad original image previously SHA1-verified from Wikimedia Commons Dryad high-res via De Morgan original Cinema",
     "original_artwork_image_sha256": "f562842995eda856cd8e04b5da7409ffa1a0e7bb8f4ddc8c8486103ff63fac78",
@@ -65,9 +65,9 @@
   },
   "review": {
     "technical": "PASS",
-    "human_full_speed_voice_naturalness": "PENDING",
+    "human_full_speed_voice_naturalness": "OWNER_REJECTED_WRONG_VOICE",
     "narration_accurate_timing": "per-beat audio measured, visuals cue-aligned; manual accuracy review pending",
-    "artistic_full_speed": "PENDING",
+    "artistic_full_speed": "OWNER_REJECTED_WRONG_VOICE",
     "commercial_photo_rights": "PENDING",
     "commercial_google_translate_tts_terms": "PENDING",
     "gold": false,
@@ -77,11 +77,25 @@
   "queue_accounting": {
     "second_owner_30_cinema_total_unchanged": true,
     "the_dryad_cinema_standard": "existing verified",
-    "the_dryad_critico_standard": "new real verified technical",
+    "the_dryad_critico_standard": "MISSING_REJECTED_GTTS_MUST_REMAKE_WITH_APPROVED_GACRUX",
     "the_dryad_cinema_museum": "MISSING",
-    "the_dryad_critico_museum": "MISSING",
+    "the_dryad_critico_museum": "MISSING_SAME_APPROVED_GACRUX_REQUIRED",
     "owner_selected_dali_excluded": true,
     "original_ten_4x1_technical_slots_unchanged": true
   },
-  "next": "Continue making real Critico Standard for selected owner works with authentic source + natural voice; keep matching music20. Never count without finished narrated MP4 and ZIP. Avoid fake Museum until exact frame/room scale and V331/V332 visual continuity gates."
+  "next": "VOICE FREEZE V333: NEVER generate gTTS or Edge fallback. Find and verify approved Gemini Gacrux from prior voice assets (same script exact hash) or use Gemini TTS only after independently verified free quota/billing-disabled gates. If unavailable, mark BLOCKED and continue other cinema/research safe work. No more incorrect Critico delivery.",
+  "owner_voice_rejection": {
+    "date": "2026-11-13",
+    "reason": "Owner expressly rejected Google Translate gTTS on The Dryad as not the already approved natural mature Google Gemini Gacrux voice.",
+    "selected_voice": "Google Gemini TTS Gacrux Italian approved original",
+    "actual_voice": "Google Translate gTTS, NOT Google Gemini Gacrux",
+    "owner_approved": false,
+    "use_in_critico_standard": false,
+    "use_in_critico_museum": false,
+    "publish": false,
+    "count_as_completed": false,
+    "rejected_media_status": "RETAINED_TECHNICAL_AUDIT_ONLY_NOT_FOR_OWNER_DELIVERY",
+    "corrected_voice_and_video": "NOT_YET_PRODUCED",
+    "voice_asset_gate": "EXACT_GACRUX_APPROVED_VOICE_REQUIRED; reuse cached recording of same script if authentic; if no free+unbilled approved capability keep pending"
+  }
 }
