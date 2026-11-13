@@ -248,8 +248,7 @@ def assemble(catalog_path,assets_dir,painting_path,out_dir,art_width_cm,art_heig
         'museum_approved':False,'Gold_V25':False,'full_speed_video_qa':'NOT_PERFORMED',
         'geometry':geometry,'output_image_sha256':sha256_file(target)}
     qa=out_dir/(variant+'_'+room['room_id']+'_QA.json')
-    qa.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'
-',encoding='utf8')
+    qa.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
     return target,report
 
 
