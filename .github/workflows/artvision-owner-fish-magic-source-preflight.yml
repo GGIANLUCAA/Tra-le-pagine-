@@ -1,0 +1,38 @@
+name: "ArtVision OWNER | Fish Magic source fingerprint and visual preflight"
+on:
+  pull_request:
+    paths:
+      - "scripts/artvision_owner_klee_fish_magic_source_preflight.py"
+      - ".github/workflows/artvision-owner-fish-magic-source-preflight.yml"
+permissions:
+  contents: read
+jobs:
+  original_sha_and_preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Pillow and fetch exact historical source
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13"
+          python scripts/artvision_owner_klee_fish_magic_source_preflight.py
+      - name: Upload verified private original/source proof, no film and no publication
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_FISH_MAGIC_VERIFIED_ORIGINAL_PRIVATE
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            output/owner-fish-magic-source-preflight/ORIGINAL_ARTWORK.jpg
+            output/owner-fish-magic-source-preflight/SOURCE_PREVIEW.jpg
+            output/owner-fish-magic-source-preflight/QA_SOURCE.json
+            output/owner-fish-magic-source-preflight/IMMERSSED_OFFICIAL_MP3.mp3
+            output/owner-fish-magic-source-preflight/MUSIC_PROOF.json
+            output/owner-fish-magic-source-preflight/MUSIC_BLOCKED.txt
