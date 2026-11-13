@@ -38,7 +38,7 @@ jobs:
           assert q['human_face_identity_review']=='PENDING'
           print('NEW_REAL_PHOTO_CANDIDATE_REVIEW_ONLY_TECH_PASSED')
           PY
-      - name: "Create owner-only prerelease, no social, no 4K or artistic approval claims"
+      - name: "Publish candidate as owner-review-only prerelease, no social or artistic approval"
         shell: bash
         run: |
           set -euo pipefail
