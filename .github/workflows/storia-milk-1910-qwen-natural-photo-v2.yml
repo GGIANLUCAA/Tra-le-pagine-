@@ -1,0 +1,109 @@
+name: "La Storia Rivive | Milk 1910 NEW film | Qwen natural modern photo v2"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-milk-1910-qwen-natural-photo-v2.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-milk-1910-new-photo-second-provider-once
+  cancel-in-progress: false
+jobs:
+  photo_to_real_moving_video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: \${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Read exact original Finegrain image and failed photo QA, without repeating provider
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_milk_1910_previous
+          gh run download 43407929611 \
+             --repo "$GITHUB_REPOSITORY" \
+             --name NEW_1910_PHOTO_VIDEO_OWNER_REVIEW_OR_DOCUMENTED_FAILURE \
+             --dir output/storia_milk_1910_previous
+          test -s output/storia_milk_1910_previous/GENERATIVE_PHOTO_REAL_CANDIDATE.png
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path("output/storia_milk_1910_previous/PHOTO_QA.json").read_text())
+          s=json.loads(Path("output/storia_milk_1910_previous/SOURCE_QA.json").read_text())
+          assert j["real_free_I2I_created"] and j["saturation"]>135
+          assert s["year"]==1910 and not s["vidu_clip_generated"]
+          print("REUSED_REAL_I2I_SEPIA_REJECTED_NO_DUPLICATE_FINEGRAIN_CALL")
+          PY
+      - name: Install source/modern photo I2I/video tools (free only)
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_milk_1910_qwen_natural_colors_v2.py src/storia_milk_1910_photo_owner_review.py
+          if ! command -v ffmpeg; then
+            timeout 70 sudo apt-get update -qq || true
+            timeout 120 sudo apt-get install -y -qq ffmpeg
+          fi
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: Real new film + alternative free photo generation; prevent uniform sepia
+        run: |
+          set -euo pipefail
+          python -u src/storia_milk_1910_qwen_natural_colors_v2.py
+      - name: Independently validate actual MP4 bytes and Android ZIP
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, pathlib, zipfile,subprocess
+          root=pathlib.Path("output/storia_milk_1910_new_owner_review")
+          q=json.loads((root/"DELIVERY.json").read_text())
+          p=json.loads((root/"V2_PHOTO_QUALITY_GATE.json").read_text())
+          mp4=root/"MILK_1910_NEW_PHOTO_REVIEW.mp4"
+          zp=root/"MILK_1910_NEW_VIDEO_COVER_SOCIAL.zip"
+          assert mp4.is_file() and zp.is_file() and mp4.stat().st_size>1000000
+          assert all(p["checks"].values())
+          assert hashlib.sha256(mp4.read_bytes()).hexdigest()==q["video_sha256"]
+          assert hashlib.sha256(zp.read_bytes()).hexdigest()==q["zip_sha256"]
+          assert q["new_video"] and not q["full_4plus1"] and not q["published"]
+          with zipfile.ZipFile(zp) as z:assert z.testzip() is None
+          subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(mp4),"-f","null","-"],check=True,timeout=180)
+          print("REAL_NEW_1910_MODERN_PHOTO_VIDEO_MP4_ZIP_BOTH_PASS",q["video_sha256"])
+          PY
+      - name: Save all real images, evidence, MP4/ZIP OR exact failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MILK_1910_V2_NEW_MODERN_PHOTO_VIDEO_OR_FAILURE
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_milk_1910_new_owner_review/*.json
+            output/storia_milk_1910_new_owner_review/*.jpg
+            output/storia_milk_1910_new_owner_review/*_CANDIDATE.png
+            output/storia_milk_1910_new_owner_review/*.mp4
+            output/storia_milk_1910_new_owner_review/*_SOCIAL.zip
+            output/storia_milk_1910_new_owner_review/POST_*.txt
+      - name: Real new downloadable owner prerelease, NOT public social posting
+        if: success()
+        run: |
+          set -euo pipefail
+          d=output/storia_milk_1910_new_owner_review
+          tag=storia-1910-milk-new-qwen-modern-photo-owner-review-v2
+          gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 && { echo "RELEASE_ALREADY_EXISTS_NO_OVERWRITE"; exit 5; } || true
+          gh release create "$tag" \
+            "$d/MILK_1910_NEW_PHOTO_REVIEW.mp4" \
+            "$d/MILK_1910_NEW_VIDEO_COVER_SOCIAL.zip" \
+            "$d/SOCIAL_COVER.jpg" "$d/ORIGINAL_VS_PHOTO_VISUAL_QA.jpg" "$d/V2_PHOTO_QUALITY_GATE.json" \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --latest=false \
+            --title "All on Account of the Milk · 1910 · NEW photographic owner review" \
+            --notes "Completely NEW historical film subject, not repackaged earlier release. Real 1910 moving archival scan (Wikimedia 720p transcode), AI I2I photograph: Finegrain source-locked frame + Qwen photo editing to correct uniform sepia; genuine moving source colorized neurally. Original generated music, MP4 and Android ZIP. TECHNICAL preview only; exact facial identity/historical Italian rights review PENDING; no Vidu in this version, no paid API, not Gold/final or social published."
+          for name in MILK_1910_NEW_PHOTO_REVIEW.mp4 MILK_1910_NEW_VIDEO_COVER_SOCIAL.zip; do
+            curl -fsSL --retry 2 --connect-timeout 15 --max-time 140 \
+             "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$name" -o "/tmp/$name"
+            cmp "$d/$name" "/tmp/$name"
+          done
+          echo "NEW_1910_REAL_OWNER_MP4_AND_ZIP_FULL_BYTE_ANDROID_DOWNLOAD_VERIFIED"
