@@ -1,0 +1,45 @@
+name: "La Storia Rivive | NEW 1905 Biograph Subway | real-source preflight"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-subway-1905-true-source-scout-v1.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-subway-1905-source-scout-once
+  cancel-in-progress: false
+jobs:
+  true_original_film:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Read-only source scout dependencies (zero credits)"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/storia_subway_1905_source_scout_v1.py
+          if ! command -v ffmpeg >/dev/null; then
+            timeout 75 sudo apt-get update -qq || true
+            timeout 100 sudo apt-get install -qq -y ffmpeg
+          fi
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "requests>=2.31,<3"
+      - name: "Verify 1905 film in motion and five distinct acting beats"
+        run: python -u tools/storia_subway_1905_source_scout_v1.py
+      - name: "Preserve the full source and 5 original frame proofs"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SUBWAY_1905_AUTHENTIC_FILM_FIVE_SOURCE_ANCHORS
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_subway_1905_source/*.json
+            output/storia_subway_1905_source/*.jpg
+            output/storia_subway_1905_source/SCENE_*_BW_EXACT.png
+            output/storia_subway_1905_source/SOURCE_1905_REAL_MOVING.webm
