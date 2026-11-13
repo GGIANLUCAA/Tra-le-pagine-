@@ -1,0 +1,35 @@
+name: "ArtVision OWNER | Titan's Goblet | exact Met CC0 original + fixed20 music preflight"
+on:
+  pull_request:
+    paths:
+      - "scripts/artvision_titans_goblet_source_preflight.py"
+      - ".github/workflows/artvision-titans-goblet-source-preflight.yml"
+permissions:
+  contents: read
+jobs:
+  verify_original:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install exact-file QA tools (no paid API)
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13"
+          python scripts/artvision_titans_goblet_source_preflight.py
+      - name: Preserve verified source, musician file and hashes, private only
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_TITANS_GOBLET_EXACT_CC0_SOURCE_AND_MUSIC
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            output/owner-titans-goblet-source/ORIGINAL_MET_COLE_TITANS_GOBLET.jpg
+            output/owner-titans-goblet-source/IMAGE_PREVIEW.jpg
+            output/owner-titans-goblet-source/MYST_ON_THE_MOOR_OFFICIAL.mp3
+            output/owner-titans-goblet-source/SOURCE_MUSIC_CHECK.json
