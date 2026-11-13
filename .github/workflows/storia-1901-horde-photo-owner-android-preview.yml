@@ -1,0 +1,65 @@
+name: "La Storia Rivive · 1901 first improved photo · Android owner review"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-1901-horde-photo-owner-android-preview.yml"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-1901-photo-improved-android-owner-preview
+  cancel-in-progress: false
+jobs:
+  photo_review_delivery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Recover single new source-matched AI photo from verified no-charge run"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p review/1901
+          gh run download 43493160678 --repo "$GITHUB_REPOSITORY" \
+            --name STORIA_1901_NEW_GENUINE_IMG2IMG_PHOTO_OR_QUALITY_BLOCKER \
+            --dir review/1901
+          test -s review/1901/AI_HORDE_PHOTOGRAPH_CANDIDATE.webp
+          test -s review/1901/NEW_AI_PHOTO_VS_REAL_1901_SOURCE.jpg
+          test -s review/1901/PHOTO_QUALITY_REPORT.json
+          python - <<'PY'
+          import json,pathlib
+          q=json.loads(pathlib.Path('review/1901/PHOTO_QUALITY_REPORT.json').read_text())
+          assert q['technical_photo_candidate'] is True
+          assert q['mean_saturation']>=18 and q['geometry_corr']>=.83
+          assert q['vidu_paid_calls']==0 and not q['final_video_ready']
+          assert q['human_face_identity_review']=='PENDING'
+          print('NEW_REAL_PHOTO_CANDIDATE_REVIEW_ONLY_TECH_PASSED')
+          PY
+      - name: "Create owner-only prerelease, no social, no 4K or artistic approval claims"
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag=storia-1901-new-photographic-photo-first-candidate-20261113
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "PREVIEW_EXISTS_STOP";exit 1
+          fi
+          gh release create "$tag" \
+            review/1901/AI_HORDE_PHOTOGRAPH_CANDIDATE.webp \
+            review/1901/NEW_AI_PHOTO_VS_REAL_1901_SOURCE.jpg \
+            review/1901/NEURAL_COLOR_CONDITIONING_NOT_FINAL.jpg \
+            review/1901/PHOTO_QUALITY_REPORT.json \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --latest=false \
+            --title "1901 · NEW true photographic img2img image — owner visual review" \
+            --notes "New genuine AI Horde ICBINP img2img image from verified actual archival frame, seeded by DDColor semantic historical color. Technical gates passed geometry .9841, saturation 121.26, color coverage 98.9 percent. Photo is ONLY an experiment requiring human visual review. Historical faces/skin/clothes and commercial licensing not yet approved. No new video or Vidu credits. No web/social publication."
+          mkdir -p confirmed
+          for file in AI_HORDE_PHOTOGRAPH_CANDIDATE.webp NEW_AI_PHOTO_VS_REAL_1901_SOURCE.jpg; do
+            curl -fsSL --retry 2 --max-time 100 \
+              "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$file" \
+              -o "confirmed/$file"
+            cmp "review/1901/$file" "confirmed/$file"
+          done
+          echo "OWNER_DIRECT_ANDROID_NEW_PHOTO_DOWNLOAD_SHA_IDENTICAL"
