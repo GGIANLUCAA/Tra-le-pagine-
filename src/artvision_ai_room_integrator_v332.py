@@ -166,7 +166,8 @@ def mount_on_wall(room_image,frame_image,art_cm,frame_cm,room):
 def assemble(catalog_path,assets_dir,painting_path,out_dir,art_width_cm,art_height_cm,moods,
              variant,room_id=None,prev_rooms=None,authentic_frame_photo=None,
              frame_source_url=None,frame_license=None,frame_style='auto',allow_editorial=False,
-             frame_outer_cm=None,verified_frame_type='current_documented',\n             original_frame_evidence_url=None):
+             frame_outer_cm=None,verified_frame_type='current_documented',
+             original_frame_evidence_url=None):
     catalog=load_catalog(catalog_path)
     if variant not in ('cinema_museum','critico_museum'):
         raise ValueError('Only the two Museum variants use these rooms')
@@ -236,7 +237,8 @@ def assemble(catalog_path,assets_dir,painting_path,out_dir,art_width_cm,art_heig
         'source_artwork_sha256':sha256_file(painting_path),
         'official_artwork_cm':[art_width_cm,art_height_cm],
         'frame_status':frame_kind,'frame_source_url':frame_source_url,'frame_source_license':frame_license,
-        'frame_source_sha256':source_frame_sha,'frame_dimensions_status':frame_dimensions_status,\n        'original_frame_historical_evidence_url':original_frame_evidence_url if frame_kind=='original_documented' else None,
+        'frame_source_sha256':source_frame_sha,'frame_dimensions_status':frame_dimensions_status,
+        'original_frame_historical_evidence_url':original_frame_evidence_url if frame_kind=='original_documented' else None,
         'frame_source_disclosure':frame_source_disclosure,'editorial_frame_family':frame_style if frame_kind=='editorial_scenographic_not_historical' else None,
         'moods':list(moods),'matched_tags':matched,
         'paired_variants_lock':'Use the same room_id, authentic frame/source, and art source in both Museum versions',
@@ -246,7 +248,8 @@ def assemble(catalog_path,assets_dir,painting_path,out_dir,art_width_cm,art_heig
         'museum_approved':False,'Gold_V25':False,'full_speed_video_qa':'NOT_PERFORMED',
         'geometry':geometry,'output_image_sha256':sha256_file(target)}
     qa=out_dir/(variant+'_'+room['room_id']+'_QA.json')
-    qa.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+    qa.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'
+',encoding='utf8')
     return target,report
 
 
@@ -262,7 +265,9 @@ def main():
     p.add_argument('--exclude-room',action='append',default=[])
     p.add_argument('--authentic-frame-photo',type=Path)
     p.add_argument('--frame-source-url')
-    p.add_argument('--frame-license')\n    p.add_argument('--verified-frame-type',choices=('current_documented','original_documented','historic_documented'),default='current_documented')\n    p.add_argument('--original-frame-evidence-url')
+    p.add_argument('--frame-license')
+    p.add_argument('--verified-frame-type',choices=('current_documented','original_documented','historic_documented'),default='current_documented')
+    p.add_argument('--original-frame-evidence-url')
     p.add_argument('--frame-style',choices=('auto',)+tuple(PALETTE),default='auto')
     p.add_argument('--allow-editorial',action='store_true')
     p.add_argument('--variant',choices=('cinema_museum','critico_museum'),required=True)
@@ -270,7 +275,8 @@ def main():
     a=p.parse_args()
     image,info=assemble(a.catalog,a.assets_dir,a.painting,a.out_dir,a.width_cm,a.height_cm,
         [s.strip() for s in a.moods.split(',')],a.variant,a.room_id,a.exclude_room,
-        a.authentic_frame_photo,a.frame_source_url,a.frame_license,a.frame_style,a.allow_editorial,\n        verified_frame_type=a.verified_frame_type,original_frame_evidence_url=a.original_frame_evidence_url)
+        a.authentic_frame_photo,a.frame_source_url,a.frame_license,a.frame_style,a.allow_editorial,
+        verified_frame_type=a.verified_frame_type,original_frame_evidence_url=a.original_frame_evidence_url)
     print(json.dumps({'result':'PHOTO_SCENOGRAPHY_REVIEW_ONLY','png':str(image),
                       'room_id':info['source_gallery'],'frame':info['frame_status'],
                       'sha256':info['output_image_sha256'],'museum_approved':False},ensure_ascii=False))
