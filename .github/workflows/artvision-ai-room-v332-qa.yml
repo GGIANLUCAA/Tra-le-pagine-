@@ -7,7 +7,7 @@ on:
       - 'src/artvision_ai_room_integrator_v332.py'
       - 'src/artvision_ai_room_video_v332.py'
       - 'src/creative_director_v21.py'
-      - 'tests/test_artvision_ai_room_integrator_v332.py'
+      - 'tests/test_artvision_ai_room_integrator_v332.py'\n      - 'tests/test_artvision_ai_room_frame_provenance_v333.py'
       - 'config/artvision_ai_room_library_v332.json'
   workflow_dispatch:
 permissions:
@@ -28,7 +28,7 @@ jobs:
           python -m py_compile src/artvision_ai_room_integrator_v332.py src/artvision_ai_room_video_v332.py src/creative_director_v21.py
       - name: Run 10+ no-duplication, original-frame-first, room lock and geometry tests
         run: python -m unittest discover -s tests -p 'test_artvision_ai_room_integrator_v332.py' -v
-      - name: Validate all 12 owner generated room descriptors and reject built-in false frames
+      - name: Test paired Museum frame reuse and historical provenance guard\n        run: python -m unittest discover -s tests -p 'test_artvision_ai_room_frame_provenance_v333.py' -v\n      - name: Validate all 12 owner generated room descriptors and reject built-in false frames
         run: |
           python - <<'PY'
           import json,re
