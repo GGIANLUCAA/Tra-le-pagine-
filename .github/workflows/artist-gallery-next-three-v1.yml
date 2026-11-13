@@ -19,7 +19,8 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        artist: [bocklin, burne_jones, von_stuck]
+        # Two preceding reels are delivered. Isolated source revision of von Stuck only.
+        artist: [von_stuck]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
