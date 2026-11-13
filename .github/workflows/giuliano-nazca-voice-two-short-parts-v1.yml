@@ -1,0 +1,129 @@
+name: "GIULIANO 04 Nazca | Two short Gacrux parts, cached then ASR"
+on:
+  push:
+    branches: [feature/artvision-curated-agent-skills-20261112]
+    paths:
+      - "requests/giuliano/nazca-ep04-gacrux-short-parts-once-20261112.json"
+permissions:
+  contents: read
+concurrency:
+  group: giuliano-nazca-GACRUX-SHORT-TWO-PARTS
+  cancel-in-progress: false
+jobs:
+  one-time-cost-and-prompt-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Verify new unique request, two chunks only, no duplicate paid retry
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/giuliano_nazca_voice_split_v1.py scripts/giuliano_nazca_voice_v1.py
+          python - <<'PY'
+          import json,subprocess,os
+          filename='requests/giuliano/nazca-ep04-gacrux-short-parts-once-20261112.json'
+          new=subprocess.check_output(['git','diff','--name-only','--diff-filter=A','HEAD^','HEAD'],text=True).splitlines()
+          assert new==[filename], 'TTS request not new or already consumed'
+          req=json.load(open(filename))
+          assert set(req)=={'schema','episode','owner_authorized','action','model','voice',
+                           'max_new_synthesis_calls','buy_credits','automatic_retries',
+                           'publish','reason'}
+          assert req['schema']=='nazca-owner-split-short-Gacrux-one-shot-v1'
+          assert req['episode']=='GIULIANO_04_NAZCA'
+          assert req['owner_authorized'] is True and req['action']=='recover_benign_archeology_narration'
+          assert req['model']=='gemini-3.1-flash-tts-preview' and req['voice']=='Gacrux'
+          assert type(req['max_new_synthesis_calls']) is int and req['max_new_synthesis_calls']==2
+          assert req['buy_credits'] is False and req['automatic_retries'] is False and req['publish'] is False
+          assert os.environ['GITHUB_RUN_ATTEMPT']=='1','TTS rerun forbidden'
+          print('NAZCA_OWNER_AUTHORIZED_TWO_SHORT_VOICE_CALLS_MAX_NO_RETRY')
+          PY
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate short text ranges without Google API calls
+        run: |
+          python -m pip install --disable-pip-version-check numpy soundfile google-genai
+          python scripts/giuliano_nazca_voice_split_v1.py --validate-only
+  first-short-voice:
+    needs: one-time-cost-and-prompt-preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GIULIANO_NAZCA_TWO_SHORT_REQUESTS_ONCE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Google TTS SDK and audio writer
+        run: python -m pip install --disable-pip-version-check numpy soundfile google-genai
+      - name: One and only one TTS for Nazca scenes 1 to 13
+        run: |
+          test "$GITHUB_RUN_ATTEMPT" = "1" || exit 2
+          python -u scripts/giuliano_nazca_voice_split_v1.py --part 1
+      - name: Cache PART 1 as its own proof, even if later part fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_04_NAZCA_GACRUX_PART1
+          path: output/GIULIANO_04_NAZCA_GACRUX_PART1/
+          retention-days: 30
+          if-no-files-found: warn
+  second-short-voice:
+    needs: first-short-voice
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GIULIANO_NAZCA_TWO_SHORT_REQUESTS_ONCE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Google TTS SDK and audio writer
+        run: python -m pip install --disable-pip-version-check numpy soundfile google-genai
+      - name: One and only one TTS for Nazca scenes 14 to 27
+        run: |
+          test "$GITHUB_RUN_ATTEMPT" = "1" || exit 2
+          python -u scripts/giuliano_nazca_voice_split_v1.py --part 2
+      - name: Cache PART 2 independently
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_04_NAZCA_GACRUX_PART2
+          path: output/GIULIANO_04_NAZCA_GACRUX_PART2/
+          retention-days: 30
+          if-no-files-found: warn
+  verified-joined-voice:
+    needs: [first-short-voice,second-short-voice]
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install local ASR and PCM tools (no Google API)
+        run: python -m pip install --disable-pip-version-check numpy soundfile faster-whisper google-genai
+      - uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_04_NAZCA_GACRUX_PART1
+          path: output/GIULIANO_04_NAZCA_GACRUX_PART1
+      - uses: actions/download-artifact@v4
+        with:
+          name: GIULIANO_04_NAZCA_GACRUX_PART2
+          path: output/GIULIANO_04_NAZCA_GACRUX_PART2
+      - name: Join original two Gacrux WAVs, align 27 actual narration phrases, verify hashes
+        run: python -u scripts/giuliano_nazca_voice_split_v1.py --assemble
+      - name: Preserve exact joined WAV and true word-timing for later silent renderer
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_04_NAZCA_VERIFIED_GACRUX_VOICE_COMPLETE
+          path: output/GIULIANO_04_NAZCA_VOICE/
+          if-no-files-found: warn
+          retention-days: 30

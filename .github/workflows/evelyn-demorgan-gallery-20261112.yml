@@ -1,0 +1,44 @@
+name: "Evelyn De Morgan | Authentic Painting Gallery | Private Review"
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/evelyn_demorgan_gallery_20261112.py"
+      - ".github/workflows/evelyn-demorgan-gallery-20261112.yml"
+permissions:
+  contents: read
+concurrency:
+  group: evelyn-gallery-trial-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  render-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify Python source syntax
+        run: python -m py_compile scripts/evelyn_demorgan_gallery_20261112.py
+      - name: Install lightweight free tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "Pillow>=10,<13"
+      - name: Verify artwork bytes, edit longer gallery, decode MP4 and inspect ZIP
+        run: python -u scripts/evelyn_demorgan_gallery_20261112.py
+      - name: Save private review MP4 and supporting assets
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EVELYN_DE_MORGAN_GALLERY_REVIEW_REAL_ARTWORKS
+          path: |
+            output/evelyn-demorgan-gallery-20261112/EVELYN_DE_MORGAN_GALLERY_REVIEW.mp4
+            output/evelyn-demorgan-gallery-20261112/EVELYN_DE_MORGAN_COMPLETE.zip
+            output/evelyn-demorgan-gallery-20261112/COVER.jpg
+            output/evelyn-demorgan-gallery-20261112/CONTACT_SHEET.jpg
+            output/evelyn-demorgan-gallery-20261112/SOURCE_MANIFEST.json
+            output/evelyn-demorgan-gallery-20261112/SOCIAL_CAPTION.txt
+          if-no-files-found: error
+          retention-days: 14

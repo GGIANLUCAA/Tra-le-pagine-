@@ -1,0 +1,56 @@
+name: "GIULIANO 04 Nazca | Source scout REAL photos + aerial film"
+on:
+  push:
+    branches: [feature/artvision-curated-agent-skills-20261112]
+    paths:
+      - "scripts/giuliano_nazca_scout_v1.py"
+      - ".github/workflows/giuliano-nazca-scout-v1.yml"
+permissions:
+  contents: read
+concurrency:
+  group: giuliano-nazca-scout-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  licensing-and-real-media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install only source inspection dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install 'Pillow>=10,<13'
+          if ! command -v ffprobe >/dev/null 2>&1; then
+            timeout 120 sudo apt-get update -qq
+            timeout 120 sudo apt-get install -y -qq ffmpeg
+          fi
+          ffprobe -version | head -n 1
+          python -m py_compile scripts/giuliano_nazca_scout_v1.py
+      - name: Verify Commons licenses, 18+ different photos and actual moving aerial footage
+        run: |
+          set -euo pipefail
+          python -u scripts/giuliano_nazca_scout_v1.py
+      - name: Confirm byte manifest and non-synthetic real media before handoff
+        run: |
+          python - <<'PY'
+          import json,hashlib,pathlib
+          root=pathlib.Path('output/giuliano-nazca-scout')
+          m=json.loads((root/'SOURCE_SCOUT.json').read_text())
+          assert len(m['photos'])>=18 and m['real_video'] and m['status']=='SOURCE_VERIFIED'
+          for v in m['photos']+[m['real_video']]:
+              p=root/v['filename']
+              assert p.exists() and hashlib.sha256(p.read_bytes()).hexdigest()==v['sha256']
+              assert v['license'] and v['license_url'] and v['author']
+          print('NAZCA_REAL_MEDIA_LICENSE_SHA256_PASS',len(m['photos']),'REAL_VIDEO',m['real_video']['duration_s'])
+          PY
+      - name: Keep source archive, attribution, contact sheet (NO master yet)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GIULIANO_NAZCA_REAL_MEDIA_SCOUT_${{ github.run_id }}
+          path: output/giuliano-nazca-scout/
+          if-no-files-found: warn
+          retention-days: 14

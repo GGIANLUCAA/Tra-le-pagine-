@@ -1,0 +1,45 @@
+name: "Curated artist-gallery trial | Mikhail Vrubel | source locked"
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - scripts/vrubel_curated_artist_gallery_trial_20261112.py
+      - .github/workflows/vrubel-curated-artist-gallery-trial.yml
+permissions:
+  contents: read
+concurrency:
+  group: vrubel-gallery-trial-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  review-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Offline Python syntax preflight
+        run: python -m py_compile scripts/vrubel_curated_artist_gallery_trial_20261112.py
+      - name: Install light free tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'Pillow>=10,<13'
+      - name: Download exact authentic artworks, render and verify real MP4
+        run: python -u scripts/vrubel_curated_artist_gallery_trial_20261112.py
+      - name: Upload owner-review video, ZIP, cover, contact sheet and source proofs
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: VRUBEL_AUTHENTIC_ARTIST_GALLERY_V2
+          path: |
+            output/vrubel-curated-gallery-20261112/VRUBEL_REAL_ARTIST_GALLERY_REVIEW_V2.mp4
+            output/vrubel-curated-gallery-20261112/VRUBEL_REVIEW_PACKAGE_V2.zip
+            output/vrubel-curated-gallery-20261112/COVER_V2.jpg
+            output/vrubel-curated-gallery-20261112/CONTACT_SHEET_V2.jpg
+            output/vrubel-curated-gallery-20261112/SOURCE_MANIFEST.json
+            output/vrubel-curated-gallery-20261112/SOCIAL_CAPTION.txt
+          if-no-files-found: error
+          retention-days: 14

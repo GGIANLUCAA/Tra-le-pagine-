@@ -1,0 +1,64 @@
+name: "Gallery 2 | Bocklin Burne-Jones von Stuck | source locked"
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "config/artist_gallery_next_three_20261113.json"
+      - "scripts/artist_gallery_next_three_v1.py"
+      - ".github/workflows/artist-gallery-next-three-v1.yml"
+permissions:
+  contents: read
+concurrency:
+  group: artist-gallery-next-three-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  review-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        # Two preceding reels are delivered. Isolated source revision of von Stuck only.
+        artist: [von_stuck]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate scripts before downloads
+        run: |
+          python -m py_compile scripts/artist_gallery_first_five_v1.py
+          python -m py_compile scripts/artist_gallery_next_three_v1.py
+          python -m json.tool config/artist_gallery_next_three_20261113.json > /dev/null
+      - name: Install free render tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install "Pillow>=10,<13"
+      - name: Render one verified painter, full MP4 decode and ZIP byte comparison
+        env:
+          ARTIST: ${{ matrix.artist }}
+        run: python -u scripts/artist_gallery_next_three_v1.py --artist "$ARTIST"
+      - name: Upload simple Android archive with MP4 at root, no nested ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTIST_GALLERY_2_${{ matrix.artist }}_MP4_ANDROID
+          path: |
+            output/artist-gallery-next-three-20261113/${{ matrix.artist }}/*_GALLERY_REVIEW.mp4
+            output/artist-gallery-next-three-20261113/${{ matrix.artist }}/COVER.jpg
+            output/artist-gallery-next-three-20261113/${{ matrix.artist }}/CONTACT_SHEET.jpg
+            output/artist-gallery-next-three-20261113/${{ matrix.artist }}/SOURCE_MANIFEST.json
+            output/artist-gallery-next-three-20261113/${{ matrix.artist }}/SOCIAL_CAPTION.txt
+            output/artist-gallery-next-three-20261113/SERIES_STATUS_${{ matrix.artist }}.json
+          if-no-files-found: error
+          retention-days: 21
+      - name: Upload source-failure evidence, never a fake finished video
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTIST_GALLERY_2_${{ matrix.artist }}_SOURCE_BLOCK
+          path: output/artist-gallery-next-three-20261113/SERIES_STATUS_${{ matrix.artist }}.json
+          if-no-files-found: warn
+          retention-days: 7
