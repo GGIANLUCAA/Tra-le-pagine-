@@ -197,6 +197,17 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
 .control-center-newtab{display:none!important}.control-center-launcher{gap:12px;padding:15px}.control-center-launcher-icon{width:44px;height:44px;font-size:25px}
 .control-center-launcher-copy{min-width:200px}.control-center-launcher-copy strong{font-size:21px}
 .control-center-launcher .btn{width:100%}.control-center-buttons .ghost{padding:8px 9px}}
+/* Archive metadata: import timestamp and file size never depend on hidden mobile pills. */
+.card-meta{display:flex;align-items:flex-start;justify-content:space-between;gap:7px;flex-wrap:wrap;margin:2px 0 10px;color:#c7d5df;font-size:12px;line-height:1.4}
+.card-uploaded{display:flex;flex-direction:column;gap:2px;min-width:0}
+.card-uploaded>span{color:#a6b4c0;font-size:11px}
+.card-uploaded time,.card-uploaded .date-missing{font-weight:700;color:#f2dab4;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.card-file-size{white-space:nowrap;border:1px solid #43505b;background:#232f39;padding:3px 7px;border-radius:7px;font-variant-numeric:tabular-nums}
+.archive-quick{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr);gap:9px;margin-top:12px}
+.archive-quick label{display:flex;flex-direction:column;gap:5px;min-width:0;color:#b8c8d5;font-size:12px;font-weight:650}
+.archive-quick select{width:100%;min-width:0;background:#1b2834;border-color:#52606b;color:#f3ede2}
+@media(max-width:720px){.archive-quick{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.archive-quick label:first-child{grid-column:1/-1}.archive-quick select{font-size:13px;min-height:44px}.filters{display:none}.card-meta{display:block;font-size:11px}.card-file-size{display:inline-block;margin-top:6px;font-size:10px;padding:2px 6px}.card-uploaded time{font-size:12px}.card-uploaded .date-missing{font-size:11px}}
+
 </style>
 </head>
 <body>
@@ -270,9 +281,20 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
  <button class="ghost view-btn" id="compactToggle" type="button" aria-pressed="false">☷ <span>Vista compatta</span></button>
  <button class="ghost selection-toggle" id="selectionToggle" type="button" aria-pressed="false" hidden>☑ <span>Seleziona</span></button>
 </div>
-<details class="advanced-filters" id="advancedFilters"><summary>☷ Filtri avanzati <span>Progetto · ordinamento · versione</span></summary><div class="advanced-row">
+<div class="archive-quick" role="group" aria-label="Ordina e filtra i video">
+ <label for="sort">Ordina per
+  <select id="sort" aria-label="Ordina i video"><option value="recent">Caricati di recente</option><option value="oldest">Caricati meno recentemente</option><option value="size">File più grandi</option><option value="size_asc">File più piccoli</option><option value="title">Titolo A–Z</option><option value="title_desc">Titolo Z–A</option><option value="genre">Genere A–Z</option><option value="project">Progetto A–Z</option><option value="duration">Durata maggiore</option><option value="favorites">Preferiti</option></select>
+ </label>
+ <label for="genre">Genere
+  <select id="genre" aria-label="Filtra per genere"><option value="Tutti">Tutti i generi</option></select>
+ </label>
+ <label for="uploadPeriod">Caricamento
+  <select id="uploadPeriod" aria-label="Filtra per data di caricamento"><option value="all">Qualsiasi data</option><option value="today">Oggi</option><option value="7">Ultimi 7 giorni</option><option value="30">Ultimi 30 giorni</option><option value="365">Ultimo anno</option><option value="undated">Senza data</option></select>
+ </label>
+</div>
+<details class="advanced-filters" id="advancedFilters"><summary>☷ Altri filtri <span>Progetto · dimensione · versione</span></summary><div class="advanced-row">
  <select id="project" aria-label="Filtra per progetto"><option value="">Tutti i progetti</option></select>
- <select id="sort" aria-label="Ordina video"><option value="recent">Più recenti</option><option value="title">Titolo A–Z</option><option value="duration">Durata maggiore</option><option value="size">File più grandi</option><option value="favorites">Preferiti</option></select>
+ <select id="sizeBand" aria-label="Filtra per dimensione file"><option value="all">Qualsiasi dimensione</option><option value="small">Sotto 100 MB</option><option value="medium">100–500 MB</option><option value="large">500 MB–1 GB</option><option value="huge">Oltre 1 GB</option><option value="unknown">Dimensione non disponibile</option></select>
  <select id="versions" aria-label="Filtra per versione"><option value="">Tutte le versioni</option><option value="final">Solo finali</option><option value="draft">Bozze / provini</option><option value="variants">Possibili varianti</option></select>
  </div><label class="group-versions"><input id="groupVariants" type="checkbox"> Raggruppa le versioni riconosciute (senza eliminare file)</label></details>
 <p class="notice">I video con il simbolo ☁ sono presenti nella libreria ChatGPT ma non ancora riproducibili da questo sito. Per guardare o scaricare un video serve il trasferimento del suo file originale.</p><div class="filters" id="filters"></div>
@@ -435,8 +457,27 @@ body{background:radial-gradient(ellipse at 85% 2%,#784b282a,transparent 34%),rad
 'use strict';
 const $=s=>document.querySelector(s), g={items:[],category:'Tutti',admin:false,token:'',selected:null,override:{},studio:false,selectionMode:false,selectedKeys:new Set(),showLimit:36,compact:false,shownCache:[]};
 const fmtDate=s=>{if(!s)return 'Non disponibile';try{return new Intl.DateTimeFormat('it-IT',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(s))}catch{return 'Non disponibile'}};
+/* The upload timestamp comes only from the catalog's uploaded field, never from ChatGPT creation. */
+const uploadMs=x=>{const raw=x&&x.uploaded;if(typeof raw!=='string'||!raw.trim())return null;const time=Date.parse(raw);return Number.isFinite(time)?time:null};
+const fmtUpload=x=>{const time=uploadMs(x);return time===null?'Data non disponibile':new Intl.DateTimeFormat('it-IT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(time))};
+const uploadPeriodMatch=(x,period,now=Date.now())=>{
+ if(!period||period==='all')return true;
+ const stamp=uploadMs(x);
+ if(period==='undated')return stamp===null;
+ if(stamp===null||stamp>now)return false;
+ if(period==='today'){const a=new Date(stamp),b=new Date(now);return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate()}
+ const days=Number(period);return Number.isFinite(days)&&days>0&&now-stamp<=days*86400000;
+};
+const sizeBandMatch=(x,band)=>{
+ if(!band||band==='all')return true;
+ const n=Number(x.size),valid=Number.isFinite(n)&&n>0;
+ if(band==='unknown')return !valid;
+ if(!valid)return false;
+ return band==='small'?n<1e8:band==='medium'?n>=1e8&&n<5e8:band==='large'?n>=5e8&&n<1e9:band==='huge'?n>=1e9:false;
+};
+
 const dur=v=>{const n=Number(v);if(!Number.isFinite(n)||n<=0)return 'Da rilevare';const s=Math.round(n);return s>=3600?Math.floor(s/3600)+'h '+String(Math.floor(s%3600/60)).padStart(2,'0')+'m':Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
-const size=v=>v>=1e9?(v/1e9).toFixed(2)+' GB':(v/1e6).toFixed(1)+' MB';
+const size=v=>{const n=Number(v);if(!Number.isFinite(n)||n<=0)return 'Dimensione non disponibile';return n>=1e9?(n/1e9).toFixed(2)+' GB':(n/1e6).toFixed(1)+' MB'};
 const norm=s=>(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const h=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const mediaURL=x=>location.origin+'/media/'+encodeURIComponent(x.key);const shareURL=x=>location.origin+'/watch/'+encodeURIComponent(x.key);
@@ -502,7 +543,7 @@ return {title,description,category,project,kind,artist:artis,version}}
 const base=k=>norm(k.replace(/\.(mp4|m4v|mov)$/i,'').replace(/__\d+$/,'').replace(/[_\s-]v\d+(?:_\d+)?$/i,'')).replace(/[^a-z0-9]+/g,'');
 function decorate(list){const groups={},fingerprints={};for(const x of list){x.guess=inferred(x);x.viewTitle=x.title||x.guess.title;x.viewCategory=categoryLabel(x.category||x.guess.category);x.viewDescription=x.description||x.guess.description;x.viewProject=x.project||x.guess.project;x.viewVersion=x.version||x.guess.version;const k=base(x.key);(groups[k]||(groups[k]=[])).push(x);if(x.contentHash){const id=String(x.size)+'|'+x.contentHash;(fingerprints[id]||(fingerprints[id]=[])).push(x)}}for(const x of list){const peers=groups[base(x.key)]||[];x.variants=peers.length-1;x.variantGroup=peers.map(p=>p.key);x.sameContent=x.contentHash?(fingerprints[String(x.size)+'|'+x.contentHash]||[]).filter(p=>p.key!==x.key).map(p=>p.name||p.key):[];if(x.variants>0&&x.viewVersion==='unknown')x.viewVersion='variant';}return list}
 
-function sortedFresh(a){return [...a].sort((x,y)=>Date.parse(y.gptCreatedAt||y.uploaded||0)-Date.parse(x.gptCreatedAt||x.uploaded||0))}
+function sortedFresh(a){return [...a].sort((x,y)=>(uploadMs(y)??0)-(uploadMs(x)??0))}
 const gotoSection=(name)=>{
  const el=document.getElementById(name);if(!el)return;
  el.scrollIntoView({behavior:'smooth',block:'start'});
@@ -723,8 +764,16 @@ museumStage.addEventListener('touchcancel',()=>{museumTouch=null});
 
 let last=0;
 async function load(force){if(!force&&Date.now()-last<9000)return;last=Date.now();$('#counter').textContent='Aggiornamento archivio…';try{const res=await fetch('/api/catalog',{cache:'no-store',headers:g.token?{'Authorization':'Bearer '+g.token}:{}});if(!res.ok)throw Error('Impossibile leggere il catalogo ('+res.status+')');const data=await res.json();g.admin=!!data.admin;g.items=decorate(data.items||[]);g.override=data.overrides||{};if(!initialCategoryApplied){initialCategoryApplied=true;const requested=new URLSearchParams(location.search).get('category');if(requested){const label=categoryLabel(requested);if(CATEGORY_WORLDS.includes(label)||g.items.some(x=>x.viewCategory===label))g.category=label;}}$('#adminBanner').classList.toggle('show',g.admin);$('#archivedToggle').style.display=g.admin?'flex':'none';const projects=[...new Set(g.items.map(x=>x.viewProject))].sort();const selected=$('#project').value;$('#project').replaceChildren(new Option('Tutti i progetti',''));projects.forEach(p=>$('#project').add(new Option(p,p)));$('#project').value=projects.includes(selected)?selected:'';let total=g.items.filter(x=>!x.hidden);const online=total.filter(x=>x.available!==false);$('#nVideos').textContent=online.length;$('#nGpt').textContent=total.length-online.length;$('#nPosters').textContent=online.filter(x=>x.cover).length;$('#nProjects').textContent=new Set(total.map(x=>x.viewCategory)).size;const hours=total.reduce((s,x)=>s+(Number(x.duration)||0),0)/3600;$('#nHours').textContent=hours?hours.toFixed(1).replace('.',','):'—';categories();renderHome();renderMuseum();applyStudioVisibility();draw();}catch(e){log(e.message);$('#counter').textContent='Errore durante il caricamento. Riprova con Aggiorna.'}}
-function categories(){const actual=[...new Set(g.items.map(x=>x.viewCategory))];const cats=['Tutti',...CATEGORY_WORLDS,...actual.filter(c=>!CATEGORY_WORLDS.includes(c))];const nav=$('#filters');nav.replaceChildren();cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(g.category===c?' active':'');const count=g.items.filter(x=>!x.hidden&&x.viewCategory===c).length;b.textContent=c+(c==='Tutti'?'':' · '+count);b.onclick=()=>{g.category=c;g.showLimit=36;categories();draw()};nav.append(b)});}
-function filtered(){const q=norm($('#query').value),p=$('#project').value,sort=$('#sort').value,ver=$('#versions').value,arc=$('#includeArchived').checked,where=$('#availability').value;let arr=g.items.filter(x=>(!x.hidden||(g.admin&&arc))&&(!where||(where==='online'?x.available!==false:x.available===false))&&(g.category==='Tutti'||x.viewCategory===g.category)&&(!p||x.viewProject===p)&&(!ver||(ver==='final'&&x.viewVersion==='final')||(ver==='draft'&&x.viewVersion==='draft')||(ver==='variants'&&x.variants>0))&&norm([x.viewTitle,x.key,x.viewDescription,x.viewProject,x.guess.artist].join(' ')).includes(q));arr.sort((a,b)=>sort==='title'?a.viewTitle.localeCompare(b.viewTitle,'it'):sort==='duration'?(b.duration||0)-(a.duration||0):sort==='size'?b.size-a.size:sort==='favorites'?Number(!!b.favorite)-Number(!!a.favorite):Date.parse(b.gptCreatedAt||b.uploaded||0)-Date.parse(a.gptCreatedAt||a.uploaded||0));if($('#groupVariants').checked){const seen=new Set();arr=arr.filter(x=>{const key=base(x.key);if(/^(artvisionvideo|basevideo|tralepagineep01)/.test(key)||!x.variants)return true;if(seen.has(key))return false;seen.add(key);return true})}return arr}
+function categories(){const actual=[...new Set(g.items.map(x=>x.viewCategory))];const cats=['Tutti',...CATEGORY_WORLDS,...actual.filter(c=>!CATEGORY_WORLDS.includes(c))];const nav=$('#filters');nav.replaceChildren();cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(g.category===c?' active':'');const count=g.items.filter(x=>!x.hidden&&x.viewCategory===c).length;b.textContent=c+(c==='Tutti'?'':' · '+count);b.onclick=()=>{g.category=c;g.showLimit=36;categories();draw()};nav.append(b)});const genre=$('#genre');genre.replaceChildren(new Option('Tutti i generi','Tutti'));actual.sort((a,b)=>a.localeCompare(b,'it')).forEach(c=>genre.add(new Option(c,c)));genre.value=actual.includes(g.category)?g.category:'Tutti';}
+function filtered(){
+ const q=norm($('#query').value),p=$('#project').value,sort=$('#sort').value,ver=$('#versions').value,arc=$('#includeArchived').checked,where=$('#availability').value;
+ const period=$('#uploadPeriod').value,band=$('#sizeBand').value;
+ let arr=g.items.filter(x=>(!x.hidden||(g.admin&&arc))&&(!where||(where==='online'?x.available!==false:x.available===false))&&(g.category==='Tutti'||x.viewCategory===g.category)&&(!p||x.viewProject===p)&&(!ver||(ver==='final'&&x.viewVersion==='final')||(ver==='draft'&&x.viewVersion==='draft')||(ver==='variants'&&x.variants>0))&&uploadPeriodMatch(x,period)&&sizeBandMatch(x,band)&&norm([x.viewTitle,x.key,x.viewDescription,x.viewProject,x.guess.artist].join(' ')).includes(q));
+ const cmpUpload=(a,b)=>(uploadMs(b)??0)-(uploadMs(a)??0);
+ arr.sort((a,b)=>sort==='title'?a.viewTitle.localeCompare(b.viewTitle,'it'):sort==='title_desc'?b.viewTitle.localeCompare(a.viewTitle,'it'):sort==='genre'?a.viewCategory.localeCompare(b.viewCategory,'it')||cmpUpload(a,b):sort==='project'?a.viewProject.localeCompare(b.viewProject,'it')||cmpUpload(a,b):sort==='duration'?(Number(b.duration)||0)-(Number(a.duration)||0):sort==='size'?(Number(b.size)||0)-(Number(a.size)||0):sort==='size_asc'?(Number(a.size)||0)-(Number(b.size)||0):sort==='favorites'?Number(!!b.favorite)-Number(!!a.favorite)||cmpUpload(a,b):sort==='oldest'?(uploadMs(a)??Number.MAX_SAFE_INTEGER)-(uploadMs(b)??Number.MAX_SAFE_INTEGER):cmpUpload(a,b));
+ if($('#groupVariants').checked){const seen=new Set();arr=arr.filter(x=>{const key=base(x.key);if(/^(artvisionvideo|basevideo|tralepagineep01)/.test(key)||!x.variants)return true;if(seen.has(key))return false;seen.add(key);return true})}
+ return arr;
+}
 function draw(){
  const arr=filtered(),node=$('#grid');g.shownCache=arr;node.replaceChildren();
  node.classList.toggle('compact',g.compact);
@@ -745,12 +794,14 @@ function draw(){
   if(x.sameContent?.length)tags.push('<span class="pill alert">≡ '+x.sameContent.length+' copie uguali</span>');
   if(x.hidden)tags.push('<span class="pill alert">Archiviato</span>');
   if(x.available===false)tags.unshift('<span class="pill alert">☁ Solo ChatGPT</span>');
-  const date=x.gptCreatedAt?'Creato '+fmtDate(x.gptCreatedAt):'Importato '+fmtDate(x.uploaded);
+  const uploadTime=uploadMs(x);
+  const uploadedMarkup=uploadTime===null?'<span class="date-missing">Data non disponibile</span>':'<time datetime="'+h(new Date(uploadTime).toISOString())+'">'+h(fmtUpload(x))+'</time>';
+  const cardMeta='<div class="card-meta"><div class="card-uploaded"><span>Caricato</span>'+uploadedMarkup+'</div><span class="card-file-size">'+h(size(x.size))+'</span></div>';
   const isSelecting=g.admin&&g.studio&&g.selectionMode;
   const upper=isSelecting?'<button type="button" class="select-mark" data-act="select" aria-pressed="'+g.selectedKeys.has(x.key)+'" aria-label="Seleziona '+h(x.viewTitle)+'">'+(g.selectedKeys.has(x.key)?'✓':'☐')+'</button>':g.admin?'<button class="heart'+(x.favorite?' on':'')+'" data-act="fav" aria-label="Preferito">'+(x.favorite?'♥':'♡')+'</button>':'';
   const cardActions=isSelecting?'<button class="primary" data-act="select">'+(g.selectedKeys.has(x.key)?'✓ Selezionato':'☐ Seleziona')+'</button><button data-act="detail">Scheda</button>':x.available===false?'<button data-act="detail">☁ Dettagli ChatGPT</button>':'<button class="primary" data-act="play">▶ Guarda</button><button data-act="download">↓ Scarica</button><button data-act="detail">··· Altro</button>';
   card.innerHTML='<div class="poster"><span class="symbol">'+(x.viewCategory==='Libri raccontati'?'▤':x.viewCategory==='Musica e visual'?'♫':'✦')+'</span>'+cover+'<span class="badge">'+h(x.guess.kind)+'</span><span class="duration">'+(x.available===false&&!x.duration?'Solo GPT':h(dur(x.duration)))+'</span>'+upper+'</div>'+
-    '<div class="cardbody"><div class="eyebrow">'+h(x.viewCategory)+'</div><h3>'+h(x.viewTitle)+'</h3><p>'+h(x.viewDescription)+'</p><div class="info">'+tags.join('')+'<span class="pill">'+h(size(x.size))+'</span><span class="pill">'+h(date)+'</span></div><div class="actions">'+cardActions+'</div>'+
+    '<div class="cardbody"><div class="eyebrow">'+h(x.viewCategory)+'</div><h3>'+h(x.viewTitle)+'</h3>'+cardMeta+'<p>'+h(x.viewDescription)+'</p><div class="info">'+tags.join('')+'</div><div class="actions">'+cardActions+'</div>'+
     (g.admin&&g.studio&&!isSelecting?'<div class="modalactions" style="margin-top:9px"><button class="ghost" data-act="dossier">📁 Dossier / ZIP</button><button class="ghost" data-act="hide">'+(x.hidden?'↩ Ripristina':'⊟ Archivia')+'</button><button class="ghost" data-act="edit">✎ Modifica</button></div>':'')+'</div>';
   card.addEventListener('click',e=>{
    const t=e.target.closest('[data-act]');if(!t)return;
@@ -769,7 +820,7 @@ function draw(){
  node.append(frag);updateSelectionPanel();
 }
 function play(x){if(x.available===false){log('Video presente solo in ChatGPT: trasferimento non ancora disponibile');return}g.selected=x;$('#playerTitle').textContent=x.viewTitle;$('#playerInfo').textContent=dur(x.duration)+' · '+size(x.size)+' · '+x.viewCategory;$('#video').src=mediaURL(x);if(x.cover)$('#video').poster=x.cover;else $('#video').removeAttribute('poster');if(!$('#player').open)$('#player').showModal();$('#video').play().catch(()=>{});}
-function details(x){g.selected=x;$('#detailTitle').textContent=x.viewTitle;const root=$('#detailBody');const rows=[['Titolo',x.viewTitle],['Categoria',x.viewCategory],['Progetto',x.viewProject],['Tipologia',x.guess.kind],['Durata',dur(x.duration)],['Risoluzione',x.width&&x.height?x.width+' × '+x.height:'Da rilevare'],['Dimensione',size(x.size)],['Creazione ChatGPT',x.gptCreatedAt?fmtDate(x.gptCreatedAt):'Data non disponibile'],['Importazione',fmtDate(x.uploaded)],['Versione',({final:'Versione finale',draft:'Bozza / provino',variant:'Seconda versione / variante',unknown:'Non verificata'})[x.viewVersion]||'Non verificata'],['Possibili varianti',String(x.variants)],['Copie con stessa impronta',x.sameContent?.length?x.sameContent.join(' · '):'Nessuna rilevata'],['File originale',x.name||x.key],['Disponibilità',x.available===false?'Solo ChatGPT — trasferimento mancante':'Riproducibile e scaricabile dal sito']];root.replaceChildren();const desc=document.createElement('p');desc.className='modalinfo';desc.textContent=x.viewDescription;root.append(desc);const table=document.createElement('div');table.style.cssText='display:grid;grid-template-columns:125px 1fr;gap:8px 12px;font-size:13px;word-break:break-word';for(const pair of rows){const k=document.createElement('span');k.style.color='#91a5c1';k.textContent=pair[0];const v=document.createElement('span');v.textContent=pair[1];table.append(k,v)}root.append(table);if(x.variants){const p=document.createElement('p');p.className='notice';p.textContent='Possibili altre versioni: '+x.variantGroup.filter(n=>n!==x.key).join(' · ')+'. Il sistema non può ancora confermare che siano identiche.';root.append(p)}
+function details(x){g.selected=x;$('#detailTitle').textContent=x.viewTitle;const root=$('#detailBody');const rows=[['Titolo',x.viewTitle],['Categoria',x.viewCategory],['Progetto',x.viewProject],['Tipologia',x.guess.kind],['Durata',dur(x.duration)],['Risoluzione',x.width&&x.height?x.width+' × '+x.height:'Da rilevare'],['Dimensione',size(x.size)],['Creazione ChatGPT',x.gptCreatedAt?fmtDate(x.gptCreatedAt):'Data non disponibile'],['Caricamento nel catalogo',fmtUpload(x)],['Versione',({final:'Versione finale',draft:'Bozza / provino',variant:'Seconda versione / variante',unknown:'Non verificata'})[x.viewVersion]||'Non verificata'],['Possibili varianti',String(x.variants)],['Copie con stessa impronta',x.sameContent?.length?x.sameContent.join(' · '):'Nessuna rilevata'],['File originale',x.name||x.key],['Disponibilità',x.available===false?'Solo ChatGPT — trasferimento mancante':'Riproducibile e scaricabile dal sito']];root.replaceChildren();const desc=document.createElement('p');desc.className='modalinfo';desc.textContent=x.viewDescription;root.append(desc);const table=document.createElement('div');table.style.cssText='display:grid;grid-template-columns:125px 1fr;gap:8px 12px;font-size:13px;word-break:break-word';for(const pair of rows){const k=document.createElement('span');k.style.color='#91a5c1';k.textContent=pair[0];const v=document.createElement('span');v.textContent=pair[1];table.append(k,v)}root.append(table);if(x.variants){const p=document.createElement('p');p.className='notice';p.textContent='Possibili altre versioni: '+x.variantGroup.filter(n=>n!==x.key).join(' · ')+'. Il sistema non può ancora confermare che siano identiche.';root.append(p)}
 const buttons=document.createElement('div');buttons.className='modalactions';buttons.innerHTML=(x.available===false?'<span class="pill alert">☁ Video da trasferire dalla libreria ChatGPT</span>':'<button class="btn primary" data-d="play">▶ Guarda</button><button class="btn" data-d="download">↓ Scarica</button><button class="btn" data-d="info">↓ Scheda TXT</button><button class="btn" data-d="share">↗ Condividi</button>')+(g.admin?'<button class="btn primary" data-d="dossier">📁 Dossier completo / ZIP social</button><button class="ghost" data-d="edit">✎ Modifica / archivia</button>':'');buttons.onclick=e=>{const a=e.target.closest('[data-d]')?.dataset.d;if(!a)return;if(a==='play'){$('#detail').close();play(x)}if(a==='download'&&x.available!==false)location.href=fullURL(x);if(a==='info'&&x.available!==false)location.href='/info/'+encodeURIComponent(x.key);if(a==='share'&&x.available!==false)share(x);if(a==='edit'){$('#detail').close();edit(x)}if(a==='dossier'){$('#detail').close();openEditorial(x)}};root.append(buttons);
 if(x.available===false){const msg=document.createElement('p');msg.className='notice';msg.textContent='Questo video è individuato nella libreria ChatGPT, ma il suo MP4 non è ancora stato caricato su Cloudflare. Lo puoi cercare in ChatGPT con questo nome: '+x.name;root.append(msg);$('#detail').showModal();return}const url=encodeURIComponent(shareURL(x)),txt=encodeURIComponent(x.viewTitle+' — '+shareURL(x));const links=document.createElement('div');links.className='share-links';links.innerHTML='<a target="_blank" rel="noopener noreferrer" href="https://wa.me/?text='+txt+'">WhatsApp</a><a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/sharer/sharer.php?u='+url+'">Facebook</a><a target="_blank" rel="noopener noreferrer" href="https://t.me/share/url?url='+url+'&text='+encodeURIComponent(x.viewTitle)+'">Telegram</a><a target="_blank" rel="noopener noreferrer" href="https://twitter.com/intent/tweet?text='+encodeURIComponent(x.viewTitle)+'&url='+url+'">X</a>';root.append(links);$('#detail').showModal()}
 async function share(x){const link=shareURL(x);if(navigator.share){try{await navigator.share({title:x.viewTitle,text:x.viewDescription,url:link});log('Condiviso il link. Per il post completo usa Prepara pubblicazione.');return}catch(e){if(e.name==='AbortError')return}}try{await navigator.clipboard.writeText(link);log('Link del video copiato')}catch{prompt('Copia il collegamento',link)}}
@@ -836,7 +887,7 @@ $('#exportCSV').onclick=()=>{
 $('#refresh').onclick=()=>load(true);
 const refreshFilter=()=>{g.showLimit=36;draw()};
 $('#availability').onchange=refreshFilter;$('#query').oninput=refreshFilter;
-$('#project').onchange=refreshFilter;$('#sort').onchange=refreshFilter;
+$('#project').onchange=refreshFilter;$('#sort').onchange=refreshFilter;$('#uploadPeriod').onchange=refreshFilter;$('#sizeBand').onchange=refreshFilter;$('#genre').onchange=()=>{g.category=$('#genre').value;g.showLimit=36;categories();draw()};
 $('#versions').onchange=refreshFilter;$('#includeArchived').onchange=refreshFilter;$('#groupVariants').onchange=refreshFilter;
 $('#topSearch').onclick=()=>{gotoSection('library');$('#query').focus()};
 $('#heroExplore').onclick=()=>{g.category='Tutti';categories();refreshFilter();gotoSection('library')};

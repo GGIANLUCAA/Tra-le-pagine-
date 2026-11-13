@@ -71,6 +71,10 @@ jobs:
           checked=subprocess.run(['node','--check'],input=scripts[0],text=True,capture_output=True)
           if checked.returncode:raise RuntimeError('Frontend syntax validation failed: '+checked.stderr[:300])
           assert 'function swPostUpdate' in page.text and 'function openEditorial' in page.text
+          # Refuse scheduled republishing of a stale UI: preserve visible upload metadata/filters.
+          required_ui=('id="genre"','id="uploadPeriod"','id="sizeBand"','class="card-meta"','const uploadTime=uploadMs(x)')
+          missing_ui=[needle for needle in required_ui if needle not in page.text]
+          if missing_ui:raise RuntimeError('STALE_SITE_UI_BLOCKED: missing '+', '.join(missing_ui))
           # The importer limits HTML to 220k characters; keep the site a single HTML file. Preserve HTML/JS behavior
           # while stripping only verified block comments and blank markup spaces.
           # Main source stays untouched; this is a transport representation.
