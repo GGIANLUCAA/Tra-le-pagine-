@@ -1,0 +1,60 @@
+name: "La Storia Rivive | New 1905 Subway | ONE capped Q3 Pro image-to-video"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-subway-1905-vidu-q3-photo-locked-v1.yml"
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: storia-subway-1905-one-capped-q3-post
+  cancel-in-progress: false
+jobs:
+  only_one_paid_clip:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VIDU_API_KEY: ${{ secrets.VIDUOK || secrets.VIDU_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Provider debit guard and read-only photo preflight"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/storia_subway_1905_vidu_one_q3_20261113.py
+          test -n "${VIDU_API_KEY:-}" || (echo "NO_PREPAID_VIDU_ACCOUNT" && exit 4)
+          if ! command -v ffprobe >/dev/null; then
+            timeout 80 sudo apt-get update -qq || true
+            timeout 100 sudo apt-get install -y -qq ffmpeg
+          fi
+      - name: "Install true video decoding dependencies"
+        run: python -m pip install -q 'numpy>=1.26,<2.3' 'opencv-python-headless>=4.9,<5' 'requests>=2.31,<3'
+      - name: "Recover real source-matched first Finegrain photo from successful trial"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_subway_1905_prev_photo
+          gh run download 43360370888 --repo "$GITHUB_REPOSITORY" \
+             --name SUBWAY_1905_PHOTOREAL_I2I_SOURCE_VS_CANDIDATES_ZERO_VIDU \
+             --dir output/storia_subway_1905_prev_photo
+          test -s output/storia_subway_1905_prev_photo/FINEGRAIN_NEW_REAL_I2I_PHOTO.jpg
+          test -s output/storia_subway_1905_prev_photo/DDCOLOR_BASE_ONLY_NOT_A_PHOTOREAL_PHOTO.png
+      - name: "Single authorized Vidu Q3 Pro photo-locked 5sec generation with visible QA"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u tools/storia_subway_1905_vidu_one_q3_20261113.py
+      - name: "Preserve only genuine provider video and photo/first-frame QA"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SUBWAY_1905_REAL_Q3_MOVING_CLIP_PHOTO_CONTINUITY_OR_FAILURE
+          retention-days: 14
+          if-no-files-found: warn
+          path: output/storia_subway_1905_vidu_q3/
