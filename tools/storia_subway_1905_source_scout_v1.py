@@ -41,7 +41,7 @@ def acquire():
  info=next(iter(q.json()["query"]["pages"].values()))["imageinfo"][0]
  orig=info["url"].split("?")[0]
  encoded=urllib.parse.quote(FN.replace(" ","_"),safe="(),'")
- # Source variations; use original 720p whenever possible; never silently substitute low-res.
+ # Use original Library of Congress 1440x1080 digitization; never silently switch to an unrelated film.
  base=orig.split(".webm")[0]+".webm"
  options=[orig,base,
   "https://commons.wikimedia.org/wiki/Special:Redirect/file/"+encoded,
@@ -56,19 +56,6 @@ def acquire():
    failures.append({"variant":i,"error":str(e)[:140]})
    log("SOURCE_UNAVAILABLE",i,str(e)[:140])
   time.sleep(1)
- (R/"DOWNLOAD_FAILURES.json").write_text(json.dumps(failures,indent=2))
- # no youtube unless yt-dlp already approved? Contained fallback reads the actual publicly shared video.
- try:
-  run(["yt-dlp","--no-playlist","-f","bestvideo[height>=720]/best[height>=720]",
-       "--merge-output-format","mp4","-o",str(R/"SOURCE_1905_REAL_MOVING.%(ext)s"),
-       "https://www.youtube.com/watch?v=jfN60ZlZhpY"],timeout=150)
-  files=list(R.glob("SOURCE_1905_REAL_MOVING.*"))
-  files=[x for x in files if x.suffix.lower() in (".mp4",".webm",".mkv")]
-  if files:
-   p=files[0];c=cv2.VideoCapture(str(p));n=c.get(cv2.CAP_PROP_FRAME_COUNT);fps=c.get(cv2.CAP_PROP_FPS);w=c.get(cv2.CAP_PROP_FRAME_WIDTH);c.release()
-   if n>500 and fps>10 and w>=1000:return {"file":str(p),"bytes":p.stat().st_size,"sha256":sha(p),"frame_count":n,"fps":fps,"download_url":"https://www.youtube.com/watch?v=jfN60ZlZhpY"}
- except Exception as e:
-  failures.append({"variant":"youtube_dlp","error":str(e)[-180:]})
  (R/"DOWNLOAD_FAILURES.json").write_text(json.dumps(failures,indent=2))
  raise RuntimeError("NO_AUTHENTIC_NEW_SUBJECT_HIGH_RES_FILM")
 def make_scout(meta):
@@ -122,4 +109,4 @@ if __name__=="__main__":
  try:make_scout(acquire())
  except Exception as e:
   (R/"SOURCE_SCOUT_ERROR.json").write_text(json.dumps({"error":type(e).__name__+": "+str(e)[:500],"spent_credits":0,"finished_video":False},indent=2))
-  log("WORKERS_1901_SOURCE_SCOUT_BLOCKED",str(e)[:500]);sys.exit(1)
+  log("SUBWAY_1905_SOURCE_SCOUT_BLOCKED",str(e)[:500]);sys.exit(1)
