@@ -1,0 +1,48 @@
+name: "ArtVision Critico | The Dryad | exact Music20 soundtrack"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-critico-dryad-music-v1.yml"
+permissions:
+  contents: read
+jobs:
+  download_verify_exact_music20:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Ensure FFmpeg exists
+        run: |
+          set -e
+          if ! command -v ffmpeg >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+      - name: Verify full official Magic Forest recording actual bytes and license
+        shell: bash
+        run: |
+          set -euo pipefail
+          python src/artvision_music_selector_v330.py \
+            --title "The Dryad" --artist "Evelyn De Morgan" \
+            --moods "magical,mysterious" --pin "magic_forest" \
+            --duration 190 --prepare \
+            --cache output/artvision-critico-dryad-music-v1 \
+            --out-json output/artvision-critico-dryad-music-v1/MUSIC_V330_PROOF.json
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          d=Path("output/artvision-critico-dryad-music-v1")
+          j=json.loads((d/"MUSIC_V330_PROOF.json").read_text())
+          assert j["selected"]["track_id"]=="magic_forest"
+          assert j["recording_proof"]["seconds"]>200
+          m=d/(j["selected"]["isrc"]+".mp3")
+          assert hashlib.sha256(m.read_bytes()).hexdigest()==j["recording_proof"]["sha256"]
+          subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(m),"-f","null","-"],check=True)
+          print("MAGIC_FOREST_REAL_MP3_SHA_AND_FFMPEG_PASS",m.stat().st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_CRITICO_DRYAD_SAME_AS_CINEMA_MAGIC_FOREST_REAL_MP3
+          retention-days: 21
+          path: output/artvision-critico-dryad-music-v1/
