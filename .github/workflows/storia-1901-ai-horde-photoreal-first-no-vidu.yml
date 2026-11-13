@@ -39,7 +39,7 @@ jobs:
             --name STORIA_1901_ONE_FACE_PHOTO_FIRST_NEW_REAL_IMAGE_OR_FAILURE \
             --dir output/storia_1901_photo_first_probe
           test -s output/storia_1901_photo_first_probe/ORIGINAL_REAL_1901_FRAME.png
-      - name: "Real DDColor conditioning plus one genuinely photographic i2i, strict source quality gate NO VIDEO"
+      - name: "Source-locked DDColor import fixed, genuine photographic img2img with strict no-Vidu gate"
         shell: bash
         run: |
           set -euo pipefail
