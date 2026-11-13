@@ -1,0 +1,52 @@
+name: "ArtVision Critico | The Dryad | Italian voice private asset"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-critico-dryad-voice-v1.yml"
+permissions:
+  contents: read
+jobs:
+  one_real_italian_narration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install verified no-pay speech clients and FFmpeg
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python -m pip install --disable-pip-version-check 'gTTS>=2.4,<3' 'edge-tts>=6,<8'
+      - name: Render real 20 voice beats with strict audio and source checks
+        run: python scripts/artvision_critico_dryad_voice_v1.py
+      - name: Check actual audio coverage and no billing API before download
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          p=Path('output/artvision-critico-dryad-voice-v1')
+          d=json.loads((p/'VOICE_MANIFEST.json').read_text())
+          assert len(d['beats'])==20
+          assert d['total_raw_voice_seconds']>88
+          assert d['google_cloud_paid_calls']==0 and d['published'] is False
+          for beat in d['beats']:
+            b=(p/beat['file']).read_bytes()
+            assert hashlib.sha256(b).hexdigest()==beat['file_sha256']
+          print('REAL ITALIAN VOICE MP3 20 BEATS ALL SHA/DECODE PASS',d['voice_provider'])
+          PY
+      - name: Save real audio assets and source manifest for Critico
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_CRITICO_DRYAD_REAL_ITALIAN_VOICE_20_BEATS
+          retention-days: 21
+          if-no-files-found: error
+          path: |
+            output/artvision-critico-dryad-voice-v1/BEAT_*.mp3
+            output/artvision-critico-dryad-voice-v1/VOICE_MANIFEST.json
