@@ -1,0 +1,56 @@
+name: "La Storia Rivive · Photo-first realistic face probe · real 1901 archival frame"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-1901-photo-first-qwen-no-vidu.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: storia-photo-first-qwen-1901-single-real-test
+  cancel-in-progress: false
+jobs:
+  source_locked_new_photo_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HUGGING_FACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Verify genuine source and photographic-only script; never submit Vidu"
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/storia_1901_single_face_qwen_quality_probe.py
+          mkdir -p output/storia_workers_1901_source
+          test -z "${VIDU_API_KEY:-}"
+      - name: "Install single photoreal image-edit client"
+        run: |
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "pillow>=10,<13" "gradio_client>=1.0,<3"
+      - name: "Recover source authenticated in previous real archival scout"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh run download 42954852591 --repo "$GITHUB_REPOSITORY" --name WORKERS_1901_NEW_SUBJECT_SOURCE_AND_FIVE_REAL_FRAMES --dir output/storia_workers_1901_source
+          test -s output/storia_workers_1901_source/SCOUT_REPORT.json
+          test -s output/storia_workers_1901_source/SOURCE_1901_REAL_MOVING.webm
+      - name: "Generate one new genuine 1901 I2I photographic candidate; strict fidelity gate"
+        run: |
+          set -euo pipefail
+          python -u tools/storia_1901_single_face_qwen_quality_probe.py
+      - name: "Preserve real photo or actionable failure, not a fake MP4"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_1901_ONE_FACE_PHOTO_FIRST_NEW_REAL_IMAGE_OR_FAILURE
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            output/storia_1901_photo_first_probe/*.json
+            output/storia_1901_photo_first_probe/*.jpg
+            output/storia_1901_photo_first_probe/ORIGINAL_REAL_1901_FRAME.png
