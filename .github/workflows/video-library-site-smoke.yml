@@ -27,6 +27,11 @@ jobs:
               html=page.read().decode('utf-8')
           assert 'Video Library Studio' in html,'Missing site'
           assert 'id="exportCSV"' in html and 'Video_Library_Studio_Catalogo_' in html,'Missing catalog CSV export'
+          # Owner-facing metadata must remain visible after automated R2 HTML republishing.
+          required=('id="genre"','id="uploadPeriod"','id="sizeBand"','class="card-meta"','const uploadTime=uploadMs(x)')
+          missing=[needle for needle in required if needle not in html]
+          assert not missing,'Published site lost upload dates / Android filters: '+', '.join(missing)
+          print('PASS: uploaded date/time + genre/date/size filters in live HTML',flush=True)
           print('PASS: public catalog has CSV export',flush=True)
           js=html.split('<script>')[-1].split('</script>')[0]
           with tempfile.TemporaryDirectory() as folder:
