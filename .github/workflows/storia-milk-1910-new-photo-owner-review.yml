@@ -1,0 +1,98 @@
+name: "La Storia Rivive | NEW 1910 human-face photoreal review (NO Vidu spend)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-milk-1910-new-photo-owner-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: storia-milk-1910-new-source-photo-once
+  cancel-in-progress: false
+jobs:
+  render_original_human_moment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: \${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate real new film script and install free processing dependencies
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_milk_1910_photo_owner_review.py
+          python -m py_compile src/storia_cinema_magicien_1898_visual_social_v1.py
+          if ! command -v ffmpeg; then
+            timeout 90 sudo apt-get update -qq || true
+            timeout 100 sudo apt-get install -y -qq ffmpeg
+          fi
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: Render entirely new 1910 archival film with REAL free photo-I2I (review ONLY)
+        run: |
+          set -euo pipefail
+          python -u src/storia_milk_1910_photo_owner_review.py
+      - name: Verify actual MP4/ZIP by complete FFmpeg decode and ZIP CRC
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,zipfile
+          d=Path("output/storia_milk_1910_new_owner_review")
+          q=json.loads((d/"DELIVERY.json").read_text())
+          m=d/"MILK_1910_NEW_PHOTO_REVIEW.mp4"
+          z=d/"MILK_1910_NEW_VIDEO_COVER_SOCIAL.zip"
+          assert m.is_file() and m.stat().st_size>1_000_000
+          assert z.is_file() and z.stat().st_size>m.stat().st_size
+          assert hashlib.sha256(m.read_bytes()).hexdigest()==q["video_sha256"]
+          assert hashlib.sha256(z.read_bytes()).hexdigest()==q["zip_sha256"]
+          assert q["photo_count"]==1 and not q["full_4plus1"] and not q["published"]
+          with zipfile.ZipFile(z) as f:assert f.testzip() is None
+          subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(m),"-f","null","-"],check=True,timeout=160)
+          for t,codec in [("v:0","h264"),("a:0","aac")]:
+              p=subprocess.check_output(["ffprobe","-v","error","-select_streams",t,
+                   "-show_entries","stream=codec_name","-of","default=noprint_wrappers=1:nokey=1",str(m)],text=True).strip()
+              assert p==codec,(t,p)
+          print("NEW_1910_REAL_MOVEMENT_FREE_PHOTO_OWNER_REVIEW_QA_PASS",q["video_sha256"])
+          PY
+      - name: Keep artifact if provider or scene quality fails, never fabricate completion
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEW_1910_PHOTO_VIDEO_OWNER_REVIEW_OR_DOCUMENTED_FAILURE
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_milk_1910_new_owner_review/*.json
+            output/storia_milk_1910_new_owner_review/*_REVIEW.mp4
+            output/storia_milk_1910_new_owner_review/*_SOCIAL.zip
+            output/storia_milk_1910_new_owner_review/*.jpg
+            output/storia_milk_1910_new_owner_review/*_CANDIDATE.png
+            output/storia_milk_1910_new_owner_review/POST_*.txt
+      - name: Create distinct owner-view GitHub prerelease and verify complete bytes
+        if: success()
+        run: |
+          set -euo pipefail
+          d=output/storia_milk_1910_new_owner_review
+          tag=storia-milk-1910-new-human-face-photo-review-20261113
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "EXISTING_RELEASE_STOP_DO_NOT_OVERWRITE"
+            exit 5
+          fi
+          gh release create "$tag" \
+            "$d/MILK_1910_NEW_PHOTO_REVIEW.mp4" \
+            "$d/MILK_1910_NEW_VIDEO_COVER_SOCIAL.zip" \
+            "$d/SOCIAL_COVER.jpg" "$d/ORIGINAL_VS_PHOTO_VISUAL_QA.jpg" "$d/DELIVERY.json" \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --latest=false \
+            --title "ALL ON ACCOUNT OF THE MILK | 1910 | New human-face I2I owner review" \
+            --notes "NEW authentic historical film, distinct from previous episodes. The B/W movement is real. ONE actual Finegrain photographic I2I still, original generated soundtrack, original moving neural colorization, 1080x1920 delivery upscale. NOT a completed 4+1 Vidu format, NOT an approval of faces/identity, Italian rights/scan terms need human review. No paid calls, no site/social publication."
+          for name in MILK_1910_NEW_PHOTO_REVIEW.mp4 MILK_1910_NEW_VIDEO_COVER_SOCIAL.zip; do
+            curl -fsSL --retry 2 --connect-timeout 15 --max-time 180 \
+              "https://github.com/$GITHUB_REPOSITORY/releases/download/$tag/$name" -o "/tmp/$name"
+            cmp "$d/$name" "/tmp/$name"
+          done
+          echo "NEW_MILK_1910_ACTUAL_MP4_ZIP_ANDROID_FULL_BYTE_DOWNLOAD_PASS"
