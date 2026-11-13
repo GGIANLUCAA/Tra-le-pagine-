@@ -1,0 +1,87 @@
+{
+  "schema": "artvision_owner_30_critico_checkpoint_v1",
+  "created": "2026-11-13",
+  "owner_selection_order": 22,
+  "artist": "Evelyn De Morgan",
+  "title": "The Dryad",
+  "year": "1884–1885",
+  "variant": "critico_standard",
+  "status": "ONE_REAL_NEW_NARRATED_MP4_SOURCE_SHA_AND_VOICE_SYNC_VERIFIED_PRIVATE_ARTISTIC_RIGHTS_PENDING",
+  "production": {
+    "source_image": "Exact Dryad original image previously SHA1-verified from Wikimedia Commons Dryad high-res via De Morgan original Cinema",
+    "original_artwork_image_sha256": "f562842995eda856cd8e04b5da7409ffa1a0e7bb8f4ddc8c8486103ff63fac78",
+    "real_synthesized_voice": "gTTS Italian / Google Translate free interface (NOT Google Cloud/Gacrux)",
+    "voice_beats": 20,
+    "narration_content": "research/artvision_critico_dryad_20261113_narration.json",
+    "narration_generation_script": "scripts/artvision_critico_dryad_voice_v1.py",
+    "voice_gen_workflow": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43364696234",
+    "voice_gen_artifact_id": 14009422851,
+    "voice_source_seconds": 204.552,
+    "final_tempo_ratio": 1.19,
+    "music": "Magic Forest — Kevin MacLeod",
+    "music_20_id": "magic_forest",
+    "music_isrc": "USUAN1600044",
+    "music_real_mp3_sha256": "0e8f92a3dfb5e71398502478d6d3be14b705b0dfc0afabccf5831bc741592f55",
+    "music_audio_workflow": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43364780889",
+    "music_artifact_id": 14010081877,
+    "paid_apis_used": 0
+  },
+  "mp4": {
+    "name": "THE_DRYAD_CRITICO_STANDARD_GOOGLE_MUSIC20.mp4",
+    "bytes": 34339710,
+    "sha256": "9c495507b4355907fb29438b6f37f40d3093c8ef5b9521c86118b99d44652706",
+    "duration_s": 176.94,
+    "fps": 18,
+    "resolution": [
+      720,
+      1280
+    ],
+    "h264": true,
+    "aac": true,
+    "all_streams_ffmpeg_full_decode": "PASS"
+  },
+  "zip": {
+    "name": "ANDROID_PACKAGE_CRITICO_STANDARD.zip",
+    "bytes": 34794176,
+    "sha256": "db82098a0dc76b3cf513a7c4a7e61a56a47211b1163ca80e799851a5892fca77",
+    "crc": "PASS",
+    "mp4_inside_sha256": "PASS",
+    "cover": true,
+    "storyboard": true,
+    "copione": true,
+    "social": true,
+    "rights": true,
+    "qa": true
+  },
+  "private_library": {
+    "folder": "/ArtVision/Owner_30/De_Morgan_Dryad_20261113/Critico_Standard",
+    "mp4_library_id": "libfile_1ffaacdd04048191beb2c8383e63ed21",
+    "zip_library_id": "libfile_1d21580d11a08191ac1a4f988dc8f374",
+    "cover_sheet_library_id": "libfile_a3e71d2060648191806445d5a9aec555",
+    "fresh_readback_video_hash": "PASS",
+    "fresh_readback_zip_hash": "PASS",
+    "fresh_ffmpeg_full_decode": "PASS",
+    "fresh_zip_crc": "PASS"
+  },
+  "review": {
+    "technical": "PASS",
+    "human_full_speed_voice_naturalness": "PENDING",
+    "narration_accurate_timing": "per-beat audio measured, visuals cue-aligned; manual accuracy review pending",
+    "artistic_full_speed": "PENDING",
+    "commercial_photo_rights": "PENDING",
+    "commercial_google_translate_tts_terms": "PENDING",
+    "gold": false,
+    "published": false,
+    "original_cinema_untouched": true
+  },
+  "queue_accounting": {
+    "second_owner_30_cinema_total_unchanged": true,
+    "the_dryad_cinema_standard": "existing verified",
+    "the_dryad_critico_standard": "new real verified technical",
+    "the_dryad_cinema_museum": "MISSING",
+    "the_dryad_critico_museum": "MISSING",
+    "owner_selected_dali_excluded": true,
+    "original_ten_4x1_technical_slots_unchanged": true
+  },
+  "next": "Continue making real Critico Standard for selected owner works with authentic source + natural voice; keep matching music20. Never count without finished narrated MP4 and ZIP. Avoid fake Museum until exact frame/room scale and V331/V332 visual continuity gates."
+}
