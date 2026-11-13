@@ -1,0 +1,89 @@
+{
+  "schema": "artvision-extra-artwork-real-cinema-review-v1",
+  "date": "2026-11-13",
+  "work": "The Titan's Goblet",
+  "artist": "Thomas Cole",
+  "year": 1833,
+  "met_object_id": 10499,
+  "accession": "04.29.2",
+  "museum": "The Metropolitan Museum of Art",
+  "museum_object_url": "https://www.metmuseum.org/art/collection/search/10499",
+  "format": "Cinema Standard",
+  "status": "PHYSICAL_NEW_1080_AND_ANDROID_MP4_QA_AUDIO_VIDEO_SHA_ZIP_LIBRARY_READBACK_PASS_ARTISTIC_REVIEW_PENDING",
+  "source": {
+    "met_api": "https://collectionapi.metmuseum.org/public/collection/v1/objects/10499",
+    "is_public_domain_confirmed": true,
+    "CC0_met_open_access": true,
+    "source_url": "https://images.metmuseum.org/CRDImages/ad/original/DP-12799-001.jpg",
+    "bytes": 5477698,
+    "pixels": [
+      3279,
+      3907
+    ],
+    "sha256": "e7a1308ea9f6524ed2f2c21cf8ebc96dc1922248fd49e255fd4c8a0566bc3254"
+  },
+  "music": {
+    "track": "Myst on the Moor",
+    "composer": "Kevin MacLeod",
+    "slot": "myst_on_the_moor",
+    "isrc": "USUAN1600007",
+    "official_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600007",
+    "recording_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Myst%20on%20the%20Moor.mp3",
+    "recording_sha256": "7f99264bf77e3746f7d63c99e63db77e06aac0a47b37b7a0f053df84e2bb8ac7",
+    "recording_bytes": 7331606,
+    "license": "CC BY 4.0, attribution included",
+    "used_excerpt_s": 58.3
+  },
+  "video": {
+    "duration_s": 58.3,
+    "shots": 12,
+    "fps": 20,
+    "hq_1080": {
+      "bytes": 21921092,
+      "sha256": "1258e2a61c05a6e940a596ead0f4081fff7cfefa9b0480bb7e806d24319050d6"
+    },
+    "android_720": {
+      "bytes": 4214252,
+      "sha256": "b801cae37bf85aac1e241606a07d4c5f0368218347ae86bfab27ba6886fa0d2d"
+    },
+    "android_zip": {
+      "bytes": 4984159,
+      "sha256": "44fe2e2ccf507bbe633d5320154ec40ad58f532c2008327141d097df9a79c158"
+    },
+    "HQ_zip": {
+      "bytes": 22676499,
+      "sha256": "f5069ec228ad314a7f363ea430b7dff4fe0f7aa75b137af583a5e34b094ff92e"
+    },
+    "h264_aac_decode": "PASS_FULL_BOTH_VERSIONS",
+    "zip_crc_and_member_hash": "PASS",
+    "image_source_visual_QA": "PASS_STATIC_12_SHOT_CONTACT_SHEET_HUMAN_FULL_SPEED_PENDING",
+    "published": false,
+    "gold": false,
+    "paid_api_calls": 0
+  },
+  "persistent_library": {
+    "folder": "/ArtVision/Opere_Extra/The_Titans_Goblet_20261113",
+    "mobile_id": "libfile_ac5a5152575881919df6ca0cab53ac24",
+    "HQ_id": "libfile_ff25add83100819187e04c5f9305703b",
+    "android_zip_id": "libfile_d3a6518c3ef081919282802770c5fd6c",
+    "cover_id": "libfile_eeb5b5fa8b6c8191abbbbbb8b9bf0660",
+    "QA_id": "libfile_cbb38dba74548191b4fd0c6cff696ba8",
+    "fresh_materialization_mp4_sha_and_zip_crc": "PASS",
+    "fresh_library_materialized_mp4_all_streams_ffmpeg": "PASS"
+  },
+  "github": {
+    "source_and_music_PR": 299,
+    "merged_preflight_commit": "1f177675c1beba7be92526a87a7f89e558305c16",
+    "source_artifact": 14010130367,
+    "source_run": 43364215926,
+    "new_video_rendered_in": "ChatGPT container not GitHub workflow",
+    "video_uploaded_to_git_repository": false
+  },
+  "queue": {
+    "owner_second_30_progress_change": 0,
+    "owner_original_ten_progress_change": 0,
+    "do_not_miscount_as_28th_of_30": true,
+    "do_not_regenerate_the_same_cinema_slot": true
+  },
+  "next": "Artistic normal-speed QA, then optionally 2/4 Critico Standard with one natural verified-free Google voice, Critico Museum and Cinema Museum only if historical frame/physical scale measured; no additional spend/publish without rights and QA."
+}
