@@ -1,0 +1,78 @@
+name: "La Storia Rivive | 1905 Subway | real photographic restoration quality test"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-subway-1905-real-photo-model-test-v1.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-subway-1905-real-photo-test-once
+  cancel-in-progress: false
+jobs:
+  evaluate_real_photo_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HUGGING_FACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Syntax check: no paid Vidu API, source-locked original"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/storia_subway_1905_photoreal_probe_v1.py
+          if grep -E 'api.vidu.com|/img2video|/text2video|VIDU_API_KEY' tools/storia_subway_1905_photoreal_probe_v1.py; then
+            echo "PAID_VIDEO_CALL_IN_PHOTO_PREVIEW_FORBIDDEN"
+            exit 2
+          fi
+      - name: "Free image research dependencies"
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'numpy>=1.26,<2.3' 'opencv-python-headless>=4.9,<5' 'pillow>=10,<13' 'requests>=2.31,<3' 'onnxruntime>=1.17,<2' 'huggingface_hub>=0.25,<1' 'gradio_client>=1.0,<3'
+      - name: "Read verified original movie from previous zero-credit scout"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_subway_1905_source
+          gh run download 43359938381 --repo "$GITHUB_REPOSITORY" \
+            --name SUBWAY_1905_AUTHENTIC_FILM_FIVE_SOURCE_ANCHORS \
+            --dir output/storia_subway_1905_source
+          test -s output/storia_subway_1905_source/SOURCE_1905_REAL_MOVING.webm
+          test -s output/storia_subway_1905_source/SCOUT_REPORT.json
+      - name: "Real free generative I2I photo providers: Finegrain one attempt, Qwen single fallback"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u tools/storia_subway_1905_photoreal_probe_v1.py
+      - name: "Verify model actually returned a real candidate image, not just DDColor"
+        shell: bash
+        if: success()
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          root=pathlib.Path('output/storia_subway_1905_photo_trial')
+          p=json.loads((root/'ONE_PHOTO_MODEL_AUDIT.json').read_text())
+          assert p['free_paid_vidu_posts']==0
+          assert (root/'TRUE_SOURCE_VS_NEW_PHOTO_CANDIDATES.jpg').stat().st_size>50000
+          print('ACTUAL_IMAGE_RESULTS',[(x.get('model'),x.get('automatic_source_and_color_gate'),x.get('error_class')) for x in p['i2i_trials']])
+          print('AUTHOR_REVIEW_REQUIRED_NO_MASTER',p['photos_ready_for_final'])
+          PY
+      - name: "Always preserve photo candidates, exact source and honest failure"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SUBWAY_1905_PHOTOREAL_I2I_SOURCE_VS_CANDIDATES_ZERO_VIDU
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_subway_1905_photo_trial/*.json
+            output/storia_subway_1905_photo_trial/*.jpg
+            output/storia_subway_1905_photo_trial/*.png
