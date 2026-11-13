@@ -1,0 +1,194 @@
+{
+  "schema": "artist-gallery-next-three-v1",
+  "date": "2026-11-13",
+  "previous_completed": [
+    "Evelyn De Morgan",
+    "John William Waterhouse",
+    "Odilon Redon",
+    "Fernand Khnopff",
+    "Gustave Moreau",
+    "Marianne Stokes",
+    "Mikhail Vrubel"
+  ],
+  "benchmark": {
+    "artist": "Evelyn De Morgan",
+    "approval": "Artistic style and music approved by owner; not publishing authority",
+    "mp4_sha256": "12a29832b5326910b062a30559c6ea67e66d04d8049ae16c167fd11f2b828542"
+  },
+  "production": {
+    "format": "one video per artist, separate from ArtVision 4x1 owner",
+    "minimum_distinct_works": 6,
+    "preferred_distinct_works": 9,
+    "full_artwork_fraction_min": 0.65,
+    "seconds_range": [
+      40,
+      57
+    ],
+    "paid_calls": 0,
+    "publish": false,
+    "review": "technical_pass_artistic_pending"
+  },
+  "profiles": [
+    {
+      "slug": "bocklin",
+      "artist": "Arnold Böcklin",
+      "public_title": "The Island Beyond Time",
+      "target_seconds": 50,
+      "visual_promise": "The mysterious journey from sea, rock and centaur mythology to the silent island",
+      "moods": [
+        "mysterious",
+        "dreamlike",
+        "ghostly"
+      ],
+      "hero": "Die Toteninsel",
+      "search_queries": [
+        "Arnold Böcklin paintings",
+        "Arnold Böcklin art mythological paintings"
+      ],
+      "direction": "Build tension from living figures to a still island, allow full-painting contemplative holds; avoid constant zoom",
+      "works": [
+        "Die Toteninsel",
+        "Isle of the Dead",
+        "Villa by the Sea",
+        "Self-Portrait with Death as a Fiddler",
+        "Self Portrait with Death as a Fiddler",
+        "Im Spiel der Wellen",
+        "Centaur",
+        "Kentaurenkampf",
+        "Centaurs",
+        "Diana's Hunt",
+        "Diana auf der Jagd",
+        "The Plague",
+        "Pest",
+        "Triton and Nereid",
+        "Triton und Nereïde",
+        "The Sacred Grove",
+        "Heiliger Hain",
+        "Sirens",
+        "Venus Anadyomene",
+        "Ruggiero und Angelica",
+        "Sea Surf",
+        "The Sanctuary of Hercules",
+        "Pan in the Reeds",
+        "Waves",
+        "Mermaids"
+      ],
+      "music": {
+        "id": "myst_on_the_moor",
+        "title": "Myst on the Moor",
+        "isrc": "USUAN1600007",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Myst%20on%20the%20Moor.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600007"
+      }
+    },
+    {
+      "slug": "burne_jones",
+      "artist": "Edward Burne-Jones",
+      "public_title": "Dreams of the Golden Age",
+      "target_seconds": 52,
+      "visual_promise": "Myth and medieval romance told through full ornamental compositions and purposeful close details",
+      "moods": [
+        "romantic",
+        "magical",
+        "solemn"
+      ],
+      "hero": "The Golden Stairs",
+      "search_queries": [
+        "Edward Burne-Jones paintings",
+        "Edward Burne Jones art works"
+      ],
+      "direction": "Open with the flowing procession, move to mythic encounters, end on the full sleeping figure; no repetitive pan",
+      "works": [
+        "The Golden Stairs",
+        "The Beguiling of Merlin",
+        "The Last Sleep of Arthur in Avalon",
+        "The Sleep of Arthur in Avalon",
+        "King Arthur in Avalon",
+        "The Mirror of Venus",
+        "The Love Song",
+        "Le Chant d'Amour",
+        "The Wheel of Fortune",
+        "Briar Rose",
+        "The Sleeping Beauty",
+        "The Garden of Pan",
+        "King Cophetua and the Beggar Maid",
+        "The Star of Bethlehem",
+        "The Annunciation",
+        "The Tree of Forgiveness",
+        "The Days of Creation",
+        "The Depths of the Sea",
+        "The Baleful Head",
+        "The Mill",
+        "The Rose Bower",
+        "Princess Sabra",
+        "Laus Veneris",
+        "Love Among the Ruins",
+        "The Knight",
+        "The Flower Book"
+      ],
+      "music": {
+        "id": "immersed",
+        "title": "Immersed",
+        "isrc": "USUAN1600010",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Immersed.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600010"
+      }
+    },
+    {
+      "slug": "von_stuck",
+      "artist": "Franz von Stuck",
+      "public_title": "Shadows of Desire",
+      "target_seconds": 49,
+      "visual_promise": "Mythological silhouettes and symbolic faces unfolding from darkness and color",
+      "moods": [
+        "dark",
+        "eerie",
+        "dramatic"
+      ],
+      "hero": "The Sin",
+      "search_queries": [
+        "Franz von Stuck paintings",
+        "Franz von Stuck mythological paintings"
+      ],
+      "direction": "Use bold contrasting paintings, a few close-ups of eyes/gesture, then a complete final composition with clean audio falloff",
+      "works": [
+        "The Sin",
+        "Die Sünde",
+        "Sünde",
+        "Sinnlichkeit",
+        "Lucifer",
+        "Salome",
+        "Faun und Nymphe",
+        "Faun and Nymph",
+        "Sisyphus",
+        "The Kiss",
+        "Der Kuss",
+        "Dissonanz",
+        "Dissonance",
+        "Der Reigen",
+        "Reigen",
+        "Schaukel im Wald",
+        "Spring",
+        "Frühling",
+        "Belauschung",
+        "Wounded Amazon",
+        "Wounded Amazone",
+        "The Guardian of Paradise",
+        "Wächter des Paradieses",
+        "Sphinx",
+        "Medusa",
+        "Kampf ums Weib",
+        "The Wild Chase",
+        "Der Kampf ums Weib",
+        "Der Kampf"
+      ],
+      "music": {
+        "id": "lightless_dawn",
+        "title": "Lightless Dawn",
+        "isrc": "USUAN1100655",
+        "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Lightless%20Dawn.mp3",
+        "page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100655"
+      }
+    }
+  ]
+}
