@@ -1,0 +1,86 @@
+{
+  "schema": "artvision-owner-30-fish-magic-private-cinema-checkpoint-v1",
+  "recorded_at": "2026-11-13",
+  "selection_order": 14,
+  "title": "Fish Magic",
+  "artist": "Paul Klee",
+  "year": 1925,
+  "museum": "Philadelphia Museum of Art",
+  "museum_object": 51027,
+  "accession": "1950-134-112",
+  "variant": "cinema_standard",
+  "status": "NEW_REAL_LOCAL_MP4_PRIVATE_CINEMA_FULL_DECODE_AND_LIBRARY_READBACK_PASS_RIGHTS_AND_ARTISTIC_REVIEW_PENDING",
+  "verified_image": {
+    "url": "https://commons.wikimedia.org/wiki/File:Fish_Magic,_1925_-_Paul_Klee.jpg",
+    "sha1": "0a017ad16420ca4ce519ab5c2168c2298efc130c",
+    "sha256": "7033861c2357ee7dcacb1dd7d647c331857db4867a08585847d2222a5d024109",
+    "bytes": 3471756,
+    "pixels": [
+      4096,
+      3213
+    ],
+    "github_source_run": 43359846697,
+    "source_artifact": 14007896671,
+    "rights": "Commons PD-Art/PDM; PMA official museum image educational-use statement, commercial/territorial redistribution PENDING; private review only"
+  },
+  "music": {
+    "selected_fixed_track": "Immersed",
+    "artist": "Kevin MacLeod",
+    "isrc": "USUAN1600010",
+    "license": "CC BY 4.0 with attribution",
+    "official": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600010",
+    "mp3_sha256": "870fa4f642816b2207cf74e48c36cbbbd147df99be24f08f29aa26ac0597a44b",
+    "original_verified_bytes": 7969389,
+    "ffprobe": "MPEG Audio 44.1kHz stereo 248.973 s real recording, physically checked",
+    "music_used": "50.1s excerpt + volume/fades"
+  },
+  "render": {
+    "location": "ChatGPT session physical container, not GitHub Actions",
+    "date": "2026-11-13",
+    "duration_seconds": 50.1,
+    "shots": 10,
+    "voice": "none, Cinema only",
+    "h264_aac_full_decode": "PASS",
+    "hq_720": {
+      "bytes": 24051207,
+      "sha256": "3a3b6615f5e85115d40d09e0a60681794f9db6b710e70d6ad2d2498f21e3f10b"
+    },
+    "android_light_720": {
+      "bytes": 5107615,
+      "sha256": "fbe9886b8489461f9c1baa0f7693d2a4c414fb78c3c42c50cbe2aff2dd06ab7a"
+    },
+    "android_zip": {
+      "bytes": 5523510,
+      "sha256": "3ffa647c27b47d2ad6fb63b6d60f9702d4bc1e9e71f12e42882e9ab5cb2527e2",
+      "CRC": "PASS",
+      "embedded_MP4_SHA": "PASS"
+    },
+    "contact_sheet": "PASS_STATIC_DIFFERENT_FISH_CLOCK_FLOWERS_FIGURE_EGG_FULL_PAINTING",
+    "human_full_speed": "PENDING",
+    "rights": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_api_calls": 0
+  },
+  "persistent_library": {
+    "folder": "/ArtVision/Owner_30/Fish_Magic_20261113",
+    "android_light_mp4": "libfile_901620f26e88819188643e174a6a9e76",
+    "hq_mp4": "libfile_b8e81f12caec8191982f23fba38039b1",
+    "android_zip": "libfile_8c7435d97acc819199e841d0b6f5a838",
+    "cover": "libfile_6b4aeaf87e4c8191b4f8b4334ef7210f",
+    "qa_manifest": "libfile_b7ef7ef98e9881918191621168c563b1",
+    "independent_materialization_sha_check": "PASS",
+    "full_ffmpeg_decode_of_freshly_materialized_mp4": "PASS"
+  },
+  "queue_effect": {
+    "secondary_prior_checkpointed_cinema": 26,
+    "secondary_after_checkpointed_cinema": 27,
+    "selected_works": 30,
+    "original_ten_queue_technical_count": 26,
+    "original_ten_queue_slots_added": 0,
+    "not_a_full_4x1": true,
+    "avoid_duplicate_new_cinema_render": true,
+    "existing_historical_Avalon_4x1": "already produced outside this secondary counter"
+  },
+  "followup": "Use this checkpoint as canonical dedupe; Fish Magic has only Cinema Standard. Commercial/territorial image rights and artistic screening must pass before Gold/publication. Never silently claim a new Critico voice, nor re-render an existing Cinema as a new painting."
+}
