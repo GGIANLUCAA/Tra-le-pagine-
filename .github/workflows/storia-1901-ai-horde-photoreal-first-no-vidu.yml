@@ -1,0 +1,57 @@
+name: "La Storia Rivive · ONE real 1901 img2img portrait · no Vidu spend"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-1901-ai-horde-photoreal-first-no-vidu.yml"
+permissions:
+  contents: read
+concurrency:
+  group: 1901-ai-horde-one-authentic-source-portrait-no-paid-video
+  cancel-in-progress: false
+jobs:
+  photo_only_sfw_real_historical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Syntax and safety: no Vidu credential accessible"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/storia_1901_face_ai_horde_photo_only.py
+          test -z "${VIDU_API_KEY:-}"
+      - name: "Install minimal photo dependencies only"
+        shell: bash
+        run: |
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "pillow>=10,<13" "requests>=2.31,<3"
+      - name: "Recover authentic original source frame produced by the prior photo-first test"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_1901_photo_first_probe
+          gh run download 43492267990 --repo "$GITHUB_REPOSITORY" \
+            --name STORIA_1901_ONE_FACE_PHOTO_FIRST_NEW_REAL_IMAGE_OR_FAILURE \
+            --dir output/storia_1901_photo_first_probe
+          test -s output/storia_1901_photo_first_probe/ORIGINAL_REAL_1901_FRAME.png
+      - name: "Single volunteer-worker img2img trial on authentic 1901 frame, strict photo gate, NO VIDEO"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u tools/storia_1901_face_ai_horde_photo_only.py
+      - name: "Save actual new photo or precise no-charge failure"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_1901_NEW_GENUINE_IMG2IMG_PHOTO_OR_QUALITY_BLOCKER
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_1901_horde_photo/*.json
+            output/storia_1901_horde_photo/*.jpg
+            output/storia_1901_horde_photo/*.webp
