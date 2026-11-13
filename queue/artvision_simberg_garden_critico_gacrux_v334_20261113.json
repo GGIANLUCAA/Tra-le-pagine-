@@ -1,0 +1,79 @@
+{
+  "schema": "artvision_critico_gacrux_remaster_v334",
+  "date": "2026-11-13",
+  "artist": "Hugo Simberg",
+  "painting": "The Garden of Death (1896)",
+  "variant": "critico_standard",
+  "status": "NEW_REVIEW_EDIT_REAL_MP4_TECHNICALLY_VERIFIED__NOT_NEW_4x1_SLOT",
+  "artistic_change": "20 carefully framed semantic scenes, small optical motion, preserve exact artwork pixels and show whole painting multiple times, remove museum simulation",
+  "voice": {
+    "engine": "Google Gemini TTS",
+    "voice": "Gacrux",
+    "original_v146_wav_sha256": "70b5918ddf7e2a7edb6b80da140e14d834b1f6ec9b0031d1e24e873d77d1871e",
+    "same_hash_verified_against_v146_cache": true,
+    "speed_or_pitch_modified": false,
+    "new_tts_calls": 0
+  },
+  "source": {
+    "museum": "Finnish National Gallery",
+    "museum_inventory": "A II 968:16",
+    "year": 1896,
+    "source_artwork_sha256": "514bf455d7cdc3543e3ee8ff49f206370ef34121c72e49e04353e3e902f530a5",
+    "original_work_dimensions_cm": [
+      17.5,
+      15.8
+    ]
+  },
+  "music": {
+    "track": "Myst on the Moor",
+    "composer": "Kevin MacLeod",
+    "isrc": "USUAN1600007",
+    "license": "CC BY 4.0",
+    "official_sha256": "7f99264bf77e3746f7d63c99e63db77e06aac0a47b37b7a0f053df84e2bb8ac7",
+    "proper_credits": "included_in_android_zip"
+  },
+  "mp4": {
+    "filename": "SIMBERG_THE_GARDEN_OF_DEATH_GACRUX_CRITICO_V334.mp4",
+    "sha256": "f58318734b713a0125ce9feefc65cd0c1ac24d201e3d2d06c6ca95416dbacf17",
+    "size_bytes": 5942398,
+    "fps": 20,
+    "resolution": [
+      720,
+      1280
+    ],
+    "duration_s": 112.35,
+    "codec": "H264_AAC",
+    "independent_full_ffmpeg_decode": "PASS"
+  },
+  "zip": {
+    "filename": "ARTVISION_SIMBERG_CRITICO_GACRUX_VERIFICATO_ANDROID.zip",
+    "sha256": "11b512b36f89d76afb6c92f693252a77a3c104b152e7f26bc0162f7c9d2d35b7",
+    "size_bytes": 6693639,
+    "CRC": "PASS",
+    "embedded_MP4_sha256": "PASS",
+    "cover": "included",
+    "social": "included",
+    "provenance": "included",
+    "QA": "included"
+  },
+  "library": {
+    "private_folder": "/ArtVision/Critico_Gacrux/Simberg_Garden_V334_20261113",
+    "mp4_library_file_id": "libfile_b1177b95d2b48191adf09f8dc6629974",
+    "zip_library_file_id": "libfile_683c9a4825148191944d76339bcc2a09",
+    "contact_sheet_library_file_id": "libfile_ece3d7b138308191b8ac5935395c796b",
+    "fresh_readback_MP4_and_zip_sha": "PASS"
+  },
+  "current_review": {
+    "full_speed_artistic_listening": "PENDING_OWNER",
+    "word_visual_sync": "original_sentence_timecodes_applied_manual_full_speed_review_pending",
+    "photo_rights_commercial": "PENDING",
+    "gold": false,
+    "published": false
+  },
+  "queue_accounting": {
+    "adds_new_painting": false,
+    "adds_new_critico_slot": false,
+    "existing_verified_critic_original_v146": true,
+    "one_distinct_artistic_revision": true
+  }
+}
