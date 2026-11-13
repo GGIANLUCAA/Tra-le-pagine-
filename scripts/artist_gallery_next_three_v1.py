@@ -84,7 +84,7 @@ def main():
         status.update({"status":"BLOCKED_NOT_RENDERED",
                        "reason":str(exc)[:800]})
         print("ARTIST_BLOCKED",a.artist,status["reason"],flush=True)
-    (OUT/"SERIES_STATUS_"+a.artist+".json").write_text(
+    (OUT/("SERIES_STATUS_"+a.artist+".json")).write_text(
         json.dumps(status,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     print("ARTIST_RESULT",json.dumps(status,ensure_ascii=False),flush=True)
     return 0 if status["status"]=="TECHNICAL_PASS_ARTISTIC_PENDING" else 2
