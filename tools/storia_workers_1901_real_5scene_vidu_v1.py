@@ -454,6 +454,17 @@ def main():
   "automatic_gates_passed":True,"human_artistic_review":False})
  make_contact(shots,photos)
  say("FIVE_NEURAL_PHOTO_RESTORATIONS_COMPLETE_NO_VIDU_POST_YET",photo_backend)
+ # Owner's quality directive: local colorization + upscaling is not sufficient
+ # evidence of modern photorealistic human faces. Never bill Vidu for it.
+ if full_i2i != 5:
+  write("ARTISTIC_PHOTO_GATE.json",{
+   "status":"REJECTED_BEFORE_VIDU","reason":"Colorization and super-resolution alone do not deliver photographic face reconstruction",
+   "finegrain_photographic_i2i_count":full_i2i,
+   "source_locked_restored_count":len(photos),
+   "vidu_spend_authorized_at_this_gate":False,
+   "next_step":"Replace low-quality photos with genuine face-faithful photoreal I2I; human inspect before any paid animation"})
+  say("STOP_BEFORE_VIDU_LOW_PHOTOGRAPHIC_QUALITY_NO_CREDITS")
+  return
  # Safety: paid post is submitted exactly once, only after every photo and source frame has passed.
  vidu=new_vidu_clip(shots[4],photos[4])
  produce(shots,photos,vidu)
