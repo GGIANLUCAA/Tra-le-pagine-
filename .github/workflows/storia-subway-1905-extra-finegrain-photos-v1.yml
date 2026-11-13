@@ -1,0 +1,56 @@
+name: "La Storia Rivive | 1905 Subway | three authentic source-locked portrait restorations"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-subway-1905-extra-finegrain-photos-v1.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: storia-subway-1905-extra-i2i-photo-once
+  cancel-in-progress: false
+jobs:
+  free_real_i2i:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HUGGING_FACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Zero paid Vidu and syntax preflight"
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/storia_subway_1905_extra_finegrain_photos_v1.py
+          if grep -E 'api.vidu.com|/ent/v2/img2video|VIDU_API_KEY' tools/storia_subway_1905_extra_finegrain_photos_v1.py; then
+            echo "NO_PAID_CALLS_ALLOWED"; exit 4
+          fi
+      - name: "Install true AI I2I and film deps"
+        run: python -m pip install -q 'numpy>=1.26,<2.3' 'opencv-python-headless>=4.9,<5' 'pillow>=10,<13' 'onnxruntime>=1.17,<2' 'huggingface_hub>=0.25,<1' 'gradio_client>=1.0,<3'
+      - name: "Retrieve hashed genuine film verified in no-cost 1905 scout"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_subway_1905_source
+          gh run download 43359938381 --repo "$GITHUB_REPOSITORY" \
+             --name SUBWAY_1905_AUTHENTIC_FILM_FIVE_SOURCE_ANCHORS \
+             --dir output/storia_subway_1905_source
+          test -s output/storia_subway_1905_source/SOURCE_1905_REAL_MOVING.webm
+      - name: "Three different historical actor frames: genuine Finegrain I2I, no fake neural-only fallback"
+        run: python -u tools/storia_subway_1905_extra_finegrain_photos_v1.py
+      - name: "Keep every successful photo even when free GPU quota stops other scenes"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SUBWAY_1905_THREE_ACTOR_FINEGRAIN_PHOTO_RESTORATIONS_AND_QA
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_subway_1905_more_photos/*.json
+            output/storia_subway_1905_more_photos/*.jpg
+            output/storia_subway_1905_more_photos/*_ORIGINAL_EXACT_BW.png
