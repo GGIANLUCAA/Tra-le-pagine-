@@ -31,15 +31,27 @@ def main():
  if not SRC.is_file():raise RuntimeError("ORIGINAL_ARCHIVAL_FRAME_MISSING")
  original=cv2.imread(str(SRC))
  if original is None:raise RuntimeError("ARCHIVAL_FRAME_BAD")
- scaled=cv2.resize(original,(512,896),interpolation=cv2.INTER_AREA)
+ # Separate semantic color recovery from human photographic detail.
+ # The historical source remains the ground truth for the final shape comparison.
+ import storia_rivive_real_ai_v60 as dd
+ ddmodel,_=dd.download_model()
+ sample=cv2.resize(original,(720,576),interpolation=cv2.INTER_AREA)
+ ab=dd.infer_ab(ddmodel,sample)
+ lab=cv2.cvtColor(original.astype(np.float32)/255.,cv2.COLOR_BGR2LAB)
+ lab[:,:,1:]=np.clip(cv2.resize(ab,(original.shape[1],original.shape[0]))*1.08,-92,92)
+ naturally_colored=np.uint8(np.clip(cv2.cvtColor(lab,cv2.COLOR_LAB2BGR)*255,0,255))
+ baseline_color=float(np.mean(cv2.cvtColor(naturally_colored,cv2.COLOR_BGR2HSV)[:,:,1]))
+ if baseline_color<12:raise RuntimeError("NEURAL_COLOR_BASE_TOO_GRAY_NO_IMG2IMG")
+ cv2.imwrite(str(ROOT/"NEURAL_COLOR_CONDITIONING_NOT_FINAL.jpg"),naturally_colored,[cv2.IMWRITE_JPEG_QUALITY,96])
+ scaled=cv2.resize(naturally_colored,(512,896),interpolation=cv2.INTER_AREA)
  im=Image.fromarray(cv2.cvtColor(scaled,cv2.COLOR_BGR2RGB))
  out=io.BytesIO();im.save(out,format="WEBP",quality=88)
  b64=base64.b64encode(out.getvalue()).decode("ascii")
  models=request("GET","/status/models")
  matching=next((m for m in models if m.get("name")==MODEL),None)
  if not matching or matching.get("count",0)<1:raise RuntimeError("EXACT_PHOTOGRAPHIC_MODEL_NOT_AVAILABLE")
- prompt=("STRICT photographic restoration of exactly this original 1901 real black and white archival motion film frame of factory workers, "
- "same authentic historical people faces and face count, identical eyes, heads, hats, clothes and positions, "
+ prompt=("STRICT photographic restoration of exactly this original 1901 archival motion film frame, now already neutrally colorized by DDColor of factory workers, "
+ "preserve the chromatic palette of the colored reference, same authentic historical people faces and face count, identical eyes, heads, hats, clothes and positions, "
  "same architecture and authentic group, detailed modern documentary COLOR photography, authentic natural light, life-like skin texture and subtle colors, "
  "everything source-locked, genuine British industrial history, realistic hair and textile texture ### "
  "new people, altered faces, fake clothing, different background, fantasy, invented objects, deformed hands, painting, cartoon, wax skin, "
@@ -50,7 +62,7 @@ def main():
   "nsfw":False,"censor_nsfw":True,"r2":False,"shared":False,
   "slow_workers":True}
  save("PRE_SUBMISSION.json",{"model":MODEL,"source_sha256":sha(SRC),
-  "source_processing":"img2img","denoising_strength":0.36,"mode":"anonymous free public-archive research",
+  "source_processing":"img2img","input":"actual frame DDColor chroma conditioned","denoising_strength":0.36,"mode":"anonymous free public-archive research",
   "paid_api_calls":0,"vidu_calls":0,"external_worker_input":"authentic public historical footage frame",
   "shared_policy":"anonymous AI Horde may share image with LAION; no private user photo","human_QA_pending":True})
  job=request("POST","/generate/async",json=body)
@@ -93,7 +105,7 @@ def main():
   "geometry_corr":round(geom,4),"mean_saturation":round(sat,2),
   "color_area_fraction":round(spread,4),"sharpness":round(sharp,1),
   "technical_photo_candidate":qualified,"human_face_identity_review":"PENDING",
-  "public_archival_source":True,"source_processing":"img2img",
+  "public_archival_source":True,"source_processing":"img2img","DDColor_input_base_saturation":round(baseline_color,2),
   "final_video_ready":False,"vidu_paid_calls":0,"commercial_license_approval":False}
  save("PHOTO_QUALITY_REPORT.json",metrics)
  sheet=Image.new("RGB",(960,900),(15,18,23))
