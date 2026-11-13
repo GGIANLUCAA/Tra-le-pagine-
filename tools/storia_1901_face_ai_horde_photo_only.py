@@ -2,6 +2,7 @@
 """One anonymous no-money image-to-image trial on an authentic public 1901 source photo.
 No Vidu, no social posting, no commercial approval. Reject hallucination and keep comparison."""
 import base64,hashlib,io,json,os,pathlib,sys,time,requests,cv2,numpy as np
+sys.path.insert(0,"src")
 from PIL import Image,ImageDraw,ImageFont
 ROOT=pathlib.Path("output/storia_1901_horde_photo")
 ROOT.mkdir(parents=True,exist_ok=True)
