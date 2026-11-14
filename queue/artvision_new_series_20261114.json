@@ -1,0 +1,172 @@
+{
+  "schema": "artvision-owner-new-series-v1",
+  "created_at": "2026-11-14",
+  "instruction": "Nuovo lotto ArtVision 4x1 autorizzato dall'utente in chat il 14/11/2026: iniziare nuovi quadri senza duplicare i 26 Cinema già checkpointed e senza interrompere la coda precedente. Avanzare solo se fonti/diritti/file verificati; fallover all'opera successiva senza bloccare tutto.",
+  "owner_authorized": true,
+  "auto_publish": false,
+  "no_unverified_paid_api": true,
+  "gold_by_technical_QA_alone": false,
+  "required_variants": [
+    "cinema_standard",
+    "cinema_museum",
+    "critico_standard",
+    "critico_museum"
+  ],
+  "production_gates": {
+    "voice": "Solo Google Gemini TTS Gacrux italiano identico e naturale nelle due varianti Critico; se indisponibile bloccare solo Critico, non usare gTTS/Edge.",
+    "music": "1 brano coerente selezionato dalla libreria stabile di 20 per quadro, MP3+SHA+licenza CC BY 4.0 verificati, stessi crediti e mix per le 4 varianti.",
+    "museum": "V331 inquadratura frontale, cornice vera dell'esemplare documentata se possibile; V332 scenografia AI dichiarata, raccordi V203, scala reale verificata.",
+    "source": "Oggetto preciso del museo, immagine autentica e non ricostruita, dimensioni, diritti originali e foto, SHA256 bytes, no sostituzioni di esemplari.",
+    "deliverable": "MP4 reale, Android MP4, ZIP CRC con cover, copy social, credits e manifest, QA tecnico+visivo, link persistente verificato. Non dichiarare Gold.",
+    "anti_duplicate": "Prima di ogni render leggere queue/artvision_owner_30_render_checkpoint_*.json, gallery 4x1 storica, Releases, Library, eventuali run attivi; nessun remake della stessa opera per errore."
+  },
+  "works": [
+    {
+      "priority": 1,
+      "title": "The Race Track (Death on a Pale Horse)",
+      "artist": "Albert Pinkham Ryder",
+      "year": "c. 1896-1908",
+      "museum": "Cleveland Museum of Art",
+      "object_id": "1928.8",
+      "selected_30": false,
+      "official_object": "https://www.clevelandart.org/art/1928.8",
+      "artwork_rights": "CMA Open Access CC0 confirmed on official page",
+      "source_binary": "PENDING_IIIF_OR_CMA_API_DOWNLOAD_SHA",
+      "status": "SOURCE_RIGHTS_CONFIRMED_BINARY_NOT_YET_VALIDATED",
+      "mood": [
+        "eerie",
+        "mysterious",
+        "ghostly"
+      ],
+      "music_candidate": "ghost_processional",
+      "first_hook_it": "Perché la Morte corre su una pista deserta?",
+      "scene_beats": [
+        "quadro intero con pista",
+        "scheletro e falce",
+        "cavallo nella corsa",
+        "serpente in basso",
+        "interpretazione storica attribuita al museo",
+        "ritorno all'insieme"
+      ],
+      "director_note": "L'immagine è orizzontale: conservare leggibilità del quadro intero; nessun 9:16 crop che tagli la figura e il serpente."
+    },
+    {
+      "priority": 2,
+      "title": "The Bulls and Bears in the Market",
+      "owner_title": "The Bulls and Bears",
+      "artist": "William Holbrook Beard",
+      "year": "1879",
+      "museum": "New-York Historical Society",
+      "object_id": "1971.104",
+      "selected_30": true,
+      "official_object": "https://emuseum.nyhistory.org/objects/58776/the-bulls-and-bears-in-the-market",
+      "artwork_rights": "Original painting PD based on artist 1900 death; photo high-res permissions are NOT cleared",
+      "source_binary": "PENDING_RIGHTS_AND_SHA",
+      "status": "BLOCKED_UNTIL_EXACT_REPRODUCTION_LICENSE_OR_PUBLIC_DOMAIN_BINARY",
+      "mood": [
+        "dramatic",
+        "whimsical"
+      ],
+      "music_candidate": "call_to_adventure",
+      "first_hook_it": "A Wall Street, tori e orsi combattono davvero. Ma nel quadro.",
+      "scene_beats": [
+        "ingresso della borsa sullo sfondo",
+        "tormenta di animali",
+        "toro in primo piano",
+        "orso con registro contabile",
+        "significato di mercato rialzista e ribassista",
+        "intero quadro"
+      ],
+      "director_note": "Non acquistare foto da licenzianti né usare un preview proprietario senza permesso."
+    },
+    {
+      "priority": 3,
+      "title": "The Sin (Die Sünde)",
+      "artist": "Franz von Stuck",
+      "year": "c. 1912",
+      "museum": "Alte Nationalgalerie, Berlin",
+      "object_id": "F.V. 72",
+      "selected_30": false,
+      "official_object": "https://search.smb.museum/en/object/obj-967504?involved=Franz+von+Stuck",
+      "artwork_rights": "Official museum PDM 1.0 photo; verify exact downloaded binary and metadata",
+      "source_binary": "PENDING_OFFICIAL_IMAGE_SHA",
+      "status": "SOURCE_POLICY_DOCUMENTED_ASSET_PENDING",
+      "mood": [
+        "dark",
+        "ominous",
+        "mysterious"
+      ],
+      "music_candidate": "unseen_horrors",
+      "first_hook_it": "Un volto emerge dal buio. Ma è il serpente a dominare la scena.",
+      "scene_beats": [
+        "il buio e la figura",
+        "occhi/sguardo",
+        "serpente a volta",
+        "contrasto luminoso",
+        "identità versione del museo 1912, non confondere con 1893 Monaco",
+        "intero dipinto"
+      ],
+      "director_note": "Non confondere con Die Sünde 1893 Neue Pinakothek. Composizione rispettosa, niente nudo esplicito o crop sensazionalistici."
+    },
+    {
+      "priority": 4,
+      "title": "Le cattive madri (The Evil Mothers)",
+      "artist": "Giovanni Segantini",
+      "year": "1894",
+      "museum": "Belvedere, Vienna",
+      "object_id": "485",
+      "selected_30": false,
+      "official_object": "https://digital.belvedere.at/objects/6224/die-bosen-mutter",
+      "artwork_rights": "Original historical artwork PD in Italy; specific high-res file license not verified",
+      "source_binary": "PENDING_LICENSE_AND_SHA",
+      "status": "RESEARCH_PENDING",
+      "mood": [
+        "melancholic",
+        "somber",
+        "mysterious"
+      ],
+      "music_candidate": "evening_fall_piano",
+      "first_hook_it": "Un paesaggio di neve nasconde una storia inquietante.",
+      "scene_beats": [
+        "vasta distesa innevata",
+        "rami contorti",
+        "figura femminile",
+        "segni e figure marginali se riscontrabili nel file",
+        "contesto simbolista storico senza giudizi odierni della madre",
+        "quadro intero"
+      ],
+      "director_note": "Evitare di presentare la condanna morale dell'epoca come un giudizio moderno, e non inventare personaggi nelle zone a bassa risoluzione."
+    },
+    {
+      "priority": 5,
+      "title": "The Strange Garden",
+      "artist": "Franz Sedlacek",
+      "selected_30": true,
+      "year": "verify exact year",
+      "museum": "verify exact collection",
+      "official_object": "PENDING_OFFICIAL_INSTITUTION",
+      "artwork_rights": "Artwork and photo reuse NOT CLEARED",
+      "source_binary": "PENDING_LICENSE_AND_SHA",
+      "status": "RESEARCH_PENDING",
+      "mood": [
+        "eerie",
+        "dreamlike",
+        "mysterious"
+      ],
+      "music_candidate": "myst_on_the_moor",
+      "first_hook_it": "Sembra un giardino. Ma qualcosa non torna.",
+      "scene_beats": [
+        "apertura insieme",
+        "elementi botanici",
+        "dettagli insoliti reali",
+        "contrasto naturale/surreale",
+        "composizione generale"
+      ],
+      "director_note": "Nessun render o falsa attribuzione finché non è verificato l'oggetto esatto e una foto idonea."
+    }
+  ],
+  "fallback": {
+    "next_after_all_blocked": "Ricerca di nuove opere rare fuori dalla lista 30 con immagine museale CC0 comprovata; non inventare completamenti o usare materiale non licenziato.",
+    "already_done": "The Sphinx of the Seashore prodotto nel batch V114: NON conteggiarlo come nuovo."
+  }
+}
