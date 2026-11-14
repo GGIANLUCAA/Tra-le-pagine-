@@ -1,0 +1,60 @@
+{
+  "schema": "artvision-new-series-private-cinema-checkpoint-v1",
+  "recorded_at": "2026-11-14",
+  "artist": "Albert Pinkham Ryder",
+  "title": "The Race Track (Death on a Pale Horse)",
+  "museum": "Cleveland Museum of Art",
+  "object_id": "1928.8",
+  "variant": "cinema_standard",
+  "status": "ONE_REAL_NEW_CINEMA_STANDARD_MP4_AND_ZIP_PRIVATE_ARTIFACT_TECHNICAL_QA_PASS_ARTISTIC_REVIEW_PENDING",
+  "technical_source": {
+    "official_url": "https://www.clevelandart.org/art/1928.8",
+    "image_url": "https://openaccess-cdn.clevelandart.org/1928.8/1928.8_print.jpg",
+    "license": "Cleveland Open Access CC0",
+    "pixels": [
+      3400,
+      2685
+    ],
+    "sha256": "02640803f0b848bb651f9aa5c72dda458ce001adccb2c258cd9a3d0e32c7bfed"
+  },
+  "verified_render": {
+    "run_id": 43572539399,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43572539399",
+    "job_id": 132379824605,
+    "status": "SUCCESS",
+    "artifact_id": 14104937142,
+    "artifact_name": "ARTVISION_NEW_RYDER_RACE_TRACK_CINEMA_REVIEW",
+    "artifact_archive_bytes": 8631298,
+    "retention_days": 30,
+    "mp4_sha256": "4745c5f093b35bfef418da78f95424d295783c493f2d0d54784bdb4e92eb8a87",
+    "android_zip_sha256": "d08f8e82057833dc48abaaf104dd10b156fd078ab7694c7be8d2510b50b101fe",
+    "full_ffmpeg_audio_video_decode": "PASS",
+    "zip_crc": "PASS",
+    "source_sha_match": "PASS",
+    "audio_real_recording_v330": "PASS",
+    "android_download_on_device": "NOT_TESTED"
+  },
+  "guards": {
+    "new_artist_video_count": 1,
+    "variants_produced_for_this_artwork": 1,
+    "variants_remaining": [
+      "cinema_museum",
+      "critico_standard",
+      "critico_museum"
+    ],
+    "critico_requires_approved_gacrux": true,
+    "museum_requires_v331_v332": true,
+    "paid_api_calls": 0,
+    "auto_published": false,
+    "gold": false,
+    "human_artistic_review": "PENDING",
+    "license_qa": "Official CMA CC0 metadata verified; check final attribution and music license in bundle"
+  },
+  "next_steps": [
+    "Do not repeat this Cinema Standard as new slot.",
+    "Build Cinema Museum from same source only if front wall geometry and frame provenance reviewed.",
+    "Critico Standard and Museum require approved Google Gemini Gacrux IT voice. No alternate voice.",
+    "Continue with other five-work batch and avoid duplicating selected-30 originals.",
+    "For owner delivery verify Android download using persistent release or Library bridge; GitHub Actions artifact expires after 30 days."
+  ]
+}
