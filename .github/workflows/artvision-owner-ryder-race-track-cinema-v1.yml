@@ -1,0 +1,112 @@
+name: "ArtVision OWNER | Ryder The Race Track | New Cinema Standard private review"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-owner-ryder-race-track-cinema-v1.yml"
+      - "scripts/artvision_owner_ryder_race_track_cinema_v1.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-single-heavy-render
+  cancel-in-progress: false
+jobs:
+  cinema_source_music_review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Enforce duplicate gate and V333 no narration substitution
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,pathlib
+          d=json.loads(pathlib.Path('queue/artvision_new_series_20261114.json').read_text())
+          assert d['owner_authorized'] and not d['auto_publish']
+          assert d['works'][0]['artist']=='Albert Pinkham Ryder'
+          assert d['works'][0]['title']=='The Race Track (Death on a Pale Horse)'
+          assert not list(pathlib.Path('queue').glob('artvision_new_series_checkpoint_*ryder*race_track*.json'))
+          assert d['production_gates']['voice'].startswith('Solo Google Gemini TTS Gacrux')
+          print('RYDER_PRIVATE_CINEMA_SLOT_AND_NO_TTS_GATE_PASS')
+          PY
+          python -m py_compile scripts/artvision_owner_ryder_race_track_cinema_v1.py src/artvision_music_selector_v330.py
+      - name: FFmpeg and Pillow
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Download real Cleveland CC0 artwork and render new Ryder Cinema MP4
+        run: python scripts/artvision_owner_ryder_race_track_cinema_v1.py
+      - name: Select one real track from stable V330 music 20 and verify recording
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/artvision-owner-ryder-race-track-cinema-v1
+          python src/artvision_music_selector_v330.py \
+            --title "The Race Track (Death on a Pale Horse)" \
+            --artist "Albert Pinkham Ryder" \
+            --moods "eerie,mysterious,ghostly" \
+            --pin "ghost_processional" \
+            --source-video "$d/VIDEO_SILENT_PRIVATE.mp4" \
+            --review-video "$d/VIDEO_MUSIC20_REVIEW.mp4" \
+            --cache "$d/verified_music" \
+            --prepare \
+            --out-json "$d/MUSIC_V330_PROOF.json"
+      - name: Verify actual bytes, full A/V decode, package Android ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/artvision-owner-ryder-race-track-cinema-v1
+          ffmpeg -v error -xerror -i "$d/VIDEO_MUSIC20_REVIEW.mp4" -map 0 -f null -
+          python - <<'PY'
+          import pathlib,hashlib,json,subprocess,zipfile
+          p=pathlib.Path('output/artvision-owner-ryder-race-track-cinema-v1')
+          sh=lambda x:hashlib.sha256(x.read_bytes()).hexdigest()
+          m=json.loads((p/'SOURCES_RIGHTS.json').read_text())
+          a=json.loads((p/'MUSIC_V330_PROOF.json').read_text())
+          video=p/'VIDEO_MUSIC20_REVIEW.mp4'
+          assert m['source_sha256']==sh(p/'ORIGINAL_ARTWORK.jpg')
+          assert a.get('license_status')=='ACTUAL_BINARY_SHA256_FFPROBE_VERIFIED'
+          assert a['review']['review_video_sha256']==sh(video)
+          probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(video)]))
+          v=[x for x in probe['streams'] if x.get('codec_type')=='video']
+          au=[x for x in probe['streams'] if x.get('codec_type')=='audio']
+          assert len(v)==1 and v[0]['width']==1080 and v[0]['height']==1920
+          assert len(au)==1 and au[0]['codec_name']=='aac'
+          assert 30 < float(probe['format']['duration']) < 50
+          m.update({'output_status':'PRIVATE_CINEMA_STANDARD_TECHNICAL_REVIEW_READY','music_proof_sha256':sh(p/'MUSIC_V330_PROOF.json'),
+                    'video_sha256':sh(video),'video_duration_s':float(probe['format']['duration'])})
+          (p/'SOURCES_RIGHTS.json').write_text(json.dumps(m,ensure_ascii=False,indent=2))
+          z=p/'RYDER_THE_RACE_TRACK_ANDROID_PRIVATE_REVIEW.zip'
+          with zipfile.ZipFile(z,'w',zipfile.ZIP_DEFLATED,compresslevel=3) as f:
+            for n in ['VIDEO_MUSIC20_REVIEW.mp4','COVER.jpg','SOURCES_RIGHTS.json','SOCIAL_COPY.txt','STORYBOARD.json','MUSIC_V330_PROOF.json']:
+              f.write(p/n,n)
+          with zipfile.ZipFile(z) as f:
+            assert f.testzip() is None
+            assert hashlib.sha256(f.read(video.name)).hexdigest()==sh(video)
+          (p/'TECHNICAL_QA.json').write_text(json.dumps({'full_decode':'PASS','source_hash_match':True,'zip_crc':'PASS',
+            'mp4_sha256':sh(video),'zip_sha256':sh(z),'artistic_review':'PENDING','publish':False,'gold':False},indent=2))
+          print('ONE_NEW_REAL_RYDER_PRIVATE_CINEMA_REVIEW',sh(video),sh(z))
+          PY
+      - name: Upload verified private review package (no social publication)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_NEW_RYDER_RACE_TRACK_CINEMA_REVIEW
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            output/artvision-owner-ryder-race-track-cinema-v1/VIDEO_MUSIC20_REVIEW.mp4
+            output/artvision-owner-ryder-race-track-cinema-v1/RYDER_THE_RACE_TRACK_ANDROID_PRIVATE_REVIEW.zip
+            output/artvision-owner-ryder-race-track-cinema-v1/COVER.jpg
+            output/artvision-owner-ryder-race-track-cinema-v1/SOURCES_RIGHTS.json
+            output/artvision-owner-ryder-race-track-cinema-v1/SOCIAL_COPY.txt
+            output/artvision-owner-ryder-race-track-cinema-v1/STORYBOARD.json
+            output/artvision-owner-ryder-race-track-cinema-v1/MUSIC_V330_PROOF.json
+            output/artvision-owner-ryder-race-track-cinema-v1/TECHNICAL_QA.json
