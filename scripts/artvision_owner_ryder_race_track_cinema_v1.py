@@ -91,10 +91,9 @@ fs=[]
 for i,seconds in enumerate(duration):
     count=int(seconds*fps)
     fs.append(f"[{i}:v]trim=duration={seconds},setpts=PTS-STARTPTS,scale=1080:1920,zoompan=z='min(zoom+0.00015,1.020)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=1080x1920:fps={fps},trim=duration={seconds},setpts=PTS-STARTPTS,fps={fps}[v{i}]")
-offset=0
 left="v0"
 for i in range(1,len(paths)):
-    offset += duration[i-1]-(.45 if i>1 else 0)
+    offset = round(sum(duration[:i]) - i*.45, 3)
     label=f"x{i}"
     fs.append(f"[{left}][v{i}]xfade=transition=fade:duration=.45:offset={offset:.2f}[{label}]")
     left=label
