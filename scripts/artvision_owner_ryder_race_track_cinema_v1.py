@@ -95,7 +95,7 @@ left="v0"
 for i in range(1,len(paths)):
     offset = round(sum(duration[:i]) - i*.45, 3)
     label=f"x{i}"
-    fs.append(f"[{left}][v{i}]xfade=transition=fade:duration=.45:offset={offset:.2f}[{label}]")
+    fs.append(f"[{left}][v{i}]xfade=transition=fade:duration=0.45:offset={offset:.2f}[{label}]")
     left=label
 cmd+=["-filter_complex",";".join(fs),"-map",f"[{left}]","-c:v","libx264","-preset","veryfast","-crf","19","-pix_fmt","yuv420p","-movflags","+faststart",str(OUT/"VIDEO_SILENT_PRIVATE.mp4")]
 print("Rendering source-locked private Cinema. No AI generated elements.",flush=True)
