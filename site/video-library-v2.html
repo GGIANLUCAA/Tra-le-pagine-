@@ -1162,10 +1162,22 @@ async function edDownload(mode){
  edSetInfo(mode==='full'?'Preparazione ZIP con il video originale…':'Preparazione ZIP leggero con testi, dossier e copertina…');
  try{
   const res=await fetch('/api/social-package-link',{method:'POST',headers:{'content-type':'application/json','Authorization':'Bearer '+g.token},body:JSON.stringify({key:x.key,mode})});
-  if(!res.ok)throw Error('Impossibile preparare ZIP ('+res.status+')');
+  if(!res.ok){
+   const message=res.status===404?'Video o file non disponibile sul server.':'Impossibile preparare ZIP ('+res.status+')';
+   throw Error(message);
+  }
   const data=await res.json();if(!data.url)throw Error('Collegamento ZIP assente');
+  // V334: check the signed link and original availability before asking the browser to download.
+  // A successful HEAD does not guarantee that Android actually saved the stream.
+  const check=await fetch(data.url,{method:'HEAD',cache:'no-store'});
+  if(!check.ok){
+   if(check.status===403)throw Error('Link ZIP scaduto o non valido. Riprova il download per generarne uno nuovo.');
+   if(check.status===404)throw Error('Video o file non trovato sul server. Non risulta scaricabile.');
+   if(check.status===409)throw Error('Video originale ancora solo su ChatGPT: ZIP completo non disponibile.');
+   throw Error('Verifica ZIP non riuscita ('+check.status+'). Nessun download avviato.');
+  }
   const a=document.createElement('a');a.href=data.url;a.download='';a.rel='noreferrer';document.body.append(a);a.click();a.remove();
-  edSetInfo('Download ZIP avviato. Il server prepara il pacchetto in diretta senza conservare copie.');
+  edSetInfo('Link ZIP verificato; download richiesto al browser. Controlla che il file arrivi davvero nei Download: il link temporaneo non garantisce il salvataggio.');
  }catch(e){edSetInfo(e.message);log(e.message)}
  finally{button.disabled=false}
 }

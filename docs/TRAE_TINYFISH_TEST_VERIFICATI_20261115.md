@@ -49,3 +49,15 @@ Questo file è una **registrazione di prove realmente eseguite**, non la dichiar
 - Il wallet TinyFish è separato dal credito TRAE e può avere addebiti a consumo per automazioni web.
 - Una sessione browser può funzionare anche se il profilo TinyFish mostra il sito trae.ai come «Captured» anziché «Signed in». Conta il test reale della dashboard, non l'etichetta da sola.
 - L'interazione da ChatGPT richiede chiamate TinyFish effettive; **non** significa che sia disponibile un'API ufficiale TRAE di chat programmabile o un accesso costante in background.
+
+## V334 — prima correzione reale su repository ArtVision (15/11/2026)
+**Oggetto:** Issue #300, download ZIP via Video Library Studio. Prove e modifiche solo su `feature/trae-artvision-download-audit-20261115` derivato da `main`.
+
+- **Audit del repository via TRAE Work: PASS.** La lettura del codice remoto autentico è stata completata nella sessione https://work.trae.ai/session/6af965b0299e1111b4f17752; file letti: `site/video-library-editorial-core.js`, `site/video-library-v2.html`, `tests/video-library-editorial.test.cjs`. Nessuna modifica GitHub da TRAE in quel test.
+- **Precisazione del codice:** `/api/social-package-link` controllava già l'esistenza tramite `edExists`. La debolezza osservata è soprattutto il messaggio di download ottimistico nel frontend, che non attende una conferma del trasferimento; non attribuire un errore di trasporto a codec o produzione inesistente senza prove.
+- **Patch solo su branch:** `/api/social-package-link` risponde 404 a file mancante/vuoto e mantiene 403 per firma non valida o scaduta; `/api/social-package` accetta HEAD firmato e verifica oggetto/size per ZIP full prima del GET; `edDownload` usa HEAD per convalidare il link e distingue 403/404/409, mostrando un messaggio onesto sul mancato controllo dell'effettivo salvataggio Android. Nessun master video o workflow modificato.
+- **TRAE ha clonato esattamente questo branch** nella sandbox, remoto HEAD `06cc3f465f325a9d2312fdf580dfa84a75fc2c4a`, eseguito `node tests/video-library-editorial.test.cjs`: **11/11 PASS, EXIT 0**, controlli sintassi JS PASS, working tree pulito: https://work.trae.ai/session/6af96738d8c4e9c8c16f263e
+- **Limiti espliciti:** il server non può confermare che Android abbia salvato il file dopo il click; HEAD 200 è una verifica di disponibilità in quel momento, non prova di integrità ZIP o download completo. Anche il test in sandbox usa mock R2 e non dimostra ancora la compatibilità Cloudflare/Android sul sito pubblico.
+- **Stato del deployment:** NON distribuito, NON unito a main, nessuna modifica sul branch Gold. Prima della fusione: revisione del PR, test live in ambiente di prova usando MP4/ZIP veri, 403/404, download Android, CRC ZIP, GET/Range e verifica dell'assenza di regressioni nel sito.
+- **Selettore branch TRAE:** dopo il collegamento GitHub, il branch nuovo non risulta nel picker TRAE. Questo non ne impedisce il clone esplicito in una task sandbox; evitare ogni modifica sul branch principale dalla UI.
+- **Non ripetere** i test generici TRAE/TinyFish/Python già archiviati o gli 11 test V334 salvo cambi al codice.

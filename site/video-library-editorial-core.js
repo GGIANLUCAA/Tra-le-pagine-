@@ -382,19 +382,27 @@ if(u.pathname==='/api/social-package-link'&&req.method==='POST'){
  if(!await auth())return new Response('Non autorizzato',{status:401});
  let body;try{body=await req.json()}catch{return new Response('Richiesta errata',{status:400})}
  const key=body?.key,mode=body?.mode==='full'?'full':body?.mode==='light'?'light':null;
- if(!mode||!await edExists(key))return new Response('Video o modalità non valida',{status:400});
+ if(!mode||!edValidKey(key))return new Response('Video o modalità non valida',{status:400});
+ if(!await edExists(key))return new Response('Video non trovato',{status:404});
  if(mode==='full'&&key.startsWith('gpt:'))return new Response('MP4 ancora solo su ChatGPT. Usa ZIP leggero.',{status:409});
+ if(mode==='full'&&!(await env.VIDEOS.head(key))?.size)return new Response('Video originale mancante o vuoto',{status:404});
  const exp=Math.floor(Date.now()/1000)+300;
  const sig=await edSign(key+'|'+mode+'|'+exp);
  const href=u.origin+'/api/social-package?key='+encodeURIComponent(key)+'&mode='+mode+'&exp='+exp+'&sig='+sig;
  return json({ok:true,url:href,expiresInSeconds:300,mode});
 }
-if(u.pathname==='/api/social-package'&&req.method==='GET'){
+if(u.pathname==='/api/social-package'&&['GET','HEAD'].includes(req.method)){
  const key=u.searchParams.get('key')||'',mode=u.searchParams.get('mode')||'',
  exp=Number(u.searchParams.get('exp')),sig=u.searchParams.get('sig')||'';
  const now=Math.floor(Date.now()/1000);
  if(!edValidKey(key)||!['full','light'].includes(mode)||!Number.isSafeInteger(exp)||exp<now||exp>now+300||!await edCheck(key+'|'+mode+'|'+exp,sig))return new Response('Collegamento non valido o scaduto',{status:403});
  if(!await edExists(key))return new Response('Video non trovato',{status:404});
+ if(mode==='full'){
+  if(key.startsWith('gpt:'))return new Response('MP4 ancora solo su ChatGPT',{status:409});
+  if(!(await env.VIDEOS.head(key))?.size)return new Response('Video originale mancante o vuoto',{status:404});
+ }
+ // V334: validate the signed request and the real source before triggering the browser download.
+ if(req.method==='HEAD')return new Response(null,{status:200,headers:{'cache-control':'private, no-store','x-content-type-options':'nosniff'}});
  const e=await edLoad(key),m=e.metadata,files=edFiles(e.record,m,e.missing);
  if(e.assets.length){
   files.push({name:'02_PROGETTO/Inventario_materiali_originali.txt',text:e.assets.map(x=>x.name+' ('+x.size+' byte)').join('\n')+'\n'});
