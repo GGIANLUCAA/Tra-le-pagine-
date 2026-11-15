@@ -28,6 +28,14 @@ jobs:
           echo '659fc4847a36dab4d4dad26ebc5ee5c836483bb95807549b2f54631510d85342  video.mp4' | sha256sum -c -
           echo '0bb94a2282e56013170ac97045fad9c18727466476ed0be58332d257e8d46121  package.zip' | sha256sum -c -
           echo "PASS: 2 anonymous complete GETs, sizes, exact SHA-256"
+      - name: "Install FFmpeg diagnostics for the pinned Ubuntu runner"
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe
+          command -v ffmpeg
       - name: "Validate real ZIP CRC and MP4 decoding"
         shell: bash
         run: |
