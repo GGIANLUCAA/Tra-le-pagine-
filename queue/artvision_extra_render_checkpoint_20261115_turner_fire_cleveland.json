@@ -1,0 +1,73 @@
+{
+  "schema": "artvision-extra-one-cinema-standard-completed-v1",
+  "date": "2026-11-15",
+  "artist": "Joseph Mallord William Turner",
+  "title": "The Burning of the Houses of Lords and Commons, 16 October 1834",
+  "year": 1835,
+  "museum": "Cleveland Museum of Art",
+  "accession": "1942.647",
+  "official_object": "https://www.clevelandart.org/art/1942.647",
+  "source": {
+    "original_image_url": "https://openaccess-cdn.clevelandart.org/1942.647/1942.647_print.jpg",
+    "pixels": [
+      3400,
+      2525
+    ],
+    "bytes": 3059828,
+    "sha256": "cf21271696b203a297d7899c296a1f13ccde8571dacda09213e1273871af9c39",
+    "license": "CC0",
+    "api_metadata_and_binary_verified": true,
+    "wrong_version_excluded": "Philadelphia Museum of Art distinct version"
+  },
+  "music": {
+    "title": "The Descent",
+    "artist": "Kevin MacLeod",
+    "fixed20_id": "the_descent",
+    "isrc": "USUAN1200094",
+    "recording_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3",
+    "recording_sha256": "f097d51700b970efffc62499473ea3a31e09aad4172e787978bc9c2a644d53a2",
+    "license": "CC BY 4.0",
+    "attribution_required": true
+  },
+  "source_proof_run_id": 43703401114,
+  "source_proof_artifact_id": 14156639047,
+  "variants": {
+    "cinema_standard": {
+      "status": "RENDERED_TECH_QA_ART_REVIEW_PENDING",
+      "mp4_sha256": "c5608f155c5adfa994a1af235b718f54826b9b70d84d78ce1e1c3dbfd21f38a3",
+      "bytes": 4634359,
+      "seconds": 49.9,
+      "codec": "H264/AAC",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "android_zip_sha256": "3fcffab127ec34766b1b8db0f3f5886890a14f984b0cdd22d0d3806897724983",
+      "zip_bytes": 4951516,
+      "ffmpeg_full_av_decode": "PASS",
+      "zip_crc": "PASS",
+      "library_readback": "MP4_SHA_AND_ZIP_SHA_AND_CRC_PASS",
+      "artistic_full_speed": "PENDING",
+      "published": false,
+      "gold": false
+    },
+    "cinema_museum": {
+      "status": "NOT_STARTED_MUSEUM_GATE"
+    },
+    "critico_standard": {
+      "status": "BLOCKED_APPROVED_GACRUX_V333_API"
+    },
+    "critico_museum": {
+      "status": "BLOCKED_GACRUX_V333_AND_MUSEUM_GATE"
+    }
+  },
+  "storage": {
+    "library_directory": "/ArtVision/Opere_Extra/Turner_Parliament_Fire_20261115",
+    "mp4_library_file_id": "libfile_79a19103489c81919bbebd61be36ce56",
+    "android_zip_library_file_id": "libfile_98e9bc197a6c8191bb7b3e5e9ea84e67",
+    "cover_library_file_id": "libfile_ffc7ee26f3f08191ae08f667467f6dcc",
+    "source_and_music_proof_library_file_id": "libfile_50525d2d43f48191925d51709819e0a9"
+  },
+  "integrity": "No Gacrux requests, no API billing changes, no publishing, no prior masters modified. Artwork is EXTRA outside owner 30 and historical 26/36. One distinct Cinema Standard slot.",
+  "next": "Review video at natural speed; maintain V330 proof and social credits. Continue another new artwork only after source/legal/preflight and one heavy render."
+}
