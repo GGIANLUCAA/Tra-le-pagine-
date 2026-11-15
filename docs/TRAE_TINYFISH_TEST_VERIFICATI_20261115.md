@@ -17,8 +17,8 @@ Questo file è una **registrazione di prove realmente eseguite**, non la dichiar
 | Verifica MP4 con `ffprobe` e generazione campione con `ffmpeg` | PASS riportato dall'agente | 5/5 test, compresi video vero, video falso, file vuoto, assente, directory |
 | Costo dopo due richieste | VISIBILE | TRAE Work Usage: $0,01 consumati su $20,00; $19,99 rimanenti, reset mostrato 03/12/2026 alle 06:21 (fuso non verificato) |
 | Autenticazione GitHub in browser TinyFish | PASS | Sessione GitHub valida; verifica delle autorizzazioni |
-| TRAE Work connesso **a GitHub** | **NON COMPLETATO** | Impostazioni TRAE > Connectors mostrano **Connect GitHub**; autorizzazione OAuth da approvare personalmente |
-| Repository `GGIANLUCAA/Tra-le-pagine-` importato dentro TRAE Work | **NON VERIFICATO/NON DISPONIBILE** | Richiede collegamento GitHub completato; **non avviare test già riusciti per risolvere questo punto** |
+| TRAE Work connesso **a GitHub** | **PASS (15/11/2026)** | Connectors mostra GitHub Connected; workspace TRAE e TraeWork |
+| Repository `GGIANLUCAA/Tra-le-pagine-` selezionato in TRAE Work | **PASS — selezione UI** | Repository selezionato nella dashboard; non equivale a importazione/esecuzione o scrittura sul repo |
 | Codice `check_video.py` nel repo ArtVision | NO | Il file è **solo nel sandbox TRAE**, non nel repository GitHub; va analizzato prima di qualsiasi integrazione |
 | Rendering video completo / ZIP Android via TRAE | NON TESTATO | Non confondere i 5 unit test con QA del prodotto video reale |
 
@@ -31,11 +31,18 @@ Questo file è una **registrazione di prove realmente eseguite**, non la dichiar
 - Verifica quota e stato OAuth: https://agent.tinyfish.ai/runs/d7768fa6-8848-45d3-9e4a-cf0c1847c81f
 - Autorizzazione OAuth storica Trae-AI già presente su GitHub ma **non sufficiente** a completare il collegamento in TRAE Work: https://agent.tinyfish.ai/runs/e11f2abe-925a-45d9-843f-a0460c3dabcf
 
-## Prossima attività utile senza ripetere test
-1. Il proprietario deve approvare su **GitHub** la nuova richiesta OAuth avviata da **TRAE Work** (non condividere password/codici; verificare prima i permessi). La precedente autorizzazione `Trae-AI` non prova che la nuova connessione TRAE Work sia attiva.
-2. Soltanto dopo verificare in TRAE Work che `Connect to GitHub` sparisca e che `GGIANLUCAA/Tra-le-pagine-` appaia nel selettore repository. Non rifare i due test Python.
-3. Prima di una prima modifica al codice: lavorare su branch isolato/PR, senza modificare main, automazioni o master ArtVision, e rispettando `AGENTS.md` / `docs/REGOLE_ATTIVE.md` (voce Gacrux, qualità video, no spese inattese).
-4. Se serve l'utilità `check_video.py`, recuperare il codice dalla sessione TRAE, esaminarlo e testarlo contro veri MP4 prima di adottarlo nella pipeline.
+## Stato aggiornato e attività residue — 15/11/2026
+- **Confermata autorizzazione OAuth effettiva**: GitHub collegato dentro TRAE Work. Non richiedere nuovamente il consenso senza necessità.
+- **Confermato repo visibile e selezionabile**: `GGIANLUCAA/Tra-le-pagine-`. È stato selezionato come repository di lavoro con cambio UI, senza importare, creare task o modificare file.
+- **ATTENZIONE BRANCH**: TRAE ha selezionato automaticamente `ARTVISION_V6_GOLD_MASTER_APPROVATA_2026-10-20`. Si è tentato solo di selezionare `main` dal menu, ma l'elenco mostrato da TRAE non contiene `main`; **nessun cambio branch eseguito**. GitHub conferma indipendentemente `main` come branch predefinito. Non interpretare il menu parziale TRAE come prova che `main` non esista! Evitare assolutamente scritture o task sulla branch Gold finché non è possibile selezionare/creare una branch di lavoro sicura.
+- **Lettura reale tramite TRAE del contenuto di ArtVision**: NON ANCORA TESTATA. I due test Python precedenti erano solo nel sandbox senza repository.
+- **Prossima operazione sicura**: risolvere selezione branch in TRAE senza toccare Gold; fare una singola lettura del repo tramite TRAE, poi eventuali cambi su branch isolato/PR; rispettare `AGENTS.md` / `docs/REGOLE_ATTIVE.md`.
+- **Non ripetere**: test accesso TRAE Pro, TinyFish, invio prompt, sessione persistente, Python 2/2, MP4 check 5/5, OAuth: già eseguiti.
+
+### Nuove evidenze
+- OAuth TRAE Work connesso e repo elencato: https://agent.tinyfish.ai/runs/8d1c74bc-34ea-40ea-a2cb-91588d7ff881
+- Repository ArtVision selezionato nella UI: https://agent.tinyfish.ai/runs/d0cf7864-ce45-4a0a-b1d7-df1ef53c43ec
+- Tentativo solo UI di selezionare `main`, assente nel branch picker TRAE: https://agent.tinyfish.ai/runs/44ef57dc-8751-4009-bebd-6d6c867248a9
 
 ## Distinzioni operative da mantenere
 - `TRAE Work Pro` ha una quota interna denominata in USD; **non equivale** a crediti dell'API Gemini o a un credito convertibile.
