@@ -132,10 +132,22 @@ const request=async(path,method='GET',data)=>{
  denied=await request('/api/social-package?key='+encodeURIComponent(video)+'&exp=9999999999&sig='+'a'.repeat(64)+'&mode=light');
  assert.equal(denied.status,403);
  console.log('PASS: unknown metadata fields and forged download links rejected');
+ const missingVideo='ARTVISION_NOT_PRODUCED_V334.mp4';
+ assert.equal((await request('/api/social-package-link','POST',{key:missingVideo,mode:'full'})).status,404,'Unproduced MP4 must return 404 before minting URL');
+ const emptyVideo='ARTVISION_EMPTY_V334.mp4';add(emptyVideo,new Uint8Array(0));
+ assert.equal((await request('/api/social-package-link','POST',{key:emptyVideo,mode:'full'})).status,404,'Empty MP4 must not be offered as downloadable');
+ const client=fs.readFileSync('site/video-library-v2.html','utf8');
+ assert(client.includes("fetch(data.url,{method:'HEAD',cache:'no-store'})"),'Frontend must check signed URL status before firing download');
+ assert(!client.includes("edSetInfo('Download ZIP avviato."),'Frontend must not claim successful download after anchor click');
+ console.log('PASS V334: missing/empty MP4 blocked and frontend preflight present');
  for(const mode of ['light','full']){
   const r=await request('/api/social-package-link','POST',{key:video,mode});
   assert.equal(r.status,200,'Cannot generate '+mode+' ZIP download link');
   const link=(await r.json()).url;
+  const check=await request(new URL(link).pathname+new URL(link).search,'HEAD');
+  assert.equal(check.status,200,'HEAD preflight '+mode+' ZIP failed');
+  const forged=new URL(link);forged.searchParams.set('sig','f'.repeat(64));
+  assert.equal((await request(forged.pathname+forged.search,'HEAD')).status,403,'Forged HEAD request must fail');
   const resp=await request(new URL(link).pathname+new URL(link).search);
   assert.equal(resp.status,200,'ZIP stream '+mode+' failed');
   const bytes=Buffer.from(await resp.arrayBuffer());
