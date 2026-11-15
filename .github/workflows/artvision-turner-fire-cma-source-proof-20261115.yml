@@ -1,0 +1,54 @@
+name: "ArtVision | Turner Cleveland 1942.647 | Exact Source + V330 Music Proof"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/artvision-turner-fire-cma-source-proof-20261115.yml"
+      - "scripts/artvision_turner_fire_source_proof_20261115.py"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-turner-fire-cma-source-proof-20261115.yml"
+      - "scripts/artvision_turner_fire_source_proof_20261115.py"
+permissions:
+  contents: read
+jobs:
+  source_art_and_music:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Enforce one distinct Cleveland painting with no prior checkpoint
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_turner_fire_source_proof_20261115.py
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13"
+          python scripts/artvision_turner_fire_source_proof_20261115.py --preflight
+      - name: Fetch real Cleveland CC0 image, exact accession, pixels SHA256
+        if: github.event_name == 'push'
+        run: python scripts/artvision_turner_fire_source_proof_20261115.py
+      - name: Real musical recording with SHA/FFprobe and CC BY 4.0
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          d=output/artvision-turner-cma1942-647-source-20261115
+          python src/artvision_music_selector_v330.py \
+            --title "The Burning of the Houses of Lords and Commons, 16 October 1834" \
+            --artist "Joseph Mallord William Turner" \
+            --moods "dramatic,ominous,dark" --pin "the_descent" \
+            --prepare --cache "$d/verified_music" --out-json "$d/MUSIC_V330_PROOF.json"
+      - name: Upload REAL source/music proof only (NOT MP4)
+        if: github.event_name == 'push' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_TURNER_CLEVELAND_1942_647_SOURCE_MUSIC
+          if-no-files-found: error
+          retention-days: 21
+          path: |
+            output/artvision-turner-cma1942-647-source-20261115/TURNER_CMA_1942_647_EXACT_PRINT.jpg
+            output/artvision-turner-cma1942-647-source-20261115/SOURCE_PROOF.json
+            output/artvision-turner-cma1942-647-source-20261115/MUSIC_V330_PROOF.json
+            output/artvision-turner-cma1942-647-source-20261115/verified_music/
