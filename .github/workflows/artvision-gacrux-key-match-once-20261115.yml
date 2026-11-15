@@ -1,0 +1,40 @@
+name: "ArtVision | One-shot private Gacrux project match audit"
+on:
+  push:
+    branches:
+      - audit/gacrux-key-match-20261115
+    paths:
+      - .github/workflows/artvision-gacrux-key-match-once-20261115.yml
+permissions:
+  contents: read
+jobs:
+  key_project_match:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      EXISTING_KEY: ${{ secrets.GEMINI_API_KEY }}
+      FREE_QUOTA_GATE: ${{ vars.GEMINI_TTS_FREE_QUOTA_CONFIRMED }}
+      BILLING_DISABLED_GATE: ${{ vars.GEMINI_TTS_PROJECT_BILLING_DISABLED_CONFIRMED }}
+    steps:
+      - name: Match secret ONLY to key endings from verified AI Studio projects
+        shell: python
+        run: |
+          import os
+          key = os.environ.get("EXISTING_KEY", "")
+          # No request to any API; no generation, credentials or substrings logged.
+          # Compare only endings previously visible in private AI Studio screenshots.
+          suffix = key[-4:].lower() if key else ""
+          if not key:
+              label = "MISSING_SECRET"
+          elif suffix == "-cfa":
+              label = "MATCH_AI_STUDIO_PROJECT_GPT"
+          elif suffix == "cj4a":
+              label = "MATCH_AI_STUDIO_PROJECT_GEMINI_VIDEO"
+          else:
+              label = "NO_MATCH_TO_TWO_SCREENSHOT_KEYS"
+          print("SECRET_PROJECT_COMPARISON=" + label)
+          print("VOICE_FREE_QUOTA_GATE_SET=" + str(os.environ.get("FREE_QUOTA_GATE", "").lower()=="true"))
+          print("PROJECT_BILLING_DISABLED_GATE_SET=" + str(os.environ.get("BILLING_DISABLED_GATE", "").lower()=="true"))
+          print("GEMINI_CALLS_MADE=0")
+          print("KEY_MATERIAL_EXPORTED=0")
+          print("ONE_SHOT_AUDIT_NO_RENDER")
