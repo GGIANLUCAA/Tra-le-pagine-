@@ -1,0 +1,89 @@
+name: "ArtVision Browser · Browserless cloud bridge V1 (public only)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/browserless-cloud-bridge-v1.yml"
+      - "tools/browserless_bridge_v1.py"
+      - "tests/test_browserless_bridge_v1.py"
+  push:
+    branches: [main]
+    paths:
+      - "requests/browserless/*.json"
+      - ".github/workflows/browserless-cloud-bridge-v1.yml"
+  workflow_dispatch:
+    inputs:
+      request_path:
+        description: "Existing public-only request file: requests/browserless/<id>.json"
+        required: false
+        type: string
+        default: ""
+permissions:
+  contents: read
+concurrency:
+  group: artvision-browserless-cloud-bridge-v1
+  cancel-in-progress: false
+jobs:
+  verify_and_execute:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - name: Read exact repository contents
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Offline lint and security regression tests — no Browserless cost
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/browserless_bridge_v1.py tests/test_browserless_bridge_v1.py
+          python -m unittest discover -s tests -p 'test_browserless_bridge_v1.py' -v
+      - name: Select a single new public request (never browse on PR)
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+          MANUAL_REQUEST: ${{ inputs.request_path }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "pull_request" ]; then
+            echo "BROWSERLESS_OFFLINE_TEST_ONLY_PULL_REQUEST"
+            exit 0
+          fi
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            path="$MANUAL_REQUEST"
+          else
+            if ! [[ "$BEFORE" =~ ^[0-9a-f]{40}$ ]] || ! [[ "$AFTER" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "No trustworthy commit range: do not call provider"
+              exit 1
+            fi
+            mapfile -t paths < <(git diff --name-only --diff-filter=A "$BEFORE" "$AFTER" -- requests/browserless/)
+            if [ "${#paths[@]}" -gt 1 ]; then
+              echo "Multiple requests in one push refused"
+              exit 1
+            fi
+            path="${paths[0]:-}"
+          fi
+          if [ -z "$path" ]; then
+            echo "BROWSERLESS_NO_REQUEST_NO_PROVIDER_CALL"
+            exit 0
+          fi
+          if ! [[ "$path" =~ ^requests/browserless/[a-z0-9][a-z0-9-]{7,59}\.json$ ]] || [ ! -f "$path" ]; then
+            echo "Invalid or missing queued request"
+            exit 1
+          fi
+          python tools/browserless_bridge_v1.py --request "$path" --dry-run
+          echo "BROWSERLESS_REQUEST_PATH=$path" >> "$GITHUB_ENV"
+      - name: Run exactly one Browserless session only if securely configured
+        if: github.event_name != 'pull_request' && env.BROWSERLESS_REQUEST_PATH != ''
+        shell: bash
+        env:
+          BROWSERLESS_TOKEN: ${{ secrets.BROWSERLESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          python tools/browserless_bridge_v1.py --request "$BROWSERLESS_REQUEST_PATH"
