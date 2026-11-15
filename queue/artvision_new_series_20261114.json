@@ -31,8 +31,8 @@
       "selected_30": false,
       "official_object": "https://www.clevelandart.org/art/1928.8",
       "artwork_rights": "CMA Open Access CC0 confirmed on official page",
-      "source_binary": "PENDING_IIIF_OR_CMA_API_DOWNLOAD_SHA",
-      "status": "SOURCE_RIGHTS_CONFIRMED_BINARY_NOT_YET_VALIDATED",
+      "source_binary": "VERIFIED_CMA_3400x2685_SHA_02640803f0b848bb651f9aa5c72dda458ce001adccb2c258cd9a3d0e32c7bfed",
+      "status": "CINEMA_STANDARD_RENDERED_TECH_QA_ART_REVIEW_PENDING",
       "mood": [
         "eerie",
         "mysterious",
@@ -48,7 +48,8 @@
         "interpretazione storica attribuita al museo",
         "ritorno all'insieme"
       ],
-      "director_note": "L'immagine è orizzontale: conservare leggibilità del quadro intero; nessun 9:16 crop che tagli la figura e il serpente."
+      "director_note": "L'immagine è orizzontale: conservare leggibilità del quadro intero; nessun 9:16 crop che tagli la figura e il serpente.",
+      "checkpoint": "queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json"
     },
     {
       "priority": 2,
@@ -89,8 +90,8 @@
       "selected_30": false,
       "official_object": "https://search.smb.museum/en/object/obj-967504?involved=Franz+von+Stuck",
       "artwork_rights": "Official museum PDM 1.0 photo; verify exact downloaded binary and metadata",
-      "source_binary": "PENDING_OFFICIAL_IMAGE_SHA",
-      "status": "SOURCE_POLICY_DOCUMENTED_ASSET_PENDING",
+      "source_binary": "PENDING_DOWNLOAD_SHA_PIXEL_INSPECTION",
+      "status": "EXACT_1912_OBJECT_AND_CC_BY_SOURCE_FOUND_BINARY_SHA_PENDING",
       "mood": [
         "dark",
         "ominous",
@@ -106,7 +107,30 @@
         "identità versione del museo 1912, non confondere con 1893 Monaco",
         "intero dipinto"
       ],
-      "director_note": "Non confondere con Die Sünde 1893 Neue Pinakothek. Composizione rispettosa, niente nudo esplicito o crop sensazionalistici."
+      "director_note": "Non confondere con Die Sünde 1893 Neue Pinakothek. Composizione rispettosa, niente nudo esplicito o crop sensazionalistici.",
+      "source_candidates": [
+        {
+          "url": "https://commons.wikimedia.org/wiki/File:Franz_von_stuck,_il_peccato,_1912_ca._00.jpg",
+          "photographer": "Sailko",
+          "license": "CC BY 3.0",
+          "pixels": [
+            3000,
+            3660
+          ],
+          "verification": "Wikimedia Commons category links to exact F.V.72 Berlin 1912, full image includes frame; download and SHA not yet verified"
+        },
+        {
+          "url": "https://commons.wikimedia.org/wiki/File:Berlin,_Alte_Nationalgalerie,_Franz_von_Stuck,_die_S%C3%BCnde.JPG",
+          "photographer": "Dguendel",
+          "license": "CC BY 4.0",
+          "pixels": [
+            2501,
+            4236
+          ],
+          "verification": "Same Berlin F.V.72, exact version, source page verified; image SHA pending"
+        }
+      ],
+      "next_step": "Download exact 1912 Commons original; verify SHA256, decode pixels, confirm frame crop and museum rights; then render single Cinema Standard only if all gates pass"
     },
     {
       "priority": 4,
