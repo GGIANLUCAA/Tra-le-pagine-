@@ -1,0 +1,81 @@
+{
+  "schema": "artvision-extra-artwork-one-cinema-slot-v1",
+  "recorded_at": "2026-11-15",
+  "artist": "Albert Bierstadt",
+  "title": "The Last of the Buffalo",
+  "date": "1888–1889",
+  "artwork_object_id": "National Gallery of Art 2014.79.5",
+  "official_object_url": "https://www.nga.gov/artworks/124525-last-buffalo",
+  "source": {
+    "exact_original_binary_url": "https://upload.wikimedia.org/wikipedia/commons/3/30/The_Last_of_the_Buffalo.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:The_Last_of_the_Buffalo.jpg",
+    "image_dimensions": [
+      10602,
+      6252
+    ],
+    "source_bytes": 37142923,
+    "source_sha1": "aaef7503f34ae7591bac8c0a5221e782ee52cf9f",
+    "source_sha256": "6895db7890a1c71d0a00b38a5601708b703191fff3fd6c82616ba9c9a17402e6",
+    "license": "Painting public domain; faithful reproduction on Wikimedia Commons PDM; NGA Open Access",
+    "image_verified_against_actual_binary": true
+  },
+  "music": {
+    "fixed20_id": "lightless_dawn",
+    "title": "Lightless Dawn",
+    "composer": "Kevin MacLeod",
+    "isrc": "USUAN1100655",
+    "official_page": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100655",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "recording_sha256": "59fd69e4432c95887d626e8055113da8fb0da9a8ccac85c6b7da6a6031c4f325",
+    "reuse_audio_track_v2": "AAC compressed audio bitstream verified identical to V1, SHA256 5b46e9028bbf92356faf3a661e292dae38b625620b518e9e4e2f93f1719af0fb"
+  },
+  "variant_matrix": {
+    "cinema_standard": {
+      "status": "RENDERED_TECH_QA_ART_REVIEW_PENDING",
+      "counted_once": true,
+      "original_run_id": 43702160089,
+      "original_artifact_id": 14156323297,
+      "original_v1_mp4_sha256": "c9eb9cf3d9d652e1abe45899e0f9eb8386b208c6a2cb31fba2bb7971d39d5d8e",
+      "preferred_v2_mp4_sha256": "544f803f84b3ce037e5da8720af8c7673d4c4b3cbb1814831f62780c260b73d3",
+      "preferred_v2_bytes": 4754572,
+      "preferred_v2_zip_sha256": "568ed8d43e7cce162cb981071ecd97090fcdd39944bd5e0f45251dfeed50dff5",
+      "preferred_v2_zip_bytes": 5189928,
+      "duration_seconds": 50.1,
+      "codec": "H264/AAC",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "ffmpeg_full_av_decode": "PASS",
+      "zip_crc": "PASS",
+      "independent_chatgpt_library_readback": "SHA_AND_CRC_PASS",
+      "artistic_normal_speed_review": "PENDING",
+      "publication": false,
+      "gold": false
+    },
+    "cinema_museum": {
+      "status": "NOT_STARTED_MUSEUM_SOURCE_SCALE_AND_ROOM_GATE"
+    },
+    "critico_standard": {
+      "status": "BLOCKED_V333_APPROVED_GACRUX_TTS_API"
+    },
+    "critico_museum": {
+      "status": "BLOCKED_V333_APPROVED_GACRUX_TTS_AND_MUSEUM_GATE"
+    }
+  },
+  "storage": {
+    "persistent_library_directory": "/ArtVision/Opere_Extra/The_Last_of_the_Buffalo_20261115",
+    "preferred_zip_library_id": "libfile_8b3b9f0c8080819182a50e789056132f",
+    "preferred_mp4_library_id": "libfile_6ad81134064881918b0134f5ba8e494b",
+    "cover_library_id": "libfile_54f0652f753081918ed254942cf80cf7",
+    "original_artifact_library_id": "libfile_6148654dc4888191b474a9db5f4cd7f8"
+  },
+  "provenance_notes": [
+    "This is an additional distinct work outside owner-selected 30 and original 9×4 = 36; do not add to those historical denominators.",
+    "V2 was a camera/portrait reframing corrective revision of same Cinema Standard slot, NOT a second slot.",
+    "V1 baseline untouched and archived; independent library readback of preferred V2 zip and mp4 PASS.",
+    "No synthetic figures, no TTS, no API purchases, no social/site publishing, artistic QA and territorial distribution separately pending."
+  ],
+  "next_action": "Continue NEXT distinct CC0 source-verified painting candidate, e.g. Turner Cleveland The Burning of the Houses of Lords and Commons 1942.647, unless a higher-priority pending Museum is cleared."
+}
