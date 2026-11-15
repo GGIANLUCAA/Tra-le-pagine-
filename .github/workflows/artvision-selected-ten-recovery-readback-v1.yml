@@ -1,0 +1,99 @@
+name: "ArtVision selected ten - existing artifact readback only"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/artvision-selected-ten-recovery-readback-v1.yml"
+      - "docs/productions/2026-11-12-artvision-owner-ten-recovery-evidence.md"
+permissions:
+  contents: read
+  actions: read
+jobs:
+  independent_existing_artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - slug: babel_v137
+            source_run: 41663098584
+            artifact: BRUEGEL_BABEL_V137_MUSEUM_REVIEW_REAL_MP4
+            movie: BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_MUSEUM_V137_REVIEW.mp4
+            movie_sha: 4a9639be84ecf912ae0a82e8078dcacc1a93ac6bf82433a95d927b98746e5d7f
+            package: BRUEGEL_BABEL_V137_CINEMA_MUSEUM_REVIEW_PACKAGE.zip
+            package_sha: 3737d08f1b099383a4e4196f96609ffed8912f66db68a961df5f0c7fcfc61c53
+          - slug: delacroix_v169
+            source_run: 42125709649
+            artifact: ART_V169_DELACROIX_SARDANAPALUS_CRITICO_AND_ONE_PRESERVED_WAV
+            movie: DELACROIX_THE_DEATH_OF_SARDANAPALUS_CRITICO_STANDARD_V169_REVIEW.mp4
+            movie_sha: c7d3a2e231b384fb6a082cb61158d3133d3f309c05e0247b228a1ab6ea7a77dc
+            package: DELACROIX_SARDANAPALUS_CRITICO_STANDARD_V169_REVIEW_PACKAGE.zip
+            package_sha: 4a6b25d42ae125b844f5d149e43af2eebbe7612e36f42033b5ac9bc3f6188597
+    steps:
+      - name: Download ORIGINAL source artifact only
+        uses: actions/download-artifact@v4
+        with:
+          repository: GGIANLUCAA/Tra-le-pagine-
+          run-id: ${{ matrix.source_run }}
+          name: ${{ matrix.artifact }}
+          github-token: ${{ github.token }}
+          path: /tmp/owner-recovered-original
+
+      - name: Set up free independent FFmpeg decoder
+        shell: bash
+        run: python3 -m pip install --disable-pip-version-check --quiet --user 'imageio-ffmpeg==0.8.1'
+
+      - name: Readback SHA, full audio/video decode, ZIP CRC and inner MP4
+        shell: bash
+        env:
+          SLUG: ${{ matrix.slug }}
+          SOURCE_RUN: ${{ matrix.source_run }}
+          MOVIE: ${{ matrix.movie }}
+          MOVIE_SHA: ${{ matrix.movie_sha }}
+          PACKAGE: ${{ matrix.package }}
+          PACKAGE_SHA: ${{ matrix.package_sha }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json, os, subprocess, zipfile
+          from imageio_ffmpeg import get_ffmpeg_exe
+          root = Path('/tmp/owner-recovered-original')
+          assert root.is_dir()
+          def unique(name):
+              matches=[p for p in root.rglob(name) if p.is_file() and p.name==name]
+              assert len(matches)==1, f'Missing/ambiguous source: {name}'
+              return matches[0]
+          mp4=unique(os.environ['MOVIE'])
+          archive=unique(os.environ['PACKAGE'])
+          sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+          assert sha(mp4)==os.environ['MOVIE_SHA'], 'MP4 SHA mismatch'
+          assert sha(archive)==os.environ['PACKAGE_SHA'], 'ZIP SHA mismatch'
+          with zipfile.ZipFile(archive) as z:
+              assert z.testzip() is None, 'ZIP CRC failure'
+              member=[n for n in z.namelist() if Path(n).name==mp4.name]
+              assert len(member)==1, 'ZIP missing exact MP4'
+              assert hashlib.sha256(z.read(member[0])).hexdigest()==os.environ['MOVIE_SHA'], 'Inner MP4 SHA mismatch'
+          ff=get_ffmpeg_exe()
+          probe=subprocess.run([ff,'-hide_banner','-i',str(mp4)],capture_output=True,text=True)
+          assert 'Video: h264' in probe.stderr and 'Audio: aac' in probe.stderr, 'Codec mismatch'
+          subprocess.run([ff,'-v','error','-xerror','-i',str(mp4),'-map','0','-f','null','-'],check=True)
+          evidence={'original_run_id':int(os.environ['SOURCE_RUN']),'variant':os.environ['SLUG'],
+                    'original_movie_sha256':os.environ['MOVIE_SHA'],'original_zip_sha256':os.environ['PACKAGE_SHA'],
+                    'downloaded_original_artifact':True,'full_video_audio_decode':'PASS',
+                    'zip_crc':'PASS','inner_movie_sha':'PASS','new_mp4_count':0,'paid_api_calls':0,
+                    'gold':False,'published':False,'artistic_review':'PENDING',
+                    'commercial_rights':'PENDING'}
+          out=Path('/tmp')/(os.environ['SLUG']+'-READBACK_ONLY.json')
+          out.write_text(json.dumps(evidence,indent=2)+'\n',encoding='utf-8')
+          print('EXISTING_ARTIFACT_INDEPENDENT_READBACK_PASS',json.dumps(evidence))
+          PY
+
+      - name: Publish only JSON verification evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "ARTVISION_RECOVERY_${{ matrix.slug }}_EVIDENCE"
+          path: "/tmp/${{ matrix.slug }}-READBACK_ONLY.json"
+          if-no-files-found: error
+          retention-days: 30
