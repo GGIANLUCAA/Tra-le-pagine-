@@ -231,27 +231,43 @@ def synthesize(text,outdir):
     spoken=speech_directed(text)
     print("Genero un'unica recitazione italiana completa con pause interpretative.",flush=True)
     client=genai.Client(api_key=key)
-    interaction=client.interactions.create(
+    # V334: the existing Interactions endpoint returned 404 for this TTS model
+    # on the verified free-tier project (Actions #43696305445).
+    # Use the officially documented GenerateContent AUDIO endpoint instead.
+    # Same MODEL, identical Gacrux voice and unmodified spoken transcript.
+    from google.genai import types
+    part={"text":spoken}
+    # Newer SDK versions accept speech_metadata for stable mature delivery;
+    # on older SDKs use verbatim speech with the exact same Gacrux voice.
+    if "speech_metadata" in getattr(types.Part,"model_fields",{}):
+        part["speech_metadata"]={"style":STYLE}
+    response=client.models.generate_content(
         model=MODEL,
-        input=[{
-            "type":"user_input",
-            "content":[{
-                "type":"text",
-                "text":spoken,
-                "annotations":[{
-                    "type":"speech_metadata",
-                    "style":STYLE
-                }]
-            }]
-        }],
-        response_format={"type":"audio"},
-        generation_config={"speech_config":[{"voice":VOICE}]},
+        contents=[{"role":"user","parts":[part]}],
+        config=types.GenerateContentConfig(
+            response_modalities=["AUDIO"],
+            speech_config=types.SpeechConfig(
+                voice_config=types.VoiceConfig(
+                    prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                        voice_name=VOICE
+                    )
+                )
+            )
+        )
     )
-    if not interaction.output_audio or not interaction.output_audio.data:
-        raise RuntimeError("Gemini TTS non ha restituito audio")
-    b=interaction.output_audio.data
+    audio_parts=[
+        p.inline_data.data
+        for candidate in (response.candidates or [])
+        for p in (candidate.content.parts if candidate.content else [])
+        if p.inline_data is not None and p.inline_data.data
+    ]
+    if not audio_parts:
+        raise RuntimeError("Gemini Gacrux TTS non ha restituito audio")
+    b=audio_parts[0]
     if isinstance(b,str):
         b=base64.b64decode(b)
+    elif isinstance(b,(memoryview,bytearray)):
+        b=bytes(b)
     data,sr=sf.read(io.BytesIO(b),dtype="float32")
     if data.ndim==2:
         data=data.mean(axis=1)
