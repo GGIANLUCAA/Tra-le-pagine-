@@ -1,0 +1,57 @@
+name: "Video Library V334 — Real public MP4/ZIP delivery QA"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/video-download-real-qa-v334.yml"
+      - "site/video-library-v2.html"
+      - "site/video-library-editorial-core.js"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-release-download:
+    name: "Anonymous HTTP download and integrity QA"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: "Download real Antikythera release assets without authentication"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/real-video-qa
+          cd /tmp/real-video-qa
+          base="https://github.com/GGIANLUCAA/Tra-le-pagine-/releases/download/giuliano-03-antikythera-android-review-download-20261112"
+          curl --fail --location --silent --show-error --retry 2 --retry-delay 2 --connect-timeout 15 --max-time 120 -o video.mp4 "$base/GIULIANO_ANTICITERA_ANDROID.mp4"
+          curl --fail --location --silent --show-error --retry 2 --retry-delay 2 --connect-timeout 15 --max-time 120 -o package.zip "$base/GIULIANO_ANTICITERA_VIDEO_E_COPERTINA.zip"
+          test "$(stat -c%s video.mp4)" -eq 5317366 || { echo "::error::MP4 download size does not match prior recorded release metadata"; exit 1; }
+          test "$(stat -c%s package.zip)" -eq 11006693 || { echo "::error::ZIP download size does not match prior recorded release metadata"; exit 1; }
+          echo '659fc4847a36dab4d4dad26ebc5ee5c836483bb95807549b2f54631510d85342  video.mp4' | sha256sum -c -
+          echo '0bb94a2282e56013170ac97045fad9c18727466476ed0be58332d257e8d46121  package.zip' | sha256sum -c -
+          echo "PASS: 2 anonymous complete GETs, sizes, exact SHA-256"
+      - name: "Validate real ZIP CRC and MP4 decoding"
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/real-video-qa
+          command -v unzip
+          command -v ffprobe
+          command -v ffmpeg
+          unzip -t package.zip
+          unzip -Z -1 package.zip | grep -Eiq '\.mp4$' || { echo "::error::ZIP contains no MP4"; exit 1; }
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 video.mp4
+          ffmpeg -nostdin -hide_banner -loglevel error -i video.mp4 -f null -
+          echo "PASS: ZIP CRC, MP4 present in ZIP, MP4 full decode"
+      - name: "Check anonymous HTTP Range behavior (diagnostic)"
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/real-video-qa
+          base="https://github.com/GGIANLUCAA/Tra-le-pagine-/releases/download/giuliano-03-antikythera-android-review-download-20261112"
+          curl --fail --location --silent --show-error --range 0-1023 -D range_headers.txt -o sample.bin --connect-timeout 15 --max-time 45 "$base/GIULIANO_ANTICITERA_ANDROID.mp4"
+          code="$(awk '/^HTTP\//{s=$2} END{print s}' range_headers.txt)"
+          echo "Final Range HTTP status: $code, bytes received: $(stat -c%s sample.bin)"
+          if [ "$code" = 206 ]; then
+            grep -i '^content-range:' range_headers.txt | tail -1 || true
+          else
+            echo "::warning::Range request returned HTTP $code, not 206; investigate streaming compatibility separately"
+          fi
