@@ -20,7 +20,9 @@ permissions:
 jobs:
   diagnostics:
     name: "Sito pubblico + Chrome Android (simulato)"
-    runs-on: ubuntu-latest
+    # Playwright 1.56.1 cannot install Chromium/deps on ubuntu-26.04 (now ubuntu-latest).
+    # Keep the V9 browser audit on a supported runner until Playwright is upgraded.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
