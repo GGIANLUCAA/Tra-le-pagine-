@@ -1,0 +1,80 @@
+{
+  "schema": "artvision-new-rare-cinema-candidate-research-v1",
+  "recorded_at": "2026-11-15",
+  "scope": "Supplementary source-first editorial scouting. Does NOT supersede queue/artvision_new_series_20261114.json, owner 30, historic 26/36. No new MP4 produced.",
+  "anti_duplicates": {
+    "checked_repo_code_search": [
+      "The Last of the Buffalo",
+      "The Burning of the Houses of Lords",
+      "The Voyage of Life: Manhood",
+      "The Gulf Stream"
+    ],
+    "excluded_explicitly": "Winslow Homer - The Gulf Stream: existing ArtVision production reports and variants, NOT a new work",
+    "still_required": "Check actual persistent checkpoints and Actions archives across all ArtVision lanes before beginning render."
+  },
+  "candidates": [
+    {
+      "rank": 1,
+      "artist": "Albert Bierstadt",
+      "title": "The Last of the Buffalo",
+      "year": "1888–1889",
+      "institution": "National Gallery of Art, Washington",
+      "accession": "2014.79.5",
+      "object_url": "https://www.nga.gov/artworks/124525-last-buffalo",
+      "original_download_url": "https://api.nga.gov/iiif/d5d978ed-61c4-4c14-8c5d-1c2444d76301/full/full/0/default.jpg?attachment_filename=the_last_of_the_buffalo_2014.79.5.jpg",
+      "original_rights_evidence": "NGA object page says 'This object's media is free and in the public domain.'",
+      "size_cm": "180.3 × 301.63; framed 217.17 × 339.09 × 15.24",
+      "quality_angle": "Large panoramic real animals, buffalo and riders, skulls in foreground; ecological/historical shock, no AI-generated details",
+      "first_hook": "Un dipinto enorme racconta la scomparsa di milioni di bisonti.",
+      "music20_id": "lightless_dawn",
+      "status": "SOURCE_AND_RIGHTS_DOCUMENTED_ORIGINAL_BINARY_SHA_AND_PIXEL_CHECK_REQUIRED",
+      "rendered": false,
+      "source_sha256": null,
+      "source_pixels": null,
+      "social_originality": "Potential, not measured social-saturation claim",
+      "notes": "Not the NGA 1891 photogravure accession 2015.19.3216. Primary original oil only."
+    },
+    {
+      "rank": 2,
+      "artist": "J. M. W. Turner",
+      "title": "The Burning of the Houses of Lords and Commons, 16 October 1834",
+      "year": 1835,
+      "institution": "The Cleveland Museum of Art",
+      "accession": "1942.647",
+      "object_url": "https://www.clevelandart.org/art/1942.647",
+      "source_rights": "CMA Open Access / CC0, official object page allows copy, modify and distribute",
+      "dimensions_cm": "Unframed 92 × 123.2; framed 123.5 × 153.5 × 12",
+      "quality_angle": "London 1834 Parliament fire; monumental flames, river rescue vessels; cinematic 3–7 s hook",
+      "first_hook": "La notte in cui Londra vide il Parlamento scomparire tra le fiamme.",
+      "music20_id": "the_descent",
+      "status": "SOURCE_AND_RIGHTS_DOCUMENTED_ORIGINAL_BINARY_SHA_AND_PIXEL_CHECK_REQUIRED",
+      "rendered": false,
+      "source_sha256": null,
+      "source_pixels": null,
+      "source_binary": "PENDING_OFFICIAL_CMA_ORIGINAL_DOWNLOAD",
+      "notes": "Must use Cleveland 1942.647 fire viewed downriver, NOT Philadelphia Museum's distinct version."
+    },
+    {
+      "rank": 3,
+      "artist": "Thomas Cole",
+      "title": "The Voyage of Life: Manhood",
+      "year": 1842,
+      "institution": "National Gallery of Art, Washington",
+      "accession": "1971.16.3",
+      "object_url": "https://www.nga.gov/artworks/52452-voyage-life-manhood",
+      "source_rights": "NGA object media free and in public domain (official object page)",
+      "dimensions_cm": "Unframed 134.3 × 202.6; framed 162.6 × 231.1 × 17.8",
+      "quality_angle": "Lone human in storm river, looming demons in sky, impending rapids; clear emotional narrative and hero POV",
+      "first_hook": "Nel quadro sembra imminente una catastrofe. Ma il vero pericolo è nascosto nel cielo.",
+      "music20_id": "ghost_processional",
+      "status": "SOURCE_AND_RIGHTS_DOCUMENTED_ORIGINAL_BINARY_SHA_AND_PIXEL_CHECK_REQUIRED",
+      "rendered": false,
+      "source_sha256": null,
+      "source_pixels": null,
+      "notes": "This is Manhood, third of Cole's four Life panels, not Childhood, Youth or Old Age. Other Cole extra Titan's Goblet already produced, but different painting; diversify artists first."
+    }
+  ],
+  "blocker": "Original full-size image download not available in this container due outbound DNS failure; external download attempts insufficient to validate binary, SHA or pixels. No MP4/ZIP claimed.",
+  "next_step": "Before production, retrieve exact official source bytes in a network-capable GitHub Action or trusted Library asset; record sha256, pixel dimensions, exact licensed URL, and select Music20 with hash. Then render one new Cinema Standard only, FFmpeg full decode, SHA and Android ZIP CRC; artistic review and rights clearance separate.",
+  "safety": "No Gacrux alternate voice, no API expenses, no publishing, no fake Gold, no duplicate slots, no new automation."
+}
