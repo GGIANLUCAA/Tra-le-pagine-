@@ -1,0 +1,126 @@
+name: "ArtVision OWNER | Bierstadt Last of Buffalo | New Cinema review"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/artvision-bierstadt-buffalo-cinema-20261115.yml"
+      - "scripts/artvision_bierstadt_last_buffalo_cinema_v1.py"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-bierstadt-buffalo-cinema-20261115.yml"
+      - "scripts/artvision_bierstadt_last_buffalo_cinema_v1.py"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-single-heavy-render
+  cancel-in-progress: false
+jobs:
+  private_bierstadt_cinema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: No duplicate or hidden narration
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_bierstadt_last_buffalo_cinema_v1.py
+          python - <<'PY'
+          import pathlib,json
+          assert not pathlib.Path('queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json').exists()
+          r=json.loads(pathlib.Path('research/artvision_rare_cc0_video_candidates_20261115.json').read_text())
+          assert len([x for x in r["candidates"] if x["title"]=="The Last of the Buffalo" and x["accession"]=="2014.79.5" and not x["rendered"]])==1
+          print('ANTI_DUPLICATE_AND_EXACT_NGA_OBJECT_PASS')
+          PY
+      - name: Install source-render tools
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core; fi
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13"
+      - name: Editorial preflight without downloading or rendering
+        run: python scripts/artvision_bierstadt_last_buffalo_cinema_v1.py --preflight
+      - name: Download original museum painting, validate SHA-1 and 10602x6252 pixels, render
+        if: github.event_name == 'push'
+        run: python scripts/artvision_bierstadt_last_buffalo_cinema_v1.py
+      - name: Verify official Lightless Dawn recording from fixed 20 and soundtrack mix
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          d=output/artvision-bierstadt-buffalo-20261115
+          python src/artvision_music_selector_v330.py \
+            --title "The Last of the Buffalo" \
+            --artist "Albert Bierstadt" \
+            --moods "somber,ominous,dramatic" \
+            --pin "lightless_dawn" \
+            --source-video "$d/SILENT_SOURCE_LOCKED.mp4" \
+            --review-video "$d/THE_LAST_OF_THE_BUFFALO_CINEMA_ANDROID_REVIEW.mp4" \
+            --cache "$d/verified_music" --prepare \
+            --out-json "$d/MUSIC_V330_PROOF.json"
+      - name: SHA, FFmpeg full decode, Android ZIP CRC, cover, social and source manifest
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          d=output/artvision-bierstadt-buffalo-20261115
+          ffmpeg -v error -xerror -i "$d/THE_LAST_OF_THE_BUFFALO_CINEMA_ANDROID_REVIEW.mp4" -map 0 -f null -
+          python - <<'PY'
+          import pathlib,json,hashlib,subprocess,zipfile
+          from PIL import Image,ImageOps,ImageDraw
+          p=pathlib.Path('output/artvision-bierstadt-buffalo-20261115')
+          h=lambda x:hashlib.sha256(x.read_bytes()).hexdigest()
+          proof=json.loads((p/'MUSIC_V330_PROOF.json').read_text())
+          qa=json.loads((p/'SOURCE_STORYBOARD_QA.json').read_text())
+          video=p/'THE_LAST_OF_THE_BUFFALO_CINEMA_ANDROID_REVIEW.mp4'
+          assert proof['license_status']=='ACTUAL_BINARY_SHA256_FFPROBE_VERIFIED'
+          assert proof['selected']['track_id']=='lightless_dawn'
+          assert proof['review']['review_video_sha256']==h(video)
+          assert qa['source_sha256']==h(p/'ORIGINAL_ARTWORK_2014.79.5.jpg')
+          with Image.open(p/'ORIGINAL_ARTWORK_2014.79.5.jpg') as im: assert im.size==(10602,6252)
+          meta=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_format','-show_streams','-of','json',str(video)]))
+          v=[s for s in meta['streams'] if s['codec_type']=='video']
+          a=[s for s in meta['streams'] if s['codec_type']=='audio']
+          assert len(v)==1 and v[0]['width']==720 and v[0]['height']==1280 and v[0]['codec_name']=='h264'
+          assert len(a)==1 and a[0]['codec_name']=='aac'
+          seconds=float(meta['format']['duration'])
+          assert 43<seconds<65
+          # Capture frames from actual final MP4 for artistic review, not synthetic QA claims.
+          for s in (2,8,15,23,31,40,48):
+           out=p/f'QA_FRAME_{s:02}.jpg'
+           subprocess.run(['ffmpeg','-v','error','-y','-ss',str(s),'-i',str(video),'-frames:v','1','-q:v','3',str(out)],check=True)
+          qa.update({'video_sha256':h(video),'video_size_bytes':video.stat().st_size,'video_duration_s':seconds,
+                     'music_status':'VERIFIED_REAL_INCOMPETECH_RECORDING_CC_BY4',
+                     'music_proof_sha256':h(p/'MUSIC_V330_PROOF.json'),
+                     'video_qa':'FULL_VIDEO_AUDIO_DECODE_PASS','human_artistic_review':'PENDING',
+                     'rights_distribution_territories':'PENDING','published':False,'gold':False})
+          (p/'TECHNICAL_QA.json').write_text(json.dumps(qa,ensure_ascii=False,indent=2)+'\n')
+          z=p/'THE_LAST_OF_THE_BUFFALO_ANDROID_PRIVATE_REVIEW.zip'
+          included=['THE_LAST_OF_THE_BUFFALO_CINEMA_ANDROID_REVIEW.mp4','COVER.jpg','SOURCE_STORYBOARD_QA.json','MUSIC_V330_PROOF.json','TECHNICAL_QA.json','SOCIAL_PACK.json','SOCIAL_PACK.txt']
+          with zipfile.ZipFile(z,'w',zipfile.ZIP_DEFLATED,compresslevel=3) as arc:
+           for n in included:arc.write(p/n,n)
+           for f in sorted(p.glob('QA_FRAME_*.jpg')):arc.write(f,f.name)
+          with zipfile.ZipFile(z) as arc:
+           assert arc.testzip() is None
+           assert hashlib.sha256(arc.read(video.name)).hexdigest()==h(video)
+          (p/'DELIVERY_SHA256.json').write_text(json.dumps({'mp4_sha256':h(video),'zip_sha256':h(z),'zip_crc':'PASS','audio_video_full_decode':'PASS','artistic_review':'PENDING','published':False,'gold':False},indent=2)+'\n')
+          print('NEW_PRIVATE_ARTVISION_BIERSTADT_CINEMA_VIDEO_SHA256',h(video),'ZIP_SHA256',h(z),flush=True)
+          PY
+      - name: Upload genuine new MP4, original source bytes and Android review pack
+        if: github.event_name == 'push' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_BIERSTADT_LAST_BUFFALO_CINEMA_20261115_REVIEW
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            output/artvision-bierstadt-buffalo-20261115/THE_LAST_OF_THE_BUFFALO_CINEMA_ANDROID_REVIEW.mp4
+            output/artvision-bierstadt-buffalo-20261115/THE_LAST_OF_THE_BUFFALO_ANDROID_PRIVATE_REVIEW.zip
+            output/artvision-bierstadt-buffalo-20261115/ORIGINAL_ARTWORK_2014.79.5.jpg
+            output/artvision-bierstadt-buffalo-20261115/COVER.jpg
+            output/artvision-bierstadt-buffalo-20261115/SOURCE_STORYBOARD_QA.json
+            output/artvision-bierstadt-buffalo-20261115/TECHNICAL_QA.json
+            output/artvision-bierstadt-buffalo-20261115/MUSIC_V330_PROOF.json
+            output/artvision-bierstadt-buffalo-20261115/SOCIAL_PACK.json
+            output/artvision-bierstadt-buffalo-20261115/SOCIAL_PACK.txt
+            output/artvision-bierstadt-buffalo-20261115/DELIVERY_SHA256.json
+            output/artvision-bierstadt-buffalo-20261115/QA_FRAME_*.jpg
