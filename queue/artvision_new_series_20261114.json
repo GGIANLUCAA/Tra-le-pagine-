@@ -90,8 +90,8 @@
       "selected_30": false,
       "official_object": "https://search.smb.museum/en/object/obj-967504?involved=Franz+von+Stuck",
       "artwork_rights": "Official museum PDM 1.0 photo; verify exact downloaded binary and metadata",
-      "source_binary": "PENDING_DOWNLOAD_SHA_PIXEL_INSPECTION",
-      "status": "EXACT_1912_OBJECT_AND_CC_BY_SOURCE_FOUND_BINARY_SHA_PENDING",
+      "source_binary": "VERIFIED_3000x3660_5666561_BYTES_SHA256_476108c98a6c8d7a9bdda91fcf0343cd2f876d2e4954d1d8f8fc26aa451ecaca",
+      "status": "EXACT_BERLIN_1912_SOURCE_BINARY_SHA_PIXEL_LICENSE_VERIFIED_READY_FOR_CINEMA_PREFLIGHT",
       "mood": [
         "dark",
         "ominous",
@@ -130,7 +130,8 @@
           "verification": "Same Berlin F.V.72, exact version, source page verified; image SHA pending"
         }
       ],
-      "next_step": "Download exact 1912 Commons original; verify SHA256, decode pixels, confirm frame crop and museum rights; then render single Cinema Standard only if all gates pass"
+      "next_step": "Reuse verified 1912 Berlin F.V.72 image from source proof artifact; select/verify V330 real music track and render single new Cinema Standard with full QA, cover, social, ZIP, no duplicate",
+      "source_proof_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43698704509"
     },
     {
       "priority": 4,
