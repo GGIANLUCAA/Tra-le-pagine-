@@ -1,0 +1,39 @@
+name: "ArtVision | Private secondary Gacrux key project audit"
+on:
+  push:
+    branches: [audit/artvision-gacrux-secondary-key-20261115]
+    paths:
+      - .github/workflows/artvision-gacrux-secondary-key-private-audit-20261115.yml
+permissions:
+  contents: read
+jobs:
+  match_existing_keys_without_api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      PRIMARY_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SECONDARY_KEY: ${{ secrets.GEMINI_API_KEY2 }}
+    steps:
+      - name: Inspect only key presence and private four-character masked screenshots
+        shell: python
+        run: |
+          import os, hmac
+          first=os.environ.get("PRIMARY_KEY","")
+          second=os.environ.get("SECONDARY_KEY","")
+          # Never print any secret value, hash, prefix, or suffix.
+          print("SECONDARY_SECRET_PRESENT=" + str(bool(second)))
+          print("PRIMARY_SECRET_PRESENT=" + str(bool(first)))
+          print("SECONDARY_DISTINCT_FROM_PRIMARY=" + str(bool(second and first and not hmac.compare_digest(first,second))))
+          if second:
+              tail=second[-4:].lower()
+              if tail=="cj4a":
+                  match="MATCH_VERIFIED_AI_STUDIO_GEMINI_VIDEO_MASKED_KEY"
+              elif tail=="-cfa":
+                  match="MATCH_VERIFIED_AI_STUDIO_PROJECT_GPT_MASKED_KEY"
+              else:
+                  match="NO_MATCH_TO_TWO_SCREENSHOT_MASKED_KEYS"
+          else:
+              match="MISSING_SECONDARY_SECRET"
+          print("SECONDARY_PROJECT_HINT=" + match)
+          print("GOOGLE_REQUESTS=0")
+          print("NO_API_BILLING_CHANGES_NO_TTS_NO_KEY_EXPORT")
