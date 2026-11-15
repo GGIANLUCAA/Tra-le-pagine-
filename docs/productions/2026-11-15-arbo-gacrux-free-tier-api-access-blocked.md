@@ -20,3 +20,8 @@
 ## QA e contatori
 - Nuovi Critico MP4 con FFmpeg/SHA/ZIP validati in queste due prove: **0**.
 - Stati tecnici, artistici, diritti e pubblicazione sono distinti.
+
+## Verifica aggiuntiva 15/11/2026 — secondo segreto storico
+- Run privata in sola lettura [#43698067352](https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43698067352), su branch dedicato `audit/artvision-gacrux-secondary-key-20261115`: `GEMINI_API_KEY2` **ESISTE** ma il valore completo risulta **identico** a `GEMINI_API_KEY` secondo confronto locale costante nel runner. Nessuna chiave/parte della chiave scritta nei log. È coerente con la chiave mascherata del progetto `Progetto gpt` mostrata in Google AI Studio.
+- La produzione riuscita di Böcklin il 31/10 aveva effettivamente utilizzato `secrets.GEMINI_API_KEY2` (run #41231258203), ma ciò **non prova che il valore del secret sia ancora quello di allora**. La seconda variabile non offre ora un account Google indipendente né aggira i 404/400 recenti.
+- **STOP** a ulteriori tentativi TTS con entrambe le variabili finché non si verifica una chiave e un endpoint realmente abilitati; mantenere Gacrux e l'audio storico approvato, niente altri provider e niente cambio/fatturazione automatica. Una chiave differente presente in Google AI Studio (progetto `Progetto gemini video`, Free Tier con billing disabilitato) **non è stata copiata** in GitHub né usata per effettuare richieste; occorrono controllo dei permessi API e autorizzazione specifica prima di eventuale sostituzione del SOLO secondo secret.
