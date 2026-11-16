@@ -21,6 +21,12 @@ class PreflightDuplicateTests(unittest.TestCase):
                          "UNKNOWN_NEEDS_RESEARCH")
         self.assertEqual(preflight({"works":[WORK]},"Example Painter","The River","critico_standard")["verdict"],
                          "BLOCKED_REPAIR_INDEPENDENTLY")
+    def test_article_alias_matches_only_same_artist(self):
+        art={**WORK,"artist":"Edvard Munch","title":"The Vampire"}
+        self.assertEqual(preflight({"works":[art]},"Edvard Munch","Vampire","cinema_standard")["verdict"],
+                         "RENDER_EXISTS_VERIFY_REUSE_OR_REVISION")
+        self.assertEqual(preflight({"works":[art]},"Another Artist","Vampire","cinema_standard")["verdict"],
+                         "UNKNOWN_NEEDS_RESEARCH")
     def test_owner_exclusion_never_undone(self):
         x={**WORK,"excluded":True}
         d=preflight({"works":[x]},"Example Painter","The River","cinema_standard")
