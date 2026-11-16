@@ -2,3 +2,9 @@ __pycache__/
 *.pyc
 output/
 .env
+
+# Private ChatGPT Library exports must NEVER enter this public repository
+private_artvision_*.json
+artvision_private_*.json
+private_library_manifest*.json
+data/archivio-generale/privato/
