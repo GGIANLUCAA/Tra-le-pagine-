@@ -1,0 +1,61 @@
+name: ArtVision | Archivio Generale (censimento non distruttivo)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '11 */6 * * *'
+  push:
+    branches:
+      - main
+      - feature/artvision-archivio-generale-20261116
+    paths:
+      - 'queue/**'
+      - 'scripts/artvision_master_registry_v1.py'
+      - 'tests/test_artvision_master_registry_v1.py'
+      - '.github/workflows/archivio-generale-artvision.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: artvision-master-registry-v1
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Check Python syntax and inventory tests
+        run: |
+          python3 -m py_compile scripts/artvision_master_registry_v1.py
+          python3 -m unittest discover -s tests -p test_artvision_master_registry_v1.py -v
+      - name: Reconcile all queues and live public catalog
+        run: |
+          python3 scripts/artvision_master_registry_v1.py | tee /tmp/artvision-master-summary.json
+      - name: Write a differential commit only when archive changed
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            # Another producer can commit to this branch during a catalog fetch.
+            # Re-read from the current remote head instead of force-pushing.
+            git fetch origin "$GITHUB_REF_NAME"
+            git reset --hard "origin/$GITHUB_REF_NAME"
+            python3 scripts/artvision_master_registry_v1.py > /tmp/artvision-master-summary-reconciled.json
+            git add data/archivio-generale/ docs/ARCHIVIO_GENERALE_ARTVISION.md docs/ARCHIVIO_OPERE_E_VERSIONI.md docs/ARCHIVIO_SITO_COMPLETO.md docs/ARCHIVIO_CODE_MANCANTI.md docs/ARCHIVIO_DOPPIONI_POTENZIALI.md docs/ARCHIVIO_ALTRI_FORMAT.md
+            if git diff --cached --quiet; then
+              echo 'Archivio invariato'
+              exit 0
+            fi
+            git commit -m 'chore(artvision): refresh evidence-led master inventory [skip ci]'
+            if git push origin "HEAD:$GITHUB_REF_NAME"; then
+              echo "Archivio aggiornato dopo tentativo $attempt"
+              exit 0
+            fi
+            sleep "$attempt"
+          done
+          echo 'Il ramo continua a ricevere modifiche simultanee; non sovrascrivo nulla.'
+          exit 1
