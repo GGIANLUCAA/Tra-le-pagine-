@@ -1,0 +1,78 @@
+name: "ArtVision | Cole Manhood | Verified source and music only"
+on:
+  push:
+    branches:
+      - assets/artvision-cole-manhood-source-20261116
+    paths:
+      - .github/workflows/artvision-cole-manhood-source-20261116.yml
+permissions:
+  contents: read
+jobs:
+  source_acquisition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify no prior new Cole Manhood checkpoint
+        run: |
+          test ! -f queue/artvision_extra_render_checkpoint_20261116_cole_manhood.json
+          python - <<'PY'
+          import json
+          d=json.load(open('research/artvision_rare_cc0_video_candidates_20261115.json'))
+          found=[x for x in d['candidates'] if x['title']=='The Voyage of Life: Manhood' and x['accession']=='1971.16.3']
+          assert len(found)==1 and not found[0]['rendered']
+          music=json.load(open('config/artvision_music_20_v1.json'))
+          assert len([x for x in music['tracks'] if x['id']=='ghost_processional' and x['license']=='CC BY 4.0'])==1
+          print('PASS_EXACT_NGA_CANDIDATE_NO_DUPLICATE_AND_GHOST_PROCESSIONAL_CC_BY4')
+          PY
+      - name: Acquire NGA 1971.16.3 authentic image and Kevin MacLeod original music
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/cole_manhood_source
+          python - <<'PY'
+          import urllib.request,hashlib,json,io
+          from pathlib import Path
+          p=Path('output/cole_manhood_source')
+          image='https://upload.wikimedia.org/wikipedia/commons/0/03/Thomas_Cole_-_The_Voyage_of_Life_Manhood%2C_1842_%28National_Gallery_of_Art%29.jpg'
+          music='https://incompetech.com/music/royalty-free/mp3-royaltyfree/Ghost%20Processional.mp3'
+          def fetch(url,path,maxbytes):
+           req=urllib.request.Request(url,headers={'User-Agent':'ArtVisionSourceQA/1.0 (private CC0 painting and CC BY4 music)'})
+           with urllib.request.urlopen(req,timeout=100) as response: raw=response.read(maxbytes+1)
+           assert 300000<len(raw)<=maxbytes, 'download failed or truncated'
+           path.write_bytes(raw)
+           return {'url':url,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'sha1':hashlib.sha1(raw).hexdigest()}
+          manifest={}
+          manifest['image']=fetch(image,p/'Cole_Manhood_NGA_1971.16.3.jpg',20000000)
+          manifest['music']=fetch(music,p/'Ghost_Processional_Kevin_MacLeod.mp3',20000000)
+          manifest['image']['expected_width']=5272
+          manifest['image']['expected_height']=3468
+          manifest['object_id']='1971.16.3'
+          manifest['museum_url']='https://www.nga.gov/artworks/52452-voyage-life-manhood'
+          manifest['file_page']='https://commons.wikimedia.org/wiki/File:Thomas_Cole_-_The_Voyage_of_Life_Manhood,_1842_(National_Gallery_of_Art).jpg'
+          manifest['image_rights']='NGA free public domain; faithful photographic reproduction'
+          manifest['music_credit']='Ghost Processional by Kevin MacLeod (incompetech.com); CC BY 4.0 https://creativecommons.org/licenses/by/4.0/'
+          manifest['no_speech']=True
+          manifest['no_publish']=True
+          (p/'SOURCE_PROOF.json').write_text(json.dumps(manifest,indent=2))
+          print('EXACT_IMAGE_SHA256='+manifest['image']['sha256'])
+          print('ORIGINAL_MP3_SHA256='+manifest['music']['sha256'])
+          PY
+          python -m pip -q install Pillow
+          python - <<'PY'
+          from PIL import Image
+          p='output/cole_manhood_source/Cole_Manhood_NGA_1971.16.3.jpg'
+          with Image.open(p) as im:
+           assert im.size == (5272,3468), f'wrong painting or size: {im.size}'
+           assert im.format == 'JPEG'
+           im.verify()
+          print('ORIGINAL_NGA_COLE_MANHOOD_JPEG_5272_3468_VERIFIED')
+          PY
+          ffprobe -v error -select_streams a:0 -show_entries format=duration:stream=codec_name -of default=noprint_wrappers=1 output/cole_manhood_source/Ghost_Processional_Kevin_MacLeod.mp3
+      - name: Upload only actual original image and licensed recording
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_COLE_MANHOOD_NGA_ORIGINAL_MUSIC_PROOF
+          path: output/cole_manhood_source/
+          retention-days: 15
+          if-no-files-found: error
