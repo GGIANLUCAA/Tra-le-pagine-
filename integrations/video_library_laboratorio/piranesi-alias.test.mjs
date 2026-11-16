@@ -7,7 +7,7 @@ const OLD='ARTVISION_PIRANESI_CINEMA_V6.mp4';
 const KEEP='ArtVision_WOW7_Piranesi_Le_Prigioni_Impossibili.mp4';
 const SIZE=41361075;
 const ETAG='2596f0317268b24c3eeefb522a03ab09-5';
-const URL='https://video-library-studio.example.test';
+const ORIGIN='https://video-library-studio.example.test';
 
 function fakeR2({hasOld=false,keepEtag=ETAG,keepSize=SIZE,
                 removed=false,hiddenOld=false,hiddenKeep=false,
@@ -47,7 +47,7 @@ function fakeR2({hasOld=false,keepEtag=ETAG,keepSize=SIZE,
 
 async function call(route,env,range=false) {
  const headers=range?{'Range':'bytes=0-1023'}:{};
- return worker.fetch(new Request(URL+route,{headers}),{VIDEOS:env});
+ return worker.fetch(new Request(ORIGIN+route,{headers}),{VIDEOS:env});
 }
 
 const clean=fakeR2();
@@ -56,7 +56,7 @@ for(const route of ['/media/','/download/','/watch/','/info/','/download-info/']
  assert.equal(res.status,307,route+' must preserve old URL while old object is absent');
  assert.equal(res.headers.get('cache-control'),'no-store');
  const loc=new URL(res.headers.get('location'));
- assert.equal(loc.origin,URL);
+ assert.equal(loc.origin,ORIGIN);
  assert.equal(decodeURIComponent(loc.pathname),route+KEEP);
 }
 // Following the redirect with the original Range header still returns HTTP 206.
