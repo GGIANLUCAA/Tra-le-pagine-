@@ -46,8 +46,8 @@ jobs:
           print("MCP_INITIALIZE_OK")
           status, listing = mcp("tools/list")
           names = [x["name"] for x in listing["result"]["tools"]]
-          assert names == ["get_project_rules","get_work_status","get_open_blockers","get_bridge_inbox"], names
-          print("MCP_LIST_3_TOOLS_OK")
+          assert names == ["get_project_rules","get_work_status","get_open_blockers","get_bridge_inbox","get_shared_memory"], names
+          print("MCP_LIST_5_TOOLS_OK")
           for name in names:
               status, result = mcp("tools/call", {"name":name, "arguments":{}}, id=3)
               assert status == 200, (name,status)
@@ -60,6 +60,12 @@ jobs:
                              and x["text"] == "prova 123" and x["to"] == "trae"
                              for x in data["messages"]), "Bridge inbox did not find owned test message"
                   print("MCP_INBOX_PROVA_123_CONFIRMED")
+              if name == "get_shared_memory":
+                  data = result["result"]["structuredContent"]
+                  keys = [x["key"] for x in data["notes"]]
+                  assert len(keys) >= 6 and "critical_voice" in keys and "tinyfish_budget_policy" in keys, keys
+                  assert "PUBLIC" in data["visibility"]
+                  print("MCP_D1_SHARED_MEMORY_6_NOTES_CONFIRMED")
           status, refusal = mcp("tools/call", {"name":"send_message","arguments":{}})
           assert refusal["error"]["code"] == -32602
           print("MCP_READONLY_REJECTS_WRITES")
