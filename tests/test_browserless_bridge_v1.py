@@ -82,5 +82,19 @@ class TestPublicBrowserBridge(unittest.TestCase):
                 run_request(sample(), "private_test_token")
 
 
+    def test_http_error_is_classified_without_leaking_credentials(self):
+        from urllib.error import HTTPError
+        from io import BytesIO
+        secret = "private_example_secret_value"
+        body = ("SELECTOR_NOT_FOUND " + secret).encode()
+        simulated = HTTPError("https://example.org/?token=" + secret, 400,
+                              "Bad Request", {}, BytesIO(body))
+        with patch("tools.browserless_bridge_v1.urllib.request.urlopen", side_effect=simulated):
+            with self.assertRaises(RuntimeError) as raised:
+                run_request(sample(), secret)
+        self.assertIn("selector_not_found", str(raised.exception))
+        self.assertNotIn(secret, str(raised.exception))
+
+
 if __name__ == "__main__":
     unittest.main()
