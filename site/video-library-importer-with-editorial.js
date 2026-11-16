@@ -25,7 +25,7 @@ export default{async fetch(request,env){
  if(route==='/private-status'||route==='/private-single'){
   if(!env.PRIVATE_ARCHIVE)return resp({error:'Private archive binding not configured'},503);
   const artifact=u.searchParams.get('artifact')||'',key=u.searchParams.get('key')||'';
-  if(!/^[0-9]{4,20}$/.test(artifact)||!/^[A-Za-z0-9_(). -]{1,180}\\.(mp4|m4v|mov)$/i.test(key)||key.includes('..')||
+  if(!/^[0-9]{4,20}$/.test(artifact)||!/^[A-Za-z0-9_(). -]{1,180}\.(mp4|m4v|mov)$/i.test(key)||key.includes('..')||
      /(^|[_ .-])(SOURCE|SCOUT|CONTACT|FRAMES|ASSETS|PROBE|RAW|NOT_FINAL|NON_FINALE)([_ .-]|$)/i.test(key)||
      /^AUDIO_POLISHED_REVIEW/i.test(key))return resp({error:'Invalid finished-video identity'},400);
   const target='gh-artifacts/'+artifact+'/'+key;
@@ -49,7 +49,7 @@ export default{async fetch(request,env){
      return resp({ok:true,private:true,already_exists:true,key:target,size:existing.size,sha256:hash});
     return resp({error:'Private object collision (no overwrite)'},409);
    }
-   const contentType=/\\.(mp4|m4v)$/i.test(key)?'video/mp4':'video/quicktime';
+   const contentType=/\.(mp4|m4v)$/i.test(key)?'video/mp4':'video/quicktime';
    const put=await env.PRIVATE_ARCHIVE.put(target,bytes,{
     httpMetadata:{contentType},
     customMetadata:{sha256:hash,artifact,visibility:'private_owner_review'},
