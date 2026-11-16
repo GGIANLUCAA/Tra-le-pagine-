@@ -6,11 +6,14 @@ on:
       - ".github/workflows/artvision-google-tts-access-probe-v1.yml"
       - "scripts/artvision_google_tts_access_probe_v1.py"
       - "tests/test_artvision_google_tts_access_probe_v1.py"
+      - "src/gemini_voice.py"
+      - "tests/test_voice_cache_v13.py"
   push:
     branches: [main, feature/artvision-gemini-tts-probe-20261116]
     paths:
       - ".github/workflows/artvision-google-tts-access-probe-v1.yml"
       - "scripts/artvision_google_tts_access_probe_v1.py"
+      - "src/gemini_voice.py"
 permissions:
   contents: read
 concurrency:
@@ -29,6 +32,8 @@ jobs:
         run: |
           python -m py_compile scripts/artvision_google_tts_access_probe_v1.py
           python -m unittest discover -s tests -p 'test_artvision_google_tts_access_probe_v1.py' -v
+          python -m pip install --disable-pip-version-check 'numpy>=1.26,<3' 'soundfile>=0.12' 'scipy>=1.11,<2'
+          python -m unittest discover -s tests -p 'test_voice_cache_v13.py' -v
   models_metadata:
     needs: tests
     if: github.event_name != 'pull_request'
