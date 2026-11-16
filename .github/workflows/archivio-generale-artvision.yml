@@ -20,6 +20,8 @@ on:
       - 'tests/test_artvision_master_registry_v1.py'
       - 'scripts/artvision_private_library_reconcile_v1.py'
       - 'tests/test_artvision_private_library_reconcile_v1.py'
+      - 'scripts/artvision_preflight_duplicate_v1.py'
+      - 'tests/test_artvision_preflight_duplicate_v1.py'
       - '.github/workflows/archivio-generale-artvision.yml'
 
 permissions:
@@ -42,6 +44,7 @@ jobs:
           python3 -m py_compile scripts/artvision_master_registry_v1.py
           python3 -m unittest discover -s tests -p test_artvision_master_registry_v1.py -v
           python3 -m unittest discover -s tests -p test_artvision_private_library_reconcile_v1.py -v
+          python3 -m unittest discover -s tests -p test_artvision_preflight_duplicate_v1.py -v
       - name: Reconcile all queues and live public catalog
         run: |
           python3 scripts/artvision_master_registry_v1.py | tee /tmp/artvision-master-summary.json
