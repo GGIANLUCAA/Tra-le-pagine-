@@ -223,5 +223,28 @@
     "zero_auto_gold": true,
     "zero_social_publication": true,
     "do_not_change_historical_masters": true
-  }
+  },
+  "authorized_gentileschi_cinema_20261116": {
+    "enabled": true,
+    "authorization": "Explicit user instruction in the current conversation 2026-11-16: 'Continua ok cerca di consegnarmi un lavoro finito' (after earlier 'Decidi te'). Grants the owner-selected new artwork a single ArtVision Cinema (silent) slot only.",
+    "allowed_group_id": "gentileschi_giuditta_uffizi_1567_1620",
+    "allowed_title": "Judith Slaying Holofernes",
+    "allowed_artist": "Artemisia Gentileschi",
+    "museum_accession": "Galleria degli Uffizi, sala 90, inv. 1567",
+    "phase": "gentileschi_only_owner_cinema_silent",
+    "authorized_slots": [
+      "cinema_silent_owner_single"
+    ],
+    "museum_slots_authorized": false,
+    "critico_tts_authorized": false,
+    "no_paid_video_ai": true,
+    "no_paid_tts": true,
+    "no_social_auto_publish": true,
+    "no_v25_auto_approval": true,
+    "zero_paid_calls_required": true,
+    "real_mp4_full_ffmpeg_decode_and_readback_required": true,
+    "existing_masters_immutable": true,
+    "automatic_further_artwork_selection": false
+  },
+  "note_gentileschi_cinema": "Owner-chosen new artwork Artemisia Gentileschi (Uffizi Giuditta) authorized for ONE silent Cinema private-review render only. Museum and Critico slots are NOT authorized; no paid calls, no publication, no Gold."
 }

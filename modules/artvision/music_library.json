@@ -25,6 +25,14 @@
       "status": "render_success",
       "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/39435930028",
       "licensed_track_sha256": "a8ea5df5f969ed8d898af7fe07eb4712233f03e9d83f7ebcc88d1c851f3171b0"
+    },
+    {
+      "artist": "Artemisia Gentileschi",
+      "style": "artvision_cinema_silent_v6",
+      "track": "ever_mindful",
+      "date": "2026-11-16",
+      "status": "render_success_local",
+      "licensed_track_sha256": "d09c03710d225e0978015cc62eed56cfa7405f589474ebd17f1591b152f1ad9a"
     }
   ],
   "tracks": [
@@ -91,9 +99,17 @@
       "license": "CC BY 4.0",
       "isrc": "USUAN1700033",
       "source": "https://incompetech.com/music/royalty-free/?isrc=USUAN1700033",
+      "download_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Ever%20Mindful.mp3",
       "approx_duration_seconds": 1599,
       "mood": "slow orchestral strings",
-      "download_tested": false
+      "download_tested": true,
+      "tested_from": "direct incompetech mp3-royaltyfree URL",
+      "verified_sha256": "d09c03710d225e0978015cc62eed56cfa7405f589474ebd17f1591b152f1ad9a",
+      "verified_bytes": 51172130,
+      "verified_duration_seconds": 1599.06,
+      "verified_format": "mp3 stereo 44100 Hz",
+      "production_ready": true,
+      "last_used": "2026-11-16"
     }
   ],
   "production_standard": {
