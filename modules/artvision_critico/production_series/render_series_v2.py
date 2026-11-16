@@ -177,24 +177,11 @@ def frame_beat(background,art,beat,p,ratio):
     z=beat["zoom_start"]+(beat["zoom_end"]-beat["zoom_start"])*small_smooth(p)
     fx=beat["focus"][0]+.005*math.sin(math.pi*p)
     fy=beat["focus"][1]
-    if ratio>1.15:
-        # Both wide masterpiece and speaker-relevant detail are continuously visible.
-        # Landscape top is whole painting; detail underneath follows narration.
-        ih,iw=art.shape[:2]
-        sc=min(970/iw,725/ih)
-        sw,sh=round(iw*sc),round(ih*sc)
-        whole=cv2.resize(art,(sw,sh),interpolation=cv2.INTER_AREA)
-        x=(W-sw)//2;y=220+(700-sh)//2
-        frame[y:y+sh,x:x+sw]=whole
-        cv2.rectangle(frame,(x-2,y-2),(x+sw+2,y+sh+2),(127,119,102),1,cv2.LINE_AA)
-        detail=crop_to(art,fx,fy,max(1.06,z),968/665,968,665)
-        frame[965:1630,56:1024]=detail
-        cv2.rectangle(frame,(54,963),(1025,1631),(127,119,102),1,cv2.LINE_AA)
-    else:
-        # Portrait and square paintings: a large unobstructed artwork, no captions.
-        patch=crop_to(art,fx,fy,max(1,z),968/1430,968,1430)
-        frame[235:1665,56:1024]=patch
-        cv2.rectangle(frame,(54,233),(1025,1666),(127,119,102),1,cv2.LINE_AA)
+    # Una sola immagine per inquadratura: il dettaglio spiegato, a tutto schermo.
+    # Nessuna opera intera sopra il dettaglio: solo il particolare che la voce racconta.
+    patch=crop_to(art,fx,fy,max(1,z),968/1430,968,1430)
+    frame[235:1665,56:1024]=patch
+    cv2.rectangle(frame,(54,233),(1025,1666),(127,119,102),1,cv2.LINE_AA)
     return frame
 
 def silent_symbols(frame,progress):
