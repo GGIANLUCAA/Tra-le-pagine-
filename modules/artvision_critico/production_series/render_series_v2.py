@@ -172,16 +172,33 @@ def crop_to(art,fx,fy,zoom,ratio,tw,th):
     crop=cv2.getRectSubPix(art,(cw,ch),(cx,cy))
     return cv2.resize(crop,(tw,th),interpolation=cv2.INTER_AREA if cw>tw else cv2.INTER_CUBIC)
 
+def paste_clipped(frame,image,x,y):
+    fh,fw=frame.shape[:2];ih,iw=image.shape[:2]
+    x0=max(0,x);y0=max(0,y);x1=min(fw,x+iw);y1=min(fh,y+ih)
+    if x1<=x0 or y1<=y0:return
+    frame[y0:y1,x0:x1]=image[y0-y:y1-y,x0-x:x1-x]
+
 def frame_beat(background,art,beat,p,ratio):
     frame=background.copy()
+    rx0,ry0,rx1,ry1=56,235,1024,1665
+    if beat.get("wide"):
+        # Inquadratura d'insieme: UNA sola immagine, il quadro intero, con un lentissimo
+        # respiro di zoom. Serve ad aprire e a chiudere l'episodio senza didascalie.
+        ih,iw=art.shape[:2]
+        s=(rx1-rx0)/iw*(1.0+.06*small_smooth(p))
+        nw,nh=max(2,round(iw*s)),max(2,round(ih*s))
+        image=cv2.resize(art,(nw,nh),interpolation=cv2.INTER_AREA if s<1 else cv2.INTER_CUBIC)
+        paste_clipped(frame,image,rx0+((rx1-rx0)-nw)//2,ry0+((ry1-ry0)-nh)//2)
+        cv2.rectangle(frame,(rx0-2,ry0-2),(rx1+1,ry1+1),(127,119,102),1,cv2.LINE_AA)
+        return frame
     z=beat["zoom_start"]+(beat["zoom_end"]-beat["zoom_start"])*small_smooth(p)
     fx=beat["focus"][0]+.005*math.sin(math.pi*p)
     fy=beat["focus"][1]
     # Una sola immagine per inquadratura: il dettaglio spiegato, a tutto schermo.
     # Nessuna opera intera sopra il dettaglio: solo il particolare che la voce racconta.
     patch=crop_to(art,fx,fy,max(1,z),968/1430,968,1430)
-    frame[235:1665,56:1024]=patch
-    cv2.rectangle(frame,(54,233),(1025,1666),(127,119,102),1,cv2.LINE_AA)
+    frame[ry0:ry1,rx0:rx1]=patch
+    cv2.rectangle(frame,(rx0-2,ry0-2),(rx1+1,ry1+1),(127,119,102),1,cv2.LINE_AA)
     return frame
 
 def silent_symbols(frame,progress):
