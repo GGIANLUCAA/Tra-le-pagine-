@@ -62,7 +62,20 @@ jobs:
                   except Exception:
                       if attempt==2:raise
                       time.sleep(2**attempt)
-          page=s.get(os.environ['SOURCE'],timeout=35);page.raise_for_status()
+          # Gracefully recover from brief Cloudflare/GitHub network resets. No writes in this helper.
+          def get_public(url,timeout=60):
+              for attempt in range(4):
+                  try:
+                      response=s.get(url,timeout=timeout)
+                      if response.status_code in (429,500,502,503,504):
+                          raise requests.HTTPError('Retryable site HTTP '+str(response.status_code))
+                      response.raise_for_status()
+                      return response
+                  except (requests.ConnectionError,requests.Timeout,requests.HTTPError) as exc:
+                      if attempt==3:raise
+                      print('TRANSIENT READ RETRY',attempt+1,str(exc)[:150],flush=True)
+                      time.sleep(2**attempt)
+          page=get_public(os.environ['SOURCE'],timeout=35)
           assert page.text.lstrip().lower().startswith('<!doctype html>')
           # Validate the exact current main HTML before publishing, even for queued old runs.
           import re
@@ -97,7 +110,7 @@ jobs:
               raise RuntimeError('HTML transport compacting broke JS: '+checked_final.stderr[:250])
           print('HTML transport bytes:',len(page.text.encode('utf-8')),'->',len(html.encode('utf-8')),flush=True)
           print('Site upload:',api('POST','/publish-html',data=html.encode('utf-8')),flush=True)
-          catalog=s.get(site+'/api/catalog',timeout=60);catalog.raise_for_status()
+          catalog=get_public(site+'/api/catalog',timeout=60)
           assets=catalog.json().get('items',[])
           # AUTO-DOSSIER V1: one lightweight persistent editorial record for every imported MP4.
           # Does not copy or transcode original videos, does not overwrite owner edits.
@@ -115,7 +128,7 @@ jobs:
                   except Exception as exc:
                       print('WARNING editorial dossier auto-seed:',str(exc)[:180],flush=True)
                       break
-          current=s.get(site+'/api/metadata',timeout=60);current.raise_for_status()
+          current=get_public(site+'/api/metadata',timeout=60)
           metadata=current.json()
           print('Catalog assets:',len(assets),'Already enriched:',len(metadata),flush=True)
           need=[v for v in assets if v.get('available') is not False and not v['key'].startswith('gpt:') and (v['key'] not in metadata or not v.get('cover'))]
