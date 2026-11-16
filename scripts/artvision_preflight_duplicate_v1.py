@@ -19,10 +19,12 @@ def norm(x):
     return re.sub(r"[^a-z0-9]+"," ",text.lower()).strip()
 
 def find_work(registry,artist,title):
+    # Share canonical normalization with the archive builder. No surname-only matching.
+    from scripts.artvision_master_registry_v1 import artist_key,title_key
     works=registry.get("works",[])
-    exact=[w for w in works if norm(w.get("artist"))==norm(artist) and norm(w.get("title"))==norm(title)]
+    exact=[w for w in works if artist_key(w.get("artist"))==artist_key(artist)
+           and title_key(w.get("title"))==title_key(title)]
     if exact:return exact
-    # Aliases must be explicitly documented; surname-only or title-only is insufficient.
     return []
 
 def preflight(registry,artist,title,variant,candidate_sha256=None):
