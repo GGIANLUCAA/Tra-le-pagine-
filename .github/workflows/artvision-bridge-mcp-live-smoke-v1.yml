@@ -46,7 +46,7 @@ jobs:
           print("MCP_INITIALIZE_OK")
           status, listing = mcp("tools/list")
           names = [x["name"] for x in listing["result"]["tools"]]
-          assert names == ["get_project_rules","get_work_status","get_open_blockers"], names
+          assert names == ["get_project_rules","get_work_status","get_open_blockers","get_bridge_inbox"], names
           print("MCP_LIST_3_TOOLS_OK")
           for name in names:
               status, result = mcp("tools/call", {"name":name, "arguments":{}}, id=3)
@@ -54,6 +54,12 @@ jobs:
               assert result["result"].get("isError") is False, (name,result["result"])
               assert "structuredContent" in result["result"], name
               print("MCP_CALL_OK " + name)
+              if name == "get_bridge_inbox":
+                  data = result["result"]["structuredContent"]
+                  assert any(x["message_id"] == "artvision-bridge-smoke-20261116-001"
+                             and x["text"] == "prova 123" and x["to"] == "trae"
+                             for x in data["messages"]), "Bridge inbox did not find owned test message"
+                  print("MCP_INBOX_PROVA_123_CONFIRMED")
           status, refusal = mcp("tools/call", {"name":"send_message","arguments":{}})
           assert refusal["error"]["code"] == -32602
           print("MCP_READONLY_REJECTS_WRITES")
