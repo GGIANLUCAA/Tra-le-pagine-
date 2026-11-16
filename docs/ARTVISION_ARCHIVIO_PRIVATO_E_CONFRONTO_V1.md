@@ -51,6 +51,19 @@ Prima di creare un nuovo video:
 
 Una scansione manuale ChatGPT va rinnovata quando arrivano nuovi asset privati. **La schedulazione ogni sei ore di GitHub vede soltanto fonti GitHub e catalogo pubblico**, e non può aggiornare da sola la Libreria ChatGPT.
 
+## Preflight anti-doppioni (in sola lettura)
+
+Il seguente comando cerca un'opera e uno slot fra i render registrati:
+
+    python3 scripts/artvision_preflight_duplicate_v1.py \
+      --artist "John William Waterhouse" \
+      --title "The Lady of Shalott" \
+      --variant cinema_standard
+
+Il responso RENDER_EXISTS_VERIFY_REUSE_OR_REVISION chiede di riutilizzare oppure verificare prima di rifare lo stesso video. Non certifica disponibilità di bytes e non forza uno stop. Non usare abbreviazioni non documentate per titolo e autore; il matching è volutamente rigoroso.
+
+Le pipeline attive devono consultare il preflight prima della generazione: l'installazione di questo script NON lo inserisce magicamente in tutte le decine di workflow storici di rendering. Aggiornare gli orchestratori uno alla volta, con QA e senza interrompere le code.
+
 ## Sicurezza
 
 Non condividere URL privati, ID Library, API key o nomi di file personali nel repository pubblico. Gli esempi e i test sono fittizi. I dati di uno snapshot privato possono essere conservati nella Libreria ChatGPT, non nel codice sorgente del sito.
