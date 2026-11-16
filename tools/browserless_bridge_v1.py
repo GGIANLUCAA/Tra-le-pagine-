@@ -32,6 +32,7 @@ export default async ({page, context}) => {
   }
   await page.goto(context.url, {waitUntil: "domcontentloaded", timeout: 15000});
   ensureAllowed();
+  let verifiedClicks = 0;
   for (const action of context.actions) {
     let stage = "start";
     try {
@@ -69,11 +70,30 @@ export default async ({page, context}) => {
         if (u.protocol !== "https:" || !allowed.has(u.hostname) || u.search || u.hash)
           throw new Error("LINK_OUTSIDE_PUBLIC_ALLOWLIST");
         stage = "click_dispatch";
-        await Promise.all([
-          page.waitForNavigation({waitUntil: "domcontentloaded", timeout: 10000}).catch(() => null),
-          el.click({timeout: 8500})
-        ]);
+        try {
+          // Use the Puppeteer page click API (more compatible with DOM changes).
+          await page.click(action.selector, {delay: 15});
+        } catch (_) {
+          // Only for a PREVALIDATED public HTTPS anchor. DOM click supports
+          // elements in responsive menus that are hidden from pointer input.
+          stage = "click_dom_fallback";
+          await el.evaluate(node => node.click());
+        }
         stage = "click_verify";
+        let destinationReached = false;
+        for (let attempt = 0; attempt < 16; attempt++) {
+          const current = new URL(page.url());
+          if (current.protocol === "https:" &&
+              current.hostname === u.hostname &&
+              current.pathname === u.pathname &&
+              !current.search && !current.hash) {
+            destinationReached = true;
+            break;
+          }
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+        if (!destinationReached) throw new Error("CLICK_DESTINATION_NOT_REACHED");
+        verifiedClicks++;
       } else if (action.type === "type_public") {
         stage = "type";
         await page.type(action.selector, action.text, {delay: 8});
@@ -89,6 +109,7 @@ export default async ({page, context}) => {
         : msg.includes("LINK_OUTSIDE_PUBLIC_ALLOWLIST") ? "LINK_OUTSIDE_PUBLIC_ALLOWLIST"
         : msg.includes("REDIRECT_OUTSIDE_PUBLIC_ALLOWLIST") ? "REDIRECT_OUTSIDE_PUBLIC_ALLOWLIST"
         : msg.includes("ONLY_PUBLIC_LINK_CLICKS_ALLOWED") ? "UNSAFE_ELEMENT_REFUSED"
+        : msg.includes("CLICK_DESTINATION_NOT_REACHED") ? "CLICK_DESTINATION_NOT_REACHED"
         : /timeout|timed out/i.test(msg) ? "INTERACTION_TIMEOUT"
         : "OTHER_INTERACTION_ERROR";
       return {data: {browser_error: browserError, browser_stage: stage},
@@ -97,7 +118,8 @@ export default async ({page, context}) => {
   }
   const title = (await page.title()).slice(0, 240);
   const heading = await page.$eval("h1", n => (n.innerText || "").slice(0, 400)).catch(() => "");
-  return {data: {title, heading, url: page.url(), action_count: context.actions.length}, type: "application/json"};
+  return {data: {title, heading, url: page.url(), action_count: context.actions.length,
+                 verified_clicks: verifiedClicks}, type: "application/json"};
 };"""
 
 
@@ -180,22 +202,27 @@ def run_request(value, token):
         code = data["browser_error"]
         safe = ("SELECTOR_NOT_FOUND", "LINK_OUTSIDE_PUBLIC_ALLOWLIST",
                 "REDIRECT_OUTSIDE_PUBLIC_ALLOWLIST", "UNSAFE_ELEMENT_REFUSED",
-                "INTERACTION_TIMEOUT", "OTHER_INTERACTION_ERROR")
+                "INTERACTION_TIMEOUT", "CLICK_DESTINATION_NOT_REACHED",
+                "OTHER_INTERACTION_ERROR")
         stage = data.get("browser_stage", "unknown")
         if stage not in ("start", "inspect_read", "inspect_filter", "click_find",
                          "click_check_element", "click_check_href", "click_dispatch",
-                         "click_verify", "type"):
+                         "click_dom_fallback", "click_verify", "type"):
             stage = "unknown"
         raise RuntimeError("Browserless interaction: " +
                            (code if code in safe else "UNKNOWN_ERROR") + " at " + stage)
     if not isinstance(data, dict) or not isinstance(data.get("title"), str):
         raise RuntimeError("Unexpected Browserless response")
+    expected_clicks = sum(1 for action in value["actions"] if action["type"] == "click")
+    if expected_clicks and data.get("verified_clicks") != expected_clicks:
+        raise RuntimeError("Click was not independently verified")
     final_url = urllib.parse.urlsplit(data.get("url", ""))
     if final_url.scheme != "https" or final_url.hostname not in ALLOWED_HOSTS:
         raise RuntimeError("Final browser URL outside allowlist")
     output = {"request_id": value["request_id"], "status": "verified_public_page",
               "title": data["title"][:240], "heading": str(data.get("heading", ""))[:400],
-              "final_host": final_url.hostname, "actions_executed": data.get("action_count")}
+              "final_host": final_url.hostname, "actions_executed": data.get("action_count"),
+              "verified_clicks": data.get("verified_clicks", 0)}
     if value["actions"] and value["actions"][0]["type"] == "inspect_public_links":
         raw_links = data.get("links", [])
         if not isinstance(raw_links, list) or len(raw_links) > 25:
