@@ -195,6 +195,17 @@ def build(root,site,source,stamp):
     production_dossiers=[{"path":str(p.relative_to(root)),"extension":p.suffix.lower(),
         "bytes":p.stat().st_size} for p in sorted(production_root.rglob("*")) if p.is_file()] if production_root.is_dir() else []
     production_dirs=sum(p.is_dir() for p in production_root.rglob("*")) if production_root.is_dir() else 0
+    # Independent verified historical technical review files.
+    # They remain NOT owner-approved, NOT Gold, and NOT counted as newly approved slots.
+    extra_reviews=load(root/"data/archivio-generale/revisioni_storiche_fonti_pubbliche.json")
+    historic_review_count=0
+    for item in extra_reviews.get("records",[]) if isinstance(extra_reviews,dict) else []:
+        if not isinstance(item,dict):continue
+        w=get(item,val(item,"source"),"review_storica")
+        if w and val(item,"variant") in VARIANTS:
+            put(w,item["variant"],{"status":"RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD",
+                "mp4_sha256":val(item,"mp4_sha256")},val(item,"source"))
+            historic_review_count+=1
     # All literary series dossiers are included without implying completed video delivery.
     literary=[]
     for folder in sorted((root/"episodes").glob("*")):
@@ -255,8 +266,12 @@ def build(root,site,source,stamp):
         filename_groups[canonical].append(name)
     ordered=sorted(works.values(),key=lambda w:(norm(w["artist"]),norm(w["title"]),w["year"]))
     for w in ordered:
-        w["missing_variants"]=[v for v in VARIANTS if w["variants"][v]["state"]!="render_documentato"]
-        w["render_documented"]=4-len(w["missing_variants"])
+        # Historical one-off Cinema/Museum or paired pilots are not automatically
+        # four-variant commitments. The owner-selected and checkpoint lanes are.
+        w["four_by_one_target"]=not w["excluded"] and bool(set(w["lanes"]) &
+            {"storico_4x1","selezione_10","selezione_30","nuova_serie","checkpoint"})
+        w["missing_variants"]=[v for v in VARIANTS if w["variants"][v]["state"]!="render_documentato"] if w["four_by_one_target"] else []
+        w["render_documented"]=sum(w["variants"][v]["state"]=="render_documentato" for v in VARIANTS)
         w["site_playback_verified"]=False
         w["published_confirmed"]=False
     categories=dict(Counter(x.get("category") or "Senza categoria" for x in site_rows))
@@ -268,7 +283,11 @@ def build(root,site,source,stamp):
            "queue_files":len(queue_files),"literary_dossiers":len(literary),"history_candidates":len(history_candidates),
            "research_100":len(future_100),"selected_future_30":len(future_30),
            "production_dossiers":len(production_dossiers),"production_dossier_subdirs":production_dirs,
-           "unmatched_site_items":sum(x["match_quality"]=="nessuna" for x in site_rows),"categories":categories}
+           "unmatched_site_items":sum(x["match_quality"]=="nessuna" for x in site_rows),
+           "recovered_historical_review_files":historic_review_count,
+           "four_by_one_scoped":sum(w["four_by_one_target"] for w in ordered),
+           "complete_four_render_documented":sum(w["four_by_one_target"] and w["render_documented"]==4 for w in ordered),
+           "categories":categories}
     likely_duplicate_names=[{"normalized":k,"files":v} for k,v in filename_groups.items() if len(v)>1]
     cross_hashes=[{"sha256":h,"claims":proofs} for h,proofs in duplicates.items()
                   if len(set((w,v) for w,v,_ in proofs))>1]
@@ -296,6 +315,8 @@ def markdown(root,r):
        table_row(["Banca idee future (non coda)",st["research_100"]]),
        table_row(["Future selezionate (non video finiti)",st["selected_future_30"]]),
        table_row(["Fascicoli di produzione indicizzati",st["production_dossiers"]]),
+       table_row(["Review Museum storiche recuperate",st["recovered_historical_review_files"]]),
+       table_row(["Opere in scope 4x1",st["four_by_one_scoped"]]),
        table_row(["File sito senza artista/opera abbinati",st["unmatched_site_items"]]),"",
        "## Documenti collegati","",
        "- [Opere e tutte le varianti](ARCHIVIO_OPERE_E_VERSIONI.md)",
