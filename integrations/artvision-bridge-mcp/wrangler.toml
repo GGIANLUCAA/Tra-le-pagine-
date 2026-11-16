@@ -1,0 +1,6 @@
+name = "artvision-bridge-mcp-v1"
+main = "./src/worker.mjs"
+compatibility_date = "2026-11-16"
+
+# Isolated Worker, deliberately independent from the repository root wrangler.toml.
+# No D1, no R2, no paid AI bindings, no cron, no production video mutations.
