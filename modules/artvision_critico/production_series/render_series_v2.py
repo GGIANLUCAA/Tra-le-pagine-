@@ -15,7 +15,8 @@ ROOT=Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(ROOT/"modules"/"artvision_critico"))
 sys.path.insert(0,str(ROOT/"src"))
 from render_dali import choose_voice, music_get
-W,H,FPS=1080,1920,20
+W,H,FPS=1080,1920,24
+RX0,RY0,RX1,RY1=56,235,1024,1665
 PARENT=Path(__file__).parent
 FONTS={
  "display":"/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf",
@@ -211,34 +212,34 @@ def paste_clipped(frame,image,x,y):
 
 def frame_beat(background,art,beat,p,ratio):
     frame=background.copy()
-    rx0,ry0,rx1,ry1=56,235,1024,1665
+    ih,iw=art.shape[:2]
     if beat.get("wide"):
-        # Inquadratura d'insieme: UNA sola immagine, il quadro intero, con un lento
-        # respiro di zoom che tiene viva l'apertura e la chiusura.
-        ih,iw=art.shape[:2]
-        s=(rx1-rx0)/iw*(1.0+.13*small_smooth(p))
+        # Apertura "come una fotografia che prende vita": il quadro e' dapprima
+        # incorniciato e quasi fermo, poi una carrellata morbida lo fa entrare
+        # nel campo verso la zona dei primi proverbi, senza sbalzi.
+        s=(RX1-RX0)/iw*(0.95+.27*push(p))
         nw,nh=max(2,round(iw*s)),max(2,round(ih*s))
         image=cv2.resize(art,(nw,nh),interpolation=cv2.INTER_AREA if s<1 else cv2.INTER_CUBIC)
-        paste_clipped(frame,image,rx0+((rx1-rx0)-nw)//2,ry0+((ry1-ry0)-nh)//2)
-        cv2.rectangle(frame,(rx0-2,ry0-2),(rx1+1,ry1+1),(127,119,102),1,cv2.LINE_AA)
+        dx=round(-30*small_smooth(p)); dy=round(-14*small_smooth(p))
+        paste_clipped(frame,image,RX0+((RX1-RX0)-nw)//2+dx,RY0+((RY1-RY0)-nh)//2+dy)
+        cv2.rectangle(frame,(RX0-2,RY0-2),(RX1+1,RY1+1),(127,119,102),1,cv2.LINE_AA)
         return frame
-    # Carrellata: spinta decisa in apertura, poi strisciata lenta con un leggero
-    # respiro di macchina, così il particolare spiegato resta il protagonista.
-    z=beat["zoom_start"]+(beat["zoom_end"]-beat["zoom_start"])*push(p)
-    ih,iw=art.shape[:2]
+    # Dettaglio: apertura sul contesto (zoom basso per far vedere le figure
+    # intorno), carrellata sul particolare narrato che resta il protagonista,
+    # infine un leggero rilascio per preparare lo sguardo al racconto dopo.
+    q=min(1.,max(0.,p))
+    if q<.5:
+        env=push(q/.5)                 # 0 -> 1  (spinta sul dettaglio)
+    else:
+        env=1.0-.14*((q-.5)/.5)        # 1 -> 0.86 (rilascio finale)
+    z=beat["zoom_start"]+(beat["zoom_end"]-beat["zoom_start"])*env
     cw=min(ih,iw/(968/1430))*(968/1430)/max(1,z)   # larghezza reale del ritaglio
-    # Deriva di macchina proporzionata al ritaglio: un arco leggerissimo che
-    # parte e ritorna esattamente sul proverbio (a meta' battuta e' al massimo
-    # qualche punto percentuale fuori centro), cosi' il dettaglio resta sempre
-    # il protagonista e l'inquadratura non "vaga" mai altrove.
-    fx=beat["focus"][0]+(.040*cw)/iw*math.sin(math.pi*p)
-    fy=beat["focus"][1]+(.028*cw)/ih*math.sin(math.pi*p)
-    # Una sola immagine per inquadratura: il dettaglio spiegato, a tutto schermo,
-    # centrato sul proverbio che la voce racconta.
-    patch=background[ry0:ry1,rx0:rx1].copy()
+    fx=beat["focus"][0]+(.030*cw)/iw*math.sin(math.pi*q)
+    fy=beat["focus"][1]+(.020*cw)/ih*math.sin(math.pi*q)
+    patch=background[RY0:RY1,RX0:RX1].copy()
     crop_into(patch,art,fx,fy,max(1,z),968/1430)
-    frame[ry0:ry1,rx0:rx1]=patch
-    cv2.rectangle(frame,(rx0-2,ry0-2),(rx1+1,ry1+1),(127,119,102),1,cv2.LINE_AA)
+    frame[RY0:RY1,RX0:RX1]=patch
+    cv2.rectangle(frame,(RX0-2,RY0-2),(RX1+1,RY1+1),(127,119,102),1,cv2.LINE_AA)
     return frame
 
 def closing_card(background,cfg):
@@ -280,9 +281,19 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
       "-threads","2","-movflags","+faststart",str(raw)],stdin=subprocess.PIPE)
     # Cache identity-free transitions as a retained picture only per beat.
     previous=None;oldbeat=-1;transition=None;enter_at=0
-    close_frame=full_art(base.copy(),img)
     card=closing_card(base,cfg)
     dark=np.zeros((H,W,3),np.uint8);dark[:]=INK
+    def close_frame_at(q):
+        # Chiusura in movimento: il quadro intero si allontana lentamente
+        # (zoom out) come un respiro finale, mai un fermo immagine.
+        fr=base.copy()
+        ih,iw=img.shape[:2]
+        s=(RX1-RX0)/iw*(1.03-.10*small_smooth(min(1.,q)))
+        nw,nh=max(2,round(iw*s)),max(2,round(ih*s))
+        image=cv2.resize(img,(nw,nh),interpolation=cv2.INTER_AREA if s<1 else cv2.INTER_CUBIC)
+        paste_clipped(fr,image,RX0+((RX1-RX0)-nw)//2,RY0+((RY1-RY0)-nh)//2)
+        cv2.rectangle(fr,(RX0-2,RY0-2),(RX1+1,RY1+1),(127,119,102),1,cv2.LINE_AA)
+        return fr
     print("VIDEO BATCH",cfg["id"],"voice",round(vsec,1),"timeline",duration,"frames",duration*FPS,flush=True)
     frames=duration*FPS
     for k in range(frames):
@@ -297,23 +308,24 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
         p=(narr-begin)/max(.2,stop-begin)
         if t<3.25 and not cfg.get("immediate_visual_hook"):fr=cover.copy()
         elif t>pad+vsec:
-            # Chiusura: il quadro intero indugia, poi si dissolve nel cartellino
-            # d'opera e infine scende al buio. Nessuna icona, nessun invito.
+            # Chiusura: il quadro si allontana lentamente, poi si dissolve nel
+            # cartellino d'opera e infine scende al buio. Sempre in movimento.
             q=(t-(pad+vsec))/tail
-            if q<.28:fr=close_frame.copy()
+            if q<.28:fr=close_frame_at(q)
             elif q<.52:
                 b=small_smooth((q-.28)/.24)
-                fr=cv2.addWeighted(close_frame,1-b,card,b,0)
+                fr=cv2.addWeighted(close_frame_at(q),1-b,card,b,0)
             elif q<.88:fr=card.copy()
             else:
                 b=small_smooth((q-.88)/.12)
                 fr=cv2.addWeighted(card,1-b,dark,b,0)
         elif idx==len(beats)-1 and narr>bounds[-1]-3.1:
-            fr=close_frame.copy()
+            q=(narr-(bounds[-1]-3.1))/3.1
+            fr=close_frame_at(q*1.6)
         else:
             fr=frame_beat(base,img,beats[idx],p,ratio)
-            if transition is not None and t-enter_at<.55:
-                blend=small_smooth((t-enter_at)/.55)
+            if transition is not None and t-enter_at<.40:
+                blend=small_smooth((t-enter_at)/.40)
                 fr=cv2.addWeighted(transition,1-blend,fr,blend,0)
         try:ff.stdin.write(fr.tobytes())
         except BrokenPipeError:raise RuntimeError("FFmpeg encode crashed")
@@ -325,9 +337,10 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
     ffargs=["ffmpeg","-hide_banner","-loglevel","error","-y","-i",raw,
       "-i",voice,"-stream_loop","-1","-i",music,
       "-filter_complex",
-      f"[1:a]adelay={round(pad*1000)}|{round(pad*1000)},volume=1.0[v];"+
-      f"[2:a]volume=0.061,afade=t=in:st=0:d=3,afade=t=out:st={max(0,duration-6)}:d=6[m];"+
-      "[v][m]amix=inputs=2:duration=first:normalize=0[a]",
+      f"[1:a]adelay={round(pad*1000)}|{round(pad*1000)},atrim=0:{duration},asetpts=PTS-STARTPTS,volume=1.0[v];"+
+      f"[2:a]atrim=0:{duration},asetpts=PTS-STARTPTS,volume=0.085,"+
+      f"afade=t=in:st=0:d=3,afade=t=out:st={max(0,duration-6)}:d=6[m];"+
+      "[v][m]amix=inputs=2:duration=longest:normalize=0[a]",
       "-map","0:v:0","-map","[a]","-c:v","copy","-c:a","aac","-b:a","192k",
       "-movflags","+faststart","-t",str(duration),str(master)]
     run(ffargs)
