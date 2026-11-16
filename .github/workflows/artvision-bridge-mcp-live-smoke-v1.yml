@@ -20,10 +20,18 @@ jobs:
           ROOT = "https://artvision-bridge-mcp-v1.600led.workers.dev"
           def req(path, method="GET", body=None, headers=None):
               data = None if body is None else json.dumps(body).encode("utf-8")
+              h = dict(headers or {})
+              h["User-Agent"] = "Mozilla/5.0 (ArtVisionBridgeSmokeTest; +https://github.com/GGIANLUCAA/Tra-le-pagine-)"
               r = urllib.request.Request(ROOT + path, data=data, method=method,
-                   headers=headers or {})
-              with urllib.request.urlopen(r, timeout=25) as response:
-                  return response.status, json.load(response)
+                   headers=h)
+              try:
+                  with urllib.request.urlopen(r, timeout=25) as response:
+                      return response.status, json.load(response)
+              except urllib.error.HTTPError as e:
+                  safe = {k:v for k,v in e.headers.items()
+                          if k.lower() in ("server","cf-ray","content-type","location","x-frame-options")}
+                  print("HTTP_DIAGNOSTIC", e.code, safe, e.read(250).decode("utf-8","replace"))
+                  raise
           status, health = req("/health")
           assert status == 200 and health.get("status") == "read-only-public-data", health
           print("HEALTH_OK")
