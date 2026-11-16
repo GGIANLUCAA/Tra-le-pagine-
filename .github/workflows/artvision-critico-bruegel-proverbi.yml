@@ -51,7 +51,7 @@ jobs:
           for b in c["beats"]:
               assert b.get("speech") and isinstance(b.get("focus"),list) and len(b["focus"])==2
           words=sum(len(b["speech"].split()) for b in c["beats"])
-          assert 90<=words<=170, words
+          assert 65<=words<=105, words
           assert c["image_ratio_min"]<1.4123<c["image_ratio_max"], (c["image_ratio_min"],c["image_ratio_max"])
           assert c["music"].get("download","").startswith("http")
           print("EPISODE READY bruegel_proverbi beats",len(c["beats"]),"words",words)
@@ -75,7 +75,7 @@ jobs:
           vid=next(z for z in x["streams"] if z["codec_type"]=="video")
           assert (vid["width"],vid["height"])==(1080,1920),(vid["width"],vid["height"])
           dur=float(x["format"]["duration"])
-          assert 30<dur<400,dur
+          assert 35<dur<72,dur
           assert (out/"COPERTINA.jpg").stat().st_size>70_000
           m=json.loads((out/"REGIA_SINCRONIZZAZIONE.json").read_text(encoding="utf8"))
           assert m["subtitle_overlay"] is False
