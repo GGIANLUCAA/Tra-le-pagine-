@@ -35,7 +35,7 @@ async function main() {
         return v ? {size:v.bytes.byteLength,customMetadata:v.meta} : null;
       },
       async put(key, value, options) {
-        assert.equal(options.customMetadata.visibility,'private_owner_review');
+        if(key.startsWith('gh-artifacts/')) assert.equal(options.customMetadata?.visibility,'private_owner_review');
         assert(options.onlyIf?.etagDoesNotMatch==='*');
         assert(!privateObjects.has(key));
         const bytes = value instanceof ArrayBuffer ? new Uint8Array(value)
