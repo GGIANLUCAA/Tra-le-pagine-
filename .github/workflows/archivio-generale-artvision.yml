@@ -9,6 +9,7 @@ on:
       - feature/artvision-archivio-generale-20261116
       - feature/artvision-archive-audit-20261116
       - feature/artvision-private-inventory-reconciliation-20261116
+      - feature/artvision-fix-checkpoint-evidence-20261116
     paths:
       - 'queue/**'
       - 'data/archivio-generale/revisioni_storiche_fonti_pubbliche.json'
