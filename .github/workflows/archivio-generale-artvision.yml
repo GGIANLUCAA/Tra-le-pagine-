@@ -39,7 +39,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/archivio-generale/ docs/ARCHIVIO_GENERALE_ARTVISION.md docs/ARCHIVIO_OPERE_E_VERSIONI.md docs/ARCHIVIO_SITO_COMPLETO.md docs/ARCHIVIO_CODE_MANCANTI.md docs/ARCHIVIO_DOPPIONI_POTENZIALI.md
+          git add data/archivio-generale/ docs/ARCHIVIO_GENERALE_ARTVISION.md docs/ARCHIVIO_OPERE_E_VERSIONI.md docs/ARCHIVIO_SITO_COMPLETO.md docs/ARCHIVIO_CODE_MANCANTI.md docs/ARCHIVIO_DOPPIONI_POTENZIALI.md docs/ARCHIVIO_ALTRI_FORMAT.md
           if git diff --cached --quiet; then
             echo 'Archivio invariato'
           else
