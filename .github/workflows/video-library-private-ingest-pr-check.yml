@@ -1,0 +1,29 @@
+name: Video Library - Private R2 staging PR safety checks
+on:
+  pull_request:
+    paths:
+      - 'site/video-library-importer-with-editorial.js'
+      - 'tests/video-library-private-ingest.test.cjs'
+      - 'tests/video-library-importer-v55.test.cjs'
+      - '.github/workflows/video-library-private-owner-archive.yml'
+      - '.github/workflows/video-library-private-ingest-pr-check.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vls-private-ingest-pr-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-private-archive-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax check private import Worker
+        run: node --check site/video-library-importer-with-editorial.js
+      - name: Verify private storage isolated from public site
+        run: node tests/video-library-private-ingest.test.cjs
+      - name: Preserve existing V55 importer behavior
+        run: node tests/video-library-importer-v55.test.cjs
