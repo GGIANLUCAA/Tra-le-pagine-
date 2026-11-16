@@ -1,11 +1,11 @@
 name: Video Library - Owner rejected content recovery backup
 
+# Recovery backup already created, downloaded and SHA-checked before cleanup:
+# https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43950515320
+# Archive artifact 14266173436, SHA256 ZIP 482bcc5137fe361c6399307877c92941c2680fe92ab8b0ffeb50bd29ea92d5b5
+# Never rerun on PR pushes after source videos have been deleted.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/video-library-owner-discard-backup-pr.yml'
-      - 'reports/video_library_owner_discard_20261116.json'
-      - 'src/video_library_owner_rejected_backup.py'
+  workflow_dispatch:
 
 permissions:
   contents: read
