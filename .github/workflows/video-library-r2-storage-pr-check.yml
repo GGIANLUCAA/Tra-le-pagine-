@@ -1,0 +1,34 @@
+name: Video Library R2 storage audit — read-only PR checks
+
+on:
+  pull_request:
+    paths:
+      - 'reports/video_library_r2_storage_audit_20261116.json'
+      - 'docs/VIDEO_LIBRARY_R2_RECUPERO_SPAZIO_20261116.md'
+      - 'tools/video_library_r2_cleanup_triage.py'
+      - 'tests/test_video_library_r2_cleanup_triage.py'
+      - 'integrations/video_library_laboratorio/workspace-base.mjs'
+      - 'integrations/video_library_laboratorio/piranesi-alias.test.mjs'
+      - '.github/workflows/video-library-r2-storage-pr-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-storage-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate exact legacy Piranesi aliases against simulated R2, including Range 206
+        run: node integrations/video_library_laboratorio/piranesi-alias.test.mjs
+      - name: Confirm safe inventory and no automatic deletion
+        run: |
+          python3 -m unittest discover -s tests -p 'test_video_library_r2_cleanup_triage.py' -v
+          python3 tools/video_library_r2_cleanup_triage.py --out /tmp/r2_safe_triage.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/r2_safe_triage.json'))
+          assert d['eligible_to_delete_now']==[]
+          assert d['actually_deleted_bytes']==0
+          PY
