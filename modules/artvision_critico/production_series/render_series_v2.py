@@ -42,6 +42,12 @@ def check_image(cfg,im):
 
 def get_art(cfg,out):
     title=cfg["commons_title"]
+    # Gli zoom molto stretti hanno bisogno del file originale a piena
+    # risoluzione: il thumbnailer Wikimedia qui si ferma a 3840 px, quindi per
+    # gli episodi che richiedono il massimo dettaglio si prova prima l'upload
+    # originale (con fallback automatico ai thumbnail se e' troppo pesante).
+    prefer_original=bool(cfg.get("source_prefer_original"))
+    limit=6000 if prefer_original else 4300
     urls=[]
     # Wikimedia API resolves exact upload filename and correct SHA directory.
     for thumb in (3600,3000,2200):
@@ -54,7 +60,7 @@ def get_art(cfg,out):
                 j=json.load(resp)
             for page in j.get("query",{}).get("pages",{}).values():
                 for row in page.get("imageinfo",[]):
-                    for key in ("thumburl","url"):
+                    for key in (("url","thumburl") if prefer_original else ("thumburl","url")):
                         if row.get(key) and row[key] not in urls:urls.append(row[key])
             if urls:break
         except Exception as e:print("Image API retry",repr(e)[:170],flush=True)
@@ -73,7 +79,7 @@ def get_art(cfg,out):
             with Image.open(io.BytesIO(buf)) as img:
                 painting=ImageOps.exif_transpose(img).convert("RGB")
             ratio=check_image(cfg,painting)
-            if max(painting.size)>4300:painting.thumbnail((4300,4300),Image.Resampling.LANCZOS)
+            if max(painting.size)>limit:painting.thumbnail((limit,limit),Image.Resampling.LANCZOS)
             p=out/"ARTWORK_SOURCE.jpg";painting.save(p,quality=95,subsampling=0)
             print("PAINTING VERIFIED:",cfg["artist"],painting.size,"ratio",round(ratio,3),u,flush=True)
             return cv2.imread(str(p)),{"url":u,"width":painting.width,"height":painting.height,"sha256":hashlib.sha256(buf).hexdigest()}
@@ -92,13 +98,15 @@ def backdrop(art):
 def small_smooth(x):
     q=min(1.,max(0.,x));return q*q*(3-2*q)
 
-def ease_out(x):
-    q=min(1.,max(0.,x));return 1-(1-q)**2.4
-
 def push(x):
-    # Carrellata decisa: il grosso del movimento arriva subito (il "Zum"),
-    # poi la macchina continua a stringere piano fino alla fine della battuta.
-    q=min(1.,max(0.,x));return .62*ease_out(q)+.38*q
+    # Carellata da cinema: un brevissimo respiro d'avvio (nessuno strappo sul
+    # taglio), poi la spinta decisa del "Zum" che copre gran parte della
+    # distanza, quindi una planata che posa il dettaglio al centro. Velocita'
+    # massima all'inizio, nulla all'ultimo fotogramma: mai fermate di colpo.
+    q=min(1.,max(0.,x))
+    lead=small_smooth(min(1.,q/.12))
+    dash=1-(1-q)**2.0
+    return .12*lead+.88*dash
 
 def font_to_fit(draw,st,maxw,maxsize,minsize=22,face=DRAW_FONT):
     for pts in range(maxsize,minsize-1,-1):
@@ -208,7 +216,7 @@ def frame_beat(background,art,beat,p,ratio):
         # Inquadratura d'insieme: UNA sola immagine, il quadro intero, con un lento
         # respiro di zoom che tiene viva l'apertura e la chiusura.
         ih,iw=art.shape[:2]
-        s=(rx1-rx0)/iw*(1.0+.11*ease_out(p))
+        s=(rx1-rx0)/iw*(1.0+.13*small_smooth(p))
         nw,nh=max(2,round(iw*s)),max(2,round(ih*s))
         image=cv2.resize(art,(nw,nh),interpolation=cv2.INTER_AREA if s<1 else cv2.INTER_CUBIC)
         paste_clipped(frame,image,rx0+((rx1-rx0)-nw)//2,ry0+((ry1-ry0)-nh)//2)
@@ -217,8 +225,14 @@ def frame_beat(background,art,beat,p,ratio):
     # Carrellata: spinta decisa in apertura, poi strisciata lenta con un leggero
     # respiro di macchina, così il particolare spiegato resta il protagonista.
     z=beat["zoom_start"]+(beat["zoom_end"]-beat["zoom_start"])*push(p)
-    fx=beat["focus"][0]+.008*math.sin(math.pi*p)
-    fy=beat["focus"][1]+.006*math.sin(2*math.pi*p)
+    ih,iw=art.shape[:2]
+    cw=min(ih,iw/(968/1430))*(968/1430)/max(1,z)   # larghezza reale del ritaglio
+    # Deriva di macchina proporzionata al ritaglio: un arco leggerissimo che
+    # parte e ritorna esattamente sul proverbio (a meta' battuta e' al massimo
+    # qualche punto percentuale fuori centro), cosi' il dettaglio resta sempre
+    # il protagonista e l'inquadratura non "vaga" mai altrove.
+    fx=beat["focus"][0]+(.040*cw)/iw*math.sin(math.pi*p)
+    fy=beat["focus"][1]+(.028*cw)/ih*math.sin(math.pi*p)
     # Una sola immagine per inquadratura: il dettaglio spiegato, a tutto schermo,
     # centrato sul proverbio che la voce racconta.
     patch=background[ry0:ry1,rx0:rx1].copy()
