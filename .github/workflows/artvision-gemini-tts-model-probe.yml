@@ -1,5 +1,5 @@
 name: "ArtVision · probe modelli Gemini TTS"
-run-name: "PROBE · elenca modelli TTS Google disponibili"
+run-name: "PROBE v2 · candidati TTS Google"
 on:
   workflow_dispatch:
   push:
@@ -10,7 +10,7 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       PYTHONUNBUFFERED: "1"
@@ -20,48 +20,50 @@ jobs:
         with:
           python-version: "3.11"
       - name: "Installa SDK Google"
-        run: |
-          python -m pip install --disable-pip-version-check "google-genai>=2.25,<4"
-      - name: "Elenca modelli e prova sintesi TTS"
+        run: python -m pip install --disable-pip-version-check "google-genai>=2.25,<4"
+      - name: "Testa nomi modello TTS candidati (interactions + generate_content)"
         run: |
           python - <<'PY'
-          import os, traceback
+          import os
           from google import genai
-          key=os.environ["GEMINI_API_KEY"]
-          client=genai.Client(api_key=key)
-          names=[]
-          try:
-              for m in client.models.list():
-                  n=getattr(m,"name","")
-                  names.append(n)
-              print("TOT MODELS:",len(names),flush=True)
-              for n in sorted(names):
-                  ln=n.lower()
-                  if "tts" in ln or "speech" in ln or "audio" in ln:
-                      print("  CANDIDATE:",n,flush=True)
-          except Exception as e:
-              print("LIST ERROR:",repr(e)[:300],flush=True)
-          print("--- tutti i modelli ---",flush=True)
-          for n in sorted(names): print("  ",n,flush=True)
-
-          candidates=[n.split("/")[-1] for n in names if "tts" in n.lower()]
-          candidates=sorted(set(candidates)) or [
-              "gemini-3.8-flash-tts","gemini-3-flash-tts","gemini-2.5-flash-preview-tts",
-              "gemini-2.5-pro-preview-tts","gemini-3-pro-tts"]
-          ok=[]
-          for model in candidates:
+          client=genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+          cands=[
+            "gemini-3.8-flash-tts","gemini-3.8-flash-lite-tts","gemini-3.8-pro-tts",
+            "gemini-3.7-flash-tts","gemini-3.6-flash-tts","gemini-3.5-flash-tts",
+            "gemini-3.1-flash-tts-preview","gemini-3.1-flash-tts","gemini-3.1-pro-tts",
+            "gemini-3-flash-tts","gemini-3-pro-tts",
+            "gemini-2.5-flash-tts","gemini-2.5-flash-preview-tts","gemini-2.5-pro-tts",
+            "gemini-2.5-pro-preview-tts","gemini-2.5-flash-lite-tts","gemini-2.5-flash-lite-preview-tts",
+            "gemini-omni-flash-preview","gemini-3.8-flash","gemini-4-argon",
+          ]
+          def try_interactions(m):
+              it=client.interactions.create(
+                  model=m,
+                  input=[{"type":"user_input","content":[{"type":"text","text":"Ciao, prova voce.",
+                          "annotations":[{"type":"speech_metadata","style":"neutral"}]}]}],
+                  response_format={"type":"audio"},
+                  generation_config={"speech_config":[{"voice":"Gacrux"}]})
+              return bool(it.output_audio and it.output_audio.data)
+          def try_gc(m):
+              from google.genai import types
+              r=client.models.generate_content(
+                  model=m,contents="Ciao, prova voce.",
+                  config=types.GenerateContentConfig(
+                      response_modalities=["AUDIO"],
+                      speech_config=types.SpeechConfig(
+                          voice_config=types.VoiceConfig(
+                              prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name="Gacrux")))))
+              return bool(getattr(r,"candidates",None))
+          print("=== interactions.create ===",flush=True)
+          for m in cands:
               try:
-                  it=client.interactions.create(
-                      model=model,
-                      input=[{"type":"user_input","content":[{"type":"text","text":"Prova voce Gacrux.",
-                              "annotations":[{"type":"speech_metadata","style":"neutral"}]}]}],
-                      response_format={"type":"audio"},
-                      generation_config={"speech_config":[{"voice":"Gacrux"}]})
-                  if it.output_audio and it.output_audio.data:
-                      print("WORKING MODEL:",model,flush=True); ok.append(model)
-                  else:
-                      print("NO AUDIO:",model,flush=True)
+                  print("OK  interactions:",m,flush=True if try_interactions(m) else False)
               except Exception as e:
-                  print("FAIL:",model,repr(e)[:200],flush=True)
-          print("RESULT_OK:",ok,flush=True)
+                  print("ERR interactions:",m,repr(e)[:160],flush=True)
+          print("=== generate_content (AUDIO) ===",flush=True)
+          for m in cands:
+              try:
+                  print("OK  generate_content:",m,flush=True if try_gc(m) else False)
+              except Exception as e:
+                  print("ERR generate_content:",m,repr(e)[:160],flush=True)
           PY
