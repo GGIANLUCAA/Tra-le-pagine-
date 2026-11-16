@@ -22,13 +22,22 @@ export default{async fetch(request,env){
  // PRIVATE owner archive, isolated from the public VIDEOS bucket and catalogue.
  // Route authorization is restricted to the dedicated main-branch GitHub workflow.
  // There is deliberately no GET of video bytes or public URL for these objects.
- if(route==='/private-status'||route==='/private-single'){
+ if(route==='/private-ready'&&method==='GET')
+  return resp({ready:!!env.PRIVATE_ARCHIVE,private:true,publicCatalogUntouched:true},env.PRIVATE_ARCHIVE?200:503);
+ if(route==='/private-status'||route==='/private-single'||route==='/private-stream'||route==='/private-artifact-list'){
   if(!env.PRIVATE_ARCHIVE)return resp({error:'Private archive binding not configured'},503);
   const artifact=u.searchParams.get('artifact')||'',key=u.searchParams.get('key')||'';
   if(!/^[0-9]{4,20}$/.test(artifact)||!/^[A-Za-z0-9_(). -]{1,180}\.(mp4|m4v|mov)$/i.test(key)||key.includes('..')||
      /(^|[_ .-])(SOURCE|SCOUT|CONTACT|FRAMES|ASSETS|PROBE|RAW|NOT_FINAL|NON_FINALE)([_ .-]|$)/i.test(key)||
      /^AUDIO_POLISHED_REVIEW/i.test(key))return resp({error:'Invalid finished-video identity'},400);
   const target='gh-artifacts/'+artifact+'/'+key;
+  if(route==='/private-artifact-list'&&method==='GET'){
+   const listed=await env.PRIVATE_ARCHIVE.list({prefix:'gh-artifacts/'+artifact+'/',limit:1000});
+   return resp({private:true,items:listed.objects.map(x=>({
+    key:x.key.slice(('gh-artifacts/'+artifact+'/').length),
+    size:x.size,sha256:x.customMetadata?.sha256||null
+   })),truncated:!!listed.truncated,cursor:listed.truncated?listed.cursor:null});
+  }
   if(route==='/private-status'&&method==='GET'){
    const obj=await env.PRIVATE_ARCHIVE.head(target);
    return resp(obj?{exists:true,private:true,size:obj.size,sha256:obj.customMetadata?.sha256||null}:{exists:false,private:true});
@@ -60,6 +69,37 @@ export default{async fetch(request,env){
    if(!verified||verified.size!==bytes.byteLength||verified.customMetadata?.sha256!==hash)
     return resp({error:'Private archive readback metadata mismatch'},500);
    return resp({ok:true,stored:true,private:true,key:target,size:verified.size,sha256:hash});
+  }
+  if(route==='/private-stream'&&method==='POST'){
+   // R2.put streams the authenticated request directly without buffering an entire video.
+   // The GitHub Actions producer MUST independently hash the complete source MP4;
+   // this route verifies declared Content-Length, stored size and source SHA metadata.
+   const expected=u.searchParams.get('sha256')||'';
+   const expectedSize=Number(u.searchParams.get('bytes')||0);
+   const declared=Number(request.headers.get('content-length')||0);
+   if(!/^[a-f0-9]{64}$/i.test(expected)||!Number.isSafeInteger(expectedSize)||
+      expectedSize<1024||expectedSize>512*1024*1024||declared!==expectedSize||!request.body)
+    return resp({error:'Missing or conflicting source SHA256/content-length/size'},400);
+   const existing=await env.PRIVATE_ARCHIVE.head(target);
+   if(existing){
+    if(existing.size===expectedSize&&existing.customMetadata?.sha256===expected.toLowerCase())
+     return resp({ok:true,private:true,already_exists:true,key:target,size:existing.size,sha256:expected.toLowerCase(),
+                  sha256Proof:'github_source_checked'});
+    return resp({error:'Private object collision (no overwrite)'},409);
+   }
+   const contentType=/\.(mp4|m4v)$/i.test(key)?'video/mp4':'video/quicktime';
+   const uploaded=await env.PRIVATE_ARCHIVE.put(target,request.body,{
+    httpMetadata:{contentType},
+    customMetadata:{sha256:expected.toLowerCase(),artifact,visibility:'private_owner_review',
+                    sha256Proof:'github_source_checked'},
+    onlyIf:{etagDoesNotMatch:'*'}
+   });
+   if(!uploaded)return resp({error:'Concurrent private archive write rejected'},409);
+   const verified=await env.PRIVATE_ARCHIVE.head(target);
+   if(!verified||verified.size!==expectedSize||verified.customMetadata?.sha256!==expected.toLowerCase())
+    return resp({error:'Private R2 streaming size/source-digest metadata mismatch'},500);
+   return resp({ok:true,private:true,stored:true,key:target,size:verified.size,
+                sha256:expected.toLowerCase(),sha256Proof:'github_source_checked'});
   }
   return resp({error:'Private archive method not allowed'},405);
  }
