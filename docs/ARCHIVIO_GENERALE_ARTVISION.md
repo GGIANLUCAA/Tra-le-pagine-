@@ -1,6 +1,6 @@
 # ArtVision — Archivio Generale
 
-Generato: 2026-11-16T11:38:55+00:00 · Verifica sito: live_api
+Generato: 2026-11-16T11:43:54+00:00 · Verifica sito: live_api
 
 Fonte: repository GitHub e catalogo pubblico Video Library Studio; nessuna modifica a video, code o sito.
 AVVERTENZA: un render documentato non significa file oggi scaricabile, QA artistico approvato o video pubblicato.

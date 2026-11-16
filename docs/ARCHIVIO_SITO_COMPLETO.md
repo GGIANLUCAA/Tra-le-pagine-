@@ -1,6 +1,6 @@
 # Tutto il catalogo pubblico di Video Library Studio
 
-Generato: 2026-11-16T11:38:55+00:00; fonte: live_api.
+Generato: 2026-11-16T11:43:54+00:00; fonte: live_api.
 Le voci con autore da_verificare non contengono dati sufficienti per identificarlo. Nessuna prova individuale di playback.
 
 | Nome file | Titolo indicato | Autore candidato | Opera candidata | Categoria | Caricamento UTC | Byte | API disponibile |
