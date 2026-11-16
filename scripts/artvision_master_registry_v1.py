@@ -309,9 +309,9 @@ def markdown(root,r):
        "L'Action aggiorna i dati periodicamente; gli errori del sito conservano il precedente snapshot dichiarandolo non attuale.",
        "Nessun dato ricavato da sole conversazioni viene spacciato per verifica di MP4."]
     save(root/"docs/ARCHIVIO_GENERALE_ARTVISION.md","\n".join(intro)+"\n")
-    chars={"render_documentato":"D","da_produrre":"C","in_coda_o_preflight":"C","bloccato":"B","non_documentato":"—"}
+    chars={"render_documentato":"D","render_respinto":"R","da_produrre":"C","in_coda_o_preflight":"C","bloccato":"B","non_documentato":"—"}
     p=["# Opere, artisti, quattro versioni","",
-       "D = render documentato · C = in coda/preflight · B = blocco documentato · — = non documentato.",
+       "D = render documentato · R = render respinto (non completato) · C = in coda/preflight · B = blocco documentato · — = non documentato.",
        "Questi stati non implicano pubblicazione né playback.","",
        "| Autore | Titolo | Anno | Critico | Critico Museum | Cinema | Cinema Museum | Sul sito? |",
        "|---|---|---|---|---|---|---|---|"]
@@ -435,6 +435,20 @@ def main():
         if isinstance(old,dict) and isinstance(old.get("items"),list):
             site=old;source="cache_precedente_non_attuale"
     registry=build(root,site,source,stamp)
+    # A scheduled check must not commit every six hours when nothing changed.
+    old=load(root/"data/archivio-generale/opere.json")
+    old_site=load(root/"data/archivio-generale/catalogo_sito.json")
+    old_queue=load(root/"data/archivio-generale/code.json")
+    old_prod=load(root/"data/archivio-generale/fascicoli_produzione.json")
+    if isinstance(old,dict) and isinstance(old_site,dict) and isinstance(old_queue,dict) and isinstance(old_prod,dict):
+        keys=("works","literary","history_candidates","future_100","future_30","stats","warnings")
+        if (all(old.get(k)==registry.get(k) for k in keys)
+            and old_site.get("items")==registry["site_items"]
+            and old_queue.get("items")==registry["queue_files"]
+            and old_prod.get("items")==registry["production_dossiers"]
+            and old.get("site_state")==registry["site_state"]):
+            stamp=old.get("generated_at") or stamp
+            registry["generated_at"]=stamp
     folder=root/"data/archivio-generale"
     save(folder/"opere.json",jd({k:v for k,v in registry.items() if k not in
        ("site_items","queue_files","possible_filename_duplicates","cross_variant_sha_collisions","production_dossiers")}))
