@@ -22,6 +22,37 @@ export default{async fetch(request,env){
  // PRIVATE owner archive, isolated from the public VIDEOS bucket and catalogue.
  // Route authorization is restricted to the dedicated main-branch GitHub workflow.
  // There is deliberately no GET of video bytes or public URL for these objects.
+ if(route==='/private-artifact-done'){
+  if(!env.PRIVATE_ARCHIVE)return resp({error:'Private archive binding not configured'},503);
+  const aid=u.searchParams.get('artifact')||'';
+  if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad artifact ID'},400);
+  const marker='sync/gh/'+aid+'.json';
+  if(method==='GET'){
+   const object=await env.PRIVATE_ARCHIVE.get(marker);
+   return resp(object?{private:true,done:true,details:await object.json()}:{private:true,done:false});
+  }
+  if(method==='POST'){
+   const existing=await env.PRIVATE_ARCHIVE.head(marker);
+   if(existing)return resp({private:true,done:true,already_exists:true});
+   let doc;try{doc=await request.json()}catch{return resp({error:'Invalid archive checkpoint'},400)}
+   if(!Array.isArray(doc.files)||!doc.files.length||doc.files.length>40)
+    return resp({error:'Expected verified private videos'},400);
+   for(const x of doc.files){
+    if(typeof x.name!=='string'||!(/^[A-Za-z0-9_(). -]{1,180}\.(mp4|m4v|mov)$/i).test(x.name)||
+       !/^[a-f0-9]{64}$/i.test(x.sha256||'')||!Number.isSafeInteger(x.bytes)||x.bytes<1024)
+     return resp({error:'Invalid private checkpoint entry'},400);
+    const stored=await env.PRIVATE_ARCHIVE.head('gh-artifacts/'+aid+'/'+x.name);
+    if(!stored||stored.size!==x.bytes||stored.customMetadata?.sha256!==x.sha256.toLowerCase())
+     return resp({error:'Private file absent or verification mismatch: '+x.name},409);
+   }
+   const rec={schema:1,artifact:aid,completedAt:new Date().toISOString(),
+              state:'PRIVATE_ONLY',publicRelease:false,files:doc.files};
+   const result=await env.PRIVATE_ARCHIVE.put(marker,JSON.stringify(rec),
+    {httpMetadata:{contentType:'application/json'},onlyIf:{etagDoesNotMatch:'*'}});
+   return resp(result?{private:true,done:true,files:rec.files.length}:{error:'Concurrent checkpoint rejected'},result?200:409);
+  }
+  return resp({error:'Private checkpoint method not allowed'},405);
+ }
  if(route==='/private-ready'&&method==='GET')
   return resp({ready:!!env.PRIVATE_ARCHIVE,private:true,publicCatalogUntouched:true},env.PRIVATE_ARCHIVE?200:503);
  if(route==='/private-status'||route==='/private-single'||route==='/private-stream'||route==='/private-artifact-list'){
