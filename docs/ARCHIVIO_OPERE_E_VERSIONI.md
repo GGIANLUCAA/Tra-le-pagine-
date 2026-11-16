@@ -80,9 +80,9 @@ Questi stati non implicano pubblicazione né playback.
 | Peter Paul Rubens | The Battle of the Amazons | ? | — | — | — | — | Non abbinato |
 | Piero di Cosimo | The Forest Fire | ca. 1505 | — | — | D | — | Non abbinato |
 | Pieter Bruegel the Elder | Dulle Griet | 1563 | — | — | D | — | Non abbinato |
-| Pieter Bruegel the Elder | The Fall of the Rebel Angels | 1562 | D | D | D | D | Non abbinato |
-| Pieter Bruegel the Elder | The Tower of Babel | 1563 | D | D | D | D | Non abbinato |
-| Pieter Bruegel the Elder | The Triumph of Death | 1562–1563 | D | D | D | D | Non abbinato |
+| Pieter Bruegel the Elder | The Fall of the Rebel Angels | 1562 | D | D | D | D | Possibili 4 |
+| Pieter Bruegel the Elder | The Tower of Babel | 1563 | D | D | D | D | Possibili 4 |
+| Pieter Bruegel the Elder | The Triumph of Death | 1562–1563 | D | D | D | D | Possibili 2 |
 | Rembrandt van Rijn | The Night Watch | 1642 | D | D | D | D | Non abbinato |
 | Richard Dadd | The Fairy Feller's Master-Stroke | 1855-1864 | — | — | D | — | Non abbinato |
 | Rosa Bonheur | La fiera dei cavalli | ? | D | D | D | D | Non abbinato |
@@ -854,7 +854,7 @@ Questi stati non implicano pubblicazione né playback.
 
 - Anno: 1562; Museo: Royal Museums of Fine Arts of Belgium
 - Code: selezione_10, cicli_v31
-- Candidati sul sito (nome compatibile soltanto): nessuno
+- Candidati sul sito (nome compatibile soltanto): BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CINEMA_V153_REPLACEMENT_REVIEW.mp4, BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4, BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V330_REVIEW.mp4, BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V331_REVIEW.mp4
 - critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v144 [physical_MP4_artifact_download_independently_verified_review_not_]; queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218 [TWO_NEW_SHORTER_REAL_CRITICO_MP4S_REVIEW_ONLY_NOT_NEW_APPROVED_SL]
 - critico_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218 [TWO_NEW_SHORTER_REAL_CRITICO_MP4S_REVIEW_ONLY_NOT_NEW_APPROVED_SL]
 - cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v133 [rendered_needs_review_one_real_MP4_not_4x1]; queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v135 [real_non_destructive_revision_same_slot_clean_public_title_verifi]; queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v153 [ONE_REAL_MP4_REPLACEMENT_OF_UNDELIVERED_V135_IN_SAME_CINEMA_SLOT_]; queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218 [VERIFIED_EXISTING_SAME_SLOT_REAL_MP4]
@@ -864,7 +864,7 @@ Questi stati non implicano pubblicazione né playback.
 
 - Anno: 1563; Museo: Kunsthistorisches Museum Wien
 - Code: selezione_10
-- Candidati sul sito (nome compatibile soltanto): nessuno
+- Candidati sul sito (nome compatibile soltanto): BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_MUSEUM_V137_REVIEW.mp4, BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_V136_REVIEW.mp4, BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_MUSEUM_V138_REVIEW.mp4, BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_STANDARD_V138_REVIEW.mp4
 - critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v141 [non dichiarato]
 - critico_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_museum_v141 [non dichiarato]
 - cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v136 [physical_artifact_download_readback_verified_review_not_gold]
@@ -874,7 +874,7 @@ Questi stati non implicano pubblicazione né playback.
 
 - Anno: 1562–1563; Museo: Museo del Prado
 - Code: selezione_10, review_storica
-- Candidati sul sito (nome compatibile soltanto): nessuno
+- Candidati sul sito (nome compatibile soltanto): BRUEGEL_THE_TRIUMPH_OF_DEATH_CINEMA_V150_REVIEW.mp4, BRUEGEL_THE_TRIUMPH_OF_DEATH_CRITICO_STANDARD_V151_REVIEW.mp4
 - critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v151 [REAL_MP4_SOURCE_PD_ART_SHA_ZIP_CRC_AND_FULL_FFMPEG_DECODE_INDEPEN]
 - critico_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-triumph-v224-private-review.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 - cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v150 [REAL_H264_AAC_48S_MP4_ZIP_SHA_FFMPEG_CRC_INDEPENDENT_DOWNLOAD_PAS]

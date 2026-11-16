@@ -1,6 +1,6 @@
 # ArtVision — Archivio Generale
 
-Generato: 2026-11-16T12:40:45+00:00 · Verifica sito: live_api
+Generato: 2026-11-16T13:04:32+00:00 · Verifica sito: live_api
 
 Fonte: repository GitHub e catalogo pubblico Video Library Studio; nessuna modifica a video, code o sito.
 AVVERTENZA: un render documentato non significa file oggi scaricabile, QA artistico approvato o video pubblicato.
@@ -20,7 +20,9 @@ Un possibile abbinamento per nome non dimostra l'identità del file. Le lacune n
 | Fascicoli di produzione indicizzati | 195 |
 | Review Museum storiche recuperate | 8 |
 | Opere in scope 4x1 | 67 |
-| File sito senza artista/opera abbinati | 721 |
+| Schede sito senza indizi artistici | 608 |
+| Schede sito con indizio solo artista | 103 |
+| Schede con possibile opera identificata | 21 |
 
 ## Documenti collegati
 
