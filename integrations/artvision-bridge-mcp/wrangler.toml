@@ -4,3 +4,8 @@ compatibility_date = "2026-11-16"
 
 # Isolated Worker, deliberately independent from the repository root wrangler.toml.
 # No D1, no R2, no paid AI bindings, no cron, no production video mutations.
+
+[[d1_databases]]
+binding = "MEMORY_DB"
+database_name = "artvision-bridge-memory-v1"
+database_id = "b33d2367-270d-41df-8d82-dfe38bf073dd"

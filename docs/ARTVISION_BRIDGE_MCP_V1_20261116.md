@@ -104,3 +104,15 @@ Messaggio di prova effettivamente pubblicato: `prova 123` destinato a `trae`. L'
 - TinyFish è l'ultima risorsa: soltanto per completare un login, configurare una schermata cui i connettori non accedono o svolgere un'azione che altrimenti non è tecnicamente eseguibile, non per ricerca, monitoraggio ordinario o test ripetuti.
 - Prima di ogni chiamata TinyFish: valutare fattibilità con strumenti diretti, necessità dell'azione, limite del numero di passaggi e disponibilità di crediti. Evitare chiamate duplicate e non attivare auto-reload o acquisti.
 - Non trattare l'assenza di TinyFish come blocco globale: continuare le altre lavorazioni sicure.
+
+## V1.2 · Memoria D1 pubblica, senza dati personali
+
+È stata creata una nuova base dati Cloudflare D1 `artvision-bridge-memory-v1`, giurisdizione UE, Workers Free; quota gratuita D1 fino a 10 database, 5 milioni di righe lette e 100.000 scritte al giorno, con interruzione delle query al superamento delle quote: https://developers.cloudflare.com/d1/platform/pricing/.
+
+La tabella `public_context` contiene soltanto sei note di progetto già pubbliche:
+`critical_voice`, `museum_quality`, `music_catalog`, `github_source_of_truth`, `bridge_public_inbox`, `tinyfish_budget_policy`.
+Ciascuna nota ha chiave, categoria, sintesi e URL GitHub ufficiale. Può essere aggiornata solo con le autorizzazioni del **connettore Cloudflare** o tramite una futura autenticazione separata; nessuna scrittura MCP pubblica.
+
+Strumento MCP `get_shared_memory`: legge soltanto `public_context`, massimo 20 righe, valida categoria, lunghezza e dominio del link, restituisce un avvertimento che le note possono essere incomplete o superate. Niente cookie, token, chat private o dati cliente.
+
+**Importante:** per dati privati e messaggi personali occorrerà un **database distinto** e strumenti autenticati con OAuth, permessi per agente e tracciamento delle modifiche. Il presente database è collegato a un Worker pubblico e non deve mai ricevere contenuti riservati. Nessuna integrazione diretta TRAE Work verificata per V1.2. Non usare TinyFish per l'aggiornamento ordinario delle note.
