@@ -6,6 +6,8 @@ on:
       - 'tests/video-library-private-ingest.test.cjs'
       - 'tests/video-library-importer-v55.test.cjs'
       - '.github/workflows/video-library-private-owner-archive.yml'
+      - 'src/video_library_private_auto_reconcile.py'
+      - 'tests/test_video_library_private_reconcile.py'
       - '.github/workflows/video-library-private-ingest-pr-check.yml'
 
 permissions:
@@ -27,3 +29,8 @@ jobs:
         run: node tests/video-library-private-ingest.test.cjs
       - name: Preserve existing V55 importer behavior
         run: node tests/video-library-importer-v55.test.cjs
+      - name: Verify artifact selection, owner-private hash and routes
+        run: |
+          python3 -m pip -q install requests
+          python3 -m unittest discover -s tests -p 'test_video_library_private_reconcile.py' -v
+          python3 -m py_compile src/video_library_private_auto_reconcile.py
