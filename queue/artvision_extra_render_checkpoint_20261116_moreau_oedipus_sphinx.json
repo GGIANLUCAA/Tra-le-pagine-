@@ -1,0 +1,92 @@
+{
+  "schema": "artvision-extra-verified-cinema-checkpoint-v1",
+  "date": "2026-11-16",
+  "artist": "Gustave Moreau",
+  "title": "Oedipus and the Sphinx",
+  "year": 1864,
+  "selected_from": "ARTVISION_EXTRA_NEW_SUBJECT",
+  "owner_request": "Continua con nuovi video after choosing Oedipus and the Sphinx",
+  "official_object_url": "https://www.metmuseum.org/art/collection/search/437153",
+  "official_met_object_id": 437153,
+  "accession": "21.134.1",
+  "status": "ONE_NEW_REAL_CINEMA_STANDARD_FULL_FFMPEG_ZIP_CRC_LIBRARY_READBACK_PASS_PRIVATE_ARTISTIC_REVIEW_PENDING",
+  "anti_duplicate": "repo search Oedipus, Oedipe, Moreau Oedipus, object 437153 returned no prior rendered file or checkpoint; this single slot now accounted for",
+  "variants": {
+    "cinema_standard": "RENDERED_TECH_VERIFIED_NEW_SUBJECT_V1",
+    "cinema_museum": "NOT_PRODUCED",
+    "critico_standard": "NOT_PRODUCED_REQUIRES_ORIGINAL_APPROVED_GEMINI_GACRUX",
+    "critico_museum": "NOT_PRODUCED_REQUIRES_SAME_APPROVED_GEMINI_GACRUX"
+  },
+  "source": {
+    "institution": "Metropolitan Museum of Art",
+    "object_api": "https://collectionapi.metmuseum.org/public/collection/v1/objects/437153",
+    "source_image": "https://images.metmuseum.org/CRDImages/ep/original/DP-14201-023.jpg",
+    "image_pixels": [
+      2072,
+      4000
+    ],
+    "source_image_bytes": 2200951,
+    "source_sha256": "7ad53fd51bbe0ba88d81f5558b7791b2d69e57d9e05d73ae89acb189c3dc7b82",
+    "verified_api_isPublicDomain": true,
+    "physical_cm": [
+      206.4,
+      104.8
+    ],
+    "media_rights": "Met Open Access public-domain item; final destination territorial/commercial review pending",
+    "ai_generated_content": false
+  },
+  "video": {
+    "format": "H264 + AAC 900x1600 20fps",
+    "duration_seconds": 61.5,
+    "scenes": 13,
+    "music": "Myst on the Moor — Kevin MacLeod",
+    "music_pool": "fixed 20 V330",
+    "music_isrc": "USUAN1600007",
+    "music_verified_mp3_sha256": "7f99264bf77e3746f7d63c99e63db77e06aac0a47b37b7a0f053df84e2bb8ac7",
+    "music_license": "CC BY 4.0; attribution in zip",
+    "hq_mp4": "VIDEO_MUSIC20_HQ_REVIEW.mp4",
+    "hq_mp4_bytes": 14266928,
+    "hq_sha256": "cb10419306adfc50fd8a620f874c681a9e9b9c5f9fe57f81f68914bdead9c88b",
+    "android_mp4": "VIDEO_ANDROID_MUSIC20_REVIEW.mp4",
+    "android_mp4_bytes": 4010207,
+    "android_sha256": "6a2aa5013c449daeead71c9288037e5cbae989665b610a808ab3b17fd5b458ad",
+    "android_zip": "ANDROID_MUSIC20_COMPLETE_PACKAGE.zip",
+    "zip_bytes": 4774002,
+    "zip_sha256": "925637750ea616d09678ee7dc8d93f43e459388be01b54ef803b62d9ca03b90a"
+  },
+  "qa": {
+    "source_verified_from_Met_API": true,
+    "actual_media_ffmpeg_full_decode_HQ_and_android": "PASS",
+    "artifact_archive_crc": "PASS",
+    "android_zip_crc": "PASS",
+    "android_zip_embedded_mp4_sha256": "PASS",
+    "library_backup_readback_SHA256_HQ_android_and_zip": "PASS",
+    "authorial_artistic_listen_full_speed": "PENDING",
+    "cover": "EXISTS",
+    "contact_sheet": "EXISTS_INSPECTED",
+    "social_drafts": "EXISTS_NOT_PUBLISHED",
+    "no_Gacrux_voice_synthesized": true,
+    "paid_apis_called": 0,
+    "published": false,
+    "gold_master": false
+  },
+  "github": {
+    "script": "scripts/artvision_moreau_oedipus_sphinx_cinema_20261116.py",
+    "workflow": ".github/workflows/artvision-moreau-oedipus-sphinx-cinema-20261116.yml",
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43956538022",
+    "run_id": 43956538022,
+    "run_status": "success",
+    "artifact_id": 14272810553,
+    "artifact_name": "ARTVISION_MOREAU_OEDIPUS_AND_SPHINX_NEW_CINEMA_REAL_MP4_ANDROID_ZIP"
+  },
+  "private_library": {
+    "directory": "/ArtVision/Opere_Extra/Moreau_Oedipus_Sphinx_20261116",
+    "android_mp4_library_id": "libfile_75d58b1c87648191bdd2c940b51ee37b",
+    "hq_mp4_library_id": "libfile_c11ba5fe57e0819189672c459d7968c5",
+    "zip_library_id": "libfile_15daba60b07c81919e7e9d5eb7f6ba16",
+    "cover_library_id": "libfile_c348ea5e70948191a51c12466eb6a20a",
+    "contact_sheet_library_id": "libfile_e95f7406b3dc8191bb233833fcbf2f4e",
+    "library_readback_actual_SHA_verified": true
+  },
+  "next": "Do not regenerate this Cinema as another new delivery. Future Critico must use original Gacrux only, with verified genuinely free quota/billing gates, or stay blocked; Museum versions require authentic frontal frame/scale and transition QA. Preserve source authenticity and music track among this work's four variants."
+}
