@@ -33,57 +33,66 @@ export default async ({page, context}) => {
   await page.goto(context.url, {waitUntil: "domcontentloaded", timeout: 15000});
   ensureAllowed();
   for (const action of context.actions) {
+    let stage = "start";
     try {
       ensureAllowed();
       if (action.type === "inspect_public_links") {
-        // Only expose public on-page navigation destinations. Strip query/fragment;
-        // reject off-allowlist links. No HTML, cookies, headers or form contents.
-        const links = await page.$eval("a[href]", els =>
-          els.map(el => {
-            try {
-              const url = new URL(el.href);
-              if (url.protocol !== "https:" ||
-                  !["example.com", "docs.browserless.io"].includes(url.hostname) ||
-                  url.search || url.hash) return null;
-              return {path: url.pathname.slice(0, 140),
-                      host: url.hostname,
-                      text: (el.textContent || "").trim().replace(/\\s+/g, " ").slice(0, 90)};
-            } catch (_) { return null; }
-          }).filter(Boolean).slice(0, 25));
+        // Use page.evaluate, not the single-element $eval.
+        stage = "inspect_read";
+        const candidates = await page.evaluate(() =>
+          Array.from(document.querySelectorAll("a[href]")).slice(0, 120)
+            .map(el => ({href: el.href, text: (el.textContent || "").trim().slice(0, 90)})));
+        stage = "inspect_filter";
+        const links = candidates.map(candidate => {
+          try {
+            const u = new URL(candidate.href);
+            if (u.protocol !== "https:" ||
+                !["example.com", "docs.browserless.io"].includes(u.hostname) ||
+                u.search || u.hash) return null;
+            return {path: u.pathname.slice(0, 140), host: u.hostname,
+                    text: candidate.text.replace(/\s+/g, " ").slice(0, 90)};
+          } catch (_) { return null; }
+        }).filter(Boolean).slice(0, 25);
         return {data: {title: (await page.title()).slice(0, 240),
                        url: page.url(), action_count: 1, links},
                 type: "application/json"};
       } else if (action.type === "click") {
+        stage = "click_find";
         const el = await page.waitForSelector(action.selector, {timeout: 6500});
         if (!el) throw new Error("SELECTOR_NOT_FOUND");
+        stage = "click_check_element";
         const isLink = await el.evaluate(n => n.tagName.toLowerCase() === "a");
         if (!isLink) throw new Error("ONLY_PUBLIC_LINK_CLICKS_ALLOWED");
+        stage = "click_check_href";
         const href = await el.evaluate(n => n.href);
         const u = new URL(href);
-        if (u.protocol !== "https:" || !allowed.has(u.hostname))
+        if (u.protocol !== "https:" || !allowed.has(u.hostname) || u.search || u.hash)
           throw new Error("LINK_OUTSIDE_PUBLIC_ALLOWLIST");
+        stage = "click_dispatch";
         await Promise.all([
           page.waitForNavigation({waitUntil: "domcontentloaded", timeout: 10000}).catch(() => null),
           el.click({timeout: 8500})
         ]);
+        stage = "click_verify";
       } else if (action.type === "type_public") {
+        stage = "type";
         await page.type(action.selector, action.text, {delay: 8});
       } else {
         throw new Error("INVALID_ACTION");
       }
       ensureAllowed();
     } catch (err) {
-      // Return only a fixed diagnostic code. Never disclose page content,
-      // stack traces, URLs containing tokens, or raw error messages.
+      // Only fixed machine-readable categories. Never page contents, URLs or stacks.
       const msg = String(err && err.message || "");
-      const browserError = msg.includes("SELECTOR_NOT_FOUND") || msg.includes("waiting for selector")
+      const browserError = msg.includes("SELECTOR_NOT_FOUND") || /waiting for selector/i.test(msg)
         ? "SELECTOR_NOT_FOUND"
         : msg.includes("LINK_OUTSIDE_PUBLIC_ALLOWLIST") ? "LINK_OUTSIDE_PUBLIC_ALLOWLIST"
         : msg.includes("REDIRECT_OUTSIDE_PUBLIC_ALLOWLIST") ? "REDIRECT_OUTSIDE_PUBLIC_ALLOWLIST"
         : msg.includes("ONLY_PUBLIC_LINK_CLICKS_ALLOWED") ? "UNSAFE_ELEMENT_REFUSED"
         : /timeout|timed out/i.test(msg) ? "INTERACTION_TIMEOUT"
         : "OTHER_INTERACTION_ERROR";
-      return {data: {browser_error: browserError}, type: "application/json"};
+      return {data: {browser_error: browserError, browser_stage: stage},
+              type: "application/json"};
     }
   }
   const title = (await page.title()).slice(0, 240);
@@ -172,7 +181,13 @@ def run_request(value, token):
         safe = ("SELECTOR_NOT_FOUND", "LINK_OUTSIDE_PUBLIC_ALLOWLIST",
                 "REDIRECT_OUTSIDE_PUBLIC_ALLOWLIST", "UNSAFE_ELEMENT_REFUSED",
                 "INTERACTION_TIMEOUT", "OTHER_INTERACTION_ERROR")
-        raise RuntimeError("Browserless interaction: " + (code if code in safe else "UNKNOWN_ERROR"))
+        stage = data.get("browser_stage", "unknown")
+        if stage not in ("start", "inspect_read", "inspect_filter", "click_find",
+                         "click_check_element", "click_check_href", "click_dispatch",
+                         "click_verify", "type"):
+            stage = "unknown"
+        raise RuntimeError("Browserless interaction: " +
+                           (code if code in safe else "UNKNOWN_ERROR") + " at " + stage)
     if not isinstance(data, dict) or not isinstance(data.get("title"), str):
         raise RuntimeError("Unexpected Browserless response")
     final_url = urllib.parse.urlsplit(data.get("url", ""))
