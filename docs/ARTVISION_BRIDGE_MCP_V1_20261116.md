@@ -11,7 +11,7 @@ Questa V1 NON sincronizza direttamente chat private e NON legge memoria personal
 ## Architettura
 
 - Cloudflare Worker separato: artvision-bridge-mcp-v1.
-- Endpoint previsto: https://artvision-bridge-mcp-v1.600led.workers.dev/mcp dopo deploy e attivazione del sottodominio.
+- Endpoint Cloudflare attivato e verificato: https://artvision-bridge-mcp-v1.600led.workers.dev/mcp.
 - Health: /health (solo metadati).
 - Trasporto: MCP JSON-RPC 2.0 su HTTP POST stateless, risposte JSON.
 - Fonte: repository pubblico GGIANLUCAA/Tra-le-pagine-, ramo main, tramite endpoint GitHub HTTPS fissati nel codice.
@@ -63,3 +63,29 @@ Questa V1 viene utilizzata da TRAE o ChatGPT soltanto se quel client è configur
 - https://developers.cloudflare.com/agents/model-context-protocol/
 
 V1 è un'implementazione stateless minimale del trasporto JSON-RPC MCP. La compatibilità con ciascun client resta da testare. Per OAuth e streaming completi adottare createMcpHandler del Cloudflare Agents SDK.
+
+## Verifica live e installazione — 16/11/2026
+
+- Worker caricato su Cloudflare e workers.dev abilitato senza modificare i Worker di Video Library.
+- Handshake MCP reale e tutte le tre chiamate di lettura verificate dal test GitHub Actions: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43852297548.
+- Test di sicurezza: invocazione del comando sconosciuto send_message rifiutata correttamente.
+- Plugin personale privato ChatGPT creato: https://chatgpt.com/plugins/plugins_6afae0600d3481918d99044242c0d02a. La creazione non equivale a installazione/connettività attiva: il proprietario deve collegarlo dal proprio account.
+- La protezione Browser Integrity Check sul dominio workers.dev blocca alcuni user-agent generici (ad esempio Python-urllib/3.12); un client identificato come mcp-client/1.0 e il test standard con user-agent esplicito hanno ricevuto HTTP 200. Per client differenti va verificata la connessione.
+
+### Configurazione manuale TRAE Work
+
+TRAE Work ha una pagina ufficiale per Settings > MCP > Create > Manual Configuration, che documenta il campo URL per server MCP HTTP: https://docs.trae.cn/work_remote-mcp-server.
+
+Esempio JSON senza segreti e senza accesso ai dati privati:
+
+~~~json
+{
+  "mcpServers": {
+    "artvision-bridge": {
+      "url": "https://artvision-bridge-mcp-v1.600led.workers.dev/mcp"
+    }
+  }
+}
+~~~
+
+Per TRAE Work da Android, aprire la modalità con supporto MCP (in alcuni casi Code Mode invece di Work Mode). Testare esplicitamente lo strumento get_project_rules. Non toccare il ramo Gold, non chiedere login di GitHub e non installare pacchetti localmente per questa integrazione. Il collegamento nel profilo TRAE e l'installazione del plugin in ChatGPT NON risultano ancora verificati.
