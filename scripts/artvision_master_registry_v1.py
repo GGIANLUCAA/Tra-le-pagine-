@@ -235,7 +235,20 @@ def build(root,site,source,stamp):
                 if isinstance(d,dict) and isinstance(d.get(k),list)),None)
         queue_files.append({"path":rel,"items":n,"type":"checkpoint" if "checkpoint" in rel else
                       ("principale" if rel in [s[0] for s in source_defs] else "supporto")})
-    site_rows=[]; filename_groups=defaultdict(list)
+    # Map distinct artist surname aliases to canonical names. A surname alone is
+    # NOT evidence of a specific painting; do not bind a 4x1 work on that basis.
+    aliases=defaultdict(set)
+    stop={"the","elder","younger","of","von","van","de","der","di","da","le","la","del","il"}
+    artists={w["artist"] for w in works.values()}
+    artists.update(x["artist"] for x in future_100 if x["artist"])
+    artists.update(x["artist"] for x in future_30 if x["artist"])
+    for artist in artists:
+        aa=[t for t in norm(artist).split() if t not in stop]
+        if not aa:continue
+        # Last meaningful surname in "Pieter Bruegel the Elder" is Bruegel.
+        surname=aa[-1]
+        if len(surname)>=4:aliases[surname].add(artist)
+    site_rows=[];filename_groups=defaultdict(list);site_claims={}
     for x in site.get("items",[]) if isinstance(site,dict) else []:
         if not isinstance(x,dict):continue
         name=val(x,"name","key")
@@ -245,12 +258,15 @@ def build(root,site,source,stamp):
              "version","size","duration","uploaded","gptCreatedAt","available","source","cover","width","height","hidden")}
         row.update(artist="da_verificare",artwork="da_verificare",match_quality="nessuna",
                    video_url=SITE+"/video/"+quote(key,safe=""))
-        n=norm(name).split()
+        n=norm(name+" "+val(x,"title")).split()
+        n_set=set(n)
         possible=[]
         for w in works.values():
-            surname=norm(w["artist"]).split()[-1]
-            title_tokens=[t for t in norm(w["title"]).split() if len(t)>=4 and t not in ("with","from","upon","into","over","after")]
-            if surname in n and title_tokens and sum(t in n for t in title_tokens)>=max(1,(len(title_tokens)+1)//2):
+            tokens=[t for t in norm(w["artist"]).split() if t not in stop]
+            surname=tokens[-1] if tokens else ""
+            title_tokens=[t for t in norm(w["title"]).split()
+                          if len(t)>=4 and t not in {"with","from","upon","into","over","after","before","between"}]
+            if surname and surname in n_set and title_tokens and all(t in n_set for t in title_tokens):
                 possible.append(w)
         if len(possible)==1:
             w=possible[0]
@@ -260,10 +276,20 @@ def build(root,site,source,stamp):
             variant=("critico" if "critico" in n else "cinema" if "cinema" in n else None)
             scene=("museum" if "museum" in n else "standard" if "standard" in n else None)
             if variant and scene:w["variants"][variant+"_"+scene]["site_candidates"].append(key)
-        elif len(possible)>1:row["match_quality"]="ambiguo"
+        elif len(possible)>1:
+            row["match_quality"]="ambiguo"
+        else:
+            # Artist-only hint: useful for search, NEVER proof of work/video identity.
+            artist_guesses=set()
+            for token in n_set:
+                if token in aliases and len(aliases[token])==1:
+                    artist_guesses.update(aliases[token])
+            if len(artist_guesses)==1:
+                row.update(artist=next(iter(artist_guesses)),match_quality="indizio_solo_artista")
         site_rows.append(row)
         canonical=norm(re.sub(r"__\d+(?=\.)","",name))
-        filename_groups[canonical].append(name)
+        filename_groups[canonical].append({"name":name,"size":x.get("size"),"key":key})
+        site_claims[key]=row
     ordered=sorted(works.values(),key=lambda w:(norm(w["artist"]),norm(w["title"]),w["year"]))
     for w in ordered:
         # Historical one-off Cinema/Museum or paired pilots are not automatically
@@ -284,11 +310,20 @@ def build(root,site,source,stamp):
            "research_100":len(future_100),"selected_future_30":len(future_30),
            "production_dossiers":len(production_dossiers),"production_dossier_subdirs":production_dirs,
            "unmatched_site_items":sum(x["match_quality"]=="nessuna" for x in site_rows),
+           "site_artist_only_hints":sum(x["match_quality"]=="indizio_solo_artista" for x in site_rows),
+           "site_ambiguous":sum(x["match_quality"]=="ambiguo" for x in site_rows),
            "recovered_historical_review_files":historic_review_count,
            "four_by_one_scoped":sum(w["four_by_one_target"] for w in ordered),
            "complete_four_render_documented":sum(w["four_by_one_target"] and w["render_documented"]==4 for w in ordered),
            "categories":categories}
-    likely_duplicate_names=[{"normalized":k,"files":v} for k,v in filename_groups.items() if len(v)>1]
+    likely_duplicate_names=[]
+    for k,members in filename_groups.items():
+        if len(members)<2:continue
+        sizes={v["size"] for v in members}
+        suspected="same_name_same_size_no_hash" if len(sizes)==1 and None not in sizes else "same_stem_mixed_sizes_revisions_possible"
+        likely_duplicate_names.append({"normalized":k,"files":[v["name"] for v in members],
+            "comparison":suspected,
+            "warning":"Filename/size alone never proves byte-identical video."})
     cross_hashes=[{"sha256":h,"claims":proofs} for h,proofs in duplicates.items()
                   if len(set((w,v) for w,v,_ in proofs))>1]
     return dict(schema="artvision-master-registry-v1",generated_at=stamp,site_state=source,stats=stats,
@@ -317,7 +352,9 @@ def markdown(root,r):
        table_row(["Fascicoli di produzione indicizzati",st["production_dossiers"]]),
        table_row(["Review Museum storiche recuperate",st["recovered_historical_review_files"]]),
        table_row(["Opere in scope 4x1",st["four_by_one_scoped"]]),
-       table_row(["File sito senza artista/opera abbinati",st["unmatched_site_items"]]),"",
+       table_row(["Schede sito senza indizi artistici",st["unmatched_site_items"]]),
+       table_row(["Schede sito con indizio solo artista",st["site_artist_only_hints"]]),
+       table_row(["Schede con possibile opera identificata",st["possible_site_matches"]]),"",
        "## Documenti collegati","",
        "- [Opere e tutte le varianti](ARCHIVIO_OPERE_E_VERSIONI.md)",
        "- [Inventario integrale del sito](ARCHIVIO_SITO_COMPLETO.md)",
@@ -357,7 +394,7 @@ def markdown(root,r):
     save(root/"docs/ARCHIVIO_OPERE_E_VERSIONI.md","\n".join(p)+"\n")
     p=["# Tutto il catalogo pubblico di Video Library Studio","",
        "Generato: "+stamp+"; fonte: "+r["site_state"]+".",
-       "Le voci con autore da_verificare non contengono dati sufficienti per identificarlo. Nessuna prova individuale di playback.","",
+       "Indizio solo artista non identifica un quadro né una variante; mai usarlo per concludere che un MP4 è pubblicato.","Le voci con autore da_verificare non contengono dati sufficienti per identificarlo. Nessuna prova individuale di playback.","",
        "| Nome file | Titolo indicato | Autore candidato | Opera candidata | Categoria | Caricamento UTC | Byte | API disponibile |",
        "|---|---|---|---|---|---|---:|---|"]
     for x in sorted(r["site_items"],key=lambda z:(z.get("uploaded") or ""),reverse=True):
