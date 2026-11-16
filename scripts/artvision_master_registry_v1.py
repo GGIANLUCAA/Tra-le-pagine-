@@ -92,7 +92,10 @@ def checkpoint_evidence(obj):
         return {"status":"RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING","mp4_sha256":sha}
     if extra_pass and private_bytes and private_id and "REAL_MP4" in status_text:
         return {"status":"RENDERED_TECH_QA_PRIVATE_VIDEO_NO_MP4_SHA_RECORDED"}
-    return {"status":status_text} if status_text else {}
+    if any(k in status_text.lower() for k in ("blocked","failed","not_started","source","pending")):
+        return {"status":status_text}
+    # A self-declared MP4 or a hash without independent QA is NOT a verified render.
+    return {"status":"UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF"}
 
 def status(d):
     s=val(d,"status","render_status").lower()
