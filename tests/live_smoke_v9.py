@@ -14,7 +14,7 @@ DEFAULT_URL = "https://ggianlucaa.github.io/Tra-le-pagine-/"
 # Validate the published service worker against this exact repository version,
 # rather than the historical v9 cache marker after the source moved to v11.
 SW_SOURCE = (Path(__file__).resolve().parents[1] / "docs" / "sw.js").read_bytes()
-SW_CACHE_MATCH = re.search(rb"const CACHE\\s*=\\s*[\\\"']([^\\\"']+)[\\\"']", SW_SOURCE)
+SW_CACHE_MATCH = re.search(rb'const CACHE\s*=\s*["\']([^"\']+)["\']', SW_SOURCE)
 if not SW_CACHE_MATCH:
     raise RuntimeError("Service worker source has no defined CACHE id")
 CHECKS = {
