@@ -202,6 +202,15 @@ def _human_tone_pre_tts(text, outdir):
     return report
 
 
+def _gemini_client(key):
+    """The owner's key sees Gemini 3.8 TTS on v1beta, not v1 (read-only 2026-11-16 audit).
+
+    Only changes transport version. The approved Gacrux voice, model, original
+    narration, cache identity and free-only caller gates stay unchanged.
+    """
+    from google import genai
+    return genai.Client(api_key=key,http_options={"api_version":"v1beta"})
+
 def synthesize(text,outdir):
     outdir=Path(outdir)
     outdir.mkdir(parents=True,exist_ok=True)
@@ -227,10 +236,9 @@ def synthesize(text,outdir):
     # V320: do not spend even a free quota call on a stock AI-like finale.
     # Existing verified WAVs were returned above without touching their hash.
     _human_tone_pre_tts(text, outdir)
-    from google import genai
     spoken=speech_directed(text)
     print("Genero un'unica recitazione italiana completa con pause interpretative.",flush=True)
-    client=genai.Client(api_key=key)
+    client=_gemini_client(key)
     interaction=client.interactions.create(
         model=MODEL,
         input=[{

@@ -28,6 +28,21 @@ class VoiceCacheTests(unittest.TestCase):
         voice._save_voice_cache(self.text, path, timed)
         return timed
 
+    def test_google_client_uses_verified_v1beta_and_original_gacrux(self):
+        from types import ModuleType
+        from unittest.mock import MagicMock
+        mocked_google=ModuleType("google")
+        mocked_genai=ModuleType("google.genai")
+        fake_client=MagicMock(return_value=object())
+        mocked_genai.Client=fake_client
+        mocked_google.genai=mocked_genai
+        with patch.dict(sys.modules,{"google":mocked_google,"google.genai":mocked_genai}):
+            voice._gemini_client("FAKE_KEY_NO_NETWORK")
+        fake_client.assert_called_once_with(api_key="FAKE_KEY_NO_NETWORK",
+                                            http_options={"api_version":"v1beta"})
+        self.assertEqual(voice.VOICE,"Gacrux")
+        self.assertEqual(voice.MODEL,"gemini-3.8-flash-tts")
+
     def test_cached_voice_reused_without_key_or_sdk(self):
         with tempfile.TemporaryDirectory() as d, patch.dict(os.environ, {}, clear=True):
             expected = self.seed(d)
