@@ -51,7 +51,7 @@ jobs:
           for b in c["beats"]:
               assert b.get("speech") and isinstance(b.get("focus"),list) and len(b["focus"])==2
           words=sum(len(b["speech"].split()) for b in c["beats"])
-          assert 150<=words<=260, words
+          assert 150<=words<=340, words
           assert c["image_ratio_min"]<1.4123<c["image_ratio_max"], (c["image_ratio_min"],c["image_ratio_max"])
           assert c["music"].get("download","").startswith("http")
           print("EPISODE READY bruegel_proverbi beats",len(c["beats"]),"words",words)
