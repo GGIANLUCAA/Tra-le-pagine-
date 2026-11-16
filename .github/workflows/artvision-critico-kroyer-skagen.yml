@@ -5,6 +5,8 @@ on:
   push:
     paths:
       - ".github/workflows/artvision-critico-kroyer-skagen.yml"
+      - "modules/artvision_critico/production_series/kroyer_skagen_sera.json"
+      - "src/gemini_voice.py"
 permissions:
   contents: read
 concurrency:
