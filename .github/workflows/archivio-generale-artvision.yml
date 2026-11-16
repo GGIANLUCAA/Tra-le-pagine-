@@ -9,6 +9,10 @@ on:
       - feature/artvision-archivio-generale-20261116
     paths:
       - 'queue/**'
+      - 'research/artvision_future_works_index_v1_20261107.json'
+      - 'research/artvision_owner_selected_30_future_20261109.json'
+      - 'docs/productions/**'
+      - 'episodes/**'
       - 'scripts/artvision_master_registry_v1.py'
       - 'tests/test_artvision_master_registry_v1.py'
       - '.github/workflows/archivio-generale-artvision.yml'
@@ -45,7 +49,7 @@ jobs:
             git fetch origin "$GITHUB_REF_NAME"
             git reset --hard "origin/$GITHUB_REF_NAME"
             python3 scripts/artvision_master_registry_v1.py > /tmp/artvision-master-summary-reconciled.json
-            git add data/archivio-generale/ docs/ARCHIVIO_GENERALE_ARTVISION.md docs/ARCHIVIO_OPERE_E_VERSIONI.md docs/ARCHIVIO_SITO_COMPLETO.md docs/ARCHIVIO_CODE_MANCANTI.md docs/ARCHIVIO_DOPPIONI_POTENZIALI.md docs/ARCHIVIO_ALTRI_FORMAT.md
+            git add data/archivio-generale/ docs/ARCHIVIO_GENERALE_ARTVISION.md docs/ARCHIVIO_OPERE_E_VERSIONI.md docs/ARCHIVIO_SITO_COMPLETO.md docs/ARCHIVIO_CODE_MANCANTI.md docs/ARCHIVIO_DOPPIONI_POTENZIALI.md docs/ARCHIVIO_ALTRI_FORMAT.md docs/ARCHIVIO_RICERCA_FUTURA.md docs/ARCHIVIO_PRODUZIONI_STORICHE.md
             if git diff --cached --quiet; then
               echo 'Archivio invariato'
               exit 0
