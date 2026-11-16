@@ -284,11 +284,12 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
     card=closing_card(base,cfg)
     dark=np.zeros((H,W,3),np.uint8);dark[:]=INK
     def close_frame_at(q):
-        # Chiusura in movimento: il quadro intero si allontana lentamente
-        # (zoom out) come un respiro finale, mai un fermo immagine.
+        # Chiusura in movimento: il quadro si allontana lentamente (zoom out)
+        # come un respiro finale. Parte dallo stesso zoom con cui termina la
+        # battuta 19, cosi' non c'e' nessun salto nel passaggio.
         fr=base.copy()
         ih,iw=img.shape[:2]
-        s=(RX1-RX0)/iw*(1.03-.10*small_smooth(min(1.,q)))
+        s=(RX1-RX0)/iw*(1.22-.29*small_smooth(min(1.,q)))
         nw,nh=max(2,round(iw*s)),max(2,round(ih*s))
         image=cv2.resize(img,(nw,nh),interpolation=cv2.INTER_AREA if s<1 else cv2.INTER_CUBIC)
         paste_clipped(fr,image,RX0+((RX1-RX0)-nw)//2,RY0+((RY1-RY0)-nh)//2)
