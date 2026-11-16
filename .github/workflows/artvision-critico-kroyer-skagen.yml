@@ -1,0 +1,91 @@
+name: "ArtVision Critico - Krøyer Skagen (Gacrux)"
+run-name: "KRØYER · Sera d'estate sulla spiaggia sud di Skagen"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-critico-kroyer-skagen.yml"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-critico-kroyer-skagen
+  cancel-in-progress: false
+jobs:
+  produzione:
+    name: "Critico Google Gacrux — master FULL HD"
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: "Checkout non distruttivo: conserva vecchi film, libri e processi"
+        uses: actions/checkout@v4
+      - name: "Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa strumenti e valida la configurazione dell'episodio"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1
+          python -m pip install --disable-pip-version-check \
+            "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5" \
+            "edge-tts>=6.1,<9" "soundfile>=0.12,<1" "google-genai>=2.25,<4" "scipy>=1.11,<2"
+          python -m py_compile modules/artvision_critico/production_series/render_series_v2.py
+          python -c "import sys;sys.path.insert(0, 'modules/artvision_critico');import render_dali;print('ArtVision module import OK')"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("modules/artvision_critico/production_series/kroyer_skagen_sera.json")
+          assert p.is_file(), "config mancante"
+          c=json.loads(p.read_text(encoding="utf8"))
+          assert c["id"]=="kroyer_skagen_sera"
+          assert c["language"]=="it"
+          assert len(c["beats"])>=8, len(c["beats"])
+          for b in c["beats"]:
+              assert b.get("speech") and isinstance(b.get("focus"),list) and len(b["focus"])==2
+          words=sum(len(b["speech"].split()) for b in c["beats"])
+          assert c["image_ratio_min"]<1.581<c["image_ratio_max"], (c["image_ratio_min"],c["image_ratio_max"])
+          assert c["music"].get("download","").startswith("http")
+          print("EPISODE READY kroyer_skagen_sera beats",len(c["beats"]),"words",words)
+          PY
+      - name: "Produci e sincronizza quadro, zoom e voce Google Gacrux"
+        run: |
+          python modules/artvision_critico/production_series/render_series_v2.py \
+            --config modules/artvision_critico/production_series/kroyer_skagen_sera.json
+      - name: "Verifica il master completo — non archiviare simulazioni o immagini statiche"
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          out=Path("output/artvision-serie-quattro/kroyer_skagen_sera")
+          mp4=out/"ARTVISION_KROYER_SKAGEN_SERA.mp4"
+          assert mp4.exists() and mp4.stat().st_size>8_000_000, mp4
+          x=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries",
+            "format=duration,size:stream=codec_type,width,height","-of","json",str(mp4)]))
+          tracks={t["codec_type"] for t in x["streams"]}
+          assert tracks=={"video","audio"},tracks
+          vid=next(z for z in x["streams"] if z["codec_type"]=="video")
+          assert (vid["width"],vid["height"])==(1080,1920),(vid["width"],vid["height"])
+          assert 90<float(x["format"]["duration"])<700,x["format"]["duration"]
+          assert (out/"COPERTINA.jpg").stat().st_size>70_000
+          m=json.loads((out/"REGIA_SINCRONIZZAZIONE.json").read_text(encoding="utf8"))
+          assert m["subtitle_overlay"] is False
+          assert len(m["beats"])>=8
+          assert "Gemini Gacrux" in m["engine"], m["engine"]
+          print("VALIDATED MP4 kroyer_skagen_sera",x["format"]["duration"],mp4.stat().st_size,"engine",m["engine"])
+          PY
+      - name: "Archivia MP4, copertina, copione e metadati"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_VISION_V2_kroyer_skagen_sera
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            output/artvision-serie-quattro/kroyer_skagen_sera/ARTVISION_KROYER_SKAGEN_SERA.mp4
+            output/artvision-serie-quattro/kroyer_skagen_sera/COPERTINA.jpg
+            output/artvision-serie-quattro/kroyer_skagen_sera/REGIA_SINCRONIZZAZIONE.json
+            output/artvision-serie-quattro/kroyer_skagen_sera/COPIONE_IT.txt
+            output/artvision-serie-quattro/kroyer_skagen_sera/DIRITTI_E_FONTI.txt
