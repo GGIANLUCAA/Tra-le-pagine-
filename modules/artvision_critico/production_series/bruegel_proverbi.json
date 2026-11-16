@@ -12,74 +12,123 @@
   "sources": [
     "https://it.wikipedia.org/wiki/Proverbi_fiamminghi",
     "https://en.wikipedia.org/wiki/Netherlandish_Proverbs",
+    "https://de.wikipedia.org/wiki/Die_niederl%C3%A4ndischen_Sprichw%C3%B6rter",
     "https://commons.wikimedia.org/wiki/File:Pieter_Brueghel_the_Elder_-_The_Dutch_Proverbs_-_Google_Art_Project.jpg"
   ],
   "beats": [
     {
       "id": "01",
-      "title_internal": "Da lontano sembra una festa",
-      "focus": [
-        0.5,
-        0.5
-      ],
+      "title_internal": "Inquadratura d'insieme: da lontano",
+      "wide": true,
+      "focus": [0.5, 0.5],
       "zoom_start": 1.0,
-      "zoom_end": 1.06,
-      "speech": "Da lontano è una festa di paese. Da vicino, un catalogo della stupidità umana: oltre cento proverbi."
+      "zoom_end": 1.02,
+      "speech": "Da lontano sembra una festa di paese. Da vicino è il ritratto di noi: oltre cento proverbi dipinti in un solo quadro."
     },
     {
       "id": "02",
-      "title_internal": "Il mantello blu dell'inganno",
-      "focus": [
-        0.47,
-        0.7
-      ],
-      "zoom_start": 1.12,
+      "title_internal": "Il mondo sottosopra",
+      "focus": [0.062, 0.431],
+      "zoom_start": 1.15,
       "zoom_end": 1.42,
-      "speech": "Si chiamava Il Mantello Blu: una donna lo getta sulle spalle di un uomo per ingannarlo."
+      "speech": "Tutto è sottosopra: il mondo ruota capovolto, come se la ragione avesse perso la testa."
     },
     {
       "id": "03",
-      "title_internal": "Armato fino ai denti",
-      "focus": [
-        0.26,
-        0.66
-      ],
-      "zoom_start": 1.1,
-      "zoom_end": 1.4,
-      "speech": "Questo è armato fino ai denti, e intanto prova a legare un campanello al gatto."
+      "title_internal": "I pazzi e le carte migliori",
+      "focus": [0.1, 0.329],
+      "zoom_start": 1.18,
+      "zoom_end": 1.45,
+      "speech": "E il destino premia gli sciocchi: i pazzi hanno in mano le carte migliori."
     },
     {
       "id": "04",
-      "title_internal": "La testa contro il muro",
-      "focus": [
-        0.14,
-        0.55
-      ],
-      "zoom_start": 1.15,
-      "zoom_end": 1.48,
-      "speech": "Più in là uno batte la testa contro il muro: spreca la vita per nulla."
+      "title_internal": "Guardare tra le dita",
+      "focus": [0.077, 0.208],
+      "zoom_start": 1.18,
+      "zoom_end": 1.45,
+      "speech": "Chiudiamo un occhio sui torti che ci convengono, e guardiamo il mondo tra le dita."
     },
     {
       "id": "05",
-      "title_internal": "I ciechi che guidano i ciechi",
-      "focus": [
-        0.82,
-        0.17
-      ],
-      "zoom_start": 1.1,
-      "zoom_end": 1.4,
-      "speech": "In alto i ciechi si guidano in fila: se il primo cade, trascina tutti."
+      "title_internal": "Due pazzi sotto un cappuccio",
+      "focus": [0.448, 0.334],
+      "zoom_start": 1.15,
+      "zoom_end": 1.42,
+      "speech": "Sotto un solo cappuccio stanno due pazzi: la stupidità non viaggia mai da sola."
     },
     {
       "id": "06",
-      "title_internal": "Quelle figure siamo noi",
-      "focus": [
-        0.5,
-        0.46
-      ],
+      "title_internal": "Baciare la mano al padrone",
+      "focus": [0.598, 0.247],
+      "zoom_start": 1.15,
+      "zoom_end": 1.42,
+      "speech": "Altri baciano la mano a chi comanda, pronti a piegarsi pur di farsi notare."
+    },
+    {
+      "id": "07",
+      "title_internal": "Il sussurratore",
+      "focus": [0.523, 0.518],
+      "zoom_start": 1.18,
+      "zoom_end": 1.44,
+      "speech": "E poi la calunnia, sussurrata all'orecchio, piano, perché nessuno la senta."
+    },
+    {
+      "id": "08",
+      "title_internal": "Il piatto vuoto",
+      "focus": [0.578, 0.562],
+      "zoom_start": 1.18,
+      "zoom_end": 1.44,
+      "speech": "Che vale un piatto d'argento se è vuoto? Splendidi fuori, e vuoti dentro."
+    },
+    {
+      "id": "09",
+      "title_internal": "La testa contro il muro",
+      "focus": [0.173, 0.844],
+      "zoom_start": 1.15,
+      "zoom_end": 1.42,
+      "speech": "C'è chi sbatte la testa contro il muro: ostinato, spreca la vita contro un ostacolo che non cede."
+    },
+    {
+      "id": "10",
+      "title_internal": "Chiudere il pozzo troppo tardi",
+      "focus": [0.495, 0.882],
+      "zoom_start": 1.16,
+      "zoom_end": 1.43,
+      "speech": "E chi chiude il pozzo solo dopo che il vitello è annegato: capiamo tutto troppo tardi."
+    },
+    {
+      "id": "11",
+      "title_internal": "Il mondo sul pollice",
+      "focus": [0.707, 0.85],
+      "zoom_start": 1.15,
+      "zoom_end": 1.42,
+      "speech": "Qualcuno fa ballare il mondo sul pollice, convinto di guidare ciò che non capisce."
+    },
+    {
+      "id": "12",
+      "title_internal": "Nuotare contro corrente",
+      "focus": [0.888, 0.39],
+      "zoom_start": 1.15,
+      "zoom_end": 1.42,
+      "speech": "Ma uno nuota contro corrente, da solo contro tutti: forse è l'unico modo di restare umani."
+    },
+    {
+      "id": "13",
+      "title_internal": "La rastrelliera senza manico",
+      "focus": [0.93, 0.884],
+      "zoom_start": 1.18,
+      "zoom_end": 1.45,
+      "speech": "E noi siamo una rastrelliera senza manico: strumenti incompleti, testardi, inutili."
+    },
+    {
+      "id": "14",
+      "title_internal": "Chiusura: siamo ancora noi",
+      "wide": true,
+      "focus": [0.5, 0.47],
       "zoom_start": 1.0,
       "zoom_end": 1.02,
-      "speech": "Bruegel ci mostra quanto siamo ridicoli. Quattro secoli dopo, siamo ancora noi."
+      "speech": "Quattro secoli dopo, questo quadro è ancora pieno di noi."
     }
   ],
   "episode": "ARTVISION_CRITICO_BRUEGEL_01",

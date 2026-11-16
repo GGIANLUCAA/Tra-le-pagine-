@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   produzione:
-    name: "Critico Google Gemini Kore — master verticale breve"
+    name: "Critico Google Gemini Kore — master verticale narrativo"
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
@@ -47,11 +47,11 @@ jobs:
           c=json.loads(p.read_text(encoding="utf8"))
           assert c["id"]=="bruegel_proverbi"
           assert c["language"]=="it"
-          assert len(c["beats"])>=5, len(c["beats"])
+          assert len(c["beats"])>=10, len(c["beats"])
           for b in c["beats"]:
               assert b.get("speech") and isinstance(b.get("focus"),list) and len(b["focus"])==2
           words=sum(len(b["speech"].split()) for b in c["beats"])
-          assert 65<=words<=105, words
+          assert 150<=words<=260, words
           assert c["image_ratio_min"]<1.4123<c["image_ratio_max"], (c["image_ratio_min"],c["image_ratio_max"])
           assert c["music"].get("download","").startswith("http")
           print("EPISODE READY bruegel_proverbi beats",len(c["beats"]),"words",words)
@@ -75,11 +75,11 @@ jobs:
           vid=next(z for z in x["streams"] if z["codec_type"]=="video")
           assert (vid["width"],vid["height"])==(1080,1920),(vid["width"],vid["height"])
           dur=float(x["format"]["duration"])
-          assert 35<dur<72,dur
+          assert 100<dur<165,dur
           assert (out/"COPERTINA.jpg").stat().st_size>70_000
           m=json.loads((out/"REGIA_SINCRONIZZAZIONE.json").read_text(encoding="utf8"))
           assert m["subtitle_overlay"] is False
-          assert len(m["beats"])>=5
+          assert len(m["beats"])>=10
           assert "Gemini Kore" in m["engine"], m["engine"]
           print("VALIDATED MP4 bruegel_proverbi",dur,"seconds",mp4.stat().st_size,"bytes",m["engine"])
           PY
