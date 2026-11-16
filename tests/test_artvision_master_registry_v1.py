@@ -20,6 +20,10 @@ class MasterRegistryTests(unittest.TestCase):
                    {"title":"The Sin","artist":"Franz von Stuck","year":1893},
                    {"title":"The Sin","artist":"Franz von Stuck","year":1912}]}))
         (queue/"artvision_autoproduction_v31_state.json").write_text('{"cycle_log":[]}')
+        (queue/"extra_checkpoint_20261115_bierstadt.json").write_text(json.dumps({
+          "artist":"Albert Bierstadt","title":"The Last of the Buffalo",
+          "variant_matrix":{"cinema_standard":{"status":"RENDERED_TECH_QA_ART_REVIEW_PENDING",
+             "preferred_v2_mp4_sha256":"b"*64}}}))
     def test_works_versions_site_and_distinct_years(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);self.seed(root)
@@ -29,13 +33,15 @@ class MasterRegistryTests(unittest.TestCase):
                  "source":"cloudflare","available":True,"category":"Artisti e pittura"},
                 {"name":"MYSTERY_GENERIC_123.mp4","available":False,"category":"Altri progetti"}]}
             r=build(root,catalog,"fixture","2026-11-16T10:00:00+00:00")
-            self.assertEqual(r["stats"]["works"],3)
+            self.assertEqual(r["stats"]["works"],4)
             self.assertEqual(r["stats"]["site_items"],2)
             self.assertEqual(r["stats"]["site_unavailable"],1)
             winter=next(w for w in r["works"] if w["title"]=="The Winter Garden")
             self.assertEqual(winter["variants"]["cinema_standard"]["state"],"render_documentato")
             self.assertEqual(winter["variants"]["critico_standard"]["state"],"bloccato")
             self.assertEqual(len(winter["site_candidates"]),1)
+            buffalo=next(w for w in r["works"] if w["artist"]=="Albert Bierstadt")
+            self.assertEqual(buffalo["variants"]["cinema_standard"]["state"],"render_documentato")
             mystery=next(x for x in r["site_items"] if "MYSTERY" in x["name"])
             self.assertEqual(mystery["artist"],"da_verificare")
     def test_no_invented_completion(self):
