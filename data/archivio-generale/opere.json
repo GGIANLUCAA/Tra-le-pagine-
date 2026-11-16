@@ -1,0 +1,5194 @@
+{
+  "schema": "artvision-master-registry-v1",
+  "generated_at": "2026-11-16T11:36:06+00:00",
+  "site_state": "live_api",
+  "stats": {
+    "works": 89,
+    "render_documented_slots": 89,
+    "not_documented_slots": 267,
+    "site_items": 732,
+    "site_cloudflare": 724,
+    "site_unavailable": 8,
+    "possible_site_matches": 11,
+    "queue_files": 96,
+    "categories": {
+      "Critica d’arte": 42,
+      "Altri progetti": 445,
+      "Musica e visual": 78,
+      "Artisti e pittura": 113,
+      "Libri raccontati": 50,
+      "Cronaca e attualità": 4
+    }
+  },
+  "works": [
+    {
+      "id": "albert-bierstadt-the-last-of-the-buffalo",
+      "title": "The Last of the Buffalo",
+      "artist": "Albert Bierstadt",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "albert-pinkham-ryder-the-race-track-death-on-a-pale-horse-1896",
+      "title": "The Race Track (Death on a Pale Horse)",
+      "artist": "Albert Pinkham Ryder",
+      "year": "c. 1896-1908",
+      "museum": "Cleveland Museum of Art",
+      "object_id": "1928.8",
+      "lanes": [
+        "nuova_serie",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_new_series_20261114.json",
+        "queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_new_series_20261114.json",
+              "status_claim": "CINEMA_STANDARD_RENDERED_TECH_QA_ART_REVIEW_PENDING",
+              "classification": "render_documentato"
+            },
+            {
+              "source": "queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json",
+              "status_claim": "ONE_REAL_NEW_CINEMA_STANDARD_MP4_AND_ZIP_PRIVATE_ARTIFACT_TECHNICAL_QA_PASS_ARTISTIC_REVIEW_PENDING",
+              "classification": "in_coda_o_preflight"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "albrecht-altdorfer-the-battle-of-alexander-at-issus",
+      "title": "The Battle of Alexander at Issus",
+      "artist": "Albrecht Altdorfer",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261028T1110+0100-ALTDORFER-V55",
+          "sha256": "43ffd0343268010c0dc1f0220d0d98a775dad25a9bfc32c34100202827d86a60",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40671108781"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "arnold-bocklin-isle-of-the-dead-1883",
+      "title": "Isle of the Dead",
+      "artist": "Arnold Böcklin",
+      "year": "1883",
+      "museum": "Alte Nationalgalerie, Staatliche Museen zu Berlin",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "096926e6ffb0de921fca72726deb4a136227150d1d1a224ccd42e329ee903777"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "03eb6c8a77c4572b7ca83c81088c4b3d499b06802dd996a97a505b6fe768a6ed"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "b176560a2d58e4aba6b782d2f02e3b5d22674fc7e16ea520620c83134bf90f26"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "c9f40502b5efdf216ebfe322344aed21f19913a2b869d144b2519bd2b3bd7132"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "arnold-bocklin-isle-of-the-dead-first-version-1880",
+      "title": "Isle of the Dead (first version, 1880)",
+      "artist": "Arnold Böcklin",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261026T0515+0100",
+          "sha256": "cff42dc1e74cb38623ba1a695c2803372d8664def6c7b75d103f5d7674bb7612",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "briton-riviere-la-risposta-di-daniele-al-re",
+      "title": "La risposta di Daniele al re",
+      "artist": "Briton Rivière",
+      "year": "",
+      "museum": "Manchester Art Gallery",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "4875b9dd1b7c810821697acc051fae5174fa811b249e21ac7b15703a70ddb18e"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "b4c22f106688a1573c81708a9ab6bdb32f040e4f01993db76d4afd879ac549c5"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "b076de2c87d0c7ffce29e96a4c1262ab99cf8ef94db91574c2b41fd065e9caa1"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "caef34033a3373709f7bd3ef93152c3f9c46feb236f55b7e1b7e040d7ecc378a"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "carel-fabritius-the-goldfinch-1654",
+      "title": "The Goldfinch",
+      "artist": "Carel Fabritius",
+      "year": "1654",
+      "museum": "Mauritshuis",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "d1bb19d660975f06df33e9c9e44a3991c7eb0817b81573ba2cfcbb9d74e7fcde"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "b0402f864e3f5439072aaab588d4a62328faf9db302d26fc0ef9142ef7182512"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "caspar-david-friedrich-the-sea-of-ice",
+      "title": "The Sea of Ice",
+      "artist": "Caspar David Friedrich",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261025T1415+0100",
+          "sha256": "dda35901fef620d1d85fdf440c90402e8fa2aeee8f93891186b48ccbbd916a1d",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40196817073"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "edvard-munch-the-dead-mother-and-child",
+      "title": "The Dead Mother and Child",
+      "artist": "Edvard Munch",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 18,
+      "priority": 29,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "edvard-munch-the-vampire",
+      "title": "The Vampire",
+      "artist": "Edvard Munch",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 17,
+      "priority": 28,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "edward-burne-jones-king-arthur-in-avalon",
+      "title": "King Arthur in Avalon",
+      "artist": "Edward Burne-Jones",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 8,
+      "priority": 10,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "edward-burne-jones-l-ultimo-sonno-di-re-artu",
+      "title": "L'ultimo sonno di re Artù",
+      "artist": "Edward Burne-Jones",
+      "year": "",
+      "museum": "Museo de Arte de Ponce, Puerto Rico",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "b52b746140bd9a916e516a27125dd14d95a01a1033d81a4a8bbddce057a3095a"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "524024264af836d3d043668805b71763b28a03195eaf8c28f6215b43ee13858f"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "5de6750a8d2656ad405a9ebdb64cdcfc7d831b425d5eb470e828d3ad33b250aa"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "32e78891649c5282ef942d88f1d8322bb08d71b12aee50de30744a9658bb3ac6"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "edward-burne-jones-the-baleful-head",
+      "title": "The Baleful Head",
+      "artist": "Edward Burne-Jones",
+      "year": "1885–1887",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261112_baleful_head.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_baleful_head.json",
+              "status_claim": "ONE_NEW_REAL_51_SEC_MP4_TWO_ENCODINGS_SOURCE_CHECK_FFMPEG_SHA_ZIP_GITHUB_INDEPENDENT_AND_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+              "classification": "render_documentato",
+              "sha256": "b3fe9f6f57fce2ec16ae3640d87c3109c5252acd0c1f514a1e0f1b4ac00dd0c8"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 19,
+      "priority": 21,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "edward-burne-jones-the-golden-stairs",
+      "title": "The Golden Stairs",
+      "artist": "Edward Burne-Jones",
+      "year": "1880",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261110_golden_stairs.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 12,
+      "priority": 9,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "edwin-landseer-l-uomo-propone-dio-dispone",
+      "title": "L'uomo propone, Dio dispone",
+      "artist": "Edwin Landseer",
+      "year": "",
+      "museum": "Royal Holloway University of London",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "ae0a1298ee7110a393f5695c5134d351ad06626bcee9d36c9c6328252f6de1b8"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "ca20dd3410c1b19bb7c4deee07e2550aaa61e969b8c4b44dd3d120eb0af2616a"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "54e0a3b87887afe3c3e3c724e92d45a30e3f5ecb098f510c34358eaba49db837"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "d9b555b82eca762b27f24090c4e3953e67535012bce69b0fb69751effeadfae1"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "elihu-vedder-la-sfinge-sulla-riva-del-mare",
+      "title": "La Sfinge sulla riva del mare",
+      "artist": "Elihu Vedder",
+      "year": "",
+      "museum": "de Young, Fine Arts Museums of San Francisco",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "885683bf4eaea71f322751e82b9de4a2886c293ec68f2addb0413a93b75584b5"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "dfbaa8a31119af832393444aa32efadfa54433db14b813661ea917370802142e"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "fef0b01d28fa07ced790ddacfee71bad407298ed34d0074dd8fad99f324a23f6"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "45497d7c0cb8ca248d644d3237a9454ab8b876192e39110da4d7ca643ac2fc38"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "eugene-delacroix-the-barque-of-dante",
+      "title": "The Barque of Dante",
+      "artist": "Eugène Delacroix",
+      "year": "1822",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261110_barque_dante.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 27,
+      "priority": 24,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "eugene-delacroix-the-death-of-sardanapalus-1827",
+      "title": "The Death of Sardanapalus",
+      "artist": "Eugène Delacroix",
+      "year": "1827",
+      "museum": "Musée du Louvre",
+      "object_id": "RF 2346",
+      "lanes": [
+        "selezione_10"
+      ],
+      "sources": [
+        "queue/artvision_owner_selected_ten_20261102.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": [
+            "DELACROIX_THE_DEATH_OF_SARDANAPALUS_CRITICO_MUSEUM_V171_REVIEW.mp4"
+          ]
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [
+        "DELACROIX_THE_DEATH_OF_SARDANAPALUS_CINEMA_V168_REVIEW.mp4",
+        "DELACROIX_THE_DEATH_OF_SARDANAPALUS_CRITICO_MUSEUM_V171_REVIEW.mp4"
+      ],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "evelyn-de-morgan-the-dryad",
+      "title": "The Dryad",
+      "artist": "Evelyn De Morgan",
+      "year": "1884–1885",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json",
+              "status_claim": "OWNER_REJECTED_WRONG_NARRATION_VOICE__TECHNICAL_ARTIFACT_ONLY__CRITICO_NOT_COMPLETED",
+              "classification": "non_documentato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 22,
+      "priority": 22,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "evelyn-de-morgan-the-storm-spirits",
+      "title": "The Storm Spirits",
+      "artist": "Evelyn De Morgan",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261024T1715+0200",
+          "sha256": "8805abc2cf04519d22910194e2c5b820f37695234778846715dec47f655cac67",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40106549733"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 21,
+      "priority": 2,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "evelyn-de-morgan-caspar-david-friedrich-utagawa-hiroshige-vincent-van-gogh-after-the-storm",
+      "title": "After the Storm",
+      "artist": "Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261025T2013+0100",
+          "sha256": "382d5c07a839dab2cc897b69f2d0fefffc9d6d897d27c8e51eee4a98f96748bd",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "ford-madox-brown-l-ultimo-saluto-all-inghilterra",
+      "title": "L'ultimo saluto all'Inghilterra",
+      "artist": "Ford Madox Brown",
+      "year": "",
+      "museum": "Birmingham Museum and Art Gallery",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "7924fdd91c7c6ddd75e1bab8e2a10477e9a0dfb050641e2d234d09aa8e2d30bf"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "275bf8911caf1fddb7324ac3740c47a51ec6ae47c78d796d44bb93d50b3d5201"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "bc2e04fde26a0e388ff9e538ca39a0412ae3b693f6f0a9feb51914693cca22d4"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "55a8d292878be2719ab7c3d4e8d261d9c93dca71ff11277fcc5c8f430d48ad44"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "francisco-goya-the-witches-flight",
+      "title": "The Witches' Flight",
+      "artist": "Francisco Goya",
+      "year": "1798",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261112_goya_witches_flight.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_goya_witches_flight.json",
+              "status_claim": "ONE_REAL_NEW_SOURCE_SHA1_LOCKED_52_46S_REVIEW_MP4_HQ_AND_ANDROID_FFMPEG_SHA_ZIP_GITHUB_INDEPENDENT_JOB_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+              "classification": "render_documentato",
+              "sha256": "c192126cfc8d6eb57eb980d49816d389023fdbf1798e36ba0cfaea6bc8d59048"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 15,
+      "priority": 19,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "franz-sedlacek-the-strange-garden",
+      "title": "The Strange Garden",
+      "artist": "Franz Sedlacek",
+      "year": "verify exact year",
+      "museum": "verify exact collection",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "nuova_serie"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_new_series_20261114.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 29,
+      "priority": 26,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "franz-von-stuck-the-sin-die-sunde-1912",
+      "title": "The Sin (Die Sünde)",
+      "artist": "Franz von Stuck",
+      "year": "c. 1912",
+      "museum": "Alte Nationalgalerie, Berlin",
+      "object_id": "F.V. 72",
+      "lanes": [
+        "nuova_serie",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_new_series_20261114.json",
+        "queue/artvision_new_series_checkpoint_20261116_stuck_berlin_existing_artifacts.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "da_produrre",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "da_produrre",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_new_series_checkpoint_20261116_stuck_berlin_existing_artifacts.json",
+              "status_claim": "non dichiarato",
+              "classification": "render_documentato",
+              "sha256": "8d353400e7ff758f115090c7470c9225500bf8f7819fe6e4404a14e36b481015"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_new_series_checkpoint_20261116_stuck_berlin_existing_artifacts.json",
+              "status_claim": "non dichiarato",
+              "classification": "render_documentato",
+              "sha256": "85bd6eefcf05ac23c3cb80dc99c29c1c5073a003aa273fdc3d6905582c4f214e"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum"
+      ],
+      "render_documented": 2,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "george-bellows-cliff-dwellers",
+      "title": "Cliff Dwellers",
+      "artist": "George Bellows",
+      "year": "1913",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261112_bellows_cliff_dwellers.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_bellows_cliff_dwellers.json",
+              "status_claim": "ONE_NEW_REAL_MP4_TWO_BITRATES_GITHUB_INDEPENDENT_QA_AND_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+              "classification": "render_documentato",
+              "sha256": "0143c5377c84d7fd77f85a4793cc84ccd7959c9a5ac0c8d4cec47e7adc64a32b"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 30,
+      "priority": 27,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "georges-seurat-a-sunday-on-la-grande-jatte-1884-1884",
+      "title": "A Sunday on La Grande Jatte—1884",
+      "artist": "Georges Seurat",
+      "year": "1884-1886",
+      "museum": "Art Institute of Chicago",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "bloccato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "blocked",
+              "classification": "bloccato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "bloccato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "blocked",
+              "classification": "bloccato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum"
+      ],
+      "render_documented": 2,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "giovanni-segantini-le-cattive-madri-the-evil-mothers-1894",
+      "title": "Le cattive madri (The Evil Mothers)",
+      "artist": "Giovanni Segantini",
+      "year": "1894",
+      "museum": "Belvedere, Vienna",
+      "object_id": "485",
+      "lanes": [
+        "nuova_serie"
+      ],
+      "sources": [
+        "queue/artvision_new_series_20261114.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "giuseppe-arcimboldo-vertumnus",
+      "title": "Vertumnus",
+      "artist": "Giuseppe Arcimboldo",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261027T0515+0100",
+          "sha256": "65e3bb9bc5de679122c2ccd82cc0af8d80b5cb9c677b1bcfe39aef1633f407d8",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "gustav-klimt-the-kiss-1908",
+      "title": "The Kiss",
+      "artist": "Gustav Klimt",
+      "year": "1908–1909",
+      "museum": "Upper Belvedere, Vienna",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "d8bf725675e45be210383a4ca3b2113a06807bb9af540e21b3adb7fa2b4e5eb8"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "814e52f6d4281df14d3064bce6f1295ab6cdc059a5d5c80acf7db0a095cbf1ab"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "5651ec851055d007dba9ed86762840decd51a9008a9ebdfcba470618e31200a6"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "9dc3cf7abcebc3e8b16d105e9e9934cde8775cec1ac6b684519fe0df1875e746"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "gustave-moreau-jupiter-and-semele",
+      "title": "Jupiter and Semele",
+      "artist": "Gustave Moreau",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261025T1115+0100",
+          "sha256": "168a01c4e4defdbac4a7fad128e4d4185d339344562dccc23ba5eb969c0aa758",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "gustave-moreau-the-apparition",
+      "title": "The Apparition",
+      "artist": "Gustave Moreau",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 16,
+      "priority": 20,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "henry-meynell-rheam-sleeping-beauty",
+      "title": "Sleeping Beauty",
+      "artist": "Henry Meynell Rheam",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261112_rheam_sleeping_beauty.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "in_coda_o_preflight",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_rheam_sleeping_beauty.json",
+              "status_claim": "ONE_NEW_TRUE_MP4_GITHUB_AND_INDEPENDENT_CONTAINER_FFMPEG_SHA_CRC_PASS_PRIVATE_ARTISTIC_REVIEW_PENDING",
+              "classification": "in_coda_o_preflight"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 23,
+      "priority": 5,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "hieronymus-bosch-the-garden-of-earthly-delights-1490",
+      "title": "The Garden of Earthly Delights",
+      "artist": "Hieronymus Bosch",
+      "year": "circa 1490–1500",
+      "museum": "Museo Nacional del Prado",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "2c59c58185ed3d7c51d280bf9c8442414cddf163a231fef08fd7a37d657b0ded"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "73b1a97d0640123e38184db7f20334c0de4db318594a8dd728ff0e537253854b"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "3eb4a29c00b5d937f9385fef583a39dcccb754073328258db9f8b3b940acb2ba"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "67ad38e0c3ec63c6c6a9e2c925252a515208dd357d0e6c26b0c5dd762177d508"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "hugo-simberg-the-garden-of-death-1896",
+      "title": "The Garden of Death",
+      "artist": "Hugo Simberg",
+      "year": "1896",
+      "museum": "Finnish National Gallery / Ateneum",
+      "object_id": "A II 968:16",
+      "lanes": [
+        "selezione_10"
+      ],
+      "sources": [
+        "queue/artvision_owner_selected_ten_20261102.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": [
+            "SIMBERG_THE_GARDEN_OF_DEATH_CRITICO_STANDARD_V146_REVIEW.mp4"
+          ]
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [
+        "SIMBERG_THE_GARDEN_OF_DEATH_CINEMA_V134_REVIEW.mp4",
+        "SIMBERG_THE_GARDEN_OF_DEATH_CRITICO_STANDARD_V146_REVIEW.mp4"
+      ],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "hugo-simberg-the-wounded-angel",
+      "title": "The Wounded Angel",
+      "artist": "Hugo Simberg",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261024T2315+0200",
+          "sha256": "2a482d3017f16e13dd132c366a28a344ffa05f420271d463ff99d11218dc0ace",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40134086889"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "hugo-simberg-the-wounded-angel-a-quiet-procession",
+      "title": "The Wounded Angel — A Quiet Procession",
+      "artist": "Hugo Simberg",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261026T1415+0100",
+          "sha256": "c8af621c71cfdf683cf12f6ed0b556319760b5b58919f7b33c49e8c0cdc7a98c",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "hugo-simberg-jan-van-eyck-arnold-bocklin-the-witness-three-historic-gazes",
+      "title": "The Witness — three historic gazes",
+      "artist": "Hugo Simberg; Jan van Eyck; Arnold Böcklin",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261026T2315+0100",
+          "sha256": "d7418cfe13a58b930e269ab246c4104d4b130895e43d68629b82887f33cfc33a",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "ilya-repin-sadko",
+      "title": "Sadko",
+      "artist": "Ilya Repin",
+      "year": "1876",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261111_sadko.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261111_sadko.json",
+              "status_claim": "ONE_REAL_NEW_MP4_TWO_BITRATES_ORIGINAL_SHA1_LOCKED_FFMPEG_GITHUB_INDEPENDENT_ARTIFACT_AND_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+              "classification": "render_documentato",
+              "sha256": "60e4f64a34c665d20971868d8a570afb9d6b0777cb7c83e5f22360356bb106f8"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 3,
+      "priority": 14,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "ivan-aivazovsky-the-ninth-wave",
+      "title": "The Ninth Wave",
+      "artist": "Ivan Aivazovsky",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261025T2315+0100",
+          "sha256": "6dd42ec9af731b2777b632d60c9cf5b11b87935115100f9f0382d8af41ff3f80",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40239618696"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "ivan-aivazovsky-caspar-david-friedrich-arnold-bocklin-the-sea-between-us",
+      "title": "The Sea Between Us",
+      "artist": "Ivan Aivazovsky; Caspar David Friedrich; Arnold Böcklin",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261026T1115+0100",
+          "sha256": "a104b4fb4676c61e06d6bc9c4c881dbf012c619f0a93da6bfdea307a724d222e",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "ivan-aivazovsky-utagawa-hiroshige-evelyn-de-morgan-the-shape-of-the-wind",
+      "title": "The Shape of the Wind",
+      "artist": "Ivan Aivazovsky; Utagawa Hiroshige; Evelyn De Morgan",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261026T0215+0100",
+          "sha256": "48b45dc7640e6c622fc6c4e377ff9fa98fff66376ea4ec742f11f8bb151198b2",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "j-m-w-turner-the-fighting-temeraire-1839",
+      "title": "The Fighting Temeraire",
+      "artist": "J. M. W. Turner",
+      "year": "1839",
+      "museum": "National Gallery London",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "j-m-w-turner-the-shipwreck",
+      "title": "The Shipwreck",
+      "artist": "J. M. W. Turner",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 25,
+      "priority": 3,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "jacek-malczewski-b-edne-ko-o-il-circolo-vizioso-1897",
+      "title": "Błędne koło (Il circolo vizioso)",
+      "artist": "Jacek Malczewski",
+      "year": "1897",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "be5fca2d01fdb7e8584ebf1319a16f35b04420412d0ea9de6a38114bc997412b"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "e5968d0afc9764d5ecc1e50037326fe780a4460fbcf1a661d921f24f2f49e677"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "c7543e9515b4c60c21a484232a571476fed265cd9e5c735b70d0b66ce034107a"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "baf89b0afc03a0c906382b8bc82fb20328de88768ef036ed599c58cb36036638"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "jacques-louis-david-the-death-of-socrates-1787",
+      "title": "The Death of Socrates",
+      "artist": "Jacques Louis David",
+      "year": "1787",
+      "museum": "The Metropolitan Museum of Art",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "f68592a8d65d5d774494f49892a4b8be8f9bbe7842ab19631f85046f0adf19c3"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "c3be9d91b2967df4e484918b6d678b141111130eea991b63493d15b843c090a9"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "4ea696772dd80e03a73c7b3570a22c7915787d47b77822a97ee040cbca959ce9"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "6ae8a2cb1ad3709bea4bab801ddefdaf8e7a00b3f3f65f50ddd81af8e4414afc"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "james-ensor-the-intrigue",
+      "title": "The Intrigue",
+      "artist": "James Ensor",
+      "year": "1890",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint",
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261111_ensor_intrigue.json",
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261111_ensor_intrigue.json",
+              "status_claim": "ONE_GENUINE_NEW_50_83S_MP4_TWO_BITRATES_KMSKA_CC0_SOURCE_LOCKED_FFMPEG_GITHUB_INDEPENDENT_READBACK_AND_LIBRARY_PASS_ARTISTIC_PENDING",
+              "classification": "render_documentato",
+              "sha256": "8ed0fb016b147664bc91589a8f545f8d71a259b4697f98677a022e78d0184663"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261028T0215+0100",
+          "sha256": "9eafd4ca3513605082607b879ed124dc7e73ca05818d5c23ea4250dae8c0cfcc",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40610397247"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 11,
+      "priority": 12,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "jan-van-eyck-the-arnolfini-portrait-the-secret-in-the-mirror",
+      "title": "The Arnolfini Portrait — The Secret in the Mirror",
+      "artist": "Jan van Eyck",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261026T1715+0100",
+          "sha256": "322ffedbd631cdd7d698864482ddeccbfca026864d911a68a9a84c9d2299942f",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40359415221"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "jean-leon-gerome-the-duel-after-the-masquerade",
+      "title": "The Duel After the Masquerade",
+      "artist": "Jean-Léon Gérôme",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261110_duel_masquerade.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 13,
+      "priority": 18,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "john-everett-millais-la-ragazza-cieca",
+      "title": "La ragazza cieca",
+      "artist": "John Everett Millais",
+      "year": "",
+      "museum": "Birmingham Museum and Art Gallery",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "c97f42ce33e9e38788d8392390e289e8d8953a36a3459e79378b2d192a978a3a"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "f0bd2b2346a95d42934efb25ef36f4c1b1d81a545fb410e75f436348f942c2a8"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "70d7feac0a00339601d4ac9faa222e227b6d4b46e46ef78149800113d8401973"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "e3f261639b89c16f073e7b975c2966a1523c52bce895a4ccf05b486ed88add6f"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "john-martin-the-country-of-the-iguanodon",
+      "title": "The Country of the Iguanodon",
+      "artist": "John Martin",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261026T2015+0100",
+          "sha256": "966813be3f304b1d28ea3f47ac85ed33f6750e0d9b9df256e1ea0f6722859280",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "john-william-waterhouse-circe-invidiosa",
+      "title": "Circe Invidiosa",
+      "artist": "John William Waterhouse",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261025T0215+0200",
+          "sha256": "df44f90c09f0a9d1e392527eaf96c3ff1c6e76ac4ad99ff07653f1acac33203d",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40146646289"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "john-william-waterhouse-the-lady-of-shalott-1888",
+      "title": "The Lady of Shalott",
+      "artist": "John William Waterhouse",
+      "year": "1888",
+      "museum": "Tate Britain",
+      "object_id": "N01543",
+      "lanes": [
+        "selezione_10"
+      ],
+      "sources": [
+        "queue/artvision_owner_selected_ten_20261102.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": [
+            "WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_STANDARD_V156_REVIEW.mp4"
+          ]
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": [
+            "WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_MUSEUM_V164_REVIEW.mp4"
+          ]
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [
+        "WATERHOUSE_THE_LADY_OF_SHALOTT_CINEMA_V155_REVIEW.mp4",
+        "WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_MUSEUM_V164_REVIEW.mp4",
+        "WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_STANDARD_V156_REVIEW.mp4"
+      ],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "john-william-waterhouse-the-magic-circle-1886",
+      "title": "The Magic Circle",
+      "artist": "John William Waterhouse",
+      "year": "1886",
+      "museum": "Tate Britain",
+      "object_id": "N01572",
+      "lanes": [
+        "selezione_10"
+      ],
+      "sources": [
+        "queue/artvision_owner_selected_ten_20261102.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": [
+            "WATERHOUSE_THE_MAGIC_CIRCLE_CRITICO_STANDARD_V159_REVIEW.mp4"
+          ]
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "source": "queue/artvision_owner_selected_ten_20261102.json",
+          "status": "legacy_non_4x1"
+        }
+      ],
+      "site_candidates": [
+        "WATERHOUSE_THE_MAGIC_CIRCLE_CINEMA_V158_REVIEW.mp4",
+        "WATERHOUSE_THE_MAGIC_CIRCLE_CRITICO_STANDARD_V159_REVIEW.mp4"
+      ],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "john-william-waterhouse-the-mermaid",
+      "title": "The Mermaid",
+      "artist": "John William Waterhouse",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 20,
+      "priority": 8,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "john-william-waterhouse-ulysses-and-the-sirens",
+      "title": "Ulysses and the Sirens",
+      "artist": "John William Waterhouse",
+      "year": "1891",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261110_ulysses_sirens.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 7,
+      "priority": 7,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "joos-van-craesbeeck-the-temptation-of-saint-anthony",
+      "title": "The Temptation of Saint Anthony",
+      "artist": "Joos van Craesbeeck",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261027T1115+0100",
+          "sha256": "58497af140bdfd5db63a070b5539e3c5c8dfba65f06fb657c18d437a8436b430",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "joseph-mallord-william-turner-the-burning-of-the-houses-of-lords-and-commons-16-october-1834-1835",
+      "title": "The Burning of the Houses of Lords and Commons, 16 October 1834",
+      "artist": "Joseph Mallord William Turner",
+      "year": "1835",
+      "museum": "Cleveland Museum of Art",
+      "object_id": "1942.647",
+      "lanes": [
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_extra_render_checkpoint_20261115_turner_fire_cleveland.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "bloccato",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261115_turner_fire_cleveland.json",
+              "status_claim": "BLOCKED_APPROVED_GACRUX_V333_API",
+              "classification": "bloccato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "bloccato",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261115_turner_fire_cleveland.json",
+              "status_claim": "BLOCKED_GACRUX_V333_AND_MUSEUM_GATE",
+              "classification": "bloccato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261115_turner_fire_cleveland.json",
+              "status_claim": "RENDERED_TECH_QA_ART_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "c5608f155c5adfa994a1af235b718f54826b9b70d84d78ce1e1c3dbfd21f38a3"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "da_produrre",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261115_turner_fire_cleveland.json",
+              "status_claim": "NOT_STARTED_MUSEUM_GATE",
+              "classification": "da_produrre"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "joseph-wright-of-derby-an-experiment-on-a-bird-in-the-air-pump-1768",
+      "title": "An Experiment on a Bird in the Air Pump",
+      "artist": "Joseph Wright of Derby",
+      "year": "1768",
+      "museum": "National Gallery London",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1",
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json",
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "0d3a171f5a760463e66f16d6eaab50eac7c44fb72115dc2a734fe822be6b8323"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "462f0afd6643a023110f48ce287cfada56d15293d375ac905098e6778f9cb94c"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "ec4525c155334a02696bfa05d745005bea3084f178043c9eaf1dca6d7bfe29e2"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "ae5af74ed0a35e1d6ebfe31081b543b2778ce5b1a1c7b88dcfe712f516192a99"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261028T0915+0100-V52B",
+          "sha256": "ec4525c155334a02696bfa05d745005bea3084f178043c9eaf1dca6d7bfe29e2",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40649283319"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "joseph-wright-of-derby-the-alchemist",
+      "title": "The Alchemist",
+      "artist": "Joseph Wright of Derby",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 26,
+      "priority": 23,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "jules-bastien-lepage-giovanna-d-arco",
+      "title": "Giovanna d'Arco",
+      "artist": "Jules Bastien-Lepage",
+      "year": "",
+      "museum": "The Metropolitan Museum of Art, New York",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "573cd31dac77c69faa4708482851d1d0646aec9e15e881caf32349d74e14c16b"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "1b303090417c85190706668fd486cbbc6f6993eac8f75cffff453e6d44a5ba8c"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "55097be8e178d8219d03ada9aafd0cdf03320397a0a1a5e210e20b95aa2db372"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "c75df0efc965b040913c4fa6fe9e93f730303305969426892ee6e7b29fa59213"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "karl-bryullov-the-last-day-of-pompeii",
+      "title": "The Last Day of Pompeii",
+      "artist": "Karl Bryullov",
+      "year": "1833",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261112_pompeii.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_pompeii.json",
+              "status_claim": "ONE_NEW_REAL_MP4_TWO_VISUAL_RENDER_ATTEMPTS_V2_APPROVED_FOR_TECHNICAL_PRIVATE_REVIEW_ONLY_ARTISTIC_PENDING",
+              "classification": "render_documentato",
+              "sha256": "e13376325398f04950db91ab2c1408ba4b120632eb892cf78a604ee0d986077c"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 5,
+      "priority": 17,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "katsushika-hokusai-the-great-wave-1830",
+      "title": "The Great Wave",
+      "artist": "Katsushika Hokusai",
+      "year": "circa 1830–1832",
+      "museum": "The Metropolitan Museum of Art",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "20eee2b33cdf8a007213a2ce92b9c98c16bd63b5b93d8e91083dbf9614959ba3"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "76576d24242d4c173502d85acd34d7c233fbeb6f55e00e05a5c6e8ae15ac93bb"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "f253f21ea327e17a16ac453a18059f8e468c98f3b7e468574d5ced630fcc8689"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "92d017fc9b65b63799d161a33e9e9902cfb1e20c7fbbf6ba878b1d54035a6547"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "konstantin-flavitsky-princess-tarakanova",
+      "title": "Princess Tarakanova",
+      "artist": "Konstantin Flavitsky",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 4,
+      "priority": 16,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "mikhail-vrubel-the-demon-seated",
+      "title": "The Demon Seated",
+      "artist": "Mikhail Vrubel",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261025T0515+0100",
+          "sha256": "311bafb24465a9d5b2b11c078ae850bbca4286e3084a0ac277d2b156d7186fed",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40161154578"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "odilon-redon-the-cyclops",
+      "title": "The Cyclops",
+      "artist": "Odilon Redon",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261027T2015+0100",
+          "sha256": "860922e2ffac18bfd6859a291f26b58e53dfbe639cb3eb2d50b5efedd17acda0",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "odilon-redon-evelyn-de-morgan-hugo-simberg-the-other-side-of-beauty",
+      "title": "The Other Side of Beauty",
+      "artist": "Odilon Redon; Evelyn De Morgan; Hugo Simberg",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261025T0815+0100",
+          "sha256": "45ad412cfa177c4822bab07e849b7feca3f15f9323d58f66d1e845f8946c9f6a",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "odilon-redon-gustave-moreau-arnold-bocklin-visions-of-symbolism",
+      "title": "Visions of Symbolism",
+      "artist": "Odilon Redon; Gustave Moreau; Arnold Böcklin",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261024T2015+0200",
+          "sha256": "596e8de31372c8026eaaa7a4d2f82ffd75133e0bdc601a0907ea1af7501b4746",
+          "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40120512139"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "paul-klee-fish-magic",
+      "title": "Fish Magic",
+      "artist": "Paul Klee",
+      "year": "1925",
+      "museum": "Philadelphia Museum of Art",
+      "object_id": "1950-134-112",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261113_klee_fish_magic.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "in_coda_o_preflight",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261113_klee_fish_magic.json",
+              "status_claim": "NEW_REAL_LOCAL_MP4_PRIVATE_CINEMA_FULL_DECODE_AND_LIBRARY_READBACK_PASS_RIGHTS_AND_ARTISTIC_REVIEW_PENDING",
+              "classification": "in_coda_o_preflight"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 14,
+      "priority": 30,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "peter-nicolai-arbo-the-wild-hunt-of-odin",
+      "title": "The Wild Hunt of Odin",
+      "artist": "Peter Nicolai Arbo",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261111_arbo_wild_hunt.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261111_arbo_wild_hunt.json",
+              "status_claim": "ONE_REAL_NEW_MP4_SOURCE_LOCKED_TECH_QA_AND_PRIVATE_LIBRARY_INDEPENDENT_READBACK_PASS_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "7d086f6e7c5a6180ef43ffd67bf4764ceb787dfceb09463b6c1d776a18680611"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 1,
+      "priority": 15,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "peter-paul-rubens-the-battle-of-the-amazons",
+      "title": "The Battle of the Amazons",
+      "artist": "Peter Paul Rubens",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 28,
+      "priority": 25,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "piero-di-cosimo-the-forest-fire",
+      "title": "The Forest Fire",
+      "artist": "Piero di Cosimo",
+      "year": "ca. 1505",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261111_forest_fire.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261111_forest_fire.json",
+              "status_claim": "ONE_REAL_NEW_VIDEO_TWICE_ENCODED_HQ_AND_ANDROID_SOURCE_QA_FFMPEG_INDEPENDENT_ARTIFACT_AND_LIBRARY_READBACK_PASS__ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "42b35f80474c8889c1aed8de86ab2f66a9c8cdd086449f3b1c93011f3c1fa90f"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 24,
+      "priority": 6,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "pieter-bruegel-the-elder-dulle-griet",
+      "title": "Dulle Griet",
+      "artist": "Pieter Bruegel the Elder",
+      "year": "1563",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261111_dulle_griet.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261111_dulle_griet.json",
+              "status_claim": "NEW_REAL_RESTORED_SOURCE_2021_CINEMA_MP4_2_BITRATES_GITHUB_QA_AND_INDEPENDENT_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+              "classification": "render_documentato",
+              "sha256": "2a31eb964a3e102e5205dba569e8186ee46fab49e9811e14c6825630a2e92279"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 10,
+      "priority": 11,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "pieter-bruegel-the-elder-the-fall-of-the-rebel-angels-1562",
+      "title": "The Fall of the Rebel Angels",
+      "artist": "Pieter Bruegel the Elder",
+      "year": "1562",
+      "museum": "Royal Museums of Fine Arts of Belgium",
+      "object_id": "584",
+      "lanes": [
+        "selezione_10",
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_owner_selected_ten_20261102.json",
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "source": "queue/artvision_owner_selected_ten_20261102.json",
+          "status": "legacy_non_4x1"
+        },
+        {
+          "cycle_id": "20261027T2315+0100",
+          "sha256": "0bd2fb6e0aadd02ae1eab56fa804f5fcb914c15330121765e28ba5878531f12a",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "pieter-bruegel-the-elder-the-tower-of-babel-1563",
+      "title": "The Tower of Babel",
+      "artist": "Pieter Bruegel the Elder",
+      "year": "1563",
+      "museum": "Kunsthistorisches Museum Wien",
+      "object_id": "GG 1026",
+      "lanes": [
+        "selezione_10"
+      ],
+      "sources": [
+        "queue/artvision_owner_selected_ten_20261102.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "pieter-bruegel-the-elder-the-triumph-of-death-1562",
+      "title": "The Triumph of Death",
+      "artist": "Pieter Bruegel the Elder",
+      "year": "1562–1563",
+      "museum": "Museo del Prado",
+      "object_id": "P001393",
+      "lanes": [
+        "selezione_10"
+      ],
+      "sources": [
+        "queue/artvision_owner_selected_ten_20261102.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "source": "queue/artvision_owner_selected_ten_20261102.json",
+          "status": "legacy_non_4x1"
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "rembrandt-van-rijn-the-night-watch-1642",
+      "title": "The Night Watch",
+      "artist": "Rembrandt van Rijn",
+      "year": "1642",
+      "museum": "Rijksmuseum",
+      "object_id": "SK-C-5",
+      "lanes": [
+        "selezione_10"
+      ],
+      "sources": [
+        "queue/artvision_owner_selected_ten_20261102.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "richard-dadd-the-fairy-feller-s-master-stroke",
+      "title": "The Fairy Feller's Master-Stroke",
+      "artist": "Richard Dadd",
+      "year": "1855-1864",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30",
+        "checkpoint",
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261112_fairy_feller.json",
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_fairy_feller.json",
+              "status_claim": "ONE_REAL_NEW_CINEMA_MP4_CORRECTED_V2_PRIVATE_REVIEW__SOURCE_SHA1_FFMPEG_ZIP_GITHUB_INDEPENDENT_AND_LIBRARY_READBACK_PASS__ARTISTIC_PENDING",
+              "classification": "render_documentato",
+              "sha256": "e4b3ac240cbb04f039f66b9d64f278890b2e28fb35102b4fdd337bc44dd966bb"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261027T0815+0100",
+          "sha256": "401a3a802d42d045d3261ed143d9f302879db2bbc53876c6a11c2b52529fc693",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 2,
+      "priority": 13,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "rosa-bonheur-la-fiera-dei-cavalli",
+      "title": "La fiera dei cavalli",
+      "artist": "Rosa Bonheur",
+      "year": "",
+      "museum": "The Metropolitan Museum of Art, New York",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "649af0e20abd230714a06619c238b9d8358dc6e9e3e9a191042882431d59073c"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "2265bd9235bde8f7d46ab98eabbd5bfeaa8c8c7039cbf1ce4d0dbcb9afd1b491"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "dce227e4fbfdae53ab841b09f76fcb7dd810a08e4cd09e6be4721a1f23c25397"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "df5a10e388a79e57b0160b95dc9983f1337a0b9733ec339d8077c2a5f6bdf59c"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "salvador-dali-the-temptation-of-st-anthony-1946",
+      "title": "The Temptation of St. Anthony",
+      "artist": "Salvador Dalí",
+      "year": "1946",
+      "museum": "Royal Museums of Fine Arts of Belgium",
+      "object_id": "Fundació Dalí catalogue P 625",
+      "lanes": [
+        "selezione_10"
+      ],
+      "sources": [
+        "queue/artvision_owner_selected_ten_20261102.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": true,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "thomas-cole-the-course-of-empire-destruction",
+      "title": "The Course of Empire: Destruction",
+      "artist": "Thomas Cole",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 9,
+      "priority": 1,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "thomas-cole-the-voyage-of-life-manhood-1842",
+      "title": "The Voyage of Life: Manhood",
+      "artist": "Thomas Cole",
+      "year": "1842",
+      "museum": "",
+      "object_id": "NGA 1971.16.3",
+      "lanes": [
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_extra_render_checkpoint_20261116_cole_manhood.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "bloccato",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261116_cole_manhood.json",
+              "status_claim": "BLOCKED_APPROVED_GACRUX_API",
+              "classification": "bloccato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "bloccato",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261116_cole_manhood.json",
+              "status_claim": "BLOCKED_APPROVED_GACRUX_API_AND_MUSEUM",
+              "classification": "bloccato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261116_cole_manhood.json",
+              "status_claim": "RENDERED_TECH_PASS_PRIVATE_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "c5ad9a970467bfd77f1b29e15504df6464288fb35d2d25201ceaea5a1d453f6d"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "da_produrre",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261116_cole_manhood.json",
+              "status_claim": "NOT_STARTED_MUSEUM_DIMENSIONS_AND_ROOM_GATE",
+              "classification": "da_produrre"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "utagawa-hiroshige-plum-garden-at-kameido",
+      "title": "Plum Garden at Kameido",
+      "artist": "Utagawa Hiroshige",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261026T0815+0100",
+          "sha256": "9afc9b6eb688b427e1957efc161382cc7fad1fdec9c26c75339a09c2c334275c",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "utagawa-hiroshige-vincent-van-gogh-japan-through-van-gogh",
+      "title": "Japan Through Van Gogh",
+      "artist": "Utagawa Hiroshige; Vincent van Gogh",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261025T1715+0100",
+          "sha256": "c005bc6f860bc57ed412ac483d56ed440d9ae49feecc908f1701090b42f5da3f",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "william-blake-the-ghost-of-a-flea-1819",
+      "title": "The Ghost of a Flea",
+      "artist": "William Blake",
+      "year": "1819–1820",
+      "museum": "Tate Britain",
+      "object_id": "N05889",
+      "lanes": [
+        "selezione_10"
+      ],
+      "sources": [
+        "queue/artvision_owner_selected_ten_20261102.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": [
+            "BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4"
+          ]
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [
+        "BLAKE_THE_GHOST_OF_A_FLEA_CINEMA_V158_REVIEW.mp4",
+        "BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4"
+      ],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "william-blake-the-great-red-dragon-and-the-woman-clothed-with-the-sun",
+      "title": "The Great Red Dragon and the Woman Clothed with the Sun",
+      "artist": "William Blake",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "cicli_v31"
+      ],
+      "sources": [
+        "queue/artvision_autoproduction_v31_state.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "cycle_id": "20261027T0217+0100",
+          "sha256": "1e0a2e77926a017fe22eb530b83ae43b142eb317786cd1e622a98966dcc78100",
+          "workflow_run": null
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "william-holbrook-beard-the-bulls-and-bears",
+      "title": "The Bulls and Bears",
+      "artist": "William Holbrook Beard",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "selezione_30"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "selection_order": 6,
+      "priority": 4,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "william-holbrook-beard-the-bulls-and-bears-in-the-market-1879",
+      "title": "The Bulls and Bears in the Market",
+      "artist": "William Holbrook Beard",
+      "year": "1879",
+      "museum": "New-York Historical Society",
+      "object_id": "1971.104",
+      "lanes": [
+        "nuova_serie"
+      ],
+      "sources": [
+        "queue/artvision_new_series_20261114.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "winslow-homer-the-gulf-stream-1899",
+      "title": "The Gulf Stream",
+      "artist": "Winslow Homer",
+      "year": "1899; reworked by 1906",
+      "museum": "The Metropolitan Museum of Art",
+      "object_id": "",
+      "lanes": [
+        "storico_4x1"
+      ],
+      "sources": [
+        "queue/artvision_four_variants_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "b28da50e0dac449ef9eca2edffe5ee6ee692702f95ab094d1fadff892d28eb52"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_four_variants_s01_20261028.json",
+              "status_claim": "rendered_needs_review",
+              "classification": "render_documentato",
+              "sha256": "2c50c5f94c2fefbdf23b1a03086245afed3e25b06a159845c8947fcd9ee1a5b8"
+            }
+          ],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [],
+      "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    }
+  ],
+  "warnings": []
+}
