@@ -116,3 +116,16 @@ Ciascuna nota ha chiave, categoria, sintesi e URL GitHub ufficiale. Può essere 
 Strumento MCP `get_shared_memory`: legge soltanto `public_context`, massimo 20 righe, valida categoria, lunghezza e dominio del link, restituisce un avvertimento che le note possono essere incomplete o superate. Niente cookie, token, chat private o dati cliente.
 
 **Importante:** per dati privati e messaggi personali occorrerà un **database distinto** e strumenti autenticati con OAuth, permessi per agente e tracciamento delle modifiche. Il presente database è collegato a un Worker pubblico e non deve mai ricevere contenuti riservati. Nessuna integrazione diretta TRAE Work verificata per V1.2. Non usare TinyFish per l'aggiornamento ordinario delle note.
+
+## Verifica reale V1.2 — PASS
+
+Il 16 novembre 2026 è stato installato su Cloudflare il Worker V1.2 con binding D1 `MEMORY_DB`. La prova GitHub Actions https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43858009794 ha confermato dal Worker reale:
+
+- HEALTH, initialize e tools/list: PASS, cinque strumenti;
+- get_project_rules, get_work_status, get_open_blockers: PASS;
+- get_bridge_inbox: PASS, messaggio di prova `prova 123` letto dalla issue #326;
+- get_shared_memory: PASS, sei note di progetto curate in D1 UE;
+- tentativo di scrittura con `send_message`: RIFIUTATO (comportamento atteso).
+
+Il server resta PUBBLICO e SOLO IN LETTURA, con dati già pubblici. Il collegamento diretto degli account ChatGPT e TRAE al server MCP e il dialogo privato bidirezionale NON sono verificati. Per la parte privata servono autenticazione e un database distinto. TinyFish non è stato utilizzato per le modifiche Cloudflare/GitHub né per questi test.
+
