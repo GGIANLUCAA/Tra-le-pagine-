@@ -179,10 +179,11 @@ class Bridge:
             raise RuntimeError("PRIVATE_ARCHIVE binding not yet active")
         rows = self.artifact_rows(since)
         details = []
-        imported = skipped = failed = 0
+        imported = skipped = failed = inspected = 0
         for artifact in rows:
-            if imported >= max_artifacts:
+            if inspected >= max_artifacts:
                 break
+            inspected += 1
             aid = int(artifact["id"])
             done = self.private("GET", "/private-artifact-done",
                                 params={"artifact": str(aid)})
@@ -222,7 +223,8 @@ class Bridge:
                                     "reason": str(exc)[:300]})
         return {"schema": "vls-private-auto-reconcile-v1",
                 "private_only": True, "site_publication_count": 0,
-                "artifact_candidates": len(rows), "new_artifacts_archived": imported,
+                "artifact_candidates": len(rows), "inspected_this_cycle": inspected,
+                "new_artifacts_archived": imported,
                 "already_archived": skipped, "blocked_artifacts": failed,
                 "details": details}
 
