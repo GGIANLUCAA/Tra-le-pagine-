@@ -18,7 +18,8 @@ import soundfile as sf
 
 SAMPLE_RATE = 24000
 MODEL = "gemini-3.8-flash-tts"
-VOICE = "Gacrux"
+# Voce selezionabile via env: default Gacrux (compatibilità con i lavori esistenti).
+VOICE = (os.environ.get("GEMINI_VOICE") or "Gacrux").strip() or "Gacrux"
 STYLE = "intimate, expressive audiobook storytelling; natural human rhythm, dramatic but never exaggerated, curiosity in questions, brief reflective silences, tender restrained ending"
 
 def _json_write(path, value):
@@ -276,7 +277,7 @@ def synthesize(text,outdir):
     timed=align(sentences(text),path,duration)
     _save_voice_cache(text, outdir, timed)
     (outdir/"INFO_VOCE_GEMINI.txt").write_text(
-        "Motore: Gemini 3.8 Flash TTS. Profilo narratore maturo Gacrux.\n"
+        "Motore: Gemini 3.8 Flash TTS. Profilo narratore: "+VOICE+".\n"
         "Testo recitato in unica sessione, pause naturali dirette.\n"
         "Allineamento parole con Whisper base, fallback proporzionale.\n"
         "L'utilizzo dell'API segue quote e condizioni Google AI Studio.\n",

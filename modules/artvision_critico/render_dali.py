@@ -59,7 +59,7 @@ def load_art(cfg, out):
     raise RuntimeError("Nessuna riproduzione ad alta risoluzione accessibile: "+"; ".join(failures))
 
 def audio_gemini(beats,out):
-    from gemini_voice import synthesize, sentences
+    from gemini_voice import synthesize, sentences, VOICE
     # Recitazione CONTINUA: una sola timbrica, pausa tra paragrafi.
     script="\n\n".join(b["speech"] for b in beats)
     samples,timed=synthesize(script,out)
@@ -80,7 +80,7 @@ def audio_gemini(beats,out):
         for x in weights:
             c+=x
             boundaries.append(duration*c/sum(weights))
-    return out/"VOCE.wav",duration,boundaries,"Gemini Gacrux (Google)"
+    return out/"VOCE.wav",duration,boundaries,"Gemini "+VOICE+" (Google)"
 
 async def audio_edge(beats,out):
     # Fallback senza crediti aggiuntivi. Non spacciare la voce sintetica per umana.

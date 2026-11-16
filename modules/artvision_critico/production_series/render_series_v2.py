@@ -280,7 +280,7 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
     assert (next(s for s in meta["streams"] if s["codec_type"]=="video")["width"],
       next(s for s in meta["streams"] if s["codec_type"]=="video")["height"])==(W,H)
     assert abs(float(meta["format"]["duration"])-duration)<1
-    assert master.stat().st_size>8_000_000
+    assert master.stat().st_size>cfg.get("min_master_bytes",8_000_000)
     report={"episode":cfg["id"],"video":master.name,"seconds":duration,"voice_seconds":vsec,
       "engine":engine,"resolution":[W,H],"art":source,"music":proof,
       "cover_layout":"universal V2: localized title + artist only",
@@ -294,7 +294,8 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
       "Opera storica in pubblico dominio in Italia. Fotografia / stampa di pubblico dominio: verificare pagina Wikimedia e norme di destinazione.\n"+
       "Riproduzione usata: "+cfg["commons_title"]+"\n"+
       "Voce: "+engine+"\n"+
-      "Musica: Night on the Docks - Piano di Kevin MacLeod (https://incompetech.com), CC BY 4.0 "+
+      "Musica: "+cfg["music"].get("title","?")+" di "+cfg["music"].get("composer","Kevin MacLeod")+
+      " (https://incompetech.com), "+cfg["music"].get("license","CC BY 4.0")+" "+
       "https://creativecommons.org/licenses/by/4.0/ — ripetizione, volume attenuato, fade iniziale/finale e mix con voce.\n"+
       "Fonti:\n"+"\n".join(cfg["sources"])+"\n",
       encoding="utf8")
@@ -326,8 +327,9 @@ def main():
         not b.get("speech") or not isinstance(b.get("focus"),list) or len(b["focus"])!=2
         for b in cfg["beats"]):
         cli.error("Critico requires researched narration and visual focus for each beat")
-    # New custom V53 episodes always require true Google Gacrux; legacy
-    # V2 rendering retains its historical fallback unless explicitly constrained.
+    # New custom V53 episodes always require a real Google Gemini voice (any
+    # configured timbre); legacy V2 rendering retains its historical fallback
+    # unless explicitly constrained. Edge is never accepted here.
     require_gacrux=args.require_gacrux or args.config is not None
     if require_gacrux and not os.getenv("GEMINI_API_KEY","").strip():
         raise RuntimeError("blocked_voice_unavailable: GEMINI_API_KEY absent; "
@@ -336,8 +338,8 @@ def main():
     output.mkdir(parents=True,exist_ok=True)
     painting,source=get_art(cfg,output)
     voice,sec,bounds,engine=choose_voice(cfg["beats"],output)
-    if require_gacrux and "Gemini Gacrux" not in engine:
-        raise RuntimeError("blocked_voice_unavailable: Gacrux audio not actually produced; "
+    if require_gacrux and "Gemini" not in engine:
+        raise RuntimeError("blocked_voice_unavailable: real Google Gemini voice not produced ("+engine+"); "
                            "render is forbidden (no fallback approval)")
     if "Gemini" not in engine:
         print("WARNING: Gemini unavailable, alternative Edge voice used. Clearly disclosed in metadata.",flush=True)
