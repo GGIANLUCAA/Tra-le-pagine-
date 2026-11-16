@@ -1,0 +1,19 @@
+name: Video Library Android touch and monitor checkpoint
+on:
+  pull_request:
+    paths:
+      - 'site/video-library-v2.html'
+      - 'reports/video_library_monitor_checkpoint.json'
+      - 'tests/video_library_monitor_android_touch.test.mjs'
+      - '.github/workflows/video-library-monitor-android-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate mobile targets and checkpoint invariants
+        run: node tests/video_library_monitor_android_touch.test.mjs
