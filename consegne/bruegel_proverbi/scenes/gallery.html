@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proverbi Fiamminghi — 50 inquadrature</title>
+<style>
+:root {
+  --ink:#0d0f15; --ink2:#151923; --gold:#dac6a8; --ivory:#f8f4ec;
+  --muted:#9aa0ad; --line:rgba(218,198,168,.22);
+}
+* { box-sizing:border-box; }
+html,body { margin:0; background:var(--ink); color:var(--ivory);
+  font-family:'Helvetica Neue',Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+a { color:var(--gold); }
+header.hero { padding:56px 24px 30px; text-align:center;
+  background:radial-gradient(1200px 400px at 50% -60px, rgba(218,198,168,.10), transparent 70%);
+  border-bottom:1px solid var(--line); }
+.kicker { letter-spacing:.42em; font-size:11px; color:var(--gold); text-transform:uppercase; }
+h1 { font-family:Georgia,'Times New Roman',serif; font-weight:400;
+  font-size:clamp(28px,5vw,52px); margin:14px 0 8px; line-height:1.08; }
+h1 em { color:var(--gold); font-style:italic; }
+.sub { color:var(--muted); font-size:15px; max-width:640px; margin:0 auto; line-height:1.6; }
+.meta { margin-top:18px; font-size:12px; color:var(--muted); letter-spacing:.14em; text-transform:uppercase; }
+nav.filters { display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
+  padding:22px 18px; position:sticky; top:0; z-index:20;
+  background:rgba(13,15,21,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+.filter { background:transparent; color:var(--ivory); border:1px solid var(--line);
+  border-radius:999px; padding:8px 16px; font-size:12.5px; letter-spacing:.06em;
+  cursor:pointer; transition:.2s; text-transform:uppercase; }
+.filter:hover { border-color:var(--gold); color:var(--gold); }
+.filter.active { background:var(--gold); color:var(--ink); border-color:var(--gold); font-weight:700; }
+.filter .cnt { opacity:.6; font-size:11px; margin-left:4px; }
+main { max-width:1400px; margin:0 auto; padding:30px 18px 90px; }
+.grid { display:grid; gap:22px;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); }
+.card { margin:0; background:var(--ink2); border:1px solid var(--line);
+  border-radius:10px; overflow:hidden; transition:.25s; }
+.card:hover { transform:translateY(-4px); border-color:var(--gold);
+  box-shadow:0 18px 40px rgba(0,0,0,.5); }
+.thumb { position:relative; background:#000; aspect-ratio:4/3; overflow:hidden; }
+.thumb img { width:100%; height:100%; object-fit:cover; display:block; transition:.5s; }
+.card:hover .thumb img { transform:scale(1.045); }
+.badge { position:absolute; top:10px; left:10px; background:rgba(13,15,21,.82);
+  color:var(--gold); font-size:11px; font-weight:700; letter-spacing:.1em;
+  padding:4px 9px; border-radius:4px; border:1px solid var(--line); }
+.tag { position:absolute; top:10px; right:10px; font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; padding:4px 9px; border-radius:4px; font-weight:700;
+  background:rgba(13,15,21,.82); border:1px solid var(--line); }
+.tag.cat-proverbio { color:#e9c97a; }
+.tag.cat-bello { color:#8fd0a8; }
+.tag.cat-curioso { color:#8fc4e8; }
+.tag.cat-assurdo { color:#e88f8f; }
+.tag.cat-architettura { color:#c8b6e8; }
+.tag.cat-scena { color:#d9c48f; }
+.plaque { padding:14px 16px 16px; display:flex; flex-direction:column; gap:5px; }
+.plate-num { font-size:10.5px; letter-spacing:.22em; color:var(--gold); text-transform:uppercase; }
+.plate-de { font-family:Georgia,serif; font-style:italic; font-size:14.5px; color:var(--ivory); line-height:1.35; }
+.plate-it { font-size:14px; color:#fff; font-weight:600; line-height:1.35; }
+.plate-mean { font-size:12.5px; color:var(--muted); line-height:1.5; }
+.empty { text-align:center; color:var(--muted); padding:60px; display:none; }
+footer { text-align:center; color:var(--muted); font-size:12px; padding:30px 20px 50px;
+  border-top:1px solid var(--line); line-height:1.7; }
+/* lightbox */
+.lb { position:fixed; inset:0; background:rgba(6,7,11,.96); z-index:100;
+  display:none; align-items:center; justify-content:center; padding:30px; }
+.lb.open { display:flex; }
+.lb img { max-width:92vw; max-height:78vh; border:1px solid var(--line);
+  box-shadow:0 30px 80px rgba(0,0,0,.7); }
+.lb .cap { position:absolute; bottom:26px; left:0; right:0; text-align:center;
+  padding:0 24px; }
+.lb .cap .t { font-family:Georgia,serif; font-style:italic; color:var(--gold); font-size:17px; }
+.lb .cap .s { color:var(--ivory); font-size:14px; margin-top:4px; }
+.lb .x { position:absolute; top:18px; right:24px; font-size:30px; color:var(--ivory);
+  cursor:pointer; background:none; border:none; line-height:1; }
+.lb .nav { position:absolute; top:50%; transform:translateY(-50%); font-size:44px;
+  color:var(--ivory); background:none; border:none; cursor:pointer; padding:10px 18px; opacity:.7; }
+.lb .nav:hover { opacity:1; color:var(--gold); }
+.lb .prev { left:10px; } .lb .next { right:10px; }
+@media(max-width:520px) { .grid { grid-template-columns:1fr 1fr; gap:12px; }
+  .plaque { padding:10px 11px 12px; } .plate-de,.plate-it { font-size:12px; }
+  .plate-mean { font-size:11px; } }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="kicker">ArtVision · Critico</div>
+  <h1>Proverbi Fiamminghi<br><em>50 inquadrature</em></h1>
+  <p class="sub">Pieter Bruegel il Vecchio, <em>Die niederländischen Sprichwörter</em>, 1559.
+  Cinquanta dettagli estratti dal quadro a piena risoluzione: i proverbi più assurdi e curiosi,
+  e scene senza proverbio scelte per forza visiva e stranezza.</p>
+  <div class="meta">5649 × 4000 · Gemäldegalerie, Berlino</div>
+</header>
+<nav class="filters">
+<button class="filter" data-filter="tutti">Tutte <span class="cnt">50</span></button>
+<button class="filter" data-filter="proverbio">Proverbio <span class="cnt">30</span></button>
+<button class="filter" data-filter="bello">Bello <span class="cnt">6</span></button>
+<button class="filter" data-filter="curioso">Curioso <span class="cnt">4</span></button>
+<button class="filter" data-filter="assurdo">Assurdo <span class="cnt">3</span></button>
+<button class="filter" data-filter="architettura">Architettura <span class="cnt">3</span></button>
+<button class="filter" data-filter="scena">Scena <span class="cnt">4</span></button>
+</nav>
+<main>
+  <div class="grid" id="grid">
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S01">
+      <div class="thumb"><img src="S01.jpg" alt="Voler sfondare il muro con la testa" loading="lazy">
+        <span class="badge">S01</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 4</span><span class="plate-de">Jemand will mit dem Kopf durch die Wand.</span><span class="plate-it">Voler sfondare il muro con la testa</span><span class="plate-mean">Stur und unbedacht etwas Unmögliches versuchen.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S02">
+      <div class="thumb"><img src="S02.jpg" alt="Si fa il mondo sul culo" loading="lazy">
+        <span class="badge">S02</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 40</span><span class="plate-de">Er scheißt auf die Welt.</span><span class="plate-it">Si fa il mondo sul culo</span><span class="plate-mean">Die Welt verachten.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S03">
+      <div class="thumb"><img src="S03.jpg" alt="Sfrega il culo sulla forca" loading="lazy">
+        <span class="badge">S03</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 80</span><span class="plate-de">Er scheißt auf den Galgen.</span><span class="plate-it">Sfrega il culo sulla forca</span><span class="plate-mean">Sich vor keiner Strafe fürchten.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S04">
+      <div class="thumb"><img src="S04.jpg" alt="Il mondo alla rovescia" loading="lazy">
+        <span class="badge">S04</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 39</span><span class="plate-de">Verkehrte Welt.</span><span class="plate-it">Il mondo alla rovescia</span><span class="plate-mean">Nichts ist wie es sein sollte.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S05">
+      <div class="thumb"><img src="S05.jpg" alt="La cicogna e la volpe" loading="lazy">
+        <span class="badge">S05</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 36</span><span class="plate-de">Storch und Fuchs haben einander zum Essen eingeladen.</span><span class="plate-it">La cicogna e la volpe</span><span class="plate-mean">Was du nicht willst, dass man dir tut, das füg auch keinem anderen zu.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S06">
+      <div class="thumb"><img src="S06.jpg" alt="Il cieco che guida il cieco" loading="lazy">
+        <span class="badge">S06</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 75</span><span class="plate-de">Wenn ein Blinder den anderen führt, fallen beide in den Graben.</span><span class="plate-it">Il cieco che guida il cieco</span><span class="plate-mean">Wenn ein Unwissender den anderen führt, gibt es ein Unglück.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S07">
+      <div class="thumb"><img src="S07.jpg" alt="Due sciocchi sotto un cappuccio" loading="lazy">
+        <span class="badge">S07</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 55</span><span class="plate-de">Zwei Narren unter einer Kapuze.</span><span class="plate-it">Due sciocchi sotto un cappuccio</span><span class="plate-mean">Ein Narr kommt selten allein.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S08">
+      <div class="thumb"><img src="S08.jpg" alt="La scrofa tira il tappo" loading="lazy">
+        <span class="badge">S08</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 20</span><span class="plate-de">Hier zieht die Sau den Zapfen raus</span><span class="plate-it">La scrofa tira il tappo</span><span class="plate-mean">Nachlässigkeit rächt sich.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S09">
+      <div class="thumb"><img src="S09.jpg" alt="Tappare il pozzo dopo che il vitello è annegato" loading="lazy">
+        <span class="badge">S09</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 9</span><span class="plate-de">Er schüttet den Brunnen zu, nachdem das Kalb ertrunken ist.</span><span class="plate-it">Tappare il pozzo dopo che il vitello è annegato</span><span class="plate-mean">Es wird erst etwas unternommen, wenn es zu spät ist.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S10">
+      <div class="thumb"><img src="S10.jpg" alt="Stare tra due sedie" loading="lazy">
+        <span class="badge">S10</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 30</span><span class="plate-de">Er sitzt zwischen zwei Stühlen.</span><span class="plate-it">Stare tra due sedie</span><span class="plate-mean">Jemand kann keine Entscheidung treffen; jemand steht auf keiner Seite.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S11">
+      <div class="thumb"><img src="S11.jpg" alt="Prendere due piccioni con una fava" loading="lazy">
+        <span class="badge">S11</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 71</span><span class="plate-de">Zwei Fliegen mit einer Klappe schlagen.</span><span class="plate-it">Prendere due piccioni con una fava</span><span class="plate-mean">Zwei Aufgaben mit einer einzigen Maßnahme erledigen.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S12">
+      <div class="thumb"><img src="S12.jpg" alt="Chi mangia fuoco, sputa scintille" loading="lazy">
+        <span class="badge">S12</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 66</span><span class="plate-de">Wer Feuer frisst, scheißt Funken.</span><span class="plate-it">Chi mangia fuoco, sputa scintille</span><span class="plate-mean">Wer Gefährliches unternimmt, braucht sich über die Folgen nicht zu wundern.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S13">
+      <div class="thumb"><img src="S13.jpg" alt="Legare il diavolo al cuscino" loading="lazy">
+        <span class="badge">S13</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 1</span><span class="plate-de">Den Teufel aufs Kissen binden.</span><span class="plate-it">Legare il diavolo al cuscino</span><span class="plate-mean">Durch Starrköpfigkeit selbst den Teufel überwinden.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S14">
+      <div class="thumb"><img src="S14.jpg" alt="Fuoco in una mano, acqua nell&#x27;altra" loading="lazy">
+        <span class="badge">S14</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 3</span><span class="plate-de">Sie trägt Feuer in der einen, Wasser in der anderen Hand.</span><span class="plate-it">Fuoco in una mano, acqua nell&#x27;altra</span><span class="plate-mean">Jemand ist eine doppelzüngige Person.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S15">
+      <div class="thumb"><img src="S15.jpg" alt="A che serve un bel piatto se non c&#x27;è nulla?" loading="lazy">
+        <span class="badge">S15</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 36</span><span class="plate-de">Was nützt ein schöner Teller, wenn nichts drauf ist?</span><span class="plate-it">A che serve un bel piatto se non c&#x27;è nulla?</span><span class="plate-mean">Körperliche Bedürfnisse stehen vor sinnlichen Bedürfnissen.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S16">
+      <div class="thumb"><img src="S16.jpg" alt="Il viaggio non finisce quando si vede la chiesa" loading="lazy">
+        <span class="badge">S16</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 76</span><span class="plate-de">Die Reise ist noch nicht zu End, wenn man Kirch und Turm erkennt.</span><span class="plate-it">Il viaggio non finisce quando si vede la chiesa</span><span class="plate-mean">Das Ziel einer Unternehmung wird erst mit Abschluss des Erfolgs erreicht.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S17">
+      <div class="thumb"><img src="S17.jpg" alt="Legare a Dio una barba di lino" loading="lazy">
+        <span class="badge">S17</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 26</span><span class="plate-de">Er bindet Gott einen flächsernen Bart um.</span><span class="plate-it">Legare a Dio una barba di lino</span><span class="plate-mean">Betrug unter der Maske der Scheinheiligkeit.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S18">
+      <div class="thumb"><img src="S18.jpg" alt="Baciare l&#x27;anello sulla porta" loading="lazy">
+        <span class="badge">S18</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 68</span><span class="plate-de">Er küsst den Ring an der Tür.</span><span class="plate-it">Baciare l&#x27;anello sulla porta</span><span class="plate-mean">Übermäßig unterwürfig sein.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S19">
+      <div class="thumb"><img src="S19.jpg" alt="Pisciare contro la luna" loading="lazy">
+        <span class="badge">S19</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 43</span><span class="plate-de">Er pisst gegen den Mond.</span><span class="plate-it">Pisciare contro la luna</span><span class="plate-mean">Sich anstrengen, um etwas Unmögliches zu erreichen.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S20">
+      <div class="thumb"><img src="S20.jpg" alt="Nuotare contro corrente" loading="lazy">
+        <span class="badge">S20</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 48</span><span class="plate-de">Gegen den Strom schwimmen.</span><span class="plate-it">Nuotare contro corrente</span><span class="plate-mean">Gegen die allgemeine Meinung aufbegehren.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S21">
+      <div class="thumb"><img src="S21.jpg" alt="Avere un buco nel tetto (essere matto)" loading="lazy">
+        <span class="badge">S21</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 53</span><span class="plate-de">Ein Loch im Dach haben.</span><span class="plate-it">Avere un buco nel tetto (essere matto)</span><span class="plate-mean">Nicht sehr intelligent sein.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S22">
+      <div class="thumb"><img src="S22.jpg" alt="Avere le doghe sul tetto (essere matto)" loading="lazy">
+        <span class="badge">S22</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 53</span><span class="plate-de">Jemand hat Latten auf dem Dach.</span><span class="plate-it">Avere le doghe sul tetto (essere matto)</span><span class="plate-mean">Abgehört werden.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S23">
+      <div class="thumb"><img src="S23.jpg" alt="Fare la cacca nello stesso buco" loading="lazy">
+        <span class="badge">S23</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 59</span><span class="plate-de">Zwei scheißen durch dasselbe Loch.</span><span class="plate-it">Fare la cacca nello stesso buco</span><span class="plate-mean">Zwei sind unzertrennliche Kameraden.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S24">
+      <div class="thumb"><img src="S24.jpg" alt="Gettare perle ai porci" loading="lazy">
+        <span class="badge">S24</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 10</span><span class="plate-de">Rosen (Perlen) vor die Säue werfen.</span><span class="plate-it">Gettare perle ai porci</span><span class="plate-mean">Verschwendung an Unwürdige.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S25">
+      <div class="thumb"><img src="S25.jpg" alt="Mettere il mantello blu al marito (cornuto)" loading="lazy">
+        <span class="badge">S25</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 8</span><span class="plate-de">Dem Mann einen blauen Mantel umhängen.</span><span class="plate-it">Mettere il mantello blu al marito (cornuto)</span><span class="plate-mean">Jemanden betrügen.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S26">
+      <div class="thumb"><img src="S26.jpg" alt="Scoccare le sue frecce" loading="lazy">
+        <span class="badge">S26</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 54</span><span class="plate-de">Seine Pfeile verschießen.</span><span class="plate-it">Scoccare le sue frecce</span><span class="plate-mean">Zu schnell handeln.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S27">
+      <div class="thumb"><img src="S27.jpg" alt="I dadi sono tratti" loading="lazy">
+        <span class="badge">S27</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 41</span><span class="plate-de">Die Würfel sind gefallen.</span><span class="plate-it">I dadi sono tratti</span><span class="plate-mean">Etwas ist entschieden.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S28">
+      <div class="thumb"><img src="S28.jpg" alt="Accendere candele al diavolo" loading="lazy">
+        <span class="badge">S28</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 34</span><span class="plate-de">Kerzen für den Teufel anzünden.</span><span class="plate-it">Accendere candele al diavolo</span><span class="plate-mean">Sich jedermann zum Freund machen.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S29">
+      <div class="thumb"><img src="S29.jpg" alt="Andare a confessarsi dal diavolo" loading="lazy">
+        <span class="badge">S29</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 35</span><span class="plate-de">Beim Teufel zur Beichte gehen.</span><span class="plate-it">Andare a confessarsi dal diavolo</span><span class="plate-mean">Geheimnisse an den Feind offenbaren.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-proverbio" data-cat="proverbio" data-id="S30">
+      <div class="thumb"><img src="S30.jpg" alt="Aggrapparsi al lato del portafoglio" loading="lazy">
+        <span class="badge">S30</span>
+        <span class="tag cat-proverbio">Proverbio</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-num">Tavola 15</span><span class="plate-de">Sich an der Seite des Geldbeutels festhalten.</span><span class="plate-it">Aggrapparsi al lato del portafoglio</span><span class="plate-mean">Die Liebe hängt auf der Seite des Geldbeutels; sich an finanziellen Vorteilen orientieren.</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-architettura" data-cat="architettura" data-id="S31">
+      <div class="thumb"><img src="S31.jpg" alt="La casa grande con il tetto di paglia" loading="lazy">
+        <span class="badge">S31</span>
+        <span class="tag cat-architettura">Architettura</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">La casa grande con il tetto di paglia</span><span class="plate-mean">Prospettiva impossibile, uomo sottosopra</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-architettura" data-cat="architettura" data-id="S32">
+      <div class="thumb"><img src="S32.jpg" alt="La torre e l&#x27;uomo alla finestra" loading="lazy">
+        <span class="badge">S32</span>
+        <span class="tag cat-architettura">Architettura</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">La torre e l&#x27;uomo alla finestra</span><span class="plate-mean">Torre con figura che si affaccia</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-bello" data-cat="bello" data-id="S33">
+      <div class="thumb"><img src="S33.jpg" alt="Il mare e le barche all&#x27;orizzonte" loading="lazy">
+        <span class="badge">S33</span>
+        <span class="tag cat-bello">Bello</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">Il mare e le barche all&#x27;orizzonte</span><span class="plate-mean">Paesaggio marino con barche a vela</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-scena" data-cat="scena" data-id="S34">
+      <div class="thumb"><img src="S34.jpg" alt="La fontana centrale e la folla" loading="lazy">
+        <span class="badge">S34</span>
+        <span class="tag cat-scena">Scena</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">La fontana centrale e la folla</span><span class="plate-mean">Punto di fuga con tante figure</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-scena" data-cat="scena" data-id="S35">
+      <div class="thumb"><img src="S35.jpg" alt="Folla in basso: lavori e mestieri" loading="lazy">
+        <span class="badge">S35</span>
+        <span class="tag cat-scena">Scena</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">Folla in basso: lavori e mestieri</span><span class="plate-mean">Movimento di figure in primo piano</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-bello" data-cat="bello" data-id="S36">
+      <div class="thumb"><img src="S36.jpg" alt="La filatrice e la donna dal mantello blu" loading="lazy">
+        <span class="badge">S36</span>
+        <span class="tag cat-bello">Bello</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">La filatrice e la donna dal mantello blu</span><span class="plate-mean">Dettaglio di figura, colori caldi</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-assurdo" data-cat="assurdo" data-id="S37">
+      <div class="thumb"><img src="S37.jpg" alt="La fucina con il fuoco" loading="lazy">
+        <span class="badge">S37</span>
+        <span class="tag cat-assurdo">Assurdo</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">La fucina con il fuoco</span><span class="plate-mean">Fabbro al lavoro con fiamme</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-curioso" data-cat="curioso" data-id="S38">
+      <div class="thumb"><img src="S38.jpg" alt="L&#x27;uomo che ne porta un altro in spalla" loading="lazy">
+        <span class="badge">S38</span>
+        <span class="tag cat-curioso">Curioso</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">L&#x27;uomo che ne porta un altro in spalla</span><span class="plate-mean">Figura che trasporta un uomo</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-architettura" data-cat="architettura" data-id="S39">
+      <div class="thumb"><img src="S39.jpg" alt="Il tetto di fronde e il pollaio" loading="lazy">
+        <span class="badge">S39</span>
+        <span class="tag cat-architettura">Architettura</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">Il tetto di fronde e il pollaio</span><span class="plate-mean">Struttura ricoperta di paglia</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-scena" data-cat="scena" data-id="S40">
+      <div class="thumb"><img src="S40.jpg" alt="Il mendicante e la folla povera" loading="lazy">
+        <span class="badge">S40</span>
+        <span class="tag cat-scena">Scena</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">Il mendicante e la folla povera</span><span class="plate-mean">Dettaglio di figure ai margini</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-assurdo" data-cat="assurdo" data-id="S41">
+      <div class="thumb"><img src="S41.jpg" alt="Il maiale macellato e i lavoratori" loading="lazy">
+        <span class="badge">S41</span>
+        <span class="tag cat-assurdo">Assurdo</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">Il maiale macellato e i lavoratori</span><span class="plate-mean">Scena di macellazione</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-assurdo" data-cat="assurdo" data-id="S42">
+      <div class="thumb"><img src="S42.jpg" alt="L&#x27;uomo sullo spiedo" loading="lazy">
+        <span class="badge">S42</span>
+        <span class="tag cat-assurdo">Assurdo</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">L&#x27;uomo sullo spiedo</span><span class="plate-mean">Figura umana arrostita</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-bello" data-cat="bello" data-id="S43">
+      <div class="thumb"><img src="S43.jpg" alt="La donna al pozzo" loading="lazy">
+        <span class="badge">S43</span>
+        <span class="tag cat-bello">Bello</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">La donna al pozzo</span><span class="plate-mean">Figura femminile con orcio</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-curioso" data-cat="curioso" data-id="S44">
+      <div class="thumb"><img src="S44.jpg" alt="I giocatori di carte" loading="lazy">
+        <span class="badge">S44</span>
+        <span class="tag cat-curioso">Curioso</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">I giocatori di carte</span><span class="plate-mean">Gruppo che gioca a carte</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-curioso" data-cat="curioso" data-id="S45">
+      <div class="thumb"><img src="S45.jpg" alt="L&#x27;uomo con il mappamondo" loading="lazy">
+        <span class="badge">S45</span>
+        <span class="tag cat-curioso">Curioso</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">L&#x27;uomo con il mappamondo</span><span class="plate-mean">Globo celeste su un trespolo</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-bello" data-cat="bello" data-id="S46">
+      <div class="thumb"><img src="S46.jpg" alt="Le oche e il cortile" loading="lazy">
+        <span class="badge">S46</span>
+        <span class="tag cat-bello">Bello</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">Le oche e il cortile</span><span class="plate-mean">Animali nel cortile sul mare</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-curioso" data-cat="curioso" data-id="S47">
+      <div class="thumb"><img src="S47.jpg" alt="Le due figure che si baciano" loading="lazy">
+        <span class="badge">S47</span>
+        <span class="tag cat-curioso">Curioso</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">Le due figure che si baciano</span><span class="plate-mean">Coppia in intimo abbraccio</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-bello" data-cat="bello" data-id="S48">
+      <div class="thumb"><img src="S48.jpg" alt="Il cielo e la forca sullo sfondo" loading="lazy">
+        <span class="badge">S48</span>
+        <span class="tag cat-bello">Bello</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">Il cielo e la forca sullo sfondo</span><span class="plate-mean">Orizzonte con forca e paesaggio</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-scena" data-cat="scena" data-id="S49">
+      <div class="thumb"><img src="S49.jpg" alt="Il pane e la vita quotidiana" loading="lazy">
+        <span class="badge">S49</span>
+        <span class="tag cat-scena">Scena</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">Il pane e la vita quotidiana</span><span class="plate-mean">Dettaglio di vita domestica</span>
+      </figcaption>
+    </figure>
+    <figure class="card cat-bello" data-cat="bello" data-id="S50">
+      <div class="thumb"><img src="S50.jpg" alt="Quadro completo: il villaggio alla rovescia" loading="lazy">
+        <span class="badge">S50</span>
+        <span class="tag cat-bello">Bello</span>
+      </div>
+      <figcaption class="plaque">
+        <span class="plate-it">Quadro completo: il villaggio alla rovescia</span><span class="plate-mean">Visione d&#x27;insieme dell&#x27;opera</span>
+      </figcaption>
+    </figure>
+  </div>
+  <div class="empty" id="empty">Nessuna scena in questa categoria.</div>
+</main>
+<footer>
+  Base visiva per la produzione video "ArtVision Critico".<br>
+  Estratti dal quadro originale tramite template matching delle tavole Wikimedia (NP-1…NP-117).
+</footer>
+
+<div class="lb" id="lb">
+  <button class="x" id="lbx">&times;</button>
+  <button class="nav prev" id="lbp">&#8249;</button>
+  <img id="lbi" src="" alt="">
+  <button class="nav next" id="lbn">&#8250;</button>
+  <div class="cap"><div class="t" id="lbt"></div><div class="s" id="lbs"></div></div>
+</div>
+
+<script>
+const grid=document.getElementById('grid');
+const cards=[...document.querySelectorAll('.card')];
+const filters=[...document.querySelectorAll('.filter')];
+filters.forEach(b=>b.addEventListener('click',()=>{
+  filters.forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  const f=b.dataset.filter;
+  let n=0;
+  cards.forEach(c=>{
+    const show=(f==='tutti'||c.dataset.cat===f);
+    c.style.display=show?'':'none';
+    if(show)n++;
+  });
+  document.getElementById('empty').style.display=n?'none':'block';
+}));
+// lightbox
+const lb=document.getElementById('lb'), lbi=document.getElementById('lbi'),
+      lbt=document.getElementById('lbt'), lbs=document.getElementById('lbs');
+let cur=0, visible=[];
+function refreshVisible(){ visible=cards.filter(c=>c.style.display!=='none'); }
+function openCard(i){
+  refreshVisible();
+  cur=i; const c=visible[i]; if(!c)return;
+  const img=c.querySelector('img');
+  const de=c.querySelector('.plate-de'), it=c.querySelector('.plate-it'), mean=c.querySelector('.plate-mean'), num=c.querySelector('.plate-num');
+  lbi.src=img.src;
+  lbt.textContent = (num? num.textContent+' — ':'') + (de? de.textContent : (it?it.textContent:''));
+  lbs.textContent = (de&&it? it.textContent+' · ':'') + (mean? mean.textContent : (it?it.textContent:''));
+  lb.classList.add('open');
+}
+cards.forEach(c=>c.addEventListener('click',()=>{
+  refreshVisible(); openCard(visible.indexOf(c));
+}));
+document.getElementById('lbx').onclick=()=>lb.classList.remove('open');
+lb.addEventListener('click',e=>{ if(e.target===lb) lb.classList.remove('open'); });
+document.getElementById('lbp').onclick=e=>{ e.stopPropagation(); openCard((cur-1+visible.length)%visible.length); };
+document.getElementById('lbn').onclick=e=>{ e.stopPropagation(); openCard((cur+1)%visible.length); };
+document.addEventListener('keydown',e=>{
+  if(!lb.classList.contains('open'))return;
+  if(e.key==='Escape')lb.classList.remove('open');
+  if(e.key==='ArrowLeft')openCard((cur-1+visible.length)%visible.length);
+  if(e.key==='ArrowRight')openCard((cur+1)%visible.length);
+});
+</script>
+</body>
+</html>
