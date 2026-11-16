@@ -4,10 +4,13 @@ on:
     paths:
       - ".github/workflows/artvision-owner-arbo-critico-standard-v1.yml"
       - "scripts/artvision_owner_arbo_critico_standard_v1.py"
+      - "src/gemini_voice.py"
+      - "tests/test_voice_cache_v13.py"
   push:
     branches: [main]
     paths:
       - ".github/workflows/artvision-owner-arbo-critico-standard-v1.yml"
+      - "src/gemini_voice.py"
   workflow_dispatch:
 permissions:
   contents: read
