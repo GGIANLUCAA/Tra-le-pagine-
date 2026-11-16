@@ -1,0 +1,49 @@
+{
+  "schema": "artvision-unified-production-mode-v1",
+  "mode": "critico_standard",
+  "mode_options": [
+    "cinema_standard",
+    "cinema_museum",
+    "critico_standard",
+    "critico_museum",
+    "all_missing"
+  ],
+  "queue_policy": "reuse_existing_artwork_queues_without_copying_or_reordering",
+  "selection_policy": "existing_verified_slot_skip; missing_slot_preflight; blocked_slot_skip_and_continue",
+  "priorities": [
+    {
+      "artist": "Franz von Stuck",
+      "title": "The Sin (Berlin 1912)",
+      "variant": "critico_standard"
+    },
+    {
+      "artist": "Albert Pinkham Ryder",
+      "title": "The Race Track",
+      "variant": "critico_standard"
+    },
+    {
+      "artist": "Thomas Cole",
+      "title": "The Voyage of Life: Manhood",
+      "variant": "critico_standard",
+      "status": "RECONCILE_FIRST"
+    }
+  ],
+  "voice": {
+    "critico": "Gemini Gacrux IT only",
+    "require_free_quota_confirmed": true,
+    "require_billing_disabled_confirmed": true,
+    "reuse_approved_audio": true,
+    "never_fallback": true
+  },
+  "safety": {
+    "no_duplicate_render": true,
+    "no_paid_calls": true,
+    "no_auto_publish": true,
+    "no_auto_gold": true,
+    "no_master_overwrite": true,
+    "require_source_license_qa": true,
+    "require_artistic_review": true
+  },
+  "execution_status": "CONFIG_ONLY_NOT_DISPATCHED",
+  "notes": "Selection configuration for future integration with existing owner renderer; does not itself trigger a workflow."
+}
