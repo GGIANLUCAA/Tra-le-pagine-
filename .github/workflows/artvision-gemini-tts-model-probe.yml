@@ -1,5 +1,5 @@
 name: "ArtVision · probe modelli Gemini TTS"
-run-name: "PROBE v2 · candidati TTS Google"
+run-name: "PROBE v3 · Gemini TTS su api_version v1beta"
 on:
   workflow_dispatch:
   push:
@@ -21,49 +21,34 @@ jobs:
           python-version: "3.11"
       - name: "Installa SDK Google"
         run: python -m pip install --disable-pip-version-check "google-genai>=2.25,<4"
-      - name: "Testa nomi modello TTS candidati (interactions + generate_content)"
+      - name: "Testa Gemini TTS con api_version v1beta"
         run: |
           python - <<'PY'
           import os
           from google import genai
-          client=genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-          cands=[
-            "gemini-3.8-flash-tts","gemini-3.8-flash-lite-tts","gemini-3.8-pro-tts",
-            "gemini-3.7-flash-tts","gemini-3.6-flash-tts","gemini-3.5-flash-tts",
-            "gemini-3.1-flash-tts-preview","gemini-3.1-flash-tts","gemini-3.1-pro-tts",
-            "gemini-3-flash-tts","gemini-3-pro-tts",
-            "gemini-2.5-flash-tts","gemini-2.5-flash-preview-tts","gemini-2.5-pro-tts",
-            "gemini-2.5-pro-preview-tts","gemini-2.5-flash-lite-tts","gemini-2.5-flash-lite-preview-tts",
-            "gemini-omni-flash-preview","gemini-3.8-flash","gemini-4-argon",
-          ]
-          def try_interactions(m):
+          from google.genai import types
+          key=os.environ["GEMINI_API_KEY"]
+          def synth(client,model,voice="Gacrux"):
               it=client.interactions.create(
-                  model=m,
-                  input=[{"type":"user_input","content":[{"type":"text","text":"Ciao, prova voce.",
-                          "annotations":[{"type":"speech_metadata","style":"neutral"}]}]}],
+                  model=model,
+                  input=[{"type":"user_input","content":[{"type":"text",
+                          "text":"Ciao, questa è una prova della voce narrante.","annotations":[
+                          {"type":"speech_metadata","style":"neutral"}]}]}],
                   response_format={"type":"audio"},
-                  generation_config={"speech_config":[{"voice":"Gacrux"}]})
-              return bool(it.output_audio and it.output_audio.data)
-          def try_gc(m):
-              from google.genai import types
-              r=client.models.generate_content(
-                  model=m,contents="Ciao, prova voce.",
-                  config=types.GenerateContentConfig(
-                      response_modalities=["AUDIO"],
-                      speech_config=types.SpeechConfig(
-                          voice_config=types.VoiceConfig(
-                              prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name="Gacrux")))))
-              return bool(getattr(r,"candidates",None))
-          print("=== interactions.create ===",flush=True)
-          for m in cands:
-              try:
-                  print("OK  interactions:",m,flush=True if try_interactions(m) else False)
-              except Exception as e:
-                  print("ERR interactions:",m,repr(e)[:160],flush=True)
-          print("=== generate_content (AUDIO) ===",flush=True)
-          for m in cands:
-              try:
-                  print("OK  generate_content:",m,flush=True if try_gc(m) else False)
-              except Exception as e:
-                  print("ERR generate_content:",m,repr(e)[:160],flush=True)
+                  generation_config={"speech_config":[{"voice":voice}]})
+              d=it.output_audio.data if it.output_audio else None
+              if isinstance(d,str):
+                  import base64; d=base64.b64decode(d)
+              return len(d) if d else 0
+          variants={
+            "dict": genai.Client(api_key=key,http_options={"api_version":"v1beta"}),
+            "HttpOptions": genai.Client(api_key=key,http_options=types.HttpOptions(api_version="v1beta")),
+          }
+          for name,client in variants.items():
+              for m in ["gemini-3.8-flash-tts","gemini-3.8-flash-lite-tts","gemini-2.5-flash-preview-tts"]:
+                  try:
+                      n=synth(client,m)
+                      print(f"[{name}] WORKING {m} -> audio_bytes={n}",flush=True)
+                  except Exception as e:
+                      print(f"[{name}] FAIL {m} {repr(e)[:150]}",flush=True)
           PY
