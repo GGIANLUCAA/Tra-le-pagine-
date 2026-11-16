@@ -129,3 +129,23 @@ Il 16 novembre 2026 è stato installato su Cloudflare il Worker V1.2 con binding
 
 Il server resta PUBBLICO e SOLO IN LETTURA, con dati già pubblici. Il collegamento diretto degli account ChatGPT e TRAE al server MCP e il dialogo privato bidirezionale NON sono verificati. Per la parte privata servono autenticazione e un database distinto. TinyFish non è stato utilizzato per le modifiche Cloudflare/GitHub né per questi test.
 
+
+## Compatibilità client MCP standard — verificata il 16 novembre 2026
+
+La prova GitHub Actions con il **client Python ufficiale MCP 1.30** ha verificato su `https://artvision-bridge-mcp-v1.600led.workers.dev/mcp`:
+- handshake `initialize` compatibile col protocollo `2025-11-25`;
+- scoperta di tutti e 5 gli strumenti con `list_tools()`;
+- chiamata effettiva `get_bridge_inbox` e lettura del messaggio `prova 123`;
+- chiamata effettiva `get_shared_memory` e lettura delle sei note D1.
+
+Evidenza: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43859189334
+
+File JSON pronto da incollare in TRAE Work > Impostazioni > MCP > Crea > Configurazione manuale:
+`integrations/artvision-bridge-mcp/trae-work-mcp.json`.
+La procedura è documentata ufficialmente in https://docs.trae.cn/work_remote-mcp-server .
+Il test MCP con client standard **non certifica** che TRAE Work abbia già installato il server o abbia letto il messaggio: resta una verifica distinta.
+
+### Blocco sessione TinyFish
+
+Il controllo diretto TinyFish del 16/11/2026 ha confermato saldo $4.264, ricarica automatica non configurata; il profilo `TRAE AI` conserva accessi Google/GitHub ma **non registra TRAE come signed_in_site**. Poiché la configurazione MCP richiede accesso autenticato al pannello TRAE Work, non avviare run TinyFish a consumo senza conferma di accesso o completamento del salvataggio del profilo. Una volta registrato, configurare lo stesso server MCP con un unico run limitato di TinyFish e verificare da TRAE che compaiano i cinque strumenti e che `get_bridge_inbox` restituisca `prova 123`. Nessuna modifica a branch Gold, MP4, crediti video o workflow.
+
