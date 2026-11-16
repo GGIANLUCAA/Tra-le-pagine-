@@ -328,7 +328,10 @@ def markdown(root,r):
        "- [Fascicoli di produzione storici](ARCHIVIO_PRODUZIONI_STORICHE.md)","",
        "I file JSON e CSV nella cartella data/archivio-generale sono l'interfaccia leggibile dalle automazioni.",
        "L'Action aggiorna i dati periodicamente; gli errori del sito conservano il precedente snapshot dichiarandolo non attuale.",
-       "Nessun dato ricavato da sole conversazioni viene spacciato per verifica di MP4."]
+       "Nessun dato ricavato da sole conversazioni viene spacciato per verifica di MP4.",
+       "LIMITAZIONE: la Libreria privata ChatGPT non è esposta a GitHub Actions. I suoi MP4 non",
+       "sono inventariati automaticamente in questo repository pubblico; verificarli separatamente",
+       "senza pubblicare ID, percorsi o altri metadati privati. La coincidenza per nome non prova identità."]
     save(root/"docs/ARCHIVIO_GENERALE_ARTVISION.md","\n".join(intro)+"\n")
     chars={"render_documentato":"D","render_respinto":"R","da_produrre":"C","in_coda_o_preflight":"C","bloccato":"B","non_documentato":"—"}
     p=["# Opere, artisti, quattro versioni","",
