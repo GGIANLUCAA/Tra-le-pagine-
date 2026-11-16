@@ -58,4 +58,12 @@ jobs:
           assert refusal["error"]["code"] == -32602
           print("MCP_READONLY_REJECTS_WRITES")
           print("ARTVISION_BRIDGE_LIVE_SMOKE_PASS")
+          for agent in ("Python-urllib/3.12", "mcp-client/1.0"):
+              rq=urllib.request.Request(ROOT + "/health",headers={"User-Agent":agent})
+              try:
+                  with urllib.request.urlopen(rq,timeout=10) as response:
+                      code=response.status
+              except urllib.error.HTTPError as e:
+                  code=e.code
+              print("MCP_CLIENT_UA_PROBE",agent,code)
           PY
