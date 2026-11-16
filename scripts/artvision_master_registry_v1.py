@@ -383,6 +383,31 @@ def markdown(root,r):
               "Le schede prive di autore o titolo attribuibile restano da verificare."]
     save(root/"docs/ARCHIVIO_ALTRI_FORMAT.md","\n".join(other)+"\n")
 
+    future=["# Ricerca futura — non è una coda di rendering","",
+       "Le 100 opere editoriali e le 30 selezionate sono cataloghi di idee, non 130 render ordinati.",
+       "La presenza in ricerca non significa file, diritti, qualità o pubblicazione verificata.","",
+       "## Catalogo editoriale 100 opere","",
+       "| ID | Autore | Opera | Anno | Gruppo | Stato diritti file |",
+       "|---|---|---|---|---|---|"]
+    for x in r["future_100"]:
+        future.append(table_row([x["catalog_id"],x["artist"],x["title"],x["year"] or "?",
+                                 x["category"],x["rights_status"]]))
+    future+=["","## Le 30 opere selezionate","",
+        "| Ordine | Autore | Opera | Stato ricerca | Diritti commerciali |",
+        "|---|---|---|---|---|"]
+    for x in r["future_30"]:
+        future.append(table_row([x["order"],x["artist"],x["title"],x["status"],
+                          "dichiarati chiariti" if x["rights_cleared"] else "da verificare"]))
+    save(root/"docs/ARCHIVIO_RICERCA_FUTURA.md","\n".join(future)+"\n")
+    dossiers=["# Tutti i fascicoli di produzione storici","",
+       "Indice dei file realmente presenti in docs/productions, non conferma file MP4 o pubblicazione.",
+       "La dimensione indica il file di documentazione, non il video.","",
+       "| Fascicolo | Tipo | Byte |","|---|---|---:|"]
+    for x in r["production_dossiers"]:
+        dossiers.append(table_row(["["+x["path"]+"]("+link(x["path"])+")",
+                                    x["extension"] or "altro",x["bytes"]]))
+    save(root/"docs/ARCHIVIO_PRODUZIONI_STORICHE.md","\n".join(dossiers)+"\n")
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--root",type=Path,default=Path(__file__).resolve().parents[1])
