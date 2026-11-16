@@ -16,12 +16,20 @@ def script_source():
     text = WORKFLOW.read_text(encoding="utf-8")
     start_marker = "          python3 - <<'PY'\n"
     end_marker = "\n          PY"
-    assert text.count(start_marker) == 1, "Expected one importer inline script"
-    start = text.index(start_marker) + len(start_marker)
-    end = text.index(end_marker, start)
-    lines = text[start:end].splitlines()
-    assert all(not line or line.startswith("          ") for line in lines)
-    return "\n".join(line[10:] if line else "" for line in lines) + "\n"
+    # This workflow contains more than one inline Python program.
+    # Isolate the upload job by its security gate, not by first occurrence.
+    programs = []
+    cursor = 0
+    while (start := text.find(start_marker, cursor)) != -1:
+        start += len(start_marker)
+        end = text.index(end_marker, start)
+        lines = text[start:end].splitlines()
+        assert all(not line or line.startswith("          ") for line in lines)
+        programs.append("\n".join(line[10:] if line else "" for line in lines) + "\n")
+        cursor = end + len(end_marker)
+    matches = [source for source in programs if "def site_release_gate(" in source]
+    assert len(matches) == 1, "Expected one public site release gate"
+    return matches[0]
 
 
 def gates():
