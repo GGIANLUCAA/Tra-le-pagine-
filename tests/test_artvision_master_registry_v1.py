@@ -2,7 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from scripts.artvision_master_registry_v1 import build, norm, status, checkpoint_evidence
+from scripts.artvision_master_registry_v1 import build, norm, status, checkpoint_evidence, title_key
 
 class MasterRegistryTests(unittest.TestCase):
     def seed(self,root):
@@ -129,6 +129,21 @@ class MasterRegistryTests(unittest.TestCase):
         self.assertEqual(checkpoint_evidence(item)["mp4_sha256"],"a"*64)
     def test_normalized_titles(self):
         self.assertEqual(norm("Die Sünde"),"die sunde")
+        self.assertEqual(title_key("The Vampire"),title_key("Vampire"))
+        self.assertNotEqual(title_key("The Sin"),title_key("The Shipwreck"))
+    def test_checkpoint_vampire_matches_owner_selected_article_alias(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);self.seed(root)
+            q=root/"queue"
+            (q/"artvision_owner_30_fast_quality_lane_20261109.json").write_text(json.dumps({
+                "selected_works":[{"artist_as_chosen":"Edvard Munch","title_as_chosen":"The Vampire"}]}))
+            (q/"artvision_owner_30_render_checkpoint_vampire.json").write_text(json.dumps({
+                "artist":"Edvard Munch","work":"Vampire","variant":"cinema_standard",
+                "mp4":{"sha256":"a"*64},"qa":{"local_ffmpeg_all_streams":"PASS"}}))
+            d=build(root,{"items":[]},"fixture","2026-11-16T10:00:00+00:00")
+            w=[x for x in d["works"] if x["artist"]=="Edvard Munch"]
+            self.assertEqual(len(w),1)
+            self.assertEqual(w[0]["variants"]["cinema_standard"]["state"],"render_documentato")
 
 if __name__ == "__main__":
     unittest.main()
