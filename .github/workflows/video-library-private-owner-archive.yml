@@ -25,6 +25,11 @@ on:
         required: true
         default: false
 
+  schedule:
+    # Existing importer already scans hourly; this adds only private backup to
+    # the existing private workflow, with independent OIDC and no site release.
+    - cron: '42 */4 * * *'
+
 permissions:
   contents: read
   actions: read
@@ -108,3 +113,26 @@ jobs:
               raise ValueError('Private upload not verified; no publication claimed')
           print('PRIVATE OWNER BACKUP ONLY:',json.dumps({'artifact_id':aid,'key':response['key'],'sha256':actual,'bytes':len(video),'private':True,'site_published':False}))
           PY
+
+  auto_private_reconcile:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PRIVATE_INGEST: https://video-library-import.600led.workers.dev
+      MAX_ARTIFACTS_PER_CYCLE: '3'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install only the existing HTTP client; never render video
+        run: python3 -m pip -q install requests
+      - name: Reconcile completed existing GitHub video artifacts to private R2 only
+        run: python3 src/video_library_private_auto_reconcile.py
+      - name: Archive sync report without video files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: VLS_PRIVATE_SYNC_REPORT_${{ github.run_id }}
+          path: reports/video_library_private_reconcile_last.json
+          if-no-files-found: ignore
+          retention-days: 14
