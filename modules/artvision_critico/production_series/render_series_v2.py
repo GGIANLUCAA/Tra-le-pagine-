@@ -139,8 +139,9 @@ def cover_universal(art,cfg):
     cv2.rectangle(frame,(x-3,y-3),(x+pw+3,y+ph+3),(140,125,103),2,cv2.LINE_AA)
     canvas=Image.fromarray(cv2.cvtColor(frame,cv2.COLOR_BGR2RGB))
     d=ImageDraw.Draw(canvas)
-    gold=(GOLD[2],GOLD[1],GOLD[0])
-    ivory=(IVORY[2],IVORY[1],IVORY[0])
+    # canvas è già in RGB: i colori di progetto sono in RGB (vedi INK/GOLD/IVORY
+    # e index.html), quindi vanno passati diretti. L'oro resta oro.
+    gold=GOLD;ivory=IVORY
     d.line((157,193,923,193),fill=gold,width=2)
     title=cfg["artwork"].upper()
     # Uniform cover: always centered in same title area with slightly enlarged
@@ -231,7 +232,7 @@ def closing_card(background,cfg):
     # Stessa tipografia dell'opera: filetti d'oro, nome, autore, anno e sede.
     canvas=Image.fromarray(cv2.cvtColor(background,cv2.COLOR_BGR2RGB))
     d=ImageDraw.Draw(canvas)
-    gold=(GOLD[2],GOLD[1],GOLD[0]);ivory=(IVORY[2],IVORY[1],IVORY[0])
+    gold=GOLD;ivory=IVORY
     quiet=(214,205,190)
     cy=980
     d.line((330,cy-190,750,cy-190),fill=gold,width=2)
