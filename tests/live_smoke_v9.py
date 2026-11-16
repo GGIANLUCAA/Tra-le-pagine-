@@ -2,6 +2,8 @@
 """Public GitHub Pages availability + asset smoke test. Read-only, stdlib only."""
 import argparse
 import json
+import re
+from pathlib import Path
 import ssl
 import time
 import urllib.error
@@ -9,6 +11,12 @@ import urllib.request
 from urllib.parse import urljoin
 
 DEFAULT_URL = "https://ggianlucaa.github.io/Tra-le-pagine-/"
+# Validate the published service worker against this exact repository version,
+# rather than the historical v9 cache marker after the source moved to v11.
+SW_SOURCE = (Path(__file__).resolve().parents[1] / "docs" / "sw.js").read_bytes()
+SW_CACHE_MATCH = re.search(rb"const CACHE\\s*=\\s*[\\\"']([^\\\"']+)[\\\"']", SW_SOURCE)
+if not SW_CACHE_MATCH:
+    raise RuntimeError("Service worker source has no defined CACHE id")
 CHECKS = {
     "index.html": (b'id="view-videoteca"', "text/html"),
     "app.js": (b"videoteca_v11.js", "javascript"),
@@ -16,7 +24,7 @@ CHECKS = {
     "styles.css": (b":root", "text/css"),
     "manifest.webmanifest": (b"Tra le Pagine", "json"),
     "icon.svg": (b"<svg", "image/svg+xml"),
-    "sw.js": (b"tra-le-pagine-v9", "javascript"),
+    "sw.js": (SW_CACHE_MATCH.group(1), "javascript"),
 }
 HEADERS = {
     "User-Agent": "TraLePagine-PublicSmoke/1.0 (GitHub Actions)",
