@@ -68,6 +68,9 @@ def checkpoint_evidence(obj):
                     if sha:break
     qas=[obj.get(k) for k in ("qa","QA","technical_qa","independent_qa","review")]
     qas=[q for q in qas if isinstance(q,dict)]
+    # Some v1 render checkpoints keep the final video checksum in QA itself.
+    for q in qas:
+        if not sha:sha=val(q,"mp4_sha256","sha256_mp4","video_sha256","SHA256")
     qas+=parts
     def positive(p):
         for k,v in p.items():
