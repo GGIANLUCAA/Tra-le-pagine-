@@ -63,7 +63,7 @@ jobs:
           assert not re.search(r'(^|[_ .-])(SOURCE|SCOUT|CONTACT|FRAMES|ASSETS|PROBE|RAW|NOT_FINAL|NON_FINALE)([_ .-]|$)',name,re.I), 'Not a finished video'
           assert not re.match('AUDIO_POLISHED_REVIEW',name,re.I), 'Intermediate video'
           assert re.fullmatch(r'[a-f0-9]{64}',want), 'Expected MP4 SHA256 required'
-          assert length.isdecimal() and 1024<=int(length)<=30*1024*1024, 'Single-upload limit: <=30 MiB'
+          assert length.isdecimal() and 1024<=int(length)<=512*1024*1024, 'Private upload limit: <=512 MiB'
           s=requests.Session()
           gh='https://api.github.com/repos/'+os.environ['REPO']+'/actions/artifacts/'+aid
           h={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
@@ -75,12 +75,12 @@ jobs:
               raw=io.BytesIO()
               for chunk in stream.iter_content(1024*1024):
                   raw.write(chunk)
-                  if raw.tell()>512*1024*1024:raise ValueError('Artifact archive unexpectedly large')
+                  if raw.tell()>1024*1024*1024:raise ValueError('Artifact archive unexpectedly large')
           raw.seek(0)
           with zipfile.ZipFile(raw) as z:
               members=[m for m in z.namelist() if not m.endswith('/') and pathlib.PurePosixPath(m).name==name]
               if len(members)!=1:raise ValueError('Exact named video not unique in artifact: '+str(members))
-              with z.open(members[0]) as fd:video=fd.read(30*1024*1024+1)
+              with z.open(members[0]) as fd:video=fd.read(512*1024*1024+1)
           if len(video)!=int(length):raise ValueError('MP4 length mismatch')
           actual=hashlib.sha256(video).hexdigest()
           if actual!=want:raise ValueError('MP4 SHA256 mismatch; never import')
@@ -97,8 +97,10 @@ jobs:
               r.raise_for_status()
               token_cache[:]=[r.json()['value'],time.time()]
               return token_cache[0]
-          url=os.environ['PRIVATE_INGEST'].rstrip('/')+'/private-single'
+          streaming=len(video)>30*1024*1024
+          url=os.environ['PRIVATE_INGEST'].rstrip('/')+('/private-stream' if streaming else '/private-single')
           params={'artifact':aid,'key':name,'sha256':actual}
+          if streaming:params['bytes']=str(len(video))
           result=s.post(url,params=params,headers={'Authorization':'Bearer '+token(),'Content-Type':'video/mp4'},data=video,timeout=180)
           result.raise_for_status()
           response=result.json()
