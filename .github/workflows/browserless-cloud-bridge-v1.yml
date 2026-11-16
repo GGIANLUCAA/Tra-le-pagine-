@@ -83,7 +83,7 @@ jobs:
         if: github.event_name != 'pull_request' && env.BROWSERLESS_REQUEST_PATH != ''
         shell: bash
         env:
-          BROWSERLESS_TOKEN: ${{ secrets.BROWSERLESS_TOKEN }}
+          BROWSERLESS_TOKEN: ${{ secrets.BROWSERLESS_TOKEN || secrets.BROWSERLESS }}
         run: |
           set -euo pipefail
           python tools/browserless_bridge_v1.py --request "$BROWSERLESS_REQUEST_PATH"
