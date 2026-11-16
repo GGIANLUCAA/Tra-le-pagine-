@@ -1,0 +1,36 @@
+name: Video Library - Owner rejected content recovery backup
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/video-library-owner-discard-backup-pr.yml'
+      - 'reports/video_library_owner_discard_20261116.json'
+      - 'src/video_library_owner_rejected_backup.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vls-cleanup-recovery-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backup-before-deleting:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install small HTTP client only
+        run: python3 -m pip -q install requests
+      - name: Download each exact old MP4 and cover to a SHA-verified ZIP
+        run: python3 src/video_library_owner_rejected_backup.py --output-dir private_backup
+      - name: Upload rollback ZIP as workflow artifact before any R2 deletion
+        uses: actions/upload-artifact@v4
+        with:
+          name: VLS_OWNER_REJECTED_BACKUP_${{ github.run_id }}
+          path: |
+            private_backup/VIDEO_LIBRARY_REJECTED_RECOVERY_20261116.zip
+            private_backup/verified_manifest.json
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
