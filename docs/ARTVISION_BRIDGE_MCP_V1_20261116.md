@@ -89,3 +89,18 @@ Esempio JSON senza segreti e senza accesso ai dati privati:
 ~~~
 
 Per TRAE Work da Android, aprire la modalità con supporto MCP (in alcuni casi Code Mode invece di Work Mode). Testare esplicitamente lo strumento get_project_rules. Non toccare il ramo Gold, non chiedere login di GitHub e non installare pacchetti localmente per questa integrazione. Il collegamento nel profilo TRAE e l'installazione del plugin in ChatGPT NON risultano ancora verificati.
+
+## V1.1 · Inbox pubblico GPT–TRAE (16/11/2026)
+
+Issue dedicata: https://github.com/GGIANLUCAA/Tra-le-pagine-/issues/326.
+
+Quarta funzione MCP `get_bridge_inbox`: legge al massimo 20 messaggi brevi presenti nei commenti della issue #326 con marcatore `[ARTVISION_BRIDGE_V1]`. Restituisce solo messaggi pubblicati dall'account proprietario con author_association=OWNER, campi `from`, `to`, `type`, `id`, `text` validati e link alla sorgente. Non esegue automaticamente le istruzioni lette, non considera gli autori delle risposte TRAE autenticati a prescindere e non abilita invio di messaggi da HTTP pubblico.
+
+Messaggio di prova effettivamente pubblicato: `prova 123` destinato a `trae`. L'accesso TRAE all'MCP e la sua eventuale risposta DEVONO essere provati separatamente. Il repository è **pubblico**: non usare questo inbox per chat private, dati clienti, segreti o informazioni riservate. Per la messaggistica privata resta necessario un archivio protetto (D1) e un modello di autenticazione per agente.
+
+### Politica TinyFish (direttiva proprietario 16/11/2026)
+
+- Usare **prima** gli strumenti diretti GitHub, Cloudflare e gli MCP collegati. Usare Browserless già disponibile per i controlli browser semplici, se realmente necessario.
+- TinyFish è l'ultima risorsa: soltanto per completare un login, configurare una schermata cui i connettori non accedono o svolgere un'azione che altrimenti non è tecnicamente eseguibile, non per ricerca, monitoraggio ordinario o test ripetuti.
+- Prima di ogni chiamata TinyFish: valutare fattibilità con strumenti diretti, necessità dell'azione, limite del numero di passaggi e disponibilità di crediti. Evitare chiamate duplicate e non attivare auto-reload o acquisti.
+- Non trattare l'assenza di TinyFish come blocco globale: continuare le altre lavorazioni sicure.
