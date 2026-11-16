@@ -261,7 +261,7 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
     raw=out/"BASE_VIDEO.mp4"
     ff=subprocess.Popen(["ffmpeg","-hide_banner","-loglevel","error","-y",
       "-f","rawvideo","-pix_fmt","bgr24","-s",f"{W}x{H}","-r",str(FPS),
-      "-i","-","-c:v","libx264","-preset","veryfast","-crf","21","-pix_fmt","yuv420p",
+      "-i","-","-c:v","libx264","-preset","veryfast","-crf","22","-pix_fmt","yuv420p",
       "-threads","2","-movflags","+faststart",str(raw)],stdin=subprocess.PIPE)
     # Cache identity-free transitions as a retained picture only per beat.
     previous=None;oldbeat=-1;transition=None;enter_at=0
