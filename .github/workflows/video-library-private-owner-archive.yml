@@ -115,7 +115,9 @@ jobs:
           PY
 
   auto_private_reconcile:
-    if: github.event_name == 'schedule'
+    # R2 already has >10 GB stored in this account; never add storage expenses
+    # merely because the PR was merged. Owner must explicitly permit overage.
+    if: github.event_name == 'schedule' && vars.VLS_PRIVATE_ARCHIVE_COST_APPROVED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
