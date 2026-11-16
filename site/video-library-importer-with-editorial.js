@@ -27,9 +27,9 @@ export default{async fetch(request,env){
  if(route==='/private-status'||route==='/private-single'||route==='/private-stream'||route==='/private-artifact-list'){
   if(!env.PRIVATE_ARCHIVE)return resp({error:'Private archive binding not configured'},503);
   const artifact=u.searchParams.get('artifact')||'',key=u.searchParams.get('key')||'';
-  if(!/^[0-9]{4,20}$/.test(artifact)||!/^[A-Za-z0-9_(). -]{1,180}\.(mp4|m4v|mov)$/i.test(key)||key.includes('..')||
+  if(!/^[0-9]{4,20}$/.test(artifact)||(route!=='/private-artifact-list'&&!/^[A-Za-z0-9_(). -]{1,180}\.(mp4|m4v|mov)$/i.test(key)||key.includes('..')||
      /(^|[_ .-])(SOURCE|SCOUT|CONTACT|FRAMES|ASSETS|PROBE|RAW|NOT_FINAL|NON_FINALE)([_ .-]|$)/i.test(key)||
-     /^AUDIO_POLISHED_REVIEW/i.test(key))return resp({error:'Invalid finished-video identity'},400);
+     /^AUDIO_POLISHED_REVIEW/i.test(key)))return resp({error:'Invalid finished-video identity'},400);
   const target='gh-artifacts/'+artifact+'/'+key;
   if(route==='/private-artifact-list'&&method==='GET'){
    const listed=await env.PRIVATE_ARCHIVE.list({prefix:'gh-artifacts/'+artifact+'/',limit:1000});
