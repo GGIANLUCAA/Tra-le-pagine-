@@ -1,0 +1,88 @@
+{
+  "schema": "artvision-owner-30-two-real-new-cinema-museum-private-checkpoints-v1",
+  "recorded_at": "2026-11-16",
+  "repo": "GGIANLUCAA/Tra-le-pagine-",
+  "branch": "main",
+  "action": "record_two_new_independent_museum_variant_slots_avoid_duplicates",
+  "source_session": "ChatGPT direct local ffmpeg render + independently checked Library readback",
+  "queue": "research/artvision_owner_selected_30_future_20261109.json",
+  "new_independent_mp4_slots": 2,
+  "not_new_subjects": true,
+  "not_new_cinema_standard": true,
+  "not_historic_26_of_36": true,
+  "works": [
+    {
+      "title": "The Witches' Flight",
+      "artist": "Francisco Goya",
+      "museum": "Museo del Prado",
+      "accession": "P07748",
+      "variant": "cinema_museum",
+      "status": "RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING",
+      "source_original_sha256": "ab502126677b42dddd873487d268e763b7f052c5bfe13deaab36d74d298bac76",
+      "source_pixels": [
+        2068,
+        2952
+      ],
+      "source_rights": "Commons PD-Art, territorial distribution pending",
+      "cinema_standard_preexisting_mp4_sha256": "82246bdc093321aa34a9070a5de5a623fd0d2e2a94dfa084d4bfa40503d8c26c",
+      "music": "The Descent / Kevin MacLeod CC BY 4.0",
+      "music_original_mp3_sha256": "f097d51700b970efffc62499473ea3a31e09aad4172e787978bc9c2a644d53a2",
+      "virtual_room": "G06_NAVY_GOLD",
+      "virtual_frame": "editorial_nonhistorical",
+      "mp4_sha256": "38c22c474d9fd224fb4b247299a0ad8db07aaa4e385e8908e681fa93229b6707",
+      "mobile_mp4_sha256": "9d55df7460596a14b245a4676e4a2e7e3c5b652ee63717924f767c05abb35589",
+      "mobile_zip_sha256": "4ea59504ebccc17fda6a958fec212ef2e3bde33ba0e0a31f8f84a7ac554f68da",
+      "v203_camera_jump_gate": "PASS_ADJACENT_FRAME_MAD_MAX_16.2183_LT_18",
+      "technical_full_ffmpeg_video_audio_decode": "PASS",
+      "zip_crc_and_library_readback": "PASS",
+      "library_path": "/ArtVision/Owner_30/Goya_Witches_Flight_20261116_Museum"
+    },
+    {
+      "title": "The Shipwreck",
+      "artist": "J. M. W. Turner",
+      "museum": "Tate Britain",
+      "accession": "N00476",
+      "variant": "cinema_museum",
+      "status": "RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING",
+      "source_original_sha256": "8123b51407e0ff48ec40f87111bbf120d16e60d96e1c8fa3bc1923de0dc778a4",
+      "source_pixels": [
+        5244,
+        3648
+      ],
+      "source_rights": "Original public domain, Sailko photograph CC BY 3.0; territorial distribution pending",
+      "cinema_standard_preexisting_mp4_sha256": "4c12c9b6c1f07ef12e49b66da7a37ca7b0872b14e8efc6a44954760d8b8f9537",
+      "music": "Lightless Dawn / Kevin MacLeod CC BY 4.0",
+      "music_original_mp3_preverified_sha256": "59fd69e4432c95887d626e8055113da8fb0da9a8ccac85c6b7da6a6031c4f325",
+      "music_source": "previously verified V330 source AAC, without new paid download",
+      "virtual_room": "G01_BORDEAUX_CLASSIC",
+      "virtual_frame": "editorial_nonhistorical",
+      "first_render": "REJECTED_CAMERA_JUMP_MAD_31.6",
+      "correction": "targeted keyframe smoothing: same independent slot, not a second video",
+      "mp4_sha256": "4f24e740fc715457813681437bef159feac77a133f2c18ef9ae32584e17950df",
+      "mobile_mp4_sha256": "c283a5c60a69b43b08139be39daa458de6ab94a61bbadb529ae8aa1f3ce172c7",
+      "mobile_zip_sha256": "fa84133700d8a801263d9bfaf1f917af50de204d3456e9c4d33a9f52f2aa02ca",
+      "v203_camera_jump_gate": "PASS_ADJACENT_FRAME_MAD_MAX_17.8958_LT_18",
+      "technical_full_ffmpeg_video_audio_decode": "PASS",
+      "zip_crc_and_library_readback": "PASS",
+      "library_path": "/ArtVision/Owner_30/Turner_Shipwreck_Museum_20261116"
+    }
+  ],
+  "combined_android_delivery": {
+    "zip_sha256": "6d33db9f9a49ba105fdfbd3ac73ebd54d5d7f2de262d44100ca287afbfc87dbc",
+    "bytes": 14693867,
+    "library_path": "/ArtVision/Owner_30/Nuovi_2_Cinema_Museum_20261116/ARTVISION_GOYA_TURNER_DUE_NUOVI_MUSEUM_ANDROID.zip",
+    "independent_library_readback_sha_and_zip_crc": "PASS"
+  },
+  "guards": {
+    "GACRUX_CRITICO_ONLY": true,
+    "critico_produced": 0,
+    "gold": false,
+    "auto_published": false,
+    "spent_paid_api": false,
+    "android_device_download_user_verified": false,
+    "owner_artistic_approval": "PENDING",
+    "territorial_rights_final": "PENDING",
+    "same_artwork_music_different_from_pre_v330_standard": true,
+    "do_not_rerender_as_new_slot": true
+  }
+}
