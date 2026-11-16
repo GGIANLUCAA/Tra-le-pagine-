@@ -10,6 +10,13 @@ on:
       - 'tests/test_artvision_ai_room_integrator_v332.py'
       - 'tests/test_artvision_ai_room_frame_provenance_v333.py'
       - 'config/artvision_ai_room_library_v332.json'
+  pull_request:
+    paths:
+      - '.github/workflows/artvision-ai-room-v332-qa.yml'
+      - 'src/artvision_ai_room_integrator_v332.py'
+      - 'src/artvision_ai_room_video_v332.py'
+      - 'tests/test_artvision_ai_room_integrator_v332.py'
+      - 'tests/test_artvision_ai_room_frame_provenance_v333.py'
   workflow_dispatch:
 permissions:
   contents: read
