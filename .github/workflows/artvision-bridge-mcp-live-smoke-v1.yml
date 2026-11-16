@@ -1,0 +1,53 @@
+name: "ArtVision Bridge MCP · live smoke check (manual/public read-only)"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-bridge-mcp-live-smoke-v1.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify_live_mcp:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Check live MCP handshake, public read tools and safety
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, urllib.error
+          ROOT = "https://artvision-bridge-mcp-v1.600led.workers.dev"
+          def req(path, method="GET", body=None, headers=None):
+              data = None if body is None else json.dumps(body).encode("utf-8")
+              r = urllib.request.Request(ROOT + path, data=data, method=method,
+                   headers=headers or {})
+              with urllib.request.urlopen(r, timeout=25) as response:
+                  return response.status, json.load(response)
+          status, health = req("/health")
+          assert status == 200 and health.get("status") == "read-only-public-data", health
+          print("HEALTH_OK")
+          def mcp(method, params=None, id=1):
+              return req("/mcp", "POST",
+                   {"jsonrpc":"2.0","id":id,"method":method,"params":params or {}},
+                   {"Content-Type":"application/json",
+                    "Accept":"application/json, text/event-stream"})
+          status, init = mcp("initialize", {"protocolVersion":"2025-06-18","capabilities":{},
+                        "clientInfo":{"name":"github-live-smoke","version":"1"}})
+          assert status == 200 and init["result"]["serverInfo"]["name"] == "artvision-bridge-readonly"
+          print("MCP_INITIALIZE_OK")
+          status, listing = mcp("tools/list")
+          names = [x["name"] for x in listing["result"]["tools"]]
+          assert names == ["get_project_rules","get_work_status","get_open_blockers"], names
+          print("MCP_LIST_3_TOOLS_OK")
+          for name in names:
+              status, result = mcp("tools/call", {"name":name, "arguments":{}}, id=3)
+              assert status == 200, (name,status)
+              assert result["result"].get("isError") is False, (name,result["result"])
+              assert "structuredContent" in result["result"], name
+              print("MCP_CALL_OK " + name)
+          status, refusal = mcp("tools/call", {"name":"send_message","arguments":{}})
+          assert refusal["error"]["code"] == -32602
+          print("MCP_READONLY_REJECTS_WRITES")
+          print("ARTVISION_BRIDGE_LIVE_SMOKE_PASS")
+          PY
