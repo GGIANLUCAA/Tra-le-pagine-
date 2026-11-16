@@ -38,13 +38,14 @@ def val(o,*keys):
 def identify(obj):
     base=obj.get("work",{}) if isinstance(obj.get("work"),dict) else {}
     return (val(obj,"artist","artist_as_chosen") or val(base,"artist"),
-            val(obj,"title_en","title","title_as_chosen","artwork","work_title") or val(base,"title"),
+            val(obj,"title_en","title","title_as_chosen","artwork","work_title","work") or val(base,"title"),
             val(obj,"year") or val(base,"year"),
             val(obj,"museum") or val(base,"museum"),
             val(obj,"accession","object_id") or val(base,"accession","object_id"))
 def status(d):
     s=val(d,"status","render_status").lower()
     sha=val(d,"video_sha256","rendered_mp4_sha256","mp4_sha256","hd_sha256","sha256","preferred_v2_mp4_sha256","original_v1_mp4_sha256")
+    if any(k in s for k in ("owner_rejected","rejected_wrong","wrong_voice")):return "render_respinto"
     if any(k in s for k in ("rendered","real_mp4","real_new_mp4","technical_pass","mp4_verified")) or re.fullmatch(r"[a-fA-F0-9]{64}",sha):return "render_documentato"
     if "not_started" in s:return "da_produrre"
     if any(k in s for k in ("blocked","failed","unavailable")):return "bloccato"
@@ -108,6 +109,28 @@ def build(root,site,source,stamp):
                 put(w,"cinema_standard",{"status":val(obj,"status")},rel)
             if lane=="selezione_10" and obj.get("preexisting_cinema_candidate"):
                 w["legacy_video_claims"].append({"source":rel,"status":"legacy_non_4x1"})
+            if lane=="selezione_10":
+                # This pre-4x1-format queue stores proven MP4s under version-specific keys.
+                # Multiple revisions of the same slot count once only.
+                for k,detail in obj.items():
+                    m=re.match(r"^(?:new_)?(critico_standard|critico_museum|cinema_standard|cinema_museum)_v\d+",k)
+                    if m and isinstance(detail,dict):
+                        put(w,m.group(1),detail,rel+"#"+k)
+                old_cinema=obj.get("v134_cinema_candidate")
+                if isinstance(old_cinema,dict) and val(old_cinema,"mp4_sha256") and val(old_cinema,"mp4_filename"):
+                    put(w,"cinema_standard",old_cinema,rel+"#v134_cinema_candidate")
+                revision=obj.get("critico_short_revision_v218",{})
+                if isinstance(revision,dict):
+                    for v in ("critico_standard","critico_museum"):
+                        sample=revision.get(v,{})
+                        if isinstance(sample,dict) and val(sample,"sha256") and val(sample,"filename"):
+                            put(w,v,dict(sample,status=val(revision,"production_status")),rel+"#critico_short_revision_v218")
+                    for v in ("cinema_standard","cinema_museum"):
+                        sample=revision.get(v+"_preserved",{})
+                        if isinstance(sample,dict) and val(sample,"sha256"):
+                            put(w,v,dict(sample,status="VERIFIED_EXISTING_SAME_SLOT_REAL_MP4"),rel+"#critico_short_revision_v218")
+                w["selected_ten_legacy_slots_claim"]=obj.get("slots_delivered_this_selection")
+                w["preflight_status_claim"]=val(obj,"preflight_status")
             if lane=="selezione_30":
                 w["selection_order"]=obj.get("selection_order")
                 w["priority"]=obj.get("provisional_production_priority")
@@ -142,6 +165,47 @@ def build(root,site,source,stamp):
         if w and cycle.get("mp4_verified"):
             w["legacy_video_claims"].append({"cycle_id":cycle.get("cycle_id"),
                    "sha256":cycle.get("sha256_mp4"),"workflow_run":cycle.get("workflow_run_url")})
+    # Historical source sets: keep evidence without promoting to four-variant masters.
+    for rel,lane,field in (
+        ("queue/artvision_museum_scale_s01_20261028.json","museum_scale","episodes"),
+        ("queue/artvision_dual_format_s01_20261028.json","legacy_dual_format","pairs")):
+        d=load(root/rel)
+        for item in d.get(field,[]) if isinstance(d,dict) else []:
+            if not isinstance(item,dict):continue
+            w=get(item,rel,lane)
+            if w:
+                w["legacy_video_claims"].append({"source":rel,"status":val(item,"status") or val(d,"status"),
+                    "note":"Formato storico; non conteggiare come slot 4x1 senza video specifico."})
+    # Research-only source lists: never confuse a shortlist with a render queue.
+    future_catalog=load(root/"research/artvision_future_works_index_v1_20261107.json")
+    future_100=[{"catalog_id":item.get("catalog_id"),"artist":val(item,"artist"),
+        "title":val(item,"title"),"year":val(item,"year"),"category":val(item,"category"),
+        "source":"research/artvision_future_works_index_v1_20261107.json",
+        "work_status":"banca_idee_non_coda_produttiva",
+        "rights_status":val(item,"pixel_file_license_status") or "non_verificato"}
+        for item in future_catalog.get("works",[]) if isinstance(item,dict)] if isinstance(future_catalog,dict) else []
+    selected_futures=load(root/"research/artvision_owner_selected_30_future_20261109.json")
+    future_30=[{"order":item.get("selection_order"),"artist":val(item,"artist_as_chosen","artist"),
+        "title":val(item,"title_as_chosen","title"),"status":val(item,"current_stage") or "research_pending",
+        "source":"research/artvision_owner_selected_30_future_20261109.json",
+        "rights_cleared":bool(item.get("territorial_commercial_reuse_cleared",False)),
+        "selection_only_not_completed":True}
+        for item in selected_futures.get("works",[]) if isinstance(item,dict)] if isinstance(selected_futures,dict) else []
+    production_root=root/"docs/productions"
+    production_dossiers=[{"path":str(p.relative_to(root)),"extension":p.suffix.lower(),
+        "bytes":p.stat().st_size} for p in sorted(production_root.rglob("*")) if p.is_file()] if production_root.is_dir() else []
+    production_dirs=sum(p.is_dir() for p in production_root.rglob("*")) if production_root.is_dir() else 0
+    # Independent verified historical technical review files.
+    # They remain NOT owner-approved, NOT Gold, and NOT counted as newly approved slots.
+    extra_reviews=load(root/"data/archivio-generale/revisioni_storiche_fonti_pubbliche.json")
+    historic_review_count=0
+    for item in extra_reviews.get("records",[]) if isinstance(extra_reviews,dict) else []:
+        if not isinstance(item,dict):continue
+        w=get(item,val(item,"source"),"review_storica")
+        if w and val(item,"variant") in VARIANTS:
+            put(w,item["variant"],{"status":"RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD",
+                "mp4_sha256":val(item,"mp4_sha256")},val(item,"source"))
+            historic_review_count+=1
     # All literary series dossiers are included without implying completed video delivery.
     literary=[]
     for folder in sorted((root/"episodes").glob("*")):
@@ -157,7 +221,7 @@ def build(root,site,source,stamp):
             "episode":val(meta,"episode")})
     history_candidates=[]
     for rel,field in (("queue/storia_rivive_candidates_v58.json","candidates"),
-                      ("queue/storia_rivive_v69_film_scouting_candidates.json","candidates")):
+                      ("queue/storia_rivive_v69_film_scouting_candidates.json","items")):
         d=load(root/rel)
         if isinstance(d.get(field),list):
             for obj in d[field]:
@@ -202,8 +266,12 @@ def build(root,site,source,stamp):
         filename_groups[canonical].append(name)
     ordered=sorted(works.values(),key=lambda w:(norm(w["artist"]),norm(w["title"]),w["year"]))
     for w in ordered:
-        w["missing_variants"]=[v for v in VARIANTS if w["variants"][v]["state"]!="render_documentato"]
-        w["render_documented"]=4-len(w["missing_variants"])
+        # Historical one-off Cinema/Museum or paired pilots are not automatically
+        # four-variant commitments. The owner-selected and checkpoint lanes are.
+        w["four_by_one_target"]=not w["excluded"] and bool(set(w["lanes"]) &
+            {"storico_4x1","selezione_10","selezione_30","nuova_serie","checkpoint"})
+        w["missing_variants"]=[v for v in VARIANTS if w["variants"][v]["state"]!="render_documentato"] if w["four_by_one_target"] else []
+        w["render_documented"]=sum(w["variants"][v]["state"]=="render_documentato" for v in VARIANTS)
         w["site_playback_verified"]=False
         w["published_confirmed"]=False
     categories=dict(Counter(x.get("category") or "Senza categoria" for x in site_rows))
@@ -212,12 +280,20 @@ def build(root,site,source,stamp):
            "site_items":len(site_rows),"site_cloudflare":sum(x.get("source")=="cloudflare" for x in site_rows),
            "site_unavailable":sum(x.get("available") is False for x in site_rows),
            "possible_site_matches":sum(x["match_quality"]=="ipotesi_nome_non_hash" for x in site_rows),
-           "queue_files":len(queue_files),"literary_dossiers":len(literary),"history_candidates":len(history_candidates),"categories":categories}
+           "queue_files":len(queue_files),"literary_dossiers":len(literary),"history_candidates":len(history_candidates),
+           "research_100":len(future_100),"selected_future_30":len(future_30),
+           "production_dossiers":len(production_dossiers),"production_dossier_subdirs":production_dirs,
+           "unmatched_site_items":sum(x["match_quality"]=="nessuna" for x in site_rows),
+           "recovered_historical_review_files":historic_review_count,
+           "four_by_one_scoped":sum(w["four_by_one_target"] for w in ordered),
+           "complete_four_render_documented":sum(w["four_by_one_target"] and w["render_documented"]==4 for w in ordered),
+           "categories":categories}
     likely_duplicate_names=[{"normalized":k,"files":v} for k,v in filename_groups.items() if len(v)>1]
     cross_hashes=[{"sha256":h,"claims":proofs} for h,proofs in duplicates.items()
                   if len(set((w,v) for w,v,_ in proofs))>1]
     return dict(schema="artvision-master-registry-v1",generated_at=stamp,site_state=source,stats=stats,
                 works=ordered,site_items=site_rows,queue_files=queue_files,literary=literary,history_candidates=history_candidates,
+                future_100=future_100,future_30=future_30,production_dossiers=production_dossiers,
                 possible_filename_duplicates=likely_duplicate_names,
                 cross_variant_sha_collisions=cross_hashes,warnings=warnings)
 
@@ -235,20 +311,31 @@ def markdown(root,r):
        table_row(["Elementi del catalogo sito",st["site_items"]]),
        table_row(["Elementi Cloudflare",st["site_cloudflare"]]),
        table_row(["Elementi non disponibili",st["site_unavailable"]]),
-       table_row(["Code JSON esaminate",st["queue_files"]]),"",
+       table_row(["Code JSON esaminate",st["queue_files"]]),
+       table_row(["Banca idee future (non coda)",st["research_100"]]),
+       table_row(["Future selezionate (non video finiti)",st["selected_future_30"]]),
+       table_row(["Fascicoli di produzione indicizzati",st["production_dossiers"]]),
+       table_row(["Review Museum storiche recuperate",st["recovered_historical_review_files"]]),
+       table_row(["Opere in scope 4x1",st["four_by_one_scoped"]]),
+       table_row(["File sito senza artista/opera abbinati",st["unmatched_site_items"]]),"",
        "## Documenti collegati","",
        "- [Opere e tutte le varianti](ARCHIVIO_OPERE_E_VERSIONI.md)",
        "- [Inventario integrale del sito](ARCHIVIO_SITO_COMPLETO.md)",
        "- [Code e produzioni mancanti](ARCHIVIO_CODE_MANCANTI.md)",
        "- [Doppioni potenziali](ARCHIVIO_DOPPIONI_POTENZIALI.md)",
-       "- [Libri e ricerche La Storia Rivive](ARCHIVIO_ALTRI_FORMAT.md)","",
+       "- [Libri e ricerche La Storia Rivive](ARCHIVIO_ALTRI_FORMAT.md)",
+       "- [Ricerca futura: 100 opere e selezione 30](ARCHIVIO_RICERCA_FUTURA.md)",
+       "- [Fascicoli di produzione storici](ARCHIVIO_PRODUZIONI_STORICHE.md)","",
        "I file JSON e CSV nella cartella data/archivio-generale sono l'interfaccia leggibile dalle automazioni.",
        "L'Action aggiorna i dati periodicamente; gli errori del sito conservano il precedente snapshot dichiarandolo non attuale.",
-       "Nessun dato ricavato da sole conversazioni viene spacciato per verifica di MP4."]
+       "Nessun dato ricavato da sole conversazioni viene spacciato per verifica di MP4.",
+       "LIMITAZIONE: la Libreria privata ChatGPT non è esposta a GitHub Actions. I suoi MP4 non",
+       "sono inventariati automaticamente in questo repository pubblico; verificarli separatamente",
+       "senza pubblicare ID, percorsi o altri metadati privati. La coincidenza per nome non prova identità."]
     save(root/"docs/ARCHIVIO_GENERALE_ARTVISION.md","\n".join(intro)+"\n")
-    chars={"render_documentato":"D","da_produrre":"C","in_coda_o_preflight":"C","bloccato":"B","non_documentato":"—"}
+    chars={"render_documentato":"D","render_respinto":"R","da_produrre":"C","in_coda_o_preflight":"C","bloccato":"B","non_documentato":"—"}
     p=["# Opere, artisti, quattro versioni","",
-       "D = render documentato · C = in coda/preflight · B = blocco documentato · — = non documentato.",
+       "D = render documentato · R = render respinto (non completato) · C = in coda/preflight · B = blocco documentato · — = non documentato.",
        "Questi stati non implicano pubblicazione né playback.","",
        "| Autore | Titolo | Anno | Critico | Critico Museum | Cinema | Cinema Museum | Sul sito? |",
        "|---|---|---|---|---|---|---|---|"]
@@ -320,6 +407,31 @@ def markdown(root,r):
               "Le schede prive di autore o titolo attribuibile restano da verificare."]
     save(root/"docs/ARCHIVIO_ALTRI_FORMAT.md","\n".join(other)+"\n")
 
+    future=["# Ricerca futura — non è una coda di rendering","",
+       "Le 100 opere editoriali e le 30 selezionate sono cataloghi di idee, non 130 render ordinati.",
+       "La presenza in ricerca non significa file, diritti, qualità o pubblicazione verificata.","",
+       "## Catalogo editoriale 100 opere","",
+       "| ID | Autore | Opera | Anno | Gruppo | Stato diritti file |",
+       "|---|---|---|---|---|---|"]
+    for x in r["future_100"]:
+        future.append(table_row([x["catalog_id"],x["artist"],x["title"],x["year"] or "?",
+                                 x["category"],x["rights_status"]]))
+    future+=["","## Le 30 opere selezionate","",
+        "| Ordine | Autore | Opera | Stato ricerca | Diritti commerciali |",
+        "|---|---|---|---|---|"]
+    for x in r["future_30"]:
+        future.append(table_row([x["order"],x["artist"],x["title"],x["status"],
+                          "dichiarati chiariti" if x["rights_cleared"] else "da verificare"]))
+    save(root/"docs/ARCHIVIO_RICERCA_FUTURA.md","\n".join(future)+"\n")
+    dossiers=["# Tutti i fascicoli di produzione storici","",
+       "Indice dei file realmente presenti in docs/productions, non conferma file MP4 o pubblicazione.",
+       "La dimensione indica il file di documentazione, non il video.","",
+       "| Fascicolo | Tipo | Byte |","|---|---|---:|"]
+    for x in r["production_dossiers"]:
+        dossiers.append(table_row(["["+x["path"]+"]("+link(x["path"])+")",
+                                    x["extension"] or "altro",x["bytes"]]))
+    save(root/"docs/ARCHIVIO_PRODUZIONI_STORICHE.md","\n".join(dossiers)+"\n")
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--root",type=Path,default=Path(__file__).resolve().parents[1])
@@ -347,12 +459,27 @@ def main():
         if isinstance(old,dict) and isinstance(old.get("items"),list):
             site=old;source="cache_precedente_non_attuale"
     registry=build(root,site,source,stamp)
+    # A scheduled check must not commit every six hours when nothing changed.
+    old=load(root/"data/archivio-generale/opere.json")
+    old_site=load(root/"data/archivio-generale/catalogo_sito.json")
+    old_queue=load(root/"data/archivio-generale/code.json")
+    old_prod=load(root/"data/archivio-generale/fascicoli_produzione.json")
+    if isinstance(old,dict) and isinstance(old_site,dict) and isinstance(old_queue,dict) and isinstance(old_prod,dict):
+        keys=("works","literary","history_candidates","future_100","future_30","stats","warnings")
+        if (all(old.get(k)==registry.get(k) for k in keys)
+            and old_site.get("items")==registry["site_items"]
+            and old_queue.get("items")==registry["queue_files"]
+            and old_prod.get("items")==registry["production_dossiers"]
+            and old.get("site_state")==registry["site_state"]):
+            stamp=old.get("generated_at") or stamp
+            registry["generated_at"]=stamp
     folder=root/"data/archivio-generale"
     save(folder/"opere.json",jd({k:v for k,v in registry.items() if k not in
-       ("site_items","queue_files","possible_filename_duplicates","cross_variant_sha_collisions")}))
+       ("site_items","queue_files","possible_filename_duplicates","cross_variant_sha_collisions","production_dossiers")}))
     save(folder/"catalogo_sito.json",jd({"schema":"artvision-site-snapshot-v1","checked_at":stamp,
              "source_state":source,"items":registry["site_items"]}))
     save(folder/"code.json",jd({"checked_at":stamp,"items":registry["queue_files"]}))
+    save(folder/"fascicoli_produzione.json",jd({"checked_at":stamp,"items":registry["production_dossiers"]}))
     save(folder/"doppioni.json",jd({"filename_suspects":registry["possible_filename_duplicates"],
                "cross_variant_sha_collisions":registry["cross_variant_sha_collisions"]}))
     buffer=io.StringIO()

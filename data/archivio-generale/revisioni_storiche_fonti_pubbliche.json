@@ -1,0 +1,87 @@
+{
+  "schema": "artvision-public-proofs-recovered-v1",
+  "created_at": "2026-11-16",
+  "purpose": "Historically produced technical review MP4s missing from current canonical 4x1 counters; exact public report SHA only. This does not certify owner approval, site upload or playable phone download.",
+  "records": [
+    {
+      "artist": "Hugo Simberg",
+      "title": "The Garden of Death",
+      "variant": "cinema_museum",
+      "mp4_sha256": "6e8a5bbf0e1a37bfa1b5352c3c7da5e317f8f5068412448f7646115094c2eb26",
+      "source": "docs/productions/2026-11-08-artvision-simberg-v225-cinema-scale-corrected.md",
+      "note": "V225, QA tecnico PASS, revisione artistica pendente",
+      "approval": "NON_GOLD_ARTISTIC_REVIEW_PENDING",
+      "not_an_increment_of_canonical_owner_approved_slots": true
+    },
+    {
+      "artist": "Hugo Simberg",
+      "title": "The Garden of Death",
+      "variant": "critico_museum",
+      "mp4_sha256": "7fe48f41f5da136fdfead63a0067bddc21863121eec25551fbe795443e2313aa",
+      "source": "docs/productions/2026-11-08-artvision-simberg-garden-v218-critico-phrase-sync.md",
+      "note": "V218, QA tecnico PASS, Museum non approvato",
+      "approval": "NON_GOLD_ARTISTIC_REVIEW_PENDING",
+      "not_an_increment_of_canonical_owner_approved_slots": true
+    },
+    {
+      "artist": "John William Waterhouse",
+      "title": "The Magic Circle",
+      "variant": "cinema_museum",
+      "mp4_sha256": "d38b992015bd026ea2ece3267cd5ee72f96accc7c67f90180b869f53e977c60f",
+      "source": "docs/productions/2026-11-08-artvision-waterhouse-magic-circle-v222-v223-real-museum-reviews.md",
+      "note": "V222, QA tecnico PASS, niente Gold",
+      "approval": "NON_GOLD_ARTISTIC_REVIEW_PENDING",
+      "not_an_increment_of_canonical_owner_approved_slots": true
+    },
+    {
+      "artist": "John William Waterhouse",
+      "title": "The Magic Circle",
+      "variant": "critico_museum",
+      "mp4_sha256": "5843aa37be07ecd9cd2ae7d0c98f7f10dfc3fa8488a84a3e7c4487744c7dcee4",
+      "source": "docs/productions/2026-11-08-artvision-waterhouse-magic-circle-v222-v223-real-museum-reviews.md",
+      "note": "V223, QA tecnico PASS, review pendente",
+      "approval": "NON_GOLD_ARTISTIC_REVIEW_PENDING",
+      "not_an_increment_of_canonical_owner_approved_slots": true
+    },
+    {
+      "artist": "William Blake",
+      "title": "The Ghost of a Flea",
+      "variant": "cinema_museum",
+      "mp4_sha256": "64dcf69d8dc8ed3169d0d3036b8801b3c562b3519e7f5163fa4e78c3e96367c6",
+      "source": "docs/productions/2026-11-08-artvision-blake-v220-private-museum-continuous-review.md",
+      "note": "V220, QA tecnico PASS, review non Gold",
+      "approval": "NON_GOLD_ARTISTIC_REVIEW_PENDING",
+      "not_an_increment_of_canonical_owner_approved_slots": true
+    },
+    {
+      "artist": "William Blake",
+      "title": "The Ghost of a Flea",
+      "variant": "critico_museum",
+      "mp4_sha256": "511ee72a1bfcb89fa70a9eb7eecf8b2eced1327be12237af790141b7df03adaa",
+      "source": "docs/productions/2026-11-08-artvision-blake-ghost-flea-v221-critico-museum.md",
+      "note": "V221, QA tecnico PASS, review non Gold",
+      "approval": "NON_GOLD_ARTISTIC_REVIEW_PENDING",
+      "not_an_increment_of_canonical_owner_approved_slots": true
+    },
+    {
+      "artist": "Pieter Bruegel the Elder",
+      "title": "The Triumph of Death",
+      "variant": "cinema_museum",
+      "mp4_sha256": "edc724783729262ded63e8c1a6ea55f97d0d01665bb025f19f5a9dcd3bc373cf",
+      "source": "docs/productions/2026-11-08-artvision-triumph-v217-private-cinema-museum-review.md",
+      "note": "V217, QA tecnico PASS, approvazione artistica pendente",
+      "approval": "NON_GOLD_ARTISTIC_REVIEW_PENDING",
+      "not_an_increment_of_canonical_owner_approved_slots": true
+    },
+    {
+      "artist": "Pieter Bruegel the Elder",
+      "title": "The Triumph of Death",
+      "variant": "critico_museum",
+      "mp4_sha256": "7181523e7531f56f1c1d03cc30052f5df1870a2b82fd16a799d810b68c9a80ba",
+      "source": "docs/productions/2026-11-08-artvision-triumph-v224-private-review.md",
+      "note": "V224, QA tecnico PASS, movimento WARN e revisione artistica pendente",
+      "approval": "NON_GOLD_ARTISTIC_REVIEW_PENDING",
+      "not_an_increment_of_canonical_owner_approved_slots": true
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Opere, artisti, quattro versioni
 
-D = render documentato · C = in coda/preflight · B = blocco documentato · — = non documentato.
+D = render documentato · R = render respinto (non completato) · C = in coda/preflight · B = blocco documentato · — = non documentato.
 Questi stati non implicano pubblicazione né playback.
 
 | Autore | Titolo | Anno | Critico | Critico Museum | Cinema | Cinema Museum | Sul sito? |
@@ -15,6 +15,7 @@ Questi stati non implicano pubblicazione né playback.
 | Caspar David Friedrich | The Sea of Ice | ? | — | — | — | — | Non abbinato |
 | Edvard Munch | The Dead Mother and Child | ? | — | — | — | — | Non abbinato |
 | Edvard Munch | The Vampire | ? | — | — | — | — | Non abbinato |
+| Edvard Munch | Vampire | ? | — | — | D | — | Non abbinato |
 | Edward Burne-Jones | King Arthur in Avalon | ? | — | — | — | — | Non abbinato |
 | Edward Burne-Jones | L'ultimo sonno di re Artù | ? | D | D | D | D | Non abbinato |
 | Edward Burne-Jones | The Baleful Head | 1885–1887 | — | — | D | — | Non abbinato |
@@ -22,8 +23,8 @@ Questi stati non implicano pubblicazione né playback.
 | Edwin Landseer | L'uomo propone, Dio dispone | ? | D | D | D | D | Non abbinato |
 | Elihu Vedder | La Sfinge sulla riva del mare | ? | D | D | D | D | Non abbinato |
 | Eugène Delacroix | The Barque of Dante | 1822 | — | — | — | — | Non abbinato |
-| Eugène Delacroix | The Death of Sardanapalus | 1827 | — | — | — | — | Possibili 2 |
-| Evelyn De Morgan | The Dryad | 1884–1885 | — | — | — | — | Non abbinato |
+| Eugène Delacroix | The Death of Sardanapalus | 1827 | D | D | D | D | Possibili 2 |
+| Evelyn De Morgan | The Dryad | 1884–1885 | R | — | — | — | Non abbinato |
 | Evelyn De Morgan | The Storm Spirits | ? | — | — | — | — | Non abbinato |
 | Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh | After the Storm | ? | — | — | — | — | Non abbinato |
 | Ford Madox Brown | L'ultimo saluto all'Inghilterra | ? | D | D | D | D | Non abbinato |
@@ -39,7 +40,7 @@ Questi stati non implicano pubblicazione né playback.
 | Gustave Moreau | The Apparition | ? | — | — | — | — | Non abbinato |
 | Henry Meynell Rheam | Sleeping Beauty | ? | — | — | C | — | Non abbinato |
 | Hieronymus Bosch | The Garden of Earthly Delights | circa 1490–1500 | D | D | D | D | Non abbinato |
-| Hugo Simberg | The Garden of Death | 1896 | — | — | — | — | Possibili 2 |
+| Hugo Simberg | The Garden of Death | 1896 | D | D | D | D | Possibili 2 |
 | Hugo Simberg | The Wounded Angel | ? | — | — | — | — | Non abbinato |
 | Hugo Simberg | The Wounded Angel — A Quiet Procession | ? | — | — | — | — | Non abbinato |
 | Hugo Simberg; Jan van Eyck; Arnold Böcklin | The Witness — three historic gazes | ? | — | — | — | — | Non abbinato |
@@ -57,12 +58,13 @@ Questi stati non implicano pubblicazione né playback.
 | John Everett Millais | La ragazza cieca | ? | D | D | D | D | Non abbinato |
 | John Martin | The Country of the Iguanodon | ? | — | — | — | — | Non abbinato |
 | John William Waterhouse | Circe Invidiosa | ? | — | — | — | — | Non abbinato |
-| John William Waterhouse | The Lady of Shalott | 1888 | — | — | — | — | Possibili 3 |
-| John William Waterhouse | The Magic Circle | 1886 | — | — | — | — | Possibili 2 |
+| John William Waterhouse | The Lady of Shalott | 1888 | D | D | D | D | Possibili 3 |
+| John William Waterhouse | The Magic Circle | 1886 | D | D | D | D | Possibili 2 |
 | John William Waterhouse | The Mermaid | ? | — | — | — | — | Non abbinato |
 | John William Waterhouse | Ulysses and the Sirens | 1891 | — | — | — | — | Non abbinato |
 | Joos van Craesbeeck | The Temptation of Saint Anthony | ? | — | — | — | — | Non abbinato |
 | Joseph Mallord William Turner | The Burning of the Houses of Lords and Commons, 16 October 1834 | 1835 | B | B | D | C | Non abbinato |
+| Joseph Mallord William Turner | The Fighting Temeraire tugged to her last berth to be broken up, 1838 | 1839 | — | — | — | — | Non abbinato |
 | Joseph Wright of Derby | An Experiment on a Bird in the Air Pump | 1768 | D | D | D | D | Non abbinato |
 | Joseph Wright of Derby | The Alchemist | ? | — | — | — | — | Non abbinato |
 | Jules Bastien-Lepage | Giovanna d'Arco | ? | D | D | D | D | Non abbinato |
@@ -78,18 +80,19 @@ Questi stati non implicano pubblicazione né playback.
 | Peter Paul Rubens | The Battle of the Amazons | ? | — | — | — | — | Non abbinato |
 | Piero di Cosimo | The Forest Fire | ca. 1505 | — | — | D | — | Non abbinato |
 | Pieter Bruegel the Elder | Dulle Griet | 1563 | — | — | D | — | Non abbinato |
-| Pieter Bruegel the Elder | The Fall of the Rebel Angels | 1562 | — | — | — | — | Non abbinato |
-| Pieter Bruegel the Elder | The Tower of Babel | 1563 | — | — | — | — | Non abbinato |
-| Pieter Bruegel the Elder | The Triumph of Death | 1562–1563 | — | — | — | — | Non abbinato |
-| Rembrandt van Rijn | The Night Watch | 1642 | — | — | — | — | Non abbinato |
+| Pieter Bruegel the Elder | The Fall of the Rebel Angels | 1562 | D | D | D | D | Non abbinato |
+| Pieter Bruegel the Elder | The Tower of Babel | 1563 | D | D | D | D | Non abbinato |
+| Pieter Bruegel the Elder | The Triumph of Death | 1562–1563 | D | D | D | D | Non abbinato |
+| Rembrandt van Rijn | The Night Watch | 1642 | D | D | D | D | Non abbinato |
 | Richard Dadd | The Fairy Feller's Master-Stroke | 1855-1864 | — | — | D | — | Non abbinato |
 | Rosa Bonheur | La fiera dei cavalli | ? | D | D | D | D | Non abbinato |
 | Salvador Dalí | The Temptation of St. Anthony | 1946 | — | — | — | — | ESCLUSO |
 | Thomas Cole | The Course of Empire: Destruction | ? | — | — | — | — | Non abbinato |
+| Thomas Cole | The Titan's Goblet | 1833 | — | — | — | — | Non abbinato |
 | Thomas Cole | The Voyage of Life: Manhood | 1842 | B | B | D | C | Non abbinato |
 | Utagawa Hiroshige | Plum Garden at Kameido | ? | — | — | — | — | Non abbinato |
 | Utagawa Hiroshige; Vincent van Gogh | Japan Through Van Gogh | ? | — | — | — | — | Non abbinato |
-| William Blake | The Ghost of a Flea | 1819–1820 | — | — | — | — | Possibili 2 |
+| William Blake | The Ghost of a Flea | 1819–1820 | D | D | D | D | Possibili 2 |
 | William Blake | The Great Red Dragon and the Woman Clothed with the Sun | ? | — | — | — | — | Non abbinato |
 | William Holbrook Beard | The Bulls and Bears | ? | — | — | — | — | Non abbinato |
 | William Holbrook Beard | The Bulls and Bears in the Market | 1879 | — | — | — | — | Non abbinato |
@@ -160,7 +163,7 @@ Questi stati non implicano pubblicazione né playback.
 ### Carel Fabritius — The Goldfinch
 
 - Anno: 1654; Museo: Mauritshuis
-- Code: storico_4x1
+- Code: storico_4x1, museum_scale, legacy_dual_format
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: render_documentato; prove: queue/artvision_four_variants_s01_20261028.json [rendered_needs_review]
 - critico_museum: render_documentato; prove: queue/artvision_four_variants_s01_20261028.json [rendered_needs_review]
@@ -195,6 +198,16 @@ Questi stati non implicano pubblicazione né playback.
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: non_documentato; prove: nessuna
+- cinema_museum: non_documentato; prove: nessuna
+
+### Edvard Munch — Vampire
+
+- Anno: da verificare; Museo: da verificare
+- Code: checkpoint
+- Candidati sul sito (nome compatibile soltanto): nessuno
+- critico_standard: non_documentato; prove: nessuna
+- critico_museum: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_munch_vampire.json [RENDERED_INDEPENDENT_BYTE_READBACK_PASS_ARTISTIC_AND_RIGHTS_REVIE]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Edward Burne-Jones — King Arthur in Avalon
@@ -272,17 +285,17 @@ Questi stati non implicano pubblicazione né playback.
 - Anno: 1827; Museo: Musée du Louvre
 - Code: selezione_10
 - Candidati sul sito (nome compatibile soltanto): DELACROIX_THE_DEATH_OF_SARDANAPALUS_CINEMA_V168_REVIEW.mp4, DELACROIX_THE_DEATH_OF_SARDANAPALUS_CRITICO_MUSEUM_V171_REVIEW.mp4
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
+- critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v169 [ONE_REAL_MP4_FROM_SUCCESS_GITHUB_ACTIONS_INDEPENDENT_FFMPEG_SHA_Z]
+- critico_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_museum_v171 [ONE_REAL_REVIEW_MP4_GITHUB_ARTIFACT_SHA_FFMPEG_ZIP_LIBRARY_READBA]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v168 [INDEPENDENT_REAL_MP4_FROM_GITHUB_ARTIFACT_AND_PRIVATE_LIBRARY_ZIP]
+- cinema_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_museum_v172 [REAL_48S_CINEMA_MUSEUM_MP4_INDEPENDENT_FULL_DECODE_SHA_ZIP_CRC_AN]
 
 ### Evelyn De Morgan — The Dryad
 
 - Anno: 1884–1885; Museo: da verificare
 - Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
-- critico_standard: non_documentato; prove: queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json [OWNER_REJECTED_WRONG_NARRATION_VOICE__TECHNICAL_ARTIFACT_ONLY__CR]
+- critico_standard: render_respinto; prove: queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json [OWNER_REJECTED_WRONG_NARRATION_VOICE__TECHNICAL_ARTIFACT_ONLY__CR]
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: non_documentato; prove: nessuna
 - cinema_museum: non_documentato; prove: nessuna
@@ -360,7 +373,7 @@ Questi stati non implicano pubblicazione né playback.
 ### Georges Seurat — A Sunday on La Grande Jatte—1884
 
 - Anno: 1884-1886; Museo: Art Institute of Chicago
-- Code: storico_4x1
+- Code: storico_4x1, museum_scale, legacy_dual_format
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: bloccato; prove: queue/artvision_four_variants_s01_20261028.json [blocked]
 - critico_museum: bloccato; prove: queue/artvision_four_variants_s01_20261028.json [blocked]
@@ -440,12 +453,12 @@ Questi stati non implicano pubblicazione né playback.
 ### Hugo Simberg — The Garden of Death
 
 - Anno: 1896; Museo: Finnish National Gallery / Ateneum
-- Code: selezione_10
+- Code: selezione_10, review_storica
 - Candidati sul sito (nome compatibile soltanto): SIMBERG_THE_GARDEN_OF_DEATH_CINEMA_V134_REVIEW.mp4, SIMBERG_THE_GARDEN_OF_DEATH_CRITICO_STANDARD_V146_REVIEW.mp4
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
+- critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v146 [REAL_MP4_GitHub_ARTIFACT_DOWNLOADED_INDEPENDENT_SHA_ZIP_CRC_FULL_]
+- critico_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-simberg-garden-v218-critico-phrase-sync.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#v134_cinema_candidate [real_mp4_artifact_downloaded_full_decode_SHA_zip_crc_PASS_one_slo]
+- cinema_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-simberg-v225-cinema-scale-corrected.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 
 ### Hugo Simberg — The Wounded Angel
 
@@ -520,7 +533,7 @@ Questi stati non implicano pubblicazione né playback.
 ### J. M. W. Turner — The Fighting Temeraire
 
 - Anno: 1839; Museo: National Gallery London
-- Code: storico_4x1
+- Code: storico_4x1, legacy_dual_format
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: render_documentato; prove: queue/artvision_four_variants_s01_20261028.json [rendered_needs_review]
 - critico_museum: render_documentato; prove: queue/artvision_four_variants_s01_20261028.json [rendered_needs_review]
@@ -622,20 +635,20 @@ Questi stati non implicano pubblicazione né playback.
 - Anno: 1888; Museo: Tate Britain
 - Code: selezione_10
 - Candidati sul sito (nome compatibile soltanto): WATERHOUSE_THE_LADY_OF_SHALOTT_CINEMA_V155_REVIEW.mp4, WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_MUSEUM_V164_REVIEW.mp4, WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_STANDARD_V156_REVIEW.mp4
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
+- critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v156 [REAL_MP4_SHA256_FULL_FFMPEG_DECODE_AND_ZIP_CRC_INDEPENDENTLY_VERI]
+- critico_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_museum_v164 [REAL_MP4_ARTIFACT_DOWNLOAD_SHA256_FULL_FFMPEG_ZIP_CRC_AND_AUDIO_I]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v155 [REAL_CINEMA_48S_SOURCE_JPG_ZIP_FFMPEG_SHA256_INDEPENDENTLY_VERIFI]
+- cinema_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_museum_v166 [REAL_MP4_LIBRARY_UPLOAD_DOWNLOAD_SHA256_FFMPEG_FULL_DECODE_ZIP_CR]
 
 ### John William Waterhouse — The Magic Circle
 
 - Anno: 1886; Museo: Tate Britain
-- Code: selezione_10
+- Code: selezione_10, review_storica
 - Candidati sul sito (nome compatibile soltanto): WATERHOUSE_THE_MAGIC_CIRCLE_CINEMA_V158_REVIEW.mp4, WATERHOUSE_THE_MAGIC_CIRCLE_CRITICO_STANDARD_V159_REVIEW.mp4
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
+- critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v159 [REAL_MP4_INDEPENDENT_LOCAL_GITHUB_ARTIFACT_SHA_FFMPEG_ZIP_CRC_PAS]
+- critico_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-waterhouse-magic-circle-v222-v223-real-museum-reviews.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v158 [REAL_1080p_CINEMA_MP4_GITHUB_ARTIFACT_FULL_FFMPEG_SHA256_AND_ZIP_]
+- cinema_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-waterhouse-magic-circle-v222-v223-real-museum-reviews.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 
 ### John William Waterhouse — The Mermaid
 
@@ -677,10 +690,20 @@ Questi stati non implicano pubblicazione né playback.
 - cinema_standard: render_documentato; prove: queue/artvision_extra_render_checkpoint_20261115_turner_fire_cleveland.json [RENDERED_TECH_QA_ART_REVIEW_PENDING]
 - cinema_museum: da_produrre; prove: queue/artvision_extra_render_checkpoint_20261115_turner_fire_cleveland.json [NOT_STARTED_MUSEUM_GATE]
 
+### Joseph Mallord William Turner — The Fighting Temeraire tugged to her last berth to be broken up, 1838
+
+- Anno: 1839; Museo: National Gallery, London, NG524, Room 40
+- Code: museum_scale
+- Candidati sul sito (nome compatibile soltanto): nessuno
+- critico_standard: non_documentato; prove: nessuna
+- critico_museum: non_documentato; prove: nessuna
+- cinema_standard: non_documentato; prove: nessuna
+- cinema_museum: non_documentato; prove: nessuna
+
 ### Joseph Wright of Derby — An Experiment on a Bird in the Air Pump
 
 - Anno: 1768; Museo: National Gallery London
-- Code: storico_4x1, cicli_v31
+- Code: storico_4x1, cicli_v31, legacy_dual_format
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: render_documentato; prove: queue/artvision_four_variants_s01_20261028.json [rendered_needs_review]
 - critico_museum: render_documentato; prove: queue/artvision_four_variants_s01_20261028.json [rendered_needs_review]
@@ -832,40 +855,40 @@ Questi stati non implicano pubblicazione né playback.
 - Anno: 1562; Museo: Royal Museums of Fine Arts of Belgium
 - Code: selezione_10, cicli_v31
 - Candidati sul sito (nome compatibile soltanto): nessuno
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
+- critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v144 [physical_MP4_artifact_download_independently_verified_review_not_]; queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218 [TWO_NEW_SHORTER_REAL_CRITICO_MP4S_REVIEW_ONLY_NOT_NEW_APPROVED_SL]
+- critico_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218 [TWO_NEW_SHORTER_REAL_CRITICO_MP4S_REVIEW_ONLY_NOT_NEW_APPROVED_SL]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v133 [rendered_needs_review_one_real_MP4_not_4x1]; queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v135 [real_non_destructive_revision_same_slot_clean_public_title_verifi]; queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v153 [ONE_REAL_MP4_REPLACEMENT_OF_UNDELIVERED_V135_IN_SAME_CINEMA_SLOT_]; queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218 [VERIFIED_EXISTING_SAME_SLOT_REAL_MP4]
+- cinema_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218 [VERIFIED_EXISTING_SAME_SLOT_REAL_MP4]
 
 ### Pieter Bruegel the Elder — The Tower of Babel
 
 - Anno: 1563; Museo: Kunsthistorisches Museum Wien
 - Code: selezione_10
 - Candidati sul sito (nome compatibile soltanto): nessuno
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
+- critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v141 [non dichiarato]
+- critico_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_museum_v141 [non dichiarato]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v136 [physical_artifact_download_readback_verified_review_not_gold]
+- cinema_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_museum_v137 [technical_readback_pass_artistic_full_watch_pending]
 
 ### Pieter Bruegel the Elder — The Triumph of Death
 
 - Anno: 1562–1563; Museo: Museo del Prado
-- Code: selezione_10
+- Code: selezione_10, review_storica
 - Candidati sul sito (nome compatibile soltanto): nessuno
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
+- critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v151 [REAL_MP4_SOURCE_PD_ART_SHA_ZIP_CRC_AND_FULL_FFMPEG_DECODE_INDEPEN]
+- critico_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-triumph-v224-private-review.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v150 [REAL_H264_AAC_48S_MP4_ZIP_SHA_FFMPEG_CRC_INDEPENDENT_DOWNLOAD_PAS]
+- cinema_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-triumph-v217-private-cinema-museum-review.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 
 ### Rembrandt van Rijn — The Night Watch
 
 - Anno: 1642; Museo: Rijksmuseum
 - Code: selezione_10
 - Candidati sul sito (nome compatibile soltanto): nessuno
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
+- critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v149 [REAL_MP4_SOURCE_OFFICIAL_RIJKSMUSEUM_IIIF_PJEZO_SHA_ZIP_CRC_FULL_]
+- critico_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_museum_v179 [non dichiarato]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v132 [rendered_needs_review_one_real_MP4_not_4x1]
+- cinema_museum: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_museum_v180 [non dichiarato]
 
 ### Richard Dadd — The Fairy Feller's Master-Stroke
 
@@ -907,6 +930,16 @@ Questi stati non implicano pubblicazione né playback.
 - cinema_standard: non_documentato; prove: nessuna
 - cinema_museum: non_documentato; prove: nessuna
 
+### Thomas Cole — The Titan's Goblet
+
+- Anno: 1833; Museo: The Metropolitan Museum of Art
+- Code: checkpoint
+- Candidati sul sito (nome compatibile soltanto): nessuno
+- critico_standard: non_documentato; prove: nessuna
+- critico_museum: non_documentato; prove: nessuna
+- cinema_standard: non_documentato; prove: nessuna
+- cinema_museum: non_documentato; prove: nessuna
+
 ### Thomas Cole — The Voyage of Life: Manhood
 
 - Anno: 1842; Museo: da verificare
@@ -940,12 +973,12 @@ Questi stati non implicano pubblicazione né playback.
 ### William Blake — The Ghost of a Flea
 
 - Anno: 1819–1820; Museo: Tate Britain
-- Code: selezione_10
+- Code: selezione_10, review_storica
 - Candidati sul sito (nome compatibile soltanto): BLAKE_THE_GHOST_OF_A_FLEA_CINEMA_V158_REVIEW.mp4, BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
+- critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v159 [REAL_NATURAL_CRITICO_MP4_SHA_FFMPEG_ALL_STREAMS_AND_ZIP_CRC_INDEP]
+- critico_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-blake-ghost-flea-v221-critico-museum.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v158 [REAL_48S_MP4_INDEPENDENTLY_FFMPEG_SHA256_ZIP_CRC_VERIFIED]
+- cinema_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-blake-v220-private-museum-continuous-review.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 
 ### William Blake — The Great Red Dragon and the Woman Clothed with the Sun
 

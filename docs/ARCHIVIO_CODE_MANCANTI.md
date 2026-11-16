@@ -7,72 +7,42 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 |---|---|---|---|
 | Albert Bierstadt | The Last of the Buffalo | critico_standard, critico_museum, cinema_museum | checkpoint |
 | Albert Pinkham Ryder | The Race Track (Death on a Pale Horse) | critico_standard, critico_museum, cinema_museum | nuova_serie, checkpoint |
-| Albrecht Altdorfer | The Battle of Alexander at Issus | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Arnold Böcklin | Isle of the Dead (first version, 1880) | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Caspar David Friedrich | The Sea of Ice | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Edvard Munch | The Dead Mother and Child | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | Edvard Munch | The Vampire | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
+| Edvard Munch | Vampire | critico_standard, critico_museum, cinema_museum | checkpoint |
 | Edward Burne-Jones | King Arthur in Avalon | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | Edward Burne-Jones | The Baleful Head | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Edward Burne-Jones | The Golden Stairs | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
 | Eugène Delacroix | The Barque of Dante | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
-| Eugène Delacroix | The Death of Sardanapalus | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_10 |
 | Evelyn De Morgan | The Dryad | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
 | Evelyn De Morgan | The Storm Spirits | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, cicli_v31 |
-| Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh | After the Storm | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Francisco Goya | The Witches' Flight | critico_standard, critico_museum | selezione_30, checkpoint |
 | Franz Sedlacek | The Strange Garden | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, nuova_serie |
 | Franz von Stuck | The Sin (Die Sünde) | critico_standard, critico_museum | nuova_serie, checkpoint |
 | George Bellows | Cliff Dwellers | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
-| Georges Seurat | A Sunday on La Grande Jatte—1884 | critico_standard, critico_museum | storico_4x1 |
+| Georges Seurat | A Sunday on La Grande Jatte—1884 | critico_standard, critico_museum | storico_4x1, museum_scale, legacy_dual_format |
 | Giovanni Segantini | Le cattive madri (The Evil Mothers) | critico_standard, critico_museum, cinema_standard, cinema_museum | nuova_serie |
-| Giuseppe Arcimboldo | Vertumnus | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Gustave Moreau | Jupiter and Semele | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Gustave Moreau | The Apparition | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | Henry Meynell Rheam | Sleeping Beauty | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
-| Hugo Simberg | The Garden of Death | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_10 |
-| Hugo Simberg | The Wounded Angel | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Hugo Simberg | The Wounded Angel — A Quiet Procession | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Hugo Simberg; Jan van Eyck; Arnold Böcklin | The Witness — three historic gazes | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Ilya Repin | Sadko | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
-| Ivan Aivazovsky | The Ninth Wave | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Ivan Aivazovsky; Caspar David Friedrich; Arnold Böcklin | The Sea Between Us | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Ivan Aivazovsky; Utagawa Hiroshige; Evelyn De Morgan | The Shape of the Wind | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | J. M. W. Turner | The Shipwreck | critico_standard, critico_museum, cinema_standard | selezione_30, checkpoint |
 | James Ensor | The Intrigue | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
-| Jan van Eyck | The Arnolfini Portrait — The Secret in the Mirror | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Jean-Léon Gérôme | The Duel After the Masquerade | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
-| John Martin | The Country of the Iguanodon | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| John William Waterhouse | Circe Invidiosa | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| John William Waterhouse | The Lady of Shalott | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_10 |
-| John William Waterhouse | The Magic Circle | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_10 |
 | John William Waterhouse | The Mermaid | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | John William Waterhouse | Ulysses and the Sirens | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
-| Joos van Craesbeeck | The Temptation of Saint Anthony | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Joseph Mallord William Turner | The Burning of the Houses of Lords and Commons, 16 October 1834 | critico_standard, critico_museum, cinema_museum | checkpoint |
 | Joseph Wright of Derby | The Alchemist | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | Karl Bryullov | The Last Day of Pompeii | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Konstantin Flavitsky | Princess Tarakanova | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
-| Mikhail Vrubel | The Demon Seated | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Odilon Redon | The Cyclops | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Odilon Redon; Evelyn De Morgan; Hugo Simberg | The Other Side of Beauty | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Odilon Redon; Gustave Moreau; Arnold Böcklin | Visions of Symbolism | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Paul Klee | Fish Magic | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
 | Peter Nicolai Arbo | The Wild Hunt of Odin | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Peter Paul Rubens | The Battle of the Amazons | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | Piero di Cosimo | The Forest Fire | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Pieter Bruegel the Elder | Dulle Griet | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
-| Pieter Bruegel the Elder | The Fall of the Rebel Angels | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_10, cicli_v31 |
-| Pieter Bruegel the Elder | The Tower of Babel | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_10 |
-| Pieter Bruegel the Elder | The Triumph of Death | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_10 |
-| Rembrandt van Rijn | The Night Watch | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_10 |
 | Richard Dadd | The Fairy Feller's Master-Stroke | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
 | Thomas Cole | The Course of Empire: Destruction | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
+| Thomas Cole | The Titan's Goblet | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
 | Thomas Cole | The Voyage of Life: Manhood | critico_standard, critico_museum, cinema_museum | checkpoint |
-| Utagawa Hiroshige | Plum Garden at Kameido | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Utagawa Hiroshige; Vincent van Gogh | Japan Through Van Gogh | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| William Blake | The Ghost of a Flea | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_10 |
-| William Blake | The Great Red Dragon and the Woman Clothed with the Sun | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | William Holbrook Beard | The Bulls and Bears | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | William Holbrook Beard | The Bulls and Bears in the Market | critico_standard, critico_museum, cinema_standard, cinema_museum | nuova_serie |
 

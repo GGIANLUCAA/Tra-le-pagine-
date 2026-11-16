@@ -49,6 +49,44 @@ class MasterRegistryTests(unittest.TestCase):
         self.assertEqual(status({"status":"pending_rights"}),"in_coda_o_preflight")
         self.assertEqual(status({"status":"rendered_needs_review"}),"render_documentato")
         self.assertEqual(status({"status":"failed_upload"}),"bloccato")
+    def test_legacy_ten_versions_research_and_dossiers(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);self.seed(root)
+            queue=root/"queue"
+            (queue/"artvision_owner_selected_ten_20261102.json").write_text(json.dumps({
+              "works":[{"artist":"Example Old Master","title_en":"The Night Light","year":1902,
+                "slots_delivered_this_selection":4,
+                "cinema_standard_v155":{"status":"REAL_MP4_VERIFIED","sha256":"1"*64},
+                "critico_standard_v156":{"status":"REAL_MP4_VERIFIED","sha256":"2"*64},
+                "critico_museum_v164":{"sha256":"3"*64},
+                "cinema_museum_v166":{"sha256":"4"*64}},
+               {"artist":"Example Other","title_en":"The Old Tower",
+                "v134_cinema_candidate":{"mp4_sha256":"5"*64,"mp4_filename":"old.mp4",
+                     "status":"real_mp4_artifact_downloaded"}}]}))
+            research=root/"research";research.mkdir()
+            (research/"artvision_future_works_index_v1_20261107.json").write_text(json.dumps({
+              "works":[{"catalog_id":1,"artist":"Future Artist","title":"Future Work",
+                "pixel_file_license_status":"unverified"}]}))
+            (research/"artvision_owner_selected_30_future_20261109.json").write_text(json.dumps({
+              "works":[{"selection_order":1,"artist_as_chosen":"Future Artist",
+                "title_as_chosen":"Future Work","current_stage":"pending"}]}))
+            target=root/"docs/productions/sample";target.mkdir(parents=True)
+            (target/"README.md").write_text("Technical information only")
+            (queue/"storia_rivive_v69_film_scouting_candidates.json").write_text(
+              '{"items":[{"title":"A Trip Down Main Street","year":1906}]}')
+            d=build(root,{"items":[]},"fixture","2026-11-16T10:00:00+00:00")
+            night=next(w for w in d["works"] if w["title"]=="The Night Light")
+            self.assertEqual(night["render_documented"],4)
+            tower=next(w for w in d["works"] if w["title"]=="The Old Tower")
+            self.assertEqual(tower["variants"]["cinema_standard"]["state"],"render_documentato")
+            self.assertEqual(d["stats"]["research_100"],1)
+            self.assertEqual(d["stats"]["selected_future_30"],1)
+            self.assertEqual(d["stats"]["production_dossiers"],1)
+            self.assertEqual(len(d["history_candidates"]),1)
+            self.assertNotIn("Future Work",[w["title"] for w in d["works"]])
+    def test_rejected_voice_never_completed(self):
+        self.assertEqual(status({"status":"OWNER_REJECTED_WRONG_NARRATION_VOICE__TECHNICAL_ARTIFACT_ONLY",
+                                "sha256":"a"*64}),"render_respinto")
     def test_normalized_titles(self):
         self.assertEqual(norm("Die Sünde"),"die sunde")
 

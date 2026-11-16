@@ -1,6 +1,6 @@
 # Altri format — libri e La Storia Rivive
 
-Generato: 2026-11-16T11:47:09+00:00
+Generato: 2026-11-16T12:40:45+00:00
 Attenzione: una cartella con metadata o una ricerca di fonti NON prova un MP4 finito.
 
 ## Libri raccontati, autore e stato dichiarato
@@ -38,6 +38,11 @@ Attenzione: una cartella con metadata o una ricerca di fonti NON prova un MP4 fi
 | Parigi 1918 — Champs-Élysées e Concorde | 1918 | real_source_pages_verified_video_frames_not_yet_reviewed | [queue/storia_rivive_candidates_v58.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_candidates_v58.json) |
 | 1920 — mercato coperto e vita rurale | 1920 | real_source_pages_verified_video_frames_not_yet_reviewed | [queue/storia_rivive_candidates_v58.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_candidates_v58.json) |
 | Cina 1928 — la vita quotidiana ritrovata | 1928 | real_source_pages_verified_video_frames_not_yet_reviewed | [queue/storia_rivive_candidates_v58.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_candidates_v58.json) |
+| A Trip Down Market Street (1906) | — | RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED | [queue/storia_rivive_v69_film_scouting_candidates.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_v69_film_scouting_candidates.json) |
+| Scenes in New York City, 1903 | — | RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED | [queue/storia_rivive_v69_film_scouting_candidates.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_v69_film_scouting_candidates.json) |
+| A Native Street in India (1906) | — | RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED | [queue/storia_rivive_v69_film_scouting_candidates.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_v69_film_scouting_candidates.json) |
+| Parigi 1918, Cinema Parisiana (V68 benchmark) | — | RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED | [queue/storia_rivive_v69_film_scouting_candidates.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_v69_film_scouting_candidates.json) |
+| One Week (1920) HD copy | — | RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED | [queue/storia_rivive_v69_film_scouting_candidates.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_v69_film_scouting_candidates.json) |
 
 ## Tutti gli altri video realmente segnalati dal catalogo pubblico
 
