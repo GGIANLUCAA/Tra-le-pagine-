@@ -1,6 +1,6 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-16T12:40:45+00:00",
+  "generated_at": "2026-11-16T13:04:32+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 92,
@@ -9,7 +9,7 @@
     "site_items": 732,
     "site_cloudflare": 724,
     "site_unavailable": 8,
-    "possible_site_matches": 11,
+    "possible_site_matches": 21,
     "queue_files": 96,
     "literary_dossiers": 19,
     "history_candidates": 12,
@@ -17,7 +17,9 @@
     "selected_future_30": 30,
     "production_dossiers": 195,
     "production_dossier_subdirs": 32,
-    "unmatched_site_items": 721,
+    "unmatched_site_items": 608,
+    "site_artist_only_hints": 103,
+    "site_ambiguous": 0,
     "recovered_historical_review_files": 8,
     "four_by_one_scoped": 67,
     "complete_four_render_documented": 27,
@@ -4600,7 +4602,11 @@
               "sha256": "24aad1bd142020ff4c6c5c256a738cca025e938f2723788cda9b0e14e581d43d"
             }
           ],
-          "site_candidates": []
+          "site_candidates": [
+            "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4",
+            "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V330_REVIEW.mp4",
+            "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V331_REVIEW.mp4"
+          ]
         },
         "critico_museum": {
           "state": "render_documentato",
@@ -4668,7 +4674,12 @@
           "workflow_run": null
         }
       ],
-      "site_candidates": [],
+      "site_candidates": [
+        "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CINEMA_V153_REPLACEMENT_REVIEW.mp4",
+        "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V144_REVIEW.mp4",
+        "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V330_REVIEW.mp4",
+        "BRUEGEL_THE_FALL_OF_THE_REBEL_ANGELS_CRITICO_STANDARD_V331_REVIEW.mp4"
+      ],
       "excluded": false,
       "selected_ten_legacy_slots_claim": 2,
       "preflight_status_claim": "2/4 slots: Critico V144 plus active Cinema V153 replacement; original V135 unavailable, no extra slot; Museum pending",
@@ -4702,7 +4713,9 @@
               "sha256": "125ce39ad907b51e1d07f8d9b78e3871b27c02d92969771f0ae41819016b08a0"
             }
           ],
-          "site_candidates": []
+          "site_candidates": [
+            "BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_STANDARD_V138_REVIEW.mp4"
+          ]
         },
         "critico_museum": {
           "state": "render_documentato",
@@ -4714,7 +4727,9 @@
               "sha256": "c870811ef0b6d6fdcb9d64738172bdd43554b4e3fa3eb3738f9bed7363466a7d"
             }
           ],
-          "site_candidates": []
+          "site_candidates": [
+            "BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_MUSEUM_V138_REVIEW.mp4"
+          ]
         },
         "cinema_standard": {
           "state": "render_documentato",
@@ -4738,11 +4753,18 @@
               "sha256": "4a9639be84ecf912ae0a82e8078dcacc1a93ac6bf82433a95d927b98746e5d7f"
             }
           ],
-          "site_candidates": []
+          "site_candidates": [
+            "BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_MUSEUM_V137_REVIEW.mp4"
+          ]
         }
       },
       "legacy_video_claims": [],
-      "site_candidates": [],
+      "site_candidates": [
+        "BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_MUSEUM_V137_REVIEW.mp4",
+        "BRUEGEL_THE_TOWER_OF_BABEL_CINEMA_V136_REVIEW.mp4",
+        "BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_MUSEUM_V138_REVIEW.mp4",
+        "BRUEGEL_THE_TOWER_OF_BABEL_CRITICO_STANDARD_V138_REVIEW.mp4"
+      ],
       "excluded": false,
       "selected_ten_legacy_slots_claim": 4,
       "preflight_status_claim": "four_real_distinct_MP4_Cinema_V136_V137_Critico_V141_independent_full_decode_SHA_CRC_readback_PASS_human_artistic_review_PENDING",
@@ -4779,7 +4801,9 @@
               "sha256": "a02248ce3744c6b0c392f9093360a86c55e74abcb641f51ee935915bbdb1f397"
             }
           ],
-          "site_candidates": []
+          "site_candidates": [
+            "BRUEGEL_THE_TRIUMPH_OF_DEATH_CRITICO_STANDARD_V151_REVIEW.mp4"
+          ]
         },
         "critico_museum": {
           "state": "render_documentato",
@@ -4824,7 +4848,10 @@
           "status": "legacy_non_4x1"
         }
       ],
-      "site_candidates": [],
+      "site_candidates": [
+        "BRUEGEL_THE_TRIUMPH_OF_DEATH_CINEMA_V150_REVIEW.mp4",
+        "BRUEGEL_THE_TRIUMPH_OF_DEATH_CRITICO_STANDARD_V151_REVIEW.mp4"
+      ],
       "excluded": false,
       "selected_ten_legacy_slots_claim": 2,
       "preflight_status_claim": "2/4 real Cinema V150 and Critico V151, both full MP4 SHA FFmpeg CRC PASS, two Museum slots pending source/frame authentic verification",
