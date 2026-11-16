@@ -10,6 +10,7 @@ on:
       - feature/artvision-archive-audit-20261116
       - feature/artvision-private-inventory-reconciliation-20261116
       - feature/artvision-fix-checkpoint-evidence-20261116
+      - feature/artvision-live-queue-preflight-20261116
     paths:
       - 'queue/**'
       - 'data/archivio-generale/revisioni_storiche_fonti_pubbliche.json'
@@ -46,6 +47,13 @@ jobs:
           python3 -m unittest discover -s tests -p test_artvision_master_registry_v1.py -v
           python3 -m unittest discover -s tests -p test_artvision_private_library_reconcile_v1.py -v
           python3 -m unittest discover -s tests -p test_artvision_preflight_duplicate_v1.py -v
+          python3 -m scripts.artvision_preflight_duplicate_v1 --artist "Peter Nicolai Arbo" --title "The Wild Hunt of Odin" --variant critico_standard --refresh-queue > /tmp/preflight-live-queue.json
+          python3 - <<'PY'
+          import json
+          x=json.load(open("/tmp/preflight-live-queue.json"))
+          assert "verdict" in x and x.get("auto_skip_render") is False
+          print("Preflight live queue CLI OK:",x["verdict"])
+          PY
       - name: Reconcile all queues and live public catalog
         run: |
           python3 scripts/artvision_master_registry_v1.py | tee /tmp/artvision-master-summary.json
