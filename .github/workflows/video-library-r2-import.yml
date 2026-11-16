@@ -264,6 +264,16 @@ jobs:
               if unmatched:
                   return False,'master hash is not covered by an approved V25 review: '+repr(unmatched)
               return True,'exact-hash V25 reviews passed'
+          def site_release_gate(archive,video_members):
+              # The public R2 bucket is not a private review archive.
+              # Even a technically reviewed V25 video needs a separate, explicit owner decision.
+              passed,reason=publication_gate(archive,video_members)
+              if not passed:return False,reason
+              for label,contract in contract_manifests(archive):
+                  p=contract.get('publication')
+                  if not isinstance(p,dict) or p.get('status')!='approved_for_site' or p.get('site_publication_authorized') is not True or p.get('owner_approved') is not True:
+                      return False,label+' missing explicit site publication authorization'
+              return True,'V25 exact-hash review and explicit site owner authorization passed'
           def upload(fp,key):
               size=fp.stat().st_size
               old=status(key)
@@ -322,6 +332,15 @@ jobs:
               with zipfile.ZipFile(approved) as test:
                   allowed,_=publication_gate(test,['VIDEO_MASTER.mp4'])
                   assert allowed,'Exact-hash fully reviewed V25 artifact must pass'
+                  published,_=site_release_gate(test,['VIDEO_MASTER.mp4'])
+                  assert not published,'V25 reviews alone never authorize public website publishing'
+              contract['publication']={'status':'approved_for_site',
+                                       'site_publication_authorized':True,
+                                       'owner_approved':True}
+              explicitly_approved=make(contract)
+              with zipfile.ZipFile(explicitly_approved) as test:
+                  published,_=site_release_gate(test,['VIDEO_MASTER.mp4'])
+                  assert published,'Exact hash plus explicit owner site approval should pass'
               contract['review_video_sha256']='0'*64
               wrong=make(contract)
               with zipfile.ZipFile(wrong) as test:
@@ -393,18 +412,15 @@ jobs:
                               print('EXPLICITLY NOT AUTHORIZED - excluded from private archive:',a['name'],blocked,flush=True)
                               cf('POST','/artifact-mark',{'artifact':a['id']},json={'name':a['name']})
                               continue
-                          # 2026-11-02 owner request: automatically archive NEW finished video files
-                          # on the website even if artistic V25 approval is pending.
-                          # This is site ingestion only, never social publishing or Gold approval.
-                          is_auto_archive=(a.get('created_at') or '')>=fresh_since
-                          if is_auto_archive:
-                              print('DIRECT SITE IMPORT (ART REVIEW NOT REQUIRED):',a['name'],flush=True)
-                          else:
-                              allowed,reason=publication_gate(z,videos)
-                              if not allowed:
-                                  print('LEGACY UNREVIEWED (not new auto-import):',a['name'],reason,flush=True)
-                                  continue
-                              print('LEGACY APPROVED IMPORT:',a['name'],reason,flush=True)
+                          # The importer targets the PUBLIC site bucket (not the private R2 archive).
+                          # Never promote recent or legacy artifacts without exact-hash V25 reviews
+                          # AND a distinct, explicit owner authorization for website publication.
+                          allowed,reason=site_release_gate(z,videos)
+                          if not allowed:
+                              print('PRIVATE_BLOCKED (no public R2 upload):',a['name'],reason,flush=True)
+                              continue
+                          print('SITE PUBLICATION AUTHORIZED:',a['name'],reason,flush=True)
+                          is_auto_archive=False
                           downloaded+=1
                           for n in videos:
                               name=pathlib.PurePosixPath(n).name

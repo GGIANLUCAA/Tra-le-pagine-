@@ -1,0 +1,25 @@
+name: Video Library - Public R2 import guard (PR only)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/video-library-r2-import.yml'
+      - 'tests/test_video_library_r2_import_gate.py'
+      - '.github/workflows/video-library-public-gate-pr-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: video-library-public-gate-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  public-import-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate inline Python and fail-closed tests, no external requests
+        run: python3 -m unittest discover -s tests -p 'test_video_library_r2_import_gate.py' -v
