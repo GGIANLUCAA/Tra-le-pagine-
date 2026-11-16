@@ -177,7 +177,6 @@ def full_art(frame,art):
     image=cv2.resize(art,(sw,sh),interpolation=cv2.INTER_AREA if sc<1 else cv2.INTER_CUBIC)
     x=(W-sw)//2;y=215+(1495-sh)//2
     frame[y:y+sh,x:x+sw]=image
-    cv2.rectangle(frame,(x-2,y-2),(x+sw+2,y+sh+2),(131,120,100),1,cv2.LINE_AA)
     return frame
 
 def crop_into(patch,art,fx,fy,zoom,ratio):
@@ -215,14 +214,14 @@ def frame_beat(background,art,beat,p,ratio):
     ih,iw=art.shape[:2]
     if beat.get("wide"):
         # Apertura "come una fotografia che prende vita": il quadro e' dapprima
-        # incorniciato e quasi fermo, poi una carrellata morbida lo fa entrare
-        # nel campo verso la zona dei primi proverbi, senza sbalzi.
-        s=(RX1-RX0)/iw*(0.95+.27*push(p))
+        # incorniciato e quasi fermo, poi una carrellata decisa lo fa entrare
+        # nel campo verso la zona dei primi proverbi, in sincrono con la voce
+        # ("Da lontano... Da vicino"). Nessun bordo: il quadro riempie il campo.
+        s=(RX1-RX0)/iw*(0.82+.60*push(p))
         nw,nh=max(2,round(iw*s)),max(2,round(ih*s))
         image=cv2.resize(art,(nw,nh),interpolation=cv2.INTER_AREA if s<1 else cv2.INTER_CUBIC)
-        dx=round(-30*small_smooth(p)); dy=round(-14*small_smooth(p))
+        dx=round(-70*small_smooth(p)); dy=round(-30*small_smooth(p))
         paste_clipped(frame,image,RX0+((RX1-RX0)-nw)//2+dx,RY0+((RY1-RY0)-nh)//2+dy)
-        cv2.rectangle(frame,(RX0-2,RY0-2),(RX1+1,RY1+1),(127,119,102),1,cv2.LINE_AA)
         return frame
     # Dettaglio: apertura sul contesto (zoom basso per far vedere le figure
     # intorno), carrellata sul particolare narrato che resta il protagonista,
@@ -239,7 +238,6 @@ def frame_beat(background,art,beat,p,ratio):
     patch=background[RY0:RY1,RX0:RX1].copy()
     crop_into(patch,art,fx,fy,max(1,z),968/1430)
     frame[RY0:RY1,RX0:RX1]=patch
-    cv2.rectangle(frame,(RX0-2,RY0-2),(RX1+1,RY1+1),(127,119,102),1,cv2.LINE_AA)
     return frame
 
 def closing_card(background,cfg):
@@ -294,7 +292,6 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
         image=cv2.resize(img,(nw,nh),interpolation=cv2.INTER_AREA if s<1 else cv2.INTER_CUBIC)
         dx=round(-30*(1-small_smooth(min(1.,q)))); dy=round(-14*(1-small_smooth(min(1.,q))))
         paste_clipped(fr,image,RX0+((RX1-RX0)-nw)//2+dx,RY0+((RY1-RY0)-nh)//2+dy)
-        cv2.rectangle(fr,(RX0-2,RY0-2),(RX1+1,RY1+1),(127,119,102),1,cv2.LINE_AA)
         return fr
     print("VIDEO BATCH",cfg["id"],"voice",round(vsec,1),"timeline",duration,"frames",duration*FPS,flush=True)
     frames=duration*FPS
