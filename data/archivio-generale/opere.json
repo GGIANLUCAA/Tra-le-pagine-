@@ -1,11 +1,11 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-16T11:44:57+00:00",
+  "generated_at": "2026-11-16T11:46:14+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 89,
-    "render_documented_slots": 91,
-    "not_documented_slots": 265,
+    "render_documented_slots": 92,
+    "not_documented_slots": 264,
     "site_items": 732,
     "site_cloudflare": 724,
     "site_unavailable": 8,
@@ -38,23 +38,48 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "bloccato",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json",
+              "status_claim": "BLOCKED_V333_APPROVED_GACRUX_TTS_API",
+              "classification": "bloccato"
+            }
+          ],
           "site_candidates": []
         },
         "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "bloccato",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json",
+              "status_claim": "BLOCKED_V333_APPROVED_GACRUX_TTS_AND_MUSEUM_GATE",
+              "classification": "bloccato"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json",
+              "status_claim": "RENDERED_TECH_QA_ART_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "544f803f84b3ce037e5da8720af8c7673d4c4b3cbb1814831f62780c260b73d3"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "da_produrre",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json",
+              "status_claim": "NOT_STARTED_MUSEUM_SOURCE_SCALE_AND_ROOM_GATE",
+              "classification": "da_produrre"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -64,10 +89,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },

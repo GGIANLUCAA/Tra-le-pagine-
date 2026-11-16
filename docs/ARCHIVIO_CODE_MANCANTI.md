@@ -5,7 +5,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 
 | Autore | Opera | Slot senza prova di render | Serie |
 |---|---|---|---|
-| Albert Bierstadt | The Last of the Buffalo | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
+| Albert Bierstadt | The Last of the Buffalo | critico_standard, critico_museum, cinema_museum | checkpoint |
 | Albert Pinkham Ryder | The Race Track (Death on a Pale Horse) | critico_standard, critico_museum, cinema_museum | nuova_serie, checkpoint |
 | Albrecht Altdorfer | The Battle of Alexander at Issus | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Arnold Böcklin | Isle of the Dead (first version, 1880) | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
