@@ -13,19 +13,18 @@ Questi stati non implicano pubblicazione né playback.
 | Briton Rivière | La risposta di Daniele al re | ? | D | D | D | D | Non abbinato |
 | Carel Fabritius | The Goldfinch | 1654 | D | D | D | D | Non abbinato |
 | Caspar David Friedrich | The Sea of Ice | ? | — | — | — | — | Non abbinato |
-| Edvard Munch | The Dead Mother and Child | ? | — | — | — | — | Non abbinato |
-| Edvard Munch | The Vampire | ? | — | — | — | — | Non abbinato |
-| Edvard Munch | Vampire | ? | — | — | D | — | Non abbinato |
+| Edvard Munch | The Dead Mother and Child | 1899 | — | — | D | — | Non abbinato |
+| Edvard Munch | The Vampire | ? | — | — | D | — | Non abbinato |
 | Edward Burne-Jones | King Arthur in Avalon | ? | — | — | — | — | Non abbinato |
 | Edward Burne-Jones | L'ultimo sonno di re Artù | ? | D | D | D | D | Non abbinato |
 | Edward Burne-Jones | The Baleful Head | 1885–1887 | — | — | D | — | Non abbinato |
-| Edward Burne-Jones | The Golden Stairs | 1880 | — | — | — | — | Non abbinato |
+| Edward Burne-Jones | The Golden Stairs | 1880 | — | — | D | — | Non abbinato |
 | Edwin Landseer | L'uomo propone, Dio dispone | ? | D | D | D | D | Non abbinato |
 | Elihu Vedder | La Sfinge sulla riva del mare | ? | D | D | D | D | Non abbinato |
-| Eugène Delacroix | The Barque of Dante | 1822 | — | — | — | — | Non abbinato |
+| Eugène Delacroix | The Barque of Dante | 1822 | — | — | D | — | Non abbinato |
 | Eugène Delacroix | The Death of Sardanapalus | 1827 | D | D | D | D | Possibili 2 |
-| Evelyn De Morgan | The Dryad | 1884–1885 | R | — | — | — | Non abbinato |
-| Evelyn De Morgan | The Storm Spirits | ? | — | — | — | — | Non abbinato |
+| Evelyn De Morgan | The Dryad | 1884–1885 | R | — | D | — | Non abbinato |
+| Evelyn De Morgan | The Storm Spirits | 1900 | — | — | D | — | Non abbinato |
 | Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh | After the Storm | ? | — | — | — | — | Non abbinato |
 | Ford Madox Brown | L'ultimo saluto all'Inghilterra | ? | D | D | D | D | Non abbinato |
 | Francisco Goya | The Witches' Flight | 1798 | — | — | D | D | Non abbinato |
@@ -37,8 +36,8 @@ Questi stati non implicano pubblicazione né playback.
 | Giuseppe Arcimboldo | Vertumnus | ? | — | — | — | — | Non abbinato |
 | Gustav Klimt | The Kiss | 1908–1909 | D | D | D | D | Non abbinato |
 | Gustave Moreau | Jupiter and Semele | ? | — | — | — | — | Non abbinato |
-| Gustave Moreau | The Apparition | ? | — | — | — | — | Non abbinato |
-| Henry Meynell Rheam | Sleeping Beauty | ? | — | — | C | — | Non abbinato |
+| Gustave Moreau | The Apparition | ? | — | — | D | — | Non abbinato |
+| Henry Meynell Rheam | Sleeping Beauty | ? | — | — | D | — | Non abbinato |
 | Hieronymus Bosch | The Garden of Earthly Delights | circa 1490–1500 | D | D | D | D | Non abbinato |
 | Hugo Simberg | The Garden of Death | 1896 | D | D | D | D | Possibili 2 |
 | Hugo Simberg | The Wounded Angel | ? | — | — | — | — | Non abbinato |
@@ -49,7 +48,7 @@ Questi stati non implicano pubblicazione né playback.
 | Ivan Aivazovsky; Caspar David Friedrich; Arnold Böcklin | The Sea Between Us | ? | — | — | — | — | Non abbinato |
 | Ivan Aivazovsky; Utagawa Hiroshige; Evelyn De Morgan | The Shape of the Wind | ? | — | — | — | — | Non abbinato |
 | J. M. W. Turner | The Fighting Temeraire | 1839 | D | D | D | D | Non abbinato |
-| J. M. W. Turner | The Shipwreck | ? | — | — | — | D | Non abbinato |
+| J. M. W. Turner | The Shipwreck | 1805 | — | — | D | D | Non abbinato |
 | Jacek Malczewski | Błędne koło (Il circolo vizioso) | 1897 | D | D | D | D | Non abbinato |
 | Jacques Louis David | The Death of Socrates | 1787 | D | D | D | D | Non abbinato |
 | James Ensor | The Intrigue | 1890 | — | — | D | — | Non abbinato |
@@ -60,24 +59,24 @@ Questi stati non implicano pubblicazione né playback.
 | John William Waterhouse | Circe Invidiosa | ? | — | — | — | — | Non abbinato |
 | John William Waterhouse | The Lady of Shalott | 1888 | D | D | D | D | Possibili 3 |
 | John William Waterhouse | The Magic Circle | 1886 | D | D | D | D | Possibili 2 |
-| John William Waterhouse | The Mermaid | ? | — | — | — | — | Non abbinato |
-| John William Waterhouse | Ulysses and the Sirens | 1891 | — | — | — | — | Non abbinato |
+| John William Waterhouse | The Mermaid | ? | — | — | D | — | Non abbinato |
+| John William Waterhouse | Ulysses and the Sirens | 1891 | — | — | D | — | Non abbinato |
 | Joos van Craesbeeck | The Temptation of Saint Anthony | ? | — | — | — | — | Non abbinato |
 | Joseph Mallord William Turner | The Burning of the Houses of Lords and Commons, 16 October 1834 | 1835 | B | B | D | C | Non abbinato |
 | Joseph Mallord William Turner | The Fighting Temeraire tugged to her last berth to be broken up, 1838 | 1839 | — | — | — | — | Non abbinato |
 | Joseph Wright of Derby | An Experiment on a Bird in the Air Pump | 1768 | D | D | D | D | Non abbinato |
-| Joseph Wright of Derby | The Alchemist | ? | — | — | — | — | Non abbinato |
+| Joseph Wright of Derby | The Alchemist | ? | — | — | D | — | Non abbinato |
 | Jules Bastien-Lepage | Giovanna d'Arco | ? | D | D | D | D | Non abbinato |
 | Karl Bryullov | The Last Day of Pompeii | 1833 | — | — | D | — | Non abbinato |
 | Katsushika Hokusai | The Great Wave | circa 1830–1832 | D | D | D | D | Non abbinato |
-| Konstantin Flavitsky | Princess Tarakanova | ? | — | — | — | — | Non abbinato |
+| Konstantin Flavitsky | Princess Tarakanova | ? | — | — | D | — | Non abbinato |
 | Mikhail Vrubel | The Demon Seated | ? | — | — | — | — | Non abbinato |
 | Odilon Redon | The Cyclops | ? | — | — | — | — | Non abbinato |
 | Odilon Redon; Evelyn De Morgan; Hugo Simberg | The Other Side of Beauty | ? | — | — | — | — | Non abbinato |
 | Odilon Redon; Gustave Moreau; Arnold Böcklin | Visions of Symbolism | ? | — | — | — | — | Non abbinato |
-| Paul Klee | Fish Magic | 1925 | — | — | C | — | Non abbinato |
+| Paul Klee | Fish Magic | 1925 | — | — | D | — | Non abbinato |
 | Peter Nicolai Arbo | The Wild Hunt of Odin | ? | — | — | D | — | Non abbinato |
-| Peter Paul Rubens | The Battle of the Amazons | ? | — | — | — | — | Non abbinato |
+| Peter Paul Rubens | The Battle of the Amazons | circa 1618 | — | — | D | — | Non abbinato |
 | Piero di Cosimo | The Forest Fire | ca. 1505 | — | — | D | — | Non abbinato |
 | Pieter Bruegel the Elder | Dulle Griet | 1563 | — | — | D | — | Non abbinato |
 | Pieter Bruegel the Elder | The Fall of the Rebel Angels | 1562 | D | D | D | D | Possibili 4 |
@@ -94,8 +93,7 @@ Questi stati non implicano pubblicazione né playback.
 | Utagawa Hiroshige; Vincent van Gogh | Japan Through Van Gogh | ? | — | — | — | — | Non abbinato |
 | William Blake | The Ghost of a Flea | 1819–1820 | D | D | D | D | Possibili 2 |
 | William Blake | The Great Red Dragon and the Woman Clothed with the Sun | ? | — | — | — | — | Non abbinato |
-| William Holbrook Beard | The Bulls and Bears | ? | — | — | — | — | Non abbinato |
-| William Holbrook Beard | The Bulls and Bears in the Market | 1879 | — | — | — | — | Non abbinato |
+| William Holbrook Beard | The Bulls and Bears | 1879 | — | — | — | — | Non abbinato |
 | Winslow Homer | The Gulf Stream | 1899; reworked by 1906 | D | D | D | D | Non abbinato |
 
 ## Schede con provenienza
@@ -117,7 +115,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_new_series_20261114.json [CINEMA_STANDARD_RENDERED_TECH_QA_ART_REVIEW_PENDING]; queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json [ONE_REAL_NEW_CINEMA_STANDARD_MP4_AND_ZIP_PRIVATE_ARTIFACT_TECHNIC]
+- cinema_standard: render_documentato; prove: queue/artvision_new_series_20261114.json [CINEMA_STANDARD_RENDERED_TECH_QA_ART_REVIEW_PENDING]; queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Albrecht Altdorfer — The Battle of Alexander at Issus
@@ -182,32 +180,22 @@ Questi stati non implicano pubblicazione né playback.
 
 ### Edvard Munch — The Dead Mother and Child
 
-- Anno: da verificare; Museo: da verificare
-- Code: selezione_30
+- Anno: 1899; Museo: da verificare
+- Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_munch_dead_mother.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Edvard Munch — The Vampire
 
 - Anno: da verificare; Museo: da verificare
-- Code: selezione_30
+- Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
-
-### Edvard Munch — Vampire
-
-- Anno: da verificare; Museo: da verificare
-- Code: checkpoint
-- Candidati sul sito (nome compatibile soltanto): nessuno
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_munch_vampire.json [RENDERED_INDEPENDENT_BYTE_READBACK_PASS_ARTISTIC_AND_RIGHTS_REVIE]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_munch_vampire.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Edward Burne-Jones — King Arthur in Avalon
@@ -237,7 +225,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_baleful_head.json [ONE_NEW_REAL_51_SEC_MP4_TWO_ENCODINGS_SOURCE_CHECK_FFMPEG_SHA_ZIP]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_baleful_head.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Edward Burne-Jones — The Golden Stairs
@@ -247,7 +235,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_golden_stairs.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Edwin Landseer — L'uomo propone, Dio dispone
@@ -277,7 +265,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_barque_dante.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Eugène Delacroix — The Death of Sardanapalus
@@ -297,17 +285,17 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: render_respinto; prove: queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json [OWNER_REJECTED_WRONG_NARRATION_VOICE__TECHNICAL_ARTIFACT_ONLY__CR]
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261113_demorgan_dryad.json [RENDERED_TECH_QA_PRIVATE_VIDEO_NO_MP4_SHA_RECORDED]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Evelyn De Morgan — The Storm Spirits
 
-- Anno: da verificare; Museo: da verificare
-- Code: selezione_30, cicli_v31
+- Anno: 1900; Museo: da verificare
+- Code: selezione_30, checkpoint, cicli_v31
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_storm_spirits.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh — After the Storm
@@ -337,7 +325,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_goya_witches_flight.json [ONE_REAL_NEW_SOURCE_SHA1_LOCKED_52_46S_REVIEW_MP4_HQ_AND_ANDROID_]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_goya_witches_flight.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: render_documentato; prove: queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json [RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING]
 
 ### Franz Sedlacek — The Strange Garden
@@ -367,7 +355,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_bellows_cliff_dwellers.json [ONE_NEW_REAL_MP4_TWO_BITRATES_GITHUB_INDEPENDENT_QA_AND_LIBRARY_R]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_bellows_cliff_dwellers.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Georges Seurat — A Sunday on La Grande Jatte—1884
@@ -423,11 +411,11 @@ Questi stati non implicano pubblicazione né playback.
 ### Gustave Moreau — The Apparition
 
 - Anno: da verificare; Museo: da verificare
-- Code: selezione_30
+- Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261109_moreau_apparition.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Henry Meynell Rheam — Sleeping Beauty
@@ -437,7 +425,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: in_coda_o_preflight; prove: queue/artvision_owner_30_render_checkpoint_20261112_rheam_sleeping_beauty.json [ONE_NEW_TRUE_MP4_GITHUB_AND_INDEPENDENT_CONTAINER_FFMPEG_SHA_CRC_]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_rheam_sleeping_beauty.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Hieronymus Bosch — The Garden of Earthly Delights
@@ -497,7 +485,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_sadko.json [ONE_REAL_NEW_MP4_TWO_BITRATES_ORIGINAL_SHA1_LOCKED_FFMPEG_GITHUB_]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_sadko.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Ivan Aivazovsky — The Ninth Wave
@@ -542,12 +530,12 @@ Questi stati non implicano pubblicazione né playback.
 
 ### J. M. W. Turner — The Shipwreck
 
-- Anno: da verificare; Museo: Tate Britain
+- Anno: 1805; Museo: Tate Britain
 - Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_shipwreck.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: render_documentato; prove: queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json [RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING]
 
 ### Jacek Malczewski — Błędne koło (Il circolo vizioso)
@@ -577,7 +565,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_ensor_intrigue.json [ONE_GENUINE_NEW_50_83S_MP4_TWO_BITRATES_KMSKA_CC0_SOURCE_LOCKED_F]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_ensor_intrigue.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Jan van Eyck — The Arnolfini Portrait — The Secret in the Mirror
@@ -597,7 +585,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: non_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_duel_masquerade.json [UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### John Everett Millais — La ragazza cieca
@@ -653,11 +641,11 @@ Questi stati non implicano pubblicazione né playback.
 ### John William Waterhouse — The Mermaid
 
 - Anno: da verificare; Museo: da verificare
-- Code: selezione_30
+- Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_waterhouse_mermaid.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### John William Waterhouse — Ulysses and the Sirens
@@ -667,7 +655,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_ulysses_sirens.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Joos van Craesbeeck — The Temptation of Saint Anthony
@@ -713,11 +701,11 @@ Questi stati non implicano pubblicazione né playback.
 ### Joseph Wright of Derby — The Alchemist
 
 - Anno: da verificare; Museo: da verificare
-- Code: selezione_30
+- Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261109_alchemist.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Jules Bastien-Lepage — Giovanna d'Arco
@@ -737,7 +725,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_pompeii.json [ONE_NEW_REAL_MP4_TWO_VISUAL_RENDER_ATTEMPTS_V2_APPROVED_FOR_TECHN]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_pompeii.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Katsushika Hokusai — The Great Wave
@@ -753,11 +741,11 @@ Questi stati non implicano pubblicazione né playback.
 ### Konstantin Flavitsky — Princess Tarakanova
 
 - Anno: da verificare; Museo: da verificare
-- Code: selezione_30
+- Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_princess_tarakanova.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Mikhail Vrubel — The Demon Seated
@@ -807,7 +795,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: in_coda_o_preflight; prove: queue/artvision_owner_30_render_checkpoint_20261113_klee_fish_magic.json [NEW_REAL_LOCAL_MP4_PRIVATE_CINEMA_FULL_DECODE_AND_LIBRARY_READBAC]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261113_klee_fish_magic.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Peter Nicolai Arbo — The Wild Hunt of Odin
@@ -817,17 +805,17 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_arbo_wild_hunt.json [ONE_REAL_NEW_MP4_SOURCE_LOCKED_TECH_QA_AND_PRIVATE_LIBRARY_INDEPE]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_arbo_wild_hunt.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Peter Paul Rubens — The Battle of the Amazons
 
-- Anno: da verificare; Museo: da verificare
-- Code: selezione_30
+- Anno: circa 1618; Museo: da verificare
+- Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_rubens_amazons.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Piero di Cosimo — The Forest Fire
@@ -837,7 +825,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_forest_fire.json [ONE_REAL_NEW_VIDEO_TWICE_ENCODED_HQ_AND_ANDROID_SOURCE_QA_FFMPEG_]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_forest_fire.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Pieter Bruegel the Elder — Dulle Griet
@@ -847,7 +835,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_dulle_griet.json [NEW_REAL_RESTORED_SOURCE_2021_CINEMA_MP4_2_BITRATES_GITHUB_QA_AND]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_dulle_griet.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Pieter Bruegel the Elder — The Fall of the Rebel Angels
@@ -897,7 +885,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_fairy_feller.json [ONE_REAL_NEW_CINEMA_MP4_CORRECTED_V2_PRIVATE_REVIEW__SOURCE_SHA1_]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_fairy_feller.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Rosa Bonheur — La fiera dei cavalli
@@ -923,11 +911,11 @@ Questi stati non implicano pubblicazione né playback.
 ### Thomas Cole — The Course of Empire: Destruction
 
 - Anno: da verificare; Museo: da verificare
-- Code: selezione_30
+- Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
+- cinema_standard: non_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_cole_destruction.json [UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Thomas Cole — The Titan's Goblet
@@ -992,18 +980,8 @@ Questi stati non implicano pubblicazione né playback.
 
 ### William Holbrook Beard — The Bulls and Bears
 
-- Anno: da verificare; Museo: da verificare
-- Code: selezione_30
-- Candidati sul sito (nome compatibile soltanto): nessuno
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
-
-### William Holbrook Beard — The Bulls and Bears in the Market
-
 - Anno: 1879; Museo: New-York Historical Society
-- Code: nuova_serie
+- Code: selezione_30, nuova_serie
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna

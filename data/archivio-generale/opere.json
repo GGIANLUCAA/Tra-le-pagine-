@@ -1,13 +1,13 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-16T13:04:32+00:00",
+  "generated_at": "2026-11-16T18:12:00+00:00",
   "site_state": "live_api",
   "stats": {
-    "works": 92,
-    "render_documented_slots": 129,
-    "not_documented_slots": 139,
-    "site_items": 732,
-    "site_cloudflare": 724,
+    "works": 90,
+    "render_documented_slots": 143,
+    "not_documented_slots": 117,
+    "site_items": 733,
+    "site_cloudflare": 725,
     "site_unavailable": 8,
     "possible_site_matches": 21,
     "queue_files": 96,
@@ -18,16 +18,16 @@
     "production_dossiers": 195,
     "production_dossier_subdirs": 32,
     "unmatched_site_items": 608,
-    "site_artist_only_hints": 103,
+    "site_artist_only_hints": 104,
     "site_ambiguous": 0,
     "recovered_historical_review_files": 8,
-    "four_by_one_scoped": 67,
+    "four_by_one_scoped": 65,
     "complete_four_render_documented": 27,
     "categories": {
       "Critica d’arte": 42,
       "Altri progetti": 445,
       "Musica e visual": 78,
-      "Artisti e pittura": 113,
+      "Artisti e pittura": 114,
       "Libri raccontati": 50,
       "Cronaca e attualità": 4
     }
@@ -142,7 +142,7 @@
             },
             {
               "source": "queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json",
-              "status_claim": "ONE_REAL_NEW_CINEMA_STANDARD_MP4_AND_ZIP_PRIVATE_ARTIFACT_TECHNICAL_QA_PASS_ARTISTIC_REVIEW_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
               "sha256": "4745c5f093b35bfef418da78f95424d295783c493f2d0d54784bdb4e92eb8a87"
             }
@@ -551,14 +551,16 @@
       "id": "edvard-munch-the-dead-mother-and-child",
       "title": "The Dead Mother and Child",
       "artist": "Edvard Munch",
-      "year": "",
+      "year": "1899",
       "museum": "",
       "object_id": "",
       "lanes": [
-        "selezione_30"
+        "selezione_30",
+        "checkpoint"
       ],
       "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261112_munch_dead_mother.json"
       ],
       "variants": {
         "critico_standard": {
@@ -572,8 +574,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_munch_dead_mother.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "3f86aff803bbab5c4e7dad393cb113825eb9d47cc9ace919230308ee9e0a76d1"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -591,10 +600,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -606,60 +614,11 @@
       "museum": "",
       "object_id": "",
       "lanes": [
-        "selezione_30"
-      ],
-      "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
-      ],
-      "variants": {
-        "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        },
-        "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        },
-        "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        },
-        "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        }
-      },
-      "legacy_video_claims": [],
-      "site_candidates": [],
-      "excluded": false,
-      "selection_order": 17,
-      "priority": 28,
-      "four_by_one_target": true,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
-      "render_documented": 0,
-      "site_playback_verified": false,
-      "published_confirmed": false
-    },
-    {
-      "id": "edvard-munch-vampire",
-      "title": "Vampire",
-      "artist": "Edvard Munch",
-      "year": "",
-      "museum": "",
-      "object_id": "",
-      "lanes": [
+        "selezione_30",
         "checkpoint"
       ],
       "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
         "queue/artvision_owner_30_render_checkpoint_20261112_munch_vampire.json"
       ],
       "variants": {
@@ -678,8 +637,9 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261112_munch_vampire.json",
-              "status_claim": "RENDERED_INDEPENDENT_BYTE_READBACK_PASS_ARTISTIC_AND_RIGHTS_REVIEW_PENDING",
-              "classification": "render_documentato"
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "0ead556a3b0ce45b0b5fb92e3c25ae2ce61b886d367704c024fd5762bf371f52"
             }
           ],
           "site_candidates": []
@@ -693,6 +653,8 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "selection_order": 17,
+      "priority": 28,
       "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
@@ -857,7 +819,7 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261112_baleful_head.json",
-              "status_claim": "ONE_NEW_REAL_51_SEC_MP4_TWO_ENCODINGS_SOURCE_CHECK_FFMPEG_SHA_ZIP_GITHUB_INDEPENDENT_AND_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
               "sha256": "b3fe9f6f57fce2ec16ae3640d87c3109c5252acd0c1f514a1e0f1b4ac00dd0c8"
             }
@@ -912,8 +874,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261110_golden_stairs.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "b04e3c82a9ef8ba5e9edb0de8e30a3d8230019f8ce72a27e8e963d1558f2a719"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -931,10 +900,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -1109,8 +1077,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261110_barque_dante.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "36f9306f02d16ac4e4fa36909e7b6d2f178fd53c855277432beaa770721ef188"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -1128,10 +1103,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -1227,7 +1201,8 @@
       ],
       "sources": [
         "queue/artvision_owner_30_fast_quality_lane_20261109.json",
-        "queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json"
+        "queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json",
+        "queue/artvision_owner_30_render_checkpoint_20261113_demorgan_dryad.json"
       ],
       "variants": {
         "critico_standard": {
@@ -1247,8 +1222,14 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261113_demorgan_dryad.json",
+              "status_claim": "RENDERED_TECH_QA_PRIVATE_VIDEO_NO_MP4_SHA_RECORDED",
+              "classification": "render_documentato"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -1266,10 +1247,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -1277,15 +1257,17 @@
       "id": "evelyn-de-morgan-the-storm-spirits",
       "title": "The Storm Spirits",
       "artist": "Evelyn De Morgan",
-      "year": "",
+      "year": "1900",
       "museum": "",
       "object_id": "",
       "lanes": [
         "selezione_30",
+        "checkpoint",
         "cicli_v31"
       ],
       "sources": [
         "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261111_storm_spirits.json",
         "queue/artvision_autoproduction_v31_state.json"
       ],
       "variants": {
@@ -1300,8 +1282,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261111_storm_spirits.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "2e95fc8dea4b3baaa1dbd0b4e699ca97d6c5906076e66d14ca5512a53bccfa83"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -1325,10 +1314,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -1486,9 +1474,9 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261112_goya_witches_flight.json",
-              "status_claim": "ONE_REAL_NEW_SOURCE_SHA1_LOCKED_52_46S_REVIEW_MP4_HQ_AND_ANDROID_FFMPEG_SHA_ZIP_GITHUB_INDEPENDENT_JOB_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
-              "sha256": "c192126cfc8d6eb57eb980d49816d389023fdbf1798e36ba0cfaea6bc8d59048"
+              "sha256": "82246bdc093321aa34a9070a5de5a623fd0d2e2a94dfa084d4bfa40503d8c26c"
             }
           ],
           "site_candidates": []
@@ -1499,8 +1487,7 @@
             {
               "source": "queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json",
               "status_claim": "RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING",
-              "classification": "render_documentato",
-              "sha256": "38c22c474d9fd224fb4b247299a0ad8db07aaa4e385e8908e681fa93229b6707"
+              "classification": "render_documentato"
             }
           ],
           "site_candidates": []
@@ -1667,7 +1654,7 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261112_bellows_cliff_dwellers.json",
-              "status_claim": "ONE_NEW_REAL_MP4_TWO_BITRATES_GITHUB_INDEPENDENT_QA_AND_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
               "sha256": "0143c5377c84d7fd77f85a4793cc84ccd7959c9a5ac0c8d4cec47e7adc64a32b"
             }
@@ -2010,10 +1997,12 @@
       "museum": "",
       "object_id": "",
       "lanes": [
-        "selezione_30"
+        "selezione_30",
+        "checkpoint"
       ],
       "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261109_moreau_apparition.json"
       ],
       "variants": {
         "critico_standard": {
@@ -2027,8 +2016,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261109_moreau_apparition.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "faa111e2794b73ddf42858e6083b88495089fac8ace3ef1904b0505209be36c3"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -2046,10 +2042,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -2080,12 +2075,13 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "in_coda_o_preflight",
+          "state": "render_documentato",
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261112_rheam_sleeping_beauty.json",
-              "status_claim": "ONE_NEW_TRUE_MP4_GITHUB_AND_INDEPENDENT_CONTAINER_FFMPEG_SHA_CRC_PASS_PRIVATE_ARTISTIC_REVIEW_PENDING",
-              "classification": "in_coda_o_preflight"
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "db097ad70ab0e5081181de7109771869ff7845f187763d470cb1102657eaa6be"
             }
           ],
           "site_candidates": []
@@ -2105,10 +2101,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -2447,7 +2442,7 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261111_sadko.json",
-              "status_claim": "ONE_REAL_NEW_MP4_TWO_BITRATES_ORIGINAL_SHA1_LOCKED_FFMPEG_GITHUB_INDEPENDENT_ARTIFACT_AND_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
               "sha256": "60e4f64a34c665d20971868d8a570afb9d6b0777cb7c83e5f22360356bb106f8"
             }
@@ -2705,7 +2700,7 @@
       "id": "j-m-w-turner-the-shipwreck",
       "title": "The Shipwreck",
       "artist": "J. M. W. Turner",
-      "year": "",
+      "year": "1805",
       "museum": "Tate Britain",
       "object_id": "N00476",
       "lanes": [
@@ -2714,7 +2709,8 @@
       ],
       "sources": [
         "queue/artvision_owner_30_fast_quality_lane_20261109.json",
-        "queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json"
+        "queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json",
+        "queue/artvision_owner_30_render_checkpoint_20261111_shipwreck.json"
       ],
       "variants": {
         "critico_standard": {
@@ -2728,8 +2724,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261111_shipwreck.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "4c12c9b6c1f07ef12e49b66da7a37ca7b0872b14e8efc6a44954760d8b8f9537"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -2738,8 +2741,7 @@
             {
               "source": "queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json",
               "status_claim": "RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING",
-              "classification": "render_documentato",
-              "sha256": "4f24e740fc715457813681437bef159feac77a133f2c18ef9ae32584e17950df"
+              "classification": "render_documentato"
             }
           ],
           "site_candidates": []
@@ -2753,10 +2755,9 @@
       "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
-        "critico_museum",
-        "cinema_standard"
+        "critico_museum"
       ],
-      "render_documented": 1,
+      "render_documented": 2,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -2937,7 +2938,7 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261111_ensor_intrigue.json",
-              "status_claim": "ONE_GENUINE_NEW_50_83S_MP4_TWO_BITRATES_KMSKA_CC0_SOURCE_LOCKED_FFMPEG_GITHUB_INDEPENDENT_READBACK_AND_LIBRARY_PASS_ARTISTIC_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
               "sha256": "8ed0fb016b147664bc91589a8f545f8d71a259b4697f98677a022e78d0184663"
             }
@@ -3049,7 +3050,13 @@
         },
         "cinema_standard": {
           "state": "non_documentato",
-          "evidence": [],
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261110_duel_masquerade.json",
+              "status_claim": "UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF",
+              "classification": "non_documentato"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -3422,10 +3429,12 @@
       "museum": "",
       "object_id": "",
       "lanes": [
-        "selezione_30"
+        "selezione_30",
+        "checkpoint"
       ],
       "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261112_waterhouse_mermaid.json"
       ],
       "variants": {
         "critico_standard": {
@@ -3439,8 +3448,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_waterhouse_mermaid.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "0fecef848ed7d1becfffd4a603ddf641192ab85fee0dfbc3df836a5996544c17"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -3458,10 +3474,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -3492,8 +3507,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261110_ulysses_sirens.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "2403b1f1131396368fa9a0ed2b65f1193206b5016bdce720735f9fc7606c1d05"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -3511,10 +3533,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -3786,10 +3807,12 @@
       "museum": "",
       "object_id": "",
       "lanes": [
-        "selezione_30"
+        "selezione_30",
+        "checkpoint"
       ],
       "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261109_alchemist.json"
       ],
       "variants": {
         "critico_standard": {
@@ -3803,8 +3826,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261109_alchemist.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "734e81a54cb773f4d8b1f424aeb9872051c6de1e7fa00411b752ebbd3349a14e"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -3822,10 +3852,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -3932,9 +3961,9 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261112_pompeii.json",
-              "status_claim": "ONE_NEW_REAL_MP4_TWO_VISUAL_RENDER_ATTEMPTS_V2_APPROVED_FOR_TECHNICAL_PRIVATE_REVIEW_ONLY_ARTISTIC_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
-              "sha256": "e13376325398f04950db91ab2c1408ba4b120632eb892cf78a604ee0d986077c"
+              "sha256": "3d5e9f37be448dc6cbefe82898249de8123da94e2b8b62a8460667ea21e5fa8b"
             }
           ],
           "site_candidates": []
@@ -4040,10 +4069,12 @@
       "museum": "",
       "object_id": "",
       "lanes": [
-        "selezione_30"
+        "selezione_30",
+        "checkpoint"
       ],
       "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261112_princess_tarakanova.json"
       ],
       "variants": {
         "critico_standard": {
@@ -4057,8 +4088,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_princess_tarakanova.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "3dc80b148f4de5ae1f7a0827fbd53288e847b52021d8752b0bcf89e69977f9d2"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -4076,10 +4114,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -4310,12 +4347,13 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "in_coda_o_preflight",
+          "state": "render_documentato",
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261113_klee_fish_magic.json",
-              "status_claim": "NEW_REAL_LOCAL_MP4_PRIVATE_CINEMA_FULL_DECODE_AND_LIBRARY_READBACK_PASS_RIGHTS_AND_ARTISTIC_REVIEW_PENDING",
-              "classification": "in_coda_o_preflight"
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "3a3b6615f5e85115d40d09e0a60681794f9db6b710e70d6ad2d2498f21e3f10b"
             }
           ],
           "site_candidates": []
@@ -4335,10 +4373,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -4373,7 +4410,7 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261111_arbo_wild_hunt.json",
-              "status_claim": "ONE_REAL_NEW_MP4_SOURCE_LOCKED_TECH_QA_AND_PRIVATE_LIBRARY_INDEPENDENT_READBACK_PASS_ARTISTIC_REVIEW_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
               "sha256": "7d086f6e7c5a6180ef43ffd67bf4764ceb787dfceb09463b6c1d776a18680611"
             }
@@ -4405,14 +4442,16 @@
       "id": "peter-paul-rubens-the-battle-of-the-amazons",
       "title": "The Battle of the Amazons",
       "artist": "Peter Paul Rubens",
-      "year": "",
+      "year": "circa 1618",
       "museum": "",
       "object_id": "",
       "lanes": [
-        "selezione_30"
+        "selezione_30",
+        "checkpoint"
       ],
       "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261112_rubens_amazons.json"
       ],
       "variants": {
         "critico_standard": {
@@ -4426,8 +4465,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_rubens_amazons.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "500cb6ebee7c3366606b275836fab7eecbbeb02fdd6f460989317f7b9685661d"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -4445,10 +4491,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -4483,9 +4528,9 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261111_forest_fire.json",
-              "status_claim": "ONE_REAL_NEW_VIDEO_TWICE_ENCODED_HQ_AND_ANDROID_SOURCE_QA_FFMPEG_INDEPENDENT_ARTIFACT_AND_LIBRARY_READBACK_PASS__ARTISTIC_REVIEW_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
-              "sha256": "42b35f80474c8889c1aed8de86ab2f66a9c8cdd086449f3b1c93011f3c1fa90f"
+              "sha256": "8c5cb28c4b7b1a76381a2bd882acde8a54293f7f6c7db51a28224f27a3c183c5"
             }
           ],
           "site_candidates": []
@@ -4542,7 +4587,7 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261111_dulle_griet.json",
-              "status_claim": "NEW_REAL_RESTORED_SOURCE_2021_CINEMA_MP4_2_BITRATES_GITHUB_QA_AND_INDEPENDENT_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
               "sha256": "2a31eb964a3e102e5205dba569e8186ee46fab49e9811e14c6825630a2e92279"
             }
@@ -4968,7 +5013,7 @@
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261112_fairy_feller.json",
-              "status_claim": "ONE_REAL_NEW_CINEMA_MP4_CORRECTED_V2_PRIVATE_REVIEW__SOURCE_SHA1_FFMPEG_ZIP_GITHUB_INDEPENDENT_AND_LIBRARY_READBACK_PASS__ARTISTIC_PENDING",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
               "classification": "render_documentato",
               "sha256": "e4b3ac240cbb04f039f66b9d64f278890b2e28fb35102b4fdd337bc44dd966bb"
             }
@@ -5128,10 +5173,12 @@
       "museum": "",
       "object_id": "",
       "lanes": [
-        "selezione_30"
+        "selezione_30",
+        "checkpoint"
       ],
       "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_render_checkpoint_20261110_cole_destruction.json"
       ],
       "variants": {
         "critico_standard": {
@@ -5146,7 +5193,13 @@
         },
         "cinema_standard": {
           "state": "non_documentato",
-          "evidence": [],
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261110_cole_destruction.json",
+              "status_claim": "UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF",
+              "classification": "non_documentato"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -5529,14 +5582,16 @@
       "id": "william-holbrook-beard-the-bulls-and-bears",
       "title": "The Bulls and Bears",
       "artist": "William Holbrook Beard",
-      "year": "",
-      "museum": "",
-      "object_id": "",
+      "year": "1879",
+      "museum": "New-York Historical Society",
+      "object_id": "1971.104",
       "lanes": [
-        "selezione_30"
+        "selezione_30",
+        "nuova_serie"
       ],
       "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_new_series_20261114.json"
       ],
       "variants": {
         "critico_standard": {
@@ -5565,55 +5620,6 @@
       "excluded": false,
       "selection_order": 6,
       "priority": 4,
-      "four_by_one_target": true,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
-      "render_documented": 0,
-      "site_playback_verified": false,
-      "published_confirmed": false
-    },
-    {
-      "id": "william-holbrook-beard-the-bulls-and-bears-in-the-market-1879",
-      "title": "The Bulls and Bears in the Market",
-      "artist": "William Holbrook Beard",
-      "year": "1879",
-      "museum": "New-York Historical Society",
-      "object_id": "1971.104",
-      "lanes": [
-        "nuova_serie"
-      ],
-      "sources": [
-        "queue/artvision_new_series_20261114.json"
-      ],
-      "variants": {
-        "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        },
-        "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        },
-        "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        },
-        "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        }
-      },
-      "legacy_video_claims": [],
-      "site_candidates": [],
-      "excluded": false,
       "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
