@@ -3,6 +3,58 @@ export default {async fetch(req,env){const u=new URL(req.url);const json=x=>new 
 const auth=async()=>{const t=(req.headers.get('authorization')||'').replace(/^Bearer\s+/i,'').trim();if(!env.ADMIN_KEY_SHA256||t.length<32||t.length>180)return false;const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));const hex=Array.from(new Uint8Array(d),v=>v.toString(16).padStart(2,'0')).join('');let diff=0;const expected=String(env.ADMIN_KEY_SHA256);if(hex.length!==expected.length)return false;for(let i=0;i<hex.length;i++)diff|=hex.charCodeAt(i)^expected.charCodeAt(i);return diff===0};
 const readJSON=async k=>{try{const o=await env.VIDEOS.get(k);return o?await o.json():{}}catch(e){return {}}};
 
+/* R2 CLEANUP COMPATIBILITY — one SHA-verified alias, never delete via this handler.
+   Works only AFTER the legacy file has been separately removed with approved backup.
+   While the original key exists, all routes remain unchanged. An owner tombstone,
+   curated hidden status, failed metadata read or changed canonical ETag blocks aliasing. */
+const piranesiAlias={
+ from:'ARTVISION_PIRANESI_CINEMA_V6.mp4',
+ to:'ArtVision_WOW7_Piranesi_Le_Prigioni_Impossibili.mp4',
+ size:41361075,
+ etag:'2596f0317268b24c3eeefb522a03ab09-5',
+ sha256Proof:'25e979519e54445a285aea9a19d27215ea0fe4f295067b77ea0f01543b99219a'
+};
+if(req.method==='GET'&&env.VIDEOS){
+ const aliases=['/media/','/download/','/watch/','/info/','/download-info/'];
+ const prefix=aliases.find(p=>u.pathname.startsWith(p));
+ if(prefix){
+  let wanted;
+  try{wanted=decodeURIComponent(u.pathname.slice(prefix.length));}
+  catch{return new Response('Invalid key',{status:400})}
+  if(wanted===piranesiAlias.from){
+   let old;
+   try{old=await env.VIDEOS.head(wanted);}
+   catch{return new Response('Archive unavailable',{status:503})}
+   if(!old){
+    // A missing metadata file must NOT convert a private/deleted item to public.
+    let edits,tombstones,keeper;
+    try{
+     const [m,d,k]=await Promise.all([
+      env.VIDEOS.get('catalog/manage.json'),
+      env.VIDEOS.get('catalog/deleted.json'),
+      env.VIDEOS.head(piranesiAlias.to)
+     ]);
+     if(!m||!d||!k)return new Response('Not found',{status:404});
+     [edits,tombstones]=await Promise.all([m.json(),d.json()]);
+     if(!edits||typeof edits!=='object'||Array.isArray(edits)||
+        !tombstones||typeof tombstones!=='object'||Array.isArray(tombstones))
+      return new Response('Not found',{status:404});
+     keeper=k;
+    }catch{return new Response('Archive metadata unavailable',{status:503})}
+    if(tombstones[piranesiAlias.from]||tombstones[piranesiAlias.to]||
+       edits[piranesiAlias.from]?.hidden||edits[piranesiAlias.to]?.hidden||
+       keeper.size!==piranesiAlias.size||keeper.etag!==piranesiAlias.etag)
+     return new Response('Not found',{status:404});
+    const dest=new URL(req.url);
+    dest.pathname=prefix+encodeURIComponent(piranesiAlias.to);
+    return new Response(null,{status:307,
+     headers:{Location:dest.toString(),'Cache-Control':'no-store'}});
+   }
+  }
+ }
+}
+
+
 if(u.pathname==='/assets/previews-v1.js'&&req.method==='GET')return new Response(PREVIEW_CLIENT,{headers:{'content-type':'application/javascript; charset=utf-8','cache-control':'public,max-age=300','x-content-type-options':'nosniff'}});
 const goodKey=k=>/^[\w ().-]{1,190}\.(mp4|mov|m4v)$/i.test(k);
 if(u.pathname==='/api/preview-upload'&&req.method==='POST'){
