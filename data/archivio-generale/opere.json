@@ -1,11 +1,11 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-16T12:34:18+00:00",
+  "generated_at": "2026-11-16T12:40:45+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 92,
-    "render_documented_slots": 121,
-    "not_documented_slots": 247,
+    "render_documented_slots": 129,
+    "not_documented_slots": 139,
     "site_items": 732,
     "site_cloudflare": 724,
     "site_unavailable": 8,
@@ -18,6 +18,9 @@
     "production_dossiers": 195,
     "production_dossier_subdirs": 32,
     "unmatched_site_items": 721,
+    "recovered_historical_review_files": 8,
+    "four_by_one_scoped": 67,
+    "complete_four_render_documented": 27,
     "categories": {
       "Critica d’arte": 42,
       "Altri progetti": 445,
@@ -91,6 +94,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -152,6 +156,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -205,12 +210,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -281,6 +282,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -330,12 +332,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -406,6 +404,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -490,6 +489,7 @@
       ],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -539,12 +539,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -589,6 +585,7 @@
       "excluded": false,
       "selection_order": 18,
       "priority": 29,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -639,6 +636,7 @@
       "excluded": false,
       "selection_order": 17,
       "priority": 28,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -693,6 +691,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -742,6 +741,7 @@
       "excluded": false,
       "selection_order": 8,
       "priority": 10,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -818,6 +818,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -872,6 +873,7 @@
       "excluded": false,
       "selection_order": 19,
       "priority": 21,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -923,6 +925,7 @@
       "excluded": false,
       "selection_order": 12,
       "priority": 9,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -999,6 +1002,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -1070,6 +1074,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -1117,6 +1122,7 @@
       "excluded": false,
       "selection_order": 27,
       "priority": 24,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -1200,6 +1206,7 @@
       "excluded": false,
       "selected_ten_legacy_slots_claim": 4,
       "preflight_status_claim": "4_of_4_REAL_MP4_CINEMA_STANDARD_V168_CRITICO_STANDARD_V169_CRITICO_MUSEUM_V171_CINEMA_MUSEUM_V172_SHA_FFMPEG_ZIP_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_AND_TERRITORIAL_RIGHTS_REVIEW_PENDING_NOT_GOLD",
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -1253,6 +1260,7 @@
       "excluded": false,
       "selection_order": 22,
       "priority": 22,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -1311,6 +1319,7 @@
       "excluded": false,
       "selection_order": 21,
       "priority": 2,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -1365,12 +1374,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -1441,6 +1446,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -1503,6 +1509,7 @@
       "excluded": false,
       "selection_order": 15,
       "priority": 19,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum"
@@ -1553,6 +1560,7 @@
       "excluded": false,
       "selection_order": 29,
       "priority": 26,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -1617,6 +1625,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum"
@@ -1674,6 +1683,7 @@
       "excluded": false,
       "selection_order": 30,
       "priority": 27,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -1760,6 +1770,7 @@
       ],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum"
@@ -1806,6 +1817,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -1860,12 +1872,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -1936,6 +1944,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -1985,12 +1994,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -2035,6 +2040,7 @@
       "excluded": false,
       "selection_order": 16,
       "priority": 20,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -2093,6 +2099,7 @@
       "excluded": false,
       "selection_order": 23,
       "priority": 5,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -2169,6 +2176,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -2182,10 +2190,13 @@
       "museum": "Finnish National Gallery / Ateneum",
       "object_id": "A II 968:16",
       "lanes": [
-        "selezione_10"
+        "selezione_10",
+        "review_storica"
       ],
       "sources": [
-        "queue/artvision_owner_selected_ten_20261102.json"
+        "queue/artvision_owner_selected_ten_20261102.json",
+        "docs/productions/2026-11-08-artvision-simberg-v225-cinema-scale-corrected.md",
+        "docs/productions/2026-11-08-artvision-simberg-garden-v218-critico-phrase-sync.md"
       ],
       "variants": {
         "critico_standard": {
@@ -2203,8 +2214,15 @@
           ]
         },
         "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "docs/productions/2026-11-08-artvision-simberg-garden-v218-critico-phrase-sync.md",
+              "status_claim": "RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "7fe48f41f5da136fdfead63a0067bddc21863121eec25551fbe795443e2313aa"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_standard": {
@@ -2220,8 +2238,15 @@
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "docs/productions/2026-11-08-artvision-simberg-v225-cinema-scale-corrected.md",
+              "status_claim": "RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "6e8a5bbf0e1a37bfa1b5352c3c7da5e317f8f5068412448f7646115094c2eb26"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -2233,11 +2258,9 @@
       "excluded": false,
       "selected_ten_legacy_slots_claim": 2,
       "preflight_status_claim": "2/4 real Critico Standard V146 plus Cinema Standard V134 SHA FFmpeg CRC PASS, 2 Museum slots pending genuine frame",
-      "missing_variants": [
-        "critico_museum",
-        "cinema_museum"
-      ],
-      "render_documented": 2,
+      "four_by_one_target": true,
+      "missing_variants": [],
+      "render_documented": 4,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -2285,12 +2308,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -2339,12 +2358,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -2393,12 +2408,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -2452,6 +2463,7 @@
       "excluded": false,
       "selection_order": 3,
       "priority": 14,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -2505,12 +2517,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -2559,12 +2567,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -2613,12 +2617,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -2693,6 +2693,7 @@
       ],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -2747,6 +2748,7 @@
       "excluded": false,
       "selection_order": 25,
       "priority": 3,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -2822,6 +2824,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -2893,6 +2896,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -2955,6 +2959,7 @@
       "excluded": false,
       "selection_order": 11,
       "priority": 12,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -3008,12 +3013,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -3060,6 +3061,7 @@
       "excluded": false,
       "selection_order": 13,
       "priority": 18,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -3136,6 +3138,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -3185,12 +3188,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -3239,12 +3238,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -3325,6 +3320,7 @@
       "excluded": false,
       "selected_ten_legacy_slots_claim": 4,
       "preflight_status_claim": "4_of_4_REAL_MP4_TECHNICALLY_VERIFIED_critico_standard_v156_critico_museum_v164r1_cinema_standard_v155_cinema_museum_v166_ARTISTIC_AND_RIGHTS_REVIEW_PENDING",
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -3338,10 +3334,12 @@
       "museum": "Tate Britain",
       "object_id": "N01572",
       "lanes": [
-        "selezione_10"
+        "selezione_10",
+        "review_storica"
       ],
       "sources": [
-        "queue/artvision_owner_selected_ten_20261102.json"
+        "queue/artvision_owner_selected_ten_20261102.json",
+        "docs/productions/2026-11-08-artvision-waterhouse-magic-circle-v222-v223-real-museum-reviews.md"
       ],
       "variants": {
         "critico_standard": {
@@ -3359,8 +3357,15 @@
           ]
         },
         "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "docs/productions/2026-11-08-artvision-waterhouse-magic-circle-v222-v223-real-museum-reviews.md",
+              "status_claim": "RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "5843aa37be07ecd9cd2ae7d0c98f7f10dfc3fa8488a84a3e7c4487744c7dcee4"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_standard": {
@@ -3376,8 +3381,15 @@
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "docs/productions/2026-11-08-artvision-waterhouse-magic-circle-v222-v223-real-museum-reviews.md",
+              "status_claim": "RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "d38b992015bd026ea2ece3267cd5ee72f96accc7c67f90180b869f53e977c60f"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -3394,11 +3406,9 @@
       "excluded": false,
       "selected_ten_legacy_slots_claim": 2,
       "preflight_status_claim": "2_of_4_real_MP4_verified_Cinema_V158_and_Critico_V159; two Museum slots pending authenticated frame and artistic QA",
-      "missing_variants": [
-        "critico_museum",
-        "cinema_museum"
-      ],
-      "render_documented": 2,
+      "four_by_one_target": true,
+      "missing_variants": [],
+      "render_documented": 4,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -3442,6 +3452,7 @@
       "excluded": false,
       "selection_order": 20,
       "priority": 8,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -3494,6 +3505,7 @@
       "excluded": false,
       "selection_order": 7,
       "priority": 7,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -3548,12 +3560,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -3621,6 +3629,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -3674,12 +3683,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -3765,6 +3770,7 @@
       ],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -3810,6 +3816,7 @@
       "excluded": false,
       "selection_order": 26,
       "priority": 23,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -3886,6 +3893,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -3940,6 +3948,7 @@
       "excluded": false,
       "selection_order": 5,
       "priority": 17,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -4015,6 +4024,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -4060,6 +4070,7 @@
       "excluded": false,
       "selection_order": 4,
       "priority": 16,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -4114,12 +4125,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -4168,12 +4175,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -4222,12 +4225,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -4276,12 +4275,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -4334,6 +4329,7 @@
       "excluded": false,
       "selection_order": 14,
       "priority": 30,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -4393,6 +4389,7 @@
       "excluded": false,
       "selection_order": 1,
       "priority": 15,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -4442,6 +4439,7 @@
       "excluded": false,
       "selection_order": 28,
       "priority": 25,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -4501,6 +4499,7 @@
       "excluded": false,
       "selection_order": 24,
       "priority": 6,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -4559,6 +4558,7 @@
       "excluded": false,
       "selection_order": 10,
       "priority": 11,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -4672,6 +4672,7 @@
       "excluded": false,
       "selected_ten_legacy_slots_claim": 2,
       "preflight_status_claim": "2/4 slots: Critico V144 plus active Cinema V153 replacement; original V135 unavailable, no extra slot; Museum pending",
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -4745,6 +4746,7 @@
       "excluded": false,
       "selected_ten_legacy_slots_claim": 4,
       "preflight_status_claim": "four_real_distinct_MP4_Cinema_V136_V137_Critico_V141_independent_full_decode_SHA_CRC_readback_PASS_human_artistic_review_PENDING",
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -4758,10 +4760,13 @@
       "museum": "Museo del Prado",
       "object_id": "P001393",
       "lanes": [
-        "selezione_10"
+        "selezione_10",
+        "review_storica"
       ],
       "sources": [
-        "queue/artvision_owner_selected_ten_20261102.json"
+        "queue/artvision_owner_selected_ten_20261102.json",
+        "docs/productions/2026-11-08-artvision-triumph-v217-private-cinema-museum-review.md",
+        "docs/productions/2026-11-08-artvision-triumph-v224-private-review.md"
       ],
       "variants": {
         "critico_standard": {
@@ -4777,8 +4782,15 @@
           "site_candidates": []
         },
         "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "docs/productions/2026-11-08-artvision-triumph-v224-private-review.md",
+              "status_claim": "RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "7181523e7531f56f1c1d03cc30052f5df1870a2b82fd16a799d810b68c9a80ba"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_standard": {
@@ -4794,8 +4806,15 @@
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "docs/productions/2026-11-08-artvision-triumph-v217-private-cinema-museum-review.md",
+              "status_claim": "RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "edc724783729262ded63e8c1a6ea55f97d0d01665bb025f19f5a9dcd3bc373cf"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -4809,11 +4828,9 @@
       "excluded": false,
       "selected_ten_legacy_slots_claim": 2,
       "preflight_status_claim": "2/4 real Cinema V150 and Critico V151, both full MP4 SHA FFmpeg CRC PASS, two Museum slots pending source/frame authentic verification",
-      "missing_variants": [
-        "critico_museum",
-        "cinema_museum"
-      ],
-      "render_documented": 2,
+      "four_by_one_target": true,
+      "missing_variants": [],
+      "render_documented": 4,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -4885,6 +4902,7 @@
       "excluded": false,
       "selected_ten_legacy_slots_claim": 4,
       "preflight_status_claim": "4/4_REAL_MP4_CRITICO_V149_CRITICO_MUSEUM_V179_CINEMA_V132_CINEMA_MUSEUM_V180_FULL_DECODE_SHA_CRC_LIBRARY_READBACK_PASS_HISTORIC_1984_ROOM_CC0_ARTISTIC_REVIEW_PENDING",
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -4947,6 +4965,7 @@
       "excluded": false,
       "selection_order": 2,
       "priority": 13,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -5022,6 +5041,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,
@@ -5067,12 +5087,8 @@
       "excluded": true,
       "selected_ten_legacy_slots_claim": 0,
       "preflight_status_claim": "rights_blocked_no_render_no_distribution",
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -5117,6 +5133,7 @@
       "excluded": false,
       "selection_order": 9,
       "priority": 1,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -5165,6 +5182,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -5238,6 +5256,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -5291,12 +5310,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -5345,12 +5360,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -5363,10 +5374,13 @@
       "museum": "Tate Britain",
       "object_id": "N05889",
       "lanes": [
-        "selezione_10"
+        "selezione_10",
+        "review_storica"
       ],
       "sources": [
-        "queue/artvision_owner_selected_ten_20261102.json"
+        "queue/artvision_owner_selected_ten_20261102.json",
+        "docs/productions/2026-11-08-artvision-blake-v220-private-museum-continuous-review.md",
+        "docs/productions/2026-11-08-artvision-blake-ghost-flea-v221-critico-museum.md"
       ],
       "variants": {
         "critico_standard": {
@@ -5384,8 +5398,15 @@
           ]
         },
         "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "docs/productions/2026-11-08-artvision-blake-ghost-flea-v221-critico-museum.md",
+              "status_claim": "RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "511ee72a1bfcb89fa70a9eb7eecf8b2eced1327be12237af790141b7df03adaa"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_standard": {
@@ -5401,8 +5422,15 @@
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "docs/productions/2026-11-08-artvision-blake-v220-private-museum-continuous-review.md",
+              "status_claim": "RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "64dcf69d8dc8ed3169d0d3036b8801b3c562b3519e7f5163fa4e78c3e96367c6"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -5414,11 +5442,9 @@
       "excluded": false,
       "selected_ten_legacy_slots_claim": 2,
       "preflight_status_claim": "2/4 original Cinema V158 and genuine Critico V159 MP4 SHA/FFmpeg ZIP full verification, site readback pending, Museum blocked frame authenticity",
-      "missing_variants": [
-        "critico_museum",
-        "cinema_museum"
-      ],
-      "render_documented": 2,
+      "four_by_one_target": true,
+      "missing_variants": [],
+      "render_documented": 4,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -5466,12 +5492,8 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
+      "four_by_one_target": false,
+      "missing_variants": [],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
@@ -5516,6 +5538,7 @@
       "excluded": false,
       "selection_order": 6,
       "priority": 4,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -5564,6 +5587,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -5638,6 +5662,7 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
       "site_playback_verified": false,

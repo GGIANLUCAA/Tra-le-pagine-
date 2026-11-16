@@ -40,7 +40,7 @@ Questi stati non implicano pubblicazione né playback.
 | Gustave Moreau | The Apparition | ? | — | — | — | — | Non abbinato |
 | Henry Meynell Rheam | Sleeping Beauty | ? | — | — | C | — | Non abbinato |
 | Hieronymus Bosch | The Garden of Earthly Delights | circa 1490–1500 | D | D | D | D | Non abbinato |
-| Hugo Simberg | The Garden of Death | 1896 | D | — | D | — | Possibili 2 |
+| Hugo Simberg | The Garden of Death | 1896 | D | D | D | D | Possibili 2 |
 | Hugo Simberg | The Wounded Angel | ? | — | — | — | — | Non abbinato |
 | Hugo Simberg | The Wounded Angel — A Quiet Procession | ? | — | — | — | — | Non abbinato |
 | Hugo Simberg; Jan van Eyck; Arnold Böcklin | The Witness — three historic gazes | ? | — | — | — | — | Non abbinato |
@@ -59,7 +59,7 @@ Questi stati non implicano pubblicazione né playback.
 | John Martin | The Country of the Iguanodon | ? | — | — | — | — | Non abbinato |
 | John William Waterhouse | Circe Invidiosa | ? | — | — | — | — | Non abbinato |
 | John William Waterhouse | The Lady of Shalott | 1888 | D | D | D | D | Possibili 3 |
-| John William Waterhouse | The Magic Circle | 1886 | D | — | D | — | Possibili 2 |
+| John William Waterhouse | The Magic Circle | 1886 | D | D | D | D | Possibili 2 |
 | John William Waterhouse | The Mermaid | ? | — | — | — | — | Non abbinato |
 | John William Waterhouse | Ulysses and the Sirens | 1891 | — | — | — | — | Non abbinato |
 | Joos van Craesbeeck | The Temptation of Saint Anthony | ? | — | — | — | — | Non abbinato |
@@ -82,7 +82,7 @@ Questi stati non implicano pubblicazione né playback.
 | Pieter Bruegel the Elder | Dulle Griet | 1563 | — | — | D | — | Non abbinato |
 | Pieter Bruegel the Elder | The Fall of the Rebel Angels | 1562 | D | D | D | D | Non abbinato |
 | Pieter Bruegel the Elder | The Tower of Babel | 1563 | D | D | D | D | Non abbinato |
-| Pieter Bruegel the Elder | The Triumph of Death | 1562–1563 | D | — | D | — | Non abbinato |
+| Pieter Bruegel the Elder | The Triumph of Death | 1562–1563 | D | D | D | D | Non abbinato |
 | Rembrandt van Rijn | The Night Watch | 1642 | D | D | D | D | Non abbinato |
 | Richard Dadd | The Fairy Feller's Master-Stroke | 1855-1864 | — | — | D | — | Non abbinato |
 | Rosa Bonheur | La fiera dei cavalli | ? | D | D | D | D | Non abbinato |
@@ -92,7 +92,7 @@ Questi stati non implicano pubblicazione né playback.
 | Thomas Cole | The Voyage of Life: Manhood | 1842 | B | B | D | C | Non abbinato |
 | Utagawa Hiroshige | Plum Garden at Kameido | ? | — | — | — | — | Non abbinato |
 | Utagawa Hiroshige; Vincent van Gogh | Japan Through Van Gogh | ? | — | — | — | — | Non abbinato |
-| William Blake | The Ghost of a Flea | 1819–1820 | D | — | D | — | Possibili 2 |
+| William Blake | The Ghost of a Flea | 1819–1820 | D | D | D | D | Possibili 2 |
 | William Blake | The Great Red Dragon and the Woman Clothed with the Sun | ? | — | — | — | — | Non abbinato |
 | William Holbrook Beard | The Bulls and Bears | ? | — | — | — | — | Non abbinato |
 | William Holbrook Beard | The Bulls and Bears in the Market | 1879 | — | — | — | — | Non abbinato |
@@ -453,12 +453,12 @@ Questi stati non implicano pubblicazione né playback.
 ### Hugo Simberg — The Garden of Death
 
 - Anno: 1896; Museo: Finnish National Gallery / Ateneum
-- Code: selezione_10
+- Code: selezione_10, review_storica
 - Candidati sul sito (nome compatibile soltanto): SIMBERG_THE_GARDEN_OF_DEATH_CINEMA_V134_REVIEW.mp4, SIMBERG_THE_GARDEN_OF_DEATH_CRITICO_STANDARD_V146_REVIEW.mp4
 - critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v146 [REAL_MP4_GitHub_ARTIFACT_DOWNLOADED_INDEPENDENT_SHA_ZIP_CRC_FULL_]
-- critico_museum: non_documentato; prove: nessuna
+- critico_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-simberg-garden-v218-critico-phrase-sync.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 - cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#v134_cinema_candidate [real_mp4_artifact_downloaded_full_decode_SHA_zip_crc_PASS_one_slo]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-simberg-v225-cinema-scale-corrected.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 
 ### Hugo Simberg — The Wounded Angel
 
@@ -643,12 +643,12 @@ Questi stati non implicano pubblicazione né playback.
 ### John William Waterhouse — The Magic Circle
 
 - Anno: 1886; Museo: Tate Britain
-- Code: selezione_10
+- Code: selezione_10, review_storica
 - Candidati sul sito (nome compatibile soltanto): WATERHOUSE_THE_MAGIC_CIRCLE_CINEMA_V158_REVIEW.mp4, WATERHOUSE_THE_MAGIC_CIRCLE_CRITICO_STANDARD_V159_REVIEW.mp4
 - critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v159 [REAL_MP4_INDEPENDENT_LOCAL_GITHUB_ARTIFACT_SHA_FFMPEG_ZIP_CRC_PAS]
-- critico_museum: non_documentato; prove: nessuna
+- critico_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-waterhouse-magic-circle-v222-v223-real-museum-reviews.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 - cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v158 [REAL_1080p_CINEMA_MP4_GITHUB_ARTIFACT_FULL_FFMPEG_SHA256_AND_ZIP_]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-waterhouse-magic-circle-v222-v223-real-museum-reviews.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 
 ### John William Waterhouse — The Mermaid
 
@@ -873,12 +873,12 @@ Questi stati non implicano pubblicazione né playback.
 ### Pieter Bruegel the Elder — The Triumph of Death
 
 - Anno: 1562–1563; Museo: Museo del Prado
-- Code: selezione_10
+- Code: selezione_10, review_storica
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v151 [REAL_MP4_SOURCE_PD_ART_SHA_ZIP_CRC_AND_FULL_FFMPEG_DECODE_INDEPEN]
-- critico_museum: non_documentato; prove: nessuna
+- critico_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-triumph-v224-private-review.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 - cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v150 [REAL_H264_AAC_48S_MP4_ZIP_SHA_FFMPEG_CRC_INDEPENDENT_DOWNLOAD_PAS]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-triumph-v217-private-cinema-museum-review.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 
 ### Rembrandt van Rijn — The Night Watch
 
@@ -973,12 +973,12 @@ Questi stati non implicano pubblicazione né playback.
 ### William Blake — The Ghost of a Flea
 
 - Anno: 1819–1820; Museo: Tate Britain
-- Code: selezione_10
+- Code: selezione_10, review_storica
 - Candidati sul sito (nome compatibile soltanto): BLAKE_THE_GHOST_OF_A_FLEA_CINEMA_V158_REVIEW.mp4, BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4
 - critico_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#critico_standard_v159 [REAL_NATURAL_CRITICO_MP4_SHA_FFMPEG_ALL_STREAMS_AND_ZIP_CRC_INDEP]
-- critico_museum: non_documentato; prove: nessuna
+- critico_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-blake-ghost-flea-v221-critico-museum.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 - cinema_standard: render_documentato; prove: queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v158 [REAL_48S_MP4_INDEPENDENTLY_FFMPEG_SHA256_ZIP_CRC_VERIFIED]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: docs/productions/2026-11-08-artvision-blake-v220-private-museum-continuous-review.md [RENDERED_TECH_REVIEW_ONLY_ARTISTIC_PENDING_NOT_GOLD]
 
 ### William Blake — The Great Red Dragon and the Woman Clothed with the Sun
 
