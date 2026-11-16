@@ -1,6 +1,6 @@
 # ArtVision — Archivio Generale
 
-Generato: 2026-11-16T11:43:54+00:00 · Verifica sito: live_api
+Generato: 2026-11-16T11:44:57+00:00 · Verifica sito: live_api
 
 Fonte: repository GitHub e catalogo pubblico Video Library Studio; nessuna modifica a video, code o sito.
 AVVERTENZA: un render documentato non significa file oggi scaricabile, QA artistico approvato o video pubblicato.
@@ -22,6 +22,7 @@ Un possibile abbinamento per nome non dimostra l'identità del file. Le lacune n
 - [Inventario integrale del sito](ARCHIVIO_SITO_COMPLETO.md)
 - [Code e produzioni mancanti](ARCHIVIO_CODE_MANCANTI.md)
 - [Doppioni potenziali](ARCHIVIO_DOPPIONI_POTENZIALI.md)
+- [Libri e ricerche La Storia Rivive](ARCHIVIO_ALTRI_FORMAT.md)
 
 I file JSON e CSV nella cartella data/archivio-generale sono l'interfaccia leggibile dalle automazioni.
 L'Action aggiorna i dati periodicamente; gli errori del sito conservano il precedente snapshot dichiarandolo non attuale.

@@ -1,6 +1,6 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-16T11:43:54+00:00",
+  "generated_at": "2026-11-16T11:44:57+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 89,
@@ -11,6 +11,8 @@
     "site_unavailable": 8,
     "possible_site_matches": 11,
     "queue_files": 96,
+    "literary_dossiers": 19,
+    "history_candidates": 7,
     "categories": {
       "Critica d’arte": 42,
       "Altri progetti": 445,
@@ -5204,6 +5206,242 @@
       "render_documented": 4,
       "site_playback_verified": false,
       "published_confirmed": false
+    }
+  ],
+  "literary": [
+    {
+      "folder": "episodes/01_scacchi",
+      "title": "La novella degli scacchi",
+      "author": "Stefan Zweig",
+      "series": "Tra le Pagine",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "non_verificata",
+      "metadata_present": true,
+      "episode": "01"
+    },
+    {
+      "folder": "episodes/02_arte_della_gioia",
+      "title": "L'arte della gioia",
+      "author": "Goliarda Sapienza",
+      "series": "Tra le Pagine",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "non_verificata",
+      "metadata_present": true,
+      "episode": "02"
+    },
+    {
+      "folder": "episodes/03_siddharta",
+      "title": "Siddharta",
+      "author": "Hermann Hesse",
+      "series": "Tra le Pagine",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "non_verificata",
+      "metadata_present": true,
+      "episode": "03"
+    },
+    {
+      "folder": "episodes/04_inferno",
+      "title": "Inferno — La Divina Commedia, Cantica I",
+      "author": "Dante Alighieri",
+      "series": "Tra le Pagine",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "non_verificata",
+      "metadata_present": true,
+      "episode": "04"
+    },
+    {
+      "folder": "episodes/05_purgatorio",
+      "title": "Purgatorio — Divina Commedia, Cantica II",
+      "author": "Dante Alighieri",
+      "series": "Tra le Pagine",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "non_verificata",
+      "metadata_present": true,
+      "episode": "05"
+    },
+    {
+      "folder": "episodes/06_paradiso",
+      "title": "Paradiso — La Divina Commedia, Cantica III",
+      "author": "Dante Alighieri",
+      "series": "Tra le Pagine",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "non_verificata",
+      "metadata_present": true,
+      "episode": "06"
+    },
+    {
+      "folder": "episodes/07_trainspotting",
+      "title": "Trainspotting — Il prezzo di una fuga",
+      "author": "Irvine Welsh",
+      "series": "Tra le Pagine",
+      "status_claim": "voce in produzione",
+      "publication_claim": "non_verificata",
+      "metadata_present": true,
+      "episode": "07"
+    },
+    {
+      "folder": "episodes/08_delitto_e_castigo",
+      "title": "Delitto e castigo — Il peso della colpa",
+      "author": "Fëdor Dostoevskij",
+      "series": "Tra le Pagine",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "non_verificata",
+      "metadata_present": true,
+      "episode": "08"
+    },
+    {
+      "folder": "episodes/09_dersu_uzala",
+      "title": "09 dersu uzala",
+      "author": "da_verificare",
+      "series": "Tra le Pagine",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "non_verificata",
+      "metadata_present": false,
+      "episode": ""
+    },
+    {
+      "folder": "episodes/10_cuore_rivelatore_20261027",
+      "title": "Il cuore rivelatore",
+      "author": "Edgar Allan Poe",
+      "series": "Tra le Pagine — Classici che parlano ancora",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "not published",
+      "metadata_present": true,
+      "episode": "CUORE_RIVELATORE_20261027"
+    },
+    {
+      "folder": "episodes/alice_wonderland_20261028",
+      "title": "Alice nel Paese delle Meraviglie",
+      "author": "Lewis Carroll",
+      "series": "Tra le Pagine — Studio Ibrido",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "not published",
+      "metadata_present": true,
+      "episode": "ALICE_20261028"
+    },
+    {
+      "folder": "episodes/looking_glass_20261027",
+      "title": "Attraverso lo specchio",
+      "author": "Lewis Carroll",
+      "series": "Tra le Pagine",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "non_verificata",
+      "metadata_present": true,
+      "episode": "11"
+    },
+    {
+      "folder": "episodes/marinaio_antico_20261028",
+      "title": "La ballata del vecchio marinaio",
+      "author": "Samuel Taylor Coleridge",
+      "series": "Tra le Pagine — Classici che parlano ancora",
+      "status_claim": "assets_preparation_not_final",
+      "publication_claim": "not_performed",
+      "metadata_present": true,
+      "episode": "MARINAIO_ANTICO_20261028"
+    },
+    {
+      "folder": "episodes/nautilus_20261027",
+      "title": "Ventimila leghe sotto i mari",
+      "author": "Jules Verne",
+      "series": "Tra le Pagine — Classici che parlano ancora",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "not_performed",
+      "metadata_present": true,
+      "episode": "NAUTILUS_20261027"
+    },
+    {
+      "folder": "episodes/oz_dorothy_20261026",
+      "title": "Il meraviglioso mago di Oz",
+      "author": "L. Frank Baum",
+      "series": "Tra le Pagine — Classici che parlano ancora",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "no automatic publication",
+      "metadata_present": true,
+      "episode": "OZ_20261026"
+    },
+    {
+      "folder": "episodes/peter_rabbit_20261029",
+      "title": "Peter Coniglio — Il giardino proibito",
+      "author": "Beatrix Potter",
+      "series": "Tra le Pagine — Classici che parlano ancora",
+      "status_claim": "assets_ready_voice_blocked_not_final",
+      "publication_claim": "no automatic publication",
+      "metadata_present": true,
+      "episode": "PETER_RABBIT_20261029"
+    },
+    {
+      "folder": "episodes/pifferaio_hamelin_20261028",
+      "title": "Il pifferaio di Hamelin",
+      "author": "Robert Browning",
+      "series": "Tra le Pagine — Studio Ibrido",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "not published",
+      "metadata_present": true,
+      "episode": "PIFFERAIO_HAMELIN_20261028"
+    },
+    {
+      "folder": "episodes/pinocchio_20261029",
+      "title": "pinocchio 20261029",
+      "author": "da_verificare",
+      "series": "Tra le Pagine",
+      "status_claim": "solo_dossier_non_prova_del_video",
+      "publication_claim": "non_verificata",
+      "metadata_present": false,
+      "episode": ""
+    },
+    {
+      "folder": "episodes/rip_van_winkle_20261029",
+      "title": "Rip Van Winkle",
+      "author": "Washington Irving",
+      "series": "Tra le Pagine",
+      "status_claim": "assets_pending_voice_free_quota_unconfirmed",
+      "publication_claim": "False",
+      "metadata_present": true,
+      "episode": "rip_van_winkle_20261029"
+    }
+  ],
+  "history_candidates": [
+    {
+      "source": "queue/storia_rivive_candidates_v58.json",
+      "title": "Parigi 1918 — la folla alla gara di nuoto",
+      "year": "1918",
+      "status_claim": "real_source_pages_verified_video_frames_not_yet_reviewed"
+    },
+    {
+      "source": "queue/storia_rivive_candidates_v58.json",
+      "title": "Parigi 1918 — stazione ferroviaria e viaggio",
+      "year": "1918",
+      "status_claim": "real_source_pages_verified_video_frames_not_yet_reviewed"
+    },
+    {
+      "source": "queue/storia_rivive_candidates_v58.json",
+      "title": "Beirut 1919 — mercato, strada, mestieri",
+      "year": "1919",
+      "status_claim": "real_source_pages_verified_video_frames_not_yet_reviewed"
+    },
+    {
+      "source": "queue/storia_rivive_candidates_v58.json",
+      "title": "Parigi 1919 — sciopero dei camerieri",
+      "year": "1919",
+      "status_claim": "real_source_pages_verified_video_frames_not_yet_reviewed"
+    },
+    {
+      "source": "queue/storia_rivive_candidates_v58.json",
+      "title": "Parigi 1918 — Champs-Élysées e Concorde",
+      "year": "1918",
+      "status_claim": "real_source_pages_verified_video_frames_not_yet_reviewed"
+    },
+    {
+      "source": "queue/storia_rivive_candidates_v58.json",
+      "title": "1920 — mercato coperto e vita rurale",
+      "year": "1920",
+      "status_claim": "real_source_pages_verified_video_frames_not_yet_reviewed"
+    },
+    {
+      "source": "queue/storia_rivive_candidates_v58.json",
+      "title": "Cina 1928 — la vita quotidiana ritrovata",
+      "year": "1928",
+      "status_claim": "real_source_pages_verified_video_frames_not_yet_reviewed"
     }
   ],
   "warnings": []
