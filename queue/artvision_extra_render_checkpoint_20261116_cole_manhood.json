@@ -1,0 +1,82 @@
+{
+  "schema": "artvision-extra-verified-cinema-standard-v1",
+  "completion_date": "2026-11-16",
+  "work": {
+    "artist": "Thomas Cole",
+    "title": "The Voyage of Life: Manhood",
+    "year": 1842,
+    "accession": "NGA 1971.16.3",
+    "official_url": "https://www.nga.gov/artworks/52452-voyage-life-manhood",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Thomas_Cole_-_The_Voyage_of_Life_Manhood,_1842_(National_Gallery_of_Art).jpg",
+    "source_pixels": [
+      5272,
+      3468
+    ],
+    "source_sha256": "a2c2051d85907ff610ea5c9e12d2b607bd6620e9b5a08288940cdfedf1658263",
+    "source_license": "NGA Open Access / public domain faithful reproduction"
+  },
+  "music": {
+    "title": "Ghost Processional",
+    "composer": "Kevin MacLeod",
+    "catalog_id": "ghost_processional",
+    "isrc": "USUAN1100219",
+    "recording_sha256": "9502c6f9a0c365f2717ea82acd7e18c17f784da742c63a1e6887c5761a7ef421",
+    "source_url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Ghost%20Processional.mp3",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution_in_social_pack": true
+  },
+  "variants": {
+    "cinema_standard": {
+      "status": "RENDERED_TECH_PASS_PRIVATE_ARTISTIC_REVIEW_PENDING",
+      "new_distinct_work": true,
+      "video_sha256": "c5ad9a970467bfd77f1b29e15504df6464288fb35d2d25201ceaea5a1d453f6d",
+      "bytes": 10431462,
+      "duration_seconds": 49.1,
+      "resolution": [
+        720,
+        1280
+      ],
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "full_audio_video_ffmpeg_decode": "PASS",
+      "zip_crc": "PASS",
+      "android_zip_sha256": "b56f39fe100cab2a3410c810f2f7f76e037c708d558dabae987ad8336843ca2d",
+      "android_zip_bytes": 11082036,
+      "library_readback_sha_equal": true,
+      "library_readback_zip_crc": "PASS",
+      "human_artistic_review": "PENDING",
+      "published": false,
+      "gold": false
+    },
+    "cinema_museum": {
+      "status": "NOT_STARTED_MUSEUM_DIMENSIONS_AND_ROOM_GATE"
+    },
+    "critico_standard": {
+      "status": "BLOCKED_APPROVED_GACRUX_API"
+    },
+    "critico_museum": {
+      "status": "BLOCKED_APPROVED_GACRUX_API_AND_MUSEUM"
+    }
+  },
+  "archive": {
+    "library_path": "/ArtVision/Opere_Extra/Thomas_Cole_Manhood_20261116",
+    "mp4_library_file_id": "libfile_2cb8d69d614881919db4838d76d8086c",
+    "zip_library_file_id": "libfile_a4a27c21d4108191ba55e858893c119f",
+    "cover_library_file_id": "libfile_8a2a63994c988191a2fa1c1e7fc8bdaf",
+    "social_library_file_id": "libfile_689604c5fc34819188cc1787d99d397f",
+    "source_music_proof_library_file_id": "libfile_acfdb39352688191be79e55ee54d3fec"
+  },
+  "provenance": {
+    "source_and_music_acquisition_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43804602232",
+    "artifact_id": 14197408277,
+    "source_image_exact_verified": true,
+    "original_music_binary_verified": true,
+    "zoom_crops_from_original_painting_only": true,
+    "synthetic_people_or_painting_details": false,
+    "no_paid_calls": true,
+    "no_voice_substitution": true,
+    "previous_masters_unchanged": true,
+    "duplicate_guard": "Single extra artwork outside owner 30 and original 36; once completed, do not regenerate unless explicit revision."
+  }
+}
