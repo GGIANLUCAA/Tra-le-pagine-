@@ -38,13 +38,14 @@ def val(o,*keys):
 def identify(obj):
     base=obj.get("work",{}) if isinstance(obj.get("work"),dict) else {}
     return (val(obj,"artist","artist_as_chosen") or val(base,"artist"),
-            val(obj,"title_en","title","title_as_chosen","artwork","work_title") or val(base,"title"),
+            val(obj,"title_en","title","title_as_chosen","artwork","work_title","work") or val(base,"title"),
             val(obj,"year") or val(base,"year"),
             val(obj,"museum") or val(base,"museum"),
             val(obj,"accession","object_id") or val(base,"accession","object_id"))
 def status(d):
     s=val(d,"status","render_status").lower()
     sha=val(d,"video_sha256","rendered_mp4_sha256","mp4_sha256","hd_sha256","sha256","preferred_v2_mp4_sha256","original_v1_mp4_sha256")
+    if any(k in s for k in ("owner_rejected","rejected_wrong","wrong_voice")):return "render_respinto"
     if any(k in s for k in ("rendered","real_mp4","real_new_mp4","technical_pass","mp4_verified")) or re.fullmatch(r"[a-fA-F0-9]{64}",sha):return "render_documentato"
     if "not_started" in s:return "da_produrre"
     if any(k in s for k in ("blocked","failed","unavailable")):return "bloccato"
@@ -108,6 +109,28 @@ def build(root,site,source,stamp):
                 put(w,"cinema_standard",{"status":val(obj,"status")},rel)
             if lane=="selezione_10" and obj.get("preexisting_cinema_candidate"):
                 w["legacy_video_claims"].append({"source":rel,"status":"legacy_non_4x1"})
+            if lane=="selezione_10":
+                # This pre-4x1-format queue stores proven MP4s under version-specific keys.
+                # Multiple revisions of the same slot count once only.
+                for k,detail in obj.items():
+                    m=re.match(r"^(?:new_)?(critico_standard|critico_museum|cinema_standard|cinema_museum)_v\d+",k)
+                    if m and isinstance(detail,dict):
+                        put(w,m.group(1),detail,rel+"#"+k)
+                old_cinema=obj.get("v134_cinema_candidate")
+                if isinstance(old_cinema,dict) and val(old_cinema,"mp4_sha256") and val(old_cinema,"mp4_filename"):
+                    put(w,"cinema_standard",old_cinema,rel+"#v134_cinema_candidate")
+                revision=obj.get("critico_short_revision_v218",{})
+                if isinstance(revision,dict):
+                    for v in ("critico_standard","critico_museum"):
+                        sample=revision.get(v,{})
+                        if isinstance(sample,dict) and val(sample,"sha256") and val(sample,"filename"):
+                            put(w,v,dict(sample,status=val(revision,"production_status")),rel+"#critico_short_revision_v218")
+                    for v in ("cinema_standard","cinema_museum"):
+                        sample=revision.get(v+"_preserved",{})
+                        if isinstance(sample,dict) and val(sample,"sha256"):
+                            put(w,v,dict(sample,status="VERIFIED_EXISTING_SAME_SLOT_REAL_MP4"),rel+"#critico_short_revision_v218")
+                w["selected_ten_legacy_slots_claim"]=obj.get("slots_delivered_this_selection")
+                w["preflight_status_claim"]=val(obj,"preflight_status")
             if lane=="selezione_30":
                 w["selection_order"]=obj.get("selection_order")
                 w["priority"]=obj.get("provisional_production_priority")
@@ -157,7 +180,7 @@ def build(root,site,source,stamp):
             "episode":val(meta,"episode")})
     history_candidates=[]
     for rel,field in (("queue/storia_rivive_candidates_v58.json","candidates"),
-                      ("queue/storia_rivive_v69_film_scouting_candidates.json","candidates")):
+                      ("queue/storia_rivive_v69_film_scouting_candidates.json","items")):
         d=load(root/rel)
         if isinstance(d.get(field),list):
             for obj in d[field]:
