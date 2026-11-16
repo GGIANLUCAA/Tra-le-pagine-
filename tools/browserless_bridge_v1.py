@@ -112,8 +112,20 @@ def run_request(value, token):
         with urllib.request.urlopen(req, timeout=55) as response:
             result = json.loads(response.read(100000).decode("utf-8"))
     except urllib.error.HTTPError as exc:
-        # Never log the token-bearing URL, response body, or headers.
-        raise RuntimeError("Browserless HTTP status " + str(exc.code)) from None
+        # Inspect only fixed error categories. Never log token-bearing URLs,
+        # response body, or headers (they may contain API credentials).
+        body = exc.read(8192).decode("utf-8", "replace").lower()
+        categories = (
+            ("selector_not_found", "selector_not_found"),
+            ("link_outside_public_allowlist", "link_outside_allowlist"),
+            ("redirect_outside_public_allowlist", "redirect_outside_allowlist"),
+            ("only_public_link_clicks_allowed", "unsafe_click_refused"),
+            ("navigation timeout", "navigation_timeout"),
+            ("timeout exceeded", "timeout"),
+            ("net::err_", "browser_network_error"),
+        )
+        error_code = next((label for marker, label in categories if marker in body), "other_provider_error")
+        raise RuntimeError("Browserless HTTP status " + str(exc.code) + " (" + error_code + ")") from None
     except urllib.error.URLError:
         raise RuntimeError("Browserless connection unavailable") from None
     data = result.get("data") if isinstance(result, dict) else None
