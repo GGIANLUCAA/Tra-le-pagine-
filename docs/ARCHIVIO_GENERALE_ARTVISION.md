@@ -35,3 +35,6 @@ Un possibile abbinamento per nome non dimostra l'identità del file. Le lacune n
 I file JSON e CSV nella cartella data/archivio-generale sono l'interfaccia leggibile dalle automazioni.
 L'Action aggiorna i dati periodicamente; gli errori del sito conservano il precedente snapshot dichiarandolo non attuale.
 Nessun dato ricavato da sole conversazioni viene spacciato per verifica di MP4.
+LIMITAZIONE: la Libreria privata ChatGPT non è esposta a GitHub Actions. I suoi MP4 non
+sono inventariati automaticamente in questo repository pubblico; verificarli separatamente
+senza pubblicare ID, percorsi o altri metadati privati. La coincidenza per nome non prova identità.
