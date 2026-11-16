@@ -285,14 +285,15 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
     dark=np.zeros((H,W,3),np.uint8);dark[:]=INK
     def close_frame_at(q):
         # Chiusura in movimento: il quadro si allontana lentamente (zoom out)
-        # come un respiro finale. Parte dallo stesso zoom con cui termina la
-        # battuta 19, cosi' non c'e' nessun salto nel passaggio.
+        # come un respiro finale. Parte dallo stesso zoom e dalla stessa deriva
+        # con cui termina la battuta 19 (wide), cosi' non c'e' nessun salto.
         fr=base.copy()
         ih,iw=img.shape[:2]
-        s=(RX1-RX0)/iw*(1.22-.29*small_smooth(min(1.,q)))
+        s=(RX1-RX0)/iw*(1.22-.30*small_smooth(min(1.,q)))
         nw,nh=max(2,round(iw*s)),max(2,round(ih*s))
         image=cv2.resize(img,(nw,nh),interpolation=cv2.INTER_AREA if s<1 else cv2.INTER_CUBIC)
-        paste_clipped(fr,image,RX0+((RX1-RX0)-nw)//2,RY0+((RY1-RY0)-nh)//2)
+        dx=round(-30*(1-small_smooth(min(1.,q)))); dy=round(-14*(1-small_smooth(min(1.,q))))
+        paste_clipped(fr,image,RX0+((RX1-RX0)-nw)//2+dx,RY0+((RY1-RY0)-nh)//2+dy)
         cv2.rectangle(fr,(RX0-2,RY0-2),(RX1+1,RY1+1),(127,119,102),1,cv2.LINE_AA)
         return fr
     print("VIDEO BATCH",cfg["id"],"voice",round(vsec,1),"timeline",duration,"frames",duration*FPS,flush=True)
@@ -320,9 +321,6 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
             else:
                 b=small_smooth((q-.88)/.12)
                 fr=cv2.addWeighted(card,1-b,dark,b,0)
-        elif idx==len(beats)-1 and narr>bounds[-1]-3.1:
-            q=(narr-(bounds[-1]-3.1))/3.1
-            fr=close_frame_at(q*1.6)
         else:
             fr=frame_beat(base,img,beats[idx],p,ratio)
             if transition is not None and t-enter_at<.40:
