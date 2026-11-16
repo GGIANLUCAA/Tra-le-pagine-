@@ -16,6 +16,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   editorial_preflight:
+    outputs:
+      render_ok: ${{ steps.duplicate_guard.outputs.render_ok }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -23,6 +25,33 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Check existing Wild Hunt Critico against current queues (no network/no spend)
+        id: duplicate_guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/artvision-owner-arbo-critico-v1
+          python -m scripts.artvision_preflight_duplicate_v1 \
+            --artist "Peter Nicolai Arbo" \
+            --title "The Wild Hunt of Odin" \
+            --variant critico_standard \
+            --refresh-queue | tee output/artvision-owner-arbo-critico-v1/DUPLICATE_PREFLIGHT.json
+          python - <<'PY'
+          import json,os
+          p="output/artvision-owner-arbo-critico-v1/DUPLICATE_PREFLIGHT.json"
+          d=json.load(open(p,encoding="utf-8"))
+          verdict=d["verdict"]
+          skip={"EXCLUDED_BY_OWNER","AMBIGUOUS_WORK","RENDER_EXISTS_VERIFY_REUSE_OR_REVISION","SHA_ALREADY_RECORDED","UNKNOWN_NEEDS_RESEARCH"}
+          permitted=verdict not in skip
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write(f"render_ok={str(permitted).lower()}\n")
+          with open(os.environ["GITHUB_STEP_SUMMARY"],"a",encoding="utf-8") as f:
+              f.write("## ArtVision preflight anti-doppioni\n\n")
+              f.write(f"Opera: Peter Nicolai Arbo — The Wild Hunt of Odin; Critico Standard.\n\nVerdetto: {verdict}.\n\n")
+              f.write("Nessun file privato, hash o video è stato modificato.\n")
+          if not permitted:
+              print("Rendere soltanto dopo revisione esplicita o recupero asset; ciclo Arbo non crea un duplicato.")
+          PY
       - run: |
           python -m py_compile scripts/artvision_owner_arbo_critico_standard_v1.py
           python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3"
@@ -36,7 +65,7 @@ jobs:
           retention-days: 14
   render_private_critico:
     needs: editorial_preflight
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && needs.editorial_preflight.outputs.render_ok == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 65
     env:

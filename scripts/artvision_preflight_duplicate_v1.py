@@ -68,7 +68,16 @@ def main():
     p.add_argument("--variant",required=True,choices=VARIANTS)
     p.add_argument("--candidate-sha256")
     p.add_argument("--registry",type=Path,default=Path("data/archivio-generale/opere.json"))
+    p.add_argument("--refresh-queue",action="store_true",
+                   help="Read current checked-out queue and cached public catalog in memory, no network or file mutation")
     args=p.parse_args()
     r=json.loads(args.registry.read_text(encoding="utf-8"))
+    if args.refresh_queue:
+        from scripts.artvision_master_registry_v1 import build
+        root=Path(__file__).resolve().parents[1]
+        snapshot=root/"data/archivio-generale/catalogo_sito.json"
+        # A preflight must not depend on network availability or R2 permissions.
+        cached=json.loads(snapshot.read_text(encoding="utf-8")) if snapshot.is_file() else {"items":[]}
+        r=build(root,cached,"preflight_local_fresh_queue_cached_site","read_only")
     print(json.dumps(preflight(r,args.artist,args.title,args.variant,args.candidate_sha256),ensure_ascii=False,indent=2))
 if __name__=="__main__":main()
