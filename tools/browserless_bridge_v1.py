@@ -33,26 +33,40 @@ export default async ({page, context}) => {
   await page.goto(context.url, {waitUntil: "domcontentloaded", timeout: 15000});
   ensureAllowed();
   for (const action of context.actions) {
-    ensureAllowed();
-    if (action.type === "click") {
-      const el = await page.$(action.selector);
-      if (!el) throw new Error("SELECTOR_NOT_FOUND");
-      const isLink = await el.evaluate(n => n.tagName.toLowerCase() === "a");
-      if (!isLink) throw new Error("ONLY_PUBLIC_LINK_CLICKS_ALLOWED");
-      const href = await el.evaluate(n => n.href);
-      const u = new URL(href);
-      if (u.protocol !== "https:" || !allowed.has(u.hostname))
-        throw new Error("LINK_OUTSIDE_PUBLIC_ALLOWLIST");
-      await Promise.all([
-        page.waitForNavigation({waitUntil: "domcontentloaded", timeout: 10000}).catch(() => null),
-        el.click()
-      ]);
-    } else if (action.type === "type_public") {
-      await page.type(action.selector, action.text, {delay: 8});
-    } else {
-      throw new Error("INVALID_ACTION");
+    try {
+      ensureAllowed();
+      if (action.type === "click") {
+        const el = await page.waitForSelector(action.selector, {timeout: 6500});
+        if (!el) throw new Error("SELECTOR_NOT_FOUND");
+        const isLink = await el.evaluate(n => n.tagName.toLowerCase() === "a");
+        if (!isLink) throw new Error("ONLY_PUBLIC_LINK_CLICKS_ALLOWED");
+        const href = await el.evaluate(n => n.href);
+        const u = new URL(href);
+        if (u.protocol !== "https:" || !allowed.has(u.hostname))
+          throw new Error("LINK_OUTSIDE_PUBLIC_ALLOWLIST");
+        await Promise.all([
+          page.waitForNavigation({waitUntil: "domcontentloaded", timeout: 10000}).catch(() => null),
+          el.click({timeout: 8500})
+        ]);
+      } else if (action.type === "type_public") {
+        await page.type(action.selector, action.text, {delay: 8});
+      } else {
+        throw new Error("INVALID_ACTION");
+      }
+      ensureAllowed();
+    } catch (err) {
+      // Return only a fixed diagnostic code. Never disclose page content,
+      // stack traces, URLs containing tokens, or raw error messages.
+      const msg = String(err && err.message || "");
+      const browserError = msg.includes("SELECTOR_NOT_FOUND") || msg.includes("waiting for selector")
+        ? "SELECTOR_NOT_FOUND"
+        : msg.includes("LINK_OUTSIDE_PUBLIC_ALLOWLIST") ? "LINK_OUTSIDE_PUBLIC_ALLOWLIST"
+        : msg.includes("REDIRECT_OUTSIDE_PUBLIC_ALLOWLIST") ? "REDIRECT_OUTSIDE_PUBLIC_ALLOWLIST"
+        : msg.includes("ONLY_PUBLIC_LINK_CLICKS_ALLOWED") ? "UNSAFE_ELEMENT_REFUSED"
+        : /timeout|timed out/i.test(msg) ? "INTERACTION_TIMEOUT"
+        : "OTHER_INTERACTION_ERROR";
+      return {data: {browser_error: browserError}, type: "application/json"};
     }
-    ensureAllowed();
   }
   const title = (await page.title()).slice(0, 240);
   const heading = await page.$eval("h1", n => (n.innerText || "").slice(0, 400)).catch(() => "");
@@ -129,6 +143,12 @@ def run_request(value, token):
     except urllib.error.URLError:
         raise RuntimeError("Browserless connection unavailable") from None
     data = result.get("data") if isinstance(result, dict) else None
+    if isinstance(data, dict) and "browser_error" in data:
+        code = data["browser_error"]
+        safe = ("SELECTOR_NOT_FOUND", "LINK_OUTSIDE_PUBLIC_ALLOWLIST",
+                "REDIRECT_OUTSIDE_PUBLIC_ALLOWLIST", "UNSAFE_ELEMENT_REFUSED",
+                "INTERACTION_TIMEOUT", "OTHER_INTERACTION_ERROR")
+        raise RuntimeError("Browserless interaction: " + (code if code in safe else "UNKNOWN_ERROR"))
     if not isinstance(data, dict) or not isinstance(data.get("title"), str):
         raise RuntimeError("Unexpected Browserless response")
     final_url = urllib.parse.urlsplit(data.get("url", ""))
