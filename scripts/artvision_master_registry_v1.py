@@ -265,12 +265,16 @@ def build(root,site,source,stamp):
            "site_items":len(site_rows),"site_cloudflare":sum(x.get("source")=="cloudflare" for x in site_rows),
            "site_unavailable":sum(x.get("available") is False for x in site_rows),
            "possible_site_matches":sum(x["match_quality"]=="ipotesi_nome_non_hash" for x in site_rows),
-           "queue_files":len(queue_files),"literary_dossiers":len(literary),"history_candidates":len(history_candidates),"categories":categories}
+           "queue_files":len(queue_files),"literary_dossiers":len(literary),"history_candidates":len(history_candidates),
+           "research_100":len(future_100),"selected_future_30":len(future_30),
+           "production_dossiers":len(production_dossiers),"production_dossier_subdirs":production_dirs,
+           "unmatched_site_items":sum(x["match_quality"]=="nessuna" for x in site_rows),"categories":categories}
     likely_duplicate_names=[{"normalized":k,"files":v} for k,v in filename_groups.items() if len(v)>1]
     cross_hashes=[{"sha256":h,"claims":proofs} for h,proofs in duplicates.items()
                   if len(set((w,v) for w,v,_ in proofs))>1]
     return dict(schema="artvision-master-registry-v1",generated_at=stamp,site_state=source,stats=stats,
                 works=ordered,site_items=site_rows,queue_files=queue_files,literary=literary,history_candidates=history_candidates,
+                future_100=future_100,future_30=future_30,production_dossiers=production_dossiers,
                 possible_filename_duplicates=likely_duplicate_names,
                 cross_variant_sha_collisions=cross_hashes,warnings=warnings)
 
@@ -288,13 +292,19 @@ def markdown(root,r):
        table_row(["Elementi del catalogo sito",st["site_items"]]),
        table_row(["Elementi Cloudflare",st["site_cloudflare"]]),
        table_row(["Elementi non disponibili",st["site_unavailable"]]),
-       table_row(["Code JSON esaminate",st["queue_files"]]),"",
+       table_row(["Code JSON esaminate",st["queue_files"]]),
+       table_row(["Banca idee future (non coda)",st["research_100"]]),
+       table_row(["Future selezionate (non video finiti)",st["selected_future_30"]]),
+       table_row(["Fascicoli di produzione indicizzati",st["production_dossiers"]]),
+       table_row(["File sito senza artista/opera abbinati",st["unmatched_site_items"]]),"",
        "## Documenti collegati","",
        "- [Opere e tutte le varianti](ARCHIVIO_OPERE_E_VERSIONI.md)",
        "- [Inventario integrale del sito](ARCHIVIO_SITO_COMPLETO.md)",
        "- [Code e produzioni mancanti](ARCHIVIO_CODE_MANCANTI.md)",
        "- [Doppioni potenziali](ARCHIVIO_DOPPIONI_POTENZIALI.md)",
-       "- [Libri e ricerche La Storia Rivive](ARCHIVIO_ALTRI_FORMAT.md)","",
+       "- [Libri e ricerche La Storia Rivive](ARCHIVIO_ALTRI_FORMAT.md)",
+       "- [Ricerca futura: 100 opere e selezione 30](ARCHIVIO_RICERCA_FUTURA.md)",
+       "- [Fascicoli di produzione storici](ARCHIVIO_PRODUZIONI_STORICHE.md)","",
        "I file JSON e CSV nella cartella data/archivio-generale sono l'interfaccia leggibile dalle automazioni.",
        "L'Action aggiorna i dati periodicamente; gli errori del sito conservano il precedente snapshot dichiarandolo non attuale.",
        "Nessun dato ricavato da sole conversazioni viene spacciato per verifica di MP4."]
@@ -402,10 +412,11 @@ def main():
     registry=build(root,site,source,stamp)
     folder=root/"data/archivio-generale"
     save(folder/"opere.json",jd({k:v for k,v in registry.items() if k not in
-       ("site_items","queue_files","possible_filename_duplicates","cross_variant_sha_collisions")}))
+       ("site_items","queue_files","possible_filename_duplicates","cross_variant_sha_collisions","production_dossiers")}))
     save(folder/"catalogo_sito.json",jd({"schema":"artvision-site-snapshot-v1","checked_at":stamp,
              "source_state":source,"items":registry["site_items"]}))
     save(folder/"code.json",jd({"checked_at":stamp,"items":registry["queue_files"]}))
+    save(folder/"fascicoli_produzione.json",jd({"checked_at":stamp,"items":registry["production_dossiers"]}))
     save(folder/"doppioni.json",jd({"filename_suspects":registry["possible_filename_duplicates"],
                "cross_variant_sha_collisions":registry["cross_variant_sha_collisions"]}))
     buffer=io.StringIO()
