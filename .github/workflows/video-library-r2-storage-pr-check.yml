@@ -7,6 +7,8 @@ on:
       - 'docs/VIDEO_LIBRARY_R2_RECUPERO_SPAZIO_20261116.md'
       - 'tools/video_library_r2_cleanup_triage.py'
       - 'tests/test_video_library_r2_cleanup_triage.py'
+      - 'integrations/video_library_laboratorio/workspace-base.mjs'
+      - 'integrations/video_library_laboratorio/piranesi-alias.test.mjs'
       - '.github/workflows/video-library-r2-storage-pr-check.yml'
 
 permissions:
@@ -18,6 +20,8 @@ jobs:
     timeout-minutes: 4
     steps:
       - uses: actions/checkout@v4
+      - name: Validate exact legacy Piranesi aliases against simulated R2, including Range 206
+        run: node integrations/video_library_laboratorio/piranesi-alias.test.mjs
       - name: Confirm safe inventory and no automatic deletion
         run: |
           python3 -m unittest discover -s tests -p 'test_video_library_r2_cleanup_triage.py' -v
