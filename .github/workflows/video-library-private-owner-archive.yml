@@ -59,7 +59,7 @@ jobs:
           want=os.environ['EXPECTED_SHA256'].lower()
           length=os.environ['EXPECTED_BYTES']
           assert re.fullmatch(r'[0-9]{4,20}',aid), 'Artifact ID required'
-          assert re.fullmatch(r'[A-Za-z0-9_(). -]{1,180}\\.(mp4|m4v|mov)',name,re.I), 'Exact MP4 filename required'
+          assert re.fullmatch(r'[A-Za-z0-9_(). -]{1,180}\.(mp4|m4v|mov)',name,re.I), 'Exact MP4 filename required'
           assert not re.search(r'(^|[_ .-])(SOURCE|SCOUT|CONTACT|FRAMES|ASSETS|PROBE|RAW|NOT_FINAL|NON_FINALE)([_ .-]|$)',name,re.I), 'Not a finished video'
           assert not re.match('AUDIO_POLISHED_REVIEW',name,re.I), 'Intermediate video'
           assert re.fullmatch(r'[a-f0-9]{64}',want), 'Expected MP4 SHA256 required'
