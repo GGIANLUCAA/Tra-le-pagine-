@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "checkpointAt": "2026-11-16T15:31:52Z",
+  "source": "Cloudflare R2 complete paginated inventory and GitHub source; HTTPS DNS unavailable from runner",
+  "main": {
+    "siteHtmlSha": "c6ef81e63386a4964683bf286185db065b7060c8",
+    "workerSourceSha": "aeb63cb6b1bdebeb7675e2445751dec3e3c6dc4f",
+    "controlSourceSha": "90c8414626104ccb76a47e4cebe64b22dd2e6cd6"
+  },
+  "cloudflare": {
+    "workerVersions": {
+      "video-library-studio": 39,
+      "artvision-control-preview": 22
+    },
+    "r2": {
+      "pages": 7,
+      "complete": true,
+      "objects": 6250,
+      "mp4": 730,
+      "jpg": 1042,
+      "other": 4478,
+      "totalBytes": 13328639533,
+      "previous": {
+        "objects": 6244,
+        "mp4": 729,
+        "jpg": 1041,
+        "totalBytes": 13243144361
+      },
+      "delta": {
+        "objects": 6,
+        "mp4": 1,
+        "jpg": 1,
+        "totalBytes": 85495172
+      },
+      "latestMp4": {
+        "key": "ARTVISION_BRUEGEL_PROVERBI__84938982.mp4",
+        "size": 84938982,
+        "etag": "dde83a9115eb770b73ce9f7b05dbb498-11",
+        "uploadedAt": "2026-11-16T13:39:18.440Z",
+        "inReady": false,
+        "inManage": false,
+        "inInfo": false,
+        "inDeleted": false,
+        "qa": "UNVERIFIED",
+        "rights": "UNVERIFIED",
+        "approval": "UNVERIFIED",
+        "player": "UNVERIFIED"
+      }
+    }
+  },
+  "network": {
+    "videoLibrary": "DNS_UNAVAILABLE_FROM_CONTAINER",
+    "controlCenter": "DNS_UNAVAILABLE_FROM_CONTAINER",
+    "httpChecks": "NOT_VERIFIED",
+    "androidScreenshots": "NOT_CAPTURED"
+  },
+  "library": {
+    "status": "PARTIAL",
+    "note": "Recent recursive listing returned first page with no MP4, next_cursor exists; semantic search did not establish exhaustive comparison; previous LIBRARY_ONLY cases remain BLOCKED_FILE_EGRESS."
+  },
+  "defects": [
+    {
+      "id": "VLS-ANDROID-TOUCH-001",
+      "component": "site/video-library-v2.html",
+      "severity": "P3",
+      "firstSeen": "2026-11-16",
+      "lastSeen": "2026-11-16",
+      "evidence": "CSS .chip padding 8px 13px without minimum height; compact .actions button min-height 42px",
+      "cause": "Mobile hit areas below 44px",
+      "attempts": 1,
+      "patch": "44px min-height for filter chips and compact card actions",
+      "state": "FIXED_IN_DRAFT_PR_PENDING_LIVE",
+      "test": "Static source assertion plus existing GitHub CI pending",
+      "nextAction": "Verify 360/393/430 real viewport, keyboard and tap interaction before merge/deploy"
+    },
+    {
+      "id": "VLS-PUBLIC-UNAPPROVED-002",
+      "component": "R2 public bucket /api/catalog",
+      "severity": "P0_RISK_UNCONFIRMED",
+      "firstSeen": "2026-11-16",
+      "lastSeen": "2026-11-16",
+      "evidence": "New ARTVISION_BRUEGEL_PROVERBI__84938982.mp4 in public R2 13:39 UTC; absent from ready/manage/info/deleted",
+      "cause": "Possible import path without explicit publication gate; public exposure not independently proven",
+      "attempts": 0,
+      "state": "OPEN",
+      "nextAction": "Confirm current catalog/player HTTP via trusted Actions; inspect upload provenance and approval; do not publish or delete"
+    },
+    {
+      "id": "VLS-NETWORK-003",
+      "component": "both workers.dev HTTPS",
+      "severity": "UNVERIFIED",
+      "firstSeen": "2026-11-16",
+      "lastSeen": "2026-11-16",
+      "evidence": "Container NameResolutionError for both hosts; Cloudflare API read works",
+      "cause": "Tool network DNS limitation possible",
+      "attempts": 1,
+      "state": "BLOCKED",
+      "nextAction": "Use existing GitHub Actions site smoke to verify public HTTPS and Range"
+    }
+  ]
+}
