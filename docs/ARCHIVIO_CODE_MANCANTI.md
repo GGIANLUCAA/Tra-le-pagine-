@@ -7,44 +7,43 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 |---|---|---|---|
 | Albert Bierstadt | The Last of the Buffalo | critico_standard, critico_museum, cinema_museum | checkpoint |
 | Albert Pinkham Ryder | The Race Track (Death on a Pale Horse) | critico_standard, critico_museum, cinema_museum | nuova_serie, checkpoint |
-| Edvard Munch | The Dead Mother and Child | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
+| Edvard Munch | The Dead Mother and Child | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Edvard Munch | The Vampire | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | Edvard Munch | Vampire | critico_standard, critico_museum, cinema_museum | checkpoint |
 | Edward Burne-Jones | King Arthur in Avalon | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | Edward Burne-Jones | The Baleful Head | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
-| Edward Burne-Jones | The Golden Stairs | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
-| Eugène Delacroix | The Barque of Dante | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
-| Evelyn De Morgan | The Dryad | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
-| Evelyn De Morgan | The Storm Spirits | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, cicli_v31 |
+| Edward Burne-Jones | The Golden Stairs | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
+| Eugène Delacroix | The Barque of Dante | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
+| Evelyn De Morgan | The Dryad | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
+| Evelyn De Morgan | The Storm Spirits | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
 | Francisco Goya | The Witches' Flight | critico_standard, critico_museum | selezione_30, checkpoint |
 | Franz Sedlacek | The Strange Garden | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, nuova_serie |
 | Franz von Stuck | The Sin (Die Sünde) | critico_standard, critico_museum | nuova_serie, checkpoint |
 | George Bellows | Cliff Dwellers | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Georges Seurat | A Sunday on La Grande Jatte—1884 | critico_standard, critico_museum | storico_4x1, museum_scale, legacy_dual_format |
 | Giovanni Segantini | Le cattive madri (The Evil Mothers) | critico_standard, critico_museum, cinema_standard, cinema_museum | nuova_serie |
-| Gustave Moreau | The Apparition | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
-| Henry Meynell Rheam | Sleeping Beauty | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
+| Gustave Moreau | The Apparition | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
+| Henry Meynell Rheam | Sleeping Beauty | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Ilya Repin | Sadko | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
-| J. M. W. Turner | The Shipwreck | critico_standard, critico_museum, cinema_standard | selezione_30, checkpoint |
+| J. M. W. Turner | The Shipwreck | critico_standard, critico_museum | selezione_30, checkpoint |
 | James Ensor | The Intrigue | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
 | Jean-Léon Gérôme | The Duel After the Masquerade | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
-| John William Waterhouse | The Mermaid | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
-| John William Waterhouse | Ulysses and the Sirens | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
+| John William Waterhouse | The Mermaid | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
+| John William Waterhouse | Ulysses and the Sirens | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Joseph Mallord William Turner | The Burning of the Houses of Lords and Commons, 16 October 1834 | critico_standard, critico_museum, cinema_museum | checkpoint |
-| Joseph Wright of Derby | The Alchemist | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
+| Joseph Wright of Derby | The Alchemist | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Karl Bryullov | The Last Day of Pompeii | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
-| Konstantin Flavitsky | Princess Tarakanova | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
-| Paul Klee | Fish Magic | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
+| Konstantin Flavitsky | Princess Tarakanova | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
+| Paul Klee | Fish Magic | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Peter Nicolai Arbo | The Wild Hunt of Odin | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
-| Peter Paul Rubens | The Battle of the Amazons | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
+| Peter Paul Rubens | The Battle of the Amazons | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Piero di Cosimo | The Forest Fire | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Pieter Bruegel the Elder | Dulle Griet | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Richard Dadd | The Fairy Feller's Master-Stroke | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
-| Thomas Cole | The Course of Empire: Destruction | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
+| Thomas Cole | The Course of Empire: Destruction | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
 | Thomas Cole | The Titan's Goblet | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
 | Thomas Cole | The Voyage of Life: Manhood | critico_standard, critico_museum, cinema_museum | checkpoint |
-| William Holbrook Beard | The Bulls and Bears | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
-| William Holbrook Beard | The Bulls and Bears in the Market | critico_standard, critico_museum, cinema_standard, cinema_museum | nuova_serie |
+| William Holbrook Beard | The Bulls and Bears | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, nuova_serie |
 
 ## Tutti i JSON delle code
 
