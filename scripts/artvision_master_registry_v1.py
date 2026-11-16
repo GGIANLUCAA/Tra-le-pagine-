@@ -26,6 +26,9 @@ def norm(x):
 def artist_key(x):
     s=norm(x)
     return {"j m w turner":"joseph mallord william turner", "jm w turner":"joseph mallord william turner"}.get(s,s)
+def title_key(x):
+    # Handle trivial leading-article variants of the SAME artist/work, not arbitrary fuzzy matches.
+    return re.sub(r"^(?:the|a|an) ", "", norm(x))
 def year(x):
     m=re.search(r"\b(?:1[4-9]\d{2}|20\d{2})\b",str(x or ""))
     return m.group(0) if m else ""
@@ -118,7 +121,7 @@ def build(root,site,source,stamp):
         if not isinstance(obj,dict):return None
         artist,title,yr,museum,objid=identify(obj)
         if not artist or not title:return None
-        matches=[w for w in works.values() if artist_key(w["artist"])==artist_key(artist) and norm(w["title"])==norm(title)
+        matches=[w for w in works.values() if artist_key(w["artist"])==artist_key(artist) and title_key(w["title"])==title_key(title)
                  and (not year(yr) or not year(w["year"]) or year(yr)==year(w["year"]))]
         if matches:w=matches[0]
         else:
