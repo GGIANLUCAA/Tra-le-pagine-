@@ -33,6 +33,14 @@
       "date": "2026-11-16",
       "status": "render_success_local",
       "licensed_track_sha256": "d09c03710d225e0978015cc62eed56cfa7405f589474ebd17f1591b152f1ad9a"
+    },
+    {
+      "artist": "Sandro Botticelli",
+      "style": "artvision_cinema_silent_v6",
+      "track": "ancient_rite",
+      "date": "2026-11-16",
+      "status": "render_success_local",
+      "licensed_track_sha256": "f7766ca703fbcb62533e42fa4d85cadaa8d7a00dc1697bf030ff16d60a22c600"
     }
   ],
   "tracks": [
@@ -108,6 +116,25 @@
       "verified_bytes": 51172130,
       "verified_duration_seconds": 1599.06,
       "verified_format": "mp3 stereo 44100 Hz",
+      "production_ready": true,
+      "last_used": "2026-11-16"
+    },
+    {
+      "id": "ancient_rite",
+      "title": "Ancient Rite",
+      "composer": "Kevin MacLeod",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "source": "https://commons.wikimedia.org/wiki/File:Ancient_Rite_by_Kevin_MacLeod.ogg",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Ancient_Rite_by_Kevin_MacLeod.ogg",
+      "approx_duration_seconds": 113.2,
+      "mood": "solemn, archaic, rising tension",
+      "download_tested": true,
+      "tested_from": "Wikimedia Commons OGG (CC BY 4.0)",
+      "verified_sha256": "f7766ca703fbcb62533e42fa4d85cadaa8d7a00dc1697bf030ff16d60a22c600",
+      "verified_bytes": 2386208,
+      "verified_duration_seconds": 113.214694,
+      "verified_format": "ogg vorbis stereo",
       "production_ready": true,
       "last_used": "2026-11-16"
     }

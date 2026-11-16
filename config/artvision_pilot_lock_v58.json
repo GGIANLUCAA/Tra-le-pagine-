@@ -246,5 +246,28 @@
     "existing_masters_immutable": true,
     "automatic_further_artwork_selection": false
   },
-  "note_gentileschi_cinema": "Owner-chosen new artwork Artemisia Gentileschi (Uffizi Giuditta) authorized for ONE silent Cinema private-review render only. Museum and Critico slots are NOT authorized; no paid calls, no publication, no Gold."
+  "note_gentileschi_cinema": "Owner-chosen new artwork Artemisia Gentileschi (Uffizi Giuditta) authorized for ONE silent Cinema private-review render only. Museum and Critico slots are NOT authorized; no paid calls, no publication, no Gold.",
+  "authorized_botticelli_venere_cinema_20261116": {
+    "enabled": true,
+    "authorization": "Explicit user instruction in the current conversation 2026-11-16: 'Ok creiamo un altro video'; artwork chosen by the user = Botticelli, Nascita di Venere (Uffizi), direction chosen = 'più tesa e ritmata'. Grants the owner a single ArtVision Cinema (silent) slot only.",
+    "allowed_group_id": "botticelli_birth_of_venus_uffizi_1890_878",
+    "allowed_title": "The Birth of Venus",
+    "allowed_artist": "Sandro Botticelli",
+    "museum_accession": "Galleria degli Uffizi, inv. 1890 n. 878",
+    "phase": "botticelli_only_owner_cinema_silent",
+    "authorized_slots": [
+      "cinema_silent_owner_single"
+    ],
+    "museum_slots_authorized": false,
+    "critico_tts_authorized": false,
+    "no_paid_video_ai": true,
+    "no_paid_tts": true,
+    "no_social_auto_publish": true,
+    "no_v25_auto_approval": true,
+    "zero_paid_calls_required": true,
+    "real_mp4_full_ffmpeg_decode_and_readback_required": true,
+    "existing_masters_immutable": true,
+    "automatic_further_artwork_selection": false
+  },
+  "note_botticelli_venere_cinema": "Owner-chosen new artwork Sandro Botticelli (Uffizi Nascita di Venere) authorized for ONE silent Cinema private-review render only, with a more rhythmic/tenser direction. Museum and Critico slots are NOT authorized; no paid calls, no publication, no Gold."
 }
