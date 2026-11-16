@@ -92,6 +92,14 @@ def backdrop(art):
 def small_smooth(x):
     q=min(1.,max(0.,x));return q*q*(3-2*q)
 
+def ease_out(x):
+    q=min(1.,max(0.,x));return 1-(1-q)**2.4
+
+def push(x):
+    # Carrellata decisa: il grosso del movimento arriva subito (il "Zum"),
+    # poi la macchina continua a stringere piano fino alla fine della battuta.
+    q=min(1.,max(0.,x));return .62*ease_out(q)+.38*q
+
 def font_to_fit(draw,st,maxw,maxsize,minsize=22,face=DRAW_FONT):
     for pts in range(maxsize,minsize-1,-1):
         f=ImageFont.truetype(face,pts)
@@ -162,15 +170,29 @@ def full_art(frame,art):
     cv2.rectangle(frame,(x-2,y-2),(x+sw+2,y+sh+2),(131,120,100),1,cv2.LINE_AA)
     return frame
 
-def crop_to(art,fx,fy,zoom,ratio,tw,th):
+def crop_into(patch,art,fx,fy,zoom,ratio):
+    # Ritaglia il quadro centrando ESATTAMENTE il proverbio raccontato, anche
+    # quando è a ridosso del bordo: fuori tela resta lo sfondo della pagina,
+    # così il dettaglio spiegato resta al centro dell'inquadratura.
+    th,tw=patch.shape[:2]
     ih,iw=art.shape[:2]
     baseh=min(ih,iw/ratio);basew=baseh*ratio
-    cw=max(2,min(iw,round(basew/max(1,zoom))))
-    ch=max(2,min(ih,round(baseh/max(1,zoom))))
-    cx=min(iw-cw/2,max(cw/2,fx*iw))
-    cy=min(ih-ch/2,max(ch/2,fy*ih))
-    crop=cv2.getRectSubPix(art,(cw,ch),(cx,cy))
-    return cv2.resize(crop,(tw,th),interpolation=cv2.INTER_AREA if cw>tw else cv2.INTER_CUBIC)
+    cw=max(2,round(basew/max(1,zoom)));ch=max(2,round(baseh/max(1,zoom)))
+    # Si centra il proverbio, ma senza sfondare il bordo: al massimo il 14% del
+    # fotogramma resta fuori tela, così l'immagine non si svuota di lato.
+    over=.14
+    x0=round(fx*iw-cw/2);y0=round(fy*ih-ch/2)
+    x0=int(min(iw-cw+over*cw,max(-over*cw,x0)))
+    y0=int(min(ih-ch+over*ch,max(-over*ch,y0)))
+    sx0=max(0,x0);sy0=max(0,y0);sx1=min(iw,x0+cw);sy1=min(ih,y0+ch)
+    if sx1<=sx0 or sy1<=sy0:return
+    px0=max(0,min(tw-1,round((sx0-x0)*tw/cw)));py0=max(0,min(th-1,round((sy0-y0)*th/ch)))
+    px1=min(tw,round((sx1-x0)*tw/cw));py1=min(th,round((sy1-y0)*th/ch))
+    if px1<=px0 or py1<=py0:return
+    sub=art[sy0:sy1,sx0:sx1]
+    resized=cv2.resize(sub,(px1-px0,py1-py0),
+        interpolation=cv2.INTER_AREA if sx1-sx0>px1-px0 else cv2.INTER_CUBIC)
+    patch[py0:py1,px0:px1]=resized
 
 def paste_clipped(frame,image,x,y):
     fh,fw=frame.shape[:2];ih,iw=image.shape[:2]
@@ -182,42 +204,49 @@ def frame_beat(background,art,beat,p,ratio):
     frame=background.copy()
     rx0,ry0,rx1,ry1=56,235,1024,1665
     if beat.get("wide"):
-        # Inquadratura d'insieme: UNA sola immagine, il quadro intero, con un lentissimo
-        # respiro di zoom. Serve ad aprire e a chiudere l'episodio senza didascalie.
+        # Inquadratura d'insieme: UNA sola immagine, il quadro intero, con un lento
+        # respiro di zoom che tiene viva l'apertura e la chiusura.
         ih,iw=art.shape[:2]
-        s=(rx1-rx0)/iw*(1.0+.06*small_smooth(p))
+        s=(rx1-rx0)/iw*(1.0+.11*ease_out(p))
         nw,nh=max(2,round(iw*s)),max(2,round(ih*s))
         image=cv2.resize(art,(nw,nh),interpolation=cv2.INTER_AREA if s<1 else cv2.INTER_CUBIC)
         paste_clipped(frame,image,rx0+((rx1-rx0)-nw)//2,ry0+((ry1-ry0)-nh)//2)
         cv2.rectangle(frame,(rx0-2,ry0-2),(rx1+1,ry1+1),(127,119,102),1,cv2.LINE_AA)
         return frame
-    z=beat["zoom_start"]+(beat["zoom_end"]-beat["zoom_start"])*small_smooth(p)
-    fx=beat["focus"][0]+.005*math.sin(math.pi*p)
-    fy=beat["focus"][1]
-    # Una sola immagine per inquadratura: il dettaglio spiegato, a tutto schermo.
-    # Nessuna opera intera sopra il dettaglio: solo il particolare che la voce racconta.
-    patch=crop_to(art,fx,fy,max(1,z),968/1430,968,1430)
+    # Carrellata: spinta decisa in apertura, poi strisciata lenta con un leggero
+    # respiro di macchina, così il particolare spiegato resta il protagonista.
+    z=beat["zoom_start"]+(beat["zoom_end"]-beat["zoom_start"])*push(p)
+    fx=beat["focus"][0]+.008*math.sin(math.pi*p)
+    fy=beat["focus"][1]+.006*math.sin(2*math.pi*p)
+    # Una sola immagine per inquadratura: il dettaglio spiegato, a tutto schermo,
+    # centrato sul proverbio che la voce racconta.
+    patch=background[ry0:ry1,rx0:rx1].copy()
+    crop_into(patch,art,fx,fy,max(1,z),968/1430)
     frame[ry0:ry1,rx0:rx1]=patch
     cv2.rectangle(frame,(rx0-2,ry0-2),(rx1+1,ry1+1),(127,119,102),1,cv2.LINE_AA)
     return frame
 
-def silent_symbols(frame,progress):
-    # minimal, exclusively iconographic, no written words, no spoken CTA
-    level=small_smooth(progress)
-    if level<=0:return frame
-    import PIL
-    canvas=Image.fromarray(cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)).convert("RGBA")
-    overlay=Image.new("RGBA",(W,H),(0,0,0,0))
-    d=ImageDraw.Draw(overlay)
-    a=int(242*level)
-    stroke=(243,225,192,a)
-    # Small heart left; outline play & + right
-    d.line([(471,1778),(443,1750),(445,1735),(455,1728),(470,1732),(480,1740),
-            (491,1731),(503,1728),(514,1736),(513,1750),(480,1780),(471,1778)],
-          fill=stroke,width=3,joint="curve")
-    d.ellipse((559,1723,619,1783),outline=stroke,width=3)
-    d.polygon([(580,1739),(580,1767),(600,1753)],outline=stroke)
-    return cv2.cvtColor(np.asarray(Image.alpha_composite(canvas,overlay).convert("RGB")),cv2.COLOR_RGB2BGR)
+def closing_card(background,cfg):
+    # Cartellino d'opera: il finale è una scheda di museo, non un invito social.
+    # Stessa tipografia dell'opera: filetti d'oro, nome, autore, anno e sede.
+    canvas=Image.fromarray(cv2.cvtColor(background,cv2.COLOR_BGR2RGB))
+    d=ImageDraw.Draw(canvas)
+    gold=(GOLD[2],GOLD[1],GOLD[0]);ivory=(IVORY[2],IVORY[1],IVORY[0])
+    quiet=(214,205,190)
+    cy=980
+    d.line((330,cy-190,750,cy-190),fill=gold,width=2)
+    artist=cfg["artist"].upper()
+    f=font_to_fit(d,artist,760,44,26)
+    d.text(((W-d.textbbox((0,0),artist,font=f)[2])/2,cy-160),artist,font=f,fill=gold)
+    title=cfg["artwork"]
+    f=font_to_fit(d,title,880,80,40)
+    d.text(((W-d.textbbox((0,0),title,font=f)[2])/2,cy-84),title,font=f,fill=ivory)
+    meta=" · ".join(x for x in (cfg.get("year",""),cfg.get("museum","")) if x)
+    if meta:
+        f=font_to_fit(d,meta,820,40,24)
+        d.text(((W-d.textbbox((0,0),meta,font=f)[2])/2,cy+56),meta,font=f,fill=quiet)
+    d.line((330,cy+150,750,cy+150),fill=gold,width=2)
+    return cv2.cvtColor(np.asarray(canvas),cv2.COLOR_RGB2BGR)
 
 def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
     beats=cfg["beats"]
@@ -227,7 +256,7 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
     base=backdrop(img)
     ratio=img.shape[1]/img.shape[0]
     pad=0.22 if cfg.get("immediate_visual_hook") else 2.8
-    tail=3.0 if cfg.get("immediate_visual_hook") else 4.1
+    tail=5.2 if cfg.get("immediate_visual_hook") else 4.1
     duration=math.ceil(pad+vsec+tail)
     raw=out/"BASE_VIDEO.mp4"
     ff=subprocess.Popen(["ffmpeg","-hide_banner","-loglevel","error","-y",
@@ -237,6 +266,8 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
     # Cache identity-free transitions as a retained picture only per beat.
     previous=None;oldbeat=-1;transition=None;enter_at=0
     close_frame=full_art(base.copy(),img)
+    card=closing_card(base,cfg)
+    dark=np.zeros((H,W,3),np.uint8);dark[:]=INK
     print("VIDEO BATCH",cfg["id"],"voice",round(vsec,1),"timeline",duration,"frames",duration*FPS,flush=True)
     frames=duration*FPS
     for k in range(frames):
@@ -251,16 +282,23 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
         p=(narr-begin)/max(.2,stop-begin)
         if t<3.25 and not cfg.get("immediate_visual_hook"):fr=cover.copy()
         elif t>pad+vsec:
-            fr=close_frame.copy()
+            # Chiusura: il quadro intero indugia, poi si dissolve nel cartellino
+            # d'opera e infine scende al buio. Nessuna icona, nessun invito.
             q=(t-(pad+vsec))/tail
-            if q>.18:fr=silent_symbols(fr,(q-.18)/.32)
-            if q>.78:fr=cv2.convertScaleAbs(fr,alpha=max(0,1-(q-.78)/.22),beta=0)
+            if q<.28:fr=close_frame.copy()
+            elif q<.52:
+                b=small_smooth((q-.28)/.24)
+                fr=cv2.addWeighted(close_frame,1-b,card,b,0)
+            elif q<.88:fr=card.copy()
+            else:
+                b=small_smooth((q-.88)/.12)
+                fr=cv2.addWeighted(card,1-b,dark,b,0)
         elif idx==len(beats)-1 and narr>bounds[-1]-3.1:
             fr=close_frame.copy()
         else:
             fr=frame_beat(base,img,beats[idx],p,ratio)
-            if transition is not None and t-enter_at<.75:
-                blend=small_smooth((t-enter_at)/.75)
+            if transition is not None and t-enter_at<.55:
+                blend=small_smooth((t-enter_at)/.55)
                 fr=cv2.addWeighted(transition,1-blend,fr,blend,0)
         try:ff.stdin.write(fr.tobytes())
         except BrokenPipeError:raise RuntimeError("FFmpeg encode crashed")
