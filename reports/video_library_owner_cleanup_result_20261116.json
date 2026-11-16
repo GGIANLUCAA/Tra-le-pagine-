@@ -1,0 +1,63 @@
+{
+  "schema": "vls-owner-rejected-cleanup-result-v1",
+  "completedAtUTC": "2026-11-16",
+  "request": "Eliminare video 1–9 secondi senza senso, musica con note sincronizzate, duplicati e versioni brutte",
+  "state": "LIVE_R2_OBJECTS_DELETED_AND_GUEST_CATALOG_VERIFIED",
+  "backup": {
+    "githubWorkflowRun": 43950515320,
+    "githubArtifact": 14266173436,
+    "githubArtifactName": "VLS_OWNER_REJECTED_BACKUP_43950515320",
+    "downloadedAndInspected": true,
+    "embeddedZipSHA256": "482bcc5137fe361c6399307877c92941c2680fe92ab8b0ffeb50bd29ea92d5b5",
+    "sha256All34ObjectsVerified": true,
+    "retentionDays": 14,
+    "note": "Temporary recovery artifact, download for long-term preservation if desired"
+  },
+  "deletion": {
+    "bucket": "video-library-studio",
+    "videoFiles": 17,
+    "jpgCovers": 17,
+    "objects": 34,
+    "bytes": 70336001,
+    "mp4Bytes": 69973399,
+    "jpgBytes": 362602,
+    "tombstonesAdded": 17,
+    "previewAndDemoCounts": {
+      "musicalNoteVisualizers": 8,
+      "graphicEffectDemos": 8,
+      "shortMozartPreview": 1
+    },
+    "all34KeysAbsentOnR2": true,
+    "readyEntriesRemoved": 3,
+    "readyEntriesNow": 104
+  },
+  "preservation": {
+    "shortTechnicalClipsHiddenNotDeleted": 179,
+    "shortTechnicalClipBytesStillInR2": 110597287,
+    "chatgptLibraryGhostItemsHidden": 7,
+    "sourceViduArtHistoryMastersPreserved": true,
+    "subjectiveOldVersionsUntouched": true
+  },
+  "r2After": {
+    "allObjects": 6217,
+    "mp4": 713,
+    "jpg": 1026,
+    "totalBytes": 13258472681,
+    "deletedRecords": 18
+  },
+  "publicGuestSiteSmoke": {
+    "githubRun": 43952560281,
+    "passed": true,
+    "totalVisibleEntries": 540,
+    "availableVideos": 529,
+    "deleted17Absent": true,
+    "shortIncompleteVideosVisible": 0,
+    "bruegelPlayerRangeHTTP206": true
+  },
+  "restrictions": {
+    "pending": "Older uglier versions and duplicate master cleanup: require exact SHA, artistic acceptability and link preservation; see PR #330.",
+    "noNewVideoProduction": true,
+    "noNewCloudflareWorkerDeploy": true,
+    "githubPR": "https://github.com/GGIANLUCAA/Tra-le-pagine-/pull/340"
+  }
+}
