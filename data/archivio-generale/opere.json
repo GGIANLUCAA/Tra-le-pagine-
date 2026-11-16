@@ -1,18 +1,23 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-16T11:47:09+00:00",
+  "generated_at": "2026-11-16T12:34:18+00:00",
   "site_state": "live_api",
   "stats": {
-    "works": 89,
-    "render_documented_slots": 92,
-    "not_documented_slots": 264,
+    "works": 92,
+    "render_documented_slots": 121,
+    "not_documented_slots": 247,
     "site_items": 732,
     "site_cloudflare": 724,
     "site_unavailable": 8,
     "possible_site_matches": 11,
     "queue_files": 96,
     "literary_dossiers": 19,
-    "history_candidates": 7,
+    "history_candidates": 12,
+    "research_100": 100,
+    "selected_future_30": 30,
+    "production_dossiers": 195,
+    "production_dossier_subdirs": 32,
+    "unmatched_site_items": 721,
     "categories": {
       "Critica d’arte": 42,
       "Altri progetti": 445,
@@ -414,10 +419,14 @@
       "museum": "Mauritshuis",
       "object_id": "",
       "lanes": [
-        "storico_4x1"
+        "storico_4x1",
+        "museum_scale",
+        "legacy_dual_format"
       ],
       "sources": [
-        "queue/artvision_four_variants_s01_20261028.json"
+        "queue/artvision_four_variants_s01_20261028.json",
+        "queue/artvision_museum_scale_s01_20261028.json",
+        "queue/artvision_dual_format_s01_20261028.json"
       ],
       "variants": {
         "critico_standard": {
@@ -467,7 +476,18 @@
           "site_candidates": []
         }
       },
-      "legacy_video_claims": [],
+      "legacy_video_claims": [
+        {
+          "source": "queue/artvision_museum_scale_s01_20261028.json",
+          "status": "rendered_needs_review",
+          "note": "Formato storico; non conteggiare come slot 4x1 senza video specifico."
+        },
+        {
+          "source": "queue/artvision_dual_format_s01_20261028.json",
+          "status": "planned_and_existing_cinema_candidates_registered_no_new_render_claimed",
+          "note": "Formato storico; non conteggiare come slot 4x1 senza video specifico."
+        }
+      ],
       "site_candidates": [],
       "excluded": false,
       "missing_variants": [],
@@ -626,6 +646,59 @@
         "cinema_museum"
       ],
       "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "edvard-munch-vampire",
+      "title": "Vampire",
+      "artist": "Edvard Munch",
+      "year": "",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_owner_30_render_checkpoint_20261112_munch_vampire.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_render_checkpoint_20261112_munch_vampire.json",
+              "status_claim": "RENDERED_INDEPENDENT_BYTE_READBACK_PASS_ARTISTIC_AND_RIGHTS_REVIEW_PENDING",
+              "classification": "render_documentato"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_museum"
+      ],
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -1069,25 +1142,53 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_standard_v169",
+              "status_claim": "ONE_REAL_MP4_FROM_SUCCESS_GITHUB_ACTIONS_INDEPENDENT_FFMPEG_SHA_ZIP_CRC_AND_PERMANENT_LIBRARY_READBACK_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "c7d3a2e231b384fb6a082cb61158d3133d3f309c05e0247b228a1ab6ea7a77dc"
+            }
+          ],
           "site_candidates": []
         },
         "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_museum_v171",
+              "status_claim": "ONE_REAL_REVIEW_MP4_GITHUB_ARTIFACT_SHA_FFMPEG_ZIP_LIBRARY_READBACK_PASS_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "ec5b2c9139f6e05f43c2ba489349dab6660933407388c8cd5f6c7a14a660e693"
+            }
+          ],
           "site_candidates": [
             "DELACROIX_THE_DEATH_OF_SARDANAPALUS_CRITICO_MUSEUM_V171_REVIEW.mp4"
           ]
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v168",
+              "status_claim": "INDEPENDENT_REAL_MP4_FROM_GITHUB_ARTIFACT_AND_PRIVATE_LIBRARY_ZIP_READBACK_PASS_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "7b34dcd5bc7619e630d3d315ab31fd1d1d5735dd1bffa6d52b6e1f948b5e24d3"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#cinema_museum_v172",
+              "status_claim": "REAL_48S_CINEMA_MUSEUM_MP4_INDEPENDENT_FULL_DECODE_SHA_ZIP_CRC_AND_LIBRARY_READBACK_PASS",
+              "classification": "render_documentato",
+              "sha256": "a023436e8e68635e134ca3faeb83e2bffbc78a53d7bbb29afaf33d57851ab9ed"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -1097,13 +1198,10 @@
         "DELACROIX_THE_DEATH_OF_SARDANAPALUS_CRITICO_MUSEUM_V171_REVIEW.mp4"
       ],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
-      "render_documented": 0,
+      "selected_ten_legacy_slots_claim": 4,
+      "preflight_status_claim": "4_of_4_REAL_MP4_CINEMA_STANDARD_V168_CRITICO_STANDARD_V169_CRITICO_MUSEUM_V171_CINEMA_MUSEUM_V172_SHA_FFMPEG_ZIP_PRIVATE_LIBRARY_READBACK_PASS_ARTISTIC_AND_TERRITORIAL_RIGHTS_REVIEW_PENDING_NOT_GOLD",
+      "missing_variants": [],
+      "render_documented": 4,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -1124,12 +1222,12 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
+          "state": "render_respinto",
           "evidence": [
             {
               "source": "queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json",
               "status_claim": "OWNER_REJECTED_WRONG_NARRATION_VOICE__TECHNICAL_ARTIFACT_ONLY__CRITICO_NOT_COMPLETED",
-              "classification": "non_documentato"
+              "classification": "render_respinto"
             }
           ],
           "site_candidates": []
@@ -1593,10 +1691,14 @@
       "museum": "Art Institute of Chicago",
       "object_id": "",
       "lanes": [
-        "storico_4x1"
+        "storico_4x1",
+        "museum_scale",
+        "legacy_dual_format"
       ],
       "sources": [
-        "queue/artvision_four_variants_s01_20261028.json"
+        "queue/artvision_four_variants_s01_20261028.json",
+        "queue/artvision_museum_scale_s01_20261028.json",
+        "queue/artvision_dual_format_s01_20261028.json"
       ],
       "variants": {
         "critico_standard": {
@@ -1644,7 +1746,18 @@
           "site_candidates": []
         }
       },
-      "legacy_video_claims": [],
+      "legacy_video_claims": [
+        {
+          "source": "queue/artvision_museum_scale_s01_20261028.json",
+          "status": "rendered_needs_review",
+          "note": "Formato storico; non conteggiare come slot 4x1 senza video specifico."
+        },
+        {
+          "source": "queue/artvision_dual_format_s01_20261028.json",
+          "status": "planned_and_existing_cinema_candidates_registered_no_new_render_claimed",
+          "note": "Formato storico; non conteggiare come slot 4x1 senza video specifico."
+        }
+      ],
       "site_candidates": [],
       "excluded": false,
       "missing_variants": [
@@ -2076,8 +2189,15 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_standard_v146",
+              "status_claim": "REAL_MP4_GitHub_ARTIFACT_DOWNLOADED_INDEPENDENT_SHA_ZIP_CRC_FULL_DECODE_PASS",
+              "classification": "render_documentato",
+              "sha256": "eb934087049dbc4a304c2a5924451cff02fe635b827074b4c472696e508b8f8f"
+            }
+          ],
           "site_candidates": [
             "SIMBERG_THE_GARDEN_OF_DEATH_CRITICO_STANDARD_V146_REVIEW.mp4"
           ]
@@ -2088,8 +2208,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#v134_cinema_candidate",
+              "status_claim": "real_mp4_artifact_downloaded_full_decode_SHA_zip_crc_PASS_one_slot_review_not_gold",
+              "classification": "render_documentato",
+              "sha256": "2ec7e57ac37c521c2d8e224ed026d651f44a201790ae55f02e902c771d891152"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -2104,13 +2231,13 @@
         "SIMBERG_THE_GARDEN_OF_DEATH_CRITICO_STANDARD_V146_REVIEW.mp4"
       ],
       "excluded": false,
+      "selected_ten_legacy_slots_claim": 2,
+      "preflight_status_claim": "2/4 real Critico Standard V146 plus Cinema Standard V134 SHA FFmpeg CRC PASS, 2 Museum slots pending genuine frame",
       "missing_variants": [
-        "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 2,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -2504,10 +2631,12 @@
       "museum": "National Gallery London",
       "object_id": "",
       "lanes": [
-        "storico_4x1"
+        "storico_4x1",
+        "legacy_dual_format"
       ],
       "sources": [
-        "queue/artvision_four_variants_s01_20261028.json"
+        "queue/artvision_four_variants_s01_20261028.json",
+        "queue/artvision_dual_format_s01_20261028.json"
       ],
       "variants": {
         "critico_standard": {
@@ -2555,7 +2684,13 @@
           "site_candidates": []
         }
       },
-      "legacy_video_claims": [],
+      "legacy_video_claims": [
+        {
+          "source": "queue/artvision_dual_format_s01_20261028.json",
+          "status": "planned_and_existing_cinema_candidates_registered_no_new_render_claimed",
+          "note": "Formato storico; non conteggiare come slot 4x1 senza video specifico."
+        }
+      ],
       "site_candidates": [],
       "excluded": false,
       "missing_variants": [],
@@ -3129,27 +3264,55 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_standard_v156",
+              "status_claim": "REAL_MP4_SHA256_FULL_FFMPEG_DECODE_AND_ZIP_CRC_INDEPENDENTLY_VERIFIED_NO_GOLD",
+              "classification": "render_documentato",
+              "sha256": "dae1b49fe4b5db9fa831a158335030744d0bcc88930ce96ede2f97785318b028"
+            }
+          ],
           "site_candidates": [
             "WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_STANDARD_V156_REVIEW.mp4"
           ]
         },
         "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_museum_v164",
+              "status_claim": "REAL_MP4_ARTIFACT_DOWNLOAD_SHA256_FULL_FFMPEG_ZIP_CRC_AND_AUDIO_IDENTICAL_INDEPENDENT_REVIEW_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "2af1d47544edf5cbdb07f2daa3926930508aebe94ecc15db032572aa5ee12918"
+            }
+          ],
           "site_candidates": [
             "WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_MUSEUM_V164_REVIEW.mp4"
           ]
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v155",
+              "status_claim": "REAL_CINEMA_48S_SOURCE_JPG_ZIP_FFMPEG_SHA256_INDEPENDENTLY_VERIFIED",
+              "classification": "render_documentato",
+              "sha256": "977b8c54d466026564f1bd92216c6829d818656d069d9c5f8ea664e77f30a56c"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#cinema_museum_v166",
+              "status_claim": "REAL_MP4_LIBRARY_UPLOAD_DOWNLOAD_SHA256_FFMPEG_FULL_DECODE_ZIP_CRC_PASS_PRIVATE_REVIEW_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "5b8eff08ecfcb6ad196085e4e3dc6e670305d6d26d3699cd85dd9b452f189ae5"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -3160,13 +3323,10 @@
         "WATERHOUSE_THE_LADY_OF_SHALOTT_CRITICO_STANDARD_V156_REVIEW.mp4"
       ],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
-      "render_documented": 0,
+      "selected_ten_legacy_slots_claim": 4,
+      "preflight_status_claim": "4_of_4_REAL_MP4_TECHNICALLY_VERIFIED_critico_standard_v156_critico_museum_v164r1_cinema_standard_v155_cinema_museum_v166_ARTISTIC_AND_RIGHTS_REVIEW_PENDING",
+      "missing_variants": [],
+      "render_documented": 4,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -3185,8 +3345,15 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_standard_v159",
+              "status_claim": "REAL_MP4_INDEPENDENT_LOCAL_GITHUB_ARTIFACT_SHA_FFMPEG_ZIP_CRC_PASS_REVIEW_NOT_GOLD",
+              "classification": "render_documentato",
+              "sha256": "aa3931949b31ace5ff021c6d3f92e8f8d0cc2c05aecbfe8c0bf1b062fa4e57e3"
+            }
+          ],
           "site_candidates": [
             "WATERHOUSE_THE_MAGIC_CIRCLE_CRITICO_STANDARD_V159_REVIEW.mp4"
           ]
@@ -3197,8 +3364,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v158",
+              "status_claim": "REAL_1080p_CINEMA_MP4_GITHUB_ARTIFACT_FULL_FFMPEG_SHA256_AND_ZIP_CRC_INDEPENDENTLY_VERIFIED",
+              "classification": "render_documentato",
+              "sha256": "57ec493478c5f4a0c1a35cd336df7b157bf557a17efb1eca4fdeba49def95660"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -3218,13 +3392,13 @@
         "WATERHOUSE_THE_MAGIC_CIRCLE_CRITICO_STANDARD_V159_REVIEW.mp4"
       ],
       "excluded": false,
+      "selected_ten_legacy_slots_claim": 2,
+      "preflight_status_claim": "2_of_4_real_MP4_verified_Cinema_V158_and_Critico_V159; two Museum slots pending authenticated frame and artistic QA",
       "missing_variants": [
-        "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 2,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -3457,6 +3631,60 @@
       "published_confirmed": false
     },
     {
+      "id": "joseph-mallord-william-turner-the-fighting-temeraire-tugged-to-her-last-berth-to-be-broken-up-1838-1839",
+      "title": "The Fighting Temeraire tugged to her last berth to be broken up, 1838",
+      "artist": "Joseph Mallord William Turner",
+      "year": "1839",
+      "museum": "National Gallery, London, NG524, Room 40",
+      "object_id": "",
+      "lanes": [
+        "museum_scale"
+      ],
+      "sources": [
+        "queue/artvision_museum_scale_s01_20261028.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [
+        {
+          "source": "queue/artvision_museum_scale_s01_20261028.json",
+          "status": "blocked_voice_unavailable",
+          "note": "Formato storico; non conteggiare come slot 4x1 senza video specifico."
+        }
+      ],
+      "site_candidates": [],
+      "excluded": false,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
       "id": "joseph-wright-of-derby-an-experiment-on-a-bird-in-the-air-pump-1768",
       "title": "An Experiment on a Bird in the Air Pump",
       "artist": "Joseph Wright of Derby",
@@ -3465,11 +3693,13 @@
       "object_id": "",
       "lanes": [
         "storico_4x1",
-        "cicli_v31"
+        "cicli_v31",
+        "legacy_dual_format"
       ],
       "sources": [
         "queue/artvision_four_variants_s01_20261028.json",
-        "queue/artvision_autoproduction_v31_state.json"
+        "queue/artvision_autoproduction_v31_state.json",
+        "queue/artvision_dual_format_s01_20261028.json"
       ],
       "variants": {
         "critico_standard": {
@@ -3526,6 +3756,11 @@
           "cycle_id": "20261028T0915+0100-V52B",
           "sha256": "ec4525c155334a02696bfa05d745005bea3084f178043c9eaf1dca6d7bfe29e2",
           "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40649283319"
+        },
+        {
+          "source": "queue/artvision_dual_format_s01_20261028.json",
+          "status": "planned_and_existing_cinema_candidates_registered_no_new_render_claimed",
+          "note": "Formato storico; non conteggiare come slot 4x1 senza video specifico."
         }
       ],
       "site_candidates": [],
@@ -4350,23 +4585,75 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_standard_v144",
+              "status_claim": "physical_MP4_artifact_download_independently_verified_review_not_gold",
+              "classification": "render_documentato",
+              "sha256": "83aad1da82a091de42aa19ca6bd532a0e2a2b21c27f4c4c34eac5e53c8799f39"
+            },
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218",
+              "status_claim": "TWO_NEW_SHORTER_REAL_CRITICO_MP4S_REVIEW_ONLY_NOT_NEW_APPROVED_SLOT",
+              "classification": "render_documentato",
+              "sha256": "24aad1bd142020ff4c6c5c256a738cca025e938f2723788cda9b0e14e581d43d"
+            }
+          ],
           "site_candidates": []
         },
         "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218",
+              "status_claim": "TWO_NEW_SHORTER_REAL_CRITICO_MP4S_REVIEW_ONLY_NOT_NEW_APPROVED_SLOT",
+              "classification": "render_documentato",
+              "sha256": "23743fc5eec772c65d5671e36b78497843824b447dfb38ec22851183fe68bf2b"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v133",
+              "status_claim": "rendered_needs_review_one_real_MP4_not_4x1",
+              "classification": "render_documentato",
+              "sha256": "744ba3e924df222cde88558d42a1c454e743f3b9f673c6addb7213f497653078"
+            },
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v135",
+              "status_claim": "real_non_destructive_revision_same_slot_clean_public_title_verified",
+              "classification": "render_documentato",
+              "sha256": "346c361919da8cfa652a8f451d2a9879a384f870cdbf2d0a936f290f996e92f5"
+            },
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v153",
+              "status_claim": "ONE_REAL_MP4_REPLACEMENT_OF_UNDELIVERED_V135_IN_SAME_CINEMA_SLOT_NOT_ADDITIONAL_VARIANT",
+              "classification": "render_documentato",
+              "sha256": "dd12618fff53b63c97cff8d1096efa221f8b15d089c4a9a1f2db0e1cba6d8662"
+            },
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218",
+              "status_claim": "VERIFIED_EXISTING_SAME_SLOT_REAL_MP4",
+              "classification": "render_documentato",
+              "sha256": "dd12618fff53b63c97cff8d1096efa221f8b15d089c4a9a1f2db0e1cba6d8662"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_short_revision_v218",
+              "status_claim": "VERIFIED_EXISTING_SAME_SLOT_REAL_MP4",
+              "classification": "render_documentato",
+              "sha256": "708076b42b7a135e5fc49ea16412e686324f809867f1ef125913e71dfc7afe19"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -4383,13 +4670,10 @@
       ],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
-      "render_documented": 0,
+      "selected_ten_legacy_slots_claim": 2,
+      "preflight_status_claim": "2/4 slots: Critico V144 plus active Cinema V153 replacement; original V135 unavailable, no extra slot; Museum pending",
+      "missing_variants": [],
+      "render_documented": 4,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -4408,36 +4692,61 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_standard_v141",
+              "status_claim": "non dichiarato",
+              "classification": "render_documentato",
+              "sha256": "125ce39ad907b51e1d07f8d9b78e3871b27c02d92969771f0ae41819016b08a0"
+            }
+          ],
           "site_candidates": []
         },
         "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_museum_v141",
+              "status_claim": "non dichiarato",
+              "classification": "render_documentato",
+              "sha256": "c870811ef0b6d6fdcb9d64738172bdd43554b4e3fa3eb3738f9bed7363466a7d"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v136",
+              "status_claim": "physical_artifact_download_readback_verified_review_not_gold",
+              "classification": "render_documentato",
+              "sha256": "ad401e87ac181d6627bed80b5072a466fa2cc930143857838896b4d1bfe7a6a4"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#cinema_museum_v137",
+              "status_claim": "technical_readback_pass_artistic_full_watch_pending",
+              "classification": "render_documentato",
+              "sha256": "4a9639be84ecf912ae0a82e8078dcacc1a93ac6bf82433a95d927b98746e5d7f"
+            }
+          ],
           "site_candidates": []
         }
       },
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
-      "render_documented": 0,
+      "selected_ten_legacy_slots_claim": 4,
+      "preflight_status_claim": "four_real_distinct_MP4_Cinema_V136_V137_Critico_V141_independent_full_decode_SHA_CRC_readback_PASS_human_artistic_review_PENDING",
+      "missing_variants": [],
+      "render_documented": 4,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -4456,8 +4765,15 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_standard_v151",
+              "status_claim": "REAL_MP4_SOURCE_PD_ART_SHA_ZIP_CRC_AND_FULL_FFMPEG_DECODE_INDEPENDENTLY_VERIFIED",
+              "classification": "render_documentato",
+              "sha256": "a02248ce3744c6b0c392f9093360a86c55e74abcb641f51ee935915bbdb1f397"
+            }
+          ],
           "site_candidates": []
         },
         "critico_museum": {
@@ -4466,8 +4782,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v150",
+              "status_claim": "REAL_H264_AAC_48S_MP4_ZIP_SHA_FFMPEG_CRC_INDEPENDENT_DOWNLOAD_PASS",
+              "classification": "render_documentato",
+              "sha256": "c460fe7fa72ac29425de67eec40f986add502c42ec9e4166050c7ce107804138"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -4484,13 +4807,13 @@
       ],
       "site_candidates": [],
       "excluded": false,
+      "selected_ten_legacy_slots_claim": 2,
+      "preflight_status_claim": "2/4 real Cinema V150 and Critico V151, both full MP4 SHA FFmpeg CRC PASS, two Museum slots pending source/frame authentic verification",
       "missing_variants": [
-        "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 2,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -4509,36 +4832,61 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_standard_v149",
+              "status_claim": "REAL_MP4_SOURCE_OFFICIAL_RIJKSMUSEUM_IIIF_PJEZO_SHA_ZIP_CRC_FULL_DECODE_PASS",
+              "classification": "render_documentato",
+              "sha256": "2448e5ba7bf4db51fd8efad07546522468ffd2c85d6eb023a55256e359b9cf07"
+            }
+          ],
           "site_candidates": []
         },
         "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_museum_v179",
+              "status_claim": "non dichiarato",
+              "classification": "render_documentato",
+              "sha256": "45ddd04834593165fde1da908eb6d431c62f176437a75718fc861e14999e8475"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#new_cinema_standard_v132",
+              "status_claim": "rendered_needs_review_one_real_MP4_not_4x1",
+              "classification": "render_documentato",
+              "sha256": "66d53c4353c79c5c99e9eea4dd77d9e080ed3ad9d1b3ee33d612fa9cbf486768"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#cinema_museum_v180",
+              "status_claim": "non dichiarato",
+              "classification": "render_documentato",
+              "sha256": "1695464e74fd77a027d739704d28efbb7975f6396f5e5e5f9807c32e75f4b97b"
+            }
+          ],
           "site_candidates": []
         }
       },
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
-      "render_documented": 0,
+      "selected_ten_legacy_slots_claim": 4,
+      "preflight_status_claim": "4/4_REAL_MP4_CRITICO_V149_CRITICO_MUSEUM_V179_CINEMA_V132_CINEMA_MUSEUM_V180_FULL_DECODE_SHA_CRC_LIBRARY_READBACK_PASS_HISTORIC_1984_ROOM_CC0_ARTISTIC_REVIEW_PENDING",
+      "missing_variants": [],
+      "render_documented": 4,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -4717,6 +5065,8 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": true,
+      "selected_ten_legacy_slots_claim": 0,
+      "preflight_status_claim": "rights_blocked_no_render_no_distribution",
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -4767,6 +5117,54 @@
       "excluded": false,
       "selection_order": 9,
       "priority": 1,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "thomas-cole-the-titan-s-goblet-1833",
+      "title": "The Titan's Goblet",
+      "artist": "Thomas Cole",
+      "year": "1833",
+      "museum": "The Metropolitan Museum of Art",
+      "object_id": "04.29.2",
+      "lanes": [
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_extra_render_checkpoint_20261113_thomas_cole_titans_goblet.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
       "missing_variants": [
         "critico_standard",
         "critico_museum",
@@ -4972,8 +5370,15 @@
       ],
       "variants": {
         "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#critico_standard_v159",
+              "status_claim": "REAL_NATURAL_CRITICO_MP4_SHA_FFMPEG_ALL_STREAMS_AND_ZIP_CRC_INDEPENDENTLY_PASS",
+              "classification": "render_documentato",
+              "sha256": "579217cee4eb80d43296e7ac52f62c6ed355c5b479bfea89fe4cb37edd222bcb"
+            }
+          ],
           "site_candidates": [
             "BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4"
           ]
@@ -4984,8 +5389,15 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_selected_ten_20261102.json#cinema_standard_v158",
+              "status_claim": "REAL_48S_MP4_INDEPENDENTLY_FFMPEG_SHA256_ZIP_CRC_VERIFIED",
+              "classification": "render_documentato",
+              "sha256": "3a4697083c55f67818990370b6c4f34ca2383f6a876fc21ca118481ab6f910fe"
+            }
+          ],
           "site_candidates": []
         },
         "cinema_museum": {
@@ -5000,13 +5412,13 @@
         "BLAKE_THE_GHOST_OF_A_FLEA_CRITICO_STANDARD_V159_REVIEW.mp4"
       ],
       "excluded": false,
+      "selected_ten_legacy_slots_claim": 2,
+      "preflight_status_claim": "2/4 original Cinema V158 and genuine Critico V159 MP4 SHA/FFmpeg ZIP full verification, site readback pending, Museum blocked frame authenticity",
       "missing_variants": [
-        "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 2,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -5466,6 +5878,1310 @@
       "title": "Cina 1928 — la vita quotidiana ritrovata",
       "year": "1928",
       "status_claim": "real_source_pages_verified_video_frames_not_yet_reviewed"
+    },
+    {
+      "source": "queue/storia_rivive_v69_film_scouting_candidates.json",
+      "title": "A Trip Down Market Street (1906)",
+      "year": "",
+      "status_claim": "RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED"
+    },
+    {
+      "source": "queue/storia_rivive_v69_film_scouting_candidates.json",
+      "title": "Scenes in New York City, 1903",
+      "year": "",
+      "status_claim": "RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED"
+    },
+    {
+      "source": "queue/storia_rivive_v69_film_scouting_candidates.json",
+      "title": "A Native Street in India (1906)",
+      "year": "",
+      "status_claim": "RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED"
+    },
+    {
+      "source": "queue/storia_rivive_v69_film_scouting_candidates.json",
+      "title": "Parigi 1918, Cinema Parisiana (V68 benchmark)",
+      "year": "",
+      "status_claim": "RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED"
+    },
+    {
+      "source": "queue/storia_rivive_v69_film_scouting_candidates.json",
+      "title": "One Week (1920) HD copy",
+      "year": "",
+      "status_claim": "RESEARCH_SHORTLIST_NOT_FULL_FRAME_SCORED"
+    }
+  ],
+  "future_100": [
+    {
+      "catalog_id": 1,
+      "artist": "Leonardo da Vinci",
+      "title": "Mona Lisa (La Gioconda)",
+      "year": "1503–1519",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 2,
+      "artist": "Vincent van Gogh",
+      "title": "The Starry Night (Notte stellata)",
+      "year": "1889",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 3,
+      "artist": "Edvard Munch",
+      "title": "The Scream (L'urlo)",
+      "year": "1893",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 4,
+      "artist": "Johannes Vermeer",
+      "title": "Girl with a Pearl Earring (Ragazza con l'orecchino di perla)",
+      "year": "c. 1665",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 5,
+      "artist": "Sandro Botticelli",
+      "title": "The Birth of Venus (Nascita di Venere)",
+      "year": "c. 1485",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 6,
+      "artist": "Gustav Klimt",
+      "title": "The Kiss (Il bacio)",
+      "year": "1908–1909",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 7,
+      "artist": "Grant Wood",
+      "title": "American Gothic",
+      "year": "1930",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 8,
+      "artist": "Claude Monet",
+      "title": "The Japanese Footbridge (Il ponte giapponese)",
+      "year": "1899",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 9,
+      "artist": "Salvador Dalí",
+      "title": "The Persistence of Memory (La persistenza della memoria)",
+      "year": "1931",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 10,
+      "artist": "René Magritte",
+      "title": "The Son of Man (Il figlio dell'uomo)",
+      "year": "1964",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 11,
+      "artist": "Edward Hopper",
+      "title": "Nighthawks (I nottambuli)",
+      "year": "1942",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 12,
+      "artist": "James McNeill Whistler",
+      "title": "Arrangement in Grey and Black No. 1 (La madre di Whistler)",
+      "year": "1871",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 13,
+      "artist": "Diego Velázquez",
+      "title": "Las Meninas",
+      "year": "1656",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 14,
+      "artist": "Rembrandt",
+      "title": "The Night Watch (La ronda di notte)",
+      "year": "1642",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 15,
+      "artist": "Eugène Delacroix",
+      "title": "Liberty Leading the People (La Libertà che guida il popolo)",
+      "year": "1830",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 16,
+      "artist": "Caspar David Friedrich",
+      "title": "Wanderer above the Sea of Fog (Viandante sul mare di nebbia)",
+      "year": "1817–1818",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 17,
+      "artist": "Hieronymus Bosch",
+      "title": "The Garden of Earthly Delights (Giardino delle delizie)",
+      "year": "c. 1490–1500",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 18,
+      "artist": "Francisco Goya",
+      "title": "Saturn Devouring His Son (Saturno che divora un figlio)",
+      "year": "c. 1819–1823",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 19,
+      "artist": "Théodore Géricault",
+      "title": "The Raft of the Medusa (La zattera della Medusa)",
+      "year": "1818–1819",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 20,
+      "artist": "John Everett Millais",
+      "title": "Ophelia (Ofelia)",
+      "year": "1851–1852",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 21,
+      "artist": "Jan van Eyck",
+      "title": "The Arnolfini Portrait (I coniugi Arnolfini)",
+      "year": "1434",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 22,
+      "artist": "Michelangelo",
+      "title": "The Creation of Adam (Creazione di Adamo)",
+      "year": "c. 1511",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 23,
+      "artist": "Leonardo da Vinci",
+      "title": "The Last Supper (Ultima Cena)",
+      "year": "1494–1498",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 24,
+      "artist": "Artemisia Gentileschi",
+      "title": "Judith Beheading Holofernes (Giuditta decapita Oloferne)",
+      "year": "c. 1620",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 25,
+      "artist": "Caravaggio",
+      "title": "Medusa",
+      "year": "c. 1597",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 26,
+      "artist": "Caravaggio",
+      "title": "The Calling of Saint Matthew (Vocazione di San Matteo)",
+      "year": "1599–1600",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 27,
+      "artist": "Jacques-Louis David",
+      "title": "Napoleon Crossing the Alps (Napoleone valica le Alpi)",
+      "year": "1801",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 28,
+      "artist": "Jean-Honoré Fragonard",
+      "title": "The Swing (L'altalena)",
+      "year": "c. 1767–1768",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 29,
+      "artist": "Georges Seurat",
+      "title": "A Sunday on La Grande Jatte (Una domenica alla Grande Jatte)",
+      "year": "1884–1886",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 30,
+      "artist": "Pierre-Auguste Renoir",
+      "title": "Bal du moulin de la Galette",
+      "year": "1876",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 31,
+      "artist": "Pierre-Auguste Renoir",
+      "title": "Luncheon of the Boating Party (Colazione dei canottieri)",
+      "year": "1880–1881",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 32,
+      "artist": "Henri Rousseau",
+      "title": "The Sleeping Gypsy (La zingara addormentata)",
+      "year": "1897",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 33,
+      "artist": "Henri Rousseau",
+      "title": "The Dream (Il sogno)",
+      "year": "1910",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 34,
+      "artist": "Frederic Leighton",
+      "title": "Flaming June (Giugno fiammeggiante)",
+      "year": "1895",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 35,
+      "artist": "John William Waterhouse",
+      "title": "The Lady of Shalott (La dama di Shalott)",
+      "year": "1888",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 36,
+      "artist": "J. M. W. Turner",
+      "title": "The Fighting Temeraire (La valorosa Téméraire)",
+      "year": "1839",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 37,
+      "artist": "J. M. W. Turner",
+      "title": "Rain, Steam and Speed (Pioggia, vapore e velocità)",
+      "year": "1844",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 38,
+      "artist": "Andrew Wyeth",
+      "title": "Christina's World (Il mondo di Christina)",
+      "year": "1948",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 39,
+      "artist": "René Magritte",
+      "title": "The Lovers (Gli amanti)",
+      "year": "1928",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 40,
+      "artist": "René Magritte",
+      "title": "The False Mirror (Il falso specchio)",
+      "year": "1929",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 41,
+      "artist": "Andy Warhol",
+      "title": "Campbell's Soup Cans (Barattoli di zuppa Campbell)",
+      "year": "1962",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 42,
+      "artist": "Andy Warhol",
+      "title": "Marilyn Diptych (Dittico di Marilyn)",
+      "year": "1962",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 43,
+      "artist": "Jackson Pollock",
+      "title": "One: Number 31, 1950",
+      "year": "1950",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 44,
+      "artist": "Mark Rothko",
+      "title": "No. 14, 1960",
+      "year": "1960",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 45,
+      "artist": "Piet Mondrian",
+      "title": "Composition in Red, Blue, and Yellow (Composizione in rosso, blu e giallo)",
+      "year": "1937–1942",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 46,
+      "artist": "Piet Mondrian",
+      "title": "Broadway Boogie Woogie",
+      "year": "1942–1943",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 47,
+      "artist": "Kazimir Malevich",
+      "title": "Black Square (Quadrato nero)",
+      "year": "1915",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 48,
+      "artist": "Henri Matisse",
+      "title": "The Dance (La danza)",
+      "year": "1910",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 49,
+      "artist": "Pablo Picasso",
+      "title": "Les Demoiselles d'Avignon (Le signorine d'Avignone)",
+      "year": "1907",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 50,
+      "artist": "Pablo Picasso",
+      "title": "Guernica",
+      "year": "1937",
+      "category": "impatto_visivo",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 51,
+      "artist": "Giotto",
+      "title": "Lamentation (Compianto sul Cristo morto)",
+      "year": "c. 1305",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 52,
+      "artist": "Masaccio",
+      "title": "The Holy Trinity (La Trinità)",
+      "year": "c. 1427",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 53,
+      "artist": "Jan e Hubert van Eyck",
+      "title": "Ghent Altarpiece (Polittico dell'Agnello mistico)",
+      "year": "1432",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 54,
+      "artist": "Paolo Uccello",
+      "title": "The Battle of San Romano (Battaglia di San Romano)",
+      "year": "c. 1438–1440",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 55,
+      "artist": "Piero della Francesca",
+      "title": "The Flagellation of Christ (Flagellazione)",
+      "year": "1459–1460",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 56,
+      "artist": "Leonardo da Vinci",
+      "title": "The Virgin of the Rocks (Vergine delle rocce, versione di Londra)",
+      "year": "c. 1491–1508",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 57,
+      "artist": "Raffaello",
+      "title": "The School of Athens (Scuola di Atene)",
+      "year": "1509–1511",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 58,
+      "artist": "Tiziano",
+      "title": "Venus of Urbino (Venere di Urbino)",
+      "year": "1538",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 59,
+      "artist": "Bronzino",
+      "title": "An Allegory with Venus and Cupid (Allegoria con Venere e Cupido)",
+      "year": "c. 1545",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 60,
+      "artist": "Caravaggio",
+      "title": "The Supper at Emmaus (Cena in Emmaus)",
+      "year": "1601",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 61,
+      "artist": "Peter Paul Rubens",
+      "title": "The Elevation of the Cross (Innalzamento della croce)",
+      "year": "1609–1610",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 62,
+      "artist": "Diego Velázquez",
+      "title": "The Rokeby Venus (Venere allo specchio)",
+      "year": "1647–1651",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 63,
+      "artist": "Rembrandt",
+      "title": "The Anatomy Lesson of Dr Nicolaes Tulp (Lezione di anatomia)",
+      "year": "1632",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 64,
+      "artist": "Johannes Vermeer",
+      "title": "The Art of Painting (Allegoria della pittura)",
+      "year": "1666–1668",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 65,
+      "artist": "Nicolas Poussin",
+      "title": "Et in Arcadia Ego (I pastori d'Arcadia)",
+      "year": "1637–1638",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 66,
+      "artist": "Antoine Watteau",
+      "title": "Pilgrimage to Cythera (Imbarco per Citera)",
+      "year": "1717",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 67,
+      "artist": "William Hogarth",
+      "title": "Marriage A-la-Mode: The Tête à Tête",
+      "year": "c. 1743",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 68,
+      "artist": "Jacques-Louis David",
+      "title": "The Death of Marat (Morte di Marat)",
+      "year": "1793",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 69,
+      "artist": "Francisco Goya",
+      "title": "The Third of May 1808 (3 maggio 1808)",
+      "year": "1814",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 70,
+      "artist": "Jean-Auguste-Dominique Ingres",
+      "title": "Grande Odalisque (Grande odalisca)",
+      "year": "1814",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 71,
+      "artist": "Gustave Courbet",
+      "title": "The Painter's Studio (L'atelier del pittore)",
+      "year": "1855",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 72,
+      "artist": "Jean-François Millet",
+      "title": "The Gleaners (Le spigolatrici)",
+      "year": "1857",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 73,
+      "artist": "Édouard Manet",
+      "title": "Le Déjeuner sur l'herbe (Colazione sull'erba)",
+      "year": "1863",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 74,
+      "artist": "Édouard Manet",
+      "title": "Olympia",
+      "year": "1863",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 75,
+      "artist": "Claude Monet",
+      "title": "Impression, Sunrise (Impressione, levar del sole)",
+      "year": "1872",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 76,
+      "artist": "Edgar Degas",
+      "title": "The Dance Class (La lezione di danza)",
+      "year": "1874",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 77,
+      "artist": "Paul Cézanne",
+      "title": "Mont Sainte-Victoire with Large Pine (Mont Sainte-Victoire con grande pino)",
+      "year": "c. 1887",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 78,
+      "artist": "Paul Gauguin",
+      "title": "Vision after the Sermon (Visione dopo il sermone)",
+      "year": "1888",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 79,
+      "artist": "Vincent van Gogh",
+      "title": "The Potato Eaters (I mangiatori di patate)",
+      "year": "1885",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 80,
+      "artist": "Gustav Klimt",
+      "title": "Portrait of Adele Bloch-Bauer I (Ritratto di Adele Bloch-Bauer I)",
+      "year": "1907",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 81,
+      "artist": "Wassily Kandinsky",
+      "title": "Composition VII (Composizione VII)",
+      "year": "1913",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 82,
+      "artist": "Georges Braque",
+      "title": "Houses at L'Estaque (Case all'Estaque)",
+      "year": "1908",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 83,
+      "artist": "Pablo Picasso",
+      "title": "Ma Jolie",
+      "year": "1911–1912",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 84,
+      "artist": "Marcel Duchamp",
+      "title": "Nude Descending a Staircase No. 2 (Nudo che scende le scale n. 2)",
+      "year": "1912",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 85,
+      "artist": "Kazimir Malevich",
+      "title": "White on White (Bianco su bianco)",
+      "year": "1918",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 86,
+      "artist": "Giorgio de Chirico",
+      "title": "The Song of Love (Il canto d'amore)",
+      "year": "1914",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 87,
+      "artist": "Piet Mondrian",
+      "title": "Tableau I: Lozenge with Four Lines and Gray",
+      "year": "1926",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 88,
+      "artist": "Joan Miró",
+      "title": "The Harlequin's Carnival (Carnevale di Arlecchino)",
+      "year": "1924–1925",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 89,
+      "artist": "René Magritte",
+      "title": "The Treachery of Images (Il tradimento delle immagini)",
+      "year": "1929",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 90,
+      "artist": "Salvador Dalí",
+      "title": "Metamorphosis of Narcissus (Metamorfosi di Narciso)",
+      "year": "1937",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 91,
+      "artist": "Frida Kahlo",
+      "title": "The Two Fridas (Le due Frida)",
+      "year": "1939",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 92,
+      "artist": "Georgia O'Keeffe",
+      "title": "Black Iris III (Iris nero III)",
+      "year": "1926",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 93,
+      "artist": "Wifredo Lam",
+      "title": "The Jungle (La giungla)",
+      "year": "1943",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 94,
+      "artist": "Willem de Kooning",
+      "title": "Woman I (Donna I)",
+      "year": "1950–1952",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 95,
+      "artist": "Barnett Newman",
+      "title": "Vir Heroicus Sublimis",
+      "year": "1950–1951",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 96,
+      "artist": "Helen Frankenthaler",
+      "title": "Mountains and Sea (Montagne e mare)",
+      "year": "1952",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 97,
+      "artist": "Jasper Johns",
+      "title": "Flag (Bandiera)",
+      "year": "1954–1955",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 98,
+      "artist": "Faith Ringgold",
+      "title": "American People Series #20: Die",
+      "year": "1967",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 99,
+      "artist": "Gerhard Richter",
+      "title": "Betty",
+      "year": "1988",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    },
+    {
+      "catalog_id": 100,
+      "artist": "Jean-Michel Basquiat",
+      "title": "Untitled (Skull) (Senza titolo, teschio)",
+      "year": "1981",
+      "category": "critica_arte",
+      "source": "research/artvision_future_works_index_v1_20261107.json",
+      "work_status": "banca_idee_non_coda_produttiva",
+      "rights_status": "unverified"
+    }
+  ],
+  "future_30": [
+    {
+      "order": 1,
+      "artist": "Peter Nicolai Arbo",
+      "title": "The Wild Hunt of Odin",
+      "status": "official_object_verified_file_candidate_found_rights_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 2,
+      "artist": "Richard Dadd",
+      "title": "The Fairy Feller's Master-Stroke",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 3,
+      "artist": "Ilya Repin",
+      "title": "Sadko",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 4,
+      "artist": "Konstantin Flavitsky",
+      "title": "Princess Tarakanova",
+      "status": "official_object_verified_rejected_wrong_study_source_rights_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 5,
+      "artist": "Karl Bryullov",
+      "title": "The Last Day of Pompeii",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 6,
+      "artist": "William Holbrook Beard",
+      "title": "The Bulls and Bears",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 7,
+      "artist": "John William Waterhouse",
+      "title": "Ulysses and the Sirens",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 8,
+      "artist": "Edward Burne-Jones",
+      "title": "King Arthur in Avalon",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 9,
+      "artist": "Thomas Cole",
+      "title": "The Course of Empire: Destruction",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 10,
+      "artist": "Pieter Bruegel the Elder",
+      "title": "Dulle Griet",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 11,
+      "artist": "James Ensor",
+      "title": "The Intrigue",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 12,
+      "artist": "Edward Burne-Jones",
+      "title": "The Golden Stairs",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 13,
+      "artist": "Jean-Léon Gérôme",
+      "title": "The Duel After the Masquerade",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 14,
+      "artist": "Paul Klee",
+      "title": "Fish Magic",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 15,
+      "artist": "Francisco Goya",
+      "title": "The Witches' Flight",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 16,
+      "artist": "Gustave Moreau",
+      "title": "The Apparition",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 17,
+      "artist": "Edvard Munch",
+      "title": "The Vampire",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 18,
+      "artist": "Edvard Munch",
+      "title": "The Dead Mother and Child",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 19,
+      "artist": "Edward Burne-Jones",
+      "title": "The Baleful Head",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 20,
+      "artist": "John William Waterhouse",
+      "title": "The Mermaid",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 21,
+      "artist": "Evelyn De Morgan",
+      "title": "The Storm Spirits",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 22,
+      "artist": "Evelyn De Morgan",
+      "title": "The Dryad",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 23,
+      "artist": "Henry Meynell Rheam",
+      "title": "Sleeping Beauty",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 24,
+      "artist": "Piero di Cosimo",
+      "title": "The Forest Fire",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 25,
+      "artist": "J. M. W. Turner",
+      "title": "The Shipwreck",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 26,
+      "artist": "Joseph Wright of Derby",
+      "title": "The Alchemist",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 27,
+      "artist": "Eugène Delacroix",
+      "title": "The Barque of Dante",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 28,
+      "artist": "Peter Paul Rubens",
+      "title": "The Battle of the Amazons",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 29,
+      "artist": "Franz Sedlacek",
+      "title": "The Strange Garden",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
+    },
+    {
+      "order": 30,
+      "artist": "George Bellows",
+      "title": "Cliff Dwellers",
+      "status": "owner_selected_research_pending",
+      "source": "research/artvision_owner_selected_30_future_20261109.json",
+      "rights_cleared": false,
+      "selection_only_not_completed": true
     }
   ],
   "warnings": []
