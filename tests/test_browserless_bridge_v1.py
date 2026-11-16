@@ -145,5 +145,29 @@ class TestPublicBrowserBridge(unittest.TestCase):
                 run_request(req, "private_token")
 
 
+    def test_click_requires_provider_verified_destination(self):
+        class Response:
+            def __init__(self, verified):
+                self.verified = verified
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self, n):
+                return json.dumps({"data": {"title": "REST APIs",
+                  "url": "https://docs.browserless.io/rest-apis/intro",
+                  "action_count": 1, "verified_clicks": self.verified}}).encode()
+        req = sample()
+        req["url"] = "https://docs.browserless.io/"
+        req["actions"] = [{"type": "click", "selector": 'a[href="/rest-apis/intro"]'}]
+        with patch("tools.browserless_bridge_v1.urllib.request.urlopen", return_value=Response(0)):
+            with self.assertRaisesRegex(RuntimeError, "Click was not independently verified"):
+                run_request(req, "test_secret")
+        with patch("tools.browserless_bridge_v1.urllib.request.urlopen", return_value=Response(1)):
+            result = run_request(req, "test_secret")
+            self.assertEqual(result["verified_clicks"], 1)
+            self.assertEqual(result["final_host"], "docs.browserless.io")
+
+
 if __name__ == "__main__":
     unittest.main()
