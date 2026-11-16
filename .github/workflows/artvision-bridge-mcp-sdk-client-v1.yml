@@ -1,0 +1,52 @@
+name: "ArtVision Bridge · official MCP Python client validation"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-bridge-mcp-sdk-client-v1.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify_official_client:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install standard Model Context Protocol Python client (v1)
+        run: python -m pip install --disable-pip-version-check "mcp>=1.18,<2"
+      - name: Check public MCP with a real external protocol client
+        shell: bash
+        run: |
+          python - <<'PY'
+          import asyncio
+          from mcp import ClientSession
+          from mcp.client.streamable_http import streamable_http_client
+          URL = "https://artvision-bridge-mcp-v1.600led.workers.dev/mcp"
+          async def verify():
+              async with streamable_http_client(URL, headers={"User-Agent": "mcp-client/1.0"}) as streams:
+                  read,write = streams[0],streams[1]
+                  async with ClientSession(read,write) as client:
+                      info = await asyncio.wait_for(client.initialize(),timeout=25)
+                      print("SDK_INITIALIZED",info.serverInfo.name,info.protocolVersion)
+                      result = await asyncio.wait_for(client.list_tools(),timeout=25)
+                      names = [tool.name for tool in result.tools]
+                      assert names == [
+                          "get_project_rules","get_work_status","get_open_blockers",
+                          "get_bridge_inbox","get_shared_memory"],names
+                      print("SDK_TOOLS_DISCOVERED",len(names))
+                      inbox = await asyncio.wait_for(client.call_tool("get_bridge_inbox",{}),timeout=25)
+                      assert inbox.isError is False, "Inbox tool error"
+                      content = "\n".join(x.text for x in inbox.content if x.type=="text")
+                      assert "prova 123" in content and "artvision-bridge-smoke-20261116-001" in content
+                      print("SDK_INBOX_READ_OK")
+                      memory = await asyncio.wait_for(client.call_tool("get_shared_memory",{}),timeout=25)
+                      assert memory.isError is False, "D1 memory tool error"
+                      data = "\n".join(x.text for x in memory.content if x.type=="text")
+                      assert "critical_voice" in data and "tinyfish_budget_policy" in data
+                      print("SDK_D1_MEMORY_READ_OK")
+          asyncio.run(verify())
+          print("STANDARD_MCP_CLIENT_FULL_PASS")
+          PY
