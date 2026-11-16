@@ -96,5 +96,20 @@ class TestPublicBrowserBridge(unittest.TestCase):
         self.assertNotIn(secret, str(raised.exception))
 
 
+    def test_structured_interaction_error_is_fail_closed(self):
+        class Response:
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self, n):
+                return json.dumps({"data": {"browser_error": "SELECTOR_NOT_FOUND",
+                                            "untrusted_page": "never disclose"}}).encode()
+        with patch("tools.browserless_bridge_v1.urllib.request.urlopen", return_value=Response()):
+            with self.assertRaisesRegex(RuntimeError, "SELECTOR_NOT_FOUND") as outcome:
+                run_request(sample(), "test_secret")
+        self.assertNotIn("never disclose", str(outcome.exception))
+
+
 if __name__ == "__main__":
     unittest.main()
