@@ -68,6 +68,7 @@ jobs:
            im.verify()
           print('ORIGINAL_NGA_COLE_MANHOOD_JPEG_5272_3468_VERIFIED')
           PY
+          if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
           ffprobe -v error -select_streams a:0 -show_entries format=duration:stream=codec_name -of default=noprint_wrappers=1 output/cole_manhood_source/Ghost_Processional_Kevin_MacLeod.mp3
       - name: Upload only actual original image and licensed recording
         uses: actions/upload-artifact@v4
