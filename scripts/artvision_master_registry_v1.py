@@ -118,8 +118,9 @@ def build(root,site,source,stamp):
         for obj in objects:
             w=get(obj,rel,"checkpoint")
             if not w:continue
-            if isinstance(obj.get("variants"),dict):
-                for variant,detail in obj["variants"].items():put(w,variant,detail,rel)
+            variant_matrix=obj.get("variants") if isinstance(obj.get("variants"),dict) else obj.get("variant_matrix")
+            if isinstance(variant_matrix,dict):
+                for variant,detail in variant_matrix.items():put(w,variant,detail,rel)
             if isinstance(obj.get("existing_slots"),list):
                 for slot in obj["existing_slots"]:
                     if isinstance(slot,dict):put(w,slot.get("variant"),slot,rel)
