@@ -33,6 +33,7 @@ Un possibile abbinamento per nome non dimostra l'identità del file. Le lacune n
 - [Libri e ricerche La Storia Rivive](ARCHIVIO_ALTRI_FORMAT.md)
 - [Ricerca futura: 100 opere e selezione 30](ARCHIVIO_RICERCA_FUTURA.md)
 - [Fascicoli di produzione storici](ARCHIVIO_PRODUZIONI_STORICHE.md)
+- [Procedura archivio PRIVATO e antidoppioni](ARTVISION_ARCHIVIO_PRIVATO_E_CONFRONTO_V1.md)
 
 I file JSON e CSV nella cartella data/archivio-generale sono l'interfaccia leggibile dalle automazioni.
 L'Action aggiorna i dati periodicamente; gli errori del sito conservano il precedente snapshot dichiarandolo non attuale.
