@@ -1,0 +1,54 @@
+name: "ArtVision | Google TTS model visibility (no generation)"
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/artvision-google-tts-access-probe-v1.yml"
+      - "scripts/artvision_google_tts_access_probe_v1.py"
+      - "tests/test_artvision_google_tts_access_probe_v1.py"
+  push:
+    branches: [main, feature/artvision-gemini-tts-probe-20261116]
+    paths:
+      - ".github/workflows/artvision-google-tts-access-probe-v1.yml"
+      - "scripts/artvision_google_tts_access_probe_v1.py"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-google-tts-model-visibility
+  cancel-in-progress: false
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test metadata-only probe (no API connection)
+        run: |
+          python -m py_compile scripts/artvision_google_tts_access_probe_v1.py
+          python -m unittest discover -s tests -p 'test_artvision_google_tts_access_probe_v1.py' -v
+  models_metadata:
+    needs: tests
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GEMINI_API_KEY: \${{ secrets.GEMINI_API_KEY }}
+      ARTVISION_GOOGLE_TTS_PROBE_OUT: output/artvision-google-tts-access-v1/report.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: GET-only visibility comparison (v1beta and v1; zero synthesis)
+        run: python scripts/artvision_google_tts_access_probe_v1.py
+      - name: Archive status-only report, no key/voice
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_GOOGLE_TTS_API_VISIBILITY_\${{ github.run_id }}
+          path: output/artvision-google-tts-access-v1/report.json
+          if-no-files-found: warn
+          retention-days: 14
