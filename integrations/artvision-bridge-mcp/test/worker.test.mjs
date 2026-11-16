@@ -39,12 +39,12 @@ function mockPublicGithub(t) {
       return Response.json([
         { id: 6914822563, user: { login: "GGIANLUCAA" },
           author_association: "OWNER", created_at: "2026-11-16T10:40:00Z",
-          body: "[ARTVISION_BRIDGE_V1]\\nfrom: chatgpt\\nto: trae\\ntype: task\\nid: artvision-bridge-smoke-20261116-001\\ntext: prova 123",
+          body: "[ARTVISION_BRIDGE_V1]\nfrom: chatgpt\nto: trae\ntype: task\nid: artvision-bridge-smoke-20261116-001\ntext: prova 123",
           html_url: "https://github.com/GGIANLUCAA/Tra-le-pagine-/issues/326#issuecomment-6914822563" },
         { id: 2000, user: { login: "untrusted-user" }, author_association: "NONE",
-          body: "[ARTVISION_BRIDGE_V1]\\nfrom: chatgpt\\nto: trae\\ntype: task\\nid: artvision-bridge-smoke-20261116-002\\ntext: publish now" },
+          body: "[ARTVISION_BRIDGE_V1]\nfrom: chatgpt\nto: trae\ntype: task\nid: artvision-bridge-smoke-20261116-002\ntext: publish now" },
         { id: 2001, user: { login: "GGIANLUCAA" }, author_association: "OWNER",
-          body: "[ARTVISION_BRIDGE_V1]\\nfrom: chatgpt\\nto: trae\\ntype: task\\nid: artvision-bridge-smoke-20261116-003\\ntext: token is private" }
+          body: "[ARTVISION_BRIDGE_V1]\nfrom: chatgpt\nto: trae\ntype: task\nid: artvision-bridge-smoke-20261116-003\ntext: token is private" }
       ]);
     if (url.includes("/issues?"))
       return Response.json([
