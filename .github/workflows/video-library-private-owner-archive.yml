@@ -1,0 +1,108 @@
+name: Video Library - Private owner archive (manual, never publish)
+
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_id:
+        description: 'Existing GitHub Actions artifact numeric ID'
+        type: string
+        required: true
+      mp4_filename:
+        description: 'Exact finished MP4 filename inside the artifact'
+        type: string
+        required: true
+      expected_sha256:
+        description: 'SHA256 of the final MP4 (from production checkpoint)'
+        type: string
+        required: true
+      expected_bytes:
+        description: 'Exact final MP4 size (bytes)'
+        type: string
+        required: true
+      authorize_private_owner_backup:
+        description: 'Authorized PRIVATE backup only; never site/social publication'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+concurrency:
+  group: video-library-private-owner-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    if: inputs.authorize_private_owner_backup == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Verify existing exact-hash MP4 and upload only to private R2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ARTIFACT_ID: ${{ inputs.artifact_id }}
+          MP4_NAME: ${{ inputs.mp4_filename }}
+          EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
+          EXPECTED_BYTES: ${{ inputs.expected_bytes }}
+          PRIVATE_INGEST: https://video-library-import.600led.workers.dev
+        run: |
+          python3 -m pip -q install requests
+          python3 - <<'PY'
+          import hashlib, io, json, os, pathlib, re, subprocess, tempfile, time, zipfile
+          import requests
+          aid=os.environ['ARTIFACT_ID']
+          name=os.environ['MP4_NAME']
+          want=os.environ['EXPECTED_SHA256'].lower()
+          length=os.environ['EXPECTED_BYTES']
+          assert re.fullmatch(r'[0-9]{4,20}',aid), 'Artifact ID required'
+          assert re.fullmatch(r'[A-Za-z0-9_(). -]{1,180}\\.(mp4|m4v|mov)',name,re.I), 'Exact MP4 filename required'
+          assert not re.search(r'(^|[_ .-])(SOURCE|SCOUT|CONTACT|FRAMES|ASSETS|PROBE|RAW|NOT_FINAL|NON_FINALE)([_ .-]|$)',name,re.I), 'Not a finished video'
+          assert not re.match('AUDIO_POLISHED_REVIEW',name,re.I), 'Intermediate video'
+          assert re.fullmatch(r'[a-f0-9]{64}',want), 'Expected MP4 SHA256 required'
+          assert length.isdecimal() and 1024<=int(length)<=30*1024*1024, 'Single-upload limit: <=30 MiB'
+          s=requests.Session()
+          gh='https://api.github.com/repos/'+os.environ['REPO']+'/actions/artifacts/'+aid
+          h={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          info=s.get(gh,headers=h,timeout=30);info.raise_for_status()
+          metadata=info.json()
+          if metadata.get('expired') or str(metadata.get('id'))!=aid:raise ValueError('Expired or mismatched artifact')
+          with s.get(gh+'/zip',headers=h,timeout=180,stream=True) as stream:
+              stream.raise_for_status()
+              raw=io.BytesIO()
+              for chunk in stream.iter_content(1024*1024):
+                  raw.write(chunk)
+                  if raw.tell()>512*1024*1024:raise ValueError('Artifact archive unexpectedly large')
+          raw.seek(0)
+          with zipfile.ZipFile(raw) as z:
+              members=[m for m in z.namelist() if not m.endswith('/') and pathlib.PurePosixPath(m).name==name]
+              if len(members)!=1:raise ValueError('Exact named video not unique in artifact: '+str(members))
+              with z.open(members[0]) as fd:video=fd.read(30*1024*1024+1)
+          if len(video)!=int(length):raise ValueError('MP4 length mismatch')
+          actual=hashlib.sha256(video).hexdigest()
+          if actual!=want:raise ValueError('MP4 SHA256 mismatch; never import')
+          with tempfile.TemporaryDirectory() as tmp:
+              fp=pathlib.Path(tmp)/name;fp.write_bytes(video)
+              probe=subprocess.run(['ffprobe','-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1',str(fp)],capture_output=True,text=True,timeout=45,check=True)
+              if float(probe.stdout.strip())<=1:raise ValueError('Invalid video duration')
+              decode=subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(fp),'-f','null','-'],capture_output=True,text=True,timeout=160)
+              if decode.returncode:raise ValueError('Video full decode failed: '+decode.stderr[:250])
+          token_cache=['',0.]
+          def token():
+              if token_cache[0] and time.time()-token_cache[1]<180:return token_cache[0]
+              r=s.get(os.environ['ACTIONS_ID_TOKEN_REQUEST_URL'],headers={'Authorization':'Bearer '+os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']},params={'audience':'vls-gh-import-2026'},timeout=20)
+              r.raise_for_status()
+              token_cache[:]=[r.json()['value'],time.time()]
+              return token_cache[0]
+          url=os.environ['PRIVATE_INGEST'].rstrip('/')+'/private-single'
+          params={'artifact':aid,'key':name,'sha256':actual}
+          result=s.post(url,params=params,headers={'Authorization':'Bearer '+token(),'Content-Type':'video/mp4'},data=video,timeout=180)
+          result.raise_for_status()
+          response=result.json()
+          if response.get('private') is not True or response.get('sha256')!=actual or response.get('size')!=len(video):
+              raise ValueError('Private upload not verified; no publication claimed')
+          print('PRIVATE OWNER BACKUP ONLY:',json.dumps({'artifact_id':aid,'key':response['key'],'sha256':actual,'bytes':len(video),'private':True,'site_published':False}))
+          PY
