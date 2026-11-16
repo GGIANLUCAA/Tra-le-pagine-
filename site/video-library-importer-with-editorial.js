@@ -1,4 +1,5 @@
 const AUD='vls-gh-import-2026', REPO='GGIANLUCAA/Tra-le-pagine-', WF=REPO+'/.github/workflows/video-library-r2-import.yml@refs/heads/main';
+const PRIVATE_WF=REPO+'/.github/workflows/video-library-private-owner-archive.yml@refs/heads/main';
 let jwksCache=null,jwksTime=0;
 function from64(s){const z=s.replace(/-/g,'+').replace(/_/g,'/');return Uint8Array.from(atob(z+'='.repeat((4-z.length%4)%4)),x=>x.charCodeAt(0));}
 async function authorized(req){
@@ -6,7 +7,7 @@ async function authorized(req){
  const seg=hdr.slice(7).split('.');if(seg.length!==3)return false;
  let head,claims;try{head=JSON.parse(new TextDecoder().decode(from64(seg[0])));claims=JSON.parse(new TextDecoder().decode(from64(seg[1])));}catch{return false;}
  const now=Math.floor(Date.now()/1000);
- if(head.alg!=='RS256'||!head.kid||claims.iss!=='https://token.actions.githubusercontent.com'||claims.aud!==AUD||claims.repository!==REPO||claims.ref!=='refs/heads/main'||![WF,REPO+'/.github/workflows/video-library-enrich.yml@refs/heads/main'].includes(claims.workflow_ref)||!Number.isFinite(claims.exp)||claims.exp<=now||!Number.isFinite(claims.iat)||claims.iat>now+60)return false;
+ if(head.alg!=='RS256'||!head.kid||claims.iss!=='https://token.actions.githubusercontent.com'||claims.aud!==AUD||claims.repository!==REPO||claims.ref!=='refs/heads/main'||!(new URL(req.url).pathname.startsWith('/private-')?[PRIVATE_WF]:[WF,REPO+'/.github/workflows/video-library-enrich.yml@refs/heads/main']).includes(claims.workflow_ref)||!Number.isFinite(claims.exp)||claims.exp<=now||!Number.isFinite(claims.iat)||claims.iat>now+60)return false;
  if(!jwksCache||Date.now()-jwksTime>600000){const res=await fetch('https://token.actions.githubusercontent.com/.well-known/jwks');if(!res.ok)throw Error('GitHub JWKS unavailable');jwksCache=await res.json();jwksTime=Date.now();}
  const jwk=jwksCache.keys.find(x=>x.kid===head.kid&&x.kty==='RSA'&&(!x.alg||x.alg==='RS256'));if(!jwk)return false;
  const key=await crypto.subtle.importKey('jwk',jwk,{name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['verify']);
@@ -18,6 +19,50 @@ export default{async fetch(request,env){
  const u=new URL(request.url),method=request.method,route=u.pathname;
  if(route==='/health'&&method==='GET')return resp({service:'video-library-import',ready:true});
  try{if(!await authorized(request))return resp({error:'Not authorized'},401);}catch(e){return resp({error:'Authentication temporarily unavailable'},503);}
+ // PRIVATE owner archive, isolated from the public VIDEOS bucket and catalogue.
+ // Route authorization is restricted to the dedicated main-branch GitHub workflow.
+ // There is deliberately no GET of video bytes or public URL for these objects.
+ if(route==='/private-status'||route==='/private-single'){
+  if(!env.PRIVATE_ARCHIVE)return resp({error:'Private archive binding not configured'},503);
+  const artifact=u.searchParams.get('artifact')||'',key=u.searchParams.get('key')||'';
+  if(!/^[0-9]{4,20}$/.test(artifact)||!/^[A-Za-z0-9_(). -]{1,180}\\.(mp4|m4v|mov)$/i.test(key)||key.includes('..')||
+     /(^|[_ .-])(SOURCE|SCOUT|CONTACT|FRAMES|ASSETS|PROBE|RAW|NOT_FINAL|NON_FINALE)([_ .-]|$)/i.test(key)||
+     /^AUDIO_POLISHED_REVIEW/i.test(key))return resp({error:'Invalid finished-video identity'},400);
+  const target='gh-artifacts/'+artifact+'/'+key;
+  if(route==='/private-status'&&method==='GET'){
+   const obj=await env.PRIVATE_ARCHIVE.head(target);
+   return resp(obj?{exists:true,private:true,size:obj.size,sha256:obj.customMetadata?.sha256||null}:{exists:false,private:true});
+  }
+  if(route==='/private-single'&&method==='POST'){
+   const expected=u.searchParams.get('sha256')||'';
+   if(!/^[a-f0-9]{64}$/i.test(expected))return resp({error:'Missing verified video SHA256'},400);
+   const max=30*1024*1024;
+   const declared=Number(request.headers.get('content-length')||0);
+   if(declared>max)return resp({error:'Video exceeds private single upload limit'},413);
+   const bytes=await request.arrayBuffer();
+   if(bytes.byteLength<1024||bytes.byteLength>max)return resp({error:'Invalid complete video size'},413);
+   const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
+   if(hash!==expected.toLowerCase())return resp({error:'Private archive SHA256 mismatch'},400);
+   const existing=await env.PRIVATE_ARCHIVE.head(target);
+   if(existing){
+    if(existing.size===bytes.byteLength&&existing.customMetadata?.sha256===hash)
+     return resp({ok:true,private:true,already_exists:true,key:target,size:existing.size,sha256:hash});
+    return resp({error:'Private object collision (no overwrite)'},409);
+   }
+   const contentType=/\\.(mp4|m4v)$/i.test(key)?'video/mp4':'video/quicktime';
+   const put=await env.PRIVATE_ARCHIVE.put(target,bytes,{
+    httpMetadata:{contentType},
+    customMetadata:{sha256:hash,artifact,visibility:'private_owner_review'},
+    onlyIf:{etagDoesNotMatch:'*'}
+   });
+   if(!put)return resp({error:'Concurrent private archive write rejected'},409);
+   const verified=await env.PRIVATE_ARCHIVE.head(target);
+   if(!verified||verified.size!==bytes.byteLength||verified.customMetadata?.sha256!==hash)
+    return resp({error:'Private archive readback metadata mismatch'},500);
+   return resp({ok:true,stored:true,private:true,key:target,size:verified.size,sha256:hash});
+  }
+  return resp({error:'Private archive method not allowed'},405);
+ }
  if(route==='/editorial-seed'&&method==='POST'){
   let input;try{const text=await request.text();if(text.length>170000)return resp({error:'Manifest too large'},413);input=JSON.parse(text)}catch{return resp({error:'Invalid JSON'},400)}
   if(!Array.isArray(input?.items)||input.items.length>800)return resp({error:'Expected up to 800 video entries'},400);
