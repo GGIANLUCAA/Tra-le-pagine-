@@ -141,6 +141,28 @@ def build(root,site,source,stamp):
         if w and cycle.get("mp4_verified"):
             w["legacy_video_claims"].append({"cycle_id":cycle.get("cycle_id"),
                    "sha256":cycle.get("sha256_mp4"),"workflow_run":cycle.get("workflow_run_url")})
+    # All literary series dossiers are included without implying completed video delivery.
+    literary=[]
+    for folder in sorted((root/"episodes").glob("*")):
+        if not folder.is_dir():continue
+        meta=load(folder/"metadata.json")
+        literary.append({"folder":str(folder.relative_to(root)),
+            "title":val(meta,"title") or folder.name.replace("_"," "),
+            "author":val(meta,"author") or "da_verificare",
+            "series":val(meta,"series") or "Tra le Pagine",
+            "status_claim":val(meta,"status") or "solo_dossier_non_prova_del_video",
+            "publication_claim":val(meta,"publication","social_publish","publications") or "non_verificata",
+            "metadata_present":bool(meta),
+            "episode":val(meta,"episode")})
+    history_candidates=[]
+    for rel,field in (("queue/storia_rivive_candidates_v58.json","candidates"),
+                      ("queue/storia_rivive_v69_film_scouting_candidates.json","candidates")):
+        d=load(root/rel)
+        if isinstance(d.get(field),list):
+            for obj in d[field]:
+                if isinstance(obj,dict):
+                    history_candidates.append({"source":rel,"title":val(obj,"title","event","name") or "da_verificare",
+                        "year":val(obj,"year"),"status_claim":val(obj,"status") or val(d,"status") or "ricerca_non_video_finito"})
     queue_files=[]
     for path in sorted((root/"queue").rglob("*.json")):
         d=load(path);rel=str(path.relative_to(root))
@@ -189,12 +211,12 @@ def build(root,site,source,stamp):
            "site_items":len(site_rows),"site_cloudflare":sum(x.get("source")=="cloudflare" for x in site_rows),
            "site_unavailable":sum(x.get("available") is False for x in site_rows),
            "possible_site_matches":sum(x["match_quality"]=="ipotesi_nome_non_hash" for x in site_rows),
-           "queue_files":len(queue_files),"categories":categories}
+           "queue_files":len(queue_files),"literary_dossiers":len(literary),"history_candidates":len(history_candidates),"categories":categories}
     likely_duplicate_names=[{"normalized":k,"files":v} for k,v in filename_groups.items() if len(v)>1]
     cross_hashes=[{"sha256":h,"claims":proofs} for h,proofs in duplicates.items()
                   if len(set((w,v) for w,v,_ in proofs))>1]
     return dict(schema="artvision-master-registry-v1",generated_at=stamp,site_state=source,stats=stats,
-                works=ordered,site_items=site_rows,queue_files=queue_files,
+                works=ordered,site_items=site_rows,queue_files=queue_files,literary=literary,history_candidates=history_candidates,
                 possible_filename_duplicates=likely_duplicate_names,
                 cross_variant_sha_collisions=cross_hashes,warnings=warnings)
 
@@ -217,7 +239,8 @@ def markdown(root,r):
        "- [Opere e tutte le varianti](ARCHIVIO_OPERE_E_VERSIONI.md)",
        "- [Inventario integrale del sito](ARCHIVIO_SITO_COMPLETO.md)",
        "- [Code e produzioni mancanti](ARCHIVIO_CODE_MANCANTI.md)",
-       "- [Doppioni potenziali](ARCHIVIO_DOPPIONI_POTENZIALI.md)","",
+       "- [Doppioni potenziali](ARCHIVIO_DOPPIONI_POTENZIALI.md)",
+       "- [Libri e ricerche La Storia Rivive](ARCHIVIO_ALTRI_FORMAT.md)","",
        "I file JSON e CSV nella cartella data/archivio-generale sono l'interfaccia leggibile dalle automazioni.",
        "L'Action aggiorna i dati periodicamente; gli errori del sito conservano il precedente snapshot dichiarandolo non attuale.",
        "Nessun dato ricavato da sole conversazioni viene spacciato per verifica di MP4."]
@@ -278,6 +301,23 @@ def markdown(root,r):
     if not r["cross_variant_sha_collisions"]:p.append("Nessun caso documentato.")
     for d in r["cross_variant_sha_collisions"]:p.append("- "+d["sha256"]+": "+str(d["claims"]))
     save(root/"docs/ARCHIVIO_DOPPIONI_POTENZIALI.md","\n".join(p)+"\n")
+    other=["# Altri format — libri e La Storia Rivive","","Generato: "+stamp,
+         "Attenzione: una cartella con metadata o una ricerca di fonti NON prova un MP4 finito.","",
+         "## Libri raccontati, autore e stato dichiarato","",
+         "| Titolo | Autore | Cartella | Stato dichiarato | Pubblicazione dichiarata |",
+         "|---|---|---|---|---|"]
+    for x in r["literary"]:
+        other.append(table_row([x["title"],x["author"],"["+x["folder"]+"]("+link(x["folder"])+")",
+                     x["status_claim"],x["publication_claim"]]))
+    other += ["","## La Storia Rivive — candidati di ricerca, non video completati","",
+              "| Soggetto | Anno | Stato ricerca | Fonte coda |","|---|---|---|---|"]
+    for x in r["history_candidates"]:
+        other.append(table_row([x["title"],x["year"] or "—",x["status_claim"],
+                  "["+x["source"]+"]("+link(x["source"])+")"]))
+    other += ["","## Tutti gli altri video realmente segnalati dal catalogo pubblico","",
+              "I video delle altre categorie sono inclusi senza esclusioni nell'Archivio sito completo.",
+              "Le schede prive di autore o titolo attribuibile restano da verificare."]
+    save(root/"docs/ARCHIVIO_ALTRI_FORMAT.md","\n".join(other)+"\n")
 
 def main():
     parser=argparse.ArgumentParser()
