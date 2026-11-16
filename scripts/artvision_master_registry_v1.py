@@ -109,20 +109,28 @@ def build(root,site,source,stamp):
                 w["priority"]=obj.get("provisional_production_priority")
     for path in sorted((root/"queue").glob("*checkpoint*.json")):
         d=load(path);rel=str(path.relative_to(root))
-        w=get(d,rel,"checkpoint")
-        if not w:continue
-        if isinstance(d.get("variants"),dict):
-            for variant,detail in d["variants"].items():put(w,variant,detail,rel)
-        if isinstance(d.get("existing_slots"),list):
-            for slot in d["existing_slots"]:
-                if isinstance(slot,dict):put(w,slot.get("variant"),slot,rel)
-        if d.get("variant") in VARIANTS:
-            prod=d.get("production",{}) if isinstance(d.get("production"),dict) else {}
-            put(w,d["variant"],{"status":val(d,"status"),"video_sha256":val(prod,"hd_sha256","video_sha256","android_sha256")},rel)
-        if isinstance(d.get("remaining"),list):
-            for v in d["remaining"]:
-                if v in VARIANTS and w["variants"][v]["state"]=="non_documentato":
-                    w["variants"][v]["state"]="da_produrre"
+        # Some checkpoints contain two or more independent artworks in works[].
+        objects=d.get("works") if isinstance(d,dict) and isinstance(d.get("works"),list) else [d]
+        for obj in objects:
+            w=get(obj,rel,"checkpoint")
+            if not w:continue
+            if isinstance(obj.get("variants"),dict):
+                for variant,detail in obj["variants"].items():put(w,variant,detail,rel)
+            if isinstance(obj.get("existing_slots"),list):
+                for slot in obj["existing_slots"]:
+                    if isinstance(slot,dict):put(w,slot.get("variant"),slot,rel)
+            if obj.get("variant") in VARIANTS:
+                prod=obj.get("production",{}) if isinstance(obj.get("production"),dict) else {}
+                verified=obj.get("verified_render",{}) if isinstance(obj.get("verified_render"),dict) else {}
+                put(w,obj["variant"],{"status":val(obj,"status"),
+                    "mp4_sha256":val(obj,"mp4_sha256","video_sha256") or
+                    val(prod,"hd_sha256","mp4_sha256","video_sha256","android_sha256") or
+                    val(verified,"mp4_sha256","hd_sha256")},rel)
+            if isinstance(obj.get("remaining"),list):
+                for v in obj["remaining"]:
+                    if v in VARIANTS and w["variants"][v]["state"]=="non_documentato":
+                        w["variants"][v]["state"]="da_produrre"
+
     cycles=load(root/"queue/artvision_autoproduction_v31_state.json")
     for cycle in cycles.get("cycle_log",[]) if isinstance(cycles,dict) else []:
         w=get({"artist":cycle.get("artist"),"title":cycle.get("work")},"queue/artvision_autoproduction_v31_state.json","cicli_v31")
