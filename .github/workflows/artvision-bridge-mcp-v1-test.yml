@@ -1,0 +1,25 @@
+name: "ArtVision Bridge MCP V1 · read-only tests"
+on:
+  pull_request:
+    paths:
+      - "integrations/artvision-bridge-mcp/**"
+      - ".github/workflows/artvision-bridge-mcp-v1-test.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test_bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax and MCP security tests — no Cloudflare deployment
+        run: |
+          node --check integrations/artvision-bridge-mcp/src/worker.mjs
+          node --test integrations/artvision-bridge-mcp/test/worker.test.mjs
