@@ -1,32 +1,32 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-16T18:12:00+00:00",
+  "generated_at": "2026-11-16T21:10:48+00:00",
   "site_state": "live_api",
   "stats": {
-    "works": 90,
+    "works": 91,
     "render_documented_slots": 143,
-    "not_documented_slots": 117,
-    "site_items": 733,
-    "site_cloudflare": 725,
-    "site_unavailable": 8,
+    "not_documented_slots": 121,
+    "site_items": 540,
+    "site_cloudflare": 529,
+    "site_unavailable": 11,
     "possible_site_matches": 21,
-    "queue_files": 96,
+    "queue_files": 97,
     "literary_dossiers": 19,
     "history_candidates": 12,
     "research_100": 100,
     "selected_future_30": 30,
     "production_dossiers": 195,
     "production_dossier_subdirs": 32,
-    "unmatched_site_items": 608,
+    "unmatched_site_items": 415,
     "site_artist_only_hints": 104,
     "site_ambiguous": 0,
     "recovered_historical_review_files": 8,
-    "four_by_one_scoped": 65,
+    "four_by_one_scoped": 66,
     "complete_four_render_documented": 27,
     "categories": {
       "Critica d’arte": 42,
-      "Altri progetti": 445,
-      "Musica e visual": 78,
+      "Musica e visual": 65,
+      "Altri progetti": 265,
       "Artisti e pittura": 114,
       "Libri raccontati": 50,
       "Cronaca e attualità": 4
@@ -1985,6 +1985,55 @@
       "excluded": false,
       "four_by_one_target": false,
       "missing_variants": [],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "gustave-moreau-oedipus-and-the-sphinx-1864",
+      "title": "Oedipus and the Sphinx",
+      "artist": "Gustave Moreau",
+      "year": "1864",
+      "museum": "",
+      "object_id": "21.134.1",
+      "lanes": [
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_extra_render_checkpoint_20261116_moreau_oedipus_sphinx.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "four_by_one_target": true,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
       "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false

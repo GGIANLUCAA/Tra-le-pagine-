@@ -36,6 +36,7 @@ Questi stati non implicano pubblicazione né playback.
 | Giuseppe Arcimboldo | Vertumnus | ? | — | — | — | — | Non abbinato |
 | Gustav Klimt | The Kiss | 1908–1909 | D | D | D | D | Non abbinato |
 | Gustave Moreau | Jupiter and Semele | ? | — | — | — | — | Non abbinato |
+| Gustave Moreau | Oedipus and the Sphinx | 1864 | — | — | — | — | Non abbinato |
 | Gustave Moreau | The Apparition | ? | — | — | D | — | Non abbinato |
 | Henry Meynell Rheam | Sleeping Beauty | ? | — | — | D | — | Non abbinato |
 | Hieronymus Bosch | The Garden of Earthly Delights | circa 1490–1500 | D | D | D | D | Non abbinato |
@@ -402,6 +403,16 @@ Questi stati non implicano pubblicazione né playback.
 
 - Anno: da verificare; Museo: da verificare
 - Code: cicli_v31
+- Candidati sul sito (nome compatibile soltanto): nessuno
+- critico_standard: non_documentato; prove: nessuna
+- critico_museum: non_documentato; prove: nessuna
+- cinema_standard: non_documentato; prove: nessuna
+- cinema_museum: non_documentato; prove: nessuna
+
+### Gustave Moreau — Oedipus and the Sphinx
+
+- Anno: 1864; Museo: da verificare
+- Code: checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna

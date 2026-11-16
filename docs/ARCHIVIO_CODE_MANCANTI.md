@@ -21,6 +21,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | George Bellows | Cliff Dwellers | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Georges Seurat | A Sunday on La Grande Jatte—1884 | critico_standard, critico_museum | storico_4x1, museum_scale, legacy_dual_format |
 | Giovanni Segantini | Le cattive madri (The Evil Mothers) | critico_standard, critico_museum, cinema_standard, cinema_museum | nuova_serie |
+| Gustave Moreau | Oedipus and the Sphinx | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
 | Gustave Moreau | The Apparition | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Henry Meynell Rheam | Sleeping Beauty | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Ilya Repin | Sadko | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
@@ -55,6 +56,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | [queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json) | checkpoint | n.d. |
 | [queue/artvision_extra_render_checkpoint_20261115_turner_fire_cleveland.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_extra_render_checkpoint_20261115_turner_fire_cleveland.json) | checkpoint | n.d. |
 | [queue/artvision_extra_render_checkpoint_20261116_cole_manhood.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_extra_render_checkpoint_20261116_cole_manhood.json) | checkpoint | n.d. |
+| [queue/artvision_extra_render_checkpoint_20261116_moreau_oedipus_sphinx.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_extra_render_checkpoint_20261116_moreau_oedipus_sphinx.json) | checkpoint | n.d. |
 | [queue/artvision_four_variants_s01_20261028.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_four_variants_s01_20261028.json) | principale | 19 |
 | [queue/artvision_museum_scale_s01_20261028.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_museum_scale_s01_20261028.json) | supporto | n.d. |
 | [queue/artvision_music20_gallery_two_real_audio_remixes_20261113.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_music20_gallery_two_real_audio_remixes_20261113.json) | supporto | n.d. |
