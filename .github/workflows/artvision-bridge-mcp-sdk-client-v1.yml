@@ -22,11 +22,13 @@ jobs:
         run: |
           python - <<'PY'
           import asyncio
+          import httpx
           from mcp import ClientSession
           from mcp.client.streamable_http import streamable_http_client
           URL = "https://artvision-bridge-mcp-v1.600led.workers.dev/mcp"
           async def verify():
-              async with streamable_http_client(URL, headers={"User-Agent": "mcp-client/1.0"}) as streams:
+              http = httpx.AsyncClient(headers={"User-Agent": "mcp-client/1.0"})
+              async with streamable_http_client(URL, http_client=http) as streams:
                   read,write = streams[0],streams[1]
                   async with ClientSession(read,write) as client:
                       info = await asyncio.wait_for(client.initialize(),timeout=25)
@@ -47,6 +49,7 @@ jobs:
                       data = "\n".join(x.text for x in memory.content if x.type=="text")
                       assert "critical_voice" in data and "tinyfish_budget_policy" in data
                       print("SDK_D1_MEMORY_READ_OK")
+              await http.aclose()
           asyncio.run(verify())
           print("STANDARD_MCP_CLIENT_FULL_PASS")
           PY
