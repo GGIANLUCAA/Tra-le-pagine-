@@ -32,3 +32,23 @@ Sono stati consultati inoltre `catalog/info.json`, `catalog/manage.json`, `catal
 Non duplicare automaticamente sotto nomi nuovi gli stessi SHA di video già archiviati; distinguere *file fisico* da *variante editoriale* e mantenere riferimenti stabili. Il workflow di importazione è già oggetto della PR #323 (gate di pubblicazione) e la PR #324 (archivio privato): non introdurre una terza modifica concorrente al Worker o al workflow senza risolvere quei conflitti.
 
 L'audit è una preparazione concreta, **non** una promessa di 2–3 GB già liberati. La quantità dimostrata con SHA è 41,4 MB *candidati*, non 41,4 MB cancellati.
+
+## Protezione degli indirizzi prima della prima deduplica (PR #330)
+
+È stata aggiunta una **correzione isolata nel sorgente canonico Worker** `integrations/video_library_laboratorio/workspace-base.mjs`, non ancora distribuita sul sito. Per l'esatta coppia Piranesi già verificata con SHA256, se e soltanto se la vecchia chiave `ARTVISION_PIRANESI_CINEMA_V6.mp4` diventerà assente, il sito potrà effettuare un reindirizzamento **temporaneo 307** verso `ArtVision_WOW7_Piranesi_Le_Prigioni_Impossibili.mp4`.
+
+Il controllo si applica ai percorsi `/media/`, `/download/`, `/watch/`, `/info/` e `/download-info/`. Conserva la stessa origine e la query originale; il browser può quindi ripetere la richiesta con l'header `Range`. Il reindirizzamento rimane inattivo finché entrambi gli MP4 esistono (stato attuale). Restituisce 404 se è presente una tombstone in `catalog/deleted.json`, una delle voci è `hidden`, il file da conservare manca, è cambiato di dimensione o non ha più l'ETag del file verificato. I cataloghi di sicurezza mancanti/illeggibili impediscono di riattivare il vecchio indirizzo (fail-closed). Non si estende automaticamente ad altre opere o versioni.
+
+**Test offline verificati:** `integrations/video_library_laboratorio/piranesi-alias.test.mjs` — URL originali, reindirizzamento condizionale, Range `206` dopo il reindirizzamento, `404` per tombstone/hidden/keeper alterato, `503` per guasto metadati, nessuna modifica al catalogo R2. Il test usa R2 simulato, **non** dimostra ancora un HTTP 206 sul sito live. GitHub CI: https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43871849945 .
+
+**Preflight R2 in sola lettura ripetuto:** entrambi i video esistono ancora su R2, 41.361.075 byte ciascuno, ETag `2596f0317268b24c3eeefb522a03ab09-5`, nessuna tombstone o `hidden` nella gestione, solo il keeper è in `catalog/ready.json`. **Byte rimossi: ZERO**.
+
+### Gate vincolanti per un futuro cleanup effettivo
+
+1. Backup e rollback del Worker Cloudflare attualmente distribuito: sorgente script, versione, tutti i binding e settings. Confronto esatto con il sorgente canonico, verificare dipendenze importate e PR concorrenti; deploy solo attraverso procedura già validata e con backup.
+2. Eseguire i test su Worker in **preview isolata**, poi sul live solo con controllo Range e dei 5 percorsi originari, verificando entrambi gli MP4 e il catalogo; non rompere le schede/coperte.
+3. Conservare una **copia verificata esterna a R2** e un manifest con SHA256 e dimensione dell'oggetto che si vuole togliere; non aggiungere duplicati in R2 per il backup a causa di costi e spazio.
+4. Ottenere autorizzazione specifica della chiave da eliminare. Riconfermare SHA/ETag/size e assenza di nuove approvazioni/modifiche prima del DELETE. Non usare l'endpoint `/api/delete` del sito, perché salva una tombstone che disabiliterebbe correttamente il redirect.
+5. Eliminare una sola chiave nella finestra controllata, immediatamente verificare HTTPS/Range/metadata/player/download e disponibilità del rollback. Se un test fallisce, ripristinare dall'archivio esterno.
+
+L'intervento corrente **non elimina file**, non attiva il redirect sul Worker live, non avvia download pesanti o copie private a pagamento. Lo spazio liberabile rimane potenziale.
