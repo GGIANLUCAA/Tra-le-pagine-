@@ -8,8 +8,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Albert Bierstadt | The Last of the Buffalo | critico_standard, critico_museum, cinema_museum | checkpoint |
 | Albert Pinkham Ryder | The Race Track (Death on a Pale Horse) | critico_standard, critico_museum, cinema_museum | nuova_serie, checkpoint |
 | Edvard Munch | The Dead Mother and Child | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
-| Edvard Munch | The Vampire | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
-| Edvard Munch | Vampire | critico_standard, critico_museum, cinema_museum | checkpoint |
+| Edvard Munch | The Vampire | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Edward Burne-Jones | King Arthur in Avalon | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | Edward Burne-Jones | The Baleful Head | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Edward Burne-Jones | The Golden Stairs | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |

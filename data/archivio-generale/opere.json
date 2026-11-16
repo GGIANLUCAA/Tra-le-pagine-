@@ -1,11 +1,11 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-16T18:10:29+00:00",
+  "generated_at": "2026-11-16T18:12:00+00:00",
   "site_state": "live_api",
   "stats": {
-    "works": 91,
+    "works": 90,
     "render_documented_slots": 143,
-    "not_documented_slots": 121,
+    "not_documented_slots": 117,
     "site_items": 733,
     "site_cloudflare": 725,
     "site_unavailable": 8,
@@ -21,7 +21,7 @@
     "site_artist_only_hints": 104,
     "site_ambiguous": 0,
     "recovered_historical_review_files": 8,
-    "four_by_one_scoped": 66,
+    "four_by_one_scoped": 65,
     "complete_four_render_documented": 27,
     "categories": {
       "Critica d’arte": 42,
@@ -614,60 +614,11 @@
       "museum": "",
       "object_id": "",
       "lanes": [
-        "selezione_30"
-      ],
-      "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
-      ],
-      "variants": {
-        "critico_standard": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        },
-        "critico_museum": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        },
-        "cinema_standard": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        },
-        "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
-          "site_candidates": []
-        }
-      },
-      "legacy_video_claims": [],
-      "site_candidates": [],
-      "excluded": false,
-      "selection_order": 17,
-      "priority": 28,
-      "four_by_one_target": true,
-      "missing_variants": [
-        "critico_standard",
-        "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
-      ],
-      "render_documented": 0,
-      "site_playback_verified": false,
-      "published_confirmed": false
-    },
-    {
-      "id": "edvard-munch-vampire",
-      "title": "Vampire",
-      "artist": "Edvard Munch",
-      "year": "",
-      "museum": "",
-      "object_id": "",
-      "lanes": [
+        "selezione_30",
         "checkpoint"
       ],
       "sources": [
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
         "queue/artvision_owner_30_render_checkpoint_20261112_munch_vampire.json"
       ],
       "variants": {
@@ -702,6 +653,8 @@
       "legacy_video_claims": [],
       "site_candidates": [],
       "excluded": false,
+      "selection_order": 17,
+      "priority": 28,
       "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",

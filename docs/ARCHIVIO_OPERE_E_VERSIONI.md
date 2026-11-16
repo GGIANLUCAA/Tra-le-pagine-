@@ -14,8 +14,7 @@ Questi stati non implicano pubblicazione né playback.
 | Carel Fabritius | The Goldfinch | 1654 | D | D | D | D | Non abbinato |
 | Caspar David Friedrich | The Sea of Ice | ? | — | — | — | — | Non abbinato |
 | Edvard Munch | The Dead Mother and Child | 1899 | — | — | D | — | Non abbinato |
-| Edvard Munch | The Vampire | ? | — | — | — | — | Non abbinato |
-| Edvard Munch | Vampire | ? | — | — | D | — | Non abbinato |
+| Edvard Munch | The Vampire | ? | — | — | D | — | Non abbinato |
 | Edward Burne-Jones | King Arthur in Avalon | ? | — | — | — | — | Non abbinato |
 | Edward Burne-Jones | L'ultimo sonno di re Artù | ? | D | D | D | D | Non abbinato |
 | Edward Burne-Jones | The Baleful Head | 1885–1887 | — | — | D | — | Non abbinato |
@@ -192,17 +191,7 @@ Questi stati non implicano pubblicazione né playback.
 ### Edvard Munch — The Vampire
 
 - Anno: da verificare; Museo: da verificare
-- Code: selezione_30
-- Candidati sul sito (nome compatibile soltanto): nessuno
-- critico_standard: non_documentato; prove: nessuna
-- critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
-
-### Edvard Munch — Vampire
-
-- Anno: da verificare; Museo: da verificare
-- Code: checkpoint
+- Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
