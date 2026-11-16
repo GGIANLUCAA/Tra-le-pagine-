@@ -1,0 +1,148 @@
+name: "ArtVision NEW | Moreau Oedipus and Sphinx 1864 | authentic Cinema + Music20"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-moreau-oedipus-sphinx-cinema-20261116.yml"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-moreau-oedipus-437153-cinema-unique
+  cancel-in-progress: false
+jobs:
+  render_verified_cinema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Dedup before render; no other Moreau Oedipus finished Cinema"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_moreau_oedipus_sphinx_cinema_20261116.py
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          folder=Path("queue")
+          cp=list(folder.glob("*moreau*oedipus*cinema*.json"))
+          assert not cp, f"STOP: a checkpoint for this exact subject exists: {cp}"
+          archive=json.loads(Path("data/archivio-generale/opere.json").read_text())
+          entries=archive if isinstance(archive,list) else archive.get("works",archive.get("opere",[]))
+          for w in entries:
+            if not isinstance(w,dict):continue
+            label=(" ".join(str(w.get(x,"")) for x in ("artist","title","id"))).lower()
+            if "moreau" in label and ("oedipus" in label or "œdipe" in label or "oedipe" in label):
+              assert not any(w.get(t) for t in ("cinema_standard_video_sha256","mp4_sha256")), "STOP existing source"
+          print("PRE_RENDER_DEDUP_PASS: Moreau 1864 Met 437153, NEW Cinema Standard only")
+          PY
+      - name: "Install exclusively free rendering dependencies"
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13" "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: "Fetch exact Met API CC0 original and render new real 13-shot artwork Cinema"
+        run: |
+          set -euo pipefail
+          python scripts/artvision_moreau_oedipus_sphinx_cinema_20261116.py
+      - name: "License-check and place matching music from fixed 20"
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/artvision-moreau-oedipus-sphinx-cinema-20261116
+          python src/artvision_music_selector_v330.py \
+            --title "Oedipus and the Sphinx" \
+            --artist "Gustave Moreau" \
+            --moods "mysterious,eerie,dreamlike" \
+            --pin "myst_on_the_moor" \
+            --source-video "$d/VIDEO_SILENT_HQ_REVIEW.mp4" \
+            --review-video "$d/VIDEO_MUSIC20_HQ_REVIEW.mp4" \
+            --cache "$d/music_verified" \
+            --prepare \
+            --out-json "$d/MUSIC_V330_PROOF.json"
+          ffmpeg -v error -xerror -i "$d/VIDEO_MUSIC20_HQ_REVIEW.mp4" -map 0 -f null -
+      - name: "Produce real Android MP4 with same music, include cover and truthful social copy"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,zipfile
+          from PIL import Image
+          p=Path("output/artvision-moreau-oedipus-sphinx-cinema-20261116")
+          rights=json.loads((p/"SOURCES_RIGHTS.json").read_text())
+          music=json.loads((p/"MUSIC_V330_PROOF.json").read_text())
+          assert rights["met_object_id"]==437153 and rights["exact_api_isPublicDomain"] is True
+          assert rights["source_image_sha256"]==hashlib.sha256((p/"MET_ORIGINAL_ARTWORK.jpg").read_bytes()).hexdigest()
+          assert music["license_status"]=="ACTUAL_BINARY_SHA256_FFPROBE_VERIFIED"
+          assert music["selected"]["track_id"]=="myst_on_the_moor"
+          assert music["review"]["full_decode_video_audio"]=="PASS"
+          assert music["review"]["review_video_sha256"]==hashlib.sha256((p/"VIDEO_MUSIC20_HQ_REVIEW.mp4").read_bytes()).hexdigest()
+          copy=json.loads((p/"SOCIAL_COPY_DRAFTS.json").read_text())
+          copy["music_credits"]=music["selected"]["title"]+" — Kevin MacLeod (incompetech.com). CC BY 4.0 https://creativecommons.org/licenses/by/4.0/ ; ISRC "+music["selected"]["isrc"]
+          (p/"SOCIAL_COPY_DRAFTS.json").write_text(json.dumps(copy,ensure_ascii=False,indent=2)+"\n")
+          mobile=p/"VIDEO_ANDROID_MUSIC20_REVIEW.mp4"
+          subprocess.run(["ffmpeg","-y","-v","error","-i",str(p/"VIDEO_MUSIC20_HQ_REVIEW.mp4"),
+                         "-vf","scale=720:1280:flags=lanczos","-map","0:v:0","-map","0:a:0",
+                         "-c:v","libx264","-preset","veryfast","-crf","25","-pix_fmt","yuv420p",
+                         "-c:a","aac","-b:a","128k","-movflags","+faststart",str(mobile)],check=True)
+          for video in (p/"VIDEO_MUSIC20_HQ_REVIEW.mp4",mobile):
+            subprocess.run(["ffmpeg","-v","error","-xerror","-i",str(video),"-map","0",
+                            "-f","null","-"],check=True)
+          probe=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_format","-show_streams","-of","json",str(mobile)]))
+          assert 55<float(probe["format"]["duration"])<68
+          vs=[s for s in probe["streams"] if s.get("codec_type")=="video"]
+          au=[s for s in probe["streams"] if s.get("codec_type")=="audio"]
+          assert len(vs)==len(au)==1 and vs[0]["width"]==720 and vs[0]["height"]==1280
+          assert vs[0]["codec_name"]=="h264" and au[0]["codec_name"]=="aac"
+          digest=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
+          qa=json.loads((p/"QA_PREMUSIC.json").read_text())
+          qa.update({"status":"NEW_REAL_CINEMA_STANDARD_TECHNICAL_QA_PASS_PRIVATE_ARTISTIC_QA_PENDING",
+            "source_object":"MET_437153_21.134.1","music_verified":"Myst on the Moor Kevin MacLeod CC BY 4.0",
+            "music_isrc":music["selected"]["isrc"],"music_recording_actual_sha256":music["recording_proof"]["sha256"],
+            "music_HQ_mp4_sha256":digest(p/"VIDEO_MUSIC20_HQ_REVIEW.mp4"),
+            "android_mp4_sha256":digest(mobile),"android_mp4_bytes":mobile.stat().st_size,
+            "full_ffmpeg_decode_both_streams":"PASS","music_proof":music["license_status"],
+            "source_rights_review":"Met isPublicDomain=true confirmed, territorial final review pending",
+            "no_Gacrux_TTS_calls":True,"human_full_speed_review":"PENDING","gold":False,"published":False})
+          (p/"QA_FINAL.json").write_text(json.dumps(qa,ensure_ascii=False,indent=2)+"\n")
+          package=p/"ANDROID_MUSIC20_COMPLETE_PACKAGE.zip"
+          with zipfile.ZipFile(package,"w",zipfile.ZIP_DEFLATED,compresslevel=2) as z:
+            for filename in ("VIDEO_ANDROID_MUSIC20_REVIEW.mp4","COVER.jpg","CONTACT_SHEET.jpg",
+                             "SOURCES_RIGHTS.json","STORYBOARD.json","SOCIAL_COPY_DRAFTS.json",
+                             "QA_PREMUSIC.json","QA_FINAL.json","MUSIC_V330_PROOF.json"):
+              z.write(p/filename,filename)
+          with zipfile.ZipFile(package) as z:
+            assert z.testzip() is None
+            assert hashlib.sha256(z.read(mobile.name)).hexdigest()==qa["android_mp4_sha256"]
+          print("NEW_GUSTAVE_MOREAU_1864_CINEMA_COMPLETE",json.dumps({
+            "video_sha256":qa["music_HQ_mp4_sha256"],
+            "mobile_sha256":qa["android_mp4_sha256"],
+            "zip_sha256":digest(package),
+            "source_sha256":rights["source_image_sha256"],
+            "full_decode":"PASS","zip_crc":"PASS","published":False,"Gold":False}))
+          PY
+      - name: "Keep genuine MP4 ZIP source and documented inspection"
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: ARTVISION_MOREAU_OEDIPUS_AND_SPHINX_NEW_CINEMA_REAL_MP4_ANDROID_ZIP
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/VIDEO_MUSIC20_HQ_REVIEW.mp4
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/VIDEO_ANDROID_MUSIC20_REVIEW.mp4
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/ANDROID_MUSIC20_COMPLETE_PACKAGE.zip
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/MET_ORIGINAL_ARTWORK.jpg
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/COVER.jpg
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/CONTACT_SHEET.jpg
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/SOURCES_RIGHTS.json
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/STORYBOARD.json
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/SOCIAL_COPY_DRAFTS.json
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/MUSIC_V330_PROOF.json
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/QA_PREMUSIC.json
+            output/artvision-moreau-oedipus-sphinx-cinema-20261116/QA_FINAL.json
