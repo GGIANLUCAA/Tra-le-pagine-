@@ -226,12 +226,12 @@ def frame_beat(background,art,beat,p,ratio):
         return frame
     # Dettaglio: apertura sul contesto (zoom basso per far vedere le figure
     # intorno), carrellata sul particolare narrato che resta il protagonista,
-    # infine un leggero rilascio per preparare lo sguardo al racconto dopo.
+    # infine un leggero rilascio morbido per preparare lo sguardo al racconto dopo.
     q=min(1.,max(0.,p))
     if q<.5:
         env=push(q/.5)                 # 0 -> 1  (spinta sul dettaglio)
     else:
-        env=1.0-.14*((q-.5)/.5)        # 1 -> 0.86 (rilascio finale)
+        env=1.0-.14*small_smooth((q-.5)/.5)   # 1 -> 0.86 (rilascio morbido)
     z=beat["zoom_start"]+(beat["zoom_end"]-beat["zoom_start"])*env
     cw=min(ih,iw/(968/1430))*(968/1430)/max(1,z)   # larghezza reale del ritaglio
     fx=beat["focus"][0]+(.030*cw)/iw*math.sin(math.pi*q)
@@ -323,8 +323,8 @@ def produce(cfg,img,source,voice,vsec,bounds,engine,music,proof,out):
                 fr=cv2.addWeighted(card,1-b,dark,b,0)
         else:
             fr=frame_beat(base,img,beats[idx],p,ratio)
-            if transition is not None and t-enter_at<.40:
-                blend=small_smooth((t-enter_at)/.40)
+            if transition is not None and t-enter_at<.28:
+                blend=small_smooth((t-enter_at)/.28)
                 fr=cv2.addWeighted(transition,1-blend,fr,blend,0)
         try:ff.stdin.write(fr.tobytes())
         except BrokenPipeError:raise RuntimeError("FFmpeg encode crashed")
