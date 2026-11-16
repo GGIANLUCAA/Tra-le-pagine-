@@ -2,7 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from scripts.artvision_master_registry_v1 import build, norm, status
+from scripts.artvision_master_registry_v1 import build, norm, status, checkpoint_evidence
 
 class MasterRegistryTests(unittest.TestCase):
     def seed(self,root):
@@ -87,6 +87,46 @@ class MasterRegistryTests(unittest.TestCase):
     def test_rejected_voice_never_completed(self):
         self.assertEqual(status({"status":"OWNER_REJECTED_WRONG_NARRATION_VOICE__TECHNICAL_ARTIFACT_ONLY",
                                 "sha256":"a"*64}),"render_respinto")
+    def test_legacy_checkpoint_evidence_schema_variants(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);self.seed(root);q=root/"queue"
+            examples=[
+                ("golden",{"work":{"artist":"Edward Burne-Jones","title":"The Golden Stairs",
+                    "variant":"cinema_standard","state":"RENDERED_TECHNICALLY_VERIFIED"},
+                    "qa":{"mp4_sha256":"1"*64,"ffmpeg_full_decode":"PASS_VIDEO_AUDIO"}}),
+                ("apparition",{"secondary_work":{"artist":"Gustave Moreau","selected_title":"The Apparition",
+                    "variant":"cinema_standard"},"mp4":{"sha256":"2"*64,
+                    "ffmpeg_full_audio_decode":"PASS"}}),
+                ("fish",{"artist":"Paul Klee","title":"Fish Magic","variant":"cinema_standard",
+                    "render":{"hq_720":{"sha256":"3"*64},"h264_aac_full_decode":"PASS"}}),
+                ("dead_mother",{"artist":"Edvard Munch","owner_title":"The Dead Mother and Child",
+                    "variant":"cinema_standard","video":{"sha256":"4"*64},
+                    "technical_qa":{"local_full_ffmpeg_decode":"PASS"}}),
+                ("unknown",{"artist":"Unverified Artist","title":"Unverified Claim",
+                    "variant":"cinema_standard","status":"NEW_REAL_MP4_REVIEW",
+                    "production":{"mp4_hd_sha256":"5"*64},"qa":{"full_ffmpeg_decode":"PENDING"}}),
+                ("rejected",{"artist":"Evelyn De Morgan","owner_title":"The Dryad",
+                    "variant":"critico_standard","status":"OWNER_REJECTED_WRONG_NARRATION_VOICE",
+                    "mp4":{"sha256":"6"*64,"all_streams_ffmpeg_full_decode":"PASS"}})
+            ]
+            for name,record in examples:
+                (q/("owner_"+name+"_checkpoint.json")).write_text(json.dumps(record))
+            d=build(root,{"items":[]},"fixture","2026-11-16T10:00:00+00:00")
+            for artist,title in [("Edward Burne-Jones","The Golden Stairs"),
+                ("Gustave Moreau","The Apparition"),("Paul Klee","Fish Magic"),
+                ("Edvard Munch","The Dead Mother and Child")]:
+                w=next(w for w in d["works"] if w["artist"]==artist and w["title"]==title)
+                self.assertEqual(w["variants"]["cinema_standard"]["state"],"render_documentato",title)
+            bad=next(w for w in d["works"] if w["title"]=="Unverified Claim")
+            self.assertNotEqual(bad["variants"]["cinema_standard"]["state"],"render_documentato")
+            dryad=next(w for w in d["works"] if w["title"]=="The Dryad")
+            self.assertEqual(dryad["variants"]["critico_standard"]["state"],"render_respinto")
+    def test_declared_hash_needs_qa_evidence(self):
+        item={"status":"RENDERED_REAL_MP4","production":{"mp4_hd_sha256":"a"*64},
+              "qa":{"ffmpeg_full_decode":"PENDING"}}
+        self.assertEqual(checkpoint_evidence(item)["status"],"UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF")
+        item["qa"]["ffmpeg_full_decode"]="PASS"
+        self.assertEqual(checkpoint_evidence(item)["mp4_sha256"],"a"*64)
     def test_normalized_titles(self):
         self.assertEqual(norm("Die Sünde"),"die sunde")
 
