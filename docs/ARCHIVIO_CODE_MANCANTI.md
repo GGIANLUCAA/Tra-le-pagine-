@@ -20,7 +20,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Evelyn De Morgan | The Dryad | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
 | Evelyn De Morgan | The Storm Spirits | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, cicli_v31 |
 | Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh | After the Storm | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| Francisco Goya | The Witches' Flight | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
+| Francisco Goya | The Witches' Flight | critico_standard, critico_museum | selezione_30, checkpoint |
 | Franz Sedlacek | The Strange Garden | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, nuova_serie |
 | Franz von Stuck | The Sin (Die Sünde) | critico_standard, critico_museum | nuova_serie, checkpoint |
 | George Bellows | Cliff Dwellers | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
@@ -38,7 +38,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Ivan Aivazovsky | The Ninth Wave | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Ivan Aivazovsky; Caspar David Friedrich; Arnold Böcklin | The Sea Between Us | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Ivan Aivazovsky; Utagawa Hiroshige; Evelyn De Morgan | The Shape of the Wind | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
-| J. M. W. Turner | The Shipwreck | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
+| J. M. W. Turner | The Shipwreck | critico_standard, critico_museum, cinema_standard | selezione_30, checkpoint |
 | James Ensor | The Intrigue | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
 | Jan van Eyck | The Arnolfini Portrait — The Secret in the Mirror | critico_standard, critico_museum, cinema_standard, cinema_museum | cicli_v31 |
 | Jean-Léon Gérôme | The Duel After the Masquerade | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |

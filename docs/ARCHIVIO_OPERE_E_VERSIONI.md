@@ -27,7 +27,7 @@ Questi stati non implicano pubblicazione né playback.
 | Evelyn De Morgan | The Storm Spirits | ? | — | — | — | — | Non abbinato |
 | Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh | After the Storm | ? | — | — | — | — | Non abbinato |
 | Ford Madox Brown | L'ultimo saluto all'Inghilterra | ? | D | D | D | D | Non abbinato |
-| Francisco Goya | The Witches' Flight | 1798 | — | — | D | — | Non abbinato |
+| Francisco Goya | The Witches' Flight | 1798 | — | — | D | D | Non abbinato |
 | Franz Sedlacek | The Strange Garden | verify exact year | — | — | — | — | Non abbinato |
 | Franz von Stuck | The Sin (Die Sünde) | c. 1912 | C | C | D | D | Non abbinato |
 | George Bellows | Cliff Dwellers | 1913 | — | — | D | — | Non abbinato |
@@ -48,7 +48,7 @@ Questi stati non implicano pubblicazione né playback.
 | Ivan Aivazovsky; Caspar David Friedrich; Arnold Böcklin | The Sea Between Us | ? | — | — | — | — | Non abbinato |
 | Ivan Aivazovsky; Utagawa Hiroshige; Evelyn De Morgan | The Shape of the Wind | ? | — | — | — | — | Non abbinato |
 | J. M. W. Turner | The Fighting Temeraire | 1839 | D | D | D | D | Non abbinato |
-| J. M. W. Turner | The Shipwreck | ? | — | — | — | — | Non abbinato |
+| J. M. W. Turner | The Shipwreck | ? | — | — | — | D | Non abbinato |
 | Jacek Malczewski | Błędne koło (Il circolo vizioso) | 1897 | D | D | D | D | Non abbinato |
 | Jacques Louis David | The Death of Socrates | 1787 | D | D | D | D | Non abbinato |
 | James Ensor | The Intrigue | 1890 | — | — | D | — | Non abbinato |
@@ -319,13 +319,13 @@ Questi stati non implicano pubblicazione né playback.
 
 ### Francisco Goya — The Witches' Flight
 
-- Anno: 1798; Museo: da verificare
+- Anno: 1798; Museo: Museo del Prado
 - Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_goya_witches_flight.json [ONE_REAL_NEW_SOURCE_SHA1_LOCKED_52_46S_REVIEW_MP4_HQ_AND_ANDROID_]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json [RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING]
 
 ### Franz Sedlacek — The Strange Garden
 
@@ -529,13 +529,13 @@ Questi stati non implicano pubblicazione né playback.
 
 ### J. M. W. Turner — The Shipwreck
 
-- Anno: da verificare; Museo: da verificare
-- Code: selezione_30
+- Anno: da verificare; Museo: Tate Britain
+- Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: non_documentato; prove: nessuna
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json [RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING]
 
 ### Jacek Malczewski — Błędne koło (Il circolo vizioso)
 

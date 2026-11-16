@@ -1,11 +1,11 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-16T11:36:06+00:00",
+  "generated_at": "2026-11-16T11:38:55+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 89,
-    "render_documented_slots": 89,
-    "not_documented_slots": 267,
+    "render_documented_slots": 91,
+    "not_documented_slots": 265,
     "site_items": 732,
     "site_cloudflare": 724,
     "site_unavailable": 8,
@@ -106,7 +106,8 @@
             {
               "source": "queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json",
               "status_claim": "ONE_REAL_NEW_CINEMA_STANDARD_MP4_AND_ZIP_PRIVATE_ARTIFACT_TECHNICAL_QA_PASS_ARTISTIC_REVIEW_PENDING",
-              "classification": "in_coda_o_preflight"
+              "classification": "render_documentato",
+              "sha256": "4745c5f093b35bfef418da78f95424d295783c493f2d0d54784bdb4e92eb8a87"
             }
           ],
           "site_candidates": []
@@ -1326,14 +1327,15 @@
       "title": "The Witches' Flight",
       "artist": "Francisco Goya",
       "year": "1798",
-      "museum": "",
-      "object_id": "",
+      "museum": "Museo del Prado",
+      "object_id": "P07748",
       "lanes": [
         "selezione_30",
         "checkpoint"
       ],
       "sources": [
         "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json",
         "queue/artvision_owner_30_render_checkpoint_20261112_goya_witches_flight.json"
       ],
       "variants": {
@@ -1360,8 +1362,15 @@
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json",
+              "status_claim": "RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "38c22c474d9fd224fb4b247299a0ad8db07aaa4e385e8908e681fa93229b6707"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -1372,10 +1381,9 @@
       "priority": 19,
       "missing_variants": [
         "critico_standard",
-        "critico_museum",
-        "cinema_museum"
+        "critico_museum"
       ],
-      "render_documented": 1,
+      "render_documented": 2,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -2534,13 +2542,15 @@
       "title": "The Shipwreck",
       "artist": "J. M. W. Turner",
       "year": "",
-      "museum": "",
-      "object_id": "",
+      "museum": "Tate Britain",
+      "object_id": "N00476",
       "lanes": [
-        "selezione_30"
+        "selezione_30",
+        "checkpoint"
       ],
       "sources": [
-        "queue/artvision_owner_30_fast_quality_lane_20261109.json"
+        "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json"
       ],
       "variants": {
         "critico_standard": {
@@ -2559,8 +2569,15 @@
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json",
+              "status_claim": "RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "4f24e740fc715457813681437bef159feac77a133f2c18ef9ae32584e17950df"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -2572,10 +2589,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
-        "cinema_museum"
+        "cinema_standard"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
