@@ -165,6 +165,36 @@ def build(root,site,source,stamp):
         if w and cycle.get("mp4_verified"):
             w["legacy_video_claims"].append({"cycle_id":cycle.get("cycle_id"),
                    "sha256":cycle.get("sha256_mp4"),"workflow_run":cycle.get("workflow_run_url")})
+    # Historical source sets: keep evidence without promoting to four-variant masters.
+    for rel,lane,field in (
+        ("queue/artvision_museum_scale_s01_20261028.json","museum_scale","episodes"),
+        ("queue/artvision_dual_format_s01_20261028.json","legacy_dual_format","pairs")):
+        d=load(root/rel)
+        for item in d.get(field,[]) if isinstance(d,dict) else []:
+            if not isinstance(item,dict):continue
+            w=get(item,rel,lane)
+            if w:
+                w["legacy_video_claims"].append({"source":rel,"status":val(item,"status") or val(d,"status"),
+                    "note":"Formato storico; non conteggiare come slot 4x1 senza video specifico."})
+    # Research-only source lists: never confuse a shortlist with a render queue.
+    future_catalog=load(root/"research/artvision_future_works_index_v1_20261107.json")
+    future_100=[{"catalog_id":item.get("catalog_id"),"artist":val(item,"artist"),
+        "title":val(item,"title"),"year":val(item,"year"),"category":val(item,"category"),
+        "source":"research/artvision_future_works_index_v1_20261107.json",
+        "work_status":"banca_idee_non_coda_produttiva",
+        "rights_status":val(item,"pixel_file_license_status") or "non_verificato"}
+        for item in future_catalog.get("works",[]) if isinstance(item,dict)] if isinstance(future_catalog,dict) else []
+    selected_futures=load(root/"research/artvision_owner_selected_30_future_20261109.json")
+    future_30=[{"order":item.get("selection_order"),"artist":val(item,"artist_as_chosen","artist"),
+        "title":val(item,"title_as_chosen","title"),"status":val(item,"current_stage") or "research_pending",
+        "source":"research/artvision_owner_selected_30_future_20261109.json",
+        "rights_cleared":bool(item.get("territorial_commercial_reuse_cleared",False)),
+        "selection_only_not_completed":True}
+        for item in selected_futures.get("works",[]) if isinstance(item,dict)] if isinstance(selected_futures,dict) else []
+    production_root=root/"docs/productions"
+    production_dossiers=[{"path":str(p.relative_to(root)),"extension":p.suffix.lower(),
+        "bytes":p.stat().st_size} for p in sorted(production_root.rglob("*")) if p.is_file()] if production_root.is_dir() else []
+    production_dirs=sum(p.is_dir() for p in production_root.rglob("*")) if production_root.is_dir() else 0
     # All literary series dossiers are included without implying completed video delivery.
     literary=[]
     for folder in sorted((root/"episodes").glob("*")):
