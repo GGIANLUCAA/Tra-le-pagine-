@@ -38,10 +38,62 @@ def val(o,*keys):
 def identify(obj):
     base=obj.get("work",{}) if isinstance(obj.get("work"),dict) else {}
     return (val(obj,"artist","artist_as_chosen") or val(base,"artist"),
-            val(obj,"title_en","title","title_as_chosen","artwork","work_title","work") or val(base,"title"),
+            val(obj,"title_en","title_as_chosen","owner_title","selected_title","title_selected",
+                "title","artwork","work_title","work") or val(base,"title"),
             val(obj,"year") or val(base,"year"),
             val(obj,"museum") or val(base,"museum"),
             val(obj,"accession","object_id") or val(base,"accession","object_id"))
+
+def checkpoint_evidence(obj):
+    """Extract an exact MP4 claim only when a checkpoint also reports positive QA.
+
+    A SHA from a source image, music, ZIP, or unverified job is never MP4 proof.
+    A successful technical review does not mean owner approval or publication.
+    """
+    if not isinstance(obj,dict):return {}
+    work=obj.get("work") if isinstance(obj.get("work"),dict) else {}
+    parts=[obj.get(k) for k in ("production","mp4","video","media","render","verified_render")]
+    parts=[p for p in parts if isinstance(p,dict)]
+    sha_keys=("mp4_sha256","video_sha256","hd_sha256","mp4_hd_sha256",
+              "hd_video_sha256","hq_sha256","v2_sha256","v2_mp4_sha256","sha256_mp4",
+              "SHA256","sha256","hd_sha","android_sha256")
+    sha=val(obj,"mp4_sha256","video_sha256")
+    for part in parts:
+        if not sha:sha=val(part,*sha_keys)
+        if not sha:
+            for nested in ("hq_720","hq_1080","hd","original","master"):
+                p=part.get(nested)
+                if isinstance(p,dict):
+                    sha=val(p,"mp4_sha256","sha256")
+                    if sha:break
+    qas=[obj.get(k) for k in ("qa","QA","technical_qa","independent_qa","review")]
+    qas=[q for q in qas if isinstance(q,dict)]
+    qas+=parts
+    def positive(p):
+        for k,v in p.items():
+            if isinstance(v,dict) and positive(v):return True
+            if (isinstance(v,str) and "pass" in v.lower()
+                and any(t in k.lower() for t in ("ffmpeg","decode","readback","sha256",
+                    "video","render_job","artifact","crc","source_mp4","mp4"))):
+                return True
+        return False
+    qa_pass=any(positive(q) for q in qas)
+    status_text=val(obj,"status","render_status") or val(work,"status","state") or ""
+    if any(w in status_text.lower() for w in ("owner_rejected","wrong_voice","rejected_wrong")):
+        return {"status":status_text}
+    verified_hash=bool(re.fullmatch(r"[a-fA-F0-9]{64}",sha or ""))
+    # One historical private Cinema checkpoint has independently decoded bytes
+    # and a private-library reference, but no published SHA: keep claim explicit.
+    extra=obj.get("other",{})
+    extra_pass=isinstance(extra,dict) and val(extra,"full_ffmpeg_video_audio_decode")=="PASS"
+    private_bytes=isinstance(extra,dict) and isinstance(extra.get("source_video_1080_bytes"),int) and extra["source_video_1080_bytes"]>1000000
+    private_id=bool(val(extra,"private_library_file_id"))
+    if verified_hash and qa_pass:
+        return {"status":"RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING","mp4_sha256":sha}
+    if extra_pass and private_bytes and private_id and "REAL_MP4" in status_text:
+        return {"status":"RENDERED_TECH_QA_PRIVATE_VIDEO_NO_MP4_SHA_RECORDED"}
+    return {"status":status_text} if status_text else {}
+
 def status(d):
     s=val(d,"status","render_status").lower()
     sha=val(d,"video_sha256","rendered_mp4_sha256","mp4_sha256","hd_sha256","sha256","preferred_v2_mp4_sha256","original_v1_mp4_sha256")
@@ -138,26 +190,31 @@ def build(root,site,source,stamp):
         d=load(path);rel=str(path.relative_to(root))
         # Some checkpoints contain two or more independent artworks in works[].
         objects=d.get("works") if isinstance(d,dict) and isinstance(d.get("works"),list) else [d]
-        for obj in objects:
-            w=get(obj,rel,"checkpoint")
-            if not w:continue
-            variant_matrix=obj.get("variants") if isinstance(obj.get("variants"),dict) else obj.get("variant_matrix")
-            if isinstance(variant_matrix,dict):
-                for variant,detail in variant_matrix.items():put(w,variant,detail,rel)
-            if isinstance(obj.get("existing_slots"),list):
-                for slot in obj["existing_slots"]:
-                    if isinstance(slot,dict):put(w,slot.get("variant"),slot,rel)
-            if obj.get("variant") in VARIANTS:
-                prod=obj.get("production",{}) if isinstance(obj.get("production"),dict) else {}
-                verified=obj.get("verified_render",{}) if isinstance(obj.get("verified_render"),dict) else {}
-                put(w,obj["variant"],{"status":val(obj,"status"),
-                    "mp4_sha256":val(obj,"mp4_sha256","video_sha256") or
-                    val(prod,"hd_sha256","mp4_sha256","video_sha256","android_sha256") or
-                    val(verified,"mp4_sha256","hd_sha256")},rel)
-            if isinstance(obj.get("remaining"),list):
-                for v in obj["remaining"]:
-                    if v in VARIANTS and w["variants"][v]["state"]=="non_documentato":
-                        w["variants"][v]["state"]="da_produrre"
+        for original in objects:
+            # Old owner-30 checkpoints use secondary_work for the selected
+            # painting and keep video proofs in top-level mp4 + QA.
+            extra=original.get("secondary_work") if isinstance(original,dict) else None
+            objs=[original]
+            if isinstance(extra,dict):
+                objs.append({**original,**extra,"title":val(extra,"selected_title","title"),
+                             "artist":val(extra,"artist")})
+            for obj in objs:
+                w=get(obj,rel,"checkpoint")
+                if not w:continue
+                variant_matrix=obj.get("variants") if isinstance(obj.get("variants"),dict) else obj.get("variant_matrix")
+                if isinstance(variant_matrix,dict):
+                    for variant,detail in variant_matrix.items():put(w,variant,detail,rel)
+                if isinstance(obj.get("existing_slots"),list):
+                    for slot in obj["existing_slots"]:
+                        if isinstance(slot,dict):put(w,slot.get("variant"),slot,rel)
+                work=obj.get("work") if isinstance(obj.get("work"),dict) else {}
+                variant=val(obj,"variant") or val(extra,"variant") or val(work,"variant")
+                if variant in VARIANTS:
+                    put(w,variant,checkpoint_evidence(obj),rel)
+                if isinstance(obj.get("remaining"),list):
+                    for v in obj["remaining"]:
+                        if v in VARIANTS and w["variants"][v]["state"]=="non_documentato":
+                            w["variants"][v]["state"]="da_produrre"
 
     cycles=load(root/"queue/artvision_autoproduction_v31_state.json")
     for cycle in cycles.get("cycle_log",[]) if isinstance(cycles,dict) else []:
