@@ -161,12 +161,21 @@ def main() -> None:
 
     background = cv2.GaussianBlur(cv2.resize(src, (W, H), interpolation=cv2.INTER_AREA), (0, 0), 51)
     background = cv2.convertScaleAbs(background, alpha=0.30)
-    wide = background.copy()
+    wide1 = background.copy()
     full_w = min(W - 42, int((H - 300) * aw / ah))
     full_h = round(full_w * ah / aw)
-    x0 = (W - full_w) // 2
-    y0 = (H - full_h) // 2
-    wide[y0:y0 + full_h, x0:x0 + full_w] = cv2.resize(src, (full_w, full_h), interpolation=cv2.INTER_AREA)
+    fx0 = (W - full_w) // 2
+    fy0 = (H - full_h) // 2
+    wide1[fy0:fy0 + full_h, fx0:fx0 + full_w] = cv2.resize(src, (full_w, full_h), interpolation=cv2.INTER_AREA)
+
+    def wide(s: float) -> np.ndarray:
+        """Opera intera incorniciata; s>1 = vista ravvicinata (per rivelazioni/allontanamenti fluidi)."""
+        s = max(1.0, float(s))
+        sw = max(2, round(W / s))
+        sh = max(2, round(H / s))
+        x = (W - sw) // 2
+        y = (H - sh) // 2
+        return cv2.resize(wide1[y:y + sh, x:x + sw], (W, H), interpolation=cv2.INTER_AREA)
 
     def detail(p) -> np.ndarray:
         cx, cy, hfrac = p
@@ -176,29 +185,59 @@ def main() -> None:
         y = max(0, min(ah - hh, round(cy * ah - hh / 2)))
         return cv2.resize(src[y:y + hh, x:x + ww], (W, H), interpolation=cv2.INTER_AREA)
 
-    # 14 inquadrature dagli stessi 14 punti del dossier V13. None = opera intera.
-    # (etichetta, durata, crop iniziale, crop finale)  crop=(cx,cy,hfrac)
+    # 14 inquadrature: UNA sola intenzione di regia per inquadratura, sempre nello stesso verso.
+    #   kind "wide" -> opera intera incorniciata, rivelazione (s0 -> s1) con un solo movimento lento.
+    #   kind "move" -> carrello lento e continuo su un dettaglio (from -> to); mai zoom che tornano indietro.
+    #   kind "card" -> opera intera tenuta, con la firma V6 che entra in dissolvenza (chiusura).
+    # xf = dissolvenza in apertura di scena (frame); 0 = stacco netto, riservato al culmine.
     shots: list = [
-        ("FIRMA: NOME ARTISTA E MUSIC BY", 5.5, "SIGNATURE", None),
-        ("OPERA INTERA: DUE DONNE, UN UOMO", 5.0, None, None),
-        ("LENZUOLO BIANCO E SANGUE", 4.5, (0.27, 0.68, 0.34), (0.25, 0.70, 0.24)),
-        ("VOLTO DI OLOFERNE: COSCIENTE, INERME", 4.0, (0.52, 0.43, 0.20), (0.52, 0.43, 0.20)),
-        ("GETTO DI SANGUE DAL COLLO", 4.5, (0.62, 0.36, 0.30), (0.60, 0.37, 0.20)),
-        ("VOLTO DI GIUDITTA: FERMEZZA E DISGUSTO", 5.0, (0.84, 0.41, 0.24), (0.84, 0.41, 0.24)),
-        ("BRACCIO DESTRO E TORSIONE DEL BUSTO", 4.5, (0.71, 0.55, 0.38), (0.71, 0.57, 0.27)),
-        ("LA SPADA LUNGA E LA MANO", 4.0, (0.63, 0.42, 0.30), (0.63, 0.42, 0.30)),
-        ("VOLTO DELL'ANCELLA: CALMO", 5.0, (0.15, 0.40, 0.24), (0.15, 0.40, 0.24)),
-        ("BRACCIALE IN ORO CON CAMMEI", 4.5, (0.74, 0.58, 0.22), (0.74, 0.59, 0.15)),
-        ("VESTE IN DAMASCO GIALLO E MERLETTO", 4.5, (0.72, 0.73, 0.22), (0.72, 0.73, 0.33)),
-        ("PIEGHE DEL VELLUTO ROSSO E FRANGE", 4.5, (0.30, 0.61, 0.36), (0.30, 0.62, 0.26)),
-        ("RITORNO ALL'OPERA INTERA", 5.5, None, None),
-        ("TENUTA FINALE, DISSOLVENZA IN NERO", 5.0, None, None),
+        {"label": "RIVELAZIONE: L'OPERA INTERA EMERGE DAL BUIO", "dur": 8.0,
+         "kind": "wide", "s0": 1.18, "s1": 1.00, "xf": 0},
+        {"label": "LE DUE DONNE: CARRELLO LENTO DA SINISTRA A DESTRA", "dur": 6.0,
+         "kind": "move", "from": (0.20, 0.45, 0.44), "to": (0.80, 0.45, 0.44), "xf": 14},
+        {"label": "VOLTO DI GIUDITTA: FERMEZZA (AVVICINAMENTO)", "dur": 5.0,
+         "kind": "move", "from": (0.84, 0.40, 0.30), "to": (0.84, 0.40, 0.24), "xf": 14},
+        {"label": "L'ANCELLA CHE SI COPRE (AVVICINAMENTO)", "dur": 4.0,
+         "kind": "move", "from": (0.16, 0.39, 0.30), "to": (0.16, 0.39, 0.24), "xf": 14},
+        {"label": "IL BRACCIO TESO E LA SPADA (AVVICINAMENTO)", "dur": 4.5,
+         "kind": "move", "from": (0.70, 0.48, 0.42), "to": (0.68, 0.44, 0.30), "xf": 14},
+        {"label": "LA MANO CHE STRINGE I CAPELLI (AVVICINAMENTO)", "dur": 3.5,
+         "kind": "move", "from": (0.55, 0.30, 0.32), "to": (0.55, 0.30, 0.24), "xf": 14},
+        {"label": "IL VOLTO DI OLOFERNE: COSCIENTE, INERME", "dur": 4.0,
+         "kind": "move", "from": (0.50, 0.44, 0.26), "to": (0.50, 0.44, 0.20), "xf": 14},
+        {"label": "IL GETTO DI SANGUE: IL CULMINE (STACCO NETTO)", "dur": 6.5,
+         "kind": "move", "from": (0.63, 0.36, 0.30), "to": (0.61, 0.36, 0.22), "xf": 0},
+        {"label": "IL LENZUOLO BIANCO INTINTO (AVVICINAMENTO)", "dur": 4.0,
+         "kind": "move", "from": (0.28, 0.66, 0.34), "to": (0.27, 0.68, 0.26), "xf": 14},
+        {"label": "BRACCIALE D'ORO E CAMMEI (AVVICINAMENTO)", "dur": 3.5,
+         "kind": "move", "from": (0.74, 0.58, 0.24), "to": (0.74, 0.58, 0.16), "xf": 14},
+        {"label": "LA VESTE DI DAMASCO (ALLONTANAMENTO)", "dur": 4.0,
+         "kind": "move", "from": (0.72, 0.73, 0.20), "to": (0.72, 0.73, 0.32), "xf": 14},
+        {"label": "IL VELLUTO ROSSO E LE PIEGHE (ALLONTANAMENTO)", "dur": 4.0,
+         "kind": "move", "from": (0.30, 0.62, 0.26), "to": (0.30, 0.62, 0.36), "xf": 14},
+        {"label": "RITORNO ALL'OPERA: IL RESPIRO (ALLONTANAMENTO)", "dur": 6.0,
+         "kind": "wide", "s0": 1.12, "s1": 1.00, "xf": 14},
+        {"label": "TENUTA FINALE: FIRMA DELLA SERIE, DISSOLVENZA IN NERO", "dur": 6.0,
+         "kind": "card", "s0": 1.00, "s1": 1.00, "xf": 14},
     ]
-    frame_counts = [round(s[1] * FPS) for s in shots]
+    assert len(shots) == 14, len(shots)
+    frame_counts = [round(s["dur"] * FPS) for s in shots]
     N = sum(frame_counts)
     DURATION = N / FPS
-    assert len(shots) == 14 and 64.0 < DURATION < 68.0, DURATION
+    assert 66.0 < DURATION < 70.0, DURATION
     last = len(shots) - 1
+
+    def ease(u: float) -> float:
+        u = max(0.0, min(1.0, u))
+        return u * u * (3 - 2 * u)
+
+    def shot_frame(k: int, u: float) -> np.ndarray:
+        s = shots[k]
+        e = ease(u)
+        if s["kind"] == "move":
+            a, b = s["from"], s["to"]
+            return detail(tuple(a[j] + (b[j] - a[j]) * e for j in range(3)))
+        return wide(s["s0"] + (s["s1"] - s["s0"]) * e)
 
     # Copertina = volto di Giuditta in luce, con la stessa identità V6 della serie.
     cover_frame = cover(detail((0.83, 0.42, 0.30)), ARTIST, COMPOSER)
@@ -221,39 +260,37 @@ def main() -> None:
     contact: list = []
     story: list = []
     cursor = 0.0
-    fade_frames = round(1.6 * FPS)
+    fade_in_frames = round(1.2 * FPS)
+    fade_out_frames = round(1.5 * FPS)
     try:
-        for k, ((label, duration, frm, to), count) in enumerate(zip(shots, frame_counts)):
+        prev_last: np.ndarray | None = None
+        for k, s in enumerate(shots):
+            count = frame_counts[k]
+            xf = s["xf"] if prev_last is not None else 0
             for i in range(count):
-                q = i / max(1, count - 1)
-                s = q * q * (3 - 2 * q)
-                if k == 0:
-                    frame = background.copy()
-                    frame = signature(frame, i / FPS, ARTIST, COMPOSER)
-                elif frm is None:
-                    frame = wide.copy()
-                else:
-                    frame = detail(tuple(frm[j] + (to[j] - frm[j]) * s for j in range(3)))
-                # Rampa di continuità all'ingresso della scena (un solo movimento per volta).
-                prev = shots[k - 1][3] if k > 0 else None
-                ramp = min(count // 3, round(0.70 * FPS))
-                if k > 1 and i < ramp and frm is not None and prev is not None:
-                    e = i / max(1, ramp - 1)
-                    e = e * e * (3 - 2 * e)
-                    p = tuple(prev[j] + (frm[j] - prev[j]) * e for j in range(3))
-                    frame = detail(p)
-                elif k > 0 and i < ramp and frm is None and prev is not None:
-                    e = i / max(1, ramp - 1)
-                    e = e * e * (3 - 2 * e)
-                    frame = cv2.addWeighted(detail(prev), 1 - e, wide, e, 0)
-                if k == last and i >= count - fade_frames:
-                    f = (count - i) / fade_frames
-                    frame = cv2.convertScaleAbs(frame, alpha=max(0.0, f))
+                u = i / max(1, count - 1)
+                frame = shot_frame(k, u)
+                if k == 0:  # l'opera emerge dal nero
+                    frame = cv2.convertScaleAbs(frame, alpha=min(1.0, (i + 1) / fade_in_frames))
+                if k == last:  # la firma V6 entra in dissolvenza, poi si spegne nel nero
+                    a = min(1.0, (i + 1) / (1.0 * FPS))
+                    sig = signature(frame, 0.0, ARTIST, COMPOSER, force_visible=True)
+                    frame = cv2.addWeighted(frame, 1 - a, sig, a, 0)
+                    if i >= count - fade_out_frames:
+                        frame = cv2.convertScaleAbs(
+                            frame, alpha=max(0.0, (count - i) / fade_out_frames))
+                if xf > 0 and i < xf:  # dissolvenza in apertura di scena
+                    e = ease((i + 1) / (xf + 1))
+                    frame = cv2.addWeighted(prev_last, 1 - e, frame, e, 0)
                 proc.stdin.write(np.ascontiguousarray(frame).tobytes())
                 if i == count // 2:
                     contact.append((cursor + i / FPS, cv2.resize(frame, (216, 384))))
-            story.append({"scene": k + 1, "subject": label, "start_s": round(cursor, 3),
-                          "duration_s": round(count / FPS, 3), "semantic_qa": "PENDING"})
+            prev_last = shot_frame(k, 1.0)
+            story.append({"scene": k + 1, "subject": s["label"], "kind": s["kind"],
+                          "start_s": round(cursor, 3), "duration_s": round(count / FPS, 3),
+                          "opens_with": ("fade_from_black" if k == 0 else
+                                         ("hard_cut" if xf == 0 else f"dissolve_{xf}f")),
+                          "semantic_qa": "PENDING"})
             cursor += count / FPS
         proc.stdin.close()
         err = proc.stderr.read()
