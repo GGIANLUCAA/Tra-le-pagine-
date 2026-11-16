@@ -23,6 +23,9 @@ def norm(x):
     x=unicodedata.normalize("NFKD",str(x or ""))
     x="".join(c for c in x if not unicodedata.combining(c))
     return re.sub(r"[^a-z0-9]+"," ",x.lower()).strip()
+def artist_key(x):
+    s=norm(x)
+    return {"j m w turner":"joseph mallord william turner", "jm w turner":"joseph mallord william turner"}.get(s,s)
 def year(x):
     m=re.search(r"\b(?:1[4-9]\d{2}|20\d{2})\b",str(x or ""))
     return m.group(0) if m else ""
@@ -41,7 +44,7 @@ def identify(obj):
             val(obj,"accession","object_id") or val(base,"accession","object_id"))
 def status(d):
     s=val(d,"status","render_status").lower()
-    sha=val(d,"video_sha256","rendered_mp4_sha256","mp4_sha256","hd_sha256","sha256")
+    sha=val(d,"video_sha256","rendered_mp4_sha256","mp4_sha256","hd_sha256","sha256","preferred_v2_mp4_sha256","original_v1_mp4_sha256")
     if any(k in s for k in ("rendered","real_mp4","real_new_mp4","technical_pass","mp4_verified")) or re.fullmatch(r"[a-fA-F0-9]{64}",sha):return "render_documentato"
     if "not_started" in s:return "da_produrre"
     if any(k in s for k in ("blocked","failed","unavailable")):return "bloccato"
@@ -56,7 +59,7 @@ def build(root,site,source,stamp):
         if not isinstance(obj,dict):return None
         artist,title,yr,museum,objid=identify(obj)
         if not artist or not title:return None
-        matches=[w for w in works.values() if norm(w["artist"])==norm(artist) and norm(w["title"])==norm(title)
+        matches=[w for w in works.values() if artist_key(w["artist"])==artist_key(artist) and norm(w["title"])==norm(title)
                  and (not year(yr) or not year(w["year"]) or year(yr)==year(w["year"]))]
         if matches:w=matches[0]
         else:
@@ -76,7 +79,7 @@ def build(root,site,source,stamp):
     def put(w,v,obj,path):
         if v not in VARIANTS or not isinstance(obj,dict):return
         stat=status(obj)
-        sha=val(obj,"video_sha256","rendered_mp4_sha256","mp4_sha256","hd_sha256","sha256")
+        sha=val(obj,"video_sha256","rendered_mp4_sha256","mp4_sha256","hd_sha256","sha256","preferred_v2_mp4_sha256","original_v1_mp4_sha256")
         ev={"source":path,"status_claim":val(obj,"status","render_status") or "non dichiarato","classification":stat}
         if re.fullmatch(r"[a-fA-F0-9]{64}",sha):
             ev["sha256"]=sha.lower()
@@ -98,8 +101,9 @@ def build(root,site,source,stamp):
         for obj in d[field]:
             w=get(obj,rel,lane)
             if not w:continue
-            if isinstance(obj.get("variants"),dict):
-                for variant,detail in obj["variants"].items():put(w,variant,detail,rel)
+            variant_matrix=obj.get("variants") if isinstance(obj.get("variants"),dict) else obj.get("variant_matrix")
+            if isinstance(variant_matrix,dict):
+                for variant,detail in variant_matrix.items():put(w,variant,detail,rel)
             if lane=="nuova_serie" and "RENDER" in val(obj,"status").upper():
                 put(w,"cinema_standard",{"status":val(obj,"status")},rel)
             if lane=="selezione_10" and obj.get("preexisting_cinema_candidate"):
