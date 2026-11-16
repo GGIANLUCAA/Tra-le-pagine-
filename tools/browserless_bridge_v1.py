@@ -35,7 +35,25 @@ export default async ({page, context}) => {
   for (const action of context.actions) {
     try {
       ensureAllowed();
-      if (action.type === "click") {
+      if (action.type === "inspect_public_links") {
+        // Only expose public on-page navigation destinations. Strip query/fragment;
+        // reject off-allowlist links. No HTML, cookies, headers or form contents.
+        const links = await page.$eval("a[href]", els =>
+          els.map(el => {
+            try {
+              const url = new URL(el.href);
+              if (url.protocol !== "https:" ||
+                  !["example.com", "docs.browserless.io"].includes(url.hostname) ||
+                  url.search || url.hash) return null;
+              return {path: url.pathname.slice(0, 140),
+                      host: url.hostname,
+                      text: (el.textContent || "").trim().replace(/\\s+/g, " ").slice(0, 90)};
+            } catch (_) { return null; }
+          }).filter(Boolean).slice(0, 25));
+        return {data: {title: (await page.title()).slice(0, 240),
+                       url: page.url(), action_count: 1, links},
+                type: "application/json"};
+      } else if (action.type === "click") {
         const el = await page.waitForSelector(action.selector, {timeout: 6500});
         if (!el) throw new Error("SELECTOR_NOT_FOUND");
         const isLink = await el.evaluate(n => n.tagName.toLowerCase() === "a");
@@ -90,11 +108,17 @@ def validate_request(value):
     if not isinstance(actions, list) or len(actions) > MAX_ACTIONS:
         raise ValueError("Too many actions")
     for action in actions:
-        if not isinstance(action, dict) or action.get("type") not in ("click", "type_public"):
+        if not isinstance(action, dict) or action.get("type") not in ("click", "type_public", "inspect_public_links"):
             raise ValueError("Invalid action")
-        if set(action) != ({"type", "selector"} if action["type"] == "click"
-                           else {"type", "selector", "text"}):
+        fields = ({"type"} if action["type"] == "inspect_public_links"
+                  else {"type", "selector"} if action["type"] == "click"
+                  else {"type", "selector", "text"})
+        if set(action) != fields:
             raise ValueError("Invalid action fields")
+        if action["type"] == "inspect_public_links":
+            if len(actions) != 1:
+                raise ValueError("Public link inspection must be a single action")
+            continue
         selector = action["selector"]
         if not isinstance(selector, str) or not selector.strip() or len(selector) > 100:
             raise ValueError("Invalid CSS selector")
@@ -154,9 +178,27 @@ def run_request(value, token):
     final_url = urllib.parse.urlsplit(data.get("url", ""))
     if final_url.scheme != "https" or final_url.hostname not in ALLOWED_HOSTS:
         raise RuntimeError("Final browser URL outside allowlist")
-    return {"request_id": value["request_id"], "status": "verified_public_page",
-            "title": data["title"][:240], "heading": str(data.get("heading", ""))[:400],
-            "final_host": final_url.hostname, "actions_executed": data.get("action_count")}
+    output = {"request_id": value["request_id"], "status": "verified_public_page",
+              "title": data["title"][:240], "heading": str(data.get("heading", ""))[:400],
+              "final_host": final_url.hostname, "actions_executed": data.get("action_count")}
+    if value["actions"] and value["actions"][0]["type"] == "inspect_public_links":
+        raw_links = data.get("links", [])
+        if not isinstance(raw_links, list) or len(raw_links) > 25:
+            raise RuntimeError("Invalid public links result")
+        links = []
+        for link in raw_links:
+            if not isinstance(link, dict) or set(link) != {"host", "path", "text"}:
+                raise RuntimeError("Invalid public link")
+            if link["host"] not in ALLOWED_HOSTS:
+                raise RuntimeError("Public link host outside allowlist")
+            if not isinstance(link["path"], str) or not link["path"].startswith("/") or (
+                    "?" in link["path"] or "#" in link["path"]):
+                raise RuntimeError("Invalid public link path")
+            if not isinstance(link["text"], str):
+                raise RuntimeError("Invalid public link text")
+            links.append({"host": link["host"], "path": link["path"][:140], "text": link["text"][:90]})
+        output["public_links"] = links
+    return output
 
 
 def main():

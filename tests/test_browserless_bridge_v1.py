@@ -111,5 +111,39 @@ class TestPublicBrowserBridge(unittest.TestCase):
         self.assertNotIn("never disclose", str(outcome.exception))
 
 
+    def test_inspect_public_links_is_one_public_action(self):
+        req = sample()
+        req["actions"] = [{"type": "inspect_public_links"}]
+        self.assertIs(validate_request(req), req)
+        req["actions"] = [{"type": "inspect_public_links", "selector": "a"}]
+        with self.assertRaises(ValueError):
+            validate_request(req)
+        req["actions"] = [{"type": "inspect_public_links"}, {"type": "click", "selector": "a"}]
+        with self.assertRaises(ValueError):
+            validate_request(req)
+
+    def test_public_links_results_do_not_expose_unapproved_hosts(self):
+        class Response:
+            def __init__(self, host):
+                self.host = host
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self, n):
+                return json.dumps({"data": {"title": "Documentation", "url": "https://docs.browserless.io/",
+                  "links": [{"host": self.host, "path": "/rest-apis/intro", "text": "REST APIs"}]}}).encode()
+        req = sample()
+        req["url"] = "https://docs.browserless.io/"
+        req["actions"] = [{"type": "inspect_public_links"}]
+        with patch("tools.browserless_bridge_v1.urllib.request.urlopen", return_value=Response("docs.browserless.io")):
+            response = run_request(req, "private_token")
+            self.assertEqual(response["public_links"][0]["path"], "/rest-apis/intro")
+            self.assertNotIn("private_token", json.dumps(response))
+        with patch("tools.browserless_bridge_v1.urllib.request.urlopen", return_value=Response("untrusted.example")):
+            with self.assertRaises(RuntimeError):
+                run_request(req, "private_token")
+
+
 if __name__ == "__main__":
     unittest.main()
