@@ -21,6 +21,15 @@ async function main() {
   const env = {
     VIDEOS: {async put(){publicWrites++;throw Error('PUBLIC BUCKET MUST NOT BE USED')}},
     PRIVATE_ARCHIVE: {
+      async list({prefix}) {
+        return {objects:[...privateObjects.entries()].filter(([key])=>key.startsWith(prefix))
+          .map(([key,v])=>({key,size:v.bytes.byteLength,customMetadata:v.meta})),
+          truncated:false};
+      },
+      async get(key) {
+        const x=privateObjects.get(key);
+        return x?{async json(){return JSON.parse(Buffer.from(x.bytes).toString('utf8'))}}:null;
+      },
       async head(key) {
         const v = privateObjects.get(key);
         return v ? {size:v.bytes.byteLength,customMetadata:v.meta} : null;
@@ -30,8 +39,10 @@ async function main() {
         assert(options.onlyIf?.etagDoesNotMatch==='*');
         assert(!privateObjects.has(key));
         const bytes = value instanceof ArrayBuffer ? new Uint8Array(value)
+          : typeof value==='string'?Buffer.from(value,'utf8')
+          : value?.getReader ? new Uint8Array(await new Response(value).arrayBuffer())
           : Uint8Array.from(value);
-        privateObjects.set(key,{bytes,meta:options.customMetadata});
+        privateObjects.set(key,{bytes,meta:options.customMetadata||{}});
         return {size:bytes.byteLength};
       }
     }
@@ -87,6 +98,43 @@ async function main() {
   result=await invoke('https://example.test/private-single?artifact=bad&key=TEST_VIDEO.mp4&sha256='+sha,'POST',bytes);
   assert.equal(result.status,400);
   assert.equal(publicWrites,0);
+  // Authenticated stream handles HD/Museum masters bigger than the old 30MiB ceiling.
+  const longName='LARGE_MUSEUM.mp4', longArtifact='14156323301';
+  const longKey='gh-artifacts/'+longArtifact+'/'+longName;
+  const streamUrl='https://example.test/private-stream?artifact='+longArtifact+
+    '&key='+longName+'&sha256='+sha+'&bytes='+bytes.length;
+  const longReq=()=>new Request(streamUrl,{method:'POST',body:bytes,
+                                  headers:{'content-length':String(bytes.length)}});
+  result=await worker.fetch(longReq(),env);
+  assert.equal(result.status,200);
+  const streamed=await result.json();
+  assert.equal(streamed.sha256Proof,'github_source_checked');
+  assert.equal(privateObjects.get(longKey).bytes.length,bytes.length);
+  assert.equal(publicWrites,0);
+
+  result=await worker.fetch(longReq(),env);
+  assert.equal(result.status,200);
+  assert.equal((await result.json()).already_exists,true);
+
+  const list=await invoke('https://example.test/private-artifact-list?artifact='+longArtifact,'GET');
+  assert.equal(list.status,200);
+  assert((await list.json()).items.some(x=>x.key===longName&&x.sha256===sha));
+
+  const checkpointUrl='https://example.test/private-artifact-done?artifact='+longArtifact;
+  const checkpointBody=JSON.stringify({files:[{name:longName,bytes:bytes.length,sha256:sha}]});
+  result=await invoke(checkpointUrl,'POST',checkpointBody);
+  assert.equal(result.status,200);
+  assert.equal((await result.json()).done,true);
+  result=await invoke(checkpointUrl,'GET');
+  assert.equal(result.status,200);
+  assert.equal((await result.json()).details.publicRelease,false);
+  assert.equal((await invoke(checkpointUrl,'POST',checkpointBody)).status,200);
+  assert.equal(publicWrites,0);
+
+  result=await invoke('https://example.test/private-ready','GET',{},{VIDEOS:env.VIDEOS});
+  assert.equal(result.status,503,'Fail closed before private binding is deployed');
+  result=await invoke('https://example.test/private-ready','GET');
+  assert.equal((await result.json()).ready,true);
 
   console.log('PASS: private-only staging, exact SHA, owner OIDC route separation, no public bucket writes');
 }
