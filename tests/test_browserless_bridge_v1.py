@@ -23,7 +23,8 @@ class TestPublicBrowserBridge(unittest.TestCase):
     def test_url_must_be_approved_and_have_no_credentials(self):
         for bad in ("http://example.com", "https://evil.example.com",
                     "https://example.com/?token=secret", "https://alice:password@example.com/",
-                    "https://accounts.google.com/", "https://work.trae.ai/",
+                    "https://accounts.google.com/", "https://work.trae.ai/projects",
+                    "https://work.trae.ai/?login=1",
                     "https://example.com:8080/"):
             with self.subTest(bad=bad):
                 v = sample()
@@ -167,6 +168,18 @@ class TestPublicBrowserBridge(unittest.TestCase):
             result = run_request(req, "test_secret")
             self.assertEqual(result["verified_clicks"], 1)
             self.assertEqual(result["final_host"], "docs.browserless.io")
+
+
+    def test_trae_public_landing_is_read_only(self):
+        req = sample()
+        req["url"] = "https://work.trae.ai/"
+        self.assertIs(validate_request(req), req)
+        req["actions"] = [{"type": "click", "selector": "a"}]
+        with self.assertRaisesRegex(ValueError, "read-only"):
+            validate_request(req)
+        req["actions"] = [{"type": "inspect_public_links"}]
+        with self.assertRaisesRegex(ValueError, "read-only"):
+            validate_request(req)
 
 
 if __name__ == "__main__":
