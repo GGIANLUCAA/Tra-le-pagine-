@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "request_id": "artvision-browser-multistep-20261116-01",
+  "url": "https://docs.browserless.io/",
+  "actions": [
+    {
+      "type": "click",
+      "selector": "a[href=\"/rest-apis/intro\"]"
+    },
+    {
+      "type": "type_public",
+      "selector": "input[placeholder*=\"Search\"]",
+      "text": "automation"
+    }
+  ]
+}
