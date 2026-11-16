@@ -3,7 +3,6 @@ run-name: "KRØYER · Sera d'estate sulla spiaggia sud di Skagen"
 on:
   workflow_dispatch:
   push:
-    branches: [main]
     paths:
       - ".github/workflows/artvision-critico-kroyer-skagen.yml"
 permissions:
