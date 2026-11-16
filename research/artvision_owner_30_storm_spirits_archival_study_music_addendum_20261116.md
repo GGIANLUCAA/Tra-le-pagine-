@@ -1,0 +1,41 @@
+# ArtVision owner 30 — #44 The Storm Spirits: archival source and music addendum (2026-11-16)
+
+**Scope:** supplement to `research/artvision_owner_30_storm_spirits_primary_rights_social_music_20261116.md`; NOT a replacement, new work, new shortlist position, production authorization or MP4. No changes to queue, masters, workflows, schedules or publishing.
+
+## Newly documented primary/archival evidence
+
+1. **De Morgan Foundation, 1907 exhibition research** — https://www.demorgan.org.uk/exhibitions/painted-dreams/ . The Foundation reports that a contemporary Wolverhampton Star reviewer praised the artist's colour, specifically in *The Storm Spirits*. This is evidence of **historical reception**, not a contemporary review newly discovered by ArtVision, and the exact original newspaper issue/page has **not** been independently inspected. The Foundation also discusses a 1907 Wolverhampton exhibition catalogue held in London's National Art Library; the exact checklist entry for this painting remains to be checked. **Status: institutional account VERIFIED; original newspaper/cat. NOT READ.**
+
+2. **De Morgan Foundation exhibition education PDF, *Look Beneath the Lustre*** — https://www.demorgan.org.uk/wp-content/uploads/2021/10/2021-Completed-Exhibition-Folder-Look-Beneath-the-Lustre-explore-book.pdf . The Foundation describes a **pastel study for *The Storm Spirits*, c. 1900**, showing the central cloud spirit initially concealing her face with drapery; the final painting exposes her face and gives a more forceful gesture with hands near the head. This is a particularly strong **verified narrative comparison** for future editorial direction. Do not confuse this pastel with the Foundation's separate drawing `D_EDM_0154` (listed 1875) without a confirmed inventory match. **Status: institutional exhibition text VERIFIED; precise pastel object number / downloadable file NOT VERIFIED.**
+
+3. **Historic installation source: *Old Battersea House and the De Morgan collection of pictures & pottery*** — https://upload.wikimedia.org/wikipedia/commons/6/66/Old_Battersea_House_and_the_De_Morgan_collection_of_pictures_%26_pottery_-_to_which_are_added_a_few_pictures_by_Roddam_Spencer-Stanhope_and_other_Pre-Raphaelite_artists_%28IA_oldbatterseahous00unse%29.pdf . Its description places *The Storm Spirits* **above a refectory table in the hall**, with De Morgan pottery panels to either side. It describes Lightning's rose-red wings, Flood's shell/vessel, cloud spirit, stormy moon and sky. This is **historical textual placement only**, NOT proof of present display, original frame or a usable photograph. Publication date/edition and authorship of this PDF require bibliographic verification before asserting a precise historical year. **Status: historical source passage found; provenance/edition metadata incomplete.**
+
+4. **Current object identity** remains De Morgan Foundation P_EDM_0034, 1900, canvas 1225×1765 mm; official object https://www.demorgan.org.uk/collection/the-storm-spirits/ . The Foundation describes Rain/Lightning/Thunderclouds; the historical book calls the water spirit Flood. Preserve each source's vocabulary instead of falsely implying the same naming across sources.
+
+## New narrative alignment — optional archival passage, 100 s draft
+
+- **00–03**: painting overall; hook “Before she painted the storm, she changed the face of the clouds.”
+- **03–20**: left yellow figure and water vessel; use Foundation's term Rain and, if quoting historic text, explain its different term Flood.
+- **20–37**: red-winged Lightning; narration only as wings and bolts remain visible.
+- **37–55**: upper-centre Thunderclouds, exposed face and hands; compare to the **documented pastel** only if its precise digital file is subsequently verified and legally usable; otherwise narrate over final painting without fabricating a split-screen.
+- **55–73**: stormy sea and calm centre; attribute the Boer War reading to the Foundation as interpretative.
+- **73–87**: whole painting and historically reported 1907 reception; no invented gallery photos.
+- **87–100**: natural wide pullback and closing thought. No Museum variant until independent frame/sala gates pass.
+
+## Concrete free music candidate, newly identified
+
+- **Track:** Kevin MacLeod, *Darkest Child*, ISRC **USUAN1100783**, 3:59, **128 BPM**, celesta/harp/cello/bass. **Primary composer website:** https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100783 . Official page supplies **CC BY 4.0 attribution** text. **Original MP3 URL listed by Commons:** https://incompetech.com/music/royalty-free/mp3-royaltyfree/Darkest%20Child.mp3 . Commons mirror: https://commons.wikimedia.org/wiki/File:Darkest_Child_(ISRC_USUAN1100783).mp3 lists **CC BY 3.0** for its copy. Record the discrepancy by source; use the license attached to the exact downloaded version, preserve dated proof, and don't merge license versions silently. Creative Commons attribution licenses ordinarily allow commercial adaptation with attribution, but the **actual binary was not downloaded/hashed**, and **Content ID/claim status is unverified**. No guarantee of claim-free Instagram/Facebook/TikTok/YouTube use.
+- **Editorial fit:** family 7 (mystery, sparse percussion) / alternative family 2 (dramatic strings); dark celesta and low strings could underscore the storm, but 128 BPM is faster than the earlier 65–80 BPM mood brief. **Preview/listen and QA required**; do not assert final selection. Start restrained; swell under Lightning; thin the arrangement over the cloud-spirit study and resolve without abrupt cut. Duck under voice based on measured mix, not fixed LUFS guesses.
+- **Attribution draft, not published:** “Darkest Child” Kevin MacLeod (incompetech.com), licensed under Creative Commons Attribution 4.0, https://creativecommons.org/licenses/by/4.0/ ; if edited, disclose changes. Verify exact-file version before use.
+
+## Production and rights gate
+
+- Artwork museum primary **VERIFIED**; archival passage and Foundation educational text **LOCATED/READ**; exact pastel inventory **UNRESOLVED**.
+- Painting image: original Commons/official binary **NOT DOWNLOADED**; actual pixels, SHA256, visual QA **NOT VERIFIED**. Museum/photographer terms, commercial/territorial clearance **NOT VERIFIED**. Historic hall description is **not** a current museum scene or licensed photo.
+- Music: official track page and license wording **READ**, exact MP3 binary, SHA256, Content ID and platform claim behavior **NOT VERIFIED**.
+- Historical master/duplicate exhaustive check **NOT VERIFIED**. Owner-30 selection is **research approval only**, not production authorization.
+- **READY: NO. New MP4 this research cycle: 0.** Other authorized production remains independent. Do not dispatch without checkpoint/lock checks.
+
+## Editorial/social addendum (unpublished)
+
+**Alternate accurate hook:** “The cloud spirit once hid her face. Then Evelyn De Morgan changed the painting.” **Cover concept:** exposed face of Thunderclouds, with caption “SHE CHANGED THE STORM”; never depict an unverified preparatory sketch. **Instagram:** “A study for *The Storm Spirits* shows a cloud figure hiding her face. In the painting, she confronts the storm. Why might De Morgan have changed it? #EvelynDeMorgan #ArtHistory”. **Facebook:** “A De Morgan Foundation exhibition document reveals a striking change between a pastel study and the final 1900 painting. The cloud spirit becomes more forceful. The reason is an interpretation, not a documented statement from the artist.” **TikTok:** “This storm spirit originally hid her face—then the artist changed her. #ArtTok #EvelynDeMorgan”. **YouTube Shorts:** “The Secret Study Behind Evelyn De Morgan’s Storm Spirits | Art History”. **Question:** “Which is more powerful: a hidden face or an exposed one?” **Alt-text:** “Painted winged female cloud spirit in blue above a stormy sea, her face visible and hands raised near her head.” **SEO:** Evelyn De Morgan, The Storm Spirits, pastel study, Thunderclouds, 1900, Wolverhampton exhibition 1907, De Morgan Foundation. **Credit caveat:** any future photograph or music must credit the *actual* file and license; none has been included in a video.
