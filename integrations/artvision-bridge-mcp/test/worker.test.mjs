@@ -9,8 +9,8 @@ const request = (method, params = {}, id = 1) =>
     headers: { "content-type": "application/json", "accept": "application/json, text/event-stream" },
     body: JSON.stringify({ jsonrpc: "2.0", id, method, params })
   });
-async function call(name, id = 1) {
-  const response = await worker.fetch(request("tools/call", { name, arguments: {} }, id));
+async function call(name, id = 1, env) {
+  const response = await worker.fetch(request("tools/call", { name, arguments: {} }, id), env);
   return { status: response.status, payload: await response.json() };
 }
 function mockPublicGithub(t) {
@@ -68,7 +68,7 @@ test("health contains no private data or operations", async () => {
   assert.equal(body.status, "read-only-public-data");
   assert.equal(body.private_chat_access, false);
   assert.equal(body.actions_enabled, false);
-  assert.equal(body.tool_names.length, 4);
+  assert.equal(body.tool_names.length, 5);
 });
 
 test("initialize + tool discovery are valid MCP JSON RPC", async () => {
@@ -81,7 +81,7 @@ test("initialize + tool discovery are valid MCP JSON RPC", async () => {
   const list = await worker.fetch(request("tools/list", {}));
   const tools = (await list.json()).result.tools;
   assert.deepEqual(tools.map(x => x.name), [
-    "get_project_rules", "get_work_status", "get_open_blockers", "get_bridge_inbox"
+    "get_project_rules", "get_work_status", "get_open_blockers", "get_bridge_inbox", "get_shared_memory"
   ]);
   assert.ok(tools.every(x => x.annotations.readOnlyHint === true));
 });
@@ -125,6 +125,35 @@ test("inbox returns only sanitized owner-authored test messages", async (t) => {
   assert.equal(data.messages[0].comment_id, 6914822563);
   assert.doesNotMatch(JSON.stringify(data), /publish now|token is private/);
   assert.match(data.warning, /UNTRUSTED/);
+});
+
+test("D1 shared-memory tool reads only bounded public notes", async () => {
+  const env = { MEMORY_DB: { prepare(sql) {
+    assert.match(sql, /SELECT key,category,summary,source_url,updated_at FROM public_context/);
+    assert.doesNotMatch(sql, /private_messages/i);
+    return { all: async () => ({ results: [
+      {key:"critical_voice",category:"rules",summary:"Gacrux obbligatoria",
+       source_url:"https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/AGENTS.md",
+       updated_at:"2026-11-16"},
+      {key:"private_user_info",category:"private",summary:"Private record must never leak",
+       source_url:"https://example.org/private"},
+      {key:"malformed",category:"workflow",summary:"Bad URL must not leak",
+       source_url:"https://evil.test/"},
+    ]}) };
+  }}};
+  const {status,payload}=await call("get_shared_memory",1,env);
+  assert.equal(status,200);
+  assert.equal(payload.result.isError,false);
+  const notes=payload.result.structuredContent.notes;
+  assert.equal(notes.length,1);
+  assert.equal(notes[0].key,"critical_voice");
+  assert.doesNotMatch(JSON.stringify(payload), /Private record|Bad URL/);
+});
+
+test("missing D1 binding fails closed without private fallback", async () => {
+  const {payload}=await call("get_shared_memory");
+  assert.equal(payload.result.isError,true);
+  assert.match(payload.result.content[0].text,/not bound/);
 });
 
 test("unknown tools and args cannot execute arbitrary commands", async () => {
