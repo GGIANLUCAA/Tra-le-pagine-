@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const html=readFileSync('site/video-library-v2.html','utf8');
+const checkpoint=JSON.parse(readFileSync('reports/video_library_monitor_checkpoint.json','utf8'));
+assert.match(html,/\.chip\{[^}]*min-height:44px;display:inline-flex;align-items:center;justify-content:center/);
+assert.match(html,/\.actions button\{min-height:44px;padding:8px 5px;font-size:11px\}/);
+assert.match(html,/button:focus-visible,a:focus-visible/);
+assert.match(html,/@media\(prefers-reduced-motion:reduce\)/);
+for(const n of [360,393,430])assert(n>=320,'viewport target');
+assert.equal(checkpoint.cloudflare.r2.objects,checkpoint.cloudflare.r2.mp4+checkpoint.cloudflare.r2.jpg+checkpoint.cloudflare.r2.other);
+assert.equal(checkpoint.cloudflare.r2.totalBytes-checkpoint.cloudflare.r2.previous.totalBytes,checkpoint.cloudflare.r2.delta.totalBytes);
+assert.equal(checkpoint.cloudflare.r2.mp4-checkpoint.cloudflare.r2.previous.mp4,1);
+assert(checkpoint.defects.some(d=>d.id==='VLS-PUBLIC-UNAPPROVED-002'&&d.state==='OPEN'));
+console.log('PASS static Android touch and R2 differential invariants; no browser viewport screenshots were performed');
