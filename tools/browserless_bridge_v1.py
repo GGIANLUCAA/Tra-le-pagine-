@@ -15,7 +15,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-ALLOWED_HOSTS = frozenset(("example.com", "docs.browserless.io"))
+ALLOWED_HOSTS = frozenset(("example.com", "docs.browserless.io", "work.trae.ai"))
 REQUEST_ID = re.compile(r"^[a-z][a-z0-9-]{7,59}$")
 FILE_PATH = re.compile(r"^requests/browserless/[a-z0-9][a-z0-9-]{7,59}\.json$")
 API_URL = "https://production-lon.browserless.io/function"
@@ -23,7 +23,7 @@ MAX_ACTIONS = 4
 
 FUNCTION_CODE = r"""
 export default async ({page, context}) => {
-  const allowed = new Set(["example.com", "docs.browserless.io"]);
+  const allowed = new Set(["example.com", "docs.browserless.io", "work.trae.ai"]);
   function ensureAllowed() {
     const u = new URL(page.url());
     if (u.protocol !== "https:" || !allowed.has(u.hostname)) {
@@ -138,6 +138,10 @@ def validate_request(value):
     actions = value["actions"]
     if not isinstance(actions, list) or len(actions) > MAX_ACTIONS:
         raise ValueError("Too many actions")
+    # TRAE is a PUBLIC, read-only landing-page probe, not an account browser.
+    # No authenticated session, actions, user data, query strings or subpages.
+    if parts.hostname == "work.trae.ai" and (parts.path not in ("", "/") or actions):
+        raise ValueError("TRAE public landing page is read-only and accepts no actions")
     for action in actions:
         if not isinstance(action, dict) or action.get("type") not in ("click", "type_public", "inspect_public_links"):
             raise ValueError("Invalid action")
