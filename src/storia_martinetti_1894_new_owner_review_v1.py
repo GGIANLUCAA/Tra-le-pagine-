@@ -148,7 +148,8 @@ def main():
     return pic
    token=os.environ.get("HF_TOKEN","").strip()
    if not token: raise RuntimeError("HF_TOKEN_NOT_AVAILABLE__DO_NOT_REPEAT_ANONYMOUS_ZERO_GPU")
-   client=m.Client("finegrain/finegrain-image-enhancer",hf_token=token,verbose=False)
+   try:client=m.Client("finegrain/finegrain-image-enhancer",hf_token=token,verbose=False)
+   except TypeError:client=m.Client("finegrain/finegrain-image-enhancer",token=token,verbose=False)
    raw=client.predict(m.handle_file(str(output/"ANCHOR_AI_NEURAL_COLOR_BASE.png")),
        profile["prompt"],profile["neg"],profile["year"],2,1.14,.97,6,112,144,.45,18,"DDIM",api_name="/process")
    obj=raw[1] if isinstance(raw,(list,tuple)) and len(raw)>1 else raw
