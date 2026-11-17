@@ -43,16 +43,70 @@ def main():
  if prior.exists():
   try:
    old=json.loads(prior.read_text())
-   if len(old)==4 and all(x.get("photo_file")==f"PHOTO_AI_{j:02d}.png" and
-       (OUT/x["photo_file"]).is_file() and sha(OUT/x["photo_file"])==x["photo_sha256"]
-       for j,x in enumerate(old,1)):
-    photo_records=old
-    print("REUSE_FOUR_REAL_FINEGRAIN_RESTORATIONS_FROM_SOURCE_VERIFIED_CACHE",flush=True)
-  except Exception:pass
- if not photo_records:
-  dd,model,checkpoint=v80.load_dd()
-  photo_records=v80.enhanced_ai_images(meta,records[:4],OUT,dd,model)
- if len(photo_records)!=4:raise RuntimeError("V99_NOT_ENOUGH_FOUR_VERIFIED_GENERATIVE_PHOTO_RESTORATIONS_"+str(len(photo_records)))
+   for x in old:
+    i=int(x["scene"])
+    if i in (1,2,3,4) and x.get("sha256")==records[i-1]["sha256"] and
+       x.get("model")=="DDColor+free Finegrain image enhancer" and
+       x.get("photo_file")==f"PHOTO_AI_{i:02d}.png" and
+       (OUT/x["photo_file"]).is_file() and sha(OUT/x["photo_file"])==x["photo_sha256"]:
+     photo_records.append(x)
+   print("REUSED_TRUE_FINEGRAIN_IMAGES",sorted(x["scene"] for x in photo_records),flush=True)
+  except Exception as exc:
+   print("IGNORED_INVALID_PARTIAL_I2I_CACHE",type(exc).__name__,flush=True)
+ remaining=[j for j in (1,2,3,4) if j not in {x["scene"] for x in photo_records}]
+ if remaining:
+  # NO DDColor fallback: the rejected elephant image must be made generatively,
+  # then graded to historical neutral saturation rather than saturated cartoon.
+  from gradio_client import Client,handle_file
+  import inspect,os
+  kw={"verbose":False};api_params=inspect.signature(Client).parameters
+  token=os.environ.get("HF_TOKEN")
+  if token:
+   if "hf_token" in api_params:kw["hf_token"]=token
+   elif "token" in api_params:kw["token"]=token
+  client=Client("finegrain/finegrain-image-enhancer",**kw)
+  for i in remaining:
+   raw=OUT/f"FRAME_{i:02d}_SOURCE.png"
+   conditioning=OUT/f"PHOTO_COLOR_BASE_{i:02d}.jpg"
+   if not conditioning.is_file():
+    dd,model,_=v80.load_dd()
+    p=v80.natural_color(dd,model,raw)
+    cv2.imwrite(str(conditioning),cv2.resize(p,(576,1024)),[cv2.IMWRITE_JPEG_QUALITY,96])
+   prompt=("Photorealistic contemporary photographic restoration of the EXACT 1902 original circus parade film frame. "
+    +SCENES[i-1]["tag"]+". Maintain precisely the REAL elephant, horse, riders, wheels, trunks, tusks, "
+    "limb anatomies, pedestrians, clothes and stone buildings that visibly exist. Preserve all positions, "
+    "geometry, camera view, and source composition. Natural historic documentary daylight; realistic "
+    "neutral skin, brown leather, soft grey elephant skin, realistic wool and timber, vivid yet restrained colors. "
+    "NO invented people, animals or objects, no hallucinated details, no faces on architecture.")
+   neg=("cartoon, CGI, extra animals, trunk morph, split heads, duplicated legs, painted texture, "
+    "saturated neon red, orange oversaturation, modern clothes, extra faces, changed background, "
+    "person becoming horse, limbs fused, text, watermarks, artificial skin")
+   print("SINGLE_MISSING_REAL_FINEGRAIN_IMAGE",i,flush=True)
+   result=client.predict(handle_file(str(conditioning)),prompt,neg,1902+i,2,1.08,.96,6,112,144,.38,18,"DDIM",api_name="/process")
+   val=result[1] if isinstance(result,(list,tuple)) and len(result)>1 else result
+   if isinstance(val,dict):val=val.get("path")
+   if not val or not Path(str(val)).is_file():raise RuntimeError("FAILED_NEW_FINEGRAIN_PROVIDER_IMAGE_"+str(i))
+   im=cv2.imread(str(val))
+   if im is None:raise RuntimeError("REAL_FINEGRAIN_IMAGE_UNREADABLE")
+   im=cv2.resize(im,(720,1280))
+   saturation=cv2.cvtColor(im,cv2.COLOR_BGR2HSV)
+   avg=float(saturation[:,:,1].mean())
+   if avg>105:
+    saturation[:,:,1]=np.uint8(np.clip(saturation[:,:,1].astype("float32")*(105/avg),0,220))
+    im=cv2.cvtColor(saturation,cv2.COLOR_HSV2BGR)
+   geom=v80.similarity(cv2.imread(str(raw)),im)
+   sat=float(cv2.cvtColor(im,cv2.COLOR_BGR2HSV)[:,:,1].mean())
+   if geom<.75 or sat<12 or sat>135:raise RuntimeError("REAL_FINEGRAIN_PHOTO_FAILS_SOURCE_OR_NATURAL_COLOR_QA_"+str((i,round(geom,3),round(sat,1))))
+   target=OUT/f"PHOTO_AI_{i:02d}.png"
+   cv2.imwrite(str(target),im,[cv2.IMWRITE_PNG_COMPRESSION,2])
+   photo_records.append({**records[i-1],"photo_file":target.name,"photo_sha256":sha(target),
+     "geom_corr":round(geom,3),"sat":round(sat,1),
+     "model":"DDColor+free Finegrain image enhancer",
+     "source_locked_semantic_review":"PENDING_HUMAN"})
+ photo_records=sorted(photo_records,key=lambda x:x["scene"])
+ prior.write_text(json.dumps(photo_records,ensure_ascii=False,indent=2)+"\n")
+ if len(photo_records)!=4 or [x["scene"] for x in photo_records]!=[1,2,3,4]:
+  raise RuntimeError("V99_NOT_ENOUGH_FOUR_VERIFIED_GENERATIVE_PHOTO_RESTORATIONS_"+str(len(photo_records)))
  for j,(photo,source) in enumerate(zip(photo_records,records[:4]),1):
   if photo["scene"]!=j or photo["sha256"]!=source["sha256"] or photo.get("geom_corr",0)<.69 or photo.get("model")!="DDColor+free Finegrain image enhancer":raise RuntimeError("RESTORED_SOURCE_OR_MODEL_WRONG_"+str(j))
   if sha(OUT/photo["photo_file"])!=photo["photo_sha256"]:raise RuntimeError("CHANGED_REAL_PHOTO_"+str(j))
