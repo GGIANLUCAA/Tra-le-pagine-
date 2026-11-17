@@ -1,6 +1,6 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-17T06:58:42+00:00",
+  "generated_at": "2026-11-17T07:15:13+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 92,
@@ -10,7 +10,7 @@
     "site_cloudflare": 530,
     "site_unavailable": 11,
     "possible_site_matches": 21,
-    "queue_files": 100,
+    "queue_files": 101,
     "literary_dossiers": 19,
     "history_candidates": 12,
     "research_100": 100,
@@ -120,6 +120,7 @@
       "sources": [
         "queue/artvision_new_series_20261114.json",
         "queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json",
+        "queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum.json",
         "queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum_review.json"
       ],
       "variants": {
@@ -153,6 +154,11 @@
         "cinema_museum": {
           "state": "render_documentato",
           "evidence": [
+            {
+              "source": "queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum.json",
+              "status_claim": "ONE_NEW_REAL_CINEMA_MUSEUM_PRIVATE_TECH_QA_PASS_ARTISTIC_REVIEW_PENDING",
+              "classification": "in_coda_o_preflight"
+            },
             {
               "source": "queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum_review.json",
               "status_claim": "LIBRARY_ONLY_RENDERED_TECHNICAL_QA_PASS_ARTISTIC_REVIEW_PENDING",
