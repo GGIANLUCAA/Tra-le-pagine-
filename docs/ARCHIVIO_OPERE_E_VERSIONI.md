@@ -85,7 +85,7 @@ Questi stati non implicano pubblicazione né playback.
 | Pieter Bruegel the Elder | The Tower of Babel | 1563 | D | D | D | D | Possibili 4 |
 | Pieter Bruegel the Elder | The Triumph of Death | 1562–1563 | D | D | D | D | Possibili 2 |
 | Rembrandt van Rijn | The Night Watch | 1642 | D | D | D | D | Non abbinato |
-| Richard Dadd | The Fairy Feller's Master-Stroke | 1855-1864 | — | — | D | — | Non abbinato |
+| Richard Dadd | The Fairy Feller's Master-Stroke | 1855-1864 | — | — | D | D | Non abbinato |
 | Rosa Bonheur | La fiera dei cavalli | ? | D | D | D | D | Non abbinato |
 | Salvador Dalí | The Temptation of St. Anthony | 1946 | — | — | — | — | ESCLUSO |
 | Salvator Rosa | Scenes of Witchcraft: Night | c. 1645–49 | — | — | C | — | Non abbinato |
@@ -909,7 +909,7 @@ Questi stati non implicano pubblicazione né playback.
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_fairy_feller.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261117_dadd_cinema_museum.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 
 ### Rosa Bonheur — La fiera dei cavalli
 

@@ -40,7 +40,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Peter Paul Rubens | The Battle of the Amazons | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Piero di Cosimo | The Forest Fire | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Pieter Bruegel the Elder | Dulle Griet | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
-| Richard Dadd | The Fairy Feller's Master-Stroke | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
+| Richard Dadd | The Fairy Feller's Master-Stroke | critico_standard, critico_museum | selezione_30, checkpoint, cicli_v31 |
 | Salvator Rosa | Scenes of Witchcraft: Night | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
 | Thomas Cole | The Course of Empire: Destruction | critico_standard, critico_museum | selezione_30, checkpoint |
 | Thomas Cole | The Titan's Goblet | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
@@ -101,6 +101,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | [queue/artvision_owner_30_render_checkpoint_20261112_waterhouse_mermaid.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261112_waterhouse_mermaid.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261113_demorgan_dryad.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261113_demorgan_dryad.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261113_klee_fish_magic.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261113_klee_fish_magic.json) | checkpoint | n.d. |
+| [queue/artvision_owner_30_render_checkpoint_20261117_dadd_cinema_museum.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261117_dadd_cinema_museum.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261117_sadko_cinema_museum.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261117_sadko_cinema_museum.json) | checkpoint | n.d. |
 | [queue/artvision_owner_checkpoint_20261107_v210.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_checkpoint_20261107_v210.json) | checkpoint | n.d. |
 | [queue/artvision_owner_museum_feedback_20261109.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_museum_feedback_20261109.json) | supporto | n.d. |
