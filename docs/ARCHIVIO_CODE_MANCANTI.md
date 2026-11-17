@@ -41,6 +41,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Piero di Cosimo | The Forest Fire | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Pieter Bruegel the Elder | Dulle Griet | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Richard Dadd | The Fairy Feller's Master-Stroke | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
+| Salvator Rosa | Scenes of Witchcraft: Night | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
 | Thomas Cole | The Course of Empire: Destruction | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
 | Thomas Cole | The Titan's Goblet | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
 | Thomas Cole | The Voyage of Life: Manhood | critico_standard, critico_museum, cinema_museum | checkpoint |
@@ -59,6 +60,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | [queue/artvision_extra_render_checkpoint_20261116_cole_manhood.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_extra_render_checkpoint_20261116_cole_manhood.json) | checkpoint | n.d. |
 | [queue/artvision_extra_render_checkpoint_20261116_moreau_oedipus_sphinx.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_extra_render_checkpoint_20261116_moreau_oedipus_sphinx.json) | checkpoint | n.d. |
 | [queue/artvision_extra_render_checkpoint_20261117_delacroix_abduction_rebecca.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_extra_render_checkpoint_20261117_delacroix_abduction_rebecca.json) | checkpoint | n.d. |
+| [queue/artvision_extra_render_checkpoint_20261117_salvator_rosa_night_preflight.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_extra_render_checkpoint_20261117_salvator_rosa_night_preflight.json) | checkpoint | n.d. |
 | [queue/artvision_four_variants_s01_20261028.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_four_variants_s01_20261028.json) | principale | 19 |
 | [queue/artvision_museum_scale_s01_20261028.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_museum_scale_s01_20261028.json) | supporto | n.d. |
 | [queue/artvision_music20_gallery_two_real_audio_remixes_20261113.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_music20_gallery_two_real_audio_remixes_20261113.json) | supporto | n.d. |
