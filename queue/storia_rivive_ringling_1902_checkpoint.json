@@ -2,7 +2,7 @@
   "schema": "storia_rivive_video_production_checkpoint_v1",
   "episode_id": "ringling_brothers_circus_parade_1902",
   "last_updated_at": "2026-11-17",
-  "current_state": "FOUR_REAL_I2I_MP4_REVIEW_AVAILABLE__FIFTH_ANCHOR_HUMAN_ARTISTIC_REJECTED",
+  "current_state": "NEW_REAL_FOUR_I2I_MP4_REVIEW_DOWNLOADABLE__FIFTH_SOURCE_REPAIRED_PRESPEND_NOT_VIDU",
   "subject": "Ringling Brothers Circus Parade Film 1902",
   "original_source_page": "https://commons.wikimedia.org/wiki/File:Ringling_Brothers_Parade_Film_(1902).webm",
   "original_sha256": "bdb3dcce3b7feacc017853ba42c0fdcb66eff357ded3f3853380df0860f8b69e",
@@ -47,7 +47,11 @@
     ],
     "owner_approved": false,
     "paid_vidu_generation_authorized_for_this_exact_image": false,
-    "next_action": "Repair sign from actual original source pixels and tone down rider face with constrained reconstruction; visual review BEFORE any Vidu paid POST"
+    "next_action": "Repair sign from actual original source pixels and tone down rider face with constrained reconstruction; visual review BEFORE any Vidu paid POST",
+    "repair_status": "ORIGINAL_1902_SIGN_LETTERING_SOURCE_LOCKED_AND_RIDER_SKIN_COLOR_TONED__AWAITING_VISUAL_APPROVAL",
+    "repaired_photo_sha256": "18bc9ac03efa4c1d45dea819650631e257ad337046e52576f121a35ea4be2801",
+    "repaired_release_tag": "storia-ringling-1902-fifth-corrected-theatre-source-photo",
+    "repair_workflow_run": 44113779639
   },
   "provider": {
     "new_vidu_posts_this_turn": 0,
@@ -56,11 +60,10 @@
     "provider_spend_policy": "Do not fake gateway's user_approved_this_exact_scene. Single paid task needs exact signed approved plan / existing prepaid budget authorization."
   },
   "next_best_steps": [
-    "Source-locked correction of fifth image preserving actual 1902 sign text/physical anatomy",
-    "Visual comparison and source-sign fidelity approval",
-    "Only after prepaid 16-credit cap, single provider Vidu Q2 Pro Fast 5 second animation from same exact frame",
-    "Rebuild 4+1 preserving four successful photo chapters and music; V91/V94/V96/V99 QA on actual MP4",
-    "Verify Android MP4/ZIP links; user artistic approval before social publication"
+    "Review the actual source-corrected fifth photo and exact 1902 frame, including horse legs and human face",
+    "After single-clip approved prepaid credit quote and deduplicated ledger, generate one real five-second Vidu animation from exact repaired fifth image",
+    "Build whole genuine five-scene 4 Finegrain I2I + 1 Vidu moving video; V91/V94/V96/V99 actual MP4 quality gates",
+    "Deliver final Android MP4/ZIP only when true video generated, QA and rights reviewed"
   ],
   "anti_duplicate_source_subjects": [
     "Ringling Brothers Circus Parade Film 1902"
