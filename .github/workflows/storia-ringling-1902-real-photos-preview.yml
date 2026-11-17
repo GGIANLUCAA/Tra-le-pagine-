@@ -78,3 +78,5 @@ jobs:
             --title "La Storia Rivive — Ringling Brothers Circus Parade 1902 (new, REAL I2I, review)" \
             --notes "NEW subject 1902 Circus Parade authentic original film, four different group original moving shots to four TRUE Finegrain image-to-image photographs, fifth original film anchor only. Real MP4 H264/AAC and Android ZIP. Not a completed V98-equivalent 4+1 until fifth Vidu is genuinely produced; Italian territorial rights/quality pending. No paid API/video credits used."
           gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fqx "RINGLING_CIRCUS_1902_FOUR_FINEGRAIN_RESTORATIONS_QA_PREVIEW.mp4"
+
+# Retry restored-photo cache with fixed Python syntax; zero new Vidu expense.
