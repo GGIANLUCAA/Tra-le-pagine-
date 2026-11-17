@@ -36,7 +36,8 @@ jobs:
           python - <<'PY'
           import json,pathlib
           q=json.loads(pathlib.Path('queue/artvision_extra_render_checkpoint_20261117_salvator_rosa_evening_preflight.json').read_text())
-          assert q['status']=='AUTHORIZED_EDITORIALLY_PREFLIGHT_ONLY_NO_MP4'
+          assert q.get('render_status')=='NOT_STARTED', ('Do not duplicate existing video',q.get('render_status'))
+          assert q.get('artist')=='Salvator Rosa' and q.get('title')=='Scenes of Witchcraft: Evening'
           assert q['accession']=='1977.37.3' and q['variant']=='cinema_standard'
           assert not q['publish'] and not q['gold'] and q['paid_api_calls']==0
           print("OWNER_AUTHORIZATION_AND_NO_DUPLICATE_CHECKPOINT_GATES_PASS")
