@@ -42,7 +42,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Pieter Bruegel the Elder | Dulle Griet | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Richard Dadd | The Fairy Feller's Master-Stroke | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
 | Salvator Rosa | Scenes of Witchcraft: Night | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
-| Thomas Cole | The Course of Empire: Destruction | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
+| Thomas Cole | The Course of Empire: Destruction | critico_standard, critico_museum | selezione_30, checkpoint |
 | Thomas Cole | The Titan's Goblet | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
 | Thomas Cole | The Voyage of Life: Manhood | critico_standard, critico_museum, cinema_museum | checkpoint |
 | William Holbrook Beard | The Bulls and Bears | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, nuova_serie |
@@ -73,6 +73,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | [queue/artvision_owner_30_fast_quality_lane_20261109.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_fast_quality_lane_20261109.json) | principale | 30 |
 | [queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json) | checkpoint | 2 |
 | [queue/artvision_owner_30_museum_checkpoint_20261117_burne_jones_baleful_head.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_museum_checkpoint_20261117_burne_jones_baleful_head.json) | checkpoint | n.d. |
+| [queue/artvision_owner_30_museum_checkpoint_20261117_cole_destruction.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_museum_checkpoint_20261117_cole_destruction.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261109_alchemist.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261109_alchemist.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261109_moreau_apparition.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261109_moreau_apparition.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261110_barque_dante.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261110_barque_dante.json) | checkpoint | n.d. |

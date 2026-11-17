@@ -89,7 +89,7 @@ Questi stati non implicano pubblicazione né playback.
 | Rosa Bonheur | La fiera dei cavalli | ? | D | D | D | D | Non abbinato |
 | Salvador Dalí | The Temptation of St. Anthony | 1946 | — | — | — | — | ESCLUSO |
 | Salvator Rosa | Scenes of Witchcraft: Night | c. 1645–49 | — | — | C | — | Non abbinato |
-| Thomas Cole | The Course of Empire: Destruction | ? | — | — | D | — | Non abbinato |
+| Thomas Cole | The Course of Empire: Destruction | 1836 | — | — | D | D | Non abbinato |
 | Thomas Cole | The Titan's Goblet | 1833 | — | — | — | — | Non abbinato |
 | Thomas Cole | The Voyage of Life: Manhood | 1842 | B | B | D | C | Non abbinato |
 | Utagawa Hiroshige | Plum Garden at Kameido | ? | — | — | — | — | Non abbinato |
@@ -943,13 +943,13 @@ Questi stati non implicano pubblicazione né playback.
 
 ### Thomas Cole — The Course of Empire: Destruction
 
-- Anno: da verificare; Museo: da verificare
+- Anno: 1836; Museo: New-York Historical
 - Code: selezione_30, checkpoint
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_cole_destruction.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: queue/artvision_owner_30_museum_checkpoint_20261117_cole_destruction.json [RENDERED_TECH_QA_ARTISTIC_REVIEW_PENDING]
 
 ### Thomas Cole — The Titan's Goblet
 

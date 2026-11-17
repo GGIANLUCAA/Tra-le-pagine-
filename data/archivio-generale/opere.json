@@ -1,16 +1,16 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-17T13:38:16+00:00",
+  "generated_at": "2026-11-17T13:40:19+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 93,
-    "render_documented_slots": 148,
-    "not_documented_slots": 124,
+    "render_documented_slots": 149,
+    "not_documented_slots": 123,
     "site_items": 541,
     "site_cloudflare": 530,
     "site_unavailable": 11,
     "possible_site_matches": 21,
-    "queue_files": 103,
+    "queue_files": 104,
     "literary_dossiers": 19,
     "history_candidates": 12,
     "research_100": 100,
@@ -5348,8 +5348,8 @@
       "id": "thomas-cole-the-course-of-empire-destruction",
       "title": "The Course of Empire: Destruction",
       "artist": "Thomas Cole",
-      "year": "",
-      "museum": "",
+      "year": "1836",
+      "museum": "New-York Historical",
       "object_id": "",
       "lanes": [
         "selezione_30",
@@ -5357,6 +5357,7 @@
       ],
       "sources": [
         "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_museum_checkpoint_20261117_cole_destruction.json",
         "queue/artvision_owner_30_render_checkpoint_20261110_cole_destruction.json"
       ],
       "variants": {
@@ -5383,8 +5384,14 @@
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_museum_checkpoint_20261117_cole_destruction.json",
+              "status_claim": "RENDERED_TECH_QA_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -5396,10 +5403,9 @@
       "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
-        "critico_museum",
-        "cinema_museum"
+        "critico_museum"
       ],
-      "render_documented": 1,
+      "render_documented": 2,
       "site_playback_verified": false,
       "published_confirmed": false
     },
