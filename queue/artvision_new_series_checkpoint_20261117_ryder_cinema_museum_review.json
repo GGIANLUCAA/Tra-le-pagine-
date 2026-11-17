@@ -1,0 +1,74 @@
+{
+  "schema": "artvision-new-series-cinema-museum-private-review-v1",
+  "recorded_at_utc": "2026-11-17",
+  "artist": "Albert Pinkham Ryder",
+  "title": "The Race Track (Death on a Pale Horse)",
+  "museum": "Cleveland Museum of Art",
+  "object_id": "1928.8",
+  "variant": "cinema_museum",
+  "status": "LIBRARY_ONLY_RENDERED_TECHNICAL_QA_PASS_ARTISTIC_REVIEW_PENDING",
+  "original_artwork_id": "1928.8",
+  "artwork_original_image_sha256_from_existing_verified_cinema_standard": "02640803f0b848bb651f9aa5c72dda458ce001adccb2c258cd9a3d0e32c7bfed",
+  "upstream_cinema_standard_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/43572539399",
+  "upstream_cinema_standard_mp4_sha256": "4745c5f093b35bfef418da78f95424d295783c493f2d0d54784bdb4e92eb8a87",
+  "production_method": "Reused verified original Cinema Standard visual sequences and its licensed soundtrack; derived a painting still from its exact checked MP4; composed an additional front-on virtual museum G01 intro/outro and an editorial (non-authentic) frame; edited with match cuts to avoid ghosting; this is NOT a new source painting or a new original artwork.",
+  "museum_room_id": "G01",
+  "museum_scenography_ai": true,
+  "editorial_frame_not_authentic": true,
+  "exact_museum_exhibit_photo": false,
+  "artwork_dimensions_unframed_cm": [
+    90,
+    70.5
+  ],
+  "video": {
+    "duration_seconds": 35,
+    "width": 720,
+    "height": 1280,
+    "fps": 20,
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "sha256": "df83d6f74186a166e193f0e8273dd35e418a1394afcf46b6605ed5f33321f4b7",
+    "bytes": 4653662,
+    "library_path": "/ArtVision/New_Series/Ryder_The_Race_Track_20261117/ARTVISION_RYDER_CINEMA_MUSEUM_PRIVATE_REVIEW.mp4",
+    "library_file_id": "libfile_0631ff8ca83c81918a8f8cc2fae2407c"
+  },
+  "android_zip": {
+    "sha256": "8b3fcc96d20adb22e3fa308afe35c0b96a91d178b361f21eaeb046bc86750016",
+    "bytes": 5268157,
+    "library_path": "/ArtVision/New_Series/Ryder_The_Race_Track_20261117/ARTVISION_RYDER_THE_RACE_TRACK_CINEMA_MUSEUM_ANDROID_PACK.zip",
+    "library_file_id": "libfile_768c0e44e1b0819192ffe0a4bf83126f"
+  },
+  "cover": {
+    "sha256": "0866b2621d847e3ddc741b9dd8437ddf56192e46eadeac333a93c05e6269196b",
+    "library_file_id": "libfile_a564d5a835b481919cbce9d983556367"
+  },
+  "music": "Ghost Processional — Kevin MacLeod CC BY 4.0 (same as Cinema Standard); credits in ZIP",
+  "checks": {
+    "full_ffmpeg_audio_video_decode": "PASS",
+    "zip_crc": "PASS",
+    "library_readback_mp4_sha": "PASS",
+    "library_readback_zip_sha": "PASS",
+    "sampled_frame_review": "PASS_WITH_PURPOSEFUL_HARD_MATCH_CUTS",
+    "full_speed_artist_review": "PENDING",
+    "actual_android_device_download": "NOT_TESTED",
+    "real_museum_photography": "NOT_CLAIMED",
+    "site_player_http_range": "NOT_TESTED"
+  },
+  "rights": {
+    "artwork": "CMA Open Access CC0",
+    "music": "CC BY 4.0 with attribution",
+    "scenography": "private GPT-generated room authorized for ArtVision use",
+    "public_site_release": "PENDING_FINAL_RIGHTS_AND_CONTENT_SAFETY_CHECK"
+  },
+  "new_artwork_count": 0,
+  "new_technical_variant_count": 1,
+  "gh_artifact_created": false,
+  "github_workflow_new_run": false,
+  "physical_public_r2": false,
+  "in_public_catalog": false,
+  "site_published": false,
+  "gold": false,
+  "artistic_owner_approved": false,
+  "paid_api_calls": 0,
+  "note": "PRIVATE QA review deliverable only. Keep Cinema Standard master unchanged. Do not mistake uploaded Library file for GH Artifact/R2 or artist-approved film. Do not duplicate this variant as a new work; artistic revisions may still be needed."
+}
