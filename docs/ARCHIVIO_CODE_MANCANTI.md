@@ -136,6 +136,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | [queue/storia_rivive_beirut_v63_selected_scenes.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_beirut_v63_selected_scenes.json) | supporto | n.d. |
 | [queue/storia_rivive_candidates_v58.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_candidates_v58.json) | supporto | 7 |
 | [queue/storia_rivive_highres_scans_v64.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_highres_scans_v64.json) | supporto | n.d. |
+| [queue/storia_rivive_ringling_1902_checkpoint.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_ringling_1902_checkpoint.json) | checkpoint | n.d. |
 | [queue/storia_rivive_v69_film_scouting_candidates.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_v69_film_scouting_candidates.json) | supporto | n.d. |
 | [queue/verne_episode_20261027.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/verne_episode_20261027.json) | supporto | n.d. |
 | [queue/vidu_api_attempts/20261029_V84_5_TESTS_01_TRAM_CAMERA_FISSA.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/vidu_api_attempts/20261029_V84_5_TESTS_01_TRAM_CAMERA_FISSA.json) | supporto | n.d. |
