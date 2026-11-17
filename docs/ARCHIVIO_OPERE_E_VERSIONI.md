@@ -117,7 +117,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: render_documentato; prove: queue/artvision_new_series_20261114.json [CINEMA_STANDARD_RENDERED_TECH_QA_ART_REVIEW_PENDING]; queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
+- cinema_standard: render_documentato; prove: queue/artvision_new_series_20261114.json [CINEMA_STANDARD_AND_CINEMA_MUSEUM_RENDERED_TECH_QA_ART_REVIEW_PEN]; queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: render_documentato; prove: queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum.json [ONE_NEW_REAL_CINEMA_MUSEUM_PRIVATE_TECH_QA_PASS_ARTISTIC_REVIEW_P]; queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum_review.json [LIBRARY_ONLY_RENDERED_TECHNICAL_QA_PASS_ARTISTIC_REVIEW_PENDING]
 
 ### Albrecht Altdorfer — The Battle of Alexander at Issus
