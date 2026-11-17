@@ -18,7 +18,7 @@ Questi stati non implicano pubblicazione né playback.
 | Edward Burne-Jones | King Arthur in Avalon | ? | — | — | — | — | Non abbinato |
 | Edward Burne-Jones | L'ultimo sonno di re Artù | ? | D | D | D | D | Non abbinato |
 | Edward Burne-Jones | The Baleful Head | 1885–1887 | — | — | D | D | Non abbinato |
-| Edward Burne-Jones | The Golden Stairs | 1880 | — | — | D | — | Non abbinato |
+| Edward Burne-Jones | The Golden Stairs | 1880 | — | — | D | D | Non abbinato |
 | Edwin Landseer | L'uomo propone, Dio dispone | ? | D | D | D | D | Non abbinato |
 | Elihu Vedder | La Sfinge sulla riva del mare | ? | D | D | D | D | Non abbinato |
 | Eugène Delacroix | The Abduction of Rebecca | 1846 | — | — | — | — | Non abbinato |
@@ -240,7 +240,7 @@ Questi stati non implicano pubblicazione né playback.
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_golden_stairs.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261117_golden_stairs_cinema_museum.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 
 ### Edwin Landseer — L'uomo propone, Dio dispone
 

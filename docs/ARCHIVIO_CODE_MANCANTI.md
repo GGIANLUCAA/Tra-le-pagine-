@@ -11,7 +11,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Edvard Munch | The Vampire | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Edward Burne-Jones | King Arthur in Avalon | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
 | Edward Burne-Jones | The Baleful Head | critico_standard, critico_museum | selezione_30, checkpoint |
-| Edward Burne-Jones | The Golden Stairs | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
+| Edward Burne-Jones | The Golden Stairs | critico_standard, critico_museum | selezione_30, checkpoint |
 | Eugène Delacroix | The Abduction of Rebecca | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
 | Eugène Delacroix | The Barque of Dante | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Evelyn De Morgan | The Dryad | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
@@ -104,6 +104,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | [queue/artvision_owner_30_render_checkpoint_20261113_demorgan_dryad.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261113_demorgan_dryad.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261113_klee_fish_magic.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261113_klee_fish_magic.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261117_dadd_cinema_museum.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261117_dadd_cinema_museum.json) | checkpoint | n.d. |
+| [queue/artvision_owner_30_render_checkpoint_20261117_golden_stairs_cinema_museum.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261117_golden_stairs_cinema_museum.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261117_sadko_cinema_museum.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261117_sadko_cinema_museum.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261117_storm_spirits_cinema_museum.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261117_storm_spirits_cinema_museum.json) | checkpoint | n.d. |
 | [queue/artvision_owner_checkpoint_20261107_v210.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_checkpoint_20261107_v210.json) | checkpoint | n.d. |
