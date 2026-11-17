@@ -1,0 +1,68 @@
+{
+  "schema": "storia_rivive_video_production_checkpoint_v1",
+  "episode_id": "ringling_brothers_circus_parade_1902",
+  "last_updated_at": "2026-11-17",
+  "current_state": "FOUR_REAL_I2I_MP4_REVIEW_AVAILABLE__FIFTH_ANCHOR_HUMAN_ARTISTIC_REJECTED",
+  "subject": "Ringling Brothers Circus Parade Film 1902",
+  "original_source_page": "https://commons.wikimedia.org/wiki/File:Ringling_Brothers_Parade_Film_(1902).webm",
+  "original_sha256": "bdb3dcce3b7feacc017853ba42c0fdcb66eff357ded3f3853380df0860f8b69e",
+  "original_source_scout_run": 44109197640,
+  "actual_four_restored_review_run": 44111444636,
+  "actual_fifth_free_image_anchor_run": 44112535078,
+  "generated_review": {
+    "release_tag": "storia-rivive-ringling-brothers-1902-four-true-i2i-review",
+    "mp4": "RINGLING_CIRCUS_1902_FOUR_FINEGRAIN_RESTORATIONS_QA_PREVIEW.mp4",
+    "mp4_sha256": "fb678b6d94097c960dba0af5a592c691b599b72cf6c0413443dd24367cbd13db",
+    "duration_s": 15.1333,
+    "scene_moments_original_s": [
+      20,
+      80,
+      132,
+      176,
+      212
+    ],
+    "first_four_photo_methods": [
+      "Finegrain genuine I2I",
+      "Finegrain genuine I2I",
+      "Finegrain genuine I2I plus neural saturation grade",
+      "Finegrain genuine I2I"
+    ],
+    "contains_vidu": false,
+    "codec_qa_success": true,
+    "cover_and_social_zip": true,
+    "published_to_social_or_site": false,
+    "human_video_approved": false
+  },
+  "fifth_frame": {
+    "original_t_s": 212,
+    "original_frame_sha256": "02966d620df5acfad323b546b510f113697c8577a606cb663db9df823a9bbabb",
+    "candidate_photo_sha256": "3daeb8feaedde2dce23c737fe915c4f879f60b211e7df56865ecbcb3523437ce",
+    "candidate_review_release_tag": "storia-ringling-1902-fifth-real-vidu-photo-anchor-owner-review",
+    "geometry_corr": 0.9989,
+    "source_text_in_real_frame": "Historic theater sign visible; do not infer exact text from cropped photo without verification",
+    "reviewer_artistic_observations": [
+      "Finegrain candidate invents illegible changed lettering on the right-side historical theatre sign",
+      "Rider face and helmet are brightly synthetic red/orange, unlike the real source material",
+      "Horse and architecture alignment adequate technically but semantic fidelity NOT approved"
+    ],
+    "owner_approved": false,
+    "paid_vidu_generation_authorized_for_this_exact_image": false,
+    "next_action": "Repair sign from actual original source pixels and tone down rider face with constrained reconstruction; visual review BEFORE any Vidu paid POST"
+  },
+  "provider": {
+    "new_vidu_posts_this_turn": 0,
+    "new_vidu_credits_spent_this_turn": 0,
+    "provider_generation_state": "NOT_SUBMITTED",
+    "provider_spend_policy": "Do not fake gateway's user_approved_this_exact_scene. Single paid task needs exact signed approved plan / existing prepaid budget authorization."
+  },
+  "next_best_steps": [
+    "Source-locked correction of fifth image preserving actual 1902 sign text/physical anatomy",
+    "Visual comparison and source-sign fidelity approval",
+    "Only after prepaid 16-credit cap, single provider Vidu Q2 Pro Fast 5 second animation from same exact frame",
+    "Rebuild 4+1 preserving four successful photo chapters and music; V91/V94/V96/V99 QA on actual MP4",
+    "Verify Android MP4/ZIP links; user artistic approval before social publication"
+  ],
+  "anti_duplicate_source_subjects": [
+    "Ringling Brothers Circus Parade Film 1902"
+  ]
+}
