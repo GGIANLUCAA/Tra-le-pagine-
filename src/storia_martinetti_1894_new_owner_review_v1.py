@@ -203,7 +203,7 @@ def main():
   "original_subtle_music":True,"audio_codec":"aac","new_source":"Luis Martinetti 1894",
   "artistic_review":"PENDING","no_vidu":True})
  save(output,"VISUAL_REPORT.json",meta)
- post=
+ post={
  "FACEBOOK":f'{profile["label"]} · {profile["year"]}\n{profile["description"]}\nSource: {m.PAGE}\nReview copy only; not yet published.',
  "INSTAGRAM":f'{profile["label"]} · {profile["year"]} 🎞️\nAuthentic moving film and a source-matched AI photo. Visual restoration preview.\n#SilentCinema #History',
  "TIKTOK":f'{profile["year"]}: {profile["label"]}. Real archival film in motion, one modern AI photographic interpretation. #EarlyCinema',
