@@ -1,0 +1,65 @@
+name: "La Storia Rivive Ringling 1902 · real I2I fifth Vidu photo source-only"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-ringling-1902-fifth-anchor-free.yml"]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  fifth_photo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_HUB_DISABLE_XET: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install free source-to-photo model; NO VIDEO PROVIDER API KEY"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2" "gradio_client>=1.3,<3"
+          python -m py_compile tools/storia_ringling_1902_fifth_vidu_photo_anchor.py
+      - name: "Recover actual four photos and original fifth 1902 frame from successful preview run"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_ringling_1902_v1
+          gh run download 44111444636 --repo "$GITHUB_REPOSITORY" \
+            --name RINGLING_1902_FOUR_TRUE_AI_PHOTOS_AND_VIDEO_RECOVERY \
+            --dir output/storia_ringling_1902_v1
+          test -s output/storia_ringling_1902_v1/FRAME_05_SOURCE.png
+          test -s output/storia_ringling_1902_v1/PHOTO_QA.json
+      - name: "Generate one TRUE Finegrain photo of the real 212-second mounted rider anchor, source-locked"
+        run: python -u tools/storia_ringling_1902_fifth_vidu_photo_anchor.py
+      - name: "Keep exact comparison and full generated fifth image SHA for future one-clip Vidu"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RINGLING_1902_FIFTH_REAL_FINEGRAIN_VIDU_ANCHOR_FREE
+          path: |
+            output/storia_ringling_1902_v1/RINGLING_1902_SCENE05_VIDU_ANCHOR.jpg
+            output/storia_ringling_1902_v1/RINGLING_1902_FIFTH_TRUE_SOURCE_VS_VIDU_START.jpg
+            output/storia_ringling_1902_v1/FIFTH_VIDU_ANCHOR_PRESPEND_QA.json
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Publish actual ready-to-use fifth source-locked image as owner-review preview ONLY"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag=storia-ringling-1902-fifth-real-vidu-photo-anchor-owner-review
+          d=output/storia_ringling_1902_v1
+          gh release create "$tag" \
+            "$d/RINGLING_1902_SCENE05_VIDU_ANCHOR.jpg" \
+            "$d/RINGLING_1902_FIFTH_TRUE_SOURCE_VS_VIDU_START.jpg" \
+            "$d/FIFTH_VIDU_ANCHOR_PRESPEND_QA.json" \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "Ringling 1902 · authentic fifth shot I2I photo for Vidu (no credits yet)" \
+            --notes "Source-locked fifth original historic 1902 Ringling parade frame at 212 sec and TRUE Finegrain image-to-image color photograph. To build the final video one new genuine five-second Vidu image-to-video paid task is required (subject QA and single-credit-bound authorization first). This is an image preflight, not a finished video. No Vidu paid POST."
+          gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fqx RINGLING_1902_SCENE05_VIDU_ANCHOR.jpg
