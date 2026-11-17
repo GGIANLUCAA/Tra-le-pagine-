@@ -8,7 +8,7 @@
     "inventory": "Walters 37.51",
     "selection_order": 13,
     "variant": "cinema_standard",
-    "status": "RENDER_IN_PROGRESS_NOT_YET_VERIFIED"
+    "status": "RENDERED_TECH_QA_REVIEW_PENDING"
   },
   "run_id": 42782307048,
   "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42782307048",
@@ -25,15 +25,33 @@
     "commons_rights": "PDM/PD-Art claim; Walters 2-D reproduction open release"
   },
   "qa": {
-    "new_verified_mp4": 0,
-    "ffmpeg": "PENDING",
-    "zip_crc": "PENDING",
+    "new_verified_mp4": 1,
+    "ffmpeg": "PASS",
+    "zip_crc": "PASS",
     "visual_artistic": "PENDING",
     "commercial_rights": "PENDING",
     "gold": false,
-    "published": false
+    "published": false,
+    "new_mp4_verified": true,
+    "sha256_mp4": "db2e20a25d6d553e83ff65bf934cf3cea7f9dd962fc65c7507ebaad2444e75bb",
+    "mp4_bytes": 20207129,
+    "duration_s": 77.2,
+    "ffmpeg_video_full_decode": "PASS",
+    "ffmpeg_audio_full_decode": "PASS",
+    "zip_verified": true,
+    "artist_review": "PENDING"
   },
   "primary_queue_change": 0,
   "anti_duplicate": "Do not relaunch while running or after success",
-  "next_step": "Verify Actions run and artifact, then update SHA and status; no additional heavy render until terminal"
+  "next_step": "Verify Actions run and artifact, then update SHA and status; no additional heavy render until terminal",
+  "recovered_20261117": {
+    "recovered_from_existing_completed_run": 42782307048,
+    "artifact_id": 13746163826,
+    "original_video_sha256": "db2e20a25d6d553e83ff65bf934cf3cea7f9dd962fc65c7507ebaad2444e75bb",
+    "source_artist": "Jean-Léon Gérôme",
+    "appended_video_to_android_package": true,
+    "recovered_count_is_not_new_render": true,
+    "metadata_correction": "Original QA_TECHNICAL.json had incorrect artist Edward Burne-Jones; original SOURCES_RIGHTS.json verified Jean-Léon Gérôme",
+    "recovered_on": "2026-11-17"
+  }
 }
