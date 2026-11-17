@@ -1,0 +1,93 @@
+{
+  "schema": "artvision-owner-30-cinema-museum-private-real-mp4-v1",
+  "date": "2026-11-17",
+  "artist": "Edward Burne-Jones",
+  "title": "The Baleful Head",
+  "year": "1885–1887",
+  "queue": "research/artvision_owner_selected_30_future_20261109.json",
+  "variant": "cinema_museum",
+  "slot_status": "RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING",
+  "production_is_new_independent_variant": true,
+  "same_subject_cinema_standard_preexisting_and_untouched": true,
+  "provenance": {
+    "museum": "Staatsgalerie Stuttgart",
+    "inventory": "3110",
+    "official_url": "https://mediaguide.staatsgalerie.de/en/sammlung/baleful-head/people_with_hearing_impairments/",
+    "source_commons": "https://commons.wikimedia.org/wiki/File:The_Baleful_Head_-_Edward_Burne-Jones.jpg",
+    "source_original_pixels": [
+      1410,
+      1800
+    ],
+    "source_sha256": "2ff494f37894976ef48dab91f3f2bf7b8ae08bee2a1ac1246517906652b68e1c",
+    "source_license": "PD-Art/PDM 1.0, territorial commercial publication review pending",
+    "official_physical_cm_height_width": [
+      150,
+      130
+    ],
+    "source_pixel_to_cm_ratio_discrepancy": "source 1410/1800=0.783; published 130/150=0.867; original reproduced without stretch, V119 physical-scale correspondence review pending"
+  },
+  "frame": {
+    "historical_original_frame_proven": false,
+    "editorial_custom_frame": "BESPOKE_EDWARD_BURNE_JONES_APPLE_VINES_OCTAGONAL_FOUNTAIN",
+    "design": "ebonized walnut and aged brass, carved apple vine in Arts & Crafts idiom, 8-sided corner rosettes echoing the fountain",
+    "museum_room_id": "G06_NAVY_GOLD",
+    "room_type": "AUTHORIZED_V332_VIRTUAL_GALLERY_NOT_AN_ACTUAL_MUSEUM",
+    "never_claim_authentic_frame": true,
+    "full_frame_entry_exit": true
+  },
+  "music": {
+    "library": "config/artvision_music_20_v1.json",
+    "title": "The Descent",
+    "composer": "Kevin MacLeod",
+    "isrc": "USUAN1200094",
+    "license": "CC BY 4.0 attribution required",
+    "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+    "original_mp3_sha256": "f097d51700b970efffc62499473ea3a31e09aad4172e787978bc9c2a644d53a2",
+    "source_audio_original_binary_verified": true
+  },
+  "render": {
+    "duration_seconds": 54,
+    "fps": 20,
+    "resolution": [
+      720,
+      1280
+    ],
+    "mp4_sha256": "50967e861dd5263844d84aeb41a8e2e4eda0118227de118158fafefc477b439c",
+    "android_mp4_sha256": "4c8939161fcfe47ea4832079b1ccdc5815495e64222005af9b843fc33362200f",
+    "android_zip_sha256": "22b330c1fe414e980a20600b82817df1568a25959891ca5f519dc077aa3aa8a2",
+    "full_ffmpeg_audio_video_decode": "PASS_BOTH_MASTERS",
+    "zip_crc_manifest_sha256": "PASS",
+    "preflight_v203_v1": "REJECTED_CAMERA_MOTION_MAD_20.6705",
+    "targeted_correction_v203_v2": "PASS_CAMERA_MOTION_MAD_16.7156_BELOW_18",
+    "revision_count_for_same_slot": 1,
+    "new_independent_slots_count": 1
+  },
+  "delivery": {
+    "persistent_library_path": "/ArtVision/Owner_30/Burne_Jones_Baleful_Head_20261112/Cinema_Museum_20261117",
+    "independent_library_readback_zip_sha_and_crc": "PASS",
+    "android_device_user_download_tested": false,
+    "included": [
+      "MP4",
+      "Android MP4",
+      "ZIP",
+      "COVER",
+      "SOCIAL_PACK",
+      "CREDITS_RIGHTS_FRAME_PROVENANCE",
+      "SHOT_STORYBOARD",
+      "REAL_VIDEO_CONTACT_SHEET",
+      "SHA256_MANIFEST",
+      "TECHNICAL_QA"
+    ],
+    "publication": false,
+    "gold": false,
+    "owner_artistic_review": "PENDING",
+    "rights_territorial": "PENDING"
+  },
+  "voice": {
+    "critico_generated": false,
+    "approved_gacrux_policy_preserved": true,
+    "owner_rejected_dryad_gtTS_not_counted": true
+  },
+  "do_not_duplicate": "This already fills one Cinema Museum slot for The Baleful Head. Future revisions are the same slot. Leave pre-existing Cinema Standard untouched.",
+  "next": "Choose another independent missing variant using true source/photo/license/music and bespoke frame; keep Critico blocked without approved cached Gacrux and two verified cost gates."
+}
