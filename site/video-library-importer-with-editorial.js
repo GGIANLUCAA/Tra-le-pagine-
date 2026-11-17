@@ -35,20 +35,8 @@ export default{async fetch(request,env){
   }
   return resp({ok:true,created,pending:Math.max(0,pending.length-batch.length),unavailable,total:candidates.length,existing:existing.size});
  }
- // Archive import and public release are distinct: previews must be archived privately.
- if(route==='/ingest-stage'&&method==='POST'){
-  const key=u.searchParams.get('key')||'';
-  if(!/^[\\w(). -]{1,180}\\.(mp4|mov|m4v)$/i.test(key)||key.includes('..'))return resp({error:'Invalid video name'},400);
-  for(let attempt=0;attempt<5;attempt++){
-   const o=await env.VIDEOS.get('catalog/manage.json');
-   let entries={};try{if(o)entries=await o.json()}catch{return resp({error:'Unable to read current private catalog'},503)}
-   if(entries[key])return resp({ok:true,staged:!!entries[key].hidden,existing:true});
-   entries[key]={hidden:true,version:'draft',note:'Importato automaticamente in Studio: revisione artistica e diritti in attesa.'};
-   const written=await env.VIDEOS.put('catalog/manage.json',JSON.stringify(entries),{httpMetadata:{contentType:'application/json'},onlyIf:o?{etagMatches:o.etag}:{etagDoesNotMatch:'*'}});
-   if(written)return resp({ok:true,staged:true,created:true});
-  }
-  return resp({error:'Concurrent catalog update; retry later'},409);
- }
+ // Staging into the public R2 bucket cannot provide private review access.
+ if(route==='/ingest-stage'&&method==='POST')return resp({error:'Authenticated private bucket required; staging disabled'},409);
 
  // V336: signed GitHub Actions may reconcile old markers, but no legacy
  // marker is evidence that a video exists in R2 or is publicly available.
