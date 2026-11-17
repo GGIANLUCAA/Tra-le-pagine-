@@ -32,7 +32,7 @@
       "official_object": "https://www.clevelandart.org/art/1928.8",
       "artwork_rights": "CMA Open Access CC0 confirmed on official page",
       "source_binary": "VERIFIED_CMA_3400x2685_SHA_02640803f0b848bb651f9aa5c72dda458ce001adccb2c258cd9a3d0e32c7bfed",
-      "status": "CINEMA_STANDARD_RENDERED_TECH_QA_ART_REVIEW_PENDING",
+      "status": "CINEMA_STANDARD_AND_CINEMA_MUSEUM_RENDERED_TECH_QA_ART_REVIEW_PENDING",
       "mood": [
         "eerie",
         "mysterious",
@@ -49,7 +49,16 @@
         "ritorno all'insieme"
       ],
       "director_note": "L'immagine è orizzontale: conservare leggibilità del quadro intero; nessun 9:16 crop che tagli la figura e il serpente.",
-      "checkpoint": "queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json"
+      "checkpoint": "queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json",
+      "cinema_museum_checkpoint": "queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum.json",
+      "variants": {
+        "cinema_standard": "RENDERED_TECH_QA_ART_REVIEW_PENDING",
+        "cinema_museum": "RENDERED_TECH_QA_ART_REVIEW_PENDING",
+        "critico_standard": "BLOCKED_GACRUX_AND_FREE_BILLING_GATE",
+        "critico_museum": "BLOCKED_GACRUX_AND_FREE_BILLING_GATE"
+      },
+      "frame_policy": "V334 - original frame if photo/provenance verified; else art-specific dedicated editorial reconstruction; G03_PALE_MARBLE frame recorded for future same-artwork Museum",
+      "next_step": "Do not regenerate Cinema Standard or Cinema Museum; target distinct independent missing variant/work. Critico requires exact approved Gacrux plus verified free-quota and billing-disabled gates."
     },
     {
       "priority": 2,
