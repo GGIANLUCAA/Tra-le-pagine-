@@ -1,7 +1,7 @@
 {
   "schema": "artvision-extra-render-preflight-v1",
   "recorded_at": "2026-11-17",
-  "status": "AUTHORIZED_EDITORIALLY_PREFLIGHT_ONLY_NO_MP4",
+  "status": "ONE_REAL_NEW_EXTRA_CINEMA_STANDARD_TECH_PASS_ART_REVIEW_PENDING_LIBRARY_BACKED_UP",
   "artist": "Salvator Rosa",
   "title": "Scenes of Witchcraft: Night",
   "year": "c. 1645–49",
@@ -27,6 +27,52 @@
   "publish": false,
   "gold": false,
   "paid_api_calls": 0,
-  "render_status": "NOT_STARTED",
-  "next": "Commit renderer, push-triggered workflow, verify GH run artifact before claiming any video"
+  "render_status": "COMPLETED_TECH_PASS",
+  "next": "Do not rerender this cinema_standard; review artistic quality with owner, remaining cinema_museum/critico only under their specific gates. No auto-publication.",
+  "completed_at_utc": "2026-11-17T13:33:36Z",
+  "verified_source": {
+    "kind": "CMA_OPEN_ACCESS_CDN",
+    "pixels": [
+      3400,
+      3388
+    ],
+    "bytes": 2044992,
+    "sha256": "73132dfd84cb9a3c7de50c07f10b017f7cb5ca3fbbd6a3745317c2542e111b92",
+    "license": "CMA Open Access CC0"
+  },
+  "output": {
+    "run_id": 44093778807,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/44093778807",
+    "artifact_id": 14332408255,
+    "artifact_name": "ARTVISION_NEW_SALVATOR_ROSA_NIGHT_CINEMA_PRIVATE_REVIEW",
+    "variant": "cinema_standard",
+    "duration_seconds": 35,
+    "resolution": "1080x1920",
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "mp4_bytes": 3034912,
+    "mp4_sha256": "47e5187c52900acb68d4e834005f116aadab550092050ec010a05e5cd295ebe9",
+    "android_zip_bytes": 3244358,
+    "android_zip_sha256": "bd058120fd4e461ae69f4ee65c6c268f2b4a961240ea223f1112c340579ea146",
+    "cover_bytes": 355797,
+    "full_decode": "PASS",
+    "zip_crc": "PASS",
+    "music": "Ghost Processional — Kevin MacLeod",
+    "music_license": "CC BY 4.0, source recording SHA verified",
+    "music_recording_sha256": "9502c6f9a0c365f2717ea82acd7e18c17f784da742c63a1e6887c5761a7ef421",
+    "artistic_review": "PENDING",
+    "android_on_device": "NOT_TESTED",
+    "site_online": false,
+    "gold": false,
+    "auto_published": false
+  },
+  "backup": {
+    "location": "/ArtVision/New_Series/Salvator_Rosa_Night_20261117",
+    "verified_list": [
+      "ARTVISION_SALVATOR_ROSA_NIGHT.mp4",
+      "ARTVISION_SALVATOR_ROSA_ANDROID.zip",
+      "ARTVISION_SALVATOR_ROSA_COVER.jpg"
+    ],
+    "storage": "LIBRARY_BACKUP_AND_GITHUB_ARTIFACT"
+  }
 }
