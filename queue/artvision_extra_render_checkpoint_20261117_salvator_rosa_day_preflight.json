@@ -1,7 +1,7 @@
 {
   "schema": "artvision-extra-render-preflight-v1",
   "recorded_at": "2026-11-17",
-  "status": "AUTHORIZED_EDITORIALLY_PREFLIGHT_ONLY_NO_MP4",
+  "status": "ONE_REAL_NEW_EXTRA_CINEMA_STANDARD_TECH_PASS_ART_REVIEW_PENDING",
   "artist": "Salvator Rosa",
   "title": "Scenes of Witchcraft: Day",
   "year": "c. 1645–49",
@@ -27,6 +27,39 @@
   "publish": false,
   "gold": false,
   "paid_api_calls": 0,
-  "render_status": "NOT_STARTED",
-  "next": "Render new Day and full technical QA; no auto publication"
+  "render_status": "COMPLETED_TECH_PASS",
+  "next": "Do not rerender Day Cinema Standard. Await artistic review, keep private. Cover Library upload blocked 403 but included in ZIP and GitHub artifact.",
+  "output": {
+    "run_id": 44128065032,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/44128065032",
+    "artifact_id": 14349160967,
+    "duration_seconds": 35,
+    "resolution": "1080x1920",
+    "mp4_bytes": 3541177,
+    "mp4_sha256": "af467676e31065d40aac5d4f004dfa52a8cc75de77dca4b41f0bc897282f2b71",
+    "android_zip_bytes": 3869636,
+    "android_zip_sha256": "0ba84b465b122dedef72e7270ebbc91f5988352090402482b4ba07fbda8108d4",
+    "source_pixels": [
+      3400,
+      3382
+    ],
+    "source_sha256": "08c686b0b3fe58a446ef2408a10aad16051a2aa2e15aea0e97f2d34e6a6e0c42",
+    "music": "V330 verified CC BY 4.0",
+    "qa": "TECH_PASS",
+    "full_av_decode": "PASS",
+    "zip_crc": "PASS",
+    "android_device_test": "NOT_TESTED",
+    "artistic_review": "PENDING",
+    "published": false,
+    "site_online": false,
+    "gold": false
+  },
+  "backup": {
+    "library_path": "/ArtVision/New_Series/Salvator_Rosa_Day_20261117",
+    "mp4": "UPLOAD_SUCCEEDED",
+    "zip": "UPLOAD_SUCCEEDED",
+    "cover": "LIBRARY_UPLOAD_FAILED_403_TRUSTED_PRODUCER; COVER_PRESENT_IN_GITHUB_ARTIFACT_AND_ANDROID_ZIP",
+    "readback": "NOT_VERIFIED",
+    "artifact": "GITHUB_ACTIONS_PERSISTED"
+  }
 }
