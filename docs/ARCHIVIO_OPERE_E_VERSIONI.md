@@ -55,7 +55,7 @@ Questi stati non implicano pubblicazione né playback.
 | Jacques Louis David | The Death of Socrates | 1787 | D | D | D | D | Non abbinato |
 | James Ensor | The Intrigue | 1890 | — | — | D | — | Non abbinato |
 | Jan van Eyck | The Arnolfini Portrait — The Secret in the Mirror | ? | — | — | — | — | Non abbinato |
-| Jean-Léon Gérôme | The Duel After the Masquerade | ? | — | — | — | — | Non abbinato |
+| Jean-Léon Gérôme | The Duel After the Masquerade | ? | — | — | D | — | Non abbinato |
 | John Everett Millais | La ragazza cieca | ? | D | D | D | D | Non abbinato |
 | John Martin | The Country of the Iguanodon | ? | — | — | — | — | Non abbinato |
 | John William Waterhouse | Circe Invidiosa | ? | — | — | — | — | Non abbinato |
@@ -88,8 +88,8 @@ Questi stati non implicano pubblicazione né playback.
 | Richard Dadd | The Fairy Feller's Master-Stroke | 1855-1864 | — | — | D | — | Non abbinato |
 | Rosa Bonheur | La fiera dei cavalli | ? | D | D | D | D | Non abbinato |
 | Salvador Dalí | The Temptation of St. Anthony | 1946 | — | — | — | — | ESCLUSO |
-| Salvator Rosa | Scenes of Witchcraft: Night | c. 1645–49 | — | — | — | — | Non abbinato |
-| Thomas Cole | The Course of Empire: Destruction | ? | — | — | — | — | Non abbinato |
+| Salvator Rosa | Scenes of Witchcraft: Night | c. 1645–49 | — | — | C | — | Non abbinato |
+| Thomas Cole | The Course of Empire: Destruction | ? | — | — | D | — | Non abbinato |
 | Thomas Cole | The Titan's Goblet | 1833 | — | — | — | — | Non abbinato |
 | Thomas Cole | The Voyage of Life: Manhood | 1842 | B | B | D | C | Non abbinato |
 | Utagawa Hiroshige | Plum Garden at Kameido | ? | — | — | — | — | Non abbinato |
@@ -608,7 +608,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_duel_masquerade.json [UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_duel_masquerade.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### John Everett Millais — La ragazza cieca
@@ -938,7 +938,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: queue/artvision_extra_render_checkpoint_20261117_salvator_rosa_night_preflight.json [UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF]
+- cinema_standard: in_coda_o_preflight; prove: queue/artvision_extra_render_checkpoint_20261117_salvator_rosa_night_preflight.json [ONE_REAL_NEW_EXTRA_CINEMA_STANDARD_TECH_PASS_ART_REVIEW_PENDING_L]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Thomas Cole — The Course of Empire: Destruction
@@ -948,7 +948,7 @@ Questi stati non implicano pubblicazione né playback.
 - Candidati sul sito (nome compatibile soltanto): nessuno
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
-- cinema_standard: non_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_cole_destruction.json [UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF]
+- cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261110_cole_destruction.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Thomas Cole — The Titan's Goblet

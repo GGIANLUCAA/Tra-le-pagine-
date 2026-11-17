@@ -28,7 +28,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Ilya Repin | Sadko | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | J. M. W. Turner | The Shipwreck | critico_standard, critico_museum | selezione_30, checkpoint |
 | James Ensor | The Intrigue | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
-| Jean-Léon Gérôme | The Duel After the Masquerade | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
+| Jean-Léon Gérôme | The Duel After the Masquerade | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | John William Waterhouse | The Mermaid | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | John William Waterhouse | Ulysses and the Sirens | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Joseph Mallord William Turner | The Burning of the Houses of Lords and Commons, 16 October 1834 | critico_standard, critico_museum, cinema_museum | checkpoint |
@@ -42,7 +42,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Pieter Bruegel the Elder | Dulle Griet | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Richard Dadd | The Fairy Feller's Master-Stroke | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint, cicli_v31 |
 | Salvator Rosa | Scenes of Witchcraft: Night | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
-| Thomas Cole | The Course of Empire: Destruction | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, checkpoint |
+| Thomas Cole | The Course of Empire: Destruction | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Thomas Cole | The Titan's Goblet | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
 | Thomas Cole | The Voyage of Life: Manhood | critico_standard, critico_museum, cinema_museum | checkpoint |
 | William Holbrook Beard | The Bulls and Bears | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30, nuova_serie |

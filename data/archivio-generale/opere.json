@@ -1,11 +1,11 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-17T13:28:27+00:00",
+  "generated_at": "2026-11-17T13:37:01+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 93,
-    "render_documented_slots": 145,
-    "not_documented_slots": 127,
+    "render_documented_slots": 147,
+    "not_documented_slots": 125,
     "site_items": 541,
     "site_cloudflare": 530,
     "site_unavailable": 11,
@@ -3166,12 +3166,13 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
+          "state": "render_documentato",
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261110_duel_masquerade.json",
-              "status_claim": "UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF",
-              "classification": "non_documentato"
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "db2e20a25d6d553e83ff65bf934cf3cea7f9dd962fc65c7507ebaad2444e75bb"
             }
           ],
           "site_candidates": []
@@ -3191,10 +3192,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
@@ -5307,12 +5307,12 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
+          "state": "in_coda_o_preflight",
           "evidence": [
             {
               "source": "queue/artvision_extra_render_checkpoint_20261117_salvator_rosa_night_preflight.json",
-              "status_claim": "UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF",
-              "classification": "non_documentato"
+              "status_claim": "ONE_REAL_NEW_EXTRA_CINEMA_STANDARD_TECH_PASS_ART_REVIEW_PENDING_LIBRARY_BACKED_UP",
+              "classification": "in_coda_o_preflight"
             }
           ],
           "site_candidates": []
@@ -5364,12 +5364,13 @@
           "site_candidates": []
         },
         "cinema_standard": {
-          "state": "non_documentato",
+          "state": "render_documentato",
           "evidence": [
             {
               "source": "queue/artvision_owner_30_render_checkpoint_20261110_cole_destruction.json",
-              "status_claim": "UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF",
-              "classification": "non_documentato"
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "771ed77e9b601e909b1d11a4260f7300978137a0534ee9d1bcde995c96c92eca"
             }
           ],
           "site_candidates": []
@@ -5389,10 +5390,9 @@
       "missing_variants": [
         "critico_standard",
         "critico_museum",
-        "cinema_standard",
         "cinema_museum"
       ],
-      "render_documented": 0,
+      "render_documented": 1,
       "site_playback_verified": false,
       "published_confirmed": false
     },
