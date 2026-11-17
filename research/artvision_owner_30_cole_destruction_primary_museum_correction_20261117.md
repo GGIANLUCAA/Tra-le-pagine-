@@ -1,0 +1,28 @@
+# ArtVision · #19 Thomas Cole — verifica primaria e correzione dimensioni (17 novembre 2026)
+
+**Ambito:** integrazione puntuale del dossier `research/artvision_owner_30_cole_destruction_burnejones_golden_stairs_source_social_music_20261114.md`. Numero originale #19 invariato; nessuna modifica a shortlist, queue, master, workflow, pubblicazione o altre automazioni. **Solo ricerca; nessun video creato.**
+
+## Fonte primaria effettivamente consultata
+- **New-York Historical, eMuseum**, scheda dell'esemplare `1858.4`: https://emuseum.nyhistory.org/objects/41597/the-course-of-empire-destruction (risposta indicizzata con scheda museo leggibile il 17/11/2026; URL con sessione osservato: https://emuseum.nyhistory.org/objects/41597/the-course-of-empire-destruction%3Bjsessionid%3DE5E67879B0D9DD4296DB8063CC651DDA ).
+- Titolo ufficiale: *The Course of Empire: Destruction*; artista Thomas Cole (1801–1848), **1836**, **olio su tela**, **1858.4**.
+- Dimensioni **senza cornice 99,7 × 161,3 cm**; **con cornice 134,6 × 194,3 × 14,6 cm**. Questi sono dati della scheda del museo e correggono la precedente larghezza candidata di 160,6 cm. **Non significa che l'attuale cornice sia originale del 1836:** provenienza, fotografia, struttura e storia della cornice ancora da accertare. Non creare una sala museo ipotetica presentata come autentica.
+- Provenienza istituzionale: ciclo commissionato nel 1833 dal mercante Luman Reed per la sua galleria domestica; Reed morì nel giugno 1836 prima di vederlo concluso; famiglia incoraggiò il completamento; esposto nel 1836; passaggio tramite New-York Gallery of the Fine Arts, **donazione alla New-York Historical Society nel 1858**. Fonte: scheda ufficiale sopra.
+- Il museo conferma che è la **quarta** e più drammatica scena del ciclo. Una lettera del **30 agosto 1836** ad Asher B. Durand testimonia che Cole lavorava a rappresentare il saccheggio e l'incendio di una città. Non raccontare l'allegoria come un assedio storico realmente identificato.
+- Corroborazione istituzionale della scheda ripubblicata: https://artsandculture.google.com/asset/the-course-of-empire-destruction/tQFLZqWBxVAINQ .
+
+## Asset e licenza: CANDIDATO, non master verificato
+- Candidato distinto dalla fotografia del museo: https://commons.wikimedia.org/wiki/File:Cole_Thomas_The_Course_of_Empire_Destruction_1836.jpg
+- **Metadati dichiarati dalla pagina Commons, non misurati su byte locali:** JPEG **8.917 × 5.532 px**, circa **16,75 MiB**; pagina indica PD-Art / Public Domain Mark per riproduzione fedele bidimensionale. Il record Wikisource riporta **17.561.412 byte** e **SHA-1 b2af9bc527fd6a671ae2e307f8ec8a0a2b4e993a**; sono claim di fonte, **non hash calcolato qui**, e SHA-256 è assente.
+- La provenienza del singolo file, il suo download integrale, checksum SHA-256, cromia e leggibilità dei microdettagli non sono stati verificati. Anche una dicitura PD-Art non sostituisce analisi del riuso del file per le piattaforme e i territori interessati. L'opera è in museo statunitense: **non applicare automaticamente** gli artt. 107–108 del Codice italiano come se il museo fosse italiano; valutare separatamente gli eventuali vincoli pertinenti.
+- **Gate:** museo / identità **VERIFICATI**; cornice **dimensioni verificate, autenticità storica ignota**; immagine **CANDIDATA**; file SHA-256 / pixel locali **NON VERIFICATI**; diritti del file per uso commerciale multipiattaforma **NON CHIARITI**; produzione individuale **NON AUTORIZZATA dalla sola shortlist**; **NOT READY**.
+
+## Dettagli reali per la regia (proposta, non montaggio)
+00:00–00:07 mostrare intero l'attacco alla città, senza deformare proporzioni 99,7:161,3; 00:07–00:22 caos umano e ponte; 00:22–00:39 navi, porto e architettura in fiamme; 00:39–00:57 enorme figura monumentale del guerriero **decapitato** (riferimento al *Borghese Warrior* secondo la descrizione museale riprodotta da Google Arts & Culture); 00:57–01:15 fumo, rovine e ritorno alla composizione; 01:15–01:30 quarta scena nel ciclo e destino successivo (*Desolation*). Tempi solo editoriali, da riallineare al copione e all'immagine effettiva. Non aggiungere dettagli generativi non presenti.
+
+## Social / musica: integrazione al dossier esistente
+Hook inglese candidato: **“An empire collapses — but this city never existed.”** È una formula narrativa che indica il carattere allegorico, non una ricostruzione documentaria. Titolo/pack Instagram, Facebook, TikTok, YouTube Shorts, alt-text, cover, crediti e music brief già **in bozza non pubblicata** nel dossier 14/11; non considerarli finali o già consegnati. Musica: famiglia 2 (archi drammatici), alternativa 10 (tensione cinematografica), ducking e conclusione naturale; nessuna traccia singola/licenza Content ID verificata in questo ciclo. Saturazione social non verificata; nessuna statistica inventata.
+
+## Preflight duplicati e handoff
+Esistono già `scripts/artvision_owner_cole_destruction_cinema_v1.py`, `.github/workflows/artvision-owner-cole-destruction-cinema-v1.yml`, `queue/artvision_owner_30_render_checkpoint_20261110_cole_destruction.json` e un vecchio modulo collettivo `modules/artvision/thomas_cole_course_v6.py`. **Non avviare alcun nuovo render** prima di confronto esatto per slot, SHA, run e stato checkpoint con l'automazione produttiva. La ricerca museale aggiorna la correttezza del dossier, non costituisce autorizzazione o consegna MP4.
+
+**Esito 17/11:** corretti i dati dimensionali e documentata la storia museale tramite fonte primaria; il blocco reale rimane la verifica binaria/licenza della fotografia e la mancata autorizzazione individuale a una nuova produzione.
