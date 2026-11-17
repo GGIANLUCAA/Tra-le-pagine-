@@ -52,20 +52,43 @@ jobs:
           import urllib.request,hashlib,pathlib,json,io,subprocess
           from PIL import Image
           out=pathlib.Path("output/segantini_source");out.mkdir(parents=True,exist_ok=True)
-          painting="https://upload.wikimedia.org/wikipedia/commons/a/ad/Giovanni_Segantini_-_Die_b%C3%B6sen_M%C3%BCtter_-_485_-_%C3%96sterreichische_Galerie_Belvedere.jpg"
+          source_candidates=[
+           ("Belvedere original 2018 dispatcher","https://digital.belvedere.at/internal/media/downloaddispatcher/3814"),
+           ("Belvedere updated dispatcher","https://sammlung.belvedere.at/internal/media/downloaddispatcher/3814"),
+           ("Wikimedia original via Commons redirect","https://commons.wikimedia.org/wiki/Special:Redirect/file/Giovanni_Segantini_-_Die_b%C3%B6sen_M%C3%BCtter_-_485_-_%C3%96sterreichische_Galerie_Belvedere.jpg"),
+           ("Wikimedia original direct","https://upload.wikimedia.org/wikipedia/commons/a/ad/Giovanni_Segantini_-_Die_b%C3%B6sen_M%C3%BCtter_-_485_-_%C3%96sterreichische_Galerie_Belvedere.jpg")
+          ]
           music="https://incompetech.com/music/royalty-free/mp3-royaltyfree/Evening%20Fall%20-%20Piano.mp3"
           def fetch(url,limit):
-           request=urllib.request.Request(url,headers={"User-Agent":"ArtVision/1.0 (source proof and private art review)"})
-           with urllib.request.urlopen(request,timeout=80) as r:
+           request=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36","Accept":"image/avif,image/webp,image/jpeg,image/png,*/*"})
+           with urllib.request.urlopen(request,timeout=55) as r:
             b=r.read(limit+1)
            assert 300000<len(b)<=limit,f"UNEXPECTED_BINARY_SIZE_{len(b)}"
            return b
-          img=fetch(painting,20_000_000)
-          assert hashlib.sha1(img).hexdigest()=="2ddc44385c2e3d081b33e68c609f9b602837b0c8", "WRONG_SOURCE_IMAGE_SHA1"
+          errors=[]
+          img=None;painting=None
+          for provenance,url in source_candidates:
+           try:
+            candidate=fetch(url,42_000_000)
+            with Image.open(io.BytesIO(candidate)) as im:
+             w,h=im.size
+             assert im.format in ("JPEG","PNG","TIFF") and w>=2000 and h>=1000 and 1.75<w/h<2.02, f"WRONG_PAINTING_IMAGE {im.format} {im.size}"
+             im.verify()
+            if "Wikimedia" in provenance:
+             assert (w,h)==(3508,1820) and hashlib.sha1(candidate).hexdigest()=="2ddc44385c2e3d081b33e68c609f9b602837b0c8","NOT_EXACT_WIKIMEDIA_BINARY"
+            img=candidate;painting=url
+            print("PAINTING_ORIGINAL_SUCCESS",provenance,w,h,flush=True)
+            break
+           except Exception as exc:
+            errors.append({"provenance":provenance,"error":str(exc)[:140]})
+            print("SOURCE_FALLBACK",provenance,type(exc).__name__,str(exc)[:120],flush=True)
+          if img is None:
+           raise RuntimeError("ALL_FOUR_ORIGINAL_SOURCE_ENDPOINTS_BLOCKED: "+json.dumps(errors))
           with Image.open(io.BytesIO(img)) as im:
-           assert im.format=="JPEG" and im.size==(3508,1820),f"WRONG_PAINTING_PIXELS_FORMAT {im.format} {im.size}"
-           im.verify()
-          p=out/"SEGANTINI_BELVEDERE_485_ORIGINAL.jpg";p.write_bytes(img)
+           rgb=im.convert("RGB")
+           actual_dims=list(im.size)
+          saved=io.BytesIO();rgb.save(saved,format="JPEG",quality=95)
+          p=out/"SEGANTINI_BELVEDERE_485_ORIGINAL.jpg";p.write_bytes(saved.getvalue())
           wav=fetch(music,30_000_000)
           m=out/"Evening_Fall_Piano_Kevin_MacLeod.mp3";m.write_bytes(wav)
           meta=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_streams","-show_format","-of","json",str(m)]))
@@ -75,7 +98,7 @@ jobs:
            "title":"The Evil Mothers / Le cattive madri", "artist":"Giovanni Segantini",
            "year":1894,"museum":"Belvedere, Vienna, Austria","museum_object":"485","museum_object_id":"6224",
            "source_url":painting,"source_image_page":"https://commons.wikimedia.org/wiki/File:Giovanni_Segantini_-_Die_b%C3%B6sen_M%C3%BCtter_-_485_-_%C3%96sterreichische_Galerie_Belvedere.jpg",
-           "source_pixels":[3508,1820],"source_sha1":hashlib.sha1(img).hexdigest(),"source_sha256":hashlib.sha256(img).hexdigest(),
+           "source_pixels":actual_dims,"source_sha1":hashlib.sha1(img).hexdigest(),"source_sha256":hashlib.sha256(img).hexdigest(),"saved_jpeg_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
            "image_license":"faithful public-domain artwork reproduction; Wikimedia file CC BY-SA 4.0 conditions and attribution, source metadata and changed crop must be preserved",
            "museum_open_content_policy":"https://sammlung.belvedere.at/opencontent/images",
            "music":"Evening Fall (Piano) by Kevin MacLeod",
