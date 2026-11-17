@@ -59,7 +59,7 @@ export default{async fetch(request,env){
   const o=await env.VIDEOS.get('sync/gh/'+aid+'.json');
   if(!o)return resp({artifact_id:aid,state:'untracked',verified:false,synced:false});
   let m;try{m=await o.json()}catch{return resp({artifact_id:aid,state:'invalid_marker',verified:false,synced:false});}
-  if(m.state==='no_video'||m.state==='blocked_rights'||m.state==='private_review'){
+  if(m.state==='no_video'||m.state==='blocked_rights'||m.state==='private_review'||m.state==='owner_deleted'){
    return resp({artifact_id:aid,state:m.state,verified:false,synced:false});
   }
   const files=Array.isArray(m.files)?m.files:[];
@@ -83,7 +83,7 @@ export default{async fetch(request,env){
   if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad ID'},400);
   let data;try{data=await request.json()}catch{return resp({error:'Invalid JSON'},400);}
   const state=data?.state;
-  if(!['complete','no_video','blocked_rights','private_review'].includes(state))return resp({error:'Invalid state'},400);
+  if(!['complete','no_video','blocked_rights','private_review','owner_deleted'].includes(state))return resp({error:'Invalid state'},400);
   const name=String(data.name||'').slice(0,160);
   const files=state==='complete'?data.files:[];
   if(state==='complete'){
