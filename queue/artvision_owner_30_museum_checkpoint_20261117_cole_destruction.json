@@ -1,0 +1,75 @@
+{
+  "schema": "artvision-owner-30-one-new-cinema-museum-verified-v1",
+  "recorded_at": "2026-11-17",
+  "source_queue": "research/artvision_owner_selected_30_future_20261109.json",
+  "work": {
+    "artist": "Thomas Cole",
+    "title": "The Course of Empire: Destruction",
+    "year": 1836,
+    "museum": "New-York Historical",
+    "inventory": "1858.4",
+    "painting_cm": [
+      161.2,
+      100.3
+    ]
+  },
+  "variant": "cinema_museum",
+  "status": "RENDERED_TECH_QA_ARTISTIC_REVIEW_PENDING",
+  "new_independent_slot_count": 1,
+  "is_new_artwork": false,
+  "not_historic_26_of_36": true,
+  "standard": {
+    "prior_completed_run": 42737588988,
+    "prior_artifact": 13727903252,
+    "mp4_sha256": "771ed77e9b601e909b1d11a4260f7300978137a0534ee9d1bcde995c96c92eca",
+    "source_original_sha256": "070c09253e7ff70639817a8790d10ea67b8de0f54f6020625e7b74b1be200cb9"
+  },
+  "museum": {
+    "room_library": "/ArtVision/Museum_AI_Rooms_V332",
+    "room_id": "G08",
+    "room_sha256": "486d86df4767b5417b980245b07195dfe8d73057b374dd5825e57f92e8a02656",
+    "room_is_ai_editorial_not_real_museum": true,
+    "frame_is_editorial_not_authentic": true,
+    "painting_physical_size_museum_documented": true,
+    "mp4_sha256": "3eb76bf188b0810d5248467d7ac592611e07ce321a4442e5547e585d097fe388",
+    "mp4_bytes": 8029623,
+    "video_seconds": 69.6,
+    "pixels": [
+      720,
+      1280
+    ],
+    "fps": 20,
+    "audio_same_AAC_bits_as_standard": true,
+    "transition_mean_pixel_deltas": [
+      8.443,
+      0.14,
+      2.903,
+      6.374
+    ],
+    "transition_gate": "PASS_MAX_8.443_LT_18",
+    "full_ffmpeg_decode": "PASS",
+    "android_zip_sha256": "fc8a699b77421136e8853444580a674aff5416f594b8515190e9e0005baf0cc4",
+    "android_zip_bytes": 10681203,
+    "zip_crc": "PASS",
+    "independent_library_readback_MP4_ZIP_SHA_CRC": "PASS",
+    "artist_review": "PENDING",
+    "publish": false,
+    "gold": false
+  },
+  "persistent_library": {
+    "path": "/ArtVision/Owner_30/Cole_Destruction_Museum_20261117",
+    "mp4_library_id": "libfile_a592d70137a081918cc4066c18fa061a",
+    "android_zip_library_id": "libfile_b97c3bfe4c608191ab82e15c950a0396",
+    "technical_report_library_id": "libfile_365feab2526481918d88973538f8a5af",
+    "contact_sheet_library_id": "libfile_02ab6e3f4b048191afda773af4b79f1b"
+  },
+  "guards": {
+    "Gacrux_only_for_future_critico": true,
+    "new_critico": 0,
+    "paid_api_calls": 0,
+    "original_standard_unchanged": true,
+    "no_automatic_publish": true,
+    "territorial_licensed_image_review": "PENDING",
+    "do_not_rerender_as_new_slot": true
+  }
+}
