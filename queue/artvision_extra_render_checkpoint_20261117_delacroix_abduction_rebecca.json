@@ -1,0 +1,88 @@
+{
+  "schema": "artvision-extra-one-new-cinema-standard-20261117",
+  "recorded_at": "2026-11-17",
+  "work": {
+    "artist": "Eugène Delacroix",
+    "title": "The Abduction of Rebecca",
+    "year": 1846,
+    "collection": "The Metropolitan Museum of Art",
+    "met_object_id": 438814,
+    "accession": "03.30",
+    "official_url": "https://www.metmuseum.org/art/collection/search/438814",
+    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-14344-001.jpg",
+    "source_sha256": "7a996eb0ac515383c2b6820555b9af57a90a429261e55f36c7dbaa4adb333bcf",
+    "source_pixels": [
+      3263,
+      4000
+    ],
+    "license": "Public Domain / Met Open Access, verified using exact official API"
+  },
+  "music": {
+    "catalogue": "config/artvision_music_20_v1.json",
+    "catalogue_id": "magistar",
+    "title": "Magistar",
+    "author": "Kevin MacLeod",
+    "isrc": "USUAN1900003",
+    "source": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Magistar.mp3",
+    "source_sha256": "299a5619829dbb95604531d310fd89dd190009589bdcdc2ef7881f878b1f7a60",
+    "license": "CC BY 4.0",
+    "attribution": "Required, included in social pack"
+  },
+  "production": {
+    "variant": "cinema_standard",
+    "status": "RENDERED_FULL_AV_FFMPEG_PASS_PRIVATE_ARTISTIC_REVIEW_PENDING",
+    "duration_seconds": 58.6,
+    "dimensions": [
+      720,
+      1280
+    ],
+    "fps": 20,
+    "scenes": 12,
+    "mp4_sha256": "8ffef670e2ca5d13ee2fcc5c466c207f7d781f997fbb45077656288326e4addd",
+    "mp4_bytes": 8130408,
+    "android_zip_sha256": "4c83cdb10e2548ba77faed572907c7f21bdfa88940075b45725652f41b9a4f0d",
+    "android_zip_bytes": 8688351,
+    "ffmpeg_full_audio_video_decode": "PASS",
+    "zip_crc": "PASS",
+    "library_readback_sha256": "MATCH_BOTH_MP4_ZIP",
+    "library_readback_zip_crc": "PASS",
+    "no_tts_calls": true,
+    "no_paid_api_calls": true,
+    "not_published": true,
+    "gold": false,
+    "human_artistic_full_speed_review": "PENDING",
+    "voice_policy": "Cinema Standard has no narration; Gacrux only for future Critico"
+  },
+  "variants": {
+    "cinema_standard": "RENDERED_TECH_QA_ART_REVIEW_PENDING",
+    "cinema_museum": "NOT_STARTED_MUSEUM_GATE",
+    "critico_standard": "BLOCKED_GACRUX_API",
+    "critico_museum": "BLOCKED_GACRUX_API_AND_MUSEUM_GATE"
+  },
+  "storage": {
+    "library_path": "/ArtVision/Opere_Extra/Delacroix_Abduction_of_Rebecca_20261117",
+    "library_mp4_id": "libfile_3a1cc5262f808191af44aa14f019272f",
+    "library_android_zip_id": "libfile_d623af5c91488191bfc09eda3449c87e",
+    "library_cover_id": "libfile_1d117a9b473c8191a34f149c80a7a3ff",
+    "library_social_id": "libfile_0821e0f438dc8191aaec520f247a1698",
+    "library_contact_id": "libfile_b0de27013f4c8191b288b3c62cc0976a",
+    "library_source_music_artifact_id": "libfile_2dcc2d1d6ee48191aed41550dc66cbfd"
+  },
+  "source_acquisition": {
+    "github_run_id": 44033702667,
+    "github_artifact_id": 14305988740,
+    "github_branch": "production/artvision-delacroix-rebecca-20261117",
+    "no_fake_claims": true
+  },
+  "anti_duplicate": {
+    "searched_archive": true,
+    "artist_title_not_present": true,
+    "work_is_extra_outside_original_36_and_selected_30": true,
+    "one_slot_only": true
+  },
+  "previous_attempts": {
+    "giovanni_segantini_le_cattive_madri": "SOURCE_BLOCKED_BELVEDERE_403_AND_WIKIMEDIA_429_AFTER_TWO_REASONABLE_ATTEMPTS_NO_MP4; stay in pending main queue",
+    "franz_von_stuck_die_sunde": "TWO_EXISTING_CINEMA_ALREADY_IN_NEW_SERIES_CHECKPOINT_DO_NOT_DUPLICATE"
+  },
+  "next": "Continue other preflight-cleared owner queues first; when blocked, choose another different public-domain/Open Access rare artwork and make verified real Cinema MP4 with Music20, cover, social and Android ZIP. Never count source-only actions as new videos."
+}
