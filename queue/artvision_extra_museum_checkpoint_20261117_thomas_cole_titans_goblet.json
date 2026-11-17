@@ -1,0 +1,92 @@
+{
+  "schema": "artvision-extra-cinema-museum-library-only-private-review-v1",
+  "created_at_utc": "2026-11-17",
+  "artist": "Thomas Cole",
+  "title": "The Titan's Goblet",
+  "year": 1833,
+  "museum": "The Metropolitan Museum of Art",
+  "object_id": "10499",
+  "accession": "04.29.2",
+  "variant": "cinema_museum",
+  "status": "LIBRARY_ONLY_RENDERED_TECH_QA_PASS_ARTISTIC_OWNER_REVIEW_PENDING",
+  "independent_new_artwork_count": 0,
+  "new_distinct_variant_count": 1,
+  "original_cinema_standard_sha256": "1258e2a61c05a6e940a596ead0f4081fff7cfefa9b0480bb7e806d24319050d6",
+  "upstream_existing_master_modified": false,
+  "original_artwork_proof": {
+    "license": "Met Open Access CC0",
+    "original_jpg_sha256_previously_verified": "e7a1308ea9f6524ed2f2c21cf8ebc96dc1922248fd49e255fd4c8a0566bc3254",
+    "downloaded_original_this_cycle": false,
+    "actual_visual_source": "still from previously checked 1080p Cinema Standard at t=56.0 seconds"
+  },
+  "scene": {
+    "room_id": "G05_GREEN_GOLD",
+    "ai_generated_editorial_room": true,
+    "actual_historical_museum_room": false,
+    "editorial_custom_frame_for_this_work": true,
+    "actual_historical_frame": false,
+    "painting_unframed_cm": [
+      49.2,
+      41
+    ],
+    "frontal_camera": true,
+    "physical_scale_human_review": "PENDING"
+  },
+  "video": {
+    "duration_seconds": 57.3,
+    "dimensions": [
+      720,
+      1280
+    ],
+    "fps": 20,
+    "sha256": "577e8ea2451a59ab0015e43d5c1e08b7d8da3c0b240c897d1a40f141934ba7a4",
+    "bytes": 19283692,
+    "library_file_id": "libfile_8322f0f52b148191bec5fdc3258b518c"
+  },
+  "android_light": {
+    "sha256": "d6edd5b55b140e1d9d0b7b0a34f7a0be5cf2a165d7d2c2713c91e387e4a06290",
+    "bytes": 7636548,
+    "library_file_id": "libfile_f9972a10ba64819197b94ff17bbe2021"
+  },
+  "zip": {
+    "sha256": "318efb1e1a6ff33687be5ba21702bcb5f0b2de39837f7d7eeae1e6ab6a7e5f87",
+    "bytes": 27629496,
+    "crc": "PASS",
+    "library_file_id": "libfile_fd9e5db6bb148191b207e1ed1b2e4be7"
+  },
+  "cover": {
+    "library_file_id": "libfile_797a245b78108191930329c068d15d6a"
+  },
+  "qa": {
+    "full_ffmpeg_video_decode": "PASS",
+    "full_ffmpeg_audio_decode": "PASS",
+    "independent_library_readback_mp4_sha": "PASS",
+    "independent_library_readback_zip_sha": "PASS",
+    "zip_crc": "PASS",
+    "local_consecutive_frame_delta_proxy_max": 12.406,
+    "local_delta_above_18_count": 0,
+    "official_v203_and_full_speed_artist_review": "PENDING_NOT_REPLACED_BY_PROXY",
+    "museum_scale_final_review": "PENDING",
+    "commercial_release_review": "PENDING"
+  },
+  "music": {
+    "track": "Myst on the Moor",
+    "author": "Kevin MacLeod",
+    "original_track_sha256_previously_verified": "7f99264bf77e3746f7d63c99e63db77e06aac0a47b37b7a0f053df84e2bb8ac7",
+    "license": "CC BY 4.0 attribution",
+    "reuse": "verified audio source previously prepared for same original painting, no fresh API"
+  },
+  "backup_library_path": "/ArtVision/Opere_Extra/The_Titans_Goblet_20261117_Cinema_Museum",
+  "handoff": {
+    "library_download": "ARCHIVED",
+    "gh_artifact_created": false,
+    "physical_r2": false,
+    "site_public": false,
+    "site_player_verified": false,
+    "gold": false,
+    "artist_owner_approved": false
+  },
+  "cost_new_paid_api": 0,
+  "auto_published": false,
+  "next_step": "Owner artistic review of complete video at natural speed, frame and scene realism and soundtrack; no new render counted for editorial revisions. Critico variants only with approved Gacrux and both free/billing gates truly confirmed. Do not alter verified Cinema Standard."
+}
