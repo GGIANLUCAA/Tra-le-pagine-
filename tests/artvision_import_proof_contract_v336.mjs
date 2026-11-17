@@ -4,6 +4,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
+import {spawnSync} from "node:child_process";
 const source = fs.readFileSync("site/video-library-importer-with-editorial.js", "utf8");
 const authGuard = "try{if(!await authorized(request))return resp({error:'Not authorized'},401);}catch(e){return resp({error:'Authentication temporarily unavailable'},503);}";
 assert.equal(source.split(authGuard).length - 1, 1, "Do not weaken production OIDC authentication.");
@@ -61,9 +62,32 @@ resp = await post("88888",{name:"DUP",state:"complete",files:[
   {key:"FINAL.mp4",size:88,sha256:"a".repeat(64)},
   {key:"FINAL.mp4",size:88,sha256:"a".repeat(64)}]});
 assert.equal(resp.status,400,"Duplicate file references must fail");
+
+resp = await worker.fetch({url:"https://import.invalid/ingest-stage?key=FINAL.mp4",method:"POST"},env);
+assert.equal(resp.status,409,"Public R2 hidden flag is not authenticated private storage");
+assert.match(resp.body.error,/Private|private/);
+
 const wf = fs.readFileSync(".github/workflows/video-library-r2-import.yml","utf8");
 assert.match(wf, /recovery_left=6/);
 assert.match(wf, /artifact-proof/);
 assert.match(wf, /artifact-confirm/);
 assert.ok(!wf.includes("cf('POST','/artifact-mark'"),"Legacy marker endpoint must not be used for new production");
-console.log("PASS V336: 13 endpoint + workflow checks; no external calls, no publication.");
+
+const ymlLines=wf.split("\n");
+const pythonSections=[];
+for(let i=0;i<ymlLines.length;i++){
+  if(!ymlLines[i].includes("python3 - <<'PY'"))continue;
+  const pad=ymlLines[i].match(/^\s*/)[0].length;
+  const end=ymlLines.findIndex((row,j)=>j>i && row.trim()==="PY" && row.match(/^\s*/)[0].length===pad);
+  assert.ok(end>i,"Missing heredoc end for embedded GitHub Actions Python");
+  const code=ymlLines.slice(i+1,end).map(row=>row.slice(Math.min(row.length,pad))).join("\n");
+  pythonSections.push(code);
+  i=end;
+}
+assert.ok(pythonSections.length>=1,"No Python scripts detected in import workflow");
+for(const [index,code] of pythonSections.entries()){
+  const proc=spawnSync("python3",["-c","import ast,sys;ast.parse(sys.stdin.read());print('PARSE_PASS')"],{input:code,encoding:"utf8"});
+  assert.equal(proc.status,0,"Python heredoc "+index+" failed: "+proc.stderr);
+}
+
+console.log("PASS V336: endpoint, privacy, workflow and embedded Python syntax tests; no external calls.");
