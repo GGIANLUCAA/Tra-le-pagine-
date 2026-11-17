@@ -1,0 +1,33 @@
+name: "La Storia Rivive · NEW RINGLING 1902 Circus Parade genuine-source scout"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-ringling-1902-new-source-scout.yml"]
+permissions:
+  contents: read
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install AV1-decoding source inspection, no paid APIs"
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13"
+          python -m py_compile tools/storia_ringling_1902_original_scout.py
+      - name: "Acquire exact original Wikimedia Commons 1902 parade and verify SHA1"
+        run: python -u tools/storia_ringling_1902_original_scout.py
+      - name: "Store original full film and 19 source moments/contact sheet"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_RINGLING_1902_SOURCE_AND_CONTACT_PRESPEND
+          path: output/storia_ringling_parade_1902_source/
+          retention-days: 14
+          if-no-files-found: warn
