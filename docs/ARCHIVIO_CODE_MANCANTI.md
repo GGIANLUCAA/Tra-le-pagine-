@@ -5,7 +5,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 
 | Autore | Opera | Slot senza prova di render | Serie |
 |---|---|---|---|
-| Albert Bierstadt | The Last of the Buffalo | critico_standard, critico_museum, cinema_museum | checkpoint |
+| Albert Bierstadt | The Last of the Buffalo | critico_standard, critico_museum | checkpoint |
 | Albert Pinkham Ryder | The Race Track (Death on a Pale Horse) | critico_standard, critico_museum | nuova_serie, checkpoint |
 | Edvard Munch | The Dead Mother and Child | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Edvard Munch | The Vampire | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |

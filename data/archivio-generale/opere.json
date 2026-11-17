@@ -1,11 +1,11 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-17T15:03:12+00:00",
+  "generated_at": "2026-11-17T15:06:42+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 94,
-    "render_documented_slots": 151,
-    "not_documented_slots": 125,
+    "render_documented_slots": 152,
+    "not_documented_slots": 124,
     "site_items": 541,
     "site_cloudflare": 530,
     "site_unavailable": 11,
@@ -82,12 +82,13 @@
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "da_produrre",
+          "state": "render_documentato",
           "evidence": [
             {
               "source": "queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json",
-              "status_claim": "NOT_STARTED_MUSEUM_SOURCE_SCALE_AND_ROOM_GATE",
-              "classification": "da_produrre"
+              "status_claim": "RENDERED_TECH_QA_ART_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "764dc807fa0d8680a43edb9bd9f6e06430b6a7e4d06f3e0a3c5e5f1741877790"
             }
           ],
           "site_candidates": []
@@ -99,10 +100,9 @@
       "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
-        "critico_museum",
-        "cinema_museum"
+        "critico_museum"
       ],
-      "render_documented": 1,
+      "render_documented": 2,
       "site_playback_verified": false,
       "published_confirmed": false
     },

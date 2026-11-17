@@ -5,7 +5,7 @@ Questi stati non implicano pubblicazione né playback.
 
 | Autore | Titolo | Anno | Critico | Critico Museum | Cinema | Cinema Museum | Sul sito? |
 |---|---|---|---|---|---|---|---|
-| Albert Bierstadt | The Last of the Buffalo | ? | B | B | D | C | Non abbinato |
+| Albert Bierstadt | The Last of the Buffalo | ? | B | B | D | D | Non abbinato |
 | Albert Pinkham Ryder | The Race Track (Death on a Pale Horse) | c. 1896-1908 | — | — | D | D | Non abbinato |
 | Albrecht Altdorfer | The Battle of Alexander at Issus | ? | — | — | — | — | Non abbinato |
 | Arnold Böcklin | Isle of the Dead | 1883 | D | D | D | D | Non abbinato |
@@ -110,7 +110,7 @@ Questi stati non implicano pubblicazione né playback.
 - critico_standard: bloccato; prove: queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json [BLOCKED_V333_APPROVED_GACRUX_TTS_API]
 - critico_museum: bloccato; prove: queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json [BLOCKED_V333_APPROVED_GACRUX_TTS_AND_MUSEUM_GATE]
 - cinema_standard: render_documentato; prove: queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json [RENDERED_TECH_QA_ART_REVIEW_PENDING]
-- cinema_museum: da_produrre; prove: queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json [NOT_STARTED_MUSEUM_SOURCE_SCALE_AND_ROOM_GATE]
+- cinema_museum: render_documentato; prove: queue/artvision_extra_render_checkpoint_20261115_bierstadt_last_buffalo.json [RENDERED_TECH_QA_ART_REVIEW_PENDING]
 
 ### Albert Pinkham Ryder — The Race Track (Death on a Pale Horse)
 
