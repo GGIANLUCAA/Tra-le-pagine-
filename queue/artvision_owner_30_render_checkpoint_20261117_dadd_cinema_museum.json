@@ -1,0 +1,64 @@
+{
+  "schema": "artvision-owner30-dadd-cinema-museum-private-v1",
+  "recorded_at": "2026-11-17",
+  "artist": "Richard Dadd",
+  "title": "The Fairy Feller's Master-Stroke",
+  "year": "1855-1864",
+  "museum": {
+    "room_id": "G01",
+    "room_is_ai_scenography": true,
+    "never_claim_actual_tate_room": true,
+    "room_sha256": "98fba4131363e7d9c4fcd50a1ae44e62922a19cb22b971085de929bb49ee868e",
+    "frame_kind": "actual_photographed_current_frame_not_historic_original",
+    "scale": "estimated_physical_perspective"
+  },
+  "accession": "T00598",
+  "variant": "cinema_museum",
+  "status": "NEW_REAL_RENDER_1080_AND_ANDROID_FULL_DECODE_PASS__PRIVATE_REVIEW__ARTISTIC_RIGHTS_PENDING",
+  "new_distinct_variant": true,
+  "preserved_cinema_standard_v2": true,
+  "source": {
+    "real_exact_artwork_photo_sha256": "6fcd75dcd552a6f6455e43c718f869b5fce63752a53fa54252b6e3742dd42889",
+    "photo_author": "Sailko",
+    "license": "CC BY 3.0 Unported attribution and edits disclosure",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Richard_dadd,_il_colpo_da_maestro_del_cantastorie,_1855-64,_01.jpg",
+    "painting_cm": [
+      39.4,
+      54
+    ],
+    "territorial_museum_rights": "PENDING",
+    "authentic_current_frame_photo_used": true
+  },
+  "render": {
+    "fps": 24,
+    "frames": 1183,
+    "duration_s": 49.291667,
+    "resolutions": [
+      [
+        1080,
+        1920
+      ],
+      [
+        720,
+        1280
+      ]
+    ],
+    "hd_sha256": "20ea9f88a3dc0e0cfa0fd2fb0eca77bf1d5cafc4297b4aa71a5dc8820f45b412",
+    "android_sha256": "2ba7ab70e2ae13043036376fe74f073740b1963e536dffd91ae3cb55fa270342",
+    "private_package_sha256": "126dd64a4a78c1b7a4001ae6dfac25adedadbd1fddafd21edc2a97884f706184",
+    "music_reused_identical_to_cinema_standard_AAC": true,
+    "full_ffmpeg_audio_video_decode": "PASS_BOTH",
+    "zip_crc": "PASS",
+    "paid_api_calls": 0
+  },
+  "delivery": {
+    "saved_private_library": true,
+    "private_storage_only": true,
+    "public_site": false,
+    "private_identifiers_and_filenames_withheld_from_public_repository": true,
+    "artistic_review": "PENDING",
+    "commercial_rights": "PENDING",
+    "gold": false
+  },
+  "next_action": "Do not regenerate this Cinema Museum variant. Retrieve private stored MP4 by exact hash, obtain owner artistic review, verify territorial usage rights; keep two Critico variants blocked unless approved Gacrux voice and free billing gates. Continue different missing variants."
+}
