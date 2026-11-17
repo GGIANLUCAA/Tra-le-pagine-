@@ -55,7 +55,49 @@
       "gold": false
     },
     "cinema_museum": {
-      "status": "NOT_STARTED_MUSEUM_SOURCE_SCALE_AND_ROOM_GATE"
+      "status": "RENDERED_TECH_QA_ART_REVIEW_PENDING",
+      "rendered_at": "2026-11-17",
+      "variant": "cinema_museum",
+      "counted_once": true,
+      "mp4_sha256": "764dc807fa0d8680a43edb9bd9f6e06430b6a7e4d06f3e0a3c5e5f1741877790",
+      "mp4_bytes": 18250140,
+      "zip_sha256": "17468ae4d9c1b11909dbb272678776d7fd8488c556174f289706424b6fb4587b",
+      "zip_bytes": 18282546,
+      "seconds": 50.1,
+      "dimensions": [
+        720,
+        1280
+      ],
+      "codec": "H264/AAC",
+      "fps": 20,
+      "technical_full_ffmpeg_av_decode": "PASS",
+      "camera_jump_frame_MAD": 14.3399,
+      "camera_jump_gate": "PASS_MAX_LT18",
+      "original_artwork_source_sha256": "6895db7890a1c71d0a00b38a5601708b703191fff3fd6c82616ba9c9a17402e6",
+      "original_artwork_pixels": [
+        10602,
+        6252
+      ],
+      "original_artwork_dimensions_cm": [
+        301.63,
+        180.3
+      ],
+      "room": "V332 G11",
+      "room_library": "/ArtVision/Museum_AI_Rooms_V332",
+      "room_SHA256": "486d86df4767b5417b980245b07195dfe8d73057b374dd5825e57f92e8a02656",
+      "frame": "EDITORIAL_SCENOGRAPHIC_NOT_HISTORICAL",
+      "museum_reconstruction": "AI_EDITORIAL_NOT_REAL_MUSEUM",
+      "same_music_AAC_exact_bitstream_as_approved_standard": "PASS",
+      "zip_crc": "PASS",
+      "independent_library_readback_sha_crc": "PASS",
+      "library_mp4_id": "libfile_507d5a887d1c819192a71e9b3bb6fd6a",
+      "library_zip_id": "libfile_d9376c0e82bc8191ad735fe683636e02",
+      "human_artistic_review": "PENDING",
+      "territorial_rights": "PENDING",
+      "published": false,
+      "gold": false,
+      "no_paid_calls": true,
+      "extra_note": "A new Museum variant of existing Bierstadt artwork, NOT second Cinema Standard, NOT new artwork. Existing Cinema Standard remains untouched."
     },
     "critico_standard": {
       "status": "BLOCKED_V333_APPROVED_GACRUX_TTS_API"
@@ -69,13 +111,16 @@
     "preferred_zip_library_id": "libfile_8b3b9f0c8080819182a50e789056132f",
     "preferred_mp4_library_id": "libfile_6ad81134064881918b0134f5ba8e494b",
     "cover_library_id": "libfile_54f0652f753081918ed254942cf80cf7",
-    "original_artifact_library_id": "libfile_6148654dc4888191b474a9db5f4cd7f8"
+    "original_artifact_library_id": "libfile_6148654dc4888191b474a9db5f4cd7f8",
+    "cinema_museum_mp4_library_id": "libfile_507d5a887d1c819192a71e9b3bb6fd6a",
+    "cinema_museum_zip_library_id": "libfile_d9376c0e82bc8191ad735fe683636e02"
   },
   "provenance_notes": [
     "This is an additional distinct work outside owner-selected 30 and original 9×4 = 36; do not add to those historical denominators.",
     "V2 was a camera/portrait reframing corrective revision of same Cinema Standard slot, NOT a second slot.",
     "V1 baseline untouched and archived; independent library readback of preferred V2 zip and mp4 PASS.",
-    "No synthetic figures, no TTS, no API purchases, no social/site publishing, artistic QA and territorial distribution separately pending."
+    "No synthetic figures, no TTS, no API purchases, no social/site publishing, artistic QA and territorial distribution separately pending.",
+    "2026-11-17: new Cinema Museum V332 G11 completed and backed up, SHA/ZIP/FFmpeg gate PASS; source verified; AI room and frame disclosed; artistic review pending; do not duplicate."
   ],
   "next_action": "Continue NEXT distinct CC0 source-verified painting candidate, e.g. Turner Cleveland The Burning of the Houses of Lords and Commons 1942.647, unless a higher-priority pending Museum is cleared."
 }
