@@ -1,0 +1,75 @@
+name: "La Storia Rivive · Ringling Circus 1902 FOUR real AI photographic restorations"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-ringling-1902-real-photos-preview.yml"]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: ringling-1902-historical-photos-real-source-no-paid-vidu
+  cancel-in-progress: false
+jobs:
+  four_photos:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_HUB_DISABLE_XET: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install source-locked free photographic image-to-image AI and video codecs"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2" "gradio_client>=1.3,<3"
+          python -m py_compile tools/storia_ringling_1902_four_real_i2i_preview.py
+      - name: "Recover source video with proven authentic 1902 Wikimedia sha1 and 19 distinct candidate frames"
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/storia_ringling_1902_v1
+          gh run download 44109197640 --repo "$GITHUB_REPOSITORY" --name STORIA_RINGLING_1902_SOURCE_AND_CONTACT_PRESPEND --dir staging
+          test -s staging/RINGLING_1902_AUTHENTIC_FILM.webm
+          mv staging/RINGLING_1902_AUTHENTIC_FILM.webm output/storia_ringling_1902_v1/
+          printf '%s\n' 'bdb3dcce3b7feacc017853ba42c0fdcb66eff357ded3f3853380df0860f8b69e  output/storia_ringling_1902_v1/RINGLING_1902_AUTHENTIC_FILM.webm' | sha256sum -c -
+      - name: "Render from TRUE original film, require FOUR actual Finegrain image-to-image photographs"
+        run: python -u tools/storia_ringling_1902_four_real_i2i_preview.py
+      - name: "Retain real images and partial preflight on any free-model limit without false MP4 final"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RINGLING_1902_FOUR_TRUE_AI_PHOTOS_AND_VIDEO_RECOVERY
+          path: |
+            output/storia_ringling_1902_v1/PHOTO_AI_*.png
+            output/storia_ringling_1902_v1/PHOTO_QA.json
+            output/storia_ringling_1902_v1/FRAME_*_SOURCE.png
+            output/storia_ringling_1902_v1/PHOTO_COLOR_BASE_*.jpg
+            output/storia_ringling_1902_v1/RINGLING_1902_FIVE_SOURCE_VS_REAL_I2I_CONTACT.jpg
+            output/storia_ringling_1902_v1/RINGLING_CIRCUS_1902_FOUR_FINEGRAIN_RESTORATIONS_QA_PREVIEW.mp4
+            output/storia_ringling_1902_v1/RINGLING_CIRCUS_1902_QA_PREVIEW_ANDROID.zip
+            output/storia_ringling_1902_v1/RINGLING_V1_PREVIEW_QA.json
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Deliver real MP4 to Android only if four Finegrain photo previews were produced"
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_ringling_1902_v1
+          tag=storia-rivive-ringling-brothers-1902-four-true-i2i-review
+          gh release create "$tag" \
+            "$d/RINGLING_CIRCUS_1902_FOUR_FINEGRAIN_RESTORATIONS_QA_PREVIEW.mp4" \
+            "$d/RINGLING_CIRCUS_1902_QA_PREVIEW_ANDROID.zip" \
+            "$d/RINGLING_1902_FIVE_SOURCE_VS_REAL_I2I_CONTACT.jpg" \
+            "$d/COVER_CIRCUS_1902.jpg" \
+            "$d/RINGLING_V1_PREVIEW_QA.json" \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "La Storia Rivive — Ringling Brothers Circus Parade 1902 (new, REAL I2I, review)" \
+            --notes "NEW subject 1902 Circus Parade authentic original film, four different group original moving shots to four TRUE Finegrain image-to-image photographs, fifth original film anchor only. Real MP4 H264/AAC and Android ZIP. Not a completed V98-equivalent 4+1 until fifth Vidu is genuinely produced; Italian territorial rights/quality pending. No paid API/video credits used."
+          gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fqx "RINGLING_CIRCUS_1902_FOUR_FINEGRAIN_RESTORATIONS_QA_PREVIEW.mp4"
