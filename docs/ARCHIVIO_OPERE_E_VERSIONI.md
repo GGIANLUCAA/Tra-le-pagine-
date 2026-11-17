@@ -45,7 +45,7 @@ Questi stati non implicano pubblicazione né playback.
 | Hugo Simberg | The Wounded Angel | ? | — | — | — | — | Non abbinato |
 | Hugo Simberg | The Wounded Angel — A Quiet Procession | ? | — | — | — | — | Non abbinato |
 | Hugo Simberg; Jan van Eyck; Arnold Böcklin | The Witness — three historic gazes | ? | — | — | — | — | Non abbinato |
-| Ilya Repin | Sadko | 1876 | — | — | D | — | Non abbinato |
+| Ilya Repin | Sadko | 1876 | — | — | D | D | Non abbinato |
 | Ivan Aivazovsky | The Ninth Wave | ? | — | — | — | — | Non abbinato |
 | Ivan Aivazovsky; Caspar David Friedrich; Arnold Böcklin | The Sea Between Us | ? | — | — | — | — | Non abbinato |
 | Ivan Aivazovsky; Utagawa Hiroshige; Evelyn De Morgan | The Shape of the Wind | ? | — | — | — | — | Non abbinato |
@@ -509,7 +509,7 @@ Questi stati non implicano pubblicazione né playback.
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_sadko.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261117_sadko_cinema_museum.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 
 ### Ivan Aivazovsky — The Ninth Wave
 
