@@ -10,7 +10,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Edvard Munch | The Dead Mother and Child | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Edvard Munch | The Vampire | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Edward Burne-Jones | King Arthur in Avalon | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
-| Edward Burne-Jones | The Baleful Head | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
+| Edward Burne-Jones | The Baleful Head | critico_standard, critico_museum | selezione_30, checkpoint |
 | Edward Burne-Jones | The Golden Stairs | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Eugène Delacroix | The Abduction of Rebecca | critico_standard, critico_museum, cinema_standard, cinema_museum | checkpoint |
 | Eugène Delacroix | The Barque of Dante | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
@@ -69,6 +69,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | [queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_fast_quality_lane_20261109.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_fast_quality_lane_20261109.json) | principale | 30 |
 | [queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json) | checkpoint | 2 |
+| [queue/artvision_owner_30_museum_checkpoint_20261117_burne_jones_baleful_head.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_museum_checkpoint_20261117_burne_jones_baleful_head.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261109_alchemist.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261109_alchemist.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261109_moreau_apparition.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261109_moreau_apparition.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_render_checkpoint_20261110_barque_dante.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_render_checkpoint_20261110_barque_dante.json) | checkpoint | n.d. |

@@ -1,16 +1,16 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-17T06:53:43+00:00",
+  "generated_at": "2026-11-17T06:58:42+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 92,
-    "render_documented_slots": 144,
-    "not_documented_slots": 124,
+    "render_documented_slots": 145,
+    "not_documented_slots": 123,
     "site_items": 541,
     "site_cloudflare": 530,
     "site_unavailable": 11,
     "possible_site_matches": 21,
-    "queue_files": 99,
+    "queue_files": 100,
     "literary_dossiers": 19,
     "history_candidates": 12,
     "research_100": 100,
@@ -807,6 +807,7 @@
       ],
       "sources": [
         "queue/artvision_owner_30_fast_quality_lane_20261109.json",
+        "queue/artvision_owner_30_museum_checkpoint_20261117_burne_jones_baleful_head.json",
         "queue/artvision_owner_30_render_checkpoint_20261112_baleful_head.json"
       ],
       "variants": {
@@ -833,8 +834,15 @@
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_owner_30_museum_checkpoint_20261117_burne_jones_baleful_head.json",
+              "status_claim": "RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato",
+              "sha256": "50967e861dd5263844d84aeb41a8e2e4eda0118227de118158fafefc477b439c"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -846,10 +854,9 @@
       "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
-        "critico_museum",
-        "cinema_museum"
+        "critico_museum"
       ],
-      "render_documented": 1,
+      "render_documented": 2,
       "site_playback_verified": false,
       "published_confirmed": false
     },
