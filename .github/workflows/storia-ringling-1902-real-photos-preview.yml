@@ -34,6 +34,11 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p output/storia_ringling_1902_v1
+          # Recover three TRUE previously-generated I2I photographs and scene hashes.
+          gh run download 44110405110 --repo "$GITHUB_REPOSITORY" \
+            --name RINGLING_1902_FOUR_TRUE_AI_PHOTOS_AND_VIDEO_RECOVERY \
+            --dir output/storia_ringling_1902_v1
+          test -s output/storia_ringling_1902_v1/PHOTO_QA.json
           gh run download 44109197640 --repo "$GITHUB_REPOSITORY" --name STORIA_RINGLING_1902_SOURCE_AND_CONTACT_PRESPEND --dir staging
           test -s staging/RINGLING_1902_AUTHENTIC_FILM.webm
           mv staging/RINGLING_1902_AUTHENTIC_FILM.webm output/storia_ringling_1902_v1/
