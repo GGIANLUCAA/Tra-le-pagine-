@@ -1,0 +1,57 @@
+name: "Ringling 1902 · source-locked historical sign and face repair FREE"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-ringling-1902-fifth-source-repair.yml"]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Install only OpenCV/Numpy; zero AI or paid video API calls"
+        run: |
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5"
+          python -m py_compile tools/storia_ringling_1902_fifth_source_text_repair.py
+      - name: "Recover immutable true 1902 frame plus real Finegrain image prior to fixing historical lettering"
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_ringling_1902_v1
+          mkdir -p "$d"
+          gh run download 44111444636 --repo "$GITHUB_REPOSITORY" \
+            --name RINGLING_1902_FOUR_TRUE_AI_PHOTOS_AND_VIDEO_RECOVERY --dir "$d"
+          gh run download 44112535078 --repo "$GITHUB_REPOSITORY" \
+            --name RINGLING_1902_FIFTH_REAL_FINEGRAIN_VIDU_ANCHOR_FREE --dir "$d"
+          python -u tools/storia_ringling_1902_fifth_source_text_repair.py
+      - name: "Keep real source-locked corrected fifth source candidate"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RINGLING_1902_REAL_THEATRE_SIGN_CORRECTED_FIFTH_ANCHOR
+          path: |
+            output/storia_ringling_1902_v1/RINGLING_1902_SCENE05_VIDU_SOURCE_REPAIRED.jpg
+            output/storia_ringling_1902_v1/SCENE05_CONSERVATIVE_HISTORIC_TEXT_FACE_REPAIR_QA.json
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Publish corrected source-locked photo only as PRESPEND technical evidence"
+        if: success()
+        shell: bash
+        run: |
+          tag=storia-ringling-1902-fifth-corrected-theatre-source-photo
+          d=output/storia_ringling_1902_v1
+          gh release create "$tag" \
+            "$d/RINGLING_1902_SCENE05_VIDU_SOURCE_REPAIRED.jpg" \
+            "$d/SCENE05_CONSERVATIVE_HISTORIC_TEXT_FACE_REPAIR_QA.json" \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "Ringling 1902 fifth REAL source-repaired image (free, Vidu pending)" \
+            --notes "Restored the exact original 1902 theatre sign pixels rather than invented Finegrain text; reduced unnatural red facial color without changing shapes. One authentic 212s historic film shot with genuine I2I color base; no real Vidu video yet. Photo and subject require human visual review, rights territorial clearance and exact approved 16-credit cap before any paid provider POST. Do NOT label as finished video."
+          gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fqx RINGLING_1902_SCENE05_VIDU_SOURCE_REPAIRED.jpg
