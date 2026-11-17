@@ -1,0 +1,66 @@
+{
+  "schema": "artvision-owner30-golden-stairs-cinema-museum-private-v1",
+  "recorded_at": "2026-11-17",
+  "work_id": "burne-jones-the-golden-stairs-1880-tate-n04005",
+  "artist": "Edward Burne-Jones",
+  "title": "The Golden Stairs",
+  "year": 1880,
+  "museum": {
+    "room_id": "G04",
+    "room_sha256": "b23ad4c0667d86db5779633f6c71ecd4ba876f1d4ffc99a99eab2918c1147f51",
+    "gallery_is_fictional_ai_scenography": true,
+    "room_is_not_tate": true,
+    "front_camera": true,
+    "frame_from_source_photo": true,
+    "scale_physical_estimate_not_calibrated": true
+  },
+  "object_id": "N04005",
+  "variant": "cinema_museum",
+  "status": "NEW_REAL_RENDER_HD_ANDROID_FULL_DECODE_AND_ZIP_CRC_PASS__PRIVATE_REVIEW_PENDING",
+  "new_distinct_variant": true,
+  "existing_cinema_standard_preserved": true,
+  "artwork": {
+    "source_page": "https://commons.wikimedia.org/wiki/File:Edward_coley_burne-jones,_the_golden_stairs,_1880.jpg",
+    "source_sha256": "1aae2c1476ecf08f0dbf53b3d97d176dca34f1005ec1b32189b61907e346a108",
+    "photo_author": "Sailko",
+    "license": "CC BY 3.0 Unported",
+    "painting_width_height_cm": [
+      116.8,
+      269.2
+    ],
+    "photo_current_frame": "EXACT_SOURCE_SHOT_CURRENT_NOT_PROVEN_HISTORIC_ORIGINAL",
+    "museum_photo_territorial_clearance": "PENDING"
+  },
+  "render": {
+    "seconds": 72.3,
+    "fps": 20,
+    "frames": 1446,
+    "HD_resolution": [
+      1080,
+      1920
+    ],
+    "HD_sha256": "1d15837b42df48018db93cf2969e1f42e5cfa26b922f37c2a56597b249986c1a",
+    "android_resolution": [
+      720,
+      1280
+    ],
+    "android_sha256": "c08d949109d58430176170a67c78721ac1d4472b939d2e1cc0adf74366918f0a",
+    "zip_android_sha256": "9600e60a6dd6944bd08a1c8f91427c5cd30c8ba4788becbfd63a96f6ba6aac5b",
+    "cover_sha256": "f1d0d1789f1c20015ba7b94371789fa8e789823037deb62c70eb90890ef22047",
+    "original_standard_audio_adts_sha256": "609c149ce40a2e5cbedef8ad6461671f9a5933c7b83bc18baea8f79a03b79921",
+    "bitidentical_original_AAC": true,
+    "full_ffmpeg_decode": "PASS_BOTH",
+    "zip_crc": "PASS",
+    "new_paid_api_calls": 0
+  },
+  "delivery": {
+    "private_library_saved": true,
+    "public_site": false,
+    "private_file_ids_and_paths_withheld": true,
+    "owner_artistic_review": "PENDING",
+    "territorial_rights": "PENDING",
+    "gold": false,
+    "published": false
+  },
+  "anti_duplicate": "Do not repeat Golden Stairs Cinema Museum; reuse and review already saved identical MP4 SHA. Critico variants require exact owner-approved Gemini Gacrux and verified free quota/no billing, no voice fallback."
+}
