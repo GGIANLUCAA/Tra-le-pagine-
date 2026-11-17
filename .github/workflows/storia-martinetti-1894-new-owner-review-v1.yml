@@ -1,0 +1,75 @@
+name: "La Storia Rivive | NEW Luis Martinetti 1894 | Photo owner review"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-martinetti-1894-new-owner-review-v1.yml"
+      - "src/storia_martinetti_1894_new_owner_review_v1.py"
+permissions:
+  contents: read
+concurrency:
+  group: storia-rivive-martinetti-new-owner-review-20261117
+  cancel-in-progress: false
+jobs:
+  single_real_new_historical_film:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Free film and image renderer dependencies
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ffmpeg
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.8,<5" "Pillow>=10,<13" "onnxruntime>=1.17,<2" "huggingface_hub>=0.25,<1" "gradio_client>=1.0,<3"
+      - name: Render NEW source-locked 1894 photographic candidate with original subtle music
+        run: |
+          set -euo pipefail
+          python -m py_compile src/storia_martinetti_1894_new_owner_review_v1.py
+          python -u src/storia_martinetti_1894_new_owner_review_v1.py --episode martinetti_1894
+      - name: Verify true new MP4 and Android ZIP before claiming a video
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,pathlib,subprocess,zipfile
+          d=pathlib.Path("output/storia_serial_martinetti_1894")
+          q=json.loads((d/"SERIAL_QA.json").read_text())
+          src=json.loads((d/"RIGHTS.json").read_text())
+          p=d/"MARTINETTI_1894_SOCIAL_REVIEW.mp4"
+          z=d/"MARTINETTI_1894_SOCIAL_REVIEW_WITH_SOCIAL.zip"
+          h=lambda x:hashlib.sha256(x.read_bytes()).hexdigest()
+          assert p.is_file() and p.stat().st_size>1000000
+          assert z.is_file() and h(z)==q["zip_sha256"]
+          assert h(p)==q["movie_sha256"] and q["artistic_approval"] is False
+          assert src["source_size"]>=27000000 and len(src["source_sha256"])==64
+          assert (d/"GENERATIVE_PHOTO_REAL_CANDIDATE.png").is_file()
+          with zipfile.ZipFile(z) as f:
+            assert f.testzip() is None
+            assert hashlib.sha256(f.read(p.name)).hexdigest()==h(p)
+          probe=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_streams","-show_format","-of","json",str(p)]))
+          video=next(x for x in probe["streams"] if x["codec_type"]=="video")
+          audio=next(x for x in probe["streams"] if x["codec_type"]=="audio")
+          assert video["codec_name"]=="h264" and (video["width"],video["height"])==(1080,1920)
+          assert audio["codec_name"]=="aac" and 14<float(probe["format"]["duration"])<20
+          subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(p),"-f","null","-"],check=True,timeout=180)
+          print("NEW_MARTINETTI_REAL_MP4_AND_ZIP_TECH_PASS_ART_REVIEW_PENDING",h(p),h(z))
+          PY
+      - name: Preserve genuine video, cover, still, social and diagnosis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_NEW_MARTINETTI_1894_OWNER_REVIEW
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            output/storia_serial_martinetti_1894/*.mp4
+            output/storia_serial_martinetti_1894/*.zip
+            output/storia_serial_martinetti_1894/*.jpg
+            output/storia_serial_martinetti_1894/*.png
+            output/storia_serial_martinetti_1894/*.json
+            output/storia_serial_martinetti_1894/POST_*.txt
+            output/storia_serial_martinetti_1894/README_REVIEW_ONLY.txt
