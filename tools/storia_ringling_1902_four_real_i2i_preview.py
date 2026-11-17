@@ -45,10 +45,10 @@ def main():
    old=json.loads(prior.read_text())
    for x in old:
     i=int(x["scene"])
-    if i in (1,2,3,4) and x.get("sha256")==records[i-1]["sha256"] and
+    if (i in (1,2,3,4) and x.get("sha256")==records[i-1]["sha256"] and
        x.get("model")=="DDColor+free Finegrain image enhancer" and
        x.get("photo_file")==f"PHOTO_AI_{i:02d}.png" and
-       (OUT/x["photo_file"]).is_file() and sha(OUT/x["photo_file"])==x["photo_sha256"]:
+       (OUT/x["photo_file"]).is_file() and sha(OUT/x["photo_file"])==x["photo_sha256"]):
      photo_records.append(x)
    print("REUSED_TRUE_FINEGRAIN_IMAGES",sorted(x["scene"] for x in photo_records),flush=True)
   except Exception as exc:
