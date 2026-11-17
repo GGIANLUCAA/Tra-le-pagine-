@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/artvision-extra-salvator-rosa-evening-cinema-20261117.yml"
+      - ".github/workflows/artvision-extra-salvator-rosa-day-cinema-20261117.yml"
       - "scripts/artvision_extra_salvator_rosa_witchcraft_day_cinema_v1.py"
   workflow_dispatch:
 permissions:
