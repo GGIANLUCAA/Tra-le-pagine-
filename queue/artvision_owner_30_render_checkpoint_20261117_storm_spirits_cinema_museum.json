@@ -1,0 +1,63 @@
+{
+  "schema": "artvision-owner30-storm-spirits-cinema-museum-private-v1",
+  "recorded_at": "2026-11-17",
+  "work_id": "evelyn-de-morgan-the-storm-spirits",
+  "artist": "Evelyn De Morgan",
+  "title": "The Storm Spirits",
+  "year": 1900,
+  "variant": "cinema_museum",
+  "status": "NEW_REAL_RENDER_PRIVATE_REVIEW_HD_AND_ANDROID_FFMPEG_FULL_DECODE_AND_ZIP_CRC_PASS",
+  "new_distinct_variant": true,
+  "existing_cinema_standard_preserved": true,
+  "source": {
+    "institution": "De Morgan Foundation",
+    "accession": "P_EDM_0034",
+    "source_page": "https://commons.wikimedia.org/wiki/File:The_Storm_Spirits,_by_Evelyn_De_Morgan.jpg",
+    "source_sha256": "fac23c638ea59b14fda8ab954f7a85b51662b6e7554ca958c821009d044d65ab",
+    "physical_dimensions_cm_width_height": [
+      176.5,
+      122.5
+    ],
+    "photo_territorial_clearance": "PENDING"
+  },
+  "gallery": {
+    "room_id": "G06",
+    "room_sha256": "7146d21b3703e3e14174db995e92bfa3539db1b1a023ea356dfe1409efc5b201",
+    "ai_scenography_not_actual_museum": true,
+    "frame_kind": "editorial_bronze_not_historic",
+    "camera_front_facing": true,
+    "scale_3d_calibrated": false
+  },
+  "render": {
+    "duration_seconds": 51,
+    "frames": 1224,
+    "fps": 24,
+    "HD_resolution": [
+      1080,
+      1920
+    ],
+    "HD_sha256": "f003e828cf4488f41263d820b9f8197c82972df65cb5a8f058d3dc3155280efc",
+    "android_resolution": [
+      720,
+      1280
+    ],
+    "android_sha256": "de54357b296e768204a2e3c1857568a467935856fb993ef7837153e32e49a883",
+    "android_zip_sha256": "c0b06bea8404abcf22a644a876b7535f18c8555b19d9a79fe8c07a779b01c02f",
+    "original_standard_audio_reused_bitidentical": true,
+    "audio_adts_sha256": "d63098e1a9aa882d71ae7fb2fdc495c6573b8573199255aac10ec9ea831f25ac",
+    "ffmpeg_full_decode_both": "PASS",
+    "zip_crc": "PASS",
+    "cover_sha256": "289e2619e775ec10de2d913ad4886c5e7148932e4cb25724ef3985b25d1b3a88",
+    "paid_api_calls": 0
+  },
+  "delivery": {
+    "saved_private_library": true,
+    "public_site": false,
+    "private_file_ids_and_paths_not_exposed": true,
+    "owner_review": "PENDING",
+    "territorial_and_photo_rights": "PENDING",
+    "gold": false,
+    "approval": "NOT_GRANTED"
+  },
+  "anti_duplicate": "Do not render another Cinema Museum for this painting. Resolve critiques using the existing saved exact SHA. Critico Standard & Museum require approved genuine Google Gemini Gacrux and confirmed free usage plus no billing, no TTS fallback."
+}
