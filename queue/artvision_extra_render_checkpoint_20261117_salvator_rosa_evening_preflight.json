@@ -1,7 +1,7 @@
 {
   "schema": "artvision-extra-render-preflight-v1",
   "recorded_at": "2026-11-17",
-  "status": "AUTHORIZED_EDITORIALLY_PREFLIGHT_ONLY_NO_MP4",
+  "status": "ONE_REAL_NEW_EXTRA_CINEMA_STANDARD_TECH_PASS_ART_REVIEW_PENDING_LIBRARY_BACKED_UP",
   "artist": "Salvator Rosa",
   "title": "Scenes of Witchcraft: Evening",
   "year": "c. 1645–49",
@@ -27,6 +27,39 @@
   "publish": false,
   "gold": false,
   "paid_api_calls": 0,
-  "render_status": "NOT_STARTED",
-  "next": "Render one new evening video then technical and artistic QA"
+  "render_status": "COMPLETED_TECH_PASS",
+  "next": "Do not rerender this Evening Cinema Standard; distinct from Night; other versions require independent QA. Do not publish until approved.",
+  "output": {
+    "run_id": 44107838019,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/44107838019",
+    "artifact_id": 14338758271,
+    "variant": "cinema_standard",
+    "duration_seconds": 35,
+    "resolution": "1080x1920",
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "mp4_bytes": 2732709,
+    "mp4_sha256": "b8d602709a1abd1cd114cd1bee0bf4e9318800b7dedd510eb2483b5f21be6df1",
+    "android_zip_bytes": 2923358,
+    "android_zip_sha256": "248244e6bfe61aac0829a0d5bd68178b6d08c56c14f4d5e0643554cfcfc07927",
+    "source_pixels": [
+      3400,
+      3383
+    ],
+    "source_sha256": "70656a78acea3456d3e69043fcd76ebf59eca537c8dd92d857a6d68771f3cec9",
+    "music": "Ghost Processional Kevin MacLeod CC BY 4.0",
+    "qa": "TECH_PASS",
+    "artistic_review": "PENDING",
+    "published": false,
+    "site_online": false,
+    "gold": false
+  },
+  "backup": {
+    "library_path": "/ArtVision/New_Series/Salvator_Rosa_Evening_20261117",
+    "files": [
+      "ARTVISION_SALVATOR_ROSA_EVENING.mp4",
+      "ARTVISION_SALVATOR_ROSA_EVENING_ANDROID.zip",
+      "ARTVISION_SALVATOR_ROSA_EVENING_COVER.jpg"
+    ]
+  }
 }
