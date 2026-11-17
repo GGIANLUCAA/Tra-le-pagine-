@@ -35,20 +35,61 @@ export default{async fetch(request,env){
   }
   return resp({ok:true,created,pending:Math.max(0,pending.length-batch.length),unavailable,total:candidates.length,existing:existing.size});
  }
- // Archive import and public release are distinct: previews must be archived privately.
- if(route==='/ingest-stage'&&method==='POST'){
-  const key=u.searchParams.get('key')||'';
-  if(!/^[\\w(). -]{1,180}\\.(mp4|mov|m4v)$/i.test(key)||key.includes('..'))return resp({error:'Invalid video name'},400);
-  for(let attempt=0;attempt<5;attempt++){
-   const o=await env.VIDEOS.get('catalog/manage.json');
-   let entries={};try{if(o)entries=await o.json()}catch{return resp({error:'Unable to read current private catalog'},503)}
-   if(entries[key])return resp({ok:true,staged:!!entries[key].hidden,existing:true});
-   entries[key]={hidden:true,version:'draft',note:'Importato automaticamente in Studio: revisione artistica e diritti in attesa.'};
-   const written=await env.VIDEOS.put('catalog/manage.json',JSON.stringify(entries),{httpMetadata:{contentType:'application/json'},onlyIf:o?{etagMatches:o.etag}:{etagDoesNotMatch:'*'}});
-   if(written)return resp({ok:true,staged:true,created:true});
+ // Staging into the public R2 bucket cannot provide private review access.
+ if(route==='/ingest-stage'&&method==='POST')return resp({error:'Authenticated private bucket required; staging disabled'},409);
+
+ // V336: signed GitHub Actions may reconcile old markers, but no legacy
+ // marker is evidence that a video exists in R2 or is publicly available.
+ // This API has no upload, delete, publish or authorization-bypass side effects.
+ if(route==='/artifact-proof'&&method==='GET'){
+  const aid=u.searchParams.get('artifact')||'';
+  if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad ID'},400);
+  const o=await env.VIDEOS.get('sync/gh/'+aid+'.json');
+  if(!o)return resp({artifact_id:aid,state:'untracked',verified:false,synced:false});
+  let m;try{m=await o.json()}catch{return resp({artifact_id:aid,state:'invalid_marker',verified:false,synced:false});}
+  if(m.state==='no_video'||m.state==='blocked_rights'||m.state==='private_review'||m.state==='owner_deleted'){
+   return resp({artifact_id:aid,state:m.state,verified:false,synced:false});
   }
-  return resp({error:'Concurrent catalog update; retry later'},409);
+  const files=Array.isArray(m.files)?m.files:[];
+  if(m.state!=='complete'||!files.length){
+   return resp({artifact_id:aid,state:'legacy_unverified',verified:false,synced:false});
+  }
+  const valid=/^[A-Za-z0-9_(). -]{1,190}\.(?:mp4|m4v|mov)$/i;
+  if(files.length>64||files.some(x=>!x||typeof x.key!=='string'||!valid.test(x.key)||!Number.isSafeInteger(x.size)||x.size<=0)){
+   return resp({artifact_id:aid,state:'invalid_marker',verified:false,synced:false});
+  }
+  const checked=await Promise.all(files.map(async f=>{
+   const o=await env.VIDEOS.head(f.key);
+   return {key:f.key,expected_size:f.size,present:!!o,size_matches:!!o&&o.size===f.size};
+  }));
+  const verified=checked.every(x=>x.size_matches);
+  return resp({artifact_id:aid,state:verified?'uploaded_verified':'missing_or_size_mismatch',
+   verified,synced:verified,verification:'R2_HEAD_AND_BYTE_LENGTH',files:checked});
  }
+ if(route==='/artifact-confirm'&&method==='POST'){
+  const aid=u.searchParams.get('artifact')||'';
+  if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad ID'},400);
+  let data;try{data=await request.json()}catch{return resp({error:'Invalid JSON'},400);}
+  const state=data?.state;
+  if(!['complete','no_video','blocked_rights','private_review','owner_deleted'].includes(state))return resp({error:'Invalid state'},400);
+  const name=String(data.name||'').slice(0,160);
+  const files=state==='complete'?data.files:[];
+  if(state==='complete'){
+   const valid=/^[A-Za-z0-9_(). -]{1,190}\.(?:mp4|m4v|mov)$/i;
+   if(!Array.isArray(files)||!files.length||files.length>64)return resp({error:'Complete needs verified MP4 files'},400);
+   if(files.some(f=>!f||typeof f.key!=='string'||!valid.test(f.key)||
+      !Number.isSafeInteger(f.size)||f.size<=0||!/^[a-f0-9]{64}$/i.test(f.sha256||'')))return resp({error:'Invalid video proof'},400);
+   if(new Set(files.map(f=>f.key)).size!==files.length)return resp({error:'Duplicate keys'},400);
+   const checks=await Promise.all(files.map(async f=>{const o=await env.VIDEOS.head(f.key);return !!o&&o.size===f.size;}));
+   if(checks.some(ok=>!ok))return resp({error:'R2 objects absent or byte lengths differ'},409);
+  }
+  const marker={id:aid,name,state,files:state==='complete'?files.map(f=>({key:f.key,size:f.size,sha256:f.sha256.toLowerCase()})):[],
+   verification:state==='complete'?'R2_HEAD_AND_BYTE_LENGTH_SHA_CLAIMED_BY_SIGNED_GITHUB_ACTION':null,
+   visibility:state==='complete'?'public':'not_published',when:new Date().toISOString()};
+  await env.VIDEOS.put('sync/gh/'+aid+'.json',JSON.stringify(marker),{httpMetadata:{contentType:'application/json'}});
+  return resp({ok:true,state,synced:state==='complete',verified:state==='complete'});
+ }
+
  const aid=u.searchParams.get('artifact')||'';
  if(route==='/artifact-status'&&method==='GET'){
   if(!/^[0-9]{4,20}$/.test(aid))return resp({error:'Bad ID'},400);
