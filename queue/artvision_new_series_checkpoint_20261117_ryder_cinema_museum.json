@@ -1,0 +1,91 @@
+{
+  "schema": "artvision-new-series-cinema-museum-verified-private-checkpoint-v1",
+  "recorded_at": "2026-11-17",
+  "repo": "GGIANLUCAA/Tra-le-pagine-",
+  "branch": "main",
+  "title": "The Race Track (Death on a Pale Horse)",
+  "artist": "Albert Pinkham Ryder",
+  "exact_museum_object": "Cleveland Museum of Art accession 1928.8",
+  "variant": "cinema_museum",
+  "status": "ONE_NEW_REAL_CINEMA_MUSEUM_PRIVATE_TECH_QA_PASS_ARTISTIC_REVIEW_PENDING",
+  "slot_count_new": 1,
+  "source": {
+    "museum_url": "https://www.clevelandart.org/art/1928.8",
+    "original_url": "https://openaccess-cdn.clevelandart.org/1928.8/1928.8_print.jpg",
+    "rights": "CMA Open Access CC0",
+    "pixels": [
+      3400,
+      2685
+    ],
+    "bytes": 3004560,
+    "sha256": "02640803f0b848bb651f9aa5c72dda458ce001adccb2c258cd9a3d0e32c7bfed",
+    "verification_workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/44035743390",
+    "verification_artifact_id": 14306054253
+  },
+  "music": {
+    "selected_from_fixed_music_20": true,
+    "track": "Ghost Processional",
+    "composer": "Kevin MacLeod",
+    "isrc": "USUAN1100219",
+    "rights": "CC BY 4.0 attribution required",
+    "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100219",
+    "sha256": "9502c6f9a0c365f2717ea82acd7e18c17f784da742c63a1e6887c5761a7ef421",
+    "verified_official_original_bytes": 3440840,
+    "render_audio_same_track_as_cinema_standard": true
+  },
+  "frame": {
+    "frame_appearance_of_original_not_verified": true,
+    "bespoke_editorial_frame": "Ryder late-19th-century dark mahogany and antique bronze with engraved race-track relief",
+    "room_id": "G03_PALE_MARBLE",
+    "room_is_ai_scenographic_not_actual_CMA": true,
+    "dimensions_published_unframed_cm": [
+      70.5,
+      90
+    ],
+    "framed_cm": [
+      84.5,
+      102,
+      6.5
+    ],
+    "frame_geometry_outer_to_inner_approximately_matches_published_cm": true,
+    "painting_not_stretched": true,
+    "original_full_painting_verified": true
+  },
+  "delivery": {
+    "duration_s": 60,
+    "fps": 20,
+    "pixels": [
+      720,
+      1280
+    ],
+    "video_sha256": "dd03c0eea9e03e4677af88fecc084049f674cbc5237c3f834b39b36aab1b01b4",
+    "android_video_sha256": "bbcffc77c73b38f6ee77f18153db211a9797b77454775473747e1f6e2c7c5b62",
+    "android_zip_sha256": "ee0f3f4eab9e08e6e38fac6e42a3bd932d0d6a79325c615d28b833922aa107d4",
+    "full_ffmpeg_video_audio_decode": "PASS",
+    "android_full_ffmpeg_decode": "PASS",
+    "zip_crc_and_file_manifest_sha256": "PASS",
+    "library_fresh_readback": "PASS",
+    "camera_v203_max_mad": 7.4131,
+    "camera_v203_threshold": 18,
+    "camera_v203": "PASS",
+    "cover_and_social_and_credits_in_zip": true,
+    "library_path": "/ArtVision/New_Series_20261114/Ryder_The_Race_Track/Cinema_Museum_20261117",
+    "android_user_device_tested": false
+  },
+  "artistic": {
+    "human_full_speed_approval": "PENDING",
+    "frame_design_approval": "PENDING",
+    "territorial_commercial_music_clearance": "PENDING",
+    "publication": false,
+    "gold": false
+  },
+  "continuity": {
+    "preexisting_cinema_standard": "PRESERVED_NOT_REGENERATED",
+    "preexisting_cinema_standard_mp4_sha256": "4745c5f093b35bfef418da78f95424d295783c493f2d0d54784bdb4e92eb8a87",
+    "critico_standard": "BLOCKED_APPROVED_GACRUX_AND_FREE_BILLING_GATES",
+    "critico_museum": "BLOCKED_APPROVED_GACRUX_AND_FREE_BILLING_GATES",
+    "no_paid_api_calls": true,
+    "no_auto_publish": true
+  },
+  "deduplication": "Do not count a corrective render or recovery of this existing Cinema Museum as another slot. Do not repeat Cinema Standard."
+}
