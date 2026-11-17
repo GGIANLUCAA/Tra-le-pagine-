@@ -6,7 +6,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | Autore | Opera | Slot senza prova di render | Serie |
 |---|---|---|---|
 | Albert Bierstadt | The Last of the Buffalo | critico_standard, critico_museum, cinema_museum | checkpoint |
-| Albert Pinkham Ryder | The Race Track (Death on a Pale Horse) | critico_standard, critico_museum, cinema_museum | nuova_serie, checkpoint |
+| Albert Pinkham Ryder | The Race Track (Death on a Pale Horse) | critico_standard, critico_museum | nuova_serie, checkpoint |
 | Edvard Munch | The Dead Mother and Child | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Edvard Munch | The Vampire | critico_standard, critico_museum, cinema_museum | selezione_30, checkpoint |
 | Edward Burne-Jones | King Arthur in Avalon | critico_standard, critico_museum, cinema_standard, cinema_museum | selezione_30 |
@@ -63,6 +63,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | [queue/artvision_new_series_20261114.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_new_series_20261114.json) | principale | 5 |
 | [queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json) | checkpoint | n.d. |
 | [queue/artvision_new_series_checkpoint_20261116_stuck_berlin_existing_artifacts.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_new_series_checkpoint_20261116_stuck_berlin_existing_artifacts.json) | checkpoint | n.d. |
+| [queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum_review.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum_review.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_critico_checkpoint_20261113_demorgan_dryad.json) | checkpoint | n.d. |
 | [queue/artvision_owner_30_fast_quality_lane_20261109.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_fast_quality_lane_20261109.json) | principale | 30 |
 | [queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/artvision_owner_30_museum_checkpoint_20261116_goya_turner.json) | checkpoint | 2 |

@@ -1,16 +1,16 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-16T21:10:48+00:00",
+  "generated_at": "2026-11-17T06:51:38+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 91,
-    "render_documented_slots": 143,
-    "not_documented_slots": 121,
-    "site_items": 540,
-    "site_cloudflare": 529,
+    "render_documented_slots": 144,
+    "not_documented_slots": 120,
+    "site_items": 541,
+    "site_cloudflare": 530,
     "site_unavailable": 11,
     "possible_site_matches": 21,
-    "queue_files": 97,
+    "queue_files": 98,
     "literary_dossiers": 19,
     "history_candidates": 12,
     "research_100": 100,
@@ -18,7 +18,7 @@
     "production_dossiers": 195,
     "production_dossier_subdirs": 32,
     "unmatched_site_items": 415,
-    "site_artist_only_hints": 104,
+    "site_artist_only_hints": 105,
     "site_ambiguous": 0,
     "recovered_historical_review_files": 8,
     "four_by_one_scoped": 66,
@@ -27,7 +27,7 @@
       "Critica d’arte": 42,
       "Musica e visual": 65,
       "Altri progetti": 265,
-      "Artisti e pittura": 114,
+      "Artisti e pittura": 115,
       "Libri raccontati": 50,
       "Cronaca e attualità": 4
     }
@@ -119,7 +119,8 @@
       ],
       "sources": [
         "queue/artvision_new_series_20261114.json",
-        "queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json"
+        "queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json",
+        "queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum_review.json"
       ],
       "variants": {
         "critico_standard": {
@@ -150,8 +151,14 @@
           "site_candidates": []
         },
         "cinema_museum": {
-          "state": "non_documentato",
-          "evidence": [],
+          "state": "render_documentato",
+          "evidence": [
+            {
+              "source": "queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum_review.json",
+              "status_claim": "LIBRARY_ONLY_RENDERED_TECHNICAL_QA_PASS_ARTISTIC_REVIEW_PENDING",
+              "classification": "render_documentato"
+            }
+          ],
           "site_candidates": []
         }
       },
@@ -161,10 +168,9 @@
       "four_by_one_target": true,
       "missing_variants": [
         "critico_standard",
-        "critico_museum",
-        "cinema_museum"
+        "critico_museum"
       ],
-      "render_documented": 1,
+      "render_documented": 2,
       "site_playback_verified": false,
       "published_confirmed": false
     },

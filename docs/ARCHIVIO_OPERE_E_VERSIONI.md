@@ -6,7 +6,7 @@ Questi stati non implicano pubblicazione né playback.
 | Autore | Titolo | Anno | Critico | Critico Museum | Cinema | Cinema Museum | Sul sito? |
 |---|---|---|---|---|---|---|---|
 | Albert Bierstadt | The Last of the Buffalo | ? | B | B | D | C | Non abbinato |
-| Albert Pinkham Ryder | The Race Track (Death on a Pale Horse) | c. 1896-1908 | — | — | D | — | Non abbinato |
+| Albert Pinkham Ryder | The Race Track (Death on a Pale Horse) | c. 1896-1908 | — | — | D | D | Non abbinato |
 | Albrecht Altdorfer | The Battle of Alexander at Issus | ? | — | — | — | — | Non abbinato |
 | Arnold Böcklin | Isle of the Dead | 1883 | D | D | D | D | Non abbinato |
 | Arnold Böcklin | Isle of the Dead (first version, 1880) | ? | — | — | — | — | Non abbinato |
@@ -117,7 +117,7 @@ Questi stati non implicano pubblicazione né playback.
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_new_series_20261114.json [CINEMA_STANDARD_RENDERED_TECH_QA_ART_REVIEW_PENDING]; queue/artvision_new_series_checkpoint_20261114_ryder_race_track.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: queue/artvision_new_series_checkpoint_20261117_ryder_cinema_museum_review.json [LIBRARY_ONLY_RENDERED_TECHNICAL_QA_PASS_ARTISTIC_REVIEW_PENDING]
 
 ### Albrecht Altdorfer — The Battle of Alexander at Issus
 
