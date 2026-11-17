@@ -1,0 +1,98 @@
+name: "ArtVision NEW | Delacroix Abduction of Rebecca | Met Open Access source + Music20"
+on:
+  push:
+    branches: [production/artvision-delacroix-rebecca-20261117]
+    paths:
+      - ".github/workflows/artvision-delacroix-rebecca-source-20261117.yml"
+permissions:
+  contents: read
+jobs:
+  source_music:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Strict anti-duplicate checkpoint and catalog license
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib,json
+          q=pathlib.Path('queue')
+          assert not list(q.glob('*rebecca*delacroix*')) and not list(q.glob('*delacroix*rebecca*'))
+          r=json.load(open('data/archivio-generale/opere.json'))
+          assert not any('delacroix' in w.get('artist','').lower() and 'rebecca' in w.get('title','').lower() for w in r.get('works',[]))
+          c=json.load(open('config/artvision_music_20_v1.json'))
+          assert len([t for t in c['tracks'] if t['id']=='magistar' and t['license']=='CC BY 4.0'])==1
+          print('NEW_DELA_REBECCA_1846_MET_03_30_NOT_DUPLICATE_MUSIC20_ALLOWED')
+          PY
+      - name: Install photo validation and FFprobe
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip -q install 'Pillow>=10,<13'
+          if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; fi
+      - name: Verify exact Met API public-domain oil original and genuine Music20 recording
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib,urllib.request,urllib.parse,json,hashlib,io,subprocess
+          from PIL import Image
+          out=pathlib.Path('output/delacroix_rebecca_20261117');out.mkdir(parents=True,exist_ok=True)
+          object_id=438814
+          api=f'https://collectionapi.metmuseum.org/public/collection/v1/objects/{object_id}'
+          req=lambda url:urllib.request.Request(url,headers={'User-Agent':'ArtVisionOpenAccess/1.0 for private Cinema Standard review','Accept':'application/json,image/jpeg,*/*'})
+          def download(url,cap):
+           with urllib.request.urlopen(req(url),timeout=100) as r:b=r.read(cap+1)
+           assert 100000<len(b)<=cap,'INVALID_OR_TOO_LARGE_BINARY'
+           return b
+          with urllib.request.urlopen(req(api),timeout=80) as r: meta=json.load(r)
+          assert meta.get('objectID')==object_id
+          assert meta.get('accessionNumber')=='03.30'
+          assert meta.get('artistDisplayName')=='Eugène Delacroix'
+          assert meta.get('title')=='The Abduction of Rebecca'
+          assert meta.get('isPublicDomain') is True
+          source=meta.get('primaryImage')
+          assert source and urllib.parse.urlparse(source).hostname=='images.metmuseum.org'
+          raw=download(source,45_000_000)
+          with Image.open(io.BytesIO(raw)) as img:
+           assert img.format=='JPEG' and min(img.size)>=1250
+           pixels=list(img.size)
+           img.verify()
+          image=out/'ORIGINAL_MET_438814_03_30.jpg';image.write_bytes(raw)
+          catalogue=json.load(open('config/artvision_music_20_v1.json'))
+          track=next(t for t in catalogue['tracks'] if t['id']=='magistar')
+          mp3=download(track['download_url'],25_000_000)
+          sound=out/'MAGISTAR_KEVIN_MACLEOD.mp3';sound.write_bytes(mp3)
+          audio=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_format','-show_streams','-of','json',str(sound)]))
+          assert any(s.get('codec_name')=='mp3' for s in audio['streams'] if s.get('codec_type')=='audio') and float(audio['format']['duration'])>80
+          report={
+            'artist':'Eugène Delacroix','title':'The Abduction of Rebecca','year':1846,
+            'museum':'The Metropolitan Museum of Art','met_object_id':438814,'accession':'03.30',
+            'object_url':'https://www.metmuseum.org/art/collection/search/438814',
+            'met_api_url':api,'met_isPublicDomain':True,
+            'photo_source_url':source,'photo_dimensions':pixels,'photo_bytes':len(raw),
+            'photo_sha256':hashlib.sha256(raw).hexdigest(),
+            'music_id':'magistar','music_title':track['title'],'music_isrc':track['isrc'],
+            'music_url':track['download_url'],'music_sha256':hashlib.sha256(mp3).hexdigest(),
+            'music_duration_s':float(audio['format']['duration']),
+            'music_license':track['license'],'music_license_url':track['license_url'],
+            'license_proof_met':'Public Domain / Met Open Access confirmed by exact API',
+            'no_narrator':True,'no_ai_painting_details':True,'no_paid_api':True,
+            'published':False,'gold':False
+          }
+          (out/'SOURCE_MUSIC_PROOF.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print('MET_EXACT_ORIGINAL_AND_REAL_AUDIO_OK',report['photo_dimensions'],report['photo_sha256'],report['music_sha256'],flush=True)
+          PY
+      - name: Upload exact source, recording and checksum proof
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_DELA_REBECCA_1846_SOURCE_MUSIC_20261117
+          retention-days: 30
+          if-no-files-found: error
+          path: output/delacroix_rebecca_20261117/
