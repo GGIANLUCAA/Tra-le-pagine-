@@ -25,7 +25,7 @@ Questi stati non implicano pubblicazione né playback.
 | Eugène Delacroix | The Barque of Dante | 1822 | — | — | D | — | Non abbinato |
 | Eugène Delacroix | The Death of Sardanapalus | 1827 | D | D | D | D | Possibili 2 |
 | Evelyn De Morgan | The Dryad | 1884–1885 | R | — | D | — | Non abbinato |
-| Evelyn De Morgan | The Storm Spirits | 1900 | — | — | D | — | Non abbinato |
+| Evelyn De Morgan | The Storm Spirits | 1900 | — | — | D | D | Non abbinato |
 | Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh | After the Storm | ? | — | — | — | — | Non abbinato |
 | Ford Madox Brown | L'ultimo saluto all'Inghilterra | ? | D | D | D | D | Non abbinato |
 | Francisco Goya | The Witches' Flight | 1798 | — | — | D | D | Non abbinato |
@@ -310,7 +310,7 @@ Questi stati non implicano pubblicazione né playback.
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_storm_spirits.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
-- cinema_museum: non_documentato; prove: nessuna
+- cinema_museum: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261117_storm_spirits_cinema_museum.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
 
 ### Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh — After the Storm
 
