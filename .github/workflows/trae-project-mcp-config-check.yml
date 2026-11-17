@@ -1,0 +1,39 @@
+name: "TRAE project MCP · safe configuration check"
+on:
+  pull_request:
+    paths:
+      - ".trae/mcp.json"
+      - "integrations/artvision-bridge-mcp/trae-work-mcp.json"
+      - ".github/workflows/trae-project-mcp-config-check.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check_trae_mcp:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate project MCP config and no secrets
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          project = json.loads(Path(".trae/mcp.json").read_text())
+          work = json.loads(Path("integrations/artvision-bridge-mcp/trae-work-mcp.json").read_text())
+          expected = {
+            "mcpServers": {
+              "artvision-bridge": {
+                "url": "https://artvision-bridge-mcp-v1.600led.workers.dev/mcp"
+              }
+            }
+          }
+          assert project == expected, "Project config deviates from read-only MCP endpoint"
+          assert work == expected, "TRAE Work config deviates from project config"
+          raw = Path(".trae/mcp.json").read_text().lower()
+          assert all(x not in raw for x in ("bearer", "authorization", "token", "api_key", "command", "args", "headers", "password")), "Credential or executable content in project config"
+          print("TRAE_PROJECT_MCP_READONLY_CONFIG_PASS")
+          PY
