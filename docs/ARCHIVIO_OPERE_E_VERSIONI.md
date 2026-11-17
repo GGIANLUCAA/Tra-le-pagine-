@@ -88,6 +88,7 @@ Questi stati non implicano pubblicazione né playback.
 | Richard Dadd | The Fairy Feller's Master-Stroke | 1855-1864 | — | — | D | D | Non abbinato |
 | Rosa Bonheur | La fiera dei cavalli | ? | D | D | D | D | Non abbinato |
 | Salvador Dalí | The Temptation of St. Anthony | 1946 | — | — | — | — | ESCLUSO |
+| Salvator Rosa | Scenes of Witchcraft: Evening | c. 1645–49 | — | — | — | — | Non abbinato |
 | Salvator Rosa | Scenes of Witchcraft: Night | c. 1645–49 | — | — | C | — | Non abbinato |
 | Thomas Cole | The Course of Empire: Destruction | 1836 | — | — | D | D | Non abbinato |
 | Thomas Cole | The Titan's Goblet | 1833 | — | — | — | — | Non abbinato |
@@ -929,6 +930,16 @@ Questi stati non implicano pubblicazione né playback.
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: non_documentato; prove: nessuna
+- cinema_museum: non_documentato; prove: nessuna
+
+### Salvator Rosa — Scenes of Witchcraft: Evening
+
+- Anno: c. 1645–49; Museo: Cleveland Museum of Art
+- Code: checkpoint
+- Candidati sul sito (nome compatibile soltanto): nessuno
+- critico_standard: non_documentato; prove: nessuna
+- critico_museum: non_documentato; prove: nessuna
+- cinema_standard: non_documentato; prove: queue/artvision_extra_render_checkpoint_20261117_salvator_rosa_evening_preflight.json [UNVERIFIED_CHECKPOINT_REQUIRES_MEDIA_PROOF]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Salvator Rosa — Scenes of Witchcraft: Night
