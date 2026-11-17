@@ -1,0 +1,68 @@
+{
+  "schema": "artvision-owner30-sadko-cinema-museum-v1",
+  "recorded_at": "2026-11-17",
+  "artist": "Ilya Repin",
+  "title": "Sadko",
+  "year": 1876,
+  "variant": "cinema_museum",
+  "status": "NEW_REAL_RENDER_1080_AND_ANDROID_FULL_DECODE_PASS__PRIVATE_REVIEW__ARTISTIC_AND_TERRITORIAL_RIGHTS_PENDING",
+  "new_distinct_variant": true,
+  "existing_cinema_standard_unchanged": true,
+  "source": {
+    "artwork_sha256": "cd3ee1bfce75529fb211b563410a8c5aea96fa972458304e87b498333e2ac1d7",
+    "public_source_page": "https://commons.wikimedia.org/wiki/File:Ilya_Repin_-_Sadko_-_Google_Art_Project.jpg",
+    "official_object_page": "https://virtual.rusmuseumvrm.ru/mikh_palace/collection/russkoe_iskusstvo_vtoroy_polovini_xix_veka/sadko/index.php?lang=ru",
+    "artwork_dimensions_cm": [
+      230,
+      322.5
+    ],
+    "territorial_photo_reuse": "PENDING"
+  },
+  "render": {
+    "format": "vertical 9:16",
+    "fps": 24,
+    "duration_seconds": 50.208333,
+    "frames": 1205,
+    "resolutions": [
+      [
+        1080,
+        1920
+      ],
+      [
+        720,
+        1280
+      ]
+    ],
+    "hd_sha256": "c099bae3800db7c2cc07f1a5d6b5932996d4450b4742a36c16e81675cf26ccca",
+    "android_sha256": "3207cb06f4267f171f655c796e7e729270bed73730594c60295e58cbc313532f",
+    "package_sha256": "c15238ced1531da49578055c44370a6aeb6e7c17ec072f35e017a5c76607f00e",
+    "source_audio_aac_sha256": "01b2a970d7479d0d8416d76b0b3caab66c1357ca6a822c930d715310505c1ef7",
+    "music_reused_bitidentical_from_existing_cinema_standard": true,
+    "full_audio_video_decode": "PASS_BOTH",
+    "zip_crc": "PASS"
+  },
+  "museum": {
+    "room_id": "G05",
+    "ai_gallery_scenography_not_actual_museum": true,
+    "room_sha256": "c9f7efb03d470989f373937619792c150ab76449260e5bd7002e6af6a8693458",
+    "frame_kind": "editorial_dark_wood_not_documented_original",
+    "frontal_camera": true,
+    "physical_scale": "DESIGN_ESTIMATE_NOT_CALIBRATED",
+    "human_approval": "PENDING"
+  },
+  "delivery": {
+    "persistent_private_library": true,
+    "public_site": false,
+    "private_file_paths_and_identifiers_withheld_from_public_repository": true,
+    "public_release_eligible": false,
+    "rights_clearance": "PENDING",
+    "artistic_fullwatch_review": "PENDING",
+    "gold": false
+  },
+  "anti_duplicate": "DO NOT REGENERATE Cinema Museum of Sadko as another new video. Find/review this exact SHA in the authorized private library; prefer finishing remaining other variants and works. Cinema Standard existing and approved. Critico variants require genuine approved Gacrux and verified no-billing free gates.",
+  "safety": {
+    "paid_api_calls": 0,
+    "public_distribution": false,
+    "new_automation_created": false
+  }
+}
