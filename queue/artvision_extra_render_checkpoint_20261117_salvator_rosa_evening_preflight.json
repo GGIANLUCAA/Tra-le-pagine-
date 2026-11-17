@@ -61,5 +61,21 @@
       "ARTVISION_SALVATOR_ROSA_EVENING_ANDROID.zip",
       "ARTVISION_SALVATOR_ROSA_EVENING_COVER.jpg"
     ]
+  },
+  "duplicate_runs_reconciled_20261117": {
+    "artwork": "Scenes of Witchcraft: Evening",
+    "accession": "CMA 1977.37.3",
+    "variant": "cinema_standard",
+    "first_success_run": 44107838019,
+    "first_artifact_id": 14338758271,
+    "second_success_run": 44107989973,
+    "second_artifact_id": 14339810698,
+    "both_mp4_sha256_identical": "b8d602709a1abd1cd114cd1bee0bf4e9318800b7dedd510eb2483b5f21be6df1",
+    "zip_sha256_different_due_to_runtime_metadata_not_new_video": true,
+    "counted_new_slots": 1,
+    "do_not_rerender_this_variant": true,
+    "original_and_audio_qa": "PASS",
+    "preferred_delivery": "ArtVision_Salvator_Rosa_Evening_Cinema.mp4",
+    "note": "Parallel workflow edits inadvertently triggered duplicate independent Actions runs; ignore second as already identical MP4 content, no new slot."
   }
 }
