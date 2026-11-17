@@ -4,7 +4,7 @@ Reuses the successfully rendered Magicien V1 pipeline; distinct real films and r
 FAIL CLOSED: do not publish, no paid API, no Vidu POST. Review photo/frame personally first.
 """
 from __future__ import annotations
-import argparse, hashlib, importlib.util, json, pathlib, shutil, sys, zipfile
+import argparse, hashlib, importlib.util, json, pathlib, shutil, sys, zipfile, os
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 import cv2
@@ -146,7 +146,9 @@ def main():
     save(output,"PHOTO_QA.json",trial)
     print("REUSED_EXACT_PREVIOUS_FINEGRAIN_PHOTO_NO_NEW_API_POST",flush=True)
     return pic
-   client=m.Client("finegrain/finegrain-image-enhancer",verbose=False)
+   token=os.environ.get("HF_TOKEN","").strip()
+   if not token: raise RuntimeError("HF_TOKEN_NOT_AVAILABLE__DO_NOT_REPEAT_ANONYMOUS_ZERO_GPU")
+   client=m.Client("finegrain/finegrain-image-enhancer",hf_token=token,verbose=False)
    raw=client.predict(m.handle_file(str(output/"ANCHOR_AI_NEURAL_COLOR_BASE.png")),
        profile["prompt"],profile["neg"],profile["year"],2,1.14,.97,6,112,144,.45,18,"DDIM",api_name="/process")
    obj=raw[1] if isinstance(raw,(list,tuple)) and len(raw)>1 else raw
