@@ -1,0 +1,138 @@
+name: "ArtVision EXTRA | Salvator Rosa Evening | New Cinema private review"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-extra-salvator-rosa-evening-cinema-20261117.yml"
+      - "scripts/artvision_extra_salvator_rosa_witchcraft_evening_cinema_v1.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artvision-owner-single-heavy-render
+  cancel-in-progress: false
+jobs:
+  authentic_witchcraft_evening_cinema:
+    name: One new source-verified private Cinema Standard
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify source-gated new slot, dependencies and FFmpeg
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_extra_salvator_rosa_witchcraft_evening_cinema_v1.py src/artvision_music_selector_v330.py
+          python -m pip install --disable-pip-version-check "Pillow>=10,<13"
+          if ! command -v ffmpeg >/dev/null 2>&1 || ! command -v ffprobe >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          command -v ffmpeg
+          command -v ffprobe
+          python - <<'PY'
+          import json,pathlib
+          q=json.loads(pathlib.Path('queue/artvision_extra_render_checkpoint_20261117_salvator_rosa_night_preflight.json').read_text())
+          assert q['status']=='AUTHORIZED_EDITORIALLY_PREFLIGHT_ONLY_NO_MP4'
+          assert q['accession']=='1977.37.3' and q['variant']=='cinema_standard'
+          assert not q['publish'] and not q['gold'] and q['paid_api_calls']==0
+          print("OWNER_AUTHORIZATION_AND_NO_DUPLICATE_CHECKPOINT_GATES_PASS")
+          PY
+      - name: Download exact 1977.37.3 original and render real new silent Cinema
+        run: python scripts/artvision_extra_salvator_rosa_witchcraft_evening_cinema_v1.py
+      - name: Verify real V330 recording CC BY 4.0 and mux music
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/artvision-extra-salvator-rosa-witchcraft-evening-v1
+          python src/artvision_music_selector_v330.py \
+            --title "Scenes of Witchcraft: Evening" \
+            --artist "Salvator Rosa" \
+            --moods "eerie,mysterious,ghostly,somber" \
+            --pin "ghost_processional" \
+            --source-video "$d/VIDEO_SILENT_PRIVATE.mp4" \
+            --review-video "$d/VIDEO_MUSIC20_REVIEW.mp4" \
+            --cache "$d/verified_music" \
+            --prepare \
+            --out-json "$d/MUSIC_V330_PROOF.json"
+      - name: Full A/V decode, SHA256, storyboard, cover, Android ZIP CRC
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/artvision-extra-salvator-rosa-witchcraft-evening-v1
+          ffmpeg -v error -xerror -i "$d/VIDEO_MUSIC20_REVIEW.mp4" -map 0 -f null -
+          python - <<'PY'
+          import hashlib,json,pathlib,subprocess,zipfile,datetime,os
+          p=pathlib.Path('output/artvision-extra-salvator-rosa-witchcraft-evening-v1')
+          h=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
+          src=p/'ORIGINAL_ARTWORK.jpg'; vid=p/'VIDEO_MUSIC20_REVIEW.mp4'
+          m=json.loads((p/'SOURCES_RIGHTS.json').read_text())
+          a=json.loads((p/'MUSIC_V330_PROOF.json').read_text())
+          b=json.loads((p/'STORYBOARD.json').read_text())
+          assert m['source_sha256']==h(src) and m['source_pixels'][0]>=2500 and m['source_pixels'][1]>=2500
+          assert m['license_status']=='MUSEUM_OBJECT_CC0_RUNTIME_IMAGE_BINARY_VERIFIED'
+          assert a['license_status']=='ACTUAL_BINARY_SHA256_FFPROBE_VERIFIED'
+          assert a['review']['review_video_sha256']==h(vid)
+          assert len(b['shots'])==11 and all(s['end_s']-s['start_s']>=2.9 for s in b['shots'])
+          probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(vid)]))
+          vs=[x for x in probe['streams'] if x.get('codec_type')=='video']
+          au=[x for x in probe['streams'] if x.get('codec_type')=='audio']
+          assert len(vs)==1 and vs[0]['codec_name']=='h264' and vs[0]['width']==1080 and vs[0]['height']==1920
+          assert len(au)==1 and au[0]['codec_name']=='aac'
+          assert 34.0<=float(probe['format']['duration'])<=37.0
+          m.update({'output_status':'PRIVATE_NEW_EXTRA_CINEMA_STANDARD_TECH_PASS_ART_REVIEW_PENDING',
+                    'video_sha256':h(vid),'video_bytes':vid.stat().st_size,
+                    'video_duration_s':float(probe['format']['duration']),
+                    'music_proof_sha256':h(p/'MUSIC_V330_PROOF.json'),
+                    'qa':{'full_ffmpeg_decode':'PASS','video_codec':'h264','audio_codec':'aac',
+                          'source_hash_match':'PASS','artistic_review':'PENDING'},
+                    'storage':'GITHUB_ACTIONS_ARTIFACT_ONLY_NOT_LIBRARY',
+                    'site_online':False,'gold':False,'published':False,
+                    'completed_at_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                    'github_run_id':os.environ.get('GITHUB_RUN_ID')})
+          (p/'SOURCES_RIGHTS.json').write_text(json.dumps(m,indent=2))
+          z=p/'SALVATOR_ROSA_WITCHCRAFT_EVENING_ANDROID_PRIVATE.zip'
+          filenames=['VIDEO_MUSIC20_REVIEW.mp4','COVER.jpg','SOURCES_RIGHTS.json',
+                     'SOCIAL_COPY.txt','STORYBOARD.json','MUSIC_V330_PROOF.json']
+          manifest={'schema':'artvision-real-new-video-manifest-v1',
+                    'created_at_utc':m['completed_at_utc'],
+                    'artist':m['artist'],'artwork':m['artwork'],'variant':'cinema_standard',
+                    'publish':False,'gold':False,'artistic_review':'PENDING',
+                    'source_sha256':h(src),
+                    'files':{n:{'sha256':h(p/n),'bytes':(p/n).stat().st_size} for n in filenames}}
+          (p/'MANIFEST_SHA256.json').write_text(json.dumps(manifest,indent=2))
+          with zipfile.ZipFile(z,'w',zipfile.ZIP_DEFLATED,compresslevel=3) as f:
+            for n in filenames+['MANIFEST_SHA256.json']:
+              f.write(p/n,n)
+          with zipfile.ZipFile(z) as f:
+            assert f.testzip() is None
+            assert hashlib.sha256(f.read('VIDEO_MUSIC20_REVIEW.mp4')).hexdigest()==h(vid)
+          (p/'TECHNICAL_QA.json').write_text(json.dumps({
+              'result':'TECH_PASS_ART_REVIEW_PENDING','source_licensed':'CC0_RUNTIME_SHA_VERIFIED',
+              'audio_license':'CC_BY_4_0_ACTUAL_BYTES_VERIFIED','full_audio_video_decode':'PASS',
+              'zip_crc':'PASS','mp4_sha256':h(vid),'mp4_bytes':vid.stat().st_size,
+              'zip_sha256':h(z),'zip_bytes':z.stat().st_size,
+              'android_on_device':'NOT_TESTED','site':'NOT_PUBLISHED',
+              'storage':'GITHUB_ACTIONS_ARTIFACT_ONLY','gold':False},indent=2))
+          print("NEW_REAL_SALVATOR_ROSA_EVENING_TECH_PASS",h(vid),h(z),"ZIP_BYTES",z.stat().st_size)
+          PY
+      - name: Save original MP4, Android ZIP, cover, social, hashes in same run
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_NEW_SALVATOR_ROSA_EVENING_CINEMA_PRIVATE_REVIEW
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            output/artvision-extra-salvator-rosa-witchcraft-evening-v1/VIDEO_MUSIC20_REVIEW.mp4
+            output/artvision-extra-salvator-rosa-witchcraft-evening-v1/SALVATOR_ROSA_WITCHCRAFT_EVENING_ANDROID_PRIVATE.zip
+            output/artvision-extra-salvator-rosa-witchcraft-evening-v1/COVER.jpg
+            output/artvision-extra-salvator-rosa-witchcraft-evening-v1/SOURCES_RIGHTS.json
+            output/artvision-extra-salvator-rosa-witchcraft-evening-v1/SOCIAL_COPY.txt
+            output/artvision-extra-salvator-rosa-witchcraft-evening-v1/STORYBOARD.json
+            output/artvision-extra-salvator-rosa-witchcraft-evening-v1/MUSIC_V330_PROOF.json
+            output/artvision-extra-salvator-rosa-witchcraft-evening-v1/MANIFEST_SHA256.json
+            output/artvision-extra-salvator-rosa-witchcraft-evening-v1/TECHNICAL_QA.json
