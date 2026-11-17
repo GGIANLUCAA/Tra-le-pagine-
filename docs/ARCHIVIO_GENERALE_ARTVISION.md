@@ -1,6 +1,6 @@
 # ArtVision — Archivio Generale
 
-Generato: 2026-11-17T15:12:17+00:00 · Verifica sito: live_api
+Generato: 2026-11-17T15:16:39+00:00 · Verifica sito: live_api
 
 Fonte: repository GitHub e catalogo pubblico Video Library Studio; nessuna modifica a video, code o sito.
 AVVERTENZA: un render documentato non significa file oggi scaricabile, QA artistico approvato o video pubblicato.
@@ -14,7 +14,7 @@ Un possibile abbinamento per nome non dimostra l'identità del file. Le lacune n
 | Elementi del catalogo sito | 541 |
 | Elementi Cloudflare | 530 |
 | Elementi non disponibili | 11 |
-| Code JSON esaminate | 108 |
+| Code JSON esaminate | 109 |
 | Banca idee future (non coda) | 100 |
 | Future selezionate (non video finiti) | 30 |
 | Fascicoli di produzione indicizzati | 195 |

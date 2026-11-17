@@ -132,6 +132,7 @@ Le versioni già rese devono essere verificate prima di ogni possibile rigeneraz
 | [queue/render_requests/holbein_ambasciatori_20261024.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/render_requests/holbein_ambasciatori_20261024.json) | supporto | n.d. |
 | [queue/rip_van_winkle_20261029.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/rip_van_winkle_20261029.json) | supporto | n.d. |
 | [queue/runner_state_v16.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/runner_state_v16.json) | supporto | n.d. |
+| [queue/storia_martinetti_1894_owner_review_20261117.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_martinetti_1894_owner_review_20261117.json) | supporto | n.d. |
 | [queue/storia_rivive_beirut_v63_selected_scenes.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_beirut_v63_selected_scenes.json) | supporto | n.d. |
 | [queue/storia_rivive_candidates_v58.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_candidates_v58.json) | supporto | 7 |
 | [queue/storia_rivive_highres_scans_v64.json](https://github.com/GGIANLUCAA/Tra-le-pagine-/blob/main/queue/storia_rivive_highres_scans_v64.json) | supporto | n.d. |
