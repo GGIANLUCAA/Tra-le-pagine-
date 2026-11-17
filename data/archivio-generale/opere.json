@@ -1,16 +1,16 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-17T06:51:38+00:00",
+  "generated_at": "2026-11-17T06:53:43+00:00",
   "site_state": "live_api",
   "stats": {
-    "works": 91,
+    "works": 92,
     "render_documented_slots": 144,
-    "not_documented_slots": 120,
+    "not_documented_slots": 124,
     "site_items": 541,
     "site_cloudflare": 530,
     "site_unavailable": 11,
     "possible_site_matches": 21,
-    "queue_files": 98,
+    "queue_files": 99,
     "literary_dossiers": 19,
     "history_candidates": 12,
     "research_100": 100,
@@ -21,7 +21,7 @@
     "site_artist_only_hints": 105,
     "site_ambiguous": 0,
     "recovered_historical_review_files": 8,
-    "four_by_one_scoped": 66,
+    "four_by_one_scoped": 67,
     "complete_four_render_documented": 27,
     "categories": {
       "Critica d’arte": 42,
@@ -1053,6 +1053,55 @@
       "four_by_one_target": true,
       "missing_variants": [],
       "render_documented": 4,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "eugene-delacroix-the-abduction-of-rebecca-1846",
+      "title": "The Abduction of Rebecca",
+      "artist": "Eugène Delacroix",
+      "year": "1846",
+      "museum": "",
+      "object_id": "03.30",
+      "lanes": [
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_extra_render_checkpoint_20261117_delacroix_abduction_rebecca.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "four_by_one_target": true,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
       "site_playback_verified": false,
       "published_confirmed": false
     },

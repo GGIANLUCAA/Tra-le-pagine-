@@ -1,6 +1,6 @@
 # ArtVision — Archivio Generale
 
-Generato: 2026-11-17T06:51:38+00:00 · Verifica sito: live_api
+Generato: 2026-11-17T06:53:43+00:00 · Verifica sito: live_api
 
 Fonte: repository GitHub e catalogo pubblico Video Library Studio; nessuna modifica a video, code o sito.
 AVVERTENZA: un render documentato non significa file oggi scaricabile, QA artistico approvato o video pubblicato.
@@ -8,18 +8,18 @@ Un possibile abbinamento per nome non dimostra l'identità del file. Le lacune n
 
 ## Conteggi
 
-| Opere censite | 91 |
+| Opere censite | 92 |
 | Slot render documentati | 144 |
-| Slot mancanti / non documentati | 120 |
+| Slot mancanti / non documentati | 124 |
 | Elementi del catalogo sito | 541 |
 | Elementi Cloudflare | 530 |
 | Elementi non disponibili | 11 |
-| Code JSON esaminate | 98 |
+| Code JSON esaminate | 99 |
 | Banca idee future (non coda) | 100 |
 | Future selezionate (non video finiti) | 30 |
 | Fascicoli di produzione indicizzati | 195 |
 | Review Museum storiche recuperate | 8 |
-| Opere in scope 4x1 | 66 |
+| Opere in scope 4x1 | 67 |
 | Schede sito senza indizi artistici | 415 |
 | Schede sito con indizio solo artista | 105 |
 | Schede con possibile opera identificata | 21 |

@@ -21,6 +21,7 @@ Questi stati non implicano pubblicazione né playback.
 | Edward Burne-Jones | The Golden Stairs | 1880 | — | — | D | — | Non abbinato |
 | Edwin Landseer | L'uomo propone, Dio dispone | ? | D | D | D | D | Non abbinato |
 | Elihu Vedder | La Sfinge sulla riva del mare | ? | D | D | D | D | Non abbinato |
+| Eugène Delacroix | The Abduction of Rebecca | 1846 | — | — | — | — | Non abbinato |
 | Eugène Delacroix | The Barque of Dante | 1822 | — | — | D | — | Non abbinato |
 | Eugène Delacroix | The Death of Sardanapalus | 1827 | D | D | D | D | Possibili 2 |
 | Evelyn De Morgan | The Dryad | 1884–1885 | R | — | D | — | Non abbinato |
@@ -258,6 +259,16 @@ Questi stati non implicano pubblicazione né playback.
 - critico_museum: render_documentato; prove: queue/artvision_four_variants_s01_20261028.json [rendered_needs_review]
 - cinema_standard: render_documentato; prove: queue/artvision_four_variants_s01_20261028.json [rendered_needs_review]
 - cinema_museum: render_documentato; prove: queue/artvision_four_variants_s01_20261028.json [rendered_needs_review]
+
+### Eugène Delacroix — The Abduction of Rebecca
+
+- Anno: 1846; Museo: da verificare
+- Code: checkpoint
+- Candidati sul sito (nome compatibile soltanto): nessuno
+- critico_standard: non_documentato; prove: nessuna
+- critico_museum: non_documentato; prove: nessuna
+- cinema_standard: non_documentato; prove: nessuna
+- cinema_museum: non_documentato; prove: nessuna
 
 ### Eugène Delacroix — The Barque of Dante
 
