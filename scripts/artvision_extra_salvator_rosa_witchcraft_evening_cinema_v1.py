@@ -49,7 +49,7 @@ def dedup_gate():
         states = [v.get("state") for v in w.get("variants", {}).values()]
         if "render_documentato" in states:
             raise ValueError("ANTI_DUPLICATE_EXISTING_RENDER_DOCUMENTED " + TITLE)
-    for f in (ROOT / "queue").glob("artvision_extra_render_checkpoint_*salvator*rosa*night*.json"):
+    for f in (ROOT / "queue").glob("artvision_extra_render_checkpoint_*salvator*rosa*evening*.json"):
         d = json.loads(f.read_text(encoding="utf-8"))
         if d.get("status") not in ("AUTHORIZED_EDITORIALLY_PREFLIGHT_ONLY_NO_MP4",
                                    "PRE_RENDER_NO_MP4", "RENDER_FAILED_NO_MP4"):
