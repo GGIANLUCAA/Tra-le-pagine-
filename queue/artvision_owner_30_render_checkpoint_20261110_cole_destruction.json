@@ -8,7 +8,7 @@
     "artist": "Thomas Cole",
     "selection_order": 9,
     "variant": "cinema_standard",
-    "slot_state": "render_running_unverified_do_not_duplicate"
+    "slot_state": "RENDERED_TECH_QA_REVIEW_PENDING"
   },
   "github_run_id": 42737588988,
   "github_run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/42737588988",
@@ -24,15 +24,33 @@
     "commons_pd_art_claim": "PDM/PD-Art; territorial commercial reuse pending"
   },
   "qa": {
-    "new_mp4_verified": false,
-    "sha256_mp4": null,
-    "zip_verified": false,
+    "new_mp4_verified": true,
+    "sha256_mp4": "771ed77e9b601e909b1d11a4260f7300978137a0534ee9d1bcde995c96c92eca",
+    "zip_verified": true,
     "artistic_review": "PENDING",
     "commercial_rights": "PENDING",
     "gold": false,
-    "published": false
+    "published": false,
+    "new_verified_mp4": 1,
+    "mp4_bytes": 14696683,
+    "duration_s": 69.6,
+    "ffmpeg": "PASS",
+    "ffmpeg_video_full_decode": "PASS",
+    "ffmpeg_audio_full_decode": "PASS",
+    "zip_crc": "PASS",
+    "artist_review": "PENDING"
   },
   "main_queue_slot_changes": 0,
   "no_new_paid_apis": true,
-  "do_not_rerender_same_variant_until_run_terminal": true
+  "do_not_rerender_same_variant_until_run_terminal": true,
+  "recovered_20261117": {
+    "recovered_from_existing_completed_run": 42737588988,
+    "artifact_id": 13727903252,
+    "original_video_sha256": "771ed77e9b601e909b1d11a4260f7300978137a0534ee9d1bcde995c96c92eca",
+    "source_artist": "Thomas Cole",
+    "appended_video_to_android_package": true,
+    "recovered_count_is_not_new_render": true,
+    "metadata_correction": null,
+    "recovered_on": "2026-11-17"
+  }
 }
