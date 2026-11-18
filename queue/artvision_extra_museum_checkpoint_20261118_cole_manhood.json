@@ -1,0 +1,55 @@
+{
+  "schema": "artvision-private-cinema-museum-checkpoint-v1",
+  "date": "2026-11-18",
+  "artist": "Thomas Cole",
+  "title": "The Voyage of Life: Manhood",
+  "accession": "NGA 1971.16.3",
+  "variant": "cinema_museum",
+  "status": "LIBRARY_ONLY_TECH_QA_PASS_ART_REVIEW_PENDING",
+  "new_distinct_slot_count": 1,
+  "new_artwork_count": 0,
+  "source_sha256": "a2c2051d85907ff610ea5c9e12d2b607bd6620e9b5a08288940cdfedf1658263",
+  "source_rights": "NGA public domain; original file reused from existing source proof",
+  "standard_master_unchanged": true,
+  "music": "Ghost Processional — Kevin MacLeod, CC BY 4.0, reuse of verified Standard soundtrack",
+  "room": "G02_RED_ORNATE",
+  "room_ai_editorial": true,
+  "frame": "CUSTOM_COLE_DARK_WALNUT_GOLD",
+  "frame_historical": false,
+  "dimensions_cm_unframed": [
+    202.6,
+    134.3
+  ],
+  "hq": {
+    "sha256": "0c2fb50924e94d08ee0054b9689f862dae343544f5c0ed4195cf8dd8fcef27dc",
+    "bytes": 36821095,
+    "library_file_id": "file_000000009eb881f5ac82680e32dd0932"
+  },
+  "android": {
+    "sha256": "0528fb04a25407a9e438523ee5ddd85cb374d841b01e43c09198fb6de5171bce",
+    "bytes": 2521991,
+    "library_file_id": "file_00000000d0b081f58c419bec23a7c1dc"
+  },
+  "zip": {
+    "sha256": "5b7d91d3e1ef5cf475cfbc25521c4b13aaef7bcf88edbe41d39bcb23b2ee2f92",
+    "bytes": 2757685,
+    "library_file_id": "file_000000007da881f587b65b35a8e07a94"
+  },
+  "library_path": "/ArtVision/Opere_Extra/Thomas_Cole_Manhood_20261118_Cinema_Museum",
+  "cover": "COVER.jpg included inside ZIP; standalone Library JPG upload blocked 403 LPE trusted producer",
+  "checks": {
+    "ffmpeg_video_audio": "PASS",
+    "android_video_audio": "PASS",
+    "zip_crc": "PASS",
+    "library_mp4_zip_readback_sha": "PASS",
+    "full_speed_artist_review": "PENDING",
+    "v203": "PENDING",
+    "museum_physical_scale_artistic": "PENDING"
+  },
+  "public_site": false,
+  "r2": false,
+  "gh_artifact": false,
+  "gold": false,
+  "cost": 0,
+  "note": "Private QA trial, not owner approved. Source original art is genuine, room/frame editorial. Do not duplicate Cinema Standard or count editorial revisions as slots."
+}
