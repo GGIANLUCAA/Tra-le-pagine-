@@ -37,63 +37,93 @@ def canvas(scene,title="",small=""):
     return orig_canvas(scene,title,small)
 m.frame_canvas=canvas
 def source():
-    params=urlencode({"action":"query","format":"json","formatversion":"2","prop":"imageinfo",
-       "titles":"File:"+FILENAME,"iiprop":"url|size|mime|sha1"})
+    """Attempt original Commons source first, then its OFFICIAL 1080p VP9 transcode.
+    Do not replace with low resolution composite footage or silently upscale a poor source."""
+    from urllib.parse import urlparse,quote
+    from urllib.error import HTTPError
     ua="LaStoriaRiviveAuthenticFilmReview/1.0 (github.com/GGIANLUCAA/Tra-le-pagine-)"
+    params=urlencode({"action":"query","format":"json","formatversion":"2","prop":"imageinfo",
+      "titles":"File:"+FILENAME,"iiprop":"url|size|mime|sha1"})
     req=Request("https://commons.wikimedia.org/w/api.php?"+params,headers={"User-Agent":ua})
     with urlopen(req,timeout=55) as r: info=json.load(r)["query"]["pages"][0]["imageinfo"][0]
-    expected_size=int(info["size"])
-    if info["mime"]!="video/webm" or not 24_000_000<expected_size<35_000_000:
-        raise RuntimeError("ORIGINAL_COMMONS_FILE_CHANGED_OR_NOT_VIDEO")
-    from urllib.parse import urlparse
-    url=info["url"]
-    if urlparse(url).hostname!="upload.wikimedia.org" or not url.startswith("https://"):
-        raise RuntimeError("UNVERIFIED_ORIGINAL_SOURCE_HOST")
-    if not m.SOURCE.exists() or m.SOURCE.stat().st_size!=expected_size:
-        with urlopen(Request(url,headers={"User-Agent":ua}),timeout=160) as r,m.SOURCE.open("wb") as f:
-            while True:
-                block=r.read(1<<20)
-                if not block:break
-                f.write(block)
-                if f.tell()>35_000_000:raise RuntimeError("ORIGINAL_FILE_TOO_LARGE")
-    if m.SOURCE.stat().st_size!=expected_size:raise RuntimeError("INCOMPLETE_COMMONS_SOURCE")
-    sha1=hashlib.sha1(m.SOURCE.read_bytes()).hexdigest()
-    if sha1!=info["sha1"]:raise RuntimeError("COMMONS_SHA1_SOURCE_CHANGED")
-    p=json.loads(m.run(["ffprobe","-v","error","-select_streams","v:0",
-        "-show_entries","stream=width,height,avg_frame_rate","-show_entries","format=duration",
-        "-of","json",str(m.SOURCE)]))
-    stream=p["streams"][0]; width=stream["width"];height=stream["height"]
-    dur=float(p["format"]["duration"])
-    if width<1800 or height<1000 or dur<m.START+m.DURATION+2:
-        raise RuntimeError("SOURCE_NOT_APPROPRIATE_HIGH_RESOLUTION_FILM")
-    # Preserve BOTH real girl and cat: no left/right crop and no stretched faces.
+    size=int(info["size"])
+    if info["mime"]!="video/webm" or not 24_000_000<size<35_000_000:
+        raise RuntimeError("COMMONS_ORIGINAL_METADATA_NOT_EXPECTED")
+    original_url=info["url"]
+    parsed=urlparse(original_url)
+    if parsed.hostname!="upload.wikimedia.org" or not original_url.startswith("https://"):
+        raise RuntimeError("UNEXPECTED_MEDIA_HOST")
+    basepath=parsed.path
+    if "/wikipedia/commons/" not in basepath:raise RuntimeError("UNEXPECTED_COMMONS_PATH")
+    stem=basepath.rsplit("/",1)[-1]
+    dirname=basepath.rsplit("/",1)[0].replace("/wikipedia/commons/","/wikipedia/commons/transcoded/",1)
+    transcode_url="https://upload.wikimedia.org"+dirname+"/"+stem+"/"+stem+".1080p.vp9.webm"
+    # Try the authentic source before its official machine transcode; two bounded
+    # attempts per distinct URL. No tokenised proxy, bypass, or other paid service.
+    choices=[("COMMONS_ORIGINAL",original_url),("COMMONS_OFFICIAL_1080P_TRANSCODE",transcode_url)]
+    attempts=[]
+    selected=None
+    for kind,url in choices:
+        for attempt in range(1,3):
+            tmp=m.SOURCE.with_suffix(".partial")
+            try:
+                if tmp.exists():tmp.unlink()
+                with urlopen(Request(url,headers={"User-Agent":ua,"Accept":"video/webm,*/*"}),timeout=160) as r,tmp.open("wb") as f:
+                    if r.geturl().startswith("http://"):raise RuntimeError("UNSAFE_HTTP_REDIRECT")
+                    while True:
+                        block=r.read(1<<20)
+                        if not block:break
+                        f.write(block)
+                        if f.tell()>40_000_000:raise RuntimeError("UNEXPECTED_SOURCE_SIZE")
+                if tmp.stat().st_size<7_000_000:raise RuntimeError("SUSPICIOUSLY_SHORT_VIDEO_SOURCE")
+                if kind=="COMMONS_ORIGINAL":
+                    if tmp.stat().st_size!=size or hashlib.sha1(tmp.read_bytes()).hexdigest()!=info["sha1"]:
+                        raise RuntimeError("COMMONS_ORIGINAL_SHA1_SIZE_MISMATCH")
+                p=json.loads(m.run(["ffprobe","-v","error","-select_streams","v:0",
+                  "-show_entries","stream=width,height,avg_frame_rate","-show_entries","format=duration",
+                  "-of","json",str(tmp)]))
+                stream=p["streams"][0];width=int(stream["width"]);height=int(stream["height"])
+                dur=float(p["format"]["duration"])
+                if width<1800 or height<1000 or dur<m.START+m.DURATION+2 or dur>90:
+                    raise RuntimeError("HIGH_RESOLUTION_SOURCE_OR_DURATION_NOT_VALID")
+                tmp.replace(m.SOURCE)
+                selected=(kind,url,width,height,dur)
+                break
+            except Exception as e:
+                attempts.append({"candidate":kind,"attempt":attempt,"failure":str(e)[:180]})
+                if tmp.exists():tmp.unlink()
+                if isinstance(e,HTTPError) and e.code in (401,403,404,429):break
+        if selected:break
+    if not selected:
+        m.write("SOURCE_DOWNLOAD_FAILURE.json",{"state":"NO_HIGH_RES_ORIGINAL_AVAILABLE",
+            "attempts":attempts,"no_paid_calls":True,"no_video_claimed":True})
+        raise RuntimeError("COMMONS_ORIGINAL_AND_1080P_TRANSCODE_UNAVAILABLE")
+    kind,url,width,height,dur=selected
     m.run(["ffmpeg","-nostdin","-y","-v","error","-ss",str(m.START),"-i",str(m.SOURCE),
         "-t",str(m.DURATION),"-vf","fps=24,scale=960:720:force_original_aspect_ratio=decrease,pad=960:720:(ow-iw)/2:(oh-ih)/2",
         "-an","-c:v","libx264","-preset","veryfast","-crf","18","-pix_fmt","yuv420p",str(m.CLIP)],260)
     cap=cv2.VideoCapture(str(m.CLIP))
     n=int(cap.get(cv2.CAP_PROP_FRAME_COUNT));fps=cap.get(cv2.CAP_PROP_FPS)
-    image_n=[]
     for idx in (15,39,60,m.ANCHOR-7,m.ANCHOR,m.ANCHOR+7,170,270):
-        cap.set(cv2.CAP_PROP_POS_FRAMES,idx)
-        ok,img=cap.read()
-        if ok:
-            cv2.imwrite(str(OUT/f"SOURCE_SCOUT_FRAME_{idx:04d}.jpg"),img)
-            image_n.append(img)
+        cap.set(cv2.CAP_PROP_POS_FRAMES,idx);ok,img=cap.read()
+        if ok:cv2.imwrite(str(OUT/f"SOURCE_SCOUT_FRAME_{idx:04d}.jpg"),img)
     cap.release()
     if n<420 or abs(fps-24)>.1:raise RuntimeError("SOURCE_EXCERPT_NOT_REAL_VIDEO")
-    # Human artistic review remains PENDING until comparison of these actual images.
-    m.write("RIGHTS.json",{"work":TITLE,"film_year":1900,
-      "director":"Louis Lumière","director_death_year":1948,
-      "source_page":PAGE,"source_url":url,"source_mime":info["mime"],
-      "source_original_bytes":expected_size,"source_original_sha1_verified":sha1,
-      "source_original_sha256":m.sha(m.SOURCE),"source_dimensions":[width,height],
-      "source_duration_s":dur,"selected_excerpt_start_s":m.START,
-      "selected_excerpt_duration_s":m.DURATION,"anchor_absolute_s":m.START+m.ANCHOR/m.FPS,
-      "anchor_local_frame_index":m.ANCHOR,"excerpt_fps":24,
-      "rights_basis":"Wikimedia Commons PDM; film from 1900, original director died 1948; territory-specific 2015 restoration claims require final review",
-      "original_colors":False,"no_publication":True,"no_paid_calls":True,"no_vidu_post":True})
-    print("REAL_COMMONS_SOURCE_VERIFIED",expected_size,sha1,m.sha(m.SOURCE),flush=True)
+    m.write("RIGHTS.json",{"work":TITLE,"film_year":1900,"director":"Louis Lumière",
+      "director_death_year":1948,"source_page":PAGE,"original_url":original_url,
+      "acquired_url":url,"acquired_kind":kind,"source_mime":"video/webm",
+      "common_original_sha1_reported":info["sha1"],
+      "source_original_sha1_verified":info["sha1"] if kind=="COMMONS_ORIGINAL" else None,
+      "source_downloaded_sha256":m.sha(m.SOURCE),"source_downloaded_bytes":m.SOURCE.stat().st_size,
+      "source_dimensions":[width,height],"source_duration_s":dur,
+      "selected_excerpt_start_s":m.START,"selected_excerpt_duration_s":m.DURATION,
+      "anchor_absolute_s":m.START+m.ANCHOR/m.FPS,"anchor_local_frame_index":m.ANCHOR,
+      "excerpt_fps":24,
+      "rights_basis":"Wikimedia Commons PDM original work; check 2015 restoration rights Italy before commercial distribution",
+      "artistic_approval":"PENDING","no_publication":True,"no_paid_calls":True,"no_vidu_post":True})
+    print("REAL_HIGH_RES_SOURCE_ACQUIRED",kind,width,height,m.sha(m.SOURCE),flush=True)
     return m.CLIP
+
 m.source=source
 def photo(base,original):
     original_path=OUT/"ANCHOR_REAL_ORIGINAL_BW.png"
