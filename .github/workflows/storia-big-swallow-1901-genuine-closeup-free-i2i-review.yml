@@ -1,0 +1,100 @@
+name: "La Storia Rivive · new Big Swallow 1901 authentic first-closeup I2I"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-big-swallow-1901-genuine-closeup-free-i2i-review.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+  actions: read
+concurrency:
+  group: storia-big-swallow-1901-no-spend-real-owner-review
+  cancel-in-progress: false
+jobs:
+  original_film_real_photographic_review:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_HUB_DISABLE_XET: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install real photo and film dependencies, no paid provider
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2" "gradio_client>=1.3,<3"
+          python -m py_compile tools/storia_big_swallow_1901_first_closeup_new_i2i.py
+      - name: Produce authentic Edwardian close-up from SHA1 verified archival motion and free I2I
+        run: |
+          set -euo pipefail
+          python -u tools/storia_big_swallow_1901_first_closeup_new_i2i.py
+      - name: Preserve full source frames and real visual evidence even when artistic quality fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_BIG_SWALLOW_1901_REAL_SOURCE_FACE_I2I_AND_MP4_IF_PASS
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_big_swallow_1901_v1/ORIGINAL_FILM_FRAME_*.jpg
+            output/storia_big_swallow_1901_v1/ANCHOR_REAL_ORIGINAL_BW.png
+            output/storia_big_swallow_1901_v1/ANCHOR_AI_NEURAL_COLOR_BASE.png
+            output/storia_big_swallow_1901_v1/GENERATIVE_PHOTO_REAL_CANDIDATE.png
+            output/storia_big_swallow_1901_v1/BEFORE_AFTER_EXACT_ANCHOR.jpg
+            output/storia_big_swallow_1901_v1/ORIGINAL_VS_PHOTO_VISUAL_QA.jpg
+            output/storia_big_swallow_1901_v1/RIGHTS.json
+            output/storia_big_swallow_1901_v1/PHOTO_QA.json
+            output/storia_big_swallow_1901_v1/VISUAL_REPORT.json
+            output/storia_big_swallow_1901_v1/FINAL_TECH_QA.json
+            output/storia_big_swallow_1901_v1/FAILURE.json
+            output/storia_big_swallow_1901_v1/SOCIAL_COVER.jpg
+            output/storia_big_swallow_1901_v1/BIG_SWALLOW_1901_TRUE_CLOSEUP_I2I_REVIEW.mp4
+            output/storia_big_swallow_1901_v1/BIG_SWALLOW_1901_MP4_COVER_SOCIAL_QA.zip
+      - name: Release actual MP4 and ZIP to owner Android only after technical and public download verification
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_big_swallow_1901_v1
+          movie=BIG_SWALLOW_1901_TRUE_CLOSEUP_I2I_REVIEW.mp4
+          kit=BIG_SWALLOW_1901_MP4_COVER_SOCIAL_QA.zip
+          tag=storia-big-swallow-1901-first-face-closeup-free-i2i-owner-review
+          python - <<'PY'
+          from pathlib import Path
+          import json,zipfile
+          p=Path("output/storia_big_swallow_1901_v1")
+          q=json.loads((p/"FINAL_TECH_QA.json").read_text())
+          assert q["full_mp4_decode"] and q["zip_crc_pass"] and q["real_Finegrain_photo"] and q["artistic_review"]=="PENDING"
+          for file in ["BIG_SWALLOW_1901_TRUE_CLOSEUP_I2I_REVIEW.mp4","BIG_SWALLOW_1901_MP4_COVER_SOCIAL_QA.zip","SOCIAL_COVER.jpg","BEFORE_AFTER_EXACT_ANCHOR.jpg"]:
+              assert (p/file).is_file() and (p/file).stat().st_size>20000
+          with zipfile.ZipFile(p/"BIG_SWALLOW_1901_MP4_COVER_SOCIAL_QA.zip") as a:assert a.testzip() is None
+          print("TECHNICAL_REVIEW_ONLY_PASS_SOURCE_HASH",q["movie_sha256"],q["zip_sha256"])
+          PY
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "EXISTING_RELEASE_REFUSE_DUPLICATE"; exit 1
+          fi
+          gh release create "$tag" "$d/$movie" "$d/$kit" "$d/SOCIAL_COVER.jpg" \
+            "$d/BEFORE_AFTER_EXACT_ANCHOR.jpg" "$d/PHOTO_QA.json" "$d/RIGHTS.json" \
+            --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "NEW THE BIG SWALLOW 1901 - first close-up genuine I2I PHOTO - Owner artistic review" \
+            --notes "First real camera-facing close-up from James Williamson 1901 19-second authentic film excerpt. True single FREE Finegrain source-locked AI image and original moving footage recolored with DDColor; no temporal I2V and no Vidu spend. Artistic review of face/mouth and Italy rights pending; no site or social publication. Only public prerelease to deliver MP4/ZIP for owner review."
+          root="https://github.com/$GITHUB_REPOSITORY/releases/download/$tag"
+          for f in "$movie" "$kit"; do
+            curl -fsSL --retry 3 --connect-timeout 20 --max-time 240 "$root/$f" -o "/tmp/$f"
+            cmp "$d/$f" "/tmp/$f"
+            echo "EXTERNAL_NO_AUTH_FULL_DOWNLOAD_SHA_CHECK_PASS $f"
+          done
+          python - <<'PY'
+          import zipfile
+          with zipfile.ZipFile("/tmp/BIG_SWALLOW_1901_MP4_COVER_SOCIAL_QA.zip") as z:assert z.testzip() is None
+          print("PUBLIC_ANDROID_ZIP_CRC_PASS")
+          PY
+          gh issue comment 144 --repo "$GITHUB_REPOSITORY" --body "New **The Big Swallow 1901** genuine 1901 moving first-closeup from IA, one free REAL Finegrain image-to-image source-locked photo. Actual MP4 H264/AAC and ZIP CRC+decode+public anonymous downloads TECH PASS. **Artistic face/eye/teeth/mouth QA pending; NOT FINAL approved.** Original motion recolored with DDColor, not temporal photoreal I2V. No Vidu spend, no website/social. $root/$movie and $root/$kit"
