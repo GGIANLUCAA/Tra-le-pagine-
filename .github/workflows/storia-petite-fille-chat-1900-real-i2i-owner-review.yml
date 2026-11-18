@@ -1,0 +1,110 @@
+name: "La Storia Rivive · Lumiere Girl and Cat 1900 NEW real I2I owner review"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storia-petite-fille-chat-1900-real-i2i-owner-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+  issues: write
+concurrency:
+  group: storia-girl-cat-1900-new-original-i2i-reviewed
+  cancel-in-progress: false
+jobs:
+  real_new_episode:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_HUB_DISABLE_XET: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg and FREE photographic I2I dependencies
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          python -m pip install -q "numpy>=1.26,<2.3" "opencv-python-headless>=4.9,<5" "pillow>=10,<13" "onnxruntime>=1.18,<2" "huggingface_hub>=0.25,<2" "gradio_client>=1.3,<3"
+          python -m py_compile tools/storia_petite_fille_chat_1900_new_i2i_review.py
+      - name: Authentic 1900 archival film plus one genuinely FREE Finegrain I2I and real MP4
+        run: |
+          set -euo pipefail
+          python -u tools/storia_petite_fille_chat_1900_new_i2i_review.py
+      - name: Retain original source frames, genuine I2I and MP4 only if bytes exist
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_GIRL_CAT_1900_REAL_SOURCE_I2I_AND_MP4_QA_IF_AVAILABLE
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            output/storia_petite_fille_chat_1900_review/RIGHTS.json
+            output/storia_petite_fille_chat_1900_review/PHOTO_QA.json
+            output/storia_petite_fille_chat_1900_review/FAILURE.json
+            output/storia_petite_fille_chat_1900_review/VISUAL_REPORT.json
+            output/storia_petite_fille_chat_1900_review/DELIVERY.json
+            output/storia_petite_fille_chat_1900_review/SOURCE_SCOUT_FRAME_*.jpg
+            output/storia_petite_fille_chat_1900_review/ANCHOR_REAL_ORIGINAL_BW.png
+            output/storia_petite_fille_chat_1900_review/ANCHOR_AI_NEURAL_COLOR_BASE.png
+            output/storia_petite_fille_chat_1900_review/GENERATIVE_PHOTO_REAL_CANDIDATE.png
+            output/storia_petite_fille_chat_1900_review/GIRL_CAT_1900_EXACT_FRAME_BEFORE_AFTER.png
+            output/storia_petite_fille_chat_1900_review/ORIGINAL_VS_PHOTO_VISUAL_QA.jpg
+            output/storia_petite_fille_chat_1900_review/SOCIAL_COVER.jpg
+            output/storia_petite_fille_chat_1900_review/PETITE_FILLE_CHAT_1900_NEW_REAL_I2I_OWNER_REVIEW.mp4
+            output/storia_petite_fille_chat_1900_review/PETITE_FILLE_CHAT_1900_ANDROID_OWNER_REVIEW.zip
+      - name: Release only actual real MP4 plus cover and ZIP as unapproved owner-review
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          d=output/storia_petite_fille_chat_1900_review
+          video=PETITE_FILLE_CHAT_1900_NEW_REAL_I2I_OWNER_REVIEW.mp4
+          kit=PETITE_FILLE_CHAT_1900_ANDROID_OWNER_REVIEW.zip
+          tag=storia-lumiere-girl-cat-1900-real-i2i-owner-review
+          python - <<'PY'
+          import json,pathlib,zipfile
+          p=pathlib.Path("output/storia_petite_fille_chat_1900_review")
+          qa=json.loads((p/"DELIVERY.json").read_text())
+          assert qa["real_new_I2I"] and qa["full_video_decode_pass"] and qa["zip_crc_pass"]
+          assert qa["artistic_review"]=="PENDING"
+          assert (p/"PETITE_FILLE_CHAT_1900_NEW_REAL_I2I_OWNER_REVIEW.mp4").stat().st_size>1500000
+          assert (p/"PETITE_FILLE_CHAT_1900_ANDROID_OWNER_REVIEW.zip").stat().st_size>1500000
+          assert (p/"SOCIAL_COVER.jpg").is_file()
+          with zipfile.ZipFile(p/"PETITE_FILLE_CHAT_1900_ANDROID_OWNER_REVIEW.zip") as z: assert z.testzip() is None
+          print("TECH_REVIEW_GATE_ONLY",qa["video_sha256"],qa["zip_sha256"])
+          PY
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "EXISTING_TAG_REFUSE_OVERWRITE_OR_DUPLICATE_RELEASE"; exit 1
+          fi
+          gh release create "$tag" "$d/$video" "$d/$kit" "$d/SOCIAL_COVER.jpg" \
+            "$d/GIRL_CAT_1900_EXACT_FRAME_BEFORE_AFTER.png" "$d/RIGHTS.json" \
+            "$d/PHOTO_QA.json" "$d/VISUAL_REPORT.json" --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "Lumiere 1900 - La petite fille et son chat - REAL I2I artistic REVIEW" \
+            --notes "New distinct authentic 1900 Lumiere film. True FREE Finegrain I2I photo; original B/W moving film and recolored original movement, no temporal I2V. Artistic face/cat continuity and Italy 2015 restoration rights PENDING. ZERO paid calls, ZERO Vidu, NO site/social publication. Public prerelease is for owner review only."
+          root="https://github.com/$GITHUB_REPOSITORY/releases/download/$tag"
+          for fn in "$video" "$kit"; do
+            curl -fsSL --retry 3 --connect-timeout 25 --max-time 240 "$root/$fn" -o "/tmp/$fn"
+            cmp "$d/$fn" "/tmp/$fn"
+            test -s "/tmp/$fn"
+            echo "PUBLIC_ANONYMOUS_DOWNLOAD_VERIFIED $fn"
+          done
+          python - <<'PY'
+          import zipfile
+          with zipfile.ZipFile("/tmp/PETITE_FILLE_CHAT_1900_ANDROID_OWNER_REVIEW.zip") as z: assert z.testzip() is None
+          print("PUBLIC_ZIP_CRC_PASS")
+          PY
+          printf '%s\n' \
+            'NEW source-locked 1900 Lumiere girl+cat real video preview, 1 true FREE Finegrain I2I photo. Technical H264/AAC, full decode, ZIP CRC PASS. External anonymous byte-identical MP4+ZIP download PASS.' \
+            'ARTISTIC REVIEW PENDING: face/eyes/cat geometry not approved. Original colored motion is neural chroma, NOT I2V. Italy 2015 restoration reuse rights PENDING. No Vidu/cost/social/site/other-project changes.' \
+            "MP4: $root/$video" \
+            "ZIP: $root/$kit" \
+            "FRAME QA: $root/GIRL_CAT_1900_EXACT_FRAME_BEFORE_AFTER.png" \
+              > /tmp/storia_issue_144.txt
+          gh issue comment 144 --repo "$GITHUB_REPOSITORY" --body-file /tmp/storia_issue_144.txt
