@@ -227,7 +227,13 @@ def frame_beat(background,art,beat,p,ratio):
     # intorno), carrellata sul particolare narrato che resta il protagonista,
     # infine un leggero rilascio morbido per preparare lo sguardo al racconto dopo.
     q=min(1.,max(0.,p))
-    if q<.5:
+    if beat.get("zoom_to_end"):
+        # Arrivo a fondo, opzionale per battuta: lo zoom parte dal contesto e
+        # completa la spinta sul particolare entro la fine della battuta,
+        # restando agganciato al dettaglio narrato. Gli episodi che non lo
+        # richiedono mantengono invariato l'envelope storico qui sotto.
+        env=push(q)                    # 0 -> 1  (arrivo pieno sul dettaglio)
+    elif q<.5:
         env=push(q/.5)                 # 0 -> 1  (spinta sul dettaglio)
     else:
         env=1.0-.14*small_smooth((q-.5)/.5)   # 1 -> 0.86 (rilascio morbido)
