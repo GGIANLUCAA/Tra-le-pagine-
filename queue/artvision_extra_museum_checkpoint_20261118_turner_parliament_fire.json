@@ -1,0 +1,93 @@
+{
+  "schema": "artvision-extra-one-new-cinema-museum-private-review-20261118",
+  "recorded_at_utc": "2026-11-18",
+  "work": {
+    "title": "The Burning of the Houses of Lords and Commons, 16 October 1834",
+    "artist": "Joseph Mallord William Turner",
+    "year": 1835,
+    "museum": "Cleveland Museum of Art",
+    "accession": "1942.647",
+    "source_image_url": "https://openaccess-cdn.clevelandart.org/1942.647/1942.647_print.jpg",
+    "image_sha256": "cf21271696b203a297d7899c296a1f13ccde8571dacda09213e1273871af9c39",
+    "source_pixels": [
+      3400,
+      2525
+    ],
+    "artwork_license": "CMA CC0",
+    "dimensions_cm": [
+      92,
+      123.2
+    ],
+    "official_url": "https://www.clevelandart.org/art/1942.647",
+    "not_philadelphia_version": true
+  },
+  "music": {
+    "title": "The Descent",
+    "artist": "Kevin MacLeod",
+    "isrc": "USUAN1200094",
+    "source_sha256": "f097d51700b970efffc62499473ea3a31e09aad4172e787978bc9c2a644d53a2",
+    "license": "CC BY 4.0",
+    "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/The%20Descent.mp3"
+  },
+  "previous_cinema_standard": {
+    "sha256": "c5608f155c5adfa994a1af235b718f54826b9b70d84d78ce1e1c3dbfd21f38a3",
+    "do_not_rerender_or_count": true
+  },
+  "current_new_variant": {
+    "variant": "cinema_museum",
+    "state": "LIBRARY_ONLY_RENDERED_TECH_QA_PASS_ARTISTIC_REVIEW_PENDING",
+    "video_sha256": "20dbacfdd05126f7cd7093686de43c9b82ec264ffec171e6f833bc5e8599c9e1",
+    "video_bytes": 10414032,
+    "android_zip_sha256": "aa988faeeab16abaa6ba1bab261f3eb8f1be63365c9db720aeab61cdfdee4111",
+    "android_zip_bytes": 11704043,
+    "duration_s": 48,
+    "pixels": [
+      720,
+      1280
+    ],
+    "fps": 20,
+    "original_standard_unchanged": true,
+    "room_id": "G06_NAVY_GOLD",
+    "virtual_room": true,
+    "dedicated_editorial_frame": true,
+    "real_frame_claimed": false,
+    "real_museum_room_claimed": false,
+    "full_ffmpeg_a_v_decode": "PASS",
+    "zip_crc": "PASS",
+    "independent_library_readback_sha_mp4_zip": "PASS",
+    "v203_boundary_mad": {
+      "7.0": 1.456,
+      "41.0": 2.341
+    },
+    "v203_threshold": 18,
+    "artistic_full_speed_review": "PENDING",
+    "rights_final_release": "PENDING",
+    "gold": false,
+    "site_published": false,
+    "r2_uploaded": false,
+    "github_artifact_uploaded": false
+  },
+  "library_folder": "/ArtVision/Opere_Extra/Turner_Parliament_Fire_Cinema_Museum_20261118",
+  "library_files": {
+    "mp4": "libfile_8e388651ad348191b9bac4381b1e57b9",
+    "zip": "libfile_412bd8ca709c819192f00ffd04884714",
+    "cover": "libfile_71d94864a7e081918b535dd2687646b8",
+    "contact_sheet": "libfile_7194fc8d15f081919df742422aad324c",
+    "rights": "libfile_ec17e39cd4fc8191924e57729ebb0216",
+    "social": "libfile_2808b011d5808191afc46f6b3f7cdffe",
+    "qa": "libfile_a42139eb29c081918ec29d3c4980f4e1"
+  },
+  "variants": {
+    "cinema_standard": "PREEXISTING",
+    "cinema_museum": "ONE_NEW_SLOT_REVIEW",
+    "critico_standard": "BLOCKED_APPROVED_GACRUX_FREE_BILLING_GATE",
+    "critico_museum": "BLOCKED_APPROVED_GACRUX_FREE_BILLING_GATE"
+  },
+  "no_paid_apis": true,
+  "no_autopublish": true,
+  "new_artwork_count": 0,
+  "new_variant_count": 1,
+  "queue_owner_30_count_unchanged": true,
+  "original_36_count_unchanged": true,
+  "anti_duplicate_note": "Different Cinema Museum variant from pre-existing Cinema Standard; do not rerender as new video. Do not claim GH Artifact/R2/site from Library upload."
+}
