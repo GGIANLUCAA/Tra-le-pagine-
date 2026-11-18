@@ -26,7 +26,7 @@ m.SOURCE=OUT/"LUMIERE_GIRL_CAT_1900_ORIGINAL.webm"
 m.CLIP=OUT/"REAL_LUMIERE_EXCERPT_CFR.mp4"
 m.MOVIE=OUT/"PETITE_FILLE_CHAT_1900_NEW_REAL_I2I_OWNER_REVIEW.mp4"
 m.ZIP=OUT/"PETITE_FILLE_CHAT_1900_ANDROID_OWNER_REVIEW.zip"
-m.START=7.0
+m.START=2.0
 m.DURATION=18.0
 m.ANCHOR=round(5.0*m.FPS)
 m.HOLD=round(1.75*m.FPS)
@@ -37,93 +37,69 @@ def canvas(scene,title="",small=""):
     return orig_canvas(scene,title,small)
 m.frame_canvas=canvas
 def source():
-    """Attempt original Commons source first, then its OFFICIAL 1080p VP9 transcode.
-    Do not replace with low resolution composite footage or silently upscale a poor source."""
-    from urllib.parse import urlparse,quote
-    from urllib.error import HTTPError
-    ua="LaStoriaRiviveAuthenticFilmReview/1.0 (github.com/GGIANLUCAA/Tra-le-pagine-)"
-    params=urlencode({"action":"query","format":"json","formatversion":"2","prop":"imageinfo",
-      "titles":"File:"+FILENAME,"iiprop":"url|size|mime|sha1"})
-    req=Request("https://commons.wikimedia.org/w/api.php?"+params,headers={"User-Agent":ua})
-    with urlopen(req,timeout=55) as r: info=json.load(r)["query"]["pages"][0]["imageinfo"][0]
-    size=int(info["size"])
-    if info["mime"]!="video/webm" or not 24_000_000<size<35_000_000:
-        raise RuntimeError("COMMONS_ORIGINAL_METADATA_NOT_EXPECTED")
-    original_url=info["url"]
-    parsed=urlparse(original_url)
-    if parsed.hostname!="upload.wikimedia.org" or not original_url.startswith("https://"):
-        raise RuntimeError("UNEXPECTED_MEDIA_HOST")
-    basepath=parsed.path
-    if "/wikipedia/commons/" not in basepath:raise RuntimeError("UNEXPECTED_COMMONS_PATH")
-    stem=basepath.rsplit("/",1)[-1]
-    dirname=basepath.rsplit("/",1)[0].replace("/wikipedia/commons/","/wikipedia/commons/transcoded/",1)
-    transcode_url="https://upload.wikimedia.org"+dirname+"/"+stem+"/"+stem+".1080p.vp9.webm"
-    # Try the authentic source before its official machine transcode; two bounded
-    # attempts per distinct URL. No tokenised proxy, bypass, or other paid service.
-    choices=[("COMMONS_ORIGINAL",original_url),("COMMONS_OFFICIAL_1080P_TRANSCODE",transcode_url)]
-    attempts=[]
-    selected=None
-    for kind,url in choices:
-        for attempt in range(1,3):
-            tmp=m.SOURCE.with_suffix(".partial")
-            try:
-                if tmp.exists():tmp.unlink()
-                with urlopen(Request(url,headers={"User-Agent":ua,"Accept":"video/webm,*/*"}),timeout=160) as r,tmp.open("wb") as f:
-                    if r.geturl().startswith("http://"):raise RuntimeError("UNSAFE_HTTP_REDIRECT")
-                    while True:
-                        block=r.read(1<<20)
-                        if not block:break
-                        f.write(block)
-                        if f.tell()>40_000_000:raise RuntimeError("UNEXPECTED_SOURCE_SIZE")
-                if tmp.stat().st_size<7_000_000:raise RuntimeError("SUSPICIOUSLY_SHORT_VIDEO_SOURCE")
-                if kind=="COMMONS_ORIGINAL":
-                    if tmp.stat().st_size!=size or hashlib.sha1(tmp.read_bytes()).hexdigest()!=info["sha1"]:
-                        raise RuntimeError("COMMONS_ORIGINAL_SHA1_SIZE_MISMATCH")
-                p=json.loads(m.run(["ffprobe","-v","error","-select_streams","v:0",
-                  "-show_entries","stream=width,height,avg_frame_rate","-show_entries","format=duration",
-                  "-of","json",str(tmp)]))
-                stream=p["streams"][0];width=int(stream["width"]);height=int(stream["height"])
-                dur=float(p["format"]["duration"])
-                if width<1800 or height<1000 or dur<m.START+m.DURATION+2 or dur>90:
-                    raise RuntimeError("HIGH_RESOLUTION_SOURCE_OR_DURATION_NOT_VALID")
-                tmp.replace(m.SOURCE)
-                selected=(kind,url,width,height,dur)
-                break
-            except Exception as e:
-                attempts.append({"candidate":kind,"attempt":attempt,"failure":str(e)[:180]})
-                if tmp.exists():tmp.unlink()
-                if isinstance(e,HTTPError) and e.code in (401,403,404,429):break
-        if selected:break
-    if not selected:
-        m.write("SOURCE_DOWNLOAD_FAILURE.json",{"state":"NO_HIGH_RES_ORIGINAL_AVAILABLE",
-            "attempts":attempts,"no_paid_calls":True,"no_video_claimed":True})
-        raise RuntimeError("COMMONS_ORIGINAL_AND_1080P_TRANSCODE_UNAVAILABLE")
-    kind,url,width,height,dur=selected
+    """Use original standalone Internet Archive item when Commons upload gives HTTP429.
+    Exact 2012 archive file byte-checked against IA sha1; never claim native 1080p.
+    """
+    from urllib.parse import quote
+    ua="LaStoriaRiviveAuthenticSource/1.0 (+github.com/GGIANLUCAA/Tra-le-pagine-)"
+    item="LaPetiteFilleEtSonChat"
+    with urlopen(Request("https://archive.org/metadata/"+item,headers={"User-Agent":ua}),timeout=40) as response:
+        meta=json.load(response)
+    filename="1899Lumire-LaPetiteFilleEtSonChat.mp4"
+    record=next((f for f in meta.get("files",[]) if f.get("name")==filename),None)
+    if not record or int(record.get("size",0))<2_000_000 or int(record.get("size",0))>8_000_000 or not record.get("sha1"):
+        raise RuntimeError("STANDALONE_ORIGINAL_IA_FILE_METADATA_NOT_VERIFIED")
+    u="https://archive.org/download/"+item+"/"+quote(filename)
+    m.SOURCE=OUT/"LUMIERE_GIRL_AND_CAT_IA_2012_SOURCE.mp4"
+    if not m.SOURCE.exists() or m.SOURCE.stat().st_size!=int(record["size"]):
+        with urlopen(Request(u,headers={"User-Agent":ua}),timeout=120) as response,m.SOURCE.open("wb") as target:
+            while True:
+                block=response.read(1024*1024)
+                if not block:break
+                target.write(block)
+                if target.tell()>8_000_000:raise RuntimeError("SOURCE_EXCEEDS_METADATA_CAP")
+    raw=m.SOURCE.read_bytes()
+    if len(raw)!=int(record["size"]) or hashlib.sha1(raw).hexdigest()!=record["sha1"]:
+        raise RuntimeError("AUTHENTIC_IA_ARCHIVE_SOURCE_HASH_MISMATCH")
+    p=json.loads(m.run(["ffprobe","-v","error","-select_streams","v:0",
+        "-show_entries","stream=width,height,r_frame_rate","-show_entries","format=duration",
+        "-of","json",str(m.SOURCE)]))
+    stream=p["streams"][0];width=int(stream["width"]);height=int(stream["height"])
+    duration=float(p["format"]["duration"])
+    if width<320 or height<200 or duration<m.START+m.DURATION+1:
+        raise RuntimeError("IA_FILM_NOT_LONG_OR_SHARP_ENOUGH_FOR_ANY_REVIEW")
     m.run(["ffmpeg","-nostdin","-y","-v","error","-ss",str(m.START),"-i",str(m.SOURCE),
-        "-t",str(m.DURATION),"-vf","fps=24,scale=960:720:force_original_aspect_ratio=decrease,pad=960:720:(ow-iw)/2:(oh-ih)/2",
-        "-an","-c:v","libx264","-preset","veryfast","-crf","18","-pix_fmt","yuv420p",str(m.CLIP)],260)
+        "-t",str(m.DURATION),"-vf",
+        "fps=24,scale=960:720:force_original_aspect_ratio=decrease,pad=960:720:(ow-iw)/2:(oh-ih)/2",
+        "-an","-c:v","libx264","-preset","veryfast","-crf","18","-pix_fmt","yuv420p",
+        str(m.CLIP)],180)
     cap=cv2.VideoCapture(str(m.CLIP))
-    n=int(cap.get(cv2.CAP_PROP_FRAME_COUNT));fps=cap.get(cv2.CAP_PROP_FPS)
-    for idx in (15,39,60,m.ANCHOR-7,m.ANCHOR,m.ANCHOR+7,170,270):
-        cap.set(cv2.CAP_PROP_POS_FRAMES,idx);ok,img=cap.read()
-        if ok:cv2.imwrite(str(OUT/f"SOURCE_SCOUT_FRAME_{idx:04d}.jpg"),img)
+    count=int(cap.get(cv2.CAP_PROP_FRAME_COUNT)); fps=float(cap.get(cv2.CAP_PROP_FPS))
+    for i in [0,24,48,72,96,m.ANCHOR-7,m.ANCHOR,m.ANCHOR+7,192,288,360]:
+        cap.set(cv2.CAP_PROP_POS_FRAMES,i);ok,frame=cap.read()
+        if ok:cv2.imwrite(str(OUT/f"SOURCE_SCOUT_FRAME_{i:04d}.jpg"),frame)
     cap.release()
-    if n<420 or abs(fps-24)>.1:raise RuntimeError("SOURCE_EXCERPT_NOT_REAL_VIDEO")
-    m.write("RIGHTS.json",{"work":TITLE,"film_year":1900,"director":"Louis Lumière",
-      "director_death_year":1948,"source_page":PAGE,"original_url":original_url,
-      "acquired_url":url,"acquired_kind":kind,"source_mime":"video/webm",
-      "common_original_sha1_reported":info["sha1"],
-      "source_original_sha1_verified":info["sha1"] if kind=="COMMONS_ORIGINAL" else None,
-      "source_downloaded_sha256":m.sha(m.SOURCE),"source_downloaded_bytes":m.SOURCE.stat().st_size,
-      "source_dimensions":[width,height],"source_duration_s":dur,
-      "selected_excerpt_start_s":m.START,"selected_excerpt_duration_s":m.DURATION,
-      "anchor_absolute_s":m.START+m.ANCHOR/m.FPS,"anchor_local_frame_index":m.ANCHOR,
-      "excerpt_fps":24,
-      "rights_basis":"Wikimedia Commons PDM original work; check 2015 restoration rights Italy before commercial distribution",
-      "artistic_approval":"PENDING","no_publication":True,"no_paid_calls":True,"no_vidu_post":True})
-    print("REAL_HIGH_RES_SOURCE_ACQUIRED",kind,width,height,m.sha(m.SOURCE),flush=True)
+    if count<400 or fps<23.9:raise RuntimeError("STANDALONE_ARCHIVE_CLIP_NOT_18S_REAL_MOTION")
+    m.write("RIGHTS.json",{
+      "work":"La petite fille et son chat","year_catalogue_lumiere":1900,
+      "internet_archive_listing_date":1899,
+      "recorded_1900_according_to_catalogue":True,
+      "film_director":"Louis Lumiere","director_death_year":1948,
+      "reference_catalogue":"https://catalogue-lumiere.com/edition-bluray-2015/",
+      "exact_source":"https://archive.org/details/"+item,
+      "archive_file":u,"archive_file_sha1":record["sha1"],
+      "archive_file_sha256":hashlib.sha256(raw).hexdigest(),
+      "source_width_px":width,"source_height_px":height,
+      "source_duration_s":duration,"source_codec":"check ffprobe",
+      "excerpt_start_s":m.START,"excerpt_duration_s":m.DURATION,
+      "exact_frame_at_source_time_s":m.START+m.ANCHOR/m.FPS,
+      "anchor_frame_index_in_CFR_excerpt":m.ANCHOR,
+      "copyright_note":"1900 original work PD France/Italy (Louis Lumiere d.1948); IA copy marked Public Domain Mark. Verify source rights if redistributing; not 2015 remaster.",
+      "1080x1920_output_upscaled_NOT_native_high_resolution":True,
+      "artistic_approval":False,"no_vidu_or_paid_requests":True,
+      "publication":False})
+    print("REAL_STANDALONE_SOURCE_SUCCESS",width,height,record["sha1"],m.sha(m.SOURCE),flush=True)
     return m.CLIP
-
 m.source=source
 def photo(base,original):
     original_path=OUT/"ANCHOR_REAL_ORIGINAL_BW.png"
