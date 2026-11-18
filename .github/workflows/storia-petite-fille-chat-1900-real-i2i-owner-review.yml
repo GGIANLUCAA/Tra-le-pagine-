@@ -1,4 +1,4 @@
-name: "La Storia Rivive · Lumiere Girl and Cat 1900 NEW real I2I owner review"
+name: "La Storia Rivive · Lumiere Girl and Cat 1900 high-res original I2I owner review"
 on:
   push:
     branches: [main]
@@ -48,6 +48,7 @@ jobs:
             output/storia_petite_fille_chat_1900_review/RIGHTS.json
             output/storia_petite_fille_chat_1900_review/PHOTO_QA.json
             output/storia_petite_fille_chat_1900_review/FAILURE.json
+            output/storia_petite_fille_chat_1900_review/SOURCE_DOWNLOAD_FAILURE.json
             output/storia_petite_fille_chat_1900_review/VISUAL_REPORT.json
             output/storia_petite_fille_chat_1900_review/DELIVERY.json
             output/storia_petite_fille_chat_1900_review/SOURCE_SCOUT_FRAME_*.jpg
