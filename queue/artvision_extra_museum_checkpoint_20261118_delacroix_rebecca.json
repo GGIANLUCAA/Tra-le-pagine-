@@ -1,0 +1,91 @@
+{
+  "schema": "artvision-extra-one-verified-cinema-museum-private-review-20261118",
+  "recorded_at_utc": "2026-11-18",
+  "artwork": {
+    "title": "The Abduction of Rebecca",
+    "artist": "Eugène Delacroix",
+    "year": 1846,
+    "museum": "The Metropolitan Museum of Art",
+    "accession": "03.30",
+    "met_object_id": 438814,
+    "dimensions_cm": [
+      100.3,
+      81.9
+    ],
+    "public_domain": true,
+    "source_sha256": "7a996eb0ac515383c2b6820555b9af57a90a429261e55f36c7dbaa4adb333bcf",
+    "source_pixels": [
+      3263,
+      4000
+    ],
+    "official_url": "https://www.metmuseum.org/art/collection/search/438814"
+  },
+  "music": {
+    "title": "Magistar",
+    "artist": "Kevin MacLeod",
+    "isrc": "USUAN1900003",
+    "license": "CC BY 4.0",
+    "source_sha256": "299a5619829dbb95604531d310fd89dd190009589bdcdc2ef7881f878b1f7a60",
+    "official_mp3": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Magistar.mp3"
+  },
+  "original_standard": {
+    "status": "PREEXISTING_IN_LIBRARY_DO_NOT_RECOUNT_OR_RERENDER",
+    "sha256": "8ffef670e2ca5d13ee2fcc5c466c207f7d781f997fbb45077656288326e4addd"
+  },
+  "current_new_variant": {
+    "variant": "cinema_museum",
+    "status": "LIBRARY_ONLY_RENDERED_FULL_AUDIO_VIDEO_FFMPEG_PASS_ZIP_CRC_PASS_INDEPENDENT_LIBRARY_READBACK_PASS_PRIVATE_ART_REVIEW_PENDING",
+    "duration_seconds": 51,
+    "dimensions": [
+      720,
+      1280
+    ],
+    "fps": 20,
+    "mp4_sha256": "81f63d52e558b59f27f55a1261b0e7b96407d7883228f737465001e62de23da3",
+    "mp4_bytes": 12135074,
+    "zip_sha256": "9177841589e0b3dfcace7d04409effec9b3f898d5a634f15d2abc78dac494324",
+    "zip_bytes": 13376718,
+    "video_library_id": "libfile_c538436bb7748191ae922ffc3f2b13d1",
+    "zip_library_id": "libfile_31059f629a948191923a1d6237405218",
+    "cover_library_id": "libfile_4d24c44d527081919ae9d541c5a08005",
+    "social_library_id": "libfile_a5f6b8a1d49c81918b3e0ce38aabf78d",
+    "qa_library_id": "libfile_1931413130908191a7512c1b4edb8020",
+    "room_id": "G05_GREEN_GOLD",
+    "scenographic_room_ai": true,
+    "dedicated_editorial_frame": true,
+    "real_museum_installation_photo": false,
+    "frame_historically_documented": false,
+    "full_decode": "PASS",
+    "zip_crc": "PASS",
+    "independent_library_readback_ffmpeg_zip": "PASS",
+    "v203_scene_boundary_mean_absolute_diff": {
+      "7.0": 2.479,
+      "44.0": 3.246
+    },
+    "v203_threshold": 18,
+    "artistic_full_speed_owner_review": "PENDING",
+    "gold": false,
+    "published": false,
+    "gh_artifact_created": false,
+    "r2_physical": false,
+    "site_public": false,
+    "verifiable_player": false
+  },
+  "library_folder": "/ArtVision/Opere_Extra/Delacroix_Abduction_of_Rebecca_Cinema_Museum_20261118",
+  "variants": {
+    "cinema_standard": "PREEXISTING_TECH_QA_NOT_NEW_TODAY",
+    "cinema_museum": "RENDERED_TECH_QA_PRIVATE_ART_REVIEW_PENDING_NEW_SLOT",
+    "critico_standard": "BLOCKED_GACRUX_FREE_QUOTA_AND_BILLING_GATES_OR_EXACT_APPROVED_WAV_REQUIRED",
+    "critico_museum": "BLOCKED_GACRUX_AND_MUSEUM_V334_QA_PENDING"
+  },
+  "anti_duplicate": {
+    "new_subject_count": 0,
+    "new_variant_count_this_session": 1,
+    "no_master_changes": true,
+    "no_paid_api_calls": true,
+    "no_autopublish": true,
+    "dali_excluded": true,
+    "not_in_owner_30_or_original_36": true
+  },
+  "next": "Do not re-render either existing Cinema. Critico requires approved Gemini Gacrux WAV and verified no-cost/billing-disabled gates. Continue next independent owner-authorized missing slot; GH Artifact handoff and public site NOT claimed."
+}
