@@ -30,7 +30,7 @@ def ledger_or_empty(path):
     if not isinstance(x,dict) or x.get('schema')!='production-ledger-v15' or not isinstance(x.get('deliveries'),list):raise ValueError('Registro non valido')
     return x
 
-def plan(queue,ledger,day):
+def plan(queue,ledger,day,include_backlog=False):
     policy=read_json(POLICY);valid_day(day)
     if not isinstance(queue,dict) or queue.get('schema')!='production-queue-v15' or not isinstance(queue.get('items'),list):raise ValueError('Coda non valida')
     if not isinstance(ledger,dict) or ledger.get('schema')!='production-ledger-v15' or not isinstance(ledger.get('deliveries'),list):raise ValueError('Registro non valido')
@@ -74,7 +74,7 @@ def plan(queue,ledger,day):
         else:ready.append(row)
     slots=min(len(ready),missing+2 if missing else 0,policy['max_jobs_per_batch'])
     return {'schema':'production-batch-v15','day':day,'timezone':policy['timezone'],
-      'target':target,'qualified_today':unique_today,'missing_to_target':missing,'ready':ready[:slots],
+      'target':target,'qualified_today':unique_today,'missing_to_target':missing,'ready':ready if include_backlog else ready[:slots],
       'backlog_ready':len(ready)-slots,'blocked':blocked,'stale_receipts':stale,
       'max_parallel_renders':policy['max_parallel_renders'],'target_met':unique_today>=target,
       'autonomous_renderer_started':False,'note':'Questo comando verifica la coda. Non genera MP4 né certifica capacità giornaliera.'}

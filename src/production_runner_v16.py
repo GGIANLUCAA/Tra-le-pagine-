@@ -162,7 +162,7 @@ def run_locked(queue_file,workspace,fallback_state,timeout):
                 skipped.append(job['id'])
             except (ValueError,OSError,KeyError) as exc:blocked.append({'id':job.get('id'),'reason':str(exc)})
         else:candidate_items.append(job)
-    report=batch.plan({**queue,'items':candidate_items},ledger,batch.today());pending=[]
+    report=batch.plan({**queue,'items':candidate_items},ledger,batch.today(),include_backlog=True);pending=[]
     awaiting_review=sum(v.get('status')=='rendered_needs_review' for v in state['jobs'].values())
     available_slots=max(0,policy['max_jobs_per_batch']-awaiting_review)
     for job in report['ready']:
