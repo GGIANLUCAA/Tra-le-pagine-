@@ -1,0 +1,98 @@
+name: "ArtVision Critico - Raffaello Scuola di Atene (Kore)"
+run-name: "RAFFAELLO · La Scuola di Atene"
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/artvision-critico-raffaello-scuola-atene.yml"
+      - "modules/artvision_critico/production_series/raffaello_scuola_atene.json"
+      - "modules/artvision_critico/production_series/render_series_v2.py"
+      - "modules/artvision_critico/render_dali.py"
+      - "src/gemini_voice.py"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-critico-raffaello-scuola-atene
+  cancel-in-progress: false
+jobs:
+  produzione:
+    name: "Critico Google Gemini Kore — master verticale narrativo"
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_VOICE: "Kore"
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: "Checkout non distruttivo: conserva vecchi film, libri e processi"
+        uses: actions/checkout@v4
+      - name: "Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa strumenti e valida la configurazione dell'episodio"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1
+          python -m pip install --disable-pip-version-check \
+            "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5" \
+            "edge-tts>=6.1,<9" "soundfile>=0.12,<1" "google-genai>=2.25,<4" "scipy>=1.11,<2"
+          python -m py_compile modules/artvision_critico/production_series/render_series_v2.py
+          python -c "import sys;sys.path.insert(0, 'modules/artvision_critico');import render_dali;print('ArtVision module import OK')"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("modules/artvision_critico/production_series/raffaello_scuola_atene.json")
+          assert p.is_file(), "config mancante"
+          c=json.loads(p.read_text(encoding="utf8"))
+          assert c["id"]=="raffaello_scuola_atene"
+          assert c["language"]=="it"
+          assert len(c["beats"])>=12, len(c["beats"])
+          for b in c["beats"]:
+              assert b.get("speech") and isinstance(b.get("focus"),list) and len(b["focus"])==2
+          words=sum(len(b["speech"].split()) for b in c["beats"])
+          assert 150<=words<=430, words
+          assert c["image_ratio_min"]<1.5315<c["image_ratio_max"], (c["image_ratio_min"],c["image_ratio_max"])
+          assert c["music"].get("download","").startswith("http")
+          print("EPISODE READY raffaello_scuola_atene beats",len(c["beats"]),"words",words)
+          PY
+      - name: "Produci e sincronizza quadro, zoom e voce Google Gemini Kore"
+        run: |
+          python modules/artvision_critico/production_series/render_series_v2.py \
+            --config modules/artvision_critico/production_series/raffaello_scuola_atene.json
+      - name: "Verifica il master completo — verticale, integrale, voce Google reale"
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          out=Path("output/artvision-serie-quattro/raffaello_scuola_atene")
+          mp4=out/"ARTVISION_RAFFAELLO_SCUOLA_ATENE.mp4"
+          assert mp4.exists() and mp4.stat().st_size>7_000_000, mp4
+          x=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries",
+            "format=duration,size:stream=codec_type,width,height","-of","json",str(mp4)]))
+          tracks={t["codec_type"] for t in x["streams"]}
+          assert tracks=={"video","audio"},tracks
+          vid=next(z for z in x["streams"] if z["codec_type"]=="video")
+          assert (vid["width"],vid["height"])==(1080,1920),(vid["width"],vid["height"])
+          dur=float(x["format"]["duration"])
+          assert 100<dur<210,dur
+          assert (out/"COPERTINA.jpg").stat().st_size>70_000
+          m=json.loads((out/"REGIA_SINCRONIZZAZIONE.json").read_text(encoding="utf8"))
+          assert m["subtitle_overlay"] is False
+          assert len(m["beats"])>=12
+          assert "Gemini Kore" in m["engine"], m["engine"]
+          print("VALIDATED MP4 raffaello_scuola_atene",dur,"seconds",mp4.stat().st_size,"bytes",m["engine"])
+          PY
+      - name: "Salva il master, cover, copione e regia"
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_CRITICO_RAFFAELLO_SCUOLA_ATENE
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            output/artvision-serie-quattro/raffaello_scuola_atene/ARTVISION_RAFFAELLO_SCUOLA_ATENE.mp4
+            output/artvision-serie-quattro/raffaello_scuola_atene/COPERTINA.jpg
+            output/artvision-serie-quattro/raffaello_scuola_atene/COPIONE_IT.txt
+            output/artvision-serie-quattro/raffaello_scuola_atene/REGIA_SINCRONIZZAZIONE.json
+            output/artvision-serie-quattro/raffaello_scuola_atene/DIRITTI_E_FONTI.txt
