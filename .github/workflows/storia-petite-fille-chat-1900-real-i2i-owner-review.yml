@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/storia-petite-fille-chat-1900-real-i2i-owner-review.yml"
+      - "tools/storia_petite_fille_chat_1900_new_i2i_review.py"
   workflow_dispatch:
 permissions:
   contents: write
