@@ -1,0 +1,87 @@
+name: "La Storia Rivive · girl and cat 1900 authorized Archive mirror SOURCE SCOUT"
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/storia-girl-cat-1900-archive-mirror-original-scout.yml"]
+permissions:
+  contents: read
+jobs:
+  original_archive_source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Read genuine Internet Archive 2015 Lumiere restoration source, not a lower resolution fake
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q "Pillow>=10,<13"
+          mkdir -p out/girl_cat_1900_archive_mirror
+          url='https://archive.org/download/lumiereaaventuracomeca18951905/Lumi%C3%A8re%2C%20a%20aventura%20come%C3%A7a%20%281895-1905%29.mp4'
+          curl -fL --retry 2 --retry-delay 10 --connect-timeout 30 --max-time 650 "$url" -o out/girl_cat_1900_archive_mirror/lumiere_compilation_archive.mp4
+          test "$(stat -c%s out/girl_cat_1900_archive_mirror/lumiere_compilation_archive.mp4)" -gt 400000000
+          sha256sum out/girl_cat_1900_archive_mirror/lumiere_compilation_archive.mp4 | tee out/girl_cat_1900_archive_mirror/ORIGINAL_IA_COMPILATION_SHA256.txt
+          ffprobe -v error -show_entries format=duration,size:stream=width,height,avg_frame_rate -of json \
+            out/girl_cat_1900_archive_mirror/lumiere_compilation_archive.mp4 \
+            > out/girl_cat_1900_archive_mirror/PROBE.json
+      - name: Index real original photographic moments in chapter Enfances, no AI and no misleading final
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import subprocess,json,hashlib
+          from pathlib import Path
+          from PIL import Image,ImageDraw
+          d=Path("out/girl_cat_1900_archive_mirror")
+          source=d/"lumiere_compilation_archive.mp4"
+          p=json.loads((d/"PROBE.json").read_text())
+          dur=float(p["format"]["duration"])
+          times=list(range(450,int(min(dur-20,2100)),18))
+          image_list=[]
+          for t in times:
+              name=d/f"T{t:05d}.jpg"
+              command=["ffmpeg","-nostdin","-y","-v","error","-ss",str(t),"-i",str(source),
+                       "-frames:v","1","-vf","scale=320:180:force_original_aspect_ratio=decrease,pad=320:180:(ow-iw)/2:(oh-ih)/2",
+                       "-q:v","3",str(name)]
+              subprocess.run(command,check=True,timeout=30)
+              if name.exists() and name.stat().st_size>2000:
+                  image_list.append((t,name))
+          pages=[]
+          for page_idx in range(0,len(image_list),42):
+              group=image_list[page_idx:page_idx+42]
+              canvas=Image.new("RGB",(6*324,7*213),(17,19,23))
+              dr=ImageDraw.Draw(canvas)
+              for i,(t,name) in enumerate(group):
+                  x,y=(i%6)*324,(i//6)*213
+                  canvas.paste(Image.open(name).convert("RGB"),(x+2,y+23))
+                  dr.text((x+6,y+5),f"Original film time: {t//60:02d}:{t%60:02d}",fill=(245,240,229))
+              sheet=d/f"ARCHIVE_SOURCE_CONTACT_{page_idx//42+1:02d}.jpg"
+              canvas.save(sheet,quality=89)
+              pages.append(sheet.name)
+          report={"study":"SAME original 1900 Lumiere film contained in Internet Archive's 114-title 2015 source compilation",
+             "source_page":"https://archive.org/details/lumiereaaventuracomeca18951905",
+             "commons_exact_1900_source_page":"https://commons.wikimedia.org/wiki/File:La_Petite_fille_et_son_chat_-_Film_1900.webm",
+             "compilation_sha256":hashlib.sha256(source.read_bytes()).hexdigest(),
+             "whole_compilation_duration_s":dur,"sampled_times_s":times,
+             "contact_pages":pages,"girl_and_cat_exact_shot":"REQUIRES_REAL_VISUAL_SELECTION",
+             "true_I2I":False,"new_video":False,"paid_api_posts":0,"artistic_approved":False}
+          (d/"SCOUT.json").write_text(json.dumps(report,indent=2))
+          print("REAL_INTERNET_ARCHIVE_SOURCE_SCOUT_READY",pages,flush=True)
+          PY
+      - name: Preserve real 1900 candidate contact sheets without publishing incorrect film content
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STORIA_GIRL_CAT_1900_ORIGINAL_ARCHIVE_MIRROR_CONTACT_NO_FINAL
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            out/girl_cat_1900_archive_mirror/PROBE.json
+            out/girl_cat_1900_archive_mirror/ORIGINAL_IA_COMPILATION_SHA256.txt
+            out/girl_cat_1900_archive_mirror/SCOUT.json
+            out/girl_cat_1900_archive_mirror/ARCHIVE_SOURCE_CONTACT_*.jpg
