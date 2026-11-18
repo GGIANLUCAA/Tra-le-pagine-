@@ -1,0 +1,87 @@
+{
+  "schema": "artvision-extra-museum-checkpoint-20261118",
+  "recorded_at_utc": "2026-11-18",
+  "artwork": {
+    "artist": "Joseph Mallord William Turner",
+    "title": "The Burning of the Houses of Lords and Commons, 16 October 1834",
+    "year": 1835,
+    "museum": "Cleveland Museum of Art",
+    "object_id": "1942.647",
+    "physical_dimensions_unframed_cm": [
+      92,
+      123.2
+    ],
+    "official_object": "https://www.clevelandart.org/art/1942.647"
+  },
+  "variants": {
+    "cinema_standard": "ALREADY_RENDERED_20261115_DO_NOT_REPEAT",
+    "cinema_museum": "NEW_TECH_PASS_ART_REVIEW_PENDING_LIBRARY_ONLY",
+    "critico_standard": "BLOCKED_UNLESS_GACRUX_APPROVED",
+    "critico_museum": "BLOCKED_UNLESS_GACRUX_APPROVED"
+  },
+  "new_variant_count": 1,
+  "new_artwork_count": 0,
+  "source": {
+    "exact_file": "TURNER_CMA_1942_647_EXACT_PRINT.jpg",
+    "pixels": [
+      3400,
+      2525
+    ],
+    "sha256": "cf21271696b203a297d7899c296a1f13ccde8571dacda09213e1273871af9c39",
+    "licence": "Cleveland Museum of Art Open Access CC0"
+  },
+  "music": {
+    "title": "The Descent",
+    "composer": "Kevin MacLeod",
+    "isrc": "USUAN1200094",
+    "sha256": "sha256 in private verified music proof",
+    "licence": "Creative Commons Attribution 4.0",
+    "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094"
+  },
+  "output": {
+    "status": "TECH_PASS_ART_REVIEW_PENDING",
+    "duration_seconds": 47.458333,
+    "frames": 1139,
+    "shots": 13,
+    "mp4_codec": "H264",
+    "width": 1080,
+    "height": 1920,
+    "fps": 24,
+    "audio_codec": "AAC",
+    "audio_hz": 48000,
+    "audio_mean_db": -19.4,
+    "mp4_bytes": 20722478,
+    "mp4_sha256": "b6501636259760aac9f055cf34e491a02133f8172684301e453648273395ee21",
+    "zip_bytes": 21372272,
+    "zip_sha256": "43c9e99e85534bc3d0446a072153d04813f361abaa3aaa0205b7773726e7eafa",
+    "zip_crc": "PASS",
+    "ffmpeg_full_audio_video_decode": "PASS",
+    "on_device_android_playback": "NOT_VERIFIED",
+    "full_speed_art_review": "PENDING"
+  },
+  "scenography": {
+    "room": "G05_GREEN_GOLD",
+    "generated_room": true,
+    "not_actual_cleveland_gallery": true,
+    "frame_not_historically_verified": true,
+    "perspective_dimension_fit": "approximate_not_independently_certified"
+  },
+  "library": {
+    "folder": "/ArtVision/Opere_Extra/Turner_Parliament_Fire_20261118_Cinema_Museum",
+    "mp4_backup_readback_sha_matches": true,
+    "private_only": true
+  },
+  "publication": {
+    "automatic": false,
+    "gold": false,
+    "r2_public": false,
+    "website_online": false
+  },
+  "safety": {
+    "no_paid_api": true,
+    "no_old_master_changes": true,
+    "anti_duplicate_enforced": true,
+    "dali_excluded": true
+  },
+  "next": "Do not redo Turner Cinema Standard or Cinema Museum. Prefer another work's unrendered variant with verified rights/source/music. No social publishing until explicit owner signoff and policy gates."
+}
