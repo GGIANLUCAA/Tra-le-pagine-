@@ -405,20 +405,18 @@ jobs:
                               cf('POST','/artifact-confirm',{'artifact':a['id']},json={'name':a['name'],'state':'blocked_rights'})
                               audit['blocked_or_private']+=1
                               continue
-                          # 2026-11-02 owner request: automatically archive NEW finished video files
-                          # on the website even if artistic V25 approval is pending.
-                          # This is site ingestion only, never social publishing or Gold approval.
+                          # Owner directive 2026-11-16: PUBLIC R2 is fail-closed.
+                          # A fresh artifact is not publication approval. Every public master
+                          # must be covered by the exact-SHA V25 contract, including rights.
                           is_auto_archive=(a.get('created_at') or '')>=fresh_since
-                          if is_auto_archive:
-                              print('DIRECT SITE IMPORT (ART REVIEW NOT REQUIRED):',a['name'],flush=True)
-                          else:
-                              allowed,reason=publication_gate(z,videos)
-                              if not allowed:
-                                  print('LEGACY UNREVIEWED (not new auto-import):',a['name'],reason,flush=True)
-                                  cf('POST','/artifact-confirm',{'artifact':a['id']},json={'name':a['name'],'state':'blocked_rights'})
-                                  audit['blocked_or_private']+=1
-                                  continue
-                              print('LEGACY APPROVED IMPORT:',a['name'],reason,flush=True)
+                          allowed,reason=publication_gate(z,videos)
+                          if not allowed:
+                              label='NEW PUBLICATION BLOCKED' if is_auto_archive else 'LEGACY PUBLICATION BLOCKED'
+                              print(label+':',a['name'],reason,flush=True)
+                              cf('POST','/artifact-confirm',{'artifact':a['id']},json={'name':a['name'],'state':'private_review'})
+                              audit['blocked_or_private']+=1
+                              continue
+                          print('OWNER-APPROVED PUBLIC IMPORT:',a['name'],reason,flush=True)
                           downloaded+=1
                           for n in videos:
                               name=pathlib.PurePosixPath(n).name
