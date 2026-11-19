@@ -1,0 +1,98 @@
+{
+  "schema": "artvision-extra-one-new-cinema-museum-private-review-v1",
+  "recorded_at_utc": "2026-11-19",
+  "artwork": {
+    "artist": "Gustave Moreau",
+    "title": "Oedipus and the Sphinx",
+    "year": 1864,
+    "institution": "The Metropolitan Museum of Art",
+    "accession": "21.134.1",
+    "met_object_id": 437153,
+    "physical_cm": [
+      206.4,
+      104.8
+    ],
+    "official_object_url": "https://www.metmuseum.org/art/collection/search/437153"
+  },
+  "preexisting": {
+    "cinema_standard": "RENDERED_PREEXISTING_20261116",
+    "checkpoint": "queue/artvision_extra_render_checkpoint_20261116_moreau_oedipus_sphinx.json",
+    "cinema_standard_sha256": "cb10419306adfc50fd8a620f874c681a9e9b9c5f9fe57f81f68914bdead9c88b"
+  },
+  "new_variant": {
+    "variant": "cinema_museum",
+    "status": "TECH_PASS_ART_REVIEW_PENDING_LIBRARY_ONLY",
+    "duration_seconds": 53.167,
+    "frames": 1276,
+    "fps": 24,
+    "dimensions": [
+      1080,
+      1920
+    ],
+    "video": "H264",
+    "audio": "AAC stereo 48000Hz",
+    "shot_count": 13,
+    "mp4_sha256": "aff3d3a36800279cd9f9a2d981cc728a92ac166bd2bd9d673b63c19de0d1c83d",
+    "mp4_bytes": 13984353,
+    "zip_sha256": "4eb18313f81ddce67b8ac7bc642658233b125ed7cf1dd266e58e6bf66f0add7d",
+    "zip_bytes": 17145420,
+    "full_av_ffmpeg_decode": "PASS",
+    "zip_crc": "PASS",
+    "android_real_hardware_test": "NOT_VERIFIED",
+    "human_full_speed_artistic_review": "PENDING",
+    "library_readback_mp4_sha_zip_sha_and_crc": "PASS"
+  },
+  "source": {
+    "photo_origin": "Met original image, retrieved verbatim from earlier GitHub Actions artifact #14272810553 (run #43956538022)",
+    "pixels": [
+      2072,
+      4000
+    ],
+    "sha256": "7ad53fd51bbe0ba88d81f5558b7791b2d69e57d9e05d73ae89acb189c3dc7b82",
+    "met_api_isPublicDomain": true,
+    "license": "Met Open Access",
+    "territorial_commercial_gate": "REVIEW_BEFORE_PUBLICATION"
+  },
+  "music": {
+    "title": "Myst on the Moor",
+    "composer": "Kevin MacLeod",
+    "isrc": "USUAN1600007",
+    "license": "CC BY 4.0",
+    "reuse_exact_previous_cinema_standard_track": true,
+    "official_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600007",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "scenography": {
+    "room_id": "G06_NAVY_GOLD",
+    "library": "ArtVision V332 AI Rooms",
+    "synthetic_editorial_gallery": true,
+    "real_met_installation": false,
+    "frame_documented_historical": false,
+    "illustrative_scale_only": true
+  },
+  "backup": {
+    "library_folder": "/ArtVision/Opere_Extra/Moreau_Oedipus_Sphinx_20261119_Cinema_Museum",
+    "mp4_filename": "MOREAU_OEDIPUS_SPHINX_CINEMA_MUSEUM_20261119.mp4",
+    "zip_filename": "MOREAU_OEDIPUS_SPHINX_CINEMA_MUSEUM_ANDROID_PACKAGE.zip",
+    "cover_filename": "MOREAU_OEDIPUS_SPHINX_CINEMA_MUSEUM_COVER.jpg",
+    "sha_crc_retrieval_verified": true,
+    "new_subject": false,
+    "new_4x1_slot": true
+  },
+  "publication": {
+    "private_review": true,
+    "gold": false,
+    "site_uploaded": false,
+    "social_published": false,
+    "no_paid_api": true,
+    "owner_art_review_pending": true
+  },
+  "anti_duplicate": {
+    "cinema_standard": "already_rendered_do_not_repeat",
+    "cinema_museum": "new_verified_MP4_do_not_repeat",
+    "critico_standard": "blocked_without_approved_Gemini_Gacrux",
+    "critico_museum": "blocked_without_approved_Gemini_Gacrux",
+    "do_not_count_as_new_subject": true
+  },
+  "next": "Continue another genuinely missing work or format. Only Gacrux for Critico. Do not regenerate this Cinema Museum; quality approval and publishing remain pending."
+}
