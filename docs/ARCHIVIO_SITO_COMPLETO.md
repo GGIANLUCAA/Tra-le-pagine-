@@ -1,11 +1,12 @@
 # Tutto il catalogo pubblico di Video Library Studio
 
-Generato: 2026-11-19T10:31:49+00:00; fonte: live_api.
+Generato: 2026-11-19T20:29:37+00:00; fonte: live_api.
 Indizio solo artista non identifica un quadro né una variante; mai usarlo per concludere che un MP4 è pubblicato.
 Le voci con autore da_verificare non contengono dati sufficienti per identificarlo. Nessuna prova individuale di playback.
 
 | Nome file | Titolo indicato | Autore candidato | Opera candidata | Categoria | Caricamento UTC | Byte | API disponibile |
 |---|---|---|---|---|---|---:|---|
+| [ARTVISION_BOTTICELLI_PRIMAVERA.mp4](https://video-library-studio.600led.workers.dev/video/ARTVISION_BOTTICELLI_PRIMAVERA.mp4) | non indicato | Sandro Botticelli | da_verificare | Artisti e pittura | 2026-11-19T13:16:42.294Z | 106645329 | True |
 | [ARTVISION_RAFFAELLO_SCUOLA_ATENE__40512862.mp4](https://video-library-studio.600led.workers.dev/video/ARTVISION_RAFFAELLO_SCUOLA_ATENE__40512862.mp4) | non indicato | Raffaello | da_verificare | Artisti e pittura | 2026-11-19T03:33:26.673Z | 40512862 | True |
 | [ARTVISION_BRUEGEL_PROVERBI__37766310.mp4](https://video-library-studio.600led.workers.dev/video/ARTVISION_BRUEGEL_PROVERBI__37766310.mp4) | non indicato | Pieter Bruegel the Elder | da_verificare | Artisti e pittura | 2026-11-18T22:00:07.918Z | 37766310 | True |
 | [ARTVISION_RAFFAELLO_SCUOLA_ATENE.mp4](https://video-library-studio.600led.workers.dev/video/ARTVISION_RAFFAELLO_SCUOLA_ATENE.mp4) | non indicato | Raffaello | da_verificare | Artisti e pittura | 2026-11-18T21:59:54.661Z | 39934383 | True |
