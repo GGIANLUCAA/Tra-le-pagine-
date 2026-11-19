@@ -6,7 +6,7 @@ from pathlib import Path
 import cv2, numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-out = Path("output/owner-paton-quarrel-cinema-v1")
+out = Path("deliverables/cinema-nuova-selezione-30-20261119/owner-paton-quarrel-cinema-v1")
 out.mkdir(parents=True, exist_ok=True)
 source = out / "ORIGINAL_ARTWORK.jpg"
 page = "https://commons.wikimedia.org/wiki/File:Sir_Joseph_Noel_Paton_-_The_Quarrel_of_Oberon_and_Titania_-_Google_Art_Project.jpg"

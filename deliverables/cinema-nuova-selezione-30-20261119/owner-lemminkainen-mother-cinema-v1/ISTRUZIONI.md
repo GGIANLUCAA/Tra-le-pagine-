@@ -1,0 +1,1 @@
+Revisione tecnica privata. Solo dipinto originale e partitura originale. Revisione umana artistica/semantica e verifica diritti commerciali territoriali PENDING. Nessun Gold, nessuna pubblicazione. Nuova selezione 30 - versione Cinema.

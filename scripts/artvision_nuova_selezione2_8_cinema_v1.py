@@ -119,7 +119,7 @@ def fit_font(text, max_w, path, start):
 results = {}
 for wk in WORKS:
     slug = wk["slug"]
-    out = Path(f"output/owner-{slug}-cinema-v1"); out.mkdir(parents=True, exist_ok=True)
+    out = Path(f"deliverables/cinema-nuova-selezione-30-20261119/owner-{slug}-cinema-v1"); out.mkdir(parents=True, exist_ok=True)
     source = out / "ORIGINAL_ARTWORK.jpg"
     got = False
     try:
