@@ -1,11 +1,14 @@
 # Tutto il catalogo pubblico di Video Library Studio
 
-Generato: 2026-11-18T14:47:59+00:00; fonte: live_api.
+Generato: 2026-11-19T07:17:36+00:00; fonte: live_api.
 Indizio solo artista non identifica un quadro né una variante; mai usarlo per concludere che un MP4 è pubblicato.
 Le voci con autore da_verificare non contengono dati sufficienti per identificarlo. Nessuna prova individuale di playback.
 
 | Nome file | Titolo indicato | Autore candidato | Opera candidata | Categoria | Caricamento UTC | Byte | API disponibile |
 |---|---|---|---|---|---|---:|---|
+| [ARTVISION_RAFFAELLO_SCUOLA_ATENE__40512862.mp4](https://video-library-studio.600led.workers.dev/video/ARTVISION_RAFFAELLO_SCUOLA_ATENE__40512862.mp4) | non indicato | Raffaello | da_verificare | Artisti e pittura | 2026-11-19T03:33:26.673Z | 40512862 | True |
+| [ARTVISION_BRUEGEL_PROVERBI__37766310.mp4](https://video-library-studio.600led.workers.dev/video/ARTVISION_BRUEGEL_PROVERBI__37766310.mp4) | non indicato | Pieter Bruegel the Elder | da_verificare | Artisti e pittura | 2026-11-18T22:00:07.918Z | 37766310 | True |
+| [ARTVISION_RAFFAELLO_SCUOLA_ATENE.mp4](https://video-library-studio.600led.workers.dev/video/ARTVISION_RAFFAELLO_SCUOLA_ATENE.mp4) | non indicato | Raffaello | da_verificare | Artisti e pittura | 2026-11-18T21:59:54.661Z | 39934383 | True |
 | [RINGLING_CIRCUS_1902_FOUR_FINEGRAIN_RESTORATIONS_QA_PREVIEW.mp4](https://video-library-studio.600led.workers.dev/video/RINGLING_CIRCUS_1902_FOUR_FINEGRAIN_RESTORATIONS_QA_PREVIEW.mp4) | non indicato | da_verificare | da_verificare | Altri progetti | 2026-11-17T22:55:01.465Z | 3943364 | True |
 | [ARTVISION_BRUEGEL_PROVERBI__38663691.mp4](https://video-library-studio.600led.workers.dev/video/ARTVISION_BRUEGEL_PROVERBI__38663691.mp4) | non indicato | Pieter Bruegel the Elder | da_verificare | Artisti e pittura | 2026-11-16T22:09:50.370Z | 38663691 | True |
 | [ARTVISION_BRUEGEL_PROVERBI__84938982.mp4](https://video-library-studio.600led.workers.dev/video/ARTVISION_BRUEGEL_PROVERBI__84938982.mp4) | non indicato | Pieter Bruegel the Elder | da_verificare | Artisti e pittura | 2026-11-16T13:39:18.440Z | 84938982 | True |
