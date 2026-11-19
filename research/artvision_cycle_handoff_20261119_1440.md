@@ -1,0 +1,11 @@
+# ArtVision — handoff ricerca + produzione — 2026-11-19 14:40 Europe/Rome
+
+## Controllo corrente (main)
+- Archivio `data/archivio-generale/opere.json`, generato 2026-11-19T10:31:49Z: **96 opere**, **153 slot render documentati**, **131 non documentati**, **545 elementi sito / 11 indisponibili**. Lo stato live_api non prova che un determinato video sia online.
+- GitHub Actions ultimo controllo: import sito run 44531786987 completato success alle 13:18Z; ricerca fonti run 44521140459 success. Non sono prove di pubblicazione di singoli MP4.
+- Checkpoint nuovo già presente su main: `queue/artvision_extra_render_checkpoint_20261119_burnejones_love_song.json`. **The Love Song** (Sir Edward Burne-Jones, Met 435826, accession 47.26) Cinema Standard è già stato prodotto **una sola volta**, run 44504918809, artifact 14520021035. HQ SHA256 `499ed61934cb2f679eeebe4350ae899d79f5a69ae74ee7a88fc7201ccf1ef3c1`, Android SHA256 `7b6e2c1338aa23f82e79a384a1db1709dff23af4b666b52f473052e2c99`, ZIP SHA256 `182d482701b7c58f4071bc081e670ca34f01ac0e4198a14531ce099d717e712b`. Source Met CC0, 4000x2948, source SHA256 documented; music Kevin MacLeod Immersed CC BY 4.0, recording hash documented. FFmpeg A/V decode and ZIP CRC PASS, Library readback PASS. **ART REVIEW PENDING, private, not published**. Run 44505871323 is same artwork recovery: never count twice.
+- Caravaggio I bari / Bacco / Medusa research candidates; exact asset bytes, commercial/territorial rights not cleared. Beard HD rights blocked; Segantini endpoints 403/429 previously exhausted. Do not reuse.
+- Previously rendered Cinema variants of Bierstadt Buffalo, Turner Parliament Fire, Cole Manhood, Moreau Oedipus/Sphinx, Delacroix Rebecca, Ryder, The Sin and Dadd/Repin Museum are not new distinct subjects.
+
+## Gate and decision
+No new render dispatched by THIS cycle: independent new-slot proof, music V330 source materialization, no concurrent slot and rights gate not established for another candidate. Do not substitute audits for production or fabricate download links. A new candidate must pass source bytes/SHA/pixels, exact rights, music, anti-duplicate, lock, then H264/AAC QA and private artifact+ZIP+cover+social package. Preserve both automations and schedules; no costs, publication or destructive changes.
