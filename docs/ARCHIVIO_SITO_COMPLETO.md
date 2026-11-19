@@ -1,6 +1,6 @@
 # Tutto il catalogo pubblico di Video Library Studio
 
-Generato: 2026-11-19T10:29:31+00:00; fonte: live_api.
+Generato: 2026-11-19T10:31:49+00:00; fonte: live_api.
 Indizio solo artista non identifica un quadro né una variante; mai usarlo per concludere che un MP4 è pubblicato.
 Le voci con autore da_verificare non contengono dati sufficienti per identificarlo. Nessuna prova individuale di playback.
 
@@ -16,7 +16,7 @@ Le voci con autore da_verificare non contengono dati sufficienti per identificar
 | [ARTVISION_BRUEGEL_PROVERBI.mp4](https://video-library-studio.600led.workers.dev/video/ARTVISION_BRUEGEL_PROVERBI.mp4) | non indicato | Pieter Bruegel the Elder | da_verificare | Artisti e pittura | 2026-11-16T11:28:39.387Z | 63627998 | True |
 | [REAL_SOURCE_EXCERPT_1910.mp4](https://video-library-studio.600led.workers.dev/video/REAL_SOURCE_EXCERPT_1910.mp4) | non indicato | da_verificare | da_verificare | Altri progetti | 2026-11-13T13:07:03.558Z | 4669803 | True |
 | [BOCKLIN_GALLERY_REVIEW.mp4](https://video-library-studio.600led.workers.dev/video/BOCKLIN_GALLERY_REVIEW.mp4) | non indicato | da_verificare | da_verificare | Altri progetti | 2026-11-13T09:36:12.318Z | 2695374 | True |
-| [BURNE_JONES_GALLERY_REVIEW.mp4](https://video-library-studio.600led.workers.dev/video/BURNE_JONES_GALLERY_REVIEW.mp4) | non indicato | Edward Burne-Jones | da_verificare | Altri progetti | 2026-11-13T09:36:06.456Z | 3500941 | True |
+| [BURNE_JONES_GALLERY_REVIEW.mp4](https://video-library-studio.600led.workers.dev/video/BURNE_JONES_GALLERY_REVIEW.mp4) | non indicato | da_verificare | da_verificare | Altri progetti | 2026-11-13T09:36:06.456Z | 3500941 | True |
 | [REDON_GALLERY_REVIEW__3216431.mp4](https://video-library-studio.600led.workers.dev/video/REDON_GALLERY_REVIEW__3216431.mp4) | non indicato | Odilon Redon | da_verificare | Altri progetti | 2026-11-13T09:35:58.909Z | 3216431 | True |
 | [VON_STUCK_GALLERY_REVIEW.mp4](https://video-library-studio.600led.workers.dev/video/VON_STUCK_GALLERY_REVIEW.mp4) | non indicato | Franz von Stuck | da_verificare | Altri progetti | 2026-11-13T09:35:51.839Z | 2577521 | True |
 | [WATERHOUSE_GALLERY_REVIEW.mp4](https://video-library-studio.600led.workers.dev/video/WATERHOUSE_GALLERY_REVIEW.mp4) | non indicato | John William Waterhouse | da_verificare | Altri progetti | 2026-11-12T23:53:21.450Z | 3843966 | True |

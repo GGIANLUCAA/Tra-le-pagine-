@@ -1,27 +1,27 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-19T10:29:31+00:00",
+  "generated_at": "2026-11-19T10:31:49+00:00",
   "site_state": "live_api",
   "stats": {
-    "works": 95,
+    "works": 96,
     "render_documented_slots": 153,
-    "not_documented_slots": 127,
+    "not_documented_slots": 131,
     "site_items": 545,
     "site_cloudflare": 534,
     "site_unavailable": 11,
     "possible_site_matches": 21,
-    "queue_files": 115,
+    "queue_files": 116,
     "literary_dossiers": 19,
     "history_candidates": 12,
     "research_100": 100,
     "selected_future_30": 30,
     "production_dossiers": 195,
     "production_dossier_subdirs": 32,
-    "unmatched_site_items": 416,
-    "site_artist_only_hints": 108,
+    "unmatched_site_items": 417,
+    "site_artist_only_hints": 107,
     "site_ambiguous": 0,
     "recovered_historical_review_files": 8,
-    "four_by_one_scoped": 70,
+    "four_by_one_scoped": 71,
     "complete_four_render_documented": 27,
     "categories": {
       "Critica d’arte": 42,
@@ -5451,6 +5451,61 @@
             {
               "source": "queue/artvision_extra_render_checkpoint_20261117_salvator_rosa_night_preflight.json",
               "status_claim": "ONE_REAL_NEW_EXTRA_CINEMA_STANDARD_TECH_PASS_ART_REVIEW_PENDING_LIBRARY_BACKED_UP",
+              "classification": "in_coda_o_preflight"
+            }
+          ],
+          "site_candidates": []
+        },
+        "cinema_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        }
+      },
+      "legacy_video_claims": [],
+      "site_candidates": [],
+      "excluded": false,
+      "four_by_one_target": true,
+      "missing_variants": [
+        "critico_standard",
+        "critico_museum",
+        "cinema_standard",
+        "cinema_museum"
+      ],
+      "render_documented": 0,
+      "site_playback_verified": false,
+      "published_confirmed": false
+    },
+    {
+      "id": "sir-edward-burne-jones-the-love-song-1868",
+      "title": "The Love Song",
+      "artist": "Sir Edward Burne-Jones",
+      "year": "1868–1877",
+      "museum": "",
+      "object_id": "",
+      "lanes": [
+        "checkpoint"
+      ],
+      "sources": [
+        "queue/artvision_extra_render_checkpoint_20261119_burnejones_love_song.json"
+      ],
+      "variants": {
+        "critico_standard": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "critico_museum": {
+          "state": "non_documentato",
+          "evidence": [],
+          "site_candidates": []
+        },
+        "cinema_standard": {
+          "state": "in_coda_o_preflight",
+          "evidence": [
+            {
+              "source": "queue/artvision_extra_render_checkpoint_20261119_burnejones_love_song.json",
+              "status_claim": "ONE_NEW_REAL_CINEMA_STANDARD_TECH_QA_PASS_PRIVATE_ARTISTIC_REVIEW_PENDING",
               "classification": "in_coda_o_preflight"
             }
           ],

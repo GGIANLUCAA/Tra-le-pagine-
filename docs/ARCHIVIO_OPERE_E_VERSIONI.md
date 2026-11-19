@@ -91,6 +91,7 @@ Questi stati non implicano pubblicazione né playback.
 | Salvator Rosa | Scenes of Witchcraft: Day | c. 1645–49 | — | — | C | — | Non abbinato |
 | Salvator Rosa | Scenes of Witchcraft: Evening | c. 1645–49 | — | — | C | — | Non abbinato |
 | Salvator Rosa | Scenes of Witchcraft: Night | c. 1645–49 | — | — | C | — | Non abbinato |
+| Sir Edward Burne-Jones | The Love Song | 1868–1877 | — | — | C | — | Non abbinato |
 | Thomas Cole | The Course of Empire: Destruction | 1836 | — | — | D | D | Non abbinato |
 | Thomas Cole | The Titan's Goblet | 1833 | — | — | — | — | Non abbinato |
 | Thomas Cole | The Voyage of Life: Manhood | 1842 | B | B | D | C | Non abbinato |
@@ -961,6 +962,16 @@ Questi stati non implicano pubblicazione né playback.
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: in_coda_o_preflight; prove: queue/artvision_extra_render_checkpoint_20261117_salvator_rosa_night_preflight.json [ONE_REAL_NEW_EXTRA_CINEMA_STANDARD_TECH_PASS_ART_REVIEW_PENDING_L]
+- cinema_museum: non_documentato; prove: nessuna
+
+### Sir Edward Burne-Jones — The Love Song
+
+- Anno: 1868–1877; Museo: da verificare
+- Code: checkpoint
+- Candidati sul sito (nome compatibile soltanto): nessuno
+- critico_standard: non_documentato; prove: nessuna
+- critico_museum: non_documentato; prove: nessuna
+- cinema_standard: in_coda_o_preflight; prove: queue/artvision_extra_render_checkpoint_20261119_burnejones_love_song.json [ONE_NEW_REAL_CINEMA_STANDARD_TECH_QA_PASS_PRIVATE_ARTISTIC_REVIEW]
 - cinema_museum: non_documentato; prove: nessuna
 
 ### Thomas Cole — The Course of Empire: Destruction
