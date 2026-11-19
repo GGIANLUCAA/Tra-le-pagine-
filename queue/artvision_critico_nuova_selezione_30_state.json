@@ -5,10 +5,16 @@
   "separation_note": "Selezione NUOVA, tenuta separata da tutte le liste e produzioni precedenti (artvision_100_opere, owner_selected_ten, owner_selected_30_future, 20 rarita social). Nessuna pubblicazione e nessuna approvazione Gold.",
   "production_environment": {
     "repo_ready": true,
-    "runtimes": {"python": "3.14.8", "ffmpeg": "6.1.1-ubuntu5", "node": "v24.1.0"},
+    "runtimes": {
+      "python": "3.14.8",
+      "ffmpeg": "6.1.1-ubuntu5",
+      "node": "v24.1.0"
+    },
     "voice_google_gacrux_available": false,
     "voice_note": "In questo ambiente NON e presente GEMINI_API_KEY. La voce naturale Google approvata (Gemini Gacrux) e il render MP4 non sono eseguibili qui: i Critico si fermano a copione + asset + diritti + QA di pianificazione e vengono marcati NON conclusi finche la voce non esiste.",
-    "voice_source_doc": "docs/FILOSOFIA_FONTI_MEDIA_V33.md (GEMINI_API_KEY = motore TTS attuale)"
+    "voice_source_doc": "docs/FILOSOFIA_FONTI_MEDIA_V33.md (GEMINI_API_KEY = motore TTS attuale)",
+    "cinema_voice_free_producible": true,
+    "cinema_note": "Versione Cinema (senza voce) producibile in autonomia: dipinto PD da Commons/GAC verificato per SHA1 + partitura sintetizzata localmente. Restano PENDING la revisione umana delle inquadrature (semantic crop) e i diritti commerciali territoriali. Il Critico resta bloccato dalla voce Google approvata."
   },
   "rules_ref": [
     "AGENTS.md",
@@ -20,10 +26,44 @@
     "docs/MUSIC_POLICY_V20.md"
   ],
   "groups": {
-    "priority_first_8": [1, 2, 3, 4, 5, 6, 7, 8],
-    "altri_critico_numbers": [2, 3, 5, 9, 10, 11, 12, 14, 15, 16, 17, 26, 29],
-    "brevi_numbers": [6, 20, 22, 23, 27, 28],
-    "solo_cinema_numbers": [21, 24, 30],
+    "priority_first_8": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "altri_critico_numbers": [
+      2,
+      3,
+      5,
+      9,
+      10,
+      11,
+      12,
+      14,
+      15,
+      16,
+      17,
+      26,
+      29
+    ],
+    "brevi_numbers": [
+      6,
+      20,
+      22,
+      23,
+      27,
+      28
+    ],
+    "solo_cinema_numbers": [
+      21,
+      24,
+      30
+    ],
     "unresolved_warning": "La lista numerata di riferimento 1-30 NON e presente nel repository. I numeri 'altri/brevi/solo cinema' non sono mappabili a titoli e restano PENDING_LISTA: nessun titolo inventato.",
     "list_search_note": "Ricerca in tutto il repository eseguita il 2026-11-19 (grep su titoli delle prioritarie, '30 opere', 'nuova selezione'). Nessun file contiene la nuova lista 1-30. Esistono solo liste CANDIDATE precedenti e diverse, NON questa: research/artvision_future_selection_30_20261109.json (30 voci: Arbo, Paton id2, Dadd, Repin, Moreau, Ryder, Flavitsky...; contiene solo 2 delle 8 prioritarie - Paton id2 e Medea id12) e research/artvision_owner_selected_30_future_20261109.json (Arbo, Dadd, Repin, Flavitsky...). Poiche' le 8 prioritarie (Ciurlionis x2, Menzel, Gallen-Kallela x2, Cole Architect's Dream) NON compaiono in alcuna lista del repo, la numerazione 'altri/brevi/solo cinema' resta non risolvibile qui: richiesta la lista originale all'utente."
   },
@@ -47,13 +87,20 @@
       "official_inventory": "NG 293",
       "date_official": "1849",
       "medium": "Oil on canvas",
-      "original_cm_official": {"height": 99.0, "width": 152.0},
-      "framed_cm_official": {"height": 130.7, "width": 183.7, "depth": 7.4},
+      "original_cm_official": {
+        "height": 99.0,
+        "width": 152.0
+      },
+      "framed_cm_official": {
+        "height": 130.7,
+        "width": 183.7,
+        "depth": 7.4
+      },
       "gallery": "Scottish National Gallery, Edinburgh (On Display)",
       "credit_line": "Purchased by RAPFAS 1850; transferred to the National Gallery of Scotland 1897",
-      "original_file_downloaded": false,
-      "source_pixels_verified": false,
-      "sha256_verified": false,
+      "original_file_downloaded": true,
+      "source_pixels_verified": true,
+      "sha256_verified": true,
       "rights_status": "not_cleared",
       "rights_note": "NGS: immagini scaricabili per uso personale/non commerciale; licenza professionale/commerciale da richiedere. Gate aperto prima di qualsiasi pubblicazione.",
       "script": "docs/productions/artvision-4x1-nuova-selezione-30/quarrel-oberon-titania/CRITICO_SCRIPT_IT.md",
@@ -62,7 +109,17 @@
       "mp4_standard": "not_produced",
       "mp4_museum": "not_produced",
       "ready_for_production": false,
-      "current_stage": "dossier_and_script_ready_pending_rights_and_voice"
+      "current_stage": "cinema_review_produced_pending_human_review_and_voice",
+      "mp4_cinema_standard": {
+        "path": "output/owner-paton-quarrel-cinema-v1/VIDEO_REVIEW.mp4",
+        "sha256": "d979fc2fbebf0e0dbf161be4a830a3e29b3da420c08c8f4323376809ef1c9154",
+        "resolution": "1080x1920",
+        "fps": 20,
+        "produced": "2026-11-19",
+        "publication_allowed": false,
+        "semantic_crop_review": "PENDING",
+        "italian_territorial_commercial_review": "PENDING"
+      }
     },
     {
       "slug": "medea-sandys",
@@ -77,11 +134,14 @@
       "official_inventory": "1925P105",
       "date_official": "1866/1868",
       "medium": "Oil on wood panel with gilded background",
-      "original_cm_official": {"height": 61.0, "width": 46.0},
+      "original_cm_official": {
+        "height": 61.0,
+        "width": 46.0
+      },
       "gallery": "Birmingham Museum and Art Gallery, Birmingham Museums Trust",
-      "original_file_downloaded": false,
-      "source_pixels_verified": false,
-      "sha256_verified": false,
+      "original_file_downloaded": true,
+      "source_pixels_verified": true,
+      "sha256_verified": true,
       "rights_status": "not_cleared",
       "rights_note": "Diritti del file specifico da verificare per uso social/promozionale; il proxy Google Arts & Culture e la pagina del museo NON confermano la licenza.",
       "script": "docs/productions/artvision-4x1-nuova-selezione-30/medea-sandys/CRITICO_SCRIPT_IT.md",
@@ -90,7 +150,17 @@
       "mp4_standard": "not_produced",
       "mp4_museum": "not_produced",
       "ready_for_production": false,
-      "current_stage": "dossier_and_script_ready_pending_rights_and_voice"
+      "current_stage": "cinema_review_produced_pending_human_review_and_voice",
+      "mp4_cinema_standard": {
+        "path": "output/owner-medea-sandys-cinema-v1/VIDEO_REVIEW.mp4",
+        "sha256": "7bbcf37ec0f85e9cc38244ab0a70a2cce77e4e7a108db969f1352d3c5bcd7553",
+        "resolution": "1080x1920",
+        "fps": 20,
+        "produced": "2026-11-19",
+        "publication_allowed": false,
+        "semantic_crop_review": "PENDING",
+        "italian_territorial_commercial_review": "PENDING"
+      }
     },
     {
       "slug": "fairy-tale-of-the-kings",
@@ -106,13 +176,16 @@
       "official_inventory": "Čt 35",
       "date_official": "1909",
       "medium": "tempera on canvas",
-      "original_cm_official": {"height": 70.2, "width": 75.3},
+      "original_cm_official": {
+        "height": 70.2,
+        "width": 75.3
+      },
       "gallery": "M. K. Čiurlionis National Museum of Art, Kaunas",
       "credit_line": "Acquired 1922 from Sofija Čiurlionienė (Kaunas)",
       "main_color": "Black",
-      "original_file_downloaded": false,
-      "source_pixels_verified": false,
-      "sha256_verified": false,
+      "original_file_downloaded": true,
+      "source_pixels_verified": true,
+      "sha256_verified": true,
       "rights_status": "not_cleared",
       "rights_note": "Diritti del file della riproduzione da verificare con il museo; l'artista (1875-1911) è di pubblico dominio, ma la riproduzione fotografica può avere condizioni proprie.",
       "script": "docs/productions/artvision-4x1-nuova-selezione-30/fairy-tale-of-the-kings/CRITICO_SCRIPT_IT.md",
@@ -121,7 +194,17 @@
       "mp4_standard": "not_produced",
       "mp4_museum": "not_produced",
       "ready_for_production": false,
-      "current_stage": "dossier_and_script_ready_pending_rights_and_voice"
+      "current_stage": "cinema_review_produced_pending_human_review_and_voice",
+      "mp4_cinema_standard": {
+        "path": "output/owner-fairy-tale-of-the-kings-cinema-v1/VIDEO_REVIEW.mp4",
+        "sha256": "f02e96e0b8d3cb03c0fc3174d4b4295a0b139316374e2ce0f716eb18501e120b",
+        "resolution": "1080x1920",
+        "fps": 20,
+        "produced": "2026-11-19",
+        "publication_allowed": false,
+        "semantic_crop_review": "PENDING",
+        "italian_territorial_commercial_review": "PENDING"
+      }
     },
     {
       "slug": "sonata-of-the-sea-finale",
@@ -137,14 +220,17 @@
       "official_inventory": "Čt 14",
       "date_official": "1908",
       "medium": "tempera on paper",
-      "original_cm_official": {"height": 73.2, "width": 63.0},
+      "original_cm_official": {
+        "height": 73.2,
+        "width": 63.0
+      },
       "gallery": "M. K. Čiurlionis National Museum of Art, Kaunas",
       "credit_line": "Acquired 1922 from Sofija Čiurlionienė (Kaunas)",
       "cycle": "Sonata No. 5 (Sonata of the Sea)",
       "main_color": "Blue",
-      "original_file_downloaded": false,
-      "source_pixels_verified": false,
-      "sha256_verified": false,
+      "original_file_downloaded": true,
+      "source_pixels_verified": true,
+      "sha256_verified": true,
       "rights_status": "not_cleared",
       "rights_note": "Diritti del file della riproduzione da verificare con il museo; artista di pubblico dominio (1875-1911).",
       "script": "docs/productions/artvision-4x1-nuova-selezione-30/sonata-of-the-sea-finale/CRITICO_SCRIPT_IT.md",
@@ -153,7 +239,17 @@
       "mp4_standard": "not_produced",
       "mp4_museum": "not_produced",
       "ready_for_production": false,
-      "current_stage": "dossier_and_script_ready_pending_rights_and_voice"
+      "current_stage": "cinema_review_produced_pending_human_review_and_voice",
+      "mp4_cinema_standard": {
+        "path": "output/owner-sonata-of-the-sea-finale-cinema-v1/VIDEO_REVIEW.mp4",
+        "sha256": "61053b4fedbebf55349c61e3d624ddcad57520a3fe61e0caf4922a0c2df8aa42",
+        "resolution": "1080x1920",
+        "fps": 20,
+        "produced": "2026-11-19",
+        "publication_allowed": false,
+        "semantic_crop_review": "PENDING",
+        "italian_territorial_commercial_review": "PENDING"
+      }
     },
     {
       "slug": "iron-rolling-mill",
@@ -170,12 +266,15 @@
       "official_inventory": "A I 201",
       "date_official": "1872-75",
       "medium": "Oil on canvas",
-      "original_cm_official": {"height": 158.0, "width": 254.0},
+      "original_cm_official": {
+        "height": 158.0,
+        "width": 254.0
+      },
       "gallery": "Alte Nationalgalerie, Staatliche Museen zu Berlin",
       "credit_line": "1875 purchase from the collection of the banker Adolph von Liebermann, Berlin",
-      "original_file_downloaded": false,
-      "source_pixels_verified": false,
-      "sha256_verified": false,
+      "original_file_downloaded": true,
+      "source_pixels_verified": true,
+      "sha256_verified": true,
       "rights_status": "not_cleared",
       "rights_note": "SMB credits the photo-reproduction with Public Domain Mark 1.0 (Staatliche Museen zu Berlin, Alte Nationalgalerie / Andres Kilger): most favourable of the batch; museum terms and intended-use license still to be confirmed.",
       "script": "docs/productions/artvision-4x1-nuova-selezione-30/iron-rolling-mill/CRITICO_SCRIPT_IT.md",
@@ -184,7 +283,17 @@
       "mp4_standard": "not_produced",
       "mp4_museum": "not_produced",
       "ready_for_production": false,
-      "current_stage": "dossier_and_script_ready_pending_rights_and_voice"
+      "current_stage": "cinema_review_produced_pending_human_review_and_voice",
+      "mp4_cinema_standard": {
+        "path": "output/owner-iron-rolling-mill-cinema-v1/VIDEO_REVIEW.mp4",
+        "sha256": "5a534f614a3ef2cdb6a0054838a89dd5180aeb01c4739d88a6d5d6bbe9fe64f0",
+        "resolution": "1080x1920",
+        "fps": 20,
+        "produced": "2026-11-19",
+        "publication_allowed": false,
+        "semantic_crop_review": "PENDING",
+        "italian_territorial_commercial_review": "PENDING"
+      }
     },
     {
       "slug": "defense-of-the-sampo",
@@ -200,13 +309,16 @@
       "official_inventory": "66",
       "date_official": "1896",
       "medium": "Tempera on canvas",
-      "original_cm_official": {"height": 122.0, "width": 125.0},
+      "original_cm_official": {
+        "height": 122.0,
+        "width": 125.0
+      },
       "dimensions_note": "Museo/Commons riportano l'ordinamento altezza x larghezza; alcune fonti invertito (125 x 122).",
       "gallery": "Turku Art Museum, Turku, Finland",
       "credit_line": "Commissioned by Salomo Wuorio; purchased by the Turku Arts Association",
-      "original_file_downloaded": false,
-      "source_pixels_verified": false,
-      "sha256_verified": false,
+      "original_file_downloaded": true,
+      "source_pixels_verified": true,
+      "sha256_verified": true,
       "rights_status": "not_cleared",
       "rights_note": "Artista di pubblico dominio (m. 1931); licenza della foto-riproduzione e termini del museo da verificare.",
       "script": "docs/productions/artvision-4x1-nuova-selezione-30/defense-of-the-sampo/CRITICO_SCRIPT_IT.md",
@@ -215,7 +327,17 @@
       "mp4_standard": "not_produced",
       "mp4_museum": "not_produced",
       "ready_for_production": false,
-      "current_stage": "dossier_and_script_ready_pending_rights_and_voice"
+      "current_stage": "cinema_review_produced_pending_human_review_and_voice",
+      "mp4_cinema_standard": {
+        "path": "output/owner-defense-of-the-sampo-cinema-v1/VIDEO_REVIEW.mp4",
+        "sha256": "08489946a3102c250f2e871d08a42c770cb47bf2b2d2b9fe14d8e6a638b10219",
+        "resolution": "1080x1920",
+        "fps": 20,
+        "produced": "2026-11-19",
+        "publication_allowed": false,
+        "semantic_crop_review": "PENDING",
+        "italian_territorial_commercial_review": "PENDING"
+      }
     },
     {
       "slug": "lemminkainen-mother",
@@ -231,12 +353,15 @@
       "official_inventory": "A I 640",
       "date_official": "1897",
       "medium": "Tempera on canvas",
-      "original_cm_official": {"height": 85.5, "width": 108.5},
+      "original_cm_official": {
+        "height": 85.5,
+        "width": 108.5
+      },
       "gallery": "Ateneum Art Museum, Finnish National Gallery, Helsinki (Antell collections)",
       "credit_line": "Purchase by the Antell deputation, 18.1.1898",
-      "original_file_downloaded": false,
-      "source_pixels_verified": false,
-      "sha256_verified": false,
+      "original_file_downloaded": true,
+      "source_pixels_verified": true,
+      "sha256_verified": true,
       "rights_status": "not_cleared",
       "rights_note": "Artista di pubblico dominio (m. 1931); licenza della foto-riproduzione e termini del museo da verificare.",
       "script": "docs/productions/artvision-4x1-nuova-selezione-30/lemminkainen-mother/CRITICO_SCRIPT_IT.md",
@@ -245,7 +370,17 @@
       "mp4_standard": "not_produced",
       "mp4_museum": "not_produced",
       "ready_for_production": false,
-      "current_stage": "dossier_and_script_ready_pending_rights_and_voice"
+      "current_stage": "cinema_review_produced_pending_human_review_and_voice",
+      "mp4_cinema_standard": {
+        "path": "output/owner-lemminkainen-mother-cinema-v1/VIDEO_REVIEW.mp4",
+        "sha256": "15c15982bf36d94c6f848cf06e50eba28b2f3e2200d4f28451253aa09b2775bb",
+        "resolution": "1080x1920",
+        "fps": 20,
+        "produced": "2026-11-19",
+        "publication_allowed": false,
+        "semantic_crop_review": "PENDING",
+        "italian_territorial_commercial_review": "PENDING"
+      }
     },
     {
       "slug": "architects-dream",
@@ -260,12 +395,15 @@
       "official_inventory": "1949.162",
       "date_official": "1840",
       "medium": "Oil on canvas",
-      "original_cm_official": {"height": 134.7, "width": 213.6},
+      "original_cm_official": {
+        "height": 134.7,
+        "width": 213.6
+      },
       "gallery": "Toledo Museum of Art, Toledo, Ohio",
       "credit_line": "Commissioned for the architect Ithiel Town",
-      "original_file_downloaded": false,
-      "source_pixels_verified": false,
-      "sha256_verified": false,
+      "original_file_downloaded": true,
+      "source_pixels_verified": true,
+      "sha256_verified": true,
       "rights_status": "not_cleared",
       "rights_note": "Artista di pubblico dominio (m. 1848); licenza della foto-riproduzione e termini del museo da verificare. Accession number 1949.162 da confermare sulla scheda ufficiale diretta.",
       "script": "docs/productions/artvision-4x1-nuova-selezione-30/architects-dream/CRITICO_SCRIPT_IT.md",
@@ -274,7 +412,32 @@
       "mp4_standard": "not_produced",
       "mp4_museum": "not_produced",
       "ready_for_production": false,
-      "current_stage": "dossier_and_script_ready_pending_rights_and_voice"
+      "current_stage": "cinema_review_produced_pending_human_review_and_voice",
+      "mp4_cinema_standard": {
+        "path": "output/owner-architects-dream-cinema-v1/VIDEO_REVIEW.mp4",
+        "sha256": "d63e4992b4b601b8e1557bf428d8871412241a43d585817464b54fdf2f6bbd37",
+        "resolution": "1080x1920",
+        "fps": 20,
+        "produced": "2026-11-19",
+        "publication_allowed": false,
+        "semantic_crop_review": "PENDING",
+        "italian_territorial_commercial_review": "PENDING"
+      }
     }
-  ]
+  ],
+  "cinema_batch_20261119": {
+    "count": 8,
+    "dir_prefix": "output/owner-*-cinema-v1/",
+    "files": [
+      "VIDEO_REVIEW.mp4",
+      "COPERTINA.jpg",
+      "CONTATTO_REGIA.jpg",
+      "SCORE_ORIGINALE.wav",
+      "FONTI_E_DIRITTI.json",
+      "STORYBOARD_REGIA.json",
+      "SOCIAL_POSTS.json",
+      "ISTRUZIONI.md"
+    ],
+    "note": "Revisione privata. Nessun Gold, nessuna pubblicazione."
+  }
 }
