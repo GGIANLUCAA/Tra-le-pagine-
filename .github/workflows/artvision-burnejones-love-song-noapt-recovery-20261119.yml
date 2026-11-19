@@ -1,0 +1,161 @@
+name: "ArtVision FAST | NEW Love Song Cinema | no-apt recovery"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/artvision-burnejones-love-song-noapt-recovery-20261119.yml"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-love-song-435826-independent-noapt-recovery
+  cancel-in-progress: false
+jobs:
+  render_real_video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Pip only: avoid hangs in apt update while keeping FFmpeg available"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5' 'imageio-ffmpeg>=0.6,<1'
+          mkdir -p "$RUNNER_TEMP/artvision_bin"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from imageio_ffmpeg import get_ffmpeg_exe
+          source=Path(get_ffmpeg_exe())
+          target=Path(os.environ["RUNNER_TEMP"])/"artvision_bin"/"ffmpeg"
+          target.symlink_to(source)
+          assert source.is_file() and target.is_file()
+          print("STATIC_FFMPEG",source)
+          PY
+          echo "$RUNNER_TEMP/artvision_bin" >> "$GITHUB_PATH"
+      - name: "Dedup; compile and render exact Met Open Access artwork to real silent video"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/artvision_burnejones_love_song_cinema_20261119.py
+          python - <<'PY'
+          from pathlib import Path
+          assert not list(Path('queue').glob('*burnejones*love*song*cinema*.json'))
+          print("NEW_WORK_CHECK_OK")
+          PY
+          python scripts/artvision_burnejones_love_song_cinema_20261119.py
+      - name: "No-apt verified real Music20 binary, authentic Cinema MP4 Android and ZIP"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,re,subprocess,urllib.request,zipfile
+          from pathlib import Path
+          out=Path('output/artvision-burnejones-love-song-cinema-20261119')
+          art=json.loads((out/'SOURCE_RIGHTS.json').read_text())
+          pre=json.loads((out/'PRE_MUSIC_QA.json').read_text())
+          assert art['met_api_isPublicDomain'] and art['met_object_id']==435826 and art['accession']=='47.26'
+          assert art['original_sha256']==hashlib.sha256((out/'ORIGINAL_MET_PAINTING.jpg').read_bytes()).hexdigest()
+          assert not art['published'] and art['voice']=='NONE (Cinema, not Critico)'
+          lib=json.loads(Path('config/artvision_music_20_v1.json').read_text())
+          assert lib['fixed_slots']==20 and len(lib['tracks'])==20
+          track=[x for x in lib['tracks'] if x['id']=='immersed']
+          assert len(track)==1
+          t=track[0]
+          assert t['title']=='Immersed' and t['composer']=='Kevin MacLeod'
+          assert t['license']=='CC BY 4.0' and t['license_url']=='https://creativecommons.org/licenses/by/4.0/'
+          assert t['download_url'].startswith('https://incompetech.com/music/royalty-free/mp3-royaltyfree/')
+          req=urllib.request.Request(t['download_url'],headers={'User-Agent':'ArtVision-Music20-Owner/1.0 (CC BY4 attribution)'})
+          with urllib.request.urlopen(req,timeout=100) as r:data=r.read(24_000_001)
+          assert 120_000<len(data)<24_000_001 and not data.startswith(b'<')
+          music=out/'MUSIC20_IMMERSED_REAL.mp3'
+          music.write_bytes(data)
+          music_sha=hashlib.sha256(data).hexdigest()
+          def call(args,check=True):
+            p=subprocess.run([str(x) for x in args],capture_output=True,text=True,timeout=190)
+            if check and p.returncode:raise RuntimeError(p.stderr[-1400:])
+            return p
+          p=call(['ffmpeg','-hide_banner','-i',music,'-f','null','-'])
+          m=re.search(r'Duration:\s*(\d+):(\d+):([\d.]+)',p.stderr)
+          assert m, 'Real music has no duration header'
+          secs=int(m.group(1))*3600+int(m.group(2))*60+float(m.group(3))
+          dur=float(pre['silent_duration_s'])
+          assert secs>dur+10 and 59<dur<67
+          orig=out/'SILENT_MASTER_REVIEW.mp4'
+          hq=out/'VIDEO_HQ_MUSIC20_REVIEW.mp4'
+          phone=out/'VIDEO_ANDROID_MUSIC20_REVIEW.mp4'
+          fadestart=dur-2.5
+          filters=(f'[1:a]atrim=duration={dur:.3f},asetpts=PTS-STARTPTS,'
+                   f'loudnorm=I=-17:TP=-2:LRA=9,afade=t=in:st=0:d=1.2,'
+                   f'afade=t=out:st={fadestart:.3f}:d=2.5[sound]')
+          call(['ffmpeg','-y','-hide_banner','-loglevel','error','-i',orig,'-i',music,
+             '-filter_complex',filters,'-map','0:v:0','-map','[sound]',
+             '-c:v','copy','-c:a','aac','-b:a','160k','-ac','2',
+             '-movflags','+faststart','-t',f'{dur:.3f}',hq])
+          call(['ffmpeg','-y','-hide_banner','-loglevel','error','-i',hq,
+             '-vf','scale=720:1280:flags=lanczos',
+             '-map','0:v:0','-map','0:a:0',
+             '-c:v','libx264','-preset','veryfast','-crf','25','-pix_fmt','yuv420p',
+             '-c:a','aac','-b:a','128k','-movflags','+faststart',phone])
+          for f in (hq,phone):
+            call(['ffmpeg','-v','error','-xerror','-i',f,'-map','0','-f','null','-'])
+          probe=call(['ffmpeg','-hide_banner','-i',phone],check=False)
+          assert 'Video: h264' in probe.stderr and 'Audio: aac' in probe.stderr
+          assert '720x1280' in probe.stderr
+          dig=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
+          proof={'schema':'Music20 real source verified without apt','track_id':t['id'],'track_title':t['title'],
+           'composer':'Kevin MacLeod','isrc':t['isrc'],
+           'source_url':t['source_url'],'official_audio_url':t['download_url'],
+           'sha256':music_sha,'bytes':len(data),'duration_seconds':secs,
+           'recording_fully_decoded':'PASS','license':'CC BY 4.0',
+           'license_url':t['license_url'],'published':False}
+          (out/'MUSIC20_VERIFIED.json').write_text(json.dumps(proof,ensure_ascii=False,indent=2)+'\n')
+          social=json.loads((out/'SOCIAL_DRAFTS.json').read_text())
+          social['music_credits']='Immersed — Kevin MacLeod (incompetech.com), CC BY 4.0 https://creativecommons.org/licenses/by/4.0/ ; ISRC '+t['isrc']
+          (out/'SOCIAL_DRAFTS.json').write_text(json.dumps(social,ensure_ascii=False,indent=2)+'\n')
+          qa={**pre,'status':'ONE_NEW_REAL_CINEMA_STANDARD_PRIVATE_REVIEW',
+             'met_object_id':435826,'source_sha256':art['original_sha256'],
+             'music_real_sha256':music_sha,'music_license':'CC BY 4.0',
+             'music_isrc':t['isrc'],'duration_seconds':dur,
+             'hq_mp4_sha256':dig(hq),'hq_mp4_bytes':hq.stat().st_size,
+             'android_mp4_sha256':dig(phone),'android_mp4_bytes':phone.stat().st_size,
+             'full_ffmpeg_decode_HQ_and_mobile':'PASS',
+             'real_music_fully_decoded':'PASS','human_artistic_review':'PENDING',
+             'source_rights_final_review':'PENDING','Gacrux_voice_unmodified':True,
+             'no_paid_calls':True,'published':False,'gold':False}
+          (out/'QA_FINAL.json').write_text(json.dumps(qa,ensure_ascii=False,indent=2)+'\n')
+          zf=out/'ANDROID_COMPLETE_CINEMA_PACKAGE.zip'
+          with zipfile.ZipFile(zf,'w',zipfile.ZIP_DEFLATED,compresslevel=2) as z:
+            for n in ('VIDEO_ANDROID_MUSIC20_REVIEW.mp4','COVER.jpg','CONTACT_SHEET.jpg',
+                      'SOURCE_RIGHTS.json','STORYBOARD.json','SOCIAL_DRAFTS.json',
+                      'PRE_MUSIC_QA.json','QA_FINAL.json','MUSIC20_VERIFIED.json'):
+              z.write(out/n,n)
+          with zipfile.ZipFile(zf) as z:
+            assert z.testzip() is None
+            assert hashlib.sha256(z.read(phone.name)).hexdigest()==dig(phone)
+          print('BURNE_JONES_LOVE_SONG_NEW_CINEMA_NOAPT_PASS',json.dumps({
+            'source_sha256':art['original_sha256'],'duration_seconds':dur,
+            'music_sha256':music_sha,'HQ_sha256':dig(hq),
+            'android_sha256':dig(phone),'zip_sha256':dig(zf),
+            'zip_crc':'PASS','all_audio_video_full_decode':'PASS','gold':False}))
+          PY
+      - name: "Preserve physical new video, cover, original source, mobile ZIP, independent QA"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_NEW_BURNEJONES_THE_LOVE_SONG_CINEMA_REAL_NOAPT_ANDROID
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            output/artvision-burnejones-love-song-cinema-20261119/VIDEO_HQ_MUSIC20_REVIEW.mp4
+            output/artvision-burnejones-love-song-cinema-20261119/VIDEO_ANDROID_MUSIC20_REVIEW.mp4
+            output/artvision-burnejones-love-song-cinema-20261119/ANDROID_COMPLETE_CINEMA_PACKAGE.zip
+            output/artvision-burnejones-love-song-cinema-20261119/ORIGINAL_MET_PAINTING.jpg
+            output/artvision-burnejones-love-song-cinema-20261119/COVER.jpg
+            output/artvision-burnejones-love-song-cinema-20261119/CONTACT_SHEET.jpg
+            output/artvision-burnejones-love-song-cinema-20261119/SOURCE_RIGHTS.json
+            output/artvision-burnejones-love-song-cinema-20261119/STORYBOARD.json
+            output/artvision-burnejones-love-song-cinema-20261119/SOCIAL_DRAFTS.json
+            output/artvision-burnejones-love-song-cinema-20261119/MUSIC20_VERIFIED.json
+            output/artvision-burnejones-love-song-cinema-20261119/QA_FINAL.json
