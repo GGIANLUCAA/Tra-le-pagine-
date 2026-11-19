@@ -28,6 +28,8 @@
 
 **Nota di produzione:** il file grafico definitivo resta sospeso finche non e autorizzato l'uso della specifica riproduzione. Il crop va controllato anche in miniatura e nell'anteprima verticale della piattaforma.
 
+**Prova visiva privata:** [PILOTA_PATON_COPERTINA_SOCIAL_DRAFT.jpg](PILOTA_PATON_COPERTINA_SOCIAL_DRAFT.jpg), 1080 x 1920. E un mockup editoriale basato sul crop dell'immagine presente nel dossier; non e approvato per pubblicazione e non modifica la copertina o il master esistenti.
+
 ## Titoli
 
 - **Facebook Reel:** Lewis Carroll conto 165 fate in questo quadro. Tu quante ne trovi?
