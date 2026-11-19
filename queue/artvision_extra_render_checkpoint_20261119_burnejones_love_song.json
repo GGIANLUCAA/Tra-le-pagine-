@@ -1,0 +1,82 @@
+{
+  "schema": "artvision_extra_verified_new_cinema_checkpoint_v1",
+  "record_date": "2026-11-19",
+  "owner_instruction": "Continua a produrre video",
+  "title": "The Love Song",
+  "artist": "Sir Edward Burne-Jones",
+  "year": "1868–1877",
+  "variant": "cinema_standard",
+  "existing_archive_dedup": "EXACT_ARTIST_TITLE_AND_MET_OBJECT_SEARCH_NO_PREVIOUS_CINEMA_IDENTIFIED",
+  "status": "ONE_NEW_REAL_CINEMA_STANDARD_TECH_QA_PASS_PRIVATE_ARTISTIC_REVIEW_PENDING",
+  "source": {
+    "museum": "Metropolitan Museum of Art",
+    "official_object_url": "https://www.metmuseum.org/art/collection/search/435826",
+    "met_object_id": 435826,
+    "accession": "47.26",
+    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP323394.jpg",
+    "source_sha256": "9b0a356726da653f082ef10f8cd79122d17eabda035ed09ae320461d0c111f98",
+    "source_bytes": 3060160,
+    "pixels": [
+      4000,
+      2948
+    ],
+    "met_api_isPublicDomain": true,
+    "license": "Met Open Access public domain / CC0",
+    "reproduction_not_ai_generated": true
+  },
+  "video": {
+    "format": "H264 AAC 900x1600 18fps",
+    "duration_seconds": 60.835,
+    "semantic_scenes": 13,
+    "source_painting_only": true,
+    "voice": "NONE — Cinema Standard",
+    "approved_Gacrux_voice_remains_unchanged": true,
+    "music": "Immersed — Kevin MacLeod",
+    "music_isrc": "USUAN1600010",
+    "music_license": "CC BY 4.0 https://creativecommons.org/licenses/by/4.0/",
+    "music_recording_sha256": "870fa4f642816b2207cf74e48c36cbbbd147df99be24f08f29aa26ac0597a44b",
+    "hq_mp4_sha256": "499ed61934cb2f679eeebe4350ae899d79f5a69ae74ee7a88fc7201ccf1ef3c1",
+    "hq_mp4_bytes": 18208447,
+    "android_mp4_sha256": "7b6e2c1338aa23f82e79a384a1db1709dff23af4b666cb566b52f473052e2c99",
+    "android_mp4_bytes": 4862293,
+    "android_zip_sha256": "182d482701b7c58f4071bc081e670ca34f01ac0e4198a14531ce099d717e712b",
+    "android_zip_bytes": 5641062
+  },
+  "variants": {
+    "cinema_standard": "NEW_PRODUCTION_RENDERED_TECH_QA_PASS",
+    "cinema_museum": "NOT_RENDERED",
+    "critico_standard": "NOT_RENDERED_ONLY_ORIGINAL_APPROVED_GACRUX",
+    "critico_museum": "NOT_RENDERED_ONLY_SAME_APPROVED_GACRUX"
+  },
+  "qa": {
+    "FFmpeg_full_decode_video_and_audio_both_MP4": "PASS_GITHUB_ACTIONS_AND_INDEPENDENT_CONTAINER",
+    "ZIP_CRC": "PASS",
+    "embedded_android_MP4_SHA": "MATCH",
+    "library_readback_HQ_android_ZIP": "IDENTICAL_SHA256_PASS",
+    "contact_sheet": "INSPECTED_REVIEW_ONLY",
+    "human_artist_full_speed_listening": "PENDING",
+    "gold": false,
+    "published": false,
+    "paid_API_calls": 0
+  },
+  "github": {
+    "script": "scripts/artvision_burnejones_love_song_cinema_20261119.py",
+    "workflow": ".github/workflows/artvision-burnejones-love-song-cinema-20261119.yml",
+    "successful_run_id": 44504918809,
+    "run_url": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/44504918809",
+    "artifact_id": 14520021035,
+    "artifact_name": "ARTVISION_NEW_BURNE_JONES_LOVE_SONG_CINEMA_MP4_AND_ZIP",
+    "experimental_noapt_recovery_run_id": 44505871323,
+    "note": "Independent fallback attempt on same work if successful remains a duplicate render proof, NOT a new distinct artwork or additional new slot."
+  },
+  "library": {
+    "folder": "/ArtVision/Opere_Extra/Burne_Jones_The_Love_Song_20261119",
+    "android_libfile": "libfile_1862164b90d481919b060b78467627e0",
+    "HQ_libfile": "libfile_281ad34570c48191abd87e7669c92e60",
+    "zip_libfile": "libfile_9d6803d2663c81919644839cbcfbabe0",
+    "cover_libfile": "libfile_cb71670f7b4481918bea34cfdeac2b4d",
+    "contact_libfile": "libfile_c7cd2f5b4b4481919d687b6f7da44cbf",
+    "readback_SHA_verified": true
+  },
+  "next": "Never count this Cinema Standard twice or regenerate as a new subject. For Critico maintain exact Google Gemini Gacrux original natural speaker only and both real no-billing gate variables; if blocked, continue other genuine new paintings or independent variants with verified source and rights. Do not claim Gold/publication until owner creative QA."
+}
