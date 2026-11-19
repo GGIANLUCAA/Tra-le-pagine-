@@ -1,0 +1,105 @@
+{
+  "schema": "artvision-owner-30-museum-private-review-v1",
+  "recorded_at_utc": "2026-11-19",
+  "artist": "Joseph Wright of Derby",
+  "title": "The Alchemist Discovering Phosphorus",
+  "year": 1771,
+  "variant": "cinema_museum",
+  "status": "LIBRARY_ONLY_RENDERED_TECH_QA_PASS_ART_REVIEW_PENDING",
+  "source_artwork": {
+    "museum": "Derby Museum and Art Gallery",
+    "accession": "1883-152",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Joseph_Wright_of_Derby_The_Alchemist.jpg",
+    "sha256": "89c65fd865de689f11d2d1ebe8770909b9dcc9c11746ebb578bcb0d5134c6019",
+    "pixels": [
+      4724,
+      6126
+    ],
+    "physical_dimensions_cm": [
+      127,
+      101.6
+    ],
+    "commercial_territorial_rights": "PENDING_FINAL_CLEARANCE"
+  },
+  "music": {
+    "title": "Magistar",
+    "composer": "Kevin MacLeod",
+    "isrc": "USUAN1900003",
+    "license": "CC BY 4.0 attribution required",
+    "official_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1900003",
+    "recording_sha256": "299a5619829dbb95604531d310fd89dd190009589bdcdc2ef7881f878b1f7a60",
+    "binary_source": "verified existing original music proof archive; no new download"
+  },
+  "museum": {
+    "room_id": "G04_CRIMSON_CLASSIC",
+    "room_origin": "Authorized GPT-generated virtual museum from /ArtVision/Museum_AI_Rooms_V332; NOT authentic Derby museum",
+    "frame": "Georgian-inspired custom editorial ebonized walnut and antique gilding, NOT authentic historic frame",
+    "painting_geometry": "photograph not stretched; original pixels and unframed cm noted; final scale check pending human review",
+    "room_image_sha256": "b23ad4c0667d86db5779633f6c71ecd4ba876f1d4ffc99a99eab2918c1147f51"
+  },
+  "video": {
+    "duration_seconds": 55,
+    "dimensions": [
+      720,
+      1280
+    ],
+    "fps": 20,
+    "codecs": [
+      "H264",
+      "AAC"
+    ],
+    "master_sha256": "9a24597ca93c36384a63eaafd5fe294c435bfc09433dae4113bac588c49e009a",
+    "master_bytes": 95301301,
+    "android_sha256": "bd0db7ee36768f86f72b182b5b57f7d9995637949a93fccb71185ba163cd58f8",
+    "android_bytes": 8262691,
+    "zip_sha256": "4d4ab216d4cf29f13668600d221400fcbeaac8f66463371e66f9d03bd07329ea",
+    "zip_bytes": 9442986
+  },
+  "qa": {
+    "ffmpeg_master_full_decode": "PASS",
+    "ffmpeg_android_full_decode": "PASS",
+    "v203_sampled_transitions_at_7s_and_49s": [
+      3.88,
+      3.96
+    ],
+    "v203_max_threshold": 18,
+    "zip_crc": "PASS",
+    "fresh_library_readback_video_sha": "PASS",
+    "fresh_library_readback_zip_sha": "PASS",
+    "sampled_frame_contact_sheet": "14 frames physically captured",
+    "human_full_speed_artistic_review": "PENDING",
+    "android_on_device_download": "NOT_VERIFIED"
+  },
+  "library": {
+    "folder": "/ArtVision/Owner_30/The_Alchemist_Cinema_Museum_20261119",
+    "android_mp4_id": "libfile_ca2b2db16d1c8191aa395f4e60c34e24",
+    "android_zip_id": "libfile_bd3ffcc78ea0819182de7b13e7b52e71",
+    "cover_id": "libfile_d8954894386c8191a492bffc66186c5c",
+    "manifest_id": "libfile_1e5b66b76a4c8191aeba2cd5a6ebafd5",
+    "qa_id": "libfile_92bb1cbeeaf88191a7b79253c57b36f3",
+    "social_id": "libfile_73660493c1a88191a87b960808676f6d",
+    "cover_sha256": "d630363ebd8921821ef33b7e4a4df9264983fe3693a28e70cf7fdf64f5f9d0a4"
+  },
+  "original_cinema_standard": {
+    "status": "PREEXISTING_DO_NOT_RERENDER",
+    "sha256": "734e81a54cb773f4d8b1f424aeb9872051c6de1e7fa00411b752ebbd3349a14e",
+    "workflow_run_id": 42622451654,
+    "artifact_id": 13675939181
+  },
+  "variants": {
+    "cinema_standard": "PREEXISTING",
+    "cinema_museum": "NEW_TECH_PASS_PRIVATE_ART_REVIEW_PENDING",
+    "critico_standard": "BLOCKED_ONLY_APPROVED_GACRUX_UNLESS_EXISTING_SAME_SCRIPT_WAV",
+    "critico_museum": "BLOCKED_ONLY_APPROVED_GACRUX_AND_MUSEUM_QA"
+  },
+  "new_work_count": 0,
+  "new_slot_count": 1,
+  "gh_artifact_created": false,
+  "private_r2": false,
+  "site_public": false,
+  "verified_site_player": false,
+  "gold": false,
+  "published": false,
+  "paid_api_calls": 0,
+  "note": "This JSON records a physically new Cinema Museum variant produced 2026-11-19 in chat, then backed up and independently read back from Library. Do not re-render as another new slot. The existing Cinema Standard master remains unchanged. This private checkpoint is proposed via draft PR and is not merged to main until approved."
+}
