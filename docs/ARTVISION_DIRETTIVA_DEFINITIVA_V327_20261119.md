@@ -87,11 +87,18 @@ Ispirazione: documentario d'autore, cinema, produzione culturale professionale. 
 3. **Non dichiarare "finito"** un video se manca il file finale o non supera i controlli essenziali. Senza approvazione artistica lo stato è `rendered_needs_review`, mai Gold/publish.
 4. La pubblicazione può essere automatica **solo** quando il sistema è configurato e autorizzato.
 
-### 7.1 Social-first (senza tradire l'arte)
-- Primi 3 secondi con un soggetto autentico e forte (e leggibile in miniatura), non un cartello prolungato.
-- Copertina distinta dal primo fotogramma, leggibile su smartphone.
-- Finale non promozionale: il cartello/CTA lungo a coda è sconsigliato (riferimento Regia Umana V1, coda promo ~6s giudicata eccessiva).
-- Quattro testi realmente diversi, non lo stesso copiato; hashtag pochi e pertinenti; nessun clickbait su nudità, sangue o inquietudine (regola social ArtVision v1).
+### 7.1 Social-first (regola vincolante per ogni formato)
+
+Tutti i video ArtVision sono concepiti e realizzati per la fruizione social: piattaforma, schermo mobile, anteprima, copertina, apertura, ritmo, testo e condivisione si considerano **fin dall'idea iniziale**, non come adattamento finale. L'obiettivo è massimizzare la probabilità di attenzione, visione completa, replay, condivisione e ritorno del pubblico, senza promettere risultati che solo gli analytics possono dimostrare.
+
+- **Confezione visiva coerente, non seriale.** Ogni serie mantiene una grammatica riconoscibile (gerarchia, tipografia, contrasto e collocazione dei testi); ogni copertina resta specifica dell'opera e sceglie un'immagine/dettaglio autentico e una promessa editoriale breve. Coerenza non significa ripetere meccanicamente la stessa composizione.
+- **Copertina progettata per la miniatura.** Deve essere leggibile su smartphone, distinguersi nel feed e incuriosire senza coprire o falsare l'opera. Evitare titoli lunghi, microtesti, elementi decorativi gratuiti e duplicazione automatica del titolo dell'opera.
+- **Apertura che mantiene la promessa.** I primi secondi devono offrire subito un'immagine significativa e una ragione autentica per restare. La forma può essere una domanda, un gesto, un contrasto, un dettaglio o una scena: nessun hook è obbligatorio e nessuna suspense può dipendere da fatti inventati o rivelazioni trattenute artificialmente.
+- **Montaggio per attenzione e comprensione.** Eliminare tempi morti non intenzionali; variare scala e ritmo quando aiuta a vedere o capire; mantenere naturalezza, fedeltà dell'opera e sincronia. Non aggiungere movimento, tagli o effetti solo per aumentare la frequenza degli stimoli.
+- **Adattamento nativo.** Formato, area sicura, sottotitoli, copertina, titolo, descrizione e crediti si preparano per la destinazione prevista, rispettando le regole tecniche e di diritti della piattaforma. I quattro testi V28 devono essere realmente distinti e adatti ai rispettivi canali.
+- **Chiusura essenziale.** Il video termina sul contenuto; un'eventuale CTA è breve, pertinente e non sostituisce la conclusione narrativa. Niente coda promozionale lunga.
+- **Ottimizzazione verificabile.** Quando sono disponibili dati reali, confrontare copertine e aperture tramite test controllati e metriche pertinenti (per esempio visualizzazioni, tempo medio, completamento, replay, condivisioni e nuovi follower). Registrare periodo, piattaforma e campione; non attribuire causalità a un singolo risultato e non dichiarare virale un contenuto senza evidenza.
+- **Limiti inderogabili.** Nessun clickbait, immagine ingannevole o promessa non mantenuta; nessun compromesso su fonti, diritti, accuratezza, sicurezza, accessibilità e integrità dell'opera. Le precedenze del §0.3 restano superiori all'ottimizzazione delle visualizzazioni.
 
 ---
 
