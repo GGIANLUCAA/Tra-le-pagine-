@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARTVISION — Video</title>
+<style>
+  :root{--bg:#0c0e11;--card:#14171c;--line:#262b33;--gold:#d2a661;--ink:#ece6da;--mut:#9aa0a8;--ok:#6fcf97}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,Roboto,sans-serif}
+  header{padding:30px 20px 14px;text-align:center;border-bottom:1px solid var(--line)}
+  h1{margin:0;font:600 27px/1.2 Georgia,serif;letter-spacing:.4px}
+  .sub{color:var(--mut);font-size:13px;margin-top:6px}
+  .hero{padding:26px 20px 6px;max-width:1080px;margin:0 auto;text-align:center}
+  .badge{display:inline-block;color:#0c0e11;background:var(--ok);font-weight:700;font-size:12px;padding:4px 12px;border-radius:20px}
+  h2{font:600 22px/1.2 Georgia,serif;margin:14px 0 4px}
+  .hmeta{color:var(--mut);font-size:13px}
+  .hvideo{width:min(420px,92%);margin:18px auto;background:#000;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  video{width:100%;display:block;background:#000;aspect-ratio:9/16;object-fit:contain}
+  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+  a.btn{display:inline-block;padding:10px 16px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600}
+  .dl{background:var(--gold);color:#141414}.op{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+  .sec{max-width:1400px;margin:0 auto;padding:10px 24px 4px}
+  .sec h3{font:600 18px Georgia,serif;margin:18px 0 2px}
+  .sec p{color:var(--mut);font-size:12.5px;margin:2px 0 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;padding:18px 24px 40px;max-width:1400px;margin:0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .body{padding:13px 15px 15px}
+  .t{font:600 16px/1.25 Georgia,serif}.m{color:var(--mut);font-size:12.5px;margin-top:4px}
+  .tag{margin-left:auto;font-size:11px;color:var(--mut);border:1px solid var(--line);padding:3px 8px;border-radius:20px}
+</style>
+</head>
+<body>
+<header>
+  <h1>ARTVISION — Video</h1>
+  <div class="sub">Verticale 1080×1920 · dipinto originale di pubblico dominio + colonna sonora originale</div>
+</header>
+
+<section class="hero">
+  <span class="badge">PRONTO PER LA PUBBLICAZIONE</span>
+  <h2>Lewis Carroll contò 165 fate in questo quadro. Tu quante ne vedi?</h2>
+  <div class="hmeta">The Quarrel of Oberon and Titania · Sir Joseph Noel Paton · 1849 · Scottish National Gallery, NG 293</div>
+  <div class="hvideo">
+    <video id="main" controls playsinline preload="metadata"
+      poster="social-publish-ready-20261120/paton-quarrel-social-v1/COPERTINA_SOCIAL.jpg">
+      <source src="social-publish-ready-20261120/paton-quarrel-social-v1/FINAL_1080x1920.mp4" type="video/mp4">
+      Il tuo browser non supporta il video.
+    </video>
+  </div>
+  <div class="row">
+    <a class="btn dl" href="social-publish-ready-20261120/paton-quarrel-social-v1/FINAL_1080x1920.mp4" download>Scarica video (MP4)</a>
+    <a class="btn op" href="social-publish-ready-20261120/paton-quarrel-social-v1/COPERTINA_SOCIAL.jpg" download>Scarica copertina</a>
+    <a class="btn op" href="social-publish-ready-20261120/paton-quarrel-social-v1/LEGGIMI.md">Leggimi</a>
+  </div>
+  <div class="hmeta" style="margin-top:12px">70 s · 30 fps · testo a schermo + musica originale · versione senza voce narrante</div>
+</section>
+
+<div class="sec">
+  <h3>Revisione Cinema — Nuova selezione 30</h3>
+  <p>Versioni senza voce, in revisione privata (inquadrature e diritti da confermare).</p>
+</div>
+<main class="grid" id="grid"></main>
+
+<script>
+const works=[
+ {t:"The Quarrel of Oberon and Titania",a:"Sir Joseph Noel Paton",y:"1849",d:"69,5 s",dir:"owner-paton-quarrel-cinema-v1"},
+ {t:"Medea",a:"Frederick Sandys",y:"1868",d:"43,2 s",dir:"owner-medea-sandys-cinema-v1"},
+ {t:"Fairy Tale of the Kings",a:"M. K. Čiurlionis",y:"1909",d:"35,4 s",dir:"owner-fairy-tale-of-the-kings-cinema-v1"},
+ {t:"Sonata of the Sea: Finale",a:"M. K. Čiurlionis",y:"1908",d:"31,4 s",dir:"owner-sonata-of-the-sea-finale-cinema-v1"},
+ {t:"The Iron Rolling Mill",a:"Adolph Menzel",y:"1872-75",d:"39,8 s",dir:"owner-iron-rolling-mill-cinema-v1"},
+ {t:"The Defense of the Sampo",a:"Akseli Gallen-Kallela",y:"1896",d:"35,2 s",dir:"owner-defense-of-the-sampo-cinema-v1"},
+ {t:"Lemminkäinen's Mother",a:"Akseli Gallen-Kallela",y:"1897",d:"39,1 s",dir:"owner-lemminkainen-mother-cinema-v1"},
+ {t:"The Architect's Dream",a:"Thomas Cole",y:"1840",d:"39,8 s",dir:"owner-architects-dream-cinema-v1"}
+];
+const base="cinema-nuova-selezione-30-20261119/";
+const g=document.getElementById('grid');
+works.forEach((w,i)=>{
+  const p=base+w.dir+"/VIDEO_REVIEW.mp4";
+  const el=document.createElement('div');el.className='card';
+  el.innerHTML=`
+    <video controls preload="metadata" playsinline poster="${base}${w.dir}/COPERTINA.jpg">
+      <source src="${p}" type="video/mp4">Il tuo browser non supporta il video.
+    </video>
+    <div class="body">
+      <div class="t">${i+1}. ${w.t}</div>
+      <div class="m">${w.a} · ${w.y} · ${w.d} · 1080×1920</div>
+      <div class="row" style="justify-content:flex-start;margin-top:11px">
+        <a class="btn dl" href="${p}" download>Scarica MP4</a>
+        <a class="btn op" href="${base}${w.dir}/COPERTINA.jpg" download>Copertina</a>
+        <span class="tag">revisione</span>
+      </div>
+    </div>`;
+  g.appendChild(el);
+});
+</script>
+</body>
+</html>
