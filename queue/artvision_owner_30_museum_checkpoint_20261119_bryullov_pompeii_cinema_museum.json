@@ -1,0 +1,118 @@
+{
+  "schema": "artvision-owner-30-cinema-museum-private-review-v1",
+  "recorded_at_utc": "2026-11-19",
+  "title": "The Last Day of Pompeii",
+  "artist": "Karl Bryullov",
+  "year": 1833,
+  "variant": "cinema_museum",
+  "status": "LIBRARY_ONLY_RENDERED_TECH_QA_PASS_ART_REVIEW_PENDING",
+  "source": {
+    "object": "State Russian Museum accession Ж-5084",
+    "painting_physical_cm": [
+      456.5,
+      651
+    ],
+    "verified_commons_url": "https://commons.wikimedia.org/wiki/File:Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project.jpg",
+    "pixels": [
+      3840,
+      2696
+    ],
+    "source_sha256": "85ad52a049af1f2b71c6cc98db6a8f97ccf637f16731445322732d2597dd3b84",
+    "source_asset": "recovered from existing verified standard GitHub Action artifact 13924364236",
+    "territorial_commercial_reuse": "PENDING"
+  },
+  "music": {
+    "title": "The Descent",
+    "composer": "Kevin MacLeod",
+    "isrc": "USUAN1200094",
+    "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200094",
+    "license": "CC BY 4.0 attribution mandatory",
+    "real_binary_sha256": "f097d51700b970efffc62499473ea3a31e09aad4172e787978bc9c2a644d53a2",
+    "original_verified_music_reuse": true
+  },
+  "scenography": {
+    "room_id": "G07_BEIGE_MARBLE",
+    "room_sha256": "ffa5f367a3228881e8e252a821f80929caaaddd37d45b39d6fcafdc3b397fc99",
+    "room_is_ai_fictional": true,
+    "room_not_real_russian_museum": true,
+    "dedicated_frame": "1833 artwork-specific dark bronze and aged gold editorial frame",
+    "original_historical_frame": false,
+    "front_on": true,
+    "geometry": "photograph ratio and painting documented physical ratio compatible; no picture stretching",
+    "v203_transition_samples": [
+      5.38,
+      5.73
+    ],
+    "v203_threshold": 18
+  },
+  "production": {
+    "duration_s": 55,
+    "frame_rate": 20,
+    "dimensions": [
+      720,
+      1280
+    ],
+    "codecs": [
+      "H264",
+      "AAC"
+    ],
+    "master": {
+      "sha256": "7eed12d950b50fd27c7ee603b9eda017c07f2345e51045971456a7b3a38385bf",
+      "bytes": 109008258,
+      "ffmpeg_decode": "PASS"
+    },
+    "android": {
+      "sha256": "87d1ff9af4fb9e98a9eb78cd106375092b0dd5695431fdf023eae87b00a38044",
+      "bytes": 9958913,
+      "ffmpeg_decode": "PASS"
+    },
+    "android_zip": {
+      "sha256": "d9f058e937846052a499fcf5c5aa696bc7ea9e85ee1923dc3da771d23494da53",
+      "bytes": 11216604,
+      "crc": "PASS"
+    },
+    "cover_sha256": "e47a3d205da14cf91667a0027a184b382c488ff8e9390f0ccfaf28a3e5172642"
+  },
+  "library": {
+    "folder": "/ArtVision/Owner_30/Pompeii_Cinema_Museum_20261119",
+    "android_id": "libfile_bd0e3d7e224481918330e47c75de37a1",
+    "zip_id": "libfile_13d3464af7288191bc0444ec397769a2",
+    "cover_id": "libfile_14bfcb52a3148191bcd94c56e50d0cd2",
+    "manifest_id": "libfile_2463bd8fb3688191a4e062bf17d0bb83",
+    "qa_id": "libfile_9ba46b9ac7f48191b3bd50b7df396f2f",
+    "social_id": "libfile_1976ebbafee48191a9b2fcf7c106c9aa",
+    "independent_fresh_readback_sha": "PASS",
+    "independent_fresh_readback_zip_crc": "PASS",
+    "independent_readback_ffmpeg": "PASS"
+  },
+  "old_cinema_standard": {
+    "status": "PREEXISTING_DO_NOT_REPEAT",
+    "sha256": "3d5e9f37be448dc6cbefe82898249de8123da94e2b8b62a8460667ea21e5fa8b",
+    "run_id": 43177478398,
+    "artifact_id": 13924364236
+  },
+  "variants": {
+    "cinema_standard": "PREEXISTING",
+    "cinema_museum": "NEW_TECH_PASS_ART_REVIEW_PENDING",
+    "critico_standard": "BLOCKED_V333_GACRUX_FREE_AND_BILLING_GATES_UNLESS_APPROVED_WAV",
+    "critico_museum": "BLOCKED_V333_GACRUX_AND_MUSEUM_QA"
+  },
+  "count_this_session": {
+    "new_artworks": 0,
+    "new_variant_slots": 1
+  },
+  "qa": {
+    "contact_sheet": "14 actual frames sampled",
+    "full_speed_owner_artistic_review": "PENDING",
+    "territorial_commercial_reuse": "PENDING",
+    "android_device_manual_test": "NOT_TESTED"
+  },
+  "publishing": {
+    "gold": false,
+    "site_public": false,
+    "r2": false,
+    "gh_artifact_created": false
+  },
+  "paid_api_calls": 0,
+  "note": "Source and music binaries and full QA verified for one newly made Cinema Museum slot; archived and independently read back in Library. This is checkpoint proposal via draft PR, not a GH artifact or a publication. Old Cinema Standard remains unchanged; do not count recoveries or revision as new variants."
+}
