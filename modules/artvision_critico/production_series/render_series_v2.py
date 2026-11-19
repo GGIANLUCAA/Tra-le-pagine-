@@ -177,24 +177,20 @@ def frame_beat(background,art,beat,p,ratio):
     z=beat["zoom_start"]+(beat["zoom_end"]-beat["zoom_start"])*small_smooth(p)
     fx=beat["focus"][0]+.005*math.sin(math.pi*p)
     fy=beat["focus"][1]
-    if ratio>1.15:
-        # Both wide masterpiece and speaker-relevant detail are continuously visible.
-        # Landscape top is whole painting; detail underneath follows narration.
-        ih,iw=art.shape[:2]
-        sc=min(970/iw,725/ih)
-        sw,sh=round(iw*sc),round(ih*sc)
-        whole=cv2.resize(art,(sw,sh),interpolation=cv2.INTER_AREA)
-        x=(W-sw)//2;y=220+(700-sh)//2
-        frame[y:y+sh,x:x+sw]=whole
-        cv2.rectangle(frame,(x-2,y-2),(x+sw+2,y+sh+2),(127,119,102),1,cv2.LINE_AA)
-        detail=crop_to(art,fx,fy,max(1.06,z),968/665,968,665)
-        frame[965:1630,56:1024]=detail
-        cv2.rectangle(frame,(54,963),(1025,1631),(127,119,102),1,cv2.LINE_AA)
+    # REGOLA DELLA SERIE: una sola inquadratura per battuta, MAI due riquadri.
+    # Il riquadro ha le proporzioni del quadro: a zoom 1 si vede l'opera intera,
+    # lo zoom rivela il dettaglio narrato. Nessun secondo pannello aggiunto.
+    ih,iw=art.shape[:2]
+    art_ratio=iw/ih
+    maxw,maxh=968,1430
+    if maxw/art_ratio<=maxh:
+        pw=maxw;ph=max(2,round(pw/art_ratio))
     else:
-        # Portrait and square paintings: a large unobstructed artwork, no captions.
-        patch=crop_to(art,fx,fy,max(1,z),968/1430,968,1430)
-        frame[235:1665,56:1024]=patch
-        cv2.rectangle(frame,(54,233),(1025,1666),(127,119,102),1,cv2.LINE_AA)
+        ph=maxh;pw=max(2,round(ph*art_ratio))
+    x=(W-pw)//2;y=235+(maxh-ph)//2
+    patch=crop_to(art,fx,fy,max(1,z),pw/ph,pw,ph)
+    frame[y:y+ph,x:x+pw]=patch
+    cv2.rectangle(frame,(x-2,y-2),(x+pw+2,y+ph+2),(127,119,102),1,cv2.LINE_AA)
     return frame
 
 def silent_symbols(frame,progress):

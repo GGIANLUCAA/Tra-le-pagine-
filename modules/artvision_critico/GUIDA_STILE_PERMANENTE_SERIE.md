@@ -7,7 +7,7 @@ La base approvata da chi realizza il progetto è **Dalí Critico V1.1**, con mig
 1. L'episodio è un vero commento **da critico d'arte esperto**: informazioni museali controllate, descrizioni precise dei particolari effettivamente visibili, interpretazioni controverse distinte dai fatti. Mai inventare simboli, date, citazioni o caratteristiche.
 2. Narrazione accessibile ma non banale: curiosità forte nei primi secondi, domande intelligenti, ritmo naturale con piccole pause e alternanza tra rivelazione, descrizione e riflessione. Non appesantire con liste e termini accademici non spiegati.
 3. Voce italiana **Google Gemini Gacrux** quando disponibile, narratore coerente per l'intera storia; evitare cambi improvvisi di voce, volume o prosodia. Se non disponibile, registrare chiaramente la voce alternativa nei metadati. Mai fingere voce umana.
-4. Il **quadro autentico** rimane il protagonista: allineare le immagini ai punti del copione. Zoom sui dettagli menzionati, ma periodicamente tornare alla visione integrale. Per dipinti orizzontali usare il layout a due livelli (insieme in alto, dettaglio sotto), invece di tagliare metà quadro per riempire uno schermo verticale.
+4. Il **quadro autentico** rimane il protagonista: allineare le immagini ai punti del copione. Zoom sui dettagli menzionati, ma periodicamente tornare alla visione integrale. **UNA SOLA inquadratura per battuta: mai due riquadri affiancati/impilati.** Per ogni dipinto (anche orizzontale) il riquadro ha le proporzioni dell'opera — a zoom 1 si vede l'opera intera, lo zoom rivela il dettaglio — e resta UNO solo, centrato. Nessun secondo pannello "insieme + dettaglio".
 5. Copertina riconoscibile e di alta qualità con **identita_visiva_v6.py**: stessa fascia scura inferiore, nome artista, filetto oro, dicitura musicale, caratteri e composizione; variano opera, artista e titolo-esca elegante e veritiero. Nessun numero progressivo sulle copertine.
 6. Musica autorizzata, discreta sotto la voce, senza cambi bruschi. Sfumare audio in apertura/chiusura e dissolvere tra inquadrature. Ritmi visivi mai da stampino.
 7. Negli ultimi secondi solo **piccolo simbolo grafico** discreto per like/iscrizione (cuore e play/+), senza pronunciare richieste o interrompere il commento; chiusura armoniosa, non tagliata.
@@ -33,6 +33,7 @@ Ri-eseguire esattamente `crop_into` di `render_series_v2.py` per ogni beat di de
 - se cade al bordo (|offset| > 0.2) il `focus` è **sbagliato** → correggere e ripetere.
 
 ### Costanti di regia già fissate dal motore (`render_series_v2.py`)
+- **Un solo riquadro per battuta (obbligatorio).** Ogni inquadratura mostra UN pannello, con le proporzioni dell'opera, centrato. Mai il vecchio "due livelli" (opera intera sopra + dettaglio sotto). Vale anche per i quadri orizzontali/larghi.
 - Beat **"wide"**: inquadratura d'insieme con leggera deriva; **aprire e chiudere** con un wide.
 - Beat **"dettaglio"**: `zoom_to_end: true` così lo **zoom arriva a fondo entro la battuta** restando agganciato al volto; `zoom_end` tipico **2.5–3.0**.
 - Ritorno periodico alla **visione integrale** (una volta a metà racconto) per non perdere l'insieme → regola editoriale 4.
