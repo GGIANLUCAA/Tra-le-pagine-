@@ -8,6 +8,7 @@ on:
     paths:
       - ".github/workflows/artvision-critico-botticelli-primavera-v1.yml"
       - "modules/artvision_critico/production_series/botticelli_primavera.json"
+      - "src/gemini_voice.py"
 permissions:
   contents: read
 concurrency:

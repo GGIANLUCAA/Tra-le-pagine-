@@ -230,7 +230,7 @@ def synthesize(text,outdir):
     from google import genai
     spoken=speech_directed(text)
     print("Genero un'unica recitazione italiana completa con pause interpretative.",flush=True)
-    client=genai.Client(api_key=key)
+    client=genai.Client(api_key=key, http_options={"api_version":"v1beta"})
     interaction=client.interactions.create(
         model=MODEL,
         input=[{
