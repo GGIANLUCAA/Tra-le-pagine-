@@ -57,7 +57,8 @@
     "human_artist_full_speed_listening": "PENDING",
     "gold": false,
     "published": false,
-    "paid_API_calls": 0
+    "paid_API_calls": 0,
+    "duplicate_run_accounting": "Only run 44504918809 counts as one new Cinema Standard; no-apt recovery is ignored for production slot counting."
   },
   "github": {
     "script": "scripts/artvision_burnejones_love_song_cinema_20261119.py",
@@ -67,7 +68,8 @@
     "artifact_id": 14520021035,
     "artifact_name": "ARTVISION_NEW_BURNE_JONES_LOVE_SONG_CINEMA_MP4_AND_ZIP",
     "experimental_noapt_recovery_run_id": 44505871323,
-    "note": "Independent fallback attempt on same work if successful remains a duplicate render proof, NOT a new distinct artwork or additional new slot."
+    "note": "Independent fallback attempt on same work if successful remains a duplicate render proof, NOT a new distinct artwork or additional new slot.",
+    "experimental_noapt_recovery_status": "SUCCESS but duplicate production candidate for same artwork, explicitly NOT counted as second new Cinema / artwork"
   },
   "library": {
     "folder": "/ArtVision/Opere_Extra/Burne_Jones_The_Love_Song_20261119",
