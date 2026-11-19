@@ -1,6 +1,6 @@
 # Altri format — libri e La Storia Rivive
 
-Generato: 2026-11-19T07:17:36+00:00
+Generato: 2026-11-19T10:29:31+00:00
 Attenzione: una cartella con metadata o una ricerca di fonti NON prova un MP4 finito.
 
 ## Libri raccontati, autore e stato dichiarato
