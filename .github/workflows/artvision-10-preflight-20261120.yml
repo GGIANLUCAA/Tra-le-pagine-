@@ -1,0 +1,28 @@
+name: ArtVision 10 - Preflight Open Access
+on:
+  push:
+    branches: [feature/artvision-cromatica-ten-real-artworks-20261120]
+    paths:
+      - tools/artvision_ten_preflight_20261120.py
+      - .github/workflows/artvision-10-preflight-20261120.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --disable-pip-version-check requests pillow
+      - run: python -u tools/artvision_ten_preflight_20261120.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARTVISION-10-MUSEUM-SOURCE-PREFLIGHT
+          path: output/artvision_10_preflight/RESULTS.json
+          if-no-files-found: warn
+          retention-days: 30
