@@ -23,6 +23,7 @@ CATALOG_JSON = ROOT / "_catalog.json"
 LIB = "https://video-library-studio.600led.workers.dev"
 
 FRIENDLY = {
+    "REEL_VANGOGH_V2.mp4": "Social Reel V2 — Van Gogh · Starry Skies (cinema / beat-locked)",
     "REEL_VANGOGH_STARRY_SKIES.mp4": "Social Reel — Van Gogh · Starry Skies",
     "ARTVISION_BOTTICELLI_PRIMAVERA.mp4": "ArtVision Critico — Botticelli · La primavera",
     "ARTVISION_CARAVAGGIO_VOCAZIONE_MATTEO.mp4": "ArtVision Critico — Caravaggio · La vocazione di San Matteo",

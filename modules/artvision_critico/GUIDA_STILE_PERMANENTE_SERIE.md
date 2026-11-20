@@ -44,18 +44,23 @@ Qualsiasi episodio lanciato con `--config` richiede `GEMINI_API_KEY`: il master 
 
 ## Reel social — formato breve (obbligatorio · aggiornamento 20 novembre 2026)
 
-Oltre all'episodio critico lungo, la serie produce **reel social verticali** di 30–60 s per la promozione. Regole fisse (riferimento: `src/render_social_reel.py`, primo master: Van Gogh «Starry Skies»):
+Oltre all'episodio critico lungo, la serie produce **reel social verticali** di 30–60 s per la promozione. Regole fisse (riferimento: `src/render_social_reel_v2.py`, primo master: Van Gogh «Starry Skies», versione cinema/beat-locked):
 
 1. **Un solo artista, molte opere.** Mai un solo quadro: 10–14 opere dello stesso pittore in sequenza. Il reel è un "assaggio" del pittore, non di un singolo dipinto.
-2. **Testo in inglese, minimale.** Solo nome dell'artista (maiuscolo), date di vita e una tagline breve. Nessuna didascalia lunga, nessun titolo d'opera a schermo. Hook d'apertura + eventuale cover.
-3. **Nessuna voce — solo musica.** Il reel è muto a livello narrativo: la musica guida tutto. Traccia autorizzata CC con beat chiaro e riconoscibile.
-4. **Tagli a ritmo di beat.** Rilevare i beat con `scipy.signal.stft` + spectral flux (niente librerie extra) e tagliare ogni 8 beat (~2,5 s a quadro). Nessun ritmo da stampino: la griglia di taglio segue la musica.
-5. **Camera dinamica full-bleed.** Verticale **1080×1920 a 30 FPS**, cover-crop senza cornice/pill/fondo sfocato. Ogni quadro ha un **motion plan diverso** (push in/out, pan orizzontale, tilt verticale, diagonali) scelto in base al formato dell'opera (orizzontale → pan; verticale → tilt).
-6. **Apertura e chiusura pulite.** Fade-in da nero e **dissolvenza finale to-black con audio in fade** (~1,3 s): mai taglio secco sull'ultimo fotogramma.
-7. **Difetti da evitare.** Frame bianchi da overflow `uint8` → clampare i fattori di fade e `np.clip(frame, 0, 255)`. Sfasamento video/audio → fissare una base temporale unica (`t0`) e usarla per frame, fade e audio.
+2. **Arco emotivo, non elenco.** L'ordine delle opere costruisce un'emozione: stupore → calore → delicatezza → speranza → lavoro → colore notturno → intimità → fatica → l'uomo → tragedia (climax). Il primo fotogramma deve essere il capolavoro più iconico (hook), l'ultimo il quadro più intenso.
+3. **Testo in inglese, minimale ed elegante.** Solo nome dell'artista (serif, spaziato), date di vita e una tagline breve, più una call-to-action finale ("Follow for one masterpiece a day"). Nessuna didascalia lunga, nessun titolo d'opera a schermo. Tipografia **kinetica** (appare/sale in dissolvenza), non statica.
+4. **Nessuna voce — solo musica.** Il reel è muto a livello narrativo: la musica guida tutto.
+5. **Tagli a ritmo di beat.** Rilevare i beat con `scipy.signal.stft` + spectral flux e tagliare su un multiplo di beat (es. ogni 4 beat con brani ~110 BPM ≈ 2,1 s per opera). L'immagine "respira": micro zoom/luminosità che decade dopo ogni beat + un breve lampo d'impatto subito dopo il taglio.
+6. **Camera dinamica full-bleed + grade cinema.** Verticale **1080×1920 a 30 FPS** cover-crop. Applicare una **resa cinematografica**: contrasto a S, saturazione lieve, luci calde / ombre fredde (split-tone), vignettatura e grana fine. Ogni quadro ha un motion plan diverso (push/pan/tilt/diagonali) scelto in base al formato dell'opera.
+7. **Apertura, chiusura e loop.** Fade-in da nero e dissolvenza finale to-black con audio in fade: così il reel **si ripete in modo continuo** (il loop aumenta i replay, che l'algoritmo premia).
+8. **Zona sicura.** Tenere testi e CTA lontani dal bordo inferiore (UI di TikTok/Reels).
+9. **Difetti da evitare.** Frame bianchi da overflow `uint8` → clampare i fattori di fade e `np.clip(frame, 0, 255)`. Sfasamento video/audio → base temporale unica (`t0`). Musica con copertina video incorporata → estrarre con `-map 0:a:0 -vn`.
+
+**Musica per i social.** Sui social (Instagram/TikTok/Facebook) conviene usare le **librerie musicali in-app** (audio con licenza già inclusa nella piattaforma), scelte nella categoria *cinematic / emotional / classical*: brani ~90–115 BPM, pianoforte/archi con un *build* e un *drop*, perfetti per contenuti d'arte. Per il file *scaricabile* (fuori piattaforma) usare musica **CC** (es. Kevin MacLeod / incompetech, CC BY 4.0) e citarla nei crediti.
 
 ## Moduli di riferimento
-- Reel social: `src/render_social_reel.py`
+- Reel social (v2, cinema/emozione): `src/render_social_reel_v2.py`
+- Reel social (v1): `src/render_social_reel.py`
 - Baseline copertina: `modules/artvision/identita_visiva_v6.py`
 - Dalí, base approvata: `modules/artvision_critico/render_dali.py`, `dali_sogno_ape.json`; il V1.1 con musica rimane un Artifact GitHub separato.
 - Picasso Guernica, nuovo episodio: `render_guernica.py`, `guernica_picasso_v1.json`, workflow dedicato.
