@@ -1,0 +1,49 @@
+name: ArtVision Cromatica - 10 Real Museum Reels
+on:
+  push:
+    branches:
+      - feature/artvision-cromatica-ten-real-artworks-20261120
+    paths:
+      - .github/workflows/artvision-cromatica-ten-20261120.yml
+      - tools/artvision_cromatica_batch_ten_20261120.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-10:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        reel_index: [0,1,2,3,4,5,6,7,8,9]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg and licensed media tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'requests>=2.31,<3' 'numpy>=1.26,<3'
+      - name: Render genuine museum painting with musical recording
+        run: python -u tools/artvision_cromatica_batch_ten_20261120.py --index ${{ matrix.reel_index }}
+      - name: Upload authenticated MP4, cover, music manifests and Android ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION-CROMATICA-REAL-${{ matrix.reel_index }}
+          path: |
+            output/artvision_cromatica_ten/*/*.mp4
+            output/artvision_cromatica_ten/*/*_COVER.jpg
+            output/artvision_cromatica_ten/*/*_QA.jpg
+            output/artvision_cromatica_ten/*/QA_AND_EDIT.json
+            output/artvision_cromatica_ten/*/SOURCES_AND_RIGHTS.md
+            output/artvision_cromatica_ten/*/POST_*.txt
+            output/artvision_cromatica_ten/*/dist/*_COMPLETO.zip
+            output/artvision_cromatica_ten/*/dist/*_ANDROID.zip
+            output/artvision_cromatica_ten/*/dist/*_META.zip
+          if-no-files-found: error
+          retention-days: 30

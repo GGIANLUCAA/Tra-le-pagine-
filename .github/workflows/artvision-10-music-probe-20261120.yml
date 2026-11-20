@@ -1,0 +1,25 @@
+name: ArtVision 10 - Music Source Preflight
+on:
+  push:
+    branches: [feature/artvision-cromatica-ten-real-artworks-20261120]
+    paths:
+      - tools/artvision_ten_music_probe_20261120.py
+      - .github/workflows/artvision-10-music-probe-20261120.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  music:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install requests
+      - run: python -u tools/artvision_ten_music_probe_20261120.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION-10-MUSIC-PROBE
+          path: output/artvision_10_preflight/music_probe.json
+          retention-days: 30
