@@ -31,11 +31,11 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ARTVISION-ACHENBACH-REAL-REEL-20261120
+          name: ARTVISION-ACHENBACH-REAL-REEL-V2-47SEC
           path: |
-            output/reel_achenbach_real/dist/ARTVISION_CROMATICA_REALE_COMPLETO.zip
-            output/reel_achenbach_real/dist/ARTVISION_VIDEO_ANDROID.zip
-            output/reel_achenbach_real/QA_CONTACT_SHEET.jpg
-            output/reel_achenbach_real/EDITOR_REPORT.json
+            output/reel_achenbach_revised_47s/dist/ARTVISION_CROMATICA_REALE_V2_COMPLETO.zip
+            output/reel_achenbach_revised_47s/dist/ARTVISION_VIDEO_V2_ANDROID.zip
+            output/reel_achenbach_revised_47s/QA_CONTACT_SHEET.jpg
+            output/reel_achenbach_revised_47s/EDITOR_REPORT.json
           if-no-files-found: error
           retention-days: 30
