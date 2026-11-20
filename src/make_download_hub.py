@@ -112,12 +112,14 @@ def local_cards(vids):
         pv = ensure_preview(v)
         src = pv.relative_to(ROOT).as_posix() if pv else rel
         poster = v.parent / "COPERTINA.jpg"
-        poster_attr = f' poster="{poster.relative_to(ROOT).as_posix()}"' if poster.exists() else ""
-        out.append(f"""    <div class="card">
-      <h3>{html.escape(title_of(v))}</h3>
-      <div class="sub">{human(v.stat().st_size)} · MP4 · player leggero 540p</div>
-      <div class="frame"><video controls playsinline preload="metadata"{poster_attr}>
-        <source src="{src}" type="video/mp4"></video></div>
+        poster_rel = poster.relative_to(ROOT).as_posix() if poster.exists() else ""
+        title = html.escape(title_of(v))
+        img = (f'<img loading="lazy" src="{poster_rel}" alt="">' if poster_rel
+               else '<div style="aspect-ratio:9/16;background:#111"></div>')
+        out.append(f"""    <div class="card" data-t="{title.lower()}">
+      <h3>{title}</h3>
+      <div class="sub">{human(v.stat().st_size)} · player 540p · streaming</div>
+      <div class="frame" data-src="{src}" data-poster="{poster_rel}">{img}</div>
       <div class="meta"><a class="dl" href="{rel}" download>Scarica {human(v.stat().st_size)} (1080p)</a></div>
     </div>""")
     return out
@@ -138,10 +140,12 @@ def library_cards(items):
             meta += f" · {mmss(it['duration'])}"
         if it.get("width") and it.get("height"):
             meta += f" · {it['width']}×{it['height']}"
-        out.append(f"""    <div class="card">
+        data_t = html.escape(f"{ttl} {cat}".lower(), quote=True)
+        out.append(f"""    <div class="card" data-t="{data_t}">
       <h3>{ttl}</h3>
       <div class="sub">{cat} · {meta}</div>
-      <a class="frame" href="{media}" download><img loading="lazy" src="{cover}" alt=""></a>
+      <div class="frame" data-src="{media}" data-poster="{cover}">
+        <img loading="lazy" src="{cover}" alt=""></div>
       <div class="meta"><a class="dl" href="{media}" download>Scarica MP4</a></div>
     </div>""")
     return out
@@ -197,8 +201,17 @@ def main():
   .card h3{{font-size:15px;margin:0 0 4px;color:var(--gold);letter-spacing:.02em}}
   .card .sub{{font-family:system-ui,sans-serif;font-size:12px;color:#9a9386;margin-bottom:10px}}
   .frame{{display:block;border:1px solid rgba(218,198,168,.5);border-radius:14px;overflow:hidden;
-         box-shadow:0 30px 80px rgba(0,0,0,.65);background:#000}}
+         box-shadow:0 30px 80px rgba(0,0,0,.65);background:#000;position:relative}}
   video,.frame img{{display:block;width:100%;height:auto}}
+  .frame[data-src]{{cursor:pointer}}
+  .frame[data-src]::after{{content:"▶";position:absolute;inset:0;display:flex;align-items:center;
+    justify-content:center;font-size:42px;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.85);
+    background:radial-gradient(55% 38% at 50% 50%,rgba(0,0,0,.30),transparent 72%)}}
+  .frame[data-src]:hover::after{{background:radial-gradient(55% 38% at 50% 50%,rgba(0,0,0,.48),transparent 72%)}}
+  .search{{font-family:system-ui,sans-serif;font-size:14px;padding:11px 16px;border-radius:999px;
+    border:1px solid rgba(218,198,168,.5);background:rgba(0,0,0,.35);color:var(--ivory);
+    width:min(90vw,420px);margin-top:14px;outline:none}}
+  .search:focus{{border-color:var(--gold)}}
   .meta{{margin-top:10px;text-align:center}}
   .dl{{display:inline-block;border:1px solid rgba(218,198,168,.6);border-radius:999px;padding:8px 18px;
        font-family:system-ui,sans-serif;font-size:13px;color:var(--gold);text-decoration:none}}
@@ -209,14 +222,39 @@ def main():
   <header>
     <h1>Video prodotti</h1>
     <h2>{len(vids) + len(catalog)} video in totale</h2>
-    {hero}
-    <div class="hint">{hint}</div>
+    <input id="q" class="search" placeholder="Cerca per artista o titolo…" autocomplete="off">
+    <div class="hint" style="margin-top:12px"><b id="count" style="color:var(--gold)">{len(vids) + len(catalog)}</b> video — tocca un poster per guardarlo in streaming</div>
+    <div style="margin-top:14px">{hero}</div>
+    <div class="hint" style="margin-top:8px">{hint}</div>
   </header>
 
 {local_block}  <h3 class="sec">Libreria completa — {len(catalog)} video</h3>
   <div class="grid">
 {chr(10).join(library_cards(catalog))}
   </div>
+<script>
+  var q = document.getElementById('q');
+  var count = document.getElementById('count');
+  if (q) q.addEventListener('input', function () {{
+    var s = this.value.trim().toLowerCase(), n = 0;
+    document.querySelectorAll('.card[data-t]').forEach(function (c) {{
+      var hit = !s || c.dataset.t.indexOf(s) >= 0;
+      c.style.display = hit ? '' : 'none';
+      if (hit) n++;
+    }});
+    count.textContent = n;
+  }});
+  document.addEventListener('click', function (e) {{
+    var f = e.target.closest('.frame[data-src]');
+    if (!f) return;
+    var v = document.createElement('video');
+    v.controls = true; v.autoplay = true; v.playsInline = true;
+    v.setAttribute('playsinline', '');
+    if (f.dataset.poster) v.poster = f.dataset.poster;
+    v.src = f.dataset.src;                  // streams on demand (HTTP Range)
+    f.innerHTML = ''; f.appendChild(v); f.removeAttribute('data-src');
+  }});
+</script>
 </body>
 </html>
 """, encoding="utf-8")
